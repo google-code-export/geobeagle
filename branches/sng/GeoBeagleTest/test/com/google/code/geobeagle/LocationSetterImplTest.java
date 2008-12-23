@@ -31,6 +31,14 @@ public class LocationSetterImplTest extends TestCase {
                 assertTrue(false);
                 return null;
             }
+
+            @Override
+            public void onPause() {
+            }
+
+            @Override
+            public void onResume() {
+            }
         });
         lsi.setLocation(LOCATION1, null);
         lsi.setLocation(LOCATION2, null);
@@ -55,6 +63,14 @@ public class LocationSetterImplTest extends TestCase {
             public Location getLocation() {
                 return location;
             }
+
+            @Override
+            public void onPause() {
+            }
+
+            @Override
+            public void onResume() {
+            }
         });
         lsi.setLocation(null, null);
         verify(location);
@@ -72,6 +88,14 @@ public class LocationSetterImplTest extends TestCase {
         LocationSetter locationSetter = new LocationSetterImpl(null, editText, new GpsControl() {
             public Location getLocation() {
                 return null;
+            }
+
+            @Override
+            public void onPause() {
+            }
+
+            @Override
+            public void onResume() {
             }
         });
         locationSetter.setLocation(null, errorDisplayer);

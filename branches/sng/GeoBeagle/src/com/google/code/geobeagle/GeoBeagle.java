@@ -3,9 +3,11 @@ package com.google.code.geobeagle;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
+import android.location.Location;
+import android.location.LocationManager;
 import android.net.UrlQuerySanitizer;
 import android.os.Bundle;
 import android.widget.Button;
@@ -13,12 +15,13 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 public class GeoBeagle extends Activity {
-    private static final String sPrefsLocation = "Location";
     private AlertDialog mDlgError;
     private GpsLocationListener mGpsLocationListener;
     private LocationSetter mLocationSetter;
     private LocationViewer mLocationViewer;
-    private ErrorDisplayerImpl mErrorDisplayer;
+    private ErrorDisplayer mErrorDisplayer;
+    private LifecycleManager mLifecycleManager;
+    private GpsControl mGpsControl;
 
     private AlertDialog createErrorDialog() {
         return new AlertDialog.Builder(this).setNeutralButton("Ok",
@@ -61,25 +64,33 @@ public class GeoBeagle extends Activity {
         try {
             super.onCreate(savedInstanceState);
             setContentView(R.layout.main);
-            GpsControl gpsControl = new GpsControlImpl(this);
+
             final EditText txtLocation = (EditText)findViewById(R.id.go_to);
             txtLocation.setOnKeyListener(new LocationOnKeyListener(
                     (Button)findViewById(R.id.cache_page), new TooString(txtLocation)));
-            mLocationSetter = new LocationSetterImpl(this, new MockableEditText(txtLocation),
-                    gpsControl);
+
             mDlgError = createErrorDialog();
             mLocationViewer = new LocationViewerImpl(new MockableContext(this),
                     new MockableTextView((TextView)findViewById(R.id.location_viewer)),
                     new MockableTextView((TextView)findViewById(R.id.last_updated)),
-                    new MockableTextView((TextView)findViewById(R.id.status)), gpsControl
-                            .getLocation());
+                    new MockableTextView((TextView)findViewById(R.id.status)));
             mGpsLocationListener = new GpsLocationListener(mLocationViewer);
+            mGpsControl = new GpsControlImpl(
+                    (LocationManager)getSystemService(Context.LOCATION_SERVICE),
+                    mGpsLocationListener);
+            mLocationSetter = new LocationSetterImpl(this, new MockableEditText(txtLocation),
+                    mGpsControl);
+
             setOnClickListeners(mLocationSetter);
             final Button btnGoToList = (Button)findViewById(R.id.go_to_list);
             mErrorDisplayer = new ErrorDisplayerImpl(this);
             btnGoToList.setOnClickListener(new DestinationListOnClickListener(mLocationSetter
                     .getDescriptionsAndLocations(), mLocationSetter, new AlertDialog.Builder(this),
                     mErrorDisplayer));
+
+            mLifecycleManager = new LifecycleManagerImpl(mGpsControl, mLocationSetter,
+                    getPreferences(MODE_PRIVATE));
+
         } catch (final Exception e) {
             ((TextView)findViewById(R.id.debug)).setText(e.toString() + "\n"
                     + Util.getStackTrace(e));
@@ -89,20 +100,17 @@ public class GeoBeagle extends Activity {
     @Override
     protected void onPause() {
         super.onPause();
-        GpsControlImpl.onPause(this, mGpsLocationListener);
-        final SharedPreferences.Editor editor = getPreferences(MODE_PRIVATE).edit();
-        editor.putString(sPrefsLocation, mLocationSetter.getLocation().toString());
-        editor.commit();
-        mLocationSetter.save(this);
+        mLifecycleManager.onPause();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        mLocationSetter.load(this);
+        mLifecycleManager.onResume(mErrorDisplayer, getString(R.string.initial_destination));
         if (!maybeGetCoordinatesFromIntent()) {
-            mLocationSetter.setLocation(getPreferences(MODE_PRIVATE).getString(sPrefsLocation,
-                    getString(R.string.initial_destination)), mErrorDisplayer);
+            final Location location = mGpsControl.getLocation();
+            if (location != null)
+                mGpsLocationListener.onLocationChanged(location);
         }
     }
 

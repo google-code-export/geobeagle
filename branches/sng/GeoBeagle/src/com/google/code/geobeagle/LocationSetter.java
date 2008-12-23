@@ -1,8 +1,6 @@
 
 package com.google.code.geobeagle;
 
-import android.content.Context;
-
 import java.util.List;
 
 public interface LocationSetter {
@@ -18,7 +16,7 @@ public interface LocationSetter {
 
     public abstract DescriptionsAndLocations getDescriptionsAndLocations();
 
-    public abstract void load(Context c);
+    public abstract void load();
 
-    public abstract void save(Context c);
+    public abstract void save();
 }

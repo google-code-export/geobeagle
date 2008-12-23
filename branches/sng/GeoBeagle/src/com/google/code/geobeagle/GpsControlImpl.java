@@ -1,16 +1,17 @@
 
 package com.google.code.geobeagle;
 
-import android.content.Context;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 
 public class GpsControlImpl implements GpsControl {
-    private Context mContext;
+    private final LocationManager mLocationManager;
+    private final LocationListener mLocationListener;
 
-    public GpsControlImpl(Context context) {
-        this.mContext = context;
+    public GpsControlImpl(LocationManager locationManager, LocationListener locationListener) {
+        this.mLocationManager = locationManager;
+        this.mLocationListener = locationListener;
     }
 
     /*
@@ -19,20 +20,15 @@ public class GpsControlImpl implements GpsControl {
      * com.android.geobrowse.GpsControlI#getLocation(android.content.Context)
      */
     public Location getLocation() {
-        return getLocationManagerFromContext(mContext).getLastKnownLocation(
-                LocationManager.GPS_PROVIDER);
+        return mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
     }
 
-    private static LocationManager getLocationManagerFromContext(Context context) {
-        return (LocationManager)context.getSystemService(Context.LOCATION_SERVICE);
+    public void onPause() {
+        mLocationManager.removeUpdates(mLocationListener);
     }
 
-    public static void onPause(Context context, LocationListener locationListener) {
-        getLocationManagerFromContext(context).removeUpdates(locationListener);
-    }
-
-    public static void onResume(Context context, LocationListener locationListener) {
-        getLocationManagerFromContext(context).requestLocationUpdates(LocationManager.GPS_PROVIDER,
-                0, 0, locationListener);
+    public void onResume() {
+        mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0,
+                mLocationListener);
     }
 }

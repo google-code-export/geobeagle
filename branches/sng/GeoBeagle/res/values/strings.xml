@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 	<string name="select_destination">Select destination</string>
-	<string name="go_to">Destination:</string>
+	<string name="go_to">Coordinates:</string>
 	<string name="via">Android App</string>
 	<string name="radar">Radar</string>
 	<string name="app_name">GeoBeagle</string>
-	<string name="maps">Maps</string>
+	<string name="maps">Map</string>
 	<string name="geocaching_map">Map</string>
 	<string name="nearest_caches">Nearest Caches</string>
 	<string name="my_location">My Location</string>
-	<string name="cache_page">Cache Page</string>
+	<string name="cache_page">Web Page</string>
 	<string name="recent_locations">Recent locations</string>
 	<string name="initial_destination">"37 25.341 -122 04.933 # GCMEY7"</string>
 	<string name="current_location_null">Current Location is not available. Make sure

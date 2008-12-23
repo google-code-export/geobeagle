@@ -13,6 +13,7 @@
 				android:layout_width="wrap_content" android:layout_height="wrap_content"
 				android:layout_weight="1" android:text="XX XX.XXX -XXX XX.XXX  +/-4001.0m" />
 		</LinearLayout>
+
 		<LinearLayout android:orientation="horizontal"
 			android:layout_width="fill_parent" android:layout_height="wrap_content">
 			<TextView android:layout_width="wrap_content"
@@ -27,10 +28,21 @@
 			<TextView android:layout_width="wrap_content"
 				android:layout_height="wrap_content" android:text="Status: " />
 			<TextView android:id="@+id/status" android:layout_width="wrap_content"
-				android:layout_height="wrap_content" android:text="TEMPORARILY UNAVAILBLE" />
-
+				android:layout_height="wrap_content" android:text="TEMPORARILY UNAVAILABLE" />
 		</LinearLayout>
 
+		<TextView android:layout_width="fill_parent"
+			android:layout_height="wrap_content" android:text="Select cache from geocaching.com:"
+			android:paddingTop="12sp" android:textSize="18sp" />
+		<LinearLayout android:orientation="horizontal"
+			android:layout_height="wrap_content" android:layout_width="fill_parent">
+			<Button android:id="@+id/nearest_caches"
+				android:layout_height="wrap_content" android:layout_width="wrap_content"
+				android:layout_weight="1" android:text="@string/nearest_caches" />
+			<Button android:id="@+id/geocaching_map"
+				android:layout_height="wrap_content" android:layout_width="wrap_content"
+				android:layout_weight="1" android:text="@string/geocaching_map" />
+		</LinearLayout>
 		<TextView android:layout_width="fill_parent"
 			android:layout_height="wrap_content" android:text="@string/go_to" />
 		<LinearLayout android:orientation="horizontal"
@@ -43,23 +55,9 @@
 		</LinearLayout>
 
 		<TextView android:layout_width="fill_parent"
-			android:layout_height="wrap_content" android:text="Open Geocaching.com web page:"
-			android:paddingTop="12sp" />
-		<LinearLayout android:orientation="horizontal"
-			android:layout_height="wrap_content" android:layout_width="fill_parent">
-			<Button android:id="@+id/nearest_caches"
-				android:layout_height="wrap_content" android:layout_width="wrap_content"
-				android:layout_weight="1" android:text="@string/nearest_caches" />
-			<Button android:id="@+id/geocaching_map"
-				android:layout_height="wrap_content" android:layout_width="wrap_content"
-				android:layout_weight="1" android:text="@string/geocaching_map" />
-			<Button android:id="@+id/cache_page" android:layout_height="wrap_content"
-				android:layout_width="wrap_content" android:layout_weight="1"
-				android:text="@string/cache_page" />
-		</LinearLayout>
-		<TextView android:layout_height="fill_parent"
-			android:layout_width="wrap_content" android:text="Open Android application:"
-			android:paddingTop="12sp" />
+			android:layout_height="wrap_content" android:text="Go to cache:"
+			android:paddingTop="18sp" android:textSize="18sp" />
+
 		<LinearLayout android:orientation="horizontal"
 			android:layout_height="wrap_content" android:layout_width="fill_parent">
 			<Button android:id="@+id/radar" android:layout_height="wrap_content"
@@ -68,6 +66,9 @@
 			<Button android:id="@+id/maps" android:layout_height="wrap_content"
 				android:layout_width="wrap_content" android:text="@string/maps"
 				android:layout_weight="1" />
+			<Button android:id="@+id/cache_page" android:layout_height="wrap_content"
+				android:layout_width="wrap_content" android:layout_weight="1"
+				android:text="@string/cache_page" />
 		</LinearLayout>
 
 		<TextView android:id="@+id/debug" android:layout_width="fill_parent"

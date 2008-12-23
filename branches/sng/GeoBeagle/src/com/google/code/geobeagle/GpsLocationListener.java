@@ -5,8 +5,8 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.os.Bundle;
 
-public final class GpsLocationListener implements LocationListener {
-    private LocationViewer mLocationViewer;
+public class GpsLocationListener implements LocationListener {
+    private final LocationViewer mLocationViewer;
 
     public GpsLocationListener(LocationViewer locationViewer) {
         this.mLocationViewer = locationViewer;

@@ -17,12 +17,14 @@ import java.util.List;
 
 public class LocationSetterImpl implements LocationSetter {
     private static final String FNAME_RECENT_LOCATIONS = "RECENT_LOCATIONS";
+    private final Context mContext;
     private final DescriptionsAndLocations mDescriptionsAndLocations;
-    private final MockableEditText mTxtLocation;
     private final GpsControl mGpsControl;
+    private final MockableEditText mTxtLocation;
 
     public LocationSetterImpl(Context context, MockableEditText editText, GpsControl gpsControl) {
         mTxtLocation = editText;
+        mContext = context;
         this.mGpsControl = gpsControl;
         mDescriptionsAndLocations = new DescriptionsAndLocations();
         editText.setOnFocusChangeListener(new OnFocusChangeListener() {
@@ -32,6 +34,10 @@ public class LocationSetterImpl implements LocationSetter {
                 }
             }
         });
+    }
+
+    public DescriptionsAndLocations getDescriptionsAndLocations() {
+        return mDescriptionsAndLocations;
     }
 
     public CharSequence getLocation() {
@@ -46,10 +52,10 @@ public class LocationSetterImpl implements LocationSetter {
         return mDescriptionsAndLocations.getPreviousLocations();
     }
 
-    public void load(Context c) {
+    public void load() {
         try {
             mDescriptionsAndLocations.clear();
-            final FileInputStream f = c.openFileInput(FNAME_RECENT_LOCATIONS);
+            final FileInputStream f = mContext.openFileInput(FNAME_RECENT_LOCATIONS);
             final InputStreamReader isr = new InputStreamReader(f);
             final BufferedReader br = new BufferedReader(isr);
             CharSequence dataLine = null;
@@ -66,9 +72,9 @@ public class LocationSetterImpl implements LocationSetter {
         }
     }
 
-    public void save(Context c) {
+    public void save() {
         try {
-            final FileOutputStream openFileOutput = c.openFileOutput(FNAME_RECENT_LOCATIONS,
+            final FileOutputStream openFileOutput = mContext.openFileOutput(FNAME_RECENT_LOCATIONS,
                     Context.MODE_PRIVATE);
             final BufferedOutputStream bos = new BufferedOutputStream(openFileOutput);
             for (final CharSequence location : mDescriptionsAndLocations.getPreviousLocations()) {
@@ -117,9 +123,5 @@ public class LocationSetterImpl implements LocationSetter {
         mTxtLocation.setText(latLonText);
         saveLocation(latLonText);
         return latLonText;
-    }
-
-    public DescriptionsAndLocations getDescriptionsAndLocations() {
-        return mDescriptionsAndLocations;
     }
 }
