@@ -109,11 +109,10 @@ public class GeoBeagle extends Activity {
     protected void onResume() {
         super.onResume();
         mLifecycleManager.onResume(mErrorDisplayer, getString(R.string.initial_destination));
-        if (!maybeGetCoordinatesFromIntent()) {
-            final Location location = mGpsControl.getLocation();
-            if (location != null)
-                mGpsLocationListener.onLocationChanged(location);
-        }
+        maybeGetCoordinatesFromIntent();
+        final Location location = mGpsControl.getLocation();
+        if (location != null)
+            mGpsLocationListener.onLocationChanged(location);
     }
 
     private void setOnClickListener(int id, IntentStarter intentStarter) {
