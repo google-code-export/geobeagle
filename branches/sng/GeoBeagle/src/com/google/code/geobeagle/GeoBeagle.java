@@ -22,6 +22,8 @@ public class GeoBeagle extends Activity {
     private ErrorDisplayer mErrorDisplayer;
     private LifecycleManager mLifecycleManager;
     private GpsControl mGpsControl;
+    private final IntentFactoryImpl intentFactory = new IntentFactoryImpl(new UriParserImpl());
+    private final ActivityStarterImpl activityStarter = new ActivityStarterImpl(this);
 
     private AlertDialog createErrorDialog() {
         return new AlertDialog.Builder(this).setNeutralButton("Ok",
@@ -114,22 +116,21 @@ public class GeoBeagle extends Activity {
         }
     }
 
-    private void setOnClickListener(int id, IntentStarter activityStarter) {
+    private void setOnClickListener(int id, IntentStarter intentStarter) {
         ((Button)findViewById(id)).setOnClickListener(new OnActivityButtonLinkClickListener(
-                new IntentFactoryImpl(new UriParserImpl()), activityStarter,
-                new ActivityStarterImpl(this), mLocationSetter, mDlgError));
+                intentFactory, intentStarter, activityStarter, mLocationSetter, mDlgError));
     }
 
     private void setOnClickListeners(final LocationSetter controls) {
         final GetCoordsToast getCoordsToast = new GetCoordsToastImpl(this);
-        final ResourceProviderImpl resourceProviderImpl = new ResourceProviderImpl(this);
+        final ResourceProvider resourceProvider = new ResourceProviderImpl(this);
 
         setOnClickListener(R.id.radar, new RadarIntentStarter());
         setOnClickListener(R.id.geocaching_map, new GeocachingMapsIntentStarter(getCoordsToast,
-                resourceProviderImpl));
+                resourceProvider));
         setOnClickListener(R.id.nearest_caches, new NearestCachesIntentStarter(getCoordsToast,
-                resourceProviderImpl));
-        setOnClickListener(R.id.maps, new MapsIntentStarter(resourceProviderImpl));
-        setOnClickListener(R.id.cache_page, new CachePageIntentStarter(resourceProviderImpl));
+                resourceProvider));
+        setOnClickListener(R.id.maps, new MapsIntentStarter(resourceProvider));
+        setOnClickListener(R.id.cache_page, new CachePageIntentStarter(resourceProvider));
     }
 }

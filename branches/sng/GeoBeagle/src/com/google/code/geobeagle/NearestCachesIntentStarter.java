@@ -7,7 +7,8 @@ class NearestCachesIntentStarter implements IntentStarter {
     private final GetCoordsToast mGetCoordsToast;
     private final ResourceProvider mResourceProvider;
 
-    public NearestCachesIntentStarter(GetCoordsToast getCoordsToast, ResourceProvider resourceProvider) {
+    public NearestCachesIntentStarter(GetCoordsToast getCoordsToast,
+            ResourceProvider resourceProvider) {
         mGetCoordsToast = getCoordsToast;
         mResourceProvider = resourceProvider;
     }
