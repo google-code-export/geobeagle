@@ -44,7 +44,12 @@ public class DestinationTest extends TestCase {
         assertEquals(0.0, destination.getLongitude());
         assertEquals("", destination.getDescription());
     }
+    
     public void testExtractDescription() {
         assertEquals("GC123", Destination.extractDescription("123 # GC123"));
+    }
+
+    public void testExtractDescriptionNoCoords() {
+        assertEquals("GC123", Destination.extractDescription("GC123"));
     }
 }

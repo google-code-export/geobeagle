@@ -11,7 +11,7 @@ import android.view.View;
 import junit.framework.TestCase;
 
 public class CachePageButtonEnablerTest extends TestCase {
-    
+
     public void helper(String input, boolean expected) {
         TooString tooString = createMock(TooString.class);
         View view = createMock(View.class);
@@ -26,13 +26,12 @@ public class CachePageButtonEnablerTest extends TestCase {
         verify(tooString);
         verify(view);
     }
-    
+
     public void testValid() {
         helper("12345 # GCxxx", true);
     }
-    
+
     public void testInvalid() {
         helper("12345 # CGxxx", false);
     }
-    
 }

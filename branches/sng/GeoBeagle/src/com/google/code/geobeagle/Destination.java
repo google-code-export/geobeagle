@@ -20,15 +20,18 @@ public class Destination {
     public static CharSequence extractDescription(CharSequence location) {
         final String REGEX = "[^#]*#?(.*)";
         Matcher matcher = Pattern.compile(REGEX).matcher(location);
-        if (matcher.matches())
-            return matcher.group(1).trim();
+        if (matcher.matches()) {
+            final String afterPoundSign = matcher.group(1);
+            if (afterPoundSign.length() > 0)
+                return afterPoundSign.trim();
+        }
         return location;
     }
 
     private boolean extractLocationAndDescription(CharSequence location) {
         final String REGEX = "\\s*(\\S+\\s+\\S+)\\s+(\\S+\\s+\\S+)\\s*#?(.*)";
         final Matcher matcher = Pattern.compile(REGEX).matcher(location);
-        
+
         if (!matcher.matches())
             return false;
         try {
