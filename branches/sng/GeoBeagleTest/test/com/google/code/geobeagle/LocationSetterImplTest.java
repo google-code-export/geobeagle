@@ -7,6 +7,10 @@ import static org.easymock.classextension.EasyMock.createMock;
 import static org.easymock.classextension.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.verify;
 
+import com.google.code.geobeagle.ui.ErrorDisplayer;
+import com.google.code.geobeagle.ui.LocationSetterImpl;
+import com.google.code.geobeagle.ui.MockableEditText;
+
 import android.location.Location;
 import android.view.View.OnFocusChangeListener;
 
@@ -26,7 +30,7 @@ public class LocationSetterImplTest extends TestCase {
         editText.setText(LOCATION2);
 
         replay(editText);
-        LocationSetter lsi = new LocationSetterImpl(null, editText, new GpsControl() {
+        LocationSetterImpl lsi = new LocationSetterImpl(null, editText, new GpsControl() {
             public Location getLocation() {
                 assertTrue(false);
                 return null;
@@ -59,7 +63,7 @@ public class LocationSetterImplTest extends TestCase {
 
         replay(location);
         replay(editText);
-        LocationSetter lsi = new LocationSetterImpl(null, editText, new GpsControl() {
+        LocationSetterImpl lsi = new LocationSetterImpl(null, editText, new GpsControl() {
             public Location getLocation() {
                 return location;
             }
@@ -85,7 +89,7 @@ public class LocationSetterImplTest extends TestCase {
 
         replay(editText);
         replay(errorDisplayer);
-        LocationSetter locationSetter = new LocationSetterImpl(null, editText, new GpsControl() {
+        LocationSetterImpl locationSetter = new LocationSetterImpl(null, editText, new GpsControl() {
             public Location getLocation() {
                 return null;
             }

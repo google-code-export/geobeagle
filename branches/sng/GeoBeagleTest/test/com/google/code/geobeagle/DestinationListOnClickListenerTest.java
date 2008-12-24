@@ -9,6 +9,8 @@ import static org.easymock.classextension.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.verify;
 
 import com.google.code.geobeagle.DestinationListOnClickListener.DestinationListDialogOnClickListener;
+import com.google.code.geobeagle.ui.CachePageButtonEnabler;
+import com.google.code.geobeagle.ui.LocationSetter;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface.OnClickListener;

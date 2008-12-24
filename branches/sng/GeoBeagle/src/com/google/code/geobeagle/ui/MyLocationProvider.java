@@ -1,5 +1,8 @@
 
-package com.google.code.geobeagle;
+package com.google.code.geobeagle.ui;
+
+import com.google.code.geobeagle.GpsControl;
+import com.google.code.geobeagle.R;
 
 import android.location.Location;
 

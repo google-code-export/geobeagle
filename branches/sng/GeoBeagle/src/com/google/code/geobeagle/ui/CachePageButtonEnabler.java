@@ -1,5 +1,8 @@
 
-package com.google.code.geobeagle;
+package com.google.code.geobeagle.ui;
+
+import com.google.code.geobeagle.Destination;
+import com.google.code.geobeagle.TooString;
 
 import android.view.View;
 

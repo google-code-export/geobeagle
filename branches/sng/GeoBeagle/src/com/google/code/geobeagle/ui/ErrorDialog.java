@@ -1,4 +1,6 @@
-package com.google.code.geobeagle;
+package com.google.code.geobeagle.ui;
+
+import com.google.code.geobeagle.ResourceProvider;
 
 import android.app.AlertDialog;
 

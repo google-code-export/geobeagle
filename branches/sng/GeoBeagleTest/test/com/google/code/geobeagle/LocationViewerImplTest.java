@@ -6,6 +6,11 @@ import static org.easymock.classextension.EasyMock.createMock;
 import static org.easymock.classextension.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.verify;
 
+import com.google.code.geobeagle.ui.LocationViewer;
+import com.google.code.geobeagle.ui.LocationViewerImpl;
+import com.google.code.geobeagle.ui.MockableContext;
+import com.google.code.geobeagle.ui.MockableTextView;
+
 import android.location.LocationProvider;
 
 import junit.framework.TestCase;

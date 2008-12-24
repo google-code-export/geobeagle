@@ -1,6 +1,8 @@
 
 package com.google.code.geobeagle;
 
+import com.google.code.geobeagle.ui.LocationViewer;
+
 import android.location.Location;
 import android.location.LocationListener;
 import android.os.Bundle;

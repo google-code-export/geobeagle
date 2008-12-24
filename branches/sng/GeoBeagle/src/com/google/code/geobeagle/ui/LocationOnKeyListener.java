@@ -1,5 +1,5 @@
 
-package com.google.code.geobeagle;
+package com.google.code.geobeagle.ui;
 
 import android.view.KeyEvent;
 import android.view.View;

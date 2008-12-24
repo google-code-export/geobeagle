@@ -1,6 +1,9 @@
 
 package com.google.code.geobeagle;
 
+import com.google.code.geobeagle.ui.ErrorDisplayer;
+import com.google.code.geobeagle.ui.LocationSetter;
+
 import android.content.SharedPreferences;
 
 public class LifecycleManagerImpl implements LifecycleManager {

@@ -6,6 +6,9 @@ import static org.easymock.classextension.EasyMock.createMock;
 import static org.easymock.classextension.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.verify;
 
+import com.google.code.geobeagle.ui.ErrorDialog;
+import com.google.code.geobeagle.ui.MyLocationProvider;
+
 import android.location.Location;
 
 import junit.framework.TestCase;

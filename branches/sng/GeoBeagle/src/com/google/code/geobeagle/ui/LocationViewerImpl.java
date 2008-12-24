@@ -1,14 +1,14 @@
 
-package com.google.code.geobeagle;
+package com.google.code.geobeagle.ui;
+
+import com.google.code.geobeagle.R;
+import com.google.code.geobeagle.Util;
 
 import android.location.Location;
 import android.location.LocationProvider;
 
 /**
- * @author sng
- *
- * Displays the current location as well as the GPS status.
- * 
+ * @author sng Displays the current location as well as the GPS status.
  */
 public class LocationViewerImpl implements LocationViewer {
     private final MockableTextView mCoordinates;

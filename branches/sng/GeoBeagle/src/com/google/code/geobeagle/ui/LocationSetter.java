@@ -1,5 +1,7 @@
 
-package com.google.code.geobeagle;
+package com.google.code.geobeagle.ui;
+
+import com.google.code.geobeagle.DescriptionsAndLocations;
 
 import java.util.List;
 

@@ -1,10 +1,10 @@
 
 package com.google.code.geobeagle.intents;
 
-import com.google.code.geobeagle.GetCoordsToast;
-import com.google.code.geobeagle.MyLocationProvider;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.ResourceProvider;
+import com.google.code.geobeagle.ui.GetCoordsToast;
+import com.google.code.geobeagle.ui.MyLocationProvider;
 
 import android.content.Intent;
 import android.location.Location;

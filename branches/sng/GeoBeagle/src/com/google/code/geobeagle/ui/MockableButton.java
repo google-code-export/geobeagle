@@ -1,5 +1,5 @@
 
-package com.google.code.geobeagle;
+package com.google.code.geobeagle.ui;
 
 import android.view.View.OnClickListener;
 import android.widget.Button;
