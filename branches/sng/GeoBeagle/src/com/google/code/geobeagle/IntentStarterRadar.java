@@ -3,7 +3,7 @@ package com.google.code.geobeagle;
 
 import android.content.Intent;
 
-class RadarIntentStarter implements IntentStarter {
+class IntentStarterRadar implements IntentStarterGotoCache {
     public void startIntent(ActivityStarter activityStarter, IntentFactory intentFactory,
             Destination destination) {
         final Intent intent = intentFactory.createIntent("com.google.android.radar.SHOW_RADAR");

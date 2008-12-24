@@ -54,7 +54,7 @@ public class LocationOnKeyListenerTest extends TestCase {
 
     public void testLocationOnKeyListenerNan() {
         expect(tooString.tooString()).andReturn("x37 03.0 122 00.0 # GC");
-        btnCachePage.setEnabled(false);
+        btnCachePage.setEnabled(true);
 
         replayAndVerify();
     }

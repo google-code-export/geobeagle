@@ -10,7 +10,7 @@ import android.content.Intent;
 
 import junit.framework.TestCase;
 
-public class RadarIntentStarterTest extends TestCase {
+public class IntentStarterRadarTest extends TestCase {
 
     public void testStartIntent() {
         Intent intent = createMock(Intent.class);
@@ -25,7 +25,7 @@ public class RadarIntentStarterTest extends TestCase {
         replay(intent);
         replay(activityStarter);
         replay(intentFactory);
-        new RadarIntentStarter().startIntent(activityStarter, intentFactory, new Destination(
+        new IntentStarterRadar().startIntent(activityStarter, intentFactory, new Destination(
                 "37 10.500 122 50.250 # GCFOO"));
         verify(intent);
         verify(activityStarter);

@@ -3,10 +3,10 @@ package com.google.code.geobeagle;
 
 import android.content.Intent;
 
-public class CachePageIntentStarter implements IntentStarter {
+public class IntentStarterCachePage implements IntentStarterGotoCache {
     private final ResourceProvider mResourceProvider;
 
-    public CachePageIntentStarter(ResourceProvider resourceProvider) {
+    public IntentStarterCachePage(ResourceProvider resourceProvider) {
         mResourceProvider = resourceProvider;
     }
 

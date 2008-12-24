@@ -10,26 +10,28 @@ import android.content.Intent;
 
 import junit.framework.TestCase;
 
-public class CachePageIntentStarterTest extends TestCase {
-    public void test() {
+public class IntentStarterMapsTest extends TestCase {
+
+    public void testStartIntent() {
         Intent intent = createMock(Intent.class);
         ActivityStarter activityStarter = createMock(ActivityStarter.class);
         IntentFactory intentFactory = createMock(IntentFactory.class);
         ResourceProvider resourceProvider = createMock(ResourceProvider.class);
 
-        expect(resourceProvider.getString(R.string.cache_page_url)).andReturn(
-                "http://coord.info/%1$s");
-        expect(intentFactory.createIntent(Intent.ACTION_VIEW, "http://coord.info/GCFOO"))
+        expect(resourceProvider.getString(R.string.map_intent)).andReturn(
+                "geo:0,0?q=%1$.5f,%2$.5f (%3$s)");
+        expect(intentFactory.createIntent(Intent.ACTION_VIEW, "geo:0,0?q=37.17500,122.83750 (GCFOO)"))
                 .andReturn(intent);
         activityStarter.startActivity(intent);
 
         replay(resourceProvider);
         replay(activityStarter);
         replay(intentFactory);
-        new CachePageIntentStarter(resourceProvider).startIntent(activityStarter,
-                intentFactory, new Destination("37 12.234 122 56.789 # GCFOO"));
+        new IntentStarterMaps(resourceProvider).startIntent(activityStarter, intentFactory,
+                new Destination("37 10.500 122 50.250 # GCFOO"));
         verify(resourceProvider);
         verify(activityStarter);
         verify(intentFactory);
     }
+
 }

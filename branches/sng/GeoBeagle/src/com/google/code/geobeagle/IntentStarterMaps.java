@@ -3,10 +3,10 @@ package com.google.code.geobeagle;
 
 import android.content.Intent;
 
-class MapsIntentStarter implements IntentStarter {
+class IntentStarterMaps implements IntentStarterGotoCache {
     private final ResourceProvider mResourceProvider;
 
-    public MapsIntentStarter(ResourceProvider resourceProvider) {
+    public IntentStarterMaps(ResourceProvider resourceProvider) {
         mResourceProvider = resourceProvider;
     }
 

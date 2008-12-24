@@ -3,10 +3,8 @@ package com.google.code.geobeagle;
 
 import java.util.List;
 
-public interface LocationSetter {
+public interface LocationSetter extends LocationProvider {
     public abstract CharSequence setLocation(double lat, double lon, CharSequence description);
-
-    public abstract CharSequence getLocation();
 
     public abstract void setLocation(CharSequence c, ErrorDisplayer errorDisplayer);
 

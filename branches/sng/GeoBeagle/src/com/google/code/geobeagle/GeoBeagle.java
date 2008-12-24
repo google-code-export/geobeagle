@@ -115,21 +115,29 @@ public class GeoBeagle extends Activity {
             mGpsLocationListener.onLocationChanged(location);
     }
 
-    private void setOnClickListener(int id, IntentStarter intentStarter) {
-        ((Button)findViewById(id)).setOnClickListener(new OnActivityButtonLinkClickListener(
-                intentFactory, intentStarter, activityStarter, mLocationSetter, mDlgError));
+    private void setGotoCacheClickListener(int id, IntentStarterGotoCache intentStarterGotoCache) {
+        ((Button)findViewById(id)).setOnClickListener(new OnGotoCacheClickListener(intentFactory,
+                intentStarterGotoCache, activityStarter, mLocationSetter, mDlgError));
+    }
+
+    private void setSelectCacheClickListener(int id,
+            IntentStarterSelectCache intentStarterSelectCache) {
+        ((Button)findViewById(id)).setOnClickListener(new OnSelectCacheButtonClickListener(
+                intentFactory, intentStarterSelectCache, activityStarter, mLocationSetter));
     }
 
     private void setOnClickListeners(final LocationSetter controls) {
         final GetCoordsToast getCoordsToast = new GetCoordsToastImpl(this);
         final ResourceProvider resourceProvider = new ResourceProviderImpl(this);
+        final MyLocationProvider myLocationProvider = new MyLocationProvider(mGpsControl, mDlgError);
 
-        setOnClickListener(R.id.radar, new RadarIntentStarter());
-        setOnClickListener(R.id.geocaching_map, new GeocachingMapsIntentStarter(getCoordsToast,
-                resourceProvider));
-        setOnClickListener(R.id.nearest_caches, new NearestCachesIntentStarter(getCoordsToast,
-                resourceProvider));
-        setOnClickListener(R.id.maps, new MapsIntentStarter(resourceProvider));
-        setOnClickListener(R.id.cache_page, new CachePageIntentStarter(resourceProvider));
+        setSelectCacheClickListener(R.id.geocaching_map, new IntentStarterGeocachingMaps(
+                getCoordsToast, resourceProvider, myLocationProvider));
+        setSelectCacheClickListener(R.id.nearest_caches, new IntentStarterNearestCaches(
+                getCoordsToast, resourceProvider, myLocationProvider));
+
+        setGotoCacheClickListener(R.id.radar, new IntentStarterRadar());
+        setGotoCacheClickListener(R.id.maps, new IntentStarterMaps(resourceProvider));
+        setGotoCacheClickListener(R.id.cache_page, new IntentStarterCachePage(resourceProvider));
     }
 }

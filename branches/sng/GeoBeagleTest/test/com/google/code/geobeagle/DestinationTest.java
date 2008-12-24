@@ -24,10 +24,25 @@ public class DestinationTest extends TestCase {
     }
 
     public void testDescription() {
-        Destination ll5 = new Destination(" \t 37 03.0 122 00.0 # Description ");
-        assertEquals(37.05, ll5.getLatitude());
-        assertEquals(122.0, ll5.getLongitude());
-        assertEquals("Description", ll5.getDescription());
+        Destination destination = new Destination(" \t 37 03.0 122 00.0 # Description ");
+        assertEquals(37.05, destination.getLatitude());
+        assertEquals(122.0, destination.getLongitude());
+        assertEquals("Description", destination.getDescription());
+    }
+
+    public void testBadCoordinatesGoodDescription() {
+        Destination destination = new Destination(" 37.0 122.0 # Description ");
+        assertEquals(0.0, destination.getLatitude());
+        assertEquals(0.0, destination.getLongitude());
+        assertEquals("Description", destination.getDescription());
+
+    }
+
+    public void testEmptyDestination() {
+        Destination destination = new Destination("");
+        assertEquals(0.0, destination.getLatitude());
+        assertEquals(0.0, destination.getLongitude());
+        assertEquals("", destination.getDescription());
 
     }
 }
