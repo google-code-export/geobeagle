@@ -1,43 +1,40 @@
 
 package com.google.code.geobeagle;
 
-import android.app.AlertDialog;
-import android.location.Location;
-
-import static org.easymock.classextension.EasyMock.expect;
+import static org.easymock.EasyMock.expect;
 import static org.easymock.classextension.EasyMock.createMock;
 import static org.easymock.classextension.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.verify;
+
+import android.location.Location;
 
 import junit.framework.TestCase;
 
 public class MyLocationProviderTest extends TestCase {
     public void testNullLocation() {
         GpsControl gpsControl = createMock(GpsControl.class);
-        AlertDialog alertDialog = createMock(AlertDialog.class);
-
+        ErrorDialog errorDialog = createMock(ErrorDialog.class);
         expect(gpsControl.getLocation()).andReturn(null);
-        alertDialog
-                .setMessage("Location cannot be determined.  Please ensure that your GPS is enabled and try again.");
-        alertDialog.show();
+
+        errorDialog.show(R.string.error_cant_get_location);
 
         replay(gpsControl);
-        replay(alertDialog);
-        MyLocationProvider myLocationProvider = new MyLocationProvider(gpsControl, alertDialog);
+        replay(errorDialog);
+        MyLocationProvider myLocationProvider = new MyLocationProvider(gpsControl, errorDialog);
         assertEquals(null, myLocationProvider.getLocation());
         verify(gpsControl);
-        verify(alertDialog);
+        verify(errorDialog);
     }
-    
+
     public void test() {
         GpsControl gpsControl = createMock(GpsControl.class);
-        AlertDialog alertDialog = createMock(AlertDialog.class);
+        ErrorDialog errorDialog = createMock(ErrorDialog.class);
         Location location = createMock(Location.class);
-        
+
         expect(gpsControl.getLocation()).andReturn(location);
 
         replay(gpsControl);
-        MyLocationProvider myLocationProvider = new MyLocationProvider(gpsControl, alertDialog);
+        MyLocationProvider myLocationProvider = new MyLocationProvider(gpsControl, errorDialog);
         assertEquals(location, myLocationProvider.getLocation());
         verify(gpsControl);
     }

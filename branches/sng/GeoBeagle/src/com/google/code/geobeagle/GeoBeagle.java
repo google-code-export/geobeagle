@@ -25,7 +25,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 public class GeoBeagle extends Activity {
-    private AlertDialog mDlgError;
+    private ErrorDialog mErrorDialog;
     private GpsLocationListener mGpsLocationListener;
     private LocationSetter mLocationSetter;
     private LocationViewer mLocationViewer;
@@ -35,16 +35,16 @@ public class GeoBeagle extends Activity {
     private final IntentFactoryImpl intentFactory = new IntentFactoryImpl(new UriParserImpl());
     private final ActivityStarterImpl activityStarter = new ActivityStarterImpl(this);
 
-    private AlertDialog createErrorDialog() {
-        return new AlertDialog.Builder(this).setNeutralButton("Ok",
+    private ErrorDialog createErrorDialog() {
+        return new ErrorDialog(new AlertDialog.Builder(this).setNeutralButton("Ok",
                 new DialogInterface.OnClickListener() {
                     public void onClick(final DialogInterface dialog, final int which) {
                     }
-                }).create();
+                }).create(), new ResourceProviderImpl(this));
     }
 
     private void getCoordinatesFromIntent(LocationSetter locationSetter, Intent intent,
-            AlertDialog alertDialog) {
+            ErrorDialog errorDialog) {
         try {
             final String query = intent.getData().getQuery();
             final String sanitizedQuery = Util.parseHttpUri(query, new UrlQuerySanitizer(),
@@ -55,8 +55,7 @@ public class GeoBeagle extends Activity {
             // startActivityForResult(new RadarIntentCreator().createIntent(new
             // LatLong(ll)), -1);
         } catch (final Exception e) {
-            alertDialog.setMessage("Error: " + e.getMessage());
-            alertDialog.show();
+            errorDialog.show("Error: " + e.getMessage());
             startActivity(new Intent(Intent.ACTION_VIEW, intent.getData()));
         }
     }
@@ -65,7 +64,7 @@ public class GeoBeagle extends Activity {
         final Intent intent = getIntent();
         final String action = intent.getAction();
         if ((action != null) && action.equals(Intent.ACTION_VIEW)) {
-            getCoordinatesFromIntent(mLocationSetter, intent, mDlgError);
+            getCoordinatesFromIntent(mLocationSetter, intent, mErrorDialog);
             return true;
         }
         return false;
@@ -81,7 +80,7 @@ public class GeoBeagle extends Activity {
             txtLocation.setOnKeyListener(new LocationOnKeyListener(
                     (Button)findViewById(R.id.cache_page), new TooString(txtLocation)));
 
-            mDlgError = createErrorDialog();
+            mErrorDialog = createErrorDialog();
             mLocationViewer = new LocationViewerImpl(new MockableContext(this),
                     new MockableTextView((TextView)findViewById(R.id.location_viewer)),
                     new MockableTextView((TextView)findViewById(R.id.last_updated)),
@@ -127,7 +126,7 @@ public class GeoBeagle extends Activity {
 
     private void setGotoCacheClickListener(int id, IntentStarterGotoCache intentStarterGotoCache) {
         ((Button)findViewById(id)).setOnClickListener(new OnGotoCacheClickListener(intentFactory,
-                intentStarterGotoCache, activityStarter, mLocationSetter, mDlgError));
+                intentStarterGotoCache, activityStarter, mLocationSetter, mErrorDialog));
     }
 
     private void setSelectCacheClickListener(int id,
@@ -139,7 +138,8 @@ public class GeoBeagle extends Activity {
     private void setOnClickListeners(final LocationSetter controls) {
         final GetCoordsToast getCoordsToast = new GetCoordsToastImpl(this);
         final ResourceProvider resourceProvider = new ResourceProviderImpl(this);
-        final MyLocationProvider myLocationProvider = new MyLocationProvider(mGpsControl, mDlgError);
+        final MyLocationProvider myLocationProvider = new MyLocationProvider(mGpsControl,
+                mErrorDialog);
 
         setSelectCacheClickListener(R.id.geocaching_map, new IntentStarterGeocachingMaps(
                 getCoordsToast, resourceProvider, myLocationProvider));

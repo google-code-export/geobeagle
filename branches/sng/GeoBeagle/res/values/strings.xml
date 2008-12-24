@@ -23,4 +23,5 @@
 	<string name="nearest_caches_url">http://www.geocaching.com/seek/nearest.aspx?lat=%1$.5f&amp;lng=%2$.5f&amp;f=1</string>
 	<string name="geocaching_maps_url">"http://www.geocaching.com/map/?lat=%1$.5f&amp;lng=%2$.5f"</string>
 	<string name="get_coords_toast">&quot;To get the coords from the cache page, click: 'online maps...' / 'Google Maps'.&quot;</string>
+	<string name="error_cant_get_location">"Location cannot be determined.  Please ensure that your GPS is enabled and try again."</string>
 </resources>
