@@ -5,7 +5,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Destination {
-    private String mDescription;
+    private CharSequence mDescription;
     private double mLatitude;
     private double mLongitude;
 
@@ -14,14 +14,15 @@ public class Destination {
         mLongitude = 0;
         mLatitude = 0;
         if (!extractLocationAndDescription(location))
-            extractDescriptionOnly(location);
+            mDescription = extractDescription(location);
     }
 
-    private void extractDescriptionOnly(CharSequence location) {
+    public static CharSequence extractDescription(CharSequence location) {
         final String REGEX = "[^#]*#?(.*)";
         Matcher matcher = Pattern.compile(REGEX).matcher(location);
         if (matcher.matches())
-            mDescription = matcher.group(1).trim();
+            return matcher.group(1).trim();
+        return location;
     }
 
     private boolean extractLocationAndDescription(CharSequence location) {
@@ -40,7 +41,7 @@ public class Destination {
         return true;
     }
 
-    public final String getDescription() {
+    public final CharSequence getDescription() {
         return mDescription;
     }
 

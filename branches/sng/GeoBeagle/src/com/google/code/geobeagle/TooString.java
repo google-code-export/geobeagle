@@ -10,7 +10,7 @@ public class TooString {
         this.mEditText = editText;
     }
 
-    public String tooString() {
+    public CharSequence tooString() {
         return mEditText.getText().toString();
     }
 }
