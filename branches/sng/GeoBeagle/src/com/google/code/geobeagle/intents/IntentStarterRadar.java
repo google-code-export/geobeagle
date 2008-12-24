@@ -1,9 +1,11 @@
 
-package com.google.code.geobeagle;
+package com.google.code.geobeagle.intents;
+
+import com.google.code.geobeagle.Destination;
 
 import android.content.Intent;
 
-class IntentStarterRadar implements IntentStarterGotoCache {
+public class IntentStarterRadar implements IntentStarterGotoCache {
     public void startIntent(ActivityStarter activityStarter, IntentFactory intentFactory,
             Destination destination) {
         final Intent intent = intentFactory.createIntent("com.google.android.radar.SHOW_RADAR");

@@ -1,5 +1,5 @@
 
-package com.google.code.geobeagle;
+package com.google.code.geobeagle.intents;
 
 import android.content.Intent;
 

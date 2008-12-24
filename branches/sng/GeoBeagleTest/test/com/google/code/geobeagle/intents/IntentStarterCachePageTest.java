@@ -1,10 +1,14 @@
 
-package com.google.code.geobeagle;
+package com.google.code.geobeagle.intents;
 
 import static org.easymock.EasyMock.expect;
 import static org.easymock.classextension.EasyMock.createMock;
 import static org.easymock.classextension.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.verify;
+
+import com.google.code.geobeagle.Destination;
+import com.google.code.geobeagle.R;
+import com.google.code.geobeagle.ResourceProvider;
 
 import android.content.Intent;
 

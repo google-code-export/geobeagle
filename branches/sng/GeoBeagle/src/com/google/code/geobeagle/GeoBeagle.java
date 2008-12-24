@@ -1,6 +1,16 @@
 
 package com.google.code.geobeagle;
 
+import com.google.code.geobeagle.intents.ActivityStarterImpl;
+import com.google.code.geobeagle.intents.IntentFactoryImpl;
+import com.google.code.geobeagle.intents.IntentStarterCachePage;
+import com.google.code.geobeagle.intents.IntentStarterGeocachingMaps;
+import com.google.code.geobeagle.intents.IntentStarterGotoCache;
+import com.google.code.geobeagle.intents.IntentStarterMaps;
+import com.google.code.geobeagle.intents.IntentStarterNearestCaches;
+import com.google.code.geobeagle.intents.IntentStarterRadar;
+import com.google.code.geobeagle.intents.IntentStarterSelectCache;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;

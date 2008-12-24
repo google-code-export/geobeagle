@@ -1,5 +1,6 @@
 
-package com.google.code.geobeagle;
+package com.google.code.geobeagle.intents;
+
 
 
 public interface IntentStarterSelectCache {

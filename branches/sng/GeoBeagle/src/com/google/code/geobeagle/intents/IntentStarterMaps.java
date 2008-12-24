@@ -1,9 +1,13 @@
 
-package com.google.code.geobeagle;
+package com.google.code.geobeagle.intents;
+
+import com.google.code.geobeagle.Destination;
+import com.google.code.geobeagle.R;
+import com.google.code.geobeagle.ResourceProvider;
 
 import android.content.Intent;
 
-class IntentStarterMaps implements IntentStarterGotoCache {
+public class IntentStarterMaps implements IntentStarterGotoCache {
     private final ResourceProvider mResourceProvider;
 
     public IntentStarterMaps(ResourceProvider resourceProvider) {

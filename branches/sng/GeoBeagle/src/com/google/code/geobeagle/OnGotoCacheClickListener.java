@@ -1,6 +1,10 @@
 
 package com.google.code.geobeagle;
 
+import com.google.code.geobeagle.intents.ActivityStarter;
+import com.google.code.geobeagle.intents.IntentFactory;
+import com.google.code.geobeagle.intents.IntentStarterGotoCache;
+
 import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
 import android.view.View;

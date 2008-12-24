@@ -1,5 +1,7 @@
 
-package com.google.code.geobeagle;
+package com.google.code.geobeagle.intents;
+
+import com.google.code.geobeagle.UriParser;
 
 import android.content.Intent;
 

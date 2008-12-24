@@ -1,6 +1,11 @@
 
 package com.google.code.geobeagle;
 
+import com.google.code.geobeagle.intents.ActivityStarter;
+import com.google.code.geobeagle.intents.IntentFactory;
+import com.google.code.geobeagle.intents.IntentFactoryImpl;
+import com.google.code.geobeagle.intents.IntentStarterSelectCache;
+
 import android.view.View;
 import android.view.View.OnClickListener;
 
