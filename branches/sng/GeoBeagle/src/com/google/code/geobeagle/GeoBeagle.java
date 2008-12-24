@@ -77,8 +77,9 @@ public class GeoBeagle extends Activity {
             setContentView(R.layout.main);
 
             final EditText txtLocation = (EditText)findViewById(R.id.go_to);
-            txtLocation.setOnKeyListener(new LocationOnKeyListener(
-                    (Button)findViewById(R.id.cache_page), new TooString(txtLocation)));
+            final CachePageButtonEnabler cachePageButtonEnabler = new CachePageButtonEnabler(
+                    new TooString(txtLocation), (Button)findViewById(R.id.cache_page));
+            txtLocation.setOnKeyListener(new LocationOnKeyListener(cachePageButtonEnabler));
 
             mErrorDialog = createErrorDialog();
             mLocationViewer = new LocationViewerImpl(new MockableContext(this),
@@ -97,7 +98,7 @@ public class GeoBeagle extends Activity {
             mErrorDisplayer = new ErrorDisplayerImpl(this);
             btnGoToList.setOnClickListener(new DestinationListOnClickListener(mLocationSetter
                     .getDescriptionsAndLocations(), mLocationSetter, new AlertDialog.Builder(this),
-                    mErrorDisplayer));
+                    mErrorDisplayer, cachePageButtonEnabler));
 
             mLifecycleManager = new LifecycleManagerImpl(mGpsControl, mLocationSetter,
                     getPreferences(MODE_PRIVATE));
