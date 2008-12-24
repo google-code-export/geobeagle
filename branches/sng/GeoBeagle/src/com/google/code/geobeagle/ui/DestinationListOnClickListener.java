@@ -1,9 +1,8 @@
 
-package com.google.code.geobeagle;
+package com.google.code.geobeagle.ui;
 
-import com.google.code.geobeagle.ui.CachePageButtonEnabler;
-import com.google.code.geobeagle.ui.ErrorDisplayer;
-import com.google.code.geobeagle.ui.LocationSetter;
+import com.google.code.geobeagle.DescriptionsAndLocations;
+import com.google.code.geobeagle.R;
 
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;

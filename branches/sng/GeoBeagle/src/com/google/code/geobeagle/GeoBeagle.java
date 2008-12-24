@@ -11,6 +11,7 @@ import com.google.code.geobeagle.intents.IntentStarterNearestCaches;
 import com.google.code.geobeagle.intents.IntentStarterRadar;
 import com.google.code.geobeagle.intents.IntentStarterSelectCache;
 import com.google.code.geobeagle.ui.CachePageButtonEnabler;
+import com.google.code.geobeagle.ui.DestinationListOnClickListener;
 import com.google.code.geobeagle.ui.ErrorDialog;
 import com.google.code.geobeagle.ui.ErrorDisplayer;
 import com.google.code.geobeagle.ui.GetCoordsToast;
