@@ -13,13 +13,13 @@ import android.content.SharedPreferences;
 
 import junit.framework.TestCase;
 
-public class LifecycleManagerImplTest extends TestCase {
+public class LifecycleManagerTest extends TestCase {
 
     public void testOnPause() {
         GpsControl gpsControl = createMock(GpsControl.class);
         LocationSetter locationSetter = createMock(LocationSetter.class);
         SharedPreferences sharedPreferences = createMock(SharedPreferences.class);
-        LifecycleManager lifecycleManager = new LifecycleManagerImpl(gpsControl, locationSetter,
+        LifecycleManager lifecycleManager = new LifecycleManager(gpsControl, locationSetter,
                 sharedPreferences);
         locationSetter.save();
         expect(locationSetter.getLocation()).andReturn("somewhere");
@@ -46,11 +46,11 @@ public class LifecycleManagerImplTest extends TestCase {
         SharedPreferences sharedPreferences = createMock(SharedPreferences.class);
         ErrorDisplayer errorDisplayer = createMock(ErrorDisplayer.class);
 
-        LifecycleManager lifecycleManager = new LifecycleManagerImpl(gpsControl, locationSetter,
+        LifecycleManager lifecycleManager = new LifecycleManager(gpsControl, locationSetter,
                 sharedPreferences);
         expect(
-                sharedPreferences.getString(LifecycleManagerImpl.PREFS_LOCATION, "initial destination")).andReturn(
-                "saved destination");
+                sharedPreferences.getString(LifecycleManager.PREFS_LOCATION,
+                        "initial destination")).andReturn("saved destination");
         locationSetter.load();
         locationSetter.setLocation("saved destination", errorDisplayer);
         gpsControl.onResume();

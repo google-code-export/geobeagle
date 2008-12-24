@@ -3,6 +3,8 @@ package com.google.code.geobeagle;
 
 import android.net.Uri;
 
-public interface UriParser {
-    Uri parse(String format);
+public class UriParser {
+    public Uri parse(String uriString) {
+        return Uri.parse(uriString);
+    }
 }

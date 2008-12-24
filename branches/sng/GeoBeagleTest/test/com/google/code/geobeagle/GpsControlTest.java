@@ -12,11 +12,11 @@ import android.location.LocationManager;
 
 import junit.framework.TestCase;
 
-public class GpsControlImplTest extends TestCase {
+public class GpsControlTest extends TestCase {
 
     public void testGetLocation() {
         LocationManager locationManager = createMock(LocationManager.class);
-        GpsControl gpsControl = new GpsControlImpl(locationManager, null);
+        GpsControl gpsControl = new GpsControl(locationManager, null);
         Location location = createMock(Location.class);
 
         expect(locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)).andReturn(
@@ -30,7 +30,7 @@ public class GpsControlImplTest extends TestCase {
     public void testOnPause() {
         LocationManager locationManager = createMock(LocationManager.class);
         LocationListener locationListener = createMock(LocationListener.class);
-        GpsControl gpsControl = new GpsControlImpl(locationManager, locationListener);
+        GpsControl gpsControl = new GpsControl(locationManager, locationListener);
 
         locationManager.removeUpdates(locationListener);
 
@@ -42,7 +42,7 @@ public class GpsControlImplTest extends TestCase {
     public void testOnResume() {
         LocationManager locationManager = createMock(LocationManager.class);
         LocationListener locationListener = createMock(LocationListener.class);
-        GpsControl gpsControl = new GpsControlImpl(locationManager, locationListener);
+        GpsControl gpsControl = new GpsControl(locationManager, locationListener);
 
         locationManager
                 .requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);

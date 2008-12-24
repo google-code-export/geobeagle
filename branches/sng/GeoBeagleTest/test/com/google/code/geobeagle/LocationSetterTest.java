@@ -8,7 +8,7 @@ import static org.easymock.classextension.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.verify;
 
 import com.google.code.geobeagle.ui.ErrorDisplayer;
-import com.google.code.geobeagle.ui.LocationSetterImpl;
+import com.google.code.geobeagle.ui.LocationSetter;
 import com.google.code.geobeagle.ui.MockableEditText;
 
 import android.location.Location;
@@ -18,7 +18,7 @@ import java.util.GregorianCalendar;
 
 import junit.framework.TestCase;
 
-public class LocationSetterImplTest extends TestCase {
+public class LocationSetterTest extends TestCase {
     private static final String LOCATION1 = "37 11.1 122 22.2 #foobar";
 
     private static final String LOCATION2 = "38 33.3 122 44.4 #baz";
@@ -30,7 +30,7 @@ public class LocationSetterImplTest extends TestCase {
         editText.setText(LOCATION2);
 
         replay(editText);
-        LocationSetterImpl lsi = new LocationSetterImpl(null, editText, new GpsControl() {
+        LocationSetter lsi = new LocationSetter(null, editText, new GpsControl(null, null) {
             public Location getLocation() {
                 assertTrue(false);
                 return null;
@@ -63,7 +63,7 @@ public class LocationSetterImplTest extends TestCase {
 
         replay(location);
         replay(editText);
-        LocationSetterImpl lsi = new LocationSetterImpl(null, editText, new GpsControl() {
+        LocationSetter lsi = new LocationSetter(null, editText, new GpsControl(null, null) {
             public Location getLocation() {
                 return location;
             }
@@ -89,7 +89,7 @@ public class LocationSetterImplTest extends TestCase {
 
         replay(editText);
         replay(errorDisplayer);
-        LocationSetterImpl locationSetter = new LocationSetterImpl(null, editText, new GpsControl() {
+        LocationSetter locationSetter = new LocationSetter(null, editText, new GpsControl(null, null) {
             public Location getLocation() {
                 return null;
             }

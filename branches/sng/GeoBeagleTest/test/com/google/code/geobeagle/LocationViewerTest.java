@@ -7,7 +7,6 @@ import static org.easymock.classextension.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.verify;
 
 import com.google.code.geobeagle.ui.LocationViewer;
-import com.google.code.geobeagle.ui.LocationViewerImpl;
 import com.google.code.geobeagle.ui.MockableContext;
 import com.google.code.geobeagle.ui.MockableTextView;
 
@@ -15,7 +14,7 @@ import android.location.LocationProvider;
 
 import junit.framework.TestCase;
 
-public class LocationViewerImplTest extends TestCase {
+public class LocationViewerTest extends TestCase {
 
     public final void testCreate() {
         MockableContext context = createMock(MockableContext.class);
@@ -26,7 +25,7 @@ public class LocationViewerImplTest extends TestCase {
         replay(context);
         replay(lastUpdateTime);
         replay(coordinates);
-        new LocationViewerImpl(context, coordinates, lastUpdateTime, null);
+        new LocationViewer(context, coordinates, lastUpdateTime, null);
         verify(context);
         verify(lastUpdateTime);
         verify(coordinates);
@@ -50,7 +49,7 @@ public class LocationViewerImplTest extends TestCase {
         replay(lastUpdateTime);
         replay(coordinates);
         replay(status);
-        LocationViewer lv = new LocationViewerImpl(context, coordinates, lastUpdateTime, status);
+        LocationViewer lv = new LocationViewer(context, coordinates, lastUpdateTime, status);
         lv.setStatus(LocationProvider.OUT_OF_SERVICE);
         lv.setStatus(LocationProvider.AVAILABLE);
         lv.setStatus(LocationProvider.TEMPORARILY_UNAVAILABLE);

@@ -1,8 +1,8 @@
 
 package com.google.code.geobeagle;
 
-import com.google.code.geobeagle.intents.ActivityStarterImpl;
-import com.google.code.geobeagle.intents.IntentFactoryImpl;
+import com.google.code.geobeagle.intents.ActivityStarter;
+import com.google.code.geobeagle.intents.IntentFactory;
 import com.google.code.geobeagle.intents.IntentStarterCachePage;
 import com.google.code.geobeagle.intents.IntentStarterGeocachingMaps;
 import com.google.code.geobeagle.intents.IntentStarterGotoCache;
@@ -13,14 +13,10 @@ import com.google.code.geobeagle.intents.IntentStarterSelectCache;
 import com.google.code.geobeagle.ui.CachePageButtonEnabler;
 import com.google.code.geobeagle.ui.ErrorDialog;
 import com.google.code.geobeagle.ui.ErrorDisplayer;
-import com.google.code.geobeagle.ui.ErrorDisplayerImpl;
 import com.google.code.geobeagle.ui.GetCoordsToast;
-import com.google.code.geobeagle.ui.GetCoordsToastImpl;
 import com.google.code.geobeagle.ui.LocationOnKeyListener;
 import com.google.code.geobeagle.ui.LocationSetter;
-import com.google.code.geobeagle.ui.LocationSetterImpl;
 import com.google.code.geobeagle.ui.LocationViewer;
-import com.google.code.geobeagle.ui.LocationViewerImpl;
 import com.google.code.geobeagle.ui.MockableContext;
 import com.google.code.geobeagle.ui.MockableEditText;
 import com.google.code.geobeagle.ui.MockableTextView;
@@ -49,15 +45,15 @@ public class GeoBeagle extends Activity {
     private ErrorDisplayer mErrorDisplayer;
     private LifecycleManager mLifecycleManager;
     private GpsControl mGpsControl;
-    private final IntentFactoryImpl intentFactory = new IntentFactoryImpl(new UriParserImpl());
-    private final ActivityStarterImpl activityStarter = new ActivityStarterImpl(this);
+    private final IntentFactory intentFactory = new IntentFactory(new UriParser());
+    private final ActivityStarter activityStarter = new ActivityStarter(this);
 
     private ErrorDialog createErrorDialog() {
         return new ErrorDialog(new AlertDialog.Builder(this).setNeutralButton("Ok",
                 new DialogInterface.OnClickListener() {
                     public void onClick(final DialogInterface dialog, final int which) {
                     }
-                }).create(), new ResourceProviderImpl(this));
+                }).create(), new ResourceProvider(this));
     }
 
     private void getCoordinatesFromIntent(LocationSetter locationSetter, Intent intent,
@@ -99,25 +95,25 @@ public class GeoBeagle extends Activity {
             txtLocation.setOnKeyListener(new LocationOnKeyListener(cachePageButtonEnabler));
 
             mErrorDialog = createErrorDialog();
-            mLocationViewer = new LocationViewerImpl(new MockableContext(this),
+            mLocationViewer = new LocationViewer(new MockableContext(this),
                     new MockableTextView((TextView)findViewById(R.id.location_viewer)),
                     new MockableTextView((TextView)findViewById(R.id.last_updated)),
                     new MockableTextView((TextView)findViewById(R.id.status)));
             mGpsLocationListener = new GpsLocationListener(mLocationViewer);
-            mGpsControl = new GpsControlImpl(
+            mGpsControl = new GpsControl(
                     (LocationManager)getSystemService(Context.LOCATION_SERVICE),
                     mGpsLocationListener);
-            mLocationSetter = new LocationSetterImpl(this, new MockableEditText(txtLocation),
+            mLocationSetter = new LocationSetter(this, new MockableEditText(txtLocation),
                     mGpsControl);
 
             setOnClickListeners(mLocationSetter);
             final Button btnGoToList = (Button)findViewById(R.id.go_to_list);
-            mErrorDisplayer = new ErrorDisplayerImpl(this);
+            mErrorDisplayer = new ErrorDisplayer(this);
             btnGoToList.setOnClickListener(new DestinationListOnClickListener(mLocationSetter
                     .getDescriptionsAndLocations(), mLocationSetter, new AlertDialog.Builder(this),
                     mErrorDisplayer, cachePageButtonEnabler));
 
-            mLifecycleManager = new LifecycleManagerImpl(mGpsControl, mLocationSetter,
+            mLifecycleManager = new LifecycleManager(mGpsControl, mLocationSetter,
                     getPreferences(MODE_PRIVATE));
 
         } catch (final Exception e) {
@@ -154,8 +150,8 @@ public class GeoBeagle extends Activity {
     }
 
     private void setOnClickListeners(final LocationSetter controls) {
-        final GetCoordsToast getCoordsToast = new GetCoordsToastImpl(this);
-        final ResourceProvider resourceProvider = new ResourceProviderImpl(this);
+        final GetCoordsToast getCoordsToast = new GetCoordsToast(this);
+        final ResourceProvider resourceProvider = new ResourceProvider(this);
         final MyLocationProvider myLocationProvider = new MyLocationProvider(mGpsControl,
                 mErrorDialog);
 

@@ -3,7 +3,6 @@ package com.google.code.geobeagle.ui;
 
 import com.google.code.geobeagle.intents.ActivityStarter;
 import com.google.code.geobeagle.intents.IntentFactory;
-import com.google.code.geobeagle.intents.IntentFactoryImpl;
 import com.google.code.geobeagle.intents.IntentStarterSelectCache;
 
 import android.view.View;
@@ -15,7 +14,7 @@ public class OnSelectCacheButtonClickListener implements OnClickListener {
     private final IntentFactory mIntentFactory;
     private final IntentStarterSelectCache mIntentStarterSelectCache;
 
-    public OnSelectCacheButtonClickListener(IntentFactoryImpl intentFactory,
+    public OnSelectCacheButtonClickListener(IntentFactory intentFactory,
             IntentStarterSelectCache intentStarterSelectCache, ActivityStarter activityStarter,
             LocationSetter locationSetter) {
         mActivityStarter = activityStarter;
