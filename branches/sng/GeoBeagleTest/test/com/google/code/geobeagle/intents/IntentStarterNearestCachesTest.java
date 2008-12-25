@@ -44,7 +44,7 @@ public class IntentStarterNearestCachesTest extends TestCase {
         replay(resourceProvider);
         replay(getCoordsToast);
         replay(intent);
-        new IntentStarterNearestCaches(getCoordsToast, resourceProvider, myLocationProvider).startIntent(
+        new SelectCacheFromNearestCaches(getCoordsToast, resourceProvider, myLocationProvider).startIntent(
                 activityStarter, intentFactory);
         verify(resourceProvider);
         verify(getCoordsToast);

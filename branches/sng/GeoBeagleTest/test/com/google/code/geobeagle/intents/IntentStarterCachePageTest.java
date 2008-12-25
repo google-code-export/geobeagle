@@ -30,7 +30,7 @@ public class IntentStarterCachePageTest extends TestCase {
         replay(resourceProvider);
         replay(activityStarter);
         replay(intentFactory);
-        new IntentStarterCachePage(resourceProvider).startIntent(activityStarter,
+        new GotoCachePage(resourceProvider).startIntent(activityStarter,
                 intentFactory, new Destination("37 12.234 122 56.789 # GCFOO"));
         verify(resourceProvider);
         verify(activityStarter);

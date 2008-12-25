@@ -4,7 +4,7 @@ package com.google.code.geobeagle.ui;
 import com.google.code.geobeagle.Destination;
 import com.google.code.geobeagle.intents.ActivityStarter;
 import com.google.code.geobeagle.intents.IntentFactory;
-import com.google.code.geobeagle.intents.IntentStarterGotoCache;
+import com.google.code.geobeagle.intents.GotoCache;
 
 import android.content.ActivityNotFoundException;
 import android.view.View;
@@ -12,13 +12,13 @@ import android.view.View.OnClickListener;
 
 public class OnGotoCacheClickListener implements OnClickListener {
     private final ActivityStarter mActivityStarter;
-    private final IntentStarterGotoCache mIntentStarter;
+    private final GotoCache mIntentStarter;
     private final LocationProvider mLocationProvider;
     private final ErrorDialog mErrorDialog;
     private final IntentFactory mIntentFactory;
 
     public OnGotoCacheClickListener(IntentFactory intentFactory,
-            IntentStarterGotoCache intentStarter, ActivityStarter activityStarter,
+            GotoCache intentStarter, ActivityStarter activityStarter,
             LocationProvider locationProvider, ErrorDialog errorDialog) {
         this.mIntentFactory = intentFactory;
         this.mIntentStarter = intentStarter;

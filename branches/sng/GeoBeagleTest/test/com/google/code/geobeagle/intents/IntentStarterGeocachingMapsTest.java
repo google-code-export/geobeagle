@@ -44,7 +44,7 @@ public class IntentStarterGeocachingMapsTest extends TestCase {
         replay(intent);
         replay(myLocationProvider);
         replay(location);
-        new IntentStarterGeocachingMaps(getCoordsToast, resourceProvider, myLocationProvider).startIntent(
+        new SelectCacheFromGeocachingMaps(getCoordsToast, resourceProvider, myLocationProvider).startIntent(
                 activityStarter, intentFactory);
         verify(resourceProvider);
         verify(getCoordsToast);

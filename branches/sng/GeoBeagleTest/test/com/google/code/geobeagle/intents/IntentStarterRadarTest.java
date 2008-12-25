@@ -27,7 +27,7 @@ public class IntentStarterRadarTest extends TestCase {
         replay(intent);
         replay(activityStarter);
         replay(intentFactory);
-        new IntentStarterRadar().startIntent(activityStarter, intentFactory, new Destination(
+        new GotoCacheRadar().startIntent(activityStarter, intentFactory, new Destination(
                 "37 10.500 122 50.250 # GCFOO"));
         verify(intent);
         verify(activityStarter);

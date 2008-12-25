@@ -31,7 +31,7 @@ public class IntentStarterMapsTest extends TestCase {
         replay(resourceProvider);
         replay(activityStarter);
         replay(intentFactory);
-        new IntentStarterMaps(resourceProvider).startIntent(activityStarter, intentFactory,
+        new GotoCacheMaps(resourceProvider).startIntent(activityStarter, intentFactory,
                 new Destination("37 10.500 122 50.250 # GCFOO"));
         verify(resourceProvider);
         verify(activityStarter);
