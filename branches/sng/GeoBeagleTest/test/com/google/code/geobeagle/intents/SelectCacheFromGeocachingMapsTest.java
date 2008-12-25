@@ -16,7 +16,7 @@ import android.location.Location;
 
 import junit.framework.TestCase;
 
-public class IntentStarterNearestCachesTest extends TestCase {
+public class SelectCacheFromGeocachingMapsTest extends TestCase {
 
     public void testStartIntent() {
         GetCoordsToast getCoordsToast = createMock(GetCoordsToast.class);
@@ -27,30 +27,30 @@ public class IntentStarterNearestCachesTest extends TestCase {
         MyLocationProvider myLocationProvider = createMock(MyLocationProvider.class);
         Location location = createMock(Location.class);
 
-        expect(resourceProvider.getString(R.string.nearest_caches_url)).andReturn(
-                "http://www.geocaching.com/nearest?slat=37.00000&lng=122.00000");
+        expect(resourceProvider.getString(R.string.geocaching_maps_url)).andReturn(
+                "http://www.geocaching.com/map/?lat=%1$.5f&lng=%2$.5f");
         getCoordsToast.show();
         expect(
                 intentFactory.createIntent(Intent.ACTION_VIEW,
-                        "http://www.geocaching.com/nearest?slat=37.00000&lng=122.00000"))
-                .andReturn(intent);
-        activityStarter.startActivity(intent);
+                        "http://www.geocaching.com/map/?lat=37.00000&lng=122.00000")).andReturn(
+                intent);
         expect(myLocationProvider.getLocation()).andReturn(location);
         expect(location.getLatitude()).andReturn(37.0);
         expect(location.getLongitude()).andReturn(122.0);
+        activityStarter.startActivity(intent);
 
-        replay(location);
-        replay(myLocationProvider);
         replay(resourceProvider);
         replay(getCoordsToast);
         replay(intent);
-        new SelectCacheFromNearestCaches(getCoordsToast, resourceProvider, myLocationProvider).startIntent(
+        replay(myLocationProvider);
+        replay(location);
+        new SelectCacheFromGeocachingMaps(getCoordsToast, resourceProvider, myLocationProvider).startIntent(
                 activityStarter, intentFactory);
         verify(resourceProvider);
         verify(getCoordsToast);
         verify(intent);
-        verify(location);
         verify(myLocationProvider);
-    }
+        verify(location);
 
+    }
 }

@@ -14,7 +14,7 @@ import android.content.Intent;
 
 import junit.framework.TestCase;
 
-public class IntentStarterCachePageTest extends TestCase {
+public class GotoCachePageTest extends TestCase {
     public void test() {
         Intent intent = createMock(Intent.class);
         ActivityStarter activityStarter = createMock(ActivityStarter.class);
