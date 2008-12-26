@@ -5,19 +5,16 @@ import com.google.code.geobeagle.Destination;
 
 import android.content.Intent;
 
-public abstract class GotoCacheByViewingUri extends GotoCache {
-    private final IntentFromActionUriFactory mIntentFromActionUriFactory;
+public class GotoCacheByViewingUri extends GotoCache {
+    private final CreateIntentFromDestinationFactory mCreateIntentFromDestinationFactory;
 
-    protected GotoCacheByViewingUri(ActivityStarter activityStarter,
-            IntentFromActionUriFactory intentFromActionUriFactory) {
+    public GotoCacheByViewingUri(ActivityStarter activityStarter,
+            CreateIntentFromDestinationFactory createIntentFromDestinationFactory) {
         super(activityStarter);
-        mIntentFromActionUriFactory = intentFromActionUriFactory;
+        mCreateIntentFromDestinationFactory = createIntentFromDestinationFactory;
     }
 
-    @Override
     protected Intent createIntent(Destination destination) {
-        return mIntentFromActionUriFactory.createIntent(Intent.ACTION_VIEW, getUri(destination));
+        return mCreateIntentFromDestinationFactory.createIntent(destination);
     }
-
-    abstract String getUri(Destination destination);
 }

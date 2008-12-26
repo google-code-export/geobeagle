@@ -2,9 +2,11 @@
 package com.google.code.geobeagle;
 
 import com.google.code.geobeagle.intents.ActivityStarter;
+import com.google.code.geobeagle.intents.CreateIntentFromDestinationFactory;
+import com.google.code.geobeagle.intents.DestinationToCachePageUri;
+import com.google.code.geobeagle.intents.DestinationToMapsUri;
 import com.google.code.geobeagle.intents.GotoCache;
-import com.google.code.geobeagle.intents.GotoCacheMaps;
-import com.google.code.geobeagle.intents.GotoCachePage;
+import com.google.code.geobeagle.intents.GotoCacheByViewingUri;
 import com.google.code.geobeagle.intents.GotoCacheRadar;
 import com.google.code.geobeagle.intents.IntentFromActionFactory;
 import com.google.code.geobeagle.intents.IntentFromActionUriFactory;
@@ -160,10 +162,12 @@ public class GeoBeagle extends Activity {
     private void setGotoCacheOnClickListeners(
             final IntentFromActionUriFactory intentFromActionUriFactory,
             final ResourceProvider resourceProvider) {
-        setGotoCacheClickListener(R.id.maps, new GotoCacheMaps(activityStarter, intentFromActionUriFactory,
-                resourceProvider));
-        setGotoCacheClickListener(R.id.cache_page, new GotoCachePage(activityStarter,
-                intentFromActionUriFactory, resourceProvider));
+        setGotoCacheClickListener(R.id.maps, new GotoCacheByViewingUri(activityStarter,
+                new CreateIntentFromDestinationFactory(intentFromActionUriFactory,
+                        new DestinationToMapsUri(resourceProvider))));
+        setGotoCacheClickListener(R.id.cache_page, new GotoCacheByViewingUri(activityStarter,
+                new CreateIntentFromDestinationFactory(intentFromActionUriFactory,
+                        new DestinationToCachePageUri(resourceProvider))));
 
         setGotoCacheClickListener(R.id.radar, new GotoCacheRadar(activityStarter,
                 new IntentFromActionFactory()));

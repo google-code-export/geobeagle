@@ -5,17 +5,16 @@ import com.google.code.geobeagle.Destination;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.ResourceProvider;
 
-public class GotoCachePage extends GotoCacheByViewingUri {
+public class DestinationToCachePageUri implements DestinationToUri {
     private final ResourceProvider mResourceProvider;
 
-    public GotoCachePage(ActivityStarter activityStarter, IntentFromActionUriFactory intentFromActionUriFactory,
-            ResourceProvider resourceProvider) {
-        super(activityStarter, intentFromActionUriFactory);
+    public DestinationToCachePageUri(ResourceProvider resourceProvider) {
         mResourceProvider = resourceProvider;
     }
 
-    protected String getUri(Destination destination) {
+    public String convert(Destination destination) {
         return String.format(mResourceProvider.getString(R.string.cache_page_url), destination
                 .getDescription());
     }
+
 }
