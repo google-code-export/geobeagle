@@ -5,20 +5,18 @@ import com.google.code.geobeagle.Destination;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.ResourceProvider;
 
-import android.content.Intent;
-
-public class GotoCacheMaps implements GotoCache {
+public class GotoCacheMaps extends GotoCacheByViewingUri {
     private final ResourceProvider mResourceProvider;
 
-    public GotoCacheMaps(ResourceProvider resourceProvider) {
+    public GotoCacheMaps(ActivityStarter activityStarter,
+            IntentFromActionUriFactory intentFromActionUriFactory, ResourceProvider resourceProvider) {
+        super(activityStarter, intentFromActionUriFactory);
         mResourceProvider = resourceProvider;
     }
 
-    public void startIntent(ActivityStarter activityStarter, IntentFactory intentFactory,
-            Destination destination) {
+    protected String getUri(Destination destination) {
         // "geo:%1$.5f,%2$.5f?name=cachename"
-        activityStarter.startActivity(intentFactory.createIntent(Intent.ACTION_VIEW, String.format(
-                mResourceProvider.getString(R.string.map_intent), destination.getLatitude(),
-                destination.getLongitude(), destination.getDescription())));
+        return String.format(mResourceProvider.getString(R.string.map_intent), destination
+                .getLatitude(), destination.getLongitude(), destination.getDescription());
     }
 }

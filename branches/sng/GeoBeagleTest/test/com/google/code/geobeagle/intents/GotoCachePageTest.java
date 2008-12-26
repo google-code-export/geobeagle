@@ -18,22 +18,22 @@ public class GotoCachePageTest extends TestCase {
     public void test() {
         Intent intent = createMock(Intent.class);
         ActivityStarter activityStarter = createMock(ActivityStarter.class);
-        IntentFactory intentFactory = createMock(IntentFactory.class);
+        IntentFromActionUriFactory intentFromActionFactory = createMock(IntentFromActionUriFactory.class);
         ResourceProvider resourceProvider = createMock(ResourceProvider.class);
 
         expect(resourceProvider.getString(R.string.cache_page_url)).andReturn(
                 "http://coord.info/%1$s");
-        expect(intentFactory.createIntent(Intent.ACTION_VIEW, "http://coord.info/GCFOO"))
+        expect(intentFromActionFactory.createIntent(Intent.ACTION_VIEW, "http://coord.info/GCFOO"))
                 .andReturn(intent);
         activityStarter.startActivity(intent);
 
         replay(resourceProvider);
         replay(activityStarter);
-        replay(intentFactory);
-        new GotoCachePage(resourceProvider).startIntent(activityStarter,
-                intentFactory, new Destination("37 12.234 122 56.789 # GCFOO"));
+        replay(intentFromActionFactory);
+        new GotoCachePage(activityStarter, intentFromActionFactory, resourceProvider)
+                .startIntent(new Destination("37 12.234 122 56.789 # GCFOO"));
         verify(resourceProvider);
         verify(activityStarter);
-        verify(intentFactory);
+        verify(intentFromActionFactory);
     }
 }

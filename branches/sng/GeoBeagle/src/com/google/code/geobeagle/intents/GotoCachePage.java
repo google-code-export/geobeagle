@@ -5,19 +5,17 @@ import com.google.code.geobeagle.Destination;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.ResourceProvider;
 
-import android.content.Intent;
-
-public class GotoCachePage implements GotoCache {
+public class GotoCachePage extends GotoCacheByViewingUri {
     private final ResourceProvider mResourceProvider;
 
-    public GotoCachePage(ResourceProvider resourceProvider) {
+    public GotoCachePage(ActivityStarter activityStarter, IntentFromActionUriFactory intentFromActionUriFactory,
+            ResourceProvider resourceProvider) {
+        super(activityStarter, intentFromActionUriFactory);
         mResourceProvider = resourceProvider;
     }
 
-    public void startIntent(ActivityStarter activityStarter, IntentFactory intentFactory,
-            Destination destination) {
-        activityStarter.startActivity(intentFactory
-                .createIntent(Intent.ACTION_VIEW, String.format(mResourceProvider
-                        .getString(R.string.cache_page_url), destination.getDescription())));
+    protected String getUri(Destination destination) {
+        return String.format(mResourceProvider.getString(R.string.cache_page_url), destination
+                .getDescription());
     }
 }

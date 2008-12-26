@@ -6,10 +6,9 @@ import com.google.code.geobeagle.intents.GotoCache;
 import com.google.code.geobeagle.intents.GotoCacheMaps;
 import com.google.code.geobeagle.intents.GotoCachePage;
 import com.google.code.geobeagle.intents.GotoCacheRadar;
-import com.google.code.geobeagle.intents.IntentFactory;
+import com.google.code.geobeagle.intents.IntentFromActionFactory;
+import com.google.code.geobeagle.intents.IntentFromActionUriFactory;
 import com.google.code.geobeagle.intents.SelectCache;
-import com.google.code.geobeagle.intents.SelectCacheFromGeocachingMaps;
-import com.google.code.geobeagle.intents.SelectCacheFromNearestCaches;
 import com.google.code.geobeagle.ui.CachePageButtonEnabler;
 import com.google.code.geobeagle.ui.DestinationListOnClickListener;
 import com.google.code.geobeagle.ui.ErrorDialog;
@@ -47,7 +46,6 @@ public class GeoBeagle extends Activity {
     private ErrorDisplayer mErrorDisplayer;
     private LifecycleManager mLifecycleManager;
     private GpsControl mGpsControl;
-    private final IntentFactory intentFactory = new IntentFactory(new UriParser());
     private final ActivityStarter activityStarter = new ActivityStarter(this);
 
     private ErrorDialog createErrorDialog() {
@@ -93,14 +91,14 @@ public class GeoBeagle extends Activity {
 
             final EditText txtLocation = (EditText)findViewById(R.id.go_to);
             final CachePageButtonEnabler cachePageButtonEnabler = new CachePageButtonEnabler(
-                    new TooString(txtLocation), (Button)findViewById(R.id.cache_page));
+                    new TooString(txtLocation), findViewById(R.id.cache_page));
             txtLocation.setOnKeyListener(new LocationOnKeyListener(cachePageButtonEnabler));
 
             mErrorDialog = createErrorDialog();
-            mLocationViewer = new LocationViewer(new MockableContext(this),
-                    new MockableTextView((TextView)findViewById(R.id.location_viewer)),
-                    new MockableTextView((TextView)findViewById(R.id.last_updated)),
-                    new MockableTextView((TextView)findViewById(R.id.status)));
+            mLocationViewer = new LocationViewer(new MockableContext(this), new MockableTextView(
+                    (TextView)findViewById(R.id.location_viewer)), new MockableTextView(
+                    (TextView)findViewById(R.id.last_updated)), new MockableTextView(
+                    (TextView)findViewById(R.id.status)));
             mGpsLocationListener = new GpsLocationListener(mLocationViewer);
             mGpsControl = new GpsControl(
                     (LocationManager)getSystemService(Context.LOCATION_SERVICE),
@@ -141,29 +139,48 @@ public class GeoBeagle extends Activity {
     }
 
     private void setGotoCacheClickListener(int id, GotoCache gotoCache) {
-        ((Button)findViewById(id)).setOnClickListener(new OnGotoCacheClickListener(intentFactory,
-                gotoCache, activityStarter, mLocationSetter, mErrorDialog));
+        ((Button)findViewById(id)).setOnClickListener(new OnGotoCacheClickListener(gotoCache,
+                activityStarter, mLocationSetter, mErrorDialog));
     }
 
-    private void setSelectCacheClickListener(int id,
-            SelectCache selectCache) {
+    private void setSelectCacheClickListener(int id, SelectCache selectCache) {
         ((Button)findViewById(id)).setOnClickListener(new OnSelectCacheButtonClickListener(
-                intentFactory, selectCache, activityStarter, mLocationSetter));
+                selectCache));
     }
 
     private void setOnClickListeners(final LocationSetter controls) {
-        final GetCoordsToast getCoordsToast = new GetCoordsToast(this);
+        final IntentFromActionUriFactory intentFromActionUriFactory = new IntentFromActionUriFactory(
+                new UriParser());
         final ResourceProvider resourceProvider = new ResourceProvider(this);
+
+        setSelectCacheOnClickListeners(intentFromActionUriFactory, resourceProvider);
+        setGotoCacheOnClickListeners(intentFromActionUriFactory, resourceProvider);
+    }
+
+    private void setGotoCacheOnClickListeners(
+            final IntentFromActionUriFactory intentFromActionUriFactory,
+            final ResourceProvider resourceProvider) {
+        setGotoCacheClickListener(R.id.maps, new GotoCacheMaps(activityStarter, intentFromActionUriFactory,
+                resourceProvider));
+        setGotoCacheClickListener(R.id.cache_page, new GotoCachePage(activityStarter,
+                intentFromActionUriFactory, resourceProvider));
+
+        setGotoCacheClickListener(R.id.radar, new GotoCacheRadar(activityStarter,
+                new IntentFromActionFactory()));
+    }
+
+    private void setSelectCacheOnClickListeners(
+            final IntentFromActionUriFactory intentFromActionUriFactory,
+            ResourceProvider resourceProvider) {
+        final GetCoordsToast getCoordsToast = new GetCoordsToast(this);
         final MyLocationProvider myLocationProvider = new MyLocationProvider(mGpsControl,
                 mErrorDialog);
 
-        setSelectCacheClickListener(R.id.geocaching_map, new SelectCacheFromGeocachingMaps(
-                getCoordsToast, resourceProvider, myLocationProvider));
-        setSelectCacheClickListener(R.id.nearest_caches, new SelectCacheFromNearestCaches(
-                getCoordsToast, resourceProvider, myLocationProvider));
-
-        setGotoCacheClickListener(R.id.radar, new GotoCacheRadar());
-        setGotoCacheClickListener(R.id.maps, new GotoCacheMaps(resourceProvider));
-        setGotoCacheClickListener(R.id.cache_page, new GotoCachePage(resourceProvider));
+        setSelectCacheClickListener(R.id.geocaching_map, new SelectCache(myLocationProvider,
+                getCoordsToast, activityStarter, intentFromActionUriFactory, resourceProvider,
+                R.string.geocaching_maps_url));
+        setSelectCacheClickListener(R.id.nearest_caches, new SelectCache(myLocationProvider,
+                getCoordsToast, activityStarter, intentFromActionUriFactory, resourceProvider,
+                R.string.nearest_caches_url));
     }
 }

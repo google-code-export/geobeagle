@@ -5,12 +5,19 @@ import com.google.code.geobeagle.Destination;
 
 import android.content.Intent;
 
-public class GotoCacheRadar implements GotoCache {
-    public void startIntent(ActivityStarter activityStarter, IntentFactory intentFactory,
-            Destination destination) {
-        final Intent intent = intentFactory.createIntent("com.google.android.radar.SHOW_RADAR");
+public class GotoCacheRadar extends GotoCache {
+    private final IntentFromActionFactory mIntentFactory;
+
+    public GotoCacheRadar(ActivityStarter activityStarter,
+            IntentFromActionFactory intentFromActionFactory) {
+        super(activityStarter);
+        mIntentFactory = intentFromActionFactory;
+    }
+
+    protected Intent createIntent(Destination destination) {
+        final Intent intent = mIntentFactory.createIntent("com.google.android.radar.SHOW_RADAR");
         intent.putExtra("latitude", (float)destination.getLatitude());
         intent.putExtra("longitude", (float)destination.getLongitude());
-        activityStarter.startActivity(intent);
+        return intent;
     }
 }

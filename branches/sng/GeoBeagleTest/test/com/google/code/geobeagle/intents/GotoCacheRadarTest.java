@@ -17,20 +17,20 @@ public class GotoCacheRadarTest extends TestCase {
     public void testStartIntent() {
         Intent intent = createMock(Intent.class);
         ActivityStarter activityStarter = createMock(ActivityStarter.class);
-        IntentFactory intentFactory = createMock(IntentFactory.class);
+        IntentFromActionFactory intentFromActionFactory = createMock(IntentFromActionFactory.class);
 
-        expect(intentFactory.createIntent("com.google.android.radar.SHOW_RADAR")).andReturn(intent);
+        expect(intentFromActionFactory.createIntent("com.google.android.radar.SHOW_RADAR")).andReturn(intent);
         expect(intent.putExtra("latitude", 37.175f)).andReturn(intent);
         expect(intent.putExtra("longitude", 122.8375f)).andReturn(intent);
         activityStarter.startActivity(intent);
 
         replay(intent);
         replay(activityStarter);
-        replay(intentFactory);
-        new GotoCacheRadar().startIntent(activityStarter, intentFactory, new Destination(
+        replay(intentFromActionFactory);
+        new GotoCacheRadar(activityStarter, intentFromActionFactory).startIntent(new Destination(
                 "37 10.500 122 50.250 # GCFOO"));
         verify(intent);
         verify(activityStarter);
-        verify(intentFactory);
+        verify(intentFromActionFactory);
     }
 }
