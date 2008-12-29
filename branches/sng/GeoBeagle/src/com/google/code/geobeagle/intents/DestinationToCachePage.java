@@ -5,10 +5,10 @@ import com.google.code.geobeagle.Destination;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.ResourceProvider;
 
-public class DestinationToCachePageUri implements DestinationToUri {
+public class DestinationToCachePage implements DestinationToUri {
     private final ResourceProvider mResourceProvider;
 
-    public DestinationToCachePageUri(ResourceProvider resourceProvider) {
+    public DestinationToCachePage(ResourceProvider resourceProvider) {
         mResourceProvider = resourceProvider;
     }
 

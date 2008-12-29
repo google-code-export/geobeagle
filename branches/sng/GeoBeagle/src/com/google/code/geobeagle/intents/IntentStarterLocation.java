@@ -5,25 +5,26 @@ import com.google.code.geobeagle.ResourceProvider;
 import com.google.code.geobeagle.ui.GetCoordsToast;
 import com.google.code.geobeagle.ui.MyLocationProvider;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.location.Location;
 
-public class SelectCache {
-    private final ActivityStarter mActivityStarter;
+public class IntentStarterLocation implements IntentStarter {
+    private final Activity mActivity;
     private final GetCoordsToast mGetCoordsToast;
-    private final IntentFromActionUriFactory mIntentFromActionUriFactory;
+    private final IntentFactory mIntentFactory;
     private final MyLocationProvider mMyLocationProvider;
     private final ResourceProvider mResourceProvider;
     private final int mUriId;
 
-    public SelectCache(MyLocationProvider myLocationProvider,
-            GetCoordsToast getCoordsToast, ActivityStarter activityStarter,
-            IntentFromActionUriFactory intentFromActionUriFactory, ResourceProvider resourceProvider, int uriId) {
-        mActivityStarter = activityStarter;
+    public IntentStarterLocation(Activity activity, ResourceProvider resourceProvider,
+            IntentFactory intentFactory, MyLocationProvider myLocationProvider, int uriId,
+            GetCoordsToast getCoordsToast) {
+        mActivity = activity;
         mGetCoordsToast = getCoordsToast;
+        mIntentFactory = intentFactory;
         mMyLocationProvider = myLocationProvider;
         mResourceProvider = resourceProvider;
-        mIntentFromActionUriFactory = intentFromActionUriFactory;
         mUriId = uriId;
     }
 
@@ -33,8 +34,8 @@ public class SelectCache {
             return;
 
         mGetCoordsToast.show();
-        mActivityStarter.startActivity(mIntentFromActionUriFactory.createIntent(Intent.ACTION_VIEW,
-                String.format(mResourceProvider.getString(mUriId), location.getLatitude(), location
+        mActivity.startActivity(mIntentFactory.createIntent(Intent.ACTION_VIEW, String.format(
+                mResourceProvider.getString(mUriId), location.getLatitude(), location
                         .getLongitude())));
     }
 }

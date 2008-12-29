@@ -21,7 +21,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.List;
 
-public class LocationSetter implements LocationProvider {
+
+public class LocationSetter {
     private static final String FNAME_RECENT_LOCATIONS = "RECENT_LOCATIONS";
     private final Context mContext;
     private final DescriptionsAndLocations mDescriptionsAndLocations;
@@ -48,6 +49,13 @@ public class LocationSetter implements LocationProvider {
 
     public CharSequence getLocation() {
         return mTxtLocation.getText();
+    }
+    
+    /* (non-Javadoc)
+     * @see com.google.code.geobeagle.ui.DestinationProvider#getDestination()
+     */
+    public Destination getDestination() {
+        return new Destination(mTxtLocation.getText());
     }
 
     public List<CharSequence> getPreviousDescriptions() {

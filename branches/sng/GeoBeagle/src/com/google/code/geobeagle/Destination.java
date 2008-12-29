@@ -44,15 +44,15 @@ public class Destination {
         return true;
     }
 
-    public final CharSequence getDescription() {
+    public CharSequence getDescription() {
         return mDescription;
     }
 
-    public final double getLatitude() {
+    public double getLatitude() {
         return mLatitude;
     }
 
-    public final double getLongitude() {
+    public double getLongitude() {
         return mLongitude;
     }
 }

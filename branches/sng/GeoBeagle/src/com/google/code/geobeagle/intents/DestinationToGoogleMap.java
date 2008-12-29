@@ -5,10 +5,10 @@ import com.google.code.geobeagle.Destination;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.ResourceProvider;
 
-public class DestinationToMapsUri implements DestinationToUri {
+public class DestinationToGoogleMap implements DestinationToUri {
     private final ResourceProvider mResourceProvider;
 
-    public DestinationToMapsUri(ResourceProvider resourceProvider) {
+    public DestinationToGoogleMap(ResourceProvider resourceProvider) {
         mResourceProvider = resourceProvider;
     }
 

@@ -24,25 +24,25 @@ public class DestinationTest extends TestCase {
     }
 
     public void testDescription() {
-        Destination destination = new Destination(" \t 37 03.0 122 00.0 # Description ");
-        assertEquals(37.05, destination.getLatitude());
-        assertEquals(122.0, destination.getLongitude());
-        assertEquals("Description", destination.getDescription());
+        Destination destinationImpl = new Destination(" \t 37 03.0 122 00.0 # Description ");
+        assertEquals(37.05, destinationImpl.getLatitude());
+        assertEquals(122.0, destinationImpl.getLongitude());
+        assertEquals("Description", destinationImpl.getDescription());
     }
 
     public void testBadCoordinatesGoodDescription() {
-        Destination destination = new Destination(" 37.0 122.0 # Description ");
-        assertEquals(0.0, destination.getLatitude());
-        assertEquals(0.0, destination.getLongitude());
-        assertEquals("Description", destination.getDescription());
+        Destination destinationImpl = new Destination(" 37.0 122.0 # Description ");
+        assertEquals(0.0, destinationImpl.getLatitude());
+        assertEquals(0.0, destinationImpl.getLongitude());
+        assertEquals("Description", destinationImpl.getDescription());
 
     }
 
     public void testEmptyDestination() {
-        Destination destination = new Destination("");
-        assertEquals(0.0, destination.getLatitude());
-        assertEquals(0.0, destination.getLongitude());
-        assertEquals("", destination.getDescription());
+        Destination destinationImpl = new Destination("");
+        assertEquals(0.0, destinationImpl.getLatitude());
+        assertEquals(0.0, destinationImpl.getLongitude());
+        assertEquals("", destinationImpl.getDescription());
     }
     
     public void testExtractDescription() {
