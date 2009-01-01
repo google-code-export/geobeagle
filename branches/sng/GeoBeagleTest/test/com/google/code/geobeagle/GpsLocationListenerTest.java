@@ -14,24 +14,45 @@ import junit.framework.TestCase;
 
 public class GpsLocationListenerTest extends TestCase {
 
+    private LocationViewer mLocationViewer;
+
+    public void setUp() {
+        mLocationViewer = createMock(LocationViewer.class);
+    }
+
     public void testOnLocationChanged() {
         Location location = createMock(Location.class);
-        LocationViewer locationViewer = createMock(LocationViewer.class);
-        locationViewer.setLocation(location);
+        mLocationViewer.setLocation(location);
 
         replay(location);
-        new GpsLocationListener(locationViewer).onLocationChanged(location);
+        new GpsLocationListener(mLocationViewer).onLocationChanged(location);
         verify(location);
     }
 
     public void testOnStatusChange() {
-        Location location = createMock(Location.class);
-        LocationViewer locationViewer = createMock(LocationViewer.class);
+        mLocationViewer.setStatus(LocationProvider.OUT_OF_SERVICE);
 
-        replay(location);
-        new GpsLocationListener(locationViewer).onStatusChanged(null,
+        replay(mLocationViewer);
+        new GpsLocationListener(mLocationViewer).onStatusChanged(null,
                 LocationProvider.OUT_OF_SERVICE, null);
-        verify(location);
+        verify(mLocationViewer);
+    }
+
+    public void testOnEnabled() {
+        mLocationViewer.setEnabled();
+
+        replay(mLocationViewer);
+        new GpsLocationListener(mLocationViewer).onProviderEnabled(null);
+        verify(mLocationViewer);
+    }
+
+    public void testOnDisabled() {
+        mLocationViewer.setDisabled();
+
+        replay(mLocationViewer);
+        new GpsLocationListener(mLocationViewer).onProviderDisabled(null);
+        verify(mLocationViewer);
+
     }
 
 }

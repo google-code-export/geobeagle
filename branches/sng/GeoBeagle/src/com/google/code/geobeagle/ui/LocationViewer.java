@@ -36,6 +36,14 @@ public class LocationViewer {
         mLastUpdateTime.setText(Util.formatTime(time));
     }
 
+    public void setDisabled() {
+        mStatus.setText("DISABLED");
+    }
+
+    public void setEnabled() {
+        mStatus.setText("ENABLED");
+    }
+
     public void setStatus(int status) {
         switch (status) {
             case LocationProvider.OUT_OF_SERVICE:

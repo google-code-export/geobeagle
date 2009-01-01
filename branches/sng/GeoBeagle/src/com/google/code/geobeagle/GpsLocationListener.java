@@ -19,9 +19,11 @@ public class GpsLocationListener implements LocationListener {
     }
 
     public void onProviderDisabled(String provider) {
+        mLocationViewer.setDisabled();
     }
 
     public void onProviderEnabled(String provider) {
+        mLocationViewer.setEnabled();
     }
 
     public void onStatusChanged(String provider, int status, Bundle extras) {
