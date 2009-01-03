@@ -30,8 +30,8 @@ public class LocationViewer {
     }
 
     public void setLocation(Location location, long time) {
-        mCoordinates.setText(Util.degreesToMinutes(location.getLatitude()) + " "
-                + Util.degreesToMinutes(location.getLongitude()) + "  ±" + location.getAccuracy()
+        mCoordinates.setText(Util.formatDegreesAsDecimalDegreesString(location.getLatitude()) + " "
+                + Util.formatDegreesAsDecimalDegreesString(location.getLongitude()) + "  ±" + location.getAccuracy()
                 + "m");
         mLastUpdateTime.setText(Util.formatTime(time));
     }

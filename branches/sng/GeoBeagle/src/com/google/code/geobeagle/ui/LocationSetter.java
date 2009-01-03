@@ -132,8 +132,8 @@ public class LocationSetter {
     }
 
     public CharSequence setLocation(double lat, double lon, CharSequence description) {
-        final CharSequence latLonText = Util.degreesToMinutes(lat) + "  "
-                + Util.degreesToMinutes(lon) + " # " + description;
+        final CharSequence latLonText = Util.formatDegreesAsDecimalDegreesString(lat) + "  "
+                + Util.formatDegreesAsDecimalDegreesString(lon) + " # " + description;
         mTxtLocation.setText(latLonText);
         saveLocation(latLonText);
         return latLonText;

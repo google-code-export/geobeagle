@@ -35,8 +35,8 @@ public class Destination {
         if (!matcher.matches())
             return false;
         try {
-            mLatitude = Util.minutesToDegrees(matcher.group(1));
-            mLongitude = Util.minutesToDegrees(matcher.group(2));
+            mLatitude = Util.parseDecimalDegreesStringToDegrees(matcher.group(1));
+            mLongitude = Util.parseDecimalDegreesStringToDegrees(matcher.group(2));
         } catch (NumberFormatException numberFormatException) {
             return false;
         }
