@@ -4,7 +4,7 @@
 
 *Beta ver does not work!  NOT even listed on web where updates are.  Instructions do not match what options are.  Very frustrating and disappointing!*
 
-How does it not work?  Please be more specific as to your problems and expectations.   (File a bug or contact us by email at geobeagleteam@gmail.com). Updates are on http://code.google.com/p/geobeagle/downloads/list.
+How does it not work?  Please be more specific as to your problems and expectations.   (File a bug or contact us by email at geobeagleteam@gmail.com). The project page now indicates the location for updates (They are on http://code.google.com/p/geobeagle/downloads/list.)
 
 *It says "server unavailable" nearly everywhere I go.*
 
