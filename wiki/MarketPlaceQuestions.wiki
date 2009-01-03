@@ -21,3 +21,12 @@ Please download the tricorder app and check to see if !GeoBeagle is reporting di
 *This just doesn't work in uk.  It thinks I'm 66 miles from where I am.  Crap!*
 
 Probably the previously mentioned bug.  Please try the new version and let us know if it fixes the problem.
+
+*Nice concept but needs work with integrating geocaching.com site.  Having to enter coords by hand is a pain.*
+
+See the topic "How do I load coordinates into GeoBeagle?" in the FAQ.
+
+*First!!!*
+
+How nice for you!
+
