@@ -16,5 +16,8 @@ There's a bug with locations near 0 latitude/longitude.  If that's the case, ple
 
 *Highly inaccurate.  Missing many caches.  Site data should be integrated directly into app.*
 
-Please download the tricorder app and check to see if GeoBeagle is reporting different coordinates.  For the missing caches--please click Menu/Go to URL from the "nearest cache" web page and email us the resulting url.  We are working on pocket query support, which will provide tighter integration.
+Please download the tricorder app and check to see if !GeoBeagle is reporting different coordinates.  For the missing caches--please click Menu/Go to URL from the "nearest cache" web page and email us the resulting url.  We are working on pocket query support, which will provide tighter integration.
 
+*This just doesn't work in uk.  It thinks I'm 66 miles from where I am.  Crap!*
+
+Probably the previously mentioned bug.  Please try the new version and let us know if it fixes the problem.
