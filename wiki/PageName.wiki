@@ -1,0 +1,12 @@
+#summary MarketPlace questions
+
+= All your questions answered here =
+
+*Beta ver does not work!  NOT even listed on web where updates are.  Instructions to not match what options are.  Very frustrating and disappointing!*
+
+How does it not work?  Please be more specific as to problems.  Updates are on http://code.google.com/p/geobeagle/downloads/list.
+
+*It says "server unavailable" nearly everywhere I go.*
+
+Might be an internet connectivity problem.  Click Menu/Go to URL.  Try opening that page in a browser and see what happens.
+
