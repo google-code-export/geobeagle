@@ -9,20 +9,21 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Util {
-    private static final String CACHE_AT_BEGINNING = "([^@])*@([NS][^EW]*)([EW][^(]*)";
-    private static final String CACHE_AT_END = "([NS][^EW]*)([EW][^(]*)\\(([^)]*)\\).*";
+    private static final String RE_CACHE_AT_BEGINNING = "([^@]*)@([NS][^EW]*)([EW][^(]*)";
+    private static final String RE_CACHE_AT_END = "([NS][^EW]*)([EW][^(]*)\\(([^)]*)\\).*";
     private static final String DATE_FORMAT_NOW = "HH:mm:ss";
     public static final String[] geocachingQueryParam = new String[] {
         "q"
     };
-    private static final Pattern PATTERN_CACHE_AT_BEGINNING = Pattern.compile(CACHE_AT_BEGINNING);
-    private static final Pattern PATTERN_CACHE_AT_END = Pattern.compile(CACHE_AT_END);
+    private static final Pattern PATTERN_CACHE_AT_BEGINNING = Pattern
+            .compile(RE_CACHE_AT_BEGINNING);
+    private static final Pattern PATTERN_CACHE_AT_END = Pattern.compile(RE_CACHE_AT_END);
 
     private static String cleanCoordinate(String coord) {
         return coord.replace('+', ' ').trim();
     }
 
-    public static String degreesToMinutes(double fDegrees) {
+    public static String formatDegreesAsDecimalDegreesString(double fDegrees) {
         final double fAbsDegrees = Math.abs(fDegrees);
         final int dAbsDegrees = (int)fAbsDegrees;
         return String.format((fDegrees < 0 ? "-" : "") + "%1$d %2$06.3f", dAbsDegrees,
@@ -33,7 +34,12 @@ public class Util {
         return new SimpleDateFormat(DATE_FORMAT_NOW).format(time);
     }
 
+    /**
+     * @param uri
+     * @return Latitude, Longitude, Waypoint id.
+     */
     public static String[] getLatLonFromQuery(final String uri) {
+
         final Matcher matcherCacheAtEnd = PATTERN_CACHE_AT_END.matcher(uri);
 
         if (matcherCacheAtEnd.matches()) {
@@ -59,7 +65,7 @@ public class Util {
         return sb.toString();
     }
 
-    public static double minutesToDegrees(String string) {
+    public static double parseDecimalDegreesStringToDegrees(String string) {
         string = string.trim();
         int nsewSign = 1;
         if (string.substring(0, 1).matches("N|S|E|W")) {

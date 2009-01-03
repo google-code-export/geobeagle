@@ -12,18 +12,33 @@ import android.net.UrlQuerySanitizer.ValueSanitizer;
 import junit.framework.TestCase;
 
 public class UtilTest extends TestCase {
-    public void testMinutesToDegrees() {
-        assertEquals(122.0, Util.minutesToDegrees("122"));
-        assertEquals(122.5, Util.minutesToDegrees("122 30"));
-        assertEquals(122.51, Util.minutesToDegrees("122 30.600"));
-        assertEquals(-122.51, Util.minutesToDegrees("-122 30.600"));
-        assertEquals(-0.0165, Util.minutesToDegrees("W 000¡ 00.990"));
-        assertEquals(-0.0165, Util.minutesToDegrees("-000¡ 00.990"));
-        assertEquals(-122.51, Util.minutesToDegrees("-122¡ 30.600"));
-        assertEquals(122.51, Util.minutesToDegrees("E 122¡ 30.600"));
-        assertEquals(-122.51, Util.minutesToDegrees("W 122¡ 30.600"));
-        assertEquals(-37.0, Util.minutesToDegrees("S 37¡ 0.000"));
-        assertEquals(-37.0, Util.minutesToDegrees(" S 37¡ 0.000"));
+    public void testConvertDegreesToMinutes() {
+        assertEquals("-122 30.000", Util.formatDegreesAsDecimalDegreesString(-122.5));
+        assertEquals("-122 30.600", Util.formatDegreesAsDecimalDegreesString(-122.51));
+        assertEquals("-122 03.000", Util.formatDegreesAsDecimalDegreesString(-122.05));
+        assertEquals("-0 03.000", Util.formatDegreesAsDecimalDegreesString(-0.05));
+    }
+
+    public void testGetLatLonFromQueryGCAtBeginning() {
+        String[] latLonFromQuery = Util.getLatLonFromQuery("GC1ERCC@N+37¡+15.165+W+122¡+02.620+");
+        assertEquals("N 37¡ 15.165", latLonFromQuery[0]);
+        assertEquals("W 122¡ 02.620", latLonFromQuery[1]);
+        assertEquals("GC1ERCC", latLonFromQuery[2]);
+        
+        latLonFromQuery = Util.getLatLonFromQuery("GC1@N+37¡+15.165+W+122¡+02.620+");
+        assertEquals("N 37¡ 15.165", latLonFromQuery[0]);
+        assertEquals("W 122¡ 02.620", latLonFromQuery[1]);
+        assertEquals("GC1", latLonFromQuery[2]);
+
+        latLonFromQuery = Util.getLatLonFromQuery("GC1@N+37¡+15.165+E+122¡+02.620+");
+        assertEquals("N 37¡ 15.165", latLonFromQuery[0]);
+        assertEquals("E 122¡ 02.620", latLonFromQuery[1]);
+        assertEquals("GC1", latLonFromQuery[2]);
+
+        latLonFromQuery = Util.getLatLonFromQuery("GC1@N+3¡+15.165+E+122¡+02.620+");
+        assertEquals("N 3¡ 15.165", latLonFromQuery[0]);
+        assertEquals("E 122¡ 02.620", latLonFromQuery[1]);
+        assertEquals("GC1", latLonFromQuery[2]);
     }
 
     public void testGetLatLonFromQueryGCAtEnd() {
@@ -34,21 +49,18 @@ public class UtilTest extends TestCase {
         assertEquals("GCTANE", ll[2]);
     }
 
-    public void testGetLatLonFromQuery() {
-        String[] latLonFromQuery = Util.getLatLonFromQuery("GC1ERCC@N+37¡+15.165+W+122¡+02.620+");
-        assertEquals("N 37¡ 15.165", latLonFromQuery[0]);
-        assertEquals("W 122¡ 02.620", latLonFromQuery[1]);
-        latLonFromQuery = Util.getLatLonFromQuery("GC1@N+37¡+15.165+W+122¡+02.620+");
-        assertEquals("N 37¡ 15.165", latLonFromQuery[0]);
-        assertEquals("W 122¡ 02.620", latLonFromQuery[1]);
-
-        latLonFromQuery = Util.getLatLonFromQuery("GC1@N+37¡+15.165+E+122¡+02.620+");
-        assertEquals("N 37¡ 15.165", latLonFromQuery[0]);
-        assertEquals("E 122¡ 02.620", latLonFromQuery[1]);
-
-        latLonFromQuery = Util.getLatLonFromQuery("GC1@N+3¡+15.165+E+122¡+02.620+");
-        assertEquals("N 3¡ 15.165", latLonFromQuery[0]);
-        assertEquals("E 122¡ 02.620", latLonFromQuery[1]);
+    public void testMinutesToDegrees() {
+        assertEquals(122.0, Util.parseDecimalDegreesStringToDegrees("122"));
+        assertEquals(122.5, Util.parseDecimalDegreesStringToDegrees("122 30"));
+        assertEquals(122.51, Util.parseDecimalDegreesStringToDegrees("122 30.600"));
+        assertEquals(-122.51, Util.parseDecimalDegreesStringToDegrees("-122 30.600"));
+        assertEquals(-0.0165, Util.parseDecimalDegreesStringToDegrees("W 000¡ 00.990"));
+        assertEquals(-0.0165, Util.parseDecimalDegreesStringToDegrees("-000¡ 00.990"));
+        assertEquals(-122.51, Util.parseDecimalDegreesStringToDegrees("-122¡ 30.600"));
+        assertEquals(122.51, Util.parseDecimalDegreesStringToDegrees("E 122¡ 30.600"));
+        assertEquals(-122.51, Util.parseDecimalDegreesStringToDegrees("W 122¡ 30.600"));
+        assertEquals(-37.0, Util.parseDecimalDegreesStringToDegrees("S 37¡ 0.000"));
+        assertEquals(-37.0, Util.parseDecimalDegreesStringToDegrees(" S 37¡ 0.000"));
     }
 
     public void testParseHttpUri() {
@@ -63,13 +75,6 @@ public class UtilTest extends TestCase {
         replay(sanitizer);
         assertEquals(sanitizedQuery, Util.parseHttpUri(unsanitizedQuery, sanitizer, valueSanitizer));
         verify(sanitizer);
-    }
-
-    public void testConvertDegreesToMinutes() {
-        assertEquals("-122 30.000", Util.degreesToMinutes(-122.5));
-        assertEquals("-122 30.600", Util.degreesToMinutes(-122.51));
-        assertEquals("-122 03.000", Util.degreesToMinutes(-122.05));
-        assertEquals("-0 03.000", Util.degreesToMinutes(-0.05));
     }
 
 }
