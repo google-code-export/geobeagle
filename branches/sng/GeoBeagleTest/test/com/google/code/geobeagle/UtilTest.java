@@ -12,11 +12,13 @@ import android.net.UrlQuerySanitizer.ValueSanitizer;
 import junit.framework.TestCase;
 
 public class UtilTest extends TestCase {
-    public void testConvert() {
+    public void testMinutesToDegrees() {
         assertEquals(122.0, Util.minutesToDegrees("122"));
         assertEquals(122.5, Util.minutesToDegrees("122 30"));
         assertEquals(122.51, Util.minutesToDegrees("122 30.600"));
         assertEquals(-122.51, Util.minutesToDegrees("-122 30.600"));
+        assertEquals(-0.0165, Util.minutesToDegrees("W 000¡ 00.990"));
+        assertEquals(-0.0165, Util.minutesToDegrees("-000¡ 00.990"));
         assertEquals(-122.51, Util.minutesToDegrees("-122¡ 30.600"));
         assertEquals(122.51, Util.minutesToDegrees("E 122¡ 30.600"));
         assertEquals(-122.51, Util.minutesToDegrees("W 122¡ 30.600"));
@@ -63,10 +65,11 @@ public class UtilTest extends TestCase {
         verify(sanitizer);
     }
 
-    public void testConvertDegtreesToMinutes() {
+    public void testConvertDegreesToMinutes() {
         assertEquals("-122 30.000", Util.degreesToMinutes(-122.5));
         assertEquals("-122 30.600", Util.degreesToMinutes(-122.51));
         assertEquals("-122 03.000", Util.degreesToMinutes(-122.05));
+        assertEquals("-0 03.000", Util.degreesToMinutes(-0.05));
     }
 
 }

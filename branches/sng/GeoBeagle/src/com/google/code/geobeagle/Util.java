@@ -18,9 +18,18 @@ public class Util {
         return coord.replace('+', ' ').trim();
     }
 
-    public static String degreesToMinutes(double degrees) {
-        return String
-                .format("%1$d %2$06.3f", (int)degrees, 60.0 * Math.abs(degrees - (int)degrees));
+    public static String degreesToMinutes(double fDegrees) {
+        final double fAbsDegrees = Math.abs(fDegrees);
+        final int dAbsDegrees = (int)fAbsDegrees;
+        final String format = "%1$d %2$06.3f";
+        if (fDegrees < 0) {
+            final String format2 = String.format((fDegrees < 0 ? "-" : "") + format, dAbsDegrees,
+                    60.0 * (fAbsDegrees - dAbsDegrees));
+            return format2;
+
+        } else {
+            return String.format("%1$d %2$06.3f", dAbsDegrees, 60.0 * (fAbsDegrees - dAbsDegrees));
+        }
     }
 
     public static String[] getLatLonFromQuery(final String uri) {
@@ -60,16 +69,18 @@ public class Util {
         string = string.trim();
         final String strings[] = string.split(" ");
         strings[0].replace("¡", " ");
-        int degrees = Integer.parseInt(strings[0].replace("¡", " ").trim());
-        degrees *= nsewSign;
+        final String degreesTrimmed = strings[0].replace("¡", " ").trim();
+        int degrees = Integer.parseInt(degreesTrimmed);
+        if (degrees < 0 || degreesTrimmed.startsWith("-")) {
+            degrees = -degrees;
+            nsewSign *= -1;
+        }
         double minutes = 0.0;
         if (strings.length > 1) {
             minutes = Double.parseDouble(strings[1]) / 60.0;
-            if (degrees < 0) {
-                minutes = -minutes;
-            }
         }
-        return degrees + minutes;
+
+        return nsewSign * (degrees + minutes);
     }
 
     public static String formatTime(long time) {
