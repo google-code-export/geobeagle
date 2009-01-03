@@ -9,10 +9,14 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Util {
+    private static final String CACHE_AT_BEGINNING = "([^@])*@([NS][^EW]*)([EW][^(]*)";
+    private static final String CACHE_AT_END = "([NS][^EW]*)([EW][^(]*)\\(([^)]*)\\).*";
     private static final String DATE_FORMAT_NOW = "HH:mm:ss";
     public static final String[] geocachingQueryParam = new String[] {
         "q"
     };
+    private static final Pattern PATTERN_CACHE_AT_BEGINNING = Pattern.compile(CACHE_AT_BEGINNING);
+    private static final Pattern PATTERN_CACHE_AT_END = Pattern.compile(CACHE_AT_END);
 
     private static String cleanCoordinate(String coord) {
         return coord.replace('+', ' ').trim();
@@ -21,30 +25,28 @@ public class Util {
     public static String degreesToMinutes(double fDegrees) {
         final double fAbsDegrees = Math.abs(fDegrees);
         final int dAbsDegrees = (int)fAbsDegrees;
-        final String format = "%1$d %2$06.3f";
-        if (fDegrees < 0) {
-            final String format2 = String.format((fDegrees < 0 ? "-" : "") + format, dAbsDegrees,
-                    60.0 * (fAbsDegrees - dAbsDegrees));
-            return format2;
+        return String.format((fDegrees < 0 ? "-" : "") + "%1$d %2$06.3f", dAbsDegrees,
+                60.0 * (fAbsDegrees - dAbsDegrees));
+    }
 
-        } else {
-            return String.format("%1$d %2$06.3f", dAbsDegrees, 60.0 * (fAbsDegrees - dAbsDegrees));
-        }
+    public static String formatTime(long time) {
+        return new SimpleDateFormat(DATE_FORMAT_NOW).format(time);
     }
 
     public static String[] getLatLonFromQuery(final String uri) {
-        final String CACHE_AT_END = "([NS][^EW]*)([EW][^(]*)\\(([^)]*)\\).*";
-        final String CACHE_AT_BEGINNING = "([^@])*@([NS][^EW]*)([EW][^(]*)";
-        Matcher m = Pattern.compile(CACHE_AT_END).matcher(uri);
-        if (m.matches()) {
+        final Matcher matcherCacheAtEnd = PATTERN_CACHE_AT_END.matcher(uri);
+
+        if (matcherCacheAtEnd.matches()) {
             return new String[] {
-                    cleanCoordinate(m.group(1)), cleanCoordinate(m.group(2)), m.group(3)
+                    cleanCoordinate(matcherCacheAtEnd.group(1)),
+                    cleanCoordinate(matcherCacheAtEnd.group(2)), matcherCacheAtEnd.group(3)
             };
         }
-        m = Pattern.compile(CACHE_AT_BEGINNING).matcher(uri);
-        m.matches();
+        final Matcher matcherCacheAtBeginning = PATTERN_CACHE_AT_BEGINNING.matcher(uri);
+        matcherCacheAtBeginning.matches();
         return new String[] {
-                cleanCoordinate(m.group(2)), cleanCoordinate(m.group(3)), m.group(1)
+                cleanCoordinate(matcherCacheAtBeginning.group(2)),
+                cleanCoordinate(matcherCacheAtBeginning.group(3)), matcherCacheAtBeginning.group(1)
         };
     }
 
@@ -81,10 +83,6 @@ public class Util {
         }
 
         return nsewSign * (degrees + minutes);
-    }
-
-    public static String formatTime(long time) {
-        return new SimpleDateFormat(DATE_FORMAT_NOW).format(time);
     }
 
     public static String parseHttpUri(String query, UrlQuerySanitizer sanitizer,
