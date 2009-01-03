@@ -9,3 +9,7 @@ How does it not work?  Please be more specific as to problems.   (File a bug or 
 *It says "server unavailable" nearly everywhere I go.*
 
 Might be an internet connectivity problem.  Click Menu/Go to URL.  Try opening that page in a browser and see what happens.
+
+*Position is twice as far as it shud be.*
+
+There's a bug with locations near 0 latitude/longitude.  If that's the case, please download the latest version from this page and let us know if that helps.  If not, please give more specific instructions for how to reproduce the problem.
