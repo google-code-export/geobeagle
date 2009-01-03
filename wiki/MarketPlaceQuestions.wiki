@@ -12,7 +12,7 @@ Might be an internet connectivity problem.  Click Menu/Go to URL.  Try opening t
 
 *Position is twice as far as it shud be.*
 
-There's a bug with locations near 0 latitude/longitude.  If that's the case, please download the latest version from this page and let us know if that helps.  If not, please give more specific instructions for how to reproduce the problem.
+There was a bug in version 0.12 with locations near 0 latitude/longitude.  If that's the case, please download the latest version and let us know if that helps.  If not, please give more specific instructions for how to reproduce the problem.
 
 *Highly inaccurate.  Missing many caches.  Site data should be integrated directly into app.*
 
@@ -20,7 +20,7 @@ Please download the tricorder app and check to see if !GeoBeagle is reporting di
 
 *This just doesn't work in uk.  It thinks I'm 66 miles from where I am.  Crap!*
 
-Probably the previously mentioned bug.  There's a bug with locations near 0 latitude/longitude.  Please try the new version and let us know if it fixes the problem.
+Could be the previously mentioned bug.  There was bug with locations near 0 latitude/longitude.  Please try the latest version and let us know if it fixes the problem.
 
 *Nice concept but needs work with integrating geocaching.com site.  Having to enter coords by hand is a pain.*
 
