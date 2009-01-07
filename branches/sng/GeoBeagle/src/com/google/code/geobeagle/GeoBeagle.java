@@ -34,7 +34,12 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 public class GeoBeagle extends Activity {
-    private ErrorDisplayer mErrorDisplayer;
+    public GeoBeagle() {
+        super();
+        mErrorDisplayer = new ErrorDisplayer(this);
+    }
+
+    private final ErrorDisplayer mErrorDisplayer;
     private GpsControl mGpsControl;
     private GpsLocationListener mGpsLocationListener;
     private LifecycleManager mLifecycleManager;
@@ -59,8 +64,8 @@ public class GeoBeagle extends Activity {
                 final String[] latlon = Util.getLatLonFromQuery(sanitizedQuery);
                 locationSetter.setLocation(Util.parseDecimalDegreesStringToDegrees(latlon[0]), Util
                         .parseDecimalDegreesStringToDegrees(latlon[1]), latlon[2]);
-            } 
-//            else if (intent.getType() != null
+            }
+            // else if (intent.getType() != null
 //                    && intent.getType().contentEquals("application/xml-loc")) {
 //                String path = intent.getData().getPath();
 //                DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
@@ -69,7 +74,7 @@ public class GeoBeagle extends Activity {
 //                byte b[] = getFileAsBytes(file);
 //                String s = new String(b);
 //                documentBuilder.parse(s);
-//            }
+            // }
         } catch (final Exception e) {
             errorDisplayer.displayError("Error: " + e.getMessage());
         }
@@ -109,7 +114,6 @@ public class GeoBeagle extends Activity {
 
             setCacheClickListeners();
             final Button btnGoToList = (Button)findViewById(R.id.go_to_list);
-            mErrorDisplayer = new ErrorDisplayer(this);
             btnGoToList.setOnClickListener(new DestinationListOnClickListener(mLocationSetter
                     .getDescriptionsAndLocations(), mLocationSetter, new AlertDialog.Builder(this),
                     mErrorDisplayer, cachePageButtonEnabler));
