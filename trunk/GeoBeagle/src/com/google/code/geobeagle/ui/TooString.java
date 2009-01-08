@@ -1,5 +1,5 @@
 
-package com.google.code.geobeagle;
+package com.google.code.geobeagle.ui;
 
 import android.widget.EditText;
 
@@ -10,7 +10,7 @@ public class TooString {
         this.mEditText = editText;
     }
 
-    public String tooString() {
+    public CharSequence tooString() {
         return mEditText.getText().toString();
     }
 }

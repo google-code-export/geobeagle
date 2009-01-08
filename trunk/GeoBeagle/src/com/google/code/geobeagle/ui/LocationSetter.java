@@ -1,5 +1,11 @@
 
-package com.google.code.geobeagle;
+package com.google.code.geobeagle.ui;
+
+import com.google.code.geobeagle.DescriptionsAndLocations;
+import com.google.code.geobeagle.Destination;
+import com.google.code.geobeagle.GpsControl;
+import com.google.code.geobeagle.R;
+import com.google.code.geobeagle.Util;
 
 import android.content.Context;
 import android.location.Location;
@@ -15,14 +21,17 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.List;
 
-public class LocationSetterImpl implements LocationSetter {
-    private static final String FNAME_RECENT_LOCATIONS = "RECENT_LOCATIONS";
-    private final DescriptionsAndLocations mDescriptionsAndLocations;
-    private final MockableEditText mTxtLocation;
-    private final GpsControl mGpsControl;
 
-    public LocationSetterImpl(Context context, MockableEditText editText, GpsControl gpsControl) {
+public class LocationSetter {
+    private static final String FNAME_RECENT_LOCATIONS = "RECENT_LOCATIONS";
+    private final Context mContext;
+    private final DescriptionsAndLocations mDescriptionsAndLocations;
+    private final GpsControl mGpsControl;
+    private final MockableEditText mTxtLocation;
+
+    public LocationSetter(Context context, MockableEditText editText, GpsControl gpsControl) {
         mTxtLocation = editText;
+        mContext = context;
         this.mGpsControl = gpsControl;
         mDescriptionsAndLocations = new DescriptionsAndLocations();
         editText.setOnFocusChangeListener(new OnFocusChangeListener() {
@@ -34,8 +43,19 @@ public class LocationSetterImpl implements LocationSetter {
         });
     }
 
+    public DescriptionsAndLocations getDescriptionsAndLocations() {
+        return mDescriptionsAndLocations;
+    }
+
     public CharSequence getLocation() {
         return mTxtLocation.getText();
+    }
+    
+    /* (non-Javadoc)
+     * @see com.google.code.geobeagle.ui.DestinationProvider#getDestination()
+     */
+    public Destination getDestination() {
+        return new Destination(mTxtLocation.getText());
     }
 
     public List<CharSequence> getPreviousDescriptions() {
@@ -46,10 +66,10 @@ public class LocationSetterImpl implements LocationSetter {
         return mDescriptionsAndLocations.getPreviousLocations();
     }
 
-    public void load(Context c) {
+    public void load() {
         try {
             mDescriptionsAndLocations.clear();
-            final FileInputStream f = c.openFileInput(FNAME_RECENT_LOCATIONS);
+            final FileInputStream f = mContext.openFileInput(FNAME_RECENT_LOCATIONS);
             final InputStreamReader isr = new InputStreamReader(f);
             final BufferedReader br = new BufferedReader(isr);
             CharSequence dataLine = null;
@@ -66,9 +86,9 @@ public class LocationSetterImpl implements LocationSetter {
         }
     }
 
-    public void save(Context c) {
+    public void save() {
         try {
-            final FileOutputStream openFileOutput = c.openFileOutput(FNAME_RECENT_LOCATIONS,
+            final FileOutputStream openFileOutput = mContext.openFileOutput(FNAME_RECENT_LOCATIONS,
                     Context.MODE_PRIVATE);
             final BufferedOutputStream bos = new BufferedOutputStream(openFileOutput);
             for (final CharSequence location : mDescriptionsAndLocations.getPreviousLocations()) {
@@ -112,14 +132,10 @@ public class LocationSetterImpl implements LocationSetter {
     }
 
     public CharSequence setLocation(double lat, double lon, CharSequence description) {
-        final CharSequence latLonText = Util.degreesToMinutes(lat) + "  "
-                + Util.degreesToMinutes(lon) + " # " + description;
+        final CharSequence latLonText = Util.formatDegreesAsDecimalDegreesString(lat) + "  "
+                + Util.formatDegreesAsDecimalDegreesString(lon) + " # " + description;
         mTxtLocation.setText(latLonText);
         saveLocation(latLonText);
         return latLonText;
-    }
-
-    public DescriptionsAndLocations getDescriptionsAndLocations() {
-        return mDescriptionsAndLocations;
     }
 }

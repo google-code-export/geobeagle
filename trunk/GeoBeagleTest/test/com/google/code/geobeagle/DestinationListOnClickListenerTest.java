@@ -8,7 +8,10 @@ import static org.easymock.classextension.EasyMock.createMock;
 import static org.easymock.classextension.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.verify;
 
-import com.google.code.geobeagle.DestinationListOnClickListener.DestinationListDialogOnClickListener;
+import com.google.code.geobeagle.ui.CachePageButtonEnabler;
+import com.google.code.geobeagle.ui.DestinationListOnClickListener;
+import com.google.code.geobeagle.ui.LocationSetter;
+import com.google.code.geobeagle.ui.DestinationListOnClickListener.DestinationListDialogOnClickListener;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface.OnClickListener;
@@ -22,9 +25,12 @@ public class DestinationListOnClickListenerTest extends TestCase {
     OnClickListener mockListener = createMock(OnClickListener.class);
 
     public void testOnClick() {
-        LocationSetter locationSetter = createMock(LocationSetter.class);
-        AlertDialog.Builder dialogBuilder = createMock(AlertDialog.Builder.class);
-        AlertDialog alertDialog = createMock(AlertDialog.class);
+        final CharSequence[] expectedDialogItems = new CharSequence[] {
+                DestinationListOnClickListener.MY_LOCATION, "OAK", "SFO"
+        };
+        final LocationSetter locationSetter = createMock(LocationSetter.class);
+        final AlertDialog.Builder dialogBuilder = createMock(AlertDialog.Builder.class);
+        final AlertDialog alertDialog = createMock(AlertDialog.class);
         CharSequence[] descriptions = new CharSequence[] {
                 "SFO", "OAK"
         };
@@ -33,10 +39,8 @@ public class DestinationListOnClickListenerTest extends TestCase {
         };
 
         expect(dialogBuilder.setTitle(R.string.select_destination)).andReturn(dialogBuilder);
-        expect(dialogBuilder.setItems(aryEq(new CharSequence[] {
-                DestinationListOnClickListener.MY_LOCATION, "OAK", "SFO"
-        }), (OnClickListener)eq(mockListener))).andReturn(dialogBuilder);
-
+        expect(dialogBuilder.setItems(aryEq(expectedDialogItems), eq(mockListener))).andReturn(
+                dialogBuilder);
         expect(dialogBuilder.create()).andReturn(alertDialog);
         alertDialog.show();
 
@@ -46,11 +50,11 @@ public class DestinationListOnClickListenerTest extends TestCase {
         for (int ix = 0; ix < descriptions.length; ix++) {
             descriptionsAndLocations.add(descriptions[ix], locations[ix]);
         }
-
         DestinationListOnClickListener destinationListOnClickListener = new DestinationListOnClickListener(
-                descriptionsAndLocations, locationSetter, dialogBuilder, null) {
+                descriptionsAndLocations, locationSetter, dialogBuilder, null, null) {
             protected OnClickListener createDestinationListDialogOnClickListener(
-                    List<CharSequence> previousLocations) {
+                    List<CharSequence> previousLocations,
+                    CachePageButtonEnabler cachePageButtonEnabler) {
                 assertEquals(Arrays.asList(null, locations[1], locations[0]), previousLocations);
                 return mockListener;
             }
@@ -62,15 +66,20 @@ public class DestinationListOnClickListenerTest extends TestCase {
 
     public void testDestinationListDialogOnClickListener() {
         LocationSetter locationSetter = createMock(LocationSetter.class);
+        CachePageButtonEnabler cachePageButtonEnabler = createMock(CachePageButtonEnabler.class);
         CharSequence[] locations = new CharSequence[] {
                 null, "37 122 foo", "37 122 etc",
         };
+
+        cachePageButtonEnabler.check();
         locationSetter.setLocation("37 122 foo", null);
 
         replay(locationSetter);
+        replay(cachePageButtonEnabler);
         DestinationListDialogOnClickListener dldocl = new DestinationListDialogOnClickListener(
-                Arrays.asList(locations), locationSetter, null);
+                Arrays.asList(locations), locationSetter, null, cachePageButtonEnabler);
         dldocl.onClick(null, 1);
         verify(locationSetter);
+        verify(cachePageButtonEnabler);
     }
 }

@@ -1,5 +1,8 @@
 
-package com.google.code.geobeagle;
+package com.google.code.geobeagle.ui;
+
+import com.google.code.geobeagle.DescriptionsAndLocations;
+import com.google.code.geobeagle.R;
 
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
@@ -17,16 +20,20 @@ public class DestinationListOnClickListener implements OnClickListener {
         private final LocationSetter mLocationSetter;
         private final List<CharSequence> mPreviousLocations;
         private final ErrorDisplayer mErrorDisplayer;
+        private final CachePageButtonEnabler mCachePageButtonEnabler;
 
         public DestinationListDialogOnClickListener(List<CharSequence> previousLocations,
-                LocationSetter locationSetter, ErrorDisplayer errorDisplayer) {
+                LocationSetter locationSetter, ErrorDisplayer errorDisplayer,
+                CachePageButtonEnabler cachePageButtonEnabler) {
             this.mPreviousLocations = previousLocations;
             this.mLocationSetter = locationSetter;
             this.mErrorDisplayer = errorDisplayer;
+            this.mCachePageButtonEnabler = cachePageButtonEnabler;
         }
 
         public void onClick(DialogInterface dialog, int which) {
             mLocationSetter.setLocation(mPreviousLocations.get(which), mErrorDisplayer);
+            mCachePageButtonEnabler.check();
         }
     }
 
@@ -34,21 +41,22 @@ public class DestinationListOnClickListener implements OnClickListener {
     final private DescriptionsAndLocations mDescriptionsAndLocations;
     final private Builder mDialogBuilder;
     final private LocationSetter mLocationSetter;
-    private ErrorDisplayer mErrorDisplayer;
-
+    final private ErrorDisplayer mErrorDisplayer;
+    final private CachePageButtonEnabler mCachePageButtonEnabler;
     public DestinationListOnClickListener(DescriptionsAndLocations descriptionsAndLocations,
             LocationSetter locationSetter, AlertDialog.Builder dialogBuilder,
-            ErrorDisplayer errorDisplayer) {
+            ErrorDisplayer errorDisplayer, CachePageButtonEnabler cachePageButtonEnabler) {
         this.mDialogBuilder = dialogBuilder;
         this.mLocationSetter = locationSetter;
         this.mDescriptionsAndLocations = descriptionsAndLocations;
         this.mErrorDisplayer = errorDisplayer;
+        this.mCachePageButtonEnabler = cachePageButtonEnabler;
     }
 
     protected DialogInterface.OnClickListener createDestinationListDialogOnClickListener(
-            List<CharSequence> previousLocations) {
+            List<CharSequence> previousLocations, CachePageButtonEnabler cachePageButtonEnabler) {
         return new DestinationListDialogOnClickListener(previousLocations, mLocationSetter,
-                mErrorDisplayer);
+                mErrorDisplayer, cachePageButtonEnabler);
     }
 
     private List<CharSequence> getDisplayableList(List<CharSequence> list, String myLocation) {
@@ -75,7 +83,7 @@ public class DestinationListOnClickListener implements OnClickListener {
                 .toArray(new CharSequence[dialogPreviousDescriptions.size()]);
         mDialogBuilder.setTitle(R.string.select_destination);
         mDialogBuilder.setItems(prevDescriptionsArray,
-                createDestinationListDialogOnClickListener(dialogPreviousLocations)).create()
+                createDestinationListDialogOnClickListener(dialogPreviousLocations, mCachePageButtonEnabler)).create()
                 .show();
     }
 }

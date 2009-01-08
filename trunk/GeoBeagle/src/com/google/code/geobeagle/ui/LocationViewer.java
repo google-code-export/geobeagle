@@ -1,26 +1,28 @@
 
-package com.google.code.geobeagle;
+package com.google.code.geobeagle.ui;
+
+import com.google.code.geobeagle.R;
+import com.google.code.geobeagle.Util;
 
 import android.location.Location;
 import android.location.LocationProvider;
 
-public class LocationViewerImpl implements LocationViewer {
+/**
+ * @author sng Displays the current location as well as the GPS status.
+ */
+public class LocationViewer {
     private final MockableTextView mCoordinates;
     private final MockableTextView mLastUpdateTime;
     private final MockableTextView mStatus;
     private final MockableContext mContext;
 
-    public LocationViewerImpl(MockableContext context, MockableTextView coordinates, MockableTextView lastUpdateTime,
-            MockableTextView status, Location initialLocation) {
+    public LocationViewer(MockableContext context, MockableTextView coordinates,
+            MockableTextView lastUpdateTime, MockableTextView status) {
         this.mContext = context;
         this.mCoordinates = coordinates;
         this.mLastUpdateTime = lastUpdateTime;
         this.mStatus = status;
-        if (initialLocation == null) {
-            this.mCoordinates.setText(R.string.getting_location_from_gps);
-        } else {
-            setLocation(initialLocation);
-        }
+        this.mCoordinates.setText(R.string.getting_location_from_gps);
     }
 
     public void setLocation(Location location) {
@@ -28,10 +30,18 @@ public class LocationViewerImpl implements LocationViewer {
     }
 
     public void setLocation(Location location, long time) {
-        mCoordinates.setText(Util.degreesToMinutes(location.getLatitude()) + " "
-                + Util.degreesToMinutes(location.getLongitude()) + "  ±" + location.getAccuracy()
+        mCoordinates.setText(Util.formatDegreesAsDecimalDegreesString(location.getLatitude()) + " "
+                + Util.formatDegreesAsDecimalDegreesString(location.getLongitude()) + "  ±" + location.getAccuracy()
                 + "m");
         mLastUpdateTime.setText(Util.formatTime(time));
+    }
+
+    public void setDisabled() {
+        mStatus.setText("DISABLED");
+    }
+
+    public void setEnabled() {
+        mStatus.setText("ENABLED");
     }
 
     public void setStatus(int status) {

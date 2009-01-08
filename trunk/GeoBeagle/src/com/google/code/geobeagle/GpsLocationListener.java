@@ -1,15 +1,16 @@
 
 package com.google.code.geobeagle;
 
-import android.content.Context;
+import com.google.code.geobeagle.ui.LocationViewer;
+
 import android.location.Location;
 import android.location.LocationListener;
 import android.os.Bundle;
 
-public final class GpsLocationListener implements LocationListener {
-    private LocationViewer mLocationViewer;
+public class GpsLocationListener implements LocationListener {
+    private final LocationViewer mLocationViewer;
 
-    public GpsLocationListener(LocationViewer locationViewer, Context context) {
+    public GpsLocationListener(LocationViewer locationViewer) {
         this.mLocationViewer = locationViewer;
     }
 
@@ -18,9 +19,11 @@ public final class GpsLocationListener implements LocationListener {
     }
 
     public void onProviderDisabled(String provider) {
+        mLocationViewer.setDisabled();
     }
 
     public void onProviderEnabled(String provider) {
+        mLocationViewer.setEnabled();
     }
 
     public void onStatusChanged(String provider, int status, Bundle extras) {

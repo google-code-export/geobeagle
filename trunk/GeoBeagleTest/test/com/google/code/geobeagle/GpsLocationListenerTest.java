@@ -5,6 +5,8 @@ import static org.easymock.classextension.EasyMock.createMock;
 import static org.easymock.classextension.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.verify;
 
+import com.google.code.geobeagle.ui.LocationViewer;
+
 import android.location.Location;
 import android.location.LocationProvider;
 
@@ -12,24 +14,45 @@ import junit.framework.TestCase;
 
 public class GpsLocationListenerTest extends TestCase {
 
+    private LocationViewer mLocationViewer;
+
+    public void setUp() {
+        mLocationViewer = createMock(LocationViewer.class);
+    }
+
     public void testOnLocationChanged() {
         Location location = createMock(Location.class);
-        LocationViewer locationViewer = createMock(LocationViewer.class);
-        locationViewer.setLocation(location);
+        mLocationViewer.setLocation(location);
 
         replay(location);
-        new GpsLocationListener(locationViewer, null).onLocationChanged(location);
+        new GpsLocationListener(mLocationViewer).onLocationChanged(location);
         verify(location);
     }
 
     public void testOnStatusChange() {
-        Location location = createMock(Location.class);
-        LocationViewer locationViewer = createMock(LocationViewer.class);
+        mLocationViewer.setStatus(LocationProvider.OUT_OF_SERVICE);
 
-        replay(location);
-        new GpsLocationListener(locationViewer, null).onStatusChanged(null,
+        replay(mLocationViewer);
+        new GpsLocationListener(mLocationViewer).onStatusChanged(null,
                 LocationProvider.OUT_OF_SERVICE, null);
-        verify(location);
+        verify(mLocationViewer);
+    }
+
+    public void testOnEnabled() {
+        mLocationViewer.setEnabled();
+
+        replay(mLocationViewer);
+        new GpsLocationListener(mLocationViewer).onProviderEnabled(null);
+        verify(mLocationViewer);
+    }
+
+    public void testOnDisabled() {
+        mLocationViewer.setDisabled();
+
+        replay(mLocationViewer);
+        new GpsLocationListener(mLocationViewer).onProviderDisabled(null);
+        verify(mLocationViewer);
+
     }
 
 }
