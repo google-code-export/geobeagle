@@ -1,6 +1,7 @@
 
 package com.google.code.geobeagle;
 
+import com.google.code.geobeagle.GpsControl.LocationChooser;
 import com.google.code.geobeagle.intents.DestinationToCachePage;
 import com.google.code.geobeagle.intents.DestinationToGoogleMap;
 import com.google.code.geobeagle.intents.IntentFactory;
@@ -41,9 +42,14 @@ public class GeoBeagle extends Activity {
     private LifecycleManager mLifecycleManager;
     private LocationSetter mLocationSetter;
     private LocationViewer mLocationViewer;
+
+	private GpsLifecycleManager mGpsLifecycleManager;
+
+	private final LocationChooser mLocationChooser;
     public GeoBeagle() {
         super();
         mErrorDisplayer = new ErrorDisplayer(this);
+		mLocationChooser = new LocationChooser();
     }
 
     private void getCoordinatesFromIntent(LocationSetter locationSetter, Intent intent,
@@ -87,10 +93,12 @@ public class GeoBeagle extends Activity {
                     (TextView)findViewById(R.id.location_viewer)), new MockableTextView(
                     (TextView)findViewById(R.id.last_updated)), new MockableTextView(
                     (TextView)findViewById(R.id.status)));
-            mGpsLocationListener = new GpsLocationListener(mLocationViewer);
-            mGpsControl = new GpsControl(
-                    (LocationManager)getSystemService(Context.LOCATION_SERVICE),
-                    mGpsLocationListener);
+            final LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+            mGpsControl = new GpsControl(locationManager, mLocationChooser);
+            mGpsLocationListener = new GpsLocationListener(mGpsControl,
+					mLocationViewer);
+			mGpsLifecycleManager = new GpsLifecycleManager(
+					mGpsLocationListener, locationManager);
             mLocationSetter = new LocationSetter(this, new MockableEditText(txtLocation),
                     mGpsControl);
 
@@ -100,9 +108,8 @@ public class GeoBeagle extends Activity {
                     .getDescriptionsAndLocations(), mLocationSetter, new AlertDialog.Builder(this),
                     mErrorDisplayer, cachePageButtonEnabler));
 
-            mLifecycleManager = new LifecycleManager(mGpsControl, mLocationSetter,
-                    getPreferences(MODE_PRIVATE));
-
+			mLifecycleManager = new LifecycleManager(mGpsLifecycleManager,
+					mLocationSetter, getPreferences(MODE_PRIVATE));
         } catch (final Exception e) {
             ((TextView)findViewById(R.id.debug)).setText(e.toString() + "\n"
                     + Util.getStackTrace(e));

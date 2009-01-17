@@ -9,13 +9,15 @@ import android.os.Bundle;
 
 public class GpsLocationListener implements LocationListener {
     private final LocationViewer mLocationViewer;
+    private final GpsControl mGpsControl;
 
-    public GpsLocationListener(LocationViewer locationViewer) {
-        this.mLocationViewer = locationViewer;
+    public GpsLocationListener(GpsControl gpsControl, LocationViewer locationViewer) {
+        mLocationViewer = locationViewer;
+        mGpsControl = gpsControl;
     }
 
     public void onLocationChanged(Location location) {
-        mLocationViewer.setLocation(location);
+        mLocationViewer.setLocation(mGpsControl.getLocation());
     }
 
     public void onProviderDisabled(String provider) {

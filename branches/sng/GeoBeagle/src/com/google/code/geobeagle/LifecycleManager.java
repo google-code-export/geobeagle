@@ -7,20 +7,20 @@ import com.google.code.geobeagle.ui.LocationSetter;
 import android.content.SharedPreferences;
 
 public class LifecycleManager {
-    private final GpsControl mGpsControl;
+    private final GpsLifecycleManager mGpsLifecycleManager;
     private final LocationSetter mLocationSetter;
     private final SharedPreferences mPreferences;
     public static final String PREFS_LOCATION = "Location";
 
-    public LifecycleManager(GpsControl gpsControl, LocationSetter locationSetter,
+    public LifecycleManager(GpsLifecycleManager gpsLifecycleManager, LocationSetter locationSetter,
             SharedPreferences preferences) {
-        mGpsControl = gpsControl;
+        mGpsLifecycleManager = gpsLifecycleManager;
         mLocationSetter = locationSetter;
         mPreferences = preferences;
     }
 
     public void onPause() {
-        mGpsControl.onPause();
+        mGpsLifecycleManager.onPause();
         mLocationSetter.save();
         final SharedPreferences.Editor editor = mPreferences.edit();
         editor.putString(PREFS_LOCATION, mLocationSetter.getLocation().toString());
@@ -28,7 +28,7 @@ public class LifecycleManager {
     }
 
     public void onResume(ErrorDisplayer errorDisplayer, String initialDestination) {
-        mGpsControl.onResume();
+        mGpsLifecycleManager.onResume();
         mLocationSetter.load();
         mLocationSetter.setLocation(mPreferences.getString(PREFS_LOCATION, initialDestination),
                 errorDisplayer);
