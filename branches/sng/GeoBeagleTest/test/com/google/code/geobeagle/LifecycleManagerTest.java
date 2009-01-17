@@ -16,14 +16,14 @@ import junit.framework.TestCase;
 public class LifecycleManagerTest extends TestCase {
 
     public void testOnPause() {
-        GpsControl gpsControl = createMock(GpsControl.class);
+        GpsLifecycleManager gpsLifecycleManager = createMock(GpsLifecycleManager.class);
         LocationSetter locationSetter = createMock(LocationSetter.class);
         SharedPreferences sharedPreferences = createMock(SharedPreferences.class);
-        LifecycleManager lifecycleManager = new LifecycleManager(gpsControl, locationSetter,
+        LifecycleManager lifecycleManager = new LifecycleManager(gpsLifecycleManager, locationSetter,
                 sharedPreferences);
         locationSetter.save();
         expect(locationSetter.getLocation()).andReturn("somewhere");
-        gpsControl.onPause();
+        gpsLifecycleManager.onPause();
         SharedPreferences.Editor editor = createMock(SharedPreferences.Editor.class);
         expect(sharedPreferences.edit()).andReturn(editor);
         expect(editor.putString("Location", "somewhere")).andReturn(editor);
@@ -32,35 +32,35 @@ public class LifecycleManagerTest extends TestCase {
         replay(sharedPreferences);
         replay(editor);
         replay(locationSetter);
-        replay(gpsControl);
+        replay(gpsLifecycleManager);
         lifecycleManager.onPause();
-        verify(gpsControl);
+        verify(gpsLifecycleManager);
         verify(locationSetter);
         verify(sharedPreferences);
         verify(editor);
     }
 
     public void testOnResume() {
-        GpsControl gpsControl = createMock(GpsControl.class);
+        GpsLifecycleManager gpsLifecycleManager = createMock(GpsLifecycleManager.class);
         LocationSetter locationSetter = createMock(LocationSetter.class);
         SharedPreferences sharedPreferences = createMock(SharedPreferences.class);
         ErrorDisplayer errorDisplayer = createMock(ErrorDisplayer.class);
 
-        LifecycleManager lifecycleManager = new LifecycleManager(gpsControl, locationSetter,
+        LifecycleManager lifecycleManager = new LifecycleManager(gpsLifecycleManager, locationSetter,
                 sharedPreferences);
         expect(
                 sharedPreferences.getString(LifecycleManager.PREFS_LOCATION,
                         "initial destination")).andReturn("saved destination");
         locationSetter.load();
         locationSetter.setLocation("saved destination", errorDisplayer);
-        gpsControl.onResume();
+        gpsLifecycleManager.onResume();
 
         replay(sharedPreferences);
         replay(locationSetter);
-        replay(gpsControl);
+        replay(gpsLifecycleManager);
         lifecycleManager.onResume(errorDisplayer, "initial destination");
         verify(sharedPreferences);
-        verify(gpsControl);
+        verify(gpsLifecycleManager);
         verify(locationSetter);
     }
 }
