@@ -15,7 +15,6 @@
 				<data android:scheme="http" android:host="maps.google.com"
 					android:pathPrefix="/maps" />
 			</intent-filter>
-<!-- 
 			<intent-filter>
 				<action android:name="android.intent.action.VIEW" />
 				<category android:name="android.intent.category.DEFAULT" />
@@ -23,17 +22,7 @@
 				<data android:mimeType="application/xml-loc" />
 			</intent-filter>
 
-			<intent-filter>
-				<action android:name="android.intent.action.VIEW" />
-				<category android:name="android.intent.category.DEFAULT" />
-				<category android:name="android.intent.category.BROWSABLE" />
-				<data android:mimeType="application/gpx" />
-			</intent-filter>
- -->
 		</activity>
 	</application>
-	<!-- 
-	<uses-permission android:name="android.permission.INTERNET" />
-	 -->
 	<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 </manifest> 
