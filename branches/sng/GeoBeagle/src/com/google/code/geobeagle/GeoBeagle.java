@@ -45,15 +45,7 @@ public class GeoBeagle extends Activity {
     private LifecycleManager mLifecycleManager;
     private LocationSetter mLocationSetter;
     private LocationViewer mLocationViewer;
-    
-//    private final byte[] getFileAsBytes(final File file) throws IOException {
-//        final BufferedInputStream bis = new BufferedInputStream( 
-//            new FileInputStream(file));
-//        final byte [] bytes = new byte[(int) file.length()];
-//        bis.read(bytes);
-//        bis.close();
-//        return bytes;
-//    }
+
     private void getCoordinatesFromIntent(LocationSetter locationSetter, Intent intent,
             ErrorDisplayer errorDisplayer) {
         try {
@@ -65,16 +57,6 @@ public class GeoBeagle extends Activity {
                 locationSetter.setLocation(Util.parseDecimalDegreesStringToDegrees(latlon[0]), Util
                         .parseDecimalDegreesStringToDegrees(latlon[1]), latlon[2]);
             }
-            // else if (intent.getType() != null
-//                    && intent.getType().contentEquals("application/xml-loc")) {
-//                String path = intent.getData().getPath();
-//                DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
-//                DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
-//                File file = new File(path);
-//                byte b[] = getFileAsBytes(file);
-//                String s = new String(b);
-//                documentBuilder.parse(s);
-            // }
         } catch (final Exception e) {
             errorDisplayer.displayError("Error: " + e.getMessage());
         }
