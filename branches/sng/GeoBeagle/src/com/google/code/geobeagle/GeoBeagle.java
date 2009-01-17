@@ -36,20 +36,18 @@ import android.widget.TextView;
 
 public class GeoBeagle extends Activity {
     private final ErrorDisplayer mErrorDisplayer;
-
     private GpsControl mGpsControl;
+    private GpsLifecycleManager mGpsLifecycleManager;
     private GpsLocationListener mGpsLocationListener;
     private LifecycleManager mLifecycleManager;
+    private final LocationChooser mLocationChooser;
     private LocationSetter mLocationSetter;
     private LocationViewer mLocationViewer;
 
-	private GpsLifecycleManager mGpsLifecycleManager;
-
-	private final LocationChooser mLocationChooser;
     public GeoBeagle() {
         super();
         mErrorDisplayer = new ErrorDisplayer(this);
-		mLocationChooser = new LocationChooser();
+        mLocationChooser = new LocationChooser();
     }
 
     private void getCoordinatesFromIntent(LocationSetter locationSetter, Intent intent,
@@ -93,12 +91,10 @@ public class GeoBeagle extends Activity {
                     (TextView)findViewById(R.id.location_viewer)), new MockableTextView(
                     (TextView)findViewById(R.id.last_updated)), new MockableTextView(
                     (TextView)findViewById(R.id.status)));
-            final LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+            final LocationManager locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
             mGpsControl = new GpsControl(locationManager, mLocationChooser);
-            mGpsLocationListener = new GpsLocationListener(mGpsControl,
-					mLocationViewer);
-			mGpsLifecycleManager = new GpsLifecycleManager(
-					mGpsLocationListener, locationManager);
+            mGpsLocationListener = new GpsLocationListener(mGpsControl, mLocationViewer);
+            mGpsLifecycleManager = new GpsLifecycleManager(mGpsLocationListener, locationManager);
             mLocationSetter = new LocationSetter(this, new MockableEditText(txtLocation),
                     mGpsControl);
 
@@ -108,8 +104,8 @@ public class GeoBeagle extends Activity {
                     .getDescriptionsAndLocations(), mLocationSetter, new AlertDialog.Builder(this),
                     mErrorDisplayer, cachePageButtonEnabler));
 
-			mLifecycleManager = new LifecycleManager(mGpsLifecycleManager,
-					mLocationSetter, getPreferences(MODE_PRIVATE));
+            mLifecycleManager = new LifecycleManager(mGpsLifecycleManager, mLocationSetter,
+                    getPreferences(MODE_PRIVATE));
         } catch (final Exception e) {
             ((TextView)findViewById(R.id.debug)).setText(e.toString() + "\n"
                     + Util.getStackTrace(e));
@@ -151,7 +147,6 @@ public class GeoBeagle extends Activity {
         cacheClickListenerSetter.set(R.id.cache_page, new IntentStarterViewUri(this, intentFactory,
                 mLocationSetter, new DestinationToCachePage(resourceProvider)), "");
         cacheClickListenerSetter.set(R.id.radar, new IntentStarterRadar(this, intentFactory,
-                mLocationSetter),
-				"\nPlease install the Radar application to use Radar.");
-	}
+                mLocationSetter), "\nPlease install the Radar application to use Radar.");
+    }
 }
