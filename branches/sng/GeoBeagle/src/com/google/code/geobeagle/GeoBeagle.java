@@ -34,17 +34,17 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 public class GeoBeagle extends Activity {
-    public GeoBeagle() {
-        super();
-        mErrorDisplayer = new ErrorDisplayer(this);
-    }
-
     private final ErrorDisplayer mErrorDisplayer;
+
     private GpsControl mGpsControl;
     private GpsLocationListener mGpsLocationListener;
     private LifecycleManager mLifecycleManager;
     private LocationSetter mLocationSetter;
     private LocationViewer mLocationViewer;
+    public GeoBeagle() {
+        super();
+        mErrorDisplayer = new ErrorDisplayer(this);
+    }
 
     private void getCoordinatesFromIntent(LocationSetter locationSetter, Intent intent,
             ErrorDisplayer errorDisplayer) {
@@ -144,6 +144,7 @@ public class GeoBeagle extends Activity {
         cacheClickListenerSetter.set(R.id.cache_page, new IntentStarterViewUri(this, intentFactory,
                 mLocationSetter, new DestinationToCachePage(resourceProvider)), "");
         cacheClickListenerSetter.set(R.id.radar, new IntentStarterRadar(this, intentFactory,
-                mLocationSetter), "\nPlease install the Radar application to use Radar.");
-    }
+                mLocationSetter),
+				"\nPlease install the Radar application to use Radar.");
+	}
 }
