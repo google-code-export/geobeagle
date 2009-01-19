@@ -9,19 +9,20 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Util {
-    private static final String RE_CACHE_AT_BEGINNING = "([^@]*)@([NS][^EW]*)([EW][^(]*)";
-    private static final String RE_CACHE_AT_END = "([NS][^EW]*)([EW][^(]*)\\(([^)]*)\\).*";
     private static final String DATE_FORMAT_NOW = "HH:mm:ss";
     public static final String[] geocachingQueryParam = new String[] {
         "q"
     };
-    private static final Pattern PATTERN_CACHE_AT_BEGINNING = Pattern
-            .compile(RE_CACHE_AT_BEGINNING);
-    private static final Pattern PATTERN_CACHE_AT_END = Pattern.compile(RE_CACHE_AT_END);
 
-    private static String cleanCoordinate(String coord) {
-        return coord.replace('+', ' ').trim();
-    }
+    private static final Pattern PAT_COORD_COMPONENT = Pattern.compile("([\\d.]+)[^\\d]*");
+    private static final Pattern PAT_LATLON = Pattern
+            .compile("([NS]?[^NSEW,]*[NS]?),?\\s*([EW]?.*)");
+
+    private static final Pattern PAT_NEGSIGN = Pattern.compile("[-WS]");
+    private static final Pattern PAT_PAREN_FORMAT = Pattern.compile("([^(]*)\\(([^)]*).*");
+
+    private static final Pattern PAT_SIGN = Pattern.compile("[-EWNS]");
+    private static final Pattern PATTERN_ATSIGN_FORMAT = Pattern.compile("([^@]*)@(.*)");
 
     public static String formatDegreesAsDecimalDegreesString(double fDegrees) {
         final double fAbsDegrees = Math.abs(fDegrees);
@@ -34,25 +35,12 @@ public class Util {
         return new SimpleDateFormat(DATE_FORMAT_NOW).format(time);
     }
 
-    /**
-     * @param uri
-     * @return Latitude, Longitude, Waypoint id.
-     */
-    public static String[] getLatLonFromQuery(final String uri) {
+    public static String[] getLatLonDescriptionFromQuery(String string) {
+        String coordsAndDescription[] = splitCoordsAndDescription(string);
+        String latLon[] = splitLatLon(coordsAndDescription[0]);
 
-        final Matcher matcherCacheAtEnd = PATTERN_CACHE_AT_END.matcher(uri);
-
-        if (matcherCacheAtEnd.matches()) {
-            return new String[] {
-                    cleanCoordinate(matcherCacheAtEnd.group(1)),
-                    cleanCoordinate(matcherCacheAtEnd.group(2)), matcherCacheAtEnd.group(3)
-            };
-        }
-        final Matcher matcherCacheAtBeginning = PATTERN_CACHE_AT_BEGINNING.matcher(uri);
-        matcherCacheAtBeginning.matches();
         return new String[] {
-                cleanCoordinate(matcherCacheAtBeginning.group(2)),
-                cleanCoordinate(matcherCacheAtBeginning.group(3)), matcherCacheAtBeginning.group(1)
+                latLon[0], latLon[1], coordsAndDescription[1]
         };
     }
 
@@ -65,30 +53,22 @@ public class Util {
         return sb.toString();
     }
 
-    public static double parseDecimalDegreesStringToDegrees(String string) {
-        string = string.trim();
-        int nsewSign = 1;
-        if (string.substring(0, 1).matches("N|S|E|W")) {
-            if (string.substring(0, 1).matches("S|W")) {
-                nsewSign = -1;
-            }
-            string = string.substring(1);
-        }
-        string = string.trim();
-        final String strings[] = string.split(" ");
-        strings[0].replace("¡", " ");
-        final String degreesTrimmed = strings[0].replace("¡", " ").trim();
-        int degrees = Integer.parseInt(degreesTrimmed);
-        if (degrees < 0 || degreesTrimmed.startsWith("-")) {
-            degrees = -degrees;
-            nsewSign *= -1;
-        }
-        double minutes = 0.0;
-        if (strings.length > 1) {
-            minutes = Double.parseDouble(strings[1]) / 60.0;
+    public static double parseCoordinate(String string) {
+        int sign = 1;
+        final Matcher negsignMatcher = PAT_NEGSIGN.matcher(string);
+        if (negsignMatcher.find()) {
+            sign = -1;
         }
 
-        return nsewSign * (degrees + minutes);
+        final Matcher signMatcher = PAT_SIGN.matcher(string);
+        string = signMatcher.replaceAll("");
+
+        final Matcher dmsMatcher = PAT_COORD_COMPONENT.matcher(string);
+        double degrees = 0.0;
+        for (double scale = 1.0; scale <= 3600.0 && dmsMatcher.find(); scale *= 60.0) {
+            degrees += Double.parseDouble(dmsMatcher.group(1)) / scale;
+        }
+        return sign * degrees;
     }
 
     public static String parseHttpUri(String query, UrlQuerySanitizer sanitizer,
@@ -96,5 +76,30 @@ public class Util {
         sanitizer.registerParameters(geocachingQueryParam, valueSanitizer);
         sanitizer.parseQuery(query);
         return sanitizer.getValue("q");
+    }
+
+    public static String[] splitCoordsAndDescription(String string) {
+        Matcher matcher = PATTERN_ATSIGN_FORMAT.matcher(string);
+        if (matcher.matches()) {
+            return new String[] {
+                    matcher.group(2), matcher.group(1)
+            };
+        }
+        matcher = PAT_PAREN_FORMAT.matcher(string);
+        if (matcher.matches()) {
+            return new String[] {
+                    matcher.group(1), matcher.group(2)
+            };
+        }
+        return null;
+    }
+
+    public static String[] splitLatLon(String string) {
+        Matcher matcher = PAT_LATLON.matcher(string);
+        if (matcher.matches())
+            return new String[] {
+                    matcher.group(1).trim(), matcher.group(2).trim()
+            };
+        return null;
     }
 }

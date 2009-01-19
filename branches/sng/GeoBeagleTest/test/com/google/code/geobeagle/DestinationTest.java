@@ -31,7 +31,7 @@ public class DestinationTest extends TestCase {
     }
 
     public void testBadCoordinatesGoodDescription() {
-        Destination destinationImpl = new Destination(" 37.0 122.0 # Description ");
+        Destination destinationImpl = new Destination("  FOO # Description ");
         assertEquals(0.0, destinationImpl.getLatitude());
         assertEquals(0.0, destinationImpl.getLongitude());
         assertEquals("Description", destinationImpl.getDescription());

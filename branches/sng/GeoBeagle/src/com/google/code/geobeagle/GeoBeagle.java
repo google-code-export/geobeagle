@@ -57,9 +57,9 @@ public class GeoBeagle extends Activity {
                 final String query = intent.getData().getQuery();
                 final String sanitizedQuery = Util.parseHttpUri(query, new UrlQuerySanitizer(),
                         UrlQuerySanitizer.getAllButNulAndAngleBracketsLegal());
-                final String[] latlon = Util.getLatLonFromQuery(sanitizedQuery);
-                locationSetter.setLocation(Util.parseDecimalDegreesStringToDegrees(latlon[0]), Util
-                        .parseDecimalDegreesStringToDegrees(latlon[1]), latlon[2]);
+                final String[] latlon = Util.getLatLonDescriptionFromQuery(sanitizedQuery);
+                locationSetter.setLocation(Util.parseCoordinate(latlon[0]), Util
+                        .parseCoordinate(latlon[1]), latlon[2]);
             }
         } catch (final Exception e) {
             errorDisplayer.displayError("Error: " + e.getMessage());
@@ -106,6 +106,7 @@ public class GeoBeagle extends Activity {
 
             mLifecycleManager = new LifecycleManager(mGpsLifecycleManager, mLocationSetter,
                     getPreferences(MODE_PRIVATE));
+
         } catch (final Exception e) {
             ((TextView)findViewById(R.id.debug)).setText(e.toString() + "\n"
                     + Util.getStackTrace(e));
