@@ -9,6 +9,7 @@ import com.google.code.geobeagle.intents.IntentStarterLocation;
 import com.google.code.geobeagle.intents.IntentStarterRadar;
 import com.google.code.geobeagle.intents.IntentStarterViewUri;
 import com.google.code.geobeagle.ui.CachePageButtonEnabler;
+import com.google.code.geobeagle.ui.ContentSelector;
 import com.google.code.geobeagle.ui.DestinationListOnClickListener;
 import com.google.code.geobeagle.ui.ErrorDisplayer;
 import com.google.code.geobeagle.ui.GetCoordsToast;
@@ -20,6 +21,7 @@ import com.google.code.geobeagle.ui.MockableEditText;
 import com.google.code.geobeagle.ui.MockableTextView;
 import com.google.code.geobeagle.ui.MyLocationProvider;
 import com.google.code.geobeagle.ui.OnCacheButtonClickListenerBuilder;
+import com.google.code.geobeagle.ui.OnContentProviderSelectedListener;
 import com.google.code.geobeagle.ui.TooString;
 
 import android.app.Activity;
@@ -32,6 +34,7 @@ import android.net.UrlQuerySanitizer;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 public class GeoBeagle extends Activity {
@@ -43,6 +46,7 @@ public class GeoBeagle extends Activity {
     private final LocationChooser mLocationChooser;
     private LocationSetter mLocationSetter;
     private LocationViewer mLocationViewer;
+    private ResourceProvider mResourceProvider;
 
     public GeoBeagle() {
         super();
@@ -107,6 +111,10 @@ public class GeoBeagle extends Activity {
             mLifecycleManager = new LifecycleManager(mGpsLifecycleManager, mLocationSetter,
                     getPreferences(MODE_PRIVATE));
 
+            ((Spinner)this.findViewById(R.id.content_provider))
+                    .setOnItemSelectedListener(new OnContentProviderSelectedListener(
+                            mResourceProvider, new MockableTextView((TextView)this
+                                    .findViewById(R.id.select_cache_prompt))));
         } catch (final Exception e) {
             ((TextView)findViewById(R.id.debug)).setText(e.toString() + "\n"
                     + Util.getStackTrace(e));
@@ -130,23 +138,28 @@ public class GeoBeagle extends Activity {
     }
 
     private void setCacheClickListeners() {
-        ResourceProvider resourceProvider = new ResourceProvider(this);
+        mResourceProvider = new ResourceProvider(this);
         IntentFactory intentFactory = new IntentFactory(new UriParser());
         GetCoordsToast getCoordsToast = new GetCoordsToast(this);
         MyLocationProvider myLocationProvider = new MyLocationProvider(mGpsControl, mErrorDisplayer);
 
         OnCacheButtonClickListenerBuilder cacheClickListenerSetter = new OnCacheButtonClickListenerBuilder(
                 this, mErrorDisplayer);
-        cacheClickListenerSetter.set(R.id.geocaching_map, new IntentStarterLocation(this,
-                resourceProvider, intentFactory, myLocationProvider, R.string.geocaching_maps_url,
-                getCoordsToast), "");
-        cacheClickListenerSetter.set(R.id.nearest_caches, new IntentStarterLocation(this,
-                resourceProvider, intentFactory, myLocationProvider, R.string.nearest_caches_url,
-                getCoordsToast), "");
+
+        ContentSelector contentSelector = new ContentSelector(
+                (Spinner)findViewById(R.id.content_provider));
+
+        cacheClickListenerSetter.set(R.id.object_map, new IntentStarterLocation(this,
+                mResourceProvider, intentFactory, myLocationProvider, contentSelector,
+                R.array.map_objects, getCoordsToast), "");
+        cacheClickListenerSetter.set(R.id.nearest_objects, new IntentStarterLocation(this,
+                mResourceProvider, intentFactory, myLocationProvider, contentSelector,
+                R.array.nearest_objects, getCoordsToast), "");
+
         cacheClickListenerSetter.set(R.id.maps, new IntentStarterViewUri(this, intentFactory,
-                mLocationSetter, new DestinationToGoogleMap(resourceProvider)), "");
+                mLocationSetter, new DestinationToGoogleMap(mResourceProvider)), "");
         cacheClickListenerSetter.set(R.id.cache_page, new IntentStarterViewUri(this, intentFactory,
-                mLocationSetter, new DestinationToCachePage(resourceProvider)), "");
+                mLocationSetter, new DestinationToCachePage(mResourceProvider)), "");
         cacheClickListenerSetter.set(R.id.radar, new IntentStarterRadar(this, intentFactory,
                 mLocationSetter), "\nPlease install the Radar application to use Radar.");
     }

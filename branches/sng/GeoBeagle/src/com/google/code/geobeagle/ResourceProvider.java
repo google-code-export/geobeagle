@@ -15,4 +15,8 @@ public class ResourceProvider {
         return mContext.getString(resourceId);
     }
 
+    public String[] getStringArray(int resourceId) {
+        return mContext.getResources().getStringArray(resourceId);
+    }
+
 }

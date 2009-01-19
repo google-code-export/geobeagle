@@ -20,8 +20,26 @@
 	<string name="getting_location_from_gps">getting location from gps...</string>
 	<string name="cache_page_url">http://coord.info/%1$s</string>
 	<string name="map_intent">geo:0,0?q=%1$.5f,%2$.5f (%3$s)</string>
-	<string name="nearest_caches_url">http://www.geocaching.com/seek/nearest.aspx?lat=%1$.5f&amp;lng=%2$.5f&amp;f=1</string>
-	<string name="geocaching_maps_url">"http://www.geocaching.com/map/?lat=%1$.5f&amp;lng=%2$.5f"</string>
 	<string name="get_coords_toast">&quot;To get the coords from the cache page, click: 'online maps...' / 'Google Maps'.&quot;</string>
 	<string name="error_cant_get_location">"Location cannot be determined.  Please ensure that your GPS is enabled and try again."</string>
+	<array name="nearest_objects">
+	  <item>http://www.atlasquest.com/results.html?gTypeId=2;gSort=5;gCoord=%1$.5f,%2$.5f</item>
+	  <item>http://www.geocaching.com/seek/nearest.aspx?lat=%1$.5f&amp;lng=%2$.5f&amp;f=1</item>
+	  <item>http://www.terracaching.com/tdl.cgi?C=L%1$.5fL%2$.5f&amp;NF=1</item>
+	</array>
+	<array name="map_objects">
+	  <item>http://www.atlasquest.com/boxes/traditional/map.html?gTypeId=2;gSort=5;gCoord=%1$.5f,%2$.5f</item>
+	  <item>http://www.geocaching.com/map/?lat=%1$.5f&amp;lng=%2$.5f</item>
+	  <item>http://www.terracaching.com/gmap.cgi#center_lat=%1$.5f&amp;center_lon=%2$.5f&amp;center_zoom=6&amp;cselect=all&amp;ctselect=all</item>
+	</array>
+    <array name="content_providers">
+      <item>Atlas Quest</item>
+      <item>Geocaching</item>
+      <item>TerraCaching</item>
+    </array>
+    <array name="object_names">
+    	<item>letterbox</item>
+    	<item>cache</item>
+    	<item>cache</item>
+    </array>
 </resources>
