@@ -24,17 +24,14 @@
 	<array name="nearest_objects">
 	  <item>http://www.atlasquest.com/results.html?gTypeId=2;gSort=5;gCoord=%1$.5f,%2$.5f</item>
 	  <item>http://www.geocaching.com/seek/nearest.aspx?lat=%1$.5f&amp;lng=%2$.5f&amp;f=1</item>
-	  <item>http://www.terracaching.com/tdl.cgi?C=L%1$.5fL%2$.5f&amp;NF=1</item>
 	</array>
 	<array name="map_objects">
 	  <item>http://www.atlasquest.com/boxes/traditional/map.html?gTypeId=2;gSort=5;gCoord=%1$.5f,%2$.5f</item>
 	  <item>http://www.geocaching.com/map/?lat=%1$.5f&amp;lng=%2$.5f</item>
-	  <item>http://www.terracaching.com/gmap.cgi#center_lat=%1$.5f&amp;center_lon=%2$.5f&amp;center_zoom=6&amp;cselect=all&amp;ctselect=all</item>
 	</array>
 	<array name="cache_page_url">
 	  <item>http://www.atlasquest.com/showinfo.html?gBoxId=%1s</item>
 	  <item>http://coord.info/GC%1$s</item>
-	  <item>http://www.terracaching.com/viewcache.cgi?C=TC%1$s</item>
 	</array>
 	<array name="content_prefixes">
 	  <item>LB</item>
