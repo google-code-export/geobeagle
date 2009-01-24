@@ -1,10 +1,11 @@
-package com.google.code.geobeagle;
+package com.google.code.geobeagle.ui;
 
 import static org.easymock.EasyMock.expect;
 import static org.easymock.classextension.EasyMock.createMock;
 import static org.easymock.classextension.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.verify;
 
+import com.google.code.geobeagle.ResourceProvider;
 import com.google.code.geobeagle.ui.ErrorDialog;
 
 import android.app.AlertDialog;

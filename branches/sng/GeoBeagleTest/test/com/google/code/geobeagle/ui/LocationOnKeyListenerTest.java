@@ -1,5 +1,5 @@
 
-package com.google.code.geobeagle;
+package com.google.code.geobeagle.ui;
 
 import static org.easymock.classextension.EasyMock.createMock;
 import static org.easymock.classextension.EasyMock.replay;

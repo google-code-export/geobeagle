@@ -15,20 +15,20 @@ public class GpsLifecycleManagerTest extends TestCase {
     public void testOnPause() {
         LocationManager locationManager = createMock(LocationManager.class);
         LocationListener locationListener = createMock(LocationListener.class);
-        GpsLifecycleManager gpsLifecycleManager = new GpsLifecycleManager(locationListener,
+        LifecycleManager gpsLifecycleManager = new LocationLifecycleManager(locationListener,
                 locationManager);
 
         locationManager.removeUpdates(locationListener);
 
         replay(locationManager);
-        gpsLifecycleManager.onPause();
+        gpsLifecycleManager.onPause(null);
         verify(locationManager);
     }
 
     public void testOnResume() {
         LocationManager locationManager = createMock(LocationManager.class);
         LocationListener locationListener = createMock(LocationListener.class);
-        GpsLifecycleManager gpsLifecycleManager = new GpsLifecycleManager(locationListener,
+        LifecycleManager gpsLifecycleManager = new LocationLifecycleManager(locationListener,
                 locationManager);
 
         locationManager
@@ -37,7 +37,7 @@ public class GpsLifecycleManagerTest extends TestCase {
                 locationListener);
 
         replay(locationManager);
-        gpsLifecycleManager.onResume();
+        gpsLifecycleManager.onResume(null, null);
         verify(locationManager);
     }
 

@@ -3,7 +3,7 @@ package com.google.code.geobeagle.ui;
 
 import com.google.code.geobeagle.DescriptionsAndLocations;
 import com.google.code.geobeagle.Destination;
-import com.google.code.geobeagle.GpsControl;
+import com.google.code.geobeagle.LocationControl;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.Util;
 
@@ -19,20 +19,24 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.util.List;
-
+import java.util.regex.Pattern;
 
 public class LocationSetter {
-    private static final String FNAME_RECENT_LOCATIONS = "RECENT_LOCATIONS";
+    public static final String FNAME_RECENT_LOCATIONS = "RECENT_LOCATIONS";
     private final Context mContext;
     private final DescriptionsAndLocations mDescriptionsAndLocations;
-    private final GpsControl mGpsControl;
+    private final Pattern[] mDestinationPatterns;
+    private final LocationControl mGpsControl;
     private final MockableEditText mTxtLocation;
 
-    public LocationSetter(Context context, MockableEditText editText, GpsControl gpsControl) {
+    public LocationSetter(Context context, MockableEditText editText,
+            LocationControl locationControl, Pattern destinationPatterns[]) {
         mTxtLocation = editText;
         mContext = context;
-        this.mGpsControl = gpsControl;
+        mDestinationPatterns = destinationPatterns;
+        mGpsControl = locationControl;
         mDescriptionsAndLocations = new DescriptionsAndLocations();
         editText.setOnFocusChangeListener(new OnFocusChangeListener() {
             public void onFocusChange(View v, boolean hasFocus) {
@@ -43,19 +47,32 @@ public class LocationSetter {
         });
     }
 
+    protected BufferedOutputStream createBufferedOutputStream(OutputStream outputStream) {
+        return new BufferedOutputStream(outputStream);
+    }
+
+    protected BufferedReader createBufferedReader(InputStreamReader inputStreamReader) {
+        return new BufferedReader(inputStreamReader);
+    }
+
+    protected InputStreamReader createInputStreamReader(FileInputStream fileInputStream) {
+        return new InputStreamReader(fileInputStream);
+    }
+
     public DescriptionsAndLocations getDescriptionsAndLocations() {
         return mDescriptionsAndLocations;
     }
 
-    public CharSequence getLocation() {
-        return mTxtLocation.getText();
-    }
-    
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
      * @see com.google.code.geobeagle.ui.DestinationProvider#getDestination()
      */
     public Destination getDestination() {
-        return new Destination(mTxtLocation.getText());
+        return new Destination(mTxtLocation.getText(), mDestinationPatterns);
+    }
+
+    public CharSequence getLocation() {
+        return mTxtLocation.getText();
     }
 
     public List<CharSequence> getPreviousDescriptions() {
@@ -66,17 +83,19 @@ public class LocationSetter {
         return mDescriptionsAndLocations.getPreviousLocations();
     }
 
-    public void load() {
+    public void readBookmarks() {
         try {
             mDescriptionsAndLocations.clear();
-            final FileInputStream f = mContext.openFileInput(FNAME_RECENT_LOCATIONS);
-            final InputStreamReader isr = new InputStreamReader(f);
-            final BufferedReader br = new BufferedReader(isr);
+            final FileInputStream fileInputStream = mContext.openFileInput(FNAME_RECENT_LOCATIONS);
+            final InputStreamReader inputStreamReader = createInputStreamReader(fileInputStream);
+            final BufferedReader bufferedReader = createBufferedReader(inputStreamReader);
             CharSequence dataLine = null;
-            while ((dataLine = br.readLine()) != null) {
+            while ((dataLine = bufferedReader.readLine()) != null) {
                 saveLocation(dataLine);
             }
-            f.close();
+            bufferedReader.close();
+            inputStreamReader.close();
+            fileInputStream.close();
         } catch (final FileNotFoundException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -86,16 +105,17 @@ public class LocationSetter {
         }
     }
 
-    public void save() {
+    public void saveBookmarks() {
         try {
-            final FileOutputStream openFileOutput = mContext.openFileOutput(FNAME_RECENT_LOCATIONS,
-                    Context.MODE_PRIVATE);
-            final BufferedOutputStream bos = new BufferedOutputStream(openFileOutput);
+            final FileOutputStream fileOutputStream = mContext.openFileOutput(
+                    FNAME_RECENT_LOCATIONS, Context.MODE_PRIVATE);
+            final BufferedOutputStream bufferedOutputStream = createBufferedOutputStream(fileOutputStream);
+
             for (final CharSequence location : mDescriptionsAndLocations.getPreviousLocations()) {
-                bos.write((location.toString() + "\n").getBytes());
+                bufferedOutputStream.write((location.toString() + "\n").getBytes());
             }
-            bos.close();
-            openFileOutput.close();
+            bufferedOutputStream.close();
+            fileOutputStream.close();
         } catch (final FileNotFoundException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -110,7 +130,7 @@ public class LocationSetter {
     }
 
     private CharSequence saveLocation(final CharSequence location) {
-        final Destination d = new Destination(location);
+        final Destination d = new Destination(location, mDestinationPatterns);
         final CharSequence description = d.getDescription();
         mDescriptionsAndLocations.add(description, location);
         return location;
@@ -132,10 +152,11 @@ public class LocationSetter {
     }
 
     public CharSequence setLocation(double lat, double lon, CharSequence description) {
-        final CharSequence latLonText = Util.formatDegreesAsDecimalDegreesString(lat) + "  "
-                + Util.formatDegreesAsDecimalDegreesString(lon) + " # " + description;
+        final CharSequence latLonText = Util.formatDegreesAsDecimalDegreesString(lat) + ", "
+                + Util.formatDegreesAsDecimalDegreesString(lon) + " (" + description + ")";
         mTxtLocation.setText(latLonText);
         saveLocation(latLonText);
         return latLonText;
     }
+
 }

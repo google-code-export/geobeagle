@@ -6,14 +6,16 @@ import com.google.code.geobeagle.ui.LocationViewer;
 import android.location.Location;
 import android.location.LocationListener;
 import android.os.Bundle;
-
-public class GpsLocationListener implements LocationListener {
+/*
+ * Listener for the Location control.
+ */
+public class GeoBeagleLocationListener implements LocationListener {
     private final LocationViewer mLocationViewer;
-    private final GpsControl mGpsControl;
+    private final LocationControl mGpsControl;
 
-    public GpsLocationListener(GpsControl gpsControl, LocationViewer locationViewer) {
+    public GeoBeagleLocationListener(LocationControl locationControl, LocationViewer locationViewer) {
         mLocationViewer = locationViewer;
-        mGpsControl = gpsControl;
+        mGpsControl = locationControl;
     }
 
     public void onLocationChanged(Location location) {
@@ -29,6 +31,6 @@ public class GpsLocationListener implements LocationListener {
     }
 
     public void onStatusChanged(String provider, int status, Bundle extras) {
-        mLocationViewer.setStatus(status);
+        mLocationViewer.setStatus(provider, status);
     }
 }

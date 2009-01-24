@@ -18,7 +18,6 @@
 	<string name="available">AVAILABLE</string>
 	<string name="temporarily_unavailable">TEMPORARILY UNAVAILABLE</string>
 	<string name="getting_location_from_gps">getting location from gps...</string>
-	<string name="cache_page_url">http://coord.info/%1$s</string>
 	<string name="map_intent">geo:0,0?q=%1$.5f,%2$.5f (%3$s)</string>
 	<string name="get_coords_toast">&quot;To get the coords from the cache page, click: 'online maps...' / 'Google Maps'.&quot;</string>
 	<string name="error_cant_get_location">"Location cannot be determined.  Please ensure that your GPS is enabled and try again."</string>
@@ -32,14 +31,21 @@
 	  <item>http://www.geocaching.com/map/?lat=%1$.5f&amp;lng=%2$.5f</item>
 	  <item>http://www.terracaching.com/gmap.cgi#center_lat=%1$.5f&amp;center_lon=%2$.5f&amp;center_zoom=6&amp;cselect=all&amp;ctselect=all</item>
 	</array>
+	<array name="cache_page_url">
+	  <item>http://www.atlasquest.com/showinfo.html?gBoxId=%1s</item>
+	  <item>http://coord.info/GC%1$s</item>
+	  <item>http://www.terracaching.com/viewcache.cgi?C=TC%1$s</item>
+	</array>
+	<array name="content_prefixes">
+	  <item>LB</item>
+	  <item>GC</item>
+	</array>
     <array name="content_providers">
       <item>Atlas Quest</item>
       <item>Geocaching</item>
-      <item>TerraCaching</item>
     </array>
     <array name="object_names">
     	<item>letterbox</item>
-    	<item>cache</item>
     	<item>cache</item>
     </array>
 </resources>

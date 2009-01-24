@@ -6,14 +6,14 @@ import static org.easymock.classextension.EasyMock.createMock;
 import static org.easymock.classextension.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.verify;
 
-import com.google.code.geobeagle.GpsControl.LocationChooser;
+import com.google.code.geobeagle.LocationControl.LocationChooser;
 
 import android.location.Location;
 import android.location.LocationManager;
 
 import junit.framework.TestCase;
 
-public class GpsControlTest extends TestCase {
+public class LocationControlTest extends TestCase {
 
     public void compareLocations(boolean expected, long firstTime, float firstAccuracy,
             long secondTime, float secondAccuracy, float distance) {
@@ -27,7 +27,7 @@ public class GpsControlTest extends TestCase {
 
         replay(location1);
         replay(location2);
-        GpsControl.LocationChooser locationChooser = new GpsControl.LocationChooser();
+        LocationControl.LocationChooser locationChooser = new LocationControl.LocationChooser();
         assertEquals(expected ? location2 : location1, locationChooser.choose(location1, location2));
         verify(location1);
         verify(location2);
@@ -39,7 +39,7 @@ public class GpsControlTest extends TestCase {
         expect(location.getAccuracy()).andStubReturn(1000f);
 
         replay(location);
-        GpsControl.LocationChooser locationChooser = new GpsControl.LocationChooser();
+        LocationControl.LocationChooser locationChooser = new LocationControl.LocationChooser();
         assertEquals(location, locationChooser.choose(null, location));
         assertEquals(location, locationChooser.choose(location, null));
         verify(location);
@@ -47,7 +47,7 @@ public class GpsControlTest extends TestCase {
 
     public void testCompareLocations() {
         // Choose first
-        
+
         // identical
         compareLocations(false, 0L, 0f, 0L, 0f, 0);
 
@@ -55,7 +55,7 @@ public class GpsControlTest extends TestCase {
         compareLocations(false, 0L, 5f, 1L, 6f, 10);
 
         // Choose second
-        
+
         // second one is newer, same accuracy
         compareLocations(true, 0L, 0f, 1L, 0f, 0);
 
@@ -71,8 +71,8 @@ public class GpsControlTest extends TestCase {
 
     public void testGetLocationNetworkChooseGps() {
         LocationManager locationManager = createMock(LocationManager.class);
-        LocationChooser locationChooser = createMock(GpsControl.LocationChooser.class);
-        GpsControl gpsControl = new GpsControl(locationManager, locationChooser);
+        LocationChooser locationChooser = createMock(LocationControl.LocationChooser.class);
+        LocationControl locationControl = new LocationControl(locationManager, locationChooser);
         Location gpsLocation = createMock(Location.class);
         Location networkLocation = createMock(Location.class);
         expect(locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)).andReturn(
@@ -84,15 +84,15 @@ public class GpsControlTest extends TestCase {
 
         replay(locationChooser);
         replay(locationManager);
-        assertEquals(gpsLocation, gpsControl.getLocation());
+        assertEquals(gpsLocation, locationControl.getLocation());
         verify(locationManager);
         verify(locationChooser);
     }
 
     public void testGetLocationNetworkChooseNetwork() {
         LocationManager locationManager = createMock(LocationManager.class);
-        LocationChooser locationChooser = createMock(GpsControl.LocationChooser.class);
-        GpsControl gpsControl = new GpsControl(locationManager, locationChooser);
+        LocationChooser locationChooser = createMock(LocationControl.LocationChooser.class);
+        LocationControl locationControl = new LocationControl(locationManager, locationChooser);
         Location gpsLocation = createMock(Location.class);
         Location networkLocation = createMock(Location.class);
         expect(locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)).andReturn(
@@ -104,7 +104,7 @@ public class GpsControlTest extends TestCase {
 
         replay(locationChooser);
         replay(locationManager);
-        assertEquals(networkLocation, gpsControl.getLocation());
+        assertEquals(networkLocation, locationControl.getLocation());
         verify(locationManager);
         verify(locationChooser);
     }

@@ -1,22 +1,22 @@
 
 package com.google.code.geobeagle.ui;
 
-import com.google.code.geobeagle.GpsControl;
+import com.google.code.geobeagle.LocationControl;
 import com.google.code.geobeagle.R;
 
 import android.location.Location;
 
 public class MyLocationProvider {
-    private final GpsControl mGpsControl;
     private final ErrorDisplayer mErrorDisplayer;
+    private final LocationControl mLocationControl;
 
-    public MyLocationProvider(GpsControl gpsControl, ErrorDisplayer errorDisplayer) {
-        mGpsControl = gpsControl;
+    public MyLocationProvider(LocationControl locationControl, ErrorDisplayer errorDisplayer) {
+        mLocationControl = locationControl;
         mErrorDisplayer = errorDisplayer;
     }
 
     public Location getLocation() {
-        Location location = mGpsControl.getLocation();
+        Location location = mLocationControl.getLocation();
         if (null == location) {
             mErrorDisplayer.displayError(R.string.error_cant_get_location);
         }

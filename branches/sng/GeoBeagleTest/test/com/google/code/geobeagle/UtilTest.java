@@ -13,7 +13,7 @@ import junit.framework.TestCase;
 
 public class UtilTest extends TestCase {
     private void splitLatLonHelper(String coords, String lat, String lon) {
-        String[] latLon = Util.splitLatLon(coords);
+        CharSequence[] latLon = Util.splitLatLon(coords);
         assertEquals(lat, latLon[0]);
         assertEquals(lon, latLon[1]);
     }
@@ -23,14 +23,6 @@ public class UtilTest extends TestCase {
         assertEquals("-122 30.600", Util.formatDegreesAsDecimalDegreesString(-122.51));
         assertEquals("-122 03.000", Util.formatDegreesAsDecimalDegreesString(-122.05));
         assertEquals("-0 03.000", Util.formatDegreesAsDecimalDegreesString(-0.05));
-    }
-
-    public void testGetLatLonFromAtlasQuest() {
-        String[] ll = Util
-                .getLatLonDescriptionFromQuery("37.258356797547,-122.0354267005 (Wildwood Park, Saratoga, CA)");
-        assertEquals("37.258356797547", ll[0]);
-        assertEquals("-122.0354267005", ll[1]);
-        assertEquals("Wildwood Park, Saratoga, CA", ll[2]);
     }
 
     public void testMinutesToDegrees() {
@@ -83,8 +75,16 @@ public class UtilTest extends TestCase {
         verify(sanitizer);
     }
 
+    public void testGetLatLonDescriptionFromQuery() {
+        CharSequence[] coordsAndDescription = Util
+                .splitLatLonDescription("Wildwood Park, Saratoga, CA(The Nut Case #89882)@37.258356797547,-122.0354267005 ");
+        assertEquals("37.258356797547", coordsAndDescription[0]);
+        assertEquals("-122.0354267005", coordsAndDescription[1]);
+        assertEquals("LB89882--The Nut Case", coordsAndDescription[2]);
+    }
+
     public void testSplitCoordsAndDescriptions() {
-        String[] coordsAndDescription = Util
+        CharSequence[] coordsAndDescription = Util
                 .splitCoordsAndDescription("GC1ERCC@N+37¡+15.165+W+122¡+02.620+");
         assertEquals("N+37¡+15.165+W+122¡+02.620+", coordsAndDescription[0]);
         assertEquals("GC1ERCC", coordsAndDescription[1]);
@@ -93,6 +93,22 @@ public class UtilTest extends TestCase {
                 .splitCoordsAndDescription("N+47¡+40.464+W+122¡+20.119+(GCTANE)+");
         assertEquals("N+47¡+40.464+W+122¡+20.119+", coordsAndDescription[0]);
         assertEquals("GCTANE", coordsAndDescription[1]);
+
+        coordsAndDescription = Util
+                .splitCoordsAndDescription("37.258356797547,-122.0354267005 (Wildwood Park, Saratoga, CA)");
+        assertEquals("37.258356797547,-122.0354267005", coordsAndDescription[0]);
+        assertEquals("Wildwood Park, Saratoga, CA", coordsAndDescription[1]);
+
+        coordsAndDescription = Util
+                .splitCoordsAndDescription("Wildwood Park, Saratoga, CA(The Nut Case #89882)@37.258356797547,-122.0354267005 ");
+        assertEquals("37.258356797547,-122.0354267005", coordsAndDescription[0]);
+        assertEquals("Wildwood Park, Saratoga, CA(The Nut Case #89882)", coordsAndDescription[1]);
+    }
+
+    public void testParseDescription() {
+        assertEquals("GCTANE", Util.parseDescription("GCTANE"));
+        assertEquals("LB89882--The Nut Case", Util
+                .parseDescription("Wildwood Park, Saratoga, CA(The Nut Case #89882)"));
     }
 
     public void testSplitLatLon() {
@@ -108,7 +124,7 @@ public class UtilTest extends TestCase {
         // Geocaching.com:
         splitLatLonHelper("N37¡ 15.165 W 122¡ 02.620", "N37¡ 15.165", "W 122¡ 02.620");
         splitLatLonHelper("N+37¡+15.165+W+122¡+02.620+", "N+37¡+15.165+", "W+122¡+02.620+");
-        
+
         // atlasquest.com:
         splitLatLonHelper("37.258356797547,-122.0354267005", "37.258356797547", "-122.0354267005");
     }

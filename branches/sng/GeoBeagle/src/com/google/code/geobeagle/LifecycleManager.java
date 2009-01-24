@@ -2,35 +2,13 @@
 package com.google.code.geobeagle;
 
 import com.google.code.geobeagle.ui.ErrorDisplayer;
-import com.google.code.geobeagle.ui.LocationSetter;
 
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 
-public class LifecycleManager {
-    private final GpsLifecycleManager mGpsLifecycleManager;
-    private final LocationSetter mLocationSetter;
-    private final SharedPreferences mPreferences;
-    public static final String PREFS_LOCATION = "Location";
+public interface LifecycleManager {
 
-    public LifecycleManager(GpsLifecycleManager gpsLifecycleManager, LocationSetter locationSetter,
-            SharedPreferences preferences) {
-        mGpsLifecycleManager = gpsLifecycleManager;
-        mLocationSetter = locationSetter;
-        mPreferences = preferences;
-    }
+    public abstract void onPause(Editor editor);
 
-    public void onPause() {
-        mGpsLifecycleManager.onPause();
-        mLocationSetter.save();
-        final SharedPreferences.Editor editor = mPreferences.edit();
-        editor.putString(PREFS_LOCATION, mLocationSetter.getLocation().toString());
-        editor.commit();
-    }
-
-    public void onResume(ErrorDisplayer errorDisplayer, String initialDestination) {
-        mGpsLifecycleManager.onResume();
-        mLocationSetter.load();
-        mLocationSetter.setLocation(mPreferences.getString(PREFS_LOCATION, initialDestination),
-                errorDisplayer);
-    }
+    public abstract void onResume(SharedPreferences preferences, ErrorDisplayer errorDisplayer);
 }

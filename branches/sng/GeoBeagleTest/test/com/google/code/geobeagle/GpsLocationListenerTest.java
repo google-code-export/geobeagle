@@ -16,11 +16,11 @@ import junit.framework.TestCase;
 public class GpsLocationListenerTest extends TestCase {
 
     private LocationViewer mLocationViewer;
-    private GpsControl mGpsControl;
+    private LocationControl mGpsControl;
 
     public void setUp() {
         mLocationViewer = createMock(LocationViewer.class);
-        mGpsControl = createMock(GpsControl.class);
+        mGpsControl = createMock(LocationControl.class);
     }
 
     public void testOnLocationChanged() {
@@ -30,16 +30,16 @@ public class GpsLocationListenerTest extends TestCase {
 
         replay(location);
         replay(mGpsControl);
-        new GpsLocationListener(mGpsControl, mLocationViewer).onLocationChanged(location);
+        new GeoBeagleLocationListener(mGpsControl, mLocationViewer).onLocationChanged(location);
         verify(location);
         verify(mGpsControl);
     }
 
     public void testOnStatusChange() {
-        mLocationViewer.setStatus(LocationProvider.OUT_OF_SERVICE);
+        mLocationViewer.setStatus("gps", LocationProvider.OUT_OF_SERVICE);
 
         replay(mLocationViewer);
-        new GpsLocationListener(null, mLocationViewer).onStatusChanged(null,
+        new GeoBeagleLocationListener(null, mLocationViewer).onStatusChanged("gps",
                 LocationProvider.OUT_OF_SERVICE, null);
         verify(mLocationViewer);
     }
@@ -48,7 +48,7 @@ public class GpsLocationListenerTest extends TestCase {
         mLocationViewer.setEnabled();
 
         replay(mLocationViewer);
-        new GpsLocationListener(null, mLocationViewer).onProviderEnabled(null);
+        new GeoBeagleLocationListener(null, mLocationViewer).onProviderEnabled(null);
         verify(mLocationViewer);
     }
 
@@ -56,7 +56,7 @@ public class GpsLocationListenerTest extends TestCase {
         mLocationViewer.setDisabled();
 
         replay(mLocationViewer);
-        new GpsLocationListener(null, mLocationViewer).onProviderDisabled(null);
+        new GeoBeagleLocationListener(null, mLocationViewer).onProviderDisabled(null);
         verify(mLocationViewer);
 
     }

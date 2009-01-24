@@ -1,5 +1,5 @@
 
-package com.google.code.geobeagle;
+package com.google.code.geobeagle.ui;
 
 import static org.easymock.EasyMock.aryEq;
 import static org.easymock.EasyMock.eq;
@@ -8,9 +8,8 @@ import static org.easymock.classextension.EasyMock.createMock;
 import static org.easymock.classextension.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.verify;
 
-import com.google.code.geobeagle.ui.CachePageButtonEnabler;
-import com.google.code.geobeagle.ui.DestinationListOnClickListener;
-import com.google.code.geobeagle.ui.LocationSetter;
+import com.google.code.geobeagle.DescriptionsAndLocations;
+import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.ui.DestinationListOnClickListener.DestinationListDialogOnClickListener;
 
 import android.app.AlertDialog;

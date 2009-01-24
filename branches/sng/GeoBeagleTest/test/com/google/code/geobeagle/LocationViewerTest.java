@@ -41,18 +41,18 @@ public class LocationViewerTest extends TestCase {
         MockableTextView coordinates = createMock(MockableTextView.class);
         coordinates.setText(R.string.getting_location_from_gps);
         MockableTextView status = createMock(MockableTextView.class);
-        status.setText("OUT OF SERVICE");
-        status.setText("AVAILABLE");
-        status.setText("TEMPORARILY UNAVAILABLE");
+        status.setText("gps status: OUT OF SERVICE");
+        status.setText("network status: AVAILABLE");
+        status.setText("gps status: TEMPORARILY UNAVAILABLE");
 
         replay(context);
         replay(lastUpdateTime);
         replay(coordinates);
         replay(status);
         LocationViewer lv = new LocationViewer(context, coordinates, lastUpdateTime, status);
-        lv.setStatus(LocationProvider.OUT_OF_SERVICE);
-        lv.setStatus(LocationProvider.AVAILABLE);
-        lv.setStatus(LocationProvider.TEMPORARILY_UNAVAILABLE);
+        lv.setStatus("gps", LocationProvider.OUT_OF_SERVICE);
+        lv.setStatus("network", LocationProvider.AVAILABLE);
+        lv.setStatus("gps", LocationProvider.TEMPORARILY_UNAVAILABLE);
         verify(context);
         verify(lastUpdateTime);
         verify(coordinates);

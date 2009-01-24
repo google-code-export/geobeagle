@@ -22,25 +22,27 @@ public class Util {
     private static final Pattern PAT_PAREN_FORMAT = Pattern.compile("([^(]*)\\(([^)]*).*");
 
     private static final Pattern PAT_SIGN = Pattern.compile("[-EWNS]");
-    private static final Pattern PATTERN_ATSIGN_FORMAT = Pattern.compile("([^@]*)@(.*)");
+    private static final Pattern PAT_ATSIGN_FORMAT = Pattern.compile("([^@]*)@(.*)");
+    // #Wildwood Park, Saratoga, CA(The Nut Case #89882)
+    private static final Pattern PAT_ATLASQUEST = Pattern.compile(".*\\((.*)#(.*)\\)");
 
-    public static String formatDegreesAsDecimalDegreesString(double fDegrees) {
+    public static CharSequence formatDegreesAsDecimalDegreesString(double fDegrees) {
         final double fAbsDegrees = Math.abs(fDegrees);
         final int dAbsDegrees = (int)fAbsDegrees;
         return String.format((fDegrees < 0 ? "-" : "") + "%1$d %2$06.3f", dAbsDegrees,
                 60.0 * (fAbsDegrees - dAbsDegrees));
     }
 
-    public static String formatTime(long time) {
+    public static CharSequence formatTime(long time) {
         return new SimpleDateFormat(DATE_FORMAT_NOW).format(time);
     }
 
-    public static String[] getLatLonDescriptionFromQuery(String string) {
-        String coordsAndDescription[] = splitCoordsAndDescription(string);
-        String latLon[] = splitLatLon(coordsAndDescription[0]);
+    public static CharSequence[] splitLatLonDescription(CharSequence location) {
+        CharSequence coordsAndDescription[] = splitCoordsAndDescription(location);
+        CharSequence latLon[] = splitLatLon(coordsAndDescription[0]);
 
-        return new String[] {
-                latLon[0], latLon[1], coordsAndDescription[1]
+        return new CharSequence[] {
+                latLon[0], latLon[1], parseDescription(coordsAndDescription[1])
         };
     }
 
@@ -53,7 +55,7 @@ public class Util {
         return sb.toString();
     }
 
-    public static double parseCoordinate(String string) {
+    public static double parseCoordinate(CharSequence string) {
         int sign = 1;
         final Matcher negsignMatcher = PAT_NEGSIGN.matcher(string);
         if (negsignMatcher.find()) {
@@ -71,30 +73,40 @@ public class Util {
         return sign * degrees;
     }
 
-    public static String parseHttpUri(String query, UrlQuerySanitizer sanitizer,
+    public static CharSequence parseHttpUri(String query, UrlQuerySanitizer sanitizer,
             ValueSanitizer valueSanitizer) {
         sanitizer.registerParameters(geocachingQueryParam, valueSanitizer);
         sanitizer.parseQuery(query);
         return sanitizer.getValue("q");
     }
 
-    public static String[] splitCoordsAndDescription(String string) {
-        Matcher matcher = PATTERN_ATSIGN_FORMAT.matcher(string);
-        if (matcher.matches()) {
-            return new String[] {
-                    matcher.group(2), matcher.group(1)
-            };
-        }
-        matcher = PAT_PAREN_FORMAT.matcher(string);
-        if (matcher.matches()) {
-            return new String[] {
-                    matcher.group(1), matcher.group(2)
-            };
-        }
-        return null;
+    public static CharSequence parseDescription(CharSequence string) {
+        Matcher matcher = PAT_ATLASQUEST.matcher(string);
+        if (matcher.matches())
+            return "LB" + matcher.group(2).trim() + "--" + matcher.group(1).trim();
+        return string;
     }
 
-    public static String[] splitLatLon(String string) {
+    public static CharSequence[] splitCoordsAndDescription(CharSequence location) {
+        Matcher matcher = PAT_ATSIGN_FORMAT.matcher(location);
+        if (matcher.matches()) {
+            return new CharSequence[] {
+                    matcher.group(2).trim(), matcher.group(1).trim()
+            };
+        }
+        matcher = PAT_PAREN_FORMAT.matcher(location);
+        if (matcher.matches()) {
+            return new CharSequence[] {
+                    matcher.group(1).trim(), matcher.group(2).trim()
+            };
+        }
+        // No description.
+        return new CharSequence[] {
+                location, ""
+        };
+    }
+
+    public static CharSequence[] splitLatLon(CharSequence string) {
         Matcher matcher = PAT_LATLON.matcher(string);
         if (matcher.matches())
             return new String[] {
@@ -102,4 +114,5 @@ public class Util {
             };
         return null;
     }
+
 }

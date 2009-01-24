@@ -15,7 +15,7 @@ public class ContentSelectorTest extends TestCase {
         expect(spinner.getSelectedItemPosition()).andReturn(17);
         
         replay(spinner);
-        ContentSelector contentSelector = new ContentSelector(spinner);
+        ContentSelector contentSelector = new ContentSelector(spinner, null);
         assertEquals(17, contentSelector.getIndex());
         verify(spinner);
     }

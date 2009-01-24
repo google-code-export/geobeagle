@@ -15,30 +15,30 @@ import junit.framework.TestCase;
 
 public class MyLocationProviderTest extends TestCase {
     public void testNullLocation() {
-        GpsControl gpsControl = createMock(GpsControl.class);
+        LocationControl locationControl = createMock(LocationControl.class);
         ErrorDisplayer errorDisplayer = createMock(ErrorDisplayer.class);
-        expect(gpsControl.getLocation()).andReturn(null);
+        expect(locationControl.getLocation()).andReturn(null);
 
         errorDisplayer.displayError(R.string.error_cant_get_location);
 
-        replay(gpsControl);
+        replay(locationControl);
         replay(errorDisplayer);
-        MyLocationProvider myLocationProvider = new MyLocationProvider(gpsControl, errorDisplayer);
+        MyLocationProvider myLocationProvider = new MyLocationProvider(locationControl, errorDisplayer);
         assertEquals(null, myLocationProvider.getLocation());
-        verify(gpsControl);
+        verify(locationControl);
         verify(errorDisplayer);
     }
 
     public void test() {
-        GpsControl gpsControl = createMock(GpsControl.class);
+        LocationControl locationControl = createMock(LocationControl.class);
         ErrorDisplayer errorDisplayer = createMock(ErrorDisplayer.class);
         Location location = createMock(Location.class);
 
-        expect(gpsControl.getLocation()).andReturn(location);
+        expect(locationControl.getLocation()).andReturn(location);
 
-        replay(gpsControl);
-        MyLocationProvider myLocationProvider = new MyLocationProvider(gpsControl, errorDisplayer);
+        replay(locationControl);
+        MyLocationProvider myLocationProvider = new MyLocationProvider(locationControl, errorDisplayer);
         assertEquals(location, myLocationProvider.getLocation());
-        verify(gpsControl);
+        verify(locationControl);
     }
 }

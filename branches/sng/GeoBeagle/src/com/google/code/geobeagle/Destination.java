@@ -1,52 +1,63 @@
+
 package com.google.code.geobeagle;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * Cache or letterbox description, id, and coordinates.
+ */
 public class Destination {
-    private static final Pattern PAT_EXTRACT_DESCRIPTION = Pattern.compile("[^#]*#?(.*)");
-    private static final Pattern PAT_LOCATION_AND_DESCRIPTION = Pattern
-            .compile("\\s*(\\S+\\s+\\S+)\\s+(\\S+\\s+\\S+)\\s*#?(.*)");
-    
     public static CharSequence extractDescription(CharSequence location) {
-        Matcher matcher = PAT_EXTRACT_DESCRIPTION.matcher(location);
-        if (matcher.matches()) {
-            final String afterPoundSign = matcher.group(1);
-            if (afterPoundSign.length() > 0)
-                return afterPoundSign.trim();
-        }
-        return location;
+        return Util.splitCoordsAndDescription(location)[1];
     }
-    
+
+    static Pattern[] getDestinationPatterns(ResourceProvider resourceProvider) {
+        return getDestinationPatterns(resourceProvider.getStringArray(R.array.content_prefixes));
+    }
+
+    static Pattern[] getDestinationPatterns(String contentPrefixes[]) {
+        Pattern mContentSelectors[] = new Pattern[contentPrefixes.length];
+        for (int ix = 0; ix < contentPrefixes.length; ix++) {
+            mContentSelectors[ix] = Pattern.compile("(?:" + contentPrefixes[ix] + ")(\\w*)");
+        }
+        return mContentSelectors;
+    }
+
+    private int mContentSelectorIndex;
     private CharSequence mDescription;
+    private CharSequence mId;
     private double mLatitude;
     private double mLongitude;
 
-    public Destination(CharSequence location) {
-        mDescription = "";
-        mLongitude = 0;
-        mLatitude = 0;
-        if (!extractLocationAndDescription(location))
-            mDescription = extractDescription(location);
+    public Destination(CharSequence location, Pattern destinationPatterns[]) {
+        CharSequence latLonDescription[] = Util.splitLatLonDescription(location);
+        try {
+            mLatitude = Util.parseCoordinate(latLonDescription[0]);
+            mLongitude = Util.parseCoordinate(latLonDescription[1]);
+        } catch (NumberFormatException numberFormatException) {
+        }
+        mDescription = latLonDescription[2];
+
+        for (mContentSelectorIndex = destinationPatterns.length - 1; mContentSelectorIndex >= 0; mContentSelectorIndex--) {
+            Matcher matcher = destinationPatterns[mContentSelectorIndex].matcher(mDescription);
+            if (matcher.find()) {
+                mId = matcher.group(1);
+                return;
+            }
+        }
     }
 
-    private boolean extractLocationAndDescription(CharSequence location) {
-        final Matcher matcher = PAT_LOCATION_AND_DESCRIPTION.matcher(location);
-
-        if (!matcher.matches())
-            return false;
-        try {
-            mLatitude = Util.parseCoordinate(matcher.group(1));
-            mLongitude = Util.parseCoordinate(matcher.group(2));
-        } catch (NumberFormatException numberFormatException) {
-            return false;
-        }
-        mDescription = matcher.group(3).trim();
-        return true;
+    public int getContentIndex() {
+        return mContentSelectorIndex;
     }
 
     public CharSequence getDescription() {
         return mDescription;
+    }
+
+    public CharSequence getId() {
+        return mId;
     }
 
     public double getLatitude() {
