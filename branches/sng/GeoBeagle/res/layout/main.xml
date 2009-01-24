@@ -34,7 +34,7 @@
 
 		<TextView android:id="@+id/select_cache_prompt"
 			android:layout_width="fill_parent" android:layout_height="wrap_content"
-			android:text="Select cache:" android:paddingTop="12sp"
+			android:text="Search for cache:" android:paddingTop="12sp"
 			android:textSize="18sp" />
 		<LinearLayout android:orientation="horizontal"
 			android:layout_height="wrap_content" android:layout_width="fill_parent">
@@ -56,9 +56,10 @@
 				android:layout_height="wrap_content" android:layout_width="wrap_content" />
 		</LinearLayout>
 
-		<TextView android:layout_width="fill_parent"
-			android:layout_height="wrap_content" android:text="Go to cache:"
-			android:paddingTop="18sp" android:textSize="18sp" />
+		<TextView android:id="@+id/go_to_cache_prompt"
+			android:layout_width="fill_parent" android:layout_height="wrap_content"
+			android:text="Go to cache:" android:paddingTop="18sp"
+			android:textSize="18sp" />
 
 		<LinearLayout android:orientation="horizontal"
 			android:layout_height="wrap_content" android:layout_width="fill_parent">

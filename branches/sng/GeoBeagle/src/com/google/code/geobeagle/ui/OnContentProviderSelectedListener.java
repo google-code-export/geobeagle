@@ -8,17 +8,20 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 
 public class OnContentProviderSelectedListener implements OnItemSelectedListener {
-    private final String[] objectNames;
     private final MockableTextView mContentProviderCaption;
+    private final String[] mObjectNames;
+    private final MockableTextView mGotoObjectCaption;
 
     public OnContentProviderSelectedListener(ResourceProvider resourceProvider,
-            MockableTextView contentProviderCaption) {
-        this.objectNames = resourceProvider.getStringArray(R.array.object_names);
+            MockableTextView contentProviderCaption, MockableTextView gotoCacheCaption) {
+        mObjectNames = resourceProvider.getStringArray(R.array.object_names);
         mContentProviderCaption = contentProviderCaption;
+        mGotoObjectCaption = gotoCacheCaption;
     }
 
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        mContentProviderCaption.setText("Select " + objectNames[position] + ":");
+        mContentProviderCaption.setText("Search for " + mObjectNames[position] + ":");
+        mGotoObjectCaption.setText("Go to " + mObjectNames[position] + ":");
     }
 
     public void onNothingSelected(AdapterView<?> parent) {

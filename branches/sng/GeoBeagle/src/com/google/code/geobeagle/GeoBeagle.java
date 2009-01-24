@@ -49,13 +49,14 @@ public class GeoBeagle extends Activity {
     private final LocationChooser mLocationChooser;
     private LocationSetter mLocationSetter;
     private LocationViewer mLocationViewer;
-    private ResourceProvider mResourceProvider;
+    private final ResourceProvider mResourceProvider;
     private ContentSelector mContentSelector;
 
     public GeoBeagle() {
         super();
         mErrorDisplayer = new ErrorDisplayer(this);
         mLocationChooser = new LocationChooser();
+        mResourceProvider = new ResourceProvider(this);
     }
 
     private void getCoordinatesFromIntent(LocationSetter locationSetter, Intent intent,
@@ -125,11 +126,11 @@ public class GeoBeagle extends Activity {
 
             ((Spinner)this.findViewById(R.id.content_provider))
                     .setOnItemSelectedListener(new OnContentProviderSelectedListener(
-                            mResourceProvider, new MockableTextView((TextView)this
-                                    .findViewById(R.id.select_cache_prompt))));
+                            mResourceProvider, new MockableTextView(
+                                    (TextView)findViewById(R.id.select_cache_prompt)),
+                            new MockableTextView((TextView)findViewById(R.id.go_to_cache_prompt))));
         } catch (final Exception e) {
-            ((TextView)findViewById(R.id.debug)).setText(e.toString() + "\n"
-                    + Util.getStackTrace(e));
+            mErrorDisplayer.displayError(e.toString() + "\n" + Util.getStackTrace(e));
         }
     }
 
@@ -150,7 +151,6 @@ public class GeoBeagle extends Activity {
     }
 
     private void setCacheClickListeners() {
-        mResourceProvider = new ResourceProvider(this);
         IntentFactory intentFactory = new IntentFactory(new UriParser());
         GetCoordsToast getCoordsToast = new GetCoordsToast(this);
         MyLocationProvider myLocationProvider = new MyLocationProvider(mGpsControl, mErrorDisplayer);

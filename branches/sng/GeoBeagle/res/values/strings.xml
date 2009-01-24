@@ -7,7 +7,7 @@
 	<string name="app_name">GeoBeagle</string>
 	<string name="maps">Map</string>
 	<string name="geocaching_map">Map</string>
-	<string name="nearest_caches">Nearest Caches</string>
+	<string name="nearest_caches">List</string>
 	<string name="my_location">My Location</string>
 	<string name="cache_page">Web Page</string>
 	<string name="recent_locations">Recent locations</string>
@@ -39,7 +39,7 @@
 	</array>
     <array name="content_providers">
       <item>Atlas Quest</item>
-      <item>Geocaching</item>
+      <item>Groundspeak</item>
     </array>
     <array name="object_names">
     	<item>letterbox</item>
