@@ -1,3 +1,16 @@
+/*
+ ** Licensed under the Apache License, Version 2.0 (the "License");
+ ** you may not use this file except in compliance with the License.
+ ** You may obtain a copy of the License at
+ **
+ **     http://www.apache.org/licenses/LICENSE-2.0
+ **
+ ** Unless required by applicable law or agreed to in writing, software
+ ** distributed under the License is distributed on an "AS IS" BASIS,
+ ** WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ ** See the License for the specific language governing permissions and
+ ** limitations under the License.
+ */
 
 package com.google.code.geobeagle.ui;
 
@@ -55,8 +68,8 @@ public class LocationSetterTest extends TestCase {
         replay(context);
         replay(fileOutputStream);
         replay(bufferedOutputStream);
-        LocationSetter locationSetter = new LocationSetter(context, editText, new LocationControl(null,
-                null), new Pattern[] {}) {
+        LocationSetter locationSetter = new LocationSetter(context, editText, new LocationControl(
+                null, null), new Pattern[] {}) {
             protected BufferedOutputStream createBufferedOutputStream(OutputStream outputStream) {
                 return bufferedOutputStream;
             }
@@ -84,8 +97,8 @@ public class LocationSetterTest extends TestCase {
 
         replay(location);
         replay(editText);
-        LocationSetter locationSetter = new LocationSetter(null, editText, new LocationControl(null,
-                null) {
+        LocationSetter locationSetter = new LocationSetter(null, editText, new LocationControl(
+                null, null) {
             public Location getLocation() {
                 return location;
             }
@@ -104,8 +117,8 @@ public class LocationSetterTest extends TestCase {
 
         replay(editText);
         replay(errorDisplayer);
-        LocationSetter locationSetter = new LocationSetter(null, editText, new LocationControl(null,
-                null) {
+        LocationSetter locationSetter = new LocationSetter(null, editText, new LocationControl(
+                null, null) {
             public Location getLocation() {
                 return null;
             }
