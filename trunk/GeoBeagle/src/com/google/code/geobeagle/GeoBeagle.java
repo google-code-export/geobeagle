@@ -1,6 +1,20 @@
+/*
+ ** Licensed under the Apache License, Version 2.0 (the "License");
+ ** you may not use this file except in compliance with the License.
+ ** You may obtain a copy of the License at
+ **
+ **     http://www.apache.org/licenses/LICENSE-2.0
+ **
+ ** Unless required by applicable law or agreed to in writing, software
+ ** distributed under the License is distributed on an "AS IS" BASIS,
+ ** WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ ** See the License for the specific language governing permissions and
+ ** limitations under the License.
+ */
 
 package com.google.code.geobeagle;
 
+import com.google.code.geobeagle.LocationControl.LocationChooser;
 import com.google.code.geobeagle.intents.DestinationToCachePage;
 import com.google.code.geobeagle.intents.DestinationToGoogleMap;
 import com.google.code.geobeagle.intents.IntentFactory;
@@ -8,17 +22,20 @@ import com.google.code.geobeagle.intents.IntentStarterLocation;
 import com.google.code.geobeagle.intents.IntentStarterRadar;
 import com.google.code.geobeagle.intents.IntentStarterViewUri;
 import com.google.code.geobeagle.ui.CachePageButtonEnabler;
+import com.google.code.geobeagle.ui.ContentSelector;
 import com.google.code.geobeagle.ui.DestinationListOnClickListener;
 import com.google.code.geobeagle.ui.ErrorDisplayer;
 import com.google.code.geobeagle.ui.GetCoordsToast;
 import com.google.code.geobeagle.ui.LocationOnKeyListener;
 import com.google.code.geobeagle.ui.LocationSetter;
+import com.google.code.geobeagle.ui.LocationSetterLifecycleManager;
 import com.google.code.geobeagle.ui.LocationViewer;
 import com.google.code.geobeagle.ui.MockableContext;
 import com.google.code.geobeagle.ui.MockableEditText;
 import com.google.code.geobeagle.ui.MockableTextView;
 import com.google.code.geobeagle.ui.MyLocationProvider;
 import com.google.code.geobeagle.ui.OnCacheButtonClickListenerBuilder;
+import com.google.code.geobeagle.ui.OnContentProviderSelectedListener;
 import com.google.code.geobeagle.ui.TooString;
 
 import android.app.Activity;
@@ -31,50 +48,42 @@ import android.net.UrlQuerySanitizer;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 
+/*
+ * Main Activity for GeoBeagle.
+ */
 public class GeoBeagle extends Activity {
+    private final ErrorDisplayer mErrorDisplayer;
+    private LocationControl mGpsControl;
+    private GeoBeagleLocationListener mLocationListener;
+    private AppLifecycleManager mAppLifecycleManager;
+    private final LocationChooser mLocationChooser;
+    private LocationSetter mLocationSetter;
+    private LocationViewer mLocationViewer;
+    private final ResourceProvider mResourceProvider;
+    private ContentSelector mContentSelector;
+
     public GeoBeagle() {
         super();
         mErrorDisplayer = new ErrorDisplayer(this);
+        mLocationChooser = new LocationChooser();
+        mResourceProvider = new ResourceProvider(this);
     }
 
-    private final ErrorDisplayer mErrorDisplayer;
-    private GpsControl mGpsControl;
-    private GpsLocationListener mGpsLocationListener;
-    private LifecycleManager mLifecycleManager;
-    private LocationSetter mLocationSetter;
-    private LocationViewer mLocationViewer;
-    
-//    private final byte[] getFileAsBytes(final File file) throws IOException {
-//        final BufferedInputStream bis = new BufferedInputStream( 
-//            new FileInputStream(file));
-//        final byte [] bytes = new byte[(int) file.length()];
-//        bis.read(bytes);
-//        bis.close();
-//        return bytes;
-//    }
     private void getCoordinatesFromIntent(LocationSetter locationSetter, Intent intent,
             ErrorDisplayer errorDisplayer) {
         try {
             if (intent.getType() == null) {
                 final String query = intent.getData().getQuery();
-                final String sanitizedQuery = Util.parseHttpUri(query, new UrlQuerySanitizer(),
-                        UrlQuerySanitizer.getAllButNulAndAngleBracketsLegal());
-                final String[] latlon = Util.getLatLonFromQuery(sanitizedQuery);
-                locationSetter.setLocation(Util.parseDecimalDegreesStringToDegrees(latlon[0]), Util
-                        .parseDecimalDegreesStringToDegrees(latlon[1]), latlon[2]);
+                final CharSequence sanitizedQuery = Util.parseHttpUri(query,
+                        new UrlQuerySanitizer(), UrlQuerySanitizer
+                                .getAllButNulAndAngleBracketsLegal());
+                final CharSequence[] latlon = Util.splitLatLonDescription(sanitizedQuery);
+                locationSetter.setLocation(Util.parseCoordinate(latlon[0]), Util
+                        .parseCoordinate(latlon[1]), latlon[2]);
             }
-            // else if (intent.getType() != null
-//                    && intent.getType().contentEquals("application/xml-loc")) {
-//                String path = intent.getData().getPath();
-//                DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
-//                DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
-//                File file = new File(path);
-//                byte b[] = getFileAsBytes(file);
-//                String s = new String(b);
-//                documentBuilder.parse(s);
-            // }
         } catch (final Exception e) {
             errorDisplayer.displayError("Error: " + e.getMessage());
         }
@@ -96,21 +105,23 @@ public class GeoBeagle extends Activity {
             super.onCreate(savedInstanceState);
             setContentView(R.layout.main);
 
+            mContentSelector = new ContentSelector((Spinner)findViewById(R.id.content_provider),
+                    getPreferences(MODE_PRIVATE));
+
             final EditText txtLocation = (EditText)findViewById(R.id.go_to);
             final CachePageButtonEnabler cachePageButtonEnabler = new CachePageButtonEnabler(
-                    new TooString(txtLocation), findViewById(R.id.cache_page));
+                    new TooString(txtLocation), findViewById(R.id.cache_page), mResourceProvider);
             txtLocation.setOnKeyListener(new LocationOnKeyListener(cachePageButtonEnabler));
 
             mLocationViewer = new LocationViewer(new MockableContext(this), new MockableTextView(
                     (TextView)findViewById(R.id.location_viewer)), new MockableTextView(
                     (TextView)findViewById(R.id.last_updated)), new MockableTextView(
                     (TextView)findViewById(R.id.status)));
-            mGpsLocationListener = new GpsLocationListener(mLocationViewer);
-            mGpsControl = new GpsControl(
-                    (LocationManager)getSystemService(Context.LOCATION_SERVICE),
-                    mGpsLocationListener);
+            final LocationManager locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
+            mGpsControl = new LocationControl(locationManager, mLocationChooser);
+            mLocationListener = new GeoBeagleLocationListener(mGpsControl, mLocationViewer);
             mLocationSetter = new LocationSetter(this, new MockableEditText(txtLocation),
-                    mGpsControl);
+                    mGpsControl, Destination.getDestinationPatterns(mResourceProvider));
 
             setCacheClickListeners();
             final Button btnGoToList = (Button)findViewById(R.id.go_to_list);
@@ -118,49 +129,60 @@ public class GeoBeagle extends Activity {
                     .getDescriptionsAndLocations(), mLocationSetter, new AlertDialog.Builder(this),
                     mErrorDisplayer, cachePageButtonEnabler));
 
-            mLifecycleManager = new LifecycleManager(mGpsControl, mLocationSetter,
-                    getPreferences(MODE_PRIVATE));
+            mAppLifecycleManager = new AppLifecycleManager(getPreferences(MODE_PRIVATE),
+                    new LifecycleManager[] {
+                            new LocationLifecycleManager(mLocationListener, locationManager),
+                            mContentSelector,
+                            new LocationSetterLifecycleManager(mLocationSetter,
+                                    getString(R.string.initial_destination))
+                    });
 
+            ((Spinner)this.findViewById(R.id.content_provider))
+                    .setOnItemSelectedListener(new OnContentProviderSelectedListener(
+                            mResourceProvider, new MockableTextView(
+                                    (TextView)findViewById(R.id.select_cache_prompt)),
+                            new MockableTextView((TextView)findViewById(R.id.go_to_cache_prompt))));
         } catch (final Exception e) {
-            ((TextView)findViewById(R.id.debug)).setText(e.toString() + "\n"
-                    + Util.getStackTrace(e));
+            mErrorDisplayer.displayError(e.toString() + "\n" + Util.getStackTrace(e));
         }
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        mLifecycleManager.onPause();
+        mAppLifecycleManager.onPause();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        mLifecycleManager.onResume(mErrorDisplayer, getString(R.string.initial_destination));
+        mAppLifecycleManager.onResume(mErrorDisplayer);
         maybeGetCoordinatesFromIntent();
         final Location location = mGpsControl.getLocation();
         if (location != null)
-            mGpsLocationListener.onLocationChanged(location);
+            mLocationListener.onLocationChanged(location);
     }
 
     private void setCacheClickListeners() {
-        ResourceProvider resourceProvider = new ResourceProvider(this);
         IntentFactory intentFactory = new IntentFactory(new UriParser());
         GetCoordsToast getCoordsToast = new GetCoordsToast(this);
         MyLocationProvider myLocationProvider = new MyLocationProvider(mGpsControl, mErrorDisplayer);
 
         OnCacheButtonClickListenerBuilder cacheClickListenerSetter = new OnCacheButtonClickListenerBuilder(
                 this, mErrorDisplayer);
-        cacheClickListenerSetter.set(R.id.geocaching_map, new IntentStarterLocation(this,
-                resourceProvider, intentFactory, myLocationProvider, R.string.geocaching_maps_url,
-                getCoordsToast), "");
-        cacheClickListenerSetter.set(R.id.nearest_caches, new IntentStarterLocation(this,
-                resourceProvider, intentFactory, myLocationProvider, R.string.nearest_caches_url,
-                getCoordsToast), "");
+
+        cacheClickListenerSetter.set(R.id.object_map, new IntentStarterLocation(this,
+                mResourceProvider, intentFactory, myLocationProvider, mContentSelector,
+                R.array.map_objects, getCoordsToast), "");
+        cacheClickListenerSetter.set(R.id.nearest_objects, new IntentStarterLocation(this,
+                mResourceProvider, intentFactory, myLocationProvider, mContentSelector,
+                R.array.nearest_objects, getCoordsToast), "");
+
         cacheClickListenerSetter.set(R.id.maps, new IntentStarterViewUri(this, intentFactory,
-                mLocationSetter, new DestinationToGoogleMap(resourceProvider)), "");
+                mLocationSetter, new DestinationToGoogleMap(mResourceProvider)), "");
         cacheClickListenerSetter.set(R.id.cache_page, new IntentStarterViewUri(this, intentFactory,
-                mLocationSetter, new DestinationToCachePage(resourceProvider)), "");
+                mLocationSetter, new DestinationToCachePage(mResourceProvider, mContentSelector)),
+                "");
         cacheClickListenerSetter.set(R.id.radar, new IntentStarterRadar(this, intentFactory,
                 mLocationSetter), "\nPlease install the Radar application to use Radar.");
     }

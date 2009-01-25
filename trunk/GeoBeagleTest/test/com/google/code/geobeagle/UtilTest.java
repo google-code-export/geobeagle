@@ -1,3 +1,16 @@
+/*
+ ** Licensed under the Apache License, Version 2.0 (the "License");
+ ** you may not use this file except in compliance with the License.
+ ** You may obtain a copy of the License at
+ **
+ **     http://www.apache.org/licenses/LICENSE-2.0
+ **
+ ** Unless required by applicable law or agreed to in writing, software
+ ** distributed under the License is distributed on an "AS IS" BASIS,
+ ** WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ ** See the License for the specific language governing permissions and
+ ** limitations under the License.
+ */
 
 package com.google.code.geobeagle;
 
@@ -12,6 +25,12 @@ import android.net.UrlQuerySanitizer.ValueSanitizer;
 import junit.framework.TestCase;
 
 public class UtilTest extends TestCase {
+    private void splitLatLonHelper(String coords, String lat, String lon) {
+        CharSequence[] latLon = Util.splitLatLon(coords);
+        assertEquals(lat, latLon[0]);
+        assertEquals(lon, latLon[1]);
+    }
+
     public void testConvertDegreesToMinutes() {
         assertEquals("-122 30.000", Util.formatDegreesAsDecimalDegreesString(-122.5));
         assertEquals("-122 30.600", Util.formatDegreesAsDecimalDegreesString(-122.51));
@@ -19,48 +38,40 @@ public class UtilTest extends TestCase {
         assertEquals("-0 03.000", Util.formatDegreesAsDecimalDegreesString(-0.05));
     }
 
-    public void testGetLatLonFromQueryGCAtBeginning() {
-        String[] latLonFromQuery = Util.getLatLonFromQuery("GC1ERCC@N+37¡+15.165+W+122¡+02.620+");
-        assertEquals("N 37¡ 15.165", latLonFromQuery[0]);
-        assertEquals("W 122¡ 02.620", latLonFromQuery[1]);
-        assertEquals("GC1ERCC", latLonFromQuery[2]);
-        
-        latLonFromQuery = Util.getLatLonFromQuery("GC1@N+37¡+15.165+W+122¡+02.620+");
-        assertEquals("N 37¡ 15.165", latLonFromQuery[0]);
-        assertEquals("W 122¡ 02.620", latLonFromQuery[1]);
-        assertEquals("GC1", latLonFromQuery[2]);
-
-        latLonFromQuery = Util.getLatLonFromQuery("GC1@N+37¡+15.165+E+122¡+02.620+");
-        assertEquals("N 37¡ 15.165", latLonFromQuery[0]);
-        assertEquals("E 122¡ 02.620", latLonFromQuery[1]);
-        assertEquals("GC1", latLonFromQuery[2]);
-
-        latLonFromQuery = Util.getLatLonFromQuery("GC1@N+3¡+15.165+E+122¡+02.620+");
-        assertEquals("N 3¡ 15.165", latLonFromQuery[0]);
-        assertEquals("E 122¡ 02.620", latLonFromQuery[1]);
-        assertEquals("GC1", latLonFromQuery[2]);
-    }
-
-    public void testGetLatLonFromQueryGCAtEnd() {
-        // Util.getLatLonFromQuery("a");
-        String[] ll = Util.getLatLonFromQuery("N+47¡+40.464+W+122¡+20.119+(GCTANE)+");
-        assertEquals("N 47¡ 40.464", ll[0]);
-        assertEquals("W 122¡ 20.119", ll[1]);
-        assertEquals("GCTANE", ll[2]);
-    }
-
     public void testMinutesToDegrees() {
-        assertEquals(122.0, Util.parseDecimalDegreesStringToDegrees("122"));
-        assertEquals(122.5, Util.parseDecimalDegreesStringToDegrees("122 30"));
-        assertEquals(122.51, Util.parseDecimalDegreesStringToDegrees("122 30.600"));
-        assertEquals(-122.51, Util.parseDecimalDegreesStringToDegrees("-122 30.600"));
-        assertEquals(-0.0165, Util.parseDecimalDegreesStringToDegrees("W 000¡ 00.990"));
-        assertEquals(-0.0165, Util.parseDecimalDegreesStringToDegrees("-000¡ 00.990"));
-        assertEquals(-122.51, Util.parseDecimalDegreesStringToDegrees("-122¡ 30.600"));
-        assertEquals(122.51, Util.parseDecimalDegreesStringToDegrees("E 122¡ 30.600"));
-        assertEquals(-122.51, Util.parseDecimalDegreesStringToDegrees("W 122¡ 30.600"));
-        assertEquals(-37.0, Util.parseDecimalDegreesStringToDegrees("S 37¡ 0.000"));
-        assertEquals(-37.0, Util.parseDecimalDegreesStringToDegrees(" S 37¡ 0.000"));
+        assertEquals(122.0, Util.parseCoordinate("122"));
+        assertEquals(122.5, Util.parseCoordinate("122 30"));
+        assertEquals(122.51, Util.parseCoordinate("122 30.600"));
+        assertEquals(-122.51, Util.parseCoordinate("-122 30.600"));
+        assertEquals(-0.0165, Util.parseCoordinate("W 000¡ 00.990"));
+        assertEquals(-0.0165, Util.parseCoordinate("-000¡ 00.990"));
+        assertEquals(-122.51, Util.parseCoordinate("-122¡ 30.600"));
+        assertEquals(122.51, Util.parseCoordinate("E 122¡ 30.600"));
+        assertEquals(-122.51, Util.parseCoordinate("W 122¡ 30.600"));
+        assertEquals(-37.0, Util.parseCoordinate("S 37¡ 0.000"));
+        assertEquals(-37.0, Util.parseCoordinate(" S 37¡ 0.000"));
+    }
+
+    public void testParseCoordinate() {
+        assertEquals(122.5, Util.parseCoordinate("122.5"));
+        assertEquals(-122.5, Util.parseCoordinate("W122.5"));
+        assertEquals(122.51, Util.parseCoordinate("122 30.6"));
+        assertEquals(122.51, Util.parseCoordinate("122 30 36"));
+
+        assertEquals(40.4425, Util.parseCoordinate("40:26:33"), 0.00001);
+
+        assertEquals(-40.4425, Util.parseCoordinate("40:26:33S"), 0.00001);
+        assertEquals(40.4425, Util.parseCoordinate("40:26:33N"), 0.00001);
+        assertEquals(40.4425, Util.parseCoordinate("E40:26:33"), 0.00001);
+        assertEquals(37.25275, Util.parseCoordinate("N+37¡+15.165 "), 0.00001);
+
+        assertEquals(40.446195, Util.parseCoordinate("40¡ 26.7717"));
+        assertEquals(40.446195, Util.parseCoordinate("40:26:46.302N"), 0.0000001);
+        assertEquals(40.4461, Util.parseCoordinate("40¡26'46\"N"), 0.0001);
+        assertEquals(40.4461, Util.parseCoordinate("40d 26' 46\" N"), 0.0001);
+        assertEquals(40.446195, Util.parseCoordinate("40.446195N"), 0.0000001);
+        assertEquals(40.446195, Util.parseCoordinate("40.446195"), 0.0000001);
+        assertEquals(40.446195, Util.parseCoordinate("40¡ 26.7717"), 0.0000001);
     }
 
     public void testParseHttpUri() {
@@ -75,6 +86,60 @@ public class UtilTest extends TestCase {
         replay(sanitizer);
         assertEquals(sanitizedQuery, Util.parseHttpUri(unsanitizedQuery, sanitizer, valueSanitizer));
         verify(sanitizer);
+    }
+
+    public void testGetLatLonDescriptionFromQuery() {
+        CharSequence[] coordsAndDescription = Util
+                .splitLatLonDescription("Wildwood Park, Saratoga, CA(The Nut Case #89882)@37.258356797547,-122.0354267005 ");
+        assertEquals("37.258356797547", coordsAndDescription[0]);
+        assertEquals("-122.0354267005", coordsAndDescription[1]);
+        assertEquals("LB89882--The Nut Case", coordsAndDescription[2]);
+    }
+
+    public void testSplitCoordsAndDescriptions() {
+        CharSequence[] coordsAndDescription = Util
+                .splitCoordsAndDescription("GC1ERCC@N+37¡+15.165+W+122¡+02.620+");
+        assertEquals("N+37¡+15.165+W+122¡+02.620+", coordsAndDescription[0]);
+        assertEquals("GC1ERCC", coordsAndDescription[1]);
+
+        coordsAndDescription = Util
+                .splitCoordsAndDescription("N+47¡+40.464+W+122¡+20.119+(GCTANE)+");
+        assertEquals("N+47¡+40.464+W+122¡+20.119+", coordsAndDescription[0]);
+        assertEquals("GCTANE", coordsAndDescription[1]);
+
+        coordsAndDescription = Util
+                .splitCoordsAndDescription("37.258356797547,-122.0354267005 (Wildwood Park, Saratoga, CA)");
+        assertEquals("37.258356797547,-122.0354267005", coordsAndDescription[0]);
+        assertEquals("Wildwood Park, Saratoga, CA", coordsAndDescription[1]);
+
+        coordsAndDescription = Util
+                .splitCoordsAndDescription("Wildwood Park, Saratoga, CA(The Nut Case #89882)@37.258356797547,-122.0354267005 ");
+        assertEquals("37.258356797547,-122.0354267005", coordsAndDescription[0]);
+        assertEquals("Wildwood Park, Saratoga, CA(The Nut Case #89882)", coordsAndDescription[1]);
+    }
+
+    public void testParseDescription() {
+        assertEquals("GCTANE", Util.parseDescription("GCTANE"));
+        assertEquals("LB89882--The Nut Case", Util
+                .parseDescription("Wildwood Park, Saratoga, CA(The Nut Case #89882)"));
+    }
+
+    public void testSplitLatLon() {
+        // http://en.wikipedia.org/wiki/Geographic_coordinate_conversion.
+        splitLatLonHelper("40:26:46N,79:56:55W", "40:26:46N", "79:56:55W");
+        splitLatLonHelper("40:26:46.302N 79:56:55.903W", "40:26:46.302N", "79:56:55.903W");
+        splitLatLonHelper("40¡26'21\"N 79¡58'36\"W", "40¡26'21\"N", "79¡58'36\"W");
+        splitLatLonHelper("40d 26' 21\" N 79d 58' 36\" W", "40d 26' 21\" N", "79d 58' 36\" W");
+        splitLatLonHelper("40.446195N 79.948862W", "40.446195N", "79.948862W");
+        splitLatLonHelper("40.446195, -79.948862", "40.446195", "-79.948862");
+        splitLatLonHelper("40¡ 26.7717, -79¡ 56.93172", "40¡ 26.7717", "-79¡ 56.93172");
+
+        // Geocaching.com:
+        splitLatLonHelper("N37¡ 15.165 W 122¡ 02.620", "N37¡ 15.165", "W 122¡ 02.620");
+        splitLatLonHelper("N+37¡+15.165+W+122¡+02.620+", "N+37¡+15.165+", "W+122¡+02.620+");
+
+        // atlasquest.com:
+        splitLatLonHelper("37.258356797547,-122.0354267005", "37.258356797547", "-122.0354267005");
     }
 
 }

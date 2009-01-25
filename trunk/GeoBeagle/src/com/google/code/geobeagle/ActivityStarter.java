@@ -12,9 +12,10 @@
  ** limitations under the License.
  */
 
-package com.google.code.geobeagle.intents;
+package com.google.code.geobeagle;
 
+import android.content.Intent;
 
-public interface IntentStarter {
-    public abstract void startIntent();
+public interface ActivityStarter {
+    void startActivity(Intent intent);
 }

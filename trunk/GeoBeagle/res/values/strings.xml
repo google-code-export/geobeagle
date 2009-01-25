@@ -1,4 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
+	<!--
+		Licensed under the Apache License, Version 2.0 (the "License"); you
+		may not use this file except in compliance with the License. You may
+		obtain a copy of the License at:
+		http://www.apache.org/licenses/LICENSE-2.0. Unless required by
+		applicable law or agreed to in writing, software distributed under the
+		License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+		CONDITIONS OF ANY KIND, either express or implied. See the License for
+		the specific language governing permissions and limitations under the
+		License.
+	-->
 <resources>
 	<string name="select_destination">Select destination</string>
 	<string name="go_to">Coordinates:</string>
@@ -7,7 +18,7 @@
 	<string name="app_name">GeoBeagle</string>
 	<string name="maps">Map</string>
 	<string name="geocaching_map">Map</string>
-	<string name="nearest_caches">Nearest Caches</string>
+	<string name="nearest_caches">List</string>
 	<string name="my_location">My Location</string>
 	<string name="cache_page">Web Page</string>
 	<string name="recent_locations">Recent locations</string>
@@ -18,10 +29,31 @@
 	<string name="available">AVAILABLE</string>
 	<string name="temporarily_unavailable">TEMPORARILY UNAVAILABLE</string>
 	<string name="getting_location_from_gps">getting location from gps...</string>
-	<string name="cache_page_url">http://coord.info/%1$s</string>
 	<string name="map_intent">geo:0,0?q=%1$.5f,%2$.5f (%3$s)</string>
-	<string name="nearest_caches_url">http://www.geocaching.com/seek/nearest.aspx?lat=%1$.5f&amp;lng=%2$.5f&amp;f=1</string>
-	<string name="geocaching_maps_url">"http://www.geocaching.com/map/?lat=%1$.5f&amp;lng=%2$.5f"</string>
 	<string name="get_coords_toast">&quot;To get the coords from the cache page, click: 'online maps...' / 'Google Maps'.&quot;</string>
 	<string name="error_cant_get_location">"Location cannot be determined.  Please ensure that your GPS is enabled and try again."</string>
+	<array name="nearest_objects">
+	  <item>http://www.atlasquest.com/results.html?gTypeId=2;gSort=5;gCoord=%1$.5f,%2$.5f</item>
+	  <item>http://www.geocaching.com/seek/nearest.aspx?lat=%1$.5f&amp;lng=%2$.5f&amp;f=1</item>
+	</array>
+	<array name="map_objects">
+	  <item>http://www.atlasquest.com/boxes/traditional/map.html?gTypeId=2;gStatus=1193;gSort=5;gCoord=%1$.5f,%2$.5f</item>
+	  <item>http://www.geocaching.com/map/?lat=%1$.5f&amp;lng=%2$.5f</item>
+	</array>
+	<array name="cache_page_url">
+	  <item>http://www.atlasquest.com/showinfo.html?gBoxId=%1s</item>
+	  <item>http://coord.info/GC%1$s</item>
+	</array>
+	<array name="content_prefixes">
+	  <item>LB</item>
+	  <item>GC</item>
+	</array>
+    <array name="content_providers">
+      <item>Atlas Quest: Letterboxes</item>
+      <item>Groundspeak Inc: Geocaches</item>
+    </array>
+    <array name="object_names">
+    	<item>letterbox</item>
+    	<item>cache</item>
+    </array>
 </resources>

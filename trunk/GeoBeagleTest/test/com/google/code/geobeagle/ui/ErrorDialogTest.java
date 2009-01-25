@@ -12,35 +12,44 @@
  ** limitations under the License.
  */
 
-package com.google.code.geobeagle.intents;
+package com.google.code.geobeagle.ui;
 
 import static org.easymock.EasyMock.expect;
 import static org.easymock.classextension.EasyMock.createMock;
 import static org.easymock.classextension.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.verify;
 
-import com.google.code.geobeagle.Destination;
-import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.ResourceProvider;
+import com.google.code.geobeagle.ui.ErrorDialog;
+
+import android.app.AlertDialog;
 
 import junit.framework.TestCase;
 
-public class DestinationToGoogleMapTest extends TestCase {
-    public void testConvert() {
+public class ErrorDialogTest extends TestCase {
+    public void testResource() {
         ResourceProvider resourceProvider = createMock(ResourceProvider.class);
-        Destination destination = createMock(Destination.class);
-        expect(destination.getDescription()).andReturn("GCFOO");
-        expect(destination.getLatitude()).andReturn(37.123);
-        expect(destination.getLongitude()).andReturn(122.345);
-        expect(resourceProvider.getString(R.string.map_intent)).andReturn(
-                "geo:0,0?q=%1$.5f,%2$.5f (%3$s)");
+        AlertDialog alertDialog = createMock(AlertDialog.class);
+        ErrorDialog errorDialog = new ErrorDialog(alertDialog, resourceProvider);
+        expect(resourceProvider.getString(37)).andReturn("some error message");
+        alertDialog.setMessage("some error message");
+        alertDialog.show();
 
-        replay(destination);
         replay(resourceProvider);
-        DestinationToGoogleMap destinationToCachePage = new DestinationToGoogleMap(resourceProvider);
-        assertEquals("geo:0,0?q=37.12300,122.34500 (GCFOO)", destinationToCachePage
-                .convert(destination));
-        verify(destination);
+        replay(alertDialog);
+        errorDialog.show(37);
         verify(resourceProvider);
+        verify(alertDialog);
+    }
+
+    public void testString() {
+        AlertDialog alertDialog = createMock(AlertDialog.class);
+        ErrorDialog errorDialog = new ErrorDialog(alertDialog, null);
+        alertDialog.setMessage("another error message");
+        alertDialog.show();
+
+        replay(alertDialog);
+        errorDialog.show("another error message");
+        verify(alertDialog);
     }
 }

@@ -1,7 +1,21 @@
+/*
+ ** Licensed under the Apache License, Version 2.0 (the "License");
+ ** you may not use this file except in compliance with the License.
+ ** You may obtain a copy of the License at
+ **
+ **     http://www.apache.org/licenses/LICENSE-2.0
+ **
+ ** Unless required by applicable law or agreed to in writing, software
+ ** distributed under the License is distributed on an "AS IS" BASIS,
+ ** WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ ** See the License for the specific language governing permissions and
+ ** limitations under the License.
+ */
 
 package com.google.code.geobeagle.intents;
 
 import com.google.code.geobeagle.ResourceProvider;
+import com.google.code.geobeagle.ui.ContentSelector;
 import com.google.code.geobeagle.ui.GetCoordsToast;
 import com.google.code.geobeagle.ui.MyLocationProvider;
 
@@ -16,15 +30,17 @@ public class IntentStarterLocation implements IntentStarter {
     private final MyLocationProvider mMyLocationProvider;
     private final ResourceProvider mResourceProvider;
     private final int mUriId;
+    private ContentSelector mContentSelector;
 
     public IntentStarterLocation(Activity activity, ResourceProvider resourceProvider,
-            IntentFactory intentFactory, MyLocationProvider myLocationProvider, int uriId,
-            GetCoordsToast getCoordsToast) {
+            IntentFactory intentFactory, MyLocationProvider myLocationProvider,
+            ContentSelector contentSelector, int uriId, GetCoordsToast getCoordsToast) {
         mActivity = activity;
         mGetCoordsToast = getCoordsToast;
         mIntentFactory = intentFactory;
         mMyLocationProvider = myLocationProvider;
         mResourceProvider = resourceProvider;
+        mContentSelector = contentSelector;
         mUriId = uriId;
     }
 
@@ -35,7 +51,7 @@ public class IntentStarterLocation implements IntentStarter {
 
         mGetCoordsToast.show();
         mActivity.startActivity(mIntentFactory.createIntent(Intent.ACTION_VIEW, String.format(
-                mResourceProvider.getString(mUriId), location.getLatitude(), location
-                        .getLongitude())));
+                mResourceProvider.getStringArray(mUriId)[mContentSelector.getIndex()], location
+                        .getLatitude(), location.getLongitude())));
     }
 }

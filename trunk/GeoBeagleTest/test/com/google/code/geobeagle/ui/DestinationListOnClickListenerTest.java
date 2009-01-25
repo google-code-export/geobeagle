@@ -1,5 +1,18 @@
+/*
+ ** Licensed under the Apache License, Version 2.0 (the "License");
+ ** you may not use this file except in compliance with the License.
+ ** You may obtain a copy of the License at
+ **
+ **     http://www.apache.org/licenses/LICENSE-2.0
+ **
+ ** Unless required by applicable law or agreed to in writing, software
+ ** distributed under the License is distributed on an "AS IS" BASIS,
+ ** WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ ** See the License for the specific language governing permissions and
+ ** limitations under the License.
+ */
 
-package com.google.code.geobeagle;
+package com.google.code.geobeagle.ui;
 
 import static org.easymock.EasyMock.aryEq;
 import static org.easymock.EasyMock.eq;
@@ -8,9 +21,8 @@ import static org.easymock.classextension.EasyMock.createMock;
 import static org.easymock.classextension.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.verify;
 
-import com.google.code.geobeagle.ui.CachePageButtonEnabler;
-import com.google.code.geobeagle.ui.DestinationListOnClickListener;
-import com.google.code.geobeagle.ui.LocationSetter;
+import com.google.code.geobeagle.DescriptionsAndLocations;
+import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.ui.DestinationListOnClickListener.DestinationListDialogOnClickListener;
 
 import android.app.AlertDialog;
@@ -31,12 +43,6 @@ public class DestinationListOnClickListenerTest extends TestCase {
         final LocationSetter locationSetter = createMock(LocationSetter.class);
         final AlertDialog.Builder dialogBuilder = createMock(AlertDialog.Builder.class);
         final AlertDialog alertDialog = createMock(AlertDialog.class);
-        CharSequence[] descriptions = new CharSequence[] {
-                "SFO", "OAK"
-        };
-        final CharSequence[] locations = new CharSequence[] {
-                "37 122 etc", "37 122 foo"
-        };
 
         expect(dialogBuilder.setTitle(R.string.select_destination)).andReturn(dialogBuilder);
         expect(dialogBuilder.setItems(aryEq(expectedDialogItems), eq(mockListener))).andReturn(
@@ -47,15 +53,14 @@ public class DestinationListOnClickListenerTest extends TestCase {
         replay(dialogBuilder);
         replay(alertDialog);
         DescriptionsAndLocations descriptionsAndLocations = new DescriptionsAndLocations();
-        for (int ix = 0; ix < descriptions.length; ix++) {
-            descriptionsAndLocations.add(descriptions[ix], locations[ix]);
-        }
+        descriptionsAndLocations.add("SFO", "37 122 etc");
+        descriptionsAndLocations.add("OAK", "37 122 foo");
         DestinationListOnClickListener destinationListOnClickListener = new DestinationListOnClickListener(
                 descriptionsAndLocations, locationSetter, dialogBuilder, null, null) {
             protected OnClickListener createDestinationListDialogOnClickListener(
                     List<CharSequence> previousLocations,
                     CachePageButtonEnabler cachePageButtonEnabler) {
-                assertEquals(Arrays.asList(null, locations[1], locations[0]), previousLocations);
+                assertEquals(Arrays.asList(null, "37 122 foo", "37 122 etc"), previousLocations);
                 return mockListener;
             }
         };
