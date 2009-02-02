@@ -1,5 +1,4 @@
 /*
- ** Licensed under the Apache License, Version 2.0 (the "License");
  ** you may not use this file except in compliance with the License.
  ** You may obtain a copy of the License at
  **
@@ -26,9 +25,9 @@ import com.google.code.geobeagle.ui.ContentSelector;
 import com.google.code.geobeagle.ui.DestinationListOnClickListener;
 import com.google.code.geobeagle.ui.ErrorDisplayer;
 import com.google.code.geobeagle.ui.GetCoordsToast;
+import com.google.code.geobeagle.ui.LocationBookmarks;
 import com.google.code.geobeagle.ui.LocationOnKeyListener;
 import com.google.code.geobeagle.ui.LocationSetter;
-import com.google.code.geobeagle.ui.LocationSetterLifecycleManager;
 import com.google.code.geobeagle.ui.LocationViewer;
 import com.google.code.geobeagle.ui.MockableContext;
 import com.google.code.geobeagle.ui.MockableEditText;
@@ -120,21 +119,30 @@ public class GeoBeagle extends Activity {
             final LocationManager locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
             mGpsControl = new LocationControl(locationManager, mLocationChooser);
             mLocationListener = new GeoBeagleLocationListener(mGpsControl, mLocationViewer);
-            mLocationSetter = new LocationSetter(this, new MockableEditText(txtLocation),
-                    mGpsControl, Destination.getDestinationPatterns(mResourceProvider));
+            DescriptionsAndLocations descriptionAndLocations = new DescriptionsAndLocations();
+            LocationBookmarks locationBookmarks = new LocationBookmarks(this,
+                    descriptionAndLocations, Destination.getDestinationPatterns(mResourceProvider));
+            
+            MockableEditText mockableTxtLocation = new MockableEditText(txtLocation);
+            mockableTxtLocation
+                    .setOnFocusChangeListener(new LocationSetter.EditTextFocusChangeListener(
+                            locationBookmarks, mockableTxtLocation));
+            mLocationSetter = new LocationSetter(this, mockableTxtLocation, mGpsControl,
+                    Destination.getDestinationPatterns(mResourceProvider), locationBookmarks,
+                    getString(R.string.initial_destination));
 
             setCacheClickListeners();
-            final Button btnGoToList = (Button)findViewById(R.id.go_to_list);
-            btnGoToList.setOnClickListener(new DestinationListOnClickListener(mLocationSetter
-                    .getDescriptionsAndLocations(), mLocationSetter, new AlertDialog.Builder(this),
-                    mErrorDisplayer, cachePageButtonEnabler));
+
+            ((Button)findViewById(R.id.go_to_list))
+                    .setOnClickListener(new DestinationListOnClickListener(descriptionAndLocations,
+                            mLocationSetter, new AlertDialog.Builder(this), mErrorDisplayer,
+                            cachePageButtonEnabler, this));
 
             mAppLifecycleManager = new AppLifecycleManager(getPreferences(MODE_PRIVATE),
                     new LifecycleManager[] {
+                            mLocationSetter, locationBookmarks,
                             new LocationLifecycleManager(mLocationListener, locationManager),
-                            mContentSelector,
-                            new LocationSetterLifecycleManager(mLocationSetter,
-                                    getString(R.string.initial_destination))
+                            mContentSelector
                     });
 
             ((Spinner)this.findViewById(R.id.content_provider))
