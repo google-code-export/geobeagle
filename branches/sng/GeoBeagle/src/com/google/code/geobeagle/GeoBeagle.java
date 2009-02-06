@@ -38,7 +38,6 @@ import com.google.code.geobeagle.ui.OnContentProviderSelectedListener;
 import com.google.code.geobeagle.ui.TooString;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
@@ -63,6 +62,7 @@ public class GeoBeagle extends Activity {
     private LocationViewer mLocationViewer;
     private final ResourceProvider mResourceProvider;
     private ContentSelector mContentSelector;
+    private CachePageButtonEnabler mCachePageButtonEnabler;
 
     public GeoBeagle() {
         super();
@@ -91,9 +91,15 @@ public class GeoBeagle extends Activity {
     private boolean maybeGetCoordinatesFromIntent() {
         final Intent intent = getIntent();
         final String action = intent.getAction();
-        if ((action != null) && action.equals(Intent.ACTION_VIEW)) {
-            getCoordinatesFromIntent(mLocationSetter, intent, mErrorDisplayer);
-            return true;
+        if (action != null) {
+            if (action.equals(Intent.ACTION_VIEW)) {
+                getCoordinatesFromIntent(mLocationSetter, intent, mErrorDisplayer);
+                return true;
+            } else if (action.equals(CacheList.SELECT_CACHE)) {
+                mLocationSetter.setLocation(intent.getStringExtra("location"), mErrorDisplayer);
+                mCachePageButtonEnabler.check();
+                return true;
+            }
         }
         return false;
     }
@@ -108,9 +114,9 @@ public class GeoBeagle extends Activity {
                     getPreferences(MODE_PRIVATE));
 
             final EditText txtLocation = (EditText)findViewById(R.id.go_to);
-            final CachePageButtonEnabler cachePageButtonEnabler = new CachePageButtonEnabler(
-                    new TooString(txtLocation), findViewById(R.id.cache_page), mResourceProvider);
-            txtLocation.setOnKeyListener(new LocationOnKeyListener(cachePageButtonEnabler));
+            mCachePageButtonEnabler = new CachePageButtonEnabler(new TooString(txtLocation),
+                    findViewById(R.id.cache_page), mResourceProvider);
+            txtLocation.setOnKeyListener(new LocationOnKeyListener(mCachePageButtonEnabler));
 
             mLocationViewer = new LocationViewer(new MockableContext(this), new MockableTextView(
                     (TextView)findViewById(R.id.location_viewer)), new MockableTextView(
@@ -119,10 +125,10 @@ public class GeoBeagle extends Activity {
             final LocationManager locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
             mGpsControl = new LocationControl(locationManager, mLocationChooser);
             mLocationListener = new GeoBeagleLocationListener(mGpsControl, mLocationViewer);
-            DescriptionsAndLocations descriptionAndLocations = new DescriptionsAndLocations();
+            DescriptionsAndLocations descriptionsAndLocations = new DescriptionsAndLocations();
             LocationBookmarks locationBookmarks = new LocationBookmarks(this,
-                    descriptionAndLocations, Destination.getDestinationPatterns(mResourceProvider));
-            
+                    descriptionsAndLocations, Destination.getDestinationPatterns(mResourceProvider));
+
             MockableEditText mockableTxtLocation = new MockableEditText(txtLocation);
             mockableTxtLocation
                     .setOnFocusChangeListener(new LocationSetter.EditTextFocusChangeListener(
@@ -134,9 +140,7 @@ public class GeoBeagle extends Activity {
             setCacheClickListeners();
 
             ((Button)findViewById(R.id.go_to_list))
-                    .setOnClickListener(new DestinationListOnClickListener(descriptionAndLocations,
-                            mLocationSetter, new AlertDialog.Builder(this), mErrorDisplayer,
-                            cachePageButtonEnabler, this));
+                    .setOnClickListener(new DestinationListOnClickListener(this));
 
             mAppLifecycleManager = new AppLifecycleManager(getPreferences(MODE_PRIVATE),
                     new LifecycleManager[] {

@@ -32,8 +32,9 @@
 				<category android:name="android.intent.category.BROWSABLE" />
 				<data android:mimeType="application/xml-loc" />
 			</intent-filter>
-
 		</activity>
+		<activity android:name=".CacheList" android:label="GeoBeagle Caches and Letterboxes"/>
+
 	</application>
 	<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 	<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
