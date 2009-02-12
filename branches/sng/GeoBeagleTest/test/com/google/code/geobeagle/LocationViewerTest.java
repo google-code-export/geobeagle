@@ -20,55 +20,124 @@ import static org.easymock.classextension.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.verify;
 
 import com.google.code.geobeagle.ui.LocationViewer;
-import com.google.code.geobeagle.ui.MockableContext;
 import com.google.code.geobeagle.ui.MockableTextView;
+import com.google.code.geobeagle.ui.LocationViewer.MeterFormatter;
+import com.google.code.geobeagle.ui.LocationViewer.MeterView;
+import com.google.code.geobeagle.ui.LocationViewer.Time;
 
+import android.location.Location;
 import android.location.LocationProvider;
 
 import junit.framework.TestCase;
 
 public class LocationViewerTest extends TestCase {
 
-    public final void testCreate() {
-        MockableContext context = createMock(MockableContext.class);
-        MockableTextView lastUpdateTime = createMock(MockableTextView.class);
-        MockableTextView coordinates = createMock(MockableTextView.class);
-        coordinates.setText(R.string.getting_location_from_gps);
-
-        replay(context);
-        replay(lastUpdateTime);
-        replay(coordinates);
-        new LocationViewer(context, coordinates, lastUpdateTime, null);
-        verify(context);
-        verify(lastUpdateTime);
-        verify(coordinates);
+    public void testAccuracyToBars() {
+        LocationViewer.MeterFormatter meterFormatter = new LocationViewer.MeterFormatter();
+        assertEquals(0, meterFormatter.accuracyToBarCount(-1));
+        assertEquals(0, meterFormatter.accuracyToBarCount(0));
+        assertEquals(0, meterFormatter.accuracyToBarCount(1));
+        assertEquals(1, meterFormatter.accuracyToBarCount(2));
+        assertEquals(2, meterFormatter.accuracyToBarCount(4));
+        assertEquals(3, meterFormatter.accuracyToBarCount(8));
+        assertEquals(LocationViewer.METER_LEFT.length(), meterFormatter
+                .accuracyToBarCount(Long.MAX_VALUE));
     }
 
-    public final void testSetStatus() {
-        MockableContext context = createMock(MockableContext.class);
-        expect(context.getString(R.string.out_of_service)).andReturn("OUT OF SERVICE");
-        expect(context.getString(R.string.available)).andReturn("AVAILABLE");
-        expect(context.getString(R.string.temporarily_unavailable)).andReturn(
-                "TEMPORARILY UNAVAILABLE");
-        MockableTextView lastUpdateTime = createMock(MockableTextView.class);
-        MockableTextView coordinates = createMock(MockableTextView.class);
-        coordinates.setText(R.string.getting_location_from_gps);
+    public void testAccuracyToBarText() {
+        LocationViewer.MeterFormatter meterFormatter = new LocationViewer.MeterFormatter();
+        assertEquals("·×·", meterFormatter.barsToMeterText(meterFormatter.accuracyToBarCount(2)));
+    }
+
+    public void testGetAlpha() {
+        LocationViewer.MeterFormatter meterFormatter = new LocationViewer.MeterFormatter();
+        assertEquals(256, meterFormatter.lagToAlpha(-1));
+        assertEquals(255, meterFormatter.lagToAlpha(0));
+        assertEquals(254, meterFormatter.lagToAlpha(8));
+        assertEquals(253, meterFormatter.lagToAlpha(16));
+        assertEquals(128, meterFormatter.lagToAlpha(Integer.MAX_VALUE));
+    }
+
+    public void testGetMeterText() {
+        LocationViewer.MeterFormatter meterFormatter = new LocationViewer.MeterFormatter();
+        assertEquals("×", meterFormatter.barsToMeterText(0));
+        assertEquals("·×·", meterFormatter.barsToMeterText(1));
+        assertEquals("‹····×····›", meterFormatter.barsToMeterText(5));
+    }
+
+    public void testMeterView() {
+        MockableTextView textView = createMock(MockableTextView.class);
+        MeterFormatter meterFormatter = createMock(MeterFormatter.class);
+
+        expect(meterFormatter.accuracyToBarCount(342)).andReturn(7);
+        expect(meterFormatter.barsToMeterText(7)).andReturn("<-->");
+        expect(meterFormatter.lagToAlpha(17)).andReturn(94);
+        textView.setText("<-->");
+        textView.setTextColor(94, 147, 190, 38);
+
+        replay(textView);
+        replay(meterFormatter);
+        final MeterView meterView = new MeterView(textView, meterFormatter);
+        meterView.set(17, 342);
+        verify(textView);
+        verify(meterFormatter);
+    }
+
+    public void testSetLocationEightSecondDelay() {
+        MeterView meterView = createMock(MeterView.class);
+        MockableTextView lag = createMock(MockableTextView.class);
+        MockableTextView accuracy = createMock(MockableTextView.class);
+        MockableTextView provider = createMock(MockableTextView.class);
+        Time time = createMock(Time.class);
+        Location location = createMock(Location.class);
+
+        expect(time.getCurrentTime()).andReturn(10000L);
+        expect(time.getCurrentTime()).andReturn(18000L);
+        expect(location.getAccuracy()).andReturn(12f);
+        expect(location.getProvider()).andReturn("gps");
+        provider.setText("gps");
+        lag.setText("8s");
+        accuracy.setText("12.0m");
+        meterView.set(8000, 12f);
+
+        replay(meterView);
+        replay(lag);
+        replay(accuracy);
+        replay(provider);
+        replay(location);
+        replay(time);
+        LocationViewer locationViewer = new LocationViewer(null, meterView, provider, lag,
+                accuracy, null, time, location);
+        locationViewer.setLocation(location);
+        locationViewer.refreshLocation();
+        verify(location);
+        verify(meterView);
+        verify(provider);
+        verify(lag);
+        verify(accuracy);
+        verify(time);
+    }
+
+    public void testSetStatus() {
+        ResourceProvider resourceProvider = createMock(ResourceProvider.class);
         MockableTextView status = createMock(MockableTextView.class);
+
+        expect(resourceProvider.getString(R.string.out_of_service)).andReturn("OUT OF SERVICE");
+        expect(resourceProvider.getString(R.string.available)).andReturn("AVAILABLE");
+        expect(resourceProvider.getString(R.string.temporarily_unavailable)).andReturn(
+                "TEMPORARILY UNAVAILABLE");
         status.setText("gps status: OUT OF SERVICE");
         status.setText("network status: AVAILABLE");
         status.setText("gps status: TEMPORARILY UNAVAILABLE");
 
-        replay(context);
-        replay(lastUpdateTime);
-        replay(coordinates);
+        replay(resourceProvider);
         replay(status);
-        LocationViewer lv = new LocationViewer(context, coordinates, lastUpdateTime, status);
-        lv.setStatus("gps", LocationProvider.OUT_OF_SERVICE);
-        lv.setStatus("network", LocationProvider.AVAILABLE);
-        lv.setStatus("gps", LocationProvider.TEMPORARILY_UNAVAILABLE);
-        verify(context);
-        verify(lastUpdateTime);
-        verify(coordinates);
+        LocationViewer locationViewer = new LocationViewer(resourceProvider, null, null, null,
+                null, status, null, null);
+        locationViewer.setStatus("gps", LocationProvider.OUT_OF_SERVICE);
+        locationViewer.setStatus("network", LocationProvider.AVAILABLE);
+        locationViewer.setStatus("gps", LocationProvider.TEMPORARILY_UNAVAILABLE);
+        verify(resourceProvider);
         verify(status);
     }
 }

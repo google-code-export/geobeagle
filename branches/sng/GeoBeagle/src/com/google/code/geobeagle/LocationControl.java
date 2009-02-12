@@ -34,12 +34,13 @@ public class LocationControl {
                 return location1;
 
             if (location2.getTime() > location1.getTime()) {
-                if (location2.getAccuracy() <= location1.getAccuracy())
+                if (location2.getAccuracy() <= location1.getAccuracy()) {
                     return location2;
-                else {
+                } else {
                     if (location1.distanceTo(location2) >= location1.getAccuracy()
-                            + location2.getAccuracy())
+                            + location2.getAccuracy()) {
                         return location2;
+                    }
                 }
             }
             return location1;

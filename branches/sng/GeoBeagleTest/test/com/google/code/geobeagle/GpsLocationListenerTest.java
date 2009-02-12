@@ -14,7 +14,6 @@
 
 package com.google.code.geobeagle;
 
-import static org.easymock.classextension.EasyMock.expect;
 import static org.easymock.classextension.EasyMock.createMock;
 import static org.easymock.classextension.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.verify;
@@ -38,7 +37,6 @@ public class GpsLocationListenerTest extends TestCase {
 
     public void testOnLocationChanged() {
         Location location = createMock(Location.class);
-        expect(mGpsControl.getLocation()).andReturn(location);
         mLocationViewer.setLocation(location);
 
         replay(location);

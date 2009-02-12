@@ -19,20 +19,23 @@ import com.google.code.geobeagle.ui.LocationViewer;
 import android.location.Location;
 import android.location.LocationListener;
 import android.os.Bundle;
+
 /*
  * Listener for the Location control.
  */
 public class GeoBeagleLocationListener implements LocationListener {
     private final LocationViewer mLocationViewer;
-    private final LocationControl mGpsControl;
+    private final LocationControl mLocationControl;
 
     public GeoBeagleLocationListener(LocationControl locationControl, LocationViewer locationViewer) {
         mLocationViewer = locationViewer;
-        mGpsControl = locationControl;
+        mLocationControl = locationControl;
     }
 
     public void onLocationChanged(Location location) {
-        mLocationViewer.setLocation(mGpsControl.getLocation());
+        // Ask the location control to pick the most accurate location (might
+        // not be this one).
+        mLocationViewer.setLocation(mLocationControl.getLocation());
     }
 
     public void onProviderDisabled(String provider) {

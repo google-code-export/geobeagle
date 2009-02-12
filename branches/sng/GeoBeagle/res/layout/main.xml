@@ -16,33 +16,43 @@
 
 	<LinearLayout android:orientation="vertical"
 		android:layout_width="fill_parent" android:layout_height="fill_parent">
-		<LinearLayout android:orientation="horizontal"
-			android:layout_width="fill_parent" android:layout_height="wrap_content">
+		<LinearLayout android:gravity="center"
+			android:orientation="horizontal" android:layout_width="fill_parent"
+			android:layout_height="wrap_content">
+			<TextView android:layout_width="wrap_content"
+				android:layout_height="wrap_content" android:textSize="26sp"
+				android:textStyle="bold" android:text="[" android:textColor="#93be26" />
 			<TextView android:id="@+id/location_viewer"
 				android:layout_width="wrap_content" android:layout_height="wrap_content"
-				android:layout_weight="1" android:text="XX XX.XXX -XXX XX.XXX  +/-4001.0m" />
+				android:textSize="26sp" android:textStyle="bold" android:textColor="#7f93be26" android:text="×" />
+			<TextView android:layout_width="wrap_content"
+				android:layout_height="wrap_content" android:textSize="26sp"
+				android:textStyle="bold" android:text="]" android:textColor="#93be26" />
 		</LinearLayout>
 
+		<!--  TODO: use use relative layout. -->
 		<LinearLayout android:orientation="horizontal"
 			android:layout_width="fill_parent" android:layout_height="wrap_content">
-			<TextView android:layout_width="wrap_content"
-				android:layout_height="wrap_content" android:text="Last updated: " />
-			<TextView android:id="@+id/last_updated"
-				android:layout_width="wrap_content" android:layout_height="wrap_content"
-				android:text="14:30:26" />
+			<TextView android:id="@+id/provider" android:layout_width="100sp"
+				android:layout_height="wrap_content" android:text="" />
+			<TextView android:id="@+id/accuracy" android:layout_width="wrap_content"
+				android:text="" android:layout_height="wrap_content"
+				android:gravity="center" android:layout_weight="1" />
+			<TextView android:id="@+id/lag" android:layout_width="100sp"
+				android:text="" android:layout_height="wrap_content"
+				android:gravity="right" />
 		</LinearLayout>
+
 		<LinearLayout android:orientation="horizontal"
 			android:layout_width="fill_parent" android:layout_height="wrap_content"
 			android:paddingBottom="12sp">
 			<TextView android:id="@+id/status" android:layout_width="wrap_content"
 				android:layout_height="wrap_content" android:text="TEMPORARILY UNAVAILABLE" />
 		</LinearLayout>
-
 		<Spinner android:id="@+id/content_provider"
 			android:layout_alignParentTop="true" android:layout_width="fill_parent"
 			android:layout_height="wrap_content" android:drawSelectorOnTop="false"
 			android:entries="@array/content_providers" />
-
 		<TextView android:id="@+id/select_cache_prompt"
 			android:layout_width="fill_parent" android:layout_height="wrap_content"
 			android:text="Search for cache:" android:paddingTop="12sp"

@@ -14,17 +14,14 @@
 
 package com.google.code.geobeagle.ui;
 
+import android.graphics.Color;
 import android.widget.TextView;
 
 public class MockableTextView {
     private TextView mTextView;
 
     public MockableTextView(TextView textView) {
-        this.mTextView = textView;
-    }
-
-    public void setText(CharSequence text) {
-        mTextView.setText(text);
+        mTextView = textView;
     }
 
     public CharSequence getText() {
@@ -35,7 +32,19 @@ public class MockableTextView {
         mTextView.setEnabled(enabled);
     }
 
+    public void setText(CharSequence text) {
+        mTextView.setText(text);
+    }
+
     public void setText(int id) {
         mTextView.setText(id);
+    }
+
+    public void setTextColor(int color) {
+        mTextView.setTextColor(color);
+    }
+
+    public void setTextColor(int alpha, int r, int g, int b) {
+        mTextView.setTextColor(Color.argb(alpha, r, g, b));        
     }
 }
