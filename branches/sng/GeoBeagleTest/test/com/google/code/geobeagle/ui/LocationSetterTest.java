@@ -21,6 +21,7 @@ import static org.easymock.classextension.EasyMock.verify;
 
 import com.google.code.geobeagle.LocationControl;
 import com.google.code.geobeagle.R;
+import com.google.code.geobeagle.io.LocationBookmarksSql;
 
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
@@ -50,28 +51,28 @@ public class LocationSetterTest extends TestCase {
     public void testOnResume() {
         SharedPreferences sharedPreferences = createMock(SharedPreferences.class);
         MockableEditText editText = createMock(MockableEditText.class);
-        LocationBookmarks locationBookmarks = createMock(LocationBookmarks.class);
+        LocationBookmarksSql locationBookmarksTextFile = createMock(LocationBookmarksSql.class);
 
         editText.setText("googleplex");
         expect(sharedPreferences.getString(LocationSetter.PREFS_LOCATION, "initial location"))
                 .andReturn("googleplex");
-        locationBookmarks.saveLocation("googleplex");
+        locationBookmarksTextFile.saveLocation("googleplex");
 
         replay(sharedPreferences);
         replay(editText);
-        replay(locationBookmarks);
+        replay(locationBookmarksTextFile);
         LocationSetter locationSetter = new LocationSetter(null, editText, null, null,
-                locationBookmarks, "initial location");
+                locationBookmarksTextFile, "initial location");
         locationSetter.onResume(sharedPreferences, null);
         verify(sharedPreferences);
         verify(editText);
-        verify(locationBookmarks);
+        verify(locationBookmarksTextFile);
     }
 
     public void testSetMyLocation() {
         final Location location = createMock(Location.class);
         MockableEditText editText = createMock(MockableEditText.class);
-        LocationBookmarks locationBookmarks = createMock(LocationBookmarks.class);
+        LocationBookmarksSql locationBookmarksTextFile = createMock(LocationBookmarksSql.class);
         LocationControl locationControl = createMock(LocationControl.class);
 
         editText.setText("37 07.380, 122 20.700 ([16:07] My Location)");
@@ -80,18 +81,18 @@ public class LocationSetterTest extends TestCase {
         expect(location.getTime()).andReturn(
                 new GregorianCalendar(2008, 12, 5, 16, 7, 10).getTime().getTime());
         expect(locationControl.getLocation()).andReturn(location);
-        locationBookmarks.saveLocation("37 07.380, 122 20.700 ([16:07] My Location)");
+        locationBookmarksTextFile.saveLocation("37 07.380, 122 20.700 ([16:07] My Location)");
 
         replay(location);
         replay(editText);
-        replay(locationBookmarks);
+        replay(locationBookmarksTextFile);
         replay(locationControl);
         LocationSetter locationSetter = new LocationSetter(null, editText, locationControl, null,
-                locationBookmarks, null);
+                locationBookmarksTextFile, null);
         locationSetter.setLocation(null, null);
         verify(location);
         verify(editText);
-        verify(locationBookmarks);
+        verify(locationBookmarksTextFile);
         verify(locationControl);
     }
 

@@ -1,5 +1,17 @@
+/*
+ ** you may not use this file except in compliance with the License.
+ ** You may obtain a copy of the License at
+ **
+ **     http://www.apache.org/licenses/LICENSE-2.0
+ **
+ ** Unless required by applicable law or agreed to in writing, software
+ ** distributed under the License is distributed on an "AS IS" BASIS,
+ ** WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ ** See the License for the specific language governing permissions and
+ ** limitations under the License.
+ */
 
-package com.google.code.geobeagle.ui;
+package com.google.code.geobeagle.io;
 
 import static org.easymock.EasyMock.aryEq;
 import static org.easymock.EasyMock.expect;
@@ -9,6 +21,9 @@ import static org.easymock.classextension.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.verify;
 
 import com.google.code.geobeagle.DescriptionsAndLocations;
+import com.google.code.geobeagle.io.LocationBookmarksTextFile;
+import com.google.code.geobeagle.ui.LocationSetter;
+import com.google.code.geobeagle.ui.MockableEditText;
 
 import android.content.Context;
 
@@ -22,7 +37,7 @@ import java.io.OutputStream;
 
 import junit.framework.TestCase;
 
-public class LocationBookmarksTest extends TestCase {
+public class LocationBookmarksTextFileTest extends TestCase {
 
     public void testReadBookmarks() throws IOException {
         Context context = createMock(Context.class);
@@ -41,7 +56,7 @@ public class LocationBookmarksTest extends TestCase {
         replay(fileInputStream);
         replay(inputStreamReader);
         replay(bufferedReader);
-        LocationBookmarks locationBookmarks = new LocationBookmarks(context,
+        LocationBookmarksTextFile locationBookmarks = new LocationBookmarksTextFile(context,
                 new DescriptionsAndLocations(), null) {
             protected InputStreamReader createInputStreamReader(FileInputStream fileInputStream) {
                 return inputStreamReader;
@@ -83,7 +98,7 @@ public class LocationBookmarksTest extends TestCase {
         replay(context);
         replay(fileOutputStream);
         replay(bufferedOutputStream);
-        LocationBookmarks locationBookmarks = new LocationBookmarks(context,
+        LocationBookmarksTextFile locationBookmarks = new LocationBookmarksTextFile(context,
                 descriptionsAndLocations, null) {
             protected BufferedOutputStream createBufferedOutputStream(OutputStream outputStream) {
                 return bufferedOutputStream;

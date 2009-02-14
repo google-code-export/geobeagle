@@ -14,8 +14,8 @@
 
 package com.google.code.geobeagle;
 
+import com.google.code.geobeagle.io.LocationBookmarksSql;
 import com.google.code.geobeagle.ui.ErrorDisplayer;
-import com.google.code.geobeagle.ui.LocationBookmarks;
 
 import android.app.ListActivity;
 import android.content.Context;
@@ -57,11 +57,11 @@ public class CacheListDelegate {
 
     private final List<CharSequence> mLocations;
     private final ListActivity mParent;
-    private final LocationBookmarks mLocationBookmarks;
+    private final LocationBookmarksSql mLocationBookmarks;
     private final ErrorDisplayer mErrorDisplayer;
 
     public CacheListDelegate(ListActivity parent, List<CharSequence> locations,
-            LocationBookmarks locationBookmarks, ErrorDisplayer errorDisplayer) {
+            LocationBookmarksSql locationBookmarks, ErrorDisplayer errorDisplayer) {
         mParent = parent;
         mLocations = locations;
         mErrorDisplayer = errorDisplayer;

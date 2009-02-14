@@ -20,12 +20,13 @@ import com.google.code.geobeagle.intents.IntentFactory;
 import com.google.code.geobeagle.intents.IntentStarterLocation;
 import com.google.code.geobeagle.intents.IntentStarterRadar;
 import com.google.code.geobeagle.intents.IntentStarterViewUri;
+import com.google.code.geobeagle.io.DatabaseFactory;
+import com.google.code.geobeagle.io.LocationBookmarksSql;
 import com.google.code.geobeagle.ui.CachePageButtonEnabler;
 import com.google.code.geobeagle.ui.ContentSelector;
 import com.google.code.geobeagle.ui.DestinationListOnClickListener;
 import com.google.code.geobeagle.ui.ErrorDisplayer;
 import com.google.code.geobeagle.ui.GetCoordsToast;
-import com.google.code.geobeagle.ui.LocationBookmarks;
 import com.google.code.geobeagle.ui.LocationOnKeyListener;
 import com.google.code.geobeagle.ui.LocationSetter;
 import com.google.code.geobeagle.ui.LocationViewer;
@@ -60,7 +61,7 @@ public class GeoBeagle extends Activity {
     private ContentSelector mContentSelector;
     private final ErrorDisplayer mErrorDisplayer;
     private LocationControl mGpsControl;
-    Handler mHandler = new Handler();
+    private final Handler mHandler;
     private final LocationChooser mLocationChooser;
     private GeoBeagleLocationListener mLocationListener;
     private LocationSetter mLocationSetter;
@@ -81,6 +82,7 @@ public class GeoBeagle extends Activity {
         mErrorDisplayer = new ErrorDisplayer(this);
         mLocationChooser = new LocationChooser();
         mResourceProvider = new ResourceProvider(this);
+        mHandler = new Handler();
     }
 
     private MockableTextView createTextView(int id) {
@@ -119,7 +121,7 @@ public class GeoBeagle extends Activity {
         }
         return false;
     }
-    
+
     @Override
     public void onCreate(final Bundle savedInstanceState) {
         try {
@@ -143,8 +145,9 @@ public class GeoBeagle extends Activity {
             mGpsControl = new LocationControl(locationManager, mLocationChooser);
             mLocationListener = new GeoBeagleLocationListener(mGpsControl, mLocationViewer);
             DescriptionsAndLocations descriptionsAndLocations = new DescriptionsAndLocations();
-            LocationBookmarks locationBookmarks = new LocationBookmarks(this,
-                    descriptionsAndLocations, Destination.getDestinationPatterns(mResourceProvider));
+            LocationBookmarksSql locationBookmarks = new LocationBookmarksSql(
+                    descriptionsAndLocations, new DatabaseFactory(
+                            new DatabaseFactory.SQLiteWrapper()), mErrorDisplayer);
 
             MockableEditText mockableTxtLocation = new MockableEditText(txtLocation);
             mockableTxtLocation

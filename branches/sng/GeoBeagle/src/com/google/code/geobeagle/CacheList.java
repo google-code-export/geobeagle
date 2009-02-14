@@ -14,8 +14,9 @@
 
 package com.google.code.geobeagle;
 
+import com.google.code.geobeagle.io.DatabaseFactory;
+import com.google.code.geobeagle.io.LocationBookmarksSql;
 import com.google.code.geobeagle.ui.ErrorDisplayer;
-import com.google.code.geobeagle.ui.LocationBookmarks;
 
 import android.app.ListActivity;
 import android.os.Bundle;
@@ -33,19 +34,18 @@ public class CacheList extends ListActivity {
     }
 
     private final ErrorDisplayer mErrorDisplayer;
-    private final ResourceProvider mResourceProvider;
 
     public CacheList() {
         mErrorDisplayer = new ErrorDisplayer(this);
-        mResourceProvider = new ResourceProvider(this);
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         DescriptionsAndLocations descriptionsAndLocations = new DescriptionsAndLocations();
-        LocationBookmarks locationBookmarks = new LocationBookmarks(this, descriptionsAndLocations,
-                Destination.getDestinationPatterns(mResourceProvider));
+        LocationBookmarksSql locationBookmarks = new LocationBookmarksSql(
+                descriptionsAndLocations, new DatabaseFactory(new DatabaseFactory.SQLiteWrapper()),
+                mErrorDisplayer);
 
         mCacheListDelegate = new CacheListDelegate(this, descriptionsAndLocations
                 .getPreviousLocations(), locationBookmarks, mErrorDisplayer);

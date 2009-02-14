@@ -19,6 +19,7 @@ import com.google.code.geobeagle.LifecycleManager;
 import com.google.code.geobeagle.LocationControl;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.Util;
+import com.google.code.geobeagle.io.LocationBookmarksSql;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -32,11 +33,11 @@ import java.util.regex.Pattern;
 public class LocationSetter implements LifecycleManager {
     public static final class EditTextFocusChangeListener implements OnFocusChangeListener {
         private final MockableEditText mEditText;
-        private final LocationBookmarks mLocationBookmarks;
+        private final LocationBookmarksSql mLocationBookmarks;
 
-        public EditTextFocusChangeListener(LocationBookmarks locationBookmarks,
+        public EditTextFocusChangeListener(LocationBookmarksSql locationBookmarksSql,
                 MockableEditText editText) {
-            mLocationBookmarks = locationBookmarks;
+            mLocationBookmarks = locationBookmarksSql;
             mEditText = editText;
         }
 
@@ -52,16 +53,16 @@ public class LocationSetter implements LifecycleManager {
     private final Pattern[] mDestinationPatterns;
     private final LocationControl mGpsControl;
     private final String mInitialDestination;
-    private final LocationBookmarks mLocationBookmarks;
+    private final LocationBookmarksSql mLocationBookmarks;
     private final MockableEditText mTxtLocation;
 
     public LocationSetter(Context context, MockableEditText txtLocation,
             LocationControl locationControl, Pattern destinationPatterns[],
-            LocationBookmarks locationBookmarks, String initialDestination) {
+            LocationBookmarksSql locationBookmarksTextFile, String initialDestination) {
         mTxtLocation = txtLocation;
         mDestinationPatterns = destinationPatterns;
         mGpsControl = locationControl;
-        mLocationBookmarks = locationBookmarks;
+        mLocationBookmarks = locationBookmarksTextFile;
         mInitialDestination = initialDestination;
     }
 

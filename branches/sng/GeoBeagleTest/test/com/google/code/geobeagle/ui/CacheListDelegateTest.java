@@ -22,6 +22,7 @@ import static org.easymock.classextension.EasyMock.verify;
 import com.google.code.geobeagle.CacheList;
 import com.google.code.geobeagle.CacheListDelegate;
 import com.google.code.geobeagle.R;
+import com.google.code.geobeagle.io.LocationBookmarksSql;
 
 import android.app.ListActivity;
 import android.content.Context;
@@ -60,7 +61,7 @@ public class CacheListDelegateTest extends TestCase {
     }
 
     public void testOnCreate() {
-        LocationBookmarks locationBookmarks = createMock(LocationBookmarks.class);
+        LocationBookmarksSql locationBookmarks = createMock(LocationBookmarksSql.class);
         ErrorDisplayer errorDisplayer = createMock(ErrorDisplayer.class);
         final ListActivity listActivity = createMock(ListActivity.class);
         final ArrayList<CharSequence> arrayList = new ArrayList<CharSequence>(0);
@@ -134,7 +135,7 @@ public class CacheListDelegateTest extends TestCase {
     }
 
     public void testOnResume() {
-        LocationBookmarks locationBookmarks = createMock(LocationBookmarks.class);
+        LocationBookmarksSql locationBookmarks = createMock(LocationBookmarksSql.class);
         ErrorDisplayer errorDisplayer = createMock(ErrorDisplayer.class);
         final ListActivity listActivity = createMock(ListActivity.class);
         final ArrayList<CharSequence> arrayList = new ArrayList<CharSequence>(0);
