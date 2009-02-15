@@ -31,7 +31,7 @@ public class DatabaseFactory {
         }
 
         public void close() {
-            mDb.close();
+            mCursor.close();
         }
 
         public CharSequence getCache() {
