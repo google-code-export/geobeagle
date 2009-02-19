@@ -14,8 +14,6 @@
 
 package com.google.code.geobeagle;
 
-import com.google.code.geobeagle.ui.ErrorDisplayer;
-
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.location.LocationListener;
@@ -44,7 +42,7 @@ public class LocationLifecycleManager implements LifecycleManager {
      * (non-Javadoc)
      * @see com.google.code.geobeagle.LifecycleManager#onResume()
      */
-    public void onResume(SharedPreferences preferences, ErrorDisplayer errorDisplayer) {
+    public void onResume(SharedPreferences preferences) {
         mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0,
                 mLocationListener);
         mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0,

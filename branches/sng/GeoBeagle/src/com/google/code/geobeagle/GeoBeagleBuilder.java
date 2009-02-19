@@ -14,12 +14,22 @@
 
 package com.google.code.geobeagle;
 
+import com.google.code.geobeagle.ui.ContentSelector;
+
+import android.app.Activity;
 import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
+import android.widget.Spinner;
 
-public interface LifecycleManager {
+public class GeoBeagleBuilder {
+    private final Activity mActivity;
 
-    public abstract void onPause(Editor editor);
+    public GeoBeagleBuilder(Activity context) {
+        mActivity = context;
+    }
 
-    public abstract void onResume(SharedPreferences preferences);
+    public ContentSelector createContentSelector(SharedPreferences preferences) {
+        return new ContentSelector((Spinner)mActivity.findViewById(R.id.content_provider),
+                preferences);
+    }
+
 }

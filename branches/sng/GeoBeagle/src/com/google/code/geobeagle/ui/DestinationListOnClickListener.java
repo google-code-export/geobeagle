@@ -14,6 +14,7 @@
 
 package com.google.code.geobeagle.ui;
 
+
 import com.google.code.geobeagle.CacheList;
 
 import android.app.Activity;

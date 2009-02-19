@@ -37,6 +37,14 @@ public class LocationBookmarksSqlTest extends TestCase {
         mSqlite = createMock(SQLiteDatabase.class);
     }
 
+    public void testGetDescriptionsAndLocations() {
+        DescriptionsAndLocations descriptionsAndLocations = createMock(DescriptionsAndLocations.class);
+
+        LocationBookmarksSql locationBookmarksSql = new LocationBookmarksSql(
+                descriptionsAndLocations, null, null);
+        assertEquals(descriptionsAndLocations, locationBookmarksSql.getDescriptionsAndLocations());
+    }
+
     public void testReadBookmarksCursorOpenError() {
         CacheReader cacheReader = createMock(CacheReader.class);
 
@@ -49,7 +57,7 @@ public class LocationBookmarksSqlTest extends TestCase {
         replay(mSqlite);
         replay(cacheReader);
         LocationBookmarksSql locationBookmarksSql = new LocationBookmarksSql(null, mFactory, null);
-        locationBookmarksSql.onResume(null, null);
+        locationBookmarksSql.onResume(null);
         verify(mFactory);
         verify(mSqlite);
         verify(cacheReader);
@@ -60,7 +68,7 @@ public class LocationBookmarksSqlTest extends TestCase {
 
         replay(mFactory);
         LocationBookmarksSql locationBookmarksSql = new LocationBookmarksSql(null, mFactory, null);
-        locationBookmarksSql.onResume(null, null);
+        locationBookmarksSql.onResume(null);
         verify(mFactory);
     }
 
@@ -76,7 +84,7 @@ public class LocationBookmarksSqlTest extends TestCase {
         replay(mSqlite);
         replay(cacheReader);
         LocationBookmarksSql locationBookmarksSql = new LocationBookmarksSql(null, mFactory, null);
-        locationBookmarksSql.onResume(null, null);
+        locationBookmarksSql.onResume(null);
         verify(mFactory);
         verify(mSqlite);
         verify(cacheReader);

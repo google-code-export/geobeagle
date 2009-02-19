@@ -12,7 +12,11 @@
  ** limitations under the License.
  */
 
-package com.google.code.geobeagle;
+package com.google.code.geobeagle.data;
+
+import com.google.code.geobeagle.R;
+import com.google.code.geobeagle.ResourceProvider;
+import com.google.code.geobeagle.Util;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -21,11 +25,24 @@ import java.util.regex.Pattern;
  * Cache or letterbox description, id, and coordinates.
  */
 public class Destination {
+
+    public static class DestinationFactory {
+        private final Pattern[] mDestinationPatterns;
+
+        public DestinationFactory(Pattern destinationPatterns[]) {
+            mDestinationPatterns = destinationPatterns;
+        }
+
+        public Destination create(CharSequence location) {
+            return new Destination(location, mDestinationPatterns);
+        }
+    }
+
     public static CharSequence extractDescription(CharSequence location) {
         return Util.splitCoordsAndDescription(location)[1];
     }
 
-    static Pattern[] getDestinationPatterns(ResourceProvider resourceProvider) {
+    public static Pattern[] getDestinationPatterns(ResourceProvider resourceProvider) {
         return getDestinationPatterns(resourceProvider.getStringArray(R.array.content_prefixes));
     }
 
@@ -39,6 +56,7 @@ public class Destination {
 
     private int mContentSelectorIndex;
     private CharSequence mDescription;
+    private CharSequence mLocation;
     private CharSequence mId;
     private double mLatitude;
     private double mLongitude;
@@ -51,6 +69,7 @@ public class Destination {
         } catch (NumberFormatException numberFormatException) {
         }
         mDescription = latLonDescription[2];
+        mLocation = location;
 
         for (mContentSelectorIndex = destinationPatterns.length - 1; mContentSelectorIndex >= 0; mContentSelectorIndex--) {
             Matcher matcher = destinationPatterns[mContentSelectorIndex].matcher(mDescription);
@@ -65,6 +84,9 @@ public class Destination {
         return mContentSelectorIndex;
     }
 
+    public CharSequence getLocation() {
+        return mLocation;
+    }
     public CharSequence getDescription() {
         return mDescription;
     }

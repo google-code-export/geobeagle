@@ -19,149 +19,86 @@ import static org.easymock.classextension.EasyMock.createMock;
 import static org.easymock.classextension.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.verify;
 
-import com.google.code.geobeagle.CacheList;
-import com.google.code.geobeagle.CacheListDelegate;
+import com.google.code.geobeagle.LocationControl;
 import com.google.code.geobeagle.R;
+import com.google.code.geobeagle.data.CacheListData;
 import com.google.code.geobeagle.io.LocationBookmarksSql;
+import com.google.code.geobeagle.ui.CacheListDelegate.CacheListDelegateFactory;
 
 import android.app.ListActivity;
-import android.content.Context;
 import android.content.Intent;
+import android.location.Location;
 import android.widget.SimpleAdapter;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 import junit.framework.TestCase;
 
 public class CacheListDelegateTest extends TestCase {
+    ListActivity listActivity = createMock(ListActivity.class);
     SimpleAdapter simpleAdapter = createMock(SimpleAdapter.class);
 
-    public void testCreateSimpleAdapterList() {
-        List<CharSequence> locations = new ArrayList<CharSequence>();
-        locations.add("Paris");
-        locations.add("Spain");
-
-        List<Map<String, Object>> simpleAdapterData = CacheListDelegate
-                .createSimpleAdapterData(locations);
-        assertNotNull(simpleAdapterData);
-        assertEquals(3, simpleAdapterData.size());
-        assertEquals(CacheListDelegate.MY_CURRENT_LOCATION, simpleAdapterData.get(0).get("cache"));
-        assertEquals("Spain", simpleAdapterData.get(1).get("cache"));
-        assertEquals("Paris", simpleAdapterData.get(2).get("cache"));
-    }
-
-    public void testCreateSimpleAdapterListEmpty() {
-        List<CharSequence> locations = new ArrayList<CharSequence>(0);
-        List<Map<String, Object>> simpleAdapterData = CacheListDelegate
-                .createSimpleAdapterData(locations);
-        assertNotNull(simpleAdapterData);
-        assertEquals(1, simpleAdapterData.size());
-    }
-
     public void testOnCreate() {
-        LocationBookmarksSql locationBookmarks = createMock(LocationBookmarksSql.class);
-        ErrorDisplayer errorDisplayer = createMock(ErrorDisplayer.class);
-        final ListActivity listActivity = createMock(ListActivity.class);
-        final ArrayList<CharSequence> arrayList = new ArrayList<CharSequence>(0);
-
         listActivity.setContentView(R.layout.cache_list);
 
         replay(listActivity);
-        replay(locationBookmarks);
-        replay(errorDisplayer);
-        replay(simpleAdapter);
-        new CacheListDelegate(listActivity, arrayList, locationBookmarks, errorDisplayer)
-                .onCreate();
+        new CacheListDelegate(listActivity, null, null, null, null, null).onCreate();
         verify(listActivity);
-        verify(errorDisplayer);
-        verify(simpleAdapter);
-        verify(locationBookmarks);
     }
 
     public void testOnListItemClick() {
-        final ListActivity listActivity = createMock(ListActivity.class);
-        final ArrayList<CharSequence> arrayList = new ArrayList<CharSequence>(0);
-        final Intent intent = createMock(Intent.class);
+        Intent intent = createMock(Intent.class);
+        CacheListData cacheListData = createMock(CacheListData.class);
+        CacheListDelegateFactory cacheListDelegateFactory = createMock(CacheListDelegateFactory.class);
 
-        arrayList.add("England");
-        arrayList.add("New York");
-        arrayList.add("Paris"); 
-
-        expect(intent.setAction(CacheList.SELECT_CACHE)).andReturn(intent);
-        expect(intent.putExtra("location", (CharSequence)"Paris")).andReturn(intent);
+        expect(cacheListData.getLocation(12)).andReturn("a cache");
+        expect(intent.setAction(CacheListDelegate.SELECT_CACHE)).andReturn(intent);
+        expect(intent.putExtra("location", (CharSequence)"a cache")).andReturn(intent);
         listActivity.startActivity(intent);
 
+        replay(cacheListDelegateFactory);
         replay(intent);
         replay(listActivity);
-        replay(simpleAdapter);
-        CacheListDelegate cacheListDelegate = new CacheListDelegate(listActivity,
-                arrayList, null, null) {
-            protected Intent createIntent(Context context, Class<?> cls) {
-                return intent;
-            }
-        };
-        cacheListDelegate.onListItemClick(null, null, 1, 0);
+        replay(cacheListData);
+        CacheListDelegate cacheListDelegate = new CacheListDelegate(listActivity, null, null,
+                cacheListDelegateFactory, cacheListData, intent);
+        cacheListDelegate.onListItemClick(null, null, 12, 0);
+        verify(cacheListDelegateFactory);
         verify(intent);
         verify(listActivity);
-        verify(simpleAdapter);
-    }
-
-    public void testOnListItemClickMyLocation() {
-        final ListActivity listActivity = createMock(ListActivity.class);
-        final ArrayList<CharSequence> arrayList = new ArrayList<CharSequence>(0);
-        final Intent intent = createMock(Intent.class);
-
-        arrayList.add("Paris");
-
-        expect(intent.setAction(CacheList.SELECT_CACHE)).andReturn(intent);
-        expect(intent.putExtra("location", (CharSequence)null)).andReturn(intent);
-        listActivity.startActivity(intent);
-
-        replay(intent);
-        replay(listActivity);
-        replay(simpleAdapter);
-        CacheListDelegate cacheListDelegate = new CacheListDelegate(listActivity,
-                arrayList, null, null) {
-            protected Intent createIntent(Context context, Class<?> cls) {
-                return intent;
-            }
-        };
-        cacheListDelegate.onListItemClick(null, null, 0, 0);
-        verify(intent);
-        verify(listActivity);
-        verify(simpleAdapter);
+        verify(cacheListData);
     }
 
     public void testOnResume() {
+        CacheListDelegateFactory cacheListDelegateFactory = createMock(CacheListDelegateFactory.class);
         LocationBookmarksSql locationBookmarks = createMock(LocationBookmarksSql.class);
-        ErrorDisplayer errorDisplayer = createMock(ErrorDisplayer.class);
-        final ListActivity listActivity = createMock(ListActivity.class);
-        final ArrayList<CharSequence> arrayList = new ArrayList<CharSequence>(0);
+        CacheListData cacheListData = createMock(CacheListData.class);
+        LocationControl locationControl = createMock(LocationControl.class);
+        Location here = createMock(Location.class);
+        ArrayList<CharSequence> locations = new ArrayList<CharSequence>(0);
+        ArrayList<Map<String, Object>> adapterData = new ArrayList<Map<String, Object>>(0);
 
-        locationBookmarks.onResume(null, errorDisplayer);
+        locationBookmarks.onResume(null);
+        expect(locationBookmarks.getLocations()).andReturn(locations);
+        expect(locationControl.getLocation()).andReturn(here);
+        cacheListData.add(locations, here);
+        expect(cacheListData.getAdapterData()).andReturn(adapterData);
+        expect(
+                cacheListDelegateFactory.createSimpleAdapter(listActivity, adapterData,
+                        R.layout.cache_row, CacheListDelegate.ADAPTER_FROM,
+                        CacheListDelegate.ADAPTER_TO)).andReturn(simpleAdapter);
         listActivity.setListAdapter(simpleAdapter);
 
-        replay(listActivity);
+        replay(cacheListDelegateFactory);
         replay(locationBookmarks);
-        replay(errorDisplayer);
-        replay(simpleAdapter);
-        new CacheListDelegate(listActivity, arrayList, locationBookmarks,
-                errorDisplayer) {
-            protected SimpleAdapter createSimpleAdapter(Context context,
-                    List<CharSequence> locations, int view_layout, String[] from, int[] to) {
-                assertEquals(context, listActivity);
-                assertEquals(locations, arrayList);
-                assertEquals(view_layout, R.layout.cache_row);
-                assertEquals(CacheListDelegate.ADAPTER_FROM, from);
-                assertEquals(CacheListDelegate.ADAPTER_TO, to);
-                return simpleAdapter;
-            }
-        }.onResume();
-        verify(listActivity);
-        verify(errorDisplayer);
-        verify(simpleAdapter);
+        replay(cacheListData);
+        replay(locationControl);
+        new CacheListDelegate(listActivity, locationBookmarks, locationControl,
+                cacheListDelegateFactory, cacheListData, null).onResume();
+        verify(cacheListDelegateFactory);
         verify(locationBookmarks);
+        verify(cacheListData);
+        verify(locationControl);
     }
 }

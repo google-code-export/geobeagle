@@ -12,7 +12,9 @@
  ** limitations under the License.
  */
 
-package com.google.code.geobeagle;
+package com.google.code.geobeagle.data;
+
+import com.google.code.geobeagle.data.Destination;
 
 import java.util.regex.Pattern;
 
@@ -88,5 +90,9 @@ public class DestinationTest extends TestCase {
 
     public void testExtractDescription() {
         assertEquals("GC123", Destination.extractDescription("123 (GC123)"));
+    }
+    
+    public void testGetCacheListDisplayMap() {
+        
     }
 }

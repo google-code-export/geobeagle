@@ -14,14 +14,16 @@
 package com.google.code.geobeagle.io;
 
 import com.google.code.geobeagle.DescriptionsAndLocations;
-import com.google.code.geobeagle.Destination;
 import com.google.code.geobeagle.LifecycleManager;
+import com.google.code.geobeagle.data.Destination;
 import com.google.code.geobeagle.io.DatabaseFactory.CacheWriter;
 import com.google.code.geobeagle.ui.ErrorDisplayer;
 
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.database.sqlite.SQLiteDatabase;
+
+import java.util.ArrayList;
 
 public class LocationBookmarksSql implements LifecycleManager {
     private final DatabaseFactory mDatabaseFactory;
@@ -35,11 +37,19 @@ public class LocationBookmarksSql implements LifecycleManager {
         mDatabaseFactory = databaseFactory;
     }
 
+    public DescriptionsAndLocations getDescriptionsAndLocations() {
+        return mDescriptionsAndLocations;
+    }
+
+    public ArrayList<CharSequence> getLocations() {
+        return mDescriptionsAndLocations.getPreviousLocations();
+    }
+
     public void onPause(Editor editor) {
         saveBookmarks();
     }
 
-    public void onResume(SharedPreferences preferences, ErrorDisplayer errorDisplayer) {
+    public void onResume(SharedPreferences preferences) {
         readBookmarks();
     }
 
@@ -77,4 +87,5 @@ public class LocationBookmarksSql implements LifecycleManager {
     public void saveLocation(final CharSequence location) {
         mDescriptionsAndLocations.add(Destination.extractDescription(location), location);
     }
+
 }

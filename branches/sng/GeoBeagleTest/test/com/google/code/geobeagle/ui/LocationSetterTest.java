@@ -42,7 +42,7 @@ public class LocationSetterTest extends TestCase {
 
         replay(editor);
         replay(editText);
-        LocationSetter locationSetter = new LocationSetter(null, editText, null, null, null, null);
+        LocationSetter locationSetter = new LocationSetter(null, editText, null, null, null, null, null);
         locationSetter.onPause(editor);
         verify(editor);
         verify(editText);
@@ -62,8 +62,8 @@ public class LocationSetterTest extends TestCase {
         replay(editText);
         replay(locationBookmarksTextFile);
         LocationSetter locationSetter = new LocationSetter(null, editText, null, null,
-                locationBookmarksTextFile, "initial location");
-        locationSetter.onResume(sharedPreferences, null);
+                locationBookmarksTextFile, "initial location", null);
+        locationSetter.onResume(sharedPreferences);
         verify(sharedPreferences);
         verify(editText);
         verify(locationBookmarksTextFile);
@@ -88,8 +88,8 @@ public class LocationSetterTest extends TestCase {
         replay(locationBookmarksTextFile);
         replay(locationControl);
         LocationSetter locationSetter = new LocationSetter(null, editText, locationControl, null,
-                locationBookmarksTextFile, null);
-        locationSetter.setLocation(null, null);
+                locationBookmarksTextFile, null, null);
+        locationSetter.setLocation(null);
         verify(location);
         verify(editText);
         verify(locationBookmarksTextFile);
@@ -108,8 +108,8 @@ public class LocationSetterTest extends TestCase {
         replay(editText);
         replay(errorDisplayer);
         LocationSetter locationSetter = new LocationSetter(null, editText, locationControl, null,
-                null, null);
-        locationSetter.setLocation(null, errorDisplayer);
+                null, null, errorDisplayer);
+        locationSetter.setLocation(null);
         verify(editText);
         verify(errorDisplayer);
         verify(locationControl);

@@ -12,20 +12,14 @@
  ** limitations under the License.
  */
 
-package com.google.code.geobeagle.ui;
+package com.google.code.geobeagle.data;
 
-import android.content.Context;
+import java.util.Map;
 
-public class MockableContext {
+public interface IDestinationVector {
+    public float getDistance();
 
-    private Context context;
+    public CharSequence getLocation();
 
-    public MockableContext(Context context) {
-        this.context = context;
-    }
-
-    public String getString(int id) {
-        return context.getString(id);
-    }
-
+    public Map<String, Object> getViewMap();
 }

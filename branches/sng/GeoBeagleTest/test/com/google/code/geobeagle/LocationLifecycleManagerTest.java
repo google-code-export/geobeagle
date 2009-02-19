@@ -23,25 +23,25 @@ import android.location.LocationManager;
 
 import junit.framework.TestCase;
 
-public class GpsLifecycleManagerTest extends TestCase {
+public class LocationLifecycleManagerTest extends TestCase {
 
     public void testOnPause() {
         LocationManager locationManager = createMock(LocationManager.class);
         LocationListener locationListener = createMock(LocationListener.class);
-        LifecycleManager gpsLifecycleManager = new LocationLifecycleManager(locationListener,
+        LifecycleManager lifecycleManager = new LocationLifecycleManager(locationListener,
                 locationManager);
 
         locationManager.removeUpdates(locationListener);
 
         replay(locationManager);
-        gpsLifecycleManager.onPause(null);
+        lifecycleManager.onPause(null);
         verify(locationManager);
     }
 
     public void testOnResume() {
         LocationManager locationManager = createMock(LocationManager.class);
         LocationListener locationListener = createMock(LocationListener.class);
-        LifecycleManager gpsLifecycleManager = new LocationLifecycleManager(locationListener,
+        LifecycleManager lifecycleManager = new LocationLifecycleManager(locationListener,
                 locationManager);
 
         locationManager
@@ -50,7 +50,7 @@ public class GpsLifecycleManagerTest extends TestCase {
                 locationListener);
 
         replay(locationManager);
-        gpsLifecycleManager.onResume(null, null);
+        lifecycleManager.onResume(null);
         verify(locationManager);
     }
 

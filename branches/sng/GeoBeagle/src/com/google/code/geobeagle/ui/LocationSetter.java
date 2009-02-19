@@ -14,11 +14,11 @@
 
 package com.google.code.geobeagle.ui;
 
-import com.google.code.geobeagle.Destination;
 import com.google.code.geobeagle.LifecycleManager;
 import com.google.code.geobeagle.LocationControl;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.Util;
+import com.google.code.geobeagle.data.Destination;
 import com.google.code.geobeagle.io.LocationBookmarksSql;
 
 import android.content.Context;
@@ -55,15 +55,17 @@ public class LocationSetter implements LifecycleManager {
     private final String mInitialDestination;
     private final LocationBookmarksSql mLocationBookmarks;
     private final MockableEditText mTxtLocation;
+    private final ErrorDisplayer mErrorDisplayer;
 
     public LocationSetter(Context context, MockableEditText txtLocation,
             LocationControl locationControl, Pattern destinationPatterns[],
-            LocationBookmarksSql locationBookmarksTextFile, String initialDestination) {
+            LocationBookmarksSql locationBookmarksTextFile, String initialDestination, ErrorDisplayer errorDisplayer) {
         mTxtLocation = txtLocation;
         mDestinationPatterns = destinationPatterns;
         mGpsControl = locationControl;
         mLocationBookmarks = locationBookmarksTextFile;
         mInitialDestination = initialDestination;
+        mErrorDisplayer = errorDisplayer;
     }
 
     /*
@@ -78,15 +80,15 @@ public class LocationSetter implements LifecycleManager {
         editor.putString(PREFS_LOCATION, mTxtLocation.getText().toString());
     }
 
-    public void onResume(SharedPreferences preferences, ErrorDisplayer errorDisplayer) {
-        setLocation(preferences.getString(PREFS_LOCATION, mInitialDestination), errorDisplayer);
+    public void onResume(SharedPreferences preferences) {
+        setLocation(preferences.getString(PREFS_LOCATION, mInitialDestination));
     }
 
-    public void setLocation(CharSequence c, ErrorDisplayer errorDisplayer) {
+    public void setLocation(CharSequence c) {
         if (c == null) {
             Location location = mGpsControl.getLocation();
             if (location == null) {
-                errorDisplayer.displayError(R.string.current_location_null);
+                mErrorDisplayer.displayError(R.string.current_location_null);
                 return;
             }
             setLocation(location.getLatitude(), location.getLongitude(), String.format(

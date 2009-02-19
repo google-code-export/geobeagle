@@ -14,8 +14,6 @@
 
 package com.google.code.geobeagle;
 
-import com.google.code.geobeagle.ui.ErrorDisplayer;
-
 import android.content.SharedPreferences;
 
 public class AppLifecycleManager {
@@ -35,9 +33,9 @@ public class AppLifecycleManager {
         editor.commit();
     }
 
-    public void onResume(ErrorDisplayer errorDisplayer) {
+    public void onResume() {
         for (LifecycleManager lifecycleManager : mLifecycleManagers) {
-            lifecycleManager.onResume(mPreferences, errorDisplayer);
+            lifecycleManager.onResume(mPreferences);
         }
     }
 }

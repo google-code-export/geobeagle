@@ -14,12 +14,20 @@
 
 package com.google.code.geobeagle;
 
-import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
+public class GeoBeagleDelegate {
 
-public interface LifecycleManager {
+    private final AppLifecycleManager mAppLifecycleManager;
 
-    public abstract void onPause(Editor editor);
+    public GeoBeagleDelegate(AppLifecycleManager appLifecycleManager) {
+        mAppLifecycleManager = appLifecycleManager;
+    }
 
-    public abstract void onResume(SharedPreferences preferences);
+    public void onPause() {
+        mAppLifecycleManager.onPause();
+    }
+
+    public void onResume() {
+        mAppLifecycleManager.onResume();
+    }
+
 }

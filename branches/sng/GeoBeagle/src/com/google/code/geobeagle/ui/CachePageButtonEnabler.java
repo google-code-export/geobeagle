@@ -14,9 +14,9 @@
 
 package com.google.code.geobeagle.ui;
 
-import com.google.code.geobeagle.Destination;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.ResourceProvider;
+import com.google.code.geobeagle.data.Destination;
 
 import android.view.View;
 

@@ -66,7 +66,7 @@ public class LocationBookmarksTextFileTest extends TestCase {
                 return bufferedReader;
             }
         };
-        locationBookmarks.onResume(null, null);
+        locationBookmarks.onResume(null);
         verify(context);
         verify(fileInputStream);
         verify(inputStreamReader);

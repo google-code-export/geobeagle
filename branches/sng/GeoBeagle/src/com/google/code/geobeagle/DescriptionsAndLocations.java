@@ -19,7 +19,7 @@ import java.util.List;
 
 public class DescriptionsAndLocations {
     private List<CharSequence> mPreviousDescriptions;
-    private List<CharSequence> mPreviousLocations;
+    private ArrayList<CharSequence> mPreviousLocations;
     private int mMaxSize;
 
     public DescriptionsAndLocations() {
@@ -57,7 +57,7 @@ public class DescriptionsAndLocations {
         return mPreviousDescriptions;
     }
 
-    public List<CharSequence> getPreviousLocations() {
+    public ArrayList<CharSequence> getPreviousLocations() {
         return mPreviousLocations;
     }
 

@@ -14,9 +14,8 @@
 package com.google.code.geobeagle.io;
 
 import com.google.code.geobeagle.DescriptionsAndLocations;
-import com.google.code.geobeagle.Destination;
 import com.google.code.geobeagle.LifecycleManager;
-import com.google.code.geobeagle.ui.ErrorDisplayer;
+import com.google.code.geobeagle.data.Destination;
 import com.google.code.geobeagle.ui.LocationSetter;
 
 import android.content.Context;
@@ -55,6 +54,14 @@ public class LocationBookmarksTextFile implements LifecycleManager {
 
     protected InputStreamReader createInputStreamReader(FileInputStream fileInputStream) {
         return new InputStreamReader(fileInputStream);
+    }
+
+    public void onPause(Editor editor) {
+        saveBookmarks();
+    }
+
+    public void onResume(SharedPreferences preferences) {
+        readBookmarks();
     }
 
     private void readBookmarks() {
@@ -101,14 +108,6 @@ public class LocationBookmarksTextFile implements LifecycleManager {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-    }
-
-    public void onPause(Editor editor) {
-        saveBookmarks();
-    }
-
-    public void onResume(SharedPreferences preferences, ErrorDisplayer errorDisplayer) {
-        readBookmarks();
     }
 
     void saveLocation(final CharSequence location) {
