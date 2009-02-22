@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.Map;
 
 public class CacheListData {
-    final DestinationVectorFactory mDestinationVectorFactory;
+    private final DestinationVectorFactory mDestinationVectorFactory;
     private final DestinationVectors mDestinationVectors;
 
     public CacheListData(DestinationVectors destinationVectors,

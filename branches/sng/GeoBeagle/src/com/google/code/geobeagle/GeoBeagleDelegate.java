@@ -23,10 +23,12 @@ public class GeoBeagleDelegate {
     }
 
     public void onPause() {
+        //TODO catch errors
         mAppLifecycleManager.onPause();
     }
 
     public void onResume() {
+        //TODO catch errors
         mAppLifecycleManager.onResume();
     }
 

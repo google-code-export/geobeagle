@@ -16,16 +16,26 @@ package com.google.code.geobeagle.ui;
 
 import com.google.code.geobeagle.LocationControl;
 import com.google.code.geobeagle.R;
+import com.google.code.geobeagle.Util;
 import com.google.code.geobeagle.data.CacheListData;
+import com.google.code.geobeagle.io.FileOpener;
+import com.google.code.geobeagle.io.LoadGpx;
 import com.google.code.geobeagle.io.LocationBookmarksSql;
+import com.google.code.geobeagle.io.FileOpener.FileReaderFactory;
+import com.google.code.geobeagle.io.LoadGpx.CacheFilter;
+import com.google.code.geobeagle.io.LoadGpx.GBXmlPullParserFactory;
+
+import org.xmlpull.v1.XmlPullParser;
 
 import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
+import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -52,16 +62,18 @@ public class CacheListDelegate {
     private final LocationControl mLocationControl;
     private final ListActivity mParent;
     private final Intent mIntent;
+    private final ErrorDisplayer mErrorDisplayer;
 
     public CacheListDelegate(ListActivity parent, LocationBookmarksSql locationBookmarks,
             LocationControl locationControl, CacheListDelegateFactory cacheListDelegateFactory,
-            CacheListData cacheListData, Intent intent) {
+            CacheListData cacheListData, Intent intent, ErrorDisplayer errorDisplayer) {
         mParent = parent;
         mLocationBookmarks = locationBookmarks;
         mLocationControl = locationControl;
         mCacheListDelegateFactory = cacheListDelegateFactory;
         mCacheListData = cacheListData;
         mIntent = intent;
+        mErrorDisplayer = errorDisplayer;
     }
 
     public void onCreate() {
@@ -79,5 +91,25 @@ public class CacheListDelegate {
 
         mParent.setListAdapter(mCacheListDelegateFactory.createSimpleAdapter(mParent,
                 mCacheListData.getAdapterData(), R.layout.cache_row, ADAPTER_FROM, ADAPTER_TO));
+    }
+
+    public boolean onOptionsItemSelected(MenuItem item) {
+        try {
+            FileReaderFactory fileReaderFactory = new FileReaderFactory();
+            FileReader fileReader = new FileOpener().open(fileReaderFactory);
+            XmlPullParser xmlPullParser = new GBXmlPullParserFactory().create(mErrorDisplayer);
+            xmlPullParser.setInput(fileReader);
+
+            LoadGpx loadGpx = LoadGpx.create(mParent, mErrorDisplayer, xmlPullParser);
+
+            if (loadGpx != null) {
+                loadGpx.load(new CacheFilter(mLocationControl.getLocation()));
+            }
+
+        } catch (final Exception e) {
+            mErrorDisplayer.displayError(e.toString() + "\n" + Util.getStackTrace(e));
+        }
+        onResume();
+        return true;
     }
 }

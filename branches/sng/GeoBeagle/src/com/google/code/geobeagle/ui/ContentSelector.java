@@ -40,6 +40,6 @@ public class ContentSelector implements LifecycleManager {
     }
 
     public void onResume(SharedPreferences preferences) {
-        mSpinner.setSelection(mPreferences.getInt(CONTENT_PROVIDER, 0));
+        mSpinner.setSelection(mPreferences.getInt(CONTENT_PROVIDER, 1));
     }
 }

@@ -43,7 +43,7 @@ public class CacheListDelegateTest extends TestCase {
         listActivity.setContentView(R.layout.cache_list);
 
         replay(listActivity);
-        new CacheListDelegate(listActivity, null, null, null, null, null).onCreate();
+        new CacheListDelegate(listActivity, null, null, null, null, null, null).onCreate();
         verify(listActivity);
     }
 
@@ -62,7 +62,7 @@ public class CacheListDelegateTest extends TestCase {
         replay(listActivity);
         replay(cacheListData);
         CacheListDelegate cacheListDelegate = new CacheListDelegate(listActivity, null, null,
-                cacheListDelegateFactory, cacheListData, intent);
+                cacheListDelegateFactory, cacheListData, intent, null);
         cacheListDelegate.onListItemClick(null, null, 12, 0);
         verify(cacheListDelegateFactory);
         verify(intent);
@@ -95,7 +95,7 @@ public class CacheListDelegateTest extends TestCase {
         replay(cacheListData);
         replay(locationControl);
         new CacheListDelegate(listActivity, locationBookmarks, locationControl,
-                cacheListDelegateFactory, cacheListData, null).onResume();
+                cacheListDelegateFactory, cacheListData, null, null).onResume();
         verify(cacheListDelegateFactory);
         verify(locationBookmarks);
         verify(cacheListData);

@@ -56,12 +56,17 @@ public class Destination {
 
     private int mContentSelectorIndex;
     private CharSequence mDescription;
-    private CharSequence mLocation;
+    private CharSequence mFullId;
     private CharSequence mId;
     private double mLatitude;
+    private CharSequence mLocation;
     private double mLongitude;
+    private CharSequence mName;
 
     public Destination(CharSequence location, Pattern destinationPatterns[]) {
+        mId = "";
+        mFullId = "";
+        mName = "";
         CharSequence latLonDescription[] = Util.splitLatLonDescription(location);
         try {
             mLatitude = Util.parseCoordinate(latLonDescription[0]);
@@ -75,8 +80,16 @@ public class Destination {
             Matcher matcher = destinationPatterns[mContentSelectorIndex].matcher(mDescription);
             if (matcher.find()) {
                 mId = matcher.group(1);
-                return;
+                mFullId = matcher.group();
+                break;
             }
+        }
+        
+        if (mId.length() == 0) {
+            mName = mDescription;
+        } else {
+            if (mDescription.length() > mFullId.length() + 2)
+                mName = mDescription.subSequence(mFullId.length() + 2, mDescription.length());
         }
     }
 
@@ -84,11 +97,12 @@ public class Destination {
         return mContentSelectorIndex;
     }
 
-    public CharSequence getLocation() {
-        return mLocation;
-    }
     public CharSequence getDescription() {
         return mDescription;
+    }
+
+    public CharSequence getFullId() {
+        return mFullId;
     }
 
     public CharSequence getId() {
@@ -99,7 +113,15 @@ public class Destination {
         return mLatitude;
     }
 
+    public CharSequence getLocation() {
+        return mLocation;
+    }
+
     public double getLongitude() {
         return mLongitude;
+    }
+
+    public CharSequence getName() {
+        return mName;
     }
 }

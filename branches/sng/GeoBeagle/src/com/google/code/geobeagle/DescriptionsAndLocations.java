@@ -23,7 +23,7 @@ public class DescriptionsAndLocations {
     private int mMaxSize;
 
     public DescriptionsAndLocations() {
-        create(25);
+        create(100);
     }
 
     public DescriptionsAndLocations(int maxSize) {

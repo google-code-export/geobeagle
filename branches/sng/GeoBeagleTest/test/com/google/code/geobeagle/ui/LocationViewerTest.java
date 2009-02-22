@@ -12,15 +12,15 @@
  ** limitations under the License.
  */
 
-package com.google.code.geobeagle;
+package com.google.code.geobeagle.ui;
 
 import static org.easymock.EasyMock.expect;
 import static org.easymock.classextension.EasyMock.createMock;
 import static org.easymock.classextension.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.verify;
 
-import com.google.code.geobeagle.ui.LocationViewer;
-import com.google.code.geobeagle.ui.MockableTextView;
+import com.google.code.geobeagle.R;
+import com.google.code.geobeagle.ResourceProvider;
 import com.google.code.geobeagle.ui.LocationViewer.MeterFormatter;
 import com.google.code.geobeagle.ui.LocationViewer.MeterView;
 import com.google.code.geobeagle.ui.LocationViewer.Time;

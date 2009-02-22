@@ -15,6 +15,7 @@ package com.google.code.geobeagle;
 
 import com.google.code.geobeagle.LocationControl.LocationChooser;
 import com.google.code.geobeagle.data.Destination;
+import com.google.code.geobeagle.data.Destination.DestinationFactory;
 import com.google.code.geobeagle.intents.DestinationToCachePage;
 import com.google.code.geobeagle.intents.DestinationToGoogleMap;
 import com.google.code.geobeagle.intents.IntentFactory;
@@ -52,6 +53,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
+
+import java.util.regex.Pattern;
 
 /*
  * Main Activity for GeoBeagle.
@@ -142,16 +145,20 @@ public class GeoBeagle extends Activity {
             mGpsControl = new LocationControl(locationManager, new LocationChooser());
             mLocationListener = new GeoBeagleLocationListener(mGpsControl, mLocationViewer);
             DescriptionsAndLocations descriptionsAndLocations = new DescriptionsAndLocations();
+            final Pattern[] destinationPatterns = Destination
+                    .getDestinationPatterns(mResourceProvider);
+            final DestinationFactory destinationFactory = new DestinationFactory(
+                    destinationPatterns);
             LocationBookmarksSql locationBookmarks = new LocationBookmarksSql(
-                    descriptionsAndLocations, new DatabaseFactory(
-                            new DatabaseFactory.SQLiteWrapper()), mErrorDisplayer);
+                    descriptionsAndLocations, DatabaseFactory.create(this), destinationFactory,
+                    mErrorDisplayer);
 
             MockableEditText mockableTxtLocation = new MockableEditText(txtLocation);
             mockableTxtLocation
                     .setOnFocusChangeListener(new LocationSetter.EditTextFocusChangeListener(
                             locationBookmarks, mockableTxtLocation));
             mLocationSetter = new LocationSetter(this, mockableTxtLocation, mGpsControl,
-                    Destination.getDestinationPatterns(mResourceProvider), locationBookmarks,
+                    destinationPatterns, locationBookmarks,
                     getString(R.string.initial_destination), mErrorDisplayer);
 
             setCacheClickListeners();
@@ -190,6 +197,7 @@ public class GeoBeagle extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
+
         mGeoBeagleDelegate.onResume();
         maybeGetCoordinatesFromIntent();
         final Location location = mGpsControl.getLocation();

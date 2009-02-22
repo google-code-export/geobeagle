@@ -96,7 +96,7 @@ public class Util {
     public static CharSequence parseDescription(CharSequence string) {
         Matcher matcher = PAT_ATLASQUEST.matcher(string);
         if (matcher.matches())
-            return "LB" + matcher.group(2).trim() + "--" + matcher.group(1).trim();
+            return "LB" + matcher.group(2).trim() + ": " + matcher.group(1).trim();
         return string;
     }
 
