@@ -135,13 +135,18 @@ public class LocationBookmarksSqlTest extends TestCase {
 
     public void testSaveBookmarksEmpty() {
         expect(mFactory.openOrCreateCacheDatabase(null)).andReturn(mSqlite);
-        expect(mFactory.createCacheWriter(mSqlite, null)).andReturn(null);
-
+        CacheWriter writer = createMock(CacheWriter.class);
+        expect(mFactory.createCacheWriter(mSqlite, null)).andReturn(writer);
+        writer.startWriting();
+        writer.stopWriting();
+        
         replay(mFactory);
+        replay(writer);
         LocationBookmarksSql locationBookmarksSql = new LocationBookmarksSql(
                 new DescriptionsAndLocations(), mFactory, null, null);
         locationBookmarksSql.onPause(null);
         verify(mFactory);
+        verify(writer);
     }
 
     public void testSaveBookmarksOpenError() {
@@ -161,6 +166,7 @@ public class LocationBookmarksSqlTest extends TestCase {
 
         expect(mFactory.openOrCreateCacheDatabase(null)).andReturn(mSqlite);
         expect(mFactory.createCacheWriter(mSqlite, null)).andReturn(writer);
+        writer.startWriting();
         expect(destinationFactory.create("122 32.3423 83 32.3221 (LB12345: my cache)"))
                 .andReturn(destination);
         expect(destination.getFullId()).andReturn("LB12345");
@@ -168,6 +174,7 @@ public class LocationBookmarksSqlTest extends TestCase {
         expect(destination.getLatitude()).andReturn(122.0);
         expect(destination.getLongitude()).andReturn(37.0);
         expect(writer.write("LB12345", "my cache", 122, 37)).andReturn(false);
+        writer.stopWriting();
         mSqlite.close();
 
         replay(mFactory);
@@ -195,6 +202,7 @@ public class LocationBookmarksSqlTest extends TestCase {
 
         expect(mFactory.openOrCreateCacheDatabase(null)).andReturn(mSqlite);
         expect(mFactory.createCacheWriter(mSqlite, null)).andReturn(writer);
+        writer.startWriting();
         expect(destinationFactory.create("122 32.3423 83 32.3221 (LB12345)"))
                 .andReturn(destination);
         expect(destination.getFullId()).andReturn("LB12345");
@@ -210,6 +218,7 @@ public class LocationBookmarksSqlTest extends TestCase {
         expect(destination.getLatitude()).andReturn(122.0);
         expect(destination.getLongitude()).andReturn(37.0);
         expect(writer.write("LB54321", "", 122, 37)).andReturn(true);
+        writer.stopWriting();
         mSqlite.close();
 
         replay(mFactory);

@@ -77,8 +77,10 @@ public class LoadGpxTest extends TestCase {
         cache.mLongitude = 37;
         expect(gpxToCache.load()).andReturn(cache);
         expect(cacheFilter.filter(cache)).andReturn(true);
+        cacheWriter.startWriting();
         expect(cacheWriter.write("gc1234", "my cache", 122, 37)).andReturn(true);
         expect(gpxToCache.load()).andReturn(null);
+        cacheWriter.stopWriting();
 
         replay(gpxToCache);
         replay(cacheFilter);
@@ -104,7 +106,9 @@ public class LoadGpxTest extends TestCase {
         cache.mLongitude = 37;
         expect(gpxToCache.load()).andReturn(cache);
         expect(cacheFilter.filter(cache)).andReturn(true);
+        cacheWriter.startWriting();
         expect(cacheWriter.write("gc1234", "my cache", 122, 37)).andReturn(false);
+        cacheWriter.stopWriting();
 
         replay(gpxToCache);
         replay(cacheFilter);

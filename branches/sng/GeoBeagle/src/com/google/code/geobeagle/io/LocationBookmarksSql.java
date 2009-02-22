@@ -81,12 +81,14 @@ public class LocationBookmarksSql implements LifecycleManager {
         SQLiteDatabase sqlite = mDatabaseFactory.openOrCreateCacheDatabase(mErrorDisplayer);
         if (sqlite != null) {
             CacheWriter cacheWriter = mDatabaseFactory.createCacheWriter(sqlite, mErrorDisplayer);
+            cacheWriter.startWriting();
             for (final CharSequence location : mDescriptionsAndLocations.getPreviousLocations()) {
                 Destination destination = mDestinationFactory.create(location);
                 final CharSequence id = destination.getFullId();
                 if (!cacheWriter.write(id, destination.getName(), destination.getLatitude(), destination.getLongitude()))
                     break;
             }
+            cacheWriter.stopWriting();
             sqlite.close();
         }
     }

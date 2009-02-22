@@ -163,12 +163,14 @@ public class LoadGpx {
     public void load(CacheFilter cacheFilter) throws XmlPullParserException, IOException {
         mCacheWriter.clear();
         Cache cache;
+        mCacheWriter.startWriting();
         for (mGpxToCache.startLoad(), cache = mGpxToCache.load(); cache != null; cache = mGpxToCache
                 .load()) {
             if (cacheFilter.filter(cache))
                 if (!mCacheWriter.write(cache.mId, cache.mName, cache.mLatitude, cache.mLongitude))
                     break;
         }
+        mCacheWriter.stopWriting();
     }
 
 }

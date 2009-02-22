@@ -94,6 +94,15 @@ public class DatabaseFactory {
             }
             return true;
         }
+
+        public void startWriting() {
+            mSqlite.beginTransaction();
+        }
+
+        public void stopWriting() {
+            mSqlite.setTransactionSuccessful();
+            mSqlite.endTransaction();
+        }
     }
 
     public static class OpenHelperDelegate {
