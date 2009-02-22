@@ -45,7 +45,7 @@ public class CacheList extends ListActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
-        menu.add("Import Gpx");
+        menu.add("Import caches from /sdcard/caches.gpx");
         return true;
     }
 
