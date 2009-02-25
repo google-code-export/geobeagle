@@ -22,9 +22,11 @@ import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
 
+import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.Reader;
 import java.util.Iterator;
 
 public class GpxToCache {
@@ -63,9 +65,9 @@ public class GpxToCache {
 
     public static XmlPullParser createPullParser() throws FileNotFoundException,
             XmlPullParserException {
-        final FileReader fileReader = new FileReader(GPX_PATH);
+        final Reader reader = new BufferedReader(new FileReader(GPX_PATH));
         final XmlPullParser newPullParser = XmlPullParserFactory.newInstance().newPullParser();
-        newPullParser.setInput(fileReader);
+        newPullParser.setInput(reader);
         return newPullParser;
     }
 
