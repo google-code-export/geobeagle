@@ -124,7 +124,7 @@ public class GpxToCacheTest extends TestCase {
         replay(cacheDetailsWriterFactory);
         replay(xmlPullParser);
         GpxToCache gpxToCache = new GpxToCache(xmlPullParser, new EventHelper(new XmlPathBuilder(),
-                new GpxEventHandler(cacheDetailsWriterFactory, new Cache()), xmlPullParser));
+                new GpxEventHandler(cacheDetailsWriterFactory, new Cache(), cacheDetailsWriter), xmlPullParser));
         Cache cache = gpxToCache.load();
         assertEquals("GC123", cache.mId);
         verify(xmlPullParser);
@@ -149,7 +149,7 @@ public class GpxToCacheTest extends TestCase {
         replay(xmlPullParser);
         replay(cacheDetailsWriterFactory);
         GpxToCache gpxToCache = new GpxToCache(xmlPullParser, new EventHelper(new XmlPathBuilder(),
-                new GpxEventHandler(cacheDetailsWriterFactory, new Cache()), xmlPullParser));
+                new GpxEventHandler(cacheDetailsWriterFactory, new Cache(), cacheDetailsWriter), xmlPullParser));
         Cache cache = gpxToCache.load();
         assertEquals("a fun little cache", cache.mName);
         verify(xmlPullParser);
