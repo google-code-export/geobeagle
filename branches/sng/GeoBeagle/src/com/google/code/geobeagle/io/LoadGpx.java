@@ -24,6 +24,7 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 
 public class LoadGpx {
@@ -54,7 +55,8 @@ public class LoadGpx {
     }
 
     public static LoadGpx create(Context context, ErrorDisplayer errorDisplayer,
-            DatabaseFactory databaseFactory) throws XmlPullParserException, IOException {
+            DatabaseFactory databaseFactory) throws XmlPullParserException, IOException,
+            FileNotFoundException {
         final FileFactory fileFactory = new FileFactory();
         final SQLiteDatabase sqlite = databaseFactory.openOrCreateCacheDatabase();
         final CacheWriter cacheWriter = databaseFactory.createCacheWriter(sqlite, errorDisplayer);

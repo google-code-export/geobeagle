@@ -34,6 +34,7 @@ import android.view.View;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -111,7 +112,10 @@ public class CacheListDelegate {
             if (loadGpx != null) {
                 loadGpx.load();
             }
-
+        } catch (final FileNotFoundException e) {
+            mErrorDisplayer.displayError("Unable to open file '" + e.getMessage()
+                    + "'.  Please ensure that the cache import file exists "
+                    + "and that your sdcard is unmounted.");
         } catch (final Exception e) {
             mErrorDisplayer.displayErrorAndStack(e);
         }
@@ -120,10 +124,14 @@ public class CacheListDelegate {
     }
 
     public void onResume() {
-        mLocationBookmarks.onResume(null);
-        mCacheListData.add(mLocationBookmarks.getLocations(), mLocationControl.getLocation());
+        try {
+            mLocationBookmarks.onResume(null);
+            mCacheListData.add(mLocationBookmarks.getLocations(), mLocationControl.getLocation());
 
-        mParent.setListAdapter(mSimpleAdapterFactory.createSimpleAdapter(mParent, mCacheListData
-                .getAdapterData(), R.layout.cache_row, ADAPTER_FROM, ADAPTER_TO));
+            mParent.setListAdapter(mSimpleAdapterFactory.createSimpleAdapter(mParent,
+                    mCacheListData.getAdapterData(), R.layout.cache_row, ADAPTER_FROM, ADAPTER_TO));
+        } catch (final Exception e) {
+            mErrorDisplayer.displayErrorAndStack(e);
+        }
     }
 }

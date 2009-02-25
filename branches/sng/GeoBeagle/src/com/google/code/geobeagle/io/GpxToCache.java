@@ -160,7 +160,7 @@ public class GpxToCache {
     }
 
     public static GpxCaches createGpxCaches(ErrorDisplayer errorDisplayer)
-            throws XmlPullParserException, IOException {
+            throws XmlPullParserException, IOException, FileNotFoundException {
         final GpxToCache gpxToCache = GpxToCache.create();
         return new GpxCaches(gpxToCache, errorDisplayer);
     }

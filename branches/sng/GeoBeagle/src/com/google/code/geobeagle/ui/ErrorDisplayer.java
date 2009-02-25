@@ -56,6 +56,7 @@ public class ErrorDisplayer {
     }
 
     public void displayErrorAndStack(Exception e) {
-        displayError("Error: " + e.getMessage() + "\n\n" + Util.getStackTrace(e));
+        displayError("Error: " + e.toString() + "\n" + "\n\n"
+                + Util.getStackTrace(e));
     }
 }
