@@ -249,41 +249,4 @@ public class GpxToCacheTest extends TestCase {
         assertFalse(iterator.hasNext());
         verify(gpxToCache);
     }
-
-    public void xtestNameNotTB() throws XmlPullParserException, IOException {
-        startTag(xmlPullParser);
-
-        expectTag(XmlPullParser.START_TAG, "groundspeak:cache");
-        expectTag(XmlPullParser.START_TAG, "groundspeak:name");
-        expectText("a fun little cache");
-        expectTag(XmlPullParser.END_TAG, "groundspeak:name");
-        expectTag(XmlPullParser.END_TAG, "groundspeak:cache");
-
-        expectTag(XmlPullParser.START_TAG, "groundspeak:travelbug");
-        expectTag(XmlPullParser.START_TAG, "groundspeak:name");
-        // expect(xmlPullParser.next()).andReturn(XmlPullParser.TEXT);
-        expectTag(XmlPullParser.END_TAG, "groundspeak:name");
-        expectTag(XmlPullParser.END_TAG, "groundspeak:travelbug");
-
-        endTagAndDocument(xmlPullParser);
-
-        replay(xmlPullParser);
-        GpxToCache gpxToCache = new GpxToCache(xmlPullParser, new EventHelper(new XmlPathBuilder(),
-                new GpxEventHandler(null, new Cache()), xmlPullParser));
-        Cache cache = gpxToCache.load();
-        assertEquals("a fun little cache", cache.mName);
-        verify(xmlPullParser);
-    }
-
-    public void xtestWpt() throws XmlPullParserException, IOException {
-        startTag(xmlPullParser);
-        endTagAndDocument(xmlPullParser);
-
-        replay(xmlPullParser);
-        GpxToCache gpxToCache = new GpxToCache(xmlPullParser, null);
-        Cache cache = gpxToCache.load();
-        assertEquals(123.0, cache.mLatitude);
-        assertEquals(37.0, cache.mLongitude);
-        verify(xmlPullParser);
-    }
 }
