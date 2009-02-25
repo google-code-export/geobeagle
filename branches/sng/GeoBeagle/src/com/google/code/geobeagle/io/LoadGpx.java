@@ -17,6 +17,7 @@ package com.google.code.geobeagle.io;
 import com.google.code.geobeagle.io.DatabaseFactory.CacheWriter;
 import com.google.code.geobeagle.io.GpxToCache.GpxCaches;
 import com.google.code.geobeagle.ui.ErrorDisplayer;
+import com.google.code.geobeagle.ui.CacheListDelegate.CacheProgressUpdater;
 
 import org.xmlpull.v1.XmlPullParserException;
 
@@ -28,6 +29,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 public class LoadGpx {
+
 
     public static class Cache {
         public String mId;
@@ -75,13 +77,14 @@ public class LoadGpx {
         mFileFactory = fileFactory;
     }
 
-    public void load() {
+    public void load(CacheProgressUpdater cacheProgressUpdater) {
         File file = mFileFactory.createFile(GpxToCache.GEOBEAGLE_DIR);
         file.mkdirs();
 
         mCacheWriter.clear();
         mCacheWriter.startWriting();
-        for (Cache cache : mGpxCaches) {
+        for (final Cache cache : mGpxCaches) {
+            cacheProgressUpdater.update(cache.mName);
             if (!mCacheWriter.write(cache.mId, cache.mName, cache.mLatitude, cache.mLongitude))
                 break;
         }

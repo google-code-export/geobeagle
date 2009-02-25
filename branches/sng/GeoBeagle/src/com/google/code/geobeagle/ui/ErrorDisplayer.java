@@ -23,6 +23,8 @@ import android.content.DialogInterface;
 public class ErrorDisplayer {
     private final Context mContext;
 
+    // TODO: Wrap this in runOnUiThread so it is displayed even if accidentally
+    // called from the wrong thread.
     public ErrorDisplayer(Context context) {
         this.mContext = context;
     }
@@ -56,7 +58,6 @@ public class ErrorDisplayer {
     }
 
     public void displayErrorAndStack(Exception e) {
-        displayError("Error: " + e.toString() + "\n" + "\n\n"
-                + Util.getStackTrace(e));
+        displayError("Error: " + e.toString() + "\n" + "\n\n" + Util.getStackTrace(e));
     }
 }

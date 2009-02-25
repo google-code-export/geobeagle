@@ -25,7 +25,9 @@ import com.google.code.geobeagle.io.DatabaseFactory;
 import com.google.code.geobeagle.io.LoadGpx;
 import com.google.code.geobeagle.io.LocationBookmarksSql;
 
+import android.app.Activity;
 import android.app.ListActivity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.location.LocationManager;
@@ -42,6 +44,20 @@ import java.util.regex.Pattern;
 
 public class CacheListDelegate {
 
+    private static class DisplayErrorRunnable implements Runnable {
+        private final ErrorDisplayer mErrorDisplayer;
+        private final Exception mException;
+
+        private DisplayErrorRunnable(Exception e, ErrorDisplayer errorDisplayer) {
+            mException = e;
+            mErrorDisplayer = errorDisplayer;
+        }
+
+        public void run() {
+            mErrorDisplayer.displayErrorAndStack(mException);
+        }
+    }
+
     public static class SimpleAdapterFactory {
         public SimpleAdapter createSimpleAdapter(Context context,
                 ArrayList<Map<String, Object>> arrayList, int view_layout, String[] from, int[] to) {
@@ -55,6 +71,7 @@ public class CacheListDelegate {
     public static final int[] ADAPTER_TO = {
             R.id.txt_cache, R.id.distance
     };
+
     public static final String SELECT_CACHE = "SELECT_CACHE";
 
     public static CacheListDelegate create(ListActivity parent) {
@@ -74,15 +91,19 @@ public class CacheListDelegate {
         return new CacheListDelegate(parent, locationBookmarks, locationControl,
                 simpleAdapterFactory, cacheListData, intent, errorDisplayer, databaseFactory);
     }
+
     private final CacheListData mCacheListData;
     private final DatabaseFactory mDatabaseFactory;
     private final ErrorDisplayer mErrorDisplayer;
     private final Intent mIntent;
     private final LocationBookmarksSql mLocationBookmarks;
     private final LocationControl mLocationControl;
+
     private final ListActivity mParent;
 
     private final SimpleAdapterFactory mSimpleAdapterFactory;
+
+    private ProgressDialog progressDialog;
 
     public CacheListDelegate(ListActivity parent, LocationBookmarksSql locationBookmarks,
             LocationControl locationControl, SimpleAdapterFactory simpleAdapterFactory,
@@ -112,11 +133,48 @@ public class CacheListDelegate {
         mParent.startActivity(mIntent);
     }
 
+    public static class CacheProgressUpdater {
+        private final ProgressDialog mProgressDialog;
+        private final Activity mActivity;
+        private String mCacheName;
+
+        public CacheProgressUpdater(Activity activity, ProgressDialog progressDialog) {
+            mActivity = activity;
+            mProgressDialog = progressDialog;
+        }
+
+        public void update(String cache) {
+            mCacheName = cache;
+            mActivity.runOnUiThread(new Runnable() {
+                public void run() {
+                    mProgressDialog.setMessage("Importing " + mCacheName);
+                }
+            });
+        }
+    }
+
     public boolean onOptionsItemSelected(MenuItem item) {
         try {
-            LoadGpx loadGpx = LoadGpx.create(mParent, mErrorDisplayer, mDatabaseFactory);
+            final LoadGpx loadGpx = LoadGpx.create(mParent, mErrorDisplayer, mDatabaseFactory);
             if (loadGpx != null) {
-                loadGpx.load();
+                progressDialog = ProgressDialog.show(this.mParent, "Importing Caches",
+                        "Please wait...");
+                final Thread thread = new Thread() {
+                    public void run() {
+                        try {
+                            loadGpx.load(new CacheProgressUpdater(mParent, progressDialog));
+                            progressDialog.dismiss();
+                            mParent.runOnUiThread(new Runnable() {
+                                public void run() {
+                                    CacheListDelegate.this.onResume();
+                                }
+                            });
+                        } catch (Exception e) {
+                            mParent.runOnUiThread(new DisplayErrorRunnable(e, mErrorDisplayer));
+                        }
+                    }
+                };
+                thread.start();
             }
         } catch (final FileNotFoundException e) {
             mErrorDisplayer.displayError("Unable to open file '" + e.getMessage()
@@ -125,7 +183,6 @@ public class CacheListDelegate {
         } catch (final Exception e) {
             mErrorDisplayer.displayErrorAndStack(e);
         }
-        onResume();
         return true;
     }
 
