@@ -29,6 +29,7 @@ import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.location.LocationManager;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
@@ -56,15 +57,6 @@ public class CacheListDelegate {
     };
     public static final String SELECT_CACHE = "SELECT_CACHE";
 
-    private final CacheListData mCacheListData;
-    private final DatabaseFactory mDatabaseFactory;
-    private final ErrorDisplayer mErrorDisplayer;
-    private final Intent mIntent;
-    private final LocationBookmarksSql mLocationBookmarks;
-    private final LocationControl mLocationControl;
-    private final ListActivity mParent;
-    private final SimpleAdapterFactory mSimpleAdapterFactory;
-
     public static CacheListDelegate create(ListActivity parent) {
         final ErrorDisplayer errorDisplayer = new ErrorDisplayer(parent);
         final DatabaseFactory databaseFactory = DatabaseFactory.create(parent);
@@ -82,6 +74,15 @@ public class CacheListDelegate {
         return new CacheListDelegate(parent, locationBookmarks, locationControl,
                 simpleAdapterFactory, cacheListData, intent, errorDisplayer, databaseFactory);
     }
+    private final CacheListData mCacheListData;
+    private final DatabaseFactory mDatabaseFactory;
+    private final ErrorDisplayer mErrorDisplayer;
+    private final Intent mIntent;
+    private final LocationBookmarksSql mLocationBookmarks;
+    private final LocationControl mLocationControl;
+    private final ListActivity mParent;
+
+    private final SimpleAdapterFactory mSimpleAdapterFactory;
 
     public CacheListDelegate(ListActivity parent, LocationBookmarksSql locationBookmarks,
             LocationControl locationControl, SimpleAdapterFactory simpleAdapterFactory,
@@ -99,6 +100,11 @@ public class CacheListDelegate {
 
     public void onCreate() {
         mParent.setContentView(R.layout.cache_list);
+    }
+
+    public boolean onCreateOptionsMenu(Menu menu) {
+        menu.add(R.string.menu_import_gpx);
+        return true;
     }
 
     public void onListItemClick(ListView l, View v, int position, long id) {

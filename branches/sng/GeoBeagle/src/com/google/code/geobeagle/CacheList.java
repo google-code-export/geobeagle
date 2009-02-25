@@ -28,14 +28,13 @@ public class CacheList extends ListActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
-        menu.add("Import caches from /sdcard/caches.gpx (max 100)");
-        return true;
+        return delegate.onCreateOptionsMenu(menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         super.onOptionsItemSelected(item);
-        return mCacheListDelegate.onOptionsItemSelected(item);
+        return delegate.onOptionsItemSelected(item);
     }
 
     public static final String SELECT_CACHE = CacheListDelegate.SELECT_CACHE;
@@ -44,26 +43,26 @@ public class CacheList extends ListActivity {
         return CacheListDelegate.create(listActivity);
     }
 
-    private CacheListDelegate mCacheListDelegate;
+    private CacheListDelegate delegate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mCacheListDelegate = buildCacheListDelegate(this);
-        mCacheListDelegate.onCreate();
+        delegate = buildCacheListDelegate(this);
+        delegate.onCreate();
     }
 
     @Override
     protected void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
-        mCacheListDelegate.onListItemClick(l, v, position, id);
+        delegate.onListItemClick(l, v, position, id);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        mCacheListDelegate.onResume();
+        delegate.onResume();
     }
 
 }

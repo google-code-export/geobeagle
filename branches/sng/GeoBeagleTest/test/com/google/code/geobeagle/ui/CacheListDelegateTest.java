@@ -28,6 +28,7 @@ import com.google.code.geobeagle.ui.CacheListDelegate.SimpleAdapterFactory;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.location.Location;
+import android.view.Menu;
 import android.widget.SimpleAdapter;
 
 import java.util.ArrayList;
@@ -45,6 +46,18 @@ public class CacheListDelegateTest extends TestCase {
         replay(listActivity);
         new CacheListDelegate(listActivity, null, null, null, null, null, null, null).onCreate();
         verify(listActivity);
+    }
+
+    public void testOnCreateOptionsMenu() {
+        Menu menu = createMock(Menu.class);
+
+        expect(menu.add(R.string.menu_import_gpx)).andReturn(null);
+        
+        replay(menu);
+        CacheListDelegate cacheListDelegate = new CacheListDelegate(null, null, null, null, null,
+                null, null, null);
+        assertTrue(cacheListDelegate.onCreateOptionsMenu(menu));
+        verify(menu);
     }
 
     public void testOnListItemClick() {
