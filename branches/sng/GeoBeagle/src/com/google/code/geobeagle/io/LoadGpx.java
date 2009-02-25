@@ -30,10 +30,10 @@ import java.io.IOException;
 public class LoadGpx {
 
     public static class Cache {
-        String mId;
-        double mLatitude;
-        double mLongitude;
-        String mName;
+        public String mId;
+        public double mLatitude;
+        public double mLongitude;
+        public String mName;
 
         public Cache() {
             mId = "";

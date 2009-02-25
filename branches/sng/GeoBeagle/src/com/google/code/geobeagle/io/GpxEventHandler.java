@@ -11,6 +11,7 @@
  ** See the License for the specific language governing permissions and
  ** limitations under the License.
  */
+
 package com.google.code.geobeagle.io;
 
 import com.google.code.geobeagle.io.CacheDetailsWriter.CacheDetailsWriterFactory;
@@ -21,12 +22,25 @@ import org.xmlpull.v1.XmlPullParser;
 import java.io.IOException;
 
 public class GpxEventHandler {
-    private final CacheDetailsWriterFactory mCacheDetailsWriterFactory;
     private final Cache mCache;
     private CacheDetailsWriter mCacheDetailsWriter;
+    private final CacheDetailsWriterFactory mCacheDetailsWriterFactory;
+    private final String mWriteLineMatches[] = {
+            "/gpx/wpt/desc", "/gpx/wpt/groundspeak:cache/groundspeak:type",
+            "/gpx/wpt/groundspeak:cache/groundspeak:container",
+            "/gpx/wpt/groundspeak:cache/groundspeak:short_description",
+            "/gpx/wpt/groundspeak:cache/groundspeak:long_description",
+            "/gpx/wpt/groundspeak:cache/groundspeak:name",
+            "/gpx/wpt/groundspeak:cache/groundspeak:logs/groundspeak:log/groundspeak:date",
+            "/gpx/wpt/groundspeak:cache/groundspeak:logs/groundspeak:log/groundspeak:type",
+            "/gpx/wpt/groundspeak:cache/groundspeak:logs/groundspeak:log/groundspeak:finder",
+            "/gpx/wpt/groundspeak:cache/groundspeak:logs/groundspeak:log/groundspeak:text"
+    };
 
-    public GpxEventHandler(CacheDetailsWriterFactory cacheDetailsWriterFactory, Cache cache) {
+    public GpxEventHandler(CacheDetailsWriterFactory cacheDetailsWriterFactory, Cache cache,
+            CacheDetailsWriter cacheDetailsWriter) {
         mCacheDetailsWriterFactory = cacheDetailsWriterFactory;
+        mCacheDetailsWriter = cacheDetailsWriter;
         mCache = cache;
     }
 
@@ -49,38 +63,20 @@ public class GpxEventHandler {
     }
 
     public void text(String mFullPath, String text) throws IOException {
+        for (String writeLineMatch : mWriteLineMatches) {
+            if (mFullPath.equals(writeLineMatch)) {
+                mCacheDetailsWriter.write(text);
+                return;
+            }
+        }
+
         if (mFullPath.equals("/gpx/wpt/name")) {
-            mCacheDetailsWriter = mCacheDetailsWriterFactory.create(GpxToCache.GEOBEAGLE_DIR + "/" + text
-                    + ".html");
+            mCacheDetailsWriter = mCacheDetailsWriterFactory.create(GpxToCache.GEOBEAGLE_DIR + "/"
+                    + text + ".html");
             mCacheDetailsWriter.writeHeader();
             mCacheDetailsWriter.write(text);
             mCacheDetailsWriter.write(mCache.mLatitude + ", " + mCache.mLongitude);
-            mCache.mId += text;
-        } else if (mFullPath.equals("/gpx/wpt/desc")) {
-            mCacheDetailsWriter.write(text);
-        } else if (mFullPath.equals("/gpx/wpt/groundspeak:cache/groundspeak:type")) {
-            mCacheDetailsWriter.write(text);
-        } else if (mFullPath.equals("/gpx/wpt/groundspeak:cache/groundspeak:container")) {
-            mCacheDetailsWriter.write(text);
-        } else if (mFullPath.equals("/gpx/wpt/groundspeak:cache/groundspeak:short_description")) {
-            mCacheDetailsWriter.write(text);
-        } else if (mFullPath.equals("/gpx/wpt/groundspeak:cache/groundspeak:long_description")) {
-            mCacheDetailsWriter.write(text);
-        } else if (mFullPath.equals("/gpx/wpt/groundspeak:cache/groundspeak:name")) {
-            mCache.mName += text;
-        } else if (mFullPath
-                .equals("/gpx/wpt/groundspeak:cache/groundspeak:logs/groundspeak:log/groundspeak:date")) {
-            mCacheDetailsWriter.writeSeparator();
-            mCacheDetailsWriter.write(text);
-        } else if (mFullPath
-                .equals("/gpx/wpt/groundspeak:cache/groundspeak:logs/groundspeak:log/groundspeak:type")) {
-            mCacheDetailsWriter.write(text);
-        } else if (mFullPath
-                .equals("/gpx/wpt/groundspeak:cache/groundspeak:logs/groundspeak:log/groundspeak:finder")) {
-            mCacheDetailsWriter.write(text);
-        } else if (mFullPath
-                .equals("/gpx/wpt/groundspeak:cache/groundspeak:logs/groundspeak:log/groundspeak:text")) {
-            mCacheDetailsWriter.write(text);
+            mCache.mId = text;
         }
     }
 }

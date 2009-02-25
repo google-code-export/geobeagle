@@ -138,7 +138,7 @@ public class GpxToCache {
         final Cache cache = new Cache();
         final XmlPathBuilder xmlPathBuilder = new XmlPathBuilder();
         final GpxEventHandler gpxEventHandler = new GpxEventHandler(cacheDetailsWriterFactory,
-                cache);
+                cache, null);
         final EventHelper eventHelper = new EventHelper(xmlPathBuilder, gpxEventHandler,
                 xmlPullParser);
 
