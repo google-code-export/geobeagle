@@ -30,8 +30,6 @@ public class GpxEventHandler {
             "/gpx/wpt/groundspeak:cache/groundspeak:container",
             "/gpx/wpt/groundspeak:cache/groundspeak:short_description",
             "/gpx/wpt/groundspeak:cache/groundspeak:long_description",
-            "/gpx/wpt/groundspeak:cache/groundspeak:name",
-            "/gpx/wpt/groundspeak:cache/groundspeak:logs/groundspeak:log/groundspeak:date",
             "/gpx/wpt/groundspeak:cache/groundspeak:logs/groundspeak:log/groundspeak:type",
             "/gpx/wpt/groundspeak:cache/groundspeak:logs/groundspeak:log/groundspeak:finder",
             "/gpx/wpt/groundspeak:cache/groundspeak:logs/groundspeak:log/groundspeak:text"
@@ -63,13 +61,6 @@ public class GpxEventHandler {
     }
 
     public void text(String mFullPath, String text) throws IOException {
-        for (String writeLineMatch : mWriteLineMatches) {
-            if (mFullPath.equals(writeLineMatch)) {
-                mCacheDetailsWriter.write(text);
-                return;
-            }
-        }
-
         if (mFullPath.equals("/gpx/wpt/name")) {
             mCacheDetailsWriter = mCacheDetailsWriterFactory.create(GpxToCache.GEOBEAGLE_DIR + "/"
                     + text + ".html");
@@ -77,6 +68,19 @@ public class GpxEventHandler {
             mCacheDetailsWriter.write(text);
             mCacheDetailsWriter.write(mCache.mLatitude + ", " + mCache.mLongitude);
             mCache.mId = text;
+        } else if (mFullPath.equals("/gpx/wpt/groundspeak:cache/groundspeak:name")) {
+            mCache.mName = text;
+        } else if (mFullPath
+                .equals("/gpx/wpt/groundspeak:cache/groundspeak:logs/groundspeak:log/groundspeak:date")) {
+            mCacheDetailsWriter.writeSeparator();
+            mCacheDetailsWriter.write(text);
+        } else {
+            for (String writeLineMatch : mWriteLineMatches) {
+                if (mFullPath.equals(writeLineMatch)) {
+                    mCacheDetailsWriter.write(text);
+                    return;
+                }
+            }
         }
     }
 }
