@@ -14,8 +14,12 @@
 
 package com.google.code.geobeagle.data;
 
+import com.google.code.geobeagle.R;
+import com.google.code.geobeagle.data.Destination.DestinationFactory;
 import com.google.code.geobeagle.data.DestinationVector.DestinationVectorFactory;
+import com.google.code.geobeagle.data.DestinationVector.LocationComparator;
 
+import android.content.Context;
 import android.location.Location;
 
 import java.util.ArrayList;
@@ -24,6 +28,19 @@ import java.util.Map;
 public class CacheListData {
     private final DestinationVectorFactory mDestinationVectorFactory;
     private final DestinationVectors mDestinationVectors;
+
+    public static CacheListData create(DestinationFactory destinationFactory, Context parent) {
+        final DistanceFormatter distanceFormatter = new DistanceFormatter();
+
+        final DestinationVectorFactory destinationVectorFactory = new DestinationVectorFactory(
+                destinationFactory, parent.getString(R.string.my_current_location),
+                distanceFormatter);
+
+        final LocationComparator locationComparator = new LocationComparator();
+        final DestinationVectors destinationVectors = new DestinationVectors(locationComparator,
+                destinationVectorFactory);
+        return new CacheListData(destinationVectors, destinationVectorFactory);
+    }
 
     public CacheListData(DestinationVectors destinationVectors,
             DestinationVectorFactory destinationVectorFactory) {

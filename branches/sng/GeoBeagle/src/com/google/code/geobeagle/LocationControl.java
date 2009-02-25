@@ -55,6 +55,11 @@ public class LocationControl {
         this.mLocationChooser = locationChooser;
     }
 
+    public static LocationControl create(LocationManager locationManager) {
+        final LocationChooser locationChooser = new LocationChooser();
+        return new LocationControl(locationManager, locationChooser);
+    }
+
     /*
      * (non-Javadoc)
      * @see

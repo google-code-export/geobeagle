@@ -76,6 +76,11 @@ public class LocationSetter implements LifecycleManager {
         return new Destination(mTxtLocation.getText(), mDestinationPatterns);
     }
 
+    // TODO: test.
+    public CharSequence getId() {
+        return getDestination().getFullId();
+    }
+    
     public void onPause(Editor editor) {
         editor.putString(PREFS_LOCATION, mTxtLocation.getText().toString());
     }

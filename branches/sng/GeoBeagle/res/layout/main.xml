@@ -24,7 +24,8 @@
 				android:textStyle="bold" android:text="[" android:textColor="#93be26" />
 			<TextView android:id="@+id/location_viewer"
 				android:layout_width="wrap_content" android:layout_height="wrap_content"
-				android:textSize="26sp" android:textStyle="bold" android:textColor="#7f93be26" android:text="×" />
+				android:textSize="26sp" android:textStyle="bold" android:textColor="#7f93be26"
+				android:text="×" />
 			<TextView android:layout_width="wrap_content"
 				android:layout_height="wrap_content" android:textSize="26sp"
 				android:textStyle="bold" android:text="]" android:textColor="#93be26" />
@@ -93,6 +94,9 @@
 			<Button android:id="@+id/cache_page" android:layout_height="wrap_content"
 				android:layout_width="wrap_content" android:layout_weight="1"
 				android:text="@string/cache_page" />
+			<Button android:id="@+id/cache_details" android:layout_height="wrap_content"
+				android:layout_width="wrap_content" android:layout_weight="1"
+				android:text="Details" />
 		</LinearLayout>
 
 		<TextView android:id="@+id/debug" android:layout_width="fill_parent"

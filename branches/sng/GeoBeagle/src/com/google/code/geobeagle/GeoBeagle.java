@@ -172,7 +172,9 @@ public class GeoBeagle extends Activity {
                             new LocationLifecycleManager(mLocationListener, locationManager),
                             mContentSelector
                     });
-            mGeoBeagleDelegate = new GeoBeagleDelegate(appLifecycleManager);
+            mGeoBeagleDelegate = GeoBeagleDelegate.buildGeoBeagleDelegate(this,
+                    appLifecycleManager, mLocationSetter, mErrorDisplayer);
+            mGeoBeagleDelegate.onCreate();
 
             ((Spinner)this.findViewById(R.id.content_provider))
                     .setOnItemSelectedListener(new OnContentProviderSelectedListener(
@@ -182,9 +184,8 @@ public class GeoBeagle extends Activity {
 
             mHandler.removeCallbacks(mUpdateTimeTask);
             mHandler.postDelayed(mUpdateTimeTask, 1000);
-
         } catch (final Exception e) {
-            mErrorDisplayer.displayError(e.toString() + "\n" + Util.getStackTrace(e));
+            mErrorDisplayer.displayErrorAndStack(e);
         }
     }
 
@@ -228,4 +229,5 @@ public class GeoBeagle extends Activity {
         cacheClickListenerSetter.set(R.id.radar, new IntentStarterRadar(this, intentFactory,
                 mLocationSetter), "\nPlease install the Radar application to use Radar.");
     }
+
 }

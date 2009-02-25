@@ -14,22 +14,73 @@
 
 package com.google.code.geobeagle;
 
+import com.google.code.geobeagle.ui.CacheDetailsOnClickListener;
+import com.google.code.geobeagle.ui.ErrorDisplayer;
+import com.google.code.geobeagle.ui.LocationSetter;
+
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
+import android.view.LayoutInflater;
+import android.widget.Button;
+
 public class GeoBeagleDelegate {
 
-    private final AppLifecycleManager mAppLifecycleManager;
+    static GeoBeagleDelegate buildGeoBeagleDelegate(Activity parent,
+            AppLifecycleManager appLifecycleManager, LocationSetter locationSetter,
+            ErrorDisplayer errorDisplayer) {
+        final AlertDialog.Builder cacheDetailsBuilder = new AlertDialog.Builder(parent);
+        final DialogInterface.OnClickListener cacheDetailsOkListener = new CacheDetailsOnClickListener.OkListener();
+        final CacheDetailsOnClickListener.Env env = new CacheDetailsOnClickListener.Env(
+                LayoutInflater.from(parent));
+        final CacheDetailsOnClickListener cacheDetailsOnClickListener = CacheDetailsOnClickListener
+                .create(cacheDetailsBuilder, locationSetter, errorDisplayer, env);
 
-    public GeoBeagleDelegate(AppLifecycleManager appLifecycleManager) {
+        return new GeoBeagleDelegate(parent, appLifecycleManager, cacheDetailsBuilder,
+                cacheDetailsOkListener, cacheDetailsOnClickListener, errorDisplayer);
+    }
+
+    private final AppLifecycleManager mAppLifecycleManager;
+    private final Builder mCacheDetailsBuilder;
+    private final OnClickListener mCacheDetailsOkListener;
+    private final CacheDetailsOnClickListener mCacheDetailsOnClickListener;
+    private final ErrorDisplayer mErrorDisplayer;
+    private final Activity mParent;
+
+    public GeoBeagleDelegate(Activity parent, AppLifecycleManager appLifecycleManager,
+            Builder cacheDetailsBuilder, OnClickListener cacheDetailsOkListener,
+            CacheDetailsOnClickListener cacheDetailsOnClickListener, ErrorDisplayer errorDisplayer) {
+        mParent = parent;
         mAppLifecycleManager = appLifecycleManager;
+        mCacheDetailsBuilder = cacheDetailsBuilder;
+        mCacheDetailsOkListener = cacheDetailsOkListener;
+        mCacheDetailsOnClickListener = cacheDetailsOnClickListener;
+        mErrorDisplayer = errorDisplayer;
+    }
+
+    public void onCreate() {
+        mCacheDetailsBuilder.setPositiveButton("Ok", mCacheDetailsOkListener);
+        mCacheDetailsBuilder.create();
+
+        ((Button)mParent.findViewById(R.id.cache_details))
+                .setOnClickListener(mCacheDetailsOnClickListener);
     }
 
     public void onPause() {
-        //TODO catch errors
-        mAppLifecycleManager.onPause();
+        try {
+            mAppLifecycleManager.onPause();
+        } catch (Exception e) {
+            mErrorDisplayer.displayErrorAndStack(e);
+        }
     }
 
     public void onResume() {
-        //TODO catch errors
-        mAppLifecycleManager.onResume();
+        try {
+            mAppLifecycleManager.onResume();
+        } catch (Exception e) {
+            mErrorDisplayer.displayErrorAndStack(e);
+        }
     }
-
 }

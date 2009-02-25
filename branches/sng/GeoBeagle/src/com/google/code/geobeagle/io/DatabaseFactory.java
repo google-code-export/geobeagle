@@ -107,7 +107,6 @@ public class DatabaseFactory {
 
     public static class OpenHelperDelegate {
         public void onCreate(SQLiteDatabase db) {
-            // TODO: handle errors.
             db.execSQL(SQL_CREATE_CACHE_TABLE);
         }
 
@@ -172,13 +171,7 @@ public class DatabaseFactory {
         return new CacheWriter(sqlite, errorDisplayer);
     }
 
-    public SQLiteDatabase openOrCreateCacheDatabase(ErrorDisplayer errorDisplayer) {
-        try {
-            return mSqliteOpenHelper.getWritableDatabase();
-        } catch (final SQLiteException e) {
-            errorDisplayer.displayError("Error opening or creating database " + DATABASE_NAME
-                    + ": " + e.getMessage() + ".");
-        }
-        return null;
+    public SQLiteDatabase openOrCreateCacheDatabase() {
+        return mSqliteOpenHelper.getWritableDatabase();
     }
 }

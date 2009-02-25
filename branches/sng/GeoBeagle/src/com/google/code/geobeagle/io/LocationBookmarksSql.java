@@ -1,4 +1,5 @@
 /*
+ ** Licensed under the Apache License, Version 2.0 (the "License");
  ** you may not use this file except in compliance with the License.
  ** You may obtain a copy of the License at
  **
@@ -21,6 +22,7 @@ import com.google.code.geobeagle.io.DatabaseFactory.CacheReader;
 import com.google.code.geobeagle.io.DatabaseFactory.CacheWriter;
 import com.google.code.geobeagle.ui.ErrorDisplayer;
 
+import android.app.ListActivity;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.database.sqlite.SQLiteDatabase;
@@ -32,6 +34,15 @@ public class LocationBookmarksSql implements LifecycleManager {
     private final DescriptionsAndLocations mDescriptionsAndLocations;
     private final ErrorDisplayer mErrorDisplayer;
     private final DestinationFactory mDestinationFactory;
+
+    public static LocationBookmarksSql create(ListActivity listActivity,
+            DatabaseFactory databaseFactory, DestinationFactory destinationFactory,
+            ErrorDisplayer errorDisplayer) {
+        final DescriptionsAndLocations descriptionsAndLocations = new DescriptionsAndLocations();
+        return new LocationBookmarksSql(descriptionsAndLocations, databaseFactory,
+                destinationFactory, errorDisplayer);
+
+    }
 
     public LocationBookmarksSql(DescriptionsAndLocations descriptionsAndLocations,
             DatabaseFactory databaseFactory, DestinationFactory destinationFactory,
@@ -59,7 +70,7 @@ public class LocationBookmarksSql implements LifecycleManager {
     }
 
     private void readBookmarks() {
-        SQLiteDatabase sqlite = mDatabaseFactory.openOrCreateCacheDatabase(mErrorDisplayer);
+        SQLiteDatabase sqlite = mDatabaseFactory.openOrCreateCacheDatabase();
         if (sqlite != null) {
             CacheReader cacheReader = mDatabaseFactory.createCacheReader(sqlite);
             if (cacheReader.open()) {
@@ -78,14 +89,15 @@ public class LocationBookmarksSql implements LifecycleManager {
     }
 
     private void saveBookmarks() {
-        SQLiteDatabase sqlite = mDatabaseFactory.openOrCreateCacheDatabase(mErrorDisplayer);
+        SQLiteDatabase sqlite = mDatabaseFactory.openOrCreateCacheDatabase();
         if (sqlite != null) {
             CacheWriter cacheWriter = mDatabaseFactory.createCacheWriter(sqlite, mErrorDisplayer);
             cacheWriter.startWriting();
             for (final CharSequence location : mDescriptionsAndLocations.getPreviousLocations()) {
                 Destination destination = mDestinationFactory.create(location);
                 final CharSequence id = destination.getFullId();
-                if (!cacheWriter.write(id, destination.getName(), destination.getLatitude(), destination.getLongitude()))
+                if (!cacheWriter.write(id, destination.getName(), destination.getLatitude(),
+                        destination.getLongitude()))
                     break;
             }
             cacheWriter.stopWriting();

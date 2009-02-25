@@ -14,34 +14,33 @@
 
 package com.google.code.geobeagle.ui;
 
+import com.google.code.geobeagle.GeoBeagle;
 import com.google.code.geobeagle.LocationControl;
 import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.Util;
+import com.google.code.geobeagle.ResourceProvider;
 import com.google.code.geobeagle.data.CacheListData;
-import com.google.code.geobeagle.io.FileOpener;
+import com.google.code.geobeagle.data.Destination;
+import com.google.code.geobeagle.data.Destination.DestinationFactory;
+import com.google.code.geobeagle.io.DatabaseFactory;
 import com.google.code.geobeagle.io.LoadGpx;
 import com.google.code.geobeagle.io.LocationBookmarksSql;
-import com.google.code.geobeagle.io.FileOpener.FileReaderFactory;
-import com.google.code.geobeagle.io.LoadGpx.CacheFilter;
-import com.google.code.geobeagle.io.LoadGpx.GBXmlPullParserFactory;
-
-import org.xmlpull.v1.XmlPullParser;
 
 import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;
+import android.location.LocationManager;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
-import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 public class CacheListDelegate {
 
-    public static class CacheListDelegateFactory {
+    public static class SimpleAdapterFactory {
         public SimpleAdapter createSimpleAdapter(Context context,
                 ArrayList<Map<String, Object>> arrayList, int view_layout, String[] from, int[] to) {
             return new SimpleAdapter(context, arrayList, view_layout, from, to);
@@ -57,23 +56,44 @@ public class CacheListDelegate {
     public static final String SELECT_CACHE = "SELECT_CACHE";
 
     private final CacheListData mCacheListData;
-    private final CacheListDelegateFactory mCacheListDelegateFactory;
+    private final DatabaseFactory mDatabaseFactory;
+    private final ErrorDisplayer mErrorDisplayer;
+    private final Intent mIntent;
     private final LocationBookmarksSql mLocationBookmarks;
     private final LocationControl mLocationControl;
     private final ListActivity mParent;
-    private final Intent mIntent;
-    private final ErrorDisplayer mErrorDisplayer;
+    private final SimpleAdapterFactory mSimpleAdapterFactory;
+
+    public static CacheListDelegate create(ListActivity parent) {
+        final ErrorDisplayer errorDisplayer = new ErrorDisplayer(parent);
+        final DatabaseFactory databaseFactory = DatabaseFactory.create(parent);
+        final ResourceProvider resourceProvider = new ResourceProvider(parent);
+        final Pattern[] destinationPatterns = Destination.getDestinationPatterns(resourceProvider);
+        final DestinationFactory destinationFactory = new DestinationFactory(destinationPatterns);
+        final LocationBookmarksSql locationBookmarks = LocationBookmarksSql.create(parent,
+                databaseFactory, destinationFactory, errorDisplayer);
+        final SimpleAdapterFactory simpleAdapterFactory = new SimpleAdapterFactory();
+        final Intent intent = new Intent(parent, GeoBeagle.class);
+        final CacheListData cacheListData = CacheListData.create(destinationFactory, parent);
+        final LocationControl locationControl = LocationControl.create(((LocationManager)parent
+                .getSystemService(Context.LOCATION_SERVICE)));
+
+        return new CacheListDelegate(parent, locationBookmarks, locationControl,
+                simpleAdapterFactory, cacheListData, intent, errorDisplayer, databaseFactory);
+    }
 
     public CacheListDelegate(ListActivity parent, LocationBookmarksSql locationBookmarks,
-            LocationControl locationControl, CacheListDelegateFactory cacheListDelegateFactory,
-            CacheListData cacheListData, Intent intent, ErrorDisplayer errorDisplayer) {
+            LocationControl locationControl, SimpleAdapterFactory simpleAdapterFactory,
+            CacheListData cacheListData, Intent intent, ErrorDisplayer errorDisplayer,
+            DatabaseFactory databaseFactory) {
         mParent = parent;
         mLocationBookmarks = locationBookmarks;
         mLocationControl = locationControl;
-        mCacheListDelegateFactory = cacheListDelegateFactory;
+        mSimpleAdapterFactory = simpleAdapterFactory;
         mCacheListData = cacheListData;
         mIntent = intent;
         mErrorDisplayer = errorDisplayer;
+        mDatabaseFactory = databaseFactory;
     }
 
     public void onCreate() {
@@ -85,31 +105,25 @@ public class CacheListDelegate {
         mParent.startActivity(mIntent);
     }
 
+    public boolean onOptionsItemSelected(MenuItem item) {
+        try {
+            LoadGpx loadGpx = LoadGpx.create(mParent, mErrorDisplayer, mDatabaseFactory);
+            if (loadGpx != null) {
+                loadGpx.load();
+            }
+
+        } catch (final Exception e) {
+            mErrorDisplayer.displayErrorAndStack(e);
+        }
+        onResume();
+        return true;
+    }
+
     public void onResume() {
         mLocationBookmarks.onResume(null);
         mCacheListData.add(mLocationBookmarks.getLocations(), mLocationControl.getLocation());
 
-        mParent.setListAdapter(mCacheListDelegateFactory.createSimpleAdapter(mParent,
-                mCacheListData.getAdapterData(), R.layout.cache_row, ADAPTER_FROM, ADAPTER_TO));
-    }
-
-    public boolean onOptionsItemSelected(MenuItem item) {
-        try {
-            FileReaderFactory fileReaderFactory = new FileReaderFactory();
-            FileReader fileReader = new FileOpener().open(fileReaderFactory);
-            XmlPullParser xmlPullParser = new GBXmlPullParserFactory().create(mErrorDisplayer);
-            xmlPullParser.setInput(fileReader);
-
-            LoadGpx loadGpx = LoadGpx.create(mParent, mErrorDisplayer, xmlPullParser);
-
-            if (loadGpx != null) {
-                loadGpx.load(new CacheFilter(mLocationControl.getLocation()));
-            }
-
-        } catch (final Exception e) {
-            mErrorDisplayer.displayError(e.toString() + "\n" + Util.getStackTrace(e));
-        }
-        onResume();
-        return true;
+        mParent.setListAdapter(mSimpleAdapterFactory.createSimpleAdapter(mParent, mCacheListData
+                .getAdapterData(), R.layout.cache_row, ADAPTER_FROM, ADAPTER_TO));
     }
 }

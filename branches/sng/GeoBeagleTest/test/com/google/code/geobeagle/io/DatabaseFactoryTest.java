@@ -1,4 +1,5 @@
 /*
+ ** Licensed under the Apache License, Version 2.0 (the "License");
  ** you may not use this file except in compliance with the License.
  ** You may obtain a copy of the License at
  **
@@ -18,7 +19,6 @@ import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.expectLastCall;
 import static org.easymock.EasyMock.isNull;
 import static org.easymock.EasyMock.notNull;
-import static org.easymock.EasyMock.startsWith;
 import static org.easymock.classextension.EasyMock.createMock;
 import static org.easymock.classextension.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.verify;
@@ -169,30 +169,11 @@ public class DatabaseFactoryTest extends TestCase {
         replay(sqlite);
         replay(sqliteOpenHelper);
         DatabaseFactory database = new DatabaseFactory(sqliteWrapper, sqliteOpenHelper);
-        assertEquals(sqlite, database.openOrCreateCacheDatabase(null));
+        assertEquals(sqlite, database.openOrCreateCacheDatabase());
         verify(sqliteOpenHelper);
         verify(sqlite);
     }
 
-    public void testDatabaseOpenOrCreateOpenError() {
-        SQLiteException e = createMock(SQLiteException.class);
-        ErrorDisplayer errorDisplayer = createMock(ErrorDisplayer.class);
-        SQLiteOpenHelper sqliteOpenHelper = createMock(SQLiteOpenHelper.class);
-
-        expect(sqliteOpenHelper.getWritableDatabase()).andThrow(e);
-        expect(e.fillInStackTrace()).andReturn(e);
-        expect(e.getMessage()).andReturn("can't open file");
-        errorDisplayer.displayError(startsWith("Error opening or creating database"));
-
-        replay(sqliteOpenHelper);
-        replay(errorDisplayer);
-        replay(e);
-        DatabaseFactory database = new DatabaseFactory(null, sqliteOpenHelper);
-        database.openOrCreateCacheDatabase(errorDisplayer);
-        verify(sqliteOpenHelper);
-        verify(errorDisplayer);
-        verify(e);
-    }
 
     public void testSQLiteOpenHelperDelegate_onCreate() {
         SQLiteDatabase sqliteDatabase = createMock(SQLiteDatabase.class);
