@@ -15,7 +15,6 @@
 package com.google.code.geobeagle.io;
 
 import com.google.code.geobeagle.io.DatabaseFactory.CacheWriter;
-import com.google.code.geobeagle.io.GpxToCache.GpxCaches;
 import com.google.code.geobeagle.ui.ErrorDisplayer;
 import com.google.code.geobeagle.ui.CacheListDelegate.CacheProgressUpdater;
 
@@ -55,6 +54,7 @@ public class LoadGpx {
             return new File(path);
         }
     }
+    public static final String GPX_PATH = "/sdcard/caches.gpx";
 
     public static LoadGpx create(Context context, ErrorDisplayer errorDisplayer,
             DatabaseFactory databaseFactory) throws XmlPullParserException, IOException,
@@ -63,7 +63,7 @@ public class LoadGpx {
         final SQLiteDatabase sqlite = databaseFactory.openOrCreateCacheDatabase();
         final CacheWriter cacheWriter = databaseFactory.createCacheWriter(sqlite, errorDisplayer);
 
-        final GpxCaches gpxCaches = GpxToCache.createGpxCaches(errorDisplayer);
+        final GpxCaches gpxCaches = GpxToCache.createGpxCaches(errorDisplayer, GPX_PATH);
         return new LoadGpx(cacheWriter, gpxCaches, fileFactory);
     }
 
@@ -81,11 +81,11 @@ public class LoadGpx {
         File file = mFileFactory.createFile(GpxToCache.GEOBEAGLE_DIR);
         file.mkdirs();
 
-        mCacheWriter.clear();
+        mCacheWriter.clear(GPX_PATH);
         mCacheWriter.startWriting();
         for (final Cache cache : mGpxCaches) {
             cacheProgressUpdater.update(cache.mName);
-            if (!mCacheWriter.write(cache.mId, cache.mName, cache.mLatitude, cache.mLongitude))
+            if (!mCacheWriter.write(cache.mId, cache.mName, cache.mLatitude, cache.mLongitude, mGpxCaches.getSource()))
                 break;
         }
         mCacheWriter.stopWriting();

@@ -57,7 +57,7 @@ public class DatabaseFactory {
 
         public boolean open() {
             try {
-                mCursor = mSqliteWrapper.query(mSqliteDatabase, "CACHES", READER_COLUMNS, null,
+                mCursor = mSqliteWrapper.query(mSqliteDatabase, TBL_CACHES, READER_COLUMNS, null,
                         null, null, null, null);
             } catch (SQLiteException e) {
                 e.printStackTrace();
@@ -79,14 +79,17 @@ public class DatabaseFactory {
             mErrorDisplayer = errorDisplayer;
         }
 
-        public void clear() {
-            mSqlite.execSQL("DELETE FROM CACHES");
+        public void clear(String source) {
+            mSqlite.execSQL(SQL_CLEAR_CACHES, new Object[] {
+                source
+            });
         }
 
-        public boolean write(CharSequence id, CharSequence name, double latitude, double longitude) {
+        public boolean write(CharSequence id, CharSequence name, double latitude, double longitude,
+                String source) {
             try {
-                mSqlite.execSQL(DatabaseFactory.SQL_INSERT_CACHE_FULL, new Object[] {
-                        name, id, new Double(latitude), new Double(longitude), "", "import"
+                mSqlite.execSQL(DatabaseFactory.SQL_INSERT_CACHE, new Object[] {
+                        name, id, new Double(latitude), new Double(longitude), "", source
                 });
             } catch (final SQLiteException e) {
                 mErrorDisplayer.displayError("Error writing cache: " + e.getMessage());
@@ -147,13 +150,16 @@ public class DatabaseFactory {
     public static final String[] READER_COLUMNS = new String[] {
             "Latitude", "Longitude", "Name", "Description"
     };
+
+    public static final String SQL_CLEAR_CACHES = "DELETE FROM CACHES WHERE Source=?";
     public static final String SQL_CREATE_CACHE_TABLE = "CREATE TABLE IF NOT EXISTS CACHES ("
             + "Id INTEGER PRIMARY KEY AUTOINCREMENT, Description VARCHAR, Name VARCHAR, Details VARCHAR, "
             + "Latitude DOUBLE, Longitude DOUBLE, Source VARCHAR)";
     public static final String SQL_DROP_CACHE_TABLE = "DROP TABLE CACHES";
-    public static final String SQL_INSERT_CACHE_FULL = "INSERT INTO CACHES "
+    public static final String SQL_INSERT_CACHE = "INSERT INTO CACHES "
             + "(Description, Name, Latitude, Longitude, Details, Source) "
             + "VALUES (?, ?, ?, ?, ?, ?)";
+    public static final String TBL_CACHES = "CACHES";
 
     private final SQLiteOpenHelper mSqliteOpenHelper;
     private final SQLiteWrapper mSqliteWrapper;

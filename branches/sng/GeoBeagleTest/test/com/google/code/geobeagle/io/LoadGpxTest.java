@@ -1,3 +1,16 @@
+/*
+ ** Licensed under the Apache License, Version 2.0 (the "License");
+ ** you may not use this file except in compliance with the License.
+ ** You may obtain a copy of the License at
+ **
+ **     http://www.apache.org/licenses/LICENSE-2.0
+ **
+ ** Unless required by applicable law or agreed to in writing, software
+ ** distributed under the License is distributed on an "AS IS" BASIS,
+ ** WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ ** See the License for the specific language governing permissions and
+ ** limitations under the License.
+ */
 
 package com.google.code.geobeagle.io;
 
@@ -23,22 +36,22 @@ public class LoadGpxTest extends TestCase {
 
     public void testLoad() throws XmlPullParserException, IOException {
         CacheWriter cacheWriter = createMock(CacheWriter.class);
-        GpxToCache.GpxCaches gpxCaches = createMock(GpxToCache.GpxCaches.class);
+        GpxCaches gpxCaches = createMock(GpxCaches.class);
         FileFactory fileFactory = createMock(FileFactory.class);
         File file = createMock(File.class);
         CacheProgressUpdater cacheProgressUpdater = createMock(CacheProgressUpdater.class);
 
-
         expect(fileFactory.createFile(GpxToCache.GEOBEAGLE_DIR)).andReturn(file);
         expect(file.mkdirs()).andReturn(true);
-        cacheWriter.clear();
+        cacheWriter.clear(LoadGpx.GPX_PATH);
         Cache cache = new Cache("gc1234", "my cache", 122, 37);
         ArrayList<Cache> caches = new ArrayList<Cache>(1);
         caches.add(cache);
         expect(gpxCaches.iterator()).andReturn(caches.iterator());
         cacheProgressUpdater.update("my cache");
         cacheWriter.startWriting();
-        expect(cacheWriter.write("gc1234", "my cache", 122, 37)).andReturn(true);
+        expect(gpxCaches.getSource()).andReturn(LoadGpx.GPX_PATH);
+        expect(cacheWriter.write("gc1234", "my cache", 122, 37, LoadGpx.GPX_PATH)).andReturn(true);
         cacheWriter.stopWriting();
 
         replay(fileFactory);
@@ -54,7 +67,7 @@ public class LoadGpxTest extends TestCase {
     }
 
     public void testLoadHasError() throws XmlPullParserException, IOException {
-        GpxToCache.GpxCaches gpxCaches = createMock(GpxToCache.GpxCaches.class);
+        GpxCaches gpxCaches = createMock(GpxCaches.class);
         CacheWriter cacheWriter = createMock(CacheWriter.class);
         FileFactory fileFactory = createMock(FileFactory.class);
         CacheProgressUpdater cacheProgressUpdater = createMock(CacheProgressUpdater.class);
@@ -63,14 +76,15 @@ public class LoadGpxTest extends TestCase {
         expect(fileFactory.createFile(GpxToCache.GEOBEAGLE_DIR)).andReturn(file);
         expect(file.mkdirs()).andReturn(true);
 
-        cacheWriter.clear();
+        cacheWriter.clear(LoadGpx.GPX_PATH);
         Cache cache = new Cache("gc1234", "my cache", 122, 37);
         ArrayList<Cache> caches = new ArrayList<Cache>(1);
         caches.add(cache);
         expect(gpxCaches.iterator()).andReturn(caches.iterator());
         cacheProgressUpdater.update("my cache");
         cacheWriter.startWriting();
-        expect(cacheWriter.write("gc1234", "my cache", 122, 37)).andReturn(false);
+        expect(gpxCaches.getSource()).andReturn(LoadGpx.GPX_PATH);
+        expect(cacheWriter.write("gc1234", "my cache", 122, 37, LoadGpx.GPX_PATH)).andReturn(false);
         cacheWriter.stopWriting();
 
         replay(cacheProgressUpdater);

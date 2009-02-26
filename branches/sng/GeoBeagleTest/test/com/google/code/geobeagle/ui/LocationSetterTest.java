@@ -21,7 +21,7 @@ import static org.easymock.classextension.EasyMock.verify;
 
 import com.google.code.geobeagle.LocationControl;
 import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.io.LocationBookmarksSql;
+import com.google.code.geobeagle.io.LocationSaver;
 
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
@@ -42,7 +42,8 @@ public class LocationSetterTest extends TestCase {
 
         replay(editor);
         replay(editText);
-        LocationSetter locationSetter = new LocationSetter(null, editText, null, null, null, null, null);
+        LocationSetter locationSetter = new LocationSetter(null, editText, null, null, null, null,
+                null);
         locationSetter.onPause(editor);
         verify(editor);
         verify(editText);
@@ -51,29 +52,28 @@ public class LocationSetterTest extends TestCase {
     public void testOnResume() {
         SharedPreferences sharedPreferences = createMock(SharedPreferences.class);
         MockableEditText editText = createMock(MockableEditText.class);
-        LocationBookmarksSql locationBookmarksTextFile = createMock(LocationBookmarksSql.class);
+        LocationSaver locationSaver = createMock(LocationSaver.class);
 
         editText.setText("googleplex");
         expect(sharedPreferences.getString(LocationSetter.PREFS_LOCATION, "initial location"))
                 .andReturn("googleplex");
-        locationBookmarksTextFile.saveLocation("googleplex");
+        locationSaver.saveLocation("googleplex");
 
         replay(sharedPreferences);
         replay(editText);
-        replay(locationBookmarksTextFile);
-        LocationSetter locationSetter = new LocationSetter(null, editText, null, null,
-                locationBookmarksTextFile, "initial location", null);
-        locationSetter.onResume(sharedPreferences);
+        replay(locationSaver);
+        new LocationSetter(null, editText, null, null, "initial location", null, locationSaver)
+                .onResume(sharedPreferences);
         verify(sharedPreferences);
         verify(editText);
-        verify(locationBookmarksTextFile);
+        verify(locationSaver);
     }
 
     public void testSetMyLocation() {
         final Location location = createMock(Location.class);
         MockableEditText editText = createMock(MockableEditText.class);
-        LocationBookmarksSql locationBookmarksTextFile = createMock(LocationBookmarksSql.class);
         LocationControl locationControl = createMock(LocationControl.class);
+        LocationSaver locationSaver = createMock(LocationSaver.class);
 
         editText.setText("37 07.380, 122 20.700 ([16:07] My Location)");
         expect(location.getLatitude()).andReturn(37.123);
@@ -81,25 +81,26 @@ public class LocationSetterTest extends TestCase {
         expect(location.getTime()).andReturn(
                 new GregorianCalendar(2008, 12, 5, 16, 7, 10).getTime().getTime());
         expect(locationControl.getLocation()).andReturn(location);
-        locationBookmarksTextFile.saveLocation("37 07.380, 122 20.700 ([16:07] My Location)");
+        locationSaver.saveLocation("37 07.380, 122 20.700 ([16:07] My Location)");
 
+        replay(locationSaver);
         replay(location);
         replay(editText);
-        replay(locationBookmarksTextFile);
         replay(locationControl);
-        LocationSetter locationSetter = new LocationSetter(null, editText, locationControl, null,
-                locationBookmarksTextFile, null, null);
-        locationSetter.setLocation(null);
+        new LocationSetter(null, editText, locationControl, null, null, null, locationSaver)
+                .setLocation(null);
         verify(location);
         verify(editText);
-        verify(locationBookmarksTextFile);
         verify(locationControl);
+        verify(locationSaver);
+
     }
 
     public void testSetMyLocationNull() {
         MockableEditText editText = createMock(MockableEditText.class);
         ErrorDisplayer errorDisplayer = createMock(ErrorDisplayer.class);
         LocationControl locationControl = createMock(LocationControl.class);
+        LocationSaver locationSaver = createMock(LocationSaver.class);
 
         expect(locationControl.getLocation()).andReturn(null);
         errorDisplayer.displayError(R.string.current_location_null);
@@ -107,12 +108,14 @@ public class LocationSetterTest extends TestCase {
         replay(locationControl);
         replay(editText);
         replay(errorDisplayer);
+        replay(locationSaver);
         LocationSetter locationSetter = new LocationSetter(null, editText, locationControl, null,
-                null, null, errorDisplayer);
+                null, errorDisplayer, locationSaver);
         locationSetter.setLocation(null);
         verify(editText);
         verify(errorDisplayer);
         verify(locationControl);
+        verify(locationSaver);
     }
 
 }

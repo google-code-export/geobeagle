@@ -8,7 +8,6 @@ import static org.easymock.classextension.EasyMock.verify;
 
 import com.google.code.geobeagle.io.CacheDetailsWriter.CacheDetailsWriterFactory;
 import com.google.code.geobeagle.io.GpxToCache.EventHelper;
-import com.google.code.geobeagle.io.GpxToCache.GpxCaches;
 import com.google.code.geobeagle.io.GpxToCache.XmlPathBuilder;
 import com.google.code.geobeagle.io.LoadGpx.Cache;
 
@@ -227,7 +226,7 @@ public class GpxToCacheTest extends TestCase {
         expect(gpxToCache.load()).andReturn(null);
 
         replay(gpxToCache);
-        GpxCaches gpxCaches = new GpxCaches(gpxToCache, null);
+        GpxCaches gpxCaches = new GpxCaches(gpxToCache, null, null);
         Iterator<Cache> iterator = gpxCaches.iterator();
         assertFalse(iterator.hasNext());
         assertNull(iterator.next());
@@ -242,7 +241,7 @@ public class GpxToCacheTest extends TestCase {
         expect(gpxToCache.load()).andReturn(null);
 
         replay(gpxToCache);
-        GpxCaches gpxCaches = new GpxCaches(gpxToCache, null);
+        GpxCaches gpxCaches = new GpxCaches(gpxToCache, null, null);
         Iterator<Cache> iterator = gpxCaches.iterator();
         assertTrue(iterator.hasNext());
         assertEquals(cache, iterator.next());

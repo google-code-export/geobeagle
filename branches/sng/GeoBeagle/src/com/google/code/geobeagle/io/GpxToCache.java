@@ -27,11 +27,8 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
-import java.util.Iterator;
 
 public class GpxToCache {
-    private static final String GPX_PATH = "/sdcard/caches.gpx";
-
     public static class EventHelper {
         private final GpxEventHandler mGpxEventHandler;
         private final XmlPathBuilder mXmlPathBuilder;
@@ -63,54 +60,12 @@ public class GpxToCache {
         }
     }
 
-    public static XmlPullParser createPullParser() throws FileNotFoundException,
+    public static XmlPullParser createPullParser(String path) throws FileNotFoundException,
             XmlPullParserException {
-        final Reader reader = new BufferedReader(new FileReader(GPX_PATH));
+        final Reader reader = new BufferedReader(new FileReader(path));
         final XmlPullParser newPullParser = XmlPullParserFactory.newInstance().newPullParser();
         newPullParser.setInput(reader);
         return newPullParser;
-    }
-
-    public static class GpxCaches implements Iterable<Cache> {
-        public class CacheIterator implements Iterator<Cache> {
-            // TODO: hasNext has a side effect, and next does not, which is
-            // backwards.
-            public boolean hasNext() {
-                try {
-                    mCache = mGpxToCache.load();
-                    return mCache != null;
-                } catch (XmlPullParserException e) {
-                    mErrorDisplayer.displayErrorAndStack(e);
-                    return false;
-                } catch (IOException e) {
-                    mErrorDisplayer.displayErrorAndStack(e);
-                    return false;
-                }
-            }
-
-            public Cache next() {
-                return mCache;
-            }
-
-            public void remove() {
-                throw new UnsupportedOperationException();
-            }
-        }
-
-        private Cache mCache;
-        private final ErrorDisplayer mErrorDisplayer;
-        private final GpxToCache mGpxToCache;
-
-        public GpxCaches(GpxToCache gpxToCache, ErrorDisplayer errorDisplayer)
-                throws XmlPullParserException, IOException {
-            mGpxToCache = gpxToCache;
-            mErrorDisplayer = errorDisplayer;
-        }
-
-        public Iterator<Cache> iterator() {
-            return new CacheIterator();
-        }
-
     }
 
     public static class XmlPathBuilder {
@@ -134,8 +89,8 @@ public class GpxToCache {
     private final EventHelper mEventHelper;
     private final XmlPullParser mXmlPullParser;
 
-    public static GpxToCache create() throws FileNotFoundException, XmlPullParserException {
-        final XmlPullParser xmlPullParser = createPullParser();
+    public static GpxToCache create(String path) throws FileNotFoundException, XmlPullParserException {
+        final XmlPullParser xmlPullParser = createPullParser(path);
         final CacheDetailsWriterFactory cacheDetailsWriterFactory = new CacheDetailsWriterFactory();
         final Cache cache = new Cache();
         final XmlPathBuilder xmlPathBuilder = new XmlPathBuilder();
@@ -161,9 +116,9 @@ public class GpxToCache {
         return cache;
     }
 
-    public static GpxCaches createGpxCaches(ErrorDisplayer errorDisplayer)
+    public static GpxCaches createGpxCaches(ErrorDisplayer errorDisplayer, String path)
             throws XmlPullParserException, IOException, FileNotFoundException {
-        final GpxToCache gpxToCache = GpxToCache.create();
-        return new GpxCaches(gpxToCache, errorDisplayer);
+        final GpxToCache gpxToCache = GpxToCache.create(path);
+        return new GpxCaches(gpxToCache, path, errorDisplayer);
     }
 }

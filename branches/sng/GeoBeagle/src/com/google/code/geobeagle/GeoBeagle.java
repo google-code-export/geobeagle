@@ -24,6 +24,7 @@ import com.google.code.geobeagle.intents.IntentStarterRadar;
 import com.google.code.geobeagle.intents.IntentStarterViewUri;
 import com.google.code.geobeagle.io.DatabaseFactory;
 import com.google.code.geobeagle.io.LocationBookmarksSql;
+import com.google.code.geobeagle.io.LocationSaver;
 import com.google.code.geobeagle.ui.CachePageButtonEnabler;
 import com.google.code.geobeagle.ui.ContentSelector;
 import com.google.code.geobeagle.ui.DestinationListOnClickListener;
@@ -149,17 +150,19 @@ public class GeoBeagle extends Activity {
                     .getDestinationPatterns(mResourceProvider);
             final DestinationFactory destinationFactory = new DestinationFactory(
                     destinationPatterns);
+            final DatabaseFactory databaseFactory = DatabaseFactory.create(this);
             LocationBookmarksSql locationBookmarks = new LocationBookmarksSql(
-                    descriptionsAndLocations, DatabaseFactory.create(this), destinationFactory,
-                    mErrorDisplayer);
+                    descriptionsAndLocations, databaseFactory, destinationFactory, mErrorDisplayer);
 
             MockableEditText mockableTxtLocation = new MockableEditText(txtLocation);
+            LocationSaver locationSaver = new LocationSaver(databaseFactory, destinationFactory,
+                    mErrorDisplayer);
             mockableTxtLocation
                     .setOnFocusChangeListener(new LocationSetter.EditTextFocusChangeListener(
-                            locationBookmarks, mockableTxtLocation));
+                            locationSaver, mockableTxtLocation));
+            final String initialDestination = getString(R.string.initial_destination);
             mLocationSetter = new LocationSetter(this, mockableTxtLocation, mGpsControl,
-                    destinationPatterns, locationBookmarks,
-                    getString(R.string.initial_destination), mErrorDisplayer);
+                    destinationPatterns, initialDestination, mErrorDisplayer, locationSaver);
 
             setCacheClickListeners();
 

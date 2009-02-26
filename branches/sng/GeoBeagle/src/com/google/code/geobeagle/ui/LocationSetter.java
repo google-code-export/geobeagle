@@ -19,7 +19,7 @@ import com.google.code.geobeagle.LocationControl;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.Util;
 import com.google.code.geobeagle.data.Destination;
-import com.google.code.geobeagle.io.LocationBookmarksSql;
+import com.google.code.geobeagle.io.LocationSaver;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -33,17 +33,16 @@ import java.util.regex.Pattern;
 public class LocationSetter implements LifecycleManager {
     public static final class EditTextFocusChangeListener implements OnFocusChangeListener {
         private final MockableEditText mEditText;
-        private final LocationBookmarksSql mLocationBookmarks;
+        private final LocationSaver mLocationSaver;
 
-        public EditTextFocusChangeListener(LocationBookmarksSql locationBookmarksSql,
-                MockableEditText editText) {
-            mLocationBookmarks = locationBookmarksSql;
+        public EditTextFocusChangeListener(LocationSaver locationSaver, MockableEditText editText) {
+            mLocationSaver = locationSaver;
             mEditText = editText;
         }
 
         public void onFocusChange(View v, boolean hasFocus) {
             if (!hasFocus) {
-                mLocationBookmarks.saveLocation(mEditText.getText());
+                mLocationSaver.saveLocation(mEditText.getText());
             }
         }
     }
@@ -53,19 +52,19 @@ public class LocationSetter implements LifecycleManager {
     private final Pattern[] mDestinationPatterns;
     private final LocationControl mGpsControl;
     private final String mInitialDestination;
-    private final LocationBookmarksSql mLocationBookmarks;
     private final MockableEditText mTxtLocation;
     private final ErrorDisplayer mErrorDisplayer;
+    private final LocationSaver mLocationSaver;
 
     public LocationSetter(Context context, MockableEditText txtLocation,
             LocationControl locationControl, Pattern destinationPatterns[],
-            LocationBookmarksSql locationBookmarksTextFile, String initialDestination, ErrorDisplayer errorDisplayer) {
+            String initialDestination, ErrorDisplayer errorDisplayer, LocationSaver locationSaver) {
         mTxtLocation = txtLocation;
         mDestinationPatterns = destinationPatterns;
         mGpsControl = locationControl;
-        mLocationBookmarks = locationBookmarksTextFile;
         mInitialDestination = initialDestination;
         mErrorDisplayer = errorDisplayer;
+        mLocationSaver = locationSaver;
     }
 
     /*
@@ -80,7 +79,7 @@ public class LocationSetter implements LifecycleManager {
     public CharSequence getId() {
         return getDestination().getFullId();
     }
-    
+
     public void onPause(Editor editor) {
         editor.putString(PREFS_LOCATION, mTxtLocation.getText().toString());
     }
@@ -100,7 +99,7 @@ public class LocationSetter implements LifecycleManager {
                     "[%1$tk:%1$tM] My Location", location.getTime()));
             return;
         }
-        mLocationBookmarks.saveLocation(c);
+        mLocationSaver.saveLocation(c);
         mTxtLocation.setText(c);
     }
 
@@ -108,7 +107,7 @@ public class LocationSetter implements LifecycleManager {
         final CharSequence latLonText = Util.formatDegreesAsDecimalDegreesString(lat) + ", "
                 + Util.formatDegreesAsDecimalDegreesString(lon) + " (" + description + ")";
         mTxtLocation.setText(latLonText);
-        mLocationBookmarks.saveLocation(latLonText);
+        mLocationSaver.saveLocation(latLonText);
         return latLonText;
     }
 

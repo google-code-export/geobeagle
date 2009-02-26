@@ -1,4 +1,5 @@
 /*
+ ** Licensed under the Apache License, Version 2.0 (the "License");
  ** you may not use this file except in compliance with the License.
  ** You may obtain a copy of the License at
  **
@@ -19,10 +20,7 @@ import static org.easymock.classextension.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.verify;
 
 import com.google.code.geobeagle.DescriptionsAndLocations;
-import com.google.code.geobeagle.data.Destination;
-import com.google.code.geobeagle.data.Destination.DestinationFactory;
 import com.google.code.geobeagle.io.DatabaseFactory.CacheReader;
-import com.google.code.geobeagle.io.DatabaseFactory.CacheWriter;
 
 import android.database.sqlite.SQLiteDatabase;
 
@@ -133,110 +131,4 @@ public class LocationBookmarksSqlTest extends TestCase {
         verify(descriptionsAndLocations);
     }
 
-    public void testSaveBookmarksEmpty() {
-        expect(mFactory.openOrCreateCacheDatabase()).andReturn(mSqlite);
-        CacheWriter writer = createMock(CacheWriter.class);
-        expect(mFactory.createCacheWriter(mSqlite, null)).andReturn(writer);
-        writer.startWriting();
-        writer.stopWriting();
-
-        replay(mFactory);
-        replay(writer);
-        LocationBookmarksSql locationBookmarksSql = new LocationBookmarksSql(
-                new DescriptionsAndLocations(), mFactory, null, null);
-        locationBookmarksSql.onPause(null);
-        verify(mFactory);
-        verify(writer);
-    }
-
-    public void testSaveBookmarksOpenError() {
-        expect(mFactory.openOrCreateCacheDatabase()).andReturn(null);
-
-        replay(mFactory);
-        LocationBookmarksSql locationBookmarksSql = new LocationBookmarksSql(
-                new DescriptionsAndLocations(), mFactory, null, null);
-        locationBookmarksSql.onPause(null);
-        verify(mFactory);
-    }
-
-    public void testSaveBookmarksWriteError() {
-        CacheWriter writer = createMock(CacheWriter.class);
-        DestinationFactory destinationFactory = createMock(DestinationFactory.class);
-        Destination destination = createMock(Destination.class);
-
-        expect(mFactory.openOrCreateCacheDatabase()).andReturn(mSqlite);
-        expect(mFactory.createCacheWriter(mSqlite, null)).andReturn(writer);
-        writer.startWriting();
-        expect(destinationFactory.create("122 32.3423 83 32.3221 (LB12345: my cache)")).andReturn(
-                destination);
-        expect(destination.getFullId()).andReturn("LB12345");
-        expect(destination.getName()).andReturn("my cache");
-        expect(destination.getLatitude()).andReturn(122.0);
-        expect(destination.getLongitude()).andReturn(37.0);
-        expect(writer.write("LB12345", "my cache", 122, 37)).andReturn(false);
-        writer.stopWriting();
-        mSqlite.close();
-
-        replay(mFactory);
-        replay(mSqlite);
-        replay(writer);
-        replay(destination);
-        replay(destinationFactory);
-        DescriptionsAndLocations descriptionsAndLocations = new DescriptionsAndLocations();
-        descriptionsAndLocations.add("LB12345", "122 32.3423 83 32.3221 (LB54321: your cache)");
-        descriptionsAndLocations.add("LB12345", "122 32.3423 83 32.3221 (LB12345: my cache)");
-        LocationBookmarksSql locationBookmarksSql = new LocationBookmarksSql(
-                descriptionsAndLocations, mFactory, destinationFactory, null);
-        locationBookmarksSql.onPause(null);
-        verify(mFactory);
-        verify(mSqlite);
-        verify(writer);
-        verify(destinationFactory);
-        verify(destination);
-    }
-
-    public void testSaveBookmarksTwo() {
-        CacheWriter writer = createMock(CacheWriter.class);
-        DestinationFactory destinationFactory = createMock(DestinationFactory.class);
-        Destination destination = createMock(Destination.class);
-
-        expect(mFactory.openOrCreateCacheDatabase()).andReturn(mSqlite);
-        expect(mFactory.createCacheWriter(mSqlite, null)).andReturn(writer);
-        writer.startWriting();
-        expect(destinationFactory.create("122 32.3423 83 32.3221 (LB12345)"))
-                .andReturn(destination);
-        expect(destination.getFullId()).andReturn("LB12345");
-        expect(destination.getName()).andReturn("");
-        expect(destination.getLatitude()).andReturn(122.0);
-        expect(destination.getLongitude()).andReturn(37.0);
-        expect(writer.write("LB12345", "", 122, 37)).andReturn(true);
-
-        expect(destinationFactory.create("122 32.3423 83 32.3221 (LB54321)"))
-                .andReturn(destination);
-        expect(destination.getFullId()).andReturn("LB54321");
-        expect(destination.getName()).andReturn("");
-        expect(destination.getLatitude()).andReturn(122.0);
-        expect(destination.getLongitude()).andReturn(37.0);
-        expect(writer.write("LB54321", "", 122, 37)).andReturn(true);
-        writer.stopWriting();
-        mSqlite.close();
-
-        replay(mFactory);
-        replay(mSqlite);
-        replay(writer);
-        replay(destination);
-        replay(destinationFactory);
-
-        DescriptionsAndLocations descriptionsAndLocations = new DescriptionsAndLocations();
-        descriptionsAndLocations.add("LB12345", "122 32.3423 83 32.3221 (LB12345)");
-        descriptionsAndLocations.add("LB54321", "122 32.3423 83 32.3221 (LB54321)");
-        LocationBookmarksSql locationBookmarksSql = new LocationBookmarksSql(
-                descriptionsAndLocations, mFactory, destinationFactory, null);
-        locationBookmarksSql.onPause(null);
-        verify(mFactory);
-        verify(writer);
-        verify(mSqlite);
-        verify(destinationFactory);
-        verify(destination);
-    }
 }

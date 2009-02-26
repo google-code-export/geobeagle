@@ -19,7 +19,6 @@ import com.google.code.geobeagle.LifecycleManager;
 import com.google.code.geobeagle.data.Destination;
 import com.google.code.geobeagle.data.Destination.DestinationFactory;
 import com.google.code.geobeagle.io.DatabaseFactory.CacheReader;
-import com.google.code.geobeagle.io.DatabaseFactory.CacheWriter;
 import com.google.code.geobeagle.ui.ErrorDisplayer;
 
 import android.app.ListActivity;
@@ -32,8 +31,6 @@ import java.util.ArrayList;
 public class LocationBookmarksSql implements LifecycleManager {
     private final DatabaseFactory mDatabaseFactory;
     private final DescriptionsAndLocations mDescriptionsAndLocations;
-    private final ErrorDisplayer mErrorDisplayer;
-    private final DestinationFactory mDestinationFactory;
 
     public static LocationBookmarksSql create(ListActivity listActivity,
             DatabaseFactory databaseFactory, DestinationFactory destinationFactory,
@@ -41,16 +38,13 @@ public class LocationBookmarksSql implements LifecycleManager {
         final DescriptionsAndLocations descriptionsAndLocations = new DescriptionsAndLocations();
         return new LocationBookmarksSql(descriptionsAndLocations, databaseFactory,
                 destinationFactory, errorDisplayer);
-
     }
 
     public LocationBookmarksSql(DescriptionsAndLocations descriptionsAndLocations,
             DatabaseFactory databaseFactory, DestinationFactory destinationFactory,
             ErrorDisplayer errorDisplayer) {
         mDescriptionsAndLocations = descriptionsAndLocations;
-        mErrorDisplayer = errorDisplayer;
         mDatabaseFactory = databaseFactory;
-        mDestinationFactory = destinationFactory;
     }
 
     public DescriptionsAndLocations getDescriptionsAndLocations() {
@@ -62,7 +56,6 @@ public class LocationBookmarksSql implements LifecycleManager {
     }
 
     public void onPause(Editor editor) {
-        saveBookmarks();
     }
 
     public void onResume(SharedPreferences preferences) {
@@ -84,29 +77,9 @@ public class LocationBookmarksSql implements LifecycleManager {
     public void readBookmarks(CacheReader cacheReader) {
         mDescriptionsAndLocations.clear();
         do {
-            saveLocation(cacheReader.getCache());
+            final String location = cacheReader.getCache();
+            mDescriptionsAndLocations.add(Destination.extractDescription(location), location);
         } while (cacheReader.moveToNext());
-    }
-
-    private void saveBookmarks() {
-        SQLiteDatabase sqlite = mDatabaseFactory.openOrCreateCacheDatabase();
-        if (sqlite != null) {
-            CacheWriter cacheWriter = mDatabaseFactory.createCacheWriter(sqlite, mErrorDisplayer);
-            cacheWriter.startWriting();
-            for (final CharSequence location : mDescriptionsAndLocations.getPreviousLocations()) {
-                Destination destination = mDestinationFactory.create(location);
-                final CharSequence id = destination.getFullId();
-                if (!cacheWriter.write(id, destination.getName(), destination.getLatitude(),
-                        destination.getLongitude()))
-                    break;
-            }
-            cacheWriter.stopWriting();
-            sqlite.close();
-        }
-    }
-
-    public void saveLocation(final CharSequence location) {
-        mDescriptionsAndLocations.add(Destination.extractDescription(location), location);
     }
 
 }

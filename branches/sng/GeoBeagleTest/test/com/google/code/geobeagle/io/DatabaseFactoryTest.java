@@ -14,6 +14,7 @@
 
 package com.google.code.geobeagle.io;
 
+import static org.easymock.EasyMock.aryEq;
 import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.expectLastCall;
@@ -130,20 +131,31 @@ public class DatabaseFactoryTest extends TestCase {
     public void testCacheWriter() {
         SQLiteDatabase sqlite = createMock(SQLiteDatabase.class);
 
-        sqlite.execSQL(eq(DatabaseFactory.SQL_INSERT_CACHE_FULL), (Object[])notNull());
+        sqlite.execSQL(eq(DatabaseFactory.SQL_INSERT_CACHE), (Object[])notNull());
 
         replay(sqlite);
         CacheWriter cacheWriter = new CacheWriter(sqlite, null);
-        cacheWriter.write("gc123", "a cache", 122, 37);
+        cacheWriter.write("gc123", "a cache", 122, 37, "source");
         verify(sqlite);
     }
 
+    public void testCacheWriterClear() {
+        SQLiteDatabase sqlite = createMock(SQLiteDatabase.class);
+        Object params[] = new Object[] { "the source" };
+        sqlite.execSQL(eq(DatabaseFactory.SQL_CLEAR_CACHES), (Object[])aryEq(params));
+
+        replay(sqlite);
+        CacheWriter cacheWriter = new CacheWriter(sqlite, null);
+        cacheWriter.clear("the source");
+        verify(sqlite);
+    }
+    
     public void testCacheWriterError() {
         ErrorDisplayer errorDisplayer = createMock(ErrorDisplayer.class);
         SQLiteDatabase sqlite = createMock(SQLiteDatabase.class);
         SQLiteException exception = createMock(SQLiteException.class);
 
-        sqlite.execSQL(eq(DatabaseFactory.SQL_INSERT_CACHE_FULL), (Object[])notNull());
+        sqlite.execSQL(eq(DatabaseFactory.SQL_INSERT_CACHE), (Object[])notNull());
         expectLastCall().andThrow(exception);
         expect(exception.fillInStackTrace()).andReturn(exception);
         expect(exception.getMessage()).andReturn("sql problem");
@@ -153,7 +165,7 @@ public class DatabaseFactoryTest extends TestCase {
         replay(errorDisplayer);
         replay(exception);
         CacheWriter cacheWriter = new CacheWriter(sqlite, errorDisplayer);
-        cacheWriter.write("gc123", "a cache", 122, 37);
+        cacheWriter.write("gc123", "a cache", 122, 37, "source");
         verify(sqlite);
         verify(errorDisplayer);
         verify(exception);
