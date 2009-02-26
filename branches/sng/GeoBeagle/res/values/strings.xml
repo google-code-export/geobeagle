@@ -22,7 +22,7 @@
 	<string name="my_location">My Location</string>
 	<string name="cache_page">Web Page</string>
 	<string name="recent_locations">Recent locations</string>
-	<string name="initial_destination">"37 25.341 -122 04.933 # GCMEY7"</string>
+	<string name="initial_destination">"37 25.341, -122 04.933 (GCMEY7)"</string>
 	<string name="current_location_null">Current Location is not available. Make sure
 		your GPS is enabled and try again.</string>
 	<string name="out_of_service">OUT OF SERVICE</string>
