@@ -6,6 +6,5 @@
 	android:scrollbars="vertical">
 
 	<WebView android:id="@+id/webview" android:layout_width="wrap_content"
-		android:layout_height="wrap_content" android:textSize="26sp"
-		android:textStyle="bold" android:text="fds" android:textColor="#93be26" />
+		android:layout_height="wrap_content" android:textColor="#93be26" />
 </FrameLayout>

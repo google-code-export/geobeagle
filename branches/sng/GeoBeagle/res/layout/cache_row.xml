@@ -19,7 +19,7 @@
 		android:layout_height="wrap_content" android:text="GC1H6KX"
 		android:layout_weight="5" />
 	<TextView android:id="@+id/distance" android:gravity="right"
-		android:textColor="#93be26" android:textSize="24sp"
+		android:textColor="#93be26" android:textSize="24sp" android:minEms="3"
 		android:paddingBottom="4sp" android:layout_weight="1" android:paddingRight="4sp"
 		android:layout_width="wrap_content" android:layout_height="wrap_content"
 		android:text="304m" />

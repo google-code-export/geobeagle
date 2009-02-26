@@ -45,17 +45,6 @@ public class DescriptionsAndLocationsTest extends TestCase {
         assertEquals("description2", descriptionsAndLocations.getPreviousDescriptions().get(1));
     }
 
-    public final void testAddRemoveOldest() {
-        DescriptionsAndLocations descriptionsAndLocations = new DescriptionsAndLocations(3);
-        descriptionsAndLocations.add("description1", "new location");
-        descriptionsAndLocations.add("description2", "new location");
-        descriptionsAndLocations.add("description3", "new location");
-        descriptionsAndLocations.add("description4", "new location");
-
-        assertEquals(3, descriptionsAndLocations.getPreviousDescriptions().size());
-        assertEquals("description2", descriptionsAndLocations.getPreviousDescriptions().get(0));
-    }
-
     public final void testClear() {
         DescriptionsAndLocations descriptionsAndLocations = new DescriptionsAndLocations();
         descriptionsAndLocations.add("SFO", "37 122 etc");

@@ -29,7 +29,6 @@ import java.io.IOException;
 
 public class LoadGpx {
 
-
     public static class Cache {
         public String mId;
         public double mLatitude;
