@@ -24,10 +24,10 @@ import static org.easymock.classextension.EasyMock.createMock;
 import static org.easymock.classextension.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.verify;
 
-import com.google.code.geobeagle.io.DatabaseFactory.CacheReader;
-import com.google.code.geobeagle.io.DatabaseFactory.CacheWriter;
-import com.google.code.geobeagle.io.DatabaseFactory.OpenHelperDelegate;
-import com.google.code.geobeagle.io.DatabaseFactory.SQLiteWrapper;
+import com.google.code.geobeagle.io.Database.CacheReader;
+import com.google.code.geobeagle.io.Database.CacheWriter;
+import com.google.code.geobeagle.io.Database.OpenHelperDelegate;
+import com.google.code.geobeagle.io.Database.SQLiteWrapper;
 import com.google.code.geobeagle.ui.ErrorDisplayer;
 
 import android.database.Cursor;
@@ -46,7 +46,7 @@ public class DatabaseFactoryTest extends TestCase {
 
         expect(
                 sqliteWrapper.query(eq(sqliteDatabase), eq("CACHES"),
-                        (String[])eq(DatabaseFactory.READER_COLUMNS), (String)isNull(),
+                        (String[])eq(Database.READER_COLUMNS), (String)isNull(),
                         (String[])isNull(), (String)isNull(), (String)isNull(), (String)isNull()))
                 .andReturn(cursor);
         expect(cursor.moveToFirst()).andReturn(true);
@@ -67,7 +67,7 @@ public class DatabaseFactoryTest extends TestCase {
 
         expect(
                 sqliteWrapper.query(eq(sqliteDatabase), eq("CACHES"),
-                        (String[])eq(DatabaseFactory.READER_COLUMNS), (String)isNull(),
+                        (String[])eq(Database.READER_COLUMNS), (String)isNull(),
                         (String[])isNull(), (String)isNull(), (String)isNull(), (String)isNull()))
                 .andReturn(cursor);
         expect(cursor.moveToFirst()).andReturn(false);
@@ -88,7 +88,7 @@ public class DatabaseFactoryTest extends TestCase {
 
         expect(
                 sqliteWrapper.query(eq(sqliteDatabase), eq("CACHES"),
-                        (String[])eq(DatabaseFactory.READER_COLUMNS), (String)isNull(),
+                        (String[])eq(Database.READER_COLUMNS), (String)isNull(),
                         (String[])isNull(), (String)isNull(), (String)isNull(), (String)isNull()))
                 .andReturn(cursor);
         expect(cursor.moveToFirst()).andReturn(true);
@@ -108,7 +108,7 @@ public class DatabaseFactoryTest extends TestCase {
 
         expect(
                 sqliteWrapper.query(eq(sqliteDatabase), eq("CACHES"),
-                        (String[])eq(DatabaseFactory.READER_COLUMNS), (String)isNull(),
+                        (String[])eq(Database.READER_COLUMNS), (String)isNull(),
                         (String[])isNull(), (String)isNull(), (String)isNull(), (String)isNull()))
                 .andReturn(cursor);
         expect(cursor.moveToFirst()).andReturn(true);
@@ -131,7 +131,7 @@ public class DatabaseFactoryTest extends TestCase {
     public void testCacheWriter() {
         SQLiteDatabase sqlite = createMock(SQLiteDatabase.class);
 
-        sqlite.execSQL(eq(DatabaseFactory.SQL_INSERT_CACHE), (Object[])notNull());
+        sqlite.execSQL(eq(Database.SQL_INSERT_CACHE), (Object[])notNull());
 
         replay(sqlite);
         CacheWriter cacheWriter = new CacheWriter(sqlite, null);
@@ -142,7 +142,7 @@ public class DatabaseFactoryTest extends TestCase {
     public void testCacheWriterClear() {
         SQLiteDatabase sqlite = createMock(SQLiteDatabase.class);
         Object params[] = new Object[] { "the source" };
-        sqlite.execSQL(eq(DatabaseFactory.SQL_CLEAR_CACHES), (Object[])aryEq(params));
+        sqlite.execSQL(eq(Database.SQL_CLEAR_CACHES), (Object[])aryEq(params));
 
         replay(sqlite);
         CacheWriter cacheWriter = new CacheWriter(sqlite, null);
@@ -155,7 +155,7 @@ public class DatabaseFactoryTest extends TestCase {
         SQLiteDatabase sqlite = createMock(SQLiteDatabase.class);
         SQLiteException exception = createMock(SQLiteException.class);
 
-        sqlite.execSQL(eq(DatabaseFactory.SQL_INSERT_CACHE), (Object[])notNull());
+        sqlite.execSQL(eq(Database.SQL_INSERT_CACHE), (Object[])notNull());
         expectLastCall().andThrow(exception);
         expect(exception.fillInStackTrace()).andReturn(exception);
         expect(exception.getMessage()).andReturn("sql problem");
@@ -180,7 +180,7 @@ public class DatabaseFactoryTest extends TestCase {
 
         replay(sqlite);
         replay(sqliteOpenHelper);
-        DatabaseFactory database = new DatabaseFactory(sqliteWrapper, sqliteOpenHelper);
+        Database database = new Database(sqliteWrapper, sqliteOpenHelper);
         assertEquals(sqlite, database.openOrCreateCacheDatabase());
         verify(sqliteOpenHelper);
         verify(sqlite);
@@ -190,7 +190,7 @@ public class DatabaseFactoryTest extends TestCase {
     public void testSQLiteOpenHelperDelegate_onCreate() {
         SQLiteDatabase sqliteDatabase = createMock(SQLiteDatabase.class);
 
-        sqliteDatabase.execSQL(DatabaseFactory.SQL_CREATE_CACHE_TABLE);
+        sqliteDatabase.execSQL(Database.SQL_CREATE_CACHE_TABLE);
 
         replay(sqliteDatabase);
         OpenHelperDelegate openHelperDelegate = new OpenHelperDelegate();
@@ -201,8 +201,8 @@ public class DatabaseFactoryTest extends TestCase {
     public void testSQLiteOpenHelperDelegate_onUpgrade() {
         SQLiteDatabase sqliteDatabase = createMock(SQLiteDatabase.class);
 
-        sqliteDatabase.execSQL(DatabaseFactory.SQL_DROP_CACHE_TABLE);
-        sqliteDatabase.execSQL(DatabaseFactory.SQL_CREATE_CACHE_TABLE);
+        sqliteDatabase.execSQL(Database.SQL_DROP_CACHE_TABLE);
+        sqliteDatabase.execSQL(Database.SQL_CREATE_CACHE_TABLE);
 
         replay(sqliteDatabase);
         OpenHelperDelegate openHelperDelegate = new OpenHelperDelegate();

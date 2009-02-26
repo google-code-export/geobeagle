@@ -16,19 +16,19 @@ package com.google.code.geobeagle.io;
 
 import com.google.code.geobeagle.data.Destination;
 import com.google.code.geobeagle.data.Destination.DestinationFactory;
-import com.google.code.geobeagle.io.DatabaseFactory.CacheWriter;
+import com.google.code.geobeagle.io.Database.CacheWriter;
 import com.google.code.geobeagle.ui.ErrorDisplayer;
 
 import android.database.sqlite.SQLiteDatabase;
 
 public class LocationSaver {
-    private final DatabaseFactory mDatabaseFactory;
+    private final Database mDatabaseFactory;
     private final DestinationFactory mDestinationFactory;
     private final ErrorDisplayer mErrorDisplayer;
 
-    public LocationSaver(DatabaseFactory databaseFactory, DestinationFactory destinationFactory,
+    public LocationSaver(Database database, DestinationFactory destinationFactory,
             ErrorDisplayer errorDisplayer) {
-        mDatabaseFactory = databaseFactory;
+        mDatabaseFactory = database;
         mDestinationFactory = destinationFactory;
         mErrorDisplayer = errorDisplayer;
     }

@@ -21,7 +21,7 @@ import com.google.code.geobeagle.ResourceProvider;
 import com.google.code.geobeagle.data.CacheListData;
 import com.google.code.geobeagle.data.Destination;
 import com.google.code.geobeagle.data.Destination.DestinationFactory;
-import com.google.code.geobeagle.io.DatabaseFactory;
+import com.google.code.geobeagle.io.Database;
 import com.google.code.geobeagle.io.GpxLoader;
 import com.google.code.geobeagle.io.LocationBookmarksSql;
 
@@ -76,12 +76,12 @@ public class CacheListDelegate {
 
     public static CacheListDelegate create(ListActivity parent) {
         final ErrorDisplayer errorDisplayer = new ErrorDisplayer(parent);
-        final DatabaseFactory databaseFactory = DatabaseFactory.create(parent);
+        final Database database = Database.create(parent);
         final ResourceProvider resourceProvider = new ResourceProvider(parent);
         final Pattern[] destinationPatterns = Destination.getDestinationPatterns(resourceProvider);
         final DestinationFactory destinationFactory = new DestinationFactory(destinationPatterns);
         final LocationBookmarksSql locationBookmarks = LocationBookmarksSql.create(parent,
-                databaseFactory, destinationFactory, errorDisplayer);
+                database, destinationFactory, errorDisplayer);
         final SimpleAdapterFactory simpleAdapterFactory = new SimpleAdapterFactory();
         final Intent intent = new Intent(parent, GeoBeagle.class);
         final CacheListData cacheListData = CacheListData.create(destinationFactory, parent);
@@ -89,11 +89,11 @@ public class CacheListDelegate {
                 .getSystemService(Context.LOCATION_SERVICE)));
 
         return new CacheListDelegate(parent, locationBookmarks, locationControl,
-                simpleAdapterFactory, cacheListData, intent, errorDisplayer, databaseFactory);
+                simpleAdapterFactory, cacheListData, intent, errorDisplayer, database);
     }
 
     private final CacheListData mCacheListData;
-    private final DatabaseFactory mDatabaseFactory;
+    private final Database mDatabaseFactory;
     private final ErrorDisplayer mErrorDisplayer;
     private final Intent mIntent;
     private final LocationBookmarksSql mLocationBookmarks;
@@ -108,7 +108,7 @@ public class CacheListDelegate {
     public CacheListDelegate(ListActivity parent, LocationBookmarksSql locationBookmarks,
             LocationControl locationControl, SimpleAdapterFactory simpleAdapterFactory,
             CacheListData cacheListData, Intent intent, ErrorDisplayer errorDisplayer,
-            DatabaseFactory databaseFactory) {
+            Database database) {
         mParent = parent;
         mLocationBookmarks = locationBookmarks;
         mLocationControl = locationControl;
@@ -116,7 +116,7 @@ public class CacheListDelegate {
         mCacheListData = cacheListData;
         mIntent = intent;
         mErrorDisplayer = errorDisplayer;
-        mDatabaseFactory = databaseFactory;
+        mDatabaseFactory = database;
     }
 
     public void onCreate() {

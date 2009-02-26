@@ -19,7 +19,7 @@ import static org.easymock.classextension.EasyMock.createMock;
 import static org.easymock.classextension.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.verify;
 
-import com.google.code.geobeagle.io.DatabaseFactory.CacheWriter;
+import com.google.code.geobeagle.io.Database.CacheWriter;
 import com.google.code.geobeagle.io.GpxLoader.Cache;
 import com.google.code.geobeagle.io.GpxLoader.FileFactory;
 import com.google.code.geobeagle.ui.CacheListDelegate.CacheProgressUpdater;

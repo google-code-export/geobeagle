@@ -21,9 +21,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 
-public class DatabaseFactory {
-    public static DatabaseFactory create(Context context) {
-        return new DatabaseFactory(new SQLiteWrapper(), new GeoBeagleSqliteOpenHelper(context,
+public class Database {
+    public static Database create(Context context) {
+        return new Database(new SQLiteWrapper(), new GeoBeagleSqliteOpenHelper(context,
                 new OpenHelperDelegate()));
     }
 
@@ -88,7 +88,7 @@ public class DatabaseFactory {
         public boolean write(CharSequence id, CharSequence name, double latitude, double longitude,
                 String source) {
             try {
-                mSqlite.execSQL(DatabaseFactory.SQL_INSERT_CACHE, new Object[] {
+                mSqlite.execSQL(Database.SQL_INSERT_CACHE, new Object[] {
                         name, id, new Double(latitude), new Double(longitude), "", source
                 });
             } catch (final SQLiteException e) {
@@ -164,7 +164,7 @@ public class DatabaseFactory {
     private final SQLiteOpenHelper mSqliteOpenHelper;
     private final SQLiteWrapper mSqliteWrapper;
 
-    public DatabaseFactory(SQLiteWrapper sqliteWrapper, SQLiteOpenHelper sqliteOpenHelper) {
+    public Database(SQLiteWrapper sqliteWrapper, SQLiteOpenHelper sqliteOpenHelper) {
         mSqliteWrapper = sqliteWrapper;
         mSqliteOpenHelper = sqliteOpenHelper;
     }

@@ -14,7 +14,7 @@
 
 package com.google.code.geobeagle.io;
 
-import com.google.code.geobeagle.io.DatabaseFactory.CacheWriter;
+import com.google.code.geobeagle.io.Database.CacheWriter;
 import com.google.code.geobeagle.ui.ErrorDisplayer;
 import com.google.code.geobeagle.ui.CacheListDelegate.CacheProgressUpdater;
 
@@ -56,11 +56,11 @@ public class GpxLoader {
     public static final String GPX_PATH = "/sdcard/caches.gpx";
 
     public static GpxLoader create(Context context, ErrorDisplayer errorDisplayer,
-            DatabaseFactory databaseFactory) throws XmlPullParserException, IOException,
+            Database database) throws XmlPullParserException, IOException,
             FileNotFoundException {
         final FileFactory fileFactory = new FileFactory();
-        final SQLiteDatabase sqlite = databaseFactory.openOrCreateCacheDatabase();
-        final CacheWriter cacheWriter = databaseFactory.createCacheWriter(sqlite, errorDisplayer);
+        final SQLiteDatabase sqlite = database.openOrCreateCacheDatabase();
+        final CacheWriter cacheWriter = database.createCacheWriter(sqlite, errorDisplayer);
 
         final GpxCaches gpxCaches = GpxToCache.createGpxCaches(errorDisplayer, GPX_PATH);
         return new GpxLoader(cacheWriter, gpxCaches, fileFactory);

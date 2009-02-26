@@ -22,7 +22,7 @@ import com.google.code.geobeagle.intents.IntentFactory;
 import com.google.code.geobeagle.intents.IntentStarterLocation;
 import com.google.code.geobeagle.intents.IntentStarterRadar;
 import com.google.code.geobeagle.intents.IntentStarterViewUri;
-import com.google.code.geobeagle.io.DatabaseFactory;
+import com.google.code.geobeagle.io.Database;
 import com.google.code.geobeagle.io.LocationBookmarksSql;
 import com.google.code.geobeagle.io.LocationSaver;
 import com.google.code.geobeagle.ui.CachePageButtonEnabler;
@@ -151,12 +151,12 @@ public class GeoBeagle extends Activity {
                     .getDestinationPatterns(mResourceProvider);
             final DestinationFactory destinationFactory = new DestinationFactory(
                     destinationPatterns);
-            final DatabaseFactory databaseFactory = DatabaseFactory.create(this);
+            final Database database = Database.create(this);
             LocationBookmarksSql locationBookmarks = new LocationBookmarksSql(
-                    descriptionsAndLocations, databaseFactory, destinationFactory, mErrorDisplayer);
+                    descriptionsAndLocations, database, destinationFactory, mErrorDisplayer);
 
             MockableEditText mockableTxtLocation = new MockableEditText(txtLocation);
-            LocationSaver locationSaver = new LocationSaver(databaseFactory, destinationFactory,
+            LocationSaver locationSaver = new LocationSaver(database, destinationFactory,
                     mErrorDisplayer);
             mockableTxtLocation
                     .setOnFocusChangeListener(new LocationSetter.EditTextFocusChangeListener(
