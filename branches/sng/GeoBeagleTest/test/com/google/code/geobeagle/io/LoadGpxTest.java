@@ -48,7 +48,7 @@ public class LoadGpxTest extends TestCase {
         ArrayList<Cache> caches = new ArrayList<Cache>(1);
         caches.add(cache);
         expect(gpxCaches.iterator()).andReturn(caches.iterator());
-        cacheProgressUpdater.update("my cache");
+        cacheProgressUpdater.update("1: my cache");
         cacheWriter.startWriting();
         expect(gpxCaches.getSource()).andReturn(LoadGpx.GPX_PATH);
         expect(cacheWriter.write("gc1234", "my cache", 122, 37, LoadGpx.GPX_PATH)).andReturn(true);
@@ -81,7 +81,7 @@ public class LoadGpxTest extends TestCase {
         ArrayList<Cache> caches = new ArrayList<Cache>(1);
         caches.add(cache);
         expect(gpxCaches.iterator()).andReturn(caches.iterator());
-        cacheProgressUpdater.update("my cache");
+        cacheProgressUpdater.update("1: my cache");
         cacheWriter.startWriting();
         expect(gpxCaches.getSource()).andReturn(LoadGpx.GPX_PATH);
         expect(cacheWriter.write("gc1234", "my cache", 122, 37, LoadGpx.GPX_PATH)).andReturn(false);

@@ -133,8 +133,9 @@ public class GeoBeagle extends Activity {
             mContentSelector = builder.createContentSelector(getPreferences(Activity.MODE_PRIVATE));
 
             final EditText txtLocation = (EditText)findViewById(R.id.go_to);
-            mCachePageButtonEnabler = new CachePageButtonEnabler(new TooString(txtLocation),
-                    findViewById(R.id.cache_page), mResourceProvider);
+            mCachePageButtonEnabler = CachePageButtonEnabler.create(new TooString(txtLocation),
+                    findViewById(R.id.cache_page), findViewById(R.id.cache_details),
+                    mResourceProvider);
             txtLocation.setOnKeyListener(new LocationOnKeyListener(mCachePageButtonEnabler));
 
             mLocationViewer = new LocationViewer(mResourceProvider, new MeterView(

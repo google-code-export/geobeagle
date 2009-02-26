@@ -82,8 +82,9 @@ public class LoadGpx {
 
         mCacheWriter.clear(GPX_PATH);
         mCacheWriter.startWriting();
+        int nCache = 0;
         for (final Cache cache : mGpxCaches) {
-            cacheProgressUpdater.update(cache.mName);
+            cacheProgressUpdater.update(++nCache + ": " + cache.mName);
             if (!mCacheWriter.write(cache.mId, cache.mName, cache.mLatitude, cache.mLongitude, mGpxCaches.getSource()))
                 break;
         }

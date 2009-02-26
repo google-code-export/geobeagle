@@ -136,18 +136,18 @@ public class CacheListDelegate {
     public static class CacheProgressUpdater {
         private final ProgressDialog mProgressDialog;
         private final Activity mActivity;
-        private String mCacheName;
+        private String mStatus;
 
         public CacheProgressUpdater(Activity activity, ProgressDialog progressDialog) {
             mActivity = activity;
             mProgressDialog = progressDialog;
         }
 
-        public void update(String cache) {
-            mCacheName = cache;
+        public void update(String status) {
+            mStatus = status;
             mActivity.runOnUiThread(new Runnable() {
                 public void run() {
-                    mProgressDialog.setMessage("Importing " + mCacheName);
+                    mProgressDialog.setMessage(mStatus);
                 }
             });
         }
