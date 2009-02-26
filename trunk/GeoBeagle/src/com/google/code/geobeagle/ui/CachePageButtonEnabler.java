@@ -14,27 +14,45 @@
 
 package com.google.code.geobeagle.ui;
 
-import com.google.code.geobeagle.Destination;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.ResourceProvider;
+import com.google.code.geobeagle.data.Destination;
 
+import android.text.TextUtils;
 import android.view.View;
 
 public class CachePageButtonEnabler {
     private final View mCachePageButton;
     private final String[] mContentPrefixes;
     private final TooString mTooString;
+    private final View mDetailsButton;
+    private final MockableTextUtils mTextUtils;
 
-    public CachePageButtonEnabler(TooString editText, View cachePageButton,
+    public static class MockableTextUtils {
+        int indexOf(CharSequence s, char ch){
+            return TextUtils.indexOf(s, ch);
+        }
+    }
+
+    public static CachePageButtonEnabler create(TooString editText, View cachePageButton, View detailsButton,
             ResourceProvider resourceProvider) {
+        MockableTextUtils textUtils = new MockableTextUtils();
+        return new CachePageButtonEnabler(editText, cachePageButton, detailsButton, resourceProvider, textUtils);
+    }
+    
+    public CachePageButtonEnabler(TooString editText, View cachePageButton, View detailsButton,
+            ResourceProvider resourceProvider, MockableTextUtils textUtils) {
         mTooString = editText;
         mCachePageButton = cachePageButton;
+        mDetailsButton = detailsButton;
         mContentPrefixes = resourceProvider.getStringArray(R.array.content_prefixes);
+        mTextUtils = textUtils;
     }
 
     public void check() {
-        final String description = (String)Destination.extractDescription(mTooString.tooString());
-
+        final CharSequence s = mTooString.tooString();
+        final String description = (String)Destination.extractDescription(s);
+        mDetailsButton.setEnabled(-1 != mTextUtils.indexOf(s, ':'));
         for (String contentPrefix : mContentPrefixes) {
             if (description.startsWith(contentPrefix)) {
                 mCachePageButton.setEnabled(true);

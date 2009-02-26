@@ -15,7 +15,7 @@
 package com.google.code.geobeagle.ui;
 
 import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.Util;
+import com.google.code.geobeagle.ResourceProvider;
 
 import android.location.Location;
 import android.location.LocationProvider;
@@ -24,19 +24,74 @@ import android.location.LocationProvider;
  * @author sng Displays the current location as well as the GPS status.
  */
 public class LocationViewer {
-    private final MockableContext mContext;
-    private final MockableTextView mCoordinates;
-    private final MockableTextView mLastUpdateTime;
-    private final MockableTextView mStatus;
+    public static class MeterFormatter {
+        public int accuracyToBarCount(float accuracy) {
+            return Math.min(METER_LEFT.length(), (int)(Math.log(Math.max(1, accuracy)) / Math
+                    .log(2)));
+        }
 
-    public LocationViewer(MockableContext context, MockableTextView coordinates,
-            MockableTextView lastUpdateTime, MockableTextView status) {
-        this.mContext = context;
-        this.mCoordinates = coordinates;
-        this.mLastUpdateTime = lastUpdateTime;
-        this.mStatus = status;
-        this.mCoordinates.setText(R.string.getting_location_from_gps);
+        public String barsToMeterText(int bars) {
+            return METER_LEFT.substring(METER_LEFT.length() - bars) + "×"
+                    + METER_RIGHT.substring(0, bars);
+        }
+
+        public int lagToAlpha(long milliseconds) {
+            return Math.max(128, 255 - (int)(milliseconds >> 3));
+        }
     }
+
+    public static class MeterView {
+        private final MeterFormatter mMeterFormatter;
+        private final MockableTextView mTextView;
+
+        public MeterView(MockableTextView textView, MeterFormatter meterFormatter) {
+            mTextView = textView;
+            mMeterFormatter = meterFormatter;
+        }
+
+        public void set(long lag, float accuracy) {
+            mTextView.setText(mMeterFormatter.barsToMeterText(mMeterFormatter
+                    .accuracyToBarCount(accuracy)));
+            mTextView.setTextColor(mMeterFormatter.lagToAlpha(lag), 147, 190, 38);
+        }
+    }
+
+    public static class Time {
+        public long getCurrentTime() {
+            return System.currentTimeMillis();
+        }
+    }
+
+    public final static String METER_LEFT = "····«····‹····";
+    public final static String METER_RIGHT = "····›····»····";
+    private float mAccuracy;
+    private final ResourceProvider mResourceProvider;
+    private long mLocationTime;
+    private final MeterView mMeterView;
+    private final MockableTextView mStatus;
+    private final Time mTime;
+    private final MockableTextView mLag;
+    private final MockableTextView mProvider;
+    private final MockableTextView mAccuracyView;
+
+    public LocationViewer(ResourceProvider resourceProvider, MeterView meterView,
+            MockableTextView provider, MockableTextView lag, MockableTextView accuracy,
+            MockableTextView status, Time time, Location initialLocation) {
+        mResourceProvider = resourceProvider;
+        mMeterView = meterView;
+        mLag = lag;
+        mAccuracyView = accuracy;
+        mProvider = provider;
+        mStatus = status;
+        mTime = time;
+    }
+
+    public void refreshLocation() {
+        final long lag = mTime.getCurrentTime() - mLocationTime;
+        mLag.setText((lag / 1000 + "s").trim());
+        mAccuracyView.setText((mAccuracy + "m").trim());
+        mMeterView.set(lag, mAccuracy);
+    };
 
     public void setDisabled() {
         mStatus.setText("DISABLED");
@@ -47,29 +102,26 @@ public class LocationViewer {
     }
 
     public void setLocation(Location location) {
-        setLocation(location, location.getTime());
-    }
-
-    public void setLocation(Location location, long time) {
-        mCoordinates.setText(location.getProvider() + ": "
-                + Util.formatDegreesAsDecimalDegreesString(location.getLatitude()) + " "
-                + Util.formatDegreesAsDecimalDegreesString(location.getLongitude()) + "  �"
-                + location.getAccuracy() + "m");
-        mLastUpdateTime.setText(Util.formatTime(time));
+        // TODO: use currentTime for alpha channel, but locationTime for text
+        // lag.
+        mLocationTime = mTime.getCurrentTime();
+        mProvider.setText(location.getProvider());
+        mAccuracy = location.getAccuracy();
     }
 
     public void setStatus(String provider, int status) {
         switch (status) {
             case LocationProvider.OUT_OF_SERVICE:
                 mStatus.setText(provider + " status: "
-                        + mContext.getString(R.string.out_of_service));
+                        + mResourceProvider.getString(R.string.out_of_service));
                 break;
             case LocationProvider.AVAILABLE:
-                mStatus.setText(provider + " status: " + mContext.getString(R.string.available));
+                mStatus.setText(provider + " status: "
+                        + mResourceProvider.getString(R.string.available));
                 break;
             case LocationProvider.TEMPORARILY_UNAVAILABLE:
                 mStatus.setText(provider + " status: "
-                        + mContext.getString(R.string.temporarily_unavailable));
+                        + mResourceProvider.getString(R.string.temporarily_unavailable));
                 break;
         }
     }

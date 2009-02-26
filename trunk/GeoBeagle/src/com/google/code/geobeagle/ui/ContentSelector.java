@@ -39,7 +39,7 @@ public class ContentSelector implements LifecycleManager {
         editor.putInt(CONTENT_PROVIDER, mSpinner.getSelectedItemPosition());
     }
 
-    public void onResume(SharedPreferences preferences, ErrorDisplayer errorDisplayer) {
-        mSpinner.setSelection(mPreferences.getInt(CONTENT_PROVIDER, 0));
+    public void onResume(SharedPreferences preferences) {
+        mSpinner.setSelection(mPreferences.getInt(CONTENT_PROVIDER, 1));
     }
 }

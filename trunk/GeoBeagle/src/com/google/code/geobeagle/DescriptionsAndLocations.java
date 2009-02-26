@@ -19,11 +19,10 @@ import java.util.List;
 
 public class DescriptionsAndLocations {
     private List<CharSequence> mPreviousDescriptions;
-    private List<CharSequence> mPreviousLocations;
-    private int mMaxSize;
+    private ArrayList<CharSequence> mPreviousLocations;
 
     public DescriptionsAndLocations() {
-        create(25);
+        create(100);
     }
 
     public DescriptionsAndLocations(int maxSize) {
@@ -33,7 +32,6 @@ public class DescriptionsAndLocations {
     private void create(int maxSize) {
         mPreviousDescriptions = new ArrayList<CharSequence>();
         mPreviousLocations = new ArrayList<CharSequence>();
-        this.mMaxSize = maxSize;
     }
 
     public void add(CharSequence description, CharSequence location) {
@@ -43,9 +41,6 @@ public class DescriptionsAndLocations {
         }
         mPreviousDescriptions.add(description);
         mPreviousLocations.add(location);
-        if (mPreviousDescriptions.size() > mMaxSize) {
-            remove(0);
-        }
     }
 
     public void clear() {
@@ -57,7 +52,7 @@ public class DescriptionsAndLocations {
         return mPreviousDescriptions;
     }
 
-    public List<CharSequence> getPreviousLocations() {
+    public ArrayList<CharSequence> getPreviousLocations() {
         return mPreviousLocations;
     }
 

@@ -93,7 +93,7 @@ public class UtilTest extends TestCase {
                 .splitLatLonDescription("Wildwood Park, Saratoga, CA(The Nut Case #89882)@37.258356797547,-122.0354267005 ");
         assertEquals("37.258356797547", coordsAndDescription[0]);
         assertEquals("-122.0354267005", coordsAndDescription[1]);
-        assertEquals("LB89882--The Nut Case", coordsAndDescription[2]);
+        assertEquals("LB89882: The Nut Case", coordsAndDescription[2]);
     }
 
     public void testSplitCoordsAndDescriptions() {
@@ -120,7 +120,7 @@ public class UtilTest extends TestCase {
 
     public void testParseDescription() {
         assertEquals("GCTANE", Util.parseDescription("GCTANE"));
-        assertEquals("LB89882--The Nut Case", Util
+        assertEquals("LB89882: The Nut Case", Util
                 .parseDescription("Wildwood Park, Saratoga, CA(The Nut Case #89882)"));
     }
 

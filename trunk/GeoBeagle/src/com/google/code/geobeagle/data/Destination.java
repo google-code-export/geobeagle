@@ -12,7 +12,11 @@
  ** limitations under the License.
  */
 
-package com.google.code.geobeagle;
+package com.google.code.geobeagle.data;
+
+import com.google.code.geobeagle.R;
+import com.google.code.geobeagle.ResourceProvider;
+import com.google.code.geobeagle.Util;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -21,11 +25,24 @@ import java.util.regex.Pattern;
  * Cache or letterbox description, id, and coordinates.
  */
 public class Destination {
+
+    public static class DestinationFactory {
+        private final Pattern[] mDestinationPatterns;
+
+        public DestinationFactory(Pattern destinationPatterns[]) {
+            mDestinationPatterns = destinationPatterns;
+        }
+
+        public Destination create(CharSequence location) {
+            return new Destination(location, mDestinationPatterns);
+        }
+    }
+
     public static CharSequence extractDescription(CharSequence location) {
         return Util.splitCoordsAndDescription(location)[1];
     }
 
-    static Pattern[] getDestinationPatterns(ResourceProvider resourceProvider) {
+    public static Pattern[] getDestinationPatterns(ResourceProvider resourceProvider) {
         return getDestinationPatterns(resourceProvider.getStringArray(R.array.content_prefixes));
     }
 
@@ -39,11 +56,17 @@ public class Destination {
 
     private int mContentSelectorIndex;
     private CharSequence mDescription;
+    private CharSequence mFullId;
     private CharSequence mId;
     private double mLatitude;
+    private CharSequence mLocation;
     private double mLongitude;
+    private CharSequence mName;
 
     public Destination(CharSequence location, Pattern destinationPatterns[]) {
+        mId = "";
+        mFullId = "";
+        mName = "";
         CharSequence latLonDescription[] = Util.splitLatLonDescription(location);
         try {
             mLatitude = Util.parseCoordinate(latLonDescription[0]);
@@ -51,13 +74,22 @@ public class Destination {
         } catch (NumberFormatException numberFormatException) {
         }
         mDescription = latLonDescription[2];
+        mLocation = location;
 
         for (mContentSelectorIndex = destinationPatterns.length - 1; mContentSelectorIndex >= 0; mContentSelectorIndex--) {
             Matcher matcher = destinationPatterns[mContentSelectorIndex].matcher(mDescription);
             if (matcher.find()) {
                 mId = matcher.group(1);
-                return;
+                mFullId = matcher.group();
+                break;
             }
+        }
+        
+        if (mId.length() == 0) {
+            mName = mDescription;
+        } else {
+            if (mDescription.length() > mFullId.length() + 2)
+                mName = mDescription.subSequence(mFullId.length() + 2, mDescription.length());
         }
     }
 
@@ -69,6 +101,10 @@ public class Destination {
         return mDescription;
     }
 
+    public CharSequence getFullId() {
+        return mFullId;
+    }
+
     public CharSequence getId() {
         return mId;
     }
@@ -77,7 +113,15 @@ public class Destination {
         return mLatitude;
     }
 
+    public CharSequence getLocation() {
+        return mLocation;
+    }
+
     public double getLongitude() {
         return mLongitude;
+    }
+
+    public CharSequence getName() {
+        return mName;
     }
 }

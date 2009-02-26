@@ -12,7 +12,9 @@
  ** limitations under the License.
  */
 
-package com.google.code.geobeagle;
+package com.google.code.geobeagle.data;
+
+import com.google.code.geobeagle.data.Destination;
 
 import java.util.regex.Pattern;
 
@@ -23,9 +25,10 @@ public class DestinationTest extends TestCase {
         Pattern destinationPatterns[] = {
                 Pattern.compile("(?:GC)(\\w*)"), Pattern.compile("(?:LB)(\\w*)")
         };
-        Destination ll = new Destination("37 00.0, 122 00.0", destinationPatterns);
-        assertEquals(37.0, ll.getLatitude());
-        assertEquals(122.0, ll.getLongitude());
+        Destination destination = new Destination("37 00.0, 122 00.0", destinationPatterns);
+        assertEquals(37.0, destination.getLatitude());
+        assertEquals(122.0, destination.getLongitude());
+        assertEquals("", destination.getName());
 
         Destination ll2 = new Destination("37 00.0, 122 00.0", destinationPatterns);
         assertEquals(37.0, ll2.getLatitude());
@@ -52,6 +55,19 @@ public class DestinationTest extends TestCase {
         assertEquals("Description", destinationImpl.getDescription());
     }
 
+    public void testNoName() {
+        Pattern destinationPatterns[] = {
+                Pattern.compile("(?:GC)(\\w*)"), Pattern.compile("(?:LB)(\\w*)")
+        };
+        Destination destinationImpl = new Destination(" \t 37 03.0, 122 00.0 (GC12345)",
+                destinationPatterns);
+        assertEquals(37.05, destinationImpl.getLatitude());
+        assertEquals(122.0, destinationImpl.getLongitude());
+        assertEquals("GC12345", destinationImpl.getFullId());
+        assertEquals("", destinationImpl.getName());
+        assertEquals("GC12345", destinationImpl.getDescription());
+    }
+
     public void testBadCoordinatesGoodDescription() {
         Destination destinationImpl = new Destination("  FOO (Description)", new Pattern[] {
                 Pattern.compile("(?:GC)(\\w*)"), Pattern.compile("(?:LB)(\\w*)")
@@ -59,22 +75,22 @@ public class DestinationTest extends TestCase {
         assertEquals(0.0, destinationImpl.getLatitude());
         assertEquals(0.0, destinationImpl.getLongitude());
         assertEquals("Description", destinationImpl.getDescription());
-
     }
 
     public void testGetId() {
         Pattern destinationPatterns[] = {
                 Pattern.compile("(?:LB)(\\w*)"), Pattern.compile("(?:GC)(\\w*)")
         };
-        Destination destination = new Destination("34.313,122.43 (LB89882--The Nut Case)",
+        Destination destination = new Destination("34.313,122.43 (LB89882: The Nut Case)",
                 destinationPatterns);
         assertEquals("89882", destination.getId());
+        assertEquals("LB89882", destination.getFullId());
         assertEquals(0, destination.getContentIndex());
+        assertEquals("The Nut Case", destination.getName());
 
-        destination = new Destination("34.313,122.43 (GCFOOBAR--GS cache)", destinationPatterns);
+        destination = new Destination("34.313,122.43 (GCFOOBAR: GS cache)", destinationPatterns);
         assertEquals("FOOBAR", destination.getId());
         assertEquals(1, destination.getContentIndex());
-
     }
 
     public void testEmptyDestination() {

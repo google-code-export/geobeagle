@@ -14,45 +14,50 @@
 
 package com.google.code.geobeagle.ui;
 
-import android.app.AlertDialog;
+import com.google.code.geobeagle.Util;
+
 import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.content.DialogInterface;
 
 public class ErrorDisplayer {
-    private final Context context;
+    private final Context mContext;
 
+    // TODO: Wrap this in runOnUiThread so it is displayed even if accidentally
+    // called from the wrong thread.
     public ErrorDisplayer(Context context) {
-        this.context = context;
+        this.mContext = context;
     }
 
     public void displayError(int resourceId) {
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this.context);
+        Builder alertDialogBuilder = new Builder(mContext);
         final Builder setMessage = setMessage(alertDialogBuilder, resourceId);
-        setMessage.setNeutralButton("Ok",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                    }
-                });
+        setMessage.setNeutralButton("Ok", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+            }
+        });
         alertDialogBuilder.create().show();
-    }
-
-    private Builder setMessage(AlertDialog.Builder alertDialogBuilder, int resourceId) {
-        return alertDialogBuilder.setMessage(resourceId);
     }
 
     public void displayError(String string) {
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this.context);
+        Builder alertDialogBuilder = new Builder(mContext);
         final Builder setMessage = setMessage(alertDialogBuilder, string);
-        setMessage.setNeutralButton("Ok",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                    }
-                });
+        setMessage.setNeutralButton("Ok", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+            }
+        });
         alertDialogBuilder.create().show();
     }
 
-    private Builder setMessage(AlertDialog.Builder alertDialogBuilder, String string) {
+    private Builder setMessage(Builder alertDialogBuilder, int resourceId) {
+        return alertDialogBuilder.setMessage(resourceId);
+    }
+
+    private Builder setMessage(Builder alertDialogBuilder, String string) {
         return alertDialogBuilder.setMessage(string);
+    }
+
+    public void displayErrorAndStack(Exception e) {
+        displayError("Error: " + e.toString() + "\n" + "\n\n" + Util.getStackTrace(e));
     }
 }
