@@ -13,7 +13,7 @@
  */
 package com.google.code.geobeagle.io;
 
-import com.google.code.geobeagle.io.LoadGpx.Cache;
+import com.google.code.geobeagle.io.GpxLoader.Cache;
 import com.google.code.geobeagle.ui.ErrorDisplayer;
 
 import org.xmlpull.v1.XmlPullParserException;

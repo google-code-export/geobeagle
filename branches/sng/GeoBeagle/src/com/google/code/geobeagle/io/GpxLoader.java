@@ -27,7 +27,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-public class LoadGpx {
+public class GpxLoader {
 
     public static class Cache {
         public String mId;
@@ -55,7 +55,7 @@ public class LoadGpx {
     }
     public static final String GPX_PATH = "/sdcard/caches.gpx";
 
-    public static LoadGpx create(Context context, ErrorDisplayer errorDisplayer,
+    public static GpxLoader create(Context context, ErrorDisplayer errorDisplayer,
             DatabaseFactory databaseFactory) throws XmlPullParserException, IOException,
             FileNotFoundException {
         final FileFactory fileFactory = new FileFactory();
@@ -63,14 +63,14 @@ public class LoadGpx {
         final CacheWriter cacheWriter = databaseFactory.createCacheWriter(sqlite, errorDisplayer);
 
         final GpxCaches gpxCaches = GpxToCache.createGpxCaches(errorDisplayer, GPX_PATH);
-        return new LoadGpx(cacheWriter, gpxCaches, fileFactory);
+        return new GpxLoader(cacheWriter, gpxCaches, fileFactory);
     }
 
     private final CacheWriter mCacheWriter;
     private final FileFactory mFileFactory;
     private final GpxCaches mGpxCaches;
 
-    public LoadGpx(CacheWriter cacheWriter, GpxCaches gpxCaches, FileFactory fileFactory) {
+    public GpxLoader(CacheWriter cacheWriter, GpxCaches gpxCaches, FileFactory fileFactory) {
         mCacheWriter = cacheWriter;
         mGpxCaches = gpxCaches;
         mFileFactory = fileFactory;

@@ -9,7 +9,7 @@ import static org.easymock.classextension.EasyMock.verify;
 import com.google.code.geobeagle.io.CacheDetailsWriter.CacheDetailsWriterFactory;
 import com.google.code.geobeagle.io.GpxToCache.EventHelper;
 import com.google.code.geobeagle.io.GpxToCache.XmlPathBuilder;
-import com.google.code.geobeagle.io.LoadGpx.Cache;
+import com.google.code.geobeagle.io.GpxLoader.Cache;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;

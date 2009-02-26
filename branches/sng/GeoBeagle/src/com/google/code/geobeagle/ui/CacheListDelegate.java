@@ -22,7 +22,7 @@ import com.google.code.geobeagle.data.CacheListData;
 import com.google.code.geobeagle.data.Destination;
 import com.google.code.geobeagle.data.Destination.DestinationFactory;
 import com.google.code.geobeagle.io.DatabaseFactory;
-import com.google.code.geobeagle.io.LoadGpx;
+import com.google.code.geobeagle.io.GpxLoader;
 import com.google.code.geobeagle.io.LocationBookmarksSql;
 
 import android.app.Activity;
@@ -155,14 +155,14 @@ public class CacheListDelegate {
 
     public boolean onOptionsItemSelected(MenuItem item) {
         try {
-            final LoadGpx loadGpx = LoadGpx.create(mParent, mErrorDisplayer, mDatabaseFactory);
-            if (loadGpx != null) {
+            final GpxLoader gpxLoader = GpxLoader.create(mParent, mErrorDisplayer, mDatabaseFactory);
+            if (gpxLoader != null) {
                 progressDialog = ProgressDialog.show(this.mParent, "Importing Caches",
                         "Please wait...");
                 final Thread thread = new Thread() {
                     public void run() {
                         try {
-                            loadGpx.load(new CacheProgressUpdater(mParent, progressDialog));
+                            gpxLoader.load(new CacheProgressUpdater(mParent, progressDialog));
                             progressDialog.dismiss();
                             mParent.runOnUiThread(new Runnable() {
                                 public void run() {

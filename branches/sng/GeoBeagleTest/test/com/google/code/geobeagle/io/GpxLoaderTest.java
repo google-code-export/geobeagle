@@ -20,8 +20,8 @@ import static org.easymock.classextension.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.verify;
 
 import com.google.code.geobeagle.io.DatabaseFactory.CacheWriter;
-import com.google.code.geobeagle.io.LoadGpx.Cache;
-import com.google.code.geobeagle.io.LoadGpx.FileFactory;
+import com.google.code.geobeagle.io.GpxLoader.Cache;
+import com.google.code.geobeagle.io.GpxLoader.FileFactory;
 import com.google.code.geobeagle.ui.CacheListDelegate.CacheProgressUpdater;
 
 import org.xmlpull.v1.XmlPullParserException;
@@ -32,7 +32,7 @@ import java.util.ArrayList;
 
 import junit.framework.TestCase;
 
-public class LoadGpxTest extends TestCase {
+public class GpxLoaderTest extends TestCase {
 
     public void testLoad() throws XmlPullParserException, IOException {
         CacheWriter cacheWriter = createMock(CacheWriter.class);
@@ -43,15 +43,15 @@ public class LoadGpxTest extends TestCase {
 
         expect(fileFactory.createFile(GpxToCache.GEOBEAGLE_DIR)).andReturn(file);
         expect(file.mkdirs()).andReturn(true);
-        cacheWriter.clear(LoadGpx.GPX_PATH);
+        cacheWriter.clear(GpxLoader.GPX_PATH);
         Cache cache = new Cache("gc1234", "my cache", 122, 37);
         ArrayList<Cache> caches = new ArrayList<Cache>(1);
         caches.add(cache);
         expect(gpxCaches.iterator()).andReturn(caches.iterator());
         cacheProgressUpdater.update("1: my cache");
         cacheWriter.startWriting();
-        expect(gpxCaches.getSource()).andReturn(LoadGpx.GPX_PATH);
-        expect(cacheWriter.write("gc1234", "my cache", 122, 37, LoadGpx.GPX_PATH)).andReturn(true);
+        expect(gpxCaches.getSource()).andReturn(GpxLoader.GPX_PATH);
+        expect(cacheWriter.write("gc1234", "my cache", 122, 37, GpxLoader.GPX_PATH)).andReturn(true);
         cacheWriter.stopWriting();
 
         replay(fileFactory);
@@ -59,8 +59,8 @@ public class LoadGpxTest extends TestCase {
         replay(file);
         replay(gpxCaches);
         replay(cacheWriter);
-        LoadGpx loadGpx = new LoadGpx(cacheWriter, gpxCaches, fileFactory);
-        loadGpx.load(cacheProgressUpdater);
+        GpxLoader gpxLoader = new GpxLoader(cacheWriter, gpxCaches, fileFactory);
+        gpxLoader.load(cacheProgressUpdater);
         verify(cacheWriter);
         verify(gpxCaches);
         verify(cacheProgressUpdater);
@@ -76,15 +76,15 @@ public class LoadGpxTest extends TestCase {
         expect(fileFactory.createFile(GpxToCache.GEOBEAGLE_DIR)).andReturn(file);
         expect(file.mkdirs()).andReturn(true);
 
-        cacheWriter.clear(LoadGpx.GPX_PATH);
+        cacheWriter.clear(GpxLoader.GPX_PATH);
         Cache cache = new Cache("gc1234", "my cache", 122, 37);
         ArrayList<Cache> caches = new ArrayList<Cache>(1);
         caches.add(cache);
         expect(gpxCaches.iterator()).andReturn(caches.iterator());
         cacheProgressUpdater.update("1: my cache");
         cacheWriter.startWriting();
-        expect(gpxCaches.getSource()).andReturn(LoadGpx.GPX_PATH);
-        expect(cacheWriter.write("gc1234", "my cache", 122, 37, LoadGpx.GPX_PATH)).andReturn(false);
+        expect(gpxCaches.getSource()).andReturn(GpxLoader.GPX_PATH);
+        expect(cacheWriter.write("gc1234", "my cache", 122, 37, GpxLoader.GPX_PATH)).andReturn(false);
         cacheWriter.stopWriting();
 
         replay(cacheProgressUpdater);
@@ -92,8 +92,8 @@ public class LoadGpxTest extends TestCase {
         replay(file);
         replay(gpxCaches);
         replay(cacheWriter);
-        LoadGpx loadGpx = new LoadGpx(cacheWriter, gpxCaches, fileFactory);
-        loadGpx.load(cacheProgressUpdater);
+        GpxLoader gpxLoader = new GpxLoader(cacheWriter, gpxCaches, fileFactory);
+        gpxLoader.load(cacheProgressUpdater);
         verify(cacheProgressUpdater);
         verify(cacheWriter);
         verify(gpxCaches);
