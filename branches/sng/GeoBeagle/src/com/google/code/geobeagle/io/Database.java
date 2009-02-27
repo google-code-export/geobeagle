@@ -43,11 +43,12 @@ public class Database {
 
         public String getCache() {
             String name = mCursor.getString(3);
-            if (name.length() > 0) {
+            String id = mCursor.getString(2);
+            if (name.length() > 0 && id.length() > 0) {
                 name = ": " + name;
             }
 
-            return mCursor.getString(0) + ", " + mCursor.getString(1) + " (" + mCursor.getString(2)
+            return mCursor.getString(0) + ", " + mCursor.getString(1) + " (" + id
                     + name + ")";
         }
 
@@ -146,7 +147,7 @@ public class Database {
     }
 
     public static final String DATABASE_NAME = "GeoBeagle.db";
-    public static final int DATABASE_VERSION = 3;
+    public static final int DATABASE_VERSION = 4;
     public static final String[] READER_COLUMNS = new String[] {
             "Latitude", "Longitude", "Name", "Description"
     };
