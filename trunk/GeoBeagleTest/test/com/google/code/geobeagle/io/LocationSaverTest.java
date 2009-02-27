@@ -21,7 +21,7 @@ import static org.easymock.classextension.EasyMock.verify;
 
 import com.google.code.geobeagle.data.Destination;
 import com.google.code.geobeagle.data.Destination.DestinationFactory;
-import com.google.code.geobeagle.io.DatabaseFactory.CacheWriter;
+import com.google.code.geobeagle.io.Database.CacheWriter;
 
 import android.database.sqlite.SQLiteDatabase;
 
@@ -29,11 +29,11 @@ import junit.framework.TestCase;
 
 public class LocationSaverTest extends TestCase {
 
-    private DatabaseFactory mFactory;
+    private Database mFactory;
     private SQLiteDatabase mSqlite;
 
     public void setUp() {
-        mFactory = createMock(DatabaseFactory.class);
+        mFactory = createMock(Database.class);
         mSqlite = createMock(SQLiteDatabase.class);
     }
 

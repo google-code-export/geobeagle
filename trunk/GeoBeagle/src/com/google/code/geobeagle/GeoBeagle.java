@@ -22,8 +22,7 @@ import com.google.code.geobeagle.intents.IntentFactory;
 import com.google.code.geobeagle.intents.IntentStarterLocation;
 import com.google.code.geobeagle.intents.IntentStarterRadar;
 import com.google.code.geobeagle.intents.IntentStarterViewUri;
-import com.google.code.geobeagle.io.DatabaseFactory;
-import com.google.code.geobeagle.io.LocationBookmarksSql;
+import com.google.code.geobeagle.io.Database;
 import com.google.code.geobeagle.io.LocationSaver;
 import com.google.code.geobeagle.ui.CachePageButtonEnabler;
 import com.google.code.geobeagle.ui.ContentSelector;
@@ -64,6 +63,7 @@ public class GeoBeagle extends Activity {
     private CachePageButtonEnabler mCachePageButtonEnabler;
     private ContentSelector mContentSelector;
     private final ErrorDisplayer mErrorDisplayer;
+    private GeoBeagleDelegate mGeoBeagleDelegate;
     private LocationControl mGpsControl;
     private final Handler mHandler;
     private GeoBeagleLocationListener mLocationListener;
@@ -72,13 +72,11 @@ public class GeoBeagle extends Activity {
     private final ResourceProvider mResourceProvider;
 
     private Runnable mUpdateTimeTask = new Runnable() {
-
         public void run() {
             mLocationViewer.refreshLocation();
             mHandler.postDelayed(mUpdateTimeTask, 100);
         }
     };
-    private GeoBeagleDelegate mGeoBeagleDelegate;
 
     public GeoBeagle() {
         super();
@@ -146,21 +144,15 @@ public class GeoBeagle extends Activity {
             final LocationManager locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
             mGpsControl = new LocationControl(locationManager, new LocationChooser());
             mLocationListener = new GeoBeagleLocationListener(mGpsControl, mLocationViewer);
-            DescriptionsAndLocations descriptionsAndLocations = new DescriptionsAndLocations();
             final Pattern[] destinationPatterns = Destination
                     .getDestinationPatterns(mResourceProvider);
             final DestinationFactory destinationFactory = new DestinationFactory(
                     destinationPatterns);
-            final DatabaseFactory databaseFactory = DatabaseFactory.create(this);
-            LocationBookmarksSql locationBookmarks = new LocationBookmarksSql(
-                    descriptionsAndLocations, databaseFactory, destinationFactory, mErrorDisplayer);
+            final Database database = Database.create(this);
 
             MockableEditText mockableTxtLocation = new MockableEditText(txtLocation);
-            LocationSaver locationSaver = new LocationSaver(databaseFactory, destinationFactory,
+            LocationSaver locationSaver = new LocationSaver(database, destinationFactory,
                     mErrorDisplayer);
-            mockableTxtLocation
-                    .setOnFocusChangeListener(new LocationSetter.EditTextFocusChangeListener(
-                            locationSaver, mockableTxtLocation));
             final String initialDestination = getString(R.string.initial_destination);
             mLocationSetter = new LocationSetter(this, mockableTxtLocation, mGpsControl,
                     destinationPatterns, initialDestination, mErrorDisplayer, locationSaver);
@@ -172,7 +164,7 @@ public class GeoBeagle extends Activity {
 
             AppLifecycleManager appLifecycleManager = new AppLifecycleManager(
                     getPreferences(MODE_PRIVATE), new LifecycleManager[] {
-                            mLocationSetter, locationBookmarks,
+                            mLocationSetter,
                             new LocationLifecycleManager(mLocationListener, locationManager),
                             mContentSelector
                     });

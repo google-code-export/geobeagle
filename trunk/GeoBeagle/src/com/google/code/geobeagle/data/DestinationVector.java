@@ -30,23 +30,28 @@ public class DestinationVector implements IDestinationVector {
         private final CharSequence mMyCurrentLocation;
         private final DistanceFormatter mDistanceFormatter;
 
-        public DestinationVectorFactory(DestinationFactory destinationFactory, CharSequence myCurrentLocation, DistanceFormatter distanceFormatter) {
+        public DestinationVectorFactory(DestinationFactory destinationFactory,
+                CharSequence myCurrentLocation, DistanceFormatter distanceFormatter) {
             mDestinationFactory = destinationFactory;
             mMyCurrentLocation = myCurrentLocation;
             mDistanceFormatter = distanceFormatter;
         }
 
         private float calculateDistance(Location here, Destination destination) {
-            float[] results = new float[1];
-            Location.distanceBetween(here.getLatitude(), here.getLongitude(), destination
-                    .getLatitude(), destination.getLongitude(), results);
+            if (here != null) {
+                float[] results = new float[1];
+                Location.distanceBetween(here.getLatitude(), here.getLongitude(), destination
+                        .getLatitude(), destination.getLongitude(), results);
 
-            return results[0];
+                return results[0];
+            }
+            return -1;
         }
 
         public DestinationVector create(CharSequence location, Location here) {
-            return new DestinationVector(mDestinationFactory.create(location), calculateDistance(
-                    here, mDestinationFactory.create(location)), mDistanceFormatter);
+            final Destination destinationHere = mDestinationFactory.create(location);
+            return new DestinationVector(destinationHere, calculateDistance(here, destinationHere),
+                    mDistanceFormatter);
         }
 
         public IDestinationVector createMyLocation() {
@@ -77,7 +82,7 @@ public class DestinationVector implements IDestinationVector {
         public MyLocation(CharSequence myCurrentLocation) {
             mMyCurrentLocation = myCurrentLocation;
         }
-        
+
         public Destination getDestination() {
             return null;
         }
@@ -102,7 +107,8 @@ public class DestinationVector implements IDestinationVector {
     private final float mDistance;
     private final DistanceFormatter mDistanceFormatter;
 
-    public DestinationVector(Destination destination, float distance, DistanceFormatter distanceFormatter) {
+    public DestinationVector(Destination destination, float distance,
+            DistanceFormatter distanceFormatter) {
         mDestination = destination;
         mDistance = distance;
         mDistanceFormatter = distanceFormatter;

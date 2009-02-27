@@ -20,7 +20,7 @@ import static org.easymock.classextension.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.verify;
 
 import com.google.code.geobeagle.DescriptionsAndLocations;
-import com.google.code.geobeagle.io.DatabaseFactory.CacheReader;
+import com.google.code.geobeagle.io.Database.CacheReader;
 
 import android.database.sqlite.SQLiteDatabase;
 
@@ -28,11 +28,11 @@ import junit.framework.TestCase;
 
 public class LocationBookmarksSqlTest extends TestCase {
 
-    private DatabaseFactory mFactory;
+    private Database mFactory;
     private SQLiteDatabase mSqlite;
 
     public void setUp() {
-        mFactory = createMock(DatabaseFactory.class);
+        mFactory = createMock(Database.class);
         mSqlite = createMock(SQLiteDatabase.class);
     }
 

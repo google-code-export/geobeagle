@@ -17,13 +17,14 @@ import com.google.code.geobeagle.ui.ErrorDisplayer;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteConstraintException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 
-public class DatabaseFactory {
-    public static DatabaseFactory create(Context context) {
-        return new DatabaseFactory(new SQLiteWrapper(), new GeoBeagleSqliteOpenHelper(context,
+public class Database {
+    public static Database create(Context context) {
+        return new Database(new SQLiteWrapper(), new GeoBeagleSqliteOpenHelper(context,
                 new OpenHelperDelegate()));
     }
 
@@ -43,12 +44,12 @@ public class DatabaseFactory {
 
         public String getCache() {
             String name = mCursor.getString(3);
-            if (name.length() > 0) {
+            String id = mCursor.getString(2);
+            if (name.length() > 0 && id.length() > 0) {
                 name = ": " + name;
             }
 
-            return mCursor.getString(0) + ", " + mCursor.getString(1) + " (" + mCursor.getString(2)
-                    + name + ")";
+            return mCursor.getString(0) + ", " + mCursor.getString(1) + " (" + id + name + ")";
         }
 
         public boolean moveToNext() {
@@ -88,14 +89,36 @@ public class DatabaseFactory {
         public boolean write(CharSequence id, CharSequence name, double latitude, double longitude,
                 String source) {
             try {
-                mSqlite.execSQL(DatabaseFactory.SQL_INSERT_CACHE, new Object[] {
-                        name, id, new Double(latitude), new Double(longitude), "", source
-                });
+                tryInsertAndUpdate(id, name, latitude, longitude, source);
             } catch (final SQLiteException e) {
-                mErrorDisplayer.displayError("Error writing cache: " + e.getMessage());
+                mErrorDisplayer.displayError("Error writing cache: " + e.toString());
                 return false;
             }
             return true;
+        }
+
+        private void tryInsertAndUpdate(CharSequence id, CharSequence name, double latitude,
+                double longitude, String source) {
+            try {
+                insert(id, name, latitude, longitude, source);
+            } catch (final SQLiteConstraintException e) {
+                delete(id);
+                insert(id, name, latitude, longitude, source);
+            }
+        }
+
+        private void delete(CharSequence id) {
+            mSqlite.execSQL(Database.SQL_DELETE_CACHE, new Object[] {
+                id
+            });
+
+        }
+
+        private void insert(CharSequence id, CharSequence name, double latitude, double longitude,
+                String source) {
+            mSqlite.execSQL(Database.SQL_INSERT_CACHE, new Object[] {
+                    id, name, new Double(latitude), new Double(longitude), source
+            });
         }
 
         public void startWriting() {
@@ -146,25 +169,25 @@ public class DatabaseFactory {
     }
 
     public static final String DATABASE_NAME = "GeoBeagle.db";
-    public static final int DATABASE_VERSION = 3;
+    public static final int DATABASE_VERSION = 6;
     public static final String[] READER_COLUMNS = new String[] {
-            "Latitude", "Longitude", "Name", "Description"
+            "Latitude", "Longitude", "Id", "Description"
     };
 
     public static final String SQL_CLEAR_CACHES = "DELETE FROM CACHES WHERE Source=?";
+    public static final String SQL_DELETE_CACHE = "DELETE FROM CACHES WHERE Id=?";
     public static final String SQL_CREATE_CACHE_TABLE = "CREATE TABLE IF NOT EXISTS CACHES ("
-            + "Id INTEGER PRIMARY KEY AUTOINCREMENT, Description VARCHAR, Name VARCHAR, Details VARCHAR, "
+            + "Id VARCHAR PRIMARY KEY, Description VARCHAR, "
             + "Latitude DOUBLE, Longitude DOUBLE, Source VARCHAR)";
     public static final String SQL_DROP_CACHE_TABLE = "DROP TABLE CACHES";
     public static final String SQL_INSERT_CACHE = "INSERT INTO CACHES "
-            + "(Description, Name, Latitude, Longitude, Details, Source) "
-            + "VALUES (?, ?, ?, ?, ?, ?)";
+            + "(Id, Description, Latitude, Longitude, Source) " + "VALUES (?, ?, ?, ?, ?)";
     public static final String TBL_CACHES = "CACHES";
 
     private final SQLiteOpenHelper mSqliteOpenHelper;
     private final SQLiteWrapper mSqliteWrapper;
 
-    public DatabaseFactory(SQLiteWrapper sqliteWrapper, SQLiteOpenHelper sqliteOpenHelper) {
+    public Database(SQLiteWrapper sqliteWrapper, SQLiteOpenHelper sqliteOpenHelper) {
         mSqliteWrapper = sqliteWrapper;
         mSqliteOpenHelper = sqliteOpenHelper;
     }
@@ -178,6 +201,7 @@ public class DatabaseFactory {
     }
 
     public SQLiteDatabase openOrCreateCacheDatabase() {
+        // TODO: need to create read-only database too.
         return mSqliteOpenHelper.getWritableDatabase();
     }
 }

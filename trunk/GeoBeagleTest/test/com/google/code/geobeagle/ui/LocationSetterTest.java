@@ -36,17 +36,21 @@ public class LocationSetterTest extends TestCase {
     public void testOnPause() {
         Editor editor = createMock(Editor.class);
         MockableEditText editText = createMock(MockableEditText.class);
+        LocationSaver locationSaver = createMock(LocationSaver.class);
 
         expect(editText.getText()).andReturn("googleplex");
         expect(editor.putString(LocationSetter.PREFS_LOCATION, "googleplex")).andReturn(editor);
-
+        locationSaver.saveLocation("googleplex");
+        
         replay(editor);
         replay(editText);
+        replay(locationSaver);
         LocationSetter locationSetter = new LocationSetter(null, editText, null, null, null, null,
-                null);
+                locationSaver);
         locationSetter.onPause(editor);
         verify(editor);
         verify(editText);
+        verify(locationSaver);
     }
 
     public void testOnResume() {
@@ -57,7 +61,6 @@ public class LocationSetterTest extends TestCase {
         editText.setText("googleplex");
         expect(sharedPreferences.getString(LocationSetter.PREFS_LOCATION, "initial location"))
                 .andReturn("googleplex");
-        locationSaver.saveLocation("googleplex");
 
         replay(sharedPreferences);
         replay(editText);

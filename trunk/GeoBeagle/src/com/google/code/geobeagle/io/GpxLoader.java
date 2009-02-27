@@ -14,7 +14,7 @@
 
 package com.google.code.geobeagle.io;
 
-import com.google.code.geobeagle.io.DatabaseFactory.CacheWriter;
+import com.google.code.geobeagle.io.Database.CacheWriter;
 import com.google.code.geobeagle.ui.ErrorDisplayer;
 import com.google.code.geobeagle.ui.CacheListDelegate.CacheProgressUpdater;
 
@@ -27,7 +27,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-public class LoadGpx {
+public class GpxLoader {
 
     public static class Cache {
         public String mId;
@@ -53,27 +53,33 @@ public class LoadGpx {
             return new File(path);
         }
     }
+
     public static final String GPX_PATH = "/sdcard/caches.gpx";
 
-    public static LoadGpx create(Context context, ErrorDisplayer errorDisplayer,
-            DatabaseFactory databaseFactory) throws XmlPullParserException, IOException,
+    public static GpxLoader create(Context context, ErrorDisplayer errorDisplayer,
+            Database database, SQLiteDatabase sqlite) throws XmlPullParserException, IOException,
             FileNotFoundException {
+        final CacheWriter cacheWriter = database.createCacheWriter(sqlite, errorDisplayer);
+        final GpxCaches gpxCaches = GpxCaches.create(errorDisplayer, GPX_PATH);
         final FileFactory fileFactory = new FileFactory();
-        final SQLiteDatabase sqlite = databaseFactory.openOrCreateCacheDatabase();
-        final CacheWriter cacheWriter = databaseFactory.createCacheWriter(sqlite, errorDisplayer);
 
-        final GpxCaches gpxCaches = GpxToCache.createGpxCaches(errorDisplayer, GPX_PATH);
-        return new LoadGpx(cacheWriter, gpxCaches, fileFactory);
+        return new GpxLoader(cacheWriter, gpxCaches, fileFactory);
     }
 
     private final CacheWriter mCacheWriter;
     private final FileFactory mFileFactory;
     private final GpxCaches mGpxCaches;
+    private boolean mAbortLoad;
 
-    public LoadGpx(CacheWriter cacheWriter, GpxCaches gpxCaches, FileFactory fileFactory) {
+    public GpxLoader(CacheWriter cacheWriter, GpxCaches gpxCaches, FileFactory fileFactory) {
         mCacheWriter = cacheWriter;
         mGpxCaches = gpxCaches;
         mFileFactory = fileFactory;
+        mAbortLoad = false;
+    }
+
+    public void abortLoad() {
+        mAbortLoad = true;
     }
 
     public void load(CacheProgressUpdater cacheProgressUpdater) {
@@ -85,7 +91,9 @@ public class LoadGpx {
         int nCache = 0;
         for (final Cache cache : mGpxCaches) {
             cacheProgressUpdater.update(++nCache + ": " + cache.mName);
-            if (!mCacheWriter.write(cache.mId, cache.mName, cache.mLatitude, cache.mLongitude, mGpxCaches.getSource()))
+            if (!mCacheWriter.write(cache.mId, cache.mName, cache.mLatitude, cache.mLongitude,
+                    mGpxCaches.getSource())
+                    || mAbortLoad)
                 break;
         }
         mCacheWriter.stopWriting();

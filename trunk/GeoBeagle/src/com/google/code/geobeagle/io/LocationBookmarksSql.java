@@ -18,7 +18,7 @@ import com.google.code.geobeagle.DescriptionsAndLocations;
 import com.google.code.geobeagle.LifecycleManager;
 import com.google.code.geobeagle.data.Destination;
 import com.google.code.geobeagle.data.Destination.DestinationFactory;
-import com.google.code.geobeagle.io.DatabaseFactory.CacheReader;
+import com.google.code.geobeagle.io.Database.CacheReader;
 import com.google.code.geobeagle.ui.ErrorDisplayer;
 
 import android.app.ListActivity;
@@ -29,22 +29,22 @@ import android.database.sqlite.SQLiteDatabase;
 import java.util.ArrayList;
 
 public class LocationBookmarksSql implements LifecycleManager {
-    private final DatabaseFactory mDatabaseFactory;
+    private final Database mDatabaseFactory;
     private final DescriptionsAndLocations mDescriptionsAndLocations;
 
     public static LocationBookmarksSql create(ListActivity listActivity,
-            DatabaseFactory databaseFactory, DestinationFactory destinationFactory,
+            Database database, DestinationFactory destinationFactory,
             ErrorDisplayer errorDisplayer) {
         final DescriptionsAndLocations descriptionsAndLocations = new DescriptionsAndLocations();
-        return new LocationBookmarksSql(descriptionsAndLocations, databaseFactory,
+        return new LocationBookmarksSql(descriptionsAndLocations, database,
                 destinationFactory, errorDisplayer);
     }
 
     public LocationBookmarksSql(DescriptionsAndLocations descriptionsAndLocations,
-            DatabaseFactory databaseFactory, DestinationFactory destinationFactory,
+            Database database, DestinationFactory destinationFactory,
             ErrorDisplayer errorDisplayer) {
         mDescriptionsAndLocations = descriptionsAndLocations;
-        mDatabaseFactory = databaseFactory;
+        mDatabaseFactory = database;
     }
 
     public DescriptionsAndLocations getDescriptionsAndLocations() {

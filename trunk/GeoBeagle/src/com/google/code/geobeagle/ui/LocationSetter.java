@@ -25,27 +25,10 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.location.Location;
-import android.view.View;
-import android.view.View.OnFocusChangeListener;
 
 import java.util.regex.Pattern;
 
 public class LocationSetter implements LifecycleManager {
-    public static final class EditTextFocusChangeListener implements OnFocusChangeListener {
-        private final MockableEditText mEditText;
-        private final LocationSaver mLocationSaver;
-
-        public EditTextFocusChangeListener(LocationSaver locationSaver, MockableEditText editText) {
-            mLocationSaver = locationSaver;
-            mEditText = editText;
-        }
-
-        public void onFocusChange(View v, boolean hasFocus) {
-            if (!hasFocus) {
-                mLocationSaver.saveLocation(mEditText.getText());
-            }
-        }
-    }
 
     public static final String FNAME_RECENT_LOCATIONS = "RECENT_LOCATIONS";
     public static final String PREFS_LOCATION = "Location";
@@ -81,7 +64,9 @@ public class LocationSetter implements LifecycleManager {
     }
 
     public void onPause(Editor editor) {
-        editor.putString(PREFS_LOCATION, mTxtLocation.getText().toString());
+        final CharSequence text = mTxtLocation.getText();
+        editor.putString(PREFS_LOCATION, text.toString());
+        mLocationSaver.saveLocation(text);
     }
 
     public void onResume(SharedPreferences preferences) {
@@ -99,7 +84,6 @@ public class LocationSetter implements LifecycleManager {
                     "[%1$tk:%1$tM] My Location", location.getTime()));
             return;
         }
-        mLocationSaver.saveLocation(c);
         mTxtLocation.setText(c);
     }
 

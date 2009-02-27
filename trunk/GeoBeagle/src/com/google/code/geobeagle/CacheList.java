@@ -37,6 +37,12 @@ public class CacheList extends ListActivity {
         return delegate.onOptionsItemSelected(item);
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        delegate.onPause();
+    }
+
     public static final String SELECT_CACHE = CacheListDelegate.SELECT_CACHE;
 
     private static CacheListDelegate buildCacheListDelegate(ListActivity listActivity) {
