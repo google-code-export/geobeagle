@@ -63,6 +63,7 @@ public class GeoBeagle extends Activity {
     private CachePageButtonEnabler mCachePageButtonEnabler;
     private ContentSelector mContentSelector;
     private final ErrorDisplayer mErrorDisplayer;
+    private GeoBeagleDelegate mGeoBeagleDelegate;
     private LocationControl mGpsControl;
     private final Handler mHandler;
     private GeoBeagleLocationListener mLocationListener;
@@ -71,13 +72,11 @@ public class GeoBeagle extends Activity {
     private final ResourceProvider mResourceProvider;
 
     private Runnable mUpdateTimeTask = new Runnable() {
-
         public void run() {
             mLocationViewer.refreshLocation();
             mHandler.postDelayed(mUpdateTimeTask, 100);
         }
     };
-    private GeoBeagleDelegate mGeoBeagleDelegate;
 
     public GeoBeagle() {
         super();
