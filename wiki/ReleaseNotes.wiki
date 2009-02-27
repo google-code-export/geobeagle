@@ -5,13 +5,13 @@
 This version involves a db upgrade that will wipe your data.
 
 Many fixes:
-- fix crash when going to cache list page if all the location providers are off
-- removed many gratuitous writes to the database
-- changed db key to be the cache id
-- check for duplicate writes, and delete previous record
-- only save the edit field on pause
+  * fix crash when going to cache list page if all the location providers are off
+  * removed many gratuitous writes to the database
+  * changed db key to be the cache id
+  * check for duplicate writes, and delete previous record
+  * only save the edit field on pause
 
 Remaining critical issues:
-- Crash bug when reorienting phone during update (see http://bend-ing.blogspot.com/2008/11/properly-handle-progress-dialog-in.html)
-- Back button loses changes to edit control.  Edit control will need to be rewritten as a separate activity to fix this.
-- No cache hints are imported from the gpx.
+  * Crash bug when reorienting phone during update (see http://bend-ing.blogspot.com/2008/11/properly-handle-progress-dialog-in.html)
+  * Back button loses changes to edit control.  Edit control will need to be rewritten as a separate activity to fix this.
+  * No cache hints are imported from the gpx.
