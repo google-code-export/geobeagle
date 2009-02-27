@@ -1,6 +1,6 @@
 #summary Setting up the test framework for development
 
-= How to get EasyMock configured for running GeoBeagle unit tests =
+= How to get !EasyMock configured for running !GeoBeagle unit tests =
 
 You can also download the files from the GeoBeagle download tab.
 
