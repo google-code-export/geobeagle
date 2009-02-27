@@ -178,6 +178,7 @@ public class Database {
     }
 
     public SQLiteDatabase openOrCreateCacheDatabase() {
+        // TODO: need to create read-only database too.
         return mSqliteOpenHelper.getWritableDatabase();
     }
 }

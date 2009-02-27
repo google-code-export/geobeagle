@@ -1,12 +1,22 @@
+/*
+ ** Licensed under the Apache License, Version 2.0 (the "License");
+ ** you may not use this file except in compliance with the License.
+ ** You may obtain a copy of the License at
+ **
+ **     http://www.apache.org/licenses/LICENSE-2.0
+ **
+ ** Unless required by applicable law or agreed to in writing, software
+ ** distributed under the License is distributed on an "AS IS" BASIS,
+ ** WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ ** See the License for the specific language governing permissions and
+ ** limitations under the License.
+ */
 
 package com.google.code.geobeagle.io;
 
-import static org.easymock.EasyMock.expect;
 import static org.easymock.classextension.EasyMock.createMock;
 import static org.easymock.classextension.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.verify;
-
-import com.google.code.geobeagle.io.GpxLoader.Cache;
 
 import org.xmlpull.v1.XmlPullParser;
 
@@ -15,40 +25,68 @@ import java.io.IOException;
 import junit.framework.TestCase;
 
 public class GpxEventHandlerTest extends TestCase {
-    public void testEndTagNotCache() throws IOException {
-        GpxEventHandler gpxEventHandler = new GpxEventHandler(null, null, null);
-        gpxEventHandler.endTag("/gpx/wptNOT!");
-    }
-
-    public void testEndTagCache() throws IOException {
-        CacheDetailsWriter cacheDetailsWriter = createMock(CacheDetailsWriter.class);
-
-        cacheDetailsWriter.writeFooter();
-        cacheDetailsWriter.close();
-
-        replay(cacheDetailsWriter);
-        GpxEventHandler gpxEventHandler = new GpxEventHandler(null, null, cacheDetailsWriter);
-        gpxEventHandler.endTag("/gpx/wpt");
-        verify(cacheDetailsWriter);
-    }
 
     public void testStartTagNotCache() throws IOException {
-        Cache cache = new Cache();
-        GpxEventHandler gpxEventHandler = new GpxEventHandler(null, cache, null);
+        GpxEventHandler gpxEventHandler = new GpxEventHandler(null);
         gpxEventHandler.startTag("/gpx/wptNot", null);
     }
 
     public void testStartTagCache() throws IOException {
         XmlPullParser xmlPullParser = createMock(XmlPullParser.class);
-        expect(xmlPullParser.getAttributeValue(null, "lat")).andReturn("37");
-        expect(xmlPullParser.getAttributeValue(null, "lon")).andReturn("122");
+        CachePersisterFacade cachePersisterFacade = createMock(CachePersisterFacade.class);
 
+        cachePersisterFacade.wpt(xmlPullParser);
+
+        replay(cachePersisterFacade);
         replay(xmlPullParser);
-        Cache cache = new Cache();
-        GpxEventHandler gpxEventHandler = new GpxEventHandler(null, cache, null);
+        GpxEventHandler gpxEventHandler = new GpxEventHandler(cachePersisterFacade);
         gpxEventHandler.startTag("/gpx/wpt", xmlPullParser);
-        assertEquals(37.0, cache.mLatitude);
-        assertEquals(122.0, cache.mLongitude);
         verify(xmlPullParser);
+        verify(cachePersisterFacade);
     }
+
+    public void testTextWptName() throws IOException {
+        CachePersisterFacade cachePersisterFacade = createMock(CachePersisterFacade.class);
+
+        cachePersisterFacade.wptName("my wpt");
+
+        replay(cachePersisterFacade);
+        GpxEventHandler gpxEventHandler = new GpxEventHandler(cachePersisterFacade);
+        gpxEventHandler.text(GpxEventHandler.XPATH_WPTNAME, "my wpt");
+        verify(cachePersisterFacade);
+    }
+
+    public void testGroundspeakName() throws IOException {
+        CachePersisterFacade cachePersisterFacade = createMock(CachePersisterFacade.class);
+
+        cachePersisterFacade.groundspeakName("my wpt");
+
+        replay(cachePersisterFacade);
+        GpxEventHandler gpxEventHandler = new GpxEventHandler(cachePersisterFacade);
+        gpxEventHandler.text(GpxEventHandler.XPATH_GROUNDSPEAKNAME, "my wpt");
+        verify(cachePersisterFacade);
+    }
+
+    public void testLogDate() throws IOException {
+        CachePersisterFacade cachePersisterFacade = createMock(CachePersisterFacade.class);
+
+        cachePersisterFacade.logDate("date");
+
+        replay(cachePersisterFacade);
+        GpxEventHandler gpxEventHandler = new GpxEventHandler(cachePersisterFacade);
+        gpxEventHandler.text(GpxEventHandler.XPATH_LOGDATE, "date");
+        verify(cachePersisterFacade);
+    }
+
+    public void testPlainLine() throws IOException {
+        CachePersisterFacade cachePersisterFacade = createMock(CachePersisterFacade.class);
+
+        cachePersisterFacade.line("hello");
+
+        replay(cachePersisterFacade);
+        GpxEventHandler gpxEventHandler = new GpxEventHandler(cachePersisterFacade);
+        gpxEventHandler.text(GpxEventHandler.XPATH_PLAINLINES[0], "hello");
+        verify(cachePersisterFacade);
+    }
+
 }

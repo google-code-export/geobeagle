@@ -58,11 +58,11 @@ public class GpxLoader {
     public static GpxLoader create(Context context, ErrorDisplayer errorDisplayer,
             Database database) throws XmlPullParserException, IOException,
             FileNotFoundException {
-        final FileFactory fileFactory = new FileFactory();
         final SQLiteDatabase sqlite = database.openOrCreateCacheDatabase();
         final CacheWriter cacheWriter = database.createCacheWriter(sqlite, errorDisplayer);
-
-        final GpxCaches gpxCaches = GpxToCache.createGpxCaches(errorDisplayer, GPX_PATH);
+        final GpxCaches gpxCaches = GpxCaches.create(errorDisplayer, GPX_PATH);
+        final FileFactory fileFactory = new FileFactory();
+        
         return new GpxLoader(cacheWriter, gpxCaches, fileFactory);
     }
 
