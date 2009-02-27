@@ -12,4 +12,9 @@ public class DistanceFormatterTest extends TestCase {
         DistanceFormatter distanceFormatter = new DistanceFormatter();
         assertEquals("1km", distanceFormatter.format(1234.5f));
     }
+
+    public void testNoGps() {
+        DistanceFormatter distanceFormatter = new DistanceFormatter();
+        assertEquals("", distanceFormatter.format(-1f));
+    }
 }
