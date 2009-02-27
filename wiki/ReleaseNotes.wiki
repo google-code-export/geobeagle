@@ -8,7 +8,7 @@ Many fixes:
   * fix crash when going to cache list page if all the location providers are off
   * removed many gratuitous writes to the database
   * changed db key to be the cache id
-  * check for duplicate writes, and delete previous record
+  * check for duplicate writes, and delete previous record (the combination of these bugs meant that we were writing many many copies of the same data, gradually bloating the database)
   * only save the edit field on pause
 
 Remaining critical issues:
