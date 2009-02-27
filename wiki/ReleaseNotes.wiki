@@ -16,4 +16,4 @@ Remaining critical issues:
   * Crash bug when reorienting phone during update (see http://bend-ing.blogspot.com/2008/11/properly-handle-progress-dialog-in.html)
   * Back button loses changes to edit control.  Edit control will need to be rewritten as a separate activity to fix this.
   * No cache hints are imported from the gpx.
-  * Nead to add "delete" button, since old entries are no longer aged out.
+  * Need to add "delete" button, since old entries are no longer aged out.
