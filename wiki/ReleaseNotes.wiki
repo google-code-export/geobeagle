@@ -5,6 +5,7 @@
 This version involves a db upgrade that will wipe your data.
 
 Many fixes:
+  * fix crash and database lockout if import is interrupted
   * fix crash when going to cache list page if all the location providers are off
   * removed many gratuitous writes to the database
   * changed db key to be the cache id
