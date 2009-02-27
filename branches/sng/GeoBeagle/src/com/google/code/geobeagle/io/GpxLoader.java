@@ -53,27 +53,33 @@ public class GpxLoader {
             return new File(path);
         }
     }
+
     public static final String GPX_PATH = "/sdcard/caches.gpx";
 
     public static GpxLoader create(Context context, ErrorDisplayer errorDisplayer,
-            Database database) throws XmlPullParserException, IOException,
+            Database database, SQLiteDatabase sqlite) throws XmlPullParserException, IOException,
             FileNotFoundException {
-        final SQLiteDatabase sqlite = database.openOrCreateCacheDatabase();
         final CacheWriter cacheWriter = database.createCacheWriter(sqlite, errorDisplayer);
         final GpxCaches gpxCaches = GpxCaches.create(errorDisplayer, GPX_PATH);
         final FileFactory fileFactory = new FileFactory();
-        
+
         return new GpxLoader(cacheWriter, gpxCaches, fileFactory);
     }
 
     private final CacheWriter mCacheWriter;
     private final FileFactory mFileFactory;
     private final GpxCaches mGpxCaches;
+    private boolean mAbortLoad;
 
     public GpxLoader(CacheWriter cacheWriter, GpxCaches gpxCaches, FileFactory fileFactory) {
         mCacheWriter = cacheWriter;
         mGpxCaches = gpxCaches;
         mFileFactory = fileFactory;
+        mAbortLoad = false;
+    }
+
+    public void abortLoad() {
+        mAbortLoad = true;
     }
 
     public void load(CacheProgressUpdater cacheProgressUpdater) {
@@ -85,7 +91,9 @@ public class GpxLoader {
         int nCache = 0;
         for (final Cache cache : mGpxCaches) {
             cacheProgressUpdater.update(++nCache + ": " + cache.mName);
-            if (!mCacheWriter.write(cache.mId, cache.mName, cache.mLatitude, cache.mLongitude, mGpxCaches.getSource()))
+            if (!mCacheWriter.write(cache.mId, cache.mName, cache.mLatitude, cache.mLongitude,
+                    mGpxCaches.getSource())
+                    || mAbortLoad)
                 break;
         }
         mCacheWriter.stopWriting();

@@ -30,12 +30,14 @@ import android.app.ListActivity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.location.LocationManager;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
+import android.widget.Toast;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -43,6 +45,26 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 public class CacheListDelegate {
+
+    public static class CacheProgressUpdater {
+        private final Activity mActivity;
+        private final ProgressDialog mProgressDialog;
+        private String mStatus;
+
+        public CacheProgressUpdater(Activity activity, ProgressDialog progressDialog) {
+            mActivity = activity;
+            mProgressDialog = progressDialog;
+        }
+
+        public void update(String status) {
+            mStatus = status;
+            mActivity.runOnUiThread(new Runnable() {
+                public void run() {
+                    mProgressDialog.setMessage(mStatus);
+                }
+            });
+        }
+    }
 
     private static class DisplayErrorRunnable implements Runnable {
         private final ErrorDisplayer mErrorDisplayer;
@@ -68,6 +90,7 @@ public class CacheListDelegate {
     public static final String[] ADAPTER_FROM = {
             "cache", "distance"
     };
+
     public static final int[] ADAPTER_TO = {
             R.id.txt_cache, R.id.distance
     };
@@ -93,17 +116,21 @@ public class CacheListDelegate {
     }
 
     private final CacheListData mCacheListData;
-    private final Database mDatabaseFactory;
+    private final Database mDatabase;
     private final ErrorDisplayer mErrorDisplayer;
     private final Intent mIntent;
     private final LocationBookmarksSql mLocationBookmarks;
     private final LocationControl mLocationControl;
-
     private final ListActivity mParent;
-
     private final SimpleAdapterFactory mSimpleAdapterFactory;
 
+    private SQLiteDatabase mSqliteDatabase;
+
     private ProgressDialog progressDialog;
+
+    private GpxLoader mGpxLoader;
+
+    private Thread importThread;
 
     public CacheListDelegate(ListActivity parent, LocationBookmarksSql locationBookmarks,
             LocationControl locationControl, SimpleAdapterFactory simpleAdapterFactory,
@@ -116,7 +143,7 @@ public class CacheListDelegate {
         mCacheListData = cacheListData;
         mIntent = intent;
         mErrorDisplayer = errorDisplayer;
-        mDatabaseFactory = database;
+        mDatabase = database;
     }
 
     public void onCreate() {
@@ -133,48 +160,32 @@ public class CacheListDelegate {
         mParent.startActivity(mIntent);
     }
 
-    public static class CacheProgressUpdater {
-        private final ProgressDialog mProgressDialog;
-        private final Activity mActivity;
-        private String mStatus;
-
-        public CacheProgressUpdater(Activity activity, ProgressDialog progressDialog) {
-            mActivity = activity;
-            mProgressDialog = progressDialog;
-        }
-
-        public void update(String status) {
-            mStatus = status;
-            mActivity.runOnUiThread(new Runnable() {
-                public void run() {
-                    mProgressDialog.setMessage(mStatus);
-                }
-            });
-        }
-    }
-
     public boolean onOptionsItemSelected(MenuItem item) {
         try {
-            final GpxLoader gpxLoader = GpxLoader.create(mParent, mErrorDisplayer, mDatabaseFactory);
-            if (gpxLoader != null) {
+            mSqliteDatabase = mDatabase.openOrCreateCacheDatabase();
+            mGpxLoader = GpxLoader.create(mParent, mErrorDisplayer, mDatabase, mSqliteDatabase);
+            if (mGpxLoader != null) {
                 progressDialog = ProgressDialog.show(this.mParent, "Importing Caches",
                         "Please wait...");
-                final Thread thread = new Thread() {
+                importThread = new Thread() {
                     public void run() {
                         try {
-                            gpxLoader.load(new CacheProgressUpdater(mParent, progressDialog));
+                            mGpxLoader.load(new CacheProgressUpdater(mParent, progressDialog));
                             progressDialog.dismiss();
                             mParent.runOnUiThread(new Runnable() {
                                 public void run() {
                                     CacheListDelegate.this.onResume();
                                 }
                             });
+                            mGpxLoader = null;
                         } catch (Exception e) {
                             mParent.runOnUiThread(new DisplayErrorRunnable(e, mErrorDisplayer));
+                        } finally {
+                            mSqliteDatabase.close();
                         }
                     }
                 };
-                thread.start();
+                importThread.start();
             }
         } catch (final FileNotFoundException e) {
             mErrorDisplayer.displayError("Unable to open file '" + e.getMessage()
@@ -184,6 +195,24 @@ public class CacheListDelegate {
             mErrorDisplayer.displayErrorAndStack(e);
         }
         return true;
+    }
+
+    public void onPause() {
+        try {
+            if (mGpxLoader != null) {
+                mGpxLoader.abortLoad();
+                if (importThread != null) {
+                    importThread.join();
+                    Toast mToast = Toast.makeText(mParent, R.string.import_canceled,
+                            Toast.LENGTH_SHORT);
+                    mToast.show();
+                }
+            }
+        } catch (InterruptedException e) {
+            mErrorDisplayer.displayErrorAndStack(e);
+        } catch (Exception e) {
+            mErrorDisplayer.displayErrorAndStack(e);
+        }
     }
 
     public void onResume() {
