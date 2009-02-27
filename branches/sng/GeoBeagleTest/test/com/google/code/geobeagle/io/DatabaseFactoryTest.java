@@ -158,7 +158,6 @@ public class DatabaseFactoryTest extends TestCase {
         sqlite.execSQL(eq(Database.SQL_INSERT_CACHE), (Object[])notNull());
         expectLastCall().andThrow(exception);
         expect(exception.fillInStackTrace()).andReturn(exception);
-        expect(exception.getMessage()).andReturn("sql problem");
         errorDisplayer.displayError((String)notNull());
 
         replay(sqlite);
