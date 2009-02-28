@@ -1,5 +1,15 @@
-/**
- * 
+/*
+ ** Licensed under the Apache License, Version 2.0 (the "License");
+ ** you may not use this file except in compliance with the License.
+ ** You may obtain a copy of the License at
+ **
+ **     http://www.apache.org/licenses/LICENSE-2.0
+ **
+ ** Unless required by applicable law or agreed to in writing, software
+ ** distributed under the License is distributed on an "AS IS" BASIS,
+ ** WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ ** See the License for the specific language governing permissions and
+ ** limitations under the License.
  */
 
 package com.google.code.geobeagle.io;
@@ -28,7 +38,7 @@ public class CachePersisterFacade {
             mCacheDetailsWriter.write(text);
         }
 
-        void writeLogDate(Cache cache, String text) throws IOException {
+        void writeLogDate(String text) throws IOException {
             mCacheDetailsWriter.writeSeparator();
             mCacheDetailsWriter.write(text);
         }
@@ -38,7 +48,6 @@ public class CachePersisterFacade {
             mCacheDetailsWriter.write(text);
             mCacheDetailsWriter.write(latitude + ", " + longitude);
         }
-
     }
 
     public static class GpxWriterFactory {
@@ -58,11 +67,10 @@ public class CachePersisterFacade {
     private final CacheDetailsWriterFactory mCacheDetailsWriterFactory;
     private CachePersisterFacade.GpxWriter mGpxWriter;
 
-    private final CachePersisterFacade.GpxWriterFactory mGpxWriterFactory;
+    private final GpxWriterFactory mGpxWriterFactory;
 
-    public CachePersisterFacade(CachePersisterFacade.GpxWriter gpxWriter, Cache cache,
-            CachePersisterFacade.GpxWriterFactory gpxWriterFactory,
-            CacheDetailsWriterFactory cacheDetailsFactory) {
+    public CachePersisterFacade(GpxWriter gpxWriter, Cache cache,
+            GpxWriterFactory gpxWriterFactory, CacheDetailsWriterFactory cacheDetailsFactory) {
         mGpxWriterFactory = gpxWriterFactory;
         mGpxWriter = gpxWriter;
         mCache = cache;
@@ -83,7 +91,7 @@ public class CachePersisterFacade {
     }
 
     void logDate(String text) throws IOException {
-        mGpxWriter.writeLogDate(mCache, text);
+        mGpxWriter.writeLogDate(text);
     }
 
     void wpt(XmlPullParser mXmlPullParser) {

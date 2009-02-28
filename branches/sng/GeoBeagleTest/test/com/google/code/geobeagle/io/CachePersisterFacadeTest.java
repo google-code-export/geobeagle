@@ -48,7 +48,7 @@ public class CachePersisterFacadeTest extends TestCase {
     public void testLogDate() throws IOException {
         CachePersisterFacade.GpxWriter gpxWriter = createMock(CachePersisterFacade.GpxWriter.class);
         Cache cache = new Cache();
-        gpxWriter.writeLogDate(cache, "04/30/99");
+        gpxWriter.writeLogDate("04/30/99");
 
         replay(gpxWriter);
         new CachePersisterFacade(gpxWriter, cache, null, null).logDate("04/30/99");
