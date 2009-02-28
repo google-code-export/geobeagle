@@ -18,7 +18,7 @@ import junit.framework.TestCase;
 public class CachePersisterFacadeTest extends TestCase {
 
     public void testEndTag() throws IOException {
-        CachePersisterFacade.GpxWriter gpxWriter = createMock(CachePersisterFacade.GpxWriter.class);
+        GpxWriter gpxWriter = createMock(GpxWriter.class);
         gpxWriter.writeEndTag();
 
         replay(gpxWriter);
@@ -38,7 +38,7 @@ public class CachePersisterFacadeTest extends TestCase {
     }
 
     public void testLine() throws IOException {
-        CachePersisterFacade.GpxWriter gpxWriter = createMock(CachePersisterFacade.GpxWriter.class);
+        GpxWriter gpxWriter = createMock(GpxWriter.class);
         gpxWriter.writeLine("some data");
         replay(gpxWriter);
         new CachePersisterFacade(gpxWriter, null, null, null).line("some data");
@@ -46,7 +46,7 @@ public class CachePersisterFacadeTest extends TestCase {
     }
 
     public void testLogDate() throws IOException {
-        CachePersisterFacade.GpxWriter gpxWriter = createMock(CachePersisterFacade.GpxWriter.class);
+        GpxWriter gpxWriter = createMock(GpxWriter.class);
         Cache cache = new Cache();
         gpxWriter.writeLogDate("04/30/99");
 
@@ -69,8 +69,8 @@ public class CachePersisterFacadeTest extends TestCase {
     public void testWptName() throws IOException {
         CacheDetailsWriterFactory cacheDetailsWriterFactory = createMock(CacheDetailsWriterFactory.class);
         CacheDetailsWriter cacheDetailsWriter = createMock(CacheDetailsWriter.class);
-        CachePersisterFacade.GpxWriterFactory gpxWriterFactory = createMock(CachePersisterFacade.GpxWriterFactory.class);
-        CachePersisterFacade.GpxWriter gpxWriter = createMock(CachePersisterFacade.GpxWriter.class);
+        GpxWriter.GpxWriterFactory gpxWriterFactory = createMock(GpxWriter.GpxWriterFactory.class);
+        GpxWriter gpxWriter = createMock(GpxWriter.class);
 
         Cache cache = new Cache();
         cache.mLatitude = 122;

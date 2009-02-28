@@ -125,11 +125,8 @@ public class CacheListDelegate {
     private final SimpleAdapterFactory mSimpleAdapterFactory;
 
     private SQLiteDatabase mSqliteDatabase;
-
     private ProgressDialog progressDialog;
-
     private GpxLoader mGpxLoader;
-
     private Thread importThread;
 
     public CacheListDelegate(ListActivity parent, LocationBookmarksSql locationBookmarks,

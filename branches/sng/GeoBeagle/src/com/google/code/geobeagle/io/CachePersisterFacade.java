@@ -16,46 +16,13 @@ package com.google.code.geobeagle.io;
 
 import com.google.code.geobeagle.io.CacheDetailsWriter.CacheDetailsWriterFactory;
 import com.google.code.geobeagle.io.GpxLoader.Cache;
+import com.google.code.geobeagle.io.GpxWriter.GpxWriterFactory;
 
 import org.xmlpull.v1.XmlPullParser;
 
 import java.io.IOException;
 
 public class CachePersisterFacade {
-    public static class GpxWriter {
-        final CacheDetailsWriter mCacheDetailsWriter;
-
-        public GpxWriter(CacheDetailsWriter cacheDetailsWriter) {
-            mCacheDetailsWriter = cacheDetailsWriter;
-        }
-
-        void writeEndTag() throws IOException {
-            mCacheDetailsWriter.writeFooter();
-            mCacheDetailsWriter.close();
-        }
-
-        void writeLine(String text) throws IOException {
-            mCacheDetailsWriter.write(text);
-        }
-
-        void writeLogDate(String text) throws IOException {
-            mCacheDetailsWriter.writeSeparator();
-            mCacheDetailsWriter.write(text);
-        }
-
-        void writeWptName(String text, double latitude, double longitude) throws IOException {
-            mCacheDetailsWriter.writeHeader();
-            mCacheDetailsWriter.write(text);
-            mCacheDetailsWriter.write(latitude + ", " + longitude);
-        }
-    }
-
-    public static class GpxWriterFactory {
-        public GpxWriter create(CacheDetailsWriter cacheDetailsWriter) {
-            return new GpxWriter(cacheDetailsWriter);
-        }
-    }
-
     public static CachePersisterFacade create() {
         final CacheDetailsWriterFactory cacheDetailsWriterFactory = new CacheDetailsWriterFactory();
         final Cache cache = new Cache();
@@ -65,12 +32,13 @@ public class CachePersisterFacade {
 
     private final Cache mCache;
     private final CacheDetailsWriterFactory mCacheDetailsWriterFactory;
-    private CachePersisterFacade.GpxWriter mGpxWriter;
+    private GpxWriter mGpxWriter;
 
     private final GpxWriterFactory mGpxWriterFactory;
 
     public CachePersisterFacade(GpxWriter gpxWriter, Cache cache,
-            GpxWriterFactory gpxWriterFactory, CacheDetailsWriterFactory cacheDetailsFactory) {
+            GpxWriterFactory gpxWriterFactory,
+            CacheDetailsWriterFactory cacheDetailsFactory) {
         mGpxWriterFactory = gpxWriterFactory;
         mGpxWriter = gpxWriter;
         mCache = cache;
