@@ -19,22 +19,15 @@ import static org.easymock.classextension.EasyMock.createMock;
 import static org.easymock.classextension.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.verify;
 
+import com.google.code.geobeagle.CacheListActions;
 import com.google.code.geobeagle.LocationControl;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.data.CacheListData;
-import com.google.code.geobeagle.io.Database;
 import com.google.code.geobeagle.io.LocationBookmarksSql;
-import com.google.code.geobeagle.io.Database.CacheWriter;
-import com.google.code.geobeagle.ui.CacheListDelegate.Action;
-import com.google.code.geobeagle.ui.CacheListDelegate.ActionDelete;
-import com.google.code.geobeagle.ui.CacheListDelegate.ActionView;
 import com.google.code.geobeagle.ui.CacheListDelegate.CacheListOnCreateContextMenuListener;
 import com.google.code.geobeagle.ui.CacheListDelegate.SimpleAdapterFactory;
 
 import android.app.ListActivity;
-import android.content.Context;
-import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 import android.view.ContextMenu;
 import android.view.Menu;
@@ -49,55 +42,6 @@ import java.util.Map;
 import junit.framework.TestCase;
 
 public class CacheListDelegateTest extends TestCase {
-    public void testActionDelete() {
-        CacheListData cacheListData = createMock(CacheListData.class);
-        Database database = createMock(Database.class);
-        CacheWriter cacheWriter = createMock(CacheWriter.class);
-        SQLiteDatabase sqliteDatabase = createMock(SQLiteDatabase.class);
-        SimpleAdapter simpleAdapter = createMock(SimpleAdapter.class);
-
-        expect(database.openOrCreateCacheDatabase()).andReturn(sqliteDatabase);
-        expect(database.createCacheWriter(sqliteDatabase, null)).andReturn(cacheWriter);
-        cacheListData.delete(17);
-        expect(cacheListData.getId(17)).andReturn("GC123");
-        cacheWriter.delete("GC123");
-        sqliteDatabase.close();
-        simpleAdapter.notifyDataSetChanged();
-
-        replay(simpleAdapter);
-        replay(sqliteDatabase);
-        replay(cacheListData);
-        replay(cacheWriter);
-        replay(database);
-        Action action = new ActionDelete(database, cacheListData, null);
-        action.act(17, simpleAdapter);
-        verify(sqliteDatabase);
-        verify(cacheListData);
-        verify(cacheWriter);
-        verify(database);
-        verify(simpleAdapter);
-    }
-
-    public void testActionView() {
-        CacheListData cacheListData = createMock(CacheListData.class);
-        Intent intent = createMock(Intent.class);
-        Context context = createMock(Context.class);
-
-        expect(cacheListData.getLocation(34)).andReturn("a cache");
-        expect(intent.setAction(CacheListDelegate.SELECT_CACHE)).andReturn(intent);
-        expect(intent.putExtra("location", (CharSequence)"a cache")).andReturn(intent);
-        context.startActivity(intent);
-
-        replay(cacheListData);
-        replay(context);
-        replay(intent);
-        Action action = new ActionView(cacheListData, context, intent);
-        action.act(34, null);
-        verify(cacheListData);
-        verify(context);
-        verify(intent);
-    }
-
     public void testCacheListOnCreateContextMenuListener() {
         ContextMenu menu = createMock(ContextMenu.class);
         AdapterContextMenuInfo menuInfo = createMock(AdapterContextMenuInfo.class);
@@ -144,9 +88,9 @@ public class CacheListDelegateTest extends TestCase {
     public void testOnContextItemSelected() {
         MenuItem menuItem = createMock(MenuItem.class);
         AdapterContextMenuInfo adapterContextMenuInfo = createMock(AdapterContextMenuInfo.class);
-        Action action = createMock(Action.class);
+        CacheListActions.Action action = createMock(CacheListActions.Action.class);
 
-        Action actions[] = {
+        CacheListActions.Action actions[] = {
                 null, null, action
         };
 
@@ -198,8 +142,8 @@ public class CacheListDelegateTest extends TestCase {
     }
 
     public void testOnListItemClick() {
-        final Action action = createMock(Action.class);
-        Action actions[] = {
+        final CacheListActions.Action action = createMock(CacheListActions.Action.class);
+        CacheListActions.Action actions[] = {
                 null, action
         };
 

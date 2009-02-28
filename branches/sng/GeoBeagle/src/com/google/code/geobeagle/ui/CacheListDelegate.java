@@ -14,7 +14,7 @@
 
 package com.google.code.geobeagle.ui;
 
-import com.google.code.geobeagle.GeoBeagle;
+import com.google.code.geobeagle.CacheListActions;
 import com.google.code.geobeagle.LocationControl;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.ResourceProvider;
@@ -24,13 +24,11 @@ import com.google.code.geobeagle.data.Destination.DestinationFactory;
 import com.google.code.geobeagle.io.Database;
 import com.google.code.geobeagle.io.GpxLoader;
 import com.google.code.geobeagle.io.LocationBookmarksSql;
-import com.google.code.geobeagle.io.Database.CacheWriter;
 
 import android.app.Activity;
 import android.app.ListActivity;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.LocationManager;
 import android.view.ContextMenu;
@@ -51,56 +49,7 @@ import java.util.regex.Pattern;
 
 public class CacheListDelegate {
 
-    public static interface Action {
-        public void act(int position, SimpleAdapter simpleAdapter);
-    }
-
-    public static class ActionDelete implements Action {
-        private final CacheListData mCacheListData;
-        private final Database mDatabase;
-        private final ErrorDisplayer mErrorDisplayer;
-
-        public ActionDelete(Database database, CacheListData cacheListData,
-                ErrorDisplayer errorDisplayer) {
-            mCacheListData = cacheListData;
-            mDatabase = database;
-            mErrorDisplayer = errorDisplayer;
-        }
-
-        public void act(int position, SimpleAdapter simpleAdapter) {
-            // TODO: pull sqliteDatbase and then cachewriter up to top level so
-            // they're shared.
-            SQLiteDatabase sqliteDatabase = mDatabase.openOrCreateCacheDatabase();
-            CacheWriter cacheWriter = mDatabase.createCacheWriter(sqliteDatabase, mErrorDisplayer);
-            cacheWriter.delete(mCacheListData.getId(position));
-            sqliteDatabase.close();
-
-            mCacheListData.delete(position);
-
-            simpleAdapter.notifyDataSetChanged();
-        }
-    }
-
-    public static class ActionView implements Action {
-        private final CacheListData mCacheListData;
-        private final Context mContext;
-        private final Intent mIntent;
-
-        public ActionView(CacheListData cacheListData, Context context, Intent intent) {
-            mCacheListData = cacheListData;
-            mContext = context;
-            mIntent = intent;
-        }
-
-        public void act(int position, SimpleAdapter simpleAdapter) {
-            mIntent.putExtra("location", mCacheListData.getLocation(position)).setAction(
-                    SELECT_CACHE);
-            mContext.startActivity(mIntent);
-        }
-    }
-
     static class CacheListOnCreateContextMenuListener implements OnCreateContextMenuListener {
-
         public static class Factory {
             public OnCreateContextMenuListener create(CacheListData cacheListData) {
                 return new CacheListOnCreateContextMenuListener(cacheListData);
@@ -188,12 +137,9 @@ public class CacheListDelegate {
         final CacheListData cacheListData = CacheListData.create(destinationFactory, parent);
         final LocationControl locationControl = LocationControl.create(((LocationManager)parent
                 .getSystemService(Context.LOCATION_SERVICE)));
-        final Intent intent = new Intent(parent, GeoBeagle.class);
 
-        final Action actions[] = {
-                new ActionDelete(database, cacheListData, errorDisplayer),
-                new ActionView(cacheListData, parent, intent)
-        };
+        final CacheListActions.Action actions[] = CacheListActions.create(parent, database,
+                cacheListData, errorDisplayer);
 
         CacheListOnCreateContextMenuListener.Factory factory = new CacheListOnCreateContextMenuListener.Factory();
         return new CacheListDelegate(parent, locationBookmarks, locationControl,
@@ -201,7 +147,7 @@ public class CacheListDelegate {
     }
 
     private Thread importThread;
-    private final Action mActions[];
+    private final CacheListActions.Action mActions[];
     private final CacheListData mCacheListData;
     private final CacheListOnCreateContextMenuListener.Factory mCreateContextMenuFactory;
     private final Database mDatabase;
@@ -221,7 +167,7 @@ public class CacheListDelegate {
     public CacheListDelegate(ListActivity parent, LocationBookmarksSql locationBookmarks,
             LocationControl locationControl, SimpleAdapterFactory simpleAdapterFactory,
             CacheListData cacheListData, ErrorDisplayer errorDisplayer, Database database,
-            Action[] actions, CacheListOnCreateContextMenuListener.Factory factory) {
+            CacheListActions.Action[] actions, CacheListOnCreateContextMenuListener.Factory factory) {
         mParent = parent;
         mLocationBookmarks = locationBookmarks;
         mLocationControl = locationControl;
