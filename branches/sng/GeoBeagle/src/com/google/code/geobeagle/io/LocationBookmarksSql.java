@@ -29,7 +29,7 @@ import android.database.sqlite.SQLiteDatabase;
 import java.util.ArrayList;
 
 public class LocationBookmarksSql implements LifecycleManager {
-    private final Database mDatabaseFactory;
+    private final Database mDatabase;
     private final DescriptionsAndLocations mDescriptionsAndLocations;
 
     public static LocationBookmarksSql create(ListActivity listActivity,
@@ -44,7 +44,7 @@ public class LocationBookmarksSql implements LifecycleManager {
             Database database, DestinationFactory destinationFactory,
             ErrorDisplayer errorDisplayer) {
         mDescriptionsAndLocations = descriptionsAndLocations;
-        mDatabaseFactory = database;
+        mDatabase = database;
     }
 
     public DescriptionsAndLocations getDescriptionsAndLocations() {
@@ -63,9 +63,9 @@ public class LocationBookmarksSql implements LifecycleManager {
     }
 
     private void readBookmarks() {
-        SQLiteDatabase sqlite = mDatabaseFactory.openOrCreateCacheDatabase();
+        SQLiteDatabase sqlite = mDatabase.openOrCreateCacheDatabase();
         if (sqlite != null) {
-            CacheReader cacheReader = mDatabaseFactory.createCacheReader(sqlite);
+            CacheReader cacheReader = mDatabase.createCacheReader(sqlite);
             if (cacheReader.open()) {
                 readBookmarks(cacheReader);
                 cacheReader.close();
