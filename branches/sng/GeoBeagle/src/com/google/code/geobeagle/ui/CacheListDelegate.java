@@ -24,6 +24,7 @@ import com.google.code.geobeagle.data.Destination.DestinationFactory;
 import com.google.code.geobeagle.io.Database;
 import com.google.code.geobeagle.io.GpxLoader;
 import com.google.code.geobeagle.io.LocationBookmarksSql;
+import com.google.code.geobeagle.io.Database.CacheWriter;
 
 import android.app.Activity;
 import android.app.ListActivity;
@@ -32,12 +33,16 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.LocationManager;
+import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ContextMenu.ContextMenuInfo;
+import android.view.View.OnCreateContextMenuListener;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.Toast;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -45,6 +50,77 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 public class CacheListDelegate {
+
+    public static interface Action {
+        public void act(int position, SimpleAdapter simpleAdapter);
+    }
+
+    public static class ActionDelete implements Action {
+        private final CacheListData mCacheListData;
+        private final Database mDatabase;
+        private final ErrorDisplayer mErrorDisplayer;
+
+        public ActionDelete(Database database, CacheListData cacheListData,
+                ErrorDisplayer errorDisplayer) {
+            mCacheListData = cacheListData;
+            mDatabase = database;
+            mErrorDisplayer = errorDisplayer;
+        }
+
+        public void act(int position, SimpleAdapter simpleAdapter) {
+            // TODO: pull sqliteDatbase and then cachewriter up to top level so
+            // they're shared.
+            SQLiteDatabase sqliteDatabase = mDatabase.openOrCreateCacheDatabase();
+            CacheWriter cacheWriter = mDatabase.createCacheWriter(sqliteDatabase, mErrorDisplayer);
+            cacheWriter.delete(mCacheListData.getId(position));
+            sqliteDatabase.close();
+
+            mCacheListData.delete(position);
+
+            simpleAdapter.notifyDataSetChanged();
+        }
+    }
+
+    public static class ActionView implements Action {
+        private final CacheListData mCacheListData;
+        private final Context mContext;
+        private final Intent mIntent;
+
+        public ActionView(CacheListData cacheListData, Context context, Intent intent) {
+            mCacheListData = cacheListData;
+            mContext = context;
+            mIntent = intent;
+        }
+
+        public void act(int position, SimpleAdapter simpleAdapter) {
+            mIntent.putExtra("location", mCacheListData.getLocation(position)).setAction(
+                    SELECT_CACHE);
+            mContext.startActivity(mIntent);
+        }
+    }
+
+    static class CacheListOnCreateContextMenuListener implements OnCreateContextMenuListener {
+
+        public static class Factory {
+            public OnCreateContextMenuListener create(CacheListData cacheListData) {
+                return new CacheListOnCreateContextMenuListener(cacheListData);
+            }
+        }
+
+        CacheListData mCacheListData;
+
+        CacheListOnCreateContextMenuListener(CacheListData cacheListData) {
+            mCacheListData = cacheListData;
+        }
+
+        public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
+            AdapterContextMenuInfo acmi = (AdapterContextMenuInfo)menuInfo;
+            menu.setHeaderTitle(mCacheListData.getId(acmi.position));
+            menu.add(0, MENU_VIEW, 0, "View");
+            if (acmi.position > 0)
+                menu.add(0, MENU_DELETE, 1, "Delete");
+        }
+    }
 
     public static class CacheProgressUpdater {
         private final Activity mActivity;
@@ -81,8 +157,8 @@ public class CacheListDelegate {
     }
 
     public static class SimpleAdapterFactory {
-        public SimpleAdapter createSimpleAdapter(Context context,
-                ArrayList<Map<String, Object>> arrayList, int view_layout, String[] from, int[] to) {
+        public SimpleAdapter create(Context context, ArrayList<Map<String, Object>> arrayList,
+                int view_layout, String[] from, int[] to) {
             return new SimpleAdapter(context, arrayList, view_layout, from, to);
         }
     }
@@ -94,6 +170,8 @@ public class CacheListDelegate {
     public static final int[] ADAPTER_TO = {
             R.id.txt_cache, R.id.distance
     };
+    public static final int MENU_DELETE = 0;
+    public static final int MENU_VIEW = 1;
 
     public static final String SELECT_CACHE = "SELECT_CACHE";
 
@@ -101,50 +179,76 @@ public class CacheListDelegate {
         final ErrorDisplayer errorDisplayer = new ErrorDisplayer(parent);
         final Database database = Database.create(parent);
         final ResourceProvider resourceProvider = new ResourceProvider(parent);
+        // TODO: add a create function that takes a resourceid
         final Pattern[] destinationPatterns = Destination.getDestinationPatterns(resourceProvider);
         final DestinationFactory destinationFactory = new DestinationFactory(destinationPatterns);
         final LocationBookmarksSql locationBookmarks = LocationBookmarksSql.create(parent,
                 database, destinationFactory, errorDisplayer);
         final SimpleAdapterFactory simpleAdapterFactory = new SimpleAdapterFactory();
-        final Intent intent = new Intent(parent, GeoBeagle.class);
         final CacheListData cacheListData = CacheListData.create(destinationFactory, parent);
         final LocationControl locationControl = LocationControl.create(((LocationManager)parent
                 .getSystemService(Context.LOCATION_SERVICE)));
+        final Intent intent = new Intent(parent, GeoBeagle.class);
 
+        final Action actions[] = {
+                new ActionDelete(database, cacheListData, errorDisplayer),
+                new ActionView(cacheListData, parent, intent)
+        };
+
+        CacheListOnCreateContextMenuListener.Factory factory = new CacheListOnCreateContextMenuListener.Factory();
         return new CacheListDelegate(parent, locationBookmarks, locationControl,
-                simpleAdapterFactory, cacheListData, intent, errorDisplayer, database);
+                simpleAdapterFactory, cacheListData, errorDisplayer, database, actions, factory);
     }
 
+    private Thread importThread;
+    private final Action mActions[];
     private final CacheListData mCacheListData;
+    private final CacheListOnCreateContextMenuListener.Factory mCreateContextMenuFactory;
     private final Database mDatabase;
     private final ErrorDisplayer mErrorDisplayer;
-    private final Intent mIntent;
+
+    private GpxLoader mGpxLoader;
     private final LocationBookmarksSql mLocationBookmarks;
     private final LocationControl mLocationControl;
     private final ListActivity mParent;
-    private final SimpleAdapterFactory mSimpleAdapterFactory;
 
+    private SimpleAdapter mSimpleAdapter;
+    private final SimpleAdapterFactory mSimpleAdapterFactory;
     private SQLiteDatabase mSqliteDatabase;
+
     private ProgressDialog progressDialog;
-    private GpxLoader mGpxLoader;
-    private Thread importThread;
 
     public CacheListDelegate(ListActivity parent, LocationBookmarksSql locationBookmarks,
             LocationControl locationControl, SimpleAdapterFactory simpleAdapterFactory,
-            CacheListData cacheListData, Intent intent, ErrorDisplayer errorDisplayer,
-            Database database) {
+            CacheListData cacheListData, ErrorDisplayer errorDisplayer, Database database,
+            Action[] actions, CacheListOnCreateContextMenuListener.Factory factory) {
         mParent = parent;
         mLocationBookmarks = locationBookmarks;
         mLocationControl = locationControl;
         mSimpleAdapterFactory = simpleAdapterFactory;
         mCacheListData = cacheListData;
-        mIntent = intent;
         mErrorDisplayer = errorDisplayer;
         mDatabase = database;
+        mActions = actions;
+        mCreateContextMenuFactory = factory;
+    }
+
+    public boolean onContextItemSelected(MenuItem menuItem) {
+        try {
+            AdapterContextMenuInfo adapterContextMenuInfo = (AdapterContextMenuInfo)menuItem
+                    .getMenuInfo();
+            mActions[menuItem.getItemId()].act(adapterContextMenuInfo.position, mSimpleAdapter);
+            return true;
+        } catch (final Exception e) {
+            mErrorDisplayer.displayErrorAndStack(e);
+        }
+        return false;
     }
 
     public void onCreate() {
         mParent.setContentView(R.layout.cache_list);
+        mParent.getListView().setOnCreateContextMenuListener(
+                mCreateContextMenuFactory.create(mCacheListData));
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -153,8 +257,11 @@ public class CacheListDelegate {
     }
 
     public void onListItemClick(ListView l, View v, int position, long id) {
-        mIntent.putExtra("location", mCacheListData.getLocation(position)).setAction(SELECT_CACHE);
-        mParent.startActivity(mIntent);
+        try {
+            mActions[MENU_VIEW].act(position, mSimpleAdapter);
+        } catch (final Exception e) {
+            mErrorDisplayer.displayErrorAndStack(e);
+        }
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -216,9 +323,9 @@ public class CacheListDelegate {
         try {
             mLocationBookmarks.onResume(null);
             mCacheListData.add(mLocationBookmarks.getLocations(), mLocationControl.getLocation());
-
-            mParent.setListAdapter(mSimpleAdapterFactory.createSimpleAdapter(mParent,
-                    mCacheListData.getAdapterData(), R.layout.cache_row, ADAPTER_FROM, ADAPTER_TO));
+            mSimpleAdapter = mSimpleAdapterFactory.create(mParent, mCacheListData.getAdapterData(),
+                    R.layout.cache_row, ADAPTER_FROM, ADAPTER_TO);
+            mParent.setListAdapter(mSimpleAdapter);
         } catch (final Exception e) {
             mErrorDisplayer.displayErrorAndStack(e);
         }

@@ -37,7 +37,34 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import junit.framework.TestCase;
 
-public class DatabaseFactoryTest extends TestCase {
+public class DatabaseTest extends TestCase {
+
+    public void testCacheReaderGetCache() {
+        SQLiteDatabase sqliteDatabase = createMock(SQLiteDatabase.class);
+        SQLiteWrapper sqliteWrapper = createMock(SQLiteWrapper.class);
+        Cursor cursor = createMock(Cursor.class);
+
+        expect(
+                sqliteWrapper.query(eq(sqliteDatabase), eq("CACHES"),
+                        (String[])eq(Database.READER_COLUMNS), (String)isNull(),
+                        (String[])isNull(), (String)isNull(), (String)isNull(), (String)isNull()))
+                .andReturn(cursor);
+        expect(cursor.moveToFirst()).andReturn(true);
+        expect(cursor.getString(0)).andReturn("122");
+        expect(cursor.getString(1)).andReturn("37");
+        expect(cursor.getString(2)).andReturn("the_name");
+        expect(cursor.getString(3)).andReturn("description");
+
+        replay(sqliteDatabase);
+        replay(sqliteWrapper);
+        replay(cursor);
+        final CacheReader cacheReader = new CacheReader(sqliteDatabase, sqliteWrapper);
+        cacheReader.open();
+        assertEquals("122, 37 (the_name: description)", cacheReader.getCache());
+        verify(sqliteDatabase);
+        verify(sqliteWrapper);
+        verify(cursor);
+    }
 
     public void testCacheReaderOpen() {
         SQLiteDatabase sqliteDatabase = createMock(SQLiteDatabase.class);
@@ -101,33 +128,6 @@ public class DatabaseFactoryTest extends TestCase {
         verify(cursor);
     }
 
-    public void testCacheReaderGetCache() {
-        SQLiteDatabase sqliteDatabase = createMock(SQLiteDatabase.class);
-        SQLiteWrapper sqliteWrapper = createMock(SQLiteWrapper.class);
-        Cursor cursor = createMock(Cursor.class);
-
-        expect(
-                sqliteWrapper.query(eq(sqliteDatabase), eq("CACHES"),
-                        (String[])eq(Database.READER_COLUMNS), (String)isNull(),
-                        (String[])isNull(), (String)isNull(), (String)isNull(), (String)isNull()))
-                .andReturn(cursor);
-        expect(cursor.moveToFirst()).andReturn(true);
-        expect(cursor.getString(0)).andReturn("122");
-        expect(cursor.getString(1)).andReturn("37");
-        expect(cursor.getString(2)).andReturn("the_name");
-        expect(cursor.getString(3)).andReturn("description");
-
-        replay(sqliteDatabase);
-        replay(sqliteWrapper);
-        replay(cursor);
-        final CacheReader cacheReader = new CacheReader(sqliteDatabase, sqliteWrapper);
-        cacheReader.open();
-        assertEquals("122, 37 (the_name: description)", cacheReader.getCache());
-        verify(sqliteDatabase);
-        verify(sqliteWrapper);
-        verify(cursor);
-    }
-
     public void testCacheWriter() {
         SQLiteDatabase sqlite = createMock(SQLiteDatabase.class);
 
@@ -147,6 +147,17 @@ public class DatabaseFactoryTest extends TestCase {
         replay(sqlite);
         CacheWriter cacheWriter = new CacheWriter(sqlite, null);
         cacheWriter.clear("the source");
+        verify(sqlite);
+    }
+
+    public void testCacheWriterDelete() {
+        SQLiteDatabase sqlite = createMock(SQLiteDatabase.class);
+        Object params[] = new Object[] { "GC123" };
+        sqlite.execSQL(eq(Database.SQL_DELETE_CACHE), (Object[])aryEq(params));
+
+        replay(sqlite);
+        CacheWriter cacheWriter = new CacheWriter(sqlite, null);
+        cacheWriter.delete("GC123");
         verify(sqlite);
     }
     

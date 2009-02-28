@@ -32,6 +32,24 @@ import junit.framework.TestCase;
 public class DestinationVectorTest extends TestCase {
     private Destination destination = createMock(Destination.class);
 
+    public void testCompare() {
+        IDestinationVector d1 = createMock(IDestinationVector.class);
+        IDestinationVector d2 = createMock(IDestinationVector.class);
+
+        expect(d1.getDistance()).andReturn(0f).anyTimes();
+        expect(d2.getDistance()).andReturn(1f).anyTimes();
+
+        replay(d1);
+        replay(d2);
+        LocationComparator locationComparator = new LocationComparator();
+        assertEquals(-1, locationComparator.compare(d1, d2));
+        assertEquals(1, locationComparator.compare(d2, d1));
+        assertEquals(0, locationComparator.compare(d1, d1));
+        verify(d1);
+        verify(d2);
+
+    }
+
     public void testDestinationGetCacheListDisplayMap() {
         DistanceFormatter distanceFormatter = createMock(DistanceFormatter.class);
         expect(destination.getDescription()).andReturn("a cache");
@@ -51,6 +69,15 @@ public class DestinationVectorTest extends TestCase {
         assertEquals(3.5f, new DestinationVector(destination, 3.5f, null).getDistance());
     }
 
+    public void testDestinationGetId() {
+        expect(destination.getFullId()).andReturn("a cache");
+
+        replay(destination);
+        DestinationVector destinationVector = new DestinationVector(destination, 3.5f, null);
+        assertEquals("a cache", destinationVector.getId());
+        verify(destination);
+    }
+
     public void testDestinationGetLocation() {
         expect(destination.getLocation()).andReturn("343 2323 (a cache)");
 
@@ -67,23 +94,5 @@ public class DestinationVectorTest extends TestCase {
         assertEquals(-1.0f, myLocation.getDistance());
         final Map<String, Object> viewMap = myLocation.getViewMap();
         assertEquals("My Current Location", viewMap.get("cache"));
-    }
-
-    public void testCompare() {
-        IDestinationVector d1 = createMock(IDestinationVector.class);
-        IDestinationVector d2 = createMock(IDestinationVector.class);
-
-        expect(d1.getDistance()).andReturn(0f).anyTimes();
-        expect(d2.getDistance()).andReturn(1f).anyTimes();
-
-        replay(d1);
-        replay(d2);
-        LocationComparator locationComparator = new LocationComparator();
-        assertEquals(-1, locationComparator.compare(d1, d2));
-        assertEquals(1, locationComparator.compare(d2, d1));
-        assertEquals(0, locationComparator.compare(d1, d1));
-        verify(d1);
-        verify(d2);
-
     }
 }

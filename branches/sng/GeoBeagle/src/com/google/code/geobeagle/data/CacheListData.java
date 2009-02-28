@@ -28,6 +28,7 @@ import java.util.Map;
 public class CacheListData {
     private final DestinationVectorFactory mDestinationVectorFactory;
     private final DestinationVectors mDestinationVectors;
+    private ArrayList<Map<String, Object>> mAdapterData;
 
     public static CacheListData create(DestinationFactory destinationFactory, Context parent) {
         final DistanceFormatter distanceFormatter = new DistanceFormatter();
@@ -56,10 +57,22 @@ public class CacheListData {
     }
 
     public ArrayList<Map<String, Object>> getAdapterData() {
-        return mDestinationVectors.getAdapterData();
+        mAdapterData = mDestinationVectors.getAdapterData();
+        return mAdapterData;
+    }
+
+    public CharSequence getId(int position) {
+        return mDestinationVectors.getId(position);
     }
 
     public CharSequence getLocation(int position) {
         return mDestinationVectors.getLocation(position);
+    }
+
+    public void delete(int position) {
+        // TODO: write a custom adapter, because only deletes are handled
+        // dynamically; any adds require a rebuild.
+        mDestinationVectors.delete(position);
+        mAdapterData.remove(position);
     }
 }

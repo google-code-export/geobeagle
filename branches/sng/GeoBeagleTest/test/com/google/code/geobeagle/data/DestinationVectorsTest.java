@@ -32,20 +32,6 @@ import java.util.Map;
 import junit.framework.TestCase;
 
 public class DestinationVectorsTest extends TestCase {
-    public void testGetAdapterData() {
-        IDestinationVector destinationVector = createMock(IDestinationVector.class);
-
-        Map<String, Object> map = new HashMap<String, Object>(0);
-        expect(destinationVector.getViewMap()).andReturn(map);
-
-        replay(destinationVector);
-        DestinationVectors destinationVectors = new DestinationVectors(null, null);
-        destinationVectors.add(destinationVector);
-        final ArrayList<Map<String, Object>> adapterData = destinationVectors.getAdapterData();
-        assertEquals(map, adapterData.get(0));
-        verify(destinationVector);
-    }
-
     public void testAddLocations() {
         DestinationVectorFactory destinationVectorFactory = createMock(DestinationVectorFactory.class);
         Location here = createMock(Location.class);
@@ -63,15 +49,41 @@ public class DestinationVectorsTest extends TestCase {
         verify(destinationVectorFactory);
     }
 
-    public void testGetLocation() {
+    public void testGetAdapterData() {
         IDestinationVector destinationVector = createMock(IDestinationVector.class);
 
-        expect(destinationVector.getLocation()).andReturn("GC123");
+        Map<String, Object> map = new HashMap<String, Object>(0);
+        expect(destinationVector.getViewMap()).andReturn(map);
 
         replay(destinationVector);
         DestinationVectors destinationVectors = new DestinationVectors(null, null);
         destinationVectors.add(destinationVector);
-        assertEquals("GC123", destinationVectors.getLocation(0));
+        final ArrayList<Map<String, Object>> adapterData = destinationVectors.getAdapterData();
+        assertEquals(map, adapterData.get(0));
+        verify(destinationVector);
+    }
+
+    public void testGetId() {
+        IDestinationVector destinationVector = createMock(IDestinationVector.class);
+
+        expect(destinationVector.getId()).andReturn("GC123");
+
+        replay(destinationVector);
+        DestinationVectors destinationVectors = new DestinationVectors(null, null);
+        destinationVectors.add(destinationVector);
+        assertEquals("GC123", destinationVectors.getId(0));
+        verify(destinationVector); 
+    }
+    
+    public void testGetLocation() {
+        IDestinationVector destinationVector = createMock(IDestinationVector.class);
+
+        expect(destinationVector.getLocation()).andReturn("122 37 (GC1234)");
+
+        replay(destinationVector);
+        DestinationVectors destinationVectors = new DestinationVectors(null, null);
+        destinationVectors.add(destinationVector);
+        assertEquals("122 37 (GC1234)", destinationVectors.getLocation(0));
         verify(destinationVector);
     }
 

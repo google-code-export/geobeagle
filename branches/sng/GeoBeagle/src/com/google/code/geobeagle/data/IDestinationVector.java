@@ -19,6 +19,8 @@ import java.util.Map;
 public interface IDestinationVector {
     public float getDistance();
 
+    public CharSequence getId();
+
     public CharSequence getLocation();
 
     public Map<String, Object> getViewMap();

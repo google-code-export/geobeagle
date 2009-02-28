@@ -22,14 +22,26 @@ import static org.easymock.classextension.EasyMock.verify;
 import com.google.code.geobeagle.LocationControl;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.data.CacheListData;
+import com.google.code.geobeagle.io.Database;
 import com.google.code.geobeagle.io.LocationBookmarksSql;
+import com.google.code.geobeagle.io.Database.CacheWriter;
+import com.google.code.geobeagle.ui.CacheListDelegate.Action;
+import com.google.code.geobeagle.ui.CacheListDelegate.ActionDelete;
+import com.google.code.geobeagle.ui.CacheListDelegate.ActionView;
+import com.google.code.geobeagle.ui.CacheListDelegate.CacheListOnCreateContextMenuListener;
 import com.google.code.geobeagle.ui.CacheListDelegate.SimpleAdapterFactory;
 
 import android.app.ListActivity;
+import android.content.Context;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
+import android.view.ContextMenu;
 import android.view.Menu;
+import android.view.MenuItem;
+import android.widget.ListView;
 import android.widget.SimpleAdapter;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -37,54 +49,173 @@ import java.util.Map;
 import junit.framework.TestCase;
 
 public class CacheListDelegateTest extends TestCase {
-    ListActivity listActivity = createMock(ListActivity.class);
-    SimpleAdapter simpleAdapter = createMock(SimpleAdapter.class);
+    public void testActionDelete() {
+        CacheListData cacheListData = createMock(CacheListData.class);
+        Database database = createMock(Database.class);
+        CacheWriter cacheWriter = createMock(CacheWriter.class);
+        SQLiteDatabase sqliteDatabase = createMock(SQLiteDatabase.class);
+        SimpleAdapter simpleAdapter = createMock(SimpleAdapter.class);
+
+        expect(database.openOrCreateCacheDatabase()).andReturn(sqliteDatabase);
+        expect(database.createCacheWriter(sqliteDatabase, null)).andReturn(cacheWriter);
+        cacheListData.delete(17);
+        expect(cacheListData.getId(17)).andReturn("GC123");
+        cacheWriter.delete("GC123");
+        sqliteDatabase.close();
+        simpleAdapter.notifyDataSetChanged();
+
+        replay(simpleAdapter);
+        replay(sqliteDatabase);
+        replay(cacheListData);
+        replay(cacheWriter);
+        replay(database);
+        Action action = new ActionDelete(database, cacheListData, null);
+        action.act(17, simpleAdapter);
+        verify(sqliteDatabase);
+        verify(cacheListData);
+        verify(cacheWriter);
+        verify(database);
+        verify(simpleAdapter);
+    }
+
+    public void testActionView() {
+        CacheListData cacheListData = createMock(CacheListData.class);
+        Intent intent = createMock(Intent.class);
+        Context context = createMock(Context.class);
+
+        expect(cacheListData.getLocation(34)).andReturn("a cache");
+        expect(intent.setAction(CacheListDelegate.SELECT_CACHE)).andReturn(intent);
+        expect(intent.putExtra("location", (CharSequence)"a cache")).andReturn(intent);
+        context.startActivity(intent);
+
+        replay(cacheListData);
+        replay(context);
+        replay(intent);
+        Action action = new ActionView(cacheListData, context, intent);
+        action.act(34, null);
+        verify(cacheListData);
+        verify(context);
+        verify(intent);
+    }
+
+    public void testCacheListOnCreateContextMenuListener() {
+        ContextMenu menu = createMock(ContextMenu.class);
+        AdapterContextMenuInfo menuInfo = createMock(AdapterContextMenuInfo.class);
+        CacheListData cacheListData = createMock(CacheListData.class);
+
+        expect(cacheListData.getId(12)).andReturn("GC123");
+        expect(menu.setHeaderTitle("GC123")).andReturn(menu);
+        expect(menu.add(0, CacheListDelegate.MENU_VIEW, 0, "View")).andReturn(null);
+        expect(menu.add(0, CacheListDelegate.MENU_DELETE, 1, "Delete")).andReturn(null);
+
+        replay(menu);
+        replay(menuInfo);
+        replay(cacheListData);
+        menuInfo.position = 12;
+        CacheListOnCreateContextMenuListener c = new CacheListOnCreateContextMenuListener(
+                cacheListData);
+        c.onCreateContextMenu(menu, null, menuInfo);
+        verify(menu);
+        verify(menuInfo);
+        verify(cacheListData);
+    }
+
+    public void testCacheListOnCreateContextMenuListenerMyLocation() {
+        ContextMenu menu = createMock(ContextMenu.class);
+        AdapterContextMenuInfo menuInfo = createMock(AdapterContextMenuInfo.class);
+        CacheListData cacheListData = createMock(CacheListData.class);
+
+        expect(cacheListData.getId(0)).andReturn("My Current Location");
+        expect(menu.setHeaderTitle("My Current Location")).andReturn(menu);
+        expect(menu.add(0, CacheListDelegate.MENU_VIEW, 0, "View")).andReturn(null);
+
+        replay(menu);
+        replay(menuInfo);
+        replay(cacheListData);
+        menuInfo.position = 0;
+        CacheListOnCreateContextMenuListener c = new CacheListOnCreateContextMenuListener(
+                cacheListData);
+        c.onCreateContextMenu(menu, null, menuInfo);
+        verify(menu);
+        verify(menuInfo);
+        verify(cacheListData);
+    }
+
+    public void testOnContextItemSelected() {
+        MenuItem menuItem = createMock(MenuItem.class);
+        AdapterContextMenuInfo adapterContextMenuInfo = createMock(AdapterContextMenuInfo.class);
+        Action action = createMock(Action.class);
+
+        Action actions[] = {
+                null, null, action
+        };
+
+        expect(menuItem.getMenuInfo()).andReturn(adapterContextMenuInfo);
+        expect(menuItem.getItemId()).andReturn(2);
+        action.act(76, null);
+
+        replay(menuItem);
+        adapterContextMenuInfo.position = 76;
+        CacheListDelegate cacheListDelegate = new CacheListDelegate(null, null, null, null, null,
+                null, null, actions, null);
+        assertTrue(cacheListDelegate.onContextItemSelected(menuItem));
+        verify(menuItem);
+    }
 
     public void testOnCreate() {
-        listActivity.setContentView(R.layout.cache_list);
+        ListActivity activity = createMock(ListActivity.class);
+        ListView listView = createMock(ListView.class);
+        CacheListOnCreateContextMenuListener.Factory factory = createMock(CacheListOnCreateContextMenuListener.Factory.class);
+        CacheListData cacheListData = createMock(CacheListData.class);
 
-        replay(listActivity);
-        new CacheListDelegate(listActivity, null, null, null, null, null, null, null).onCreate();
-        verify(listActivity);
+        activity.setContentView(R.layout.cache_list);
+        expect(activity.getListView()).andReturn(listView);
+        expect(factory.create(cacheListData)).andReturn(activity);
+        listView.setOnCreateContextMenuListener(activity);
+
+        replay(activity);
+        replay(listView);
+        replay(factory);
+        replay(cacheListData);
+        new CacheListDelegate(activity, null, null, null, cacheListData, null, null, null, factory)
+                .onCreate();
+        verify(activity);
+        verify(listView);
+        verify(factory);
+        verify(cacheListData);
     }
 
     public void testOnCreateOptionsMenu() {
         Menu menu = createMock(Menu.class);
 
         expect(menu.add(R.string.menu_import_gpx)).andReturn(null);
-        
+
         replay(menu);
         CacheListDelegate cacheListDelegate = new CacheListDelegate(null, null, null, null, null,
-                null, null, null);
+                null, null, null, null);
         assertTrue(cacheListDelegate.onCreateOptionsMenu(menu));
         verify(menu);
     }
 
     public void testOnListItemClick() {
-        Intent intent = createMock(Intent.class);
-        CacheListData cacheListData = createMock(CacheListData.class);
-        SimpleAdapterFactory simpleAdapterFactory = createMock(SimpleAdapterFactory.class);
+        final Action action = createMock(Action.class);
+        Action actions[] = {
+                null, action
+        };
 
-        expect(cacheListData.getLocation(12)).andReturn("a cache");
-        expect(intent.setAction(CacheListDelegate.SELECT_CACHE)).andReturn(intent);
-        expect(intent.putExtra("location", (CharSequence)"a cache")).andReturn(intent);
-        listActivity.startActivity(intent);
+        action.act(46, null);
 
-        replay(simpleAdapterFactory);
-        replay(intent);
-        replay(listActivity);
-        replay(cacheListData);
-        CacheListDelegate cacheListDelegate = new CacheListDelegate(listActivity, null, null,
-                simpleAdapterFactory, cacheListData, intent, null, null);
-        cacheListDelegate.onListItemClick(null, null, 12, 0);
-        verify(simpleAdapterFactory);
-        verify(intent);
-        verify(listActivity);
-        verify(cacheListData);
+        replay(action);
+        CacheListDelegate cacheListDelegate = new CacheListDelegate(null, null, null, null, null,
+                null, null, actions, null);
+        cacheListDelegate.onListItemClick(null, null, 46, 0);
+        verify(action);
     }
 
     public void testOnResume() {
+        ListActivity listActivity = createMock(ListActivity.class);
         SimpleAdapterFactory simpleAdapterFactory = createMock(SimpleAdapterFactory.class);
+        SimpleAdapter simpleAdapter = createMock(SimpleAdapter.class);
         LocationBookmarksSql locationBookmarks = createMock(LocationBookmarksSql.class);
         CacheListData cacheListData = createMock(CacheListData.class);
         LocationControl locationControl = createMock(LocationControl.class);
@@ -98,9 +229,9 @@ public class CacheListDelegateTest extends TestCase {
         cacheListData.add(locations, here);
         expect(cacheListData.getAdapterData()).andReturn(adapterData);
         expect(
-                simpleAdapterFactory.createSimpleAdapter(listActivity, adapterData,
-                        R.layout.cache_row, CacheListDelegate.ADAPTER_FROM,
-                        CacheListDelegate.ADAPTER_TO)).andReturn(simpleAdapter);
+                simpleAdapterFactory.create(listActivity, adapterData, R.layout.cache_row,
+                        CacheListDelegate.ADAPTER_FROM, CacheListDelegate.ADAPTER_TO)).andReturn(
+                simpleAdapter);
         listActivity.setListAdapter(simpleAdapter);
 
         replay(simpleAdapterFactory);
@@ -108,7 +239,7 @@ public class CacheListDelegateTest extends TestCase {
         replay(cacheListData);
         replay(locationControl);
         new CacheListDelegate(listActivity, locationBookmarks, locationControl,
-                simpleAdapterFactory, cacheListData, null, null, null).onResume();
+                simpleAdapterFactory, cacheListData, null, null, null, null).onResume();
         verify(simpleAdapterFactory);
         verify(locationBookmarks);
         verify(cacheListData);

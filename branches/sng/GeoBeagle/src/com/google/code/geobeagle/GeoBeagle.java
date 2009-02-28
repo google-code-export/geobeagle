@@ -25,6 +25,7 @@ import com.google.code.geobeagle.intents.IntentStarterRadar;
 import com.google.code.geobeagle.intents.IntentStarterViewUri;
 import com.google.code.geobeagle.io.Database;
 import com.google.code.geobeagle.io.LocationSaver;
+import com.google.code.geobeagle.ui.CacheListDelegate;
 import com.google.code.geobeagle.ui.CachePageButtonEnabler;
 import com.google.code.geobeagle.ui.ContentSelector;
 import com.google.code.geobeagle.ui.DestinationListOnClickListener;
@@ -114,7 +115,7 @@ public class GeoBeagle extends Activity {
             if (action.equals(Intent.ACTION_VIEW)) {
                 getCoordinatesFromIntent(mLocationSetter, intent, mErrorDisplayer);
                 return true;
-            } else if (action.equals(CacheList.SELECT_CACHE)) {
+            } else if (action.equals(CacheListDelegate.SELECT_CACHE)) {
                 mLocationSetter.setLocation(intent.getStringExtra("location"));
                 mCachePageButtonEnabler.check();
                 return true;
