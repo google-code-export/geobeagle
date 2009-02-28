@@ -11,46 +11,41 @@
  ** See the License for the specific language governing permissions and
  ** limitations under the License.
  */
+
 package com.google.code.geobeagle.io;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.Writer;
 
 public class CacheDetailsWriter {
     public static class CacheDetailsWriterFactory {
-        public CacheDetailsWriter create(String path)
-                throws IOException {
-            return new CacheDetailsWriter(new BufferedWriter(new FileWriter(path)));
+        public CacheDetailsWriter create(HtmlWriter htmlWriter) {
+            return new CacheDetailsWriter(htmlWriter);
         }
     }
 
-    private final Writer mWriter;
+    final HtmlWriter mHtlmWriter;
 
-    public CacheDetailsWriter(Writer fileWriter) {
-        mWriter = fileWriter;
+    public CacheDetailsWriter(HtmlWriter htmlWriter) {
+        mHtlmWriter = htmlWriter;
     }
 
-    public void close() throws IOException {
-        mWriter.close();
+    void writeEndTag() throws IOException {
+        mHtlmWriter.writeFooter();
+        mHtlmWriter.close();
     }
 
-    public void write(String text) throws IOException {
-        mWriter.write(text + "<br/>\n");
+    void writeLine(String text) throws IOException {
+        mHtlmWriter.write(text);
     }
 
-    public void writeFooter() throws IOException {
-        mWriter.write("  </body>\n");
-        mWriter.write("</html>\n");
+    void writeLogDate(String text) throws IOException {
+        mHtlmWriter.writeSeparator();
+        mHtlmWriter.write(text);
     }
 
-    public void writeHeader() throws IOException {
-        mWriter.write("<html>\n");
-        mWriter.write("  <body>\n");
-    }
-
-    public void writeSeparator() throws IOException {
-        mWriter.write("<hr/>\n");
+    void writeWptName(String text, double latitude, double longitude) throws IOException {
+        mHtlmWriter.writeHeader();
+        mHtlmWriter.write(text);
+        mHtlmWriter.write(latitude + ", " + longitude);
     }
 }

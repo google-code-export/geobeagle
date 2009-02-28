@@ -14,9 +14,9 @@
 
 package com.google.code.geobeagle.io;
 
-import com.google.code.geobeagle.io.CacheDetailsWriter.CacheDetailsWriterFactory;
+import com.google.code.geobeagle.io.HtmlWriter.HtmlWriterFactory;
 import com.google.code.geobeagle.io.GpxLoader.Cache;
-import com.google.code.geobeagle.io.GpxWriter.GpxWriterFactory;
+import com.google.code.geobeagle.io.CacheDetailsWriter.CacheDetailsWriterFactory;
 
 import org.xmlpull.v1.XmlPullParser;
 
@@ -24,23 +24,23 @@ import java.io.IOException;
 
 public class CachePersisterFacade {
     public static CachePersisterFacade create() {
-        final CacheDetailsWriterFactory cacheDetailsWriterFactory = new CacheDetailsWriterFactory();
+        final HtmlWriterFactory htmlWriterFactory = new HtmlWriterFactory();
         final Cache cache = new Cache();
-        final GpxWriterFactory gpxWriterFactory = new GpxWriterFactory();
-        return new CachePersisterFacade(null, cache, gpxWriterFactory, cacheDetailsWriterFactory);
+        final CacheDetailsWriterFactory cacheDetailsWriterFactory = new CacheDetailsWriterFactory();
+        return new CachePersisterFacade(null, cache, cacheDetailsWriterFactory, htmlWriterFactory);
     }
 
     private final Cache mCache;
-    private final CacheDetailsWriterFactory mCacheDetailsWriterFactory;
-    private GpxWriter mGpxWriter;
+    private final HtmlWriterFactory mCacheDetailsWriterFactory;
+    private CacheDetailsWriter mGpxWriter;
 
-    private final GpxWriterFactory mGpxWriterFactory;
+    private final CacheDetailsWriterFactory mGpxWriterFactory;
 
-    public CachePersisterFacade(GpxWriter gpxWriter, Cache cache,
-            GpxWriterFactory gpxWriterFactory,
-            CacheDetailsWriterFactory cacheDetailsFactory) {
-        mGpxWriterFactory = gpxWriterFactory;
-        mGpxWriter = gpxWriter;
+    public CachePersisterFacade(CacheDetailsWriter cacheDetailsWriter, Cache cache,
+            CacheDetailsWriterFactory cacheDetailsWriterFactory,
+            HtmlWriterFactory cacheDetailsFactory) {
+        mGpxWriterFactory = cacheDetailsWriterFactory;
+        mGpxWriter = cacheDetailsWriter;
         mCache = cache;
         mCacheDetailsWriterFactory = cacheDetailsFactory;
     }
@@ -68,9 +68,9 @@ public class CachePersisterFacade {
     }
 
     void wptName(String text) throws IOException {
-        CacheDetailsWriter cacheDetailsWriter = mCacheDetailsWriterFactory
+        HtmlWriter htmlWriter = mCacheDetailsWriterFactory
                 .create(GpxToCache.GEOBEAGLE_DIR + "/" + text + ".html");
-        mGpxWriter = mGpxWriterFactory.create(cacheDetailsWriter);
+        mGpxWriter = mGpxWriterFactory.create(htmlWriter);
         mGpxWriter.writeWptName(text, mCache.mLatitude, mCache.mLongitude);
         mCache.mId = text;
     }
