@@ -25,12 +25,13 @@ import com.google.code.geobeagle.io.Database;
 import com.google.code.geobeagle.io.GpxLoader;
 import com.google.code.geobeagle.io.LocationBookmarksSql;
 
-import android.app.Activity;
 import android.app.ListActivity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.LocationManager;
+import android.os.Handler;
+import android.os.Message;
 import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -48,6 +49,45 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 public class CacheListDelegate {
+    
+    public class MessageHandler extends Handler {
+
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case MSG_PROGRESS:
+                    mProgressDialog.setMessage(mCacheProgressUpdater.mStatus);
+                    break;
+                case MSG_DONE:
+                    mProgressDialog.dismiss();
+                    onResume();
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+
+    private class ImportThread extends Thread {
+        private final CacheProgressUpdater mCacheProgressUpdater;
+        private Handler mHandler;
+
+        public ImportThread(CacheProgressUpdater cacheProgressUpdater, Handler handler) {
+            mCacheProgressUpdater = cacheProgressUpdater;
+            mHandler = handler;
+        }
+
+        public void run() {
+            try {
+                mGpxLoader.load(mCacheProgressUpdater);
+                mHandler.sendEmptyMessage(MSG_DONE);
+                mGpxLoader = null;
+            } catch (Exception e) {
+                mParent.runOnUiThread(new DisplayErrorRunnable(e, mErrorDisplayer));
+            } finally {
+                mSqliteDatabase.close();
+            }
+        }
+    }
 
     static class CacheListOnCreateContextMenuListener implements OnCreateContextMenuListener {
         public static class Factory {
@@ -72,22 +112,16 @@ public class CacheListDelegate {
     }
 
     public static class CacheProgressUpdater {
-        private final Activity mActivity;
-        private final ProgressDialog mProgressDialog;
         private String mStatus;
+        private final Handler mHandler;
 
-        public CacheProgressUpdater(Activity activity, ProgressDialog progressDialog) {
-            mActivity = activity;
-            mProgressDialog = progressDialog;
+        public CacheProgressUpdater(Handler handler) {
+            mHandler = handler;
         }
 
         public void update(String status) {
             mStatus = status;
-            mActivity.runOnUiThread(new Runnable() {
-                public void run() {
-                    mProgressDialog.setMessage(mStatus);
-                }
-            });
+            mHandler.sendEmptyMessage(MSG_PROGRESS);
         }
     }
 
@@ -124,6 +158,9 @@ public class CacheListDelegate {
 
     public static final String SELECT_CACHE = "SELECT_CACHE";
 
+    private static final int MSG_PROGRESS = 0;
+    private static final int MSG_DONE = 1;
+
     public static CacheListDelegate create(ListActivity parent) {
         final ErrorDisplayer errorDisplayer = new ErrorDisplayer(parent);
         final Database database = Database.create(parent);
@@ -142,8 +179,14 @@ public class CacheListDelegate {
                 cacheListData, errorDisplayer);
 
         CacheListOnCreateContextMenuListener.Factory factory = new CacheListOnCreateContextMenuListener.Factory();
-        return new CacheListDelegate(parent, locationBookmarks, locationControl,
+        final CacheListDelegate cacheListDelegate = new CacheListDelegate(parent, locationBookmarks, locationControl,
                 simpleAdapterFactory, cacheListData, errorDisplayer, database, actions, factory);
+        cacheListDelegate.setHandler(cacheListDelegate.new MessageHandler());
+        return cacheListDelegate;
+    }
+
+    private void setHandler(MessageHandler messageHandler) {
+        mMessageHandler = messageHandler;
     }
 
     private Thread importThread;
@@ -152,17 +195,16 @@ public class CacheListDelegate {
     private final CacheListOnCreateContextMenuListener.Factory mCreateContextMenuFactory;
     private final Database mDatabase;
     private final ErrorDisplayer mErrorDisplayer;
-
     private GpxLoader mGpxLoader;
     private final LocationBookmarksSql mLocationBookmarks;
     private final LocationControl mLocationControl;
     private final ListActivity mParent;
-
     private SimpleAdapter mSimpleAdapter;
     private final SimpleAdapterFactory mSimpleAdapterFactory;
     private SQLiteDatabase mSqliteDatabase;
-
-    private ProgressDialog progressDialog;
+    private ProgressDialog mProgressDialog;
+    private MessageHandler mMessageHandler;
+    private CacheProgressUpdater mCacheProgressUpdater;
 
     public CacheListDelegate(ListActivity parent, LocationBookmarksSql locationBookmarks,
             LocationControl locationControl, SimpleAdapterFactory simpleAdapterFactory,
@@ -214,27 +256,12 @@ public class CacheListDelegate {
         try {
             mSqliteDatabase = mDatabase.openOrCreateCacheDatabase();
             mGpxLoader = GpxLoader.create(mParent, mErrorDisplayer, mDatabase, mSqliteDatabase);
+            mCacheProgressUpdater = new CacheProgressUpdater(this.mMessageHandler);
             if (mGpxLoader != null) {
-                progressDialog = ProgressDialog.show(this.mParent, "Importing Caches",
+                mProgressDialog = ProgressDialog.show(this.mParent, "Importing Caches",
                         "Please wait...");
-                importThread = new Thread() {
-                    public void run() {
-                        try {
-                            mGpxLoader.load(new CacheProgressUpdater(mParent, progressDialog));
-                            progressDialog.dismiss();
-                            mParent.runOnUiThread(new Runnable() {
-                                public void run() {
-                                    CacheListDelegate.this.onResume();
-                                }
-                            });
-                            mGpxLoader = null;
-                        } catch (Exception e) {
-                            mParent.runOnUiThread(new DisplayErrorRunnable(e, mErrorDisplayer));
-                        } finally {
-                            mSqliteDatabase.close();
-                        }
-                    }
-                };
+
+                importThread = new ImportThread(mCacheProgressUpdater, this.mMessageHandler);
                 importThread.start();
             }
         } catch (final FileNotFoundException e) {
@@ -249,6 +276,9 @@ public class CacheListDelegate {
 
     public void onPause() {
         try {
+            if (mProgressDialog != null) {
+                mProgressDialog.dismiss();
+            }
             if (mGpxLoader != null) {
                 mGpxLoader.abortLoad();
                 if (importThread != null) {
@@ -259,6 +289,7 @@ public class CacheListDelegate {
                 }
             }
         } catch (InterruptedException e) {
+            // None of these errors are displayed because the activity is terminating.
             mErrorDisplayer.displayErrorAndStack(e);
         } catch (Exception e) {
             mErrorDisplayer.displayErrorAndStack(e);
