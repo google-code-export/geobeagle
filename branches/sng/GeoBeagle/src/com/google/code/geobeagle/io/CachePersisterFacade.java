@@ -69,7 +69,7 @@ public class CachePersisterFacade {
 
     void wptName(String text) throws IOException {
         HtmlWriter htmlWriter = mCacheDetailsWriterFactory
-                .create(GpxToCache.GEOBEAGLE_DIR + "/" + text + ".html");
+                .create(GpxLoader.GEOBEAGLE_DIR + "/" + text + ".html");
         mGpxWriter = mGpxWriterFactory.create(htmlWriter);
         mGpxWriter.writeWptName(text, mCache.mLatitude, mCache.mLongitude);
         mCache.mId = text;

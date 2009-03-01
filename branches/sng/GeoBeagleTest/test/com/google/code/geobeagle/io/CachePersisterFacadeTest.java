@@ -76,7 +76,7 @@ public class CachePersisterFacadeTest extends TestCase {
         cache.mLatitude = 122;
         cache.mLongitude = 37;
 
-        expect(htmlWriterFactory.create(GpxToCache.GEOBEAGLE_DIR + "/GC123.html"))
+        expect(htmlWriterFactory.create(GpxLoader.GEOBEAGLE_DIR + "/GC123.html"))
                 .andReturn(htmlWriter);
         expect(cacheDetailsWriterFactory.create(htmlWriter)).andReturn(cacheDetailsWriter);
         cacheDetailsWriter.writeWptName("GC123", 122, 37);

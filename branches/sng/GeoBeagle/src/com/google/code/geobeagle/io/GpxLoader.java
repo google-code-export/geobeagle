@@ -70,6 +70,7 @@ public class GpxLoader {
     private final FileFactory mFileFactory;
     private final GpxCaches mGpxCaches;
     private boolean mAbortLoad;
+    public static final String GEOBEAGLE_DIR = "/sdcard/GeoBeagle";
 
     public GpxLoader(CacheWriter cacheWriter, GpxCaches gpxCaches, FileFactory fileFactory) {
         mCacheWriter = cacheWriter;
@@ -83,7 +84,7 @@ public class GpxLoader {
     }
 
     public void load(CacheProgressUpdater cacheProgressUpdater) {
-        File file = mFileFactory.createFile(GpxToCache.GEOBEAGLE_DIR);
+        File file = mFileFactory.createFile(GpxLoader.GEOBEAGLE_DIR);
         file.mkdirs();
 
         mCacheWriter.clear(GPX_PATH);

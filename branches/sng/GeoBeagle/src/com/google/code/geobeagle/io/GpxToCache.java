@@ -27,8 +27,6 @@ import java.io.IOException;
 import java.io.Reader;
 
 public class GpxToCache {
-    public static final String GEOBEAGLE_DIR = "/sdcard/GeoBeagle";
-
     public static GpxToCache create(String path) throws FileNotFoundException,
             XmlPullParserException {
         final XmlPullParser xmlPullParser = createPullParser(path);

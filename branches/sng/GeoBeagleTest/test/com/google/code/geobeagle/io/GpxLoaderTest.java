@@ -41,7 +41,7 @@ public class GpxLoaderTest extends TestCase {
         File file = createMock(File.class);
         CacheProgressUpdater cacheProgressUpdater = createMock(CacheProgressUpdater.class);
 
-        expect(fileFactory.createFile(GpxToCache.GEOBEAGLE_DIR)).andReturn(file);
+        expect(fileFactory.createFile(GpxLoader.GEOBEAGLE_DIR)).andReturn(file);
         expect(file.mkdirs()).andReturn(true);
         cacheWriter.clear(GpxLoader.GPX_PATH);
         Cache cache = new Cache("gc1234", "my cache", 122, 37);
@@ -73,7 +73,7 @@ public class GpxLoaderTest extends TestCase {
         CacheProgressUpdater cacheProgressUpdater = createMock(CacheProgressUpdater.class);
         File file = createMock(File.class);
 
-        expect(fileFactory.createFile(GpxToCache.GEOBEAGLE_DIR)).andReturn(file);
+        expect(fileFactory.createFile(GpxLoader.GEOBEAGLE_DIR)).andReturn(file);
         expect(file.mkdirs()).andReturn(true);
 
         cacheWriter.clear(GpxLoader.GPX_PATH);
