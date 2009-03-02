@@ -17,9 +17,8 @@ package com.google.code.geobeagle.io;
 import com.google.code.geobeagle.data.Destination;
 import com.google.code.geobeagle.data.Destination.DestinationFactory;
 import com.google.code.geobeagle.io.Database.CacheWriter;
+import com.google.code.geobeagle.io.Database.SQLiteWrapper;
 import com.google.code.geobeagle.ui.ErrorDisplayer;
-
-import android.database.sqlite.SQLiteDatabase;
 
 public class LocationSaver {
     private final Database mDatabaseFactory;
@@ -34,7 +33,9 @@ public class LocationSaver {
     }
 
     public void saveLocation(final CharSequence location) {
-        SQLiteDatabase sqlite = mDatabaseFactory.openOrCreateCacheDatabase();
+        SQLiteWrapper sqlite = mDatabaseFactory.getWritableDatabase();
+        // TODO: actually getWritableDatabase throws on error rather than
+        // returning null.
         if (sqlite != null) {
             CacheWriter cacheWriter = mDatabaseFactory.createCacheWriter(sqlite, mErrorDisplayer);
             cacheWriter.startWriting();

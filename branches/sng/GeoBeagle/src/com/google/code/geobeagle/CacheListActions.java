@@ -17,13 +17,13 @@ package com.google.code.geobeagle;
 import com.google.code.geobeagle.data.CacheListData;
 import com.google.code.geobeagle.io.Database;
 import com.google.code.geobeagle.io.Database.CacheWriter;
+import com.google.code.geobeagle.io.Database.SQLiteWrapper;
 import com.google.code.geobeagle.ui.CacheListDelegate;
 import com.google.code.geobeagle.ui.ErrorDisplayer;
 
 import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
 import android.widget.SimpleAdapter;
 
 public class CacheListActions {
@@ -56,10 +56,10 @@ public class CacheListActions {
         public void act(int position, SimpleAdapter simpleAdapter) {
             // TODO: pull sqliteDatbase and then cachewriter up to top level so
             // they're shared.
-            SQLiteDatabase sqliteDatabase = mDatabase.openOrCreateCacheDatabase();
-            CacheWriter cacheWriter = mDatabase.createCacheWriter(sqliteDatabase, mErrorDisplayer);
+            SQLiteWrapper sqliteWrapper = mDatabase.getWritableDatabase();
+            CacheWriter cacheWriter = mDatabase.createCacheWriter(sqliteWrapper, mErrorDisplayer);
             cacheWriter.delete(mCacheListData.getId(position));
-            sqliteDatabase.close();
+            sqliteWrapper.close();
 
             mCacheListData.delete(position);
 

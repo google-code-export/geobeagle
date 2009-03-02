@@ -23,6 +23,7 @@ import com.google.code.geobeagle.CacheListActions;
 import com.google.code.geobeagle.data.CacheListData;
 import com.google.code.geobeagle.io.Database;
 import com.google.code.geobeagle.io.Database.CacheWriter;
+import com.google.code.geobeagle.io.Database.SQLiteWrapper;
 
 import android.content.Context;
 import android.content.Intent;
@@ -37,25 +38,25 @@ public class CacheListActionsTest extends TestCase {
         CacheListData cacheListData = createMock(CacheListData.class);
         Database database = createMock(Database.class);
         CacheWriter cacheWriter = createMock(CacheWriter.class);
-        SQLiteDatabase sqliteDatabase = createMock(SQLiteDatabase.class);
+        SQLiteWrapper sqliteWrapper = createMock(SQLiteWrapper.class);
         SimpleAdapter simpleAdapter = createMock(SimpleAdapter.class);
 
-        expect(database.openOrCreateCacheDatabase()).andReturn(sqliteDatabase);
-        expect(database.createCacheWriter(sqliteDatabase, null)).andReturn(cacheWriter);
+        expect(database.getWritableDatabase()).andReturn(sqliteWrapper);
+        expect(database.createCacheWriter(sqliteWrapper, null)).andReturn(cacheWriter);
         cacheListData.delete(17);
         expect(cacheListData.getId(17)).andReturn("GC123");
         cacheWriter.delete("GC123");
-        sqliteDatabase.close();
+        sqliteWrapper.close();
         simpleAdapter.notifyDataSetChanged();
 
         replay(simpleAdapter);
-        replay(sqliteDatabase);
+        replay(sqliteWrapper);
         replay(cacheListData);
         replay(cacheWriter);
         replay(database);
         CacheListActions.Action action = new CacheListActions.Delete(database, cacheListData, null);
         action.act(17, simpleAdapter);
-        verify(sqliteDatabase);
+        verify(sqliteWrapper);
         verify(cacheListData);
         verify(cacheWriter);
         verify(database);

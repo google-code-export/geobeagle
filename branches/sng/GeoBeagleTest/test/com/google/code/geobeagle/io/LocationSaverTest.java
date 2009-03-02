@@ -22,6 +22,7 @@ import static org.easymock.classextension.EasyMock.verify;
 import com.google.code.geobeagle.data.Destination;
 import com.google.code.geobeagle.data.Destination.DestinationFactory;
 import com.google.code.geobeagle.io.Database.CacheWriter;
+import com.google.code.geobeagle.io.Database.SQLiteWrapper;
 
 import android.database.sqlite.SQLiteDatabase;
 
@@ -30,20 +31,23 @@ import junit.framework.TestCase;
 public class LocationSaverTest extends TestCase {
 
     private Database mFactory;
-    private SQLiteDatabase mSqlite;
+    private SQLiteWrapper mSqlite;
 
     public void setUp() {
         mFactory = createMock(Database.class);
-        mSqlite = createMock(SQLiteDatabase.class);
+        mSqlite = createMock(SQLiteWrapper.class);
     }
 
     public void testSaveBookmarksOpenError() {
-        expect(mFactory.openOrCreateCacheDatabase()).andReturn(null);
+        SQLiteDatabase sqliteDb = createMock(SQLiteDatabase.class);
+        expect(mFactory.getWritableDatabase()).andReturn(null);
 
         replay(mFactory);
+        replay(sqliteDb);
         LocationSaver locationSaver = new LocationSaver(mFactory, null, null);
         locationSaver.saveLocation(null);
         verify(mFactory);
+        verify(sqliteDb);
     }
 
     public void testSave() {
@@ -51,7 +55,7 @@ public class LocationSaverTest extends TestCase {
         DestinationFactory destinationFactory = createMock(DestinationFactory.class);
         Destination destination = createMock(Destination.class);
 
-        expect(mFactory.openOrCreateCacheDatabase()).andReturn(mSqlite);
+        expect(mFactory.getWritableDatabase()).andReturn(mSqlite);
         expect(mFactory.createCacheWriter(mSqlite, null)).andReturn(writer);
         writer.startWriting();
         expect(destinationFactory.create("122 32.3423 83 32.3221 (LB12345)"))
@@ -69,7 +73,8 @@ public class LocationSaverTest extends TestCase {
         replay(writer);
         replay(destination);
         replay(destinationFactory);
-        new LocationSaver(mFactory, destinationFactory, null).saveLocation("122 32.3423 83 32.3221 (LB12345)");
+        new LocationSaver(mFactory, destinationFactory, null)
+                .saveLocation("122 32.3423 83 32.3221 (LB12345)");
         verify(mFactory);
         verify(writer);
         verify(mSqlite);

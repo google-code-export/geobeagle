@@ -15,13 +15,13 @@
 package com.google.code.geobeagle.io;
 
 import com.google.code.geobeagle.R;
+import com.google.code.geobeagle.io.Database.SQLiteWrapper;
 import com.google.code.geobeagle.io.GpxLoader.Factory;
 import com.google.code.geobeagle.ui.CacheListDelegate;
 import com.google.code.geobeagle.ui.ErrorDisplayer;
 
 import android.app.ListActivity;
 import android.app.ProgressDialog;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Handler;
 import android.os.Message;
 import android.widget.Toast;
@@ -41,7 +41,7 @@ public class GpxImporter {
 
             ImportThread create(CacheListDelegate cacheListDelegate,
                     ProgressDialogWrapper progressDialog, GpxLoader gpxLoader,
-                    SQLiteDatabase sqliteDatabase) {
+                    SQLiteWrapper sqliteDatabase) {
 
                 final MessageHandler messageHandler = new MessageHandler(cacheListDelegate,
                         progressDialog, sqliteDatabase);
@@ -76,11 +76,11 @@ public class GpxImporter {
         static final int MSG_PROGRESS = 0;
         private final CacheListDelegate mCacheListDelegate;
         private final ProgressDialogWrapper mProgressDialog;
-        private final SQLiteDatabase mSqliteDatabase;
+        private final SQLiteWrapper mSqliteDatabase;
         private String mStatus;
 
         public MessageHandler(CacheListDelegate cacheListDelegate,
-                ProgressDialogWrapper progressDialog, SQLiteDatabase sqliteDatabase) {
+                ProgressDialogWrapper progressDialog, SQLiteWrapper sqliteDatabase) {
             mCacheListDelegate = cacheListDelegate;
             mProgressDialog = progressDialog;
             mSqliteDatabase = sqliteDatabase;
@@ -163,7 +163,7 @@ public class GpxImporter {
         }
     }
 
-    public boolean importGpxs(CacheListDelegate cacheListDelegate, SQLiteDatabase sqliteDatabase) {
+    public boolean importGpxs(CacheListDelegate cacheListDelegate, SQLiteWrapper sqliteDatabase) {
         try {
             mGpxLoader = mGpxLoaderFactory.create(sqliteDatabase);
             mGpxLoader.open();

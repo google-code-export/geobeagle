@@ -129,7 +129,7 @@ public class DatabaseTest extends TestCase {
     }
 
     public void testCacheWriter() {
-        SQLiteDatabase sqlite = createMock(SQLiteDatabase.class);
+        SQLiteWrapper sqlite = createMock(SQLiteWrapper.class);
 
         sqlite.execSQL(eq(Database.SQL_INSERT_CACHE), (Object[])notNull());
 
@@ -140,7 +140,7 @@ public class DatabaseTest extends TestCase {
     }
 
     public void testCacheWriterClear() {
-        SQLiteDatabase sqlite = createMock(SQLiteDatabase.class);
+        SQLiteWrapper sqlite = createMock(SQLiteWrapper.class);
         Object params[] = new Object[] { "the source" };
         sqlite.execSQL(eq(Database.SQL_CLEAR_CACHES), (Object[])aryEq(params));
 
@@ -151,7 +151,7 @@ public class DatabaseTest extends TestCase {
     }
 
     public void testCacheWriterDelete() {
-        SQLiteDatabase sqlite = createMock(SQLiteDatabase.class);
+        SQLiteWrapper sqlite = createMock(SQLiteWrapper.class);
         Object params[] = new Object[] { "GC123" };
         sqlite.execSQL(eq(Database.SQL_DELETE_CACHE), (Object[])aryEq(params));
 
@@ -163,7 +163,7 @@ public class DatabaseTest extends TestCase {
     
     public void testCacheWriterError() {
         ErrorDisplayer errorDisplayer = createMock(ErrorDisplayer.class);
-        SQLiteDatabase sqlite = createMock(SQLiteDatabase.class);
+        SQLiteWrapper sqlite = createMock(SQLiteWrapper.class);
         SQLiteException exception = createMock(SQLiteException.class);
 
         sqlite.execSQL(eq(Database.SQL_INSERT_CACHE), (Object[])notNull());

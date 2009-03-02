@@ -25,12 +25,12 @@ import com.google.code.geobeagle.io.Database;
 import com.google.code.geobeagle.io.GpxImporter;
 import com.google.code.geobeagle.io.GpxLoader;
 import com.google.code.geobeagle.io.LocationBookmarksSql;
+import com.google.code.geobeagle.io.Database.SQLiteWrapper;
 import com.google.code.geobeagle.io.GpxImporter.ImportThread;
 import com.google.code.geobeagle.io.GpxImporter.ProgressDialogWrapper;
 
 import android.app.ListActivity;
 import android.content.Context;
-import android.database.sqlite.SQLiteDatabase;
 import android.location.LocationManager;
 import android.view.ContextMenu;
 import android.view.Menu;
@@ -125,7 +125,7 @@ public class CacheListDelegate {
     private final ListActivity mParent;
     private SimpleAdapter mSimpleAdapter;
     private final SimpleAdapterFactory mSimpleAdapterFactory;
-    private SQLiteDatabase mSqliteDatabase;
+    private SQLiteWrapper mSqliteDatabase;
 
     public CacheListDelegate(ListActivity parent, LocationBookmarksSql locationBookmarks,
             LocationControl locationControl, SimpleAdapterFactory simpleAdapterFactory,
@@ -178,7 +178,8 @@ public class CacheListDelegate {
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {
-        mSqliteDatabase = mDatabase.openOrCreateCacheDatabase();
+        mSqliteDatabase = new SQLiteWrapper();
+        mSqliteDatabase.open(mDatabase.openOrCreateCacheDatabase());
         return mGpxImporter.importGpxs(this, mSqliteDatabase);
     }
 

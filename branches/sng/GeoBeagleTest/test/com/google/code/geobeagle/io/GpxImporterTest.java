@@ -6,6 +6,7 @@ import static org.easymock.classextension.EasyMock.createMock;
 import static org.easymock.classextension.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.verify;
 
+import com.google.code.geobeagle.io.Database.SQLiteWrapper;
 import com.google.code.geobeagle.io.GpxImporter.ImportThread;
 import com.google.code.geobeagle.io.GpxImporter.ProgressDialogWrapper;
 import com.google.code.geobeagle.ui.CacheListDelegate;
@@ -13,7 +14,6 @@ import com.google.code.geobeagle.ui.CacheListDelegate;
 import org.xmlpull.v1.XmlPullParserException;
 
 import android.app.ListActivity;
-import android.database.sqlite.SQLiteDatabase;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -25,7 +25,7 @@ public class GpxImporterTest extends TestCase {
     public void testImportGpxs() throws FileNotFoundException, XmlPullParserException, IOException {
         CacheListDelegate cacheListDelegate = createMock(CacheListDelegate.class);
         GpxLoader.Factory gpxLoaderFactory = createMock(GpxLoader.Factory.class);
-        SQLiteDatabase sqliteDatabase = createMock(SQLiteDatabase.class);
+        SQLiteWrapper sqliteDatabase = createMock(SQLiteWrapper.class);
         GpxLoader gpxLoader = createMock(GpxLoader.class);
         ProgressDialogWrapper progressDialog = createMock(ProgressDialogWrapper.class);
         ListActivity listActivity = createMock(ListActivity.class);

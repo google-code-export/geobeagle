@@ -15,11 +15,10 @@
 package com.google.code.geobeagle.io;
 
 import com.google.code.geobeagle.io.Database.CacheWriter;
+import com.google.code.geobeagle.io.Database.SQLiteWrapper;
 import com.google.code.geobeagle.ui.ErrorDisplayer;
 
 import org.xmlpull.v1.XmlPullParserException;
-
-import android.database.sqlite.SQLiteDatabase;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -35,7 +34,7 @@ public class GpxLoader {
             mErrorDisplayer = errorDisplayer;
         }
 
-        public GpxLoader create(SQLiteDatabase sqlite) {
+        public GpxLoader create(SQLiteWrapper sqlite) {
             return GpxLoader.create(mErrorDisplayer, mDatabase, sqlite);
         }
     }
@@ -69,7 +68,7 @@ public class GpxLoader {
     public static final String GPX_PATH = "/sdcard/caches.gpx";
 
     public static GpxLoader create(ErrorDisplayer errorDisplayer, Database database,
-            SQLiteDatabase sqlite) {
+            SQLiteWrapper sqlite) {
         final CacheWriter cacheWriter = database.createCacheWriter(sqlite, errorDisplayer);
         final FileFactory fileFactory = new FileFactory();
         final GpxCaches gpxCaches = GpxCaches.create(errorDisplayer);
@@ -79,7 +78,7 @@ public class GpxLoader {
     private boolean mAbortLoad;
     private final CacheWriter mCacheWriter;
     private final FileFactory mFileFactory;
-    private GpxCaches mGpxCaches;
+    private final GpxCaches mGpxCaches;
 
     public GpxLoader(CacheWriter cacheWriter, FileFactory fileFactory, GpxCaches gpxCaches,
             ErrorDisplayer errorDisplayer) {
