@@ -94,7 +94,7 @@ public class Database {
                     id, name, new Double(latitude), new Double(longitude), source
             });
         }
-
+        
         public void startWriting() {
             mSqlite.beginTransaction();
         }

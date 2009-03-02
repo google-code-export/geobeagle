@@ -23,7 +23,10 @@ import com.google.code.geobeagle.data.Destination;
 import com.google.code.geobeagle.data.Destination.DestinationFactory;
 import com.google.code.geobeagle.io.Database;
 import com.google.code.geobeagle.io.GpxImporter;
+import com.google.code.geobeagle.io.GpxLoader;
 import com.google.code.geobeagle.io.LocationBookmarksSql;
+import com.google.code.geobeagle.io.GpxImporter.ImportThread;
+import com.google.code.geobeagle.io.GpxImporter.ProgressDialogWrapper;
 
 import android.app.ListActivity;
 import android.content.Context;
@@ -77,7 +80,6 @@ public class CacheListDelegate {
     public static final String[] ADAPTER_FROM = {
             "cache", "distance"
     };
-
     public static final int[] ADAPTER_TO = {
             R.id.txt_cache, R.id.distance
     };
@@ -98,24 +100,26 @@ public class CacheListDelegate {
         final CacheListData cacheListData = CacheListData.create(destinationFactory, parent);
         final LocationControl locationControl = LocationControl.create(((LocationManager)parent
                 .getSystemService(Context.LOCATION_SERVICE)));
-
         final CacheListActions.Action actions[] = CacheListActions.create(parent, database,
                 cacheListData, errorDisplayer);
+        final CacheListOnCreateContextMenuListener.Factory factory = new CacheListOnCreateContextMenuListener.Factory();
+        final GpxLoader.Factory gxpLoaderFactory = new GpxLoader.Factory(database, errorDisplayer);
+        final ImportThread.Factory importThreadFactory = new ImportThread.Factory(errorDisplayer);
+        final ProgressDialogWrapper progressDialogWrapper = new ProgressDialogWrapper();
+        final GpxImporter gpxImporter = new GpxImporter(gxpLoaderFactory, database, errorDisplayer,
+                parent, importThreadFactory, progressDialogWrapper);
 
-        CacheListOnCreateContextMenuListener.Factory factory = new CacheListOnCreateContextMenuListener.Factory();
-        final CacheListDelegate cacheListDelegate = new CacheListDelegate(parent,
-                locationBookmarks, locationControl, simpleAdapterFactory, cacheListData,
-                errorDisplayer, database, actions, factory);
-        return cacheListDelegate;
+        return new CacheListDelegate(parent, locationBookmarks, locationControl,
+                simpleAdapterFactory, cacheListData, errorDisplayer, database, actions, factory,
+                gxpLoaderFactory, gpxImporter);
     }
 
     private final CacheListActions.Action mActions[];
-
     private final CacheListData mCacheListData;
     private final CacheListOnCreateContextMenuListener.Factory mCreateContextMenuFactory;
     private final Database mDatabase;
     private final ErrorDisplayer mErrorDisplayer;
-    private GpxImporter mGpxImporter;
+    private final GpxImporter mGpxImporter;
     private final LocationBookmarksSql mLocationBookmarks;
     private final LocationControl mLocationControl;
     private final ListActivity mParent;
@@ -126,7 +130,9 @@ public class CacheListDelegate {
     public CacheListDelegate(ListActivity parent, LocationBookmarksSql locationBookmarks,
             LocationControl locationControl, SimpleAdapterFactory simpleAdapterFactory,
             CacheListData cacheListData, ErrorDisplayer errorDisplayer, Database database,
-            CacheListActions.Action[] actions, CacheListOnCreateContextMenuListener.Factory factory) {
+            CacheListActions.Action[] actions,
+            CacheListOnCreateContextMenuListener.Factory factory,
+            GpxLoader.Factory gpxLoaderFactory, GpxImporter gpxImporter) {
         mParent = parent;
         mLocationBookmarks = locationBookmarks;
         mLocationControl = locationControl;
@@ -136,7 +142,8 @@ public class CacheListDelegate {
         mDatabase = database;
         mActions = actions;
         mCreateContextMenuFactory = factory;
-        mGpxImporter = new GpxImporter();
+
+        mGpxImporter = gpxImporter;
     }
 
     public boolean onContextItemSelected(MenuItem menuItem) {
@@ -172,11 +179,11 @@ public class CacheListDelegate {
 
     public boolean onOptionsItemSelected(MenuItem item) {
         mSqliteDatabase = mDatabase.openOrCreateCacheDatabase();
-        return mGpxImporter.load(this, mSqliteDatabase, mDatabase, mErrorDisplayer, mParent);
+        return mGpxImporter.importGpxs(this, mSqliteDatabase);
     }
 
     public void onPause() {
-        mGpxImporter.abortLoad(this);
+        mGpxImporter.abort();
     }
 
     public void onResume() {

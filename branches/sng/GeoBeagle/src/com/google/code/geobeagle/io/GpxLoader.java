@@ -19,7 +19,6 @@ import com.google.code.geobeagle.ui.ErrorDisplayer;
 
 import org.xmlpull.v1.XmlPullParserException;
 
-import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
 import java.io.File;
@@ -27,6 +26,19 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 public class GpxLoader {
+    public static class Factory {
+        private final ErrorDisplayer mErrorDisplayer;
+        private final Database mDatabase;
+
+        public Factory(Database database, ErrorDisplayer errorDisplayer) {
+            mDatabase = database;
+            mErrorDisplayer = errorDisplayer;
+        }
+
+        public GpxLoader create(SQLiteDatabase sqlite) {
+            return GpxLoader.create(mErrorDisplayer, mDatabase, sqlite);
+        }
+    }
 
     public static class Cache {
         public String mId;
@@ -53,36 +65,37 @@ public class GpxLoader {
         }
     }
 
+    public static final String GEOBEAGLE_DIR = "/sdcard/GeoBeagle";
     public static final String GPX_PATH = "/sdcard/caches.gpx";
 
-    public static GpxLoader create(Context context, ErrorDisplayer errorDisplayer,
-            Database database, SQLiteDatabase sqlite) throws XmlPullParserException, IOException,
-            FileNotFoundException {
+    public static GpxLoader create(ErrorDisplayer errorDisplayer, Database database,
+            SQLiteDatabase sqlite) {
         final CacheWriter cacheWriter = database.createCacheWriter(sqlite, errorDisplayer);
-        final GpxCaches gpxCaches = GpxCaches.create(errorDisplayer, GPX_PATH);
         final FileFactory fileFactory = new FileFactory();
 
-        return new GpxLoader(cacheWriter, gpxCaches, fileFactory);
+        return new GpxLoader(cacheWriter, fileFactory, null, errorDisplayer);
     }
 
-    private final CacheWriter mCacheWriter;
-    private final FileFactory mFileFactory;
-    private final GpxCaches mGpxCaches;
     private boolean mAbortLoad;
-    public static final String GEOBEAGLE_DIR = "/sdcard/GeoBeagle";
+    private final CacheWriter mCacheWriter;
+    private ErrorDisplayer mErrorDisplayer;
+    private final FileFactory mFileFactory;
+    private GpxCaches mGpxCaches;
 
-    public GpxLoader(CacheWriter cacheWriter, GpxCaches gpxCaches, FileFactory fileFactory) {
+    public GpxLoader(CacheWriter cacheWriter, FileFactory fileFactory, GpxCaches gpxCaches,
+            ErrorDisplayer errorDisplayer) {
         mCacheWriter = cacheWriter;
-        mGpxCaches = gpxCaches;
         mFileFactory = fileFactory;
+        mErrorDisplayer = errorDisplayer;
         mAbortLoad = false;
+        mGpxCaches = gpxCaches;
     }
 
     public void abortLoad() {
         mAbortLoad = true;
     }
 
-    public void load(GpxImporter.CacheProgressUpdater cacheProgressUpdater) {
+    public void load(GpxImporter.MessageHandler messageHandler) {
         File file = mFileFactory.createFile(GpxLoader.GEOBEAGLE_DIR);
         file.mkdirs();
 
@@ -90,12 +103,16 @@ public class GpxLoader {
         mCacheWriter.startWriting();
         int nCache = 0;
         for (final Cache cache : mGpxCaches) {
-            cacheProgressUpdater.update(++nCache + ": " + cache.mName);
+            messageHandler.update(++nCache + ": " + cache.mName);
             if (!mCacheWriter.write(cache.mId, cache.mName, cache.mLatitude, cache.mLongitude,
                     mGpxCaches.getSource())
                     || mAbortLoad)
                 break;
         }
         mCacheWriter.stopWriting();
+    }
+
+    public void open() throws FileNotFoundException, XmlPullParserException, IOException {
+        mGpxCaches = GpxCaches.create(mErrorDisplayer, GPX_PATH);
     }
 }

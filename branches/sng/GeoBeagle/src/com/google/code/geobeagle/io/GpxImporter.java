@@ -15,6 +15,7 @@
 package com.google.code.geobeagle.io;
 
 import com.google.code.geobeagle.R;
+import com.google.code.geobeagle.io.GpxLoader.Factory;
 import com.google.code.geobeagle.ui.CacheListDelegate;
 import com.google.code.geobeagle.ui.ErrorDisplayer;
 
@@ -29,90 +30,124 @@ import java.io.FileNotFoundException;
 
 public class GpxImporter {
 
-    public static class CacheProgressUpdater {
-        private final Handler mHandler;
-        String mStatus;
-
-        public CacheProgressUpdater(Handler handler) {
-            mHandler = handler;
-        }
-
-        public void update(String status) {
-            mStatus = status;
-            mHandler.sendEmptyMessage(MSG_PROGRESS);
-        }
-    }
-
+    // Too hard to test this class due to final methods in base.
     public static class ImportThread extends Thread {
-        private final GpxImporter.CacheProgressUpdater mCacheProgressUpdater;
-        private ErrorDisplayer mErrorDisplayer;
-        private GpxLoader mGpxLoader;
-        private Handler mHandler;
-        private SQLiteDatabase mSqliteDatabase;
+        public static class Factory {
+            private final ErrorDisplayer mErrorDisplayer;
 
-        public ImportThread(GpxImporter.CacheProgressUpdater cacheProgressUpdater, Handler handler,
-                GpxLoader gpxLoader, ErrorDisplayer errorDisplayer, SQLiteDatabase sqliteDatabase) {
-            mCacheProgressUpdater = cacheProgressUpdater;
-            mHandler = handler;
+            public Factory(ErrorDisplayer errorDisplayer) {
+                mErrorDisplayer = errorDisplayer;
+            }
+
+            ImportThread create(CacheListDelegate cacheListDelegate,
+                    ProgressDialogWrapper progressDialog, GpxLoader gpxLoader,
+                    SQLiteDatabase sqliteDatabase) {
+
+                final MessageHandler messageHandler = new MessageHandler(cacheListDelegate,
+                        progressDialog, sqliteDatabase);
+                return new ImportThread(messageHandler, gpxLoader, mErrorDisplayer);
+            }
+        }
+
+        private final ErrorDisplayer mErrorDisplayer;
+        private final GpxLoader mGpxLoader;
+        private final MessageHandler mMessageHandler;
+
+        public ImportThread(MessageHandler messageHandler, GpxLoader gpxLoader,
+                ErrorDisplayer errorDisplayer) {
+            mMessageHandler = messageHandler;
             mGpxLoader = gpxLoader;
             mErrorDisplayer = errorDisplayer;
-            mSqliteDatabase = sqliteDatabase;
         }
 
         public void run() {
             try {
-                mGpxLoader.load(mCacheProgressUpdater);
-                mHandler.sendEmptyMessage(MSG_DONE);
-                mGpxLoader = null;
+                mGpxLoader.load(mMessageHandler);
+                mMessageHandler.sendEmptyMessage(MessageHandler.MSG_DONE);
             } catch (Exception e) {
                 mErrorDisplayer.displayErrorAndStack(e);
-            } finally {
-                mSqliteDatabase.close();
             }
         }
     }
 
+    // Too hard to test this class due to final methods in base.
     public static class MessageHandler extends Handler {
-        private CacheListDelegate mCacheListDelegate;
-        private GpxImporter mGpxImporter;
+        static final int MSG_DONE = 1;
+        static final int MSG_PROGRESS = 0;
+        private final CacheListDelegate mCacheListDelegate;
+        private final ProgressDialogWrapper mProgressDialog;
+        private final SQLiteDatabase mSqliteDatabase;
+        private String mStatus;
 
-        public MessageHandler(GpxImporter gpxImporter, CacheListDelegate cacheListDelegate) {
-            mGpxImporter = gpxImporter;
+        public MessageHandler(CacheListDelegate cacheListDelegate,
+                ProgressDialogWrapper progressDialog, SQLiteDatabase sqliteDatabase) {
             mCacheListDelegate = cacheListDelegate;
+            mProgressDialog = progressDialog;
+            mSqliteDatabase = sqliteDatabase;
         }
 
         public void handleMessage(Message msg) {
             switch (msg.what) {
-                case MSG_PROGRESS:
-                    mGpxImporter.mProgressDialog
-                            .setMessage(mGpxImporter.mCacheProgressUpdater.mStatus);
+                case MessageHandler.MSG_PROGRESS:
+                    mProgressDialog.setMessage(mStatus);
                     break;
-                case MSG_DONE:
-                    mGpxImporter.mProgressDialog.dismiss();
+                case MessageHandler.MSG_DONE:
+                    mProgressDialog.dismiss();
                     mCacheListDelegate.onResume();
+                    mSqliteDatabase.close();
                     break;
                 default:
                     break;
             }
         }
-    }
-    static final int MSG_DONE = 1;
-    static final int MSG_PROGRESS = 0;
-    private CacheProgressUpdater mCacheProgressUpdater;
-    private ErrorDisplayer mErrorDisplayer;
-    private GpxLoader mGpxLoader;
-    private Thread mImportThread;
-    private ListActivity mListActivity;
-    private ProgressDialog mProgressDialog;
 
-    public void abortLoad(CacheListDelegate cacheListDelegate) {
-        try {
-            if (mProgressDialog != null) {
+        public void update(String status) {
+            mStatus = status;
+            sendEmptyMessage(MessageHandler.MSG_PROGRESS);
+        }
+    }
+
+    public static class ProgressDialogWrapper {
+        ProgressDialog mProgressDialog;
+
+        public void dismiss() {
+            if (mProgressDialog != null)
                 mProgressDialog.dismiss();
-            }
+        }
+
+        public void setMessage(CharSequence message) {
+            mProgressDialog.setMessage(message);
+        }
+
+        public void show(ListActivity listActivity, String title, String msg) {
+            mProgressDialog = ProgressDialog.show(listActivity, title, msg);
+        }
+    }
+
+    private final ErrorDisplayer mErrorDisplayer;
+    private GpxLoader mGpxLoader;
+    private final Factory mGpxLoaderFactory;
+    private Thread mImportThread;
+    private final ImportThread.Factory mImportThreadFactory;
+    private final ListActivity mListActivity;
+    private final ProgressDialogWrapper mProgressDialog;
+
+    public GpxImporter(GpxLoader.Factory gpxLoaderFactory, Database database,
+            ErrorDisplayer errorDisplayer, ListActivity listActivity,
+            ImportThread.Factory importThreadFactory, ProgressDialogWrapper progressDialog) {
+        mGpxLoaderFactory = gpxLoaderFactory;
+        mErrorDisplayer = errorDisplayer;
+        mListActivity = listActivity;
+        mImportThreadFactory = importThreadFactory;
+        mProgressDialog = progressDialog;
+    }
+
+    public void abort() {
+        try {
+            mProgressDialog.dismiss();
             if (mGpxLoader != null) {
                 mGpxLoader.abortLoad();
-                if (mImportThread != null) {
+                if (mImportThread != null && mImportThread.isAlive()) {
                     mImportThread.join();
                     Toast mToast = Toast.makeText(mListActivity, R.string.import_canceled,
                             Toast.LENGTH_SHORT);
@@ -122,36 +157,28 @@ public class GpxImporter {
         } catch (InterruptedException e) {
             mErrorDisplayer.displayErrorAndStack(e);
         } catch (Exception e) {
-            // None of these errors get displayed because the activity is
-            // terminating.
+            // None of these errors actually get displayed because the activity
+            // is terminating.
             mErrorDisplayer.displayErrorAndStack(e);
         }
     }
 
-    public boolean load(CacheListDelegate cacheListDelegate, SQLiteDatabase sqliteDatabase,
-            Database database, ErrorDisplayer errorDisplayer, ListActivity listActivity) {
+    public boolean importGpxs(CacheListDelegate cacheListDelegate, SQLiteDatabase sqliteDatabase) {
         try {
-            mErrorDisplayer = errorDisplayer;
-            mListActivity = listActivity;
-            mGpxLoader = GpxLoader.create(listActivity, errorDisplayer, database, sqliteDatabase);
-            MessageHandler messageHandler = new MessageHandler(this, cacheListDelegate);
-            mCacheProgressUpdater = new GpxImporter.CacheProgressUpdater(messageHandler);
-            if (mGpxLoader != null) {
-                mProgressDialog = ProgressDialog.show(listActivity, "Importing Caches",
-                        "Please wait...");
+            mGpxLoader = mGpxLoaderFactory.create(sqliteDatabase);
+            mGpxLoader.open();
+            mProgressDialog.show(mListActivity, "Importing Caches", "Please wait...");
+            mImportThread = mImportThreadFactory.create(cacheListDelegate, mProgressDialog,
+                    mGpxLoader, sqliteDatabase);
 
-                mImportThread = new ImportThread(mCacheProgressUpdater, messageHandler, mGpxLoader,
-                        errorDisplayer, sqliteDatabase);
-                mImportThread.start();
-            }
+            mImportThread.start();
         } catch (final FileNotFoundException e) {
-            errorDisplayer.displayError("Unable to open file '" + e.getMessage()
+            mErrorDisplayer.displayError("Unable to open file '" + e.getMessage()
                     + "'.  Please ensure that the cache import file exists "
-                    + "and that your sdcard is unmounted.");
+                    + "and that the sdcard is readable from your phone.");
         } catch (final Exception e) {
-            errorDisplayer.displayErrorAndStack(e);
+            mErrorDisplayer.displayErrorAndStack(e);
         }
         return true;
     }
-
 }

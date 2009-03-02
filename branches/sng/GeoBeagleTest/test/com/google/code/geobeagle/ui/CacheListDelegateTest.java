@@ -101,7 +101,7 @@ public class CacheListDelegateTest extends TestCase {
         replay(menuItem);
         adapterContextMenuInfo.position = 76;
         CacheListDelegate cacheListDelegate = new CacheListDelegate(null, null, null, null, null,
-                null, null, actions, null);
+                null, null, actions, null, null, null);
         assertTrue(cacheListDelegate.onContextItemSelected(menuItem));
         verify(menuItem);
     }
@@ -121,7 +121,8 @@ public class CacheListDelegateTest extends TestCase {
         replay(listView);
         replay(factory);
         replay(cacheListData);
-        new CacheListDelegate(activity, null, null, null, cacheListData, null, null, null, factory)
+        new CacheListDelegate(activity, null, null, null, cacheListData, null, null, null, factory,
+                null, null)
                 .onCreate();
         verify(activity);
         verify(listView);
@@ -136,7 +137,7 @@ public class CacheListDelegateTest extends TestCase {
 
         replay(menu);
         CacheListDelegate cacheListDelegate = new CacheListDelegate(null, null, null, null, null,
-                null, null, null, null);
+                null, null, null, null, null, null);
         assertTrue(cacheListDelegate.onCreateOptionsMenu(menu));
         verify(menu);
     }
@@ -151,7 +152,7 @@ public class CacheListDelegateTest extends TestCase {
 
         replay(action);
         CacheListDelegate cacheListDelegate = new CacheListDelegate(null, null, null, null, null,
-                null, null, actions, null);
+                null, null, actions, null, null, null);
         cacheListDelegate.onListItemClick(null, null, 46, 0);
         verify(action);
     }
@@ -183,7 +184,7 @@ public class CacheListDelegateTest extends TestCase {
         replay(cacheListData);
         replay(locationControl);
         new CacheListDelegate(listActivity, locationBookmarks, locationControl,
-                simpleAdapterFactory, cacheListData, null, null, null, null).onResume();
+                simpleAdapterFactory, cacheListData, null, null, null, null, null, null).onResume();
         verify(simpleAdapterFactory);
         verify(locationBookmarks);
         verify(cacheListData);
