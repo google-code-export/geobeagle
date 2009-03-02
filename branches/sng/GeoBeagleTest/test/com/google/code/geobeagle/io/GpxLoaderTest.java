@@ -22,7 +22,6 @@ import static org.easymock.classextension.EasyMock.verify;
 import com.google.code.geobeagle.io.Database.CacheWriter;
 import com.google.code.geobeagle.io.GpxLoader.Cache;
 import com.google.code.geobeagle.io.GpxLoader.FileFactory;
-import com.google.code.geobeagle.ui.CacheListDelegate.CacheProgressUpdater;
 
 import org.xmlpull.v1.XmlPullParserException;
 
@@ -39,7 +38,7 @@ public class GpxLoaderTest extends TestCase {
         GpxCaches gpxCaches = createMock(GpxCaches.class);
         FileFactory fileFactory = createMock(FileFactory.class);
         File file = createMock(File.class);
-        CacheProgressUpdater cacheProgressUpdater = createMock(CacheProgressUpdater.class);
+        GpxImporter.CacheProgressUpdater cacheProgressUpdater = createMock(GpxImporter.CacheProgressUpdater.class);
 
         expect(fileFactory.createFile(GpxLoader.GEOBEAGLE_DIR)).andReturn(file);
         expect(file.mkdirs()).andReturn(true);
@@ -70,7 +69,7 @@ public class GpxLoaderTest extends TestCase {
         GpxCaches gpxCaches = createMock(GpxCaches.class);
         CacheWriter cacheWriter = createMock(CacheWriter.class);
         FileFactory fileFactory = createMock(FileFactory.class);
-        CacheProgressUpdater cacheProgressUpdater = createMock(CacheProgressUpdater.class);
+        GpxImporter.CacheProgressUpdater cacheProgressUpdater = createMock(GpxImporter.CacheProgressUpdater.class);
         File file = createMock(File.class);
 
         expect(fileFactory.createFile(GpxLoader.GEOBEAGLE_DIR)).andReturn(file);

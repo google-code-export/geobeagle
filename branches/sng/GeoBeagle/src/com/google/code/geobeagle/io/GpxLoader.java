@@ -16,7 +16,6 @@ package com.google.code.geobeagle.io;
 
 import com.google.code.geobeagle.io.Database.CacheWriter;
 import com.google.code.geobeagle.ui.ErrorDisplayer;
-import com.google.code.geobeagle.ui.CacheListDelegate.CacheProgressUpdater;
 
 import org.xmlpull.v1.XmlPullParserException;
 
@@ -83,7 +82,7 @@ public class GpxLoader {
         mAbortLoad = true;
     }
 
-    public void load(CacheProgressUpdater cacheProgressUpdater) {
+    public void load(GpxImporter.CacheProgressUpdater cacheProgressUpdater) {
         File file = mFileFactory.createFile(GpxLoader.GEOBEAGLE_DIR);
         file.mkdirs();
 
