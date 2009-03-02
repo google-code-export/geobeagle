@@ -15,6 +15,7 @@
 package com.google.code.geobeagle.io;
 
 import com.google.code.geobeagle.io.GpxLoader.Cache;
+import com.google.code.geobeagle.io.GpxToCache.XmlPullParserWrapper;
 
 import org.xmlpull.v1.XmlPullParser;
 
@@ -37,7 +38,7 @@ public class EventHelper {
         }
     }
 
-    public static EventHelper create(XmlPullParser xmlPullParser) {
+    public static EventHelper create(XmlPullParserWrapper xmlPullParser) {
         final GpxEventHandler gpxEventHandler = GpxEventHandler.create();
         final XmlPathBuilder xmlPathBuilder = new XmlPathBuilder();
         return new EventHelper(xmlPathBuilder, gpxEventHandler, xmlPullParser);
@@ -45,10 +46,10 @@ public class EventHelper {
 
     private final GpxEventHandler mGpxEventHandler;
     private final XmlPathBuilder mXmlPathBuilder;
-    private final XmlPullParser mXmlPullParser;
+    private final XmlPullParserWrapper mXmlPullParser;
 
     public EventHelper(XmlPathBuilder xmlPathBuilder, GpxEventHandler gpxEventHandler,
-            XmlPullParser xmlPullParser) {
+            XmlPullParserWrapper xmlPullParser) {
         mXmlPathBuilder = xmlPathBuilder;
         mGpxEventHandler = gpxEventHandler;
         mXmlPullParser = xmlPullParser;

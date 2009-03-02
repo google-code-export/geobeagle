@@ -72,13 +72,12 @@ public class GpxLoader {
             SQLiteDatabase sqlite) {
         final CacheWriter cacheWriter = database.createCacheWriter(sqlite, errorDisplayer);
         final FileFactory fileFactory = new FileFactory();
-
-        return new GpxLoader(cacheWriter, fileFactory, null, errorDisplayer);
+        final GpxCaches gpxCaches = GpxCaches.create(errorDisplayer);
+        return new GpxLoader(cacheWriter, fileFactory, gpxCaches, errorDisplayer);
     }
 
     private boolean mAbortLoad;
     private final CacheWriter mCacheWriter;
-    private ErrorDisplayer mErrorDisplayer;
     private final FileFactory mFileFactory;
     private GpxCaches mGpxCaches;
 
@@ -86,7 +85,6 @@ public class GpxLoader {
             ErrorDisplayer errorDisplayer) {
         mCacheWriter = cacheWriter;
         mFileFactory = fileFactory;
-        mErrorDisplayer = errorDisplayer;
         mAbortLoad = false;
         mGpxCaches = gpxCaches;
     }
@@ -113,6 +111,6 @@ public class GpxLoader {
     }
 
     public void open() throws FileNotFoundException, XmlPullParserException, IOException {
-        mGpxCaches = GpxCaches.create(mErrorDisplayer, GPX_PATH);
+        mGpxCaches.open(GPX_PATH);
     }
 }

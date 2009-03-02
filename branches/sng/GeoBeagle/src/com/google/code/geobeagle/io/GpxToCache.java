@@ -27,11 +27,42 @@ import java.io.IOException;
 import java.io.Reader;
 
 public class GpxToCache {
-    public static GpxToCache create(String path) throws FileNotFoundException,
-            XmlPullParserException {
-        final XmlPullParser xmlPullParser = createPullParser(path);
-        final EventHelper eventHelper = EventHelper.create(xmlPullParser);
-        return new GpxToCache(xmlPullParser, eventHelper);
+    public static GpxToCache create() {
+        final XmlPullParserWrapper xmlPullParserWrapper = new XmlPullParserWrapper();
+        final EventHelper eventHelper = EventHelper.create(xmlPullParserWrapper);
+        return new GpxToCache(xmlPullParserWrapper, eventHelper);
+    }
+
+    public static class XmlPullParserWrapper {
+        private XmlPullParser mXmlPullParser;
+
+        public void open(String path) throws XmlPullParserException, FileNotFoundException {
+            final XmlPullParser newPullParser = XmlPullParserFactory.newInstance().newPullParser();
+            final Reader reader = new BufferedReader(new FileReader(path));
+            newPullParser.setInput(reader);
+            mXmlPullParser = newPullParser;
+        }
+
+        public int getEventType() throws XmlPullParserException {
+            return mXmlPullParser.getEventType();
+        }
+
+        public int next() throws XmlPullParserException, IOException {
+            return mXmlPullParser.next();
+        }
+
+        public String getName() {
+            return mXmlPullParser.getName();
+        }
+
+        public String getAttributeValue(String namespace, String name) {
+            return mXmlPullParser.getAttributeValue(namespace, name);
+        }
+
+        public String getText() {
+            return mXmlPullParser.getText();
+        }
+
     }
 
     public static XmlPullParser createPullParser(String path) throws FileNotFoundException,
@@ -43,11 +74,15 @@ public class GpxToCache {
     }
 
     private final EventHelper mEventHelper;
-    private final XmlPullParser mXmlPullParser;
+    private final XmlPullParserWrapper mXmlPullParser;
 
-    public GpxToCache(XmlPullParser xmlPullParser, EventHelper eventHelper) {
+    public GpxToCache(XmlPullParserWrapper xmlPullParser, EventHelper eventHelper) {
         mXmlPullParser = xmlPullParser;
         mEventHelper = eventHelper;
+    }
+
+    public void open(String path) throws FileNotFoundException, XmlPullParserException {
+        mXmlPullParser.open(path);
     }
 
     public Cache load() throws XmlPullParserException, IOException {

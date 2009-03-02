@@ -7,9 +7,8 @@ import static org.easymock.classextension.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.verify;
 
 import com.google.code.geobeagle.io.GpxLoader.Cache;
+import com.google.code.geobeagle.io.GpxToCache.XmlPullParserWrapper;
 import com.google.code.geobeagle.io.HtmlWriter.HtmlWriterFactory;
-
-import org.xmlpull.v1.XmlPullParser;
 
 import java.io.IOException;
 
@@ -56,7 +55,7 @@ public class CachePersisterFacadeTest extends TestCase {
     }
 
     public void testWpt() throws IOException {
-        XmlPullParser xmlPullParser = createMock(XmlPullParser.class);
+        XmlPullParserWrapper xmlPullParser = createMock(XmlPullParserWrapper.class);
         Cache cache = new Cache();
         expect(xmlPullParser.getAttributeValue(null, "lat")).andReturn("37");
         expect(xmlPullParser.getAttributeValue(null, "lon")).andReturn("122");

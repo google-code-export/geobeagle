@@ -20,6 +20,7 @@ import static org.easymock.classextension.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.verify;
 
 import com.google.code.geobeagle.io.GpxLoader.Cache;
+import com.google.code.geobeagle.io.GpxToCache.XmlPullParserWrapper;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
@@ -36,7 +37,7 @@ public class GpxToCacheTest extends TestCase {
         expect(gpxToCache.load()).andReturn(null);
 
         replay(gpxToCache);
-        GpxCaches gpxCaches = new GpxCaches(gpxToCache, null, null);
+        GpxCaches gpxCaches = new GpxCaches(gpxToCache, null);
         Iterator<Cache> iterator = gpxCaches.iterator();
         assertFalse(iterator.hasNext());
         assertNull(iterator.next());
@@ -51,7 +52,7 @@ public class GpxToCacheTest extends TestCase {
         expect(gpxToCache.load()).andReturn(null);
 
         replay(gpxToCache);
-        GpxCaches gpxCaches = new GpxCaches(gpxToCache, null, null);
+        GpxCaches gpxCaches = new GpxCaches(gpxToCache, null);
         Iterator<Cache> iterator = gpxCaches.iterator();
         assertTrue(iterator.hasNext());
         assertEquals(cache, iterator.next());
@@ -60,7 +61,7 @@ public class GpxToCacheTest extends TestCase {
     }
 
     public void testLoad() throws XmlPullParserException, IOException {
-        XmlPullParser xmlPullParser = createMock(XmlPullParser.class);
+        XmlPullParserWrapper xmlPullParser = createMock(XmlPullParserWrapper.class);
         EventHelper eventHelper = createMock(EventHelper.class);
         Cache cache = createMock(Cache.class);
 
@@ -83,7 +84,7 @@ public class GpxToCacheTest extends TestCase {
     }
 
     public void testLoadEmpty() throws XmlPullParserException, IOException {
-        XmlPullParser xmlPullParser = createMock(XmlPullParser.class);
+        XmlPullParserWrapper xmlPullParser = createMock(XmlPullParserWrapper.class);
         EventHelper eventHelper = createMock(EventHelper.class);
 
         expect(xmlPullParser.getEventType()).andReturn(XmlPullParser.END_DOCUMENT);

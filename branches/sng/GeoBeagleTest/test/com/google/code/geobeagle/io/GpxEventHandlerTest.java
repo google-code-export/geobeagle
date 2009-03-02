@@ -18,7 +18,7 @@ import static org.easymock.classextension.EasyMock.createMock;
 import static org.easymock.classextension.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.verify;
 
-import org.xmlpull.v1.XmlPullParser;
+import com.google.code.geobeagle.io.GpxToCache.XmlPullParserWrapper;
 
 import java.io.IOException;
 
@@ -32,7 +32,7 @@ public class GpxEventHandlerTest extends TestCase {
     }
 
     public void testStartTagCache() throws IOException {
-        XmlPullParser xmlPullParser = createMock(XmlPullParser.class);
+        XmlPullParserWrapper xmlPullParser = createMock(XmlPullParserWrapper.class);
         CachePersisterFacade cachePersisterFacade = createMock(CachePersisterFacade.class);
 
         cachePersisterFacade.wpt(xmlPullParser);

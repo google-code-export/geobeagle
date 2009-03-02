@@ -51,21 +51,23 @@ public class GpxCaches implements Iterable<Cache> {
         }
     }
 
-    public static GpxCaches create(ErrorDisplayer errorDisplayer, String path)
-            throws XmlPullParserException, IOException, FileNotFoundException {
-        final GpxToCache gpxToCache = GpxToCache.create(path);
-        return new GpxCaches(gpxToCache, path, errorDisplayer);
+    public static GpxCaches create(ErrorDisplayer errorDisplayer) {
+        final GpxToCache gpxToCache = GpxToCache.create();
+        return new GpxCaches(gpxToCache, errorDisplayer);
     }
-    
+
     private final ErrorDisplayer mErrorDisplayer;
     private final GpxToCache mGpxToCache;
-    private final String mSource;
+    private String mSource;
 
-    public GpxCaches(GpxToCache gpxToCache, String source, ErrorDisplayer errorDisplayer)
-            throws XmlPullParserException, IOException {
+    public GpxCaches(GpxToCache gpxToCache, ErrorDisplayer errorDisplayer) {
         mGpxToCache = gpxToCache;
         mErrorDisplayer = errorDisplayer;
-        mSource = source;
+    }
+
+    public void open(String path) throws FileNotFoundException, XmlPullParserException {
+        mSource = path;
+        mGpxToCache.open(path);
     }
 
     public String getSource() {

@@ -21,6 +21,7 @@ import static org.easymock.classextension.EasyMock.verify;
 
 import com.google.code.geobeagle.io.EventHelper.XmlPathBuilder;
 import com.google.code.geobeagle.io.GpxLoader.Cache;
+import com.google.code.geobeagle.io.GpxToCache.XmlPullParserWrapper;
 
 import org.xmlpull.v1.XmlPullParser;
 
@@ -33,7 +34,7 @@ public class EventHelperTest extends TestCase {
     public void testEventHelperEnd() throws IOException {
         XmlPathBuilder xmlPathBuilder = createMock(XmlPathBuilder.class);
         GpxEventHandler gpxEventHandler = createMock(GpxEventHandler.class);
-        XmlPullParser xmlPullParser = createMock(XmlPullParser.class);
+        XmlPullParserWrapper xmlPullParser = createMock(XmlPullParserWrapper.class);
         Cache cache = createMock(Cache.class);
 
         expect(xmlPathBuilder.getPath()).andReturn("/path");
@@ -54,7 +55,7 @@ public class EventHelperTest extends TestCase {
     public void testEventHelperStart() throws IOException {
         XmlPathBuilder xmlPathBuilder = createMock(XmlPathBuilder.class);
         GpxEventHandler gpxEventHandler = createMock(GpxEventHandler.class);
-        XmlPullParser xmlPullParser = createMock(XmlPullParser.class);
+        XmlPullParserWrapper xmlPullParser = createMock(XmlPullParserWrapper.class);
 
         expect(xmlPullParser.getName()).andReturn("some tag");
         xmlPathBuilder.startTag("some tag");
@@ -74,7 +75,7 @@ public class EventHelperTest extends TestCase {
     public void testEventHelperText() throws IOException {
         XmlPathBuilder xmlPathBuilder = createMock(XmlPathBuilder.class);
         GpxEventHandler gpxEventHandler = createMock(GpxEventHandler.class);
-        XmlPullParser xmlPullParser = createMock(XmlPullParser.class);
+        XmlPullParserWrapper xmlPullParser = createMock(XmlPullParserWrapper.class);
 
         expect(xmlPathBuilder.getPath()).andReturn("/path");
         expect(xmlPullParser.getText()).andReturn("text");

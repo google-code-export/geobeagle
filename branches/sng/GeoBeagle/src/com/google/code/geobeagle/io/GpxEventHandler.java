@@ -15,8 +15,7 @@
 package com.google.code.geobeagle.io;
 
 import com.google.code.geobeagle.io.GpxLoader.Cache;
-
-import org.xmlpull.v1.XmlPullParser;
+import com.google.code.geobeagle.io.GpxToCache.XmlPullParserWrapper;
 
 import java.io.IOException;
 
@@ -52,7 +51,7 @@ public class GpxEventHandler {
         return null;
     }
 
-    public void startTag(String mFullPath, XmlPullParser mXmlPullParser) {
+    public void startTag(String mFullPath, XmlPullParserWrapper mXmlPullParser) {
         if (mFullPath.equals("/gpx/wpt")) {
             mCachePersisterFacade.wpt(mXmlPullParser);
         }

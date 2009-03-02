@@ -14,11 +14,10 @@
 
 package com.google.code.geobeagle.io;
 
-import com.google.code.geobeagle.io.HtmlWriter.HtmlWriterFactory;
-import com.google.code.geobeagle.io.GpxLoader.Cache;
 import com.google.code.geobeagle.io.CacheDetailsWriter.CacheDetailsWriterFactory;
-
-import org.xmlpull.v1.XmlPullParser;
+import com.google.code.geobeagle.io.GpxLoader.Cache;
+import com.google.code.geobeagle.io.GpxToCache.XmlPullParserWrapper;
+import com.google.code.geobeagle.io.HtmlWriter.HtmlWriterFactory;
 
 import java.io.IOException;
 
@@ -62,7 +61,7 @@ public class CachePersisterFacade {
         mGpxWriter.writeLogDate(text);
     }
 
-    void wpt(XmlPullParser mXmlPullParser) {
+    void wpt(XmlPullParserWrapper mXmlPullParser) {
         mCache.mLatitude = Double.parseDouble(mXmlPullParser.getAttributeValue(null, "lat"));
         mCache.mLongitude = Double.parseDouble(mXmlPullParser.getAttributeValue(null, "lon"));
     }
