@@ -23,11 +23,7 @@ import com.google.code.geobeagle.data.Destination;
 import com.google.code.geobeagle.data.Destination.DestinationFactory;
 import com.google.code.geobeagle.io.Database;
 import com.google.code.geobeagle.io.GpxImporter;
-import com.google.code.geobeagle.io.GpxLoader;
 import com.google.code.geobeagle.io.LocationBookmarksSql;
-import com.google.code.geobeagle.io.Database.SQLiteWrapper;
-import com.google.code.geobeagle.io.GpxImporter.ImportThread;
-import com.google.code.geobeagle.io.GpxImporter.ProgressDialogWrapper;
 
 import android.app.ListActivity;
 import android.content.Context;
@@ -103,16 +99,10 @@ public class CacheListDelegate {
         final CacheListActions.Action actions[] = CacheListActions.create(parent, database,
                 cacheListData, errorDisplayer);
         final CacheListOnCreateContextMenuListener.Factory factory = new CacheListOnCreateContextMenuListener.Factory();
-        final GpxLoader.Factory gxpLoaderFactory = new GpxLoader.Factory(database, errorDisplayer);
-        final ImportThread.Factory importThreadFactory = new ImportThread.Factory(errorDisplayer);
-        final ProgressDialogWrapper progressDialogWrapper = new ProgressDialogWrapper();
-        final SQLiteWrapper sqliteWrapper = new SQLiteWrapper();
-        final GpxImporter gpxImporter = new GpxImporter(gxpLoaderFactory, database, errorDisplayer,
-                parent, importThreadFactory, progressDialogWrapper, sqliteWrapper);
+        final GpxImporter gpxImporter = GpxImporter.create(database, errorDisplayer, parent);
 
         return new CacheListDelegate(parent, locationBookmarks, locationControl,
-                simpleAdapterFactory, cacheListData, errorDisplayer, actions, factory,
-                gxpLoaderFactory, gpxImporter);
+                simpleAdapterFactory, cacheListData, errorDisplayer, actions, factory, gpxImporter);
     }
 
     private final CacheListActions.Action mActions[];
@@ -130,8 +120,7 @@ public class CacheListDelegate {
             LocationControl locationControl, SimpleAdapterFactory simpleAdapterFactory,
             CacheListData cacheListData, ErrorDisplayer errorDisplayer,
             CacheListActions.Action[] actions,
-            CacheListOnCreateContextMenuListener.Factory factory,
-            GpxLoader.Factory gpxLoaderFactory, GpxImporter gpxImporter) {
+            CacheListOnCreateContextMenuListener.Factory factory, GpxImporter gpxImporter) {
         mParent = parent;
         mLocationBookmarks = locationBookmarks;
         mLocationControl = locationControl;
@@ -179,7 +168,12 @@ public class CacheListDelegate {
     }
 
     public void onPause() {
-        mGpxImporter.abort();
+        try {
+            mGpxImporter.abort();
+        } catch (InterruptedException e) {
+            // Nothing we can do here! There is no chance to communicate to the
+            // user.
+        }
     }
 
     public void onResume() {

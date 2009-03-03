@@ -7,7 +7,7 @@ import static org.easymock.classextension.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.verify;
 
 import com.google.code.geobeagle.io.Database.SQLiteWrapper;
-import com.google.code.geobeagle.io.GpxImporter.ImportThread;
+import com.google.code.geobeagle.io.GpxImporter.ImportThreadWrapper;
 import com.google.code.geobeagle.io.GpxImporter.ProgressDialogWrapper;
 import com.google.code.geobeagle.ui.CacheListDelegate;
 
@@ -25,32 +25,47 @@ public class GpxImporterTest extends TestCase {
     public void testImportGpxs() throws FileNotFoundException, XmlPullParserException, IOException {
         CacheListDelegate cacheListDelegate = createMock(CacheListDelegate.class);
         Database database = createMock(Database.class);
-        GpxLoader.Factory gpxLoaderFactory = createMock(GpxLoader.Factory.class);
         SQLiteWrapper sqliteWrapper = createMock(SQLiteWrapper.class);
         GpxLoader gpxLoader = createMock(GpxLoader.class);
         ProgressDialogWrapper progressDialog = createMock(ProgressDialogWrapper.class);
         ListActivity listActivity = createMock(ListActivity.class);
-        ImportThread.Factory importThreadFactory = createMock(ImportThread.Factory.class);
-        ImportThread importThread = createMock(ImportThread.class);
+        ImportThreadWrapper importThreadWrapper = createMock(ImportThreadWrapper.class);
 
-        sqliteWrapper.openWritableDatabase(database);
-        expect(gpxLoaderFactory.create(sqliteWrapper)).andReturn(gpxLoader);
+        sqliteWrapper.openReadableDatabase(database);
         gpxLoader.open();
         progressDialog.show(listActivity, "Importing Caches...", "Please wait...");
-        expect(importThreadFactory.create(cacheListDelegate, progressDialog, gpxLoader)).andReturn(
-                importThread);
+        importThreadWrapper.open(cacheListDelegate, progressDialog, gpxLoader, null);
+        importThreadWrapper.start();
 
         replay(database);
-        replay(importThreadFactory);
+        replay(importThreadWrapper);
         replay(cacheListDelegate);
-        replay(gpxLoaderFactory);
-        GpxImporter gpxImporter = new GpxImporter(gpxLoaderFactory, database, null, listActivity,
-                importThreadFactory, progressDialog, sqliteWrapper);
+        GpxImporter gpxImporter = new GpxImporter(gpxLoader, database, null, listActivity,
+                progressDialog, sqliteWrapper, importThreadWrapper);
         gpxImporter.importGpxs(cacheListDelegate);
-        verify(gpxLoaderFactory);
         verify(cacheListDelegate);
-        verify(importThreadFactory);
+        verify(importThreadWrapper);
         verify(database);
     }
 
+    public void testAbort() throws InterruptedException {
+        // TODO: test thread alive case.
+        ProgressDialogWrapper progressDialog = createMock(ProgressDialogWrapper.class);
+        GpxLoader gpxLoader = createMock(GpxLoader.class);
+        ImportThreadWrapper importThreadWrapper = createMock(ImportThreadWrapper.class);
+
+        progressDialog.dismiss();
+        gpxLoader.abortLoad();
+        expect(importThreadWrapper.isAlive()).andReturn(false);
+
+        replay(progressDialog);
+        replay(gpxLoader);
+        replay(importThreadWrapper);
+        GpxImporter gpxImporter = new GpxImporter(gpxLoader, null, null, null, progressDialog,
+                null, importThreadWrapper);
+        gpxImporter.abort();
+        verify(progressDialog);
+        verify(gpxLoader);
+        verify(importThreadWrapper);
+    }
 }

@@ -25,20 +25,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 public class GpxLoader {
-    public static class Factory {
-        private final ErrorDisplayer mErrorDisplayer;
-        private final Database mDatabase;
-
-        public Factory(Database database, ErrorDisplayer errorDisplayer) {
-            mDatabase = database;
-            mErrorDisplayer = errorDisplayer;
-        }
-
-        public GpxLoader create(SQLiteWrapper sqlite) {
-            return GpxLoader.create(mErrorDisplayer, mDatabase, sqlite);
-        }
-    }
-
     public static class Cache {
         public String mId;
         public double mLatitude;
@@ -98,6 +84,7 @@ public class GpxLoader {
 
         mCacheWriter.clear(GPX_PATH);
         mCacheWriter.startWriting();
+        mAbortLoad = false;
         int nCache = 0;
         for (final Cache cache : mGpxCaches) {
             messageHandler.update(++nCache + ": " + cache.mName);
