@@ -21,30 +21,29 @@ import com.google.code.geobeagle.io.Database.SQLiteWrapper;
 import com.google.code.geobeagle.ui.ErrorDisplayer;
 
 public class LocationSaver {
-    private final Database mDatabaseFactory;
+    private final Database mDatabase;
     private final DestinationFactory mDestinationFactory;
     private final ErrorDisplayer mErrorDisplayer;
+    private final SQLiteWrapper mSQLiteWrapper;
 
     public LocationSaver(Database database, DestinationFactory destinationFactory,
-            ErrorDisplayer errorDisplayer) {
-        mDatabaseFactory = database;
+            ErrorDisplayer errorDisplayer, SQLiteWrapper sqliteWrapper) {
+        mDatabase = database;
         mDestinationFactory = destinationFactory;
         mErrorDisplayer = errorDisplayer;
+        mSQLiteWrapper = sqliteWrapper;
     }
 
     public void saveLocation(final CharSequence location) {
-        SQLiteWrapper sqlite = mDatabaseFactory.getWritableDatabase();
-        // TODO: actually getWritableDatabase throws on error rather than
-        // returning null.
-        if (sqlite != null) {
-            CacheWriter cacheWriter = mDatabaseFactory.createCacheWriter(sqlite, mErrorDisplayer);
-            cacheWriter.startWriting();
-            Destination destination = mDestinationFactory.create(location);
-            cacheWriter.write(destination.getFullId(), destination.getName(), destination
-                    .getLatitude(), destination.getLongitude(), "intent");
-            cacheWriter.stopWriting();
-            sqlite.close();
-        }
+        mSQLiteWrapper.openWritableDatabase(mDatabase);
+        // TODO: catch errors on open
+        CacheWriter cacheWriter = mDatabase.createCacheWriter(mSQLiteWrapper, mErrorDisplayer);
+        cacheWriter.startWriting();
+        Destination destination = mDestinationFactory.create(location);
+        cacheWriter.write(destination.getFullId(), destination.getName(),
+                destination.getLatitude(), destination.getLongitude(), "intent");
+        cacheWriter.stopWriting();
+        mSQLiteWrapper.close();
     }
 
 }

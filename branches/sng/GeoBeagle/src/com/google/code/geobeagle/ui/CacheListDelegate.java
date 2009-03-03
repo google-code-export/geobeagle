@@ -106,18 +106,18 @@ public class CacheListDelegate {
         final GpxLoader.Factory gxpLoaderFactory = new GpxLoader.Factory(database, errorDisplayer);
         final ImportThread.Factory importThreadFactory = new ImportThread.Factory(errorDisplayer);
         final ProgressDialogWrapper progressDialogWrapper = new ProgressDialogWrapper();
+        final SQLiteWrapper sqliteWrapper = new SQLiteWrapper();
         final GpxImporter gpxImporter = new GpxImporter(gxpLoaderFactory, database, errorDisplayer,
-                parent, importThreadFactory, progressDialogWrapper);
+                parent, importThreadFactory, progressDialogWrapper, sqliteWrapper);
 
         return new CacheListDelegate(parent, locationBookmarks, locationControl,
-                simpleAdapterFactory, cacheListData, errorDisplayer, database, actions, factory,
+                simpleAdapterFactory, cacheListData, errorDisplayer, actions, factory,
                 gxpLoaderFactory, gpxImporter);
     }
 
     private final CacheListActions.Action mActions[];
     private final CacheListData mCacheListData;
     private final CacheListOnCreateContextMenuListener.Factory mCreateContextMenuFactory;
-    private final Database mDatabase;
     private final ErrorDisplayer mErrorDisplayer;
     private final GpxImporter mGpxImporter;
     private final LocationBookmarksSql mLocationBookmarks;
@@ -125,11 +125,10 @@ public class CacheListDelegate {
     private final ListActivity mParent;
     private SimpleAdapter mSimpleAdapter;
     private final SimpleAdapterFactory mSimpleAdapterFactory;
-    private SQLiteWrapper mSqliteDatabase;
 
     public CacheListDelegate(ListActivity parent, LocationBookmarksSql locationBookmarks,
             LocationControl locationControl, SimpleAdapterFactory simpleAdapterFactory,
-            CacheListData cacheListData, ErrorDisplayer errorDisplayer, Database database,
+            CacheListData cacheListData, ErrorDisplayer errorDisplayer,
             CacheListActions.Action[] actions,
             CacheListOnCreateContextMenuListener.Factory factory,
             GpxLoader.Factory gpxLoaderFactory, GpxImporter gpxImporter) {
@@ -139,10 +138,8 @@ public class CacheListDelegate {
         mSimpleAdapterFactory = simpleAdapterFactory;
         mCacheListData = cacheListData;
         mErrorDisplayer = errorDisplayer;
-        mDatabase = database;
         mActions = actions;
         mCreateContextMenuFactory = factory;
-
         mGpxImporter = gpxImporter;
     }
 
@@ -178,9 +175,7 @@ public class CacheListDelegate {
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {
-        mSqliteDatabase = new SQLiteWrapper();
-        mSqliteDatabase.open(mDatabase.openOrCreateCacheDatabase());
-        return mGpxImporter.importGpxs(this, mSqliteDatabase);
+        return mGpxImporter.importGpxs(this);
     }
 
     public void onPause() {

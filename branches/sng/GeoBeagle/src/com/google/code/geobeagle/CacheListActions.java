@@ -31,9 +31,10 @@ public class CacheListActions {
     public static CacheListActions.Action[] create(ListActivity parent, Database database,
             CacheListData cacheListData, ErrorDisplayer errorDisplayer) {
         final Intent intent = new Intent(parent, GeoBeagle.class);
+        final SQLiteWrapper sqliteWrapper = new SQLiteWrapper();
 
         return new CacheListActions.Action[] {
-                new CacheListActions.Delete(database, cacheListData, errorDisplayer),
+                new CacheListActions.Delete(database, sqliteWrapper, cacheListData, errorDisplayer),
                 new CacheListActions.View(cacheListData, parent, intent)
         };
     }
@@ -46,20 +47,23 @@ public class CacheListActions {
         private final CacheListData mCacheListData;
         private final Database mDatabase;
         private final ErrorDisplayer mErrorDisplayer;
+        private final SQLiteWrapper mSQLiteWrapper;
 
-        public Delete(Database database, CacheListData cacheListData, ErrorDisplayer errorDisplayer) {
+        public Delete(Database database, SQLiteWrapper sqliteWrapper, CacheListData cacheListData,
+                ErrorDisplayer errorDisplayer) {
             mCacheListData = cacheListData;
             mDatabase = database;
             mErrorDisplayer = errorDisplayer;
+            mSQLiteWrapper = sqliteWrapper;
         }
 
         public void act(int position, SimpleAdapter simpleAdapter) {
-            // TODO: pull sqliteDatbase and then cachewriter up to top level so
+            // TODO: pull sqliteDatabase and then cachewriter up to top level so
             // they're shared.
-            SQLiteWrapper sqliteWrapper = mDatabase.getWritableDatabase();
-            CacheWriter cacheWriter = mDatabase.createCacheWriter(sqliteWrapper, mErrorDisplayer);
+            mSQLiteWrapper.openWritableDatabase(mDatabase);
+            CacheWriter cacheWriter = mDatabase.createCacheWriter(mSQLiteWrapper, mErrorDisplayer);
             cacheWriter.delete(mCacheListData.getId(position));
-            sqliteWrapper.close();
+            mSQLiteWrapper.close();
 
             mCacheListData.delete(position);
 

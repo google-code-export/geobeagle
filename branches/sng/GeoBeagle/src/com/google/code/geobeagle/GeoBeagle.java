@@ -25,6 +25,7 @@ import com.google.code.geobeagle.intents.IntentStarterRadar;
 import com.google.code.geobeagle.intents.IntentStarterViewUri;
 import com.google.code.geobeagle.io.Database;
 import com.google.code.geobeagle.io.LocationSaver;
+import com.google.code.geobeagle.io.Database.SQLiteWrapper;
 import com.google.code.geobeagle.ui.CacheListDelegate;
 import com.google.code.geobeagle.ui.CachePageButtonEnabler;
 import com.google.code.geobeagle.ui.ContentSelector;
@@ -152,9 +153,10 @@ public class GeoBeagle extends Activity {
                     destinationPatterns);
             final Database database = Database.create(this);
 
-            MockableEditText mockableTxtLocation = new MockableEditText(txtLocation);
-            LocationSaver locationSaver = new LocationSaver(database, destinationFactory,
-                    mErrorDisplayer);
+            final MockableEditText mockableTxtLocation = new MockableEditText(txtLocation);
+            final SQLiteWrapper sqliteWrapper = new SQLiteWrapper();
+            final LocationSaver locationSaver = new LocationSaver(database, destinationFactory,
+                    mErrorDisplayer, sqliteWrapper);
             final String initialDestination = getString(R.string.initial_destination);
             mLocationSetter = new LocationSetter(this, mockableTxtLocation, mGpsControl,
                     destinationPatterns, initialDestination, mErrorDisplayer, locationSaver);

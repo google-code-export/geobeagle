@@ -40,11 +40,9 @@ public class GpxImporter {
             }
 
             ImportThread create(CacheListDelegate cacheListDelegate,
-                    ProgressDialogWrapper progressDialog, GpxLoader gpxLoader,
-                    SQLiteWrapper sqliteDatabase) {
-
+                    ProgressDialogWrapper progressDialog, GpxLoader gpxLoader) {
                 final MessageHandler messageHandler = new MessageHandler(cacheListDelegate,
-                        progressDialog, sqliteDatabase);
+                        progressDialog);
                 return new ImportThread(messageHandler, gpxLoader, mErrorDisplayer);
             }
         }
@@ -76,14 +74,12 @@ public class GpxImporter {
         static final int MSG_PROGRESS = 0;
         private final CacheListDelegate mCacheListDelegate;
         private final ProgressDialogWrapper mProgressDialog;
-        private final SQLiteWrapper mSqliteDatabase;
         private String mStatus;
 
         public MessageHandler(CacheListDelegate cacheListDelegate,
-                ProgressDialogWrapper progressDialog, SQLiteWrapper sqliteDatabase) {
+                ProgressDialogWrapper progressDialog) {
             mCacheListDelegate = cacheListDelegate;
             mProgressDialog = progressDialog;
-            mSqliteDatabase = sqliteDatabase;
         }
 
         public void handleMessage(Message msg) {
@@ -94,7 +90,6 @@ public class GpxImporter {
                 case MessageHandler.MSG_DONE:
                     mProgressDialog.dismiss();
                     mCacheListDelegate.onResume();
-                    mSqliteDatabase.close();
                     break;
                 default:
                     break;
@@ -131,15 +126,21 @@ public class GpxImporter {
     private final ImportThread.Factory mImportThreadFactory;
     private final ListActivity mListActivity;
     private final ProgressDialogWrapper mProgressDialog;
+    private final SQLiteWrapper mSqliteWrapper;
+    private final Database mDatabase;
 
     public GpxImporter(GpxLoader.Factory gpxLoaderFactory, Database database,
             ErrorDisplayer errorDisplayer, ListActivity listActivity,
-            ImportThread.Factory importThreadFactory, ProgressDialogWrapper progressDialog) {
+            ImportThread.Factory importThreadFactory, ProgressDialogWrapper progressDialog,
+            SQLiteWrapper sqliteWrapper) {
         mGpxLoaderFactory = gpxLoaderFactory;
+        mDatabase = database;
         mErrorDisplayer = errorDisplayer;
         mListActivity = listActivity;
         mImportThreadFactory = importThreadFactory;
         mProgressDialog = progressDialog;
+        mGpxLoader = mGpxLoaderFactory.create(sqliteWrapper);
+        mSqliteWrapper = sqliteWrapper;
     }
 
     public void abort() {
@@ -149,6 +150,7 @@ public class GpxImporter {
                 mGpxLoader.abortLoad();
                 if (mImportThread != null && mImportThread.isAlive()) {
                     mImportThread.join();
+                    mSqliteWrapper.close();
                     Toast mToast = Toast.makeText(mListActivity, R.string.import_canceled,
                             Toast.LENGTH_SHORT);
                     mToast.show();
@@ -163,14 +165,13 @@ public class GpxImporter {
         }
     }
 
-    public boolean importGpxs(CacheListDelegate cacheListDelegate, SQLiteWrapper sqliteDatabase) {
+    public boolean importGpxs(CacheListDelegate cacheListDelegate) {
         try {
-            mGpxLoader = mGpxLoaderFactory.create(sqliteDatabase);
+            mSqliteWrapper.openWritableDatabase(mDatabase);
             mGpxLoader.open();
             mProgressDialog.show(mListActivity, "Importing Caches", "Please wait...");
             mImportThread = mImportThreadFactory.create(cacheListDelegate, mProgressDialog,
-                    mGpxLoader, sqliteDatabase);
-
+                    mGpxLoader);
             mImportThread.start();
         } catch (final FileNotFoundException e) {
             mErrorDisplayer.displayError("Unable to open file '" + e.getMessage()

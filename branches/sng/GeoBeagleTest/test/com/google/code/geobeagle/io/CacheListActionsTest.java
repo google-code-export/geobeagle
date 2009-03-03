@@ -12,7 +12,7 @@
  ** limitations under the License.
  */
 
-package com.google.code.geobeagle.ui;
+package com.google.code.geobeagle.io;
 
 import static org.easymock.EasyMock.expect;
 import static org.easymock.classextension.EasyMock.createMock;
@@ -21,13 +21,12 @@ import static org.easymock.classextension.EasyMock.verify;
 
 import com.google.code.geobeagle.CacheListActions;
 import com.google.code.geobeagle.data.CacheListData;
-import com.google.code.geobeagle.io.Database;
 import com.google.code.geobeagle.io.Database.CacheWriter;
 import com.google.code.geobeagle.io.Database.SQLiteWrapper;
+import com.google.code.geobeagle.ui.CacheListDelegate;
 
 import android.content.Context;
 import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
 import android.widget.SimpleAdapter;
 
 import junit.framework.TestCase;
@@ -40,8 +39,8 @@ public class CacheListActionsTest extends TestCase {
         CacheWriter cacheWriter = createMock(CacheWriter.class);
         SQLiteWrapper sqliteWrapper = createMock(SQLiteWrapper.class);
         SimpleAdapter simpleAdapter = createMock(SimpleAdapter.class);
-
-        expect(database.getWritableDatabase()).andReturn(sqliteWrapper);
+        
+        sqliteWrapper.openWritableDatabase(database);
         expect(database.createCacheWriter(sqliteWrapper, null)).andReturn(cacheWriter);
         cacheListData.delete(17);
         expect(cacheListData.getId(17)).andReturn("GC123");
@@ -54,7 +53,7 @@ public class CacheListActionsTest extends TestCase {
         replay(cacheListData);
         replay(cacheWriter);
         replay(database);
-        CacheListActions.Action action = new CacheListActions.Delete(database, cacheListData, null);
+        CacheListActions.Action action = new CacheListActions.Delete(database, sqliteWrapper, cacheListData, null);
         action.act(17, simpleAdapter);
         verify(sqliteWrapper);
         verify(cacheListData);

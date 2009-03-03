@@ -26,11 +26,9 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class Database {
     public static class CacheReader {
         private Cursor mCursor;
-        private final SQLiteDatabase mSqliteDatabase;
         private final SQLiteWrapper mSqliteWrapper;
 
-        public CacheReader(SQLiteDatabase sqliteDatabase, SQLiteWrapper sqliteWrapper) {
-            mSqliteDatabase = sqliteDatabase;
+        public CacheReader(SQLiteWrapper sqliteWrapper) {
             mSqliteWrapper = sqliteWrapper;
         }
 
@@ -54,9 +52,10 @@ public class Database {
 
         public boolean open() {
             try {
-                mCursor = mSqliteWrapper.query(mSqliteDatabase, TBL_CACHES, READER_COLUMNS, null,
-                        null, null, null, null);
+                mCursor = mSqliteWrapper.query(TBL_CACHES, READER_COLUMNS, null, null, null, null,
+                        null);
             } catch (SQLiteException e) {
+                // TODO: this can't be right....
                 e.printStackTrace();
                 return false;
             }
@@ -157,10 +156,14 @@ public class Database {
     }
 
     public static class SQLiteWrapper {
-        SQLiteDatabase mSQLiteDatabase;
+        private SQLiteDatabase mSQLiteDatabase;
 
         public void beginTransaction() {
             mSQLiteDatabase.beginTransaction();
+        }
+
+        public void close() {
+            mSQLiteDatabase.close();
         }
 
         public void endTransaction() {
@@ -175,17 +178,14 @@ public class Database {
             mSQLiteDatabase.execSQL(sql, bindArgs);
         }
 
-        public void open(SQLiteDatabase sqliteDatabase) {
-            mSQLiteDatabase = sqliteDatabase;
+        public void openWritableDatabase(Database database) {
+            mSQLiteDatabase = database.getWritableDatabase();
         }
 
-        public void close() {
-            mSQLiteDatabase.close();
-        }
-
-        public Cursor query(SQLiteDatabase db, String table, String[] columns, String selection,
+        public Cursor query(String table, String[] columns, String selection,
                 String[] selectionArgs, String groupBy, String having, String orderBy) {
-            return db.query(table, columns, selection, selectionArgs, groupBy, orderBy, having);
+            return mSQLiteDatabase.query(table, columns, selection, selectionArgs, groupBy,
+                    orderBy, having);
         }
 
         public void setTransactionSuccessful() {
@@ -210,35 +210,27 @@ public class Database {
     public static final String TBL_CACHES = "CACHES";
 
     public static Database create(Context context) {
-        return new Database(new SQLiteWrapper(), new GeoBeagleSqliteOpenHelper(context,
-                new OpenHelperDelegate()));
+        final OpenHelperDelegate openHelperDelegate = new OpenHelperDelegate();
+        final GeoBeagleSqliteOpenHelper sqliteOpenHelper = new GeoBeagleSqliteOpenHelper(context,
+                openHelperDelegate);
+        return new Database(sqliteOpenHelper);
     }
 
     private final SQLiteOpenHelper mSqliteOpenHelper;
-    private final SQLiteWrapper mSqliteWrapper;
 
-    public Database(SQLiteWrapper sqliteWrapper, SQLiteOpenHelper sqliteOpenHelper) {
-        mSqliteWrapper = sqliteWrapper;
+    public Database(SQLiteOpenHelper sqliteOpenHelper) {
         mSqliteOpenHelper = sqliteOpenHelper;
     }
 
-    public CacheReader createCacheReader(SQLiteDatabase sqlite) {
-        return new CacheReader(sqlite, mSqliteWrapper);
+    public CacheReader createCacheReader(SQLiteWrapper sqliteWrapper) {
+        return new CacheReader(sqliteWrapper);
     }
 
-    public CacheWriter createCacheWriter(SQLiteWrapper sqlite, ErrorDisplayer errorDisplayer) {
-        return new CacheWriter(sqlite, errorDisplayer);
+    public CacheWriter createCacheWriter(SQLiteWrapper sqliteWrapper, ErrorDisplayer errorDisplayer) {
+        return new CacheWriter(sqliteWrapper, errorDisplayer);
     }
 
-    public SQLiteDatabase openOrCreateCacheDatabase() {
-        // TODO: need to create read-only database too.
+    public SQLiteDatabase getWritableDatabase() {
         return mSqliteOpenHelper.getWritableDatabase();
-    }
-
-    public SQLiteWrapper getWritableDatabase() {
-        SQLiteWrapper sqliteWrapper = new SQLiteWrapper();
-        sqliteWrapper.open(mSqliteOpenHelper.getWritableDatabase());
-        return sqliteWrapper;
-        
     }
 }

@@ -24,39 +24,19 @@ import com.google.code.geobeagle.data.Destination.DestinationFactory;
 import com.google.code.geobeagle.io.Database.CacheWriter;
 import com.google.code.geobeagle.io.Database.SQLiteWrapper;
 
-import android.database.sqlite.SQLiteDatabase;
-
 import junit.framework.TestCase;
 
 public class LocationSaverTest extends TestCase {
 
-    private Database mFactory;
-    private SQLiteWrapper mSqlite;
-
-    public void setUp() {
-        mFactory = createMock(Database.class);
-        mSqlite = createMock(SQLiteWrapper.class);
-    }
-
-    public void testSaveBookmarksOpenError() {
-        SQLiteDatabase sqliteDb = createMock(SQLiteDatabase.class);
-        expect(mFactory.getWritableDatabase()).andReturn(null);
-
-        replay(mFactory);
-        replay(sqliteDb);
-        LocationSaver locationSaver = new LocationSaver(mFactory, null, null);
-        locationSaver.saveLocation(null);
-        verify(mFactory);
-        verify(sqliteDb);
-    }
-
     public void testSave() {
+        Database database = createMock(Database.class);
+        SQLiteWrapper sqliteWrapper = createMock(SQLiteWrapper.class);
         CacheWriter writer = createMock(CacheWriter.class);
         DestinationFactory destinationFactory = createMock(DestinationFactory.class);
         Destination destination = createMock(Destination.class);
 
-        expect(mFactory.getWritableDatabase()).andReturn(mSqlite);
-        expect(mFactory.createCacheWriter(mSqlite, null)).andReturn(writer);
+        sqliteWrapper.openWritableDatabase(database);
+        expect(database.createCacheWriter(sqliteWrapper, null)).andReturn(writer);
         writer.startWriting();
         expect(destinationFactory.create("122 32.3423 83 32.3221 (LB12345)"))
                 .andReturn(destination);
@@ -66,18 +46,18 @@ public class LocationSaverTest extends TestCase {
         expect(destination.getLongitude()).andReturn(37.0);
         expect(writer.write("LB12345", "", 122, 37, "intent")).andReturn(true);
         writer.stopWriting();
-        mSqlite.close();
+        sqliteWrapper.close();
 
-        replay(mFactory);
-        replay(mSqlite);
+        replay(database);
+        replay(sqliteWrapper);
         replay(writer);
         replay(destination);
         replay(destinationFactory);
-        new LocationSaver(mFactory, destinationFactory, null)
+        new LocationSaver(database, destinationFactory, null, sqliteWrapper)
                 .saveLocation("122 32.3423 83 32.3221 (LB12345)");
-        verify(mFactory);
+        verify(database);
         verify(writer);
-        verify(mSqlite);
+        verify(sqliteWrapper);
         verify(destinationFactory);
         verify(destination);
     }
