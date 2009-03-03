@@ -65,7 +65,7 @@ public class LocationBookmarksSql implements LifecycleManager {
     }
 
     private void readBookmarks() {
-        mSQLiteWrapper.openWritableDatabase(mDatabase);
+        mSQLiteWrapper.openReadableDatabase(mDatabase);
         CacheReader cacheReader = mDatabase.createCacheReader(mSQLiteWrapper);
         if (cacheReader.open()) {
             readBookmarks(cacheReader);

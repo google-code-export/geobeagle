@@ -167,7 +167,7 @@ public class GpxImporter {
 
     public boolean importGpxs(CacheListDelegate cacheListDelegate) {
         try {
-            mSqliteWrapper.openWritableDatabase(mDatabase);
+            mSqliteWrapper.openReadableDatabase(mDatabase);
             mGpxLoader.open();
             mProgressDialog.show(mListActivity, "Importing Caches", "Please wait...");
             mImportThread = mImportThreadFactory.create(cacheListDelegate, mProgressDialog,

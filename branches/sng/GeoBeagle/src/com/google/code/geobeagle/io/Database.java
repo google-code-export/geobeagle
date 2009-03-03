@@ -178,6 +178,10 @@ public class Database {
             mSQLiteDatabase.execSQL(sql, bindArgs);
         }
 
+        public void openReadableDatabase(Database database) {
+            mSQLiteDatabase = database.getReadableDatabase();
+        }
+
         public void openWritableDatabase(Database database) {
             mSQLiteDatabase = database.getWritableDatabase();
         }
@@ -228,6 +232,10 @@ public class Database {
 
     public CacheWriter createCacheWriter(SQLiteWrapper sqliteWrapper, ErrorDisplayer errorDisplayer) {
         return new CacheWriter(sqliteWrapper, errorDisplayer);
+    }
+
+    public SQLiteDatabase getReadableDatabase() {
+        return mSqliteOpenHelper.getReadableDatabase();
     }
 
     public SQLiteDatabase getWritableDatabase() {
