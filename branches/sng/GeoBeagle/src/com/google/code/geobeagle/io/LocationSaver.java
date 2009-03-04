@@ -40,7 +40,7 @@ public class LocationSaver {
         CacheWriter cacheWriter = mDatabase.createCacheWriter(mSQLiteWrapper, mErrorDisplayer);
         cacheWriter.startWriting();
         Destination destination = mDestinationFactory.create(location);
-        cacheWriter.write(destination.getFullId(), destination.getName(),
+        cacheWriter.insertAndUpdateCache(destination.getFullId(), destination.getName(),
                 destination.getLatitude(), destination.getLongitude(), "intent");
         cacheWriter.stopWriting();
         mSQLiteWrapper.close();

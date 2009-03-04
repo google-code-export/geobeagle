@@ -44,7 +44,7 @@ public class CacheListActionsTest extends TestCase {
         expect(database.createCacheWriter(sqliteWrapper, null)).andReturn(cacheWriter);
         cacheListData.delete(17);
         expect(cacheListData.getId(17)).andReturn("GC123");
-        cacheWriter.delete("GC123");
+        cacheWriter.deleteCache("GC123");
         sqliteWrapper.close();
         simpleAdapter.notifyDataSetChanged();
 

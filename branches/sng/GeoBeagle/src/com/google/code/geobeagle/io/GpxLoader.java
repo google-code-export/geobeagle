@@ -82,14 +82,14 @@ public class GpxLoader {
         File file = mFileFactory.createFile(GpxLoader.GEOBEAGLE_DIR);
         file.mkdirs();
 
-        mCacheWriter.clear(GPX_PATH);
+        mCacheWriter.clearCaches(GPX_PATH);
         mCacheWriter.startWriting();
         mAbortLoad = false;
         int nCache = 0;
         for (final Cache cache : mGpxCaches) {
             messageHandler.update(++nCache + ": " + cache.mName);
-            if (!mCacheWriter.write(cache.mId, cache.mName, cache.mLatitude, cache.mLongitude,
-                    mGpxCaches.getSource())
+            if (!mCacheWriter.insertAndUpdateCache(cache.mId, cache.mName, cache.mLatitude,
+                    cache.mLongitude, mGpxCaches.getSource())
                     || mAbortLoad)
                 break;
         }

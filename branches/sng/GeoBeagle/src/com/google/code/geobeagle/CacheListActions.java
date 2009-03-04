@@ -62,7 +62,7 @@ public class CacheListActions {
             // they're shared.
             mSQLiteWrapper.openWritableDatabase(mDatabase);
             CacheWriter cacheWriter = mDatabase.createCacheWriter(mSQLiteWrapper, mErrorDisplayer);
-            cacheWriter.delete(mCacheListData.getId(position));
+            cacheWriter.deleteCache(mCacheListData.getId(position));
             mSQLiteWrapper.close();
 
             mCacheListData.delete(position);

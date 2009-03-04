@@ -120,7 +120,7 @@ public class DatabaseTest extends TestCase {
 
         replay(sqlite);
         CacheWriter cacheWriter = new CacheWriter(sqlite, null);
-        cacheWriter.write("gc123", "a cache", 122, 37, "source");
+        cacheWriter.insertAndUpdateCache("gc123", "a cache", 122, 37, "source");
         verify(sqlite);
     }
 
@@ -133,7 +133,7 @@ public class DatabaseTest extends TestCase {
 
         replay(sqlite);
         CacheWriter cacheWriter = new CacheWriter(sqlite, null);
-        cacheWriter.clear("the source");
+        cacheWriter.clearCaches("the source");
         verify(sqlite);
     }
 
@@ -146,7 +146,7 @@ public class DatabaseTest extends TestCase {
 
         replay(sqlite);
         CacheWriter cacheWriter = new CacheWriter(sqlite, null);
-        cacheWriter.delete("GC123");
+        cacheWriter.deleteCache("GC123");
         verify(sqlite);
     }
 
@@ -164,7 +164,7 @@ public class DatabaseTest extends TestCase {
         replay(errorDisplayer);
         replay(exception);
         CacheWriter cacheWriter = new CacheWriter(sqlite, errorDisplayer);
-        cacheWriter.write("gc123", "a cache", 122, 37, "source");
+        cacheWriter.insertAndUpdateCache("gc123", "a cache", 122, 37, "source");
         verify(sqlite);
         verify(errorDisplayer);
         verify(exception);

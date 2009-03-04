@@ -75,19 +75,19 @@ public class Database {
             mErrorDisplayer = errorDisplayer;
         }
 
-        public void clear(String source) {
+        public void clearCaches(String source) {
             mSqlite.execSQL(SQL_CLEAR_CACHES, new Object[] {
                 source
             });
         }
 
-        public void delete(CharSequence id) {
+        public void deleteCache(CharSequence id) {
             mSqlite.execSQL(Database.SQL_DELETE_CACHE, new Object[] {
                 id
             });
         }
 
-        private void insert(CharSequence id, CharSequence name, double latitude, double longitude,
+        private void insertCache(CharSequence id, CharSequence name, double latitude, double longitude,
                 String source) {
             mSqlite.execSQL(Database.SQL_INSERT_CACHE, new Object[] {
                     id, name, new Double(latitude), new Double(longitude), source
@@ -103,20 +103,20 @@ public class Database {
             mSqlite.endTransaction();
         }
 
-        private void tryInsertAndUpdate(CharSequence id, CharSequence name, double latitude,
+        private void tryInsertAndUpdateCache(CharSequence id, CharSequence name, double latitude,
                 double longitude, String source) {
             try {
-                insert(id, name, latitude, longitude, source);
+                insertCache(id, name, latitude, longitude, source);
             } catch (final SQLiteConstraintException e) {
-                delete(id);
-                insert(id, name, latitude, longitude, source);
+                deleteCache(id);
+                insertCache(id, name, latitude, longitude, source);
             }
         }
 
-        public boolean write(CharSequence id, CharSequence name, double latitude, double longitude,
+        public boolean insertAndUpdateCache(CharSequence id, CharSequence name, double latitude, double longitude,
                 String source) {
             try {
-                tryInsertAndUpdate(id, name, latitude, longitude, source);
+                tryInsertAndUpdateCache(id, name, latitude, longitude, source);
             } catch (final SQLiteException e) {
                 mErrorDisplayer.displayError("Error writing cache: " + e.toString());
                 return false;

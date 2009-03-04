@@ -44,7 +44,7 @@ public class LocationSaverTest extends TestCase {
         expect(destination.getName()).andReturn("");
         expect(destination.getLatitude()).andReturn(122.0);
         expect(destination.getLongitude()).andReturn(37.0);
-        expect(writer.write("LB12345", "", 122, 37, "intent")).andReturn(true);
+        expect(writer.insertAndUpdateCache("LB12345", "", 122, 37, "intent")).andReturn(true);
         writer.stopWriting();
         sqliteWrapper.close();
 

@@ -42,7 +42,7 @@ public class GpxLoaderTest extends TestCase {
 
         expect(fileFactory.createFile(GpxLoader.GEOBEAGLE_DIR)).andReturn(file);
         expect(file.mkdirs()).andReturn(true);
-        cacheWriter.clear(GpxLoader.GPX_PATH);
+        cacheWriter.clearCaches(GpxLoader.GPX_PATH);
         Cache cache = new Cache("gc1234", "my cache", 122, 37);
         ArrayList<Cache> caches = new ArrayList<Cache>(1);
         caches.add(cache);
@@ -50,7 +50,7 @@ public class GpxLoaderTest extends TestCase {
         messageHandler.update("1: my cache");
         cacheWriter.startWriting();
         expect(gpxCaches.getSource()).andReturn(GpxLoader.GPX_PATH);
-        expect(cacheWriter.write("gc1234", "my cache", 122, 37, GpxLoader.GPX_PATH)).andReturn(true);
+        expect(cacheWriter.insertAndUpdateCache("gc1234", "my cache", 122, 37, GpxLoader.GPX_PATH)).andReturn(true);
         cacheWriter.stopWriting();
 
         replay(fileFactory);
@@ -75,7 +75,7 @@ public class GpxLoaderTest extends TestCase {
         expect(fileFactory.createFile(GpxLoader.GEOBEAGLE_DIR)).andReturn(file);
         expect(file.mkdirs()).andReturn(true);
 
-        cacheWriter.clear(GpxLoader.GPX_PATH);
+        cacheWriter.clearCaches(GpxLoader.GPX_PATH);
         Cache cache = new Cache("gc1234", "my cache", 122, 37);
         ArrayList<Cache> caches = new ArrayList<Cache>(1);
         caches.add(cache);
@@ -83,7 +83,7 @@ public class GpxLoaderTest extends TestCase {
         messageHandler.update("1: my cache");
         cacheWriter.startWriting();
         expect(gpxCaches.getSource()).andReturn(GpxLoader.GPX_PATH);
-        expect(cacheWriter.write("gc1234", "my cache", 122, 37, GpxLoader.GPX_PATH)).andReturn(false);
+        expect(cacheWriter.insertAndUpdateCache("gc1234", "my cache", 122, 37, GpxLoader.GPX_PATH)).andReturn(false);
         cacheWriter.stopWriting();
 
         replay(messageHandler);
