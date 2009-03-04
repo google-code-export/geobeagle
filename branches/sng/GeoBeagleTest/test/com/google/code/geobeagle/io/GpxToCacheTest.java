@@ -25,6 +25,7 @@ import com.google.code.geobeagle.io.GpxToCache.XmlPullParserWrapper;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Iterator;
 
@@ -60,6 +61,27 @@ public class GpxToCacheTest extends TestCase {
         verify(gpxToCache);
     }
 
+    public void testGetSource() {
+        XmlPullParserWrapper xmlPullParserWrapper = createMock(XmlPullParserWrapper.class);
+        
+        expect(xmlPullParserWrapper.getSource()).andReturn("/my/path");
+        
+        replay(xmlPullParserWrapper);
+        GpxToCache gpxToCache = new GpxToCache(xmlPullParserWrapper, null);
+        assertEquals("/my/path", gpxToCache.getSource());
+        verify(xmlPullParserWrapper);
+    }
+    
+    public void testOpen() throws FileNotFoundException, XmlPullParserException {
+        XmlPullParserWrapper xmlPullParserWrapper = createMock(XmlPullParserWrapper.class);
+        xmlPullParserWrapper.open("/my/path");
+        
+        replay(xmlPullParserWrapper);
+        GpxToCache gpxToCache = new GpxToCache(xmlPullParserWrapper, null);
+        gpxToCache.open("/my/path");
+        verify(xmlPullParserWrapper);
+    }
+    
     public void testLoad() throws XmlPullParserException, IOException {
         XmlPullParserWrapper xmlPullParser = createMock(XmlPullParserWrapper.class);
         EventHelper eventHelper = createMock(EventHelper.class);

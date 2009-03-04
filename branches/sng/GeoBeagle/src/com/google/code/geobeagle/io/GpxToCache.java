@@ -35,11 +35,13 @@ public class GpxToCache {
 
     public static class XmlPullParserWrapper {
         private XmlPullParser mXmlPullParser;
+        private String mSource;
 
         public void open(String path) throws XmlPullParserException, FileNotFoundException {
             final XmlPullParser newPullParser = XmlPullParserFactory.newInstance().newPullParser();
             final Reader reader = new BufferedReader(new FileReader(path));
             newPullParser.setInput(reader);
+            mSource = path;
             mXmlPullParser = newPullParser;
         }
 
@@ -59,6 +61,10 @@ public class GpxToCache {
             return mXmlPullParser.getAttributeValue(namespace, name);
         }
 
+        public String getSource() {
+            return mSource;
+        }
+
         public String getText() {
             return mXmlPullParser.getText();
         }
@@ -74,23 +80,27 @@ public class GpxToCache {
     }
 
     private final EventHelper mEventHelper;
-    private final XmlPullParserWrapper mXmlPullParser;
+    private final XmlPullParserWrapper mXmlPullParserWrapper;
 
-    public GpxToCache(XmlPullParserWrapper xmlPullParser, EventHelper eventHelper) {
-        mXmlPullParser = xmlPullParser;
+    public GpxToCache(XmlPullParserWrapper xmlPullParserWrapper, EventHelper eventHelper) {
+        mXmlPullParserWrapper = xmlPullParserWrapper;
         mEventHelper = eventHelper;
     }
 
     public void open(String path) throws FileNotFoundException, XmlPullParserException {
-        mXmlPullParser.open(path);
+        mXmlPullParserWrapper.open(path);
     }
 
     public Cache load() throws XmlPullParserException, IOException {
         Cache cache = null;
-        for (int eventType = mXmlPullParser.getEventType(); eventType != XmlPullParser.END_DOCUMENT
-                && cache == null; eventType = mXmlPullParser.next()) {
+        for (int eventType = mXmlPullParserWrapper.getEventType(); eventType != XmlPullParser.END_DOCUMENT
+                && cache == null; eventType = mXmlPullParserWrapper.next()) {
             cache = mEventHelper.handleEvent(eventType);
         }
         return cache;
+    }
+
+    public String getSource() {
+        return mXmlPullParserWrapper.getSource();
     }
 }
