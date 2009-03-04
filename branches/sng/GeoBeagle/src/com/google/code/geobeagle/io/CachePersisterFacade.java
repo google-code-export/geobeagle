@@ -30,22 +30,21 @@ public class CachePersisterFacade {
     }
 
     private final Cache mCache;
-    private final HtmlWriterFactory mCacheDetailsWriterFactory;
-    private CacheDetailsWriter mGpxWriter;
-
-    private final CacheDetailsWriterFactory mGpxWriterFactory;
+    private CacheDetailsWriter mCacheDetailsWriter;
+    private final CacheDetailsWriterFactory mCacheDetailsWriterFactory;
+    private final HtmlWriterFactory mHtmlWriterFactory;
 
     public CachePersisterFacade(CacheDetailsWriter cacheDetailsWriter, Cache cache,
             CacheDetailsWriterFactory cacheDetailsWriterFactory,
             HtmlWriterFactory cacheDetailsFactory) {
-        mGpxWriterFactory = cacheDetailsWriterFactory;
-        mGpxWriter = cacheDetailsWriter;
+        mCacheDetailsWriterFactory = cacheDetailsWriterFactory;
+        mCacheDetailsWriter = cacheDetailsWriter;
         mCache = cache;
-        mCacheDetailsWriterFactory = cacheDetailsFactory;
+        mHtmlWriterFactory = cacheDetailsFactory;
     }
 
     Cache endTag() throws IOException {
-        mGpxWriter.writeEndTag();
+        mCacheDetailsWriter.writeEndTag();
         return mCache;
     }
 
@@ -54,11 +53,11 @@ public class CachePersisterFacade {
     }
 
     void line(String text) throws IOException {
-        mGpxWriter.writeLine(text);
+        mCacheDetailsWriter.writeLine(text);
     }
 
     void logDate(String text) throws IOException {
-        mGpxWriter.writeLogDate(text);
+        mCacheDetailsWriter.writeLogDate(text);
     }
 
     void wpt(XmlPullParserWrapper mXmlPullParser) {
@@ -67,10 +66,10 @@ public class CachePersisterFacade {
     }
 
     void wptName(String text) throws IOException {
-        HtmlWriter htmlWriter = mCacheDetailsWriterFactory
-                .create(GpxLoader.GEOBEAGLE_DIR + "/" + text + ".html");
-        mGpxWriter = mGpxWriterFactory.create(htmlWriter);
-        mGpxWriter.writeWptName(text, mCache.mLatitude, mCache.mLongitude);
+        HtmlWriter htmlWriter = mHtmlWriterFactory.create(GpxLoader.GEOBEAGLE_DIR + "/" + text
+                + ".html");
+        mCacheDetailsWriter = mCacheDetailsWriterFactory.create(htmlWriter);
+        mCacheDetailsWriter.writeWptName(text, mCache.mLatitude, mCache.mLongitude);
         mCache.mId = text;
     }
 }
