@@ -11,10 +11,10 @@
 		License.
 	-->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-	package="com.google.code.geobeagle" android:versionCode="31"
-	android:versionName="0.31">
+	package="com.google.code.geobeagle" android:versionCode="33"
+	android:versionName="0.33">
 	<application android:icon="@drawable/icon" android:label="@string/app_name">
-		<activity android:name=".GeoBeagle" android:label="@string/app_name">
+		<activity android:name=".GeoBeagle" android:label="@string/app_name" android:configChanges="orientation|keyboardHidden">
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN" />
 				<category android:name="android.intent.category.LAUNCHER" />
@@ -33,7 +33,7 @@
 				<data android:mimeType="application/xml-loc" />
 			</intent-filter>
 		</activity>
-		<activity android:name=".CacheList" android:label="GeoBeagle Caches and Letterboxes"/>
+		<activity android:name=".CacheList" android:label="@string/cache_list_title"/>
 
 	</application>
 	<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />

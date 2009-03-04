@@ -35,6 +35,7 @@
 	<string name="my_current_location">My Current Location</string>
 	<string name="import_canceled">Import aborted!</string>
 	<string name="menu_import_gpx">Sync caches from /sdcard/caches.gpx.</string>
+	<string name="cache_list_title">GeoBeagle Nearest Caches</string>
 	<array name="nearest_objects">
 	  <item>http://www.atlasquest.com/results.html?gTypeId=2;gSort=5;gCoord=%1$.5f,%2$.5f</item>
 	  <item>http://www.geocaching.com/seek/nearest.aspx?lat=%1$.5f&amp;lng=%2$.5f&amp;f=1</item>
