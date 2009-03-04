@@ -36,11 +36,11 @@ public class CachePersisterFacade {
 
     public CachePersisterFacade(CacheDetailsWriter cacheDetailsWriter, Cache cache,
             CacheDetailsWriterFactory cacheDetailsWriterFactory,
-            HtmlWriterFactory cacheDetailsFactory) {
+            HtmlWriterFactory htmlWriterFactory) {
         mCacheDetailsWriterFactory = cacheDetailsWriterFactory;
         mCacheDetailsWriter = cacheDetailsWriter;
         mCache = cache;
-        mHtmlWriterFactory = cacheDetailsFactory;
+        mHtmlWriterFactory = htmlWriterFactory;
     }
 
     Cache endTag() throws IOException {
