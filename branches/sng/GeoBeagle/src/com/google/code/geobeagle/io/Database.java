@@ -51,14 +51,8 @@ public class Database {
         }
 
         public boolean open() {
-            try {
-                mCursor = mSqliteWrapper.query(TBL_CACHES, READER_COLUMNS, null, null, null, null,
-                        null);
-            } catch (SQLiteException e) {
-                // TODO: this can't be right....
-                e.printStackTrace();
-                return false;
-            }
+            mCursor = mSqliteWrapper
+                    .query(TBL_CACHES, READER_COLUMNS, null, null, null, null, null);
             final boolean result = mCursor.moveToFirst();
             if (!result)
                 mCursor.close();
@@ -87,8 +81,19 @@ public class Database {
             });
         }
 
-        private void insertCache(CharSequence id, CharSequence name, double latitude, double longitude,
-                String source) {
+        public boolean insertAndUpdateCache(CharSequence id, CharSequence name, double latitude,
+                double longitude, String source) {
+            try {
+                tryInsertAndUpdateCache(id, name, latitude, longitude, source);
+            } catch (final SQLiteException e) {
+                mErrorDisplayer.displayError("Error writing cache: " + e.toString());
+                return false;
+            }
+            return true;
+        }
+
+        private void insertCache(CharSequence id, CharSequence name, double latitude,
+                double longitude, String source) {
             mSqlite.execSQL(Database.SQL_INSERT_CACHE, new Object[] {
                     id, name, new Double(latitude), new Double(longitude), source
             });
@@ -111,17 +116,6 @@ public class Database {
                 deleteCache(id);
                 insertCache(id, name, latitude, longitude, source);
             }
-        }
-
-        public boolean insertAndUpdateCache(CharSequence id, CharSequence name, double latitude, double longitude,
-                String source) {
-            try {
-                tryInsertAndUpdateCache(id, name, latitude, longitude, source);
-            } catch (final SQLiteException e) {
-                mErrorDisplayer.displayError("Error writing cache: " + e.toString());
-                return false;
-            }
-            return true;
         }
     }
 
