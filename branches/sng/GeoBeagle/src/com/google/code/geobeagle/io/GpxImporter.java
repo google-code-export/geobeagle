@@ -19,6 +19,8 @@ import com.google.code.geobeagle.io.Database.SQLiteWrapper;
 import com.google.code.geobeagle.ui.CacheListDelegate;
 import com.google.code.geobeagle.ui.ErrorDisplayer;
 
+import org.xmlpull.v1.XmlPullParserException;
+
 import android.app.ListActivity;
 import android.app.ProgressDialog;
 import android.os.Handler;
@@ -26,6 +28,7 @@ import android.os.Message;
 import android.widget.Toast;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 
 public class GpxImporter {
 
@@ -180,7 +183,7 @@ public class GpxImporter {
         }
     }
 
-    public boolean importGpxs(CacheListDelegate cacheListDelegate) {
+    public void importGpxs(CacheListDelegate cacheListDelegate) {
         try {
             mSqliteWrapper.openReadableDatabase(mDatabase);
             mGpxLoader.open();
@@ -192,9 +195,10 @@ public class GpxImporter {
             mErrorDisplayer.displayError("Unable to open file '" + e.getMessage()
                     + "'.  Please ensure that the cache import file exists "
                     + "and that the sdcard is readable from your phone.");
-        } catch (final Exception e) {
-            mErrorDisplayer.displayErrorAndStack(e);
+        } catch (XmlPullParserException e) {
+            mErrorDisplayer.displayError(R.string.error_parsing_file, GpxLoader.GPX_PATH);
+        } catch (IOException e) {
+            mErrorDisplayer.displayError(R.string.error_reading_file, GpxLoader.GPX_PATH);
         }
-        return true;
     }
 }

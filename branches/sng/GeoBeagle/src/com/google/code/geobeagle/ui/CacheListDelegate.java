@@ -164,7 +164,8 @@ public class CacheListDelegate {
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {
-        return mGpxImporter.importGpxs(this);
+        mGpxImporter.importGpxs(this);
+        return true;
     }
 
     public void onPause() {
