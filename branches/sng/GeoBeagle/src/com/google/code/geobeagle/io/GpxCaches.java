@@ -14,6 +14,7 @@
 
 package com.google.code.geobeagle.io;
 
+import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.io.GpxLoader.Cache;
 import com.google.code.geobeagle.ui.ErrorDisplayer;
 
@@ -24,6 +25,7 @@ import java.io.IOException;
 import java.util.Iterator;
 
 public class GpxCaches implements Iterable<Cache> {
+
     public class CacheIterator implements Iterator<Cache> {
         private Cache mCache;
 
@@ -34,9 +36,12 @@ public class GpxCaches implements Iterable<Cache> {
                 mCache = mGpxToCache.load();
                 return mCache != null;
             } catch (XmlPullParserException e) {
-                mErrorDisplayer.displayErrorAndStack(e);
+                mErrorDisplayer.displayError(R.string.error_parsing_file, mGpxToCache.getSource());
                 return false;
             } catch (IOException e) {
+                mErrorDisplayer.displayError(R.string.error_reading_file, mGpxToCache.getSource());
+                return false;
+            } catch (Exception e) {
                 mErrorDisplayer.displayErrorAndStack(e);
                 return false;
             }
