@@ -36,7 +36,7 @@ public class DestinationVectorsTest extends TestCase {
         DestinationVectorFactory destinationVectorFactory = createMock(DestinationVectorFactory.class);
         Location here = createMock(Location.class);
         DestinationVector destinationVector = createMock(DestinationVector.class);
-        
+
         expect(destinationVectorFactory.create("a cache", here)).andReturn(destinationVector);
 
         replay(destinationVectorFactory);
@@ -47,6 +47,17 @@ public class DestinationVectorsTest extends TestCase {
         destinationVectors.addLocations(locations, here);
         assertEquals(destinationVector, destinationVectors.get(0));
         verify(destinationVectorFactory);
+    }
+
+    public void testDelete() {
+        DestinationVector destinationVector1 = createMock(DestinationVector.class);
+        DestinationVector destinationVector2 = createMock(DestinationVector.class);
+
+        DestinationVectors destinationVectors = new DestinationVectors(null, null);
+        destinationVectors.add(destinationVector1);
+        destinationVectors.add(destinationVector2);
+        destinationVectors.delete(0);
+        assertEquals(destinationVector1, destinationVectors.get(0));
     }
 
     public void testGetAdapterData() {
@@ -72,9 +83,9 @@ public class DestinationVectorsTest extends TestCase {
         DestinationVectors destinationVectors = new DestinationVectors(null, null);
         destinationVectors.add(destinationVector);
         assertEquals("GC123", destinationVectors.getId(0));
-        verify(destinationVector); 
+        verify(destinationVector);
     }
-    
+
     public void testGetLocation() {
         IDestinationVector destinationVector = createMock(IDestinationVector.class);
 
