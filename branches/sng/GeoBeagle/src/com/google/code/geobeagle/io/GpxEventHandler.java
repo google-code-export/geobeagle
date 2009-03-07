@@ -14,8 +14,7 @@
 
 package com.google.code.geobeagle.io;
 
-import com.google.code.geobeagle.io.GpxLoader.Cache;
-import com.google.code.geobeagle.io.GpxToCache.XmlPullParserWrapper;
+import com.google.code.geobeagle.io.di.GpxToCacheDI;
 
 import java.io.IOException;
 
@@ -31,12 +30,8 @@ public class GpxEventHandler {
             "/gpx/wpt/groundspeak:cache/groundspeak:logs/groundspeak:log/groundspeak:finder",
             "/gpx/wpt/groundspeak:cache/groundspeak:logs/groundspeak:log/groundspeak:text"
     };
+    public static final String XPATH_WPT = "/gpx/wpt";
     public static final String XPATH_WPTNAME = "/gpx/wpt/name";
-
-    static GpxEventHandler create() {
-        final CachePersisterFacade cachePersisterFacade = CachePersisterFacade.create();
-        return new GpxEventHandler(cachePersisterFacade);
-    }
 
     private final CachePersisterFacade mCachePersisterFacade;
 
@@ -44,15 +39,14 @@ public class GpxEventHandler {
         mCachePersisterFacade = cachePersisterFacade;
     }
 
-    public Cache endTag(String previousFullPath) throws IOException {
-        if (previousFullPath.equals("/gpx/wpt")) {
-            return mCachePersisterFacade.endTag();
+    public void endTag(String previousFullPath) throws IOException {
+        if (previousFullPath.equals(XPATH_WPT)) {
+            mCachePersisterFacade.endTag();
         }
-        return null;
     }
 
-    public void startTag(String mFullPath, XmlPullParserWrapper mXmlPullParser) {
-        if (mFullPath.equals("/gpx/wpt")) {
+    public void startTag(String mFullPath, GpxToCacheDI.XmlPullParserWrapper mXmlPullParser) {
+        if (mFullPath.equals(XPATH_WPT)) {
             mCachePersisterFacade.wpt(mXmlPullParser);
         }
     }

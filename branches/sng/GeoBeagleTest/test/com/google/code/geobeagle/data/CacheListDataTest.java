@@ -60,6 +60,16 @@ public class CacheListDataTest extends TestCase {
         verify(destinationVectors);
     }
 
+    public void testGetId() {
+        DestinationVectors destinationVectors = createMock(DestinationVectors.class);
+
+        expect(destinationVectors.getId(8)).andReturn("GC123");
+
+        replay(destinationVectors);
+        assertEquals("GC123", new CacheListData(destinationVectors, null).getId(8));
+        verify(destinationVectors);
+    }
+
     public void testGetLocation() {
         DestinationVectors destinationVectors = createMock(DestinationVectors.class);
 

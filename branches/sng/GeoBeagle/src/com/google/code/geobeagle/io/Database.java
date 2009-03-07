@@ -14,13 +14,10 @@
 
 package com.google.code.geobeagle.io;
 
-import com.google.code.geobeagle.ui.ErrorDisplayer;
-
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteConstraintException;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 
 public class Database {
@@ -61,15 +58,15 @@ public class Database {
     }
 
     public static class CacheWriter {
-        private final ErrorDisplayer mErrorDisplayer;
+        private String mSource;
         private final SQLiteWrapper mSqlite;
 
-        public CacheWriter(SQLiteWrapper sqlite, ErrorDisplayer errorDisplayer) {
+        public CacheWriter(SQLiteWrapper sqlite) {
             mSqlite = sqlite;
-            mErrorDisplayer = errorDisplayer;
         }
 
         public void clearCaches(String source) {
+            mSource = source;
             mSqlite.execSQL(SQL_CLEAR_CACHES, new Object[] {
                 source
             });
@@ -81,15 +78,19 @@ public class Database {
             });
         }
 
-        public boolean insertAndUpdateCache(CharSequence id, CharSequence name, double latitude,
+        public void insertAndUpdateCache(CharSequence id, CharSequence name, double latitude,
+                double longitude) {
+            insertAndUpdateCache(id, name, latitude, longitude, mSource);
+        }
+
+        public void insertAndUpdateCache(CharSequence id, CharSequence name, double latitude,
                 double longitude, String source) {
             try {
-                tryInsertAndUpdateCache(id, name, latitude, longitude, source);
-            } catch (final SQLiteException e) {
-                mErrorDisplayer.displayError("Error writing cache: " + e.toString());
-                return false;
+                insertCache(id, name, latitude, longitude, source);
+            } catch (final SQLiteConstraintException e) {
+                deleteCache(id);
+                insertCache(id, name, latitude, longitude, source);
             }
-            return true;
         }
 
         private void insertCache(CharSequence id, CharSequence name, double latitude,
@@ -100,22 +101,13 @@ public class Database {
         }
 
         public void startWriting() {
-            mSqlite.beginTransaction();
+             mSqlite.beginTransaction();
         }
 
         public void stopWriting() {
-            mSqlite.setTransactionSuccessful();
-            mSqlite.endTransaction();
-        }
-
-        private void tryInsertAndUpdateCache(CharSequence id, CharSequence name, double latitude,
-                double longitude, String source) {
-            try {
-                insertCache(id, name, latitude, longitude, source);
-            } catch (final SQLiteConstraintException e) {
-                deleteCache(id);
-                insertCache(id, name, latitude, longitude, source);
-            }
+            // TODO: abort if no writes--otherwise sqlite is unhappy.
+             mSqlite.setTransactionSuccessful();
+             mSqlite.endTransaction();
         }
     }
 
@@ -224,8 +216,8 @@ public class Database {
         return new CacheReader(sqliteWrapper);
     }
 
-    public CacheWriter createCacheWriter(SQLiteWrapper sqliteWrapper, ErrorDisplayer errorDisplayer) {
-        return new CacheWriter(sqliteWrapper, errorDisplayer);
+    public CacheWriter createCacheWriter(SQLiteWrapper sqliteWrapper) {
+        return new CacheWriter(sqliteWrapper);
     }
 
     public SQLiteDatabase getReadableDatabase() {

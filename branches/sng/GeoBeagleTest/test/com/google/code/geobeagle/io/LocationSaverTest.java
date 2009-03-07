@@ -36,7 +36,7 @@ public class LocationSaverTest extends TestCase {
         Destination destination = createMock(Destination.class);
 
         sqliteWrapper.openWritableDatabase(database);
-        expect(database.createCacheWriter(sqliteWrapper, null)).andReturn(writer);
+        expect(database.createCacheWriter(sqliteWrapper)).andReturn(writer);
         writer.startWriting();
         expect(destinationFactory.create("122 32.3423 83 32.3221 (LB12345)"))
                 .andReturn(destination);
@@ -44,7 +44,7 @@ public class LocationSaverTest extends TestCase {
         expect(destination.getName()).andReturn("");
         expect(destination.getLatitude()).andReturn(122.0);
         expect(destination.getLongitude()).andReturn(37.0);
-        expect(writer.insertAndUpdateCache("LB12345", "", 122, 37, "intent")).andReturn(true);
+        writer.insertAndUpdateCache("LB12345", "", 122, 37, "intent");
         writer.stopWriting();
         sqliteWrapper.close();
 

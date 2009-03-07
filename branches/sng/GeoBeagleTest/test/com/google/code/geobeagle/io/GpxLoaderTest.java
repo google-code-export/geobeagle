@@ -15,88 +15,120 @@
 package com.google.code.geobeagle.io;
 
 import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.expectLastCall;
 import static org.easymock.classextension.EasyMock.createMock;
 import static org.easymock.classextension.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.verify;
 
-import com.google.code.geobeagle.io.Database.CacheWriter;
-import com.google.code.geobeagle.io.GpxLoader.Cache;
-import com.google.code.geobeagle.io.GpxLoader.FileFactory;
+import com.google.code.geobeagle.R;
+import com.google.code.geobeagle.ui.ErrorDisplayer;
 
 import org.xmlpull.v1.XmlPullParserException;
 
-import java.io.File;
+import android.database.sqlite.SQLiteException;
+
 import java.io.IOException;
-import java.util.ArrayList;
 
 import junit.framework.TestCase;
 
 public class GpxLoaderTest extends TestCase {
 
+    private <T> void loadAndRaise(Class<T> exceptionClass, int errorResource)
+            throws XmlPullParserException, IOException {
+        CachePersisterFacade cachePersisterFacade = createMock(CachePersisterFacade.class);
+        GpxToCache gpxToCache = createMock(GpxToCache.class);
+        Throwable e = (Throwable)createMock(exceptionClass);
+        ErrorDisplayer errorDisplayer = createMock(ErrorDisplayer.class);
+
+        gpxToCache.load();
+        expectLastCall().andThrow(e);
+        expect(gpxToCache.getSource()).andReturn("foo.gpx");
+        expect(e.fillInStackTrace()).andReturn(e);
+        errorDisplayer.displayError(errorResource, "foo.gpx");
+        cachePersisterFacade.close();
+
+        replay(e);
+        replay(errorDisplayer);
+        replay(cachePersisterFacade);
+        replay(gpxToCache);
+        new GpxLoader(gpxToCache, cachePersisterFacade, errorDisplayer).load();
+        verify(cachePersisterFacade);
+        verify(gpxToCache);
+        verify(errorDisplayer);
+    }
+
+    private <T> void loadRaiseAndDisplayMessage(int errorMessage, Class<T> exceptionClass)
+            throws XmlPullParserException, IOException {
+        CachePersisterFacade cachePersisterFacade = createMock(CachePersisterFacade.class);
+        GpxToCache gpxToCache = createMock(GpxToCache.class);
+        Throwable e = (Throwable)createMock(exceptionClass);
+        ErrorDisplayer errorDisplayer = createMock(ErrorDisplayer.class);
+
+        gpxToCache.load();
+        expectLastCall().andThrow(e);
+        expect(e.getMessage()).andReturn("a problem of some sort");
+        expect(e.fillInStackTrace()).andReturn(e);
+        errorDisplayer.displayError(errorMessage, "a problem of some sort");
+        cachePersisterFacade.close();
+
+        replay(e);
+        replay(errorDisplayer);
+        replay(cachePersisterFacade);
+        replay(gpxToCache);
+        new GpxLoader(gpxToCache, cachePersisterFacade, errorDisplayer).load();
+        verify(cachePersisterFacade);
+        verify(gpxToCache);
+        verify(errorDisplayer);
+    }
+
+    public void testAbortLoad() throws XmlPullParserException, IOException {
+        GpxToCache gpxToCache = createMock(GpxToCache.class);
+
+        gpxToCache.abortLoad();
+
+        replay(gpxToCache);
+        new GpxLoader(gpxToCache, null, null).abortLoad();
+        verify(gpxToCache);
+    }
+
     public void testLoad() throws XmlPullParserException, IOException {
-        CacheWriter cacheWriter = createMock(CacheWriter.class);
-        GpxCaches gpxCaches = createMock(GpxCaches.class);
-        FileFactory fileFactory = createMock(FileFactory.class);
-        File file = createMock(File.class);
-        GpxImporter.MessageHandler messageHandler = createMock(GpxImporter.MessageHandler.class);
+        CachePersisterFacade cachePersisterFacade = createMock(CachePersisterFacade.class);
+        GpxToCache gpxToCache = createMock(GpxToCache.class);
 
-        expect(fileFactory.createFile(GpxLoader.GEOBEAGLE_DIR)).andReturn(file);
-        expect(file.mkdirs()).andReturn(true);
-        cacheWriter.clearCaches(GpxLoader.GPX_PATH);
-        Cache cache = new Cache("gc1234", "my cache", 122, 37);
-        ArrayList<Cache> caches = new ArrayList<Cache>(1);
-        caches.add(cache);
-        expect(gpxCaches.iterator()).andReturn(caches.iterator());
-        messageHandler.update("1: my cache");
-        cacheWriter.startWriting();
-        expect(gpxCaches.getSource()).andReturn(GpxLoader.GPX_PATH);
-        expect(cacheWriter.insertAndUpdateCache("gc1234", "my cache", 122, 37, GpxLoader.GPX_PATH)).andReturn(true);
-        cacheWriter.stopWriting();
+        gpxToCache.load();
+        cachePersisterFacade.close();
 
-        replay(fileFactory);
-        replay(messageHandler);
-        replay(file);
-        replay(gpxCaches);
-        replay(cacheWriter);
-        GpxLoader gpxLoader = new GpxLoader(cacheWriter, fileFactory, gpxCaches, null);
-        gpxLoader.load(messageHandler);
-        verify(cacheWriter);
-        verify(gpxCaches);
-        verify(messageHandler);
+        replay(cachePersisterFacade);
+        replay(gpxToCache);
+        new GpxLoader(gpxToCache, cachePersisterFacade, null).load();
+        verify(cachePersisterFacade);
+        verify(gpxToCache);
     }
 
-    public void testLoadHasError() throws XmlPullParserException, IOException {
-        GpxCaches gpxCaches = createMock(GpxCaches.class);
-        CacheWriter cacheWriter = createMock(CacheWriter.class);
-        FileFactory fileFactory = createMock(FileFactory.class);
-        GpxImporter.MessageHandler messageHandler = createMock(GpxImporter.MessageHandler.class);
-        File file = createMock(File.class);
-
-        expect(fileFactory.createFile(GpxLoader.GEOBEAGLE_DIR)).andReturn(file);
-        expect(file.mkdirs()).andReturn(true);
-
-        cacheWriter.clearCaches(GpxLoader.GPX_PATH);
-        Cache cache = new Cache("gc1234", "my cache", 122, 37);
-        ArrayList<Cache> caches = new ArrayList<Cache>(1);
-        caches.add(cache);
-        expect(gpxCaches.iterator()).andReturn(caches.iterator());
-        messageHandler.update("1: my cache");
-        cacheWriter.startWriting();
-        expect(gpxCaches.getSource()).andReturn(GpxLoader.GPX_PATH);
-        expect(cacheWriter.insertAndUpdateCache("gc1234", "my cache", 122, 37, GpxLoader.GPX_PATH)).andReturn(false);
-        cacheWriter.stopWriting();
-
-        replay(messageHandler);
-        replay(fileFactory);
-        replay(file);
-        replay(gpxCaches);
-        replay(cacheWriter);
-        GpxLoader gpxLoader = new GpxLoader(cacheWriter, fileFactory, gpxCaches, null);
-        gpxLoader.load(messageHandler);
-        verify(messageHandler);
-        verify(cacheWriter);
-        verify(gpxCaches);
-        verify(fileFactory);
-        verify(file);
+    public void testLoadIOException() throws XmlPullParserException, IOException {
+        loadAndRaise(IOException.class, R.string.error_reading_file);
     }
+
+    public void testLoadPullParserException() throws XmlPullParserException, IOException {
+        loadRaiseAndDisplayMessage(R.string.error_parsing_file, XmlPullParserException.class);
+    }
+
+    public void testLoadSqliteException() throws XmlPullParserException, IOException {
+        loadRaiseAndDisplayMessage(R.string.error_writing_cache, SQLiteException.class);
+    }
+
+    public void testOpen() throws XmlPullParserException, IOException {
+        CachePersisterFacade cachePersisterFacade = createMock(CachePersisterFacade.class);
+        GpxToCache gpxToCache = createMock(GpxToCache.class);
+
+        gpxToCache.open(GpxLoader.GPX_PATH);
+        cachePersisterFacade.open(GpxLoader.GPX_PATH);
+
+        replay(cachePersisterFacade);
+        replay(gpxToCache);
+        new GpxLoader(gpxToCache, cachePersisterFacade, null).open(GpxLoader.GPX_PATH);
+        verify(cachePersisterFacade);
+        verify(gpxToCache);
+    }
+
 }

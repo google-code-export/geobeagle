@@ -24,6 +24,8 @@ import com.google.code.geobeagle.data.Destination.DestinationFactory;
 import com.google.code.geobeagle.io.Database;
 import com.google.code.geobeagle.io.GpxImporter;
 import com.google.code.geobeagle.io.LocationBookmarksSql;
+import com.google.code.geobeagle.io.Database.SQLiteWrapper;
+import com.google.code.geobeagle.io.di.GpxImporterDI;
 
 import android.app.ListActivity;
 import android.content.Context;
@@ -96,10 +98,12 @@ public class CacheListDelegate {
         final CacheListData cacheListData = CacheListData.create(destinationFactory, parent);
         final LocationControl locationControl = LocationControl.create(((LocationManager)parent
                 .getSystemService(Context.LOCATION_SERVICE)));
+        final SQLiteWrapper sqliteWrapper = new SQLiteWrapper();
         final CacheListActions.Action actions[] = CacheListActions.create(parent, database,
-                cacheListData, errorDisplayer);
+                sqliteWrapper, cacheListData, errorDisplayer);
         final CacheListOnCreateContextMenuListener.Factory factory = new CacheListOnCreateContextMenuListener.Factory();
-        final GpxImporter gpxImporter = GpxImporter.create(database, errorDisplayer, parent);
+        final GpxImporter gpxImporter = GpxImporterDI.create(database, sqliteWrapper,
+                errorDisplayer, parent);
 
         return new CacheListDelegate(parent, locationBookmarks, locationControl,
                 simpleAdapterFactory, cacheListData, errorDisplayer, actions, factory, gpxImporter);

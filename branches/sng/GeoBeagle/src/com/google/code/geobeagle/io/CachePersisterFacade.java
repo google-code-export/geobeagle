@@ -15,37 +15,70 @@
 package com.google.code.geobeagle.io;
 
 import com.google.code.geobeagle.io.CacheDetailsWriter.CacheDetailsWriterFactory;
-import com.google.code.geobeagle.io.GpxLoader.Cache;
-import com.google.code.geobeagle.io.GpxToCache.XmlPullParserWrapper;
+import com.google.code.geobeagle.io.Database.CacheWriter;
 import com.google.code.geobeagle.io.HtmlWriter.HtmlWriterFactory;
+import com.google.code.geobeagle.io.di.CachePersisterFacadeDI;
+import com.google.code.geobeagle.io.di.GpxImporterDI;
+import com.google.code.geobeagle.io.di.GpxToCacheDI;
 
+import java.io.File;
 import java.io.IOException;
 
 public class CachePersisterFacade {
-    public static CachePersisterFacade create() {
-        final HtmlWriterFactory htmlWriterFactory = new HtmlWriterFactory();
-        final Cache cache = new Cache();
-        final CacheDetailsWriterFactory cacheDetailsWriterFactory = new CacheDetailsWriterFactory();
-        return new CachePersisterFacade(null, cache, cacheDetailsWriterFactory, htmlWriterFactory);
+
+    public static class Cache {
+        public String mId;
+        public double mLatitude;
+        public double mLongitude;
+        public String mName;
+
+        public Cache() {
+            mId = "";
+            mName = "";
+        }
+
+        public Cache(String id, String name, double latitude, double longitude) {
+            mId = id;
+            mName = name;
+            mLatitude = latitude;
+            mLongitude = longitude;
+        }
     }
 
+    public static final String GEOBEAGLE_DIR = "/sdcard/GeoBeagle";
+
     private final Cache mCache;
+    private int mCacheCount;
     private CacheDetailsWriter mCacheDetailsWriter;
     private final CacheDetailsWriterFactory mCacheDetailsWriterFactory;
+    private final CacheWriter mCacheWriter;
+    private final CachePersisterFacadeDI.FileFactory mFileFactory;
+    private String mFilename;
     private final HtmlWriterFactory mHtmlWriterFactory;
+    private GpxImporterDI.MessageHandler mMessageHandler;
 
-    public CachePersisterFacade(CacheDetailsWriter cacheDetailsWriter, Cache cache,
+    public CachePersisterFacade(CacheWriter cacheWriter,
+            CachePersisterFacadeDI.FileFactory fileFactory,
             CacheDetailsWriterFactory cacheDetailsWriterFactory,
-            HtmlWriterFactory htmlWriterFactory) {
+            CacheDetailsWriter cacheDetailsWriter, HtmlWriterFactory htmlWriterFactory,
+            GpxImporterDI.MessageHandler messageHandler, Cache cache) {
+        mCacheWriter = cacheWriter;
+        mFileFactory = fileFactory;
         mCacheDetailsWriterFactory = cacheDetailsWriterFactory;
         mCacheDetailsWriter = cacheDetailsWriter;
         mCache = cache;
         mHtmlWriterFactory = htmlWriterFactory;
+        mMessageHandler = messageHandler;
     }
 
-    Cache endTag() throws IOException {
+    public void close() {
+        mCacheWriter.stopWriting();
+    }
+
+    void endTag() throws IOException {
         mCacheDetailsWriter.writeEndTag();
-        return mCache;
+        mCacheWriter.insertAndUpdateCache(mCache.mId, mCache.mName, mCache.mLatitude,
+                mCache.mLongitude);
     }
 
     void groundspeakName(String text) {
@@ -60,16 +93,26 @@ public class CachePersisterFacade {
         mCacheDetailsWriter.writeLogDate(text);
     }
 
-    void wpt(XmlPullParserWrapper mXmlPullParser) {
+    void open(String text) {
+        mFilename = text;
+        File file = mFileFactory.createFile(GEOBEAGLE_DIR);
+        file.mkdirs();
+        mCacheWriter.clearCaches(text);
+        mCacheWriter.startWriting();
+        mCacheCount = 0;
+    }
+
+    void wpt(GpxToCacheDI.XmlPullParserWrapper mXmlPullParser) {
         mCache.mLatitude = Double.parseDouble(mXmlPullParser.getAttributeValue(null, "lat"));
         mCache.mLongitude = Double.parseDouble(mXmlPullParser.getAttributeValue(null, "lon"));
     }
 
-    void wptName(String text) throws IOException {
-        HtmlWriter htmlWriter = mHtmlWriterFactory.create(GpxLoader.GEOBEAGLE_DIR + "/" + text
-                + ".html");
+    void wptName(String wpt) throws IOException {
+        HtmlWriter htmlWriter = mHtmlWriterFactory.create(GEOBEAGLE_DIR + "/" + wpt + ".html");
         mCacheDetailsWriter = mCacheDetailsWriterFactory.create(htmlWriter);
-        mCacheDetailsWriter.writeWptName(text, mCache.mLatitude, mCache.mLongitude);
-        mCache.mId = text;
+        mCacheDetailsWriter.writeWptName(wpt, mCache.mLatitude, mCache.mLongitude);
+        mCache.mId = wpt;
+        mCacheCount++;
+        mMessageHandler.workerSendUpdate(mCacheCount + ": " + mFilename + " - " + wpt);
     }
 }

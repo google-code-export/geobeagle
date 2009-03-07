@@ -18,7 +18,8 @@ import static org.easymock.classextension.EasyMock.createMock;
 import static org.easymock.classextension.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.verify;
 
-import com.google.code.geobeagle.io.GpxToCache.XmlPullParserWrapper;
+import com.google.code.geobeagle.io.di.GpxToCacheDI;
+import com.google.code.geobeagle.io.di.GpxToCacheDI.XmlPullParserWrapper;
 
 import java.io.IOException;
 
@@ -26,13 +27,24 @@ import junit.framework.TestCase;
 
 public class GpxEventHandlerTest extends TestCase {
 
+    public void testEndTag() throws IOException {
+        CachePersisterFacade cachePersisterFacade = createMock(CachePersisterFacade.class);
+
+        cachePersisterFacade.endTag();
+
+        replay(cachePersisterFacade);
+        GpxEventHandler gpxEventHandler = new GpxEventHandler(cachePersisterFacade);
+        gpxEventHandler.endTag("/gpx/wpt");
+        verify(cachePersisterFacade);
+    }
+
     public void testStartTagNotCache() throws IOException {
         GpxEventHandler gpxEventHandler = new GpxEventHandler(null);
         gpxEventHandler.startTag("/gpx/wptNot", null);
     }
 
     public void testStartTagCache() throws IOException {
-        XmlPullParserWrapper xmlPullParser = createMock(XmlPullParserWrapper.class);
+        GpxToCacheDI.XmlPullParserWrapper xmlPullParser = createMock(XmlPullParserWrapper.class);
         CachePersisterFacade cachePersisterFacade = createMock(CachePersisterFacade.class);
 
         cachePersisterFacade.wpt(xmlPullParser);
@@ -89,4 +101,12 @@ public class GpxEventHandlerTest extends TestCase {
         verify(cachePersisterFacade);
     }
 
+    public void testMatchNothing() throws IOException {
+        CachePersisterFacade cachePersisterFacade = createMock(CachePersisterFacade.class);
+
+        replay(cachePersisterFacade);
+        GpxEventHandler gpxEventHandler = new GpxEventHandler(cachePersisterFacade);
+        gpxEventHandler.text("/gpx/foo", "hello");
+        verify(cachePersisterFacade);
+    }
 }

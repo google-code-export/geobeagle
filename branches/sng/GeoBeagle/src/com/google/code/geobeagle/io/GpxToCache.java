@@ -14,93 +14,45 @@
 
 package com.google.code.geobeagle.io;
 
-import com.google.code.geobeagle.io.GpxLoader.Cache;
+
+import com.google.code.geobeagle.io.di.GpxToCacheDI;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
-import org.xmlpull.v1.XmlPullParserFactory;
 
-import java.io.BufferedReader;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
-import java.io.Reader;
 
 public class GpxToCache {
-    public static GpxToCache create() {
-        final XmlPullParserWrapper xmlPullParserWrapper = new XmlPullParserWrapper();
-        final EventHelper eventHelper = EventHelper.create(xmlPullParserWrapper);
-        return new GpxToCache(xmlPullParserWrapper, eventHelper);
-    }
-
-    public static class XmlPullParserWrapper {
-        private XmlPullParser mXmlPullParser;
-        private String mSource;
-
-        public void open(String path) throws XmlPullParserException, FileNotFoundException {
-            final XmlPullParser newPullParser = XmlPullParserFactory.newInstance().newPullParser();
-            final Reader reader = new BufferedReader(new FileReader(path));
-            newPullParser.setInput(reader);
-            mSource = path;
-            mXmlPullParser = newPullParser;
-        }
-
-        public int getEventType() throws XmlPullParserException {
-            return mXmlPullParser.getEventType();
-        }
-
-        public int next() throws XmlPullParserException, IOException {
-            return mXmlPullParser.next();
-        }
-
-        public String getName() {
-            return mXmlPullParser.getName();
-        }
-
-        public String getAttributeValue(String namespace, String name) {
-            return mXmlPullParser.getAttributeValue(namespace, name);
-        }
-
-        public String getSource() {
-            return mSource;
-        }
-
-        public String getText() {
-            return mXmlPullParser.getText();
-        }
-
-    }
-
-    public static XmlPullParser createPullParser(String path) throws FileNotFoundException,
-            XmlPullParserException {
-        final XmlPullParser newPullParser = XmlPullParserFactory.newInstance().newPullParser();
-        final Reader reader = new BufferedReader(new FileReader(path));
-        newPullParser.setInput(reader);
-        return newPullParser;
-    }
-
     private final EventHelper mEventHelper;
-    private final XmlPullParserWrapper mXmlPullParserWrapper;
+    private final GpxToCacheDI.XmlPullParserWrapper mXmlPullParserWrapper;
+    private boolean mAbort;
 
-    public GpxToCache(XmlPullParserWrapper xmlPullParserWrapper, EventHelper eventHelper) {
+    public GpxToCache(GpxToCacheDI.XmlPullParserWrapper xmlPullParserWrapper, EventHelper eventHelper) {
         mXmlPullParserWrapper = xmlPullParserWrapper;
         mEventHelper = eventHelper;
     }
 
-    public void open(String path) throws FileNotFoundException, XmlPullParserException {
-        mXmlPullParserWrapper.open(path);
+    public void open(String source) throws FileNotFoundException, XmlPullParserException {
+        mXmlPullParserWrapper.open(source);
+        mAbort = false;
     }
 
-    public Cache load() throws XmlPullParserException, IOException {
-        Cache cache = null;
-        for (int eventType = mXmlPullParserWrapper.getEventType(); eventType != XmlPullParser.END_DOCUMENT
-                && cache == null; eventType = mXmlPullParserWrapper.next()) {
-            cache = mEventHelper.handleEvent(eventType);
+    public void load() throws XmlPullParserException, IOException {
+        int eventType;
+        for (eventType = mXmlPullParserWrapper.getEventType(); !mAbort
+                && eventType != XmlPullParser.END_DOCUMENT; eventType = mXmlPullParserWrapper
+                .next()) {
+            mEventHelper.handleEvent(eventType);
         }
-        return cache;
+        mEventHelper.handleEvent(eventType);
     }
 
     public String getSource() {
         return mXmlPullParserWrapper.getSource();
+    }
+
+    public void abortLoad() {
+        mAbort = true;
     }
 }

@@ -14,8 +14,7 @@
 
 package com.google.code.geobeagle.io;
 
-import com.google.code.geobeagle.io.GpxLoader.Cache;
-import com.google.code.geobeagle.io.GpxToCache.XmlPullParserWrapper;
+import com.google.code.geobeagle.io.di.GpxToCacheDI.XmlPullParserWrapper;
 
 import org.xmlpull.v1.XmlPullParser;
 
@@ -24,24 +23,18 @@ import java.io.IOException;
 public class EventHelper {
     public static class XmlPathBuilder {
         private String mPath = "";
-    
+
         public void endTag(String currentTag) {
             mPath = mPath.substring(0, mPath.length() - (currentTag.length() + 1));
         }
-    
+
         public String getPath() {
             return mPath;
         }
-    
+
         public void startTag(String mCurrentTag) {
             mPath += "/" + mCurrentTag;
         }
-    }
-
-    public static EventHelper create(XmlPullParserWrapper xmlPullParser) {
-        final GpxEventHandler gpxEventHandler = GpxEventHandler.create();
-        final XmlPathBuilder xmlPathBuilder = new XmlPathBuilder();
-        return new EventHelper(xmlPathBuilder, gpxEventHandler, xmlPullParser);
     }
 
     private final GpxEventHandler mGpxEventHandler;
@@ -55,21 +48,19 @@ public class EventHelper {
         mXmlPullParser = xmlPullParser;
     }
 
-    public Cache handleEvent(int eventType) throws IOException {
-        Cache cache = null;
+    public void handleEvent(int eventType) throws IOException {
         switch (eventType) {
             case XmlPullParser.START_TAG:
                 mXmlPathBuilder.startTag(mXmlPullParser.getName());
                 mGpxEventHandler.startTag(mXmlPathBuilder.getPath(), mXmlPullParser);
                 break;
             case XmlPullParser.END_TAG:
-                cache = mGpxEventHandler.endTag(mXmlPathBuilder.getPath());
+                mGpxEventHandler.endTag(mXmlPathBuilder.getPath());
                 mXmlPathBuilder.endTag(mXmlPullParser.getName());
                 break;
             case XmlPullParser.TEXT:
                 mGpxEventHandler.text(mXmlPathBuilder.getPath(), mXmlPullParser.getText());
                 break;
         }
-        return cache;
     }
 }

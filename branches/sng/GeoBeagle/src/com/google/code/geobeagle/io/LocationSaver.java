@@ -23,21 +23,19 @@ import com.google.code.geobeagle.ui.ErrorDisplayer;
 public class LocationSaver {
     private final Database mDatabase;
     private final DestinationFactory mDestinationFactory;
-    private final ErrorDisplayer mErrorDisplayer;
     private final SQLiteWrapper mSQLiteWrapper;
 
     public LocationSaver(Database database, DestinationFactory destinationFactory,
             ErrorDisplayer errorDisplayer, SQLiteWrapper sqliteWrapper) {
         mDatabase = database;
         mDestinationFactory = destinationFactory;
-        mErrorDisplayer = errorDisplayer;
         mSQLiteWrapper = sqliteWrapper;
     }
 
     public void saveLocation(final CharSequence location) {
         mSQLiteWrapper.openWritableDatabase(mDatabase);
         // TODO: catch errors on open
-        CacheWriter cacheWriter = mDatabase.createCacheWriter(mSQLiteWrapper, mErrorDisplayer);
+        CacheWriter cacheWriter = mDatabase.createCacheWriter(mSQLiteWrapper);
         cacheWriter.startWriting();
         Destination destination = mDestinationFactory.create(location);
         cacheWriter.insertAndUpdateCache(destination.getFullId(), destination.getName(),

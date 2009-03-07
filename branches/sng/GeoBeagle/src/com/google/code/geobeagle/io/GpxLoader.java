@@ -14,89 +14,50 @@
 
 package com.google.code.geobeagle.io;
 
-import com.google.code.geobeagle.io.Database.CacheWriter;
-import com.google.code.geobeagle.io.Database.SQLiteWrapper;
+import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.ui.ErrorDisplayer;
 
 import org.xmlpull.v1.XmlPullParserException;
 
-import java.io.File;
+import android.database.sqlite.SQLiteException;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
 public class GpxLoader {
-    public static class Cache {
-        public String mId;
-        public double mLatitude;
-        public double mLongitude;
-        public String mName;
-
-        public Cache() {
-            mId = "";
-            mName = "";
-        }
-
-        public Cache(String id, String name, double latitude, double longitude) {
-            mId = id;
-            mName = name;
-            mLatitude = latitude;
-            mLongitude = longitude;
-        }
-    }
-
-    public static class FileFactory {
-        public File createFile(String path) {
-            return new File(path);
-        }
-    }
-
-    public static final String GEOBEAGLE_DIR = "/sdcard/GeoBeagle";
     public static final String GPX_PATH = "/sdcard/caches.gpx";
 
-    public static GpxLoader create(ErrorDisplayer errorDisplayer, Database database,
-            SQLiteWrapper sqlite) {
-        final CacheWriter cacheWriter = database.createCacheWriter(sqlite, errorDisplayer);
-        final FileFactory fileFactory = new FileFactory();
-        final GpxCaches gpxCaches = GpxCaches.create(errorDisplayer);
-        return new GpxLoader(cacheWriter, fileFactory, gpxCaches, errorDisplayer);
-    }
+    private final CachePersisterFacade mCachePersisterFacade;
+    private final ErrorDisplayer mErrorDisplayer;
+    private final GpxToCache mGpxToCache;
 
-    private boolean mAbortLoad;
-    private final CacheWriter mCacheWriter;
-    private final FileFactory mFileFactory;
-    private final GpxCaches mGpxCaches;
-
-    public GpxLoader(CacheWriter cacheWriter, FileFactory fileFactory, GpxCaches gpxCaches,
+    public GpxLoader(GpxToCache gpxToCache, CachePersisterFacade cachePersisterFacade,
             ErrorDisplayer errorDisplayer) {
-        mCacheWriter = cacheWriter;
-        mFileFactory = fileFactory;
-        mAbortLoad = false;
-        mGpxCaches = gpxCaches;
+        mGpxToCache = gpxToCache;
+        mCachePersisterFacade = cachePersisterFacade;
+        mErrorDisplayer = errorDisplayer;
     }
 
     public void abortLoad() {
-        mAbortLoad = true;
+        mGpxToCache.abortLoad();
     }
 
-    public void load(GpxImporter.MessageHandler messageHandler) {
-        File file = mFileFactory.createFile(GpxLoader.GEOBEAGLE_DIR);
-        file.mkdirs();
-
-        mCacheWriter.clearCaches(GPX_PATH);
-        mCacheWriter.startWriting();
-        mAbortLoad = false;
-        int nCache = 0;
-        for (final Cache cache : mGpxCaches) {
-            messageHandler.update(++nCache + ": " + cache.mName);
-            if (!mCacheWriter.insertAndUpdateCache(cache.mId, cache.mName, cache.mLatitude,
-                    cache.mLongitude, mGpxCaches.getSource())
-                    || mAbortLoad)
-                break;
+    public void load() {
+        try {
+            mGpxToCache.load();
+        } catch (final SQLiteException e) {
+            mErrorDisplayer.displayError(R.string.error_writing_cache, e.getMessage());
+        } catch (XmlPullParserException e) {
+            mErrorDisplayer.displayError(R.string.error_parsing_file, e.getMessage());
+        } catch (IOException e) {
+            mErrorDisplayer.displayError(R.string.error_reading_file, mGpxToCache.getSource());
+        } finally {
+            mCachePersisterFacade.close();
         }
-        mCacheWriter.stopWriting();
     }
 
-    public void open() throws FileNotFoundException, XmlPullParserException, IOException {
-        mGpxCaches.open(GPX_PATH);
+    public void open(String path) throws FileNotFoundException, XmlPullParserException, IOException {
+        mGpxToCache.open(path);
+        mCachePersisterFacade.open(path);
     }
 }
