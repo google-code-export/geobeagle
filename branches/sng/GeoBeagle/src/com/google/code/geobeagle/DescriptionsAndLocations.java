@@ -25,10 +25,6 @@ public class DescriptionsAndLocations {
         create(100);
     }
 
-    public DescriptionsAndLocations(int maxSize) {
-        create(maxSize);
-    }
-
     private void create(int maxSize) {
         mPreviousDescriptions = new ArrayList<CharSequence>();
         mPreviousLocations = new ArrayList<CharSequence>();

@@ -19,6 +19,8 @@ import static org.easymock.classextension.EasyMock.createMock;
 import static org.easymock.classextension.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.verify;
 
+import com.google.code.geobeagle.R;
+import com.google.code.geobeagle.ResourceProvider;
 import com.google.code.geobeagle.data.Destination;
 import com.google.code.geobeagle.data.DestinationVector;
 import com.google.code.geobeagle.data.IDestinationVector;
@@ -87,12 +89,19 @@ public class DestinationVectorTest extends TestCase {
         verify(destination);
     }
 
-    public void testMyLocationGetDestination() {
-        MyLocation myLocation = new MyLocation("My Current Location");
+    public void testMyLocation() {
+        ResourceProvider resourceProvider = createMock(ResourceProvider.class);
+        expect(resourceProvider.getString(R.string.my_current_location)).andReturn(
+                "My Current Location").anyTimes();
+
+        replay(resourceProvider);
+        MyLocation myLocation = new MyLocation(resourceProvider);
         assertEquals(null, myLocation.getLocation());
         assertEquals(null, myLocation.getDestination());
         assertEquals(-1.0f, myLocation.getDistance());
+        assertEquals("My Current Location", myLocation.getId());
         final Map<String, Object> viewMap = myLocation.getViewMap();
         assertEquals("My Current Location", viewMap.get("cache"));
+        verify(resourceProvider);
     }
 }

@@ -14,8 +14,6 @@
 
 package com.google.code.geobeagle.data;
 
-import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.ResourceProvider;
 import com.google.code.geobeagle.Util;
 
 import java.util.regex.Matcher;
@@ -25,35 +23,6 @@ import java.util.regex.Pattern;
  * Cache or letterbox description, id, and coordinates.
  */
 public class Destination {
-
-    public static class DestinationFactory {
-        private final Pattern[] mDestinationPatterns;
-
-        public DestinationFactory(Pattern destinationPatterns[]) {
-            mDestinationPatterns = destinationPatterns;
-        }
-
-        public Destination create(CharSequence location) {
-            return new Destination(location, mDestinationPatterns);
-        }
-    }
-
-    public static CharSequence extractDescription(CharSequence location) {
-        return Util.splitCoordsAndDescription(location)[1];
-    }
-
-    public static Pattern[] getDestinationPatterns(ResourceProvider resourceProvider) {
-        return getDestinationPatterns(resourceProvider.getStringArray(R.array.content_prefixes));
-    }
-
-    static Pattern[] getDestinationPatterns(String contentPrefixes[]) {
-        Pattern mContentSelectors[] = new Pattern[contentPrefixes.length];
-        for (int ix = 0; ix < contentPrefixes.length; ix++) {
-            mContentSelectors[ix] = Pattern.compile("(?:" + contentPrefixes[ix] + ")(\\w*)");
-        }
-        return mContentSelectors;
-    }
-
     private int mContentSelectorIndex;
     private CharSequence mDescription;
     private CharSequence mFullId;
@@ -72,6 +41,8 @@ public class Destination {
             mLatitude = Util.parseCoordinate(latLonDescription[0]);
             mLongitude = Util.parseCoordinate(latLonDescription[1]);
         } catch (NumberFormatException numberFormatException) {
+            // TODO: Looks like this case is unreachable; remove this after the
+            // destination input method has been reworked.
         }
         mDescription = latLonDescription[2];
         mLocation = location;
@@ -84,7 +55,7 @@ public class Destination {
                 break;
             }
         }
-        
+
         if (mId.length() == 0) {
             mName = mDescription;
         } else {

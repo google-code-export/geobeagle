@@ -19,8 +19,8 @@ import com.google.code.geobeagle.LocationControl;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.ResourceProvider;
 import com.google.code.geobeagle.data.CacheListData;
-import com.google.code.geobeagle.data.Destination;
-import com.google.code.geobeagle.data.Destination.DestinationFactory;
+import com.google.code.geobeagle.data.di.CacheListDataDI;
+import com.google.code.geobeagle.data.di.DestinationFactory;
 import com.google.code.geobeagle.io.Database;
 import com.google.code.geobeagle.io.GpxImporter;
 import com.google.code.geobeagle.io.LocationBookmarksSql;
@@ -42,7 +42,6 @@ import android.widget.AdapterView.AdapterContextMenuInfo;
 
 import java.util.ArrayList;
 import java.util.Map;
-import java.util.regex.Pattern;
 
 public class CacheListDelegate {
 
@@ -89,13 +88,11 @@ public class CacheListDelegate {
         final ErrorDisplayer errorDisplayer = new ErrorDisplayer(parent);
         final Database database = Database.create(parent);
         final ResourceProvider resourceProvider = new ResourceProvider(parent);
-        // TODO: add a create function that takes a resourceid
-        final Pattern[] destinationPatterns = Destination.getDestinationPatterns(resourceProvider);
-        final DestinationFactory destinationFactory = new DestinationFactory(destinationPatterns);
+        final DestinationFactory destinationFactory = new DestinationFactory(resourceProvider);
         final LocationBookmarksSql locationBookmarks = LocationBookmarksSql.create(parent,
                 database, destinationFactory, errorDisplayer);
         final SimpleAdapterFactory simpleAdapterFactory = new SimpleAdapterFactory();
-        final CacheListData cacheListData = CacheListData.create(destinationFactory, parent);
+        final CacheListData cacheListData = CacheListDataDI.create(destinationFactory, parent);
         final LocationControl locationControl = LocationControl.create(((LocationManager)parent
                 .getSystemService(Context.LOCATION_SERVICE)));
         final SQLiteWrapper sqliteWrapper = new SQLiteWrapper();
@@ -104,7 +101,6 @@ public class CacheListDelegate {
         final CacheListOnCreateContextMenuListener.Factory factory = new CacheListOnCreateContextMenuListener.Factory();
         final GpxImporter gpxImporter = GpxImporterDI.create(database, sqliteWrapper,
                 errorDisplayer, parent);
-
         return new CacheListDelegate(parent, locationBookmarks, locationControl,
                 simpleAdapterFactory, cacheListData, errorDisplayer, actions, factory, gpxImporter);
     }

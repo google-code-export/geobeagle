@@ -16,8 +16,7 @@ package com.google.code.geobeagle.io;
 
 import com.google.code.geobeagle.DescriptionsAndLocations;
 import com.google.code.geobeagle.LifecycleManager;
-import com.google.code.geobeagle.data.Destination;
-import com.google.code.geobeagle.data.Destination.DestinationFactory;
+import com.google.code.geobeagle.data.di.DestinationFactory;
 import com.google.code.geobeagle.io.Database.CacheReader;
 import com.google.code.geobeagle.io.Database.SQLiteWrapper;
 import com.google.code.geobeagle.ui.ErrorDisplayer;
@@ -78,7 +77,7 @@ public class LocationBookmarksSql implements LifecycleManager {
         mDescriptionsAndLocations.clear();
         do {
             final String location = cacheReader.getCache();
-            mDescriptionsAndLocations.add(Destination.extractDescription(location), location);
+            mDescriptionsAndLocations.add(DestinationFactory.extractDescription(location), location);
         } while (cacheReader.moveToNext());
     }
 

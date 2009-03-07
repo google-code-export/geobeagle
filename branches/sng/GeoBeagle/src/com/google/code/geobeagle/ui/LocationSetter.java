@@ -19,6 +19,7 @@ import com.google.code.geobeagle.LocationControl;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.Util;
 import com.google.code.geobeagle.data.Destination;
+import com.google.code.geobeagle.data.di.DestinationFactory;
 import com.google.code.geobeagle.io.LocationSaver;
 
 import android.content.Context;
@@ -26,13 +27,11 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.location.Location;
 
-import java.util.regex.Pattern;
-
 public class LocationSetter implements LifecycleManager {
 
     public static final String FNAME_RECENT_LOCATIONS = "RECENT_LOCATIONS";
     public static final String PREFS_LOCATION = "Location";
-    private final Pattern[] mDestinationPatterns;
+    private final DestinationFactory mDestinationFactory;
     private final LocationControl mGpsControl;
     private final String mInitialDestination;
     private final MockableEditText mTxtLocation;
@@ -40,10 +39,10 @@ public class LocationSetter implements LifecycleManager {
     private final LocationSaver mLocationSaver;
 
     public LocationSetter(Context context, MockableEditText txtLocation,
-            LocationControl locationControl, Pattern destinationPatterns[],
+            LocationControl locationControl, DestinationFactory destinationFactory,
             String initialDestination, ErrorDisplayer errorDisplayer, LocationSaver locationSaver) {
         mTxtLocation = txtLocation;
-        mDestinationPatterns = destinationPatterns;
+        mDestinationFactory = destinationFactory;
         mGpsControl = locationControl;
         mInitialDestination = initialDestination;
         mErrorDisplayer = errorDisplayer;
@@ -55,7 +54,7 @@ public class LocationSetter implements LifecycleManager {
      * @see com.google.code.geobeagle.ui.DestinationProvider#getDestination()
      */
     public Destination getDestination() {
-        return new Destination(mTxtLocation.getText(), mDestinationPatterns);
+        return mDestinationFactory.create(mTxtLocation.getText());
     }
 
     // TODO: test.
