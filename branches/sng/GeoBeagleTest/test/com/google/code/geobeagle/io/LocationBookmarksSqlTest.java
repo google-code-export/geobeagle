@@ -37,7 +37,7 @@ public class LocationBookmarksSqlTest extends TestCase {
         DescriptionsAndLocations descriptionsAndLocations = createMock(DescriptionsAndLocations.class);
 
         LocationBookmarksSql locationBookmarksSql = new LocationBookmarksSql(
-                descriptionsAndLocations, null, null, null, null);
+                descriptionsAndLocations, null, null, null, null, null);
         assertEquals(descriptionsAndLocations, locationBookmarksSql.getDescriptionsAndLocations());
     }
 
@@ -46,14 +46,14 @@ public class LocationBookmarksSqlTest extends TestCase {
         SQLiteWrapper sqliteWrapper = createMock(SQLiteWrapper.class);
         
         sqliteWrapper.openReadableDatabase(mDatabase);
-        expect(mDatabase.createCacheReader(sqliteWrapper)).andReturn(cacheReader);
-        expect(cacheReader.open()).andReturn(false);
+        expect(CacheReader.create(sqliteWrapper)).andReturn(cacheReader);
+        expect(cacheReader.open(null)).andReturn(false);
         sqliteWrapper.close();
 
         replay(mDatabase);
         replay(sqliteWrapper);
         replay(cacheReader);
-        LocationBookmarksSql locationBookmarksSql = new LocationBookmarksSql(null, mDatabase, sqliteWrapper, null, null);
+        LocationBookmarksSql locationBookmarksSql = new LocationBookmarksSql(null, mDatabase, sqliteWrapper, null, null, null);
         locationBookmarksSql.onResume(null);
         verify(mDatabase);
         verify(sqliteWrapper);
@@ -72,7 +72,7 @@ public class LocationBookmarksSqlTest extends TestCase {
         replay(cacheReader);
         replay(descriptionsAndLocations);
         LocationBookmarksSql locationBookmarksSql = new LocationBookmarksSql(
-                descriptionsAndLocations, null, null, null, null);
+                descriptionsAndLocations, null, null, null, null, null);
         locationBookmarksSql.readBookmarks(cacheReader);
         verify(cacheReader);
         verify(descriptionsAndLocations);
@@ -93,7 +93,7 @@ public class LocationBookmarksSqlTest extends TestCase {
         replay(cacheReader);
         replay(descriptionsAndLocations);
         LocationBookmarksSql locationBookmarksSql = new LocationBookmarksSql(
-                descriptionsAndLocations, null, null, null, null);
+                descriptionsAndLocations, null, null, null, null, null);
         locationBookmarksSql.readBookmarks(cacheReader);
         verify(cacheReader);
         verify(descriptionsAndLocations);

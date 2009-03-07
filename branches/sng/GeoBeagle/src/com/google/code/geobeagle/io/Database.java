@@ -19,14 +19,43 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteConstraintException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.location.Location;
 
 public class Database {
     public static class CacheReader {
+        public static class WhereFactory {
+            public static final double DEGREES_DELTA = 0.1; // 1 degree ~= 111km
+
+            public String getWhere(Location location) {
+                if (location == null)
+                    return null;
+                double latitude = location.getLatitude();
+                double longitude = location.getLongitude();
+
+                double latLow = latitude - WhereFactory.DEGREES_DELTA;
+                double latHigh = latitude + WhereFactory.DEGREES_DELTA;
+                double lat_radians = Math.toRadians(latitude);
+                double cos_lat = Math.cos(lat_radians);
+                double lonLow = Math.max(-180, longitude - WhereFactory.DEGREES_DELTA / cos_lat);
+                double lonHigh = Math.min(180, longitude + WhereFactory.DEGREES_DELTA / cos_lat);
+                return "Latitude > " + latLow + " AND Latitude < " + latHigh + " AND Longitude > "
+                        + lonLow + " AND Longitude < " + lonHigh;
+            }
+        }
+
         private Cursor mCursor;
         private final SQLiteWrapper mSqliteWrapper;
+        private final WhereFactory mWhereFactory;
 
-        public CacheReader(SQLiteWrapper sqliteWrapper) {
+        public CacheReader(SQLiteWrapper sqliteWrapper, WhereFactory whereFactory) {
             mSqliteWrapper = sqliteWrapper;
+            mWhereFactory = whereFactory;
+        }
+
+        public static CacheReader create(SQLiteWrapper sqliteWrapper) {
+            final WhereFactory whereFactory = new WhereFactory();
+            return new CacheReader(sqliteWrapper, whereFactory);
+
         }
 
         public void close() {
@@ -47,9 +76,11 @@ public class Database {
             return mCursor.moveToNext();
         }
 
-        public boolean open() {
-            mCursor = mSqliteWrapper
-                    .query(TBL_CACHES, READER_COLUMNS, null, null, null, null, null);
+        public boolean open(Location location) {
+            String where = mWhereFactory.getWhere(location);
+
+            mCursor = mSqliteWrapper.query(TBL_CACHES, READER_COLUMNS, where, null, null, null,
+                    null);
             final boolean result = mCursor.moveToFirst();
             if (!result)
                 mCursor.close();
@@ -88,6 +119,7 @@ public class Database {
             try {
                 insertCache(id, name, latitude, longitude, source);
             } catch (final SQLiteConstraintException e) {
+                // TODO: What if these queries have errors?
                 deleteCache(id);
                 insertCache(id, name, latitude, longitude, source);
             }
@@ -101,13 +133,13 @@ public class Database {
         }
 
         public void startWriting() {
-             mSqlite.beginTransaction();
+            mSqlite.beginTransaction();
         }
 
         public void stopWriting() {
             // TODO: abort if no writes--otherwise sqlite is unhappy.
-             mSqlite.setTransactionSuccessful();
-             mSqlite.endTransaction();
+            mSqlite.setTransactionSuccessful();
+            mSqlite.endTransaction();
         }
     }
 
@@ -210,10 +242,6 @@ public class Database {
 
     public Database(SQLiteOpenHelper sqliteOpenHelper) {
         mSqliteOpenHelper = sqliteOpenHelper;
-    }
-
-    public CacheReader createCacheReader(SQLiteWrapper sqliteWrapper) {
-        return new CacheReader(sqliteWrapper);
     }
 
     public CacheWriter createCacheWriter(SQLiteWrapper sqliteWrapper) {

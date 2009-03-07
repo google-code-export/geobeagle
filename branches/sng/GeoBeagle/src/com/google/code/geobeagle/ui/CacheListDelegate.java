@@ -89,12 +89,13 @@ public class CacheListDelegate {
         final Database database = Database.create(parent);
         final ResourceProvider resourceProvider = new ResourceProvider(parent);
         final DestinationFactory destinationFactory = new DestinationFactory(resourceProvider);
-        final LocationBookmarksSql locationBookmarks = LocationBookmarksSql.create(parent,
-                database, destinationFactory, errorDisplayer);
-        final SimpleAdapterFactory simpleAdapterFactory = new SimpleAdapterFactory();
-        final CacheListData cacheListData = CacheListDataDI.create(resourceProvider, destinationFactory);
         final LocationControl locationControl = LocationControl.create(((LocationManager)parent
                 .getSystemService(Context.LOCATION_SERVICE)));
+        final LocationBookmarksSql locationBookmarks = LocationBookmarksSql.create(parent,
+                locationControl, database, destinationFactory, errorDisplayer);
+        final SimpleAdapterFactory simpleAdapterFactory = new SimpleAdapterFactory();
+        final CacheListData cacheListData = CacheListDataDI.create(resourceProvider,
+                destinationFactory);
         final SQLiteWrapper sqliteWrapper = new SQLiteWrapper();
         final CacheListActions.Action actions[] = CacheListActions.create(parent, database,
                 sqliteWrapper, cacheListData, errorDisplayer);

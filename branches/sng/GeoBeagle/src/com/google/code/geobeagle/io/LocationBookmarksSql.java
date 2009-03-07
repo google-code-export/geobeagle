@@ -16,6 +16,7 @@ package com.google.code.geobeagle.io;
 
 import com.google.code.geobeagle.DescriptionsAndLocations;
 import com.google.code.geobeagle.LifecycleManager;
+import com.google.code.geobeagle.LocationControl;
 import com.google.code.geobeagle.data.di.DestinationFactory;
 import com.google.code.geobeagle.io.Database.CacheReader;
 import com.google.code.geobeagle.io.Database.SQLiteWrapper;
@@ -31,21 +32,24 @@ public class LocationBookmarksSql implements LifecycleManager {
     private final Database mDatabase;
     private final DescriptionsAndLocations mDescriptionsAndLocations;
     private final SQLiteWrapper mSQLiteWrapper;
+    private final LocationControl mLocationControl;
 
-    public static LocationBookmarksSql create(ListActivity listActivity, Database database,
+    public static LocationBookmarksSql create(ListActivity listActivity,
+            LocationControl locationControl, Database database,
             DestinationFactory destinationFactory, ErrorDisplayer errorDisplayer) {
         final DescriptionsAndLocations descriptionsAndLocations = new DescriptionsAndLocations();
         final SQLiteWrapper sqliteWrapper = new SQLiteWrapper();
         return new LocationBookmarksSql(descriptionsAndLocations, database, sqliteWrapper,
-                destinationFactory, errorDisplayer);
+                destinationFactory, errorDisplayer, locationControl);
     }
 
     public LocationBookmarksSql(DescriptionsAndLocations descriptionsAndLocations,
             Database database, SQLiteWrapper sqliteWrapper, DestinationFactory destinationFactory,
-            ErrorDisplayer errorDisplayer) {
+            ErrorDisplayer errorDisplayer, LocationControl locationControl) {
         mDescriptionsAndLocations = descriptionsAndLocations;
         mDatabase = database;
         mSQLiteWrapper = sqliteWrapper;
+        mLocationControl = locationControl;
     }
 
     public DescriptionsAndLocations getDescriptionsAndLocations() {
@@ -60,13 +64,13 @@ public class LocationBookmarksSql implements LifecycleManager {
     }
 
     public void onResume(SharedPreferences preferences) {
-        readBookmarks();
+        readBookmarks(mLocationControl);
     }
 
-    private void readBookmarks() {
+    private void readBookmarks(LocationControl locationControl) {
         mSQLiteWrapper.openReadableDatabase(mDatabase);
-        CacheReader cacheReader = mDatabase.createCacheReader(mSQLiteWrapper);
-        if (cacheReader.open()) {
+        CacheReader cacheReader = CacheReader.create(mSQLiteWrapper);
+        if (cacheReader.open(locationControl.getLocation())) {
             readBookmarks(cacheReader);
             cacheReader.close();
         }
@@ -77,7 +81,8 @@ public class LocationBookmarksSql implements LifecycleManager {
         mDescriptionsAndLocations.clear();
         do {
             final String location = cacheReader.getCache();
-            mDescriptionsAndLocations.add(DestinationFactory.extractDescription(location), location);
+            mDescriptionsAndLocations
+                    .add(DestinationFactory.extractDescription(location), location);
         } while (cacheReader.moveToNext());
     }
 
