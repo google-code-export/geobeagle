@@ -51,4 +51,12 @@ public class CacheDetailsWriterTest extends TestCase {
         verify(htmlWriter);
     }
 
+    public void testWriteHint() throws IOException {
+        HtmlWriter htmlWriter = createMock(HtmlWriter.class);
+        htmlWriter.write("<br />Hint: <font color=gray>a hint</font>");
+
+        replay(htmlWriter);
+        new CacheDetailsWriter(htmlWriter).writeHint("a hint");
+        verify(htmlWriter);
+    }
 }

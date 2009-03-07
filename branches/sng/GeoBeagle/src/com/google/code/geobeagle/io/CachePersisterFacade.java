@@ -16,10 +16,10 @@ package com.google.code.geobeagle.io;
 
 import com.google.code.geobeagle.io.CacheDetailsWriter.CacheDetailsWriterFactory;
 import com.google.code.geobeagle.io.Database.CacheWriter;
-import com.google.code.geobeagle.io.HtmlWriter.HtmlWriterFactory;
 import com.google.code.geobeagle.io.di.CachePersisterFacadeDI;
 import com.google.code.geobeagle.io.di.GpxImporterDI;
 import com.google.code.geobeagle.io.di.GpxToCacheDI;
+import com.google.code.geobeagle.io.di.HtmlWriterFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -85,6 +85,10 @@ public class CachePersisterFacade {
         mCache.mName = text;
     }
 
+    public void hint(String text) throws IOException {
+        mCacheDetailsWriter.writeHint(text);        
+    }
+
     void line(String text) throws IOException {
         mCacheDetailsWriter.writeLine(text);
     }
@@ -92,13 +96,13 @@ public class CachePersisterFacade {
     void logDate(String text) throws IOException {
         mCacheDetailsWriter.writeLogDate(text);
     }
-
+    
     void open(String text) {
         mFilename = text;
         mCacheWriter.clearCaches(text);
         mCacheWriter.startWriting();
     }
-    
+
     void start() {
         File file = mFileFactory.createFile(GEOBEAGLE_DIR);
         file.mkdirs();

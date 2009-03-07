@@ -5,7 +5,6 @@ import com.google.code.geobeagle.io.Database;
 import com.google.code.geobeagle.io.CacheDetailsWriter.CacheDetailsWriterFactory;
 import com.google.code.geobeagle.io.Database.CacheWriter;
 import com.google.code.geobeagle.io.Database.SQLiteWrapper;
-import com.google.code.geobeagle.io.HtmlWriter.HtmlWriterFactory;
 
 import java.io.File;
 

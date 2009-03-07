@@ -61,4 +61,14 @@ public class HtmlWriterTest extends TestCase {
         new HtmlWriter(writer).writeHeader();
         verify(writer);
     }
+
+    public void testWriteSeparator() throws IOException {
+        final Writer writer = createMock(Writer.class);
+        writer.write("<hr/>\n");
+
+        replay(writer);
+        new HtmlWriter(writer).writeSeparator();
+        verify(writer);
+    }
+    
 }

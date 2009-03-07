@@ -20,6 +20,7 @@ import java.io.IOException;
 
 public class GpxEventHandler {
     public static final String XPATH_GROUNDSPEAKNAME = "/gpx/wpt/groundspeak:cache/groundspeak:name";
+    public static final String XPATH_HINT = "/gpx/wpt/groundspeak:cache/groundspeak:encoded_hints";
     public static final String XPATH_LOGDATE = "/gpx/wpt/groundspeak:cache/groundspeak:logs/groundspeak:log/groundspeak:date";
     public static final String[] XPATH_PLAINLINES = {
             "/gpx/wpt/desc", "/gpx/wpt/groundspeak:cache/groundspeak:type",
@@ -52,12 +53,17 @@ public class GpxEventHandler {
     }
 
     public void text(String mFullPath, String text) throws IOException {
+        text = text.trim();
         if (mFullPath.equals(XPATH_WPTNAME)) {
             mCachePersisterFacade.wptName(text);
         } else if (mFullPath.equals(XPATH_GROUNDSPEAKNAME)) {
             mCachePersisterFacade.groundspeakName(text);
         } else if (mFullPath.equals(XPATH_LOGDATE)) {
             mCachePersisterFacade.logDate(text);
+        } else if (mFullPath.equals(XPATH_HINT)) {
+            if (!text.equals("")) {
+                mCachePersisterFacade.hint(text);
+            }
         } else {
             for (String writeLineMatch : XPATH_PLAINLINES) {
                 if (mFullPath.equals(writeLineMatch)) {
