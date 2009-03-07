@@ -38,7 +38,7 @@
 	<string name="error_writing_cache">Error writing cache: '%1$s'.</string>
 	<string name="my_current_location">My Current Location</string>
 	<string name="import_canceled">Import aborted!</string>
-	<string name="menu_import_gpx">Sync caches from /sdcard/caches.gpx.</string>
+	<string name="menu_import_gpx">Sync GPX files from /sdcard.</string>
 	<string name="cache_list_title">GeoBeagle Nearest Caches</string>
 	<array name="nearest_objects">
 	  <item>http://www.atlasquest.com/results.html?gTypeId=2;gSort=5;gCoord=%1$.5f,%2$.5f</item>

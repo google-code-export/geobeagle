@@ -45,6 +45,8 @@ public class GpxToCache {
                 .next()) {
             mEventHelper.handleEvent(eventType);
         }
+        
+        // Pick up END_DOCUMENT event as well.
         mEventHelper.handleEvent(eventType);
     }
 
@@ -52,7 +54,7 @@ public class GpxToCache {
         return mXmlPullParserWrapper.getSource();
     }
 
-    public void abortLoad() {
+    public void abort() {
         mAbort = true;
     }
 }

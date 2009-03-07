@@ -55,7 +55,6 @@ public class Database {
         public static CacheReader create(SQLiteWrapper sqliteWrapper) {
             final WhereFactory whereFactory = new WhereFactory();
             return new CacheReader(sqliteWrapper, whereFactory);
-
         }
 
         public void close() {
@@ -80,7 +79,7 @@ public class Database {
             String where = mWhereFactory.getWhere(location);
 
             mCursor = mSqliteWrapper.query(TBL_CACHES, READER_COLUMNS, where, null, null, null,
-                    null);
+                    null, "200");
             final boolean result = mCursor.moveToFirst();
             if (!result)
                 mCursor.close();
@@ -205,9 +204,9 @@ public class Database {
         }
 
         public Cursor query(String table, String[] columns, String selection,
-                String[] selectionArgs, String groupBy, String having, String orderBy) {
+                String[] selectionArgs, String groupBy, String having, String orderBy, String limit) {
             return mSQLiteDatabase.query(table, columns, selection, selectionArgs, groupBy,
-                    orderBy, having);
+                    orderBy, having, limit);
         }
 
         public void setTransactionSuccessful() {

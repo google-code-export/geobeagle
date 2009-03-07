@@ -5,6 +5,7 @@ import com.google.code.geobeagle.io.Database;
 import com.google.code.geobeagle.io.GpxImporter;
 import com.google.code.geobeagle.io.GpxLoader;
 import com.google.code.geobeagle.io.Database.SQLiteWrapper;
+import com.google.code.geobeagle.io.GpxImporter.ImportThreadDelegate;
 import com.google.code.geobeagle.ui.CacheListDelegate;
 import com.google.code.geobeagle.ui.ErrorDisplayer;
 
@@ -14,6 +15,9 @@ import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
 import android.widget.Toast;
+
+import java.io.File;
+import java.io.FilenameFilter;
 
 public class GpxImporterDI {
 
@@ -27,15 +31,16 @@ public class GpxImporterDI {
     public static class ImportThread extends Thread {
         static ImportThread create(MessageHandler messageHandler, GpxLoader gpxLoader,
                 ErrorDisplayer errorDisplayer) {
-            return new ImportThread(messageHandler, gpxLoader, errorDisplayer);
+            final GpxImporterDI.GpxFilenameFactory gpxFilenameFactory = new GpxImporterDI.GpxFilenameFactory();
+            return new ImportThread(messageHandler, gpxLoader, errorDisplayer, gpxFilenameFactory);
         }
 
         private final GpxImporter.ImportThreadDelegate mImportThreadDelegate;
 
         public ImportThread(MessageHandler messageHandler, GpxLoader gpxLoader,
-                ErrorDisplayer errorDisplayer) {
-            mImportThreadDelegate = new GpxImporter.ImportThreadDelegate(gpxLoader, messageHandler,
-                    errorDisplayer);
+                ErrorDisplayer errorDisplayer, GpxImporterDI.GpxFilenameFactory gpxFilenameFactory) {
+            mImportThreadDelegate = new ImportThreadDelegate(gpxLoader, messageHandler,
+                    errorDisplayer, gpxFilenameFactory);
         }
 
         @Override
@@ -82,7 +87,7 @@ public class GpxImporterDI {
         static final int MSG_PROGRESS = 0;
 
         public static MessageHandler create(ListActivity listActivity) {
-            final GpxImporterDI.ProgressDialogWrapper progressDialogWrapper = new GpxImporterDI.ProgressDialogWrapper(
+            final ProgressDialogWrapper progressDialogWrapper = new ProgressDialogWrapper(
                     listActivity);
             return new MessageHandler(progressDialogWrapper);
         }
@@ -158,10 +163,24 @@ public class GpxImporterDI {
         }
     }
 
+    public static class GpxFilenameFactory {
+    
+        public String[] getFilenames() {
+            File dir = new File("/sdcard");
+    
+            FilenameFilter filter = new FilenameFilter() {
+                public boolean accept(File dir, String name) {
+                    return !name.startsWith(".") && name.endsWith(".gpx");
+                }
+            };
+            return dir.list(filter);
+        }
+    
+    }
+
     public static GpxImporter create(Database database, SQLiteWrapper sqliteWrapper,
             ErrorDisplayer errorDisplayer, ListActivity listActivity) {
-        final GpxImporterDI.MessageHandler messageHandler = GpxImporterDI.MessageHandler
-                .create(listActivity);
+        final MessageHandler messageHandler = MessageHandler.create(listActivity);
         final GpxLoader gpxLoader = GpxLoaderDI.create(database, sqliteWrapper, messageHandler,
                 errorDisplayer);
         final ToastFactory toastFactory = new ToastFactory();

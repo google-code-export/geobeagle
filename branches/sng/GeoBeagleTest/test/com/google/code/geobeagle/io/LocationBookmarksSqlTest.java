@@ -20,6 +20,7 @@ import static org.easymock.classextension.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.verify;
 
 import com.google.code.geobeagle.DescriptionsAndLocations;
+import com.google.code.geobeagle.LocationControl;
 import com.google.code.geobeagle.io.Database.CacheReader;
 import com.google.code.geobeagle.io.Database.SQLiteWrapper;
 
@@ -36,28 +37,27 @@ public class LocationBookmarksSqlTest extends TestCase {
     public void testGetDescriptionsAndLocations() {
         DescriptionsAndLocations descriptionsAndLocations = createMock(DescriptionsAndLocations.class);
 
-        LocationBookmarksSql locationBookmarksSql = new LocationBookmarksSql(
+        LocationBookmarksSql locationBookmarksSql = new LocationBookmarksSql(null,
                 descriptionsAndLocations, null, null, null, null, null);
         assertEquals(descriptionsAndLocations, locationBookmarksSql.getDescriptionsAndLocations());
     }
 
     public void testReadBookmarksCursorOpenError() {
-        CacheReader cacheReader = createMock(CacheReader.class);
         SQLiteWrapper sqliteWrapper = createMock(SQLiteWrapper.class);
-        
+        LocationControl locationControl = createMock(LocationControl.class);
+        CacheReader cacheReader = createMock(CacheReader.class);
         sqliteWrapper.openReadableDatabase(mDatabase);
-        expect(CacheReader.create(sqliteWrapper)).andReturn(cacheReader);
-        expect(cacheReader.open(null)).andReturn(false);
         sqliteWrapper.close();
+        expect(locationControl.getLocation()).andReturn(null);
 
         replay(mDatabase);
+        replay(locationControl);
         replay(sqliteWrapper);
-        replay(cacheReader);
-        LocationBookmarksSql locationBookmarksSql = new LocationBookmarksSql(null, mDatabase, sqliteWrapper, null, null, null);
+        LocationBookmarksSql locationBookmarksSql = new LocationBookmarksSql(cacheReader, null, mDatabase, sqliteWrapper, null, null, locationControl);
         locationBookmarksSql.onResume(null);
         verify(mDatabase);
+        verify(locationControl);
         verify(sqliteWrapper);
-        verify(cacheReader);
     }
 
     public void testReadBookmarksOne() {
@@ -71,9 +71,9 @@ public class LocationBookmarksSqlTest extends TestCase {
 
         replay(cacheReader);
         replay(descriptionsAndLocations);
-        LocationBookmarksSql locationBookmarksSql = new LocationBookmarksSql(
+        LocationBookmarksSql locationBookmarksSql = new LocationBookmarksSql(cacheReader,
                 descriptionsAndLocations, null, null, null, null, null);
-        locationBookmarksSql.readBookmarks(cacheReader);
+        locationBookmarksSql.readBookmarks();
         verify(cacheReader);
         verify(descriptionsAndLocations);
     }
@@ -92,9 +92,9 @@ public class LocationBookmarksSqlTest extends TestCase {
 
         replay(cacheReader);
         replay(descriptionsAndLocations);
-        LocationBookmarksSql locationBookmarksSql = new LocationBookmarksSql(
+        LocationBookmarksSql locationBookmarksSql = new LocationBookmarksSql(cacheReader,
                 descriptionsAndLocations, null, null, null, null, null);
-        locationBookmarksSql.readBookmarks(cacheReader);
+        locationBookmarksSql.readBookmarks();
         verify(cacheReader);
         verify(descriptionsAndLocations);
     }

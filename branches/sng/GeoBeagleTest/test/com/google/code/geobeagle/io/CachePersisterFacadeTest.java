@@ -108,9 +108,23 @@ public class CachePersisterFacadeTest extends TestCase {
         verify(xmlPullParser);
     }
 
-    public void testWptName() throws IOException {
+    public void testStart() {
         FileFactory fileFactory = createMock(FileFactory.class);
         File file = createMock(File.class);
+        
+        expect(fileFactory.createFile(CachePersisterFacade.GEOBEAGLE_DIR)).andReturn(file);
+        expect(file.mkdirs()).andReturn(true);
+        
+        replay(fileFactory);
+        replay(file);
+        CachePersisterFacade cachePersisterFacade = new CachePersisterFacade(null, fileFactory,
+                null, null, null, null, null);
+        cachePersisterFacade.start();
+        verify(fileFactory);
+        verify(file);
+    }
+
+    public void testWptName() throws IOException {
         HtmlWriterFactory htmlWriterFactory = createMock(HtmlWriterFactory.class);
         HtmlWriter htmlWriter = createMock(HtmlWriter.class);
         CacheDetailsWriterFactory cacheDetailsWriterFactory = createMock(CacheDetailsWriterFactory.class);
@@ -120,27 +134,24 @@ public class CachePersisterFacadeTest extends TestCase {
         Cache cache = new Cache();
         cache.mLatitude = 122;
         cache.mLongitude = 37;
-
-        expect(fileFactory.createFile(CachePersisterFacade.GEOBEAGLE_DIR)).andReturn(file);
-        expect(file.mkdirs()).andReturn(true);
+        cache.mName = "a little cache";
         cacheWriter.clearCaches("foo.gpx");
         cacheWriter.startWriting();
         expect(htmlWriterFactory.create(CachePersisterFacade.GEOBEAGLE_DIR + "/GC123.html"))
                 .andReturn(htmlWriter);
         expect(cacheDetailsWriterFactory.create(htmlWriter)).andReturn(cacheDetailsWriter);
         cacheDetailsWriter.writeWptName("GC123", 122, 37);
-        messageHandler.workerSendUpdate("1: foo.gpx - GC123");
+        messageHandler.workerSendUpdate("1: foo.gpx - GC123 - a little cache");
 
         replay(htmlWriterFactory);
         replay(htmlWriter);
         replay(cacheDetailsWriterFactory);
         replay(cacheDetailsWriter);
         replay(messageHandler);
-        replay(fileFactory);
         replay(cacheWriter);
-        CachePersisterFacade cachePersisterFacade = new CachePersisterFacade(cacheWriter,
-                fileFactory, cacheDetailsWriterFactory, cacheDetailsWriter, htmlWriterFactory,
-                messageHandler, cache);
+        CachePersisterFacade cachePersisterFacade = new CachePersisterFacade(cacheWriter, null,
+                cacheDetailsWriterFactory, cacheDetailsWriter, htmlWriterFactory, messageHandler,
+                cache);
         cachePersisterFacade.open("foo.gpx");
         cachePersisterFacade.wptName("GC123");
         verify(htmlWriterFactory);
@@ -148,7 +159,6 @@ public class CachePersisterFacadeTest extends TestCase {
         verify(cacheDetailsWriterFactory);
         verify(cacheDetailsWriter);
         verify(messageHandler);
-        verify(fileFactory);
         verify(cacheWriter);
     }
 }

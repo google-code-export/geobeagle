@@ -95,10 +95,13 @@ public class CachePersisterFacade {
 
     void open(String text) {
         mFilename = text;
-        File file = mFileFactory.createFile(GEOBEAGLE_DIR);
-        file.mkdirs();
         mCacheWriter.clearCaches(text);
         mCacheWriter.startWriting();
+    }
+    
+    void start() {
+        File file = mFileFactory.createFile(GEOBEAGLE_DIR);
+        file.mkdirs();
         mCacheCount = 0;
     }
 
@@ -113,6 +116,6 @@ public class CachePersisterFacade {
         mCacheDetailsWriter.writeWptName(wpt, mCache.mLatitude, mCache.mLongitude);
         mCache.mId = wpt;
         mCacheCount++;
-        mMessageHandler.workerSendUpdate(mCacheCount + ": " + mFilename + " - " + wpt);
+        mMessageHandler.workerSendUpdate(mCacheCount + ": " + mFilename + " - " + wpt + " - " + mCache.mName);
     }
 }

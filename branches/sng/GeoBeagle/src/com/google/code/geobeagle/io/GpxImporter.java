@@ -16,6 +16,7 @@ package com.google.code.geobeagle.io;
 
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.io.Database.SQLiteWrapper;
+import com.google.code.geobeagle.io.di.GpxImporterDI.GpxFilenameFactory;
 import com.google.code.geobeagle.io.di.GpxImporterDI.ImportThreadWrapper;
 import com.google.code.geobeagle.io.di.GpxImporterDI.MessageHandler;
 import com.google.code.geobeagle.io.di.GpxImporterDI.ToastFactory;
@@ -33,27 +34,36 @@ import java.io.IOException;
 public class GpxImporter {
     public static class ImportThreadDelegate {
         private final ErrorDisplayer mErrorDisplayer;
+        private final GpxFilenameFactory mGpxFilenameFactory;
         private final GpxLoader mGpxLoader;
         private final MessageHandler mMessageHandler;
 
         public ImportThreadDelegate(GpxLoader gpxLoader, MessageHandler messageHandler,
-                ErrorDisplayer errorDisplayer) {
+                ErrorDisplayer errorDisplayer, GpxFilenameFactory gpxFilenameFactory) {
             mMessageHandler = messageHandler;
             mGpxLoader = gpxLoader;
             mErrorDisplayer = errorDisplayer;
+            mGpxFilenameFactory = gpxFilenameFactory;
         }
 
         public void run() {
+            String filename = "";
             try {
-                mGpxLoader.open(GpxLoader.GPX_PATH);
-                mGpxLoader.load();
+                String children[] = mGpxFilenameFactory.getFilenames();
+                mGpxLoader.start();
+                for (String child : children) {
+                    filename = "/sdcard/" + child;
+                    mGpxLoader.open(filename);
+                    mGpxLoader.load();
+                }
+
                 mMessageHandler.loadComplete();
             } catch (final FileNotFoundException e) {
-                mErrorDisplayer.displayError(R.string.error_opening_file, GpxLoader.GPX_PATH);
+                mErrorDisplayer.displayError(R.string.error_opening_file, filename);
             } catch (XmlPullParserException e) {
-                mErrorDisplayer.displayError(R.string.error_parsing_file, GpxLoader.GPX_PATH);
+                mErrorDisplayer.displayError(R.string.error_parsing_file, filename);
             } catch (IOException e) {
-                mErrorDisplayer.displayError(R.string.error_reading_file, GpxLoader.GPX_PATH);
+                mErrorDisplayer.displayError(R.string.error_reading_file, filename);
             } catch (Exception e) {
                 mErrorDisplayer.displayErrorAndStack(e);
             }
@@ -84,7 +94,7 @@ public class GpxImporter {
 
     public void abort() throws InterruptedException {
         mMessageHandler.abortLoad();
-        mGpxLoader.abortLoad();
+        mGpxLoader.abort();
         if (mImportThreadWrapper.isAlive()) {
             mImportThreadWrapper.join();
             mSqliteWrapper.close();

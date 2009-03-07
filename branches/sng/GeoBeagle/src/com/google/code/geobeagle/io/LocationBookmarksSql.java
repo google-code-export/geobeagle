@@ -22,7 +22,6 @@ import com.google.code.geobeagle.io.Database.CacheReader;
 import com.google.code.geobeagle.io.Database.SQLiteWrapper;
 import com.google.code.geobeagle.ui.ErrorDisplayer;
 
-import android.app.ListActivity;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 
@@ -33,23 +32,26 @@ public class LocationBookmarksSql implements LifecycleManager {
     private final DescriptionsAndLocations mDescriptionsAndLocations;
     private final SQLiteWrapper mSQLiteWrapper;
     private final LocationControl mLocationControl;
+    private final CacheReader mCacheReader;
 
-    public static LocationBookmarksSql create(ListActivity listActivity,
-            LocationControl locationControl, Database database,
+    public static LocationBookmarksSql create(LocationControl locationControl, Database database,
             DestinationFactory destinationFactory, ErrorDisplayer errorDisplayer) {
         final DescriptionsAndLocations descriptionsAndLocations = new DescriptionsAndLocations();
         final SQLiteWrapper sqliteWrapper = new SQLiteWrapper();
-        return new LocationBookmarksSql(descriptionsAndLocations, database, sqliteWrapper,
-                destinationFactory, errorDisplayer, locationControl);
+        final CacheReader cacheReader = CacheReader.create(sqliteWrapper);
+        return new LocationBookmarksSql(cacheReader, descriptionsAndLocations, database,
+                sqliteWrapper, destinationFactory, errorDisplayer, locationControl);
     }
 
-    public LocationBookmarksSql(DescriptionsAndLocations descriptionsAndLocations,
-            Database database, SQLiteWrapper sqliteWrapper, DestinationFactory destinationFactory,
+    public LocationBookmarksSql(CacheReader cacheReader,
+            DescriptionsAndLocations descriptionsAndLocations, Database database,
+            SQLiteWrapper sqliteWrapper, DestinationFactory destinationFactory,
             ErrorDisplayer errorDisplayer, LocationControl locationControl) {
         mDescriptionsAndLocations = descriptionsAndLocations;
         mDatabase = database;
         mSQLiteWrapper = sqliteWrapper;
         mLocationControl = locationControl;
+        mCacheReader = cacheReader;
     }
 
     public DescriptionsAndLocations getDescriptionsAndLocations() {
@@ -64,26 +66,21 @@ public class LocationBookmarksSql implements LifecycleManager {
     }
 
     public void onResume(SharedPreferences preferences) {
-        readBookmarks(mLocationControl);
-    }
-
-    private void readBookmarks(LocationControl locationControl) {
         mSQLiteWrapper.openReadableDatabase(mDatabase);
-        CacheReader cacheReader = CacheReader.create(mSQLiteWrapper);
-        if (cacheReader.open(locationControl.getLocation())) {
-            readBookmarks(cacheReader);
-            cacheReader.close();
+        if (mCacheReader.open(mLocationControl.getLocation())) {
+            readBookmarks();
+            mCacheReader.close();
         }
         mSQLiteWrapper.close();
     }
 
-    public void readBookmarks(CacheReader cacheReader) {
+    public void readBookmarks() {
         mDescriptionsAndLocations.clear();
         do {
-            final String location = cacheReader.getCache();
+            final String location = mCacheReader.getCache();
             mDescriptionsAndLocations
                     .add(DestinationFactory.extractDescription(location), location);
-        } while (cacheReader.moveToNext());
+        } while (mCacheReader.moveToNext());
     }
 
 }

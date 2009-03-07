@@ -25,8 +25,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 public class GpxLoader {
-    public static final String GPX_PATH = "/sdcard/caches.gpx";
-
     private final CachePersisterFacade mCachePersisterFacade;
     private final ErrorDisplayer mErrorDisplayer;
     private final GpxToCache mGpxToCache;
@@ -38,8 +36,8 @@ public class GpxLoader {
         mErrorDisplayer = errorDisplayer;
     }
 
-    public void abortLoad() {
-        mGpxToCache.abortLoad();
+    public void abort() {
+        mGpxToCache.abort();
     }
 
     public void load() {
@@ -59,5 +57,9 @@ public class GpxLoader {
     public void open(String path) throws FileNotFoundException, XmlPullParserException, IOException {
         mGpxToCache.open(path);
         mCachePersisterFacade.open(path);
+    }
+
+    public void start() {
+        mCachePersisterFacade.start();
     }
 }

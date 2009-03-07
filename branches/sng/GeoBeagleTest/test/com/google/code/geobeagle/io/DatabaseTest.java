@@ -42,16 +42,20 @@ import junit.framework.TestCase;
 
 public class DatabaseTest extends TestCase {
 
+    private void expectQuery(SQLiteWrapper sqliteWrapper, Cursor cursor, String where) {
+        expect(
+                sqliteWrapper.query(eq("CACHES"), (String[])eq(Database.READER_COLUMNS), eq(where),
+                        (String[])isNull(), (String)isNull(), (String)isNull(), (String)isNull(),
+                        (String)eq("200"))).andReturn(cursor);
+    }
+
     public void testCacheReaderGetCache() {
         SQLiteWrapper sqliteWrapper = createMock(SQLiteWrapper.class);
         WhereFactory whereFactory = createMock(WhereFactory.class);
 
         Cursor cursor = createMock(Cursor.class);
 
-        expect(
-                sqliteWrapper.query(eq("CACHES"), (String[])eq(Database.READER_COLUMNS),
-                        (String)isNull(), (String[])isNull(), (String)isNull(), (String)isNull(),
-                        (String)isNull())).andReturn(cursor);
+        expectQuery(sqliteWrapper, cursor, null);
         expect(cursor.moveToFirst()).andReturn(true);
         expect(cursor.getString(0)).andReturn("122");
         expect(cursor.getString(1)).andReturn("37");
@@ -67,22 +71,6 @@ public class DatabaseTest extends TestCase {
         verify(cursor);
     }
 
-    public void testGetWhere() {
-        Location location = createMock(Location.class);
-        expect(location.getLatitude()).andReturn(90.0);
-        expect(location.getLongitude()).andReturn(180.0);
-
-        replay(location);
-        assertEquals(
-                "Latitude > 89.9 AND Latitude < 90.1 AND Longitude > -180.0 AND Longitude < 180.0",
-                new WhereFactory().getWhere(location));
-        verify(location);
-    }
-
-    public void testGetWhereNullLocation() {
-        assertEquals(null, new WhereFactory().getWhere(null));
-    }
-
     public void testCacheReaderOpen() {
         SQLiteWrapper sqliteWrapper = createMock(SQLiteWrapper.class);
         Cursor cursor = createMock(Cursor.class);
@@ -91,10 +79,7 @@ public class DatabaseTest extends TestCase {
 
         String where = "Latitude > something AND Longitude < somethingelse";
         expect(whereFactory.getWhere(location)).andReturn(where);
-        expect(
-                sqliteWrapper.query(eq("CACHES"), (String[])eq(Database.READER_COLUMNS),
-                        (String)eq(where), (String[])isNull(), (String)isNull(), (String)isNull(),
-                        (String)isNull())).andReturn(cursor);
+        expectQuery(sqliteWrapper, cursor, where);
         expect(cursor.moveToFirst()).andReturn(true);
 
         replay(sqliteWrapper);
@@ -114,10 +99,7 @@ public class DatabaseTest extends TestCase {
         WhereFactory whereFactory = createMock(WhereFactory.class);
 
         expect(whereFactory.getWhere(null)).andReturn("a=b");
-        expect(
-                sqliteWrapper.query(eq("CACHES"), (String[])eq(Database.READER_COLUMNS),
-                        (String)eq("a=b"), (String[])isNull(), (String)isNull(), (String)isNull(),
-                        (String)isNull())).andReturn(cursor);
+        expectQuery(sqliteWrapper, cursor, "a=b");
         expect(cursor.moveToFirst()).andReturn(false);
         cursor.close();
 
@@ -136,10 +118,7 @@ public class DatabaseTest extends TestCase {
         WhereFactory whereFactory = createMock(WhereFactory.class);
 
         expect(whereFactory.getWhere(null)).andReturn("a=b");
-        expect(
-                sqliteWrapper.query(eq("CACHES"), (String[])eq(Database.READER_COLUMNS),
-                        (String)eq("a=b"), (String[])isNull(), (String)isNull(), (String)isNull(),
-                        (String)isNull())).andReturn(cursor);
+        expectQuery(sqliteWrapper, cursor, "a=b");
         expect(cursor.moveToFirst()).andReturn(true);
 
         replay(whereFactory);
@@ -223,6 +202,22 @@ public class DatabaseTest extends TestCase {
         assertEquals(sqlite, database.getWritableDatabase());
         verify(sqliteOpenHelper);
         verify(sqlite);
+    }
+
+    public void testGetWhere() {
+        Location location = createMock(Location.class);
+        expect(location.getLatitude()).andReturn(90.0);
+        expect(location.getLongitude()).andReturn(180.0);
+
+        replay(location);
+        assertEquals(
+                "Latitude > 89.9 AND Latitude < 90.1 AND Longitude > -180.0 AND Longitude < 180.0",
+                new WhereFactory().getWhere(location));
+        verify(location);
+    }
+
+    public void testGetWhereNullLocation() {
+        assertEquals(null, new WhereFactory().getWhere(null));
     }
 
     public void testSQLiteOpenHelperDelegate_onCreate() {

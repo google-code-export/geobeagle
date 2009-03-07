@@ -103,7 +103,7 @@ public class GpxToCacheTest extends TestCase {
         replay(xmlPullParser);
         replay(eventHelper);
         GpxToCache gpxToCache = new GpxToCache(xmlPullParser, eventHelper);
-        gpxToCache.abortLoad();
+        gpxToCache.abort();
         gpxToCache.load();
         verify(xmlPullParser);
         verify(eventHelper);
