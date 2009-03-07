@@ -92,7 +92,7 @@ public class CacheListDelegate {
         final LocationBookmarksSql locationBookmarks = LocationBookmarksSql.create(parent,
                 database, destinationFactory, errorDisplayer);
         final SimpleAdapterFactory simpleAdapterFactory = new SimpleAdapterFactory();
-        final CacheListData cacheListData = CacheListDataDI.create(destinationFactory, parent);
+        final CacheListData cacheListData = CacheListDataDI.create(resourceProvider, destinationFactory);
         final LocationControl locationControl = LocationControl.create(((LocationManager)parent
                 .getSystemService(Context.LOCATION_SERVICE)));
         final SQLiteWrapper sqliteWrapper = new SQLiteWrapper();
