@@ -1,4 +1,5 @@
 /*
+ ** Licensed under the Apache License, Version 2.0 (the "License");
  ** you may not use this file except in compliance with the License.
  ** You may obtain a copy of the License at
  **
@@ -24,6 +25,8 @@ import com.google.code.geobeagle.intents.IntentStarterRadar;
 import com.google.code.geobeagle.intents.IntentStarterViewUri;
 import com.google.code.geobeagle.io.Database;
 import com.google.code.geobeagle.io.LocationSaver;
+import com.google.code.geobeagle.io.Database.SQLiteWrapper;
+import com.google.code.geobeagle.ui.CacheListDelegate;
 import com.google.code.geobeagle.ui.CachePageButtonEnabler;
 import com.google.code.geobeagle.ui.ContentSelector;
 import com.google.code.geobeagle.ui.DestinationListOnClickListener;
@@ -113,7 +116,7 @@ public class GeoBeagle extends Activity {
             if (action.equals(Intent.ACTION_VIEW)) {
                 getCoordinatesFromIntent(mLocationSetter, intent, mErrorDisplayer);
                 return true;
-            } else if (action.equals(CacheList.SELECT_CACHE)) {
+            } else if (action.equals(CacheListDelegate.SELECT_CACHE)) {
                 mLocationSetter.setLocation(intent.getStringExtra("location"));
                 mCachePageButtonEnabler.check();
                 return true;
@@ -150,9 +153,10 @@ public class GeoBeagle extends Activity {
                     destinationPatterns);
             final Database database = Database.create(this);
 
-            MockableEditText mockableTxtLocation = new MockableEditText(txtLocation);
-            LocationSaver locationSaver = new LocationSaver(database, destinationFactory,
-                    mErrorDisplayer);
+            final MockableEditText mockableTxtLocation = new MockableEditText(txtLocation);
+            final SQLiteWrapper sqliteWrapper = new SQLiteWrapper();
+            final LocationSaver locationSaver = new LocationSaver(database, destinationFactory,
+                    mErrorDisplayer, sqliteWrapper);
             final String initialDestination = getString(R.string.initial_destination);
             mLocationSetter = new LocationSetter(this, mockableTxtLocation, mGpsControl,
                     destinationPatterns, initialDestination, mErrorDisplayer, locationSaver);

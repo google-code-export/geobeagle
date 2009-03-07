@@ -1,77 +1,84 @@
-/**
- * 
+/*
+ ** Licensed under the Apache License, Version 2.0 (the "License");
+ ** you may not use this file except in compliance with the License.
+ ** You may obtain a copy of the License at
+ **
+ **     http://www.apache.org/licenses/LICENSE-2.0
+ **
+ ** Unless required by applicable law or agreed to in writing, software
+ ** distributed under the License is distributed on an "AS IS" BASIS,
+ ** WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ ** See the License for the specific language governing permissions and
+ ** limitations under the License.
  */
 
 package com.google.code.geobeagle.io;
 
 import com.google.code.geobeagle.io.CacheDetailsWriter.CacheDetailsWriterFactory;
-import com.google.code.geobeagle.io.GpxLoader.Cache;
+import com.google.code.geobeagle.io.Database.CacheWriter;
+import com.google.code.geobeagle.io.HtmlWriter.HtmlWriterFactory;
+import com.google.code.geobeagle.io.di.CachePersisterFacadeDI;
+import com.google.code.geobeagle.io.di.GpxImporterDI;
+import com.google.code.geobeagle.io.di.GpxToCacheDI;
 
-import org.xmlpull.v1.XmlPullParser;
-
+import java.io.File;
 import java.io.IOException;
 
 public class CachePersisterFacade {
-    public static class GpxWriter {
-        final CacheDetailsWriter mCacheDetailsWriter;
 
-        public GpxWriter(CacheDetailsWriter cacheDetailsWriter) {
-            mCacheDetailsWriter = cacheDetailsWriter;
+    public static class Cache {
+        public String mId;
+        public double mLatitude;
+        public double mLongitude;
+        public String mName;
+
+        public Cache() {
+            mId = "";
+            mName = "";
         }
 
-        void writeEndTag() throws IOException {
-            mCacheDetailsWriter.writeFooter();
-            mCacheDetailsWriter.close();
-        }
-
-        void writeLine(String text) throws IOException {
-            mCacheDetailsWriter.write(text);
-        }
-
-        void writeLogDate(Cache cache, String text) throws IOException {
-            mCacheDetailsWriter.writeSeparator();
-            mCacheDetailsWriter.write(text);
-        }
-
-        void writeWptName(String text, double latitude, double longitude) throws IOException {
-            mCacheDetailsWriter.writeHeader();
-            mCacheDetailsWriter.write(text);
-            mCacheDetailsWriter.write(latitude + ", " + longitude);
-        }
-
-    }
-
-    public static class GpxWriterFactory {
-        public GpxWriter create(CacheDetailsWriter cacheDetailsWriter) {
-            return new GpxWriter(cacheDetailsWriter);
+        public Cache(String id, String name, double latitude, double longitude) {
+            mId = id;
+            mName = name;
+            mLatitude = latitude;
+            mLongitude = longitude;
         }
     }
 
-    public static CachePersisterFacade create() {
-        final CacheDetailsWriterFactory cacheDetailsWriterFactory = new CacheDetailsWriterFactory();
-        final Cache cache = new Cache();
-        final GpxWriterFactory gpxWriterFactory = new GpxWriterFactory();
-        return new CachePersisterFacade(null, cache, gpxWriterFactory, cacheDetailsWriterFactory);
-    }
+    public static final String GEOBEAGLE_DIR = "/sdcard/GeoBeagle";
 
     private final Cache mCache;
+    private int mCacheCount;
+    private CacheDetailsWriter mCacheDetailsWriter;
     private final CacheDetailsWriterFactory mCacheDetailsWriterFactory;
-    private CachePersisterFacade.GpxWriter mGpxWriter;
+    private final CacheWriter mCacheWriter;
+    private final CachePersisterFacadeDI.FileFactory mFileFactory;
+    private String mFilename;
+    private final HtmlWriterFactory mHtmlWriterFactory;
+    private GpxImporterDI.MessageHandler mMessageHandler;
 
-    private final CachePersisterFacade.GpxWriterFactory mGpxWriterFactory;
-
-    public CachePersisterFacade(CachePersisterFacade.GpxWriter gpxWriter, Cache cache,
-            CachePersisterFacade.GpxWriterFactory gpxWriterFactory,
-            CacheDetailsWriterFactory cacheDetailsFactory) {
-        mGpxWriterFactory = gpxWriterFactory;
-        mGpxWriter = gpxWriter;
+    public CachePersisterFacade(CacheWriter cacheWriter,
+            CachePersisterFacadeDI.FileFactory fileFactory,
+            CacheDetailsWriterFactory cacheDetailsWriterFactory,
+            CacheDetailsWriter cacheDetailsWriter, HtmlWriterFactory htmlWriterFactory,
+            GpxImporterDI.MessageHandler messageHandler, Cache cache) {
+        mCacheWriter = cacheWriter;
+        mFileFactory = fileFactory;
+        mCacheDetailsWriterFactory = cacheDetailsWriterFactory;
+        mCacheDetailsWriter = cacheDetailsWriter;
         mCache = cache;
-        mCacheDetailsWriterFactory = cacheDetailsFactory;
+        mHtmlWriterFactory = htmlWriterFactory;
+        mMessageHandler = messageHandler;
     }
 
-    Cache endTag() throws IOException {
-        mGpxWriter.writeEndTag();
-        return mCache;
+    public void close() {
+        mCacheWriter.stopWriting();
+    }
+
+    void endTag() throws IOException {
+        mCacheDetailsWriter.writeEndTag();
+        mCacheWriter.insertAndUpdateCache(mCache.mId, mCache.mName, mCache.mLatitude,
+                mCache.mLongitude);
     }
 
     void groundspeakName(String text) {
@@ -79,23 +86,33 @@ public class CachePersisterFacade {
     }
 
     void line(String text) throws IOException {
-        mGpxWriter.writeLine(text);
+        mCacheDetailsWriter.writeLine(text);
     }
 
     void logDate(String text) throws IOException {
-        mGpxWriter.writeLogDate(mCache, text);
+        mCacheDetailsWriter.writeLogDate(text);
     }
 
-    void wpt(XmlPullParser mXmlPullParser) {
+    void open(String text) {
+        mFilename = text;
+        File file = mFileFactory.createFile(GEOBEAGLE_DIR);
+        file.mkdirs();
+        mCacheWriter.clearCaches(text);
+        mCacheWriter.startWriting();
+        mCacheCount = 0;
+    }
+
+    void wpt(GpxToCacheDI.XmlPullParserWrapper mXmlPullParser) {
         mCache.mLatitude = Double.parseDouble(mXmlPullParser.getAttributeValue(null, "lat"));
         mCache.mLongitude = Double.parseDouble(mXmlPullParser.getAttributeValue(null, "lon"));
     }
 
-    void wptName(String text) throws IOException {
-        CacheDetailsWriter cacheDetailsWriter = mCacheDetailsWriterFactory
-                .create(GpxToCache.GEOBEAGLE_DIR + "/" + text + ".html");
-        mGpxWriter = mGpxWriterFactory.create(cacheDetailsWriter);
-        mGpxWriter.writeWptName(text, mCache.mLatitude, mCache.mLongitude);
-        mCache.mId = text;
+    void wptName(String wpt) throws IOException {
+        HtmlWriter htmlWriter = mHtmlWriterFactory.create(GEOBEAGLE_DIR + "/" + wpt + ".html");
+        mCacheDetailsWriter = mCacheDetailsWriterFactory.create(htmlWriter);
+        mCacheDetailsWriter.writeWptName(wpt, mCache.mLatitude, mCache.mLongitude);
+        mCache.mId = wpt;
+        mCacheCount++;
+        mMessageHandler.workerSendUpdate(mCacheCount + ": " + mFilename + " - " + wpt);
     }
 }

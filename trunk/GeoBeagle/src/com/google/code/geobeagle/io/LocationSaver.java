@@ -17,33 +17,31 @@ package com.google.code.geobeagle.io;
 import com.google.code.geobeagle.data.Destination;
 import com.google.code.geobeagle.data.Destination.DestinationFactory;
 import com.google.code.geobeagle.io.Database.CacheWriter;
+import com.google.code.geobeagle.io.Database.SQLiteWrapper;
 import com.google.code.geobeagle.ui.ErrorDisplayer;
 
-import android.database.sqlite.SQLiteDatabase;
-
 public class LocationSaver {
-    private final Database mDatabaseFactory;
+    private final Database mDatabase;
     private final DestinationFactory mDestinationFactory;
-    private final ErrorDisplayer mErrorDisplayer;
+    private final SQLiteWrapper mSQLiteWrapper;
 
     public LocationSaver(Database database, DestinationFactory destinationFactory,
-            ErrorDisplayer errorDisplayer) {
-        mDatabaseFactory = database;
+            ErrorDisplayer errorDisplayer, SQLiteWrapper sqliteWrapper) {
+        mDatabase = database;
         mDestinationFactory = destinationFactory;
-        mErrorDisplayer = errorDisplayer;
+        mSQLiteWrapper = sqliteWrapper;
     }
 
     public void saveLocation(final CharSequence location) {
-        SQLiteDatabase sqlite = mDatabaseFactory.openOrCreateCacheDatabase();
-        if (sqlite != null) {
-            CacheWriter cacheWriter = mDatabaseFactory.createCacheWriter(sqlite, mErrorDisplayer);
-            cacheWriter.startWriting();
-            Destination destination = mDestinationFactory.create(location);
-            cacheWriter.write(destination.getFullId(), destination.getName(), destination
-                    .getLatitude(), destination.getLongitude(), "intent");
-            cacheWriter.stopWriting();
-            sqlite.close();
-        }
+        mSQLiteWrapper.openWritableDatabase(mDatabase);
+        // TODO: catch errors on open
+        CacheWriter cacheWriter = mDatabase.createCacheWriter(mSQLiteWrapper);
+        cacheWriter.startWriting();
+        Destination destination = mDestinationFactory.create(location);
+        cacheWriter.insertAndUpdateCache(destination.getFullId(), destination.getName(),
+                destination.getLatitude(), destination.getLongitude(), "intent");
+        cacheWriter.stopWriting();
+        mSQLiteWrapper.close();
     }
 
 }

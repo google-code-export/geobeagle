@@ -57,6 +57,10 @@ public class DestinationVectors {
         }
     }
 
+    public void delete(int position) {
+        mDestinationVectorsList.remove(position);
+    }
+
     public IDestinationVector get(int position) {
         return mDestinationVectorsList.get(position);
     }
@@ -68,6 +72,10 @@ public class DestinationVectors {
             arrayList.add(destination.getViewMap());
         }
         return arrayList;
+    }
+
+    public CharSequence getId(int position) {
+        return mDestinationVectorsList.get(position).getId();
     }
 
     public CharSequence getLocation(int position) {

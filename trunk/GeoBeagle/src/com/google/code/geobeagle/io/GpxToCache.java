@@ -14,50 +14,45 @@
 
 package com.google.code.geobeagle.io;
 
-import com.google.code.geobeagle.io.GpxLoader.Cache;
+
+import com.google.code.geobeagle.io.di.GpxToCacheDI;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
-import org.xmlpull.v1.XmlPullParserFactory;
 
-import java.io.BufferedReader;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
-import java.io.Reader;
 
 public class GpxToCache {
-    public static final String GEOBEAGLE_DIR = "/sdcard/GeoBeagle";
-
-    public static GpxToCache create(String path) throws FileNotFoundException,
-            XmlPullParserException {
-        final XmlPullParser xmlPullParser = createPullParser(path);
-        final EventHelper eventHelper = EventHelper.create(xmlPullParser);
-        return new GpxToCache(xmlPullParser, eventHelper);
-    }
-
-    public static XmlPullParser createPullParser(String path) throws FileNotFoundException,
-            XmlPullParserException {
-        final XmlPullParser newPullParser = XmlPullParserFactory.newInstance().newPullParser();
-        final Reader reader = new BufferedReader(new FileReader(path));
-        newPullParser.setInput(reader);
-        return newPullParser;
-    }
-
     private final EventHelper mEventHelper;
-    private final XmlPullParser mXmlPullParser;
+    private final GpxToCacheDI.XmlPullParserWrapper mXmlPullParserWrapper;
+    private boolean mAbort;
 
-    public GpxToCache(XmlPullParser xmlPullParser, EventHelper eventHelper) {
-        mXmlPullParser = xmlPullParser;
+    public GpxToCache(GpxToCacheDI.XmlPullParserWrapper xmlPullParserWrapper, EventHelper eventHelper) {
+        mXmlPullParserWrapper = xmlPullParserWrapper;
         mEventHelper = eventHelper;
     }
 
-    public Cache load() throws XmlPullParserException, IOException {
-        Cache cache = null;
-        for (int eventType = mXmlPullParser.getEventType(); eventType != XmlPullParser.END_DOCUMENT
-                && cache == null; eventType = mXmlPullParser.next()) {
-            cache = mEventHelper.handleEvent(eventType);
+    public void open(String source) throws FileNotFoundException, XmlPullParserException {
+        mXmlPullParserWrapper.open(source);
+        mAbort = false;
+    }
+
+    public void load() throws XmlPullParserException, IOException {
+        int eventType;
+        for (eventType = mXmlPullParserWrapper.getEventType(); !mAbort
+                && eventType != XmlPullParser.END_DOCUMENT; eventType = mXmlPullParserWrapper
+                .next()) {
+            mEventHelper.handleEvent(eventType);
         }
-        return cache;
+        mEventHelper.handleEvent(eventType);
+    }
+
+    public String getSource() {
+        return mXmlPullParserWrapper.getSource();
+    }
+
+    public void abortLoad() {
+        mAbort = true;
     }
 }

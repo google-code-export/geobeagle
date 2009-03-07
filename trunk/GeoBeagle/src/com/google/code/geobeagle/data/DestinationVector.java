@@ -27,8 +27,8 @@ import java.util.Map;
 public class DestinationVector implements IDestinationVector {
     public static class DestinationVectorFactory {
         private final DestinationFactory mDestinationFactory;
-        private final CharSequence mMyCurrentLocation;
         private final DistanceFormatter mDistanceFormatter;
+        private final CharSequence mMyCurrentLocation;
 
         public DestinationVectorFactory(DestinationFactory destinationFactory,
                 CharSequence myCurrentLocation, DistanceFormatter distanceFormatter) {
@@ -91,6 +91,10 @@ public class DestinationVector implements IDestinationVector {
             return -1;
         }
 
+        public CharSequence getId() {
+            return "My Current Location";
+        }
+
         public CharSequence getLocation() {
             return null;
         }
@@ -116,6 +120,10 @@ public class DestinationVector implements IDestinationVector {
 
     public float getDistance() {
         return mDistance;
+    }
+
+    public CharSequence getId() {
+        return mDestination.getFullId();
     }
 
     public CharSequence getLocation() {

@@ -24,6 +24,15 @@ import android.view.View;
 import android.widget.ListView;
 
 public class CacheList extends ListActivity {
+    private CacheListDelegate delegate;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        delegate = CacheListDelegate.create(this);
+        delegate.onCreate();
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -32,37 +41,25 @@ public class CacheList extends ListActivity {
     }
 
     @Override
+    protected void onListItemClick(ListView l, View v, int position, long id) {
+        super.onListItemClick(l, v, position, id);
+        delegate.onListItemClick(l, v, position, id);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        super.onOptionsItemSelected(item);
-        return delegate.onOptionsItemSelected(item);
+        return delegate.onOptionsItemSelected(item) || super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        return delegate.onContextItemSelected(item) || super.onContextItemSelected(item);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         delegate.onPause();
-    }
-
-    public static final String SELECT_CACHE = CacheListDelegate.SELECT_CACHE;
-
-    private static CacheListDelegate buildCacheListDelegate(ListActivity listActivity) {
-        return CacheListDelegate.create(listActivity);
-    }
-
-    private CacheListDelegate delegate;
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        delegate = buildCacheListDelegate(this);
-        delegate.onCreate();
-    }
-
-    @Override
-    protected void onListItemClick(ListView l, View v, int position, long id) {
-        super.onListItemClick(l, v, position, id);
-        delegate.onListItemClick(l, v, position, id);
     }
 
     @Override
