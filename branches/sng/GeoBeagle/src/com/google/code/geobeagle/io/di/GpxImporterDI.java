@@ -164,10 +164,10 @@ public class GpxImporterDI {
     }
 
     public static class GpxFilenameFactory {
-    
+
         public String[] getFilenames() {
             File dir = new File("/sdcard");
-    
+
             FilenameFilter filter = new FilenameFilter() {
                 public boolean accept(File dir, String name) {
                     return !name.startsWith(".") && name.endsWith(".gpx");
@@ -175,14 +175,14 @@ public class GpxImporterDI {
             };
             return dir.list(filter);
         }
-    
+
     }
 
     public static GpxImporter create(Database database, SQLiteWrapper sqliteWrapper,
             ErrorDisplayer errorDisplayer, ListActivity listActivity) {
         final MessageHandler messageHandler = MessageHandler.create(listActivity);
-        final GpxLoader gpxLoader = GpxLoaderDI.create(database, sqliteWrapper, messageHandler,
-                errorDisplayer);
+        final GpxLoader gpxLoader = GpxLoaderDI.create(listActivity, database, sqliteWrapper,
+                messageHandler, errorDisplayer);
         final ToastFactory toastFactory = new ToastFactory();
         final ImportThreadWrapper importThreadWrapper = new ImportThreadWrapper(messageHandler);
         return new GpxImporter(gpxLoader, database, sqliteWrapper, listActivity,

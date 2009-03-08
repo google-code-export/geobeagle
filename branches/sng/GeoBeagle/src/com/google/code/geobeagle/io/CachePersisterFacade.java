@@ -21,20 +21,26 @@ import com.google.code.geobeagle.io.di.GpxImporterDI;
 import com.google.code.geobeagle.io.di.GpxToCacheDI;
 import com.google.code.geobeagle.io.di.HtmlWriterFactory;
 
+import android.os.PowerManager.WakeLock;
+
 import java.io.File;
 import java.io.IOException;
 
 public class CachePersisterFacade {
+
+    public static final int WAKELOCK_DURATION = 5000;
 
     public static class Cache {
         public String mId;
         public double mLatitude;
         public double mLongitude;
         public String mName;
+        public String mSymbol;
 
         public Cache() {
             mId = "";
             mName = "";
+            mSymbol = "";
         }
 
         public Cache(String id, String name, double latitude, double longitude) {
@@ -56,12 +62,13 @@ public class CachePersisterFacade {
     private String mFilename;
     private final HtmlWriterFactory mHtmlWriterFactory;
     private GpxImporterDI.MessageHandler mMessageHandler;
+    private final WakeLock mWakeLock;
 
     public CachePersisterFacade(CacheWriter cacheWriter,
             CachePersisterFacadeDI.FileFactory fileFactory,
             CacheDetailsWriterFactory cacheDetailsWriterFactory,
             CacheDetailsWriter cacheDetailsWriter, HtmlWriterFactory htmlWriterFactory,
-            GpxImporterDI.MessageHandler messageHandler, Cache cache) {
+            GpxImporterDI.MessageHandler messageHandler, Cache cache, WakeLock wakeLock) {
         mCacheWriter = cacheWriter;
         mFileFactory = fileFactory;
         mCacheDetailsWriterFactory = cacheDetailsWriterFactory;
@@ -69,6 +76,7 @@ public class CachePersisterFacade {
         mCache = cache;
         mHtmlWriterFactory = htmlWriterFactory;
         mMessageHandler = messageHandler;
+        mWakeLock = wakeLock;
     }
 
     public void close() {
@@ -77,8 +85,9 @@ public class CachePersisterFacade {
 
     void endTag() throws IOException {
         mCacheDetailsWriter.writeEndTag();
-        mCacheWriter.insertAndUpdateCache(mCache.mId, mCache.mName, mCache.mLatitude,
-                mCache.mLongitude);
+        if (!mCache.mSymbol.equals("Geocache Found"))
+            mCacheWriter.insertAndUpdateCache(mCache.mId, mCache.mName, mCache.mLatitude,
+                    mCache.mLongitude);
     }
 
     void groundspeakName(String text) {
@@ -86,7 +95,7 @@ public class CachePersisterFacade {
     }
 
     public void hint(String text) throws IOException {
-        mCacheDetailsWriter.writeHint(text);        
+        mCacheDetailsWriter.writeHint(text);
     }
 
     void line(String text) throws IOException {
@@ -96,7 +105,7 @@ public class CachePersisterFacade {
     void logDate(String text) throws IOException {
         mCacheDetailsWriter.writeLogDate(text);
     }
-    
+
     void open(String text) {
         mFilename = text;
         mCacheWriter.clearCaches(text);
@@ -120,6 +129,12 @@ public class CachePersisterFacade {
         mCacheDetailsWriter.writeWptName(wpt, mCache.mLatitude, mCache.mLongitude);
         mCache.mId = wpt;
         mCacheCount++;
-        mMessageHandler.workerSendUpdate(mCacheCount + ": " + mFilename + " - " + wpt + " - " + mCache.mName);
+        mMessageHandler.workerSendUpdate(mCacheCount + ": " + mFilename + " - " + wpt + " - "
+                + mCache.mName);
+        mWakeLock.acquire(WAKELOCK_DURATION);
+    }
+
+    public void symbol(String text) {
+        mCache.mSymbol = text;
     }
 }

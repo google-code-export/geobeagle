@@ -31,6 +31,7 @@ public class GpxEventHandler {
             "/gpx/wpt/groundspeak:cache/groundspeak:logs/groundspeak:log/groundspeak:finder",
             "/gpx/wpt/groundspeak:cache/groundspeak:logs/groundspeak:log/groundspeak:text"
     };
+    public static final String XPATH_SYM = "/gpx/wpt/sym";
     public static final String XPATH_WPT = "/gpx/wpt";
     public static final String XPATH_WPTNAME = "/gpx/wpt/name";
 
@@ -60,6 +61,8 @@ public class GpxEventHandler {
             mCachePersisterFacade.groundspeakName(text);
         } else if (mFullPath.equals(XPATH_LOGDATE)) {
             mCachePersisterFacade.logDate(text);
+        } else if (mFullPath.equals(XPATH_SYM)) {
+            mCachePersisterFacade.symbol(text);
         } else if (mFullPath.equals(XPATH_HINT)) {
             if (!text.equals("")) {
                 mCachePersisterFacade.hint(text);

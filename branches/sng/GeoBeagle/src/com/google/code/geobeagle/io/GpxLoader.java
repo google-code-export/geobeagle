@@ -40,9 +40,10 @@ public class GpxLoader {
         mGpxToCache.abort();
     }
 
-    public void load() {
+    public boolean load() {
+        boolean success = false;
         try {
-            mGpxToCache.load();
+            success = mGpxToCache.load();
         } catch (final SQLiteException e) {
             mErrorDisplayer.displayError(R.string.error_writing_cache, e.getMessage());
         } catch (XmlPullParserException e) {
@@ -52,6 +53,7 @@ public class GpxLoader {
         } finally {
             mCachePersisterFacade.close();
         }
+        return success;
     }
 
     public void open(String path) throws FileNotFoundException, XmlPullParserException, IOException {

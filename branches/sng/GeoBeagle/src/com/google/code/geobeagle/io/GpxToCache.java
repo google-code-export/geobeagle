@@ -14,7 +14,6 @@
 
 package com.google.code.geobeagle.io;
 
-
 import com.google.code.geobeagle.io.di.GpxToCacheDI;
 
 import org.xmlpull.v1.XmlPullParser;
@@ -28,7 +27,8 @@ public class GpxToCache {
     private final GpxToCacheDI.XmlPullParserWrapper mXmlPullParserWrapper;
     private boolean mAbort;
 
-    public GpxToCache(GpxToCacheDI.XmlPullParserWrapper xmlPullParserWrapper, EventHelper eventHelper) {
+    public GpxToCache(GpxToCacheDI.XmlPullParserWrapper xmlPullParserWrapper,
+            EventHelper eventHelper) {
         mXmlPullParserWrapper = xmlPullParserWrapper;
         mEventHelper = eventHelper;
     }
@@ -38,16 +38,17 @@ public class GpxToCache {
         mAbort = false;
     }
 
-    public void load() throws XmlPullParserException, IOException {
+    public boolean load() throws XmlPullParserException, IOException {
         int eventType;
         for (eventType = mXmlPullParserWrapper.getEventType(); !mAbort
                 && eventType != XmlPullParser.END_DOCUMENT; eventType = mXmlPullParserWrapper
                 .next()) {
             mEventHelper.handleEvent(eventType);
         }
-        
+
         // Pick up END_DOCUMENT event as well.
         mEventHelper.handleEvent(eventType);
+        return !mAbort;
     }
 
     public String getSource() {

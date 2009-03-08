@@ -54,7 +54,8 @@ public class GpxImporter {
                 for (String child : children) {
                     filename = "/sdcard/" + child;
                     mGpxLoader.open(filename);
-                    mGpxLoader.load();
+                    if (!mGpxLoader.load())
+                        return;
                 }
 
                 mMessageHandler.loadComplete();

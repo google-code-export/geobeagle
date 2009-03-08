@@ -112,7 +112,7 @@ public class GpxImporterTest extends TestCase {
         });
         gpxLoader.open("/sdcard/foo.gpx");
         gpxLoader.start();
-        gpxLoader.load();
+        expect(gpxLoader.load()).andReturn(true);
         messageHandler.loadComplete();
 
         replay(gpxLoader);

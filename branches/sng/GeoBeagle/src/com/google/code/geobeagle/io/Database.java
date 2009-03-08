@@ -23,6 +23,8 @@ import android.location.Location;
 
 public class Database {
     public static class CacheReader {
+        public static final String SQL_QUERY_LIMIT = "500";
+
         public static class WhereFactory {
             public static final double DEGREES_DELTA = 0.1; // 1 degree ~= 111km
 
@@ -79,7 +81,7 @@ public class Database {
             String where = mWhereFactory.getWhere(location);
 
             mCursor = mSqliteWrapper.query(TBL_CACHES, READER_COLUMNS, where, null, null, null,
-                    null, "200");
+                    null, SQL_QUERY_LIMIT);
             final boolean result = mCursor.moveToFirst();
             if (!result)
                 mCursor.close();

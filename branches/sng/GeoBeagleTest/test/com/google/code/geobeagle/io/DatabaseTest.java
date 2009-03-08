@@ -46,7 +46,7 @@ public class DatabaseTest extends TestCase {
         expect(
                 sqliteWrapper.query(eq("CACHES"), (String[])eq(Database.READER_COLUMNS), eq(where),
                         (String[])isNull(), (String)isNull(), (String)isNull(), (String)isNull(),
-                        (String)eq("200"))).andReturn(cursor);
+                        (String)eq(CacheReader.SQL_QUERY_LIMIT))).andReturn(cursor);
     }
 
     public void testCacheReaderGetCache() {
