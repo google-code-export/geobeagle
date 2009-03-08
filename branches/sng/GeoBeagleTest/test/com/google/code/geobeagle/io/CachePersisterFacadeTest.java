@@ -116,14 +116,16 @@ public class CachePersisterFacadeTest extends TestCase {
     public void testStart() {
         FileFactory fileFactory = createMock(FileFactory.class);
         File file = createMock(File.class);
+        CacheWriter cacheWriter = createMock(CacheWriter.class);
 
         expect(fileFactory.createFile(CachePersisterFacade.GEOBEAGLE_DIR)).andReturn(file);
         expect(file.mkdirs()).andReturn(true);
+        cacheWriter.clearAllImportedCaches();
 
         replay(fileFactory);
         replay(file);
-        CachePersisterFacade cachePersisterFacade = new CachePersisterFacade(null, fileFactory,
-                null, null, null, null, null, null);
+        CachePersisterFacade cachePersisterFacade = new CachePersisterFacade(cacheWriter,
+                fileFactory, null, null, null, null, null, null);
         cachePersisterFacade.start();
         verify(fileFactory);
         verify(file);
@@ -165,7 +167,7 @@ public class CachePersisterFacadeTest extends TestCase {
         cache.mLatitude = 122;
         cache.mLongitude = 37;
         cache.mName = "a little cache";
-        cacheWriter.clearCaches("foo.gpx");
+//        cacheWriter.clearCaches("foo.gpx");
         cacheWriter.startWriting();
         expect(htmlWriterFactory.create(CachePersisterFacade.GEOBEAGLE_DIR + "/GC123.html"))
                 .andReturn(htmlWriter);
