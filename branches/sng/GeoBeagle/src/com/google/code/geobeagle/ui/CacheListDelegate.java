@@ -111,7 +111,7 @@ public class CacheListDelegate {
     private final CacheListOnCreateContextMenuListener.Factory mCreateContextMenuFactory;
     private final ErrorDisplayer mErrorDisplayer;
     private final GpxImporter mGpxImporter;
-    private final LocationBookmarksSql mLocationBookmarks;
+    private final LocationBookmarksSql mCachesSqlTable;
     private final LocationControl mLocationControl;
     private final ListActivity mParent;
     private SimpleAdapter mSimpleAdapter;
@@ -123,7 +123,7 @@ public class CacheListDelegate {
             CacheListActions.Action[] actions,
             CacheListOnCreateContextMenuListener.Factory factory, GpxImporter gpxImporter) {
         mParent = parent;
-        mLocationBookmarks = locationBookmarks;
+        mCachesSqlTable = locationBookmarks;
         mLocationControl = locationControl;
         mSimpleAdapterFactory = simpleAdapterFactory;
         mCacheListData = cacheListData;
@@ -180,14 +180,14 @@ public class CacheListDelegate {
 
     public void onResume() {
         try {
-            mLocationBookmarks.onResume(null);
-            ArrayList<CharSequence> locations = mLocationBookmarks.getLocations();
+            mCachesSqlTable.load();
+            ArrayList<CharSequence> locations = mCachesSqlTable.getLocations();
             mCacheListData.add(locations, mLocationControl.getLocation());
             mSimpleAdapter = mSimpleAdapterFactory.create(mParent, mCacheListData.getAdapterData(),
                     R.layout.cache_row, ADAPTER_FROM, ADAPTER_TO);
             mParent.setListAdapter(mSimpleAdapter);
             mParent.setTitle("Nearest Unfound Caches (" + locations.size() + " / "
-                    + mLocationBookmarks.getCount() + ")");
+                    + mCachesSqlTable.getCount() + ")");
         } catch (final Exception e) {
             mErrorDisplayer.displayErrorAndStack(e);
         }

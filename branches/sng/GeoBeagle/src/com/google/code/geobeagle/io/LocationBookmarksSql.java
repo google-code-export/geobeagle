@@ -14,22 +14,18 @@
 
 package com.google.code.geobeagle.io;
 
-import com.google.code.geobeagle.DescriptionsAndLocations;
-import com.google.code.geobeagle.LifecycleManager;
+import com.google.code.geobeagle.Locations;
 import com.google.code.geobeagle.LocationControl;
 import com.google.code.geobeagle.data.di.DestinationFactory;
 import com.google.code.geobeagle.io.Database.CacheReader;
 import com.google.code.geobeagle.io.Database.SQLiteWrapper;
 import com.google.code.geobeagle.ui.ErrorDisplayer;
 
-import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
-
 import java.util.ArrayList;
 
-public class LocationBookmarksSql implements LifecycleManager {
+public class LocationBookmarksSql {
     private final Database mDatabase;
-    private final DescriptionsAndLocations mDescriptionsAndLocations;
+    private final Locations mLocations;
     private final SQLiteWrapper mSQLiteWrapper;
     private final LocationControl mLocationControl;
     private final CacheReader mCacheReader;
@@ -37,52 +33,48 @@ public class LocationBookmarksSql implements LifecycleManager {
 
     public static LocationBookmarksSql create(LocationControl locationControl, Database database,
             DestinationFactory destinationFactory, ErrorDisplayer errorDisplayer) {
-        final DescriptionsAndLocations descriptionsAndLocations = new DescriptionsAndLocations();
+        final Locations locations = new Locations();
         final SQLiteWrapper sqliteWrapper = new SQLiteWrapper();
         final CacheReader cacheReader = CacheReader.create(sqliteWrapper);
-        return new LocationBookmarksSql(cacheReader, descriptionsAndLocations, database,
+        return new LocationBookmarksSql(cacheReader, locations, database,
                 sqliteWrapper, destinationFactory, errorDisplayer, locationControl);
     }
 
     public LocationBookmarksSql(CacheReader cacheReader,
-            DescriptionsAndLocations descriptionsAndLocations, Database database,
+            Locations locations, Database database,
             SQLiteWrapper sqliteWrapper, DestinationFactory destinationFactory,
             ErrorDisplayer errorDisplayer, LocationControl locationControl) {
-        mDescriptionsAndLocations = descriptionsAndLocations;
+        mLocations = locations;
         mDatabase = database;
         mSQLiteWrapper = sqliteWrapper;
         mLocationControl = locationControl;
         mCacheReader = cacheReader;
     }
 
-    public DescriptionsAndLocations getDescriptionsAndLocations() {
-        return mDescriptionsAndLocations;
+    public Locations getDescriptionsAndLocations() {
+        return mLocations;
     }
 
     public ArrayList<CharSequence> getLocations() {
-        return mDescriptionsAndLocations.getPreviousLocations();
+        return mLocations.getPreviousLocations();
     }
 
-    public void onPause(Editor editor) {
-    }
-
-    public void onResume(SharedPreferences preferences) {
+    public void load() {
         mSQLiteWrapper.openReadableDatabase(mDatabase);
+
         if (mCacheReader.open(mLocationControl.getLocation())) {
-            readBookmarks();
+            read();
             mCacheReader.close();
         }
+        
         mCount = mCacheReader.getTotalCount();
-
         mSQLiteWrapper.close();
     }
 
-    public void readBookmarks() {
-        mDescriptionsAndLocations.clear();
+    public void read() {
+        mLocations.clear();
         do {
-            final String location = mCacheReader.getCache();
-            mDescriptionsAndLocations
-                    .add(DestinationFactory.extractDescription(location), location);
+            mLocations.add(mCacheReader.getCache());
         } while (mCacheReader.moveToNext());
     }
 

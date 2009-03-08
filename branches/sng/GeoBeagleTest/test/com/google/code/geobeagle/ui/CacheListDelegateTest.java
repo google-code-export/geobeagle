@@ -167,7 +167,7 @@ public class CacheListDelegateTest extends TestCase {
         ArrayList<CharSequence> locations = new ArrayList<CharSequence>(0);
         ArrayList<Map<String, Object>> adapterData = new ArrayList<Map<String, Object>>(0);
 
-        locationBookmarks.onResume(null);
+        locationBookmarks.load();
         expect(locationBookmarks.getLocations()).andReturn(locations);
         expect(locationControl.getLocation()).andReturn(here);
         cacheListData.add(locations, here);
