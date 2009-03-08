@@ -211,7 +211,7 @@ public class DatabaseTest extends TestCase {
 
         replay(location);
         assertEquals(
-                "Latitude > 89.9 AND Latitude < 90.1 AND Longitude > -180.0 AND Longitude < 180.0",
+                "Latitude > 89.92 AND Latitude < 90.08 AND Longitude > -180.0 AND Longitude < 180.0",
                 new WhereFactory().getWhere(location));
         verify(location);
     }

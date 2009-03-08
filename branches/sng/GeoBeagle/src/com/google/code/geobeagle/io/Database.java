@@ -24,7 +24,8 @@ import android.location.Location;
 public class Database {
     public static class CacheReader {
         public static class WhereFactory {
-            public static final double DEGREES_DELTA = 0.1; // 1 degree ~= 111km
+            // 1 degree ~= 111km
+            public static final double DEGREES_DELTA = 0.08;
 
             public String getWhere(Location location) {
                 if (location == null)
@@ -43,7 +44,7 @@ public class Database {
             }
         }
 
-        public static final String SQL_QUERY_LIMIT = "500";
+        public static final String SQL_QUERY_LIMIT = "1000";
 
         public static CacheReader create(SQLiteWrapper sqliteWrapper) {
             final WhereFactory whereFactory = new WhereFactory();
