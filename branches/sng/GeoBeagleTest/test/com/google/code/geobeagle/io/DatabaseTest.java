@@ -224,6 +224,9 @@ public class DatabaseTest extends TestCase {
         SQLiteDatabase sqliteDatabase = createMock(SQLiteDatabase.class);
 
         sqliteDatabase.execSQL(Database.SQL_CREATE_CACHE_TABLE);
+        sqliteDatabase.execSQL(Database.SQL_CREATE_IDX_LATITUDE);
+        sqliteDatabase.execSQL(Database.SQL_CREATE_IDX_LONGITUDE);
+        sqliteDatabase.execSQL(Database.SQL_CREATE_IDX_SOURCE);
 
         replay(sqliteDatabase);
         OpenHelperDelegate openHelperDelegate = new OpenHelperDelegate();
