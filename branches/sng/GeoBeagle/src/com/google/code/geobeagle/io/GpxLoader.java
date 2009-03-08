@@ -24,6 +24,7 @@ import android.database.sqlite.SQLiteException;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
+// TODO: This class no longer seems to do anything; push it into GpxToCache.
 public class GpxLoader {
     private final CachePersisterFacade mCachePersisterFacade;
     private final ErrorDisplayer mErrorDisplayer;

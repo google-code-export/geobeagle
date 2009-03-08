@@ -107,13 +107,14 @@ public class CachePersisterFacade {
 
     void open(String text) {
         mFilename = text;
-        mCacheWriter.clearCaches(text);
+//        mCacheWriter.clearCaches(text);
         mCacheWriter.startWriting();
     }
 
     void start() {
         File file = mFileFactory.createFile(GEOBEAGLE_DIR);
         file.mkdirs();
+        mCacheWriter.clearAllImportedCaches();
         mCacheCount = 0;
     }
 

@@ -75,6 +75,14 @@ public class Database {
             return mCursor.getString(0) + ", " + mCursor.getString(1) + " (" + id + name + ")";
         }
 
+        public int getTotalCount() {
+            Cursor cursor = mSqliteWrapper.rawQuery(SQL_COUNT_CACHES, null);
+            cursor.moveToFirst();
+            int count = cursor.getInt(0);
+            cursor.close();
+            return count;
+        }
+
         public boolean moveToNext() {
             return mCursor.moveToNext();
         }
@@ -89,14 +97,6 @@ public class Database {
                 mCursor.close();
             return result;
         }
-
-        public int getTotalCount() {
-            Cursor cursor = mSqliteWrapper.rawQuery("SELECT COUNT(*) FROM CACHES", null);
-            cursor.moveToFirst();
-            int count = cursor.getInt(0);
-            cursor.close();
-            return count;
-        }
     }
 
     public static class CacheWriter {
@@ -105,6 +105,11 @@ public class Database {
 
         public CacheWriter(SQLiteWrapper sqlite) {
             mSqlite = sqlite;
+        }
+
+        public void clearAllImportedCaches() {
+            mSqlite.execSQL(Database.SQL_DELETE_ALL_IMPORTED_CACHE, new Object[] {});
+
         }
 
         public void clearCaches(String source) {
@@ -176,11 +181,20 @@ public class Database {
     public static class OpenHelperDelegate {
         public void onCreate(SQLiteDatabase db) {
             db.execSQL(SQL_CREATE_CACHE_TABLE);
+            db.execSQL(SQL_CREATE_IDX_LATITUDE);
+            db.execSQL(SQL_CREATE_IDX_LONGITUDE);
+            db.execSQL(SQL_CREATE_IDX_SOURCE);
         }
 
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-            db.execSQL(SQL_DROP_CACHE_TABLE);
-            onCreate(db);
+            if (oldVersion < 6) {
+                db.execSQL(SQL_DROP_CACHE_TABLE);
+                db.execSQL(SQL_CREATE_CACHE_TABLE);
+            } else if (oldVersion == 6) {
+                db.execSQL(SQL_CREATE_IDX_LATITUDE);
+                db.execSQL(SQL_CREATE_IDX_LONGITUDE);
+                db.execSQL(SQL_CREATE_IDX_SOURCE);
+            }
         }
     }
 
@@ -189,10 +203,6 @@ public class Database {
 
         public void beginTransaction() {
             mSQLiteDatabase.beginTransaction();
-        }
-
-        public Cursor rawQuery(String sql, String[] selectionArgs) {
-            return mSQLiteDatabase.rawQuery(sql, selectionArgs);
         }
 
         public void close() {
@@ -225,21 +235,55 @@ public class Database {
                     orderBy, having, limit);
         }
 
+        /**
+         * @param sql
+         * @param selectionArgs
+         * @return
+         */
+        public Cursor rawQuery(String sql, String[] selectionArgs) {
+            return mSQLiteDatabase.rawQuery(sql, selectionArgs);
+        }
+
         public void setTransactionSuccessful() {
             mSQLiteDatabase.setTransactionSuccessful();
         }
     }
 
+    /**
+     * SCHEMA LOG:
+     * 
+     * <pre>
+     * version 6
+     * CREATE TABLE IF NOT EXISTS CACHES (Id VARCHAR PRIMARY KEY,
+     *          Description VARCHAR Latitude DOUBLE, Longitude DOUBLE, Source
+     *          VARCHAR)
+     *          
+     * version 7
+     * CREATE TABLE IF NOT EXISTS CACHES (Id VARCHAR PRIMARY
+     *          KEY, Description VARCHAR Latitude DOUBLE, Longitude DOUBLE,
+     *          Source VARCHAR)
+     * 
+     * CREATE INDEX IDX_LATITUDE on CACHES (Latitude)
+     * CREATE INDEX IDX_LONGITUDE on CACHES (Longitude)
+     * CREATE INDEX IDX_SOURCE on CACHES (Source)
+     * </pre>
+     */
+
     public static final String DATABASE_NAME = "GeoBeagle.db";
 
-    public static final int DATABASE_VERSION = 6;
+    public static final int DATABASE_VERSION = 7;
     public static final String[] READER_COLUMNS = new String[] {
             "Latitude", "Longitude", "Id", "Description"
     };
     public static final String SQL_CLEAR_CACHES = "DELETE FROM CACHES WHERE Source=?";
+    public static final String SQL_COUNT_CACHES = "SELECT COUNT(*) FROM CACHES";
     public static final String SQL_CREATE_CACHE_TABLE = "CREATE TABLE IF NOT EXISTS CACHES ("
             + "Id VARCHAR PRIMARY KEY, Description VARCHAR, "
             + "Latitude DOUBLE, Longitude DOUBLE, Source VARCHAR)";
+    public static final String SQL_CREATE_IDX_LATITUDE = "CREATE INDEX IDX_LATITUDE on CACHES (Latitude)";
+    public static final String SQL_CREATE_IDX_LONGITUDE = "CREATE INDEX IDX_LONGITUDE on CACHES (Longitude)";
+    public static final String SQL_CREATE_IDX_SOURCE = "CREATE INDEX IDX_SOURCE on CACHES (Source)";
+    public static final String SQL_DELETE_ALL_IMPORTED_CACHE = "DELETE FROM CACHES WHERE Source != 'intent'";
     public static final String SQL_DELETE_CACHE = "DELETE FROM CACHES WHERE Id=?";
     public static final String SQL_DROP_CACHE_TABLE = "DROP TABLE CACHES";
     public static final String SQL_INSERT_CACHE = "INSERT INTO CACHES "
