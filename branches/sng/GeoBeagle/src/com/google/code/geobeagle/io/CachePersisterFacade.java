@@ -17,9 +17,9 @@ package com.google.code.geobeagle.io;
 import com.google.code.geobeagle.io.CacheDetailsWriter.CacheDetailsWriterFactory;
 import com.google.code.geobeagle.io.Database.CacheWriter;
 import com.google.code.geobeagle.io.di.CachePersisterFacadeDI;
-import com.google.code.geobeagle.io.di.GpxImporterDI;
 import com.google.code.geobeagle.io.di.GpxToCacheDI;
 import com.google.code.geobeagle.io.di.HtmlWriterFactory;
+import com.google.code.geobeagle.io.di.GpxImporterDI.MessageHandler;
 
 import android.os.PowerManager.WakeLock;
 
@@ -27,8 +27,6 @@ import java.io.File;
 import java.io.IOException;
 
 public class CachePersisterFacade {
-
-    public static final int WAKELOCK_DURATION = 5000;
 
     public static class Cache {
         public String mId;
@@ -52,6 +50,7 @@ public class CachePersisterFacade {
     }
 
     public static final String GEOBEAGLE_DIR = "/sdcard/GeoBeagle";
+    public static final int WAKELOCK_DURATION = 5000;
 
     private final Cache mCache;
     private int mCacheCount;
@@ -61,14 +60,14 @@ public class CachePersisterFacade {
     private final CachePersisterFacadeDI.FileFactory mFileFactory;
     private String mFilename;
     private final HtmlWriterFactory mHtmlWriterFactory;
-    private GpxImporterDI.MessageHandler mMessageHandler;
+    private MessageHandler mMessageHandler;
     private final WakeLock mWakeLock;
 
     public CachePersisterFacade(CacheWriter cacheWriter,
             CachePersisterFacadeDI.FileFactory fileFactory,
             CacheDetailsWriterFactory cacheDetailsWriterFactory,
             CacheDetailsWriter cacheDetailsWriter, HtmlWriterFactory htmlWriterFactory,
-            GpxImporterDI.MessageHandler messageHandler, Cache cache, WakeLock wakeLock) {
+            MessageHandler messageHandler, Cache cache, WakeLock wakeLock) {
         mCacheWriter = cacheWriter;
         mFileFactory = fileFactory;
         mCacheDetailsWriterFactory = cacheDetailsWriterFactory;
@@ -118,6 +117,10 @@ public class CachePersisterFacade {
         mCacheCount = 0;
     }
 
+    public void symbol(String text) {
+        mCache.mSymbol = text;
+    }
+
     void wpt(GpxToCacheDI.XmlPullParserWrapper mXmlPullParser) {
         mCache.mLatitude = Double.parseDouble(mXmlPullParser.getAttributeValue(null, "lat"));
         mCache.mLongitude = Double.parseDouble(mXmlPullParser.getAttributeValue(null, "lon"));
@@ -132,9 +135,5 @@ public class CachePersisterFacade {
         mMessageHandler.workerSendUpdate(mCacheCount + ": " + mFilename + " - " + wpt + " - "
                 + mCache.mName);
         mWakeLock.acquire(WAKELOCK_DURATION);
-    }
-
-    public void symbol(String text) {
-        mCache.mSymbol = text;
     }
 }

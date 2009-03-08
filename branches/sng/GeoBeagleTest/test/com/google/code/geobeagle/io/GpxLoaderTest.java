@@ -105,7 +105,7 @@ public class GpxLoaderTest extends TestCase {
         CachePersisterFacade cachePersisterFacade = createMock(CachePersisterFacade.class);
         GpxToCache gpxToCache = createMock(GpxToCache.class);
 
-        gpxToCache.load();
+        expect(gpxToCache.load()).andReturn(true);
         cachePersisterFacade.close();
 
         replay(cachePersisterFacade);

@@ -33,6 +33,7 @@ public class LocationBookmarksSql implements LifecycleManager {
     private final SQLiteWrapper mSQLiteWrapper;
     private final LocationControl mLocationControl;
     private final CacheReader mCacheReader;
+    private int mCount;
 
     public static LocationBookmarksSql create(LocationControl locationControl, Database database,
             DestinationFactory destinationFactory, ErrorDisplayer errorDisplayer) {
@@ -71,6 +72,8 @@ public class LocationBookmarksSql implements LifecycleManager {
             readBookmarks();
             mCacheReader.close();
         }
+        mCount = mCacheReader.getTotalCount();
+
         mSQLiteWrapper.close();
     }
 
@@ -81,6 +84,10 @@ public class LocationBookmarksSql implements LifecycleManager {
             mDescriptionsAndLocations
                     .add(DestinationFactory.extractDescription(location), location);
         } while (mCacheReader.moveToNext());
+    }
+
+    public int getCount() {
+        return mCount;
     }
 
 }

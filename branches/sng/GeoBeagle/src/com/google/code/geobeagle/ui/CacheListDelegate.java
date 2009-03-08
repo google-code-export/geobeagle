@@ -181,10 +181,13 @@ public class CacheListDelegate {
     public void onResume() {
         try {
             mLocationBookmarks.onResume(null);
-            mCacheListData.add(mLocationBookmarks.getLocations(), mLocationControl.getLocation());
+            ArrayList<CharSequence> locations = mLocationBookmarks.getLocations();
+            mCacheListData.add(locations, mLocationControl.getLocation());
             mSimpleAdapter = mSimpleAdapterFactory.create(mParent, mCacheListData.getAdapterData(),
                     R.layout.cache_row, ADAPTER_FROM, ADAPTER_TO);
             mParent.setListAdapter(mSimpleAdapter);
+            mParent.setTitle("Nearest Unfound Caches (" + locations.size() + " / "
+                    + mLocationBookmarks.getCount() + ")");
         } catch (final Exception e) {
             mErrorDisplayer.displayErrorAndStack(e);
         }

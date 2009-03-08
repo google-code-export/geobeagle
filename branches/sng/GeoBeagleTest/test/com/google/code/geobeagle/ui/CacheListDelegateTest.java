@@ -177,6 +177,7 @@ public class CacheListDelegateTest extends TestCase {
                         CacheListDelegate.ADAPTER_FROM, CacheListDelegate.ADAPTER_TO)).andReturn(
                 simpleAdapter);
         listActivity.setListAdapter(simpleAdapter);
+        expect(locationBookmarks.getCount()).andReturn(1000);
 
         replay(simpleAdapterFactory);
         replay(locationBookmarks);

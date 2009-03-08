@@ -160,7 +160,7 @@ public class CachePersisterFacadeTest extends TestCase {
         CacheWriter cacheWriter = createMock(CacheWriter.class);
         GpxImporterDI.MessageHandler messageHandler = createMock(MessageHandler.class);
         WakeLock wakeLock = createMock(WakeLock.class);
-        
+
         Cache cache = new Cache();
         cache.mLatitude = 122;
         cache.mLongitude = 37;
@@ -184,7 +184,7 @@ public class CachePersisterFacadeTest extends TestCase {
                 cache, wakeLock);
         cachePersisterFacade.open("foo.gpx");
         cachePersisterFacade.wptName("GC123");
-        wakeLock.acquire(5000);
+        wakeLock.acquire(CachePersisterFacade.WAKELOCK_DURATION);
         verify(htmlWriterFactory);
         verify(htmlWriter);
         verify(cacheDetailsWriterFactory);

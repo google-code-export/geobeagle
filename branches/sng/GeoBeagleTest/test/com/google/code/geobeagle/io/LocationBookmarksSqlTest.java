@@ -46,18 +46,27 @@ public class LocationBookmarksSqlTest extends TestCase {
         SQLiteWrapper sqliteWrapper = createMock(SQLiteWrapper.class);
         LocationControl locationControl = createMock(LocationControl.class);
         CacheReader cacheReader = createMock(CacheReader.class);
+        DescriptionsAndLocations descriptionsAndLocations = createMock(DescriptionsAndLocations.class);
         sqliteWrapper.openReadableDatabase(mDatabase);
-        sqliteWrapper.close();
         expect(locationControl.getLocation()).andReturn(null);
-
+        expect(cacheReader.open(null)).andReturn(true);
+        expect(cacheReader.getCache()).andReturn("GC1234");
+        expect(cacheReader.moveToNext()).andReturn(false);
+        cacheReader.close();
+        expect(cacheReader.getTotalCount()).andReturn(1000);
+        sqliteWrapper.close();
+        
         replay(mDatabase);
         replay(locationControl);
         replay(sqliteWrapper);
-        LocationBookmarksSql locationBookmarksSql = new LocationBookmarksSql(cacheReader, null, mDatabase, sqliteWrapper, null, null, locationControl);
+        replay(cacheReader);
+        LocationBookmarksSql locationBookmarksSql = new LocationBookmarksSql(cacheReader,
+                descriptionsAndLocations, mDatabase, sqliteWrapper, null, null, locationControl);
         locationBookmarksSql.onResume(null);
         verify(mDatabase);
         verify(locationControl);
         verify(sqliteWrapper);
+        verify(cacheReader);
     }
 
     public void testReadBookmarksOne() {

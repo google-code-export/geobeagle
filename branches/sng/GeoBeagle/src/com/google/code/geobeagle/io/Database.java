@@ -23,8 +23,6 @@ import android.location.Location;
 
 public class Database {
     public static class CacheReader {
-        public static final String SQL_QUERY_LIMIT = "500";
-
         public static class WhereFactory {
             public static final double DEGREES_DELTA = 0.1; // 1 degree ~= 111km
 
@@ -45,18 +43,21 @@ public class Database {
             }
         }
 
+        public static final String SQL_QUERY_LIMIT = "500";
+
+        public static CacheReader create(SQLiteWrapper sqliteWrapper) {
+            final WhereFactory whereFactory = new WhereFactory();
+            return new CacheReader(sqliteWrapper, whereFactory);
+        }
+
         private Cursor mCursor;
         private final SQLiteWrapper mSqliteWrapper;
+
         private final WhereFactory mWhereFactory;
 
         public CacheReader(SQLiteWrapper sqliteWrapper, WhereFactory whereFactory) {
             mSqliteWrapper = sqliteWrapper;
             mWhereFactory = whereFactory;
-        }
-
-        public static CacheReader create(SQLiteWrapper sqliteWrapper) {
-            final WhereFactory whereFactory = new WhereFactory();
-            return new CacheReader(sqliteWrapper, whereFactory);
         }
 
         public void close() {
@@ -86,6 +87,14 @@ public class Database {
             if (!result)
                 mCursor.close();
             return result;
+        }
+
+        public int getTotalCount() {
+            Cursor cursor = mSqliteWrapper.rawQuery("SELECT COUNT(*) FROM CACHES", null);
+            cursor.moveToFirst();
+            int count = cursor.getInt(0);
+            cursor.close();
+            return count;
         }
     }
 
@@ -179,6 +188,10 @@ public class Database {
 
         public void beginTransaction() {
             mSQLiteDatabase.beginTransaction();
+        }
+
+        public Cursor rawQuery(String sql, String[] selectionArgs) {
+            return mSQLiteDatabase.rawQuery(sql, selectionArgs);
         }
 
         public void close() {
