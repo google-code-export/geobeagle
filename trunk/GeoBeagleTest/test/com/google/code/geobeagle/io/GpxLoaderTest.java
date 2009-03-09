@@ -57,6 +57,16 @@ public class GpxLoaderTest extends TestCase {
         verify(errorDisplayer);
     }
 
+    public void testStart() {
+        CachePersisterFacade cachePersisterFacade = createMock(CachePersisterFacade.class);
+
+        cachePersisterFacade.start();
+        
+        replay(cachePersisterFacade);
+        new GpxLoader(null, cachePersisterFacade, null).start();
+        verify(cachePersisterFacade);
+    }
+
     private <T> void loadRaiseAndDisplayMessage(int errorMessage, Class<T> exceptionClass)
             throws XmlPullParserException, IOException {
         CachePersisterFacade cachePersisterFacade = createMock(CachePersisterFacade.class);
@@ -84,10 +94,10 @@ public class GpxLoaderTest extends TestCase {
     public void testAbortLoad() throws XmlPullParserException, IOException {
         GpxToCache gpxToCache = createMock(GpxToCache.class);
 
-        gpxToCache.abortLoad();
+        gpxToCache.abort();
 
         replay(gpxToCache);
-        new GpxLoader(gpxToCache, null, null).abortLoad();
+        new GpxLoader(gpxToCache, null, null).abort();
         verify(gpxToCache);
     }
 
@@ -95,7 +105,7 @@ public class GpxLoaderTest extends TestCase {
         CachePersisterFacade cachePersisterFacade = createMock(CachePersisterFacade.class);
         GpxToCache gpxToCache = createMock(GpxToCache.class);
 
-        gpxToCache.load();
+        expect(gpxToCache.load()).andReturn(true);
         cachePersisterFacade.close();
 
         replay(cachePersisterFacade);
@@ -121,12 +131,12 @@ public class GpxLoaderTest extends TestCase {
         CachePersisterFacade cachePersisterFacade = createMock(CachePersisterFacade.class);
         GpxToCache gpxToCache = createMock(GpxToCache.class);
 
-        gpxToCache.open(GpxLoader.GPX_PATH);
-        cachePersisterFacade.open(GpxLoader.GPX_PATH);
+        gpxToCache.open("/sdcard/foo.gpx");
+        cachePersisterFacade.open("/sdcard/foo.gpx");
 
         replay(cachePersisterFacade);
         replay(gpxToCache);
-        new GpxLoader(gpxToCache, cachePersisterFacade, null).open(GpxLoader.GPX_PATH);
+        new GpxLoader(gpxToCache, cachePersisterFacade, null).open("/sdcard/foo.gpx");
         verify(cachePersisterFacade);
         verify(gpxToCache);
     }

@@ -14,72 +14,72 @@
 
 package com.google.code.geobeagle.io;
 
-import com.google.code.geobeagle.DescriptionsAndLocations;
-import com.google.code.geobeagle.LifecycleManager;
-import com.google.code.geobeagle.data.Destination;
-import com.google.code.geobeagle.data.Destination.DestinationFactory;
+import com.google.code.geobeagle.Locations;
+import com.google.code.geobeagle.LocationControl;
+import com.google.code.geobeagle.data.di.DestinationFactory;
 import com.google.code.geobeagle.io.Database.CacheReader;
 import com.google.code.geobeagle.io.Database.SQLiteWrapper;
 import com.google.code.geobeagle.ui.ErrorDisplayer;
 
-import android.app.ListActivity;
-import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
-
 import java.util.ArrayList;
 
-public class LocationBookmarksSql implements LifecycleManager {
+public class LocationBookmarksSql {
     private final Database mDatabase;
-    private final DescriptionsAndLocations mDescriptionsAndLocations;
+    private final Locations mLocations;
     private final SQLiteWrapper mSQLiteWrapper;
+    private final LocationControl mLocationControl;
+    private final CacheReader mCacheReader;
+    private int mCount;
 
-    public static LocationBookmarksSql create(ListActivity listActivity, Database database,
+    public static LocationBookmarksSql create(LocationControl locationControl, Database database,
             DestinationFactory destinationFactory, ErrorDisplayer errorDisplayer) {
-        final DescriptionsAndLocations descriptionsAndLocations = new DescriptionsAndLocations();
+        final Locations locations = new Locations();
         final SQLiteWrapper sqliteWrapper = new SQLiteWrapper();
-        return new LocationBookmarksSql(descriptionsAndLocations, database, sqliteWrapper,
-                destinationFactory, errorDisplayer);
+        final CacheReader cacheReader = CacheReader.create(sqliteWrapper);
+        return new LocationBookmarksSql(cacheReader, locations, database,
+                sqliteWrapper, destinationFactory, errorDisplayer, locationControl);
     }
 
-    public LocationBookmarksSql(DescriptionsAndLocations descriptionsAndLocations,
-            Database database, SQLiteWrapper sqliteWrapper, DestinationFactory destinationFactory,
-            ErrorDisplayer errorDisplayer) {
-        mDescriptionsAndLocations = descriptionsAndLocations;
+    public LocationBookmarksSql(CacheReader cacheReader,
+            Locations locations, Database database,
+            SQLiteWrapper sqliteWrapper, DestinationFactory destinationFactory,
+            ErrorDisplayer errorDisplayer, LocationControl locationControl) {
+        mLocations = locations;
         mDatabase = database;
         mSQLiteWrapper = sqliteWrapper;
+        mLocationControl = locationControl;
+        mCacheReader = cacheReader;
     }
 
-    public DescriptionsAndLocations getDescriptionsAndLocations() {
-        return mDescriptionsAndLocations;
+    public Locations getDescriptionsAndLocations() {
+        return mLocations;
     }
 
     public ArrayList<CharSequence> getLocations() {
-        return mDescriptionsAndLocations.getPreviousLocations();
+        return mLocations.getPreviousLocations();
     }
 
-    public void onPause(Editor editor) {
-    }
-
-    public void onResume(SharedPreferences preferences) {
-        readBookmarks();
-    }
-
-    private void readBookmarks() {
+    public void load() {
         mSQLiteWrapper.openReadableDatabase(mDatabase);
-        CacheReader cacheReader = mDatabase.createCacheReader(mSQLiteWrapper);
-        if (cacheReader.open()) {
-            readBookmarks(cacheReader);
-            cacheReader.close();
+
+        if (mCacheReader.open(mLocationControl.getLocation())) {
+            read();
+            mCacheReader.close();
         }
+        
+        mCount = mCacheReader.getTotalCount();
         mSQLiteWrapper.close();
     }
 
-    public void readBookmarks(CacheReader cacheReader) {
-        mDescriptionsAndLocations.clear();
+    public void read() {
+        mLocations.clear();
         do {
-            final String location = cacheReader.getCache();
-            mDescriptionsAndLocations.add(Destination.extractDescription(location), location);
-        } while (cacheReader.moveToNext());
+            mLocations.add(mCacheReader.getCache());
+        } while (mCacheReader.moveToNext());
+    }
+
+    public int getCount() {
+        return mCount;
     }
 
 }

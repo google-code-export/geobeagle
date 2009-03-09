@@ -24,9 +24,8 @@ import android.database.sqlite.SQLiteException;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
+// TODO: This class no longer seems to do anything; push it into GpxToCache.
 public class GpxLoader {
-    public static final String GPX_PATH = "/sdcard/caches.gpx";
-
     private final CachePersisterFacade mCachePersisterFacade;
     private final ErrorDisplayer mErrorDisplayer;
     private final GpxToCache mGpxToCache;
@@ -38,13 +37,14 @@ public class GpxLoader {
         mErrorDisplayer = errorDisplayer;
     }
 
-    public void abortLoad() {
-        mGpxToCache.abortLoad();
+    public void abort() {
+        mGpxToCache.abort();
     }
 
-    public void load() {
+    public boolean load() {
+        boolean success = false;
         try {
-            mGpxToCache.load();
+            success = mGpxToCache.load();
         } catch (final SQLiteException e) {
             mErrorDisplayer.displayError(R.string.error_writing_cache, e.getMessage());
         } catch (XmlPullParserException e) {
@@ -54,10 +54,15 @@ public class GpxLoader {
         } finally {
             mCachePersisterFacade.close();
         }
+        return success;
     }
 
     public void open(String path) throws FileNotFoundException, XmlPullParserException, IOException {
         mGpxToCache.open(path);
         mCachePersisterFacade.open(path);
+    }
+
+    public void start() {
+        mCachePersisterFacade.start();
     }
 }

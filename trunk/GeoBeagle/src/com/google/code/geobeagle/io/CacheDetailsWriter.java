@@ -23,29 +23,33 @@ public class CacheDetailsWriter {
         }
     }
 
-    final HtmlWriter mHtlmWriter;
+    final HtmlWriter mHtmlWriter;
 
     public CacheDetailsWriter(HtmlWriter htmlWriter) {
-        mHtlmWriter = htmlWriter;
+        mHtmlWriter = htmlWriter;
     }
 
     void writeEndTag() throws IOException {
-        mHtlmWriter.writeFooter();
-        mHtlmWriter.close();
+        mHtmlWriter.writeFooter();
+        mHtmlWriter.close();
     }
 
     void writeLine(String text) throws IOException {
-        mHtlmWriter.write(text);
+        mHtmlWriter.write(text);
     }
 
     void writeLogDate(String text) throws IOException {
-        mHtlmWriter.writeSeparator();
-        mHtlmWriter.write(text);
+        mHtmlWriter.writeSeparator();
+        mHtmlWriter.write(text);
     }
 
     void writeWptName(String text, double latitude, double longitude) throws IOException {
-        mHtlmWriter.writeHeader();
-        mHtlmWriter.write(text);
-        mHtlmWriter.write(latitude + ", " + longitude);
+        mHtmlWriter.writeHeader();
+        mHtmlWriter.write(text);
+        mHtmlWriter.write(latitude + ", " + longitude);
+    }
+
+    public void writeHint(String text) throws IOException {
+        mHtmlWriter.write("<br />Hint: <font color=gray>" + text + "</font>");        
     }
 }

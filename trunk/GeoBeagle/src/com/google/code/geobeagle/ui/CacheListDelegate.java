@@ -19,8 +19,8 @@ import com.google.code.geobeagle.LocationControl;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.ResourceProvider;
 import com.google.code.geobeagle.data.CacheListData;
-import com.google.code.geobeagle.data.Destination;
-import com.google.code.geobeagle.data.Destination.DestinationFactory;
+import com.google.code.geobeagle.data.di.CacheListDataDI;
+import com.google.code.geobeagle.data.di.DestinationFactory;
 import com.google.code.geobeagle.io.Database;
 import com.google.code.geobeagle.io.GpxImporter;
 import com.google.code.geobeagle.io.LocationBookmarksSql;
@@ -42,7 +42,6 @@ import android.widget.AdapterView.AdapterContextMenuInfo;
 
 import java.util.ArrayList;
 import java.util.Map;
-import java.util.regex.Pattern;
 
 public class CacheListDelegate {
 
@@ -89,22 +88,20 @@ public class CacheListDelegate {
         final ErrorDisplayer errorDisplayer = new ErrorDisplayer(parent);
         final Database database = Database.create(parent);
         final ResourceProvider resourceProvider = new ResourceProvider(parent);
-        // TODO: add a create function that takes a resourceid
-        final Pattern[] destinationPatterns = Destination.getDestinationPatterns(resourceProvider);
-        final DestinationFactory destinationFactory = new DestinationFactory(destinationPatterns);
-        final LocationBookmarksSql locationBookmarks = LocationBookmarksSql.create(parent,
-                database, destinationFactory, errorDisplayer);
-        final SimpleAdapterFactory simpleAdapterFactory = new SimpleAdapterFactory();
-        final CacheListData cacheListData = CacheListData.create(destinationFactory, parent);
+        final DestinationFactory destinationFactory = new DestinationFactory(resourceProvider);
         final LocationControl locationControl = LocationControl.create(((LocationManager)parent
                 .getSystemService(Context.LOCATION_SERVICE)));
+        final LocationBookmarksSql locationBookmarks = LocationBookmarksSql.create(locationControl,
+                database, destinationFactory, errorDisplayer);
+        final SimpleAdapterFactory simpleAdapterFactory = new SimpleAdapterFactory();
+        final CacheListData cacheListData = CacheListDataDI.create(resourceProvider,
+                destinationFactory);
         final SQLiteWrapper sqliteWrapper = new SQLiteWrapper();
         final CacheListActions.Action actions[] = CacheListActions.create(parent, database,
                 sqliteWrapper, cacheListData, errorDisplayer);
         final CacheListOnCreateContextMenuListener.Factory factory = new CacheListOnCreateContextMenuListener.Factory();
         final GpxImporter gpxImporter = GpxImporterDI.create(database, sqliteWrapper,
                 errorDisplayer, parent);
-
         return new CacheListDelegate(parent, locationBookmarks, locationControl,
                 simpleAdapterFactory, cacheListData, errorDisplayer, actions, factory, gpxImporter);
     }
@@ -114,7 +111,7 @@ public class CacheListDelegate {
     private final CacheListOnCreateContextMenuListener.Factory mCreateContextMenuFactory;
     private final ErrorDisplayer mErrorDisplayer;
     private final GpxImporter mGpxImporter;
-    private final LocationBookmarksSql mLocationBookmarks;
+    private final LocationBookmarksSql mCachesSqlTable;
     private final LocationControl mLocationControl;
     private final ListActivity mParent;
     private SimpleAdapter mSimpleAdapter;
@@ -126,7 +123,7 @@ public class CacheListDelegate {
             CacheListActions.Action[] actions,
             CacheListOnCreateContextMenuListener.Factory factory, GpxImporter gpxImporter) {
         mParent = parent;
-        mLocationBookmarks = locationBookmarks;
+        mCachesSqlTable = locationBookmarks;
         mLocationControl = locationControl;
         mSimpleAdapterFactory = simpleAdapterFactory;
         mCacheListData = cacheListData;
@@ -183,11 +180,14 @@ public class CacheListDelegate {
 
     public void onResume() {
         try {
-            mLocationBookmarks.onResume(null);
-            mCacheListData.add(mLocationBookmarks.getLocations(), mLocationControl.getLocation());
+            mCachesSqlTable.load();
+            ArrayList<CharSequence> locations = mCachesSqlTable.getLocations();
+            mCacheListData.add(locations, mLocationControl.getLocation());
             mSimpleAdapter = mSimpleAdapterFactory.create(mParent, mCacheListData.getAdapterData(),
                     R.layout.cache_row, ADAPTER_FROM, ADAPTER_TO);
             mParent.setListAdapter(mSimpleAdapter);
+            mParent.setTitle("Nearest Unfound Caches (" + locations.size() + " / "
+                    + mCachesSqlTable.getCount() + ")");
         } catch (final Exception e) {
             mErrorDisplayer.displayErrorAndStack(e);
         }

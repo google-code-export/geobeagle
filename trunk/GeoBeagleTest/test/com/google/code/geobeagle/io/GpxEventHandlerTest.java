@@ -97,7 +97,7 @@ public class GpxEventHandlerTest extends TestCase {
 
         replay(cachePersisterFacade);
         GpxEventHandler gpxEventHandler = new GpxEventHandler(cachePersisterFacade);
-        gpxEventHandler.text(GpxEventHandler.XPATH_PLAINLINES[0], "hello");
+        gpxEventHandler.text(GpxEventHandler.XPATH_PLAINLINES[0], " hello  \t");
         verify(cachePersisterFacade);
     }
 
@@ -107,6 +107,26 @@ public class GpxEventHandlerTest extends TestCase {
         replay(cachePersisterFacade);
         GpxEventHandler gpxEventHandler = new GpxEventHandler(cachePersisterFacade);
         gpxEventHandler.text("/gpx/foo", "hello");
+        verify(cachePersisterFacade);
+    }
+
+    public void testHint() throws IOException {
+        CachePersisterFacade cachePersisterFacade = createMock(CachePersisterFacade.class);
+
+        cachePersisterFacade.hint("look under the rock");
+
+        replay(cachePersisterFacade);
+        GpxEventHandler gpxEventHandler = new GpxEventHandler(cachePersisterFacade);
+        gpxEventHandler.text(GpxEventHandler.XPATH_HINT, " look under the rock");
+        verify(cachePersisterFacade);
+    }
+
+    public void testHintEmpty() throws IOException {
+        CachePersisterFacade cachePersisterFacade = createMock(CachePersisterFacade.class);
+
+        replay(cachePersisterFacade);
+        GpxEventHandler gpxEventHandler = new GpxEventHandler(cachePersisterFacade);
+        gpxEventHandler.text(GpxEventHandler.XPATH_HINT, "   ");
         verify(cachePersisterFacade);
     }
 }

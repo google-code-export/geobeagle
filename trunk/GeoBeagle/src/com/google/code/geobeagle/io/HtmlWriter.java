@@ -11,21 +11,13 @@
  ** See the License for the specific language governing permissions and
  ** limitations under the License.
  */
+
 package com.google.code.geobeagle.io;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
 
 public class HtmlWriter {
-    public static class HtmlWriterFactory {
-        public HtmlWriter create(String path)
-                throws IOException {
-            return new HtmlWriter(new BufferedWriter(new FileWriter(path)));
-        }
-    }
-
     private final Writer mWriter;
 
     public HtmlWriter(Writer fileWriter) {

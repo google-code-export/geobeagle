@@ -14,9 +14,8 @@
 
 package com.google.code.geobeagle.data;
 
-import com.google.code.geobeagle.data.Destination.DestinationFactory;
-
-import android.location.Location;
+import com.google.code.geobeagle.R;
+import com.google.code.geobeagle.ResourceProvider;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -25,40 +24,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class DestinationVector implements IDestinationVector {
-    public static class DestinationVectorFactory {
-        private final DestinationFactory mDestinationFactory;
-        private final DistanceFormatter mDistanceFormatter;
-        private final CharSequence mMyCurrentLocation;
-
-        public DestinationVectorFactory(DestinationFactory destinationFactory,
-                CharSequence myCurrentLocation, DistanceFormatter distanceFormatter) {
-            mDestinationFactory = destinationFactory;
-            mMyCurrentLocation = myCurrentLocation;
-            mDistanceFormatter = distanceFormatter;
-        }
-
-        private float calculateDistance(Location here, Destination destination) {
-            if (here != null) {
-                float[] results = new float[1];
-                Location.distanceBetween(here.getLatitude(), here.getLongitude(), destination
-                        .getLatitude(), destination.getLongitude(), results);
-
-                return results[0];
-            }
-            return -1;
-        }
-
-        public DestinationVector create(CharSequence location, Location here) {
-            final Destination destinationHere = mDestinationFactory.create(location);
-            return new DestinationVector(destinationHere, calculateDistance(here, destinationHere),
-                    mDistanceFormatter);
-        }
-
-        public IDestinationVector createMyLocation() {
-            return new MyLocation(mMyCurrentLocation);
-        }
-    }
-
     public static class LocationComparator implements Comparator<IDestinationVector> {
         public int compare(IDestinationVector destination1, IDestinationVector destination2) {
             final float d1 = destination1.getDistance();
@@ -77,10 +42,10 @@ public class DestinationVector implements IDestinationVector {
     }
 
     public static class MyLocation implements IDestinationVector {
-        private final CharSequence mMyCurrentLocation;
+        private final ResourceProvider mResourceProvider;
 
-        public MyLocation(CharSequence myCurrentLocation) {
-            mMyCurrentLocation = myCurrentLocation;
+        public MyLocation(ResourceProvider resourceProvider) {
+            mResourceProvider = resourceProvider;
         }
 
         public Destination getDestination() {
@@ -92,16 +57,16 @@ public class DestinationVector implements IDestinationVector {
         }
 
         public CharSequence getId() {
-            return "My Current Location";
+            return mResourceProvider.getString(R.string.my_current_location);
         }
 
-        public CharSequence getLocation() {
+        public CharSequence getCoordinatesIdAndName() {
             return null;
         }
 
         public Map<String, Object> getViewMap() {
             Map<String, Object> map = new HashMap<String, Object>(1);
-            map.put("cache", mMyCurrentLocation);
+            map.put("cache", mResourceProvider.getString(R.string.my_current_location));
             return map;
         }
 
@@ -123,16 +88,16 @@ public class DestinationVector implements IDestinationVector {
     }
 
     public CharSequence getId() {
-        return mDestination.getFullId();
+        return mDestination.getId();
     }
 
-    public CharSequence getLocation() {
-        return mDestination.getLocation();
+    public CharSequence getCoordinatesIdAndName() {
+        return mDestination.getCoordinatesIdAndName();
     }
 
     public Map<String, Object> getViewMap() {
         Map<String, Object> map = new HashMap<String, Object>(1);
-        map.put("cache", mDestination.getDescription());
+        map.put("cache", mDestination.getIdAndName());
         map.put("distance", mDistanceFormatter.format(mDistance));
         return map;
     }

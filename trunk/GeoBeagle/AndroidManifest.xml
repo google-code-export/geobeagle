@@ -11,8 +11,8 @@
 		License.
 	-->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-	package="com.google.code.geobeagle" android:versionCode="33"
-	android:versionName="0.33">
+	package="com.google.code.geobeagle" android:versionCode="37"
+	android:versionName="0.37">
 	<application android:icon="@drawable/icon" android:label="@string/app_name">
 		<activity android:name=".GeoBeagle" android:label="@string/app_name" android:configChanges="orientation|keyboardHidden">
 			<intent-filter>
@@ -39,4 +39,5 @@
 	<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 	<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 	<uses-permission android:name="android.permission.INTERNET" />
+	<uses-permission android:name="android.permission.WAKE_LOCK" />
 </manifest> 

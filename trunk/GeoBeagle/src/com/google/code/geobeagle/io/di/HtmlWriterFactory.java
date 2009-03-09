@@ -12,16 +12,16 @@
  ** limitations under the License.
  */
 
-package com.google.code.geobeagle.data;
+package com.google.code.geobeagle.io.di;
 
-import java.util.Map;
+import com.google.code.geobeagle.io.HtmlWriter;
 
-public interface IDestinationVector {
-    public float getDistance();
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 
-    public CharSequence getId();
-
-    public CharSequence getCoordinatesIdAndName();
-
-    public Map<String, Object> getViewMap();
+public class HtmlWriterFactory {
+    public HtmlWriter create(String path) throws IOException {
+        return new HtmlWriter(new BufferedWriter(new FileWriter(path)));
+    }
 }

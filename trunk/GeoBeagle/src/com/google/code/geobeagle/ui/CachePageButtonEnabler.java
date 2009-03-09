@@ -16,7 +16,7 @@ package com.google.code.geobeagle.ui;
 
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.ResourceProvider;
-import com.google.code.geobeagle.data.Destination;
+import com.google.code.geobeagle.data.di.DestinationFactory;
 
 import android.text.TextUtils;
 import android.view.View;
@@ -51,7 +51,7 @@ public class CachePageButtonEnabler {
 
     public void check() {
         final CharSequence s = mTooString.tooString();
-        final String description = (String)Destination.extractDescription(s);
+        final String description = (String)DestinationFactory.extractDescription(s);
         mDetailsButton.setEnabled(-1 != mTextUtils.indexOf(s, ':'));
         for (String contentPrefix : mContentPrefixes) {
             if (description.startsWith(contentPrefix)) {

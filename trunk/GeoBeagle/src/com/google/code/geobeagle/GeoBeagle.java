@@ -15,8 +15,7 @@
 package com.google.code.geobeagle;
 
 import com.google.code.geobeagle.LocationControl.LocationChooser;
-import com.google.code.geobeagle.data.Destination;
-import com.google.code.geobeagle.data.Destination.DestinationFactory;
+import com.google.code.geobeagle.data.di.DestinationFactory;
 import com.google.code.geobeagle.intents.DestinationToCachePage;
 import com.google.code.geobeagle.intents.DestinationToGoogleMap;
 import com.google.code.geobeagle.intents.IntentFactory;
@@ -56,8 +55,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
-
-import java.util.regex.Pattern;
 
 /*
  * Main Activity for GeoBeagle.
@@ -147,10 +144,7 @@ public class GeoBeagle extends Activity {
             final LocationManager locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
             mGpsControl = new LocationControl(locationManager, new LocationChooser());
             mLocationListener = new GeoBeagleLocationListener(mGpsControl, mLocationViewer);
-            final Pattern[] destinationPatterns = Destination
-                    .getDestinationPatterns(mResourceProvider);
-            final DestinationFactory destinationFactory = new DestinationFactory(
-                    destinationPatterns);
+            final DestinationFactory destinationFactory = new DestinationFactory(mResourceProvider);
             final Database database = Database.create(this);
 
             final MockableEditText mockableTxtLocation = new MockableEditText(txtLocation);
@@ -159,7 +153,7 @@ public class GeoBeagle extends Activity {
                     mErrorDisplayer, sqliteWrapper);
             final String initialDestination = getString(R.string.initial_destination);
             mLocationSetter = new LocationSetter(this, mockableTxtLocation, mGpsControl,
-                    destinationPatterns, initialDestination, mErrorDisplayer, locationSaver);
+                    destinationFactory, initialDestination, mErrorDisplayer, locationSaver);
 
             setCacheClickListeners();
 

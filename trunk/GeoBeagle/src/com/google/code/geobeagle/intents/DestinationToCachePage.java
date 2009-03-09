@@ -31,7 +31,7 @@ public class DestinationToCachePage implements DestinationToUri {
 
     public String convert(Destination destination) {
         return String.format(mResourceProvider.getStringArray(R.array.cache_page_url)[destination
-                .getContentIndex()], destination.getId());
+                .getContentIndex()], destination.getShortId());
     }
 
 }

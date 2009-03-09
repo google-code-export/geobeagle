@@ -12,16 +12,30 @@
  ** limitations under the License.
  */
 
-package com.google.code.geobeagle.data;
+package com.google.code.geobeagle;
 
-import java.util.Map;
+import java.util.ArrayList;
 
-public interface IDestinationVector {
-    public float getDistance();
+public class Locations {
+    private ArrayList<CharSequence> mLocations;
 
-    public CharSequence getId();
+    public Locations() {
+        create(100);
+    }
 
-    public CharSequence getCoordinatesIdAndName();
+    private void create(int maxSize) {
+        mLocations = new ArrayList<CharSequence>();
+    }
 
-    public Map<String, Object> getViewMap();
+    public void add(CharSequence location) {
+        mLocations.add(location);
+    }
+
+    public void clear() {
+        mLocations.clear();
+    }
+
+    public ArrayList<CharSequence> getPreviousLocations() {
+        return mLocations;
+    }
 }

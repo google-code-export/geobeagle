@@ -20,7 +20,7 @@ import static org.easymock.classextension.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.verify;
 
 import com.google.code.geobeagle.data.Destination;
-import com.google.code.geobeagle.data.Destination.DestinationFactory;
+import com.google.code.geobeagle.data.di.DestinationFactory;
 import com.google.code.geobeagle.io.Database.CacheWriter;
 import com.google.code.geobeagle.io.Database.SQLiteWrapper;
 
@@ -40,7 +40,7 @@ public class LocationSaverTest extends TestCase {
         writer.startWriting();
         expect(destinationFactory.create("122 32.3423 83 32.3221 (LB12345)"))
                 .andReturn(destination);
-        expect(destination.getFullId()).andReturn("LB12345");
+        expect(destination.getId()).andReturn("LB12345");
         expect(destination.getName()).andReturn("");
         expect(destination.getLatitude()).andReturn(122.0);
         expect(destination.getLongitude()).andReturn(37.0);

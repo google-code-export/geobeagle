@@ -19,53 +19,26 @@ import junit.framework.TestCase;
 public class DescriptionsAndLocationsTest extends TestCase {
 
     public final void testDescriptionsAndLocations() {
-        DescriptionsAndLocations descriptionsAndLocations = new DescriptionsAndLocations();
+        Locations locations = new Locations();
 
-        CharSequence[] descriptions = new CharSequence[] {
-                "SFO", "OAK"
-        };
-        final CharSequence[] locations = new CharSequence[] {
-                "37 122 etc", "37 122 foo"
-        };
-        descriptionsAndLocations = new DescriptionsAndLocations();
-        for (int ix = 0; ix < descriptions.length; ix++) {
-            descriptionsAndLocations.add(descriptions[ix], locations[ix]);
-        }
-        assertEquals(descriptions[1], descriptionsAndLocations.getPreviousDescriptions().get(1));
-        assertEquals(locations[0], descriptionsAndLocations.getPreviousLocations().get(0));
+        locations = new Locations();
+        locations.add("37 122 etc");
+        locations.add("37 122 foo");
+        assertEquals("37 122 etc", locations.getPreviousLocations().get(0));
     }
 
     public final void testAdd() {
-        DescriptionsAndLocations descriptionsAndLocations = new DescriptionsAndLocations();
-        descriptionsAndLocations.add("new description", "new location");
-        assertEquals("new description", descriptionsAndLocations.getPreviousDescriptions().get(0));
-    }
-
-    public final void testAddDupe() {
-        DescriptionsAndLocations descriptionsAndLocations = new DescriptionsAndLocations();
-        descriptionsAndLocations.add("description1", "new location");
-        descriptionsAndLocations.add("description2", "new location");
-        descriptionsAndLocations.add("description2", "new location");
-
-        assertEquals(2, descriptionsAndLocations.getPreviousDescriptions().size());
-        assertEquals("description1", descriptionsAndLocations.getPreviousDescriptions().get(0));
-        assertEquals("description2", descriptionsAndLocations.getPreviousDescriptions().get(1));
+        Locations locations = new Locations();
+        locations.add("new location");
+        assertEquals("new location", locations.getPreviousLocations().get(0));
     }
 
     public final void testClear() {
-        CharSequence[] descriptions = new CharSequence[] {
-                "SFO", "OAK"
-        };
-        final CharSequence[] locations = new CharSequence[] {
-                "37 122 etc", "37 122 foo"
-        };
-        DescriptionsAndLocations descriptionsAndLocations = new DescriptionsAndLocations();
-        for (int ix = 0; ix < descriptions.length; ix++) {
-            descriptionsAndLocations.add(descriptions[ix], locations[ix]);
-        }
-        descriptionsAndLocations.clear();
+        Locations locations = new Locations();
+        locations.add("37 122 etc");
+        locations.add("37 122 foo");
+        locations.clear();
 
-        assertEquals(0, descriptionsAndLocations.getPreviousDescriptions().size());
-        assertEquals(0, descriptionsAndLocations.getPreviousLocations().size());
+        assertEquals(0, locations.getPreviousLocations().size());
     }
 }

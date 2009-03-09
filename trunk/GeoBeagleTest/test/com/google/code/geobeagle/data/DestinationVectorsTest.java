@@ -20,8 +20,8 @@ import static org.easymock.classextension.EasyMock.createMock;
 import static org.easymock.classextension.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.verify;
 
-import com.google.code.geobeagle.data.DestinationVector.DestinationVectorFactory;
 import com.google.code.geobeagle.data.DestinationVector.LocationComparator;
+import com.google.code.geobeagle.data.di.DestinationVectorFactory;
 
 import android.location.Location;
 
@@ -89,12 +89,12 @@ public class DestinationVectorsTest extends TestCase {
     public void testGetLocation() {
         IDestinationVector destinationVector = createMock(IDestinationVector.class);
 
-        expect(destinationVector.getLocation()).andReturn("122 37 (GC1234)");
+        expect(destinationVector.getCoordinatesIdAndName()).andReturn("122 37 (GC1234)");
 
         replay(destinationVector);
         DestinationVectors destinationVectors = new DestinationVectors(null, null);
         destinationVectors.add(destinationVector);
-        assertEquals("122 37 (GC1234)", destinationVectors.getLocation(0));
+        assertEquals("122 37 (GC1234)", destinationVectors.getCoordinatesIdAndName(0));
         verify(destinationVector);
     }
 

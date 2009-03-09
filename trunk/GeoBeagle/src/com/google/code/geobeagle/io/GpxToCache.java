@@ -14,8 +14,7 @@
 
 package com.google.code.geobeagle.io;
 
-
-import com.google.code.geobeagle.io.di.GpxToCacheDI;
+import com.google.code.geobeagle.io.di.GpxToCacheDI.XmlPullParserWrapper;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
@@ -25,10 +24,11 @@ import java.io.IOException;
 
 public class GpxToCache {
     private final EventHelper mEventHelper;
-    private final GpxToCacheDI.XmlPullParserWrapper mXmlPullParserWrapper;
+    private final XmlPullParserWrapper mXmlPullParserWrapper;
     private boolean mAbort;
 
-    public GpxToCache(GpxToCacheDI.XmlPullParserWrapper xmlPullParserWrapper, EventHelper eventHelper) {
+    public GpxToCache(XmlPullParserWrapper xmlPullParserWrapper,
+            EventHelper eventHelper) {
         mXmlPullParserWrapper = xmlPullParserWrapper;
         mEventHelper = eventHelper;
     }
@@ -38,21 +38,24 @@ public class GpxToCache {
         mAbort = false;
     }
 
-    public void load() throws XmlPullParserException, IOException {
+    public boolean load() throws XmlPullParserException, IOException {
         int eventType;
         for (eventType = mXmlPullParserWrapper.getEventType(); !mAbort
                 && eventType != XmlPullParser.END_DOCUMENT; eventType = mXmlPullParserWrapper
                 .next()) {
             mEventHelper.handleEvent(eventType);
         }
+
+        // Pick up END_DOCUMENT event as well.
         mEventHelper.handleEvent(eventType);
+        return !mAbort;
     }
 
     public String getSource() {
         return mXmlPullParserWrapper.getSource();
     }
 
-    public void abortLoad() {
+    public void abort() {
         mAbort = true;
     }
 }

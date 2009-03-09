@@ -15,7 +15,7 @@
 package com.google.code.geobeagle.io;
 
 import com.google.code.geobeagle.data.Destination;
-import com.google.code.geobeagle.data.Destination.DestinationFactory;
+import com.google.code.geobeagle.data.di.DestinationFactory;
 import com.google.code.geobeagle.io.Database.CacheWriter;
 import com.google.code.geobeagle.io.Database.SQLiteWrapper;
 import com.google.code.geobeagle.ui.ErrorDisplayer;
@@ -38,7 +38,7 @@ public class LocationSaver {
         CacheWriter cacheWriter = mDatabase.createCacheWriter(mSQLiteWrapper);
         cacheWriter.startWriting();
         Destination destination = mDestinationFactory.create(location);
-        cacheWriter.insertAndUpdateCache(destination.getFullId(), destination.getName(),
+        cacheWriter.insertAndUpdateCache(destination.getId(), destination.getName(),
                 destination.getLatitude(), destination.getLongitude(), "intent");
         cacheWriter.stopWriting();
         mSQLiteWrapper.close();

@@ -19,14 +19,46 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteConstraintException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.location.Location;
 
 public class Database {
     public static class CacheReader {
+        public static class WhereFactory {
+            // 1 degree ~= 111km
+            public static final double DEGREES_DELTA = 0.08;
+
+            public String getWhere(Location location) {
+                if (location == null)
+                    return null;
+                double latitude = location.getLatitude();
+                double longitude = location.getLongitude();
+
+                double latLow = latitude - WhereFactory.DEGREES_DELTA;
+                double latHigh = latitude + WhereFactory.DEGREES_DELTA;
+                double lat_radians = Math.toRadians(latitude);
+                double cos_lat = Math.cos(lat_radians);
+                double lonLow = Math.max(-180, longitude - WhereFactory.DEGREES_DELTA / cos_lat);
+                double lonHigh = Math.min(180, longitude + WhereFactory.DEGREES_DELTA / cos_lat);
+                return "Latitude > " + latLow + " AND Latitude < " + latHigh + " AND Longitude > "
+                        + lonLow + " AND Longitude < " + lonHigh;
+            }
+        }
+
+        public static final String SQL_QUERY_LIMIT = "1000";
+
+        public static CacheReader create(SQLiteWrapper sqliteWrapper) {
+            final WhereFactory whereFactory = new WhereFactory();
+            return new CacheReader(sqliteWrapper, whereFactory);
+        }
+
         private Cursor mCursor;
         private final SQLiteWrapper mSqliteWrapper;
 
-        public CacheReader(SQLiteWrapper sqliteWrapper) {
+        private final WhereFactory mWhereFactory;
+
+        public CacheReader(SQLiteWrapper sqliteWrapper, WhereFactory whereFactory) {
             mSqliteWrapper = sqliteWrapper;
+            mWhereFactory = whereFactory;
         }
 
         public void close() {
@@ -43,13 +75,23 @@ public class Database {
             return mCursor.getString(0) + ", " + mCursor.getString(1) + " (" + id + name + ")";
         }
 
+        public int getTotalCount() {
+            Cursor cursor = mSqliteWrapper.rawQuery(SQL_COUNT_CACHES, null);
+            cursor.moveToFirst();
+            int count = cursor.getInt(0);
+            cursor.close();
+            return count;
+        }
+
         public boolean moveToNext() {
             return mCursor.moveToNext();
         }
 
-        public boolean open() {
-            mCursor = mSqliteWrapper
-                    .query(TBL_CACHES, READER_COLUMNS, null, null, null, null, null);
+        public boolean open(Location location) {
+            String where = mWhereFactory.getWhere(location);
+
+            mCursor = mSqliteWrapper.query(TBL_CACHES, READER_COLUMNS, where, null, null, null,
+                    null, SQL_QUERY_LIMIT);
             final boolean result = mCursor.moveToFirst();
             if (!result)
                 mCursor.close();
@@ -58,15 +100,18 @@ public class Database {
     }
 
     public static class CacheWriter {
-        private String mSource;
         private final SQLiteWrapper mSqlite;
 
         public CacheWriter(SQLiteWrapper sqlite) {
             mSqlite = sqlite;
         }
 
+        public void clearAllImportedCaches() {
+            mSqlite.execSQL(Database.SQL_DELETE_ALL_IMPORTED_CACHE, new Object[] {});
+
+        }
+
         public void clearCaches(String source) {
-            mSource = source;
             mSqlite.execSQL(SQL_CLEAR_CACHES, new Object[] {
                 source
             });
@@ -79,15 +124,11 @@ public class Database {
         }
 
         public void insertAndUpdateCache(CharSequence id, CharSequence name, double latitude,
-                double longitude) {
-            insertAndUpdateCache(id, name, latitude, longitude, mSource);
-        }
-
-        public void insertAndUpdateCache(CharSequence id, CharSequence name, double latitude,
                 double longitude, String source) {
             try {
                 insertCache(id, name, latitude, longitude, source);
             } catch (final SQLiteConstraintException e) {
+                // TODO: What if these queries have errors?
                 deleteCache(id);
                 insertCache(id, name, latitude, longitude, source);
             }
@@ -101,13 +142,13 @@ public class Database {
         }
 
         public void startWriting() {
-             mSqlite.beginTransaction();
+            mSqlite.beginTransaction();
         }
 
         public void stopWriting() {
             // TODO: abort if no writes--otherwise sqlite is unhappy.
-             mSqlite.setTransactionSuccessful();
-             mSqlite.endTransaction();
+            mSqlite.setTransactionSuccessful();
+            mSqlite.endTransaction();
         }
     }
 
@@ -133,11 +174,16 @@ public class Database {
     public static class OpenHelperDelegate {
         public void onCreate(SQLiteDatabase db) {
             db.execSQL(SQL_CREATE_CACHE_TABLE);
+            db.execSQL(SQL_CREATE_IDX_LATITUDE);
+            db.execSQL(SQL_CREATE_IDX_LONGITUDE);
+            db.execSQL(SQL_CREATE_IDX_SOURCE);
         }
 
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-            db.execSQL(SQL_DROP_CACHE_TABLE);
-            onCreate(db);
+            if (oldVersion < 8) {
+                db.execSQL(SQL_DROP_CACHE_TABLE);
+                db.execSQL(SQL_CREATE_CACHE_TABLE);
+            }
         }
     }
 
@@ -173,9 +219,18 @@ public class Database {
         }
 
         public Cursor query(String table, String[] columns, String selection,
-                String[] selectionArgs, String groupBy, String having, String orderBy) {
+                String[] selectionArgs, String groupBy, String having, String orderBy, String limit) {
             return mSQLiteDatabase.query(table, columns, selection, selectionArgs, groupBy,
-                    orderBy, having);
+                    orderBy, having, limit);
+        }
+
+        /**
+         * @param sql
+         * @param selectionArgs
+         * @return
+         */
+        public Cursor rawQuery(String sql, String[] selectionArgs) {
+            return mSQLiteDatabase.rawQuery(sql, selectionArgs);
         }
 
         public void setTransactionSuccessful() {
@@ -183,16 +238,45 @@ public class Database {
         }
     }
 
+    /**
+     * SCHEMA LOG:
+     * 
+     * <pre>
+     * version 6
+     * CREATE TABLE IF NOT EXISTS CACHES (Id VARCHAR PRIMARY KEY,
+     *          Description VARCHAR Latitude DOUBLE, Longitude DOUBLE, Source
+     *          VARCHAR)
+     *          
+     * version 7
+     * CREATE TABLE IF NOT EXISTS CACHES (Id VARCHAR PRIMARY
+     *          KEY, Description VARCHAR Latitude DOUBLE, Longitude DOUBLE,
+     *          Source VARCHAR)
+     * 
+     * CREATE INDEX IDX_LATITUDE on CACHES (Latitude)
+     * CREATE INDEX IDX_LONGITUDE on CACHES (Longitude)
+     * CREATE INDEX IDX_SOURCE on CACHES (Source)
+     * 
+     * version 8
+     * same as version 7 but rebuilds everything because a released version mistakenly puts *intent* into
+     * imported caches.
+     * </pre>
+     */
+
     public static final String DATABASE_NAME = "GeoBeagle.db";
 
-    public static final int DATABASE_VERSION = 6;
+    public static final int DATABASE_VERSION = 8;
     public static final String[] READER_COLUMNS = new String[] {
             "Latitude", "Longitude", "Id", "Description"
     };
     public static final String SQL_CLEAR_CACHES = "DELETE FROM CACHES WHERE Source=?";
+    public static final String SQL_COUNT_CACHES = "SELECT COUNT(*) FROM CACHES";
     public static final String SQL_CREATE_CACHE_TABLE = "CREATE TABLE IF NOT EXISTS CACHES ("
             + "Id VARCHAR PRIMARY KEY, Description VARCHAR, "
             + "Latitude DOUBLE, Longitude DOUBLE, Source VARCHAR)";
+    public static final String SQL_CREATE_IDX_LATITUDE = "CREATE INDEX IF NOT EXISTS IDX_LATITUDE on CACHES (Latitude)";
+    public static final String SQL_CREATE_IDX_LONGITUDE = "CREATE INDEX IF NOT EXISTS IDX_LONGITUDE on CACHES (Longitude)";
+    public static final String SQL_CREATE_IDX_SOURCE = "CREATE INDEX IF NOT EXISTS IDX_SOURCE on CACHES (Source)";
+    public static final String SQL_DELETE_ALL_IMPORTED_CACHE = "DELETE FROM CACHES WHERE Source != 'intent'";
     public static final String SQL_DELETE_CACHE = "DELETE FROM CACHES WHERE Id=?";
     public static final String SQL_DROP_CACHE_TABLE = "DROP TABLE CACHES";
     public static final String SQL_INSERT_CACHE = "INSERT INTO CACHES "
@@ -210,10 +294,6 @@ public class Database {
 
     public Database(SQLiteOpenHelper sqliteOpenHelper) {
         mSqliteOpenHelper = sqliteOpenHelper;
-    }
-
-    public CacheReader createCacheReader(SQLiteWrapper sqliteWrapper) {
-        return new CacheReader(sqliteWrapper);
     }
 
     public CacheWriter createCacheWriter(SQLiteWrapper sqliteWrapper) {
