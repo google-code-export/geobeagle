@@ -34,6 +34,7 @@ public class CachePersisterFacade {
         public double mLongitude;
         public String mName;
         public String mSymbol;
+        public String mSource;
 
         public Cache() {
             mId = "";
@@ -58,7 +59,6 @@ public class CachePersisterFacade {
     private final CacheDetailsWriterFactory mCacheDetailsWriterFactory;
     private final CacheWriter mCacheWriter;
     private final CachePersisterFacadeDI.FileFactory mFileFactory;
-    private String mFilename;
     private final HtmlWriterFactory mHtmlWriterFactory;
     private MessageHandler mMessageHandler;
     private final WakeLock mWakeLock;
@@ -86,7 +86,7 @@ public class CachePersisterFacade {
         mCacheDetailsWriter.writeEndTag();
         if (!mCache.mSymbol.equals("Geocache Found"))
             mCacheWriter.insertAndUpdateCache(mCache.mId, mCache.mName, mCache.mLatitude,
-                    mCache.mLongitude);
+                    mCache.mLongitude, mCache.mSource);
     }
 
     void groundspeakName(String text) {
@@ -106,8 +106,8 @@ public class CachePersisterFacade {
     }
 
     void open(String text) {
-        mFilename = text;
-//        mCacheWriter.clearCaches(text);
+        mCache.mSource = text;
+        // mCacheWriter.clearCaches(text);
         mCacheWriter.startWriting();
     }
 
@@ -133,7 +133,7 @@ public class CachePersisterFacade {
         mCacheDetailsWriter.writeWptName(wpt, mCache.mLatitude, mCache.mLongitude);
         mCache.mId = wpt;
         mCacheCount++;
-        mMessageHandler.workerSendUpdate(mCacheCount + ": " + mFilename + " - " + wpt + " - "
+        mMessageHandler.workerSendUpdate(mCacheCount + ": " + mCache.mSource + " - " + wpt + " - "
                 + mCache.mName);
         mWakeLock.acquire(WAKELOCK_DURATION);
     }

@@ -52,7 +52,7 @@ public class CachePersisterFacadeTest extends TestCase {
         cacheDetailsWriter.writeEndTag();
         CacheWriter cacheWriter = createMock(CacheWriter.class);
 
-        cacheWriter.insertAndUpdateCache("GC1234", "blinkermania", 37, -122);
+        cacheWriter.insertAndUpdateCache("GC1234", "blinkermania", 37, -122, "foo.gpx");
 
         replay(cacheWriter);
         replay(cacheDetailsWriter);
@@ -62,6 +62,7 @@ public class CachePersisterFacadeTest extends TestCase {
         cache.mLatitude = 37;
         cache.mLongitude = -122;
         cache.mSymbol = "Geocache";
+        cache.mSource = "foo.gpx";
         CachePersisterFacade cachePersisterFacade = new CachePersisterFacade(cacheWriter, null,
                 null, cacheDetailsWriter, null, null, cache, null);
         cachePersisterFacade.endTag();
