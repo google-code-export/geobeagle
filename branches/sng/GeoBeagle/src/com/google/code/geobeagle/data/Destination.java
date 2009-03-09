@@ -20,72 +20,83 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Cache or letterbox description, id, and coordinates.
+ * Destination or letterbox description, id, and coordinates.
  */
 public class Destination {
-    private int mContentSelectorIndex;
-    private CharSequence mDescription;
-    private CharSequence mFullId;
-    private CharSequence mId;
-    private double mLatitude;
-    private CharSequence mLocation;
-    private double mLongitude;
-    private CharSequence mName;
+    public static Destination create(CharSequence location, Pattern destinationPatterns[]) {
+        int contentSelectorIndex;
+        double latitude = 0;
+        double longitude = 0;
 
-    public Destination(CharSequence location, Pattern destinationPatterns[]) {
-        mId = "";
-        mFullId = "";
-        mName = "";
+        CharSequence fullId = "";
+        CharSequence name = "";
         CharSequence latLonDescription[] = Util.splitLatLonDescription(location);
         try {
-            mLatitude = Util.parseCoordinate(latLonDescription[0]);
-            mLongitude = Util.parseCoordinate(latLonDescription[1]);
+            latitude = Util.parseCoordinate(latLonDescription[0]);
+            longitude = Util.parseCoordinate(latLonDescription[1]);
         } catch (NumberFormatException numberFormatException) {
             // TODO: Looks like this case is unreachable; remove this after the
             // destination input method has been reworked.
         }
-        mDescription = latLonDescription[2];
-        mLocation = location;
 
-        for (mContentSelectorIndex = destinationPatterns.length - 1; mContentSelectorIndex >= 0; mContentSelectorIndex--) {
-            Matcher matcher = destinationPatterns[mContentSelectorIndex].matcher(mDescription);
+        CharSequence description = latLonDescription[2];
+
+        for (contentSelectorIndex = destinationPatterns.length - 1; contentSelectorIndex >= 0; contentSelectorIndex--) {
+            Matcher matcher = destinationPatterns[contentSelectorIndex].matcher(description);
             if (matcher.find()) {
-                mId = matcher.group(1);
-                mFullId = matcher.group();
+                fullId = matcher.group();
                 break;
             }
         }
 
-        if (mId.length() == 0) {
-            mName = mDescription;
+        if (fullId.length() == 0) {
+            name = description;
         } else {
-            if (mDescription.length() > mFullId.length() + 2)
-                mName = mDescription.subSequence(mFullId.length() + 2, mDescription.length());
+            if (description.length() > fullId.length() + 2)
+                name = description.subSequence(fullId.length() + 2, description.length());
         }
+        return new Destination(contentSelectorIndex, fullId, name, latitude, longitude);
+
+    }
+
+    private final int mContentSelectorIndex;
+    private final CharSequence mId;
+    private final double mLatitude;
+    private final double mLongitude;
+    private final CharSequence mName;
+
+    public Destination(int contentSelectorIndex, CharSequence id, CharSequence name,
+            double latitude, double longitude) {
+        mContentSelectorIndex = contentSelectorIndex;
+        mId = id;
+        mName = name;
+        mLatitude = latitude;
+        mLongitude = longitude;
     }
 
     public int getContentIndex() {
         return mContentSelectorIndex;
     }
 
-    public CharSequence getDescription() {
-        return mDescription;
-    }
-
-    public CharSequence getFullId() {
-        return mFullId;
+    public CharSequence getCoordinatesIdAndName() {
+        return mLatitude + ", " + mLongitude + " (" + getIdAndName() + ")";
     }
 
     public CharSequence getId() {
         return mId;
     }
 
-    public double getLatitude() {
-        return mLatitude;
+    public CharSequence getIdAndName() {
+        if (mId.length() == 0)
+            return mName;
+        else if (mName.length() == 0)
+            return mId;
+        else
+            return mId + ": " + mName;
     }
 
-    public CharSequence getLocation() {
-        return mLocation;
+    public double getLatitude() {
+        return mLatitude;
     }
 
     public double getLongitude() {
@@ -94,5 +105,12 @@ public class Destination {
 
     public CharSequence getName() {
         return mName;
+    }
+
+    public CharSequence getShortId() {
+        if (mId.length() > 2)
+            return mId.subSequence(2, mId.length());
+        else
+            return "";
     }
 }

@@ -89,12 +89,12 @@ public class DestinationVectorsTest extends TestCase {
     public void testGetLocation() {
         IDestinationVector destinationVector = createMock(IDestinationVector.class);
 
-        expect(destinationVector.getLocation()).andReturn("122 37 (GC1234)");
+        expect(destinationVector.getCoordinatesIdAndName()).andReturn("122 37 (GC1234)");
 
         replay(destinationVector);
         DestinationVectors destinationVectors = new DestinationVectors(null, null);
         destinationVectors.add(destinationVector);
-        assertEquals("122 37 (GC1234)", destinationVectors.getLocation(0));
+        assertEquals("122 37 (GC1234)", destinationVectors.getCoordinatesIdAndName(0));
         verify(destinationVector);
     }
 

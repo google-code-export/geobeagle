@@ -28,7 +28,7 @@ public class DestinationToGoogleMap implements DestinationToUri {
     public String convert(Destination destination) {
         // "geo:%1$.5f,%2$.5f?name=cachename"
         return String.format(mResourceProvider.getString(R.string.map_intent), destination
-                .getLatitude(), destination.getLongitude(), destination.getDescription());
+                .getLatitude(), destination.getLongitude(), destination.getIdAndName());
     }
 
 }

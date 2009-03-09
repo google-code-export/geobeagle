@@ -32,7 +32,7 @@ public class DestinationToCachePageTest extends TestCase {
         ResourceProvider resourceProvider = createMock(ResourceProvider.class);
         Destination destination = createMock(Destination.class);
         ContentSelector contentSelector = createMock(ContentSelector.class);
-        expect(destination.getId()).andReturn("FOO");
+        expect(destination.getShortId()).andReturn("FOO");
         expect(destination.getContentIndex()).andReturn(0);
         expect(resourceProvider.getStringArray(R.array.cache_page_url)).andReturn(new String[] {
                 "http://coord.info/GC%1$s", ""

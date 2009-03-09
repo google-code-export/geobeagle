@@ -67,7 +67,7 @@ public class CacheListActionsTest extends TestCase {
         Intent intent = createMock(Intent.class);
         Context context = createMock(Context.class);
 
-        expect(cacheListData.getLocation(34)).andReturn("a cache");
+        expect(cacheListData.getCoordinatesIdAndName(34)).andReturn("a cache");
         expect(intent.setAction(CacheListDelegate.SELECT_CACHE)).andReturn(intent);
         expect(intent.putExtra("location", (CharSequence)"a cache")).andReturn(intent);
         context.startActivity(intent);

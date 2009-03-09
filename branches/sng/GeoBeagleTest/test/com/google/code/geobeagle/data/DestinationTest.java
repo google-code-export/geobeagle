@@ -28,68 +28,71 @@ public class DestinationTest extends TestCase {
     };
 
     public void testLatLong() {
-        Destination destination = new Destination("37 00.0, 122 00.0", mDestinationPatterns);
+        Destination destination = Destination.create("37 00.0, 122 00.0", mDestinationPatterns);
         assertEquals(37.0, destination.getLatitude());
         assertEquals(122.0, destination.getLongitude());
         assertEquals("", destination.getName());
 
-        Destination ll2 = new Destination("37 00.0, 122 00.0", mDestinationPatterns);
+        Destination ll2 = Destination.create("37 00.0, 122 00.0", mDestinationPatterns);
         assertEquals(37.0, ll2.getLatitude());
         assertEquals(122.0, ll2.getLongitude());
 
-        Destination ll3 = new Destination("37 03.0, 122 00.0", mDestinationPatterns);
+        Destination ll3 = Destination.create("37 03.0, 122 00.0", mDestinationPatterns);
         assertEquals(37.05, ll3.getLatitude());
         assertEquals(122.0, ll3.getLongitude());
 
-        Destination ll4 = new Destination(" \t 37 03.0, 122 00.0  ", mDestinationPatterns);
+        Destination ll4 = Destination.create(" \t 37 03.0, 122 00.0  ", mDestinationPatterns);
         assertEquals(37.05, ll4.getLatitude());
         assertEquals(122.0, ll4.getLongitude());
-        assertEquals("", ll4.getDescription());
+        assertEquals("", ll4.getIdAndName());
     }
 
     public void testDescription() {
-        Destination destinationImpl = new Destination(" \t 37 03.0, 122 00.0 (Description)",
+        Destination destinationImpl = Destination.create(" \t 37 03.0, 122 00.0 (Description)",
                 mDestinationPatterns);
         assertEquals(37.05, destinationImpl.getLatitude());
         assertEquals(122.0, destinationImpl.getLongitude());
-        assertEquals("Description", destinationImpl.getDescription());
+        assertEquals("Description", destinationImpl.getIdAndName());
     }
 
     public void testNoName() {
-        Destination destinationImpl = new Destination(" \t 37 03.0, 122 00.0 (GC12345)",
+        Destination destinationImpl = Destination.create(" \t 37 03.0, 122 00.0 (GC12345)",
                 mDestinationPatterns);
         assertEquals(37.05, destinationImpl.getLatitude());
         assertEquals(122.0, destinationImpl.getLongitude());
-        assertEquals("GC12345", destinationImpl.getFullId());
+        assertEquals("GC12345", destinationImpl.getId());
         assertEquals("", destinationImpl.getName());
-        assertEquals("GC12345", destinationImpl.getDescription());
+        assertEquals("GC12345", destinationImpl.getIdAndName());
     }
 
     public void testBadCoordinatesGoodDescription() {
-        Destination destinationImpl = new Destination("  FOO (Description)", mDestinationPatterns);
+        Destination destinationImpl = Destination.create("  FOO (Description)",
+                mDestinationPatterns);
         assertEquals(0.0, destinationImpl.getLatitude());
         assertEquals(0.0, destinationImpl.getLongitude());
-        assertEquals("Description", destinationImpl.getDescription());
+        assertEquals("Description", destinationImpl.getIdAndName());
     }
 
     public void testGetId() {
-        Destination destination = new Destination("34.313,122.43 (LB89882: The Nut Case)",
+        Destination destination = Destination.create("34.313,122.43 (LB89882: The Nut Case)",
                 mDestinationPatterns);
-        assertEquals("89882", destination.getId());
-        assertEquals("LB89882", destination.getFullId());
+        assertEquals("89882", destination.getShortId());
+        assertEquals("LB89882", destination.getId());
         assertEquals(1, destination.getContentIndex());
         assertEquals("The Nut Case", destination.getName());
 
-        destination = new Destination("34.313,122.43 (GCFOOBAR: GS cache)", mDestinationPatterns);
-        assertEquals("FOOBAR", destination.getId());
+        destination = Destination
+                .create("34.313,122.43 (GCFOOBAR: GS cache)", mDestinationPatterns);
+        assertEquals("FOOBAR", destination.getShortId());
         assertEquals(0, destination.getContentIndex());
     }
 
     public void testEmptyDestination() {
-        Destination destination = new Destination("", mDestinationPatterns);
+        Destination destination = Destination.create("", mDestinationPatterns);
         assertEquals(0.0, destination.getLatitude());
         assertEquals(0.0, destination.getLongitude());
-        assertEquals("", destination.getDescription());
+        assertEquals("", destination.getIdAndName());
+        assertEquals("", destination.getShortId());
     }
 
     public void testExtractDescription() {

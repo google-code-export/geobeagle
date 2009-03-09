@@ -29,7 +29,7 @@ public class DestinationFactory {
     }
 
     public Destination create(CharSequence location) {
-        return new Destination(location, mDestinationPatterns);
+        return Destination.create(location, mDestinationPatterns);
     }
 
     public static CharSequence extractDescription(CharSequence location) {

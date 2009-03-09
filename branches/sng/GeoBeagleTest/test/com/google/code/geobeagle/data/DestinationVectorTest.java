@@ -54,14 +54,14 @@ public class DestinationVectorTest extends TestCase {
 
     public void testDestinationGetCacheListDisplayMap() {
         DistanceFormatter distanceFormatter = createMock(DistanceFormatter.class);
-        expect(destination.getDescription()).andReturn("a cache");
+        expect(destination.getIdAndName()).andReturn("a destination");
         expect(distanceFormatter.format(3.5f)).andReturn("3.5m");
 
         replay(destination);
         replay(distanceFormatter);
         final Map<String, Object> viewMap = new DestinationVector(destination, 3.5f,
                 distanceFormatter).getViewMap();
-        assertEquals("a cache", viewMap.get("cache"));
+        assertEquals("a destination", viewMap.get("cache"));
         assertEquals("3.5m", viewMap.get("distance"));
         verify(destination);
         verify(distanceFormatter);
@@ -72,20 +72,20 @@ public class DestinationVectorTest extends TestCase {
     }
 
     public void testDestinationGetId() {
-        expect(destination.getFullId()).andReturn("a cache");
+        expect(destination.getId()).andReturn("a destination");
 
         replay(destination);
         DestinationVector destinationVector = new DestinationVector(destination, 3.5f, null);
-        assertEquals("a cache", destinationVector.getId());
+        assertEquals("a destination", destinationVector.getId());
         verify(destination);
     }
 
     public void testDestinationGetLocation() {
-        expect(destination.getLocation()).andReturn("343 2323 (a cache)");
+        expect(destination.getCoordinatesIdAndName()).andReturn("343 2323 (a destination)");
 
         replay(destination);
         DestinationVector destinationVector = new DestinationVector(destination, 3.5f, null);
-        assertEquals("343 2323 (a cache)", destinationVector.getLocation());
+        assertEquals("343 2323 (a destination)", destinationVector.getCoordinatesIdAndName());
         verify(destination);
     }
 
@@ -96,7 +96,7 @@ public class DestinationVectorTest extends TestCase {
 
         replay(resourceProvider);
         MyLocation myLocation = new MyLocation(resourceProvider);
-        assertEquals(null, myLocation.getLocation());
+        assertEquals(null, myLocation.getCoordinatesIdAndName());
         assertEquals(null, myLocation.getDestination());
         assertEquals(-1.0f, myLocation.getDistance());
         assertEquals("My Current Location", myLocation.getId());

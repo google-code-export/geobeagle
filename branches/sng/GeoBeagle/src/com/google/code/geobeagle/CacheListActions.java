@@ -79,10 +79,9 @@ public class CacheListActions {
         }
 
         public void act(int position, SimpleAdapter simpleAdapter) {
-            mIntent.putExtra("location", mCacheListData.getLocation(position)).setAction(
+            mIntent.putExtra("location", mCacheListData.getCoordinatesIdAndName(position)).setAction(
                     CacheListDelegate.SELECT_CACHE);
             mContext.startActivity(mIntent);
         }
     }
-
 }

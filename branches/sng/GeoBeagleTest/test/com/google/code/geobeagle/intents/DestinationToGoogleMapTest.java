@@ -29,7 +29,7 @@ public class DestinationToGoogleMapTest extends TestCase {
     public void testConvert() {
         ResourceProvider resourceProvider = createMock(ResourceProvider.class);
         Destination destination = createMock(Destination.class);
-        expect(destination.getDescription()).andReturn("GCFOO");
+        expect(destination.getIdAndName()).andReturn("GCFOO");
         expect(destination.getLatitude()).andReturn(37.123);
         expect(destination.getLongitude()).andReturn(122.345);
         expect(resourceProvider.getString(R.string.map_intent)).andReturn(

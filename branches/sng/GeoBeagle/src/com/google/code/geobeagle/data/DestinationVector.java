@@ -60,7 +60,7 @@ public class DestinationVector implements IDestinationVector {
             return mResourceProvider.getString(R.string.my_current_location);
         }
 
-        public CharSequence getLocation() {
+        public CharSequence getCoordinatesIdAndName() {
             return null;
         }
 
@@ -88,16 +88,16 @@ public class DestinationVector implements IDestinationVector {
     }
 
     public CharSequence getId() {
-        return mDestination.getFullId();
+        return mDestination.getId();
     }
 
-    public CharSequence getLocation() {
-        return mDestination.getLocation();
+    public CharSequence getCoordinatesIdAndName() {
+        return mDestination.getCoordinatesIdAndName();
     }
 
     public Map<String, Object> getViewMap() {
         Map<String, Object> map = new HashMap<String, Object>(1);
-        map.put("cache", mDestination.getDescription());
+        map.put("cache", mDestination.getIdAndName());
         map.put("distance", mDistanceFormatter.format(mDistance));
         return map;
     }

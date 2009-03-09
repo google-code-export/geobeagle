@@ -21,7 +21,7 @@ public interface IDestinationVector {
 
     public CharSequence getId();
 
-    public CharSequence getLocation();
+    public CharSequence getCoordinatesIdAndName();
 
     public Map<String, Object> getViewMap();
 }

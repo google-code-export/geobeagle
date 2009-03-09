@@ -78,8 +78,8 @@ public class DestinationVectors {
         return mDestinationVectorsList.get(position).getId();
     }
 
-    public CharSequence getLocation(int position) {
-        return mDestinationVectorsList.get(position).getLocation();
+    public CharSequence getCoordinatesIdAndName(int position) {
+        return mDestinationVectorsList.get(position).getCoordinatesIdAndName();
     }
 
     public void reset(int size) {

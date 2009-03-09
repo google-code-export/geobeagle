@@ -73,10 +73,10 @@ public class CacheListDataTest extends TestCase {
     public void testGetLocation() {
         DestinationVectors destinationVectors = createMock(DestinationVectors.class);
 
-        expect(destinationVectors.getLocation(8)).andReturn("a cache");
+        expect(destinationVectors.getCoordinatesIdAndName(8)).andReturn("a cache");
 
         replay(destinationVectors);
-        assertEquals("a cache", new CacheListData(destinationVectors, null).getLocation(8));
+        assertEquals("a cache", new CacheListData(destinationVectors, null).getCoordinatesIdAndName(8));
         verify(destinationVectors);
     }
 }

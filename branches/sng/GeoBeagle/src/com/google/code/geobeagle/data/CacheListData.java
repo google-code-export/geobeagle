@@ -48,8 +48,8 @@ public class CacheListData {
         return mDestinationVectors.getId(position);
     }
 
-    public CharSequence getLocation(int position) {
-        return mDestinationVectors.getLocation(position);
+    public CharSequence getCoordinatesIdAndName(int position) {
+        return mDestinationVectors.getCoordinatesIdAndName(position);
     }
 
     public void delete(int position) {

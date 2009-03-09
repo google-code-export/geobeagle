@@ -59,7 +59,7 @@ public class LocationSetter implements LifecycleManager {
 
     // TODO: test.
     public CharSequence getId() {
-        return getDestination().getFullId();
+        return getDestination().getId();
     }
 
     public void onPause(Editor editor) {
