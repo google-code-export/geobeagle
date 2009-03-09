@@ -107,7 +107,7 @@ public class Database {
         }
 
         public void clearAllImportedCaches() {
-            mSqlite.execSQL(Database.SQL_DELETE_ALL_IMPORTED_CACHE, new Object[] {});
+            mSqlite.execSQL(Database.SQL_DELETE_ALL_IMPORTED_CACHES, new Object[] {});
 
         }
 
@@ -180,9 +180,12 @@ public class Database {
         }
 
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-            if (oldVersion < 8) {
+            if (oldVersion < 9) {
                 db.execSQL(SQL_DROP_CACHE_TABLE);
                 db.execSQL(SQL_CREATE_CACHE_TABLE);
+                db.execSQL(SQL_CREATE_IDX_LATITUDE);
+                db.execSQL(SQL_CREATE_IDX_LONGITUDE);
+                db.execSQL(SQL_CREATE_IDX_SOURCE);
             }
         }
     }
@@ -251,20 +254,31 @@ public class Database {
      * CREATE TABLE IF NOT EXISTS CACHES (Id VARCHAR PRIMARY
      *          KEY, Description VARCHAR Latitude DOUBLE, Longitude DOUBLE,
      *          Source VARCHAR)
-     * 
      * CREATE INDEX IDX_LATITUDE on CACHES (Latitude)
      * CREATE INDEX IDX_LONGITUDE on CACHES (Longitude)
      * CREATE INDEX IDX_SOURCE on CACHES (Source)
      * 
      * version 8
-     * same as version 7 but rebuilds everything because a released version mistakenly puts *intent* into
-     * imported caches.
+     * same as version 7 but rebuilds everything because a released version mistakenly puts 
+     * *intent* into imported caches.
+     * 
+     * version 9
+     * fixes bug where INDEX wasn't being created on upgrade.
+     * 
+     * version 10
+     * CREATE TABLE IF NOT EXISTS CACHES (Id VARCHAR PRIMARY
+     *          KEY, Description VARCHAR Latitude DOUBLE, Longitude DOUBLE,
+     *          Source VARCHAR)
+     * CREATE TABLE IF NOT EXISTS GPX (Name VARCHAR PRIMARY KEY, Time DATETIME)
+     * CREATE INDEX IDX_LATITUDE on CACHES (Latitude)
+     * CREATE INDEX IDX_LONGITUDE on CACHES (Longitude)
+     * CREATE INDEX IDX_SOURCE on CACHES (Source)
      * </pre>
      */
 
     public static final String DATABASE_NAME = "GeoBeagle.db";
 
-    public static final int DATABASE_VERSION = 8;
+    public static final int DATABASE_VERSION = 9;
     public static final String[] READER_COLUMNS = new String[] {
             "Latitude", "Longitude", "Id", "Description"
     };
@@ -276,7 +290,7 @@ public class Database {
     public static final String SQL_CREATE_IDX_LATITUDE = "CREATE INDEX IF NOT EXISTS IDX_LATITUDE on CACHES (Latitude)";
     public static final String SQL_CREATE_IDX_LONGITUDE = "CREATE INDEX IF NOT EXISTS IDX_LONGITUDE on CACHES (Longitude)";
     public static final String SQL_CREATE_IDX_SOURCE = "CREATE INDEX IF NOT EXISTS IDX_SOURCE on CACHES (Source)";
-    public static final String SQL_DELETE_ALL_IMPORTED_CACHE = "DELETE FROM CACHES WHERE Source != 'intent'";
+    public static final String SQL_DELETE_ALL_IMPORTED_CACHES = "DELETE FROM CACHES WHERE Source != 'intent'";
     public static final String SQL_DELETE_CACHE = "DELETE FROM CACHES WHERE Id=?";
     public static final String SQL_DROP_CACHE_TABLE = "DROP TABLE CACHES";
     public static final String SQL_INSERT_CACHE = "INSERT INTO CACHES "
