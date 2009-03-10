@@ -17,19 +17,20 @@ package com.google.code.geobeagle.io;
 import java.io.IOException;
 
 public class CacheDetailsWriter {
-    public static class CacheDetailsWriterFactory {
-        public CacheDetailsWriter create(HtmlWriter htmlWriter) {
-            return new CacheDetailsWriter(htmlWriter);
-        }
-    }
-
-    final HtmlWriter mHtmlWriter;
+    private final HtmlWriter mHtmlWriter;
+    private String mLatitude;
+    private String mLongitude;
+    public static final String GEOBEAGLE_DIR = "/sdcard/GeoBeagle";
 
     public CacheDetailsWriter(HtmlWriter htmlWriter) {
         mHtmlWriter = htmlWriter;
     }
 
-    void writeEndTag() throws IOException {
+    public void open(String wpt) throws IOException {
+        mHtmlWriter.open(CacheDetailsWriter.GEOBEAGLE_DIR + "/" + wpt + ".html");
+    }
+
+    void close() throws IOException {
         mHtmlWriter.writeFooter();
         mHtmlWriter.close();
     }
@@ -43,13 +44,19 @@ public class CacheDetailsWriter {
         mHtmlWriter.write(text);
     }
 
-    void writeWptName(String text, double latitude, double longitude) throws IOException {
+    void writeWptName(String wpt) throws IOException {
         mHtmlWriter.writeHeader();
-        mHtmlWriter.write(text);
-        mHtmlWriter.write(latitude + ", " + longitude);
+        mHtmlWriter.write(wpt);
+        mHtmlWriter.write(mLatitude + ", " + mLongitude);
+        mLatitude = mLongitude = null;
     }
 
     public void writeHint(String text) throws IOException {
-        mHtmlWriter.write("<br />Hint: <font color=gray>" + text + "</font>");        
+        mHtmlWriter.write("<br />Hint: <font color=gray>" + text + "</font>");
+    }
+
+    public void latitudeLongitude(String latitude, String longitude) {
+        mLatitude = latitude;
+        mLongitude = longitude;
     }
 }
