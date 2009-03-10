@@ -21,10 +21,19 @@ import java.io.FilenameFilter;
 
 public class GpxImporterDI {
 
-    public static class ToastFactory {
-        public void showToast(Context context, int resId, int duration) {
-            Toast.makeText(context, resId, duration).show();
+    public static class GpxFilenameFactory {
+
+        public String[] getFilenames() {
+            File dir = new File("/sdcard");
+
+            FilenameFilter filter = new FilenameFilter() {
+                public boolean accept(File dir, String name) {
+                    return !name.startsWith(".") && name.endsWith(".gpx");
+                }
+            };
+            return dir.list(filter);
         }
+
     }
 
     // Can't test this due to final methods in base.
@@ -92,10 +101,13 @@ public class GpxImporterDI {
             return new MessageHandler(progressDialogWrapper);
         }
 
+        private int mCacheCount;
         private CacheListDelegate mCacheListDelegate;
         private boolean mLoadAborted;
-        private final ProgressDialogWrapper mProgressDialogWrapper;
 
+        private String mName;
+        private final ProgressDialogWrapper mProgressDialogWrapper;
+        private String mSource;
         private String mStatus;
 
         public MessageHandler(ProgressDialogWrapper progressDialogWrapper) {
@@ -129,13 +141,22 @@ public class GpxImporterDI {
         }
 
         public void start(CacheListDelegate cacheListDelegate) {
+            mCacheCount = 0;
             mLoadAborted = false;
             mCacheListDelegate = cacheListDelegate;
             mProgressDialogWrapper.show("Importing caches", "Please wait...");
         }
 
-        public void workerSendUpdate(String status) {
-            mStatus = status;
+        public void updateName(String text) {
+            mName = text;
+        }
+
+        public void updateSource(String text) {
+            mSource = text;
+        }
+
+        public void updateWaypoint(String wpt) {
+            mStatus = mCacheCount++ + ": " + mSource + " - " + wpt + " - " + mName;
             sendEmptyMessage(MessageHandler.MSG_PROGRESS);
         }
     }
@@ -163,19 +184,10 @@ public class GpxImporterDI {
         }
     }
 
-    public static class GpxFilenameFactory {
-
-        public String[] getFilenames() {
-            File dir = new File("/sdcard");
-
-            FilenameFilter filter = new FilenameFilter() {
-                public boolean accept(File dir, String name) {
-                    return !name.startsWith(".") && name.endsWith(".gpx");
-                }
-            };
-            return dir.list(filter);
+    public static class ToastFactory {
+        public void showToast(Context context, int resId, int duration) {
+            Toast.makeText(context, resId, duration).show();
         }
-
     }
 
     public static GpxImporter create(Database database, SQLiteWrapper sqliteWrapper,

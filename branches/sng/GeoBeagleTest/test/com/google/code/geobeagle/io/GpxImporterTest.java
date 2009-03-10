@@ -29,6 +29,35 @@ import junit.framework.TestCase;
 
 public class GpxImporterTest extends TestCase {
 
+    private <T> void importThreadDelegateRunAndThrow(Class<T> exceptionClass, int errorMessage)
+            throws FileNotFoundException, XmlPullParserException, IOException {
+        GpxLoader gpxLoader = createMock(GpxLoader.class);
+        Throwable e = (Throwable)createMock(exceptionClass);
+        ErrorDisplayer errorDisplayer = createMock(ErrorDisplayer.class);
+        GpxImporterDI.GpxFilenameFactory gpxFilenameFactory = createMock(GpxImporterDI.GpxFilenameFactory.class);
+
+        expect(gpxFilenameFactory.getFilenames()).andReturn(new String[] {
+            "foo.gpx"
+        });
+        gpxLoader.start();
+        gpxLoader.open("/sdcard/foo.gpx");
+        expectLastCall().andThrow(e);
+        expect(e.fillInStackTrace()).andReturn(e);
+        errorDisplayer.displayError(errorMessage, "/sdcard/foo.gpx");
+
+        replay(errorDisplayer);
+        replay(e);
+        replay(gpxLoader);
+        replay(gpxFilenameFactory);
+        ImportThreadDelegate importThreadDelegate = new ImportThreadDelegate(gpxLoader, null,
+                errorDisplayer, gpxFilenameFactory);
+        importThreadDelegate.run();
+        verify(e);
+        verify(gpxLoader);
+        verify(errorDisplayer);
+        verify(gpxFilenameFactory);
+    }
+
     public void testAbort() throws InterruptedException {
         GpxLoader gpxLoader = createMock(GpxLoader.class);
         ImportThreadWrapper importThreadWrapper = createMock(ImportThreadWrapper.class);
@@ -101,6 +130,11 @@ public class GpxImporterTest extends TestCase {
         verify(database);
     }
 
+    public void testImportThreadDelegateIOException() throws FileNotFoundException,
+            XmlPullParserException, IOException {
+        importThreadDelegateRunAndThrow(IOException.class, R.string.error_reading_file);
+    }
+
     public void testImportThreadDelegateRun() throws FileNotFoundException, XmlPullParserException,
             IOException {
         GpxLoader gpxLoader = createMock(GpxLoader.class);
@@ -126,47 +160,27 @@ public class GpxImporterTest extends TestCase {
         verify(gpxFilenameFactory);
     }
 
-    public void testImportThreadDelegateRunFileNotFound() throws FileNotFoundException,
+    public void testImportThreadDelegateRunAborted() throws FileNotFoundException,
             XmlPullParserException, IOException {
-        importThreadDelegateRunAndThrow(FileNotFoundException.class, R.string.error_opening_file);
-    }
-
-    public void testImportThreadDelegateXmlPullParserException() throws FileNotFoundException,
-            XmlPullParserException, IOException {
-        importThreadDelegateRunAndThrow(XmlPullParserException.class, R.string.error_parsing_file);
-    }
-
-    public void testImportThreadDelegateIOException() throws FileNotFoundException,
-            XmlPullParserException, IOException {
-        importThreadDelegateRunAndThrow(IOException.class, R.string.error_reading_file);
-    }
-
-    private <T> void importThreadDelegateRunAndThrow(Class<T> exceptionClass, int errorMessage)
-            throws FileNotFoundException, XmlPullParserException, IOException {
         GpxLoader gpxLoader = createMock(GpxLoader.class);
-        Throwable e = (Throwable)createMock(exceptionClass);
-        ErrorDisplayer errorDisplayer = createMock(ErrorDisplayer.class);
         GpxImporterDI.GpxFilenameFactory gpxFilenameFactory = createMock(GpxImporterDI.GpxFilenameFactory.class);
+        MessageHandler messageHandler = createMock(MessageHandler.class);
 
         expect(gpxFilenameFactory.getFilenames()).andReturn(new String[] {
             "foo.gpx"
         });
-        gpxLoader.start();
         gpxLoader.open("/sdcard/foo.gpx");
-        expectLastCall().andThrow(e);
-        expect(e.fillInStackTrace()).andReturn(e);
-        errorDisplayer.displayError(errorMessage, "/sdcard/foo.gpx");
+        gpxLoader.start();
+        expect(gpxLoader.load()).andReturn(false);
 
-        replay(errorDisplayer);
-        replay(e);
         replay(gpxLoader);
+        replay(messageHandler);
         replay(gpxFilenameFactory);
-        ImportThreadDelegate importThreadDelegate = new ImportThreadDelegate(gpxLoader, null,
-                errorDisplayer, gpxFilenameFactory);
+        ImportThreadDelegate importThreadDelegate = new ImportThreadDelegate(gpxLoader,
+                messageHandler, null, gpxFilenameFactory);
         importThreadDelegate.run();
-        verify(e);
         verify(gpxLoader);
-        verify(errorDisplayer);
+        verify(messageHandler);
         verify(gpxFilenameFactory);
     }
 
@@ -197,6 +211,16 @@ public class GpxImporterTest extends TestCase {
         verify(gpxLoader);
         verify(errorDisplayer);
         verify(gpxFilenameFactory);
+    }
+
+    public void testImportThreadDelegateRunFileNotFound() throws FileNotFoundException,
+            XmlPullParserException, IOException {
+        importThreadDelegateRunAndThrow(FileNotFoundException.class, R.string.error_opening_file);
+    }
+
+    public void testImportThreadDelegateXmlPullParserException() throws FileNotFoundException,
+            XmlPullParserException, IOException {
+        importThreadDelegateRunAndThrow(XmlPullParserException.class, R.string.error_parsing_file);
     }
 
 }

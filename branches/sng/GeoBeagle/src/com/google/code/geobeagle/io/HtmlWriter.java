@@ -14,18 +14,23 @@
 
 package com.google.code.geobeagle.io;
 
+import com.google.code.geobeagle.io.di.CachePersisterFacadeDI.WriterWrapper;
+
 import java.io.IOException;
-import java.io.Writer;
 
 public class HtmlWriter {
-    private final Writer mWriter;
+    private WriterWrapper mWriter;
 
-    public HtmlWriter(Writer fileWriter) {
-        mWriter = fileWriter;
+    public HtmlWriter(WriterWrapper writerWrapper) {
+        mWriter = writerWrapper;
     }
 
     public void close() throws IOException {
         mWriter.close();
+    }
+
+    public void open(String path) throws IOException {
+        mWriter.open(path);
     }
 
     public void write(String text) throws IOException {

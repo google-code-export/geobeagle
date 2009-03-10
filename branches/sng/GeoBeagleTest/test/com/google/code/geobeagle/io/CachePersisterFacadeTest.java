@@ -6,11 +6,6 @@ import static org.easymock.classextension.EasyMock.createMock;
 import static org.easymock.classextension.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.verify;
 
-import com.google.code.geobeagle.io.CacheDetailsWriter.CacheDetailsWriterFactory;
-import com.google.code.geobeagle.io.CachePersisterFacade.Cache;
-import com.google.code.geobeagle.io.Database.CacheWriter;
-import com.google.code.geobeagle.io.di.GpxImporterDI;
-import com.google.code.geobeagle.io.di.HtmlWriterFactory;
 import com.google.code.geobeagle.io.di.CachePersisterFacadeDI.FileFactory;
 import com.google.code.geobeagle.io.di.GpxImporterDI.MessageHandler;
 import com.google.code.geobeagle.io.di.GpxToCacheDI.XmlPullParserWrapper;
@@ -24,62 +19,43 @@ import junit.framework.TestCase;
 
 public class CachePersisterFacadeTest extends TestCase {
 
-    public void testCache() {
-        Cache cache = new Cache("id", "name", 37, -122);
-        assertEquals("id", cache.mId);
-        assertEquals("name", cache.mName);
-        assertEquals(37.0, cache.mLatitude);
-        assertEquals(-122.0, cache.mLongitude);
-    }
-
-    public void testCacheEmptyConstructor() {
-        Cache cache = new Cache();
-        assertEquals("", cache.mId);
-        assertEquals("", cache.mName);
-    }
-
     public void testClose() {
-        CacheWriter cacheWriter = createMock(CacheWriter.class);
-        cacheWriter.stopWriting();
+        CacheTagWriter cacheTagWriter = createMock(CacheTagWriter.class);
 
-        replay(cacheWriter);
-        new CachePersisterFacade(cacheWriter, null, null, null, null, null, null, null).close();
-        verify(cacheWriter);
+        cacheTagWriter.stopWriting();
+
+        replay(cacheTagWriter);
+        new CachePersisterFacade(cacheTagWriter, null, null, null, null).close();
+        verify(cacheTagWriter);
     }
 
     public void testEndTag() throws IOException {
         CacheDetailsWriter cacheDetailsWriter = createMock(CacheDetailsWriter.class);
-        cacheDetailsWriter.writeEndTag();
-        CacheWriter cacheWriter = createMock(CacheWriter.class);
+        CacheTagWriter cacheTagWriter = createMock(CacheTagWriter.class);
 
-        cacheWriter.insertAndUpdateCache("GC1234", "blinkermania", 37, -122, "foo.gpx");
+        cacheDetailsWriter.close();
+        cacheTagWriter.write();
 
-        replay(cacheWriter);
+        replay(cacheTagWriter);
         replay(cacheDetailsWriter);
-        Cache cache = new Cache();
-        cache.mId = "GC1234";
-        cache.mName = "blinkermania";
-        cache.mLatitude = 37;
-        cache.mLongitude = -122;
-        cache.mSymbol = "Geocache";
-        cache.mSource = "foo.gpx";
-        CachePersisterFacade cachePersisterFacade = new CachePersisterFacade(cacheWriter, null,
-                null, cacheDetailsWriter, null, null, cache, null);
-        cachePersisterFacade.endTag();
+        new CachePersisterFacade(cacheTagWriter, null, cacheDetailsWriter, null, null).endTag();
         verify(cacheDetailsWriter);
-        verify(cacheWriter);
-    }
-
-    public void testEndTagNotCache() throws IOException {
-        GpxEventHandler gpxEventHandler = new GpxEventHandler(null);
-        gpxEventHandler.endTag("/gpx/wptNOT!");
+        verify(cacheTagWriter);
     }
 
     public void testGroundspeakName() throws IOException {
-        Cache cache = createMock(Cache.class);
-        new CachePersisterFacade(null, null, null, null, null, null, cache, null)
-                .groundspeakName("GC12");
-        assertEquals("GC12", cache.mName);
+        MessageHandler messageHandler = createMock(MessageHandler.class);
+        CacheTagWriter cacheTagWriter = createMock(CacheTagWriter.class);
+
+        messageHandler.updateName("GC123");
+        cacheTagWriter.name("GC123");
+
+        replay(messageHandler);
+        replay(cacheTagWriter);
+        new CachePersisterFacade(cacheTagWriter, null, null, messageHandler, null)
+                .groundspeakName("GC123");
+        verify(messageHandler);
+        verify(cacheTagWriter);
     }
 
     public void testHint() throws IOException {
@@ -88,111 +64,113 @@ public class CachePersisterFacadeTest extends TestCase {
         cacheDetailsWriter.writeHint("a hint");
 
         replay(cacheDetailsWriter);
-        new CachePersisterFacade(null, null, null, cacheDetailsWriter, null, null, null, null)
-                .hint("a hint");
+        new CachePersisterFacade(null, null, cacheDetailsWriter, null, null).hint("a hint");
         verify(cacheDetailsWriter);
     }
 
     public void testLine() throws IOException {
         CacheDetailsWriter cacheDetailsWriter = createMock(CacheDetailsWriter.class);
+
         cacheDetailsWriter.writeLine("some data");
 
         replay(cacheDetailsWriter);
-        new CachePersisterFacade(null, null, null, cacheDetailsWriter, null, null, null, null)
-                .line("some data");
+        new CachePersisterFacade(null, null, cacheDetailsWriter, null, null).line("some data");
         verify(cacheDetailsWriter);
     }
 
     public void testLogDate() throws IOException {
         CacheDetailsWriter cacheDetailsWriter = createMock(CacheDetailsWriter.class);
-        Cache cache = new Cache();
+
         cacheDetailsWriter.writeLogDate("04/30/99");
 
         replay(cacheDetailsWriter);
-        new CachePersisterFacade(null, null, null, cacheDetailsWriter, null, null, cache, null)
-                .logDate("04/30/99");
+        new CachePersisterFacade(null, null, cacheDetailsWriter, null, null).logDate("04/30/99");
         verify(cacheDetailsWriter);
+    }
+
+    public void testOpen() {
+        MessageHandler messageHandler = createMock(MessageHandler.class);
+        CacheTagWriter cacheTagWriter = createMock(CacheTagWriter.class);
+
+        messageHandler.updateSource("GC123");
+        cacheTagWriter.startWriting();
+        cacheTagWriter.source("GC123");
+
+        replay(messageHandler);
+        replay(cacheTagWriter);
+        new CachePersisterFacade(cacheTagWriter, null, null, messageHandler, null).open("GC123");
+        verify(messageHandler);
+        verify(cacheTagWriter);
     }
 
     public void testStart() {
         FileFactory fileFactory = createMock(FileFactory.class);
         File file = createMock(File.class);
-        CacheWriter cacheWriter = createMock(CacheWriter.class);
+        CacheTagWriter cacheTagWriter = createMock(CacheTagWriter.class);
 
-        expect(fileFactory.createFile(CachePersisterFacade.GEOBEAGLE_DIR)).andReturn(file);
+        expect(fileFactory.createFile(CacheDetailsWriter.GEOBEAGLE_DIR)).andReturn(file);
         expect(file.mkdirs()).andReturn(true);
-        cacheWriter.clearAllImportedCaches();
+        cacheTagWriter.clearAllImportedCaches();
 
         replay(fileFactory);
         replay(file);
-        CachePersisterFacade cachePersisterFacade = new CachePersisterFacade(cacheWriter,
-                fileFactory, null, null, null, null, null, null);
+        CachePersisterFacade cachePersisterFacade = new CachePersisterFacade(cacheTagWriter,
+                fileFactory, null, null, null);
         cachePersisterFacade.start();
         verify(fileFactory);
         verify(file);
     }
 
     public void testSymbol() throws IOException {
-        CacheDetailsWriter cacheDetailsWriter = createMock(CacheDetailsWriter.class);
+        CacheTagWriter cacheTagWriter = createMock(CacheTagWriter.class);
 
-        replay(cacheDetailsWriter);
-        Cache cache = new Cache();
-        new CachePersisterFacade(null, null, null, cacheDetailsWriter, null, null, cache, null)
-                .symbol("Geocache Found");
-        assertEquals("Geocache Found", cache.mSymbol);
-        verify(cacheDetailsWriter);
+        cacheTagWriter.symbol("Geocache Found");
+        
+        replay(cacheTagWriter);
+        new CachePersisterFacade(cacheTagWriter, null, null, null, null).symbol("Geocache Found");
+        verify(cacheTagWriter);
     }
 
     public void testWpt() throws IOException {
+        CacheTagWriter cacheTagWriter = createMock(CacheTagWriter.class);
+        CacheDetailsWriter cacheDetailsWriter = createMock(CacheDetailsWriter.class);
         XmlPullParserWrapper xmlPullParser = createMock(XmlPullParserWrapper.class);
-        Cache cache = new Cache();
         expect(xmlPullParser.getAttributeValue(null, "lat")).andReturn("37");
         expect(xmlPullParser.getAttributeValue(null, "lon")).andReturn("122");
 
+        cacheTagWriter.clear();
+        cacheTagWriter.latitudeLongitude("37", "122");
+        cacheTagWriter.latitudeLongitude("37", "122");
+
         replay(xmlPullParser);
-        new CachePersisterFacade(null, null, null, null, null, null, cache, null)
+        new CachePersisterFacade(cacheTagWriter, null, cacheDetailsWriter, null, null)
                 .wpt(xmlPullParser);
         verify(xmlPullParser);
     }
 
     public void testWptName() throws IOException {
-        HtmlWriterFactory htmlWriterFactory = createMock(HtmlWriterFactory.class);
-        HtmlWriter htmlWriter = createMock(HtmlWriter.class);
-        CacheDetailsWriterFactory cacheDetailsWriterFactory = createMock(CacheDetailsWriterFactory.class);
         CacheDetailsWriter cacheDetailsWriter = createMock(CacheDetailsWriter.class);
-        CacheWriter cacheWriter = createMock(CacheWriter.class);
-        GpxImporterDI.MessageHandler messageHandler = createMock(MessageHandler.class);
+        CacheTagWriter cacheTagWriter = createMock(CacheTagWriter.class);
+        MessageHandler messageHandler = createMock(MessageHandler.class);
         WakeLock wakeLock = createMock(WakeLock.class);
 
-        Cache cache = new Cache();
-        cache.mLatitude = 122;
-        cache.mLongitude = 37;
-        cache.mName = "a little cache";
-//        cacheWriter.clearCaches("foo.gpx");
-        cacheWriter.startWriting();
-        expect(htmlWriterFactory.create(CachePersisterFacade.GEOBEAGLE_DIR + "/GC123.html"))
-                .andReturn(htmlWriter);
-        expect(cacheDetailsWriterFactory.create(htmlWriter)).andReturn(cacheDetailsWriter);
-        cacheDetailsWriter.writeWptName("GC123", 122, 37);
-        messageHandler.workerSendUpdate("1: foo.gpx - GC123 - a little cache");
-
-        replay(htmlWriterFactory);
-        replay(htmlWriter);
-        replay(cacheDetailsWriterFactory);
-        replay(cacheDetailsWriter);
-        replay(messageHandler);
-        replay(cacheWriter);
-        CachePersisterFacade cachePersisterFacade = new CachePersisterFacade(cacheWriter, null,
-                cacheDetailsWriterFactory, cacheDetailsWriter, htmlWriterFactory, messageHandler,
-                cache, wakeLock);
-        cachePersisterFacade.open("foo.gpx");
-        cachePersisterFacade.wptName("GC123");
+        // cacheWriter.clearCaches("foo.gpx");
+        cacheDetailsWriter.open("GC123");
+        cacheDetailsWriter.writeWptName("GC123");
+        cacheTagWriter.id("GC123");
+        messageHandler.updateWaypoint("GC123");
         wakeLock.acquire(CachePersisterFacade.WAKELOCK_DURATION);
-        verify(htmlWriterFactory);
-        verify(htmlWriter);
-        verify(cacheDetailsWriterFactory);
+
+        replay(cacheDetailsWriter);
+        replay(cacheTagWriter);
+        replay(messageHandler);
+        replay(wakeLock);
+        CachePersisterFacade cachePersisterFacade = new CachePersisterFacade(cacheTagWriter, null,
+                cacheDetailsWriter, messageHandler, wakeLock);
+        cachePersisterFacade.wptName("GC123");
         verify(cacheDetailsWriter);
-        verify(messageHandler);
-        verify(cacheWriter);
+        verify(cacheTagWriter);
+        verify(cacheDetailsWriter);
+        verify(wakeLock);
     }
 }
