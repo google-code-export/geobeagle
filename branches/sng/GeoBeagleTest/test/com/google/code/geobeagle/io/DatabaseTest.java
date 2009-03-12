@@ -224,6 +224,7 @@ public class DatabaseTest extends TestCase {
         SQLiteDatabase sqliteDatabase = createMock(SQLiteDatabase.class);
 
         sqliteDatabase.execSQL(Database.SQL_CREATE_CACHE_TABLE);
+        sqliteDatabase.execSQL(Database.SQL_CREATE_GPX_TABLE);
         sqliteDatabase.execSQL(Database.SQL_CREATE_IDX_LATITUDE);
         sqliteDatabase.execSQL(Database.SQL_CREATE_IDX_LONGITUDE);
         sqliteDatabase.execSQL(Database.SQL_CREATE_IDX_SOURCE);
@@ -239,10 +240,14 @@ public class DatabaseTest extends TestCase {
 
         sqliteDatabase.execSQL(Database.SQL_DROP_CACHE_TABLE);
         sqliteDatabase.execSQL(Database.SQL_CREATE_CACHE_TABLE);
+        sqliteDatabase.execSQL(Database.SQL_CREATE_IDX_LATITUDE);
+        sqliteDatabase.execSQL(Database.SQL_CREATE_IDX_LONGITUDE);
+        sqliteDatabase.execSQL(Database.SQL_CREATE_IDX_SOURCE);
+        sqliteDatabase.execSQL(Database.SQL_CREATE_GPX_TABLE);
 
         replay(sqliteDatabase);
         OpenHelperDelegate openHelperDelegate = new OpenHelperDelegate();
-        openHelperDelegate.onUpgrade(sqliteDatabase, 0, 0);
+        openHelperDelegate.onUpgrade(sqliteDatabase, 8, 0);
         verify(sqliteDatabase);
     }
 }

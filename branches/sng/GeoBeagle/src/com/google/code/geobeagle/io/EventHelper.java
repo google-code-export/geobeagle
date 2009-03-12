@@ -32,6 +32,10 @@ public class EventHelper {
             return mPath;
         }
 
+        public void reset() {
+            mPath = "";
+        }
+
         public void startTag(String mCurrentTag) {
             mPath += "/" + mCurrentTag;
         }
@@ -48,7 +52,7 @@ public class EventHelper {
         mXmlPullParser = xmlPullParser;
     }
 
-    public void handleEvent(int eventType) throws IOException {
+    public boolean handleEvent(int eventType) throws IOException {
         switch (eventType) {
             case XmlPullParser.START_TAG:
                 mXmlPathBuilder.startTag(mXmlPullParser.getName());
@@ -59,8 +63,12 @@ public class EventHelper {
                 mXmlPathBuilder.endTag(mXmlPullParser.getName());
                 break;
             case XmlPullParser.TEXT:
-                mGpxEventHandler.text(mXmlPathBuilder.getPath(), mXmlPullParser.getText());
-                break;
+                return mGpxEventHandler.text(mXmlPathBuilder.getPath(), mXmlPullParser.getText());
         }
+        return true;
+    }
+
+    public void reset() {
+        mXmlPathBuilder.reset();
     }
 }

@@ -15,6 +15,7 @@
 package com.google.code.geobeagle.io;
 
 import com.google.code.geobeagle.R;
+import com.google.code.geobeagle.io.GpxToCache.CancelException;
 import com.google.code.geobeagle.ui.ErrorDisplayer;
 
 import org.xmlpull.v1.XmlPullParserException;
@@ -41,20 +42,27 @@ public class GpxLoader {
         mGpxToCache.abort();
     }
 
+    /**
+     * @return true if we should continue loading more files, false if we should
+     *         terminate.
+     */
     public boolean load() {
-        boolean success = false;
+        boolean markLoadAsComplete = false;
+        boolean continueLoading = false;
         try {
-            success = mGpxToCache.load();
+            boolean alreadyLoaded = mGpxToCache.load();
+            markLoadAsComplete = !alreadyLoaded;
+            continueLoading = true;
         } catch (final SQLiteException e) {
             mErrorDisplayer.displayError(R.string.error_writing_cache, e.getMessage());
         } catch (XmlPullParserException e) {
             mErrorDisplayer.displayError(R.string.error_parsing_file, e.getMessage());
         } catch (IOException e) {
             mErrorDisplayer.displayError(R.string.error_reading_file, mGpxToCache.getSource());
-        } finally {
-            mCachePersisterFacade.close();
+        } catch (CancelException e) {
         }
-        return success;
+        mCachePersisterFacade.close(markLoadAsComplete);
+        return continueLoading;
     }
 
     public void open(String path) throws FileNotFoundException, XmlPullParserException, IOException {

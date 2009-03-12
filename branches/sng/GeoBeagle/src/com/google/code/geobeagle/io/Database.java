@@ -56,6 +56,7 @@ public class Database {
 
         private final WhereFactory mWhereFactory;
 
+        // TODO: rename to CacheSqlReader / CacheSqlWriter
         public CacheReader(SQLiteWrapper sqliteWrapper, WhereFactory whereFactory) {
             mSqliteWrapper = sqliteWrapper;
             mWhereFactory = whereFactory;
@@ -100,27 +101,44 @@ public class Database {
     }
 
     public static class CacheWriter {
+        private static final String[] COLUMNS_NAME = new String[] {
+            "Name"
+        };
         private final SQLiteWrapper mSqlite;
+        private String[] mSelectionArgs2 = new String[2];
+        private Object[] mBindArgs0 = new Object[0];
+        private Object[] mBindArgs1 = new Object[1];
+        private Object[] mBindArgs2 = new Object[2];
+        private Object[] mBindArgs5 = new Object[5];
 
         public CacheWriter(SQLiteWrapper sqlite) {
             mSqlite = sqlite;
         }
 
+        public boolean isGpxAlreadyLoaded(String gpxName, String gpxTime) {
+            mSelectionArgs2[0] = gpxName;
+            mSelectionArgs2[1] = gpxTime;
+            Cursor cursor = mSqlite.query(TBL_GPX, COLUMNS_NAME, "Name = ? AND Time >= ?", mSelectionArgs2,
+                    null, null, null, null);
+            int count = cursor.getCount();
+            boolean gpxAlreadyLoaded = count > 0;
+            cursor.close();
+            return gpxAlreadyLoaded;
+        }
+
         public void clearAllImportedCaches() {
-            mSqlite.execSQL(Database.SQL_DELETE_ALL_IMPORTED_CACHES, new Object[] {});
+            mSqlite.execSQL(Database.SQL_DELETE_ALL_IMPORTED_CACHES, mBindArgs0);
 
         }
 
         public void clearCaches(String source) {
-            mSqlite.execSQL(SQL_CLEAR_CACHES, new Object[] {
-                source
-            });
+            mBindArgs1[0] = source;
+            mSqlite.execSQL(SQL_CLEAR_CACHES, mBindArgs1);
         }
 
         public void deleteCache(CharSequence id) {
-            mSqlite.execSQL(Database.SQL_DELETE_CACHE, new Object[] {
-                id
-            });
+            mBindArgs1[0] = id;
+            mSqlite.execSQL(Database.SQL_DELETE_CACHE, mBindArgs1);
         }
 
         public void insertAndUpdateCache(CharSequence id, CharSequence name, double latitude,
@@ -136,9 +154,12 @@ public class Database {
 
         private void insertCache(CharSequence id, CharSequence name, double latitude,
                 double longitude, String source) {
-            mSqlite.execSQL(Database.SQL_INSERT_CACHE, new Object[] {
-                    id, name, new Double(latitude), new Double(longitude), source
-            });
+            mBindArgs5[0] = id;
+            mBindArgs5[1] = name;
+            mBindArgs5[2] = new Double(latitude);
+            mBindArgs5[3] = new Double(longitude);
+            mBindArgs5[4] = source;
+            mSqlite.execSQL(Database.SQL_INSERT_CACHE, mBindArgs5);
         }
 
         public void startWriting() {
@@ -149,6 +170,14 @@ public class Database {
             // TODO: abort if no writes--otherwise sqlite is unhappy.
             mSqlite.setTransactionSuccessful();
             mSqlite.endTransaction();
+        }
+
+        public void writeGpx(String gpxName, String gpxTime) {
+            mBindArgs1[0] = gpxName;
+            mSqlite.execSQL(Database.SQL_DELETE_GPX, mBindArgs1);
+            mBindArgs2[0] = gpxName;
+            mBindArgs2[1]= gpxTime;
+            mSqlite.execSQL(Database.SQL_INSERT_GPX, mBindArgs2);
         }
     }
 
@@ -174,6 +203,7 @@ public class Database {
     public static class OpenHelperDelegate {
         public void onCreate(SQLiteDatabase db) {
             db.execSQL(SQL_CREATE_CACHE_TABLE);
+            db.execSQL(SQL_CREATE_GPX_TABLE);
             db.execSQL(SQL_CREATE_IDX_LATITUDE);
             db.execSQL(SQL_CREATE_IDX_LONGITUDE);
             db.execSQL(SQL_CREATE_IDX_SOURCE);
@@ -186,6 +216,9 @@ public class Database {
                 db.execSQL(SQL_CREATE_IDX_LATITUDE);
                 db.execSQL(SQL_CREATE_IDX_LONGITUDE);
                 db.execSQL(SQL_CREATE_IDX_SOURCE);
+            }
+            if (oldVersion < 10) {
+                db.execSQL(SQL_CREATE_GPX_TABLE);
             }
         }
     }
@@ -229,7 +262,7 @@ public class Database {
 
         /**
          * @param sql
-         * @param selectionArgs
+         * @param mSelectionArgs1
          * @return
          */
         public Cursor rawQuery(String sql, String[] selectionArgs) {
@@ -265,7 +298,7 @@ public class Database {
      * version 9
      * fixes bug where INDEX wasn't being created on upgrade.
      * 
-     * version 10
+     * version 10 -- not released
      * CREATE TABLE IF NOT EXISTS CACHES (Id VARCHAR PRIMARY
      *          KEY, Description VARCHAR Latitude DOUBLE, Longitude DOUBLE,
      *          Source VARCHAR)
@@ -278,7 +311,7 @@ public class Database {
 
     public static final String DATABASE_NAME = "GeoBeagle.db";
 
-    public static final int DATABASE_VERSION = 9;
+    public static final int DATABASE_VERSION = 10;
     public static final String[] READER_COLUMNS = new String[] {
             "Latitude", "Longitude", "Id", "Description"
     };
@@ -287,15 +320,21 @@ public class Database {
     public static final String SQL_CREATE_CACHE_TABLE = "CREATE TABLE IF NOT EXISTS CACHES ("
             + "Id VARCHAR PRIMARY KEY, Description VARCHAR, "
             + "Latitude DOUBLE, Longitude DOUBLE, Source VARCHAR)";
+    public static final String SQL_CLEAR_GPX_TABLE = "DELETE FROM GPX";
+    public static final String SQL_CREATE_GPX_TABLE = "CREATE TABLE IF NOT EXISTS GPX ("
+            + "Name VARCHAR PRIMARY KEY, Time DATETIME)";
     public static final String SQL_CREATE_IDX_LATITUDE = "CREATE INDEX IF NOT EXISTS IDX_LATITUDE on CACHES (Latitude)";
     public static final String SQL_CREATE_IDX_LONGITUDE = "CREATE INDEX IF NOT EXISTS IDX_LONGITUDE on CACHES (Longitude)";
     public static final String SQL_CREATE_IDX_SOURCE = "CREATE INDEX IF NOT EXISTS IDX_SOURCE on CACHES (Source)";
     public static final String SQL_DELETE_ALL_IMPORTED_CACHES = "DELETE FROM CACHES WHERE Source != 'intent'";
     public static final String SQL_DELETE_CACHE = "DELETE FROM CACHES WHERE Id=?";
+    public static final String SQL_DELETE_GPX = "DELETE FROM GPX WHERE Name=?";
     public static final String SQL_DROP_CACHE_TABLE = "DROP TABLE CACHES";
     public static final String SQL_INSERT_CACHE = "INSERT INTO CACHES "
-            + "(Id, Description, Latitude, Longitude, Source) " + "VALUES (?, ?, ?, ?, ?)";
+            + "(Id, Description, Latitude, Longitude, Source) VALUES (?, ?, ?, ?, ?)";
+    public static final String SQL_INSERT_GPX = "INSERT INTO GPX (Name, Time) VALUES (?, ?)";
     public static final String TBL_CACHES = "CACHES";
+    public static final String TBL_GPX = "GPX";
 
     public static Database create(Context context) {
         final OpenHelperDelegate openHelperDelegate = new OpenHelperDelegate();

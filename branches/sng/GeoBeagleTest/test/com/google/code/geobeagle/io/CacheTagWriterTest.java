@@ -3,81 +3,112 @@ package com.google.code.geobeagle.io;
 
 import com.google.code.geobeagle.io.Database.CacheWriter;
 
+import java.text.ParseException;
+
 import junit.framework.TestCase;
 
 import static org.easymock.classextension.EasyMock.createMock;
 import static org.easymock.classextension.EasyMock.replay;
+import static org.easymock.classextension.EasyMock.expect;
 import static org.easymock.classextension.EasyMock.verify;
 
 public class CacheTagWriterTest extends TestCase {
+    private final CacheWriter mCacheWriter = createMock(CacheWriter.class);
+
     public void testClear() {
-        CacheWriter cacheWriter = createMock(CacheWriter.class);
+        mCacheWriter.insertAndUpdateCache(null, null, 0, 0, null);
 
-        cacheWriter.insertAndUpdateCache(null, null, 0, 0, null);
-
-        replay(cacheWriter);
-        CacheTagWriter cacheTagWriter = new CacheTagWriter(cacheWriter);
+        replay(mCacheWriter);
+        CacheTagWriter cacheTagWriter = new CacheTagWriter(mCacheWriter);
         cacheTagWriter.clear();
         cacheTagWriter.write();
-        verify(cacheWriter);
+        verify(mCacheWriter);
     }
 
     public void testClearAllImportedCaches() {
-        CacheWriter cacheWriter = createMock(CacheWriter.class);
+        mCacheWriter.clearAllImportedCaches();
 
-        cacheWriter.clearAllImportedCaches();
+        replay(mCacheWriter);
+        new CacheTagWriter(mCacheWriter).clearAllImportedCaches();
+        verify(mCacheWriter);
+    }
 
-        replay(cacheWriter);
-        new CacheTagWriter(cacheWriter).clearAllImportedCaches();
-        verify(cacheWriter);
+    public void testGpxTimeDontLoad() {
+        expect(mCacheWriter.isGpxAlreadyLoaded("foo.gpx", "2008-04-15 16:10:30")).andReturn(true);
+
+        replay(mCacheWriter);
+        CacheTagWriter cacheTagWriter = new CacheTagWriter(mCacheWriter);
+        cacheTagWriter.gpxName("foo.gpx");
+        assertFalse(cacheTagWriter.gpxTime("2008-04-15T16:10:30"));
+        verify(mCacheWriter);
+    }
+
+    public void testGpxTimeLoad() {
+        expect(mCacheWriter.isGpxAlreadyLoaded("foo.gpx", "2008-04-15 16:10:30")).andReturn(false);
+        mCacheWriter.clearCaches("foo.gpx");
+        
+        replay(mCacheWriter);
+        CacheTagWriter cacheTagWriter = new CacheTagWriter(mCacheWriter);
+        cacheTagWriter.gpxName("foo.gpx");
+        assertTrue(cacheTagWriter.gpxTime("2008-04-15T16:10:30"));
+        verify(mCacheWriter);
+    }
+
+    public void testIsoTimeToSql() throws ParseException {
+        assertEquals("2008-04-15 16:10:30", new CacheTagWriter(null)
+                .isoTimeToSql("2008-04-15T16:10:30.7369220-08:00"));
     }
 
     public void testStartWriting() {
-        CacheWriter cacheWriter = createMock(CacheWriter.class);
+        mCacheWriter.startWriting();
 
-        cacheWriter.startWriting();
-
-        replay(cacheWriter);
-        CacheTagWriter cacheTagWriter = new CacheTagWriter(cacheWriter);
+        replay(mCacheWriter);
+        CacheTagWriter cacheTagWriter = new CacheTagWriter(mCacheWriter);
         cacheTagWriter.startWriting();
-        verify(cacheWriter);
+        verify(mCacheWriter);
     }
 
-    public void testStopWriting() {
-        CacheWriter cacheWriter = createMock(CacheWriter.class);
+    public void testStopWritingSuccess() {
+        mCacheWriter.stopWriting();
+        expect(mCacheWriter.isGpxAlreadyLoaded("foo.gpx", "2008-04-15 16:10:30")).andReturn(true);
+        mCacheWriter.writeGpx("foo.gpx", "2008-04-15 16:10:30");
+        
+        replay(mCacheWriter);
+        CacheTagWriter cacheTagWriter = new CacheTagWriter(mCacheWriter);
+        cacheTagWriter.gpxName("foo.gpx");
+        cacheTagWriter.gpxTime("2008-04-15T16:10:30.7369220-08:00");
+        cacheTagWriter.stopWriting(true);
+        verify(mCacheWriter);
+    }
 
-        cacheWriter.stopWriting();
+    public void testStopWritingFailure() {
+        mCacheWriter.stopWriting();
 
-        replay(cacheWriter);
-        CacheTagWriter cacheTagWriter = new CacheTagWriter(cacheWriter);
-        cacheTagWriter.stopWriting();
-        verify(cacheWriter);
+        replay(mCacheWriter);
+        CacheTagWriter cacheTagWriter = new CacheTagWriter(mCacheWriter);
+        cacheTagWriter.stopWriting(false);
+        verify(mCacheWriter);
     }
 
     public void testWrite() {
-        CacheWriter cacheWriter = createMock(CacheWriter.class);
+        mCacheWriter.insertAndUpdateCache("GC123", "my cache", 122, 37, "foo.gpx");
 
-        cacheWriter.insertAndUpdateCache("GC123", "my cache", 122, 37, "foo.gpx");
-
-        replay(cacheWriter);
-        CacheTagWriter cacheTagWriter = new CacheTagWriter(cacheWriter);
+        replay(mCacheWriter);
+        CacheTagWriter cacheTagWriter = new CacheTagWriter(mCacheWriter);
         cacheTagWriter.id("GC123");
-        cacheTagWriter.name("my cache");
+        cacheTagWriter.cacheName("my cache");
         cacheTagWriter.latitudeLongitude("122", "37");
-        cacheTagWriter.source("foo.gpx");
+        cacheTagWriter.gpxName("foo.gpx");
         cacheTagWriter.write();
-        verify(cacheWriter);
+        verify(mCacheWriter);
     }
 
-
     public void testWriteFound() {
-        CacheWriter cacheWriter = createMock(CacheWriter.class);
-
-        replay(cacheWriter);
-        CacheTagWriter cacheTagWriter = new CacheTagWriter(cacheWriter);
+        replay(mCacheWriter);
+        CacheTagWriter cacheTagWriter = new CacheTagWriter(mCacheWriter);
         cacheTagWriter.symbol("Geocache Found");
         cacheTagWriter.write();
-        verify(cacheWriter);
+        verify(mCacheWriter);
     }
 
 }

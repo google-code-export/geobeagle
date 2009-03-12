@@ -11,6 +11,7 @@ import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.io.Database.SQLiteWrapper;
 import com.google.code.geobeagle.io.GpxImporter.ImportThreadDelegate;
 import com.google.code.geobeagle.io.di.GpxImporterDI;
+import com.google.code.geobeagle.io.di.GpxImporterDI.GpxFilenameFactory;
 import com.google.code.geobeagle.io.di.GpxImporterDI.ImportThreadWrapper;
 import com.google.code.geobeagle.io.di.GpxImporterDI.MessageHandler;
 import com.google.code.geobeagle.io.di.GpxImporterDI.ToastFactory;
@@ -138,7 +139,7 @@ public class GpxImporterTest extends TestCase {
     public void testImportThreadDelegateRun() throws FileNotFoundException, XmlPullParserException,
             IOException {
         GpxLoader gpxLoader = createMock(GpxLoader.class);
-        GpxImporterDI.GpxFilenameFactory gpxFilenameFactory = createMock(GpxImporterDI.GpxFilenameFactory.class);
+        GpxFilenameFactory gpxFilenameFactory = createMock(GpxImporterDI.GpxFilenameFactory.class);
         MessageHandler messageHandler = createMock(MessageHandler.class);
 
         expect(gpxFilenameFactory.getFilenames()).andReturn(new String[] {
@@ -157,6 +158,24 @@ public class GpxImporterTest extends TestCase {
         importThreadDelegate.run();
         verify(gpxLoader);
         verify(messageHandler);
+        verify(gpxFilenameFactory);
+    }
+
+    public void testImportThreadDelegateRunNoFilesToImport() throws FileNotFoundException,
+            XmlPullParserException, IOException {
+        ErrorDisplayer errorDisplayer = createMock(ErrorDisplayer.class);
+        GpxFilenameFactory gpxFilenameFactory = createMock(GpxImporterDI.GpxFilenameFactory.class);
+        MessageHandler messageHandler = createMock(MessageHandler.class);
+
+        expect(gpxFilenameFactory.getFilenames()).andReturn(new String[] {});
+        errorDisplayer.displayError(R.string.error_no_gpx_files);
+
+        replay(errorDisplayer);
+        replay(gpxFilenameFactory);
+        ImportThreadDelegate importThreadDelegate = new ImportThreadDelegate(null, messageHandler,
+                errorDisplayer, gpxFilenameFactory);
+        importThreadDelegate.run();
+        verify(errorDisplayer);
         verify(gpxFilenameFactory);
     }
 

@@ -50,6 +50,10 @@ public class GpxImporter {
             String filename = "";
             try {
                 String children[] = mGpxFilenameFactory.getFilenames();
+                if (children.length == 0) {
+                    mErrorDisplayer.displayError(R.string.error_no_gpx_files);
+                    return;
+                }
                 mGpxLoader.start();
                 for (String child : children) {
                     filename = "/sdcard/" + child;

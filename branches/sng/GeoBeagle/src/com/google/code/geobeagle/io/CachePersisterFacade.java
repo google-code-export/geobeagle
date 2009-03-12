@@ -41,8 +41,8 @@ public class CachePersisterFacade {
         mWakeLock = wakeLock;
     }
 
-    public void close() {
-        mCacheTagWriter.stopWriting();
+    public void close(boolean success) {
+        mCacheTagWriter.stopWriting(success);
     }
 
     void endTag() throws IOException {
@@ -50,9 +50,17 @@ public class CachePersisterFacade {
         mCacheTagWriter.write();
     }
 
+    public void gpxName(String text) {
+        mCacheTagWriter.gpxName(text);
+    }
+
+    public boolean gpxTime(String gpxTime) {
+        return mCacheTagWriter.gpxTime(gpxTime);
+    }
+
     void groundspeakName(String text) {
         mMessageHandler.updateName(text);
-        mCacheTagWriter.name(text);
+        mCacheTagWriter.cacheName(text);
     }
 
     public void hint(String text) throws IOException {
@@ -69,15 +77,13 @@ public class CachePersisterFacade {
 
     void open(String text) {
         mMessageHandler.updateSource(text);
-        // mCacheWriter.clearCaches(text);
         mCacheTagWriter.startWriting();
-        mCacheTagWriter.source(text);
+        mCacheTagWriter.gpxName(text);
     }
 
     void start() {
         File file = mFileFactory.createFile(CacheDetailsWriter.GEOBEAGLE_DIR);
         file.mkdirs();
-        mCacheTagWriter.clearAllImportedCaches();
     }
 
     public void symbol(String text) {
@@ -96,7 +102,7 @@ public class CachePersisterFacade {
         mCacheDetailsWriter.open(wpt);
         mCacheDetailsWriter.writeWptName(wpt);
         mCacheTagWriter.id(wpt);
-        mMessageHandler.updateWaypoint(wpt);
+        mMessageHandler.updateWaypointId(wpt);
         mWakeLock.acquire(WAKELOCK_DURATION);
     }
 }

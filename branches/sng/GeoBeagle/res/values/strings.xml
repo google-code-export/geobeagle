@@ -36,6 +36,7 @@
 	<string name="error_parsing_file">Error parsing file '%1$s'.</string>
 	<string name="error_reading_file">Error reading file '%1$s'.</string>
 	<string name="error_writing_cache">Error writing cache: '%1$s'.</string>
+	<string name="error_no_gpx_files">No gpx files found in /sdcard folder.</string>
 	<string name="my_current_location">My Current Location</string>
 	<string name="import_canceled">Import aborted!</string>
 	<string name="menu_import_gpx">Sync GPX files from /sdcard</string>

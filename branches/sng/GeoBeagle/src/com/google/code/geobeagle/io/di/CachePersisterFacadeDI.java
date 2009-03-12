@@ -37,7 +37,7 @@ public class CachePersisterFacadeDI {
         }
 
         public void open(String path) throws IOException {
-            mWriter = new BufferedWriter(new FileWriter(path));
+            mWriter = new BufferedWriter(new FileWriter(path), 4000);
         }
 
         public void write(String str) throws IOException {

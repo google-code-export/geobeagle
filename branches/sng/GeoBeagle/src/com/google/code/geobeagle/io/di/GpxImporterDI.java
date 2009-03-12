@@ -25,7 +25,6 @@ public class GpxImporterDI {
 
         public String[] getFilenames() {
             File dir = new File("/sdcard");
-
             FilenameFilter filter = new FilenameFilter() {
                 public boolean accept(File dir, String name) {
                     return !name.startsWith(".") && name.endsWith(".gpx");
@@ -105,10 +104,10 @@ public class GpxImporterDI {
         private CacheListDelegate mCacheListDelegate;
         private boolean mLoadAborted;
 
-        private String mName;
         private final ProgressDialogWrapper mProgressDialogWrapper;
         private String mSource;
         private String mStatus;
+        private String mWaypointId;
 
         public MessageHandler(ProgressDialogWrapper progressDialogWrapper) {
             mProgressDialogWrapper = progressDialogWrapper;
@@ -147,17 +146,17 @@ public class GpxImporterDI {
             mProgressDialogWrapper.show("Importing caches", "Please wait...");
         }
 
-        public void updateName(String text) {
-            mName = text;
+        public void updateName(String name) {
+            mStatus = mCacheCount++ + ": " + mSource + " - " + mWaypointId + " - " + name;
+            sendEmptyMessage(MessageHandler.MSG_PROGRESS);
         }
 
         public void updateSource(String text) {
             mSource = text;
         }
 
-        public void updateWaypoint(String wpt) {
-            mStatus = mCacheCount++ + ": " + mSource + " - " + wpt + " - " + mName;
-            sendEmptyMessage(MessageHandler.MSG_PROGRESS);
+        public void updateWaypointId(String wpt) {
+            mWaypointId = wpt;
         }
     }
 

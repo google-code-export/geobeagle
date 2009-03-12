@@ -23,39 +23,53 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 public class GpxToCache {
+    private boolean mAbort;
     private final EventHelper mEventHelper;
     private final XmlPullParserWrapper mXmlPullParserWrapper;
-    private boolean mAbort;
 
-    public GpxToCache(XmlPullParserWrapper xmlPullParserWrapper,
-            EventHelper eventHelper) {
+    public GpxToCache(XmlPullParserWrapper xmlPullParserWrapper, EventHelper eventHelper) {
         mXmlPullParserWrapper = xmlPullParserWrapper;
         mEventHelper = eventHelper;
     }
 
-    public void open(String source) throws FileNotFoundException, XmlPullParserException {
-        mXmlPullParserWrapper.open(source);
-        mAbort = false;
-    }
-
-    public boolean load() throws XmlPullParserException, IOException {
-        int eventType;
-        for (eventType = mXmlPullParserWrapper.getEventType(); !mAbort
-                && eventType != XmlPullParser.END_DOCUMENT; eventType = mXmlPullParserWrapper
-                .next()) {
-            mEventHelper.handleEvent(eventType);
-        }
-
-        // Pick up END_DOCUMENT event as well.
-        mEventHelper.handleEvent(eventType);
-        return !mAbort;
+    public void abort() {
+        mAbort = true;
     }
 
     public String getSource() {
         return mXmlPullParserWrapper.getSource();
     }
 
-    public void abort() {
-        mAbort = true;
+    @SuppressWarnings("serial")
+    public static class CancelException extends Exception {
+    }
+
+    /**
+     * @return false if this file has already been loaded.
+     * @throws XmlPullParserException
+     * @throws IOException
+     * @throws CancelException
+     */
+    public boolean load() throws XmlPullParserException, IOException, CancelException {
+        int eventType;
+        for (eventType = mXmlPullParserWrapper.getEventType(); eventType != XmlPullParser.END_DOCUMENT; eventType = mXmlPullParserWrapper
+                .next()) {
+            if (mAbort)
+                throw new CancelException();
+
+            // File already loaded.
+            if (!mEventHelper.handleEvent(eventType))
+                return true;
+        }
+
+        // Pick up END_DOCUMENT event as well.
+        mEventHelper.handleEvent(eventType);
+        return false;
+    }
+
+    public void open(String source) throws FileNotFoundException, XmlPullParserException {
+        mXmlPullParserWrapper.open(source);
+        mEventHelper.reset();
+        mAbort = false;
     }
 }
