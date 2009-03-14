@@ -20,17 +20,13 @@ import android.app.Activity;
 import android.app.AlertDialog.Builder;
 import android.content.DialogInterface;
 
-import java.util.Formatter;
-
 // TODO: this class needs tests.
 public class ErrorDisplayer {
     private final Activity mActivity;
     private Builder mAlertDialogBuilder;
-    private Formatter mFormatter;
 
     public ErrorDisplayer(Activity activity) {
         mActivity = activity;
-        mFormatter = new Formatter();
     }
 
     private class DisplayErrorRunnable implements Runnable {
@@ -70,6 +66,6 @@ public class ErrorDisplayer {
     }
 
     public void displayError(int resId, Object... args) {
-        displayError(mFormatter.format((String)mActivity.getText(resId), args).toString());
+        displayError(String.format((String)mActivity.getText(resId), args));
     }
 }
