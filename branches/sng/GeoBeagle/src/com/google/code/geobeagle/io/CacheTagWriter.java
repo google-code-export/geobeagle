@@ -48,8 +48,8 @@ public class CacheTagWriter {
         mFound = false;
     }
 
-    public void clearAllImportedCaches() {
-        mCacheWriter.clearAllImportedCaches();
+    public void end() {
+        mCacheWriter.clearEarlierLoads();
     }
 
     public void gpxName(String gpxName) {
@@ -58,7 +58,8 @@ public class CacheTagWriter {
 
     /**
      * @param gpxTime
-     * @return
+     * @return true if we should load this gpx; false if the gpx is already
+     *         loaded.
      */
     public boolean gpxTime(String gpxTime) {
         mSqlDate = isoTimeToSql(gpxTime);

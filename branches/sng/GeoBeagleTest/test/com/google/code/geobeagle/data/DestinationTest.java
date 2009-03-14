@@ -27,6 +27,14 @@ public class DestinationTest extends TestCase {
             Pattern.compile("(?:GC)(\\w*)"), Pattern.compile("(?:LB)(\\w*)")
     };
 
+    public void testGetCoordinatesIdAndName() {
+        Destination destinationImpl = Destination.create("s37 03.0, 122 00.0 (Description)",
+                mDestinationPatterns);
+        assertEquals(37.05, destinationImpl.getLatitude());
+        assertEquals(122.0, destinationImpl.getLongitude());
+        assertEquals("37.05, 122.0 (Description)", destinationImpl.getCoordinatesIdAndName());
+    }
+
     public void testLatLong() {
         Destination destination = Destination.create("37 00.0, 122 00.0", mDestinationPatterns);
         assertEquals(37.0, destination.getLatitude());
@@ -47,7 +55,7 @@ public class DestinationTest extends TestCase {
         assertEquals("", ll4.getIdAndName());
     }
 
-    public void testDescription() {
+    public void testDescriptionGetIdAndName() {
         Destination destinationImpl = Destination.create(" \t 37 03.0, 122 00.0 (Description)",
                 mDestinationPatterns);
         assertEquals(37.05, destinationImpl.getLatitude());

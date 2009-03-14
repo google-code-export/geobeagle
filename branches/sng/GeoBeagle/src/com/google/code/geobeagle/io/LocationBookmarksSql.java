@@ -29,7 +29,6 @@ public class LocationBookmarksSql {
     private final SQLiteWrapper mSQLiteWrapper;
     private final LocationControl mLocationControl;
     private final CacheReader mCacheReader;
-    private int mCount;
 
     public static LocationBookmarksSql create(LocationControl locationControl, Database database,
             DestinationFactory destinationFactory, ErrorDisplayer errorDisplayer) {
@@ -60,14 +59,14 @@ public class LocationBookmarksSql {
     }
 
     public void load() {
-        mSQLiteWrapper.openReadableDatabase(mDatabase);
-
+        // TODO: This has to be writable for upgrade to work; we should open one readable
+        // and one writable at the activity level, and then pass it down.
+        mSQLiteWrapper.openWritableDatabase(mDatabase);
         if (mCacheReader.open(mLocationControl.getLocation())) {
             read();
             mCacheReader.close();
         }
         
-        mCount = mCacheReader.getTotalCount();
         mSQLiteWrapper.close();
     }
 
@@ -79,7 +78,10 @@ public class LocationBookmarksSql {
     }
 
     public int getCount() {
-        return mCount;
+        mSQLiteWrapper.openWritableDatabase(mDatabase);
+        int count = mCacheReader.getTotalCount();
+        mSQLiteWrapper.close();
+        return count;
     }
 
 }

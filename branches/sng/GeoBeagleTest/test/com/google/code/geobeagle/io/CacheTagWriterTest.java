@@ -25,13 +25,14 @@ public class CacheTagWriterTest extends TestCase {
         verify(mCacheWriter);
     }
 
-    public void testClearAllImportedCaches() {
-        mCacheWriter.clearAllImportedCaches();
+    public void testEnd() {
+        mCacheWriter.clearEarlierLoads();
 
         replay(mCacheWriter);
-        new CacheTagWriter(mCacheWriter).clearAllImportedCaches();
+        new CacheTagWriter(mCacheWriter).end();
         verify(mCacheWriter);
     }
+
 
     public void testGpxTimeDontLoad() {
         expect(mCacheWriter.isGpxAlreadyLoaded("foo.gpx", "2008-04-15 16:10:30")).andReturn(true);
@@ -68,6 +69,15 @@ public class CacheTagWriterTest extends TestCase {
         verify(mCacheWriter);
     }
 
+    public void testStopWritingFailure() {
+        mCacheWriter.stopWriting();
+
+        replay(mCacheWriter);
+        CacheTagWriter cacheTagWriter = new CacheTagWriter(mCacheWriter);
+        cacheTagWriter.stopWriting(false);
+        verify(mCacheWriter);
+    }
+
     public void testStopWritingSuccess() {
         mCacheWriter.stopWriting();
         expect(mCacheWriter.isGpxAlreadyLoaded("foo.gpx", "2008-04-15 16:10:30")).andReturn(true);
@@ -78,15 +88,6 @@ public class CacheTagWriterTest extends TestCase {
         cacheTagWriter.gpxName("foo.gpx");
         cacheTagWriter.gpxTime("2008-04-15T16:10:30.7369220-08:00");
         cacheTagWriter.stopWriting(true);
-        verify(mCacheWriter);
-    }
-
-    public void testStopWritingFailure() {
-        mCacheWriter.stopWriting();
-
-        replay(mCacheWriter);
-        CacheTagWriter cacheTagWriter = new CacheTagWriter(mCacheWriter);
-        cacheTagWriter.stopWriting(false);
         verify(mCacheWriter);
     }
 

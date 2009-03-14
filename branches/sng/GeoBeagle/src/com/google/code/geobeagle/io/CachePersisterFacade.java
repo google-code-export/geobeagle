@@ -45,6 +45,10 @@ public class CachePersisterFacade {
         mCacheTagWriter.stopWriting(success);
     }
 
+    public void end() {
+        mCacheTagWriter.end();
+    }
+
     void endTag() throws IOException {
         mCacheDetailsWriter.close();
         mCacheTagWriter.write();

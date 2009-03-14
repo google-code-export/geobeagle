@@ -31,6 +31,14 @@ public class CachePersisterFacadeTest extends TestCase {
         verify(mCacheTagWriter);
     }
 
+    public void testEnd() throws IOException {
+        mCacheTagWriter.end();
+
+        replay(mCacheTagWriter);
+        new CachePersisterFacade(mCacheTagWriter, null, null, null, null).end();
+        verify(mCacheTagWriter);
+    }
+
     public void testEndTag() throws IOException {
         mCacheDetailsWriter.close();
         mCacheTagWriter.write();
@@ -113,7 +121,6 @@ public class CachePersisterFacadeTest extends TestCase {
 
         expect(fileFactory.createFile(CacheDetailsWriter.GEOBEAGLE_DIR)).andReturn(file);
         expect(file.mkdirs()).andReturn(true);
-        mCacheTagWriter.clearAllImportedCaches();
 
         replay(fileFactory);
         replay(file);

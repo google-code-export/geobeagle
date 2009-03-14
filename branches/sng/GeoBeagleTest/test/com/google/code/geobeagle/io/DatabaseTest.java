@@ -244,10 +244,11 @@ public class DatabaseTest extends TestCase {
         sqliteDatabase.execSQL(Database.SQL_CREATE_IDX_LONGITUDE);
         sqliteDatabase.execSQL(Database.SQL_CREATE_IDX_SOURCE);
         sqliteDatabase.execSQL(Database.SQL_CREATE_GPX_TABLE);
+        sqliteDatabase.execSQL(Database.SQL_ADD_RECENTLY_LOADED_COLUMN_TO_CACHES);
 
         replay(sqliteDatabase);
         OpenHelperDelegate openHelperDelegate = new OpenHelperDelegate();
-        openHelperDelegate.onUpgrade(sqliteDatabase, 8, 0);
+        openHelperDelegate.onUpgrade(sqliteDatabase, 8, 9);
         verify(sqliteDatabase);
     }
 }

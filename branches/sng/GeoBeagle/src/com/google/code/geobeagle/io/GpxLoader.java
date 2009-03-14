@@ -42,6 +42,10 @@ public class GpxLoader {
         mGpxToCache.abort();
     }
 
+    public void end() {
+        mCachePersisterFacade.end();
+    }
+
     /**
      * @return true if we should continue loading more files, false if we should
      *         terminate.

@@ -104,36 +104,27 @@ public class Database {
         private static final String[] COLUMNS_NAME = new String[] {
             "Name"
         };
-        private final SQLiteWrapper mSqlite;
-        private String[] mSelectionArgs2 = new String[2];
         private Object[] mBindArgs0 = new Object[0];
         private Object[] mBindArgs1 = new Object[1];
         private Object[] mBindArgs2 = new Object[2];
         private Object[] mBindArgs5 = new Object[5];
+        private String[] mSelectionArgs2 = new String[2];
+        private final SQLiteWrapper mSqlite;
 
         public CacheWriter(SQLiteWrapper sqlite) {
             mSqlite = sqlite;
         }
 
-        public boolean isGpxAlreadyLoaded(String gpxName, String gpxTime) {
-            mSelectionArgs2[0] = gpxName;
-            mSelectionArgs2[1] = gpxTime;
-            Cursor cursor = mSqlite.query(TBL_GPX, COLUMNS_NAME, "Name = ? AND Time >= ?", mSelectionArgs2,
-                    null, null, null, null);
-            int count = cursor.getCount();
-            boolean gpxAlreadyLoaded = count > 0;
-            cursor.close();
-            return gpxAlreadyLoaded;
-        }
-
-        public void clearAllImportedCaches() {
-            mSqlite.execSQL(Database.SQL_DELETE_ALL_IMPORTED_CACHES, mBindArgs0);
-
-        }
-
         public void clearCaches(String source) {
             mBindArgs1[0] = source;
             mSqlite.execSQL(SQL_CLEAR_CACHES, mBindArgs1);
+        }
+
+        public void clearEarlierLoads() {
+            mSqlite.execSQL(SQL_DELETE_OLD_CACHES, mBindArgs0);
+            mSqlite.execSQL(SQL_DELETE_OLD_GPX, mBindArgs0);
+            mSqlite.execSQL(SQL_RESET_DELETE_ME_CACHES, mBindArgs0);
+            mSqlite.execSQL(SQL_RESET_DELETE_ME_GPX, mBindArgs0);
         }
 
         public void deleteCache(CharSequence id) {
@@ -162,6 +153,22 @@ public class Database {
             mSqlite.execSQL(Database.SQL_INSERT_CACHE, mBindArgs5);
         }
 
+        public boolean isGpxAlreadyLoaded(String gpxName, String gpxTime) {
+            mSelectionArgs2[0] = gpxName;
+            mSelectionArgs2[1] = gpxTime;
+            Cursor cursor = mSqlite.query(TBL_GPX, COLUMNS_NAME, "Name = ? AND ExportTime >= ?",
+                    mSelectionArgs2, null, null, null, null);
+            int count = cursor.getCount();
+            boolean gpxAlreadyLoaded = count > 0;
+            cursor.close();
+            if (gpxAlreadyLoaded) {
+                mBindArgs1[0] = gpxName;
+                mSqlite.execSQL(SQL_CACHES_UNSET_DELETE_ME_FOR_SOURCE, mBindArgs1);
+                mSqlite.execSQL(SQL_GPX_UNSET_DELETE_ME_FOR_SOURCE, mBindArgs1);
+            }
+            return gpxAlreadyLoaded;
+        }
+
         public void startWriting() {
             mSqlite.beginTransaction();
         }
@@ -172,12 +179,10 @@ public class Database {
             mSqlite.endTransaction();
         }
 
-        public void writeGpx(String gpxName, String gpxTime) {
-            mBindArgs1[0] = gpxName;
-            mSqlite.execSQL(Database.SQL_DELETE_GPX, mBindArgs1);
+        public void writeGpx(String gpxName, String pocketQueryExportTime) {
             mBindArgs2[0] = gpxName;
-            mBindArgs2[1]= gpxTime;
-            mSqlite.execSQL(Database.SQL_INSERT_GPX, mBindArgs2);
+            mBindArgs2[1] = pocketQueryExportTime;
+            mSqlite.execSQL(Database.SQL_REPLACE_GPX, mBindArgs2);
         }
     }
 
@@ -219,6 +224,7 @@ public class Database {
             }
             if (oldVersion < 10) {
                 db.execSQL(SQL_CREATE_GPX_TABLE);
+                db.execSQL(SQL_ADD_RECENTLY_LOADED_COLUMN_TO_CACHES);
             }
         }
     }
@@ -301,38 +307,45 @@ public class Database {
      * version 10 -- not released
      * CREATE TABLE IF NOT EXISTS CACHES (Id VARCHAR PRIMARY
      *          KEY, Description VARCHAR Latitude DOUBLE, Longitude DOUBLE,
-     *          Source VARCHAR)
-     * CREATE TABLE IF NOT EXISTS GPX (Name VARCHAR PRIMARY KEY, Time DATETIME)
+     *          Source VARCHAR, DeleteMe BOOLEAN NOT NULL)
+     * CREATE TABLE IF NOT EXISTS GPX (Name VARCHAR PRIMARY KEY NOT NULL, ExportTime DATETIME NOT NULL, 
+     *          DeleteMe BOOLEAN NOT NULL)
      * CREATE INDEX IDX_LATITUDE on CACHES (Latitude)
      * CREATE INDEX IDX_LONGITUDE on CACHES (Longitude)
      * CREATE INDEX IDX_SOURCE on CACHES (Source)
+     * 
      * </pre>
      */
 
     public static final String DATABASE_NAME = "GeoBeagle.db";
-
     public static final int DATABASE_VERSION = 10;
+
     public static final String[] READER_COLUMNS = new String[] {
             "Latitude", "Longitude", "Id", "Description"
     };
+
+    public static final String SQL_ADD_RECENTLY_LOADED_COLUMN_TO_CACHES = "ALTER TABLE CACHES ADD COLUMN DeleteMe BOOLEAN NOT NULL Default 1";
+    public static final String SQL_CACHES_UNSET_DELETE_ME_FOR_SOURCE = "UPDATE CACHES SET DeleteMe = 0 WHERE Source = ?";
     public static final String SQL_CLEAR_CACHES = "DELETE FROM CACHES WHERE Source=?";
     public static final String SQL_COUNT_CACHES = "SELECT COUNT(*) FROM CACHES";
     public static final String SQL_CREATE_CACHE_TABLE = "CREATE TABLE IF NOT EXISTS CACHES ("
             + "Id VARCHAR PRIMARY KEY, Description VARCHAR, "
-            + "Latitude DOUBLE, Longitude DOUBLE, Source VARCHAR)";
-    public static final String SQL_CLEAR_GPX_TABLE = "DELETE FROM GPX";
+            + "Latitude DOUBLE, Longitude DOUBLE, Source VARCHAR, DeleteMe BOOLEAN NOT NULL)";
     public static final String SQL_CREATE_GPX_TABLE = "CREATE TABLE IF NOT EXISTS GPX ("
-            + "Name VARCHAR PRIMARY KEY, Time DATETIME)";
+            + "Name VARCHAR PRIMARY KEY NOT NULL, ExportTime DATETIME NOT NULL, DeleteMe BOOLEAN NOT NULL)";
     public static final String SQL_CREATE_IDX_LATITUDE = "CREATE INDEX IF NOT EXISTS IDX_LATITUDE on CACHES (Latitude)";
     public static final String SQL_CREATE_IDX_LONGITUDE = "CREATE INDEX IF NOT EXISTS IDX_LONGITUDE on CACHES (Longitude)";
     public static final String SQL_CREATE_IDX_SOURCE = "CREATE INDEX IF NOT EXISTS IDX_SOURCE on CACHES (Source)";
-    public static final String SQL_DELETE_ALL_IMPORTED_CACHES = "DELETE FROM CACHES WHERE Source != 'intent'";
     public static final String SQL_DELETE_CACHE = "DELETE FROM CACHES WHERE Id=?";
-    public static final String SQL_DELETE_GPX = "DELETE FROM GPX WHERE Name=?";
-    public static final String SQL_DROP_CACHE_TABLE = "DROP TABLE CACHES";
+    public static final String SQL_DELETE_OLD_CACHES = "DELETE FROM CACHES WHERE DeleteMe = 1";
+    public static final String SQL_DELETE_OLD_GPX = "DELETE FROM GPX WHERE DeleteMe = 1";
+    public static final String SQL_DROP_CACHE_TABLE = "DROP TABLE IF EXISTS CACHES";
+    public static final String SQL_GPX_UNSET_DELETE_ME_FOR_SOURCE = "UPDATE GPX SET DeleteMe = 0 WHERE Name = ?";
     public static final String SQL_INSERT_CACHE = "INSERT INTO CACHES "
-            + "(Id, Description, Latitude, Longitude, Source) VALUES (?, ?, ?, ?, ?)";
-    public static final String SQL_INSERT_GPX = "INSERT INTO GPX (Name, Time) VALUES (?, ?)";
+            + "(Id, Description, Latitude, Longitude, Source, DeleteMe) VALUES (?, ?, ?, ?, ?, 0)";
+    public static final String SQL_REPLACE_GPX = "REPLACE INTO GPX (Name, ExportTime, DeleteMe) VALUES (?, ?, 0)";
+    public static final String SQL_RESET_DELETE_ME_CACHES = "UPDATE CACHES SET DeleteMe = 1 WHERE Source != 'Intent'";
+    public static final String SQL_RESET_DELETE_ME_GPX = "UPDATE GPX SET DeleteMe = 1";
     public static final String TBL_CACHES = "CACHES";
     public static final String TBL_GPX = "GPX";
 
