@@ -16,7 +16,6 @@ package com.google.code.geobeagle.io;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteConstraintException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.location.Location;
@@ -134,23 +133,12 @@ public class Database {
 
         public void insertAndUpdateCache(CharSequence id, CharSequence name, double latitude,
                 double longitude, String source) {
-            try {
-                insertCache(id, name, latitude, longitude, source);
-            } catch (final SQLiteConstraintException e) {
-                // TODO: What if these queries have errors?
-                deleteCache(id);
-                insertCache(id, name, latitude, longitude, source);
-            }
-        }
-
-        private void insertCache(CharSequence id, CharSequence name, double latitude,
-                double longitude, String source) {
             mBindArgs5[0] = id;
             mBindArgs5[1] = name;
             mBindArgs5[2] = new Double(latitude);
             mBindArgs5[3] = new Double(longitude);
             mBindArgs5[4] = source;
-            mSqlite.execSQL(Database.SQL_INSERT_CACHE, mBindArgs5);
+            mSqlite.execSQL(Database.SQL_REPLACE_CACHE, mBindArgs5);
         }
 
         public boolean isGpxAlreadyLoaded(String gpxName, String gpxTime) {
@@ -341,7 +329,7 @@ public class Database {
     public static final String SQL_DELETE_OLD_GPX = "DELETE FROM GPX WHERE DeleteMe = 1";
     public static final String SQL_DROP_CACHE_TABLE = "DROP TABLE IF EXISTS CACHES";
     public static final String SQL_GPX_UNSET_DELETE_ME_FOR_SOURCE = "UPDATE GPX SET DeleteMe = 0 WHERE Name = ?";
-    public static final String SQL_INSERT_CACHE = "INSERT INTO CACHES "
+    public static final String SQL_REPLACE_CACHE = "REPLACE INTO CACHES "
             + "(Id, Description, Latitude, Longitude, Source, DeleteMe) VALUES (?, ?, ?, ?, ?, 0)";
     public static final String SQL_REPLACE_GPX = "REPLACE INTO GPX (Name, ExportTime, DeleteMe) VALUES (?, ?, 0)";
     public static final String SQL_RESET_DELETE_ME_CACHES = "UPDATE CACHES SET DeleteMe = 1 WHERE Source != 'Intent'";

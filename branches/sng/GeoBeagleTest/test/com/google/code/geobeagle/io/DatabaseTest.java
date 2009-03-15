@@ -17,7 +17,6 @@ package com.google.code.geobeagle.io;
 import static org.easymock.EasyMock.aryEq;
 import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.expectLastCall;
 import static org.easymock.EasyMock.isNull;
 import static org.easymock.EasyMock.notNull;
 import static org.easymock.classextension.EasyMock.createMock;
@@ -29,12 +28,9 @@ import com.google.code.geobeagle.io.Database.CacheWriter;
 import com.google.code.geobeagle.io.Database.OpenHelperDelegate;
 import com.google.code.geobeagle.io.Database.SQLiteWrapper;
 import com.google.code.geobeagle.io.Database.CacheReader.WhereFactory;
-import com.google.code.geobeagle.ui.ErrorDisplayer;
 
 import android.database.Cursor;
-import android.database.sqlite.SQLiteConstraintException;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.location.Location;
 
@@ -133,7 +129,7 @@ public class DatabaseTest extends TestCase {
     public void testCacheWriter() {
         SQLiteWrapper sqlite = createMock(SQLiteWrapper.class);
 
-        sqlite.execSQL(eq(Database.SQL_INSERT_CACHE), (Object[])notNull());
+        sqlite.execSQL(eq(Database.SQL_REPLACE_CACHE), (Object[])notNull());
 
         replay(sqlite);
         CacheWriter cacheWriter = new CacheWriter(sqlite);
@@ -165,29 +161,6 @@ public class DatabaseTest extends TestCase {
         CacheWriter cacheWriter = new CacheWriter(sqlite);
         cacheWriter.deleteCache("GC123");
         verify(sqlite);
-    }
-
-    public void testCacheWriterError() {
-        ErrorDisplayer errorDisplayer = createMock(ErrorDisplayer.class);
-        SQLiteWrapper sqlite = createMock(SQLiteWrapper.class);
-        SQLiteException exception = createMock(SQLiteConstraintException.class);
-
-        sqlite.execSQL(eq(Database.SQL_INSERT_CACHE), (Object[])notNull());
-        expectLastCall().andThrow(exception);
-        expect(exception.fillInStackTrace()).andReturn(exception);
-        sqlite.execSQL(eq(Database.SQL_DELETE_CACHE), aryEq(new Object[] {
-            "gc123"
-        }));
-        sqlite.execSQL(eq(Database.SQL_INSERT_CACHE), (Object[])notNull());
-
-        replay(sqlite);
-        replay(errorDisplayer);
-        replay(exception);
-        CacheWriter cacheWriter = new CacheWriter(sqlite);
-        cacheWriter.insertAndUpdateCache("gc123", "a cache", 122, 37, "source");
-        verify(sqlite);
-        verify(errorDisplayer);
-        verify(exception);
     }
 
     public void testDatabaseGetWritableDatabase() {
