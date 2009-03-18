@@ -4,8 +4,8 @@ package com.google.code.geobeagle.io.di;
 import com.google.code.geobeagle.io.Database;
 import com.google.code.geobeagle.io.GpxImporter;
 import com.google.code.geobeagle.io.GpxLoader;
-import com.google.code.geobeagle.io.Database.SQLiteWrapper;
 import com.google.code.geobeagle.io.GpxImporter.ImportThreadDelegate;
+import com.google.code.geobeagle.io.di.DatabaseDI.SQLiteWrapper;
 import com.google.code.geobeagle.ui.CacheListDelegate;
 import com.google.code.geobeagle.ui.ErrorDisplayer;
 
@@ -39,14 +39,14 @@ public class GpxImporterDI {
     public static class ImportThread extends Thread {
         static ImportThread create(MessageHandler messageHandler, GpxLoader gpxLoader,
                 ErrorDisplayer errorDisplayer) {
-            final GpxImporterDI.GpxFilenameFactory gpxFilenameFactory = new GpxImporterDI.GpxFilenameFactory();
+            final GpxFilenameFactory gpxFilenameFactory = new GpxFilenameFactory();
             return new ImportThread(messageHandler, gpxLoader, errorDisplayer, gpxFilenameFactory);
         }
 
         private final GpxImporter.ImportThreadDelegate mImportThreadDelegate;
 
         public ImportThread(MessageHandler messageHandler, GpxLoader gpxLoader,
-                ErrorDisplayer errorDisplayer, GpxImporterDI.GpxFilenameFactory gpxFilenameFactory) {
+                ErrorDisplayer errorDisplayer, GpxFilenameFactory gpxFilenameFactory) {
             mImportThreadDelegate = new ImportThreadDelegate(gpxLoader, messageHandler,
                     errorDisplayer, gpxFilenameFactory);
         }

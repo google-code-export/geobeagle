@@ -21,8 +21,7 @@ import static org.easymock.classextension.EasyMock.verify;
 
 import com.google.code.geobeagle.data.Destination;
 import com.google.code.geobeagle.data.di.DestinationFactory;
-import com.google.code.geobeagle.io.Database.CacheWriter;
-import com.google.code.geobeagle.io.Database.SQLiteWrapper;
+import com.google.code.geobeagle.io.di.DatabaseDI;
 
 import junit.framework.TestCase;
 
@@ -30,13 +29,12 @@ public class LocationSaverTest extends TestCase {
 
     public void testSave() {
         Database database = createMock(Database.class);
-        SQLiteWrapper sqliteWrapper = createMock(SQLiteWrapper.class);
+        DatabaseDI.SQLiteWrapper sqliteWrapper = createMock(DatabaseDI.SQLiteWrapper.class);
         CacheWriter writer = createMock(CacheWriter.class);
         DestinationFactory destinationFactory = createMock(DestinationFactory.class);
         Destination destination = createMock(Destination.class);
 
         sqliteWrapper.openWritableDatabase(database);
-        expect(database.createCacheWriter(sqliteWrapper)).andReturn(writer);
         writer.startWriting();
         expect(destinationFactory.create("122 32.3423 83 32.3221 (LB12345)"))
                 .andReturn(destination);
@@ -53,7 +51,7 @@ public class LocationSaverTest extends TestCase {
         replay(writer);
         replay(destination);
         replay(destinationFactory);
-        new LocationSaver(database, destinationFactory, null, sqliteWrapper)
+        new LocationSaver(database, destinationFactory, null, sqliteWrapper, writer)
                 .saveLocation("122 32.3423 83 32.3221 (LB12345)");
         verify(database);
         verify(writer);

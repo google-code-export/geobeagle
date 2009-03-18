@@ -21,8 +21,7 @@ import static org.easymock.classextension.EasyMock.verify;
 
 import com.google.code.geobeagle.CacheListActions;
 import com.google.code.geobeagle.data.CacheListData;
-import com.google.code.geobeagle.io.Database.CacheWriter;
-import com.google.code.geobeagle.io.Database.SQLiteWrapper;
+import com.google.code.geobeagle.io.di.DatabaseDI.SQLiteWrapper;
 import com.google.code.geobeagle.ui.CacheListDelegate;
 
 import android.content.Context;
@@ -41,7 +40,6 @@ public class CacheListActionsTest extends TestCase {
         SimpleAdapter simpleAdapter = createMock(SimpleAdapter.class);
         
         sqliteWrapper.openWritableDatabase(database);
-        expect(database.createCacheWriter(sqliteWrapper)).andReturn(cacheWriter);
         cacheListData.delete(17);
         expect(cacheListData.getId(17)).andReturn("GC123");
         cacheWriter.deleteCache("GC123");
@@ -53,7 +51,8 @@ public class CacheListActionsTest extends TestCase {
         replay(cacheListData);
         replay(cacheWriter);
         replay(database);
-        CacheListActions.Action action = new CacheListActions.Delete(database, sqliteWrapper, cacheListData, null);
+        CacheListActions.Action action = new CacheListActions.Delete(database, sqliteWrapper,
+                cacheWriter, cacheListData, null);
         action.act(17, simpleAdapter);
         verify(sqliteWrapper);
         verify(cacheListData);

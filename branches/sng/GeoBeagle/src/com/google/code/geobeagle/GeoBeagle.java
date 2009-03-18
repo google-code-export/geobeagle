@@ -22,9 +22,10 @@ import com.google.code.geobeagle.intents.IntentFactory;
 import com.google.code.geobeagle.intents.IntentStarterLocation;
 import com.google.code.geobeagle.intents.IntentStarterRadar;
 import com.google.code.geobeagle.intents.IntentStarterViewUri;
+import com.google.code.geobeagle.io.CacheWriter;
 import com.google.code.geobeagle.io.Database;
 import com.google.code.geobeagle.io.LocationSaver;
-import com.google.code.geobeagle.io.Database.SQLiteWrapper;
+import com.google.code.geobeagle.io.di.DatabaseDI;
 import com.google.code.geobeagle.ui.CacheListDelegate;
 import com.google.code.geobeagle.ui.CachePageButtonEnabler;
 import com.google.code.geobeagle.ui.ContentSelector;
@@ -145,12 +146,13 @@ public class GeoBeagle extends Activity {
             mGpsControl = new LocationControl(locationManager, new LocationChooser());
             mLocationListener = new GeoBeagleLocationListener(mGpsControl, mLocationViewer);
             final DestinationFactory destinationFactory = new DestinationFactory(mResourceProvider);
-            final Database database = Database.create(this);
+            final Database database = DatabaseDI.create(this);
 
             final MockableEditText mockableTxtLocation = new MockableEditText(txtLocation);
-            final SQLiteWrapper sqliteWrapper = new SQLiteWrapper();
+            final DatabaseDI.SQLiteWrapper sqliteWrapper = new DatabaseDI.SQLiteWrapper(null);
+            final CacheWriter cacheWriter = DatabaseDI.createCacheWriter(sqliteWrapper);
             final LocationSaver locationSaver = new LocationSaver(database, destinationFactory,
-                    mErrorDisplayer, sqliteWrapper);
+                    mErrorDisplayer, sqliteWrapper, cacheWriter);
             final String initialDestination = getString(R.string.initial_destination);
             mLocationSetter = new LocationSetter(this, mockableTxtLocation, mGpsControl,
                     destinationFactory, initialDestination, mErrorDisplayer, locationSaver);

@@ -19,10 +19,9 @@ import static org.easymock.classextension.EasyMock.createMock;
 import static org.easymock.classextension.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.verify;
 
-import com.google.code.geobeagle.Locations;
 import com.google.code.geobeagle.LocationControl;
-import com.google.code.geobeagle.io.Database.CacheReader;
-import com.google.code.geobeagle.io.Database.SQLiteWrapper;
+import com.google.code.geobeagle.Locations;
+import com.google.code.geobeagle.io.di.DatabaseDI.SQLiteWrapper;
 
 import junit.framework.TestCase;
 
@@ -30,6 +29,7 @@ public class LocationBookmarksSqlTest extends TestCase {
 
     private Database mDatabase;
 
+    @Override
     public void setUp() {
         mDatabase = createMock(Database.class);
     }
@@ -37,8 +37,8 @@ public class LocationBookmarksSqlTest extends TestCase {
     public void testGetDescriptionsAndLocations() {
         Locations locations = createMock(Locations.class);
 
-        LocationBookmarksSql locationBookmarksSql = new LocationBookmarksSql(null,
-                locations, null, null, null, null, null);
+        LocationBookmarksSql locationBookmarksSql = new LocationBookmarksSql(null, locations, null,
+                null, null, null, null);
         assertEquals(locations, locationBookmarksSql.getDescriptionsAndLocations());
     }
 

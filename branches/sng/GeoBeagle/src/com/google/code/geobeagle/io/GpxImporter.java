@@ -15,7 +15,7 @@
 package com.google.code.geobeagle.io;
 
 import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.io.Database.SQLiteWrapper;
+import com.google.code.geobeagle.io.di.DatabaseDI.SQLiteWrapper;
 import com.google.code.geobeagle.io.di.GpxImporterDI.GpxFilenameFactory;
 import com.google.code.geobeagle.io.di.GpxImporterDI.ImportThreadWrapper;
 import com.google.code.geobeagle.io.di.GpxImporterDI.MessageHandler;
