@@ -44,18 +44,38 @@ public class GpxToCacheTest extends TestCase {
         verify(xmlPullParserWrapper);
     }
 
-    public void testOpen() throws FileNotFoundException, XmlPullParserException {
-        XmlPullParserWrapper xmlPullParserWrapper = createMock(XmlPullParserWrapper.class);
+    public void testLoadAbort() throws XmlPullParserException, IOException, ParseException {
+        XmlPullParserWrapper xmlPullParser = createMock(XmlPullParserWrapper.class);
         EventHelper eventHelper = createMock(EventHelper.class);
 
-        xmlPullParserWrapper.open("/my/path");
-        eventHelper.reset();
+        expect(xmlPullParser.getEventType()).andReturn(XmlPullParser.START_DOCUMENT);
 
-        replay(xmlPullParserWrapper);
+        replay(xmlPullParser);
         replay(eventHelper);
-        GpxToCache gpxToCache = new GpxToCache(xmlPullParserWrapper, eventHelper);
-        gpxToCache.open("/my/path");
-        verify(xmlPullParserWrapper);
+        GpxToCache gpxToCache = new GpxToCache(xmlPullParser, eventHelper);
+        gpxToCache.abort();
+        try {
+            gpxToCache.load();
+            assertFalse("expected to throw cancel exception", false);
+        } catch (CancelException e) {
+        }
+        verify(xmlPullParser);
+        verify(eventHelper);
+    }
+
+    public void testLoadNone() throws XmlPullParserException, IOException, ParseException,
+            CancelException {
+        XmlPullParserWrapper xmlPullParser = createMock(XmlPullParserWrapper.class);
+        EventHelper eventHelper = createMock(EventHelper.class);
+
+        expect(xmlPullParser.getEventType()).andReturn(XmlPullParser.END_DOCUMENT);
+        expect(eventHelper.handleEvent(XmlPullParser.END_DOCUMENT)).andReturn(true);
+
+        replay(xmlPullParser);
+        replay(eventHelper);
+        GpxToCache gpxToCache = new GpxToCache(xmlPullParser, eventHelper);
+        assertEquals(false, gpxToCache.load());
+        verify(xmlPullParser);
         verify(eventHelper);
     }
 
@@ -73,6 +93,22 @@ public class GpxToCacheTest extends TestCase {
         replay(eventHelper);
         GpxToCache gpxToCache = new GpxToCache(xmlPullParser, eventHelper);
         assertEquals(false, gpxToCache.load());
+        verify(xmlPullParser);
+        verify(eventHelper);
+    }
+
+    public void testLoadSkipThisFile() throws XmlPullParserException, IOException, ParseException,
+            CancelException {
+        XmlPullParserWrapper xmlPullParser = createMock(XmlPullParserWrapper.class);
+        EventHelper eventHelper = createMock(EventHelper.class);
+
+        expect(xmlPullParser.getEventType()).andReturn(XmlPullParser.START_DOCUMENT);
+        expect(eventHelper.handleEvent(XmlPullParser.START_DOCUMENT)).andReturn(false);
+
+        replay(xmlPullParser);
+        replay(eventHelper);
+        GpxToCache gpxToCache = new GpxToCache(xmlPullParser, eventHelper);
+        assertEquals(true, gpxToCache.load());
         verify(xmlPullParser);
         verify(eventHelper);
     }
@@ -101,54 +137,18 @@ public class GpxToCacheTest extends TestCase {
         verify(eventHelper);
     }
 
-    public void testLoadAbort() throws XmlPullParserException, IOException, ParseException {
-        XmlPullParserWrapper xmlPullParser = createMock(XmlPullParserWrapper.class);
+    public void testOpen() throws FileNotFoundException, XmlPullParserException {
+        XmlPullParserWrapper xmlPullParserWrapper = createMock(XmlPullParserWrapper.class);
         EventHelper eventHelper = createMock(EventHelper.class);
 
-        expect(xmlPullParser.getEventType()).andReturn(XmlPullParser.START_DOCUMENT);
+        xmlPullParserWrapper.open("/my/path");
+        eventHelper.reset();
 
-        replay(xmlPullParser);
+        replay(xmlPullParserWrapper);
         replay(eventHelper);
-        GpxToCache gpxToCache = new GpxToCache(xmlPullParser, eventHelper);
-        gpxToCache.abort();
-        try {
-            gpxToCache.load();
-            assertFalse("expected to throw cancel exception", false);
-        } catch (CancelException e) {
-        }
-        verify(xmlPullParser);
-        verify(eventHelper);
-    }
-
-    public void testLoadSkipThisFile() throws XmlPullParserException, IOException, ParseException,
-            CancelException {
-        XmlPullParserWrapper xmlPullParser = createMock(XmlPullParserWrapper.class);
-        EventHelper eventHelper = createMock(EventHelper.class);
-
-        expect(xmlPullParser.getEventType()).andReturn(XmlPullParser.START_DOCUMENT);
-        expect(eventHelper.handleEvent(XmlPullParser.START_DOCUMENT)).andReturn(false);
-
-        replay(xmlPullParser);
-        replay(eventHelper);
-        GpxToCache gpxToCache = new GpxToCache(xmlPullParser, eventHelper);
-        assertEquals(true, gpxToCache.load());
-        verify(xmlPullParser);
-        verify(eventHelper);
-    }
-
-    public void testLoadNone() throws XmlPullParserException, IOException, ParseException,
-            CancelException {
-        XmlPullParserWrapper xmlPullParser = createMock(XmlPullParserWrapper.class);
-        EventHelper eventHelper = createMock(EventHelper.class);
-
-        expect(xmlPullParser.getEventType()).andReturn(XmlPullParser.END_DOCUMENT);
-        expect(eventHelper.handleEvent(XmlPullParser.END_DOCUMENT)).andReturn(true);
-
-        replay(xmlPullParser);
-        replay(eventHelper);
-        GpxToCache gpxToCache = new GpxToCache(xmlPullParser, eventHelper);
-        assertEquals(false, gpxToCache.load());
-        verify(xmlPullParser);
+        GpxToCache gpxToCache = new GpxToCache(xmlPullParserWrapper, eventHelper);
+        gpxToCache.open("/my/path");
+        verify(xmlPullParserWrapper);
         verify(eventHelper);
     }
 

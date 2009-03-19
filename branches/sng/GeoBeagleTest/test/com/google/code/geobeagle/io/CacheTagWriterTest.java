@@ -1,15 +1,14 @@
 
 package com.google.code.geobeagle.io;
 
+import static org.easymock.EasyMock.expect;
+import static org.easymock.classextension.EasyMock.createMock;
+import static org.easymock.classextension.EasyMock.replay;
+import static org.easymock.classextension.EasyMock.verify;
 
 import java.text.ParseException;
 
 import junit.framework.TestCase;
-
-import static org.easymock.classextension.EasyMock.createMock;
-import static org.easymock.classextension.EasyMock.replay;
-import static org.easymock.classextension.EasyMock.expect;
-import static org.easymock.classextension.EasyMock.verify;
 
 public class CacheTagWriterTest extends TestCase {
     private final CacheWriter mCacheWriter = createMock(CacheWriter.class);
@@ -32,7 +31,6 @@ public class CacheTagWriterTest extends TestCase {
         verify(mCacheWriter);
     }
 
-
     public void testGpxTimeDontLoad() {
         expect(mCacheWriter.isGpxAlreadyLoaded("foo.gpx", "2008-04-15 16:10:30")).andReturn(true);
 
@@ -46,7 +44,7 @@ public class CacheTagWriterTest extends TestCase {
     public void testGpxTimeLoad() {
         expect(mCacheWriter.isGpxAlreadyLoaded("foo.gpx", "2008-04-15 16:10:30")).andReturn(false);
         mCacheWriter.clearCaches("foo.gpx");
-        
+
         replay(mCacheWriter);
         CacheTagWriter cacheTagWriter = new CacheTagWriter(mCacheWriter);
         cacheTagWriter.gpxName("foo.gpx");
@@ -81,7 +79,7 @@ public class CacheTagWriterTest extends TestCase {
         mCacheWriter.stopWriting();
         expect(mCacheWriter.isGpxAlreadyLoaded("foo.gpx", "2008-04-15 16:10:30")).andReturn(true);
         mCacheWriter.writeGpx("foo.gpx", "2008-04-15 16:10:30");
-        
+
         replay(mCacheWriter);
         CacheTagWriter cacheTagWriter = new CacheTagWriter(mCacheWriter);
         cacheTagWriter.gpxName("foo.gpx");

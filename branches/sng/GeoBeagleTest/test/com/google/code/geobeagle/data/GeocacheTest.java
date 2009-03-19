@@ -14,7 +14,6 @@
 
 package com.google.code.geobeagle.data;
 
-import com.google.code.geobeagle.data.Geocache;
 import com.google.code.geobeagle.data.di.GeocacheFactory;
 
 import java.util.regex.Pattern;
@@ -27,12 +26,52 @@ public class GeocacheTest extends TestCase {
             Pattern.compile("(?:GC)(\\w*)"), Pattern.compile("(?:LB)(\\w*)")
     };
 
+    public void testBadCoordinatesGoodDescription() {
+        Geocache destinationImpl = Geocache.create("  FOO (Description)", mGeocachePatterns);
+        assertEquals(0.0, destinationImpl.getLatitude());
+        assertEquals(0.0, destinationImpl.getLongitude());
+        assertEquals("Description", destinationImpl.getIdAndName());
+    }
+
+    public void testDescriptionGetIdAndName() {
+        Geocache destinationImpl = Geocache.create(" \t 37 03.0, 122 00.0 (Description)",
+                mGeocachePatterns);
+        assertEquals(37.05, destinationImpl.getLatitude());
+        assertEquals(122.0, destinationImpl.getLongitude());
+        assertEquals("Description", destinationImpl.getIdAndName());
+    }
+
+    public void testEmptyDestination() {
+        Geocache geocache = Geocache.create("", mGeocachePatterns);
+        assertEquals(0.0, geocache.getLatitude());
+        assertEquals(0.0, geocache.getLongitude());
+        assertEquals("", geocache.getIdAndName());
+        assertEquals("", geocache.getShortId());
+    }
+
+    public void testExtractDescription() {
+        assertEquals("GC123", GeocacheFactory.extractDescription("123 (GC123)"));
+    }
+
     public void testGetCoordinatesIdAndName() {
         Geocache destinationImpl = Geocache.create("s37 03.0, 122 00.0 (Description)",
                 mGeocachePatterns);
         assertEquals(37.05, destinationImpl.getLatitude());
         assertEquals(122.0, destinationImpl.getLongitude());
         assertEquals("37.05, 122.0 (Description)", destinationImpl.getCoordinatesIdAndName());
+    }
+
+    public void testGetId() {
+        Geocache geocache = Geocache.create("34.313,122.43 (LB89882: The Nut Case)",
+                mGeocachePatterns);
+        assertEquals("89882", geocache.getShortId());
+        assertEquals("LB89882", geocache.getId());
+        assertEquals(1, geocache.getContentIndex());
+        assertEquals("The Nut Case", geocache.getName());
+
+        geocache = Geocache.create("34.313,122.43 (GCFOOBAR: GS cache)", mGeocachePatterns);
+        assertEquals("FOOBAR", geocache.getShortId());
+        assertEquals(0, geocache.getContentIndex());
     }
 
     public void testLatLong() {
@@ -55,14 +94,6 @@ public class GeocacheTest extends TestCase {
         assertEquals("", ll4.getIdAndName());
     }
 
-    public void testDescriptionGetIdAndName() {
-        Geocache destinationImpl = Geocache.create(" \t 37 03.0, 122 00.0 (Description)",
-                mGeocachePatterns);
-        assertEquals(37.05, destinationImpl.getLatitude());
-        assertEquals(122.0, destinationImpl.getLongitude());
-        assertEquals("Description", destinationImpl.getIdAndName());
-    }
-
     public void testNoName() {
         Geocache destinationImpl = Geocache.create(" \t 37 03.0, 122 00.0 (GC12345)",
                 mGeocachePatterns);
@@ -71,37 +102,5 @@ public class GeocacheTest extends TestCase {
         assertEquals("GC12345", destinationImpl.getId());
         assertEquals("", destinationImpl.getName());
         assertEquals("GC12345", destinationImpl.getIdAndName());
-    }
-
-    public void testBadCoordinatesGoodDescription() {
-        Geocache destinationImpl = Geocache.create("  FOO (Description)", mGeocachePatterns);
-        assertEquals(0.0, destinationImpl.getLatitude());
-        assertEquals(0.0, destinationImpl.getLongitude());
-        assertEquals("Description", destinationImpl.getIdAndName());
-    }
-
-    public void testGetId() {
-        Geocache geocache = Geocache.create("34.313,122.43 (LB89882: The Nut Case)",
-                mGeocachePatterns);
-        assertEquals("89882", geocache.getShortId());
-        assertEquals("LB89882", geocache.getId());
-        assertEquals(1, geocache.getContentIndex());
-        assertEquals("The Nut Case", geocache.getName());
-
-        geocache = Geocache.create("34.313,122.43 (GCFOOBAR: GS cache)", mGeocachePatterns);
-        assertEquals("FOOBAR", geocache.getShortId());
-        assertEquals(0, geocache.getContentIndex());
-    }
-
-    public void testEmptyDestination() {
-        Geocache geocache = Geocache.create("", mGeocachePatterns);
-        assertEquals(0.0, geocache.getLatitude());
-        assertEquals(0.0, geocache.getLongitude());
-        assertEquals("", geocache.getIdAndName());
-        assertEquals("", geocache.getShortId());
-    }
-
-    public void testExtractDescription() {
-        assertEquals("GC123", GeocacheFactory.extractDescription("123 (GC123)"));
     }
 }

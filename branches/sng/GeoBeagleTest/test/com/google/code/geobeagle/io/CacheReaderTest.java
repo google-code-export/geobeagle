@@ -22,9 +22,9 @@ public class CacheReaderTest extends TestCase {
 
     private void expectQuery(SQLiteWrapper sqliteWrapper, Cursor cursor, String where) {
         expect(
-                sqliteWrapper.query(eq("CACHES"), (String[])eq(Database.READER_COLUMNS), eq(where),
+                sqliteWrapper.query(eq("CACHES"), eq(Database.READER_COLUMNS), eq(where),
                         (String)isNull(), (String)isNull(), (String)isNull(),
-                        (String)eq(CacheReader.SQL_QUERY_LIMIT))).andReturn(cursor);
+                        eq(CacheReader.SQL_QUERY_LIMIT))).andReturn(cursor);
     }
 
     public void testCursorClose() {

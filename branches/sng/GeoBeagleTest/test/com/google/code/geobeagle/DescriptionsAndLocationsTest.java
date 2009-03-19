@@ -18,15 +18,6 @@ import junit.framework.TestCase;
 
 public class DescriptionsAndLocationsTest extends TestCase {
 
-    public final void testDescriptionsAndLocations() {
-        Locations locations = new Locations();
-
-        locations = new Locations();
-        locations.add("37 122 etc");
-        locations.add("37 122 foo");
-        assertEquals("37 122 etc", locations.getPreviousLocations().get(0));
-    }
-
     public final void testAdd() {
         Locations locations = new Locations();
         locations.add("new location");
@@ -40,5 +31,14 @@ public class DescriptionsAndLocationsTest extends TestCase {
         locations.clear();
 
         assertEquals(0, locations.getPreviousLocations().size());
+    }
+
+    public final void testDescriptionsAndLocations() {
+        Locations locations = new Locations();
+
+        locations = new Locations();
+        locations.add("37 122 etc");
+        locations.add("37 122 foo");
+        assertEquals("37 122 etc", locations.getPreviousLocations().get(0));
     }
 }

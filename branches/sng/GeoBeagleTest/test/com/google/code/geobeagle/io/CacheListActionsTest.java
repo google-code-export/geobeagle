@@ -38,7 +38,7 @@ public class CacheListActionsTest extends TestCase {
         CacheWriter cacheWriter = createMock(CacheWriter.class);
         SQLiteWrapper sqliteWrapper = createMock(SQLiteWrapper.class);
         SimpleAdapter simpleAdapter = createMock(SimpleAdapter.class);
-        
+
         sqliteWrapper.openWritableDatabase(database);
         cacheListData.delete(17);
         expect(cacheListData.getId(17)).andReturn("GC123");

@@ -76,8 +76,7 @@ public class CacheListDataTest extends TestCase {
         expect(geocacheVectors.getCoordinatesIdAndName(8)).andReturn("a cache");
 
         replay(geocacheVectors);
-        assertEquals("a cache", new CacheListData(geocacheVectors, null)
-                .getCoordinatesIdAndName(8));
+        assertEquals("a cache", new CacheListData(geocacheVectors, null).getCoordinatesIdAndName(8));
         verify(geocacheVectors);
     }
 }

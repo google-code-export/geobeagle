@@ -36,8 +36,7 @@ public class LocationSaverTest extends TestCase {
 
         sqliteWrapper.openWritableDatabase(database);
         writer.startWriting();
-        expect(geocacheFactory.create("122 32.3423 83 32.3221 (LB12345)"))
-                .andReturn(geocache);
+        expect(geocacheFactory.create("122 32.3423 83 32.3221 (LB12345)")).andReturn(geocache);
         expect(geocache.getId()).andReturn("LB12345");
         expect(geocache.getName()).andReturn("");
         expect(geocache.getLatitude()).andReturn(122.0);

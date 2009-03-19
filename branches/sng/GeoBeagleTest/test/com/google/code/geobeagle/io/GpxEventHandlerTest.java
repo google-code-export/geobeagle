@@ -14,7 +14,7 @@
 
 package com.google.code.geobeagle.io;
 
-import static org.easymock.classextension.EasyMock.expect;
+import static org.easymock.EasyMock.expect;
 import static org.easymock.classextension.EasyMock.createMock;
 import static org.easymock.classextension.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.verify;
@@ -50,7 +50,6 @@ public class GpxEventHandlerTest extends TestCase {
         gpxEventHandler.text(GpxEventHandler.XPATH_GPXNAME, "foo.gpx");
         verify(cachePersisterFacade);
     }
-
 
     public void testGpxTime() throws IOException, ParseException {
         CachePersisterFacade cachePersisterFacade = createMock(CachePersisterFacade.class);
@@ -144,17 +143,6 @@ public class GpxEventHandlerTest extends TestCase {
         gpxEventHandler.startTag("/gpx/wptNot", null);
     }
 
-    public void testTextWptName() throws IOException, ParseException {
-        CachePersisterFacade cachePersisterFacade = createMock(CachePersisterFacade.class);
-
-        cachePersisterFacade.wptName("my wpt");
-
-        replay(cachePersisterFacade);
-        GpxEventHandler gpxEventHandler = new GpxEventHandler(cachePersisterFacade);
-        gpxEventHandler.text(GpxEventHandler.XPATH_WPTNAME, "my wpt");
-        verify(cachePersisterFacade);
-    }
-
     public void testTextSymbol() throws IOException, ParseException {
         CachePersisterFacade cachePersisterFacade = createMock(CachePersisterFacade.class);
 
@@ -163,6 +151,17 @@ public class GpxEventHandlerTest extends TestCase {
         replay(cachePersisterFacade);
         GpxEventHandler gpxEventHandler = new GpxEventHandler(cachePersisterFacade);
         gpxEventHandler.text(GpxEventHandler.XPATH_SYM, "Geocache Found");
+        verify(cachePersisterFacade);
+    }
+
+    public void testTextWptName() throws IOException, ParseException {
+        CachePersisterFacade cachePersisterFacade = createMock(CachePersisterFacade.class);
+
+        cachePersisterFacade.wptName("my wpt");
+
+        replay(cachePersisterFacade);
+        GpxEventHandler gpxEventHandler = new GpxEventHandler(cachePersisterFacade);
+        gpxEventHandler.text(GpxEventHandler.XPATH_WPTNAME, "my wpt");
         verify(cachePersisterFacade);
     }
 }

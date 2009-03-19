@@ -14,7 +14,7 @@
 
 package com.google.code.geobeagle;
 
-import static org.easymock.classextension.EasyMock.expect;
+import static org.easymock.EasyMock.expect;
 import static org.easymock.classextension.EasyMock.createMock;
 import static org.easymock.classextension.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.verify;
@@ -28,12 +28,30 @@ import junit.framework.TestCase;
 
 public class GpsLocationListenerTest extends TestCase {
 
-    private LocationViewer mLocationViewer;
     private LocationControl mGpsControl;
+    private LocationViewer mLocationViewer;
 
+    @Override
     public void setUp() {
         mLocationViewer = createMock(LocationViewer.class);
         mGpsControl = createMock(LocationControl.class);
+    }
+
+    public void testOnDisabled() {
+        mLocationViewer.setDisabled();
+
+        replay(mLocationViewer);
+        new GeoBeagleLocationListener(null, mLocationViewer).onProviderDisabled(null);
+        verify(mLocationViewer);
+
+    }
+
+    public void testOnEnabled() {
+        mLocationViewer.setEnabled();
+
+        replay(mLocationViewer);
+        new GeoBeagleLocationListener(null, mLocationViewer).onProviderEnabled(null);
+        verify(mLocationViewer);
     }
 
     public void testOnLocationChanged() {
@@ -55,22 +73,5 @@ public class GpsLocationListenerTest extends TestCase {
         new GeoBeagleLocationListener(null, mLocationViewer).onStatusChanged("gps",
                 LocationProvider.OUT_OF_SERVICE, null);
         verify(mLocationViewer);
-    }
-
-    public void testOnEnabled() {
-        mLocationViewer.setEnabled();
-
-        replay(mLocationViewer);
-        new GeoBeagleLocationListener(null, mLocationViewer).onProviderEnabled(null);
-        verify(mLocationViewer);
-    }
-
-    public void testOnDisabled() {
-        mLocationViewer.setDisabled();
-
-        replay(mLocationViewer);
-        new GeoBeagleLocationListener(null, mLocationViewer).onProviderDisabled(null);
-        verify(mLocationViewer);
-
     }
 }

@@ -158,24 +158,6 @@ public class GpxImporterTest extends TestCase {
         verify(gpxFilenameFactory);
     }
 
-    public void testImportThreadDelegateRunNoFilesToImport() throws FileNotFoundException,
-            XmlPullParserException, IOException {
-        ErrorDisplayer errorDisplayer = createMock(ErrorDisplayer.class);
-        GpxFilenameFactory gpxFilenameFactory = createMock(GpxFilenameFactory.class);
-        MessageHandler messageHandler = createMock(MessageHandler.class);
-
-        expect(gpxFilenameFactory.getFilenames()).andReturn(new String[] {});
-        errorDisplayer.displayError(R.string.error_no_gpx_files);
-
-        replay(errorDisplayer);
-        replay(gpxFilenameFactory);
-        ImportThreadDelegate importThreadDelegate = new ImportThreadDelegate(null, messageHandler,
-                errorDisplayer, gpxFilenameFactory);
-        importThreadDelegate.run();
-        verify(errorDisplayer);
-        verify(gpxFilenameFactory);
-    }
-
     public void testImportThreadDelegateRunAborted() throws FileNotFoundException,
             XmlPullParserException, IOException {
         GpxLoader gpxLoader = createMock(GpxLoader.class);
@@ -235,5 +217,23 @@ public class GpxImporterTest extends TestCase {
     public void testImportThreadDelegateRunFileNotFound() throws FileNotFoundException,
             XmlPullParserException, IOException {
         importThreadDelegateRunAndThrow(FileNotFoundException.class, R.string.error_opening_file);
+    }
+
+    public void testImportThreadDelegateRunNoFilesToImport() throws FileNotFoundException,
+            XmlPullParserException, IOException {
+        ErrorDisplayer errorDisplayer = createMock(ErrorDisplayer.class);
+        GpxFilenameFactory gpxFilenameFactory = createMock(GpxFilenameFactory.class);
+        MessageHandler messageHandler = createMock(MessageHandler.class);
+
+        expect(gpxFilenameFactory.getFilenames()).andReturn(new String[] {});
+        errorDisplayer.displayError(R.string.error_no_gpx_files);
+
+        replay(errorDisplayer);
+        replay(gpxFilenameFactory);
+        ImportThreadDelegate importThreadDelegate = new ImportThreadDelegate(null, messageHandler,
+                errorDisplayer, gpxFilenameFactory);
+        importThreadDelegate.run();
+        verify(errorDisplayer);
+        verify(gpxFilenameFactory);
     }
 }

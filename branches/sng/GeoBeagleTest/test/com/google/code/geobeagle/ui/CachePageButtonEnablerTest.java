@@ -59,13 +59,13 @@ public class CachePageButtonEnablerTest extends TestCase {
         verify(textUtils);
     }
 
+    public void testInvalid() {
+        helper("12345 (CGxxx)", false, false);
+    }
+
     public void testValid() {
         helper("12345 (GCxxx)", true, false);
         helper("12345 (LBxxx)", true, false);
         helper("12345 (GCxxx: foo)", true, true);
-    }
-
-    public void testInvalid() {
-        helper("12345 (CGxxx)", false, false);
     }
 }

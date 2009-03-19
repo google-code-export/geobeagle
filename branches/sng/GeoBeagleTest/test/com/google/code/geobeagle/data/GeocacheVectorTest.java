@@ -29,7 +29,7 @@ import java.util.Map;
 import junit.framework.TestCase;
 
 public class GeocacheVectorTest extends TestCase {
-    private Geocache geocache = createMock(Geocache.class);
+    private final Geocache geocache = createMock(Geocache.class);
 
     public void testCompare() {
         IGeocacheVector d1 = createMock(IGeocacheVector.class);

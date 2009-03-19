@@ -49,12 +49,12 @@ public class CacheDetailsOnClickListenerTest extends TestCase {
     }
 
     public void testOkListener() {
-        DialogInterface dialog= createMock(DialogInterface.class);
-        
+        DialogInterface dialog = createMock(DialogInterface.class);
+
         dialog.dismiss();
-        
+
         replay(dialog);
-        CacheDetailsOnClickListener.OkListener okListener = new CacheDetailsOnClickListener.OkListener(); 
+        CacheDetailsOnClickListener.OkListener okListener = new CacheDetailsOnClickListener.OkListener();
         okListener.onClick(dialog, 0);
         verify(dialog);
     }

@@ -49,7 +49,7 @@ public class LocationBookmarksSqlTest extends TestCase {
         CacheReader cacheReader = createMock(CacheReader.class);
         Locations locations = createMock(Locations.class);
         CacheReaderCursor cursor = createMock(CacheReaderCursor.class);
-        
+
         sqliteWrapper.openWritableDatabase(mDatabase);
         expect(locationControl.getLocation()).andReturn(null);
         expect(cacheReader.open(null)).andReturn(cursor);
@@ -84,8 +84,8 @@ public class LocationBookmarksSqlTest extends TestCase {
 
         replay(locations);
         replay(cursor);
-        LocationBookmarksSql locationBookmarksSql = new LocationBookmarksSql(null,
-                locations, null, null, null, null, null);
+        LocationBookmarksSql locationBookmarksSql = new LocationBookmarksSql(null, locations, null,
+                null, null, null, null);
         locationBookmarksSql.read(cursor);
         verify(locations);
         verify(cursor);
@@ -105,8 +105,8 @@ public class LocationBookmarksSqlTest extends TestCase {
 
         replay(locations);
         replay(cursor);
-        LocationBookmarksSql locationBookmarksSql = new LocationBookmarksSql(null,
-                locations, null, null, null, null, null);
+        LocationBookmarksSql locationBookmarksSql = new LocationBookmarksSql(null, locations, null,
+                null, null, null, null);
         locationBookmarksSql.read(cursor);
         verify(locations);
         verify(cursor);

@@ -42,8 +42,7 @@ public class GeocacheVectorsTest extends TestCase {
         replay(geocacheVectorFactory);
         ArrayList<CharSequence> locations = new ArrayList<CharSequence>(0);
         locations.add("a cache");
-        GeocacheVectors geocacheVectors = new GeocacheVectors(null,
-                geocacheVectorFactory);
+        GeocacheVectors geocacheVectors = new GeocacheVectors(null, geocacheVectorFactory);
         geocacheVectors.addLocations(locations, here);
         assertEquals(geocacheVector, geocacheVectors.get(0));
         verify(geocacheVectorFactory);
