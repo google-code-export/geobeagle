@@ -24,14 +24,14 @@ import com.google.code.geobeagle.ui.ErrorDisplayer;
 
 import java.util.ArrayList;
 
-public class LocationBookmarksSql {
+public class GeocachesSql {
     private final CacheReader mCacheReader;
     private final Database mDatabase;
     private final Geocaches mGeocaches;
     private final LocationControl mLocationControl;
     private final SQLiteWrapper mSQLiteWrapper;
 
-    public LocationBookmarksSql(CacheReader cacheReader, Geocaches geocaches, Database database,
+    public GeocachesSql(CacheReader cacheReader, Geocaches geocaches, Database database,
             SQLiteWrapper sqliteWrapper, GeocacheFromTextFactory geocacheFromTextFactory,
             ErrorDisplayer errorDisplayer, LocationControl locationControl) {
         mGeocaches = geocaches;
@@ -48,8 +48,8 @@ public class LocationBookmarksSql {
         return count;
     }
 
-    public ArrayList<Geocache> getLocations() {
-        return mGeocaches.getPreviousGeocaches();
+    public ArrayList<Geocache> getGeocaches() {
+        return mGeocaches.getAll();
     }
 
     public void load() {

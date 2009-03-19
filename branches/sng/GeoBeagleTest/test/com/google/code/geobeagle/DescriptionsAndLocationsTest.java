@@ -26,7 +26,7 @@ public class DescriptionsAndLocationsTest extends TestCase {
         Geocache geocache = createMock(Geocache.class);
         Geocaches geocaches = new Geocaches();
         geocaches.add(geocache);
-        assertEquals(geocache, geocaches.getPreviousGeocaches().get(0));
+        assertEquals(geocache, geocaches.getAll().get(0));
     }
 
     public final void testClear() {
@@ -38,6 +38,6 @@ public class DescriptionsAndLocationsTest extends TestCase {
         geocaches.add(geocache2);
         geocaches.clear();
 
-        assertEquals(0, geocaches.getPreviousGeocaches().size());
+        assertEquals(0, geocaches.getAll().size());
     }
 }

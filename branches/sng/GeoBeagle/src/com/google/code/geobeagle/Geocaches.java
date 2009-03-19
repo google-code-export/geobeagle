@@ -22,7 +22,7 @@ public class Geocaches {
     private ArrayList<Geocache> mGeocaches;
 
     public Geocaches() {
-        create(100);
+        mGeocaches = new ArrayList<Geocache>();
     }
 
     public void add(Geocache geocache) {
@@ -33,11 +33,7 @@ public class Geocaches {
         mGeocaches.clear();
     }
 
-    private void create(int maxSize) {
-        mGeocaches = new ArrayList<Geocache>();
-    }
-
-    public ArrayList<Geocache> getPreviousGeocaches() {
+    public ArrayList<Geocache> getAll() {
         return mGeocaches;
     }
 }

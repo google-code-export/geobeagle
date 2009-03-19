@@ -57,9 +57,9 @@ public class LocationBookmarksSqlTest extends TestCase {
         replay(sqliteWrapper);
         replay(cacheReader);
         replay(cursor);
-        LocationBookmarksSql locationBookmarksSql = new LocationBookmarksSql(cacheReader,
+        GeocachesSql geocachesSql = new GeocachesSql(cacheReader,
                 geocaches, mDatabase, sqliteWrapper, null, null, locationControl);
-        locationBookmarksSql.load();
+        geocachesSql.load();
         verify(mDatabase);
         verify(locationControl);
         verify(sqliteWrapper);
@@ -79,9 +79,9 @@ public class LocationBookmarksSqlTest extends TestCase {
 
         replay(geocaches);
         replay(cursor);
-        LocationBookmarksSql locationBookmarksSql = new LocationBookmarksSql(null, geocaches, null,
+        GeocachesSql geocachesSql = new GeocachesSql(null, geocaches, null,
                 null, null, null, null);
-        locationBookmarksSql.read(cursor);
+        geocachesSql.read(cursor);
         verify(geocaches);
         verify(cursor);
     }
@@ -102,9 +102,9 @@ public class LocationBookmarksSqlTest extends TestCase {
 
         replay(geocaches);
         replay(cursor);
-        LocationBookmarksSql locationBookmarksSql = new LocationBookmarksSql(null, geocaches, null,
+        GeocachesSql geocachesSql = new GeocachesSql(null, geocaches, null,
                 null, null, null, null);
-        locationBookmarksSql.read(cursor);
+        geocachesSql.read(cursor);
         verify(geocaches);
         verify(cursor);
     }

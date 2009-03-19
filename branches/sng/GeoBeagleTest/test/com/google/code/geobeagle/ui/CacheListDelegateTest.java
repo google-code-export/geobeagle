@@ -24,7 +24,7 @@ import com.google.code.geobeagle.LocationControl;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.data.CacheListData;
 import com.google.code.geobeagle.data.Geocache;
-import com.google.code.geobeagle.io.LocationBookmarksSql;
+import com.google.code.geobeagle.io.GeocachesSql;
 import com.google.code.geobeagle.ui.CacheListDelegate.CacheListOnCreateContextMenuListener;
 import com.google.code.geobeagle.ui.CacheListDelegate.SimpleAdapterFactory;
 
@@ -161,7 +161,7 @@ public class CacheListDelegateTest extends TestCase {
         ListActivity listActivity = createMock(ListActivity.class);
         SimpleAdapterFactory simpleAdapterFactory = createMock(SimpleAdapterFactory.class);
         SimpleAdapter simpleAdapter = createMock(SimpleAdapter.class);
-        LocationBookmarksSql locationBookmarks = createMock(LocationBookmarksSql.class);
+        GeocachesSql locationBookmarks = createMock(GeocachesSql.class);
         CacheListData cacheListData = createMock(CacheListData.class);
         LocationControl locationControl = createMock(LocationControl.class);
         Location here = createMock(Location.class);
@@ -169,7 +169,7 @@ public class CacheListDelegateTest extends TestCase {
         ArrayList<Map<String, Object>> adapterData = new ArrayList<Map<String, Object>>(0);
 
         locationBookmarks.load();
-        expect(locationBookmarks.getLocations()).andReturn(locations);
+        expect(locationBookmarks.getGeocaches()).andReturn(locations);
         expect(locationControl.getLocation()).andReturn(here);
         cacheListData.add(locations, here);
         expect(cacheListData.getAdapterData()).andReturn(adapterData);

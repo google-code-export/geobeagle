@@ -8,7 +8,7 @@ import com.google.code.geobeagle.data.di.GeocacheFromTextFactory;
 import com.google.code.geobeagle.io.CacheReader;
 import com.google.code.geobeagle.io.CacheWriter;
 import com.google.code.geobeagle.io.Database;
-import com.google.code.geobeagle.io.LocationBookmarksSql;
+import com.google.code.geobeagle.io.GeocachesSql;
 import com.google.code.geobeagle.io.CacheReader.WhereFactory;
 import com.google.code.geobeagle.io.Database.ISQLiteDatabase;
 import com.google.code.geobeagle.io.Database.OpenHelperDelegate;
@@ -113,12 +113,12 @@ public class DatabaseDI {
         return new Database(sqliteOpenHelper);
     }
 
-    public static LocationBookmarksSql create(LocationControl locationControl, Database database,
+    public static GeocachesSql create(LocationControl locationControl, Database database,
             GeocacheFromTextFactory geocacheFromTextFactory, ErrorDisplayer errorDisplayer) {
         final Geocaches geocaches = new Geocaches();
         final SQLiteWrapper sqliteWrapper = new SQLiteWrapper(null);
         final CacheReader cacheReader = createCacheReader(sqliteWrapper);
-        return new LocationBookmarksSql(cacheReader, geocaches, database, sqliteWrapper,
+        return new GeocachesSql(cacheReader, geocaches, database, sqliteWrapper,
                 geocacheFromTextFactory, errorDisplayer, locationControl);
     }
 

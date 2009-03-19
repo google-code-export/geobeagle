@@ -24,7 +24,7 @@ import com.google.code.geobeagle.data.di.CacheListDataDI;
 import com.google.code.geobeagle.data.di.GeocacheFromTextFactory;
 import com.google.code.geobeagle.io.Database;
 import com.google.code.geobeagle.io.GpxImporter;
-import com.google.code.geobeagle.io.LocationBookmarksSql;
+import com.google.code.geobeagle.io.GeocachesSql;
 import com.google.code.geobeagle.io.di.DatabaseDI;
 import com.google.code.geobeagle.io.di.GpxImporterDI;
 
@@ -93,7 +93,7 @@ public class CacheListDelegate {
                 resourceProvider);
         final LocationControl locationControl = LocationControl.create(((LocationManager)parent
                 .getSystemService(Context.LOCATION_SERVICE)));
-        final LocationBookmarksSql locationBookmarks = DatabaseDI.create(locationControl, database,
+        final GeocachesSql locationBookmarks = DatabaseDI.create(locationControl, database,
                 geocacheFromTextFactory, errorDisplayer);
         final SimpleAdapterFactory simpleAdapterFactory = new SimpleAdapterFactory();
         final CacheListData cacheListData = CacheListDataDI.create(resourceProvider,
@@ -110,7 +110,7 @@ public class CacheListDelegate {
 
     private final CacheListActions.Action mActions[];
     private final CacheListData mCacheListData;
-    private final LocationBookmarksSql mCachesSqlTable;
+    private final GeocachesSql mCachesSqlTable;
     private final CacheListOnCreateContextMenuListener.Factory mCreateContextMenuFactory;
     private final ErrorDisplayer mErrorDisplayer;
     private final GpxImporter mGpxImporter;
@@ -119,7 +119,7 @@ public class CacheListDelegate {
     private SimpleAdapter mSimpleAdapter;
     private final SimpleAdapterFactory mSimpleAdapterFactory;
 
-    public CacheListDelegate(ListActivity parent, LocationBookmarksSql locationBookmarks,
+    public CacheListDelegate(ListActivity parent, GeocachesSql locationBookmarks,
             LocationControl locationControl, SimpleAdapterFactory simpleAdapterFactory,
             CacheListData cacheListData, ErrorDisplayer errorDisplayer,
             CacheListActions.Action[] actions,
@@ -183,7 +183,7 @@ public class CacheListDelegate {
     public void onResume() {
         try {
             mCachesSqlTable.load();
-            ArrayList<Geocache> locations = mCachesSqlTable.getLocations();
+            ArrayList<Geocache> locations = mCachesSqlTable.getGeocaches();
             mCacheListData.add(locations, mLocationControl.getLocation());
             mSimpleAdapter = mSimpleAdapterFactory.create(mParent, mCacheListData.getAdapterData(),
                     R.layout.cache_row, ADAPTER_FROM, ADAPTER_TO);
