@@ -63,11 +63,10 @@ public class DatabaseTest extends TestCase {
         public void endTransaction() {
         }
 
-        public void execSQL(String s) {
-            System.out.print(exec(s));
-        }
-
         public void execSQL(String s, Object... bindArg1) {
+            if (bindArg1.length > 0)
+                throw new UnsupportedOperationException("bindArgs not yet supported");
+            System.out.print(exec(s));
         }
 
         public Cursor query(String table, String[] columns, String selection, String groupBy,
@@ -129,13 +128,12 @@ public class DatabaseTest extends TestCase {
     }
 
     private static String exec(String s) {
-        ProcessBuilder processBuilder = new ProcessBuilder("sqlite3", "GeoBeagle.db", s);
-        processBuilder.redirectErrorStream(true);
-        Process shell;
         String output = null;
-        InputStream shellIn = null;
         try {
-            shell = processBuilder.start();
+            ProcessBuilder processBuilder = new ProcessBuilder("sqlite3", "GeoBeagle.db", s);
+            processBuilder.redirectErrorStream(true);
+            InputStream shellIn = null;
+            Process shell = processBuilder.start();
             shellIn = shell.getInputStream();
             int result = shell.waitFor();
             output = convertStreamToString(shellIn);

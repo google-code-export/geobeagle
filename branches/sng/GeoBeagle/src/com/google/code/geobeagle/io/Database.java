@@ -26,8 +26,6 @@ public class Database {
 
         void endTransaction();
 
-        void execSQL(String s);
-
         void execSQL(String s, Object... bindArg1);
 
         public Cursor query(String table, String[] columns, String selection, String groupBy,
@@ -70,6 +68,7 @@ public class Database {
 
     public static final String S0_COLUMN_DELETE_ME = "DeleteMe BOOLEAN NOT NULL Default 1";
     public static final String S0_INTENT = "intent";
+
     public static final String SQL_CACHES_ADD_COLUMN = "ALTER TABLE CACHES ADD COLUMN "
             + S0_COLUMN_DELETE_ME;
     public static final String SQL_CACHES_DONT_DELETE_ME = "UPDATE CACHES SET DeleteMe = 0 WHERE Source = ?";
@@ -94,9 +93,7 @@ public class Database {
     public static final String SQL_RESET_DELETE_ME_CACHES = "UPDATE CACHES SET DeleteMe = 1 WHERE Source != '"
             + S0_INTENT + "'";
     public static final String SQL_RESET_DELETE_ME_GPX = "UPDATE GPX SET DeleteMe = 1";
-    public static final String SQL9_CLEAR_EARLIER_LOADS = SQL_DELETE_OLD_CACHES + "; "
-            + SQL_DELETE_OLD_GPX + "; " + SQL_RESET_DELETE_ME_CACHES + "; "
-            + SQL_RESET_DELETE_ME_GPX + ";";
+
     public static final String TBL_CACHES = "CACHES";
 
     public static final String TBL_GPX = "GPX";

@@ -21,6 +21,10 @@ import com.google.code.geobeagle.io.Database.ISQLiteDatabase;
  */
 public class CacheWriter {
     private final ISQLiteDatabase mSqlite;
+    public static final String SQLS_CLEAR_EARLIER_LOADS[] = {
+            Database.SQL_DELETE_OLD_CACHES, Database.SQL_DELETE_OLD_GPX,
+            Database.SQL_RESET_DELETE_ME_CACHES, Database.SQL_RESET_DELETE_ME_GPX
+    };
 
     public CacheWriter(ISQLiteDatabase sqlite) {
         mSqlite = sqlite;
@@ -35,7 +39,9 @@ public class CacheWriter {
      * gpx-based caches, and gpx entries with delete_me = 1.
      */
     public void clearEarlierLoads() {
-        mSqlite.execSQL(Database.SQL9_CLEAR_EARLIER_LOADS);
+        for (String sql : CacheWriter.SQLS_CLEAR_EARLIER_LOADS) {
+            mSqlite.execSQL(sql);
+        }
     }
 
     public void deleteCache(CharSequence id) {
