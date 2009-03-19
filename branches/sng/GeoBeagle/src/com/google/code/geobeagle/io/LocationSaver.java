@@ -39,7 +39,7 @@ public class LocationSaver {
         mCacheWriter.startWriting();
         Destination destination = mDestinationFactory.create(location);
         mCacheWriter.insertAndUpdateCache(destination.getId(), destination.getName(), destination
-                .getLatitude(), destination.getLongitude(), "intent");
+                .getLatitude(), destination.getLongitude(), Database.S0_INTENT);
         mCacheWriter.stopWriting();
         mSQLiteWrapper.close();
     }

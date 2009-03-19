@@ -8,7 +8,9 @@ import static org.easymock.classextension.EasyMock.createMock;
 import static org.easymock.classextension.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.verify;
 
+import com.google.code.geobeagle.io.CacheReader.CacheReaderCursor;
 import com.google.code.geobeagle.io.CacheReader.WhereFactory;
+import com.google.code.geobeagle.io.di.DatabaseDI;
 import com.google.code.geobeagle.io.di.DatabaseDI.SQLiteWrapper;
 
 import android.database.Cursor;
@@ -21,89 +23,51 @@ public class CacheReaderTest extends TestCase {
     private void expectQuery(SQLiteWrapper sqliteWrapper, Cursor cursor, String where) {
         expect(
                 sqliteWrapper.query(eq("CACHES"), (String[])eq(Database.READER_COLUMNS), eq(where),
-                        (String[])isNull(), (String)isNull(), (String)isNull(), (String)isNull(),
+                        (String)isNull(), (String)isNull(), (String)isNull(),
                         (String)eq(CacheReader.SQL_QUERY_LIMIT))).andReturn(cursor);
     }
 
-    public void testCacheReaderGetCache() {
-        SQLiteWrapper sqliteWrapper = createMock(SQLiteWrapper.class);
-        WhereFactory whereFactory = createMock(WhereFactory.class);
-
+    public void testCursorClose() {
         Cursor cursor = createMock(Cursor.class);
 
-        expectQuery(sqliteWrapper, cursor, null);
-        expect(cursor.moveToFirst()).andReturn(true);
+        cursor.close();
+
+        replay(cursor);
+        new CacheReaderCursor(cursor).close();
+        verify(cursor);
+    }
+
+    public void testCursorGetCache() {
+        Cursor cursor = createMock(Cursor.class);
+
         expect(cursor.getString(0)).andReturn("122");
         expect(cursor.getString(1)).andReturn("37");
         expect(cursor.getString(2)).andReturn("the_name");
         expect(cursor.getString(3)).andReturn("description");
 
-        replay(sqliteWrapper);
         replay(cursor);
-        CacheReader cacheReader = new CacheReader(sqliteWrapper, whereFactory);
-        cacheReader.open(null);
-        assertEquals("122, 37 (the_name: description)", cacheReader.getCache());
-        verify(sqliteWrapper);
+        assertEquals("122, 37 (the_name: description)", new CacheReaderCursor(cursor).getCache());
         verify(cursor);
     }
 
-    public void testCacheReaderOpen() {
-        SQLiteWrapper sqliteWrapper = createMock(SQLiteWrapper.class);
+    public void testCursorMoveToNext() {
         Cursor cursor = createMock(Cursor.class);
-        Location location = createMock(Location.class);
-        WhereFactory whereFactory = createMock(WhereFactory.class);
 
-        String where = "Latitude > something AND Longitude < somethingelse";
-        expect(whereFactory.getWhere(location)).andReturn(where);
-        expectQuery(sqliteWrapper, cursor, where);
-        expect(cursor.moveToFirst()).andReturn(true);
+        expect(cursor.moveToNext()).andReturn(true);
 
-        replay(sqliteWrapper);
         replay(cursor);
-        replay(location);
-        replay(whereFactory);
-        new CacheReader(sqliteWrapper, whereFactory).open(location);
-        verify(sqliteWrapper);
+        new CacheReaderCursor(cursor).moveToNext();
         verify(cursor);
-        verify(location);
-        verify(whereFactory);
     }
 
-    public void testCacheReaderOpenEmpty() {
+    public void testGetTotalCount() {
         SQLiteWrapper sqliteWrapper = createMock(SQLiteWrapper.class);
-        Cursor cursor = createMock(Cursor.class);
-        WhereFactory whereFactory = createMock(WhereFactory.class);
 
-        expect(whereFactory.getWhere(null)).andReturn("a=b");
-        expectQuery(sqliteWrapper, cursor, "a=b");
-        expect(cursor.moveToFirst()).andReturn(false);
-        cursor.close();
+        expect(sqliteWrapper.countResults(Database.TBL_CACHES, null)).andReturn(17);
 
-        replay(whereFactory);
         replay(sqliteWrapper);
-        replay(cursor);
-        new CacheReader(sqliteWrapper, whereFactory).open(null);
+        assertEquals(17, new CacheReader(sqliteWrapper, null, null).getTotalCount());
         verify(sqliteWrapper);
-        verify(cursor);
-        verify(whereFactory);
-    }
-
-    public void testCacheReaderOpenError() {
-        SQLiteWrapper sqliteWrapper = createMock(SQLiteWrapper.class);
-        Cursor cursor = createMock(Cursor.class);
-        WhereFactory whereFactory = createMock(WhereFactory.class);
-
-        expect(whereFactory.getWhere(null)).andReturn("a=b");
-        expectQuery(sqliteWrapper, cursor, "a=b");
-        expect(cursor.moveToFirst()).andReturn(true);
-
-        replay(whereFactory);
-        replay(sqliteWrapper);
-        replay(cursor);
-        new CacheReader(sqliteWrapper, whereFactory).open(null);
-        verify(sqliteWrapper);
-        verify(cursor);
-        verify(whereFactory);
     }
 
     public void testGetWhere() {
@@ -120,5 +84,51 @@ public class CacheReaderTest extends TestCase {
 
     public void testGetWhereNullLocation() {
         assertEquals(null, new WhereFactory().getWhere(null));
+    }
+
+    public void testOpen() {
+        Location location = createMock(Location.class);
+        WhereFactory whereFactory = createMock(WhereFactory.class);
+        SQLiteWrapper sqliteWrapper = createMock(SQLiteWrapper.class);
+        Cursor cursor = createMock(Cursor.class);
+        DatabaseDI.CacheReaderCursorFactory cacheReaderCursorFactory = createMock(DatabaseDI.CacheReaderCursorFactory.class);
+        CacheReaderCursor cacheReaderCursor = createMock(CacheReaderCursor.class);
+
+        String where = "Latitude > something AND Longitude < somethingelse";
+        expect(whereFactory.getWhere(location)).andReturn(where);
+        expectQuery(sqliteWrapper, cursor, where);
+        expect(cursor.moveToFirst()).andReturn(true);
+        expect(cacheReaderCursorFactory.create(cursor)).andReturn(cacheReaderCursor);
+
+        replay(whereFactory);
+        replay(sqliteWrapper);
+        replay(cursor);
+        replay(cacheReaderCursorFactory);
+        assertEquals(cacheReaderCursor, new CacheReader(sqliteWrapper, whereFactory,
+                cacheReaderCursorFactory).open(location));
+        verify(whereFactory);
+        verify(sqliteWrapper);
+        verify(cursor);
+        verify(cacheReaderCursorFactory);
+
+    }
+
+    public void testOpenEmpty() {
+        SQLiteWrapper sqliteWrapper = createMock(SQLiteWrapper.class);
+        Cursor cursor = createMock(Cursor.class);
+        WhereFactory whereFactory = createMock(WhereFactory.class);
+
+        expect(whereFactory.getWhere(null)).andReturn("a=b");
+        expectQuery(sqliteWrapper, cursor, "a=b");
+        expect(cursor.moveToFirst()).andReturn(false);
+        cursor.close();
+
+        replay(whereFactory);
+        replay(sqliteWrapper);
+        replay(cursor);
+        new CacheReader(sqliteWrapper, whereFactory, null).open(null);
+        verify(sqliteWrapper);
+        verify(cursor);
+        verify(whereFactory);
     }
 }

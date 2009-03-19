@@ -14,10 +14,10 @@
 
 package com.google.code.geobeagle.io;
 
-import com.google.code.geobeagle.Locations;
 import com.google.code.geobeagle.LocationControl;
+import com.google.code.geobeagle.Locations;
 import com.google.code.geobeagle.data.di.DestinationFactory;
-import com.google.code.geobeagle.io.di.DatabaseDI;
+import com.google.code.geobeagle.io.CacheReader.CacheReaderCursor;
 import com.google.code.geobeagle.io.di.DatabaseDI.SQLiteWrapper;
 import com.google.code.geobeagle.ui.ErrorDisplayer;
 
@@ -29,15 +29,6 @@ public class LocationBookmarksSql {
     private final SQLiteWrapper mSQLiteWrapper;
     private final LocationControl mLocationControl;
     private final CacheReader mCacheReader;
-
-    public static LocationBookmarksSql create(LocationControl locationControl, Database database,
-            DestinationFactory destinationFactory, ErrorDisplayer errorDisplayer) {
-        final Locations locations = new Locations();
-        final SQLiteWrapper sqliteWrapper = new SQLiteWrapper(null);
-        final CacheReader cacheReader = DatabaseDI.createCacheReader(sqliteWrapper);
-        return new LocationBookmarksSql(cacheReader, locations, database, sqliteWrapper,
-                destinationFactory, errorDisplayer, locationControl);
-    }
 
     public LocationBookmarksSql(CacheReader cacheReader, Locations locations, Database database,
             SQLiteWrapper sqliteWrapper, DestinationFactory destinationFactory,
@@ -62,19 +53,20 @@ public class LocationBookmarksSql {
         // readable and one writable at the activity level, and then pass it
         // down.
         mSQLiteWrapper.openWritableDatabase(mDatabase);
-        if (mCacheReader.open(mLocationControl.getLocation())) {
-            read();
-            mCacheReader.close();
+        CacheReaderCursor cursor = mCacheReader.open(mLocationControl.getLocation());
+        if (cursor != null) {
+            read(cursor);
+            cursor.close();
         }
 
         mSQLiteWrapper.close();
     }
 
-    public void read() {
+    public void read(CacheReaderCursor cursor) {
         mLocations.clear();
         do {
-            mLocations.add(mCacheReader.getCache());
-        } while (mCacheReader.moveToNext());
+            mLocations.add(cursor.getCache());
+        } while (cursor.moveToNext());
     }
 
     public int getCount() {

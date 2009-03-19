@@ -14,12 +14,26 @@
 
 package com.google.code.geobeagle.io;
 
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 public class Database {
     public static interface ISQLiteDatabase {
+        void beginTransaction();
+
+        int countResults(String table, String sql, String...args);
+
+        void endTransaction();
+
         void execSQL(String s);
+
+        void execSQL(String s, Object... bindArg1);
+
+        public Cursor query(String table, String[] columns, String selection,
+                String groupBy, String having, String orderBy, String limit, String... selectionArgs);
+
+        void setTransactionSuccessful();
     }
 
     public static class OpenHelperDelegate {
@@ -48,18 +62,19 @@ public class Database {
         }
     }
 
+    // Name SQL fragments Sn_ so they sort first.
     public static final String DATABASE_NAME = "GeoBeagle.db";
     public static final int DATABASE_VERSION = 10;
     public static final String[] READER_COLUMNS = new String[] {
             "Latitude", "Longitude", "Id", "Description"
     };
+
     public static final String S0_COLUMN_DELETE_ME = "DeleteMe BOOLEAN NOT NULL Default 1";
-    // S_ for SQL fragments so they sort first.
+    public static final String S0_INTENT = "intent";
     public static final String SQL_CACHES_ADD_COLUMN = "ALTER TABLE CACHES ADD COLUMN "
             + S0_COLUMN_DELETE_ME;
-    public static final String SQL_CACHES_UNSET_DELETE_ME_FOR_SOURCE = "UPDATE CACHES SET DeleteMe = 0 WHERE Source = ?";
+    public static final String SQL_CACHES_DONT_DELETE_ME = "UPDATE CACHES SET DeleteMe = 0 WHERE Source = ?";
     public static final String SQL_CLEAR_CACHES = "DELETE FROM CACHES WHERE Source=?";
-    public static final String SQL_COUNT_CACHES = "SELECT COUNT(*) FROM CACHES";
     public static final String SQL_CREATE_CACHE_TABLE = "CREATE TABLE CACHES ("
             + "Id VARCHAR PRIMARY KEY, Description VARCHAR, "
             + "Latitude DOUBLE, Longitude DOUBLE, Source VARCHAR, " + S0_COLUMN_DELETE_ME + ")";
@@ -72,16 +87,22 @@ public class Database {
     public static final String SQL_DELETE_OLD_CACHES = "DELETE FROM CACHES WHERE DeleteMe = 1";
     public static final String SQL_DELETE_OLD_GPX = "DELETE FROM GPX WHERE DeleteMe = 1";
     public static final String SQL_DROP_CACHE_TABLE = "DROP TABLE IF EXISTS CACHES";
-    public static final String SQL_GPX_UNSET_DELETE_ME_FOR_SOURCE = "UPDATE GPX SET DeleteMe = 0 WHERE Name = ?";
+    public static final String SQL_GPX_DONT_DELETE_ME = "UPDATE GPX SET DeleteMe = 0 WHERE Name = ?";
     public static final String SQL_REPLACE_CACHE = "REPLACE INTO CACHES "
             + "(Id, Description, Latitude, Longitude, Source, DeleteMe) VALUES (?, ?, ?, ?, ?, 0)";
     public static final String SQL_REPLACE_GPX = "REPLACE INTO GPX (Name, ExportTime, DeleteMe) VALUES (?, ?, 0)";
-    public static final String SQL_RESET_DELETE_ME_CACHES = "UPDATE CACHES SET DeleteMe = 1 WHERE Source != 'Intent'";
+    public static final String SQL_RESET_DELETE_ME_CACHES = "UPDATE CACHES SET DeleteMe = 1 WHERE Source != '"
+            + S0_INTENT + "'";
     public static final String SQL_RESET_DELETE_ME_GPX = "UPDATE GPX SET DeleteMe = 1";
+    public static final String SQL_CLEAR_EARLIER_LOADS = SQL_DELETE_OLD_CACHES + "; "
+            + SQL_DELETE_OLD_GPX + "; " + SQL_RESET_DELETE_ME_CACHES + "; "
+            + SQL_RESET_DELETE_ME_GPX + ";";
+
     public static final String TBL_CACHES = "CACHES";
     public static final String TBL_GPX = "GPX";
 
     private final SQLiteOpenHelper mSqliteOpenHelper;
+    public static final String SQL_MATCH_NAME_AND_EXPORTED_LATER = "Name = ? AND ExportTime >= ?";
 
     public Database(SQLiteOpenHelper sqliteOpenHelper) {
         mSqliteOpenHelper = sqliteOpenHelper;

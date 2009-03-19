@@ -22,6 +22,7 @@ import static org.easymock.classextension.EasyMock.verify;
 import com.google.code.geobeagle.io.Database.ISQLiteDatabase;
 import com.google.code.geobeagle.io.Database.OpenHelperDelegate;
 
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
@@ -36,12 +37,19 @@ import junit.framework.TestCase;
 
 public class DatabaseTest extends TestCase {
 
-    private static class DesktopSQLiteDatabase implements ISQLiteDatabase {
+    static class DesktopSQLiteDatabase implements ISQLiteDatabase {
         Writer mWriter;
 
         DesktopSQLiteDatabase() throws IOException {
             File db = new File("GeoBeagle.db");
             db.delete();
+        }
+
+        public void beginTransaction() {
+        }
+
+        public int countResults(String table, String sql, String... args) {
+            return 0;
         }
 
         public String dumpSchema() {
@@ -52,8 +60,27 @@ public class DatabaseTest extends TestCase {
             return exec("SELECT * FROM " + table);
         }
 
+        public void endTransaction() {
+        }
+
         public void execSQL(String s) {
             System.out.print(exec(s));
+        }
+
+        public void execSQL(String s, Object... bindArg1) {
+        }
+
+        public Cursor query(String table, String[] columns, String selection, String groupBy,
+                String having, String orderBy, String limit, String... selectionArgs) {
+            return null;
+        }
+
+        public Cursor query(String table, String[] columns, String selection,
+                String[] selectionArgs, String groupBy, String having, String orderBy, String limit) {
+            return null;
+        }
+
+        public void setTransactionSuccessful() {
         }
     }
 
@@ -94,6 +121,13 @@ public class DatabaseTest extends TestCase {
         return sb.toString();
     }
 
+    static String currentSchema() {
+        String currentSchema = SQL(Database.SQL_CREATE_CACHE_TABLE)
+                + SQL(Database.SQL_CREATE_GPX_TABLE) + SQL(Database.SQL_CREATE_IDX_LATITUDE)
+                + SQL(Database.SQL_CREATE_IDX_LONGITUDE) + SQL(Database.SQL_CREATE_IDX_SOURCE);
+        return currentSchema;
+    }
+
     private static String exec(String s) {
         ProcessBuilder processBuilder = new ProcessBuilder("sqlite3", "GeoBeagle.db", s);
         processBuilder.redirectErrorStream(true);
@@ -115,15 +149,8 @@ public class DatabaseTest extends TestCase {
         return output;
     }
 
-    private String SQL(String s) {
+    private static String SQL(String s) {
         return s + ";\n";
-    }
-
-    private String currentSchema() {
-        String currentSchema = SQL(Database.SQL_CREATE_CACHE_TABLE)
-                + SQL(Database.SQL_CREATE_GPX_TABLE) + SQL(Database.SQL_CREATE_IDX_LATITUDE)
-                + SQL(Database.SQL_CREATE_IDX_LONGITUDE) + SQL(Database.SQL_CREATE_IDX_SOURCE);
-        return currentSchema;
     }
 
     public void testDatabaseGetReableDatabase() {

@@ -91,7 +91,7 @@ public class CacheListDelegate {
         final DestinationFactory destinationFactory = new DestinationFactory(resourceProvider);
         final LocationControl locationControl = LocationControl.create(((LocationManager)parent
                 .getSystemService(Context.LOCATION_SERVICE)));
-        final LocationBookmarksSql locationBookmarks = LocationBookmarksSql.create(locationControl,
+        final LocationBookmarksSql locationBookmarks = DatabaseDI.create(locationControl,
                 database, destinationFactory, errorDisplayer);
         final SimpleAdapterFactory simpleAdapterFactory = new SimpleAdapterFactory();
         final CacheListData cacheListData = CacheListDataDI.create(resourceProvider,

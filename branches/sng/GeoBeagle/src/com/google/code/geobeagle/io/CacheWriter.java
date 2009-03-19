@@ -14,64 +14,46 @@
 
 package com.google.code.geobeagle.io;
 
-import com.google.code.geobeagle.io.di.DatabaseDI;
+import com.google.code.geobeagle.io.Database.ISQLiteDatabase;
 
-import android.database.Cursor;
-
+/**
+ * @author sng
+ */
 public class CacheWriter {
-    private static final String[] COLUMNS_NAME = new String[] {
-        "Name"
-    };
-    private Object[] mBindArgs0 = new Object[0];
-    private Object[] mBindArgs1 = new Object[1];
-    private Object[] mBindArgs2 = new Object[2];
-    private Object[] mBindArgs5 = new Object[5];
-    private String[] mSelectionArgs2 = new String[2];
-    private final DatabaseDI.SQLiteWrapper mSqlite;
+    private final ISQLiteDatabase mSqlite;
 
-    public CacheWriter(DatabaseDI.SQLiteWrapper sqlite) {
+    public CacheWriter(ISQLiteDatabase sqlite) {
         mSqlite = sqlite;
     }
 
     public void clearCaches(String source) {
-        mBindArgs1[0] = source;
-        mSqlite.execSQL(Database.SQL_CLEAR_CACHES, mBindArgs1);
+        mSqlite.execSQL(Database.SQL_CLEAR_CACHES, source);
     }
 
+    /**
+     * Deletes any cache/gpx entries marked delete_me, then marks all remaining
+     * gpx-based caches, and gpx entries with delete_me = 1.
+     */
     public void clearEarlierLoads() {
-        mSqlite.execSQL(Database.SQL_DELETE_OLD_CACHES, mBindArgs0);
-        mSqlite.execSQL(Database.SQL_DELETE_OLD_GPX, mBindArgs0);
-        mSqlite.execSQL(Database.SQL_RESET_DELETE_ME_CACHES, mBindArgs0);
-        mSqlite.execSQL(Database.SQL_RESET_DELETE_ME_GPX, mBindArgs0);
+        mSqlite.execSQL(Database.SQL_CLEAR_EARLIER_LOADS);
     }
 
     public void deleteCache(CharSequence id) {
-        mBindArgs1[0] = id;
-        mSqlite.execSQL(Database.SQL_DELETE_CACHE, mBindArgs1);
+        mSqlite.execSQL(Database.SQL_DELETE_CACHE, id);
     }
 
     public void insertAndUpdateCache(CharSequence id, CharSequence name, double latitude,
             double longitude, String source) {
-        mBindArgs5[0] = id;
-        mBindArgs5[1] = name;
-        mBindArgs5[2] = new Double(latitude);
-        mBindArgs5[3] = new Double(longitude);
-        mBindArgs5[4] = source;
-        mSqlite.execSQL(Database.SQL_REPLACE_CACHE, mBindArgs5);
+        mSqlite.execSQL(Database.SQL_REPLACE_CACHE, id, name, new Double(latitude), new Double(
+                longitude), source);
     }
 
     public boolean isGpxAlreadyLoaded(String gpxName, String gpxTime) {
-        mSelectionArgs2[0] = gpxName;
-        mSelectionArgs2[1] = gpxTime;
-        Cursor cursor = mSqlite.query(Database.TBL_GPX, COLUMNS_NAME, "Name = ? AND ExportTime >= ?",
-                mSelectionArgs2, null, null, null, null);
-        int count = cursor.getCount();
-        boolean gpxAlreadyLoaded = count > 0;
-        cursor.close();
+        boolean gpxAlreadyLoaded = mSqlite.countResults(Database.TBL_GPX,
+                Database.SQL_MATCH_NAME_AND_EXPORTED_LATER, gpxName, gpxTime) > 0;
         if (gpxAlreadyLoaded) {
-            mBindArgs1[0] = gpxName;
-            mSqlite.execSQL(Database.SQL_CACHES_UNSET_DELETE_ME_FOR_SOURCE, mBindArgs1);
-            mSqlite.execSQL(Database.SQL_GPX_UNSET_DELETE_ME_FOR_SOURCE, mBindArgs1);
+            mSqlite.execSQL(Database.SQL_CACHES_DONT_DELETE_ME, gpxName);
+            mSqlite.execSQL(Database.SQL_GPX_DONT_DELETE_ME, gpxName);
         }
         return gpxAlreadyLoaded;
     }
@@ -87,8 +69,6 @@ public class CacheWriter {
     }
 
     public void writeGpx(String gpxName, String pocketQueryExportTime) {
-        mBindArgs2[0] = gpxName;
-        mBindArgs2[1] = pocketQueryExportTime;
-        mSqlite.execSQL(Database.SQL_REPLACE_GPX, mBindArgs2);
+        mSqlite.execSQL(Database.SQL_REPLACE_GPX, gpxName, pocketQueryExportTime);
     }
 }

@@ -21,6 +21,7 @@ import static org.easymock.classextension.EasyMock.verify;
 
 import com.google.code.geobeagle.LocationControl;
 import com.google.code.geobeagle.Locations;
+import com.google.code.geobeagle.io.CacheReader.CacheReaderCursor;
 import com.google.code.geobeagle.io.di.DatabaseDI.SQLiteWrapper;
 
 import junit.framework.TestCase;
@@ -42,23 +43,26 @@ public class LocationBookmarksSqlTest extends TestCase {
         assertEquals(locations, locationBookmarksSql.getDescriptionsAndLocations());
     }
 
-    public void testReadBookmarksCursorOpenError() {
+    public void testLoad() {
         SQLiteWrapper sqliteWrapper = createMock(SQLiteWrapper.class);
         LocationControl locationControl = createMock(LocationControl.class);
         CacheReader cacheReader = createMock(CacheReader.class);
         Locations locations = createMock(Locations.class);
+        CacheReaderCursor cursor = createMock(CacheReaderCursor.class);
+        
         sqliteWrapper.openWritableDatabase(mDatabase);
         expect(locationControl.getLocation()).andReturn(null);
-        expect(cacheReader.open(null)).andReturn(true);
-        expect(cacheReader.getCache()).andReturn("GC1234");
-        expect(cacheReader.moveToNext()).andReturn(false);
-        cacheReader.close();
+        expect(cacheReader.open(null)).andReturn(cursor);
+        expect(cursor.getCache()).andReturn("GC1234");
+        expect(cursor.moveToNext()).andReturn(false);
+        cursor.close();
         sqliteWrapper.close();
 
         replay(mDatabase);
         replay(locationControl);
         replay(sqliteWrapper);
         replay(cacheReader);
+        replay(cursor);
         LocationBookmarksSql locationBookmarksSql = new LocationBookmarksSql(cacheReader,
                 locations, mDatabase, sqliteWrapper, null, null, locationControl);
         locationBookmarksSql.load();
@@ -66,45 +70,46 @@ public class LocationBookmarksSqlTest extends TestCase {
         verify(locationControl);
         verify(sqliteWrapper);
         verify(cacheReader);
+        verify(cursor);
     }
 
-    public void testReadBookmarksOne() {
+    public void testReadOne() {
         Locations locations = createMock(Locations.class);
-        CacheReader cacheReader = createMock(CacheReader.class);
+        CacheReaderCursor cursor = createMock(CacheReaderCursor.class);
 
         locations.clear();
-        expect(cacheReader.getCache()).andReturn("122 32.3423 83 32.3221 (LB1234)");
-        expect(cacheReader.moveToNext()).andReturn(false);
+        expect(cursor.getCache()).andReturn("122 32.3423 83 32.3221 (LB1234)");
+        expect(cursor.moveToNext()).andReturn(false);
         locations.add("122 32.3423 83 32.3221 (LB1234)");
 
-        replay(cacheReader);
         replay(locations);
-        LocationBookmarksSql locationBookmarksSql = new LocationBookmarksSql(cacheReader,
+        replay(cursor);
+        LocationBookmarksSql locationBookmarksSql = new LocationBookmarksSql(null,
                 locations, null, null, null, null, null);
-        locationBookmarksSql.read();
-        verify(cacheReader);
+        locationBookmarksSql.read(cursor);
         verify(locations);
+        verify(cursor);
     }
 
-    public void testReadBookmarksTwo() {
+    public void testReadTwo() {
         Locations locations = createMock(Locations.class);
-        CacheReader cacheReader = createMock(CacheReader.class);
+        CacheReaderCursor cursor = createMock(CacheReaderCursor.class);
 
         locations.clear();
-        expect(cacheReader.getCache()).andReturn("122 32.3423 83 32.3221 (LB1234)");
+        expect(cursor.getCache()).andReturn("122 32.3423 83 32.3221 (LB1234)");
         locations.add("122 32.3423 83 32.3221 (LB1234)");
-        expect(cacheReader.moveToNext()).andReturn(true);
-        expect(cacheReader.getCache()).andReturn("122 32.3423 83 32.3221 (LB54321)");
+        expect(cursor.moveToNext()).andReturn(true);
+        expect(cursor.getCache()).andReturn("122 32.3423 83 32.3221 (LB54321)");
         locations.add("122 32.3423 83 32.3221 (LB54321)");
-        expect(cacheReader.moveToNext()).andReturn(false);
+        expect(cursor.moveToNext()).andReturn(false);
 
-        replay(cacheReader);
         replay(locations);
-        LocationBookmarksSql locationBookmarksSql = new LocationBookmarksSql(cacheReader,
+        replay(cursor);
+        LocationBookmarksSql locationBookmarksSql = new LocationBookmarksSql(null,
                 locations, null, null, null, null, null);
-        locationBookmarksSql.read();
-        verify(cacheReader);
+        locationBookmarksSql.read(cursor);
         verify(locations);
+        verify(cursor);
     }
 
 }

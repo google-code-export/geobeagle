@@ -15,11 +15,38 @@
 package com.google.code.geobeagle.io;
 
 import com.google.code.geobeagle.io.di.DatabaseDI;
+import com.google.code.geobeagle.io.di.DatabaseDI.SQLiteWrapper;
 
 import android.database.Cursor;
 import android.location.Location;
 
 public class CacheReader {
+    public static class CacheReaderCursor {
+        private final Cursor mCursor;
+
+        public CacheReaderCursor(Cursor cursor) {
+            mCursor = cursor;
+        }
+
+        void close() {
+            mCursor.close();
+        }
+
+        public String getCache() {
+            String name = mCursor.getString(3);
+            String id = mCursor.getString(2);
+            if (name.length() > 0 && id.length() > 0) {
+                name = ": " + name;
+            }
+
+            return mCursor.getString(0) + ", " + mCursor.getString(1) + " (" + id + name + ")";
+        }
+
+        boolean moveToNext() {
+            return mCursor.moveToNext();
+        }
+    }
+
     public static class WhereFactory {
         // 1 degree ~= 111km
         public static final double DEGREES_DELTA = 0.08;
@@ -42,51 +69,31 @@ public class CacheReader {
     }
 
     public static final String SQL_QUERY_LIMIT = "1000";
-
-    private Cursor mCursor;
-    private final DatabaseDI.SQLiteWrapper mSqliteWrapper;
+    private final DatabaseDI.CacheReaderCursorFactory mCacheReaderCursorFactory;
+    private final SQLiteWrapper mSqliteWrapper;
     private final WhereFactory mWhereFactory;
 
     // TODO: rename to CacheSqlReader / CacheSqlWriter
-    public CacheReader(DatabaseDI.SQLiteWrapper sqliteWrapper, WhereFactory whereFactory) {
+    public CacheReader(DatabaseDI.SQLiteWrapper sqliteWrapper, WhereFactory whereFactory,
+            DatabaseDI.CacheReaderCursorFactory cacheReaderCursorFactory) {
         mSqliteWrapper = sqliteWrapper;
         mWhereFactory = whereFactory;
-    }
-
-    public void close() {
-        mCursor.close();
-    }
-
-    public String getCache() {
-        String name = mCursor.getString(3);
-        String id = mCursor.getString(2);
-        if (name.length() > 0 && id.length() > 0) {
-            name = ": " + name;
-        }
-
-        return mCursor.getString(0) + ", " + mCursor.getString(1) + " (" + id + name + ")";
+        mCacheReaderCursorFactory = cacheReaderCursorFactory;
     }
 
     public int getTotalCount() {
-        Cursor cursor = mSqliteWrapper.rawQuery(Database.SQL_COUNT_CACHES, null);
-        cursor.moveToFirst();
-        int count = cursor.getInt(0);
-        cursor.close();
-        return count;
+        return mSqliteWrapper.countResults(Database.TBL_CACHES, null);
     }
 
-    public boolean moveToNext() {
-        return mCursor.moveToNext();
-    }
-
-    public boolean open(Location location) {
+    public CacheReaderCursor open(Location location) {
         String where = mWhereFactory.getWhere(location);
 
-        mCursor = mSqliteWrapper.query(Database.TBL_CACHES, Database.READER_COLUMNS, where, null,
+        Cursor cursor = mSqliteWrapper.query(Database.TBL_CACHES, Database.READER_COLUMNS, where,
                 null, null, null, SQL_QUERY_LIMIT);
-        final boolean result = mCursor.moveToFirst();
-        if (!result)
-            mCursor.close();
-        return result;
+        if (!cursor.moveToFirst()) {
+            cursor.close();
+            return null;
+        }
+        return mCacheReaderCursorFactory.create(cursor);
     }
 }
