@@ -21,22 +21,19 @@ import static org.easymock.classextension.EasyMock.verify;
 
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.ResourceProvider;
-import com.google.code.geobeagle.data.Destination;
-import com.google.code.geobeagle.data.DestinationVector;
-import com.google.code.geobeagle.data.IDestinationVector;
-import com.google.code.geobeagle.data.DestinationVector.LocationComparator;
-import com.google.code.geobeagle.data.DestinationVector.MyLocation;
+import com.google.code.geobeagle.data.GeocacheVector.LocationComparator;
+import com.google.code.geobeagle.data.GeocacheVector.MyLocation;
 
 import java.util.Map;
 
 import junit.framework.TestCase;
 
-public class DestinationVectorTest extends TestCase {
-    private Destination destination = createMock(Destination.class);
+public class GeocacheVectorTest extends TestCase {
+    private Geocache geocache = createMock(Geocache.class);
 
     public void testCompare() {
-        IDestinationVector d1 = createMock(IDestinationVector.class);
-        IDestinationVector d2 = createMock(IDestinationVector.class);
+        IGeocacheVector d1 = createMock(IGeocacheVector.class);
+        IGeocacheVector d2 = createMock(IGeocacheVector.class);
 
         expect(d1.getDistance()).andReturn(0f).anyTimes();
         expect(d2.getDistance()).andReturn(1f).anyTimes();
@@ -54,39 +51,39 @@ public class DestinationVectorTest extends TestCase {
 
     public void testDestinationGetCacheListDisplayMap() {
         DistanceFormatter distanceFormatter = createMock(DistanceFormatter.class);
-        expect(destination.getIdAndName()).andReturn("a destination");
+        expect(geocache.getIdAndName()).andReturn("a geocache");
         expect(distanceFormatter.format(3.5f)).andReturn("3.5m");
 
-        replay(destination);
+        replay(geocache);
         replay(distanceFormatter);
-        final Map<String, Object> viewMap = new DestinationVector(destination, 3.5f,
-                distanceFormatter).getViewMap();
-        assertEquals("a destination", viewMap.get("cache"));
+        final Map<String, Object> viewMap = new GeocacheVector(geocache, 3.5f, distanceFormatter)
+                .getViewMap();
+        assertEquals("a geocache", viewMap.get("cache"));
         assertEquals("3.5m", viewMap.get("distance"));
-        verify(destination);
+        verify(geocache);
         verify(distanceFormatter);
     }
 
     public void testDestinationGetDistance() {
-        assertEquals(3.5f, new DestinationVector(destination, 3.5f, null).getDistance());
+        assertEquals(3.5f, new GeocacheVector(geocache, 3.5f, null).getDistance());
     }
 
     public void testDestinationGetId() {
-        expect(destination.getId()).andReturn("a destination");
+        expect(geocache.getId()).andReturn("a geocache");
 
-        replay(destination);
-        DestinationVector destinationVector = new DestinationVector(destination, 3.5f, null);
-        assertEquals("a destination", destinationVector.getId());
-        verify(destination);
+        replay(geocache);
+        GeocacheVector geocacheVector = new GeocacheVector(geocache, 3.5f, null);
+        assertEquals("a geocache", geocacheVector.getId());
+        verify(geocache);
     }
 
     public void testDestinationGetLocation() {
-        expect(destination.getCoordinatesIdAndName()).andReturn("343 2323 (a destination)");
+        expect(geocache.getCoordinatesIdAndName()).andReturn("343 2323 (a geocache)");
 
-        replay(destination);
-        DestinationVector destinationVector = new DestinationVector(destination, 3.5f, null);
-        assertEquals("343 2323 (a destination)", destinationVector.getCoordinatesIdAndName());
-        verify(destination);
+        replay(geocache);
+        GeocacheVector geocacheVector = new GeocacheVector(geocache, 3.5f, null);
+        assertEquals("343 2323 (a geocache)", geocacheVector.getCoordinatesIdAndName());
+        verify(geocache);
     }
 
     public void testMyLocation() {

@@ -15,6 +15,7 @@
 package com.google.code.geobeagle.ui;
 
 import com.google.code.geobeagle.R;
+
 import android.content.Context;
 import android.widget.Toast;
 

@@ -20,13 +20,13 @@ import android.view.View.OnKeyListener;
 
 public class LocationOnKeyListener implements OnKeyListener {
     private final CachePageButtonEnabler mCachePageButtonEnabler;
-    
+
     public LocationOnKeyListener(CachePageButtonEnabler cachePageButtonEnabler) {
-        this.mCachePageButtonEnabler = cachePageButtonEnabler;
+        mCachePageButtonEnabler = cachePageButtonEnabler;
     }
 
     public boolean onKey(View v, int keyCode, KeyEvent event) {
-        this.mCachePageButtonEnabler.check();
+        mCachePageButtonEnabler.check();
         return false;
     }
 }

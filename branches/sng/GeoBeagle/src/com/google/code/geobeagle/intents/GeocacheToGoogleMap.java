@@ -16,19 +16,19 @@ package com.google.code.geobeagle.intents;
 
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.ResourceProvider;
-import com.google.code.geobeagle.data.Destination;
+import com.google.code.geobeagle.data.Geocache;
 
-public class DestinationToGoogleMap implements DestinationToUri {
+public class GeocacheToGoogleMap implements GeocacheToUri {
     private final ResourceProvider mResourceProvider;
 
-    public DestinationToGoogleMap(ResourceProvider resourceProvider) {
+    public GeocacheToGoogleMap(ResourceProvider resourceProvider) {
         mResourceProvider = resourceProvider;
     }
 
-    public String convert(Destination destination) {
+    public String convert(Geocache geocache) {
         // "geo:%1$.5f,%2$.5f?name=cachename"
-        return String.format(mResourceProvider.getString(R.string.map_intent), destination
-                .getLatitude(), destination.getLongitude(), destination.getIdAndName());
+        return String.format(mResourceProvider.getString(R.string.map_intent), geocache
+                .getLatitude(), geocache.getLongitude(), geocache.getIdAndName());
     }
 
 }

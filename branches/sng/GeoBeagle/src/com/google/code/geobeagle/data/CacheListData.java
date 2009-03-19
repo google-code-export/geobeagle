@@ -14,7 +14,7 @@
 
 package com.google.code.geobeagle.data;
 
-import com.google.code.geobeagle.data.di.DestinationVectorFactory;
+import com.google.code.geobeagle.data.di.GeocacheVectorFactory;
 
 import android.location.Location;
 
@@ -22,14 +22,14 @@ import java.util.ArrayList;
 import java.util.Map;
 
 public class CacheListData {
-    private final DestinationVectorFactory mDestinationVectorFactory;
-    private final DestinationVectors mDestinationVectors;
     private ArrayList<Map<String, Object>> mAdapterData;
+    private final GeocacheVectorFactory mDestinationVectorFactory;
+    private final GeocacheVectors mDestinationVectors;
 
-    public CacheListData(DestinationVectors destinationVectors,
-            DestinationVectorFactory destinationVectorFactory) {
-        mDestinationVectors = destinationVectors;
-        mDestinationVectorFactory = destinationVectorFactory;
+    public CacheListData(GeocacheVectors geocacheVectors,
+            GeocacheVectorFactory geocacheVectorFactory) {
+        mDestinationVectors = geocacheVectors;
+        mDestinationVectorFactory = geocacheVectorFactory;
     }
 
     public void add(ArrayList<CharSequence> locations, Location here) {
@@ -39,23 +39,23 @@ public class CacheListData {
         mDestinationVectors.sort();
     }
 
+    public void delete(int position) {
+        // TODO: write a custom adapter, because only deletes are handled
+        // dynamically; any adds require a rebuild.
+        mDestinationVectors.delete(position);
+        mAdapterData.remove(position);
+    }
+
     public ArrayList<Map<String, Object>> getAdapterData() {
         mAdapterData = mDestinationVectors.getAdapterData();
         return mAdapterData;
-    }
-
-    public CharSequence getId(int position) {
-        return mDestinationVectors.getId(position);
     }
 
     public CharSequence getCoordinatesIdAndName(int position) {
         return mDestinationVectors.getCoordinatesIdAndName(position);
     }
 
-    public void delete(int position) {
-        // TODO: write a custom adapter, because only deletes are handled
-        // dynamically; any adds require a rebuild.
-        mDestinationVectors.delete(position);
-        mAdapterData.remove(position);
+    public CharSequence getId(int position) {
+        return mDestinationVectors.getId(position);
     }
 }

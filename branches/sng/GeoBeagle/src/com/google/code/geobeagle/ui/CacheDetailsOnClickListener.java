@@ -81,18 +81,19 @@ public class CacheDetailsOnClickListener implements View.OnClickListener {
         }
     }
 
-    private final Builder mAlertDialogBuilder;
-    private final CacheDetailsLoader mCacheDetailsLoader;
-    private final ErrorDisplayer mErrorDisplayer;
-    private final Env mEnv;
-    private final LocationSetter mLocationSetter;
-
     public static CacheDetailsOnClickListener create(Builder alertDialogBuilder,
             LocationSetter locationSetter, ErrorDisplayer errorDisplayer, Env env) {
         final CacheDetailsLoader cacheDetailsLoader = new CacheDetailsLoader();
         return new CacheDetailsOnClickListener(alertDialogBuilder, locationSetter, errorDisplayer,
                 env, cacheDetailsLoader);
     }
+
+    private final Builder mAlertDialogBuilder;
+    private final CacheDetailsLoader mCacheDetailsLoader;
+    private final Env mEnv;
+    private final ErrorDisplayer mErrorDisplayer;
+
+    private final LocationSetter mLocationSetter;
 
     public CacheDetailsOnClickListener(Builder alertDialogBuilder, LocationSetter locationSetter,
             ErrorDisplayer errorDisplayer, Env env, CacheDetailsLoader cacheDetailsLoader) {

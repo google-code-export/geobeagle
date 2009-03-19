@@ -27,6 +27,11 @@ public class CacheList extends ListActivity {
     private CacheListDelegate delegate;
 
     @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        return delegate.onContextItemSelected(item) || super.onContextItemSelected(item);
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
@@ -49,11 +54,6 @@ public class CacheList extends ListActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         return delegate.onOptionsItemSelected(item) || super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public boolean onContextItemSelected(MenuItem item) {
-        return delegate.onContextItemSelected(item) || super.onContextItemSelected(item);
     }
 
     @Override

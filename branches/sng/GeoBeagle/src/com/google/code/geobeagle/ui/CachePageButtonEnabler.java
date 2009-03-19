@@ -16,30 +16,33 @@ package com.google.code.geobeagle.ui;
 
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.ResourceProvider;
-import com.google.code.geobeagle.data.di.DestinationFactory;
+import com.google.code.geobeagle.data.di.GeocacheFactory;
 
 import android.text.TextUtils;
 import android.view.View;
 
 public class CachePageButtonEnabler {
-    private final View mCachePageButton;
-    private final String[] mContentPrefixes;
-    private final TooString mTooString;
-    private final View mDetailsButton;
-    private final MockableTextUtils mTextUtils;
-
     public static class MockableTextUtils {
-        int indexOf(CharSequence s, char ch){
+        int indexOf(CharSequence s, char ch) {
             return TextUtils.indexOf(s, ch);
         }
     }
 
-    public static CachePageButtonEnabler create(TooString editText, View cachePageButton, View detailsButton,
-            ResourceProvider resourceProvider) {
+    public static CachePageButtonEnabler create(TooString editText, View cachePageButton,
+            View detailsButton, ResourceProvider resourceProvider) {
         MockableTextUtils textUtils = new MockableTextUtils();
-        return new CachePageButtonEnabler(editText, cachePageButton, detailsButton, resourceProvider, textUtils);
+        return new CachePageButtonEnabler(editText, cachePageButton, detailsButton,
+                resourceProvider, textUtils);
     }
-    
+
+    private final View mCachePageButton;
+    private final String[] mContentPrefixes;
+    private final View mDetailsButton;
+
+    private final MockableTextUtils mTextUtils;
+
+    private final TooString mTooString;
+
     public CachePageButtonEnabler(TooString editText, View cachePageButton, View detailsButton,
             ResourceProvider resourceProvider, MockableTextUtils textUtils) {
         mTooString = editText;
@@ -51,7 +54,7 @@ public class CachePageButtonEnabler {
 
     public void check() {
         final CharSequence s = mTooString.tooString();
-        final String description = (String)DestinationFactory.extractDescription(s);
+        final String description = (String)GeocacheFactory.extractDescription(s);
         mDetailsButton.setEnabled(-1 != mTextUtils.indexOf(s, ':'));
         for (String contentPrefix : mContentPrefixes) {
             if (description.startsWith(contentPrefix)) {

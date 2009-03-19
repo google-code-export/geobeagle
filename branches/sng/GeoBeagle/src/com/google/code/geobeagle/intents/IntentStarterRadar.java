@@ -14,7 +14,7 @@
 
 package com.google.code.geobeagle.intents;
 
-import com.google.code.geobeagle.data.Destination;
+import com.google.code.geobeagle.data.Geocache;
 import com.google.code.geobeagle.ui.LocationSetter;
 
 import android.content.Context;
@@ -32,13 +32,11 @@ public class IntentStarterRadar implements IntentStarter {
         mLocationSetter = locationSetter;
     }
 
-
     public void startIntent() {
-        final Destination destination = mLocationSetter.getDestination();
-        final Intent intent = mIntentFactory
-                .createIntent("com.google.android.radar.SHOW_RADAR");
-        intent.putExtra("latitude", (float)destination.getLatitude());
-        intent.putExtra("longitude", (float)destination.getLongitude());
+        final Geocache geocache = mLocationSetter.getGeocache();
+        final Intent intent = mIntentFactory.createIntent("com.google.android.radar.SHOW_RADAR");
+        intent.putExtra("latitude", (float)geocache.getLatitude());
+        intent.putExtra("longitude", (float)geocache.getLongitude());
         mContext.startActivity(intent);
     }
 }

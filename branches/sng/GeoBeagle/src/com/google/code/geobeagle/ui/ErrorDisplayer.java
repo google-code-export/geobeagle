@@ -22,13 +22,6 @@ import android.content.DialogInterface;
 
 // TODO: this class needs tests.
 public class ErrorDisplayer {
-    private final Activity mActivity;
-    private Builder mAlertDialogBuilder;
-
-    public ErrorDisplayer(Activity activity) {
-        mActivity = activity;
-    }
-
     private class DisplayErrorRunnable implements Runnable {
         private DisplayErrorRunnable() {
         }
@@ -42,10 +35,22 @@ public class ErrorDisplayer {
         }
     }
 
+    private final Activity mActivity;
+
+    private Builder mAlertDialogBuilder;
+
+    public ErrorDisplayer(Activity activity) {
+        mActivity = activity;
+    }
+
     public void displayError(int resourceId) {
         mAlertDialogBuilder = new Builder(mActivity);
         mAlertDialogBuilder.setMessage(resourceId);
         mActivity.runOnUiThread(new DisplayErrorRunnable());
+    }
+
+    public void displayError(int resId, Object... args) {
+        displayError(String.format((String)mActivity.getText(resId), args));
     }
 
     public void displayError(String string) {
@@ -63,9 +68,5 @@ public class ErrorDisplayer {
         mAlertDialogBuilder.setMessage(("Error " + msg + ":" + e.toString() + "\n\n" + Util
                 .getStackTrace(e)));
         mActivity.runOnUiThread(new DisplayErrorRunnable());
-    }
-
-    public void displayError(int resId, Object... args) {
-        displayError(String.format((String)mActivity.getText(resId), args));
     }
 }

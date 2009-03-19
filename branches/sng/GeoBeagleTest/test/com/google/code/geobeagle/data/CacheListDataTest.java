@@ -19,7 +19,7 @@ import static org.easymock.classextension.EasyMock.createMock;
 import static org.easymock.classextension.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.verify;
 
-import com.google.code.geobeagle.data.di.DestinationVectorFactory;
+import com.google.code.geobeagle.data.di.GeocacheVectorFactory;
 
 import android.location.Location;
 
@@ -30,53 +30,54 @@ import junit.framework.TestCase;
 
 public class CacheListDataTest extends TestCase {
     public void testAdd() {
-        DestinationVectorFactory destinationVectorFactory = createMock(DestinationVectorFactory.class);
-        DestinationVectors destinationVectors = createMock(DestinationVectors.class);
-        IDestinationVector myLocation = createMock(IDestinationVector.class);
+        GeocacheVectorFactory geocacheVectorFactory = createMock(GeocacheVectorFactory.class);
+        GeocacheVectors geocacheVectors = createMock(GeocacheVectors.class);
+        IGeocacheVector myLocation = createMock(IGeocacheVector.class);
         Location here = createMock(Location.class);
 
         ArrayList<CharSequence> locations = new ArrayList<CharSequence>(0);
-        destinationVectors.reset(0);
-        destinationVectors.addLocations(locations, here);
-        expect(destinationVectorFactory.createMyLocation()).andReturn(myLocation);
-        destinationVectors.add(myLocation);
-        destinationVectors.sort();
+        geocacheVectors.reset(0);
+        geocacheVectors.addLocations(locations, here);
+        expect(geocacheVectorFactory.createMyLocation()).andReturn(myLocation);
+        geocacheVectors.add(myLocation);
+        geocacheVectors.sort();
 
-        replay(destinationVectorFactory);
-        replay(destinationVectors);
-        new CacheListData(destinationVectors, destinationVectorFactory).add(locations, here);
-        verify(destinationVectorFactory);
-        verify(destinationVectors);
+        replay(geocacheVectorFactory);
+        replay(geocacheVectors);
+        new CacheListData(geocacheVectors, geocacheVectorFactory).add(locations, here);
+        verify(geocacheVectorFactory);
+        verify(geocacheVectors);
     }
 
     public void testGetAdapterData() {
-        DestinationVectors destinationVectors = createMock(DestinationVectors.class);
+        GeocacheVectors geocacheVectors = createMock(GeocacheVectors.class);
         ArrayList<Map<String, Object>> adapterData = new ArrayList<Map<String, Object>>(0);
 
-        expect(destinationVectors.getAdapterData()).andReturn(adapterData);
+        expect(geocacheVectors.getAdapterData()).andReturn(adapterData);
 
-        replay(destinationVectors);
-        assertEquals(adapterData, new CacheListData(destinationVectors, null).getAdapterData());
-        verify(destinationVectors);
+        replay(geocacheVectors);
+        assertEquals(adapterData, new CacheListData(geocacheVectors, null).getAdapterData());
+        verify(geocacheVectors);
     }
 
     public void testGetId() {
-        DestinationVectors destinationVectors = createMock(DestinationVectors.class);
+        GeocacheVectors geocacheVectors = createMock(GeocacheVectors.class);
 
-        expect(destinationVectors.getId(8)).andReturn("GC123");
+        expect(geocacheVectors.getId(8)).andReturn("GC123");
 
-        replay(destinationVectors);
-        assertEquals("GC123", new CacheListData(destinationVectors, null).getId(8));
-        verify(destinationVectors);
+        replay(geocacheVectors);
+        assertEquals("GC123", new CacheListData(geocacheVectors, null).getId(8));
+        verify(geocacheVectors);
     }
 
     public void testGetLocation() {
-        DestinationVectors destinationVectors = createMock(DestinationVectors.class);
+        GeocacheVectors geocacheVectors = createMock(GeocacheVectors.class);
 
-        expect(destinationVectors.getCoordinatesIdAndName(8)).andReturn("a cache");
+        expect(geocacheVectors.getCoordinatesIdAndName(8)).andReturn("a cache");
 
-        replay(destinationVectors);
-        assertEquals("a cache", new CacheListData(destinationVectors, null).getCoordinatesIdAndName(8));
-        verify(destinationVectors);
+        replay(geocacheVectors);
+        assertEquals("a cache", new CacheListData(geocacheVectors, null)
+                .getCoordinatesIdAndName(8));
+        verify(geocacheVectors);
     }
 }

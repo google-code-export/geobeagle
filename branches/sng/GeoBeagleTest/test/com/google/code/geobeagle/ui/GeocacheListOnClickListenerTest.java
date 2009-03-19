@@ -20,30 +20,29 @@ import static org.easymock.classextension.EasyMock.verify;
 
 import com.google.code.geobeagle.CacheList;
 
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 
 import junit.framework.TestCase;
 
-public class DestinationListOnClickListenerTest extends TestCase {
+public class GeocacheListOnClickListenerTest extends TestCase {
     public void testOnClickListener() {
         final Activity activity = createMock(Activity.class);
         final Intent intent = createMock(Intent.class);
-        
+
         activity.startActivity(intent);
         replay(activity);
-        DestinationListOnClickListener destinationListOnClickListener = new DestinationListOnClickListener(
-                activity
-                ) {
+        GeocacheListOnClickListener geocacheListOnClickListener = new GeocacheListOnClickListener(
+                activity) {
+            @Override
             protected Intent createIntent(Context context, Class<?> cls) {
                 assertEquals(CacheList.class, cls);
                 assertEquals(activity, context);
                 return intent;
             }
         };
-        destinationListOnClickListener.onClick(null);
+        geocacheListOnClickListener.onClick(null);
         verify(activity);
     }
 }

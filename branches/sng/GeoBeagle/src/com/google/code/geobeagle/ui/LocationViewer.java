@@ -65,14 +65,14 @@ public class LocationViewer {
     public final static String METER_LEFT = "····«····‹····";
     public final static String METER_RIGHT = "····›····»····";
     private float mAccuracy;
-    private final ResourceProvider mResourceProvider;
+    private final MockableTextView mAccuracyView;
+    private final MockableTextView mLag;
     private long mLocationTime;
     private final MeterView mMeterView;
+    private final MockableTextView mProvider;
+    private final ResourceProvider mResourceProvider;
     private final MockableTextView mStatus;
     private final Time mTime;
-    private final MockableTextView mLag;
-    private final MockableTextView mProvider;
-    private final MockableTextView mAccuracyView;
 
     public LocationViewer(ResourceProvider resourceProvider, MeterView meterView,
             MockableTextView provider, MockableTextView lag, MockableTextView accuracy,

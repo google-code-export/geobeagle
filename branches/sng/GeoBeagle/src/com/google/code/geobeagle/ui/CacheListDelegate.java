@@ -20,7 +20,7 @@ import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.ResourceProvider;
 import com.google.code.geobeagle.data.CacheListData;
 import com.google.code.geobeagle.data.di.CacheListDataDI;
-import com.google.code.geobeagle.data.di.DestinationFactory;
+import com.google.code.geobeagle.data.di.GeocacheFactory;
 import com.google.code.geobeagle.io.Database;
 import com.google.code.geobeagle.io.GpxImporter;
 import com.google.code.geobeagle.io.LocationBookmarksSql;
@@ -88,14 +88,14 @@ public class CacheListDelegate {
         final ErrorDisplayer errorDisplayer = new ErrorDisplayer(parent);
         final Database database = DatabaseDI.create(parent);
         final ResourceProvider resourceProvider = new ResourceProvider(parent);
-        final DestinationFactory destinationFactory = new DestinationFactory(resourceProvider);
+        final GeocacheFactory geocacheFactory = new GeocacheFactory(resourceProvider);
         final LocationControl locationControl = LocationControl.create(((LocationManager)parent
                 .getSystemService(Context.LOCATION_SERVICE)));
-        final LocationBookmarksSql locationBookmarks = DatabaseDI.create(locationControl,
-                database, destinationFactory, errorDisplayer);
+        final LocationBookmarksSql locationBookmarks = DatabaseDI.create(locationControl, database,
+                geocacheFactory, errorDisplayer);
         final SimpleAdapterFactory simpleAdapterFactory = new SimpleAdapterFactory();
         final CacheListData cacheListData = CacheListDataDI.create(resourceProvider,
-                destinationFactory);
+                geocacheFactory);
         final DatabaseDI.SQLiteWrapper sqliteWrapper = new DatabaseDI.SQLiteWrapper(null);
         final CacheListActions.Action actions[] = CacheListActions.create(parent, database,
                 sqliteWrapper, cacheListData, errorDisplayer);
@@ -108,10 +108,10 @@ public class CacheListDelegate {
 
     private final CacheListActions.Action mActions[];
     private final CacheListData mCacheListData;
+    private final LocationBookmarksSql mCachesSqlTable;
     private final CacheListOnCreateContextMenuListener.Factory mCreateContextMenuFactory;
     private final ErrorDisplayer mErrorDisplayer;
     private final GpxImporter mGpxImporter;
-    private final LocationBookmarksSql mCachesSqlTable;
     private final LocationControl mLocationControl;
     private final ListActivity mParent;
     private SimpleAdapter mSimpleAdapter;

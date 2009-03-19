@@ -14,21 +14,21 @@
 
 package com.google.code.geobeagle.io;
 
-import com.google.code.geobeagle.data.Destination;
-import com.google.code.geobeagle.data.di.DestinationFactory;
+import com.google.code.geobeagle.data.Geocache;
+import com.google.code.geobeagle.data.di.GeocacheFactory;
 import com.google.code.geobeagle.io.di.DatabaseDI.SQLiteWrapper;
 import com.google.code.geobeagle.ui.ErrorDisplayer;
 
 public class LocationSaver {
     private final CacheWriter mCacheWriter;
     private final Database mDatabase;
-    private final DestinationFactory mDestinationFactory;
+    private final GeocacheFactory mDestinationFactory;
     private final SQLiteWrapper mSQLiteWrapper;
 
-    public LocationSaver(Database database, DestinationFactory destinationFactory,
+    public LocationSaver(Database database, GeocacheFactory geocacheFactory,
             ErrorDisplayer errorDisplayer, SQLiteWrapper sqliteWrapper, CacheWriter cacheWriter) {
         mDatabase = database;
-        mDestinationFactory = destinationFactory;
+        mDestinationFactory = geocacheFactory;
         mSQLiteWrapper = sqliteWrapper;
         mCacheWriter = cacheWriter;
     }
@@ -37,9 +37,9 @@ public class LocationSaver {
         mSQLiteWrapper.openWritableDatabase(mDatabase);
         // TODO: catch errors on open
         mCacheWriter.startWriting();
-        Destination destination = mDestinationFactory.create(location);
-        mCacheWriter.insertAndUpdateCache(destination.getId(), destination.getName(), destination
-                .getLatitude(), destination.getLongitude(), Database.S0_INTENT);
+        Geocache geocache = mDestinationFactory.create(location);
+        mCacheWriter.insertAndUpdateCache(geocache.getId(), geocache.getName(), geocache
+                .getLatitude(), geocache.getLongitude(), Database.S0_INTENT);
         mCacheWriter.stopWriting();
         mSQLiteWrapper.close();
     }

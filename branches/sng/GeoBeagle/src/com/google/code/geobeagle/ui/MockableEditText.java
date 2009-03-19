@@ -21,11 +21,7 @@ public class MockableEditText {
     private final EditText mEditText;
 
     public MockableEditText(EditText editText) {
-        this.mEditText = editText;
-    }
-
-    public void setText(CharSequence s) {
-        mEditText.setText(s);
+        mEditText = editText;
     }
 
     public CharSequence getText() {
@@ -34,5 +30,9 @@ public class MockableEditText {
 
     public void setOnFocusChangeListener(OnFocusChangeListener l) {
         mEditText.setOnFocusChangeListener(l);
+    }
+
+    public void setText(CharSequence s) {
+        mEditText.setText(s);
     }
 }

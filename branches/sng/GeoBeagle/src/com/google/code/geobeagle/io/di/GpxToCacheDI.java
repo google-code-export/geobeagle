@@ -20,31 +20,19 @@ import java.io.Reader;
 public class GpxToCacheDI {
 
     public static class XmlPullParserWrapper {
-        private XmlPullParser mXmlPullParser;
         private String mSource;
+        private XmlPullParser mXmlPullParser;
 
-        public void open(String path) throws XmlPullParserException, FileNotFoundException {
-            final XmlPullParser newPullParser = XmlPullParserFactory.newInstance().newPullParser();
-            final Reader reader = new BufferedReader(new FileReader(path));
-            newPullParser.setInput(reader);
-            mSource = path;
-            mXmlPullParser = newPullParser;
+        public String getAttributeValue(String namespace, String name) {
+            return mXmlPullParser.getAttributeValue(namespace, name);
         }
 
         public int getEventType() throws XmlPullParserException {
             return mXmlPullParser.getEventType();
         }
 
-        public int next() throws XmlPullParserException, IOException {
-            return mXmlPullParser.next();
-        }
-
         public String getName() {
             return mXmlPullParser.getName();
-        }
-
-        public String getAttributeValue(String namespace, String name) {
-            return mXmlPullParser.getAttributeValue(namespace, name);
         }
 
         public String getSource() {
@@ -53,6 +41,18 @@ public class GpxToCacheDI {
 
         public String getText() {
             return mXmlPullParser.getText();
+        }
+
+        public int next() throws XmlPullParserException, IOException {
+            return mXmlPullParser.next();
+        }
+
+        public void open(String path) throws XmlPullParserException, FileNotFoundException {
+            final XmlPullParser newPullParser = XmlPullParserFactory.newInstance().newPullParser();
+            final Reader reader = new BufferedReader(new FileReader(path));
+            newPullParser.setInput(reader);
+            mSource = path;
+            mXmlPullParser = newPullParser;
         }
 
     }

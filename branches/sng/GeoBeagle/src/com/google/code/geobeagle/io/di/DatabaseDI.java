@@ -3,7 +3,7 @@ package com.google.code.geobeagle.io.di;
 
 import com.google.code.geobeagle.LocationControl;
 import com.google.code.geobeagle.Locations;
-import com.google.code.geobeagle.data.di.DestinationFactory;
+import com.google.code.geobeagle.data.di.GeocacheFactory;
 import com.google.code.geobeagle.io.CacheReader;
 import com.google.code.geobeagle.io.CacheWriter;
 import com.google.code.geobeagle.io.Database;
@@ -112,12 +112,12 @@ public class DatabaseDI {
     }
 
     public static LocationBookmarksSql create(LocationControl locationControl, Database database,
-            DestinationFactory destinationFactory, ErrorDisplayer errorDisplayer) {
+            GeocacheFactory geocacheFactory, ErrorDisplayer errorDisplayer) {
         final Locations locations = new Locations();
         final SQLiteWrapper sqliteWrapper = new SQLiteWrapper(null);
         final CacheReader cacheReader = createCacheReader(sqliteWrapper);
         return new LocationBookmarksSql(cacheReader, locations, database, sqliteWrapper,
-                destinationFactory, errorDisplayer, locationControl);
+                geocacheFactory, errorDisplayer, locationControl);
     }
 
     public static CacheReader createCacheReader(SQLiteWrapper sqliteWrapper) {

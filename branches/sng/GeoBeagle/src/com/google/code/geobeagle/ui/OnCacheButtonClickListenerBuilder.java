@@ -20,8 +20,8 @@ import android.app.Activity;
 import android.widget.Button;
 
 public class OnCacheButtonClickListenerBuilder {
-    private final ErrorDisplayer mErrorDisplayer;
     private final Activity mContext;
+    private final ErrorDisplayer mErrorDisplayer;
 
     public OnCacheButtonClickListenerBuilder(Activity context, ErrorDisplayer errorDisplayer) {
         mErrorDisplayer = errorDisplayer;

@@ -21,20 +21,20 @@ import android.content.Intent;
 
 public class IntentStarterViewUri implements IntentStarter {
     private final Context mContext;
-    private final DestinationToUri mDestinationToUri;
+    private final GeocacheToUri mGeocacheToUri;
     private final IntentFactory mIntentFactory;
     private final LocationSetter mLocationSetter;
 
     public IntentStarterViewUri(Context context, IntentFactory intentFactory,
-            LocationSetter locationSetter, DestinationToUri destinationToUri) {
+            LocationSetter locationSetter, GeocacheToUri geocacheToUri) {
         mContext = context;
-        mDestinationToUri = destinationToUri;
+        mGeocacheToUri = geocacheToUri;
         mIntentFactory = intentFactory;
         mLocationSetter = locationSetter;
     }
 
     public void startIntent() {
-        mContext.startActivity(mIntentFactory.createIntent(Intent.ACTION_VIEW, mDestinationToUri
-                .convert(mLocationSetter.getDestination())));
+        mContext.startActivity(mIntentFactory.createIntent(Intent.ACTION_VIEW, mGeocacheToUri
+                .convert(mLocationSetter.getGeocache())));
     }
 }

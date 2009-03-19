@@ -14,7 +14,6 @@
 
 package com.google.code.geobeagle.io;
 
-
 // TODO: Rename to CacheTagSqlWriter.
 /**
  * @author sng

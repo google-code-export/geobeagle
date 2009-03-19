@@ -35,7 +35,7 @@ public class CacheWriter {
      * gpx-based caches, and gpx entries with delete_me = 1.
      */
     public void clearEarlierLoads() {
-        mSqlite.execSQL(Database.SQL_CLEAR_EARLIER_LOADS);
+        mSqlite.execSQL(Database.SQL9_CLEAR_EARLIER_LOADS);
     }
 
     public void deleteCache(CharSequence id) {

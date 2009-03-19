@@ -19,7 +19,7 @@ import com.google.code.geobeagle.io.di.CachePersisterFacadeDI.WriterWrapper;
 import java.io.IOException;
 
 public class HtmlWriter {
-    private WriterWrapper mWriter;
+    private final WriterWrapper mWriter;
 
     public HtmlWriter(WriterWrapper writerWrapper) {
         mWriter = writerWrapper;

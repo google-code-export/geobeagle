@@ -17,21 +17,11 @@ package com.google.code.geobeagle.data.di;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.ResourceProvider;
 import com.google.code.geobeagle.Util;
-import com.google.code.geobeagle.data.Destination;
+import com.google.code.geobeagle.data.Geocache;
 
 import java.util.regex.Pattern;
 
-public class DestinationFactory {
-    private final Pattern[] mDestinationPatterns;
-
-    public DestinationFactory(ResourceProvider resourceProvider) {
-        mDestinationPatterns = DestinationFactory.getDestinationPatterns(resourceProvider);
-    }
-
-    public Destination create(CharSequence location) {
-        return Destination.create(location, mDestinationPatterns);
-    }
-
+public class GeocacheFactory {
     public static CharSequence extractDescription(CharSequence location) {
         return Util.splitCoordsAndDescription(location)[1];
     }
@@ -43,5 +33,15 @@ public class DestinationFactory {
             mContentSelectors[ix] = Pattern.compile("(?:" + contentPrefixes[ix] + ")(\\w*)");
         }
         return mContentSelectors;
+    }
+
+    private final Pattern[] mGeocachePatterns;
+
+    public GeocacheFactory(ResourceProvider resourceProvider) {
+        mGeocachePatterns = GeocacheFactory.getDestinationPatterns(resourceProvider);
+    }
+
+    public Geocache create(CharSequence location) {
+        return Geocache.create(location, mGeocachePatterns);
     }
 }

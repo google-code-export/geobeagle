@@ -23,9 +23,9 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 
-public class DestinationVector implements IDestinationVector {
-    public static class LocationComparator implements Comparator<IDestinationVector> {
-        public int compare(IDestinationVector destination1, IDestinationVector destination2) {
+public class GeocacheVector implements IGeocacheVector {
+    public static class LocationComparator implements Comparator<IGeocacheVector> {
+        public int compare(IGeocacheVector destination1, IGeocacheVector destination2) {
             final float d1 = destination1.getDistance();
             final float d2 = destination2.getDistance();
             if (d1 < d2)
@@ -35,20 +35,24 @@ public class DestinationVector implements IDestinationVector {
             return 0;
         }
 
-        public void sort(ArrayList<IDestinationVector> arrayList) {
+        public void sort(ArrayList<IGeocacheVector> arrayList) {
             Collections.sort(arrayList, this);
         }
 
     }
 
-    public static class MyLocation implements IDestinationVector {
+    public static class MyLocation implements IGeocacheVector {
         private final ResourceProvider mResourceProvider;
 
         public MyLocation(ResourceProvider resourceProvider) {
             mResourceProvider = resourceProvider;
         }
 
-        public Destination getDestination() {
+        public CharSequence getCoordinatesIdAndName() {
+            return null;
+        }
+
+        public Geocache getDestination() {
             return null;
         }
 
@@ -60,10 +64,6 @@ public class DestinationVector implements IDestinationVector {
             return mResourceProvider.getString(R.string.my_current_location);
         }
 
-        public CharSequence getCoordinatesIdAndName() {
-            return null;
-        }
-
         public Map<String, Object> getViewMap() {
             Map<String, Object> map = new HashMap<String, Object>(1);
             map.put("cache", mResourceProvider.getString(R.string.my_current_location));
@@ -72,15 +72,18 @@ public class DestinationVector implements IDestinationVector {
 
     }
 
-    private final Destination mDestination;
+    private final Geocache mDestination;
     private final float mDistance;
     private final DistanceFormatter mDistanceFormatter;
 
-    public DestinationVector(Destination destination, float distance,
-            DistanceFormatter distanceFormatter) {
-        mDestination = destination;
+    public GeocacheVector(Geocache geocache, float distance, DistanceFormatter distanceFormatter) {
+        mDestination = geocache;
         mDistance = distance;
         mDistanceFormatter = distanceFormatter;
+    }
+
+    public CharSequence getCoordinatesIdAndName() {
+        return mDestination.getCoordinatesIdAndName();
     }
 
     public float getDistance() {
@@ -89,10 +92,6 @@ public class DestinationVector implements IDestinationVector {
 
     public CharSequence getId() {
         return mDestination.getId();
-    }
-
-    public CharSequence getCoordinatesIdAndName() {
-        return mDestination.getCoordinatesIdAndName();
     }
 
     public Map<String, Object> getViewMap() {

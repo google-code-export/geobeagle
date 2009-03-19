@@ -17,8 +17,8 @@ package com.google.code.geobeagle;
 import android.content.SharedPreferences;
 
 public class AppLifecycleManager {
-    private final SharedPreferences mPreferences;
     private final LifecycleManager[] mLifecycleManagers;
+    private final SharedPreferences mPreferences;
 
     public AppLifecycleManager(SharedPreferences preferences, LifecycleManager[] lifecycleManagers) {
         mLifecycleManagers = lifecycleManagers;

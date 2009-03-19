@@ -16,12 +16,12 @@ package com.google.code.geobeagle.data;
 
 import java.util.Map;
 
-public interface IDestinationVector {
+public interface IGeocacheVector {
+    public CharSequence getCoordinatesIdAndName();
+
     public float getDistance();
 
     public CharSequence getId();
-
-    public CharSequence getCoordinatesIdAndName();
 
     public Map<String, Object> getViewMap();
 }

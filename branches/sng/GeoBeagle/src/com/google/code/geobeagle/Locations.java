@@ -23,16 +23,16 @@ public class Locations {
         create(100);
     }
 
-    private void create(int maxSize) {
-        mLocations = new ArrayList<CharSequence>();
-    }
-
     public void add(CharSequence location) {
         mLocations.add(location);
     }
 
     public void clear() {
         mLocations.clear();
+    }
+
+    private void create(int maxSize) {
+        mLocations = new ArrayList<CharSequence>();
     }
 
     public ArrayList<CharSequence> getPreviousLocations() {

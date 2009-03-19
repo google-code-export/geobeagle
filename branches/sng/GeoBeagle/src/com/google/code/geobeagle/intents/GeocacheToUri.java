@@ -14,8 +14,8 @@
 
 package com.google.code.geobeagle.intents;
 
-import com.google.code.geobeagle.data.Destination;
+import com.google.code.geobeagle.data.Geocache;
 
-interface DestinationToUri {
-    public String convert(Destination destination);
+interface GeocacheToUri {
+    public String convert(Geocache geocache);
 }

@@ -18,6 +18,7 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.location.LocationListener;
 import android.location.LocationManager;
+
 /*
  * Handle onPause and onResume for the LocationManager.
  */
@@ -25,7 +26,8 @@ public class LocationLifecycleManager implements LifecycleManager {
     private final LocationListener mLocationListener;
     private final LocationManager mLocationManager;
 
-    public LocationLifecycleManager(LocationListener locationListener, LocationManager locationManager) {
+    public LocationLifecycleManager(LocationListener locationListener,
+            LocationManager locationManager) {
         mLocationListener = locationListener;
         mLocationManager = locationManager;
     }

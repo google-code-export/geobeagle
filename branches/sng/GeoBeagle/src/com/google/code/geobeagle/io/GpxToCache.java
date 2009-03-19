@@ -23,8 +23,13 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 public class GpxToCache {
+    @SuppressWarnings("serial")
+    public static class CancelException extends Exception {
+    }
+
     private boolean mAbort;
     private final EventHelper mEventHelper;
+
     private final XmlPullParserWrapper mXmlPullParserWrapper;
 
     public GpxToCache(XmlPullParserWrapper xmlPullParserWrapper, EventHelper eventHelper) {
@@ -38,10 +43,6 @@ public class GpxToCache {
 
     public String getSource() {
         return mXmlPullParserWrapper.getSource();
-    }
-
-    @SuppressWarnings("serial")
-    public static class CancelException extends Exception {
     }
 
     /**

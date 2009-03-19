@@ -21,31 +21,25 @@ import static org.easymock.classextension.EasyMock.verify;
 
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.ResourceProvider;
-import com.google.code.geobeagle.data.Destination;
-import com.google.code.geobeagle.ui.ContentSelector;
+import com.google.code.geobeagle.data.Geocache;
 
 import junit.framework.TestCase;
 
-public class DestinationToCachePageTest extends TestCase {
-
+public class GeocacheToGoogleMapTest extends TestCase {
     public void testConvert() {
         ResourceProvider resourceProvider = createMock(ResourceProvider.class);
-        Destination destination = createMock(Destination.class);
-        ContentSelector contentSelector = createMock(ContentSelector.class);
-        expect(destination.getShortId()).andReturn("FOO");
-        expect(destination.getContentIndex()).andReturn(0);
-        expect(resourceProvider.getStringArray(R.array.cache_page_url)).andReturn(new String[] {
-                "http://coord.info/GC%1$s", ""
-        });
-        expect(contentSelector.getIndex()).andReturn(0);
+        Geocache geocache = createMock(Geocache.class);
+        expect(geocache.getIdAndName()).andReturn("GCFOO");
+        expect(geocache.getLatitude()).andReturn(37.123);
+        expect(geocache.getLongitude()).andReturn(122.345);
+        expect(resourceProvider.getString(R.string.map_intent)).andReturn(
+                "geo:0,0?q=%1$.5f,%2$.5f (%3$s)");
 
-        replay(destination);
+        replay(geocache);
         replay(resourceProvider);
-        DestinationToCachePage destinationToCachePage = new DestinationToCachePage(
-                resourceProvider, contentSelector);
-        assertEquals("http://coord.info/GCFOO", destinationToCachePage.convert(destination));
-        verify(destination);
+        GeocacheToGoogleMap geocacheToCachePage = new GeocacheToGoogleMap(resourceProvider);
+        assertEquals("geo:0,0?q=37.12300,122.34500 (GCFOO)", geocacheToCachePage.convert(geocache));
+        verify(geocache);
         verify(resourceProvider);
     }
-
 }

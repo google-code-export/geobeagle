@@ -16,7 +16,7 @@ package com.google.code.geobeagle.io;
 
 import com.google.code.geobeagle.LocationControl;
 import com.google.code.geobeagle.Locations;
-import com.google.code.geobeagle.data.di.DestinationFactory;
+import com.google.code.geobeagle.data.di.GeocacheFactory;
 import com.google.code.geobeagle.io.CacheReader.CacheReaderCursor;
 import com.google.code.geobeagle.io.di.DatabaseDI.SQLiteWrapper;
 import com.google.code.geobeagle.ui.ErrorDisplayer;
@@ -24,20 +24,27 @@ import com.google.code.geobeagle.ui.ErrorDisplayer;
 import java.util.ArrayList;
 
 public class LocationBookmarksSql {
+    private final CacheReader mCacheReader;
     private final Database mDatabase;
+    private final LocationControl mLocationControl;
     private final Locations mLocations;
     private final SQLiteWrapper mSQLiteWrapper;
-    private final LocationControl mLocationControl;
-    private final CacheReader mCacheReader;
 
     public LocationBookmarksSql(CacheReader cacheReader, Locations locations, Database database,
-            SQLiteWrapper sqliteWrapper, DestinationFactory destinationFactory,
+            SQLiteWrapper sqliteWrapper, GeocacheFactory geocacheFactory,
             ErrorDisplayer errorDisplayer, LocationControl locationControl) {
         mLocations = locations;
         mDatabase = database;
         mSQLiteWrapper = sqliteWrapper;
         mLocationControl = locationControl;
         mCacheReader = cacheReader;
+    }
+
+    public int getCount() {
+        mSQLiteWrapper.openWritableDatabase(mDatabase);
+        int count = mCacheReader.getTotalCount();
+        mSQLiteWrapper.close();
+        return count;
     }
 
     public Locations getDescriptionsAndLocations() {
@@ -67,13 +74,6 @@ public class LocationBookmarksSql {
         do {
             mLocations.add(cursor.getCache());
         } while (cursor.moveToNext());
-    }
-
-    public int getCount() {
-        mSQLiteWrapper.openWritableDatabase(mDatabase);
-        int count = mCacheReader.getTotalCount();
-        mSQLiteWrapper.close();
-        return count;
     }
 
 }
