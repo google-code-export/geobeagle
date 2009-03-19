@@ -19,8 +19,9 @@ import static org.easymock.classextension.EasyMock.createMock;
 import static org.easymock.classextension.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.verify;
 
+import com.google.code.geobeagle.Geocaches;
 import com.google.code.geobeagle.LocationControl;
-import com.google.code.geobeagle.Locations;
+import com.google.code.geobeagle.data.Geocache;
 import com.google.code.geobeagle.io.CacheReader.CacheReaderCursor;
 import com.google.code.geobeagle.io.di.DatabaseDI.SQLiteWrapper;
 
@@ -39,13 +40,14 @@ public class LocationBookmarksSqlTest extends TestCase {
         SQLiteWrapper sqliteWrapper = createMock(SQLiteWrapper.class);
         LocationControl locationControl = createMock(LocationControl.class);
         CacheReader cacheReader = createMock(CacheReader.class);
-        Locations locations = createMock(Locations.class);
+        Geocaches geocaches = createMock(Geocaches.class);
         CacheReaderCursor cursor = createMock(CacheReaderCursor.class);
+        Geocache geocache = createMock(Geocache.class);
 
         sqliteWrapper.openWritableDatabase(mDatabase);
         expect(locationControl.getLocation()).andReturn(null);
         expect(cacheReader.open(null)).andReturn(cursor);
-        expect(cursor.getCache()).andReturn("GC1234");
+        expect(cursor.getCache()).andReturn(geocache);
         expect(cursor.moveToNext()).andReturn(false);
         cursor.close();
         sqliteWrapper.close();
@@ -56,7 +58,7 @@ public class LocationBookmarksSqlTest extends TestCase {
         replay(cacheReader);
         replay(cursor);
         LocationBookmarksSql locationBookmarksSql = new LocationBookmarksSql(cacheReader,
-                locations, mDatabase, sqliteWrapper, null, null, locationControl);
+                geocaches, mDatabase, sqliteWrapper, null, null, locationControl);
         locationBookmarksSql.load();
         verify(mDatabase);
         verify(locationControl);
@@ -66,41 +68,44 @@ public class LocationBookmarksSqlTest extends TestCase {
     }
 
     public void testReadOne() {
-        Locations locations = createMock(Locations.class);
+        Geocaches geocaches = createMock(Geocaches.class);
         CacheReaderCursor cursor = createMock(CacheReaderCursor.class);
+        Geocache geocache = createMock(Geocache.class);
 
-        locations.clear();
-        expect(cursor.getCache()).andReturn("122 32.3423 83 32.3221 (LB1234)");
+        geocaches.clear();
+        expect(cursor.getCache()).andReturn(geocache);
         expect(cursor.moveToNext()).andReturn(false);
-        locations.add("122 32.3423 83 32.3221 (LB1234)");
+        geocaches.add(geocache);
 
-        replay(locations);
+        replay(geocaches);
         replay(cursor);
-        LocationBookmarksSql locationBookmarksSql = new LocationBookmarksSql(null, locations, null,
+        LocationBookmarksSql locationBookmarksSql = new LocationBookmarksSql(null, geocaches, null,
                 null, null, null, null);
         locationBookmarksSql.read(cursor);
-        verify(locations);
+        verify(geocaches);
         verify(cursor);
     }
 
     public void testReadTwo() {
-        Locations locations = createMock(Locations.class);
+        Geocaches geocaches = createMock(Geocaches.class);
         CacheReaderCursor cursor = createMock(CacheReaderCursor.class);
+        Geocache geocache1 = createMock(Geocache.class);
+        Geocache geocache2 = createMock(Geocache.class);
 
-        locations.clear();
-        expect(cursor.getCache()).andReturn("122 32.3423 83 32.3221 (LB1234)");
-        locations.add("122 32.3423 83 32.3221 (LB1234)");
+        geocaches.clear();
+        expect(cursor.getCache()).andReturn(geocache1);
+        geocaches.add(geocache1);
         expect(cursor.moveToNext()).andReturn(true);
-        expect(cursor.getCache()).andReturn("122 32.3423 83 32.3221 (LB54321)");
-        locations.add("122 32.3423 83 32.3221 (LB54321)");
+        expect(cursor.getCache()).andReturn(geocache2);
+        geocaches.add(geocache2);
         expect(cursor.moveToNext()).andReturn(false);
 
-        replay(locations);
+        replay(geocaches);
         replay(cursor);
-        LocationBookmarksSql locationBookmarksSql = new LocationBookmarksSql(null, locations, null,
+        LocationBookmarksSql locationBookmarksSql = new LocationBookmarksSql(null, geocaches, null,
                 null, null, null, null);
         locationBookmarksSql.read(cursor);
-        verify(locations);
+        verify(geocaches);
         verify(cursor);
     }
 

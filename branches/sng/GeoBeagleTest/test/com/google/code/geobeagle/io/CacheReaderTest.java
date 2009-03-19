@@ -8,6 +8,8 @@ import static org.easymock.classextension.EasyMock.createMock;
 import static org.easymock.classextension.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.verify;
 
+import com.google.code.geobeagle.data.Geocache;
+import com.google.code.geobeagle.data.di.GeocacheFactory;
 import com.google.code.geobeagle.io.CacheReader.CacheReaderCursor;
 import com.google.code.geobeagle.io.CacheReader.WhereFactory;
 import com.google.code.geobeagle.io.di.DatabaseDI;
@@ -33,21 +35,27 @@ public class CacheReaderTest extends TestCase {
         cursor.close();
 
         replay(cursor);
-        new CacheReaderCursor(cursor).close();
+        new CacheReaderCursor(cursor, null).close();
         verify(cursor);
     }
 
     public void testCursorGetCache() {
         Cursor cursor = createMock(Cursor.class);
+        GeocacheFactory geocacheFactory = createMock(GeocacheFactory.class);
+        Geocache geocache = createMock(Geocache.class);
 
-        expect(cursor.getString(0)).andReturn("122");
-        expect(cursor.getString(1)).andReturn("37");
-        expect(cursor.getString(2)).andReturn("the_name");
-        expect(cursor.getString(3)).andReturn("description");
+        expect(cursor.getDouble(0)).andReturn(122.0);
+        expect(cursor.getDouble(1)).andReturn(37.0);
+        expect(cursor.getString(2)).andReturn("the_id");
+        expect(cursor.getString(3)).andReturn("name");
+        expect(geocacheFactory.create(Geocache.PROVIDER_GROUNDSPEAK, "the_id", "name", 122.0, 37.0))
+                .andReturn(geocache);
 
         replay(cursor);
-        assertEquals("122, 37 (the_name: description)", new CacheReaderCursor(cursor).getCache());
+        replay(geocacheFactory);
+        assertEquals(geocache, new CacheReaderCursor(cursor, geocacheFactory).getCache());
         verify(cursor);
+        verify(geocacheFactory);
     }
 
     public void testCursorMoveToNext() {
@@ -56,7 +64,7 @@ public class CacheReaderTest extends TestCase {
         expect(cursor.moveToNext()).andReturn(true);
 
         replay(cursor);
-        new CacheReaderCursor(cursor).moveToNext();
+        new CacheReaderCursor(cursor, null).moveToNext();
         verify(cursor);
     }
 

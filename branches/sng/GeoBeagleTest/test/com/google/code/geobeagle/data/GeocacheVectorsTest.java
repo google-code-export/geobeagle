@@ -35,13 +35,14 @@ public class GeocacheVectorsTest extends TestCase {
     public void testAddLocations() {
         GeocacheVectorFactory geocacheVectorFactory = createMock(GeocacheVectorFactory.class);
         Location here = createMock(Location.class);
+        Geocache geocache = createMock(Geocache.class);
         GeocacheVector geocacheVector = createMock(GeocacheVector.class);
 
-        expect(geocacheVectorFactory.create("a cache", here)).andReturn(geocacheVector);
+        expect(geocacheVectorFactory.create(geocache, here)).andReturn(geocacheVector);
 
         replay(geocacheVectorFactory);
-        ArrayList<CharSequence> locations = new ArrayList<CharSequence>(0);
-        locations.add("a cache");
+        ArrayList<Geocache> locations = new ArrayList<Geocache>(0);
+        locations.add(geocache);
         GeocacheVectors geocacheVectors = new GeocacheVectors(null, geocacheVectorFactory);
         geocacheVectors.addLocations(locations, here);
         assertEquals(geocacheVector, geocacheVectors.get(0));

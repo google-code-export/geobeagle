@@ -19,7 +19,7 @@ import com.google.code.geobeagle.LocationControl;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.Util;
 import com.google.code.geobeagle.data.Geocache;
-import com.google.code.geobeagle.data.di.GeocacheFactory;
+import com.google.code.geobeagle.data.di.GeocacheFromTextFactory;
 import com.google.code.geobeagle.io.LocationSaver;
 
 import android.content.Context;
@@ -31,7 +31,7 @@ public class LocationSetter implements LifecycleManager {
 
     public static final String FNAME_RECENT_LOCATIONS = "RECENT_LOCATIONS";
     public static final String PREFS_LOCATION = "Location";
-    private final GeocacheFactory mDestinationFactory;
+    private final GeocacheFromTextFactory mDestinationFactory;
     private final ErrorDisplayer mErrorDisplayer;
     private final LocationControl mGpsControl;
     private final String mInitialDestination;
@@ -39,10 +39,10 @@ public class LocationSetter implements LifecycleManager {
     private final MockableEditText mTxtLocation;
 
     public LocationSetter(Context context, MockableEditText txtLocation,
-            LocationControl locationControl, GeocacheFactory geocacheFactory,
+            LocationControl locationControl, GeocacheFromTextFactory geocacheFromTextFactory,
             String initialDestination, ErrorDisplayer errorDisplayer, LocationSaver locationSaver) {
         mTxtLocation = txtLocation;
-        mDestinationFactory = geocacheFactory;
+        mDestinationFactory = geocacheFromTextFactory;
         mGpsControl = locationControl;
         mInitialDestination = initialDestination;
         mErrorDisplayer = errorDisplayer;

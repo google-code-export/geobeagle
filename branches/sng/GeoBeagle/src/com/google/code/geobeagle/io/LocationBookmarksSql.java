@@ -14,9 +14,10 @@
 
 package com.google.code.geobeagle.io;
 
+import com.google.code.geobeagle.Geocaches;
 import com.google.code.geobeagle.LocationControl;
-import com.google.code.geobeagle.Locations;
-import com.google.code.geobeagle.data.di.GeocacheFactory;
+import com.google.code.geobeagle.data.Geocache;
+import com.google.code.geobeagle.data.di.GeocacheFromTextFactory;
 import com.google.code.geobeagle.io.CacheReader.CacheReaderCursor;
 import com.google.code.geobeagle.io.di.DatabaseDI.SQLiteWrapper;
 import com.google.code.geobeagle.ui.ErrorDisplayer;
@@ -26,14 +27,14 @@ import java.util.ArrayList;
 public class LocationBookmarksSql {
     private final CacheReader mCacheReader;
     private final Database mDatabase;
+    private final Geocaches mGeocaches;
     private final LocationControl mLocationControl;
-    private final Locations mLocations;
     private final SQLiteWrapper mSQLiteWrapper;
 
-    public LocationBookmarksSql(CacheReader cacheReader, Locations locations, Database database,
-            SQLiteWrapper sqliteWrapper, GeocacheFactory geocacheFactory,
+    public LocationBookmarksSql(CacheReader cacheReader, Geocaches geocaches, Database database,
+            SQLiteWrapper sqliteWrapper, GeocacheFromTextFactory geocacheFromTextFactory,
             ErrorDisplayer errorDisplayer, LocationControl locationControl) {
-        mLocations = locations;
+        mGeocaches = geocaches;
         mDatabase = database;
         mSQLiteWrapper = sqliteWrapper;
         mLocationControl = locationControl;
@@ -47,8 +48,8 @@ public class LocationBookmarksSql {
         return count;
     }
 
-    public ArrayList<CharSequence> getLocations() {
-        return mLocations.getPreviousLocations();
+    public ArrayList<Geocache> getLocations() {
+        return mGeocaches.getPreviousGeocaches();
     }
 
     public void load() {
@@ -66,9 +67,9 @@ public class LocationBookmarksSql {
     }
 
     public void read(CacheReaderCursor cursor) {
-        mLocations.clear();
+        mGeocaches.clear();
         do {
-            mLocations.add(cursor.getCache());
+            mGeocaches.add(cursor.getCache());
         } while (cursor.moveToNext());
     }
 

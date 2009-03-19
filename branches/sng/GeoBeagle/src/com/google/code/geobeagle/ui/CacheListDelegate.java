@@ -19,8 +19,9 @@ import com.google.code.geobeagle.LocationControl;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.ResourceProvider;
 import com.google.code.geobeagle.data.CacheListData;
+import com.google.code.geobeagle.data.Geocache;
 import com.google.code.geobeagle.data.di.CacheListDataDI;
-import com.google.code.geobeagle.data.di.GeocacheFactory;
+import com.google.code.geobeagle.data.di.GeocacheFromTextFactory;
 import com.google.code.geobeagle.io.Database;
 import com.google.code.geobeagle.io.GpxImporter;
 import com.google.code.geobeagle.io.LocationBookmarksSql;
@@ -88,14 +89,15 @@ public class CacheListDelegate {
         final ErrorDisplayer errorDisplayer = new ErrorDisplayer(parent);
         final Database database = DatabaseDI.create(parent);
         final ResourceProvider resourceProvider = new ResourceProvider(parent);
-        final GeocacheFactory geocacheFactory = new GeocacheFactory(resourceProvider);
+        final GeocacheFromTextFactory geocacheFromTextFactory = new GeocacheFromTextFactory(
+                resourceProvider);
         final LocationControl locationControl = LocationControl.create(((LocationManager)parent
                 .getSystemService(Context.LOCATION_SERVICE)));
         final LocationBookmarksSql locationBookmarks = DatabaseDI.create(locationControl, database,
-                geocacheFactory, errorDisplayer);
+                geocacheFromTextFactory, errorDisplayer);
         final SimpleAdapterFactory simpleAdapterFactory = new SimpleAdapterFactory();
         final CacheListData cacheListData = CacheListDataDI.create(resourceProvider,
-                geocacheFactory);
+                geocacheFromTextFactory);
         final DatabaseDI.SQLiteWrapper sqliteWrapper = new DatabaseDI.SQLiteWrapper(null);
         final CacheListActions.Action actions[] = CacheListActions.create(parent, database,
                 sqliteWrapper, cacheListData, errorDisplayer);
@@ -181,7 +183,7 @@ public class CacheListDelegate {
     public void onResume() {
         try {
             mCachesSqlTable.load();
-            ArrayList<CharSequence> locations = mCachesSqlTable.getLocations();
+            ArrayList<Geocache> locations = mCachesSqlTable.getLocations();
             mCacheListData.add(locations, mLocationControl.getLocation());
             mSimpleAdapter = mSimpleAdapterFactory.create(mParent, mCacheListData.getAdapterData(),
                     R.layout.cache_row, ADAPTER_FROM, ADAPTER_TO);

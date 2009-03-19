@@ -15,7 +15,7 @@
 package com.google.code.geobeagle;
 
 import com.google.code.geobeagle.LocationControl.LocationChooser;
-import com.google.code.geobeagle.data.di.GeocacheFactory;
+import com.google.code.geobeagle.data.di.GeocacheFromTextFactory;
 import com.google.code.geobeagle.intents.GeocacheToCachePage;
 import com.google.code.geobeagle.intents.GeocacheToGoogleMap;
 import com.google.code.geobeagle.intents.IntentFactory;
@@ -145,17 +145,18 @@ public class GeoBeagle extends Activity {
             final LocationManager locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
             mGpsControl = new LocationControl(locationManager, new LocationChooser());
             mLocationListener = new GeoBeagleLocationListener(mGpsControl, mLocationViewer);
-            final GeocacheFactory geocacheFactory = new GeocacheFactory(mResourceProvider);
+            final GeocacheFromTextFactory geocacheFromTextFactory = new GeocacheFromTextFactory(
+                    mResourceProvider);
             final Database database = DatabaseDI.create(this);
 
             final MockableEditText mockableTxtLocation = new MockableEditText(txtLocation);
             final DatabaseDI.SQLiteWrapper sqliteWrapper = new DatabaseDI.SQLiteWrapper(null);
             final CacheWriter cacheWriter = DatabaseDI.createCacheWriter(sqliteWrapper);
-            final LocationSaver locationSaver = new LocationSaver(database, geocacheFactory,
-                    mErrorDisplayer, sqliteWrapper, cacheWriter);
+            final LocationSaver locationSaver = new LocationSaver(database,
+                    geocacheFromTextFactory, mErrorDisplayer, sqliteWrapper, cacheWriter);
             final String initialDestination = getString(R.string.initial_destination);
             mLocationSetter = new LocationSetter(this, mockableTxtLocation, mGpsControl,
-                    geocacheFactory, initialDestination, mErrorDisplayer, locationSaver);
+                    geocacheFromTextFactory, initialDestination, mErrorDisplayer, locationSaver);
 
             setCacheClickListeners();
 

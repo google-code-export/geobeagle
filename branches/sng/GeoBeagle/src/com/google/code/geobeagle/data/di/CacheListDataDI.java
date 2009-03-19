@@ -10,11 +10,11 @@ import com.google.code.geobeagle.data.GeocacheVector.LocationComparator;
 public class CacheListDataDI {
 
     public static CacheListData create(ResourceProvider resourceProvider,
-            GeocacheFactory geocacheFactory) {
+            GeocacheFromTextFactory geocacheFromTextFactory) {
         final DistanceFormatter distanceFormatter = new DistanceFormatter();
 
         final GeocacheVectorFactory geocacheVectorFactory = new GeocacheVectorFactory(
-                geocacheFactory, distanceFormatter, resourceProvider);
+                geocacheFromTextFactory, distanceFormatter, resourceProvider);
 
         final LocationComparator locationComparator = new LocationComparator();
         final GeocacheVectors geocacheVectors = new GeocacheVectors(locationComparator,

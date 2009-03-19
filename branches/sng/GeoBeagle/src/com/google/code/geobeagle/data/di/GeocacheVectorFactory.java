@@ -23,13 +23,11 @@ import com.google.code.geobeagle.data.IGeocacheVector;
 import android.location.Location;
 
 public class GeocacheVectorFactory {
-    private final GeocacheFactory mDestinationFactory;
     private final DistanceFormatter mDistanceFormatter;
     private final ResourceProvider mResourceProvider;
 
-    public GeocacheVectorFactory(GeocacheFactory geocacheFactory,
+    public GeocacheVectorFactory(GeocacheFromTextFactory geocacheFromTextFactory,
             DistanceFormatter distanceFormatter, ResourceProvider resourceProvider) {
-        mDestinationFactory = geocacheFactory;
         mDistanceFormatter = distanceFormatter;
         mResourceProvider = resourceProvider;
     }
@@ -45,10 +43,8 @@ public class GeocacheVectorFactory {
         return -1;
     }
 
-    public GeocacheVector create(CharSequence location, Location here) {
-        final Geocache destinationHere = mDestinationFactory.create(location);
-        return new GeocacheVector(destinationHere, calculateDistance(here, destinationHere),
-                mDistanceFormatter);
+    public GeocacheVector create(Geocache location, Location here) {
+        return new GeocacheVector(location, calculateDistance(here, location), mDistanceFormatter);
     }
 
     public IGeocacheVector createMyLocation() {

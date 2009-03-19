@@ -14,7 +14,7 @@
 
 package com.google.code.geobeagle.data;
 
-import com.google.code.geobeagle.data.di.GeocacheFactory;
+import com.google.code.geobeagle.data.di.GeocacheFromTextFactory;
 
 import java.util.regex.Pattern;
 
@@ -50,7 +50,7 @@ public class GeocacheTest extends TestCase {
     }
 
     public void testExtractDescription() {
-        assertEquals("GC123", GeocacheFactory.extractDescription("123 (GC123)"));
+        assertEquals("GC123", GeocacheFromTextFactory.extractDescription("123 (GC123)"));
     }
 
     public void testGetCoordinatesIdAndName() {

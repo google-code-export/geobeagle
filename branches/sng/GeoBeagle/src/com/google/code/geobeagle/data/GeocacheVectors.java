@@ -51,8 +51,8 @@ public class GeocacheVectors {
         mGeocacheVectorsList.add(0, destinationVector);
     }
 
-    public void addLocations(ArrayList<CharSequence> locations, Location here) {
-        for (CharSequence location : locations) {
+    public void addLocations(ArrayList<Geocache> locations, Location here) {
+        for (Geocache location : locations) {
             add(mGeocacheVectorFactory.create(location, here));
         }
     }

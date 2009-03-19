@@ -1,9 +1,10 @@
 
 package com.google.code.geobeagle.io.di;
 
+import com.google.code.geobeagle.Geocaches;
 import com.google.code.geobeagle.LocationControl;
-import com.google.code.geobeagle.Locations;
 import com.google.code.geobeagle.data.di.GeocacheFactory;
+import com.google.code.geobeagle.data.di.GeocacheFromTextFactory;
 import com.google.code.geobeagle.io.CacheReader;
 import com.google.code.geobeagle.io.CacheWriter;
 import com.google.code.geobeagle.io.Database;
@@ -22,7 +23,8 @@ public class DatabaseDI {
 
     public static class CacheReaderCursorFactory {
         public CacheReader.CacheReaderCursor create(Cursor cursor) {
-            return new CacheReader.CacheReaderCursor(cursor);
+            GeocacheFactory geocacheFactory = new GeocacheFactory();
+            return new CacheReader.CacheReaderCursor(cursor, geocacheFactory);
         }
     }
 
@@ -112,12 +114,12 @@ public class DatabaseDI {
     }
 
     public static LocationBookmarksSql create(LocationControl locationControl, Database database,
-            GeocacheFactory geocacheFactory, ErrorDisplayer errorDisplayer) {
-        final Locations locations = new Locations();
+            GeocacheFromTextFactory geocacheFromTextFactory, ErrorDisplayer errorDisplayer) {
+        final Geocaches geocaches = new Geocaches();
         final SQLiteWrapper sqliteWrapper = new SQLiteWrapper(null);
         final CacheReader cacheReader = createCacheReader(sqliteWrapper);
-        return new LocationBookmarksSql(cacheReader, locations, database, sqliteWrapper,
-                geocacheFactory, errorDisplayer, locationControl);
+        return new LocationBookmarksSql(cacheReader, geocaches, database, sqliteWrapper,
+                geocacheFromTextFactory, errorDisplayer, locationControl);
     }
 
     public static CacheReader createCacheReader(SQLiteWrapper sqliteWrapper) {

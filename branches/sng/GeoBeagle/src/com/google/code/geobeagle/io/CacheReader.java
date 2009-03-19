@@ -14,6 +14,8 @@
 
 package com.google.code.geobeagle.io;
 
+import com.google.code.geobeagle.data.Geocache;
+import com.google.code.geobeagle.data.di.GeocacheFactory;
 import com.google.code.geobeagle.io.di.DatabaseDI;
 import com.google.code.geobeagle.io.di.DatabaseDI.SQLiteWrapper;
 
@@ -23,23 +25,20 @@ import android.location.Location;
 public class CacheReader {
     public static class CacheReaderCursor {
         private final Cursor mCursor;
+        private final GeocacheFactory mGeocacheFactory;
 
-        public CacheReaderCursor(Cursor cursor) {
+        public CacheReaderCursor(Cursor cursor, GeocacheFactory geocacheFactory) {
             mCursor = cursor;
+            mGeocacheFactory = geocacheFactory;
         }
 
         void close() {
             mCursor.close();
         }
 
-        public String getCache() {
-            String name = mCursor.getString(3);
-            String id = mCursor.getString(2);
-            if (name.length() > 0 && id.length() > 0) {
-                name = ": " + name;
-            }
-
-            return mCursor.getString(0) + ", " + mCursor.getString(1) + " (" + id + name + ")";
+        public Geocache getCache() {
+            return mGeocacheFactory.create(Geocache.PROVIDER_GROUNDSPEAK, mCursor.getString(2),
+                    mCursor.getString(3), mCursor.getDouble(0), mCursor.getDouble(1));
         }
 
         boolean moveToNext() {

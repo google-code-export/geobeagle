@@ -32,7 +32,7 @@ public class CacheListData {
         mDestinationVectorFactory = geocacheVectorFactory;
     }
 
-    public void add(ArrayList<CharSequence> locations, Location here) {
+    public void add(ArrayList<Geocache> locations, Location here) {
         mDestinationVectors.reset(locations.size());
         mDestinationVectors.addLocations(locations, here);
         mDestinationVectors.add(mDestinationVectorFactory.createMyLocation());

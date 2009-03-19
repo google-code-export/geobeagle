@@ -35,7 +35,7 @@ public class CacheListDataTest extends TestCase {
         IGeocacheVector myLocation = createMock(IGeocacheVector.class);
         Location here = createMock(Location.class);
 
-        ArrayList<CharSequence> locations = new ArrayList<CharSequence>(0);
+        ArrayList<Geocache> locations = new ArrayList<Geocache>(0);
         geocacheVectors.reset(0);
         geocacheVectors.addLocations(locations, here);
         expect(geocacheVectorFactory.createMyLocation()).andReturn(myLocation);

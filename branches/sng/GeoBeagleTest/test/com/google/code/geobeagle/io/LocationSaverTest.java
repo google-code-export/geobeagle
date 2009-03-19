@@ -20,7 +20,7 @@ import static org.easymock.classextension.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.verify;
 
 import com.google.code.geobeagle.data.Geocache;
-import com.google.code.geobeagle.data.di.GeocacheFactory;
+import com.google.code.geobeagle.data.di.GeocacheFromTextFactory;
 import com.google.code.geobeagle.io.di.DatabaseDI;
 
 import junit.framework.TestCase;
@@ -31,12 +31,13 @@ public class LocationSaverTest extends TestCase {
         Database database = createMock(Database.class);
         DatabaseDI.SQLiteWrapper sqliteWrapper = createMock(DatabaseDI.SQLiteWrapper.class);
         CacheWriter writer = createMock(CacheWriter.class);
-        GeocacheFactory geocacheFactory = createMock(GeocacheFactory.class);
+        GeocacheFromTextFactory geocacheFromTextFactory = createMock(GeocacheFromTextFactory.class);
         Geocache geocache = createMock(Geocache.class);
 
         sqliteWrapper.openWritableDatabase(database);
         writer.startWriting();
-        expect(geocacheFactory.create("122 32.3423 83 32.3221 (LB12345)")).andReturn(geocache);
+        expect(geocacheFromTextFactory.create("122 32.3423 83 32.3221 (LB12345)")).andReturn(
+                geocache);
         expect(geocache.getId()).andReturn("LB12345");
         expect(geocache.getName()).andReturn("");
         expect(geocache.getLatitude()).andReturn(122.0);
@@ -49,13 +50,13 @@ public class LocationSaverTest extends TestCase {
         replay(sqliteWrapper);
         replay(writer);
         replay(geocache);
-        replay(geocacheFactory);
-        new LocationSaver(database, geocacheFactory, null, sqliteWrapper, writer)
+        replay(geocacheFromTextFactory);
+        new LocationSaver(database, geocacheFromTextFactory, null, sqliteWrapper, writer)
                 .saveLocation("122 32.3423 83 32.3221 (LB12345)");
         verify(database);
         verify(writer);
         verify(sqliteWrapper);
-        verify(geocacheFactory);
+        verify(geocacheFromTextFactory);
         verify(geocache);
     }
 }

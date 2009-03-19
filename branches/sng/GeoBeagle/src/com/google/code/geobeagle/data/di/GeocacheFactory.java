@@ -14,34 +14,11 @@
 
 package com.google.code.geobeagle.data.di;
 
-import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.ResourceProvider;
-import com.google.code.geobeagle.Util;
 import com.google.code.geobeagle.data.Geocache;
 
-import java.util.regex.Pattern;
-
 public class GeocacheFactory {
-    public static CharSequence extractDescription(CharSequence location) {
-        return Util.splitCoordsAndDescription(location)[1];
-    }
-
-    public static Pattern[] getDestinationPatterns(ResourceProvider resourceProvider) {
-        String[] contentPrefixes = resourceProvider.getStringArray(R.array.content_prefixes);
-        Pattern mContentSelectors[] = new Pattern[contentPrefixes.length];
-        for (int ix = 0; ix < contentPrefixes.length; ix++) {
-            mContentSelectors[ix] = Pattern.compile("(?:" + contentPrefixes[ix] + ")(\\w*)");
-        }
-        return mContentSelectors;
-    }
-
-    private final Pattern[] mGeocachePatterns;
-
-    public GeocacheFactory(ResourceProvider resourceProvider) {
-        mGeocachePatterns = GeocacheFactory.getDestinationPatterns(resourceProvider);
-    }
-
-    public Geocache create(CharSequence location) {
-        return Geocache.create(location, mGeocachePatterns);
+    public Geocache create(int contentSelectorIndex, CharSequence id, CharSequence name,
+            double latitude, double longitude) {
+        return new Geocache(contentSelectorIndex, id, name, latitude, longitude);
     }
 }

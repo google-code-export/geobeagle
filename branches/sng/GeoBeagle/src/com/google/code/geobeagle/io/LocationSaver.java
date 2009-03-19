@@ -15,20 +15,20 @@
 package com.google.code.geobeagle.io;
 
 import com.google.code.geobeagle.data.Geocache;
-import com.google.code.geobeagle.data.di.GeocacheFactory;
+import com.google.code.geobeagle.data.di.GeocacheFromTextFactory;
 import com.google.code.geobeagle.io.di.DatabaseDI.SQLiteWrapper;
 import com.google.code.geobeagle.ui.ErrorDisplayer;
 
 public class LocationSaver {
     private final CacheWriter mCacheWriter;
     private final Database mDatabase;
-    private final GeocacheFactory mDestinationFactory;
+    private final GeocacheFromTextFactory mDestinationFactory;
     private final SQLiteWrapper mSQLiteWrapper;
 
-    public LocationSaver(Database database, GeocacheFactory geocacheFactory,
+    public LocationSaver(Database database, GeocacheFromTextFactory geocacheFromTextFactory,
             ErrorDisplayer errorDisplayer, SQLiteWrapper sqliteWrapper, CacheWriter cacheWriter) {
         mDatabase = database;
-        mDestinationFactory = geocacheFactory;
+        mDestinationFactory = geocacheFromTextFactory;
         mSQLiteWrapper = sqliteWrapper;
         mCacheWriter = cacheWriter;
     }

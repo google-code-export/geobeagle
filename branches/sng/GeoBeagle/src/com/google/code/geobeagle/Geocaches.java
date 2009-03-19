@@ -14,28 +14,30 @@
 
 package com.google.code.geobeagle;
 
+import com.google.code.geobeagle.data.Geocache;
+
 import java.util.ArrayList;
 
-public class Locations {
-    private ArrayList<CharSequence> mLocations;
+public class Geocaches {
+    private ArrayList<Geocache> mGeocaches;
 
-    public Locations() {
+    public Geocaches() {
         create(100);
     }
 
-    public void add(CharSequence location) {
-        mLocations.add(location);
+    public void add(Geocache geocache) {
+        mGeocaches.add(geocache);
     }
 
     public void clear() {
-        mLocations.clear();
+        mGeocaches.clear();
     }
 
     private void create(int maxSize) {
-        mLocations = new ArrayList<CharSequence>();
+        mGeocaches = new ArrayList<Geocache>();
     }
 
-    public ArrayList<CharSequence> getPreviousLocations() {
-        return mLocations;
+    public ArrayList<Geocache> getPreviousGeocaches() {
+        return mGeocaches;
     }
 }

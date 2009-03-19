@@ -23,6 +23,9 @@ import java.util.regex.Pattern;
  * Geocache or letterbox description, id, and coordinates.
  */
 public class Geocache {
+    public final static int PROVIDER_ATLASQUEST = 0;
+    public final static int PROVIDER_GROUNDSPEAK = 1;
+
     public static Geocache create(CharSequence location, Pattern destinationPatterns[]) {
         int contentSelectorIndex;
         double latitude = 0;
@@ -56,7 +59,6 @@ public class Geocache {
                 name = description.subSequence(fullId.length() + 2, description.length());
         }
         return new Geocache(contentSelectorIndex, fullId, name, latitude, longitude);
-
     }
 
     private final int mContentSelectorIndex;

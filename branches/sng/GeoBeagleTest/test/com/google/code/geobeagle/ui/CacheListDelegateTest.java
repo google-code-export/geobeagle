@@ -23,6 +23,7 @@ import com.google.code.geobeagle.CacheListActions;
 import com.google.code.geobeagle.LocationControl;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.data.CacheListData;
+import com.google.code.geobeagle.data.Geocache;
 import com.google.code.geobeagle.io.LocationBookmarksSql;
 import com.google.code.geobeagle.ui.CacheListDelegate.CacheListOnCreateContextMenuListener;
 import com.google.code.geobeagle.ui.CacheListDelegate.SimpleAdapterFactory;
@@ -164,7 +165,7 @@ public class CacheListDelegateTest extends TestCase {
         CacheListData cacheListData = createMock(CacheListData.class);
         LocationControl locationControl = createMock(LocationControl.class);
         Location here = createMock(Location.class);
-        ArrayList<CharSequence> locations = new ArrayList<CharSequence>(0);
+        ArrayList<Geocache> locations = new ArrayList<Geocache>(0);
         ArrayList<Map<String, Object>> adapterData = new ArrayList<Map<String, Object>>(0);
 
         locationBookmarks.load();
