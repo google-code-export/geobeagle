@@ -95,8 +95,8 @@ public class Database {
     public static final String SQL_RESET_DELETE_ME_GPX = "UPDATE GPX SET DeleteMe = 1";
 
     public static final String TBL_CACHES = "CACHES";
-
     public static final String TBL_GPX = "GPX";
+    
     private final SQLiteOpenHelper mSqliteOpenHelper;
 
     public Database(SQLiteOpenHelper sqliteOpenHelper) {
