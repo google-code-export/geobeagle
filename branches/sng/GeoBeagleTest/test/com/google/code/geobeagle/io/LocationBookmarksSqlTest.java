@@ -35,14 +35,6 @@ public class LocationBookmarksSqlTest extends TestCase {
         mDatabase = createMock(Database.class);
     }
 
-    public void testGetDescriptionsAndLocations() {
-        Locations locations = createMock(Locations.class);
-
-        LocationBookmarksSql locationBookmarksSql = new LocationBookmarksSql(null, locations, null,
-                null, null, null, null);
-        assertEquals(locations, locationBookmarksSql.getDescriptionsAndLocations());
-    }
-
     public void testLoad() {
         SQLiteWrapper sqliteWrapper = createMock(SQLiteWrapper.class);
         LocationControl locationControl = createMock(LocationControl.class);

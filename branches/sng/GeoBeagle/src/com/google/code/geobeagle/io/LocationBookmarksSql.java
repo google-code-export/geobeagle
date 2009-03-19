@@ -47,10 +47,6 @@ public class LocationBookmarksSql {
         return count;
     }
 
-    public Locations getDescriptionsAndLocations() {
-        return mLocations;
-    }
-
     public ArrayList<CharSequence> getLocations() {
         return mLocations.getPreviousLocations();
     }
