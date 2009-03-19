@@ -23,8 +23,8 @@ import android.widget.AdapterView.OnItemSelectedListener;
 
 public class OnContentProviderSelectedListener implements OnItemSelectedListener {
     private final MockableTextView mContentProviderCaption;
-    private final String[] mObjectNames;
     private final MockableTextView mGotoObjectCaption;
+    private final String[] mObjectNames;
 
     public OnContentProviderSelectedListener(ResourceProvider resourceProvider,
             MockableTextView contentProviderCaption, MockableTextView gotoCacheCaption) {

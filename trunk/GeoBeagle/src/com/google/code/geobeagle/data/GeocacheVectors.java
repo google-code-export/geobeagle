@@ -27,68 +27,68 @@
 
 package com.google.code.geobeagle.data;
 
-import com.google.code.geobeagle.data.DestinationVector.LocationComparator;
-import com.google.code.geobeagle.data.di.DestinationVectorFactory;
+import com.google.code.geobeagle.data.GeocacheVector.LocationComparator;
+import com.google.code.geobeagle.data.di.GeocacheVectorFactory;
 
 import android.location.Location;
 
 import java.util.ArrayList;
 import java.util.Map;
 
-public class DestinationVectors {
-    private final DestinationVectorFactory mDestinationVectorFactory;
-    private final ArrayList<IDestinationVector> mDestinationVectorsList;
+public class GeocacheVectors {
+    private final GeocacheVectorFactory mGeocacheVectorFactory;
+    private final ArrayList<IGeocacheVector> mGeocacheVectorsList;
     private final LocationComparator mLocationComparator;
 
-    public DestinationVectors(LocationComparator locationComparator,
-            DestinationVectorFactory destinationVectorFactory) {
-        mDestinationVectorsList = new ArrayList<IDestinationVector>(0);
+    public GeocacheVectors(LocationComparator locationComparator,
+            GeocacheVectorFactory geocacheVectorFactory) {
+        mGeocacheVectorsList = new ArrayList<IGeocacheVector>(0);
         mLocationComparator = locationComparator;
-        mDestinationVectorFactory = destinationVectorFactory;
+        mGeocacheVectorFactory = geocacheVectorFactory;
     }
 
-    public void add(IDestinationVector destinationVector) {
-        mDestinationVectorsList.add(0, destinationVector);
+    public void add(IGeocacheVector destinationVector) {
+        mGeocacheVectorsList.add(0, destinationVector);
     }
 
-    public void addLocations(ArrayList<CharSequence> locations, Location here) {
-        for (CharSequence location : locations) {
-            add(mDestinationVectorFactory.create(location, here));
+    public void addLocations(ArrayList<Geocache> locations, Location here) {
+        for (Geocache location : locations) {
+            add(mGeocacheVectorFactory.create(location, here));
         }
     }
 
     public void delete(int position) {
-        mDestinationVectorsList.remove(position);
+        mGeocacheVectorsList.remove(position);
     }
 
-    public IDestinationVector get(int position) {
-        return mDestinationVectorsList.get(position);
+    public IGeocacheVector get(int position) {
+        return mGeocacheVectorsList.get(position);
     }
 
     public ArrayList<Map<String, Object>> getAdapterData() {
         ArrayList<Map<String, Object>> arrayList = new ArrayList<Map<String, Object>>(
-                mDestinationVectorsList.size());
-        for (IDestinationVector destination : mDestinationVectorsList) {
+                mGeocacheVectorsList.size());
+        for (IGeocacheVector destination : mGeocacheVectorsList) {
             arrayList.add(destination.getViewMap());
         }
         return arrayList;
     }
 
-    public CharSequence getId(int position) {
-        return mDestinationVectorsList.get(position).getId();
+    public CharSequence getCoordinatesIdAndName(int position) {
+        return mGeocacheVectorsList.get(position).getCoordinatesIdAndName();
     }
 
-    public CharSequence getCoordinatesIdAndName(int position) {
-        return mDestinationVectorsList.get(position).getCoordinatesIdAndName();
+    public CharSequence getId(int position) {
+        return mGeocacheVectorsList.get(position).getId();
     }
 
     public void reset(int size) {
-        mDestinationVectorsList.clear();
-        mDestinationVectorsList.ensureCapacity(size);
+        mGeocacheVectorsList.clear();
+        mGeocacheVectorsList.ensureCapacity(size);
     }
 
     public void sort() {
-        mLocationComparator.sort(mDestinationVectorsList);
+        mLocationComparator.sort(mGeocacheVectorsList);
     }
 
 }

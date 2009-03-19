@@ -15,9 +15,10 @@
 package com.google.code.geobeagle;
 
 import com.google.code.geobeagle.data.CacheListData;
+import com.google.code.geobeagle.io.CacheWriter;
 import com.google.code.geobeagle.io.Database;
-import com.google.code.geobeagle.io.Database.CacheWriter;
-import com.google.code.geobeagle.io.Database.SQLiteWrapper;
+import com.google.code.geobeagle.io.di.DatabaseDI;
+import com.google.code.geobeagle.io.di.DatabaseDI.SQLiteWrapper;
 import com.google.code.geobeagle.ui.CacheListDelegate;
 import com.google.code.geobeagle.ui.ErrorDisplayer;
 
@@ -28,37 +29,29 @@ import android.widget.SimpleAdapter;
 
 public class CacheListActions {
 
-    public static CacheListActions.Action[] create(ListActivity parent, Database database,
-            SQLiteWrapper sqliteWrapper, CacheListData cacheListData, ErrorDisplayer errorDisplayer) {
-        final Intent intent = new Intent(parent, GeoBeagle.class);
-        return new CacheListActions.Action[] {
-                new CacheListActions.Delete(database, sqliteWrapper, cacheListData, errorDisplayer),
-                new CacheListActions.View(cacheListData, parent, intent)
-        };
-    }
-
     public static interface Action {
         public void act(int position, SimpleAdapter simpleAdapter);
     }
 
     public static class Delete implements Action {
         private final CacheListData mCacheListData;
+        private final CacheWriter mCacheWriter;
         private final Database mDatabase;
         private final SQLiteWrapper mSQLiteWrapper;
 
-        public Delete(Database database, SQLiteWrapper sqliteWrapper, CacheListData cacheListData,
-                ErrorDisplayer errorDisplayer) {
+        public Delete(Database database, SQLiteWrapper sqliteWrapper, CacheWriter cacheWriter,
+                CacheListData cacheListData, ErrorDisplayer errorDisplayer) {
             mCacheListData = cacheListData;
             mDatabase = database;
             mSQLiteWrapper = sqliteWrapper;
+            mCacheWriter = cacheWriter;
         }
 
         public void act(int position, SimpleAdapter simpleAdapter) {
             // TODO: pull sqliteDatabase and then cachewriter up to top level so
             // they're shared.
             mSQLiteWrapper.openWritableDatabase(mDatabase);
-            CacheWriter cacheWriter = mDatabase.createCacheWriter(mSQLiteWrapper);
-            cacheWriter.deleteCache(mCacheListData.getId(position));
+            mCacheWriter.deleteCache(mCacheListData.getId(position));
             mSQLiteWrapper.close();
 
             mCacheListData.delete(position);
@@ -79,9 +72,19 @@ public class CacheListActions {
         }
 
         public void act(int position, SimpleAdapter simpleAdapter) {
-            mIntent.putExtra("location", mCacheListData.getCoordinatesIdAndName(position)).setAction(
-                    CacheListDelegate.SELECT_CACHE);
+            mIntent.putExtra("location", mCacheListData.getCoordinatesIdAndName(position))
+                    .setAction(CacheListDelegate.SELECT_CACHE);
             mContext.startActivity(mIntent);
         }
+    }
+
+    public static CacheListActions.Action[] create(ListActivity parent, Database database,
+            SQLiteWrapper sqliteWrapper, CacheListData cacheListData, ErrorDisplayer errorDisplayer) {
+        final Intent intent = new Intent(parent, GeoBeagle.class);
+        CacheWriter cacheWriter = DatabaseDI.createCacheWriter(sqliteWrapper);
+        return new CacheListActions.Action[] {
+                new CacheListActions.Delete(database, sqliteWrapper, cacheWriter, cacheListData,
+                        errorDisplayer), new CacheListActions.View(cacheListData, parent, intent)
+        };
     }
 }

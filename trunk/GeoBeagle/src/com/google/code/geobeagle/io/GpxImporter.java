@@ -15,7 +15,7 @@
 package com.google.code.geobeagle.io;
 
 import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.io.Database.SQLiteWrapper;
+import com.google.code.geobeagle.io.di.DatabaseDI.SQLiteWrapper;
 import com.google.code.geobeagle.io.di.GpxImporterDI.GpxFilenameFactory;
 import com.google.code.geobeagle.io.di.GpxImporterDI.ImportThreadWrapper;
 import com.google.code.geobeagle.io.di.GpxImporterDI.MessageHandler;
@@ -23,13 +23,10 @@ import com.google.code.geobeagle.io.di.GpxImporterDI.ToastFactory;
 import com.google.code.geobeagle.ui.CacheListDelegate;
 import com.google.code.geobeagle.ui.ErrorDisplayer;
 
-import org.xmlpull.v1.XmlPullParserException;
-
 import android.app.ListActivity;
 import android.widget.Toast;
 
 import java.io.FileNotFoundException;
-import java.io.IOException;
 
 public class GpxImporter {
     public static class ImportThreadDelegate {
@@ -50,6 +47,10 @@ public class GpxImporter {
             String filename = "";
             try {
                 String children[] = mGpxFilenameFactory.getFilenames();
+                if (children.length == 0) {
+                    mErrorDisplayer.displayError(R.string.error_no_gpx_files);
+                    return;
+                }
                 mGpxLoader.start();
                 for (String child : children) {
                     filename = "/sdcard/" + child;
@@ -57,16 +58,13 @@ public class GpxImporter {
                     if (!mGpxLoader.load())
                         return;
                 }
-
-                mMessageHandler.loadComplete();
+                mGpxLoader.end();
             } catch (final FileNotFoundException e) {
                 mErrorDisplayer.displayError(R.string.error_opening_file, filename);
-            } catch (XmlPullParserException e) {
-                mErrorDisplayer.displayError(R.string.error_parsing_file, filename);
-            } catch (IOException e) {
-                mErrorDisplayer.displayError(R.string.error_reading_file, filename);
             } catch (Exception e) {
                 mErrorDisplayer.displayErrorAndStack(e);
+            } finally {
+                mMessageHandler.loadComplete();
             }
         }
     }

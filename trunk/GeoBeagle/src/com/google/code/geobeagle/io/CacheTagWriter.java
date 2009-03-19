@@ -14,33 +14,66 @@
 
 package com.google.code.geobeagle.io;
 
-import com.google.code.geobeagle.io.Database.CacheWriter;
-
+// TODO: Rename to CacheTagSqlWriter.
+/**
+ * @author sng
+ *
+ */
+/**
+ * @author sng
+ */
 public class CacheTagWriter {
     public final CacheWriter mCacheWriter;
     private boolean mFound;
+    private String mGpxName;
     private CharSequence mId;
     private double mLatitude;
     private double mLongitude;
     private CharSequence mName;
-    private String mSource;
+    private String mSqlDate;
 
     public CacheTagWriter(CacheWriter cacheWriter) {
         mCacheWriter = cacheWriter;
     }
 
-    public void clear() {
-        mId = mName = mSource = null;
+    public void cacheName(String name) {
+        mName = name;
+    }
+
+    public void clear() { // TODO: ensure source is not reset
+        mId = mName = null;
         mLatitude = mLongitude = 0;
         mFound = false;
     }
 
-    public void clearAllImportedCaches() {
-        mCacheWriter.clearAllImportedCaches();
+    public void end() {
+        mCacheWriter.clearEarlierLoads();
+    }
+
+    public void gpxName(String gpxName) {
+        mGpxName = gpxName;
+    }
+
+    /**
+     * @param gpxTime
+     * @return true if we should load this gpx; false if the gpx is already
+     *         loaded.
+     */
+    public boolean gpxTime(String gpxTime) {
+        mSqlDate = isoTimeToSql(gpxTime);
+        if (mCacheWriter.isGpxAlreadyLoaded(mGpxName, mSqlDate)) {
+            return false;
+        }
+        mCacheWriter.clearCaches(mGpxName);
+        return true;
     }
 
     public void id(CharSequence id) {
         mId = id;
+    }
+
+    public String isoTimeToSql(String gpxTime) {
+        return gpxTime.substring(0, 10) + " " + gpxTime.substring(11, 19);
     }
 
     public void latitudeLongitude(String latitude, String longitude) {
@@ -48,20 +81,14 @@ public class CacheTagWriter {
         mLongitude = Double.parseDouble(longitude);
     }
 
-    public void name(String name) {
-        mName = name;
-    }
-
-    public void source(String source) {
-        mSource = source;
-    }
-
     public void startWriting() {
         mCacheWriter.startWriting();
     }
 
-    public void stopWriting() {
+    public void stopWriting(boolean successfulGpxImport) {
         mCacheWriter.stopWriting();
+        if (successfulGpxImport)
+            mCacheWriter.writeGpx(mGpxName, mSqlDate);
     }
 
     public void symbol(String symbol) {
@@ -70,6 +97,6 @@ public class CacheTagWriter {
 
     public void write() {
         if (!mFound)
-            mCacheWriter.insertAndUpdateCache(mId, mName, mLatitude, mLongitude, mSource);
+            mCacheWriter.insertAndUpdateCache(mId, mName, mLatitude, mLongitude, mGpxName);
     }
 }

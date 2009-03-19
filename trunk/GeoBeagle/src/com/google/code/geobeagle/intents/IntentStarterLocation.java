@@ -25,12 +25,12 @@ import android.location.Location;
 
 public class IntentStarterLocation implements IntentStarter {
     private final Activity mActivity;
+    private final ContentSelector mContentSelector;
     private final GetCoordsToast mGetCoordsToast;
     private final IntentFactory mIntentFactory;
     private final MyLocationProvider mMyLocationProvider;
     private final ResourceProvider mResourceProvider;
     private final int mUriId;
-    private ContentSelector mContentSelector;
 
     public IntentStarterLocation(Activity activity, ResourceProvider resourceProvider,
             IntentFactory intentFactory, MyLocationProvider myLocationProvider,

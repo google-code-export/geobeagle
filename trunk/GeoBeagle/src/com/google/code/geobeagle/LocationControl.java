@@ -47,17 +47,18 @@ public class LocationControl {
         }
     }
 
-    private final LocationChooser mLocationChooser;
-    private final LocationManager mLocationManager;
-
-    public LocationControl(LocationManager locationManager, LocationChooser locationChooser) {
-        this.mLocationManager = locationManager;
-        this.mLocationChooser = locationChooser;
-    }
-
     public static LocationControl create(LocationManager locationManager) {
         final LocationChooser locationChooser = new LocationChooser();
         return new LocationControl(locationManager, locationChooser);
+    }
+
+    private final LocationChooser mLocationChooser;
+
+    private final LocationManager mLocationManager;
+
+    public LocationControl(LocationManager locationManager, LocationChooser locationChooser) {
+        mLocationManager = locationManager;
+        mLocationChooser = locationChooser;
     }
 
     /*

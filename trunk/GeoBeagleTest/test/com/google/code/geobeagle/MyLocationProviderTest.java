@@ -27,6 +27,20 @@ import android.location.Location;
 import junit.framework.TestCase;
 
 public class MyLocationProviderTest extends TestCase {
+    public void test() {
+        LocationControl locationControl = createMock(LocationControl.class);
+        ErrorDisplayer errorDisplayer = createMock(ErrorDisplayer.class);
+        Location location = createMock(Location.class);
+
+        expect(locationControl.getLocation()).andReturn(location);
+
+        replay(locationControl);
+        MyLocationProvider myLocationProvider = new MyLocationProvider(locationControl,
+                errorDisplayer);
+        assertEquals(location, myLocationProvider.getLocation());
+        verify(locationControl);
+    }
+
     public void testNullLocation() {
         LocationControl locationControl = createMock(LocationControl.class);
         ErrorDisplayer errorDisplayer = createMock(ErrorDisplayer.class);
@@ -41,19 +55,5 @@ public class MyLocationProviderTest extends TestCase {
         assertEquals(null, myLocationProvider.getLocation());
         verify(locationControl);
         verify(errorDisplayer);
-    }
-
-    public void test() {
-        LocationControl locationControl = createMock(LocationControl.class);
-        ErrorDisplayer errorDisplayer = createMock(ErrorDisplayer.class);
-        Location location = createMock(Location.class);
-
-        expect(locationControl.getLocation()).andReturn(location);
-
-        replay(locationControl);
-        MyLocationProvider myLocationProvider = new MyLocationProvider(locationControl,
-                errorDisplayer);
-        assertEquals(location, myLocationProvider.getLocation());
-        verify(locationControl);
     }
 }

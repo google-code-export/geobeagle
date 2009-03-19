@@ -14,31 +14,30 @@
 
 package com.google.code.geobeagle;
 
+import static org.easymock.classextension.EasyMock.createMock;
+
+import com.google.code.geobeagle.data.Geocache;
+
 import junit.framework.TestCase;
 
 public class DescriptionsAndLocationsTest extends TestCase {
 
-    public final void testDescriptionsAndLocations() {
-        Locations locations = new Locations();
-
-        locations = new Locations();
-        locations.add("37 122 etc");
-        locations.add("37 122 foo");
-        assertEquals("37 122 etc", locations.getPreviousLocations().get(0));
-    }
-
     public final void testAdd() {
-        Locations locations = new Locations();
-        locations.add("new location");
-        assertEquals("new location", locations.getPreviousLocations().get(0));
+        Geocache geocache = createMock(Geocache.class);
+        Geocaches geocaches = new Geocaches();
+        geocaches.add(geocache);
+        assertEquals(geocache, geocaches.getAll().get(0));
     }
 
     public final void testClear() {
-        Locations locations = new Locations();
-        locations.add("37 122 etc");
-        locations.add("37 122 foo");
-        locations.clear();
+        Geocaches geocaches = new Geocaches();
+        Geocache geocache1 = createMock(Geocache.class);
+        Geocache geocache2 = createMock(Geocache.class);
 
-        assertEquals(0, locations.getPreviousLocations().size());
+        geocaches.add(geocache1);
+        geocaches.add(geocache2);
+        geocaches.clear();
+
+        assertEquals(0, geocaches.getAll().size());
     }
 }

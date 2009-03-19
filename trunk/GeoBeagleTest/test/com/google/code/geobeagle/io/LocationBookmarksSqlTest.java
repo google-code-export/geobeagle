@@ -19,10 +19,11 @@ import static org.easymock.classextension.EasyMock.createMock;
 import static org.easymock.classextension.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.verify;
 
-import com.google.code.geobeagle.Locations;
+import com.google.code.geobeagle.Geocaches;
 import com.google.code.geobeagle.LocationControl;
-import com.google.code.geobeagle.io.Database.CacheReader;
-import com.google.code.geobeagle.io.Database.SQLiteWrapper;
+import com.google.code.geobeagle.data.Geocache;
+import com.google.code.geobeagle.io.CacheReader.CacheReaderCursor;
+import com.google.code.geobeagle.io.di.DatabaseDI.SQLiteWrapper;
 
 import junit.framework.TestCase;
 
@@ -30,82 +31,82 @@ public class LocationBookmarksSqlTest extends TestCase {
 
     private Database mDatabase;
 
+    @Override
     public void setUp() {
         mDatabase = createMock(Database.class);
     }
 
-    public void testGetDescriptionsAndLocations() {
-        Locations locations = createMock(Locations.class);
-
-        LocationBookmarksSql locationBookmarksSql = new LocationBookmarksSql(null,
-                locations, null, null, null, null, null);
-        assertEquals(locations, locationBookmarksSql.getDescriptionsAndLocations());
-    }
-
-    public void testReadBookmarksCursorOpenError() {
+    public void testLoad() {
         SQLiteWrapper sqliteWrapper = createMock(SQLiteWrapper.class);
         LocationControl locationControl = createMock(LocationControl.class);
         CacheReader cacheReader = createMock(CacheReader.class);
-        Locations locations = createMock(Locations.class);
-        sqliteWrapper.openReadableDatabase(mDatabase);
+        Geocaches geocaches = createMock(Geocaches.class);
+        CacheReaderCursor cursor = createMock(CacheReaderCursor.class);
+        Geocache geocache = createMock(Geocache.class);
+
+        sqliteWrapper.openWritableDatabase(mDatabase);
         expect(locationControl.getLocation()).andReturn(null);
-        expect(cacheReader.open(null)).andReturn(true);
-        expect(cacheReader.getCache()).andReturn("GC1234");
-        expect(cacheReader.moveToNext()).andReturn(false);
-        cacheReader.close();
-        expect(cacheReader.getTotalCount()).andReturn(1000);
+        expect(cacheReader.open(null)).andReturn(cursor);
+        expect(cursor.getCache()).andReturn(geocache);
+        expect(cursor.moveToNext()).andReturn(false);
+        cursor.close();
         sqliteWrapper.close();
 
         replay(mDatabase);
         replay(locationControl);
         replay(sqliteWrapper);
         replay(cacheReader);
-        LocationBookmarksSql locationBookmarksSql = new LocationBookmarksSql(cacheReader,
-                locations, mDatabase, sqliteWrapper, null, null, locationControl);
-        locationBookmarksSql.load();
+        replay(cursor);
+        GeocachesSql geocachesSql = new GeocachesSql(cacheReader,
+                geocaches, mDatabase, sqliteWrapper, null, null, locationControl);
+        geocachesSql.load();
         verify(mDatabase);
         verify(locationControl);
         verify(sqliteWrapper);
         verify(cacheReader);
+        verify(cursor);
     }
 
-    public void testReadBookmarksOne() {
-        Locations locations = createMock(Locations.class);
-        CacheReader cacheReader = createMock(CacheReader.class);
+    public void testReadOne() {
+        Geocaches geocaches = createMock(Geocaches.class);
+        CacheReaderCursor cursor = createMock(CacheReaderCursor.class);
+        Geocache geocache = createMock(Geocache.class);
 
-        locations.clear();
-        expect(cacheReader.getCache()).andReturn("122 32.3423 83 32.3221 (LB1234)");
-        expect(cacheReader.moveToNext()).andReturn(false);
-        locations.add("122 32.3423 83 32.3221 (LB1234)");
+        geocaches.clear();
+        expect(cursor.getCache()).andReturn(geocache);
+        expect(cursor.moveToNext()).andReturn(false);
+        geocaches.add(geocache);
 
-        replay(cacheReader);
-        replay(locations);
-        LocationBookmarksSql locationBookmarksSql = new LocationBookmarksSql(cacheReader,
-                locations, null, null, null, null, null);
-        locationBookmarksSql.read();
-        verify(cacheReader);
-        verify(locations);
+        replay(geocaches);
+        replay(cursor);
+        GeocachesSql geocachesSql = new GeocachesSql(null, geocaches, null,
+                null, null, null, null);
+        geocachesSql.read(cursor);
+        verify(geocaches);
+        verify(cursor);
     }
 
-    public void testReadBookmarksTwo() {
-        Locations locations = createMock(Locations.class);
-        CacheReader cacheReader = createMock(CacheReader.class);
+    public void testReadTwo() {
+        Geocaches geocaches = createMock(Geocaches.class);
+        CacheReaderCursor cursor = createMock(CacheReaderCursor.class);
+        Geocache geocache1 = createMock(Geocache.class);
+        Geocache geocache2 = createMock(Geocache.class);
 
-        locations.clear();
-        expect(cacheReader.getCache()).andReturn("122 32.3423 83 32.3221 (LB1234)");
-        locations.add("122 32.3423 83 32.3221 (LB1234)");
-        expect(cacheReader.moveToNext()).andReturn(true);
-        expect(cacheReader.getCache()).andReturn("122 32.3423 83 32.3221 (LB54321)");
-        locations.add("122 32.3423 83 32.3221 (LB54321)");
-        expect(cacheReader.moveToNext()).andReturn(false);
+        geocaches.clear();
+        expect(cursor.getCache()).andReturn(geocache1);
+        geocaches.add(geocache1);
+        expect(cursor.moveToNext()).andReturn(true);
+        expect(cursor.getCache()).andReturn(geocache2);
+        geocaches.add(geocache2);
+        expect(cursor.moveToNext()).andReturn(false);
 
-        replay(cacheReader);
-        replay(locations);
-        LocationBookmarksSql locationBookmarksSql = new LocationBookmarksSql(cacheReader,
-                locations, null, null, null, null, null);
-        locationBookmarksSql.read();
-        verify(cacheReader);
-        verify(locations);
+        replay(geocaches);
+        replay(cursor);
+        GeocachesSql geocachesSql = new GeocachesSql(null, geocaches, null,
+                null, null, null, null);
+        geocachesSql.read(cursor);
+        verify(geocaches);
+        verify(cursor);
     }
 
 }

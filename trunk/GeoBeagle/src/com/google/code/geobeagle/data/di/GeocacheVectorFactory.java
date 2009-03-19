@@ -15,43 +15,39 @@
 package com.google.code.geobeagle.data.di;
 
 import com.google.code.geobeagle.ResourceProvider;
-import com.google.code.geobeagle.data.Destination;
-import com.google.code.geobeagle.data.DestinationVector;
 import com.google.code.geobeagle.data.DistanceFormatter;
-import com.google.code.geobeagle.data.IDestinationVector;
+import com.google.code.geobeagle.data.Geocache;
+import com.google.code.geobeagle.data.GeocacheVector;
+import com.google.code.geobeagle.data.IGeocacheVector;
 
 import android.location.Location;
 
-public class DestinationVectorFactory {
-    private final DestinationFactory mDestinationFactory;
+public class GeocacheVectorFactory {
     private final DistanceFormatter mDistanceFormatter;
     private final ResourceProvider mResourceProvider;
 
-    public DestinationVectorFactory(DestinationFactory destinationFactory,
+    public GeocacheVectorFactory(GeocacheFromTextFactory geocacheFromTextFactory,
             DistanceFormatter distanceFormatter, ResourceProvider resourceProvider) {
-        mDestinationFactory = destinationFactory;
         mDistanceFormatter = distanceFormatter;
         mResourceProvider = resourceProvider;
     }
 
-    private float calculateDistance(Location here, Destination destination) {
+    private float calculateDistance(Location here, Geocache geocache) {
         if (here != null) {
             float[] results = new float[1];
-            Location.distanceBetween(here.getLatitude(), here.getLongitude(), destination
-                    .getLatitude(), destination.getLongitude(), results);
+            Location.distanceBetween(here.getLatitude(), here.getLongitude(), geocache
+                    .getLatitude(), geocache.getLongitude(), results);
 
             return results[0];
         }
         return -1;
     }
 
-    public DestinationVector create(CharSequence location, Location here) {
-        final Destination destinationHere = mDestinationFactory.create(location);
-        return new DestinationVector(destinationHere, calculateDistance(here, destinationHere),
-                mDistanceFormatter);
+    public GeocacheVector create(Geocache location, Location here) {
+        return new GeocacheVector(location, calculateDistance(here, location), mDistanceFormatter);
     }
 
-    public IDestinationVector createMyLocation() {
-        return new DestinationVector.MyLocation(mResourceProvider);
+    public IGeocacheVector createMyLocation() {
+        return new GeocacheVector.MyLocation(mResourceProvider);
     }
 }

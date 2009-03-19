@@ -46,18 +46,6 @@ public class LocationControlTest extends TestCase {
         verify(location2);
     }
 
-    public void testCompareNullLocation() {
-        Location location = createMock(Location.class);
-        expect(location.getTime()).andStubReturn(1000L);
-        expect(location.getAccuracy()).andStubReturn(1000f);
-
-        replay(location);
-        LocationControl.LocationChooser locationChooser = new LocationControl.LocationChooser();
-        assertEquals(location, locationChooser.choose(null, location));
-        assertEquals(location, locationChooser.choose(location, null));
-        verify(location);
-    }
-
     public void testCompareLocations() {
         // Choose first
 
@@ -80,6 +68,18 @@ public class LocationControlTest extends TestCase {
 
         // second one is newer, but not as accurate, distance = a1 + a2.
         compareLocations(true, 0L, 5f, 1L, 5f, 10);
+    }
+
+    public void testCompareNullLocation() {
+        Location location = createMock(Location.class);
+        expect(location.getTime()).andStubReturn(1000L);
+        expect(location.getAccuracy()).andStubReturn(1000f);
+
+        replay(location);
+        LocationControl.LocationChooser locationChooser = new LocationControl.LocationChooser();
+        assertEquals(location, locationChooser.choose(null, location));
+        assertEquals(location, locationChooser.choose(location, null));
+        verify(location);
     }
 
     public void testGetLocationNetworkChooseGps() {

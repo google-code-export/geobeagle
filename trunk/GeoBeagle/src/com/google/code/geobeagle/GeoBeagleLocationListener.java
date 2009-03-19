@@ -24,8 +24,8 @@ import android.os.Bundle;
  * Listener for the Location control.
  */
 public class GeoBeagleLocationListener implements LocationListener {
-    private final LocationViewer mLocationViewer;
     private final LocationControl mLocationControl;
+    private final LocationViewer mLocationViewer;
 
     public GeoBeagleLocationListener(LocationControl locationControl, LocationViewer locationViewer) {
         mLocationViewer = locationViewer;

@@ -19,6 +19,8 @@ import com.google.code.geobeagle.io.di.GpxToCacheDI;
 import java.io.IOException;
 
 public class GpxEventHandler {
+    public static final String XPATH_GPXNAME = "/gpx/name";
+    public static final String XPATH_GPXTIME = "/gpx/time";
     public static final String XPATH_GROUNDSPEAKNAME = "/gpx/wpt/groundspeak:cache/groundspeak:name";
     public static final String XPATH_HINT = "/gpx/wpt/groundspeak:cache/groundspeak:encoded_hints";
     public static final String XPATH_LOGDATE = "/gpx/wpt/groundspeak:cache/groundspeak:logs/groundspeak:log/groundspeak:date";
@@ -53,10 +55,14 @@ public class GpxEventHandler {
         }
     }
 
-    public void text(String mFullPath, String text) throws IOException {
+    public boolean text(String mFullPath, String text) throws IOException {
         text = text.trim();
         if (mFullPath.equals(XPATH_WPTNAME)) {
             mCachePersisterFacade.wptName(text);
+        } else if (mFullPath.equals(XPATH_GPXNAME)) {
+            mCachePersisterFacade.gpxName(text);
+        } else if (mFullPath.equals(XPATH_GPXTIME)) {
+            return mCachePersisterFacade.gpxTime(text);
         } else if (mFullPath.equals(XPATH_GROUNDSPEAKNAME)) {
             mCachePersisterFacade.groundspeakName(text);
         } else if (mFullPath.equals(XPATH_LOGDATE)) {
@@ -71,9 +77,10 @@ public class GpxEventHandler {
             for (String writeLineMatch : XPATH_PLAINLINES) {
                 if (mFullPath.equals(writeLineMatch)) {
                     mCachePersisterFacade.line(text);
-                    return;
+                    return true;
                 }
             }
         }
+        return true;
     }
 }

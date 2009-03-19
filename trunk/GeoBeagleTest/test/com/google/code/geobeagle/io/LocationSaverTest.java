@@ -19,10 +19,9 @@ import static org.easymock.classextension.EasyMock.createMock;
 import static org.easymock.classextension.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.verify;
 
-import com.google.code.geobeagle.data.Destination;
-import com.google.code.geobeagle.data.di.DestinationFactory;
-import com.google.code.geobeagle.io.Database.CacheWriter;
-import com.google.code.geobeagle.io.Database.SQLiteWrapper;
+import com.google.code.geobeagle.data.Geocache;
+import com.google.code.geobeagle.data.di.GeocacheFromTextFactory;
+import com.google.code.geobeagle.io.di.DatabaseDI;
 
 import junit.framework.TestCase;
 
@@ -30,20 +29,19 @@ public class LocationSaverTest extends TestCase {
 
     public void testSave() {
         Database database = createMock(Database.class);
-        SQLiteWrapper sqliteWrapper = createMock(SQLiteWrapper.class);
+        DatabaseDI.SQLiteWrapper sqliteWrapper = createMock(DatabaseDI.SQLiteWrapper.class);
         CacheWriter writer = createMock(CacheWriter.class);
-        DestinationFactory destinationFactory = createMock(DestinationFactory.class);
-        Destination destination = createMock(Destination.class);
+        GeocacheFromTextFactory geocacheFromTextFactory = createMock(GeocacheFromTextFactory.class);
+        Geocache geocache = createMock(Geocache.class);
 
         sqliteWrapper.openWritableDatabase(database);
-        expect(database.createCacheWriter(sqliteWrapper)).andReturn(writer);
         writer.startWriting();
-        expect(destinationFactory.create("122 32.3423 83 32.3221 (LB12345)"))
-                .andReturn(destination);
-        expect(destination.getId()).andReturn("LB12345");
-        expect(destination.getName()).andReturn("");
-        expect(destination.getLatitude()).andReturn(122.0);
-        expect(destination.getLongitude()).andReturn(37.0);
+        expect(geocacheFromTextFactory.create("122 32.3423 83 32.3221 (LB12345)")).andReturn(
+                geocache);
+        expect(geocache.getId()).andReturn("LB12345");
+        expect(geocache.getName()).andReturn("");
+        expect(geocache.getLatitude()).andReturn(122.0);
+        expect(geocache.getLongitude()).andReturn(37.0);
         writer.insertAndUpdateCache("LB12345", "", 122, 37, "intent");
         writer.stopWriting();
         sqliteWrapper.close();
@@ -51,14 +49,14 @@ public class LocationSaverTest extends TestCase {
         replay(database);
         replay(sqliteWrapper);
         replay(writer);
-        replay(destination);
-        replay(destinationFactory);
-        new LocationSaver(database, destinationFactory, null, sqliteWrapper)
+        replay(geocache);
+        replay(geocacheFromTextFactory);
+        new LocationSaver(database, geocacheFromTextFactory, null, sqliteWrapper, writer)
                 .saveLocation("122 32.3423 83 32.3221 (LB12345)");
         verify(database);
         verify(writer);
         verify(sqliteWrapper);
-        verify(destinationFactory);
-        verify(destination);
+        verify(geocacheFromTextFactory);
+        verify(geocache);
     }
 }

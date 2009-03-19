@@ -12,16 +12,13 @@
  ** limitations under the License.
  */
 
-package com.google.code.geobeagle.data;
+package com.google.code.geobeagle.data.di;
 
-import java.util.Map;
+import com.google.code.geobeagle.data.Geocache;
 
-public interface IDestinationVector {
-    public float getDistance();
-
-    public CharSequence getId();
-
-    public CharSequence getCoordinatesIdAndName();
-
-    public Map<String, Object> getViewMap();
+public class GeocacheFactory {
+    public Geocache create(int contentSelectorIndex, CharSequence id, CharSequence name,
+            double latitude, double longitude) {
+        return new Geocache(contentSelectorIndex, id, name, latitude, longitude);
+    }
 }

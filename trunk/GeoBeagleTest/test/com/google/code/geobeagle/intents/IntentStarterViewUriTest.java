@@ -19,7 +19,7 @@ import static org.easymock.classextension.EasyMock.createMock;
 import static org.easymock.classextension.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.verify;
 
-import com.google.code.geobeagle.data.Destination;
+import com.google.code.geobeagle.data.Geocache;
 import com.google.code.geobeagle.ui.LocationSetter;
 
 import android.content.Context;
@@ -33,23 +33,23 @@ public class IntentStarterViewUriTest extends TestCase {
         Context context = createMock(Context.class);
         IntentFactory intentFactory = createMock(IntentFactory.class);
         LocationSetter locationSetter = createMock(LocationSetter.class);
-        DestinationToUri destinationToUri = createMock(DestinationToUri.class);
+        GeocacheToUri geocacheToUri = createMock(GeocacheToUri.class);
         Intent intent = createMock(Intent.class);
 
-        Destination destination = createMock(Destination.class);
-        expect(locationSetter.getDestination()).andReturn(destination);
-        expect(destinationToUri.convert(destination)).andReturn("destination uri");
+        Geocache geocache = createMock(Geocache.class);
+        expect(locationSetter.getGeocache()).andReturn(geocache);
+        expect(geocacheToUri.convert(geocache)).andReturn("destination uri");
         expect(intentFactory.createIntent(Intent.ACTION_VIEW, "destination uri")).andReturn(intent);
         context.startActivity(intent);
 
         replay(locationSetter);
-        replay(destinationToUri);
+        replay(geocacheToUri);
         replay(intentFactory);
         replay(context);
-        new IntentStarterViewUri(context, intentFactory, locationSetter, destinationToUri)
+        new IntentStarterViewUri(context, intentFactory, locationSetter, geocacheToUri)
                 .startIntent();
         verify(locationSetter);
-        verify(destinationToUri);
+        verify(geocacheToUri);
         verify(intentFactory);
         verify(context);
     }

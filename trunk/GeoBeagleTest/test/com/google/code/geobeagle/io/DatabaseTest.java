@@ -14,180 +14,155 @@
 
 package com.google.code.geobeagle.io;
 
-import static org.easymock.EasyMock.aryEq;
-import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.expectLastCall;
-import static org.easymock.EasyMock.isNull;
-import static org.easymock.EasyMock.notNull;
 import static org.easymock.classextension.EasyMock.createMock;
 import static org.easymock.classextension.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.verify;
 
-import com.google.code.geobeagle.io.Database.CacheReader;
-import com.google.code.geobeagle.io.Database.CacheWriter;
+import com.google.code.geobeagle.io.Database.ISQLiteDatabase;
 import com.google.code.geobeagle.io.Database.OpenHelperDelegate;
-import com.google.code.geobeagle.io.Database.SQLiteWrapper;
-import com.google.code.geobeagle.io.Database.CacheReader.WhereFactory;
-import com.google.code.geobeagle.ui.ErrorDisplayer;
 
 import android.database.Cursor;
-import android.database.sqlite.SQLiteConstraintException;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.location.Location;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Writer;
 
 import junit.framework.TestCase;
 
 public class DatabaseTest extends TestCase {
 
-    private void expectQuery(SQLiteWrapper sqliteWrapper, Cursor cursor, String where) {
-        expect(
-                sqliteWrapper.query(eq("CACHES"), (String[])eq(Database.READER_COLUMNS), eq(where),
-                        (String[])isNull(), (String)isNull(), (String)isNull(), (String)isNull(),
-                        (String)eq(CacheReader.SQL_QUERY_LIMIT))).andReturn(cursor);
+    static class DesktopSQLiteDatabase implements ISQLiteDatabase {
+        Writer mWriter;
+
+        DesktopSQLiteDatabase() throws IOException {
+            File db = new File("GeoBeagle.db");
+            db.delete();
+        }
+
+        public void beginTransaction() {
+        }
+
+        public int countResults(String table, String sql, String... args) {
+            return 0;
+        }
+
+        public String dumpSchema() {
+            return exec(".schema");
+        }
+
+        public String dumpTable(String table) {
+            return exec("SELECT * FROM " + table);
+        }
+
+        public void endTransaction() {
+        }
+
+        public void execSQL(String s, Object... bindArg1) {
+            if (bindArg1.length > 0)
+                throw new UnsupportedOperationException("bindArgs not yet supported");
+            System.out.print(exec(s));
+        }
+
+        public Cursor query(String table, String[] columns, String selection, String groupBy,
+                String having, String orderBy, String limit, String... selectionArgs) {
+            return null;
+        }
+
+        public Cursor query(String table, String[] columns, String selection,
+                String[] selectionArgs, String groupBy, String having, String orderBy, String limit) {
+            return null;
+        }
+
+        public void setTransactionSuccessful() {
+        }
     }
 
-    public void testCacheReaderGetCache() {
-        SQLiteWrapper sqliteWrapper = createMock(SQLiteWrapper.class);
-        WhereFactory whereFactory = createMock(WhereFactory.class);
+    // Previous schemas.
+    final static String schema6 = "CREATE TABLE CACHES (Id VARCHAR PRIMARY KEY,"
+            + " Description VARCHAR Latitude DOUBLE, Longitude DOUBLE, Source VARCHAR)";
+    final static String schema7 = "CREATE TABLE IF NOT EXISTS CACHES (Id VARCHAR PRIMARY KEY, "
+            + "Description VARCHAR, Latitude DOUBLE, Longitude DOUBLE, Source VARCHAR); "
+            + "CREATE INDEX IDX_LATITUDE on CACHES (Latitude); "
+            + "CREATE INDEX IDX_LONGITUDE on CACHES (Longitude); "
+            + "CREATE INDEX IDX_SOURCE on CACHES (Source); ";
 
-        Cursor cursor = createMock(Cursor.class);
+    /**
+     * <pre>
+     * 
+     * version 8
+     * same as version 7 but rebuilds everything because a released version mistakenly puts 
+     * *intent* into imported caches.
+     * 
+     * version 9
+     * fixes bug where INDEX wasn't being created on upgrade.
+     * 
+     * </pre>
+     * 
+     * @throws IOException
+     */
 
-        expectQuery(sqliteWrapper, cursor, null);
-        expect(cursor.moveToFirst()).andReturn(true);
-        expect(cursor.getString(0)).andReturn("122");
-        expect(cursor.getString(1)).andReturn("37");
-        expect(cursor.getString(2)).andReturn("the_name");
-        expect(cursor.getString(3)).andReturn("description");
+    private static String convertStreamToString(InputStream is) throws IOException {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+        StringBuilder sb = new StringBuilder();
 
-        replay(sqliteWrapper);
-        replay(cursor);
-        CacheReader cacheReader = new CacheReader(sqliteWrapper, whereFactory);
-        cacheReader.open(null);
-        assertEquals("122, 37 (the_name: description)", cacheReader.getCache());
-        verify(sqliteWrapper);
-        verify(cursor);
+        String line = null;
+        while ((line = reader.readLine()) != null) {
+            sb.append(line + "\n");
+        }
+        is.close();
+
+        return sb.toString();
     }
 
-    public void testCacheReaderOpen() {
-        SQLiteWrapper sqliteWrapper = createMock(SQLiteWrapper.class);
-        Cursor cursor = createMock(Cursor.class);
-        Location location = createMock(Location.class);
-        WhereFactory whereFactory = createMock(WhereFactory.class);
-
-        String where = "Latitude > something AND Longitude < somethingelse";
-        expect(whereFactory.getWhere(location)).andReturn(where);
-        expectQuery(sqliteWrapper, cursor, where);
-        expect(cursor.moveToFirst()).andReturn(true);
-
-        replay(sqliteWrapper);
-        replay(cursor);
-        replay(location);
-        replay(whereFactory);
-        new CacheReader(sqliteWrapper, whereFactory).open(location);
-        verify(sqliteWrapper);
-        verify(cursor);
-        verify(location);
-        verify(whereFactory);
+    static String currentSchema() {
+        String currentSchema = SQL(Database.SQL_CREATE_CACHE_TABLE)
+                + SQL(Database.SQL_CREATE_GPX_TABLE) + SQL(Database.SQL_CREATE_IDX_LATITUDE)
+                + SQL(Database.SQL_CREATE_IDX_LONGITUDE) + SQL(Database.SQL_CREATE_IDX_SOURCE);
+        return currentSchema;
     }
 
-    public void testCacheReaderOpenEmpty() {
-        SQLiteWrapper sqliteWrapper = createMock(SQLiteWrapper.class);
-        Cursor cursor = createMock(Cursor.class);
-        WhereFactory whereFactory = createMock(WhereFactory.class);
-
-        expect(whereFactory.getWhere(null)).andReturn("a=b");
-        expectQuery(sqliteWrapper, cursor, "a=b");
-        expect(cursor.moveToFirst()).andReturn(false);
-        cursor.close();
-
-        replay(whereFactory);
-        replay(sqliteWrapper);
-        replay(cursor);
-        new CacheReader(sqliteWrapper, whereFactory).open(null);
-        verify(sqliteWrapper);
-        verify(cursor);
-        verify(whereFactory);
+    private static String exec(String s) {
+        String output = null;
+        try {
+            ProcessBuilder processBuilder = new ProcessBuilder("sqlite3", "GeoBeagle.db", s);
+            processBuilder.redirectErrorStream(true);
+            InputStream shellIn = null;
+            Process shell = processBuilder.start();
+            shellIn = shell.getInputStream();
+            int result = shell.waitFor();
+            output = convertStreamToString(shellIn);
+            if (result != 0)
+                throw (new RuntimeException(output));
+        } catch (InterruptedException e) {
+            throw (new RuntimeException(e + "\n" + output));
+        } catch (IOException e) {
+            throw (new RuntimeException(e + "\n" + output));
+        }
+        return output;
     }
 
-    public void testCacheReaderOpenError() {
-        SQLiteWrapper sqliteWrapper = createMock(SQLiteWrapper.class);
-        Cursor cursor = createMock(Cursor.class);
-        WhereFactory whereFactory = createMock(WhereFactory.class);
-
-        expect(whereFactory.getWhere(null)).andReturn("a=b");
-        expectQuery(sqliteWrapper, cursor, "a=b");
-        expect(cursor.moveToFirst()).andReturn(true);
-
-        replay(whereFactory);
-        replay(sqliteWrapper);
-        replay(cursor);
-        new CacheReader(sqliteWrapper, whereFactory).open(null);
-        verify(sqliteWrapper);
-        verify(cursor);
-        verify(whereFactory);
+    private static String SQL(String s) {
+        return s + ";\n";
     }
 
-    public void testCacheWriter() {
-        SQLiteWrapper sqlite = createMock(SQLiteWrapper.class);
+    public void testDatabaseGetReableDatabase() {
+        SQLiteDatabase sqlite = createMock(SQLiteDatabase.class);
+        SQLiteOpenHelper sqliteOpenHelper = createMock(SQLiteOpenHelper.class);
 
-        sqlite.execSQL(eq(Database.SQL_INSERT_CACHE), (Object[])notNull());
+        expect(sqliteOpenHelper.getReadableDatabase()).andReturn(sqlite);
 
         replay(sqlite);
-        CacheWriter cacheWriter = new CacheWriter(sqlite);
-        cacheWriter.insertAndUpdateCache("gc123", "a cache", 122, 37, "source");
+        replay(sqliteOpenHelper);
+        Database database = new Database(sqliteOpenHelper);
+        assertEquals(sqlite, database.getReadableDatabase());
+        verify(sqliteOpenHelper);
         verify(sqlite);
-    }
-
-    public void testCacheWriterClear() {
-        SQLiteWrapper sqlite = createMock(SQLiteWrapper.class);
-        Object params[] = new Object[] {
-            "the source"
-        };
-        sqlite.execSQL(eq(Database.SQL_CLEAR_CACHES), (Object[])aryEq(params));
-
-        replay(sqlite);
-        CacheWriter cacheWriter = new CacheWriter(sqlite);
-        cacheWriter.clearCaches("the source");
-        verify(sqlite);
-    }
-
-    public void testCacheWriterDelete() {
-        SQLiteWrapper sqlite = createMock(SQLiteWrapper.class);
-        Object params[] = new Object[] {
-            "GC123"
-        };
-        sqlite.execSQL(eq(Database.SQL_DELETE_CACHE), (Object[])aryEq(params));
-
-        replay(sqlite);
-        CacheWriter cacheWriter = new CacheWriter(sqlite);
-        cacheWriter.deleteCache("GC123");
-        verify(sqlite);
-    }
-
-    public void testCacheWriterError() {
-        ErrorDisplayer errorDisplayer = createMock(ErrorDisplayer.class);
-        SQLiteWrapper sqlite = createMock(SQLiteWrapper.class);
-        SQLiteException exception = createMock(SQLiteConstraintException.class);
-
-        sqlite.execSQL(eq(Database.SQL_INSERT_CACHE), (Object[])notNull());
-        expectLastCall().andThrow(exception);
-        expect(exception.fillInStackTrace()).andReturn(exception);
-        sqlite.execSQL(eq(Database.SQL_DELETE_CACHE), aryEq(new Object[] {
-            "gc123"
-        }));
-        sqlite.execSQL(eq(Database.SQL_INSERT_CACHE), (Object[])notNull());
-
-        replay(sqlite);
-        replay(errorDisplayer);
-        replay(exception);
-        CacheWriter cacheWriter = new CacheWriter(sqlite);
-        cacheWriter.insertAndUpdateCache("gc123", "a cache", 122, 37, "source");
-        verify(sqlite);
-        verify(errorDisplayer);
-        verify(exception);
     }
 
     public void testDatabaseGetWritableDatabase() {
@@ -204,45 +179,57 @@ public class DatabaseTest extends TestCase {
         verify(sqlite);
     }
 
-    public void testGetWhere() {
-        Location location = createMock(Location.class);
-        expect(location.getLatitude()).andReturn(90.0);
-        expect(location.getLongitude()).andReturn(180.0);
-
-        replay(location);
-        assertEquals(
-                "Latitude > 89.92 AND Latitude < 90.08 AND Longitude > -180.0 AND Longitude < 180.0",
-                new WhereFactory().getWhere(location));
-        verify(location);
-    }
-
-    public void testGetWhereNullLocation() {
-        assertEquals(null, new WhereFactory().getWhere(null));
-    }
-
-    public void testSQLiteOpenHelperDelegate_onCreate() {
-        SQLiteDatabase sqliteDatabase = createMock(SQLiteDatabase.class);
-
-        sqliteDatabase.execSQL(Database.SQL_CREATE_CACHE_TABLE);
-        sqliteDatabase.execSQL(Database.SQL_CREATE_IDX_LATITUDE);
-        sqliteDatabase.execSQL(Database.SQL_CREATE_IDX_LONGITUDE);
-        sqliteDatabase.execSQL(Database.SQL_CREATE_IDX_SOURCE);
-
-        replay(sqliteDatabase);
+    public void testOnCreate() throws IOException {
+        DesktopSQLiteDatabase db = new DesktopSQLiteDatabase();
         OpenHelperDelegate openHelperDelegate = new OpenHelperDelegate();
-        openHelperDelegate.onCreate(sqliteDatabase);
-        verify(sqliteDatabase);
+        openHelperDelegate.onCreate(db);
+        String schema = db.dumpSchema();
+
+        assertEquals(currentSchema(), schema);
     }
 
-    public void testSQLiteOpenHelperDelegate_onUpgrade() {
-        SQLiteDatabase sqliteDatabase = createMock(SQLiteDatabase.class);
-
-        sqliteDatabase.execSQL(Database.SQL_DROP_CACHE_TABLE);
-        sqliteDatabase.execSQL(Database.SQL_CREATE_CACHE_TABLE);
-
-        replay(sqliteDatabase);
+    public void testUpgradeFrom6() throws IOException {
+        DesktopSQLiteDatabase db = new DesktopSQLiteDatabase();
+        db.execSQL(schema6);
+        db.execSQL("INSERT INTO CACHES (Id, Source) VALUES (\"GCABC\", \"intent\")");
         OpenHelperDelegate openHelperDelegate = new OpenHelperDelegate();
-        openHelperDelegate.onUpgrade(sqliteDatabase, 0, 0);
-        verify(sqliteDatabase);
+        openHelperDelegate.onUpgrade(db, 6, Database.DATABASE_VERSION);
+        String schema = db.dumpSchema();
+
+        assertEquals(currentSchema(), schema);
+
+        String data = db.dumpTable("CACHES");
+        assertEquals("", data);
+    }
+
+    public void testUpgradeFrom8() throws IOException {
+        DesktopSQLiteDatabase db = new DesktopSQLiteDatabase();
+        db.execSQL(schema7);
+        db.execSQL("INSERT INTO CACHES (Id, Source) VALUES (\"GCABC\", \"intent\")");
+        OpenHelperDelegate openHelperDelegate = new OpenHelperDelegate();
+        openHelperDelegate.onUpgrade(db, 8, Database.DATABASE_VERSION);
+        String schema = db.dumpSchema();
+
+        // Need to blow away all data from v8.
+        String data = db.dumpTable("CACHES");
+        assertEquals("", data);
+
+        assertEquals(currentSchema(), schema);
+
+    }
+
+    public void testUpgradeFrom9() throws IOException {
+        DesktopSQLiteDatabase db = new DesktopSQLiteDatabase();
+        db.execSQL(schema7);
+        db.execSQL("INSERT INTO CACHES (Id, Source) VALUES (\"GCABC\", \"intent\")");
+        db.execSQL("INSERT INTO CACHES (Id, Source) VALUES (\"GC123\", \"foo.gpx\")");
+
+        OpenHelperDelegate openHelperDelegate = new OpenHelperDelegate();
+        openHelperDelegate.onUpgrade(db, 9, Database.DATABASE_VERSION);
+        String schema = db.dumpSchema();
+
+        assertEquals(currentSchema(), schema);
+        String data = db.dumpTable("CACHES");
+        assertEquals("GCABC||||intent|1\nGC123||||foo.gpx|1\n", data);
     }
 }

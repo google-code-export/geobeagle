@@ -12,10 +12,28 @@
  ** limitations under the License.
  */
 
-package com.google.code.geobeagle.intents;
+package com.google.code.geobeagle;
 
-import com.google.code.geobeagle.data.Destination;
+import com.google.code.geobeagle.data.Geocache;
 
-interface DestinationToUri {
-    public String convert(Destination destination);
+import java.util.ArrayList;
+
+public class Geocaches {
+    private ArrayList<Geocache> mGeocaches;
+
+    public Geocaches() {
+        mGeocaches = new ArrayList<Geocache>();
+    }
+
+    public void add(Geocache geocache) {
+        mGeocaches.add(geocache);
+    }
+
+    public void clear() {
+        mGeocaches.clear();
+    }
+
+    public ArrayList<Geocache> getAll() {
+        return mGeocaches;
+    }
 }

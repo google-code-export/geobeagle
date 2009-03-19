@@ -20,10 +20,13 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Destination or letterbox description, id, and coordinates.
+ * Geocache or letterbox description, id, and coordinates.
  */
-public class Destination {
-    public static Destination create(CharSequence location, Pattern destinationPatterns[]) {
+public class Geocache {
+    public final static int PROVIDER_ATLASQUEST = 0;
+    public final static int PROVIDER_GROUNDSPEAK = 1;
+
+    public static Geocache create(CharSequence location, Pattern destinationPatterns[]) {
         int contentSelectorIndex;
         double latitude = 0;
         double longitude = 0;
@@ -55,8 +58,7 @@ public class Destination {
             if (description.length() > fullId.length() + 2)
                 name = description.subSequence(fullId.length() + 2, description.length());
         }
-        return new Destination(contentSelectorIndex, fullId, name, latitude, longitude);
-
+        return new Geocache(contentSelectorIndex, fullId, name, latitude, longitude);
     }
 
     private final int mContentSelectorIndex;
@@ -65,8 +67,8 @@ public class Destination {
     private final double mLongitude;
     private final CharSequence mName;
 
-    public Destination(int contentSelectorIndex, CharSequence id, CharSequence name,
-            double latitude, double longitude) {
+    public Geocache(int contentSelectorIndex, CharSequence id, CharSequence name, double latitude,
+            double longitude) {
         mContentSelectorIndex = contentSelectorIndex;
         mId = id;
         mName = name;

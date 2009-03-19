@@ -18,8 +18,8 @@ import com.google.code.geobeagle.LifecycleManager;
 import com.google.code.geobeagle.LocationControl;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.Util;
-import com.google.code.geobeagle.data.Destination;
-import com.google.code.geobeagle.data.di.DestinationFactory;
+import com.google.code.geobeagle.data.Geocache;
+import com.google.code.geobeagle.data.di.GeocacheFromTextFactory;
 import com.google.code.geobeagle.io.LocationSaver;
 
 import android.content.Context;
@@ -31,18 +31,18 @@ public class LocationSetter implements LifecycleManager {
 
     public static final String FNAME_RECENT_LOCATIONS = "RECENT_LOCATIONS";
     public static final String PREFS_LOCATION = "Location";
-    private final DestinationFactory mDestinationFactory;
+    private final GeocacheFromTextFactory mDestinationFactory;
+    private final ErrorDisplayer mErrorDisplayer;
     private final LocationControl mGpsControl;
     private final String mInitialDestination;
-    private final MockableEditText mTxtLocation;
-    private final ErrorDisplayer mErrorDisplayer;
     private final LocationSaver mLocationSaver;
+    private final MockableEditText mTxtLocation;
 
     public LocationSetter(Context context, MockableEditText txtLocation,
-            LocationControl locationControl, DestinationFactory destinationFactory,
+            LocationControl locationControl, GeocacheFromTextFactory geocacheFromTextFactory,
             String initialDestination, ErrorDisplayer errorDisplayer, LocationSaver locationSaver) {
         mTxtLocation = txtLocation;
-        mDestinationFactory = destinationFactory;
+        mDestinationFactory = geocacheFromTextFactory;
         mGpsControl = locationControl;
         mInitialDestination = initialDestination;
         mErrorDisplayer = errorDisplayer;
@@ -53,13 +53,13 @@ public class LocationSetter implements LifecycleManager {
      * (non-Javadoc)
      * @see com.google.code.geobeagle.ui.DestinationProvider#getDestination()
      */
-    public Destination getDestination() {
+    public Geocache getGeocache() {
         return mDestinationFactory.create(mTxtLocation.getText());
     }
 
     // TODO: test.
     public CharSequence getId() {
-        return getDestination().getId();
+        return getGeocache().getId();
     }
 
     public void onPause(Editor editor) {

@@ -19,102 +19,112 @@ import junit.framework.TestCase;
 
 public class CachePersisterFacadeTest extends TestCase {
 
-    public void testClose() {
-        CacheTagWriter cacheTagWriter = createMock(CacheTagWriter.class);
+    private final CacheDetailsWriter mCacheDetailsWriter = createMock(CacheDetailsWriter.class);
+    private final CacheTagWriter mCacheTagWriter = createMock(CacheTagWriter.class);
+    private final MessageHandler mMessageHandler = createMock(MessageHandler.class);
 
-        cacheTagWriter.stopWriting();
+    public void testCloseTrue() {
+        mCacheTagWriter.stopWriting(true);
 
-        replay(cacheTagWriter);
-        new CachePersisterFacade(cacheTagWriter, null, null, null, null).close();
-        verify(cacheTagWriter);
+        replay(mCacheTagWriter);
+        new CachePersisterFacade(mCacheTagWriter, null, null, null, null).close(true);
+        verify(mCacheTagWriter);
+    }
+
+    public void testEnd() throws IOException {
+        mCacheTagWriter.end();
+
+        replay(mCacheTagWriter);
+        new CachePersisterFacade(mCacheTagWriter, null, null, null, null).end();
+        verify(mCacheTagWriter);
     }
 
     public void testEndTag() throws IOException {
-        CacheDetailsWriter cacheDetailsWriter = createMock(CacheDetailsWriter.class);
-        CacheTagWriter cacheTagWriter = createMock(CacheTagWriter.class);
+        mCacheDetailsWriter.close();
+        mCacheTagWriter.write();
 
-        cacheDetailsWriter.close();
-        cacheTagWriter.write();
+        replay(mCacheTagWriter);
+        replay(mCacheDetailsWriter);
+        new CachePersisterFacade(mCacheTagWriter, null, mCacheDetailsWriter, null, null).endTag();
+        verify(mCacheDetailsWriter);
+        verify(mCacheTagWriter);
+    }
 
-        replay(cacheTagWriter);
-        replay(cacheDetailsWriter);
-        new CachePersisterFacade(cacheTagWriter, null, cacheDetailsWriter, null, null).endTag();
-        verify(cacheDetailsWriter);
-        verify(cacheTagWriter);
+    public void testGpxName() {
+        mCacheTagWriter.gpxName("foo.gpx");
+
+        replay(mCacheTagWriter);
+        new CachePersisterFacade(mCacheTagWriter, null, null, null, null).gpxName("foo.gpx");
+        verify(mCacheTagWriter);
+    }
+
+    public void testGpxTime() {
+        expect(mCacheTagWriter.gpxTime("today")).andReturn(true);
+
+        replay(mCacheTagWriter);
+        assertTrue(new CachePersisterFacade(mCacheTagWriter, null, null, null, null)
+                .gpxTime("today"));
+        verify(mCacheTagWriter);
     }
 
     public void testGroundspeakName() throws IOException {
-        MessageHandler messageHandler = createMock(MessageHandler.class);
-        CacheTagWriter cacheTagWriter = createMock(CacheTagWriter.class);
+        mMessageHandler.updateName("GC123");
+        mCacheTagWriter.cacheName("GC123");
 
-        messageHandler.updateName("GC123");
-        cacheTagWriter.name("GC123");
-
-        replay(messageHandler);
-        replay(cacheTagWriter);
-        new CachePersisterFacade(cacheTagWriter, null, null, messageHandler, null)
+        replay(mMessageHandler);
+        replay(mCacheTagWriter);
+        new CachePersisterFacade(mCacheTagWriter, null, null, mMessageHandler, null)
                 .groundspeakName("GC123");
-        verify(messageHandler);
-        verify(cacheTagWriter);
+        verify(mMessageHandler);
+        verify(mCacheTagWriter);
     }
 
     public void testHint() throws IOException {
-        CacheDetailsWriter cacheDetailsWriter = createMock(CacheDetailsWriter.class);
+        mCacheDetailsWriter.writeHint("a hint");
 
-        cacheDetailsWriter.writeHint("a hint");
-
-        replay(cacheDetailsWriter);
-        new CachePersisterFacade(null, null, cacheDetailsWriter, null, null).hint("a hint");
-        verify(cacheDetailsWriter);
+        replay(mCacheDetailsWriter);
+        new CachePersisterFacade(null, null, mCacheDetailsWriter, null, null).hint("a hint");
+        verify(mCacheDetailsWriter);
     }
 
     public void testLine() throws IOException {
-        CacheDetailsWriter cacheDetailsWriter = createMock(CacheDetailsWriter.class);
+        mCacheDetailsWriter.writeLine("some data");
 
-        cacheDetailsWriter.writeLine("some data");
-
-        replay(cacheDetailsWriter);
-        new CachePersisterFacade(null, null, cacheDetailsWriter, null, null).line("some data");
-        verify(cacheDetailsWriter);
+        replay(mCacheDetailsWriter);
+        new CachePersisterFacade(null, null, mCacheDetailsWriter, null, null).line("some data");
+        verify(mCacheDetailsWriter);
     }
 
     public void testLogDate() throws IOException {
-        CacheDetailsWriter cacheDetailsWriter = createMock(CacheDetailsWriter.class);
+        mCacheDetailsWriter.writeLogDate("04/30/99");
 
-        cacheDetailsWriter.writeLogDate("04/30/99");
-
-        replay(cacheDetailsWriter);
-        new CachePersisterFacade(null, null, cacheDetailsWriter, null, null).logDate("04/30/99");
-        verify(cacheDetailsWriter);
+        replay(mCacheDetailsWriter);
+        new CachePersisterFacade(null, null, mCacheDetailsWriter, null, null).logDate("04/30/99");
+        verify(mCacheDetailsWriter);
     }
 
     public void testOpen() {
-        MessageHandler messageHandler = createMock(MessageHandler.class);
-        CacheTagWriter cacheTagWriter = createMock(CacheTagWriter.class);
+        mMessageHandler.updateSource("GC123");
+        mCacheTagWriter.startWriting();
+        mCacheTagWriter.gpxName("GC123");
 
-        messageHandler.updateSource("GC123");
-        cacheTagWriter.startWriting();
-        cacheTagWriter.source("GC123");
-
-        replay(messageHandler);
-        replay(cacheTagWriter);
-        new CachePersisterFacade(cacheTagWriter, null, null, messageHandler, null).open("GC123");
-        verify(messageHandler);
-        verify(cacheTagWriter);
+        replay(mMessageHandler);
+        replay(mCacheTagWriter);
+        new CachePersisterFacade(mCacheTagWriter, null, null, mMessageHandler, null).open("GC123");
+        verify(mMessageHandler);
+        verify(mCacheTagWriter);
     }
 
     public void testStart() {
         FileFactory fileFactory = createMock(FileFactory.class);
         File file = createMock(File.class);
-        CacheTagWriter cacheTagWriter = createMock(CacheTagWriter.class);
 
         expect(fileFactory.createFile(CacheDetailsWriter.GEOBEAGLE_DIR)).andReturn(file);
         expect(file.mkdirs()).andReturn(true);
-        cacheTagWriter.clearAllImportedCaches();
 
         replay(fileFactory);
         replay(file);
-        CachePersisterFacade cachePersisterFacade = new CachePersisterFacade(cacheTagWriter,
+        CachePersisterFacade cachePersisterFacade = new CachePersisterFacade(mCacheTagWriter,
                 fileFactory, null, null, null);
         cachePersisterFacade.start();
         verify(fileFactory);
@@ -122,55 +132,48 @@ public class CachePersisterFacadeTest extends TestCase {
     }
 
     public void testSymbol() throws IOException {
-        CacheTagWriter cacheTagWriter = createMock(CacheTagWriter.class);
+        mCacheTagWriter.symbol("Geocache Found");
 
-        cacheTagWriter.symbol("Geocache Found");
-        
-        replay(cacheTagWriter);
-        new CachePersisterFacade(cacheTagWriter, null, null, null, null).symbol("Geocache Found");
-        verify(cacheTagWriter);
+        replay(mCacheTagWriter);
+        new CachePersisterFacade(mCacheTagWriter, null, null, null, null).symbol("Geocache Found");
+        verify(mCacheTagWriter);
     }
 
     public void testWpt() throws IOException {
-        CacheTagWriter cacheTagWriter = createMock(CacheTagWriter.class);
-        CacheDetailsWriter cacheDetailsWriter = createMock(CacheDetailsWriter.class);
         XmlPullParserWrapper xmlPullParser = createMock(XmlPullParserWrapper.class);
         expect(xmlPullParser.getAttributeValue(null, "lat")).andReturn("37");
         expect(xmlPullParser.getAttributeValue(null, "lon")).andReturn("122");
 
-        cacheTagWriter.clear();
-        cacheTagWriter.latitudeLongitude("37", "122");
-        cacheTagWriter.latitudeLongitude("37", "122");
+        mCacheTagWriter.clear();
+        mCacheTagWriter.latitudeLongitude("37", "122");
+        mCacheTagWriter.latitudeLongitude("37", "122");
 
         replay(xmlPullParser);
-        new CachePersisterFacade(cacheTagWriter, null, cacheDetailsWriter, null, null)
+        new CachePersisterFacade(mCacheTagWriter, null, mCacheDetailsWriter, null, null)
                 .wpt(xmlPullParser);
         verify(xmlPullParser);
     }
 
     public void testWptName() throws IOException {
-        CacheDetailsWriter cacheDetailsWriter = createMock(CacheDetailsWriter.class);
-        CacheTagWriter cacheTagWriter = createMock(CacheTagWriter.class);
-        MessageHandler messageHandler = createMock(MessageHandler.class);
         WakeLock wakeLock = createMock(WakeLock.class);
 
         // cacheWriter.clearCaches("foo.gpx");
-        cacheDetailsWriter.open("GC123");
-        cacheDetailsWriter.writeWptName("GC123");
-        cacheTagWriter.id("GC123");
-        messageHandler.updateWaypoint("GC123");
+        mCacheDetailsWriter.open("GC123");
+        mCacheDetailsWriter.writeWptName("GC123");
+        mCacheTagWriter.id("GC123");
+        mMessageHandler.updateWaypointId("GC123");
         wakeLock.acquire(CachePersisterFacade.WAKELOCK_DURATION);
 
-        replay(cacheDetailsWriter);
-        replay(cacheTagWriter);
-        replay(messageHandler);
+        replay(mCacheDetailsWriter);
+        replay(mCacheTagWriter);
+        replay(mMessageHandler);
         replay(wakeLock);
-        CachePersisterFacade cachePersisterFacade = new CachePersisterFacade(cacheTagWriter, null,
-                cacheDetailsWriter, messageHandler, wakeLock);
+        CachePersisterFacade cachePersisterFacade = new CachePersisterFacade(mCacheTagWriter, null,
+                mCacheDetailsWriter, mMessageHandler, wakeLock);
         cachePersisterFacade.wptName("GC123");
-        verify(cacheDetailsWriter);
-        verify(cacheTagWriter);
-        verify(cacheDetailsWriter);
+        verify(mCacheDetailsWriter);
+        verify(mCacheTagWriter);
+        verify(mCacheDetailsWriter);
         verify(wakeLock);
     }
 }

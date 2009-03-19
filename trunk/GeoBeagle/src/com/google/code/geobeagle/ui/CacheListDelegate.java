@@ -19,12 +19,13 @@ import com.google.code.geobeagle.LocationControl;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.ResourceProvider;
 import com.google.code.geobeagle.data.CacheListData;
+import com.google.code.geobeagle.data.Geocache;
 import com.google.code.geobeagle.data.di.CacheListDataDI;
-import com.google.code.geobeagle.data.di.DestinationFactory;
+import com.google.code.geobeagle.data.di.GeocacheFromTextFactory;
 import com.google.code.geobeagle.io.Database;
 import com.google.code.geobeagle.io.GpxImporter;
-import com.google.code.geobeagle.io.LocationBookmarksSql;
-import com.google.code.geobeagle.io.Database.SQLiteWrapper;
+import com.google.code.geobeagle.io.GeocachesSql;
+import com.google.code.geobeagle.io.di.DatabaseDI;
 import com.google.code.geobeagle.io.di.GpxImporterDI;
 
 import android.app.ListActivity;
@@ -86,17 +87,18 @@ public class CacheListDelegate {
 
     public static CacheListDelegate create(ListActivity parent) {
         final ErrorDisplayer errorDisplayer = new ErrorDisplayer(parent);
-        final Database database = Database.create(parent);
+        final Database database = DatabaseDI.create(parent);
         final ResourceProvider resourceProvider = new ResourceProvider(parent);
-        final DestinationFactory destinationFactory = new DestinationFactory(resourceProvider);
+        final GeocacheFromTextFactory geocacheFromTextFactory = new GeocacheFromTextFactory(
+                resourceProvider);
         final LocationControl locationControl = LocationControl.create(((LocationManager)parent
                 .getSystemService(Context.LOCATION_SERVICE)));
-        final LocationBookmarksSql locationBookmarks = LocationBookmarksSql.create(locationControl,
-                database, destinationFactory, errorDisplayer);
+        final GeocachesSql locationBookmarks = DatabaseDI.create(locationControl, database,
+                geocacheFromTextFactory, errorDisplayer);
         final SimpleAdapterFactory simpleAdapterFactory = new SimpleAdapterFactory();
         final CacheListData cacheListData = CacheListDataDI.create(resourceProvider,
-                destinationFactory);
-        final SQLiteWrapper sqliteWrapper = new SQLiteWrapper();
+                geocacheFromTextFactory);
+        final DatabaseDI.SQLiteWrapper sqliteWrapper = new DatabaseDI.SQLiteWrapper(null);
         final CacheListActions.Action actions[] = CacheListActions.create(parent, database,
                 sqliteWrapper, cacheListData, errorDisplayer);
         final CacheListOnCreateContextMenuListener.Factory factory = new CacheListOnCreateContextMenuListener.Factory();
@@ -108,16 +110,16 @@ public class CacheListDelegate {
 
     private final CacheListActions.Action mActions[];
     private final CacheListData mCacheListData;
+    private final GeocachesSql mCachesSqlTable;
     private final CacheListOnCreateContextMenuListener.Factory mCreateContextMenuFactory;
     private final ErrorDisplayer mErrorDisplayer;
     private final GpxImporter mGpxImporter;
-    private final LocationBookmarksSql mCachesSqlTable;
     private final LocationControl mLocationControl;
     private final ListActivity mParent;
     private SimpleAdapter mSimpleAdapter;
     private final SimpleAdapterFactory mSimpleAdapterFactory;
 
-    public CacheListDelegate(ListActivity parent, LocationBookmarksSql locationBookmarks,
+    public CacheListDelegate(ListActivity parent, GeocachesSql locationBookmarks,
             LocationControl locationControl, SimpleAdapterFactory simpleAdapterFactory,
             CacheListData cacheListData, ErrorDisplayer errorDisplayer,
             CacheListActions.Action[] actions,
@@ -181,7 +183,7 @@ public class CacheListDelegate {
     public void onResume() {
         try {
             mCachesSqlTable.load();
-            ArrayList<CharSequence> locations = mCachesSqlTable.getLocations();
+            ArrayList<Geocache> locations = mCachesSqlTable.getGeocaches();
             mCacheListData.add(locations, mLocationControl.getLocation());
             mSimpleAdapter = mSimpleAdapterFactory.create(mParent, mCacheListData.getAdapterData(),
                     R.layout.cache_row, ADAPTER_FROM, ADAPTER_TO);

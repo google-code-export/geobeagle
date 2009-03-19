@@ -18,7 +18,7 @@ import android.graphics.Color;
 import android.widget.TextView;
 
 public class MockableTextView {
-    private TextView mTextView;
+    private final TextView mTextView;
 
     public MockableTextView(TextView textView) {
         mTextView = textView;
@@ -45,6 +45,6 @@ public class MockableTextView {
     }
 
     public void setTextColor(int alpha, int r, int g, int b) {
-        mTextView.setTextColor(Color.argb(alpha, r, g, b));        
+        mTextView.setTextColor(Color.argb(alpha, r, g, b));
     }
 }

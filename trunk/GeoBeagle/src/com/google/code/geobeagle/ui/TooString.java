@@ -20,7 +20,7 @@ public class TooString {
     private final EditText mEditText;
 
     public TooString(EditText editText) {
-        this.mEditText = editText;
+        mEditText = editText;
     }
 
     public CharSequence tooString() {

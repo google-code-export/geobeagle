@@ -14,7 +14,6 @@
 
 package com.google.code.geobeagle.ui;
 
-
 import com.google.code.geobeagle.CacheList;
 
 import android.app.Activity;
@@ -23,19 +22,19 @@ import android.content.Intent;
 import android.view.View;
 import android.view.View.OnClickListener;
 
-public class DestinationListOnClickListener implements OnClickListener {
+public class GeocacheListOnClickListener implements OnClickListener {
 
     final private Activity mActivity;
 
-    public DestinationListOnClickListener(Activity activity) {
-        this.mActivity = activity;
+    public GeocacheListOnClickListener(Activity activity) {
+        mActivity = activity;
+    }
+
+    protected Intent createIntent(Context context, Class<?> cls) {
+        return new Intent(context, cls);
     }
 
     public void onClick(View v) {
         mActivity.startActivity(createIntent(mActivity, CacheList.class));
-    }
-    
-    protected Intent createIntent(Context context, Class<?> cls) {
-        return new Intent(context, cls);
     }
 }

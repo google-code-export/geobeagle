@@ -4,8 +4,8 @@ package com.google.code.geobeagle.io.di;
 import com.google.code.geobeagle.io.Database;
 import com.google.code.geobeagle.io.GpxImporter;
 import com.google.code.geobeagle.io.GpxLoader;
-import com.google.code.geobeagle.io.Database.SQLiteWrapper;
 import com.google.code.geobeagle.io.GpxImporter.ImportThreadDelegate;
+import com.google.code.geobeagle.io.di.DatabaseDI.SQLiteWrapper;
 import com.google.code.geobeagle.ui.CacheListDelegate;
 import com.google.code.geobeagle.ui.ErrorDisplayer;
 
@@ -25,7 +25,6 @@ public class GpxImporterDI {
 
         public String[] getFilenames() {
             File dir = new File("/sdcard");
-
             FilenameFilter filter = new FilenameFilter() {
                 public boolean accept(File dir, String name) {
                     return !name.startsWith(".") && name.endsWith(".gpx");
@@ -40,14 +39,14 @@ public class GpxImporterDI {
     public static class ImportThread extends Thread {
         static ImportThread create(MessageHandler messageHandler, GpxLoader gpxLoader,
                 ErrorDisplayer errorDisplayer) {
-            final GpxImporterDI.GpxFilenameFactory gpxFilenameFactory = new GpxImporterDI.GpxFilenameFactory();
+            final GpxFilenameFactory gpxFilenameFactory = new GpxFilenameFactory();
             return new ImportThread(messageHandler, gpxLoader, errorDisplayer, gpxFilenameFactory);
         }
 
         private final GpxImporter.ImportThreadDelegate mImportThreadDelegate;
 
         public ImportThread(MessageHandler messageHandler, GpxLoader gpxLoader,
-                ErrorDisplayer errorDisplayer, GpxImporterDI.GpxFilenameFactory gpxFilenameFactory) {
+                ErrorDisplayer errorDisplayer, GpxFilenameFactory gpxFilenameFactory) {
             mImportThreadDelegate = new ImportThreadDelegate(gpxLoader, messageHandler,
                     errorDisplayer, gpxFilenameFactory);
         }
@@ -105,10 +104,10 @@ public class GpxImporterDI {
         private CacheListDelegate mCacheListDelegate;
         private boolean mLoadAborted;
 
-        private String mName;
         private final ProgressDialogWrapper mProgressDialogWrapper;
         private String mSource;
         private String mStatus;
+        private String mWaypointId;
 
         public MessageHandler(ProgressDialogWrapper progressDialogWrapper) {
             mProgressDialogWrapper = progressDialogWrapper;
@@ -147,17 +146,17 @@ public class GpxImporterDI {
             mProgressDialogWrapper.show("Importing caches", "Please wait...");
         }
 
-        public void updateName(String text) {
-            mName = text;
+        public void updateName(String name) {
+            mStatus = mCacheCount++ + ": " + mSource + " - " + mWaypointId + " - " + name;
+            sendEmptyMessage(MessageHandler.MSG_PROGRESS);
         }
 
         public void updateSource(String text) {
             mSource = text;
         }
 
-        public void updateWaypoint(String wpt) {
-            mStatus = mCacheCount++ + ": " + mSource + " - " + wpt + " - " + mName;
-            sendEmptyMessage(MessageHandler.MSG_PROGRESS);
+        public void updateWaypointId(String wpt) {
+            mWaypointId = wpt;
         }
     }
 

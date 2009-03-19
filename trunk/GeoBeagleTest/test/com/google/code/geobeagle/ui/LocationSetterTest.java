@@ -41,7 +41,7 @@ public class LocationSetterTest extends TestCase {
         expect(editText.getText()).andReturn("googleplex");
         expect(editor.putString(LocationSetter.PREFS_LOCATION, "googleplex")).andReturn(editor);
         locationSaver.saveLocation("googleplex");
-        
+
         replay(editor);
         replay(editText);
         replay(locationSaver);

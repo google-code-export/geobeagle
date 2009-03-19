@@ -16,22 +16,22 @@ package com.google.code.geobeagle.intents;
 
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.ResourceProvider;
-import com.google.code.geobeagle.data.Destination;
+import com.google.code.geobeagle.data.Geocache;
 import com.google.code.geobeagle.ui.ContentSelector;
 
 /*
- * Convert a Destination to the cache page url.
+ * Convert a Geocache to the cache page url.
  */
-public class DestinationToCachePage implements DestinationToUri {
+public class GeocacheToCachePage implements GeocacheToUri {
     private final ResourceProvider mResourceProvider;
 
-    public DestinationToCachePage(ResourceProvider resourceProvider, ContentSelector contentSelector) {
+    public GeocacheToCachePage(ResourceProvider resourceProvider, ContentSelector contentSelector) {
         mResourceProvider = resourceProvider;
     }
 
-    public String convert(Destination destination) {
-        return String.format(mResourceProvider.getStringArray(R.array.cache_page_url)[destination
-                .getContentIndex()], destination.getShortId());
+    public String convert(Geocache geocache) {
+        return String.format(mResourceProvider.getStringArray(R.array.cache_page_url)[geocache
+                .getContentIndex()], geocache.getShortId());
     }
 
 }

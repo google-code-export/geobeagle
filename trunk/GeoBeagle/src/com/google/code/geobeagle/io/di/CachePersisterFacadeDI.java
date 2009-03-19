@@ -4,10 +4,10 @@ package com.google.code.geobeagle.io.di;
 import com.google.code.geobeagle.io.CacheDetailsWriter;
 import com.google.code.geobeagle.io.CachePersisterFacade;
 import com.google.code.geobeagle.io.CacheTagWriter;
+import com.google.code.geobeagle.io.CacheWriter;
 import com.google.code.geobeagle.io.Database;
 import com.google.code.geobeagle.io.HtmlWriter;
-import com.google.code.geobeagle.io.Database.CacheWriter;
-import com.google.code.geobeagle.io.Database.SQLiteWrapper;
+import com.google.code.geobeagle.io.di.DatabaseDI.SQLiteWrapper;
 import com.google.code.geobeagle.io.di.GpxImporterDI.MessageHandler;
 
 import android.app.Activity;
@@ -37,7 +37,7 @@ public class CachePersisterFacadeDI {
         }
 
         public void open(String path) throws IOException {
-            mWriter = new BufferedWriter(new FileWriter(path));
+            mWriter = new BufferedWriter(new FileWriter(path), 4000);
         }
 
         public void write(String str) throws IOException {
@@ -47,7 +47,7 @@ public class CachePersisterFacadeDI {
 
     public static CachePersisterFacade create(Activity activity, MessageHandler messageHandler,
             Database database, SQLiteWrapper sqliteWrapper) {
-        final CacheWriter cacheWriter = database.createCacheWriter(sqliteWrapper);
+        final CacheWriter cacheWriter = DatabaseDI.createCacheWriter(sqliteWrapper);
         final CacheTagWriter cacheTagWriter = new CacheTagWriter(cacheWriter);
         final FileFactory fileFactory = new FileFactory();
         final WriterWrapper writerWrapper = new WriterWrapper();

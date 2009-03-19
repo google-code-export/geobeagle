@@ -21,9 +21,9 @@ import android.view.View;
 import android.view.View.OnClickListener;
 
 public class CacheButtonOnClickListener implements OnClickListener {
+    private final IntentStarter mDestinationToIntentFactory;
     private final ErrorDisplayer mErrorDisplayer;
     private final String mErrorMessage;
-    private final IntentStarter mDestinationToIntentFactory;
 
     public CacheButtonOnClickListener(IntentStarter intentStarter, ErrorDisplayer errorDisplayer,
             String errorMessage) {

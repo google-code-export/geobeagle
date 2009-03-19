@@ -27,17 +27,17 @@ public class Util {
         "q"
     };
 
+    // #Wildwood Park, Saratoga, CA(The Nut Case #89882)
+    private static final Pattern PAT_ATLASQUEST = Pattern.compile(".*\\((.*)#(.*)\\)");
+    private static final Pattern PAT_ATSIGN_FORMAT = Pattern.compile("([^@]*)@(.*)");
+
     private static final Pattern PAT_COORD_COMPONENT = Pattern.compile("([\\d.]+)[^\\d]*");
     private static final Pattern PAT_LATLON = Pattern
             .compile("([NS]?[^NSEW,]*[NS]?),?\\s*([EW]?.*)");
 
     private static final Pattern PAT_NEGSIGN = Pattern.compile("[-WS]");
     private static final Pattern PAT_PAREN_FORMAT = Pattern.compile("([^(]*)\\(([^)]*).*");
-
     private static final Pattern PAT_SIGN = Pattern.compile("[-EWNS]");
-    private static final Pattern PAT_ATSIGN_FORMAT = Pattern.compile("([^@]*)@(.*)");
-    // #Wildwood Park, Saratoga, CA(The Nut Case #89882)
-    private static final Pattern PAT_ATLASQUEST = Pattern.compile(".*\\((.*)#(.*)\\)");
 
     public static CharSequence formatDegreesAsDecimalDegreesString(double fDegrees) {
         final double fAbsDegrees = Math.abs(fDegrees);
@@ -48,15 +48,6 @@ public class Util {
 
     public static CharSequence formatTime(long time) {
         return new SimpleDateFormat(DATE_FORMAT_NOW).format(time);
-    }
-
-    public static CharSequence[] splitLatLonDescription(CharSequence location) {
-        CharSequence coordsAndDescription[] = splitCoordsAndDescription(location);
-        CharSequence latLon[] = splitLatLon(coordsAndDescription[0]);
-
-        return new CharSequence[] {
-                latLon[0], latLon[1], parseDescription(coordsAndDescription[1])
-        };
     }
 
     public static String getStackTrace(Exception e) {
@@ -86,18 +77,18 @@ public class Util {
         return sign * degrees;
     }
 
-    public static CharSequence parseHttpUri(String query, UrlQuerySanitizer sanitizer,
-            ValueSanitizer valueSanitizer) {
-        sanitizer.registerParameters(geocachingQueryParam, valueSanitizer);
-        sanitizer.parseQuery(query);
-        return sanitizer.getValue("q");
-    }
-
     public static CharSequence parseDescription(CharSequence string) {
         Matcher matcher = PAT_ATLASQUEST.matcher(string);
         if (matcher.matches())
             return "LB" + matcher.group(2).trim() + ": " + matcher.group(1).trim();
         return string;
+    }
+
+    public static CharSequence parseHttpUri(String query, UrlQuerySanitizer sanitizer,
+            ValueSanitizer valueSanitizer) {
+        sanitizer.registerParameters(geocachingQueryParam, valueSanitizer);
+        sanitizer.parseQuery(query);
+        return sanitizer.getValue("q");
     }
 
     public static CharSequence[] splitCoordsAndDescription(CharSequence location) {
@@ -126,6 +117,15 @@ public class Util {
                     matcher.group(1).trim(), matcher.group(2).trim()
             };
         return null;
+    }
+
+    public static CharSequence[] splitLatLonDescription(CharSequence location) {
+        CharSequence coordsAndDescription[] = splitCoordsAndDescription(location);
+        CharSequence latLon[] = splitLatLon(coordsAndDescription[0]);
+
+        return new CharSequence[] {
+                latLon[0], latLon[1], parseDescription(coordsAndDescription[1])
+        };
     }
 
 }

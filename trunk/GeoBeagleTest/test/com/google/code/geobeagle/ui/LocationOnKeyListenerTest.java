@@ -17,10 +17,6 @@ package com.google.code.geobeagle.ui;
 import static org.easymock.classextension.EasyMock.createMock;
 import static org.easymock.classextension.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.verify;
-
-import com.google.code.geobeagle.ui.CachePageButtonEnabler;
-import com.google.code.geobeagle.ui.LocationOnKeyListener;
-
 import junit.framework.TestCase;
 
 public class LocationOnKeyListenerTest extends TestCase {
