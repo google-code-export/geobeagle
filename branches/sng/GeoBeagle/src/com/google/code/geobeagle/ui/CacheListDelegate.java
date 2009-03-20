@@ -14,23 +14,16 @@
 
 package com.google.code.geobeagle.ui;
 
-import com.google.code.geobeagle.CacheListActions;
+import com.google.code.geobeagle.Action;
 import com.google.code.geobeagle.LocationControl;
 import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.ResourceProvider;
 import com.google.code.geobeagle.data.CacheListData;
 import com.google.code.geobeagle.data.Geocache;
-import com.google.code.geobeagle.data.di.CacheListDataDI;
-import com.google.code.geobeagle.data.di.GeocacheFromTextFactory;
-import com.google.code.geobeagle.io.Database;
-import com.google.code.geobeagle.io.GpxImporter;
+import com.google.code.geobeagle.data.GeocacheVectors;
 import com.google.code.geobeagle.io.GeocachesSql;
-import com.google.code.geobeagle.io.di.DatabaseDI;
-import com.google.code.geobeagle.io.di.GpxImporterDI;
+import com.google.code.geobeagle.io.GpxImporter;
 
 import android.app.ListActivity;
-import android.content.Context;
-import android.location.LocationManager;
 import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -38,108 +31,72 @@ import android.view.View;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.View.OnCreateContextMenuListener;
 import android.widget.ListView;
-import android.widget.SimpleAdapter;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 
 import java.util.ArrayList;
-import java.util.Map;
 
 public class CacheListDelegate {
 
-    static class CacheListOnCreateContextMenuListener implements OnCreateContextMenuListener {
+    public static class CacheListOnCreateContextMenuListener implements OnCreateContextMenuListener {
         public static class Factory {
-            public OnCreateContextMenuListener create(CacheListData cacheListData) {
-                return new CacheListOnCreateContextMenuListener(cacheListData);
+            public OnCreateContextMenuListener create(GeocacheVectors geocacheVectors) {
+                return new CacheListOnCreateContextMenuListener(geocacheVectors);
             }
         }
 
-        CacheListData mCacheListData;
+        private final GeocacheVectors mGeocacheVectors;
 
-        CacheListOnCreateContextMenuListener(CacheListData cacheListData) {
-            mCacheListData = cacheListData;
+        CacheListOnCreateContextMenuListener(GeocacheVectors geocacheVectors) {
+            mGeocacheVectors = geocacheVectors;
         }
 
         public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
             AdapterContextMenuInfo acmi = (AdapterContextMenuInfo)menuInfo;
-            menu.setHeaderTitle(mCacheListData.getId(acmi.position));
-            menu.add(0, MENU_VIEW, 0, "View");
+            menu.setHeaderTitle(mGeocacheVectors.get(acmi.position).getId());
+            menu.add(0, MENU_VIEW, 0, "ViewAction");
             if (acmi.position > 0)
-                menu.add(0, MENU_DELETE, 1, "Delete");
+                menu.add(0, MENU_DELETE, 1, "DeleteAction");
         }
     }
 
-    public static class SimpleAdapterFactory {
-        public SimpleAdapter create(Context context, ArrayList<Map<String, Object>> arrayList,
-                int view_layout, String[] from, int[] to) {
-            return new SimpleAdapter(context, arrayList, view_layout, from, to);
-        }
-    }
-
-    public static final String[] ADAPTER_FROM = {
-            "cache", "distance"
-    };
-    public static final int[] ADAPTER_TO = {
-            R.id.txt_cache, R.id.distance
-    };
     public static final int MENU_DELETE = 0;
     public static final int MENU_VIEW = 1;
     public static final String SELECT_CACHE = "SELECT_CACHE";
 
-    public static CacheListDelegate create(ListActivity parent) {
-        final ErrorDisplayer errorDisplayer = new ErrorDisplayer(parent);
-        final Database database = DatabaseDI.create(parent);
-        final ResourceProvider resourceProvider = new ResourceProvider(parent);
-        final GeocacheFromTextFactory geocacheFromTextFactory = new GeocacheFromTextFactory(
-                resourceProvider);
-        final LocationControl locationControl = LocationControl.create(((LocationManager)parent
-                .getSystemService(Context.LOCATION_SERVICE)));
-        final GeocachesSql locationBookmarks = DatabaseDI.create(locationControl, database,
-                geocacheFromTextFactory, errorDisplayer);
-        final SimpleAdapterFactory simpleAdapterFactory = new SimpleAdapterFactory();
-        final CacheListData cacheListData = CacheListDataDI.create(resourceProvider,
-                geocacheFromTextFactory);
-        final DatabaseDI.SQLiteWrapper sqliteWrapper = new DatabaseDI.SQLiteWrapper(null);
-        final CacheListActions.Action actions[] = CacheListActions.create(parent, database,
-                sqliteWrapper, cacheListData, errorDisplayer);
-        final CacheListOnCreateContextMenuListener.Factory factory = new CacheListOnCreateContextMenuListener.Factory();
-        final GpxImporter gpxImporter = GpxImporterDI.create(database, sqliteWrapper,
-                errorDisplayer, parent);
-        return new CacheListDelegate(parent, locationBookmarks, locationControl,
-                simpleAdapterFactory, cacheListData, errorDisplayer, actions, factory, gpxImporter);
-    }
-
-    private final CacheListActions.Action mActions[];
+    private final Action mActions[];
     private final CacheListData mCacheListData;
-    private final GeocachesSql mCachesSqlTable;
+    private final GeocachesSql mGeocachesSql;
     private final CacheListOnCreateContextMenuListener.Factory mCreateContextMenuFactory;
     private final ErrorDisplayer mErrorDisplayer;
     private final GpxImporter mGpxImporter;
     private final LocationControl mLocationControl;
     private final ListActivity mParent;
-    private SimpleAdapter mSimpleAdapter;
-    private final SimpleAdapterFactory mSimpleAdapterFactory;
+    private final GeocacheListAdapter mGeocacheListAdapter;
+    private final GeocacheVectors mGeocacheVectors;
 
-    public CacheListDelegate(ListActivity parent, GeocachesSql locationBookmarks,
-            LocationControl locationControl, SimpleAdapterFactory simpleAdapterFactory,
-            CacheListData cacheListData, ErrorDisplayer errorDisplayer,
-            CacheListActions.Action[] actions,
+    public CacheListDelegate(ListActivity parent, GeocachesSql geocachesSql,
+            LocationControl locationControl, CacheListData cacheListData,
+            GeocacheVectors geocacheVectors, GeocacheListAdapter geocacheListAdapter,
+            ErrorDisplayer errorDisplayer, Action[] actions,
             CacheListOnCreateContextMenuListener.Factory factory, GpxImporter gpxImporter) {
         mParent = parent;
-        mCachesSqlTable = locationBookmarks;
+        mGeocachesSql = geocachesSql;
         mLocationControl = locationControl;
-        mSimpleAdapterFactory = simpleAdapterFactory;
         mCacheListData = cacheListData;
+        mGeocacheVectors = geocacheVectors;
         mErrorDisplayer = errorDisplayer;
         mActions = actions;
         mCreateContextMenuFactory = factory;
         mGpxImporter = gpxImporter;
+        mGeocacheListAdapter = geocacheListAdapter;
     }
 
     public boolean onContextItemSelected(MenuItem menuItem) {
         try {
             AdapterContextMenuInfo adapterContextMenuInfo = (AdapterContextMenuInfo)menuItem
                     .getMenuInfo();
-            mActions[menuItem.getItemId()].act(adapterContextMenuInfo.position, mSimpleAdapter);
+            mActions[menuItem.getItemId()].act(adapterContextMenuInfo.position,
+                    mGeocacheListAdapter);
             return true;
         } catch (final Exception e) {
             mErrorDisplayer.displayErrorAndStack(e);
@@ -150,7 +107,7 @@ public class CacheListDelegate {
     public void onCreate() {
         mParent.setContentView(R.layout.cache_list);
         mParent.getListView().setOnCreateContextMenuListener(
-                mCreateContextMenuFactory.create(mCacheListData));
+                mCreateContextMenuFactory.create(mGeocacheVectors));
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -160,7 +117,7 @@ public class CacheListDelegate {
 
     public void onListItemClick(ListView l, View v, int position, long id) {
         try {
-            mActions[MENU_VIEW].act(position, mSimpleAdapter);
+            mActions[MENU_VIEW].act(position, mGeocacheListAdapter);
         } catch (final Exception e) {
             mErrorDisplayer.displayErrorAndStack(e);
         }
@@ -182,14 +139,12 @@ public class CacheListDelegate {
 
     public void onResume() {
         try {
-            mCachesSqlTable.load();
-            ArrayList<Geocache> locations = mCachesSqlTable.getGeocaches();
-            mCacheListData.add(locations, mLocationControl.getLocation());
-            mSimpleAdapter = mSimpleAdapterFactory.create(mParent, mCacheListData.getAdapterData(),
-                    R.layout.cache_row, ADAPTER_FROM, ADAPTER_TO);
-            mParent.setListAdapter(mSimpleAdapter);
-            mParent.setTitle("Nearest Unfound Caches (" + locations.size() + " / "
-                    + mCachesSqlTable.getCount() + ")");
+            mGeocachesSql.load();
+            ArrayList<Geocache> geocaches = mGeocachesSql.getGeocaches();
+            mCacheListData.add(geocaches, mLocationControl.getLocation());
+            mParent.setListAdapter(mGeocacheListAdapter);
+            mParent.setTitle("Nearest Unfound Caches (" + geocaches.size() + " / "
+                    + mGeocachesSql.getCount() + ")");
         } catch (final Exception e) {
             mErrorDisplayer.displayErrorAndStack(e);
         }

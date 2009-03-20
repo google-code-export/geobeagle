@@ -19,43 +19,21 @@ import com.google.code.geobeagle.data.di.GeocacheVectorFactory;
 import android.location.Location;
 
 import java.util.ArrayList;
-import java.util.Map;
 
 public class CacheListData {
-    private ArrayList<Map<String, Object>> mAdapterData;
-    private final GeocacheVectorFactory mDestinationVectorFactory;
-    private final GeocacheVectors mDestinationVectors;
+    private final GeocacheVectorFactory mGeocacheVectorFactory;
+    private final GeocacheVectors mGeocacheVectors;
 
     public CacheListData(GeocacheVectors geocacheVectors,
             GeocacheVectorFactory geocacheVectorFactory) {
-        mDestinationVectors = geocacheVectors;
-        mDestinationVectorFactory = geocacheVectorFactory;
+        mGeocacheVectors = geocacheVectors;
+        mGeocacheVectorFactory = geocacheVectorFactory;
     }
 
-    public void add(ArrayList<Geocache> locations, Location here) {
-        mDestinationVectors.reset(locations.size());
-        mDestinationVectors.addLocations(locations, here);
-        mDestinationVectors.add(mDestinationVectorFactory.createMyLocation());
-        mDestinationVectors.sort();
-    }
-
-    public void delete(int position) {
-        // TODO: write a custom adapter, because only deletes are handled
-        // dynamically; any adds require a rebuild.
-        mDestinationVectors.delete(position);
-        mAdapterData.remove(position);
-    }
-
-    public ArrayList<Map<String, Object>> getAdapterData() {
-        mAdapterData = mDestinationVectors.getAdapterData();
-        return mAdapterData;
-    }
-
-    public CharSequence getCoordinatesIdAndName(int position) {
-        return mDestinationVectors.getCoordinatesIdAndName(position);
-    }
-
-    public CharSequence getId(int position) {
-        return mDestinationVectors.getId(position);
+    public void add(ArrayList<Geocache> geocaches, Location here) {
+        mGeocacheVectors.reset(geocaches.size());
+        mGeocacheVectors.addLocations(geocaches, here);
+        mGeocacheVectors.add(mGeocacheVectorFactory.createMyLocation());
+        mGeocacheVectors.sort();
     }
 }

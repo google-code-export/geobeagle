@@ -12,17 +12,10 @@
  ** limitations under the License.
  */
 
-package com.google.code.geobeagle.data;
+package com.google.code.geobeagle;
 
+import com.google.code.geobeagle.ui.GeocacheListAdapter;
 
-public interface IGeocacheVector {
-    public CharSequence getCoordinatesIdAndName();
-
-    public CharSequence getFormattedDistance();
-
-    public float getDistance();
-
-    public CharSequence getId();
-
-    public CharSequence getIdAndName();
+public interface Action {
+    public void act(int position, GeocacheListAdapter geocacheListAdapter);
 }

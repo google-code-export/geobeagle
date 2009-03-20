@@ -19,66 +19,77 @@ import static org.easymock.classextension.EasyMock.createMock;
 import static org.easymock.classextension.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.verify;
 
-import com.google.code.geobeagle.CacheListActions;
-import com.google.code.geobeagle.data.CacheListData;
+import com.google.code.geobeagle.Action;
+import com.google.code.geobeagle.DeleteAction;
+import com.google.code.geobeagle.ViewAction;
+import com.google.code.geobeagle.data.GeocacheVector;
+import com.google.code.geobeagle.data.GeocacheVectors;
 import com.google.code.geobeagle.io.di.DatabaseDI.SQLiteWrapper;
 import com.google.code.geobeagle.ui.CacheListDelegate;
+import com.google.code.geobeagle.ui.GeocacheListAdapter;
 
 import android.content.Context;
 import android.content.Intent;
-import android.widget.SimpleAdapter;
 
 import junit.framework.TestCase;
 
 public class CacheListActionsTest extends TestCase {
 
     public void testActionDelete() {
-        CacheListData cacheListData = createMock(CacheListData.class);
         Database database = createMock(Database.class);
         CacheWriter cacheWriter = createMock(CacheWriter.class);
         SQLiteWrapper sqliteWrapper = createMock(SQLiteWrapper.class);
-        SimpleAdapter simpleAdapter = createMock(SimpleAdapter.class);
+        GeocacheListAdapter geocacheListAdapter = createMock(GeocacheListAdapter.class);
+        GeocacheVectors geocacheVectors = createMock(GeocacheVectors.class);
+        GeocacheVector geocacheVector = createMock(GeocacheVector.class);
 
         sqliteWrapper.openWritableDatabase(database);
-        cacheListData.delete(17);
-        expect(cacheListData.getId(17)).andReturn("GC123");
+        geocacheVectors.remove(17);
+        expect(geocacheVectors.get(17)).andReturn(geocacheVector);
+        expect(geocacheVector.getId()).andReturn("GC123");
         cacheWriter.deleteCache("GC123");
         sqliteWrapper.close();
-        simpleAdapter.notifyDataSetChanged();
+        geocacheListAdapter.notifyDataSetChanged();
 
-        replay(simpleAdapter);
+        replay(geocacheVector);
+        replay(geocacheVectors);
+        replay(geocacheListAdapter);
         replay(sqliteWrapper);
-        replay(cacheListData);
         replay(cacheWriter);
         replay(database);
-        CacheListActions.Action action = new CacheListActions.Delete(database, sqliteWrapper,
-                cacheWriter, cacheListData, null);
-        action.act(17, simpleAdapter);
+        Action action = new DeleteAction(database, sqliteWrapper, cacheWriter, geocacheVectors,
+                null);
+        action.act(17, geocacheListAdapter);
         verify(sqliteWrapper);
-        verify(cacheListData);
         verify(cacheWriter);
         verify(database);
-        verify(simpleAdapter);
+        verify(geocacheListAdapter);
+        verify(geocacheVectors);
+        verify(geocacheVector);
     }
 
     public void testActionView() {
-        CacheListData cacheListData = createMock(CacheListData.class);
         Intent intent = createMock(Intent.class);
         Context context = createMock(Context.class);
+        GeocacheVectors geocacheVectors = createMock(GeocacheVectors.class);
+        GeocacheVector geocacheVector = createMock(GeocacheVector.class);
 
-        expect(cacheListData.getCoordinatesIdAndName(34)).andReturn("a cache");
+        expect(geocacheVectors.get(34)).andReturn(geocacheVector);
+        expect(geocacheVector.getCoordinatesIdAndName()).andReturn("a cache");
         expect(intent.setAction(CacheListDelegate.SELECT_CACHE)).andReturn(intent);
         expect(intent.putExtra("location", (CharSequence)"a cache")).andReturn(intent);
         context.startActivity(intent);
 
-        replay(cacheListData);
+        replay(geocacheVectors);
+        replay(geocacheVector);
         replay(context);
         replay(intent);
-        CacheListActions.Action action = new CacheListActions.View(cacheListData, context, intent);
+        Action action = new ViewAction(geocacheVectors, context, intent);
         action.act(34, null);
-        verify(cacheListData);
         verify(context);
         verify(intent);
+        verify(geocacheVectors);
+        verify(geocacheVector);
     }
 
 }
