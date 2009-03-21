@@ -36,7 +36,7 @@ public class CacheList extends ListActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        delegate = CacheListDelegateDI.create(this);
+        delegate = CacheListDelegateDI.create(this, this.getLayoutInflater());
         delegate.onCreate();
     }
 
