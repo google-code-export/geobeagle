@@ -64,7 +64,7 @@ public class CacheDetailsOnClickListenerTest {
         Builder builder = PowerMock.createMock(Builder.class);
         AlertDialog alertDialog = PowerMock.createMock(AlertDialog.class);
         Env env = PowerMock.createMock(Env.class);
-        LocationSetter locationSetter = PowerMock.createMock(LocationSetter.class);
+        GeocacheViewer geocacheViewer = PowerMock.createMock(GeocacheViewer.class);
         MockableView mockableDetailsView = PowerMock.createMock(MockableView.class);
         CacheDetailsLoader cacheDetailsLoader = PowerMock.createMock(CacheDetailsLoader.class);
         View detailsView = PowerMock.createMock(View.class);
@@ -72,7 +72,7 @@ public class CacheDetailsOnClickListenerTest {
         Geocache geocache = PowerMock.createMock(Geocache.class);
 
         expect(env.inflate(R.layout.cache_details, null)).andReturn(mockableDetailsView);
-        expect(locationSetter.getGeocache()).andReturn(geocache);
+        expect(geocacheViewer.getGeocache()).andReturn(geocache);
         expect(geocache.getId()).andReturn("GC1234");
         expect(builder.setTitle("GC1234")).andReturn(builder);
         expect(mockableDetailsView.findViewById(R.id.webview)).andReturn(webView);
@@ -85,7 +85,7 @@ public class CacheDetailsOnClickListenerTest {
 
         PowerMock.replayAll();
         CacheDetailsOnClickListener cacheDetailsOnClickListener = new CacheDetailsOnClickListener(
-                builder, locationSetter, null, env, cacheDetailsLoader);
+                builder, geocacheViewer, null, env, cacheDetailsLoader);
         cacheDetailsOnClickListener.onClick(null);
         PowerMock.verifyAll();
     }

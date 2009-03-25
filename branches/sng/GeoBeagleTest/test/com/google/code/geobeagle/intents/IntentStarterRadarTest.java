@@ -20,7 +20,7 @@ import static org.easymock.classextension.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.verify;
 
 import com.google.code.geobeagle.data.Geocache;
-import com.google.code.geobeagle.ui.LocationSetter;
+import com.google.code.geobeagle.ui.GeocacheViewer;
 
 import android.content.Context;
 import android.content.Intent;
@@ -32,11 +32,11 @@ public class IntentStarterRadarTest extends TestCase {
     public void testStartIntent() {
         Intent intent = createMock(Intent.class);
         Context context = createMock(Context.class);
-        LocationSetter locationSetter = createMock(LocationSetter.class);
+        GeocacheViewer geocacheViewer = createMock(GeocacheViewer.class);
         IntentFactory intentFactory = createMock(IntentFactory.class);
         Geocache geocache = createMock(Geocache.class);
 
-        expect(locationSetter.getGeocache()).andReturn(geocache);
+        expect(geocacheViewer.getGeocache()).andReturn(geocache);
         expect(intentFactory.createIntent("com.google.android.radar.SHOW_RADAR")).andReturn(intent);
         expect(geocache.getLatitude()).andReturn(37.175d);
         expect(intent.putExtra("latitude", 37.175f)).andReturn(intent);
@@ -44,13 +44,13 @@ public class IntentStarterRadarTest extends TestCase {
         expect(intent.putExtra("longitude", 122.8375f)).andReturn(intent);
         context.startActivity(intent);
 
-        replay(locationSetter);
+        replay(geocacheViewer);
         replay(geocache);
         replay(intentFactory);
         replay(intent);
         replay(context);
-        new IntentStarterRadar(context, intentFactory, locationSetter).startIntent();
-        verify(locationSetter);
+        new IntentStarterRadar(context, intentFactory, geocacheViewer).startIntent();
+        verify(geocacheViewer);
         verify(geocache);
         verify(intentFactory);
         verify(intent);

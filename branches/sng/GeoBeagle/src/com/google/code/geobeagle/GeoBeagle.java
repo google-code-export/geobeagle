@@ -35,7 +35,7 @@ import com.google.code.geobeagle.ui.EditButtonOnClickListener;
 import com.google.code.geobeagle.ui.ErrorDisplayer;
 import com.google.code.geobeagle.ui.GeocacheListOnClickListener;
 import com.google.code.geobeagle.ui.GetCoordsToast;
-import com.google.code.geobeagle.ui.LocationSetter;
+import com.google.code.geobeagle.ui.GeocacheViewer;
 import com.google.code.geobeagle.ui.GpsStatusWidget;
 import com.google.code.geobeagle.ui.MockableTextView;
 import com.google.code.geobeagle.ui.MyLocationProvider;
@@ -68,7 +68,7 @@ public class GeoBeagle extends Activity {
     private LocationControl mGpsControl;
     private final Handler mHandler;
     private GeoBeagleLocationListener mLocationListener;
-    private LocationSetter mLocationSetter;
+    private GeocacheViewer mLocationSetter;
     private GpsStatusWidget mLocationViewer;
     private final ResourceProvider mResourceProvider;
 
@@ -90,7 +90,7 @@ public class GeoBeagle extends Activity {
         return new MockableTextView((TextView)findViewById(id));
     }
 
-    private void getCoordinatesFromIntent(LocationSetter locationSetter, Intent intent,
+    private void getCoordinatesFromIntent(GeocacheViewer geocacheViewer, Intent intent,
             ErrorDisplayer errorDisplayer) {
         try {
             if (intent.getType() == null) {
@@ -99,7 +99,7 @@ public class GeoBeagle extends Activity {
                         new UrlQuerySanitizer(), UrlQuerySanitizer
                                 .getAllButNulAndAngleBracketsLegal());
                 final CharSequence[] latlon = Util.splitLatLonDescription(sanitizedQuery);
-                locationSetter.setLocation(Util.parseCoordinate(latlon[0]), Util
+                geocacheViewer.setLocation(Util.parseCoordinate(latlon[0]), Util
                         .parseCoordinate(latlon[1]), latlon[2]);
             }
         } catch (final Exception e) {
@@ -155,7 +155,7 @@ public class GeoBeagle extends Activity {
             final LocationSaver locationSaver = new LocationSaver(database,
                     geocacheFromTextFactory, mErrorDisplayer, sqliteWrapper, cacheWriter);
             final String initialDestination = getString(R.string.initial_destination);
-            mLocationSetter = new LocationSetter(this, txtLocation, mGpsControl,
+            mLocationSetter = new GeocacheViewer(this, txtLocation, mGpsControl,
                     geocacheFromTextFactory, initialDestination, mErrorDisplayer, locationSaver);
 
             setCacheClickListeners();

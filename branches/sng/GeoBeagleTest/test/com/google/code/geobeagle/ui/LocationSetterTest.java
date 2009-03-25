@@ -55,9 +55,9 @@ public class LocationSetterTest extends TestCase {
         expect(geocacheFromTextFactory.create("GC123")).andReturn(geocache);
 
         PowerMock.replayAll();
-        LocationSetter locationSetter = new LocationSetter(null, textView, null,
+        GeocacheViewer geocacheViewer = new GeocacheViewer(null, textView, null,
                 geocacheFromTextFactory, null, null, null);
-        locationSetter.getGeocache();
+        geocacheViewer.getGeocache();
         PowerMock.verifyAll();
     }
 
@@ -67,15 +67,15 @@ public class LocationSetterTest extends TestCase {
         LocationSaver locationSaver = createMock(LocationSaver.class);
 
         expect(textView.getText()).andReturn("googleplex");
-        expect(editor.putString(LocationSetter.PREFS_LOCATION, "googleplex")).andReturn(editor);
+        expect(editor.putString(GeocacheViewer.PREFS_LOCATION, "googleplex")).andReturn(editor);
         locationSaver.saveLocation("googleplex");
 
         replay(editor);
         replay(textView);
         replay(locationSaver);
-        LocationSetter locationSetter = new LocationSetter(null, textView, null, null, null, null,
+        GeocacheViewer geocacheViewer = new GeocacheViewer(null, textView, null, null, null, null,
                 locationSaver);
-        locationSetter.onPause(editor);
+        geocacheViewer.onPause(editor);
         verify(editor);
         verify(textView);
         verify(locationSaver);
@@ -87,13 +87,13 @@ public class LocationSetterTest extends TestCase {
         LocationSaver locationSaver = createMock(LocationSaver.class);
 
         textView.setText("googleplex");
-        expect(sharedPreferences.getString(LocationSetter.PREFS_LOCATION, "initial location"))
+        expect(sharedPreferences.getString(GeocacheViewer.PREFS_LOCATION, "initial location"))
                 .andReturn("googleplex");
 
         replay(sharedPreferences);
         replay(textView);
         replay(locationSaver);
-        new LocationSetter(null, textView, null, null, "initial location", null, locationSaver)
+        new GeocacheViewer(null, textView, null, null, "initial location", null, locationSaver)
                 .onResume(sharedPreferences);
         verify(sharedPreferences);
         verify(textView);
@@ -118,7 +118,7 @@ public class LocationSetterTest extends TestCase {
         replay(location);
         replay(textView);
         replay(locationControl);
-        new LocationSetter(null, textView, locationControl, null, null, null, locationSaver)
+        new GeocacheViewer(null, textView, locationControl, null, null, null, locationSaver)
                 .setLocation(null);
         verify(location);
         verify(textView);
@@ -140,9 +140,9 @@ public class LocationSetterTest extends TestCase {
         replay(textView);
         replay(errorDisplayer);
         replay(locationSaver);
-        LocationSetter locationSetter = new LocationSetter(null, textView, locationControl, null,
+        GeocacheViewer geocacheViewer = new GeocacheViewer(null, textView, locationControl, null,
                 null, errorDisplayer, locationSaver);
-        locationSetter.setLocation(null);
+        geocacheViewer.setLocation(null);
         verify(textView);
         verify(errorDisplayer);
         verify(locationControl);

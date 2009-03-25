@@ -28,7 +28,7 @@ import android.content.SharedPreferences.Editor;
 import android.location.Location;
 import android.widget.TextView;
 
-public class LocationSetter implements LifecycleManager {
+public class GeocacheViewer implements LifecycleManager {
 
     public static final String FNAME_RECENT_LOCATIONS = "RECENT_LOCATIONS";
     public static final String PREFS_LOCATION = "Location";
@@ -39,7 +39,7 @@ public class LocationSetter implements LifecycleManager {
     private final LocationSaver mLocationSaver;
     private final TextView mTxtLocation;
 
-    public LocationSetter(Context context, TextView mockableTxtLocation,
+    public GeocacheViewer(Context context, TextView mockableTxtLocation,
             LocationControl locationControl, GeocacheFromTextFactory geocacheFromTextFactory,
             String initialDestination, ErrorDisplayer errorDisplayer, LocationSaver locationSaver) {
         mTxtLocation = mockableTxtLocation;

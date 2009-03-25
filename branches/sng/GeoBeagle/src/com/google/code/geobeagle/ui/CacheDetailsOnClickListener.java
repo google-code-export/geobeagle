@@ -82,9 +82,9 @@ public class CacheDetailsOnClickListener implements View.OnClickListener {
     }
 
     public static CacheDetailsOnClickListener create(Builder alertDialogBuilder,
-            LocationSetter locationSetter, ErrorDisplayer errorDisplayer, Env env) {
+            GeocacheViewer geocacheViewer, ErrorDisplayer errorDisplayer, Env env) {
         final CacheDetailsLoader cacheDetailsLoader = new CacheDetailsLoader();
-        return new CacheDetailsOnClickListener(alertDialogBuilder, locationSetter, errorDisplayer,
+        return new CacheDetailsOnClickListener(alertDialogBuilder, geocacheViewer, errorDisplayer,
                 env, cacheDetailsLoader);
     }
 
@@ -93,12 +93,12 @@ public class CacheDetailsOnClickListener implements View.OnClickListener {
     private final Env mEnv;
     private final ErrorDisplayer mErrorDisplayer;
 
-    private final LocationSetter mLocationSetter;
+    private final GeocacheViewer mLocationSetter;
 
-    public CacheDetailsOnClickListener(Builder alertDialogBuilder, LocationSetter locationSetter,
+    public CacheDetailsOnClickListener(Builder alertDialogBuilder, GeocacheViewer geocacheViewer,
             ErrorDisplayer errorDisplayer, Env env, CacheDetailsLoader cacheDetailsLoader) {
         mAlertDialogBuilder = alertDialogBuilder;
-        mLocationSetter = locationSetter;
+        mLocationSetter = geocacheViewer;
         mErrorDisplayer = errorDisplayer;
         mEnv = env;
         mCacheDetailsLoader = cacheDetailsLoader;
