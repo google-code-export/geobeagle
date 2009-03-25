@@ -26,7 +26,7 @@ public class GeocacheFromTextFactory {
         return Util.splitCoordsAndDescription(location)[1];
     }
 
-    public static Pattern[] getDestinationPatterns(ResourceProvider resourceProvider) {
+    public static Pattern[] getDestinationPatterns() {
         String[] contentPrefixes = new String[] {
                 "LB", "GC"
         };
@@ -40,7 +40,7 @@ public class GeocacheFromTextFactory {
     private final Pattern[] mGeocachePatterns;
 
     public GeocacheFromTextFactory(ResourceProvider resourceProvider) {
-        mGeocachePatterns = GeocacheFromTextFactory.getDestinationPatterns(resourceProvider);
+        mGeocachePatterns = GeocacheFromTextFactory.getDestinationPatterns();
     }
 
     public Geocache create(CharSequence location) {
