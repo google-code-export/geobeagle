@@ -1,6 +1,8 @@
 
 package com.google.code.geobeagle.ui;
 
+import static org.junit.Assert.assertEquals;
+
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.data.Geocache;
 import com.google.code.geobeagle.data.di.GeocacheFromTextFactory;
@@ -26,6 +28,7 @@ import android.widget.EditText;
         EditCacheActivityDelegate.class
 })
 public class EditCacheActivityDelegateTest {
+
     @Test
     public void CancelButtonOnClickListenerTest() {
         Activity activity = PowerMock.createMock(Activity.class);
@@ -111,37 +114,51 @@ public class EditCacheActivityDelegateTest {
         EasyMock.expect(latitude.requestFocus()).andReturn(true);
 
         PowerMock.replayAll();
-        EditCacheActivityDelegate.GeocacheView geocacheView = new EditCacheActivityDelegate.GeocacheView(
-                id, name, latitude, longitude);
+        GeocacheView geocacheView = new GeocacheView(id, name, latitude, longitude);
         Geocache geocache = new Geocache("GC123", "a cache", 37.5, -122.4);
         geocacheView.set(geocache);
         PowerMock.verifyAll();
     }
 
     @Test
+    public void GeocacheViewGetTest() {
+        EditText id = PowerMock.createMock(EditText.class);
+        EditText name = PowerMock.createMock(EditText.class);
+        EditText latitude = PowerMock.createMock(EditText.class);
+        EditText longitude = PowerMock.createMock(EditText.class);
+
+        EasyMock.expect(id.getText()).andReturn(new StubEditable("GC123"));
+        EasyMock.expect(name.getText()).andReturn(new StubEditable("a cache"));
+        EasyMock.expect(latitude.getText()).andReturn(new StubEditable("37 15.50"));
+        EasyMock.expect(longitude.getText()).andReturn(new StubEditable("-122 30.000"));
+
+        PowerMock.replayAll();
+        GeocacheView geocacheView = new GeocacheView(id, name, latitude, longitude);
+        Geocache geocache = geocacheView.get();
+        assertEquals("GC123", geocache.getId().toString());
+        assertEquals("a cache", geocache.getName().toString());
+        assertEquals(37.25833, geocache.getLatitude(), 0.00001);
+        assertEquals(-122.5, geocache.getLongitude(), 0.0001);
+        PowerMock.verifyAll();
+    }
+
+    @Test
     public void SetButtonOnClickListenerTest() throws Exception {
         Activity activity = PowerMock.createMock(Activity.class);
-        EditCacheActivityDelegate.GeocacheView geocacheView = PowerMock
-                .createMock(EditCacheActivityDelegate.GeocacheView.class);
+        GeocacheView geocacheView = PowerMock.createMock(GeocacheView.class);
         Intent intent = PowerMock.createMock(Intent.class);
+        Geocache geocache = PowerMock.createMock(Geocache.class);
 
         EasyMock.expect(intent.setAction(CacheListDelegate.SELECT_CACHE)).andReturn(intent);
         PowerMock.expectNew(Intent.class).andReturn(intent);
-        EasyMock.expect(geocacheView.getId()).andReturn("GC123");
-        EasyMock.expect(geocacheView.getName()).andReturn("a cache");
-        EasyMock.expect(geocacheView.getLatitude()).andReturn("37");
-        EasyMock.expect(geocacheView.getLongitude()).andReturn("-122");
-        EasyMock.expect(
-                intent
-                        .putExtra("location",
-                                (CharSequence)"37 00.000, -122 00.000 (GC123: a cache)"))
-                .andReturn(intent);
+        EasyMock.expect(geocacheView.get()).andReturn(geocache);
+        EasyMock.expect(intent.putExtra("geocache", geocache)).andReturn(intent);
         activity.setResult(0, intent);
         activity.finish();
 
         PowerMock.replayAll();
-        EditCacheActivityDelegate.SetButtonOnClickListener setButtonOnClickListener = new EditCacheActivityDelegate.SetButtonOnClickListener(
-                activity, geocacheView);
+        SetButtonOnClickListener setButtonOnClickListener = new SetButtonOnClickListener(activity,
+                geocacheView);
         setButtonOnClickListener.onClick(null);
         PowerMock.verifyAll();
     }

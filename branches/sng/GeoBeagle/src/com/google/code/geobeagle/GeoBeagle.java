@@ -15,6 +15,7 @@
 package com.google.code.geobeagle;
 
 import com.google.code.geobeagle.LocationControl.LocationChooser;
+import com.google.code.geobeagle.data.Geocache;
 import com.google.code.geobeagle.data.di.GeocacheFromTextFactory;
 import com.google.code.geobeagle.intents.GeocacheToCachePage;
 import com.google.code.geobeagle.intents.GeocacheToGoogleMap;
@@ -30,10 +31,10 @@ import com.google.code.geobeagle.io.di.DatabaseDI.SQLiteWrapper;
 import com.google.code.geobeagle.ui.CacheListDelegate;
 import com.google.code.geobeagle.ui.CachePageButtonEnabler;
 import com.google.code.geobeagle.ui.ContentSelector;
+import com.google.code.geobeagle.ui.EditButtonOnClickListener;
 import com.google.code.geobeagle.ui.ErrorDisplayer;
 import com.google.code.geobeagle.ui.GeocacheListOnClickListener;
 import com.google.code.geobeagle.ui.GetCoordsToast;
-import com.google.code.geobeagle.ui.EditButtonOnClickListener;
 import com.google.code.geobeagle.ui.LocationSetter;
 import com.google.code.geobeagle.ui.LocationViewer;
 import com.google.code.geobeagle.ui.MockableTextView;
@@ -114,7 +115,7 @@ public class GeoBeagle extends Activity {
                 getCoordinatesFromIntent(mLocationSetter, intent, mErrorDisplayer);
                 return true;
             } else if (action.equals(CacheListDelegate.SELECT_CACHE)) {
-                mLocationSetter.setLocation(intent.getStringExtra("location"));
+                mLocationSetter.set(intent.<Geocache> getParcelableExtra("geocache"));
                 mCachePageButtonEnabler.check();
                 return true;
             }

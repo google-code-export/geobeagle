@@ -90,4 +90,8 @@ public class LocationSetter implements LifecycleManager {
         return latLonText;
     }
 
+    public void set(Geocache geocache) {
+        setLocation(geocache.getLatitude(), geocache.getLongitude(), geocache.getIdAndName());
+    }
+
 }

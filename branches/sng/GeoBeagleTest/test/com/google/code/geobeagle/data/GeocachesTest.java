@@ -12,7 +12,7 @@
  ** limitations under the License.
  */
 
-package com.google.code.geobeagle;
+package com.google.code.geobeagle.data;
 
 import static org.easymock.classextension.EasyMock.createMock;
 
@@ -21,7 +21,7 @@ import com.google.code.geobeagle.data.Geocaches;
 
 import junit.framework.TestCase;
 
-public class DescriptionsAndLocationsTest extends TestCase {
+public class GeocachesTest extends TestCase {
 
     public final void testAdd() {
         Geocache geocache = createMock(Geocache.class);

@@ -9,7 +9,7 @@ import android.app.Activity;
 import android.os.Bundle;
 
 public class EditCacheActivity extends Activity {
-    private EditCacheActivityDelegate mEditCacheActivityDelegate;
+    private final EditCacheActivityDelegate mEditCacheActivityDelegate;
 
     public EditCacheActivity() {
         super();

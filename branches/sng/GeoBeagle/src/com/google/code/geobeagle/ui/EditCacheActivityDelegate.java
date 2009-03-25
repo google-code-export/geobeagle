@@ -36,6 +36,7 @@ public class EditCacheActivityDelegate {
         }
 
         public void onClick(View v) {
+            // TODO: replace magic number.
             mActivity.setResult(-1, null);
             mActivity.finish();
         }
@@ -54,20 +55,9 @@ public class EditCacheActivityDelegate {
             mLongitude = longitude;
         }
 
-        CharSequence getId() {
-            return mId.getText();
-        }
-
-        CharSequence getLatitude() {
-            return mLatitude.getText();
-        }
-
-        CharSequence getLongitude() {
-            return mLongitude.getText();
-        }
-
-        CharSequence getName() {
-            return mName.getText();
+        Geocache get() {
+            return new Geocache(mId.getText(), mName.getText(), Util.parseCoordinate(mLatitude
+                    .getText()), Util.parseCoordinate(mLongitude.getText()));
         }
 
         void set(Geocache geocache) {
@@ -90,12 +80,9 @@ public class EditCacheActivityDelegate {
         }
 
         public void onClick(View v) {
-            Geocache geocache = new Geocache(mGeocacheView.getId(), mGeocacheView.getName(), Util
-                    .parseCoordinate(mGeocacheView.getLatitude()), Util
-                    .parseCoordinate(mGeocacheView.getLongitude()));
             Intent i = new Intent();
             i.setAction(CacheListDelegate.SELECT_CACHE);
-            i.putExtra("location", geocache.getCoordinatesIdAndName());
+            i.putExtra("geocache", mGeocacheView.get());
             mActivity.setResult(0, i);
             mActivity.finish();
         }

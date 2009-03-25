@@ -16,10 +16,24 @@ package com.google.code.geobeagle.data;
 
 import com.google.code.geobeagle.Util;
 
+import android.os.Bundle;
+import android.os.Parcel;
+import android.os.Parcelable;
+
 /**
  * Geocache or letterbox description, id, and coordinates.
  */
-public class Geocache {
+public class Geocache implements Parcelable {
+    public static final Parcelable.Creator<Geocache> CREATOR = new Parcelable.Creator<Geocache>() {
+        public Geocache createFromParcel(Parcel in) {
+            return new Geocache(in);
+        }
+
+        public Geocache[] newArray(int size) {
+            return new Geocache[size];
+        }
+    };
+
     public final static int PROVIDER_ATLASQUEST = 0;
     public final static int PROVIDER_GROUNDSPEAK = 1;
 
@@ -41,6 +55,19 @@ public class Geocache {
         mName = name;
         mLatitude = latitude;
         mLongitude = longitude;
+    }
+
+    public Geocache(Parcel in) {
+        Bundle bundle = in.readBundle();
+        mContentSelectorIndex = bundle.getInt("contentSelectorIndex");
+        mId = bundle.getCharSequence("id");
+        mLatitude = bundle.getDouble("latitude");
+        mLongitude = bundle.getDouble("longitude");
+        mName = bundle.getCharSequence("name");
+    }
+
+    public int describeContents() {
+        return 0;
     }
 
     public int getContentIndex() {
@@ -83,5 +110,15 @@ public class Geocache {
             return mId.subSequence(2, mId.length());
         else
             return "";
+    }
+
+    public void writeToParcel(Parcel out, int flags) {
+        Bundle bundle = new Bundle();
+        bundle.putInt("contentSelectorIndex", mContentSelectorIndex);
+        bundle.putCharSequence("id", mId);
+        bundle.putCharSequence("name", mName);
+        bundle.putDouble("latitude", mLatitude);
+        bundle.putDouble("longitude", mLongitude);
+        out.writeBundle(bundle);
     }
 }
