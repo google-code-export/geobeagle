@@ -22,6 +22,7 @@ import static org.easymock.classextension.EasyMock.verify;
 import com.google.code.geobeagle.Action;
 import com.google.code.geobeagle.DeleteAction;
 import com.google.code.geobeagle.ViewAction;
+import com.google.code.geobeagle.data.Geocache;
 import com.google.code.geobeagle.data.GeocacheVector;
 import com.google.code.geobeagle.data.GeocacheVectors;
 import com.google.code.geobeagle.io.di.DatabaseDI.SQLiteWrapper;
@@ -73,11 +74,12 @@ public class CacheListActionsTest extends TestCase {
         Context context = createMock(Context.class);
         GeocacheVectors geocacheVectors = createMock(GeocacheVectors.class);
         GeocacheVector geocacheVector = createMock(GeocacheVector.class);
+        Geocache geocache = createMock(Geocache.class);
 
         expect(geocacheVectors.get(34)).andReturn(geocacheVector);
-        expect(geocacheVector.getCoordinatesIdAndName()).andReturn("a cache");
+        expect(geocacheVector.getGeocache()).andReturn(geocache);
         expect(intent.setAction(CacheListDelegate.SELECT_CACHE)).andReturn(intent);
-        expect(intent.putExtra("location", (CharSequence)"a cache")).andReturn(intent);
+        expect(intent.putExtra("geocache", geocache)).andReturn(intent);
         context.startActivity(intent);
 
         replay(geocacheVectors);

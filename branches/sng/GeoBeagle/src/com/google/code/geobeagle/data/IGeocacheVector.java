@@ -15,7 +15,10 @@
 package com.google.code.geobeagle.data;
 
 
+
 public interface IGeocacheVector {
+    public Geocache getGeocache();
+    
     public CharSequence getCoordinatesIdAndName();
 
     public CharSequence getFormattedDistance();

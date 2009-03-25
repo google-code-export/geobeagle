@@ -47,11 +47,11 @@ public class GeocacheVectorTest extends TestCase {
 
     }
 
-    public void testDestinationGetDistance() {
+    public void testGetDistance() {
         assertEquals(3.5f, new GeocacheVector(geocache, 3.5f, null).getDistance());
     }
 
-    public void testDestinationGetFormattedDistance() {
+    public void testGetFormattedDistance() {
         DistanceFormatter distanceFormatter = createMock(DistanceFormatter.class);
         expect(distanceFormatter.format(3.5f)).andReturn("3.5m");
 
@@ -61,7 +61,14 @@ public class GeocacheVectorTest extends TestCase {
         verify(distanceFormatter);
     }
 
-    public void testDestinationGetId() {
+    public void testGetGeocache() {
+        replay(geocache);
+        GeocacheVector geocacheVector = new GeocacheVector(geocache, 3.5f, null);
+        assertEquals(geocache, geocacheVector.getGeocache());
+        verify(geocache);
+    }
+
+    public void testGetId() {
         expect(geocache.getId()).andReturn("a geocache");
 
         replay(geocache);
@@ -70,7 +77,7 @@ public class GeocacheVectorTest extends TestCase {
         verify(geocache);
     }
 
-    public void testDestinationGetIdAndName() {
+    public void testGetIdAndName() {
         expect(geocache.getIdAndName()).andReturn("GC123: a geocache");
 
         replay(geocache);
@@ -79,7 +86,7 @@ public class GeocacheVectorTest extends TestCase {
         verify(geocache);
     }
 
-    public void testDestinationGetLocation() {
+    public void testGetCoordinatesIdAndName() {
         expect(geocache.getCoordinatesIdAndName()).andReturn("343 2323 (a geocache)");
 
         replay(geocache);
@@ -101,6 +108,8 @@ public class GeocacheVectorTest extends TestCase {
         assertEquals("", myLocation.getFormattedDistance());
         assertEquals(-1.0f, myLocation.getDistance());
         assertEquals("My Current Location", myLocation.getId());
+        Geocache myLocationGeocache = myLocation.getGeocache();
+        assertEquals("My Location", myLocationGeocache.getName());
         verify(resourceProvider);
     }
 }

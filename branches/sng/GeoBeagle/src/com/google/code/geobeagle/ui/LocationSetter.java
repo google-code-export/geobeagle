@@ -91,7 +91,10 @@ public class LocationSetter implements LifecycleManager {
     }
 
     public void set(Geocache geocache) {
-        setLocation(geocache.getLatitude(), geocache.getLongitude(), geocache.getIdAndName());
+        if (geocache.getContentIndex() == Geocache.PROVIDER_MYLOCATION) {
+            setLocation(null);
+        } else
+            setLocation(geocache.getLatitude(), geocache.getLongitude(), geocache.getIdAndName());
     }
 
 }

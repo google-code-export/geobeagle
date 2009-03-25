@@ -34,6 +34,7 @@ public class Geocache implements Parcelable {
         }
     };
 
+    public final static int PROVIDER_MYLOCATION = -1;
     public final static int PROVIDER_ATLASQUEST = 0;
     public final static int PROVIDER_GROUNDSPEAK = 1;
 

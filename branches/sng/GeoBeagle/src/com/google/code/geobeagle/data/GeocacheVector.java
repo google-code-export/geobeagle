@@ -36,7 +36,6 @@ public class GeocacheVector implements IGeocacheVector {
         public void sort(ArrayList<IGeocacheVector> arrayList) {
             Collections.sort(arrayList, this);
         }
-
     }
 
     public static class MyLocation implements IGeocacheVector {
@@ -70,6 +69,9 @@ public class GeocacheVector implements IGeocacheVector {
             return mResourceProvider.getString(R.string.my_current_location);
         }
 
+        public Geocache getGeocache() {
+            return new Geocache(Geocache.PROVIDER_MYLOCATION, "MYLOC", "My Location", 0, 0);
+        }
     }
 
     private final Geocache mGeocache;
@@ -100,6 +102,10 @@ public class GeocacheVector implements IGeocacheVector {
 
     public CharSequence getIdAndName() {
         return mGeocache.getIdAndName();
+    }
+
+    public Geocache getGeocache() {
+        return mGeocache;
     }
 
 }

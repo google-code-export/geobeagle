@@ -33,8 +33,8 @@ public class ViewAction implements Action {
     }
 
     public void act(int position, GeocacheListAdapter geocacheListAdapter) {
-        mIntent.putExtra("location", mGeocacheVectors.get(position).getCoordinatesIdAndName())
-                .setAction(CacheListDelegate.SELECT_CACHE);
+        mIntent.putExtra("geocache", mGeocacheVectors.get(position).getGeocache()).setAction(
+                CacheListDelegate.SELECT_CACHE);
         mContext.startActivity(mIntent);
     }
 }
