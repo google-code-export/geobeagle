@@ -27,14 +27,14 @@ public class GeocacheTest extends TestCase {
     };
 
     public void testBadCoordinatesGoodDescription() {
-        Geocache destinationImpl = Geocache.create("  FOO (Description)", mGeocachePatterns);
+        Geocache destinationImpl = GeocacheFromTextFactory.create("  FOO (Description)", mGeocachePatterns);
         assertEquals(0.0, destinationImpl.getLatitude());
         assertEquals(0.0, destinationImpl.getLongitude());
         assertEquals("Description", destinationImpl.getIdAndName());
     }
 
     public void testDescriptionGetIdAndName() {
-        Geocache destinationImpl = Geocache.create(" \t 37 03.0, 122 00.0 (Description)",
+        Geocache destinationImpl = GeocacheFromTextFactory.create(" \t 37 03.0, 122 00.0 (Description)",
                 mGeocachePatterns);
         assertEquals(37.05, destinationImpl.getLatitude());
         assertEquals(122.0, destinationImpl.getLongitude());
@@ -42,7 +42,7 @@ public class GeocacheTest extends TestCase {
     }
 
     public void testEmptyDestination() {
-        Geocache geocache = Geocache.create("", mGeocachePatterns);
+        Geocache geocache = GeocacheFromTextFactory.create("", mGeocachePatterns);
         assertEquals(0.0, geocache.getLatitude());
         assertEquals(0.0, geocache.getLongitude());
         assertEquals("", geocache.getIdAndName());
@@ -54,48 +54,48 @@ public class GeocacheTest extends TestCase {
     }
 
     public void testGetCoordinatesIdAndName() {
-        Geocache destinationImpl = Geocache.create("s37 03.0, 122 00.0 (Description)",
+        Geocache destinationImpl = GeocacheFromTextFactory.create("s37 03.0, 122 00.0 (Description)",
                 mGeocachePatterns);
         assertEquals(37.05, destinationImpl.getLatitude());
         assertEquals(122.0, destinationImpl.getLongitude());
-        assertEquals("37.05, 122.0 (Description)", destinationImpl.getCoordinatesIdAndName());
+        assertEquals("37 03.000, 122 00.000 (Description)", destinationImpl.getCoordinatesIdAndName());
     }
 
     public void testGetId() {
-        Geocache geocache = Geocache.create("34.313,122.43 (LB89882: The Nut Case)",
+        Geocache geocache = GeocacheFromTextFactory.create("34.313,122.43 (LB89882: The Nut Case)",
                 mGeocachePatterns);
         assertEquals("89882", geocache.getShortId());
         assertEquals("LB89882", geocache.getId());
         assertEquals(1, geocache.getContentIndex());
         assertEquals("The Nut Case", geocache.getName());
 
-        geocache = Geocache.create("34.313,122.43 (GCFOOBAR: GS cache)", mGeocachePatterns);
+        geocache = GeocacheFromTextFactory.create("34.313,122.43 (GCFOOBAR: GS cache)", mGeocachePatterns);
         assertEquals("FOOBAR", geocache.getShortId());
         assertEquals(0, geocache.getContentIndex());
     }
 
     public void testLatLong() {
-        Geocache geocache = Geocache.create("37 00.0, 122 00.0", mGeocachePatterns);
+        Geocache geocache = GeocacheFromTextFactory.create("37 00.0, 122 00.0", mGeocachePatterns);
         assertEquals(37.0, geocache.getLatitude());
         assertEquals(122.0, geocache.getLongitude());
         assertEquals("", geocache.getName());
 
-        Geocache ll2 = Geocache.create("37 00.0, 122 00.0", mGeocachePatterns);
+        Geocache ll2 = GeocacheFromTextFactory.create("37 00.0, 122 00.0", mGeocachePatterns);
         assertEquals(37.0, ll2.getLatitude());
         assertEquals(122.0, ll2.getLongitude());
 
-        Geocache ll3 = Geocache.create("37 03.0, 122 00.0", mGeocachePatterns);
+        Geocache ll3 = GeocacheFromTextFactory.create("37 03.0, 122 00.0", mGeocachePatterns);
         assertEquals(37.05, ll3.getLatitude());
         assertEquals(122.0, ll3.getLongitude());
 
-        Geocache ll4 = Geocache.create(" \t 37 03.0, 122 00.0  ", mGeocachePatterns);
+        Geocache ll4 = GeocacheFromTextFactory.create(" \t 37 03.0, 122 00.0  ", mGeocachePatterns);
         assertEquals(37.05, ll4.getLatitude());
         assertEquals(122.0, ll4.getLongitude());
         assertEquals("", ll4.getIdAndName());
     }
 
     public void testNoName() {
-        Geocache destinationImpl = Geocache.create(" \t 37 03.0, 122 00.0 (GC12345)",
+        Geocache destinationImpl = GeocacheFromTextFactory.create(" \t 37 03.0, 122 00.0 (GC12345)",
                 mGeocachePatterns);
         assertEquals(37.05, destinationImpl.getLatitude());
         assertEquals(122.0, destinationImpl.getLongitude());

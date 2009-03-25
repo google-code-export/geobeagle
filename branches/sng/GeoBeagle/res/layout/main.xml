@@ -66,22 +66,23 @@
 			<Button android:id="@+id/object_map" android:layout_height="wrap_content"
 				android:layout_width="wrap_content" android:layout_weight="1"
 				android:text="@string/geocaching_map" />
-		</LinearLayout>
-		<TextView android:layout_width="fill_parent"
-			android:layout_height="wrap_content" android:text="@string/go_to" />
-		<LinearLayout android:orientation="horizontal"
-			android:layout_height="wrap_content" android:layout_width="fill_parent">
-			<EditText android:id="@+id/go_to" android:layout_height="wrap_content"
-				android:scrollHorizontally="true" android:layout_width="wrap_content"
-				android:layout_weight="1" android:textSize="14sp" android:text="37 122" />
-			<Button android:id="@+id/go_to_list" android:text="..."
-				android:layout_height="wrap_content" android:layout_width="wrap_content" />
+			<Button android:id="@+id/go_to_list" android:text="Offline List"
+				android:layout_height="wrap_content" android:layout_width="wrap_content"
+				android:layout_weight="1" />
 		</LinearLayout>
 
-		<TextView android:id="@+id/go_to_cache_prompt"
+		<TextView android:id="@+id/cache_prompt"
 			android:layout_width="fill_parent" android:layout_height="wrap_content"
 			android:text="Go to cache:" android:paddingTop="18sp"
 			android:textSize="18sp" />
+		<LinearLayout android:orientation="horizontal"
+			android:layout_height="wrap_content" android:layout_width="fill_parent">
+			<TextView android:id="@+id/go_to" android:layout_height="wrap_content"
+				android:layout_width="wrap_content" android:layout_weight="1"
+				android:textSize="18sp" android:text="37 122" />
+			<ImageButton android:id="@+id/edit" android:src="@android:drawable/ic_menu_edit"
+				android:layout_height="wrap_content" android:layout_width="wrap_content" />
+		</LinearLayout>
 
 		<LinearLayout android:orientation="horizontal"
 			android:layout_height="wrap_content" android:layout_width="fill_parent">

@@ -14,11 +14,9 @@
 
 package com.google.code.geobeagle.ui;
 
-import static org.easymock.classextension.EasyMock.createMock;
-import static org.easymock.classextension.EasyMock.replay;
-import static org.easymock.classextension.EasyMock.verify;
-
 import com.google.code.geobeagle.CacheList;
+
+import org.powermock.api.easymock.PowerMock;
 
 import android.app.Activity;
 import android.content.Context;
@@ -28,11 +26,11 @@ import junit.framework.TestCase;
 
 public class GeocacheListOnClickListenerTest extends TestCase {
     public void testOnClickListener() {
-        final Activity activity = createMock(Activity.class);
-        final Intent intent = createMock(Intent.class);
+        final Activity activity = PowerMock.createMock(Activity.class);
+        final Intent intent = PowerMock.createMock(Intent.class);
 
         activity.startActivity(intent);
-        replay(activity);
+        PowerMock.replayAll();
         GeocacheListOnClickListener geocacheListOnClickListener = new GeocacheListOnClickListener(
                 activity) {
             @Override
@@ -43,6 +41,6 @@ public class GeocacheListOnClickListenerTest extends TestCase {
             }
         };
         geocacheListOnClickListener.onClick(null);
-        verify(activity);
+        PowerMock.verifyAll();
     }
 }

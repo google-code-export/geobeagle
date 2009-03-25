@@ -16,6 +16,7 @@ package com.google.code.geobeagle.data.di;
 
 import com.google.code.geobeagle.data.Geocache;
 
+
 public class GeocacheFactory {
     public Geocache create(int contentSelectorIndex, CharSequence id, CharSequence name,
             double latitude, double longitude) {

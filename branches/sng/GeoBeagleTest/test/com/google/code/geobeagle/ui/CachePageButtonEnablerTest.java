@@ -24,13 +24,14 @@ import com.google.code.geobeagle.ResourceProvider;
 import com.google.code.geobeagle.ui.CachePageButtonEnabler.MockableTextUtils;
 
 import android.view.View;
+import android.widget.TextView;
 
 import junit.framework.TestCase;
 
 public class CachePageButtonEnablerTest extends TestCase {
 
     public void helper(String input, boolean webPageExpected, boolean detailsExpected) {
-        TooString tooString = createMock(TooString.class);
+        TextView txtGeocache = createMock(TextView.class);
         View pageButton = createMock(View.class);
         View detailsButton = createMock(View.class);
         ResourceProvider resourceProvider = createMock(ResourceProvider.class);
@@ -40,19 +41,19 @@ public class CachePageButtonEnablerTest extends TestCase {
         expect(resourceProvider.getStringArray(R.array.content_prefixes)).andReturn(new String[] {
                 "GC", "LB"
         });
-        expect(tooString.tooString()).andReturn(input);
+        expect(txtGeocache.getText()).andReturn(input);
         pageButton.setEnabled(webPageExpected);
         detailsButton.setEnabled(detailsExpected);
 
         replay(textUtils);
         replay(detailsButton);
-        replay(tooString);
+        replay(txtGeocache);
         replay(resourceProvider);
         replay(pageButton);
-        CachePageButtonEnabler cachePageButtonEnabler = new CachePageButtonEnabler(tooString,
+        CachePageButtonEnabler cachePageButtonEnabler = new CachePageButtonEnabler(txtGeocache,
                 pageButton, detailsButton, resourceProvider, textUtils);
         cachePageButtonEnabler.check();
-        verify(tooString);
+        verify(txtGeocache);
         verify(pageButton);
         verify(resourceProvider);
         verify(detailsButton);

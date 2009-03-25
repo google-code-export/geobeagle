@@ -21,64 +21,92 @@ import static org.easymock.classextension.EasyMock.verify;
 
 import com.google.code.geobeagle.LocationControl;
 import com.google.code.geobeagle.R;
+import com.google.code.geobeagle.data.Geocache;
+import com.google.code.geobeagle.data.di.GeocacheFromTextFactory;
 import com.google.code.geobeagle.io.LocationSaver;
+
+import org.junit.runner.RunWith;
+import org.powermock.api.easymock.PowerMock;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.location.Location;
+import android.widget.TextView;
 
 import java.util.GregorianCalendar;
 
 import junit.framework.TestCase;
 
+@RunWith(PowerMockRunner.class)
+@PrepareForTest( {
+    TextView.class
+})
 public class LocationSetterTest extends TestCase {
+
+    public void testGetGeocache() {
+        TextView textView = PowerMock.createMock(TextView.class);
+        GeocacheFromTextFactory geocacheFromTextFactory = PowerMock
+                .createMock(GeocacheFromTextFactory.class);
+        Geocache geocache = PowerMock.createMock(Geocache.class);
+
+        expect(textView.getText()).andReturn("GC123");
+        expect(geocacheFromTextFactory.create("GC123")).andReturn(geocache);
+
+        PowerMock.replayAll();
+        LocationSetter locationSetter = new LocationSetter(null, textView, null,
+                geocacheFromTextFactory, null, null, null);
+        locationSetter.getGeocache();
+        PowerMock.verifyAll();
+    }
 
     public void testOnPause() {
         Editor editor = createMock(Editor.class);
-        MockableEditText editText = createMock(MockableEditText.class);
+        TextView textView = createMock(TextView.class);
         LocationSaver locationSaver = createMock(LocationSaver.class);
 
-        expect(editText.getText()).andReturn("googleplex");
+        expect(textView.getText()).andReturn("googleplex");
         expect(editor.putString(LocationSetter.PREFS_LOCATION, "googleplex")).andReturn(editor);
         locationSaver.saveLocation("googleplex");
 
         replay(editor);
-        replay(editText);
+        replay(textView);
         replay(locationSaver);
-        LocationSetter locationSetter = new LocationSetter(null, editText, null, null, null, null,
+        LocationSetter locationSetter = new LocationSetter(null, textView, null, null, null, null,
                 locationSaver);
         locationSetter.onPause(editor);
         verify(editor);
-        verify(editText);
+        verify(textView);
         verify(locationSaver);
     }
 
     public void testOnResume() {
         SharedPreferences sharedPreferences = createMock(SharedPreferences.class);
-        MockableEditText editText = createMock(MockableEditText.class);
+        TextView textView = PowerMock.createMock(TextView.class);
         LocationSaver locationSaver = createMock(LocationSaver.class);
 
-        editText.setText("googleplex");
+        textView.setText("googleplex");
         expect(sharedPreferences.getString(LocationSetter.PREFS_LOCATION, "initial location"))
                 .andReturn("googleplex");
 
         replay(sharedPreferences);
-        replay(editText);
+        replay(textView);
         replay(locationSaver);
-        new LocationSetter(null, editText, null, null, "initial location", null, locationSaver)
+        new LocationSetter(null, textView, null, null, "initial location", null, locationSaver)
                 .onResume(sharedPreferences);
         verify(sharedPreferences);
-        verify(editText);
+        verify(textView);
         verify(locationSaver);
     }
 
     public void testSetMyLocation() {
         final Location location = createMock(Location.class);
-        MockableEditText editText = createMock(MockableEditText.class);
+        TextView textView = PowerMock.createMock(TextView.class);
         LocationControl locationControl = createMock(LocationControl.class);
         LocationSaver locationSaver = createMock(LocationSaver.class);
 
-        editText.setText("37 07.380, 122 20.700 ([16:07] My Location)");
+        textView.setText("37 07.380, 122 20.700 ([16:07] My Location)");
         expect(location.getLatitude()).andReturn(37.123);
         expect(location.getLongitude()).andReturn(122.345);
         expect(location.getTime()).andReturn(
@@ -88,19 +116,19 @@ public class LocationSetterTest extends TestCase {
 
         replay(locationSaver);
         replay(location);
-        replay(editText);
+        replay(textView);
         replay(locationControl);
-        new LocationSetter(null, editText, locationControl, null, null, null, locationSaver)
+        new LocationSetter(null, textView, locationControl, null, null, null, locationSaver)
                 .setLocation(null);
         verify(location);
-        verify(editText);
+        verify(textView);
         verify(locationControl);
         verify(locationSaver);
 
     }
 
     public void testSetMyLocationNull() {
-        MockableEditText editText = createMock(MockableEditText.class);
+        TextView textView = createMock(TextView.class);
         ErrorDisplayer errorDisplayer = createMock(ErrorDisplayer.class);
         LocationControl locationControl = createMock(LocationControl.class);
         LocationSaver locationSaver = createMock(LocationSaver.class);
@@ -109,13 +137,13 @@ public class LocationSetterTest extends TestCase {
         errorDisplayer.displayError(R.string.current_location_null);
 
         replay(locationControl);
-        replay(editText);
+        replay(textView);
         replay(errorDisplayer);
         replay(locationSaver);
-        LocationSetter locationSetter = new LocationSetter(null, editText, locationControl, null,
+        LocationSetter locationSetter = new LocationSetter(null, textView, locationControl, null,
                 null, errorDisplayer, locationSaver);
         locationSetter.setLocation(null);
-        verify(editText);
+        verify(textView);
         verify(errorDisplayer);
         verify(locationControl);
         verify(locationSaver);

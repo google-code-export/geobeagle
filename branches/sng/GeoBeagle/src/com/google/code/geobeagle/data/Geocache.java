@@ -16,9 +16,6 @@ package com.google.code.geobeagle.data;
 
 import com.google.code.geobeagle.Util;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 /**
  * Geocache or letterbox description, id, and coordinates.
  */
@@ -26,46 +23,16 @@ public class Geocache {
     public final static int PROVIDER_ATLASQUEST = 0;
     public final static int PROVIDER_GROUNDSPEAK = 1;
 
-    public static Geocache create(CharSequence location, Pattern destinationPatterns[]) {
-        int contentSelectorIndex;
-        double latitude = 0;
-        double longitude = 0;
-
-        CharSequence fullId = "";
-        CharSequence name = "";
-        CharSequence latLonDescription[] = Util.splitLatLonDescription(location);
-        try {
-            latitude = Util.parseCoordinate(latLonDescription[0]);
-            longitude = Util.parseCoordinate(latLonDescription[1]);
-        } catch (NumberFormatException numberFormatException) {
-            // TODO: Looks like this case is unreachable; remove this after the
-            // destination input method has been reworked.
-        }
-
-        CharSequence description = latLonDescription[2];
-
-        for (contentSelectorIndex = destinationPatterns.length - 1; contentSelectorIndex >= 0; contentSelectorIndex--) {
-            Matcher matcher = destinationPatterns[contentSelectorIndex].matcher(description);
-            if (matcher.find()) {
-                fullId = matcher.group();
-                break;
-            }
-        }
-
-        if (fullId.length() == 0) {
-            name = description;
-        } else {
-            if (description.length() > fullId.length() + 2)
-                name = description.subSequence(fullId.length() + 2, description.length());
-        }
-        return new Geocache(contentSelectorIndex, fullId, name, latitude, longitude);
-    }
-
     private final int mContentSelectorIndex;
     private final CharSequence mId;
     private final double mLatitude;
     private final double mLongitude;
     private final CharSequence mName;
+
+    // Use Groundspeak if no provider specified.
+    public Geocache(CharSequence id, CharSequence name, double latitude, double longitude) {
+        this(PROVIDER_GROUNDSPEAK, id, name, latitude, longitude);
+    }
 
     public Geocache(int contentSelectorIndex, CharSequence id, CharSequence name, double latitude,
             double longitude) {
@@ -81,7 +48,9 @@ public class Geocache {
     }
 
     public CharSequence getCoordinatesIdAndName() {
-        return mLatitude + ", " + mLongitude + " (" + getIdAndName() + ")";
+        return Util.formatDegreesAsDecimalDegreesString(mLatitude) + ", "
+                + Util.formatDegreesAsDecimalDegreesString(mLongitude) + " (" + getIdAndName()
+                + ")";
     }
 
     public CharSequence getId() {

@@ -108,7 +108,7 @@ public class CacheDetailsOnClickListener implements View.OnClickListener {
         try {
             MockableView detailsView = mEnv.inflate(R.layout.cache_details, null);
 
-            CharSequence id = mLocationSetter.getId();
+            CharSequence id = mLocationSetter.getGeocache().getId();
             mAlertDialogBuilder.setTitle(id);
             mAlertDialogBuilder.setView(detailsView.getView());
 

@@ -26,23 +26,24 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.location.Location;
+import android.widget.TextView;
 
 public class LocationSetter implements LifecycleManager {
 
     public static final String FNAME_RECENT_LOCATIONS = "RECENT_LOCATIONS";
     public static final String PREFS_LOCATION = "Location";
-    private final GeocacheFromTextFactory mDestinationFactory;
     private final ErrorDisplayer mErrorDisplayer;
+    private final GeocacheFromTextFactory mGeocacheFromTextFactory;
     private final LocationControl mGpsControl;
     private final String mInitialDestination;
     private final LocationSaver mLocationSaver;
-    private final MockableEditText mTxtLocation;
+    private final TextView mTxtLocation;
 
-    public LocationSetter(Context context, MockableEditText txtLocation,
+    public LocationSetter(Context context, TextView mockableTxtLocation,
             LocationControl locationControl, GeocacheFromTextFactory geocacheFromTextFactory,
             String initialDestination, ErrorDisplayer errorDisplayer, LocationSaver locationSaver) {
-        mTxtLocation = txtLocation;
-        mDestinationFactory = geocacheFromTextFactory;
+        mTxtLocation = mockableTxtLocation;
+        mGeocacheFromTextFactory = geocacheFromTextFactory;
         mGpsControl = locationControl;
         mInitialDestination = initialDestination;
         mErrorDisplayer = errorDisplayer;
@@ -54,12 +55,7 @@ public class LocationSetter implements LifecycleManager {
      * @see com.google.code.geobeagle.ui.DestinationProvider#getDestination()
      */
     public Geocache getGeocache() {
-        return mDestinationFactory.create(mTxtLocation.getText());
-    }
-
-    // TODO: test.
-    public CharSequence getId() {
-        return getGeocache().getId();
+        return mGeocacheFromTextFactory.create(mTxtLocation.getText());
     }
 
     public void onPause(Editor editor) {

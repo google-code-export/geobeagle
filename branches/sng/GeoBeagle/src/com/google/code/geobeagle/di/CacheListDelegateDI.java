@@ -52,7 +52,7 @@ public class CacheListDelegateDI {
                 geocacheVectorFactory);
         final CacheListData cacheListData = new CacheListData(geocacheVectors,
                 geocacheVectorFactory);
-        final DatabaseDI.SQLiteWrapper sqliteWrapper = new DatabaseDI.SQLiteWrapper(null);
+        final SQLiteWrapper sqliteWrapper = new SQLiteWrapper(null);
         final Action actions[] = CacheListDelegateDI.create(parent, database, sqliteWrapper,
                 cacheListData, geocacheVectors, errorDisplayer);
         final CacheListDelegate.CacheListOnCreateContextMenuListener.Factory factory = new CacheListDelegate.CacheListOnCreateContextMenuListener.Factory();

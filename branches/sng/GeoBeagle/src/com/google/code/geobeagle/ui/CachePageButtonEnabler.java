@@ -20,6 +20,7 @@ import com.google.code.geobeagle.data.di.GeocacheFromTextFactory;
 
 import android.text.TextUtils;
 import android.view.View;
+import android.widget.TextView;
 
 public class CachePageButtonEnabler {
     public static class MockableTextUtils {
@@ -28,24 +29,22 @@ public class CachePageButtonEnabler {
         }
     }
 
-    public static CachePageButtonEnabler create(TooString editText, View cachePageButton,
+    public static CachePageButtonEnabler create(TextView txtLocation, View cachePageButton,
             View detailsButton, ResourceProvider resourceProvider) {
         MockableTextUtils textUtils = new MockableTextUtils();
-        return new CachePageButtonEnabler(editText, cachePageButton, detailsButton,
+        return new CachePageButtonEnabler(txtLocation, cachePageButton, detailsButton,
                 resourceProvider, textUtils);
     }
 
     private final View mCachePageButton;
     private final String[] mContentPrefixes;
     private final View mDetailsButton;
-
     private final MockableTextUtils mTextUtils;
+    private final TextView txtGeocache;
 
-    private final TooString mTooString;
-
-    public CachePageButtonEnabler(TooString editText, View cachePageButton, View detailsButton,
+    public CachePageButtonEnabler(TextView txtLocation, View cachePageButton, View detailsButton,
             ResourceProvider resourceProvider, MockableTextUtils textUtils) {
-        mTooString = editText;
+        txtGeocache = txtLocation;
         mCachePageButton = cachePageButton;
         mDetailsButton = detailsButton;
         mContentPrefixes = resourceProvider.getStringArray(R.array.content_prefixes);
@@ -53,8 +52,8 @@ public class CachePageButtonEnabler {
     }
 
     public void check() {
-        final CharSequence s = mTooString.tooString();
-        final String description = (String)GeocacheFromTextFactory.extractDescription(s);
+        CharSequence s = txtGeocache.getText();
+        String description = (String)GeocacheFromTextFactory.extractDescription(s);
         mDetailsButton.setEnabled(-1 != mTextUtils.indexOf(s, ':'));
         for (String contentPrefix : mContentPrefixes) {
             if (description.startsWith(contentPrefix)) {

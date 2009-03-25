@@ -14,11 +14,11 @@
 
 package com.google.code.geobeagle.data.di;
 
-import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.ResourceProvider;
 import com.google.code.geobeagle.Util;
 import com.google.code.geobeagle.data.Geocache;
 
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class GeocacheFromTextFactory {
@@ -27,7 +27,9 @@ public class GeocacheFromTextFactory {
     }
 
     public static Pattern[] getDestinationPatterns(ResourceProvider resourceProvider) {
-        String[] contentPrefixes = resourceProvider.getStringArray(R.array.content_prefixes);
+        String[] contentPrefixes = new String[] {
+                "LB", "GC"
+        };
         Pattern mContentSelectors[] = new Pattern[contentPrefixes.length];
         for (int ix = 0; ix < contentPrefixes.length; ix++) {
             mContentSelectors[ix] = Pattern.compile("(?:" + contentPrefixes[ix] + ")(\\w*)");
@@ -42,6 +44,42 @@ public class GeocacheFromTextFactory {
     }
 
     public Geocache create(CharSequence location) {
-        return Geocache.create(location, mGeocachePatterns);
+        return GeocacheFromTextFactory.create(location, mGeocachePatterns);
+    }
+
+    public static Geocache create(CharSequence location, Pattern destinationPatterns[]) {
+        int contentSelectorIndex;
+        double latitude = 0;
+        double longitude = 0;
+
+        CharSequence fullId = "";
+        CharSequence name = "";
+        CharSequence latLonDescription[] = Util.splitLatLonDescription(location);
+        try {
+            latitude = Util.parseCoordinate(latLonDescription[0]);
+            longitude = Util.parseCoordinate(latLonDescription[1]);
+        } catch (NumberFormatException numberFormatException) {
+            // TODO: Looks like this case is unreachable; remove this after
+            // the
+            // destination input method has been reworked.
+        }
+
+        CharSequence description = latLonDescription[2];
+
+        for (contentSelectorIndex = destinationPatterns.length - 1; contentSelectorIndex >= 0; contentSelectorIndex--) {
+            Matcher matcher = destinationPatterns[contentSelectorIndex].matcher(description);
+            if (matcher.find()) {
+                fullId = matcher.group();
+                break;
+            }
+        }
+
+        if (fullId.length() == 0) {
+            name = description;
+        } else {
+            if (description.length() > fullId.length() + 2)
+                name = description.subSequence(fullId.length() + 2, description.length());
+        }
+        return new Geocache(contentSelectorIndex, fullId, name, latitude, longitude);
     }
 }
