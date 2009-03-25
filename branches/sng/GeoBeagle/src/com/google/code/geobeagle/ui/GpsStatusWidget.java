@@ -21,9 +21,9 @@ import android.location.Location;
 import android.location.LocationProvider;
 
 /**
- * @author sng Displays the current location as well as the GPS status.
+ * @author sng Displays the GPS status (accuracy, availability, etc).
  */
-public class LocationViewer {
+public class GpsStatusWidget {
     public static class MeterFormatter {
         public int accuracyToBarCount(float accuracy) {
             return Math.min(METER_LEFT.length(), (int)(Math.log(Math.max(1, accuracy)) / Math
@@ -74,7 +74,7 @@ public class LocationViewer {
     private final MockableTextView mStatus;
     private final Time mTime;
 
-    public LocationViewer(ResourceProvider resourceProvider, MeterView meterView,
+    public GpsStatusWidget(ResourceProvider resourceProvider, MeterView meterView,
             MockableTextView provider, MockableTextView lag, MockableTextView accuracy,
             MockableTextView status, Time time, Location initialLocation) {
         mResourceProvider = resourceProvider;

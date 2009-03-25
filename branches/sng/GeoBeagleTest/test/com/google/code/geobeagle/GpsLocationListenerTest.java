@@ -19,7 +19,7 @@ import static org.easymock.classextension.EasyMock.createMock;
 import static org.easymock.classextension.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.verify;
 
-import com.google.code.geobeagle.ui.LocationViewer;
+import com.google.code.geobeagle.ui.GpsStatusWidget;
 
 import android.location.Location;
 import android.location.LocationProvider;
@@ -29,11 +29,11 @@ import junit.framework.TestCase;
 public class GpsLocationListenerTest extends TestCase {
 
     private LocationControl mGpsControl;
-    private LocationViewer mLocationViewer;
+    private GpsStatusWidget mLocationViewer;
 
     @Override
     public void setUp() {
-        mLocationViewer = createMock(LocationViewer.class);
+        mLocationViewer = createMock(GpsStatusWidget.class);
         mGpsControl = createMock(LocationControl.class);
     }
 

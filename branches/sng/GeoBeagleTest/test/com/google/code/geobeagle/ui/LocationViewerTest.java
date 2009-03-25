@@ -21,9 +21,9 @@ import static org.easymock.classextension.EasyMock.verify;
 
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.ResourceProvider;
-import com.google.code.geobeagle.ui.LocationViewer.MeterFormatter;
-import com.google.code.geobeagle.ui.LocationViewer.MeterView;
-import com.google.code.geobeagle.ui.LocationViewer.Time;
+import com.google.code.geobeagle.ui.GpsStatusWidget.MeterFormatter;
+import com.google.code.geobeagle.ui.GpsStatusWidget.MeterView;
+import com.google.code.geobeagle.ui.GpsStatusWidget.Time;
 
 import android.location.Location;
 import android.location.LocationProvider;
@@ -33,24 +33,24 @@ import junit.framework.TestCase;
 public class LocationViewerTest extends TestCase {
 
     public void testAccuracyToBars() {
-        LocationViewer.MeterFormatter meterFormatter = new LocationViewer.MeterFormatter();
+        GpsStatusWidget.MeterFormatter meterFormatter = new GpsStatusWidget.MeterFormatter();
         assertEquals(0, meterFormatter.accuracyToBarCount(-1));
         assertEquals(0, meterFormatter.accuracyToBarCount(0));
         assertEquals(0, meterFormatter.accuracyToBarCount(1));
         assertEquals(1, meterFormatter.accuracyToBarCount(2));
         assertEquals(2, meterFormatter.accuracyToBarCount(4));
         assertEquals(3, meterFormatter.accuracyToBarCount(8));
-        assertEquals(LocationViewer.METER_LEFT.length(), meterFormatter
+        assertEquals(GpsStatusWidget.METER_LEFT.length(), meterFormatter
                 .accuracyToBarCount(Long.MAX_VALUE));
     }
 
     public void testAccuracyToBarText() {
-        LocationViewer.MeterFormatter meterFormatter = new LocationViewer.MeterFormatter();
+        GpsStatusWidget.MeterFormatter meterFormatter = new GpsStatusWidget.MeterFormatter();
         assertEquals("·×·", meterFormatter.barsToMeterText(meterFormatter.accuracyToBarCount(2)));
     }
 
     public void testGetAlpha() {
-        LocationViewer.MeterFormatter meterFormatter = new LocationViewer.MeterFormatter();
+        GpsStatusWidget.MeterFormatter meterFormatter = new GpsStatusWidget.MeterFormatter();
         assertEquals(256, meterFormatter.lagToAlpha(-1));
         assertEquals(255, meterFormatter.lagToAlpha(0));
         assertEquals(254, meterFormatter.lagToAlpha(8));
@@ -59,7 +59,7 @@ public class LocationViewerTest extends TestCase {
     }
 
     public void testGetMeterText() {
-        LocationViewer.MeterFormatter meterFormatter = new LocationViewer.MeterFormatter();
+        GpsStatusWidget.MeterFormatter meterFormatter = new GpsStatusWidget.MeterFormatter();
         assertEquals("×", meterFormatter.barsToMeterText(0));
         assertEquals("·×·", meterFormatter.barsToMeterText(1));
         assertEquals("‹····×····›", meterFormatter.barsToMeterText(5));
@@ -106,10 +106,10 @@ public class LocationViewerTest extends TestCase {
         replay(provider);
         replay(location);
         replay(time);
-        LocationViewer locationViewer = new LocationViewer(null, meterView, provider, lag,
+        GpsStatusWidget gpsStatusWidget = new GpsStatusWidget(null, meterView, provider, lag,
                 accuracy, null, time, location);
-        locationViewer.setLocation(location);
-        locationViewer.refreshLocation();
+        gpsStatusWidget.setLocation(location);
+        gpsStatusWidget.refreshLocation();
         verify(location);
         verify(meterView);
         verify(provider);
@@ -132,11 +132,11 @@ public class LocationViewerTest extends TestCase {
 
         replay(resourceProvider);
         replay(status);
-        LocationViewer locationViewer = new LocationViewer(resourceProvider, null, null, null,
+        GpsStatusWidget gpsStatusWidget = new GpsStatusWidget(resourceProvider, null, null, null,
                 null, status, null, null);
-        locationViewer.setStatus("gps", LocationProvider.OUT_OF_SERVICE);
-        locationViewer.setStatus("network", LocationProvider.AVAILABLE);
-        locationViewer.setStatus("gps", LocationProvider.TEMPORARILY_UNAVAILABLE);
+        gpsStatusWidget.setStatus("gps", LocationProvider.OUT_OF_SERVICE);
+        gpsStatusWidget.setStatus("network", LocationProvider.AVAILABLE);
+        gpsStatusWidget.setStatus("gps", LocationProvider.TEMPORARILY_UNAVAILABLE);
         verify(resourceProvider);
         verify(status);
     }
