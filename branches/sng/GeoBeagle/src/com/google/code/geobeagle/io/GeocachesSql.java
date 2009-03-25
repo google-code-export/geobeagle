@@ -14,9 +14,9 @@
 
 package com.google.code.geobeagle.io;
 
-import com.google.code.geobeagle.Geocaches;
 import com.google.code.geobeagle.LocationControl;
 import com.google.code.geobeagle.data.Geocache;
+import com.google.code.geobeagle.data.Geocaches;
 import com.google.code.geobeagle.data.di.GeocacheFromTextFactory;
 import com.google.code.geobeagle.io.CacheReader.CacheReaderCursor;
 import com.google.code.geobeagle.io.di.DatabaseDI.SQLiteWrapper;

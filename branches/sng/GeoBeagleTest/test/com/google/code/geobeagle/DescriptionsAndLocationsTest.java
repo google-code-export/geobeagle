@@ -17,6 +17,7 @@ package com.google.code.geobeagle;
 import static org.easymock.classextension.EasyMock.createMock;
 
 import com.google.code.geobeagle.data.Geocache;
+import com.google.code.geobeagle.data.Geocaches;
 
 import junit.framework.TestCase;
 

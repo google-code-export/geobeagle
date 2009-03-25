@@ -1,8 +1,8 @@
 
 package com.google.code.geobeagle.io.di;
 
-import com.google.code.geobeagle.Geocaches;
 import com.google.code.geobeagle.LocationControl;
+import com.google.code.geobeagle.data.Geocaches;
 import com.google.code.geobeagle.data.di.GeocacheFactory;
 import com.google.code.geobeagle.data.di.GeocacheFromTextFactory;
 import com.google.code.geobeagle.io.CacheReader;

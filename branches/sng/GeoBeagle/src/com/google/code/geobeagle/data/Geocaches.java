@@ -12,9 +12,8 @@
  ** limitations under the License.
  */
 
-package com.google.code.geobeagle;
+package com.google.code.geobeagle.data;
 
-import com.google.code.geobeagle.data.Geocache;
 
 import java.util.ArrayList;
 
