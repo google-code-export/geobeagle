@@ -44,7 +44,7 @@
 	<string name="search_for">Search for</string>
 	<string name="cache_list_title">GeoBeagle Nearest Caches</string>
 	<array name="nearest_objects">
-	  <item>http://www.atlasquest.com/results.html?gTypeId=2;gSort=5;gCoord=%1$.5f,%2$.5f</item>
+	  <item>http://www.atlasquest.com/results.html?gTypeId=2;gSort=5;gStatus=1209;gCoord=%1$.5f,%2$.5f</item>
 	  <item>http://www.geocaching.com/seek/nearest.aspx?lat=%1$.5f&amp;lng=%2$.5f&amp;f=1</item>
 	</array>
 	<array name="map_objects">
@@ -53,7 +53,7 @@
 	</array>
 	<array name="cache_page_url">
 	  <item>http://www.atlasquest.com/showinfo.html?gBoxId=%1s</item>
-	  <item>http://coord.info/GC%1$s</item>
+	  <item>http://www.geocaching.com/seek/cache_details.aspx?wp=GC%1$s</item>
 	</array>
 	<array name="content_prefixes">
 	  <item>LB</item>
