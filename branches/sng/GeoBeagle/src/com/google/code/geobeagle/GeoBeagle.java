@@ -109,15 +109,17 @@ public class GeoBeagle extends Activity {
 
     private boolean maybeGetCoordinatesFromIntent() {
         final Intent intent = getIntent();
-        final String action = intent.getAction();
-        if (action != null) {
-            if (action.equals(Intent.ACTION_VIEW)) {
-                getCoordinatesFromIntent(mLocationSetter, intent, mErrorDisplayer);
-                return true;
-            } else if (action.equals(CacheListDelegate.SELECT_CACHE)) {
-                mLocationSetter.set(intent.<Geocache> getParcelableExtra("geocache"));
-                mCachePageButtonEnabler.check();
-                return true;
+        if (intent != null) {
+            final String action = intent.getAction();
+            if (action != null) {
+                if (action.equals(Intent.ACTION_VIEW)) {
+                    getCoordinatesFromIntent(mLocationSetter, intent, mErrorDisplayer);
+                    return true;
+                } else if (action.equals(CacheListDelegate.SELECT_CACHE)) {
+                    mLocationSetter.set(intent.<Geocache> getParcelableExtra("geocache"));
+                    mCachePageButtonEnabler.check();
+                    return true;
+                }
             }
         }
         return false;
