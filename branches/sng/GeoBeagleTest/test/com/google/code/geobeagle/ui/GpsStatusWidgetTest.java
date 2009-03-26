@@ -30,7 +30,7 @@ import android.location.LocationProvider;
 
 import junit.framework.TestCase;
 
-public class LocationViewerTest extends TestCase {
+public class GpsStatusWidgetTest extends TestCase {
 
     public void testAccuracyToBars() {
         GpsStatusWidget.MeterFormatter meterFormatter = new GpsStatusWidget.MeterFormatter();
@@ -83,7 +83,7 @@ public class LocationViewerTest extends TestCase {
         verify(meterFormatter);
     }
 
-    public void testSetLocationEightSecondDelay() {
+    public void testSetLocationSixSecondDelay() {
         MeterView meterView = createMock(MeterView.class);
         MockableTextView lag = createMock(MockableTextView.class);
         MockableTextView accuracy = createMock(MockableTextView.class);
@@ -92,11 +92,13 @@ public class LocationViewerTest extends TestCase {
         Location location = createMock(Location.class);
 
         expect(time.getCurrentTime()).andReturn(10000L);
+        expect(location.getTime()).andReturn(12000L);
+
         expect(time.getCurrentTime()).andReturn(18000L);
         expect(location.getAccuracy()).andReturn(12f);
         expect(location.getProvider()).andReturn("gps");
         provider.setText("gps");
-        lag.setText("8s");
+        lag.setText("6s");
         accuracy.setText("12.0m");
         meterView.set(8000, 12f);
 

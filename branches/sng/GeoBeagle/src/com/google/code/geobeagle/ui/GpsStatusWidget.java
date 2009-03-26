@@ -67,6 +67,7 @@ public class GpsStatusWidget {
     private float mAccuracy;
     private final MockableTextView mAccuracyView;
     private final MockableTextView mLag;
+    private long mLastUpdateTime;
     private long mLocationTime;
     private final MeterView mMeterView;
     private final MockableTextView mProvider;
@@ -87,10 +88,12 @@ public class GpsStatusWidget {
     }
 
     public void refreshLocation() {
-        final long lag = mTime.getCurrentTime() - mLocationTime;
-        mLag.setText((lag / 1000 + "s").trim());
+        long currentTime = mTime.getCurrentTime();
+        long lastUpdateLag = currentTime - mLastUpdateTime;
+        long locationLag = currentTime - mLocationTime;
+        mLag.setText((locationLag / 1000 + "s").trim());
         mAccuracyView.setText((mAccuracy + "m").trim());
-        mMeterView.set(lag, mAccuracy);
+        mMeterView.set(lastUpdateLag, mAccuracy);
     };
 
     public void setDisabled() {
@@ -104,7 +107,8 @@ public class GpsStatusWidget {
     public void setLocation(Location location) {
         // TODO: use currentTime for alpha channel, but locationTime for text
         // lag.
-        mLocationTime = mTime.getCurrentTime();
+        mLastUpdateTime = mTime.getCurrentTime();
+        mLocationTime = location.getTime();
         mProvider.setText(location.getProvider());
         mAccuracy = location.getAccuracy();
     }
