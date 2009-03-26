@@ -80,8 +80,6 @@
 			<TextView android:id="@+id/go_to" android:layout_height="wrap_content"
 				android:layout_width="wrap_content" android:layout_weight="1"
 				android:textSize="18sp" android:text="37 122" />
-			<ImageButton android:id="@+id/edit" android:src="@android:drawable/ic_menu_edit"
-				android:layout_height="wrap_content" android:layout_width="wrap_content" />
 		</LinearLayout>
 
 		<LinearLayout android:orientation="horizontal"

@@ -41,6 +41,7 @@
 	<string name="my_current_location">My Current Location</string>
 	<string name="import_canceled">Import aborted!</string>
 	<string name="menu_import_gpx">Sync GPX files from /sdcard</string>
+	<string name="menu_edit_geocache">Edit Geocache</string>
 	<string name="search_for">Search for</string>
 	<string name="cache_list_title">GeoBeagle Nearest Caches</string>
 	<array name="nearest_objects">

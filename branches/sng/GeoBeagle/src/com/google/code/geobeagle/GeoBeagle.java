@@ -31,11 +31,10 @@ import com.google.code.geobeagle.io.di.DatabaseDI.SQLiteWrapper;
 import com.google.code.geobeagle.ui.CacheListDelegate;
 import com.google.code.geobeagle.ui.CachePageButtonEnabler;
 import com.google.code.geobeagle.ui.ContentSelector;
-import com.google.code.geobeagle.ui.EditButtonOnClickListener;
 import com.google.code.geobeagle.ui.ErrorDisplayer;
 import com.google.code.geobeagle.ui.GeocacheListOnClickListener;
-import com.google.code.geobeagle.ui.GetCoordsToast;
 import com.google.code.geobeagle.ui.GeocacheViewer;
+import com.google.code.geobeagle.ui.GetCoordsToast;
 import com.google.code.geobeagle.ui.GpsStatusWidget;
 import com.google.code.geobeagle.ui.MockableTextView;
 import com.google.code.geobeagle.ui.MyLocationProvider;
@@ -43,6 +42,7 @@ import com.google.code.geobeagle.ui.OnCacheButtonClickListenerBuilder;
 import com.google.code.geobeagle.ui.OnContentProviderSelectedListener;
 import com.google.code.geobeagle.ui.GpsStatusWidget.MeterFormatter;
 import com.google.code.geobeagle.ui.GpsStatusWidget.MeterView;
+import com.google.code.geobeagle.ui.di.EditCacheActivity;
 
 import android.app.Activity;
 import android.content.Context;
@@ -52,8 +52,9 @@ import android.location.LocationManager;
 import android.net.UrlQuerySanitizer;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -126,6 +127,13 @@ public class GeoBeagle extends Activity {
     }
 
     @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == 0)
+            setIntent(data);
+    }
+
+    @Override
     public void onCreate(final Bundle savedInstanceState) {
         try {
             super.onCreate(savedInstanceState);
@@ -137,8 +145,6 @@ public class GeoBeagle extends Activity {
             mCachePageButtonEnabler = CachePageButtonEnabler.create(txtLocation,
                     findViewById(R.id.cache_page), findViewById(R.id.cache_details),
                     mResourceProvider);
-            final ImageButton btnEdit = (ImageButton)findViewById(R.id.edit);
-            btnEdit.setOnClickListener(new EditButtonOnClickListener(this, txtLocation));
 
             mLocationViewer = new GpsStatusWidget(mResourceProvider, new MeterView(
                     createTextView(R.id.location_viewer), new MeterFormatter()),
@@ -189,10 +195,18 @@ public class GeoBeagle extends Activity {
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == 0)
-            setIntent(data);
+    public boolean onCreateOptionsMenu(Menu menu) {
+        menu.add(R.string.menu_edit_geocache);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        Intent intent = new Intent(this, EditCacheActivity.class);
+        final TextView txtLocation = (TextView)findViewById(R.id.go_to);
+        intent.putExtra("cache", txtLocation.getText());
+        startActivityForResult(intent, 0);
+        return true;
     }
 
     @Override
