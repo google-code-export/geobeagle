@@ -4,6 +4,7 @@
 
 package com.google.code.geobeagle.ui;
 
+import com.google.code.geobeagle.GeoBeagle;
 import com.google.code.geobeagle.R;
 
 import android.app.AlertDialog.Builder;
@@ -81,34 +82,35 @@ public class CacheDetailsOnClickListener implements View.OnClickListener {
         }
     }
 
-    public static CacheDetailsOnClickListener create(Builder alertDialogBuilder,
-            GeocacheViewer geocacheViewer, ErrorDisplayer errorDisplayer, Env env) {
+    public static CacheDetailsOnClickListener create(GeoBeagle geoBeagle,
+            Builder alertDialogBuilder, GeocacheViewer geocacheViewer,
+            ErrorDisplayer errorDisplayer, Env env) {
         final CacheDetailsLoader cacheDetailsLoader = new CacheDetailsLoader();
-        return new CacheDetailsOnClickListener(alertDialogBuilder, geocacheViewer, errorDisplayer,
-                env, cacheDetailsLoader);
+        return new CacheDetailsOnClickListener(geoBeagle, alertDialogBuilder, geocacheViewer,
+                errorDisplayer, env, cacheDetailsLoader);
     }
 
     private final Builder mAlertDialogBuilder;
     private final CacheDetailsLoader mCacheDetailsLoader;
     private final Env mEnv;
     private final ErrorDisplayer mErrorDisplayer;
+    private GeoBeagle mGeoBeagle;
 
-    private final GeocacheViewer mLocationSetter;
-
-    public CacheDetailsOnClickListener(Builder alertDialogBuilder, GeocacheViewer geocacheViewer,
-            ErrorDisplayer errorDisplayer, Env env, CacheDetailsLoader cacheDetailsLoader) {
+    public CacheDetailsOnClickListener(GeoBeagle geoBeagle, Builder alertDialogBuilder,
+            GeocacheViewer geocacheViewer, ErrorDisplayer errorDisplayer, Env env,
+            CacheDetailsLoader cacheDetailsLoader) {
         mAlertDialogBuilder = alertDialogBuilder;
-        mLocationSetter = geocacheViewer;
         mErrorDisplayer = errorDisplayer;
         mEnv = env;
         mCacheDetailsLoader = cacheDetailsLoader;
+        mGeoBeagle = geoBeagle;
     }
 
     public void onClick(View v) {
         try {
             MockableView detailsView = mEnv.inflate(R.layout.cache_details, null);
 
-            CharSequence id = mLocationSetter.getGeocache().getId();
+            CharSequence id = mGeoBeagle.getGeocache().getId();
             mAlertDialogBuilder.setTitle(id);
             mAlertDialogBuilder.setView(detailsView.getView());
 

@@ -5,7 +5,7 @@ import static org.junit.Assert.assertEquals;
 
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.data.Geocache;
-import com.google.code.geobeagle.data.di.GeocacheFromTextFactory;
+import com.google.code.geobeagle.io.LocationSaver;
 import com.google.code.geobeagle.ui.EditCacheActivityDelegate.CancelButtonOnClickListener;
 import com.google.code.geobeagle.ui.EditCacheActivityDelegate.GeocacheView;
 import com.google.code.geobeagle.ui.EditCacheActivityDelegate.SetButtonOnClickListener;
@@ -58,8 +58,7 @@ public class EditCacheActivityDelegateTest {
     public void EditCacheActivityOnResumeTest() throws Exception {
         Activity activity = PowerMock.createMock(Activity.class);
         Intent intent = PowerMock.createMock(Intent.class);
-        GeocacheFromTextFactory geocacheFactoryFromString = PowerMock
-                .createMock(GeocacheFromTextFactory.class);
+        Geocache geocache = PowerMock.createMock(Geocache.class);
         EditText id = PowerMock.createMock(EditText.class);
         EditText name = PowerMock.createMock(EditText.class);
         EditText latitude = PowerMock.createMock(EditText.class);
@@ -71,11 +70,10 @@ public class EditCacheActivityDelegateTest {
         CancelButtonOnClickListener cancelButtonOnClickListener = PowerMock
                 .createMock(CancelButtonOnClickListener.class);
         Button cancel = PowerMock.createMock(Button.class);
+        LocationSaver locationSaver = PowerMock.createMock(LocationSaver.class);
 
         EasyMock.expect(activity.getIntent()).andReturn(intent);
-        EasyMock.expect(intent.getStringExtra("cache")).andReturn("37 122 etc");
-        Geocache geocache = new Geocache("GC123", "a cache", 37.5, -122.4);
-        EasyMock.expect(geocacheFactoryFromString.create("37 122 etc")).andReturn(geocache);
+        EasyMock.expect(intent.<Geocache> getParcelableExtra("geocache")).andReturn(geocache);
 
         EasyMock.expect(activity.findViewById(R.id.edit_id)).andReturn(id);
         EasyMock.expect(activity.findViewById(R.id.edit_name)).andReturn(name);
@@ -85,8 +83,8 @@ public class EditCacheActivityDelegateTest {
         PowerMock.expectNew(GeocacheView.class, (EditText)id, (EditText)name, (EditText)latitude,
                 (EditText)longitude).andReturn(geocacheView);
         geocacheView.set(geocache);
-        PowerMock.expectNew(SetButtonOnClickListener.class, activity, geocacheView).andReturn(
-                setButtonOnClickListener);
+        PowerMock.expectNew(SetButtonOnClickListener.class, activity, geocacheView, locationSaver)
+                .andReturn(setButtonOnClickListener);
         EasyMock.expect(activity.findViewById(R.id.edit_set)).andReturn(set);
         set.setOnClickListener(setButtonOnClickListener);
 
@@ -95,7 +93,7 @@ public class EditCacheActivityDelegateTest {
 
         PowerMock.replayAll();
         EditCacheActivityDelegate editCacheActivityDelegate = new EditCacheActivityDelegate(
-                activity, geocacheFactoryFromString, cancelButtonOnClickListener);
+                activity, cancelButtonOnClickListener, locationSaver);
         editCacheActivityDelegate.onResume();
         PowerMock.verifyAll();
     }
@@ -148,7 +146,9 @@ public class EditCacheActivityDelegateTest {
         GeocacheView geocacheView = PowerMock.createMock(GeocacheView.class);
         Intent intent = PowerMock.createMock(Intent.class);
         Geocache geocache = PowerMock.createMock(Geocache.class);
+        LocationSaver locationSaver = PowerMock.createMock(LocationSaver.class);
 
+        locationSaver.saveLocation(geocache);
         EasyMock.expect(intent.setAction(CacheListDelegate.SELECT_CACHE)).andReturn(intent);
         PowerMock.expectNew(Intent.class).andReturn(intent);
         EasyMock.expect(geocacheView.get()).andReturn(geocache);
@@ -158,7 +158,7 @@ public class EditCacheActivityDelegateTest {
 
         PowerMock.replayAll();
         SetButtonOnClickListener setButtonOnClickListener = new SetButtonOnClickListener(activity,
-                geocacheView);
+                geocacheView, locationSaver);
         setButtonOnClickListener.onClick(null);
         PowerMock.verifyAll();
     }

@@ -47,6 +47,15 @@ public class GeocacheVectorTest extends TestCase {
 
     }
 
+    public void testGetCoordinatesIdAndName() {
+        expect(geocache.getCoordinatesIdAndName()).andReturn("343 2323 (a geocache)");
+
+        replay(geocache);
+        GeocacheVector geocacheVector = new GeocacheVector(geocache, 3.5f, null);
+        assertEquals("343 2323 (a geocache)", geocacheVector.getCoordinatesIdAndName());
+        verify(geocache);
+    }
+
     public void testGetDistance() {
         assertEquals(3.5f, new GeocacheVector(geocache, 3.5f, null).getDistance());
     }
@@ -86,30 +95,26 @@ public class GeocacheVectorTest extends TestCase {
         verify(geocache);
     }
 
-    public void testGetCoordinatesIdAndName() {
-        expect(geocache.getCoordinatesIdAndName()).andReturn("343 2323 (a geocache)");
-
-        replay(geocache);
-        GeocacheVector geocacheVector = new GeocacheVector(geocache, 3.5f, null);
-        assertEquals("343 2323 (a geocache)", geocacheVector.getCoordinatesIdAndName());
-        verify(geocache);
-    }
-
     public void testMyLocation() {
+        Geocache geocache = createMock(Geocache.class);
         ResourceProvider resourceProvider = createMock(ResourceProvider.class);
-        expect(resourceProvider.getString(R.string.my_current_location)).andReturn(
-                "My Current Location").anyTimes();
+        GeocacheFromMyLocationFactory geocacheFromMyLocationFactory = createMock(GeocacheFromMyLocationFactory.class);
+
+        expect(geocacheFromMyLocationFactory.create()).andReturn(geocache);
+        expect(resourceProvider.getString(R.string.my_current_location)).andReturn("my location");
+        expect(resourceProvider.getString(R.string.my_current_location)).andReturn("my location");
 
         replay(resourceProvider);
-        MyLocation myLocation = new MyLocation(resourceProvider);
-        assertEquals("My Current Location", myLocation.getIdAndName());
+        replay(geocacheFromMyLocationFactory);
+        MyLocation myLocation = new MyLocation(resourceProvider, geocacheFromMyLocationFactory);
+        assertEquals(geocache, myLocation.getGeocache());
         assertEquals(null, myLocation.getCoordinatesIdAndName());
         assertEquals(null, myLocation.getDestination());
-        assertEquals("", myLocation.getFormattedDistance());
         assertEquals(-1.0f, myLocation.getDistance());
-        assertEquals("My Current Location", myLocation.getId());
-        Geocache myLocationGeocache = myLocation.getGeocache();
-        assertEquals("My Location", myLocationGeocache.getName());
+        assertEquals("", myLocation.getFormattedDistance());
+        assertEquals("my location", myLocation.getIdAndName());
+        assertEquals("my location", myLocation.getId());
+        verify(geocacheFromMyLocationFactory);
         verify(resourceProvider);
     }
 }

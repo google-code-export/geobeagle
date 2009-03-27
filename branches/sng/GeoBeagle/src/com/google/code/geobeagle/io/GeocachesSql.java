@@ -17,10 +17,8 @@ package com.google.code.geobeagle.io;
 import com.google.code.geobeagle.LocationControl;
 import com.google.code.geobeagle.data.Geocache;
 import com.google.code.geobeagle.data.Geocaches;
-import com.google.code.geobeagle.data.di.GeocacheFromTextFactory;
 import com.google.code.geobeagle.io.CacheReader.CacheReaderCursor;
 import com.google.code.geobeagle.io.di.DatabaseDI.SQLiteWrapper;
-import com.google.code.geobeagle.ui.ErrorDisplayer;
 
 import java.util.ArrayList;
 
@@ -32,13 +30,12 @@ public class GeocachesSql {
     private final SQLiteWrapper mSQLiteWrapper;
 
     public GeocachesSql(CacheReader cacheReader, Geocaches geocaches, Database database,
-            SQLiteWrapper sqliteWrapper, GeocacheFromTextFactory geocacheFromTextFactory,
-            ErrorDisplayer errorDisplayer, LocationControl locationControl) {
+            SQLiteWrapper sqliteWrapper, LocationControl locationControl) {
+        mCacheReader = cacheReader;
         mGeocaches = geocaches;
         mDatabase = database;
         mSQLiteWrapper = sqliteWrapper;
         mLocationControl = locationControl;
-        mCacheReader = cacheReader;
     }
 
     public int getCount() {
@@ -52,7 +49,7 @@ public class GeocachesSql {
         return mGeocaches.getAll();
     }
 
-    public void load() {
+    public void loadNearestCaches() {
         // TODO: This has to be writable for upgrade to work; we should open one
         // readable and one writable at the activity level, and then pass it
         // down.

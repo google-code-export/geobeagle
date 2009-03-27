@@ -25,6 +25,7 @@ import org.powermock.api.easymock.PowerMock;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.os.Parcel;
 
@@ -169,6 +170,22 @@ public class GeocacheTest {
         PowerMock.replayAll();
         Geocache geocache = new Geocache("GC123", "a cache", 37.5, -122.25);
         geocache.writeToParcel(parcel, 0);
+        PowerMock.verifyAll();
+    }
+
+    @Test
+    public void testWriteToPrefs() throws Exception {
+        Editor editor = PowerMock.createMock(Editor.class);
+
+        EasyMock.expect(editor.putInt("contentSelectorIndex", 1)).andReturn(editor);
+        EasyMock.expect(editor.putString("id", "GC123")).andReturn(editor);
+        EasyMock.expect(editor.putString("name", "a cache")).andReturn(editor);
+        EasyMock.expect(editor.putFloat("latitude", 37.5f)).andReturn(editor);
+        EasyMock.expect(editor.putFloat("longitude", -122.25f)).andReturn(editor);
+
+        PowerMock.replayAll();
+        Geocache geocache = new Geocache("GC123", "a cache", 37.5, -122.25);
+        geocache.writeToPrefs(editor);
         PowerMock.verifyAll();
     }
 }

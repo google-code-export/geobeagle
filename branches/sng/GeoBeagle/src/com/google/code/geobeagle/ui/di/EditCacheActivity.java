@@ -1,9 +1,13 @@
 
 package com.google.code.geobeagle.ui.di;
 
-import com.google.code.geobeagle.ResourceProvider;
-import com.google.code.geobeagle.data.di.GeocacheFromTextFactory;
+import com.google.code.geobeagle.io.CacheWriter;
+import com.google.code.geobeagle.io.Database;
+import com.google.code.geobeagle.io.LocationSaver;
+import com.google.code.geobeagle.io.di.DatabaseDI;
+import com.google.code.geobeagle.io.di.DatabaseDI.SQLiteWrapper;
 import com.google.code.geobeagle.ui.EditCacheActivityDelegate;
+import com.google.code.geobeagle.ui.EditCacheActivityDelegate.CancelButtonOnClickListener;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -13,14 +17,16 @@ public class EditCacheActivity extends Activity {
 
     public EditCacheActivity() {
         super();
+        final Database database = DatabaseDI.create(this);
 
-        final ResourceProvider resourceProvider = new ResourceProvider(this);
-        final GeocacheFromTextFactory geocacheFromTextFactory = new GeocacheFromTextFactory(
-                resourceProvider);
-        final EditCacheActivityDelegate.CancelButtonOnClickListener cancelButtonOnClickListener = new EditCacheActivityDelegate.CancelButtonOnClickListener(
+        final SQLiteWrapper sqliteWrapper = new SQLiteWrapper(null);
+        final CacheWriter cacheWriter = DatabaseDI.createCacheWriter(sqliteWrapper);
+        final LocationSaver locationSaver = new LocationSaver(database, sqliteWrapper,
+                cacheWriter);
+        final CancelButtonOnClickListener cancelButtonOnClickListener = new CancelButtonOnClickListener(
                 this);
-        mEditCacheActivityDelegate = new EditCacheActivityDelegate(this, geocacheFromTextFactory,
-                cancelButtonOnClickListener);
+        mEditCacheActivityDelegate = new EditCacheActivityDelegate(this,
+                cancelButtonOnClickListener, locationSaver);
     }
 
     @Override

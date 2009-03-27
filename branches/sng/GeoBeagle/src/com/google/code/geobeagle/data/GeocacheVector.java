@@ -40,9 +40,12 @@ public class GeocacheVector implements IGeocacheVector {
 
     public static class MyLocation implements IGeocacheVector {
         private final ResourceProvider mResourceProvider;
+        private GeocacheFromMyLocationFactory mGeocacheFromMyLocationFactory;
 
-        public MyLocation(ResourceProvider resourceProvider) {
+        public MyLocation(ResourceProvider resourceProvider,
+                GeocacheFromMyLocationFactory geocacheFromMyLocationFactory) {
             mResourceProvider = resourceProvider;
+            mGeocacheFromMyLocationFactory = geocacheFromMyLocationFactory;
         }
 
         public CharSequence getCoordinatesIdAndName() {
@@ -70,7 +73,7 @@ public class GeocacheVector implements IGeocacheVector {
         }
 
         public Geocache getGeocache() {
-            return new Geocache(Geocache.PROVIDER_MYLOCATION, "MYLOC", "My Location", 0, 0);
+            return mGeocacheFromMyLocationFactory.create();
         }
     }
 

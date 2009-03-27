@@ -139,7 +139,7 @@ public class CacheListDelegate {
 
     public void onResume() {
         try {
-            mGeocachesSql.load();
+            mGeocachesSql.loadNearestCaches();
             ArrayList<Geocache> geocaches = mGeocachesSql.getGeocaches();
             mCacheListData.add(geocaches, mLocationControl.getLocation());
             mParent.setListAdapter(mGeocacheListAdapter);

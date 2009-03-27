@@ -16,6 +16,7 @@ package com.google.code.geobeagle.data;
 
 import com.google.code.geobeagle.Util;
 
+import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -122,4 +123,13 @@ public class Geocache implements Parcelable {
         bundle.putDouble("longitude", mLongitude);
         out.writeBundle(bundle);
     }
+
+    public void writeToPrefs(Editor editor) {
+        editor.putInt("contentSelectorIndex", mContentSelectorIndex);
+        editor.putString("id", (String)mId);
+        editor.putString("name", (String)mName);
+        editor.putFloat("latitude", (float)mLatitude);
+        editor.putFloat("longitude", (float)mLongitude);
+    }
+
 }

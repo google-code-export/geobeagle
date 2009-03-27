@@ -9,9 +9,10 @@ import com.google.code.geobeagle.ResourceProvider;
 import com.google.code.geobeagle.ViewAction;
 import com.google.code.geobeagle.data.CacheListData;
 import com.google.code.geobeagle.data.DistanceFormatter;
+import com.google.code.geobeagle.data.GeocacheFromMyLocationFactory;
 import com.google.code.geobeagle.data.GeocacheVectors;
 import com.google.code.geobeagle.data.GeocacheVector.LocationComparator;
-import com.google.code.geobeagle.data.di.GeocacheFromTextFactory;
+import com.google.code.geobeagle.data.di.GeocacheFactory;
 import com.google.code.geobeagle.data.di.GeocacheVectorFactory;
 import com.google.code.geobeagle.io.CacheWriter;
 import com.google.code.geobeagle.io.Database;
@@ -37,16 +38,17 @@ public class CacheListDelegateDI {
         final ErrorDisplayer errorDisplayer = new ErrorDisplayer(parent);
         final Database database = DatabaseDI.create(parent);
         final ResourceProvider resourceProvider = new ResourceProvider(parent);
-        final GeocacheFromTextFactory geocacheFromTextFactory = new GeocacheFromTextFactory(
-                resourceProvider);
-        final LocationControl locationControl = LocationControl.create(((LocationManager)parent
-                .getSystemService(Context.LOCATION_SERVICE)));
-        final GeocachesSql locationBookmarks = DatabaseDI.create(locationControl, database,
-                geocacheFromTextFactory, errorDisplayer);
+        final LocationManager locationManager = (LocationManager)parent
+                .getSystemService(Context.LOCATION_SERVICE);
+        final LocationControl locationControl = LocationControl.create(locationManager);
+        final GeocacheFactory geocacheFactory = new GeocacheFactory();
+        final GeocacheFromMyLocationFactory geocacheFromMyLocationFactory = new GeocacheFromMyLocationFactory(
+                geocacheFactory, locationControl, errorDisplayer);
+        final GeocachesSql locationBookmarks = DatabaseDI.create(locationControl, database);
 
         final DistanceFormatter distanceFormatter = new DistanceFormatter();
         final GeocacheVectorFactory geocacheVectorFactory = new GeocacheVectorFactory(
-                geocacheFromTextFactory, distanceFormatter, resourceProvider);
+                geocacheFromMyLocationFactory, distanceFormatter, resourceProvider);
         final LocationComparator locationComparator = new LocationComparator();
         final GeocacheVectors geocacheVectors = new GeocacheVectors(locationComparator,
                 geocacheVectorFactory);

@@ -176,7 +176,7 @@ public class CacheListDelegateTest extends TestCase {
         Location here = createMock(Location.class);
         ArrayList<Geocache> locations = new ArrayList<Geocache>(0);
 
-        locationBookmarks.load();
+        locationBookmarks.loadNearestCaches();
         expect(locationBookmarks.getGeocaches()).andReturn(locations);
         expect(locationControl.getLocation()).andReturn(here);
         cacheListData.add(locations, here);

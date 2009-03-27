@@ -28,7 +28,7 @@ import android.widget.Button;
 
 public class GeoBeagleDelegate {
 
-    static GeoBeagleDelegate buildGeoBeagleDelegate(Activity parent,
+    static GeoBeagleDelegate buildGeoBeagleDelegate(GeoBeagle parent,
             AppLifecycleManager appLifecycleManager, GeocacheViewer geocacheViewer,
             ErrorDisplayer errorDisplayer) {
         final AlertDialog.Builder cacheDetailsBuilder = new AlertDialog.Builder(parent);
@@ -36,7 +36,7 @@ public class GeoBeagleDelegate {
         final CacheDetailsOnClickListener.Env env = new CacheDetailsOnClickListener.Env(
                 LayoutInflater.from(parent));
         final CacheDetailsOnClickListener cacheDetailsOnClickListener = CacheDetailsOnClickListener
-                .create(cacheDetailsBuilder, geocacheViewer, errorDisplayer, env);
+                .create(parent, cacheDetailsBuilder, geocacheViewer, errorDisplayer, env);
 
         return new GeoBeagleDelegate(parent, appLifecycleManager, cacheDetailsBuilder,
                 cacheDetailsOkListener, cacheDetailsOnClickListener, errorDisplayer);

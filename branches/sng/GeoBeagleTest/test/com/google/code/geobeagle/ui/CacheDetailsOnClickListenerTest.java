@@ -4,6 +4,7 @@ package com.google.code.geobeagle.ui;
 import static org.easymock.EasyMock.expect;
 import static org.junit.Assert.assertEquals;
 
+import com.google.code.geobeagle.GeoBeagle;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.data.Geocache;
 import com.google.code.geobeagle.ui.CacheDetailsOnClickListener.CacheDetailsLoader;
@@ -61,6 +62,7 @@ public class CacheDetailsOnClickListenerTest {
 
     @Test
     public void testOnClick() {
+        GeoBeagle geobeagle = PowerMock.createMock(GeoBeagle.class);
         Builder builder = PowerMock.createMock(Builder.class);
         AlertDialog alertDialog = PowerMock.createMock(AlertDialog.class);
         Env env = PowerMock.createMock(Env.class);
@@ -72,7 +74,7 @@ public class CacheDetailsOnClickListenerTest {
         Geocache geocache = PowerMock.createMock(Geocache.class);
 
         expect(env.inflate(R.layout.cache_details, null)).andReturn(mockableDetailsView);
-        expect(geocacheViewer.getGeocache()).andReturn(geocache);
+        expect(geobeagle.getGeocache()).andReturn(geocache);
         expect(geocache.getId()).andReturn("GC1234");
         expect(builder.setTitle("GC1234")).andReturn(builder);
         expect(mockableDetailsView.findViewById(R.id.webview)).andReturn(webView);
@@ -85,7 +87,7 @@ public class CacheDetailsOnClickListenerTest {
 
         PowerMock.replayAll();
         CacheDetailsOnClickListener cacheDetailsOnClickListener = new CacheDetailsOnClickListener(
-                builder, geocacheViewer, null, env, cacheDetailsLoader);
+                geobeagle, builder, geocacheViewer, null, env, cacheDetailsLoader);
         cacheDetailsOnClickListener.onClick(null);
         PowerMock.verifyAll();
     }

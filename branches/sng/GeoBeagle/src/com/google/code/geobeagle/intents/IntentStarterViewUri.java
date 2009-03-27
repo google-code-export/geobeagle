@@ -14,27 +14,25 @@
 
 package com.google.code.geobeagle.intents;
 
+import com.google.code.geobeagle.GeoBeagle;
 import com.google.code.geobeagle.ui.GeocacheViewer;
 
-import android.content.Context;
 import android.content.Intent;
 
 public class IntentStarterViewUri implements IntentStarter {
-    private final Context mContext;
+    private final GeoBeagle mGeoBeagle;
     private final GeocacheToUri mGeocacheToUri;
     private final IntentFactory mIntentFactory;
-    private final GeocacheViewer mLocationSetter;
 
-    public IntentStarterViewUri(Context context, IntentFactory intentFactory,
+    public IntentStarterViewUri(GeoBeagle geoBeagle, IntentFactory intentFactory,
             GeocacheViewer geocacheViewer, GeocacheToUri geocacheToUri) {
-        mContext = context;
+        mGeoBeagle = geoBeagle;
         mGeocacheToUri = geocacheToUri;
         mIntentFactory = intentFactory;
-        mLocationSetter = geocacheViewer;
     }
 
     public void startIntent() {
-        mContext.startActivity(mIntentFactory.createIntent(Intent.ACTION_VIEW, mGeocacheToUri
-                .convert(mLocationSetter.getGeocache())));
+        mGeoBeagle.startActivity(mIntentFactory.createIntent(Intent.ACTION_VIEW, mGeocacheToUri
+                .convert(mGeoBeagle.getGeocache())));
     }
 }

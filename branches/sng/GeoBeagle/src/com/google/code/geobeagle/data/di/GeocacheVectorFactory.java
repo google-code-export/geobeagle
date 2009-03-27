@@ -17,6 +17,7 @@ package com.google.code.geobeagle.data.di;
 import com.google.code.geobeagle.ResourceProvider;
 import com.google.code.geobeagle.data.DistanceFormatter;
 import com.google.code.geobeagle.data.Geocache;
+import com.google.code.geobeagle.data.GeocacheFromMyLocationFactory;
 import com.google.code.geobeagle.data.GeocacheVector;
 import com.google.code.geobeagle.data.IGeocacheVector;
 
@@ -25,10 +26,12 @@ import android.location.Location;
 public class GeocacheVectorFactory {
     private final DistanceFormatter mDistanceFormatter;
     private final ResourceProvider mResourceProvider;
+    private final GeocacheFromMyLocationFactory mGeocacheFromMyLocationFactory;
 
-    public GeocacheVectorFactory(GeocacheFromTextFactory geocacheFromTextFactory,
+    public GeocacheVectorFactory(GeocacheFromMyLocationFactory geocacheFromMyLocationFactory,
             DistanceFormatter distanceFormatter, ResourceProvider resourceProvider) {
         mDistanceFormatter = distanceFormatter;
+        mGeocacheFromMyLocationFactory = geocacheFromMyLocationFactory;
         mResourceProvider = resourceProvider;
     }
 
@@ -48,6 +51,6 @@ public class GeocacheVectorFactory {
     }
 
     public IGeocacheVector createMyLocation() {
-        return new GeocacheVector.MyLocation(mResourceProvider);
+        return new GeocacheVector.MyLocation(mResourceProvider, mGeocacheFromMyLocationFactory);
     }
 }

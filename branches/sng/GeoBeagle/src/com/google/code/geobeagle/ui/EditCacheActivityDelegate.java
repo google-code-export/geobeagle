@@ -17,7 +17,7 @@ package com.google.code.geobeagle.ui;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.Util;
 import com.google.code.geobeagle.data.Geocache;
-import com.google.code.geobeagle.data.di.GeocacheFromTextFactory;
+import com.google.code.geobeagle.io.LocationSaver;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -73,31 +73,35 @@ public class EditCacheActivityDelegate {
     public static class SetButtonOnClickListener implements OnClickListener {
         private final Activity mActivity;
         private final GeocacheView mGeocacheView;
+        private final LocationSaver mLocationSaver;
 
-        public SetButtonOnClickListener(Activity activity, GeocacheView geocacheView) {
+        public SetButtonOnClickListener(Activity activity, GeocacheView geocacheView,
+                LocationSaver locationSaver) {
             mActivity = activity;
             mGeocacheView = geocacheView;
+            mLocationSaver = locationSaver;
         }
 
         public void onClick(View v) {
+            Geocache geocache = mGeocacheView.get();
+            mLocationSaver.saveLocation(geocache);
             Intent i = new Intent();
             i.setAction(CacheListDelegate.SELECT_CACHE);
-            i.putExtra("geocache", mGeocacheView.get());
+            i.putExtra("geocache", geocache);
             mActivity.setResult(0, i);
             mActivity.finish();
         }
     }
 
     private final CancelButtonOnClickListener mCancelButtonOnClickListener;
-    private final GeocacheFromTextFactory mGeocacheFactory;
+    private final LocationSaver mLocationSaver;
     private final Activity mParent;
 
     public EditCacheActivityDelegate(Activity parent,
-            GeocacheFromTextFactory geocacheFromTextFactory,
-            CancelButtonOnClickListener cancelButtonOnClickListener) {
+            CancelButtonOnClickListener cancelButtonOnClickListener, LocationSaver locationSaver) {
         mParent = parent;
-        mGeocacheFactory = geocacheFromTextFactory;
         mCancelButtonOnClickListener = cancelButtonOnClickListener;
+        mLocationSaver = locationSaver;
     }
 
     public void onCreate(Bundle savedInstanceState) {
@@ -106,8 +110,7 @@ public class EditCacheActivityDelegate {
 
     public void onResume() {
         Intent intent = mParent.getIntent();
-        String stringExtra = intent.getStringExtra("cache");
-        Geocache geocache = mGeocacheFactory.create(stringExtra);
+        Geocache geocache = intent.<Geocache> getParcelableExtra("geocache");
 
         GeocacheView geocacheView = new GeocacheView((EditText)mParent.findViewById(R.id.edit_id),
                 (EditText)mParent.findViewById(R.id.edit_name), (EditText)mParent
@@ -116,7 +119,7 @@ public class EditCacheActivityDelegate {
         geocacheView.set(geocache);
 
         SetButtonOnClickListener setButtonOnClickListener = new SetButtonOnClickListener(mParent,
-                geocacheView);
+                geocacheView, mLocationSaver);
         ((Button)mParent.findViewById(R.id.edit_set)).setOnClickListener(setButtonOnClickListener);
 
         Button cancel = (Button)mParent.findViewById(R.id.edit_cancel);

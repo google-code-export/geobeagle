@@ -14,87 +14,30 @@
 
 package com.google.code.geobeagle.ui;
 
-import com.google.code.geobeagle.LifecycleManager;
-import com.google.code.geobeagle.LocationControl;
-import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.Util;
 import com.google.code.geobeagle.data.Geocache;
-import com.google.code.geobeagle.data.di.GeocacheFromTextFactory;
-import com.google.code.geobeagle.io.LocationSaver;
+import com.google.code.geobeagle.data.GeocacheFromPreferencesFactory;
 
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
-import android.location.Location;
 import android.widget.TextView;
 
-public class GeocacheViewer implements LifecycleManager {
+public class GeocacheViewer {
 
     public static final String FNAME_RECENT_LOCATIONS = "RECENT_LOCATIONS";
     public static final String PREFS_LOCATION = "Location";
-    private final ErrorDisplayer mErrorDisplayer;
-    private final GeocacheFromTextFactory mGeocacheFromTextFactory;
-    private final LocationControl mGpsControl;
-    private final String mInitialDestination;
-    private final LocationSaver mLocationSaver;
     private final TextView mTxtLocation;
 
-    public GeocacheViewer(Context context, TextView mockableTxtLocation,
-            LocationControl locationControl, GeocacheFromTextFactory geocacheFromTextFactory,
-            String initialDestination, ErrorDisplayer errorDisplayer, LocationSaver locationSaver) {
+    public GeocacheViewer(TextView mockableTxtLocation,
+            GeocacheFromPreferencesFactory geocacheFactory) {
         mTxtLocation = mockableTxtLocation;
-        mGeocacheFromTextFactory = geocacheFromTextFactory;
-        mGpsControl = locationControl;
-        mInitialDestination = initialDestination;
-        mErrorDisplayer = errorDisplayer;
-        mLocationSaver = locationSaver;
-    }
-
-    /*
-     * (non-Javadoc)
-     * @see com.google.code.geobeagle.ui.DestinationProvider#getDestination()
-     */
-    public Geocache getGeocache() {
-        return mGeocacheFromTextFactory.create(mTxtLocation.getText());
-    }
-
-    public void onPause(Editor editor) {
-        final CharSequence text = mTxtLocation.getText();
-        editor.putString(PREFS_LOCATION, text.toString());
-        mLocationSaver.saveLocation(text);
-    }
-
-    public void onResume(SharedPreferences preferences) {
-        setLocation(preferences.getString(PREFS_LOCATION, mInitialDestination));
-    }
-
-    public void setLocation(CharSequence c) {
-        if (c == null) {
-            Location location = mGpsControl.getLocation();
-            if (location == null) {
-                mErrorDisplayer.displayError(R.string.current_location_null);
-                return;
-            }
-            setLocation(location.getLatitude(), location.getLongitude(), String.format(
-                    "[%1$tk:%1$tM] My Location", location.getTime()));
-            return;
-        }
-        mTxtLocation.setText(c);
-    }
-
-    public CharSequence setLocation(double lat, double lon, CharSequence description) {
-        final CharSequence latLonText = Util.formatDegreesAsDecimalDegreesString(lat) + ", "
-                + Util.formatDegreesAsDecimalDegreesString(lon) + " (" + description + ")";
-        mTxtLocation.setText(latLonText);
-        mLocationSaver.saveLocation(latLonText);
-        return latLonText;
     }
 
     public void set(Geocache geocache) {
-        if (geocache.getContentIndex() == Geocache.PROVIDER_MYLOCATION) {
-            setLocation(null);
-        } else
-            setLocation(geocache.getLatitude(), geocache.getLongitude(), geocache.getIdAndName());
+        final CharSequence latLonText = Util.formatDegreesAsDecimalDegreesString(geocache
+                .getLatitude())
+                + ", "
+                + Util.formatDegreesAsDecimalDegreesString(geocache.getLongitude())
+                + " ("
+                + geocache.getIdAndName() + ")";
+        mTxtLocation.setText(latLonText);
     }
-
 }
