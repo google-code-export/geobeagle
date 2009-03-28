@@ -22,24 +22,23 @@ import java.io.FilenameFilter;
 public class GpxImporterDI {
 
     public static class GpxFilenameFactory {
+        private final FilenameFilter mFilenameFilter;
 
-        public String[] getFilenames() {
-            File dir = new File("/sdcard");
-            FilenameFilter filter = new FilenameFilter() {
-                public boolean accept(File dir, String name) {
-                    return !name.startsWith(".") && name.endsWith(".gpx");
-                }
-            };
-            return dir.list(filter);
+        public GpxFilenameFactory(FilenameFilter filenameFilter) {
+            mFilenameFilter = filenameFilter;
         }
 
+        public String[] getFilenames() {
+            return new File("/sdcard").list(mFilenameFilter);
+        }
     }
 
     // Can't test this due to final methods in base.
     public static class ImportThread extends Thread {
         static ImportThread create(MessageHandler messageHandler, GpxLoader gpxLoader,
                 ErrorDisplayer errorDisplayer) {
-            final GpxFilenameFactory gpxFilenameFactory = new GpxFilenameFactory();
+            final GpxFilenameFactory gpxFilenameFactory = new GpxFilenameFactory(
+                    GpxImporter.filenameFilter);
             return new ImportThread(messageHandler, gpxLoader, errorDisplayer, gpxFilenameFactory);
         }
 

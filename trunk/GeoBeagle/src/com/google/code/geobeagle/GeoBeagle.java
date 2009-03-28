@@ -15,63 +15,66 @@
 package com.google.code.geobeagle;
 
 import com.google.code.geobeagle.LocationControl.LocationChooser;
-import com.google.code.geobeagle.data.di.GeocacheFromTextFactory;
+import com.google.code.geobeagle.data.Geocache;
+import com.google.code.geobeagle.data.GeocacheFromPreferencesFactory;
+import com.google.code.geobeagle.data.Geocache.Source;
+import com.google.code.geobeagle.data.di.GeocacheFactory;
 import com.google.code.geobeagle.intents.GeocacheToCachePage;
 import com.google.code.geobeagle.intents.GeocacheToGoogleMap;
 import com.google.code.geobeagle.intents.IntentFactory;
 import com.google.code.geobeagle.intents.IntentStarterLocation;
 import com.google.code.geobeagle.intents.IntentStarterRadar;
 import com.google.code.geobeagle.intents.IntentStarterViewUri;
-import com.google.code.geobeagle.io.CacheWriter;
-import com.google.code.geobeagle.io.Database;
-import com.google.code.geobeagle.io.LocationSaver;
-import com.google.code.geobeagle.io.di.DatabaseDI;
 import com.google.code.geobeagle.ui.CacheListDelegate;
-import com.google.code.geobeagle.ui.CachePageButtonEnabler;
 import com.google.code.geobeagle.ui.ContentSelector;
 import com.google.code.geobeagle.ui.ErrorDisplayer;
 import com.google.code.geobeagle.ui.GeocacheListOnClickListener;
+import com.google.code.geobeagle.ui.GeocacheViewer;
 import com.google.code.geobeagle.ui.GetCoordsToast;
-import com.google.code.geobeagle.ui.LocationOnKeyListener;
-import com.google.code.geobeagle.ui.LocationSetter;
-import com.google.code.geobeagle.ui.LocationViewer;
-import com.google.code.geobeagle.ui.MockableEditText;
+import com.google.code.geobeagle.ui.GpsStatusWidget;
 import com.google.code.geobeagle.ui.MockableTextView;
 import com.google.code.geobeagle.ui.MyLocationProvider;
 import com.google.code.geobeagle.ui.OnCacheButtonClickListenerBuilder;
 import com.google.code.geobeagle.ui.OnContentProviderSelectedListener;
-import com.google.code.geobeagle.ui.TooString;
-import com.google.code.geobeagle.ui.LocationViewer.MeterFormatter;
-import com.google.code.geobeagle.ui.LocationViewer.MeterView;
+import com.google.code.geobeagle.ui.WebPageAndDetailsButtonEnabler;
+import com.google.code.geobeagle.ui.GpsStatusWidget.MeterFormatter;
+import com.google.code.geobeagle.ui.GpsStatusWidget.MeterView;
+import com.google.code.geobeagle.ui.di.EditCacheActivity;
+import com.google.code.geobeagle.ui.di.WebPageAndDetailsButtonDI;
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.UrlQuerySanitizer;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 
 /*
  * Main Activity for GeoBeagle.
  */
-public class GeoBeagle extends Activity {
-    private CachePageButtonEnabler mCachePageButtonEnabler;
+public class GeoBeagle extends Activity implements LifecycleManager {
+    private WebPageAndDetailsButtonEnabler mWebPageButtonEnabler;
     private ContentSelector mContentSelector;
     private final ErrorDisplayer mErrorDisplayer;
     private GeoBeagleDelegate mGeoBeagleDelegate;
+    private Geocache mGeocache;
+    private GeocacheFromPreferencesFactory mGeocacheFromPreferencesFactory;
+    private GeocacheViewer mGeocacheViewer;
     private LocationControl mGpsControl;
     private final Handler mHandler;
     private GeoBeagleLocationListener mLocationListener;
-    private LocationSetter mLocationSetter;
-    private LocationViewer mLocationViewer;
-    private final ResourceProvider mResourceProvider;
+    private GpsStatusWidget mLocationViewer;
 
+    private final ResourceProvider mResourceProvider;
     private final Runnable mUpdateTimeTask = new Runnable() {
         public void run() {
             mLocationViewer.refreshLocation();
@@ -90,7 +93,7 @@ public class GeoBeagle extends Activity {
         return new MockableTextView((TextView)findViewById(id));
     }
 
-    private void getCoordinatesFromIntent(LocationSetter locationSetter, Intent intent,
+    private void getCoordinatesFromIntent(GeocacheViewer geocacheViewer, Intent intent,
             ErrorDisplayer errorDisplayer) {
         try {
             if (intent.getType() == null) {
@@ -99,28 +102,43 @@ public class GeoBeagle extends Activity {
                         new UrlQuerySanitizer(), UrlQuerySanitizer
                                 .getAllButNulAndAngleBracketsLegal());
                 final CharSequence[] latlon = Util.splitLatLonDescription(sanitizedQuery);
-                locationSetter.setLocation(Util.parseCoordinate(latlon[0]), Util
-                        .parseCoordinate(latlon[1]), latlon[2]);
+                mGeocache = new Geocache(latlon[2], "", Util.parseCoordinate(latlon[0]), Util
+                        .parseCoordinate(latlon[1]), Source.WEB_URL, null);
+                geocacheViewer.set(mGeocache);
             }
         } catch (final Exception e) {
             errorDisplayer.displayError("Error: " + e.getMessage());
         }
     }
 
+    public Geocache getGeocache() {
+        return mGeocache;
+    }
+
     private boolean maybeGetCoordinatesFromIntent() {
         final Intent intent = getIntent();
-        final String action = intent.getAction();
-        if (action != null) {
-            if (action.equals(Intent.ACTION_VIEW)) {
-                getCoordinatesFromIntent(mLocationSetter, intent, mErrorDisplayer);
-                return true;
-            } else if (action.equals(CacheListDelegate.SELECT_CACHE)) {
-                mLocationSetter.setLocation(intent.getStringExtra("location"));
-                mCachePageButtonEnabler.check();
-                return true;
+        if (intent != null) {
+            final String action = intent.getAction();
+            if (action != null) {
+                if (action.equals(Intent.ACTION_VIEW)) {
+                    getCoordinatesFromIntent(mGeocacheViewer, intent, mErrorDisplayer);
+                    return true;
+                } else if (action.equals(CacheListDelegate.SELECT_CACHE)) {
+                    mGeocache = intent.<Geocache> getParcelableExtra("geocache");
+                    mGeocacheViewer.set(mGeocache);
+                    mWebPageButtonEnabler.check();
+                    return true;
+                }
             }
         }
         return false;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == 0)
+            setIntent(data);
     }
 
     @Override
@@ -131,32 +149,21 @@ public class GeoBeagle extends Activity {
             GeoBeagleBuilder builder = new GeoBeagleBuilder(this);
             mContentSelector = builder.createContentSelector(getPreferences(Activity.MODE_PRIVATE));
 
-            final EditText txtLocation = (EditText)findViewById(R.id.go_to);
-            mCachePageButtonEnabler = CachePageButtonEnabler.create(new TooString(txtLocation),
-                    findViewById(R.id.cache_page), findViewById(R.id.cache_details),
-                    mResourceProvider);
-            txtLocation.setOnKeyListener(new LocationOnKeyListener(mCachePageButtonEnabler));
+            final TextView txtLocation = (TextView)findViewById(R.id.go_to);
+            mWebPageButtonEnabler = WebPageAndDetailsButtonDI.create(this,
+                    findViewById(R.id.cache_page), findViewById(R.id.cache_details));
 
-            mLocationViewer = new LocationViewer(mResourceProvider, new MeterView(
+            mLocationViewer = new GpsStatusWidget(mResourceProvider, new MeterView(
                     createTextView(R.id.location_viewer), new MeterFormatter()),
                     createTextView(R.id.provider), createTextView(R.id.lag),
                     createTextView(R.id.accuracy), createTextView(R.id.status),
-                    new LocationViewer.Time(), new Location(""));
+                    new GpsStatusWidget.Time(), new Location(""));
             final LocationManager locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
             mGpsControl = new LocationControl(locationManager, new LocationChooser());
             mLocationListener = new GeoBeagleLocationListener(mGpsControl, mLocationViewer);
-            final GeocacheFromTextFactory geocacheFromTextFactory = new GeocacheFromTextFactory(
-                    mResourceProvider);
-            final Database database = DatabaseDI.create(this);
-
-            final MockableEditText mockableTxtLocation = new MockableEditText(txtLocation);
-            final DatabaseDI.SQLiteWrapper sqliteWrapper = new DatabaseDI.SQLiteWrapper(null);
-            final CacheWriter cacheWriter = DatabaseDI.createCacheWriter(sqliteWrapper);
-            final LocationSaver locationSaver = new LocationSaver(database,
-                    geocacheFromTextFactory, mErrorDisplayer, sqliteWrapper, cacheWriter);
-            final String initialDestination = getString(R.string.initial_destination);
-            mLocationSetter = new LocationSetter(this, mockableTxtLocation, mGpsControl,
-                    geocacheFromTextFactory, initialDestination, mErrorDisplayer, locationSaver);
+            final GeocacheFactory geocacheFactory = new GeocacheFactory();
+            mGeocacheFromPreferencesFactory = new GeocacheFromPreferencesFactory(geocacheFactory);
+            mGeocacheViewer = new GeocacheViewer(txtLocation, mGeocacheFromPreferencesFactory);
 
             setCacheClickListeners();
 
@@ -165,19 +172,18 @@ public class GeoBeagle extends Activity {
 
             AppLifecycleManager appLifecycleManager = new AppLifecycleManager(
                     getPreferences(MODE_PRIVATE), new LifecycleManager[] {
-                            mLocationSetter,
-                            new LocationLifecycleManager(mLocationListener, locationManager),
+                            this, new LocationLifecycleManager(mLocationListener, locationManager),
                             mContentSelector
                     });
             mGeoBeagleDelegate = GeoBeagleDelegate.buildGeoBeagleDelegate(this,
-                    appLifecycleManager, mLocationSetter, mErrorDisplayer);
+                    appLifecycleManager, mGeocacheViewer, mErrorDisplayer);
             mGeoBeagleDelegate.onCreate();
 
             ((Spinner)findViewById(R.id.content_provider))
                     .setOnItemSelectedListener(new OnContentProviderSelectedListener(
                             mResourceProvider, new MockableTextView(
                                     (TextView)findViewById(R.id.select_cache_prompt)),
-                            new MockableTextView((TextView)findViewById(R.id.go_to_cache_prompt))));
+                            new MockableTextView((TextView)findViewById(R.id.cache_prompt))));
 
             mHandler.removeCallbacks(mUpdateTimeTask);
             mHandler.postDelayed(mUpdateTimeTask, 1000);
@@ -187,9 +193,27 @@ public class GeoBeagle extends Activity {
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        menu.add(R.string.menu_edit_geocache);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        Intent intent = new Intent(this, EditCacheActivity.class);
+        intent.putExtra("geocache", mGeocache);
+        startActivityForResult(intent, 0);
+        return true;
+    }
+
+    @Override
     public void onPause() {
         super.onPause();
         mGeoBeagleDelegate.onPause();
+    }
+
+    public void onPause(Editor editor) {
+        getGeocache().writeToPrefs(editor);
     }
 
     @Override
@@ -198,9 +222,14 @@ public class GeoBeagle extends Activity {
 
         mGeoBeagleDelegate.onResume();
         maybeGetCoordinatesFromIntent();
+        mWebPageButtonEnabler.check();
         final Location location = mGpsControl.getLocation();
         if (location != null)
             mLocationListener.onLocationChanged(location);
+    }
+
+    public void onResume(SharedPreferences preferences) {
+        setGeocache(mGeocacheFromPreferencesFactory.create(preferences));
     }
 
     private void setCacheClickListeners() {
@@ -219,11 +248,15 @@ public class GeoBeagle extends Activity {
                 R.array.nearest_objects, getCoordsToast), "");
 
         cacheClickListenerSetter.set(R.id.maps, new IntentStarterViewUri(this, intentFactory,
-                mLocationSetter, new GeocacheToGoogleMap(mResourceProvider)), "");
+                mGeocacheViewer, new GeocacheToGoogleMap(mResourceProvider)), "");
         cacheClickListenerSetter.set(R.id.cache_page, new IntentStarterViewUri(this, intentFactory,
-                mLocationSetter, new GeocacheToCachePage(mResourceProvider, mContentSelector)), "");
-        cacheClickListenerSetter.set(R.id.radar, new IntentStarterRadar(this, intentFactory,
-                mLocationSetter), "\nPlease install the Radar application to use Radar.");
+                mGeocacheViewer, new GeocacheToCachePage(mResourceProvider)), "");
+        cacheClickListenerSetter.set(R.id.radar, new IntentStarterRadar(this, intentFactory),
+                "\nPlease install the Radar application to use Radar.");
     }
 
+    void setGeocache(Geocache geocache) {
+        mGeocache = geocache;
+        mGeocacheViewer.set(getGeocache());
+    }
 }

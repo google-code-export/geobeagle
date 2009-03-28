@@ -24,7 +24,6 @@ import com.google.code.geobeagle.data.di.GeocacheVectorFactory;
 import android.location.Location;
 
 import java.util.ArrayList;
-import java.util.Map;
 
 import junit.framework.TestCase;
 
@@ -46,37 +45,6 @@ public class CacheListDataTest extends TestCase {
         replay(geocacheVectors);
         new CacheListData(geocacheVectors, geocacheVectorFactory).add(locations, here);
         verify(geocacheVectorFactory);
-        verify(geocacheVectors);
-    }
-
-    public void testGetAdapterData() {
-        GeocacheVectors geocacheVectors = createMock(GeocacheVectors.class);
-        ArrayList<Map<String, Object>> adapterData = new ArrayList<Map<String, Object>>(0);
-
-        expect(geocacheVectors.getAdapterData()).andReturn(adapterData);
-
-        replay(geocacheVectors);
-        assertEquals(adapterData, new CacheListData(geocacheVectors, null).getAdapterData());
-        verify(geocacheVectors);
-    }
-
-    public void testGetId() {
-        GeocacheVectors geocacheVectors = createMock(GeocacheVectors.class);
-
-        expect(geocacheVectors.getId(8)).andReturn("GC123");
-
-        replay(geocacheVectors);
-        assertEquals("GC123", new CacheListData(geocacheVectors, null).getId(8));
-        verify(geocacheVectors);
-    }
-
-    public void testGetLocation() {
-        GeocacheVectors geocacheVectors = createMock(GeocacheVectors.class);
-
-        expect(geocacheVectors.getCoordinatesIdAndName(8)).andReturn("a cache");
-
-        replay(geocacheVectors);
-        assertEquals("a cache", new CacheListData(geocacheVectors, null).getCoordinatesIdAndName(8));
         verify(geocacheVectors);
     }
 }

@@ -60,6 +60,12 @@ public class GpxImporterTest extends TestCase {
         verify(gpxFilenameFactory);
     }
 
+    public void testFilenameFilter() {
+        assertFalse(GpxImporter.filenameFilter.accept(null, ".appledetritus010.gpx"));
+        assertFalse(GpxImporter.filenameFilter.accept(null, "foo.bar"));
+        assertTrue(GpxImporter.filenameFilter.accept(null, "01243.gpx"));
+    }
+
     public void testAbort() throws InterruptedException {
         GpxLoader gpxLoader = createMock(GpxLoader.class);
         ImportThreadWrapper importThreadWrapper = createMock(ImportThreadWrapper.class);

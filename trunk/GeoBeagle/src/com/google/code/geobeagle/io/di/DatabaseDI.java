@@ -1,18 +1,18 @@
 
 package com.google.code.geobeagle.io.di;
 
-import com.google.code.geobeagle.Geocaches;
 import com.google.code.geobeagle.LocationControl;
+import com.google.code.geobeagle.data.Geocaches;
 import com.google.code.geobeagle.data.di.GeocacheFactory;
-import com.google.code.geobeagle.data.di.GeocacheFromTextFactory;
 import com.google.code.geobeagle.io.CacheReader;
 import com.google.code.geobeagle.io.CacheWriter;
 import com.google.code.geobeagle.io.Database;
+import com.google.code.geobeagle.io.DbToGeocacheAdapter;
 import com.google.code.geobeagle.io.GeocachesSql;
+import com.google.code.geobeagle.io.CacheReader.CacheReaderCursor;
 import com.google.code.geobeagle.io.CacheReader.WhereFactory;
 import com.google.code.geobeagle.io.Database.ISQLiteDatabase;
 import com.google.code.geobeagle.io.Database.OpenHelperDelegate;
-import com.google.code.geobeagle.ui.ErrorDisplayer;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -22,9 +22,10 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class DatabaseDI {
 
     public static class CacheReaderCursorFactory {
-        public CacheReader.CacheReaderCursor create(Cursor cursor) {
+        public CacheReaderCursor create(Cursor cursor) {
             GeocacheFactory geocacheFactory = new GeocacheFactory();
-            return new CacheReader.CacheReaderCursor(cursor, geocacheFactory);
+            DbToGeocacheAdapter dbToGeocacheAdapter = new DbToGeocacheAdapter();
+            return new CacheReaderCursor(cursor, geocacheFactory, dbToGeocacheAdapter);
         }
     }
 
@@ -113,13 +114,11 @@ public class DatabaseDI {
         return new Database(sqliteOpenHelper);
     }
 
-    public static GeocachesSql create(LocationControl locationControl, Database database,
-            GeocacheFromTextFactory geocacheFromTextFactory, ErrorDisplayer errorDisplayer) {
+    public static GeocachesSql create(LocationControl locationControl, Database database) {
         final Geocaches geocaches = new Geocaches();
         final SQLiteWrapper sqliteWrapper = new SQLiteWrapper(null);
         final CacheReader cacheReader = createCacheReader(sqliteWrapper);
-        return new GeocachesSql(cacheReader, geocaches, database, sqliteWrapper,
-                geocacheFromTextFactory, errorDisplayer, locationControl);
+        return new GeocachesSql(cacheReader, geocaches, database, sqliteWrapper, locationControl);
     }
 
     public static CacheReader createCacheReader(SQLiteWrapper sqliteWrapper) {
@@ -129,7 +128,8 @@ public class DatabaseDI {
     }
 
     public static CacheWriter createCacheWriter(SQLiteWrapper sqliteWrapper) {
-        return new CacheWriter(sqliteWrapper);
+        DbToGeocacheAdapter dbToGeocacheAdapter = new DbToGeocacheAdapter();
+        return new CacheWriter(sqliteWrapper, dbToGeocacheAdapter);
     }
 
 }

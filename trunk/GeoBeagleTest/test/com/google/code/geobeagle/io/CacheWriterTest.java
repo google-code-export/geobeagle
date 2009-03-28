@@ -6,6 +6,7 @@ import static org.easymock.classextension.EasyMock.createMock;
 import static org.easymock.classextension.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.verify;
 
+import com.google.code.geobeagle.data.Geocache.Source;
 import com.google.code.geobeagle.io.DatabaseTest.DesktopSQLiteDatabase;
 import com.google.code.geobeagle.io.di.DatabaseDI.SQLiteWrapper;
 
@@ -24,7 +25,7 @@ public class CacheWriterTest extends TestCase {
         sqlite.execSQL(Database.SQL_CLEAR_CACHES, "the source");
 
         replay(sqlite);
-        CacheWriter cacheWriter = new CacheWriter(sqlite);
+        CacheWriter cacheWriter = new CacheWriter(sqlite, null);
         cacheWriter.clearCaches("the source");
         verify(sqlite);
     }
@@ -40,7 +41,7 @@ public class CacheWriterTest extends TestCase {
         db.execSQL(INSERT_INTO_GPX + "VALUES ('nuke.gpx', '2009-04-30', 1)");
         db.execSQL(INSERT_INTO_GPX + "VALUES ('keep.gpx', '2009-04-30', 0)");
 
-        CacheWriter cacheWriter = new CacheWriter(db);
+        CacheWriter cacheWriter = new CacheWriter(db, null);
         cacheWriter.clearEarlierLoads();
 
         assertEquals("GCTHISIMPORT|just loaded|||foo.gpx|1\n"
@@ -54,19 +55,22 @@ public class CacheWriterTest extends TestCase {
         sqlite.execSQL(Database.SQL_DELETE_CACHE, "GC123");
 
         replay(sqlite);
-        CacheWriter cacheWriter = new CacheWriter(sqlite);
+        CacheWriter cacheWriter = new CacheWriter(sqlite, null);
         cacheWriter.deleteCache("GC123");
         verify(sqlite);
     }
 
     public void testInsertAndUpdate() {
         SQLiteWrapper sqlite = createMock(SQLiteWrapper.class);
+        DbToGeocacheAdapter dbToGeocacheAdapter = createMock(DbToGeocacheAdapter.class);
 
         sqlite.execSQL(Database.SQL_REPLACE_CACHE, "gc123", "a cache", 122.0, 37.0, "source");
-
+        expect(dbToGeocacheAdapter.sourceTypeToSourceName(Source.GPX, "source")).andReturn("source");
+        
         replay(sqlite);
-        CacheWriter cacheWriter = new CacheWriter(sqlite);
-        cacheWriter.insertAndUpdateCache("gc123", "a cache", 122, 37, "source");
+        replay(dbToGeocacheAdapter);
+        CacheWriter cacheWriter = new CacheWriter(sqlite, dbToGeocacheAdapter);
+        cacheWriter.insertAndUpdateCache("gc123", "a cache", 122, 37, Source.GPX, "source");
         verify(sqlite);
     }
 
@@ -78,7 +82,7 @@ public class CacheWriterTest extends TestCase {
                         "04-30-2009")).andReturn(0);
 
         replay(sqlite);
-        CacheWriter cacheWriter = new CacheWriter(sqlite);
+        CacheWriter cacheWriter = new CacheWriter(sqlite, null);
         assertFalse(cacheWriter.isGpxAlreadyLoaded("foo.gpx", "04-30-2009"));
         verify(sqlite);
     }
@@ -93,7 +97,7 @@ public class CacheWriterTest extends TestCase {
         sqlite.execSQL(Database.SQL_GPX_DONT_DELETE_ME, "foo.gpx");
 
         replay(sqlite);
-        CacheWriter cacheWriter = new CacheWriter(sqlite);
+        CacheWriter cacheWriter = new CacheWriter(sqlite, null);
         assertTrue(cacheWriter.isGpxAlreadyLoaded("foo.gpx", "04-30-2009"));
         verify(sqlite);
     }
@@ -103,7 +107,7 @@ public class CacheWriterTest extends TestCase {
         sqlite.beginTransaction();
 
         replay(sqlite);
-        new CacheWriter(sqlite).startWriting();
+        new CacheWriter(sqlite, null).startWriting();
         verify(sqlite);
     }
 
@@ -113,7 +117,7 @@ public class CacheWriterTest extends TestCase {
         sqlite.endTransaction();
 
         replay(sqlite);
-        new CacheWriter(sqlite).stopWriting();
+        new CacheWriter(sqlite, null).stopWriting();
         verify(sqlite);
     }
 
@@ -122,7 +126,7 @@ public class CacheWriterTest extends TestCase {
         sqlite.execSQL(Database.SQL_REPLACE_GPX, "foo.gpx", "2009-04-30 10:30");
 
         replay(sqlite);
-        new CacheWriter(sqlite).writeGpx("foo.gpx", "2009-04-30 10:30");
+        new CacheWriter(sqlite, null).writeGpx("foo.gpx", "2009-04-30 10:30");
         verify(sqlite);
     }
 

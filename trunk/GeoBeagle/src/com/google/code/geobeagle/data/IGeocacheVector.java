@@ -14,14 +14,16 @@
 
 package com.google.code.geobeagle.data;
 
-import java.util.Map;
+
 
 public interface IGeocacheVector {
-    public CharSequence getCoordinatesIdAndName();
+    public Geocache getGeocache();
+    
+    public CharSequence getFormattedDistance();
 
     public float getDistance();
 
     public CharSequence getId();
 
-    public Map<String, Object> getViewMap();
+    public CharSequence getIdAndName();
 }

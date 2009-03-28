@@ -21,9 +21,9 @@ import android.location.Location;
 import android.location.LocationProvider;
 
 /**
- * @author sng Displays the current location as well as the GPS status.
+ * @author sng Displays the GPS status (accuracy, availability, etc).
  */
-public class LocationViewer {
+public class GpsStatusWidget {
     public static class MeterFormatter {
         public int accuracyToBarCount(float accuracy) {
             return Math.min(METER_LEFT.length(), (int)(Math.log(Math.max(1, accuracy)) / Math
@@ -67,6 +67,7 @@ public class LocationViewer {
     private float mAccuracy;
     private final MockableTextView mAccuracyView;
     private final MockableTextView mLag;
+    private long mLastUpdateTime;
     private long mLocationTime;
     private final MeterView mMeterView;
     private final MockableTextView mProvider;
@@ -74,7 +75,7 @@ public class LocationViewer {
     private final MockableTextView mStatus;
     private final Time mTime;
 
-    public LocationViewer(ResourceProvider resourceProvider, MeterView meterView,
+    public GpsStatusWidget(ResourceProvider resourceProvider, MeterView meterView,
             MockableTextView provider, MockableTextView lag, MockableTextView accuracy,
             MockableTextView status, Time time, Location initialLocation) {
         mResourceProvider = resourceProvider;
@@ -87,10 +88,12 @@ public class LocationViewer {
     }
 
     public void refreshLocation() {
-        final long lag = mTime.getCurrentTime() - mLocationTime;
-        mLag.setText((lag / 1000 + "s").trim());
+        long currentTime = mTime.getCurrentTime();
+        long lastUpdateLag = currentTime - mLastUpdateTime;
+        long locationLag = currentTime - mLocationTime;
+        mLag.setText((locationLag / 1000 + "s").trim());
         mAccuracyView.setText((mAccuracy + "m").trim());
-        mMeterView.set(lag, mAccuracy);
+        mMeterView.set(lastUpdateLag, mAccuracy);
     };
 
     public void setDisabled() {
@@ -104,7 +107,8 @@ public class LocationViewer {
     public void setLocation(Location location) {
         // TODO: use currentTime for alpha channel, but locationTime for text
         // lag.
-        mLocationTime = mTime.getCurrentTime();
+        mLastUpdateTime = mTime.getCurrentTime();
+        mLocationTime = location.getTime();
         mProvider.setText(location.getProvider());
         mAccuracy = location.getAccuracy();
     }

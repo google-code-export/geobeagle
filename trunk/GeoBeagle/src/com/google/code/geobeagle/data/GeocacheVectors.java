@@ -33,7 +33,6 @@ import com.google.code.geobeagle.data.di.GeocacheVectorFactory;
 import android.location.Location;
 
 import java.util.ArrayList;
-import java.util.Map;
 
 public class GeocacheVectors {
     private final GeocacheVectorFactory mGeocacheVectorFactory;
@@ -51,40 +50,27 @@ public class GeocacheVectors {
         mGeocacheVectorsList.add(0, destinationVector);
     }
 
-    public void addLocations(ArrayList<Geocache> locations, Location here) {
-        for (Geocache location : locations) {
-            add(mGeocacheVectorFactory.create(location, here));
+    public void addLocations(ArrayList<Geocache> geocaches, Location here) {
+        for (Geocache geocache : geocaches) {
+            add(mGeocacheVectorFactory.create(geocache, here));
         }
-    }
-
-    public void delete(int position) {
-        mGeocacheVectorsList.remove(position);
     }
 
     public IGeocacheVector get(int position) {
         return mGeocacheVectorsList.get(position);
     }
 
-    public ArrayList<Map<String, Object>> getAdapterData() {
-        ArrayList<Map<String, Object>> arrayList = new ArrayList<Map<String, Object>>(
-                mGeocacheVectorsList.size());
-        for (IGeocacheVector destination : mGeocacheVectorsList) {
-            arrayList.add(destination.getViewMap());
-        }
-        return arrayList;
-    }
-
-    public CharSequence getCoordinatesIdAndName(int position) {
-        return mGeocacheVectorsList.get(position).getCoordinatesIdAndName();
-    }
-
-    public CharSequence getId(int position) {
-        return mGeocacheVectorsList.get(position).getId();
+    public void remove(int position) {
+        mGeocacheVectorsList.remove(position);
     }
 
     public void reset(int size) {
         mGeocacheVectorsList.clear();
         mGeocacheVectorsList.ensureCapacity(size);
+    }
+
+    public int size() {
+        return mGeocacheVectorsList.size();
     }
 
     public void sort() {

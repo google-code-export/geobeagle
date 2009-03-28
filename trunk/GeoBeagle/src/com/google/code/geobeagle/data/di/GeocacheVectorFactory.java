@@ -17,19 +17,26 @@ package com.google.code.geobeagle.data.di;
 import com.google.code.geobeagle.ResourceProvider;
 import com.google.code.geobeagle.data.DistanceFormatter;
 import com.google.code.geobeagle.data.Geocache;
+import com.google.code.geobeagle.data.GeocacheFromMyLocationFactory;
 import com.google.code.geobeagle.data.GeocacheVector;
 import com.google.code.geobeagle.data.IGeocacheVector;
+import com.google.code.geobeagle.io.LocationSaver;
 
 import android.location.Location;
 
 public class GeocacheVectorFactory {
     private final DistanceFormatter mDistanceFormatter;
     private final ResourceProvider mResourceProvider;
+    private final GeocacheFromMyLocationFactory mGeocacheFromMyLocationFactory;
+    private final LocationSaver mLocationSaver;
 
-    public GeocacheVectorFactory(GeocacheFromTextFactory geocacheFromTextFactory,
-            DistanceFormatter distanceFormatter, ResourceProvider resourceProvider) {
+    public GeocacheVectorFactory(GeocacheFromMyLocationFactory geocacheFromMyLocationFactory,
+            LocationSaver locationSaver, DistanceFormatter distanceFormatter,
+            ResourceProvider resourceProvider) {
         mDistanceFormatter = distanceFormatter;
+        mGeocacheFromMyLocationFactory = geocacheFromMyLocationFactory;
         mResourceProvider = resourceProvider;
+        mLocationSaver = locationSaver;
     }
 
     private float calculateDistance(Location here, Geocache geocache) {
@@ -48,6 +55,7 @@ public class GeocacheVectorFactory {
     }
 
     public IGeocacheVector createMyLocation() {
-        return new GeocacheVector.MyLocation(mResourceProvider);
+        return new GeocacheVector.MyLocation(mResourceProvider, mGeocacheFromMyLocationFactory,
+                mLocationSaver);
     }
 }

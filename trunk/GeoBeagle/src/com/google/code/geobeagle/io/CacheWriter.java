@@ -14,6 +14,7 @@
 
 package com.google.code.geobeagle.io;
 
+import com.google.code.geobeagle.data.Geocache.Source;
 import com.google.code.geobeagle.io.Database.ISQLiteDatabase;
 
 /**
@@ -21,13 +22,15 @@ import com.google.code.geobeagle.io.Database.ISQLiteDatabase;
  */
 public class CacheWriter {
     private final ISQLiteDatabase mSqlite;
+    private final DbToGeocacheAdapter mDbToGeocacheAdapter;
     public static final String SQLS_CLEAR_EARLIER_LOADS[] = {
             Database.SQL_DELETE_OLD_CACHES, Database.SQL_DELETE_OLD_GPX,
             Database.SQL_RESET_DELETE_ME_CACHES, Database.SQL_RESET_DELETE_ME_GPX
     };
 
-    public CacheWriter(ISQLiteDatabase sqlite) {
+    public CacheWriter(ISQLiteDatabase sqlite, DbToGeocacheAdapter dbToGeocacheAdapter) {
         mSqlite = sqlite;
+        mDbToGeocacheAdapter = dbToGeocacheAdapter;
     }
 
     public void clearCaches(String source) {
@@ -49,9 +52,9 @@ public class CacheWriter {
     }
 
     public void insertAndUpdateCache(CharSequence id, CharSequence name, double latitude,
-            double longitude, String source) {
+            double longitude, Source sourceType, String sourceName) {
         mSqlite.execSQL(Database.SQL_REPLACE_CACHE, id, name, new Double(latitude), new Double(
-                longitude), source);
+                longitude), mDbToGeocacheAdapter.sourceTypeToSourceName(sourceType, sourceName));
     }
 
     public boolean isGpxAlreadyLoaded(String gpxName, String gpxTime) {

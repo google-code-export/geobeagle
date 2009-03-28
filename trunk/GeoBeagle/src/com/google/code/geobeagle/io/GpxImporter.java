@@ -26,9 +26,18 @@ import com.google.code.geobeagle.ui.ErrorDisplayer;
 import android.app.ListActivity;
 import android.widget.Toast;
 
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FilenameFilter;
 
 public class GpxImporter {
+
+    public static FilenameFilter filenameFilter = new FilenameFilter() {
+        public boolean accept(File dir, String name) {
+            return !name.startsWith(".") && name.endsWith(".gpx");
+        }
+    };
+
     public static class ImportThreadDelegate {
         private final ErrorDisplayer mErrorDisplayer;
         private final GpxFilenameFactory mGpxFilenameFactory;

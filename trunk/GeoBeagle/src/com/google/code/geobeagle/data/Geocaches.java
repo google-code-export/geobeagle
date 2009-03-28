@@ -12,21 +12,27 @@
  ** limitations under the License.
  */
 
-package com.google.code.geobeagle.ui;
+package com.google.code.geobeagle.data;
 
-import android.view.KeyEvent;
-import android.view.View;
-import android.view.View.OnKeyListener;
 
-public class LocationOnKeyListener implements OnKeyListener {
-    private final CachePageButtonEnabler mCachePageButtonEnabler;
+import java.util.ArrayList;
 
-    public LocationOnKeyListener(CachePageButtonEnabler cachePageButtonEnabler) {
-        mCachePageButtonEnabler = cachePageButtonEnabler;
+public class Geocaches {
+    private ArrayList<Geocache> mGeocaches;
+
+    public Geocaches() {
+        mGeocaches = new ArrayList<Geocache>();
     }
 
-    public boolean onKey(View v, int keyCode, KeyEvent event) {
-        mCachePageButtonEnabler.check();
-        return false;
+    public void add(Geocache geocache) {
+        mGeocaches.add(geocache);
+    }
+
+    public void clear() {
+        mGeocaches.clear();
+    }
+
+    public ArrayList<Geocache> getAll() {
+        return mGeocaches;
     }
 }

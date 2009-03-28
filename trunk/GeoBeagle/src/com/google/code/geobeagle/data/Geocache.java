@@ -14,74 +14,95 @@
 
 package com.google.code.geobeagle.data;
 
-import com.google.code.geobeagle.Util;
+import com.google.code.geobeagle.data.di.GeocacheFactory;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import android.content.SharedPreferences.Editor;
+import android.os.Bundle;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 /**
  * Geocache or letterbox description, id, and coordinates.
  */
-public class Geocache {
-    public final static int PROVIDER_ATLASQUEST = 0;
-    public final static int PROVIDER_GROUNDSPEAK = 1;
+public class Geocache implements Parcelable {
+    public static enum Provider {
+        ATLAS_QUEST(0), GROUNDSPEAK(1), MY_LOCATION(-1);
 
-    public static Geocache create(CharSequence location, Pattern destinationPatterns[]) {
-        int contentSelectorIndex;
-        double latitude = 0;
-        double longitude = 0;
+        private final int mIx;
 
-        CharSequence fullId = "";
-        CharSequence name = "";
-        CharSequence latLonDescription[] = Util.splitLatLonDescription(location);
-        try {
-            latitude = Util.parseCoordinate(latLonDescription[0]);
-            longitude = Util.parseCoordinate(latLonDescription[1]);
-        } catch (NumberFormatException numberFormatException) {
-            // TODO: Looks like this case is unreachable; remove this after the
-            // destination input method has been reworked.
+        Provider(int ix) {
+            mIx = ix;
         }
 
-        CharSequence description = latLonDescription[2];
+        public int toInt() {
+            return mIx;
+        }
+    }
 
-        for (contentSelectorIndex = destinationPatterns.length - 1; contentSelectorIndex >= 0; contentSelectorIndex--) {
-            Matcher matcher = destinationPatterns[contentSelectorIndex].matcher(description);
-            if (matcher.find()) {
-                fullId = matcher.group();
-                break;
+    public static enum Source {
+        GPX(0), MY_LOCATION(1), WEB_URL(2);
+
+        public static class SourceFactory {
+            private final Source mSources[] = new Source[values().length];
+
+            public SourceFactory() {
+                for (Source source : values())
+                    mSources[source.mIx] = source;
+            }
+
+            public Source fromInt(int i) {
+                return mSources[i];
             }
         }
 
-        if (fullId.length() == 0) {
-            name = description;
-        } else {
-            if (description.length() > fullId.length() + 2)
-                name = description.subSequence(fullId.length() + 2, description.length());
+        private final int mIx;
+
+        Source(int ix) {
+            mIx = ix;
         }
-        return new Geocache(contentSelectorIndex, fullId, name, latitude, longitude);
+
+        public int toInt() {
+            return mIx;
+        }
     }
 
-    private final int mContentSelectorIndex;
+    public static Parcelable.Creator<Geocache> CREATOR = new GeocacheFactory.CreateGeocacheFromParcel();
+    public static final String ID = "id";
+    public static final String LATITUDE = "latitude";
+    public static final String LONGITUDE = "longitude";
+    public static final String NAME = "name";
+    public static final String SOURCE_NAME = "sourceName";
+    public static final String SOURCE_TYPE = "sourceType";
+
     private final CharSequence mId;
     private final double mLatitude;
     private final double mLongitude;
     private final CharSequence mName;
+    private final String mSourceName;
+    private final Source mSourceType;
 
-    public Geocache(int contentSelectorIndex, CharSequence id, CharSequence name, double latitude,
-            double longitude) {
-        mContentSelectorIndex = contentSelectorIndex;
+    public Geocache(CharSequence id, CharSequence name, double latitude, double longitude,
+            Source sourceType, String sourceName) {
         mId = id;
         mName = name;
         mLatitude = latitude;
         mLongitude = longitude;
+        mSourceType = sourceType;
+        mSourceName = sourceName;
     }
 
-    public int getContentIndex() {
-        return mContentSelectorIndex;
+    public int describeContents() {
+        return 0;
     }
 
-    public CharSequence getCoordinatesIdAndName() {
-        return mLatitude + ", " + mLongitude + " (" + getIdAndName() + ")";
+    public Provider getContentProvider() {
+        CharSequence prefix = mId.subSequence(0, 2);
+        if (prefix.equals("GC"))
+            return Provider.GROUNDSPEAK;
+        if (prefix.equals("LB"))
+            return Provider.ATLAS_QUEST;
+        else
+            return Provider.MY_LOCATION;
     }
 
     public CharSequence getId() {
@@ -115,4 +136,33 @@ public class Geocache {
         else
             return "";
     }
+
+    public String getSourceName() {
+        return mSourceName;
+    }
+
+    public Source getSourceType() {
+        return mSourceType;
+    }
+
+    public void writeToParcel(Parcel out, int flags) {
+        Bundle bundle = new Bundle();
+        bundle.putCharSequence(ID, mId);
+        bundle.putCharSequence(NAME, mName);
+        bundle.putDouble(LATITUDE, mLatitude);
+        bundle.putDouble(LONGITUDE, mLongitude);
+        bundle.putInt(SOURCE_TYPE, mSourceType.mIx);
+        bundle.putString(SOURCE_NAME, mSourceName);
+        out.writeBundle(bundle);
+    }
+
+    public void writeToPrefs(Editor editor) {
+        editor.putString(ID, (String)mId);
+        editor.putString(NAME, (String)mName);
+        editor.putFloat(LATITUDE, (float)mLatitude);
+        editor.putFloat(LONGITUDE, (float)mLongitude);
+        editor.putInt(SOURCE_TYPE, mSourceType.mIx);
+        editor.putString(SOURCE_NAME, mSourceName);
+    }
+
 }

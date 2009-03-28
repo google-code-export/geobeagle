@@ -63,7 +63,7 @@ public class Database {
     public static final String DATABASE_NAME = "GeoBeagle.db";
     public static final int DATABASE_VERSION = 10;
     public static final String[] READER_COLUMNS = new String[] {
-            "Latitude", "Longitude", "Id", "Description"
+            "Latitude", "Longitude", "Id", "Description", "Source"
     };
 
     public static final String S0_COLUMN_DELETE_ME = "DeleteMe BOOLEAN NOT NULL Default 1";
@@ -95,8 +95,8 @@ public class Database {
     public static final String SQL_RESET_DELETE_ME_GPX = "UPDATE GPX SET DeleteMe = 1";
 
     public static final String TBL_CACHES = "CACHES";
-
     public static final String TBL_GPX = "GPX";
+    
     private final SQLiteOpenHelper mSqliteOpenHelper;
 
     public Database(SQLiteOpenHelper sqliteOpenHelper) {

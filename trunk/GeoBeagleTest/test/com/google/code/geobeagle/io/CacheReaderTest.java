@@ -9,6 +9,7 @@ import static org.easymock.classextension.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.verify;
 
 import com.google.code.geobeagle.data.Geocache;
+import com.google.code.geobeagle.data.Geocache.Source;
 import com.google.code.geobeagle.data.di.GeocacheFactory;
 import com.google.code.geobeagle.io.CacheReader.CacheReaderCursor;
 import com.google.code.geobeagle.io.CacheReader.WhereFactory;
@@ -35,7 +36,7 @@ public class CacheReaderTest extends TestCase {
         cursor.close();
 
         replay(cursor);
-        new CacheReaderCursor(cursor, null).close();
+        new CacheReaderCursor(cursor, null, null).close();
         verify(cursor);
     }
 
@@ -43,17 +44,21 @@ public class CacheReaderTest extends TestCase {
         Cursor cursor = createMock(Cursor.class);
         GeocacheFactory geocacheFactory = createMock(GeocacheFactory.class);
         Geocache geocache = createMock(Geocache.class);
+        DbToGeocacheAdapter dbToGeocacheAdapter = createMock(DbToGeocacheAdapter.class);
 
         expect(cursor.getDouble(0)).andReturn(122.0);
         expect(cursor.getDouble(1)).andReturn(37.0);
-        expect(cursor.getString(2)).andReturn("the_id");
+        expect(cursor.getString(2)).andReturn("GC123");
         expect(cursor.getString(3)).andReturn("name");
-        expect(geocacheFactory.create(Geocache.PROVIDER_GROUNDSPEAK, "the_id", "name", 122.0, 37.0))
+        expect(cursor.getString(4)).andReturn("cupertino");
+        expect(dbToGeocacheAdapter.sourceNameToSourceType("cupertino")).andReturn(Source.GPX);
+        expect(geocacheFactory.create("GC123", "name", 122.0, 37.0, Source.GPX, "cupertino"))
                 .andReturn(geocache);
 
         replay(cursor);
         replay(geocacheFactory);
-        assertEquals(geocache, new CacheReaderCursor(cursor, geocacheFactory).getCache());
+        replay(dbToGeocacheAdapter);
+        assertEquals(geocache, new CacheReaderCursor(cursor, geocacheFactory, dbToGeocacheAdapter).getCache());
         verify(cursor);
         verify(geocacheFactory);
     }
@@ -64,7 +69,7 @@ public class CacheReaderTest extends TestCase {
         expect(cursor.moveToNext()).andReturn(true);
 
         replay(cursor);
-        new CacheReaderCursor(cursor, null).moveToNext();
+        new CacheReaderCursor(cursor, null, null).moveToNext();
         verify(cursor);
     }
 

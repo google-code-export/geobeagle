@@ -16,12 +16,11 @@ package com.google.code.geobeagle.data;
 
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.ResourceProvider;
+import com.google.code.geobeagle.io.LocationSaver;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Map;
 
 public class GeocacheVector implements IGeocacheVector {
     public static class LocationComparator implements Comparator<IGeocacheVector> {
@@ -38,14 +37,18 @@ public class GeocacheVector implements IGeocacheVector {
         public void sort(ArrayList<IGeocacheVector> arrayList) {
             Collections.sort(arrayList, this);
         }
-
     }
 
     public static class MyLocation implements IGeocacheVector {
         private final ResourceProvider mResourceProvider;
+        private GeocacheFromMyLocationFactory mGeocacheFromMyLocationFactory;
+        private final LocationSaver mLocationSaver;
 
-        public MyLocation(ResourceProvider resourceProvider) {
+        public MyLocation(ResourceProvider resourceProvider,
+                GeocacheFromMyLocationFactory geocacheFromMyLocationFactory, LocationSaver locationSaver) {
             mResourceProvider = resourceProvider;
+            mGeocacheFromMyLocationFactory = geocacheFromMyLocationFactory;
+            mLocationSaver = locationSaver;
         }
 
         public CharSequence getCoordinatesIdAndName() {
@@ -64,26 +67,29 @@ public class GeocacheVector implements IGeocacheVector {
             return mResourceProvider.getString(R.string.my_current_location);
         }
 
-        public Map<String, Object> getViewMap() {
-            Map<String, Object> map = new HashMap<String, Object>(1);
-            map.put("cache", mResourceProvider.getString(R.string.my_current_location));
-            return map;
+        public CharSequence getFormattedDistance() {
+            return "";
         }
 
+        public CharSequence getIdAndName() {
+            return mResourceProvider.getString(R.string.my_current_location);
+        }
+
+        public Geocache getGeocache() {
+            Geocache geocache = mGeocacheFromMyLocationFactory.create();
+            mLocationSaver.saveLocation(geocache);
+            return geocache;
+        }
     }
 
-    private final Geocache mDestination;
+    private final Geocache mGeocache;
     private final float mDistance;
     private final DistanceFormatter mDistanceFormatter;
 
     public GeocacheVector(Geocache geocache, float distance, DistanceFormatter distanceFormatter) {
-        mDestination = geocache;
+        mGeocache = geocache;
         mDistance = distance;
         mDistanceFormatter = distanceFormatter;
-    }
-
-    public CharSequence getCoordinatesIdAndName() {
-        return mDestination.getCoordinatesIdAndName();
     }
 
     public float getDistance() {
@@ -91,14 +97,19 @@ public class GeocacheVector implements IGeocacheVector {
     }
 
     public CharSequence getId() {
-        return mDestination.getId();
+        return mGeocache.getId();
     }
 
-    public Map<String, Object> getViewMap() {
-        Map<String, Object> map = new HashMap<String, Object>(1);
-        map.put("cache", mDestination.getIdAndName());
-        map.put("distance", mDistanceFormatter.format(mDistance));
-        return map;
+    public CharSequence getFormattedDistance() {
+        return mDistanceFormatter.format(mDistance);
+    }
+
+    public CharSequence getIdAndName() {
+        return mGeocache.getIdAndName();
+    }
+
+    public Geocache getGeocache() {
+        return mGeocache;
     }
 
 }

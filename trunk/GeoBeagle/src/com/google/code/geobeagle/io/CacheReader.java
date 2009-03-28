@@ -26,10 +26,13 @@ public class CacheReader {
     public static class CacheReaderCursor {
         private final Cursor mCursor;
         private final GeocacheFactory mGeocacheFactory;
+        private final DbToGeocacheAdapter mDbToGeocacheAdapter;
 
-        public CacheReaderCursor(Cursor cursor, GeocacheFactory geocacheFactory) {
+        public CacheReaderCursor(Cursor cursor, GeocacheFactory geocacheFactory,
+                DbToGeocacheAdapter dbToGeocacheAdapter) {
             mCursor = cursor;
             mGeocacheFactory = geocacheFactory;
+            mDbToGeocacheAdapter = dbToGeocacheAdapter;
         }
 
         void close() {
@@ -37,8 +40,10 @@ public class CacheReader {
         }
 
         public Geocache getCache() {
-            return mGeocacheFactory.create(Geocache.PROVIDER_GROUNDSPEAK, mCursor.getString(2),
-                    mCursor.getString(3), mCursor.getDouble(0), mCursor.getDouble(1));
+            String sourceName = mCursor.getString(4);
+            return mGeocacheFactory.create(mCursor.getString(2), mCursor.getString(3), mCursor
+                    .getDouble(0), mCursor.getDouble(1), mDbToGeocacheAdapter
+                    .sourceNameToSourceType(sourceName), sourceName);
         }
 
         boolean moveToNext() {

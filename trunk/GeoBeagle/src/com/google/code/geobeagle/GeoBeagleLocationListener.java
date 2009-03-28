@@ -14,7 +14,7 @@
 
 package com.google.code.geobeagle;
 
-import com.google.code.geobeagle.ui.LocationViewer;
+import com.google.code.geobeagle.ui.GpsStatusWidget;
 
 import android.location.Location;
 import android.location.LocationListener;
@@ -25,10 +25,10 @@ import android.os.Bundle;
  */
 public class GeoBeagleLocationListener implements LocationListener {
     private final LocationControl mLocationControl;
-    private final LocationViewer mLocationViewer;
+    private final GpsStatusWidget mLocationViewer;
 
-    public GeoBeagleLocationListener(LocationControl locationControl, LocationViewer locationViewer) {
-        mLocationViewer = locationViewer;
+    public GeoBeagleLocationListener(LocationControl locationControl, GpsStatusWidget gpsStatusWidget) {
+        mLocationViewer = gpsStatusWidget;
         mLocationControl = locationControl;
     }
 

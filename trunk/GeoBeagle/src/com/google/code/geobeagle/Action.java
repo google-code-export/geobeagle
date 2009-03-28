@@ -12,18 +12,10 @@
  ** limitations under the License.
  */
 
-package com.google.code.geobeagle.ui;
+package com.google.code.geobeagle;
 
-import android.widget.EditText;
+import com.google.code.geobeagle.ui.GeocacheListAdapter;
 
-public class TooString {
-    private final EditText mEditText;
-
-    public TooString(EditText editText) {
-        mEditText = editText;
-    }
-
-    public CharSequence tooString() {
-        return mEditText.getText().toString();
-    }
+public interface Action {
+    public void act(int position, GeocacheListAdapter geocacheListAdapter);
 }

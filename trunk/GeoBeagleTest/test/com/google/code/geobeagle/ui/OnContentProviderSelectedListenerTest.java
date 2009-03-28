@@ -22,6 +22,8 @@ import static org.easymock.classextension.EasyMock.verify;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.ResourceProvider;
 
+import org.easymock.EasyMock;
+
 import junit.framework.TestCase;
 
 public class OnContentProviderSelectedListenerTest extends TestCase {
@@ -30,13 +32,17 @@ public class OnContentProviderSelectedListenerTest extends TestCase {
         MockableTextView contentProviderCaption = createMock(MockableTextView.class);
         MockableTextView gotoObjectCaption = createMock(MockableTextView.class);
         ResourceProvider resourceProvider = createMock(ResourceProvider.class);
+        expect(resourceProvider.getString(R.string.search_for)).andReturn("Search for");
+        EasyMock.expectLastCall().times(2);
+
         expect(resourceProvider.getStringArray(R.array.object_names)).andReturn(new String[] {
                 "letterbox", "geocache"
         });
+        EasyMock.expectLastCall().times(2);
         contentProviderCaption.setText("Search for letterbox:");
         contentProviderCaption.setText("Search for geocache:");
-        gotoObjectCaption.setText("Go to letterbox:");
-        gotoObjectCaption.setText("Go to geocache:");
+        gotoObjectCaption.setText("letterbox:");
+        gotoObjectCaption.setText("geocache:");
 
         replay(resourceProvider);
         replay(contentProviderCaption);
@@ -48,5 +54,11 @@ public class OnContentProviderSelectedListenerTest extends TestCase {
         verify(resourceProvider);
         verify(contentProviderCaption);
         verify(gotoObjectCaption);
+    }
+
+    public void testOnNothingSelected() {
+        OnContentProviderSelectedListener ocpsl = new OnContentProviderSelectedListener(null, null,
+                null);
+        ocpsl.onNothingSelected(null);
     }
 }

@@ -26,8 +26,6 @@ import com.google.code.geobeagle.data.di.GeocacheVectorFactory;
 import android.location.Location;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 import junit.framework.TestCase;
 
@@ -56,46 +54,8 @@ public class GeocacheVectorsTest extends TestCase {
         GeocacheVectors geocacheVectors = new GeocacheVectors(null, null);
         geocacheVectors.add(destinationVector1);
         geocacheVectors.add(destinationVector2);
-        geocacheVectors.delete(0);
+        geocacheVectors.remove(0);
         assertEquals(destinationVector1, geocacheVectors.get(0));
-    }
-
-    public void testGetAdapterData() {
-        IGeocacheVector destinationVector = createMock(IGeocacheVector.class);
-
-        Map<String, Object> map = new HashMap<String, Object>(0);
-        expect(destinationVector.getViewMap()).andReturn(map);
-
-        replay(destinationVector);
-        GeocacheVectors geocacheVectors = new GeocacheVectors(null, null);
-        geocacheVectors.add(destinationVector);
-        final ArrayList<Map<String, Object>> adapterData = geocacheVectors.getAdapterData();
-        assertEquals(map, adapterData.get(0));
-        verify(destinationVector);
-    }
-
-    public void testGetId() {
-        IGeocacheVector destinationVector = createMock(IGeocacheVector.class);
-
-        expect(destinationVector.getId()).andReturn("GC123");
-
-        replay(destinationVector);
-        GeocacheVectors geocacheVectors = new GeocacheVectors(null, null);
-        geocacheVectors.add(destinationVector);
-        assertEquals("GC123", geocacheVectors.getId(0));
-        verify(destinationVector);
-    }
-
-    public void testGetLocation() {
-        IGeocacheVector destinationVector = createMock(IGeocacheVector.class);
-
-        expect(destinationVector.getCoordinatesIdAndName()).andReturn("122 37 (GC1234)");
-
-        replay(destinationVector);
-        GeocacheVectors geocacheVectors = new GeocacheVectors(null, null);
-        geocacheVectors.add(destinationVector);
-        assertEquals("122 37 (GC1234)", geocacheVectors.getCoordinatesIdAndName(0));
-        verify(destinationVector);
     }
 
     public void testReset() {
@@ -105,8 +65,7 @@ public class GeocacheVectorsTest extends TestCase {
         GeocacheVectors geocacheVectors = new GeocacheVectors(null, null);
         geocacheVectors.add(destinationVector);
         geocacheVectors.reset(12); // can't test ensureCapacity.
-        final ArrayList<Map<String, Object>> adapterData = geocacheVectors.getAdapterData();
-        assertEquals(0, adapterData.size());
+        assertEquals(0, geocacheVectors.size());
         verify(destinationVector);
     }
 

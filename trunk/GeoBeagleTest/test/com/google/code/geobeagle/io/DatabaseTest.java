@@ -86,12 +86,11 @@ public class DatabaseTest extends TestCase {
     // Previous schemas.
     final static String schema6 = "CREATE TABLE CACHES (Id VARCHAR PRIMARY KEY,"
             + " Description VARCHAR Latitude DOUBLE, Longitude DOUBLE, Source VARCHAR)";
-    final static String schema7 = "CREATE TABLE IF NOT EXISTS CACHES (Id VARCHAR PRIMARY KEY, "
+    final static String schema7 = "CREATE TABLE CACHES (Id VARCHAR PRIMARY KEY, "
             + "Description VARCHAR, Latitude DOUBLE, Longitude DOUBLE, Source VARCHAR); "
             + "CREATE INDEX IDX_LATITUDE on CACHES (Latitude); "
             + "CREATE INDEX IDX_LONGITUDE on CACHES (Longitude); "
             + "CREATE INDEX IDX_SOURCE on CACHES (Source); ";
-
     /**
      * <pre>
      * 
