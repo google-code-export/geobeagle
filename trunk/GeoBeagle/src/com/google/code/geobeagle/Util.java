@@ -77,11 +77,15 @@ public class Util {
         return sign * degrees;
     }
 
-    public static CharSequence parseDescription(CharSequence string) {
+    public static CharSequence[] parseDescription(CharSequence string) {
         Matcher matcher = PAT_ATLASQUEST.matcher(string);
         if (matcher.matches())
-            return "LB" + matcher.group(2).trim() + ": " + matcher.group(1).trim();
-        return string;
+            return new CharSequence[] {
+                    "LB" + matcher.group(2).trim(), matcher.group(1).trim()
+            };
+        return new CharSequence[] {
+                string, ""
+        };
     }
 
     public static CharSequence parseHttpUri(String query, UrlQuerySanitizer sanitizer,
@@ -123,8 +127,9 @@ public class Util {
         CharSequence coordsAndDescription[] = splitCoordsAndDescription(location);
         CharSequence latLon[] = splitLatLon(coordsAndDescription[0]);
 
+        CharSequence[] parseDescription = parseDescription(coordsAndDescription[1]);
         return new CharSequence[] {
-                latLon[0], latLon[1], parseDescription(coordsAndDescription[1])
+                latLon[0], latLon[1], parseDescription[0], parseDescription[1]
         };
     }
 

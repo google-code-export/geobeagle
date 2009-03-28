@@ -30,7 +30,6 @@ public class OnContentProviderSelectedListenerTest extends TestCase {
 
     public void testOnContentProviderSelectedListener() {
         MockableTextView contentProviderCaption = createMock(MockableTextView.class);
-        MockableTextView gotoObjectCaption = createMock(MockableTextView.class);
         ResourceProvider resourceProvider = createMock(ResourceProvider.class);
         expect(resourceProvider.getString(R.string.search_for)).andReturn("Search for");
         EasyMock.expectLastCall().times(2);
@@ -41,24 +40,19 @@ public class OnContentProviderSelectedListenerTest extends TestCase {
         EasyMock.expectLastCall().times(2);
         contentProviderCaption.setText("Search for letterbox:");
         contentProviderCaption.setText("Search for geocache:");
-        gotoObjectCaption.setText("letterbox:");
-        gotoObjectCaption.setText("geocache:");
 
         replay(resourceProvider);
         replay(contentProviderCaption);
-        replay(gotoObjectCaption);
         OnContentProviderSelectedListener ocpsl = new OnContentProviderSelectedListener(
-                resourceProvider, contentProviderCaption, gotoObjectCaption);
+                resourceProvider, contentProviderCaption);
         ocpsl.onItemSelected(null, null, 0, 0);
         ocpsl.onItemSelected(null, null, 1, 0);
         verify(resourceProvider);
         verify(contentProviderCaption);
-        verify(gotoObjectCaption);
     }
 
     public void testOnNothingSelected() {
-        OnContentProviderSelectedListener ocpsl = new OnContentProviderSelectedListener(null, null,
-                null);
+        OnContentProviderSelectedListener ocpsl = new OnContentProviderSelectedListener(null, null);
         ocpsl.onNothingSelected(null);
     }
 }
