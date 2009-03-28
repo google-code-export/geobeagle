@@ -33,7 +33,8 @@ public class LocationSaver {
         // TODO: catch errors on open
         mCacheWriter.startWriting();
         mCacheWriter.insertAndUpdateCache(geocache.getId(), geocache.getName(), geocache
-                .getLatitude(), geocache.getLongitude(), Database.S0_INTENT);
+                .getLatitude(), geocache.getLongitude(), geocache.getSourceType(), geocache
+                .getSourceName());
         mCacheWriter.stopWriting();
         mSQLiteWrapper.close();
     }

@@ -14,7 +14,7 @@
 
 package com.google.code.geobeagle.data;
 
-import com.google.code.geobeagle.Util;
+import com.google.code.geobeagle.data.di.GeocacheFactory;
 
 import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
@@ -25,61 +25,84 @@ import android.os.Parcelable;
  * Geocache or letterbox description, id, and coordinates.
  */
 public class Geocache implements Parcelable {
-    public static final Parcelable.Creator<Geocache> CREATOR = new Parcelable.Creator<Geocache>() {
-        public Geocache createFromParcel(Parcel in) {
-            return new Geocache(in);
+    public static enum Provider {
+        ATLAS_QUEST(0), GROUNDSPEAK(1), MY_LOCATION(-1);
+
+        private final int mIx;
+
+        Provider(int ix) {
+            mIx = ix;
         }
 
-        public Geocache[] newArray(int size) {
-            return new Geocache[size];
+        public int toInt() {
+            return mIx;
         }
-    };
+    }
 
-    public final static int PROVIDER_MYLOCATION = -1;
-    public final static int PROVIDER_ATLASQUEST = 0;
-    public final static int PROVIDER_GROUNDSPEAK = 1;
+    public static enum Source {
+        GPX(0), MY_LOCATION(1), WEB_URL(2);
 
-    private final int mContentSelectorIndex;
+        public static class SourceFactory {
+            private final Source mSources[] = new Source[values().length];
+
+            public SourceFactory() {
+                for (Source source : values())
+                    mSources[source.mIx] = source;
+            }
+
+            public Source fromInt(int i) {
+                return mSources[i];
+            }
+        }
+
+        private final int mIx;
+
+        Source(int ix) {
+            mIx = ix;
+        }
+
+        public int toInt() {
+            return mIx;
+        }
+    }
+
+    public static Parcelable.Creator<Geocache> CREATOR = new GeocacheFactory.CreateGeocacheFromParcel();
+    public static final String ID = "id";
+    public static final String LATITUDE = "latitude";
+    public static final String LONGITUDE = "longitude";
+    public static final String NAME = "name";
+    public static final String SOURCE_NAME = "sourceName";
+    public static final String SOURCE_TYPE = "sourceType";
+
     private final CharSequence mId;
     private final double mLatitude;
     private final double mLongitude;
     private final CharSequence mName;
+    private final String mSourceName;
+    private final Source mSourceType;
 
-    // Use Groundspeak if no provider specified.
-    public Geocache(CharSequence id, CharSequence name, double latitude, double longitude) {
-        this(PROVIDER_GROUNDSPEAK, id, name, latitude, longitude);
-    }
-
-    public Geocache(int contentSelectorIndex, CharSequence id, CharSequence name, double latitude,
-            double longitude) {
-        mContentSelectorIndex = contentSelectorIndex;
+    public Geocache(CharSequence id, CharSequence name, double latitude, double longitude,
+            Source sourceType, String sourceName) {
         mId = id;
         mName = name;
         mLatitude = latitude;
         mLongitude = longitude;
-    }
-
-    public Geocache(Parcel in) {
-        Bundle bundle = in.readBundle();
-        mContentSelectorIndex = bundle.getInt("contentSelectorIndex");
-        mId = bundle.getCharSequence("id");
-        mLatitude = bundle.getDouble("latitude");
-        mLongitude = bundle.getDouble("longitude");
-        mName = bundle.getCharSequence("name");
+        mSourceType = sourceType;
+        mSourceName = sourceName;
     }
 
     public int describeContents() {
         return 0;
     }
 
-    public int getContentIndex() {
-        return mContentSelectorIndex;
-    }
-
-    public CharSequence getCoordinatesIdAndName() {
-        return Util.formatDegreesAsDecimalDegreesString(mLatitude) + ", "
-                + Util.formatDegreesAsDecimalDegreesString(mLongitude) + " (" + getIdAndName()
-                + ")";
+    public Provider getContentProvider() {
+        CharSequence prefix = mId.subSequence(0, 2);
+        if (prefix.equals("GC"))
+            return Provider.GROUNDSPEAK;
+        if (prefix.equals("LB"))
+            return Provider.ATLAS_QUEST;
+        else
+            return Provider.MY_LOCATION;
     }
 
     public CharSequence getId() {
@@ -114,22 +137,32 @@ public class Geocache implements Parcelable {
             return "";
     }
 
+    public String getSourceName() {
+        return mSourceName;
+    }
+
+    public Source getSourceType() {
+        return mSourceType;
+    }
+
     public void writeToParcel(Parcel out, int flags) {
         Bundle bundle = new Bundle();
-        bundle.putInt("contentSelectorIndex", mContentSelectorIndex);
-        bundle.putCharSequence("id", mId);
-        bundle.putCharSequence("name", mName);
-        bundle.putDouble("latitude", mLatitude);
-        bundle.putDouble("longitude", mLongitude);
+        bundle.putCharSequence(ID, mId);
+        bundle.putCharSequence(NAME, mName);
+        bundle.putDouble(LATITUDE, mLatitude);
+        bundle.putDouble(LONGITUDE, mLongitude);
+        bundle.putInt(SOURCE_TYPE, mSourceType.mIx);
+        bundle.putString(SOURCE_NAME, mSourceName);
         out.writeBundle(bundle);
     }
 
     public void writeToPrefs(Editor editor) {
-        editor.putInt("contentSelectorIndex", mContentSelectorIndex);
-        editor.putString("id", (String)mId);
-        editor.putString("name", (String)mName);
-        editor.putFloat("latitude", (float)mLatitude);
-        editor.putFloat("longitude", (float)mLongitude);
+        editor.putString(ID, (String)mId);
+        editor.putString(NAME, (String)mName);
+        editor.putFloat(LATITUDE, (float)mLatitude);
+        editor.putFloat(LONGITUDE, (float)mLongitude);
+        editor.putInt(SOURCE_TYPE, mSourceType.mIx);
+        editor.putString(SOURCE_NAME, mSourceName);
     }
 
 }

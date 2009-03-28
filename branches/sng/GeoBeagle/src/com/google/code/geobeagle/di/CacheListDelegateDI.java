@@ -18,6 +18,7 @@ import com.google.code.geobeagle.io.CacheWriter;
 import com.google.code.geobeagle.io.Database;
 import com.google.code.geobeagle.io.GeocachesSql;
 import com.google.code.geobeagle.io.GpxImporter;
+import com.google.code.geobeagle.io.LocationSaver;
 import com.google.code.geobeagle.io.di.DatabaseDI;
 import com.google.code.geobeagle.io.di.GpxImporterDI;
 import com.google.code.geobeagle.io.di.DatabaseDI.SQLiteWrapper;
@@ -45,18 +46,19 @@ public class CacheListDelegateDI {
         final GeocacheFromMyLocationFactory geocacheFromMyLocationFactory = new GeocacheFromMyLocationFactory(
                 geocacheFactory, locationControl, errorDisplayer);
         final GeocachesSql locationBookmarks = DatabaseDI.create(locationControl, database);
-
+        final SQLiteWrapper sqliteWrapper = new SQLiteWrapper(null);
+        final CacheWriter cacheWriter = DatabaseDI.createCacheWriter(sqliteWrapper);
         final DistanceFormatter distanceFormatter = new DistanceFormatter();
+        final LocationSaver locationSaver = new LocationSaver(database, sqliteWrapper, cacheWriter);
         final GeocacheVectorFactory geocacheVectorFactory = new GeocacheVectorFactory(
-                geocacheFromMyLocationFactory, distanceFormatter, resourceProvider);
+                geocacheFromMyLocationFactory, locationSaver, distanceFormatter, resourceProvider);
         final LocationComparator locationComparator = new LocationComparator();
         final GeocacheVectors geocacheVectors = new GeocacheVectors(locationComparator,
                 geocacheVectorFactory);
         final CacheListData cacheListData = new CacheListData(geocacheVectors,
                 geocacheVectorFactory);
-        final SQLiteWrapper sqliteWrapper = new SQLiteWrapper(null);
         final Action actions[] = CacheListDelegateDI.create(parent, database, sqliteWrapper,
-                cacheListData, geocacheVectors, errorDisplayer);
+                cacheListData, cacheWriter, geocacheVectors, errorDisplayer);
         final CacheListDelegate.CacheListOnCreateContextMenuListener.Factory factory = new CacheListDelegate.CacheListOnCreateContextMenuListener.Factory();
         final GpxImporter gpxImporter = GpxImporterDI.create(database, sqliteWrapper,
                 errorDisplayer, parent);
@@ -70,10 +72,9 @@ public class CacheListDelegateDI {
     }
 
     public static Action[] create(ListActivity parent, Database database,
-            SQLiteWrapper sqliteWrapper, CacheListData cacheListData,
+            SQLiteWrapper sqliteWrapper, CacheListData cacheListData, CacheWriter cacheWriter,
             GeocacheVectors geocacheVectors, ErrorDisplayer errorDisplayer) {
         final Intent intent = new Intent(parent, GeoBeagle.class);
-        final CacheWriter cacheWriter = DatabaseDI.createCacheWriter(sqliteWrapper);
         final ViewAction viewAction = new ViewAction(geocacheVectors, parent, intent);
         final DeleteAction deleteAction = new DeleteAction(database, sqliteWrapper, cacheWriter,
                 geocacheVectors, errorDisplayer);

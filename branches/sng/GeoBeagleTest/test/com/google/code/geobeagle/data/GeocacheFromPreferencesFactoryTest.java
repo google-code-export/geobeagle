@@ -1,8 +1,9 @@
 
 package com.google.code.geobeagle.data;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
+import com.google.code.geobeagle.data.Geocache.Source;
 import com.google.code.geobeagle.data.di.GeocacheFactory;
 
 import org.easymock.EasyMock;
@@ -21,14 +22,19 @@ public class GeocacheFromPreferencesFactoryTest {
         SharedPreferences preferences = PowerMock.createMock(SharedPreferences.class);
         Geocache geocache = PowerMock.createMock(Geocache.class);
 
-        EasyMock.expect(preferences.getInt("contentSelectorIndex", 1)).andReturn(0);
-        EasyMock.expect(preferences.getString("id", "GCMEY7")).andReturn("GC123");
-        EasyMock.expect(preferences.getString("name", "Google Falls")).andReturn("a cache");
-        EasyMock.expect(preferences.getFloat("latitude", 37.42235f)).andReturn(37f);
-        EasyMock.expect(preferences.getFloat("longitude", -122.082217f)).andReturn(-122f);
-        EasyMock.expect(geocacheFactory.create(0, "GC123", "a cache", 37f, -122f)).andReturn(
-                geocache);
-        
+        EasyMock.expect(preferences.getString(Geocache.ID, "GCMEY7")).andReturn("GC123");
+        EasyMock.expect(preferences.getString(Geocache.NAME, "Google Falls")).andReturn("a cache");
+        EasyMock.expect(preferences.getFloat(Geocache.LATITUDE, 37.42235f)).andReturn(37f);
+        EasyMock.expect(preferences.getFloat(Geocache.LONGITUDE, -122.082217f)).andReturn(-122f);
+        EasyMock.expect(preferences.getInt(Geocache.SOURCE_TYPE, -1)).andReturn(
+                Source.MY_LOCATION.toInt());
+        EasyMock.expect(geocacheFactory.sourceFromInt(Source.MY_LOCATION.toInt())).andReturn(
+                Source.MY_LOCATION);
+        EasyMock.expect(preferences.getString(Geocache.SOURCE_NAME, null)).andReturn(null);
+        EasyMock.expect(
+                geocacheFactory.create("GC123", "a cache", 37f, -122f, Source.MY_LOCATION, null))
+                .andReturn(geocache);
+
         PowerMock.replayAll();
         GeocacheFromPreferencesFactory geocacheFromPreferencesFactory = new GeocacheFromPreferencesFactory(
                 geocacheFactory);

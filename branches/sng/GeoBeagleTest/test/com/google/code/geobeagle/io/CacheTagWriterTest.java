@@ -6,6 +6,8 @@ import static org.easymock.classextension.EasyMock.createMock;
 import static org.easymock.classextension.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.verify;
 
+import com.google.code.geobeagle.data.Geocache.Source;
+
 import java.text.ParseException;
 
 import junit.framework.TestCase;
@@ -14,7 +16,7 @@ public class CacheTagWriterTest extends TestCase {
     private final CacheWriter mCacheWriter = createMock(CacheWriter.class);
 
     public void testClear() {
-        mCacheWriter.insertAndUpdateCache(null, null, 0, 0, null);
+        mCacheWriter.insertAndUpdateCache(null, null, 0, 0, Source.GPX, null);
 
         replay(mCacheWriter);
         CacheTagWriter cacheTagWriter = new CacheTagWriter(mCacheWriter);
@@ -89,7 +91,7 @@ public class CacheTagWriterTest extends TestCase {
     }
 
     public void testWrite() {
-        mCacheWriter.insertAndUpdateCache("GC123", "my cache", 122, 37, "foo.gpx");
+        mCacheWriter.insertAndUpdateCache("GC123", "my cache", 122, 37, Source.GPX, "foo.gpx");
 
         replay(mCacheWriter);
         CacheTagWriter cacheTagWriter = new CacheTagWriter(mCacheWriter);

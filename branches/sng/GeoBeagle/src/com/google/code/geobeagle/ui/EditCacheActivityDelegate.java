@@ -42,13 +42,14 @@ public class EditCacheActivityDelegate {
         }
     }
 
-    public static class GeocacheView {
+    public static class EditCache {
         private final EditText mId;
         private final EditText mLatitude;
         private final EditText mLongitude;
         private final EditText mName;
+        private Geocache mOriginalGeocache;
 
-        public GeocacheView(EditText id, EditText name, EditText latitude, EditText longitude) {
+        public EditCache(EditText id, EditText name, EditText latitude, EditText longitude) {
             mId = id;
             mName = name;
             mLatitude = latitude;
@@ -57,10 +58,12 @@ public class EditCacheActivityDelegate {
 
         Geocache get() {
             return new Geocache(mId.getText(), mName.getText(), Util.parseCoordinate(mLatitude
-                    .getText()), Util.parseCoordinate(mLongitude.getText()));
+                    .getText()), Util.parseCoordinate(mLongitude.getText()), mOriginalGeocache
+                    .getSourceType(), mOriginalGeocache.getSourceName());
         }
 
         void set(Geocache geocache) {
+            mOriginalGeocache = geocache;
             mId.setText(geocache.getId());
             mName.setText(geocache.getName());
             mLatitude.setText(Util.formatDegreesAsDecimalDegreesString(geocache.getLatitude()));
@@ -72,13 +75,13 @@ public class EditCacheActivityDelegate {
 
     public static class SetButtonOnClickListener implements OnClickListener {
         private final Activity mActivity;
-        private final GeocacheView mGeocacheView;
+        private final EditCache mGeocacheView;
         private final LocationSaver mLocationSaver;
 
-        public SetButtonOnClickListener(Activity activity, GeocacheView geocacheView,
+        public SetButtonOnClickListener(Activity activity, EditCache editCache,
                 LocationSaver locationSaver) {
             mActivity = activity;
-            mGeocacheView = geocacheView;
+            mGeocacheView = editCache;
             mLocationSaver = locationSaver;
         }
 
@@ -112,14 +115,14 @@ public class EditCacheActivityDelegate {
         Intent intent = mParent.getIntent();
         Geocache geocache = intent.<Geocache> getParcelableExtra("geocache");
 
-        GeocacheView geocacheView = new GeocacheView((EditText)mParent.findViewById(R.id.edit_id),
+        EditCache editCache = new EditCache((EditText)mParent.findViewById(R.id.edit_id),
                 (EditText)mParent.findViewById(R.id.edit_name), (EditText)mParent
                         .findViewById(R.id.edit_latitude), (EditText)mParent
                         .findViewById(R.id.edit_longitude));
-        geocacheView.set(geocache);
+        editCache.set(geocache);
 
         SetButtonOnClickListener setButtonOnClickListener = new SetButtonOnClickListener(mParent,
-                geocacheView, mLocationSaver);
+                editCache, mLocationSaver);
         ((Button)mParent.findViewById(R.id.edit_set)).setOnClickListener(setButtonOnClickListener);
 
         Button cancel = (Button)mParent.findViewById(R.id.edit_cancel);

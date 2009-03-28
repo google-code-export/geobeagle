@@ -16,6 +16,7 @@ package com.google.code.geobeagle.data;
 
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.ResourceProvider;
+import com.google.code.geobeagle.io.LocationSaver;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -41,11 +42,13 @@ public class GeocacheVector implements IGeocacheVector {
     public static class MyLocation implements IGeocacheVector {
         private final ResourceProvider mResourceProvider;
         private GeocacheFromMyLocationFactory mGeocacheFromMyLocationFactory;
+        private final LocationSaver mLocationSaver;
 
         public MyLocation(ResourceProvider resourceProvider,
-                GeocacheFromMyLocationFactory geocacheFromMyLocationFactory) {
+                GeocacheFromMyLocationFactory geocacheFromMyLocationFactory, LocationSaver locationSaver) {
             mResourceProvider = resourceProvider;
             mGeocacheFromMyLocationFactory = geocacheFromMyLocationFactory;
+            mLocationSaver = locationSaver;
         }
 
         public CharSequence getCoordinatesIdAndName() {
@@ -73,7 +76,9 @@ public class GeocacheVector implements IGeocacheVector {
         }
 
         public Geocache getGeocache() {
-            return mGeocacheFromMyLocationFactory.create();
+            Geocache geocache = mGeocacheFromMyLocationFactory.create();
+            mLocationSaver.saveLocation(geocache);
+            return geocache;
         }
     }
 
@@ -85,10 +90,6 @@ public class GeocacheVector implements IGeocacheVector {
         mGeocache = geocache;
         mDistance = distance;
         mDistanceFormatter = distanceFormatter;
-    }
-
-    public CharSequence getCoordinatesIdAndName() {
-        return mGeocache.getCoordinatesIdAndName();
     }
 
     public float getDistance() {

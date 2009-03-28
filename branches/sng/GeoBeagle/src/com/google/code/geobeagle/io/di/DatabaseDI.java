@@ -7,7 +7,9 @@ import com.google.code.geobeagle.data.di.GeocacheFactory;
 import com.google.code.geobeagle.io.CacheReader;
 import com.google.code.geobeagle.io.CacheWriter;
 import com.google.code.geobeagle.io.Database;
+import com.google.code.geobeagle.io.DbToGeocacheAdapter;
 import com.google.code.geobeagle.io.GeocachesSql;
+import com.google.code.geobeagle.io.CacheReader.CacheReaderCursor;
 import com.google.code.geobeagle.io.CacheReader.WhereFactory;
 import com.google.code.geobeagle.io.Database.ISQLiteDatabase;
 import com.google.code.geobeagle.io.Database.OpenHelperDelegate;
@@ -20,9 +22,10 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class DatabaseDI {
 
     public static class CacheReaderCursorFactory {
-        public CacheReader.CacheReaderCursor create(Cursor cursor) {
+        public CacheReaderCursor create(Cursor cursor) {
             GeocacheFactory geocacheFactory = new GeocacheFactory();
-            return new CacheReader.CacheReaderCursor(cursor, geocacheFactory);
+            DbToGeocacheAdapter dbToGeocacheAdapter = new DbToGeocacheAdapter();
+            return new CacheReaderCursor(cursor, geocacheFactory, dbToGeocacheAdapter);
         }
     }
 
@@ -125,7 +128,8 @@ public class DatabaseDI {
     }
 
     public static CacheWriter createCacheWriter(SQLiteWrapper sqliteWrapper) {
-        return new CacheWriter(sqliteWrapper);
+        DbToGeocacheAdapter dbToGeocacheAdapter = new DbToGeocacheAdapter();
+        return new CacheWriter(sqliteWrapper, dbToGeocacheAdapter);
     }
 
 }

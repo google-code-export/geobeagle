@@ -53,8 +53,8 @@ public class CacheListDelegateTest extends TestCase {
         expect(geocacheVectors.get(12)).andReturn(geocacheVector);
         expect(geocacheVector.getId()).andReturn("GC123");
         expect(menu.setHeaderTitle("GC123")).andReturn(menu);
-        expect(menu.add(0, CacheListDelegate.MENU_VIEW, 0, "ViewAction")).andReturn(null);
-        expect(menu.add(0, CacheListDelegate.MENU_DELETE, 1, "DeleteAction")).andReturn(null);
+        expect(menu.add(0, CacheListDelegate.MENU_VIEW, 0, "View")).andReturn(null);
+        expect(menu.add(0, CacheListDelegate.MENU_DELETE, 1, "Delete")).andReturn(null);
 
         replay(menu);
         replay(menuInfo);
@@ -79,7 +79,7 @@ public class CacheListDelegateTest extends TestCase {
         expect(geocacheVectors.get(0)).andReturn(geocacheVector);
         expect(geocacheVector.getId()).andReturn("My Current Location");
         expect(menu.setHeaderTitle("My Current Location")).andReturn(menu);
-        expect(menu.add(0, CacheListDelegate.MENU_VIEW, 0, "ViewAction")).andReturn(null);
+        expect(menu.add(0, CacheListDelegate.MENU_VIEW, 0, "View")).andReturn(null);
 
         replay(menu);
         replay(menuInfo);

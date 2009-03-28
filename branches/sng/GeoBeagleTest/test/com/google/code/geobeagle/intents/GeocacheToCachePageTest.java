@@ -22,7 +22,7 @@ import static org.easymock.classextension.EasyMock.verify;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.ResourceProvider;
 import com.google.code.geobeagle.data.Geocache;
-import com.google.code.geobeagle.ui.ContentSelector;
+import com.google.code.geobeagle.data.Geocache.Provider;
 
 import junit.framework.TestCase;
 
@@ -31,18 +31,16 @@ public class GeocacheToCachePageTest extends TestCase {
     public void testConvert() {
         ResourceProvider resourceProvider = createMock(ResourceProvider.class);
         Geocache geocache = createMock(Geocache.class);
-        ContentSelector contentSelector = createMock(ContentSelector.class);
+
         expect(geocache.getShortId()).andReturn("FOO");
-        expect(geocache.getContentIndex()).andReturn(0);
+        expect(geocache.getContentProvider()).andReturn(Provider.GROUNDSPEAK);
         expect(resourceProvider.getStringArray(R.array.cache_page_url)).andReturn(new String[] {
-                "http://coord.info/GC%1$s", ""
+                "", "http://coord.info/GC%1$s",
         });
-        expect(contentSelector.getIndex()).andReturn(0);
 
         replay(geocache);
         replay(resourceProvider);
-        GeocacheToCachePage geocacheToCachePage = new GeocacheToCachePage(resourceProvider,
-                contentSelector);
+        GeocacheToCachePage geocacheToCachePage = new GeocacheToCachePage(resourceProvider);
         assertEquals("http://coord.info/GCFOO", geocacheToCachePage.convert(geocache));
         verify(geocache);
         verify(resourceProvider);

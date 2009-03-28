@@ -15,11 +15,40 @@
 package com.google.code.geobeagle.data.di;
 
 import com.google.code.geobeagle.data.Geocache;
+import com.google.code.geobeagle.data.GeocacheFromParcelFactory;
+import com.google.code.geobeagle.data.Geocache.Source;
+import com.google.code.geobeagle.data.Geocache.Source.SourceFactory;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 
 public class GeocacheFactory {
-    public Geocache create(int contentSelectorIndex, CharSequence id, CharSequence name,
-            double latitude, double longitude) {
-        return new Geocache(contentSelectorIndex, id, name, latitude, longitude);
+    private static SourceFactory mSourceFactory;
+
+    public GeocacheFactory() {
+        mSourceFactory = new SourceFactory();
     }
+
+    public static class CreateGeocacheFromParcel implements Parcelable.Creator<Geocache> {
+        private final GeocacheFromParcelFactory mGeocacheFromParcelFactory = new GeocacheFromParcelFactory(
+                new GeocacheFactory());
+
+        public Geocache createFromParcel(Parcel in) {
+            return mGeocacheFromParcelFactory.create(in);
+        }
+
+        public Geocache[] newArray(int size) {
+            return new Geocache[size];
+        }
+    }
+
+    public Geocache create(CharSequence id, CharSequence name, double latitude, double longitude,
+            Source sourceType, String sourceName) {
+        return new Geocache(id, name, latitude, longitude, sourceType, sourceName);
+    }
+
+    public Source sourceFromInt(int sourceIx) {
+        return mSourceFactory.fromInt(sourceIx);
+    }
+
 }

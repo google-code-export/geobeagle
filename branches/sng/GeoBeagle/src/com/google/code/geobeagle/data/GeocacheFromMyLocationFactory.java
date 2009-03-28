@@ -3,6 +3,7 @@ package com.google.code.geobeagle.data;
 
 import com.google.code.geobeagle.LocationControl;
 import com.google.code.geobeagle.R;
+import com.google.code.geobeagle.data.Geocache.Source;
 import com.google.code.geobeagle.data.di.GeocacheFactory;
 import com.google.code.geobeagle.ui.ErrorDisplayer;
 
@@ -27,8 +28,8 @@ public class GeocacheFromMyLocationFactory {
             return null;
         }
         long time = location.getTime();
-        return mGeocacheFactory.create(Geocache.PROVIDER_MYLOCATION, String.format(
-                "ML%1$tk%1$tM%1$tS", time), String.format("[%1$tk:%1$tM] My Location", time),
-                location.getLatitude(), location.getLongitude());
+        return mGeocacheFactory.create(String.format("ML%1$tk%1$tM%1$tS", time), String.format(
+                "[%1$tk:%1$tM] My Location", time), location.getLatitude(),
+                location.getLongitude(), Source.MY_LOCATION, null);
     }
 }

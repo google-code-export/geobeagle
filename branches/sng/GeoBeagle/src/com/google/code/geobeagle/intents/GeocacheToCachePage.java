@@ -17,7 +17,6 @@ package com.google.code.geobeagle.intents;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.ResourceProvider;
 import com.google.code.geobeagle.data.Geocache;
-import com.google.code.geobeagle.ui.ContentSelector;
 
 /*
  * Convert a Geocache to the cache page url.
@@ -25,13 +24,14 @@ import com.google.code.geobeagle.ui.ContentSelector;
 public class GeocacheToCachePage implements GeocacheToUri {
     private final ResourceProvider mResourceProvider;
 
-    public GeocacheToCachePage(ResourceProvider resourceProvider, ContentSelector contentSelector) {
+    public GeocacheToCachePage(ResourceProvider resourceProvider) {
         mResourceProvider = resourceProvider;
     }
 
+    // TODO: move strings into Provider enum.
     public String convert(Geocache geocache) {
         return String.format(mResourceProvider.getStringArray(R.array.cache_page_url)[geocache
-                .getContentIndex()], geocache.getShortId());
+                .getContentProvider().toInt()], geocache.getShortId());
     }
 
 }

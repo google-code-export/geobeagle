@@ -53,9 +53,9 @@ public class CacheListDelegate {
         public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
             AdapterContextMenuInfo acmi = (AdapterContextMenuInfo)menuInfo;
             menu.setHeaderTitle(mGeocacheVectors.get(acmi.position).getId());
-            menu.add(0, MENU_VIEW, 0, "ViewAction");
+            menu.add(0, MENU_VIEW, 0, "View");
             if (acmi.position > 0)
-                menu.add(0, MENU_DELETE, 1, "DeleteAction");
+                menu.add(0, MENU_DELETE, 1, "Delete");
         }
     }
 

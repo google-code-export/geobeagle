@@ -16,7 +16,10 @@ package com.google.code.geobeagle.data;
 
 import static org.junit.Assert.assertEquals;
 
-import com.google.code.geobeagle.data.di.GeocacheFromTextFactory;
+import com.google.code.geobeagle.data.Geocache.Provider;
+import com.google.code.geobeagle.data.Geocache.Source;
+import com.google.code.geobeagle.data.Geocache.Source.SourceFactory;
+import com.google.code.geobeagle.data.di.GeocacheFactory;
 
 import org.easymock.classextension.EasyMock;
 import org.junit.Test;
@@ -29,129 +32,98 @@ import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.os.Parcel;
 
-import java.util.regex.Pattern;
-
 @RunWith(PowerMockRunner.class)
 @PrepareForTest( {
         Parcel.class, Bundle.class, Geocache.class
 })
 public class GeocacheTest {
 
-    private static final Pattern mGeocachePatterns[] = {
-            Pattern.compile("(?:GC)(\\w*)"), Pattern.compile("(?:LB)(\\w*)")
-    };
-
     @Test
-    public void testBadCoordinatesGoodDescription() {
-        Geocache destinationImpl = GeocacheFromTextFactory.create("  FOO (Description)",
-                mGeocachePatterns);
-        assertEquals(0.0, destinationImpl.getLatitude(), 0);
-        assertEquals(0.0, destinationImpl.getLongitude(), 0);
-        assertEquals("Description", destinationImpl.getIdAndName());
+    public void testDescribeContents() {
+        Geocache geocache = new Geocache(null, null, 0, 0, null, null);
+        assertEquals(0, geocache.describeContents());
     }
 
     @Test
-    public void testDescriptionGetIdAndName() {
-        Geocache destinationImpl = GeocacheFromTextFactory.create(
-                " \t 37 03.0, 122 00.0 (Description)", mGeocachePatterns);
-        assertEquals(37.05, destinationImpl.getLatitude(), 0);
-        assertEquals(122.0, destinationImpl.getLongitude(), 0);
-        assertEquals("Description", destinationImpl.getIdAndName());
+    public void testGetContentProvider() {
+        Geocache geocache = new Geocache("GC123", null, 0, 0, null, null);
+        assertEquals(Provider.GROUNDSPEAK, geocache.getContentProvider());
+
+        geocache = new Geocache("LBabc", null, 0, 0, null, null);
+        assertEquals(Provider.ATLAS_QUEST, geocache.getContentProvider());
+
+        geocache = new Geocache("foo", null, 0, 0, null, null);
+        assertEquals(Provider.MY_LOCATION, geocache.getContentProvider());
     }
 
     @Test
-    public void testEmptyDestination() {
-        Geocache geocache = GeocacheFromTextFactory.create("", mGeocachePatterns);
-        assertEquals(0.0, geocache.getLatitude(), 0);
-        assertEquals(0.0, geocache.getLongitude(), 0);
-        assertEquals("", geocache.getIdAndName());
+    public void testGetIdAndName() {
+        Geocache geocache = new Geocache("", "hello", 0, 0, null, null);
+        assertEquals("hello", geocache.getIdAndName());
+
+        geocache = new Geocache("idonly", "", 0, 0, null, null);
+        assertEquals("idonly", geocache.getIdAndName());
+
+        geocache = new Geocache("id", "hello", 0, 0, null, null);
+        assertEquals("id: hello", geocache.getIdAndName());
+
+    }
+
+    @Test
+    public void testGetShortId() {
+        Geocache geocache = new Geocache("GC123", "a cache", 37.5, -122.25, Source.GPX, "alameda");
+        assertEquals("123", geocache.getShortId());
+
+        geocache = new Geocache("", "a cache", 37.5, -122.25, Source.GPX, "alameda");
         assertEquals("", geocache.getShortId());
     }
-
+    
     @Test
-    public void testExtractDescription() {
-        assertEquals("GC123", GeocacheFromTextFactory.extractDescription("123 (GC123)"));
-    }
-
-    @Test
-    public void testGetCoordinatesIdAndName() {
-        Geocache destinationImpl = GeocacheFromTextFactory.create(
-                "s37 03.0, 122 00.0 (Description)", mGeocachePatterns);
-        assertEquals(37.05, destinationImpl.getLatitude(), 0);
-        assertEquals(122.0, destinationImpl.getLongitude(), 0);
-        assertEquals("37 03.000, 122 00.000 (Description)", destinationImpl
-                .getCoordinatesIdAndName());
-    }
-
-    @Test
-    public void testGetId() {
-        Geocache geocache = GeocacheFromTextFactory.create("34.313,122.43 (LB89882: The Nut Case)",
-                mGeocachePatterns);
-        assertEquals("89882", geocache.getShortId());
-        assertEquals("LB89882", geocache.getId());
-        assertEquals(1, geocache.getContentIndex());
-        assertEquals("The Nut Case", geocache.getName());
-
-        geocache = GeocacheFromTextFactory.create("34.313,122.43 (GCFOOBAR: GS cache)",
-                mGeocachePatterns);
-        assertEquals("FOOBAR", geocache.getShortId());
-        assertEquals(0, geocache.getContentIndex());
-        assertEquals("GCFOOBAR: GS cache", geocache.getIdAndName());
-    }
-
-    @Test
-    public void testLatLong() {
-        Geocache geocache = GeocacheFromTextFactory.create("37 00.0, 122 00.0", mGeocachePatterns);
-        assertEquals(37.0, geocache.getLatitude(), 0);
-        assertEquals(122.0, geocache.getLongitude(), 0);
-        assertEquals("", geocache.getName());
-
-        Geocache ll2 = GeocacheFromTextFactory.create("37 00.0, 122 00.0", mGeocachePatterns);
-        assertEquals(37.0, ll2.getLatitude(), 0);
-        assertEquals(122.0, ll2.getLongitude(), 0);
-
-        Geocache ll3 = GeocacheFromTextFactory.create("37 03.0, 122 00.0", mGeocachePatterns);
-        assertEquals(37.05, ll3.getLatitude(), 0);
-        assertEquals(122.0, ll3.getLongitude(), 0);
-
-        Geocache ll4 = GeocacheFromTextFactory.create(" \t 37 03.0, 122 00.0  ", mGeocachePatterns);
-        assertEquals(37.05, ll4.getLatitude(), 0);
-        assertEquals(122.0, ll4.getLongitude(), 0);
-        assertEquals("", ll4.getIdAndName());
-    }
-
-    @Test
-    public void testNoName() {
-        Geocache destinationImpl = GeocacheFromTextFactory.create(
-                " \t 37 03.0, 122 00.0 (GC12345)", mGeocachePatterns);
-        assertEquals(37.05, destinationImpl.getLatitude(), 0);
-        assertEquals(122.0, destinationImpl.getLongitude(), 0);
-        assertEquals("GC12345", destinationImpl.getId());
-        assertEquals("", destinationImpl.getName());
-        assertEquals("GC12345", destinationImpl.getIdAndName());
+    public void testGetters() {
+        Geocache geocache = new Geocache("GC123", "a cache", 37.5, -122.25, Source.GPX, "alameda");
+        assertEquals("GC123", geocache.getId());
+        assertEquals(37.5, geocache.getLatitude(), 0);
+        assertEquals(-122.25, geocache.getLongitude(), 0);
+        assertEquals("a cache", geocache.getName());
+        assertEquals("alameda", geocache.getSourceName());
+        assertEquals(Source.GPX, geocache.getSourceType());
     }
 
     @Test
     public void testParcelConstructor() {
         Parcel parcel = PowerMock.createMock(Parcel.class);
         Bundle bundle = PowerMock.createMock(Bundle.class);
+        GeocacheFactory geocacheFactory = PowerMock.createMock(GeocacheFactory.class);
+        Geocache geocache = PowerMock.createMock(Geocache.class);
 
         EasyMock.expect(parcel.readBundle()).andReturn(bundle);
-        EasyMock.expect(bundle.getInt("contentSelectorIndex")).andReturn(1);
         EasyMock.expect(bundle.getCharSequence("id")).andReturn("GC123");
         EasyMock.expect(bundle.getDouble("latitude")).andReturn(new Double(37));
         EasyMock.expect(bundle.getDouble("longitude")).andReturn(new Double(-122));
         EasyMock.expect(bundle.getCharSequence("name")).andReturn("a cache");
+        EasyMock.expect(bundle.getInt("sourceType")).andReturn(1);
+        EasyMock.expect(bundle.getString("sourceName")).andReturn("new york city");
+        EasyMock.expect(geocacheFactory.sourceFromInt(1)).andReturn(Source.GPX);
+        EasyMock.expect(
+                geocacheFactory.create("GC123", "a cache", 37f, -122, Source.GPX, "new york city"))
+                .andReturn(geocache);
 
         PowerMock.replayAll();
-        Geocache geocache = new Geocache(parcel);
-        assertEquals(1, geocache.getContentIndex());
-        assertEquals("GC123", geocache.getId());
-        assertEquals("a cache", geocache.getName());
-        assertEquals(37, geocache.getLatitude(), 0);
-        assertEquals(-122, geocache.getLongitude(), 0);
-        assertEquals(0, geocache.describeContents());
+        GeocacheFromParcelFactory geocacheFromParcelFactory = new GeocacheFromParcelFactory(
+                geocacheFactory);
+        assertEquals(geocache, geocacheFromParcelFactory.create(parcel));
         PowerMock.verifyAll();
+    }
+
+    @Test
+    public void testProviderToInt() {
+        assertEquals(1, Provider.GROUNDSPEAK.toInt());
+    }
+
+    @Test
+    public void testSourceFromInt() {
+        SourceFactory sourceFactory = new SourceFactory();
+        assertEquals(Source.MY_LOCATION, sourceFactory.fromInt(1));
     }
 
     @Test
@@ -160,15 +132,16 @@ public class GeocacheTest {
         Bundle bundle = PowerMock.createMock(Bundle.class);
 
         PowerMock.expectNew(Bundle.class).andReturn(bundle);
-        bundle.putInt("contentSelectorIndex", 1);
         bundle.putCharSequence("id", "GC123");
         bundle.putCharSequence("name", "a cache");
         bundle.putDouble("latitude", 37.5);
         bundle.putDouble("longitude", -122.25);
+        bundle.putInt("sourceType", Source.GPX.toInt());
+        bundle.putString("sourceName", "alameda");
         parcel.writeBundle(bundle);
 
         PowerMock.replayAll();
-        Geocache geocache = new Geocache("GC123", "a cache", 37.5, -122.25);
+        Geocache geocache = new Geocache("GC123", "a cache", 37.5, -122.25, Source.GPX, "alameda");
         geocache.writeToParcel(parcel, 0);
         PowerMock.verifyAll();
     }
@@ -177,14 +150,16 @@ public class GeocacheTest {
     public void testWriteToPrefs() throws Exception {
         Editor editor = PowerMock.createMock(Editor.class);
 
-        EasyMock.expect(editor.putInt("contentSelectorIndex", 1)).andReturn(editor);
         EasyMock.expect(editor.putString("id", "GC123")).andReturn(editor);
         EasyMock.expect(editor.putString("name", "a cache")).andReturn(editor);
         EasyMock.expect(editor.putFloat("latitude", 37.5f)).andReturn(editor);
         EasyMock.expect(editor.putFloat("longitude", -122.25f)).andReturn(editor);
+        EasyMock.expect(editor.putInt("sourceType", Source.MY_LOCATION.toInt())).andReturn(editor);
+        EasyMock.expect(editor.putString("sourceName", null)).andReturn(editor);
 
         PowerMock.replayAll();
-        Geocache geocache = new Geocache("GC123", "a cache", 37.5, -122.25);
+        Geocache geocache = new Geocache("GC123", "a cache", 37.5, -122.25, Source.MY_LOCATION,
+                null);
         geocache.writeToPrefs(editor);
         PowerMock.verifyAll();
     }

@@ -50,9 +50,9 @@ public class GeocacheVectors {
         mGeocacheVectorsList.add(0, destinationVector);
     }
 
-    public void addLocations(ArrayList<Geocache> locations, Location here) {
-        for (Geocache location : locations) {
-            add(mGeocacheVectorFactory.create(location, here));
+    public void addLocations(ArrayList<Geocache> geocaches, Location here) {
+        for (Geocache geocache : geocaches) {
+            add(mGeocacheVectorFactory.create(geocache, here));
         }
     }
 

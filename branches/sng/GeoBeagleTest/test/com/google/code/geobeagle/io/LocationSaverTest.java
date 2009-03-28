@@ -20,6 +20,7 @@ import static org.easymock.classextension.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.verify;
 
 import com.google.code.geobeagle.data.Geocache;
+import com.google.code.geobeagle.data.Geocache.Source;
 import com.google.code.geobeagle.io.di.DatabaseDI;
 
 import junit.framework.TestCase;
@@ -38,7 +39,9 @@ public class LocationSaverTest extends TestCase {
         expect(geocache.getName()).andReturn("");
         expect(geocache.getLatitude()).andReturn(122.0);
         expect(geocache.getLongitude()).andReturn(37.0);
-        writer.insertAndUpdateCache("LB12345", "", 122, 37, "intent");
+        expect(geocache.getSourceType()).andReturn(Source.GPX);
+        expect(geocache.getSourceName()).andReturn("manhattan");
+        writer.insertAndUpdateCache("LB12345", "", 122, 37, Source.GPX, "manhattan");
         writer.stopWriting();
         sqliteWrapper.close();
 

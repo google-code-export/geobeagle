@@ -23,6 +23,7 @@ import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.ResourceProvider;
 import com.google.code.geobeagle.data.GeocacheVector.LocationComparator;
 import com.google.code.geobeagle.data.GeocacheVector.MyLocation;
+import com.google.code.geobeagle.io.LocationSaver;
 
 import junit.framework.TestCase;
 
@@ -45,15 +46,6 @@ public class GeocacheVectorTest extends TestCase {
         verify(d1);
         verify(d2);
 
-    }
-
-    public void testGetCoordinatesIdAndName() {
-        expect(geocache.getCoordinatesIdAndName()).andReturn("343 2323 (a geocache)");
-
-        replay(geocache);
-        GeocacheVector geocacheVector = new GeocacheVector(geocache, 3.5f, null);
-        assertEquals("343 2323 (a geocache)", geocacheVector.getCoordinatesIdAndName());
-        verify(geocache);
     }
 
     public void testGetDistance() {
@@ -99,14 +91,17 @@ public class GeocacheVectorTest extends TestCase {
         Geocache geocache = createMock(Geocache.class);
         ResourceProvider resourceProvider = createMock(ResourceProvider.class);
         GeocacheFromMyLocationFactory geocacheFromMyLocationFactory = createMock(GeocacheFromMyLocationFactory.class);
+        LocationSaver locationSaver = createMock(LocationSaver.class);
 
         expect(geocacheFromMyLocationFactory.create()).andReturn(geocache);
         expect(resourceProvider.getString(R.string.my_current_location)).andReturn("my location");
         expect(resourceProvider.getString(R.string.my_current_location)).andReturn("my location");
+        locationSaver.saveLocation(geocache);
 
         replay(resourceProvider);
         replay(geocacheFromMyLocationFactory);
-        MyLocation myLocation = new MyLocation(resourceProvider, geocacheFromMyLocationFactory);
+        MyLocation myLocation = new MyLocation(resourceProvider, geocacheFromMyLocationFactory,
+                locationSaver);
         assertEquals(geocache, myLocation.getGeocache());
         assertEquals(null, myLocation.getCoordinatesIdAndName());
         assertEquals(null, myLocation.getDestination());
