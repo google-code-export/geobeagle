@@ -16,7 +16,6 @@ package com.google.code.geobeagle.ui;
 
 import com.google.code.geobeagle.Util;
 import com.google.code.geobeagle.data.Geocache;
-import com.google.code.geobeagle.data.GeocacheFromPreferencesFactory;
 
 import android.widget.TextView;
 
@@ -24,20 +23,20 @@ public class GeocacheViewer {
 
     public static final String FNAME_RECENT_LOCATIONS = "RECENT_LOCATIONS";
     public static final String PREFS_LOCATION = "Location";
-    private final TextView mTxtLocation;
+    private final TextView mId;
+    private final TextView mName;
+    private final TextView mCoords;
 
-    public GeocacheViewer(TextView mockableTxtLocation,
-            GeocacheFromPreferencesFactory geocacheFactory) {
-        mTxtLocation = mockableTxtLocation;
+    public GeocacheViewer(TextView gcid, TextView gcname, TextView gccoords) {
+        mId = gcid;
+        mName = gcname;
+        mCoords = gccoords;
     }
 
     public void set(Geocache geocache) {
-        final CharSequence latLonText = Util.formatDegreesAsDecimalDegreesString(geocache
-                .getLatitude())
-                + ", "
-                + Util.formatDegreesAsDecimalDegreesString(geocache.getLongitude())
-                + " ("
-                + geocache.getIdAndName() + ")";
-        mTxtLocation.setText(latLonText);
+        mId.setText(geocache.getId());
+        mName.setText(geocache.getName());
+        mCoords.setText(Util.formatDegreesAsDecimalDegreesString(geocache.getLatitude()) + ", "
+                + Util.formatDegreesAsDecimalDegreesString(geocache.getLongitude()));
     }
 }

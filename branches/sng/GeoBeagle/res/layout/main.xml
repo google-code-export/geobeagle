@@ -71,9 +71,15 @@
 				android:layout_weight="1" />
 		</LinearLayout>
 
-		<LinearLayout android:orientation="horizontal" android:paddingTop="12sp"
+		<LinearLayout android:orientation="vertical" android:paddingTop="12sp"
 			android:layout_height="wrap_content" android:layout_width="fill_parent">
-			<TextView android:id="@+id/go_to" android:layout_height="wrap_content"
+			<TextView android:id="@+id/gcid" android:layout_height="wrap_content"
+				android:layout_width="wrap_content" android:layout_weight="1"
+				android:textSize="18sp" android:text="37 122" />
+			<TextView android:id="@+id/gcname" android:layout_height="wrap_content"
+				android:layout_width="wrap_content" android:layout_weight="1"
+				android:textSize="18sp" android:text="37 122" />
+			<TextView android:id="@+id/gccoords" android:layout_height="wrap_content"
 				android:layout_width="wrap_content" android:layout_weight="1"
 				android:textSize="18sp" android:text="37 122" />
 		</LinearLayout>

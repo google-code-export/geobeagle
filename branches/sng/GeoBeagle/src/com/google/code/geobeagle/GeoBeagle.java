@@ -158,7 +158,6 @@ public class GeoBeagle extends Activity implements LifecycleManager {
             final Database Database = DatabaseDI.create(this);
             mLocationSaver = new LocationSaver(Database, sqliteWrapper, DatabaseDI
                     .createCacheWriter(sqliteWrapper));
-            final TextView txtLocation = (TextView)findViewById(R.id.go_to);
             mWebPageButtonEnabler = WebPageAndDetailsButtonDI.create(this,
                     findViewById(R.id.cache_page), findViewById(R.id.cache_details));
 
@@ -172,7 +171,10 @@ public class GeoBeagle extends Activity implements LifecycleManager {
             mLocationListener = new GeoBeagleLocationListener(mGpsControl, mLocationViewer);
             final GeocacheFactory geocacheFactory = new GeocacheFactory();
             mGeocacheFromPreferencesFactory = new GeocacheFromPreferencesFactory(geocacheFactory);
-            mGeocacheViewer = new GeocacheViewer(txtLocation, mGeocacheFromPreferencesFactory);
+            final TextView gcid = (TextView)findViewById(R.id.gcid);
+            final TextView gcname = (TextView)findViewById(R.id.gcname);
+            final TextView gccoords = (TextView)findViewById(R.id.gccoords);
+            mGeocacheViewer = new GeocacheViewer(gcid, gcname, gccoords);
 
             setCacheClickListeners();
 

@@ -34,16 +34,22 @@ import junit.framework.TestCase;
 public class GeocacheViewerTest extends TestCase {
 
     public void testSet() {
-        TextView textView = PowerMock.createMock(TextView.class);
+        TextView id = PowerMock.createMock(TextView.class);
+        TextView name = PowerMock.createMock(TextView.class);
+        TextView coords = PowerMock.createMock(TextView.class);
         Geocache geocache = PowerMock.createMock(Geocache.class);
 
         expect(geocache.getLatitude()).andReturn(37.0);
         expect(geocache.getLongitude()).andReturn(-122.0);
-        expect(geocache.getIdAndName()).andReturn("GC123: A cache");
-        textView.setText("37 00.000, -122 00.000 (GC123: A cache)");
+        expect(geocache.getId()).andReturn("GC123");
+        expect(geocache.getName()).andReturn("a cache");
+
+        id.setText("GC123");
+        name.setText("a cache");
+        coords.setText("37 00.000, -122 00.000");
 
         PowerMock.replayAll();
-        GeocacheViewer geocacheViewer = new GeocacheViewer(textView, null);
+        GeocacheViewer geocacheViewer = new GeocacheViewer(id, name, coords);
         geocacheViewer.set(geocache);
         PowerMock.verifyAll();
     }
