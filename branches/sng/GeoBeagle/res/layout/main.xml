@@ -71,11 +71,7 @@
 				android:layout_weight="1" />
 		</LinearLayout>
 
-		<TextView android:id="@+id/cache_prompt"
-			android:layout_width="fill_parent" android:layout_height="wrap_content"
-			android:text="Go to cache:" android:paddingTop="18sp"
-			android:textSize="18sp" />
-		<LinearLayout android:orientation="horizontal"
+		<LinearLayout android:orientation="horizontal" android:paddingTop="12sp"
 			android:layout_height="wrap_content" android:layout_width="fill_parent">
 			<TextView android:id="@+id/go_to" android:layout_height="wrap_content"
 				android:layout_width="wrap_content" android:layout_weight="1"

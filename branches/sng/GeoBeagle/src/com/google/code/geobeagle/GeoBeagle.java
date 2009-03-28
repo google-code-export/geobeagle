@@ -25,6 +25,10 @@ import com.google.code.geobeagle.intents.IntentFactory;
 import com.google.code.geobeagle.intents.IntentStarterLocation;
 import com.google.code.geobeagle.intents.IntentStarterRadar;
 import com.google.code.geobeagle.intents.IntentStarterViewUri;
+import com.google.code.geobeagle.io.Database;
+import com.google.code.geobeagle.io.LocationSaver;
+import com.google.code.geobeagle.io.di.DatabaseDI;
+import com.google.code.geobeagle.io.di.DatabaseDI.SQLiteWrapper;
 import com.google.code.geobeagle.ui.CacheListDelegate;
 import com.google.code.geobeagle.ui.ContentSelector;
 import com.google.code.geobeagle.ui.ErrorDisplayer;
@@ -81,6 +85,7 @@ public class GeoBeagle extends Activity implements LifecycleManager {
             mHandler.postDelayed(mUpdateTimeTask, 100);
         }
     };
+    private LocationSaver mLocationSaver;
 
     public GeoBeagle() {
         super();
@@ -102,8 +107,9 @@ public class GeoBeagle extends Activity implements LifecycleManager {
                         new UrlQuerySanitizer(), UrlQuerySanitizer
                                 .getAllButNulAndAngleBracketsLegal());
                 final CharSequence[] latlon = Util.splitLatLonDescription(sanitizedQuery);
-                mGeocache = new Geocache(latlon[2], "", Util.parseCoordinate(latlon[0]), Util
-                        .parseCoordinate(latlon[1]), Source.WEB_URL, null);
+                mGeocache = new Geocache(latlon[2], latlon[3], Util.parseCoordinate(latlon[0]),
+                        Util.parseCoordinate(latlon[1]), Source.WEB_URL, null);
+                mLocationSaver.saveLocation(mGeocache);
                 geocacheViewer.set(mGeocache);
             }
         } catch (final Exception e) {
@@ -148,7 +154,10 @@ public class GeoBeagle extends Activity implements LifecycleManager {
             setContentView(R.layout.main);
             GeoBeagleBuilder builder = new GeoBeagleBuilder(this);
             mContentSelector = builder.createContentSelector(getPreferences(Activity.MODE_PRIVATE));
-
+            final SQLiteWrapper sqliteWrapper = new SQLiteWrapper(null);
+            final Database Database = DatabaseDI.create(this);
+            mLocationSaver = new LocationSaver(Database, sqliteWrapper, DatabaseDI
+                    .createCacheWriter(sqliteWrapper));
             final TextView txtLocation = (TextView)findViewById(R.id.go_to);
             mWebPageButtonEnabler = WebPageAndDetailsButtonDI.create(this,
                     findViewById(R.id.cache_page), findViewById(R.id.cache_details));
@@ -182,8 +191,7 @@ public class GeoBeagle extends Activity implements LifecycleManager {
             ((Spinner)findViewById(R.id.content_provider))
                     .setOnItemSelectedListener(new OnContentProviderSelectedListener(
                             mResourceProvider, new MockableTextView(
-                                    (TextView)findViewById(R.id.select_cache_prompt)),
-                            new MockableTextView((TextView)findViewById(R.id.cache_prompt))));
+                                    (TextView)findViewById(R.id.select_cache_prompt))));
 
             mHandler.removeCallbacks(mUpdateTimeTask);
             mHandler.postDelayed(mUpdateTimeTask, 1000);
