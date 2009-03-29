@@ -18,7 +18,7 @@ import com.google.code.geobeagle.LocationControl;
 import com.google.code.geobeagle.data.Geocache;
 import com.google.code.geobeagle.data.Geocaches;
 import com.google.code.geobeagle.io.CacheReader.CacheReaderCursor;
-import com.google.code.geobeagle.io.di.DatabaseDI.SQLiteWrapper;
+import com.google.code.geobeagle.io.DatabaseDI.SQLiteWrapper;
 
 import java.util.ArrayList;
 
@@ -29,7 +29,7 @@ public class GeocachesSql {
     private final LocationControl mLocationControl;
     private final SQLiteWrapper mSQLiteWrapper;
 
-    public GeocachesSql(CacheReader cacheReader, Geocaches geocaches, Database database,
+    GeocachesSql(CacheReader cacheReader, Geocaches geocaches, Database database,
             SQLiteWrapper sqliteWrapper, LocationControl locationControl) {
         mCacheReader = cacheReader;
         mGeocaches = geocaches;

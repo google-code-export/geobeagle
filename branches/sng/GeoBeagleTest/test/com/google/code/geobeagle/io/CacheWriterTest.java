@@ -7,8 +7,8 @@ import static org.easymock.classextension.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.verify;
 
 import com.google.code.geobeagle.data.Geocache.Source;
+import com.google.code.geobeagle.io.DatabaseDI.SQLiteWrapper;
 import com.google.code.geobeagle.io.DatabaseTest.DesktopSQLiteDatabase;
-import com.google.code.geobeagle.io.di.DatabaseDI.SQLiteWrapper;
 
 import java.io.IOException;
 

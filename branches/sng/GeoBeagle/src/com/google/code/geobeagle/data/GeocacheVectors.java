@@ -28,7 +28,6 @@
 package com.google.code.geobeagle.data;
 
 import com.google.code.geobeagle.data.GeocacheVector.LocationComparator;
-import com.google.code.geobeagle.data.di.GeocacheVectorFactory;
 
 import android.location.Location;
 

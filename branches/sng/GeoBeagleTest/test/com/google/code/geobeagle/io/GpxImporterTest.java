@@ -8,12 +8,12 @@ import static org.easymock.classextension.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.verify;
 
 import com.google.code.geobeagle.R;
+import com.google.code.geobeagle.io.DatabaseDI.SQLiteWrapper;
 import com.google.code.geobeagle.io.GpxImporter.ImportThreadDelegate;
-import com.google.code.geobeagle.io.di.DatabaseDI.SQLiteWrapper;
-import com.google.code.geobeagle.io.di.GpxImporterDI.GpxFilenameFactory;
-import com.google.code.geobeagle.io.di.GpxImporterDI.ImportThreadWrapper;
-import com.google.code.geobeagle.io.di.GpxImporterDI.MessageHandler;
-import com.google.code.geobeagle.io.di.GpxImporterDI.ToastFactory;
+import com.google.code.geobeagle.io.GpxImporterDI.GpxFilenameFactory;
+import com.google.code.geobeagle.io.GpxImporterDI.ImportThreadWrapper;
+import com.google.code.geobeagle.io.GpxImporterDI.MessageHandler;
+import com.google.code.geobeagle.io.GpxImporterDI.ToastFactory;
 import com.google.code.geobeagle.ui.CacheListDelegate;
 import com.google.code.geobeagle.ui.ErrorDisplayer;
 

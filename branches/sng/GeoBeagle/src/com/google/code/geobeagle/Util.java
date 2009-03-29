@@ -17,12 +17,10 @@ package com.google.code.geobeagle;
 import android.net.UrlQuerySanitizer;
 import android.net.UrlQuerySanitizer.ValueSanitizer;
 
-import java.text.SimpleDateFormat;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Util {
-    private static final String DATE_FORMAT_NOW = "HH:mm:ss";
     public static final String[] geocachingQueryParam = new String[] {
         "q"
     };
@@ -44,10 +42,6 @@ public class Util {
         final int dAbsDegrees = (int)fAbsDegrees;
         return String.format((fDegrees < 0 ? "-" : "") + "%1$d %2$06.3f", dAbsDegrees,
                 60.0 * (fAbsDegrees - dAbsDegrees));
-    }
-
-    public static CharSequence formatTime(long time) {
-        return new SimpleDateFormat(DATE_FORMAT_NOW).format(time);
     }
 
     public static String getStackTrace(Exception e) {

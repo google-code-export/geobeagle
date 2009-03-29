@@ -31,7 +31,7 @@ public class GpxLoader {
     private final ErrorDisplayer mErrorDisplayer;
     private final GpxToCache mGpxToCache;
 
-    public GpxLoader(GpxToCache gpxToCache, CachePersisterFacade cachePersisterFacade,
+    GpxLoader(GpxToCache gpxToCache, CachePersisterFacade cachePersisterFacade,
             ErrorDisplayer errorDisplayer) {
         mGpxToCache = gpxToCache;
         mCachePersisterFacade = cachePersisterFacade;

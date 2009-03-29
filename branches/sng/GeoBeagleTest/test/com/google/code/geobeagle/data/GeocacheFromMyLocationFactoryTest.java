@@ -6,7 +6,6 @@ import static org.junit.Assert.assertEquals;
 import com.google.code.geobeagle.LocationControl;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.data.Geocache.Source;
-import com.google.code.geobeagle.data.di.GeocacheFactory;
 import com.google.code.geobeagle.ui.ErrorDisplayer;
 
 import org.easymock.classextension.EasyMock;

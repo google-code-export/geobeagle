@@ -14,7 +14,7 @@
 
 package com.google.code.geobeagle.io;
 
-import com.google.code.geobeagle.io.di.GpxToCacheDI.XmlPullParserWrapper;
+import com.google.code.geobeagle.io.GpxToCacheDI.XmlPullParserWrapper;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
@@ -32,7 +32,7 @@ public class GpxToCache {
 
     private final XmlPullParserWrapper mXmlPullParserWrapper;
 
-    public GpxToCache(XmlPullParserWrapper xmlPullParserWrapper, EventHelper eventHelper) {
+    GpxToCache(XmlPullParserWrapper xmlPullParserWrapper, EventHelper eventHelper) {
         mXmlPullParserWrapper = xmlPullParserWrapper;
         mEventHelper = eventHelper;
     }

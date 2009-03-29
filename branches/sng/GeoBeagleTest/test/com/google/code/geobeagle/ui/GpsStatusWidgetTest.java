@@ -23,7 +23,6 @@ import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.ResourceProvider;
 import com.google.code.geobeagle.ui.GpsStatusWidget.MeterFormatter;
 import com.google.code.geobeagle.ui.GpsStatusWidget.MeterView;
-import com.google.code.geobeagle.ui.GpsStatusWidget.Time;
 
 import android.location.Location;
 import android.location.LocationProvider;
@@ -83,22 +82,71 @@ public class GpsStatusWidgetTest extends TestCase {
         verify(meterFormatter);
     }
 
-    public void testSetLocationSixSecondDelay() {
+    public void testSetEnabledDisabled() {
+        MockableTextView status = createMock(MockableTextView.class);
+        
+        status.setText("ENABLED");
+        status.setText("DISABLED");
+        
+        replay(status);
+        GpsStatusWidget gpsStatusWidget = new GpsStatusWidget(null, null, null, null, null, status,
+                null, null);
+        gpsStatusWidget.setEnabled();
+        gpsStatusWidget.setDisabled();
+        verify(status);
+    }
+
+    public void testSetLocationElevenSecondDelay() {
         MeterView meterView = createMock(MeterView.class);
         MockableTextView lag = createMock(MockableTextView.class);
         MockableTextView accuracy = createMock(MockableTextView.class);
         MockableTextView provider = createMock(MockableTextView.class);
-        Time time = createMock(Time.class);
+        Misc.Time time = createMock(Misc.Time.class);
+        Location location = createMock(Location.class);
+
+        expect(time.getCurrentTime()).andReturn(10000L);
+        expect(location.getTime()).andReturn(9000L);
+        expect(time.getCurrentTime()).andReturn(20000L);
+        expect(location.getAccuracy()).andReturn(12f);
+        expect(location.getProvider()).andReturn("gps");
+        provider.setText("gps");
+        lag.setText("11s");
+        accuracy.setText("12.0m");
+        meterView.set(10000, 12f);
+
+        replay(meterView);
+        replay(lag);
+        replay(accuracy);
+        replay(provider);
+        replay(location);
+        replay(time);
+        GpsStatusWidget gpsStatusWidget = new GpsStatusWidget(null, meterView, provider, lag,
+                accuracy, null, time, location);
+        gpsStatusWidget.setLocation(location);
+        gpsStatusWidget.refreshLocation();
+        verify(location);
+        verify(meterView);
+        verify(provider);
+        verify(lag);
+        verify(accuracy);
+        verify(time);
+    }
+
+    public void testSetLocationGpsReportsFutureTimeWeirdnessDelay() {
+        MeterView meterView = createMock(MeterView.class);
+        MockableTextView lag = createMock(MockableTextView.class);
+        MockableTextView accuracy = createMock(MockableTextView.class);
+        MockableTextView provider = createMock(MockableTextView.class);
+        Misc.Time time = createMock(Misc.Time.class);
         Location location = createMock(Location.class);
 
         expect(time.getCurrentTime()).andReturn(10000L);
         expect(location.getTime()).andReturn(12000L);
-
         expect(time.getCurrentTime()).andReturn(18000L);
         expect(location.getAccuracy()).andReturn(12f);
         expect(location.getProvider()).andReturn("gps");
         provider.setText("gps");
-        lag.setText("6s");
+        lag.setText("8s");
         accuracy.setText("12.0m");
         meterView.set(8000, 12f);
 

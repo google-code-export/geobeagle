@@ -21,7 +21,6 @@ import static org.easymock.classextension.EasyMock.verify;
 
 import com.google.code.geobeagle.data.Geocache;
 import com.google.code.geobeagle.data.Geocache.Source;
-import com.google.code.geobeagle.io.di.DatabaseDI;
 
 import junit.framework.TestCase;
 

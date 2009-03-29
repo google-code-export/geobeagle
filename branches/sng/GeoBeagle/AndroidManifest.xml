@@ -36,7 +36,7 @@
 		</activity>
 		<activity android:name=".CacheList" android:label="@string/cache_list_title"
 			android:configChanges="orientation|keyboardHidden" />
-		<activity android:name=".ui.di.EditCacheActivity" android:label="Edit Geocache"
+		<activity android:name=".ui.EditCacheActivity" android:label="Edit Geocache"
 			android:configChanges="orientation|keyboardHidden" />
 
 	</application>

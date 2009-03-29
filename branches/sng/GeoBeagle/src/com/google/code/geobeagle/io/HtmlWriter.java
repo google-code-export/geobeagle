@@ -14,7 +14,7 @@
 
 package com.google.code.geobeagle.io;
 
-import com.google.code.geobeagle.io.di.CachePersisterFacadeDI.WriterWrapper;
+import com.google.code.geobeagle.io.CachePersisterFacadeDI.WriterWrapper;
 
 import java.io.IOException;
 

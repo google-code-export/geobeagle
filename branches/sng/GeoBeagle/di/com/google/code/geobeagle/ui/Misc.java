@@ -12,10 +12,22 @@
  ** limitations under the License.
  */
 
-package com.google.code.geobeagle;
+package com.google.code.geobeagle.ui;
 
-import com.google.code.geobeagle.ui.GeocacheListAdapter;
+import com.google.code.geobeagle.GeoBeagle;
+import com.google.code.geobeagle.ui.WebPageAndDetailsButtonEnabler;
 
-public interface Action {
-    public void act(int position, GeocacheListAdapter geocacheListAdapter);
+import android.view.View;
+
+public class Misc {
+    public static class Time {
+        public long getCurrentTime() {
+            return System.currentTimeMillis();
+        }
+    }
+
+    public static WebPageAndDetailsButtonEnabler create(GeoBeagle geoBeagle, View cachePageButton,
+            View detailsButton) {
+        return new WebPageAndDetailsButtonEnabler(geoBeagle, cachePageButton, detailsButton);
+    }
 }

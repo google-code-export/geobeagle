@@ -12,22 +12,19 @@
  ** limitations under the License.
  */
 
-package com.google.code.geobeagle.io;
+package com.google.code.geobeagle.ui;
 
 import static org.easymock.EasyMock.expect;
 import static org.easymock.classextension.EasyMock.createMock;
 import static org.easymock.classextension.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.verify;
 
-import com.google.code.geobeagle.Action;
-import com.google.code.geobeagle.DeleteAction;
-import com.google.code.geobeagle.ViewAction;
 import com.google.code.geobeagle.data.Geocache;
 import com.google.code.geobeagle.data.GeocacheVector;
 import com.google.code.geobeagle.data.GeocacheVectors;
-import com.google.code.geobeagle.io.di.DatabaseDI.SQLiteWrapper;
-import com.google.code.geobeagle.ui.CacheListDelegate;
-import com.google.code.geobeagle.ui.GeocacheListAdapter;
+import com.google.code.geobeagle.io.CacheWriter;
+import com.google.code.geobeagle.io.Database;
+import com.google.code.geobeagle.io.DatabaseDI.SQLiteWrapper;
 
 import android.content.Context;
 import android.content.Intent;

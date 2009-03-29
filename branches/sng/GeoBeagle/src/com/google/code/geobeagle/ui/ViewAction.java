@@ -12,11 +12,9 @@
  ** limitations under the License.
  */
 
-package com.google.code.geobeagle;
+package com.google.code.geobeagle.ui;
 
 import com.google.code.geobeagle.data.GeocacheVectors;
-import com.google.code.geobeagle.ui.CacheListDelegate;
-import com.google.code.geobeagle.ui.GeocacheListAdapter;
 
 import android.content.Context;
 import android.content.Intent;
@@ -26,7 +24,7 @@ public class ViewAction implements Action {
     private final Intent mIntent;
     private GeocacheVectors mGeocacheVectors;
 
-    public ViewAction(GeocacheVectors geocacheVectors, Context context, Intent intent) {
+    ViewAction(GeocacheVectors geocacheVectors, Context context, Intent intent) {
         mGeocacheVectors = geocacheVectors;
         mContext = context;
         mIntent = intent;

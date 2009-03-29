@@ -19,7 +19,6 @@ import static org.junit.Assert.assertEquals;
 import com.google.code.geobeagle.data.Geocache.Provider;
 import com.google.code.geobeagle.data.Geocache.Source;
 import com.google.code.geobeagle.data.Geocache.Source.SourceFactory;
-import com.google.code.geobeagle.data.di.GeocacheFactory;
 
 import org.easymock.classextension.EasyMock;
 import org.junit.Test;

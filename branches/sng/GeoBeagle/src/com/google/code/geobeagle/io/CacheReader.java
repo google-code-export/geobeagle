@@ -15,9 +15,8 @@
 package com.google.code.geobeagle.io;
 
 import com.google.code.geobeagle.data.Geocache;
-import com.google.code.geobeagle.data.di.GeocacheFactory;
-import com.google.code.geobeagle.io.di.DatabaseDI;
-import com.google.code.geobeagle.io.di.DatabaseDI.SQLiteWrapper;
+import com.google.code.geobeagle.data.GeocacheFactory;
+import com.google.code.geobeagle.io.DatabaseDI.SQLiteWrapper;
 
 import android.database.Cursor;
 import android.location.Location;
@@ -78,7 +77,7 @@ public class CacheReader {
     private final WhereFactory mWhereFactory;
 
     // TODO: rename to CacheSqlReader / CacheSqlWriter
-    public CacheReader(DatabaseDI.SQLiteWrapper sqliteWrapper, WhereFactory whereFactory,
+    CacheReader(DatabaseDI.SQLiteWrapper sqliteWrapper, WhereFactory whereFactory,
             DatabaseDI.CacheReaderCursorFactory cacheReaderCursorFactory) {
         mSqliteWrapper = sqliteWrapper;
         mWhereFactory = whereFactory;

@@ -14,7 +14,6 @@
 
 package com.google.code.geobeagle.io;
 
-import com.google.code.geobeagle.io.di.GpxToCacheDI;
 
 import java.io.IOException;
 

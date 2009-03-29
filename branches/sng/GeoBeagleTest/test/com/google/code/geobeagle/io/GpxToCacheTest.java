@@ -20,7 +20,7 @@ import static org.easymock.classextension.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.verify;
 
 import com.google.code.geobeagle.io.GpxToCache.CancelException;
-import com.google.code.geobeagle.io.di.GpxToCacheDI.XmlPullParserWrapper;
+import com.google.code.geobeagle.io.GpxToCacheDI.XmlPullParserWrapper;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;

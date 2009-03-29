@@ -23,7 +23,7 @@ import com.google.code.geobeagle.LocationControl;
 import com.google.code.geobeagle.data.Geocache;
 import com.google.code.geobeagle.data.Geocaches;
 import com.google.code.geobeagle.io.CacheReader.CacheReaderCursor;
-import com.google.code.geobeagle.io.di.DatabaseDI.SQLiteWrapper;
+import com.google.code.geobeagle.io.DatabaseDI.SQLiteWrapper;
 
 import junit.framework.TestCase;
 

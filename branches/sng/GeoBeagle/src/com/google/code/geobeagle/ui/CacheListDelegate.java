@@ -14,7 +14,6 @@
 
 package com.google.code.geobeagle.ui;
 
-import com.google.code.geobeagle.Action;
 import com.google.code.geobeagle.LocationControl;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.data.CacheListData;
@@ -74,7 +73,7 @@ public class CacheListDelegate {
     private final GeocacheListAdapter mGeocacheListAdapter;
     private final GeocacheVectors mGeocacheVectors;
 
-    public CacheListDelegate(ListActivity parent, GeocachesSql geocachesSql,
+    CacheListDelegate(ListActivity parent, GeocachesSql geocachesSql,
             LocationControl locationControl, CacheListData cacheListData,
             GeocacheVectors geocacheVectors, GeocacheListAdapter geocacheListAdapter,
             ErrorDisplayer errorDisplayer, Action[] actions,
