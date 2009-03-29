@@ -6,6 +6,8 @@ import static org.easymock.EasyMock.expectLastCall;
 import static org.easymock.classextension.EasyMock.createMock;
 import static org.easymock.classextension.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.verify;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.io.DatabaseDI.SQLiteWrapper;
@@ -17,6 +19,7 @@ import com.google.code.geobeagle.io.GpxImporterDI.ToastFactory;
 import com.google.code.geobeagle.ui.CacheListDelegate;
 import com.google.code.geobeagle.ui.ErrorDisplayer;
 
+import org.junit.Test;
 import org.xmlpull.v1.XmlPullParserException;
 
 import android.app.ListActivity;
@@ -25,9 +28,7 @@ import android.widget.Toast;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-import junit.framework.TestCase;
-
-public class GpxImporterTest extends TestCase {
+public class GpxImporterTest {
 
     private <T> void importThreadDelegateRunAndThrow(Class<T> exceptionClass, int errorMessage)
             throws FileNotFoundException, XmlPullParserException, IOException {
@@ -60,12 +61,14 @@ public class GpxImporterTest extends TestCase {
         verify(gpxFilenameFactory);
     }
 
+    @Test
     public void testFilenameFilter() {
         assertFalse(GpxImporter.filenameFilter.accept(null, ".appledetritus010.gpx"));
         assertFalse(GpxImporter.filenameFilter.accept(null, "foo.bar"));
         assertTrue(GpxImporter.filenameFilter.accept(null, "01243.gpx"));
     }
 
+    @Test
     public void testAbort() throws InterruptedException {
         GpxLoader gpxLoader = createMock(GpxLoader.class);
         ImportThreadWrapper importThreadWrapper = createMock(ImportThreadWrapper.class);
@@ -86,6 +89,7 @@ public class GpxImporterTest extends TestCase {
         verify(messageHandler);
     }
 
+    @Test
     public void testAbortThreadAlive() throws InterruptedException {
         GpxLoader gpxLoader = createMock(GpxLoader.class);
         ImportThreadWrapper importThreadWrapper = createMock(ImportThreadWrapper.class);
@@ -116,6 +120,7 @@ public class GpxImporterTest extends TestCase {
         verify(toastFactory);
     }
 
+    @Test
     public void testImportGpxs() throws FileNotFoundException, XmlPullParserException, IOException {
         CacheListDelegate cacheListDelegate = createMock(CacheListDelegate.class);
         Database database = createMock(Database.class);
@@ -138,6 +143,7 @@ public class GpxImporterTest extends TestCase {
         verify(database);
     }
 
+    @Test
     public void testImportThreadDelegateRun() throws FileNotFoundException, XmlPullParserException,
             IOException {
         GpxLoader gpxLoader = createMock(GpxLoader.class);
@@ -189,6 +195,7 @@ public class GpxImporterTest extends TestCase {
         verify(gpxFilenameFactory);
     }
 
+    @Test
     public void testImportThreadDelegateRunAndThrowRandomException() throws FileNotFoundException,
             XmlPullParserException, IOException {
         GpxLoader gpxLoader = createMock(GpxLoader.class);
@@ -220,11 +227,13 @@ public class GpxImporterTest extends TestCase {
         verify(gpxFilenameFactory);
     }
 
+    @Test
     public void testImportThreadDelegateRunFileNotFound() throws FileNotFoundException,
             XmlPullParserException, IOException {
         importThreadDelegateRunAndThrow(FileNotFoundException.class, R.string.error_opening_file);
     }
 
+    @Test
     public void testImportThreadDelegateRunNoFilesToImport() throws FileNotFoundException,
             XmlPullParserException, IOException {
         ErrorDisplayer errorDisplayer = createMock(ErrorDisplayer.class);
