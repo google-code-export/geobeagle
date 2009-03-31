@@ -14,10 +14,6 @@
 
 package com.google.code.geobeagle.io;
 
-import com.google.code.geobeagle.io.CachePersisterFacade;
-import com.google.code.geobeagle.io.EventHelper;
-import com.google.code.geobeagle.io.GpxToCache;
-
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
@@ -60,9 +56,14 @@ public class GpxToCacheDI {
             return mXmlPullParser.next();
         }
 
-        public void open(String path) throws XmlPullParserException, FileNotFoundException {
+        public void open(String path, Reader reader) throws XmlPullParserException {
             final XmlPullParser newPullParser = XmlPullParserFactory.newInstance().newPullParser();
-            final Reader reader = new BufferedReader(new FileReader(path));
+            // ZipEntry zipEntry = null;
+            // ZipFile zipFile = null;
+            // InputStream inputStream = zipFile.getInputStream(zipEntry);
+            // final Reader reader1 = new BufferedReader(new
+            // InputStreamReader(inputStream));
+            // final Reader reader = new BufferedReader(new FileReader(path));
             newPullParser.setInput(reader);
             mSource = path;
             mXmlPullParser = newPullParser;

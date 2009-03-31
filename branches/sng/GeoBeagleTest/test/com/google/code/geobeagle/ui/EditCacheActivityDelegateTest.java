@@ -37,7 +37,7 @@ public class EditCacheActivityDelegateTest {
         activity.setResult(-1, null);
         activity.finish();
 
-        PowerMock.replayAll();
+        PowerMock.replay(activity);
         CancelButtonOnClickListener cancelButtonOnClickListener = new CancelButtonOnClickListener(
                 activity);
         cancelButtonOnClickListener.onClick(null);

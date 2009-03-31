@@ -19,8 +19,9 @@ import com.google.code.geobeagle.io.GpxToCacheDI.XmlPullParserWrapper;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
-import java.io.FileNotFoundException;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.Reader;
 
 public class GpxToCache {
     @SuppressWarnings("serial")
@@ -29,7 +30,6 @@ public class GpxToCache {
 
     private boolean mAbort;
     private final EventHelper mEventHelper;
-
     private final XmlPullParserWrapper mXmlPullParserWrapper;
 
     GpxToCache(XmlPullParserWrapper xmlPullParserWrapper, EventHelper eventHelper) {
@@ -68,8 +68,9 @@ public class GpxToCache {
         return false;
     }
 
-    public void open(String source) throws FileNotFoundException, XmlPullParserException {
-        mXmlPullParserWrapper.open(source);
+    public void open(String source, Reader reader) throws XmlPullParserException, IOException {
+        Reader bufferedReader = new BufferedReader(reader);
+        mXmlPullParserWrapper.open(source, bufferedReader);
         mEventHelper.reset();
         mAbort = false;
     }

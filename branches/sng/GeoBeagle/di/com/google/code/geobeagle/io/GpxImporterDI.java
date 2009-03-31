@@ -14,11 +14,10 @@
 
 package com.google.code.geobeagle.io;
 
-import com.google.code.geobeagle.io.Database;
-import com.google.code.geobeagle.io.GpxImporter;
-import com.google.code.geobeagle.io.GpxLoader;
 import com.google.code.geobeagle.io.DatabaseDI.SQLiteWrapper;
-import com.google.code.geobeagle.io.GpxImporter.ImportThreadDelegate;
+import com.google.code.geobeagle.io.GpxImporter.GpxFilenameFactory;
+import com.google.code.geobeagle.io.GpxImporter.GpxFiles;
+import com.google.code.geobeagle.io.ImportThreadDelegate.ImportThreadHelper;
 import com.google.code.geobeagle.ui.CacheListDelegate;
 import com.google.code.geobeagle.ui.ErrorDisplayer;
 
@@ -29,23 +28,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.widget.Toast;
 
-import java.io.File;
-import java.io.FilenameFilter;
-
 public class GpxImporterDI {
-
-    public static class GpxFilenameFactory {
-        private final FilenameFilter mFilenameFilter;
-
-        public GpxFilenameFactory(FilenameFilter filenameFilter) {
-            mFilenameFilter = filenameFilter;
-        }
-
-        public String[] getFilenames() {
-            return new File("/sdcard").list(mFilenameFilter);
-        }
-    }
-
     // Can't test this due to final methods in base.
     public static class ImportThread extends Thread {
         static ImportThread create(MessageHandler messageHandler, GpxLoader gpxLoader,
@@ -55,12 +38,14 @@ public class GpxImporterDI {
             return new ImportThread(messageHandler, gpxLoader, errorDisplayer, gpxFilenameFactory);
         }
 
-        private final GpxImporter.ImportThreadDelegate mImportThreadDelegate;
+        private final ImportThreadDelegate mImportThreadDelegate;
 
         public ImportThread(MessageHandler messageHandler, GpxLoader gpxLoader,
                 ErrorDisplayer errorDisplayer, GpxFilenameFactory gpxFilenameFactory) {
-            mImportThreadDelegate = new ImportThreadDelegate(gpxLoader, messageHandler,
-                    errorDisplayer, gpxFilenameFactory);
+            final GpxFiles gpxFiles = new GpxFiles(GpxImporter.filenameFilter);
+            final ImportThreadHelper importThreadHelper = new ImportThreadHelper(gpxLoader,
+                    messageHandler, errorDisplayer);
+            mImportThreadDelegate = new ImportThreadDelegate(gpxFiles, importThreadHelper);
         }
 
         @Override
