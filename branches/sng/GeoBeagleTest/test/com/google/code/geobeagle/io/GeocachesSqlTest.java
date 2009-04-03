@@ -15,9 +15,7 @@
 package com.google.code.geobeagle.io;
 
 import static org.easymock.EasyMock.expect;
-import static org.easymock.classextension.EasyMock.createMock;
-import static org.easymock.classextension.EasyMock.replay;
-import static org.easymock.classextension.EasyMock.verify;
+import static org.junit.Assert.assertEquals;
 
 import com.google.code.geobeagle.LocationControl;
 import com.google.code.geobeagle.data.Geocache;
@@ -25,104 +23,102 @@ import com.google.code.geobeagle.data.Geocaches;
 import com.google.code.geobeagle.io.CacheReader.CacheReaderCursor;
 import com.google.code.geobeagle.io.DatabaseDI.SQLiteWrapper;
 
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.powermock.api.easymock.PowerMock;
+import org.powermock.modules.junit4.PowerMockRunner;
+
 import java.util.ArrayList;
 
-import junit.framework.TestCase;
-
-public class GeocachesSqlTest extends TestCase {
+@RunWith(PowerMockRunner.class)
+public class GeocachesSqlTest {
 
     private Database mDatabase;
 
-    @Override
+    @Before
     public void setUp() {
-        mDatabase = createMock(Database.class);
+        mDatabase = PowerMock.createMock(Database.class);
     }
 
+    @Test
     public void testGetCount() {
-        SQLiteWrapper sqliteWrapper = createMock(SQLiteWrapper.class);
-        CacheReader cacheReader = createMock(CacheReader.class);
+        SQLiteWrapper sqliteWrapper = PowerMock.createMock(SQLiteWrapper.class);
+        CacheReader cacheReader = PowerMock.createMock(CacheReader.class);
 
         sqliteWrapper.openWritableDatabase(mDatabase);
         expect(cacheReader.getTotalCount()).andReturn(12);
         sqliteWrapper.close();
 
-        replay(mDatabase);
-        replay(sqliteWrapper);
-        replay(cacheReader);
+        PowerMock.replayAll();
         GeocachesSql geocachesSql = new GeocachesSql(cacheReader, null, mDatabase, sqliteWrapper,
                 null);
         assertEquals(12, geocachesSql.getCount());
-        verify(mDatabase);
-        verify(sqliteWrapper);
-        verify(cacheReader);
+        PowerMock.verifyAll();
     }
 
+    @Test
     public void testGetGeocaches() {
-        Geocaches geocaches = createMock(Geocaches.class);
+        Geocaches geocaches = PowerMock.createMock(Geocaches.class);
 
         ArrayList<Geocache> arGeocaches = new ArrayList<Geocache>();
         expect(geocaches.getAll()).andReturn(arGeocaches);
 
-        replay(geocaches);
+        PowerMock.replayAll();
         GeocachesSql geocachesSql = new GeocachesSql(null, geocaches, null, null, null);
         assertEquals(arGeocaches, geocachesSql.getGeocaches());
-        verify(geocaches);
+        PowerMock.verifyAll();
     }
 
+    @Test
     public void testLoad() {
-        SQLiteWrapper sqliteWrapper = createMock(SQLiteWrapper.class);
-        LocationControl locationControl = createMock(LocationControl.class);
-        CacheReader cacheReader = createMock(CacheReader.class);
-        Geocaches geocaches = createMock(Geocaches.class);
-        CacheReaderCursor cursor = createMock(CacheReaderCursor.class);
-        Geocache geocache = createMock(Geocache.class);
+        SQLiteWrapper sqliteWrapper = PowerMock.createMock(SQLiteWrapper.class);
+        LocationControl locationControl = PowerMock.createMock(LocationControl.class);
+        CacheReader cacheReader = PowerMock.createMock(CacheReader.class);
+        Geocaches geocaches = PowerMock.createMock(Geocaches.class);
+        CacheReaderCursor cursor = PowerMock.createMock(CacheReaderCursor.class);
+        Geocache geocache = PowerMock.createMock(Geocache.class);
 
         sqliteWrapper.openWritableDatabase(mDatabase);
         expect(locationControl.getLocation()).andReturn(null);
         expect(cacheReader.open(null)).andReturn(cursor);
         expect(cursor.getCache()).andReturn(geocache);
+        geocaches.clear();
+        geocaches.add(geocache);
         expect(cursor.moveToNext()).andReturn(false);
         cursor.close();
         sqliteWrapper.close();
 
-        replay(mDatabase);
-        replay(locationControl);
-        replay(sqliteWrapper);
-        replay(cacheReader);
-        replay(cursor);
+        PowerMock.replayAll();
         GeocachesSql geocachesSql = new GeocachesSql(cacheReader, geocaches, mDatabase,
                 sqliteWrapper, locationControl);
         geocachesSql.loadNearestCaches();
-        verify(mDatabase);
-        verify(locationControl);
-        verify(sqliteWrapper);
-        verify(cacheReader);
-        verify(cursor);
+        PowerMock.verifyAll();
     }
 
+    @Test
     public void testReadOne() {
-        Geocaches geocaches = createMock(Geocaches.class);
-        CacheReaderCursor cursor = createMock(CacheReaderCursor.class);
-        Geocache geocache = createMock(Geocache.class);
+        Geocaches geocaches = PowerMock.createMock(Geocaches.class);
+        CacheReaderCursor cursor = PowerMock.createMock(CacheReaderCursor.class);
+        Geocache geocache = PowerMock.createMock(Geocache.class);
 
         geocaches.clear();
         expect(cursor.getCache()).andReturn(geocache);
         expect(cursor.moveToNext()).andReturn(false);
         geocaches.add(geocache);
 
-        replay(geocaches);
-        replay(cursor);
+        PowerMock.replayAll();
         GeocachesSql geocachesSql = new GeocachesSql(null, geocaches, null, null, null);
         geocachesSql.read(cursor);
-        verify(geocaches);
-        verify(cursor);
+        PowerMock.verifyAll();
     }
 
+    @Test
     public void testReadTwo() {
-        Geocaches geocaches = createMock(Geocaches.class);
-        CacheReaderCursor cursor = createMock(CacheReaderCursor.class);
-        Geocache geocache1 = createMock(Geocache.class);
-        Geocache geocache2 = createMock(Geocache.class);
+        Geocaches geocaches = PowerMock.createMock(Geocaches.class);
+        CacheReaderCursor cursor = PowerMock.createMock(CacheReaderCursor.class);
+        Geocache geocache1 = PowerMock.createMock(Geocache.class);
+        Geocache geocache2 = PowerMock.createMock(Geocache.class);
 
         geocaches.clear();
         expect(cursor.getCache()).andReturn(geocache1);
@@ -132,12 +128,10 @@ public class GeocachesSqlTest extends TestCase {
         geocaches.add(geocache2);
         expect(cursor.moveToNext()).andReturn(false);
 
-        replay(geocaches);
-        replay(cursor);
+        PowerMock.replayAll();
         GeocachesSql geocachesSql = new GeocachesSql(null, geocaches, null, null, null);
         geocachesSql.read(cursor);
-        verify(geocaches);
-        verify(cursor);
+        PowerMock.verifyAll();
     }
 
 }
