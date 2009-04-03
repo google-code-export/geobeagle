@@ -75,8 +75,8 @@ public class ImportThreadDelegate {
     private ImportThreadHelper mImportThreadHelper;
     private ErrorDisplayer mErrorDisplayer;
 
-    public ImportThreadDelegate(GpxAndZipFiles gpxAndZipFiles, ImportThreadHelper importThreadHelper,
-            ErrorDisplayer errorDisplayer) {
+    public ImportThreadDelegate(GpxAndZipFiles gpxAndZipFiles,
+            ImportThreadHelper importThreadHelper, ErrorDisplayer errorDisplayer) {
         mGpxAndZipFiles = gpxAndZipFiles;
         mImportThreadHelper = importThreadHelper;
         mErrorDisplayer = errorDisplayer;
@@ -85,7 +85,7 @@ public class ImportThreadDelegate {
     public void run() {
         try {
             tryRun();
-        } catch (IOException e) {
+        } catch (Exception e) {
             mErrorDisplayer.displayErrorAndStack(e);
         } finally {
             mImportThreadHelper.cleanup();
@@ -94,6 +94,10 @@ public class ImportThreadDelegate {
 
     protected void tryRun() throws IOException {
         GpxAndZipFilesIter gpxFileIter = mGpxAndZipFiles.iterator();
+        if (gpxFileIter == null) {
+            mErrorDisplayer.displayError(R.string.error_cant_read_sd);
+            return;
+        }
         if (!mImportThreadHelper.start(gpxFileIter.hasNext()))
             return;
 

@@ -9,7 +9,6 @@ import static org.easymock.classextension.EasyMock.verify;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.gpx.GpxAndZipFiles;
 import com.google.code.geobeagle.gpx.IGpxReader;
-import com.google.code.geobeagle.gpx.GpxAndZipFiles.GpxAndZipFilesIter;
 import com.google.code.geobeagle.gpx.GpxAndZipFiles.GpxAndZipFilenameFilter;
 import com.google.code.geobeagle.gpx.gpx.GpxFileOpener;
 import com.google.code.geobeagle.gpx.zip.ZipFileOpener;
@@ -34,7 +33,6 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -118,27 +116,6 @@ public class GpxImporterTest {
         verify(cacheListDelegate);
         verify(importThreadWrapper);
         verify(database);
-    }
-
-    @Test
-    public void GpxFilesIterator() throws Exception {
-        FilenameFilter filenameFilter = PowerMock.createMock(FilenameFilter.class);
-        com.google.code.geobeagle.gpx.GpxAndZipFiles.GpxAndZipFilesIterFactory gpxAndZipFilesIterFactory = PowerMock
-                .createMock(com.google.code.geobeagle.gpx.GpxAndZipFiles.GpxAndZipFilesIterFactory.class);
-        GpxAndZipFilesIter gpxAndZipFilesIter = PowerMock.createMock(GpxAndZipFilesIter.class);
-        File file = PowerMock.createMock(File.class);
-
-        PowerMock.expectNew(File.class, GpxAndZipFiles.GPX_DIR).andReturn(file);
-        String[] fileList = new String[] {
-                "foo.gpx", "bar.gpx"
-        };
-        expect(file.list(filenameFilter)).andReturn(fileList);
-        PowerMock.expectNew(GpxAndZipFilesIter.class, fileList, gpxAndZipFilesIterFactory)
-                .andReturn(gpxAndZipFilesIter);
-
-        PowerMock.replayAll();
-        new GpxAndZipFiles(filenameFilter, gpxAndZipFilesIterFactory).iterator();
-        PowerMock.verifyAll();
     }
 
     @Test
