@@ -77,6 +77,8 @@ public class GpxAndZipFiles {
 
     public GpxAndZipFilesIter iterator() {
         String[] fileList = new File(GPX_DIR).list(mFilenameFilter);
+        if (fileList == null)
+            return null;
         return new GpxAndZipFilesIter(fileList, mGpxFileIterFactory);
     }
 }

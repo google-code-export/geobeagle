@@ -216,6 +216,24 @@ public class ImportThreadDelegateTest {
     }
 
     @Test
+    public void testRunIteratorFail() throws FileNotFoundException, XmlPullParserException,
+            IOException {
+        GpxAndZipFiles gpxAndZipFiles = PowerMock.createMock(GpxAndZipFiles.class);
+        ImportThreadHelper importThreadHelper = PowerMock.createMock(ImportThreadHelper.class);
+        ErrorDisplayer errorDisplayer = PowerMock.createMock(ErrorDisplayer.class);
+
+        expect(gpxAndZipFiles.iterator()).andReturn(null);
+        errorDisplayer.displayError(R.string.error_cant_read_sd);
+        importThreadHelper.cleanup();
+
+        PowerMock.replayAll();
+        ImportThreadDelegate importThreadDelegate = new ImportThreadDelegate(gpxAndZipFiles,
+                importThreadHelper, errorDisplayer);
+        importThreadDelegate.run();
+        PowerMock.verifyAll();
+    }
+
+    @Test
     public void testRunAborted() throws FileNotFoundException, XmlPullParserException, IOException {
         GpxAndZipFiles gpxAndZipFiles = PowerMock.createMock(GpxAndZipFiles.class);
         GpxAndZipFilesIter gpxAndZipFilesIter = PowerMock.createMock(GpxAndZipFilesIter.class);

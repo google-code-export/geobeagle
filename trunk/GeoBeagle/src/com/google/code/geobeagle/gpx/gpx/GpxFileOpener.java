@@ -25,9 +25,9 @@ public class GpxFileOpener {
         }
 
         public IGpxReader next() {
-            final IGpxReader iGpxFile = new GpxReader(mFilename);
+            final IGpxReader gpxReader = new GpxReader(mFilename);
             mFilename = null;
-            return iGpxFile;
+            return gpxReader;
         }
     }
 

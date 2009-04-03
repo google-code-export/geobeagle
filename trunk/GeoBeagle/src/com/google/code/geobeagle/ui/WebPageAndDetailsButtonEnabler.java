@@ -35,7 +35,8 @@ public class WebPageAndDetailsButtonEnabler {
     public void check() {
         Geocache geocache = mGeoBeagle.getGeocache();
         mDetailsButton.setEnabled(geocache.getSourceType() == Source.GPX);
-        mWebPageButton.setEnabled(geocache.getContentProvider() == Provider.GROUNDSPEAK
-                || geocache.getContentProvider() == Provider.ATLAS_QUEST);
+        final Provider contentProvider = geocache.getContentProvider();
+        mWebPageButton.setEnabled(contentProvider == Provider.GROUNDSPEAK
+                || contentProvider == Provider.ATLAS_QUEST);
     }
 }
