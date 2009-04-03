@@ -25,15 +25,48 @@ import com.google.code.geobeagle.data.Geocaches;
 import com.google.code.geobeagle.io.CacheReader.CacheReaderCursor;
 import com.google.code.geobeagle.io.DatabaseDI.SQLiteWrapper;
 
+import java.util.ArrayList;
+
 import junit.framework.TestCase;
 
-public class LocationBookmarksSqlTest extends TestCase {
+public class GeocachesSqlTest extends TestCase {
 
     private Database mDatabase;
 
     @Override
     public void setUp() {
         mDatabase = createMock(Database.class);
+    }
+
+    public void testGetCount() {
+        SQLiteWrapper sqliteWrapper = createMock(SQLiteWrapper.class);
+        CacheReader cacheReader = createMock(CacheReader.class);
+
+        sqliteWrapper.openWritableDatabase(mDatabase);
+        expect(cacheReader.getTotalCount()).andReturn(12);
+        sqliteWrapper.close();
+
+        replay(mDatabase);
+        replay(sqliteWrapper);
+        replay(cacheReader);
+        GeocachesSql geocachesSql = new GeocachesSql(cacheReader, null, mDatabase, sqliteWrapper,
+                null);
+        assertEquals(12, geocachesSql.getCount());
+        verify(mDatabase);
+        verify(sqliteWrapper);
+        verify(cacheReader);
+    }
+
+    public void testGetGeocaches() {
+        Geocaches geocaches = createMock(Geocaches.class);
+
+        ArrayList<Geocache> arGeocaches = new ArrayList<Geocache>();
+        expect(geocaches.getAll()).andReturn(arGeocaches);
+
+        replay(geocaches);
+        GeocachesSql geocachesSql = new GeocachesSql(null, geocaches, null, null, null);
+        assertEquals(arGeocaches, geocachesSql.getGeocaches());
+        verify(geocaches);
     }
 
     public void testLoad() {
