@@ -1,19 +1,4 @@
 #summary Release Notes for GeoBeagle versions
 
-= v0.31 =
-
-This version involves a db upgrade that will wipe your data.
-
-Many fixes:
-  * fix crash and database lockout if import is interrupted
-  * fix crash when going to cache list page if all the location providers are off
-  * removed many gratuitous writes to the database
-  * changed db key to be the cache id
-  * check for duplicate writes, and delete previous record (the combination of these bugs meant that we were writing many many copies of the same data, gradually bloating the database)
-  * only save the edit field on pause
-
-Remaining critical issues:
-  * Crash bug when reorienting phone during update (see http://bend-ing.blogspot.com/2008/11/properly-handle-progress-dialog-in.html)
-  * Back button loses changes to edit control.  Edit control will need to be rewritten as a separate activity to fix this.
-  * No cache hints are imported from the gpx.
-  * Need to add "delete" button, since old entries are no longer aged out.
+= v0.45 =
+Supports uploading from gpx files.  Sync directory changed to /sdcard/download, to match browser download dir.
