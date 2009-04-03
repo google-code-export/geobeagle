@@ -94,7 +94,7 @@ public class Geocache implements Parcelable {
     }
 
     public Provider getContentProvider() {
-        CharSequence prefix = mId.subSequence(0, 2);
+        String prefix = mId.subSequence(0, 2).toString();
         if (prefix.equals("GC"))
             return Provider.GROUNDSPEAK;
         if (prefix.equals("LB"))
@@ -155,8 +155,8 @@ public class Geocache implements Parcelable {
     }
 
     public void writeToPrefs(Editor editor) {
-        editor.putString(ID, (String)mId);
-        editor.putString(NAME, (String)mName);
+        editor.putString(ID, mId.toString());
+        editor.putString(NAME, mName.toString());
         editor.putFloat(LATITUDE, (float)mLatitude);
         editor.putFloat(LONGITUDE, (float)mLongitude);
         editor.putInt(SOURCE_TYPE, mSourceType.mIx);
