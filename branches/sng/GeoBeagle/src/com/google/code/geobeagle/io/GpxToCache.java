@@ -19,7 +19,6 @@ import com.google.code.geobeagle.io.GpxToCacheDI.XmlPullParserWrapper;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
 
@@ -69,8 +68,7 @@ public class GpxToCache {
     }
 
     public void open(String source, Reader reader) throws XmlPullParserException, IOException {
-        Reader bufferedReader = new BufferedReader(reader);
-        mXmlPullParserWrapper.open(source, bufferedReader);
+        mXmlPullParserWrapper.open(source, reader);
         mEventHelper.reset();
         mAbort = false;
     }

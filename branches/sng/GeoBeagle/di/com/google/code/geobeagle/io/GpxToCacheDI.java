@@ -58,12 +58,6 @@ public class GpxToCacheDI {
 
         public void open(String path, Reader reader) throws XmlPullParserException {
             final XmlPullParser newPullParser = XmlPullParserFactory.newInstance().newPullParser();
-            // ZipEntry zipEntry = null;
-            // ZipFile zipFile = null;
-            // InputStream inputStream = zipFile.getInputStream(zipEntry);
-            // final Reader reader1 = new BufferedReader(new
-            // InputStreamReader(inputStream));
-            // final Reader reader = new BufferedReader(new FileReader(path));
             newPullParser.setInput(reader);
             mSource = path;
             mXmlPullParser = newPullParser;

@@ -5,20 +5,21 @@ import static org.easymock.EasyMock.expect;
 import static org.easymock.classextension.EasyMock.createMock;
 import static org.easymock.classextension.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.verify;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 import com.google.code.geobeagle.R;
+import com.google.code.geobeagle.gpx.GpxAndZipFiles;
+import com.google.code.geobeagle.gpx.IGpxReader;
+import com.google.code.geobeagle.gpx.GpxAndZipFiles.GpxAndZipFilesIter;
+import com.google.code.geobeagle.gpx.GpxAndZipFiles.GpxAndZipFilenameFilter;
+import com.google.code.geobeagle.gpx.gpx.GpxFileOpener;
+import com.google.code.geobeagle.gpx.zip.ZipFileOpener;
+import com.google.code.geobeagle.gpx.zip.ZipFileOpener.ZipFileIter;
 import com.google.code.geobeagle.io.DatabaseDI.SQLiteWrapper;
-import com.google.code.geobeagle.io.GpxImporter.GpxFile;
-import com.google.code.geobeagle.io.GpxImporter.GpxFiles;
 import com.google.code.geobeagle.io.GpxImporterDI.ImportThreadWrapper;
 import com.google.code.geobeagle.io.GpxImporterDI.MessageHandler;
 import com.google.code.geobeagle.io.GpxImporterDI.ToastFactory;
 import com.google.code.geobeagle.ui.CacheListDelegate;
 
-import org.easymock.EasyMock;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.api.easymock.PowerMock;
@@ -29,15 +30,19 @@ import org.xmlpull.v1.XmlPullParserException;
 import android.app.ListActivity;
 import android.widget.Toast;
 
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest( {
-        GpxImporter.GpxFilenameFactory.class, File.class, GpxFiles.class, GpxFile.class
+        GpxAndZipFilenameFilter.class, File.class, GpxAndZipFiles.class, IGpxReader.class,
+        GpxFileOpener.class, ZipFileIter.class, ZipFileOpener.class
 })
 public class GpxImporterTest {
 
@@ -93,32 +98,6 @@ public class GpxImporterTest {
     }
 
     @Test
-    public void testFilenameFilter() {
-        assertFalse(GpxImporter.filenameFilter.accept(null, ".appledetritus010.gpx"));
-        assertFalse(GpxImporter.filenameFilter.accept(null, "foo.bar"));
-        assertTrue(GpxImporter.filenameFilter.accept(null, "01243.gpx"));
-        // assertTrue(GpxImporter.filenameFilter.accept(null, "567.zip"));
-    }
-
-    @Test
-    public void testGpxFilenameFactory() throws Exception {
-        FilenameFilter filenameFilter = PowerMock.createMock(FilenameFilter.class);
-        File file = PowerMock.createMock(File.class);
-
-        String files[] = new String[] {
-                "foo.gpx", "bar.gpx"
-        };
-        PowerMock.expectNew(File.class, "/sdcard").andReturn(file);
-        EasyMock.expect(file.list(filenameFilter)).andReturn(files);
-
-        PowerMock.replayAll();
-        GpxImporter.GpxFilenameFactory gpxFilenameFactory = new GpxImporter.GpxFilenameFactory(
-                filenameFilter);
-        gpxFilenameFactory.getFilenames();
-        PowerMock.verifyAll();
-    }
-
-    @Test
     public void testImportGpxs() throws FileNotFoundException, XmlPullParserException, IOException {
         CacheListDelegate cacheListDelegate = createMock(CacheListDelegate.class);
         Database database = createMock(Database.class);
@@ -141,47 +120,40 @@ public class GpxImporterTest {
         verify(database);
     }
 
+    @Test
+    public void GpxFilesIterator() throws Exception {
+        FilenameFilter filenameFilter = PowerMock.createMock(FilenameFilter.class);
+        com.google.code.geobeagle.gpx.GpxAndZipFiles.GpxAndZipFilesIterFactory gpxAndZipFilesIterFactory = PowerMock
+                .createMock(com.google.code.geobeagle.gpx.GpxAndZipFiles.GpxAndZipFilesIterFactory.class);
+        GpxAndZipFilesIter gpxAndZipFilesIter = PowerMock.createMock(GpxAndZipFilesIter.class);
+        File file = PowerMock.createMock(File.class);
 
+        PowerMock.expectNew(File.class, GpxAndZipFiles.GPX_DIR).andReturn(file);
+        String[] fileList = new String[] {
+                "foo.gpx", "bar.gpx"
+        };
+        expect(file.list(filenameFilter)).andReturn(fileList);
+        PowerMock.expectNew(GpxAndZipFilesIter.class, fileList, gpxAndZipFilesIterFactory)
+                .andReturn(gpxAndZipFilesIter);
+
+        PowerMock.replayAll();
+        new GpxAndZipFiles(filenameFilter, gpxAndZipFilesIterFactory).iterator();
+        PowerMock.verifyAll();
+    }
 
     @Test
-    public void testReaderFactory() throws Exception {
-        File file = PowerMock.createMock(File.class);
-        FilenameFilter filenameFilter = PowerMock.createMock(FilenameFilter.class);
-        FileReader fileReader = PowerMock.createMock(FileReader.class);
+    public void testZippedGpxFileIterIterator() throws Exception {
+        FileInputStream fileInputStream = PowerMock.createMock(FileInputStream.class);
+        BufferedInputStream bufferedInputStream = PowerMock.createMock(BufferedInputStream.class);
+        ZipInputStream zipInputStream = PowerMock.createMock(ZipInputStream.class);
+        ZipEntry zipEntry = PowerMock.createMock(ZipEntry.class);
 
-        PowerMock.expectNew(File.class, "/sdcard").andReturn(file);
-        PowerMock.expectNew(FileReader.class, "/sdcard/foo.gpx").andReturn(fileReader);
-        expect(file.list(filenameFilter)).andReturn(new String[] {
-            "foo.gpx"
-        });
+        PowerMock.expectNew(FileInputStream.class, "foo.zip").andReturn(fileInputStream);
+        PowerMock.expectNew(BufferedInputStream.class, fileInputStream).andReturn(
+                bufferedInputStream);
+        PowerMock.expectNew(ZipInputStream.class, bufferedInputStream).andReturn(zipInputStream);
+        expect(zipInputStream.getNextEntry()).andReturn(zipEntry);
 
-        PowerMock.replayAll();
-        GpxFiles gpxFiles = new GpxFiles(filenameFilter);
-        int nFiles = 0;
-        for (GpxFile gpxFile : gpxFiles) {
-            nFiles++;
-            assertEquals("foo.gpx", gpxFile.getFilename());
-            assertEquals(fileReader, gpxFile.open());
-        }
-        assertEquals(1, nFiles);
-        PowerMock.verifyAll();
     }
 
-    @Test(expected = UnsupportedOperationException.class)
-    public void testReaderFactoryRemove() throws Exception {
-        File file = PowerMock.createMock(File.class);
-        FilenameFilter filenameFilter = PowerMock.createMock(FilenameFilter.class);
-        FileReader fileReader = PowerMock.createMock(FileReader.class);
-
-        PowerMock.expectNew(File.class, "/sdcard").andReturn(file);
-        PowerMock.expectNew(FileReader.class, "/sdcard/foo.gpx").andReturn(fileReader);
-        expect(file.list(filenameFilter)).andReturn(new String[] {
-            "foo.gpx"
-        });
-
-        PowerMock.replayAll();
-        GpxFiles gpxFiles = new GpxFiles(filenameFilter);
-        gpxFiles.iterator().remove();
-        PowerMock.verifyAll();
-    }
 }

@@ -31,14 +31,14 @@
 	<string name="map_intent">geo:0,0?q=%1$.5f,%2$.5f (%3$s)</string>
 	<string name="get_coords_toast">&quot;To get the coords from the cache page, click: 'online maps...' / 'Google Maps'.&quot;</string>
 	<string name="error_cant_get_location">"Location cannot be determined.  Please ensure that your GPS is enabled and try again."</string>
-	<string name="error_opening_file">Unable to open file '%1$s'.  Cache details are only available for caches imported from GPX files.  Please ensure that the cache import file exists and that the sdcard is readable from your phone.</string>
+	<string name="error_opening_file">Unable to open file '%1$s'.</string>
 	<string name="error_parsing_file">Error parsing file '%1$s'.</string>
 	<string name="error_reading_file">Error reading file '%1$s'.</string>
 	<string name="error_writing_cache">Error writing cache: '%1$s'.</string>
-	<string name="error_no_gpx_files">No gpx files found in /sdcard folder.</string>
+	<string name="error_no_gpx_files">No gpx files found in /sdcard/download folder.</string>
 	<string name="my_current_location">My Current Location</string>
 	<string name="import_canceled">Import aborted!</string>
-	<string name="menu_import_gpx">Sync GPX files from /sdcard</string>
+	<string name="menu_import_gpx">Sync GPX files from /sdcard/download</string>
 	<string name="menu_edit_geocache">Edit Geocache</string>
 	<string name="search_for">Search for</string>
 	<string name="cache_list_title">GeoBeagle Nearest Caches</string>

@@ -32,7 +32,6 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.text.ParseException;
@@ -159,10 +158,8 @@ public class GpxToCacheTest {
                 .createMock(XmlPullParserWrapper.class);
         EventHelper eventHelper = PowerMock.createMock(EventHelper.class);
         Reader reader = PowerMock.createMock(Reader.class);
-        BufferedReader bufferedReader = PowerMock.createMock(BufferedReader.class);
 
-        PowerMock.expectNew(BufferedReader.class, reader).andReturn(bufferedReader);
-        xmlPullParserWrapper.open("/my/path", bufferedReader);
+        xmlPullParserWrapper.open("/my/path", reader);
         eventHelper.reset();
 
         PowerMock.replayAll();

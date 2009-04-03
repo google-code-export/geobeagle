@@ -15,13 +15,14 @@
 package com.google.code.geobeagle.io;
 
 import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.io.GpxImporter.GpxFile;
-import com.google.code.geobeagle.io.GpxImporter.GpxFiles;
+import com.google.code.geobeagle.gpx.GpxAndZipFiles;
+import com.google.code.geobeagle.gpx.IGpxReader;
+import com.google.code.geobeagle.gpx.GpxAndZipFiles.GpxAndZipFilesIter;
 import com.google.code.geobeagle.io.GpxImporterDI.MessageHandler;
 import com.google.code.geobeagle.ui.ErrorDisplayer;
 
 import java.io.FileNotFoundException;
-import java.util.Iterator;
+import java.io.IOException;
 
 public class ImportThreadDelegate {
     public static class ImportThreadHelper {
@@ -44,10 +45,10 @@ public class ImportThreadDelegate {
             mGpxLoader.end();
         }
 
-        public boolean processFile(GpxFile gpxFile) {
-            String filename = gpxFile.getFilename();
+        public boolean processFile(IGpxReader iGpxFile) {
+            String filename = iGpxFile.getFilename();
             try {
-                mGpxLoader.open(filename, gpxFile.open());
+                mGpxLoader.open(filename, iGpxFile.open());
                 if (!mGpxLoader.load())
                     return false;
                 return true;
@@ -70,27 +71,36 @@ public class ImportThreadDelegate {
         }
     }
 
-    private final GpxFiles mGpxFiles;
+    private final GpxAndZipFiles mGpxAndZipFiles;
     private ImportThreadHelper mImportThreadHelper;
+    private ErrorDisplayer mErrorDisplayer;
 
-    public ImportThreadDelegate(GpxFiles gpxFiles, ImportThreadHelper importThreadHelper) {
-        mGpxFiles = gpxFiles;
+    public ImportThreadDelegate(GpxAndZipFiles gpxAndZipFiles, ImportThreadHelper importThreadHelper,
+            ErrorDisplayer errorDisplayer) {
+        mGpxAndZipFiles = gpxAndZipFiles;
         mImportThreadHelper = importThreadHelper;
+        mErrorDisplayer = errorDisplayer;
     }
 
     public void run() {
         try {
-            Iterator<GpxFile> gpxFileIter = mGpxFiles.iterator();
-            if (!mImportThreadHelper.start(gpxFileIter.hasNext()))
-                return;
-
-            while (gpxFileIter.hasNext()) {
-                if (!mImportThreadHelper.processFile(gpxFileIter.next()))
-                    return;
-            }
-            mImportThreadHelper.end();
+            tryRun();
+        } catch (IOException e) {
+            mErrorDisplayer.displayErrorAndStack(e);
         } finally {
             mImportThreadHelper.cleanup();
         }
+    }
+
+    protected void tryRun() throws IOException {
+        GpxAndZipFilesIter gpxFileIter = mGpxAndZipFiles.iterator();
+        if (!mImportThreadHelper.start(gpxFileIter.hasNext()))
+            return;
+
+        while (gpxFileIter.hasNext()) {
+            if (!mImportThreadHelper.processFile(gpxFileIter.next()))
+                return;
+        }
+        mImportThreadHelper.end();
     }
 }

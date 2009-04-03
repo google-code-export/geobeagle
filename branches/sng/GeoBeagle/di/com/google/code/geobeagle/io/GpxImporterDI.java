@@ -14,9 +14,10 @@
 
 package com.google.code.geobeagle.io;
 
+import com.google.code.geobeagle.gpx.GpxAndZipFiles;
+import com.google.code.geobeagle.gpx.GpxAndZipFiles.GpxAndZipFilesIterFactory;
+import com.google.code.geobeagle.gpx.GpxAndZipFiles.GpxAndZipFilenameFilter;
 import com.google.code.geobeagle.io.DatabaseDI.SQLiteWrapper;
-import com.google.code.geobeagle.io.GpxImporter.GpxFilenameFactory;
-import com.google.code.geobeagle.io.GpxImporter.GpxFiles;
 import com.google.code.geobeagle.io.ImportThreadDelegate.ImportThreadHelper;
 import com.google.code.geobeagle.ui.CacheListDelegate;
 import com.google.code.geobeagle.ui.ErrorDisplayer;
@@ -28,24 +29,29 @@ import android.os.Handler;
 import android.os.Message;
 import android.widget.Toast;
 
+import java.io.FilenameFilter;
+
 public class GpxImporterDI {
     // Can't test this due to final methods in base.
     public static class ImportThread extends Thread {
         static ImportThread create(MessageHandler messageHandler, GpxLoader gpxLoader,
                 ErrorDisplayer errorDisplayer) {
-            final GpxFilenameFactory gpxFilenameFactory = new GpxFilenameFactory(
-                    GpxImporter.filenameFilter);
-            return new ImportThread(messageHandler, gpxLoader, errorDisplayer, gpxFilenameFactory);
+            final FilenameFilter filenameFilter = new GpxAndZipFilenameFilter();
+            final GpxAndZipFilesIterFactory gpxAndZipFilesIterFactory = new GpxAndZipFilesIterFactory();
+            final GpxAndZipFiles gpxAndZipFiles = new GpxAndZipFiles(filenameFilter,
+                    gpxAndZipFilesIterFactory);
+            final ImportThreadHelper importThreadHelper = new ImportThreadHelper(gpxLoader,
+                    messageHandler, errorDisplayer);
+            return new ImportThread(gpxAndZipFiles, importThreadHelper, errorDisplayer);
         }
 
         private final ImportThreadDelegate mImportThreadDelegate;
 
-        public ImportThread(MessageHandler messageHandler, GpxLoader gpxLoader,
-                ErrorDisplayer errorDisplayer, GpxFilenameFactory gpxFilenameFactory) {
-            final GpxFiles gpxFiles = new GpxFiles(GpxImporter.filenameFilter);
-            final ImportThreadHelper importThreadHelper = new ImportThreadHelper(gpxLoader,
-                    messageHandler, errorDisplayer);
-            mImportThreadDelegate = new ImportThreadDelegate(gpxFiles, importThreadHelper);
+        public ImportThread(GpxAndZipFiles gpxAndZipFiles, ImportThreadHelper importThreadHelper,
+                ErrorDisplayer errorDisplayer) {
+
+            mImportThreadDelegate = new ImportThreadDelegate(gpxAndZipFiles, importThreadHelper,
+                    errorDisplayer);
         }
 
         @Override
