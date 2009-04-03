@@ -14,6 +14,7 @@
 
 package com.google.code.geobeagle.gpx.gpx;
 
+import com.google.code.geobeagle.gpx.GpxAndZipFiles;
 import com.google.code.geobeagle.gpx.IGpxReader;
 
 import java.io.BufferedReader;
@@ -33,6 +34,6 @@ class GpxReader implements IGpxReader {
     }
 
     public Reader open() throws FileNotFoundException {
-        return new BufferedReader(new FileReader("/sdcard/" + mFilename));
+        return new BufferedReader(new FileReader(GpxAndZipFiles.GPX_DIR + mFilename));
     }
 }
