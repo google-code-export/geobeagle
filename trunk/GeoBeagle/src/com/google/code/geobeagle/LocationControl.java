@@ -34,29 +34,22 @@ public class LocationControl {
                 return location1;
 
             if (location2.getTime() > location1.getTime()) {
-                if (location2.getAccuracy() <= location1.getAccuracy()) {
+                if (location2.getAccuracy() <= location1.getAccuracy())
                     return location2;
-                } else {
-                    if (location1.distanceTo(location2) >= location1.getAccuracy()
-                            + location2.getAccuracy()) {
-                        return location2;
-                    }
+                else if (location1.distanceTo(location2) >= location1.getAccuracy()
+                        + location2.getAccuracy()) {
+                    return location2;
                 }
             }
             return location1;
         }
     }
 
-    public static LocationControl create(LocationManager locationManager) {
-        final LocationChooser locationChooser = new LocationChooser();
-        return new LocationControl(locationManager, locationChooser);
-    }
-
     private final LocationChooser mLocationChooser;
 
     private final LocationManager mLocationManager;
 
-    public LocationControl(LocationManager locationManager, LocationChooser locationChooser) {
+    LocationControl(LocationManager locationManager, LocationChooser locationChooser) {
         mLocationManager = locationManager;
         mLocationChooser = locationChooser;
     }

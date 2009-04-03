@@ -26,8 +26,7 @@ public class WebPageAndDetailsButtonEnabler {
     private final View mDetailsButton;
     private final GeoBeagle mGeoBeagle;
 
-    public WebPageAndDetailsButtonEnabler(GeoBeagle geoBeagle, View cachePageButton,
-            View detailsButton) {
+    WebPageAndDetailsButtonEnabler(GeoBeagle geoBeagle, View cachePageButton, View detailsButton) {
         mGeoBeagle = geoBeagle;
         mWebPageButton = cachePageButton;
         mDetailsButton = detailsButton;

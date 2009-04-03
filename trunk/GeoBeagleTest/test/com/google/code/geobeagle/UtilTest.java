@@ -128,6 +128,10 @@ public class UtilTest extends TestCase {
                 .splitCoordsAndDescription("Wildwood Park, Saratoga, CA(The Nut Case #89882)@37.258356797547,-122.0354267005 ");
         assertEquals("37.258356797547,-122.0354267005", coordsAndDescription[0]);
         assertEquals("Wildwood Park, Saratoga, CA(The Nut Case #89882)", coordsAndDescription[1]);
+
+        coordsAndDescription = Util.splitCoordsAndDescription("37.258356797547,-122.0354267005");
+        assertEquals("37.258356797547,-122.0354267005", coordsAndDescription[0]);
+        assertEquals("", coordsAndDescription[1]);
     }
 
     public void testSplitLatLon() {

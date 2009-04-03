@@ -14,8 +14,8 @@
 
 package com.google.code.geobeagle;
 
-import com.google.code.geobeagle.di.CacheListDelegateDI;
 import com.google.code.geobeagle.ui.CacheListDelegate;
+import com.google.code.geobeagle.ui.CacheListDelegateDI;
 
 import android.app.ListActivity;
 import android.os.Bundle;

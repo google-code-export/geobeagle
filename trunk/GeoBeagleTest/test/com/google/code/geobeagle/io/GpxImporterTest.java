@@ -2,70 +2,51 @@
 package com.google.code.geobeagle.io;
 
 import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.expectLastCall;
 import static org.easymock.classextension.EasyMock.createMock;
 import static org.easymock.classextension.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.verify;
 
 import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.io.GpxImporter.ImportThreadDelegate;
-import com.google.code.geobeagle.io.di.DatabaseDI.SQLiteWrapper;
-import com.google.code.geobeagle.io.di.GpxImporterDI.GpxFilenameFactory;
-import com.google.code.geobeagle.io.di.GpxImporterDI.ImportThreadWrapper;
-import com.google.code.geobeagle.io.di.GpxImporterDI.MessageHandler;
-import com.google.code.geobeagle.io.di.GpxImporterDI.ToastFactory;
+import com.google.code.geobeagle.gpx.GpxAndZipFiles;
+import com.google.code.geobeagle.gpx.IGpxReader;
+import com.google.code.geobeagle.gpx.GpxAndZipFiles.GpxAndZipFilesIter;
+import com.google.code.geobeagle.gpx.GpxAndZipFiles.GpxAndZipFilenameFilter;
+import com.google.code.geobeagle.gpx.gpx.GpxFileOpener;
+import com.google.code.geobeagle.gpx.zip.ZipFileOpener;
+import com.google.code.geobeagle.gpx.zip.ZipFileOpener.ZipFileIter;
+import com.google.code.geobeagle.io.DatabaseDI.SQLiteWrapper;
+import com.google.code.geobeagle.io.GpxImporterDI.ImportThreadWrapper;
+import com.google.code.geobeagle.io.GpxImporterDI.MessageHandler;
+import com.google.code.geobeagle.io.GpxImporterDI.ToastFactory;
 import com.google.code.geobeagle.ui.CacheListDelegate;
-import com.google.code.geobeagle.ui.ErrorDisplayer;
 
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.powermock.api.easymock.PowerMock;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 import org.xmlpull.v1.XmlPullParserException;
 
 import android.app.ListActivity;
 import android.widget.Toast;
 
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FilenameFilter;
 import java.io.IOException;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
-import junit.framework.TestCase;
+@RunWith(PowerMockRunner.class)
+@PrepareForTest( {
+        GpxAndZipFilenameFilter.class, File.class, GpxAndZipFiles.class, IGpxReader.class,
+        GpxFileOpener.class, ZipFileIter.class, ZipFileOpener.class
+})
+public class GpxImporterTest {
 
-public class GpxImporterTest extends TestCase {
-
-    private <T> void importThreadDelegateRunAndThrow(Class<T> exceptionClass, int errorMessage)
-            throws FileNotFoundException, XmlPullParserException, IOException {
-        GpxLoader gpxLoader = createMock(GpxLoader.class);
-        Throwable e = (Throwable)createMock(exceptionClass);
-        ErrorDisplayer errorDisplayer = createMock(ErrorDisplayer.class);
-        GpxFilenameFactory gpxFilenameFactory = createMock(GpxFilenameFactory.class);
-        MessageHandler messageHandler = createMock(MessageHandler.class);
-
-        expect(gpxFilenameFactory.getFilenames()).andReturn(new String[] {
-            "foo.gpx"
-        });
-        gpxLoader.start();
-        gpxLoader.open("/sdcard/foo.gpx");
-        expectLastCall().andThrow(e);
-        expect(e.fillInStackTrace()).andReturn(e);
-        errorDisplayer.displayError(errorMessage, "/sdcard/foo.gpx");
-        messageHandler.loadComplete();
-
-        replay(errorDisplayer);
-        replay(e);
-        replay(gpxLoader);
-        replay(gpxFilenameFactory);
-        ImportThreadDelegate importThreadDelegate = new ImportThreadDelegate(gpxLoader,
-                messageHandler, errorDisplayer, gpxFilenameFactory);
-        importThreadDelegate.run();
-        verify(e);
-        verify(gpxLoader);
-        verify(errorDisplayer);
-        verify(gpxFilenameFactory);
-    }
-
-    public void testFilenameFilter() {
-        assertFalse(GpxImporter.filenameFilter.accept(null, ".appledetritus010.gpx"));
-        assertFalse(GpxImporter.filenameFilter.accept(null, "foo.bar"));
-        assertTrue(GpxImporter.filenameFilter.accept(null, "01243.gpx"));
-    }
-
+    @Test
     public void testAbort() throws InterruptedException {
         GpxLoader gpxLoader = createMock(GpxLoader.class);
         ImportThreadWrapper importThreadWrapper = createMock(ImportThreadWrapper.class);
@@ -78,14 +59,14 @@ public class GpxImporterTest extends TestCase {
         replay(messageHandler);
         replay(gpxLoader);
         replay(importThreadWrapper);
-        GpxImporter gpxImporter = new GpxImporter(gpxLoader, null, null, null, importThreadWrapper,
-                messageHandler, null, null);
-        gpxImporter.abort();
+        new GpxImporter(gpxLoader, null, null, null, importThreadWrapper, messageHandler, null,
+                null).abort();
         verify(gpxLoader);
         verify(importThreadWrapper);
         verify(messageHandler);
     }
 
+    @Test
     public void testAbortThreadAlive() throws InterruptedException {
         GpxLoader gpxLoader = createMock(GpxLoader.class);
         ImportThreadWrapper importThreadWrapper = createMock(ImportThreadWrapper.class);
@@ -116,6 +97,7 @@ public class GpxImporterTest extends TestCase {
         verify(toastFactory);
     }
 
+    @Test
     public void testImportGpxs() throws FileNotFoundException, XmlPullParserException, IOException {
         CacheListDelegate cacheListDelegate = createMock(CacheListDelegate.class);
         Database database = createMock(Database.class);
@@ -138,108 +120,40 @@ public class GpxImporterTest extends TestCase {
         verify(database);
     }
 
-    public void testImportThreadDelegateRun() throws FileNotFoundException, XmlPullParserException,
-            IOException {
-        GpxLoader gpxLoader = createMock(GpxLoader.class);
-        GpxFilenameFactory gpxFilenameFactory = createMock(GpxFilenameFactory.class);
-        MessageHandler messageHandler = createMock(MessageHandler.class);
+    @Test
+    public void GpxFilesIterator() throws Exception {
+        FilenameFilter filenameFilter = PowerMock.createMock(FilenameFilter.class);
+        com.google.code.geobeagle.gpx.GpxAndZipFiles.GpxAndZipFilesIterFactory gpxAndZipFilesIterFactory = PowerMock
+                .createMock(com.google.code.geobeagle.gpx.GpxAndZipFiles.GpxAndZipFilesIterFactory.class);
+        GpxAndZipFilesIter gpxAndZipFilesIter = PowerMock.createMock(GpxAndZipFilesIter.class);
+        File file = PowerMock.createMock(File.class);
 
-        expect(gpxFilenameFactory.getFilenames()).andReturn(new String[] {
-            "foo.gpx"
-        });
-        gpxLoader.open("/sdcard/foo.gpx");
-        gpxLoader.start();
-        expect(gpxLoader.load()).andReturn(true);
-        gpxLoader.end();
-        messageHandler.loadComplete();
+        PowerMock.expectNew(File.class, GpxAndZipFiles.GPX_DIR).andReturn(file);
+        String[] fileList = new String[] {
+                "foo.gpx", "bar.gpx"
+        };
+        expect(file.list(filenameFilter)).andReturn(fileList);
+        PowerMock.expectNew(GpxAndZipFilesIter.class, fileList, gpxAndZipFilesIterFactory)
+                .andReturn(gpxAndZipFilesIter);
 
-        replay(gpxLoader);
-        replay(messageHandler);
-        replay(gpxFilenameFactory);
-        ImportThreadDelegate importThreadDelegate = new ImportThreadDelegate(gpxLoader,
-                messageHandler, null, gpxFilenameFactory);
-        importThreadDelegate.run();
-        verify(gpxLoader);
-        verify(messageHandler);
-        verify(gpxFilenameFactory);
+        PowerMock.replayAll();
+        new GpxAndZipFiles(filenameFilter, gpxAndZipFilesIterFactory).iterator();
+        PowerMock.verifyAll();
     }
 
-    public void testImportThreadDelegateRunAborted() throws FileNotFoundException,
-            XmlPullParserException, IOException {
-        GpxLoader gpxLoader = createMock(GpxLoader.class);
-        GpxFilenameFactory gpxFilenameFactory = createMock(GpxFilenameFactory.class);
-        MessageHandler messageHandler = createMock(MessageHandler.class);
+    @Test
+    public void testZippedGpxFileIterIterator() throws Exception {
+        FileInputStream fileInputStream = PowerMock.createMock(FileInputStream.class);
+        BufferedInputStream bufferedInputStream = PowerMock.createMock(BufferedInputStream.class);
+        ZipInputStream zipInputStream = PowerMock.createMock(ZipInputStream.class);
+        ZipEntry zipEntry = PowerMock.createMock(ZipEntry.class);
 
-        expect(gpxFilenameFactory.getFilenames()).andReturn(new String[] {
-            "foo.gpx"
-        });
-        gpxLoader.open("/sdcard/foo.gpx");
-        gpxLoader.start();
-        expect(gpxLoader.load()).andReturn(false);
-        messageHandler.loadComplete();
+        PowerMock.expectNew(FileInputStream.class, "foo.zip").andReturn(fileInputStream);
+        PowerMock.expectNew(BufferedInputStream.class, fileInputStream).andReturn(
+                bufferedInputStream);
+        PowerMock.expectNew(ZipInputStream.class, bufferedInputStream).andReturn(zipInputStream);
+        expect(zipInputStream.getNextEntry()).andReturn(zipEntry);
 
-        replay(gpxLoader);
-        replay(messageHandler);
-        replay(gpxFilenameFactory);
-        ImportThreadDelegate importThreadDelegate = new ImportThreadDelegate(gpxLoader,
-                messageHandler, null, gpxFilenameFactory);
-        importThreadDelegate.run();
-        verify(gpxLoader);
-        verify(messageHandler);
-        verify(gpxFilenameFactory);
     }
 
-    public void testImportThreadDelegateRunAndThrowRandomException() throws FileNotFoundException,
-            XmlPullParserException, IOException {
-        GpxLoader gpxLoader = createMock(GpxLoader.class);
-        Exception e = createMock(RuntimeException.class);
-        ErrorDisplayer errorDisplayer = createMock(ErrorDisplayer.class);
-        GpxFilenameFactory gpxFilenameFactory = createMock(GpxFilenameFactory.class);
-        MessageHandler messageHandler = createMock(MessageHandler.class);
-
-        expect(gpxFilenameFactory.getFilenames()).andReturn(new String[] {
-            "foo.gpx"
-        });
-        gpxLoader.start();
-        gpxLoader.open("/sdcard/foo.gpx");
-        expectLastCall().andThrow(e);
-        expect(e.fillInStackTrace()).andReturn(e);
-        errorDisplayer.displayErrorAndStack(e);
-        messageHandler.loadComplete();
-
-        replay(gpxFilenameFactory);
-        replay(errorDisplayer);
-        replay(e);
-        replay(gpxLoader);
-        ImportThreadDelegate importThreadDelegate = new ImportThreadDelegate(gpxLoader,
-                messageHandler, errorDisplayer, gpxFilenameFactory);
-        importThreadDelegate.run();
-        verify(e);
-        verify(gpxLoader);
-        verify(errorDisplayer);
-        verify(gpxFilenameFactory);
-    }
-
-    public void testImportThreadDelegateRunFileNotFound() throws FileNotFoundException,
-            XmlPullParserException, IOException {
-        importThreadDelegateRunAndThrow(FileNotFoundException.class, R.string.error_opening_file);
-    }
-
-    public void testImportThreadDelegateRunNoFilesToImport() throws FileNotFoundException,
-            XmlPullParserException, IOException {
-        ErrorDisplayer errorDisplayer = createMock(ErrorDisplayer.class);
-        GpxFilenameFactory gpxFilenameFactory = createMock(GpxFilenameFactory.class);
-        MessageHandler messageHandler = createMock(MessageHandler.class);
-
-        expect(gpxFilenameFactory.getFilenames()).andReturn(new String[] {});
-        errorDisplayer.displayError(R.string.error_no_gpx_files);
-
-        replay(errorDisplayer);
-        replay(gpxFilenameFactory);
-        ImportThreadDelegate importThreadDelegate = new ImportThreadDelegate(null, messageHandler,
-                errorDisplayer, gpxFilenameFactory);
-        importThreadDelegate.run();
-        verify(errorDisplayer);
-        verify(gpxFilenameFactory);
-    }
 }

@@ -1,11 +1,24 @@
+/*
+ ** Licensed under the Apache License, Version 2.0 (the "License");
+ ** you may not use this file except in compliance with the License.
+ ** You may obtain a copy of the License at
+ **
+ **     http://www.apache.org/licenses/LICENSE-2.0
+ **
+ ** Unless required by applicable law or agreed to in writing, software
+ ** distributed under the License is distributed on an "AS IS" BASIS,
+ ** WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ ** See the License for the specific language governing permissions and
+ ** limitations under the License.
+ */
 
-package com.google.code.geobeagle.io.di;
+package com.google.code.geobeagle.io;
 
-import com.google.code.geobeagle.io.Database;
-import com.google.code.geobeagle.io.GpxImporter;
-import com.google.code.geobeagle.io.GpxLoader;
-import com.google.code.geobeagle.io.GpxImporter.ImportThreadDelegate;
-import com.google.code.geobeagle.io.di.DatabaseDI.SQLiteWrapper;
+import com.google.code.geobeagle.gpx.GpxAndZipFiles;
+import com.google.code.geobeagle.gpx.GpxAndZipFiles.GpxAndZipFilesIterFactory;
+import com.google.code.geobeagle.gpx.GpxAndZipFiles.GpxAndZipFilenameFilter;
+import com.google.code.geobeagle.io.DatabaseDI.SQLiteWrapper;
+import com.google.code.geobeagle.io.ImportThreadDelegate.ImportThreadHelper;
 import com.google.code.geobeagle.ui.CacheListDelegate;
 import com.google.code.geobeagle.ui.ErrorDisplayer;
 
@@ -16,38 +29,29 @@ import android.os.Handler;
 import android.os.Message;
 import android.widget.Toast;
 
-import java.io.File;
 import java.io.FilenameFilter;
 
 public class GpxImporterDI {
-
-    public static class GpxFilenameFactory {
-        private final FilenameFilter mFilenameFilter;
-
-        public GpxFilenameFactory(FilenameFilter filenameFilter) {
-            mFilenameFilter = filenameFilter;
-        }
-
-        public String[] getFilenames() {
-            return new File("/sdcard").list(mFilenameFilter);
-        }
-    }
-
     // Can't test this due to final methods in base.
     public static class ImportThread extends Thread {
         static ImportThread create(MessageHandler messageHandler, GpxLoader gpxLoader,
                 ErrorDisplayer errorDisplayer) {
-            final GpxFilenameFactory gpxFilenameFactory = new GpxFilenameFactory(
-                    GpxImporter.filenameFilter);
-            return new ImportThread(messageHandler, gpxLoader, errorDisplayer, gpxFilenameFactory);
+            final FilenameFilter filenameFilter = new GpxAndZipFilenameFilter();
+            final GpxAndZipFilesIterFactory gpxAndZipFilesIterFactory = new GpxAndZipFilesIterFactory();
+            final GpxAndZipFiles gpxAndZipFiles = new GpxAndZipFiles(filenameFilter,
+                    gpxAndZipFilesIterFactory);
+            final ImportThreadHelper importThreadHelper = new ImportThreadHelper(gpxLoader,
+                    messageHandler, errorDisplayer);
+            return new ImportThread(gpxAndZipFiles, importThreadHelper, errorDisplayer);
         }
 
-        private final GpxImporter.ImportThreadDelegate mImportThreadDelegate;
+        private final ImportThreadDelegate mImportThreadDelegate;
 
-        public ImportThread(MessageHandler messageHandler, GpxLoader gpxLoader,
-                ErrorDisplayer errorDisplayer, GpxFilenameFactory gpxFilenameFactory) {
-            mImportThreadDelegate = new ImportThreadDelegate(gpxLoader, messageHandler,
-                    errorDisplayer, gpxFilenameFactory);
+        public ImportThread(GpxAndZipFiles gpxAndZipFiles, ImportThreadHelper importThreadHelper,
+                ErrorDisplayer errorDisplayer) {
+
+            mImportThreadDelegate = new ImportThreadDelegate(gpxAndZipFiles, importThreadHelper,
+                    errorDisplayer);
         }
 
         @Override
@@ -195,6 +199,7 @@ public class GpxImporterDI {
                 messageHandler, errorDisplayer);
         final ToastFactory toastFactory = new ToastFactory();
         final ImportThreadWrapper importThreadWrapper = new ImportThreadWrapper(messageHandler);
+
         return new GpxImporter(gpxLoader, database, sqliteWrapper, listActivity,
                 importThreadWrapper, messageHandler, errorDisplayer, toastFactory);
     }

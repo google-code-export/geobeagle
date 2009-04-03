@@ -86,7 +86,7 @@ public class GeocacheVector implements IGeocacheVector {
     private final float mDistance;
     private final DistanceFormatter mDistanceFormatter;
 
-    public GeocacheVector(Geocache geocache, float distance, DistanceFormatter distanceFormatter) {
+    GeocacheVector(Geocache geocache, float distance, DistanceFormatter distanceFormatter) {
         mGeocache = geocache;
         mDistance = distance;
         mDistanceFormatter = distanceFormatter;

@@ -4,7 +4,6 @@ package com.google.code.geobeagle.data;
 import com.google.code.geobeagle.LocationControl;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.data.Geocache.Source;
-import com.google.code.geobeagle.data.di.GeocacheFactory;
 import com.google.code.geobeagle.ui.ErrorDisplayer;
 
 import android.location.Location;

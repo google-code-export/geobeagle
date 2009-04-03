@@ -12,10 +12,26 @@
  ** limitations under the License.
  */
 
-package com.google.code.geobeagle;
+package com.google.code.geobeagle.gpx.zip;
 
-import com.google.code.geobeagle.ui.GeocacheListAdapter;
+import com.google.code.geobeagle.gpx.IGpxReader;
 
-public interface Action {
-    public void act(int position, GeocacheListAdapter geocacheListAdapter);
+import java.io.Reader;
+
+class GpxReader implements IGpxReader {
+    private final String mFilename;
+    private final Reader mReader;
+
+    GpxReader(String filename, Reader reader) {
+        mFilename = filename;
+        mReader = reader;
+    }
+
+    public String getFilename() {
+        return mFilename;
+    }
+
+    public Reader open() {
+        return mReader;
+    }
 }

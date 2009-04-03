@@ -64,7 +64,7 @@ public class LocationControlTest extends TestCase {
         compareLocations(true, 0L, 2f, 1L, 1f, 0);
 
         // second one is newer, but not as accurate, distance > a1 + a2.
-        compareLocations(true, 0L, 5f, 1L, 4f, 10);
+        compareLocations(true, 0L, 1f, 1L, 2f, 4f);
 
         // second one is newer, but not as accurate, distance = a1 + a2.
         compareLocations(true, 0L, 5f, 1L, 5f, 10);

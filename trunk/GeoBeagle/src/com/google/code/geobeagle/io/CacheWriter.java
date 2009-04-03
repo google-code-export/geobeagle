@@ -28,7 +28,7 @@ public class CacheWriter {
             Database.SQL_RESET_DELETE_ME_CACHES, Database.SQL_RESET_DELETE_ME_GPX
     };
 
-    public CacheWriter(ISQLiteDatabase sqlite, DbToGeocacheAdapter dbToGeocacheAdapter) {
+    CacheWriter(ISQLiteDatabase sqlite, DbToGeocacheAdapter dbToGeocacheAdapter) {
         mSqlite = sqlite;
         mDbToGeocacheAdapter = dbToGeocacheAdapter;
     }

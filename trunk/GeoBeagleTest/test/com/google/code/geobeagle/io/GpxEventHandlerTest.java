@@ -19,8 +19,7 @@ import static org.easymock.classextension.EasyMock.createMock;
 import static org.easymock.classextension.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.verify;
 
-import com.google.code.geobeagle.io.di.GpxToCacheDI;
-import com.google.code.geobeagle.io.di.GpxToCacheDI.XmlPullParserWrapper;
+import com.google.code.geobeagle.io.GpxToCacheDI.XmlPullParserWrapper;
 
 import java.io.IOException;
 import java.text.ParseException;

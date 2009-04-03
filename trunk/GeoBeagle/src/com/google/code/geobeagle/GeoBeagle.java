@@ -16,9 +16,9 @@ package com.google.code.geobeagle;
 
 import com.google.code.geobeagle.LocationControl.LocationChooser;
 import com.google.code.geobeagle.data.Geocache;
+import com.google.code.geobeagle.data.GeocacheFactory;
 import com.google.code.geobeagle.data.GeocacheFromPreferencesFactory;
 import com.google.code.geobeagle.data.Geocache.Source;
-import com.google.code.geobeagle.data.di.GeocacheFactory;
 import com.google.code.geobeagle.intents.GeocacheToCachePage;
 import com.google.code.geobeagle.intents.GeocacheToGoogleMap;
 import com.google.code.geobeagle.intents.IntentFactory;
@@ -26,16 +26,18 @@ import com.google.code.geobeagle.intents.IntentStarterLocation;
 import com.google.code.geobeagle.intents.IntentStarterRadar;
 import com.google.code.geobeagle.intents.IntentStarterViewUri;
 import com.google.code.geobeagle.io.Database;
+import com.google.code.geobeagle.io.DatabaseDI;
 import com.google.code.geobeagle.io.LocationSaver;
-import com.google.code.geobeagle.io.di.DatabaseDI;
-import com.google.code.geobeagle.io.di.DatabaseDI.SQLiteWrapper;
+import com.google.code.geobeagle.io.DatabaseDI.SQLiteWrapper;
 import com.google.code.geobeagle.ui.CacheListDelegate;
 import com.google.code.geobeagle.ui.ContentSelector;
+import com.google.code.geobeagle.ui.EditCacheActivity;
 import com.google.code.geobeagle.ui.ErrorDisplayer;
 import com.google.code.geobeagle.ui.GeocacheListOnClickListener;
 import com.google.code.geobeagle.ui.GeocacheViewer;
 import com.google.code.geobeagle.ui.GetCoordsToast;
 import com.google.code.geobeagle.ui.GpsStatusWidget;
+import com.google.code.geobeagle.ui.Misc;
 import com.google.code.geobeagle.ui.MockableTextView;
 import com.google.code.geobeagle.ui.MyLocationProvider;
 import com.google.code.geobeagle.ui.OnCacheButtonClickListenerBuilder;
@@ -43,8 +45,6 @@ import com.google.code.geobeagle.ui.OnContentProviderSelectedListener;
 import com.google.code.geobeagle.ui.WebPageAndDetailsButtonEnabler;
 import com.google.code.geobeagle.ui.GpsStatusWidget.MeterFormatter;
 import com.google.code.geobeagle.ui.GpsStatusWidget.MeterView;
-import com.google.code.geobeagle.ui.di.EditCacheActivity;
-import com.google.code.geobeagle.ui.di.WebPageAndDetailsButtonDI;
 
 import android.app.Activity;
 import android.content.Context;
@@ -158,14 +158,14 @@ public class GeoBeagle extends Activity implements LifecycleManager {
             final Database Database = DatabaseDI.create(this);
             mLocationSaver = new LocationSaver(Database, sqliteWrapper, DatabaseDI
                     .createCacheWriter(sqliteWrapper));
-            mWebPageButtonEnabler = WebPageAndDetailsButtonDI.create(this,
+            mWebPageButtonEnabler = Misc.create(this,
                     findViewById(R.id.cache_page), findViewById(R.id.cache_details));
 
             mLocationViewer = new GpsStatusWidget(mResourceProvider, new MeterView(
                     createTextView(R.id.location_viewer), new MeterFormatter()),
                     createTextView(R.id.provider), createTextView(R.id.lag),
                     createTextView(R.id.accuracy), createTextView(R.id.status),
-                    new GpsStatusWidget.Time(), new Location(""));
+                    new Misc.Time(), new Location(""));
             final LocationManager locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
             mGpsControl = new LocationControl(locationManager, new LocationChooser());
             mLocationListener = new GeoBeagleLocationListener(mGpsControl, mLocationViewer);

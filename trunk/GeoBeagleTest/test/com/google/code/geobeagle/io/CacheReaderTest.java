@@ -9,12 +9,11 @@ import static org.easymock.classextension.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.verify;
 
 import com.google.code.geobeagle.data.Geocache;
+import com.google.code.geobeagle.data.GeocacheFactory;
 import com.google.code.geobeagle.data.Geocache.Source;
-import com.google.code.geobeagle.data.di.GeocacheFactory;
 import com.google.code.geobeagle.io.CacheReader.CacheReaderCursor;
 import com.google.code.geobeagle.io.CacheReader.WhereFactory;
-import com.google.code.geobeagle.io.di.DatabaseDI;
-import com.google.code.geobeagle.io.di.DatabaseDI.SQLiteWrapper;
+import com.google.code.geobeagle.io.DatabaseDI.SQLiteWrapper;
 
 import android.database.Cursor;
 import android.location.Location;

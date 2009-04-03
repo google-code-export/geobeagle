@@ -29,6 +29,7 @@ import org.xmlpull.v1.XmlPullParserException;
 import android.database.sqlite.SQLiteException;
 
 import java.io.IOException;
+import java.io.Reader;
 import java.text.ParseException;
 
 import junit.framework.TestCase;
@@ -179,13 +180,14 @@ public class GpxLoaderTest extends TestCase {
     public void testOpen() throws XmlPullParserException, IOException {
         CachePersisterFacade cachePersisterFacade = createMock(CachePersisterFacade.class);
         GpxToCache gpxToCache = createMock(GpxToCache.class);
+        Reader reader = createMock(Reader.class);
 
-        gpxToCache.open("/sdcard/foo.gpx");
+        gpxToCache.open("/sdcard/foo.gpx", reader);
         cachePersisterFacade.open("/sdcard/foo.gpx");
 
         replay(cachePersisterFacade);
         replay(gpxToCache);
-        new GpxLoader(gpxToCache, cachePersisterFacade, null).open("/sdcard/foo.gpx");
+        new GpxLoader(gpxToCache, cachePersisterFacade, null).open("/sdcard/foo.gpx", reader);
         verify(cachePersisterFacade);
         verify(gpxToCache);
     }

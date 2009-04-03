@@ -15,7 +15,7 @@
 package com.google.code.geobeagle.io;
 
 import com.google.code.geobeagle.data.Geocache;
-import com.google.code.geobeagle.io.di.DatabaseDI.SQLiteWrapper;
+import com.google.code.geobeagle.io.DatabaseDI.SQLiteWrapper;
 
 public class LocationSaver {
     private final CacheWriter mCacheWriter;

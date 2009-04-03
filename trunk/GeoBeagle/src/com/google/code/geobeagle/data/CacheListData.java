@@ -14,7 +14,6 @@
 
 package com.google.code.geobeagle.data;
 
-import com.google.code.geobeagle.data.di.GeocacheVectorFactory;
 
 import android.location.Location;
 
@@ -24,8 +23,7 @@ public class CacheListData {
     private final GeocacheVectorFactory mGeocacheVectorFactory;
     private final GeocacheVectors mGeocacheVectors;
 
-    public CacheListData(GeocacheVectors geocacheVectors,
-            GeocacheVectorFactory geocacheVectorFactory) {
+    public CacheListData(GeocacheVectors geocacheVectors, GeocacheVectorFactory geocacheVectorFactory) {
         mGeocacheVectors = geocacheVectors;
         mGeocacheVectorFactory = geocacheVectorFactory;
     }

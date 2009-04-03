@@ -16,6 +16,7 @@ package com.google.code.geobeagle.ui;
 
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.ResourceProvider;
+import com.google.code.geobeagle.ui.Misc.Time;
 
 import android.location.Location;
 import android.location.LocationProvider;
@@ -53,12 +54,6 @@ public class GpsStatusWidget {
             mTextView.setText(mMeterFormatter.barsToMeterText(mMeterFormatter
                     .accuracyToBarCount(accuracy)));
             mTextView.setTextColor(mMeterFormatter.lagToAlpha(lag), 147, 190, 38);
-        }
-    }
-
-    public static class Time {
-        public long getCurrentTime() {
-            return System.currentTimeMillis();
         }
     }
 
@@ -108,7 +103,7 @@ public class GpsStatusWidget {
         // TODO: use currentTime for alpha channel, but locationTime for text
         // lag.
         mLastUpdateTime = mTime.getCurrentTime();
-        mLocationTime = location.getTime();
+        mLocationTime = Math.min(location.getTime(), mLastUpdateTime);
         mProvider.setText(location.getProvider());
         mAccuracy = location.getAccuracy();
     }

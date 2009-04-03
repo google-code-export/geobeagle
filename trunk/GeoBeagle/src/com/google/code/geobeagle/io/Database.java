@@ -99,7 +99,7 @@ public class Database {
     
     private final SQLiteOpenHelper mSqliteOpenHelper;
 
-    public Database(SQLiteOpenHelper sqliteOpenHelper) {
+    Database(SQLiteOpenHelper sqliteOpenHelper) {
         mSqliteOpenHelper = sqliteOpenHelper;
     }
 
