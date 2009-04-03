@@ -39,7 +39,7 @@
 	<string name="error_cant_read_sd">Error reading folder /sdcard/download, please make sure your sdcard is readable.</string>
 	<string name="my_current_location">My Current Location</string>
 	<string name="import_canceled">Import aborted!</string>
-	<string name="menu_import_gpx">Sync GPX files from /sdcard/download</string>
+	<string name="menu_import_gpx">Sync GPX and ZIP files from /sdcard/download</string>
 	<string name="menu_edit_geocache">Edit Geocache</string>
 	<string name="search_for">Search for</string>
 	<string name="cache_list_title">GeoBeagle Nearest Caches</string>
