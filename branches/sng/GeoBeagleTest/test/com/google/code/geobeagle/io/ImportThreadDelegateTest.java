@@ -269,8 +269,8 @@ public class ImportThreadDelegateTest {
         ImportThreadHelper importThreadHelper = PowerMock.createMock(ImportThreadHelper.class);
 
         expect(gpxAndZipFiles.iterator()).andReturn(gpxAndZipFilesIter);
-        expect(gpxAndZipFilesIter.hasNext()).andReturn(false);
         importThreadHelper.start();
+        expect(gpxAndZipFilesIter.hasNext()).andReturn(false);
         importThreadHelper.end();
         importThreadHelper.cleanup();
 

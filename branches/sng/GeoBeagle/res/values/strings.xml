@@ -42,7 +42,7 @@
 	<string name="menu_import_gpx">Sync GPX and ZIP files from /sdcard/download</string>
 	<string name="menu_edit_geocache">Edit Geocache</string>
 	<string name="search_for">Search for</string>
-	<string name="cache_list_title">GeoBeagle Nearest Caches</string>
+	<string name="cache_list_title">Showing %1$d nearest caches out of %2$d total</string>
 	<array name="nearest_objects">
 	  <item>http://www.atlasquest.com/results.html?gTypeId=2;gSort=5;gStatus=1209;gCoord=%1$.5f,%2$.5f</item>
 	  <item>http://www.geocaching.com/seek/nearest.aspx?lat=%1$.5f&amp;lng=%2$.5f&amp;f=1</item>

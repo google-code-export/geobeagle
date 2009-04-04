@@ -82,8 +82,8 @@ public class GeocachesSqlTest {
         sqliteWrapper.openWritableDatabase(mDatabase);
         expect(locationControl.getLocation()).andReturn(null);
         expect(cacheReader.open(null)).andReturn(cursor);
-        expect(cursor.getCache()).andReturn(geocache);
         geocaches.clear();
+        expect(cursor.getCache()).andReturn(geocache);
         geocaches.add(geocache);
         expect(cursor.moveToNext()).andReturn(false);
         cursor.close();
@@ -102,7 +102,6 @@ public class GeocachesSqlTest {
         CacheReaderCursor cursor = PowerMock.createMock(CacheReaderCursor.class);
         Geocache geocache = PowerMock.createMock(Geocache.class);
 
-        geocaches.clear();
         expect(cursor.getCache()).andReturn(geocache);
         expect(cursor.moveToNext()).andReturn(false);
         geocaches.add(geocache);
@@ -120,7 +119,6 @@ public class GeocachesSqlTest {
         Geocache geocache1 = PowerMock.createMock(Geocache.class);
         Geocache geocache2 = PowerMock.createMock(Geocache.class);
 
-        geocaches.clear();
         expect(cursor.getCache()).andReturn(geocache1);
         geocaches.add(geocache1);
         expect(cursor.moveToNext()).andReturn(true);

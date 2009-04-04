@@ -55,6 +55,7 @@ public class GeocachesSql {
         // down.
         mSQLiteWrapper.openWritableDatabase(mDatabase);
         CacheReaderCursor cursor = mCacheReader.open(mLocationControl.getLocation());
+        mGeocaches.clear();
         if (cursor != null) {
             read(cursor);
             cursor.close();
@@ -64,7 +65,6 @@ public class GeocachesSql {
     }
 
     public void read(CacheReaderCursor cursor) {
-        mGeocaches.clear();
         do {
             mGeocaches.add(cursor.getCache());
         } while (cursor.moveToNext());
