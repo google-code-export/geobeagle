@@ -29,12 +29,14 @@ public class ImportThreadDelegate {
         private final ErrorDisplayer mErrorDisplayer;
         private final GpxLoader mGpxLoader;
         private final MessageHandler mMessageHandler;
+        private boolean mHasFiles;
 
         public ImportThreadHelper(GpxLoader gpxLoader, MessageHandler messageHandler,
                 ErrorDisplayer errorDisplayer) {
             mErrorDisplayer = errorDisplayer;
             mGpxLoader = gpxLoader;
             mMessageHandler = messageHandler;
+            mHasFiles = false;
         }
 
         public void cleanup() {
@@ -43,10 +45,13 @@ public class ImportThreadDelegate {
 
         public void end() {
             mGpxLoader.end();
+            if (!mHasFiles)
+                mErrorDisplayer.displayError(R.string.error_no_gpx_files);
         }
 
         public boolean processFile(IGpxReader iGpxFile) {
             String filename = iGpxFile.getFilename();
+            mHasFiles = true;
             try {
                 mGpxLoader.open(filename, iGpxFile.open());
                 if (!mGpxLoader.load())
@@ -60,14 +65,8 @@ public class ImportThreadDelegate {
             return false;
         }
 
-        public boolean start(boolean hasNext) {
-            if (!hasNext) {
-                mErrorDisplayer.displayError(R.string.error_no_gpx_files);
-                return false;
-            }
-
+        public void start() {
             mGpxLoader.start();
-            return true;
         }
     }
 
@@ -98,8 +97,8 @@ public class ImportThreadDelegate {
             mErrorDisplayer.displayError(R.string.error_cant_read_sd);
             return;
         }
-        if (!mImportThreadHelper.start(gpxFileIter.hasNext()))
-            return;
+
+        mImportThreadHelper.start();
 
         while (gpxFileIter.hasNext()) {
             if (!mImportThreadHelper.processFile(gpxFileIter.next()))

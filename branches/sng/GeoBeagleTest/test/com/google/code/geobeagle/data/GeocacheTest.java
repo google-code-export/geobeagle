@@ -76,7 +76,7 @@ public class GeocacheTest {
         geocache = new Geocache("", "a cache", 37.5, -122.25, Source.GPX, "alameda");
         assertEquals("", geocache.getShortId());
     }
-    
+
     @Test
     public void testGetters() {
         Geocache geocache = new Geocache("GC123", "a cache", 37.5, -122.25, Source.GPX, "alameda");
@@ -96,12 +96,12 @@ public class GeocacheTest {
         Geocache geocache = PowerMock.createMock(Geocache.class);
 
         EasyMock.expect(parcel.readBundle()).andReturn(bundle);
-        EasyMock.expect(bundle.getCharSequence("id")).andReturn("GC123");
-        EasyMock.expect(bundle.getDouble("latitude")).andReturn(new Double(37));
-        EasyMock.expect(bundle.getDouble("longitude")).andReturn(new Double(-122));
-        EasyMock.expect(bundle.getCharSequence("name")).andReturn("a cache");
-        EasyMock.expect(bundle.getInt("sourceType")).andReturn(1);
-        EasyMock.expect(bundle.getString("sourceName")).andReturn("new york city");
+        EasyMock.expect(bundle.getCharSequence(Geocache.ID)).andReturn("GC123");
+        EasyMock.expect(bundle.getDouble(Geocache.LATITUDE)).andReturn(new Double(37));
+        EasyMock.expect(bundle.getDouble(Geocache.LONGITUDE)).andReturn(new Double(-122));
+        EasyMock.expect(bundle.getCharSequence(Geocache.NAME)).andReturn("a cache");
+        EasyMock.expect(bundle.getInt(Geocache.SOURCE_TYPE)).andReturn(1);
+        EasyMock.expect(bundle.getString(Geocache.SOURCE_NAME)).andReturn("new york city");
         EasyMock.expect(geocacheFactory.sourceFromInt(1)).andReturn(Source.GPX);
         EasyMock.expect(
                 geocacheFactory.create("GC123", "a cache", 37f, -122, Source.GPX, "new york city"))
@@ -116,7 +116,9 @@ public class GeocacheTest {
 
     @Test
     public void testProviderToInt() {
+        assertEquals(0, Provider.ATLAS_QUEST.toInt());
         assertEquals(1, Provider.GROUNDSPEAK.toInt());
+        assertEquals(-1, Provider.MY_LOCATION.toInt());
     }
 
     @Test
@@ -131,12 +133,12 @@ public class GeocacheTest {
         Bundle bundle = PowerMock.createMock(Bundle.class);
 
         PowerMock.expectNew(Bundle.class).andReturn(bundle);
-        bundle.putCharSequence("id", "GC123");
-        bundle.putCharSequence("name", "a cache");
-        bundle.putDouble("latitude", 37.5);
-        bundle.putDouble("longitude", -122.25);
-        bundle.putInt("sourceType", Source.GPX.toInt());
-        bundle.putString("sourceName", "alameda");
+        bundle.putCharSequence(Geocache.ID, "GC123");
+        bundle.putCharSequence(Geocache.NAME, "a cache");
+        bundle.putDouble(Geocache.LATITUDE, 37.5);
+        bundle.putDouble(Geocache.LONGITUDE, -122.25);
+        bundle.putInt(Geocache.SOURCE_TYPE, Source.GPX.toInt());
+        bundle.putString(Geocache.SOURCE_NAME, "alameda");
         parcel.writeBundle(bundle);
 
         PowerMock.replayAll();
@@ -149,12 +151,13 @@ public class GeocacheTest {
     public void testWriteToPrefs() throws Exception {
         Editor editor = PowerMock.createMock(Editor.class);
 
-        EasyMock.expect(editor.putString("id", "GC123")).andReturn(editor);
-        EasyMock.expect(editor.putString("name", "a cache")).andReturn(editor);
-        EasyMock.expect(editor.putFloat("latitude", 37.5f)).andReturn(editor);
-        EasyMock.expect(editor.putFloat("longitude", -122.25f)).andReturn(editor);
-        EasyMock.expect(editor.putInt("sourceType", Source.MY_LOCATION.toInt())).andReturn(editor);
-        EasyMock.expect(editor.putString("sourceName", null)).andReturn(editor);
+        EasyMock.expect(editor.putString(Geocache.ID, "GC123")).andReturn(editor);
+        EasyMock.expect(editor.putString(Geocache.NAME, "a cache")).andReturn(editor);
+        EasyMock.expect(editor.putFloat(Geocache.LATITUDE, 37.5f)).andReturn(editor);
+        EasyMock.expect(editor.putFloat(Geocache.LONGITUDE, -122.25f)).andReturn(editor);
+        EasyMock.expect(editor.putInt(Geocache.SOURCE_TYPE, Source.MY_LOCATION.toInt())).andReturn(
+                editor);
+        EasyMock.expect(editor.putString(Geocache.SOURCE_NAME, null)).andReturn(editor);
 
         PowerMock.replayAll();
         Geocache geocache = new Geocache("GC123", "a cache", 37.5, -122.25, Source.MY_LOCATION,

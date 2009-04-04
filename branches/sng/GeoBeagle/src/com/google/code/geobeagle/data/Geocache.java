@@ -166,5 +166,4 @@ public class Geocache implements Parcelable {
         editor.putInt(SOURCE_TYPE, mSourceType.mIx);
         editor.putString(SOURCE_NAME, mSourceName);
     }
-
 }
