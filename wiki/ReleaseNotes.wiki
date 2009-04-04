@@ -1,4 +1,8 @@
 #summary Release Notes for GeoBeagle versions
 
+= v0.47 = 
+Fixes bug where no caches were getting deleted if sync directory is empty.
+Changed cache list title bar to be clearer.
+
 = v0.45 =
 Supports uploading from gpx files.  Sync directory changed to /sdcard/download, to match browser download dir.
