@@ -1,0 +1,13 @@
+#summary One-sentence summary of this page.
+
+= Releasing GeoBeagle =
+
+How to release GeoBeagle
+
+= Details =
+
+  # Up the version strings in AndroidManifest.xml
+  # Sign the binary.
+  # Update the release notes.
+  # Upload the binary to the downloads page.
+  # Upload the binary to the android marketplace.
