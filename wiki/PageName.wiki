@@ -1,4 +1,4 @@
-#summary How to release !GeoBeagle
+#summary How to release GeoBeagle
 
 = Releasing GeoBeagle =
 
