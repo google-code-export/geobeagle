@@ -1,6 +1,6 @@
 #summary How to release GeoBeagle
 
-= Releasing GeoBeagle =
+= Releasing !GeoBeagle =
 
   # Up the version strings in !AndroidManifest.xml
   # Sign the binary.
