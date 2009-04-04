@@ -12,14 +12,14 @@
  ** limitations under the License.
  */
 
-package com.google.code.geobeagle.ui;
+package com.google.code.geobeagle.ui.cachelist;
 
 import static org.junit.Assert.assertEquals;
 
 import com.google.code.geobeagle.data.GeocacheVectors;
 import com.google.code.geobeagle.data.IGeocacheVector;
-import com.google.code.geobeagle.ui.GeocacheRowInflater;
-import com.google.code.geobeagle.ui.GeocacheListAdapter;
+import com.google.code.geobeagle.ui.cachelist.GeocacheListAdapter;
+import com.google.code.geobeagle.ui.cachelist.GeocacheRowInflater;
 
 import org.easymock.classextension.EasyMock;
 import org.junit.Test;
@@ -49,7 +49,7 @@ public class GeocacheListAdapterTest {
         txtDistance.setText("10m");
 
         PowerMock.replayAll();
-        new GeocacheRowInflater.GeocacheRowViews(txtCache, txtDistance).set(geocacheVector);
+        new GeocacheRowInflater.RowViews(txtCache, txtDistance).set(geocacheVector);
         PowerMock.verifyAll();
     }
 
@@ -93,14 +93,14 @@ public class GeocacheListAdapterTest {
         IGeocacheVector geocacheVector = PowerMock.createMock(IGeocacheVector.class);
         View convertView = PowerMock.createMock(View.class);
         View newConvertView = PowerMock.createMock(View.class);
-        GeocacheRowInflater.GeocacheRowViews geocacheRowViews = PowerMock
-                .createMock(GeocacheRowInflater.GeocacheRowViews.class);
+        GeocacheRowInflater.RowViews rowViews = PowerMock
+                .createMock(GeocacheRowInflater.RowViews.class);
 
         EasyMock.expect(geocacheRowInflater.inflateIfNecessary(convertView)).andReturn(
                 newConvertView);
         EasyMock.expect(geocacheVectors.get(17)).andReturn(geocacheVector);
-        EasyMock.expect(newConvertView.getTag()).andReturn(geocacheRowViews);
-        geocacheRowViews.set(geocacheVector);
+        EasyMock.expect(newConvertView.getTag()).andReturn(rowViews);
+        rowViews.set(geocacheVector);
 
         PowerMock.replayAll();
         assertEquals(newConvertView, new GeocacheListAdapter(geocacheVectors, geocacheRowInflater)

@@ -17,7 +17,7 @@ import com.google.code.geobeagle.io.DatabaseDI.SQLiteWrapper;
 import com.google.code.geobeagle.io.GpxImporterDI.ImportThreadWrapper;
 import com.google.code.geobeagle.io.GpxImporterDI.MessageHandler;
 import com.google.code.geobeagle.io.GpxImporterDI.ToastFactory;
-import com.google.code.geobeagle.ui.CacheListDelegate;
+import com.google.code.geobeagle.ui.cachelist.GeocacheListDelegate;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -97,23 +97,23 @@ public class GpxImporterTest {
 
     @Test
     public void testImportGpxs() throws FileNotFoundException, XmlPullParserException, IOException {
-        CacheListDelegate cacheListDelegate = createMock(CacheListDelegate.class);
+        GeocacheListDelegate geocacheListDelegate = createMock(GeocacheListDelegate.class);
         Database database = createMock(Database.class);
         SQLiteWrapper sqliteWrapper = createMock(SQLiteWrapper.class);
         GpxLoader gpxLoader = createMock(GpxLoader.class);
         ImportThreadWrapper importThreadWrapper = createMock(ImportThreadWrapper.class);
 
         sqliteWrapper.openReadableDatabase(database);
-        importThreadWrapper.open(cacheListDelegate, gpxLoader, null);
+        importThreadWrapper.open(geocacheListDelegate, gpxLoader, null);
         importThreadWrapper.start();
 
         replay(database);
         replay(importThreadWrapper);
-        replay(cacheListDelegate);
+        replay(geocacheListDelegate);
         GpxImporter gpxImporter = new GpxImporter(gpxLoader, database, sqliteWrapper, null,
                 importThreadWrapper, null, null, null);
-        gpxImporter.importGpxs(cacheListDelegate);
-        verify(cacheListDelegate);
+        gpxImporter.importGpxs(geocacheListDelegate);
+        verify(geocacheListDelegate);
         verify(importThreadWrapper);
         verify(database);
     }

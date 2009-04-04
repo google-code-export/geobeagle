@@ -12,7 +12,7 @@
  ** limitations under the License.
  */
 
-package com.google.code.geobeagle.ui;
+package com.google.code.geobeagle.ui.cachelist;
 
 import static org.easymock.EasyMock.expect;
 import static org.easymock.classextension.EasyMock.createMock;
@@ -25,6 +25,11 @@ import com.google.code.geobeagle.data.GeocacheVectors;
 import com.google.code.geobeagle.io.CacheWriter;
 import com.google.code.geobeagle.io.Database;
 import com.google.code.geobeagle.io.DatabaseDI.SQLiteWrapper;
+import com.google.code.geobeagle.ui.cachelist.Action;
+import com.google.code.geobeagle.ui.cachelist.GeocacheListDelegate;
+import com.google.code.geobeagle.ui.cachelist.DeleteAction;
+import com.google.code.geobeagle.ui.cachelist.GeocacheListAdapter;
+import com.google.code.geobeagle.ui.cachelist.ViewAction;
 
 import android.content.Context;
 import android.content.Intent;
@@ -75,7 +80,7 @@ public class CacheListActionsTest extends TestCase {
 
         expect(geocacheVectors.get(34)).andReturn(geocacheVector);
         expect(geocacheVector.getGeocache()).andReturn(geocache);
-        expect(intent.setAction(CacheListDelegate.SELECT_CACHE)).andReturn(intent);
+        expect(intent.setAction(GeocacheListDelegate.SELECT_CACHE)).andReturn(intent);
         expect(intent.putExtra("geocache", geocache)).andReturn(intent);
         context.startActivity(intent);
 

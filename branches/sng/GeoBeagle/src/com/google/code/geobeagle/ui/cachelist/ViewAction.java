@@ -12,7 +12,7 @@
  ** limitations under the License.
  */
 
-package com.google.code.geobeagle.ui;
+package com.google.code.geobeagle.ui.cachelist;
 
 import com.google.code.geobeagle.data.GeocacheVectors;
 
@@ -32,7 +32,7 @@ public class ViewAction implements Action {
 
     public void act(int position, GeocacheListAdapter geocacheListAdapter) {
         mIntent.putExtra("geocache", mGeocacheVectors.get(position).getGeocache()).setAction(
-                CacheListDelegate.SELECT_CACHE);
+                GeocacheListDelegate.SELECT_CACHE);
         mContext.startActivity(mIntent);
     }
 }

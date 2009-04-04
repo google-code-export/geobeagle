@@ -29,11 +29,9 @@ import com.google.code.geobeagle.io.Database;
 import com.google.code.geobeagle.io.DatabaseDI;
 import com.google.code.geobeagle.io.LocationSaver;
 import com.google.code.geobeagle.io.DatabaseDI.SQLiteWrapper;
-import com.google.code.geobeagle.ui.CacheListDelegate;
 import com.google.code.geobeagle.ui.ContentSelector;
 import com.google.code.geobeagle.ui.EditCacheActivity;
 import com.google.code.geobeagle.ui.ErrorDisplayer;
-import com.google.code.geobeagle.ui.GeocacheListOnClickListener;
 import com.google.code.geobeagle.ui.GeocacheViewer;
 import com.google.code.geobeagle.ui.GetCoordsToast;
 import com.google.code.geobeagle.ui.GpsStatusWidget;
@@ -45,6 +43,8 @@ import com.google.code.geobeagle.ui.OnContentProviderSelectedListener;
 import com.google.code.geobeagle.ui.WebPageAndDetailsButtonEnabler;
 import com.google.code.geobeagle.ui.GpsStatusWidget.MeterFormatter;
 import com.google.code.geobeagle.ui.GpsStatusWidget.MeterView;
+import com.google.code.geobeagle.ui.cachelist.GeocacheListDelegate;
+import com.google.code.geobeagle.ui.cachelist.GeocacheListOnClickListener;
 
 import android.app.Activity;
 import android.content.Context;
@@ -129,7 +129,7 @@ public class GeoBeagle extends Activity implements LifecycleManager {
                 if (action.equals(Intent.ACTION_VIEW)) {
                     getCoordinatesFromIntent(mGeocacheViewer, intent, mErrorDisplayer);
                     return true;
-                } else if (action.equals(CacheListDelegate.SELECT_CACHE)) {
+                } else if (action.equals(GeocacheListDelegate.SELECT_CACHE)) {
                     mGeocache = intent.<Geocache> getParcelableExtra("geocache");
                     mGeocacheViewer.set(mGeocache);
                     mWebPageButtonEnabler.check();

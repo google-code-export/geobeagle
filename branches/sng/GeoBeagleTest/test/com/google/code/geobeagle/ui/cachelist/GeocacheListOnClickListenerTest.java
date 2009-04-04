@@ -12,24 +12,30 @@
  ** limitations under the License.
  */
 
-package com.google.code.geobeagle.ui;
+package com.google.code.geobeagle.ui.cachelist;
 
 import com.google.code.geobeagle.CacheList;
+import static org.junit.Assert.assertEquals;
 
+import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.powermock.api.easymock.PowerMock;
+import org.powermock.modules.junit4.PowerMockRunner;
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 
-import junit.framework.TestCase;
+@RunWith(PowerMockRunner.class)
+public class GeocacheListOnClickListenerTest {
 
-public class GeocacheListOnClickListenerTest extends TestCase {
+    @Test
     public void testOnClickListener() {
         final Activity activity = PowerMock.createMock(Activity.class);
         final Intent intent = PowerMock.createMock(Intent.class);
 
         activity.startActivity(intent);
+
         PowerMock.replayAll();
         GeocacheListOnClickListener geocacheListOnClickListener = new GeocacheListOnClickListener(
                 activity) {

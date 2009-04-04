@@ -19,8 +19,8 @@ import com.google.code.geobeagle.gpx.GpxAndZipFiles.GpxAndZipFilesIterFactory;
 import com.google.code.geobeagle.gpx.GpxAndZipFiles.GpxAndZipFilenameFilter;
 import com.google.code.geobeagle.io.DatabaseDI.SQLiteWrapper;
 import com.google.code.geobeagle.io.ImportThreadDelegate.ImportThreadHelper;
-import com.google.code.geobeagle.ui.CacheListDelegate;
 import com.google.code.geobeagle.ui.ErrorDisplayer;
+import com.google.code.geobeagle.ui.cachelist.GeocacheListDelegate;
 
 import android.app.ListActivity;
 import android.app.ProgressDialog;
@@ -80,9 +80,9 @@ public class GpxImporterDI {
                 mImportThread.join();
         }
 
-        public void open(CacheListDelegate cacheListDelegate, GpxLoader gpxLoader,
+        public void open(GeocacheListDelegate geocacheListDelegate, GpxLoader gpxLoader,
                 ErrorDisplayer mErrorDisplayer) {
-            mMessageHandler.start(cacheListDelegate);
+            mMessageHandler.start(geocacheListDelegate);
             mImportThread = ImportThread.create(mMessageHandler, gpxLoader, mErrorDisplayer);
         }
 
@@ -104,7 +104,7 @@ public class GpxImporterDI {
         }
 
         private int mCacheCount;
-        private CacheListDelegate mCacheListDelegate;
+        private GeocacheListDelegate mCacheListDelegate;
         private boolean mLoadAborted;
 
         private final ProgressDialogWrapper mProgressDialogWrapper;
@@ -142,10 +142,10 @@ public class GpxImporterDI {
             sendEmptyMessage(MessageHandler.MSG_DONE);
         }
 
-        public void start(CacheListDelegate cacheListDelegate) {
+        public void start(GeocacheListDelegate geocacheListDelegate) {
             mCacheCount = 0;
             mLoadAborted = false;
-            mCacheListDelegate = cacheListDelegate;
+            mCacheListDelegate = geocacheListDelegate;
             mProgressDialogWrapper.show("Importing caches", "Please wait...");
         }
 

@@ -12,7 +12,7 @@
  ** limitations under the License.
  */
 
-package com.google.code.geobeagle.ui;
+package com.google.code.geobeagle.ui.cachelist;
 
 import com.google.code.geobeagle.CacheList;
 

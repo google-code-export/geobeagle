@@ -12,7 +12,7 @@
  ** limitations under the License.
  */
 
-package com.google.code.geobeagle.ui;
+package com.google.code.geobeagle.ui.cachelist;
 
 import static org.easymock.EasyMock.expect;
 import static org.junit.Assert.assertTrue;
@@ -24,7 +24,10 @@ import com.google.code.geobeagle.data.Geocache;
 import com.google.code.geobeagle.data.GeocacheVector;
 import com.google.code.geobeagle.data.GeocacheVectors;
 import com.google.code.geobeagle.io.GeocachesSql;
-import com.google.code.geobeagle.ui.CacheListDelegate.CacheListOnCreateContextMenuListener;
+import com.google.code.geobeagle.ui.cachelist.Action;
+import com.google.code.geobeagle.ui.cachelist.GeocacheListDelegate;
+import com.google.code.geobeagle.ui.cachelist.GeocacheListAdapter;
+import com.google.code.geobeagle.ui.cachelist.GeocacheListDelegate.CacheListOnCreateContextMenuListener;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -44,7 +47,7 @@ import java.util.ArrayList;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest( {
-        CacheListDelegate.class, ListActivity.class
+        GeocacheListDelegate.class, ListActivity.class
 })
 public class CacheListDelegateTest {
 
@@ -58,8 +61,8 @@ public class CacheListDelegateTest {
         expect(geocacheVectors.get(12)).andReturn(geocacheVector);
         expect(geocacheVector.getId()).andReturn("GC123");
         expect(menu.setHeaderTitle("GC123")).andReturn(menu);
-        expect(menu.add(0, CacheListDelegate.MENU_VIEW, 0, "View")).andReturn(null);
-        expect(menu.add(0, CacheListDelegate.MENU_DELETE, 1, "Delete")).andReturn(null);
+        expect(menu.add(0, GeocacheListDelegate.MENU_VIEW, 0, "View")).andReturn(null);
+        expect(menu.add(0, GeocacheListDelegate.MENU_DELETE, 1, "Delete")).andReturn(null);
 
         PowerMock.replayAll();
         menuInfo.position = 12;
@@ -79,7 +82,7 @@ public class CacheListDelegateTest {
         expect(geocacheVectors.get(0)).andReturn(geocacheVector);
         expect(geocacheVector.getId()).andReturn("My Current Location");
         expect(menu.setHeaderTitle("My Current Location")).andReturn(menu);
-        expect(menu.add(0, CacheListDelegate.MENU_VIEW, 0, "View")).andReturn(null);
+        expect(menu.add(0, GeocacheListDelegate.MENU_VIEW, 0, "View")).andReturn(null);
 
         PowerMock.replayAll();
         menuInfo.position = 0;
@@ -106,9 +109,9 @@ public class CacheListDelegateTest {
 
         PowerMock.replayAll();
         adapterContextMenuInfo.position = 76;
-        CacheListDelegate cacheListDelegate = new CacheListDelegate(null, null, null, null, null,
-                null, null, actions, null, null);
-        assertTrue(cacheListDelegate.onContextItemSelected(menuItem));
+        GeocacheListDelegate geocacheListDelegate = new GeocacheListDelegate(null, null, null,
+                null, null, null, null, actions, null, null);
+        assertTrue(geocacheListDelegate.onContextItemSelected(menuItem));
         PowerMock.verifyAll();
     }
 
@@ -126,7 +129,7 @@ public class CacheListDelegateTest {
         listView.setOnCreateContextMenuListener(activity);
 
         PowerMock.replayAll();
-        new CacheListDelegate(activity, null, null, null, geocacheVectors, null, null, null,
+        new GeocacheListDelegate(activity, null, null, null, geocacheVectors, null, null, null,
                 factory, null).onCreate();
         PowerMock.verifyAll();
     }
@@ -138,9 +141,9 @@ public class CacheListDelegateTest {
         expect(menu.add(R.string.menu_import_gpx)).andReturn(null);
 
         PowerMock.replayAll();
-        CacheListDelegate cacheListDelegate = new CacheListDelegate(null, null, null, null, null,
-                null, null, null, null, null);
-        assertTrue(cacheListDelegate.onCreateOptionsMenu(menu));
+        GeocacheListDelegate geocacheListDelegate = new GeocacheListDelegate(null, null, null,
+                null, null, null, null, null, null, null);
+        assertTrue(geocacheListDelegate.onCreateOptionsMenu(menu));
         PowerMock.verifyAll();
     }
 
@@ -154,9 +157,9 @@ public class CacheListDelegateTest {
         action.act(46, null);
 
         PowerMock.replayAll();
-        CacheListDelegate cacheListDelegate = new CacheListDelegate(null, null, null, null, null,
-                null, null, actions, null, null);
-        cacheListDelegate.onListItemClick(null, null, 46, 0);
+        GeocacheListDelegate geocacheListDelegate = new GeocacheListDelegate(null, null, null,
+                null, null, null, null, actions, null, null);
+        geocacheListDelegate.onListItemClick(null, null, 46, 0);
         PowerMock.verifyAll();
     }
 
@@ -181,7 +184,7 @@ public class CacheListDelegateTest {
         listActivity.setTitle("0 caches out of 1000");
 
         PowerMock.replayAll();
-        new CacheListDelegate(listActivity, geocachesSql, locationControl, cacheListData, null,
+        new GeocacheListDelegate(listActivity, geocachesSql, locationControl, cacheListData, null,
                 geocacheListAdapter, null, null, null, null).onResume();
         PowerMock.verifyAll();
     }

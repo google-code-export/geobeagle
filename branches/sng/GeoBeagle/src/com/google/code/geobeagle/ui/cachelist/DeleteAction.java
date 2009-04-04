@@ -12,12 +12,13 @@
  ** limitations under the License.
  */
 
-package com.google.code.geobeagle.ui;
+package com.google.code.geobeagle.ui.cachelist;
 
 import com.google.code.geobeagle.data.GeocacheVectors;
 import com.google.code.geobeagle.io.CacheWriter;
 import com.google.code.geobeagle.io.Database;
 import com.google.code.geobeagle.io.DatabaseDI.SQLiteWrapper;
+import com.google.code.geobeagle.ui.ErrorDisplayer;
 
 public class DeleteAction implements Action {
     private final CacheWriter mCacheWriter;

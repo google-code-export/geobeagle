@@ -14,8 +14,8 @@
 
 package com.google.code.geobeagle;
 
-import com.google.code.geobeagle.ui.CacheListDelegate;
-import com.google.code.geobeagle.ui.CacheListDelegateDI;
+import com.google.code.geobeagle.ui.cachelist.CacheListDelegateDI;
+import com.google.code.geobeagle.ui.cachelist.GeocacheListDelegate;
 
 import android.app.ListActivity;
 import android.os.Bundle;
@@ -25,7 +25,7 @@ import android.view.View;
 import android.widget.ListView;
 
 public class CacheList extends ListActivity {
-    private CacheListDelegate delegate;
+    private GeocacheListDelegate delegate;
 
     @Override
     public boolean onContextItemSelected(MenuItem item) {

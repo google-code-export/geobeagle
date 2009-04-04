@@ -12,10 +12,10 @@
  ** limitations under the License.
  */
 
-package com.google.code.geobeagle.ui;
+package com.google.code.geobeagle.ui.cachelist;
 
 import com.google.code.geobeagle.data.GeocacheVectors;
-import com.google.code.geobeagle.ui.GeocacheRowInflater.GeocacheRowViews;
+import com.google.code.geobeagle.ui.cachelist.GeocacheRowInflater.RowViews;
 
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,7 +26,8 @@ public class GeocacheListAdapter extends BaseAdapter {
     private final GeocacheVectors mGeocacheVectors;
     private final GeocacheRowInflater mCacheRow;
 
-    public GeocacheListAdapter(GeocacheVectors geocacheVectors, GeocacheRowInflater geocacheRowInflater) {
+    public GeocacheListAdapter(GeocacheVectors geocacheVectors,
+            GeocacheRowInflater geocacheRowInflater) {
         mGeocacheVectors = geocacheVectors;
         mCacheRow = geocacheRowInflater;
     }
@@ -45,7 +46,7 @@ public class GeocacheListAdapter extends BaseAdapter {
 
     public View getView(int position, View convertView, ViewGroup parent) {
         convertView = mCacheRow.inflateIfNecessary(convertView);
-        ((GeocacheRowViews)convertView.getTag()).set(mGeocacheVectors.get(position));
+        ((RowViews)convertView.getTag()).set(mGeocacheVectors.get(position));
         return convertView;
     }
 }

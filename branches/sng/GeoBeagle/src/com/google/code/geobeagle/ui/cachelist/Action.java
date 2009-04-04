@@ -12,7 +12,8 @@
  ** limitations under the License.
  */
 
-package com.google.code.geobeagle.ui;
+package com.google.code.geobeagle.ui.cachelist;
+
 
 interface Action {
     public void act(int position, GeocacheListAdapter geocacheListAdapter);

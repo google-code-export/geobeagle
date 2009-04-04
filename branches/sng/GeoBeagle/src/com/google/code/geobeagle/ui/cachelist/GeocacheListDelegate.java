@@ -12,7 +12,7 @@
  ** limitations under the License.
  */
 
-package com.google.code.geobeagle.ui;
+package com.google.code.geobeagle.ui.cachelist;
 
 import com.google.code.geobeagle.LocationControl;
 import com.google.code.geobeagle.R;
@@ -21,6 +21,7 @@ import com.google.code.geobeagle.data.Geocache;
 import com.google.code.geobeagle.data.GeocacheVectors;
 import com.google.code.geobeagle.io.GeocachesSql;
 import com.google.code.geobeagle.io.GpxImporter;
+import com.google.code.geobeagle.ui.ErrorDisplayer;
 
 import android.app.ListActivity;
 import android.view.ContextMenu;
@@ -34,7 +35,7 @@ import android.widget.AdapterView.AdapterContextMenuInfo;
 
 import java.util.ArrayList;
 
-public class CacheListDelegate {
+public class GeocacheListDelegate {
 
     public static class CacheListOnCreateContextMenuListener implements OnCreateContextMenuListener {
         public static class Factory {
@@ -73,7 +74,7 @@ public class CacheListDelegate {
     private final GeocacheListAdapter mGeocacheListAdapter;
     private final GeocacheVectors mGeocacheVectors;
 
-    CacheListDelegate(ListActivity parent, GeocachesSql geocachesSql,
+    GeocacheListDelegate(ListActivity parent, GeocachesSql geocachesSql,
             LocationControl locationControl, CacheListData cacheListData,
             GeocacheVectors geocacheVectors, GeocacheListAdapter geocacheListAdapter,
             ErrorDisplayer errorDisplayer, Action[] actions,

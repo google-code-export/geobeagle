@@ -12,7 +12,7 @@
  ** limitations under the License.
  */
 
-package com.google.code.geobeagle.ui;
+package com.google.code.geobeagle.ui.cachelist;
 
 import com.google.code.geobeagle.GeoBeagle;
 import com.google.code.geobeagle.LocationControl;
@@ -33,10 +33,7 @@ import com.google.code.geobeagle.io.GpxImporter;
 import com.google.code.geobeagle.io.GpxImporterDI;
 import com.google.code.geobeagle.io.LocationSaver;
 import com.google.code.geobeagle.io.DatabaseDI.SQLiteWrapper;
-import com.google.code.geobeagle.ui.CacheListDelegate;
 import com.google.code.geobeagle.ui.ErrorDisplayer;
-import com.google.code.geobeagle.ui.GeocacheListAdapter;
-import com.google.code.geobeagle.ui.GeocacheRowInflater;
 
 import android.app.ListActivity;
 import android.content.Context;
@@ -46,7 +43,7 @@ import android.view.LayoutInflater;
 
 public class CacheListDelegateDI {
 
-    public static CacheListDelegate create(ListActivity parent, LayoutInflater layoutInflater) {
+    public static GeocacheListDelegate create(ListActivity parent, LayoutInflater layoutInflater) {
         final ErrorDisplayer errorDisplayer = new ErrorDisplayer(parent);
         final Database database = DatabaseDI.create(parent);
         final ResourceProvider resourceProvider = new ResourceProvider(parent);
@@ -70,7 +67,7 @@ public class CacheListDelegateDI {
                 geocacheVectorFactory);
         final Action actions[] = CacheListDelegateDI.create(parent, database, sqliteWrapper,
                 cacheListData, cacheWriter, geocacheVectors, errorDisplayer);
-        final CacheListDelegate.CacheListOnCreateContextMenuListener.Factory factory = new CacheListDelegate.CacheListOnCreateContextMenuListener.Factory();
+        final GeocacheListDelegate.CacheListOnCreateContextMenuListener.Factory factory = new GeocacheListDelegate.CacheListOnCreateContextMenuListener.Factory();
         final GpxImporter gpxImporter = GpxImporterDI.create(database, sqliteWrapper,
                 errorDisplayer, parent);
 
@@ -78,7 +75,7 @@ public class CacheListDelegateDI {
         final GeocacheListAdapter geocacheListAdapter = new GeocacheListAdapter(geocacheVectors,
                 geocacheRowInflater);
 
-        return new CacheListDelegate(parent, locationBookmarks, locationControl, cacheListData,
+        return new GeocacheListDelegate(parent, locationBookmarks, locationControl, cacheListData,
                 geocacheVectors, geocacheListAdapter, errorDisplayer, actions, factory, gpxImporter);
     }
 

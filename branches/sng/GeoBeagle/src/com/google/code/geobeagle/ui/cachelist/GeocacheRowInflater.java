@@ -12,7 +12,7 @@
  ** limitations under the License.
  */
 
-package com.google.code.geobeagle.ui;
+package com.google.code.geobeagle.ui.cachelist;
 
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.data.IGeocacheVector;
@@ -22,11 +22,11 @@ import android.view.View;
 import android.widget.TextView;
 
 public class GeocacheRowInflater {
-    public static class GeocacheRowViews {
+    public static class RowViews {
         private final TextView mCache;
         private final TextView mDistance;
 
-        public GeocacheRowViews(TextView cache, TextView txtDistance)  {
+        public RowViews(TextView cache, TextView txtDistance)  {
             mCache = cache;
             mDistance = txtDistance;
         }
@@ -49,9 +49,9 @@ public class GeocacheRowInflater {
         }
 
         convertView = mLayoutInflater.inflate(R.layout.cache_row, null);
-        GeocacheRowViews geocacheRowViews = new GeocacheRowViews(((TextView)convertView
+        RowViews rowViews = new RowViews(((TextView)convertView
                 .findViewById(R.id.txt_cache)), ((TextView)convertView.findViewById(R.id.distance)));
-        convertView.setTag(geocacheRowViews);
+        convertView.setTag(rowViews);
         return convertView;
     }
 }
