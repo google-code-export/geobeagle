@@ -1,9 +1,0 @@
-#summary How to release GeoBeagle
-
-= Releasing !GeoBeagle =
-
-  # Up the version strings in !AndroidManifest.xml
-  # Sign the binary.
-  # Update the release notes.
-  # Upload the binary to the downloads page.
-  # Upload the binary to the android marketplace.
