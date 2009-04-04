@@ -142,11 +142,10 @@ public class CacheListDelegate {
             ArrayList<Geocache> geocaches = mGeocachesSql.getGeocaches();
             mCacheListData.add(geocaches, mLocationControl.getLocation());
             mParent.setListAdapter(mGeocacheListAdapter);
-            mParent.setTitle("Nearest Unfound Caches (" + geocaches.size() + " / "
-                    + mGeocachesSql.getCount() + ")");
+            mParent.setTitle(mParent.getString(R.string.cache_list_title, geocaches.size(),
+                    mGeocachesSql.getCount()));
         } catch (final Exception e) {
             mErrorDisplayer.displayErrorAndStack(e);
         }
     }
-
 }

@@ -94,6 +94,9 @@ public class Geocache implements Parcelable {
     }
 
     public Provider getContentProvider() {
+        // Must use toString() rather than mId.subSequence(0,2).equals("GC"),
+        // because editing the text in android produces a SpannableString rather
+        // than a String, so the CharSequences won't be equal.
         String prefix = mId.subSequence(0, 2).toString();
         if (prefix.equals("GC"))
             return Provider.GROUNDSPEAK;
@@ -155,6 +158,7 @@ public class Geocache implements Parcelable {
     }
 
     public void writeToPrefs(Editor editor) {
+        // Must use toString(), see comment above in getCommentProvider.
         editor.putString(ID, mId.toString());
         editor.putString(NAME, mName.toString());
         editor.putFloat(LATITUDE, (float)mLatitude);
@@ -162,5 +166,4 @@ public class Geocache implements Parcelable {
         editor.putInt(SOURCE_TYPE, mSourceType.mIx);
         editor.putString(SOURCE_NAME, mSourceName);
     }
-
 }
