@@ -36,7 +36,6 @@ import com.google.code.geobeagle.ui.GeocacheViewer;
 import com.google.code.geobeagle.ui.GetCoordsToast;
 import com.google.code.geobeagle.ui.GpsStatusWidget;
 import com.google.code.geobeagle.ui.Misc;
-import com.google.code.geobeagle.ui.MockableTextView;
 import com.google.code.geobeagle.ui.MyLocationProvider;
 import com.google.code.geobeagle.ui.OnCacheButtonClickListenerBuilder;
 import com.google.code.geobeagle.ui.OnContentProviderSelectedListener;
@@ -94,8 +93,8 @@ public class GeoBeagle extends Activity implements LifecycleManager {
         mHandler = new Handler();
     }
 
-    private MockableTextView createTextView(int id) {
-        return new MockableTextView((TextView)findViewById(id));
+    private TextView getTextView(int id) {
+        return (TextView)findViewById(id);
     }
 
     private void getCoordinatesFromIntent(GeocacheViewer geocacheViewer, Intent intent,
@@ -158,14 +157,14 @@ public class GeoBeagle extends Activity implements LifecycleManager {
             final Database Database = DatabaseDI.create(this);
             mLocationSaver = new LocationSaver(Database, sqliteWrapper, DatabaseDI
                     .createCacheWriter(sqliteWrapper));
-            mWebPageButtonEnabler = Misc.create(this,
-                    findViewById(R.id.cache_page), findViewById(R.id.cache_details));
+            mWebPageButtonEnabler = Misc.create(this, findViewById(R.id.cache_page),
+                    findViewById(R.id.cache_details));
 
             mLocationViewer = new GpsStatusWidget(mResourceProvider, new MeterView(
-                    createTextView(R.id.location_viewer), new MeterFormatter()),
-                    createTextView(R.id.provider), createTextView(R.id.lag),
-                    createTextView(R.id.accuracy), createTextView(R.id.status),
-                    new Misc.Time(), new Location(""));
+                    getTextView(R.id.location_viewer), new MeterFormatter()),
+                    getTextView(R.id.provider), getTextView(R.id.lag),
+                    getTextView(R.id.accuracy), getTextView(R.id.status), new Misc.Time(),
+                    new Location(""));
             final LocationManager locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
             mGpsControl = new LocationControl(locationManager, new LocationChooser());
             mLocationListener = new GeoBeagleLocationListener(mGpsControl, mLocationViewer);
@@ -192,8 +191,7 @@ public class GeoBeagle extends Activity implements LifecycleManager {
 
             ((Spinner)findViewById(R.id.content_provider))
                     .setOnItemSelectedListener(new OnContentProviderSelectedListener(
-                            mResourceProvider, new MockableTextView(
-                                    (TextView)findViewById(R.id.select_cache_prompt))));
+                            mResourceProvider, (TextView)findViewById(R.id.select_cache_prompt)));
 
             mHandler.removeCallbacks(mUpdateTimeTask);
             mHandler.postDelayed(mUpdateTimeTask, 1000);

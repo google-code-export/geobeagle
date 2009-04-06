@@ -19,14 +19,15 @@ import com.google.code.geobeagle.ResourceProvider;
 
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.TextView;
 import android.widget.AdapterView.OnItemSelectedListener;
 
 public class OnContentProviderSelectedListener implements OnItemSelectedListener {
-    private final MockableTextView mContentProviderCaption;
+    private final TextView mContentProviderCaption;
     private final ResourceProvider mResourceProvider;
 
     public OnContentProviderSelectedListener(ResourceProvider resourceProvider,
-            MockableTextView contentProviderCaption) {
+            TextView contentProviderCaption) {
         mResourceProvider = resourceProvider;
         mContentProviderCaption = contentProviderCaption;
     }
