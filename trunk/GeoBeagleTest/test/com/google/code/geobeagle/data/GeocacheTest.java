@@ -83,9 +83,30 @@ public class GeocacheTest {
         assertEquals("GC123", geocache.getId());
         assertEquals(37.5, geocache.getLatitude(), 0);
         assertEquals(-122.25, geocache.getLongitude(), 0);
-        assertEquals("a cache", geocache.getName());
         assertEquals("alameda", geocache.getSourceName());
         assertEquals(Source.GPX, geocache.getSourceType());
+        
+        assertEquals(geocache.isAvailable(), true);
+        assertEquals(geocache.isArchived(), false);      
+        assertEquals("a cache", geocache.getName());
+        
+        geocache.setStatus(false, false);
+        assertEquals(geocache.isAvailable(), false);
+        assertEquals(geocache.isArchived(), false);
+        assertEquals("<strike>a cache</strike>", geocache.getName());
+        
+        geocache.setStatus(true, false);
+        assertEquals(geocache.isAvailable(), true);
+        assertEquals(geocache.isArchived(), false);
+        assertEquals("a cache", geocache.getName());
+        
+        geocache.setStatus(true, true);
+        assertEquals(geocache.isAvailable(), true);
+        assertEquals(geocache.isArchived(), true);
+        assertEquals("<font color='red'><strike>a cache</strike></font>", geocache.getName());
+        assertEquals("a cache", geocache.getNamePlain());
+
+
     }
 
     @Test
@@ -164,5 +185,63 @@ public class GeocacheTest {
                 null);
         geocache.writeToPrefs(editor);
         PowerMock.verifyAll();
+    }
+    
+    @Test
+    public void testDetailedWriters() throws Exception {
+        Geocache geocache = new Geocache();
+        final Double lat = 35.49;
+        final Double lon = -86.47;
+        final String diff = "1.5";
+        final String terr = "3.5";
+        final String gcid = "GC1234";
+        final String name = "Oozy Rat";
+        final String shortdescription = "My non-rambling description";
+        final String description = "My Rambling Description";
+        final String type = "Traditional";
+        final String container = "Micro";
+        final String placer = "Robert, the Wonderful";
+        final String placed = "04/03/2009";
+        final String hint = "Under the billion parallel sticks";
+        final String logs = "Eventually, this will be 'real' logs";
+  
+    	String html = "<b>" + gcid + "</b> - " + name + "<br >";
+		html += "Placed " + placed + " by " + placer + "<br >";
+		html += diff + "/" + terr +  " " + type + "/" + container + "<p />";
+		html += shortdescription + "<br />" + description + "<hr />" + hint + "hr />" + logs;
+  	
+        // Available/archived is exercised in testGetters().
+        geocache.setStatus(true, false);
+   
+        geocache.setCoords(lat, lon);
+        geocache.setDiff(diff);
+        geocache.setTerr(terr);
+        geocache.setId(gcid);
+        geocache.setName(name);
+        geocache.setShortDesc(shortdescription, false);
+        geocache.setLongDesc(description, false);
+        geocache.setCacheType(type);
+        geocache.setContainer(container);
+        geocache.setPlacer(placer);
+        geocache.setPlacementDate(placed);
+        geocache.setHint(hint);
+        geocache.setLogBlob(logs);
+        
+        assertEquals(geocache.getLatitude(), lat, 0);
+        assertEquals(geocache.getLongitude(), lon, 0);
+        assertEquals(geocache.getDiff(), diff);
+        assertEquals(geocache.getTerr(), terr);
+        assertEquals(geocache.getId(), gcid);
+        assertEquals(geocache.getName(), name);
+        assertEquals(geocache.getShortDesc(), shortdescription);
+        assertEquals(geocache.getLongDesc(), description);
+        assertEquals(geocache.getCacheType(), type);
+        assertEquals(geocache.getContainer(), container);
+        assertEquals(geocache.getPlacer(), placer);
+        assertEquals(geocache.getPlacementDay(), placed);
+        assertEquals(geocache.getHint(), hint);
+        assertEquals(geocache.getLogBlob(), logs);
+        assertEquals(geocache.asHtml(), html);
+
     }
 }
