@@ -20,7 +20,7 @@ import com.google.code.geobeagle.io.GpxImporterDI.ImportThreadWrapper;
 import com.google.code.geobeagle.io.GpxImporterDI.MessageHandler;
 import com.google.code.geobeagle.io.GpxImporterDI.ToastFactory;
 import com.google.code.geobeagle.ui.ErrorDisplayer;
-import com.google.code.geobeagle.ui.cachelist.GeocacheListDelegate;
+import com.google.code.geobeagle.ui.cachelist.GeocacheListPresenter;
 
 import android.app.ListActivity;
 import android.widget.Toast;
@@ -59,9 +59,9 @@ public class GpxImporter {
         }
     }
 
-    public void importGpxs(GeocacheListDelegate geocacheListDelegate) {
+    public void importGpxs(GeocacheListPresenter geocacheListPresenter) {
         mSqliteWrapper.openReadableDatabase(mDatabase);
-        mImportThreadWrapper.open(geocacheListDelegate, mGpxLoader, mErrorDisplayer);
+        mImportThreadWrapper.open(geocacheListPresenter, mGpxLoader, mErrorDisplayer);
         mImportThreadWrapper.start();
     }
 }

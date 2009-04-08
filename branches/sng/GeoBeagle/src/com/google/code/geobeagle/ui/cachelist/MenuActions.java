@@ -14,22 +14,20 @@
 
 package com.google.code.geobeagle.ui.cachelist;
 
-import com.google.code.geobeagle.CacheList;
+import com.google.code.geobeagle.R;
 
-import android.app.Activity;
-import android.content.Intent;
-import android.view.View;
-import android.view.View.OnClickListener;
+import java.util.HashMap;
 
-public class GeocacheListOnClickListener implements OnClickListener {
+class MenuActions {
+    private final HashMap<Integer, MenuAction> mMenuActions;
 
-    final private Activity mActivity;
-
-    public GeocacheListOnClickListener(Activity activity) {
-        mActivity = activity;
+    public MenuActions(MenuActionSyncGpx menuActionSyncGpx, MenuActionMyLocation menuActionMyLocation) {
+        mMenuActions = new HashMap<Integer, MenuAction>();
+        mMenuActions.put(R.id.menu_sync, menuActionSyncGpx);
+        mMenuActions.put(R.id.menu_my_location, menuActionMyLocation);
     }
 
-    public void onClick(View v) {
-        mActivity.startActivity(new Intent(mActivity, CacheList.class));
+    public void act(int id) {
+        mMenuActions.get(id).act();
     }
 }

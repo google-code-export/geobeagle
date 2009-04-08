@@ -20,21 +20,24 @@ import com.google.code.geobeagle.io.Database;
 import com.google.code.geobeagle.io.DatabaseDI.SQLiteWrapper;
 import com.google.code.geobeagle.ui.ErrorDisplayer;
 
-public class DeleteAction implements Action {
+public class ContextActionDelete implements ContextAction {
     private final CacheWriter mCacheWriter;
     private final Database mDatabase;
     private final SQLiteWrapper mSQLiteWrapper;
     private final GeocacheVectors mGeocacheVectors;
+    private final GeocacheListAdapter mGeocacheListAdapter;
 
-    DeleteAction(Database database, SQLiteWrapper sqliteWrapper, CacheWriter cacheWriter,
-            GeocacheVectors geocacheVectors, ErrorDisplayer errorDisplayer) {
+    ContextActionDelete(Database database, GeocacheListAdapter geocacheListAdapter,
+            SQLiteWrapper sqliteWrapper, CacheWriter cacheWriter, GeocacheVectors geocacheVectors,
+            ErrorDisplayer errorDisplayer) {
         mGeocacheVectors = geocacheVectors;
         mDatabase = database;
         mSQLiteWrapper = sqliteWrapper;
         mCacheWriter = cacheWriter;
+        mGeocacheListAdapter = geocacheListAdapter;
     }
 
-    public void act(int position, GeocacheListAdapter geocacheListAdapter) {
+    public void act(int position) {
         // TODO: pull sqliteDatabase and then cachewriter up to top level so
         // they're shared.
         mSQLiteWrapper.openWritableDatabase(mDatabase);
@@ -42,6 +45,6 @@ public class DeleteAction implements Action {
         mSQLiteWrapper.close();
 
         mGeocacheVectors.remove(position);
-        geocacheListAdapter.notifyDataSetChanged();
+        mGeocacheListAdapter.notifyDataSetChanged();
     }
 }

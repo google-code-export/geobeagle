@@ -10,7 +10,7 @@ import com.google.code.geobeagle.io.LocationSaver;
 import com.google.code.geobeagle.ui.EditCacheActivityDelegate.CancelButtonOnClickListener;
 import com.google.code.geobeagle.ui.EditCacheActivityDelegate.EditCache;
 import com.google.code.geobeagle.ui.EditCacheActivityDelegate.SetButtonOnClickListener;
-import com.google.code.geobeagle.ui.cachelist.GeocacheListDelegate;
+import com.google.code.geobeagle.ui.cachelist.GeocacheListController;
 
 import org.easymock.classextension.EasyMock;
 import org.junit.Test;
@@ -139,7 +139,7 @@ public class EditCacheActivityDelegateTest {
         LocationSaver locationSaver = PowerMock.createMock(LocationSaver.class);
 
         locationSaver.saveLocation(geocache);
-        EasyMock.expect(intent.setAction(GeocacheListDelegate.SELECT_CACHE)).andReturn(intent);
+        EasyMock.expect(intent.setAction(GeocacheListController.SELECT_CACHE)).andReturn(intent);
         PowerMock.expectNew(Intent.class).andReturn(intent);
         EasyMock.expect(editCache.get()).andReturn(geocache);
         EasyMock.expect(intent.putExtra("geocache", geocache)).andReturn(intent);

@@ -14,22 +14,18 @@
 
 package com.google.code.geobeagle.ui.cachelist;
 
-import com.google.code.geobeagle.CacheList;
+import com.google.code.geobeagle.io.GpxImporter;
 
-import android.app.Activity;
-import android.content.Intent;
-import android.view.View;
-import android.view.View.OnClickListener;
+class MenuActionSyncGpx implements MenuAction {
+    private final GeocacheListPresenter mGeocacheListPresenter;
+    private final GpxImporter mGpxImporter;
 
-public class GeocacheListOnClickListener implements OnClickListener {
-
-    final private Activity mActivity;
-
-    public GeocacheListOnClickListener(Activity activity) {
-        mActivity = activity;
+    public MenuActionSyncGpx(GpxImporter gpxImporter, GeocacheListPresenter geocacheListPresenter) {
+        mGpxImporter = gpxImporter;
+        mGeocacheListPresenter = geocacheListPresenter;
     }
 
-    public void onClick(View v) {
-        mActivity.startActivity(new Intent(mActivity, CacheList.class));
+    public void act() {
+        mGpxImporter.importGpxs(mGeocacheListPresenter);
     }
 }

@@ -18,18 +18,27 @@ import static org.easymock.EasyMock.expect;
 import static org.easymock.classextension.EasyMock.createMock;
 import static org.easymock.classextension.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.verify;
+import static org.junit.Assert.assertEquals;
 
-import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.ResourceProvider;
 import com.google.code.geobeagle.data.GeocacheVector.LocationComparator;
-import com.google.code.geobeagle.data.GeocacheVector.MyLocation;
-import com.google.code.geobeagle.io.LocationSaver;
 
-import junit.framework.TestCase;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.powermock.api.easymock.PowerMock;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 
-public class GeocacheVectorTest extends TestCase {
+import java.util.ArrayList;
+import java.util.Collections;
+
+@RunWith(PowerMockRunner.class)
+@PrepareForTest( {
+        LocationComparator.class, GeocacheVectorTest.class
+})
+public class GeocacheVectorTest {
     private final Geocache geocache = createMock(Geocache.class);
 
+    @Test
     public void testCompare() {
         IGeocacheVector d1 = createMock(IGeocacheVector.class);
         IGeocacheVector d2 = createMock(IGeocacheVector.class);
@@ -48,10 +57,24 @@ public class GeocacheVectorTest extends TestCase {
 
     }
 
-    public void testGetDistance() {
-        assertEquals(3.5f, new GeocacheVector(geocache, 3.5f, null).getDistance());
+    @Test
+    public void testSort() {
+        PowerMock.mockStatic(Collections.class);
+        ArrayList<IGeocacheVector> arrayList = new ArrayList<IGeocacheVector>();
+        LocationComparator locationComparator = new LocationComparator();
+        Collections.sort(arrayList, locationComparator);
+
+        PowerMock.replay(Collections.class);
+        locationComparator.sort(arrayList);
+        PowerMock.verify(Collections.class);
     }
 
+    @Test
+    public void testGetDistance() {
+        assertEquals(3.5f, new GeocacheVector(geocache, 3.5f, null).getDistance(), 0);
+    }
+
+    @Test
     public void testGetFormattedDistance() {
         DistanceFormatter distanceFormatter = createMock(DistanceFormatter.class);
         expect(distanceFormatter.format(3.5f)).andReturn("3.5m");
@@ -62,6 +85,7 @@ public class GeocacheVectorTest extends TestCase {
         verify(distanceFormatter);
     }
 
+    @Test
     public void testGetGeocache() {
         replay(geocache);
         GeocacheVector geocacheVector = new GeocacheVector(geocache, 3.5f, null);
@@ -69,6 +93,7 @@ public class GeocacheVectorTest extends TestCase {
         verify(geocache);
     }
 
+    @Test
     public void testGetId() {
         expect(geocache.getId()).andReturn("a geocache");
 
@@ -78,6 +103,7 @@ public class GeocacheVectorTest extends TestCase {
         verify(geocache);
     }
 
+    @Test
     public void testGetIdAndName() {
         expect(geocache.getIdAndName()).andReturn("GC123: a geocache");
 
@@ -85,31 +111,5 @@ public class GeocacheVectorTest extends TestCase {
         GeocacheVector geocacheVector = new GeocacheVector(geocache, 3.5f, null);
         assertEquals("GC123: a geocache", geocacheVector.getIdAndName());
         verify(geocache);
-    }
-
-    public void testMyLocation() {
-        Geocache geocache = createMock(Geocache.class);
-        ResourceProvider resourceProvider = createMock(ResourceProvider.class);
-        GeocacheFromMyLocationFactory geocacheFromMyLocationFactory = createMock(GeocacheFromMyLocationFactory.class);
-        LocationSaver locationSaver = createMock(LocationSaver.class);
-
-        expect(geocacheFromMyLocationFactory.create()).andReturn(geocache);
-        expect(resourceProvider.getString(R.string.my_current_location)).andReturn("my location");
-        expect(resourceProvider.getString(R.string.my_current_location)).andReturn("my location");
-        locationSaver.saveLocation(geocache);
-
-        replay(resourceProvider);
-        replay(geocacheFromMyLocationFactory);
-        MyLocation myLocation = new MyLocation(resourceProvider, geocacheFromMyLocationFactory,
-                locationSaver);
-        assertEquals(geocache, myLocation.getGeocache());
-        assertEquals(null, myLocation.getCoordinatesIdAndName());
-        assertEquals(null, myLocation.getDestination());
-        assertEquals(-1.0f, myLocation.getDistance());
-        assertEquals("", myLocation.getFormattedDistance());
-        assertEquals("my location", myLocation.getIdAndName());
-        assertEquals("my location", myLocation.getId());
-        verify(geocacheFromMyLocationFactory);
-        verify(resourceProvider);
     }
 }

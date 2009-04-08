@@ -15,37 +15,39 @@
 package com.google.code.geobeagle.ui.cachelist;
 
 import com.google.code.geobeagle.CacheList;
-import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.api.easymock.PowerMock;
+import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 
+@PrepareForTest( {
+        Intent.class, GeocacheListOnClickListener.class
+})
 @RunWith(PowerMockRunner.class)
 public class GeocacheListOnClickListenerTest {
 
     @Test
-    public void testOnClickListener() {
+    public void testOnClickListener() throws Exception {
         final Activity activity = PowerMock.createMock(Activity.class);
         final Intent intent = PowerMock.createMock(Intent.class);
 
         activity.startActivity(intent);
+        PowerMock.expectNew(Intent.class, activity, CacheList.class).andReturn(intent);
 
         PowerMock.replayAll();
         GeocacheListOnClickListener geocacheListOnClickListener = new GeocacheListOnClickListener(
-                activity) {
-            @Override
-            protected Intent createIntent(Context context, Class<?> cls) {
-                assertEquals(CacheList.class, cls);
-                assertEquals(activity, context);
-                return intent;
-            }
-        };
+                activity) /*
+                           * {
+                           * @Override protected Intent createIntent(Context
+                           * context, Class<?> cls) {
+                           * assertEquals(CacheList.class, cls);
+                           * assertEquals(activity, context); return intent; } }
+                           */;
         geocacheListOnClickListener.onClick(null);
         PowerMock.verifyAll();
     }

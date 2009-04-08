@@ -18,7 +18,7 @@ import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.Util;
 import com.google.code.geobeagle.data.Geocache;
 import com.google.code.geobeagle.io.LocationSaver;
-import com.google.code.geobeagle.ui.cachelist.GeocacheListDelegate;
+import com.google.code.geobeagle.ui.cachelist.GeocacheListController;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -90,7 +90,7 @@ public class EditCacheActivityDelegate {
             Geocache geocache = mGeocacheView.get();
             mLocationSaver.saveLocation(geocache);
             Intent i = new Intent();
-            i.setAction(GeocacheListDelegate.SELECT_CACHE);
+            i.setAction(GeocacheListController.SELECT_CACHE);
             i.putExtra("geocache", geocache);
             mActivity.setResult(0, i);
             mActivity.finish();

@@ -42,7 +42,7 @@ import com.google.code.geobeagle.ui.OnContentProviderSelectedListener;
 import com.google.code.geobeagle.ui.WebPageAndDetailsButtonEnabler;
 import com.google.code.geobeagle.ui.GpsStatusWidget.MeterFormatter;
 import com.google.code.geobeagle.ui.GpsStatusWidget.MeterView;
-import com.google.code.geobeagle.ui.cachelist.GeocacheListDelegate;
+import com.google.code.geobeagle.ui.cachelist.GeocacheListController;
 import com.google.code.geobeagle.ui.cachelist.GeocacheListOnClickListener;
 
 import android.app.Activity;
@@ -75,12 +75,12 @@ public class GeoBeagle extends Activity implements LifecycleManager {
     private LocationControl mGpsControl;
     private final Handler mHandler;
     private GeoBeagleLocationListener mLocationListener;
-    private GpsStatusWidget mLocationViewer;
+    private GpsStatusWidget mGpsStatusWidget;
 
     private final ResourceProvider mResourceProvider;
     private final Runnable mUpdateTimeTask = new Runnable() {
         public void run() {
-            mLocationViewer.refreshLocation();
+            mGpsStatusWidget.refreshLocation();
             mHandler.postDelayed(mUpdateTimeTask, 100);
         }
     };
@@ -128,7 +128,7 @@ public class GeoBeagle extends Activity implements LifecycleManager {
                 if (action.equals(Intent.ACTION_VIEW)) {
                     getCoordinatesFromIntent(mGeocacheViewer, intent, mErrorDisplayer);
                     return true;
-                } else if (action.equals(GeocacheListDelegate.SELECT_CACHE)) {
+                } else if (action.equals(GeocacheListController.SELECT_CACHE)) {
                     mGeocache = intent.<Geocache> getParcelableExtra("geocache");
                     mGeocacheViewer.set(mGeocache);
                     mWebPageButtonEnabler.check();
@@ -160,14 +160,14 @@ public class GeoBeagle extends Activity implements LifecycleManager {
             mWebPageButtonEnabler = Misc.create(this, findViewById(R.id.cache_page),
                     findViewById(R.id.cache_details));
 
-            mLocationViewer = new GpsStatusWidget(mResourceProvider, new MeterView(
+            mGpsStatusWidget = new GpsStatusWidget(mResourceProvider, new MeterView(
                     getTextView(R.id.location_viewer), new MeterFormatter()),
                     getTextView(R.id.provider), getTextView(R.id.lag),
                     getTextView(R.id.accuracy), getTextView(R.id.status), new Misc.Time(),
                     new Location(""));
             final LocationManager locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
             mGpsControl = new LocationControl(locationManager, new LocationChooser());
-            mLocationListener = new GeoBeagleLocationListener(mGpsControl, mLocationViewer);
+            mLocationListener = new GeoBeagleLocationListener(mGpsControl, mGpsStatusWidget);
             final GeocacheFactory geocacheFactory = new GeocacheFactory();
             mGeocacheFromPreferencesFactory = new GeocacheFromPreferencesFactory(geocacheFactory);
             final TextView gcid = (TextView)findViewById(R.id.gcid);

@@ -14,7 +14,6 @@
 
 package com.google.code.geobeagle.ui.cachelist;
 
-
-interface Action {
-    public void act(int position, GeocacheListAdapter geocacheListAdapter);
+interface ContextAction {
+    public void act(int position);
 }

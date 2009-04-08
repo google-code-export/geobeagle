@@ -19,20 +19,20 @@ import com.google.code.geobeagle.data.GeocacheVectors;
 import android.content.Context;
 import android.content.Intent;
 
-public class ViewAction implements Action {
+public class ContextActionView implements ContextAction {
     private final Context mContext;
     private final Intent mIntent;
     private GeocacheVectors mGeocacheVectors;
 
-    ViewAction(GeocacheVectors geocacheVectors, Context context, Intent intent) {
+    ContextActionView(GeocacheVectors geocacheVectors, Context context, Intent intent) {
         mGeocacheVectors = geocacheVectors;
         mContext = context;
         mIntent = intent;
     }
 
-    public void act(int position, GeocacheListAdapter geocacheListAdapter) {
+    public void act(int position) {
         mIntent.putExtra("geocache", mGeocacheVectors.get(position).getGeocache()).setAction(
-                GeocacheListDelegate.SELECT_CACHE);
+                GeocacheListController.SELECT_CACHE);
         mContext.startActivity(mIntent);
     }
 }

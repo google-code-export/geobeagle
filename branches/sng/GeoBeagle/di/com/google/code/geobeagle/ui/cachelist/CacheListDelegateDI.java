@@ -17,7 +17,6 @@ package com.google.code.geobeagle.ui.cachelist;
 import com.google.code.geobeagle.GeoBeagle;
 import com.google.code.geobeagle.LocationControl;
 import com.google.code.geobeagle.LocationControlDi;
-import com.google.code.geobeagle.ResourceProvider;
 import com.google.code.geobeagle.data.CacheListData;
 import com.google.code.geobeagle.data.DistanceFormatter;
 import com.google.code.geobeagle.data.GeocacheFactory;
@@ -38,15 +37,31 @@ import com.google.code.geobeagle.ui.ErrorDisplayer;
 import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;
+import android.location.Location;
+import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 
 public class CacheListDelegateDI {
 
-    public static GeocacheListDelegate create(ListActivity parent, LayoutInflater layoutInflater) {
+    private static class DummyLocationListener implements LocationListener {
+        public void onLocationChanged(Location arg0) {
+        }
+
+        public void onProviderDisabled(String arg0) {
+        }
+
+        public void onProviderEnabled(String arg0) {
+        }
+
+        public void onStatusChanged(String arg0, int arg1, Bundle arg2) {
+        }
+    }
+
+    public static CacheListDelegate create(ListActivity parent, LayoutInflater layoutInflater) {
         final ErrorDisplayer errorDisplayer = new ErrorDisplayer(parent);
         final Database database = DatabaseDI.create(parent);
-        final ResourceProvider resourceProvider = new ResourceProvider(parent);
         final LocationManager locationManager = (LocationManager)parent
                 .getSystemService(Context.LOCATION_SERVICE);
         final LocationControl locationControl = LocationControlDi.create(locationManager);
@@ -59,36 +74,48 @@ public class CacheListDelegateDI {
         final DistanceFormatter distanceFormatter = new DistanceFormatter();
         final LocationSaver locationSaver = new LocationSaver(database, sqliteWrapper, cacheWriter);
         final GeocacheVectorFactory geocacheVectorFactory = new GeocacheVectorFactory(
-                geocacheFromMyLocationFactory, locationSaver, distanceFormatter, resourceProvider);
+                distanceFormatter);
         final LocationComparator locationComparator = new LocationComparator();
         final GeocacheVectors geocacheVectors = new GeocacheVectors(locationComparator,
                 geocacheVectorFactory);
-        final CacheListData cacheListData = new CacheListData(geocacheVectors,
-                geocacheVectorFactory);
-        final Action actions[] = CacheListDelegateDI.create(parent, database, sqliteWrapper,
-                cacheListData, cacheWriter, geocacheVectors, errorDisplayer);
-        final GeocacheListDelegate.CacheListOnCreateContextMenuListener.Factory factory = new GeocacheListDelegate.CacheListOnCreateContextMenuListener.Factory();
-        final GpxImporter gpxImporter = GpxImporterDI.create(database, sqliteWrapper,
-                errorDisplayer, parent);
-
+        final CacheListData cacheListData = new CacheListData(geocacheVectors);
         final GeocacheRowInflater geocacheRowInflater = new GeocacheRowInflater(layoutInflater);
         final GeocacheListAdapter geocacheListAdapter = new GeocacheListAdapter(geocacheVectors,
                 geocacheRowInflater);
+        final ContextAction actions[] = CacheListDelegateDI.createContextActions(parent, database,
+                sqliteWrapper, cacheListData, cacheWriter, geocacheVectors, errorDisplayer,
+                geocacheListAdapter);
+        final GpxImporter gpxImporter = GpxImporterDI.create(database, sqliteWrapper,
+                errorDisplayer, parent);
 
-        return new GeocacheListDelegate(parent, locationBookmarks, locationControl, cacheListData,
-                geocacheVectors, geocacheListAdapter, errorDisplayer, actions, factory, gpxImporter);
+        // TODO: replace with a widget.
+        final LocationListener locationListener = new DummyLocationListener();
+
+        final GeocacheListPresenter geocacheListPresenter = new GeocacheListPresenter(
+                locationManager, locationControl, locationListener, locationBookmarks,
+                geocacheVectors, gpxImporter, geocacheListAdapter, cacheListData, parent,
+                errorDisplayer);
+        final MenuActionSyncGpx menuActionSyncGpx = new MenuActionSyncGpx(gpxImporter,
+                geocacheListPresenter);
+        final MenuActionMyLocation menuActionMyLocation = new MenuActionMyLocation(locationSaver,
+                geocacheFromMyLocationFactory, null);
+        final MenuActions menuActions = new MenuActions(menuActionSyncGpx, menuActionMyLocation);
+        final GeocacheListController geocacheListController = new GeocacheListController(
+                errorDisplayer, menuActions, actions, gpxImporter);
+        return new CacheListDelegate(geocacheListController, geocacheListPresenter);
     }
 
-    public static Action[] create(ListActivity parent, Database database,
+    public static ContextAction[] createContextActions(ListActivity parent, Database database,
             SQLiteWrapper sqliteWrapper, CacheListData cacheListData, CacheWriter cacheWriter,
-            GeocacheVectors geocacheVectors, ErrorDisplayer errorDisplayer) {
+            GeocacheVectors geocacheVectors, ErrorDisplayer errorDisplayer,
+            GeocacheListAdapter geocacheListAdapter) {
         final Intent intent = new Intent(parent, GeoBeagle.class);
-        final ViewAction viewAction = new ViewAction(geocacheVectors, parent, intent);
-        final DeleteAction deleteAction = new DeleteAction(database, sqliteWrapper, cacheWriter,
-                geocacheVectors, errorDisplayer);
-        return new Action[] {
-                deleteAction, viewAction
+        final ContextActionView contextActionView = new ContextActionView(geocacheVectors, parent,
+                intent);
+        final ContextActionDelete contextActionDelete = new ContextActionDelete(database,
+                geocacheListAdapter, sqliteWrapper, cacheWriter, geocacheVectors, errorDisplayer);
+        return new ContextAction[] {
+                contextActionDelete, contextActionView
         };
     }
-
 }

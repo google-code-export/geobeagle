@@ -14,22 +14,6 @@
 
 package com.google.code.geobeagle.ui.cachelist;
 
-import com.google.code.geobeagle.CacheList;
-
-import android.app.Activity;
-import android.content.Intent;
-import android.view.View;
-import android.view.View.OnClickListener;
-
-public class GeocacheListOnClickListener implements OnClickListener {
-
-    final private Activity mActivity;
-
-    public GeocacheListOnClickListener(Activity activity) {
-        mActivity = activity;
-    }
-
-    public void onClick(View v) {
-        mActivity.startActivity(new Intent(mActivity, CacheList.class));
-    }
+interface MenuAction {
+    public void act();
 }

@@ -14,10 +14,6 @@
 
 package com.google.code.geobeagle.data;
 
-import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.ResourceProvider;
-import com.google.code.geobeagle.io.LocationSaver;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -36,49 +32,6 @@ public class GeocacheVector implements IGeocacheVector {
 
         public void sort(ArrayList<IGeocacheVector> arrayList) {
             Collections.sort(arrayList, this);
-        }
-    }
-
-    public static class MyLocation implements IGeocacheVector {
-        private final ResourceProvider mResourceProvider;
-        private GeocacheFromMyLocationFactory mGeocacheFromMyLocationFactory;
-        private final LocationSaver mLocationSaver;
-
-        public MyLocation(ResourceProvider resourceProvider,
-                GeocacheFromMyLocationFactory geocacheFromMyLocationFactory, LocationSaver locationSaver) {
-            mResourceProvider = resourceProvider;
-            mGeocacheFromMyLocationFactory = geocacheFromMyLocationFactory;
-            mLocationSaver = locationSaver;
-        }
-
-        public CharSequence getCoordinatesIdAndName() {
-            return null;
-        }
-
-        public Geocache getDestination() {
-            return null;
-        }
-
-        public float getDistance() {
-            return -1;
-        }
-
-        public CharSequence getId() {
-            return mResourceProvider.getString(R.string.my_current_location);
-        }
-
-        public CharSequence getFormattedDistance() {
-            return "";
-        }
-
-        public CharSequence getIdAndName() {
-            return mResourceProvider.getString(R.string.my_current_location);
-        }
-
-        public Geocache getGeocache() {
-            Geocache geocache = mGeocacheFromMyLocationFactory.create();
-            mLocationSaver.saveLocation(geocache);
-            return geocache;
         }
     }
 
