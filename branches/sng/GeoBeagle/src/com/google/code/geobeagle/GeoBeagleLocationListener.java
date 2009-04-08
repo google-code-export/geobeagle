@@ -25,28 +25,28 @@ import android.os.Bundle;
  */
 public class GeoBeagleLocationListener implements LocationListener {
     private final LocationControl mLocationControl;
-    private final GpsStatusWidget mLocationViewer;
+    private final GpsStatusWidget mGpsStatusWidget;
 
     public GeoBeagleLocationListener(LocationControl locationControl, GpsStatusWidget gpsStatusWidget) {
-        mLocationViewer = gpsStatusWidget;
+        mGpsStatusWidget = gpsStatusWidget;
         mLocationControl = locationControl;
     }
 
     public void onLocationChanged(Location location) {
         // Ask the location control to pick the most accurate location (might
         // not be this one).
-        mLocationViewer.setLocation(mLocationControl.getLocation());
+        mGpsStatusWidget.setLocation(mLocationControl.getLocation());
     }
 
     public void onProviderDisabled(String provider) {
-        mLocationViewer.setDisabled();
+        mGpsStatusWidget.setDisabled();
     }
 
     public void onProviderEnabled(String provider) {
-        mLocationViewer.setEnabled();
+        mGpsStatusWidget.setEnabled();
     }
 
     public void onStatusChanged(String provider, int status, Bundle extras) {
-        mLocationViewer.setStatus(provider, status);
+        mGpsStatusWidget.setStatus(provider, status);
     }
 }
