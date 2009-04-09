@@ -32,6 +32,11 @@ public class CacheList extends ListActivity {
         return mCacheListDelegate.onContextItemSelected(item) || super.onContextItemSelected(item);
     }
 
+    // This is the ctor that Android will use.
+    public CacheList() {
+    }
+
+    // This is the ctor for testing.
     public CacheList(CacheListDelegate cacheListDelegate) {
         mCacheListDelegate = cacheListDelegate;
     }
