@@ -98,7 +98,7 @@ public class CacheListDelegateDI {
         final MenuActionSyncGpx menuActionSyncGpx = new MenuActionSyncGpx(gpxImporter,
                 geocacheListPresenter);
         final MenuActionMyLocation menuActionMyLocation = new MenuActionMyLocation(locationSaver,
-                geocacheFromMyLocationFactory, null);
+                geocacheFromMyLocationFactory, geocacheListPresenter);
         final MenuActions menuActions = new MenuActions(menuActionSyncGpx, menuActionMyLocation);
         final GeocacheListController geocacheListController = new GeocacheListController(
                 errorDisplayer, menuActions, contextActions);
