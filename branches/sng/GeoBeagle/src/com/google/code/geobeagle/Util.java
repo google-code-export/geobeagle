@@ -17,6 +17,7 @@ package com.google.code.geobeagle;
 import android.net.UrlQuerySanitizer;
 import android.net.UrlQuerySanitizer.ValueSanitizer;
 
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -40,7 +41,7 @@ public class Util {
     public static CharSequence formatDegreesAsDecimalDegreesString(double fDegrees) {
         final double fAbsDegrees = Math.abs(fDegrees);
         final int dAbsDegrees = (int)fAbsDegrees;
-        return String.format((fDegrees < 0 ? "-" : "") + "%1$d %2$06.3f", dAbsDegrees,
+        return String.format(Locale.US, (fDegrees < 0 ? "-" : "") + "%1$d %2$06.3f", dAbsDegrees,
                 60.0 * (fAbsDegrees - dAbsDegrees));
     }
 

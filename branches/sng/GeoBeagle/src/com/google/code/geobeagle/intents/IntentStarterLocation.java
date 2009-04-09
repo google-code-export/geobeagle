@@ -23,6 +23,8 @@ import android.app.Activity;
 import android.content.Intent;
 import android.location.Location;
 
+import java.util.Locale;
+
 public class IntentStarterLocation implements IntentStarter {
     private final Activity mActivity;
     private final ContentSelector mContentSelector;
@@ -51,7 +53,7 @@ public class IntentStarterLocation implements IntentStarter {
 
         mGetCoordsToast.show();
         mActivity.startActivity(mIntentFactory.createIntent(Intent.ACTION_VIEW, String.format(
-                mResourceProvider.getStringArray(mUriId)[mContentSelector.getIndex()], location
-                        .getLatitude(), location.getLongitude())));
+                Locale.US, mResourceProvider.getStringArray(mUriId)[mContentSelector.getIndex()],
+                location.getLatitude(), location.getLongitude())));
     }
 }

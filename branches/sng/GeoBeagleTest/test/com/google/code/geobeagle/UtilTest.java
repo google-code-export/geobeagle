@@ -22,6 +22,8 @@ import static org.easymock.classextension.EasyMock.verify;
 import android.net.UrlQuerySanitizer;
 import android.net.UrlQuerySanitizer.ValueSanitizer;
 
+import java.util.Locale;
+
 import junit.framework.TestCase;
 
 public class UtilTest extends TestCase {
@@ -32,6 +34,9 @@ public class UtilTest extends TestCase {
     }
 
     public void testConvertDegreesToMinutes() {
+        // Make sure formatting is US even if the phone is in a different locale.
+        // TODO: add locale-specific parsing/formatting.
+        Locale.setDefault(Locale.GERMANY);
         assertEquals("-122 30.000", Util.formatDegreesAsDecimalDegreesString(-122.5));
         assertEquals("-122 30.600", Util.formatDegreesAsDecimalDegreesString(-122.51));
         assertEquals("-122 03.000", Util.formatDegreesAsDecimalDegreesString(-122.05));

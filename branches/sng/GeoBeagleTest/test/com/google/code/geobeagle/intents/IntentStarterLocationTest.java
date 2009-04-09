@@ -16,6 +16,7 @@ package com.google.code.geobeagle.intents;
 
 import static org.easymock.EasyMock.expect;
 
+import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.ResourceProvider;
 import com.google.code.geobeagle.ui.ContentSelector;
 import com.google.code.geobeagle.ui.GetCoordsToast;
@@ -29,6 +30,8 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import android.app.Activity;
 import android.content.Intent;
 import android.location.Location;
+
+import java.util.Locale;
 
 @RunWith(PowerMockRunner.class)
 public class IntentStarterLocationTest {
@@ -44,16 +47,16 @@ public class IntentStarterLocationTest {
         Intent intent = PowerMock.createMock(Intent.class);
         ContentSelector contentSelector = PowerMock.createMock(ContentSelector.class);
 
+        // Make sure this works even if decimal point symbol is "," and not ".".
+        Locale.setDefault(Locale.GERMANY);
         getCoordsToast.show();
         expect(myLocationProvider.getLocation()).andReturn(location);
         expect(location.getLatitude()).andReturn(123.45);
         expect(location.getLongitude()).andReturn(37.89);
         expect(contentSelector.getIndex()).andReturn(0);
-        expect(resourceProvider.getStringArray(27)).andReturn(
-                new String[] {
-                        "http://www.geocaching.com/nearest.aspx?lat=%1$.5f&amp;lng=%2$.5f",
-                        "http://www.atlasquest.com/results.html?gTypeId=2;gSort=5;gCoord=%1$.5f,%2$.5f"
-                });
+        expect(resourceProvider.getStringArray(R.id.nearest_objects)).andReturn(new String[] {
+            "http://www.geocaching.com/nearest.aspx?lat=%1$.5f&amp;lng=%2$.5f",
+        });
         activity.startActivity(intent);
         expect(
                 intentFactory.createIntent(Intent.ACTION_VIEW,
@@ -62,7 +65,7 @@ public class IntentStarterLocationTest {
 
         PowerMock.replayAll();
         new IntentStarterLocation(activity, resourceProvider, intentFactory, myLocationProvider,
-                contentSelector, 27, getCoordsToast).startIntent();
+                contentSelector, R.id.nearest_objects, getCoordsToast).startIntent();
         PowerMock.verifyAll();
     }
 
@@ -73,7 +76,8 @@ public class IntentStarterLocationTest {
         expect(myLocationProvider.getLocation()).andReturn(null);
 
         PowerMock.replayAll();
-        new IntentStarterLocation(null, null, null, myLocationProvider, null, 0, null ).startIntent();
+        new IntentStarterLocation(null, null, null, myLocationProvider, null, 0, null)
+                .startIntent();
         PowerMock.verifyAll();
     }
 }
