@@ -1,5 +1,8 @@
 #summary Release Notes for GeoBeagle versions
 
+= v0.48 =
+Move My Location down to menu, where it should be less confusing.  Fix non-US locale bug.
+
 = v0.47 = 
 Fixes bug where no caches were getting deleted if sync directory is empty.
 Changed cache list title bar to be clearer.
