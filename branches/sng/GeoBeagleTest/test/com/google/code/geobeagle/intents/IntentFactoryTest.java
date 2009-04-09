@@ -1,0 +1,39 @@
+
+package com.google.code.geobeagle.intents;
+
+import static org.junit.Assert.*;
+
+import com.google.code.geobeagle.UriParser;
+import com.google.code.geobeagle.data.GeocacheVectorTest;
+import com.google.code.geobeagle.data.GeocacheVector.LocationComparator;
+
+import org.easymock.EasyMock;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.powermock.api.easymock.PowerMock;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
+
+import android.content.Intent;
+import android.net.Uri;
+
+@RunWith(PowerMockRunner.class)
+@PrepareForTest( {
+    IntentFactory.class
+})
+public class IntentFactoryTest {
+    @Test
+    public void testCreateIntent() throws Exception {
+        UriParser uriParser = PowerMock.createMock(UriParser.class);
+        Uri uri = PowerMock.createMock(Uri.class);
+        Intent intent = PowerMock.createMock(Intent.class);
+
+        EasyMock.expect(uriParser.parse("http://maps.google.com/etc")).andReturn(uri);
+        PowerMock.expectNew(Intent.class, "action", uri).andReturn(intent);
+
+        PowerMock.replayAll();
+        assertEquals(intent, new IntentFactory(uriParser).createIntent("action",
+                "http://maps.google.com/etc"));
+        PowerMock.verifyAll();
+    }
+}
