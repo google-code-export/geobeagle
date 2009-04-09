@@ -162,9 +162,8 @@ public class GeoBeagle extends Activity implements LifecycleManager {
 
             mGpsStatusWidget = new GpsStatusWidget(mResourceProvider, new MeterView(
                     getTextView(R.id.location_viewer), new MeterFormatter()),
-                    getTextView(R.id.provider), getTextView(R.id.lag),
-                    getTextView(R.id.accuracy), getTextView(R.id.status), new Misc.Time(),
-                    new Location(""));
+                    getTextView(R.id.provider), getTextView(R.id.lag), getTextView(R.id.accuracy),
+                    getTextView(R.id.status), new Misc.Time(), new Location(""));
             final LocationManager locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
             mGpsControl = new LocationControl(locationManager, new LocationChooser());
             mLocationListener = new GeoBeagleLocationListener(mGpsControl, mGpsStatusWidget);
@@ -259,7 +258,7 @@ public class GeoBeagle extends Activity implements LifecycleManager {
                 mGeocacheViewer, new GeocacheToGoogleMap(mResourceProvider)), "");
         cacheClickListenerSetter.set(R.id.cache_page, new IntentStarterViewUri(this, intentFactory,
                 mGeocacheViewer, new GeocacheToCachePage(mResourceProvider)), "");
-        cacheClickListenerSetter.set(R.id.radar, new IntentStarterRadar(this, intentFactory),
+        cacheClickListenerSetter.set(R.id.radar, new IntentStarterRadar(this),
                 "\nPlease install the Radar application to use Radar.");
     }
 

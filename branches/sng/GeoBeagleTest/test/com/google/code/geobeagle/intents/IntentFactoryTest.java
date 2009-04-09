@@ -1,11 +1,9 @@
 
 package com.google.code.geobeagle.intents;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import com.google.code.geobeagle.UriParser;
-import com.google.code.geobeagle.data.GeocacheVectorTest;
-import com.google.code.geobeagle.data.GeocacheVector.LocationComparator;
 
 import org.easymock.EasyMock;
 import org.junit.Test;

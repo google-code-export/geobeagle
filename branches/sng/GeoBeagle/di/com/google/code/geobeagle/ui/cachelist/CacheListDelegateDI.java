@@ -82,9 +82,9 @@ public class CacheListDelegateDI {
         final GeocacheRowInflater geocacheRowInflater = new GeocacheRowInflater(layoutInflater);
         final GeocacheListAdapter geocacheListAdapter = new GeocacheListAdapter(geocacheVectors,
                 geocacheRowInflater);
-        final ContextAction actions[] = CacheListDelegateDI.createContextActions(parent, database,
-                sqliteWrapper, cacheListData, cacheWriter, geocacheVectors, errorDisplayer,
-                geocacheListAdapter);
+        final ContextAction contextActions[] = CacheListDelegateDI.createContextActions(parent,
+                database, sqliteWrapper, cacheListData, cacheWriter, geocacheVectors,
+                errorDisplayer, geocacheListAdapter);
         final GpxImporter gpxImporter = GpxImporterDI.create(database, sqliteWrapper,
                 errorDisplayer, parent);
 
@@ -101,7 +101,7 @@ public class CacheListDelegateDI {
                 geocacheFromMyLocationFactory, null);
         final MenuActions menuActions = new MenuActions(menuActionSyncGpx, menuActionMyLocation);
         final GeocacheListController geocacheListController = new GeocacheListController(
-                errorDisplayer, menuActions, actions, gpxImporter);
+                errorDisplayer, menuActions, contextActions);
         return new CacheListDelegate(geocacheListController, geocacheListPresenter);
     }
 

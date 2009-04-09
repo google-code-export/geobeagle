@@ -15,7 +15,6 @@
 package com.google.code.geobeagle.ui.cachelist;
 
 import com.google.code.geobeagle.data.GeocacheVectors;
-import com.google.code.geobeagle.io.GpxImporter;
 import com.google.code.geobeagle.ui.ErrorDisplayer;
 
 import android.view.ContextMenu;
@@ -46,14 +45,14 @@ public class GeocacheListController {
     public static final int MENU_DELETE = 0;
     public static final int MENU_VIEW = 1;
     public static final String SELECT_CACHE = "SELECT_CACHE";
-    private final ContextAction mActions[];
+    private final ContextAction mContextActions[];
     private final ErrorDisplayer mErrorDisplayer;
     private final MenuActions mMenuActions;
 
     GeocacheListController(ErrorDisplayer errorDisplayer, MenuActions menuActions,
-            ContextAction[] actions, GpxImporter gpxImporter) {
+            ContextAction[] contextActions) {
         mErrorDisplayer = errorDisplayer;
-        mActions = actions;
+        mContextActions = contextActions;
         mMenuActions = menuActions;
     }
 
@@ -61,7 +60,7 @@ public class GeocacheListController {
         try {
             AdapterContextMenuInfo adapterContextMenuInfo = (AdapterContextMenuInfo)menuItem
                     .getMenuInfo();
-            mActions[menuItem.getItemId()].act(adapterContextMenuInfo.position);
+            mContextActions[menuItem.getItemId()].act(adapterContextMenuInfo.position);
         } catch (final Exception e) {
             mErrorDisplayer.displayErrorAndStack(e);
         }
@@ -70,7 +69,7 @@ public class GeocacheListController {
 
     public void onListItemClick(ListView l, View v, int position, long id) {
         try {
-            mActions[MENU_VIEW].act(position);
+            mContextActions[MENU_VIEW].act(position);
         } catch (final Exception e) {
             mErrorDisplayer.displayErrorAndStack(e);
         }
