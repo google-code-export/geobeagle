@@ -5,7 +5,7 @@ import static org.junit.Assert.assertEquals;
 
 import com.google.code.geobeagle.LocationControl;
 import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.data.Geocache.Source;
+import com.google.code.geobeagle.data.GeocacheFactory.Source;
 import com.google.code.geobeagle.ui.ErrorDisplayer;
 
 import org.easymock.classextension.EasyMock;
@@ -31,9 +31,8 @@ public class GeocacheFromMyLocationFactoryTest {
         EasyMock.expect(location.getLatitude()).andReturn(37.0);
         EasyMock.expect(location.getLongitude()).andReturn(-122.0);
         EasyMock.expect(
-                geocacheFactory.create("ML161640",
-                        "[16:16] My Location", 37.0, -122.0, Source.MY_LOCATION, null))
-                .andReturn(geocache);
+                geocacheFactory.create("ML161640", "[16:16] My Location", 37.0, -122.0,
+                        Source.MY_LOCATION, null)).andReturn(geocache);
 
         EasyMock.replay(locationControl);
         EasyMock.replay(location);

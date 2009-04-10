@@ -14,12 +14,12 @@
 
 package com.google.code.geobeagle.ui;
 
+import com.google.code.geobeagle.data.GeocacheFactory;
 import com.google.code.geobeagle.io.CacheWriter;
 import com.google.code.geobeagle.io.Database;
 import com.google.code.geobeagle.io.DatabaseDI;
 import com.google.code.geobeagle.io.LocationSaver;
 import com.google.code.geobeagle.io.DatabaseDI.SQLiteWrapper;
-import com.google.code.geobeagle.ui.EditCacheActivityDelegate;
 import com.google.code.geobeagle.ui.EditCacheActivityDelegate.CancelButtonOnClickListener;
 
 import android.app.Activity;
@@ -37,8 +37,9 @@ public class EditCacheActivity extends Activity {
         final LocationSaver locationSaver = new LocationSaver(database, sqliteWrapper, cacheWriter);
         final CancelButtonOnClickListener cancelButtonOnClickListener = new CancelButtonOnClickListener(
                 this);
+        final GeocacheFactory geocacheFactory = new GeocacheFactory();
         mEditCacheActivityDelegate = new EditCacheActivityDelegate(this,
-                cancelButtonOnClickListener, locationSaver);
+                cancelButtonOnClickListener, locationSaver, geocacheFactory);
     }
 
     @Override

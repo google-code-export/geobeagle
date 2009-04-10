@@ -16,8 +16,8 @@ package com.google.code.geobeagle.ui;
 
 import com.google.code.geobeagle.GeoBeagle;
 import com.google.code.geobeagle.data.Geocache;
-import com.google.code.geobeagle.data.Geocache.Provider;
-import com.google.code.geobeagle.data.Geocache.Source;
+import com.google.code.geobeagle.data.GeocacheFactory;
+import com.google.code.geobeagle.data.GeocacheFactory.Source;
 
 import org.easymock.classextension.EasyMock;
 import org.junit.Test;
@@ -45,7 +45,7 @@ public class WebPageAndDetailsButtonEnablerTest extends TestCase {
 
         EasyMock.expect(geoBeagle.getGeocache()).andReturn(geocache);
         EasyMock.expect(geocache.getSourceType()).andReturn(Source.GPX);
-        EasyMock.expect(geocache.getContentProvider()).andReturn(Provider.GROUNDSPEAK);
+        EasyMock.expect(geocache.getContentProvider()).andReturn(GeocacheFactory.Provider.GROUNDSPEAK);
         cachePageButton.setEnabled(true);
         detailsButton.setEnabled(true);
 

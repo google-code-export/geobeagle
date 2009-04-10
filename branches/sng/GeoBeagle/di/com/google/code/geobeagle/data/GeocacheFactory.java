@@ -14,21 +14,12 @@
 
 package com.google.code.geobeagle.data;
 
-import com.google.code.geobeagle.data.Geocache;
-import com.google.code.geobeagle.data.GeocacheFromParcelFactory;
-import com.google.code.geobeagle.data.Geocache.Source;
-import com.google.code.geobeagle.data.Geocache.Source.SourceFactory;
+import com.google.code.geobeagle.data.GeocacheFactory.Source.SourceFactory;
 
 import android.os.Parcel;
 import android.os.Parcelable;
 
 public class GeocacheFactory {
-    private static SourceFactory mSourceFactory;
-
-    public GeocacheFactory() {
-        mSourceFactory = new SourceFactory();
-    }
-
     public static class CreateGeocacheFromParcel implements Parcelable.Creator<Geocache> {
         private final GeocacheFromParcelFactory mGeocacheFromParcelFactory = new GeocacheFromParcelFactory(
                 new GeocacheFactory());
@@ -42,8 +33,61 @@ public class GeocacheFactory {
         }
     }
 
+    public static enum Source {
+        GPX(0), MY_LOCATION(1), WEB_URL(2);
+
+        public static class SourceFactory {
+            private final Source mSources[] = new Source[values().length];
+
+            public SourceFactory() {
+                for (Source source : values())
+                    mSources[source.mIx] = source;
+            }
+
+            public Source fromInt(int i) {
+                return mSources[i];
+            }
+        }
+
+        private final int mIx;
+
+        Source(int ix) {
+            mIx = ix;
+        }
+
+        public int toInt() {
+            return mIx;
+        }
+    }
+
+    public static enum Provider {
+        ATLAS_QUEST(0), GROUNDSPEAK(1), MY_LOCATION(-1);
+
+        private final int mIx;
+
+        Provider(int ix) {
+            mIx = ix;
+        }
+
+        public int toInt() {
+            return mIx;
+        }
+    }
+
+    private static SourceFactory mSourceFactory;
+
+    public GeocacheFactory() {
+        mSourceFactory = new SourceFactory();
+    }
+
     public Geocache create(CharSequence id, CharSequence name, double latitude, double longitude,
             Source sourceType, String sourceName) {
+        if (id.length() < 2) {
+            // ID is missing for waypoints imported from the browser; create a
+            // new id
+            // from the time.
+            id = String.format("WP%1$tk%1$tM%1$tS", System.currentTimeMillis());
+        }
         return new Geocache(id, name, latitude, longitude, sourceType, sourceName);
     }
 

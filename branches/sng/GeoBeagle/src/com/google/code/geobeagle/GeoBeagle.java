@@ -18,7 +18,7 @@ import com.google.code.geobeagle.LocationControl.LocationChooser;
 import com.google.code.geobeagle.data.Geocache;
 import com.google.code.geobeagle.data.GeocacheFactory;
 import com.google.code.geobeagle.data.GeocacheFromPreferencesFactory;
-import com.google.code.geobeagle.data.Geocache.Source;
+import com.google.code.geobeagle.data.GeocacheFactory.Source;
 import com.google.code.geobeagle.intents.GeocacheToCachePage;
 import com.google.code.geobeagle.intents.GeocacheToGoogleMap;
 import com.google.code.geobeagle.intents.IntentFactory;
@@ -85,6 +85,7 @@ public class GeoBeagle extends Activity implements LifecycleManager {
         }
     };
     private LocationSaver mLocationSaver;
+    private GeocacheFactory mGeocacheFactory;
 
     public GeoBeagle() {
         super();
@@ -97,8 +98,7 @@ public class GeoBeagle extends Activity implements LifecycleManager {
         return (TextView)findViewById(id);
     }
 
-    private void getCoordinatesFromIntent(GeocacheViewer geocacheViewer, Intent intent,
-            ErrorDisplayer errorDisplayer) {
+    private void getCoordinatesFromIntent(Intent intent) {
         try {
             if (intent.getType() == null) {
                 final String query = intent.getData().getQuery();
@@ -106,13 +106,14 @@ public class GeoBeagle extends Activity implements LifecycleManager {
                         new UrlQuerySanitizer(), UrlQuerySanitizer
                                 .getAllButNulAndAngleBracketsLegal());
                 final CharSequence[] latlon = Util.splitLatLonDescription(sanitizedQuery);
-                mGeocache = new Geocache(latlon[2], latlon[3], Util.parseCoordinate(latlon[0]),
-                        Util.parseCoordinate(latlon[1]), Source.WEB_URL, null);
+                mGeocache = mGeocacheFactory.create(latlon[2], latlon[3], Util
+                        .parseCoordinate(latlon[0]), Util.parseCoordinate(latlon[1]),
+                        Source.WEB_URL, null);
                 mLocationSaver.saveLocation(mGeocache);
-                geocacheViewer.set(mGeocache);
+                mGeocacheViewer.set(mGeocache);
             }
         } catch (final Exception e) {
-            errorDisplayer.displayError("Error: " + e.getMessage());
+            mErrorDisplayer.displayError("Error: " + e.getMessage());
         }
     }
 
@@ -126,7 +127,7 @@ public class GeoBeagle extends Activity implements LifecycleManager {
             final String action = intent.getAction();
             if (action != null) {
                 if (action.equals(Intent.ACTION_VIEW)) {
-                    getCoordinatesFromIntent(mGeocacheViewer, intent, mErrorDisplayer);
+                    getCoordinatesFromIntent(intent);
                     return true;
                 } else if (action.equals(GeocacheListController.SELECT_CACHE)) {
                     mGeocache = intent.<Geocache> getParcelableExtra("geocache");
@@ -167,8 +168,8 @@ public class GeoBeagle extends Activity implements LifecycleManager {
             final LocationManager locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
             mGpsControl = new LocationControl(locationManager, new LocationChooser());
             mLocationListener = new GeoBeagleLocationListener(mGpsControl, mGpsStatusWidget);
-            final GeocacheFactory geocacheFactory = new GeocacheFactory();
-            mGeocacheFromPreferencesFactory = new GeocacheFromPreferencesFactory(geocacheFactory);
+            mGeocacheFactory = new GeocacheFactory();
+            mGeocacheFromPreferencesFactory = new GeocacheFromPreferencesFactory(mGeocacheFactory);
             final TextView gcid = (TextView)findViewById(R.id.gcid);
             final TextView gcname = (TextView)findViewById(R.id.gcname);
             final TextView gccoords = (TextView)findViewById(R.id.gccoords);
@@ -225,14 +226,18 @@ public class GeoBeagle extends Activity implements LifecycleManager {
 
     @Override
     protected void onResume() {
-        super.onResume();
+        try {
+            super.onResume();
 
-        mGeoBeagleDelegate.onResume();
-        maybeGetCoordinatesFromIntent();
-        mWebPageButtonEnabler.check();
-        final Location location = mGpsControl.getLocation();
-        if (location != null)
-            mLocationListener.onLocationChanged(location);
+            mGeoBeagleDelegate.onResume();
+            maybeGetCoordinatesFromIntent();
+            mWebPageButtonEnabler.check();
+            final Location location = mGpsControl.getLocation();
+            if (location != null)
+                mLocationListener.onLocationChanged(location);
+        } catch (final Exception e) {
+            mErrorDisplayer.displayErrorAndStack(e);
+        }
     }
 
     public void onResume(SharedPreferences preferences) {

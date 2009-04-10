@@ -16,9 +16,8 @@ package com.google.code.geobeagle.data;
 
 import static org.junit.Assert.assertEquals;
 
-import com.google.code.geobeagle.data.Geocache.Provider;
-import com.google.code.geobeagle.data.Geocache.Source;
-import com.google.code.geobeagle.data.Geocache.Source.SourceFactory;
+import com.google.code.geobeagle.data.GeocacheFactory.Source;
+import com.google.code.geobeagle.data.GeocacheFactory.Source.SourceFactory;
 
 import org.easymock.classextension.EasyMock;
 import org.junit.Test;
@@ -33,7 +32,7 @@ import android.os.Parcel;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest( {
-        Parcel.class, Bundle.class, Geocache.class
+        Parcel.class, Bundle.class, Geocache.class, System.class
 })
 public class GeocacheTest {
 
@@ -46,13 +45,13 @@ public class GeocacheTest {
     @Test
     public void testGetContentProvider() {
         Geocache geocache = new Geocache("GC123", null, 0, 0, null, null);
-        assertEquals(Provider.GROUNDSPEAK, geocache.getContentProvider());
+        assertEquals(GeocacheFactory.Provider.GROUNDSPEAK, geocache.getContentProvider());
 
         geocache = new Geocache("LBabc", null, 0, 0, null, null);
-        assertEquals(Provider.ATLAS_QUEST, geocache.getContentProvider());
+        assertEquals(GeocacheFactory.Provider.ATLAS_QUEST, geocache.getContentProvider());
 
         geocache = new Geocache("foo", null, 0, 0, null, null);
-        assertEquals(Provider.MY_LOCATION, geocache.getContentProvider());
+        assertEquals(GeocacheFactory.Provider.MY_LOCATION, geocache.getContentProvider());
     }
 
     @Test
@@ -116,9 +115,9 @@ public class GeocacheTest {
 
     @Test
     public void testProviderToInt() {
-        assertEquals(0, Provider.ATLAS_QUEST.toInt());
-        assertEquals(1, Provider.GROUNDSPEAK.toInt());
-        assertEquals(-1, Provider.MY_LOCATION.toInt());
+        assertEquals(0, GeocacheFactory.Provider.ATLAS_QUEST.toInt());
+        assertEquals(1, GeocacheFactory.Provider.GROUNDSPEAK.toInt());
+        assertEquals(-1, GeocacheFactory.Provider.MY_LOCATION.toInt());
     }
 
     @Test

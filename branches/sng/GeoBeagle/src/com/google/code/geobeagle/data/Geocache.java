@@ -14,6 +14,9 @@
 
 package com.google.code.geobeagle.data;
 
+import com.google.code.geobeagle.data.GeocacheFactory.Provider;
+import com.google.code.geobeagle.data.GeocacheFactory.Source;
+
 import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.os.Parcel;
@@ -23,46 +26,6 @@ import android.os.Parcelable;
  * Geocache or letterbox description, id, and coordinates.
  */
 public class Geocache implements Parcelable {
-    public static enum Provider {
-        ATLAS_QUEST(0), GROUNDSPEAK(1), MY_LOCATION(-1);
-
-        private final int mIx;
-
-        Provider(int ix) {
-            mIx = ix;
-        }
-
-        public int toInt() {
-            return mIx;
-        }
-    }
-
-    public static enum Source {
-        GPX(0), MY_LOCATION(1), WEB_URL(2);
-
-        public static class SourceFactory {
-            private final Source mSources[] = new Source[values().length];
-
-            public SourceFactory() {
-                for (Source source : values())
-                    mSources[source.mIx] = source;
-            }
-
-            public Source fromInt(int i) {
-                return mSources[i];
-            }
-        }
-
-        private final int mIx;
-
-        Source(int ix) {
-            mIx = ix;
-        }
-
-        public int toInt() {
-            return mIx;
-        }
-    }
 
     public static Parcelable.Creator<Geocache> CREATOR = new GeocacheFactory.CreateGeocacheFromParcel();
     public static final String ID = "id";
@@ -79,7 +42,7 @@ public class Geocache implements Parcelable {
     private final String mSourceName;
     private final Source mSourceType;
 
-    public Geocache(CharSequence id, CharSequence name, double latitude, double longitude,
+    Geocache(CharSequence id, CharSequence name, double latitude, double longitude,
             Source sourceType, String sourceName) {
         mId = id;
         mName = name;
@@ -93,7 +56,7 @@ public class Geocache implements Parcelable {
         return 0;
     }
 
-    public Provider getContentProvider() {
+    public GeocacheFactory.Provider getContentProvider() {
         // Must use toString() rather than mId.subSequence(0,2).equals("GC"),
         // because editing the text in android produces a SpannableString rather
         // than a String, so the CharSequences won't be equal.
@@ -152,7 +115,7 @@ public class Geocache implements Parcelable {
         bundle.putCharSequence(NAME, mName);
         bundle.putDouble(LATITUDE, mLatitude);
         bundle.putDouble(LONGITUDE, mLongitude);
-        bundle.putInt(SOURCE_TYPE, mSourceType.mIx);
+        bundle.putInt(SOURCE_TYPE, mSourceType.toInt());
         bundle.putString(SOURCE_NAME, mSourceName);
         out.writeBundle(bundle);
     }
@@ -163,7 +126,7 @@ public class Geocache implements Parcelable {
         editor.putString(NAME, mName.toString());
         editor.putFloat(LATITUDE, (float)mLatitude);
         editor.putFloat(LONGITUDE, (float)mLongitude);
-        editor.putInt(SOURCE_TYPE, mSourceType.mIx);
+        editor.putInt(SOURCE_TYPE, mSourceType.toInt());
         editor.putString(SOURCE_NAME, mSourceName);
     }
 }

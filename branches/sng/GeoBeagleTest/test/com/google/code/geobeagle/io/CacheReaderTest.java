@@ -8,7 +8,7 @@ import static org.junit.Assert.assertEquals;
 
 import com.google.code.geobeagle.data.Geocache;
 import com.google.code.geobeagle.data.GeocacheFactory;
-import com.google.code.geobeagle.data.Geocache.Source;
+import com.google.code.geobeagle.data.GeocacheFactory.Source;
 import com.google.code.geobeagle.io.CacheReader.CacheReaderCursor;
 import com.google.code.geobeagle.io.CacheReader.WhereFactory;
 import com.google.code.geobeagle.io.DatabaseDI.SQLiteWrapper;

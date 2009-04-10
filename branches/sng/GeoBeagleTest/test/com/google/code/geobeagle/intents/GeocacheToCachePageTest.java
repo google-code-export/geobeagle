@@ -19,7 +19,7 @@ import static org.easymock.EasyMock.expect;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.ResourceProvider;
 import com.google.code.geobeagle.data.Geocache;
-import com.google.code.geobeagle.data.Geocache.Provider;
+import com.google.code.geobeagle.data.GeocacheFactory;
 
 import org.junit.runner.RunWith;
 import org.powermock.api.easymock.PowerMock;
@@ -35,7 +35,7 @@ public class GeocacheToCachePageTest extends TestCase {
         Geocache geocache = PowerMock.createMock(Geocache.class);
 
         expect(geocache.getShortId()).andReturn("FOO");
-        expect(geocache.getContentProvider()).andReturn(Provider.GROUNDSPEAK);
+        expect(geocache.getContentProvider()).andReturn(GeocacheFactory.Provider.GROUNDSPEAK);
         expect(resourceProvider.getStringArray(R.array.cache_page_url)).andReturn(new String[] {
                 "", "http://coord.info/GC%1$s",
         });

@@ -16,8 +16,9 @@ package com.google.code.geobeagle.ui;
 
 import com.google.code.geobeagle.GeoBeagle;
 import com.google.code.geobeagle.data.Geocache;
-import com.google.code.geobeagle.data.Geocache.Provider;
-import com.google.code.geobeagle.data.Geocache.Source;
+import com.google.code.geobeagle.data.GeocacheFactory;
+import com.google.code.geobeagle.data.GeocacheFactory.Provider;
+import com.google.code.geobeagle.data.GeocacheFactory.Source;
 
 import android.view.View;
 
@@ -35,8 +36,8 @@ public class WebPageAndDetailsButtonEnabler {
     public void check() {
         Geocache geocache = mGeoBeagle.getGeocache();
         mDetailsButton.setEnabled(geocache.getSourceType() == Source.GPX);
-        final Provider contentProvider = geocache.getContentProvider();
+        final GeocacheFactory.Provider contentProvider = geocache.getContentProvider();
         mWebPageButton.setEnabled(contentProvider == Provider.GROUNDSPEAK
-                || contentProvider == Provider.ATLAS_QUEST);
+                || contentProvider == GeocacheFactory.Provider.ATLAS_QUEST);
     }
 }
