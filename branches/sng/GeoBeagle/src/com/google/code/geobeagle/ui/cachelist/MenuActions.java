@@ -21,10 +21,12 @@ import java.util.HashMap;
 class MenuActions {
     private final HashMap<Integer, MenuAction> mMenuActions;
 
-    public MenuActions(MenuActionSyncGpx menuActionSyncGpx, MenuActionMyLocation menuActionMyLocation) {
+    public MenuActions(MenuActionSyncGpx menuActionSyncGpx,
+            MenuActionMyLocation menuActionMyLocation, MenuActionRefresh menuActionRefresh) {
         mMenuActions = new HashMap<Integer, MenuAction>();
         mMenuActions.put(R.id.menu_sync, menuActionSyncGpx);
         mMenuActions.put(R.id.menu_my_location, menuActionMyLocation);
+        mMenuActions.put(R.id.menu_refresh, menuActionRefresh);
     }
 
     public void act(int id) {
