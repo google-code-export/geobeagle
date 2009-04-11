@@ -43,7 +43,7 @@ public class ZipFileOpener {
 
             if (mNextZipEntry == null)
                 return null;
-            
+
             final String name = mNextZipEntry.getName();
             mNextZipEntry = null;
             return new GpxReader(name, new InputStreamReader(mZipInputStream.getStream()));
@@ -59,7 +59,6 @@ public class ZipFileOpener {
     }
 
     public ZipFileIter iterator() throws IOException {
-        GpxZipInputStream zipInputStream = mZipInputStreamFactory.create(mFilename);
-        return new ZipFileIter(zipInputStream);
+        return new ZipFileIter(mZipInputStreamFactory.create(mFilename));
     }
 }
