@@ -137,10 +137,12 @@ public class GpxEventHandlerTest {
 
     @Test
     public void testStartTagCache() throws IOException {
-        GpxToCacheDI.XmlPullParserWrapper xmlPullParser = createMock(XmlPullParserWrapper.class);
+        XmlPullParserWrapper xmlPullParser = createMock(XmlPullParserWrapper.class);
         CachePersisterFacade cachePersisterFacade = createMock(CachePersisterFacade.class);
 
-        cachePersisterFacade.wpt(xmlPullParser);
+        expect(xmlPullParser.getAttributeValue(null, "lat")).andReturn("37");
+        expect(xmlPullParser.getAttributeValue(null, "lon")).andReturn("122");
+        cachePersisterFacade.wpt("37", "122");
 
         replay(cachePersisterFacade);
         replay(xmlPullParser);

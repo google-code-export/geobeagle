@@ -41,14 +41,14 @@ public class EventHelper {
         }
     }
 
-    private final GpxEventHandler mGpxEventHandler;
+    private final EventHandler mEventHandler;
     private final XmlPathBuilder mXmlPathBuilder;
     private final XmlPullParserWrapper mXmlPullParser;
 
-    public EventHelper(XmlPathBuilder xmlPathBuilder, GpxEventHandler gpxEventHandler,
+    public EventHelper(XmlPathBuilder xmlPathBuilder, EventHandler eventHandler,
             XmlPullParserWrapper xmlPullParser) {
         mXmlPathBuilder = xmlPathBuilder;
-        mGpxEventHandler = gpxEventHandler;
+        mEventHandler = eventHandler;
         mXmlPullParser = xmlPullParser;
     }
 
@@ -56,14 +56,14 @@ public class EventHelper {
         switch (eventType) {
             case XmlPullParser.START_TAG:
                 mXmlPathBuilder.startTag(mXmlPullParser.getName());
-                mGpxEventHandler.startTag(mXmlPathBuilder.getPath(), mXmlPullParser);
+                mEventHandler.startTag(mXmlPathBuilder.getPath(), mXmlPullParser);
                 break;
             case XmlPullParser.END_TAG:
-                mGpxEventHandler.endTag(mXmlPathBuilder.getPath());
+                mEventHandler.endTag(mXmlPathBuilder.getPath());
                 mXmlPathBuilder.endTag(mXmlPullParser.getName());
                 break;
             case XmlPullParser.TEXT:
-                return mGpxEventHandler.text(mXmlPathBuilder.getPath(), mXmlPullParser.getText());
+                return mEventHandler.text(mXmlPathBuilder.getPath(), mXmlPullParser.getText());
         }
         return true;
     }

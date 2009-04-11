@@ -16,7 +16,6 @@ package com.google.code.geobeagle.io;
 
 import com.google.code.geobeagle.io.CachePersisterFacadeDI.FileFactory;
 import com.google.code.geobeagle.io.GpxImporterDI.MessageHandler;
-import com.google.code.geobeagle.io.GpxToCacheDI.XmlPullParserWrapper;
 
 import android.os.PowerManager.WakeLock;
 
@@ -94,10 +93,8 @@ public class CachePersisterFacade {
         mCacheTagWriter.symbol(text);
     }
 
-    void wpt(XmlPullParserWrapper mXmlPullParser) {
+    void wpt(String latitude, String longitude) {
         mCacheTagWriter.clear();
-        String latitude = mXmlPullParser.getAttributeValue(null, "lat");
-        String longitude = mXmlPullParser.getAttributeValue(null, "lon");
         mCacheTagWriter.latitudeLongitude(latitude, longitude);
         mCacheDetailsWriter.latitudeLongitude(latitude, longitude);
     }

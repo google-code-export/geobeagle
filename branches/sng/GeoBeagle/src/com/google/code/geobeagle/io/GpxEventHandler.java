@@ -14,16 +14,17 @@
 
 package com.google.code.geobeagle.io;
 
+import com.google.code.geobeagle.io.GpxToCacheDI.XmlPullParserWrapper;
 
 import java.io.IOException;
 
-public class GpxEventHandler {
-    public static final String XPATH_GPXNAME = "/gpx/name";
-    public static final String XPATH_GPXTIME = "/gpx/time";
-    public static final String XPATH_GROUNDSPEAKNAME = "/gpx/wpt/groundspeak:cache/groundspeak:name";
-    public static final String XPATH_HINT = "/gpx/wpt/groundspeak:cache/groundspeak:encoded_hints";
-    public static final String XPATH_LOGDATE = "/gpx/wpt/groundspeak:cache/groundspeak:logs/groundspeak:log/groundspeak:date";
-    public static final String[] XPATH_PLAINLINES = {
+public class GpxEventHandler implements EventHandler {
+    static final String XPATH_GPXNAME = "/gpx/name";
+    static final String XPATH_GPXTIME = "/gpx/time";
+    static final String XPATH_GROUNDSPEAKNAME = "/gpx/wpt/groundspeak:cache/groundspeak:name";
+    static final String XPATH_HINT = "/gpx/wpt/groundspeak:cache/groundspeak:encoded_hints";
+    static final String XPATH_LOGDATE = "/gpx/wpt/groundspeak:cache/groundspeak:logs/groundspeak:log/groundspeak:date";
+    static final String[] XPATH_PLAINLINES = {
             "/gpx/wpt/desc", "/gpx/wpt/groundspeak:cache/groundspeak:type",
             "/gpx/wpt/groundspeak:cache/groundspeak:container",
             "/gpx/wpt/groundspeak:cache/groundspeak:short_description",
@@ -32,9 +33,9 @@ public class GpxEventHandler {
             "/gpx/wpt/groundspeak:cache/groundspeak:logs/groundspeak:log/groundspeak:finder",
             "/gpx/wpt/groundspeak:cache/groundspeak:logs/groundspeak:log/groundspeak:text"
     };
-    public static final String XPATH_SYM = "/gpx/wpt/sym";
-    public static final String XPATH_WPT = "/gpx/wpt";
-    public static final String XPATH_WPTNAME = "/gpx/wpt/name";
+    static final String XPATH_SYM = "/gpx/wpt/sym";
+    static final String XPATH_WPT = "/gpx/wpt";
+    static final String XPATH_WPTNAME = "/gpx/wpt/name";
 
     private final CachePersisterFacade mCachePersisterFacade;
 
@@ -48,9 +49,10 @@ public class GpxEventHandler {
         }
     }
 
-    public void startTag(String mFullPath, GpxToCacheDI.XmlPullParserWrapper mXmlPullParser) {
+    public void startTag(String mFullPath, XmlPullParserWrapper mXmlPullParser) {
         if (mFullPath.equals(XPATH_WPT)) {
-            mCachePersisterFacade.wpt(mXmlPullParser);
+            mCachePersisterFacade.wpt(mXmlPullParser.getAttributeValue(null, "lat"), mXmlPullParser
+                    .getAttributeValue(null, "lon"));
         }
     }
 

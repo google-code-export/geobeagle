@@ -8,7 +8,6 @@ import static org.easymock.classextension.EasyMock.verify;
 
 import com.google.code.geobeagle.io.CachePersisterFacadeDI.FileFactory;
 import com.google.code.geobeagle.io.GpxImporterDI.MessageHandler;
-import com.google.code.geobeagle.io.GpxToCacheDI.XmlPullParserWrapper;
 
 import android.os.PowerManager.WakeLock;
 
@@ -140,18 +139,16 @@ public class CachePersisterFacadeTest extends TestCase {
     }
 
     public void testWpt() throws IOException {
-        XmlPullParserWrapper xmlPullParser = createMock(XmlPullParserWrapper.class);
-        expect(xmlPullParser.getAttributeValue(null, "lat")).andReturn("37");
-        expect(xmlPullParser.getAttributeValue(null, "lon")).andReturn("122");
-
         mCacheTagWriter.clear();
         mCacheTagWriter.latitudeLongitude("37", "122");
-        mCacheTagWriter.latitudeLongitude("37", "122");
+        mCacheDetailsWriter.latitudeLongitude("37", "122");
 
-        replay(xmlPullParser);
-        new CachePersisterFacade(mCacheTagWriter, null, mCacheDetailsWriter, null, null)
-                .wpt(xmlPullParser);
-        verify(xmlPullParser);
+        replay(mCacheTagWriter);
+        replay(mCacheDetailsWriter);
+        new CachePersisterFacade(mCacheTagWriter, null, mCacheDetailsWriter, null, null).wpt("37",
+                "122");
+        verify(mCacheDetailsWriter);
+        verify(mCacheTagWriter);
     }
 
     public void testWptName() throws IOException {
