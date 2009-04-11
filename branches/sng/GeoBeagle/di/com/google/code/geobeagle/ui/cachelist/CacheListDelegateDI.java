@@ -99,7 +99,9 @@ public class CacheListDelegateDI {
                 geocacheListPresenter);
         final MenuActionMyLocation menuActionMyLocation = new MenuActionMyLocation(locationSaver,
                 geocacheFromMyLocationFactory, geocacheListPresenter);
-        final MenuActions menuActions = new MenuActions(menuActionSyncGpx, menuActionMyLocation);
+        final MenuActionRefresh menuActionRefresh = new MenuActionRefresh(geocacheListPresenter);
+        final MenuActions menuActions = new MenuActions(menuActionSyncGpx, menuActionMyLocation,
+                menuActionRefresh);
         final GeocacheListController geocacheListController = new GeocacheListController(
                 errorDisplayer, menuActions, contextActions);
         return new CacheListDelegate(geocacheListController, geocacheListPresenter);
