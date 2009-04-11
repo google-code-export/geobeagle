@@ -28,7 +28,6 @@ import android.app.ListActivity;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.view.Menu;
-import android.view.MenuInflater;
 
 import java.util.ArrayList;
 
@@ -44,12 +43,11 @@ public class GeocacheListPresenter {
     private final LocationManager mLocationManager;
     private final ListActivity mParent;
 
-    public GeocacheListPresenter(LocationManager locationManager,
-            LocationControl locationControl, LocationListener locationListener,
-            GeocachesSql geocachesSql, GeocacheVectors geocacheVectors,
-            GpxImporter gpxImporter, GeocacheListAdapter geocacheListAdapter,
-            CacheListData cacheListData, ListActivity listActivity,
-            ErrorDisplayer errorDisplayer) {
+    public GeocacheListPresenter(LocationManager locationManager, LocationControl locationControl,
+            LocationListener locationListener, GeocachesSql geocachesSql,
+            GeocacheVectors geocacheVectors, GpxImporter gpxImporter,
+            GeocacheListAdapter geocacheListAdapter, CacheListData cacheListData,
+            ListActivity listActivity, ErrorDisplayer errorDisplayer) {
         mLocationManager = locationManager;
         mLocationListener = locationListener;
         mGeocachesSql = geocachesSql;
@@ -69,8 +67,7 @@ public class GeocacheListPresenter {
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = mParent.getMenuInflater();
-        inflater.inflate(R.menu.cache_list_menu, menu);
+        mParent.getMenuInflater().inflate(R.menu.cache_list_menu, menu);
         return true;
     }
 
