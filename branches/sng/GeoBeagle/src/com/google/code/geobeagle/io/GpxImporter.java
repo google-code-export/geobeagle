@@ -35,14 +35,17 @@ public class GpxImporter {
     private final MessageHandler mMessageHandler;
     private final SQLiteWrapper mSqliteWrapper;
     private final ToastFactory mToastFactory;
+    private final GpxEventHandler mGpxEventHandler;
 
     GpxImporter(GpxLoader gpxLoader, Database database, SQLiteWrapper sqliteWrapper,
             ListActivity listActivity, ImportThreadWrapper importThreadWrapper,
-            MessageHandler messageHandler, ErrorDisplayer errorDisplayer, ToastFactory toastFactory) {
+            MessageHandler messageHandler, ErrorDisplayer errorDisplayer,
+            ToastFactory toastFactory, GpxEventHandler gpxEventHandler) {
         mSqliteWrapper = sqliteWrapper;
         mDatabase = database;
         mListActivity = listActivity;
         mGpxLoader = gpxLoader;
+        mGpxEventHandler = gpxEventHandler;
         mImportThreadWrapper = importThreadWrapper;
         mMessageHandler = messageHandler;
         mErrorDisplayer = errorDisplayer;
@@ -61,7 +64,8 @@ public class GpxImporter {
 
     public void importGpxs(GeocacheListPresenter geocacheListPresenter) {
         mSqliteWrapper.openReadableDatabase(mDatabase);
-        mImportThreadWrapper.open(geocacheListPresenter, mGpxLoader, mErrorDisplayer);
+        mImportThreadWrapper.open(geocacheListPresenter, mGpxLoader, mGpxEventHandler,
+                mErrorDisplayer);
         mImportThreadWrapper.start();
     }
 }

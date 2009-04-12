@@ -44,18 +44,6 @@ public class GpxEventHandlerTest {
     }
 
     @Test
-    public void testGpxName() throws IOException, ParseException {
-        CachePersisterFacade cachePersisterFacade = createMock(CachePersisterFacade.class);
-
-        cachePersisterFacade.gpxName("foo.gpx");
-
-        replay(cachePersisterFacade);
-        GpxEventHandler gpxEventHandler = new GpxEventHandler(cachePersisterFacade);
-        gpxEventHandler.text(GpxEventHandler.XPATH_GPXNAME, "foo.gpx");
-        verify(cachePersisterFacade);
-    }
-
-    @Test
     public void testGpxTime() throws IOException, ParseException {
         CachePersisterFacade cachePersisterFacade = createMock(CachePersisterFacade.class);
 

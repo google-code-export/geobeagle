@@ -50,18 +50,6 @@ public class EventHelperTest extends TestCase {
         verify(gpxEventHandler);
         verify(xmlPullParser);
     }
-
-    public void testEventHelperReset() {
-        XmlPathBuilder xmlPathBuilder = createMock(XmlPathBuilder.class);
-
-        xmlPathBuilder.reset();
-
-        replay(xmlPathBuilder);
-        EventHelper eventHelper = new EventHelper(xmlPathBuilder, null, null);
-        eventHelper.reset();
-        verify(xmlPathBuilder);
-    }
-
     public void testEventHelperStart() throws IOException, ParseException {
         XmlPathBuilder xmlPathBuilder = createMock(XmlPathBuilder.class);
         GpxEventHandler gpxEventHandler = createMock(GpxEventHandler.class);
@@ -111,13 +99,6 @@ public class EventHelperTest extends TestCase {
         xmlPathBuilder.startTag("test");
         assertEquals("/test", xmlPathBuilder.getPath());
         xmlPathBuilder.endTag("test");
-        assertEquals("", xmlPathBuilder.getPath());
-    }
-
-    public void testXmlPathBuilderReset() {
-        XmlPathBuilder xmlPathBuilder = new XmlPathBuilder();
-        xmlPathBuilder.startTag("hello");
-        xmlPathBuilder.reset();
         assertEquals("", xmlPathBuilder.getPath());
     }
 

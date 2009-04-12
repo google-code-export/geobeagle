@@ -28,12 +28,10 @@ public class GpxToCache {
     }
 
     private boolean mAbort;
-    private final EventHelper mEventHelper;
     private final XmlPullParserWrapper mXmlPullParserWrapper;
 
-    GpxToCache(XmlPullParserWrapper xmlPullParserWrapper, EventHelper eventHelper) {
+    GpxToCache(XmlPullParserWrapper xmlPullParserWrapper) {
         mXmlPullParserWrapper = xmlPullParserWrapper;
-        mEventHelper = eventHelper;
     }
 
     public void abort() {
@@ -45,12 +43,13 @@ public class GpxToCache {
     }
 
     /**
+     * @param eventHelper 
      * @return false if this file has already been loaded.
      * @throws XmlPullParserException
      * @throws IOException
      * @throws CancelException
      */
-    public boolean load() throws XmlPullParserException, IOException, CancelException {
+    public boolean load(EventHelper eventHelper) throws XmlPullParserException, IOException, CancelException {
         int eventType;
         for (eventType = mXmlPullParserWrapper.getEventType(); eventType != XmlPullParser.END_DOCUMENT; eventType = mXmlPullParserWrapper
                 .next()) {
@@ -58,18 +57,17 @@ public class GpxToCache {
                 throw new CancelException();
 
             // File already loaded.
-            if (!mEventHelper.handleEvent(eventType))
+            if (!eventHelper.handleEvent(eventType))
                 return true;
         }
 
         // Pick up END_DOCUMENT event as well.
-        mEventHelper.handleEvent(eventType);
+        eventHelper.handleEvent(eventType);
         return false;
     }
 
     public void open(String source, Reader reader) throws XmlPullParserException, IOException {
         mXmlPullParserWrapper.open(source, reader);
-        mEventHelper.reset();
         mAbort = false;
     }
 }

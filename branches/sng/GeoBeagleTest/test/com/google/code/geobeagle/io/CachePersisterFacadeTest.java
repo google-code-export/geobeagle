@@ -49,14 +49,6 @@ public class CachePersisterFacadeTest extends TestCase {
         verify(mCacheTagWriter);
     }
 
-    public void testGpxName() {
-        mCacheTagWriter.gpxName("foo.gpx");
-
-        replay(mCacheTagWriter);
-        new CachePersisterFacade(mCacheTagWriter, null, null, null, null).gpxName("foo.gpx");
-        verify(mCacheTagWriter);
-    }
-
     public void testGpxTime() {
         expect(mCacheTagWriter.gpxTime("today")).andReturn(true);
 

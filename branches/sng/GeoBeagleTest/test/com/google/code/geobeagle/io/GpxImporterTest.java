@@ -58,7 +58,7 @@ public class GpxImporterTest {
         replay(gpxLoader);
         replay(importThreadWrapper);
         new GpxImporter(gpxLoader, null, null, null, importThreadWrapper, messageHandler, null,
-                null).abort();
+                null, null).abort();
         verify(gpxLoader);
         verify(importThreadWrapper);
         verify(messageHandler);
@@ -86,7 +86,7 @@ public class GpxImporterTest {
         replay(sqliteWrapper);
         replay(toastFactory);
         GpxImporter gpxImporter = new GpxImporter(gpxLoader, null, sqliteWrapper, listActivity,
-                importThreadWrapper, messageHandler, null, toastFactory);
+                importThreadWrapper, messageHandler, null, toastFactory, null);
         gpxImporter.abort();
         verify(gpxLoader);
         verify(importThreadWrapper);
@@ -102,16 +102,17 @@ public class GpxImporterTest {
         SQLiteWrapper sqliteWrapper = createMock(SQLiteWrapper.class);
         GpxLoader gpxLoader = createMock(GpxLoader.class);
         ImportThreadWrapper importThreadWrapper = createMock(ImportThreadWrapper.class);
+        GpxEventHandler gpxEventHandler = createMock(GpxEventHandler.class);
 
         sqliteWrapper.openReadableDatabase(database);
-        importThreadWrapper.open(geocacheListPresenter, gpxLoader, null);
+        importThreadWrapper.open(geocacheListPresenter, gpxLoader, gpxEventHandler, null);
         importThreadWrapper.start();
 
         replay(database);
         replay(importThreadWrapper);
         replay(geocacheListPresenter);
         GpxImporter gpxImporter = new GpxImporter(gpxLoader, database, sqliteWrapper, null,
-                importThreadWrapper, null, null, null);
+                importThreadWrapper, null, null, null, gpxEventHandler);
         gpxImporter.importGpxs(geocacheListPresenter);
         verify(geocacheListPresenter);
         verify(importThreadWrapper);

@@ -32,6 +32,7 @@ import com.google.code.geobeagle.io.GpxImporter;
 import com.google.code.geobeagle.io.GpxImporterDI;
 import com.google.code.geobeagle.io.LocationSaver;
 import com.google.code.geobeagle.io.DatabaseDI.SQLiteWrapper;
+import com.google.code.geobeagle.io.GpxToCacheDI.XmlPullParserWrapper;
 import com.google.code.geobeagle.ui.ErrorDisplayer;
 
 import android.app.ListActivity;
@@ -85,8 +86,9 @@ public class CacheListDelegateDI {
         final ContextAction contextActions[] = CacheListDelegateDI.createContextActions(parent,
                 database, sqliteWrapper, cacheListData, cacheWriter, geocacheVectors,
                 errorDisplayer, geocacheListAdapter);
+        final XmlPullParserWrapper xmlPullParserWrapper = new XmlPullParserWrapper();
         final GpxImporter gpxImporter = GpxImporterDI.create(database, sqliteWrapper,
-                errorDisplayer, parent);
+                parent, xmlPullParserWrapper, errorDisplayer);
 
         // TODO: replace with a widget.
         final LocationListener locationListener = new DummyLocationListener();

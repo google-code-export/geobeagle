@@ -49,7 +49,7 @@ public class GpxToCacheTest {
         expect(xmlPullParserWrapper.getSource()).andReturn("/my/path");
 
         replay(xmlPullParserWrapper);
-        GpxToCache gpxToCache = new GpxToCache(xmlPullParserWrapper, null);
+        GpxToCache gpxToCache = new GpxToCache(xmlPullParserWrapper);
         assertEquals("/my/path", gpxToCache.getSource());
         verify(xmlPullParserWrapper);
     }
@@ -62,16 +62,14 @@ public class GpxToCacheTest {
         expect(xmlPullParser.getEventType()).andReturn(XmlPullParser.START_DOCUMENT);
 
         replay(xmlPullParser);
-        replay(eventHelper);
-        GpxToCache gpxToCache = new GpxToCache(xmlPullParser, eventHelper);
+        GpxToCache gpxToCache = new GpxToCache(xmlPullParser);
         gpxToCache.abort();
         try {
-            gpxToCache.load();
+            gpxToCache.load(eventHelper);
             assertFalse("expected to throw cancel exception", false);
         } catch (CancelException e) {
         }
         verify(xmlPullParser);
-        verify(eventHelper);
     }
 
     @Test
@@ -85,8 +83,8 @@ public class GpxToCacheTest {
 
         replay(xmlPullParser);
         replay(eventHelper);
-        GpxToCache gpxToCache = new GpxToCache(xmlPullParser, eventHelper);
-        assertEquals(false, gpxToCache.load());
+        GpxToCache gpxToCache = new GpxToCache(xmlPullParser);
+        assertEquals(false, gpxToCache.load(eventHelper));
         verify(xmlPullParser);
         verify(eventHelper);
     }
@@ -104,8 +102,8 @@ public class GpxToCacheTest {
 
         replay(xmlPullParser);
         replay(eventHelper);
-        GpxToCache gpxToCache = new GpxToCache(xmlPullParser, eventHelper);
-        assertEquals(false, gpxToCache.load());
+        GpxToCache gpxToCache = new GpxToCache(xmlPullParser);
+        assertEquals(false, gpxToCache.load(eventHelper));
         verify(xmlPullParser);
         verify(eventHelper);
     }
@@ -121,8 +119,8 @@ public class GpxToCacheTest {
 
         replay(xmlPullParser);
         replay(eventHelper);
-        GpxToCache gpxToCache = new GpxToCache(xmlPullParser, eventHelper);
-        assertEquals(true, gpxToCache.load());
+        GpxToCache gpxToCache = new GpxToCache(xmlPullParser);
+        assertEquals(true, gpxToCache.load(eventHelper));
         verify(xmlPullParser);
         verify(eventHelper);
     }
@@ -146,8 +144,8 @@ public class GpxToCacheTest {
 
         replay(xmlPullParser);
         replay(eventHelper);
-        GpxToCache gpxToCache = new GpxToCache(xmlPullParser, eventHelper);
-        assertEquals(false, gpxToCache.load());
+        GpxToCache gpxToCache = new GpxToCache(xmlPullParser);
+        assertEquals(false, gpxToCache.load(eventHelper));
         verify(xmlPullParser);
         verify(eventHelper);
     }
@@ -156,14 +154,12 @@ public class GpxToCacheTest {
     public void testOpen() throws Exception {
         XmlPullParserWrapper xmlPullParserWrapper = PowerMock
                 .createMock(XmlPullParserWrapper.class);
-        EventHelper eventHelper = PowerMock.createMock(EventHelper.class);
         Reader reader = PowerMock.createMock(Reader.class);
 
         xmlPullParserWrapper.open("/my/path", reader);
-        eventHelper.reset();
 
         PowerMock.replayAll();
-        GpxToCache gpxToCache = new GpxToCache(xmlPullParserWrapper, eventHelper);
+        GpxToCache gpxToCache = new GpxToCache(xmlPullParserWrapper);
         gpxToCache.open("/my/path", reader);
         PowerMock.verifyAll();
     }

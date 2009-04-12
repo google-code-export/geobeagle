@@ -53,10 +53,6 @@ public class CachePersisterFacade {
         mCacheTagWriter.write();
     }
 
-    public void gpxName(String text) {
-        mCacheTagWriter.gpxName(text);
-    }
-
     public boolean gpxTime(String gpxTime) {
         return mCacheTagWriter.gpxTime(gpxTime);
     }

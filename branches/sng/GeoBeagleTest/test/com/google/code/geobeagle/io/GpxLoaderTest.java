@@ -42,21 +42,25 @@ public class GpxLoaderTest extends TestCase {
         GpxToCache gpxToCache = createMock(GpxToCache.class);
         Throwable e = (Throwable)createMock(exceptionClass);
         ErrorDisplayer errorDisplayer = createMock(ErrorDisplayer.class);
+        EventHelper eventHelper = createMock(EventHelper.class);
 
-        expect(gpxToCache.load()).andStubReturn(false);
+        expect(gpxToCache.load(eventHelper)).andStubReturn(false);
         expectLastCall().andThrow(e);
         expect(gpxToCache.getSource()).andReturn("foo.gpx");
         expect(e.fillInStackTrace()).andReturn(e);
         errorDisplayer.displayError(errorResource, "foo.gpx");
         cachePersisterFacade.close(false);
 
+        replay(eventHelper);
         replay(e);
         replay(errorDisplayer);
         replay(cachePersisterFacade);
         replay(gpxToCache);
-        assertFalse(new GpxLoader(gpxToCache, cachePersisterFacade, errorDisplayer).load());
+        assertFalse(new GpxLoader(gpxToCache, cachePersisterFacade, errorDisplayer)
+                .load(eventHelper));
         verify(cachePersisterFacade);
         verify(gpxToCache);
+        verify(eventHelper);
         verify(errorDisplayer);
     }
 
@@ -66,8 +70,9 @@ public class GpxLoaderTest extends TestCase {
         GpxToCache gpxToCache = createMock(GpxToCache.class);
         Throwable e = (Throwable)createMock(exceptionClass);
         ErrorDisplayer errorDisplayer = createMock(ErrorDisplayer.class);
+        EventHelper eventHelper = createMock(EventHelper.class);
 
-        gpxToCache.load();
+        gpxToCache.load(eventHelper);
         expectLastCall().andThrow(e);
         expect(e.getMessage()).andReturn("a problem of some sort");
         expect(e.fillInStackTrace()).andReturn(e);
@@ -78,7 +83,8 @@ public class GpxLoaderTest extends TestCase {
         replay(errorDisplayer);
         replay(cachePersisterFacade);
         replay(gpxToCache);
-        assertFalse(new GpxLoader(gpxToCache, cachePersisterFacade, errorDisplayer).load());
+        assertFalse(new GpxLoader(gpxToCache, cachePersisterFacade, errorDisplayer)
+                .load(eventHelper));
         verify(cachePersisterFacade);
         verify(gpxToCache);
         verify(errorDisplayer);
@@ -90,8 +96,9 @@ public class GpxLoaderTest extends TestCase {
         GpxToCache gpxToCache = createMock(GpxToCache.class);
         Throwable e = (Throwable)createMock(exceptionClass);
         ErrorDisplayer errorDisplayer = createMock(ErrorDisplayer.class);
+        EventHelper eventHelper = createMock(EventHelper.class);
 
-        expect(gpxToCache.load()).andStubReturn(false);
+        expect(gpxToCache.load(eventHelper)).andStubReturn(false);
         expectLastCall().andThrow(e);
         expect(e.fillInStackTrace()).andReturn(e);
         cachePersisterFacade.close(false);
@@ -100,7 +107,8 @@ public class GpxLoaderTest extends TestCase {
         replay(errorDisplayer);
         replay(cachePersisterFacade);
         replay(gpxToCache);
-        assertFalse(new GpxLoader(gpxToCache, cachePersisterFacade, errorDisplayer).load());
+        assertFalse(new GpxLoader(gpxToCache, cachePersisterFacade, errorDisplayer)
+                .load(eventHelper));
         verify(cachePersisterFacade);
         verify(gpxToCache);
         verify(errorDisplayer);
@@ -130,13 +138,14 @@ public class GpxLoaderTest extends TestCase {
             CancelException {
         CachePersisterFacade cachePersisterFacade = createMock(CachePersisterFacade.class);
         GpxToCache gpxToCache = createMock(GpxToCache.class);
+        EventHelper eventHelper = createMock(EventHelper.class);
 
-        expect(gpxToCache.load()).andReturn(false);
+        expect(gpxToCache.load(eventHelper)).andReturn(false);
         cachePersisterFacade.close(true);
 
         replay(cachePersisterFacade);
         replay(gpxToCache);
-        assertTrue(new GpxLoader(gpxToCache, cachePersisterFacade, null).load());
+        assertTrue(new GpxLoader(gpxToCache, cachePersisterFacade, null).load(eventHelper));
         verify(cachePersisterFacade);
         verify(gpxToCache);
     }
@@ -145,13 +154,14 @@ public class GpxLoaderTest extends TestCase {
             CancelException {
         CachePersisterFacade cachePersisterFacade = createMock(CachePersisterFacade.class);
         GpxToCache gpxToCache = createMock(GpxToCache.class);
+        EventHelper eventHelper = createMock(EventHelper.class);
 
-        expect(gpxToCache.load()).andReturn(true);
+        expect(gpxToCache.load(eventHelper)).andReturn(true);
         cachePersisterFacade.close(false);
 
         replay(cachePersisterFacade);
         replay(gpxToCache);
-        assertTrue(new GpxLoader(gpxToCache, cachePersisterFacade, null).load());
+        assertTrue(new GpxLoader(gpxToCache, cachePersisterFacade, null).load(eventHelper));
         verify(cachePersisterFacade);
         verify(gpxToCache);
     }

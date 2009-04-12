@@ -18,8 +18,6 @@ import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
 
-import android.app.Activity;
-
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -63,14 +61,6 @@ public class GpxToCacheDI {
             mXmlPullParser = newPullParser;
         }
 
-    }
-
-    public static GpxToCache create(Activity activity, CachePersisterFacade cachePersisterFacade) {
-        final GpxToCacheDI.XmlPullParserWrapper xmlPullParserWrapper = new GpxToCacheDI.XmlPullParserWrapper();
-        final EventHelper eventHelper = EventHelperDI.create(xmlPullParserWrapper,
-                cachePersisterFacade);
-
-        return new GpxToCache(xmlPullParserWrapper, eventHelper);
     }
 
     public static XmlPullParser createPullParser(String path) throws FileNotFoundException,

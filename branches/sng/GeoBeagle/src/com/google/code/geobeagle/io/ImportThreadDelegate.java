@@ -18,6 +18,7 @@ import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.gpx.GpxAndZipFiles;
 import com.google.code.geobeagle.gpx.IGpxReader;
 import com.google.code.geobeagle.gpx.GpxAndZipFiles.GpxAndZipFilesIter;
+import com.google.code.geobeagle.io.EventHelperDI.EventHelperFactory;
 import com.google.code.geobeagle.io.GpxImporterDI.MessageHandler;
 import com.google.code.geobeagle.ui.ErrorDisplayer;
 
@@ -30,12 +31,17 @@ public class ImportThreadDelegate {
         private final GpxLoader mGpxLoader;
         private final MessageHandler mMessageHandler;
         private boolean mHasFiles;
+        private final EventHandler mEventHandler;
+        private final EventHelperFactory mEventHelperFactory;
 
         public ImportThreadHelper(GpxLoader gpxLoader, MessageHandler messageHandler,
-                ErrorDisplayer errorDisplayer) {
+                ErrorDisplayer errorDisplayer, EventHandler eventHandler,
+                EventHelperFactory eventHelperFactory) {
             mErrorDisplayer = errorDisplayer;
             mGpxLoader = gpxLoader;
             mMessageHandler = messageHandler;
+            mEventHandler = eventHandler;
+            mEventHelperFactory = eventHelperFactory;
             mHasFiles = false;
         }
 
@@ -51,10 +57,12 @@ public class ImportThreadDelegate {
 
         public boolean processFile(IGpxReader iGpxFile) {
             String filename = iGpxFile.getFilename();
+
             mHasFiles = true;
             try {
+                EventHelper eventHelper = mEventHelperFactory.create(mEventHandler);
                 mGpxLoader.open(filename, iGpxFile.open());
-                if (!mGpxLoader.load())
+                if (!mGpxLoader.load(eventHelper))
                     return false;
                 return true;
             } catch (final FileNotFoundException e) {

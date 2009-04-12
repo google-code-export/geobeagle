@@ -32,10 +32,6 @@ public class EventHelper {
             return mPath;
         }
 
-        public void reset() {
-            mPath = "";
-        }
-
         public void startTag(String mCurrentTag) {
             mPath += "/" + mCurrentTag;
         }
@@ -45,11 +41,11 @@ public class EventHelper {
     private final XmlPathBuilder mXmlPathBuilder;
     private final XmlPullParserWrapper mXmlPullParser;
 
-    public EventHelper(XmlPathBuilder xmlPathBuilder, EventHandler eventHandler,
+    EventHelper(XmlPathBuilder xmlPathBuilder, EventHandler eventHandler,
             XmlPullParserWrapper xmlPullParser) {
         mXmlPathBuilder = xmlPathBuilder;
-        mEventHandler = eventHandler;
         mXmlPullParser = xmlPullParser;
+        mEventHandler = eventHandler;
     }
 
     public boolean handleEvent(int eventType) throws IOException {
@@ -66,9 +62,5 @@ public class EventHelper {
                 return mEventHandler.text(mXmlPathBuilder.getPath(), mXmlPullParser.getText());
         }
         return true;
-    }
-
-    public void reset() {
-        mXmlPathBuilder.reset();
     }
 }

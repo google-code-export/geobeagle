@@ -11,15 +11,24 @@
  ** See the License for the specific language governing permissions and
  ** limitations under the License.
  */
+
 package com.google.code.geobeagle.io;
+
+import com.google.code.geobeagle.io.EventHelper.XmlPathBuilder;
+import com.google.code.geobeagle.io.GpxToCacheDI.XmlPullParserWrapper;
 
 public class EventHelperDI {
 
-    public static EventHelper create(GpxToCacheDI.XmlPullParserWrapper xmlPullParser,
-            CachePersisterFacade cachePersisterFacade) {
-        final GpxEventHandler gpxEventHandler = new GpxEventHandler(cachePersisterFacade);
-        final EventHelper.XmlPathBuilder xmlPathBuilder = new EventHelper.XmlPathBuilder();
-        return new EventHelper(xmlPathBuilder, gpxEventHandler, xmlPullParser);
+    public static class EventHelperFactory {
+        private final XmlPullParserWrapper mXmlPullParser;
+    
+        public EventHelperFactory(XmlPullParserWrapper xmlPullParser) {
+            mXmlPullParser = xmlPullParser;
+        }
+    
+        public EventHelper create(EventHandler eventHandler) {
+            final XmlPathBuilder xmlPathBuilder = new XmlPathBuilder();
+            return new EventHelper(xmlPathBuilder, eventHandler, mXmlPullParser);
+        }
     }
-
 }

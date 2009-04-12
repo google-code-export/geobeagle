@@ -50,11 +50,11 @@ public class GpxLoader {
      * @return true if we should continue loading more files, false if we should
      *         terminate.
      */
-    public boolean load() {
+    public boolean load(EventHelper eventHelper) {
         boolean markLoadAsComplete = false;
         boolean continueLoading = false;
         try {
-            boolean alreadyLoaded = mGpxToCache.load();
+            boolean alreadyLoaded = mGpxToCache.load(eventHelper);
             markLoadAsComplete = !alreadyLoaded;
             continueLoading = true;
         } catch (final SQLiteException e) {
@@ -69,7 +69,8 @@ public class GpxLoader {
         return continueLoading;
     }
 
-    public void open(String path, Reader reader) throws FileNotFoundException, XmlPullParserException, IOException {
+    public void open(String path, Reader reader) throws FileNotFoundException,
+            XmlPullParserException, IOException {
         mGpxToCache.open(path, reader);
         mCachePersisterFacade.open(path);
     }

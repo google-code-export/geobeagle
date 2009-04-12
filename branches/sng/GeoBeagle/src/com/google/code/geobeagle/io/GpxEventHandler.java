@@ -60,8 +60,6 @@ public class GpxEventHandler implements EventHandler {
         text = text.trim();
         if (mFullPath.equals(XPATH_WPTNAME)) {
             mCachePersisterFacade.wptName(text);
-        } else if (mFullPath.equals(XPATH_GPXNAME)) {
-            mCachePersisterFacade.gpxName(text);
         } else if (mFullPath.equals(XPATH_GPXTIME)) {
             return mCachePersisterFacade.gpxTime(text);
         } else if (mFullPath.equals(XPATH_GROUNDSPEAKNAME)) {
