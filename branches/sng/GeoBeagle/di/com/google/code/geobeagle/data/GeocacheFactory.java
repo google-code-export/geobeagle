@@ -88,6 +88,8 @@ public class GeocacheFactory {
             // from the time.
             id = String.format("WP%1$tk%1$tM%1$tS", System.currentTimeMillis());
         }
+        if (name == null)
+            name = "";
         return new Geocache(id, name, latitude, longitude, sourceType, sourceName);
     }
 
