@@ -65,10 +65,10 @@ public class CachePersisterFacadeTest {
                 .gpxTime("today"));
         PowerMock.verifyAll();
     }
+    
 
     @Test
     public void testGroundspeakName() throws IOException {
-        mMessageHandler.updateName("GC123");
         mCacheTagWriter.cacheName("GC123");
 
         PowerMock.replayAll();
@@ -76,6 +76,7 @@ public class CachePersisterFacadeTest {
                 .groundspeakName("GC123");
         PowerMock.verifyAll();
     }
+
 
     @Test
     public void testHint() throws IOException {
@@ -154,6 +155,17 @@ public class CachePersisterFacadeTest {
         PowerMock.replayAll();
         new CachePersisterFacade(mCacheTagWriter, null, mCacheDetailsWriter, null, null).wpt("37",
                 "122");
+        PowerMock.verifyAll();
+    }
+
+    @Test
+    public void testWptDesc() throws IOException {
+        mMessageHandler.updateName("GC123 by so and so");
+        mCacheTagWriter.cacheName("GC123 by so and so");
+
+        PowerMock.replayAll();
+        new CachePersisterFacade(mCacheTagWriter, null, null, mMessageHandler, null)
+                .wptDesc("GC123 by so and so");
         PowerMock.verifyAll();
     }
 

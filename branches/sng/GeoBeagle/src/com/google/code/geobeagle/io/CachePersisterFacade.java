@@ -59,7 +59,6 @@ public class CachePersisterFacade {
     }
 
     void groundspeakName(String text) {
-        mMessageHandler.updateName(text);
         mCacheTagWriter.cacheName(text);
     }
 
@@ -99,6 +98,11 @@ public class CachePersisterFacade {
         mCacheDetailsWriter.latitudeLongitude(latitude, longitude);
     }
 
+    public void wptDesc(String text) {
+        mMessageHandler.updateName(text);
+        mCacheTagWriter.cacheName(text);
+    }
+
     void wptName(String wpt) throws IOException {
         mCacheDetailsWriter.open(wpt);
         mCacheDetailsWriter.writeWptName(wpt);
@@ -106,4 +110,5 @@ public class CachePersisterFacade {
         mMessageHandler.updateWaypointId(wpt);
         mWakeLock.acquire(WAKELOCK_DURATION);
     }
+
 }

@@ -36,6 +36,7 @@ class EventHandlerGpx implements EventHandler {
     };
     static final String XPATH_SYM = "/gpx/wpt/sym";
     static final String XPATH_WPT = "/gpx/wpt";
+    static final String XPATH_WPTDESC = "/gpx/wpt/desc";
     static final String XPATH_WPTNAME = "/gpx/wpt/name";
 
     private final CachePersisterFacade mCachePersisterFacade;
@@ -62,6 +63,8 @@ class EventHandlerGpx implements EventHandler {
         text = text.trim();
         if (mFullPath.equals(XPATH_WPTNAME)) {
             mCachePersisterFacade.wptName(text);
+        } else if (mFullPath.equals(XPATH_WPTDESC)) {
+            mCachePersisterFacade.wptDesc(text);
         } else if (mFullPath.equals(XPATH_GPXTIME)) {
             return mCachePersisterFacade.gpxTime(text);
         } else if (mFullPath.equals(XPATH_GROUNDSPEAKNAME)) {
@@ -74,12 +77,12 @@ class EventHandlerGpx implements EventHandler {
             if (!text.equals("")) {
                 mCachePersisterFacade.hint(text);
             }
-        } else {
-            for (String writeLineMatch : XPATH_PLAINLINES) {
-                if (mFullPath.equals(writeLineMatch)) {
-                    mCachePersisterFacade.line(text);
-                    return true;
-                }
+        }
+
+        for (String writeLineMatch : XPATH_PLAINLINES) {
+            if (mFullPath.equals(writeLineMatch)) {
+                mCachePersisterFacade.line(text);
+                return true;
             }
         }
         return true;

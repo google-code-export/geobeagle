@@ -61,12 +61,12 @@ public class Geocache implements Parcelable {
         // because editing the text in android produces a SpannableString rather
         // than a String, so the CharSequences won't be equal.
         String prefix = mId.subSequence(0, 2).toString();
-        if (prefix.equals("GC"))
-            return Provider.GROUNDSPEAK;
+        if (prefix.equals("ML"))
+            return Provider.MY_LOCATION;
         if (prefix.equals("LB"))
             return Provider.ATLAS_QUEST;
         else
-            return Provider.MY_LOCATION;
+            return Provider.GROUNDSPEAK;
     }
 
     public CharSequence getId() {

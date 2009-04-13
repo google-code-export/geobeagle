@@ -47,10 +47,13 @@ public class GeocacheTest {
         Geocache geocache = new Geocache("GC123", null, 0, 0, null, null);
         assertEquals(GeocacheFactory.Provider.GROUNDSPEAK, geocache.getContentProvider());
 
+        geocache = new Geocache("PK123", null, 0, 0, null, null);
+        assertEquals(GeocacheFactory.Provider.GROUNDSPEAK, geocache.getContentProvider());
+
         geocache = new Geocache("LBabc", null, 0, 0, null, null);
         assertEquals(GeocacheFactory.Provider.ATLAS_QUEST, geocache.getContentProvider());
 
-        geocache = new Geocache("foo", null, 0, 0, null, null);
+        geocache = new Geocache("MLfoo", null, 0, 0, null, null);
         assertEquals(GeocacheFactory.Provider.MY_LOCATION, geocache.getContentProvider());
     }
 
