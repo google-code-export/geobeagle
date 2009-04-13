@@ -1,5 +1,11 @@
 #summary Release Notes for GeoBeagle versions
 
+
+= v0.50 =
+Added support for intermediate waypoint files, and loc files.  Like GPX files, LOC is a "sync", not an "import" operation--deleting the LOC file will remove the cache from Geobeagle.
+
+Added a "refresh" button to cache list page, which will update the distances and re-sort.  This is a stop-gap until we get a nicer UI in place here.
+
 = v0.48 =
 Move My Location down to menu, where it should be less confusing.  Fix non-US locale bug.
 
