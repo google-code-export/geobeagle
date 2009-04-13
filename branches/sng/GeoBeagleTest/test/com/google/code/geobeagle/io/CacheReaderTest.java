@@ -11,6 +11,7 @@ import com.google.code.geobeagle.data.GeocacheFactory;
 import com.google.code.geobeagle.data.GeocacheFactory.Source;
 import com.google.code.geobeagle.io.CacheReader.CacheReaderCursor;
 import com.google.code.geobeagle.io.CacheReader.WhereFactory;
+import com.google.code.geobeagle.io.DatabaseDI.CacheReaderCursorFactory;
 import com.google.code.geobeagle.io.DatabaseDI.SQLiteWrapper;
 
 import org.junit.Test;
@@ -111,7 +112,7 @@ public class CacheReaderTest {
         SQLiteWrapper sqliteWrapper = PowerMock.createMock(SQLiteWrapper.class);
         Cursor cursor = PowerMock.createMock(Cursor.class);
         DatabaseDI.CacheReaderCursorFactory cacheReaderCursorFactory = PowerMock
-                .createMock(DatabaseDI.CacheReaderCursorFactory.class);
+                .createMock(CacheReaderCursorFactory.class);
         CacheReaderCursor cacheReaderCursor = PowerMock.createMock(CacheReaderCursor.class);
 
         String where = "Latitude > something AND Longitude < somethingelse";

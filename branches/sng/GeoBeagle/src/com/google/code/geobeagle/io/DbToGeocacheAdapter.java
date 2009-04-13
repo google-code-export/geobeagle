@@ -22,6 +22,8 @@ public class DbToGeocacheAdapter {
             return Source.WEB_URL;
         else if (sourceName.equals("mylocation"))
             return Source.MY_LOCATION;
+        else if (sourceName.toLowerCase().endsWith((".loc")))
+            return Source.LOC;
         return Source.GPX;
     }
 

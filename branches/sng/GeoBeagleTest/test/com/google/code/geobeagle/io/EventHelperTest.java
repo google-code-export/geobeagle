@@ -35,16 +35,16 @@ public class EventHelperTest {
     @Test
     public void testEventHelperEnd() throws IOException, ParseException {
         XmlPathBuilder xmlPathBuilder = PowerMock.createMock(XmlPathBuilder.class);
-        GpxEventHandler gpxEventHandler = PowerMock.createMock(GpxEventHandler.class);
+        EventHandlerGpx eventHandlerGpx = PowerMock.createMock(EventHandlerGpx.class);
         XmlPullParserWrapper xmlPullParser = PowerMock.createMock(XmlPullParserWrapper.class);
 
         expect(xmlPathBuilder.getPath()).andReturn("/path");
-        gpxEventHandler.endTag("/path");
+        eventHandlerGpx.endTag("/path");
         expect(xmlPullParser.getName()).andReturn("name");
         xmlPathBuilder.endTag("name");
 
         PowerMock.replayAll();
-        EventHelper eventHelper = new EventHelper(xmlPathBuilder, gpxEventHandler, xmlPullParser);
+        EventHelper eventHelper = new EventHelper(xmlPathBuilder, eventHandlerGpx, xmlPullParser);
         eventHelper.handleEvent(XmlPullParser.END_TAG);
         PowerMock.verifyAll();
     }
@@ -52,16 +52,16 @@ public class EventHelperTest {
     @Test
     public void testEventHelperStart() throws IOException, ParseException {
         XmlPathBuilder xmlPathBuilder = PowerMock.createMock(XmlPathBuilder.class);
-        GpxEventHandler gpxEventHandler = PowerMock.createMock(GpxEventHandler.class);
+        EventHandlerGpx eventHandlerGpx = PowerMock.createMock(EventHandlerGpx.class);
         XmlPullParserWrapper xmlPullParser = PowerMock.createMock(XmlPullParserWrapper.class);
 
         expect(xmlPullParser.getName()).andReturn("some tag");
         xmlPathBuilder.startTag("some tag");
         expect(xmlPathBuilder.getPath()).andReturn("/foo");
-        gpxEventHandler.startTag("/foo", xmlPullParser);
+        eventHandlerGpx.startTag("/foo", xmlPullParser);
 
         PowerMock.replayAll();
-        EventHelper eventHelper = new EventHelper(xmlPathBuilder, gpxEventHandler, xmlPullParser);
+        EventHelper eventHelper = new EventHelper(xmlPathBuilder, eventHandlerGpx, xmlPullParser);
         eventHelper.handleEvent(XmlPullParser.START_TAG);
         PowerMock.verifyAll();
     }
@@ -69,15 +69,15 @@ public class EventHelperTest {
     @Test
     public void testEventHelperText() throws IOException, ParseException {
         XmlPathBuilder xmlPathBuilder = PowerMock.createMock(XmlPathBuilder.class);
-        GpxEventHandler gpxEventHandler = PowerMock.createMock(GpxEventHandler.class);
+        EventHandlerGpx eventHandlerGpx = PowerMock.createMock(EventHandlerGpx.class);
         XmlPullParserWrapper xmlPullParser = PowerMock.createMock(XmlPullParserWrapper.class);
 
         expect(xmlPathBuilder.getPath()).andReturn("/path");
         expect(xmlPullParser.getText()).andReturn("text");
-        expect(gpxEventHandler.text("/path", "text")).andReturn(true);
+        expect(eventHandlerGpx.text("/path", "text")).andReturn(true);
 
         PowerMock.replayAll();
-        EventHelper eventHelper = new EventHelper(xmlPathBuilder, gpxEventHandler, xmlPullParser);
+        EventHelper eventHelper = new EventHelper(xmlPathBuilder, eventHandlerGpx, xmlPullParser);
         eventHelper.handleEvent(XmlPullParser.TEXT);
         PowerMock.verifyAll();
     }

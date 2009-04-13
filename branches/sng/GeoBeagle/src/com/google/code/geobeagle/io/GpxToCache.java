@@ -43,13 +43,14 @@ public class GpxToCache {
     }
 
     /**
-     * @param eventHelper 
+     * @param eventHelper
      * @return false if this file has already been loaded.
      * @throws XmlPullParserException
      * @throws IOException
      * @throws CancelException
      */
-    public boolean load(EventHelper eventHelper) throws XmlPullParserException, IOException, CancelException {
+    public boolean load(EventHelper eventHelper) throws XmlPullParserException, IOException,
+            CancelException {
         int eventType;
         for (eventType = mXmlPullParserWrapper.getEventType(); eventType != XmlPullParser.END_DOCUMENT; eventType = mXmlPullParserWrapper
                 .next()) {

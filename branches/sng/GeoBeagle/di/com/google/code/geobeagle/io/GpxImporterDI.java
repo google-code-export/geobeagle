@@ -37,7 +37,7 @@ public class GpxImporterDI {
     // Can't test this due to final methods in base.
     public static class ImportThread extends Thread {
         static ImportThread create(MessageHandler messageHandler, GpxLoader gpxLoader,
-                GpxEventHandler gpxEventHandler, XmlPullParserWrapper xmlPullParserWrapper,
+                EventHandlers eventHandlers, XmlPullParserWrapper xmlPullParserWrapper,
                 ErrorDisplayer errorDisplayer) {
             final FilenameFilter filenameFilter = new GpxAndZipFilenameFilter();
             final GpxAndZipFilesIterFactory gpxAndZipFilesIterFactory = new GpxAndZipFilesIterFactory();
@@ -46,7 +46,7 @@ public class GpxImporterDI {
             final EventHelperFactory eventHelperFactory = new EventHelperFactory(
                     xmlPullParserWrapper);
             final ImportThreadHelper importThreadHelper = new ImportThreadHelper(gpxLoader,
-                    messageHandler, errorDisplayer, gpxEventHandler, eventHelperFactory);
+                    messageHandler, eventHelperFactory, eventHandlers, errorDisplayer);
             return new ImportThread(gpxAndZipFiles, importThreadHelper, errorDisplayer);
         }
 
@@ -88,9 +88,9 @@ public class GpxImporterDI {
         }
 
         public void open(GeocacheListPresenter geocacheListPresenter, GpxLoader gpxLoader,
-                GpxEventHandler gpxEventHandler, ErrorDisplayer mErrorDisplayer) {
+                EventHandlers eventHandlers, ErrorDisplayer mErrorDisplayer) {
             mMessageHandler.start(geocacheListPresenter);
-            mImportThread = ImportThread.create(mMessageHandler, gpxLoader, gpxEventHandler,
+            mImportThread = ImportThread.create(mMessageHandler, gpxLoader, eventHandlers,
                     mXmlPullParserWrapper, mErrorDisplayer);
         }
 
@@ -216,9 +216,15 @@ public class GpxImporterDI {
         final ToastFactory toastFactory = new ToastFactory();
         final ImportThreadWrapper importThreadWrapper = new ImportThreadWrapper(messageHandler,
                 xmlPullParserWrapper);
-        final GpxEventHandler gpxEventHandler = new GpxEventHandler(cachePersisterFacade);
+        final EventHandlerGpx eventHandlerGpx = new EventHandlerGpx(cachePersisterFacade);
+        final EventHandlerLoc eventHandlerLoc = new EventHandlerLoc(cachePersisterFacade);
+
+        final EventHandlers eventHandlers = new EventHandlers();
+        eventHandlers.add(".gpx", eventHandlerGpx);
+        eventHandlers.add(".loc", eventHandlerLoc);
+
         return new GpxImporter(gpxLoader, database, sqliteWrapper, listActivity,
-                importThreadWrapper, messageHandler, errorDisplayer, toastFactory, gpxEventHandler);
+                importThreadWrapper, messageHandler, toastFactory, eventHandlers, errorDisplayer);
     }
 
 }

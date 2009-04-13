@@ -14,6 +14,7 @@
 
 package com.google.code.geobeagle.io;
 
+import com.google.code.geobeagle.data.GeocacheFactory.Source;
 import com.google.code.geobeagle.io.CachePersisterFacadeDI.FileFactory;
 import com.google.code.geobeagle.io.GpxImporterDI.MessageHandler;
 
@@ -48,9 +49,9 @@ public class CachePersisterFacade {
         mCacheTagWriter.end();
     }
 
-    void endTag() throws IOException {
+    void endTag(Source source) throws IOException {
         mCacheDetailsWriter.close();
-        mCacheTagWriter.write();
+        mCacheTagWriter.write(source);
     }
 
     public boolean gpxTime(String gpxTime) {
@@ -74,6 +75,10 @@ public class CachePersisterFacade {
         mCacheDetailsWriter.writeLogDate(text);
     }
 
+    void newCache() {
+        mCacheTagWriter.clear();
+    }
+
     void open(String text) {
         mMessageHandler.updateSource(text);
         mCacheTagWriter.startWriting();
@@ -90,7 +95,6 @@ public class CachePersisterFacade {
     }
 
     void wpt(String latitude, String longitude) {
-        mCacheTagWriter.clear();
         mCacheTagWriter.latitudeLongitude(latitude, longitude);
         mCacheDetailsWriter.latitudeLongitude(latitude, longitude);
     }

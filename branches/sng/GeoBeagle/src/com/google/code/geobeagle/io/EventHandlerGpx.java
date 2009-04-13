@@ -14,11 +14,12 @@
 
 package com.google.code.geobeagle.io;
 
+import com.google.code.geobeagle.data.GeocacheFactory.Source;
 import com.google.code.geobeagle.io.GpxToCacheDI.XmlPullParserWrapper;
 
 import java.io.IOException;
 
-public class GpxEventHandler implements EventHandler {
+class EventHandlerGpx implements EventHandler {
     static final String XPATH_GPXNAME = "/gpx/name";
     static final String XPATH_GPXTIME = "/gpx/time";
     static final String XPATH_GROUNDSPEAKNAME = "/gpx/wpt/groundspeak:cache/groundspeak:name";
@@ -39,18 +40,19 @@ public class GpxEventHandler implements EventHandler {
 
     private final CachePersisterFacade mCachePersisterFacade;
 
-    public GpxEventHandler(CachePersisterFacade cachePersisterFacade) {
+    public EventHandlerGpx(CachePersisterFacade cachePersisterFacade) {
         mCachePersisterFacade = cachePersisterFacade;
     }
 
     public void endTag(String previousFullPath) throws IOException {
         if (previousFullPath.equals(XPATH_WPT)) {
-            mCachePersisterFacade.endTag();
+            mCachePersisterFacade.endTag(Source.GPX);
         }
     }
 
     public void startTag(String mFullPath, XmlPullParserWrapper mXmlPullParser) {
         if (mFullPath.equals(XPATH_WPT)) {
+            mCachePersisterFacade.newCache();
             mCachePersisterFacade.wpt(mXmlPullParser.getAttributeValue(null, "lat"), mXmlPullParser
                     .getAttributeValue(null, "lon"));
         }

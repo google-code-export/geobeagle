@@ -5,11 +5,11 @@ import com.google.code.geobeagle.io.GpxToCacheDI.XmlPullParserWrapper;
 
 import java.io.IOException;
 
-public interface EventHandler {
+interface EventHandler {
 
-    public void endTag(String previousFullPath) throws IOException;
+    void endTag(String previousFullPath) throws IOException;
 
-    public void startTag(String mFullPath, XmlPullParserWrapper mXmlPullParser);
+    void startTag(String mFullPath, XmlPullParserWrapper mXmlPullParser) throws IOException;
 
-    public boolean text(String mFullPath, String text) throws IOException;
+    boolean text(String mFullPath, String text) throws IOException;
 }

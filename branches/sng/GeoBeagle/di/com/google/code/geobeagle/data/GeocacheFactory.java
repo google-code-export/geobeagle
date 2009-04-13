@@ -34,7 +34,7 @@ public class GeocacheFactory {
     }
 
     public static enum Source {
-        GPX(0), MY_LOCATION(1), WEB_URL(2);
+        GPX(0), MY_LOCATION(1), WEB_URL(2), LOC(3);
 
         public static class SourceFactory {
             private final Source mSources[] = new Source[values().length];

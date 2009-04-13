@@ -15,6 +15,7 @@ public class DbToGeocacheAdapterTest {
         assertEquals(Source.WEB_URL, dbToGeocacheAdapter.sourceNameToSourceType("intent"));
         assertEquals(Source.MY_LOCATION, dbToGeocacheAdapter.sourceNameToSourceType("mylocation"));
         assertEquals(Source.GPX, dbToGeocacheAdapter.sourceNameToSourceType("foo"));
+        assertEquals(Source.LOC, dbToGeocacheAdapter.sourceNameToSourceType("foo.Loc"));
     }
 
     @Test

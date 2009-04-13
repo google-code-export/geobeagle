@@ -61,7 +61,9 @@ public class GpxAndZipFiles {
 
     public static class GpxAndZipFilenameFilter implements FilenameFilter {
         public boolean accept(File dir, String name) {
-            return !name.startsWith(".") && (name.endsWith(".gpx") || name.endsWith(".zip"));
+            name = name.toLowerCase();
+            return !name.startsWith(".")
+                    && (name.endsWith(".gpx") || name.endsWith(".zip") || name.endsWith(".loc"));
         }
     }
 

@@ -21,7 +21,7 @@ public class CacheTagWriterTest extends TestCase {
         replay(mCacheWriter);
         CacheTagWriter cacheTagWriter = new CacheTagWriter(mCacheWriter);
         cacheTagWriter.clear();
-        cacheTagWriter.write();
+        cacheTagWriter.write(Source.GPX);
         verify(mCacheWriter);
     }
 
@@ -99,7 +99,7 @@ public class CacheTagWriterTest extends TestCase {
         cacheTagWriter.cacheName("my cache");
         cacheTagWriter.latitudeLongitude("122", "37");
         cacheTagWriter.gpxName("foo.gpx");
-        cacheTagWriter.write();
+        cacheTagWriter.write(Source.GPX);
         verify(mCacheWriter);
     }
 
@@ -107,7 +107,7 @@ public class CacheTagWriterTest extends TestCase {
         replay(mCacheWriter);
         CacheTagWriter cacheTagWriter = new CacheTagWriter(mCacheWriter);
         cacheTagWriter.symbol("Geocache Found");
-        cacheTagWriter.write();
+        cacheTagWriter.write(Source.GPX);
         verify(mCacheWriter);
     }
 

@@ -5,6 +5,7 @@ import static org.easymock.EasyMock.expect;
 import static org.easymock.classextension.EasyMock.createMock;
 import static org.junit.Assert.assertTrue;
 
+import com.google.code.geobeagle.data.GeocacheFactory.Source;
 import com.google.code.geobeagle.io.CachePersisterFacadeDI.FileFactory;
 import com.google.code.geobeagle.io.GpxImporterDI.MessageHandler;
 
@@ -47,10 +48,11 @@ public class CachePersisterFacadeTest {
     @Test
     public void testEndTag() throws IOException {
         mCacheDetailsWriter.close();
-        mCacheTagWriter.write();
+        mCacheTagWriter.write(Source.GPX);
 
         PowerMock.replayAll();
-        new CachePersisterFacade(mCacheTagWriter, null, mCacheDetailsWriter, null, null).endTag();
+        new CachePersisterFacade(mCacheTagWriter, null, mCacheDetailsWriter, null, null)
+                .endTag(Source.GPX);
         PowerMock.verifyAll();
     }
 
@@ -103,6 +105,15 @@ public class CachePersisterFacadeTest {
     }
 
     @Test
+    public void testNewCache() throws IOException {
+        mCacheTagWriter.clear();
+
+        PowerMock.replayAll();
+        new CachePersisterFacade(mCacheTagWriter, null, null, null, null).newCache();
+        PowerMock.verifyAll();
+    }
+
+    @Test
     public void testOpen() {
         mMessageHandler.updateSource("GC123");
         mCacheTagWriter.startWriting();
@@ -137,7 +148,6 @@ public class CachePersisterFacadeTest {
 
     @Test
     public void testWpt() throws IOException {
-        mCacheTagWriter.clear();
         mCacheTagWriter.latitudeLongitude("37", "122");
         mCacheDetailsWriter.latitudeLongitude("37", "122");
 

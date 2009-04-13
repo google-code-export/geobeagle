@@ -71,7 +71,7 @@ public class GpxImporterTest {
 
         PowerMock.replayAll();
         new GpxImporter(gpxLoader, null, sqliteWrapper, listActivity, importThreadWrapper,
-                messageHandler, null, toastFactory, null).abort();
+                messageHandler, toastFactory, null, null).abort();
         PowerMock.verifyAll();
     }
 
@@ -83,15 +83,15 @@ public class GpxImporterTest {
         SQLiteWrapper sqliteWrapper = PowerMock.createMock(SQLiteWrapper.class);
         GpxLoader gpxLoader = PowerMock.createMock(GpxLoader.class);
         ImportThreadWrapper importThreadWrapper = PowerMock.createMock(ImportThreadWrapper.class);
-        GpxEventHandler gpxEventHandler = PowerMock.createMock(GpxEventHandler.class);
+        EventHandlers eventHandlers = PowerMock.createMock(EventHandlers.class);
 
         sqliteWrapper.openReadableDatabase(database);
-        importThreadWrapper.open(geocacheListPresenter, gpxLoader, gpxEventHandler, null);
+        importThreadWrapper.open(geocacheListPresenter, gpxLoader, eventHandlers, null);
         importThreadWrapper.start();
 
         PowerMock.replayAll();
         new GpxImporter(gpxLoader, database, sqliteWrapper, null, importThreadWrapper, null, null,
-                null, gpxEventHandler).importGpxs(geocacheListPresenter);
+                eventHandlers, null).importGpxs(geocacheListPresenter);
         PowerMock.verifyAll();
     }
 }
