@@ -96,7 +96,7 @@ public class GeocacheListAdapterTest {
         GeocacheRowInflater.RowViews rowViews = PowerMock
                 .createMock(GeocacheRowInflater.RowViews.class);
 
-        EasyMock.expect(geocacheRowInflater.inflateIfNecessary(convertView)).andReturn(
+        EasyMock.expect(geocacheRowInflater.inflateIfNecessary(17, convertView)).andReturn(
                 newConvertView);
         EasyMock.expect(geocacheVectors.get(17)).andReturn(geocacheVector);
         EasyMock.expect(newConvertView.getTag()).andReturn(rowViews);

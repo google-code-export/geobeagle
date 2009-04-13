@@ -26,10 +26,12 @@ public class GeocacheRowInflaterTest {
     @Test
     public void testGetExisting() {
         View convertView = PowerMock.createMock(View.class);
-
+        
+        EasyMock.expect(convertView.getTag()).andReturn(new Object());
+        
         PowerMock.replayAll();
         GeocacheRowInflater geocacheRowInflater = new GeocacheRowInflater(null);
-        assertEquals(convertView, geocacheRowInflater.inflateIfNecessary(convertView));
+        assertEquals(convertView, geocacheRowInflater.inflateIfNecessary(0, convertView));
         PowerMock.verifyAll();
     }
 
@@ -49,7 +51,7 @@ public class GeocacheRowInflaterTest {
 
         PowerMock.replayAll();
         GeocacheRowInflater geocacheRowInflater = new GeocacheRowInflater(layoutInflater);
-        assertEquals(convertView, geocacheRowInflater.inflateIfNecessary(null));
+        assertEquals(convertView, geocacheRowInflater.inflateIfNecessary(0, null));
         PowerMock.verifyAll();
     }
 }

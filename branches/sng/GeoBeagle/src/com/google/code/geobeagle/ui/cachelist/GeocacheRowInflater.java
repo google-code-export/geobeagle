@@ -26,7 +26,7 @@ public class GeocacheRowInflater {
         private final TextView mCache;
         private final TextView mDistance;
 
-        public RowViews(TextView cache, TextView txtDistance)  {
+        public RowViews(TextView cache, TextView txtDistance) {
             mCache = cache;
             mDistance = txtDistance;
         }
@@ -43,14 +43,18 @@ public class GeocacheRowInflater {
         mLayoutInflater = layoutInflater;
     }
 
-    public View inflateIfNecessary(View convertView) {
-        if (convertView != null) {
+    public View inflateIfNecessary(int position, View convertView) {
+        // if (position == 0) {
+        // return mLayoutInflater.inflate(R.layout.gps_widget, null);
+        // }
+
+        if (convertView != null && convertView.getTag() != null) {
             return convertView;
         }
 
         convertView = mLayoutInflater.inflate(R.layout.cache_row, null);
-        RowViews rowViews = new RowViews(((TextView)convertView
-                .findViewById(R.id.txt_cache)), ((TextView)convertView.findViewById(R.id.distance)));
+        RowViews rowViews = new RowViews(((TextView)convertView.findViewById(R.id.txt_cache)),
+                ((TextView)convertView.findViewById(R.id.distance)));
         convertView.setTag(rowViews);
         return convertView;
     }

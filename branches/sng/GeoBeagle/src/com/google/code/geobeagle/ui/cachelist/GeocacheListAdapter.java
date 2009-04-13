@@ -45,7 +45,9 @@ public class GeocacheListAdapter extends BaseAdapter {
     }
 
     public View getView(int position, View convertView, ViewGroup parent) {
-        convertView = mCacheRow.inflateIfNecessary(convertView);
+        convertView = mCacheRow.inflateIfNecessary(position, convertView);
+//        if (position > 0)
+//            ((RowViews)convertView.getTag()).set(mGeocacheVectors.get(position - 1));
         ((RowViews)convertView.getTag()).set(mGeocacheVectors.get(position));
         return convertView;
     }
