@@ -153,7 +153,8 @@ public class GpxImporterDI {
             mCacheCount = 0;
             mLoadAborted = false;
             mGeocacheListPresenter = geocacheListDelegate;
-            mProgressDialogWrapper.show("Importing caches", "Please wait...");
+            // TODO: move into resource file.
+            mProgressDialogWrapper.show("Syncing caches", "Please wait...");
         }
 
         public void updateName(String name) {
