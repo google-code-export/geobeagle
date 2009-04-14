@@ -68,7 +68,7 @@ public class CacheListDelegateDI {
         final LocationControl locationControl = LocationControlDi.create(locationManager);
         final GeocacheFactory geocacheFactory = new GeocacheFactory();
         final GeocacheFromMyLocationFactory geocacheFromMyLocationFactory = new GeocacheFromMyLocationFactory(
-                geocacheFactory, locationControl, errorDisplayer);
+                geocacheFactory, locationControl);
         final GeocachesSql locationBookmarks = DatabaseDI.create(locationControl, database);
         final SQLiteWrapper sqliteWrapper = new SQLiteWrapper(null);
         final CacheWriter cacheWriter = DatabaseDI.createCacheWriter(sqliteWrapper);
@@ -87,8 +87,8 @@ public class CacheListDelegateDI {
                 database, sqliteWrapper, cacheListData, cacheWriter, geocacheVectors,
                 errorDisplayer, geocacheListAdapter);
         final XmlPullParserWrapper xmlPullParserWrapper = new XmlPullParserWrapper();
-        final GpxImporter gpxImporter = GpxImporterDI.create(database, sqliteWrapper,
-                parent, xmlPullParserWrapper, errorDisplayer);
+        final GpxImporter gpxImporter = GpxImporterDI.create(database, sqliteWrapper, parent,
+                xmlPullParserWrapper, errorDisplayer);
 
         // TODO: replace with a widget.
         final LocationListener locationListener = new DummyLocationListener();
@@ -100,12 +100,12 @@ public class CacheListDelegateDI {
         final MenuActionSyncGpx menuActionSyncGpx = new MenuActionSyncGpx(gpxImporter,
                 geocacheListPresenter);
         final MenuActionMyLocation menuActionMyLocation = new MenuActionMyLocation(locationSaver,
-                geocacheFromMyLocationFactory, geocacheListPresenter);
+                geocacheFromMyLocationFactory, geocacheListPresenter, errorDisplayer);
         final MenuActionRefresh menuActionRefresh = new MenuActionRefresh(geocacheListPresenter);
         final MenuActions menuActions = new MenuActions(menuActionSyncGpx, menuActionMyLocation,
                 menuActionRefresh);
         final GeocacheListController geocacheListController = new GeocacheListController(
-                errorDisplayer, menuActions, contextActions);
+                menuActions, contextActions, errorDisplayer);
         return new CacheListDelegate(geocacheListController, geocacheListPresenter);
     }
 

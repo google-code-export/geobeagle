@@ -42,15 +42,15 @@ public class GeocacheListController {
         }
     }
 
-    public static final int MENU_DELETE = 0;
-    public static final int MENU_VIEW = 1;
+    static final int MENU_DELETE = 0;
+    static final int MENU_VIEW = 1;
     public static final String SELECT_CACHE = "SELECT_CACHE";
     private final ContextAction mContextActions[];
     private final ErrorDisplayer mErrorDisplayer;
     private final MenuActions mMenuActions;
 
-    GeocacheListController(ErrorDisplayer errorDisplayer, MenuActions menuActions,
-            ContextAction[] contextActions) {
+    GeocacheListController(MenuActions menuActions, ContextAction[] contextActions,
+            ErrorDisplayer errorDisplayer) {
         mErrorDisplayer = errorDisplayer;
         mContextActions = contextActions;
         mMenuActions = menuActions;
@@ -76,7 +76,11 @@ public class GeocacheListController {
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {
-        mMenuActions.act(item.getItemId());
+        try {
+            mMenuActions.act(item.getItemId());
+        } catch (Exception e) {
+            mErrorDisplayer.displayErrorAndStack(e);
+        }
         return true;
     }
 }

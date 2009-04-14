@@ -14,24 +14,34 @@
 
 package com.google.code.geobeagle.ui.cachelist;
 
+import com.google.code.geobeagle.R;
+import com.google.code.geobeagle.data.Geocache;
 import com.google.code.geobeagle.data.GeocacheFromMyLocationFactory;
 import com.google.code.geobeagle.io.LocationSaver;
+import com.google.code.geobeagle.ui.ErrorDisplayer;
 
 class MenuActionMyLocation implements MenuAction {
     private final GeocacheFromMyLocationFactory mGeocacheFromMyLocationFactory;
     private final GeocacheListPresenter mGeocacheListPresenter;
     private final LocationSaver mLocationSaver;
+    private final ErrorDisplayer mErrorDisplayer;
 
     public MenuActionMyLocation(LocationSaver locationSaver,
             GeocacheFromMyLocationFactory geocacheFromMyLocationFactory,
-            GeocacheListPresenter geocacheListPresenter) {
+            GeocacheListPresenter geocacheListPresenter, ErrorDisplayer errorDisplayer) {
         mLocationSaver = locationSaver;
         mGeocacheFromMyLocationFactory = geocacheFromMyLocationFactory;
         mGeocacheListPresenter = geocacheListPresenter;
+        mErrorDisplayer = errorDisplayer;
     }
 
     public void act() {
-        mLocationSaver.saveLocation(mGeocacheFromMyLocationFactory.create());
+        Geocache myLocation = mGeocacheFromMyLocationFactory.create();
+        if (myLocation == null) {
+            mErrorDisplayer.displayError(R.string.current_location_null);
+            return;
+        }
+        mLocationSaver.saveLocation(myLocation);
         mGeocacheListPresenter.onResume();
     }
 }
