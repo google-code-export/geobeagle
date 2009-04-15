@@ -23,21 +23,59 @@ import com.google.code.geobeagle.data.GeocacheFactory.Source;
 import android.view.View;
 
 public class WebPageAndDetailsButtonEnabler {
-    private final View mWebPageButton;
-    private final View mDetailsButton;
+    interface CheckButton {
+        public void check(Geocache geocache);
+    }
+
+    public static class CheckButtons {
+        private final CheckButton[] mCheckButtons;
+
+        public CheckButtons(CheckButton[] checkButtons) {
+            mCheckButtons = checkButtons;
+        }
+
+        public void check(Geocache geocache) {
+            for (CheckButton checkButton : mCheckButtons) {
+                checkButton.check(geocache);
+            }
+        }
+    }
+
+    public static class CheckDetailsButton implements CheckButton {
+        private final View mDetailsButton;
+
+        public CheckDetailsButton(View checkDetailsButton) {
+            mDetailsButton = checkDetailsButton;
+        }
+
+        public void check(Geocache geocache) {
+            mDetailsButton.setEnabled(geocache.getSourceType() == Source.GPX);
+        }
+    }
+
+    public static class CheckWebPageButton implements CheckButton {
+        private final View mWebPageButton;
+
+        public CheckWebPageButton(View webPageButton) {
+            mWebPageButton = webPageButton;
+        }
+
+        public void check(Geocache geocache) {
+            final Provider contentProvider = geocache.getContentProvider();
+            mWebPageButton.setEnabled(contentProvider == Provider.GROUNDSPEAK
+                    || contentProvider == GeocacheFactory.Provider.ATLAS_QUEST);
+        }
+    }
+
+    private final CheckButtons mCheckButtons;
     private final GeoBeagle mGeoBeagle;
 
-    WebPageAndDetailsButtonEnabler(GeoBeagle geoBeagle, View cachePageButton, View detailsButton) {
+    WebPageAndDetailsButtonEnabler(GeoBeagle geoBeagle, CheckButtons checkButtons) {
         mGeoBeagle = geoBeagle;
-        mWebPageButton = cachePageButton;
-        mDetailsButton = detailsButton;
+        mCheckButtons = checkButtons;
     }
 
     public void check() {
-        Geocache geocache = mGeoBeagle.getGeocache();
-        mDetailsButton.setEnabled(geocache.getSourceType() == Source.GPX);
-        final GeocacheFactory.Provider contentProvider = geocache.getContentProvider();
-        mWebPageButton.setEnabled(contentProvider == Provider.GROUNDSPEAK
-                || contentProvider == GeocacheFactory.Provider.ATLAS_QUEST);
+        mCheckButtons.check(mGeoBeagle.getGeocache());
     }
 }
