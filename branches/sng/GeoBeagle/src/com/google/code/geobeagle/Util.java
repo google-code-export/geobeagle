@@ -45,15 +45,6 @@ public class Util {
                 60.0 * (fAbsDegrees - dAbsDegrees));
     }
 
-    public static String getStackTrace(Exception e) {
-        final StackTraceElement stack[] = e.getStackTrace();
-        final StringBuilder sb = new StringBuilder();
-        for (final StackTraceElement s : stack) {
-            sb.append(s.toString() + "\n");
-        }
-        return sb.toString();
-    }
-
     public static double parseCoordinate(CharSequence string) {
         int sign = 1;
         final Matcher negsignMatcher = PAT_NEGSIGN.matcher(string);
