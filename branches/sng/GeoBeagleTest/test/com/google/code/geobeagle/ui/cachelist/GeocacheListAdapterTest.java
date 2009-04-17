@@ -17,9 +17,7 @@ package com.google.code.geobeagle.ui.cachelist;
 import static org.junit.Assert.assertEquals;
 
 import com.google.code.geobeagle.data.GeocacheVectors;
-import com.google.code.geobeagle.data.IGeocacheVector;
-import com.google.code.geobeagle.ui.cachelist.GeocacheListAdapter;
-import com.google.code.geobeagle.ui.cachelist.GeocacheRowInflater;
+import com.google.code.geobeagle.ui.cachelist.row.RowInflaterStrategy;
 
 import org.easymock.classextension.EasyMock;
 import org.junit.Test;
@@ -37,21 +35,6 @@ import android.widget.TextView;
         GeocacheListAdapter.class, TextView.class
 })
 public class GeocacheListAdapterTest {
-    @Test
-    public void testCacheRowViewsSet() {
-        TextView txtCache = PowerMock.createMock(TextView.class);
-        TextView txtDistance = PowerMock.createMock(TextView.class);
-        IGeocacheVector geocacheVector = PowerMock.createMock(IGeocacheVector.class);
-
-        EasyMock.expect(geocacheVector.getIdAndName()).andReturn("GC123 my cache");
-        EasyMock.expect(geocacheVector.getFormattedDistance()).andReturn("10m");
-        txtCache.setText("GC123 my cache");
-        txtDistance.setText("10m");
-
-        PowerMock.replayAll();
-        new GeocacheRowInflater.RowViews(txtCache, txtDistance).set(geocacheVector);
-        PowerMock.verifyAll();
-    }
 
     @Test
     public void testGetCount() {
@@ -87,24 +70,16 @@ public class GeocacheListAdapterTest {
 
     @Test
     public void testGetView() {
+        RowInflaterStrategy rowInflaterStrategy = PowerMock.createMock(RowInflaterStrategy.class);
         PowerMock.suppressConstructor(BaseAdapter.class);
-        GeocacheVectors geocacheVectors = PowerMock.createMock(GeocacheVectors.class);
-        GeocacheRowInflater geocacheRowInflater = PowerMock.createMock(GeocacheRowInflater.class);
-        IGeocacheVector geocacheVector = PowerMock.createMock(IGeocacheVector.class);
         View convertView = PowerMock.createMock(View.class);
         View newConvertView = PowerMock.createMock(View.class);
-        GeocacheRowInflater.RowViews rowViews = PowerMock
-                .createMock(GeocacheRowInflater.RowViews.class);
 
-        EasyMock.expect(geocacheRowInflater.inflateIfNecessary(17, convertView)).andReturn(
-                newConvertView);
-        EasyMock.expect(geocacheVectors.get(17)).andReturn(geocacheVector);
-        EasyMock.expect(newConvertView.getTag()).andReturn(rowViews);
-        rowViews.set(geocacheVector);
+        EasyMock.expect(rowInflaterStrategy.getView(17, convertView)).andReturn(newConvertView);
 
         PowerMock.replayAll();
-        assertEquals(newConvertView, new GeocacheListAdapter(geocacheVectors, geocacheRowInflater)
-                .getView(17, convertView, null));
+        assertEquals(newConvertView, new GeocacheListAdapter(null, rowInflaterStrategy).getView(
+                17, convertView, null));
         PowerMock.verifyAll();
     }
 }

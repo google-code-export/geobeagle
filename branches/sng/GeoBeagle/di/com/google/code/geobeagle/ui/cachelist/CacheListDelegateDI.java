@@ -34,6 +34,8 @@ import com.google.code.geobeagle.io.LocationSaver;
 import com.google.code.geobeagle.io.DatabaseDI.SQLiteWrapper;
 import com.google.code.geobeagle.io.GpxToCacheDI.XmlPullParserWrapper;
 import com.google.code.geobeagle.ui.ErrorDisplayer;
+import com.google.code.geobeagle.ui.cachelist.row.RowInflaterStrategy;
+import com.google.code.geobeagle.ui.cachelist.row.RowInflaterStrategyDI;
 
 import android.app.ListActivity;
 import android.content.Context;
@@ -80,9 +82,10 @@ public class CacheListDelegateDI {
         final GeocacheVectors geocacheVectors = new GeocacheVectors(locationComparator,
                 geocacheVectorFactory);
         final CacheListData cacheListData = new CacheListData(geocacheVectors);
-        final GeocacheRowInflater geocacheRowInflater = new GeocacheRowInflater(layoutInflater);
+        final RowInflaterStrategy rowInflaterStrategy = RowInflaterStrategyDI.create(
+                layoutInflater, geocacheVectors);
         final GeocacheListAdapter geocacheListAdapter = new GeocacheListAdapter(geocacheVectors,
-                geocacheRowInflater);
+                rowInflaterStrategy);
         final ContextAction contextActions[] = CacheListDelegateDI.createContextActions(parent,
                 database, sqliteWrapper, cacheListData, cacheWriter, geocacheVectors,
                 errorDisplayer, geocacheListAdapter);

@@ -15,7 +15,7 @@
 package com.google.code.geobeagle.ui.cachelist;
 
 import com.google.code.geobeagle.data.GeocacheVectors;
-import com.google.code.geobeagle.ui.cachelist.GeocacheRowInflater.RowViews;
+import com.google.code.geobeagle.ui.cachelist.row.RowInflaterStrategy;
 
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,12 +24,11 @@ import android.widget.BaseAdapter;
 public class GeocacheListAdapter extends BaseAdapter {
 
     private final GeocacheVectors mGeocacheVectors;
-    private final GeocacheRowInflater mCacheRow;
+    private final RowInflaterStrategy mRowInflaterStrategy;
 
-    public GeocacheListAdapter(GeocacheVectors geocacheVectors,
-            GeocacheRowInflater geocacheRowInflater) {
+    public GeocacheListAdapter(GeocacheVectors geocacheVectors, RowInflaterStrategy rowInflaterStrategy) {
         mGeocacheVectors = geocacheVectors;
-        mCacheRow = geocacheRowInflater;
+        mRowInflaterStrategy = rowInflaterStrategy;
     }
 
     public int getCount() {
@@ -45,10 +44,9 @@ public class GeocacheListAdapter extends BaseAdapter {
     }
 
     public View getView(int position, View convertView, ViewGroup parent) {
-        convertView = mCacheRow.inflateIfNecessary(position, convertView);
-//        if (position > 0)
-//            ((RowViews)convertView.getTag()).set(mGeocacheVectors.get(position - 1));
-        ((RowViews)convertView.getTag()).set(mGeocacheVectors.get(position));
-        return convertView;
+        return mRowInflaterStrategy.getView(position, convertView);
+        // if (position > 0)
+        // ((RowViews)convertView.getTag()).set(mGeocacheVectors.get(position -
+        // 1));
     }
 }
