@@ -86,7 +86,6 @@ public class GeoBeagle extends Activity implements LifecycleManager {
     };
     private LocationSaver mLocationSaver;
     private GeocacheFactory mGeocacheFactory;
-
     public GeoBeagle() {
         super();
         mErrorDisplayer = new ErrorDisplayer(this);

@@ -52,7 +52,7 @@ public class GpxAndZipFiles {
     public static class GpxAndZipFilesIterFactory {
         public IGpxReaderIter fromFile(String filename) throws IOException {
             if (filename.endsWith(".zip")) {
-                return new ZipFileOpener(GPX_DIR + filename, new ZipInputStreamFactory())
+                return new ZipFileOpener(GpxAndZipFiles.GPX_DIR + filename, new ZipInputStreamFactory())
                         .iterator();
             }
             return new GpxFileOpener(filename).iterator();
@@ -67,9 +67,9 @@ public class GpxAndZipFiles {
         }
     }
 
-    public static final String GPX_DIR = "/sdcard/download/";
     private final FilenameFilter mFilenameFilter;
     private final GpxAndZipFilesIterFactory mGpxFileIterFactory;
+    public static final String GPX_DIR = "/sdcard/download/";
 
     public GpxAndZipFiles(FilenameFilter filenameFilter,
             GpxAndZipFilesIterFactory gpxFileIterFactory) {
@@ -78,7 +78,7 @@ public class GpxAndZipFiles {
     }
 
     public GpxAndZipFilesIter iterator() {
-        String[] fileList = new File(GPX_DIR).list(mFilenameFilter);
+        String[] fileList = new File(GpxAndZipFiles.GPX_DIR).list(mFilenameFilter);
         if (fileList == null)
             return null;
         return new GpxAndZipFilesIter(fileList, mGpxFileIterFactory);
