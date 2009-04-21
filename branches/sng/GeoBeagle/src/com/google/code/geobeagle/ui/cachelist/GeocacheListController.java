@@ -15,6 +15,7 @@
 package com.google.code.geobeagle.ui.cachelist;
 
 import com.google.code.geobeagle.data.GeocacheVectors;
+import com.google.code.geobeagle.io.GpxImporter;
 import com.google.code.geobeagle.ui.ErrorDisplayer;
 
 import android.view.ContextMenu;
@@ -36,9 +37,11 @@ public class GeocacheListController {
 
         public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
             AdapterContextMenuInfo acmi = (AdapterContextMenuInfo)menuInfo;
-            menu.setHeaderTitle(mGeocacheVectors.get(acmi.position).getId());
-            menu.add(0, MENU_VIEW, 0, "View");
-            menu.add(0, MENU_DELETE, 1, "Delete");
+            if (acmi.position > 0) {
+                menu.setHeaderTitle(mGeocacheVectors.get(acmi.position).getId());
+                menu.add(0, MENU_VIEW, 0, "View");
+                menu.add(0, MENU_DELETE, 1, "Delete");
+            }
         }
     }
 
@@ -48,19 +51,21 @@ public class GeocacheListController {
     private final ContextAction mContextActions[];
     private final ErrorDisplayer mErrorDisplayer;
     private final MenuActions mMenuActions;
+    private final GpxImporter mGpxImporter;
 
     GeocacheListController(MenuActions menuActions, ContextAction[] contextActions,
-            ErrorDisplayer errorDisplayer) {
+            GpxImporter gpxImporter, ErrorDisplayer errorDisplayer) {
         mErrorDisplayer = errorDisplayer;
         mContextActions = contextActions;
         mMenuActions = menuActions;
+        mGpxImporter = gpxImporter;
     }
 
     public boolean onContextItemSelected(MenuItem menuItem) {
         try {
             AdapterContextMenuInfo adapterContextMenuInfo = (AdapterContextMenuInfo)menuItem
                     .getMenuInfo();
-            mContextActions[menuItem.getItemId()].act(adapterContextMenuInfo.position);
+            mContextActions[menuItem.getItemId()].act(adapterContextMenuInfo.position - 1);
         } catch (final Exception e) {
             mErrorDisplayer.displayErrorAndStack(e);
         }
@@ -69,7 +74,8 @@ public class GeocacheListController {
 
     public void onListItemClick(ListView l, View v, int position, long id) {
         try {
-            mContextActions[MENU_VIEW].act(position);
+            if (position > 0)
+                mContextActions[MENU_VIEW].act(position - 1);
         } catch (final Exception e) {
             mErrorDisplayer.displayErrorAndStack(e);
         }
@@ -82,5 +88,14 @@ public class GeocacheListController {
             mErrorDisplayer.displayErrorAndStack(e);
         }
         return true;
+    }
+
+    public void onPause() {
+        try {
+            mGpxImporter.abort();
+        } catch (InterruptedException e) {
+            // Nothing we can do here! There is no chance to communicate to
+            // the user.
+        }
     }
 }

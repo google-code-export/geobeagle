@@ -20,8 +20,8 @@ import com.google.code.geobeagle.data.CacheListData;
 import com.google.code.geobeagle.data.Geocache;
 import com.google.code.geobeagle.data.GeocacheVectors;
 import com.google.code.geobeagle.io.GeocachesSql;
-import com.google.code.geobeagle.io.GpxImporter;
 import com.google.code.geobeagle.ui.ErrorDisplayer;
+import com.google.code.geobeagle.ui.GpsStatusWidget.UpdateGpsWidgetRunnable;
 import com.google.code.geobeagle.ui.cachelist.GeocacheListController.CacheListOnCreateContextMenuListener;
 
 import android.app.ListActivity;
@@ -37,15 +37,15 @@ public class GeocacheListPresenter {
     private final GeocacheListAdapter mGeocacheListAdapter;
     private final GeocachesSql mGeocachesSql;
     private final GeocacheVectors mGeocacheVectors;
-    private final GpxImporter mGpxImporter;
     private final LocationControl mLocationControl;
     private final LocationListener mLocationListener;
     private final LocationManager mLocationManager;
     private final ListActivity mParent;
+    private final UpdateGpsWidgetRunnable mUpdateGpsWidgetRunnable;
 
     public GeocacheListPresenter(LocationManager locationManager, LocationControl locationControl,
-            LocationListener locationListener, GeocachesSql geocachesSql,
-            GeocacheVectors geocacheVectors, GpxImporter gpxImporter,
+            LocationListener locationListener, UpdateGpsWidgetRunnable updateGpsWidgetRunnable,
+            GeocachesSql geocachesSql, GeocacheVectors geocacheVectors,
             GeocacheListAdapter geocacheListAdapter, CacheListData cacheListData,
             ListActivity listActivity, ErrorDisplayer errorDisplayer) {
         mLocationManager = locationManager;
@@ -53,17 +53,18 @@ public class GeocacheListPresenter {
         mGeocachesSql = geocachesSql;
         mCacheListData = cacheListData;
         mParent = listActivity;
-        mGpxImporter = gpxImporter;
         mGeocacheVectors = geocacheVectors;
-        mErrorDisplayer = errorDisplayer;
         mGeocacheListAdapter = geocacheListAdapter;
         mLocationControl = locationControl;
+        mUpdateGpsWidgetRunnable = updateGpsWidgetRunnable;
+        mErrorDisplayer = errorDisplayer;
     }
 
     public void onCreate() {
         mParent.setContentView(R.layout.cache_list);
         mParent.getListView().setOnCreateContextMenuListener(
                 new CacheListOnCreateContextMenuListener(mGeocacheVectors));
+        mUpdateGpsWidgetRunnable.run();
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -73,12 +74,6 @@ public class GeocacheListPresenter {
 
     public void onPause() {
         mLocationManager.removeUpdates(mLocationListener);
-        try {
-            mGpxImporter.abort();
-        } catch (InterruptedException e) {
-            // Nothing we can do here! There is no chance to communicate to
-            // the user.
-        }
     }
 
     public void onResume() {

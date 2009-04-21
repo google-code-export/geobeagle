@@ -15,8 +15,11 @@
 package com.google.code.geobeagle.ui.cachelist;
 
 import com.google.code.geobeagle.GeoBeagle;
+import com.google.code.geobeagle.GeoBeagleLocationListener;
 import com.google.code.geobeagle.LocationControl;
 import com.google.code.geobeagle.LocationControlDi;
+import com.google.code.geobeagle.R;
+import com.google.code.geobeagle.ResourceProvider;
 import com.google.code.geobeagle.data.CacheListData;
 import com.google.code.geobeagle.data.DistanceFormatter;
 import com.google.code.geobeagle.data.GeocacheFactory;
@@ -34,8 +37,15 @@ import com.google.code.geobeagle.io.LocationSaver;
 import com.google.code.geobeagle.io.DatabaseDI.SQLiteWrapper;
 import com.google.code.geobeagle.io.GpxToCacheDI.XmlPullParserWrapper;
 import com.google.code.geobeagle.ui.ErrorDisplayer;
+import com.google.code.geobeagle.ui.GpsStatusWidget;
+import com.google.code.geobeagle.ui.Misc;
+import com.google.code.geobeagle.ui.UpdateGpsWidgetRunnableDI;
+import com.google.code.geobeagle.ui.GpsStatusWidget.MeterFormatter;
+import com.google.code.geobeagle.ui.GpsStatusWidget.MeterView;
+import com.google.code.geobeagle.ui.GpsStatusWidget.UpdateGpsWidgetRunnable;
 import com.google.code.geobeagle.ui.cachelist.row.RowInflaterStrategy;
 import com.google.code.geobeagle.ui.cachelist.row.RowInflaterStrategyDI;
+import com.google.code.geobeagle.ui.cachelist.row.GpsWidgetRowInflater.GpsWidgetRowViews;
 
 import android.app.ListActivity;
 import android.content.Context;
@@ -43,23 +53,14 @@ import android.content.Intent;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.TextView;
 
 public class CacheListDelegateDI {
 
-    private static class DummyLocationListener implements LocationListener {
-        public void onLocationChanged(Location arg0) {
-        }
-
-        public void onProviderDisabled(String arg0) {
-        }
-
-        public void onProviderEnabled(String arg0) {
-        }
-
-        public void onStatusChanged(String arg0, int arg1, Bundle arg2) {
-        }
+    private static TextView getTextView(View gpsWidgetView, int id) {
+        return (TextView)gpsWidgetView.findViewById(id);
     }
 
     public static CacheListDelegate create(ListActivity parent, LayoutInflater layoutInflater) {
@@ -82,24 +83,35 @@ public class CacheListDelegateDI {
         final GeocacheVectors geocacheVectors = new GeocacheVectors(locationComparator,
                 geocacheVectorFactory);
         final CacheListData cacheListData = new CacheListData(geocacheVectors);
+        final XmlPullParserWrapper xmlPullParserWrapper = new XmlPullParserWrapper();
+        final GpxImporter gpxImporter = GpxImporterDI.create(database, sqliteWrapper, parent,
+                xmlPullParserWrapper, errorDisplayer);
+        View gpsWidgetView = layoutInflater.inflate(R.layout.gps_widget, null);
+        // TODO: replace with a widget.
+
+        final GpsStatusWidget gpsStatusWidget = new GpsStatusWidget(new ResourceProvider(parent),
+                new MeterView(getTextView(gpsWidgetView, R.id.location_viewer),
+                        new MeterFormatter()), getTextView(gpsWidgetView, R.id.provider),
+                getTextView(gpsWidgetView, R.id.lag), getTextView(gpsWidgetView, R.id.accuracy),
+                getTextView(gpsWidgetView, R.id.status), new Misc.Time(), new Location(""));
+        GpsWidgetRowViews gpsWidgetRowViews = new GpsWidgetRowViews();
+        gpsWidgetView.setTag(gpsWidgetRowViews);
+
         final RowInflaterStrategy rowInflaterStrategy = RowInflaterStrategyDI.create(
-                layoutInflater, geocacheVectors);
+                layoutInflater, gpsWidgetView, geocacheVectors);
         final GeocacheListAdapter geocacheListAdapter = new GeocacheListAdapter(geocacheVectors,
                 rowInflaterStrategy);
         final ContextAction contextActions[] = CacheListDelegateDI.createContextActions(parent,
                 database, sqliteWrapper, cacheListData, cacheWriter, geocacheVectors,
                 errorDisplayer, geocacheListAdapter);
-        final XmlPullParserWrapper xmlPullParserWrapper = new XmlPullParserWrapper();
-        final GpxImporter gpxImporter = GpxImporterDI.create(database, sqliteWrapper, parent,
-                xmlPullParserWrapper, errorDisplayer);
-
-        // TODO: replace with a widget.
-        final LocationListener locationListener = new DummyLocationListener();
-
+        final LocationListener locationListener = new GeoBeagleLocationListener(locationControl,
+                gpsStatusWidget);
+        final UpdateGpsWidgetRunnable updateGpsWidgetRunnable = UpdateGpsWidgetRunnableDI
+                .create(gpsStatusWidget);
         final GeocacheListPresenter geocacheListPresenter = new GeocacheListPresenter(
-                locationManager, locationControl, locationListener, locationBookmarks,
-                geocacheVectors, gpxImporter, geocacheListAdapter, cacheListData, parent,
-                errorDisplayer);
+                locationManager, locationControl, locationListener, updateGpsWidgetRunnable,
+                locationBookmarks, geocacheVectors, geocacheListAdapter,
+                cacheListData, parent, errorDisplayer);
         final MenuActionSyncGpx menuActionSyncGpx = new MenuActionSyncGpx(gpxImporter,
                 geocacheListPresenter);
         final MenuActionMyLocation menuActionMyLocation = new MenuActionMyLocation(locationSaver,
@@ -108,7 +120,7 @@ public class CacheListDelegateDI {
         final MenuActions menuActions = new MenuActions(menuActionSyncGpx, menuActionMyLocation,
                 menuActionRefresh);
         final GeocacheListController geocacheListController = new GeocacheListController(
-                menuActions, contextActions, errorDisplayer);
+                menuActions, contextActions, gpxImporter, errorDisplayer);
         return new CacheListDelegate(geocacheListController, geocacheListPresenter);
     }
 

@@ -14,16 +14,6 @@
 
 package com.google.code.geobeagle.ui.cachelist.row;
 
-import android.view.View;
-
-interface RowInflater {
-    View inflate(View convertView);
-
-    boolean match(int position);
-
-    void setData(View view, int position);
-
-    static interface RowInfo {
-        public RowType getType();
-    }
+public enum RowType {
+    CacheRow, GpsWidgetRow
 }

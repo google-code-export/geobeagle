@@ -23,7 +23,7 @@ import android.view.View;
 import android.widget.TextView;
 
 class GeocacheSummaryRowInflater implements RowInflater {
-    static class RowViews /* implements RowInfo */{
+    static class RowViews implements RowInfo {
         private final TextView mCache;
         private final TextView mDistance;
 
@@ -32,10 +32,9 @@ class GeocacheSummaryRowInflater implements RowInflater {
             mDistance = distance;
         }
 
-        //
-        // public RowType getType() {
-        // return RowType.CacheRow;
-        // }
+        public RowType getType() {
+            return RowType.CacheRow;
+        }
 
         void set(IGeocacheVector geocacheVector) {
             mCache.setText(geocacheVector.getIdAndName());
@@ -63,15 +62,14 @@ class GeocacheSummaryRowInflater implements RowInflater {
     }
 
     public boolean isAlreadyInflated(View convertView) {
-        return convertView != null;
-        // && ((RowInfo)convertView.getTag()).getType() == RowType.CacheRow;
+        return convertView != null && ((RowInfo)convertView.getTag()).getType() == RowType.CacheRow;
     }
 
     public boolean match(int position) {
-        return true;
+        return position > 0;
     }
 
     public void setData(View view, int position) {
-        ((RowViews)view.getTag()).set(mGeocacheVectors.get(position));
+        ((RowViews)view.getTag()).set(mGeocacheVectors.get(position - 1));
     }
 }

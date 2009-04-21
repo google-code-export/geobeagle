@@ -21,7 +21,9 @@ import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.ResourceProvider;
 import com.google.code.geobeagle.ui.GpsStatusWidget.MeterFormatter;
 import com.google.code.geobeagle.ui.GpsStatusWidget.MeterView;
+import com.google.code.geobeagle.ui.GpsStatusWidget.UpdateGpsWidgetRunnable;
 
+import org.easymock.EasyMock;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.api.easymock.PowerMock;
@@ -31,17 +33,33 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationProvider;
+import android.os.Handler;
 import android.widget.TextView;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest( {
-    Color.class, TextView.class
+        Color.class, Handler.class, TextView.class
 })
 public class GpsStatusWidgetTest {
+    @Test
+    public void testUpdateGpsWidgetRunnable() {
+        GpsStatusWidget gpsStatusWidget = PowerMock.createMock(GpsStatusWidget.class);
+        Handler handler = PowerMock.createMock(Handler.class);
+
+        gpsStatusWidget.refreshLocation();
+        EasyMock
+                .expect(
+                        handler.postDelayed(EasyMock.isA(UpdateGpsWidgetRunnable.class), EasyMock
+                                .eq(100L))).andReturn(true);
+
+        PowerMock.replayAll();
+        new UpdateGpsWidgetRunnable(gpsStatusWidget, handler).run();
+        PowerMock.verifyAll();
+    }
 
     @Test
     public void testAccuracyToBars() {
-        GpsStatusWidget.MeterFormatter meterFormatter = new GpsStatusWidget.MeterFormatter();
+        MeterFormatter meterFormatter = new MeterFormatter();
         assertEquals(0, meterFormatter.accuracyToBarCount(-1));
         assertEquals(0, meterFormatter.accuracyToBarCount(0));
         assertEquals(0, meterFormatter.accuracyToBarCount(1));
@@ -54,13 +72,13 @@ public class GpsStatusWidgetTest {
 
     @Test
     public void testAccuracyToBarText() {
-        GpsStatusWidget.MeterFormatter meterFormatter = new GpsStatusWidget.MeterFormatter();
+        MeterFormatter meterFormatter = new MeterFormatter();
         assertEquals("·×·", meterFormatter.barsToMeterText(meterFormatter.accuracyToBarCount(2)));
     }
 
     @Test
     public void testGetAlpha() {
-        GpsStatusWidget.MeterFormatter meterFormatter = new GpsStatusWidget.MeterFormatter();
+        MeterFormatter meterFormatter = new MeterFormatter();
         assertEquals(256, meterFormatter.lagToAlpha(-1));
         assertEquals(255, meterFormatter.lagToAlpha(0));
         assertEquals(254, meterFormatter.lagToAlpha(8));
@@ -70,7 +88,7 @@ public class GpsStatusWidgetTest {
 
     @Test
     public void testGetMeterText() {
-        GpsStatusWidget.MeterFormatter meterFormatter = new GpsStatusWidget.MeterFormatter();
+        MeterFormatter meterFormatter = new MeterFormatter();
         assertEquals("×", meterFormatter.barsToMeterText(0));
         assertEquals("·×·", meterFormatter.barsToMeterText(1));
         assertEquals("‹····×····›", meterFormatter.barsToMeterText(5));
@@ -90,8 +108,7 @@ public class GpsStatusWidgetTest {
         textView.setTextColor(333);
 
         PowerMock.replayAll();
-        final MeterView meterView = new MeterView(textView, meterFormatter);
-        meterView.set(17, 342);
+        new MeterView(textView, meterFormatter).set(17, 342);
         PowerMock.verifyAll();
     }
 

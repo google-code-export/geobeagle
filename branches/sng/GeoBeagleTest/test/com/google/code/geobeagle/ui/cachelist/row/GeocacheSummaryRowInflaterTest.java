@@ -9,6 +9,7 @@ import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.data.GeocacheVectors;
 import com.google.code.geobeagle.data.IGeocacheVector;
 import com.google.code.geobeagle.ui.cachelist.row.GeocacheSummaryRowInflater.RowViews;
+import com.google.code.geobeagle.ui.cachelist.row.RowInflater.RowInfo;
 
 import org.easymock.classextension.EasyMock;
 import org.junit.Test;
@@ -45,8 +46,12 @@ public class GeocacheSummaryRowInflaterTest {
     }
 
     @Test
-    public void testCacheRowInflaterInflateExisting() throws Exception {
+    public void testInflateExisting() throws Exception {
         View convertView = PowerMock.createMock(View.class);
+        RowInfo rowInfo = PowerMock.createMock(RowInfo.class);
+
+        EasyMock.expect(convertView.getTag()).andReturn(rowInfo);
+        EasyMock.expect(rowInfo.getType()).andReturn(RowType.CacheRow);
 
         PowerMock.replayAll();
         assertEquals(convertView, new GeocacheSummaryRowInflater(null, null).inflate(convertView));
@@ -54,7 +59,7 @@ public class GeocacheSummaryRowInflaterTest {
     }
 
     @Test
-    public void testCacheRowInflaterInflateNew() throws Exception {
+    public void testInflateNew() throws Exception {
         View view = PowerMock.createMock(View.class);
         LayoutInflater layoutInflater = PowerMock.createMock(LayoutInflater.class);
         RowViews rowViews = PowerMock.createMock(RowViews.class);
@@ -74,31 +79,29 @@ public class GeocacheSummaryRowInflaterTest {
     }
 
     @Test
-    public void testCacheRowInflaterIsAlreadyInflated() {
-        assertFalse(new GeocacheSummaryRowInflater(null, null).isAlreadyInflated(null));
-        assertTrue(new GeocacheSummaryRowInflater(null, null).isAlreadyInflated(PowerMock
-                .createMock(View.class)));
-    }
+    public void testIsAlreadyInflated() {
+        View convertView = PowerMock.createMock(View.class);
+        RowInfo rowInfo = PowerMock.createMock(RowInfo.class);
 
-    @Test
-    public void testCacheRowInflaterSetData() {
-        GeocacheVectors geocacheVectors = PowerMock.createMock(GeocacheVectors.class);
-        IGeocacheVector geocacheVector = PowerMock.createMock(IGeocacheVector.class);
-        View view = PowerMock.createMock(View.class);
-        RowViews rowViews = PowerMock.createMock(RowViews.class);
-
-        EasyMock.expect(geocacheVectors.get(17)).andReturn(geocacheVector);
-        EasyMock.expect(view.getTag()).andReturn(rowViews);
-        rowViews.set(geocacheVector);
+        final GeocacheSummaryRowInflater geocacheSummaryRowInflater = new GeocacheSummaryRowInflater(
+                null, null);
+        EasyMock.expect(convertView.getTag()).andReturn(rowInfo);
+        EasyMock.expect(rowInfo.getType()).andReturn(RowType.CacheRow);
 
         PowerMock.replayAll();
-        new GeocacheSummaryRowInflater(null, geocacheVectors).setData(view, 17);
+        assertTrue(geocacheSummaryRowInflater.isAlreadyInflated(convertView));
         PowerMock.verifyAll();
     }
 
     @Test
-    public void testCacheRowInflaterMatch() {
-        assertTrue(new GeocacheSummaryRowInflater(null, null).match(0));
+    public void testMatch() {
+        assertFalse(new GeocacheSummaryRowInflater(null, null).match(0));
+        assertTrue(new GeocacheSummaryRowInflater(null, null).match(1));
+    }
+
+    @Test
+    public void testRowViewsGetType() {
+        assertEquals(RowType.CacheRow, new RowViews(null, null).getType());
     }
 
     @Test
@@ -117,5 +120,21 @@ public class GeocacheSummaryRowInflaterTest {
         rowViews.set(geocacheVector);
         PowerMock.verifyAll();
 
+    }
+
+    @Test
+    public void testSetData() {
+        GeocacheVectors geocacheVectors = PowerMock.createMock(GeocacheVectors.class);
+        IGeocacheVector geocacheVector = PowerMock.createMock(IGeocacheVector.class);
+        View view = PowerMock.createMock(View.class);
+        RowViews rowViews = PowerMock.createMock(RowViews.class);
+
+        EasyMock.expect(geocacheVectors.get(17)).andReturn(geocacheVector);
+        EasyMock.expect(view.getTag()).andReturn(rowViews);
+        rowViews.set(geocacheVector);
+
+        PowerMock.replayAll();
+        new GeocacheSummaryRowInflater(null, geocacheVectors).setData(view, 18);
+        PowerMock.verifyAll();
     }
 }

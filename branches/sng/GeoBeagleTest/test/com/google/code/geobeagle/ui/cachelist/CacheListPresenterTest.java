@@ -10,8 +10,8 @@ import com.google.code.geobeagle.data.CacheListData;
 import com.google.code.geobeagle.data.Geocache;
 import com.google.code.geobeagle.data.GeocacheVectors;
 import com.google.code.geobeagle.io.GeocachesSql;
-import com.google.code.geobeagle.io.GpxImporter;
 import com.google.code.geobeagle.ui.ErrorDisplayer;
+import com.google.code.geobeagle.ui.GpsStatusWidget.UpdateGpsWidgetRunnable;
 import com.google.code.geobeagle.ui.cachelist.GeocacheListController.CacheListOnCreateContextMenuListener;
 
 import org.easymock.EasyMock;
@@ -44,16 +44,19 @@ public class CacheListPresenterTest {
                 .createMock(CacheListOnCreateContextMenuListener.class);
         ListView listView = PowerMock.createMock(ListView.class);
         GeocacheVectors geocacheVectors = PowerMock.createMock(GeocacheVectors.class);
+        UpdateGpsWidgetRunnable updateGpsWidgetRunnable = PowerMock
+                .createMock(UpdateGpsWidgetRunnable.class);
 
         activity.setContentView(R.layout.cache_list);
         PowerMock.expectNew(CacheListOnCreateContextMenuListener.class, geocacheVectors).andReturn(
                 listener);
         expect(activity.getListView()).andReturn(listView);
         listView.setOnCreateContextMenuListener(listener);
+        updateGpsWidgetRunnable.run();
 
         PowerMock.replayAll();
-        new GeocacheListPresenter(null, null, null, null, geocacheVectors, null, null, null,
-                activity, null).onCreate();
+        new GeocacheListPresenter(null, null, null, updateGpsWidgetRunnable, null, geocacheVectors,
+                null, null, activity, null).onCreate();
         PowerMock.verifyAll();
     }
 
@@ -75,33 +78,14 @@ public class CacheListPresenterTest {
 
     @Test
     public void testPause() throws InterruptedException {
-        GpxImporter gpxImporter = PowerMock.createMock(GpxImporter.class);
         LocationManager locationManager = PowerMock.createMock(LocationManager.class);
         LocationListener locationListener = PowerMock.createMock(LocationListener.class);
 
         locationManager.removeUpdates(locationListener);
-        gpxImporter.abort();
 
         PowerMock.replayAll();
-        new GeocacheListPresenter(locationManager, null, locationListener, null, null, gpxImporter,
-                null, null, null, null).onPause();
-        PowerMock.verifyAll();
-    }
-
-    @Test
-    public void testPauseError() throws InterruptedException {
-        GpxImporter gpxImporter = PowerMock.createMock(GpxImporter.class);
-        LocationManager locationManager = PowerMock.createMock(LocationManager.class);
-        LocationListener locationListener = PowerMock.createMock(LocationListener.class);
-
-        Exception e = new InterruptedException();
-        locationManager.removeUpdates(locationListener);
-        gpxImporter.abort();
-        EasyMock.expectLastCall().andThrow(e);
-
-        PowerMock.replayAll();
-        new GeocacheListPresenter(locationManager, null, locationListener, null, null, gpxImporter,
-                null, null, null, null).onPause();
+        new GeocacheListPresenter(locationManager, null, locationListener, null, null, null, null,
+                null, null, null).onPause();
         PowerMock.verifyAll();
     }
 
@@ -132,8 +116,9 @@ public class CacheListPresenterTest {
         listActivity.setTitle("0 caches out of 1000");
 
         PowerMock.replayAll();
-        new GeocacheListPresenter(locationManager, locationControl, locationListener, geocachesSql,
-                null, null, geocacheListAdapter, cacheListData, listActivity, null).onResume();
+        new GeocacheListPresenter(locationManager, locationControl, locationListener, null,
+                geocachesSql, null, geocacheListAdapter, cacheListData, listActivity, null)
+                .onResume();
         PowerMock.verifyAll();
     }
 

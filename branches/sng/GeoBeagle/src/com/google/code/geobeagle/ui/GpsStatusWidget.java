@@ -21,6 +21,7 @@ import com.google.code.geobeagle.ui.Misc.Time;
 import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationProvider;
+import android.os.Handler;
 import android.widget.TextView;
 
 /**
@@ -56,6 +57,21 @@ public class GpsStatusWidget {
             mTextView.setText(mMeterFormatter.barsToMeterText(mMeterFormatter
                     .accuracyToBarCount(accuracy)));
             mTextView.setTextColor(Color.argb(mMeterFormatter.lagToAlpha(lag), 147, 190, 38));
+        }
+    }
+
+    public static class UpdateGpsWidgetRunnable implements Runnable {
+        final GpsStatusWidget mGpsStatusWidget;
+        final Handler mHandler;
+    
+        UpdateGpsWidgetRunnable(GpsStatusWidget gpsStatusWidget, Handler handler) {
+            mGpsStatusWidget = gpsStatusWidget;
+            mHandler = handler;
+        }
+
+        public void run() {
+            mGpsStatusWidget.refreshLocation();
+            mHandler.postDelayed(this, 100);
         }
     }
 

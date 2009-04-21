@@ -46,11 +46,12 @@ public class CacheListDelegate {
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {
-            return mController.onOptionsItemSelected(item);
+        return mController.onOptionsItemSelected(item);
     }
 
     public void onPause() {
         mPresenter.onPause();
+        mController.onPause();
     }
 
     public void onResume() {
