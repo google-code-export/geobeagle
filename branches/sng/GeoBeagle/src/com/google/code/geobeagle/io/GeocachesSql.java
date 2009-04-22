@@ -18,31 +18,22 @@ import com.google.code.geobeagle.LocationControl;
 import com.google.code.geobeagle.data.Geocache;
 import com.google.code.geobeagle.data.Geocaches;
 import com.google.code.geobeagle.io.CacheReader.CacheReaderCursor;
-import com.google.code.geobeagle.io.DatabaseDI.SQLiteWrapper;
 
 import java.util.ArrayList;
 
 public class GeocachesSql {
     private final CacheReader mCacheReader;
-    private final Database mDatabase;
     private final Geocaches mGeocaches;
     private final LocationControl mLocationControl;
-    private final SQLiteWrapper mSQLiteWrapper;
 
-    GeocachesSql(CacheReader cacheReader, Geocaches geocaches, Database database,
-            SQLiteWrapper sqliteWrapper, LocationControl locationControl) {
+    GeocachesSql(CacheReader cacheReader, Geocaches geocaches, LocationControl locationControl) {
         mCacheReader = cacheReader;
         mGeocaches = geocaches;
-        mDatabase = database;
-        mSQLiteWrapper = sqliteWrapper;
         mLocationControl = locationControl;
     }
 
     public int getCount() {
-        mSQLiteWrapper.openWritableDatabase(mDatabase);
-        int count = mCacheReader.getTotalCount();
-        mSQLiteWrapper.close();
-        return count;
+        return mCacheReader.getTotalCount();
     }
 
     public ArrayList<Geocache> getGeocaches() {
@@ -50,18 +41,12 @@ public class GeocachesSql {
     }
 
     public void loadNearestCaches() {
-        // TODO: This has to be writable for upgrade to work; we should open one
-        // readable and one writable at the activity level, and then pass it
-        // down.
-        mSQLiteWrapper.openWritableDatabase(mDatabase);
         CacheReaderCursor cursor = mCacheReader.open(mLocationControl.getLocation());
         mGeocaches.clear();
         if (cursor != null) {
             read(cursor);
             cursor.close();
         }
-
-        mSQLiteWrapper.close();
     }
 
     public void read(CacheReaderCursor cursor) {

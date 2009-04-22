@@ -16,33 +16,21 @@ package com.google.code.geobeagle.ui.cachelist;
 
 import com.google.code.geobeagle.data.GeocacheVectors;
 import com.google.code.geobeagle.io.CacheWriter;
-import com.google.code.geobeagle.io.Database;
-import com.google.code.geobeagle.io.DatabaseDI.SQLiteWrapper;
-import com.google.code.geobeagle.ui.ErrorDisplayer;
 
 public class ContextActionDelete implements ContextAction {
     private final CacheWriter mCacheWriter;
-    private final Database mDatabase;
-    private final SQLiteWrapper mSQLiteWrapper;
     private final GeocacheVectors mGeocacheVectors;
     private final GeocacheListAdapter mGeocacheListAdapter;
 
-    ContextActionDelete(Database database, GeocacheListAdapter geocacheListAdapter,
-            SQLiteWrapper sqliteWrapper, CacheWriter cacheWriter, GeocacheVectors geocacheVectors,
-            ErrorDisplayer errorDisplayer) {
+    ContextActionDelete(GeocacheListAdapter geocacheListAdapter, CacheWriter cacheWriter,
+            GeocacheVectors geocacheVectors) {
         mGeocacheVectors = geocacheVectors;
-        mDatabase = database;
-        mSQLiteWrapper = sqliteWrapper;
         mCacheWriter = cacheWriter;
         mGeocacheListAdapter = geocacheListAdapter;
     }
 
     public void act(int position) {
-        // TODO: pull sqliteDatabase and then cachewriter up to top level so
-        // they're shared.
-        mSQLiteWrapper.openWritableDatabase(mDatabase);
         mCacheWriter.deleteCache(mGeocacheVectors.get(position).getId());
-        mSQLiteWrapper.close();
 
         mGeocacheVectors.remove(position);
         mGeocacheListAdapter.notifyDataSetChanged();

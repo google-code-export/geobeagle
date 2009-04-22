@@ -19,7 +19,9 @@ import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.data.CacheListData;
 import com.google.code.geobeagle.data.Geocache;
 import com.google.code.geobeagle.data.GeocacheVectors;
+import com.google.code.geobeagle.io.Database;
 import com.google.code.geobeagle.io.GeocachesSql;
+import com.google.code.geobeagle.io.DatabaseDI.SQLiteWrapper;
 import com.google.code.geobeagle.ui.ErrorDisplayer;
 import com.google.code.geobeagle.ui.GpsStatusWidget.UpdateGpsWidgetRunnable;
 import com.google.code.geobeagle.ui.cachelist.GeocacheListController.CacheListOnCreateContextMenuListener;
@@ -45,6 +47,7 @@ public class GeocacheListPresenter {
             mGeocacheListPresenter.onResume();
         }
     }
+
     private final CacheListData mCacheListData;
     private final ErrorDisplayer mErrorDisplayer;
     private final GeocacheListAdapter mGeocacheListAdapter;
@@ -55,17 +58,21 @@ public class GeocacheListPresenter {
     private final LocationListener mLocationListener;
     private final LocationManager mLocationManager;
     private final ListActivity mParent;
-
     private final UpdateGpsWidgetRunnable mUpdateGpsWidgetRunnable;
+    private final SQLiteWrapper mSQLiteWrapper;
+    private final Database mDatabase;
 
     public GeocacheListPresenter(LocationManager locationManager, LocationControl locationControl,
             LocationListener locationListener, UpdateGpsWidgetRunnable updateGpsWidgetRunnable,
             GeocachesSql geocachesSql, GeocacheVectors geocacheVectors,
             GeocacheListAdapter geocacheListAdapter, CacheListData cacheListData,
-            ListActivity listActivity, Handler handler, ErrorDisplayer errorDisplayer) {
+            ListActivity listActivity, Handler handler, ErrorDisplayer errorDisplayer,
+            SQLiteWrapper sqliteWrapper, Database database) {
         mLocationManager = locationManager;
         mLocationListener = locationListener;
         mGeocachesSql = geocachesSql;
+        mSQLiteWrapper = sqliteWrapper;
+        mDatabase = database;
         mCacheListData = cacheListData;
         mParent = listActivity;
         mGeocacheVectors = geocacheVectors;
@@ -90,6 +97,7 @@ public class GeocacheListPresenter {
 
     public void onPause() {
         mLocationManager.removeUpdates(mLocationListener);
+        mSQLiteWrapper.close();
     }
 
     public void onResume() {
@@ -98,6 +106,7 @@ public class GeocacheListPresenter {
                     mLocationListener);
             mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0,
                     mLocationListener);
+            mSQLiteWrapper.openWritableDatabase(mDatabase);
             mGeocachesSql.loadNearestCaches();
             ArrayList<Geocache> geocaches = mGeocachesSql.getGeocaches();
             mCacheListData.add(geocaches, mLocationControl.getLocation());

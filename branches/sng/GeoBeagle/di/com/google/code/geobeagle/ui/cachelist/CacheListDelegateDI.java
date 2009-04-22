@@ -73,8 +73,8 @@ public class CacheListDelegateDI {
         final GeocacheFactory geocacheFactory = new GeocacheFactory();
         final GeocacheFromMyLocationFactory geocacheFromMyLocationFactory = new GeocacheFromMyLocationFactory(
                 geocacheFactory, locationControl);
-        final GeocachesSql locationBookmarks = DatabaseDI.create(locationControl, database);
         final SQLiteWrapper sqliteWrapper = new SQLiteWrapper(null);
+        final GeocachesSql locationBookmarks = DatabaseDI.create(locationControl, sqliteWrapper);
         final CacheWriter cacheWriter = DatabaseDI.createCacheWriter(sqliteWrapper);
         final DistanceFormatter distanceFormatter = new DistanceFormatter();
         final LocationSaver locationSaver = new LocationSaver(database, sqliteWrapper, cacheWriter);
@@ -113,7 +113,7 @@ public class CacheListDelegateDI {
         final GeocacheListPresenter geocacheListPresenter = new GeocacheListPresenter(
                 locationManager, locationControl, locationListener, updateGpsWidgetRunnable,
                 locationBookmarks, geocacheVectors, geocacheListAdapter, cacheListData, parent,
-                handler, errorDisplayer);
+                handler, errorDisplayer, sqliteWrapper, database);
         final MenuActionSyncGpx menuActionSyncGpx = new MenuActionSyncGpx(gpxImporter,
                 geocacheListPresenter);
         final MenuActionMyLocation menuActionMyLocation = new MenuActionMyLocation(locationSaver,
@@ -133,8 +133,8 @@ public class CacheListDelegateDI {
         final Intent intent = new Intent(parent, GeoBeagle.class);
         final ContextActionView contextActionView = new ContextActionView(geocacheVectors, parent,
                 intent);
-        final ContextActionDelete contextActionDelete = new ContextActionDelete(database,
-                geocacheListAdapter, sqliteWrapper, cacheWriter, geocacheVectors, errorDisplayer);
+        final ContextActionDelete contextActionDelete = new ContextActionDelete(
+                geocacheListAdapter, cacheWriter, geocacheVectors);
         return new ContextAction[] {
                 contextActionDelete, contextActionView
         };

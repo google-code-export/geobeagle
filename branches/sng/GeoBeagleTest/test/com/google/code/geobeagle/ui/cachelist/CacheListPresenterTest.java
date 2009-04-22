@@ -9,7 +9,9 @@ import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.data.CacheListData;
 import com.google.code.geobeagle.data.Geocache;
 import com.google.code.geobeagle.data.GeocacheVectors;
+import com.google.code.geobeagle.io.Database;
 import com.google.code.geobeagle.io.GeocachesSql;
+import com.google.code.geobeagle.io.DatabaseDI.SQLiteWrapper;
 import com.google.code.geobeagle.ui.ErrorDisplayer;
 import com.google.code.geobeagle.ui.GpsStatusWidget.UpdateGpsWidgetRunnable;
 import com.google.code.geobeagle.ui.cachelist.GeocacheListController.CacheListOnCreateContextMenuListener;
@@ -59,7 +61,7 @@ public class CacheListPresenterTest {
 
         PowerMock.replayAll();
         new GeocacheListPresenter(null, null, null, updateGpsWidgetRunnable, null, geocacheVectors,
-                null, null, activity, null, null).onCreate();
+                null, null, activity, null, null, null, null).onCreate();
         PowerMock.verifyAll();
     }
 
@@ -74,7 +76,7 @@ public class CacheListPresenterTest {
 
         PowerMock.replayAll();
         GeocacheListPresenter geocacheListPresenter = new GeocacheListPresenter(null, null, null,
-                null, null, null, null, null, listActivity, null, null);
+                null, null, null, null, null, listActivity, null, null, null, null);
         assertTrue(geocacheListPresenter.onCreateOptionsMenu(menu));
         PowerMock.verifyAll();
     }
@@ -83,12 +85,14 @@ public class CacheListPresenterTest {
     public void testPause() throws InterruptedException {
         LocationManager locationManager = PowerMock.createMock(LocationManager.class);
         LocationListener locationListener = PowerMock.createMock(LocationListener.class);
+        SQLiteWrapper sqliteWrapper = PowerMock.createMock(SQLiteWrapper.class);
 
         locationManager.removeUpdates(locationListener);
+        sqliteWrapper.close();
 
         PowerMock.replayAll();
         new GeocacheListPresenter(locationManager, null, locationListener, null, null, null, null,
-                null, null, null, null).onPause();
+                null, null, null, null, sqliteWrapper, null).onPause();
         PowerMock.verifyAll();
     }
 
@@ -102,12 +106,15 @@ public class CacheListPresenterTest {
         CacheListData cacheListData = PowerMock.createMock(CacheListData.class);
         LocationControl locationControl = PowerMock.createMock(LocationControl.class);
         Location here = PowerMock.createMock(Location.class);
+        SQLiteWrapper sqliteWrapper = PowerMock.createMock(SQLiteWrapper.class);
+        Database database = PowerMock.createMock(Database.class);
 
         locationManager
                 .requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
         locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0,
                 locationListener);
         ArrayList<Geocache> locations = new ArrayList<Geocache>(0);
+        sqliteWrapper.openWritableDatabase(database);
         geocachesSql.loadNearestCaches();
         expect(geocachesSql.getGeocaches()).andReturn(locations);
         expect(locationControl.getLocation()).andReturn(here);
@@ -120,8 +127,8 @@ public class CacheListPresenterTest {
 
         PowerMock.replayAll();
         new GeocacheListPresenter(locationManager, locationControl, locationListener, null,
-                geocachesSql, null, geocacheListAdapter, cacheListData, listActivity, null, null)
-                .onResume();
+                geocachesSql, null, geocacheListAdapter, cacheListData, listActivity, null, null,
+                sqliteWrapper, database).onResume();
         PowerMock.verifyAll();
     }
 
@@ -139,7 +146,7 @@ public class CacheListPresenterTest {
 
         PowerMock.replayAll();
         new GeocacheListPresenter(locationManager, null, locationListener, null, null, null, null,
-                null, null, null, errorDisplayer).onResume();
+                null, null, null, errorDisplayer, null, null).onResume();
         PowerMock.verifyAll();
     }
 
@@ -149,7 +156,7 @@ public class CacheListPresenterTest {
                 .createMock(GeocacheListPresenter.class);
 
         geocacheListPresenter.onResume();
-        
+
         PowerMock.replayAll();
         new ResumeRunnable(geocacheListPresenter).run();
         PowerMock.verifyAll();
@@ -173,7 +180,7 @@ public class CacheListPresenterTest {
 
         PowerMock.replayAll();
         new GeocacheListPresenter(null, null, null, null, null, null, null, null, listActivity,
-                handler, null).sort();
+                handler, null, null, null).sort();
         PowerMock.verifyAll();
     }
 }
