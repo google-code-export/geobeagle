@@ -45,8 +45,5 @@ public class GeocacheListAdapter extends BaseAdapter {
 
     public View getView(int position, View convertView, ViewGroup parent) {
         return mRowInflaterStrategy.getView(position, convertView);
-        // if (position > 0)
-        // ((RowViews)convertView.getTag()).set(mGeocacheVectors.get(position -
-        // 1));
     }
 }

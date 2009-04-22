@@ -36,19 +36,20 @@ import android.widget.Toast;
 import java.util.ArrayList;
 
 public class GeocacheListPresenter {
-    public static class ResumeRunnable implements Runnable {
+    static class SortRunnable implements Runnable {
         private final GeocacheListPresenter mGeocacheListPresenter;
 
-        ResumeRunnable(GeocacheListPresenter geocacheListPresenter) {
+        SortRunnable(GeocacheListPresenter geocacheListPresenter) {
             mGeocacheListPresenter = geocacheListPresenter;
         }
 
         public void run() {
-            mGeocacheListPresenter.onResume();
+            mGeocacheListPresenter.sort();
         }
     }
 
     private final CacheListData mCacheListData;
+    private final Database mDatabase;
     private final ErrorDisplayer mErrorDisplayer;
     private final GeocacheListAdapter mGeocacheListAdapter;
     private final GeocachesSql mGeocachesSql;
@@ -58,9 +59,8 @@ public class GeocacheListPresenter {
     private final LocationListener mLocationListener;
     private final LocationManager mLocationManager;
     private final ListActivity mParent;
-    private final UpdateGpsWidgetRunnable mUpdateGpsWidgetRunnable;
     private final SQLiteWrapper mSQLiteWrapper;
-    private final Database mDatabase;
+    private final UpdateGpsWidgetRunnable mUpdateGpsWidgetRunnable;
 
     public GeocacheListPresenter(LocationManager locationManager, LocationControl locationControl,
             LocationListener locationListener, UpdateGpsWidgetRunnable updateGpsWidgetRunnable,
@@ -81,6 +81,11 @@ public class GeocacheListPresenter {
         mUpdateGpsWidgetRunnable = updateGpsWidgetRunnable;
         mErrorDisplayer = errorDisplayer;
         mHandler = handler;
+    }
+
+    public void doSort() {
+        Toast.makeText(mParent, R.string.sorting, Toast.LENGTH_SHORT).show();
+        mHandler.postDelayed(new SortRunnable(this), 200);
     }
 
     public void onCreate() {
@@ -107,19 +112,18 @@ public class GeocacheListPresenter {
             mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0,
                     mLocationListener);
             mSQLiteWrapper.openWritableDatabase(mDatabase);
-            mGeocachesSql.loadNearestCaches();
-            ArrayList<Geocache> geocaches = mGeocachesSql.getGeocaches();
-            mCacheListData.add(geocaches, mLocationControl.getLocation());
-            mParent.setListAdapter(mGeocacheListAdapter);
-            mParent.setTitle(mParent.getString(R.string.cache_list_title, geocaches.size(),
-                    mGeocachesSql.getCount()));
+            sort();
         } catch (final Exception e) {
             mErrorDisplayer.displayErrorAndStack(e);
         }
     }
 
-    public void sort() {
-        Toast.makeText(mParent, R.string.sorting, Toast.LENGTH_SHORT).show();
-        mHandler.postDelayed(new ResumeRunnable(this), 200);
+    void sort() {
+        mGeocachesSql.loadNearestCaches();
+        ArrayList<Geocache> geocaches = mGeocachesSql.getGeocaches();
+        mCacheListData.add(geocaches, mLocationControl.getLocation());
+        mParent.setListAdapter(mGeocacheListAdapter);
+        mParent.setTitle(mParent.getString(R.string.cache_list_title, geocaches.size(),
+                mGeocachesSql.getCount()));
     }
 }

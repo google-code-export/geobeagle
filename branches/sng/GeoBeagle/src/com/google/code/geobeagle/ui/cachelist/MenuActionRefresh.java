@@ -11,6 +11,6 @@ public class MenuActionRefresh implements MenuAction {
     }
 
     public void act() {
-        mGeocacheListPresenter.sort();
+        mGeocacheListPresenter.doSort();
     }
 }
