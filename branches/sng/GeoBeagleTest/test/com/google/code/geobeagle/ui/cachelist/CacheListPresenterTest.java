@@ -13,6 +13,7 @@ import com.google.code.geobeagle.io.GeocachesSql;
 import com.google.code.geobeagle.ui.ErrorDisplayer;
 import com.google.code.geobeagle.ui.GpsStatusWidget.UpdateGpsWidgetRunnable;
 import com.google.code.geobeagle.ui.cachelist.GeocacheListController.CacheListOnCreateContextMenuListener;
+import com.google.code.geobeagle.ui.cachelist.GeocacheListPresenter.ResumeRunnable;
 
 import org.easymock.EasyMock;
 import org.junit.Test;
@@ -25,15 +26,17 @@ import android.app.ListActivity;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.Handler;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest( {
-        ListActivity.class, GeocacheListPresenter.class
+        ListActivity.class, GeocacheListPresenter.class, Handler.class, Toast.class
 })
 public class CacheListPresenterTest {
 
@@ -56,7 +59,7 @@ public class CacheListPresenterTest {
 
         PowerMock.replayAll();
         new GeocacheListPresenter(null, null, null, updateGpsWidgetRunnable, null, geocacheVectors,
-                null, null, activity, null).onCreate();
+                null, null, activity, null, null).onCreate();
         PowerMock.verifyAll();
     }
 
@@ -71,7 +74,7 @@ public class CacheListPresenterTest {
 
         PowerMock.replayAll();
         GeocacheListPresenter geocacheListPresenter = new GeocacheListPresenter(null, null, null,
-                null, null, null, null, null, listActivity, null);
+                null, null, null, null, null, listActivity, null, null);
         assertTrue(geocacheListPresenter.onCreateOptionsMenu(menu));
         PowerMock.verifyAll();
     }
@@ -85,7 +88,7 @@ public class CacheListPresenterTest {
 
         PowerMock.replayAll();
         new GeocacheListPresenter(locationManager, null, locationListener, null, null, null, null,
-                null, null, null).onPause();
+                null, null, null, null).onPause();
         PowerMock.verifyAll();
     }
 
@@ -117,7 +120,7 @@ public class CacheListPresenterTest {
 
         PowerMock.replayAll();
         new GeocacheListPresenter(locationManager, locationControl, locationListener, null,
-                geocachesSql, null, geocacheListAdapter, cacheListData, listActivity, null)
+                geocachesSql, null, geocacheListAdapter, cacheListData, listActivity, null, null)
                 .onResume();
         PowerMock.verifyAll();
     }
@@ -136,7 +139,41 @@ public class CacheListPresenterTest {
 
         PowerMock.replayAll();
         new GeocacheListPresenter(locationManager, null, locationListener, null, null, null, null,
-                null, null, errorDisplayer).onResume();
+                null, null, null, errorDisplayer).onResume();
+        PowerMock.verifyAll();
+    }
+
+    @Test
+    public void testResumeRunnable() {
+        GeocacheListPresenter geocacheListPresenter = PowerMock
+                .createMock(GeocacheListPresenter.class);
+
+        geocacheListPresenter.onResume();
+        
+        PowerMock.replayAll();
+        new ResumeRunnable(geocacheListPresenter).run();
+        PowerMock.verifyAll();
+
+    }
+
+    @Test
+    public void testSort() throws Exception {
+        ListActivity listActivity = PowerMock.createMock(ListActivity.class);
+        Handler handler = PowerMock.createMock(Handler.class);
+        ResumeRunnable resumeRunnable = PowerMock.createMock(ResumeRunnable.class);
+        Toast toast = PowerMock.createMock(Toast.class);
+
+        PowerMock.mockStatic(Toast.class);
+        EasyMock.expect(Toast.makeText(listActivity, R.string.sorting, Toast.LENGTH_SHORT))
+                .andReturn(toast);
+        toast.show();
+        PowerMock.expectNew(ResumeRunnable.class, EasyMock.isA(GeocacheListPresenter.class))
+                .andReturn(resumeRunnable);
+        EasyMock.expect(handler.postDelayed(resumeRunnable, 200)).andReturn(true);
+
+        PowerMock.replayAll();
+        new GeocacheListPresenter(null, null, null, null, null, null, null, null, listActivity,
+                handler, null).sort();
         PowerMock.verifyAll();
     }
 }

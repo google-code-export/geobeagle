@@ -17,6 +17,7 @@ package com.google.code.geobeagle.ui.cachelist;
 import static org.easymock.EasyMock.expect;
 import static org.junit.Assert.assertTrue;
 
+import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.data.GeocacheVector;
 import com.google.code.geobeagle.data.GeocacheVectors;
 import com.google.code.geobeagle.io.GpxImporter;
@@ -136,6 +137,17 @@ public class GeocacheListControllerTest {
         PowerMock.replayAll();
         new GeocacheListController(null, contextActions, null, null).onListItemClick(null, null,
                 46, 0);
+        PowerMock.verifyAll();
+    }
+
+    @Test
+    public void testOnListItemClickZero() {
+        MenuActions menuActions = PowerMock.createMock(MenuActions.class);
+
+        menuActions.act(R.id.menu_refresh);
+
+        PowerMock.replayAll();
+        new GeocacheListController(menuActions, null, null, null).onListItemClick(null, null, 0, 0);
         PowerMock.verifyAll();
     }
 

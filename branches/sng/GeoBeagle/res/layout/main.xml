@@ -41,7 +41,7 @@
 				android:gravity="center" android:layout_weight="1" />
 			<TextView android:id="@+id/lag" android:layout_width="100sp"
 				android:text="" android:layout_height="wrap_content"
-				android:gravity="right" />
+				android:paddingRight="6sp" android:gravity="right" />
 		</LinearLayout>
 
 		<LinearLayout android:orientation="horizontal"
@@ -71,8 +71,9 @@
 				android:layout_weight="1" />
 		</LinearLayout>
 
-		<LinearLayout android:orientation="vertical" android:paddingTop="12sp"
-			android:layout_height="wrap_content" android:layout_width="fill_parent">
+		<LinearLayout android:orientation="vertical"
+			android:paddingTop="12sp" android:layout_height="wrap_content"
+			android:layout_width="fill_parent">
 			<TextView android:id="@+id/gcid" android:layout_height="wrap_content"
 				android:layout_width="wrap_content" android:layout_weight="1"
 				android:textSize="18sp" android:text="37 122" />

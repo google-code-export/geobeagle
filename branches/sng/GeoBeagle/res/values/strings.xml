@@ -43,6 +43,7 @@
 	<string name="import_canceled">Sync aborted!</string>
 	<string name="menu_import_gpx">Sync GPX and ZIP files from /sdcard/download</string>
 	<string name="menu_edit_geocache">Edit Geocache</string>
+	<string name="sorting">Sorting...</string>
 	<string name="search_for">Search for</string>
 	<string name="cache_list_title">%1$d nearest caches out of %2$d</string>
 	<array name="nearest_objects">

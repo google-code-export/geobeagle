@@ -6,7 +6,7 @@
 		android:id="@+id/online_map" android:title="Geocaching.com Map"
 		android:icon="@drawable/geocaching"></item>
 	-->
-	<item android:id="@+id/menu_refresh" android:title="Refresh" />
+	<item android:id="@+id/menu_refresh" android:title="Sort" />
 	<item android:id="@+id/menu_sync" android:title="Sync /sdcard/download"
 		android:icon="@android:drawable/stat_notify_sync" />
 	<item android:id="@+id/menu_my_location" android:title="Add My Location"

@@ -13,7 +13,7 @@ public class MenuActionRefreshTest {
         GeocacheListPresenter geocacheListPresenter = PowerMock
                 .createMock(GeocacheListPresenter.class);
 
-        geocacheListPresenter.onResume();
+        geocacheListPresenter.sort();
 
         PowerMock.replayAll();
         new MenuActionRefresh(geocacheListPresenter).act();

@@ -14,6 +14,7 @@
 
 package com.google.code.geobeagle.ui.cachelist;
 
+import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.data.GeocacheVectors;
 import com.google.code.geobeagle.io.GpxImporter;
 import com.google.code.geobeagle.ui.ErrorDisplayer;
@@ -76,6 +77,8 @@ public class GeocacheListController {
         try {
             if (position > 0)
                 mContextActions[MENU_VIEW].act(position - 1);
+            else 
+                mMenuActions.act(R.id.menu_refresh);
         } catch (final Exception e) {
             mErrorDisplayer.displayErrorAndStack(e);
         }

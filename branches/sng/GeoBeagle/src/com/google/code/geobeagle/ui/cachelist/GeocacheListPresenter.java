@@ -27,27 +27,42 @@ import com.google.code.geobeagle.ui.cachelist.GeocacheListController.CacheListOn
 import android.app.ListActivity;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.Handler;
 import android.view.Menu;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
 public class GeocacheListPresenter {
+    public static class ResumeRunnable implements Runnable {
+        private final GeocacheListPresenter mGeocacheListPresenter;
+
+        ResumeRunnable(GeocacheListPresenter geocacheListPresenter) {
+            mGeocacheListPresenter = geocacheListPresenter;
+        }
+
+        public void run() {
+            mGeocacheListPresenter.onResume();
+        }
+    }
     private final CacheListData mCacheListData;
     private final ErrorDisplayer mErrorDisplayer;
     private final GeocacheListAdapter mGeocacheListAdapter;
     private final GeocachesSql mGeocachesSql;
     private final GeocacheVectors mGeocacheVectors;
+    private final Handler mHandler;
     private final LocationControl mLocationControl;
     private final LocationListener mLocationListener;
     private final LocationManager mLocationManager;
     private final ListActivity mParent;
+
     private final UpdateGpsWidgetRunnable mUpdateGpsWidgetRunnable;
 
     public GeocacheListPresenter(LocationManager locationManager, LocationControl locationControl,
             LocationListener locationListener, UpdateGpsWidgetRunnable updateGpsWidgetRunnable,
             GeocachesSql geocachesSql, GeocacheVectors geocacheVectors,
             GeocacheListAdapter geocacheListAdapter, CacheListData cacheListData,
-            ListActivity listActivity, ErrorDisplayer errorDisplayer) {
+            ListActivity listActivity, Handler handler, ErrorDisplayer errorDisplayer) {
         mLocationManager = locationManager;
         mLocationListener = locationListener;
         mGeocachesSql = geocachesSql;
@@ -58,6 +73,7 @@ public class GeocacheListPresenter {
         mLocationControl = locationControl;
         mUpdateGpsWidgetRunnable = updateGpsWidgetRunnable;
         mErrorDisplayer = errorDisplayer;
+        mHandler = handler;
     }
 
     public void onCreate() {
@@ -91,5 +107,10 @@ public class GeocacheListPresenter {
         } catch (final Exception e) {
             mErrorDisplayer.displayErrorAndStack(e);
         }
+    }
+
+    public void sort() {
+        Toast.makeText(mParent, R.string.sorting, Toast.LENGTH_SHORT).show();
+        mHandler.postDelayed(new ResumeRunnable(this), 200);
     }
 }

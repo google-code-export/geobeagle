@@ -53,6 +53,7 @@ import android.content.Intent;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
@@ -108,10 +109,11 @@ public class CacheListDelegateDI {
                 gpsStatusWidget);
         final UpdateGpsWidgetRunnable updateGpsWidgetRunnable = UpdateGpsWidgetRunnableDI
                 .create(gpsStatusWidget);
+        final Handler handler = new Handler();
         final GeocacheListPresenter geocacheListPresenter = new GeocacheListPresenter(
                 locationManager, locationControl, locationListener, updateGpsWidgetRunnable,
-                locationBookmarks, geocacheVectors, geocacheListAdapter,
-                cacheListData, parent, errorDisplayer);
+                locationBookmarks, geocacheVectors, geocacheListAdapter, cacheListData, parent,
+                handler, errorDisplayer);
         final MenuActionSyncGpx menuActionSyncGpx = new MenuActionSyncGpx(gpxImporter,
                 geocacheListPresenter);
         final MenuActionMyLocation menuActionMyLocation = new MenuActionMyLocation(locationSaver,
