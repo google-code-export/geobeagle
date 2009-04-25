@@ -14,6 +14,7 @@
 
 package com.google.code.geobeagle.ui.cachelist.row;
 
+import android.util.Log;
 import android.view.View;
 
 public class RowInflaterStrategy {
@@ -24,6 +25,7 @@ public class RowInflaterStrategy {
     }
 
     public View getView(int position, View convertView) {
+        Log.v("GeoBeagle", "getView(" + position + ", " + convertView + ")");
         for (RowInflater rowInflater : mInflaters) {
             if (rowInflater.match(position)) {
                 final View view = rowInflater.inflate(convertView);
