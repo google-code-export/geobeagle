@@ -31,6 +31,9 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Handler;
 import android.view.Menu;
+import android.view.View;
+import android.widget.BaseAdapter;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -51,9 +54,10 @@ public class GeocacheListPresenter {
     private final CacheListData mCacheListData;
     private final Database mDatabase;
     private final ErrorDisplayer mErrorDisplayer;
-    private final GeocacheListAdapter mGeocacheListAdapter;
+    private final BaseAdapter mGeocacheListAdapter;
     private final GeocachesSql mGeocachesSql;
     private final GeocacheVectors mGeocacheVectors;
+    private final View mGpsWidgetView;
     private final Handler mHandler;
     private final LocationControl mLocationControl;
     private final LocationListener mLocationListener;
@@ -63,11 +67,11 @@ public class GeocacheListPresenter {
     private final UpdateGpsWidgetRunnable mUpdateGpsWidgetRunnable;
 
     public GeocacheListPresenter(LocationManager locationManager, LocationControl locationControl,
-            LocationListener locationListener, UpdateGpsWidgetRunnable updateGpsWidgetRunnable,
-            GeocachesSql geocachesSql, GeocacheVectors geocacheVectors,
-            GeocacheListAdapter geocacheListAdapter, CacheListData cacheListData,
-            ListActivity listActivity, Handler handler, ErrorDisplayer errorDisplayer,
-            SQLiteWrapper sqliteWrapper, Database database) {
+            LocationListener locationListener, View gpsWidgetView,
+            UpdateGpsWidgetRunnable updateGpsWidgetRunnable, GeocachesSql geocachesSql,
+            GeocacheVectors geocacheVectors, BaseAdapter geocacheListAdapter,
+            CacheListData cacheListData, ListActivity listActivity, Handler handler,
+            ErrorDisplayer errorDisplayer, SQLiteWrapper sqliteWrapper, Database database) {
         mLocationManager = locationManager;
         mLocationListener = locationListener;
         mGeocachesSql = geocachesSql;
@@ -81,6 +85,7 @@ public class GeocacheListPresenter {
         mUpdateGpsWidgetRunnable = updateGpsWidgetRunnable;
         mErrorDisplayer = errorDisplayer;
         mHandler = handler;
+        mGpsWidgetView = gpsWidgetView;
     }
 
     public void doSort() {
@@ -90,8 +95,10 @@ public class GeocacheListPresenter {
 
     public void onCreate() {
         mParent.setContentView(R.layout.cache_list);
-        mParent.getListView().setOnCreateContextMenuListener(
-                new CacheListOnCreateContextMenuListener(mGeocacheVectors));
+        ListView listView = mParent.getListView();
+        listView.addHeaderView(mGpsWidgetView);
+        listView.setOnCreateContextMenuListener(new CacheListOnCreateContextMenuListener(
+                mGeocacheVectors));
         mUpdateGpsWidgetRunnable.run();
     }
 

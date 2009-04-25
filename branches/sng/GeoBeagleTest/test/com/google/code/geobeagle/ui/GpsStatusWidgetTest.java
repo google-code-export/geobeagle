@@ -33,12 +33,13 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationProvider;
+import android.os.Bundle;
 import android.os.Handler;
 import android.widget.TextView;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest( {
-        Color.class, Handler.class, TextView.class
+        Bundle.class, Color.class, Handler.class, TextView.class
 })
 public class GpsStatusWidgetTest {
     @Test
@@ -73,7 +74,7 @@ public class GpsStatusWidgetTest {
     @Test
     public void testAccuracyToBarText() {
         MeterFormatter meterFormatter = new MeterFormatter();
-        assertEquals("·×·", meterFormatter.barsToMeterText(meterFormatter.accuracyToBarCount(2)));
+        assertEquals("[·×·]", meterFormatter.barsToMeterText(meterFormatter.accuracyToBarCount(2)));
     }
 
     @Test
@@ -89,9 +90,9 @@ public class GpsStatusWidgetTest {
     @Test
     public void testGetMeterText() {
         MeterFormatter meterFormatter = new MeterFormatter();
-        assertEquals("×", meterFormatter.barsToMeterText(0));
-        assertEquals("·×·", meterFormatter.barsToMeterText(1));
-        assertEquals("‹····×····›", meterFormatter.barsToMeterText(5));
+        assertEquals("[×]", meterFormatter.barsToMeterText(0));
+        assertEquals("[·×·]", meterFormatter.barsToMeterText(1));
+        assertEquals("[‹····×····›]", meterFormatter.barsToMeterText(5));
     }
 
     @Test
@@ -122,8 +123,8 @@ public class GpsStatusWidgetTest {
         PowerMock.replayAll();
         GpsStatusWidget gpsStatusWidget = new GpsStatusWidget(null, null, null, null, null, status,
                 null, null);
-        gpsStatusWidget.setEnabled();
-        gpsStatusWidget.setDisabled();
+        gpsStatusWidget.onProviderEnabled("gps");
+        gpsStatusWidget.onProviderDisabled("gps");
         PowerMock.verifyAll();
     }
 
@@ -149,7 +150,7 @@ public class GpsStatusWidgetTest {
         PowerMock.replayAll();
         GpsStatusWidget gpsStatusWidget = new GpsStatusWidget(null, meterView, provider, lag,
                 accuracy, null, time, location);
-        gpsStatusWidget.setLocation(location);
+        gpsStatusWidget.onLocationChanged(location);
         gpsStatusWidget.refreshLocation();
         PowerMock.verifyAll();
     }
@@ -176,7 +177,7 @@ public class GpsStatusWidgetTest {
         PowerMock.replayAll();
         GpsStatusWidget gpsStatusWidget = new GpsStatusWidget(null, meterView, provider, lag,
                 accuracy, null, time, location);
-        gpsStatusWidget.setLocation(location);
+        gpsStatusWidget.onLocationChanged(location);
         gpsStatusWidget.refreshLocation();
         PowerMock.verifyAll();
     }
@@ -185,6 +186,7 @@ public class GpsStatusWidgetTest {
     public void testSetStatus() {
         ResourceProvider resourceProvider = PowerMock.createMock(ResourceProvider.class);
         TextView status = PowerMock.createMock(TextView.class);
+        Bundle bundle = PowerMock.createMock(Bundle.class);
 
         expect(resourceProvider.getString(R.string.out_of_service)).andReturn("OUT OF SERVICE");
         expect(resourceProvider.getString(R.string.available)).andReturn("AVAILABLE");
@@ -197,9 +199,9 @@ public class GpsStatusWidgetTest {
         PowerMock.replayAll();
         GpsStatusWidget gpsStatusWidget = new GpsStatusWidget(resourceProvider, null, null, null,
                 null, status, null, null);
-        gpsStatusWidget.setStatus("gps", LocationProvider.OUT_OF_SERVICE);
-        gpsStatusWidget.setStatus("network", LocationProvider.AVAILABLE);
-        gpsStatusWidget.setStatus("gps", LocationProvider.TEMPORARILY_UNAVAILABLE);
+        gpsStatusWidget.onStatusChanged("gps", LocationProvider.OUT_OF_SERVICE, bundle);
+        gpsStatusWidget.onStatusChanged("network", LocationProvider.AVAILABLE, bundle);
+        gpsStatusWidget.onStatusChanged("gps", LocationProvider.TEMPORARILY_UNAVAILABLE, bundle);
         PowerMock.verifyAll();
     }
 }

@@ -18,6 +18,7 @@ import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.data.GeocacheVectors;
 import com.google.code.geobeagle.data.IGeocacheVector;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
@@ -53,6 +54,7 @@ class GeocacheSummaryRowInflater implements RowInflater {
     public View inflate(View convertView) {
         if (isAlreadyInflated(convertView))
             return convertView;
+        Log.v("GeoBeagle", "SummaryRow::inflate(" + convertView + ")");
 
         View view = mLayoutInflater.inflate(R.layout.cache_row, null);
         GeocacheSummaryRowInflater.RowViews rowViews = new RowViews(((TextView)view
@@ -62,14 +64,14 @@ class GeocacheSummaryRowInflater implements RowInflater {
     }
 
     public boolean isAlreadyInflated(View convertView) {
-        return convertView != null && ((RowInfo)convertView.getTag()).getType() == RowType.CacheRow;
+        return convertView != null;
     }
 
     public boolean match(int position) {
-        return position > 0;
+        return true;
     }
 
     public void setData(View view, int position) {
-        ((RowViews)view.getTag()).set(mGeocacheVectors.get(position - 1));
+        ((RowViews)view.getTag()).set(mGeocacheVectors.get(position));
     }
 }

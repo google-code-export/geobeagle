@@ -20,14 +20,16 @@ import com.google.code.geobeagle.ui.Misc.Time;
 
 import android.graphics.Color;
 import android.location.Location;
+import android.location.LocationListener;
 import android.location.LocationProvider;
+import android.os.Bundle;
 import android.os.Handler;
 import android.widget.TextView;
 
 /**
  * @author sng Displays the GPS status (accuracy, availability, etc).
  */
-public class GpsStatusWidget {
+public class GpsStatusWidget implements LocationListener {
     public static class MeterFormatter {
         public int accuracyToBarCount(float accuracy) {
             return Math.min(METER_LEFT.length(), (int)(Math.log(Math.max(1, accuracy)) / Math
@@ -35,8 +37,8 @@ public class GpsStatusWidget {
         }
 
         public String barsToMeterText(int bars) {
-            return METER_LEFT.substring(METER_LEFT.length() - bars) + "×"
-                    + METER_RIGHT.substring(0, bars);
+            return "[" + METER_LEFT.substring(METER_LEFT.length() - bars) + "×"
+                    + METER_RIGHT.substring(0, bars) + "]";
         }
 
         public int lagToAlpha(long milliseconds) {
@@ -61,9 +63,9 @@ public class GpsStatusWidget {
     }
 
     public static class UpdateGpsWidgetRunnable implements Runnable {
-        final GpsStatusWidget mGpsStatusWidget;
-        final Handler mHandler;
-    
+        private GpsStatusWidget mGpsStatusWidget;
+        private final Handler mHandler;
+
         UpdateGpsWidgetRunnable(GpsStatusWidget gpsStatusWidget, Handler handler) {
             mGpsStatusWidget = gpsStatusWidget;
             mHandler = handler;
@@ -109,15 +111,7 @@ public class GpsStatusWidget {
         mMeterView.set(lastUpdateLag, mAccuracy);
     };
 
-    public void setDisabled() {
-        mStatus.setText("DISABLED");
-    }
-
-    public void setEnabled() {
-        mStatus.setText("ENABLED");
-    }
-
-    public void setLocation(Location location) {
+    public void onLocationChanged(Location location) {
         // TODO: use currentTime for alpha channel, but locationTime for text
         // lag.
         mLastUpdateTime = mTime.getCurrentTime();
@@ -126,7 +120,15 @@ public class GpsStatusWidget {
         mAccuracy = location.getAccuracy();
     }
 
-    public void setStatus(String provider, int status) {
+    public void onProviderDisabled(String provider) {
+        mStatus.setText("DISABLED");
+    }
+
+    public void onProviderEnabled(String provider) {
+        mStatus.setText("ENABLED");
+    }
+
+    public void onStatusChanged(String provider, int status, Bundle extras) {
         switch (status) {
             case LocationProvider.OUT_OF_SERVICE:
                 mStatus.setText(provider + " status: "

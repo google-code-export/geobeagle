@@ -19,59 +19,72 @@ import static org.easymock.classextension.EasyMock.createMock;
 import static org.easymock.classextension.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.verify;
 
-import com.google.code.geobeagle.ui.GpsStatusWidget;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.powermock.api.easymock.PowerMock;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 
 import android.location.Location;
+import android.location.LocationListener;
 import android.location.LocationProvider;
+import android.os.Bundle;
 
-import junit.framework.TestCase;
+@RunWith(PowerMockRunner.class)
+@PrepareForTest( {
+    Bundle.class
+})
+public class GpsLocationListenerTest {
 
-public class GpsLocationListenerTest extends TestCase {
-
+    private LocationListener locationListener;
     private LocationControl mGpsControl;
-    private GpsStatusWidget mLocationViewer;
 
-    @Override
+    @Before
     public void setUp() {
-        mLocationViewer = createMock(GpsStatusWidget.class);
+        locationListener = createMock(LocationListener.class);
         mGpsControl = createMock(LocationControl.class);
     }
 
-    public void testOnDisabled() {
-        mLocationViewer.setDisabled();
-
-        replay(mLocationViewer);
-        new GeoBeagleLocationListener(null, mLocationViewer).onProviderDisabled(null);
-        verify(mLocationViewer);
-
-    }
-
-    public void testOnEnabled() {
-        mLocationViewer.setEnabled();
-
-        replay(mLocationViewer);
-        new GeoBeagleLocationListener(null, mLocationViewer).onProviderEnabled(null);
-        verify(mLocationViewer);
-    }
-
+    @Test
     public void testOnLocationChanged() {
         Location location = createMock(Location.class);
         expect(mGpsControl.getLocation()).andReturn(location);
-        mLocationViewer.setLocation(location);
+        locationListener.onLocationChanged(location);
 
         replay(location);
         replay(mGpsControl);
-        new GeoBeagleLocationListener(mGpsControl, mLocationViewer).onLocationChanged(location);
+        new GeoBeagleLocationListener(mGpsControl, locationListener).onLocationChanged(location);
         verify(location);
         verify(mGpsControl);
     }
 
-    public void testOnStatusChange() {
-        mLocationViewer.setStatus("gps", LocationProvider.OUT_OF_SERVICE);
+    @Test
+    public void testOnProviderDisabled() {
+        locationListener.onProviderDisabled("gps");
 
-        replay(mLocationViewer);
-        new GeoBeagleLocationListener(null, mLocationViewer).onStatusChanged("gps",
-                LocationProvider.OUT_OF_SERVICE, null);
-        verify(mLocationViewer);
+        replay(locationListener);
+        new GeoBeagleLocationListener(null, locationListener).onProviderDisabled("gps");
+        verify(locationListener);
+    }
+
+    @Test
+    public void testOnProviderEnabled() {
+        locationListener.onProviderEnabled("gps");
+
+        replay(locationListener);
+        new GeoBeagleLocationListener(null, locationListener).onProviderEnabled("gps");
+        verify(locationListener);
+    }
+
+    @Test
+    public void testOnStatusChange() {
+        Bundle bundle = PowerMock.createMock(Bundle.class);
+        locationListener.onStatusChanged("gps", LocationProvider.OUT_OF_SERVICE, bundle);
+
+        replay(locationListener);
+        new GeoBeagleLocationListener(null, locationListener).onStatusChanged("gps",
+                LocationProvider.OUT_OF_SERVICE, bundle);
+        verify(locationListener);
     }
 }

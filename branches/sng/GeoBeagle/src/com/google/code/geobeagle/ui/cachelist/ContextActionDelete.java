@@ -17,12 +17,14 @@ package com.google.code.geobeagle.ui.cachelist;
 import com.google.code.geobeagle.data.GeocacheVectors;
 import com.google.code.geobeagle.io.CacheWriter;
 
+import android.widget.BaseAdapter;
+
 public class ContextActionDelete implements ContextAction {
     private final CacheWriter mCacheWriter;
     private final GeocacheVectors mGeocacheVectors;
-    private final GeocacheListAdapter mGeocacheListAdapter;
+    private final BaseAdapter mGeocacheListAdapter;
 
-    ContextActionDelete(GeocacheListAdapter geocacheListAdapter, CacheWriter cacheWriter,
+    ContextActionDelete(BaseAdapter geocacheListAdapter, CacheWriter cacheWriter,
             GeocacheVectors geocacheVectors) {
         mGeocacheVectors = geocacheVectors;
         mCacheWriter = cacheWriter;

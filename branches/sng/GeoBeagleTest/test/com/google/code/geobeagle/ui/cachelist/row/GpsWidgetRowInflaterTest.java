@@ -27,6 +27,7 @@ public class GpsWidgetRowInflaterTest {
     @Test
     public void testInflateMatch() {
         View gpsWidget = PowerMock.createMock(View.class);
+        
 
         PowerMock.replayAll();
         assertEquals(gpsWidget, new GpsWidgetRowInflater(gpsWidget).inflate(gpsWidget));

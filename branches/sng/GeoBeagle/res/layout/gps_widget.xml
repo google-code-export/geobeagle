@@ -12,35 +12,23 @@
 	-->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	android:orientation="vertical" android:layout_width="fill_parent"
-	android:layout_height="fill_parent" android:paddingRight="3sp" >
+	android:layout_height="wrap_content" android:paddingRight="6sp">
 
-	<LinearLayout android:gravity="center"
-		android:orientation="horizontal" android:layout_width="fill_parent"
-		android:layout_height="wrap_content">
-		<TextView android:layout_width="wrap_content"
-			android:layout_height="wrap_content" android:textSize="26sp"
-			android:textStyle="bold" android:text="[" android:textColor="#93be26" />
-		<TextView android:id="@+id/location_viewer"
-			android:layout_width="wrap_content" android:layout_height="wrap_content"
-			android:textSize="26sp" android:textStyle="bold" android:textColor="#7f93be26"
-			android:text="×" />
-		<TextView android:layout_width="wrap_content"
-			android:layout_height="wrap_content" android:textSize="26sp"
-			android:textStyle="bold" android:text="]" android:textColor="#93be26" />
-	</LinearLayout>
-
+	<TextView android:gravity="center" android:id="@+id/location_viewer"
+		android:layout_width="fill_parent" android:layout_height="wrap_content"
+		android:textSize="26sp" android:textStyle="bold" android:textColor="#7f93be26"
+		android:text="[×]" />
 
 	<!--  TODO: use use relative layout. -->
 	<LinearLayout android:orientation="horizontal"
 		android:layout_width="fill_parent" android:layout_height="wrap_content">
-		<TextView android:id="@+id/provider" android:layout_width="100sp"
-			android:layout_height="wrap_content" android:text="" />
-		<TextView android:id="@+id/accuracy" android:layout_width="wrap_content"
-			android:text="" android:layout_height="wrap_content" android:gravity="center"
+		<TextView android:id="@+id/provider" android:layout_width="60sp"
+			android:layout_height="wrap_content" android:text="" android:gravity="left" />
+		<TextView android:id="@+id/accuracy" android:layout_width="8sp"
+			android:text="" android:layout_height="wrap_content" android:gravity="center_horizontal"
 			android:layout_weight="1" />
-		<TextView android:id="@+id/lag" android:layout_width="100sp"
-			android:text="" android:layout_height="wrap_content" android:gravity="right"
-			android:paddingRight="3sp" />
+		<TextView android:id="@+id/lag" android:layout_width="60sp"
+			android:text="" android:layout_height="wrap_content" android:gravity="right" />
 	</LinearLayout>
 
 	<LinearLayout android:orientation="horizontal"

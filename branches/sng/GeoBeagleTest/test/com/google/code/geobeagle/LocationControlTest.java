@@ -15,79 +15,91 @@
 package com.google.code.geobeagle;
 
 import static org.easymock.EasyMock.expect;
-import static org.easymock.classextension.EasyMock.createMock;
-import static org.easymock.classextension.EasyMock.replay;
-import static org.easymock.classextension.EasyMock.verify;
+import static org.junit.Assert.assertEquals;
 
 import com.google.code.geobeagle.LocationControl.LocationChooser;
+
+import org.easymock.classextension.EasyMock;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.powermock.api.easymock.PowerMock;
+import org.powermock.modules.junit4.PowerMockRunner;
 
 import android.location.Location;
 import android.location.LocationManager;
 
-import junit.framework.TestCase;
+@RunWith(PowerMockRunner.class)
+public class LocationControlTest {
 
-public class LocationControlTest extends TestCase {
-
-    public void compareLocations(boolean expected, long firstTime, float firstAccuracy,
-            long secondTime, float secondAccuracy, float distance) {
-        Location location1 = createMock(Location.class);
-        Location location2 = createMock(Location.class);
-        expect(location1.getTime()).andStubReturn(firstTime);
-        expect(location1.getAccuracy()).andStubReturn(firstAccuracy);
-        expect(location2.getTime()).andStubReturn(secondTime);
-        expect(location2.getAccuracy()).andStubReturn(secondAccuracy);
-        expect(location1.distanceTo(location2)).andStubReturn(distance);
-
-        replay(location1);
-        replay(location2);
-        LocationControl.LocationChooser locationChooser = new LocationControl.LocationChooser();
-        assertEquals(expected ? location2 : location1, locationChooser.choose(location1, location2));
-        verify(location1);
-        verify(location2);
+    @Test
+    public void compareIdentical() {
+        compareLocations(false, 0L, 0f, 0L, 0f, 0);
     }
 
-    public void testCompareLocations() {
-        // Choose first
+    private void compareLocations(boolean expected, long firstTime, float firstAccuracy,
+            long secondTime, float secondAccuracy, float distance) {
+        Location location1 = PowerMock.createMock(Location.class);
+        Location location2 = PowerMock.createMock(Location.class);
 
-        // identical
-        compareLocations(false, 0L, 0f, 0L, 0f, 0);
+        EasyMock.expect(location1.getTime()).andStubReturn(firstTime);
+        EasyMock.expect(location1.getAccuracy()).andStubReturn(firstAccuracy);
+        EasyMock.expect(location2.getTime()).andStubReturn(secondTime);
+        EasyMock.expect(location2.getAccuracy()).andStubReturn(secondAccuracy);
+        EasyMock.expect(location1.distanceTo(location2)).andStubReturn(distance);
 
-        // second one is newer, but not as accurate, distance < a1 + a2.
-        compareLocations(false, 0L, 5f, 1L, 6f, 10);
+        PowerMock.replayAll();
+        assertEquals(expected ? location2 : location1, new LocationChooser().choose(location1,
+                location2));
+        PowerMock.verifyAll();
+    }
 
-        // Choose second
-
-        // second one is newer, same accuracy
-        compareLocations(true, 0L, 0f, 1L, 0f, 0);
-
-        // second one is newer and more accurate
+    @Test
+    public void compareSecondNewerAndMoreAccurate() {
         compareLocations(true, 0L, 2f, 1L, 1f, 0);
+    }
 
-        // second one is newer, but not as accurate, distance > a1 + a2.
-        compareLocations(true, 0L, 1f, 1L, 2f, 4f);
+    @Test
+    public void compareSecondNewerAndSameAccuracy() {
+        compareLocations(true, 0L, 0f, 1L, 0f, 0);
+    }
 
-        // second one is newer, but not as accurate, distance = a1 + a2.
+    @Test
+    public void compareSecondNewerButNotAsAccurateAndDistanceEqualsAccuracy() {
         compareLocations(true, 0L, 5f, 1L, 5f, 10);
     }
 
+    @Test
+    public void compareSecondNewerButNotAsAccurateAndDistanceGreaterThanAccuracy() {
+        compareLocations(true, 0L, 1f, 1L, 2f, 4f);
+    }
+
+    @Test
+    public void compareSecondNewerButNotAsAccurateAndDistanceLessThanAccuracy() {
+        compareLocations(false, 0L, 5f, 1L, 6f, 10);
+    }
+
+    @Test
     public void testCompareNullLocation() {
-        Location location = createMock(Location.class);
+        Location location = PowerMock.createMock(Location.class);
         expect(location.getTime()).andStubReturn(1000L);
         expect(location.getAccuracy()).andStubReturn(1000f);
 
-        replay(location);
+        PowerMock.replayAll();
         LocationControl.LocationChooser locationChooser = new LocationControl.LocationChooser();
         assertEquals(location, locationChooser.choose(null, location));
         assertEquals(location, locationChooser.choose(location, null));
-        verify(location);
+        PowerMock.verifyAll();
     }
 
+    @Test
     public void testGetLocationNetworkChooseGps() {
-        LocationManager locationManager = createMock(LocationManager.class);
-        LocationChooser locationChooser = createMock(LocationControl.LocationChooser.class);
+        LocationManager locationManager = PowerMock.createMock(LocationManager.class);
+        LocationChooser locationChooser = PowerMock
+                .createMock(LocationControl.LocationChooser.class);
+        Location gpsLocation = PowerMock.createMock(Location.class);
+        Location networkLocation = PowerMock.createMock(Location.class);
+
         LocationControl locationControl = new LocationControl(locationManager, locationChooser);
-        Location gpsLocation = createMock(Location.class);
-        Location networkLocation = createMock(Location.class);
         expect(locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)).andReturn(
                 gpsLocation);
         expect(locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)).andReturn(
@@ -95,19 +107,20 @@ public class LocationControlTest extends TestCase {
 
         expect(locationChooser.choose(gpsLocation, networkLocation)).andReturn(gpsLocation);
 
-        replay(locationChooser);
-        replay(locationManager);
+        PowerMock.replayAll();
         assertEquals(gpsLocation, locationControl.getLocation());
-        verify(locationManager);
-        verify(locationChooser);
+        PowerMock.verifyAll();
     }
 
+    @Test
     public void testGetLocationNetworkChooseNetwork() {
-        LocationManager locationManager = createMock(LocationManager.class);
-        LocationChooser locationChooser = createMock(LocationControl.LocationChooser.class);
+        LocationManager locationManager = PowerMock.createMock(LocationManager.class);
+        LocationChooser locationChooser = PowerMock
+                .createMock(LocationControl.LocationChooser.class);
+        Location gpsLocation = PowerMock.createMock(Location.class);
+        Location networkLocation = PowerMock.createMock(Location.class);
+
         LocationControl locationControl = new LocationControl(locationManager, locationChooser);
-        Location gpsLocation = createMock(Location.class);
-        Location networkLocation = createMock(Location.class);
         expect(locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)).andReturn(
                 gpsLocation);
         expect(locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)).andReturn(
@@ -115,11 +128,9 @@ public class LocationControlTest extends TestCase {
 
         expect(locationChooser.choose(gpsLocation, networkLocation)).andReturn(networkLocation);
 
-        replay(locationChooser);
-        replay(locationManager);
+        PowerMock.replayAll();
         assertEquals(networkLocation, locationControl.getLocation());
-        verify(locationManager);
-        verify(locationChooser);
+        PowerMock.verifyAll();
     }
 
 }

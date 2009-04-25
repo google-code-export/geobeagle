@@ -26,7 +26,8 @@ public class GeocacheListAdapter extends BaseAdapter {
     private final GeocacheVectors mGeocacheVectors;
     private final RowInflaterStrategy mRowInflaterStrategy;
 
-    public GeocacheListAdapter(GeocacheVectors geocacheVectors, RowInflaterStrategy rowInflaterStrategy) {
+    public GeocacheListAdapter(GeocacheVectors geocacheVectors,
+            RowInflaterStrategy rowInflaterStrategy) {
         mGeocacheVectors = geocacheVectors;
         mRowInflaterStrategy = rowInflaterStrategy;
     }

@@ -1,11 +1,14 @@
 
 package com.google.code.geobeagle.data;
 
+import java.util.Locale;
+
 import junit.framework.TestCase;
 
 public class DistanceFormatterTest extends TestCase {
     public void testKilometers() {
         DistanceFormatter distanceFormatter = new DistanceFormatter();
+        Locale.setDefault(Locale.ENGLISH);
         assertEquals("1.23km", distanceFormatter.format(1234.5f));
     }
 
