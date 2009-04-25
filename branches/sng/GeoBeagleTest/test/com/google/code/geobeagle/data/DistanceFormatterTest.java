@@ -6,7 +6,7 @@ import junit.framework.TestCase;
 public class DistanceFormatterTest extends TestCase {
     public void testKilometers() {
         DistanceFormatter distanceFormatter = new DistanceFormatter();
-        assertEquals("1km", distanceFormatter.format(1234.5f));
+        assertEquals("1.23km", distanceFormatter.format(1234.5f));
     }
 
     public void testMeters() {
