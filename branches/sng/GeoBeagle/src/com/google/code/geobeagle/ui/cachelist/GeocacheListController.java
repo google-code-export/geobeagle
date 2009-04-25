@@ -39,7 +39,7 @@ public class GeocacheListController {
         public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
             AdapterContextMenuInfo acmi = (AdapterContextMenuInfo)menuInfo;
             if (acmi.position > 0) {
-                menu.setHeaderTitle(mGeocacheVectors.get(acmi.position).getId());
+                menu.setHeaderTitle(mGeocacheVectors.get(acmi.position - 1).getId());
                 menu.add(0, MENU_VIEW, 0, "View");
                 menu.add(0, MENU_DELETE, 1, "Delete");
             }
@@ -77,7 +77,7 @@ public class GeocacheListController {
         try {
             if (position > 0)
                 mContextActions[MENU_VIEW].act(position - 1);
-            else 
+            else
                 mMenuActions.act(R.id.menu_refresh);
         } catch (final Exception e) {
             mErrorDisplayer.displayErrorAndStack(e);

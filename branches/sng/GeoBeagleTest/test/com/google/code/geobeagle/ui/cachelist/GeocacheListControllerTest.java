@@ -50,7 +50,7 @@ public class GeocacheListControllerTest {
         GeocacheVectors geocacheVectors = PowerMock.createMock(GeocacheVectors.class);
         GeocacheVector geocacheVector = PowerMock.createMock(GeocacheVector.class);
 
-        expect(geocacheVectors.get(12)).andReturn(geocacheVector);
+        expect(geocacheVectors.get(11)).andReturn(geocacheVector);
         expect(geocacheVector.getId()).andReturn("GC123");
         expect(menu.setHeaderTitle("GC123")).andReturn(menu);
         expect(menu.add(0, GeocacheListController.MENU_VIEW, 0, "View")).andReturn(null);
@@ -111,7 +111,7 @@ public class GeocacheListControllerTest {
         PowerMock.suppressConstructor(AdapterContextMenuInfo.class);
         AdapterContextMenuInfo contextMenuInfo = new AdapterContextMenuInfo(null, 0, 0);
         contextMenuInfo.position = 42;
-        EasyMock.expect(geocacheVectors.get(42)).andReturn(geocacheVector);
+        EasyMock.expect(geocacheVectors.get(41)).andReturn(geocacheVector);
         EasyMock.expect(geocacheVector.getId()).andReturn("GCABC");
         EasyMock.expect(contextMenu.setHeaderTitle("GCABC")).andReturn(contextMenu);
         EasyMock.expect(contextMenu.add(0, GeocacheListController.MENU_VIEW, 0, "View")).andReturn(
