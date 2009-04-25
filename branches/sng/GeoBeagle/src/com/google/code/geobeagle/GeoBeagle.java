@@ -33,7 +33,6 @@ import com.google.code.geobeagle.ui.ContentSelector;
 import com.google.code.geobeagle.ui.EditCacheActivity;
 import com.google.code.geobeagle.ui.ErrorDisplayer;
 import com.google.code.geobeagle.ui.GeocacheViewer;
-import com.google.code.geobeagle.ui.GetCoordsToast;
 import com.google.code.geobeagle.ui.GpsStatusWidget;
 import com.google.code.geobeagle.ui.Misc;
 import com.google.code.geobeagle.ui.MyLocationProvider;
@@ -61,6 +60,7 @@ import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 /*
  * Main Activity for GeoBeagle.
@@ -239,7 +239,7 @@ public class GeoBeagle extends Activity implements LifecycleManager {
 
     private void setCacheClickListeners() {
         IntentFactory intentFactory = new IntentFactory(new UriParser());
-        GetCoordsToast getCoordsToast = new GetCoordsToast(this);
+        Toast getCoordsToast = Toast.makeText(this, R.string.get_coords_toast, Toast.LENGTH_LONG);
         MyLocationProvider myLocationProvider = new MyLocationProvider(mGpsControl, mErrorDisplayer);
 
         OnCacheButtonClickListenerBuilder cacheClickListenerSetter = new OnCacheButtonClickListenerBuilder(

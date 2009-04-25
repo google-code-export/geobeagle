@@ -19,7 +19,6 @@ import static org.easymock.EasyMock.expect;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.ResourceProvider;
 import com.google.code.geobeagle.ui.ContentSelector;
-import com.google.code.geobeagle.ui.GetCoordsToast;
 import com.google.code.geobeagle.ui.MyLocationProvider;
 
 import org.junit.Test;
@@ -30,6 +29,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import android.app.Activity;
 import android.content.Intent;
 import android.location.Location;
+import android.widget.Toast;
 
 import java.util.Locale;
 
@@ -42,7 +42,7 @@ public class IntentStarterLocationTest {
         MyLocationProvider myLocationProvider = PowerMock.createMock(MyLocationProvider.class);
         Location location = PowerMock.createMock(Location.class);
         ResourceProvider resourceProvider = PowerMock.createMock(ResourceProvider.class);
-        GetCoordsToast getCoordsToast = PowerMock.createMock(GetCoordsToast.class);
+        Toast getCoordsToast = PowerMock.createMock(Toast.class);
         IntentFactory intentFactory = PowerMock.createMock(IntentFactory.class);
         Intent intent = PowerMock.createMock(Intent.class);
         ContentSelector contentSelector = PowerMock.createMock(ContentSelector.class);

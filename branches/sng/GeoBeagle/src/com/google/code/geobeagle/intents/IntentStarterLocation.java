@@ -16,19 +16,19 @@ package com.google.code.geobeagle.intents;
 
 import com.google.code.geobeagle.ResourceProvider;
 import com.google.code.geobeagle.ui.ContentSelector;
-import com.google.code.geobeagle.ui.GetCoordsToast;
 import com.google.code.geobeagle.ui.MyLocationProvider;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.location.Location;
+import android.widget.Toast;
 
 import java.util.Locale;
 
 public class IntentStarterLocation implements IntentStarter {
     private final Activity mActivity;
     private final ContentSelector mContentSelector;
-    private final GetCoordsToast mGetCoordsToast;
+    private final Toast mGetCoordsToast;
     private final IntentFactory mIntentFactory;
     private final MyLocationProvider mMyLocationProvider;
     private final ResourceProvider mResourceProvider;
@@ -36,7 +36,7 @@ public class IntentStarterLocation implements IntentStarter {
 
     public IntentStarterLocation(Activity activity, ResourceProvider resourceProvider,
             IntentFactory intentFactory, MyLocationProvider myLocationProvider,
-            ContentSelector contentSelector, int uriId, GetCoordsToast getCoordsToast) {
+            ContentSelector contentSelector, int uriId, Toast getCoordsToast) {
         mActivity = activity;
         mGetCoordsToast = getCoordsToast;
         mIntentFactory = intentFactory;
