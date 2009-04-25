@@ -64,7 +64,7 @@ public class ErrorDisplayer {
 
     public void displayErrorAndStack(String msg, Exception e) {
         mAlertDialogBuilder = new Builder(mActivity);
-        mAlertDialogBuilder.setMessage(("Error " + msg + ":" + e.toString() + "\n\n" + ErrorDisplayer
+        mAlertDialogBuilder.setMessage(("Error " + msg + ": " + e.toString() + "\n\n" + ErrorDisplayer
                 .getStackTrace(e)));
         mActivity.runOnUiThread(new DisplayErrorRunnable());
     }

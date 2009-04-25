@@ -58,9 +58,11 @@ public class GpxLoader {
             markLoadAsComplete = !alreadyLoaded;
             continueLoading = true;
         } catch (final SQLiteException e) {
-            mErrorDisplayer.displayError(R.string.error_writing_cache, e.getMessage());
+            mErrorDisplayer.displayError(R.string.error_writing_cache, mGpxToCache.getSource()
+                    + ": " + e.getMessage());
         } catch (XmlPullParserException e) {
-            mErrorDisplayer.displayError(R.string.error_parsing_file, e.getMessage());
+            mErrorDisplayer.displayError(R.string.error_parsing_file, mGpxToCache.getSource()
+                    + ": " + e.getMessage());
         } catch (IOException e) {
             mErrorDisplayer.displayError(R.string.error_reading_file, mGpxToCache.getSource());
         } catch (CancelException e) {

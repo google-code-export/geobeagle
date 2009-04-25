@@ -69,11 +69,13 @@ public class GpxLoaderTest {
         ErrorDisplayer errorDisplayer = PowerMock.createMock(ErrorDisplayer.class);
         EventHelper eventHelper = PowerMock.createMock(EventHelper.class);
 
+        
         gpxToCache.load(eventHelper);
         expectLastCall().andThrow(e);
         expect(e.getMessage()).andReturn("a problem of some sort");
         expect(e.fillInStackTrace()).andReturn(e);
-        errorDisplayer.displayError(errorMessage, "a problem of some sort");
+        expect(gpxToCache.getSource()).andReturn("/sdcard/foo.gpx");
+        errorDisplayer.displayError(errorMessage, "/sdcard/foo.gpx: a problem of some sort");
         cachePersisterFacade.close(false);
 
         PowerMock.replayAll();
