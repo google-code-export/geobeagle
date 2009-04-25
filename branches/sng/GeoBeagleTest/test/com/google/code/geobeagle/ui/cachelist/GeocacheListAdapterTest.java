@@ -17,7 +17,6 @@ package com.google.code.geobeagle.ui.cachelist;
 import static org.junit.Assert.assertEquals;
 
 import com.google.code.geobeagle.data.GeocacheVectors;
-import com.google.code.geobeagle.ui.cachelist.row.RowInflaterStrategy;
 
 import org.easymock.classextension.EasyMock;
 import org.junit.Test;
@@ -70,16 +69,18 @@ public class GeocacheListAdapterTest {
 
     @Test
     public void testGetView() {
-        RowInflaterStrategy rowInflaterStrategy = PowerMock.createMock(RowInflaterStrategy.class);
+        GeocacheSummaryRowInflater geocacheSummaryRowInflater = PowerMock
+                .createMock(GeocacheSummaryRowInflater.class);
         PowerMock.suppressConstructor(BaseAdapter.class);
         View convertView = PowerMock.createMock(View.class);
         View newConvertView = PowerMock.createMock(View.class);
 
-        EasyMock.expect(rowInflaterStrategy.getView(17, convertView)).andReturn(newConvertView);
+        EasyMock.expect(geocacheSummaryRowInflater.inflate(convertView)).andReturn(newConvertView);
+        geocacheSummaryRowInflater.setData(newConvertView, 17);
 
         PowerMock.replayAll();
-        assertEquals(newConvertView, new GeocacheListAdapter(null, rowInflaterStrategy).getView(
-                17, convertView, null));
+        assertEquals(newConvertView, new GeocacheListAdapter(null, geocacheSummaryRowInflater)
+                .getView(17, convertView, null));
         PowerMock.verifyAll();
     }
 }

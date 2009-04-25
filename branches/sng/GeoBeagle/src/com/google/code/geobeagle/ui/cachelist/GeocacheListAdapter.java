@@ -15,7 +15,6 @@
 package com.google.code.geobeagle.ui.cachelist;
 
 import com.google.code.geobeagle.data.GeocacheVectors;
-import com.google.code.geobeagle.ui.cachelist.row.RowInflaterStrategy;
 
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,12 +23,12 @@ import android.widget.BaseAdapter;
 public class GeocacheListAdapter extends BaseAdapter {
 
     private final GeocacheVectors mGeocacheVectors;
-    private final RowInflaterStrategy mRowInflaterStrategy;
+    private final GeocacheSummaryRowInflater mGeocacheSummaryRowInflater;
 
     public GeocacheListAdapter(GeocacheVectors geocacheVectors,
-            RowInflaterStrategy rowInflaterStrategy) {
+            GeocacheSummaryRowInflater geocacheSummaryRowInflater) {
         mGeocacheVectors = geocacheVectors;
-        mRowInflaterStrategy = rowInflaterStrategy;
+        mGeocacheSummaryRowInflater = geocacheSummaryRowInflater;
     }
 
     public int getCount() {
@@ -45,6 +44,8 @@ public class GeocacheListAdapter extends BaseAdapter {
     }
 
     public View getView(int position, View convertView, ViewGroup parent) {
-        return mRowInflaterStrategy.getView(position, convertView);
+        View view = mGeocacheSummaryRowInflater.inflate(convertView);
+        mGeocacheSummaryRowInflater.setData(view, position);
+        return view;
     }
 }

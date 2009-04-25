@@ -1,13 +1,12 @@
 
-package com.google.code.geobeagle.ui.cachelist.row;
+package com.google.code.geobeagle.ui.cachelist;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.data.GeocacheVectors;
 import com.google.code.geobeagle.data.IGeocacheVector;
-import com.google.code.geobeagle.ui.cachelist.row.GeocacheSummaryRowInflater.RowViews;
+import com.google.code.geobeagle.ui.cachelist.GeocacheSummaryRowInflater.RowViews;
 
 import org.easymock.classextension.EasyMock;
 import org.junit.Test;
@@ -22,8 +21,7 @@ import android.view.View;
 import android.widget.TextView;
 
 @PrepareForTest( {
-        TextView.class, View.class, RowViews.class, RowInflater.class,
-        GeocacheSummaryRowInflater.class, Log.class
+        TextView.class, View.class, RowViews.class, GeocacheSummaryRowInflater.class, Log.class
 })
 @RunWith(PowerMockRunner.class)
 public class GeocacheSummaryRowInflaterTest {
@@ -74,28 +72,6 @@ public class GeocacheSummaryRowInflaterTest {
         PowerMock.replayAll();
         assertEquals(view, new GeocacheSummaryRowInflater(layoutInflater, null).inflate(null));
         PowerMock.verifyAll();
-    }
-
-    @Test
-    public void testIsAlreadyInflated() {
-        View convertView = PowerMock.createMock(View.class);
-
-        final GeocacheSummaryRowInflater geocacheSummaryRowInflater = new GeocacheSummaryRowInflater(
-                null, null);
-
-        PowerMock.replayAll();
-        assertTrue(geocacheSummaryRowInflater.isAlreadyInflated(convertView));
-        PowerMock.verifyAll();
-    }
-
-    @Test
-    public void testMatch() {
-        assertTrue(new GeocacheSummaryRowInflater(null, null).match(1));
-    }
-
-    @Test
-    public void testRowViewsGetType() {
-        assertEquals(RowType.CacheRow, new RowViews(null, null).getType());
     }
 
     @Test

@@ -12,7 +12,7 @@
  ** limitations under the License.
  */
 
-package com.google.code.geobeagle.ui.cachelist.row;
+package com.google.code.geobeagle.ui.cachelist;
 
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.data.GeocacheVectors;
@@ -23,18 +23,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 
-class GeocacheSummaryRowInflater implements RowInflater {
-    static class RowViews implements RowInfo {
+class GeocacheSummaryRowInflater {
+    static class RowViews {
         private final TextView mCache;
         private final TextView mDistance;
 
         RowViews(TextView cache, TextView distance) {
             mCache = cache;
             mDistance = distance;
-        }
-
-        public RowType getType() {
-            return RowType.CacheRow;
         }
 
         void set(IGeocacheVector geocacheVector) {
@@ -51,27 +47,19 @@ class GeocacheSummaryRowInflater implements RowInflater {
         mGeocacheVectors = geocacheVectors;
     }
 
-    public View inflate(View convertView) {
-        if (isAlreadyInflated(convertView))
+    View inflate(View convertView) {
+        if (convertView != null)
             return convertView;
         Log.v("GeoBeagle", "SummaryRow::inflate(" + convertView + ")");
 
         View view = mLayoutInflater.inflate(R.layout.cache_row, null);
-        GeocacheSummaryRowInflater.RowViews rowViews = new RowViews(((TextView)view
-                .findViewById(R.id.txt_cache)), ((TextView)view.findViewById(R.id.distance)));
+        RowViews rowViews = new RowViews(((TextView)view.findViewById(R.id.txt_cache)),
+                ((TextView)view.findViewById(R.id.distance)));
         view.setTag(rowViews);
         return view;
     }
 
-    public boolean isAlreadyInflated(View convertView) {
-        return convertView != null;
-    }
-
-    public boolean match(int position) {
-        return true;
-    }
-
-    public void setData(View view, int position) {
+    void setData(View view, int position) {
         ((RowViews)view.getTag()).set(mGeocacheVectors.get(position));
     }
 }

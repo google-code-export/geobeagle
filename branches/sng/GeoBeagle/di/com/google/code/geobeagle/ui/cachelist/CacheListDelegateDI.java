@@ -43,8 +43,6 @@ import com.google.code.geobeagle.ui.UpdateGpsWidgetRunnableDI;
 import com.google.code.geobeagle.ui.GpsStatusWidget.MeterFormatter;
 import com.google.code.geobeagle.ui.GpsStatusWidget.MeterView;
 import com.google.code.geobeagle.ui.GpsStatusWidget.UpdateGpsWidgetRunnable;
-import com.google.code.geobeagle.ui.cachelist.row.RowInflaterStrategy;
-import com.google.code.geobeagle.ui.cachelist.row.RowInflaterStrategyDI;
 
 import android.app.ListActivity;
 import android.content.Context;
@@ -87,10 +85,11 @@ public class CacheListDelegateDI {
                 xmlPullParserWrapper, errorDisplayer);
         final View gpsWidgetView = layoutInflater.inflate(R.layout.gps_widget, null);
 
-        final RowInflaterStrategy rowInflaterStrategy = RowInflaterStrategyDI.create(
-                layoutInflater, null, geocacheVectors);
+        final GeocacheSummaryRowInflater geocacheSummaryRowInflater = new GeocacheSummaryRowInflater(
+                layoutInflater, geocacheVectors);
+
         final GeocacheListAdapter geocacheListAdapter = new GeocacheListAdapter(geocacheVectors,
-                rowInflaterStrategy);
+                geocacheSummaryRowInflater);
         GpsStatusWidget gpsStatusWidget = new GpsStatusWidget(new ResourceProvider(parent),
                 new MeterView(getTextView(gpsWidgetView, R.id.location_viewer),
                         new MeterFormatter()), getTextView(gpsWidgetView, R.id.provider),
