@@ -14,20 +14,13 @@
 
 package com.google.code.geobeagle.io;
 
-import com.google.code.geobeagle.io.DatabaseDI.SQLiteWrapper;
-import com.google.code.geobeagle.io.GpxImporterDI.MessageHandler;
+import com.google.code.geobeagle.io.GpxToCacheDI.XmlPullParserWrapper;
 import com.google.code.geobeagle.ui.ErrorDisplayer;
 
-import android.app.Activity;
-
 public class GpxLoaderDI {
-    public static GpxLoader create(Activity activity, Database database,
-            SQLiteWrapper sqliteWrapper, MessageHandler messageHandler,
-            ErrorDisplayer errorDisplayer) {
-        final CachePersisterFacade cachePersisterFacade = CachePersisterFacadeDI.create(activity,
-                messageHandler, database, sqliteWrapper);
-        final GpxToCache gpxToCache = GpxToCacheDI.create(activity, cachePersisterFacade);
-
+    public static GpxLoader create(CachePersisterFacade cachePersisterFacade,
+            XmlPullParserWrapper xmlPullParserFactory, ErrorDisplayer errorDisplayer) {
+        final GpxToCache gpxToCache = new GpxToCache(xmlPullParserFactory);
         return new GpxLoader(gpxToCache, cachePersisterFacade, errorDisplayer);
     }
 }

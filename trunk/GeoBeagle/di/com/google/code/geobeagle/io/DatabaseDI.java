@@ -127,11 +127,10 @@ public class DatabaseDI {
         return new Database(sqliteOpenHelper);
     }
 
-    public static GeocachesSql create(LocationControl locationControl, Database database) {
+    public static GeocachesSql create(LocationControl locationControl, SQLiteWrapper sqliteWrapper) {
         final Geocaches geocaches = new Geocaches();
-        final SQLiteWrapper sqliteWrapper = new SQLiteWrapper(null);
         final CacheReader cacheReader = createCacheReader(sqliteWrapper);
-        return new GeocachesSql(cacheReader, geocaches, database, sqliteWrapper, locationControl);
+        return new GeocachesSql(cacheReader, geocaches, locationControl);
     }
 
     public static CacheReader createCacheReader(SQLiteWrapper sqliteWrapper) {

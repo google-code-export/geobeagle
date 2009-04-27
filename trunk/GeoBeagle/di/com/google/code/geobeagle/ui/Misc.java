@@ -15,7 +15,10 @@
 package com.google.code.geobeagle.ui;
 
 import com.google.code.geobeagle.GeoBeagle;
-import com.google.code.geobeagle.ui.WebPageAndDetailsButtonEnabler;
+import com.google.code.geobeagle.ui.WebPageAndDetailsButtonEnabler.CheckButton;
+import com.google.code.geobeagle.ui.WebPageAndDetailsButtonEnabler.CheckButtons;
+import com.google.code.geobeagle.ui.WebPageAndDetailsButtonEnabler.CheckDetailsButton;
+import com.google.code.geobeagle.ui.WebPageAndDetailsButtonEnabler.CheckWebPageButton;
 
 import android.view.View;
 
@@ -26,8 +29,13 @@ public class Misc {
         }
     }
 
-    public static WebPageAndDetailsButtonEnabler create(GeoBeagle geoBeagle, View cachePageButton,
+    public static WebPageAndDetailsButtonEnabler create(GeoBeagle geoBeagle, View webPageButton,
             View detailsButton) {
-        return new WebPageAndDetailsButtonEnabler(geoBeagle, cachePageButton, detailsButton);
+        final CheckWebPageButton checkWebPageButton = new CheckWebPageButton(webPageButton);
+        final CheckDetailsButton checkDetailsButton = new CheckDetailsButton(detailsButton);
+        final CheckButtons checkButtons = new CheckButtons(new CheckButton[] {
+                checkWebPageButton, checkDetailsButton
+        });
+        return new WebPageAndDetailsButtonEnabler(geoBeagle, checkButtons);
     }
 }

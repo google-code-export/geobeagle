@@ -20,17 +20,15 @@ import com.google.code.geobeagle.data.Geocache;
 import android.content.Intent;
 
 public class IntentStarterRadar implements IntentStarter {
-    private final IntentFactory mIntentFactory;
     private final GeoBeagle mGeoBeagle;
 
-    public IntentStarterRadar(GeoBeagle geoBeagle, IntentFactory intentFactory) {
-        mIntentFactory = intentFactory;
+    public IntentStarterRadar(GeoBeagle geoBeagle) {
         mGeoBeagle = geoBeagle;
     }
 
     public void startIntent() {
         final Geocache geocache = mGeoBeagle.getGeocache();
-        final Intent intent = mIntentFactory.createIntent("com.google.android.radar.SHOW_RADAR");
+        final Intent intent = new Intent("com.google.android.radar.SHOW_RADAR");
         intent.putExtra("latitude", (float)geocache.getLatitude());
         intent.putExtra("longitude", (float)geocache.getLongitude());
         mGeoBeagle.startActivity(intent);

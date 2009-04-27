@@ -3,7 +3,7 @@ package com.google.code.geobeagle.io;
 
 import static org.junit.Assert.assertEquals;
 
-import com.google.code.geobeagle.data.Geocache.Source;
+import com.google.code.geobeagle.data.GeocacheFactory.Source;
 
 import org.junit.Test;
 
@@ -15,6 +15,7 @@ public class DbToGeocacheAdapterTest {
         assertEquals(Source.WEB_URL, dbToGeocacheAdapter.sourceNameToSourceType("intent"));
         assertEquals(Source.MY_LOCATION, dbToGeocacheAdapter.sourceNameToSourceType("mylocation"));
         assertEquals(Source.GPX, dbToGeocacheAdapter.sourceNameToSourceType("foo"));
+        assertEquals(Source.LOC, dbToGeocacheAdapter.sourceNameToSourceType("foo.Loc"));
     }
 
     @Test

@@ -18,9 +18,12 @@ import static org.easymock.EasyMock.expect;
 import static org.easymock.classextension.EasyMock.createMock;
 import static org.easymock.classextension.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.verify;
+import static org.junit.Assert.assertEquals;
 
 import com.google.code.geobeagle.io.Database.ISQLiteDatabase;
 import com.google.code.geobeagle.io.Database.OpenHelperDelegate;
+
+import org.junit.Test;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -33,9 +36,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Writer;
 
-import junit.framework.TestCase;
-
-public class DatabaseTest extends TestCase {
+public class DatabaseTest {
 
     static class DesktopSQLiteDatabase implements ISQLiteDatabase {
         Writer mWriter;
@@ -91,6 +92,7 @@ public class DatabaseTest extends TestCase {
             + "CREATE INDEX IDX_LATITUDE on CACHES (Latitude); "
             + "CREATE INDEX IDX_LONGITUDE on CACHES (Longitude); "
             + "CREATE INDEX IDX_SOURCE on CACHES (Source); ";
+
     /**
      * <pre>
      * 
@@ -150,6 +152,7 @@ public class DatabaseTest extends TestCase {
         return s + ";\n";
     }
 
+    @Test
     public void testDatabaseGetReableDatabase() {
         SQLiteDatabase sqlite = createMock(SQLiteDatabase.class);
         SQLiteOpenHelper sqliteOpenHelper = createMock(SQLiteOpenHelper.class);

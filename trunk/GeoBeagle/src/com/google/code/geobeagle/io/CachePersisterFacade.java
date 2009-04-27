@@ -14,9 +14,9 @@
 
 package com.google.code.geobeagle.io;
 
+import com.google.code.geobeagle.data.GeocacheFactory.Source;
 import com.google.code.geobeagle.io.CachePersisterFacadeDI.FileFactory;
 import com.google.code.geobeagle.io.GpxImporterDI.MessageHandler;
-import com.google.code.geobeagle.io.GpxToCacheDI.XmlPullParserWrapper;
 
 import android.os.PowerManager.WakeLock;
 
@@ -49,13 +49,9 @@ public class CachePersisterFacade {
         mCacheTagWriter.end();
     }
 
-    void endTag() throws IOException {
+    void endTag(Source source) throws IOException {
         mCacheDetailsWriter.close();
-        mCacheTagWriter.write();
-    }
-
-    public void gpxName(String text) {
-        mCacheTagWriter.gpxName(text);
+        mCacheTagWriter.write(source);
     }
 
     public boolean gpxTime(String gpxTime) {
@@ -63,7 +59,6 @@ public class CachePersisterFacade {
     }
 
     void groundspeakName(String text) {
-        mMessageHandler.updateName(text);
         mCacheTagWriter.cacheName(text);
     }
 
@@ -77,6 +72,10 @@ public class CachePersisterFacade {
 
     void logDate(String text) throws IOException {
         mCacheDetailsWriter.writeLogDate(text);
+    }
+
+    void newCache() {
+        mCacheTagWriter.clear();
     }
 
     void open(String text) {
@@ -94,12 +93,14 @@ public class CachePersisterFacade {
         mCacheTagWriter.symbol(text);
     }
 
-    void wpt(XmlPullParserWrapper mXmlPullParser) {
-        mCacheTagWriter.clear();
-        String latitude = mXmlPullParser.getAttributeValue(null, "lat");
-        String longitude = mXmlPullParser.getAttributeValue(null, "lon");
+    void wpt(String latitude, String longitude) {
         mCacheTagWriter.latitudeLongitude(latitude, longitude);
         mCacheDetailsWriter.latitudeLongitude(latitude, longitude);
+    }
+
+    public void wptDesc(String text) {
+        mMessageHandler.updateName(text);
+        mCacheTagWriter.cacheName(text);
     }
 
     void wptName(String wpt) throws IOException {
@@ -109,4 +110,5 @@ public class CachePersisterFacade {
         mMessageHandler.updateWaypointId(wpt);
         mWakeLock.acquire(WAKELOCK_DURATION);
     }
+
 }

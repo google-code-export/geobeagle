@@ -45,6 +45,7 @@ public class GpxAndZipFilesTest {
         FilenameFilter filenameFilter = new GpxAndZipFilenameFilter();
         assertTrue(filenameFilter.accept(null, "foo.gpx"));
         assertTrue(filenameFilter.accept(null, "foo.zip"));
+        assertTrue(filenameFilter.accept(null, "foo.ZIP"));
         assertFalse(filenameFilter.accept(null, "skip.me"));
         assertFalse(filenameFilter.accept(null, ".appledetritus010.gpx"));
     }

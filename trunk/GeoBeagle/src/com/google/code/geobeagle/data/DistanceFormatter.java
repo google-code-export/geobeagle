@@ -8,8 +8,8 @@ public class DistanceFormatter {
             return "";
         }
         if (distance >= 1000) {
-            return (int)(distance / 1000) + "km";
+            return String.format("%1$1.2fkm", distance / 1000.0);
         }
-        return (int)distance + "m";
+        return String.format("%1$dm", (int)distance);
     }
 }

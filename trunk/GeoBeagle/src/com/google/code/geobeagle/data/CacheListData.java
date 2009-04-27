@@ -20,18 +20,15 @@ import android.location.Location;
 import java.util.ArrayList;
 
 public class CacheListData {
-    private final GeocacheVectorFactory mGeocacheVectorFactory;
     private final GeocacheVectors mGeocacheVectors;
 
-    public CacheListData(GeocacheVectors geocacheVectors, GeocacheVectorFactory geocacheVectorFactory) {
+    public CacheListData(GeocacheVectors geocacheVectors) {
         mGeocacheVectors = geocacheVectors;
-        mGeocacheVectorFactory = geocacheVectorFactory;
     }
 
     public void add(ArrayList<Geocache> geocaches, Location here) {
         mGeocacheVectors.reset(geocaches.size());
         mGeocacheVectors.addLocations(geocaches, here);
-        mGeocacheVectors.add(mGeocacheVectorFactory.createMyLocation());
         mGeocacheVectors.sort();
     }
 }

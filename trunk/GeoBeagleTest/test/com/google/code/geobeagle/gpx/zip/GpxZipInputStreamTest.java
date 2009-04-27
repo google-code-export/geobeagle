@@ -57,29 +57,10 @@ public class GpxZipInputStreamTest {
         ZipEntry zipEntry = PowerMock.createMock(ZipEntry.class);
 
         expect(zipInputStream.getNextEntry()).andReturn(zipEntry);
-        expect(zipEntry.getName()).andReturn("foo.gpx");
 
         PowerMock.replayAll();
         GpxZipInputStream zis = new GpxZipInputStream(zipInputStream);
         assertEquals(zipEntry, zis.getNextEntry());
         PowerMock.verifyAll();
     }
-
-    @Test
-    public void testSkipWpt() throws Exception {
-        ZipInputStream zipInputStream = PowerMock.createMock(ZipInputStream.class);
-        ZipEntry zipEntry1 = PowerMock.createMock(ZipEntry.class);
-        ZipEntry zipEntry2 = PowerMock.createMock(ZipEntry.class);
-
-        expect(zipInputStream.getNextEntry()).andReturn(zipEntry1);
-        expect(zipEntry1.getName()).andReturn("foo-wpts.gpx");
-        expect(zipInputStream.getNextEntry()).andReturn(zipEntry2);
-        expect(zipEntry2.getName()).andReturn("foo.gpx");
-
-        PowerMock.replayAll();
-        GpxZipInputStream zis = new GpxZipInputStream(zipInputStream);
-        assertEquals(zipEntry2, zis.getNextEntry());
-        PowerMock.verifyAll();
-    }
-
 }

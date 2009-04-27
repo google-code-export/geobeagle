@@ -3,7 +3,7 @@ package com.google.code.geobeagle.data;
 
 import static org.junit.Assert.assertEquals;
 
-import com.google.code.geobeagle.data.Geocache.Source;
+import com.google.code.geobeagle.data.GeocacheFactory.Source;
 
 import org.easymock.EasyMock;
 import org.junit.Test;

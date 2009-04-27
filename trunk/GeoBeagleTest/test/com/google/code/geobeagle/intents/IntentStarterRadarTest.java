@@ -15,41 +15,40 @@
 package com.google.code.geobeagle.intents;
 
 import static org.easymock.EasyMock.expect;
-import static org.easymock.classextension.EasyMock.createMock;
-import static org.easymock.classextension.EasyMock.replay;
-import static org.easymock.classextension.EasyMock.verify;
 
 import com.google.code.geobeagle.GeoBeagle;
 import com.google.code.geobeagle.data.Geocache;
 
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.powermock.api.easymock.PowerMock;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
+
 import android.content.Intent;
 
-import junit.framework.TestCase;
+@RunWith(PowerMockRunner.class)
+@PrepareForTest( {
+        Intent.class, IntentStarterRadar.class
+})
+public class IntentStarterRadarTest {
 
-public class IntentStarterRadarTest extends TestCase {
-
-    public void testStartIntent() {
-        Intent intent = createMock(Intent.class);
-        GeoBeagle geoBeagle = createMock(GeoBeagle.class);
-        IntentFactory intentFactory = createMock(IntentFactory.class);
-        Geocache geocache = createMock(Geocache.class);
+    @Test
+    public void testStartIntent() throws Exception {
+        Intent intent = PowerMock.createMock(Intent.class);
+        GeoBeagle geoBeagle = PowerMock.createMock(GeoBeagle.class);
+        Geocache geocache = PowerMock.createMock(Geocache.class);
 
         expect(geoBeagle.getGeocache()).andReturn(geocache);
-        expect(intentFactory.createIntent("com.google.android.radar.SHOW_RADAR")).andReturn(intent);
+        PowerMock.expectNew(Intent.class, "com.google.android.radar.SHOW_RADAR").andReturn(intent);
         expect(geocache.getLatitude()).andReturn(37.175d);
         expect(intent.putExtra("latitude", 37.175f)).andReturn(intent);
         expect(geocache.getLongitude()).andReturn(122.8375d);
         expect(intent.putExtra("longitude", 122.8375f)).andReturn(intent);
         geoBeagle.startActivity(intent);
 
-        replay(geoBeagle);
-        replay(geocache);
-        replay(intentFactory);
-        replay(intent);
-        new IntentStarterRadar(geoBeagle, intentFactory).startIntent();
-        verify(geoBeagle);
-        verify(geocache);
-        verify(intentFactory);
-        verify(intent);
+        PowerMock.replayAll();
+        new IntentStarterRadar(geoBeagle).startIntent();
+        PowerMock.verifyAll();
     }
 }

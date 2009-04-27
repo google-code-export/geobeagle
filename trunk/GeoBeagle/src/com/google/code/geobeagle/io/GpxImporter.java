@@ -19,8 +19,8 @@ import com.google.code.geobeagle.io.DatabaseDI.SQLiteWrapper;
 import com.google.code.geobeagle.io.GpxImporterDI.ImportThreadWrapper;
 import com.google.code.geobeagle.io.GpxImporterDI.MessageHandler;
 import com.google.code.geobeagle.io.GpxImporterDI.ToastFactory;
-import com.google.code.geobeagle.ui.CacheListDelegate;
 import com.google.code.geobeagle.ui.ErrorDisplayer;
+import com.google.code.geobeagle.ui.cachelist.GeocacheListPresenter;
 
 import android.app.ListActivity;
 import android.widget.Toast;
@@ -35,14 +35,18 @@ public class GpxImporter {
     private final MessageHandler mMessageHandler;
     private final SQLiteWrapper mSqliteWrapper;
     private final ToastFactory mToastFactory;
+    private final EventHandlers mEventHandlers;
 
     GpxImporter(GpxLoader gpxLoader, Database database, SQLiteWrapper sqliteWrapper,
             ListActivity listActivity, ImportThreadWrapper importThreadWrapper,
-            MessageHandler messageHandler, ErrorDisplayer errorDisplayer, ToastFactory toastFactory) {
+            MessageHandler messageHandler, ToastFactory toastFactory,
+            EventHandlers eventHandlers, ErrorDisplayer errorDisplayer) {
         mSqliteWrapper = sqliteWrapper;
         mDatabase = database;
+
         mListActivity = listActivity;
         mGpxLoader = gpxLoader;
+        mEventHandlers = eventHandlers;
         mImportThreadWrapper = importThreadWrapper;
         mMessageHandler = messageHandler;
         mErrorDisplayer = errorDisplayer;
@@ -59,9 +63,10 @@ public class GpxImporter {
         }
     }
 
-    public void importGpxs(CacheListDelegate cacheListDelegate) {
+    public void importGpxs(GeocacheListPresenter geocacheListPresenter) {
         mSqliteWrapper.openReadableDatabase(mDatabase);
-        mImportThreadWrapper.open(cacheListDelegate, mGpxLoader, mErrorDisplayer);
+        mImportThreadWrapper.open(geocacheListPresenter, mGpxLoader, mEventHandlers,
+                mErrorDisplayer);
         mImportThreadWrapper.start();
     }
 }

@@ -18,8 +18,11 @@ import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.gpx.GpxAndZipFiles;
 import com.google.code.geobeagle.gpx.IGpxReader;
 import com.google.code.geobeagle.gpx.GpxAndZipFiles.GpxAndZipFilesIter;
+import com.google.code.geobeagle.io.EventHelperDI.EventHelperFactory;
 import com.google.code.geobeagle.io.GpxImporterDI.MessageHandler;
 import com.google.code.geobeagle.ui.ErrorDisplayer;
+
+import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -30,12 +33,17 @@ public class ImportThreadDelegate {
         private final GpxLoader mGpxLoader;
         private final MessageHandler mMessageHandler;
         private boolean mHasFiles;
+        private final EventHelperFactory mEventHelperFactory;
+        private final EventHandlers mEventHandlers;
 
         public ImportThreadHelper(GpxLoader gpxLoader, MessageHandler messageHandler,
+                EventHelperFactory eventHelperFactory, EventHandlers eventHandlers,
                 ErrorDisplayer errorDisplayer) {
             mErrorDisplayer = errorDisplayer;
             mGpxLoader = gpxLoader;
             mMessageHandler = messageHandler;
+            mEventHelperFactory = eventHelperFactory;
+            mEventHandlers = eventHandlers;
             mHasFiles = false;
         }
 
@@ -49,20 +57,13 @@ public class ImportThreadDelegate {
                 mErrorDisplayer.displayError(R.string.error_no_gpx_files);
         }
 
-        public boolean processFile(IGpxReader iGpxFile) {
-            String filename = iGpxFile.getFilename();
+        public boolean processFile(IGpxReader gpxReader) throws FileNotFoundException,
+                XmlPullParserException, IOException {
+            String filename = gpxReader.getFilename();
+
             mHasFiles = true;
-            try {
-                mGpxLoader.open(filename, iGpxFile.open());
-                if (!mGpxLoader.load())
-                    return false;
-                return true;
-            } catch (final FileNotFoundException e) {
-                mErrorDisplayer.displayError(R.string.error_opening_file, filename);
-            } catch (Exception e) {
-                mErrorDisplayer.displayErrorAndStack(e);
-            }
-            return false;
+            mGpxLoader.open(filename, gpxReader.open());
+            return mGpxLoader.load(mEventHelperFactory.create(mEventHandlers.get(filename)));
         }
 
         public void start() {
@@ -84,6 +85,8 @@ public class ImportThreadDelegate {
     public void run() {
         try {
             tryRun();
+        } catch (final FileNotFoundException e) {
+            mErrorDisplayer.displayError(R.string.error_opening_file, e.getMessage());
         } catch (Exception e) {
             mErrorDisplayer.displayErrorAndStack(e);
         } finally {
@@ -91,7 +94,7 @@ public class ImportThreadDelegate {
         }
     }
 
-    protected void tryRun() throws IOException {
+    protected void tryRun() throws FileNotFoundException, IOException, XmlPullParserException  {
         GpxAndZipFilesIter gpxFileIter = mGpxAndZipFiles.iterator();
         if (gpxFileIter == null) {
             mErrorDisplayer.displayError(R.string.error_cant_read_sd);

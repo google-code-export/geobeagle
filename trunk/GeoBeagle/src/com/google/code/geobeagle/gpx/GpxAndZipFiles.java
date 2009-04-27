@@ -61,13 +61,15 @@ public class GpxAndZipFiles {
 
     public static class GpxAndZipFilenameFilter implements FilenameFilter {
         public boolean accept(File dir, String name) {
-            return !name.startsWith(".") && (name.endsWith(".gpx") || name.endsWith(".zip"));
+            name = name.toLowerCase();
+            return !name.startsWith(".")
+                    && (name.endsWith(".gpx") || name.endsWith(".zip") || name.endsWith(".loc"));
         }
     }
 
-    public static final String GPX_DIR = "/sdcard/download/";
     private final FilenameFilter mFilenameFilter;
     private final GpxAndZipFilesIterFactory mGpxFileIterFactory;
+    public static final String GPX_DIR = "/sdcard/download/";
 
     public GpxAndZipFiles(FilenameFilter filenameFilter,
             GpxAndZipFilesIterFactory gpxFileIterFactory) {

@@ -32,43 +32,35 @@ public class EventHelper {
             return mPath;
         }
 
-        public void reset() {
-            mPath = "";
-        }
-
         public void startTag(String mCurrentTag) {
             mPath += "/" + mCurrentTag;
         }
     }
 
-    private final GpxEventHandler mGpxEventHandler;
+    private final EventHandler mEventHandler;
     private final XmlPathBuilder mXmlPathBuilder;
     private final XmlPullParserWrapper mXmlPullParser;
 
-    public EventHelper(XmlPathBuilder xmlPathBuilder, GpxEventHandler gpxEventHandler,
+    EventHelper(XmlPathBuilder xmlPathBuilder, EventHandler eventHandler,
             XmlPullParserWrapper xmlPullParser) {
         mXmlPathBuilder = xmlPathBuilder;
-        mGpxEventHandler = gpxEventHandler;
         mXmlPullParser = xmlPullParser;
+        mEventHandler = eventHandler;
     }
 
     public boolean handleEvent(int eventType) throws IOException {
         switch (eventType) {
             case XmlPullParser.START_TAG:
                 mXmlPathBuilder.startTag(mXmlPullParser.getName());
-                mGpxEventHandler.startTag(mXmlPathBuilder.getPath(), mXmlPullParser);
+                mEventHandler.startTag(mXmlPathBuilder.getPath(), mXmlPullParser);
                 break;
             case XmlPullParser.END_TAG:
-                mGpxEventHandler.endTag(mXmlPathBuilder.getPath());
+                mEventHandler.endTag(mXmlPathBuilder.getPath());
                 mXmlPathBuilder.endTag(mXmlPullParser.getName());
                 break;
             case XmlPullParser.TEXT:
-                return mGpxEventHandler.text(mXmlPathBuilder.getPath(), mXmlPullParser.getText());
+                return mEventHandler.text(mXmlPathBuilder.getPath(), mXmlPullParser.getText());
         }
         return true;
-    }
-
-    public void reset() {
-        mXmlPathBuilder.reset();
     }
 }

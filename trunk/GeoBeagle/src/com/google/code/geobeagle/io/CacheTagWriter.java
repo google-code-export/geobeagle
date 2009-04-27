@@ -14,7 +14,7 @@
 
 package com.google.code.geobeagle.io;
 
-import com.google.code.geobeagle.data.Geocache.Source;
+import com.google.code.geobeagle.data.GeocacheFactory.Source;
 
 // TODO: Rename to CacheTagSqlWriter.
 /**
@@ -93,9 +93,9 @@ public class CacheTagWriter {
         mFound = symbol.equals("Geocache Found");
     }
 
-    public void write() {
+    public void write(Source source) {
         if (!mFound)
-            mCacheWriter.insertAndUpdateCache(mId, mName, mLatitude, mLongitude, Source.GPX,
+            mCacheWriter.insertAndUpdateCache(mId, mName, mLatitude, mLongitude, source,
                     mGpxName);
     }
 }

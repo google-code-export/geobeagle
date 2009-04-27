@@ -14,8 +14,6 @@
 
 package com.google.code.geobeagle;
 
-import com.google.code.geobeagle.ui.GpsStatusWidget;
-
 import android.location.Location;
 import android.location.LocationListener;
 import android.os.Bundle;
@@ -25,28 +23,29 @@ import android.os.Bundle;
  */
 public class GeoBeagleLocationListener implements LocationListener {
     private final LocationControl mLocationControl;
-    private final GpsStatusWidget mLocationViewer;
+    private LocationListener mLocationListener;
 
-    public GeoBeagleLocationListener(LocationControl locationControl, GpsStatusWidget gpsStatusWidget) {
-        mLocationViewer = gpsStatusWidget;
+    public GeoBeagleLocationListener(LocationControl locationControl,
+            LocationListener locationListener) {
+        mLocationListener = locationListener;
         mLocationControl = locationControl;
     }
 
     public void onLocationChanged(Location location) {
         // Ask the location control to pick the most accurate location (might
         // not be this one).
-        mLocationViewer.setLocation(mLocationControl.getLocation());
+        mLocationListener.onLocationChanged(mLocationControl.getLocation());
     }
 
     public void onProviderDisabled(String provider) {
-        mLocationViewer.setDisabled();
+        mLocationListener.onProviderDisabled(provider);
     }
 
     public void onProviderEnabled(String provider) {
-        mLocationViewer.setEnabled();
+        mLocationListener.onProviderEnabled(provider);
     }
 
     public void onStatusChanged(String provider, int status, Bundle extras) {
-        mLocationViewer.setStatus(provider, status);
+        mLocationListener.onStatusChanged(provider, status, extras);
     }
 }

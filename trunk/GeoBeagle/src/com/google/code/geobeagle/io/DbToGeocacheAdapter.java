@@ -14,7 +14,7 @@
 
 package com.google.code.geobeagle.io;
 
-import com.google.code.geobeagle.data.Geocache.Source;
+import com.google.code.geobeagle.data.GeocacheFactory.Source;
 
 public class DbToGeocacheAdapter {
     public Source sourceNameToSourceType(String sourceName) {
@@ -22,6 +22,8 @@ public class DbToGeocacheAdapter {
             return Source.WEB_URL;
         else if (sourceName.equals("mylocation"))
             return Source.MY_LOCATION;
+        else if (sourceName.toLowerCase().endsWith((".loc")))
+            return Source.LOC;
         return Source.GPX;
     }
 

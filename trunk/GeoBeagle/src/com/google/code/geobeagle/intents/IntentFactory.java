@@ -25,12 +25,7 @@ public class IntentFactory {
         mUriParser = uriParser;
     }
 
-    public Intent createIntent(String action) {
-        return new Intent(action);
-    }
-
     public Intent createIntent(String action, String uri) {
         return new Intent(action, mUriParser.parse(uri));
     }
-
 }

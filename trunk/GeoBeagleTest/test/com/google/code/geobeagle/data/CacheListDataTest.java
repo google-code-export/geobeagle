@@ -14,36 +14,30 @@
 
 package com.google.code.geobeagle.data;
 
-import static org.easymock.EasyMock.expect;
-import static org.easymock.classextension.EasyMock.createMock;
-import static org.easymock.classextension.EasyMock.replay;
-import static org.easymock.classextension.EasyMock.verify;
-
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.powermock.api.easymock.PowerMock;
+import org.powermock.modules.junit4.PowerMockRunner;
 
 import android.location.Location;
 
 import java.util.ArrayList;
 
-import junit.framework.TestCase;
+@RunWith(PowerMockRunner.class)
+public class CacheListDataTest {
 
-public class CacheListDataTest extends TestCase {
+    @Test
     public void testAdd() {
-        GeocacheVectorFactory geocacheVectorFactory = createMock(GeocacheVectorFactory.class);
-        GeocacheVectors geocacheVectors = createMock(GeocacheVectors.class);
-        IGeocacheVector myLocation = createMock(IGeocacheVector.class);
-        Location here = createMock(Location.class);
+        GeocacheVectors geocacheVectors = PowerMock.createMock(GeocacheVectors.class);
+        Location here = PowerMock.createMock(Location.class);
 
-        ArrayList<Geocache> locations = new ArrayList<Geocache>(0);
+        ArrayList<Geocache> geocaches = new ArrayList<Geocache>(0);
         geocacheVectors.reset(0);
-        geocacheVectors.addLocations(locations, here);
-        expect(geocacheVectorFactory.createMyLocation()).andReturn(myLocation);
-        geocacheVectors.add(myLocation);
+        geocacheVectors.addLocations(geocaches, here);
         geocacheVectors.sort();
 
-        replay(geocacheVectorFactory);
-        replay(geocacheVectors);
-        new CacheListData(geocacheVectors, geocacheVectorFactory).add(locations, here);
-        verify(geocacheVectorFactory);
-        verify(geocacheVectors);
+        PowerMock.replayAll();
+        new CacheListData(geocacheVectors).add(geocaches, here);
+        PowerMock.verifyAll();
     }
 }

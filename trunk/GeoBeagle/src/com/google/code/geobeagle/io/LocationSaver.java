@@ -29,10 +29,11 @@ public class LocationSaver {
     }
 
     public void saveLocation(Geocache geocache) {
+        CharSequence id = geocache.getId();
         mSQLiteWrapper.openWritableDatabase(mDatabase);
         // TODO: catch errors on open
         mCacheWriter.startWriting();
-        mCacheWriter.insertAndUpdateCache(geocache.getId(), geocache.getName(), geocache
+        mCacheWriter.insertAndUpdateCache(id, geocache.getName(), geocache
                 .getLatitude(), geocache.getLongitude(), geocache.getSourceType(), geocache
                 .getSourceName());
         mCacheWriter.stopWriting();

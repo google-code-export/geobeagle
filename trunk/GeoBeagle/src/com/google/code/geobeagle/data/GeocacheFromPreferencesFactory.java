@@ -1,7 +1,7 @@
 
 package com.google.code.geobeagle.data;
 
-import com.google.code.geobeagle.data.Geocache.Source;
+import com.google.code.geobeagle.data.GeocacheFactory.Source;
 
 import android.content.SharedPreferences;
 

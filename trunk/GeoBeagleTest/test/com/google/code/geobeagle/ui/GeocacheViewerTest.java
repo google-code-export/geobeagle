@@ -18,6 +18,7 @@ import static org.easymock.EasyMock.expect;
 
 import com.google.code.geobeagle.data.Geocache;
 
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.api.easymock.PowerMock;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -25,14 +26,13 @@ import org.powermock.modules.junit4.PowerMockRunner;
 
 import android.widget.TextView;
 
-import junit.framework.TestCase;
-
 @RunWith(PowerMockRunner.class)
 @PrepareForTest( {
-    TextView.class
+        TextView.class
 })
-public class GeocacheViewerTest extends TestCase {
+public class GeocacheViewerTest {
 
+    @Test
     public void testSet() {
         TextView id = PowerMock.createMock(TextView.class);
         TextView name = PowerMock.createMock(TextView.class);

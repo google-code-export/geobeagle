@@ -15,24 +15,27 @@
 package com.google.code.geobeagle.ui;
 
 import static org.easymock.EasyMock.expect;
-import static org.easymock.classextension.EasyMock.createMock;
-import static org.easymock.classextension.EasyMock.replay;
-import static org.easymock.classextension.EasyMock.verify;
+import static org.junit.Assert.assertEquals;
+
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.powermock.api.easymock.PowerMock;
+import org.powermock.modules.junit4.PowerMockRunner;
 
 import android.widget.Spinner;
 
-import junit.framework.TestCase;
+@RunWith(PowerMockRunner.class)
+public class ContentSelectorTest {
 
-public class ContentSelectorTest extends TestCase {
-
+    @Test
     public void testGetIndex() {
-        Spinner spinner = createMock(Spinner.class);
+        Spinner spinner = PowerMock.createMock(Spinner.class);
         expect(spinner.getSelectedItemPosition()).andReturn(17);
 
-        replay(spinner);
+        PowerMock.replayAll();
         ContentSelector contentSelector = new ContentSelector(spinner, null);
         assertEquals(17, contentSelector.getIndex());
-        verify(spinner);
+        PowerMock.verifyAll();
     }
 
 }

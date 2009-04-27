@@ -18,13 +18,18 @@ import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.ResourceProvider;
 import com.google.code.geobeagle.ui.Misc.Time;
 
+import android.graphics.Color;
 import android.location.Location;
+import android.location.LocationListener;
 import android.location.LocationProvider;
+import android.os.Bundle;
+import android.os.Handler;
+import android.widget.TextView;
 
 /**
  * @author sng Displays the GPS status (accuracy, availability, etc).
  */
-public class GpsStatusWidget {
+public class GpsStatusWidget implements LocationListener {
     public static class MeterFormatter {
         public int accuracyToBarCount(float accuracy) {
             return Math.min(METER_LEFT.length(), (int)(Math.log(Math.max(1, accuracy)) / Math
@@ -32,8 +37,8 @@ public class GpsStatusWidget {
         }
 
         public String barsToMeterText(int bars) {
-            return METER_LEFT.substring(METER_LEFT.length() - bars) + "×"
-                    + METER_RIGHT.substring(0, bars);
+            return "[" + METER_LEFT.substring(METER_LEFT.length() - bars) + "×"
+                    + METER_RIGHT.substring(0, bars) + "]";
         }
 
         public int lagToAlpha(long milliseconds) {
@@ -43,9 +48,9 @@ public class GpsStatusWidget {
 
     public static class MeterView {
         private final MeterFormatter mMeterFormatter;
-        private final MockableTextView mTextView;
+        private final TextView mTextView;
 
-        public MeterView(MockableTextView textView, MeterFormatter meterFormatter) {
+        public MeterView(TextView textView, MeterFormatter meterFormatter) {
             mTextView = textView;
             mMeterFormatter = meterFormatter;
         }
@@ -53,26 +58,41 @@ public class GpsStatusWidget {
         public void set(long lag, float accuracy) {
             mTextView.setText(mMeterFormatter.barsToMeterText(mMeterFormatter
                     .accuracyToBarCount(accuracy)));
-            mTextView.setTextColor(mMeterFormatter.lagToAlpha(lag), 147, 190, 38);
+            mTextView.setTextColor(Color.argb(mMeterFormatter.lagToAlpha(lag), 147, 190, 38));
+        }
+    }
+
+    public static class UpdateGpsWidgetRunnable implements Runnable {
+        private GpsStatusWidget mGpsStatusWidget;
+        private final Handler mHandler;
+
+        UpdateGpsWidgetRunnable(GpsStatusWidget gpsStatusWidget, Handler handler) {
+            mGpsStatusWidget = gpsStatusWidget;
+            mHandler = handler;
+        }
+
+        public void run() {
+            mGpsStatusWidget.refreshLocation();
+            mHandler.postDelayed(this, 100);
         }
     }
 
     public final static String METER_LEFT = "····«····‹····";
     public final static String METER_RIGHT = "····›····»····";
     private float mAccuracy;
-    private final MockableTextView mAccuracyView;
-    private final MockableTextView mLag;
+    private final TextView mAccuracyView;
+    private final TextView mLag;
     private long mLastUpdateTime;
     private long mLocationTime;
     private final MeterView mMeterView;
-    private final MockableTextView mProvider;
+    private final TextView mProvider;
     private final ResourceProvider mResourceProvider;
-    private final MockableTextView mStatus;
+    private final TextView mStatus;
     private final Time mTime;
 
     public GpsStatusWidget(ResourceProvider resourceProvider, MeterView meterView,
-            MockableTextView provider, MockableTextView lag, MockableTextView accuracy,
-            MockableTextView status, Time time, Location initialLocation) {
+            TextView provider, TextView lag, TextView accuracy, TextView status, Time time,
+            Location initialLocation) {
         mResourceProvider = resourceProvider;
         mMeterView = meterView;
         mLag = lag;
@@ -91,15 +111,7 @@ public class GpsStatusWidget {
         mMeterView.set(lastUpdateLag, mAccuracy);
     };
 
-    public void setDisabled() {
-        mStatus.setText("DISABLED");
-    }
-
-    public void setEnabled() {
-        mStatus.setText("ENABLED");
-    }
-
-    public void setLocation(Location location) {
+    public void onLocationChanged(Location location) {
         // TODO: use currentTime for alpha channel, but locationTime for text
         // lag.
         mLastUpdateTime = mTime.getCurrentTime();
@@ -108,7 +120,15 @@ public class GpsStatusWidget {
         mAccuracy = location.getAccuracy();
     }
 
-    public void setStatus(String provider, int status) {
+    public void onProviderDisabled(String provider) {
+        mStatus.setText("DISABLED");
+    }
+
+    public void onProviderEnabled(String provider) {
+        mStatus.setText("ENABLED");
+    }
+
+    public void onStatusChanged(String provider, int status, Bundle extras) {
         switch (status) {
             case LocationProvider.OUT_OF_SERVICE:
                 mStatus.setText(provider + " status: "

@@ -2,14 +2,14 @@
 package com.google.code.geobeagle.io;
 
 import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.expectLastCall;
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.gpx.GpxAndZipFiles;
 import com.google.code.geobeagle.gpx.IGpxReader;
 import com.google.code.geobeagle.gpx.GpxAndZipFiles.GpxAndZipFilenameFilter;
 import com.google.code.geobeagle.gpx.GpxAndZipFiles.GpxAndZipFilesIter;
+import com.google.code.geobeagle.io.EventHelperDI.EventHelperFactory;
 import com.google.code.geobeagle.io.GpxImporterDI.MessageHandler;
 import com.google.code.geobeagle.io.ImportThreadDelegate.ImportThreadHelper;
 import com.google.code.geobeagle.ui.ErrorDisplayer;
@@ -40,7 +40,7 @@ public class ImportThreadDelegateTest {
         messageHandler.loadComplete();
 
         PowerMock.replayAll();
-        new ImportThreadHelper(null, messageHandler, null).cleanup();
+        new ImportThreadHelper(null, messageHandler, null, null, null).cleanup();
         PowerMock.verifyAll();
     }
 
@@ -53,87 +53,36 @@ public class ImportThreadDelegateTest {
         gpxLoader.end();
 
         PowerMock.replayAll();
-        new ImportThreadHelper(gpxLoader, null, errorDisplayer).end();
+        new ImportThreadHelper(gpxLoader, null, null, null, errorDisplayer).end();
         PowerMock.verifyAll();
     }
 
     @Test
     public void testHelperProcessFileAndEnd() throws XmlPullParserException, IOException {
         GpxLoader gpxLoader = PowerMock.createMock(GpxLoader.class);
-        IGpxReader iGpxFile = PowerMock.createMock(IGpxReader.class);
+        IGpxReader gpxFile = PowerMock.createMock(IGpxReader.class);
         Reader reader = PowerMock.createMock(Reader.class);
+        EventHelperFactory eventHelperFactory = PowerMock.createMock(EventHelperFactory.class);
+        EventHelper eventHelper = PowerMock.createMock(EventHelper.class);
+        EventHandler eventHandler = PowerMock.createMock(EventHandler.class);
+        EventHandlers eventHandlers = PowerMock.createMock(EventHandlers.class);
 
-        EasyMock.expect(iGpxFile.getFilename()).andReturn("foo.gpx");
-        EasyMock.expect(iGpxFile.open()).andReturn(reader);
+        EasyMock.expect(gpxFile.getFilename()).andReturn("foo.gpx");
+        EasyMock.expect(eventHandlers.get("foo.gpx")).andReturn(eventHandler);
+        EasyMock.expect(eventHelperFactory.create(eventHandler)).andReturn(eventHelper);
+        EasyMock.expect(gpxFile.open()).andReturn(reader);
         gpxLoader.open("foo.gpx", reader);
-        EasyMock.expect(gpxLoader.load()).andReturn(true);
+        EasyMock.expect(gpxLoader.load(eventHelper)).andReturn(true);
         gpxLoader.end();
 
         PowerMock.replayAll();
-        ImportThreadHelper importThreadHelper = new ImportThreadHelper(gpxLoader, null, null);
-        assertEquals(true, importThreadHelper.processFile(iGpxFile));
+        ImportThreadHelper importThreadHelper = new ImportThreadHelper(gpxLoader, null, eventHelperFactory,
+                eventHandlers, null);
+        assertTrue(importThreadHelper.processFile(gpxFile));
         importThreadHelper.end();
         PowerMock.verifyAll();
     }
 
-    @Test
-    public void testHelperProcessFileLoadAborted() throws XmlPullParserException, IOException {
-        GpxLoader gpxLoader = PowerMock.createMock(GpxLoader.class);
-        IGpxReader iGpxFile = PowerMock.createMock(IGpxReader.class);
-        Reader reader = PowerMock.createMock(Reader.class);
-
-        EasyMock.expect(iGpxFile.getFilename()).andReturn("foo.gpx");
-        EasyMock.expect(iGpxFile.open()).andReturn(reader);
-        gpxLoader.open("foo.gpx", reader);
-        EasyMock.expect(gpxLoader.load()).andReturn(false);
-
-        PowerMock.replayAll();
-        assertEquals(false, new ImportThreadHelper(gpxLoader, null, null).processFile(iGpxFile));
-        PowerMock.verifyAll();
-    }
-
-    @Test
-    public void testHelperProcessFileLoadFileNotFound() throws XmlPullParserException, IOException {
-        GpxLoader gpxLoader = PowerMock.createMock(GpxLoader.class);
-        IGpxReader iGpxFile = PowerMock.createMock(IGpxReader.class);
-        Reader reader = PowerMock.createMock(Reader.class);
-        Throwable e = (Throwable)PowerMock.createMock(FileNotFoundException.class);
-        ErrorDisplayer errorDisplayer = PowerMock.createMock(ErrorDisplayer.class);
-
-        EasyMock.expect(iGpxFile.getFilename()).andReturn("foo.gpx");
-        EasyMock.expect(iGpxFile.open()).andReturn(reader);
-        gpxLoader.open("foo.gpx", reader);
-        expectLastCall().andThrow(e);
-        expect(e.fillInStackTrace()).andReturn(e);
-        errorDisplayer.displayError(R.string.error_opening_file, "foo.gpx");
-
-        PowerMock.replayAll();
-        assertEquals(false, new ImportThreadHelper(gpxLoader, null, errorDisplayer)
-                .processFile(iGpxFile));
-        PowerMock.verifyAll();
-    }
-
-    @Test
-    public void testHelperProcessFileLoadRandomException() throws XmlPullParserException,
-            IOException {
-        GpxLoader gpxLoader = PowerMock.createMock(GpxLoader.class);
-        IGpxReader iGpxFile = PowerMock.createMock(IGpxReader.class);
-        Reader reader = PowerMock.createMock(Reader.class);
-        Exception e = PowerMock.createMock(RuntimeException.class);
-        ErrorDisplayer errorDisplayer = PowerMock.createMock(ErrorDisplayer.class);
-
-        EasyMock.expect(iGpxFile.getFilename()).andReturn("foo.gpx");
-        EasyMock.expect(iGpxFile.open()).andReturn(reader);
-        gpxLoader.open("foo.gpx", reader);
-        expectLastCall().andThrow(e);
-        expect(e.fillInStackTrace()).andReturn(e);
-        errorDisplayer.displayErrorAndStack(e);
-
-        PowerMock.replayAll();
-        assertEquals(false, new ImportThreadHelper(gpxLoader, null, errorDisplayer)
-                .processFile(iGpxFile));
-        PowerMock.verifyAll();
-    }
 
     @Test
     public void testHelperStart() {
@@ -142,7 +91,7 @@ public class ImportThreadDelegateTest {
         gpxLoader.start();
 
         PowerMock.replayAll();
-        new ImportThreadHelper(gpxLoader, null, null).start();
+        new ImportThreadHelper(gpxLoader, null, null, null, null).start();
         PowerMock.verifyAll();
     }
 
@@ -259,6 +208,29 @@ public class ImportThreadDelegateTest {
         PowerMock.replayAll();
         new ImportThreadDelegate(gpxAndZipFiles, importThreadHelper, null).run();
         PowerMock.verifyAll();
+    }
+
+
+    @Test
+    public void testRunFileNotFound() throws FileNotFoundException, XmlPullParserException, IOException {
+        GpxAndZipFiles gpxAndZipFiles = PowerMock.createMock(GpxAndZipFiles.class);
+        ImportThreadHelper importThreadHelper = PowerMock.createMock(ImportThreadHelper.class);
+        ErrorDisplayer errorDisplayer = PowerMock.createMock(ErrorDisplayer.class);
+        final FileNotFoundException e = new FileNotFoundException("foo.gpx");
+        
+        errorDisplayer.displayError(R.string.error_opening_file, "foo.gpx");
+        importThreadHelper.cleanup();
+
+        PowerMock.replayAll();
+        ImportThreadDelegate importThreadDelegate = new ImportThreadDelegate(gpxAndZipFiles,
+                importThreadHelper, errorDisplayer) {
+            protected void tryRun() throws IOException {
+                throw e;
+            }
+        };
+        importThreadDelegate.run();
+        PowerMock.verifyAll();
+
     }
 
     @Test

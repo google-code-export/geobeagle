@@ -17,7 +17,9 @@ package com.google.code.geobeagle.ui;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.Util;
 import com.google.code.geobeagle.data.Geocache;
+import com.google.code.geobeagle.data.GeocacheFactory;
 import com.google.code.geobeagle.io.LocationSaver;
+import com.google.code.geobeagle.ui.cachelist.GeocacheListController;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -48,8 +50,11 @@ public class EditCacheActivityDelegate {
         private final EditText mLongitude;
         private final EditText mName;
         private Geocache mOriginalGeocache;
+        private final GeocacheFactory mGeocacheFactory;
 
-        public EditCache(EditText id, EditText name, EditText latitude, EditText longitude) {
+        public EditCache(GeocacheFactory geocacheFactory, EditText id, EditText name,
+                EditText latitude, EditText longitude) {
+            mGeocacheFactory = geocacheFactory;
             mId = id;
             mName = name;
             mLatitude = latitude;
@@ -57,9 +62,10 @@ public class EditCacheActivityDelegate {
         }
 
         Geocache get() {
-            return new Geocache(mId.getText(), mName.getText(), Util.parseCoordinate(mLatitude
-                    .getText()), Util.parseCoordinate(mLongitude.getText()), mOriginalGeocache
-                    .getSourceType(), mOriginalGeocache.getSourceName());
+            return mGeocacheFactory.create(mId.getText(), mName.getText(), Util
+                    .parseCoordinate(mLatitude.getText()), Util.parseCoordinate(mLongitude
+                    .getText()), mOriginalGeocache.getSourceType(), mOriginalGeocache
+                    .getSourceName());
         }
 
         void set(Geocache geocache) {
@@ -89,7 +95,7 @@ public class EditCacheActivityDelegate {
             Geocache geocache = mGeocacheView.get();
             mLocationSaver.saveLocation(geocache);
             Intent i = new Intent();
-            i.setAction(CacheListDelegate.SELECT_CACHE);
+            i.setAction(GeocacheListController.SELECT_CACHE);
             i.putExtra("geocache", geocache);
             mActivity.setResult(0, i);
             mActivity.finish();
@@ -99,11 +105,14 @@ public class EditCacheActivityDelegate {
     private final CancelButtonOnClickListener mCancelButtonOnClickListener;
     private final LocationSaver mLocationSaver;
     private final Activity mParent;
+    private final GeocacheFactory mGeocacheFactory;
 
     public EditCacheActivityDelegate(Activity parent,
-            CancelButtonOnClickListener cancelButtonOnClickListener, LocationSaver locationSaver) {
+            CancelButtonOnClickListener cancelButtonOnClickListener, LocationSaver locationSaver,
+            GeocacheFactory geocacheFactory) {
         mParent = parent;
         mCancelButtonOnClickListener = cancelButtonOnClickListener;
+        mGeocacheFactory = geocacheFactory;
         mLocationSaver = locationSaver;
     }
 
@@ -115,9 +124,9 @@ public class EditCacheActivityDelegate {
         Intent intent = mParent.getIntent();
         Geocache geocache = intent.<Geocache> getParcelableExtra("geocache");
 
-        EditCache editCache = new EditCache((EditText)mParent.findViewById(R.id.edit_id),
-                (EditText)mParent.findViewById(R.id.edit_name), (EditText)mParent
-                        .findViewById(R.id.edit_latitude), (EditText)mParent
+        EditCache editCache = new EditCache(mGeocacheFactory, (EditText)mParent
+                .findViewById(R.id.edit_id), (EditText)mParent.findViewById(R.id.edit_name),
+                (EditText)mParent.findViewById(R.id.edit_latitude), (EditText)mParent
                         .findViewById(R.id.edit_longitude));
         editCache.set(geocache);
 

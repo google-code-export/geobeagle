@@ -15,97 +15,80 @@
 package com.google.code.geobeagle.io;
 
 import static org.easymock.EasyMock.expect;
-import static org.easymock.classextension.EasyMock.createMock;
-import static org.easymock.classextension.EasyMock.replay;
-import static org.easymock.classextension.EasyMock.verify;
+import static org.junit.Assert.assertEquals;
 
 import com.google.code.geobeagle.io.EventHelper.XmlPathBuilder;
 import com.google.code.geobeagle.io.GpxToCacheDI.XmlPullParserWrapper;
 
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.powermock.api.easymock.PowerMock;
+import org.powermock.modules.junit4.PowerMockRunner;
 import org.xmlpull.v1.XmlPullParser;
 
 import java.io.IOException;
 import java.text.ParseException;
 
-import junit.framework.TestCase;
+@RunWith(PowerMockRunner.class)
+public class EventHelperTest {
 
-public class EventHelperTest extends TestCase {
-
+    @Test
     public void testEventHelperEnd() throws IOException, ParseException {
-        XmlPathBuilder xmlPathBuilder = createMock(XmlPathBuilder.class);
-        GpxEventHandler gpxEventHandler = createMock(GpxEventHandler.class);
-        XmlPullParserWrapper xmlPullParser = createMock(XmlPullParserWrapper.class);
+        XmlPathBuilder xmlPathBuilder = PowerMock.createMock(XmlPathBuilder.class);
+        EventHandlerGpx eventHandlerGpx = PowerMock.createMock(EventHandlerGpx.class);
+        XmlPullParserWrapper xmlPullParser = PowerMock.createMock(XmlPullParserWrapper.class);
 
         expect(xmlPathBuilder.getPath()).andReturn("/path");
-        gpxEventHandler.endTag("/path");
+        eventHandlerGpx.endTag("/path");
         expect(xmlPullParser.getName()).andReturn("name");
         xmlPathBuilder.endTag("name");
 
-        replay(xmlPathBuilder);
-        replay(gpxEventHandler);
-        replay(xmlPullParser);
-        EventHelper eventHelper = new EventHelper(xmlPathBuilder, gpxEventHandler, xmlPullParser);
+        PowerMock.replayAll();
+        EventHelper eventHelper = new EventHelper(xmlPathBuilder, eventHandlerGpx, xmlPullParser);
         eventHelper.handleEvent(XmlPullParser.END_TAG);
-        verify(xmlPathBuilder);
-        verify(gpxEventHandler);
-        verify(xmlPullParser);
+        PowerMock.verifyAll();
     }
 
-    public void testEventHelperReset() {
-        XmlPathBuilder xmlPathBuilder = createMock(XmlPathBuilder.class);
-
-        xmlPathBuilder.reset();
-
-        replay(xmlPathBuilder);
-        EventHelper eventHelper = new EventHelper(xmlPathBuilder, null, null);
-        eventHelper.reset();
-        verify(xmlPathBuilder);
-    }
-
+    @Test
     public void testEventHelperStart() throws IOException, ParseException {
-        XmlPathBuilder xmlPathBuilder = createMock(XmlPathBuilder.class);
-        GpxEventHandler gpxEventHandler = createMock(GpxEventHandler.class);
-        XmlPullParserWrapper xmlPullParser = createMock(XmlPullParserWrapper.class);
+        XmlPathBuilder xmlPathBuilder = PowerMock.createMock(XmlPathBuilder.class);
+        EventHandlerGpx eventHandlerGpx = PowerMock.createMock(EventHandlerGpx.class);
+        XmlPullParserWrapper xmlPullParser = PowerMock.createMock(XmlPullParserWrapper.class);
 
         expect(xmlPullParser.getName()).andReturn("some tag");
         xmlPathBuilder.startTag("some tag");
         expect(xmlPathBuilder.getPath()).andReturn("/foo");
-        gpxEventHandler.startTag("/foo", xmlPullParser);
+        eventHandlerGpx.startTag("/foo", xmlPullParser);
 
-        replay(xmlPathBuilder);
-        replay(gpxEventHandler);
-        replay(xmlPullParser);
-        EventHelper eventHelper = new EventHelper(xmlPathBuilder, gpxEventHandler, xmlPullParser);
+        PowerMock.replayAll();
+        EventHelper eventHelper = new EventHelper(xmlPathBuilder, eventHandlerGpx, xmlPullParser);
         eventHelper.handleEvent(XmlPullParser.START_TAG);
-        verify(xmlPathBuilder);
-        verify(gpxEventHandler);
-        verify(xmlPullParser);
+        PowerMock.verifyAll();
     }
 
+    @Test
     public void testEventHelperText() throws IOException, ParseException {
-        XmlPathBuilder xmlPathBuilder = createMock(XmlPathBuilder.class);
-        GpxEventHandler gpxEventHandler = createMock(GpxEventHandler.class);
-        XmlPullParserWrapper xmlPullParser = createMock(XmlPullParserWrapper.class);
+        XmlPathBuilder xmlPathBuilder = PowerMock.createMock(XmlPathBuilder.class);
+        EventHandlerGpx eventHandlerGpx = PowerMock.createMock(EventHandlerGpx.class);
+        XmlPullParserWrapper xmlPullParser = PowerMock.createMock(XmlPullParserWrapper.class);
 
         expect(xmlPathBuilder.getPath()).andReturn("/path");
         expect(xmlPullParser.getText()).andReturn("text");
-        expect(gpxEventHandler.text("/path", "text")).andReturn(true);
+        expect(eventHandlerGpx.text("/path", "text")).andReturn(true);
 
-        replay(xmlPathBuilder);
-        replay(gpxEventHandler);
-        replay(xmlPullParser);
-        EventHelper eventHelper = new EventHelper(xmlPathBuilder, gpxEventHandler, xmlPullParser);
+        PowerMock.replayAll();
+        EventHelper eventHelper = new EventHelper(xmlPathBuilder, eventHandlerGpx, xmlPullParser);
         eventHelper.handleEvent(XmlPullParser.TEXT);
-        verify(xmlPathBuilder);
-        verify(gpxEventHandler);
-        verify(xmlPullParser);
+        PowerMock.verifyAll();
     }
 
+    @Test
     public void testXmlPathBuilderEmpty() {
         XmlPathBuilder xmlPathBuilder = new XmlPathBuilder();
         assertEquals("", xmlPathBuilder.getPath());
     }
 
+    @Test
     public void testXmlPathBuilderOne() {
         XmlPathBuilder xmlPathBuilder = new XmlPathBuilder();
         xmlPathBuilder.startTag("test");
@@ -114,13 +97,7 @@ public class EventHelperTest extends TestCase {
         assertEquals("", xmlPathBuilder.getPath());
     }
 
-    public void testXmlPathBuilderReset() {
-        XmlPathBuilder xmlPathBuilder = new XmlPathBuilder();
-        xmlPathBuilder.startTag("hello");
-        xmlPathBuilder.reset();
-        assertEquals("", xmlPathBuilder.getPath());
-    }
-
+    @Test
     public void testXmlPathBuilderTwo() {
         XmlPathBuilder xmlPathBuilder = new XmlPathBuilder();
 

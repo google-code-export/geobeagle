@@ -15,64 +15,69 @@
 package com.google.code.geobeagle.intents;
 
 import static org.easymock.EasyMock.expect;
-import static org.easymock.classextension.EasyMock.createMock;
-import static org.easymock.classextension.EasyMock.replay;
-import static org.easymock.classextension.EasyMock.verify;
 
+import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.ResourceProvider;
 import com.google.code.geobeagle.ui.ContentSelector;
-import com.google.code.geobeagle.ui.GetCoordsToast;
 import com.google.code.geobeagle.ui.MyLocationProvider;
+
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.powermock.api.easymock.PowerMock;
+import org.powermock.modules.junit4.PowerMockRunner;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.location.Location;
+import android.widget.Toast;
 
-import junit.framework.TestCase;
+import java.util.Locale;
 
-public class IntentStarterLocationTest extends TestCase {
+@RunWith(PowerMockRunner.class)
+public class IntentStarterLocationTest {
 
+    @Test
     public void testStartIntent() {
-        Activity activity = createMock(Activity.class);
-        MyLocationProvider myLocationProvider = createMock(MyLocationProvider.class);
-        Location location = createMock(Location.class);
-        ResourceProvider resourceProvider = createMock(ResourceProvider.class);
-        GetCoordsToast getCoordsToast = createMock(GetCoordsToast.class);
-        IntentFactory intentFactory = createMock(IntentFactory.class);
-        Intent intent = createMock(Intent.class);
-        ContentSelector contentSelector = createMock(ContentSelector.class);
+        Activity activity = PowerMock.createMock(Activity.class);
+        MyLocationProvider myLocationProvider = PowerMock.createMock(MyLocationProvider.class);
+        Location location = PowerMock.createMock(Location.class);
+        ResourceProvider resourceProvider = PowerMock.createMock(ResourceProvider.class);
+        Toast getCoordsToast = PowerMock.createMock(Toast.class);
+        IntentFactory intentFactory = PowerMock.createMock(IntentFactory.class);
+        Intent intent = PowerMock.createMock(Intent.class);
+        ContentSelector contentSelector = PowerMock.createMock(ContentSelector.class);
 
+        // Make sure this works even if decimal point symbol is "," and not ".".
+        Locale.setDefault(Locale.GERMANY);
         getCoordsToast.show();
         expect(myLocationProvider.getLocation()).andReturn(location);
         expect(location.getLatitude()).andReturn(123.45);
         expect(location.getLongitude()).andReturn(37.89);
         expect(contentSelector.getIndex()).andReturn(0);
-        expect(resourceProvider.getStringArray(27)).andReturn(
-                new String[] {
-                        "http://www.geocaching.com/nearest.aspx?lat=%1$.5f&amp;lng=%2$.5f",
-                        "http://www.atlasquest.com/results.html?gTypeId=2;gSort=5;gCoord=%1$.5f,%2$.5f"
-                });
+        expect(resourceProvider.getStringArray(R.id.nearest_objects)).andReturn(new String[] {
+            "http://www.geocaching.com/nearest.aspx?lat=%1$.5f&amp;lng=%2$.5f",
+        });
         activity.startActivity(intent);
         expect(
                 intentFactory.createIntent(Intent.ACTION_VIEW,
                         "http://www.geocaching.com/nearest.aspx?lat=123.45000&amp;lng=37.89000"))
                 .andReturn(intent);
 
-        replay(activity);
-        replay(resourceProvider);
-        replay(intentFactory);
-        replay(myLocationProvider);
-        replay(location);
-        replay(getCoordsToast);
-        IntentStarterLocation intentStarterLocation = new IntentStarterLocation(activity,
-                resourceProvider, intentFactory, myLocationProvider, contentSelector, 27,
-                getCoordsToast);
-        intentStarterLocation.startIntent();
-        verify(activity);
-        verify(resourceProvider);
-        verify(intentFactory);
-        verify(myLocationProvider);
-        verify(location);
-        verify(getCoordsToast);
+        PowerMock.replayAll();
+        new IntentStarterLocation(activity, resourceProvider, intentFactory, myLocationProvider,
+                contentSelector, R.id.nearest_objects, getCoordsToast).startIntent();
+        PowerMock.verifyAll();
+    }
+
+    @Test
+    public void testStartIntentNoLocation() {
+        MyLocationProvider myLocationProvider = PowerMock.createMock(MyLocationProvider.class);
+
+        expect(myLocationProvider.getLocation()).andReturn(null);
+
+        PowerMock.replayAll();
+        new IntentStarterLocation(null, null, null, myLocationProvider, null, 0, null)
+                .startIntent();
+        PowerMock.verifyAll();
     }
 }

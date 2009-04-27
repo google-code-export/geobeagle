@@ -28,11 +28,7 @@ public class GpxZipInputStream {
     }
 
     ZipEntry getNextEntry() throws IOException {
-        mNextEntry = null;
         mNextEntry = mZipInputStream.getNextEntry();
-        while (mNextEntry != null && mNextEntry.getName().endsWith("-wpts.gpx")) {
-            mNextEntry = mZipInputStream.getNextEntry();
-        }
         return mNextEntry;
     }
 

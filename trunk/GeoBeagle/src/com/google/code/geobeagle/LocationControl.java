@@ -46,7 +46,6 @@ public class LocationControl {
     }
 
     private final LocationChooser mLocationChooser;
-
     private final LocationManager mLocationManager;
 
     LocationControl(LocationManager locationManager, LocationChooser locationChooser) {
@@ -60,9 +59,10 @@ public class LocationControl {
      * com.android.geobrowse.GpsControlI#getLocation(android.content.Context)
      */
     public Location getLocation() {
-        return mLocationChooser.choose(mLocationManager
+        final Location choose = mLocationChooser.choose(mLocationManager
                 .getLastKnownLocation(LocationManager.GPS_PROVIDER), mLocationManager
                 .getLastKnownLocation(LocationManager.NETWORK_PROVIDER));
+//        choose.setLatitude(choose.getLatitude() + .1 * Math.random());
+        return choose;
     }
-
 }

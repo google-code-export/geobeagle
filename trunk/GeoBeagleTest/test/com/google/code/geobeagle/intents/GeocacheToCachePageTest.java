@@ -15,35 +15,34 @@
 package com.google.code.geobeagle.intents;
 
 import static org.easymock.EasyMock.expect;
-import static org.easymock.classextension.EasyMock.createMock;
-import static org.easymock.classextension.EasyMock.replay;
-import static org.easymock.classextension.EasyMock.verify;
 
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.ResourceProvider;
 import com.google.code.geobeagle.data.Geocache;
-import com.google.code.geobeagle.data.Geocache.Provider;
+import com.google.code.geobeagle.data.GeocacheFactory;
+
+import org.junit.runner.RunWith;
+import org.powermock.api.easymock.PowerMock;
+import org.powermock.modules.junit4.PowerMockRunner;
 
 import junit.framework.TestCase;
 
+@RunWith(PowerMockRunner.class)
 public class GeocacheToCachePageTest extends TestCase {
 
     public void testConvert() {
-        ResourceProvider resourceProvider = createMock(ResourceProvider.class);
-        Geocache geocache = createMock(Geocache.class);
+        ResourceProvider resourceProvider = PowerMock.createMock(ResourceProvider.class);
+        Geocache geocache = PowerMock.createMock(Geocache.class);
 
         expect(geocache.getShortId()).andReturn("FOO");
-        expect(geocache.getContentProvider()).andReturn(Provider.GROUNDSPEAK);
+        expect(geocache.getContentProvider()).andReturn(GeocacheFactory.Provider.GROUNDSPEAK);
         expect(resourceProvider.getStringArray(R.array.cache_page_url)).andReturn(new String[] {
                 "", "http://coord.info/GC%1$s",
         });
 
-        replay(geocache);
-        replay(resourceProvider);
+        PowerMock.replayAll();
         GeocacheToCachePage geocacheToCachePage = new GeocacheToCachePage(resourceProvider);
         assertEquals("http://coord.info/GCFOO", geocacheToCachePage.convert(geocache));
-        verify(geocache);
-        verify(resourceProvider);
+        PowerMock.verifyAll();
     }
-
 }

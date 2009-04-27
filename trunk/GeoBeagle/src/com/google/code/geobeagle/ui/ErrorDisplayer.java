@@ -14,7 +14,6 @@
 
 package com.google.code.geobeagle.ui;
 
-import com.google.code.geobeagle.Util;
 
 import android.app.Activity;
 import android.app.AlertDialog.Builder;
@@ -65,8 +64,17 @@ public class ErrorDisplayer {
 
     public void displayErrorAndStack(String msg, Exception e) {
         mAlertDialogBuilder = new Builder(mActivity);
-        mAlertDialogBuilder.setMessage(("Error " + msg + ":" + e.toString() + "\n\n" + Util
+        mAlertDialogBuilder.setMessage(("Error " + msg + ": " + e.toString() + "\n\n" + ErrorDisplayer
                 .getStackTrace(e)));
         mActivity.runOnUiThread(new DisplayErrorRunnable());
+    }
+
+    public static String getStackTrace(Exception e) {
+        final StackTraceElement stack[] = e.getStackTrace();
+        final StringBuilder sb = new StringBuilder();
+        for (final StackTraceElement s : stack) {
+            sb.append(s.toString() + "\n");
+        }
+        return sb.toString();
     }
 }
