@@ -1,5 +1,7 @@
 #summary Release Notes for GeoBeagle versions
 
+= v0.60 =
+Puts the gps status widget into the cache list page too.
 
 = v0.50 =
 Added support for intermediate waypoint files, and loc files.  Like GPX files, LOC is a "sync", not an "import" operation--deleting the LOC file will remove the cache from Geobeagle.
