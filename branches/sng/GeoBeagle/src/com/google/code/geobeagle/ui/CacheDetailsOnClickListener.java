@@ -27,7 +27,7 @@ public class CacheDetailsOnClickListener implements View.OnClickListener {
     private final CacheDetailsLoader mCacheDetailsLoader;
     private final LayoutInflater mEnv;
     private final ErrorDisplayer mErrorDisplayer;
-    private GeoBeagle mGeoBeagle;
+    private final GeoBeagle mGeoBeagle;
 
     public CacheDetailsOnClickListener(GeoBeagle geoBeagle, Builder alertDialogBuilder,
             GeocacheViewer geocacheViewer, LayoutInflater env, CacheDetailsLoader cacheDetailsLoader,
