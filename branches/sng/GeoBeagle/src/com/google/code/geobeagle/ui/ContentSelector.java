@@ -22,7 +22,7 @@ import android.widget.Spinner;
 
 public class ContentSelector implements LifecycleManager {
 
-    private static final String CONTENT_PROVIDER = "ContentProvider";
+    static final String CONTENT_PROVIDER = "ContentProvider";
     private final SharedPreferences mPreferences;
     private final Spinner mSpinner;
 
