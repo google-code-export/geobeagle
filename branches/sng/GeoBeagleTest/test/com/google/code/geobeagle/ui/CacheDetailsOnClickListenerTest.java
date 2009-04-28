@@ -62,9 +62,22 @@ public class CacheDetailsOnClickListenerTest {
         alertDialog.show();
 
         PowerMock.replayAll();
-        CacheDetailsOnClickListener cacheDetailsOnClickListener = new CacheDetailsOnClickListener(
-                geobeagle, builder, geocacheViewer, null, env, cacheDetailsLoader);
-        cacheDetailsOnClickListener.onClick(null);
+        new CacheDetailsOnClickListener(geobeagle, builder, geocacheViewer, env, cacheDetailsLoader,
+                null).onClick(null);
+        PowerMock.verifyAll();
+    }
+
+    @Test
+    public void testOnClickError() {
+        LayoutInflater env = PowerMock.createMock(LayoutInflater.class);
+        ErrorDisplayer errorDisplayer = PowerMock.createMock(ErrorDisplayer.class);
+
+        Exception exception = new RuntimeException();
+        expect(env.inflate(R.layout.cache_details, null)).andThrow(exception);
+        errorDisplayer.displayErrorAndStack(exception);
+
+        PowerMock.replayAll();
+        new CacheDetailsOnClickListener(null, null, null, env, null, errorDisplayer).onClick(null);
         PowerMock.verifyAll();
     }
 }

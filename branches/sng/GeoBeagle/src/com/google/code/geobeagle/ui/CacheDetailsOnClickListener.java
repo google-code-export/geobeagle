@@ -7,7 +7,6 @@ package com.google.code.geobeagle.ui;
 import com.google.code.geobeagle.GeoBeagle;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.io.CacheDetailsLoader;
-import com.google.code.geobeagle.io.CacheDetailsLoader.DetailsOpener;
 
 import android.app.AlertDialog.Builder;
 import android.content.DialogInterface;
@@ -24,15 +23,6 @@ public class CacheDetailsOnClickListener implements View.OnClickListener {
         }
     }
 
-    public static CacheDetailsOnClickListener create(GeoBeagle geoBeagle,
-            Builder alertDialogBuilder, GeocacheViewer geocacheViewer,
-            ErrorDisplayer errorDisplayer, LayoutInflater layoutInflater) {
-        final DetailsOpener detailsOpener = new DetailsOpener(geoBeagle);
-        final CacheDetailsLoader cacheDetailsLoader = new CacheDetailsLoader(detailsOpener);
-        return new CacheDetailsOnClickListener(geoBeagle, alertDialogBuilder, geocacheViewer,
-                errorDisplayer, layoutInflater, cacheDetailsLoader);
-    }
-
     private final Builder mAlertDialogBuilder;
     private final CacheDetailsLoader mCacheDetailsLoader;
     private final LayoutInflater mEnv;
@@ -40,8 +30,8 @@ public class CacheDetailsOnClickListener implements View.OnClickListener {
     private GeoBeagle mGeoBeagle;
 
     public CacheDetailsOnClickListener(GeoBeagle geoBeagle, Builder alertDialogBuilder,
-            GeocacheViewer geocacheViewer, ErrorDisplayer errorDisplayer, LayoutInflater env,
-            CacheDetailsLoader cacheDetailsLoader) {
+            GeocacheViewer geocacheViewer, LayoutInflater env, CacheDetailsLoader cacheDetailsLoader,
+            ErrorDisplayer errorDisplayer) {
         mAlertDialogBuilder = alertDialogBuilder;
         mErrorDisplayer = errorDisplayer;
         mEnv = env;

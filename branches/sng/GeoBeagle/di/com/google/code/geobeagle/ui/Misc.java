@@ -15,11 +15,15 @@
 package com.google.code.geobeagle.ui;
 
 import com.google.code.geobeagle.GeoBeagle;
+import com.google.code.geobeagle.io.CacheDetailsLoader;
+import com.google.code.geobeagle.io.CacheDetailsLoader.DetailsOpener;
 import com.google.code.geobeagle.ui.WebPageAndDetailsButtonEnabler.CheckButton;
 import com.google.code.geobeagle.ui.WebPageAndDetailsButtonEnabler.CheckButtons;
 import com.google.code.geobeagle.ui.WebPageAndDetailsButtonEnabler.CheckDetailsButton;
 import com.google.code.geobeagle.ui.WebPageAndDetailsButtonEnabler.CheckWebPageButton;
 
+import android.app.AlertDialog.Builder;
+import android.view.LayoutInflater;
 import android.view.View;
 
 public class Misc {
@@ -37,5 +41,14 @@ public class Misc {
                 checkWebPageButton, checkDetailsButton
         });
         return new WebPageAndDetailsButtonEnabler(geoBeagle, checkButtons);
+    }
+
+    public static CacheDetailsOnClickListener create(GeoBeagle geoBeagle,
+            Builder alertDialogBuilder, GeocacheViewer geocacheViewer,
+            ErrorDisplayer errorDisplayer, LayoutInflater layoutInflater) {
+        final DetailsOpener detailsOpener = new DetailsOpener(geoBeagle);
+        final CacheDetailsLoader cacheDetailsLoader = new CacheDetailsLoader(detailsOpener);
+        return new CacheDetailsOnClickListener(geoBeagle, alertDialogBuilder, geocacheViewer,
+                layoutInflater, cacheDetailsLoader, errorDisplayer);
     }
 }

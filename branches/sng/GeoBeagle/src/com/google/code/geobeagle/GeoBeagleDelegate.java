@@ -17,6 +17,7 @@ package com.google.code.geobeagle;
 import com.google.code.geobeagle.ui.CacheDetailsOnClickListener;
 import com.google.code.geobeagle.ui.ErrorDisplayer;
 import com.google.code.geobeagle.ui.GeocacheViewer;
+import com.google.code.geobeagle.ui.Misc;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -34,7 +35,7 @@ public class GeoBeagleDelegate {
         final AlertDialog.Builder cacheDetailsBuilder = new AlertDialog.Builder(parent);
         final DialogInterface.OnClickListener cacheDetailsOkListener = new CacheDetailsOnClickListener.OkListener();
         final LayoutInflater layoutInflater = LayoutInflater.from(parent);
-        final CacheDetailsOnClickListener cacheDetailsOnClickListener = CacheDetailsOnClickListener
+        final CacheDetailsOnClickListener cacheDetailsOnClickListener = Misc
                 .create(parent, cacheDetailsBuilder, geocacheViewer, errorDisplayer, layoutInflater);
 
         return new GeoBeagleDelegate(parent, appLifecycleManager, cacheDetailsBuilder,
