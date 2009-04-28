@@ -15,28 +15,29 @@
 package com.google.code.geobeagle.ui.cachelist;
 
 import static org.easymock.EasyMock.expect;
-import static org.easymock.classextension.EasyMock.createMock;
-import static org.easymock.classextension.EasyMock.replay;
-import static org.easymock.classextension.EasyMock.verify;
 
 import com.google.code.geobeagle.data.Geocache;
 import com.google.code.geobeagle.data.GeocacheVector;
 import com.google.code.geobeagle.data.GeocacheVectors;
 
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.powermock.api.easymock.PowerMock;
+import org.powermock.modules.junit4.PowerMockRunner;
 
 import android.content.Context;
 import android.content.Intent;
 
+@RunWith(PowerMockRunner.class)
 public class CacheListActionsTest {
 
     @Test
     public void testActionView() {
-        Intent intent = createMock(Intent.class);
-        Context context = createMock(Context.class);
-        GeocacheVectors geocacheVectors = createMock(GeocacheVectors.class);
-        GeocacheVector geocacheVector = createMock(GeocacheVector.class);
-        Geocache geocache = createMock(Geocache.class);
+        Intent intent = PowerMock.createMock(Intent.class);
+        Context context = PowerMock.createMock(Context.class);
+        GeocacheVectors geocacheVectors = PowerMock.createMock(GeocacheVectors.class);
+        GeocacheVector geocacheVector = PowerMock.createMock(GeocacheVector.class);
+        Geocache geocache = PowerMock.createMock(Geocache.class);
 
         expect(geocacheVectors.get(34)).andReturn(geocacheVector);
         expect(geocacheVector.getGeocache()).andReturn(geocache);
@@ -44,15 +45,8 @@ public class CacheListActionsTest {
         expect(intent.putExtra("geocache", geocache)).andReturn(intent);
         context.startActivity(intent);
 
-        replay(geocacheVectors);
-        replay(geocacheVector);
-        replay(context);
-        replay(intent);
+        PowerMock.replayAll();
         new ContextActionView(geocacheVectors, context, intent).act(34);
-        verify(context);
-        verify(intent);
-        verify(geocacheVectors);
-        verify(geocacheVector);
+        PowerMock.verifyAll();
     }
-
 }
