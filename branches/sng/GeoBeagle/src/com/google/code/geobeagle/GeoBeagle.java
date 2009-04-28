@@ -73,9 +73,9 @@ public class GeoBeagle extends Activity implements LifecycleManager {
     private GeocacheFactory mGeocacheFactory;
     private GeocacheFromPreferencesFactory mGeocacheFromPreferencesFactory;
     private GeocacheViewer mGeocacheViewer;
-    private LocationControl mGpsControl;
+    private CombinedLocationListener mStatusWidgetLocationListener;
     private GpsStatusWidget mGpsStatusWidget;
-    private GeoBeagleLocationListener mLocationListener;
+    private LocationControlBuffered mLocationControlBuffered;
     private LocationSaver mLocationSaver;
     private final ResourceProvider mResourceProvider;
     private UpdateGpsWidgetRunnable mUpdateGpsWidgetRunnable;
@@ -159,8 +159,12 @@ public class GeoBeagle extends Activity implements LifecycleManager {
                     getTextView(R.id.provider), getTextView(R.id.lag), getTextView(R.id.accuracy),
                     getTextView(R.id.status), new Misc.Time(), new Location(""));
             final LocationManager locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
-            mGpsControl = new LocationControl(locationManager, new LocationChooser());
-            mLocationListener = new GeoBeagleLocationListener(mGpsControl, mGpsStatusWidget);
+            final LocationChooser locationChooser = new LocationChooser();
+            final LocationControl locationControl = new LocationControl(locationManager,
+                    locationChooser);
+            mLocationControlBuffered = new LocationControlBuffered(locationControl);
+            mStatusWidgetLocationListener = new CombinedLocationListener(
+                    mLocationControlBuffered, mGpsStatusWidget);
             mGeocacheFactory = new GeocacheFactory();
             mGeocacheFromPreferencesFactory = new GeocacheFromPreferencesFactory(mGeocacheFactory);
             final TextView gcid = (TextView)findViewById(R.id.gcid);
@@ -168,14 +172,19 @@ public class GeoBeagle extends Activity implements LifecycleManager {
             final TextView gccoords = (TextView)findViewById(R.id.gccoords);
             mGeocacheViewer = new GeocacheViewer(gcid, gcname, gccoords);
 
+            mLocationControlBuffered.onLocationChanged(null);
             setCacheClickListeners();
 
             ((Button)findViewById(R.id.go_to_list))
                     .setOnClickListener(new GeocacheListOnClickListener(this));
 
             AppLifecycleManager appLifecycleManager = new AppLifecycleManager(
-                    getPreferences(MODE_PRIVATE), new LifecycleManager[] {
-                            this, new LocationLifecycleManager(mLocationListener, locationManager),
+                    getPreferences(MODE_PRIVATE),
+                    new LifecycleManager[] {
+                            this,
+                            new LocationLifecycleManager(mStatusWidgetLocationListener,
+                                    locationManager),
+                            new LocationLifecycleManager(mLocationControlBuffered, locationManager),
                             mContentSelector
                     });
             mGeoBeagleDelegate = GeoBeagleDelegate.buildGeoBeagleDelegate(this,
@@ -225,9 +234,9 @@ public class GeoBeagle extends Activity implements LifecycleManager {
             mGeoBeagleDelegate.onResume();
             maybeGetCoordinatesFromIntent();
             mWebPageButtonEnabler.check();
-            final Location location = mGpsControl.getLocation();
+            final Location location = mLocationControlBuffered.getLocation();
             if (location != null)
-                mLocationListener.onLocationChanged(location);
+                mStatusWidgetLocationListener.onLocationChanged(location);
         } catch (final Exception e) {
             mErrorDisplayer.displayErrorAndStack(e);
         }
@@ -240,7 +249,8 @@ public class GeoBeagle extends Activity implements LifecycleManager {
     private void setCacheClickListeners() {
         IntentFactory intentFactory = new IntentFactory(new UriParser());
         Toast getCoordsToast = Toast.makeText(this, R.string.get_coords_toast, Toast.LENGTH_LONG);
-        MyLocationProvider myLocationProvider = new MyLocationProvider(mGpsControl, mErrorDisplayer);
+        MyLocationProvider myLocationProvider = new MyLocationProvider(mLocationControlBuffered,
+                mErrorDisplayer);
 
         OnCacheButtonClickListenerBuilder cacheClickListenerSetter = new OnCacheButtonClickListenerBuilder(
                 this, mErrorDisplayer);

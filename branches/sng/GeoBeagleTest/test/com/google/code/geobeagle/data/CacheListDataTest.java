@@ -14,12 +14,12 @@
 
 package com.google.code.geobeagle.data;
 
+import com.google.code.geobeagle.LocationControlBuffered;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.api.easymock.PowerMock;
 import org.powermock.modules.junit4.PowerMockRunner;
-
-import android.location.Location;
 
 import java.util.ArrayList;
 
@@ -29,15 +29,16 @@ public class CacheListDataTest {
     @Test
     public void testAdd() {
         GeocacheVectors geocacheVectors = PowerMock.createMock(GeocacheVectors.class);
-        Location here = PowerMock.createMock(Location.class);
+        LocationControlBuffered locationControlBuffered = PowerMock
+                .createMock(LocationControlBuffered.class);
 
         ArrayList<Geocache> geocaches = new ArrayList<Geocache>(0);
         geocacheVectors.reset(0);
-        geocacheVectors.addLocations(geocaches, here);
+        geocacheVectors.addLocations(geocaches, locationControlBuffered);
         geocacheVectors.sort();
 
         PowerMock.replayAll();
-        new CacheListData(geocacheVectors).add(geocaches, here);
+        new CacheListData(geocacheVectors).add(geocaches, locationControlBuffered);
         PowerMock.verifyAll();
     }
 }

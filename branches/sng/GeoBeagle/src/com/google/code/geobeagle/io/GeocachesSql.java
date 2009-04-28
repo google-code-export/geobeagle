@@ -14,7 +14,7 @@
 
 package com.google.code.geobeagle.io;
 
-import com.google.code.geobeagle.LocationControl;
+import com.google.code.geobeagle.LocationControlBuffered;
 import com.google.code.geobeagle.data.Geocache;
 import com.google.code.geobeagle.data.Geocaches;
 import com.google.code.geobeagle.io.CacheReader.CacheReaderCursor;
@@ -24,12 +24,13 @@ import java.util.ArrayList;
 public class GeocachesSql {
     private final CacheReader mCacheReader;
     private final Geocaches mGeocaches;
-    private final LocationControl mLocationControl;
+    private final LocationControlBuffered mLocationControlBuffered;
 
-    GeocachesSql(CacheReader cacheReader, Geocaches geocaches, LocationControl locationControl) {
+    GeocachesSql(CacheReader cacheReader, Geocaches geocaches,
+            LocationControlBuffered locationControlBuffered) {
         mCacheReader = cacheReader;
         mGeocaches = geocaches;
-        mLocationControl = locationControl;
+        mLocationControlBuffered = locationControlBuffered;
     }
 
     public int getCount() {
@@ -41,7 +42,7 @@ public class GeocachesSql {
     }
 
     public void loadNearestCaches() {
-        CacheReaderCursor cursor = mCacheReader.open(mLocationControl.getLocation());
+        CacheReaderCursor cursor = mCacheReader.open(mLocationControlBuffered.getLocation());
         mGeocaches.clear();
         if (cursor != null) {
             read(cursor);

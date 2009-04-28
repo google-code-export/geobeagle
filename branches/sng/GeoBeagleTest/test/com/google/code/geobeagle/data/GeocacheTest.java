@@ -27,14 +27,41 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import android.content.SharedPreferences.Editor;
+import android.location.Location;
 import android.os.Bundle;
 import android.os.Parcel;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest( {
-        Parcel.class, Bundle.class, Geocache.class, System.class
+        Parcel.class, Bundle.class, Geocache.class, Location.class, System.class
 })
 public class GeocacheTest {
+
+    @Test
+    public void testCalculateDistance() {
+        PowerMock.mockStatic(Location.class);
+        Location here = PowerMock.createMock(Location.class);
+
+        float[] results = new float[1];
+
+        Location.distanceBetween(EasyMock.eq(38.0), EasyMock.eq(123.0), EasyMock.eq(37.0), EasyMock
+                .eq(122.0), EasyMock.aryEq(results));
+        EasyMock.expect(here.getLatitude()).andReturn(38.0);
+        EasyMock.expect(here.getLongitude()).andReturn(123.0);
+
+        PowerMock.replayAll();
+        Geocache geocache = new Geocache(null, null, 37, 122, null, null);
+        assertEquals(0.0f, geocache.calculateDistance(here), 0);
+        PowerMock.verifyAll();
+    }
+
+    @Test
+    public void testCalculateDistanceNullHere() {
+        PowerMock.replayAll();
+        Geocache geocache = new Geocache(null, null, 37, 122, null, null);
+        assertEquals(-1f, geocache.calculateDistance(null), 0);
+        PowerMock.verifyAll();
+    }
 
     @Test
     public void testDescribeContents() {

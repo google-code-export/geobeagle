@@ -18,6 +18,7 @@ import com.google.code.geobeagle.data.GeocacheFactory.Provider;
 import com.google.code.geobeagle.data.GeocacheFactory.Source;
 
 import android.content.SharedPreferences.Editor;
+import android.location.Location;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -128,5 +129,16 @@ public class Geocache implements Parcelable {
         editor.putFloat(LONGITUDE, (float)mLongitude);
         editor.putInt(SOURCE_TYPE, mSourceType.toInt());
         editor.putString(SOURCE_NAME, mSourceName);
+    }
+
+    float calculateDistance(Location here) {
+        if (here != null) {
+            float[] results = new float[1];
+            Location.distanceBetween(here.getLatitude(), here.getLongitude(), getLatitude(),
+                    getLongitude(), results);
+
+            return results[0];
+        }
+        return -1;
     }
 }

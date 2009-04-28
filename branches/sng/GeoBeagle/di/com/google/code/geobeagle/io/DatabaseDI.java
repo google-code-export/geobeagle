@@ -14,14 +14,9 @@
 
 package com.google.code.geobeagle.io;
 
-import com.google.code.geobeagle.LocationControl;
+import com.google.code.geobeagle.LocationControlBuffered;
 import com.google.code.geobeagle.data.GeocacheFactory;
 import com.google.code.geobeagle.data.Geocaches;
-import com.google.code.geobeagle.io.CacheReader;
-import com.google.code.geobeagle.io.CacheWriter;
-import com.google.code.geobeagle.io.Database;
-import com.google.code.geobeagle.io.DbToGeocacheAdapter;
-import com.google.code.geobeagle.io.GeocachesSql;
 import com.google.code.geobeagle.io.CacheReader.CacheReaderCursor;
 import com.google.code.geobeagle.io.CacheReader.WhereFactory;
 import com.google.code.geobeagle.io.Database.ISQLiteDatabase;
@@ -127,7 +122,7 @@ public class DatabaseDI {
         return new Database(sqliteOpenHelper);
     }
 
-    public static GeocachesSql create(LocationControl locationControl, SQLiteWrapper sqliteWrapper) {
+    public static GeocachesSql create(LocationControlBuffered locationControl, SQLiteWrapper sqliteWrapper) {
         final Geocaches geocaches = new Geocaches();
         final CacheReader cacheReader = createCacheReader(sqliteWrapper);
         return new GeocachesSql(cacheReader, geocaches, locationControl);

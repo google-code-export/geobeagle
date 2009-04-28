@@ -14,6 +14,8 @@
 
 package com.google.code.geobeagle.data;
 
+import com.google.code.geobeagle.LocationControlBuffered;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -36,17 +38,18 @@ public class GeocacheVector implements IGeocacheVector {
     }
 
     private final Geocache mGeocache;
-    private final float mDistance;
+    private final LocationControlBuffered mLocationControlBuffered;
     private final DistanceFormatter mDistanceFormatter;
 
-    GeocacheVector(Geocache geocache, float distance, DistanceFormatter distanceFormatter) {
+    GeocacheVector(Geocache geocache, LocationControlBuffered locationControlBuffered,
+            DistanceFormatter distanceFormatter) {
         mGeocache = geocache;
-        mDistance = distance;
+        mLocationControlBuffered = locationControlBuffered;
         mDistanceFormatter = distanceFormatter;
     }
 
     public float getDistance() {
-        return mDistance;
+        return mGeocache.calculateDistance(mLocationControlBuffered.getLocation());
     }
 
     public CharSequence getId() {
@@ -54,7 +57,7 @@ public class GeocacheVector implements IGeocacheVector {
     }
 
     public CharSequence getFormattedDistance() {
-        return mDistanceFormatter.format(mDistance);
+        return mDistanceFormatter.format(getDistance());
     }
 
     public CharSequence getIdAndName() {

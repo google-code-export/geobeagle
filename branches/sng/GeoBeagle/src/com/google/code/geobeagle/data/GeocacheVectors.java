@@ -27,9 +27,8 @@
 
 package com.google.code.geobeagle.data;
 
+import com.google.code.geobeagle.LocationControlBuffered;
 import com.google.code.geobeagle.data.GeocacheVector.LocationComparator;
-
-import android.location.Location;
 
 import java.util.ArrayList;
 
@@ -49,9 +48,10 @@ public class GeocacheVectors {
         mGeocacheVectorsList.add(0, destinationVector);
     }
 
-    public void addLocations(ArrayList<Geocache> geocaches, Location here) {
+    public void addLocations(ArrayList<Geocache> geocaches,
+            LocationControlBuffered locationControlBuffered) {
         for (Geocache geocache : geocaches) {
-            add(mGeocacheVectorFactory.create(geocache, here));
+            add(mGeocacheVectorFactory.create(geocache, locationControlBuffered));
         }
     }
 

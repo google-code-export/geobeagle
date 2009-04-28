@@ -28,32 +28,32 @@ import junit.framework.TestCase;
 
 public class MyLocationProviderTest extends TestCase {
     public void test() {
-        LocationControl locationControl = createMock(LocationControl.class);
+        LocationControlBuffered locationControlBuffered = createMock(LocationControlBuffered.class);
         ErrorDisplayer errorDisplayer = createMock(ErrorDisplayer.class);
         Location location = createMock(Location.class);
 
-        expect(locationControl.getLocation()).andReturn(location);
+        expect(locationControlBuffered.getLocation()).andReturn(location);
 
-        replay(locationControl);
-        MyLocationProvider myLocationProvider = new MyLocationProvider(locationControl,
+        replay(locationControlBuffered);
+        MyLocationProvider myLocationProvider = new MyLocationProvider(locationControlBuffered,
                 errorDisplayer);
         assertEquals(location, myLocationProvider.getLocation());
-        verify(locationControl);
+        verify(locationControlBuffered);
     }
 
     public void testNullLocation() {
-        LocationControl locationControl = createMock(LocationControl.class);
+        LocationControlBuffered locationControlBuffered = createMock(LocationControlBuffered.class);
         ErrorDisplayer errorDisplayer = createMock(ErrorDisplayer.class);
-        expect(locationControl.getLocation()).andReturn(null);
+        expect(locationControlBuffered.getLocation()).andReturn(null);
 
         errorDisplayer.displayError(R.string.error_cant_get_location);
 
-        replay(locationControl);
+        replay(locationControlBuffered);
         replay(errorDisplayer);
-        MyLocationProvider myLocationProvider = new MyLocationProvider(locationControl,
+        MyLocationProvider myLocationProvider = new MyLocationProvider(locationControlBuffered,
                 errorDisplayer);
         assertEquals(null, myLocationProvider.getLocation());
-        verify(locationControl);
+        verify(locationControlBuffered);
         verify(errorDisplayer);
     }
 }

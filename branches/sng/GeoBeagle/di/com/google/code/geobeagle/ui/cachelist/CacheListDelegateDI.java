@@ -14,9 +14,10 @@
 
 package com.google.code.geobeagle.ui.cachelist;
 
+import com.google.code.geobeagle.CombinedLocationManager;
 import com.google.code.geobeagle.GeoBeagle;
-import com.google.code.geobeagle.GeoBeagleLocationListener;
-import com.google.code.geobeagle.LocationControl;
+import com.google.code.geobeagle.CombinedLocationListener;
+import com.google.code.geobeagle.LocationControlBuffered;
 import com.google.code.geobeagle.LocationControlDi;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.ResourceProvider;
@@ -43,6 +44,7 @@ import com.google.code.geobeagle.ui.UpdateGpsWidgetRunnableDI;
 import com.google.code.geobeagle.ui.GpsStatusWidget.MeterFormatter;
 import com.google.code.geobeagle.ui.GpsStatusWidget.MeterView;
 import com.google.code.geobeagle.ui.GpsStatusWidget.UpdateGpsWidgetRunnable;
+import com.google.code.geobeagle.ui.cachelist.GeocacheListPresenter.BaseAdapterLocationListener;
 
 import android.app.ListActivity;
 import android.content.Context;
@@ -65,12 +67,16 @@ public class CacheListDelegateDI {
         final Database database = DatabaseDI.create(parent);
         final LocationManager locationManager = (LocationManager)parent
                 .getSystemService(Context.LOCATION_SERVICE);
-        final LocationControl locationControl = LocationControlDi.create(locationManager);
+        final CombinedLocationManager combinedLocationManager = new CombinedLocationManager(
+                locationManager);
+        final LocationControlBuffered locationControlBuffered = LocationControlDi
+                .create(locationManager);
         final GeocacheFactory geocacheFactory = new GeocacheFactory();
         final GeocacheFromMyLocationFactory geocacheFromMyLocationFactory = new GeocacheFromMyLocationFactory(
-                geocacheFactory, locationControl);
+                geocacheFactory, locationControlBuffered);
         final SQLiteWrapper sqliteWrapper = new SQLiteWrapper(null);
-        final GeocachesSql locationBookmarks = DatabaseDI.create(locationControl, sqliteWrapper);
+        final GeocachesSql locationBookmarks = DatabaseDI.create(locationControlBuffered,
+                sqliteWrapper);
         final CacheWriter cacheWriter = DatabaseDI.createCacheWriter(sqliteWrapper);
         final DistanceFormatter distanceFormatter = new DistanceFormatter();
         final LocationSaver locationSaver = new LocationSaver(database, sqliteWrapper, cacheWriter);
@@ -95,8 +101,8 @@ public class CacheListDelegateDI {
                         new MeterFormatter()), getTextView(gpsWidgetView, R.id.provider),
                 getTextView(gpsWidgetView, R.id.lag), getTextView(gpsWidgetView, R.id.accuracy),
                 getTextView(gpsWidgetView, R.id.status), new Misc.Time(), new Location(""));
-        final GeoBeagleLocationListener locationListener = new GeoBeagleLocationListener(
-                locationControl, gpsStatusWidget);
+        final CombinedLocationListener gpsStatusWidgetLocationListener = new CombinedLocationListener(
+                locationControlBuffered, gpsStatusWidget);
         final UpdateGpsWidgetRunnable updateGpsWidgetRunnable = UpdateGpsWidgetRunnableDI
                 .create(gpsStatusWidget);
         final ContextAction contextActions[] = CacheListDelegateDI.createContextActions(parent,
@@ -104,10 +110,13 @@ public class CacheListDelegateDI {
                 errorDisplayer, geocacheListAdapter);
 
         final Handler handler = new Handler();
+        final BaseAdapterLocationListener baseAdapterLocationListener = new BaseAdapterLocationListener(
+                geocacheListAdapter);
         final GeocacheListPresenter geocacheListPresenter = new GeocacheListPresenter(
-                locationManager, locationControl, locationListener, gpsWidgetView,
-                updateGpsWidgetRunnable, locationBookmarks, geocacheVectors, geocacheListAdapter,
-                cacheListData, parent, handler, errorDisplayer, sqliteWrapper, database);
+                combinedLocationManager, locationControlBuffered, gpsStatusWidgetLocationListener,
+                gpsWidgetView, updateGpsWidgetRunnable, locationBookmarks, geocacheVectors,
+                geocacheListAdapter, baseAdapterLocationListener, cacheListData, parent, handler,
+                errorDisplayer, sqliteWrapper, database);
         final MenuActionSyncGpx menuActionSyncGpx = new MenuActionSyncGpx(gpxImporter,
                 geocacheListPresenter);
         final MenuActionMyLocation menuActionMyLocation = new MenuActionMyLocation(locationSaver,

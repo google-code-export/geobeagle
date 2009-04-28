@@ -21,20 +21,20 @@ import android.os.Bundle;
 /*
  * Listener for the Location control.
  */
-public class GeoBeagleLocationListener implements LocationListener {
-    private final LocationControl mLocationControl;
+public class CombinedLocationListener implements LocationListener {
+    private final LocationControlBuffered mLocationControlBuffered;
     private LocationListener mLocationListener;
 
-    public GeoBeagleLocationListener(LocationControl locationControl,
+    public CombinedLocationListener(LocationControlBuffered locationControlBuffered,
             LocationListener locationListener) {
         mLocationListener = locationListener;
-        mLocationControl = locationControl;
+        mLocationControlBuffered = locationControlBuffered;
     }
 
     public void onLocationChanged(Location location) {
         // Ask the location control to pick the most accurate location (might
         // not be this one).
-        mLocationListener.onLocationChanged(mLocationControl.getLocation());
+        mLocationListener.onLocationChanged(mLocationControlBuffered.getLocation());
     }
 
     public void onProviderDisabled(String provider) {

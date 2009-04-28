@@ -90,6 +90,7 @@ public class CacheReaderTest {
     @Test
     public void testGetWhere() {
         Location location = PowerMock.createMock(Location.class);
+        
         expect(location.getLatitude()).andReturn(90.0);
         expect(location.getLongitude()).andReturn(180.0);
 

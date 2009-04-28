@@ -1,17 +1,17 @@
 
 package com.google.code.geobeagle.data;
 
-import com.google.code.geobeagle.LocationControl;
+import com.google.code.geobeagle.LocationControlBuffered;
 import com.google.code.geobeagle.data.GeocacheFactory.Source;
 
 import android.location.Location;
 
 public class GeocacheFromMyLocationFactory {
-    private final LocationControl mLocationControl;
+    private final LocationControlBuffered mLocationControl;
     private final GeocacheFactory mGeocacheFactory;
 
     public GeocacheFromMyLocationFactory(GeocacheFactory geocacheFactory,
-            LocationControl locationControl) {
+            LocationControlBuffered locationControl) {
         mGeocacheFactory = geocacheFactory;
         mLocationControl = locationControl;
     }

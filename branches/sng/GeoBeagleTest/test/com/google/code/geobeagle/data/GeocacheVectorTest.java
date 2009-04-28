@@ -15,11 +15,11 @@
 package com.google.code.geobeagle.data;
 
 import static org.easymock.EasyMock.expect;
-import static org.easymock.classextension.EasyMock.createMock;
 import static org.easymock.classextension.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.verify;
 import static org.junit.Assert.assertEquals;
 
+import com.google.code.geobeagle.LocationControlBuffered;
 import com.google.code.geobeagle.data.GeocacheVector.LocationComparator;
 
 import org.junit.Test;
@@ -27,6 +27,8 @@ import org.junit.runner.RunWith;
 import org.powermock.api.easymock.PowerMock;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
+
+import android.location.Location;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -36,12 +38,12 @@ import java.util.Collections;
         LocationComparator.class, GeocacheVectorTest.class
 })
 public class GeocacheVectorTest {
-    private final Geocache geocache = createMock(Geocache.class);
+    private final Geocache geocache = PowerMock.createMock(Geocache.class);
 
     @Test
     public void testCompare() {
-        IGeocacheVector d1 = createMock(IGeocacheVector.class);
-        IGeocacheVector d2 = createMock(IGeocacheVector.class);
+        IGeocacheVector d1 = PowerMock.createMock(IGeocacheVector.class);
+        IGeocacheVector d2 = PowerMock.createMock(IGeocacheVector.class);
 
         expect(d1.getDistance()).andReturn(0f).anyTimes();
         expect(d2.getDistance()).andReturn(1f).anyTimes();
@@ -71,45 +73,62 @@ public class GeocacheVectorTest {
 
     @Test
     public void testGetDistance() {
-        assertEquals(3.5f, new GeocacheVector(geocache, 3.5f, null).getDistance(), 0);
+        LocationControlBuffered locationControlBuffered = PowerMock
+                .createMock(LocationControlBuffered.class);
+        Location location = PowerMock.createMock(Location.class);
+
+        expect(locationControlBuffered.getLocation()).andReturn(location);
+        expect(geocache.calculateDistance(location)).andReturn(3.5f);
+
+        PowerMock.replayAll();
+        assertEquals(3.5f, new GeocacheVector(geocache, locationControlBuffered, null)
+                .getDistance(), 0);
+        PowerMock.verifyAll();
     }
 
     @Test
     public void testGetFormattedDistance() {
-        DistanceFormatter distanceFormatter = createMock(DistanceFormatter.class);
+        DistanceFormatter distanceFormatter = PowerMock.createMock(DistanceFormatter.class);
+        LocationControlBuffered locationControlBuffered = PowerMock
+                .createMock(LocationControlBuffered.class);
+        Location location = PowerMock.createMock(Location.class);
+
+        expect(locationControlBuffered.getLocation()).andReturn(location);
+        expect(geocache.calculateDistance(location)).andReturn(3.5f);
         expect(distanceFormatter.format(3.5f)).andReturn("3.5m");
 
-        replay(distanceFormatter);
-        GeocacheVector geocacheVector = new GeocacheVector(geocache, 3.5f, distanceFormatter);
+        PowerMock.replayAll();
+        GeocacheVector geocacheVector = new GeocacheVector(geocache, locationControlBuffered,
+                distanceFormatter);
         assertEquals("3.5m", geocacheVector.getFormattedDistance());
-        verify(distanceFormatter);
+        PowerMock.verifyAll();
     }
 
     @Test
     public void testGetGeocache() {
-        replay(geocache);
-        GeocacheVector geocacheVector = new GeocacheVector(geocache, 3.5f, null);
+        PowerMock.replayAll();
+        GeocacheVector geocacheVector = new GeocacheVector(geocache, null, null);
         assertEquals(geocache, geocacheVector.getGeocache());
-        verify(geocache);
+        PowerMock.verifyAll();
     }
 
     @Test
     public void testGetId() {
         expect(geocache.getId()).andReturn("a geocache");
 
-        replay(geocache);
-        GeocacheVector geocacheVector = new GeocacheVector(geocache, 3.5f, null);
+        PowerMock.replayAll();
+        GeocacheVector geocacheVector = new GeocacheVector(geocache, null, null);
         assertEquals("a geocache", geocacheVector.getId());
-        verify(geocache);
+        PowerMock.verifyAll();
     }
 
     @Test
     public void testGetIdAndName() {
         expect(geocache.getIdAndName()).andReturn("GC123: a geocache");
 
-        replay(geocache);
-        GeocacheVector geocacheVector = new GeocacheVector(geocache, 3.5f, null);
+        PowerMock.replayAll();
+        GeocacheVector geocacheVector = new GeocacheVector(geocache, null, null);
         assertEquals("GC123: a geocache", geocacheVector.getIdAndName());
-        verify(geocache);
+        PowerMock.verifyAll();
     }
 }

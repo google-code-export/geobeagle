@@ -20,9 +20,11 @@ import android.location.LocationManager;
 
 public class LocationControlDi {
 
-    public static LocationControl create(LocationManager locationManager) {
+    public static LocationControlBuffered create(LocationManager locationManager) {
         final LocationChooser locationChooser = new LocationChooser();
-        return new LocationControl(locationManager, locationChooser);
+        final LocationControl locationControl = new LocationControl(locationManager,
+                locationChooser);
+        return new LocationControlBuffered(locationControl);
     }
 
 }

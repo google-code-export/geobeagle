@@ -20,9 +20,8 @@ import static org.easymock.classextension.EasyMock.createMock;
 import static org.easymock.classextension.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.verify;
 
+import com.google.code.geobeagle.LocationControlBuffered;
 import com.google.code.geobeagle.data.GeocacheVector.LocationComparator;
-
-import android.location.Location;
 
 import java.util.ArrayList;
 
@@ -31,7 +30,7 @@ import junit.framework.TestCase;
 public class GeocacheVectorsTest extends TestCase {
     public void testAddLocations() {
         GeocacheVectorFactory geocacheVectorFactory = createMock(GeocacheVectorFactory.class);
-        Location here = createMock(Location.class);
+        LocationControlBuffered here = createMock(LocationControlBuffered.class);
         Geocache geocache = createMock(Geocache.class);
         GeocacheVector geocacheVector = createMock(GeocacheVector.class);
 

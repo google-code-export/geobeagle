@@ -38,25 +38,26 @@ import android.os.Bundle;
 public class GpsLocationListenerTest {
 
     private LocationListener locationListener;
-    private LocationControl mGpsControl;
+    private LocationControlBuffered mLocationControlBuffered;
 
     @Before
     public void setUp() {
         locationListener = createMock(LocationListener.class);
-        mGpsControl = createMock(LocationControl.class);
+        mLocationControlBuffered = createMock(LocationControlBuffered.class);
     }
 
     @Test
     public void testOnLocationChanged() {
         Location location = createMock(Location.class);
-        expect(mGpsControl.getLocation()).andReturn(location);
+        expect(mLocationControlBuffered.getLocation()).andReturn(location);
         locationListener.onLocationChanged(location);
 
         replay(location);
-        replay(mGpsControl);
-        new GeoBeagleLocationListener(mGpsControl, locationListener).onLocationChanged(location);
+        replay(mLocationControlBuffered);
+        new CombinedLocationListener(mLocationControlBuffered, locationListener)
+                .onLocationChanged(location);
         verify(location);
-        verify(mGpsControl);
+        verify(mLocationControlBuffered);
     }
 
     @Test
@@ -64,7 +65,7 @@ public class GpsLocationListenerTest {
         locationListener.onProviderDisabled("gps");
 
         replay(locationListener);
-        new GeoBeagleLocationListener(null, locationListener).onProviderDisabled("gps");
+        new CombinedLocationListener(null, locationListener).onProviderDisabled("gps");
         verify(locationListener);
     }
 
@@ -73,7 +74,7 @@ public class GpsLocationListenerTest {
         locationListener.onProviderEnabled("gps");
 
         replay(locationListener);
-        new GeoBeagleLocationListener(null, locationListener).onProviderEnabled("gps");
+        new CombinedLocationListener(null, locationListener).onProviderEnabled("gps");
         verify(locationListener);
     }
 
@@ -83,7 +84,7 @@ public class GpsLocationListenerTest {
         locationListener.onStatusChanged("gps", LocationProvider.OUT_OF_SERVICE, bundle);
 
         replay(locationListener);
-        new GeoBeagleLocationListener(null, locationListener).onStatusChanged("gps",
+        new CombinedLocationListener(null, locationListener).onStatusChanged("gps",
                 LocationProvider.OUT_OF_SERVICE, bundle);
         verify(locationListener);
     }

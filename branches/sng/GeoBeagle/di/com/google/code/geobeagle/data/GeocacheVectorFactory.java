@@ -14,7 +14,7 @@
 
 package com.google.code.geobeagle.data;
 
-import android.location.Location;
+import com.google.code.geobeagle.LocationControlBuffered;
 
 public class GeocacheVectorFactory {
     private final DistanceFormatter mDistanceFormatter;
@@ -23,18 +23,7 @@ public class GeocacheVectorFactory {
         mDistanceFormatter = distanceFormatter;
     }
 
-    private float calculateDistance(Location here, Geocache geocache) {
-        if (here != null) {
-            float[] results = new float[1];
-            Location.distanceBetween(here.getLatitude(), here.getLongitude(), geocache
-                    .getLatitude(), geocache.getLongitude(), results);
-
-            return results[0];
-        }
-        return -1;
-    }
-
-    public GeocacheVector create(Geocache location, Location here) {
-        return new GeocacheVector(location, calculateDistance(here, location), mDistanceFormatter);
+    public GeocacheVector create(Geocache geocache, LocationControlBuffered locationControlBuffered) {
+        return new GeocacheVector(geocache, locationControlBuffered, mDistanceFormatter);
     }
 }

@@ -14,8 +14,7 @@
 
 package com.google.code.geobeagle.data;
 
-
-import android.location.Location;
+import com.google.code.geobeagle.LocationControlBuffered;
 
 import java.util.ArrayList;
 
@@ -26,9 +25,9 @@ public class CacheListData {
         mGeocacheVectors = geocacheVectors;
     }
 
-    public void add(ArrayList<Geocache> geocaches, Location here) {
+    public void add(ArrayList<Geocache> geocaches, LocationControlBuffered locationControlBuffered) {
         mGeocacheVectors.reset(geocaches.size());
-        mGeocacheVectors.addLocations(geocaches, here);
+        mGeocacheVectors.addLocations(geocaches, locationControlBuffered);
         mGeocacheVectors.sort();
     }
 }
