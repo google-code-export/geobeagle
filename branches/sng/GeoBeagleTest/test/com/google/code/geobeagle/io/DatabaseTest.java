@@ -167,6 +167,7 @@ public class DatabaseTest {
         verify(sqlite);
     }
 
+    @Test
     public void testDatabaseGetWritableDatabase() {
         SQLiteDatabase sqlite = createMock(SQLiteDatabase.class);
         SQLiteOpenHelper sqliteOpenHelper = createMock(SQLiteOpenHelper.class);
@@ -181,6 +182,7 @@ public class DatabaseTest {
         verify(sqlite);
     }
 
+    @Test
     public void testOnCreate() throws IOException {
         DesktopSQLiteDatabase db = new DesktopSQLiteDatabase();
         OpenHelperDelegate openHelperDelegate = new OpenHelperDelegate();
@@ -190,6 +192,7 @@ public class DatabaseTest {
         assertEquals(currentSchema(), schema);
     }
 
+    @Test
     public void testUpgradeFrom6() throws IOException {
         DesktopSQLiteDatabase db = new DesktopSQLiteDatabase();
         db.execSQL(schema6);
@@ -204,6 +207,7 @@ public class DatabaseTest {
         assertEquals("", data);
     }
 
+    @Test
     public void testUpgradeFrom8() throws IOException {
         DesktopSQLiteDatabase db = new DesktopSQLiteDatabase();
         db.execSQL(schema7);
@@ -220,6 +224,7 @@ public class DatabaseTest {
 
     }
 
+    @Test
     public void testUpgradeFrom9() throws IOException {
         DesktopSQLiteDatabase db = new DesktopSQLiteDatabase();
         db.execSQL(schema7);
