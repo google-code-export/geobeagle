@@ -39,7 +39,7 @@ public class GeocachesSqlTest {
         expect(cacheReader.getTotalCount()).andReturn(12);
 
         PowerMock.replayAll();
-        GeocachesSql geocachesSql = new GeocachesSql(cacheReader, null, null);
+        GeocachesSql geocachesSql = new GeocachesSql(cacheReader, null);
         assertEquals(12, geocachesSql.getCount());
         PowerMock.verifyAll();
     }
@@ -52,7 +52,7 @@ public class GeocachesSqlTest {
         expect(geocaches.getAll()).andReturn(arGeocaches);
 
         PowerMock.replayAll();
-        assertEquals(arGeocaches, new GeocachesSql(null, geocaches, null).getGeocaches());
+        assertEquals(arGeocaches, new GeocachesSql(null, geocaches).getGeocaches());
         PowerMock.verifyAll();
     }
 
@@ -74,7 +74,7 @@ public class GeocachesSqlTest {
         cursor.close();
 
         PowerMock.replayAll();
-        new GeocachesSql(cacheReader, geocaches, locationControlBuffered).loadNearestCaches();
+        new GeocachesSql(cacheReader, geocaches).loadNearestCaches(locationControlBuffered);
         PowerMock.verifyAll();
     }
 
@@ -89,7 +89,7 @@ public class GeocachesSqlTest {
         geocaches.add(geocache);
 
         PowerMock.replayAll();
-        GeocachesSql geocachesSql = new GeocachesSql(null, geocaches, null);
+        GeocachesSql geocachesSql = new GeocachesSql(null, geocaches);
         geocachesSql.read(cursor);
         PowerMock.verifyAll();
     }
@@ -109,7 +109,7 @@ public class GeocachesSqlTest {
         expect(cursor.moveToNext()).andReturn(false);
 
         PowerMock.replayAll();
-        GeocachesSql geocachesSql = new GeocachesSql(null, geocaches, null);
+        GeocachesSql geocachesSql = new GeocachesSql(null, geocaches);
         geocachesSql.read(cursor);
         PowerMock.verifyAll();
     }

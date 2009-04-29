@@ -14,7 +14,6 @@
 
 package com.google.code.geobeagle.io;
 
-import com.google.code.geobeagle.LocationControlBuffered;
 import com.google.code.geobeagle.data.GeocacheFactory;
 import com.google.code.geobeagle.data.Geocaches;
 import com.google.code.geobeagle.io.CacheReader.CacheReaderCursor;
@@ -122,10 +121,10 @@ public class DatabaseDI {
         return new Database(sqliteOpenHelper);
     }
 
-    public static GeocachesSql create(LocationControlBuffered locationControl, SQLiteWrapper sqliteWrapper) {
+    public static GeocachesSql create(SQLiteWrapper sqliteWrapper) {
         final Geocaches geocaches = new Geocaches();
         final CacheReader cacheReader = createCacheReader(sqliteWrapper);
-        return new GeocachesSql(cacheReader, geocaches, locationControl);
+        return new GeocachesSql(cacheReader, geocaches);
     }
 
     public static CacheReader createCacheReader(SQLiteWrapper sqliteWrapper) {

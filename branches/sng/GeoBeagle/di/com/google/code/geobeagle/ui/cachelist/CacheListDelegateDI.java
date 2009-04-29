@@ -75,8 +75,7 @@ public class CacheListDelegateDI {
         final GeocacheFromMyLocationFactory geocacheFromMyLocationFactory = new GeocacheFromMyLocationFactory(
                 geocacheFactory, locationControlBuffered);
         final SQLiteWrapper sqliteWrapper = new SQLiteWrapper(null);
-        final GeocachesSql locationBookmarks = DatabaseDI.create(locationControlBuffered,
-                sqliteWrapper);
+        final GeocachesSql locationBookmarks = DatabaseDI.create(sqliteWrapper);
         final CacheWriter cacheWriter = DatabaseDI.createCacheWriter(sqliteWrapper);
         final DistanceFormatter distanceFormatter = new DistanceFormatter();
         final LocationSaver locationSaver = new LocationSaver(database, sqliteWrapper, cacheWriter);

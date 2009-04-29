@@ -158,7 +158,7 @@ public class GeocacheListPresenter {
     }
 
     void sort() {
-        mGeocachesSql.loadNearestCaches();
+        mGeocachesSql.loadNearestCaches(mLocationControlBuffered);
         ArrayList<Geocache> geocaches = mGeocachesSql.getGeocaches();
         mCacheListData.add(geocaches, mLocationControlBuffered);
         mParent.setListAdapter(mGeocacheListAdapter);

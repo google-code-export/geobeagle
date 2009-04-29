@@ -167,7 +167,7 @@ public class CacheListPresenterTest {
         combinedLocationManager.requestLocationUpdates(0, 10, baseAdapterLocationListener);
         ArrayList<Geocache> locations = new ArrayList<Geocache>(0);
         sqliteWrapper.openWritableDatabase(database);
-        geocachesSql.loadNearestCaches();
+        geocachesSql.loadNearestCaches(locationControlBuffered);
         expect(geocachesSql.getGeocaches()).andReturn(locations);
         cacheListData.add(locations, locationControlBuffered);
         listActivity.setListAdapter(geocacheListAdapter);

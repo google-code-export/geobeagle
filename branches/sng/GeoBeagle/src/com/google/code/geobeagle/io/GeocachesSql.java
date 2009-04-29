@@ -19,18 +19,17 @@ import com.google.code.geobeagle.data.Geocache;
 import com.google.code.geobeagle.data.Geocaches;
 import com.google.code.geobeagle.io.CacheReader.CacheReaderCursor;
 
+import android.location.Location;
+
 import java.util.ArrayList;
 
 public class GeocachesSql {
     private final CacheReader mCacheReader;
     private final Geocaches mGeocaches;
-    private final LocationControlBuffered mLocationControlBuffered;
 
-    GeocachesSql(CacheReader cacheReader, Geocaches geocaches,
-            LocationControlBuffered locationControlBuffered) {
+    GeocachesSql(CacheReader cacheReader, Geocaches geocaches) {
         mCacheReader = cacheReader;
         mGeocaches = geocaches;
-        mLocationControlBuffered = locationControlBuffered;
     }
 
     public int getCount() {
@@ -41,8 +40,10 @@ public class GeocachesSql {
         return mGeocaches.getAll();
     }
 
-    public void loadNearestCaches() {
-        CacheReaderCursor cursor = mCacheReader.open(mLocationControlBuffered.getLocation());
+    public void loadNearestCaches(LocationControlBuffered locationControlBuffered) {
+        Location location = locationControlBuffered.getLocation();
+
+        CacheReaderCursor cursor = mCacheReader.open(location);
         mGeocaches.clear();
         if (cursor != null) {
             read(cursor);
