@@ -18,14 +18,16 @@ import static org.easymock.EasyMock.expect;
 import static org.easymock.classextension.EasyMock.createMock;
 import static org.easymock.classextension.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.verify;
+import static org.junit.Assert.assertEquals;
 
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.ResourceProvider;
 import com.google.code.geobeagle.data.Geocache;
 
-import junit.framework.TestCase;
+import org.junit.Test;
 
-public class GeocacheToGoogleMapTest extends TestCase {
+public class GeocacheToGoogleMapTest {
+    @Test
     public void testConvert() {
         ResourceProvider resourceProvider = createMock(ResourceProvider.class);
         Geocache geocache = createMock(Geocache.class);

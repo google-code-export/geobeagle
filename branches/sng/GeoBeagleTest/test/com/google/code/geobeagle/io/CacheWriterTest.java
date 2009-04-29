@@ -5,20 +5,24 @@ import static org.easymock.EasyMock.expect;
 import static org.easymock.classextension.EasyMock.createMock;
 import static org.easymock.classextension.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.verify;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import com.google.code.geobeagle.data.GeocacheFactory.Source;
 import com.google.code.geobeagle.io.DatabaseDI.SQLiteWrapper;
 import com.google.code.geobeagle.io.DatabaseTest.DesktopSQLiteDatabase;
 
+import org.junit.Test;
+
 import java.io.IOException;
 
-import junit.framework.TestCase;
-
-public class CacheWriterTest extends TestCase {
+public class CacheWriterTest {
 
     private static final String INSERT_INTO_CACHES = "INSERT INTO CACHES (Id, Description, Source, DeleteMe) ";
     private static final String INSERT_INTO_GPX = "INSERT INTO GPX (Name, ExportTime, DeleteMe) ";
 
+    @Test
     public void testClearCaches() {
         SQLiteWrapper sqlite = createMock(SQLiteWrapper.class);
 
@@ -30,6 +34,7 @@ public class CacheWriterTest extends TestCase {
         verify(sqlite);
     }
 
+    @Test
     public void testClearEarlierLoads() throws IOException {
         DesktopSQLiteDatabase db = new DesktopSQLiteDatabase();
         db.execSQL(DatabaseTest.currentSchema());
@@ -49,6 +54,7 @@ public class CacheWriterTest extends TestCase {
         assertEquals("keep.gpx|2009-04-30|1\n", db.dumpTable("GPX"));
     }
 
+    @Test
     public void testDeleteCache() {
         SQLiteWrapper sqlite = createMock(SQLiteWrapper.class);
 
@@ -60,6 +66,7 @@ public class CacheWriterTest extends TestCase {
         verify(sqlite);
     }
 
+    @Test
     public void testInsertAndUpdate() {
         SQLiteWrapper sqlite = createMock(SQLiteWrapper.class);
         DbToGeocacheAdapter dbToGeocacheAdapter = createMock(DbToGeocacheAdapter.class);
@@ -75,6 +82,7 @@ public class CacheWriterTest extends TestCase {
         verify(sqlite);
     }
 
+    @Test
     public void testIsGpxAlreadyLoadedFalse() {
         SQLiteWrapper sqlite = createMock(SQLiteWrapper.class);
 
@@ -88,6 +96,7 @@ public class CacheWriterTest extends TestCase {
         verify(sqlite);
     }
 
+    @Test
     public void testIsGpxAlreadyLoadedTrue() {
         SQLiteWrapper sqlite = createMock(SQLiteWrapper.class);
 
@@ -103,6 +112,7 @@ public class CacheWriterTest extends TestCase {
         verify(sqlite);
     }
 
+    @Test
     public void testStartWriting() {
         SQLiteWrapper sqlite = createMock(SQLiteWrapper.class);
         sqlite.beginTransaction();
@@ -112,6 +122,7 @@ public class CacheWriterTest extends TestCase {
         verify(sqlite);
     }
 
+    @Test
     public void testStopWriting() {
         SQLiteWrapper sqlite = createMock(SQLiteWrapper.class);
         sqlite.setTransactionSuccessful();
@@ -122,6 +133,7 @@ public class CacheWriterTest extends TestCase {
         verify(sqlite);
     }
 
+    @Test
     public void testWriteGpx() {
         SQLiteWrapper sqlite = createMock(SQLiteWrapper.class);
         sqlite.execSQL(Database.SQL_REPLACE_GPX, "foo.gpx", "2009-04-30 10:30");

@@ -18,21 +18,23 @@ import static org.easymock.EasyMock.expect;
 import static org.easymock.classextension.EasyMock.createMock;
 import static org.easymock.classextension.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.verify;
+import static org.junit.Assert.assertEquals;
+
+import org.junit.Test;
 
 import android.net.UrlQuerySanitizer;
 import android.net.UrlQuerySanitizer.ValueSanitizer;
 
 import java.util.Locale;
 
-import junit.framework.TestCase;
-
-public class UtilTest extends TestCase {
+public class UtilTest {
     private void splitLatLonHelper(String coords, String lat, String lon) {
         CharSequence[] latLon = Util.splitLatLon(coords);
         assertEquals(lat, latLon[0]);
         assertEquals(lon, latLon[1]);
     }
 
+    @Test
     public void testConvertDegreesToMinutes() {
         // Make sure formatting is US even if the phone is in a different
         // locale.
@@ -44,6 +46,7 @@ public class UtilTest extends TestCase {
         assertEquals("-0 03.000", Util.formatDegreesAsDecimalDegreesString(-0.05));
     }
 
+    @Test
     public void testGetLatLonDescriptionFromQuery() {
         CharSequence[] coordsAndDescription = Util
                 .splitLatLonDescription("Wildwood Park, Saratoga, CA(The Nut Case #89882)@37.258356797547,-122.0354267005 ");
@@ -53,25 +56,27 @@ public class UtilTest extends TestCase {
         assertEquals("The Nut Case", coordsAndDescription[3]);
     }
 
+    @Test
     public void testMinutesToDegrees() {
-        assertEquals(122.0, Util.parseCoordinate("122"));
-        assertEquals(122.5, Util.parseCoordinate("122 30"));
-        assertEquals(122.51, Util.parseCoordinate("122 30.600"));
-        assertEquals(-122.51, Util.parseCoordinate("-122 30.600"));
-        assertEquals(-0.0165, Util.parseCoordinate("W 000¡ 00.990"));
-        assertEquals(-0.0165, Util.parseCoordinate("-000¡ 00.990"));
-        assertEquals(-122.51, Util.parseCoordinate("-122¡ 30.600"));
-        assertEquals(122.51, Util.parseCoordinate("E 122¡ 30.600"));
-        assertEquals(-122.51, Util.parseCoordinate("W 122¡ 30.600"));
-        assertEquals(-37.0, Util.parseCoordinate("S 37¡ 0.000"));
-        assertEquals(-37.0, Util.parseCoordinate(" S 37¡ 0.000"));
+        assertEquals(122.0, Util.parseCoordinate("122"), 0.0);
+        assertEquals(122.5, Util.parseCoordinate("122 30"), 0.0);
+        assertEquals(122.51, Util.parseCoordinate("122 30.600"), 0.0);
+        assertEquals(-122.51, Util.parseCoordinate("-122 30.600"), 0.0);
+        assertEquals(-0.0165, Util.parseCoordinate("W 000¡ 00.990"), 0.0);
+        assertEquals(-0.0165, Util.parseCoordinate("-000¡ 00.990"), 0.0);
+        assertEquals(-122.51, Util.parseCoordinate("-122¡ 30.600"), 0.0);
+        assertEquals(122.51, Util.parseCoordinate("E 122¡ 30.600"), 0.0);
+        assertEquals(-122.51, Util.parseCoordinate("W 122¡ 30.600"), 0.0);
+        assertEquals(-37.0, Util.parseCoordinate("S 37¡ 0.000"), 0.0);
+        assertEquals(-37.0, Util.parseCoordinate(" S 37¡ 0.000"), 0.0);
     }
 
+    @Test
     public void testParseCoordinate() {
-        assertEquals(122.5, Util.parseCoordinate("122.5"));
-        assertEquals(-122.5, Util.parseCoordinate("W122.5"));
-        assertEquals(122.51, Util.parseCoordinate("122 30.6"));
-        assertEquals(122.51, Util.parseCoordinate("122 30 36"));
+        assertEquals(122.5, Util.parseCoordinate("122.5"), 0);
+        assertEquals(-122.5, Util.parseCoordinate("W122.5"), 0);
+        assertEquals(122.51, Util.parseCoordinate("122 30.6"), 0);
+        assertEquals(122.51, Util.parseCoordinate("122 30 36"), 0);
 
         assertEquals(40.4425, Util.parseCoordinate("40:26:33"), 0.00001);
 
@@ -80,7 +85,7 @@ public class UtilTest extends TestCase {
         assertEquals(40.4425, Util.parseCoordinate("E40:26:33"), 0.00001);
         assertEquals(37.25275, Util.parseCoordinate("N+37¡+15.165 "), 0.00001);
 
-        assertEquals(40.446195, Util.parseCoordinate("40¡ 26.7717"));
+        assertEquals(40.446195, Util.parseCoordinate("40¡ 26.7717"), 0);
         assertEquals(40.446195, Util.parseCoordinate("40:26:46.302N"), 0.0000001);
         assertEquals(40.4461, Util.parseCoordinate("40¡26'46\"N"), 0.0001);
         assertEquals(40.4461, Util.parseCoordinate("40d 26' 46\" N"), 0.0001);
@@ -89,6 +94,7 @@ public class UtilTest extends TestCase {
         assertEquals(40.446195, Util.parseCoordinate("40¡ 26.7717"), 0.0000001);
     }
 
+    @Test
     public void testParseDescription() {
         CharSequence[] groundspeak = Util.parseDescription("GCTANE");
         assertEquals("GCTANE", groundspeak[0]);
@@ -100,6 +106,7 @@ public class UtilTest extends TestCase {
         assertEquals("The Nut Case", atlasquest[1]);
     }
 
+    @Test
     public void testParseHttpUri() {
         UrlQuerySanitizer sanitizer = createMock(UrlQuerySanitizer.class);
         ValueSanitizer valueSanitizer = createMock(ValueSanitizer.class);
@@ -114,6 +121,7 @@ public class UtilTest extends TestCase {
         verify(sanitizer);
     }
 
+    @Test
     public void testSplitCoordsAndDescriptions() {
         CharSequence[] coordsAndDescription = Util
                 .splitCoordsAndDescription("GC1ERCC@N+37¡+15.165+W+122¡+02.620+");
@@ -140,6 +148,7 @@ public class UtilTest extends TestCase {
         assertEquals("", coordsAndDescription[1]);
     }
 
+    @Test
     public void testSplitLatLon() {
         // http://en.wikipedia.org/wiki/Geographic_coordinate_conversion.
         splitLatLonHelper("40:26:46N,79:56:55W", "40:26:46N", "79:56:55W");

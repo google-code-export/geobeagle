@@ -23,12 +23,12 @@ import com.google.code.geobeagle.GeoBeagle;
 import com.google.code.geobeagle.data.Geocache;
 import com.google.code.geobeagle.ui.GeocacheViewer;
 
+import org.junit.Test;
+
 import android.content.Intent;
 
-import junit.framework.TestCase;
-
-public class IntentStarterViewUriTest extends TestCase {
-
+public class IntentStarterViewUriTest {
+    @Test
     public void testStartIntent() {
         GeoBeagle geoBeagle = createMock(GeoBeagle.class);
         IntentFactory intentFactory = createMock(IntentFactory.class);

@@ -18,15 +18,17 @@ import static org.easymock.EasyMock.expect;
 import static org.easymock.classextension.EasyMock.createMock;
 import static org.easymock.classextension.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.verify;
+import static org.junit.Assert.assertEquals;
 
 import com.google.code.geobeagle.ui.ErrorDisplayer;
 import com.google.code.geobeagle.ui.MyLocationProvider;
 
+import org.junit.Test;
+
 import android.location.Location;
 
-import junit.framework.TestCase;
-
-public class MyLocationProviderTest extends TestCase {
+public class MyLocationProviderTest {
+    @Test
     public void test() {
         LocationControlBuffered locationControlBuffered = createMock(LocationControlBuffered.class);
         ErrorDisplayer errorDisplayer = createMock(ErrorDisplayer.class);
@@ -41,6 +43,7 @@ public class MyLocationProviderTest extends TestCase {
         verify(locationControlBuffered);
     }
 
+    @Test
     public void testNullLocation() {
         LocationControlBuffered locationControlBuffered = createMock(LocationControlBuffered.class);
         ErrorDisplayer errorDisplayer = createMock(ErrorDisplayer.class);

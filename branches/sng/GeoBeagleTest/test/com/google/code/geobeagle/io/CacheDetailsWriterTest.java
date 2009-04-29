@@ -5,11 +5,12 @@ import static org.easymock.classextension.EasyMock.createMock;
 import static org.easymock.classextension.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.verify;
 
+import org.junit.Test;
+
 import java.io.IOException;
 
-import junit.framework.TestCase;
-
-public class CacheDetailsWriterTest extends TestCase {
+public class CacheDetailsWriterTest {
+    @Test
     public void testOpen() throws IOException {
         HtmlWriter htmlWriter = createMock(HtmlWriter.class);
 
@@ -20,6 +21,7 @@ public class CacheDetailsWriterTest extends TestCase {
         verify(htmlWriter);
     }
 
+    @Test
     public void testWriteEndTag() throws IOException {
         HtmlWriter htmlWriter = createMock(HtmlWriter.class);
 
@@ -31,6 +33,7 @@ public class CacheDetailsWriterTest extends TestCase {
         verify(htmlWriter);
     }
 
+    @Test
     public void testWriteHint() throws IOException {
         HtmlWriter htmlWriter = createMock(HtmlWriter.class);
         htmlWriter.write("<br />Hint: <font color=gray>a hint</font>");
@@ -40,6 +43,7 @@ public class CacheDetailsWriterTest extends TestCase {
         verify(htmlWriter);
     }
 
+    @Test
     public void testWriteLine() throws IOException {
         HtmlWriter htmlWriter = createMock(HtmlWriter.class);
         htmlWriter.write("some text");
@@ -49,6 +53,7 @@ public class CacheDetailsWriterTest extends TestCase {
         verify(htmlWriter);
     }
 
+    @Test
     public void testWriteLogDate() throws IOException {
         HtmlWriter htmlWriter = createMock(HtmlWriter.class);
         htmlWriter.writeSeparator();
@@ -59,6 +64,7 @@ public class CacheDetailsWriterTest extends TestCase {
         verify(htmlWriter);
     }
 
+    @Test
     public void testWriteWptName() throws IOException {
         HtmlWriter htmlWriter = createMock(HtmlWriter.class);
         htmlWriter.writeHeader();

@@ -15,21 +15,21 @@
 package com.google.code.geobeagle.intents;
 
 import static org.easymock.EasyMock.expect;
+import static org.junit.Assert.assertEquals;
 
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.ResourceProvider;
 import com.google.code.geobeagle.data.Geocache;
 import com.google.code.geobeagle.data.GeocacheFactory;
 
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.api.easymock.PowerMock;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import junit.framework.TestCase;
-
 @RunWith(PowerMockRunner.class)
-public class GeocacheToCachePageTest extends TestCase {
-
+public class GeocacheToCachePageTest {
+    @Test
     public void testConvert() {
         ResourceProvider resourceProvider = PowerMock.createMock(ResourceProvider.class);
         Geocache geocache = PowerMock.createMock(Geocache.class);

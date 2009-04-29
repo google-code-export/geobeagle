@@ -31,10 +31,8 @@ import org.powermock.modules.junit4.PowerMockRunner;
 
 import android.view.View;
 
-import junit.framework.TestCase;
-
 @RunWith(PowerMockRunner.class)
-public class WebPageAndDetailsButtonEnablerTest extends TestCase {
+public class WebPageAndDetailsButtonEnablerTest {
     @Test
     public void testCheck() {
         GeoBeagle geoBeagle = PowerMock.createMock(GeoBeagle.class);

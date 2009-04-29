@@ -20,11 +20,12 @@ import static org.easymock.classextension.EasyMock.verify;
 
 import com.google.code.geobeagle.io.CachePersisterFacadeDI.WriterWrapper;
 
+import org.junit.Test;
+
 import java.io.IOException;
 
-import junit.framework.TestCase;
-
-public class HtmlWriterTest extends TestCase {
+public class HtmlWriterTest {
+    @Test
     public void testClose() throws IOException {
         final WriterWrapper writer = createMock(WriterWrapper.class);
 
@@ -36,6 +37,7 @@ public class HtmlWriterTest extends TestCase {
         verify(writer);
     }
 
+    @Test
     public void testOpen() throws IOException {
         final WriterWrapper writer = createMock(WriterWrapper.class);
 
@@ -47,6 +49,7 @@ public class HtmlWriterTest extends TestCase {
         verify(writer);
     }
 
+    @Test
     public void testWrite() throws IOException {
         final WriterWrapper writer = createMock(WriterWrapper.class);
 
@@ -58,6 +61,7 @@ public class HtmlWriterTest extends TestCase {
         verify(writer);
     }
 
+    @Test
     public void testWriteFooter() throws IOException {
         final WriterWrapper writer = createMock(WriterWrapper.class);
         writer.write("  </body>\n");
@@ -69,6 +73,7 @@ public class HtmlWriterTest extends TestCase {
         verify(writer);
     }
 
+    @Test
     public void testWriteHeader() throws IOException {
         final WriterWrapper writer = createMock(WriterWrapper.class);
         writer.write("<html>\n");
@@ -80,6 +85,7 @@ public class HtmlWriterTest extends TestCase {
         verify(writer);
     }
 
+    @Test
     public void testWriteSeparator() throws IOException {
         final WriterWrapper writer = createMock(WriterWrapper.class);
         writer.write("<hr/>\n");

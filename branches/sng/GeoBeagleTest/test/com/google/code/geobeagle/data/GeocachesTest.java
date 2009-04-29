@@ -15,14 +15,12 @@
 package com.google.code.geobeagle.data;
 
 import static org.easymock.classextension.EasyMock.createMock;
+import static org.junit.Assert.assertEquals;
 
-import com.google.code.geobeagle.data.Geocache;
-import com.google.code.geobeagle.data.Geocaches;
+import org.junit.Test;
 
-import junit.framework.TestCase;
-
-public class GeocachesTest extends TestCase {
-
+public class GeocachesTest {
+    @Test
     public final void testAdd() {
         Geocache geocache = createMock(Geocache.class);
         Geocaches geocaches = new Geocaches();
@@ -30,6 +28,7 @@ public class GeocachesTest extends TestCase {
         assertEquals(geocache, geocaches.getAll().get(0));
     }
 
+    @Test
     public final void testClear() {
         Geocaches geocaches = new Geocaches();
         Geocache geocache1 = createMock(Geocache.class);

@@ -19,15 +19,17 @@ import static org.easymock.EasyMock.expect;
 import static org.easymock.classextension.EasyMock.createMock;
 import static org.easymock.classextension.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.verify;
+import static org.junit.Assert.assertEquals;
 
 import com.google.code.geobeagle.LocationControlBuffered;
 import com.google.code.geobeagle.data.GeocacheVector.LocationComparator;
 
+import org.junit.Test;
+
 import java.util.ArrayList;
 
-import junit.framework.TestCase;
-
-public class GeocacheVectorsTest extends TestCase {
+public class GeocacheVectorsTest {
+    @Test
     public void testAddLocations() {
         GeocacheVectorFactory geocacheVectorFactory = createMock(GeocacheVectorFactory.class);
         LocationControlBuffered here = createMock(LocationControlBuffered.class);
@@ -45,6 +47,7 @@ public class GeocacheVectorsTest extends TestCase {
         verify(geocacheVectorFactory);
     }
 
+    @Test
     public void testDelete() {
         GeocacheVector destinationVector1 = createMock(GeocacheVector.class);
         GeocacheVector destinationVector2 = createMock(GeocacheVector.class);
@@ -56,6 +59,7 @@ public class GeocacheVectorsTest extends TestCase {
         assertEquals(destinationVector1, geocacheVectors.get(0));
     }
 
+    @Test
     public void testReset() {
         IGeocacheVector destinationVector = createMock(IGeocacheVector.class);
 
@@ -67,6 +71,7 @@ public class GeocacheVectorsTest extends TestCase {
         verify(destinationVector);
     }
 
+    @Test
     @SuppressWarnings("unchecked")
     public void testSort() {
         LocationComparator locationComparator = createMock(LocationComparator.class);

@@ -18,13 +18,13 @@ import static org.easymock.classextension.EasyMock.createMock;
 import static org.easymock.classextension.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.verify;
 
+import org.junit.Test;
+
 import android.location.LocationListener;
 import android.location.LocationManager;
 
-import junit.framework.TestCase;
-
-public class LocationLifecycleManagerTest extends TestCase {
-
+public class LocationLifecycleManagerTest {
+    @Test
     public void testOnPause() {
         LocationManager locationManager = createMock(LocationManager.class);
         LocationListener locationListener = createMock(LocationListener.class);
@@ -38,6 +38,7 @@ public class LocationLifecycleManagerTest extends TestCase {
         verify(locationManager);
     }
 
+    @Test
     public void testOnResume() {
         LocationManager locationManager = createMock(LocationManager.class);
         LocationListener locationListener = createMock(LocationListener.class);

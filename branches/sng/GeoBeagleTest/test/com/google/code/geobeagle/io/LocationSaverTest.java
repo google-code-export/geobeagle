@@ -22,10 +22,11 @@ import static org.easymock.classextension.EasyMock.verify;
 import com.google.code.geobeagle.data.Geocache;
 import com.google.code.geobeagle.data.GeocacheFactory.Source;
 
-import junit.framework.TestCase;
+import org.junit.Test;
 
-public class LocationSaverTest extends TestCase {
+public class LocationSaverTest {
 
+    @Test
     public void testSave() {
         Database database = createMock(Database.class);
         DatabaseDI.SQLiteWrapper sqliteWrapper = createMock(DatabaseDI.SQLiteWrapper.class);

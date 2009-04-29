@@ -21,12 +21,13 @@ import static org.easymock.classextension.EasyMock.verify;
 
 import com.google.code.geobeagle.ui.ContentSelector;
 
+import org.junit.Test;
+
 import android.content.SharedPreferences;
 
-import junit.framework.TestCase;
+public class AppLifecycleManagerTest {
 
-public class AppLifecycleManagerTest extends TestCase {
-
+    @Test
     public void testOnPause() {
         LifecycleManager lifecycleManager1 = createMock(LifecycleManager.class);
         LifecycleManager lifecycleManager2 = createMock(LifecycleManager.class);
@@ -52,6 +53,7 @@ public class AppLifecycleManagerTest extends TestCase {
         verify(lifecycleManager2);
     }
 
+    @Test
     public void testOnResume() {
         LifecycleManager gpsLifecycleManager = createMock(LocationLifecycleManager.class);
         SharedPreferences sharedPreferences = createMock(SharedPreferences.class);
