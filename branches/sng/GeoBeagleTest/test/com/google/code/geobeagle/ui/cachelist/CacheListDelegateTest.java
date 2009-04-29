@@ -37,7 +37,7 @@ public class CacheListDelegateTest {
     }
 
     @Test
-    public void testCreate() {
+    public void testOnCreate() {
         GeocacheListPresenter geocacheListPresenter = PowerMock
                 .createStrictMock(GeocacheListPresenter.class);
 

@@ -221,4 +221,31 @@ public class GeocacheListControllerTest {
         new GeocacheListController(null, null, gpxImporter, null).onPause();
         PowerMock.verifyAll();
     }
+
+    @Test
+    public void testOnResume() throws InterruptedException {
+        MenuActions menuActions = PowerMock.createMock(MenuActions.class);
+
+        menuActions.act(R.id.menu_refresh);
+
+        PowerMock.replayAll();
+        new GeocacheListController(menuActions, null, null, null).onResume();
+        PowerMock.verifyAll();
+    }
+
+    @Test
+    public void testOnResumeError() {
+        MenuActions menuActions = PowerMock.createMock(MenuActions.class);
+        ErrorDisplayer errorDisplayer = PowerMock.createMock(ErrorDisplayer.class);
+
+        Exception exception = new RuntimeException();
+        menuActions.act(R.id.menu_refresh);
+        EasyMock.expectLastCall().andThrow(exception);
+        errorDisplayer.displayErrorAndStack(exception);
+
+        PowerMock.replayAll();
+        new GeocacheListController(menuActions, null, null, errorDisplayer).onResume();
+        PowerMock.verifyAll();
+    }
+
 }

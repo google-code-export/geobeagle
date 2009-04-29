@@ -17,11 +17,8 @@ package com.google.code.geobeagle.ui.cachelist;
 import com.google.code.geobeagle.CombinedLocationManager;
 import com.google.code.geobeagle.LocationControlBuffered;
 import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.data.CacheListData;
-import com.google.code.geobeagle.data.Geocache;
 import com.google.code.geobeagle.data.GeocacheVectors;
 import com.google.code.geobeagle.io.Database;
-import com.google.code.geobeagle.io.GeocachesSql;
 import com.google.code.geobeagle.io.DatabaseDI.SQLiteWrapper;
 import com.google.code.geobeagle.ui.ErrorDisplayer;
 import com.google.code.geobeagle.ui.GpsStatusWidget.UpdateGpsWidgetRunnable;
@@ -31,15 +28,11 @@ import android.app.ListActivity;
 import android.location.Location;
 import android.location.LocationListener;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
-
-import java.util.ArrayList;
 
 public class GeocacheListPresenter {
     static class BaseAdapterLocationListener implements LocationListener {
@@ -64,68 +57,41 @@ public class GeocacheListPresenter {
         }
     }
 
-    static class SortRunnable implements Runnable {
-        private final GeocacheListPresenter mGeocacheListPresenter;
-
-        SortRunnable(GeocacheListPresenter geocacheListPresenter) {
-            mGeocacheListPresenter = geocacheListPresenter;
-        }
-
-        public void run() {
-            mGeocacheListPresenter.sort();
-        }
-    }
-
     private BaseAdapterLocationListener mBaseAdapterLocationListener;
-    private final CacheListData mCacheListData;
     private final Database mDatabase;
     private final ErrorDisplayer mErrorDisplayer;
-    private final BaseAdapter mGeocacheListAdapter;
-    private final GeocachesSql mGeocachesSql;
     private final GeocacheVectors mGeocacheVectors;
     private final LocationListener mGpsStatusWidgetLocationListener;
     private final View mGpsWidgetView;
-    private final Handler mHandler;
     private final LocationControlBuffered mLocationControlBuffered;
     private final CombinedLocationManager mCombinedLocationManager;
-    private final ListActivity mParent;
+    private final ListActivity mListActivity;
     private final SQLiteWrapper mSQLiteWrapper;
     private final UpdateGpsWidgetRunnable mUpdateGpsWidgetRunnable;
 
     public GeocacheListPresenter(CombinedLocationManager combinedLocationManager,
             LocationControlBuffered locationControlBuffered,
             LocationListener gpsStatusWidgetLocationListener, View gpsWidgetView,
-            UpdateGpsWidgetRunnable updateGpsWidgetRunnable, GeocachesSql geocachesSql,
-            GeocacheVectors geocacheVectors, BaseAdapter geocacheListAdapter,
-            BaseAdapterLocationListener baseAdapterLocationListener, CacheListData cacheListData,
-            ListActivity listActivity, Handler handler, ErrorDisplayer errorDisplayer,
-            SQLiteWrapper sqliteWrapper, Database database) {
+            UpdateGpsWidgetRunnable updateGpsWidgetRunnable, GeocacheVectors geocacheVectors,
+            BaseAdapterLocationListener baseAdapterLocationListener, ListActivity listActivity,
+            ErrorDisplayer errorDisplayer, SQLiteWrapper sqliteWrapper, Database database) {
         mCombinedLocationManager = combinedLocationManager;
+        mLocationControlBuffered = locationControlBuffered;
         mGpsStatusWidgetLocationListener = gpsStatusWidgetLocationListener;
-        mGeocachesSql = geocachesSql;
+        mGpsWidgetView = gpsWidgetView;
+        mUpdateGpsWidgetRunnable = updateGpsWidgetRunnable;
+        mGeocacheVectors = geocacheVectors;
+        mBaseAdapterLocationListener = baseAdapterLocationListener;
+        mListActivity = listActivity;
         mSQLiteWrapper = sqliteWrapper;
         mDatabase = database;
-        mCacheListData = cacheListData;
-        mParent = listActivity;
-        mGeocacheVectors = geocacheVectors;
-        mGeocacheListAdapter = geocacheListAdapter;
-        mLocationControlBuffered = locationControlBuffered;
-        mUpdateGpsWidgetRunnable = updateGpsWidgetRunnable;
         mErrorDisplayer = errorDisplayer;
-        mHandler = handler;
-        mGpsWidgetView = gpsWidgetView;
-        mBaseAdapterLocationListener = baseAdapterLocationListener;
-    }
-
-    public void doSort() {
-        Toast.makeText(mParent, R.string.sorting, Toast.LENGTH_SHORT).show();
-        mHandler.postDelayed(new SortRunnable(this), 200);
     }
 
     public void onCreate() {
         mLocationControlBuffered.onLocationChanged(null);
-        mParent.setContentView(R.layout.cache_list);
-        ListView listView = mParent.getListView();
+        mListActivity.setContentView(R.layout.cache_list);
+        ListView listView = mListActivity.getListView();
         listView.addHeaderView(mGpsWidgetView);
         listView.setOnCreateContextMenuListener(new CacheListOnCreateContextMenuListener(
                 mGeocacheVectors));
@@ -133,7 +99,7 @@ public class GeocacheListPresenter {
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
-        mParent.getMenuInflater().inflate(R.menu.cache_list_menu, menu);
+        mListActivity.getMenuInflater().inflate(R.menu.cache_list_menu, menu);
         return true;
     }
 
@@ -149,20 +115,9 @@ public class GeocacheListPresenter {
             mCombinedLocationManager.requestLocationUpdates(0, 0, mLocationControlBuffered);
             mCombinedLocationManager.requestLocationUpdates(0, 0, mGpsStatusWidgetLocationListener);
             mCombinedLocationManager.requestLocationUpdates(0, 10, mBaseAdapterLocationListener);
-
             mSQLiteWrapper.openWritableDatabase(mDatabase);
-            sort();
         } catch (final Exception e) {
             mErrorDisplayer.displayErrorAndStack(e);
         }
-    }
-
-    void sort() {
-        mGeocachesSql.loadNearestCaches(mLocationControlBuffered);
-        ArrayList<Geocache> geocaches = mGeocachesSql.getGeocaches();
-        mCacheListData.add(geocaches, mLocationControlBuffered);
-        mParent.setListAdapter(mGeocacheListAdapter);
-        mParent.setTitle(mParent.getString(R.string.cache_list_title, geocaches.size(),
-                mGeocachesSql.getCount()));
     }
 }

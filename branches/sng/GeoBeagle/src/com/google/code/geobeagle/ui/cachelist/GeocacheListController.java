@@ -51,8 +51,8 @@ public class GeocacheListController {
     public static final String SELECT_CACHE = "SELECT_CACHE";
     private final ContextAction mContextActions[];
     private final ErrorDisplayer mErrorDisplayer;
-    private final MenuActions mMenuActions;
     private final GpxImporter mGpxImporter;
+    private final MenuActions mMenuActions;
 
     GeocacheListController(MenuActions menuActions, ContextAction[] contextActions,
             GpxImporter gpxImporter, ErrorDisplayer errorDisplayer) {
@@ -99,6 +99,14 @@ public class GeocacheListController {
         } catch (InterruptedException e) {
             // Nothing we can do here! There is no chance to communicate to
             // the user.
+        }
+    }
+
+    public void onResume() {
+        try {
+            mMenuActions.act(R.id.menu_refresh);
+        } catch (final Exception e) {
+            mErrorDisplayer.displayErrorAndStack(e);
         }
     }
 }
