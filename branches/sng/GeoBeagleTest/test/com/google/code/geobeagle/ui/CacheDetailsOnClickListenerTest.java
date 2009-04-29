@@ -62,8 +62,8 @@ public class CacheDetailsOnClickListenerTest {
         alertDialog.show();
 
         PowerMock.replayAll();
-        new CacheDetailsOnClickListener(geobeagle, builder, geocacheViewer, env, cacheDetailsLoader,
-                null).onClick(null);
+        new CacheDetailsOnClickListener(geobeagle, builder, geocacheViewer, env,
+                cacheDetailsLoader, null).onClick(null);
         PowerMock.verifyAll();
     }
 

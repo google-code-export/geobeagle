@@ -14,14 +14,12 @@
 
 package com.google.code.geobeagle.data;
 
-
-
 public interface IGeocacheVector {
-    public Geocache getGeocache();
-    
+    public float getDistance();
+
     public CharSequence getFormattedDistance();
 
-    public float getDistance();
+    public Geocache getGeocache();
 
     public CharSequence getId();
 

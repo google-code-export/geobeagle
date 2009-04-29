@@ -45,12 +45,12 @@ public class EditCacheActivityDelegate {
     }
 
     public static class EditCache {
+        private final GeocacheFactory mGeocacheFactory;
         private final EditText mId;
         private final EditText mLatitude;
         private final EditText mLongitude;
         private final EditText mName;
         private Geocache mOriginalGeocache;
-        private final GeocacheFactory mGeocacheFactory;
 
         public EditCache(GeocacheFactory geocacheFactory, EditText id, EditText name,
                 EditText latitude, EditText longitude) {
@@ -103,9 +103,9 @@ public class EditCacheActivityDelegate {
     }
 
     private final CancelButtonOnClickListener mCancelButtonOnClickListener;
+    private final GeocacheFactory mGeocacheFactory;
     private final LocationSaver mLocationSaver;
     private final Activity mParent;
-    private final GeocacheFactory mGeocacheFactory;
 
     public EditCacheActivityDelegate(Activity parent,
             CancelButtonOnClickListener cancelButtonOnClickListener, LocationSaver locationSaver,

@@ -37,9 +37,9 @@ public class GeocacheVector implements IGeocacheVector {
         }
     }
 
+    private final DistanceFormatter mDistanceFormatter;
     private final Geocache mGeocache;
     private final LocationControlBuffered mLocationControlBuffered;
-    private final DistanceFormatter mDistanceFormatter;
 
     GeocacheVector(Geocache geocache, LocationControlBuffered locationControlBuffered,
             DistanceFormatter distanceFormatter) {
@@ -52,20 +52,20 @@ public class GeocacheVector implements IGeocacheVector {
         return mGeocache.calculateDistance(mLocationControlBuffered.getLocation());
     }
 
-    public CharSequence getId() {
-        return mGeocache.getId();
-    }
-
     public CharSequence getFormattedDistance() {
         return mDistanceFormatter.format(getDistance());
     }
 
-    public CharSequence getIdAndName() {
-        return mGeocache.getIdAndName();
-    }
-
     public Geocache getGeocache() {
         return mGeocache;
+    }
+
+    public CharSequence getId() {
+        return mGeocache.getId();
+    }
+
+    public CharSequence getIdAndName() {
+        return mGeocache.getIdAndName();
     }
 
 }

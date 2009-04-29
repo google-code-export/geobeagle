@@ -102,15 +102,6 @@ public class GpsStatusWidget implements LocationListener {
         mTime = time;
     }
 
-    public void refreshLocation() {
-        long currentTime = mTime.getCurrentTime();
-        long lastUpdateLag = currentTime - mLastUpdateTime;
-        long locationLag = currentTime - mLocationTime;
-        mLag.setText((locationLag / 1000 + "s").trim());
-        mAccuracyView.setText((mAccuracy + "m").trim());
-        mMeterView.set(lastUpdateLag, mAccuracy);
-    };
-
     public void onLocationChanged(Location location) {
         // TODO: use currentTime for alpha channel, but locationTime for text
         // lag.
@@ -118,7 +109,7 @@ public class GpsStatusWidget implements LocationListener {
         mLocationTime = Math.min(location.getTime(), mLastUpdateTime);
         mProvider.setText(location.getProvider());
         mAccuracy = location.getAccuracy();
-    }
+    };
 
     public void onProviderDisabled(String provider) {
         mStatus.setText("DISABLED");
@@ -143,5 +134,14 @@ public class GpsStatusWidget implements LocationListener {
                         + mResourceProvider.getString(R.string.temporarily_unavailable));
                 break;
         }
+    }
+
+    public void refreshLocation() {
+        long currentTime = mTime.getCurrentTime();
+        long lastUpdateLag = currentTime - mLastUpdateTime;
+        long locationLag = currentTime - mLocationTime;
+        mLag.setText((locationLag / 1000 + "s").trim());
+        mAccuracyView.setText((mAccuracy + "m").trim());
+        mMeterView.set(lastUpdateLag, mAccuracy);
     }
 }

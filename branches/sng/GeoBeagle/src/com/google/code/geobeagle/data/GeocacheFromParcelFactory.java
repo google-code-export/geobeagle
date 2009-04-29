@@ -1,7 +1,6 @@
 
 package com.google.code.geobeagle.data;
 
-
 import android.os.Bundle;
 import android.os.Parcel;
 

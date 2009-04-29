@@ -7,8 +7,8 @@ import com.google.code.geobeagle.data.GeocacheFactory.Source;
 import android.location.Location;
 
 public class GeocacheFromMyLocationFactory {
-    private final LocationControlBuffered mLocationControl;
     private final GeocacheFactory mGeocacheFactory;
+    private final LocationControlBuffered mLocationControl;
 
     public GeocacheFromMyLocationFactory(GeocacheFactory geocacheFactory,
             LocationControlBuffered locationControl) {

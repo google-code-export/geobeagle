@@ -23,6 +23,14 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 
 public class GpxAndZipFiles {
+    public static class GpxAndZipFilenameFilter implements FilenameFilter {
+        public boolean accept(File dir, String name) {
+            name = name.toLowerCase();
+            return !name.startsWith(".")
+                    && (name.endsWith(".gpx") || name.endsWith(".zip") || name.endsWith(".loc"));
+        }
+    }
+
     public static class GpxAndZipFilesIter {
         private final String[] mFileList;
         private final GpxAndZipFilesIterFactory mGpxAndZipFileIterFactory;
@@ -59,17 +67,9 @@ public class GpxAndZipFiles {
         }
     }
 
-    public static class GpxAndZipFilenameFilter implements FilenameFilter {
-        public boolean accept(File dir, String name) {
-            name = name.toLowerCase();
-            return !name.startsWith(".")
-                    && (name.endsWith(".gpx") || name.endsWith(".zip") || name.endsWith(".loc"));
-        }
-    }
-
+    public static final String GPX_DIR = "/sdcard/download/";
     private final FilenameFilter mFilenameFilter;
     private final GpxAndZipFilesIterFactory mGpxFileIterFactory;
-    public static final String GPX_DIR = "/sdcard/download/";
 
     public GpxAndZipFiles(FilenameFilter filenameFilter,
             GpxAndZipFilesIterFactory gpxFileIterFactory) {

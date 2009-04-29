@@ -21,12 +21,12 @@ import com.google.code.geobeagle.io.Database.ISQLiteDatabase;
  * @author sng
  */
 public class CacheWriter {
-    private final ISQLiteDatabase mSqlite;
-    private final DbToGeocacheAdapter mDbToGeocacheAdapter;
     public static final String SQLS_CLEAR_EARLIER_LOADS[] = {
             Database.SQL_DELETE_OLD_CACHES, Database.SQL_DELETE_OLD_GPX,
             Database.SQL_RESET_DELETE_ME_CACHES, Database.SQL_RESET_DELETE_ME_GPX
     };
+    private final DbToGeocacheAdapter mDbToGeocacheAdapter;
+    private final ISQLiteDatabase mSqlite;
 
     CacheWriter(ISQLiteDatabase sqlite, DbToGeocacheAdapter dbToGeocacheAdapter) {
         mSqlite = sqlite;

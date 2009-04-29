@@ -8,9 +8,9 @@ import java.io.IOException;
 
 class EventHandlerLoc implements EventHandler {
 
-    static final String XPATH_LOC = "/loc";
     static final String XPATH_COORD = "/loc/waypoint/coord";
     static final String XPATH_GROUNDSPEAKNAME = "/loc/waypoint/name";
+    static final String XPATH_LOC = "/loc";
     static final String XPATH_WPT = "/loc/waypoint";
     static final String XPATH_WPTNAME = "/loc/waypoint/name";
 

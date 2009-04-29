@@ -73,11 +73,11 @@ public class GeoBeagle extends Activity implements LifecycleManager {
     private GeocacheFactory mGeocacheFactory;
     private GeocacheFromPreferencesFactory mGeocacheFromPreferencesFactory;
     private GeocacheViewer mGeocacheViewer;
-    private CombinedLocationListener mStatusWidgetLocationListener;
     private GpsStatusWidget mGpsStatusWidget;
     private LocationControlBuffered mLocationControlBuffered;
     private LocationSaver mLocationSaver;
     private final ResourceProvider mResourceProvider;
+    private CombinedLocationListener mStatusWidgetLocationListener;
     private UpdateGpsWidgetRunnable mUpdateGpsWidgetRunnable;
     private WebPageAndDetailsButtonEnabler mWebPageButtonEnabler;
 
@@ -163,8 +163,8 @@ public class GeoBeagle extends Activity implements LifecycleManager {
             final LocationControl locationControl = new LocationControl(locationManager,
                     locationChooser);
             mLocationControlBuffered = new LocationControlBuffered(locationControl);
-            mStatusWidgetLocationListener = new CombinedLocationListener(
-                    mLocationControlBuffered, mGpsStatusWidget);
+            mStatusWidgetLocationListener = new CombinedLocationListener(mLocationControlBuffered,
+                    mGpsStatusWidget);
             mGeocacheFactory = new GeocacheFactory();
             mGeocacheFromPreferencesFactory = new GeocacheFromPreferencesFactory(mGeocacheFactory);
             final TextView gcid = (TextView)findViewById(R.id.gcid);

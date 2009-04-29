@@ -65,8 +65,9 @@ public class CacheWriterTest extends TestCase {
         DbToGeocacheAdapter dbToGeocacheAdapter = createMock(DbToGeocacheAdapter.class);
 
         sqlite.execSQL(Database.SQL_REPLACE_CACHE, "gc123", "a cache", 122.0, 37.0, "source");
-        expect(dbToGeocacheAdapter.sourceTypeToSourceName(Source.GPX, "source")).andReturn("source");
-        
+        expect(dbToGeocacheAdapter.sourceTypeToSourceName(Source.GPX, "source"))
+                .andReturn("source");
+
         replay(sqlite);
         replay(dbToGeocacheAdapter);
         CacheWriter cacheWriter = new CacheWriter(sqlite, dbToGeocacheAdapter);

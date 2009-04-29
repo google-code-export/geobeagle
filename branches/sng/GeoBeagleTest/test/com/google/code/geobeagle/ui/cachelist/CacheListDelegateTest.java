@@ -37,18 +37,6 @@ public class CacheListDelegateTest {
     }
 
     @Test
-    public void testOnCreate() {
-        GeocacheListPresenter geocacheListPresenter = PowerMock
-                .createStrictMock(GeocacheListPresenter.class);
-
-        geocacheListPresenter.onCreate();
-
-        PowerMock.replayAll();
-        new CacheListDelegate(null, geocacheListPresenter).onCreate();
-        PowerMock.verifyAll();
-    }
-
-    @Test
     public void testCreateOptionsMenu() {
         Menu menu = PowerMock.createMock(Menu.class);
         GeocacheListPresenter geocacheListPresenter = PowerMock
@@ -71,6 +59,18 @@ public class CacheListDelegateTest {
 
         PowerMock.replayAll();
         new CacheListDelegate(geocacheListController, null).onContextItemSelected(menuItem);
+        PowerMock.verifyAll();
+    }
+
+    @Test
+    public void testOnCreate() {
+        GeocacheListPresenter geocacheListPresenter = PowerMock
+                .createStrictMock(GeocacheListPresenter.class);
+
+        geocacheListPresenter.onCreate();
+
+        PowerMock.replayAll();
+        new CacheListDelegate(null, geocacheListPresenter).onCreate();
         PowerMock.verifyAll();
     }
 

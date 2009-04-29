@@ -35,8 +35,8 @@ public class GeoBeagleDelegate {
         final AlertDialog.Builder cacheDetailsBuilder = new AlertDialog.Builder(parent);
         final DialogInterface.OnClickListener cacheDetailsOkListener = new CacheDetailsOnClickListener.OkListener();
         final LayoutInflater layoutInflater = LayoutInflater.from(parent);
-        final CacheDetailsOnClickListener cacheDetailsOnClickListener = Misc
-                .create(parent, cacheDetailsBuilder, geocacheViewer, errorDisplayer, layoutInflater);
+        final CacheDetailsOnClickListener cacheDetailsOnClickListener = Misc.create(parent,
+                cacheDetailsBuilder, geocacheViewer, errorDisplayer, layoutInflater);
 
         return new GeoBeagleDelegate(parent, appLifecycleManager, cacheDetailsBuilder,
                 cacheDetailsOkListener, cacheDetailsOnClickListener, errorDisplayer);

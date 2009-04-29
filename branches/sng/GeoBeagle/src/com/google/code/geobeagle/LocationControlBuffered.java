@@ -6,8 +6,8 @@ import android.location.LocationListener;
 import android.os.Bundle;
 
 public class LocationControlBuffered implements LocationListener {
-    LocationControl mLocationControl;
     Location mLocation;
+    LocationControl mLocationControl;
 
     LocationControlBuffered(LocationControl locationControl) {
         mLocationControl = locationControl;

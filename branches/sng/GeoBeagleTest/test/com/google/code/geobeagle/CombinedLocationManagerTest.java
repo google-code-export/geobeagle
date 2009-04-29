@@ -25,6 +25,18 @@ import android.location.LocationManager;
 @RunWith(PowerMockRunner.class)
 public class CombinedLocationManagerTest {
     @Test
+    public void testRemoveUpdates() {
+        LocationManager locationManager = PowerMock.createMock(LocationManager.class);
+        LocationListener locationListener = PowerMock.createMock(LocationListener.class);
+
+        locationManager.removeUpdates(locationListener);
+
+        PowerMock.replayAll();
+        new CombinedLocationManager(locationManager).removeUpdates(locationListener);
+        PowerMock.verifyAll();
+    }
+
+    @Test
     public void testRequestLocationUpdates() {
         LocationManager locationManager = PowerMock.createMock(LocationManager.class);
         LocationListener locationListener = PowerMock.createMock(LocationListener.class);
@@ -36,18 +48,6 @@ public class CombinedLocationManagerTest {
 
         PowerMock.replayAll();
         new CombinedLocationManager(locationManager).requestLocationUpdates(7, 4, locationListener);
-        PowerMock.verifyAll();
-    }
-
-    @Test
-    public void testRemoveUpdates() {
-        LocationManager locationManager = PowerMock.createMock(LocationManager.class);
-        LocationListener locationListener = PowerMock.createMock(LocationListener.class);
-
-        locationManager.removeUpdates(locationListener);
-
-        PowerMock.replayAll();
-        new CombinedLocationManager(locationManager).removeUpdates(locationListener);
         PowerMock.verifyAll();
     }
 }

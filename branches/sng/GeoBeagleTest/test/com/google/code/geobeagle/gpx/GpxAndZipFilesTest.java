@@ -41,6 +41,47 @@ import java.io.FilenameFilter;
 public class GpxAndZipFilesTest {
 
     @Test
+    public void GpxFilesIterator() throws Exception {
+        FilenameFilter filenameFilter = PowerMock.createMock(FilenameFilter.class);
+        GpxAndZipFilesIterFactory gpxAndZipFilesIterFactory = PowerMock
+                .createMock(GpxAndZipFilesIterFactory.class);
+        GpxAndZipFilesIter gpxAndZipFilesIter = PowerMock.createMock(GpxAndZipFilesIter.class);
+        File file = PowerMock.createMock(File.class);
+
+        PowerMock.expectNew(File.class, GpxAndZipFiles.GPX_DIR).andReturn(file);
+        String[] fileList = new String[] {
+                "foo.gpx", "bar.gpx"
+        };
+        expect(file.list(filenameFilter)).andReturn(fileList);
+        PowerMock.expectNew(GpxAndZipFilesIter.class, fileList, gpxAndZipFilesIterFactory)
+                .andReturn(gpxAndZipFilesIter);
+
+        PowerMock.replayAll();
+        new GpxAndZipFiles(filenameFilter, gpxAndZipFilesIterFactory).iterator();
+        PowerMock.verifyAll();
+    }
+
+    @Test
+    public void GpxFilesIteratorError() throws Exception {
+        FilenameFilter filenameFilter = PowerMock.createMock(FilenameFilter.class);
+        GpxAndZipFilesIterFactory gpxAndZipFilesIterFactory = PowerMock
+                .createMock(GpxAndZipFilesIterFactory.class);
+        File file = PowerMock.createMock(File.class);
+
+        PowerMock.expectNew(File.class, GpxAndZipFiles.GPX_DIR).andReturn(file);
+        expect(file.list(filenameFilter)).andReturn(null);
+
+        PowerMock.replayAll();
+        assertEquals(null, new GpxAndZipFiles(filenameFilter, gpxAndZipFilesIterFactory).iterator());
+        PowerMock.verifyAll();
+    }
+
+    @Test
+    public void testCantReadDir() throws Exception {
+        assertFalse(new GpxAndZipFilesIter(new String[] {}, null).hasNext());
+    }
+
+    @Test
     public void testFilenameFilter() {
         FilenameFilter filenameFilter = new GpxAndZipFilenameFilter();
         assertTrue(filenameFilter.accept(null, "foo.gpx"));
@@ -86,47 +127,6 @@ public class GpxAndZipFilesTest {
     @Test
     public void testNoFiles() throws Exception {
         assertFalse(new GpxAndZipFilesIter(new String[] {}, null).hasNext());
-    }
-
-    @Test
-    public void testCantReadDir() throws Exception {
-        assertFalse(new GpxAndZipFilesIter(new String[] {}, null).hasNext());
-    }
-
-    @Test
-    public void GpxFilesIterator() throws Exception {
-        FilenameFilter filenameFilter = PowerMock.createMock(FilenameFilter.class);
-        GpxAndZipFilesIterFactory gpxAndZipFilesIterFactory = PowerMock
-                .createMock(GpxAndZipFilesIterFactory.class);
-        GpxAndZipFilesIter gpxAndZipFilesIter = PowerMock.createMock(GpxAndZipFilesIter.class);
-        File file = PowerMock.createMock(File.class);
-
-        PowerMock.expectNew(File.class, GpxAndZipFiles.GPX_DIR).andReturn(file);
-        String[] fileList = new String[] {
-                "foo.gpx", "bar.gpx"
-        };
-        expect(file.list(filenameFilter)).andReturn(fileList);
-        PowerMock.expectNew(GpxAndZipFilesIter.class, fileList, gpxAndZipFilesIterFactory)
-                .andReturn(gpxAndZipFilesIter);
-
-        PowerMock.replayAll();
-        new GpxAndZipFiles(filenameFilter, gpxAndZipFilesIterFactory).iterator();
-        PowerMock.verifyAll();
-    }
-
-    @Test
-    public void GpxFilesIteratorError() throws Exception {
-        FilenameFilter filenameFilter = PowerMock.createMock(FilenameFilter.class);
-        GpxAndZipFilesIterFactory gpxAndZipFilesIterFactory = PowerMock
-                .createMock(GpxAndZipFilesIterFactory.class);
-        File file = PowerMock.createMock(File.class);
-
-        PowerMock.expectNew(File.class, GpxAndZipFiles.GPX_DIR).andReturn(file);
-        expect(file.list(filenameFilter)).andReturn(null);
-
-        PowerMock.replayAll();
-        assertEquals(null, new GpxAndZipFiles(filenameFilter, gpxAndZipFilesIterFactory).iterator());
-        PowerMock.verifyAll();
     }
 
     @Test

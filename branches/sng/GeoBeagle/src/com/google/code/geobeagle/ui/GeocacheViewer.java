@@ -23,9 +23,9 @@ public class GeocacheViewer {
 
     public static final String FNAME_RECENT_LOCATIONS = "RECENT_LOCATIONS";
     public static final String PREFS_LOCATION = "Location";
+    private final TextView mCoords;
     private final TextView mId;
     private final TextView mName;
-    private final TextView mCoords;
 
     public GeocacheViewer(TextView gcid, TextView gcname, TextView gccoords) {
         mId = gcid;

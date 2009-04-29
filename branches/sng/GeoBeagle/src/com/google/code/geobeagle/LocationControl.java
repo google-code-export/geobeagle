@@ -62,7 +62,7 @@ public class LocationControl {
         final Location choose = mLocationChooser.choose(mLocationManager
                 .getLastKnownLocation(LocationManager.GPS_PROVIDER), mLocationManager
                 .getLastKnownLocation(LocationManager.NETWORK_PROVIDER));
-//        choose.setLatitude(choose.getLatitude() + .1 * Math.random());
+        // choose.setLatitude(choose.getLatitude() + .1 * Math.random());
         return choose;
     }
 }

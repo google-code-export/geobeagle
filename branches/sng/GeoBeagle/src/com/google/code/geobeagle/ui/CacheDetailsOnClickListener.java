@@ -30,8 +30,8 @@ public class CacheDetailsOnClickListener implements View.OnClickListener {
     private final GeoBeagle mGeoBeagle;
 
     public CacheDetailsOnClickListener(GeoBeagle geoBeagle, Builder alertDialogBuilder,
-            GeocacheViewer geocacheViewer, LayoutInflater env, CacheDetailsLoader cacheDetailsLoader,
-            ErrorDisplayer errorDisplayer) {
+            GeocacheViewer geocacheViewer, LayoutInflater env,
+            CacheDetailsLoader cacheDetailsLoader, ErrorDisplayer errorDisplayer) {
         mAlertDialogBuilder = alertDialogBuilder;
         mErrorDisplayer = errorDisplayer;
         mEnv = env;
@@ -48,7 +48,8 @@ public class CacheDetailsOnClickListener implements View.OnClickListener {
             mAlertDialogBuilder.setView(detailsView);
 
             WebView webView = (WebView)detailsView.findViewById(R.id.webview);
-            webView.loadDataWithBaseURL(null, mCacheDetailsLoader.load(id), "text/html", "utf-8", "about:blank");
+            webView.loadDataWithBaseURL(null, mCacheDetailsLoader.load(id), "text/html", "utf-8",
+                    "about:blank");
 
             mAlertDialogBuilder.create().show();
         } catch (Exception e) {

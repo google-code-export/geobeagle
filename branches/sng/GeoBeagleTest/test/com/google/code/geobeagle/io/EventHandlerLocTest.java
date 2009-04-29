@@ -17,6 +17,16 @@ import java.io.IOException;
 @RunWith(PowerMockRunner.class)
 public class EventHandlerLocTest {
     @Test
+    public void endTagTest() throws IOException {
+        CachePersisterFacade cachePersisterFacade = PowerMock
+                .createMock(CachePersisterFacade.class);
+
+        PowerMock.replayAll();
+        new EventHandlerLoc(cachePersisterFacade).endTag("/random");
+        PowerMock.verifyAll();
+    }
+
+    @Test
     public void endTagTestWaypoint() throws IOException {
         CachePersisterFacade cachePersisterFacade = PowerMock
                 .createMock(CachePersisterFacade.class);
@@ -25,16 +35,6 @@ public class EventHandlerLocTest {
 
         PowerMock.replayAll();
         new EventHandlerLoc(cachePersisterFacade).endTag(EventHandlerLoc.XPATH_WPT);
-        PowerMock.verifyAll();
-    }
-
-    @Test
-    public void endTagTest() throws IOException {
-        CachePersisterFacade cachePersisterFacade = PowerMock
-                .createMock(CachePersisterFacade.class);
-
-        PowerMock.replayAll();
-        new EventHandlerLoc(cachePersisterFacade).endTag("/random");
         PowerMock.verifyAll();
     }
 

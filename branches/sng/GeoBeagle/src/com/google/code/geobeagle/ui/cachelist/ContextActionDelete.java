@@ -21,8 +21,8 @@ import android.widget.BaseAdapter;
 
 public class ContextActionDelete implements ContextAction {
     private final CacheWriter mCacheWriter;
-    private final GeocacheVectors mGeocacheVectors;
     private final BaseAdapter mGeocacheListAdapter;
+    private final GeocacheVectors mGeocacheVectors;
 
     ContextActionDelete(BaseAdapter geocacheListAdapter, CacheWriter cacheWriter,
             GeocacheVectors geocacheVectors) {

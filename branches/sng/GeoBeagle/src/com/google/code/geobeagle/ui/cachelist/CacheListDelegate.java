@@ -29,12 +29,12 @@ public class CacheListDelegate {
         mPresenter = presenter;
     }
 
-    public void onCreate() {
-        mPresenter.onCreate();
-    }
-
     public boolean onContextItemSelected(MenuItem menuItem) {
         return mController.onContextItemSelected(menuItem);
+    }
+
+    public void onCreate() {
+        mPresenter.onCreate();
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {

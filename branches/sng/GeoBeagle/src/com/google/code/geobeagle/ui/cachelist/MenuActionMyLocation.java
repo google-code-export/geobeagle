@@ -21,10 +21,10 @@ import com.google.code.geobeagle.io.LocationSaver;
 import com.google.code.geobeagle.ui.ErrorDisplayer;
 
 class MenuActionMyLocation implements MenuAction {
+    private final ErrorDisplayer mErrorDisplayer;
     private final GeocacheFromMyLocationFactory mGeocacheFromMyLocationFactory;
     private final GeocacheListPresenter mGeocacheListPresenter;
     private final LocationSaver mLocationSaver;
-    private final ErrorDisplayer mErrorDisplayer;
 
     public MenuActionMyLocation(LocationSaver locationSaver,
             GeocacheFromMyLocationFactory geocacheFromMyLocationFactory,

@@ -22,8 +22,8 @@ import android.widget.BaseAdapter;
 
 public class GeocacheListAdapter extends BaseAdapter {
 
-    private final GeocacheVectors mGeocacheVectors;
     private final GeocacheSummaryRowInflater mGeocacheSummaryRowInflater;
+    private final GeocacheVectors mGeocacheVectors;
 
     public GeocacheListAdapter(GeocacheVectors geocacheVectors,
             GeocacheSummaryRowInflater geocacheSummaryRowInflater) {

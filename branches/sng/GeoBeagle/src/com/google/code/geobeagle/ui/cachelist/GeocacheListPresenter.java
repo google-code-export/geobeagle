@@ -58,14 +58,14 @@ public class GeocacheListPresenter {
     }
 
     private BaseAdapterLocationListener mBaseAdapterLocationListener;
+    private final CombinedLocationManager mCombinedLocationManager;
     private final Database mDatabase;
     private final ErrorDisplayer mErrorDisplayer;
     private final GeocacheVectors mGeocacheVectors;
     private final LocationListener mGpsStatusWidgetLocationListener;
     private final View mGpsWidgetView;
-    private final LocationControlBuffered mLocationControlBuffered;
-    private final CombinedLocationManager mCombinedLocationManager;
     private final ListActivity mListActivity;
+    private final LocationControlBuffered mLocationControlBuffered;
     private final SQLiteWrapper mSQLiteWrapper;
     private final UpdateGpsWidgetRunnable mUpdateGpsWidgetRunnable;
 

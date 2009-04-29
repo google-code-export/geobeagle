@@ -21,8 +21,8 @@ import android.content.Intent;
 
 public class ContextActionView implements ContextAction {
     private final Context mContext;
-    private final Intent mIntent;
     private GeocacheVectors mGeocacheVectors;
+    private final Intent mIntent;
 
     ContextActionView(GeocacheVectors geocacheVectors, Context context, Intent intent) {
         mGeocacheVectors = geocacheVectors;

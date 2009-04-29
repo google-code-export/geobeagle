@@ -53,6 +53,17 @@ public class Geocache implements Parcelable {
         mSourceName = sourceName;
     }
 
+    float calculateDistance(Location here) {
+        if (here != null) {
+            float[] results = new float[1];
+            Location.distanceBetween(here.getLatitude(), here.getLongitude(), getLatitude(),
+                    getLongitude(), results);
+
+            return results[0];
+        }
+        return -1;
+    }
+
     public int describeContents() {
         return 0;
     }
@@ -129,16 +140,5 @@ public class Geocache implements Parcelable {
         editor.putFloat(LONGITUDE, (float)mLongitude);
         editor.putInt(SOURCE_TYPE, mSourceType.toInt());
         editor.putString(SOURCE_NAME, mSourceName);
-    }
-
-    float calculateDistance(Location here) {
-        if (here != null) {
-            float[] results = new float[1];
-            Location.distanceBetween(here.getLatitude(), here.getLongitude(), getLatitude(),
-                    getLongitude(), results);
-
-            return results[0];
-        }
-        return -1;
     }
 }

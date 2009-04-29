@@ -34,7 +34,8 @@ public class UtilTest extends TestCase {
     }
 
     public void testConvertDegreesToMinutes() {
-        // Make sure formatting is US even if the phone is in a different locale.
+        // Make sure formatting is US even if the phone is in a different
+        // locale.
         // TODO: add locale-specific parsing/formatting.
         Locale.setDefault(Locale.GERMANY);
         assertEquals("-122 30.000", Util.formatDegreesAsDecimalDegreesString(-122.5));

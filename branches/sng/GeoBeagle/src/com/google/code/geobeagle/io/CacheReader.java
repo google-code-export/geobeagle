@@ -24,8 +24,8 @@ import android.location.Location;
 public class CacheReader {
     public static class CacheReaderCursor {
         private final Cursor mCursor;
-        private final GeocacheFactory mGeocacheFactory;
         private final DbToGeocacheAdapter mDbToGeocacheAdapter;
+        private final GeocacheFactory mGeocacheFactory;
 
         public CacheReaderCursor(Cursor cursor, GeocacheFactory geocacheFactory,
                 DbToGeocacheAdapter dbToGeocacheAdapter) {

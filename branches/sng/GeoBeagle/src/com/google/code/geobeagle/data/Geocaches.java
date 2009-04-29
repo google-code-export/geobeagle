@@ -14,7 +14,6 @@
 
 package com.google.code.geobeagle.data;
 
-
 import java.util.ArrayList;
 
 public class Geocaches {

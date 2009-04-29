@@ -26,15 +26,15 @@ import java.io.Reader;
 public class GpxReaderTest {
 
     @Test
+    public void GpxFileOpenedOpen() throws Exception {
+        Reader reader = PowerMock.createMock(Reader.class);
+        assertEquals(reader, new GpxReader("foo.gpx", reader).open());
+    }
+
+    @Test
     public void testGetFilename() throws Exception {
         Reader reader = PowerMock.createMock(Reader.class);
 
         assertEquals("foo.gpx", new GpxReader("foo.gpx", reader).getFilename());
-    }
-
-    @Test
-    public void GpxFileOpenedOpen() throws Exception {
-        Reader reader = PowerMock.createMock(Reader.class);
-        assertEquals(reader, new GpxReader("foo.gpx", reader).open());
     }
 }

@@ -30,11 +30,11 @@ import java.io.IOException;
 public class ImportThreadDelegate {
     public static class ImportThreadHelper {
         private final ErrorDisplayer mErrorDisplayer;
-        private final GpxLoader mGpxLoader;
-        private final MessageHandler mMessageHandler;
-        private boolean mHasFiles;
-        private final EventHelperFactory mEventHelperFactory;
         private final EventHandlers mEventHandlers;
+        private final EventHelperFactory mEventHelperFactory;
+        private final GpxLoader mGpxLoader;
+        private boolean mHasFiles;
+        private final MessageHandler mMessageHandler;
 
         public ImportThreadHelper(GpxLoader gpxLoader, MessageHandler messageHandler,
                 EventHelperFactory eventHelperFactory, EventHandlers eventHandlers,
@@ -71,9 +71,9 @@ public class ImportThreadDelegate {
         }
     }
 
+    private ErrorDisplayer mErrorDisplayer;
     private final GpxAndZipFiles mGpxAndZipFiles;
     private ImportThreadHelper mImportThreadHelper;
-    private ErrorDisplayer mErrorDisplayer;
 
     public ImportThreadDelegate(GpxAndZipFiles gpxAndZipFiles,
             ImportThreadHelper importThreadHelper, ErrorDisplayer errorDisplayer) {
@@ -94,7 +94,7 @@ public class ImportThreadDelegate {
         }
     }
 
-    protected void tryRun() throws FileNotFoundException, IOException, XmlPullParserException  {
+    protected void tryRun() throws FileNotFoundException, IOException, XmlPullParserException {
         GpxAndZipFilesIter gpxFileIter = mGpxAndZipFiles.iterator();
         if (gpxFileIter == null) {
             mErrorDisplayer.displayError(R.string.error_cant_read_sd);

@@ -95,7 +95,6 @@ public class CacheTagWriter {
 
     public void write(Source source) {
         if (!mFound)
-            mCacheWriter.insertAndUpdateCache(mId, mName, mLatitude, mLongitude, source,
-                    mGpxName);
+            mCacheWriter.insertAndUpdateCache(mId, mName, mLatitude, mLongitude, source, mGpxName);
     }
 }

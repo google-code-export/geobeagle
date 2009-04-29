@@ -27,11 +27,6 @@ import android.widget.ListView;
 public class CacheList extends ListActivity {
     private CacheListDelegate mCacheListDelegate;
 
-    @Override
-    public boolean onContextItemSelected(MenuItem item) {
-        return mCacheListDelegate.onContextItemSelected(item) || super.onContextItemSelected(item);
-    }
-
     // This is the ctor that Android will use.
     public CacheList() {
     }
@@ -39,6 +34,11 @@ public class CacheList extends ListActivity {
     // This is the ctor for testing.
     public CacheList(CacheListDelegate cacheListDelegate) {
         mCacheListDelegate = cacheListDelegate;
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        return mCacheListDelegate.onContextItemSelected(item) || super.onContextItemSelected(item);
     }
 
     @Override

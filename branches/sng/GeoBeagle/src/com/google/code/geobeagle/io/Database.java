@@ -96,7 +96,7 @@ public class Database {
 
     public static final String TBL_CACHES = "CACHES";
     public static final String TBL_GPX = "GPX";
-    
+
     private final SQLiteOpenHelper mSqliteOpenHelper;
 
     Database(SQLiteOpenHelper sqliteOpenHelper) {

@@ -141,17 +141,6 @@ public class GeocacheListControllerTest {
     }
 
     @Test
-    public void testOnListItemClickZero() {
-        MenuActions menuActions = PowerMock.createMock(MenuActions.class);
-
-        menuActions.act(R.id.menu_refresh);
-
-        PowerMock.replayAll();
-        new GeocacheListController(menuActions, null, null, null).onListItemClick(null, null, 0, 0);
-        PowerMock.verifyAll();
-    }
-
-    @Test
     public void testOnListItemClickError() {
         final ContextAction contextAction = PowerMock.createMock(ContextAction.class);
         ErrorDisplayer errorDisplayer = PowerMock.createMock(ErrorDisplayer.class);
@@ -166,6 +155,17 @@ public class GeocacheListControllerTest {
         PowerMock.replayAll();
         new GeocacheListController(null, contextActions, null, errorDisplayer).onListItemClick(
                 null, null, 47, 0);
+        PowerMock.verifyAll();
+    }
+
+    @Test
+    public void testOnListItemClickZero() {
+        MenuActions menuActions = PowerMock.createMock(MenuActions.class);
+
+        menuActions.act(R.id.menu_refresh);
+
+        PowerMock.replayAll();
+        new GeocacheListController(menuActions, null, null, null).onListItemClick(null, null, 0, 0);
         PowerMock.verifyAll();
     }
 

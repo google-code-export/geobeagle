@@ -43,22 +43,6 @@ import android.widget.TextView;
 })
 public class GpsStatusWidgetTest {
     @Test
-    public void testUpdateGpsWidgetRunnable() {
-        GpsStatusWidget gpsStatusWidget = PowerMock.createMock(GpsStatusWidget.class);
-        Handler handler = PowerMock.createMock(Handler.class);
-
-        gpsStatusWidget.refreshLocation();
-        EasyMock
-                .expect(
-                        handler.postDelayed(EasyMock.isA(UpdateGpsWidgetRunnable.class), EasyMock
-                                .eq(100L))).andReturn(true);
-
-        PowerMock.replayAll();
-        new UpdateGpsWidgetRunnable(gpsStatusWidget, handler).run();
-        PowerMock.verifyAll();
-    }
-
-    @Test
     public void testAccuracyToBars() {
         MeterFormatter meterFormatter = new MeterFormatter();
         assertEquals(0, meterFormatter.accuracyToBarCount(-1));
@@ -202,6 +186,22 @@ public class GpsStatusWidgetTest {
         gpsStatusWidget.onStatusChanged("gps", LocationProvider.OUT_OF_SERVICE, bundle);
         gpsStatusWidget.onStatusChanged("network", LocationProvider.AVAILABLE, bundle);
         gpsStatusWidget.onStatusChanged("gps", LocationProvider.TEMPORARILY_UNAVAILABLE, bundle);
+        PowerMock.verifyAll();
+    }
+
+    @Test
+    public void testUpdateGpsWidgetRunnable() {
+        GpsStatusWidget gpsStatusWidget = PowerMock.createMock(GpsStatusWidget.class);
+        Handler handler = PowerMock.createMock(Handler.class);
+
+        gpsStatusWidget.refreshLocation();
+        EasyMock
+                .expect(
+                        handler.postDelayed(EasyMock.isA(UpdateGpsWidgetRunnable.class), EasyMock
+                                .eq(100L))).andReturn(true);
+
+        PowerMock.replayAll();
+        new UpdateGpsWidgetRunnable(gpsStatusWidget, handler).run();
         PowerMock.verifyAll();
     }
 }

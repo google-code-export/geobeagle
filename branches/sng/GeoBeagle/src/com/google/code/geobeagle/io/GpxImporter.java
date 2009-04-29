@@ -29,18 +29,18 @@ public class GpxImporter {
 
     private final Database mDatabase;
     private final ErrorDisplayer mErrorDisplayer;
+    private final EventHandlers mEventHandlers;
     private final GpxLoader mGpxLoader;
     private final ImportThreadWrapper mImportThreadWrapper;
     private final ListActivity mListActivity;
     private final MessageHandler mMessageHandler;
     private final SQLiteWrapper mSqliteWrapper;
     private final ToastFactory mToastFactory;
-    private final EventHandlers mEventHandlers;
 
     GpxImporter(GpxLoader gpxLoader, Database database, SQLiteWrapper sqliteWrapper,
             ListActivity listActivity, ImportThreadWrapper importThreadWrapper,
-            MessageHandler messageHandler, ToastFactory toastFactory,
-            EventHandlers eventHandlers, ErrorDisplayer errorDisplayer) {
+            MessageHandler messageHandler, ToastFactory toastFactory, EventHandlers eventHandlers,
+            ErrorDisplayer errorDisplayer) {
         mSqliteWrapper = sqliteWrapper;
         mDatabase = database;
 

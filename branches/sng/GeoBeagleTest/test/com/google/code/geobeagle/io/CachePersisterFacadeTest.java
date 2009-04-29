@@ -65,7 +65,6 @@ public class CachePersisterFacadeTest {
                 .gpxTime("today"));
         PowerMock.verifyAll();
     }
-    
 
     @Test
     public void testGroundspeakName() throws IOException {
@@ -76,7 +75,6 @@ public class CachePersisterFacadeTest {
                 .groundspeakName("GC123");
         PowerMock.verifyAll();
     }
-
 
     @Test
     public void testHint() throws IOException {

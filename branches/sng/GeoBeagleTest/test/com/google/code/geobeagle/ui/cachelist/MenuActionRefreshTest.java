@@ -30,13 +30,23 @@ import java.util.ArrayList;
 public class MenuActionRefreshTest {
 
     @Test
-    public void testSortRunnable() {
-        MenuActionRefresh menuActionRefresh = PowerMock.createMock(MenuActionRefresh.class);
+    public void testAct() throws Exception {
+        ListActivity listActivity = PowerMock.createMock(ListActivity.class);
+        Handler handler = PowerMock.createMock(Handler.class);
+        MenuActionRefresh.SortRunnable sortRunnable = PowerMock
+                .createMock(MenuActionRefresh.SortRunnable.class);
+        Toast toast = PowerMock.createMock(Toast.class);
 
-        menuActionRefresh.sort();
+        PowerMock.mockStatic(Toast.class);
+        EasyMock.expect(Toast.makeText(listActivity, R.string.sorting, Toast.LENGTH_SHORT))
+                .andReturn(toast);
+        toast.show();
+        PowerMock.expectNew(SortRunnable.class, EasyMock.isA(MenuActionRefresh.class)).andReturn(
+                sortRunnable);
+        EasyMock.expect(handler.postDelayed(sortRunnable, 200)).andReturn(true);
 
         PowerMock.replayAll();
-        new MenuActionRefresh.SortRunnable(menuActionRefresh).run();
+        new MenuActionRefresh(listActivity, handler, null, null, null, null).act();
         PowerMock.verifyAll();
     }
 
@@ -66,23 +76,13 @@ public class MenuActionRefreshTest {
     }
 
     @Test
-    public void testAct() throws Exception {
-        ListActivity listActivity = PowerMock.createMock(ListActivity.class);
-        Handler handler = PowerMock.createMock(Handler.class);
-        MenuActionRefresh.SortRunnable sortRunnable = PowerMock
-                .createMock(MenuActionRefresh.SortRunnable.class);
-        Toast toast = PowerMock.createMock(Toast.class);
+    public void testSortRunnable() {
+        MenuActionRefresh menuActionRefresh = PowerMock.createMock(MenuActionRefresh.class);
 
-        PowerMock.mockStatic(Toast.class);
-        EasyMock.expect(Toast.makeText(listActivity, R.string.sorting, Toast.LENGTH_SHORT))
-                .andReturn(toast);
-        toast.show();
-        PowerMock.expectNew(SortRunnable.class, EasyMock.isA(MenuActionRefresh.class)).andReturn(
-                sortRunnable);
-        EasyMock.expect(handler.postDelayed(sortRunnable, 200)).andReturn(true);
+        menuActionRefresh.sort();
 
         PowerMock.replayAll();
-        new MenuActionRefresh(listActivity, handler, null, null, null, null).act();
+        new MenuActionRefresh.SortRunnable(menuActionRefresh).run();
         PowerMock.verifyAll();
     }
 }

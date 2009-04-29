@@ -27,12 +27,12 @@ public class MenuActionRefresh implements MenuAction {
         }
     }
 
-    private final GeocachesSql mGeocachesSql;
-    private final LocationControlBuffered mLocationControlBuffered;
     private final CacheListData mCacheListData;
     private final GeocacheListAdapter mGeocacheListAdapter;
-    private final ListActivity mListActivity;
+    private final GeocachesSql mGeocachesSql;
     private final Handler mHandler;
+    private final ListActivity mListActivity;
+    private final LocationControlBuffered mLocationControlBuffered;
 
     public MenuActionRefresh(ListActivity listActivity, Handler handler,
             LocationControlBuffered locationControlBuffered, GeocachesSql geocachesSql,

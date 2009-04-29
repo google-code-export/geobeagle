@@ -60,18 +60,6 @@ public class GeocacheVectorTest {
     }
 
     @Test
-    public void testSort() {
-        PowerMock.mockStatic(Collections.class);
-        ArrayList<IGeocacheVector> arrayList = new ArrayList<IGeocacheVector>();
-        LocationComparator locationComparator = new LocationComparator();
-        Collections.sort(arrayList, locationComparator);
-
-        PowerMock.replay(Collections.class);
-        locationComparator.sort(arrayList);
-        PowerMock.verify(Collections.class);
-    }
-
-    @Test
     public void testGetDistance() {
         LocationControlBuffered locationControlBuffered = PowerMock
                 .createMock(LocationControlBuffered.class);
@@ -130,5 +118,17 @@ public class GeocacheVectorTest {
         GeocacheVector geocacheVector = new GeocacheVector(geocache, null, null);
         assertEquals("GC123: a geocache", geocacheVector.getIdAndName());
         PowerMock.verifyAll();
+    }
+
+    @Test
+    public void testSort() {
+        PowerMock.mockStatic(Collections.class);
+        ArrayList<IGeocacheVector> arrayList = new ArrayList<IGeocacheVector>();
+        LocationComparator locationComparator = new LocationComparator();
+        Collections.sort(arrayList, locationComparator);
+
+        PowerMock.replay(Collections.class);
+        locationComparator.sort(arrayList);
+        PowerMock.verify(Collections.class);
     }
 }
