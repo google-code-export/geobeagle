@@ -25,8 +25,8 @@ public class CacheButtonOnClickListener implements OnClickListener {
     private final ErrorDisplayer mErrorDisplayer;
     private final String mErrorMessage;
 
-    public CacheButtonOnClickListener(IntentStarter intentStarter, ErrorDisplayer errorDisplayer,
-            String errorMessage) {
+    public CacheButtonOnClickListener(IntentStarter intentStarter, String errorMessage,
+            ErrorDisplayer errorDisplayer) {
         mDestinationToIntentFactory = intentStarter;
         mErrorDisplayer = errorDisplayer;
         mErrorMessage = errorMessage;

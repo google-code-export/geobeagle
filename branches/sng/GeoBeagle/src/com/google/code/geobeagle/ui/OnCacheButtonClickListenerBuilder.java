@@ -20,16 +20,16 @@ import android.app.Activity;
 import android.widget.Button;
 
 public class OnCacheButtonClickListenerBuilder {
-    private final Activity mContext;
+    private final Activity mActivity;
     private final ErrorDisplayer mErrorDisplayer;
 
-    public OnCacheButtonClickListenerBuilder(Activity context, ErrorDisplayer errorDisplayer) {
+    public OnCacheButtonClickListenerBuilder(Activity activity, ErrorDisplayer errorDisplayer) {
         mErrorDisplayer = errorDisplayer;
-        mContext = context;
+        mActivity = activity;
     }
 
     public void set(int id, IntentStarter intentStarter, String errorString) {
-        ((Button)mContext.findViewById(id)).setOnClickListener(new CacheButtonOnClickListener(
-                intentStarter, mErrorDisplayer, errorString));
+        ((Button)mActivity.findViewById(id)).setOnClickListener(new CacheButtonOnClickListener(
+                intentStarter, errorString, mErrorDisplayer));
     }
 }
