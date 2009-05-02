@@ -56,5 +56,6 @@ public class CacheListDelegate {
 
     public void onResume() {
         mPresenter.onResume();
+        mController.onResume();
     }
 }
