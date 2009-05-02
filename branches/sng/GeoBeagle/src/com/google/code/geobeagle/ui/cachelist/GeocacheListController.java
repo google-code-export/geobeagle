@@ -53,13 +53,16 @@ public class GeocacheListController {
     private final ErrorDisplayer mErrorDisplayer;
     private final GpxImporter mGpxImporter;
     private final MenuActions mMenuActions;
+    private final MenuActionRefresh mMenuActionRefresh;
 
     GeocacheListController(MenuActions menuActions, ContextAction[] contextActions,
-            GpxImporter gpxImporter, ErrorDisplayer errorDisplayer) {
+            GpxImporter gpxImporter, MenuActionRefresh menuActionRefresh,
+            ErrorDisplayer errorDisplayer) {
         mErrorDisplayer = errorDisplayer;
         mContextActions = contextActions;
         mMenuActions = menuActions;
         mGpxImporter = gpxImporter;
+        mMenuActionRefresh = menuActionRefresh;
     }
 
     public boolean onContextItemSelected(MenuItem menuItem) {
@@ -104,7 +107,7 @@ public class GeocacheListController {
 
     public void onResume() {
         try {
-            mMenuActions.act(R.id.menu_refresh);
+            mMenuActionRefresh.sort();
         } catch (final Exception e) {
             mErrorDisplayer.displayErrorAndStack(e);
         }
