@@ -16,7 +16,9 @@ package com.google.code.geobeagle.ui.cachelist;
 
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.data.GeocacheVectors;
+import com.google.code.geobeagle.io.Database;
 import com.google.code.geobeagle.io.GpxImporter;
+import com.google.code.geobeagle.io.DatabaseDI.SQLiteWrapper;
 import com.google.code.geobeagle.ui.ErrorDisplayer;
 
 import android.view.ContextMenu;
@@ -54,15 +56,19 @@ public class GeocacheListController {
     private final GpxImporter mGpxImporter;
     private final MenuActions mMenuActions;
     private final MenuActionRefresh mMenuActionRefresh;
+    private final SQLiteWrapper mSqliteWrapper;
+    private final Database mDatabase;
 
     GeocacheListController(MenuActions menuActions, ContextAction[] contextActions,
-            GpxImporter gpxImporter, MenuActionRefresh menuActionRefresh,
-            ErrorDisplayer errorDisplayer) {
+            SQLiteWrapper sqliteWrapper, Database database, GpxImporter gpxImporter,
+            MenuActionRefresh menuActionRefresh, ErrorDisplayer errorDisplayer) {
         mErrorDisplayer = errorDisplayer;
         mContextActions = contextActions;
         mMenuActions = menuActions;
         mGpxImporter = gpxImporter;
         mMenuActionRefresh = menuActionRefresh;
+        mSqliteWrapper = sqliteWrapper;
+        mDatabase = database;
     }
 
     public boolean onContextItemSelected(MenuItem menuItem) {
@@ -105,9 +111,11 @@ public class GeocacheListController {
         }
     }
 
-    public void onResume() {
+    public void onCreate() {
         try {
+            mSqliteWrapper.openReadableDatabase(mDatabase);
             mMenuActionRefresh.sort();
+            mSqliteWrapper.close();
         } catch (final Exception e) {
             mErrorDisplayer.displayErrorAndStack(e);
         }

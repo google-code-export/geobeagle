@@ -20,7 +20,9 @@ import static org.junit.Assert.assertTrue;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.data.GeocacheVector;
 import com.google.code.geobeagle.data.GeocacheVectors;
+import com.google.code.geobeagle.io.Database;
 import com.google.code.geobeagle.io.GpxImporter;
+import com.google.code.geobeagle.io.DatabaseDI.SQLiteWrapper;
 import com.google.code.geobeagle.ui.ErrorDisplayer;
 import com.google.code.geobeagle.ui.cachelist.GeocacheListController.CacheListOnCreateContextMenuListener;
 
@@ -80,7 +82,7 @@ public class GeocacheListControllerTest {
         PowerMock.replayAll();
         adapterContextMenuInfo.position = 76;
         GeocacheListController geocacheListController = new GeocacheListController(null,
-                contextActions, null, null, null);
+                contextActions, null, null, null, null, null);
         assertTrue(geocacheListController.onContextItemSelected(menuItem));
         PowerMock.verifyAll();
     }
@@ -96,7 +98,7 @@ public class GeocacheListControllerTest {
 
         PowerMock.replayAll();
         GeocacheListController geocacheListController = new GeocacheListController(null, null,
-                null, null, errorDisplayer);
+                null, null, null, null, errorDisplayer);
         assertTrue(geocacheListController.onContextItemSelected(menuItem));
         PowerMock.verifyAll();
     }
@@ -135,8 +137,8 @@ public class GeocacheListControllerTest {
         contextAction.act(45);
 
         PowerMock.replayAll();
-        new GeocacheListController(null, contextActions, null, null, null).onListItemClick(null,
-                null, 46, 0);
+        new GeocacheListController(null, contextActions, null, null, null, null, null)
+                .onListItemClick(null, null, 46, 0);
         PowerMock.verifyAll();
     }
 
@@ -153,7 +155,7 @@ public class GeocacheListControllerTest {
         errorDisplayer.displayErrorAndStack(runtimeException);
 
         PowerMock.replayAll();
-        new GeocacheListController(null, contextActions, null, null, errorDisplayer)
+        new GeocacheListController(null, contextActions, null, null, null, null, errorDisplayer)
                 .onListItemClick(null, null, 47, 0);
         PowerMock.verifyAll();
     }
@@ -165,8 +167,8 @@ public class GeocacheListControllerTest {
         menuActions.act(R.id.menu_refresh);
 
         PowerMock.replayAll();
-        new GeocacheListController(menuActions, null, null, null, null).onListItemClick(null, null,
-                0, 0);
+        new GeocacheListController(menuActions, null, null, null, null, null, null)
+                .onListItemClick(null, null, 0, 0);
         PowerMock.verifyAll();
     }
 
@@ -179,7 +181,7 @@ public class GeocacheListControllerTest {
         menuActions.act(27);
 
         PowerMock.replayAll();
-        new GeocacheListController(menuActions, null, null, null, null)
+        new GeocacheListController(menuActions, null, null, null, null, null, null)
                 .onOptionsItemSelected(menuItem);
         PowerMock.verifyAll();
     }
@@ -195,7 +197,7 @@ public class GeocacheListControllerTest {
         errorDisplayer.displayErrorAndStack(exception);
 
         PowerMock.replayAll();
-        new GeocacheListController(menuActions, null, null, null, errorDisplayer)
+        new GeocacheListController(menuActions, null, null, null, null, null, errorDisplayer)
                 .onOptionsItemSelected(menuItem);
         PowerMock.verifyAll();
     }
@@ -207,7 +209,7 @@ public class GeocacheListControllerTest {
         gpxImporter.abort();
 
         PowerMock.replayAll();
-        new GeocacheListController(null, null, gpxImporter, null, null).onPause();
+        new GeocacheListController(null, null, null, null, gpxImporter, null, null).onPause();
         PowerMock.verifyAll();
     }
 
@@ -220,34 +222,41 @@ public class GeocacheListControllerTest {
         EasyMock.expectLastCall().andThrow(e);
 
         PowerMock.replayAll();
-        new GeocacheListController(null, null, gpxImporter, null, null).onPause();
+        new GeocacheListController(null, null, null, null, gpxImporter, null, null).onPause();
         PowerMock.verifyAll();
     }
 
     @Test
-    public void testOnResume() throws InterruptedException {
+    public void testOnCreate() throws InterruptedException {
         MenuActionRefresh menuActionRefresh = PowerMock.createMock(MenuActionRefresh.class);
+        SQLiteWrapper sqliteWrapper = PowerMock.createMock(SQLiteWrapper.class);
+        Database database = PowerMock.createMock(Database.class);
 
+        sqliteWrapper.openReadableDatabase(database);
         menuActionRefresh.sort();
-
+        sqliteWrapper.close();
         PowerMock.replayAll();
-        new GeocacheListController(null, null, null, menuActionRefresh, null).onResume();
+        new GeocacheListController(null, null, sqliteWrapper, database, null, menuActionRefresh,
+                null).onCreate();
         PowerMock.verifyAll();
     }
 
     @Test
-    public void testOnResumeError() {
+    public void testOnCreateError() {
         MenuActionRefresh menuActionRefresh = PowerMock.createMock(MenuActionRefresh.class);
-
+        SQLiteWrapper sqliteWrapper = PowerMock.createMock(SQLiteWrapper.class);
+        Database database = PowerMock.createMock(Database.class);
         ErrorDisplayer errorDisplayer = PowerMock.createMock(ErrorDisplayer.class);
 
-        Exception exception = new RuntimeException();
+        sqliteWrapper.openReadableDatabase(database);
         menuActionRefresh.sort();
+        Exception exception = new RuntimeException();
         EasyMock.expectLastCall().andThrow(exception);
         errorDisplayer.displayErrorAndStack(exception);
 
         PowerMock.replayAll();
-        new GeocacheListController(null, null, null, menuActionRefresh, errorDisplayer).onResume();
+        new GeocacheListController(null, null, sqliteWrapper, database, null, menuActionRefresh,
+                errorDisplayer).onCreate();
         PowerMock.verifyAll();
     }
 

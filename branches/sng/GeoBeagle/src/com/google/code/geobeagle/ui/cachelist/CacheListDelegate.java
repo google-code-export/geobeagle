@@ -35,6 +35,7 @@ public class CacheListDelegate {
 
     public void onCreate() {
         mPresenter.onCreate();
+        mController.onCreate();
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -56,6 +57,5 @@ public class CacheListDelegate {
 
     public void onResume() {
         mPresenter.onResume();
-        mController.onResume();
     }
 }
