@@ -16,6 +16,7 @@ package com.google.code.geobeagle.io;
 
 import com.google.code.geobeagle.data.Geocache;
 import com.google.code.geobeagle.data.GeocacheFactory;
+import com.google.code.geobeagle.io.DatabaseDI.CacheReaderCursorFactory;
 import com.google.code.geobeagle.io.DatabaseDI.SQLiteWrapper;
 
 import android.database.Cursor;
@@ -72,13 +73,13 @@ public class CacheReader {
     }
 
     public static final String SQL_QUERY_LIMIT = "1000";
-    private final DatabaseDI.CacheReaderCursorFactory mCacheReaderCursorFactory;
+    private final CacheReaderCursorFactory mCacheReaderCursorFactory;
     private final SQLiteWrapper mSqliteWrapper;
     private final WhereFactory mWhereFactory;
 
     // TODO: rename to CacheSqlReader / CacheSqlWriter
-    CacheReader(DatabaseDI.SQLiteWrapper sqliteWrapper, WhereFactory whereFactory,
-            DatabaseDI.CacheReaderCursorFactory cacheReaderCursorFactory) {
+    CacheReader(SQLiteWrapper sqliteWrapper, WhereFactory whereFactory,
+            CacheReaderCursorFactory cacheReaderCursorFactory) {
         mSqliteWrapper = sqliteWrapper;
         mWhereFactory = whereFactory;
         mCacheReaderCursorFactory = cacheReaderCursorFactory;
