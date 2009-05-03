@@ -22,7 +22,8 @@ import com.google.code.geobeagle.io.EventHelperDI.EventHelperFactory;
 import com.google.code.geobeagle.io.GpxToCacheDI.XmlPullParserWrapper;
 import com.google.code.geobeagle.io.ImportThreadDelegate.ImportThreadHelper;
 import com.google.code.geobeagle.ui.ErrorDisplayer;
-import com.google.code.geobeagle.ui.cachelist.GeocacheListPresenter;
+import com.google.code.geobeagle.ui.cachelist.GeocacheListController;
+import com.google.code.geobeagle.ui.cachelist.MenuActionRefresh;
 
 import android.app.ListActivity;
 import android.app.ProgressDialog;
@@ -87,9 +88,9 @@ public class GpxImporterDI {
                 mImportThread.join();
         }
 
-        public void open(GeocacheListPresenter geocacheListPresenter, GpxLoader gpxLoader,
+        public void open(MenuActionRefresh menuActionRefresh, GpxLoader gpxLoader,
                 EventHandlers eventHandlers, ErrorDisplayer mErrorDisplayer) {
-            mMessageHandler.start(geocacheListPresenter);
+            mMessageHandler.start(menuActionRefresh);
             mImportThread = ImportThread.create(mMessageHandler, gpxLoader, eventHandlers,
                     mXmlPullParserWrapper, mErrorDisplayer);
         }
@@ -112,12 +113,12 @@ public class GpxImporterDI {
         }
 
         private int mCacheCount;
-        private GeocacheListPresenter mGeocacheListPresenter;
         private boolean mLoadAborted;
         private final ProgressDialogWrapper mProgressDialogWrapper;
         private String mSource;
         private String mStatus;
         private String mWaypointId;
+        private MenuActionRefresh mMenuActionRefresh;
 
         public MessageHandler(ProgressDialogWrapper progressDialogWrapper) {
             mProgressDialogWrapper = progressDialogWrapper;
@@ -137,7 +138,7 @@ public class GpxImporterDI {
                 case MessageHandler.MSG_DONE:
                     if (!mLoadAborted) {
                         mProgressDialogWrapper.dismiss();
-                        mGeocacheListPresenter.onResume();
+                        mMenuActionRefresh.act();
                     }
                     break;
                 default:
@@ -149,10 +150,10 @@ public class GpxImporterDI {
             sendEmptyMessage(MessageHandler.MSG_DONE);
         }
 
-        public void start(GeocacheListPresenter geocacheListDelegate) {
+        public void start(MenuActionRefresh menuActionRefresh) {
             mCacheCount = 0;
             mLoadAborted = false;
-            mGeocacheListPresenter = geocacheListDelegate;
+            mMenuActionRefresh = menuActionRefresh;
             // TODO: move into resource file.
             mProgressDialogWrapper.show("Syncing caches", "Please wait...");
         }

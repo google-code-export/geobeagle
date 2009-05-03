@@ -115,12 +115,12 @@ public class CacheListDelegateDI {
                 combinedLocationManager, locationControlBuffered, gpsStatusWidgetLocationListener,
                 gpsWidgetView, updateGpsWidgetRunnable, geocacheVectors,
                 baseAdapterLocationListener, listActivity, errorDisplayer, sqliteWrapper, database);
-        final MenuActionSyncGpx menuActionSyncGpx = new MenuActionSyncGpx(gpxImporter,
-                geocacheListPresenter);
         final MenuActionMyLocation menuActionMyLocation = new MenuActionMyLocation(locationSaver,
                 geocacheFromMyLocationFactory, geocacheListPresenter, errorDisplayer);
         final MenuActionRefresh menuActionRefresh = new MenuActionRefresh(listActivity, handler,
                 locationControlBuffered, geocachesSql, cacheListData, geocacheListAdapter);
+        final MenuActionSyncGpx menuActionSyncGpx = new MenuActionSyncGpx(gpxImporter,
+                menuActionRefresh);
         final MenuActions menuActions = new MenuActions(menuActionSyncGpx, menuActionMyLocation,
                 menuActionRefresh);
         final GeocacheListController geocacheListController = new GeocacheListController(

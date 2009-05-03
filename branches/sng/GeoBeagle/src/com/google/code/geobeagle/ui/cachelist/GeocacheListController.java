@@ -115,7 +115,6 @@ public class GeocacheListController {
         try {
             mSqliteWrapper.openReadableDatabase(mDatabase);
             mMenuActionRefresh.sort();
-            mSqliteWrapper.close();
         } catch (final Exception e) {
             mErrorDisplayer.displayErrorAndStack(e);
         }

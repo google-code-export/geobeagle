@@ -37,10 +37,9 @@ public class DatabaseDI {
     }
 
     public static class GeoBeagleSqliteOpenHelper extends SQLiteOpenHelper {
-        private final Database.OpenHelperDelegate mOpenHelperDelegate;
+        private final OpenHelperDelegate mOpenHelperDelegate;
 
-        public GeoBeagleSqliteOpenHelper(Context context,
-                Database.OpenHelperDelegate openHelperDelegate) {
+        public GeoBeagleSqliteOpenHelper(Context context, OpenHelperDelegate openHelperDelegate) {
             super(context, Database.DATABASE_NAME, null, Database.DATABASE_VERSION);
             mOpenHelperDelegate = openHelperDelegate;
         }
@@ -69,6 +68,7 @@ public class DatabaseDI {
 
         public void close() {
             mSQLiteDatabase.close();
+            mSQLiteDatabase = null;
         }
 
         public int countResults(String table, String selection, String... selectionArgs) {
@@ -92,11 +92,13 @@ public class DatabaseDI {
         }
 
         public void openReadableDatabase(Database database) {
-            mSQLiteDatabase = database.getReadableDatabase();
+            if (mSQLiteDatabase == null)
+                mSQLiteDatabase = database.getReadableDatabase();
         }
 
         public void openWritableDatabase(Database database) {
-            mSQLiteDatabase = database.getWritableDatabase();
+            if (mSQLiteDatabase == null)
+                mSQLiteDatabase = database.getWritableDatabase();
         }
 
         public Cursor query(String table, String[] columns, String selection, String groupBy,

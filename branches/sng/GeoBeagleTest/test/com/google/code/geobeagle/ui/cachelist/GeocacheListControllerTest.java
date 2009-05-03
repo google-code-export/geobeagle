@@ -234,7 +234,6 @@ public class GeocacheListControllerTest {
 
         sqliteWrapper.openReadableDatabase(database);
         menuActionRefresh.sort();
-        sqliteWrapper.close();
         PowerMock.replayAll();
         new GeocacheListController(null, null, sqliteWrapper, database, null, menuActionRefresh,
                 null).onCreate();

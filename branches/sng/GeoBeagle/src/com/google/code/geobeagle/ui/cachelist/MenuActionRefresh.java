@@ -8,6 +8,7 @@ import com.google.code.geobeagle.data.Geocache;
 import com.google.code.geobeagle.io.GeocachesSql;
 
 import android.app.ListActivity;
+import android.location.Location;
 import android.os.Handler;
 import android.widget.Toast;
 
@@ -51,7 +52,8 @@ public class MenuActionRefresh implements MenuAction {
     }
 
     void sort() {
-        mGeocachesSql.loadNearestCaches(mLocationControlBuffered);
+        Location location = mLocationControlBuffered.getLocation();
+        mGeocachesSql.loadNearestCaches(location);
         ArrayList<Geocache> geocaches = mGeocachesSql.getGeocaches();
         mCacheListData.add(geocaches, mLocationControlBuffered);
         mListActivity.setListAdapter(mGeocacheListAdapter);

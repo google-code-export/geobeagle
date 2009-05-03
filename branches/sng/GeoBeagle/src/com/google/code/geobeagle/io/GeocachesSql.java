@@ -14,7 +14,6 @@
 
 package com.google.code.geobeagle.io;
 
-import com.google.code.geobeagle.LocationControlBuffered;
 import com.google.code.geobeagle.data.Geocache;
 import com.google.code.geobeagle.data.Geocaches;
 import com.google.code.geobeagle.io.CacheReader.CacheReaderCursor;
@@ -40,9 +39,7 @@ public class GeocachesSql {
         return mGeocaches.getAll();
     }
 
-    public void loadNearestCaches(LocationControlBuffered locationControlBuffered) {
-        Location location = locationControlBuffered.getLocation();
-
+    public void loadNearestCaches(Location location) {
         CacheReaderCursor cursor = mCacheReader.open(location);
         mGeocaches.clear();
         if (cursor != null) {

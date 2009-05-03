@@ -17,15 +17,15 @@ package com.google.code.geobeagle.ui.cachelist;
 import com.google.code.geobeagle.io.GpxImporter;
 
 class MenuActionSyncGpx implements MenuAction {
-    private final GeocacheListPresenter mGeocacheListPresenter;
     private final GpxImporter mGpxImporter;
+    private final MenuActionRefresh mMenuActionRefresh;
 
-    public MenuActionSyncGpx(GpxImporter gpxImporter, GeocacheListPresenter geocacheListPresenter) {
+    public MenuActionSyncGpx(GpxImporter gpxImporter, MenuActionRefresh menuActionRefresh) {
         mGpxImporter = gpxImporter;
-        mGeocacheListPresenter = geocacheListPresenter;
+        mMenuActionRefresh = menuActionRefresh;
     }
 
     public void act() {
-        mGpxImporter.importGpxs(mGeocacheListPresenter);
+        mGpxImporter.importGpxs(mMenuActionRefresh);
     }
 }

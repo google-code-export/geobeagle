@@ -17,7 +17,6 @@ package com.google.code.geobeagle.io;
 import static org.easymock.EasyMock.expect;
 import static org.junit.Assert.assertEquals;
 
-import com.google.code.geobeagle.LocationControlBuffered;
 import com.google.code.geobeagle.data.Geocache;
 import com.google.code.geobeagle.data.Geocaches;
 import com.google.code.geobeagle.io.CacheReader.CacheReaderCursor;
@@ -26,6 +25,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.api.easymock.PowerMock;
 import org.powermock.modules.junit4.PowerMockRunner;
+
+import android.location.Location;
 
 import java.util.ArrayList;
 
@@ -58,15 +59,13 @@ public class GeocachesSqlTest {
 
     @Test
     public void testLoad() {
-        LocationControlBuffered locationControlBuffered = PowerMock
-                .createMock(LocationControlBuffered.class);
+        Location location = PowerMock.createMock(Location.class);
         CacheReader cacheReader = PowerMock.createMock(CacheReader.class);
         Geocaches geocaches = PowerMock.createMock(Geocaches.class);
         CacheReaderCursor cursor = PowerMock.createMock(CacheReaderCursor.class);
         Geocache geocache = PowerMock.createMock(Geocache.class);
 
-        expect(locationControlBuffered.getLocation()).andReturn(null);
-        expect(cacheReader.open(null)).andReturn(cursor);
+        expect(cacheReader.open(location)).andReturn(cursor);
         geocaches.clear();
         expect(cursor.getCache()).andReturn(geocache);
         geocaches.add(geocache);
@@ -74,7 +73,7 @@ public class GeocachesSqlTest {
         cursor.close();
 
         PowerMock.replayAll();
-        new GeocachesSql(cacheReader, geocaches).loadNearestCaches(locationControlBuffered);
+        new GeocachesSql(cacheReader, geocaches).loadNearestCaches(location);
         PowerMock.verifyAll();
     }
 

@@ -18,6 +18,7 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import android.app.ListActivity;
+import android.location.Location;
 import android.os.Handler;
 import android.widget.Toast;
 
@@ -56,11 +57,14 @@ public class MenuActionRefreshTest {
         GeocacheListAdapter geocacheListAdapter = PowerMock.createMock(GeocacheListAdapter.class);
         GeocachesSql geocachesSql = PowerMock.createMock(GeocachesSql.class);
         CacheListData cacheListData = PowerMock.createMock(CacheListData.class);
+        Location location = PowerMock.createMock(Location.class);
         LocationControlBuffered locationControlBuffered = PowerMock
                 .createMock(LocationControlBuffered.class);
 
         ArrayList<Geocache> locations = new ArrayList<Geocache>(0);
-        geocachesSql.loadNearestCaches(locationControlBuffered);
+
+        expect(locationControlBuffered.getLocation()).andReturn(location);
+        geocachesSql.loadNearestCaches(location);
         expect(geocachesSql.getGeocaches()).andReturn(locations);
         cacheListData.add(locations, locationControlBuffered);
         listActivity.setListAdapter(geocacheListAdapter);
