@@ -15,28 +15,20 @@
 package com.google.code.geobeagle.io;
 
 import com.google.code.geobeagle.data.Geocache;
-import com.google.code.geobeagle.io.DatabaseDI.SQLiteWrapper;
 
 public class LocationSaver {
     private final CacheWriter mCacheWriter;
-    private final Database mDatabase;
-    private final SQLiteWrapper mSQLiteWrapper;
 
-    public LocationSaver(Database database, SQLiteWrapper sqliteWrapper, CacheWriter cacheWriter) {
-        mDatabase = database;
-        mSQLiteWrapper = sqliteWrapper;
+    public LocationSaver(CacheWriter cacheWriter) {
         mCacheWriter = cacheWriter;
     }
 
     public void saveLocation(Geocache geocache) {
         CharSequence id = geocache.getId();
-        mSQLiteWrapper.openWritableDatabase(mDatabase);
         // TODO: catch errors on open
         mCacheWriter.startWriting();
         mCacheWriter.insertAndUpdateCache(id, geocache.getName(), geocache.getLatitude(), geocache
                 .getLongitude(), geocache.getSourceType(), geocache.getSourceName());
         mCacheWriter.stopWriting();
-        mSQLiteWrapper.close();
     }
-
 }

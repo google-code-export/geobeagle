@@ -22,9 +22,11 @@ class MenuActions {
     private final HashMap<Integer, MenuAction> mMenuActions;
 
     public MenuActions(MenuActionSyncGpx menuActionSyncGpx,
-            MenuActionMyLocation menuActionMyLocation, MenuActionRefresh menuActionRefresh) {
+            MenuActionMyLocation menuActionMyLocation,
+            MenuActionToggleFilter menuActionToggleFilter, MenuActionRefresh menuActionRefresh) {
         mMenuActions = new HashMap<Integer, MenuAction>();
         mMenuActions.put(R.id.menu_sync, menuActionSyncGpx);
+        mMenuActions.put(R.id.menu_toggle_filter, menuActionToggleFilter);
         mMenuActions.put(R.id.menu_my_location, menuActionMyLocation);
         mMenuActions.put(R.id.menu_refresh, menuActionRefresh);
     }

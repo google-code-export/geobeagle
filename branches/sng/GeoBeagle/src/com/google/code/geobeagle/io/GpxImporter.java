@@ -65,8 +65,7 @@ public class GpxImporter {
 
     public void importGpxs(MenuActionRefresh menuActionRefresh) {
         mSqliteWrapper.openReadableDatabase(mDatabase);
-        mImportThreadWrapper.open(menuActionRefresh, mGpxLoader, mEventHandlers,
-                mErrorDisplayer);
+        mImportThreadWrapper.open(menuActionRefresh, mGpxLoader, mEventHandlers, mErrorDisplayer);
         mImportThreadWrapper.start();
     }
 }

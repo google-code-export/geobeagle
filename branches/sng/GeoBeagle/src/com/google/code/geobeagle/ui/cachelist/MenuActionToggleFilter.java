@@ -12,26 +12,20 @@
  ** limitations under the License.
  */
 
-package com.google.code.geobeagle.data;
+package com.google.code.geobeagle.ui.cachelist;
 
-import java.util.ArrayList;
+class MenuActionToggleFilter implements MenuAction {
+    private final FilterNearestCaches mFilterNearestCaches;
+    private final MenuActionRefresh mMenuActionRefresh;
 
-public class Geocaches {
-    private final ArrayList<Geocache> mGeocaches;
-
-    public Geocaches() {
-        mGeocaches = new ArrayList<Geocache>();
+    MenuActionToggleFilter(FilterNearestCaches filterNearestCaches,
+            MenuActionRefresh menuActionRefresh) {
+        mFilterNearestCaches = filterNearestCaches;
+        mMenuActionRefresh = menuActionRefresh;
     }
 
-    public void add(Geocache geocache) {
-        mGeocaches.add(geocache);
-    }
-
-    public void clear() {
-        mGeocaches.clear();
-    }
-
-    public ArrayList<Geocache> getAll() {
-        return mGeocaches;
+    public void act() {
+        mFilterNearestCaches.toggle();
+        mMenuActionRefresh.act();
     }
 }

@@ -83,8 +83,8 @@ public class EditCacheActivityDelegateTest {
         EasyMock.expect(activity.findViewById(R.id.edit_latitude)).andReturn(latitude);
         EasyMock.expect(activity.findViewById(R.id.edit_longitude)).andReturn(longitude);
 
-        PowerMock.expectNew(EditCache.class, geocacheFactory, (EditText)id, (EditText)name,
-                (EditText)latitude, (EditText)longitude).andReturn(editCache);
+        PowerMock.expectNew(EditCache.class, geocacheFactory, id, name, latitude, longitude)
+                .andReturn(editCache);
         editCache.set(geocache);
         PowerMock.expectNew(SetButtonOnClickListener.class, activity, editCache, locationSaver)
                 .andReturn(setButtonOnClickListener);

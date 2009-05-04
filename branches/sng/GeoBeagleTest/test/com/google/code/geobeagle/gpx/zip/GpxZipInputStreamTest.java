@@ -17,8 +17,6 @@ package com.google.code.geobeagle.gpx.zip;
 import static org.easymock.EasyMock.expect;
 import static org.junit.Assert.assertEquals;
 
-import com.google.code.geobeagle.gpx.zip.GpxZipInputStream;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.api.easymock.PowerMock;

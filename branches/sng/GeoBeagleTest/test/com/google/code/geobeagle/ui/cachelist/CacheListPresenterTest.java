@@ -15,7 +15,6 @@
 package com.google.code.geobeagle.ui.cachelist;
 
 import static org.easymock.EasyMock.expect;
-import static org.junit.Assert.assertTrue;
 
 import com.google.code.geobeagle.CombinedLocationManager;
 import com.google.code.geobeagle.LocationControlBuffered;
@@ -38,8 +37,6 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import android.app.ListActivity;
 import android.location.LocationListener;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.View;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
@@ -94,22 +91,6 @@ public class CacheListPresenterTest {
         new GeocacheListPresenter(null, locationControlBuffered, locationControlBuffered,
                 gpsWidgetView, updateGpsWidgetRunnable, geocacheVectors, null, listActivity, null,
                 null, null).onCreate();
-        PowerMock.verifyAll();
-    }
-
-    @Test
-    public void testOnCreateOptionsMenu() {
-        Menu menu = PowerMock.createMock(Menu.class);
-        ListActivity listActivity = PowerMock.createMock(ListActivity.class);
-        MenuInflater menuInflater = PowerMock.createMock(MenuInflater.class);
-
-        expect(listActivity.getMenuInflater()).andReturn(menuInflater);
-        menuInflater.inflate(R.menu.cache_list_menu, menu);
-
-        PowerMock.replayAll();
-        GeocacheListPresenter geocacheListPresenter = new GeocacheListPresenter(null, null, null,
-                null, null, null, null, listActivity, null, null, null);
-        assertTrue(geocacheListPresenter.onCreateOptionsMenu(menu));
         PowerMock.verifyAll();
     }
 

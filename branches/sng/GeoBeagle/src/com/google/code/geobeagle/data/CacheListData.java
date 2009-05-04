@@ -30,4 +30,8 @@ public class CacheListData {
         mGeocacheVectors.addLocations(geocaches, locationControlBuffered);
         mGeocacheVectors.sort();
     }
+
+    public int size() {
+        return mGeocacheVectors.size();
+    }
 }

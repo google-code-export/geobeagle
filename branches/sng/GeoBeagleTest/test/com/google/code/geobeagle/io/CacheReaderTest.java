@@ -1,3 +1,16 @@
+/*
+ ** Licensed under the Apache License, Version 2.0 (the "License");
+ ** you may not use this file except in compliance with the License.
+ ** You may obtain a copy of the License at
+ **
+ **     http://www.apache.org/licenses/LICENSE-2.0
+ **
+ ** Unless required by applicable law or agreed to in writing, software
+ ** distributed under the License is distributed on an "AS IS" BASIS,
+ ** WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ ** See the License for the specific language governing permissions and
+ ** limitations under the License.
+ */
 
 package com.google.code.geobeagle.io;
 
@@ -10,7 +23,7 @@ import com.google.code.geobeagle.data.Geocache;
 import com.google.code.geobeagle.data.GeocacheFactory;
 import com.google.code.geobeagle.data.GeocacheFactory.Source;
 import com.google.code.geobeagle.io.CacheReader.CacheReaderCursor;
-import com.google.code.geobeagle.io.CacheReader.WhereFactory;
+import com.google.code.geobeagle.io.CacheReader.WhereFactoryNearestCaches;
 import com.google.code.geobeagle.io.DatabaseDI.CacheReaderCursorFactory;
 import com.google.code.geobeagle.io.DatabaseDI.SQLiteWrapper;
 
@@ -83,7 +96,7 @@ public class CacheReaderTest {
         expect(sqliteWrapper.countResults(Database.TBL_CACHES, null)).andReturn(17);
 
         PowerMock.replayAll();
-        assertEquals(17, new CacheReader(sqliteWrapper, null, null).getTotalCount());
+        assertEquals(17, new CacheReader(sqliteWrapper, null).getTotalCount());
         PowerMock.verifyAll();
     }
 
@@ -97,19 +110,20 @@ public class CacheReaderTest {
         PowerMock.replayAll();
         assertEquals(
                 "Latitude > 89.92 AND Latitude < 90.08 AND Longitude > -180.0 AND Longitude < 180.0",
-                new WhereFactory().getWhere(location));
+                new WhereFactoryNearestCaches().getWhere(location));
         PowerMock.verifyAll();
     }
 
     @Test
     public void testGetWhereNullLocation() {
-        assertEquals(null, new WhereFactory().getWhere(null));
+        assertEquals(null, new WhereFactoryNearestCaches().getWhere(null));
     }
 
     @Test
     public void testOpen() {
         Location location = PowerMock.createMock(Location.class);
-        WhereFactory whereFactory = PowerMock.createMock(WhereFactory.class);
+        WhereFactory whereFactoryNearestCaches = PowerMock
+                .createMock(WhereFactoryNearestCaches.class);
         SQLiteWrapper sqliteWrapper = PowerMock.createMock(SQLiteWrapper.class);
         Cursor cursor = PowerMock.createMock(Cursor.class);
         DatabaseDI.CacheReaderCursorFactory cacheReaderCursorFactory = PowerMock
@@ -117,14 +131,14 @@ public class CacheReaderTest {
         CacheReaderCursor cacheReaderCursor = PowerMock.createMock(CacheReaderCursor.class);
 
         String where = "Latitude > something AND Longitude < somethingelse";
-        expect(whereFactory.getWhere(location)).andReturn(where);
+        expect(whereFactoryNearestCaches.getWhere(location)).andReturn(where);
         expectQuery(sqliteWrapper, cursor, where);
         expect(cursor.moveToFirst()).andReturn(true);
         expect(cacheReaderCursorFactory.create(cursor)).andReturn(cacheReaderCursor);
 
         PowerMock.replayAll();
-        assertEquals(cacheReaderCursor, new CacheReader(sqliteWrapper, whereFactory,
-                cacheReaderCursorFactory).open(location));
+        assertEquals(cacheReaderCursor, new CacheReader(sqliteWrapper, cacheReaderCursorFactory)
+                .open(location, whereFactoryNearestCaches));
         PowerMock.verifyAll();
     }
 
@@ -132,15 +146,16 @@ public class CacheReaderTest {
     public void testOpenEmpty() {
         SQLiteWrapper sqliteWrapper = PowerMock.createMock(SQLiteWrapper.class);
         Cursor cursor = PowerMock.createMock(Cursor.class);
-        WhereFactory whereFactory = PowerMock.createMock(WhereFactory.class);
+        WhereFactory whereFactoryNearestCaches = PowerMock
+                .createMock(WhereFactoryNearestCaches.class);
 
-        expect(whereFactory.getWhere(null)).andReturn("a=b");
+        expect(whereFactoryNearestCaches.getWhere(null)).andReturn("a=b");
         expectQuery(sqliteWrapper, cursor, "a=b");
         expect(cursor.moveToFirst()).andReturn(false);
         cursor.close();
 
         PowerMock.replayAll();
-        new CacheReader(sqliteWrapper, whereFactory, null).open(null);
+        new CacheReader(sqliteWrapper, null).open(null, whereFactoryNearestCaches);
         PowerMock.verifyAll();
     }
 }

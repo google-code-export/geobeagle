@@ -1,7 +1,7 @@
 
 package com.google.code.geobeagle;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import org.easymock.classextension.EasyMock;
 import org.junit.Test;

@@ -16,8 +16,6 @@ package com.google.code.geobeagle.gpx.zip;
 
 import static org.junit.Assert.assertEquals;
 
-import com.google.code.geobeagle.gpx.zip.GpxReader;
-
 import org.junit.Test;
 import org.powermock.api.easymock.PowerMock;
 

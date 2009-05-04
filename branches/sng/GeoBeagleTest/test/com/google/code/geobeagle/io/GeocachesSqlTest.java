@@ -64,8 +64,9 @@ public class GeocachesSqlTest {
         Geocaches geocaches = PowerMock.createMock(Geocaches.class);
         CacheReaderCursor cursor = PowerMock.createMock(CacheReaderCursor.class);
         Geocache geocache = PowerMock.createMock(Geocache.class);
+        WhereFactory whereFactory = PowerMock.createMock(WhereFactory.class);
 
-        expect(cacheReader.open(location)).andReturn(cursor);
+        expect(cacheReader.open(location, whereFactory)).andReturn(cursor);
         geocaches.clear();
         expect(cursor.getCache()).andReturn(geocache);
         geocaches.add(geocache);
@@ -73,7 +74,7 @@ public class GeocachesSqlTest {
         cursor.close();
 
         PowerMock.replayAll();
-        new GeocachesSql(cacheReader, geocaches).loadNearestCaches(location);
+        new GeocachesSql(cacheReader, geocaches).loadCaches(location, whereFactory);
         PowerMock.verifyAll();
     }
 

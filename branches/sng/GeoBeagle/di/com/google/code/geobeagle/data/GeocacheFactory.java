@@ -33,8 +33,22 @@ public class GeocacheFactory {
         }
     }
 
+    public static enum Provider {
+        ATLAS_QUEST(0), GROUNDSPEAK(1), MY_LOCATION(-1);
+
+        private final int mIx;
+
+        Provider(int ix) {
+            mIx = ix;
+        }
+
+        public int toInt() {
+            return mIx;
+        }
+    }
+
     public static enum Source {
-        GPX(0), MY_LOCATION(1), WEB_URL(2), LOC(3);
+        GPX(0), LOC(3), MY_LOCATION(1), WEB_URL(2);
 
         public static class SourceFactory {
             private final Source mSources[] = new Source[values().length];
@@ -52,20 +66,6 @@ public class GeocacheFactory {
         private final int mIx;
 
         Source(int ix) {
-            mIx = ix;
-        }
-
-        public int toInt() {
-            return mIx;
-        }
-    }
-
-    public static enum Provider {
-        ATLAS_QUEST(0), GROUNDSPEAK(1), MY_LOCATION(-1);
-
-        private final int mIx;
-
-        Provider(int ix) {
             mIx = ix;
         }
 

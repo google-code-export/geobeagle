@@ -17,7 +17,6 @@ package com.google.code.geobeagle.io;
 import com.google.code.geobeagle.data.GeocacheFactory;
 import com.google.code.geobeagle.data.Geocaches;
 import com.google.code.geobeagle.io.CacheReader.CacheReaderCursor;
-import com.google.code.geobeagle.io.CacheReader.WhereFactory;
 import com.google.code.geobeagle.io.Database.ISQLiteDatabase;
 import com.google.code.geobeagle.io.Database.OpenHelperDelegate;
 
@@ -130,9 +129,8 @@ public class DatabaseDI {
     }
 
     public static CacheReader createCacheReader(SQLiteWrapper sqliteWrapper) {
-        final WhereFactory whereFactory = new CacheReader.WhereFactory();
         final CacheReaderCursorFactory cacheReaderCursorFactory = new CacheReaderCursorFactory();
-        return new CacheReader(sqliteWrapper, whereFactory, cacheReaderCursorFactory);
+        return new CacheReader(sqliteWrapper, cacheReaderCursorFactory);
     }
 
     public static CacheWriter createCacheWriter(SQLiteWrapper sqliteWrapper) {

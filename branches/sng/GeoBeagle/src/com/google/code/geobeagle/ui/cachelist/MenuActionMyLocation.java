@@ -23,16 +23,16 @@ import com.google.code.geobeagle.ui.ErrorDisplayer;
 class MenuActionMyLocation implements MenuAction {
     private final ErrorDisplayer mErrorDisplayer;
     private final GeocacheFromMyLocationFactory mGeocacheFromMyLocationFactory;
-    private final GeocacheListPresenter mGeocacheListPresenter;
     private final LocationSaver mLocationSaver;
+    private final MenuActionRefresh mMenuActionRefresh;
 
     public MenuActionMyLocation(LocationSaver locationSaver,
             GeocacheFromMyLocationFactory geocacheFromMyLocationFactory,
-            GeocacheListPresenter geocacheListPresenter, ErrorDisplayer errorDisplayer) {
+            MenuActionRefresh menuActionRefresh, ErrorDisplayer errorDisplayer) {
         mLocationSaver = locationSaver;
         mGeocacheFromMyLocationFactory = geocacheFromMyLocationFactory;
-        mGeocacheListPresenter = geocacheListPresenter;
         mErrorDisplayer = errorDisplayer;
+        mMenuActionRefresh = menuActionRefresh;
     }
 
     public void act() {
@@ -42,6 +42,6 @@ class MenuActionMyLocation implements MenuAction {
             return;
         }
         mLocationSaver.saveLocation(myLocation);
-        mGeocacheListPresenter.onResume();
+        mMenuActionRefresh.act();
     }
 }

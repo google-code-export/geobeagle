@@ -21,7 +21,9 @@ import com.google.code.geobeagle.io.GpxImporter;
 import com.google.code.geobeagle.io.DatabaseDI.SQLiteWrapper;
 import com.google.code.geobeagle.ui.ErrorDisplayer;
 
+import android.app.ListActivity;
 import android.view.ContextMenu;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -52,22 +54,27 @@ public class GeocacheListController {
     static final int MENU_VIEW = 1;
     public static final String SELECT_CACHE = "SELECT_CACHE";
     private final ContextAction mContextActions[];
-    private final ErrorDisplayer mErrorDisplayer;
-    private final GpxImporter mGpxImporter;
-    private final MenuActions mMenuActions;
-    private final MenuActionRefresh mMenuActionRefresh;
-    private final SQLiteWrapper mSqliteWrapper;
     private final Database mDatabase;
+    private final ErrorDisplayer mErrorDisplayer;
+    private final FilterNearestCaches mFilterNearestCaches;
+    private final GpxImporter mGpxImporter;
+    private final ListActivity mListActivity;
+    private final MenuActionRefresh mMenuActionRefresh;
+    private final MenuActions mMenuActions;
+    private final SQLiteWrapper mSqliteWrapper;
 
-    GeocacheListController(MenuActions menuActions, ContextAction[] contextActions,
-            SQLiteWrapper sqliteWrapper, Database database, GpxImporter gpxImporter,
-            MenuActionRefresh menuActionRefresh, ErrorDisplayer errorDisplayer) {
+    GeocacheListController(ListActivity listActivity, MenuActions menuActions,
+            ContextAction[] contextActions, SQLiteWrapper sqliteWrapper, Database database,
+            GpxImporter gpxImporter, MenuActionRefresh menuActionRefresh,
+            FilterNearestCaches filterNearestCaches, ErrorDisplayer errorDisplayer) {
+        mListActivity = listActivity;
         mErrorDisplayer = errorDisplayer;
         mContextActions = contextActions;
         mMenuActions = menuActions;
         mGpxImporter = gpxImporter;
         mMenuActionRefresh = menuActionRefresh;
         mSqliteWrapper = sqliteWrapper;
+        mFilterNearestCaches = filterNearestCaches;
         mDatabase = database;
     }
 
@@ -82,6 +89,20 @@ public class GeocacheListController {
         return true;
     }
 
+    public void onCreate() {
+        try {
+            mSqliteWrapper.openReadableDatabase(mDatabase);
+            mMenuActionRefresh.sort();
+        } catch (final Exception e) {
+            mErrorDisplayer.displayErrorAndStack(e);
+        }
+    }
+
+    public boolean onCreateOptionsMenu(Menu menu) {
+        mListActivity.getMenuInflater().inflate(R.menu.cache_list_menu, menu);
+        return true;
+    }
+
     public void onListItemClick(ListView l, View v, int position, long id) {
         try {
             if (position > 0)
@@ -91,6 +112,11 @@ public class GeocacheListController {
         } catch (final Exception e) {
             mErrorDisplayer.displayErrorAndStack(e);
         }
+    }
+
+    public boolean onMenuOpened(int featureId, Menu menu) {
+        menu.findItem(R.id.menu_toggle_filter).setTitle(mFilterNearestCaches.getMenuString());
+        return true;
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -108,15 +134,6 @@ public class GeocacheListController {
         } catch (InterruptedException e) {
             // Nothing we can do here! There is no chance to communicate to
             // the user.
-        }
-    }
-
-    public void onCreate() {
-        try {
-            mSqliteWrapper.openReadableDatabase(mDatabase);
-            mMenuActionRefresh.sort();
-        } catch (final Exception e) {
-            mErrorDisplayer.displayErrorAndStack(e);
         }
     }
 }

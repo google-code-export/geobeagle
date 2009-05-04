@@ -39,8 +39,8 @@ public class GeocachesSql {
         return mGeocaches.getAll();
     }
 
-    public void loadNearestCaches(Location location) {
-        CacheReaderCursor cursor = mCacheReader.open(location);
+    public void loadCaches(Location location, WhereFactory whereFactory) {
+        CacheReaderCursor cursor = mCacheReader.open(location, whereFactory);
         mGeocaches.clear();
         if (cursor != null) {
             read(cursor);

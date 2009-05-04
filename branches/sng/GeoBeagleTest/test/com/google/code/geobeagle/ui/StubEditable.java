@@ -18,7 +18,7 @@ import android.text.Editable;
 import android.text.InputFilter;
 
 class StubEditable implements Editable {
-    private String mString;
+    private final String mString;
 
     public StubEditable(String s) {
         mString = s;
@@ -112,6 +112,7 @@ class StubEditable implements Editable {
         return mString.subSequence(start, end);
     }
 
+    @Override
     public String toString() {
         return mString;
     }

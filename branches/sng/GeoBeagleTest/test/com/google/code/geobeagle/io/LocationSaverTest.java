@@ -15,25 +15,23 @@
 package com.google.code.geobeagle.io;
 
 import static org.easymock.EasyMock.expect;
-import static org.easymock.classextension.EasyMock.createMock;
-import static org.easymock.classextension.EasyMock.replay;
-import static org.easymock.classextension.EasyMock.verify;
 
 import com.google.code.geobeagle.data.Geocache;
 import com.google.code.geobeagle.data.GeocacheFactory.Source;
 
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.powermock.api.easymock.PowerMock;
+import org.powermock.modules.junit4.PowerMockRunner;
 
+@RunWith(PowerMockRunner.class)
 public class LocationSaverTest {
 
     @Test
     public void testSave() {
-        Database database = createMock(Database.class);
-        DatabaseDI.SQLiteWrapper sqliteWrapper = createMock(DatabaseDI.SQLiteWrapper.class);
-        CacheWriter writer = createMock(CacheWriter.class);
-        Geocache geocache = createMock(Geocache.class);
+        CacheWriter writer = PowerMock.createMock(CacheWriter.class);
+        Geocache geocache = PowerMock.createMock(Geocache.class);
 
-        sqliteWrapper.openWritableDatabase(database);
         writer.startWriting();
         expect(geocache.getId()).andReturn("LB12345");
         expect(geocache.getName()).andReturn("");
@@ -43,16 +41,9 @@ public class LocationSaverTest {
         expect(geocache.getSourceName()).andReturn("manhattan");
         writer.insertAndUpdateCache("LB12345", "", 122, 37, Source.GPX, "manhattan");
         writer.stopWriting();
-        sqliteWrapper.close();
 
-        replay(database);
-        replay(sqliteWrapper);
-        replay(writer);
-        replay(geocache);
-        new LocationSaver(database, sqliteWrapper, writer).saveLocation(geocache);
-        verify(database);
-        verify(writer);
-        verify(sqliteWrapper);
-        verify(geocache);
+        PowerMock.replayAll();
+        new LocationSaver(writer).saveLocation(geocache);
+        PowerMock.verifyAll();
     }
 }

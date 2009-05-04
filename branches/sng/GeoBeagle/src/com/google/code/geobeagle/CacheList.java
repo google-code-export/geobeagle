@@ -45,7 +45,7 @@ public class CacheList extends ListActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mCacheListDelegate = CacheListDelegateDI.create(this, this.getLayoutInflater());
+        mCacheListDelegate = CacheListDelegateDI.create(this, getLayoutInflater());
         mCacheListDelegate.onCreate();
     }
 
@@ -59,6 +59,16 @@ public class CacheList extends ListActivity {
     protected void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
         mCacheListDelegate.onListItemClick(l, v, position, id);
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see android.app.Activity#onMenuOpened(int, android.view.Menu)
+     */
+    @Override
+    public boolean onMenuOpened(int featureId, Menu menu) {
+        super.onMenuOpened(featureId, menu);
+        return mCacheListDelegate.onMenuOpened(featureId, menu);
     }
 
     @Override

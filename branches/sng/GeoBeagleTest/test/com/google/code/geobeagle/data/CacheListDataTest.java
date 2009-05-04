@@ -14,8 +14,11 @@
 
 package com.google.code.geobeagle.data;
 
+import static org.junit.Assert.assertEquals;
+
 import com.google.code.geobeagle.LocationControlBuffered;
 
+import org.easymock.EasyMock;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.api.easymock.PowerMock;
@@ -27,7 +30,7 @@ import java.util.ArrayList;
 public class CacheListDataTest {
 
     @Test
-    public void testAdd() {
+    public void test() {
         GeocacheVectors geocacheVectors = PowerMock.createMock(GeocacheVectors.class);
         LocationControlBuffered locationControlBuffered = PowerMock
                 .createMock(LocationControlBuffered.class);
@@ -36,9 +39,12 @@ public class CacheListDataTest {
         geocacheVectors.reset(0);
         geocacheVectors.addLocations(geocaches, locationControlBuffered);
         geocacheVectors.sort();
+        EasyMock.expect(geocacheVectors.size()).andReturn(12);
 
         PowerMock.replayAll();
-        new CacheListData(geocacheVectors).add(geocaches, locationControlBuffered);
+        CacheListData cacheListData = new CacheListData(geocacheVectors);
+        cacheListData.add(geocaches, locationControlBuffered);
+        assertEquals(12, cacheListData.size());
         PowerMock.verifyAll();
     }
 }

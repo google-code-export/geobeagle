@@ -25,7 +25,6 @@ import com.google.code.geobeagle.intents.IntentFactory;
 import com.google.code.geobeagle.intents.IntentStarterLocation;
 import com.google.code.geobeagle.intents.IntentStarterRadar;
 import com.google.code.geobeagle.intents.IntentStarterViewUri;
-import com.google.code.geobeagle.io.Database;
 import com.google.code.geobeagle.io.DatabaseDI;
 import com.google.code.geobeagle.io.LocationSaver;
 import com.google.code.geobeagle.io.DatabaseDI.SQLiteWrapper;
@@ -148,9 +147,7 @@ public class GeoBeagle extends Activity implements LifecycleManager {
             GeoBeagleBuilder builder = new GeoBeagleBuilder(this);
             mContentSelector = builder.createContentSelector(getPreferences(Activity.MODE_PRIVATE));
             final SQLiteWrapper sqliteWrapper = new SQLiteWrapper(null);
-            final Database Database = DatabaseDI.create(this);
-            mLocationSaver = new LocationSaver(Database, sqliteWrapper, DatabaseDI
-                    .createCacheWriter(sqliteWrapper));
+            mLocationSaver = new LocationSaver(DatabaseDI.createCacheWriter(sqliteWrapper));
             mWebPageButtonEnabler = Misc.create(this, findViewById(R.id.cache_page),
                     findViewById(R.id.cache_details));
 

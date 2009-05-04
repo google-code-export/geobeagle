@@ -22,7 +22,6 @@ import com.google.code.geobeagle.io.EventHelperDI.EventHelperFactory;
 import com.google.code.geobeagle.io.GpxToCacheDI.XmlPullParserWrapper;
 import com.google.code.geobeagle.io.ImportThreadDelegate.ImportThreadHelper;
 import com.google.code.geobeagle.ui.ErrorDisplayer;
-import com.google.code.geobeagle.ui.cachelist.GeocacheListController;
 import com.google.code.geobeagle.ui.cachelist.MenuActionRefresh;
 
 import android.app.ListActivity;
@@ -114,11 +113,11 @@ public class GpxImporterDI {
 
         private int mCacheCount;
         private boolean mLoadAborted;
+        private MenuActionRefresh mMenuActionRefresh;
         private final ProgressDialogWrapper mProgressDialogWrapper;
         private String mSource;
         private String mStatus;
         private String mWaypointId;
-        private MenuActionRefresh mMenuActionRefresh;
 
         public MessageHandler(ProgressDialogWrapper progressDialogWrapper) {
             mProgressDialogWrapper = progressDialogWrapper;

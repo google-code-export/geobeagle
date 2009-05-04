@@ -12,26 +12,19 @@
  ** limitations under the License.
  */
 
-package com.google.code.geobeagle.data;
+package com.google.code.geobeagle.ui.cachelist;
 
-import java.util.ArrayList;
+import static org.junit.Assert.assertEquals;
 
-public class Geocaches {
-    private final ArrayList<Geocache> mGeocaches;
+import com.google.code.geobeagle.R;
 
-    public Geocaches() {
-        mGeocaches = new ArrayList<Geocache>();
-    }
+import org.junit.Test;
 
-    public void add(Geocache geocache) {
-        mGeocaches.add(geocache);
-    }
-
-    public void clear() {
-        mGeocaches.clear();
-    }
-
-    public ArrayList<Geocache> getAll() {
-        return mGeocaches;
+public class ListTitleFormatterTest {
+    @Test
+    public void test() {
+        assertEquals(R.string.no_caches, new ListTitleFormatter().getBodyText(0));
+        assertEquals(R.string.no_nearby_caches, new ListTitleFormatter().getBodyText(1));
+        assertEquals(R.string.no_nearby_caches, new ListTitleFormatter().getBodyText(2));
     }
 }

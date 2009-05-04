@@ -16,7 +16,6 @@ package com.google.code.geobeagle.ui;
 
 import com.google.code.geobeagle.data.GeocacheFactory;
 import com.google.code.geobeagle.io.CacheWriter;
-import com.google.code.geobeagle.io.Database;
 import com.google.code.geobeagle.io.DatabaseDI;
 import com.google.code.geobeagle.io.LocationSaver;
 import com.google.code.geobeagle.io.DatabaseDI.SQLiteWrapper;
@@ -30,11 +29,10 @@ public class EditCacheActivity extends Activity {
 
     public EditCacheActivity() {
         super();
-        final Database database = DatabaseDI.create(this);
 
         final SQLiteWrapper sqliteWrapper = new SQLiteWrapper(null);
         final CacheWriter cacheWriter = DatabaseDI.createCacheWriter(sqliteWrapper);
-        final LocationSaver locationSaver = new LocationSaver(database, sqliteWrapper, cacheWriter);
+        final LocationSaver locationSaver = new LocationSaver(cacheWriter);
         final CancelButtonOnClickListener cancelButtonOnClickListener = new CancelButtonOnClickListener(
                 this);
         final GeocacheFactory geocacheFactory = new GeocacheFactory();

@@ -71,9 +71,9 @@ public class ImportThreadDelegate {
         }
     }
 
-    private ErrorDisplayer mErrorDisplayer;
+    private final ErrorDisplayer mErrorDisplayer;
     private final GpxAndZipFiles mGpxAndZipFiles;
-    private ImportThreadHelper mImportThreadHelper;
+    private final ImportThreadHelper mImportThreadHelper;
 
     public ImportThreadDelegate(GpxAndZipFiles gpxAndZipFiles,
             ImportThreadHelper importThreadHelper, ErrorDisplayer errorDisplayer) {

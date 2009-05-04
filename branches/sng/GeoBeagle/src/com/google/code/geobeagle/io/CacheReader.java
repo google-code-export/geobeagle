@@ -51,7 +51,13 @@ public class CacheReader {
         }
     }
 
-    public static class WhereFactory {
+    public static class WhereFactoryAllCaches implements WhereFactory {
+        public String getWhere(Location location) {
+            return null;
+        }
+    }
+
+    public static class WhereFactoryNearestCaches implements WhereFactory {
         // 1 degree ~= 111km
         public static final double DEGREES_DELTA = 0.08;
 
@@ -61,12 +67,14 @@ public class CacheReader {
             double latitude = location.getLatitude();
             double longitude = location.getLongitude();
 
-            double latLow = latitude - WhereFactory.DEGREES_DELTA;
-            double latHigh = latitude + WhereFactory.DEGREES_DELTA;
+            double latLow = latitude - WhereFactoryNearestCaches.DEGREES_DELTA;
+            double latHigh = latitude + WhereFactoryNearestCaches.DEGREES_DELTA;
             double lat_radians = Math.toRadians(latitude);
             double cos_lat = Math.cos(lat_radians);
-            double lonLow = Math.max(-180, longitude - WhereFactory.DEGREES_DELTA / cos_lat);
-            double lonHigh = Math.min(180, longitude + WhereFactory.DEGREES_DELTA / cos_lat);
+            double lonLow = Math.max(-180, longitude - WhereFactoryNearestCaches.DEGREES_DELTA
+                    / cos_lat);
+            double lonHigh = Math.min(180, longitude + WhereFactoryNearestCaches.DEGREES_DELTA
+                    / cos_lat);
             return "Latitude > " + latLow + " AND Latitude < " + latHigh + " AND Longitude > "
                     + lonLow + " AND Longitude < " + lonHigh;
         }
@@ -75,13 +83,10 @@ public class CacheReader {
     public static final String SQL_QUERY_LIMIT = "1000";
     private final CacheReaderCursorFactory mCacheReaderCursorFactory;
     private final SQLiteWrapper mSqliteWrapper;
-    private final WhereFactory mWhereFactory;
 
     // TODO: rename to CacheSqlReader / CacheSqlWriter
-    CacheReader(SQLiteWrapper sqliteWrapper, WhereFactory whereFactory,
-            CacheReaderCursorFactory cacheReaderCursorFactory) {
+    CacheReader(SQLiteWrapper sqliteWrapper, CacheReaderCursorFactory cacheReaderCursorFactory) {
         mSqliteWrapper = sqliteWrapper;
-        mWhereFactory = whereFactory;
         mCacheReaderCursorFactory = cacheReaderCursorFactory;
     }
 
@@ -89,8 +94,8 @@ public class CacheReader {
         return mSqliteWrapper.countResults(Database.TBL_CACHES, null);
     }
 
-    public CacheReaderCursor open(Location location) {
-        String where = mWhereFactory.getWhere(location);
+    public CacheReaderCursor open(Location location, WhereFactory whereFactory) {
+        String where = whereFactory.getWhere(location);
 
         Cursor cursor = mSqliteWrapper.query(Database.TBL_CACHES, Database.READER_COLUMNS, where,
                 null, null, null, SQL_QUERY_LIMIT);

@@ -148,6 +148,7 @@ public class ImportThreadDelegateTest {
         PowerMock.replayAll();
         ImportThreadDelegate importThreadDelegate = new ImportThreadDelegate(gpxAndZipFiles,
                 importThreadHelper, errorDisplayer) {
+            @Override
             protected void tryRun() throws IOException {
                 throw e;
             }
@@ -171,6 +172,7 @@ public class ImportThreadDelegateTest {
         PowerMock.replayAll();
         ImportThreadDelegate importThreadDelegate = new ImportThreadDelegate(gpxAndZipFiles,
                 importThreadHelper, errorDisplayer) {
+            @Override
             protected void tryRun() throws IOException {
                 throw e;
             }

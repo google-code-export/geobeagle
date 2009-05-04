@@ -23,12 +23,14 @@ public class ContextActionDelete implements ContextAction {
     private final CacheWriter mCacheWriter;
     private final BaseAdapter mGeocacheListAdapter;
     private final GeocacheVectors mGeocacheVectors;
+    private final MenuActionRefresh mMenuActionRefresh;
 
     ContextActionDelete(BaseAdapter geocacheListAdapter, CacheWriter cacheWriter,
-            GeocacheVectors geocacheVectors) {
+            GeocacheVectors geocacheVectors, MenuActionRefresh menuActionRefresh) {
         mGeocacheVectors = geocacheVectors;
         mCacheWriter = cacheWriter;
         mGeocacheListAdapter = geocacheListAdapter;
+        mMenuActionRefresh = menuActionRefresh;
     }
 
     public void act(int position) {
@@ -36,5 +38,6 @@ public class ContextActionDelete implements ContextAction {
 
         mGeocacheVectors.remove(position);
         mGeocacheListAdapter.notifyDataSetChanged();
+        mMenuActionRefresh.updateTitle();
     }
 }

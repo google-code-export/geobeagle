@@ -12,26 +12,12 @@
  ** limitations under the License.
  */
 
-package com.google.code.geobeagle.data;
+package com.google.code.geobeagle.ui.cachelist;
 
-import java.util.ArrayList;
+import com.google.code.geobeagle.R;
 
-public class Geocaches {
-    private final ArrayList<Geocache> mGeocaches;
-
-    public Geocaches() {
-        mGeocaches = new ArrayList<Geocache>();
-    }
-
-    public void add(Geocache geocache) {
-        mGeocaches.add(geocache);
-    }
-
-    public void clear() {
-        mGeocaches.clear();
-    }
-
-    public ArrayList<Geocache> getAll() {
-        return mGeocaches;
+class ListTitleFormatter {
+    int getBodyText(int sqlCount) {
+        return sqlCount > 0 ? R.string.no_nearby_caches : R.string.no_caches;
     }
 }

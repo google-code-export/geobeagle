@@ -4,7 +4,7 @@ package com.google.code.geobeagle.io;
 import java.util.HashMap;
 
 public class EventHandlers {
-    private HashMap<String, EventHandler> mEventHandlers = new HashMap<String, EventHandler>();
+    private final HashMap<String, EventHandler> mEventHandlers = new HashMap<String, EventHandler>();
 
     public void add(String extension, EventHandler eventHandler) {
         mEventHandlers.put(extension.toLowerCase(), eventHandler);

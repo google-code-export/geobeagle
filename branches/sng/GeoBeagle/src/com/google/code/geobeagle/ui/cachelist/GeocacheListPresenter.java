@@ -29,7 +29,6 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
 import android.view.View;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
@@ -57,7 +56,7 @@ public class GeocacheListPresenter {
         }
     }
 
-    private BaseAdapterLocationListener mBaseAdapterLocationListener;
+    private final BaseAdapterLocationListener mBaseAdapterLocationListener;
     private final CombinedLocationManager mCombinedLocationManager;
     private final Database mDatabase;
     private final ErrorDisplayer mErrorDisplayer;
@@ -98,11 +97,6 @@ public class GeocacheListPresenter {
         mUpdateGpsWidgetRunnable.run();
     }
 
-    public boolean onCreateOptionsMenu(Menu menu) {
-        mListActivity.getMenuInflater().inflate(R.menu.cache_list_menu, menu);
-        return true;
-    }
-
     public void onPause() {
         mCombinedLocationManager.removeUpdates(mLocationControlBuffered);
         mCombinedLocationManager.removeUpdates(mGpsStatusWidgetLocationListener);
@@ -115,6 +109,7 @@ public class GeocacheListPresenter {
             mCombinedLocationManager.requestLocationUpdates(0, 0, mLocationControlBuffered);
             mCombinedLocationManager.requestLocationUpdates(0, 0, mGpsStatusWidgetLocationListener);
             mCombinedLocationManager.requestLocationUpdates(0, 10, mBaseAdapterLocationListener);
+
             mSQLiteWrapper.openWritableDatabase(mDatabase);
         } catch (final Exception e) {
             mErrorDisplayer.displayErrorAndStack(e);

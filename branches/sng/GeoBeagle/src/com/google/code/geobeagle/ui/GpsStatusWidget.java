@@ -63,7 +63,7 @@ public class GpsStatusWidget implements LocationListener {
     }
 
     public static class UpdateGpsWidgetRunnable implements Runnable {
-        private GpsStatusWidget mGpsStatusWidget;
+        private final GpsStatusWidget mGpsStatusWidget;
         private final Handler mHandler;
 
         UpdateGpsWidgetRunnable(GpsStatusWidget gpsStatusWidget, Handler handler) {

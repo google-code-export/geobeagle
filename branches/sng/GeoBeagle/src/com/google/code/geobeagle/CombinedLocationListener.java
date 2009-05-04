@@ -23,7 +23,7 @@ import android.os.Bundle;
  */
 public class CombinedLocationListener implements LocationListener {
     private final LocationControlBuffered mLocationControlBuffered;
-    private LocationListener mLocationListener;
+    private final LocationListener mLocationListener;
 
     public CombinedLocationListener(LocationControlBuffered locationControlBuffered,
             LocationListener locationListener) {

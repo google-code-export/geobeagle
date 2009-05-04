@@ -1,7 +1,7 @@
 
 package com.google.code.geobeagle.io;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 
 import com.google.code.geobeagle.data.GeocacheFactory.Source;
 import com.google.code.geobeagle.io.GpxToCacheDI.XmlPullParserWrapper;

@@ -20,7 +20,6 @@ import android.view.View;
 import android.widget.ListView;
 
 public class CacheListDelegate {
-
     private final GeocacheListController mController;
     private final GeocacheListPresenter mPresenter;
 
@@ -39,11 +38,15 @@ public class CacheListDelegate {
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
-        return mPresenter.onCreateOptionsMenu(menu);
+        return mController.onCreateOptionsMenu(menu);
     }
 
     public void onListItemClick(ListView l, View v, int position, long id) {
         mController.onListItemClick(l, v, position, id);
+    }
+
+    public boolean onMenuOpened(int featureId, Menu menu) {
+        return mController.onMenuOpened(featureId, menu);
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {
