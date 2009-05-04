@@ -91,6 +91,10 @@ public class GeocacheListController {
 
     public void onCreate() {
         try {
+            // Upgrade database if necessary.
+            mSqliteWrapper.openWritableDatabase(mDatabase);
+            mSqliteWrapper.close();
+            
             mSqliteWrapper.openReadableDatabase(mDatabase);
             mMenuActionRefresh.sort();
         } catch (final Exception e) {

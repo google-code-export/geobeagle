@@ -111,7 +111,10 @@ public class GeocacheListControllerTest {
         SQLiteWrapper sqliteWrapper = PowerMock.createMock(SQLiteWrapper.class);
         Database database = PowerMock.createMock(Database.class);
 
+        sqliteWrapper.openWritableDatabase(database);
+        sqliteWrapper.close();
         sqliteWrapper.openReadableDatabase(database);
+
         menuActionRefresh.sort();
         PowerMock.replayAll();
         new GeocacheListController(null, null, null, sqliteWrapper, database, null,
@@ -149,6 +152,9 @@ public class GeocacheListControllerTest {
         SQLiteWrapper sqliteWrapper = PowerMock.createMock(SQLiteWrapper.class);
         Database database = PowerMock.createMock(Database.class);
         ErrorDisplayer errorDisplayer = PowerMock.createMock(ErrorDisplayer.class);
+
+        sqliteWrapper.openWritableDatabase(database);
+        sqliteWrapper.close();
 
         sqliteWrapper.openReadableDatabase(database);
         menuActionRefresh.sort();
