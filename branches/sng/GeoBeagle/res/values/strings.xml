@@ -45,7 +45,7 @@
 	<string name="menu_edit_geocache">Edit Geocache</string>
 	<string name="menu_show_nearest_caches">Show Nearest Caches</string>
 	<string name="menu_show_all_caches">Show All Caches</string>
-	<string name="sorting">Sorting...</string>
+	<string name="sorting">Filtering / Sorting...</string>
 	<string name="search_for">Search for</string>
 	<string name="cache_list_title">%1$d nearest caches out of %2$d</string>
 	<string name="cache_list_title_all">%1$d caches out of %2$d</string>
