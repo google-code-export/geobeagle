@@ -201,12 +201,6 @@ public class GpxImporterDI {
     }
 
     public static GpxImporter create(Database database, SQLiteWrapper sqliteWrapper,
-            ErrorDisplayer errorDisplayer, ListActivity listActivity,
-            XmlPullParserWrapper xmlPullParserWrapper) {
-        return create(database, sqliteWrapper, listActivity, xmlPullParserWrapper, errorDisplayer);
-    }
-
-    public static GpxImporter create(Database database, SQLiteWrapper sqliteWrapper,
             ListActivity listActivity, XmlPullParserWrapper xmlPullParserWrapper,
             ErrorDisplayer errorDisplayer) {
         final MessageHandler messageHandler = MessageHandler.create(listActivity);

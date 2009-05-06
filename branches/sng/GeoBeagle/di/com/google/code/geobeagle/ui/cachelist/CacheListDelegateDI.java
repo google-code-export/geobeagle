@@ -53,7 +53,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
 import android.location.LocationManager;
-import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.BaseAdapter;
@@ -103,7 +102,6 @@ public class CacheListDelegateDI {
         final UpdateGpsWidgetRunnable updateGpsWidgetRunnable = UpdateGpsWidgetRunnableDI
                 .create(gpsStatusWidget);
 
-        final Handler handler = new Handler();
         final BaseAdapterLocationListener baseAdapterLocationListener = new BaseAdapterLocationListener(
                 geocacheListAdapter);
         final GeocacheListPresenter geocacheListPresenter = new GeocacheListPresenter(
@@ -116,7 +114,7 @@ public class CacheListDelegateDI {
         final FilterNearestCaches filterNearestCaches = new FilterNearestCaches(
                 whereFactoryAllCaches, whereFactoryNearestCaches);
         final ListTitleFormatter listTitleFormatter = new ListTitleFormatter();
-        final MenuActionRefresh menuActionRefresh = new MenuActionRefresh(listActivity, handler,
+        final MenuActionRefresh menuActionRefresh = new MenuActionRefresh(listActivity,
                 locationControlBuffered, filterNearestCaches, geocachesSql, cacheListData,
                 geocacheListAdapter, listTitleFormatter);
         final MenuActionMyLocation menuActionMyLocation = new MenuActionMyLocation(locationSaver,

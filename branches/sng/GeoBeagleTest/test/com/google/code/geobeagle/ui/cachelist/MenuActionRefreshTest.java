@@ -22,7 +22,6 @@ import com.google.code.geobeagle.data.CacheListData;
 import com.google.code.geobeagle.data.Geocache;
 import com.google.code.geobeagle.io.GeocachesSql;
 import com.google.code.geobeagle.io.WhereFactory;
-import com.google.code.geobeagle.ui.cachelist.MenuActionRefresh.SortRunnable;
 
 import org.easymock.EasyMock;
 import org.junit.Test;
@@ -34,40 +33,20 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import android.app.ListActivity;
 import android.location.Location;
 import android.os.Handler;
+import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
 
 @PrepareForTest( {
-        Handler.class, ListActivity.class, MenuActionRefresh.class, TextView.class, Toast.class
+        Handler.class, ListActivity.class, Log.class, MenuActionRefresh.class, TextView.class,
+        Toast.class
 })
 @RunWith(PowerMockRunner.class)
 public class MenuActionRefreshTest {
-
     @Test
-    public void testAct() throws Exception {
-        ListActivity listActivity = PowerMock.createMock(ListActivity.class);
-        Handler handler = PowerMock.createMock(Handler.class);
-        MenuActionRefresh.SortRunnable sortRunnable = PowerMock
-                .createMock(MenuActionRefresh.SortRunnable.class);
-        Toast toast = PowerMock.createMock(Toast.class);
-
-        PowerMock.mockStatic(Toast.class);
-        EasyMock.expect(Toast.makeText(listActivity, R.string.sorting, Toast.LENGTH_SHORT))
-                .andReturn(toast);
-        toast.show();
-        PowerMock.expectNew(SortRunnable.class, EasyMock.isA(MenuActionRefresh.class)).andReturn(
-                sortRunnable);
-        EasyMock.expect(handler.postDelayed(sortRunnable, 200)).andReturn(true);
-
-        PowerMock.replayAll();
-        new MenuActionRefresh(listActivity, handler, null, null, null, null, null, null).act();
-        PowerMock.verifyAll();
-    }
-
-    @Test
-    public void testSort() {
+    public void testAct() {
         ListActivity listActivity = PowerMock.createMock(ListActivity.class);
         GeocacheListAdapter geocacheListAdapter = PowerMock.createMock(GeocacheListAdapter.class);
         GeocachesSql geocachesSql = PowerMock.createMock(GeocachesSql.class);
@@ -81,12 +60,17 @@ public class MenuActionRefreshTest {
         ListTitleFormatter listTitleFormatter = PowerMock.createMock(ListTitleFormatter.class);
         TextView textView = PowerMock.createMock(TextView.class);
 
+        // Allow any number of logging calls.
+        PowerMock.mockStatic(Log.class);
+        EasyMock.expect(Log.v(EasyMock.eq("GeoBeagle"), (String)EasyMock.anyObject())).andReturn(0)
+                .anyTimes();
+
         expect(locationControlBuffered.getLocation()).andReturn(location);
         expect(filterNearestCaches.getWhereFactory()).andReturn(whereFactory);
         geocachesSql.loadCaches(location, whereFactory);
         expect(geocachesSql.getGeocaches()).andReturn(geocaches);
         cacheListData.add(geocaches, locationControlBuffered);
-        listActivity.setListAdapter(geocacheListAdapter);
+        geocacheListAdapter.notifyDataSetChanged();
         expect(geocachesSql.getCount()).andReturn(1000);
         expect(listActivity.getString(R.string.cache_list_title, 0, 1000)).andReturn(
                 "0 caches out of 1000");
@@ -98,19 +82,21 @@ public class MenuActionRefreshTest {
         textView.setText(R.string.no_nearby_caches);
 
         PowerMock.replayAll();
-        new MenuActionRefresh(listActivity, null, locationControlBuffered, filterNearestCaches,
-                geocachesSql, cacheListData, geocacheListAdapter, listTitleFormatter).sort();
+        new MenuActionRefresh(listActivity, locationControlBuffered, filterNearestCaches,
+                geocachesSql, cacheListData, geocacheListAdapter, listTitleFormatter).act();
         PowerMock.verifyAll();
     }
 
     @Test
-    public void testSortRunnable() {
-        MenuActionRefresh menuActionRefresh = PowerMock.createMock(MenuActionRefresh.class);
+    public void testOnCreate() {
+        ListActivity listActivity = PowerMock.createMock(ListActivity.class);
+        GeocacheListAdapter geocacheListAdapter = PowerMock.createMock(GeocacheListAdapter.class);
 
-        menuActionRefresh.sort();
+        listActivity.setListAdapter(geocacheListAdapter);
 
         PowerMock.replayAll();
-        new MenuActionRefresh.SortRunnable(menuActionRefresh).run();
+        new MenuActionRefresh(listActivity, null, null, null, null, geocacheListAdapter, null)
+                .onCreate();
         PowerMock.verifyAll();
     }
 }

@@ -18,7 +18,9 @@ import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.Util;
 import com.google.code.geobeagle.data.Geocache;
 import com.google.code.geobeagle.data.GeocacheFactory;
+import com.google.code.geobeagle.io.Database;
 import com.google.code.geobeagle.io.LocationSaver;
+import com.google.code.geobeagle.io.DatabaseDI.SQLiteWrapper;
 import com.google.code.geobeagle.ui.cachelist.GeocacheListController;
 
 import android.app.Activity;
@@ -106,14 +108,18 @@ public class EditCacheActivityDelegate {
     private final GeocacheFactory mGeocacheFactory;
     private final LocationSaver mLocationSaver;
     private final Activity mParent;
+    private final SQLiteWrapper mSqliteWrapper;
+    private final Database mDatabase;
 
     public EditCacheActivityDelegate(Activity parent,
-            CancelButtonOnClickListener cancelButtonOnClickListener, LocationSaver locationSaver,
-            GeocacheFactory geocacheFactory) {
+            CancelButtonOnClickListener cancelButtonOnClickListener, SQLiteWrapper sqliteWrapper,
+            Database database, LocationSaver locationSaver, GeocacheFactory geocacheFactory) {
         mParent = parent;
         mCancelButtonOnClickListener = cancelButtonOnClickListener;
         mGeocacheFactory = geocacheFactory;
         mLocationSaver = locationSaver;
+        mSqliteWrapper = sqliteWrapper;
+        mDatabase = database;
     }
 
     public void onCreate(Bundle savedInstanceState) {
@@ -121,6 +127,7 @@ public class EditCacheActivityDelegate {
     }
 
     public void onResume() {
+        mSqliteWrapper.openWritableDatabase(mDatabase);
         Intent intent = mParent.getIntent();
         Geocache geocache = intent.<Geocache> getParcelableExtra("geocache");
 
@@ -136,5 +143,9 @@ public class EditCacheActivityDelegate {
 
         Button cancel = (Button)mParent.findViewById(R.id.edit_cancel);
         cancel.setOnClickListener(mCancelButtonOnClickListener);
+    }
+
+    public void onPause() {
+        mSqliteWrapper.close();
     }
 }

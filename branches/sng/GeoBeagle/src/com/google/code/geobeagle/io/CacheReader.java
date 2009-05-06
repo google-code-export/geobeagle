@@ -91,7 +91,12 @@ public class CacheReader {
     }
 
     public int getTotalCount() {
-        return mSqliteWrapper.countResults(Database.TBL_CACHES, null);
+        Cursor cursor = mSqliteWrapper
+                .rawQuery("SELECT COUNT(*) FROM " + Database.TBL_CACHES, null);
+        cursor.moveToFirst();
+        int count = cursor.getInt(0);
+        cursor.close();
+        return count;
     }
 
     public CacheReaderCursor open(Location location, WhereFactory whereFactory) {

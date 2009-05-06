@@ -16,6 +16,7 @@ package com.google.code.geobeagle.ui;
 
 import com.google.code.geobeagle.data.GeocacheFactory;
 import com.google.code.geobeagle.io.CacheWriter;
+import com.google.code.geobeagle.io.Database;
 import com.google.code.geobeagle.io.DatabaseDI;
 import com.google.code.geobeagle.io.LocationSaver;
 import com.google.code.geobeagle.io.DatabaseDI.SQLiteWrapper;
@@ -35,15 +36,23 @@ public class EditCacheActivity extends Activity {
         final LocationSaver locationSaver = new LocationSaver(cacheWriter);
         final CancelButtonOnClickListener cancelButtonOnClickListener = new CancelButtonOnClickListener(
                 this);
+        final Database database = DatabaseDI.create(this);
         final GeocacheFactory geocacheFactory = new GeocacheFactory();
         mEditCacheActivityDelegate = new EditCacheActivityDelegate(this,
-                cancelButtonOnClickListener, locationSaver, geocacheFactory);
+                cancelButtonOnClickListener, sqliteWrapper, database, locationSaver,
+                geocacheFactory);
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mEditCacheActivityDelegate.onCreate(savedInstanceState);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mEditCacheActivityDelegate.onPause();
     }
 
     @Override

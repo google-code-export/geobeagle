@@ -15,43 +15,28 @@
 package com.google.code.geobeagle.ui.cachelist;
 
 import com.google.code.geobeagle.LocationControlBuffered;
-import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.data.CacheListData;
 import com.google.code.geobeagle.data.Geocache;
 import com.google.code.geobeagle.io.GeocachesSql;
 
 import android.app.ListActivity;
 import android.location.Location;
-import android.os.Handler;
+import android.util.Log;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 
 public class MenuActionRefresh implements MenuAction {
-
-    static class SortRunnable implements Runnable {
-        private final MenuActionRefresh mMenuActionRefresh;
-
-        SortRunnable(MenuActionRefresh menuActionRefresh) {
-            mMenuActionRefresh = menuActionRefresh;
-        }
-
-        public void run() {
-            mMenuActionRefresh.sort();
-        }
-    }
-
     private final CacheListData mCacheListData;
     private final FilterNearestCaches mFilterNearestCaches;
     private final GeocacheListAdapter mGeocacheListAdapter;
     private final GeocachesSql mGeocachesSql;
-    private final Handler mHandler;
     private final ListActivity mListActivity;
     private final ListTitleFormatter mListTitleFormatter;
     private final LocationControlBuffered mLocationControlBuffered;
 
-    public MenuActionRefresh(ListActivity listActivity, Handler handler,
+    public MenuActionRefresh(ListActivity listActivity,
             LocationControlBuffered locationControlBuffered,
             FilterNearestCaches filterNearestCaches, GeocachesSql geocachesSql,
             CacheListData cacheListData, GeocacheListAdapter geocacheListAdapter,
@@ -61,24 +46,36 @@ public class MenuActionRefresh implements MenuAction {
         mGeocacheListAdapter = geocacheListAdapter;
         mLocationControlBuffered = locationControlBuffered;
         mListActivity = listActivity;
-        mHandler = handler;
         mFilterNearestCaches = filterNearestCaches;
         mListTitleFormatter = listTitleFormatter;
     }
 
-    public void act() {
-        Toast.makeText(mListActivity, R.string.sorting, Toast.LENGTH_SHORT).show();
-        mHandler.postDelayed(new MenuActionRefresh.SortRunnable(this), 200);
+    public void onCreate() {
+        mListActivity.setListAdapter(mGeocacheListAdapter);
     }
 
-    void sort() {
+    public void act() {
+//        Calendar calendar = Calendar.getInstance();
+//        long timeStart = calendar.getTimeInMillis();
+
         Location location = mLocationControlBuffered.getLocation();
         mGeocachesSql.loadCaches(location, mFilterNearestCaches.getWhereFactory());
         ArrayList<Geocache> geocaches = mGeocachesSql.getGeocaches();
+//        long timeSql = calendar.getTimeInMillis();
+//        Log.v("GeoBeagle", "SQL Time: " + (timeSql - timeStart));
+
         mCacheListData.add(geocaches, mLocationControlBuffered);
-        mListActivity.setListAdapter(mGeocacheListAdapter);
+//        long timeSort = calendar.getTimeInMillis();
+//        Log.v("GeoBeagle", "Sort Time: " + (timeSort - timeSql));
+
+        mGeocacheListAdapter.notifyDataSetChanged();
+//        long timeListAdapter = calendar.getTimeInMillis();
+//        Log.v("GeoBeagle", "Set adapter time: " + (timeListAdapter - timeSort));
 
         updateTitle();
+        // long timeTitle = calendar.getTimeInMillis();
+        // Log.v("GeoBeagle", "updatetitle time: " + (timeTitle -
+        // timeListAdapter));
     }
 
     public void updateTitle() {

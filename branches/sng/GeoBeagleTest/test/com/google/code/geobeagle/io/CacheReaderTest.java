@@ -23,6 +23,7 @@ import com.google.code.geobeagle.data.Geocache;
 import com.google.code.geobeagle.data.GeocacheFactory;
 import com.google.code.geobeagle.data.GeocacheFactory.Source;
 import com.google.code.geobeagle.io.CacheReader.CacheReaderCursor;
+import com.google.code.geobeagle.io.CacheReader.WhereFactoryAllCaches;
 import com.google.code.geobeagle.io.CacheReader.WhereFactoryNearestCaches;
 import com.google.code.geobeagle.io.DatabaseDI.CacheReaderCursorFactory;
 import com.google.code.geobeagle.io.DatabaseDI.SQLiteWrapper;
@@ -92,12 +93,22 @@ public class CacheReaderTest {
     @Test
     public void testGetTotalCount() {
         SQLiteWrapper sqliteWrapper = PowerMock.createMock(SQLiteWrapper.class);
+        Cursor cursor = PowerMock.createMock(Cursor.class);
 
-        expect(sqliteWrapper.countResults(Database.TBL_CACHES, null)).andReturn(17);
+        expect(sqliteWrapper.rawQuery("SELECT COUNT(*) FROM " + Database.TBL_CACHES, null))
+                .andReturn(cursor);
+        expect(cursor.moveToFirst()).andReturn(true);
+        expect(cursor.getInt(0)).andReturn(812);
+        cursor.close();
 
         PowerMock.replayAll();
-        assertEquals(17, new CacheReader(sqliteWrapper, null).getTotalCount());
+        assertEquals(812, new CacheReader(sqliteWrapper, null).getTotalCount());
         PowerMock.verifyAll();
+    }
+
+    @Test
+    public void testGetWhereFactoryAllCaches() {
+        assertEquals(null, new WhereFactoryAllCaches().getWhere(null));
     }
 
     @Test

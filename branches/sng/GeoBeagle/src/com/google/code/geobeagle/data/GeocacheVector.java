@@ -16,6 +16,9 @@ package com.google.code.geobeagle.data;
 
 import com.google.code.geobeagle.LocationControlBuffered;
 
+import android.location.Location;
+import android.util.FloatMath;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -23,8 +26,8 @@ import java.util.Comparator;
 public class GeocacheVector implements IGeocacheVector {
     public static class LocationComparator implements Comparator<IGeocacheVector> {
         public int compare(IGeocacheVector destination1, IGeocacheVector destination2) {
-            final float d1 = destination1.getDistance();
-            final float d2 = destination2.getDistance();
+            final float d1 = destination1.getDistanceFast();
+            final float d2 = destination2.getDistanceFast();
             if (d1 < d2)
                 return -1;
             if (d1 > d2)
@@ -35,6 +38,18 @@ public class GeocacheVector implements IGeocacheVector {
         public void sort(ArrayList<IGeocacheVector> arrayList) {
             Collections.sort(arrayList, this);
         }
+    }
+
+    // From http://www.anddev.org/viewtopic.php?p=20195.
+    public static float calculateDistanceFast(float lat1, float lon1, float lat2, float lon2) {
+        double dLat = Math.toRadians(lat2 - lat1);
+        double dLon = Math.toRadians(lon2 - lon1);
+        final float sinDLat = FloatMath.sin((float)(dLat / 2));
+        final float sinDLon = FloatMath.sin((float)(dLon / 2));
+        float a = sinDLat * sinDLat + FloatMath.cos((float)Math.toRadians(lat1))
+                * FloatMath.cos((float)Math.toRadians(lat2)) * sinDLon * sinDLon;
+        float c = (float)(2 * Math.atan2(FloatMath.sqrt(a), FloatMath.sqrt(1 - a)));
+        return 6371000 * c;
     }
 
     private final DistanceFormatter mDistanceFormatter;
@@ -48,12 +63,16 @@ public class GeocacheVector implements IGeocacheVector {
         mDistanceFormatter = distanceFormatter;
     }
 
-    public float getDistance() {
-        return mGeocache.calculateDistance(mLocationControlBuffered.getLocation());
+    public float getDistanceFast() {
+        Location here = mLocationControlBuffered.getLocation();
+        return calculateDistanceFast((float)here.getLatitude(), (float)here.getLongitude(),
+                (float)mGeocache.getLatitude(), (float)mGeocache.getLongitude());
     }
 
     public CharSequence getFormattedDistance() {
-        return mDistanceFormatter.format(getDistance());
+        // Use the slower, more accurate distance for display.
+        return mDistanceFormatter.format(mGeocache.calculateDistance(mLocationControlBuffered
+                .getLocation()));
     }
 
     public Geocache getGeocache() {

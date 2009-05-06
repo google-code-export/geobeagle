@@ -15,7 +15,7 @@
 package com.google.code.geobeagle.data;
 
 public interface IGeocacheVector {
-    public float getDistance();
+    public float getDistanceFast();
 
     public CharSequence getFormattedDistance();
 

@@ -94,9 +94,8 @@ public class GeocacheListController {
             // Upgrade database if necessary.
             mSqliteWrapper.openWritableDatabase(mDatabase);
             mSqliteWrapper.close();
-            
+
             mSqliteWrapper.openReadableDatabase(mDatabase);
-            mMenuActionRefresh.sort();
         } catch (final Exception e) {
             mErrorDisplayer.displayErrorAndStack(e);
         }
@@ -140,4 +139,14 @@ public class GeocacheListController {
             // the user.
         }
     }
+
+    public boolean onResume() {
+        try {
+            mMenuActionRefresh.act();
+        } catch (Exception e) {
+            mErrorDisplayer.displayErrorAndStack(e);
+        }
+        return true;
+    }
+
 }

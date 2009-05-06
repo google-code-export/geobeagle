@@ -7,7 +7,9 @@ import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.data.Geocache;
 import com.google.code.geobeagle.data.GeocacheFactory;
 import com.google.code.geobeagle.data.GeocacheFactory.Source;
+import com.google.code.geobeagle.io.Database;
 import com.google.code.geobeagle.io.LocationSaver;
+import com.google.code.geobeagle.io.DatabaseDI.SQLiteWrapper;
 import com.google.code.geobeagle.ui.EditCacheActivityDelegate.CancelButtonOnClickListener;
 import com.google.code.geobeagle.ui.EditCacheActivityDelegate.EditCache;
 import com.google.code.geobeagle.ui.EditCacheActivityDelegate.SetButtonOnClickListener;
@@ -33,7 +35,7 @@ import android.widget.EditText;
 public class EditCacheActivityDelegateTest {
 
     @Test
-    public void CancelButtonOnClickListenerTest() {
+    public void testCancelButtonOnClickListener() {
         Activity activity = PowerMock.createMock(Activity.class);
 
         activity.setResult(-1, null);
@@ -47,18 +49,18 @@ public class EditCacheActivityDelegateTest {
     }
 
     @Test
-    public void EditCacheActivityDelegateOnCreateTest() {
+    public void testEditCacheActivityDelegateOnCreate() {
         Activity activity = PowerMock.createMock(Activity.class);
 
         activity.setContentView(R.layout.cache_edit);
 
         PowerMock.replayAll();
-        new EditCacheActivityDelegate(activity, null, null, null).onCreate(null);
+        new EditCacheActivityDelegate(activity, null, null, null, null, null).onCreate(null);
         PowerMock.verifyAll();
     }
 
     @Test
-    public void EditCacheActivityOnResumeTest() throws Exception {
+    public void testEditCacheActivityOnResume() throws Exception {
         Activity activity = PowerMock.createMock(Activity.class);
         Intent intent = PowerMock.createMock(Intent.class);
         GeocacheFactory geocacheFactory = PowerMock.createMock(GeocacheFactory.class);
@@ -74,15 +76,17 @@ public class EditCacheActivityDelegateTest {
         CancelButtonOnClickListener cancelButtonOnClickListener = PowerMock
                 .createMock(CancelButtonOnClickListener.class);
         Button cancel = PowerMock.createMock(Button.class);
+        SQLiteWrapper sqliteWrapper = PowerMock.createMock(SQLiteWrapper.class);
+        Database database = PowerMock.createMock(Database.class);
         LocationSaver locationSaver = PowerMock.createMock(LocationSaver.class);
 
+        sqliteWrapper.openWritableDatabase(database);
         EasyMock.expect(activity.getIntent()).andReturn(intent);
         EasyMock.expect(intent.<Geocache> getParcelableExtra("geocache")).andReturn(geocache);
         EasyMock.expect(activity.findViewById(R.id.edit_id)).andReturn(id);
         EasyMock.expect(activity.findViewById(R.id.edit_name)).andReturn(name);
         EasyMock.expect(activity.findViewById(R.id.edit_latitude)).andReturn(latitude);
         EasyMock.expect(activity.findViewById(R.id.edit_longitude)).andReturn(longitude);
-
         PowerMock.expectNew(EditCache.class, geocacheFactory, id, name, latitude, longitude)
                 .andReturn(editCache);
         editCache.set(geocache);
@@ -96,13 +100,14 @@ public class EditCacheActivityDelegateTest {
 
         PowerMock.replayAll();
         EditCacheActivityDelegate editCacheActivityDelegate = new EditCacheActivityDelegate(
-                activity, cancelButtonOnClickListener, locationSaver, geocacheFactory);
+                activity, cancelButtonOnClickListener, sqliteWrapper, database, locationSaver,
+                geocacheFactory);
         editCacheActivityDelegate.onResume();
         PowerMock.verifyAll();
     }
 
     @Test
-    public void GeocacheViewGetAndSetTest() {
+    public void testGeocacheViewGetAndSet() {
         EditText id = PowerMock.createMock(EditText.class);
         EditText name = PowerMock.createMock(EditText.class);
         EditText latitude = PowerMock.createMock(EditText.class);
@@ -142,7 +147,20 @@ public class EditCacheActivityDelegateTest {
     }
 
     @Test
-    public void SetButtonOnClickListenerTest() throws Exception {
+    public void testOnPause() {
+        SQLiteWrapper sqliteWrapper = PowerMock.createMock(SQLiteWrapper.class);
+
+        sqliteWrapper.close();
+
+        PowerMock.replayAll();
+        EditCacheActivityDelegate editCacheActivityDelegate = new EditCacheActivityDelegate(null,
+                null, sqliteWrapper, null, null, null);
+        editCacheActivityDelegate.onPause();
+        PowerMock.verifyAll();
+    }
+
+    @Test
+    public void testSetButtonOnClickListener() throws Exception {
         Activity activity = PowerMock.createMock(Activity.class);
         EditCache editCache = PowerMock.createMock(EditCache.class);
         Intent intent = PowerMock.createMock(Intent.class);
