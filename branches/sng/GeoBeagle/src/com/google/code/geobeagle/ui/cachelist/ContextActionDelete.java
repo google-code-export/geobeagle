@@ -16,6 +16,7 @@ package com.google.code.geobeagle.ui.cachelist;
 
 import com.google.code.geobeagle.data.GeocacheVectors;
 import com.google.code.geobeagle.io.CacheWriter;
+import com.google.code.geobeagle.ui.cachelist.MenuActionRefresh.TitleUpdater;
 
 import android.widget.BaseAdapter;
 
@@ -23,14 +24,14 @@ public class ContextActionDelete implements ContextAction {
     private final CacheWriter mCacheWriter;
     private final BaseAdapter mGeocacheListAdapter;
     private final GeocacheVectors mGeocacheVectors;
-    private final MenuActionRefresh mMenuActionRefresh;
+    private final TitleUpdater mTitleUpdater;
 
     ContextActionDelete(BaseAdapter geocacheListAdapter, CacheWriter cacheWriter,
-            GeocacheVectors geocacheVectors, MenuActionRefresh menuActionRefresh) {
+            GeocacheVectors geocacheVectors, TitleUpdater titleUpdater) {
         mGeocacheVectors = geocacheVectors;
         mCacheWriter = cacheWriter;
         mGeocacheListAdapter = geocacheListAdapter;
-        mMenuActionRefresh = menuActionRefresh;
+        mTitleUpdater = titleUpdater;
     }
 
     public void act(int position) {
@@ -38,6 +39,6 @@ public class ContextActionDelete implements ContextAction {
 
         mGeocacheVectors.remove(position);
         mGeocacheListAdapter.notifyDataSetChanged();
-        mMenuActionRefresh.updateTitle();
+        mTitleUpdater.update();
     }
 }

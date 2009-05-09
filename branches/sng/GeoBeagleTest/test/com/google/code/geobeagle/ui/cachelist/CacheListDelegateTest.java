@@ -153,6 +153,7 @@ public class CacheListDelegateTest {
                 .createStrictMock(GeocacheListController.class);
 
         geocacheListPresenter.onResume();
+        geocacheListController.onResume();
 
         PowerMock.replayAll();
         new CacheListDelegate(geocacheListController, geocacheListPresenter).onResume();

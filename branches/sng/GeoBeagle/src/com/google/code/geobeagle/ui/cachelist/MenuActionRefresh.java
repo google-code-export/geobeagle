@@ -28,61 +28,141 @@ import java.util.ArrayList;
 import java.util.Calendar;
 
 public class MenuActionRefresh implements MenuAction {
-    private final CacheListData mCacheListData;
-    private final FilterNearestCaches mFilterNearestCaches;
-    private final GeocacheListAdapter mGeocacheListAdapter;
-    private final GeocachesSql mGeocachesSql;
-    private final ListActivity mListActivity;
-    private final ListTitleFormatter mListTitleFormatter;
-    private final LocationControlBuffered mLocationControlBuffered;
+    static class AdapterCachesSorter {
+        private final CacheListData mCacheListData;
+        private final GeocacheListAdapter mGeocacheListAdapter;
+        private final Timing mTiming;
 
-    public MenuActionRefresh(ListActivity listActivity,
-            LocationControlBuffered locationControlBuffered,
-            FilterNearestCaches filterNearestCaches, GeocachesSql geocachesSql,
-            CacheListData cacheListData, GeocacheListAdapter geocacheListAdapter,
-            ListTitleFormatter listTitleFormatter) {
-        mGeocachesSql = geocachesSql;
-        mCacheListData = cacheListData;
-        mGeocacheListAdapter = geocacheListAdapter;
-        mLocationControlBuffered = locationControlBuffered;
-        mListActivity = listActivity;
-        mFilterNearestCaches = filterNearestCaches;
-        mListTitleFormatter = listTitleFormatter;
+        AdapterCachesSorter(CacheListData cacheListData, GeocacheListAdapter geocacheListAdapter,
+                Timing timing) {
+            mCacheListData = cacheListData;
+            mGeocacheListAdapter = geocacheListAdapter;
+            mTiming = timing;
+        }
+
+        public void sort() {
+            mCacheListData.sort();
+            mTiming.lap("sort time");
+
+            mGeocacheListAdapter.notifyDataSetChanged();
+            mTiming.lap("notify changed time");
+        }
     }
 
-    public void onCreate() {
-        mListActivity.setListAdapter(mGeocacheListAdapter);
+    static class SqlCacheLoader {
+        private final CacheListData mCacheListData;
+        private final FilterNearestCaches mFilterNearestCaches;
+        private final GeocachesSql mGeocachesSql;
+        private final LocationControlBuffered mLocationControlBuffered;
+        private final Timing mTiming;
+
+        SqlCacheLoader(GeocachesSql geocachesSql, FilterNearestCaches filterNearestCaches,
+                CacheListData cacheListData, LocationControlBuffered locationControlBuffered,
+                Timing timing) {
+            mGeocachesSql = geocachesSql;
+            mFilterNearestCaches = filterNearestCaches;
+            mCacheListData = cacheListData;
+            mLocationControlBuffered = locationControlBuffered;
+            mTiming = timing;
+        }
+
+        public void load(Location location) {
+            mGeocachesSql.loadCaches(location, mFilterNearestCaches.getWhereFactory());
+            ArrayList<Geocache> geocaches = mGeocachesSql.getGeocaches();
+            mTiming.lap("SQL time");
+
+            mCacheListData.add(geocaches, mLocationControlBuffered);
+            mTiming.lap("add to list time");
+        }
+    }
+
+    static class Timing {
+        private final Calendar mCalendar;
+        private long mStartTime;
+
+        public Timing() {
+            mCalendar = Calendar.getInstance();
+        }
+
+        public void lap(CharSequence msg) {
+            long finishTime = mCalendar.getTimeInMillis();
+            Log.v("GeoBeagle", msg + ": " + (finishTime - mStartTime));
+            mStartTime = finishTime;
+        }
+
+        public void start() {
+            mStartTime = mCalendar.getTimeInMillis();
+        }
+    }
+
+    static class TitleUpdater {
+        private final CacheListData mCacheListData;
+        private final FilterNearestCaches mFilterNearestCaches;
+        private final GeocachesSql mGeocachesSql;
+        private final ListActivity mListActivity;
+        private final ListTitleFormatter mListTitleFormatter;
+        private final Timing mTiming;
+
+        TitleUpdater(GeocachesSql geocachesSql, ListActivity listActivity,
+                FilterNearestCaches filterNearestCaches, CacheListData cacheListData,
+                ListTitleFormatter listTitleFormatter, Timing timing) {
+            mGeocachesSql = geocachesSql;
+            mListActivity = listActivity;
+            mFilterNearestCaches = filterNearestCaches;
+            mCacheListData = cacheListData;
+            mListTitleFormatter = listTitleFormatter;
+            mTiming = timing;
+        }
+
+        void update() {
+            final int sqlCount = mGeocachesSql.getCount();
+            final int nearestCachesCount = mCacheListData.size();
+            mListActivity.setTitle(mListActivity.getString(mFilterNearestCaches.getTitleText(),
+                    nearestCachesCount, sqlCount));
+            if (0 == nearestCachesCount) {
+                TextView textView = (TextView)mListActivity.findViewById(android.R.id.empty);
+                textView.setText(mListTitleFormatter.getBodyText(sqlCount));
+            }
+            mTiming.lap("update title time");
+        }
+    }
+
+    private AdapterCachesSorter mAdapterCachesSorter;
+    private Location mLastSortLocation;
+    private Location mLastSqlLocation;
+    private final LocationControlBuffered mLocationControlBuffered;
+    private final SqlCacheLoader mSqlCacheLoader;
+    private final Timing mTiming;
+    private final TitleUpdater mTitleUpdater;
+
+    public MenuActionRefresh(AdapterCachesSorter adapterCachesSorter,
+            LocationControlBuffered locationControlBuffered, SqlCacheLoader sqlCacheLoader,
+            Timing timing, TitleUpdater titleUpdater, Location lastSortLocation,
+            Location lastSqlLocation) {
+        mAdapterCachesSorter = adapterCachesSorter;
+        mLocationControlBuffered = locationControlBuffered;
+        mSqlCacheLoader = sqlCacheLoader;
+        mTiming = timing;
+        mTitleUpdater = titleUpdater;
+        mLastSqlLocation = lastSqlLocation;
+        mLastSortLocation = lastSortLocation;
     }
 
     public void act() {
-//        Calendar calendar = Calendar.getInstance();
-//        long timeStart = calendar.getTimeInMillis();
-
+        mTiming.start();
         Location location = mLocationControlBuffered.getLocation();
-        mGeocachesSql.loadCaches(location, mFilterNearestCaches.getWhereFactory());
-        ArrayList<Geocache> geocaches = mGeocachesSql.getGeocaches();
-//        long timeSql = calendar.getTimeInMillis();
-//        Log.v("GeoBeagle", "SQL Time: " + (timeSql - timeStart));
 
-        mCacheListData.add(geocaches, mLocationControlBuffered);
-//        long timeSort = calendar.getTimeInMillis();
-//        Log.v("GeoBeagle", "Sort Time: " + (timeSort - timeSql));
+        if (location.distanceTo(mLastSqlLocation) > 500) {
+            mSqlCacheLoader.load(location);
+            mTitleUpdater.update();
+            mAdapterCachesSorter.sort();
+            mLastSqlLocation = location;
+            mLastSortLocation = location;
+        }
 
-        mGeocacheListAdapter.notifyDataSetChanged();
-//        long timeListAdapter = calendar.getTimeInMillis();
-//        Log.v("GeoBeagle", "Set adapter time: " + (timeListAdapter - timeSort));
-
-        updateTitle();
-        // long timeTitle = calendar.getTimeInMillis();
-        // Log.v("GeoBeagle", "updatetitle time: " + (timeTitle -
-        // timeListAdapter));
-    }
-
-    public void updateTitle() {
-        int sqlCount = mGeocachesSql.getCount();
-        mListActivity.setTitle(mListActivity.getString(mFilterNearestCaches.getTitleText(),
-                mCacheListData.size(), sqlCount));
-        TextView textView = (TextView)mListActivity.findViewById(android.R.id.empty);
-        textView.setText(mListTitleFormatter.getBodyText(sqlCount));
+        else if (location.distanceTo(mLastSortLocation) > 6) {
+            mAdapterCachesSorter.sort();
+            mLastSortLocation = location;
+        }
     }
 }

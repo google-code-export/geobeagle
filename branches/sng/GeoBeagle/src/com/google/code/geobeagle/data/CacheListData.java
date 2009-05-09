@@ -28,6 +28,9 @@ public class CacheListData {
     public void add(ArrayList<Geocache> geocaches, LocationControlBuffered locationControlBuffered) {
         mGeocacheVectors.reset(geocaches.size());
         mGeocacheVectors.addLocations(geocaches, locationControlBuffered);
+    }
+
+    public void sort() {
         mGeocacheVectors.sort();
     }
 

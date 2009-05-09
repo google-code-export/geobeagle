@@ -214,13 +214,13 @@ public class GeocacheListControllerTest {
 
     @Test
     public void testOnListItemClickZero() {
-        MenuActions menuActions = PowerMock.createMock(MenuActions.class);
+        MenuActionRefresh menuActionRefresh = PowerMock.createMock(MenuActionRefresh.class);
 
-        menuActions.act(R.id.menu_refresh);
+        menuActionRefresh.act();
 
         PowerMock.replayAll();
-        new GeocacheListController(null, menuActions, null, null, null, null, null, null, null)
-                .onListItemClick(null, null, 0, 0);
+        new GeocacheListController(null, null, null, null, null, null, menuActionRefresh, null,
+                null).onListItemClick(null, null, 0, 0);
         PowerMock.verifyAll();
     }
 

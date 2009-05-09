@@ -28,7 +28,6 @@ class MenuActions {
         mMenuActions.put(R.id.menu_sync, menuActionSyncGpx);
         mMenuActions.put(R.id.menu_toggle_filter, menuActionToggleFilter);
         mMenuActions.put(R.id.menu_my_location, menuActionMyLocation);
-        mMenuActions.put(R.id.menu_refresh, menuActionRefresh);
     }
 
     public void act(int id) {

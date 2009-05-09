@@ -30,20 +30,19 @@ import android.location.LocationListener;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.BaseAdapter;
 import android.widget.ListView;
 
 public class GeocacheListPresenter {
     static class BaseAdapterLocationListener implements LocationListener {
-        private final BaseAdapter mBaseAdapter;
+        private final MenuActionRefresh mMenuActionRefresh;
 
-        BaseAdapterLocationListener(BaseAdapter baseAdapter) {
-            mBaseAdapter = baseAdapter;
+        BaseAdapterLocationListener(MenuActionRefresh menuActionRefresh) {
+            mMenuActionRefresh = menuActionRefresh;
         }
 
         public void onLocationChanged(Location location) {
             Log.v("GeoBeagle", "location changed");
-            mBaseAdapter.notifyDataSetChanged();
+            mMenuActionRefresh.act();
         }
 
         public void onProviderDisabled(String provider) {
@@ -67,13 +66,16 @@ public class GeocacheListPresenter {
     private final LocationControlBuffered mLocationControlBuffered;
     private final SQLiteWrapper mSQLiteWrapper;
     private final UpdateGpsWidgetRunnable mUpdateGpsWidgetRunnable;
+    private final GeocacheListAdapter mGeocacheListAdapter;
 
     public GeocacheListPresenter(CombinedLocationManager combinedLocationManager,
             LocationControlBuffered locationControlBuffered,
             LocationListener gpsStatusWidgetLocationListener, View gpsWidgetView,
             UpdateGpsWidgetRunnable updateGpsWidgetRunnable, GeocacheVectors geocacheVectors,
-            BaseAdapterLocationListener baseAdapterLocationListener, ListActivity listActivity,
-            ErrorDisplayer errorDisplayer, SQLiteWrapper sqliteWrapper, Database database) {
+            BaseAdapterLocationListener baseAdapterLocationListener,
+            ListActivity listActivity,
+            GeocacheListAdapter geocacheListAdapter, ErrorDisplayer errorDisplayer,
+            SQLiteWrapper sqliteWrapper, Database database) {
         mCombinedLocationManager = combinedLocationManager;
         mLocationControlBuffered = locationControlBuffered;
         mGpsStatusWidgetLocationListener = gpsStatusWidgetLocationListener;
@@ -84,6 +86,7 @@ public class GeocacheListPresenter {
         mListActivity = listActivity;
         mSQLiteWrapper = sqliteWrapper;
         mDatabase = database;
+        mGeocacheListAdapter = geocacheListAdapter;
         mErrorDisplayer = errorDisplayer;
     }
 
@@ -92,6 +95,7 @@ public class GeocacheListPresenter {
         mListActivity.setContentView(R.layout.cache_list);
         ListView listView = mListActivity.getListView();
         listView.addHeaderView(mGpsWidgetView);
+        mListActivity.setListAdapter(mGeocacheListAdapter);
         listView.setOnCreateContextMenuListener(new CacheListOnCreateContextMenuListener(
                 mGeocacheVectors));
         mUpdateGpsWidgetRunnable.run();

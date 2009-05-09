@@ -30,7 +30,7 @@ import java.util.ArrayList;
 public class CacheListDataTest {
 
     @Test
-    public void test() {
+    public void testAdd() {
         GeocacheVectors geocacheVectors = PowerMock.createMock(GeocacheVectors.class);
         LocationControlBuffered locationControlBuffered = PowerMock
                 .createMock(LocationControlBuffered.class);
@@ -38,13 +38,31 @@ public class CacheListDataTest {
         ArrayList<Geocache> geocaches = new ArrayList<Geocache>(0);
         geocacheVectors.reset(0);
         geocacheVectors.addLocations(geocaches, locationControlBuffered);
+
+        PowerMock.replayAll();
+        new CacheListData(geocacheVectors).add(geocaches, locationControlBuffered);
+        PowerMock.verifyAll();
+    }
+
+    @Test
+    public void testSort() {
+        GeocacheVectors geocacheVectors = PowerMock.createMock(GeocacheVectors.class);
+
         geocacheVectors.sort();
+
+        PowerMock.replayAll();
+        new CacheListData(geocacheVectors).sort();
+        PowerMock.verifyAll();
+    }
+
+    @Test
+    public void testSize() {
+        GeocacheVectors geocacheVectors = PowerMock.createMock(GeocacheVectors.class);
+
         EasyMock.expect(geocacheVectors.size()).andReturn(12);
 
         PowerMock.replayAll();
-        CacheListData cacheListData = new CacheListData(geocacheVectors);
-        cacheListData.add(geocaches, locationControlBuffered);
-        assertEquals(12, cacheListData.size());
+        assertEquals(12, new CacheListData(geocacheVectors).size());
         PowerMock.verifyAll();
     }
 }
