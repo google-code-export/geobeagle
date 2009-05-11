@@ -20,6 +20,9 @@ import com.google.code.geobeagle.io.GpxToCacheDI.XmlPullParserWrapper;
 import java.io.IOException;
 
 class EventHandlerGpx implements EventHandler {
+    static final String XPATH_GEOCACHEHINT = "/gpx/wpt/geocache/hints";
+    static final String XPATH_GEOCACHELOGDATE = "/gpx/wpt/geocache/logs/log/time";
+    static final String XPATH_GEOCACHENAME = "/gpx/wpt/geocache/name";
     static final String XPATH_GPXNAME = "/gpx/name";
     static final String XPATH_GPXTIME = "/gpx/time";
     static final String XPATH_GROUNDSPEAKNAME = "/gpx/wpt/groundspeak:cache/groundspeak:name";
@@ -32,7 +35,12 @@ class EventHandlerGpx implements EventHandler {
             "/gpx/wpt/groundspeak:cache/groundspeak:long_description",
             "/gpx/wpt/groundspeak:cache/groundspeak:logs/groundspeak:log/groundspeak:type",
             "/gpx/wpt/groundspeak:cache/groundspeak:logs/groundspeak:log/groundspeak:finder",
-            "/gpx/wpt/groundspeak:cache/groundspeak:logs/groundspeak:log/groundspeak:text"
+            "/gpx/wpt/groundspeak:cache/groundspeak:logs/groundspeak:log/groundspeak:text",
+            /* here are the geocaching.com.au entries */
+            "/gpx/wpt/geocache/owner", "/gpx/wpt/geocache/type", "/gpx/wpt/geocache/summary",
+            "/gpx/wpt/geocache/description", "/gpx/wpt/geocache/logs/log/geocacher",
+            "/gpx/wpt/geocache/logs/log/type", "/gpx/wpt/geocache/logs/log/text"
+
     };
     static final String XPATH_SYM = "/gpx/wpt/sym";
     static final String XPATH_WPT = "/gpx/wpt";
@@ -67,13 +75,13 @@ class EventHandlerGpx implements EventHandler {
             mCachePersisterFacade.wptDesc(text);
         } else if (mFullPath.equals(XPATH_GPXTIME)) {
             return mCachePersisterFacade.gpxTime(text);
-        } else if (mFullPath.equals(XPATH_GROUNDSPEAKNAME)) {
+        } else if (mFullPath.equals(XPATH_GROUNDSPEAKNAME) || mFullPath.equals(XPATH_GEOCACHENAME)) {
             mCachePersisterFacade.groundspeakName(text);
-        } else if (mFullPath.equals(XPATH_LOGDATE)) {
+        } else if (mFullPath.equals(XPATH_LOGDATE) || mFullPath.equals(XPATH_GEOCACHELOGDATE)) {
             mCachePersisterFacade.logDate(text);
         } else if (mFullPath.equals(XPATH_SYM)) {
             mCachePersisterFacade.symbol(text);
-        } else if (mFullPath.equals(XPATH_HINT)) {
+        } else if (mFullPath.equals(XPATH_HINT) || mFullPath.equals(XPATH_GEOCACHEHINT)) {
             if (!text.equals("")) {
                 mCachePersisterFacade.hint(text);
             }
