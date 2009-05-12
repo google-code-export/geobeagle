@@ -20,7 +20,9 @@ import static org.easymock.classextension.EasyMock.verify;
 import static org.junit.Assert.assertEquals;
 
 import com.google.code.geobeagle.LocationControlBuffered;
+import com.google.code.geobeagle.data.GeocacheVector.DistanceSortStrategy;
 import com.google.code.geobeagle.data.GeocacheVector.LocationComparator;
+import com.google.code.geobeagle.data.GeocacheVector.NullSortStrategy;
 
 import org.easymock.EasyMock;
 import org.junit.Test;
@@ -72,6 +74,19 @@ public class GeocacheVectorTest {
         assertEquals(0, locationComparator.compare(d1, d1));
         verify(d1);
         verify(d2);
+    }
+
+    @Test
+    public void testDistanceSortStrategy() {
+        LocationComparator locationComparator = PowerMock.createMock(LocationComparator.class);
+        ArrayList<IGeocacheVector> arrayList = new ArrayList<IGeocacheVector>();
+
+        PowerMock.mockStatic(Collections.class);
+        Collections.sort(arrayList, locationComparator);
+
+        PowerMock.replayAll();
+        new DistanceSortStrategy(locationComparator).sort(arrayList);
+        PowerMock.verifyAll();
     }
 
     @Test
@@ -141,14 +156,7 @@ public class GeocacheVectorTest {
     }
 
     @Test
-    public void testSort() {
-        PowerMock.mockStatic(Collections.class);
-        ArrayList<IGeocacheVector> arrayList = new ArrayList<IGeocacheVector>();
-        LocationComparator locationComparator = new LocationComparator();
-        Collections.sort(arrayList, locationComparator);
-
-        PowerMock.replay(Collections.class);
-        locationComparator.sort(arrayList);
-        PowerMock.verify(Collections.class);
+    public void testNullSortStrategy() {
+        new NullSortStrategy().sort(null);
     }
 }

@@ -59,6 +59,7 @@ public class GeocacheListPresenter {
     private final CombinedLocationManager mCombinedLocationManager;
     private final Database mDatabase;
     private final ErrorDisplayer mErrorDisplayer;
+    private final GeocacheListAdapter mGeocacheListAdapter;
     private final GeocacheVectors mGeocacheVectors;
     private final LocationListener mGpsStatusWidgetLocationListener;
     private final View mGpsWidgetView;
@@ -66,7 +67,6 @@ public class GeocacheListPresenter {
     private final LocationControlBuffered mLocationControlBuffered;
     private final SQLiteWrapper mSQLiteWrapper;
     private final UpdateGpsWidgetRunnable mUpdateGpsWidgetRunnable;
-    private final GeocacheListAdapter mGeocacheListAdapter;
 
     public GeocacheListPresenter(CombinedLocationManager combinedLocationManager,
             LocationControlBuffered locationControlBuffered,
@@ -112,7 +112,7 @@ public class GeocacheListPresenter {
         try {
             mCombinedLocationManager.requestLocationUpdates(0, 0, mLocationControlBuffered);
             mCombinedLocationManager.requestLocationUpdates(0, 0, mGpsStatusWidgetLocationListener);
-            mCombinedLocationManager.requestLocationUpdates(0, 10, mBaseAdapterLocationListener);
+            mCombinedLocationManager.requestLocationUpdates(1000, 1, mBaseAdapterLocationListener);
 
             mSQLiteWrapper.openWritableDatabase(mDatabase);
         } catch (final Exception e) {

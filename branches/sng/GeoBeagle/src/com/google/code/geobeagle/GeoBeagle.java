@@ -14,7 +14,6 @@
 
 package com.google.code.geobeagle;
 
-import com.google.code.geobeagle.LocationControl.LocationChooser;
 import com.google.code.geobeagle.data.Geocache;
 import com.google.code.geobeagle.data.GeocacheFactory;
 import com.google.code.geobeagle.data.GeocacheFromPreferencesFactory;
@@ -151,15 +150,15 @@ public class GeoBeagle extends Activity implements LifecycleManager {
             mWebPageButtonEnabler = Misc.create(this, findViewById(R.id.cache_page),
                     findViewById(R.id.cache_details));
 
+            final LocationManager locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
+            final CombinedLocationManager combinedLocationManager = new CombinedLocationManager(
+                    locationManager);
             mGpsStatusWidget = new GpsStatusWidget(mResourceProvider, new MeterView(
                     getTextView(R.id.location_viewer), new MeterFormatter()),
                     getTextView(R.id.provider), getTextView(R.id.lag), getTextView(R.id.accuracy),
-                    getTextView(R.id.status), new Misc.Time(), new Location(""));
-            final LocationManager locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
-            final LocationChooser locationChooser = new LocationChooser();
-            final LocationControl locationControl = new LocationControl(locationManager,
-                    locationChooser);
-            mLocationControlBuffered = new LocationControlBuffered(locationControl);
+                    getTextView(R.id.status), new Misc.Time(), new Location(""),
+                    combinedLocationManager);
+            mLocationControlBuffered = LocationControlDi.create(locationManager);
             mStatusWidgetLocationListener = new CombinedLocationListener(mLocationControlBuffered,
                     mGpsStatusWidget);
             mGeocacheFactory = new GeocacheFactory();

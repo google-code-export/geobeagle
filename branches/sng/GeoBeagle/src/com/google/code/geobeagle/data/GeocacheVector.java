@@ -24,6 +24,18 @@ import java.util.Collections;
 import java.util.Comparator;
 
 public class GeocacheVector implements IGeocacheVector {
+    public static class DistanceSortStrategy implements SortStrategy {
+        private final LocationComparator mLocationComparator;
+
+        public DistanceSortStrategy(LocationComparator locationComparator) {
+            mLocationComparator = locationComparator;
+        }
+
+        public void sort(ArrayList<IGeocacheVector> arrayList) {
+            Collections.sort(arrayList, mLocationComparator);
+        }
+    }
+
     public static class LocationComparator implements Comparator<IGeocacheVector> {
         public int compare(IGeocacheVector destination1, IGeocacheVector destination2) {
             final float d1 = destination1.getDistanceFast();
@@ -34,10 +46,16 @@ public class GeocacheVector implements IGeocacheVector {
                 return 1;
             return 0;
         }
+    }
 
+    public static class NullSortStrategy implements SortStrategy {
         public void sort(ArrayList<IGeocacheVector> arrayList) {
-            Collections.sort(arrayList, this);
+            return;
         }
+    }
+
+    public interface SortStrategy {
+        public void sort(ArrayList<IGeocacheVector> arrayList);
     }
 
     // From http://www.anddev.org/viewtopic.php?p=20195.

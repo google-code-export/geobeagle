@@ -14,6 +14,7 @@
 
 package com.google.code.geobeagle.ui;
 
+import com.google.code.geobeagle.CombinedLocationManager;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.ResourceProvider;
 import com.google.code.geobeagle.ui.Misc.Time;
@@ -37,8 +38,10 @@ public class GpsStatusWidget implements LocationListener {
         }
 
         public String barsToMeterText(int bars) {
-            return "[" + METER_LEFT.substring(METER_LEFT.length() - bars) + "×"
-                    + METER_RIGHT.substring(0, bars) + "]";
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append('[').append(METER_LEFT.substring(METER_LEFT.length() - bars))
+                    .append('×').append(METER_RIGHT.substring(0, bars)).append(']');
+            return stringBuilder.toString();
         }
 
         public int lagToAlpha(long milliseconds) {
@@ -81,6 +84,7 @@ public class GpsStatusWidget implements LocationListener {
     public final static String METER_RIGHT = "····›····»····";
     private float mAccuracy;
     private final TextView mAccuracyView;
+    private CombinedLocationManager mCombinedLocationManager;
     private final TextView mLag;
     private long mLastUpdateTime;
     private long mLocationTime;
@@ -92,7 +96,7 @@ public class GpsStatusWidget implements LocationListener {
 
     public GpsStatusWidget(ResourceProvider resourceProvider, MeterView meterView,
             TextView provider, TextView lag, TextView accuracy, TextView status, Time time,
-            Location initialLocation) {
+            Location initialLocation, CombinedLocationManager locationManager) {
         mResourceProvider = resourceProvider;
         mMeterView = meterView;
         mLag = lag;
@@ -100,11 +104,12 @@ public class GpsStatusWidget implements LocationListener {
         mProvider = provider;
         mStatus = status;
         mTime = time;
+        mCombinedLocationManager = locationManager;
     }
 
     public void onLocationChanged(Location location) {
-        // TODO: use currentTime for alpha channel, but locationTime for text
-        // lag.
+        if (location == null)
+            return;
         mLastUpdateTime = mTime.getCurrentTime();
         mLocationTime = Math.min(location.getTime(), mLastUpdateTime);
         mProvider.setText(location.getProvider());
@@ -112,11 +117,11 @@ public class GpsStatusWidget implements LocationListener {
     };
 
     public void onProviderDisabled(String provider) {
-        mStatus.setText("DISABLED");
+        mStatus.setText(provider + " DISABLED");
     }
 
     public void onProviderEnabled(String provider) {
-        mStatus.setText("ENABLED");
+        mStatus.setText(provider + " ENABLED");
     }
 
     public void onStatusChanged(String provider, int status, Bundle extras) {
@@ -137,11 +142,17 @@ public class GpsStatusWidget implements LocationListener {
     }
 
     public void refreshLocation() {
-        long currentTime = mTime.getCurrentTime();
-        long lastUpdateLag = currentTime - mLastUpdateTime;
-        long locationLag = currentTime - mLocationTime;
-        mLag.setText((locationLag / 1000 + "s").trim());
-        mAccuracyView.setText((mAccuracy + "m").trim());
-        mMeterView.set(lastUpdateLag, mAccuracy);
+        if (mCombinedLocationManager.isProviderEnabled()) {
+            long currentTime = mTime.getCurrentTime();
+            long lastUpdateLag = currentTime - mLastUpdateTime;
+            long locationLag = currentTime - mLocationTime;
+            mAccuracyView.setText((Integer.toString((int)mAccuracy) + "m").trim());
+            mLag.setText(Long.toString(locationLag / 1000) + "s");
+            mMeterView.set(lastUpdateLag, mAccuracy);
+        } else {
+            mLag.setText("");
+            mAccuracyView.setText("");
+            mMeterView.set(Long.MAX_VALUE, Float.MAX_VALUE);
+        }
     }
 }

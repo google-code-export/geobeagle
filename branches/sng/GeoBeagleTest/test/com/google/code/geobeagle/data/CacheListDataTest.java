@@ -45,13 +45,14 @@ public class CacheListDataTest {
     }
 
     @Test
-    public void testSort() {
+    public void testGet() {
         GeocacheVectors geocacheVectors = PowerMock.createMock(GeocacheVectors.class);
+        ArrayList<IGeocacheVector> geocacheVectorsList = new ArrayList<IGeocacheVector>();
 
-        geocacheVectors.sort();
+        EasyMock.expect(geocacheVectors.getGeocacheVectorsList()).andReturn(geocacheVectorsList);
 
         PowerMock.replayAll();
-        new CacheListData(geocacheVectors).sort();
+        assertEquals(geocacheVectorsList, new CacheListData(geocacheVectors).get());
         PowerMock.verifyAll();
     }
 

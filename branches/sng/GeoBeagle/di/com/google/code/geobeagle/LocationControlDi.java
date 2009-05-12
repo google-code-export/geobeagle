@@ -15,16 +15,24 @@
 package com.google.code.geobeagle;
 
 import com.google.code.geobeagle.LocationControl.LocationChooser;
+import com.google.code.geobeagle.LocationControlBuffered.GpsDisabledLocation;
+import com.google.code.geobeagle.data.GeocacheVector.DistanceSortStrategy;
+import com.google.code.geobeagle.data.GeocacheVector.LocationComparator;
+import com.google.code.geobeagle.data.GeocacheVector.NullSortStrategy;
 
 import android.location.LocationManager;
 
 public class LocationControlDi {
-
     public static LocationControlBuffered create(LocationManager locationManager) {
         final LocationChooser locationChooser = new LocationChooser();
         final LocationControl locationControl = new LocationControl(locationManager,
                 locationChooser);
-        return new LocationControlBuffered(locationControl);
+        final NullSortStrategy nullSortStrategy = new NullSortStrategy();
+        final LocationComparator locationComparator = new LocationComparator();
+        final DistanceSortStrategy distanceSortStrategy = new DistanceSortStrategy(
+                locationComparator);
+        final GpsDisabledLocation gpsDisabledLocation = new GpsDisabledLocation();
+        return new LocationControlBuffered(locationControl, distanceSortStrategy, nullSortStrategy,
+                gpsDisabledLocation);
     }
-
 }

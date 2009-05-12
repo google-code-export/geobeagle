@@ -15,14 +15,22 @@
 package com.google.code.geobeagle.ui.cachelist;
 
 import static org.easymock.EasyMock.expect;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import com.google.code.geobeagle.LocationControlBuffered;
 import com.google.code.geobeagle.R;
+import com.google.code.geobeagle.LocationControlBuffered.IGpsLocation;
 import com.google.code.geobeagle.data.CacheListData;
 import com.google.code.geobeagle.data.Geocache;
+import com.google.code.geobeagle.data.IGeocacheVector;
+import com.google.code.geobeagle.data.GeocacheVector.SortStrategy;
 import com.google.code.geobeagle.io.GeocachesSql;
 import com.google.code.geobeagle.io.WhereFactory;
+import com.google.code.geobeagle.ui.cachelist.MenuActionRefresh.ActionAndTolerance;
 import com.google.code.geobeagle.ui.cachelist.MenuActionRefresh.AdapterCachesSorter;
+import com.google.code.geobeagle.ui.cachelist.MenuActionRefresh.DistanceUpdater;
+import com.google.code.geobeagle.ui.cachelist.MenuActionRefresh.RefreshAction;
 import com.google.code.geobeagle.ui.cachelist.MenuActionRefresh.SqlCacheLoader;
 import com.google.code.geobeagle.ui.cachelist.MenuActionRefresh.Timing;
 import com.google.code.geobeagle.ui.cachelist.MenuActionRefresh.TitleUpdater;
@@ -50,18 +58,130 @@ import java.util.Calendar;
 public class MenuActionRefreshTest {
 
     @Test
+    public void testActDoNothing() {
+        ActionAndTolerance actionAndTolerance = PowerMock.createMock(ActionAndTolerance.class);
+        ActionAndTolerance[] actionAndTolerances = new ActionAndTolerance[] {
+            actionAndTolerance
+        };
+        IGpsLocation here = PowerMock.createMock(IGpsLocation.class);
+        LocationControlBuffered locationControlBuffered = PowerMock
+                .createMock(LocationControlBuffered.class);
+        Timing timing = PowerMock.createMock(Timing.class);
+
+        timing.start();
+        expect(actionAndTolerance.exceedsTolerance(here)).andReturn(false);
+        expect(locationControlBuffered.getGpsLocation()).andReturn(here);
+
+        PowerMock.replayAll();
+        new MenuActionRefresh(locationControlBuffered, timing, actionAndTolerances).act();
+        PowerMock.verifyAll();
+    }
+
+    @Test
+    public void testActDoSomething() {
+        ActionAndTolerance actionAndTolerance = PowerMock.createMock(ActionAndTolerance.class);
+        ActionAndTolerance[] actionAndTolerances = new ActionAndTolerance[] {
+            actionAndTolerance
+        };
+        IGpsLocation here = PowerMock.createMock(IGpsLocation.class);
+        LocationControlBuffered locationControlBuffered = PowerMock
+                .createMock(LocationControlBuffered.class);
+        Timing timing = PowerMock.createMock(Timing.class);
+
+        timing.start();
+        expect(locationControlBuffered.getGpsLocation()).andReturn(here);
+        expect(actionAndTolerance.exceedsTolerance(here)).andReturn(true);
+        actionAndTolerance.refresh();
+        actionAndTolerance.updateLastRefreshed(here);
+
+        PowerMock.replayAll();
+        new MenuActionRefresh(locationControlBuffered, timing, actionAndTolerances).act();
+        PowerMock.verifyAll();
+    }
+
+    @Test
+    public void testActDoSomethingTwoItems() {
+        ActionAndTolerance actionAndTolerance1 = PowerMock.createMock(ActionAndTolerance.class);
+        ActionAndTolerance actionAndTolerance2 = PowerMock.createMock(ActionAndTolerance.class);
+        ActionAndTolerance[] actionAndTolerances = new ActionAndTolerance[] {
+                actionAndTolerance1, actionAndTolerance2
+        };
+        IGpsLocation here = PowerMock.createMock(IGpsLocation.class);
+        LocationControlBuffered locationControlBuffered = PowerMock
+                .createMock(LocationControlBuffered.class);
+        Timing timing = PowerMock.createMock(Timing.class);
+
+        timing.start();
+        expect(locationControlBuffered.getGpsLocation()).andReturn(here);
+        expect(actionAndTolerance1.exceedsTolerance(here)).andReturn(false);
+        expect(actionAndTolerance2.exceedsTolerance(here)).andReturn(true);
+        actionAndTolerance2.refresh();
+        actionAndTolerance2.updateLastRefreshed(here);
+
+        PowerMock.replayAll();
+        new MenuActionRefresh(locationControlBuffered, timing, actionAndTolerances).act();
+        PowerMock.verifyAll();
+    }
+
+    @Test
+    public void testActionAndToleranceAct() {
+        RefreshAction refreshAction = PowerMock.createMock(RefreshAction.class);
+
+        refreshAction.refresh();
+
+        PowerMock.replayAll();
+        new ActionAndTolerance(refreshAction, 0, null).refresh();
+        PowerMock.verifyAll();
+    }
+
+    @Test
+    public void testActionAndToleranceExceedsTolerance() {
+        IGpsLocation closer = PowerMock.createMock(IGpsLocation.class);
+        IGpsLocation farther = PowerMock.createMock(IGpsLocation.class);
+        IGpsLocation lastRefreshed = PowerMock.createMock(IGpsLocation.class);
+
+        expect(closer.distanceTo(lastRefreshed)).andReturn(99f);
+        expect(farther.distanceTo(lastRefreshed)).andReturn(100f);
+        expect(farther.distanceTo(farther)).andReturn(0f);
+
+        PowerMock.replayAll();
+        final ActionAndTolerance actionAndTolerance = new ActionAndTolerance(null, 100,
+                lastRefreshed);
+        assertFalse(actionAndTolerance.exceedsTolerance(closer));
+        assertTrue(actionAndTolerance.exceedsTolerance(farther));
+        actionAndTolerance.updateLastRefreshed(farther);
+        assertFalse(actionAndTolerance.exceedsTolerance(farther));
+        PowerMock.verifyAll();
+    }
+
+    @Test
     public void testAdapterCachesSorter() {
         CacheListData cacheListData = PowerMock.createMock(CacheListData.class);
-        GeocacheListAdapter geocacheListAdapter = PowerMock.createMock(GeocacheListAdapter.class);
         Timing timing = PowerMock.createMock(Timing.class);
+        LocationControlBuffered locationControlBuffered = PowerMock
+                .createMock(LocationControlBuffered.class);
+        SortStrategy sortStrategy = PowerMock.createMock(SortStrategy.class);
+        ArrayList<IGeocacheVector> arrayList = new ArrayList<IGeocacheVector>();
 
         timing.lap(EasyMock.isA(String.class));
         EasyMock.expectLastCall().anyTimes();
-        cacheListData.sort();
+        EasyMock.expect(cacheListData.get()).andReturn(arrayList);
+        EasyMock.expect(locationControlBuffered.getSortStrategy()).andReturn(sortStrategy);
+        sortStrategy.sort(arrayList);
+
+        PowerMock.replayAll();
+        new AdapterCachesSorter(cacheListData, timing, locationControlBuffered).refresh();
+        PowerMock.verifyAll();
+    }
+
+    @Test
+    public void testDistanceUpdater() {
+        GeocacheListAdapter geocacheListAdapter = PowerMock.createMock(GeocacheListAdapter.class);
+
         geocacheListAdapter.notifyDataSetChanged();
 
         PowerMock.replayAll();
-        new AdapterCachesSorter(cacheListData, geocacheListAdapter, timing).sort();
+        new DistanceUpdater(geocacheListAdapter).refresh();
         PowerMock.verifyAll();
     }
 
@@ -74,20 +194,42 @@ public class MenuActionRefreshTest {
                 .createMock(LocationControlBuffered.class);
         WhereFactory whereFactory = PowerMock.createMock(WhereFactory.class);
         Location location = PowerMock.createMock(Location.class);
+        TitleUpdater titleUpdater = PowerMock.createMock(TitleUpdater.class);
         Timing timing = PowerMock.createMock(Timing.class);
 
         timing.lap(EasyMock.isA(String.class));
         EasyMock.expectLastCall().anyTimes();
+        expect(locationControlBuffered.getLocation()).andReturn(location);
         expect(filterNearestCaches.getWhereFactory()).andReturn(whereFactory);
 
         geocachesSql.loadCaches(location, whereFactory);
         ArrayList<Geocache> geocaches = new ArrayList<Geocache>();
         expect(geocachesSql.getGeocaches()).andReturn(geocaches);
         cacheListData.add(geocaches, locationControlBuffered);
+        titleUpdater.update();
 
         PowerMock.replayAll();
         new SqlCacheLoader(geocachesSql, filterNearestCaches, cacheListData,
-                locationControlBuffered, timing).load(location);
+                locationControlBuffered, titleUpdater, timing).refresh();
+        PowerMock.verifyAll();
+    }
+
+    @Test
+    public void testTiming() {
+        Calendar calendar = PowerMock.createMock(Calendar.class);
+
+        PowerMock.mockStatic(Calendar.class);
+        PowerMock.mockStatic(Log.class);
+        expect(Calendar.getInstance()).andReturn(calendar);
+
+        expect(calendar.getTimeInMillis()).andReturn(10000L);
+        expect(Log.v(EasyMock.isA(String.class), EasyMock.isA(String.class))).andReturn(0);
+        expect(calendar.getTimeInMillis()).andReturn(10005L);
+
+        PowerMock.replayAll();
+        Timing timing = new Timing();
+        timing.start();
+        timing.lap("test");
         PowerMock.verifyAll();
     }
 
@@ -116,25 +258,6 @@ public class MenuActionRefreshTest {
     }
 
     @Test
-    public void testTiming() {
-        Calendar calendar = PowerMock.createMock(Calendar.class);
-
-        PowerMock.mockStatic(Calendar.class);
-        PowerMock.mockStatic(Log.class);
-        expect(Calendar.getInstance()).andReturn(calendar);
-
-        expect(calendar.getTimeInMillis()).andReturn(10000L);
-        expect(Log.v(EasyMock.isA(String.class), EasyMock.isA(String.class))).andReturn(0);
-        expect(calendar.getTimeInMillis()).andReturn(10005L);
-
-        PowerMock.replayAll();
-        Timing timing = new Timing();
-        timing.start();
-        timing.lap("test");
-        PowerMock.verifyAll();
-    }
-
-    @Test
     public void testTitleUpdaterEmpty() {
         GeocachesSql geocachesSql = PowerMock.createMock(GeocachesSql.class);
         ListActivity listActivity = PowerMock.createMock(ListActivity.class);
@@ -159,73 +282,6 @@ public class MenuActionRefreshTest {
         PowerMock.replayAll();
         new TitleUpdater(geocachesSql, listActivity, filterNearestCaches, cacheListData,
                 listTitleFormatter, timing).update();
-        PowerMock.verifyAll();
-
-    }
-
-    @Test
-    public void testActDoNothing() {
-        Location here = PowerMock.createMock(Location.class);
-        Location lastSqlLocation = PowerMock.createMock(Location.class);
-        Location lastSortLocation = PowerMock.createMock(Location.class);
-        LocationControlBuffered locationControlBuffered = PowerMock
-                .createMock(LocationControlBuffered.class);
-        Timing timing = PowerMock.createMock(Timing.class);
-
-        timing.start();
-        expect(locationControlBuffered.getLocation()).andReturn(here);
-        expect(here.distanceTo(lastSqlLocation)).andReturn(400f);
-        expect(here.distanceTo(lastSortLocation)).andReturn(5f);
-
-        PowerMock.replayAll();
-        new MenuActionRefresh(null, locationControlBuffered, null, timing, null, lastSortLocation,
-                lastSqlLocation).act();
-        PowerMock.verifyAll();
-    }
-
-    @Test
-    public void testLoad() {
-        Location here = PowerMock.createMock(Location.class);
-        Location lastSqlLocation = PowerMock.createMock(Location.class);
-        LocationControlBuffered locationControlBuffered = PowerMock
-                .createMock(LocationControlBuffered.class);
-        Timing timing = PowerMock.createMock(Timing.class);
-        SqlCacheLoader sqlCacheLoader = PowerMock.createMock(SqlCacheLoader.class);
-        TitleUpdater titleUpdater = PowerMock.createMock(TitleUpdater.class);
-        AdapterCachesSorter adapterCachesSorter = PowerMock.createMock(AdapterCachesSorter.class);
-
-        timing.start();
-        expect(locationControlBuffered.getLocation()).andReturn(here);
-        expect(here.distanceTo(lastSqlLocation)).andReturn(501f);
-        sqlCacheLoader.load(here);
-        titleUpdater.update();
-        adapterCachesSorter.sort();
-
-        PowerMock.replayAll();
-        new MenuActionRefresh(adapterCachesSorter, locationControlBuffered, sqlCacheLoader, timing,
-                titleUpdater, lastSqlLocation, lastSqlLocation).act();
-        PowerMock.verifyAll();
-    }
-
-    @Test
-    public void testSort() {
-        Location here = PowerMock.createMock(Location.class);
-        Location lastSqlLocation = PowerMock.createMock(Location.class);
-        Location lastSortLocation = PowerMock.createMock(Location.class);
-        LocationControlBuffered locationControlBuffered = PowerMock
-                .createMock(LocationControlBuffered.class);
-        Timing timing = PowerMock.createMock(Timing.class);
-        AdapterCachesSorter adapterCachesSorter = PowerMock.createMock(AdapterCachesSorter.class);
-
-        timing.start();
-        expect(locationControlBuffered.getLocation()).andReturn(here);
-        expect(here.distanceTo(lastSqlLocation)).andReturn(400f);
-        expect(here.distanceTo(lastSortLocation)).andReturn(7f);
-        adapterCachesSorter.sort();
-
-        PowerMock.replayAll();
-        new MenuActionRefresh(adapterCachesSorter, locationControlBuffered, null, timing, null,
-                lastSortLocation, lastSqlLocation).act();
         PowerMock.verifyAll();
     }
 }

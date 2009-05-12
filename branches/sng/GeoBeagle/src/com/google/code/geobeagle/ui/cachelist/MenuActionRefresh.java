@@ -15,12 +15,12 @@
 package com.google.code.geobeagle.ui.cachelist;
 
 import com.google.code.geobeagle.LocationControlBuffered;
+import com.google.code.geobeagle.LocationControlBuffered.IGpsLocation;
 import com.google.code.geobeagle.data.CacheListData;
 import com.google.code.geobeagle.data.Geocache;
 import com.google.code.geobeagle.io.GeocachesSql;
 
 import android.app.ListActivity;
-import android.location.Location;
 import android.util.Log;
 import android.widget.TextView;
 
@@ -28,51 +28,95 @@ import java.util.ArrayList;
 import java.util.Calendar;
 
 public class MenuActionRefresh implements MenuAction {
-    static class AdapterCachesSorter {
-        private final CacheListData mCacheListData;
-        private final GeocacheListAdapter mGeocacheListAdapter;
-        private final Timing mTiming;
+    static class ActionAndTolerance {
+        private IGpsLocation mLastRefreshed;
+        private final RefreshAction mRefreshAction;
+        private final float mTolerance;
 
-        AdapterCachesSorter(CacheListData cacheListData, GeocacheListAdapter geocacheListAdapter,
-                Timing timing) {
-            mCacheListData = cacheListData;
-            mGeocacheListAdapter = geocacheListAdapter;
-            mTiming = timing;
+        public ActionAndTolerance(RefreshAction refreshAction, float tolerance,
+                IGpsLocation lastRefreshed) {
+            mRefreshAction = refreshAction;
+            mTolerance = tolerance;
+            mLastRefreshed = lastRefreshed;
         }
 
-        public void sort() {
-            mCacheListData.sort();
-            mTiming.lap("sort time");
+        public boolean exceedsTolerance(IGpsLocation here) {
+            final float distanceTo = here.distanceTo(mLastRefreshed);
+            return (distanceTo >= mTolerance);
+        }
 
-            mGeocacheListAdapter.notifyDataSetChanged();
-            mTiming.lap("notify changed time");
+        public void refresh() {
+            mRefreshAction.refresh();
+        }
+
+        public void updateLastRefreshed(IGpsLocation here) {
+            mLastRefreshed = here;
         }
     }
 
-    static class SqlCacheLoader {
+    static class AdapterCachesSorter implements RefreshAction {
+        private final CacheListData mCacheListData;
+        private final LocationControlBuffered mLocationControlBuffered;
+        private final Timing mTiming;
+
+        AdapterCachesSorter(CacheListData cacheListData, Timing timing,
+                LocationControlBuffered locationControlBuffered) {
+            mCacheListData = cacheListData;
+            mTiming = timing;
+            mLocationControlBuffered = locationControlBuffered;
+        }
+
+        public void refresh() {
+            mLocationControlBuffered.getSortStrategy().sort(mCacheListData.get());
+            mTiming.lap("sort time");
+        }
+    }
+
+    static class DistanceUpdater implements RefreshAction {
+        private final GeocacheListAdapter mGeocacheListAdapter;
+
+        DistanceUpdater(GeocacheListAdapter geocacheListAdapter) {
+            mGeocacheListAdapter = geocacheListAdapter;
+        }
+
+        public void refresh() {
+            mGeocacheListAdapter.notifyDataSetChanged();
+        }
+    }
+
+    static interface RefreshAction {
+        public void refresh();
+    }
+
+    static class SqlCacheLoader implements RefreshAction {
         private final CacheListData mCacheListData;
         private final FilterNearestCaches mFilterNearestCaches;
         private final GeocachesSql mGeocachesSql;
         private final LocationControlBuffered mLocationControlBuffered;
         private final Timing mTiming;
+        private final TitleUpdater mTitleUpdater;
 
         SqlCacheLoader(GeocachesSql geocachesSql, FilterNearestCaches filterNearestCaches,
                 CacheListData cacheListData, LocationControlBuffered locationControlBuffered,
-                Timing timing) {
+                TitleUpdater titleUpdater, Timing timing) {
             mGeocachesSql = geocachesSql;
             mFilterNearestCaches = filterNearestCaches;
             mCacheListData = cacheListData;
             mLocationControlBuffered = locationControlBuffered;
             mTiming = timing;
+            mTitleUpdater = titleUpdater;
         }
 
-        public void load(Location location) {
-            mGeocachesSql.loadCaches(location, mFilterNearestCaches.getWhereFactory());
+        public void refresh() {
+            mGeocachesSql.loadCaches(mLocationControlBuffered.getLocation(), mFilterNearestCaches
+                    .getWhereFactory());
             ArrayList<Geocache> geocaches = mGeocachesSql.getGeocaches();
             mTiming.lap("SQL time");
 
             mCacheListData.add(geocaches, mLocationControlBuffered);
             mTiming.lap("add to list time");
+
+            mTitleUpdater.update();
         }
     }
 
@@ -114,7 +158,7 @@ public class MenuActionRefresh implements MenuAction {
             mTiming = timing;
         }
 
-        void update() {
+        public void update() {
             final int sqlCount = mGeocachesSql.getCount();
             final int nearestCachesCount = mCacheListData.size();
             mListActivity.setTitle(mListActivity.getString(mFilterNearestCaches.getTitleText(),
@@ -127,42 +171,30 @@ public class MenuActionRefresh implements MenuAction {
         }
     }
 
-    private AdapterCachesSorter mAdapterCachesSorter;
-    private Location mLastSortLocation;
-    private Location mLastSqlLocation;
+    private ActionAndTolerance[] mActionAndTolerances;
     private final LocationControlBuffered mLocationControlBuffered;
-    private final SqlCacheLoader mSqlCacheLoader;
     private final Timing mTiming;
-    private final TitleUpdater mTitleUpdater;
 
-    public MenuActionRefresh(AdapterCachesSorter adapterCachesSorter,
-            LocationControlBuffered locationControlBuffered, SqlCacheLoader sqlCacheLoader,
-            Timing timing, TitleUpdater titleUpdater, Location lastSortLocation,
-            Location lastSqlLocation) {
-        mAdapterCachesSorter = adapterCachesSorter;
+    public MenuActionRefresh(LocationControlBuffered locationControlBuffered, Timing timing,
+            ActionAndTolerance[] actionAndTolerances) {
         mLocationControlBuffered = locationControlBuffered;
-        mSqlCacheLoader = sqlCacheLoader;
         mTiming = timing;
-        mTitleUpdater = titleUpdater;
-        mLastSqlLocation = lastSqlLocation;
-        mLastSortLocation = lastSortLocation;
+        mActionAndTolerances = actionAndTolerances;
     }
 
     public void act() {
         mTiming.start();
-        Location location = mLocationControlBuffered.getLocation();
+        IGpsLocation here = mLocationControlBuffered.getGpsLocation();
+        boolean fExceedsTolerances = false;
+        for (int i = 0; i < mActionAndTolerances.length; i++) {
+            final boolean exceedsTolerance = mActionAndTolerances[i].exceedsTolerance(here);
+            if (exceedsTolerance)
+                fExceedsTolerances = true;
 
-        if (location.distanceTo(mLastSqlLocation) > 500) {
-            mSqlCacheLoader.load(location);
-            mTitleUpdater.update();
-            mAdapterCachesSorter.sort();
-            mLastSqlLocation = location;
-            mLastSortLocation = location;
-        }
-
-        else if (location.distanceTo(mLastSortLocation) > 6) {
-            mAdapterCachesSorter.sort();
-            mLastSortLocation = location;
+            if (fExceedsTolerances) {
+                mActionAndTolerances[i].refresh();
+                mActionAndTolerances[i].updateLastRefreshed(here);
+            }
         }
     }
 }

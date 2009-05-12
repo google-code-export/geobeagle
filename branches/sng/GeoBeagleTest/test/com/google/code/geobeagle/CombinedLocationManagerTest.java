@@ -14,6 +14,10 @@
 
 package com.google.code.geobeagle;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+import org.easymock.EasyMock;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.api.easymock.PowerMock;
@@ -36,6 +40,29 @@ public class CombinedLocationManagerTest {
         PowerMock.verifyAll();
     }
 
+    @Test
+    public void testIsProviderEnabled() {
+        LocationManager locationManager = PowerMock.createMock(LocationManager.class);
+
+        EasyMock.expect(locationManager.isProviderEnabled("gps")).andReturn(false);
+        EasyMock.expect(locationManager.isProviderEnabled("network")).andReturn(true);
+
+        PowerMock.replayAll();
+        assertTrue(new CombinedLocationManager(locationManager).isProviderEnabled());
+        PowerMock.verifyAll();
+    }
+
+    @Test
+    public void testIsProviderEnabledDisabled() {
+        LocationManager locationManager = PowerMock.createMock(LocationManager.class);
+
+        EasyMock.expect(locationManager.isProviderEnabled("gps")).andReturn(false);
+        EasyMock.expect(locationManager.isProviderEnabled("network")).andReturn(false);
+
+        PowerMock.replayAll();
+        assertFalse(new CombinedLocationManager(locationManager).isProviderEnabled());
+        PowerMock.verifyAll();
+    }
     @Test
     public void testRequestLocationUpdates() {
         LocationManager locationManager = PowerMock.createMock(LocationManager.class);

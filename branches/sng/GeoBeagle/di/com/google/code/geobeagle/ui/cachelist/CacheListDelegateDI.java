@@ -21,13 +21,14 @@ import com.google.code.geobeagle.LocationControlBuffered;
 import com.google.code.geobeagle.LocationControlDi;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.ResourceProvider;
+import com.google.code.geobeagle.LocationControlBuffered.GpsDisabledLocation;
 import com.google.code.geobeagle.data.CacheListData;
 import com.google.code.geobeagle.data.DistanceFormatter;
 import com.google.code.geobeagle.data.GeocacheFactory;
 import com.google.code.geobeagle.data.GeocacheFromMyLocationFactory;
 import com.google.code.geobeagle.data.GeocacheVectorFactory;
 import com.google.code.geobeagle.data.GeocacheVectors;
-import com.google.code.geobeagle.data.GeocacheVector.LocationComparator;
+import com.google.code.geobeagle.data.IGeocacheVector;
 import com.google.code.geobeagle.io.CacheWriter;
 import com.google.code.geobeagle.io.Database;
 import com.google.code.geobeagle.io.DatabaseDI;
@@ -47,7 +48,9 @@ import com.google.code.geobeagle.ui.GpsStatusWidget.MeterFormatter;
 import com.google.code.geobeagle.ui.GpsStatusWidget.MeterView;
 import com.google.code.geobeagle.ui.GpsStatusWidget.UpdateGpsWidgetRunnable;
 import com.google.code.geobeagle.ui.cachelist.GeocacheListPresenter.BaseAdapterLocationListener;
+import com.google.code.geobeagle.ui.cachelist.MenuActionRefresh.ActionAndTolerance;
 import com.google.code.geobeagle.ui.cachelist.MenuActionRefresh.AdapterCachesSorter;
+import com.google.code.geobeagle.ui.cachelist.MenuActionRefresh.DistanceUpdater;
 import com.google.code.geobeagle.ui.cachelist.MenuActionRefresh.SqlCacheLoader;
 import com.google.code.geobeagle.ui.cachelist.MenuActionRefresh.Timing;
 import com.google.code.geobeagle.ui.cachelist.MenuActionRefresh.TitleUpdater;
@@ -61,6 +64,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
+
+import java.util.ArrayList;
 
 public class CacheListDelegateDI {
     public static CacheListDelegate create(ListActivity listActivity, LayoutInflater layoutInflater) {
@@ -82,9 +87,9 @@ public class CacheListDelegateDI {
         final LocationSaver locationSaver = new LocationSaver(cacheWriter);
         final GeocacheVectorFactory geocacheVectorFactory = new GeocacheVectorFactory(
                 distanceFormatter);
-        final LocationComparator locationComparator = new LocationComparator();
-        final GeocacheVectors geocacheVectors = new GeocacheVectors(locationComparator,
-                geocacheVectorFactory);
+        final ArrayList<IGeocacheVector> geocacheVectorsList = new ArrayList<IGeocacheVector>(10);
+        final GeocacheVectors geocacheVectors = new GeocacheVectors(geocacheVectorFactory,
+                geocacheVectorsList);
         final CacheListData cacheListData = new CacheListData(geocacheVectors);
         final XmlPullParserWrapper xmlPullParserWrapper = new XmlPullParserWrapper();
         final GpxImporter gpxImporter = GpxImporterDI.create(database, sqliteWrapper, listActivity,
@@ -96,11 +101,15 @@ public class CacheListDelegateDI {
 
         final GeocacheListAdapter geocacheListAdapter = new GeocacheListAdapter(geocacheVectors,
                 geocacheSummaryRowInflater);
-        GpsStatusWidget gpsStatusWidget = new GpsStatusWidget(new ResourceProvider(listActivity),
-                new MeterView(getTextView(gpsWidgetView, R.id.location_viewer),
-                        new MeterFormatter()), getTextView(gpsWidgetView, R.id.provider),
-                getTextView(gpsWidgetView, R.id.lag), getTextView(gpsWidgetView, R.id.accuracy),
-                getTextView(gpsWidgetView, R.id.status), new Misc.Time(), new Location(""));
+        final MeterFormatter meterFormatter = new MeterFormatter();
+        final MeterView meterView = new MeterView(getTextView(gpsWidgetView, R.id.location_viewer),
+                meterFormatter);
+        final Misc.Time time = new Misc.Time();
+
+        final GpsStatusWidget gpsStatusWidget = new GpsStatusWidget(new ResourceProvider(
+                listActivity), meterView, getTextView(gpsWidgetView, R.id.provider), getTextView(
+                gpsWidgetView, R.id.lag), getTextView(gpsWidgetView, R.id.accuracy), getTextView(
+                gpsWidgetView, R.id.status), time, new Location(""), combinedLocationManager);
         final CombinedLocationListener gpsStatusWidgetLocationListener = new CombinedLocationListener(
                 locationControlBuffered, gpsStatusWidget);
         final UpdateGpsWidgetRunnable updateGpsWidgetRunnable = UpdateGpsWidgetRunnableDI
@@ -112,20 +121,22 @@ public class CacheListDelegateDI {
                 whereFactoryAllCaches, whereFactoryNearestCaches);
         final ListTitleFormatter listTitleFormatter = new ListTitleFormatter();
 
-        final Location nullLocation = new Location("");
-        nullLocation.setLatitude(Double.MIN_VALUE);
-        nullLocation.setLongitude(Double.MIN_VALUE);
         final Timing timing = new Timing();
-        final SqlCacheLoader sqlCacheLoader = new SqlCacheLoader(geocachesSql, filterNearestCaches,
-                cacheListData, locationControlBuffered, timing);
-        final AdapterCachesSorter adapterCachesSorter = new AdapterCachesSorter(cacheListData,
-                geocacheListAdapter, timing);
         final TitleUpdater titleUpdater = new TitleUpdater(geocachesSql, listActivity,
                 filterNearestCaches, cacheListData, listTitleFormatter, timing);
-
-        final MenuActionRefresh menuActionRefresh = new MenuActionRefresh(adapterCachesSorter,
-                locationControlBuffered, sqlCacheLoader, timing, titleUpdater, nullLocation,
-                nullLocation);
+        final SqlCacheLoader sqlCacheLoader = new SqlCacheLoader(geocachesSql, filterNearestCaches,
+                cacheListData, locationControlBuffered, titleUpdater, timing);
+        final AdapterCachesSorter adapterCachesSorter = new AdapterCachesSorter(cacheListData,
+                timing, locationControlBuffered);
+        final GpsDisabledLocation gpsDisabledLocation = new GpsDisabledLocation();
+        final DistanceUpdater distanceUpdater = new DistanceUpdater(geocacheListAdapter);
+        final ActionAndTolerance[] actionAndTolerances = new ActionAndTolerance[] {
+                new ActionAndTolerance(sqlCacheLoader, 500, gpsDisabledLocation),
+                new ActionAndTolerance(adapterCachesSorter, 6, gpsDisabledLocation),
+                new ActionAndTolerance(distanceUpdater, 1, gpsDisabledLocation)
+        };
+        final MenuActionRefresh menuActionRefresh = new MenuActionRefresh(locationControlBuffered,
+                timing, actionAndTolerances);
         final MenuActionMyLocation menuActionMyLocation = new MenuActionMyLocation(locationSaver,
                 geocacheFromMyLocationFactory, menuActionRefresh, errorDisplayer);
 

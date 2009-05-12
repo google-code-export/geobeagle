@@ -105,11 +105,11 @@ public class EditCacheActivityDelegate {
     }
 
     private final CancelButtonOnClickListener mCancelButtonOnClickListener;
+    private final Database mDatabase;
     private final GeocacheFactory mGeocacheFactory;
     private final LocationSaver mLocationSaver;
     private final Activity mParent;
     private final SQLiteWrapper mSqliteWrapper;
-    private final Database mDatabase;
 
     public EditCacheActivityDelegate(Activity parent,
             CancelButtonOnClickListener cancelButtonOnClickListener, SQLiteWrapper sqliteWrapper,
@@ -124,6 +124,10 @@ public class EditCacheActivityDelegate {
 
     public void onCreate(Bundle savedInstanceState) {
         mParent.setContentView(R.layout.cache_edit);
+    }
+
+    public void onPause() {
+        mSqliteWrapper.close();
     }
 
     public void onResume() {
@@ -143,9 +147,5 @@ public class EditCacheActivityDelegate {
 
         Button cancel = (Button)mParent.findViewById(R.id.edit_cancel);
         cancel.setOnClickListener(mCancelButtonOnClickListener);
-    }
-
-    public void onPause() {
-        mSqliteWrapper.close();
     }
 }

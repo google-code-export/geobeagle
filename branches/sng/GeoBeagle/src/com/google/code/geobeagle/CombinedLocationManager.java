@@ -25,6 +25,11 @@ public class CombinedLocationManager {
         mLocationManager = locationManager;
     }
 
+    public boolean isProviderEnabled() {
+        return mLocationManager.isProviderEnabled("gps")
+                || mLocationManager.isProviderEnabled("network");
+    }
+
     public void removeUpdates(LocationListener locationListener) {
         mLocationManager.removeUpdates(locationListener);
     }

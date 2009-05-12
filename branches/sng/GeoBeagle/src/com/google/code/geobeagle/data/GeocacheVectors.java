@@ -28,19 +28,15 @@
 package com.google.code.geobeagle.data;
 
 import com.google.code.geobeagle.LocationControlBuffered;
-import com.google.code.geobeagle.data.GeocacheVector.LocationComparator;
 
 import java.util.ArrayList;
 
 public class GeocacheVectors {
     private final GeocacheVectorFactory mGeocacheVectorFactory;
     private final ArrayList<IGeocacheVector> mGeocacheVectorsList;
-    private final LocationComparator mLocationComparator;
 
-    public GeocacheVectors(LocationComparator locationComparator,
-            GeocacheVectorFactory geocacheVectorFactory) {
-        mGeocacheVectorsList = new ArrayList<IGeocacheVector>(0);
-        mLocationComparator = locationComparator;
+    public GeocacheVectors(GeocacheVectorFactory geocacheVectorFactory, ArrayList<IGeocacheVector> geocacheVectorsList) {
+        mGeocacheVectorsList = geocacheVectorsList;
         mGeocacheVectorFactory = geocacheVectorFactory;
     }
 
@@ -59,6 +55,10 @@ public class GeocacheVectors {
         return mGeocacheVectorsList.get(position);
     }
 
+    public ArrayList<IGeocacheVector> getGeocacheVectorsList() {
+        return mGeocacheVectorsList;
+    }
+
     public void remove(int position) {
         mGeocacheVectorsList.remove(position);
     }
@@ -71,9 +71,4 @@ public class GeocacheVectors {
     public int size() {
         return mGeocacheVectorsList.size();
     }
-
-    public void sort() {
-        mLocationComparator.sort(mGeocacheVectorsList);
-    }
-
 }

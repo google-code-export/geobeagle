@@ -134,7 +134,7 @@ public class CacheListPresenterTest {
 
         combinedLocationManager.requestLocationUpdates(0, 0, gpsStatusWidgetLocationListener);
         combinedLocationManager.requestLocationUpdates(0, 0, locationControlBuffered);
-        combinedLocationManager.requestLocationUpdates(0, 10, baseAdapterLocationListener);
+        combinedLocationManager.requestLocationUpdates(1000, 1, baseAdapterLocationListener);
         sqliteWrapper.openWritableDatabase(database);
 
         PowerMock.replayAll();
