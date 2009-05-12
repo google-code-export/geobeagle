@@ -64,6 +64,7 @@ public class GpxLoader {
             mErrorDisplayer.displayError(R.string.error_parsing_file, mGpxToCache.getSource()
                     + ": " + e.getMessage());
         } catch (IOException e) {
+            // mErrorDisplayer.displayErrorAndStack(e);
             mErrorDisplayer.displayError(R.string.error_reading_file, mGpxToCache.getSource());
         } catch (CancelException e) {
         }

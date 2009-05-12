@@ -137,7 +137,7 @@ public class GpxImporterDI {
                 case MessageHandler.MSG_DONE:
                     if (!mLoadAborted) {
                         mProgressDialogWrapper.dismiss();
-                        mMenuActionRefresh.act();
+                        mMenuActionRefresh.forceRefresh();
                     }
                     break;
                 default:

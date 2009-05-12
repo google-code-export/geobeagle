@@ -52,7 +52,7 @@ public class CacheListPresenterTest {
 
         EasyMock.expect(Log.v((String)EasyMock.anyObject(), (String)EasyMock.anyObject()))
                 .andReturn(0);
-        menuActionRefresh.act();
+        menuActionRefresh.refresh();
 
         PowerMock.replayAll();
         BaseAdapterLocationListener baseAdapterLocationListener = new BaseAdapterLocationListener(

@@ -26,6 +26,6 @@ class MenuActionToggleFilter implements MenuAction {
 
     public void act() {
         mFilterNearestCaches.toggle();
-        mMenuActionRefresh.act();
+        mMenuActionRefresh.forceRefresh();
     }
 }

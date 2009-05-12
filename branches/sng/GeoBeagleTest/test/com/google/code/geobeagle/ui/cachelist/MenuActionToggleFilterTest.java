@@ -27,7 +27,7 @@ public class MenuActionToggleFilterTest {
         MenuActionRefresh menuActionRefresh = PowerMock.createMock(MenuActionRefresh.class);
 
         filterNearestCaches.toggle();
-        menuActionRefresh.act();
+        menuActionRefresh.forceRefresh();
 
         PowerMock.replayAll();
         new MenuActionToggleFilter(filterNearestCaches, menuActionRefresh).act();

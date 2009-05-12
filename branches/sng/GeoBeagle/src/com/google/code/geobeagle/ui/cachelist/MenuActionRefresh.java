@@ -27,7 +27,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.Calendar;
 
-public class MenuActionRefresh implements MenuAction {
+public class MenuActionRefresh  {
     static class ActionAndTolerance {
         private IGpsLocation mLastRefreshed;
         private final RefreshAction mRefreshAction;
@@ -182,19 +182,30 @@ public class MenuActionRefresh implements MenuAction {
         mActionAndTolerances = actionAndTolerances;
     }
 
-    public void act() {
+    public int getMinActionExceedingTolerance(IGpsLocation here) {
+        int i;
+        for (i = 0; i < mActionAndTolerances.length; i++) {
+            if (mActionAndTolerances[i].exceedsTolerance(here))
+                break;
+        }
+        return i;
+    }
+
+    public void performActions(IGpsLocation here, int startingAction) {
+        for (int i = startingAction; i < mActionAndTolerances.length; i++) {
+            mActionAndTolerances[i].refresh();
+            mActionAndTolerances[i].updateLastRefreshed(here);
+        }
+    }
+
+    public void forceRefresh() {
+        mTiming.start();
+        performActions(mLocationControlBuffered.getGpsLocation(), 0);
+    }
+
+    public void refresh() {
         mTiming.start();
         IGpsLocation here = mLocationControlBuffered.getGpsLocation();
-        boolean fExceedsTolerances = false;
-        for (int i = 0; i < mActionAndTolerances.length; i++) {
-            final boolean exceedsTolerance = mActionAndTolerances[i].exceedsTolerance(here);
-            if (exceedsTolerance)
-                fExceedsTolerances = true;
-
-            if (fExceedsTolerances) {
-                mActionAndTolerances[i].refresh();
-                mActionAndTolerances[i].updateLastRefreshed(here);
-            }
-        }
+        performActions(here, getMinActionExceedingTolerance(here));
     }
 }

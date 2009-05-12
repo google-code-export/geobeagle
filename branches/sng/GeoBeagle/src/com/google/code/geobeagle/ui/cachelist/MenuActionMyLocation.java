@@ -42,6 +42,6 @@ class MenuActionMyLocation implements MenuAction {
             return;
         }
         mLocationSaver.saveLocation(myLocation);
-        mMenuActionRefresh.act();
+        mMenuActionRefresh.forceRefresh();
     }
 }

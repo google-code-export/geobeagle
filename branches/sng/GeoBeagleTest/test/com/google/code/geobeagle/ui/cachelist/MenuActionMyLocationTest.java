@@ -26,7 +26,7 @@ public class MenuActionMyLocationTest {
 
         EasyMock.expect(geocacheFromMyLocationFactory.create()).andReturn(geocache);
         locationSaver.saveLocation(geocache);
-        menuActionRefresh.act();
+        menuActionRefresh.forceRefresh();
 
         PowerMock.replayAll();
         new MenuActionMyLocation(locationSaver, geocacheFromMyLocationFactory, menuActionRefresh,

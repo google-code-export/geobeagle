@@ -17,6 +17,8 @@ package com.google.code.geobeagle.io;
 import com.google.code.geobeagle.data.GeocacheFactory.Source;
 import com.google.code.geobeagle.io.GpxToCacheDI.XmlPullParserWrapper;
 
+import android.util.Log;
+
 import java.io.IOException;
 
 class EventHandlerGpx implements EventHandler {

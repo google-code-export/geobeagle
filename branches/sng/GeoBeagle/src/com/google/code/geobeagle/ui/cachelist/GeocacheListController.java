@@ -111,7 +111,7 @@ public class GeocacheListController {
             if (position > 0)
                 mContextActions[MENU_VIEW].act(position - 1);
             else
-                mMenuActionRefresh.act();
+                mMenuActionRefresh.refresh();
         } catch (final Exception e) {
             mErrorDisplayer.displayErrorAndStack(e);
         }
@@ -142,7 +142,7 @@ public class GeocacheListController {
 
     public void onResume() {
         try {
-            mMenuActionRefresh.act();
+            mMenuActionRefresh.refresh();
         } catch (Exception e) {
             mErrorDisplayer.displayErrorAndStack(e);
         }

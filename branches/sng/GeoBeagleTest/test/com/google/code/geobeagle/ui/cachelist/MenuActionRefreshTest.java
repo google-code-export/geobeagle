@@ -73,7 +73,7 @@ public class MenuActionRefreshTest {
         expect(locationControlBuffered.getGpsLocation()).andReturn(here);
 
         PowerMock.replayAll();
-        new MenuActionRefresh(locationControlBuffered, timing, actionAndTolerances).act();
+        new MenuActionRefresh(locationControlBuffered, timing, actionAndTolerances).refresh();
         PowerMock.verifyAll();
     }
 
@@ -95,7 +95,7 @@ public class MenuActionRefreshTest {
         actionAndTolerance.updateLastRefreshed(here);
 
         PowerMock.replayAll();
-        new MenuActionRefresh(locationControlBuffered, timing, actionAndTolerances).act();
+        new MenuActionRefresh(locationControlBuffered, timing, actionAndTolerances).refresh();
         PowerMock.verifyAll();
     }
 
@@ -119,7 +119,7 @@ public class MenuActionRefreshTest {
         actionAndTolerance2.updateLastRefreshed(here);
 
         PowerMock.replayAll();
-        new MenuActionRefresh(locationControlBuffered, timing, actionAndTolerances).act();
+        new MenuActionRefresh(locationControlBuffered, timing, actionAndTolerances).refresh();
         PowerMock.verifyAll();
     }
 

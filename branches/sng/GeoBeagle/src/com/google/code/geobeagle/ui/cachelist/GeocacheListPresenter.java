@@ -42,7 +42,7 @@ public class GeocacheListPresenter {
 
         public void onLocationChanged(Location location) {
             Log.v("GeoBeagle", "location changed");
-            mMenuActionRefresh.act();
+            mMenuActionRefresh.refresh();
         }
 
         public void onProviderDisabled(String provider) {
