@@ -1,5 +1,12 @@
 #summary Release Notes for GeoBeagle versions
 
+= v0.68 = 
+  * Georg Lukas' patches to support opencaching sites (thanks Georg!).
+  * adds a show all vs show nearest caches menu.  
+  * updating of cache distances on the fly (also, much faster sorting / filtering)
+  * automatically sort on the fly (the sort button has been removed)
+  * a bunch of fixes for force close issues related to the gps being disabled
+
 = v0.60 =
 Puts the gps status widget into the cache list page too.
 
