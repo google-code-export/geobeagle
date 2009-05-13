@@ -6,6 +6,7 @@
   * updating of cache distances on the fly (also, much faster sorting / filtering)
   * automatically sort on the fly (the sort button has been removed)
   * a bunch of fixes for force close issues related to the gps being disabled
+  * support zip file mime type so geocaching zip files can be downloaded from the browser
 
 = v0.60 =
 Puts the gps status widget into the cache list page too.
