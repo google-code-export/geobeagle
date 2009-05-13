@@ -24,6 +24,8 @@ import com.google.code.geobeagle.intents.IntentFactory;
 import com.google.code.geobeagle.intents.IntentStarterLocation;
 import com.google.code.geobeagle.intents.IntentStarterRadar;
 import com.google.code.geobeagle.intents.IntentStarterViewUri;
+import com.google.code.geobeagle.io.CacheWriter;
+import com.google.code.geobeagle.io.Database;
 import com.google.code.geobeagle.io.DatabaseDI;
 import com.google.code.geobeagle.io.LocationSaver;
 import com.google.code.geobeagle.io.DatabaseDI.SQLiteWrapper;
@@ -38,6 +40,7 @@ import com.google.code.geobeagle.ui.OnCacheButtonClickListenerBuilder;
 import com.google.code.geobeagle.ui.OnContentProviderSelectedListener;
 import com.google.code.geobeagle.ui.UpdateGpsWidgetRunnableDI;
 import com.google.code.geobeagle.ui.WebPageAndDetailsButtonEnabler;
+import com.google.code.geobeagle.ui.EditCacheActivityDelegate.CancelButtonOnClickListener;
 import com.google.code.geobeagle.ui.GpsStatusWidget.MeterFormatter;
 import com.google.code.geobeagle.ui.GpsStatusWidget.MeterView;
 import com.google.code.geobeagle.ui.GpsStatusWidget.UpdateGpsWidgetRunnable;
@@ -78,11 +81,16 @@ public class GeoBeagle extends Activity implements LifecycleManager {
     private CombinedLocationListener mStatusWidgetLocationListener;
     private UpdateGpsWidgetRunnable mUpdateGpsWidgetRunnable;
     private WebPageAndDetailsButtonEnabler mWebPageButtonEnabler;
+    private final SQLiteWrapper mSqliteWrapper;
+    private final Database mDatabase;
 
     public GeoBeagle() {
         super();
         mErrorDisplayer = new ErrorDisplayer(this);
         mResourceProvider = new ResourceProvider(this);
+
+        mSqliteWrapper = new SQLiteWrapper(null);
+        mDatabase = DatabaseDI.create(this);
     }
 
     private void getCoordinatesFromIntent(Intent intent) {
@@ -100,7 +108,7 @@ public class GeoBeagle extends Activity implements LifecycleManager {
                 mGeocacheViewer.set(mGeocache);
             }
         } catch (final Exception e) {
-            mErrorDisplayer.displayError("Error: " + e.getMessage());
+            mErrorDisplayer.displayErrorAndStack(e);
         }
     }
 
@@ -145,8 +153,7 @@ public class GeoBeagle extends Activity implements LifecycleManager {
             setContentView(R.layout.main);
             GeoBeagleBuilder builder = new GeoBeagleBuilder(this);
             mContentSelector = builder.createContentSelector(getPreferences(Activity.MODE_PRIVATE));
-            final SQLiteWrapper sqliteWrapper = new SQLiteWrapper(null);
-            mLocationSaver = new LocationSaver(DatabaseDI.createCacheWriter(sqliteWrapper));
+            mLocationSaver = new LocationSaver(DatabaseDI.createCacheWriter(mSqliteWrapper));
             mWebPageButtonEnabler = Misc.create(this, findViewById(R.id.cache_page),
                     findViewById(R.id.cache_details));
 
@@ -216,6 +223,7 @@ public class GeoBeagle extends Activity implements LifecycleManager {
     public void onPause() {
         super.onPause();
         mGeoBeagleDelegate.onPause();
+        mSqliteWrapper.close();
     }
 
     public void onPause(Editor editor) {
@@ -228,6 +236,8 @@ public class GeoBeagle extends Activity implements LifecycleManager {
             super.onResume();
 
             mGeoBeagleDelegate.onResume();
+            mSqliteWrapper.openWritableDatabase(mDatabase);
+
             maybeGetCoordinatesFromIntent();
             mWebPageButtonEnabler.check();
             final Location location = mLocationControlBuffered.getLocation();
