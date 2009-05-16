@@ -3,3 +3,5 @@
 Try Georg Lukas' improved radar app, with Compass and accuracy readings:
 
 http://op-co.de/android/Radar-gl.apk
+
+You'll need to uninstall the existing Radar app first.
