@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+	<array name="default_msg">
+		<item>Sorry...</item>
+		<item>TFTC! </item>
+	</array>
+	<array name="geobeagle_sig">
+		<item>dnfwgb</item>
+		<item>fwgb</item>
+	</array>
+	<array name="fieldnote_code">
+		<item>GEOC x</item>
+		<item>GEOC @</item>
+	</array>
+</resources>

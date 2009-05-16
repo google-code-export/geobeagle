@@ -11,5 +11,4 @@
 		android:icon="@android:drawable/stat_notify_sync" />
 	<item android:id="@+id/menu_my_location" android:title="Add My Location"
 		android:icon="@android:drawable/ic_menu_mylocation" />
-
 </menu>

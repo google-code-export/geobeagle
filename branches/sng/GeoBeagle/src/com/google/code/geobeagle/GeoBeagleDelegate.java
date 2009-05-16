@@ -15,16 +15,19 @@
 package com.google.code.geobeagle;
 
 import com.google.code.geobeagle.ui.CacheDetailsOnClickListener;
+import com.google.code.geobeagle.ui.EditCacheActivity;
 import com.google.code.geobeagle.ui.ErrorDisplayer;
 import com.google.code.geobeagle.ui.GeocacheViewer;
 import com.google.code.geobeagle.ui.Misc;
 
-import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.AlertDialog.Builder;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.DialogInterface.OnClickListener;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.widget.Button;
 
 public class GeoBeagleDelegate {
@@ -37,9 +40,10 @@ public class GeoBeagleDelegate {
         final LayoutInflater layoutInflater = LayoutInflater.from(parent);
         final CacheDetailsOnClickListener cacheDetailsOnClickListener = Misc.create(parent,
                 cacheDetailsBuilder, geocacheViewer, errorDisplayer, layoutInflater);
-
+        final FieldNoteSender fieldNoteSender = FieldNoteSenderDI.build(parent, layoutInflater);
         return new GeoBeagleDelegate(parent, appLifecycleManager, cacheDetailsBuilder,
-                cacheDetailsOkListener, cacheDetailsOnClickListener, errorDisplayer);
+                cacheDetailsOkListener, cacheDetailsOnClickListener, fieldNoteSender,
+                errorDisplayer);
     }
 
     private final AppLifecycleManager mAppLifecycleManager;
@@ -47,16 +51,19 @@ public class GeoBeagleDelegate {
     private final OnClickListener mCacheDetailsOkListener;
     private final CacheDetailsOnClickListener mCacheDetailsOnClickListener;
     private final ErrorDisplayer mErrorDisplayer;
-    private final Activity mParent;
+    private final GeoBeagle mParent;
+    private final FieldNoteSender mFieldNoteSender;
 
-    public GeoBeagleDelegate(Activity parent, AppLifecycleManager appLifecycleManager,
+    public GeoBeagleDelegate(GeoBeagle parent, AppLifecycleManager appLifecycleManager,
             Builder cacheDetailsBuilder, OnClickListener cacheDetailsOkListener,
-            CacheDetailsOnClickListener cacheDetailsOnClickListener, ErrorDisplayer errorDisplayer) {
+            CacheDetailsOnClickListener cacheDetailsOnClickListener,
+            FieldNoteSender fieldNoteSender, ErrorDisplayer errorDisplayer) {
         mParent = parent;
         mAppLifecycleManager = appLifecycleManager;
         mCacheDetailsBuilder = cacheDetailsBuilder;
         mCacheDetailsOkListener = cacheDetailsOkListener;
         mCacheDetailsOnClickListener = cacheDetailsOnClickListener;
+        mFieldNoteSender = fieldNoteSender;
         mErrorDisplayer = errorDisplayer;
     }
 
@@ -66,6 +73,22 @@ public class GeoBeagleDelegate {
 
         ((Button)mParent.findViewById(R.id.cache_details))
                 .setOnClickListener(mCacheDetailsOnClickListener);
+    }
+
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (R.id.menu_edit_geocache == item.getItemId()) {
+            Intent intent = new Intent(mParent, EditCacheActivity.class);
+            intent.putExtra("geocache", mParent.getGeocache());
+            mParent.startActivityForResult(intent, 0);
+        } else {
+            mParent.showDialog(item.getItemId());
+        }
+        return true;
+    }
+
+    public Dialog onCreateDialog(int id) {
+        return mFieldNoteSender.createDialog(mParent.getGeocache().getId(),
+                id == R.id.menu_log_dnf ? 0 : 1);
     }
 
     public void onPause() {
