@@ -1,0 +1,5 @@
+#summary Improved Radar app
+
+Try Georg Lukas' improved radar app, with Compass and accuracy readings:
+
+http://op-co.de/android/Radar-gl.apk
