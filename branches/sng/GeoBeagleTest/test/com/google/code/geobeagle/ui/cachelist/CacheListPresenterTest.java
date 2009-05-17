@@ -19,13 +19,15 @@ import static org.easymock.EasyMock.expect;
 import com.google.code.geobeagle.CombinedLocationManager;
 import com.google.code.geobeagle.LocationControlBuffered;
 import com.google.code.geobeagle.R;
+import com.google.code.geobeagle.Refresher;
 import com.google.code.geobeagle.data.GeocacheVectors;
 import com.google.code.geobeagle.io.Database;
 import com.google.code.geobeagle.io.DatabaseDI.SQLiteWrapper;
 import com.google.code.geobeagle.ui.ErrorDisplayer;
 import com.google.code.geobeagle.ui.GpsStatusWidget.UpdateGpsWidgetRunnable;
 import com.google.code.geobeagle.ui.cachelist.GeocacheListController.CacheListOnCreateContextMenuListener;
-import com.google.code.geobeagle.ui.cachelist.GeocacheListPresenter.BaseAdapterLocationListener;
+import com.google.code.geobeagle.ui.cachelist.GeocacheListPresenter.CacheListRefreshLocationListener;
+import com.google.code.geobeagle.ui.cachelist.GeocacheListPresenter.CompassListener;
 
 import org.easymock.EasyMock;
 import org.junit.Test;
@@ -35,6 +37,8 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import android.app.ListActivity;
+import android.hardware.SensorEvent;
+import android.hardware.SensorManager;
 import android.location.LocationListener;
 import android.util.Log;
 import android.view.View;
@@ -48,19 +52,19 @@ public class CacheListPresenterTest {
     @Test
     public void testBaseAdapterLocationListener() {
         PowerMock.mockStatic(Log.class);
-        MenuActionRefresh menuActionRefresh = PowerMock.createMock(MenuActionRefresh.class);
+        CacheListRefresh cacheListRefresh = PowerMock.createMock(CacheListRefresh.class);
 
         EasyMock.expect(Log.v((String)EasyMock.anyObject(), (String)EasyMock.anyObject()))
                 .andReturn(0);
-        menuActionRefresh.refresh();
+        cacheListRefresh.refresh();
 
         PowerMock.replayAll();
-        BaseAdapterLocationListener baseAdapterLocationListener = new BaseAdapterLocationListener(
-                menuActionRefresh);
-        baseAdapterLocationListener.onLocationChanged(null);
-        baseAdapterLocationListener.onProviderDisabled(null);
-        baseAdapterLocationListener.onProviderEnabled(null);
-        baseAdapterLocationListener.onStatusChanged(null, 0, null);
+        CacheListRefreshLocationListener cacheListRefreshLocationListener = new CacheListRefreshLocationListener(
+                cacheListRefresh);
+        cacheListRefreshLocationListener.onLocationChanged(null);
+        cacheListRefreshLocationListener.onProviderDisabled(null);
+        cacheListRefreshLocationListener.onProviderEnabled(null);
+        cacheListRefreshLocationListener.onStatusChanged(null, 0, null);
         PowerMock.verifyAll();
     }
 
@@ -91,7 +95,7 @@ public class CacheListPresenterTest {
         PowerMock.replayAll();
         new GeocacheListPresenter(null, locationControlBuffered, locationControlBuffered,
                 gpsWidgetView, updateGpsWidgetRunnable, geocacheVectors, null, listActivity,
-                geocacheListAdapter, null, null, null).onCreate();
+                geocacheListAdapter, null, null, null, null, null).onCreate();
         PowerMock.verifyAll();
     }
 
@@ -101,21 +105,58 @@ public class CacheListPresenterTest {
                 .createMock(CombinedLocationManager.class);
         LocationListener gpsStatusWidgetLocationListener = PowerMock
                 .createMock(LocationListener.class);
-        BaseAdapterLocationListener baseAdapterLocationListener = PowerMock
-                .createMock(BaseAdapterLocationListener.class);
+        CacheListRefreshLocationListener cacheListRefreshLocationListener = PowerMock
+                .createMock(CacheListRefreshLocationListener.class);
         SQLiteWrapper sqliteWrapper = PowerMock.createMock(SQLiteWrapper.class);
         LocationControlBuffered locationControlBuffered = PowerMock
                 .createMock(LocationControlBuffered.class);
+        SensorManager sensorManager = PowerMock.createMock(SensorManager.class);
+        CompassListener compassListener = PowerMock.createMock(CompassListener.class);
 
-        combinedLocationManager.removeUpdates(baseAdapterLocationListener);
+        combinedLocationManager.removeUpdates(cacheListRefreshLocationListener);
         combinedLocationManager.removeUpdates(gpsStatusWidgetLocationListener);
         combinedLocationManager.removeUpdates(locationControlBuffered);
+        sensorManager.unregisterListener(compassListener);
         sqliteWrapper.close();
 
         PowerMock.replayAll();
         new GeocacheListPresenter(combinedLocationManager, locationControlBuffered,
-                gpsStatusWidgetLocationListener, null, null, null, baseAdapterLocationListener,
-                null, null, null, sqliteWrapper, null).onPause();
+                gpsStatusWidgetLocationListener, null, null, null,
+                cacheListRefreshLocationListener, null, null, null, sqliteWrapper, null,
+                sensorManager, compassListener).onPause();
+        PowerMock.verifyAll();
+    }
+
+    @Test
+    public void testCompassListener() {
+        new CompassListener(null, null, 0).onAccuracyChanged(null, 0);
+    }
+
+    @Test
+    public void testCompassOnSensorUnchanged() {
+        float values[] = new float[] {
+            4f
+        };
+        final CompassListener compassListener = new CompassListener(null, null, 0);
+        compassListener.onSensorChanged(0, values);
+    }
+
+    @Test
+    public void testCompassOnSensorChanged() {
+        LocationControlBuffered locationControlBuffered = PowerMock
+                .createMock(LocationControlBuffered.class);
+        Refresher refresher = PowerMock.createMock(Refresher.class);
+
+        float values[] = new float[] {
+            6f
+        };
+        locationControlBuffered.setAzimuth(5);
+        refresher.refresh();
+
+        PowerMock.replayAll();
+        final CompassListener compassListener = new CompassListener(refresher,
+                locationControlBuffered, 0);
+        compassListener.onSensorChanged(0, values);
         PowerMock.verifyAll();
     }
 
@@ -125,22 +166,31 @@ public class CacheListPresenterTest {
                 .createMock(CombinedLocationManager.class);
         LocationListener gpsStatusWidgetLocationListener = PowerMock
                 .createMock(LocationListener.class);
-        BaseAdapterLocationListener baseAdapterLocationListener = PowerMock
-                .createMock(BaseAdapterLocationListener.class);
+        CacheListRefreshLocationListener cacheListRefreshLocationListener = PowerMock
+                .createMock(CacheListRefreshLocationListener.class);
         LocationControlBuffered locationControlBuffered = PowerMock
                 .createMock(LocationControlBuffered.class);
         SQLiteWrapper sqliteWrapper = PowerMock.createMock(SQLiteWrapper.class);
         Database database = PowerMock.createMock(Database.class);
+        SensorManager sensorManager = PowerMock.createMock(SensorManager.class);
+        CompassListener compassListener = PowerMock.createMock(CompassListener.class);
 
-        combinedLocationManager.requestLocationUpdates(0, 0, gpsStatusWidgetLocationListener);
-        combinedLocationManager.requestLocationUpdates(0, 0, locationControlBuffered);
-        combinedLocationManager.requestLocationUpdates(1000, 1, baseAdapterLocationListener);
+        combinedLocationManager.requestLocationUpdates(GeocacheListPresenter.UPDATE_DELAY, 1,
+                gpsStatusWidgetLocationListener);
+        combinedLocationManager.requestLocationUpdates(GeocacheListPresenter.UPDATE_DELAY, 1,
+                locationControlBuffered);
+        combinedLocationManager.requestLocationUpdates(GeocacheListPresenter.UPDATE_DELAY, 1,
+                cacheListRefreshLocationListener);
+        EasyMock.expect(
+                sensorManager.registerListener(compassListener, SensorManager.SENSOR_ORIENTATION,
+                        SensorManager.SENSOR_DELAY_UI)).andReturn(true);
         sqliteWrapper.openWritableDatabase(database);
 
         PowerMock.replayAll();
         new GeocacheListPresenter(combinedLocationManager, locationControlBuffered,
-                gpsStatusWidgetLocationListener, null, null, null, baseAdapterLocationListener,
-                null, null, null, sqliteWrapper, database).onResume();
+                gpsStatusWidgetLocationListener, null, null, null,
+                cacheListRefreshLocationListener, null, null, null, sqliteWrapper, database,
+                sensorManager, compassListener).onResume();
         PowerMock.verifyAll();
     }
 
@@ -153,14 +203,16 @@ public class CacheListPresenterTest {
         ErrorDisplayer errorDisplayer = PowerMock.createMock(ErrorDisplayer.class);
 
         Exception e = new RuntimeException();
-        combinedLocationManager.requestLocationUpdates(0, 0, locationControlBuffered);
+        combinedLocationManager.requestLocationUpdates(GeocacheListPresenter.UPDATE_DELAY, 1,
+                locationControlBuffered);
         EasyMock.expectLastCall().andThrow(e);
         errorDisplayer.displayErrorAndStack(e);
 
         PowerMock.replayAll();
         new GeocacheListPresenter(combinedLocationManager, locationControlBuffered,
                 locationControlBuffered, null, null, null, null, null, null, errorDisplayer, null,
-                null).onResume();
+                null, null, null).onResume();
         PowerMock.verifyAll();
     }
+
 }

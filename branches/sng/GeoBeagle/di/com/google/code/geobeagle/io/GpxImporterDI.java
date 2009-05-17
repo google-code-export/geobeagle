@@ -22,7 +22,7 @@ import com.google.code.geobeagle.io.EventHelperDI.EventHelperFactory;
 import com.google.code.geobeagle.io.GpxToCacheDI.XmlPullParserWrapper;
 import com.google.code.geobeagle.io.ImportThreadDelegate.ImportThreadHelper;
 import com.google.code.geobeagle.ui.ErrorDisplayer;
-import com.google.code.geobeagle.ui.cachelist.MenuActionRefresh;
+import com.google.code.geobeagle.ui.cachelist.CacheListRefresh;
 
 import android.app.ListActivity;
 import android.app.ProgressDialog;
@@ -87,9 +87,9 @@ public class GpxImporterDI {
                 mImportThread.join();
         }
 
-        public void open(MenuActionRefresh menuActionRefresh, GpxLoader gpxLoader,
+        public void open(CacheListRefresh cacheListRefresh, GpxLoader gpxLoader,
                 EventHandlers eventHandlers, ErrorDisplayer mErrorDisplayer) {
-            mMessageHandler.start(menuActionRefresh);
+            mMessageHandler.start(cacheListRefresh);
             mImportThread = ImportThread.create(mMessageHandler, gpxLoader, eventHandlers,
                     mXmlPullParserWrapper, mErrorDisplayer);
         }
@@ -113,7 +113,7 @@ public class GpxImporterDI {
 
         private int mCacheCount;
         private boolean mLoadAborted;
-        private MenuActionRefresh mMenuActionRefresh;
+        private CacheListRefresh mMenuActionRefresh;
         private final ProgressDialogWrapper mProgressDialogWrapper;
         private String mSource;
         private String mStatus;
@@ -149,10 +149,10 @@ public class GpxImporterDI {
             sendEmptyMessage(MessageHandler.MSG_DONE);
         }
 
-        public void start(MenuActionRefresh menuActionRefresh) {
+        public void start(CacheListRefresh cacheListRefresh) {
             mCacheCount = 0;
             mLoadAborted = false;
-            mMenuActionRefresh = menuActionRefresh;
+            mMenuActionRefresh = cacheListRefresh;
             // TODO: move into resource file.
             mProgressDialogWrapper.show("Syncing caches", "Please wait...");
         }

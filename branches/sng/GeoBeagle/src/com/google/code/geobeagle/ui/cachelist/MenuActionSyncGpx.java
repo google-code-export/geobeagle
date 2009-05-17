@@ -18,11 +18,11 @@ import com.google.code.geobeagle.io.GpxImporter;
 
 class MenuActionSyncGpx implements MenuAction {
     private final GpxImporter mGpxImporter;
-    private final MenuActionRefresh mMenuActionRefresh;
+    private final CacheListRefresh mMenuActionRefresh;
 
-    public MenuActionSyncGpx(GpxImporter gpxImporter, MenuActionRefresh menuActionRefresh) {
+    public MenuActionSyncGpx(GpxImporter gpxImporter, CacheListRefresh cacheListRefresh) {
         mGpxImporter = gpxImporter;
-        mMenuActionRefresh = menuActionRefresh;
+        mMenuActionRefresh = cacheListRefresh;
     }
 
     public void act() {

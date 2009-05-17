@@ -33,14 +33,14 @@ import java.util.ArrayList;
 
 public class GeocacheVectors {
     private final GeocacheVectorFactory mGeocacheVectorFactory;
-    private final ArrayList<IGeocacheVector> mGeocacheVectorsList;
+    private final ArrayList<GeocacheVector> mGeocacheVectorsList;
 
-    public GeocacheVectors(GeocacheVectorFactory geocacheVectorFactory, ArrayList<IGeocacheVector> geocacheVectorsList) {
+    public GeocacheVectors(GeocacheVectorFactory geocacheVectorFactory, ArrayList<GeocacheVector> geocacheVectorsList) {
         mGeocacheVectorsList = geocacheVectorsList;
         mGeocacheVectorFactory = geocacheVectorFactory;
     }
 
-    public void add(IGeocacheVector destinationVector) {
+    public void add(GeocacheVector destinationVector) {
         mGeocacheVectorsList.add(0, destinationVector);
     }
 
@@ -51,11 +51,11 @@ public class GeocacheVectors {
         }
     }
 
-    public IGeocacheVector get(int position) {
+    public GeocacheVector get(int position) {
         return mGeocacheVectorsList.get(position);
     }
 
-    public ArrayList<IGeocacheVector> getGeocacheVectorsList() {
+    public ArrayList<GeocacheVector> getGeocacheVectorsList() {
         return mGeocacheVectorsList;
     }
 

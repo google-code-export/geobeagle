@@ -15,8 +15,8 @@
 package com.google.code.geobeagle.ui.cachelist;
 
 import com.google.code.geobeagle.R;
+import com.google.code.geobeagle.data.GeocacheVector;
 import com.google.code.geobeagle.data.GeocacheVectors;
-import com.google.code.geobeagle.data.IGeocacheVector;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -33,7 +33,7 @@ class GeocacheSummaryRowInflater {
             mDistance = distance;
         }
 
-        void set(IGeocacheVector geocacheVector) {
+        void set(GeocacheVector geocacheVector) {
             mCache.setText(geocacheVector.getIdAndName());
             mDistance.setText(geocacheVector.getFormattedDistance());
         }

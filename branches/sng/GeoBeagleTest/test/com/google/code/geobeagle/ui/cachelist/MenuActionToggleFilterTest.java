@@ -24,13 +24,13 @@ public class MenuActionToggleFilterTest {
     @Test
     public void testAct() {
         FilterNearestCaches filterNearestCaches = PowerMock.createMock(FilterNearestCaches.class);
-        MenuActionRefresh menuActionRefresh = PowerMock.createMock(MenuActionRefresh.class);
+        CacheListRefresh cacheListRefresh = PowerMock.createMock(CacheListRefresh.class);
 
         filterNearestCaches.toggle();
-        menuActionRefresh.forceRefresh();
+        cacheListRefresh.forceRefresh();
 
         PowerMock.replayAll();
-        new MenuActionToggleFilter(filterNearestCaches, menuActionRefresh).act();
+        new MenuActionToggleFilter(filterNearestCaches, cacheListRefresh).act();
         PowerMock.verifyAll();
     }
 }

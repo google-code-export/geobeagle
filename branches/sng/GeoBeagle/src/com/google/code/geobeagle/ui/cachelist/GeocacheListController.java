@@ -59,20 +59,20 @@ public class GeocacheListController {
     private final FilterNearestCaches mFilterNearestCaches;
     private final GpxImporter mGpxImporter;
     private final ListActivity mListActivity;
-    private final MenuActionRefresh mMenuActionRefresh;
+    private final CacheListRefresh mMenuActionRefresh;
     private final MenuActions mMenuActions;
     private final SQLiteWrapper mSqliteWrapper;
 
     GeocacheListController(ListActivity listActivity, MenuActions menuActions,
             ContextAction[] contextActions, SQLiteWrapper sqliteWrapper, Database database,
-            GpxImporter gpxImporter, MenuActionRefresh menuActionRefresh,
+            GpxImporter gpxImporter, CacheListRefresh cacheListRefresh,
             FilterNearestCaches filterNearestCaches, ErrorDisplayer errorDisplayer) {
         mListActivity = listActivity;
         mErrorDisplayer = errorDisplayer;
         mContextActions = contextActions;
         mMenuActions = menuActions;
         mGpxImporter = gpxImporter;
-        mMenuActionRefresh = menuActionRefresh;
+        mMenuActionRefresh = cacheListRefresh;
         mSqliteWrapper = sqliteWrapper;
         mFilterNearestCaches = filterNearestCaches;
         mDatabase = database;

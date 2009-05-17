@@ -127,6 +127,14 @@ public class LocationControlBufferedTest {
         PowerMock.verifyAll();
     }
 
+    public void testAzimuth() {
+
+        LocationControlBuffered locationControlBuffered = new LocationControlBuffered(null, null,
+                null, null);
+        locationControlBuffered.setAzimuth(19f);
+        assertEquals(19f, locationControlBuffered.getAzimuth());
+    }
+
     @Test
     public void testMisc() {
         LocationControlBuffered locationControlBuffered = new LocationControlBuffered(null, null,

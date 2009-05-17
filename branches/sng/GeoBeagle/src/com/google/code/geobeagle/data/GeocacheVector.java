@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
-public class GeocacheVector implements IGeocacheVector {
+public class GeocacheVector {
     public static class DistanceSortStrategy implements SortStrategy {
         private final LocationComparator mLocationComparator;
 
@@ -31,13 +31,13 @@ public class GeocacheVector implements IGeocacheVector {
             mLocationComparator = locationComparator;
         }
 
-        public void sort(ArrayList<IGeocacheVector> arrayList) {
+        public void sort(ArrayList<GeocacheVector> arrayList) {
             Collections.sort(arrayList, mLocationComparator);
         }
     }
 
-    public static class LocationComparator implements Comparator<IGeocacheVector> {
-        public int compare(IGeocacheVector destination1, IGeocacheVector destination2) {
+    public static class LocationComparator implements Comparator<GeocacheVector> {
+        public int compare(GeocacheVector destination1, GeocacheVector destination2) {
             final float d1 = destination1.getDistanceFast();
             final float d2 = destination2.getDistanceFast();
             if (d1 < d2)
@@ -49,13 +49,13 @@ public class GeocacheVector implements IGeocacheVector {
     }
 
     public static class NullSortStrategy implements SortStrategy {
-        public void sort(ArrayList<IGeocacheVector> arrayList) {
+        public void sort(ArrayList<GeocacheVector> arrayList) {
             return;
         }
     }
 
     public interface SortStrategy {
-        public void sort(ArrayList<IGeocacheVector> arrayList);
+        public void sort(ArrayList<GeocacheVector> arrayList);
     }
 
     // From http://www.anddev.org/viewtopic.php?p=20195.
@@ -72,7 +72,7 @@ public class GeocacheVector implements IGeocacheVector {
 
     private final DistanceFormatter mDistanceFormatter;
     private final Geocache mGeocache;
-    private final LocationControlBuffered mLocationControlBuffered;
+    final LocationControlBuffered mLocationControlBuffered;
 
     GeocacheVector(Geocache geocache, LocationControlBuffered locationControlBuffered,
             DistanceFormatter distanceFormatter) {
@@ -89,8 +89,16 @@ public class GeocacheVector implements IGeocacheVector {
 
     public CharSequence getFormattedDistance() {
         // Use the slower, more accurate distance for display.
-        return mDistanceFormatter.format(mGeocache.calculateDistance(mLocationControlBuffered
-                .getLocation()));
+        final float[] distanceAndBearing = mGeocache
+                .calculateDistanceAndBearing(mLocationControlBuffered.getLocation());
+        final float azimuth = mLocationControlBuffered.getAzimuth();
+
+        final CharSequence formattedDistance = mDistanceFormatter
+                .formatDistance(distanceAndBearing[0]);
+        final String formattedBearing = mDistanceFormatter.formatBearing(distanceAndBearing[1]
+                - azimuth);
+
+        return formattedDistance + " " + formattedBearing;
     }
 
     public Geocache getGeocache() {

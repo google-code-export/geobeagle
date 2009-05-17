@@ -42,6 +42,7 @@ public class Geocache implements Parcelable {
     private final CharSequence mName;
     private final String mSourceName;
     private final Source mSourceType;
+    private float[] mDistanceAndBearing = new float[2];
 
     Geocache(CharSequence id, CharSequence name, double latitude, double longitude,
             Source sourceType, String sourceName) {
@@ -53,15 +54,15 @@ public class Geocache implements Parcelable {
         mSourceName = sourceName;
     }
 
-    float calculateDistance(Location here) {
+    float[] calculateDistanceAndBearing(Location here) {
         if (here != null) {
-            float[] results = new float[1];
             Location.distanceBetween(here.getLatitude(), here.getLongitude(), getLatitude(),
-                    getLongitude(), results);
+                    getLongitude(), mDistanceAndBearing);
 
-            return results[0];
+            return mDistanceAndBearing;
         }
-        return -1;
+        mDistanceAndBearing[0] = -1;
+        return mDistanceAndBearing;
     }
 
     public int describeContents() {

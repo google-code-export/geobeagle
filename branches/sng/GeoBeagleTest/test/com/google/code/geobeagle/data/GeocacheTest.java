@@ -42,7 +42,7 @@ public class GeocacheTest {
         PowerMock.mockStatic(Location.class);
         Location here = PowerMock.createMock(Location.class);
 
-        float[] results = new float[1];
+        float[] results = new float[2];
 
         Location.distanceBetween(EasyMock.eq(38.0), EasyMock.eq(123.0), EasyMock.eq(37.0), EasyMock
                 .eq(122.0), EasyMock.aryEq(results));
@@ -51,7 +51,7 @@ public class GeocacheTest {
 
         PowerMock.replayAll();
         Geocache geocache = new Geocache(null, null, 37, 122, null, null);
-        assertEquals(0.0f, geocache.calculateDistance(here), 0);
+        assertEquals(0.0f, geocache.calculateDistanceAndBearing(here)[0], 0);
         PowerMock.verifyAll();
     }
 
@@ -59,7 +59,7 @@ public class GeocacheTest {
     public void testCalculateDistanceNullHere() {
         PowerMock.replayAll();
         Geocache geocache = new Geocache(null, null, 37, 122, null, null);
-        assertEquals(-1f, geocache.calculateDistance(null), 0);
+        assertEquals(-1f, geocache.calculateDistanceAndBearing(null)[0], 0);
         PowerMock.verifyAll();
     }
 

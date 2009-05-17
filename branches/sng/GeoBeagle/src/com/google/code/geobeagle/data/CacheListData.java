@@ -30,7 +30,7 @@ public class CacheListData {
         mGeocacheVectors.addLocations(geocaches, locationControlBuffered);
     }
 
-    public ArrayList<IGeocacheVector> get() {
+    public ArrayList<GeocacheVector> get() {
         return mGeocacheVectors.getGeocacheVectorsList();
     }
 

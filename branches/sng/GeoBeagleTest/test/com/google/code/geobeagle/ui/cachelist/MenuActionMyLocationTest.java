@@ -21,15 +21,15 @@ public class MenuActionMyLocationTest {
         LocationSaver locationSaver = PowerMock.createMock(LocationSaver.class);
         GeocacheFromMyLocationFactory geocacheFromMyLocationFactory = PowerMock
                 .createMock(GeocacheFromMyLocationFactory.class);
-        MenuActionRefresh menuActionRefresh = PowerMock.createMock(MenuActionRefresh.class);
+        CacheListRefresh cacheListRefresh = PowerMock.createMock(CacheListRefresh.class);
         Geocache geocache = PowerMock.createMock(Geocache.class);
 
         EasyMock.expect(geocacheFromMyLocationFactory.create()).andReturn(geocache);
         locationSaver.saveLocation(geocache);
-        menuActionRefresh.forceRefresh();
+        cacheListRefresh.forceRefresh();
 
         PowerMock.replayAll();
-        new MenuActionMyLocation(locationSaver, geocacheFromMyLocationFactory, menuActionRefresh,
+        new MenuActionMyLocation(locationSaver, geocacheFromMyLocationFactory, cacheListRefresh,
                 null).act();
         PowerMock.verifyAll();
     }

@@ -24,15 +24,15 @@ class MenuActionMyLocation implements MenuAction {
     private final ErrorDisplayer mErrorDisplayer;
     private final GeocacheFromMyLocationFactory mGeocacheFromMyLocationFactory;
     private final LocationSaver mLocationSaver;
-    private final MenuActionRefresh mMenuActionRefresh;
+    private final CacheListRefresh mMenuActionRefresh;
 
     public MenuActionMyLocation(LocationSaver locationSaver,
             GeocacheFromMyLocationFactory geocacheFromMyLocationFactory,
-            MenuActionRefresh menuActionRefresh, ErrorDisplayer errorDisplayer) {
+            CacheListRefresh cacheListRefresh, ErrorDisplayer errorDisplayer) {
         mLocationSaver = locationSaver;
         mGeocacheFromMyLocationFactory = geocacheFromMyLocationFactory;
         mErrorDisplayer = errorDisplayer;
-        mMenuActionRefresh = menuActionRefresh;
+        mMenuActionRefresh = cacheListRefresh;
     }
 
     public void act() {

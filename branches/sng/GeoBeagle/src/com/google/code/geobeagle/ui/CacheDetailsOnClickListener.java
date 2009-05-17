@@ -9,19 +9,11 @@ import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.io.CacheDetailsLoader;
 
 import android.app.AlertDialog.Builder;
-import android.content.DialogInterface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.webkit.WebView;
 
 public class CacheDetailsOnClickListener implements View.OnClickListener {
-
-    public static class OkListener implements DialogInterface.OnClickListener {
-        // @Override
-        public void onClick(DialogInterface dialog, int which) {
-            dialog.dismiss();
-        }
-    }
 
     private final Builder mAlertDialogBuilder;
     private final CacheDetailsLoader mCacheDetailsLoader;

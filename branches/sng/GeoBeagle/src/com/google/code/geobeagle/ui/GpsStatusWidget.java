@@ -15,6 +15,7 @@
 package com.google.code.geobeagle.ui;
 
 import com.google.code.geobeagle.CombinedLocationManager;
+import com.google.code.geobeagle.LocationControlBuffered;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.ResourceProvider;
 import com.google.code.geobeagle.ui.Misc.Time;
@@ -37,10 +38,10 @@ public class GpsStatusWidget implements LocationListener {
                     .log(2)));
         }
 
-        public String barsToMeterText(int bars) {
+        public String barsToMeterText(int bars, String center) {
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append('[').append(METER_LEFT.substring(METER_LEFT.length() - bars))
-                    .append('×').append(METER_RIGHT.substring(0, bars)).append(']');
+                    .append(center).append(METER_RIGHT.substring(0, bars)).append(']');
             return stringBuilder.toString();
         }
 
@@ -58,9 +59,9 @@ public class GpsStatusWidget implements LocationListener {
             mMeterFormatter = meterFormatter;
         }
 
-        public void set(long lag, float accuracy) {
+        public void set(long lag, float accuracy, float azimuth) {
             mTextView.setText(mMeterFormatter.barsToMeterText(mMeterFormatter
-                    .accuracyToBarCount(accuracy)));
+                    .accuracyToBarCount(accuracy), String.valueOf((int)azimuth) + "°"));
             mTextView.setTextColor(Color.argb(mMeterFormatter.lagToAlpha(lag), 147, 190, 38));
         }
     }
@@ -93,10 +94,12 @@ public class GpsStatusWidget implements LocationListener {
     private final ResourceProvider mResourceProvider;
     private final TextView mStatus;
     private final Time mTime;
+    private final LocationControlBuffered mLocationControlBuffered;
 
     public GpsStatusWidget(ResourceProvider resourceProvider, MeterView meterView,
             TextView provider, TextView lag, TextView accuracy, TextView status, Time time,
-            Location initialLocation, CombinedLocationManager locationManager) {
+            Location initialLocation, CombinedLocationManager locationManager,
+            LocationControlBuffered locationControlBuffered) {
         mResourceProvider = resourceProvider;
         mMeterView = meterView;
         mLag = lag;
@@ -105,6 +108,7 @@ public class GpsStatusWidget implements LocationListener {
         mStatus = status;
         mTime = time;
         mCombinedLocationManager = locationManager;
+        mLocationControlBuffered = locationControlBuffered;
     }
 
     public void onLocationChanged(Location location) {
@@ -148,11 +152,11 @@ public class GpsStatusWidget implements LocationListener {
             long locationLag = currentTime - mLocationTime;
             mAccuracyView.setText((Integer.toString((int)mAccuracy) + "m").trim());
             mLag.setText(Long.toString(locationLag / 1000) + "s");
-            mMeterView.set(lastUpdateLag, mAccuracy);
+            mMeterView.set(lastUpdateLag, mAccuracy, mLocationControlBuffered.getAzimuth());
         } else {
             mLag.setText("");
             mAccuracyView.setText("");
-            mMeterView.set(Long.MAX_VALUE, Float.MAX_VALUE);
+            mMeterView.set(Long.MAX_VALUE, Float.MAX_VALUE, 0);
         }
     }
 }

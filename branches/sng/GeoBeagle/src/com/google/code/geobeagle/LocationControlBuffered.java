@@ -66,9 +66,11 @@ public class LocationControlBuffered implements LocationListener {
     private LocationControl mLocationControl;
 
     private final NullSortStrategy mNullSortStrategy;
+    private float mAzimuth;
 
     LocationControlBuffered(LocationControl locationControl,
-            DistanceSortStrategy distanceSortStrategy, NullSortStrategy nullSortStrategy, GpsDisabledLocation gpsDisabledLocation) {
+            DistanceSortStrategy distanceSortStrategy, NullSortStrategy nullSortStrategy,
+            GpsDisabledLocation gpsDisabledLocation) {
         mLocationControl = locationControl;
         mDistanceSortStrategy = distanceSortStrategy;
         mNullSortStrategy = nullSortStrategy;
@@ -109,4 +111,11 @@ public class LocationControlBuffered implements LocationListener {
     public void onStatusChanged(String provider, int status, Bundle extras) {
     }
 
+    public void setAzimuth(float azimuth) {
+        mAzimuth = azimuth;
+    }
+
+    public float getAzimuth() {
+        return mAzimuth;
+    }
 }

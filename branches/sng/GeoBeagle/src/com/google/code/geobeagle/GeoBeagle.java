@@ -43,6 +43,7 @@ import com.google.code.geobeagle.ui.GpsStatusWidget.MeterView;
 import com.google.code.geobeagle.ui.GpsStatusWidget.UpdateGpsWidgetRunnable;
 import com.google.code.geobeagle.ui.cachelist.GeocacheListController;
 import com.google.code.geobeagle.ui.cachelist.GeocacheListOnClickListener;
+import com.google.code.geobeagle.ui.cachelist.GeocacheListPresenter.CompassListener;
 
 import android.app.Activity;
 import android.app.Dialog;
@@ -50,6 +51,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.hardware.Sensor;
+import android.hardware.SensorManager;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.UrlQuerySanitizer;
@@ -60,6 +63,8 @@ import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.util.List;
 
 /*
  * Main Activity for GeoBeagle.
@@ -81,6 +86,9 @@ public class GeoBeagle extends Activity implements LifecycleManager {
     private WebPageAndDetailsButtonEnabler mWebPageButtonEnabler;
     private final SQLiteWrapper mSqliteWrapper;
     private final Database mDatabase;
+    private SensorManager mSensorManager;
+    // private Sensor mCompassSensor;
+    private CompassListener mCompassListener;
 
     public GeoBeagle() {
         super();
@@ -102,7 +110,9 @@ public class GeoBeagle extends Activity implements LifecycleManager {
                 mGeocache = mGeocacheFactory.create(latlon[2], latlon[3], Util
                         .parseCoordinate(latlon[0]), Util.parseCoordinate(latlon[1]),
                         Source.WEB_URL, null);
+                mSqliteWrapper.openWritableDatabase(mDatabase);
                 mLocationSaver.saveLocation(mGeocache);
+                mSqliteWrapper.close();
                 mGeocacheViewer.set(mGeocache);
             }
         } catch (final Exception e) {
@@ -163,12 +173,12 @@ public class GeoBeagle extends Activity implements LifecycleManager {
             final LocationManager locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
             final CombinedLocationManager combinedLocationManager = new CombinedLocationManager(
                     locationManager);
+            mLocationControlBuffered = LocationControlDi.create(locationManager);
             mGpsStatusWidget = new GpsStatusWidget(mResourceProvider, new MeterView(
                     getTextView(R.id.location_viewer), new MeterFormatter()),
                     getTextView(R.id.provider), getTextView(R.id.lag), getTextView(R.id.accuracy),
                     getTextView(R.id.status), new Misc.Time(), new Location(""),
-                    combinedLocationManager);
-            mLocationControlBuffered = LocationControlDi.create(locationManager);
+                    combinedLocationManager, mLocationControlBuffered);
             mStatusWidgetLocationListener = new CombinedLocationListener(mLocationControlBuffered,
                     mGpsStatusWidget);
             mGeocacheFactory = new GeocacheFactory();
@@ -201,10 +211,21 @@ public class GeoBeagle extends Activity implements LifecycleManager {
                     .setOnItemSelectedListener(new OnContentProviderSelectedListener(
                             mResourceProvider, (TextView)findViewById(R.id.select_cache_prompt)));
 
+            mCompassListener = new CompassListener(new NullRefresher(), mLocationControlBuffered,
+                    -1440f);
+            mSensorManager = (SensorManager)getSystemService(Context.SENSOR_SERVICE);
+            final List<Sensor> sensorList = mSensorManager.getSensorList(Sensor.TYPE_ORIENTATION);
+            // mCompassSensor = sensorList.get(0);
+
             mUpdateGpsWidgetRunnable = UpdateGpsWidgetRunnableDI.create(mGpsStatusWidget);
             mUpdateGpsWidgetRunnable.run();
         } catch (final Exception e) {
             mErrorDisplayer.displayErrorAndStack(e);
+        }
+    }
+
+    static class NullRefresher implements Refresher {
+        public void refresh() {
         }
     }
 
@@ -223,7 +244,6 @@ public class GeoBeagle extends Activity implements LifecycleManager {
     public void onPause() {
         super.onPause();
         mGeoBeagleDelegate.onPause();
-        mSqliteWrapper.close();
     }
 
     public void onPause(Editor editor) {
@@ -237,6 +257,9 @@ public class GeoBeagle extends Activity implements LifecycleManager {
 
             mGeoBeagleDelegate.onResume();
             mSqliteWrapper.openWritableDatabase(mDatabase);
+            mSensorManager.registerListener(mCompassListener, SensorManager.SENSOR_DELAY_UI);
+            // mSensorManager.registerListener(mCompassListener, mCompassSensor,
+            // SensorManager.SENSOR_DELAY_UI);
 
             maybeGetCoordinatesFromIntent();
             mWebPageButtonEnabler.check();

@@ -16,12 +16,12 @@ package com.google.code.geobeagle.ui.cachelist;
 
 class MenuActionToggleFilter implements MenuAction {
     private final FilterNearestCaches mFilterNearestCaches;
-    private final MenuActionRefresh mMenuActionRefresh;
+    private final CacheListRefresh mMenuActionRefresh;
 
     MenuActionToggleFilter(FilterNearestCaches filterNearestCaches,
-            MenuActionRefresh menuActionRefresh) {
+            CacheListRefresh cacheListRefresh) {
         mFilterNearestCaches = filterNearestCaches;
-        mMenuActionRefresh = menuActionRefresh;
+        mMenuActionRefresh = cacheListRefresh;
     }
 
     public void act() {

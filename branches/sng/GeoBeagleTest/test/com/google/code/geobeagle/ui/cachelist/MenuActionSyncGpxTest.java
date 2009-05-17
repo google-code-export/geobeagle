@@ -13,12 +13,12 @@ public class MenuActionSyncGpxTest {
     @Test
     public void testAct() {
         GpxImporter gpxImporter = PowerMock.createMock(GpxImporter.class);
-        MenuActionRefresh menuActionRefresh = PowerMock.createMock(MenuActionRefresh.class);
+        CacheListRefresh cacheListRefresh = PowerMock.createMock(CacheListRefresh.class);
 
-        gpxImporter.importGpxs(menuActionRefresh);
+        gpxImporter.importGpxs(cacheListRefresh);
 
         PowerMock.replayAll();
-        new MenuActionSyncGpx(gpxImporter, menuActionRefresh).act();
+        new MenuActionSyncGpx(gpxImporter, cacheListRefresh).act();
         PowerMock.verifyAll();
     }
 }

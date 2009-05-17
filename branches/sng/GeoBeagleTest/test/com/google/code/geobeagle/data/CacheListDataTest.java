@@ -47,7 +47,7 @@ public class CacheListDataTest {
     @Test
     public void testGet() {
         GeocacheVectors geocacheVectors = PowerMock.createMock(GeocacheVectors.class);
-        ArrayList<IGeocacheVector> geocacheVectorsList = new ArrayList<IGeocacheVector>();
+        ArrayList<GeocacheVector> geocacheVectorsList = new ArrayList<GeocacheVector>();
 
         EasyMock.expect(geocacheVectors.getGeocacheVectorsList()).andReturn(geocacheVectorsList);
 

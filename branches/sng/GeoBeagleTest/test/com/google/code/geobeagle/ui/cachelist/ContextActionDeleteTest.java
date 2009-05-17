@@ -19,7 +19,7 @@ import static org.easymock.EasyMock.expect;
 import com.google.code.geobeagle.data.GeocacheVector;
 import com.google.code.geobeagle.data.GeocacheVectors;
 import com.google.code.geobeagle.io.CacheWriter;
-import com.google.code.geobeagle.ui.cachelist.MenuActionRefresh.TitleUpdater;
+import com.google.code.geobeagle.ui.cachelist.CacheListRefresh.TitleUpdater;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

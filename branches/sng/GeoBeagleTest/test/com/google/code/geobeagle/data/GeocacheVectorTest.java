@@ -60,8 +60,8 @@ public class GeocacheVectorTest {
 
     @Test
     public void testCompare() {
-        IGeocacheVector d1 = PowerMock.createMock(IGeocacheVector.class);
-        IGeocacheVector d2 = PowerMock.createMock(IGeocacheVector.class);
+        GeocacheVector d1 = PowerMock.createMock(GeocacheVector.class);
+        GeocacheVector d2 = PowerMock.createMock(GeocacheVector.class);
 
         expect(d1.getDistanceFast()).andReturn(0f).anyTimes();
         expect(d2.getDistanceFast()).andReturn(1f).anyTimes();
@@ -79,7 +79,7 @@ public class GeocacheVectorTest {
     @Test
     public void testDistanceSortStrategy() {
         LocationComparator locationComparator = PowerMock.createMock(LocationComparator.class);
-        ArrayList<IGeocacheVector> arrayList = new ArrayList<IGeocacheVector>();
+        ArrayList<GeocacheVector> arrayList = new ArrayList<GeocacheVector>();
 
         PowerMock.mockStatic(Collections.class);
         Collections.sort(arrayList, locationComparator);
@@ -117,13 +117,18 @@ public class GeocacheVectorTest {
         Location location = PowerMock.createMock(Location.class);
 
         expect(locationControlBuffered.getLocation()).andReturn(location);
-        expect(geocache.calculateDistance(location)).andReturn(3.5f);
-        expect(distanceFormatter.format(3.5f)).andReturn("3.5m");
+        expect(geocache.calculateDistanceAndBearing(location)).andReturn(new float[] {
+                3.5f, 270
+        });
+        expect(locationControlBuffered.getAzimuth()).andReturn(10f);
+
+        expect(distanceFormatter.formatDistance(3.5f)).andReturn("3.5m");
+        expect(distanceFormatter.formatBearing(260)).andReturn(">");
 
         PowerMock.replayAll();
         GeocacheVector geocacheVector = new GeocacheVector(geocache, locationControlBuffered,
                 distanceFormatter);
-        assertEquals("3.5m", geocacheVector.getFormattedDistance());
+        assertEquals("3.5m >", geocacheVector.getFormattedDistance());
         PowerMock.verifyAll();
     }
 

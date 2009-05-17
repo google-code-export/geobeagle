@@ -15,6 +15,7 @@
 package com.google.code.geobeagle.ui.cachelist;
 
 import com.google.code.geobeagle.LocationControlBuffered;
+import com.google.code.geobeagle.Refresher;
 import com.google.code.geobeagle.LocationControlBuffered.IGpsLocation;
 import com.google.code.geobeagle.data.CacheListData;
 import com.google.code.geobeagle.data.Geocache;
@@ -25,41 +26,61 @@ import android.util.Log;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 
-public class MenuActionRefresh  {
+public class CacheListRefresh implements Refresher {
     static class ActionAndTolerance {
-        private IGpsLocation mLastRefreshed;
         private final RefreshAction mRefreshAction;
-        private final float mTolerance;
+        private final ToleranceStrategy mToleranceStrategy;
 
-        public ActionAndTolerance(RefreshAction refreshAction, float tolerance,
-                IGpsLocation lastRefreshed) {
+        public ActionAndTolerance(RefreshAction refreshAction, ToleranceStrategy toleranceStrategy,
+                float tolerance, IGpsLocation lastRefreshed) {
             mRefreshAction = refreshAction;
-            mTolerance = tolerance;
-            mLastRefreshed = lastRefreshed;
+            mToleranceStrategy = toleranceStrategy;
         }
 
-        public boolean exceedsTolerance(IGpsLocation here) {
-            final float distanceTo = here.distanceTo(mLastRefreshed);
-            return (distanceTo >= mTolerance);
+        public boolean exceedsTolerance(IGpsLocation here, float azimuth) {
+            return mToleranceStrategy.exceedsTolerance(here, azimuth);
         }
 
         public void refresh() {
             mRefreshAction.refresh();
         }
 
-        public void updateLastRefreshed(IGpsLocation here) {
-            mLastRefreshed = here;
+        public void updateLastRefreshed(IGpsLocation here, float azimuth) {
+            mToleranceStrategy.updateLastRefreshed(here, azimuth);
+        }
+    }
+
+    public static class ActionManager {
+        private final ActionAndTolerance mActionAndTolerances[];
+
+        public ActionManager(ActionAndTolerance actionAndTolerances[]) {
+            mActionAndTolerances = actionAndTolerances;
+        }
+
+        public int getMinActionExceedingTolerance(IGpsLocation here, float azimuth) {
+            int i;
+            for (i = 0; i < mActionAndTolerances.length; i++) {
+                if (mActionAndTolerances[i].exceedsTolerance(here, azimuth))
+                    break;
+            }
+            return i;
+        }
+
+        public void performActions(IGpsLocation here, float azimuth, int startingAction) {
+            for (int i = startingAction; i < mActionAndTolerances.length; i++) {
+                mActionAndTolerances[i].refresh();
+                mActionAndTolerances[i].updateLastRefreshed(here, azimuth);
+            }
         }
     }
 
     static class AdapterCachesSorter implements RefreshAction {
         private final CacheListData mCacheListData;
         private final LocationControlBuffered mLocationControlBuffered;
-        private final Timing mTiming;
+        private final CacheListDelegateDI.Timing mTiming;
 
-        AdapterCachesSorter(CacheListData cacheListData, Timing timing,
+        AdapterCachesSorter(CacheListData cacheListData, CacheListDelegateDI.Timing timing,
                 LocationControlBuffered locationControlBuffered) {
             mCacheListData = cacheListData;
             mTiming = timing;
@@ -84,6 +105,48 @@ public class MenuActionRefresh  {
         }
     }
 
+    static class LocationAndAzimuthTolerance implements ToleranceStrategy {
+        private float mLastAzimuth;
+        LocationTolerance mLocationTolerance;
+
+        public LocationAndAzimuthTolerance(LocationTolerance locationTolerance, float lastAzimuth) {
+            mLocationTolerance = locationTolerance;
+            mLastAzimuth = lastAzimuth;
+        }
+
+        public boolean exceedsTolerance(IGpsLocation here, float currentAzimuth) {
+            if (mLastAzimuth != currentAzimuth) {
+                Log.v("GeoBeagle", "new azimuth: " + currentAzimuth);
+                mLastAzimuth = currentAzimuth;
+                return true;
+            }
+            return mLocationTolerance.exceedsTolerance(here, currentAzimuth);
+        }
+
+        public void updateLastRefreshed(IGpsLocation here, float azimuth) {
+            mLocationTolerance.updateLastRefreshed(here, azimuth);
+            mLastAzimuth = azimuth;
+        }
+    }
+
+    static class LocationTolerance implements ToleranceStrategy {
+        private IGpsLocation mLastRefreshed;
+        private final float mLocationTolerance;
+
+        public LocationTolerance(float locationTolerance, IGpsLocation lastRefreshed) {
+            mLocationTolerance = locationTolerance;
+            mLastRefreshed = lastRefreshed;
+        }
+
+        public boolean exceedsTolerance(IGpsLocation here, float azimuth) {
+            return (here.distanceTo(mLastRefreshed) >= mLocationTolerance);
+        }
+
+        public void updateLastRefreshed(IGpsLocation here, float azimuth) {
+            mLastRefreshed = here;
+        }
+    }
+
     static interface RefreshAction {
         public void refresh();
     }
@@ -93,12 +156,12 @@ public class MenuActionRefresh  {
         private final FilterNearestCaches mFilterNearestCaches;
         private final GeocachesSql mGeocachesSql;
         private final LocationControlBuffered mLocationControlBuffered;
-        private final Timing mTiming;
+        private final CacheListDelegateDI.Timing mTiming;
         private final TitleUpdater mTitleUpdater;
 
         SqlCacheLoader(GeocachesSql geocachesSql, FilterNearestCaches filterNearestCaches,
                 CacheListData cacheListData, LocationControlBuffered locationControlBuffered,
-                TitleUpdater titleUpdater, Timing timing) {
+                TitleUpdater titleUpdater, CacheListDelegateDI.Timing timing) {
             mGeocachesSql = geocachesSql;
             mFilterNearestCaches = filterNearestCaches;
             mCacheListData = cacheListData;
@@ -120,36 +183,17 @@ public class MenuActionRefresh  {
         }
     }
 
-    static class Timing {
-        private final Calendar mCalendar;
-        private long mStartTime;
-
-        public Timing() {
-            mCalendar = Calendar.getInstance();
-        }
-
-        public void lap(CharSequence msg) {
-            long finishTime = mCalendar.getTimeInMillis();
-            Log.v("GeoBeagle", msg + ": " + (finishTime - mStartTime));
-            mStartTime = finishTime;
-        }
-
-        public void start() {
-            mStartTime = mCalendar.getTimeInMillis();
-        }
-    }
-
     static class TitleUpdater {
         private final CacheListData mCacheListData;
         private final FilterNearestCaches mFilterNearestCaches;
         private final GeocachesSql mGeocachesSql;
         private final ListActivity mListActivity;
         private final ListTitleFormatter mListTitleFormatter;
-        private final Timing mTiming;
+        private final CacheListDelegateDI.Timing mTiming;
 
         TitleUpdater(GeocachesSql geocachesSql, ListActivity listActivity,
                 FilterNearestCaches filterNearestCaches, CacheListData cacheListData,
-                ListTitleFormatter listTitleFormatter, Timing timing) {
+                ListTitleFormatter listTitleFormatter, CacheListDelegateDI.Timing timing) {
             mGeocachesSql = geocachesSql;
             mListActivity = listActivity;
             mFilterNearestCaches = filterNearestCaches;
@@ -171,41 +215,35 @@ public class MenuActionRefresh  {
         }
     }
 
-    private ActionAndTolerance[] mActionAndTolerances;
-    private final LocationControlBuffered mLocationControlBuffered;
-    private final Timing mTiming;
+    static interface ToleranceStrategy {
+        public boolean exceedsTolerance(IGpsLocation here, float azimuth);
 
-    public MenuActionRefresh(LocationControlBuffered locationControlBuffered, Timing timing,
-            ActionAndTolerance[] actionAndTolerances) {
+        public void updateLastRefreshed(IGpsLocation here, float azimuth);
+    }
+
+    private final ActionManager mActionManager;
+    private final LocationControlBuffered mLocationControlBuffered;
+    private final CacheListDelegateDI.Timing mTiming;
+
+    public CacheListRefresh(ActionManager actionManager,
+            LocationControlBuffered locationControlBuffered, CacheListDelegateDI.Timing timing) {
         mLocationControlBuffered = locationControlBuffered;
         mTiming = timing;
-        mActionAndTolerances = actionAndTolerances;
-    }
-
-    public int getMinActionExceedingTolerance(IGpsLocation here) {
-        int i;
-        for (i = 0; i < mActionAndTolerances.length; i++) {
-            if (mActionAndTolerances[i].exceedsTolerance(here))
-                break;
-        }
-        return i;
-    }
-
-    public void performActions(IGpsLocation here, int startingAction) {
-        for (int i = startingAction; i < mActionAndTolerances.length; i++) {
-            mActionAndTolerances[i].refresh();
-            mActionAndTolerances[i].updateLastRefreshed(here);
-        }
+        mActionManager = actionManager;
     }
 
     public void forceRefresh() {
         mTiming.start();
-        performActions(mLocationControlBuffered.getGpsLocation(), 0);
+        mActionManager.performActions(mLocationControlBuffered.getGpsLocation(),
+                mLocationControlBuffered.getAzimuth(), 0);
     }
 
     public void refresh() {
         mTiming.start();
-        IGpsLocation here = mLocationControlBuffered.getGpsLocation();
-        performActions(here, getMinActionExceedingTolerance(here));
+        final IGpsLocation here = mLocationControlBuffered.getGpsLocation();
+        final float azimuth = mLocationControlBuffered.getAzimuth();
+        final int minActionExceedingTolerance = mActionManager.getMinActionExceedingTolerance(here,
+                azimuth);
+        mActionManager.performActions(here, azimuth, minActionExceedingTolerance);
     }
 }

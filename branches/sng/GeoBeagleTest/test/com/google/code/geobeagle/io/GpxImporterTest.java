@@ -14,7 +14,7 @@ import com.google.code.geobeagle.io.DatabaseDI.SQLiteWrapper;
 import com.google.code.geobeagle.io.GpxImporterDI.ImportThreadWrapper;
 import com.google.code.geobeagle.io.GpxImporterDI.MessageHandler;
 import com.google.code.geobeagle.io.GpxImporterDI.ToastFactory;
-import com.google.code.geobeagle.ui.cachelist.MenuActionRefresh;
+import com.google.code.geobeagle.ui.cachelist.CacheListRefresh;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -77,7 +77,7 @@ public class GpxImporterTest {
 
     @Test
     public void testImportGpxs() throws FileNotFoundException, XmlPullParserException, IOException {
-        MenuActionRefresh menuActionRefresh = PowerMock.createMock(MenuActionRefresh.class);
+        CacheListRefresh cacheListRefresh = PowerMock.createMock(CacheListRefresh.class);
         Database database = PowerMock.createMock(Database.class);
         SQLiteWrapper sqliteWrapper = PowerMock.createMock(SQLiteWrapper.class);
         GpxLoader gpxLoader = PowerMock.createMock(GpxLoader.class);
@@ -85,12 +85,12 @@ public class GpxImporterTest {
         EventHandlers eventHandlers = PowerMock.createMock(EventHandlers.class);
 
         sqliteWrapper.openReadableDatabase(database);
-        importThreadWrapper.open(menuActionRefresh, gpxLoader, eventHandlers, null);
+        importThreadWrapper.open(cacheListRefresh, gpxLoader, eventHandlers, null);
         importThreadWrapper.start();
 
         PowerMock.replayAll();
         new GpxImporter(gpxLoader, database, sqliteWrapper, null, importThreadWrapper, null, null,
-                eventHandlers, null).importGpxs(menuActionRefresh);
+                eventHandlers, null).importGpxs(cacheListRefresh);
         PowerMock.verifyAll();
     }
 }

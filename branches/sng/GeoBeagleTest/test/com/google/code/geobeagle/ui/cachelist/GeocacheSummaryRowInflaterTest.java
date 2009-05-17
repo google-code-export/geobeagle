@@ -4,8 +4,8 @@ package com.google.code.geobeagle.ui.cachelist;
 import static org.junit.Assert.assertEquals;
 
 import com.google.code.geobeagle.R;
+import com.google.code.geobeagle.data.GeocacheVector;
 import com.google.code.geobeagle.data.GeocacheVectors;
-import com.google.code.geobeagle.data.IGeocacheVector;
 import com.google.code.geobeagle.ui.cachelist.GeocacheSummaryRowInflater.RowViews;
 
 import org.easymock.classextension.EasyMock;
@@ -30,7 +30,7 @@ public class GeocacheSummaryRowInflaterTest {
     public void testCacheRowViewsSet() {
         TextView txtCache = PowerMock.createMock(TextView.class);
         TextView txtDistance = PowerMock.createMock(TextView.class);
-        IGeocacheVector geocacheVector = PowerMock.createMock(IGeocacheVector.class);
+        GeocacheVector geocacheVector = PowerMock.createMock(GeocacheVector.class);
 
         EasyMock.expect(geocacheVector.getIdAndName()).andReturn("GC123 my cache");
         EasyMock.expect(geocacheVector.getFormattedDistance()).andReturn("10m");
@@ -76,7 +76,7 @@ public class GeocacheSummaryRowInflaterTest {
 
     @Test
     public void testRowViewsSet() {
-        IGeocacheVector geocacheVector = PowerMock.createMock(IGeocacheVector.class);
+        GeocacheVector geocacheVector = PowerMock.createMock(GeocacheVector.class);
         TextView cache = PowerMock.createMock(TextView.class);
         TextView distance = PowerMock.createMock(TextView.class);
 
@@ -95,7 +95,7 @@ public class GeocacheSummaryRowInflaterTest {
     @Test
     public void testSetData() {
         GeocacheVectors geocacheVectors = PowerMock.createMock(GeocacheVectors.class);
-        IGeocacheVector geocacheVector = PowerMock.createMock(IGeocacheVector.class);
+        GeocacheVector geocacheVector = PowerMock.createMock(GeocacheVector.class);
         View view = PowerMock.createMock(View.class);
         RowViews rowViews = PowerMock.createMock(RowViews.class);
 

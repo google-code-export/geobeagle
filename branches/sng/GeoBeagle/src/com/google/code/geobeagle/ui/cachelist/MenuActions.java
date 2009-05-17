@@ -23,7 +23,7 @@ class MenuActions {
 
     public MenuActions(MenuActionSyncGpx menuActionSyncGpx,
             MenuActionMyLocation menuActionMyLocation,
-            MenuActionToggleFilter menuActionToggleFilter, MenuActionRefresh menuActionRefresh) {
+            MenuActionToggleFilter menuActionToggleFilter, CacheListRefresh cacheListRefresh) {
         mMenuActions = new HashMap<Integer, MenuAction>();
         mMenuActions.put(R.id.menu_sync, menuActionSyncGpx);
         mMenuActions.put(R.id.menu_toggle_filter, menuActionToggleFilter);

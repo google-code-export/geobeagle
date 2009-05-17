@@ -26,9 +26,9 @@ import com.google.code.geobeagle.data.CacheListData;
 import com.google.code.geobeagle.data.DistanceFormatter;
 import com.google.code.geobeagle.data.GeocacheFactory;
 import com.google.code.geobeagle.data.GeocacheFromMyLocationFactory;
+import com.google.code.geobeagle.data.GeocacheVector;
 import com.google.code.geobeagle.data.GeocacheVectorFactory;
 import com.google.code.geobeagle.data.GeocacheVectors;
-import com.google.code.geobeagle.data.IGeocacheVector;
 import com.google.code.geobeagle.io.CacheWriter;
 import com.google.code.geobeagle.io.Database;
 import com.google.code.geobeagle.io.DatabaseDI;
@@ -47,27 +47,53 @@ import com.google.code.geobeagle.ui.UpdateGpsWidgetRunnableDI;
 import com.google.code.geobeagle.ui.GpsStatusWidget.MeterFormatter;
 import com.google.code.geobeagle.ui.GpsStatusWidget.MeterView;
 import com.google.code.geobeagle.ui.GpsStatusWidget.UpdateGpsWidgetRunnable;
-import com.google.code.geobeagle.ui.cachelist.GeocacheListPresenter.BaseAdapterLocationListener;
-import com.google.code.geobeagle.ui.cachelist.MenuActionRefresh.ActionAndTolerance;
-import com.google.code.geobeagle.ui.cachelist.MenuActionRefresh.AdapterCachesSorter;
-import com.google.code.geobeagle.ui.cachelist.MenuActionRefresh.DistanceUpdater;
-import com.google.code.geobeagle.ui.cachelist.MenuActionRefresh.SqlCacheLoader;
-import com.google.code.geobeagle.ui.cachelist.MenuActionRefresh.Timing;
-import com.google.code.geobeagle.ui.cachelist.MenuActionRefresh.TitleUpdater;
+import com.google.code.geobeagle.ui.cachelist.CacheListRefresh.ActionAndTolerance;
+import com.google.code.geobeagle.ui.cachelist.CacheListRefresh.ActionManager;
+import com.google.code.geobeagle.ui.cachelist.CacheListRefresh.AdapterCachesSorter;
+import com.google.code.geobeagle.ui.cachelist.CacheListRefresh.DistanceUpdater;
+import com.google.code.geobeagle.ui.cachelist.CacheListRefresh.LocationAndAzimuthTolerance;
+import com.google.code.geobeagle.ui.cachelist.CacheListRefresh.LocationTolerance;
+import com.google.code.geobeagle.ui.cachelist.CacheListRefresh.SqlCacheLoader;
+import com.google.code.geobeagle.ui.cachelist.CacheListRefresh.TitleUpdater;
+import com.google.code.geobeagle.ui.cachelist.CacheListRefresh.ToleranceStrategy;
+import com.google.code.geobeagle.ui.cachelist.GeocacheListPresenter.CacheListRefreshLocationListener;
+import com.google.code.geobeagle.ui.cachelist.GeocacheListPresenter.CompassListener;
 
 import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;
+import android.hardware.SensorManager;
 import android.location.Location;
 import android.location.LocationManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 
 public class CacheListDelegateDI {
+    public static class Timing {
+        private final Calendar mCalendar;
+        private long mStartTime;
+
+        public Timing() {
+            mCalendar = Calendar.getInstance();
+        }
+
+        public void lap(CharSequence msg) {
+            long finishTime = mCalendar.getTimeInMillis();
+            Log.v("GeoBeagle", msg + ": " + (finishTime - mStartTime));
+            mStartTime = finishTime;
+        }
+
+        public void start() {
+            mStartTime = mCalendar.getTimeInMillis();
+        }
+    }
+
     public static CacheListDelegate create(ListActivity listActivity, LayoutInflater layoutInflater) {
         final ErrorDisplayer errorDisplayer = new ErrorDisplayer(listActivity);
         final Database database = DatabaseDI.create(listActivity);
@@ -87,7 +113,7 @@ public class CacheListDelegateDI {
         final LocationSaver locationSaver = new LocationSaver(cacheWriter);
         final GeocacheVectorFactory geocacheVectorFactory = new GeocacheVectorFactory(
                 distanceFormatter);
-        final ArrayList<IGeocacheVector> geocacheVectorsList = new ArrayList<IGeocacheVector>(10);
+        final ArrayList<GeocacheVector> geocacheVectorsList = new ArrayList<GeocacheVector>(10);
         final GeocacheVectors geocacheVectors = new GeocacheVectors(geocacheVectorFactory,
                 geocacheVectorsList);
         final CacheListData cacheListData = new CacheListData(geocacheVectors);
@@ -109,7 +135,8 @@ public class CacheListDelegateDI {
         final GpsStatusWidget gpsStatusWidget = new GpsStatusWidget(new ResourceProvider(
                 listActivity), meterView, getTextView(gpsWidgetView, R.id.provider), getTextView(
                 gpsWidgetView, R.id.lag), getTextView(gpsWidgetView, R.id.accuracy), getTextView(
-                gpsWidgetView, R.id.status), time, new Location(""), combinedLocationManager);
+                gpsWidgetView, R.id.status), time, new Location(""), combinedLocationManager,
+                locationControlBuffered);
         final CombinedLocationListener gpsStatusWidgetLocationListener = new CombinedLocationListener(
                 locationControlBuffered, gpsStatusWidget);
         final UpdateGpsWidgetRunnable updateGpsWidgetRunnable = UpdateGpsWidgetRunnableDI
@@ -121,7 +148,7 @@ public class CacheListDelegateDI {
                 whereFactoryAllCaches, whereFactoryNearestCaches);
         final ListTitleFormatter listTitleFormatter = new ListTitleFormatter();
 
-        final Timing timing = new Timing();
+        final CacheListDelegateDI.Timing timing = new CacheListDelegateDI.Timing();
         final TitleUpdater titleUpdater = new TitleUpdater(geocachesSql, listActivity,
                 filterNearestCaches, cacheListData, listTitleFormatter, timing);
         final SqlCacheLoader sqlCacheLoader = new SqlCacheLoader(geocachesSql, filterNearestCaches,
@@ -130,29 +157,45 @@ public class CacheListDelegateDI {
                 timing, locationControlBuffered);
         final GpsDisabledLocation gpsDisabledLocation = new GpsDisabledLocation();
         final DistanceUpdater distanceUpdater = new DistanceUpdater(geocacheListAdapter);
+        final ToleranceStrategy sqlCacheLoaderTolerance = new LocationTolerance(500,
+                gpsDisabledLocation);
+        final ToleranceStrategy adapterCachesSorterTolerance = new LocationTolerance(6,
+                gpsDisabledLocation);
+        final LocationTolerance distanceUpdaterLocationTolerance = new LocationTolerance(1,
+                gpsDisabledLocation);
+        final ToleranceStrategy distanceUpdaterTolerance = new LocationAndAzimuthTolerance(
+                distanceUpdaterLocationTolerance, 720);
         final ActionAndTolerance[] actionAndTolerances = new ActionAndTolerance[] {
-                new ActionAndTolerance(sqlCacheLoader, 500, gpsDisabledLocation),
-                new ActionAndTolerance(adapterCachesSorter, 6, gpsDisabledLocation),
-                new ActionAndTolerance(distanceUpdater, 1, gpsDisabledLocation)
+                new ActionAndTolerance(sqlCacheLoader, sqlCacheLoaderTolerance, 500,
+                        gpsDisabledLocation),
+                new ActionAndTolerance(adapterCachesSorter, adapterCachesSorterTolerance, 6,
+                        gpsDisabledLocation),
+                new ActionAndTolerance(distanceUpdater, distanceUpdaterTolerance, 1,
+                        gpsDisabledLocation)
         };
-        final MenuActionRefresh menuActionRefresh = new MenuActionRefresh(locationControlBuffered,
-                timing, actionAndTolerances);
+        final ActionManager actionManager = new ActionManager(actionAndTolerances);
+        final CacheListRefresh cacheListRefresh = new CacheListRefresh(actionManager,
+                locationControlBuffered, timing);
         final MenuActionMyLocation menuActionMyLocation = new MenuActionMyLocation(locationSaver,
-                geocacheFromMyLocationFactory, menuActionRefresh, errorDisplayer);
+                geocacheFromMyLocationFactory, cacheListRefresh, errorDisplayer);
 
-        final BaseAdapterLocationListener baseAdapterLocationListener = new BaseAdapterLocationListener(
-                menuActionRefresh);
+        final CacheListRefreshLocationListener cacheListRefreshLocationListener = new CacheListRefreshLocationListener(
+                cacheListRefresh);
+        final SensorManager sensorManager = (SensorManager)listActivity
+                .getSystemService(Context.SENSOR_SERVICE);
+        final CompassListener compassListener = new CompassListener(cacheListRefresh,
+                locationControlBuffered, 720);
         final GeocacheListPresenter geocacheListPresenter = new GeocacheListPresenter(
                 combinedLocationManager, locationControlBuffered, gpsStatusWidgetLocationListener,
                 gpsWidgetView, updateGpsWidgetRunnable, geocacheVectors,
-                baseAdapterLocationListener, listActivity, geocacheListAdapter, errorDisplayer,
-                sqliteWrapper, database);
+                cacheListRefreshLocationListener, listActivity, geocacheListAdapter,
+                errorDisplayer, sqliteWrapper, database, sensorManager, compassListener);
         final MenuActionToggleFilter menuActionToggleFilter = new MenuActionToggleFilter(
-                filterNearestCaches, menuActionRefresh);
+                filterNearestCaches, cacheListRefresh);
         final MenuActionSyncGpx menuActionSyncGpx = new MenuActionSyncGpx(gpxImporter,
-                menuActionRefresh);
+                cacheListRefresh);
         final MenuActions menuActions = new MenuActions(menuActionSyncGpx, menuActionMyLocation,
-                menuActionToggleFilter, menuActionRefresh);
+                menuActionToggleFilter, cacheListRefresh);
 
         final ContextAction contextActions[] = CacheListDelegateDI.createContextActions(
                 listActivity, database, sqliteWrapper, cacheListData, cacheWriter, geocacheVectors,
@@ -160,7 +203,7 @@ public class CacheListDelegateDI {
 
         final GeocacheListController geocacheListController = new GeocacheListController(
                 listActivity, menuActions, contextActions, sqliteWrapper, database, gpxImporter,
-                menuActionRefresh, filterNearestCaches, errorDisplayer);
+                cacheListRefresh, filterNearestCaches, errorDisplayer);
         return new CacheListDelegate(geocacheListController, geocacheListPresenter);
     }
 

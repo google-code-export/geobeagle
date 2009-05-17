@@ -37,7 +37,7 @@ public class GeocacheVectorsTest {
         expect(geocacheVectorFactory.create(geocache, here)).andReturn(geocacheVector);
 
         ArrayList<Geocache> locations = new ArrayList<Geocache>(0);
-        ArrayList<IGeocacheVector> geocacheVectorsList = new ArrayList<IGeocacheVector>(0);
+        ArrayList<GeocacheVector> geocacheVectorsList = new ArrayList<GeocacheVector>(0);
         locations.add(geocache);
 
         replay(geocacheVectorFactory);
@@ -53,7 +53,7 @@ public class GeocacheVectorsTest {
         GeocacheVector destinationVector1 = createMock(GeocacheVector.class);
         GeocacheVector destinationVector2 = createMock(GeocacheVector.class);
 
-        ArrayList<IGeocacheVector> geocacheVectorsList = new ArrayList<IGeocacheVector>(0);
+        ArrayList<GeocacheVector> geocacheVectorsList = new ArrayList<GeocacheVector>(0);
 
         GeocacheVectors geocacheVectors = new GeocacheVectors(null, geocacheVectorsList);
         geocacheVectors.add(destinationVector1);
@@ -64,7 +64,7 @@ public class GeocacheVectorsTest {
 
     @Test
     public void testGetGeocacheVectorsList() {
-        ArrayList<IGeocacheVector> geocacheVectorsList = new ArrayList<IGeocacheVector>(0);
+        ArrayList<GeocacheVector> geocacheVectorsList = new ArrayList<GeocacheVector>(0);
 
         GeocacheVectors geocacheVectors = new GeocacheVectors(null, geocacheVectorsList);
         assertEquals(geocacheVectorsList, geocacheVectors.getGeocacheVectorsList());
@@ -72,9 +72,9 @@ public class GeocacheVectorsTest {
 
     @Test
     public void testReset() {
-        IGeocacheVector destinationVector = createMock(IGeocacheVector.class);
+        GeocacheVector destinationVector = createMock(GeocacheVector.class);
 
-        ArrayList<IGeocacheVector> geocacheVectorsList = new ArrayList<IGeocacheVector>(0);
+        ArrayList<GeocacheVector> geocacheVectorsList = new ArrayList<GeocacheVector>(0);
 
         replay(destinationVector);
         GeocacheVectors geocacheVectors = new GeocacheVectors(null, geocacheVectorsList);

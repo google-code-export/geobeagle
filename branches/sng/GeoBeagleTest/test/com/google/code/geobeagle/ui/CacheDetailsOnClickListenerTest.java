@@ -7,7 +7,6 @@ import com.google.code.geobeagle.GeoBeagle;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.data.Geocache;
 import com.google.code.geobeagle.io.CacheDetailsLoader;
-import com.google.code.geobeagle.ui.CacheDetailsOnClickListener.OkListener;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -17,7 +16,6 @@ import org.powermock.modules.junit4.PowerMockRunner;
 
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
-import android.content.DialogInterface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.webkit.WebView;
@@ -27,16 +25,6 @@ import android.webkit.WebView;
 })
 @RunWith(PowerMockRunner.class)
 public class CacheDetailsOnClickListenerTest {
-    @Test
-    public void testOkListener() {
-        DialogInterface dialog = PowerMock.createMock(DialogInterface.class);
-
-        dialog.dismiss();
-
-        PowerMock.replayAll();
-        new OkListener().onClick(dialog, 0);
-        PowerMock.verifyAll();
-    }
 
     @Test
     public void testOnClick() {

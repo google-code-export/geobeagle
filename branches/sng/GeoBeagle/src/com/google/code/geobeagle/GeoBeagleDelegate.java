@@ -23,9 +23,7 @@ import com.google.code.geobeagle.ui.Misc;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.AlertDialog.Builder;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.DialogInterface.OnClickListener;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.widget.Button;
@@ -36,39 +34,33 @@ public class GeoBeagleDelegate {
             AppLifecycleManager appLifecycleManager, GeocacheViewer geocacheViewer,
             ErrorDisplayer errorDisplayer) {
         final AlertDialog.Builder cacheDetailsBuilder = new AlertDialog.Builder(parent);
-        final DialogInterface.OnClickListener cacheDetailsOkListener = new CacheDetailsOnClickListener.OkListener();
         final LayoutInflater layoutInflater = LayoutInflater.from(parent);
         final CacheDetailsOnClickListener cacheDetailsOnClickListener = Misc.create(parent,
                 cacheDetailsBuilder, geocacheViewer, errorDisplayer, layoutInflater);
         final FieldNoteSender fieldNoteSender = FieldNoteSenderDI.build(parent, layoutInflater);
         return new GeoBeagleDelegate(parent, appLifecycleManager, cacheDetailsBuilder,
-                cacheDetailsOkListener, cacheDetailsOnClickListener, fieldNoteSender,
-                errorDisplayer);
+                cacheDetailsOnClickListener, fieldNoteSender, errorDisplayer);
     }
 
     private final AppLifecycleManager mAppLifecycleManager;
     private final Builder mCacheDetailsBuilder;
-    private final OnClickListener mCacheDetailsOkListener;
     private final CacheDetailsOnClickListener mCacheDetailsOnClickListener;
     private final ErrorDisplayer mErrorDisplayer;
     private final GeoBeagle mParent;
     private final FieldNoteSender mFieldNoteSender;
 
     public GeoBeagleDelegate(GeoBeagle parent, AppLifecycleManager appLifecycleManager,
-            Builder cacheDetailsBuilder, OnClickListener cacheDetailsOkListener,
-            CacheDetailsOnClickListener cacheDetailsOnClickListener,
+            Builder cacheDetailsBuilder, CacheDetailsOnClickListener cacheDetailsOnClickListener,
             FieldNoteSender fieldNoteSender, ErrorDisplayer errorDisplayer) {
         mParent = parent;
         mAppLifecycleManager = appLifecycleManager;
         mCacheDetailsBuilder = cacheDetailsBuilder;
-        mCacheDetailsOkListener = cacheDetailsOkListener;
         mCacheDetailsOnClickListener = cacheDetailsOnClickListener;
         mFieldNoteSender = fieldNoteSender;
         mErrorDisplayer = errorDisplayer;
     }
 
     public void onCreate() {
-        mCacheDetailsBuilder.setPositiveButton("Ok", mCacheDetailsOkListener);
         mCacheDetailsBuilder.create();
 
         ((Button)mParent.findViewById(R.id.cache_details))
