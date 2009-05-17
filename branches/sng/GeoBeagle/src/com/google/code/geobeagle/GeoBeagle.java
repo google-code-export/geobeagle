@@ -51,7 +51,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
-import android.hardware.Sensor;
 import android.hardware.SensorManager;
 import android.location.Location;
 import android.location.LocationManager;
@@ -63,8 +62,6 @@ import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import java.util.List;
 
 /*
  * Main Activity for GeoBeagle.
@@ -214,7 +211,8 @@ public class GeoBeagle extends Activity implements LifecycleManager {
             mCompassListener = new CompassListener(new NullRefresher(), mLocationControlBuffered,
                     -1440f);
             mSensorManager = (SensorManager)getSystemService(Context.SENSOR_SERVICE);
-            final List<Sensor> sensorList = mSensorManager.getSensorList(Sensor.TYPE_ORIENTATION);
+            // final List<Sensor> sensorList =
+            // mSensorManager.getSensorList(Sensor.TYPE_ORIENTATION);
             // mCompassSensor = sensorList.get(0);
 
             mUpdateGpsWidgetRunnable = UpdateGpsWidgetRunnableDI.create(mGpsStatusWidget);
