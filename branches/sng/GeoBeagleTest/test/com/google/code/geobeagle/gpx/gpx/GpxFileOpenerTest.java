@@ -19,8 +19,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import com.google.code.geobeagle.gpx.GpxAndZipFilesDI;
 import com.google.code.geobeagle.gpx.IGpxReaderIter;
-import com.google.code.geobeagle.gpx.GpxAndZipFiles.GpxAndZipFilesIterFactory;
+import com.google.code.geobeagle.gpx.GpxAndZipFilesDI.GpxAndZipFilesIterFactory;
 import com.google.code.geobeagle.gpx.gpx.GpxFileOpener.GpxFileIter;
 
 import org.junit.Test;
@@ -31,7 +32,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest( {
-        GpxAndZipFilesIterFactory.class, GpxFileOpener.class
+        GpxAndZipFilesDI.GpxAndZipFilesIterFactory.class, GpxFileOpener.class
 })
 public class GpxFileOpenerTest {
 
@@ -44,7 +45,7 @@ public class GpxFileOpenerTest {
         expect(gpxFileOpener.iterator()).andReturn(gpxFileIterator);
 
         PowerMock.replayAll();
-        assertEquals(gpxFileIterator, new GpxAndZipFilesIterFactory().fromFile("bar.gpx"));
+        assertEquals(gpxFileIterator, new GpxAndZipFilesDI.GpxAndZipFilesIterFactory(null).fromFile("bar.gpx"));
         PowerMock.verifyAll();
     }
 

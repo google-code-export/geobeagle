@@ -15,8 +15,9 @@
 package com.google.code.geobeagle.io;
 
 import com.google.code.geobeagle.gpx.GpxAndZipFiles;
+import com.google.code.geobeagle.gpx.GpxAndZipFilesDI;
 import com.google.code.geobeagle.gpx.GpxAndZipFiles.GpxAndZipFilenameFilter;
-import com.google.code.geobeagle.gpx.GpxAndZipFiles.GpxAndZipFilesIterFactory;
+import com.google.code.geobeagle.gpx.GpxAndZipFiles.GpxFilenameFilter;
 import com.google.code.geobeagle.io.DatabaseDI.SQLiteWrapper;
 import com.google.code.geobeagle.io.EventHelperDI.EventHelperFactory;
 import com.google.code.geobeagle.io.GpxToCacheDI.XmlPullParserWrapper;
@@ -39,8 +40,10 @@ public class GpxImporterDI {
         static ImportThread create(MessageHandler messageHandler, GpxLoader gpxLoader,
                 EventHandlers eventHandlers, XmlPullParserWrapper xmlPullParserWrapper,
                 ErrorDisplayer errorDisplayer) {
-            final FilenameFilter filenameFilter = new GpxAndZipFilenameFilter();
-            final GpxAndZipFilesIterFactory gpxAndZipFilesIterFactory = new GpxAndZipFilesIterFactory();
+            final GpxFilenameFilter gpxFilenameFilter = new GpxFilenameFilter();
+            final FilenameFilter filenameFilter = new GpxAndZipFilenameFilter(gpxFilenameFilter);
+            final GpxAndZipFilesDI.GpxAndZipFilesIterFactory gpxAndZipFilesIterFactory = new GpxAndZipFilesDI.GpxAndZipFilesIterFactory(
+                    gpxFilenameFilter);
             final GpxAndZipFiles gpxAndZipFiles = new GpxAndZipFiles(filenameFilter,
                     gpxAndZipFilesIterFactory);
             final EventHelperFactory eventHelperFactory = new EventHelperFactory(

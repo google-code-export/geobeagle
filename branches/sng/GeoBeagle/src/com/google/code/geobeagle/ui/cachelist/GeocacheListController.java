@@ -142,7 +142,7 @@ public class GeocacheListController {
 
     public void onResume() {
         try {
-            mMenuActionRefresh.refresh();
+            mMenuActionRefresh.forceRefresh();
         } catch (Exception e) {
             mErrorDisplayer.displayErrorAndStack(e);
         }

@@ -16,10 +16,13 @@ package com.google.code.geobeagle;
 
 import com.google.code.geobeagle.LocationControl.LocationChooser;
 import com.google.code.geobeagle.LocationControlBuffered.GpsDisabledLocation;
+import com.google.code.geobeagle.LocationControlBuffered.GpsEnabledLocation;
+import com.google.code.geobeagle.LocationControlBuffered.IGpsLocation;
 import com.google.code.geobeagle.data.GeocacheVector.DistanceSortStrategy;
 import com.google.code.geobeagle.data.GeocacheVector.LocationComparator;
 import com.google.code.geobeagle.data.GeocacheVector.NullSortStrategy;
 
+import android.location.Location;
 import android.location.LocationManager;
 
 public class LocationControlDi {
@@ -32,7 +35,14 @@ public class LocationControlDi {
         final DistanceSortStrategy distanceSortStrategy = new DistanceSortStrategy(
                 locationComparator);
         final GpsDisabledLocation gpsDisabledLocation = new GpsDisabledLocation();
+        IGpsLocation lastGpsLocation;
+        final Location lastKnownLocation = locationManager.getLastKnownLocation("gps");
+        if (lastKnownLocation == null)
+            lastGpsLocation = gpsDisabledLocation;
+        else
+            lastGpsLocation = new GpsEnabledLocation((float)lastKnownLocation.getLatitude(),
+                    (float)lastKnownLocation.getLongitude());
         return new LocationControlBuffered(locationControl, distanceSortStrategy, nullSortStrategy,
-                gpsDisabledLocation);
+                gpsDisabledLocation, lastGpsLocation, lastKnownLocation);
     }
 }

@@ -22,6 +22,7 @@ import com.google.code.geobeagle.data.Geocache;
 import com.google.code.geobeagle.io.GeocachesSql;
 
 import android.app.ListActivity;
+import android.location.Location;
 import android.util.Log;
 import android.widget.TextView;
 
@@ -32,22 +33,21 @@ public class CacheListRefresh implements Refresher {
         private final RefreshAction mRefreshAction;
         private final ToleranceStrategy mToleranceStrategy;
 
-        public ActionAndTolerance(RefreshAction refreshAction, ToleranceStrategy toleranceStrategy,
-                float tolerance, IGpsLocation lastRefreshed) {
+        public ActionAndTolerance(RefreshAction refreshAction, ToleranceStrategy toleranceStrategy) {
             mRefreshAction = refreshAction;
             mToleranceStrategy = toleranceStrategy;
         }
 
-        public boolean exceedsTolerance(IGpsLocation here, float azimuth) {
-            return mToleranceStrategy.exceedsTolerance(here, azimuth);
+        public boolean exceedsTolerance(IGpsLocation here, float azimuth, long now) {
+            return mToleranceStrategy.exceedsTolerance(here, azimuth, now);
         }
 
         public void refresh() {
             mRefreshAction.refresh();
         }
 
-        public void updateLastRefreshed(IGpsLocation here, float azimuth) {
-            mToleranceStrategy.updateLastRefreshed(here, azimuth);
+        public void updateLastRefreshed(IGpsLocation here, float azimuth, long now) {
+            mToleranceStrategy.updateLastRefreshed(here, azimuth, now);
         }
     }
 
@@ -58,19 +58,19 @@ public class CacheListRefresh implements Refresher {
             mActionAndTolerances = actionAndTolerances;
         }
 
-        public int getMinActionExceedingTolerance(IGpsLocation here, float azimuth) {
+        public int getMinActionExceedingTolerance(IGpsLocation here, float azimuth, long now) {
             int i;
             for (i = 0; i < mActionAndTolerances.length; i++) {
-                if (mActionAndTolerances[i].exceedsTolerance(here, azimuth))
+                if (mActionAndTolerances[i].exceedsTolerance(here, azimuth, now))
                     break;
             }
             return i;
         }
 
-        public void performActions(IGpsLocation here, float azimuth, int startingAction) {
+        public void performActions(IGpsLocation here, float azimuth, int startingAction, long now) {
             for (int i = startingAction; i < mActionAndTolerances.length; i++) {
                 mActionAndTolerances[i].refresh();
-                mActionAndTolerances[i].updateLastRefreshed(here, azimuth);
+                mActionAndTolerances[i].updateLastRefreshed(here, azimuth, now);
             }
         }
     }
@@ -101,6 +101,7 @@ public class CacheListRefresh implements Refresher {
         }
 
         public void refresh() {
+//            Log.v("GeoBeagle", "notifyDataSetChanged");
             mGeocacheListAdapter.notifyDataSetChanged();
         }
     }
@@ -114,36 +115,48 @@ public class CacheListRefresh implements Refresher {
             mLastAzimuth = lastAzimuth;
         }
 
-        public boolean exceedsTolerance(IGpsLocation here, float currentAzimuth) {
+        public boolean exceedsTolerance(IGpsLocation here, float currentAzimuth, long now) {
             if (mLastAzimuth != currentAzimuth) {
                 Log.v("GeoBeagle", "new azimuth: " + currentAzimuth);
                 mLastAzimuth = currentAzimuth;
                 return true;
             }
-            return mLocationTolerance.exceedsTolerance(here, currentAzimuth);
+            return mLocationTolerance.exceedsTolerance(here, currentAzimuth, now);
         }
 
-        public void updateLastRefreshed(IGpsLocation here, float azimuth) {
-            mLocationTolerance.updateLastRefreshed(here, azimuth);
+        public void updateLastRefreshed(IGpsLocation here, float azimuth, long now) {
+            mLocationTolerance.updateLastRefreshed(here, azimuth, now);
             mLastAzimuth = azimuth;
         }
     }
 
     static class LocationTolerance implements ToleranceStrategy {
-        private IGpsLocation mLastRefreshed;
+        private IGpsLocation mLastRefreshLocation;
         private final float mLocationTolerance;
+        private final int mMinTimeBetweenRefresh;
+        private long mLastRefreshTime;
 
-        public LocationTolerance(float locationTolerance, IGpsLocation lastRefreshed) {
+        public LocationTolerance(float locationTolerance, IGpsLocation lastRefreshed,
+                int minTimeBetweenRefresh) {
             mLocationTolerance = locationTolerance;
-            mLastRefreshed = lastRefreshed;
+            mLastRefreshLocation = lastRefreshed;
+            mMinTimeBetweenRefresh = minTimeBetweenRefresh;
+            mLastRefreshTime = 0;
         }
 
-        public boolean exceedsTolerance(IGpsLocation here, float azimuth) {
-            return (here.distanceTo(mLastRefreshed) >= mLocationTolerance);
+        public boolean exceedsTolerance(IGpsLocation here, float azimuth, long now) {
+            if (now < mLastRefreshTime + mMinTimeBetweenRefresh)
+                return false;
+            final float distanceTo = here.distanceTo(mLastRefreshLocation);
+//            Log.v("GeoBeagle", "distance, tolerance: " + distanceTo + ", " + mLocationTolerance);
+            final boolean fExceedsTolerance = distanceTo >= mLocationTolerance;
+            return fExceedsTolerance;
         }
 
-        public void updateLastRefreshed(IGpsLocation here, float azimuth) {
-            mLastRefreshed = here;
+        public void updateLastRefreshed(IGpsLocation here, float azimuth, long now) {
+//            Log.v("GeoBeagle", "updateLastRefreshed here: " + here);
+            mLastRefreshLocation = here;
+            mLastRefreshTime = now;
         }
     }
 
@@ -171,8 +184,9 @@ public class CacheListRefresh implements Refresher {
         }
 
         public void refresh() {
-            mGeocachesSql.loadCaches(mLocationControlBuffered.getLocation(), mFilterNearestCaches
-                    .getWhereFactory());
+            final Location location = mLocationControlBuffered.getLocation();
+//            Log.v("GeoBeagle", "Location: " + location);
+            mGeocachesSql.loadCaches(location, mFilterNearestCaches.getWhereFactory());
             ArrayList<Geocache> geocaches = mGeocachesSql.getGeocaches();
             mTiming.lap("SQL time");
 
@@ -216,9 +230,9 @@ public class CacheListRefresh implements Refresher {
     }
 
     static interface ToleranceStrategy {
-        public boolean exceedsTolerance(IGpsLocation here, float azimuth);
+        public boolean exceedsTolerance(IGpsLocation here, float azimuth, long now);
 
-        public void updateLastRefreshed(IGpsLocation here, float azimuth);
+        public void updateLastRefreshed(IGpsLocation here, float azimuth, long now);
     }
 
     private final ActionManager mActionManager;
@@ -234,16 +248,18 @@ public class CacheListRefresh implements Refresher {
 
     public void forceRefresh() {
         mTiming.start();
+        long now = mTiming.getTime();
         mActionManager.performActions(mLocationControlBuffered.getGpsLocation(),
-                mLocationControlBuffered.getAzimuth(), 0);
+                mLocationControlBuffered.getAzimuth(), 0, now);
     }
 
     public void refresh() {
         mTiming.start();
+        long now = mTiming.getTime();
         final IGpsLocation here = mLocationControlBuffered.getGpsLocation();
         final float azimuth = mLocationControlBuffered.getAzimuth();
         final int minActionExceedingTolerance = mActionManager.getMinActionExceedingTolerance(here,
-                azimuth);
-        mActionManager.performActions(here, azimuth, minActionExceedingTolerance);
+                azimuth, now);
+        mActionManager.performActions(here, azimuth, minActionExceedingTolerance, now);
     }
 }

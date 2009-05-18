@@ -35,7 +35,9 @@ import android.location.LocationListener;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AbsListView;
 import android.widget.ListView;
+import android.widget.AbsListView.OnScrollListener;
 
 @SuppressWarnings("deprecation")
 public class GeocacheListPresenter {
@@ -108,7 +110,6 @@ public class GeocacheListPresenter {
     }
 
     public void onCreate() {
-        mLocationControlBuffered.onLocationChanged(null);
         mListActivity.setContentView(R.layout.cache_list);
         ListView listView = mListActivity.getListView();
         listView.addHeaderView(mGpsWidgetView);
@@ -157,7 +158,8 @@ public class GeocacheListPresenter {
         public void onSensorChanged(int sensor, float[] values) {
             final float currentAzimuth = values[0];
             if (Math.abs(currentAzimuth - mLastAzimuth) > 5) {
-//                Log.v("GeoBeagle", "azimuth now " + currentAzimuth);
+                // Log.v("GeoBeagle", "azimuth now " + sensor +", " +
+                // currentAzimuth);
                 mLocationControlBuffered.setAzimuth(((int)currentAzimuth / 5) * 5);
                 mRefresher.refresh();
                 mLastAzimuth = currentAzimuth;

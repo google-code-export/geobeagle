@@ -300,7 +300,7 @@ public class GeocacheListControllerTest {
     public void testOnResume() throws InterruptedException {
         CacheListRefresh cacheListRefresh = PowerMock.createMock(CacheListRefresh.class);
 
-        cacheListRefresh.refresh();
+        cacheListRefresh.forceRefresh();
 
         PowerMock.replayAll();
         new GeocacheListController(null, null, null, null, null, null, cacheListRefresh, null,
@@ -313,7 +313,7 @@ public class GeocacheListControllerTest {
         CacheListRefresh cacheListRefresh = PowerMock.createMock(CacheListRefresh.class);
         ErrorDisplayer errorDisplayer = PowerMock.createMock(ErrorDisplayer.class);
 
-        cacheListRefresh.refresh();
+        cacheListRefresh.forceRefresh();
         RuntimeException runtimeException = new RuntimeException();
         EasyMock.expectLastCall().andThrow(runtimeException);
         errorDisplayer.displayErrorAndStack(runtimeException);

@@ -66,12 +66,12 @@ public class MenuActionRefreshTest {
         ToleranceStrategy toleranceStrategy = PowerMock.createMock(ToleranceStrategy.class);
         IGpsLocation here = PowerMock.createMock(IGpsLocation.class);
 
-        EasyMock.expect(toleranceStrategy.exceedsTolerance(here, 90)).andReturn(true);
+        EasyMock.expect(toleranceStrategy.exceedsTolerance(here, 90, 0)).andReturn(true);
 
         PowerMock.replayAll();
         final ActionAndTolerance actionAndTolerance = new ActionAndTolerance(null,
-                toleranceStrategy, 0, here);
-        assertTrue(actionAndTolerance.exceedsTolerance(here, 90));
+                toleranceStrategy);
+        assertTrue(actionAndTolerance.exceedsTolerance(here, 90, 0));
         PowerMock.verifyAll();
     }
 
@@ -82,7 +82,7 @@ public class MenuActionRefreshTest {
         refreshAction.refresh();
 
         PowerMock.replayAll();
-        new ActionAndTolerance(refreshAction, null, 0, null).refresh();
+        new ActionAndTolerance(refreshAction, null).refresh();
         PowerMock.verifyAll();
     }
 
@@ -91,12 +91,12 @@ public class MenuActionRefreshTest {
         ToleranceStrategy toleranceStrategy = PowerMock.createMock(ToleranceStrategy.class);
         IGpsLocation here = PowerMock.createMock(IGpsLocation.class);
 
-        toleranceStrategy.updateLastRefreshed(here, 90);
+        toleranceStrategy.updateLastRefreshed(here, 90, 0);
 
         PowerMock.replayAll();
         final ActionAndTolerance actionAndTolerance = new ActionAndTolerance(null,
-                toleranceStrategy, 0, here);
-        actionAndTolerance.updateLastRefreshed(here, 90);
+                toleranceStrategy);
+        actionAndTolerance.updateLastRefreshed(here, 90, 0);
         PowerMock.verifyAll();
     }
 
@@ -106,13 +106,13 @@ public class MenuActionRefreshTest {
         ActionAndTolerance actionAndTolerance0 = PowerMock.createMock(ActionAndTolerance.class);
         ActionAndTolerance actionAndTolerance1 = PowerMock.createMock(ActionAndTolerance.class);
 
-        EasyMock.expect(actionAndTolerance0.exceedsTolerance(here, 90)).andReturn(false);
-        EasyMock.expect(actionAndTolerance1.exceedsTolerance(here, 90)).andReturn(true);
+        EasyMock.expect(actionAndTolerance0.exceedsTolerance(here, 90, 0)).andReturn(false);
+        EasyMock.expect(actionAndTolerance1.exceedsTolerance(here, 90, 0)).andReturn(true);
 
         PowerMock.replayAll();
         assertEquals(1, new ActionManager(new ActionAndTolerance[] {
                 actionAndTolerance0, actionAndTolerance1
-        }).getMinActionExceedingTolerance(here, 90));
+        }).getMinActionExceedingTolerance(here, 90, 0));
         PowerMock.verifyAll();
 
     }
@@ -124,12 +124,12 @@ public class MenuActionRefreshTest {
         ActionAndTolerance actionAndTolerance1 = PowerMock.createMock(ActionAndTolerance.class);
 
         actionAndTolerance1.refresh();
-        actionAndTolerance1.updateLastRefreshed(here, 90);
+        actionAndTolerance1.updateLastRefreshed(here, 90, 0);
 
         PowerMock.replayAll();
         new ActionManager(new ActionAndTolerance[] {
                 actionAndTolerance0, actionAndTolerance1
-        }).performActions(here, 90, 1);
+        }).performActions(here, 90, 1, 0);
         PowerMock.verifyAll();
 
     }
@@ -162,10 +162,11 @@ public class MenuActionRefreshTest {
         ActionManager actionManager = PowerMock.createMock(ActionManager.class);
         IGpsLocation here = PowerMock.createMock(IGpsLocation.class);
 
+        EasyMock.expect(timing.getTime()).andReturn(100000L);
         timing.start();
         EasyMock.expect(locationControlBuffered.getGpsLocation()).andReturn(here);
         EasyMock.expect(locationControlBuffered.getAzimuth()).andReturn(90f);
-        actionManager.performActions(here, 90, 0);
+        actionManager.performActions(here, 90, 0, 100000);
 
         PowerMock.replayAll();
         new CacheListRefresh(actionManager, locationControlBuffered, timing).forceRefresh();
@@ -181,10 +182,12 @@ public class MenuActionRefreshTest {
         IGpsLocation here = PowerMock.createMock(IGpsLocation.class);
 
         timing.start();
+        EasyMock.expect(timing.getTime()).andReturn(10000L);
         EasyMock.expect(locationControlBuffered.getGpsLocation()).andReturn(here);
         EasyMock.expect(locationControlBuffered.getAzimuth()).andReturn(90f);
-        EasyMock.expect(actionManager.getMinActionExceedingTolerance(here, 90)).andReturn(3);
-        actionManager.performActions(here, 90, 3);
+        EasyMock.expect(actionManager.getMinActionExceedingTolerance(here, 90, 10000L))
+                .andReturn(3);
+        actionManager.performActions(here, 90, 3, 10000L);
 
         PowerMock.replayAll();
         new CacheListRefresh(actionManager, locationControlBuffered, timing).refresh();
@@ -211,7 +214,8 @@ public class MenuActionRefreshTest {
                 .andReturn(0);
 
         PowerMock.replayAll();
-        assertTrue(new LocationAndAzimuthTolerance(null, 0).exceedsTolerance(currentLocation, 110));
+        assertTrue(new LocationAndAzimuthTolerance(null, 0).exceedsTolerance(currentLocation, 110,
+                0));
         PowerMock.verifyAll();
     }
 
@@ -220,11 +224,11 @@ public class MenuActionRefreshTest {
         IGpsLocation currentLocation = PowerMock.createMock(IGpsLocation.class);
         LocationTolerance locationTolerance = PowerMock.createMock(LocationTolerance.class);
 
-        EasyMock.expect(locationTolerance.exceedsTolerance(currentLocation, 0)).andReturn(true);
+        EasyMock.expect(locationTolerance.exceedsTolerance(currentLocation, 0, 0)).andReturn(true);
 
         PowerMock.replayAll();
         assertTrue(new LocationAndAzimuthTolerance(locationTolerance, 0).exceedsTolerance(
-                currentLocation, 0));
+                currentLocation, 0, 0));
         PowerMock.verifyAll();
     }
 
@@ -233,11 +237,11 @@ public class MenuActionRefreshTest {
         IGpsLocation currentLocation = PowerMock.createMock(IGpsLocation.class);
         LocationTolerance locationTolerance = PowerMock.createMock(LocationTolerance.class);
 
-        EasyMock.expect(locationTolerance.exceedsTolerance(currentLocation, 0)).andReturn(false);
+        EasyMock.expect(locationTolerance.exceedsTolerance(currentLocation, 0, 0)).andReturn(false);
 
         PowerMock.replayAll();
         assertFalse(new LocationAndAzimuthTolerance(locationTolerance, 0).exceedsTolerance(
-                currentLocation, 0));
+                currentLocation, 0, 0));
         PowerMock.verifyAll();
     }
 
@@ -246,11 +250,11 @@ public class MenuActionRefreshTest {
         IGpsLocation currentLocation = PowerMock.createMock(IGpsLocation.class);
         LocationTolerance locationTolerance = PowerMock.createMock(LocationTolerance.class);
 
-        locationTolerance.updateLastRefreshed(currentLocation, 90);
+        locationTolerance.updateLastRefreshed(currentLocation, 90, 0);
 
         PowerMock.replayAll();
         new LocationAndAzimuthTolerance(locationTolerance, 0).updateLastRefreshed(currentLocation,
-                90);
+                90, 0);
         PowerMock.verifyAll();
     }
 
@@ -260,8 +264,9 @@ public class MenuActionRefreshTest {
         IGpsLocation here = PowerMock.createMock(IGpsLocation.class);
 
         EasyMock.expect(here.distanceTo(gpsLocation)).andReturn(20f);
+
         PowerMock.replayAll();
-        assertTrue(new LocationTolerance(10, gpsLocation).exceedsTolerance(here, 90));
+        assertTrue(new LocationTolerance(10, gpsLocation, 0).exceedsTolerance(here, 90, 0));
         PowerMock.verifyAll();
     }
 
@@ -271,8 +276,19 @@ public class MenuActionRefreshTest {
         IGpsLocation here = PowerMock.createMock(IGpsLocation.class);
 
         EasyMock.expect(here.distanceTo(gpsLocation)).andReturn(5f);
+
         PowerMock.replayAll();
-        assertFalse(new LocationTolerance(10, gpsLocation).exceedsTolerance(here, 90));
+        assertFalse(new LocationTolerance(10, gpsLocation, 0).exceedsTolerance(here, 90, 0));
+        PowerMock.verifyAll();
+    }
+
+    @Test
+    public void LocationTolerance_DoesntExceedsTimeTolerance() {
+        IGpsLocation gpsLocation = PowerMock.createMock(IGpsLocation.class);
+        IGpsLocation here = PowerMock.createMock(IGpsLocation.class);
+
+        PowerMock.replayAll();
+        assertFalse(new LocationTolerance(10, gpsLocation, 5000).exceedsTolerance(here, 90, 4000));
         PowerMock.verifyAll();
     }
 
@@ -280,7 +296,7 @@ public class MenuActionRefreshTest {
     public void LocationTolerance_UpdateLastRefreshed() {
         IGpsLocation here = PowerMock.createMock(IGpsLocation.class);
 
-        new LocationTolerance(10, null).updateLastRefreshed(here, 20);
+        new LocationTolerance(10, null, 0).updateLastRefreshed(here, 20, 0);
     }
 
     @Test

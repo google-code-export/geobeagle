@@ -7,7 +7,9 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import com.google.code.geobeagle.gpx.GpxAndZipFiles;
-import com.google.code.geobeagle.gpx.GpxAndZipFiles.GpxAndZipFilesIterFactory;
+import com.google.code.geobeagle.gpx.GpxAndZipFilesDI;
+import com.google.code.geobeagle.gpx.GpxAndZipFiles.GpxFilenameFilter;
+import com.google.code.geobeagle.gpx.GpxAndZipFilesDI.GpxAndZipFilesIterFactory;
 import com.google.code.geobeagle.gpx.zip.ZipFileOpener.ZipFileIter;
 
 import org.junit.Test;
@@ -36,7 +38,7 @@ import java.util.zip.ZipEntry;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest( {
-        ZipFileIter.class, ZipFileOpener.class, GpxAndZipFilesIterFactory.class
+        ZipFileIter.class, ZipFileOpener.class, GpxAndZipFilesDI.GpxAndZipFilesIterFactory.class
 })
 public class ZipFileOpenerTest {
 
@@ -49,11 +51,11 @@ public class ZipFileOpenerTest {
 
         PowerMock.expectNew(ZipInputStreamFactory.class).andReturn(zipInputStreamFactory);
         PowerMock.expectNew(ZipFileOpener.class, GpxAndZipFiles.GPX_DIR + "foo.zip",
-                zipInputStreamFactory).andReturn(zipFileOpener);
+                zipInputStreamFactory, null).andReturn(zipFileOpener);
         expect(zipFileOpener.iterator()).andReturn(gpxFileIterator);
 
         PowerMock.replayAll();
-        assertEquals(gpxFileIterator, new GpxAndZipFilesIterFactory().fromFile("foo.zip"));
+        assertEquals(gpxFileIterator, new GpxAndZipFilesDI.GpxAndZipFilesIterFactory(null).fromFile("foo.zip"));
         PowerMock.verifyAll();
     }
 
@@ -64,7 +66,7 @@ public class ZipFileOpenerTest {
         expect(zipInputStream.getNextEntry()).andReturn(null);
 
         PowerMock.replayAll();
-        ZipFileIter iter = new ZipFileIter(zipInputStream);
+        ZipFileIter iter = new ZipFileIter(zipInputStream, null);
         assertFalse(iter.hasNext());
         PowerMock.verifyAll();
     }
@@ -77,10 +79,11 @@ public class ZipFileOpenerTest {
         ZipFileIter zipFileIter = PowerMock.createMock(ZipFileIter.class);
 
         expect(zipInputStreamFactory.create("foo.zip")).andReturn(zipInputStream);
-        PowerMock.expectNew(ZipFileIter.class, zipInputStream).andReturn(zipFileIter);
+        PowerMock.expectNew(ZipFileIter.class, zipInputStream, null).andReturn(zipFileIter);
 
         PowerMock.replayAll();
-        assertEquals(zipFileIter, new ZipFileOpener("foo.zip", zipInputStreamFactory).iterator());
+        assertEquals(zipFileIter, new ZipFileOpener("foo.zip", zipInputStreamFactory, null)
+                .iterator());
         PowerMock.verifyAll();
     }
 
@@ -91,8 +94,76 @@ public class ZipFileOpenerTest {
         expect(zipInputStream.getNextEntry()).andReturn(null);
 
         PowerMock.replayAll();
-        ZipFileIter iter = new ZipFileIter(zipInputStream);
+        ZipFileIter iter = new ZipFileIter(zipInputStream, null);
         assertEquals(null, iter.next());
+        PowerMock.verifyAll();
+    }
+
+    @Test
+    public void testIgnoreSubdir() throws Exception {
+        GpxZipInputStream zipInputStream = PowerMock.createMock(GpxZipInputStream.class);
+        ZipEntry zipEntryDir = PowerMock.createMock(ZipEntry.class);
+
+        expect(zipInputStream.getNextEntry()).andReturn(zipEntryDir);
+        expect(zipEntryDir.isDirectory()).andReturn(true);
+        expect(zipInputStream.getNextEntry()).andReturn(null);
+
+        PowerMock.replayAll();
+        ZipFileIter iter = new ZipFileIter(zipInputStream, null);
+        assertFalse(iter.hasNext());
+
+        PowerMock.verifyAll();
+    }
+
+    @Test
+    public void testIgnoreSubdirButNotFile() throws Exception {
+        GpxZipInputStream zipInputStream = PowerMock.createMock(GpxZipInputStream.class);
+        ZipEntry zipEntryDir = PowerMock.createMock(ZipEntry.class);
+        ZipEntry zipEntryFileBad = PowerMock.createMock(ZipEntry.class);
+        ZipEntry zipEntryFileGood = PowerMock.createMock(ZipEntry.class);
+        GpxFilenameFilter gpxFilenameFilter = PowerMock.createMock(GpxFilenameFilter.class);
+
+        expect(zipInputStream.getNextEntry()).andReturn(zipEntryDir);
+        expect(zipEntryDir.isDirectory()).andReturn(true);
+
+        expect(zipInputStream.getNextEntry()).andReturn(zipEntryFileBad);
+        expect(zipEntryFileBad.isDirectory()).andReturn(false);
+        expect(zipEntryFileBad.getName()).andReturn("foo.bar");
+        expect(gpxFilenameFilter.accept("foo.bar")).andReturn(false);
+
+        expect(zipInputStream.getNextEntry()).andReturn(zipEntryFileGood);
+        expect(zipEntryFileGood.isDirectory()).andReturn(false);
+        expect(zipEntryFileGood.getName()).andReturn("foo.gpx");
+        expect(gpxFilenameFilter.accept("foo.gpx")).andReturn(true);
+
+        PowerMock.replayAll();
+        ZipFileIter iter = new ZipFileIter(zipInputStream, gpxFilenameFilter);
+        assertTrue(iter.hasNext());
+        assertEquals(zipEntryFileGood, iter.mNextZipEntry);
+        PowerMock.verifyAll();
+    }
+
+    @Test
+    public void testIgnoreNonGpxFiles() throws Exception {
+        GpxZipInputStream zipInputStream = PowerMock.createMock(GpxZipInputStream.class);
+        ZipEntry zipEntryBad = PowerMock.createMock(ZipEntry.class);
+        ZipEntry zipEntryGpx = PowerMock.createMock(ZipEntry.class);
+        GpxFilenameFilter gpxFilenameFilter = PowerMock.createMock(GpxFilenameFilter.class);
+
+        expect(zipInputStream.getNextEntry()).andReturn(zipEntryBad);
+        expect(zipEntryBad.isDirectory()).andReturn(false);
+        expect(zipEntryBad.getName()).andReturn("foo.txt");
+        expect(gpxFilenameFilter.accept("foo.txt")).andReturn(false);
+        
+        expect(zipInputStream.getNextEntry()).andReturn(zipEntryGpx);
+        expect(zipEntryGpx.isDirectory()).andReturn(false);
+        expect(zipEntryGpx.getName()).andReturn("foo.gpx");
+        expect(gpxFilenameFilter.accept("foo.gpx")).andReturn(true);
+
+        PowerMock.replayAll();
+        ZipFileIter iter = new ZipFileIter(zipInputStream, gpxFilenameFilter);
+        assertTrue(iter.hasNext());
+        assertEquals(zipEntryGpx, iter.mNextZipEntry);
         PowerMock.verifyAll();
     }
 
@@ -103,16 +174,20 @@ public class ZipFileOpenerTest {
         ZipEntry zipEntry = PowerMock.createMock(ZipEntry.class);
         InputStreamReader inputStreamReader = PowerMock.createMock(InputStreamReader.class);
         InputStream inputStream = PowerMock.createMock(InputStream.class);
+        GpxFilenameFilter gpxFilenameFilter = PowerMock.createMock(GpxFilenameFilter.class);
 
         expect(zipInputStream.getNextEntry()).andReturn(zipEntry);
         expect(zipEntry.getName()).andReturn("foo.gpx");
+        expect(gpxFilenameFilter.accept("foo.gpx")).andReturn(true);
         expect(zipInputStream.getStream()).andReturn(inputStream);
         PowerMock.expectNew(InputStreamReader.class, inputStream).andReturn(inputStreamReader);
+        expect(zipEntry.getName()).andReturn("foo.gpx");
         PowerMock.expectNew(GpxReader.class, "foo.gpx", inputStreamReader).andReturn(gpxReader);
         expect(zipInputStream.getNextEntry()).andReturn(null);
+        expect(zipEntry.isDirectory()).andReturn(false);
 
         PowerMock.replayAll();
-        ZipFileIter iter = new ZipFileIter(zipInputStream);
+        ZipFileIter iter = new ZipFileIter(zipInputStream, gpxFilenameFilter);
         assertTrue(iter.hasNext());
         assertEquals(gpxReader, iter.next());
         assertFalse(iter.hasNext());

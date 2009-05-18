@@ -70,12 +70,14 @@ public class LocationControlBuffered implements LocationListener {
 
     LocationControlBuffered(LocationControl locationControl,
             DistanceSortStrategy distanceSortStrategy, NullSortStrategy nullSortStrategy,
-            GpsDisabledLocation gpsDisabledLocation) {
+            GpsDisabledLocation gpsDisabledLocation, IGpsLocation lastGpsLocation,
+            Location lastLocation) {
         mLocationControl = locationControl;
         mDistanceSortStrategy = distanceSortStrategy;
         mNullSortStrategy = nullSortStrategy;
         mGpsDisabledLocation = gpsDisabledLocation;
-        mGpsLocation = mGpsDisabledLocation;
+        mGpsLocation = lastGpsLocation;
+        mLocation = lastLocation;
     }
 
     public IGpsLocation getGpsLocation() {

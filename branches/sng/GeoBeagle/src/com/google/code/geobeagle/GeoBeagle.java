@@ -255,7 +255,8 @@ public class GeoBeagle extends Activity implements LifecycleManager {
 
             mGeoBeagleDelegate.onResume();
             mSqliteWrapper.openWritableDatabase(mDatabase);
-            mSensorManager.registerListener(mCompassListener, SensorManager.SENSOR_DELAY_UI);
+            mSensorManager.registerListener(mCompassListener, SensorManager.SENSOR_ORIENTATION,
+                    SensorManager.SENSOR_DELAY_UI);
             // mSensorManager.registerListener(mCompassListener, mCompassSensor,
             // SensorManager.SENSOR_DELAY_UI);
 

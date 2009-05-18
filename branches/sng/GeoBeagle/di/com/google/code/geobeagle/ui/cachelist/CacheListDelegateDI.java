@@ -76,21 +76,21 @@ import java.util.Calendar;
 
 public class CacheListDelegateDI {
     public static class Timing {
-        private final Calendar mCalendar;
         private long mStartTime;
 
-        public Timing() {
-            mCalendar = Calendar.getInstance();
-        }
-
         public void lap(CharSequence msg) {
-            long finishTime = mCalendar.getTimeInMillis();
-            Log.v("GeoBeagle", msg + ": " + (finishTime - mStartTime));
+            long finishTime = Calendar.getInstance().getTimeInMillis();
+            Log.v("GeoBeagle", "****** " + msg + ": " + (finishTime - mStartTime));
             mStartTime = finishTime;
         }
 
         public void start() {
-            mStartTime = mCalendar.getTimeInMillis();
+            mStartTime = Calendar.getInstance().getTimeInMillis();
+        }
+
+        public long getTime() {
+            return Calendar.getInstance().getTimeInMillis();
+
         }
     }
 
@@ -158,20 +158,17 @@ public class CacheListDelegateDI {
         final GpsDisabledLocation gpsDisabledLocation = new GpsDisabledLocation();
         final DistanceUpdater distanceUpdater = new DistanceUpdater(geocacheListAdapter);
         final ToleranceStrategy sqlCacheLoaderTolerance = new LocationTolerance(500,
-                gpsDisabledLocation);
+                gpsDisabledLocation, 8000);
         final ToleranceStrategy adapterCachesSorterTolerance = new LocationTolerance(6,
-                gpsDisabledLocation);
+                gpsDisabledLocation, 4000);
         final LocationTolerance distanceUpdaterLocationTolerance = new LocationTolerance(1,
-                gpsDisabledLocation);
+                gpsDisabledLocation, 1000);
         final ToleranceStrategy distanceUpdaterTolerance = new LocationAndAzimuthTolerance(
                 distanceUpdaterLocationTolerance, 720);
         final ActionAndTolerance[] actionAndTolerances = new ActionAndTolerance[] {
-                new ActionAndTolerance(sqlCacheLoader, sqlCacheLoaderTolerance, 500,
-                        gpsDisabledLocation),
-                new ActionAndTolerance(adapterCachesSorter, adapterCachesSorterTolerance, 6,
-                        gpsDisabledLocation),
-                new ActionAndTolerance(distanceUpdater, distanceUpdaterTolerance, 1,
-                        gpsDisabledLocation)
+                new ActionAndTolerance(sqlCacheLoader, sqlCacheLoaderTolerance),
+                new ActionAndTolerance(adapterCachesSorter, adapterCachesSorterTolerance),
+                new ActionAndTolerance(distanceUpdater, distanceUpdaterTolerance)
         };
         final ActionManager actionManager = new ActionManager(actionAndTolerances);
         final CacheListRefresh cacheListRefresh = new CacheListRefresh(actionManager,

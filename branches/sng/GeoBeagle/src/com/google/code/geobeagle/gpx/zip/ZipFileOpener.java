@@ -16,6 +16,7 @@ package com.google.code.geobeagle.gpx.zip;
 
 import com.google.code.geobeagle.gpx.IGpxReader;
 import com.google.code.geobeagle.gpx.IGpxReaderIter;
+import com.google.code.geobeagle.gpx.GpxAndZipFiles.GpxFilenameFilter;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -23,17 +24,24 @@ import java.util.zip.ZipEntry;
 
 public class ZipFileOpener {
     public static class ZipFileIter implements IGpxReaderIter {
-        private ZipEntry mNextZipEntry;
+        ZipEntry mNextZipEntry;
         private final GpxZipInputStream mZipInputStream;
+        private GpxFilenameFilter mGpxFilenameFilter;
 
-        ZipFileIter(GpxZipInputStream zipInputStream) {
+        ZipFileIter(GpxZipInputStream zipInputStream, GpxFilenameFilter gpxFilenameFilter) {
             mZipInputStream = zipInputStream;
             mNextZipEntry = null;
+            mGpxFilenameFilter = gpxFilenameFilter;
         }
 
         public boolean hasNext() throws IOException {
-            if (mNextZipEntry == null)
-                mNextZipEntry = mZipInputStream.getNextEntry();
+            if (mNextZipEntry == null) {
+                do {
+                    mNextZipEntry = mZipInputStream.getNextEntry();
+                } while (mNextZipEntry != null
+                        && (mNextZipEntry.isDirectory() || !mGpxFilenameFilter.accept(mNextZipEntry
+                                .getName())));
+            }
             return mNextZipEntry != null;
         }
 
@@ -52,13 +60,16 @@ public class ZipFileOpener {
 
     private final String mFilename;
     private final ZipInputStreamFactory mZipInputStreamFactory;
+    private final GpxFilenameFilter mGpxFilenameFilter;
 
-    public ZipFileOpener(String filename, ZipInputStreamFactory zipInputStreamFactory) {
+    public ZipFileOpener(String filename, ZipInputStreamFactory zipInputStreamFactory,
+            GpxFilenameFilter gpxFilenameFilter) {
         mFilename = filename;
         mZipInputStreamFactory = zipInputStreamFactory;
+        mGpxFilenameFilter = gpxFilenameFilter;
     }
 
     public ZipFileIter iterator() throws IOException {
-        return new ZipFileIter(mZipInputStreamFactory.create(mFilename));
+        return new ZipFileIter(mZipInputStreamFactory.create(mFilename), mGpxFilenameFilter);
     }
 }

@@ -67,7 +67,7 @@ public class LocationControlBufferedTest {
 
         PowerMock.replayAll();
         final LocationControlBuffered locationControlBuffered = new LocationControlBuffered(
-                locationControl, distanceSortStrategy, null, null);
+                locationControl, distanceSortStrategy, null, null, null, location);
         locationControlBuffered.onLocationChanged(null);
         assertEquals(distanceSortStrategy, locationControlBuffered.getSortStrategy());
         PowerMock.verifyAll();
@@ -82,7 +82,7 @@ public class LocationControlBufferedTest {
 
         PowerMock.replayAll();
         final LocationControlBuffered locationControlBuffered = new LocationControlBuffered(
-                locationControl, null, nullSortStrategy, null);
+                locationControl, null, nullSortStrategy, null, null, null);
         locationControlBuffered.onLocationChanged(null);
         assertEquals(nullSortStrategy, locationControlBuffered.getSortStrategy());
         PowerMock.verifyAll();
@@ -100,7 +100,7 @@ public class LocationControlBufferedTest {
 
         PowerMock.replayAll();
         LocationControlBuffered locationControlBuffered = new LocationControlBuffered(
-                locationControl, null, null, gpsLocation);
+                locationControl, null, null, gpsLocation, gpsLocation, location2);
         locationControlBuffered.onLocationChanged(null);
         assertEquals(location1, locationControlBuffered.getLocation());
         locationControlBuffered.onLocationChanged(null);
@@ -121,7 +121,7 @@ public class LocationControlBufferedTest {
 
         PowerMock.replayAll();
         LocationControlBuffered locationControlBuffered = new LocationControlBuffered(
-                locationControl, null, null, gpsLocation);
+                locationControl, null, null, gpsLocation, gpsLocation, location);
         locationControlBuffered.onLocationChanged(location);
         locationControlBuffered.getGpsLocation();
         PowerMock.verifyAll();
@@ -130,7 +130,7 @@ public class LocationControlBufferedTest {
     public void testAzimuth() {
 
         LocationControlBuffered locationControlBuffered = new LocationControlBuffered(null, null,
-                null, null);
+                null, null, null, null);
         locationControlBuffered.setAzimuth(19f);
         assertEquals(19f, locationControlBuffered.getAzimuth());
     }
@@ -138,7 +138,7 @@ public class LocationControlBufferedTest {
     @Test
     public void testMisc() {
         LocationControlBuffered locationControlBuffered = new LocationControlBuffered(null, null,
-                null, null);
+                null, null, null, null);
         locationControlBuffered.onProviderDisabled(null);
         locationControlBuffered.onProviderEnabled(null);
         locationControlBuffered.onStatusChanged(null, 0, null);

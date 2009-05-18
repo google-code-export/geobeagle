@@ -37,7 +37,6 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import android.app.ListActivity;
-import android.hardware.SensorEvent;
 import android.hardware.SensorManager;
 import android.location.LocationListener;
 import android.util.Log;
@@ -82,7 +81,6 @@ public class CacheListPresenterTest {
         View gpsWidgetView = PowerMock.createMock(View.class);
         GeocacheListAdapter geocacheListAdapter = PowerMock.createMock(GeocacheListAdapter.class);
 
-        locationControlBuffered.onLocationChanged(null);
         listActivity.setContentView(R.layout.cache_list);
         PowerMock.expectNew(CacheListOnCreateContextMenuListener.class, geocacheVectors).andReturn(
                 listener);
