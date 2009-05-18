@@ -35,5 +35,4 @@ public class GpxZipInputStream {
     InputStream getStream() throws IOException {
         return mZipInputStream;
     }
-
 }
