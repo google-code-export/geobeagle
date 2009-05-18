@@ -2,7 +2,6 @@
 package com.google.code.geobeagle.data;
 
 public class DistanceFormatter {
-
     private static final String[] ARROWS = {
             "^", ">", "v", "<",
     };
@@ -18,7 +17,6 @@ public class DistanceFormatter {
     }
 
     String formatBearing(float currentBearing) {
-        int currentBearingInt = (((int)(currentBearing) + 45 + 720) % 360) / 90;
-        return ARROWS[currentBearingInt];
+        return ARROWS[((((int)(currentBearing) + 45 + 720) % 360) / 90)];
     }
 }
