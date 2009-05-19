@@ -27,7 +27,6 @@ import com.google.code.geobeagle.ui.cachelist.GeocacheListController.CacheListOn
 
 import android.app.ListActivity;
 import android.hardware.Sensor;
-import android.hardware.SensorEvent;
 import android.hardware.SensorListener;
 import android.hardware.SensorManager;
 import android.location.Location;
@@ -35,9 +34,7 @@ import android.location.LocationListener;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.AbsListView;
 import android.widget.ListView;
-import android.widget.AbsListView.OnScrollListener;
 
 @SuppressWarnings("deprecation")
 public class GeocacheListPresenter {
@@ -148,9 +145,9 @@ public class GeocacheListPresenter {
         public void onAccuracyChanged(Sensor sensor, int accuracy) {
         }
 
-        public void onSensorChanged(SensorEvent event) {
-            onSensorChanged(SensorManager.SENSOR_ORIENTATION, event.values);
-        }
+        // public void onSensorChanged(SensorEvent event) {
+        // onSensorChanged(SensorManager.SENSOR_ORIENTATION, event.values);
+        // }
 
         public void onAccuracyChanged(int sensor, int accuracy) {
         }
