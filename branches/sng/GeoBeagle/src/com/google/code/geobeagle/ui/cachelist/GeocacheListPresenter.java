@@ -124,7 +124,6 @@ public class GeocacheListPresenter {
         mCombinedLocationManager.removeUpdates(mGpsStatusWidgetLocationListener);
         mSensorManager.unregisterListener(mCompassListener);
         mCombinedLocationManager.removeUpdates(mCacheListRefreshLocationListener);
-        mSQLiteWrapper.close();
     }
 
     // static public class CompassListener implements SensorEventListener {
@@ -176,8 +175,6 @@ public class GeocacheListPresenter {
             // SensorManager.SENSOR_DELAY_UI);
             mSensorManager.registerListener(mCompassListener, SensorManager.SENSOR_ORIENTATION,
                     SensorManager.SENSOR_DELAY_UI);
-
-            mSQLiteWrapper.openWritableDatabase(mDatabase);
         } catch (final Exception e) {
             mErrorDisplayer.displayErrorAndStack(e);
         }

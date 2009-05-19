@@ -118,8 +118,6 @@ public class CacheListDelegateDI {
                 geocacheVectorsList);
         final CacheListData cacheListData = new CacheListData(geocacheVectors);
         final XmlPullParserWrapper xmlPullParserWrapper = new XmlPullParserWrapper();
-        final GpxImporter gpxImporter = GpxImporterDI.create(database, sqliteWrapper, listActivity,
-                xmlPullParserWrapper, errorDisplayer);
         final View gpsWidgetView = layoutInflater.inflate(R.layout.gps_widget, null);
 
         final GeocacheSummaryRowInflater geocacheSummaryRowInflater = new GeocacheSummaryRowInflater(
@@ -189,6 +187,8 @@ public class CacheListDelegateDI {
                 errorDisplayer, sqliteWrapper, database, sensorManager, compassListener);
         final MenuActionToggleFilter menuActionToggleFilter = new MenuActionToggleFilter(
                 filterNearestCaches, cacheListRefresh);
+        final GpxImporter gpxImporter = GpxImporterDI.create(database, sqliteWrapper, listActivity,
+                xmlPullParserWrapper, errorDisplayer, geocacheListPresenter);
         final MenuActionSyncGpx menuActionSyncGpx = new MenuActionSyncGpx(gpxImporter,
                 cacheListRefresh);
         final MenuActions menuActions = new MenuActions(menuActionSyncGpx, menuActionMyLocation,
@@ -199,8 +199,8 @@ public class CacheListDelegateDI {
                 errorDisplayer, geocacheListAdapter, titleUpdater);
 
         final GeocacheListController geocacheListController = new GeocacheListController(
-                listActivity, menuActions, contextActions, sqliteWrapper, database, gpxImporter,
-                cacheListRefresh, filterNearestCaches, errorDisplayer);
+                listActivity, menuActions, contextActions, sqliteWrapper,
+                database, gpxImporter, cacheListRefresh, filterNearestCaches, errorDisplayer);
         return new CacheListDelegate(geocacheListController, geocacheListPresenter);
     }
 

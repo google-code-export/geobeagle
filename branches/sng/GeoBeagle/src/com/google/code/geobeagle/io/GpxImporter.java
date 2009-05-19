@@ -15,34 +15,31 @@
 package com.google.code.geobeagle.io;
 
 import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.io.DatabaseDI.SQLiteWrapper;
 import com.google.code.geobeagle.io.GpxImporterDI.ImportThreadWrapper;
 import com.google.code.geobeagle.io.GpxImporterDI.MessageHandler;
 import com.google.code.geobeagle.io.GpxImporterDI.ToastFactory;
 import com.google.code.geobeagle.ui.ErrorDisplayer;
 import com.google.code.geobeagle.ui.cachelist.CacheListRefresh;
+import com.google.code.geobeagle.ui.cachelist.GeocacheListPresenter;
 
 import android.app.ListActivity;
 import android.widget.Toast;
 
 public class GpxImporter {
 
-    private final Database mDatabase;
     private final ErrorDisplayer mErrorDisplayer;
     private final EventHandlers mEventHandlers;
     private final GpxLoader mGpxLoader;
     private final ImportThreadWrapper mImportThreadWrapper;
     private final ListActivity mListActivity;
     private final MessageHandler mMessageHandler;
-    private final SQLiteWrapper mSqliteWrapper;
     private final ToastFactory mToastFactory;
+    private final GeocacheListPresenter mGeocacheListPresenter;
 
-    GpxImporter(GpxLoader gpxLoader, Database database, SQLiteWrapper sqliteWrapper,
+    GpxImporter(GeocacheListPresenter geocacheListPresenter, GpxLoader gpxLoader,
             ListActivity listActivity, ImportThreadWrapper importThreadWrapper,
             MessageHandler messageHandler, ToastFactory toastFactory, EventHandlers eventHandlers,
             ErrorDisplayer errorDisplayer) {
-        mSqliteWrapper = sqliteWrapper;
-        mDatabase = database;
 
         mListActivity = listActivity;
         mGpxLoader = gpxLoader;
@@ -51,6 +48,7 @@ public class GpxImporter {
         mMessageHandler = messageHandler;
         mErrorDisplayer = errorDisplayer;
         mToastFactory = toastFactory;
+        mGeocacheListPresenter = geocacheListPresenter;
     }
 
     public void abort() throws InterruptedException {
@@ -58,13 +56,13 @@ public class GpxImporter {
         mGpxLoader.abort();
         if (mImportThreadWrapper.isAlive()) {
             mImportThreadWrapper.join();
-            mSqliteWrapper.close();
             mToastFactory.showToast(mListActivity, R.string.import_canceled, Toast.LENGTH_SHORT);
         }
     }
 
     public void importGpxs(CacheListRefresh cacheListRefresh) {
-        mSqliteWrapper.openReadableDatabase(mDatabase);
+        mGeocacheListPresenter.onPause();
+
         mImportThreadWrapper.open(cacheListRefresh, mGpxLoader, mEventHandlers, mErrorDisplayer);
         mImportThreadWrapper.start();
     }

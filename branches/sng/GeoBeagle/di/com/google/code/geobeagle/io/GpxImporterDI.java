@@ -24,12 +24,14 @@ import com.google.code.geobeagle.io.GpxToCacheDI.XmlPullParserWrapper;
 import com.google.code.geobeagle.io.ImportThreadDelegate.ImportThreadHelper;
 import com.google.code.geobeagle.ui.ErrorDisplayer;
 import com.google.code.geobeagle.ui.cachelist.CacheListRefresh;
+import com.google.code.geobeagle.ui.cachelist.GeocacheListPresenter;
 
 import android.app.ListActivity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.widget.Toast;
 
 import java.io.FilenameFilter;
@@ -108,10 +110,11 @@ public class GpxImporterDI {
         static final int MSG_DONE = 1;
         static final int MSG_PROGRESS = 0;
 
-        public static MessageHandler create(ListActivity listActivity) {
+        public static MessageHandler create(GeocacheListPresenter geocacheListPresenter,
+                ListActivity listActivity) {
             final ProgressDialogWrapper progressDialogWrapper = new ProgressDialogWrapper(
                     listActivity);
-            return new MessageHandler(progressDialogWrapper);
+            return new MessageHandler(progressDialogWrapper, geocacheListPresenter);
         }
 
         private int mCacheCount;
@@ -121,9 +124,12 @@ public class GpxImporterDI {
         private String mSource;
         private String mStatus;
         private String mWaypointId;
+        private GeocacheListPresenter mGeocacheListPresenter;
 
-        public MessageHandler(ProgressDialogWrapper progressDialogWrapper) {
+        public MessageHandler(ProgressDialogWrapper progressDialogWrapper,
+                GeocacheListPresenter geocacheListPresenter) {
             mProgressDialogWrapper = progressDialogWrapper;
+            mGeocacheListPresenter = geocacheListPresenter;
         }
 
         public void abortLoad() {
@@ -133,6 +139,7 @@ public class GpxImporterDI {
 
         @Override
         public void handleMessage(Message msg) {
+            Log.v("GeoBeagle", "received msg: " + msg.what);
             switch (msg.what) {
                 case MessageHandler.MSG_PROGRESS:
                     mProgressDialogWrapper.setMessage(mStatus);
@@ -141,6 +148,7 @@ public class GpxImporterDI {
                     if (!mLoadAborted) {
                         mProgressDialogWrapper.dismiss();
                         mMenuActionRefresh.forceRefresh();
+                        mGeocacheListPresenter.onResume();
                     }
                     break;
                 default:
@@ -156,7 +164,7 @@ public class GpxImporterDI {
             mCacheCount = 0;
             mLoadAborted = false;
             mMenuActionRefresh = cacheListRefresh;
-            // TODO: move into resource file.
+            // TODO: move text into resource.
             mProgressDialogWrapper.show("Syncing caches", "Please wait...");
         }
 
@@ -205,8 +213,9 @@ public class GpxImporterDI {
 
     public static GpxImporter create(Database database, SQLiteWrapper sqliteWrapper,
             ListActivity listActivity, XmlPullParserWrapper xmlPullParserWrapper,
-            ErrorDisplayer errorDisplayer) {
-        final MessageHandler messageHandler = MessageHandler.create(listActivity);
+            ErrorDisplayer errorDisplayer, GeocacheListPresenter geocacheListPresenter) {
+        final MessageHandler messageHandler = MessageHandler.create(geocacheListPresenter,
+                listActivity);
         final CachePersisterFacade cachePersisterFacade = CachePersisterFacadeDI.create(
                 listActivity, messageHandler, database, sqliteWrapper);
         final GpxLoader gpxLoader = GpxLoaderDI.create(cachePersisterFacade, xmlPullParserWrapper,
@@ -221,8 +230,8 @@ public class GpxImporterDI {
         eventHandlers.add(".gpx", eventHandlerGpx);
         eventHandlers.add(".loc", eventHandlerLoc);
 
-        return new GpxImporter(gpxLoader, database, sqliteWrapper, listActivity,
-                importThreadWrapper, messageHandler, toastFactory, eventHandlers, errorDisplayer);
+        return new GpxImporter(geocacheListPresenter, gpxLoader, listActivity, importThreadWrapper,
+                messageHandler, toastFactory, eventHandlers, errorDisplayer);
     }
 
 }

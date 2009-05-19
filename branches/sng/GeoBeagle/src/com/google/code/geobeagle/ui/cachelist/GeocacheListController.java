@@ -59,20 +59,20 @@ public class GeocacheListController {
     private final FilterNearestCaches mFilterNearestCaches;
     private final GpxImporter mGpxImporter;
     private final ListActivity mListActivity;
-    private final CacheListRefresh mMenuActionRefresh;
+    private final CacheListRefresh mCacheListRefresh;
     private final MenuActions mMenuActions;
     private final SQLiteWrapper mSqliteWrapper;
 
-    GeocacheListController(ListActivity listActivity, MenuActions menuActions,
-            ContextAction[] contextActions, SQLiteWrapper sqliteWrapper, Database database,
-            GpxImporter gpxImporter, CacheListRefresh cacheListRefresh,
+    GeocacheListController(ListActivity listActivity,
+            MenuActions menuActions, ContextAction[] contextActions, SQLiteWrapper sqliteWrapper,
+            Database database, GpxImporter gpxImporter, CacheListRefresh cacheListRefresh,
             FilterNearestCaches filterNearestCaches, ErrorDisplayer errorDisplayer) {
         mListActivity = listActivity;
         mErrorDisplayer = errorDisplayer;
         mContextActions = contextActions;
         mMenuActions = menuActions;
         mGpxImporter = gpxImporter;
-        mMenuActionRefresh = cacheListRefresh;
+        mCacheListRefresh = cacheListRefresh;
         mSqliteWrapper = sqliteWrapper;
         mFilterNearestCaches = filterNearestCaches;
         mDatabase = database;
@@ -91,11 +91,6 @@ public class GeocacheListController {
 
     public void onCreate() {
         try {
-            // Upgrade database if necessary.
-            mSqliteWrapper.openWritableDatabase(mDatabase);
-            mSqliteWrapper.close();
-
-            mSqliteWrapper.openReadableDatabase(mDatabase);
         } catch (final Exception e) {
             mErrorDisplayer.displayErrorAndStack(e);
         }
@@ -111,7 +106,7 @@ public class GeocacheListController {
             if (position > 0)
                 mContextActions[MENU_VIEW].act(position - 1);
             else
-                mMenuActionRefresh.refresh();
+                mCacheListRefresh.refresh();
         } catch (final Exception e) {
             mErrorDisplayer.displayErrorAndStack(e);
         }
@@ -134,6 +129,7 @@ public class GeocacheListController {
     public void onPause() {
         try {
             mGpxImporter.abort();
+            mSqliteWrapper.close();
         } catch (InterruptedException e) {
             // Nothing we can do here! There is no chance to communicate to
             // the user.
@@ -142,7 +138,8 @@ public class GeocacheListController {
 
     public void onResume() {
         try {
-            mMenuActionRefresh.forceRefresh();
+            mSqliteWrapper.openWritableDatabase(mDatabase);
+            mCacheListRefresh.forceRefresh();
         } catch (Exception e) {
             mErrorDisplayer.displayErrorAndStack(e);
         }

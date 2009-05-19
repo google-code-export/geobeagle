@@ -115,7 +115,6 @@ public class CacheListPresenterTest {
         combinedLocationManager.removeUpdates(gpsStatusWidgetLocationListener);
         combinedLocationManager.removeUpdates(locationControlBuffered);
         sensorManager.unregisterListener(compassListener);
-        sqliteWrapper.close();
 
         PowerMock.replayAll();
         new GeocacheListPresenter(combinedLocationManager, locationControlBuffered,
@@ -182,7 +181,6 @@ public class CacheListPresenterTest {
         EasyMock.expect(
                 sensorManager.registerListener(compassListener, SensorManager.SENSOR_ORIENTATION,
                         SensorManager.SENSOR_DELAY_UI)).andReturn(true);
-        sqliteWrapper.openWritableDatabase(database);
 
         PowerMock.replayAll();
         new GeocacheListPresenter(combinedLocationManager, locationControlBuffered,

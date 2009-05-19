@@ -24,6 +24,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 public class DatabaseDI {
 
@@ -66,6 +67,7 @@ public class DatabaseDI {
         }
 
         public void close() {
+            Log.v("GeoBeagle", "------ closing SQLiteWrapper");
             mSQLiteDatabase.close();
             mSQLiteDatabase = null;
         }
@@ -91,11 +93,13 @@ public class DatabaseDI {
         }
 
         public void openReadableDatabase(Database database) {
+            Log.v("GeoBeagle", "------ openReadable SQLiteWrapper" + mSQLiteDatabase);
             if (mSQLiteDatabase == null)
                 mSQLiteDatabase = database.getReadableDatabase();
         }
 
         public void openWritableDatabase(Database database) {
+            Log.v("GeoBeagle", "------ openWriteable SQLiteWrapper" + mSQLiteDatabase);
             if (mSQLiteDatabase == null)
                 mSQLiteDatabase = database.getWritableDatabase();
         }

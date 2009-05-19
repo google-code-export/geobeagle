@@ -19,6 +19,7 @@ import com.google.code.geobeagle.ui.cachelist.CacheListDelegateDI;
 
 import android.app.ListActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -78,8 +79,12 @@ public class CacheList extends ListActivity {
 
     @Override
     protected void onPause() {
-        super.onPause();
-        mCacheListDelegate.onPause();
+        try {
+            super.onPause();
+            mCacheListDelegate.onPause();
+        } catch (Exception e) {
+            Log.v("GeoBeagle", e.getMessage());
+        }
     }
 
     @Override

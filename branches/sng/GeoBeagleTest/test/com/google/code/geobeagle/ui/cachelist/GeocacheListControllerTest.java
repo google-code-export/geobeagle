@@ -107,17 +107,8 @@ public class GeocacheListControllerTest {
 
     @Test
     public void testOnCreate() throws InterruptedException {
-        CacheListRefresh cacheListRefresh = PowerMock.createMock(CacheListRefresh.class);
-        SQLiteWrapper sqliteWrapper = PowerMock.createMock(SQLiteWrapper.class);
-        Database database = PowerMock.createMock(Database.class);
-
-        sqliteWrapper.openWritableDatabase(database);
-        sqliteWrapper.close();
-        sqliteWrapper.openReadableDatabase(database);
-
         PowerMock.replayAll();
-        new GeocacheListController(null, null, null, sqliteWrapper, database, null,
-                cacheListRefresh, null, null).onCreate();
+        new GeocacheListController(null, null, null, null, null, null, null, null, null).onCreate();
         PowerMock.verifyAll();
     }
 
@@ -142,24 +133,6 @@ public class GeocacheListControllerTest {
         PowerMock.replayAll();
         new CacheListOnCreateContextMenuListener(geocacheVectors).onCreateContextMenu(contextMenu,
                 null, contextMenuInfo);
-        PowerMock.verifyAll();
-    }
-
-    @Test
-    public void testOnCreateError() {
-        CacheListRefresh cacheListRefresh = PowerMock.createMock(CacheListRefresh.class);
-        SQLiteWrapper sqliteWrapper = PowerMock.createMock(SQLiteWrapper.class);
-        Database database = PowerMock.createMock(Database.class);
-        ErrorDisplayer errorDisplayer = PowerMock.createMock(ErrorDisplayer.class);
-
-        sqliteWrapper.openWritableDatabase(database);
-        Exception exception = new RuntimeException();
-        EasyMock.expectLastCall().andThrow(exception);
-        errorDisplayer.displayErrorAndStack(exception);
-
-        PowerMock.replayAll();
-        new GeocacheListController(null, null, null, sqliteWrapper, database, null,
-                cacheListRefresh, null, errorDisplayer).onCreate();
         PowerMock.verifyAll();
     }
 
@@ -219,8 +192,8 @@ public class GeocacheListControllerTest {
         cacheListRefresh.refresh();
 
         PowerMock.replayAll();
-        new GeocacheListController(null, null, null, null, null, null, cacheListRefresh, null,
-                null).onListItemClick(null, null, 0, 0);
+        new GeocacheListController(null, null, null, null, null, null, cacheListRefresh, null, null)
+                .onListItemClick(null, null, 0, 0);
         PowerMock.verifyAll();
     }
 
@@ -274,12 +247,15 @@ public class GeocacheListControllerTest {
     @Test
     public void testOnPause() throws InterruptedException {
         GpxImporter gpxImporter = PowerMock.createMock(GpxImporter.class);
+        SQLiteWrapper sqliteWrapper = PowerMock.createMock(SQLiteWrapper.class);
+        Database database = PowerMock.createMock(Database.class);
 
         gpxImporter.abort();
+        sqliteWrapper.close();
 
         PowerMock.replayAll();
-        new GeocacheListController(null, null, null, null, null, gpxImporter, null, null, null)
-                .onPause();
+        new GeocacheListController(null, null, null, sqliteWrapper, database, gpxImporter, null,
+                null, null).onPause();
         PowerMock.verifyAll();
     }
 
@@ -299,12 +275,15 @@ public class GeocacheListControllerTest {
     @Test
     public void testOnResume() throws InterruptedException {
         CacheListRefresh cacheListRefresh = PowerMock.createMock(CacheListRefresh.class);
+        SQLiteWrapper sqliteWrapper = PowerMock.createMock(SQLiteWrapper.class);
+        Database database = PowerMock.createMock(Database.class);
 
+        sqliteWrapper.openWritableDatabase(database);
         cacheListRefresh.forceRefresh();
 
         PowerMock.replayAll();
-        new GeocacheListController(null, null, null, null, null, null, cacheListRefresh, null,
-                null).onResume();
+        new GeocacheListController(null, null, null, sqliteWrapper, database, null, cacheListRefresh, null, null)
+                .onResume();
         PowerMock.verifyAll();
     }
 
@@ -312,15 +291,18 @@ public class GeocacheListControllerTest {
     public void testOnResumeError() throws InterruptedException {
         CacheListRefresh cacheListRefresh = PowerMock.createMock(CacheListRefresh.class);
         ErrorDisplayer errorDisplayer = PowerMock.createMock(ErrorDisplayer.class);
+        SQLiteWrapper sqliteWrapper = PowerMock.createMock(SQLiteWrapper.class);
+        Database database = PowerMock.createMock(Database.class);
 
+        sqliteWrapper.openWritableDatabase(database);
         cacheListRefresh.forceRefresh();
         RuntimeException runtimeException = new RuntimeException();
         EasyMock.expectLastCall().andThrow(runtimeException);
         errorDisplayer.displayErrorAndStack(runtimeException);
 
         PowerMock.replayAll();
-        new GeocacheListController(null, null, null, null, null, null, cacheListRefresh, null,
-                errorDisplayer).onResume();
+        new GeocacheListController(null, null, null, sqliteWrapper, database, null,
+                cacheListRefresh, null, errorDisplayer).onResume();
         PowerMock.verifyAll();
     }
 }
