@@ -1,6 +1,16 @@
 #summary Release Notes for GeoBeagle versions
 
-= v0.68 = 
+= v0.6.13 5/18/09 =
+ * Improved error message during gpx load.
+ * Skip loading files within .ZIPs if they don't have the correct extension (fixes hang bug if there are random zip files hanging around).
+ * Add indicators for bearing of caches.
+ * Add bearing indicator for the phone.
+ * Shrank font on cache list page.
+
+= v0.6.10 5/16/09 =
+ * Support for logging caches using SMS Field Notes
+
+= v0.6.8 = 
   * Georg Lukas' patches to support opencaching sites (thanks Georg!).
   * adds a show all vs show nearest caches menu.  
   * updating of cache distances on the fly (also, much faster sorting / filtering)
