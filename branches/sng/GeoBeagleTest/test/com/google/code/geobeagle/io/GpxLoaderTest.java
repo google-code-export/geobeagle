@@ -52,7 +52,8 @@ public class GpxLoaderTest {
         expectLastCall().andThrow(e);
         expect(gpxToCache.getSource()).andReturn("foo.gpx");
         expect(e.fillInStackTrace()).andReturn(e);
-        errorDisplayer.displayError(errorResource, "foo.gpx");
+        expect(e.getMessage()).andReturn("line 'blah'");
+        errorDisplayer.displayError(errorResource, "foo.gpx: line 'blah'");
         cachePersisterFacade.close(false);
 
         PowerMock.replayAll();

@@ -58,7 +58,11 @@ public class CachePersisterFacadeDI {
         }
 
         public void write(String str) throws IOException {
-            mWriter.write(str);
+            try {
+                mWriter.write(str);
+            } catch (IOException e) {
+                throw new IOException("Error writing line '" + str + "'");
+            }
         }
     }
 
