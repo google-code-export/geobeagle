@@ -15,8 +15,6 @@
 package com.google.code.geobeagle.data;
 
 import static org.easymock.EasyMock.expect;
-import static org.easymock.classextension.EasyMock.replay;
-import static org.easymock.classextension.EasyMock.verify;
 import static org.junit.Assert.assertEquals;
 
 import com.google.code.geobeagle.LocationControlBuffered;
@@ -63,25 +61,26 @@ public class GeocacheVectorTest {
         GeocacheVector d1 = PowerMock.createMock(GeocacheVector.class);
         GeocacheVector d2 = PowerMock.createMock(GeocacheVector.class);
 
-        expect(d1.getDistanceFast()).andReturn(0f).anyTimes();
-        expect(d2.getDistanceFast()).andReturn(1f).anyTimes();
+        expect(d1.getDistance()).andReturn(0f).anyTimes();
+        expect(d2.getDistance()).andReturn(1f).anyTimes();
 
-        replay(d1);
-        replay(d2);
+        PowerMock.replayAll();
         LocationComparator locationComparator = new LocationComparator();
         assertEquals(-1, locationComparator.compare(d1, d2));
         assertEquals(1, locationComparator.compare(d2, d1));
         assertEquals(0, locationComparator.compare(d1, d1));
-        verify(d1);
-        verify(d2);
+        PowerMock.verifyAll();
     }
 
     @Test
     public void testDistanceSortStrategy() {
         LocationComparator locationComparator = PowerMock.createMock(LocationComparator.class);
-        ArrayList<GeocacheVector> arrayList = new ArrayList<GeocacheVector>();
+        GeocacheVector geocacheVector = PowerMock.createMock(GeocacheVector.class);
 
+        ArrayList<GeocacheVector> arrayList = new ArrayList<GeocacheVector>(1);
+        arrayList.add(geocacheVector);
         PowerMock.mockStatic(Collections.class);
+        expect(geocacheVector.getDistanceFast()).andReturn(12f);
         Collections.sort(arrayList, locationComparator);
 
         PowerMock.replayAll();
@@ -90,7 +89,14 @@ public class GeocacheVectorTest {
     }
 
     @Test
-    public void testGetDistance() {
+    public void testGetSetDistance() {
+        GeocacheVector geocacheVector = new GeocacheVector(null, null, null);
+        geocacheVector.setDistance(37.3f);
+        assertEquals(37.3f, geocacheVector.getDistance(), .1f);
+    }
+
+    @Test
+    public void testGetDistanceFast() {
         LocationControlBuffered locationControlBuffered = PowerMock
                 .createMock(LocationControlBuffered.class);
         Location location = PowerMock.createMock(Location.class);

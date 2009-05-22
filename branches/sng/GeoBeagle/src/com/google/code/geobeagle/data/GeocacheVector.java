@@ -31,15 +31,18 @@ public class GeocacheVector {
             mLocationComparator = locationComparator;
         }
 
-        public void sort(ArrayList<GeocacheVector> arrayList) {
-            Collections.sort(arrayList, mLocationComparator);
+        public void sort(ArrayList<GeocacheVector> geocacheVectors) {
+            for (GeocacheVector geocacheVector : geocacheVectors) {
+                geocacheVector.mDistance = geocacheVector.getDistanceFast();
+            }
+            Collections.sort(geocacheVectors, mLocationComparator);
         }
     }
 
     public static class LocationComparator implements Comparator<GeocacheVector> {
-        public int compare(GeocacheVector destination1, GeocacheVector destination2) {
-            final float d1 = destination1.getDistanceFast();
-            final float d2 = destination2.getDistanceFast();
+        public int compare(GeocacheVector geocacheVector1, GeocacheVector geocacheVector2) {
+            final float d1 = geocacheVector1.getDistance();
+            final float d2 = geocacheVector2.getDistance();
             if (d1 < d2)
                 return -1;
             if (d1 > d2)
@@ -70,9 +73,19 @@ public class GeocacheVector {
         return 6371000 * c;
     }
 
+    // TODO: distance formatter shouldn't be in every object.
     private final DistanceFormatter mDistanceFormatter;
     private final Geocache mGeocache;
-    final LocationControlBuffered mLocationControlBuffered;
+    private float mDistance;
+    private final LocationControlBuffered mLocationControlBuffered;
+
+    float getDistance() {
+        return mDistance;
+    }
+
+    void setDistance(float f) {
+        mDistance = f;
+    }
 
     GeocacheVector(Geocache geocache, LocationControlBuffered locationControlBuffered,
             DistanceFormatter distanceFormatter) {
