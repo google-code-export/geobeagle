@@ -39,6 +39,7 @@ import com.google.code.geobeagle.io.LocationSaver;
 import com.google.code.geobeagle.io.CacheReader.WhereFactoryAllCaches;
 import com.google.code.geobeagle.io.CacheReader.WhereFactoryNearestCaches;
 import com.google.code.geobeagle.io.DatabaseDI.SQLiteWrapper;
+import com.google.code.geobeagle.io.GpxToCache.Aborter;
 import com.google.code.geobeagle.io.GpxToCacheDI.XmlPullParserWrapper;
 import com.google.code.geobeagle.ui.ErrorDisplayer;
 import com.google.code.geobeagle.ui.GpsStatusWidget;
@@ -158,7 +159,7 @@ public class CacheListDelegateDI {
         final ToleranceStrategy sqlCacheLoaderTolerance = new LocationTolerance(500,
                 gpsDisabledLocation, 8000);
         final ToleranceStrategy adapterCachesSorterTolerance = new LocationTolerance(6,
-                gpsDisabledLocation, 4000);
+                gpsDisabledLocation, 1000);
         final LocationTolerance distanceUpdaterLocationTolerance = new LocationTolerance(1,
                 gpsDisabledLocation, 1000);
         final ToleranceStrategy distanceUpdaterTolerance = new LocationAndAzimuthTolerance(
@@ -187,8 +188,11 @@ public class CacheListDelegateDI {
                 errorDisplayer, sqliteWrapper, database, sensorManager, compassListener);
         final MenuActionToggleFilter menuActionToggleFilter = new MenuActionToggleFilter(
                 filterNearestCaches, cacheListRefresh);
+        
+        final Aborter aborter = new Aborter();
+        
         final GpxImporter gpxImporter = GpxImporterDI.create(database, sqliteWrapper, listActivity,
-                xmlPullParserWrapper, errorDisplayer, geocacheListPresenter);
+                xmlPullParserWrapper, errorDisplayer, geocacheListPresenter, aborter);
         final MenuActionSyncGpx menuActionSyncGpx = new MenuActionSyncGpx(gpxImporter,
                 cacheListRefresh);
         final MenuActions menuActions = new MenuActions(menuActionSyncGpx, menuActionMyLocation,
@@ -199,8 +203,8 @@ public class CacheListDelegateDI {
                 errorDisplayer, geocacheListAdapter, titleUpdater);
 
         final GeocacheListController geocacheListController = new GeocacheListController(
-                listActivity, menuActions, contextActions, sqliteWrapper,
-                database, gpxImporter, cacheListRefresh, filterNearestCaches, errorDisplayer);
+                listActivity, menuActions, contextActions, sqliteWrapper, database, gpxImporter,
+                cacheListRefresh, filterNearestCaches, errorDisplayer);
         return new CacheListDelegate(geocacheListController, geocacheListPresenter);
     }
 

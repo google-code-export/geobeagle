@@ -27,15 +27,36 @@ public class GpxToCache {
     public static class CancelException extends Exception {
     }
 
-    private boolean mAbort;
-    private final XmlPullParserWrapper mXmlPullParserWrapper;
+    public static class Aborter {
+        private static boolean mAborted = false;
 
-    GpxToCache(XmlPullParserWrapper xmlPullParserWrapper) {
+        public Aborter() {
+            mAborted = false;
+        }
+
+        public void abort() {
+            mAborted = true;
+        }
+
+        public void reset() {
+            mAborted = false;
+        }
+
+        public boolean isAborted() {
+            return mAborted;
+        }
+    }
+
+    private final XmlPullParserWrapper mXmlPullParserWrapper;
+    private final Aborter mAborter;
+
+    GpxToCache(XmlPullParserWrapper xmlPullParserWrapper, Aborter aborter) {
         mXmlPullParserWrapper = xmlPullParserWrapper;
+        mAborter = aborter;
     }
 
     public void abort() {
-        mAbort = true;
+        mAborter.abort();
     }
 
     public String getSource() {
@@ -54,7 +75,7 @@ public class GpxToCache {
         int eventType;
         for (eventType = mXmlPullParserWrapper.getEventType(); eventType != XmlPullParser.END_DOCUMENT; eventType = mXmlPullParserWrapper
                 .next()) {
-            if (mAbort)
+            if (mAborter.isAborted())
                 throw new CancelException();
 
             // File already loaded.
@@ -69,6 +90,5 @@ public class GpxToCache {
 
     public void open(String source, Reader reader) throws XmlPullParserException, IOException {
         mXmlPullParserWrapper.open(source, reader);
-        mAbort = false;
     }
 }

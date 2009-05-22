@@ -15,9 +15,11 @@
 package com.google.code.geobeagle.io;
 
 import static org.easymock.EasyMock.expect;
+import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
+import com.google.code.geobeagle.io.GpxToCache.Aborter;
 import com.google.code.geobeagle.io.GpxToCache.CancelException;
 import com.google.code.geobeagle.io.GpxToCacheDI.XmlPullParserWrapper;
 
@@ -47,7 +49,7 @@ public class GpxToCacheTest {
         expect(xmlPullParserWrapper.getSource()).andReturn("/my/path");
 
         PowerMock.replayAll();
-        GpxToCache gpxToCache = new GpxToCache(xmlPullParserWrapper);
+        GpxToCache gpxToCache = new GpxToCache(xmlPullParserWrapper, new Aborter());
         assertEquals("/my/path", gpxToCache.getSource());
         PowerMock.verifyAll();
     }
@@ -60,7 +62,7 @@ public class GpxToCacheTest {
         expect(xmlPullParser.getEventType()).andReturn(XmlPullParser.START_DOCUMENT);
 
         PowerMock.replayAll();
-        GpxToCache gpxToCache = new GpxToCache(xmlPullParser);
+        GpxToCache gpxToCache = new GpxToCache(xmlPullParser, new Aborter());
         gpxToCache.abort();
         try {
             gpxToCache.load(eventHelper);
@@ -80,7 +82,7 @@ public class GpxToCacheTest {
         expect(eventHelper.handleEvent(XmlPullParser.END_DOCUMENT)).andReturn(true);
 
         PowerMock.replayAll();
-        GpxToCache gpxToCache = new GpxToCache(xmlPullParser);
+        GpxToCache gpxToCache = new GpxToCache(xmlPullParser, new Aborter());
         assertEquals(false, gpxToCache.load(eventHelper));
         PowerMock.verifyAll();
     }
@@ -97,9 +99,19 @@ public class GpxToCacheTest {
         expect(eventHelper.handleEvent(XmlPullParser.END_DOCUMENT)).andReturn(true);
 
         PowerMock.replayAll();
-        GpxToCache gpxToCache = new GpxToCache(xmlPullParser);
+        GpxToCache gpxToCache = new GpxToCache(xmlPullParser, new Aborter());
         assertEquals(false, gpxToCache.load(eventHelper));
         PowerMock.verifyAll();
+    }
+
+    @Test
+    public void testAborterReset() {
+        final Aborter aborter = new Aborter();
+        assertFalse(aborter.isAborted());
+        aborter.abort();
+        assertTrue(aborter.isAborted());
+        aborter.reset();
+        assertFalse(aborter.isAborted());
     }
 
     @Test
@@ -112,7 +124,7 @@ public class GpxToCacheTest {
         expect(eventHelper.handleEvent(XmlPullParser.START_DOCUMENT)).andReturn(false);
 
         PowerMock.replayAll();
-        GpxToCache gpxToCache = new GpxToCache(xmlPullParser);
+        GpxToCache gpxToCache = new GpxToCache(xmlPullParser, new Aborter());
         assertEquals(true, gpxToCache.load(eventHelper));
         PowerMock.verifyAll();
     }
@@ -135,7 +147,7 @@ public class GpxToCacheTest {
         expect(eventHelper.handleEvent(XmlPullParser.END_DOCUMENT)).andReturn(true);
 
         PowerMock.replayAll();
-        assertEquals(false, new GpxToCache(xmlPullParser).load(eventHelper));
+        assertEquals(false, new GpxToCache(xmlPullParser, new Aborter()).load(eventHelper));
         PowerMock.verifyAll();
     }
 
@@ -148,7 +160,7 @@ public class GpxToCacheTest {
         xmlPullParserWrapper.open("/my/path", reader);
 
         PowerMock.replayAll();
-        GpxToCache gpxToCache = new GpxToCache(xmlPullParserWrapper);
+        GpxToCache gpxToCache = new GpxToCache(xmlPullParserWrapper, new Aborter());
         gpxToCache.open("/my/path", reader);
         PowerMock.verifyAll();
     }

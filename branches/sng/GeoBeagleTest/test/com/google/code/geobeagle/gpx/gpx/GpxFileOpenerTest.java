@@ -14,16 +14,13 @@
 
 package com.google.code.geobeagle.gpx.gpx;
 
-import static org.easymock.EasyMock.expect;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import com.google.code.geobeagle.gpx.GpxAndZipFilesDI;
-import com.google.code.geobeagle.gpx.IGpxReaderIter;
-import com.google.code.geobeagle.gpx.GpxAndZipFilesDI.GpxAndZipFilesIterFactory;
-import com.google.code.geobeagle.gpx.gpx.GpxFileOpener.GpxFileIter;
+import com.google.code.geobeagle.io.GpxToCache.Aborter;
 
+import org.easymock.classextension.EasyMock;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.api.easymock.PowerMock;
@@ -32,35 +29,63 @@ import org.powermock.modules.junit4.PowerMockRunner;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest( {
-        GpxAndZipFilesDI.GpxAndZipFilesIterFactory.class, GpxFileOpener.class
+    GpxFileOpener.class
 })
 public class GpxFileOpenerTest {
 
     @Test
-    public void testFromFile() throws Exception {
-        GpxFileOpener gpxFileOpener = PowerMock.createStrictMock(GpxFileOpener.class);
-        GpxFileIter gpxFileIterator = PowerMock.createStrictMock(GpxFileIter.class);
+    public void testIter_HasNext() throws Exception {
+        Aborter aborter = PowerMock.createMock(Aborter.class);
 
-        PowerMock.expectNew(GpxFileOpener.class, "bar.gpx").andReturn(gpxFileOpener);
-        expect(gpxFileOpener.iterator()).andReturn(gpxFileIterator);
+        EasyMock.expect(aborter.isAborted()).andReturn(false);
 
         PowerMock.replayAll();
-        assertEquals(gpxFileIterator, new GpxAndZipFilesDI.GpxAndZipFilesIterFactory(null).fromFile("bar.gpx"));
+        assertTrue(new GpxFileOpener("foo.gpx", aborter).iterator().hasNext());
         PowerMock.verifyAll();
     }
 
     @Test
-    public void testIter() throws Exception {
-        GpxReader gpxReader = PowerMock.createMock(GpxReader.class);
-        PowerMock.expectNew(GpxReader.class, "foo.gpx").andReturn(gpxReader);
+    public void testIter_HasNextFalse() throws Exception {
+        Aborter aborter = PowerMock.createMock(Aborter.class);
+
+        EasyMock.expect(aborter.isAborted()).andReturn(false);
 
         PowerMock.replayAll();
-        GpxFileOpener gpxFileOpener = new GpxFileOpener("foo.gpx");
-        IGpxReaderIter iter = gpxFileOpener.iterator();
-        assertTrue(iter.hasNext());
-        assertEquals(gpxReader, iter.next());
-        assertFalse(iter.hasNext());
+        assertFalse(new GpxFileOpener(null, aborter).iterator().hasNext());
         PowerMock.verifyAll();
     }
 
+    @Test
+    public void testIter_HasNextAborted() throws Exception {
+        Aborter aborter = PowerMock.createMock(Aborter.class);
+
+        EasyMock.expect(aborter.isAborted()).andReturn(true);
+
+        PowerMock.replayAll();
+        assertFalse(new GpxFileOpener("foo.gpx", aborter).iterator().hasNext());
+        PowerMock.verifyAll();
+    }
+
+    @Test
+    public void testIter_Next() throws Exception {
+        GpxReader gpxReader = PowerMock.createMock(GpxReader.class);
+
+        PowerMock.expectNew(GpxReader.class, "foo.gpx").andReturn(gpxReader);
+
+        PowerMock.replayAll();
+        assertEquals(gpxReader, new GpxFileOpener("foo.gpx", null).iterator().next());
+        PowerMock.verifyAll();
+    }
+
+    @Test
+    public void testIterHasNext_Aborted() throws Exception {
+        Aborter aborter = PowerMock.createMock(Aborter.class);
+
+        EasyMock.expect(aborter.isAborted()).andReturn(true);
+
+        PowerMock.replayAll();
+        GpxFileOpener gpxFileOpener = new GpxFileOpener("foo.gpx", aborter);
+        assertFalse(gpxFileOpener.iterator().hasNext());
+        PowerMock.verifyAll();
+    }
 }

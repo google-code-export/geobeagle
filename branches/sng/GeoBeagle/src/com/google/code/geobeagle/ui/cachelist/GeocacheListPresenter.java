@@ -26,7 +26,6 @@ import com.google.code.geobeagle.ui.GpsStatusWidget.UpdateGpsWidgetRunnable;
 import com.google.code.geobeagle.ui.cachelist.GeocacheListController.CacheListOnCreateContextMenuListener;
 
 import android.app.ListActivity;
-import android.hardware.Sensor;
 import android.hardware.SensorListener;
 import android.hardware.SensorManager;
 import android.location.Location;
@@ -141,8 +140,8 @@ public class GeocacheListPresenter {
             mLastAzimuth = lastAzimuth;
         }
 
-        public void onAccuracyChanged(Sensor sensor, int accuracy) {
-        }
+//        public void onAccuracyChanged(Sensor sensor, int accuracy) {
+//        }
 
         // public void onSensorChanged(SensorEvent event) {
         // onSensorChanged(SensorManager.SENSOR_ORIENTATION, event.values);

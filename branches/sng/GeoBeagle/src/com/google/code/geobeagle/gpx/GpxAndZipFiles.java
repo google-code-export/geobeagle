@@ -42,22 +42,24 @@ public class GpxAndZipFiles {
         }
     }
 
-    public static class GpxAndZipFilesIter {
+    public static class GpxFilesAndZipFilesIter {
         private final String[] mFileList;
-        private final GpxAndZipFilesDI.GpxAndZipFilesIterFactory mGpxAndZipFileIterFactory;
+        private final GpxFileIterAndZipFileIterFactory mGpxAndZipFileIterFactory;
         private int mIxFileList;
         private IGpxReaderIter mSubIter;
 
-        GpxAndZipFilesIter(String[] fileList, GpxAndZipFilesDI.GpxAndZipFilesIterFactory gpxAndZipFilesIterFactory) {
+        GpxFilesAndZipFilesIter(String[] fileList,
+                GpxFileIterAndZipFileIterFactory gpxFileIterAndZipFileIterFactory) {
             mFileList = fileList;
-            mGpxAndZipFileIterFactory = gpxAndZipFilesIterFactory;
+            mGpxAndZipFileIterFactory = gpxFileIterAndZipFileIterFactory;
             mIxFileList = 0;
         }
 
         public boolean hasNext() throws IOException {
+            // Iterate through actual zip and gpx files on the filesystem.
             if (mSubIter != null && mSubIter.hasNext())
                 return true;
-            
+
             while (mIxFileList < mFileList.length) {
                 mSubIter = mGpxAndZipFileIterFactory.fromFile(mFileList[mIxFileList++]);
                 if (mSubIter.hasNext())
@@ -73,18 +75,19 @@ public class GpxAndZipFiles {
 
     public static final String GPX_DIR = "/sdcard/download/";
     private final FilenameFilter mFilenameFilter;
-    private final GpxAndZipFilesDI.GpxAndZipFilesIterFactory mGpxFileIterFactory;
+    private final GpxFileIterAndZipFileIterFactory mGpxFileIterAndZipFileIterFactory;
 
     public GpxAndZipFiles(FilenameFilter filenameFilter,
-            GpxAndZipFilesDI.GpxAndZipFilesIterFactory gpxFileIterFactory) {
+            GpxFileIterAndZipFileIterFactory gpxFileIterAndZipFileIterFactory) {
         mFilenameFilter = filenameFilter;
-        mGpxFileIterFactory = gpxFileIterFactory;
+        mGpxFileIterAndZipFileIterFactory = gpxFileIterAndZipFileIterFactory;
     }
 
-    public GpxAndZipFilesIter iterator() {
+    public GpxFilesAndZipFilesIter iterator() {
         String[] fileList = new File(GPX_DIR).list(mFilenameFilter);
         if (fileList == null)
             return null;
-        return new GpxAndZipFilesIter(fileList, mGpxFileIterFactory);
+        mGpxFileIterAndZipFileIterFactory.resetAborter();
+        return new GpxFilesAndZipFilesIter(fileList, mGpxFileIterAndZipFileIterFactory);
     }
 }

@@ -15,11 +15,13 @@
 package com.google.code.geobeagle.io;
 
 import com.google.code.geobeagle.gpx.GpxAndZipFiles;
-import com.google.code.geobeagle.gpx.GpxAndZipFilesDI;
+import com.google.code.geobeagle.gpx.GpxFileIterAndZipFileIterFactory;
 import com.google.code.geobeagle.gpx.GpxAndZipFiles.GpxAndZipFilenameFilter;
 import com.google.code.geobeagle.gpx.GpxAndZipFiles.GpxFilenameFilter;
+import com.google.code.geobeagle.gpx.zip.ZipFileOpener.ZipInputFileTester;
 import com.google.code.geobeagle.io.DatabaseDI.SQLiteWrapper;
 import com.google.code.geobeagle.io.EventHelperDI.EventHelperFactory;
+import com.google.code.geobeagle.io.GpxToCache.Aborter;
 import com.google.code.geobeagle.io.GpxToCacheDI.XmlPullParserWrapper;
 import com.google.code.geobeagle.io.ImportThreadDelegate.ImportThreadHelper;
 import com.google.code.geobeagle.ui.ErrorDisplayer;
@@ -41,24 +43,25 @@ public class GpxImporterDI {
     public static class ImportThread extends Thread {
         static ImportThread create(MessageHandler messageHandler, GpxLoader gpxLoader,
                 EventHandlers eventHandlers, XmlPullParserWrapper xmlPullParserWrapper,
-                ErrorDisplayer errorDisplayer) {
+                ErrorDisplayer errorDisplayer, Aborter aborter) {
             final GpxFilenameFilter gpxFilenameFilter = new GpxFilenameFilter();
             final FilenameFilter filenameFilter = new GpxAndZipFilenameFilter(gpxFilenameFilter);
-            final GpxAndZipFilesDI.GpxAndZipFilesIterFactory gpxAndZipFilesIterFactory = new GpxAndZipFilesDI.GpxAndZipFilesIterFactory(
-                    gpxFilenameFilter);
+            final ZipInputFileTester zipInputFileTester = new ZipInputFileTester(gpxFilenameFilter);
+            final GpxFileIterAndZipFileIterFactory gpxFileIterAndZipFileIterFactory = new GpxFileIterAndZipFileIterFactory(
+                    zipInputFileTester, aborter);
             final GpxAndZipFiles gpxAndZipFiles = new GpxAndZipFiles(filenameFilter,
-                    gpxAndZipFilesIterFactory);
+                    gpxFileIterAndZipFileIterFactory);
             final EventHelperFactory eventHelperFactory = new EventHelperFactory(
                     xmlPullParserWrapper);
             final ImportThreadHelper importThreadHelper = new ImportThreadHelper(gpxLoader,
                     messageHandler, eventHelperFactory, eventHandlers, errorDisplayer);
-            return new ImportThread(gpxAndZipFiles, importThreadHelper, errorDisplayer);
+            return new ImportThread(gpxAndZipFiles, importThreadHelper, errorDisplayer, aborter);
         }
 
         private final ImportThreadDelegate mImportThreadDelegate;
 
         public ImportThread(GpxAndZipFiles gpxAndZipFiles, ImportThreadHelper importThreadHelper,
-                ErrorDisplayer errorDisplayer) {
+                ErrorDisplayer errorDisplayer, Aborter aborter) {
             mImportThreadDelegate = new ImportThreadDelegate(gpxAndZipFiles, importThreadHelper,
                     errorDisplayer);
         }
@@ -74,11 +77,13 @@ public class GpxImporterDI {
         private ImportThread mImportThread;
         private final MessageHandler mMessageHandler;
         private final XmlPullParserWrapper mXmlPullParserWrapper;
+        private final Aborter mAborter;
 
         public ImportThreadWrapper(MessageHandler messageHandler,
-                XmlPullParserWrapper xmlPullParserWrapper) {
+                XmlPullParserWrapper xmlPullParserWrapper, Aborter aborter) {
             mMessageHandler = messageHandler;
             mXmlPullParserWrapper = xmlPullParserWrapper;
+            mAborter = aborter;
         }
 
         public boolean isAlive() {
@@ -96,7 +101,7 @@ public class GpxImporterDI {
                 EventHandlers eventHandlers, ErrorDisplayer mErrorDisplayer) {
             mMessageHandler.start(cacheListRefresh);
             mImportThread = ImportThread.create(mMessageHandler, gpxLoader, eventHandlers,
-                    mXmlPullParserWrapper, mErrorDisplayer);
+                    mXmlPullParserWrapper, mErrorDisplayer, mAborter);
         }
 
         public void start() {
@@ -213,16 +218,17 @@ public class GpxImporterDI {
 
     public static GpxImporter create(Database database, SQLiteWrapper sqliteWrapper,
             ListActivity listActivity, XmlPullParserWrapper xmlPullParserWrapper,
-            ErrorDisplayer errorDisplayer, GeocacheListPresenter geocacheListPresenter) {
+            ErrorDisplayer errorDisplayer, GeocacheListPresenter geocacheListPresenter,
+            Aborter aborter) {
         final MessageHandler messageHandler = MessageHandler.create(geocacheListPresenter,
                 listActivity);
         final CachePersisterFacade cachePersisterFacade = CachePersisterFacadeDI.create(
                 listActivity, messageHandler, database, sqliteWrapper);
         final GpxLoader gpxLoader = GpxLoaderDI.create(cachePersisterFacade, xmlPullParserWrapper,
-                errorDisplayer);
+                aborter, errorDisplayer);
         final ToastFactory toastFactory = new ToastFactory();
         final ImportThreadWrapper importThreadWrapper = new ImportThreadWrapper(messageHandler,
-                xmlPullParserWrapper);
+                xmlPullParserWrapper, aborter);
         final EventHandlerGpx eventHandlerGpx = new EventHandlerGpx(cachePersisterFacade);
         final EventHandlerLoc eventHandlerLoc = new EventHandlerLoc(cachePersisterFacade);
 

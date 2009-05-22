@@ -16,11 +16,14 @@ package com.google.code.geobeagle.gpx.gpx;
 
 import com.google.code.geobeagle.gpx.IGpxReader;
 import com.google.code.geobeagle.gpx.IGpxReaderIter;
+import com.google.code.geobeagle.io.GpxToCache.Aborter;
 
 public class GpxFileOpener {
-    class GpxFileIter implements IGpxReaderIter {
+    public class GpxFileIter implements IGpxReaderIter {
 
         public boolean hasNext() {
+            if (mAborter.isAborted())
+                return false;
             return mFilename != null;
         }
 
@@ -31,13 +34,15 @@ public class GpxFileOpener {
         }
     }
 
+    private Aborter mAborter;
     private String mFilename;
 
-    public GpxFileOpener(String filename) {
+    public GpxFileOpener(String filename, Aborter aborter) {
         mFilename = filename;
+        mAborter = aborter;
     }
 
-    public IGpxReaderIter iterator() {
+    public GpxFileIter iterator() {
         return new GpxFileIter();
     }
 }

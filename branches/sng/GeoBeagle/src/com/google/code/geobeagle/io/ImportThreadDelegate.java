@@ -17,9 +17,10 @@ package com.google.code.geobeagle.io;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.gpx.GpxAndZipFiles;
 import com.google.code.geobeagle.gpx.IGpxReader;
-import com.google.code.geobeagle.gpx.GpxAndZipFiles.GpxAndZipFilesIter;
+import com.google.code.geobeagle.gpx.GpxAndZipFiles.GpxFilesAndZipFilesIter;
 import com.google.code.geobeagle.io.EventHelperDI.EventHelperFactory;
 import com.google.code.geobeagle.io.GpxImporterDI.MessageHandler;
+import com.google.code.geobeagle.io.GpxToCache.Aborter;
 import com.google.code.geobeagle.ui.ErrorDisplayer;
 
 import org.xmlpull.v1.XmlPullParserException;
@@ -95,16 +96,15 @@ public class ImportThreadDelegate {
     }
 
     protected void tryRun() throws FileNotFoundException, IOException, XmlPullParserException {
-        GpxAndZipFilesIter gpxFileIter = mGpxAndZipFiles.iterator();
-        if (gpxFileIter == null) {
+        GpxFilesAndZipFilesIter gpxFilesAndZipFilesIter = mGpxAndZipFiles.iterator();
+        if (gpxFilesAndZipFilesIter == null) {
             mErrorDisplayer.displayError(R.string.error_cant_read_sd);
             return;
         }
 
         mImportThreadHelper.start();
-
-        while (gpxFileIter.hasNext()) {
-            if (!mImportThreadHelper.processFile(gpxFileIter.next()))
+        while (gpxFilesAndZipFilesIter.hasNext()) {
+            if (!mImportThreadHelper.processFile(gpxFilesAndZipFilesIter.next()))
                 return;
         }
         mImportThreadHelper.end();

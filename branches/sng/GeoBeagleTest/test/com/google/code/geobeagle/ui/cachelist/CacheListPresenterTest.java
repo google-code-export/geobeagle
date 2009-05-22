@@ -124,10 +124,10 @@ public class CacheListPresenterTest {
         PowerMock.verifyAll();
     }
 
-    @Test
-    public void testCompassListener() {
-        new CompassListener(null, null, 0).onAccuracyChanged(null, 0);
-    }
+    // @Test
+    // public void testCompassListener() {
+    // new CompassListener(null, null, 0).onAccuracyChanged(null, 0);
+    // }
 
     @Test
     public void testCompassOnSensorUnchanged() {
@@ -136,6 +136,11 @@ public class CacheListPresenterTest {
         };
         final CompassListener compassListener = new CompassListener(null, null, 0);
         compassListener.onSensorChanged(0, values);
+    }
+
+    @Test
+    public void testCompassOnAccuracyChanged() {
+        new CompassListener(null, null, 0).onAccuracyChanged(0, 0);
     }
 
     @Test

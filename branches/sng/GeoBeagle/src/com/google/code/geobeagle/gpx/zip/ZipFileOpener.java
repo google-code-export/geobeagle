@@ -17,59 +17,82 @@ package com.google.code.geobeagle.gpx.zip;
 import com.google.code.geobeagle.gpx.IGpxReader;
 import com.google.code.geobeagle.gpx.IGpxReaderIter;
 import com.google.code.geobeagle.gpx.GpxAndZipFiles.GpxFilenameFilter;
+import com.google.code.geobeagle.io.GpxToCache.Aborter;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.zip.ZipEntry;
 
 public class ZipFileOpener {
-    public static class ZipFileIter implements IGpxReaderIter {
-        ZipEntry mNextZipEntry;
-        private final GpxZipInputStream mZipInputStream;
-        private GpxFilenameFilter mGpxFilenameFilter;
 
-        ZipFileIter(GpxZipInputStream zipInputStream, GpxFilenameFilter gpxFilenameFilter) {
+    public static class ZipFileIter implements IGpxReaderIter {
+        private final Aborter mAborter;
+        private ZipEntry mNextZipEntry;
+        private final ZipInputFileTester mZipInputFileTester;
+        private final GpxZipInputStream mZipInputStream;
+
+        ZipFileIter(GpxZipInputStream zipInputStream, Aborter aborter,
+                ZipInputFileTester zipInputFileTester, ZipEntry nextZipEntry) {
+            mZipInputStream = zipInputStream;
+            mNextZipEntry = nextZipEntry;
+            mAborter = aborter;
+            mZipInputFileTester = zipInputFileTester;
+        }
+
+        ZipFileIter(GpxZipInputStream zipInputStream, Aborter aborter,
+                ZipInputFileTester zipInputFileTester) {
             mZipInputStream = zipInputStream;
             mNextZipEntry = null;
-            mGpxFilenameFilter = gpxFilenameFilter;
+            mAborter = aborter;
+            mZipInputFileTester = zipInputFileTester;
         }
 
         public boolean hasNext() throws IOException {
+            // Iterate through zip file entries.
             if (mNextZipEntry == null) {
                 do {
+                    if (mAborter.isAborted())
+                        break;
                     mNextZipEntry = mZipInputStream.getNextEntry();
-                } while (mNextZipEntry != null
-                        && (mNextZipEntry.isDirectory() || !mGpxFilenameFilter.accept(mNextZipEntry
-                                .getName())));
+                } while (mNextZipEntry != null && !mZipInputFileTester.isValid(mNextZipEntry));
             }
             return mNextZipEntry != null;
         }
 
         public IGpxReader next() throws IOException {
-            if (mNextZipEntry == null)
-                mNextZipEntry = mZipInputStream.getNextEntry();
-
-            if (mNextZipEntry == null)
-                return null;
-
             final String name = mNextZipEntry.getName();
             mNextZipEntry = null;
             return new GpxReader(name, new InputStreamReader(mZipInputStream.getStream()));
         }
     }
 
+    public static class ZipInputFileTester {
+        private final GpxFilenameFilter mGpxFilenameFilter;
+
+        public ZipInputFileTester(GpxFilenameFilter gpxFilenameFilter) {
+            mGpxFilenameFilter = gpxFilenameFilter;
+        }
+
+        public boolean isValid(ZipEntry zipEntry) {
+            return (!zipEntry.isDirectory() && mGpxFilenameFilter.accept(zipEntry.getName()));
+        }
+    }
+
+    private final Aborter mAborter;
     private final String mFilename;
+    private final ZipInputFileTester mZipInputFileTester;
     private final ZipInputStreamFactory mZipInputStreamFactory;
-    private final GpxFilenameFilter mGpxFilenameFilter;
 
     public ZipFileOpener(String filename, ZipInputStreamFactory zipInputStreamFactory,
-            GpxFilenameFilter gpxFilenameFilter) {
+            ZipInputFileTester zipInputFileTester, Aborter aborter) {
         mFilename = filename;
         mZipInputStreamFactory = zipInputStreamFactory;
-        mGpxFilenameFilter = gpxFilenameFilter;
+        mAborter = aborter;
+        mZipInputFileTester = zipInputFileTester;
     }
 
     public ZipFileIter iterator() throws IOException {
-        return new ZipFileIter(mZipInputStreamFactory.create(mFilename), mGpxFilenameFilter);
+        return new ZipFileIter(mZipInputStreamFactory.create(mFilename), mAborter,
+                mZipInputFileTester);
     }
 }

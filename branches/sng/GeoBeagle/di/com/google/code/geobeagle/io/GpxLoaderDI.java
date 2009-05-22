@@ -14,13 +14,14 @@
 
 package com.google.code.geobeagle.io;
 
+import com.google.code.geobeagle.io.GpxToCache.Aborter;
 import com.google.code.geobeagle.io.GpxToCacheDI.XmlPullParserWrapper;
 import com.google.code.geobeagle.ui.ErrorDisplayer;
 
 public class GpxLoaderDI {
     public static GpxLoader create(CachePersisterFacade cachePersisterFacade,
-            XmlPullParserWrapper xmlPullParserFactory, ErrorDisplayer errorDisplayer) {
-        final GpxToCache gpxToCache = new GpxToCache(xmlPullParserFactory);
+            XmlPullParserWrapper xmlPullParserFactory, Aborter aborter, ErrorDisplayer errorDisplayer) {
+        final GpxToCache gpxToCache = new GpxToCache(xmlPullParserFactory, aborter);
         return new GpxLoader(gpxToCache, cachePersisterFacade, errorDisplayer);
     }
 }

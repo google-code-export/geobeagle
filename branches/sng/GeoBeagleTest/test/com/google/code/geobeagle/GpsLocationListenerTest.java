@@ -18,6 +18,7 @@ import static org.easymock.EasyMock.expect;
 import static org.easymock.classextension.EasyMock.createMock;
 import static org.easymock.classextension.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.verify;
+import static org.junit.Assert.*;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -76,6 +77,14 @@ public class GpsLocationListenerTest {
         replay(locationListener);
         new CombinedLocationListener(null, locationListener).onProviderEnabled("gps");
         verify(locationListener);
+    }
+
+    @Test
+    public void testAzimuth() {
+        final LocationControlBuffered locationControlBuffered = new LocationControlBuffered(null,
+                null, null, null, null, null);
+        locationControlBuffered.setAzimuth(23.8f);
+        assertEquals(23.8f, locationControlBuffered.getAzimuth(), .1f);
     }
 
     @Test

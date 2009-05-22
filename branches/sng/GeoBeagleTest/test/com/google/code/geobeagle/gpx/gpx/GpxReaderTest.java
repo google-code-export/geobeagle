@@ -16,8 +16,6 @@ package com.google.code.geobeagle.gpx.gpx;
 
 import static org.junit.Assert.assertEquals;
 
-import com.google.code.geobeagle.gpx.GpxAndZipFiles;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.api.easymock.PowerMock;
@@ -44,7 +42,7 @@ public class GpxReaderTest {
         FileReader fileReader = PowerMock.createMock(FileReader.class);
         BufferedReader bufferedReader = PowerMock.createMock(BufferedReader.class);
 
-        PowerMock.expectNew(FileReader.class, GpxAndZipFiles.GPX_DIR + "foo.gpx").andReturn(
+        PowerMock.expectNew(FileReader.class, "foo.gpx").andReturn(
                 fileReader);
         PowerMock.expectNew(BufferedReader.class, fileReader).andReturn(bufferedReader);
 
