@@ -15,9 +15,9 @@
 package com.google.code.geobeagle.io;
 
 import static org.easymock.EasyMock.expect;
-import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import com.google.code.geobeagle.io.GpxToCache.Aborter;
 import com.google.code.geobeagle.io.GpxToCache.CancelException;

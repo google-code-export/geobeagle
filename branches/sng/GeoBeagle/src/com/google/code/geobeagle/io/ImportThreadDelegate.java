@@ -20,7 +20,6 @@ import com.google.code.geobeagle.gpx.IGpxReader;
 import com.google.code.geobeagle.gpx.GpxAndZipFiles.GpxFilesAndZipFilesIter;
 import com.google.code.geobeagle.io.EventHelperDI.EventHelperFactory;
 import com.google.code.geobeagle.io.GpxImporterDI.MessageHandler;
-import com.google.code.geobeagle.io.GpxToCache.Aborter;
 import com.google.code.geobeagle.ui.ErrorDisplayer;
 
 import org.xmlpull.v1.XmlPullParserException;

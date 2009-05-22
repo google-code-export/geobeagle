@@ -10,7 +10,6 @@ import com.google.code.geobeagle.gpx.GpxAndZipFiles.GpxAndZipFilenameFilter;
 import com.google.code.geobeagle.gpx.gpx.GpxFileOpener;
 import com.google.code.geobeagle.gpx.zip.ZipFileOpener;
 import com.google.code.geobeagle.gpx.zip.ZipFileOpener.ZipFileIter;
-import com.google.code.geobeagle.io.DatabaseDI.SQLiteWrapper;
 import com.google.code.geobeagle.io.GpxImporterDI.ImportThreadWrapper;
 import com.google.code.geobeagle.io.GpxImporterDI.MessageHandler;
 import com.google.code.geobeagle.io.GpxImporterDI.ToastFactory;
