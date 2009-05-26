@@ -26,9 +26,13 @@ import com.google.code.geobeagle.data.Geocache;
 
 import org.junit.Test;
 
+import java.util.Locale;
+
 public class GeocacheToGoogleMapTest {
     @Test
     public void testConvert() {
+        Locale.setDefault(Locale.GERMANY);
+        
         ResourceProvider resourceProvider = createMock(ResourceProvider.class);
         Geocache geocache = createMock(Geocache.class);
         expect(geocache.getIdAndName()).andReturn("GCFOO");

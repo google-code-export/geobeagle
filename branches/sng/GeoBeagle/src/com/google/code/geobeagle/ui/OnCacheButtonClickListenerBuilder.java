@@ -17,7 +17,6 @@ package com.google.code.geobeagle.ui;
 import com.google.code.geobeagle.intents.IntentStarter;
 
 import android.app.Activity;
-import android.widget.Button;
 
 public class OnCacheButtonClickListenerBuilder {
     private final Activity mActivity;
@@ -29,7 +28,7 @@ public class OnCacheButtonClickListenerBuilder {
     }
 
     public void set(int id, IntentStarter intentStarter, String errorString) {
-        ((Button)mActivity.findViewById(id)).setOnClickListener(new CacheButtonOnClickListener(
+        mActivity.findViewById(id).setOnClickListener(new CacheButtonOnClickListener(
                 intentStarter, errorString, mErrorDisplayer));
     }
 }

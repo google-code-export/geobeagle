@@ -102,7 +102,7 @@
 
 		<LinearLayout android:orientation="horizontal"
 			android:layout_height="wrap_content" android:layout_width="fill_parent">
-			<Button android:id="@+id/radar" android:layout_height="wrap_content"
+			<Button android:id="@+id/radar" android:visibility="gone" android:layout_height="wrap_content"
 				android:layout_width="wrap_content" android:text="@string/radar"
 				android:layout_weight="1" />
 			<Button android:id="@+id/maps" android:layout_height="wrap_content"

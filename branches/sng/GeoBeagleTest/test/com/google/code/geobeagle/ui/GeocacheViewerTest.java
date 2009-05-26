@@ -16,6 +16,7 @@ package com.google.code.geobeagle.ui;
 
 import static org.easymock.EasyMock.expect;
 
+import com.google.code.geobeagle.RadarView;
 import com.google.code.geobeagle.data.Geocache;
 
 import org.junit.Test;
@@ -38,9 +39,11 @@ public class GeocacheViewerTest {
         TextView name = PowerMock.createMock(TextView.class);
         TextView coords = PowerMock.createMock(TextView.class);
         Geocache geocache = PowerMock.createMock(Geocache.class);
+        RadarView radar = PowerMock.createMock(RadarView.class);
 
         expect(geocache.getLatitude()).andReturn(37.0);
         expect(geocache.getLongitude()).andReturn(-122.0);
+        radar.setTarget(37000000, -122000000);
         expect(geocache.getId()).andReturn("GC123");
         expect(geocache.getName()).andReturn("a cache");
 
@@ -49,8 +52,7 @@ public class GeocacheViewerTest {
         coords.setText("37 00.000, -122 00.000");
 
         PowerMock.replayAll();
-        GeocacheViewer geocacheViewer = new GeocacheViewer(id, name, coords);
-        geocacheViewer.set(geocache);
+        new GeocacheViewer(radar, id, name, coords).set(geocache);
         PowerMock.verifyAll();
     }
 }

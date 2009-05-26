@@ -28,6 +28,7 @@ import com.google.code.geobeagle.io.Database;
 import com.google.code.geobeagle.io.DatabaseDI;
 import com.google.code.geobeagle.io.LocationSaver;
 import com.google.code.geobeagle.io.DatabaseDI.SQLiteWrapper;
+import com.google.code.geobeagle.ui.CacheButtonOnClickListener;
 import com.google.code.geobeagle.ui.ContentSelector;
 import com.google.code.geobeagle.ui.ErrorDisplayer;
 import com.google.code.geobeagle.ui.GeocacheViewer;
@@ -187,7 +188,7 @@ public class GeoBeagle extends Activity implements LifecycleManager {
         final TextView gccoords = (TextView)findViewById(R.id.gccoords);
         mRadar = (RadarView)findViewById(R.id.radarview);
         mRadar.setUseMetric(true);
-//        mRadar.startSweep();
+        // mRadar.startSweep();
         mRadar.setDistanceView((TextView)findViewById(R.id.radar_distance),
                 (TextView)findViewById(R.id.radar_bearing),
                 (TextView)findViewById(R.id.radar_accuracy));
@@ -311,7 +312,7 @@ public class GeoBeagle extends Activity implements LifecycleManager {
                 mGeocacheViewer, new GeocacheToGoogleMap(mResourceProvider)), "");
         cacheClickListenerSetter.set(R.id.cache_page, new IntentStarterViewUri(this, intentFactory,
                 mGeocacheViewer, new GeocacheToCachePage(mResourceProvider)), "");
-        cacheClickListenerSetter.set(R.id.radar, new IntentStarterRadar(this),
+        cacheClickListenerSetter.set(R.id.radarview, new IntentStarterRadar(this),
                 "\nPlease install the Radar application to use Radar.");
     }
 

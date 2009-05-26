@@ -15,15 +15,13 @@
 package com.google.code.geobeagle.ui;
 
 import static org.easymock.EasyMock.expect;
-import static org.junit.Assert.assertEquals;
 
 import com.google.code.geobeagle.CombinedLocationManager;
 import com.google.code.geobeagle.LocationControlBuffered;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.ResourceProvider;
-import com.google.code.geobeagle.ui.GpsStatusWidget.MeterFormatter;
-import com.google.code.geobeagle.ui.GpsStatusWidget.MeterView;
 import com.google.code.geobeagle.ui.GpsStatusWidget.UpdateGpsWidgetRunnable;
+import com.google.code.geobeagle.ui.GpsStatusWidget.GpsStatusWidgetDelegate;
 
 import org.easymock.EasyMock;
 import org.junit.Test;
@@ -37,106 +35,36 @@ import android.location.Location;
 import android.location.LocationProvider;
 import android.os.Bundle;
 import android.os.Handler;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest( {
-        Bundle.class, Color.class, Handler.class, TextView.class
+        Bundle.class, Color.class, Handler.class, LinearLayout.class, TextView.class,
+        GpsStatusWidget.class
 })
 public class GpsStatusWidgetTest {
     @Test
-    public void testAccuracyToBars() {
-        MeterFormatter meterFormatter = new MeterFormatter();
-        assertEquals(0, meterFormatter.accuracyToBarCount(-1));
-        assertEquals(0, meterFormatter.accuracyToBarCount(0));
-        assertEquals(0, meterFormatter.accuracyToBarCount(1));
-        assertEquals(1, meterFormatter.accuracyToBarCount(2));
-        assertEquals(2, meterFormatter.accuracyToBarCount(4));
-        assertEquals(3, meterFormatter.accuracyToBarCount(8));
-        assertEquals(GpsStatusWidget.METER_LEFT.length(), meterFormatter
-                .accuracyToBarCount(Long.MAX_VALUE));
+    public void testGpsStatusWidget_OnLocationChangedNullLocation() {
+        PowerMock.suppressConstructor(LinearLayout.class);
+
+        new GpsStatusWidgetDelegate(null, null, null, null, null, null, null, null, null, null)
+                .onLocationChanged(null);
     }
 
     @Test
-    public void testAccuracyToBarText() {
-        MeterFormatter meterFormatter = new MeterFormatter();
-        assertEquals("[·×·]", meterFormatter.barsToMeterText(meterFormatter.accuracyToBarCount(2),
-                "×"));
-    }
-
-    @Test
-    public void testGetAlpha() {
-        MeterFormatter meterFormatter = new MeterFormatter();
-        assertEquals(256, meterFormatter.lagToAlpha(-1));
-        assertEquals(255, meterFormatter.lagToAlpha(0));
-        assertEquals(254, meterFormatter.lagToAlpha(8));
-        assertEquals(253, meterFormatter.lagToAlpha(16));
-        assertEquals(128, meterFormatter.lagToAlpha(Integer.MAX_VALUE));
-    }
-
-    @Test
-    public void testGetMeterText() {
-        MeterFormatter meterFormatter = new MeterFormatter();
-        assertEquals("[×]", meterFormatter.barsToMeterText(0, "×"));
-        assertEquals("[·×·]", meterFormatter.barsToMeterText(1, "×"));
-        assertEquals("[‹····×····›]", meterFormatter.barsToMeterText(5, "×"));
-    }
-
-    @Test
-    public void testMeterView() {
-        TextView textView = PowerMock.createMock(TextView.class);
-        MeterFormatter meterFormatter = PowerMock.createMock(MeterFormatter.class);
-        PowerMock.mockStatic(Color.class);
-
-        expect(meterFormatter.accuracyToBarCount(342)).andReturn(7);
-        expect(meterFormatter.barsToMeterText(7, "90°")).andReturn("<-->");
-        expect(meterFormatter.lagToAlpha(17)).andReturn(94);
-        textView.setText("<-->");
-        expect(Color.argb(94, 147, 190, 38)).andReturn(333);
-        textView.setTextColor(333);
-
-        PowerMock.replayAll();
-        new MeterView(textView, meterFormatter).set(17, 342, 90);
-        PowerMock.verifyAll();
-    }
-
-    @Test
-    public void testSetEnabledDisabled() {
+    public void testGpsWidget_SetEnabledDisabled() {
         TextView status = PowerMock.createMock(TextView.class);
+        PowerMock.suppressConstructor(LinearLayout.class);
 
         status.setText("gps ENABLED");
         status.setText("gps DISABLED");
 
         PowerMock.replayAll();
-        GpsStatusWidget gpsStatusWidget = new GpsStatusWidget(null, null, null, null, null, status,
-                null, null, null, null);
+        GpsStatusWidgetDelegate gpsStatusWidget = new GpsStatusWidgetDelegate(null, null, null,
+                null, null, null, null, null, status, null);
         gpsStatusWidget.onProviderEnabled("gps");
         gpsStatusWidget.onProviderDisabled("gps");
-        PowerMock.verifyAll();
-    }
-
-    @Test
-    public void testOnLocationChangedNullLocation() {
-        new GpsStatusWidget(null, null, null, null, null, null, null, null, null, null)
-                .onLocationChanged(null);
-    }
-
-    @Test
-    public void testRefreshLocationLocationDisabled() {
-        MeterView meterView = PowerMock.createMock(MeterView.class);
-        TextView lag = PowerMock.createMock(TextView.class);
-        TextView accuracy = PowerMock.createMock(TextView.class);
-        CombinedLocationManager combinedLocationManager = PowerMock
-                .createMock(CombinedLocationManager.class);
-
-        expect(combinedLocationManager.isProviderEnabled()).andReturn(false);
-        lag.setText("");
-        accuracy.setText("");
-        meterView.set(Long.MAX_VALUE, Float.MAX_VALUE, 0);
-
-        PowerMock.replayAll();
-        new GpsStatusWidget(null, meterView, null, lag, accuracy, null, null, null,
-                combinedLocationManager, null).refreshLocation();
         PowerMock.verifyAll();
     }
 
@@ -152,6 +80,9 @@ public class GpsStatusWidgetTest {
                 .createMock(CombinedLocationManager.class);
         LocationControlBuffered locationControlBuffered = PowerMock
                 .createMock(LocationControlBuffered.class);
+        PowerMock.suppressConstructor(LinearLayout.class);
+        PowerMock.suppressMethod(LinearLayout.class, "postInvalidate");
+        GpsStatusWidget gpsStatusWidget = PowerMock.createMock(GpsStatusWidget.class);
 
         expect(locationManager.isProviderEnabled()).andReturn(true);
         expect(time.getCurrentTime()).andReturn(10000L);
@@ -161,30 +92,89 @@ public class GpsStatusWidgetTest {
         expect(location.getProvider()).andReturn("gps");
         expect(locationControlBuffered.getAzimuth()).andReturn(45f);
         provider.setText("gps");
-        lag.setText("11s");
+        lag.setText("10s");
         accuracy.setText("12m");
-        meterView.set(10000, 12f, 45);
+        meterView.set(12f, 45);
+        expect(time.getCurrentTime()).andReturn(20000L);
+        meterView.setLag(10000);
+        gpsStatusWidget.postInvalidate();
 
         PowerMock.replayAll();
-        GpsStatusWidget gpsStatusWidget = new GpsStatusWidget(null, meterView, provider, lag,
-                accuracy, null, time, location, locationManager, locationControlBuffered);
-        gpsStatusWidget.onLocationChanged(location);
-        gpsStatusWidget.refreshLocation();
+        GpsStatusWidgetDelegate gpsStatusWidgetDelegate = new GpsStatusWidgetDelegate(
+                gpsStatusWidget, accuracy, locationControlBuffered, locationManager, lag,
+                meterView, provider, null, null, time);
+        gpsStatusWidgetDelegate.onLocationChanged(location);
+        gpsStatusWidgetDelegate.fadeMeter();
         PowerMock.verifyAll();
     }
 
     @Test
-    public void testSetLocationGpsReportsFutureTimeWeirdnessDelay() {
-        MeterView meterView = PowerMock.createMock(MeterView.class);
-        TextView lag = PowerMock.createMock(TextView.class);
-        TextView accuracy = PowerMock.createMock(TextView.class);
-        TextView provider = PowerMock.createMock(TextView.class);
+    public void testFadeMeter() {
         Misc.Time time = PowerMock.createMock(Misc.Time.class);
+        MeterView meterView = PowerMock.createMock(MeterView.class);
+
+        expect(time.getCurrentTime()).andReturn(1000L);
+        meterView.setLag(1000);
+
+        PowerMock.replayAll();
+        new GpsStatusWidgetDelegate(null, null, null, null, null, meterView, null, null, null, time)
+                .fadeMeter();
+        PowerMock.verifyAll();
+    }
+
+    @Test
+    public void testFadeMeterPostInvalidate() {
+        Misc.Time time = PowerMock.createMock(Misc.Time.class);
+        MeterView meterView = PowerMock.createMock(MeterView.class);
+        GpsStatusWidget gpsStatusWidget = PowerMock.createMock(GpsStatusWidget.class);
+
+        expect(time.getCurrentTime()).andReturn(900L);
+        meterView.setLag(900);
+        gpsStatusWidget.postInvalidateDelayed(100);
+
+        PowerMock.replayAll();
+        new GpsStatusWidgetDelegate(gpsStatusWidget, null, null, null, null, meterView, null, null,
+                null, time).fadeMeter();
+        PowerMock.verifyAll();
+    }
+
+    @Test
+    public void testOnLocationChangedProviderDisabled() {
         Location location = PowerMock.createMock(Location.class);
         CombinedLocationManager combinedLocationManager = PowerMock
                 .createMock(CombinedLocationManager.class);
+        TextView lag = PowerMock.createMock(TextView.class);
+        TextView accuracy = PowerMock.createMock(TextView.class);
+        MeterView meter = PowerMock.createMock(MeterView.class);
+
+        expect(combinedLocationManager.isProviderEnabled()).andReturn(false);
+        lag.setText("");
+        accuracy.setText("");
+        meter.set(Float.MAX_VALUE, 0);
+
+        PowerMock.replayAll();
+        new GpsStatusWidgetDelegate(null, accuracy, null, combinedLocationManager, lag, meter,
+                null, null, null, null).onLocationChanged(location);
+        PowerMock.verifyAll();
+
+    }
+
+    @Test
+    public void testSetLocationGpsReportsFutureTimeWeirdnessDelay() {
+        TextView accuracy = PowerMock.createMock(TextView.class);
+        CombinedLocationManager combinedLocationManager = PowerMock
+                .createMock(CombinedLocationManager.class);
+        TextView lag = PowerMock.createMock(TextView.class);
+        Location location = PowerMock.createMock(Location.class);
         LocationControlBuffered locationControlBuffered = PowerMock
                 .createMock(LocationControlBuffered.class);
+        MeterView meterView = PowerMock.createMock(MeterView.class);
+        TextView provider = PowerMock.createMock(TextView.class);
+        Misc.Time time = PowerMock.createMock(Misc.Time.class);
+        GpsStatusWidget gpsStatusWidget = PowerMock.createMock(GpsStatusWidget.class);
+
+        PowerMock.suppressConstructor(LinearLayout.class);
+        PowerMock.suppressMethod(LinearLayout.class, "postInvalidate");
 
         expect(combinedLocationManager.isProviderEnabled()).andReturn(true);
         expect(time.getCurrentTime()).andReturn(10000L);
@@ -193,24 +183,31 @@ public class GpsStatusWidgetTest {
         expect(location.getAccuracy()).andReturn(12f);
         expect(location.getProvider()).andReturn("gps");
         expect(locationControlBuffered.getAzimuth()).andReturn(45f);
+        meterView.setLag(10000);
+        expect(time.getCurrentTime()).andReturn(20000L);
+        gpsStatusWidget.postInvalidate();
+
         provider.setText("gps");
         lag.setText("8s");
         accuracy.setText("12m");
-        meterView.set(8000, 12f, 45);
+        meterView.set(12f, 45);
 
         PowerMock.replayAll();
-        GpsStatusWidget gpsStatusWidget = new GpsStatusWidget(null, meterView, provider, lag,
-                accuracy, null, time, location, combinedLocationManager, locationControlBuffered);
-        gpsStatusWidget.onLocationChanged(location);
-        gpsStatusWidget.refreshLocation();
+        GpsStatusWidgetDelegate gpsStatusWidgetDelegate = new GpsStatusWidgetDelegate(
+                gpsStatusWidget, accuracy, locationControlBuffered, combinedLocationManager, lag,
+                meterView, provider, null, null, time);
+        gpsStatusWidgetDelegate.onLocationChanged(location);
+        gpsStatusWidgetDelegate.fadeMeter();
         PowerMock.verifyAll();
     }
 
     @Test
     public void testSetStatus() {
+        Bundle bundle = PowerMock.createMock(Bundle.class);
         ResourceProvider resourceProvider = PowerMock.createMock(ResourceProvider.class);
         TextView status = PowerMock.createMock(TextView.class);
-        Bundle bundle = PowerMock.createMock(Bundle.class);
+
+        PowerMock.suppressConstructor(LinearLayout.class);
 
         expect(resourceProvider.getString(R.string.out_of_service)).andReturn("OUT OF SERVICE");
         expect(resourceProvider.getString(R.string.available)).andReturn("AVAILABLE");
@@ -221,8 +218,8 @@ public class GpsStatusWidgetTest {
         status.setText("gps status: TEMPORARILY UNAVAILABLE");
 
         PowerMock.replayAll();
-        GpsStatusWidget gpsStatusWidget = new GpsStatusWidget(resourceProvider, null, null, null,
-                null, status, null, null, null, null);
+        GpsStatusWidgetDelegate gpsStatusWidget = new GpsStatusWidgetDelegate(null, null, null,
+                null, null, null, null, resourceProvider, status, null);
         gpsStatusWidget.onStatusChanged("gps", LocationProvider.OUT_OF_SERVICE, bundle);
         gpsStatusWidget.onStatusChanged("network", LocationProvider.AVAILABLE, bundle);
         gpsStatusWidget.onStatusChanged("gps", LocationProvider.TEMPORARILY_UNAVAILABLE, bundle);
@@ -231,14 +228,16 @@ public class GpsStatusWidgetTest {
 
     @Test
     public void testUpdateGpsWidgetRunnable() {
-        GpsStatusWidget gpsStatusWidget = PowerMock.createMock(GpsStatusWidget.class);
+        GpsStatusWidgetDelegate gpsStatusWidget = PowerMock
+                .createMock(GpsStatusWidgetDelegate.class);
         Handler handler = PowerMock.createMock(Handler.class);
 
-        gpsStatusWidget.refreshLocation();
+        gpsStatusWidget.updateLag();
+        gpsStatusWidget.updateMeter();
         EasyMock
                 .expect(
                         handler.postDelayed(EasyMock.isA(UpdateGpsWidgetRunnable.class), EasyMock
-                                .eq(100L))).andReturn(true);
+                                .eq(500L))).andReturn(true);
 
         PowerMock.replayAll();
         new UpdateGpsWidgetRunnable(gpsStatusWidget, handler).run();
