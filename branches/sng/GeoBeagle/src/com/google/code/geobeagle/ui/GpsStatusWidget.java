@@ -20,143 +20,191 @@ import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.ResourceProvider;
 import com.google.code.geobeagle.ui.Misc.Time;
 
-import android.graphics.Color;
+import android.content.Context;
+import android.graphics.Canvas;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationProvider;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 /**
- * @author sng Displays the GPS status (accuracy, availability, etc).
+ * @author sng Displays the GPS status (mAccuracy, availability, etc).
  */
-public class GpsStatusWidget implements LocationListener {
-    public static class MeterFormatter {
-        public int accuracyToBarCount(float accuracy) {
-            return Math.min(METER_LEFT.length(), (int)(Math.log(Math.max(1, accuracy)) / Math
-                    .log(2)));
+public class GpsStatusWidget extends LinearLayout implements LocationListener {
+
+    public static class GpsStatusWidgetDelegate {
+        private float mAccuracy;
+        private final TextView mAccuracyView;
+        private CombinedLocationManager mCombinedLocationManager;
+        private final TextView mLag;
+        private long mLastUpdateTime;
+        private final LocationControlBuffered mLocationControlBuffered;
+        private long mLocationTime;
+        private final MeterView mMeterView;
+        private View mParent;
+        private final TextView mProvider;
+        private final ResourceProvider mResourceProvider;
+        private final TextView mStatus;
+        private final Time mTime;
+
+        public GpsStatusWidgetDelegate(GpsStatusWidget parent, TextView accuracyView,
+                LocationControlBuffered locationControlBuffered,
+                CombinedLocationManager combinedLocationManager, TextView lag, MeterView meterView,
+                TextView provider, ResourceProvider resourceProvider, TextView status, Time time) {
+            mParent = parent;
+            mAccuracyView = accuracyView;
+            mCombinedLocationManager = combinedLocationManager;
+            mLag = lag;
+            mLocationControlBuffered = locationControlBuffered;
+            mMeterView = meterView;
+            mProvider = provider;
+            mStatus = status;
+            mTime = time;
+            mResourceProvider = resourceProvider;
+            mLastUpdateTime = 0;
         }
 
-        public String barsToMeterText(int bars, String center) {
-            StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.append('[').append(METER_LEFT.substring(METER_LEFT.length() - bars))
-                    .append(center).append(METER_RIGHT.substring(0, bars)).append(']');
-            return stringBuilder.toString();
+        void fadeMeter() {
+            long lastUpdateLag = mTime.getCurrentTime() - mLastUpdateTime;
+            mMeterView.setLag(lastUpdateLag);
+            if (lastUpdateLag < 1000)
+                mParent.postInvalidateDelayed(100);
+            // Log.v("GeoBeagle", "painting " + lastUpdateLag);
         }
 
-        public int lagToAlpha(long milliseconds) {
-            return Math.max(128, 255 - (int)(milliseconds >> 3));
+        public void onLocationChanged(Location location) {
+            if (location == null)
+                return;
+
+            if (!mCombinedLocationManager.isProviderEnabled()) {
+                mLag.setText("");
+                mAccuracyView.setText("");
+                mMeterView.set(Float.MAX_VALUE, 0);
+                return;
+            }
+
+            mLastUpdateTime = mTime.getCurrentTime();
+            mLocationTime = Math.min(location.getTime(), mLastUpdateTime);
+            if (mLastUpdateTime - mLocationTime < 4000)
+                mLocationTime = mLastUpdateTime;
+            mProvider.setText(location.getProvider());
+
+            mAccuracy = location.getAccuracy();
+            mAccuracyView.setText((Integer.toString((int)mAccuracy) + "m").trim());
+
+            updateMeter();
+            updateLag();
+
+            mParent.postInvalidate();
         }
-    }
 
-    public static class MeterView {
-        private final MeterFormatter mMeterFormatter;
-        private final TextView mTextView;
-
-        public MeterView(TextView textView, MeterFormatter meterFormatter) {
-            mTextView = textView;
-            mMeterFormatter = meterFormatter;
+        public void onProviderDisabled(String provider) {
+            mStatus.setText(provider + " DISABLED");
         }
 
-        public void set(long lag, float accuracy, float azimuth) {
-            mTextView.setText(mMeterFormatter.barsToMeterText(mMeterFormatter
-                    .accuracyToBarCount(accuracy), String.valueOf((int)azimuth) + "°"));
-            mTextView.setTextColor(Color.argb(mMeterFormatter.lagToAlpha(lag), 147, 190, 38));
+        public void onProviderEnabled(String provider) {
+            mStatus.setText(provider + " ENABLED");
+        }
+
+        public void onStatusChanged(String provider, int status, Bundle extras) {
+            switch (status) {
+                case LocationProvider.OUT_OF_SERVICE:
+                    mStatus.setText(provider + " status: "
+                            + mResourceProvider.getString(R.string.out_of_service));
+                    break;
+                case LocationProvider.AVAILABLE:
+                    mStatus.setText(provider + " status: "
+                            + mResourceProvider.getString(R.string.available));
+                    break;
+                case LocationProvider.TEMPORARILY_UNAVAILABLE:
+                    mStatus.setText(provider + " status: "
+                            + mResourceProvider.getString(R.string.temporarily_unavailable));
+                    break;
+            }
+        }
+
+        public void updateLag() {
+            final long locationLag = mTime.getCurrentTime() - mLocationTime;
+            mLag.setText(Long.toString(locationLag / 1000) + "s");
+        }
+
+        public void updateMeter() {
+            mMeterView.set(mAccuracy, mLocationControlBuffered.getAzimuth());
         }
     }
 
     public static class UpdateGpsWidgetRunnable implements Runnable {
-        private final GpsStatusWidget mGpsStatusWidget;
+        private final GpsStatusWidgetDelegate mGpsStatusWidgetDelegate;
         private final Handler mHandler;
 
-        UpdateGpsWidgetRunnable(GpsStatusWidget gpsStatusWidget, Handler handler) {
-            mGpsStatusWidget = gpsStatusWidget;
+        UpdateGpsWidgetRunnable(GpsStatusWidgetDelegate gpsStatusWidgetDelegate, Handler handler) {
+            mGpsStatusWidgetDelegate = gpsStatusWidgetDelegate;
             mHandler = handler;
         }
 
         public void run() {
-            mGpsStatusWidget.refreshLocation();
-            mHandler.postDelayed(this, 100);
+            // Update the lag time (seconds) and the orientation.
+            mGpsStatusWidgetDelegate.updateLag();
+            mGpsStatusWidgetDelegate.updateMeter();
+
+            mHandler.postDelayed(this, 500);
         }
     }
 
-    public final static String METER_LEFT = "····«····‹····";
-    public final static String METER_RIGHT = "····›····»····";
-    private float mAccuracy;
-    private final TextView mAccuracyView;
-    private CombinedLocationManager mCombinedLocationManager;
-    private final TextView mLag;
-    private long mLastUpdateTime;
-    private long mLocationTime;
-    private final MeterView mMeterView;
-    private final TextView mProvider;
-    private final ResourceProvider mResourceProvider;
-    private final TextView mStatus;
-    private final Time mTime;
-    private final LocationControlBuffered mLocationControlBuffered;
+    private final GpsStatusWidgetDelegate mGpsStatusWidgetDelegate;
 
-    public GpsStatusWidget(ResourceProvider resourceProvider, MeterView meterView,
-            TextView provider, TextView lag, TextView accuracy, TextView status, Time time,
-            Location initialLocation, CombinedLocationManager locationManager,
-            LocationControlBuffered locationControlBuffered) {
-        mResourceProvider = resourceProvider;
-        mMeterView = meterView;
-        mLag = lag;
-        mAccuracyView = accuracy;
-        mProvider = provider;
-        mStatus = status;
-        mTime = time;
-        mCombinedLocationManager = locationManager;
-        mLocationControlBuffered = locationControlBuffered;
+    public GpsStatusWidget(Context context, ResourceProvider resourceProvider,
+            MeterView.MeterFormatter meterFormatter, Time time,
+            CombinedLocationManager locationManager, LocationControlBuffered locationControlBuffered) {
+        super(context);
+
+        final LayoutInflater inflater = (LayoutInflater)context
+                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        final View gpsWidgetView = inflater.inflate(R.layout.gps_widget, this);
+
+        final TextView accuracyView = (TextView)gpsWidgetView.findViewById(R.id.accuracy);
+        final TextView lag = (TextView)gpsWidgetView.findViewById(R.id.lag);
+        final TextView provider = (TextView)gpsWidgetView.findViewById(R.id.provider);
+        final TextView status = (TextView)gpsWidgetView.findViewById(R.id.status);
+        final TextView locationViewer = (TextView)gpsWidgetView.findViewById(R.id.location_viewer);
+
+        final MeterView meterView = new MeterView(locationViewer, meterFormatter);
+
+        mGpsStatusWidgetDelegate = new GpsStatusWidgetDelegate(this, accuracyView,
+                locationControlBuffered, locationManager, lag, meterView, provider,
+                resourceProvider, status, time);
     }
 
-    public void onLocationChanged(Location location) {
-        if (location == null)
-            return;
-        mLastUpdateTime = mTime.getCurrentTime();
-        mLocationTime = Math.min(location.getTime(), mLastUpdateTime);
-        mProvider.setText(location.getProvider());
-        mAccuracy = location.getAccuracy();
+    public GpsStatusWidgetDelegate getGpsStatusWidgetDelegate() {
+        return mGpsStatusWidgetDelegate;
+    }
+
+    @Override
+    protected void dispatchDraw(Canvas canvas) {
+        mGpsStatusWidgetDelegate.fadeMeter();
+        Log.v("GeoBeagle", "dispatch draw");
+        super.dispatchDraw(canvas);
     };
 
+    public void onLocationChanged(Location location) {
+        mGpsStatusWidgetDelegate.onLocationChanged(location);
+    }
+
     public void onProviderDisabled(String provider) {
-        mStatus.setText(provider + " DISABLED");
+        mGpsStatusWidgetDelegate.onProviderDisabled(provider);
     }
 
     public void onProviderEnabled(String provider) {
-        mStatus.setText(provider + " ENABLED");
+        mGpsStatusWidgetDelegate.onProviderEnabled(provider);
     }
 
     public void onStatusChanged(String provider, int status, Bundle extras) {
-        switch (status) {
-            case LocationProvider.OUT_OF_SERVICE:
-                mStatus.setText(provider + " status: "
-                        + mResourceProvider.getString(R.string.out_of_service));
-                break;
-            case LocationProvider.AVAILABLE:
-                mStatus.setText(provider + " status: "
-                        + mResourceProvider.getString(R.string.available));
-                break;
-            case LocationProvider.TEMPORARILY_UNAVAILABLE:
-                mStatus.setText(provider + " status: "
-                        + mResourceProvider.getString(R.string.temporarily_unavailable));
-                break;
-        }
-    }
-
-    public void refreshLocation() {
-        if (mCombinedLocationManager.isProviderEnabled()) {
-            long currentTime = mTime.getCurrentTime();
-            long lastUpdateLag = currentTime - mLastUpdateTime;
-            long locationLag = currentTime - mLocationTime;
-            mAccuracyView.setText((Integer.toString((int)mAccuracy) + "m").trim());
-            mLag.setText(Long.toString(locationLag / 1000) + "s");
-            mMeterView.set(lastUpdateLag, mAccuracy, mLocationControlBuffered.getAzimuth());
-        } else {
-            mLag.setText("");
-            mAccuracyView.setText("");
-            mMeterView.set(Long.MAX_VALUE, Float.MAX_VALUE, 0);
-        }
+        mGpsStatusWidgetDelegate.onStatusChanged(provider, status, extras);
     }
 }

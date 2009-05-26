@@ -112,6 +112,7 @@ public class GpxImporterDI {
 
     // Too hard to test this class due to final methods in base.
     public static class MessageHandler extends Handler {
+        public static final String GEOBEAGLE = "GeoBeagle";
         static final int MSG_DONE = 1;
         static final int MSG_PROGRESS = 0;
 
@@ -144,7 +145,7 @@ public class GpxImporterDI {
 
         @Override
         public void handleMessage(Message msg) {
-            Log.v("GeoBeagle", "received msg: " + msg.what);
+            Log.v(GEOBEAGLE, "received msg: " + msg.what);
             switch (msg.what) {
                 case MessageHandler.MSG_PROGRESS:
                     mProgressDialogWrapper.setMessage(mStatus);
@@ -180,6 +181,8 @@ public class GpxImporterDI {
 
         public void updateSource(String text) {
             mSource = text;
+            mStatus = "Opening: " + mSource + "...";
+            sendEmptyMessage(MessageHandler.MSG_PROGRESS);
         }
 
         public void updateWaypointId(String wpt) {

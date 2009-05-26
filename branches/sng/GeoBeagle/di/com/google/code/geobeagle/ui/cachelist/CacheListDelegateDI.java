@@ -19,7 +19,6 @@ import com.google.code.geobeagle.CombinedLocationManager;
 import com.google.code.geobeagle.GeoBeagle;
 import com.google.code.geobeagle.LocationControlBuffered;
 import com.google.code.geobeagle.LocationControlDi;
-import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.ResourceProvider;
 import com.google.code.geobeagle.LocationControlBuffered.GpsDisabledLocation;
 import com.google.code.geobeagle.data.CacheListData;
@@ -43,10 +42,9 @@ import com.google.code.geobeagle.io.GpxToCache.Aborter;
 import com.google.code.geobeagle.io.GpxToCacheDI.XmlPullParserWrapper;
 import com.google.code.geobeagle.ui.ErrorDisplayer;
 import com.google.code.geobeagle.ui.GpsStatusWidget;
+import com.google.code.geobeagle.ui.MeterView;
 import com.google.code.geobeagle.ui.Misc;
 import com.google.code.geobeagle.ui.UpdateGpsWidgetRunnableDI;
-import com.google.code.geobeagle.ui.GpsStatusWidget.MeterFormatter;
-import com.google.code.geobeagle.ui.GpsStatusWidget.MeterView;
 import com.google.code.geobeagle.ui.GpsStatusWidget.UpdateGpsWidgetRunnable;
 import com.google.code.geobeagle.ui.cachelist.CacheListRefresh.ActionAndTolerance;
 import com.google.code.geobeagle.ui.cachelist.CacheListRefresh.ActionManager;
@@ -64,7 +62,6 @@ import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.hardware.SensorManager;
-import android.location.Location;
 import android.location.LocationManager;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -119,27 +116,22 @@ public class CacheListDelegateDI {
                 geocacheVectorsList);
         final CacheListData cacheListData = new CacheListData(geocacheVectors);
         final XmlPullParserWrapper xmlPullParserWrapper = new XmlPullParserWrapper();
-        final View gpsWidgetView = layoutInflater.inflate(R.layout.gps_widget, null);
 
         final GeocacheSummaryRowInflater geocacheSummaryRowInflater = new GeocacheSummaryRowInflater(
                 layoutInflater, geocacheVectors);
 
         final GeocacheListAdapter geocacheListAdapter = new GeocacheListAdapter(geocacheVectors,
                 geocacheSummaryRowInflater);
-        final MeterFormatter meterFormatter = new MeterFormatter();
-        final MeterView meterView = new MeterView(getTextView(gpsWidgetView, R.id.location_viewer),
-                meterFormatter);
+        final MeterView.MeterFormatter meterFormatter = new MeterView.MeterFormatter();
         final Misc.Time time = new Misc.Time();
 
-        final GpsStatusWidget gpsStatusWidget = new GpsStatusWidget(new ResourceProvider(
-                listActivity), meterView, getTextView(gpsWidgetView, R.id.provider), getTextView(
-                gpsWidgetView, R.id.lag), getTextView(gpsWidgetView, R.id.accuracy), getTextView(
-                gpsWidgetView, R.id.status), time, new Location(""), combinedLocationManager,
+        final GpsStatusWidget gpsStatusWidget = new GpsStatusWidget(listActivity,
+                new ResourceProvider(listActivity), meterFormatter, time, combinedLocationManager,
                 locationControlBuffered);
         final CombinedLocationListener gpsStatusWidgetLocationListener = new CombinedLocationListener(
                 locationControlBuffered, gpsStatusWidget);
         final UpdateGpsWidgetRunnable updateGpsWidgetRunnable = UpdateGpsWidgetRunnableDI
-                .create(gpsStatusWidget);
+                .create(gpsStatusWidget.getGpsStatusWidgetDelegate());
 
         final WhereFactoryAllCaches whereFactoryAllCaches = new WhereFactoryAllCaches();
         final WhereFactoryNearestCaches whereFactoryNearestCaches = new WhereFactoryNearestCaches();
@@ -181,16 +173,17 @@ public class CacheListDelegateDI {
                 .getSystemService(Context.SENSOR_SERVICE);
         final CompassListener compassListener = new CompassListener(cacheListRefresh,
                 locationControlBuffered, 720);
+
         final GeocacheListPresenter geocacheListPresenter = new GeocacheListPresenter(
                 combinedLocationManager, locationControlBuffered, gpsStatusWidgetLocationListener,
-                gpsWidgetView, updateGpsWidgetRunnable, geocacheVectors,
+                gpsStatusWidget, updateGpsWidgetRunnable, geocacheVectors,
                 cacheListRefreshLocationListener, listActivity, geocacheListAdapter,
                 errorDisplayer, sqliteWrapper, database, sensorManager, compassListener);
         final MenuActionToggleFilter menuActionToggleFilter = new MenuActionToggleFilter(
                 filterNearestCaches, cacheListRefresh);
-        
+
         final Aborter aborter = new Aborter();
-        
+
         final GpxImporter gpxImporter = GpxImporterDI.create(database, sqliteWrapper, listActivity,
                 xmlPullParserWrapper, errorDisplayer, geocacheListPresenter, aborter);
         final MenuActionSyncGpx menuActionSyncGpx = new MenuActionSyncGpx(gpxImporter,
@@ -220,9 +213,5 @@ public class CacheListDelegateDI {
         return new ContextAction[] {
                 contextActionDelete, contextActionView
         };
-    }
-
-    private static TextView getTextView(View gpsWidgetView, int id) {
-        return (TextView)gpsWidgetView.findViewById(id);
     }
 }

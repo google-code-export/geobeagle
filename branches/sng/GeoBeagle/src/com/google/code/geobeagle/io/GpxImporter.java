@@ -40,7 +40,6 @@ public class GpxImporter {
             ListActivity listActivity, ImportThreadWrapper importThreadWrapper,
             MessageHandler messageHandler, ToastFactory toastFactory, EventHandlers eventHandlers,
             ErrorDisplayer errorDisplayer) {
-
         mListActivity = listActivity;
         mGpxLoader = gpxLoader;
         mEventHandlers = eventHandlers;

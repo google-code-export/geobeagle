@@ -62,6 +62,7 @@ public class Geocache implements Parcelable {
             return mDistanceAndBearing;
         }
         mDistanceAndBearing[0] = -1;
+        mDistanceAndBearing[1] = -1;
         return mDistanceAndBearing;
     }
 

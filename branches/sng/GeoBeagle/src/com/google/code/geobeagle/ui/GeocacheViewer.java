@@ -14,6 +14,8 @@
 
 package com.google.code.geobeagle.ui;
 
+import com.google.code.geobeagle.GeoUtils;
+import com.google.code.geobeagle.RadarView;
 import com.google.code.geobeagle.Util;
 import com.google.code.geobeagle.data.Geocache;
 
@@ -26,17 +28,23 @@ public class GeocacheViewer {
     private final TextView mCoords;
     private final TextView mId;
     private final TextView mName;
+    private final RadarView mRadarView;
 
-    public GeocacheViewer(TextView gcid, TextView gcname, TextView gccoords) {
+    public GeocacheViewer(RadarView radarView, TextView gcid, TextView gcname, TextView gccoords) {
+        mRadarView = radarView;
         mId = gcid;
         mName = gcname;
         mCoords = gccoords;
     }
 
     public void set(Geocache geocache) {
+        final double latitude = geocache.getLatitude();
+        final double longitude = geocache.getLongitude();
+        mRadarView.setTarget((int)(latitude * GeoUtils.MILLION),
+                (int)(longitude * GeoUtils.MILLION));
         mId.setText(geocache.getId());
         mName.setText(geocache.getName());
-        mCoords.setText(Util.formatDegreesAsDecimalDegreesString(geocache.getLatitude()) + ", "
-                + Util.formatDegreesAsDecimalDegreesString(geocache.getLongitude()));
+        mCoords.setText(Util.formatDegreesAsDecimalDegreesString(latitude) + ", "
+                + Util.formatDegreesAsDecimalDegreesString(longitude));
     }
 }

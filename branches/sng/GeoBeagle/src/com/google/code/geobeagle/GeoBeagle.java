@@ -32,14 +32,13 @@ import com.google.code.geobeagle.ui.ContentSelector;
 import com.google.code.geobeagle.ui.ErrorDisplayer;
 import com.google.code.geobeagle.ui.GeocacheViewer;
 import com.google.code.geobeagle.ui.GpsStatusWidget;
+import com.google.code.geobeagle.ui.MeterView;
 import com.google.code.geobeagle.ui.Misc;
 import com.google.code.geobeagle.ui.MyLocationProvider;
 import com.google.code.geobeagle.ui.OnCacheButtonClickListenerBuilder;
 import com.google.code.geobeagle.ui.OnContentProviderSelectedListener;
 import com.google.code.geobeagle.ui.UpdateGpsWidgetRunnableDI;
 import com.google.code.geobeagle.ui.WebPageAndDetailsButtonEnabler;
-import com.google.code.geobeagle.ui.GpsStatusWidget.MeterFormatter;
-import com.google.code.geobeagle.ui.GpsStatusWidget.MeterView;
 import com.google.code.geobeagle.ui.GpsStatusWidget.UpdateGpsWidgetRunnable;
 import com.google.code.geobeagle.ui.cachelist.GeocacheListController;
 import com.google.code.geobeagle.ui.cachelist.GeocacheListOnClickListener;
@@ -86,6 +85,7 @@ public class GeoBeagle extends Activity implements LifecycleManager {
     private SensorManager mSensorManager;
     // private Sensor mCompassSensor;
     private CompassListener mCompassListener;
+    private RadarView mRadar;
 
     public GeoBeagle() {
         super();
@@ -121,10 +121,6 @@ public class GeoBeagle extends Activity implements LifecycleManager {
         return mGeocache;
     }
 
-    private TextView getTextView(int id) {
-        return (TextView)findViewById(id);
-    }
-
     private boolean maybeGetCoordinatesFromIntent() {
         final Intent intent = getIntent();
         if (intent != null) {
@@ -158,68 +154,84 @@ public class GeoBeagle extends Activity implements LifecycleManager {
 
     @Override
     public void onCreate(final Bundle savedInstanceState) {
-        try {
-            super.onCreate(savedInstanceState);
-            setContentView(R.layout.main);
-            GeoBeagleBuilder builder = new GeoBeagleBuilder(this);
-            mContentSelector = builder.createContentSelector(getPreferences(Activity.MODE_PRIVATE));
-            mLocationSaver = new LocationSaver(DatabaseDI.createCacheWriter(mSqliteWrapper));
-            mWebPageButtonEnabler = Misc.create(this, findViewById(R.id.cache_page),
-                    findViewById(R.id.cache_details));
+        // try {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.main);
+        GeoBeagleBuilder builder = new GeoBeagleBuilder(this);
+        mContentSelector = builder.createContentSelector(getPreferences(Activity.MODE_PRIVATE));
+        mLocationSaver = new LocationSaver(DatabaseDI.createCacheWriter(mSqliteWrapper));
+        mWebPageButtonEnabler = Misc.create(this, findViewById(R.id.cache_page),
+                findViewById(R.id.cache_details));
 
-            final LocationManager locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
-            final CombinedLocationManager combinedLocationManager = new CombinedLocationManager(
-                    locationManager);
-            mLocationControlBuffered = LocationControlDi.create(locationManager);
-            mGpsStatusWidget = new GpsStatusWidget(mResourceProvider, new MeterView(
-                    getTextView(R.id.location_viewer), new MeterFormatter()),
-                    getTextView(R.id.provider), getTextView(R.id.lag), getTextView(R.id.accuracy),
-                    getTextView(R.id.status), new Misc.Time(), new Location(""),
-                    combinedLocationManager, mLocationControlBuffered);
-            mStatusWidgetLocationListener = new CombinedLocationListener(mLocationControlBuffered,
-                    mGpsStatusWidget);
-            mGeocacheFactory = new GeocacheFactory();
-            mGeocacheFromPreferencesFactory = new GeocacheFromPreferencesFactory(mGeocacheFactory);
-            final TextView gcid = (TextView)findViewById(R.id.gcid);
-            final TextView gcname = (TextView)findViewById(R.id.gcname);
-            final TextView gccoords = (TextView)findViewById(R.id.gccoords);
-            mGeocacheViewer = new GeocacheViewer(gcid, gcname, gccoords);
+        final LocationManager locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
+        final CombinedLocationManager combinedLocationManager = new CombinedLocationManager(
+                locationManager);
+        mLocationControlBuffered = LocationControlDi.create(locationManager);
+        final Misc.Time time = new Misc.Time();
+        MeterView.MeterFormatter meterFormatter = new MeterView.MeterFormatter();
+        mGpsStatusWidget = new GpsStatusWidget(this, mResourceProvider, meterFormatter, time,
+                combinedLocationManager, mLocationControlBuffered);
+        /*
+         * mGpsStatusWidget = new GpsStatusWidget(this, mResourceProvider, new
+         * MeterView( getTextView(R.id.location_viewer), new MeterFormatter()),
+         * getTextView(R.id.provider), getTextView(R.id.lag),
+         * getTextView(R.id.accuracy), getTextView(R.id.status), time, new
+         * Location(""), combinedLocationManager, mLocationControlBuffered);
+         */
+        mStatusWidgetLocationListener = new CombinedLocationListener(mLocationControlBuffered,
+                mGpsStatusWidget);
+        mGeocacheFactory = new GeocacheFactory();
+        mGeocacheFromPreferencesFactory = new GeocacheFromPreferencesFactory(mGeocacheFactory);
+        final TextView gcid = (TextView)findViewById(R.id.gcid);
+        final TextView gcname = (TextView)findViewById(R.id.gcname);
+        final TextView gccoords = (TextView)findViewById(R.id.gccoords);
+        mRadar = (RadarView)findViewById(R.id.radarview);
+        mRadar.setUseMetric(true);
+//        mRadar.startSweep();
+        mRadar.setDistanceView((TextView)findViewById(R.id.radar_distance),
+                (TextView)findViewById(R.id.radar_bearing),
+                (TextView)findViewById(R.id.radar_accuracy));
+        mGeocacheViewer = new GeocacheViewer(mRadar, gcid, gcname, gccoords);
 
-            mLocationControlBuffered.onLocationChanged(null);
-            setCacheClickListeners();
+        mLocationControlBuffered.onLocationChanged(null);
+        setCacheClickListeners();
 
-            ((Button)findViewById(R.id.go_to_list))
-                    .setOnClickListener(new GeocacheListOnClickListener(this));
+        ((Button)findViewById(R.id.go_to_list)).setOnClickListener(new GeocacheListOnClickListener(
+                this));
 
-            AppLifecycleManager appLifecycleManager = new AppLifecycleManager(
-                    getPreferences(MODE_PRIVATE),
-                    new LifecycleManager[] {
-                            this,
-                            new LocationLifecycleManager(mStatusWidgetLocationListener,
-                                    locationManager),
-                            new LocationLifecycleManager(mLocationControlBuffered, locationManager),
-                            mContentSelector
-                    });
-            mGeoBeagleDelegate = GeoBeagleDelegate.buildGeoBeagleDelegate(this,
-                    appLifecycleManager, mGeocacheViewer, mErrorDisplayer);
-            mGeoBeagleDelegate.onCreate();
+        // Register for location updates
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 1, mRadar);
+        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 1, mRadar);
 
-            ((Spinner)findViewById(R.id.content_provider))
-                    .setOnItemSelectedListener(new OnContentProviderSelectedListener(
-                            mResourceProvider, (TextView)findViewById(R.id.select_cache_prompt)));
+        AppLifecycleManager appLifecycleManager = new AppLifecycleManager(
+                getPreferences(MODE_PRIVATE),
+                new LifecycleManager[] {
+                        this,
+                        new LocationLifecycleManager(mStatusWidgetLocationListener, locationManager),
+                        new LocationLifecycleManager(mLocationControlBuffered, locationManager),
+                        new LocationLifecycleManager(mRadar, locationManager), mContentSelector
+                });
+        mGeoBeagleDelegate = GeoBeagleDelegate.buildGeoBeagleDelegate(this, appLifecycleManager,
+                mGeocacheViewer, mErrorDisplayer);
+        mGeoBeagleDelegate.onCreate();
 
-            mCompassListener = new CompassListener(new NullRefresher(), mLocationControlBuffered,
-                    -1440f);
-            mSensorManager = (SensorManager)getSystemService(Context.SENSOR_SERVICE);
-            // final List<Sensor> sensorList =
-            // mSensorManager.getSensorList(Sensor.TYPE_ORIENTATION);
-            // mCompassSensor = sensorList.get(0);
+        ((Spinner)findViewById(R.id.content_provider))
+                .setOnItemSelectedListener(new OnContentProviderSelectedListener(mResourceProvider,
+                        (TextView)findViewById(R.id.select_cache_prompt)));
 
-            mUpdateGpsWidgetRunnable = UpdateGpsWidgetRunnableDI.create(mGpsStatusWidget);
-            mUpdateGpsWidgetRunnable.run();
-        } catch (final Exception e) {
-            mErrorDisplayer.displayErrorAndStack(e);
-        }
+        mCompassListener = new CompassListener(new NullRefresher(), mLocationControlBuffered,
+                -1440f);
+        mSensorManager = (SensorManager)getSystemService(Context.SENSOR_SERVICE);
+        // final List<Sensor> sensorList =
+        // mSensorManager.getSensorList(Sensor.TYPE_ORIENTATION);
+        // mCompassSensor = sensorList.get(0);
+
+        mUpdateGpsWidgetRunnable = UpdateGpsWidgetRunnableDI.create(mGpsStatusWidget
+                .getGpsStatusWidgetDelegate());
+        mUpdateGpsWidgetRunnable.run();
+        // } catch (final Exception e) {
+        // mErrorDisplayer.displayErrorAndStack(e);
+        // }
     }
 
     static class NullRefresher implements Refresher {
@@ -242,6 +254,8 @@ public class GeoBeagle extends Activity implements LifecycleManager {
     public void onPause() {
         super.onPause();
         mGeoBeagleDelegate.onPause();
+        mSensorManager.unregisterListener(mCompassListener);
+        mSensorManager.unregisterListener(mRadar);
     }
 
     public void onPause(Editor editor) {
@@ -252,11 +266,14 @@ public class GeoBeagle extends Activity implements LifecycleManager {
     protected void onResume() {
         try {
             super.onResume();
-
+            mRadar.handleUnknownLocation();
             mGeoBeagleDelegate.onResume();
             mSqliteWrapper.openWritableDatabase(mDatabase);
             mSensorManager.registerListener(mCompassListener, SensorManager.SENSOR_ORIENTATION,
                     SensorManager.SENSOR_DELAY_UI);
+            mSensorManager.registerListener(mRadar, SensorManager.SENSOR_ORIENTATION,
+                    SensorManager.SENSOR_DELAY_UI);
+
             // mSensorManager.registerListener(mCompassListener, mCompassSensor,
             // SensorManager.SENSOR_DELAY_UI);
 

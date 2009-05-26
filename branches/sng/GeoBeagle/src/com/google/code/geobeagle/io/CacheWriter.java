@@ -57,8 +57,16 @@ public class CacheWriter {
                 longitude), mDbToGeocacheAdapter.sourceTypeToSourceName(sourceType, sourceName));
     }
 
+    /**
+     * Return True if the gpx is already loaded. Mark this gpx and its caches in
+     * the database to protect them from being nuked when the load is complete.
+     * 
+     * @param gpxName
+     * @param gpxTime
+     * @return
+     */
     public boolean isGpxAlreadyLoaded(String gpxName, String gpxTime) {
-        //TODO:countResults is slow; replace with a query, and moveToFirst.
+        // TODO:countResults is slow; replace with a query, and moveToFirst.
         boolean gpxAlreadyLoaded = mSqlite.countResults(Database.TBL_GPX,
                 Database.SQL_MATCH_NAME_AND_EXPORTED_LATER, gpxName, gpxTime) > 0;
         if (gpxAlreadyLoaded) {

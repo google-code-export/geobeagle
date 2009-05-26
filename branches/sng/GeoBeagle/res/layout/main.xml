@@ -16,9 +16,55 @@
 
 	<LinearLayout android:orientation="vertical"
 		android:layout_width="fill_parent" android:layout_height="fill_parent">
-		
-		<include layout="@layout/gps_widget"/>
-		
+
+		<LinearLayout android:paddingBottom="10sp"
+			android:orientation="horizontal" android:layout_width="fill_parent"
+			android:layout_height="wrap_content" android:layout_weight="1">
+
+			<LinearLayout android:orientation="vertical"
+				android:layout_width="wrap_content" android:layout_height="fill_parent">
+				<TableLayout android:gravity="left"
+					android:layout_width="fill_parent" android:layout_height="fill_parent">
+					<TableRow>
+						<TextView android:paddingTop="2sp" android:typeface="sans"
+							android:layout_width="wrap_content" android:layout_height="wrap_content"
+							android:text="DISTANCE: " android:textSize="20sp" />
+						<TextView android:id="@+id/radar_distance"
+							android:paddingTop="2sp" android:typeface="sans"
+							android:layout_width="wrap_content" android:layout_height="wrap_content"
+							android:textColor="@android:color/primary_text_dark"
+							android:text="143km" android:textSize="20sp" />
+					</TableRow>
+					<TableRow>
+						<TextView android:typeface="sans" android:layout_width="wrap_content"
+							android:layout_height="wrap_content" android:text="BEARING: "
+							android:paddingTop="6sp" android:textSize="20sp" />
+						<TextView android:id="@+id/radar_bearing"
+							android:typeface="sans" android:layout_width="wrap_content"
+							android:layout_height="wrap_content" android:text="92"
+							android:textColor="@android:color/primary_text_dark"
+							android:paddingTop="6sp" android:textSize="20sp" />
+					</TableRow>
+					<TableRow>
+						<TextView android:typeface="sans" android:layout_width="wrap_content"
+							android:layout_height="wrap_content" android:text="ACCURACY: "
+							android:paddingTop="6sp" android:textSize="20sp" />
+						<TextView  android:id="@+id/radar_accuracy" android:typeface="sans" android:layout_width="wrap_content"
+							android:layout_height="wrap_content" android:text="150km"
+							android:textColor="@android:color/primary_text_dark"
+							android:paddingTop="6sp" android:textSize="20sp" />
+					</TableRow>
+				</TableLayout>
+			</LinearLayout>
+			<LinearLayout android:orientation="vertical"
+				android:layout_width="wrap_content" android:layout_height="wrap_content"
+				android:gravity="right" android:layout_weight="1">
+				<view android:id="@+id/radarview" class="com.google.code.geobeagle.RadarView"
+					android:layout_width="130sp" android:layout_height="130sp"
+					android:gravity="right" android:layout_weight="1" />
+			</LinearLayout>
+		</LinearLayout>
+
 		<Spinner android:id="@+id/content_provider"
 			android:layout_alignParentTop="true" android:layout_width="fill_parent"
 			android:layout_height="wrap_content" android:drawSelectorOnTop="false"
@@ -39,13 +85,13 @@
 				android:layout_height="wrap_content" android:layout_width="wrap_content"
 				android:layout_weight="1" />
 		</LinearLayout>
-
+		
 		<LinearLayout android:orientation="vertical"
 			android:paddingTop="12sp" android:layout_height="wrap_content"
 			android:layout_width="fill_parent">
 			<TextView android:id="@+id/gcid" android:layout_height="wrap_content"
 				android:layout_width="wrap_content" android:layout_weight="1"
-				android:textSize="18sp" android:text="37 122" />
+				android:textSize="18sp" android:text="GC123" />
 			<TextView android:id="@+id/gcname" android:layout_height="wrap_content"
 				android:layout_width="wrap_content" android:layout_weight="1"
 				android:textSize="18sp" android:text="37 122" />

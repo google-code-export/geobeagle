@@ -104,6 +104,9 @@ public class GeocacheVector {
         // Use the slower, more accurate distance for display.
         final float[] distanceAndBearing = mGeocache
                 .calculateDistanceAndBearing(mLocationControlBuffered.getLocation());
+        if (distanceAndBearing[0] == -1) {
+            return "";
+        }
         final float azimuth = mLocationControlBuffered.getAzimuth();
 
         final CharSequence formattedDistance = mDistanceFormatter

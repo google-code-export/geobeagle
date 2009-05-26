@@ -23,10 +23,6 @@ import java.io.IOException;
 import java.io.Reader;
 
 public class GpxToCache {
-    @SuppressWarnings("serial")
-    public static class CancelException extends Exception {
-    }
-
     public static class Aborter {
         private static boolean mAborted = false;
 
@@ -38,17 +34,21 @@ public class GpxToCache {
             mAborted = true;
         }
 
-        public void reset() {
-            mAborted = false;
-        }
-
         public boolean isAborted() {
             return mAborted;
         }
+
+        public void reset() {
+            mAborted = false;
+        }
     }
 
-    private final XmlPullParserWrapper mXmlPullParserWrapper;
+    @SuppressWarnings("serial")
+    public static class CancelException extends Exception {
+    }
+
     private final Aborter mAborter;
+    private final XmlPullParserWrapper mXmlPullParserWrapper;
 
     GpxToCache(XmlPullParserWrapper xmlPullParserWrapper, Aborter aborter) {
         mXmlPullParserWrapper = xmlPullParserWrapper;
