@@ -15,7 +15,7 @@
 	android:versionCode="69">
 	<uses-sdk android:minSdkVersion="2" />
 	<application android:icon="@drawable/icon" android:label="@string/app_name"
-		android:debuggable="true">
+		android:debuggable="false">
 		<activity android:name=".GeoBeagle" android:label="@string/app_name"
 			android:configChanges="orientation|keyboardHidden">
 			<intent-filter>

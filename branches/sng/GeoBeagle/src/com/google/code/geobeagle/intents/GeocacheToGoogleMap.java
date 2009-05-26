@@ -18,6 +18,8 @@ import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.ResourceProvider;
 import com.google.code.geobeagle.data.Geocache;
 
+import java.util.Locale;
+
 public class GeocacheToGoogleMap implements GeocacheToUri {
     private final ResourceProvider mResourceProvider;
 
@@ -27,7 +29,7 @@ public class GeocacheToGoogleMap implements GeocacheToUri {
 
     public String convert(Geocache geocache) {
         // "geo:%1$.5f,%2$.5f?name=cachename"
-        return String.format(mResourceProvider.getString(R.string.map_intent), geocache
+        return String.format(Locale.US, mResourceProvider.getString(R.string.map_intent), geocache
                 .getLatitude(), geocache.getLongitude(), geocache.getIdAndName());
     }
 
