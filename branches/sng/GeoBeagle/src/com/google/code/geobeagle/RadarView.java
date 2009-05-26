@@ -20,9 +20,9 @@ package com.google.code.geobeagle;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
-import android.graphics.Rect;
 import android.graphics.Paint.Align;
 import android.graphics.Paint.Style;
 import android.graphics.drawable.BitmapDrawable;
@@ -42,21 +42,13 @@ import android.widget.TextView;
 public class RadarView extends View implements SensorListener, LocationListener {
 
     private static final long RETAIN_GPS_MILLIS = 10000L;
-
     private Paint mGridPaint;
-
     private Paint mErasePaint;
-
     private float mOrientation;
-
     private double mTargetLat;
-
     private double mTargetLon;
-
     private double mMyLocationLat;
-
     private double mMyLocationLon;
-
     private int mLastScale = -1;
     private String[] mDistanceScale = new String[4];
 
@@ -161,93 +153,56 @@ public class RadarView extends View implements SensorListener, LocationListener 
     // The view that will display the distance text
     private TextView mDistanceView;
 
-    /**
-     * Distance to target, in KM
-     */
+    // Distance to target, in KM
     private double mDistance;
 
-    /**
-     * Bearing to target, in degrees
-     */
+    // Bearing to target, in degrees
     private double mBearing;
 
-    /**
-     * Ratio of the distance to the target to the radius of the outermost ring
-     * on the radar screen
-     */
+    // Ratio of the distance to the target to the radius of the outermost ring
+    // on the radar screen
     private float mDistanceRatio;
 
-    /**
-     * Utility rect for calculating the ring labels
-     */
-    private Rect mTextBounds = new Rect();
-
-    /**
-     * The bitmap used to draw the target
-     */
+    // The bitmap used to draw the target
     private Bitmap mBlip;
 
-    /**
-     * Used to draw the animated ring that sweeps out from the center
-     */
+    // Used to draw the animated ring that sweeps out from the center
     private Paint mSweepPaint0;
 
-    /**
-     * Used to draw the animated ring that sweeps out from the center
-     */
+    // Used to draw the animated ring that sweeps out from the center
     private Paint mSweepPaint1;
 
-    /**
-     * Used to draw the animated ring that sweeps out from the center
-     */
+    // Used to draw the animated ring that sweeps out from the center
     private Paint mSweepPaint2;
 
-    /**
-     * Time in millis when the most recent sweep began
-     */
+    // Time in millis when the most recent sweep began
     private long mSweepTime;
 
-    /**
-     * True if the sweep has not yet intersected the blip
-     */
+    // True if the sweep has not yet intersected the blip
     private boolean mSweepBefore;
 
-    /**
-     * Time in millis when the sweep last crossed the blip
-     */
+    // Time in millis when the sweep last crossed the blip
     private long mBlipTime;
 
-    /**
-     * True if the display should use metric units; false if the display should
-     * use standard units
-     */
+    // True if the display should use metric units; false if the display should
+    // use standard units
     private boolean mUseMetric;
 
-    /**
-     * Time in millis for the last time GPS reported a location
-     */
+    // Time in millis for the last time GPS reported a location
     private long mLastGpsFixTime = 0L;
 
-    /**
-     * The last location reported by the network provider. Use this if we can't
-     * get a location from GPS
-     */
+    // The last location reported by the network provider. Use this if we can't
+    // get a location from GPS
     private Location mNetworkLocation;
 
-    /**
-     * True if GPS is reporting a location
-     */
+    // True if GPS is reporting a location
     private boolean mGpsAvailable;
 
-    /**
-     * True if the network provider is reporting a location
-     */
+    // True if the network provider is reporting a location
     private boolean mNetworkAvailable;
 
     private TextView mBearingView;
-
     private float mMyLocationAccuracy;
-
     private TextView mAccuracyView;
 
     public RadarView(Context context) {
@@ -380,31 +335,33 @@ public class RadarView extends View implements SensorListener, LocationListener 
             float northY = (float)Math.sin(northAngle);
             float tipX = northX * (radius - 12), tipY = northY * (radius - 12);
             float baseX = northY * 8, baseY = -northX * 8;
-            int tX = (int)(northX * radius), tY = (int)(northY * radius);
-            gridPaint.setAlpha(180);
 
             // northern half
-            mGridPaint.setStyle(Paint.Style.FILL_AND_STROKE);
+            gridPaint.setStyle(Paint.Style.FILL_AND_STROKE);
+            final int saveColor = mGridPaint.getColor();
+            gridPaint.setColor(Color.RED);
+            gridPaint.setAlpha(180);
             Path path = new Path();
             path.moveTo(center + baseX, center + baseY);
             path.lineTo(center + tipX, center + tipY);
             path.lineTo(center - baseX, center - baseY);
             path.close();
-            canvas.drawPath(path, mGridPaint);
+            canvas.drawPath(path, gridPaint);
 
             // southern half
-            mGridPaint.setStyle(Paint.Style.STROKE);
-            canvas
-                    .drawLine(center + baseX, center + baseY, center - tipX, center - tipY,
-                            gridPaint);
-            canvas
-                    .drawLine(center - baseX, center - baseY, center - tipX, center - tipY,
-                            gridPaint);
+            gridPaint.setStyle(Paint.Style.FILL_AND_STROKE);
+            gridPaint.setColor(Color.GRAY);
+            gridPaint.setAlpha(180);
+            path.reset();
+            path.moveTo(center + baseX, center + baseY);
+            path.lineTo(center - tipX, center - tipY);
+            path.lineTo(center - baseX, center - baseY);
+            path.close();
+            canvas.drawPath(path, mGridPaint);
+            gridPaint.setStyle(Paint.Style.STROKE);
 
-            // N and S marks
-            // addText(canvas, "N", center + tX, center + tY + 3);
-            // addText(canvas, "S", center - tX, center - tY + 3);
-            gridPaint.setAlpha(255);
+            mGridPaint.setColor(saveColor);
+            mGridPaint.setAlpha(255);
 
             double bearingToTarget = mBearing - mOrientation;
             double drawingAngle = Math.toRadians(bearingToTarget) - (Math.PI / 2);
@@ -412,31 +369,14 @@ public class RadarView extends View implements SensorListener, LocationListener 
             float cos = (float)Math.cos(drawingAngle);
             float sin = (float)Math.sin(drawingAngle);
 
-            // Draw the text for the rings
-            final String[] distanceScale = mDistanceScale;
-            /*
-             * addText(canvas, distanceScale[0], center, center + (radius >>
-             * 2)); addText(canvas, distanceScale[1], center, center + (radius
-             * >> 1)); addText(canvas, distanceScale[2], center, center + radius
-             * * 3 / 4); addText(canvas, distanceScale[3], center, center +
-             * radius);
-             */
             // Draw the blip. Alpha is based on how long ago the sweep crossed
-            // the blip
+            // the blip.
             long blipDifference = now - mBlipTime;
             gridPaint.setAlpha(255 - (int)((128 * blipDifference) >> 10));
             canvas.drawBitmap(mBlip, center + (cos * blipRadius) - 8, center + (sin * blipRadius)
                     - 8, gridPaint);
             gridPaint.setAlpha(255);
         }
-    }
-
-    private void addText(Canvas canvas, String str, int x, int y) {
-        mGridPaint.getTextBounds(str, 0, str.length(), mTextBounds);
-        mTextBounds.offset(x - (mTextBounds.width() >> 1), y);
-        mTextBounds.inset(-2, -2);
-        canvas.drawRect(mTextBounds, mErasePaint);
-        canvas.drawText(str, x, y, mGridPaint);
     }
 
     public void onAccuracyChanged(int sensor, int accuracy) {
