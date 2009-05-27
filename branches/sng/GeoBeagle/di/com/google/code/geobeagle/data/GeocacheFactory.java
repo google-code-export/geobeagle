@@ -84,8 +84,7 @@ public class GeocacheFactory {
             Source sourceType, String sourceName) {
         if (id.length() < 2) {
             // ID is missing for waypoints imported from the browser; create a
-            // new id
-            // from the time.
+            // new id from the time.
             id = String.format("WP%1$tk%1$tM%1$tS", System.currentTimeMillis());
         }
         if (name == null)
