@@ -186,14 +186,13 @@ public class GeoBeagle extends Activity implements LifecycleManager {
         mGeocacheFromPreferencesFactory = new GeocacheFromPreferencesFactory(mGeocacheFactory);
         final TextView gcid = (TextView)findViewById(R.id.gcid);
         final TextView gcname = (TextView)findViewById(R.id.gcname);
-        final TextView gccoords = (TextView)findViewById(R.id.gccoords);
         mRadar = (RadarView)findViewById(R.id.radarview);
         mRadar.setUseMetric(true);
         // mRadar.startSweep();
         mRadar.setDistanceView((TextView)findViewById(R.id.radar_distance),
                 (TextView)findViewById(R.id.radar_bearing),
                 (TextView)findViewById(R.id.radar_accuracy));
-        mGeocacheViewer = new GeocacheViewer(mRadar, gcid, gcname, gccoords);
+        mGeocacheViewer = new GeocacheViewer(mRadar, gcid, gcname);
 
         mLocationControlBuffered.onLocationChanged(null);
         setCacheClickListeners();

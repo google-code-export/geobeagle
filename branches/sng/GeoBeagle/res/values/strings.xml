@@ -14,14 +14,14 @@
 	<string name="select_destination">Select destination</string>
 	<string name="go_to">Geocache:</string>
 	<string name="via">Android App</string>
-	<string name="generic_failure">GENERIC FAILURE error sending SMS, please try
-		again</string>
+	<string name="generic_failure">GENERIC FAILURE error sending SMS, please
+		try again</string>
 	<string name="no_service">NO SERVICE error sending SMS, please try again
 	</string>
 	<string name="null_pdu">NULL PDU error sending SMS, please try again
 	</string>
-	<string name="radio_off">RADIO OFF error sending SMS, please try
-		again</string>
+	<string name="radio_off">RADIO OFF error sending SMS, please try again
+	</string>
 	<string name="sms_canceled">Field Note SMS delivery canceled.</string>
 	<string name="sms_delivered">Field Note SMS delivered!</string>
 	<string name="unknown_error">Unknown error</string>
@@ -65,7 +65,8 @@
 	<string name="cache_list_title_all">%1$d caches out of %2$d</string>
 	<string name="no_nearby_caches">No caches near your current location; click Menu / Show all caches.</string>
 	<string name="no_caches">No Caches--import a cache using Online List on the previous page, or click Menu / Sync to import "Pocket Queries" downloaded from Geocaching.com.</string>
-	<array name="nearest_objects">
+	<string name="select_service_provider">Select service provider:</string>
+    <array name="nearest_objects">
 	  <item>http://www.atlasquest.com/results.html?gTypeId=2;gSort=5;gStatus=1209;gCoord=%1$.5f,%2$.5f</item>
 	  <item>http://www.geocaching.com/seek/nearest.aspx?lat=%1$.5f&amp;lng=%2$.5f&amp;f=1</item>
 	</array>

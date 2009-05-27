@@ -16,7 +16,6 @@ package com.google.code.geobeagle.ui;
 
 import com.google.code.geobeagle.GeoUtils;
 import com.google.code.geobeagle.RadarView;
-import com.google.code.geobeagle.Util;
 import com.google.code.geobeagle.data.Geocache;
 
 import android.widget.TextView;
@@ -25,16 +24,14 @@ public class GeocacheViewer {
 
     public static final String FNAME_RECENT_LOCATIONS = "RECENT_LOCATIONS";
     public static final String PREFS_LOCATION = "Location";
-    private final TextView mCoords;
     private final TextView mId;
     private final TextView mName;
     private final RadarView mRadarView;
 
-    public GeocacheViewer(RadarView radarView, TextView gcid, TextView gcname, TextView gccoords) {
+    public GeocacheViewer(RadarView radarView, TextView gcid, TextView gcname) {
         mRadarView = radarView;
         mId = gcid;
         mName = gcname;
-        mCoords = gccoords;
     }
 
     public void set(Geocache geocache) {
@@ -44,7 +41,5 @@ public class GeocacheViewer {
                 (int)(longitude * GeoUtils.MILLION));
         mId.setText(geocache.getId());
         mName.setText(geocache.getName());
-        mCoords.setText(Util.formatDegreesAsDecimalDegreesString(latitude) + ", "
-                + Util.formatDegreesAsDecimalDegreesString(longitude));
     }
 }

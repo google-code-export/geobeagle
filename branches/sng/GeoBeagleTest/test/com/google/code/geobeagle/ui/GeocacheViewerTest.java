@@ -37,7 +37,6 @@ public class GeocacheViewerTest {
     public void testSet() {
         TextView id = PowerMock.createMock(TextView.class);
         TextView name = PowerMock.createMock(TextView.class);
-        TextView coords = PowerMock.createMock(TextView.class);
         Geocache geocache = PowerMock.createMock(Geocache.class);
         RadarView radar = PowerMock.createMock(RadarView.class);
 
@@ -49,10 +48,9 @@ public class GeocacheViewerTest {
 
         id.setText("GC123");
         name.setText("a cache");
-        coords.setText("37 00.000, -122 00.000");
 
         PowerMock.replayAll();
-        new GeocacheViewer(radar, id, name, coords).set(geocache);
+        new GeocacheViewer(radar, id, name).set(geocache);
         PowerMock.verifyAll();
     }
 }
