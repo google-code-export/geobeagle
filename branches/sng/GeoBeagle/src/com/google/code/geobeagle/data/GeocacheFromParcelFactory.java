@@ -12,11 +12,14 @@ public class GeocacheFromParcelFactory {
     }
 
     public Geocache create(Parcel in) {
-        Bundle bundle = in.readBundle();
+        return createFromBundle(in.readBundle());
+
+    }
+
+    public Geocache createFromBundle(Bundle bundle) {
         return mGeocacheFactory.create(bundle.getCharSequence("id"),
                 bundle.getCharSequence("name"), bundle.getDouble("latitude"), bundle
                         .getDouble("longitude"), mGeocacheFactory.sourceFromInt(bundle
                         .getInt("sourceType")), bundle.getString("sourceName"));
-
     }
 }

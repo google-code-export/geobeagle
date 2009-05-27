@@ -28,7 +28,6 @@ import com.google.code.geobeagle.io.Database;
 import com.google.code.geobeagle.io.DatabaseDI;
 import com.google.code.geobeagle.io.LocationSaver;
 import com.google.code.geobeagle.io.DatabaseDI.SQLiteWrapper;
-import com.google.code.geobeagle.ui.CacheButtonOnClickListener;
 import com.google.code.geobeagle.ui.ContentSelector;
 import com.google.code.geobeagle.ui.ErrorDisplayer;
 import com.google.code.geobeagle.ui.GeocacheViewer;
@@ -56,6 +55,7 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.net.UrlQuerySanitizer;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
@@ -67,7 +67,15 @@ import android.widget.Toast;
  * Main Activity for GeoBeagle.
  */
 public class GeoBeagle extends Activity implements LifecycleManager {
+    static class NullRefresher implements Refresher {
+        public void refresh() {
+        }
+    }
+
+    // private Sensor mCompassSensor;
+    private CompassListener mCompassListener;
     private ContentSelector mContentSelector;
+    private final Database mDatabase;
     private final ErrorDisplayer mErrorDisplayer;
     private GeoBeagleDelegate mGeoBeagleDelegate;
     private Geocache mGeocache;
@@ -77,16 +85,14 @@ public class GeoBeagle extends Activity implements LifecycleManager {
     private GpsStatusWidget mGpsStatusWidget;
     private LocationControlBuffered mLocationControlBuffered;
     private LocationSaver mLocationSaver;
+    private RadarView mRadar;
     private final ResourceProvider mResourceProvider;
+    private SensorManager mSensorManager;
+    private final SQLiteWrapper mSqliteWrapper;
     private CombinedLocationListener mStatusWidgetLocationListener;
     private UpdateGpsWidgetRunnable mUpdateGpsWidgetRunnable;
+
     private WebPageAndDetailsButtonEnabler mWebPageButtonEnabler;
-    private final SQLiteWrapper mSqliteWrapper;
-    private final Database mDatabase;
-    private SensorManager mSensorManager;
-    // private Sensor mCompassSensor;
-    private CompassListener mCompassListener;
-    private RadarView mRadar;
 
     public GeoBeagle() {
         super();
@@ -146,11 +152,6 @@ public class GeoBeagle extends Activity implements LifecycleManager {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == 0)
             setIntent(data);
-    }
-
-    @Override
-    protected Dialog onCreateDialog(int id) {
-        return mGeoBeagleDelegate.onCreateDialog(id);
     }
 
     @Override
@@ -235,9 +236,10 @@ public class GeoBeagle extends Activity implements LifecycleManager {
         // }
     }
 
-    static class NullRefresher implements Refresher {
-        public void refresh() {
-        }
+    @Override
+    protected Dialog onCreateDialog(int id) {
+        super.onCreateDialog(id);
+        return mGeoBeagleDelegate.onCreateDialog(id);
     }
 
     @Override
@@ -261,6 +263,16 @@ public class GeoBeagle extends Activity implements LifecycleManager {
 
     public void onPause(Editor editor) {
         getGeocache().writeToPrefs(editor);
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see android.app.Activity#onRestoreInstanceState(android.os.Bundle)
+     */
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        mGeoBeagleDelegate.onRestoreInstanceState(savedInstanceState);
     }
 
     @Override
@@ -289,7 +301,18 @@ public class GeoBeagle extends Activity implements LifecycleManager {
     }
 
     public void onResume(SharedPreferences preferences) {
+        Log.v("GeoBeagle", "onResume");
         setGeocache(mGeocacheFromPreferencesFactory.create(preferences));
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see android.app.Activity#onSaveInstanceState(android.os.Bundle)
+     */
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        mGeoBeagleDelegate.onSaveInstanceState(outState);
     }
 
     private void setCacheClickListeners() {

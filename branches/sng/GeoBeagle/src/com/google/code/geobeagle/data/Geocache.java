@@ -125,13 +125,17 @@ public class Geocache implements Parcelable {
 
     public void writeToParcel(Parcel out, int flags) {
         Bundle bundle = new Bundle();
+        saveToBundle(bundle);
+        out.writeBundle(bundle);
+    }
+
+    public void saveToBundle(Bundle bundle) {
         bundle.putCharSequence(ID, mId);
         bundle.putCharSequence(NAME, mName);
         bundle.putDouble(LATITUDE, mLatitude);
         bundle.putDouble(LONGITUDE, mLongitude);
         bundle.putInt(SOURCE_TYPE, mSourceType.toInt());
         bundle.putString(SOURCE_NAME, mSourceName);
-        out.writeBundle(bundle);
     }
 
     public void writeToPrefs(Editor editor) {

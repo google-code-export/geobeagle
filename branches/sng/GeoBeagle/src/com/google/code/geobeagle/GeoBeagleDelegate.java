@@ -14,6 +14,8 @@
 
 package com.google.code.geobeagle;
 
+import com.google.code.geobeagle.data.GeocacheFactory;
+import com.google.code.geobeagle.data.GeocacheFromParcelFactory;
 import com.google.code.geobeagle.ui.CacheDetailsOnClickListener;
 import com.google.code.geobeagle.ui.EditCacheActivity;
 import com.google.code.geobeagle.ui.ErrorDisplayer;
@@ -24,6 +26,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.AlertDialog.Builder;
 import android.content.Intent;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.widget.Button;
@@ -97,5 +100,15 @@ public class GeoBeagleDelegate {
         } catch (Exception e) {
             mErrorDisplayer.displayErrorAndStack(e);
         }
+    }
+
+    public void onRestoreInstanceState(Bundle savedInstanceState) {
+        GeocacheFromParcelFactory geocacheFromParcelFactory = new GeocacheFromParcelFactory(
+                new GeocacheFactory());
+        mParent.setGeocache(geocacheFromParcelFactory.createFromBundle(savedInstanceState));
+    }
+
+    public void onSaveInstanceState(Bundle outState) {
+        mParent.getGeocache().saveToBundle(outState);
     }
 }
