@@ -204,7 +204,7 @@ public class CacheListPresenterTest {
         ErrorDisplayer errorDisplayer = PowerMock.createMock(ErrorDisplayer.class);
 
         Exception e = new RuntimeException();
-        combinedLocationManager.requestLocationUpdates(GeocacheListPresenter.UPDATE_DELAY, 1,
+        combinedLocationManager.requestLocationUpdates(GeocacheListPresenter.UPDATE_DELAY, 0,
                 locationControlBuffered);
         EasyMock.expectLastCall().andThrow(e);
         errorDisplayer.displayErrorAndStack(e);
