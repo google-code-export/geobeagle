@@ -34,7 +34,11 @@ public class CombinedLocationListener implements LocationListener {
     public void onLocationChanged(Location location) {
         // Ask the location control to pick the most accurate location (might
         // not be this one).
-        mLocationListener.onLocationChanged(mLocationControlBuffered.getLocation());
+        // Log.v("GeoBeagle", "onLocationChanged:" + location);
+        final Location chosenLocation = mLocationControlBuffered.getLocation();
+        // Log.v("GeoBeagle", "onLocationChanged chosen Location" +
+        // chosenLocation);
+        mLocationListener.onLocationChanged(chosenLocation);
     }
 
     public void onProviderDisabled(String provider) {
