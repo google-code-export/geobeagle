@@ -31,15 +31,11 @@ import com.google.code.geobeagle.io.DatabaseDI.SQLiteWrapper;
 import com.google.code.geobeagle.ui.ContentSelector;
 import com.google.code.geobeagle.ui.ErrorDisplayer;
 import com.google.code.geobeagle.ui.GeocacheViewer;
-import com.google.code.geobeagle.ui.GpsStatusWidget;
-import com.google.code.geobeagle.ui.MeterView;
 import com.google.code.geobeagle.ui.Misc;
 import com.google.code.geobeagle.ui.MyLocationProvider;
 import com.google.code.geobeagle.ui.OnCacheButtonClickListenerBuilder;
 import com.google.code.geobeagle.ui.OnContentProviderSelectedListener;
-import com.google.code.geobeagle.ui.UpdateGpsWidgetRunnableDI;
 import com.google.code.geobeagle.ui.WebPageAndDetailsButtonEnabler;
-import com.google.code.geobeagle.ui.GpsStatusWidget.UpdateGpsWidgetRunnable;
 import com.google.code.geobeagle.ui.cachelist.GeocacheListController;
 import com.google.code.geobeagle.ui.cachelist.GeocacheListOnClickListener;
 import com.google.code.geobeagle.ui.cachelist.GeocacheListPresenter.CompassListener;
@@ -51,7 +47,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.hardware.SensorManager;
-import android.location.Location;
 import android.location.LocationManager;
 import android.net.UrlQuerySanitizer;
 import android.os.Bundle;
@@ -72,7 +67,6 @@ public class GeoBeagle extends Activity implements LifecycleManager {
         }
     }
 
-    // private Sensor mCompassSensor;
     private CompassListener mCompassListener;
     private ContentSelector mContentSelector;
     private final Database mDatabase;
@@ -82,15 +76,12 @@ public class GeoBeagle extends Activity implements LifecycleManager {
     private GeocacheFactory mGeocacheFactory;
     private GeocacheFromPreferencesFactory mGeocacheFromPreferencesFactory;
     private GeocacheViewer mGeocacheViewer;
-    private GpsStatusWidget mGpsStatusWidget;
     private LocationControlBuffered mLocationControlBuffered;
     private LocationSaver mLocationSaver;
     private RadarView mRadar;
     private final ResourceProvider mResourceProvider;
     private SensorManager mSensorManager;
     private final SQLiteWrapper mSqliteWrapper;
-    private CombinedLocationListener mStatusWidgetLocationListener;
-    private UpdateGpsWidgetRunnable mUpdateGpsWidgetRunnable;
 
     private WebPageAndDetailsButtonEnabler mWebPageButtonEnabler;
 
@@ -166,22 +157,7 @@ public class GeoBeagle extends Activity implements LifecycleManager {
                 findViewById(R.id.cache_details));
 
         final LocationManager locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
-        final CombinedLocationManager combinedLocationManager = new CombinedLocationManager(
-                locationManager);
         mLocationControlBuffered = LocationControlDi.create(locationManager);
-        final Misc.Time time = new Misc.Time();
-        MeterView.MeterFormatter meterFormatter = new MeterView.MeterFormatter();
-        mGpsStatusWidget = new GpsStatusWidget(this, mResourceProvider, meterFormatter, time,
-                combinedLocationManager, mLocationControlBuffered);
-        /*
-         * mGpsStatusWidget = new GpsStatusWidget(this, mResourceProvider, new
-         * MeterView( getTextView(R.id.location_viewer), new MeterFormatter()),
-         * getTextView(R.id.provider), getTextView(R.id.lag),
-         * getTextView(R.id.accuracy), getTextView(R.id.status), time, new
-         * Location(""), combinedLocationManager, mLocationControlBuffered);
-         */
-        mStatusWidgetLocationListener = new CombinedLocationListener(mLocationControlBuffered,
-                mGpsStatusWidget);
         mGeocacheFactory = new GeocacheFactory();
         mGeocacheFromPreferencesFactory = new GeocacheFromPreferencesFactory(mGeocacheFactory);
         final TextView gcid = (TextView)findViewById(R.id.gcid);
@@ -205,10 +181,8 @@ public class GeoBeagle extends Activity implements LifecycleManager {
         locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 1, mRadar);
 
         AppLifecycleManager appLifecycleManager = new AppLifecycleManager(
-                getPreferences(MODE_PRIVATE),
-                new LifecycleManager[] {
+                getPreferences(MODE_PRIVATE), new LifecycleManager[] {
                         this,
-                        new LocationLifecycleManager(mStatusWidgetLocationListener, locationManager),
                         new LocationLifecycleManager(mLocationControlBuffered, locationManager),
                         new LocationLifecycleManager(mRadar, locationManager), mContentSelector
                 });
@@ -223,16 +197,6 @@ public class GeoBeagle extends Activity implements LifecycleManager {
         mCompassListener = new CompassListener(new NullRefresher(), mLocationControlBuffered,
                 -1440f);
         mSensorManager = (SensorManager)getSystemService(Context.SENSOR_SERVICE);
-        // final List<Sensor> sensorList =
-        // mSensorManager.getSensorList(Sensor.TYPE_ORIENTATION);
-        // mCompassSensor = sensorList.get(0);
-
-        mUpdateGpsWidgetRunnable = UpdateGpsWidgetRunnableDI.create(mGpsStatusWidget
-                .getGpsStatusWidgetDelegate());
-        mUpdateGpsWidgetRunnable.run();
-        // } catch (final Exception e) {
-        // mErrorDisplayer.displayErrorAndStack(e);
-        // }
     }
 
     @Override
@@ -286,14 +250,8 @@ public class GeoBeagle extends Activity implements LifecycleManager {
             mSensorManager.registerListener(mRadar, SensorManager.SENSOR_ORIENTATION,
                     SensorManager.SENSOR_DELAY_UI);
 
-            // mSensorManager.registerListener(mCompassListener, mCompassSensor,
-            // SensorManager.SENSOR_DELAY_UI);
-
             maybeGetCoordinatesFromIntent();
             mWebPageButtonEnabler.check();
-            final Location location = mLocationControlBuffered.getLocation();
-            if (location != null)
-                mStatusWidgetLocationListener.onLocationChanged(location);
         } catch (final Exception e) {
             mErrorDisplayer.displayErrorAndStack(e);
         }
