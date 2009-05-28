@@ -177,11 +177,11 @@ public class CacheListPresenterTest {
         SensorManager sensorManager = PowerMock.createMock(SensorManager.class);
         CompassListener compassListener = PowerMock.createMock(CompassListener.class);
 
-        combinedLocationManager.requestLocationUpdates(GeocacheListPresenter.UPDATE_DELAY, 1,
+        combinedLocationManager.requestLocationUpdates(GeocacheListPresenter.UPDATE_DELAY, 0,
                 gpsStatusWidgetLocationListener);
-        combinedLocationManager.requestLocationUpdates(GeocacheListPresenter.UPDATE_DELAY, 1,
+        combinedLocationManager.requestLocationUpdates(GeocacheListPresenter.UPDATE_DELAY, 0,
                 locationControlBuffered);
-        combinedLocationManager.requestLocationUpdates(GeocacheListPresenter.UPDATE_DELAY, 1,
+        combinedLocationManager.requestLocationUpdates(GeocacheListPresenter.UPDATE_DELAY, 0,
                 cacheListRefreshLocationListener);
         EasyMock.expect(
                 sensorManager.registerListener(compassListener, SensorManager.SENSOR_ORIENTATION,
