@@ -37,7 +37,7 @@ import android.widget.ListView;
 
 @SuppressWarnings("deprecation")
 public class GeocacheListPresenter {
-    static final int UPDATE_DELAY = 2000;
+    static final int UPDATE_DELAY = 1000;
 
     static class CacheListRefreshLocationListener implements LocationListener {
         private final CacheListRefresh mCacheListRefresh;
@@ -164,11 +164,11 @@ public class GeocacheListPresenter {
 
     public void onResume() {
         try {
-            mCombinedLocationManager.requestLocationUpdates(UPDATE_DELAY, 1,
+            mCombinedLocationManager.requestLocationUpdates(UPDATE_DELAY, 0,
                     mLocationControlBuffered);
-            mCombinedLocationManager.requestLocationUpdates(UPDATE_DELAY, 1,
+            mCombinedLocationManager.requestLocationUpdates(UPDATE_DELAY, 0,
                     mGpsStatusWidgetLocationListener);
-            mCombinedLocationManager.requestLocationUpdates(UPDATE_DELAY, 1,
+            mCombinedLocationManager.requestLocationUpdates(UPDATE_DELAY, 0,
                     mCacheListRefreshLocationListener);
             // mSensorManager.registerListener(mCompassListener, mCompassSensor,
             // SensorManager.SENSOR_DELAY_UI);
