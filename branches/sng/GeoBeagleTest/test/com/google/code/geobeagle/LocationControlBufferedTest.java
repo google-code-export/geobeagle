@@ -24,10 +24,11 @@ import android.location.Location;
 })
 public class LocationControlBufferedTest {
     @Test
-    public void testGpsDisabledLocation() {
-        final GpsDisabledLocation gpsDisabledLocation = new GpsDisabledLocation();
-        assertEquals(Float.MAX_VALUE, gpsDisabledLocation.distanceTo(null), 0f);
-        assertEquals(Float.MAX_VALUE, gpsDisabledLocation.distanceTo(null), 0f);
+    public void getDisabledDistance() {
+        assertEquals(Float.MAX_VALUE, new GpsDisabledLocation()
+                .distanceToGpsDisabledLocation((GpsDisabledLocation)null), 0f);
+        assertEquals(Float.MAX_VALUE, new GpsDisabledLocation()
+                .distanceToGpsEnabledLocation((GpsEnabledLocation)null), 0f);
     }
 
     @Test
@@ -48,12 +49,12 @@ public class LocationControlBufferedTest {
         PowerMock.verifyAll();
     }
 
-    @Test
-    public void getDisabledDistance() {
-        assertEquals(Float.MAX_VALUE, new GpsDisabledLocation()
-                .distanceToGpsDisabledLocation((GpsDisabledLocation)null), 0f);
-        assertEquals(Float.MAX_VALUE, new GpsDisabledLocation()
-                .distanceToGpsEnabledLocation((GpsEnabledLocation)null), 0f);
+    public void testAzimuth() {
+
+        LocationControlBuffered locationControlBuffered = new LocationControlBuffered(null, null,
+                null, null, null, null);
+        locationControlBuffered.setAzimuth(19f);
+        assertEquals(19f, locationControlBuffered.getAzimuth());
     }
 
     @Test
@@ -89,24 +90,19 @@ public class LocationControlBufferedTest {
     }
 
     @Test
-    public void testOnLocationChangedNull() {
-        LocationControl locationControl = PowerMock.createMock(LocationControl.class);
-        GpsDisabledLocation gpsLocation = PowerMock.createMock(GpsDisabledLocation.class);
-        Location location1 = PowerMock.createMock(Location.class);
-        Location location2 = PowerMock.createMock(Location.class);
+    public void testGpsDisabledLocation() {
+        final GpsDisabledLocation gpsDisabledLocation = new GpsDisabledLocation();
+        assertEquals(Float.MAX_VALUE, gpsDisabledLocation.distanceTo(null), 0f);
+        assertEquals(Float.MAX_VALUE, gpsDisabledLocation.distanceTo(null), 0f);
+    }
 
-        EasyMock.expect(locationControl.getLocation()).andReturn(location1);
-        EasyMock.expect(locationControl.getLocation()).andReturn(location2);
-
-        PowerMock.replayAll();
-        LocationControlBuffered locationControlBuffered = new LocationControlBuffered(
-                locationControl, null, null, gpsLocation, gpsLocation, location2);
-        locationControlBuffered.onLocationChanged(null);
-        assertEquals(location1, locationControlBuffered.getLocation());
-        locationControlBuffered.onLocationChanged(null);
-        assertEquals(location2, locationControlBuffered.getLocation());
-        assertEquals(gpsLocation, locationControlBuffered.getGpsLocation());
-        PowerMock.verifyAll();
+    @Test
+    public void testMisc() {
+        LocationControlBuffered locationControlBuffered = new LocationControlBuffered(null, null,
+                null, null, null, null);
+        locationControlBuffered.onProviderDisabled(null);
+        locationControlBuffered.onProviderEnabled(null);
+        locationControlBuffered.onStatusChanged(null, 0, null);
     }
 
     @Test
@@ -127,20 +123,24 @@ public class LocationControlBufferedTest {
         PowerMock.verifyAll();
     }
 
-    public void testAzimuth() {
-
-        LocationControlBuffered locationControlBuffered = new LocationControlBuffered(null, null,
-                null, null, null, null);
-        locationControlBuffered.setAzimuth(19f);
-        assertEquals(19f, locationControlBuffered.getAzimuth());
-    }
-
     @Test
-    public void testMisc() {
-        LocationControlBuffered locationControlBuffered = new LocationControlBuffered(null, null,
-                null, null, null, null);
-        locationControlBuffered.onProviderDisabled(null);
-        locationControlBuffered.onProviderEnabled(null);
-        locationControlBuffered.onStatusChanged(null, 0, null);
+    public void testOnLocationChangedNull() {
+        LocationControl locationControl = PowerMock.createMock(LocationControl.class);
+        GpsDisabledLocation gpsLocation = PowerMock.createMock(GpsDisabledLocation.class);
+        Location location1 = PowerMock.createMock(Location.class);
+        Location location2 = PowerMock.createMock(Location.class);
+
+        EasyMock.expect(locationControl.getLocation()).andReturn(location1);
+        EasyMock.expect(locationControl.getLocation()).andReturn(location2);
+
+        PowerMock.replayAll();
+        LocationControlBuffered locationControlBuffered = new LocationControlBuffered(
+                locationControl, null, null, gpsLocation, gpsLocation, location2);
+        locationControlBuffered.onLocationChanged(null);
+        assertEquals(location1, locationControlBuffered.getLocation());
+        locationControlBuffered.onLocationChanged(null);
+        assertEquals(location2, locationControlBuffered.getLocation());
+        assertEquals(gpsLocation, locationControlBuffered.getGpsLocation());
+        PowerMock.verifyAll();
     }
 }

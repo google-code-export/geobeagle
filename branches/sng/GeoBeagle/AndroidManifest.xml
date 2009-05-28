@@ -11,8 +11,8 @@
 		License.
 	-->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-	package="com.google.code.geobeagle" android:versionName="0.6.19"
-	android:versionCode="72">
+	package="com.google.code.geobeagle" android:versionName="0.6.20"
+	android:versionCode="73">
 	<uses-sdk android:minSdkVersion="1" />
 	<application android:icon="@drawable/icon" android:label="@string/app_name"
 		android:debuggable="false">
@@ -44,7 +44,7 @@
 				<data android:mimeType="application/zip" />
 			</intent-filter>
 		</activity>
-		<activity android:name=".ui.EditCacheActivity" android:label="Edit Geocache"/>
+		<activity android:name=".ui.EditCacheActivity" android:label="Edit Geocache" />
 
 	</application>
 	<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />

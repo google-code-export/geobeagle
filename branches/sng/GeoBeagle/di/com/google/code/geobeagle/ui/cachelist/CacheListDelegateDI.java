@@ -44,7 +44,6 @@ import com.google.code.geobeagle.ui.ErrorDisplayer;
 import com.google.code.geobeagle.ui.GpsStatusWidget;
 import com.google.code.geobeagle.ui.MeterView;
 import com.google.code.geobeagle.ui.Misc;
-import com.google.code.geobeagle.ui.UpdateGpsWidgetRunnableDI;
 import com.google.code.geobeagle.ui.GpsStatusWidget.UpdateGpsWidgetRunnable;
 import com.google.code.geobeagle.ui.cachelist.CacheListRefresh.ActionAndTolerance;
 import com.google.code.geobeagle.ui.cachelist.CacheListRefresh.ActionManager;
@@ -63,11 +62,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.hardware.SensorManager;
 import android.location.LocationManager;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.widget.BaseAdapter;
-import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -126,12 +124,15 @@ public class CacheListDelegateDI {
         final Misc.Time time = new Misc.Time();
 
         final GpsStatusWidget gpsStatusWidget = new GpsStatusWidget(listActivity,
-                new ResourceProvider(listActivity), meterFormatter, time, combinedLocationManager,
-                locationControlBuffered);
+                locationControlBuffered, combinedLocationManager, meterFormatter,
+                new ResourceProvider(listActivity), time);
         final CombinedLocationListener gpsStatusWidgetLocationListener = new CombinedLocationListener(
                 locationControlBuffered, gpsStatusWidget);
-        final UpdateGpsWidgetRunnable updateGpsWidgetRunnable = UpdateGpsWidgetRunnableDI
-                .create(gpsStatusWidget.getGpsStatusWidgetDelegate());
+        final Handler handler = new Handler();
+
+        final UpdateGpsWidgetRunnable updateGpsWidgetRunnable = new UpdateGpsWidgetRunnable(
+                handler, locationControlBuffered, gpsStatusWidget.getMeterWrapper(),
+                gpsStatusWidget.getTextLagUpdater()); 
 
         final WhereFactoryAllCaches whereFactoryAllCaches = new WhereFactoryAllCaches();
         final WhereFactoryNearestCaches whereFactoryNearestCaches = new WhereFactoryNearestCaches();
@@ -149,7 +150,7 @@ public class CacheListDelegateDI {
         final GpsDisabledLocation gpsDisabledLocation = new GpsDisabledLocation();
         final DistanceUpdater distanceUpdater = new DistanceUpdater(geocacheListAdapter);
         final ToleranceStrategy sqlCacheLoaderTolerance = new LocationTolerance(500,
-                gpsDisabledLocation, 8000);
+                gpsDisabledLocation, 1000);
         final ToleranceStrategy adapterCachesSorterTolerance = new LocationTolerance(6,
                 gpsDisabledLocation, 1000);
         final LocationTolerance distanceUpdaterLocationTolerance = new LocationTolerance(1,
