@@ -18,6 +18,7 @@ import com.google.code.geobeagle.GeoUtils;
 import com.google.code.geobeagle.RadarView;
 import com.google.code.geobeagle.data.Geocache;
 
+import android.view.View;
 import android.widget.TextView;
 
 public class GeocacheViewer {
@@ -40,6 +41,11 @@ public class GeocacheViewer {
         mRadarView.setTarget((int)(latitude * GeoUtils.MILLION),
                 (int)(longitude * GeoUtils.MILLION));
         mId.setText(geocache.getId());
-        mName.setText(geocache.getName());
+        final CharSequence name = geocache.getName();
+        if (name.length() > 0) {
+            mName.setText(name);
+            mName.setVisibility(View.VISIBLE);
+        } else
+            mName.setVisibility(View.GONE);
     }
 }

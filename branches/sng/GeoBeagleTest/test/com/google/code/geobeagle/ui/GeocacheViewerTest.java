@@ -25,6 +25,7 @@ import org.powermock.api.easymock.PowerMock;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import android.view.View;
 import android.widget.TextView;
 
 @RunWith(PowerMockRunner.class)
@@ -48,6 +49,28 @@ public class GeocacheViewerTest {
 
         id.setText("GC123");
         name.setText("a cache");
+        name.setVisibility(View.VISIBLE);
+
+        PowerMock.replayAll();
+        new GeocacheViewer(radar, id, name).set(geocache);
+        PowerMock.verifyAll();
+    }
+
+    @Test
+    public void testSetEmptyDescription() {
+        TextView id = PowerMock.createMock(TextView.class);
+        TextView name = PowerMock.createMock(TextView.class);
+        Geocache geocache = PowerMock.createMock(Geocache.class);
+        RadarView radar = PowerMock.createMock(RadarView.class);
+
+        expect(geocache.getLatitude()).andReturn(37.0);
+        expect(geocache.getLongitude()).andReturn(-122.0);
+        radar.setTarget(37000000, -122000000);
+        expect(geocache.getId()).andReturn("GC123");
+        expect(geocache.getName()).andReturn("");
+
+        id.setText("GC123");
+        name.setVisibility(View.GONE);
 
         PowerMock.replayAll();
         new GeocacheViewer(radar, id, name).set(geocache);
