@@ -106,7 +106,7 @@ public class GeocacheListController {
             if (position > 0)
                 mContextActions[MENU_VIEW].act(position - 1);
             else
-                mCacheListRefresh.refresh();
+                mCacheListRefresh.forceRefresh();
         } catch (final Exception e) {
             mErrorDisplayer.displayErrorAndStack(e);
         }

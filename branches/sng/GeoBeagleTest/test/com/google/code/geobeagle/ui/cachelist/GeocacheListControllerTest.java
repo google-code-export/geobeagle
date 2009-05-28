@@ -189,7 +189,7 @@ public class GeocacheListControllerTest {
     public void testOnListItemClickZero() {
         CacheListRefresh cacheListRefresh = PowerMock.createMock(CacheListRefresh.class);
 
-        cacheListRefresh.refresh();
+        cacheListRefresh.forceRefresh();
 
         PowerMock.replayAll();
         new GeocacheListController(null, null, null, null, null, null, cacheListRefresh, null, null)
