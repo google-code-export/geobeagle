@@ -27,14 +27,11 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationProvider;
 import android.os.Bundle;
-import android.os.Debug;
 import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
-import java.util.Formatter;
 
 /**
  * @author sng Displays the GPS status (mAccuracy, availability, etc).
