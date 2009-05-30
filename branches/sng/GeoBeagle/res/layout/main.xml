@@ -118,7 +118,8 @@
 			<LinearLayout android:orientation="vertical"
 				android:layout_width="wrap_content" android:layout_height="wrap_content"
 				android:gravity="right" android:layout_weight="1">
-				<view android:id="@+id/radarview" class="com.google.code.geobeagle.RadarView"
+				<view android:id="@+id/radarview"
+					class="com.google.code.geobeagle.mainactivity.RadarView"
 					android:layout_width="130sp" android:layout_height="130sp"
 					android:gravity="right" android:layout_weight="1" />
 			</LinearLayout>
