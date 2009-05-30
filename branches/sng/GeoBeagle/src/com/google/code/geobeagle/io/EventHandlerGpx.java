@@ -14,8 +14,8 @@
 
 package com.google.code.geobeagle.io;
 
-import com.google.code.geobeagle.data.GeocacheFactory.Source;
 import com.google.code.geobeagle.io.GpxToCacheDI.XmlPullParserWrapper;
+import com.google.code.geobeagle.mainactivity.GeocacheFactory.Source;
 
 import java.io.IOException;
 

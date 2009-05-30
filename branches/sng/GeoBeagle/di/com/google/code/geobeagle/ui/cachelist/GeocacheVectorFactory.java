@@ -12,9 +12,12 @@
  ** limitations under the License.
  */
 
-package com.google.code.geobeagle.data;
+package com.google.code.geobeagle.ui.cachelist;
 
+import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.location.LocationControlBuffered;
+import com.google.code.geobeagle.ui.cachelist.DistanceFormatter;
+import com.google.code.geobeagle.ui.cachelist.GeocacheVector;
 
 public class GeocacheVectorFactory {
     private final DistanceFormatter mDistanceFormatter;

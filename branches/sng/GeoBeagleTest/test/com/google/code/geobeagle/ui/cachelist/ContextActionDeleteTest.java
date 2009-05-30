@@ -16,8 +16,6 @@ package com.google.code.geobeagle.ui.cachelist;
 
 import static org.easymock.EasyMock.expect;
 
-import com.google.code.geobeagle.data.GeocacheVector;
-import com.google.code.geobeagle.data.GeocacheVectors;
 import com.google.code.geobeagle.io.CacheWriter;
 import com.google.code.geobeagle.ui.cachelist.CacheListRefresh.TitleUpdater;
 

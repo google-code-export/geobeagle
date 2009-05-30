@@ -14,7 +14,7 @@
 
 package com.google.code.geobeagle.io;
 
-import com.google.code.geobeagle.data.Geocache;
+import com.google.code.geobeagle.Geocache;
 
 public class LocationSaver {
     private final CacheWriter mCacheWriter;

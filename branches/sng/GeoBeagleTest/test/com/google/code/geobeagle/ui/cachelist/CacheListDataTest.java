@@ -12,11 +12,15 @@
  ** limitations under the License.
  */
 
-package com.google.code.geobeagle.data;
+package com.google.code.geobeagle.ui.cachelist;
 
 import static org.junit.Assert.assertEquals;
 
+import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.location.LocationControlBuffered;
+import com.google.code.geobeagle.ui.cachelist.CacheListData;
+import com.google.code.geobeagle.ui.cachelist.GeocacheVector;
+import com.google.code.geobeagle.ui.cachelist.GeocacheVectors;
 
 import org.easymock.EasyMock;
 import org.junit.Test;

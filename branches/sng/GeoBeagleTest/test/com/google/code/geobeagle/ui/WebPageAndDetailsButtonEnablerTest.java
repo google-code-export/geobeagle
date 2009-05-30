@@ -14,10 +14,10 @@
 
 package com.google.code.geobeagle.ui;
 
-import com.google.code.geobeagle.data.Geocache;
-import com.google.code.geobeagle.data.GeocacheFactory.Provider;
-import com.google.code.geobeagle.data.GeocacheFactory.Source;
+import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.mainactivity.GeoBeagle;
+import com.google.code.geobeagle.mainactivity.GeocacheFactory.Provider;
+import com.google.code.geobeagle.mainactivity.GeocacheFactory.Source;
 import com.google.code.geobeagle.ui.WebPageAndDetailsButtonEnabler.CheckButton;
 import com.google.code.geobeagle.ui.WebPageAndDetailsButtonEnabler.CheckButtons;
 import com.google.code.geobeagle.ui.WebPageAndDetailsButtonEnabler.CheckDetailsButton;

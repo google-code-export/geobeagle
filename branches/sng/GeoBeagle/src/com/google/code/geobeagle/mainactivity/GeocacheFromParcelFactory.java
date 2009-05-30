@@ -1,5 +1,7 @@
 
-package com.google.code.geobeagle.data;
+package com.google.code.geobeagle.mainactivity;
+
+import com.google.code.geobeagle.Geocache;
 
 import android.os.Bundle;
 import android.os.Parcel;

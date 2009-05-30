@@ -12,12 +12,15 @@
  ** limitations under the License.
  */
 
-package com.google.code.geobeagle.data;
+package com.google.code.geobeagle.mainactivity;
 
 import static org.junit.Assert.assertEquals;
 
-import com.google.code.geobeagle.data.GeocacheFactory.Source;
-import com.google.code.geobeagle.data.GeocacheFactory.Source.SourceFactory;
+import com.google.code.geobeagle.Geocache;
+import com.google.code.geobeagle.mainactivity.GeocacheFactory;
+import com.google.code.geobeagle.mainactivity.GeocacheFromParcelFactory;
+import com.google.code.geobeagle.mainactivity.GeocacheFactory.Source;
+import com.google.code.geobeagle.mainactivity.GeocacheFactory.Source.SourceFactory;
 
 import org.easymock.classextension.EasyMock;
 import org.junit.Test;

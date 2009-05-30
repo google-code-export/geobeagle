@@ -6,7 +6,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import com.google.code.geobeagle.data.GeocacheFactory.Source;
+import com.google.code.geobeagle.mainactivity.GeocacheFactory.Source;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

@@ -14,12 +14,9 @@
 
 package com.google.code.geobeagle.mainactivity;
 
+import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.ResourceProvider;
-import com.google.code.geobeagle.data.Geocache;
-import com.google.code.geobeagle.data.GeocacheFactory;
-import com.google.code.geobeagle.data.GeocacheFromPreferencesFactory;
-import com.google.code.geobeagle.data.GeocacheFactory.Source;
 import com.google.code.geobeagle.intents.GeocacheToCachePage;
 import com.google.code.geobeagle.intents.GeocacheToGoogleMap;
 import com.google.code.geobeagle.intents.IntentFactory;
@@ -33,6 +30,7 @@ import com.google.code.geobeagle.io.DatabaseDI.SQLiteWrapper;
 import com.google.code.geobeagle.location.LocationControlBuffered;
 import com.google.code.geobeagle.location.LocationControlDi;
 import com.google.code.geobeagle.location.LocationLifecycleManager;
+import com.google.code.geobeagle.mainactivity.GeocacheFactory.Source;
 import com.google.code.geobeagle.ui.ContentSelector;
 import com.google.code.geobeagle.ui.ErrorDisplayer;
 import com.google.code.geobeagle.ui.GeocacheViewer;

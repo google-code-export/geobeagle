@@ -12,10 +12,11 @@
  ** limitations under the License.
  */
 
-package com.google.code.geobeagle.data;
+package com.google.code.geobeagle;
 
-import com.google.code.geobeagle.data.GeocacheFactory.Provider;
-import com.google.code.geobeagle.data.GeocacheFactory.Source;
+import com.google.code.geobeagle.mainactivity.GeocacheFactory;
+import com.google.code.geobeagle.mainactivity.GeocacheFactory.Provider;
+import com.google.code.geobeagle.mainactivity.GeocacheFactory.Source;
 
 import android.content.SharedPreferences.Editor;
 import android.location.Location;
@@ -44,7 +45,7 @@ public class Geocache implements Parcelable {
     private final Source mSourceType;
     private float[] mDistanceAndBearing = new float[2];
 
-    Geocache(CharSequence id, CharSequence name, double latitude, double longitude,
+    public Geocache(CharSequence id, CharSequence name, double latitude, double longitude,
             Source sourceType, String sourceName) {
         mId = id;
         mName = name;
@@ -54,7 +55,7 @@ public class Geocache implements Parcelable {
         mSourceName = sourceName;
     }
 
-    float[] calculateDistanceAndBearing(Location here) {
+    public float[] calculateDistanceAndBearing(Location here) {
         if (here != null) {
             Location.distanceBetween(here.getLatitude(), here.getLongitude(), getLatitude(),
                     getLongitude(), mDistanceAndBearing);

@@ -17,10 +17,10 @@ package com.google.code.geobeagle.intents;
 import static org.easymock.EasyMock.expect;
 import static org.junit.Assert.assertEquals;
 
+import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.ResourceProvider;
-import com.google.code.geobeagle.data.Geocache;
-import com.google.code.geobeagle.data.GeocacheFactory;
+import com.google.code.geobeagle.mainactivity.GeocacheFactory;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

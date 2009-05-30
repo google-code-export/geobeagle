@@ -17,8 +17,7 @@ package com.google.code.geobeagle.io;
 import static org.easymock.EasyMock.expect;
 import static org.junit.Assert.assertEquals;
 
-import com.google.code.geobeagle.data.Geocache;
-import com.google.code.geobeagle.data.Geocaches;
+import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.io.CacheReader.CacheReaderCursor;
 
 import org.junit.Test;

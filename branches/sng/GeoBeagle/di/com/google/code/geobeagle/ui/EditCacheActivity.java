@@ -14,12 +14,12 @@
 
 package com.google.code.geobeagle.ui;
 
-import com.google.code.geobeagle.data.GeocacheFactory;
 import com.google.code.geobeagle.io.CacheWriter;
 import com.google.code.geobeagle.io.Database;
 import com.google.code.geobeagle.io.DatabaseDI;
 import com.google.code.geobeagle.io.LocationSaver;
 import com.google.code.geobeagle.io.DatabaseDI.SQLiteWrapper;
+import com.google.code.geobeagle.mainactivity.GeocacheFactory;
 import com.google.code.geobeagle.ui.EditCacheActivityDelegate.CancelButtonOnClickListener;
 
 import android.app.Activity;

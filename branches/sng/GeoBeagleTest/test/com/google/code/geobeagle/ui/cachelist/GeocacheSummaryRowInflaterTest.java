@@ -4,8 +4,6 @@ package com.google.code.geobeagle.ui.cachelist;
 import static org.junit.Assert.assertEquals;
 
 import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.data.GeocacheVector;
-import com.google.code.geobeagle.data.GeocacheVectors;
 import com.google.code.geobeagle.ui.cachelist.GeocacheSummaryRowInflater.RowViews;
 
 import org.easymock.classextension.EasyMock;

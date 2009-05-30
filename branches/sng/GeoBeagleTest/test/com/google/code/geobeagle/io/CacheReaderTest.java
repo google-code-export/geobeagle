@@ -19,14 +19,14 @@ import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.isNull;
 import static org.junit.Assert.assertEquals;
 
-import com.google.code.geobeagle.data.Geocache;
-import com.google.code.geobeagle.data.GeocacheFactory;
-import com.google.code.geobeagle.data.GeocacheFactory.Source;
+import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.io.CacheReader.CacheReaderCursor;
 import com.google.code.geobeagle.io.CacheReader.WhereFactoryAllCaches;
 import com.google.code.geobeagle.io.CacheReader.WhereFactoryNearestCaches;
 import com.google.code.geobeagle.io.DatabaseDI.CacheReaderCursorFactory;
 import com.google.code.geobeagle.io.DatabaseDI.SQLiteWrapper;
+import com.google.code.geobeagle.mainactivity.GeocacheFactory;
+import com.google.code.geobeagle.mainactivity.GeocacheFactory.Source;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

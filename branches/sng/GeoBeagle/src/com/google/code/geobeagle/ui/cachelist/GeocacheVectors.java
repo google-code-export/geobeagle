@@ -25,9 +25,11 @@
  ** limitations under the License.
  */
 
-package com.google.code.geobeagle.data;
+package com.google.code.geobeagle.ui.cachelist;
 
+import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.location.LocationControlBuffered;
+import com.google.code.geobeagle.ui.cachelist.GeocacheVectorFactory;
 
 import java.util.ArrayList;
 

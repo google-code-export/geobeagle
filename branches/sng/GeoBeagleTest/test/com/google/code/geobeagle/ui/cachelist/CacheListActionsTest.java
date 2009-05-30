@@ -16,9 +16,7 @@ package com.google.code.geobeagle.ui.cachelist;
 
 import static org.easymock.EasyMock.expect;
 
-import com.google.code.geobeagle.data.Geocache;
-import com.google.code.geobeagle.data.GeocacheVector;
-import com.google.code.geobeagle.data.GeocacheVectors;
+import com.google.code.geobeagle.Geocache;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

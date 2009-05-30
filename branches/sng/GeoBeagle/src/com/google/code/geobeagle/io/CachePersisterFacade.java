@@ -14,9 +14,9 @@
 
 package com.google.code.geobeagle.io;
 
-import com.google.code.geobeagle.data.GeocacheFactory.Source;
 import com.google.code.geobeagle.io.CachePersisterFacadeDI.FileFactory;
 import com.google.code.geobeagle.io.GpxImporterDI.MessageHandler;
+import com.google.code.geobeagle.mainactivity.GeocacheFactory.Source;
 
 import android.os.PowerManager.WakeLock;
 

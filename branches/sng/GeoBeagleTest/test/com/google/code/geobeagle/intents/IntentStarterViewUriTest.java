@@ -19,7 +19,7 @@ import static org.easymock.classextension.EasyMock.createMock;
 import static org.easymock.classextension.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.verify;
 
-import com.google.code.geobeagle.data.Geocache;
+import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.mainactivity.GeoBeagle;
 import com.google.code.geobeagle.ui.GeocacheViewer;
 

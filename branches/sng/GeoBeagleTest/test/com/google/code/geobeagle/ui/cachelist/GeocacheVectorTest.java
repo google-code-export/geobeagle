@@ -12,15 +12,18 @@
  ** limitations under the License.
  */
 
-package com.google.code.geobeagle.data;
+package com.google.code.geobeagle.ui.cachelist;
 
 import static org.easymock.EasyMock.expect;
 import static org.junit.Assert.assertEquals;
 
-import com.google.code.geobeagle.data.GeocacheVector.DistanceSortStrategy;
-import com.google.code.geobeagle.data.GeocacheVector.LocationComparator;
-import com.google.code.geobeagle.data.GeocacheVector.NullSortStrategy;
+import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.location.LocationControlBuffered;
+import com.google.code.geobeagle.ui.cachelist.DistanceFormatter;
+import com.google.code.geobeagle.ui.cachelist.GeocacheVector;
+import com.google.code.geobeagle.ui.cachelist.GeocacheVector.DistanceSortStrategy;
+import com.google.code.geobeagle.ui.cachelist.GeocacheVector.LocationComparator;
+import com.google.code.geobeagle.ui.cachelist.GeocacheVector.NullSortStrategy;
 
 import org.easymock.EasyMock;
 import org.junit.Test;

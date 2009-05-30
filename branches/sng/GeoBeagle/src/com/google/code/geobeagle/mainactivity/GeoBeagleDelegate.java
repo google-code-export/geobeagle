@@ -15,8 +15,6 @@
 package com.google.code.geobeagle.mainactivity;
 
 import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.data.GeocacheFactory;
-import com.google.code.geobeagle.data.GeocacheFromParcelFactory;
 import com.google.code.geobeagle.fieldnotes.FieldNoteSender;
 import com.google.code.geobeagle.fieldnotes.FieldNoteSenderDI;
 import com.google.code.geobeagle.ui.CacheDetailsOnClickListener;

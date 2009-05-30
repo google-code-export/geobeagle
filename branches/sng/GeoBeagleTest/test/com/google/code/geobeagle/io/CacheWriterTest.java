@@ -9,9 +9,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import com.google.code.geobeagle.data.GeocacheFactory.Source;
 import com.google.code.geobeagle.io.DatabaseDI.SQLiteWrapper;
 import com.google.code.geobeagle.io.DatabaseTest.DesktopSQLiteDatabase;
+import com.google.code.geobeagle.mainactivity.GeocacheFactory.Source;
 
 import org.junit.Test;
 

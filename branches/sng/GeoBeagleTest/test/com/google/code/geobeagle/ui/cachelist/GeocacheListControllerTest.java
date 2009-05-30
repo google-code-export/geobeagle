@@ -18,8 +18,6 @@ import static org.easymock.EasyMock.expect;
 import static org.junit.Assert.assertTrue;
 
 import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.data.GeocacheVector;
-import com.google.code.geobeagle.data.GeocacheVectors;
 import com.google.code.geobeagle.io.Database;
 import com.google.code.geobeagle.io.GpxImporter;
 import com.google.code.geobeagle.io.DatabaseDI.SQLiteWrapper;

@@ -15,8 +15,6 @@
 package com.google.code.geobeagle.ui.cachelist;
 
 import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.data.GeocacheVector;
-import com.google.code.geobeagle.data.GeocacheVectors;
 
 import android.util.Log;
 import android.view.LayoutInflater;

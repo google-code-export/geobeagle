@@ -1,7 +1,9 @@
 
-package com.google.code.geobeagle.data;
+package com.google.code.geobeagle.ui.cachelist;
 
 import static org.junit.Assert.assertEquals;
+
+import com.google.code.geobeagle.ui.cachelist.DistanceFormatter;
 
 import org.junit.Test;
 

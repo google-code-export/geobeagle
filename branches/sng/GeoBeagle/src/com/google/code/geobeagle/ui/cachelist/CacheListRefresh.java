@@ -14,8 +14,7 @@
 
 package com.google.code.geobeagle.ui.cachelist;
 
-import com.google.code.geobeagle.data.CacheListData;
-import com.google.code.geobeagle.data.Geocache;
+import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.io.GeocachesSql;
 import com.google.code.geobeagle.location.LocationControlBuffered;
 import com.google.code.geobeagle.location.LocationControlBuffered.IGpsLocation;

@@ -16,7 +16,7 @@ package com.google.code.geobeagle.intents;
 
 import static org.easymock.EasyMock.expect;
 
-import com.google.code.geobeagle.data.Geocache;
+import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.mainactivity.GeoBeagle;
 
 import org.junit.Test;

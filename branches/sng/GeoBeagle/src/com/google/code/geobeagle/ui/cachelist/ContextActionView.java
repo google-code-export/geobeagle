@@ -14,7 +14,6 @@
 
 package com.google.code.geobeagle.ui.cachelist;
 
-import com.google.code.geobeagle.data.GeocacheVectors;
 
 import android.content.Context;
 import android.content.Intent;

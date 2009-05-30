@@ -14,7 +14,7 @@
 
 package com.google.code.geobeagle.ui;
 
-import com.google.code.geobeagle.data.Geocache;
+import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.mainactivity.GeoUtils;
 import com.google.code.geobeagle.mainactivity.RadarView;
 

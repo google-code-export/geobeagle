@@ -15,7 +15,6 @@
 package com.google.code.geobeagle.ui.cachelist;
 
 import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.data.GeocacheVectors;
 import com.google.code.geobeagle.io.Database;
 import com.google.code.geobeagle.io.GpxImporter;
 import com.google.code.geobeagle.io.DatabaseDI.SQLiteWrapper;

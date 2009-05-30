@@ -3,13 +3,13 @@ package com.google.code.geobeagle.location;
 
 import static org.junit.Assert.assertEquals;
 
-import com.google.code.geobeagle.data.GeocacheVector;
-import com.google.code.geobeagle.data.GeocacheVector.DistanceSortStrategy;
-import com.google.code.geobeagle.data.GeocacheVector.NullSortStrategy;
 import com.google.code.geobeagle.location.LocationControl;
 import com.google.code.geobeagle.location.LocationControlBuffered;
 import com.google.code.geobeagle.location.LocationControlBuffered.GpsDisabledLocation;
 import com.google.code.geobeagle.location.LocationControlBuffered.GpsEnabledLocation;
+import com.google.code.geobeagle.ui.cachelist.GeocacheVector;
+import com.google.code.geobeagle.ui.cachelist.GeocacheVector.DistanceSortStrategy;
+import com.google.code.geobeagle.ui.cachelist.GeocacheVector.NullSortStrategy;
 
 import org.easymock.classextension.EasyMock;
 import org.junit.Test;

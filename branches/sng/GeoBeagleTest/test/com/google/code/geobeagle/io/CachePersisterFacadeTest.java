@@ -5,9 +5,9 @@ import static org.easymock.EasyMock.expect;
 import static org.easymock.classextension.EasyMock.createMock;
 import static org.junit.Assert.assertTrue;
 
-import com.google.code.geobeagle.data.GeocacheFactory.Source;
 import com.google.code.geobeagle.io.CachePersisterFacadeDI.FileFactory;
 import com.google.code.geobeagle.io.GpxImporterDI.MessageHandler;
+import com.google.code.geobeagle.mainactivity.GeocacheFactory.Source;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

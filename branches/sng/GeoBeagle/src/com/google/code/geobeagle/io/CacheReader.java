@@ -14,10 +14,10 @@
 
 package com.google.code.geobeagle.io;
 
-import com.google.code.geobeagle.data.Geocache;
-import com.google.code.geobeagle.data.GeocacheFactory;
+import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.io.DatabaseDI.CacheReaderCursorFactory;
 import com.google.code.geobeagle.io.DatabaseDI.SQLiteWrapper;
+import com.google.code.geobeagle.mainactivity.GeocacheFactory;
 
 import android.database.Cursor;
 import android.location.Location;

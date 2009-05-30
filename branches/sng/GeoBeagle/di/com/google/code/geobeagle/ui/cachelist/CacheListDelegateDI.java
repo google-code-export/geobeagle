@@ -15,13 +15,6 @@
 package com.google.code.geobeagle.ui.cachelist;
 
 import com.google.code.geobeagle.ResourceProvider;
-import com.google.code.geobeagle.data.CacheListData;
-import com.google.code.geobeagle.data.DistanceFormatter;
-import com.google.code.geobeagle.data.GeocacheFactory;
-import com.google.code.geobeagle.data.GeocacheFromMyLocationFactory;
-import com.google.code.geobeagle.data.GeocacheVector;
-import com.google.code.geobeagle.data.GeocacheVectorFactory;
-import com.google.code.geobeagle.data.GeocacheVectors;
 import com.google.code.geobeagle.io.CacheWriter;
 import com.google.code.geobeagle.io.Database;
 import com.google.code.geobeagle.io.DatabaseDI;
@@ -40,6 +33,7 @@ import com.google.code.geobeagle.location.LocationControlBuffered;
 import com.google.code.geobeagle.location.LocationControlDi;
 import com.google.code.geobeagle.location.LocationControlBuffered.GpsDisabledLocation;
 import com.google.code.geobeagle.mainactivity.GeoBeagle;
+import com.google.code.geobeagle.mainactivity.GeocacheFactory;
 import com.google.code.geobeagle.ui.ErrorDisplayer;
 import com.google.code.geobeagle.ui.GpsStatusWidget;
 import com.google.code.geobeagle.ui.MeterView;

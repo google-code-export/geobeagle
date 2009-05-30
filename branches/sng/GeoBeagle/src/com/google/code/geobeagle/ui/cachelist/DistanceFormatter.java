@@ -1,5 +1,5 @@
 
-package com.google.code.geobeagle.data;
+package com.google.code.geobeagle.ui.cachelist;
 
 public class DistanceFormatter {
     private static final String[] ARROWS = {

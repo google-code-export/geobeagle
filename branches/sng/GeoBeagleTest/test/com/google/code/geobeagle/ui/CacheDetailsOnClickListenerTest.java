@@ -3,8 +3,8 @@ package com.google.code.geobeagle.ui;
 
 import static org.easymock.EasyMock.expect;
 
+import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.data.Geocache;
 import com.google.code.geobeagle.io.CacheDetailsLoader;
 import com.google.code.geobeagle.mainactivity.GeoBeagle;
 

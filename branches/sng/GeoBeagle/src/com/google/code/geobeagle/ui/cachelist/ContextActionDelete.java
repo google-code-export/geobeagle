@@ -14,7 +14,6 @@
 
 package com.google.code.geobeagle.ui.cachelist;
 
-import com.google.code.geobeagle.data.GeocacheVectors;
 import com.google.code.geobeagle.io.CacheWriter;
 import com.google.code.geobeagle.ui.cachelist.CacheListRefresh.TitleUpdater;
 

@@ -12,7 +12,7 @@
  ** limitations under the License.
  */
 
-package com.google.code.geobeagle.data;
+package com.google.code.geobeagle.ui.cachelist;
 
 import static org.easymock.EasyMock.expect;
 import static org.easymock.classextension.EasyMock.createMock;
@@ -20,7 +20,11 @@ import static org.easymock.classextension.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.verify;
 import static org.junit.Assert.assertEquals;
 
+import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.location.LocationControlBuffered;
+import com.google.code.geobeagle.ui.cachelist.GeocacheVector;
+import com.google.code.geobeagle.ui.cachelist.GeocacheVectorFactory;
+import com.google.code.geobeagle.ui.cachelist.GeocacheVectors;
 
 import org.junit.Test;
 

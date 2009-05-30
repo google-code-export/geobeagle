@@ -3,8 +3,8 @@ package com.google.code.geobeagle.io;
 
 import static org.junit.Assert.assertTrue;
 
-import com.google.code.geobeagle.data.GeocacheFactory.Source;
 import com.google.code.geobeagle.io.GpxToCacheDI.XmlPullParserWrapper;
+import com.google.code.geobeagle.mainactivity.GeocacheFactory.Source;
 
 import org.easymock.EasyMock;
 import org.junit.Test;

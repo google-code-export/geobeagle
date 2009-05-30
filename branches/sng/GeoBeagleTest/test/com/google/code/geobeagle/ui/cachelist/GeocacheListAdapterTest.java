@@ -16,7 +16,6 @@ package com.google.code.geobeagle.ui.cachelist;
 
 import static org.junit.Assert.assertEquals;
 
-import com.google.code.geobeagle.data.GeocacheVectors;
 
 import org.easymock.classextension.EasyMock;
 import org.junit.Test;

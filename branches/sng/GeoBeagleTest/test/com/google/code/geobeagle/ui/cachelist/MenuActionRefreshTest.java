@@ -18,11 +18,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.data.CacheListData;
-import com.google.code.geobeagle.data.Geocache;
-import com.google.code.geobeagle.data.GeocacheVector;
-import com.google.code.geobeagle.data.GeocacheVector.SortStrategy;
 import com.google.code.geobeagle.io.GeocachesSql;
 import com.google.code.geobeagle.io.WhereFactory;
 import com.google.code.geobeagle.location.LocationControlBuffered;
@@ -37,6 +34,7 @@ import com.google.code.geobeagle.ui.cachelist.CacheListRefresh.RefreshAction;
 import com.google.code.geobeagle.ui.cachelist.CacheListRefresh.SqlCacheLoader;
 import com.google.code.geobeagle.ui.cachelist.CacheListRefresh.TitleUpdater;
 import com.google.code.geobeagle.ui.cachelist.CacheListRefresh.ToleranceStrategy;
+import com.google.code.geobeagle.ui.cachelist.GeocacheVector.SortStrategy;
 
 import org.easymock.EasyMock;
 import org.junit.Test;

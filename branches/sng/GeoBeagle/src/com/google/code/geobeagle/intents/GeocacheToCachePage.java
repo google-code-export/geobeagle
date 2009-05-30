@@ -14,9 +14,9 @@
 
 package com.google.code.geobeagle.intents;
 
+import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.ResourceProvider;
-import com.google.code.geobeagle.data.Geocache;
 
 /*
  * Convert a Geocache to the cache page url.
