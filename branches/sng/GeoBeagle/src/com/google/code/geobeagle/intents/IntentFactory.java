@@ -14,7 +14,7 @@
 
 package com.google.code.geobeagle.intents;
 
-import com.google.code.geobeagle.UriParser;
+import com.google.code.geobeagle.mainactivity.UriParser;
 
 import android.content.Intent;
 

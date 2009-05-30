@@ -3,7 +3,7 @@ package com.google.code.geobeagle.intents;
 
 import static org.junit.Assert.assertEquals;
 
-import com.google.code.geobeagle.UriParser;
+import com.google.code.geobeagle.mainactivity.UriParser;
 
 import org.easymock.EasyMock;
 import org.junit.Test;

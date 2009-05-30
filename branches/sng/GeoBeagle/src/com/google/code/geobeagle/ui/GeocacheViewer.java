@@ -14,9 +14,9 @@
 
 package com.google.code.geobeagle.ui;
 
-import com.google.code.geobeagle.GeoUtils;
-import com.google.code.geobeagle.RadarView;
 import com.google.code.geobeagle.data.Geocache;
+import com.google.code.geobeagle.mainactivity.GeoUtils;
+import com.google.code.geobeagle.mainactivity.RadarView;
 
 import android.view.View;
 import android.widget.TextView;

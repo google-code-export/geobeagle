@@ -14,10 +14,10 @@
 
 package com.google.code.geobeagle.ui;
 
-import com.google.code.geobeagle.CombinedLocationManager;
-import com.google.code.geobeagle.LocationControlBuffered;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.ResourceProvider;
+import com.google.code.geobeagle.location.CombinedLocationManager;
+import com.google.code.geobeagle.location.LocationControlBuffered;
 import com.google.code.geobeagle.ui.MeterView.MeterFormatter;
 import com.google.code.geobeagle.ui.Misc.Time;
 

@@ -17,11 +17,10 @@ package com.google.code.geobeagle.ui;
 import static org.easymock.EasyMock.expect;
 import static org.junit.Assert.assertEquals;
 
-import com.google.code.geobeagle.CombinedLocationManager;
-import com.google.code.geobeagle.LocationControlBuffered;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.ResourceProvider;
-import com.google.code.geobeagle.LocationControlBuffered.GpsEnabledLocation;
+import com.google.code.geobeagle.location.CombinedLocationManager;
+import com.google.code.geobeagle.location.LocationControlBuffered;
 import com.google.code.geobeagle.ui.GpsStatusWidget.GpsStatusWidgetDelegate;
 import com.google.code.geobeagle.ui.GpsStatusWidget.MeterFader;
 import com.google.code.geobeagle.ui.GpsStatusWidget.MeterWrapper;

@@ -4,9 +4,9 @@
 
 package com.google.code.geobeagle.ui;
 
-import com.google.code.geobeagle.GeoBeagle;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.io.CacheDetailsLoader;
+import com.google.code.geobeagle.mainactivity.GeoBeagle;
 
 import android.app.AlertDialog.Builder;
 import android.view.LayoutInflater;

@@ -14,7 +14,6 @@
 
 package com.google.code.geobeagle.ui.cachelist;
 
-import com.google.code.geobeagle.CacheList;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

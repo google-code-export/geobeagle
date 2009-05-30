@@ -14,7 +14,7 @@
 
 package com.google.code.geobeagle.ui;
 
-import com.google.code.geobeagle.LifecycleManager;
+import com.google.code.geobeagle.mainactivity.LifecycleManager;
 
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;

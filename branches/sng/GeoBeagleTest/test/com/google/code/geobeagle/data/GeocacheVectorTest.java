@@ -17,10 +17,10 @@ package com.google.code.geobeagle.data;
 import static org.easymock.EasyMock.expect;
 import static org.junit.Assert.assertEquals;
 
-import com.google.code.geobeagle.LocationControlBuffered;
 import com.google.code.geobeagle.data.GeocacheVector.DistanceSortStrategy;
 import com.google.code.geobeagle.data.GeocacheVector.LocationComparator;
 import com.google.code.geobeagle.data.GeocacheVector.NullSortStrategy;
+import com.google.code.geobeagle.location.LocationControlBuffered;
 
 import org.easymock.EasyMock;
 import org.junit.Test;

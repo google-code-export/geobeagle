@@ -14,8 +14,8 @@
 
 package com.google.code.geobeagle.ui;
 
-import com.google.code.geobeagle.LocationControlBuffered;
 import com.google.code.geobeagle.R;
+import com.google.code.geobeagle.location.LocationControlBuffered;
 
 import android.location.Location;
 

@@ -14,7 +14,7 @@
 
 package com.google.code.geobeagle.intents;
 
-import com.google.code.geobeagle.GeoBeagle;
+import com.google.code.geobeagle.mainactivity.GeoBeagle;
 import com.google.code.geobeagle.ui.GeocacheViewer;
 
 import android.content.Intent;

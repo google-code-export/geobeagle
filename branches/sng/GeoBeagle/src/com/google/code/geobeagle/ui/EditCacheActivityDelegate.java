@@ -15,12 +15,12 @@
 package com.google.code.geobeagle.ui;
 
 import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.Util;
 import com.google.code.geobeagle.data.Geocache;
 import com.google.code.geobeagle.data.GeocacheFactory;
 import com.google.code.geobeagle.io.Database;
 import com.google.code.geobeagle.io.LocationSaver;
 import com.google.code.geobeagle.io.DatabaseDI.SQLiteWrapper;
+import com.google.code.geobeagle.mainactivity.Util;
 import com.google.code.geobeagle.ui.cachelist.GeocacheListController;
 
 import android.app.Activity;

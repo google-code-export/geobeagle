@@ -14,13 +14,7 @@
 
 package com.google.code.geobeagle.ui.cachelist;
 
-import com.google.code.geobeagle.CombinedLocationListener;
-import com.google.code.geobeagle.CombinedLocationManager;
-import com.google.code.geobeagle.GeoBeagle;
-import com.google.code.geobeagle.LocationControlBuffered;
-import com.google.code.geobeagle.LocationControlDi;
 import com.google.code.geobeagle.ResourceProvider;
-import com.google.code.geobeagle.LocationControlBuffered.GpsDisabledLocation;
 import com.google.code.geobeagle.data.CacheListData;
 import com.google.code.geobeagle.data.DistanceFormatter;
 import com.google.code.geobeagle.data.GeocacheFactory;
@@ -40,6 +34,12 @@ import com.google.code.geobeagle.io.CacheReader.WhereFactoryNearestCaches;
 import com.google.code.geobeagle.io.DatabaseDI.SQLiteWrapper;
 import com.google.code.geobeagle.io.GpxToCache.Aborter;
 import com.google.code.geobeagle.io.GpxToCacheDI.XmlPullParserWrapper;
+import com.google.code.geobeagle.location.CombinedLocationListener;
+import com.google.code.geobeagle.location.CombinedLocationManager;
+import com.google.code.geobeagle.location.LocationControlBuffered;
+import com.google.code.geobeagle.location.LocationControlDi;
+import com.google.code.geobeagle.location.LocationControlBuffered.GpsDisabledLocation;
+import com.google.code.geobeagle.mainactivity.GeoBeagle;
 import com.google.code.geobeagle.ui.ErrorDisplayer;
 import com.google.code.geobeagle.ui.GpsStatusWidget;
 import com.google.code.geobeagle.ui.MeterView;

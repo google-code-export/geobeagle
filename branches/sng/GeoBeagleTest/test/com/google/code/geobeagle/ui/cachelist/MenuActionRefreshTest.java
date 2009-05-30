@@ -18,15 +18,15 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import com.google.code.geobeagle.LocationControlBuffered;
 import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.LocationControlBuffered.IGpsLocation;
 import com.google.code.geobeagle.data.CacheListData;
 import com.google.code.geobeagle.data.Geocache;
 import com.google.code.geobeagle.data.GeocacheVector;
 import com.google.code.geobeagle.data.GeocacheVector.SortStrategy;
 import com.google.code.geobeagle.io.GeocachesSql;
 import com.google.code.geobeagle.io.WhereFactory;
+import com.google.code.geobeagle.location.LocationControlBuffered;
+import com.google.code.geobeagle.location.LocationControlBuffered.IGpsLocation;
 import com.google.code.geobeagle.ui.cachelist.CacheListRefresh.ActionAndTolerance;
 import com.google.code.geobeagle.ui.cachelist.CacheListRefresh.ActionManager;
 import com.google.code.geobeagle.ui.cachelist.CacheListRefresh.AdapterCachesSorter;

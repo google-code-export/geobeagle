@@ -14,13 +14,12 @@
 
 package com.google.code.geobeagle.ui.cachelist;
 
-import com.google.code.geobeagle.CombinedLocationManager;
-import com.google.code.geobeagle.LocationControlBuffered;
 import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.Refresher;
 import com.google.code.geobeagle.data.GeocacheVectors;
 import com.google.code.geobeagle.io.Database;
 import com.google.code.geobeagle.io.DatabaseDI.SQLiteWrapper;
+import com.google.code.geobeagle.location.CombinedLocationManager;
+import com.google.code.geobeagle.location.LocationControlBuffered;
 import com.google.code.geobeagle.ui.ErrorDisplayer;
 import com.google.code.geobeagle.ui.GpsStatusWidget.UpdateGpsWidgetRunnable;
 import com.google.code.geobeagle.ui.cachelist.GeocacheListController.CacheListOnCreateContextMenuListener;

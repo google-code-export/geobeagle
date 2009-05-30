@@ -3,8 +3,8 @@ package com.google.code.geobeagle.data;
 
 import static org.junit.Assert.assertEquals;
 
-import com.google.code.geobeagle.LocationControlBuffered;
 import com.google.code.geobeagle.data.GeocacheFactory.Source;
+import com.google.code.geobeagle.location.LocationControlBuffered;
 
 import org.easymock.classextension.EasyMock;
 import org.junit.Test;

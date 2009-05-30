@@ -14,7 +14,7 @@
 
 package com.google.code.geobeagle.data;
 
-import com.google.code.geobeagle.LocationControlBuffered;
+import com.google.code.geobeagle.location.LocationControlBuffered;
 
 import android.location.Location;
 import android.util.FloatMath;
