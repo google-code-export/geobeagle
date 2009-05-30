@@ -27,6 +27,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationProvider;
 import android.os.Bundle;
+import android.os.Debug;
 import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -175,12 +176,11 @@ public class GpsStatusWidget extends LinearLayout implements LocationListener {
         }
 
         static String formatTime(long l) {
-            Formatter formatter = new Formatter();
             if (l < 60)
-                return formatter.format("%1$ds", l).toString();
+                return String.valueOf(l) + "s";
             else if (l < 3600)
-                return formatter.format("%1$dm %2$ds", l / 60, l % 60).toString();
-            return formatter.format("%1$dh %2$dm", l / 3600, (l % 3600) / 60).toString();
+                return String.valueOf(l / 60) + "m " + String.valueOf(l % 60) + "s";
+            return String.valueOf(l / 3600) + "h " + String.valueOf((l % 3600) / 60) + "m";
         }
 
         public CharSequence formatLag(long l) {
