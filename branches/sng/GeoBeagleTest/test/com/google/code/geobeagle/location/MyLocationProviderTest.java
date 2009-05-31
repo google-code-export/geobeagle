@@ -21,8 +21,8 @@ import static org.easymock.classextension.EasyMock.verify;
 import static org.junit.Assert.assertEquals;
 
 import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.ui.ErrorDisplayer;
-import com.google.code.geobeagle.ui.MyLocationProvider;
+import com.google.code.geobeagle.mainactivity.ui.ErrorDisplayer;
+import com.google.code.geobeagle.mainactivity.ui.MyLocationProvider;
 
 import org.junit.Test;
 
