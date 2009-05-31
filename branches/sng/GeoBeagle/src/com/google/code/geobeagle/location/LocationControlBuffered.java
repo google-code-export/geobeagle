@@ -1,10 +1,10 @@
 
 package com.google.code.geobeagle.location;
 
-import com.google.code.geobeagle.ui.cachelist.GeocacheVector;
-import com.google.code.geobeagle.ui.cachelist.GeocacheVector.DistanceSortStrategy;
-import com.google.code.geobeagle.ui.cachelist.GeocacheVector.NullSortStrategy;
-import com.google.code.geobeagle.ui.cachelist.GeocacheVector.SortStrategy;
+import com.google.code.geobeagle.cachelist.GeocacheVector;
+import com.google.code.geobeagle.cachelist.GeocacheVector.DistanceSortStrategy;
+import com.google.code.geobeagle.cachelist.GeocacheVector.NullSortStrategy;
+import com.google.code.geobeagle.cachelist.GeocacheVector.SortStrategy;
 
 import android.location.Location;
 import android.location.LocationListener;

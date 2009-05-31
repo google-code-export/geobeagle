@@ -15,13 +15,13 @@
 package com.google.code.geobeagle.mainactivity;
 
 import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.fieldnotes.FieldNoteSender;
-import com.google.code.geobeagle.fieldnotes.FieldNoteSenderDI;
-import com.google.code.geobeagle.ui.CacheDetailsOnClickListener;
-import com.google.code.geobeagle.ui.EditCacheActivity;
-import com.google.code.geobeagle.ui.ErrorDisplayer;
-import com.google.code.geobeagle.ui.GeocacheViewer;
-import com.google.code.geobeagle.ui.Misc;
+import com.google.code.geobeagle.mainactivity.fieldnotes.FieldNoteSender;
+import com.google.code.geobeagle.mainactivity.fieldnotes.FieldNoteSenderDI;
+import com.google.code.geobeagle.mainactivity.ui.CacheDetailsOnClickListener;
+import com.google.code.geobeagle.mainactivity.ui.EditCacheActivity;
+import com.google.code.geobeagle.mainactivity.ui.ErrorDisplayer;
+import com.google.code.geobeagle.mainactivity.ui.GeocacheViewer;
+import com.google.code.geobeagle.mainactivity.ui.Misc;
 
 import android.app.AlertDialog;
 import android.app.Dialog;

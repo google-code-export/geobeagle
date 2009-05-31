@@ -12,18 +12,20 @@
  ** limitations under the License.
  */
 
-package com.google.code.geobeagle.gpx.zip;
+package com.google.code.geobeagle.cachelist;
 
-import com.google.code.geobeagle.xmlimport.gpx.zip.GpxZipInputStream;
+import com.google.code.geobeagle.xmlimport.GpxImporter;
 
-import java.io.BufferedInputStream;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.util.zip.ZipInputStream;
+class MenuActionSyncGpx implements MenuAction {
+    private final GpxImporter mGpxImporter;
+    private final CacheListRefresh mMenuActionRefresh;
 
-public class ZipInputStreamFactory {
-    public GpxZipInputStream create(String filename) throws IOException {
-        return new GpxZipInputStream(new ZipInputStream(new BufferedInputStream(
-                new FileInputStream(filename))));
+    public MenuActionSyncGpx(GpxImporter gpxImporter, CacheListRefresh cacheListRefresh) {
+        mGpxImporter = gpxImporter;
+        mMenuActionRefresh = cacheListRefresh;
+    }
+
+    public void act() {
+        mGpxImporter.importGpxs(mMenuActionRefresh);
     }
 }

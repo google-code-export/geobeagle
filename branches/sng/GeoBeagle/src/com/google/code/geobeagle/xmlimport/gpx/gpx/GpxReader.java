@@ -12,18 +12,27 @@
  ** limitations under the License.
  */
 
-package com.google.code.geobeagle.gpx.zip;
+package com.google.code.geobeagle.xmlimport.gpx.gpx;
 
-import com.google.code.geobeagle.xmlimport.gpx.zip.GpxZipInputStream;
+import com.google.code.geobeagle.xmlimport.gpx.IGpxReader;
 
-import java.io.BufferedInputStream;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.util.zip.ZipInputStream;
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.Reader;
 
-public class ZipInputStreamFactory {
-    public GpxZipInputStream create(String filename) throws IOException {
-        return new GpxZipInputStream(new ZipInputStream(new BufferedInputStream(
-                new FileInputStream(filename))));
+class GpxReader implements IGpxReader {
+    private final String mFilename;
+
+    public GpxReader(String filename) {
+        mFilename = filename;
+    }
+
+    public String getFilename() {
+        return mFilename;
+    }
+
+    public Reader open() throws FileNotFoundException {
+        return new BufferedReader(new FileReader(mFilename));
     }
 }

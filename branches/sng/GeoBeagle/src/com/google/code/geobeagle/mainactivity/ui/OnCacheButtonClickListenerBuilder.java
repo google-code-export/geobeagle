@@ -12,25 +12,23 @@
  ** limitations under the License.
  */
 
-package com.google.code.geobeagle.mainactivity;
+package com.google.code.geobeagle.mainactivity.ui;
 
-import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.mainactivity.ui.ContentSelector;
+import com.google.code.geobeagle.mainactivity.intents.IntentStarter;
 
 import android.app.Activity;
-import android.content.SharedPreferences;
-import android.widget.Spinner;
 
-public class GeoBeagleBuilder {
+public class OnCacheButtonClickListenerBuilder {
     private final Activity mActivity;
+    private final ErrorDisplayer mErrorDisplayer;
 
-    public GeoBeagleBuilder(Activity context) {
-        mActivity = context;
+    public OnCacheButtonClickListenerBuilder(Activity activity, ErrorDisplayer errorDisplayer) {
+        mErrorDisplayer = errorDisplayer;
+        mActivity = activity;
     }
 
-    public ContentSelector createContentSelector(SharedPreferences preferences) {
-        return new ContentSelector((Spinner)mActivity.findViewById(R.id.content_provider),
-                preferences);
+    public void set(int id, IntentStarter intentStarter, String errorString) {
+        mActivity.findViewById(id).setOnClickListener(new CacheButtonOnClickListener(
+                intentStarter, errorString, mErrorDisplayer));
     }
-
 }

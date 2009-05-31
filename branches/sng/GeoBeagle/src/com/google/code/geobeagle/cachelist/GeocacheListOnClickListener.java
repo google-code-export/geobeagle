@@ -12,18 +12,23 @@
  ** limitations under the License.
  */
 
-package com.google.code.geobeagle.gpx.zip;
+package com.google.code.geobeagle.cachelist;
 
-import com.google.code.geobeagle.xmlimport.gpx.zip.GpxZipInputStream;
 
-import java.io.BufferedInputStream;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.util.zip.ZipInputStream;
+import android.app.Activity;
+import android.content.Intent;
+import android.view.View;
+import android.view.View.OnClickListener;
 
-public class ZipInputStreamFactory {
-    public GpxZipInputStream create(String filename) throws IOException {
-        return new GpxZipInputStream(new ZipInputStream(new BufferedInputStream(
-                new FileInputStream(filename))));
+public class GeocacheListOnClickListener implements OnClickListener {
+
+    final private Activity mActivity;
+
+    public GeocacheListOnClickListener(Activity activity) {
+        mActivity = activity;
+    }
+
+    public void onClick(View v) {
+        mActivity.startActivity(new Intent(mActivity, CacheList.class));
     }
 }

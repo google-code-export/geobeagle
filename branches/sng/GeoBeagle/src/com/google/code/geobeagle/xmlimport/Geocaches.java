@@ -12,18 +12,28 @@
  ** limitations under the License.
  */
 
-package com.google.code.geobeagle.gpx.zip;
+package com.google.code.geobeagle.xmlimport;
 
-import com.google.code.geobeagle.xmlimport.gpx.zip.GpxZipInputStream;
+import com.google.code.geobeagle.Geocache;
 
-import java.io.BufferedInputStream;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.util.zip.ZipInputStream;
+import java.util.ArrayList;
 
-public class ZipInputStreamFactory {
-    public GpxZipInputStream create(String filename) throws IOException {
-        return new GpxZipInputStream(new ZipInputStream(new BufferedInputStream(
-                new FileInputStream(filename))));
+public class Geocaches {
+    private final ArrayList<Geocache> mGeocaches;
+
+    public Geocaches() {
+        mGeocaches = new ArrayList<Geocache>();
+    }
+
+    public void add(Geocache geocache) {
+        mGeocaches.add(geocache);
+    }
+
+    public void clear() {
+        mGeocaches.clear();
+    }
+
+    public ArrayList<Geocache> getAll() {
+        return mGeocaches;
     }
 }

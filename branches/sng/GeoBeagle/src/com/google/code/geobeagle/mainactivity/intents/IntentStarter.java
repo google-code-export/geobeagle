@@ -12,18 +12,8 @@
  ** limitations under the License.
  */
 
-package com.google.code.geobeagle.gpx.zip;
+package com.google.code.geobeagle.mainactivity.intents;
 
-import com.google.code.geobeagle.xmlimport.gpx.zip.GpxZipInputStream;
-
-import java.io.BufferedInputStream;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.util.zip.ZipInputStream;
-
-public class ZipInputStreamFactory {
-    public GpxZipInputStream create(String filename) throws IOException {
-        return new GpxZipInputStream(new ZipInputStream(new BufferedInputStream(
-                new FileInputStream(filename))));
-    }
+public interface IntentStarter {
+    public abstract void startIntent();
 }

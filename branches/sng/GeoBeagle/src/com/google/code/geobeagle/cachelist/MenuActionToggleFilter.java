@@ -12,18 +12,20 @@
  ** limitations under the License.
  */
 
-package com.google.code.geobeagle.gpx.zip;
+package com.google.code.geobeagle.cachelist;
 
-import com.google.code.geobeagle.xmlimport.gpx.zip.GpxZipInputStream;
+class MenuActionToggleFilter implements MenuAction {
+    private final FilterNearestCaches mFilterNearestCaches;
+    private final CacheListRefresh mMenuActionRefresh;
 
-import java.io.BufferedInputStream;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.util.zip.ZipInputStream;
+    MenuActionToggleFilter(FilterNearestCaches filterNearestCaches,
+            CacheListRefresh cacheListRefresh) {
+        mFilterNearestCaches = filterNearestCaches;
+        mMenuActionRefresh = cacheListRefresh;
+    }
 
-public class ZipInputStreamFactory {
-    public GpxZipInputStream create(String filename) throws IOException {
-        return new GpxZipInputStream(new ZipInputStream(new BufferedInputStream(
-                new FileInputStream(filename))));
+    public void act() {
+        mFilterNearestCaches.toggle();
+        mMenuActionRefresh.forceRefresh();
     }
 }
