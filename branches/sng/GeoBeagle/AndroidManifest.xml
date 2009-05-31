@@ -37,8 +37,7 @@
 			</intent-filter>
 
 		</activity>
-		<activity android:name=".ui.cachelist.CacheList"
-			android:label="@string/cache_list_title">
+		<activity android:name=".cachelist.CacheList" android:label="@string/cache_list_title">
 			<intent-filter>
 				<action android:name="android.intent.action.VIEW" />
 				<category android:name="android.intent.category.DEFAULT" />
@@ -46,8 +45,8 @@
 				<data android:mimeType="application/zip" />
 			</intent-filter>
 		</activity>
-		<activity android:name=".ui.EditCacheActivity" android:label="Edit Geocache" />
-
+		<activity android:name=".mainactivity.ui.EditCacheActivity"
+			android:label="Edit Geocache" />
 	</application>
 	<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 	<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
