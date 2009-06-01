@@ -48,7 +48,7 @@ public class LocationControl {
     private final LocationChooser mLocationChooser;
     private final LocationManager mLocationManager;
 
-    LocationControl(LocationManager locationManager, LocationChooser locationChooser) {
+    public LocationControl(LocationManager locationManager, LocationChooser locationChooser) {
         mLocationManager = locationManager;
         mLocationChooser = locationChooser;
     }

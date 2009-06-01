@@ -14,7 +14,6 @@
 
 package com.google.code.geobeagle.mainactivity;
 
-
 import android.content.SharedPreferences;
 
 public class AppLifecycleManager {

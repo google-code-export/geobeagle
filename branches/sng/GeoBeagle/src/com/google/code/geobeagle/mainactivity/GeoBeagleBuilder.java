@@ -15,7 +15,7 @@
 package com.google.code.geobeagle.mainactivity;
 
 import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.mainactivity.ui.ContentSelector;
+import com.google.code.geobeagle.mainactivity.view.ContentSelector;
 
 import android.app.Activity;
 import android.content.SharedPreferences;

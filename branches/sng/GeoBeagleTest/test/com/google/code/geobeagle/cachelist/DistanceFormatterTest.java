@@ -3,6 +3,8 @@ package com.google.code.geobeagle.cachelist;
 
 import static org.junit.Assert.assertEquals;
 
+import com.google.code.geobeagle.cachelistactivity.presenter.DistanceFormatter;
+
 import org.junit.Test;
 
 import java.util.Locale;

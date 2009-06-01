@@ -3,7 +3,8 @@ package com.google.code.geobeagle.xmlimport;
 
 import static org.junit.Assert.assertEquals;
 
-import com.google.code.geobeagle.mainactivity.GeocacheFactory.Source;
+import com.google.code.geobeagle.GeocacheFactory.Source;
+import com.google.code.geobeagle.database.DbToGeocacheAdapter;
 
 import org.junit.Test;
 

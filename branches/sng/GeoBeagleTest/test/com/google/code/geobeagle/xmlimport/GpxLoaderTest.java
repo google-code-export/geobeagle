@@ -20,8 +20,8 @@ import static org.easymock.classextension.EasyMock.createMock;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import com.google.code.geobeagle.ErrorDisplayer;
 import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.mainactivity.ui.ErrorDisplayer;
 import com.google.code.geobeagle.xmlimport.GpxToCache.CancelException;
 
 import org.junit.Test;

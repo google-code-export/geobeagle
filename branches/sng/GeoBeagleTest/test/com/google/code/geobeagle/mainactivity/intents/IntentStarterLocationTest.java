@@ -18,8 +18,8 @@ import static org.easymock.EasyMock.expect;
 
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.ResourceProvider;
-import com.google.code.geobeagle.mainactivity.ui.ContentSelector;
-import com.google.code.geobeagle.mainactivity.ui.MyLocationProvider;
+import com.google.code.geobeagle.mainactivity.view.ContentSelector;
+import com.google.code.geobeagle.mainactivity.view.MyLocationProvider;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

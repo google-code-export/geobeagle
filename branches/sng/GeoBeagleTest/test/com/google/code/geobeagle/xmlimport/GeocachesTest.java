@@ -18,6 +18,7 @@ import static org.easymock.classextension.EasyMock.createMock;
 import static org.junit.Assert.assertEquals;
 
 import com.google.code.geobeagle.Geocache;
+import com.google.code.geobeagle.database.Geocaches;
 
 import org.junit.Test;
 

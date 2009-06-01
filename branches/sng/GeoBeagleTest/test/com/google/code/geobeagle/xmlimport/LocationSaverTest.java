@@ -17,7 +17,9 @@ package com.google.code.geobeagle.xmlimport;
 import static org.easymock.EasyMock.expect;
 
 import com.google.code.geobeagle.Geocache;
-import com.google.code.geobeagle.mainactivity.GeocacheFactory.Source;
+import com.google.code.geobeagle.GeocacheFactory.Source;
+import com.google.code.geobeagle.database.CacheWriter;
+import com.google.code.geobeagle.database.LocationSaver;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

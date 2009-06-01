@@ -14,8 +14,8 @@
 
 package com.google.code.geobeagle.xmlimport;
 
+import com.google.code.geobeagle.ErrorDisplayer;
 import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.mainactivity.ui.ErrorDisplayer;
 import com.google.code.geobeagle.xmlimport.GpxToCache.CancelException;
 
 import org.xmlpull.v1.XmlPullParserException;

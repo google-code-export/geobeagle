@@ -15,8 +15,8 @@
 package com.google.code.geobeagle.mainactivity.intents;
 
 import com.google.code.geobeagle.ResourceProvider;
-import com.google.code.geobeagle.mainactivity.ui.ContentSelector;
-import com.google.code.geobeagle.mainactivity.ui.MyLocationProvider;
+import com.google.code.geobeagle.mainactivity.view.ContentSelector;
+import com.google.code.geobeagle.mainactivity.view.MyLocationProvider;
 
 import android.app.Activity;
 import android.content.Intent;

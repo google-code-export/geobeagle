@@ -1,5 +1,3 @@
-package com.google.code.geobeagle.mainactivity;
-
 /*
  * Copyright (C) 2008 Google Inc.
  *
@@ -16,7 +14,7 @@ package com.google.code.geobeagle.mainactivity;
  * limitations under the License.
  */
 
-
+package com.google.code.geobeagle.mainactivity;
 
 /**
  * Library for some use useful latitude/longitude math
@@ -39,12 +37,12 @@ public class GeoUtils {
         double lat1Rad = Math.toRadians(lat1);
         double lat2Rad = Math.toRadians(lat2);
         double deltaLonRad = Math.toRadians(lon2 - lon1);
-        
-        return Math.acos(Math.sin(lat1Rad) * Math.sin(lat2Rad) + Math.cos(lat1Rad) * Math.cos(lat2Rad)
-                * Math.cos(deltaLonRad))
+
+        return Math.acos(Math.sin(lat1Rad) * Math.sin(lat2Rad) + Math.cos(lat1Rad)
+                * Math.cos(lat2Rad) * Math.cos(deltaLonRad))
                 * EARTH_RADIUS_KM;
     }
-    
+
     /**
      * Computes the distance in kilometers between two points on Earth.
      * 
@@ -52,16 +50,15 @@ public class GeoUtils {
      * @param p2 Second point
      * @return Distance between the two points in kilometers.
      */
-//    
-//    public static double distanceKm(GeoPoint p1, GeoPoint p2) {
-//        double lat1 = p1.getLatitudeE6() / (double)MILLION;
-//        double lon1 = p1.getLongitudeE6() / (double)MILLION;
-//        double lat2 = p2.getLatitudeE6() / (double)MILLION;
-//        double lon2 = p2.getLongitudeE6() / (double)MILLION;
-//
-//        return distanceKm(lat1, lon1, lat2, lon2);
-//    }
-    
+    //    
+    // public static double distanceKm(GeoPoint p1, GeoPoint p2) {
+    // double lat1 = p1.getLatitudeE6() / (double)MILLION;
+    // double lon1 = p1.getLongitudeE6() / (double)MILLION;
+    // double lat2 = p2.getLatitudeE6() / (double)MILLION;
+    // double lon2 = p2.getLongitudeE6() / (double)MILLION;
+    //
+    // return distanceKm(lat1, lon1, lat2, lon2);
+    // }
     /**
      * Computes the bearing in degrees between two points on Earth.
      * 
@@ -70,15 +67,14 @@ public class GeoUtils {
      * @return Bearing between the two points in degrees. A value of 0 means due
      *         north.
      */
-//    public static double bearing(GeoPoint p1, GeoPoint p2) {
-//        double lat1 = p1.getLatitudeE6() / (double) MILLION;
-//        double lon1 = p1.getLongitudeE6() / (double) MILLION;
-//        double lat2 = p2.getLatitudeE6() / (double) MILLION;
-//        double lon2 = p2.getLongitudeE6() / (double) MILLION;
-//
-//        return bearing(lat1, lon1, lat2, lon2);
-//    }
-    
+    // public static double bearing(GeoPoint p1, GeoPoint p2) {
+    // double lat1 = p1.getLatitudeE6() / (double) MILLION;
+    // double lon1 = p1.getLongitudeE6() / (double) MILLION;
+    // double lat2 = p2.getLatitudeE6() / (double) MILLION;
+    // double lon2 = p2.getLongitudeE6() / (double) MILLION;
+    //
+    // return bearing(lat1, lon1, lat2, lon2);
+    // }
     /**
      * Computes the bearing in degrees between two points on Earth.
      * 
@@ -99,7 +95,7 @@ public class GeoUtils {
                 * Math.cos(deltaLonRad);
         return radToBearing(Math.atan2(y, x));
     }
-    
+
     /**
      * Converts an angle in radians to degrees
      */

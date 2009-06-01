@@ -14,14 +14,15 @@
 
 package com.google.code.geobeagle.mainactivity;
 
+import com.google.code.geobeagle.ErrorDisplayer;
+import com.google.code.geobeagle.GeocacheFactory;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.mainactivity.fieldnotes.FieldNoteSender;
 import com.google.code.geobeagle.mainactivity.fieldnotes.FieldNoteSenderDI;
-import com.google.code.geobeagle.mainactivity.ui.CacheDetailsOnClickListener;
-import com.google.code.geobeagle.mainactivity.ui.EditCacheActivity;
-import com.google.code.geobeagle.mainactivity.ui.ErrorDisplayer;
-import com.google.code.geobeagle.mainactivity.ui.GeocacheViewer;
-import com.google.code.geobeagle.mainactivity.ui.Misc;
+import com.google.code.geobeagle.mainactivity.view.CacheDetailsOnClickListener;
+import com.google.code.geobeagle.mainactivity.view.EditCacheActivity;
+import com.google.code.geobeagle.mainactivity.view.GeocacheViewer;
+import com.google.code.geobeagle.mainactivity.view.Misc;
 
 import android.app.AlertDialog;
 import android.app.Dialog;

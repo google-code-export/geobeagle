@@ -16,6 +16,10 @@ package com.google.code.geobeagle.cachelist;
 
 import static org.junit.Assert.assertEquals;
 
+import com.google.code.geobeagle.cachelistactivity.model.GeocacheVectors;
+import com.google.code.geobeagle.cachelistactivity.presenter.GeocacheListAdapter;
+import com.google.code.geobeagle.cachelistactivity.view.GeocacheSummaryRowInflater;
+
 import org.easymock.classextension.EasyMock;
 import org.junit.Test;
 import org.junit.runner.RunWith;

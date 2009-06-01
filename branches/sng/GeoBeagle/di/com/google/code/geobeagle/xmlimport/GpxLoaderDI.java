@@ -14,7 +14,7 @@
 
 package com.google.code.geobeagle.xmlimport;
 
-import com.google.code.geobeagle.mainactivity.ui.ErrorDisplayer;
+import com.google.code.geobeagle.ErrorDisplayer;
 import com.google.code.geobeagle.xmlimport.CachePersisterFacade;
 import com.google.code.geobeagle.xmlimport.GpxLoader;
 import com.google.code.geobeagle.xmlimport.GpxToCache;

@@ -15,6 +15,9 @@
 package com.google.code.geobeagle.cachelist;
 
 
+import com.google.code.geobeagle.cachelist.actions.click.GeocacheListOnClickListener;
+import com.google.code.geobeagle.cachelistactivity.CacheList;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.api.easymock.PowerMock;

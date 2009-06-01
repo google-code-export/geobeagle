@@ -4,9 +4,9 @@ package com.google.code.geobeagle.mainactivity;
 import static org.junit.Assert.assertEquals;
 
 import com.google.code.geobeagle.Geocache;
-import com.google.code.geobeagle.mainactivity.GeocacheFactory;
+import com.google.code.geobeagle.GeocacheFactory;
+import com.google.code.geobeagle.GeocacheFactory.Source;
 import com.google.code.geobeagle.mainactivity.GeocacheFromPreferencesFactory;
-import com.google.code.geobeagle.mainactivity.GeocacheFactory.Source;
 
 import org.easymock.EasyMock;
 import org.junit.Test;

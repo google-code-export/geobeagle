@@ -18,7 +18,8 @@ import static org.easymock.classextension.EasyMock.createMock;
 import static org.easymock.classextension.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.verify;
 
-import com.google.code.geobeagle.xmlimport.CachePersisterFacadeDI.WriterWrapper;
+import com.google.code.geobeagle.cachedetails.HtmlWriter;
+import com.google.code.geobeagle.cachedetails.WriterWrapper;
 
 import org.junit.Test;
 

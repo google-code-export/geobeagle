@@ -14,7 +14,8 @@
 
 package com.google.code.geobeagle.xmlimport;
 
-import com.google.code.geobeagle.mainactivity.GeocacheFactory.Source;
+import com.google.code.geobeagle.GeocacheFactory.Source;
+import com.google.code.geobeagle.database.CacheWriter;
 
 // TODO: Rename to CacheTagSqlWriter.
 /**

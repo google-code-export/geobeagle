@@ -14,10 +14,10 @@
 
 package com.google.code.geobeagle.xmlimport;
 
+import com.google.code.geobeagle.ErrorDisplayer;
 import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.cachelist.CacheListRefresh;
-import com.google.code.geobeagle.cachelist.GeocacheListPresenter;
-import com.google.code.geobeagle.mainactivity.ui.ErrorDisplayer;
+import com.google.code.geobeagle.cachelistactivity.presenter.CacheListRefresh;
+import com.google.code.geobeagle.cachelistactivity.presenter.GeocacheListPresenter;
 import com.google.code.geobeagle.xmlimport.GpxImporterDI.ImportThreadWrapper;
 import com.google.code.geobeagle.xmlimport.GpxImporterDI.MessageHandler;
 import com.google.code.geobeagle.xmlimport.GpxImporterDI.ToastFactory;

@@ -14,9 +14,8 @@
 
 package com.google.code.geobeagle;
 
-import com.google.code.geobeagle.mainactivity.GeocacheFactory;
-import com.google.code.geobeagle.mainactivity.GeocacheFactory.Provider;
-import com.google.code.geobeagle.mainactivity.GeocacheFactory.Source;
+import com.google.code.geobeagle.GeocacheFactory.Provider;
+import com.google.code.geobeagle.GeocacheFactory.Source;
 
 import android.content.SharedPreferences.Editor;
 import android.location.Location;

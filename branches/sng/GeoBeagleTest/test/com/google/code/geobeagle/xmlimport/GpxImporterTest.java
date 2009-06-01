@@ -4,8 +4,8 @@ package com.google.code.geobeagle.xmlimport;
 import static org.easymock.EasyMock.expect;
 
 import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.cachelist.CacheListRefresh;
-import com.google.code.geobeagle.cachelist.GeocacheListPresenter;
+import com.google.code.geobeagle.cachelistactivity.presenter.CacheListRefresh;
+import com.google.code.geobeagle.cachelistactivity.presenter.GeocacheListPresenter;
 import com.google.code.geobeagle.xmlimport.GpxImporterDI.ImportThreadWrapper;
 import com.google.code.geobeagle.xmlimport.GpxImporterDI.MessageHandler;
 import com.google.code.geobeagle.xmlimport.GpxImporterDI.ToastFactory;
