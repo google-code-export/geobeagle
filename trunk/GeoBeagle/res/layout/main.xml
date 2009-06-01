@@ -16,39 +16,16 @@
 
 	<LinearLayout android:orientation="vertical"
 		android:layout_width="fill_parent" android:layout_height="fill_parent">
-		
-		<LinearLayout android:gravity="center"
-			android:orientation="horizontal" android:layout_width="fill_parent"
-			android:layout_height="wrap_content">
-			<TextView android:id="@+id/location_viewer"
-				android:layout_width="wrap_content" android:layout_height="wrap_content"
-				android:textSize="26sp" android:textStyle="bold" android:textColor="#7f93be26"
-				android:text="×" />
-		</LinearLayout>
 
-		<!--  TODO: use use relative layout. -->
-		<LinearLayout android:orientation="horizontal"
-			android:layout_width="fill_parent" android:layout_height="wrap_content">
-			<TextView android:id="@+id/provider" android:layout_width="100sp"
-				android:layout_height="wrap_content" android:text="" />
-			<TextView android:id="@+id/accuracy" android:layout_width="wrap_content"
-				android:text="" android:layout_height="wrap_content"
-				android:gravity="center" android:layout_weight="1" />
-			<TextView android:id="@+id/lag" android:layout_width="100sp"
-				android:text="" android:layout_height="wrap_content"
-				android:paddingRight="6sp" android:gravity="right" />
-		</LinearLayout>
-
-		<LinearLayout android:orientation="horizontal"
+		<TextView android:id="@+id/select_service_provider"
 			android:layout_width="fill_parent" android:layout_height="wrap_content"
-			android:paddingBottom="12sp">
-			<TextView android:id="@+id/status" android:layout_width="wrap_content"
-				android:layout_height="wrap_content" android:text="TEMPORARILY UNAVAILABLE" />
-		</LinearLayout>
+			android:text="Select service provider:" android:paddingTop="6sp"
+			android:textSize="18sp" />
 		<Spinner android:id="@+id/content_provider"
 			android:layout_alignParentTop="true" android:layout_width="fill_parent"
 			android:layout_height="wrap_content" android:drawSelectorOnTop="false"
 			android:entries="@array/content_providers" />
+
 		<TextView android:id="@+id/select_cache_prompt"
 			android:layout_width="fill_parent" android:layout_height="wrap_content"
 			android:text="Search for cache:" android:paddingTop="12sp"
@@ -69,22 +46,24 @@
 		<LinearLayout android:orientation="vertical"
 			android:paddingTop="12sp" android:layout_height="wrap_content"
 			android:layout_width="fill_parent">
-			<TextView android:id="@+id/gcid" android:layout_height="wrap_content"
+			<TextView android:ellipsize="end" android:maxLines="1"
+				android:singleLine="true" android:id="@+id/gcid"
+				android:textColor="@android:color/primary_text_dark"
+				android:textStyle="bold" android:layout_height="wrap_content"
 				android:layout_width="wrap_content" android:layout_weight="1"
-				android:textSize="18sp" android:text="37 122" />
-			<TextView android:id="@+id/gcname" android:layout_height="wrap_content"
-				android:layout_width="wrap_content" android:layout_weight="1"
-				android:textSize="18sp" android:text="37 122" />
-			<TextView android:id="@+id/gccoords" android:layout_height="wrap_content"
-				android:layout_width="wrap_content" android:layout_weight="1"
-				android:textSize="18sp" android:text="37 122" />
+				android:textSize="16sp" android:text="GC123 jfkd" />
+			<TextView android:id="@+id/gcname" android:maxLines="1"
+				android:ellipsize="end" android:singleLine="true"
+				android:textColor="@android:color/primary_text_dark"
+				android:layout_height="wrap_content" android:layout_width="wrap_content"
+				android:layout_weight="1" android:textSize="18sp" android:text="37 122" />
 		</LinearLayout>
 
 		<LinearLayout android:orientation="horizontal"
 			android:layout_height="wrap_content" android:layout_width="fill_parent">
-			<Button android:id="@+id/radar" android:layout_height="wrap_content"
-				android:layout_width="wrap_content" android:text="@string/radar"
-				android:layout_weight="1" />
+			<Button android:id="@+id/radar" android:visibility="gone"
+				android:layout_height="wrap_content" android:layout_width="wrap_content"
+				android:text="@string/radar" android:layout_weight="1" />
 			<Button android:id="@+id/maps" android:layout_height="wrap_content"
 				android:layout_width="wrap_content" android:text="@string/maps"
 				android:layout_weight="1" />
@@ -94,6 +73,56 @@
 			<Button android:id="@+id/cache_details" android:layout_height="wrap_content"
 				android:layout_width="wrap_content" android:layout_weight="1"
 				android:text="Details" />
+		</LinearLayout>
+
+		<LinearLayout android:paddingTop="10sp"
+			android:orientation="horizontal" android:layout_width="fill_parent"
+			android:layout_height="wrap_content" android:layout_weight="1">
+
+			<LinearLayout android:orientation="vertical"
+				android:layout_width="wrap_content" android:layout_height="fill_parent">
+				<TableLayout android:gravity="left"
+					android:layout_width="fill_parent" android:layout_height="fill_parent">
+					<TableRow>
+						<TextView android:paddingTop="0sp" android:typeface="sans"
+							android:layout_width="wrap_content" android:layout_height="wrap_content"
+							android:text="DISTANCE: " android:textSize="20sp" />
+						<TextView android:id="@+id/radar_distance"
+							android:paddingTop="2sp" android:typeface="sans"
+							android:layout_width="wrap_content" android:layout_height="wrap_content"
+							android:textColor="@android:color/primary_text_dark"
+							android:text="143km" android:textSize="20sp" />
+					</TableRow>
+					<TableRow>
+						<TextView android:typeface="sans" android:layout_width="wrap_content"
+							android:layout_height="wrap_content" android:text="BEARING: "
+							android:paddingTop="6sp" android:textSize="20sp" />
+						<TextView android:id="@+id/radar_bearing"
+							android:typeface="sans" android:layout_width="wrap_content"
+							android:layout_height="wrap_content" android:text="92"
+							android:textColor="@android:color/primary_text_dark"
+							android:paddingTop="6sp" android:textSize="20sp" />
+					</TableRow>
+					<TableRow>
+						<TextView android:typeface="sans" android:layout_width="wrap_content"
+							android:layout_height="wrap_content" android:text="ACCURACY: "
+							android:paddingTop="6sp" android:textSize="20sp" />
+						<TextView android:id="@+id/radar_accuracy"
+							android:typeface="sans" android:layout_width="wrap_content"
+							android:layout_height="wrap_content" android:text="150km"
+							android:textColor="@android:color/primary_text_dark"
+							android:paddingTop="6sp" android:textSize="20sp" />
+					</TableRow>
+				</TableLayout>
+			</LinearLayout>
+			<LinearLayout android:orientation="vertical"
+				android:layout_width="wrap_content" android:layout_height="wrap_content"
+				android:gravity="right" android:layout_weight="1">
+				<view android:id="@+id/radarview"
+					class="com.google.code.geobeagle.mainactivity.RadarView"
+					android:layout_width="130sp" android:layout_height="130sp"
+					android:gravity="right" android:layout_weight="1" />
+			</LinearLayout>
 		</LinearLayout>
 
 		<TextView android:id="@+id/debug" android:layout_width="fill_parent"

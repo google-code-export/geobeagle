@@ -14,6 +14,8 @@
 
 package com.google.code.geobeagle.gpx.zip;
 
+import com.google.code.geobeagle.xmlimport.gpx.zip.GpxZipInputStream;
+
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;

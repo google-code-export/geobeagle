@@ -1,0 +1,48 @@
+/*
+ ** Licensed under the Apache License, Version 2.0 (the "License");
+ ** you may not use this file except in compliance with the License.
+ ** You may obtain a copy of the License at
+ **
+ **     http://www.apache.org/licenses/LICENSE-2.0
+ **
+ ** Unless required by applicable law or agreed to in writing, software
+ ** distributed under the License is distributed on an "AS IS" BASIS,
+ ** WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ ** See the License for the specific language governing permissions and
+ ** limitations under the License.
+ */
+
+package com.google.code.geobeagle.database;
+
+import com.google.code.geobeagle.Geocache;
+import com.google.code.geobeagle.GeocacheFactory;
+
+import android.database.Cursor;
+
+public class CacheReaderCursor {
+    private final Cursor mCursor;
+    private final DbToGeocacheAdapter mDbToGeocacheAdapter;
+    private final GeocacheFactory mGeocacheFactory;
+
+    public CacheReaderCursor(Cursor cursor, GeocacheFactory geocacheFactory,
+            DbToGeocacheAdapter dbToGeocacheAdapter) {
+        mCursor = cursor;
+        mGeocacheFactory = geocacheFactory;
+        mDbToGeocacheAdapter = dbToGeocacheAdapter;
+    }
+
+    void close() {
+        mCursor.close();
+    }
+
+    public Geocache getCache() {
+        String sourceName = mCursor.getString(4);
+        return mGeocacheFactory.create(mCursor.getString(2), mCursor.getString(3), mCursor
+                .getDouble(0), mCursor.getDouble(1), mDbToGeocacheAdapter
+                .sourceNameToSourceType(sourceName), sourceName);
+    }
+
+    boolean moveToNext() {
+        return mCursor.moveToNext();
+    }
+}
