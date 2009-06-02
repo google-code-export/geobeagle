@@ -14,7 +14,7 @@
 
 package com.google.code.geobeagle.cachelist.actions.click;
 
-import com.google.code.geobeagle.cachelistactivity.CacheList;
+import com.google.code.geobeagle.activity.cachelist.CacheList;
 
 import android.app.Activity;
 import android.content.Intent;

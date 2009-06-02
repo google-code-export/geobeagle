@@ -16,7 +16,7 @@ package com.google.code.geobeagle;
 
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.GeocacheFactory.Source.SourceFactory;
-import com.google.code.geobeagle.mainactivity.GeocacheFromParcelFactory;
+import com.google.code.geobeagle.activity.main.GeocacheFromParcelFactory;
 
 import android.os.Parcel;
 import android.os.Parcelable;

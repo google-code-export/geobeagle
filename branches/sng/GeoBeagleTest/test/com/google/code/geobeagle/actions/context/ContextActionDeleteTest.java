@@ -17,10 +17,10 @@ package com.google.code.geobeagle.actions.context;
 import static org.easymock.EasyMock.expect;
 
 import com.google.code.geobeagle.actions.context.ContextActionDelete;
-import com.google.code.geobeagle.cachelistactivity.model.GeocacheVector;
-import com.google.code.geobeagle.cachelistactivity.model.GeocacheVectors;
-import com.google.code.geobeagle.cachelistactivity.presenter.GeocacheListAdapter;
-import com.google.code.geobeagle.cachelistactivity.presenter.TitleUpdater;
+import com.google.code.geobeagle.activity.cachelist.model.GeocacheVector;
+import com.google.code.geobeagle.activity.cachelist.model.GeocacheVectors;
+import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheListAdapter;
+import com.google.code.geobeagle.activity.cachelist.presenter.TitleUpdater;
 import com.google.code.geobeagle.database.CacheWriter;
 
 import org.junit.Test;

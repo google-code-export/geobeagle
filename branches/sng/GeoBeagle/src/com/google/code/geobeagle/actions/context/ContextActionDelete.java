@@ -14,8 +14,8 @@
 
 package com.google.code.geobeagle.actions.context;
 
-import com.google.code.geobeagle.cachelistactivity.model.GeocacheVectors;
-import com.google.code.geobeagle.cachelistactivity.presenter.TitleUpdater;
+import com.google.code.geobeagle.activity.cachelist.model.GeocacheVectors;
+import com.google.code.geobeagle.activity.cachelist.presenter.TitleUpdater;
 import com.google.code.geobeagle.database.CacheWriter;
 
 import android.widget.BaseAdapter;

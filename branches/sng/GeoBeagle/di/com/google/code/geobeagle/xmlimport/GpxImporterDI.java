@@ -15,8 +15,8 @@
 package com.google.code.geobeagle.xmlimport;
 
 import com.google.code.geobeagle.ErrorDisplayer;
-import com.google.code.geobeagle.cachelistactivity.presenter.CacheListRefresh;
-import com.google.code.geobeagle.cachelistactivity.presenter.GeocacheListPresenter;
+import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
+import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheListPresenter;
 import com.google.code.geobeagle.database.Database;
 import com.google.code.geobeagle.database.DatabaseDI.SQLiteWrapper;
 import com.google.code.geobeagle.xmlimport.CachePersisterFacade;

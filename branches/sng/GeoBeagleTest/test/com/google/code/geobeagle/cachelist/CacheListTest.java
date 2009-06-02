@@ -14,8 +14,8 @@
 
 package com.google.code.geobeagle.cachelist;
 
-import com.google.code.geobeagle.cachelistactivity.CacheList;
-import com.google.code.geobeagle.cachelistactivity.CacheListDelegate;
+import com.google.code.geobeagle.activity.cachelist.CacheList;
+import com.google.code.geobeagle.activity.cachelist.CacheListDelegate;
 
 import org.easymock.classextension.EasyMock;
 import org.junit.Test;

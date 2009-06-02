@@ -4,9 +4,9 @@ package com.google.code.geobeagle.cachelist;
 import com.google.code.geobeagle.ErrorDisplayer;
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.cachelistactivity.actions.menu.MenuActionMyLocation;
-import com.google.code.geobeagle.cachelistactivity.model.GeocacheFromMyLocationFactory;
-import com.google.code.geobeagle.cachelistactivity.presenter.CacheListRefresh;
+import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionMyLocation;
+import com.google.code.geobeagle.activity.cachelist.model.GeocacheFromMyLocationFactory;
+import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
 import com.google.code.geobeagle.database.LocationSaver;
 
 import org.easymock.classextension.EasyMock;

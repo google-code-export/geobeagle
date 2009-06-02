@@ -1,8 +1,8 @@
 
 package com.google.code.geobeagle.cachelist;
 
-import com.google.code.geobeagle.cachelistactivity.actions.menu.MenuActionSyncGpx;
-import com.google.code.geobeagle.cachelistactivity.presenter.CacheListRefresh;
+import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionSyncGpx;
+import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
 import com.google.code.geobeagle.xmlimport.GpxImporter;
 
 import org.junit.Test;
