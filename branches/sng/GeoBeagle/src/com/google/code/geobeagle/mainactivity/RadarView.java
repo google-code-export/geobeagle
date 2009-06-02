@@ -535,7 +535,7 @@ public class RadarView extends View implements SensorListener, LocationListener 
 
     private void updateBearing(double bearing) {
         if (mHaveLocation)
-            mBearingView.setText(((int)bearing / 5) * 5 + "Â°");
+            mBearingView.setText(((int)bearing / 5) * 5 + "°");
     }
 
     /**
