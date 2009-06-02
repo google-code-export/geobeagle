@@ -66,7 +66,6 @@ public class RadarView extends View implements SensorListener, LocationListener 
     private double mMyLocationLat;
     private double mMyLocationLon;
     private int mLastScale = -1;
-    private String[] mDistanceScale = new String[4];
 
     private static float KM_PER_METERS = 0.001f;
     private static float METERS_PER_KM = 1000f;
@@ -535,7 +534,7 @@ public class RadarView extends View implements SensorListener, LocationListener 
 
     private void updateBearing(double bearing) {
         if (mHaveLocation)
-            mBearingView.setText(((int)bearing / 5) * 5 + "°");
+            mBearingView.setText(((int)bearing / 5) * 5 + "Â°");
     }
 
     /**
@@ -549,7 +548,6 @@ public class RadarView extends View implements SensorListener, LocationListener 
         final double[] scaleChoices;
         final float[] displayUnitsPerKm;
         final String[] displayFormats;
-        final String[] scaleFormats;
         String distanceStr = null;
         String accuracyStr = null;
 
@@ -557,12 +555,10 @@ public class RadarView extends View implements SensorListener, LocationListener 
             scaleChoices = mMetricScaleChoices;
             displayUnitsPerKm = mMetricDisplayUnitsPerKm;
             displayFormats = mMetricDisplayFormats;
-            scaleFormats = mMetricScaleFormats;
         } else {
             scaleChoices = mEnglishScaleChoices;
             displayUnitsPerKm = mEnglishDisplayUnitsPerKm;
             displayFormats = mEnglishDisplayFormats;
-            scaleFormats = mEnglishScaleFormats;
         }
 
         final int count = scaleChoices.length;
@@ -572,12 +568,6 @@ public class RadarView extends View implements SensorListener, LocationListener 
                 double distanceDisplay = distanceKm * displayUnitsPerKm[i];
                 if (mLastScale != i) {
                     mLastScale = i;
-                    String scaleFormat = scaleFormats[i];
-                    float scaleDistance = (float)(scaleChoices[i] * displayUnitsPerKm[i]);
-                    mDistanceScale[0] = String.format(scaleFormat, (scaleDistance / 4));
-                    mDistanceScale[1] = String.format(scaleFormat, (scaleDistance / 2));
-                    mDistanceScale[2] = String.format(scaleFormat, (scaleDistance * 3 / 4));
-                    mDistanceScale[3] = String.format(scaleFormat, scaleDistance);
                 }
 
                 mDistanceRatio = (float)(mDistance / scaleChoices[mLastScale]);
@@ -587,17 +577,23 @@ public class RadarView extends View implements SensorListener, LocationListener 
         }
 
         if (mMyLocationAccuracy != 0.0)
-            for (int i = 0; i < count; i++) {
-                String format = displayFormats[i];
-                if (mMyLocationAccuracy / 1000 < scaleChoices[i] || i == (count - 1)) {
-                    accuracyStr = String.format(format, mMyLocationAccuracy / 1000
-                            * displayUnitsPerKm[i]);
-                    break;
-                }
-            }
+            accuracyStr = formatDistance(scaleChoices, displayUnitsPerKm, displayFormats);
 
         mDistanceView.setText(distanceStr);
         mAccuracyView.setText(accuracyStr);
+    }
+
+    private String formatDistance(final double[] scaleChoices, final float[] displayUnitsPerKm,
+            final String[] displayFormats) {
+        int count = scaleChoices.length;
+        for (int i = 0; i < count; i++) {
+            final float myLocationAccuracyKm = mMyLocationAccuracy / 1000;
+            if (myLocationAccuracyKm < scaleChoices[i] || i == (count - 1)) {
+                final String format = displayFormats[i];
+                return String.format(format, myLocationAccuracyKm * displayUnitsPerKm[i]);
+            }
+        }
+        return "";
     }
 
     /**
