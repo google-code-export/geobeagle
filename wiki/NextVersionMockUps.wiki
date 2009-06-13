@@ -1,3 +1,3 @@
 #summary mock ups of the next version
 
-http://2009432424109620983-a-theleengs-com-s-sites.googlegroups.com/a/theleengs.com/geobeagle/Home/GeoBeagleDetailPages.png?attredirects=0&auth=ANoY7coq0M3Ov0-ZjGnrYlzd57UurNF0V98cMIMrX_QieIkRo-zjtemhNzLJAtVmj84mDswRBTcvKXs02BZHWWkpllit6Uqb_LFIvXih1e_4dbhpy4ACjB58RhnjQHViLIMyUglMo0luwxSq1r404AED-2RDjusnQQ_PDbY7Ko8ne_AAhshYq4ZOkU4ro6XxKbjPMeaYdd--n82-qkaWUfktDQ0U_n9KQg%3D%3D&inject.png
+http://geobeagle.googlecode.com/files/GeoBeagleDetailPages.png
