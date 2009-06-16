@@ -90,6 +90,10 @@ public class GeoBeagle extends Activity implements LifecycleManager {
 
     private WebPageAndDetailsButtonEnabler mWebPageButtonEnabler;
 
+    RadarView getRadar() {
+        return mRadar;
+    }
+
     public GeoBeagle() {
         super();
         mErrorDisplayer = new ErrorDisplayer(this);

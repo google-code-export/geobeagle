@@ -12,12 +12,18 @@
  ** limitations under the License.
  */
 
-package com.google.code.geobeagle.activity.cachelist.model;
+package com.google.code.geobeagle.activity.preferences;
 
-import com.google.code.geobeagle.Geocache;
+import com.google.code.geobeagle.R;
 
-public class GeocacheVectorFactory {
-    public GeocacheVector create(Geocache geocache, LocationControlBuffered locationControlBuffered) {
-        return new GeocacheVector(geocache, locationControlBuffered);
+import android.os.Bundle;
+import android.preference.PreferenceActivity;
+
+public class EditPreferences extends PreferenceActivity {
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        addPreferencesFromResource(R.xml.preferences);
     }
 }

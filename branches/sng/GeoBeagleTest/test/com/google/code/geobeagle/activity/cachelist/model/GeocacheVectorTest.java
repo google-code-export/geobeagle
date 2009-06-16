@@ -21,7 +21,8 @@ import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVector;
 import com.google.code.geobeagle.activity.cachelist.model.LocationControlBuffered;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVector.LocationComparator;
-import com.google.code.geobeagle.activity.cachelist.presenter.DistanceFormatter;
+import com.google.code.geobeagle.activity.cachelist.presenter.BearingFormatter;
+import com.google.code.geobeagle.activity.cachelist.presenter.DistanceFormatterMetric;
 import com.google.code.geobeagle.activity.cachelist.presenter.DistanceSortStrategy;
 import com.google.code.geobeagle.activity.cachelist.presenter.NullSortStrategy;
 
@@ -108,14 +109,15 @@ public class GeocacheVectorTest {
         EasyMock.expect(GeocacheVector.calculateDistanceFast(1, 2, 3, 4)).andReturn(5f);
 
         PowerMock.replayAll();
-        assertEquals(5f, new GeocacheVector(geocache, locationControlBuffered, null)
-                .getDistanceFast(), 0);
+        assertEquals(5f, new GeocacheVector(geocache, locationControlBuffered).getDistanceFast(), 0);
         PowerMock.verifyAll();
     }
 
     @Test
     public void testGetFormattedDistance() {
-        DistanceFormatter distanceFormatter = PowerMock.createMock(DistanceFormatter.class);
+        DistanceFormatterMetric distanceFormatterMetric = PowerMock
+                .createMock(DistanceFormatterMetric.class);
+        BearingFormatter bearingFormatter = PowerMock.createMock(BearingFormatter.class);
         LocationControlBuffered locationControlBuffered = PowerMock
                 .createMock(LocationControlBuffered.class);
         Location location = PowerMock.createMock(Location.class);
@@ -126,20 +128,20 @@ public class GeocacheVectorTest {
         });
         expect(locationControlBuffered.getAzimuth()).andReturn(10f);
 
-        expect(distanceFormatter.formatDistance(3.5f)).andReturn("3.5m");
-        expect(distanceFormatter.formatBearing(260)).andReturn(">");
+        expect(distanceFormatterMetric.formatDistance(3.5f)).andReturn("3.5m");
+        expect(bearingFormatter.formatBearing(260)).andReturn(">");
 
         PowerMock.replayAll();
-        GeocacheVector geocacheVector = new GeocacheVector(geocache, locationControlBuffered,
-                distanceFormatter);
-        assertEquals("3.5m >", geocacheVector.getFormattedDistance());
+        GeocacheVector geocacheVector = new GeocacheVector(geocache, locationControlBuffered);
+        assertEquals("3.5m >", geocacheVector.getFormattedDistance(distanceFormatterMetric,
+                bearingFormatter));
         PowerMock.verifyAll();
     }
 
     @Test
     public void testGetGeocache() {
         PowerMock.replayAll();
-        GeocacheVector geocacheVector = new GeocacheVector(geocache, null, null);
+        GeocacheVector geocacheVector = new GeocacheVector(geocache, null);
         assertEquals(geocache, geocacheVector.getGeocache());
         PowerMock.verifyAll();
     }
@@ -149,7 +151,7 @@ public class GeocacheVectorTest {
         expect(geocache.getId()).andReturn("a geocache");
 
         PowerMock.replayAll();
-        GeocacheVector geocacheVector = new GeocacheVector(geocache, null, null);
+        GeocacheVector geocacheVector = new GeocacheVector(geocache, null);
         assertEquals("a geocache", geocacheVector.getId());
         PowerMock.verifyAll();
     }
@@ -159,14 +161,14 @@ public class GeocacheVectorTest {
         expect(geocache.getIdAndName()).andReturn("GC123: a geocache");
 
         PowerMock.replayAll();
-        GeocacheVector geocacheVector = new GeocacheVector(geocache, null, null);
+        GeocacheVector geocacheVector = new GeocacheVector(geocache, null);
         assertEquals("GC123: a geocache", geocacheVector.getIdAndName());
         PowerMock.verifyAll();
     }
 
     @Test
     public void testGetSetDistance() {
-        GeocacheVector geocacheVector = new GeocacheVector(null, null, null);
+        GeocacheVector geocacheVector = new GeocacheVector(null, null);
         geocacheVector.setDistance(37.3f);
         assertEquals(37.3f, geocacheVector.getDistance(), .1f);
     }

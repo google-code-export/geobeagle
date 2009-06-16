@@ -23,12 +23,14 @@ import com.google.code.geobeagle.activity.main.view.CacheDetailsOnClickListener;
 import com.google.code.geobeagle.activity.main.view.EditCacheActivity;
 import com.google.code.geobeagle.activity.main.view.GeocacheViewer;
 import com.google.code.geobeagle.activity.main.view.Misc;
+import com.google.code.geobeagle.activity.preferences.EditPreferences;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.AlertDialog.Builder;
 import android.content.Intent;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.widget.Button;
@@ -73,14 +75,21 @@ public class GeoBeagleDelegate {
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (R.id.menu_edit_geocache == item.getItemId()) {
+        final int itemId = item.getItemId();
+        if (R.id.menu_edit_geocache == itemId) {
             Intent intent = new Intent(mParent, EditCacheActivity.class);
             intent.putExtra("geocache", mParent.getGeocache());
             mParent.startActivityForResult(intent, 0);
-        } else {
-            mParent.showDialog(item.getItemId());
+            return true;
+        } else if (R.id.menu_settings == itemId) {
+            mParent.startActivity(new Intent(mParent, EditPreferences.class));
+
+            return true;
+        } else if (R.id.menu_log_dnf == itemId || R.id.menu_log_find == itemId) {
+            mParent.showDialog(itemId);
+            return true;
         }
-        return true;
+        return mParent.onOptionsItemSelected(item);
     }
 
     public Dialog onCreateDialog(int id) {
@@ -98,6 +107,9 @@ public class GeoBeagleDelegate {
 
     public void onResume() {
         try {
+            mParent.getRadar().setUseMetric(
+                    !PreferenceManager.getDefaultSharedPreferences(mParent).getBoolean("imperial",
+                            false));
             mAppLifecycleManager.onResume();
         } catch (Exception e) {
             mErrorDisplayer.displayErrorAndStack(e);

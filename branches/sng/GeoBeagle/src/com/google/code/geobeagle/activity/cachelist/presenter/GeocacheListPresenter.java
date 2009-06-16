@@ -19,6 +19,7 @@ import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.cachelist.GeocacheListController.CacheListOnCreateContextMenuListener;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVectors;
 import com.google.code.geobeagle.activity.cachelist.model.LocationControlBuffered;
+import com.google.code.geobeagle.activity.cachelist.view.GpsStatusWidget;
 import com.google.code.geobeagle.activity.cachelist.view.GpsStatusWidget.UpdateGpsWidgetRunnable;
 import com.google.code.geobeagle.database.Database;
 import com.google.code.geobeagle.database.DatabaseDI.SQLiteWrapper;
@@ -33,6 +34,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
+
 
 @SuppressWarnings("deprecation")
 public class GeocacheListPresenter {
@@ -67,7 +69,7 @@ public class GeocacheListPresenter {
     private final GeocacheListAdapter mGeocacheListAdapter;
     private final GeocacheVectors mGeocacheVectors;
     private final LocationListener mGpsStatusWidgetLocationListener;
-    private final View mGpsWidgetView;
+    private final GpsStatusWidget mGpsStatusWidget;
     private final ListActivity mListActivity;
     private final LocationControlBuffered mLocationControlBuffered;
     private final SQLiteWrapper mSQLiteWrapper;
@@ -76,22 +78,24 @@ public class GeocacheListPresenter {
     // private final SensorEventListener mCompassListener;
     @SuppressWarnings("deprecation")
     private final SensorListener mCompassListener;
+    private final DistanceFormatterManager mDistanceFormatterManager;
 
     // private Sensor mCompassSensor;
 
     @SuppressWarnings("deprecation")
     public GeocacheListPresenter(CombinedLocationManager combinedLocationManager,
             LocationControlBuffered locationControlBuffered,
-            LocationListener gpsStatusWidgetLocationListener, View gpsWidgetView,
+            LocationListener gpsStatusWidgetLocationListener, GpsStatusWidget gpsWidgetView,
             UpdateGpsWidgetRunnable updateGpsWidgetRunnable, GeocacheVectors geocacheVectors,
             CacheListRefreshLocationListener cacheListRefreshLocationListener,
             ListActivity listActivity, GeocacheListAdapter geocacheListAdapter,
             ErrorDisplayer errorDisplayer, SQLiteWrapper sqliteWrapper, Database database,
-            SensorManager sensorManager, SensorListener compassListener) {
+            SensorManager sensorManager, SensorListener compassListener,
+            DistanceFormatterManager distanceFormatterManager) {
         mCombinedLocationManager = combinedLocationManager;
         mLocationControlBuffered = locationControlBuffered;
         mGpsStatusWidgetLocationListener = gpsStatusWidgetLocationListener;
-        mGpsWidgetView = gpsWidgetView;
+        mGpsStatusWidget = gpsWidgetView;
         mUpdateGpsWidgetRunnable = updateGpsWidgetRunnable;
         mGeocacheVectors = geocacheVectors;
         mCacheListRefreshLocationListener = cacheListRefreshLocationListener;
@@ -102,12 +106,13 @@ public class GeocacheListPresenter {
         mSensorManager = sensorManager;
         mErrorDisplayer = errorDisplayer;
         mCompassListener = compassListener;
+        mDistanceFormatterManager = distanceFormatterManager;
     }
 
     public void onCreate() {
         mListActivity.setContentView(R.layout.cache_list);
         ListView listView = mListActivity.getListView();
-        listView.addHeaderView(mGpsWidgetView);
+        listView.addHeaderView(mGpsStatusWidget);
         mListActivity.setListAdapter(mGeocacheListAdapter);
         listView.setOnCreateContextMenuListener(new CacheListOnCreateContextMenuListener(
                 mGeocacheVectors));
@@ -169,6 +174,7 @@ public class GeocacheListPresenter {
                     mGpsStatusWidgetLocationListener);
             mCombinedLocationManager.requestLocationUpdates(UPDATE_DELAY, 0,
                     mCacheListRefreshLocationListener);
+            mDistanceFormatterManager.setFormatter();
             // mSensorManager.registerListener(mCompassListener, mCompassSensor,
             // SensorManager.SENSOR_DELAY_UI);
             mSensorManager.registerListener(mCompassListener, SensorManager.SENSOR_ORIENTATION,

@@ -12,12 +12,17 @@
  ** limitations under the License.
  */
 
-package com.google.code.geobeagle.activity.cachelist.model;
+package com.google.code.geobeagle.activity.cachelist.presenter;
 
-import com.google.code.geobeagle.Geocache;
+public class DistanceFormatterMetric implements DistanceFormatter {
 
-public class GeocacheVectorFactory {
-    public GeocacheVector create(Geocache geocache, LocationControlBuffered locationControlBuffered) {
-        return new GeocacheVector(geocache, locationControlBuffered);
+    public CharSequence formatDistance(float distance) {
+        if (distance == -1) {
+            return "";
+        }
+        if (distance >= 1000) {
+            return String.format("%1$1.2fkm", distance / 1000.0);
+        }
+        return String.format("%1$dm", (int)distance);
     }
 }

@@ -21,12 +21,9 @@ import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.cachelist.GeocacheListController.CacheListOnCreateContextMenuListener;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVectors;
 import com.google.code.geobeagle.activity.cachelist.model.LocationControlBuffered;
-import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
-import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheListAdapter;
-import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheListPresenter;
-import com.google.code.geobeagle.activity.cachelist.presenter.Refresher;
 import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheListPresenter.CacheListRefreshLocationListener;
 import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheListPresenter.CompassListener;
+import com.google.code.geobeagle.activity.cachelist.view.GpsStatusWidget;
 import com.google.code.geobeagle.activity.cachelist.view.GpsStatusWidget.UpdateGpsWidgetRunnable;
 import com.google.code.geobeagle.database.Database;
 import com.google.code.geobeagle.database.DatabaseDI.SQLiteWrapper;
@@ -42,13 +39,13 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import android.app.ListActivity;
 import android.hardware.SensorManager;
 import android.location.LocationListener;
+import android.preference.PreferenceManager;
 import android.util.Log;
-import android.view.View;
 import android.widget.ListView;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest( {
-        GeocacheListPresenter.class, Log.class
+        GeocacheListPresenter.class, Log.class, PreferenceManager.class
 })
 public class CacheListPresenterTest {
     @Test
@@ -81,22 +78,22 @@ public class CacheListPresenterTest {
         GeocacheVectors geocacheVectors = PowerMock.createMock(GeocacheVectors.class);
         UpdateGpsWidgetRunnable updateGpsWidgetRunnable = PowerMock
                 .createMock(UpdateGpsWidgetRunnable.class);
-        View gpsWidgetView = PowerMock.createMock(View.class);
+        GpsStatusWidget gpsStatusWidget = PowerMock.createMock(GpsStatusWidget.class);
         GeocacheListAdapter geocacheListAdapter = PowerMock.createMock(GeocacheListAdapter.class);
 
         listActivity.setContentView(R.layout.cache_list);
         PowerMock.expectNew(CacheListOnCreateContextMenuListener.class, geocacheVectors).andReturn(
                 listener);
         expect(listActivity.getListView()).andReturn(listView);
-        listView.addHeaderView(gpsWidgetView);
+        listView.addHeaderView(gpsStatusWidget);
         listView.setOnCreateContextMenuListener(listener);
         updateGpsWidgetRunnable.run();
         listActivity.setListAdapter(geocacheListAdapter);
 
         PowerMock.replayAll();
         new GeocacheListPresenter(null, locationControlBuffered, locationControlBuffered,
-                gpsWidgetView, updateGpsWidgetRunnable, geocacheVectors, null, listActivity,
-                geocacheListAdapter, null, null, null, null, null).onCreate();
+                gpsStatusWidget, updateGpsWidgetRunnable, geocacheVectors, null, listActivity,
+                geocacheListAdapter, null, null, null, null, null, null).onCreate();
         PowerMock.verifyAll();
     }
 
@@ -123,7 +120,7 @@ public class CacheListPresenterTest {
         new GeocacheListPresenter(combinedLocationManager, locationControlBuffered,
                 gpsStatusWidgetLocationListener, null, null, null,
                 cacheListRefreshLocationListener, null, null, null, sqliteWrapper, null,
-                sensorManager, compassListener).onPause();
+                sensorManager, compassListener, null).onPause();
         PowerMock.verifyAll();
     }
 
@@ -179,7 +176,13 @@ public class CacheListPresenterTest {
         Database database = PowerMock.createMock(Database.class);
         SensorManager sensorManager = PowerMock.createMock(SensorManager.class);
         CompassListener compassListener = PowerMock.createMock(CompassListener.class);
-
+        ListActivity listActivity = PowerMock.createMock(ListActivity.class);
+        PowerMock.mockStatic(PreferenceManager.class);
+        GeocacheListAdapter geocacheListAdapter = PowerMock.createMock(GeocacheListAdapter.class);
+        GpsStatusWidget gpsStatusWidget = PowerMock.createMock(GpsStatusWidget.class);
+        DistanceFormatterManager distanceFormatterManager = PowerMock
+                .createMock(DistanceFormatterManager.class);
+        
         combinedLocationManager.requestLocationUpdates(GeocacheListPresenter.UPDATE_DELAY, 0,
                 gpsStatusWidgetLocationListener);
         combinedLocationManager.requestLocationUpdates(GeocacheListPresenter.UPDATE_DELAY, 0,
@@ -189,12 +192,14 @@ public class CacheListPresenterTest {
         EasyMock.expect(
                 sensorManager.registerListener(compassListener, SensorManager.SENSOR_ORIENTATION,
                         SensorManager.SENSOR_DELAY_UI)).andReturn(true);
+        distanceFormatterManager.setFormatter();
 
         PowerMock.replayAll();
         new GeocacheListPresenter(combinedLocationManager, locationControlBuffered,
-                gpsStatusWidgetLocationListener, null, null, null,
-                cacheListRefreshLocationListener, null, null, null, sqliteWrapper, database,
-                sensorManager, compassListener).onResume();
+                gpsStatusWidgetLocationListener, gpsStatusWidget, null, null,
+                cacheListRefreshLocationListener, listActivity, geocacheListAdapter, null,
+                sqliteWrapper, database, sensorManager, compassListener, distanceFormatterManager)
+                .onResume();
         PowerMock.verifyAll();
     }
 
@@ -215,7 +220,7 @@ public class CacheListPresenterTest {
         PowerMock.replayAll();
         new GeocacheListPresenter(combinedLocationManager, locationControlBuffered,
                 locationControlBuffered, null, null, null, null, null, null, errorDisplayer, null,
-                null, null, null).onResume();
+                null, null, null, null).onResume();
         PowerMock.verifyAll();
     }
 

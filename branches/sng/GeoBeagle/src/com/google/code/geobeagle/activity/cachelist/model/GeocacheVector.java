@@ -15,6 +15,7 @@
 package com.google.code.geobeagle.activity.cachelist.model;
 
 import com.google.code.geobeagle.Geocache;
+import com.google.code.geobeagle.activity.cachelist.presenter.BearingFormatter;
 import com.google.code.geobeagle.activity.cachelist.presenter.DistanceFormatter;
 
 import android.location.Location;
@@ -48,7 +49,6 @@ public class GeocacheVector {
     }
 
     // TODO: distance formatter shouldn't be in every object.
-    private final DistanceFormatter mDistanceFormatter;
     private final Geocache mGeocache;
     private float mDistance;
     private final LocationControlBuffered mLocationControlBuffered;
@@ -61,11 +61,9 @@ public class GeocacheVector {
         mDistance = f;
     }
 
-    public GeocacheVector(Geocache geocache, LocationControlBuffered locationControlBuffered,
-            DistanceFormatter distanceFormatter) {
+    public GeocacheVector(Geocache geocache, LocationControlBuffered locationControlBuffered) {
         mGeocache = geocache;
         mLocationControlBuffered = locationControlBuffered;
-        mDistanceFormatter = distanceFormatter;
     }
 
     public float getDistanceFast() {
@@ -74,7 +72,8 @@ public class GeocacheVector {
                 (float)mGeocache.getLatitude(), (float)mGeocache.getLongitude());
     }
 
-    public CharSequence getFormattedDistance() {
+    public CharSequence getFormattedDistance(DistanceFormatter distanceFormatter,
+            BearingFormatter bearingFormatter) {
         // Use the slower, more accurate distance for display.
         final float[] distanceAndBearing = mGeocache
                 .calculateDistanceAndBearing(mLocationControlBuffered.getLocation());
@@ -83,9 +82,9 @@ public class GeocacheVector {
         }
         final float azimuth = mLocationControlBuffered.getAzimuth();
 
-        final CharSequence formattedDistance = mDistanceFormatter
+        final CharSequence formattedDistance = distanceFormatter
                 .formatDistance(distanceAndBearing[0]);
-        final String formattedBearing = mDistanceFormatter.formatBearing(distanceAndBearing[1]
+        final String formattedBearing = bearingFormatter.formatBearing(distanceAndBearing[1]
                 - azimuth);
 
         return formattedDistance + " " + formattedBearing;

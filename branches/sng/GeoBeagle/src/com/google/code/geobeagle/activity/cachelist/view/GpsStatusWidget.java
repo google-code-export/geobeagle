@@ -18,6 +18,8 @@ import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.ResourceProvider;
 import com.google.code.geobeagle.Time;
 import com.google.code.geobeagle.activity.cachelist.model.LocationControlBuffered;
+import com.google.code.geobeagle.activity.cachelist.presenter.DistanceFormatter;
+import com.google.code.geobeagle.activity.cachelist.presenter.HasDistanceFormatter;
 import com.google.code.geobeagle.location.CombinedLocationManager;
 
 import android.content.Context;
@@ -35,7 +37,7 @@ import android.widget.TextView;
 /**
  * @author sng Displays the GPS status (mAccuracy, availability, etc).
  */
-public class GpsStatusWidget extends LinearLayout implements LocationListener {
+public class GpsStatusWidget extends LinearLayout implements LocationListener, HasDistanceFormatter {
 
     public static class GpsStatusWidgetDelegate {
         private final CombinedLocationManager mCombinedLocationManager;
@@ -45,10 +47,12 @@ public class GpsStatusWidget extends LinearLayout implements LocationListener {
         private final ResourceProvider mResourceProvider;
         private final TextView mStatus;
         private final TextLagUpdater mTextLagUpdater;
+        private DistanceFormatter mDistanceFormatter;
 
         public GpsStatusWidgetDelegate(CombinedLocationManager combinedLocationManager,
                 MeterFader meterFader, MeterWrapper meterWrapper, TextView provider,
-                ResourceProvider resourceProvider, TextView status, TextLagUpdater textLagUpdater) {
+                ResourceProvider resourceProvider, TextView status, TextLagUpdater textLagUpdater,
+                DistanceFormatter distanceFormatter) {
             mCombinedLocationManager = combinedLocationManager;
             mMeterFader = meterFader;
             mMeterWrapper = meterWrapper;
@@ -56,6 +60,7 @@ public class GpsStatusWidget extends LinearLayout implements LocationListener {
             mStatus = status;
             mTextLagUpdater = textLagUpdater;
             mResourceProvider = resourceProvider;
+            mDistanceFormatter = distanceFormatter;
         }
 
         public void onLocationChanged(Location location) {
@@ -70,7 +75,7 @@ public class GpsStatusWidget extends LinearLayout implements LocationListener {
                 return;
             }
             mProvider.setText(location.getProvider());
-            mMeterWrapper.setAccuracy(location.getAccuracy());
+            mMeterWrapper.setAccuracy(location.getAccuracy(), mDistanceFormatter);
             mMeterFader.reset();
             mTextLagUpdater.reset(location.getTime());
         }
@@ -98,6 +103,10 @@ public class GpsStatusWidget extends LinearLayout implements LocationListener {
                             + mResourceProvider.getString(R.string.temporarily_unavailable));
                     break;
             }
+        }
+
+        public void setDistanceFormatter(DistanceFormatter distanceFormatter) {
+            mDistanceFormatter = distanceFormatter;
         }
     }
 
@@ -142,9 +151,10 @@ public class GpsStatusWidget extends LinearLayout implements LocationListener {
             mMeterView = meterView;
         }
 
-        public void setAccuracy(float accuracy) {
+        public void setAccuracy(float accuracy, DistanceFormatter distanceFormatter) {
             mAccuracy = accuracy;
-            mAccuracyView.setText((Integer.toString((int)accuracy) + "m").trim());
+            distanceFormatter.formatDistance(accuracy);
+            mAccuracyView.setText(distanceFormatter.formatDistance(accuracy));
             mMeterView.set(accuracy, mAzimuth);
         }
 
@@ -227,7 +237,7 @@ public class GpsStatusWidget extends LinearLayout implements LocationListener {
 
     public GpsStatusWidget(Context context, LocationControlBuffered locationControlBuffered,
             CombinedLocationManager locationManager, MeterFormatter meterFormatter,
-            ResourceProvider resourceProvider, Time time) {
+            ResourceProvider resourceProvider, Time time, DistanceFormatter distanceFormatter) {
         super(context);
 
         final LayoutInflater inflater = (LayoutInflater)context
@@ -246,7 +256,8 @@ public class GpsStatusWidget extends LinearLayout implements LocationListener {
         mTextLagUpdater = new TextLagUpdater(locationManager, lag, time);
 
         mGpsStatusWidgetDelegate = new GpsStatusWidgetDelegate(locationManager, meterFader,
-                mMeterWrapper, provider, resourceProvider, status, mTextLagUpdater);
+                mMeterWrapper, provider, resourceProvider, status, mTextLagUpdater,
+                distanceFormatter);
     }
 
     @Override
@@ -283,5 +294,9 @@ public class GpsStatusWidget extends LinearLayout implements LocationListener {
 
     public void onStatusChanged(String provider, int status, Bundle extras) {
         mGpsStatusWidgetDelegate.onStatusChanged(provider, status, extras);
+    }
+
+    public void setDistanceFormatter(DistanceFormatter distanceFormatter) {
+        mGpsStatusWidgetDelegate.setDistanceFormatter(distanceFormatter);
     }
 }

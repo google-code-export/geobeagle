@@ -17,6 +17,8 @@ package com.google.code.geobeagle.activity.cachelist.view;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVector;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVectors;
+import com.google.code.geobeagle.activity.cachelist.presenter.BearingFormatter;
+import com.google.code.geobeagle.activity.cachelist.presenter.DistanceFormatter;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -33,18 +35,26 @@ public class GeocacheSummaryRowInflater {
             mDistance = distance;
         }
 
-        void set(GeocacheVector geocacheVector) {
+        void set(GeocacheVector geocacheVector, DistanceFormatter distanceFormatter,
+                BearingFormatter bearingFormatter) {
             mCache.setText(geocacheVector.getIdAndName());
-            mDistance.setText(geocacheVector.getFormattedDistance());
+            mDistance.setText(geocacheVector.getFormattedDistance(distanceFormatter,
+                    bearingFormatter));
         }
     }
 
     private final GeocacheVectors mGeocacheVectors;
     private final LayoutInflater mLayoutInflater;
+    private DistanceFormatter mDistanceFormatter;
+    private final BearingFormatter mBearingFormatter;
 
-    public GeocacheSummaryRowInflater(LayoutInflater layoutInflater, GeocacheVectors geocacheVectors) {
+    public GeocacheSummaryRowInflater(LayoutInflater layoutInflater,
+            GeocacheVectors geocacheVectors, DistanceFormatter distanceFormatter,
+            BearingFormatter bearingFormatter) {
         mLayoutInflater = layoutInflater;
         mGeocacheVectors = geocacheVectors;
+        mDistanceFormatter = distanceFormatter;
+        mBearingFormatter = bearingFormatter;
     }
 
     public View inflate(View convertView) {
@@ -60,6 +70,11 @@ public class GeocacheSummaryRowInflater {
     }
 
     public void setData(View view, int position) {
-        ((RowViews)view.getTag()).set(mGeocacheVectors.get(position));
+        ((RowViews)view.getTag()).set(mGeocacheVectors.get(position), mDistanceFormatter,
+                mBearingFormatter);
+    }
+
+    public void setDistanceFormatter(DistanceFormatter distanceFormatter) {
+        mDistanceFormatter = distanceFormatter;
     }
 }

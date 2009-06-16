@@ -21,8 +21,6 @@ import com.google.code.geobeagle.Time;
 import com.google.code.geobeagle.actions.context.ContextAction;
 import com.google.code.geobeagle.actions.context.ContextActionDelete;
 import com.google.code.geobeagle.actions.context.ContextActionView;
-import com.google.code.geobeagle.activity.cachelist.CacheListDelegate;
-import com.google.code.geobeagle.activity.cachelist.GeocacheListController;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionMyLocation;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionSyncGpx;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionToggleFilter;
@@ -37,8 +35,11 @@ import com.google.code.geobeagle.activity.cachelist.model.LocationControlDi;
 import com.google.code.geobeagle.activity.cachelist.model.LocationControlBuffered.GpsDisabledLocation;
 import com.google.code.geobeagle.activity.cachelist.presenter.ActionAndTolerance;
 import com.google.code.geobeagle.activity.cachelist.presenter.AdapterCachesSorter;
+import com.google.code.geobeagle.activity.cachelist.presenter.BearingFormatter;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
-import com.google.code.geobeagle.activity.cachelist.presenter.DistanceFormatter;
+import com.google.code.geobeagle.activity.cachelist.presenter.DistanceFormatterImperial;
+import com.google.code.geobeagle.activity.cachelist.presenter.DistanceFormatterManager;
+import com.google.code.geobeagle.activity.cachelist.presenter.DistanceFormatterMetric;
 import com.google.code.geobeagle.activity.cachelist.presenter.DistanceUpdater;
 import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheListAdapter;
 import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheListPresenter;
@@ -120,10 +121,11 @@ public class CacheListDelegateDI {
         final SQLiteWrapper sqliteWrapper = new SQLiteWrapper(null);
         final GeocachesSql geocachesSql = DatabaseDI.create(sqliteWrapper);
         final CacheWriter cacheWriter = DatabaseDI.createCacheWriter(sqliteWrapper);
-        final DistanceFormatter distanceFormatter = new DistanceFormatter();
+        final BearingFormatter bearingFormatter = new BearingFormatter();
+        final DistanceFormatterMetric distanceFormatterMetric = new DistanceFormatterMetric();
+        final DistanceFormatterImperial distanceFormatterImperial = new DistanceFormatterImperial();
         final LocationSaver locationSaver = new LocationSaver(cacheWriter);
-        final GeocacheVectorFactory geocacheVectorFactory = new GeocacheVectorFactory(
-                distanceFormatter);
+        final GeocacheVectorFactory geocacheVectorFactory = new GeocacheVectorFactory();
         final ArrayList<GeocacheVector> geocacheVectorsList = new ArrayList<GeocacheVector>(10);
         final GeocacheVectors geocacheVectors = new GeocacheVectors(geocacheVectorFactory,
                 geocacheVectorsList);
@@ -131,7 +133,7 @@ public class CacheListDelegateDI {
         final XmlPullParserWrapper xmlPullParserWrapper = new XmlPullParserWrapper();
 
         final GeocacheSummaryRowInflater geocacheSummaryRowInflater = new GeocacheSummaryRowInflater(
-                layoutInflater, geocacheVectors);
+                layoutInflater, geocacheVectors, distanceFormatterMetric, bearingFormatter);
 
         final GeocacheListAdapter geocacheListAdapter = new GeocacheListAdapter(geocacheVectors,
                 geocacheSummaryRowInflater);
@@ -140,7 +142,7 @@ public class CacheListDelegateDI {
 
         final GpsStatusWidget gpsStatusWidget = new GpsStatusWidget(listActivity,
                 locationControlBuffered, combinedLocationManager, meterFormatter,
-                new ResourceProvider(listActivity), time);
+                new ResourceProvider(listActivity), time, distanceFormatterMetric);
         final CombinedLocationListener gpsStatusWidgetLocationListener = new CombinedLocationListener(
                 locationControlBuffered, gpsStatusWidget);
         final Handler handler = new Handler();
@@ -189,12 +191,16 @@ public class CacheListDelegateDI {
                 .getSystemService(Context.SENSOR_SERVICE);
         final CompassListener compassListener = new CompassListener(cacheListRefresh,
                 locationControlBuffered, 720);
-
+        final DistanceFormatterManager distanceFormatterManager = new DistanceFormatterManager(
+                listActivity, distanceFormatterImperial, distanceFormatterMetric);
+        distanceFormatterManager.addHasDistanceFormatter(geocacheListAdapter);
+        distanceFormatterManager.addHasDistanceFormatter(gpsStatusWidget);
         final GeocacheListPresenter geocacheListPresenter = new GeocacheListPresenter(
                 combinedLocationManager, locationControlBuffered, gpsStatusWidgetLocationListener,
                 gpsStatusWidget, updateGpsWidgetRunnable, geocacheVectors,
                 cacheListRefreshLocationListener, listActivity, geocacheListAdapter,
-                errorDisplayer, sqliteWrapper, database, sensorManager, compassListener);
+                errorDisplayer, sqliteWrapper, database, sensorManager, compassListener,
+                distanceFormatterManager);
         final MenuActionToggleFilter menuActionToggleFilter = new MenuActionToggleFilter(
                 filterNearestCaches, cacheListRefresh);
 

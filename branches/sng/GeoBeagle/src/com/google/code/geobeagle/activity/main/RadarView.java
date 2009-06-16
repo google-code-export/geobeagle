@@ -101,16 +101,6 @@ public class RadarView extends View implements SensorListener, LocationListener 
             "%.0fkm", "%.0fkm"
     };
 
-    /**
-     * This array holds the formatting string used to display the distance on
-     * each ring of the radar screen. (This array is for metric measurements.)
-     */
-    private static String mMetricScaleFormats[] = {
-            "%.0fm", "%.0fm", "%.0fm", "%.0fm", "%.0fm", "%.0fkm", "%.0fkm", "%.0fkm", "%.0fkm",
-            "%.0fkm", "%.0fkm", "%.0fkm", "%.0fkm", "%.0fkm", "%.0fkm", "%.0fkm", "%.0fkm",
-            "%.0fkm", "%.0fkm", "%.0fkm"
-    };
-
     private static float KM_PER_YARDS = 0.0009144f;
     private static float KM_PER_MILES = 1.609344f;
     private static float YARDS_PER_KM = 1093.6133f;
@@ -148,16 +138,6 @@ public class RadarView extends View implements SensorListener, LocationListener 
      */
     private static String mEnglishDisplayFormats[] = {
             "%.0fyd", "%.0fyd", "%.0fyd", "%.0fyd", "%.1fmi", "%.1fmi", "%.1fmi", "%.1fmi",
-            "%.0fmi", "%.0fmi", "%.0fmi", "%.0fmi", "%.0fmi", "%.0fmi", "%.0fmi", "%.0fmi",
-            "%.0fmi", "%.0fmi", "%.0fmi", "%.0fmi"
-    };
-
-    /**
-     * This array holds the formatting string used to display the distance on
-     * each ring of the radar screen. (This array is for standard measurements.)
-     */
-    private static String mEnglishScaleFormats[] = {
-            "%.0fyd", "%.0fyd", "%.0fyd", "%.0fyd", "%.2fmi", "%.1fmi", "%.0fmi", "%.0fmi",
             "%.0fmi", "%.0fmi", "%.0fmi", "%.0fmi", "%.0fmi", "%.0fmi", "%.0fmi", "%.0fmi",
             "%.0fmi", "%.0fmi", "%.0fmi", "%.0fmi"
     };
