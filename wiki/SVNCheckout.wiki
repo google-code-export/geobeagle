@@ -3,15 +3,13 @@
 
 `svn checkout https://geobeagle.googlecode.com/svn/`
 
-Eclipse / New Android Project / Create Project From Existing Source / select GeoBeagle dir
+Eclipse / New Android Project / Create Project From Existing Source / select !GeoBeagle dir
 
-GeoBeagle / Properties / Java Build Path / Add External Jars.... / android.jar
+!GeoBeagle / Properties / Java Build Path / Add External Jars.... / android.jar
 
 
 Eclipse / Preferences / Set Android SDK Location
 
 Set java1.6
 
-Eclipse / New Java Project / Create Project From Existing Source / select GeoBeagleTest dir
-
-
+Eclipse / New Java Project / Create Project From Existing Source / select !GeoBeagleTest dir
