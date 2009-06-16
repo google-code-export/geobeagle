@@ -28,7 +28,7 @@ public class MeterView {
 
     public void set(float accuracy, float azimuth) {
         mTextView.setText(mMeterFormatter.barsToMeterText(mMeterFormatter
-                .accuracyToBarCount(accuracy), String.valueOf((int)azimuth) + "Â°"));
+                .accuracyToBarCount(accuracy), String.valueOf((int)azimuth) + "°"));
     }
 
     public void setLag(long lag) {
