@@ -225,8 +225,11 @@ public class GpsStatusWidgetTest {
         textLagUpdater.reset(1000);
 
         PowerMock.replayAll();
-        new GpsStatusWidgetDelegate(combinedLocationManager, meterFader, meterWrapper, provider,
-                null, null, textLagUpdater, distanceFormatter).onLocationChanged(location);
+        final GpsStatusWidgetDelegate gpsStatusWidgetDelegate = new GpsStatusWidgetDelegate(
+                combinedLocationManager, meterFader, meterWrapper, provider, null, null,
+                textLagUpdater, null);
+        gpsStatusWidgetDelegate.setDistanceFormatter(distanceFormatter);
+        gpsStatusWidgetDelegate.onLocationChanged(location);
         PowerMock.verifyAll();
     }
 
@@ -237,7 +240,6 @@ public class GpsStatusWidgetTest {
         Location location = PowerMock.createMock(Location.class);
         CombinedLocationManager combinedLocationManager = PowerMock
                 .createMock(CombinedLocationManager.class);
-        DistanceFormatter distanceFormatter = PowerMock.createMock(DistanceFormatter.class);
 
         expect(combinedLocationManager.isProviderEnabled()).andReturn(false);
         textLagUpdater.setDisabled();
@@ -245,7 +247,7 @@ public class GpsStatusWidgetTest {
 
         PowerMock.replayAll();
         new GpsStatusWidgetDelegate(combinedLocationManager, null, meterWrapper, null, null, null,
-                textLagUpdater, distanceFormatter).onLocationChanged(location);
+                textLagUpdater, null).onLocationChanged(location);
         PowerMock.verifyAll();
     }
 

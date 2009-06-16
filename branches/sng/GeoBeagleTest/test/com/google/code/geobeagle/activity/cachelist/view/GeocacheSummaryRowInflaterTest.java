@@ -114,15 +114,18 @@ public class GeocacheSummaryRowInflaterTest {
         View view = PowerMock.createMock(View.class);
         RowViews rowViews = PowerMock.createMock(RowViews.class);
         DistanceFormatter distanceFormatter = PowerMock.createMock(DistanceFormatter.class);
+        DistanceFormatter distanceFormatter2 = PowerMock.createMock(DistanceFormatter.class);
         BearingFormatter bearingFormatter = PowerMock.createMock(BearingFormatter.class);
 
         EasyMock.expect(geocacheVectors.get(18)).andReturn(geocacheVector);
         EasyMock.expect(view.getTag()).andReturn(rowViews);
-        rowViews.set(geocacheVector, distanceFormatter, bearingFormatter);
-
+        rowViews.set(geocacheVector, distanceFormatter2, bearingFormatter);
+        
         PowerMock.replayAll();
-        new GeocacheSummaryRowInflater(null, geocacheVectors, distanceFormatter, bearingFormatter)
-                .setData(view, 18);
+        final GeocacheSummaryRowInflater geocacheSummaryRowInflater = new GeocacheSummaryRowInflater(
+                null, geocacheVectors, distanceFormatter, bearingFormatter);
+        geocacheSummaryRowInflater.setDistanceFormatter(distanceFormatter2);
+        geocacheSummaryRowInflater.setData(view, 18);
         PowerMock.verifyAll();
     }
 }
