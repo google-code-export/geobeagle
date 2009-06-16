@@ -14,24 +14,23 @@
 
 package com.google.code.geobeagle.activity.cachelist.presenter;
 
-import android.app.Activity;
 import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 
 import java.util.ArrayList;
 
 public class DistanceFormatterManager {
-    private final Activity mActivity;
     private ArrayList<HasDistanceFormatter> mHasDistanceFormatters;
     private final DistanceFormatterMetric mDistanceFormatterMetric;
     private final DistanceFormatterImperial mDistanceFormatterImperial;
+    private final SharedPreferences mDefaultSharedPreferences;
 
-    public DistanceFormatterManager(Activity activity,
+    public DistanceFormatterManager(SharedPreferences defaultSharedPreferences,
             DistanceFormatterImperial distanceFormatterImperial,
             DistanceFormatterMetric distanceFormatterMetric) {
-        mActivity = activity;
         mDistanceFormatterImperial = distanceFormatterImperial;
         mDistanceFormatterMetric = distanceFormatterMetric;
+        mDefaultSharedPreferences = defaultSharedPreferences;
+        mHasDistanceFormatters = new ArrayList<HasDistanceFormatter>(2);
     }
 
     public void addHasDistanceFormatter(HasDistanceFormatter hasDistanceFormatter) {
@@ -39,9 +38,7 @@ public class DistanceFormatterManager {
     }
 
     public void setFormatter() {
-        final SharedPreferences defaultSharedPreferences = PreferenceManager
-                .getDefaultSharedPreferences(mActivity);
-        final boolean imperial = defaultSharedPreferences.getBoolean("imperial", false);
+        final boolean imperial = mDefaultSharedPreferences.getBoolean("imperial", false);
         for (HasDistanceFormatter hasDistanceFormatter : mHasDistanceFormatters) {
             final DistanceFormatter distanceFormatter = imperial ? mDistanceFormatterImperial
                     : mDistanceFormatterMetric;

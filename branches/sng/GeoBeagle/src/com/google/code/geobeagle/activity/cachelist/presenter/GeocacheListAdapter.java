@@ -21,8 +21,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
-public class GeocacheListAdapter extends BaseAdapter implements HasDistanceFormatter {
-
+public class GeocacheListAdapter extends BaseAdapter {
     private final GeocacheSummaryRowInflater mGeocacheSummaryRowInflater;
     private final GeocacheVectors mGeocacheVectors;
 
@@ -48,12 +47,5 @@ public class GeocacheListAdapter extends BaseAdapter implements HasDistanceForma
         View view = mGeocacheSummaryRowInflater.inflate(convertView);
         mGeocacheSummaryRowInflater.setData(view, position);
         return view;
-    }
-
-    /* (non-Javadoc)
-     * @see com.google.code.geobeagle.activity.cachelist.presenter.HasDistanceFormatter#setDistanceFormatter(com.google.code.geobeagle.activity.cachelist.presenter.DistanceFormatter)
-     */
-    public void setDistanceFormatter(DistanceFormatter distanceFormatter) {
-        mGeocacheSummaryRowInflater.setDistanceFormatter(distanceFormatter);
     }
 }

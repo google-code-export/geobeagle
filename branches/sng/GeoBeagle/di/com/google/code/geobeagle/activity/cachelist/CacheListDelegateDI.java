@@ -76,9 +76,11 @@ import com.google.code.geobeagle.xmlimport.GpxToCacheDI.XmlPullParserWrapper;
 import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.hardware.SensorManager;
 import android.location.LocationManager;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.widget.BaseAdapter;
@@ -191,9 +193,11 @@ public class CacheListDelegateDI {
                 .getSystemService(Context.SENSOR_SERVICE);
         final CompassListener compassListener = new CompassListener(cacheListRefresh,
                 locationControlBuffered, 720);
+        final SharedPreferences defaultSharedPreferences = PreferenceManager
+                .getDefaultSharedPreferences(listActivity);
         final DistanceFormatterManager distanceFormatterManager = new DistanceFormatterManager(
-                listActivity, distanceFormatterImperial, distanceFormatterMetric);
-        distanceFormatterManager.addHasDistanceFormatter(geocacheListAdapter);
+                defaultSharedPreferences, distanceFormatterImperial, distanceFormatterMetric);
+        distanceFormatterManager.addHasDistanceFormatter(geocacheSummaryRowInflater);
         distanceFormatterManager.addHasDistanceFormatter(gpsStatusWidget);
         final GeocacheListPresenter geocacheListPresenter = new GeocacheListPresenter(
                 combinedLocationManager, locationControlBuffered, gpsStatusWidgetLocationListener,

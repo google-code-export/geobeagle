@@ -19,13 +19,14 @@ import com.google.code.geobeagle.activity.cachelist.model.GeocacheVector;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVectors;
 import com.google.code.geobeagle.activity.cachelist.presenter.BearingFormatter;
 import com.google.code.geobeagle.activity.cachelist.presenter.DistanceFormatter;
+import com.google.code.geobeagle.activity.cachelist.presenter.HasDistanceFormatter;
 
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 
-public class GeocacheSummaryRowInflater {
+public class GeocacheSummaryRowInflater implements HasDistanceFormatter {
     static class RowViews {
         private final TextView mCache;
         private final TextView mDistance;
@@ -43,10 +44,10 @@ public class GeocacheSummaryRowInflater {
         }
     }
 
+    private final BearingFormatter mBearingFormatter;
+    private DistanceFormatter mDistanceFormatter;
     private final GeocacheVectors mGeocacheVectors;
     private final LayoutInflater mLayoutInflater;
-    private DistanceFormatter mDistanceFormatter;
-    private final BearingFormatter mBearingFormatter;
 
     public GeocacheSummaryRowInflater(LayoutInflater layoutInflater,
             GeocacheVectors geocacheVectors, DistanceFormatter distanceFormatter,
