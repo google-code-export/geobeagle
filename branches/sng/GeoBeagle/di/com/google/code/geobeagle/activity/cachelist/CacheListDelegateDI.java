@@ -16,8 +16,6 @@ package com.google.code.geobeagle.activity.cachelist;
 
 import com.google.code.geobeagle.ErrorDisplayer;
 import com.google.code.geobeagle.GeocacheFactory;
-import com.google.code.geobeagle.ResourceProvider;
-import com.google.code.geobeagle.Time;
 import com.google.code.geobeagle.actions.context.ContextAction;
 import com.google.code.geobeagle.actions.context.ContextActionDelete;
 import com.google.code.geobeagle.actions.context.ContextActionView;
@@ -53,9 +51,6 @@ import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh.A
 import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheListPresenter.CacheListRefreshLocationListener;
 import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheListPresenter.CompassListener;
 import com.google.code.geobeagle.activity.cachelist.view.GeocacheSummaryRowInflater;
-import com.google.code.geobeagle.activity.cachelist.view.GpsStatusWidget;
-import com.google.code.geobeagle.activity.cachelist.view.MeterFormatter;
-import com.google.code.geobeagle.activity.cachelist.view.GpsStatusWidget.UpdateGpsWidgetRunnable;
 import com.google.code.geobeagle.activity.main.GeoBeagle;
 import com.google.code.geobeagle.database.CacheWriter;
 import com.google.code.geobeagle.database.Database;
@@ -66,6 +61,8 @@ import com.google.code.geobeagle.database.LocationSaver;
 import com.google.code.geobeagle.database.WhereFactoryAllCaches;
 import com.google.code.geobeagle.database.WhereFactoryNearestCaches;
 import com.google.code.geobeagle.database.DatabaseDI.SQLiteWrapper;
+import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidget;
+import com.google.code.geobeagle.gpsstatuswidget.UpdateGpsWidgetRunnable;
 import com.google.code.geobeagle.location.CombinedLocationListener;
 import com.google.code.geobeagle.location.CombinedLocationManager;
 import com.google.code.geobeagle.xmlimport.GpxImporter;
@@ -79,7 +76,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.hardware.SensorManager;
 import android.location.LocationManager;
-import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -104,7 +100,6 @@ public class CacheListDelegateDI {
 
         public long getTime() {
             return Calendar.getInstance().getTimeInMillis();
-
         }
     }
 
@@ -139,19 +134,14 @@ public class CacheListDelegateDI {
 
         final GeocacheListAdapter geocacheListAdapter = new GeocacheListAdapter(geocacheVectors,
                 geocacheSummaryRowInflater);
-        final MeterFormatter meterFormatter = new MeterFormatter(listActivity);
-        final Time time = new Time();
 
-        final GpsStatusWidget gpsStatusWidget = new GpsStatusWidget(listActivity,
-                locationControlBuffered, combinedLocationManager, meterFormatter,
-                new ResourceProvider(listActivity), time, distanceFormatterMetric);
-        final CombinedLocationListener gpsStatusWidgetLocationListener = new CombinedLocationListener(
+        final GpsStatusWidget gpsStatusWidget = GpsStatusWidget.CreateStatusWidget(listActivity,
+                locationControlBuffered, combinedLocationManager, distanceFormatterMetric, null);
+        final CombinedLocationListener mCombinedLocationListener = new CombinedLocationListener(
                 locationControlBuffered, gpsStatusWidget);
-        final Handler handler = new Handler();
 
-        final UpdateGpsWidgetRunnable updateGpsWidgetRunnable = new UpdateGpsWidgetRunnable(
-                handler, locationControlBuffered, gpsStatusWidget.getMeterWrapper(),
-                gpsStatusWidget.getTextLagUpdater());
+        final UpdateGpsWidgetRunnable updateGpsWidgetRunnable = GpsStatusWidget
+                .CreateUpdateGpsWidgetRunnable(gpsStatusWidget, locationControlBuffered);
 
         final WhereFactoryAllCaches whereFactoryAllCaches = new WhereFactoryAllCaches();
         final WhereFactoryNearestCaches whereFactoryNearestCaches = new WhereFactoryNearestCaches();
@@ -200,7 +190,7 @@ public class CacheListDelegateDI {
         distanceFormatterManager.addHasDistanceFormatter(geocacheSummaryRowInflater);
         distanceFormatterManager.addHasDistanceFormatter(gpsStatusWidget);
         final GeocacheListPresenter geocacheListPresenter = new GeocacheListPresenter(
-                combinedLocationManager, locationControlBuffered, gpsStatusWidgetLocationListener,
+                combinedLocationManager, locationControlBuffered, mCombinedLocationListener,
                 gpsStatusWidget, updateGpsWidgetRunnable, geocacheVectors,
                 cacheListRefreshLocationListener, listActivity, geocacheListAdapter,
                 errorDisplayer, sqliteWrapper, database, sensorManager, compassListener,

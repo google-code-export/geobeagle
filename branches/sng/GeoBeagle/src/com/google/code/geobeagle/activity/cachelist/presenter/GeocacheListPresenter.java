@@ -19,10 +19,10 @@ import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.cachelist.GeocacheListController.CacheListOnCreateContextMenuListener;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVectors;
 import com.google.code.geobeagle.activity.cachelist.model.LocationControlBuffered;
-import com.google.code.geobeagle.activity.cachelist.view.GpsStatusWidget;
-import com.google.code.geobeagle.activity.cachelist.view.GpsStatusWidget.UpdateGpsWidgetRunnable;
 import com.google.code.geobeagle.database.Database;
 import com.google.code.geobeagle.database.DatabaseDI.SQLiteWrapper;
+import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidget;
+import com.google.code.geobeagle.gpsstatuswidget.UpdateGpsWidgetRunnable;
 import com.google.code.geobeagle.location.CombinedLocationManager;
 
 import android.app.ListActivity;
@@ -32,7 +32,6 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.widget.ListView;
 
 
@@ -68,7 +67,7 @@ public class GeocacheListPresenter {
     private final ErrorDisplayer mErrorDisplayer;
     private final GeocacheListAdapter mGeocacheListAdapter;
     private final GeocacheVectors mGeocacheVectors;
-    private final LocationListener mGpsStatusWidgetLocationListener;
+    private final LocationListener mCombinedLocationListener;
     private final GpsStatusWidget mGpsStatusWidget;
     private final ListActivity mListActivity;
     private final LocationControlBuffered mLocationControlBuffered;
@@ -94,7 +93,7 @@ public class GeocacheListPresenter {
             DistanceFormatterManager distanceFormatterManager) {
         mCombinedLocationManager = combinedLocationManager;
         mLocationControlBuffered = locationControlBuffered;
-        mGpsStatusWidgetLocationListener = gpsStatusWidgetLocationListener;
+        mCombinedLocationListener = gpsStatusWidgetLocationListener;
         mGpsStatusWidget = gpsWidgetView;
         mUpdateGpsWidgetRunnable = updateGpsWidgetRunnable;
         mGeocacheVectors = geocacheVectors;
@@ -124,7 +123,7 @@ public class GeocacheListPresenter {
 
     public void onPause() {
         mCombinedLocationManager.removeUpdates(mLocationControlBuffered);
-        mCombinedLocationManager.removeUpdates(mGpsStatusWidgetLocationListener);
+        mCombinedLocationManager.removeUpdates(mCombinedLocationListener);
         mSensorManager.unregisterListener(mCompassListener);
         mCombinedLocationManager.removeUpdates(mCacheListRefreshLocationListener);
     }
@@ -171,7 +170,7 @@ public class GeocacheListPresenter {
             mCombinedLocationManager.requestLocationUpdates(UPDATE_DELAY, 0,
                     mLocationControlBuffered);
             mCombinedLocationManager.requestLocationUpdates(UPDATE_DELAY, 0,
-                    mGpsStatusWidgetLocationListener);
+                    mCombinedLocationListener);
             mCombinedLocationManager.requestLocationUpdates(UPDATE_DELAY, 0,
                     mCacheListRefreshLocationListener);
             mDistanceFormatterManager.setFormatter();

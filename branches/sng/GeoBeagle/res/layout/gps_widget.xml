@@ -11,8 +11,9 @@
 		License.
 	-->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	android:orientation="vertical" android:layout_width="fill_parent"
-	android:layout_height="wrap_content" android:paddingRight="6sp">
+	android:id="@+id/gps_widget" android:orientation="vertical"
+	android:layout_width="fill_parent" android:layout_height="wrap_content"
+	android:paddingRight="6sp">
 
 	<TextView android:gravity="center" android:id="@+id/location_viewer"
 		android:layout_width="fill_parent" android:layout_height="wrap_content"
@@ -32,8 +33,7 @@
 	</LinearLayout>
 
 	<LinearLayout android:orientation="horizontal"
-		android:layout_width="fill_parent" android:layout_height="wrap_content"
-		android:paddingBottom="12sp">
+		android:layout_width="fill_parent" android:layout_height="wrap_content">
 		<TextView android:id="@+id/status" android:layout_width="wrap_content"
 			android:layout_height="wrap_content" android:text="" />
 	</LinearLayout>
