@@ -12,14 +12,14 @@
  ** limitations under the License.
  */
 
-package com.google.code.geobeagle.activity.main.view;
+package com.google.code.geobeagle.gpsstatuswidget;
 
 import static org.easymock.EasyMock.expect;
 import static org.junit.Assert.assertEquals;
 
 import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.activity.cachelist.view.MeterFormatter;
-import com.google.code.geobeagle.activity.cachelist.view.MeterView;
+import com.google.code.geobeagle.gpsstatuswidget.MeterFormatter;
+import com.google.code.geobeagle.gpsstatuswidget.MeterView;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

@@ -23,10 +23,10 @@ import com.google.code.geobeagle.activity.cachelist.model.GeocacheVectors;
 import com.google.code.geobeagle.activity.cachelist.model.LocationControlBuffered;
 import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheListPresenter.CacheListRefreshLocationListener;
 import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheListPresenter.CompassListener;
-import com.google.code.geobeagle.activity.cachelist.view.GpsStatusWidget;
-import com.google.code.geobeagle.activity.cachelist.view.GpsStatusWidget.UpdateGpsWidgetRunnable;
 import com.google.code.geobeagle.database.Database;
 import com.google.code.geobeagle.database.DatabaseDI.SQLiteWrapper;
+import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidget;
+import com.google.code.geobeagle.gpsstatuswidget.UpdateGpsWidgetRunnable;
 import com.google.code.geobeagle.location.CombinedLocationManager;
 
 import org.easymock.EasyMock;

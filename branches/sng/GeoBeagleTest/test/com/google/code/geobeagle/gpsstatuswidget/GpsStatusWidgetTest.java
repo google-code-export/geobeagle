@@ -12,7 +12,7 @@
  ** limitations under the License.
  */
 
-package com.google.code.geobeagle.activity.cachelist.view;
+package com.google.code.geobeagle.gpsstatuswidget;
 
 import static org.easymock.EasyMock.expect;
 import static org.junit.Assert.assertEquals;
@@ -22,11 +22,12 @@ import com.google.code.geobeagle.ResourceProvider;
 import com.google.code.geobeagle.Time;
 import com.google.code.geobeagle.activity.cachelist.model.LocationControlBuffered;
 import com.google.code.geobeagle.activity.cachelist.presenter.DistanceFormatter;
-import com.google.code.geobeagle.activity.cachelist.view.GpsStatusWidget.GpsStatusWidgetDelegate;
-import com.google.code.geobeagle.activity.cachelist.view.GpsStatusWidget.MeterFader;
-import com.google.code.geobeagle.activity.cachelist.view.GpsStatusWidget.MeterWrapper;
-import com.google.code.geobeagle.activity.cachelist.view.GpsStatusWidget.TextLagUpdater;
-import com.google.code.geobeagle.activity.cachelist.view.GpsStatusWidget.UpdateGpsWidgetRunnable;
+import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidget;
+import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidgetDelegate;
+import com.google.code.geobeagle.gpsstatuswidget.MeterFader;
+import com.google.code.geobeagle.gpsstatuswidget.MeterView;
+import com.google.code.geobeagle.gpsstatuswidget.TextLagUpdater;
+import com.google.code.geobeagle.gpsstatuswidget.UpdateGpsWidgetRunnable;
 import com.google.code.geobeagle.location.CombinedLocationManager;
 
 import org.easymock.EasyMock;
@@ -281,6 +282,7 @@ public class GpsStatusWidgetTest {
         TextView textLag = PowerMock.createMock(TextView.class);
 
         textLag.setText("");
+
         PowerMock.replayAll();
         new TextLagUpdater(null, textLag, null).setDisabled();
         PowerMock.verifyAll();
@@ -289,11 +291,18 @@ public class GpsStatusWidgetTest {
     @Test
     public void testTextLagUpdater_update() {
         TextView textLag = PowerMock.createMock(TextView.class);
+        Time time = PowerMock.createMock(Time.class);
+        CombinedLocationManager combinedLocationManager = PowerMock
+                .createMock(CombinedLocationManager.class);
 
-        textLag.setText("");
+        EasyMock.expect(time.getCurrentTime()).andReturn(5000L);
+        EasyMock.expect(combinedLocationManager.isProviderEnabled()).andReturn(true);
+        textLag.setText("4s");
 
         PowerMock.replayAll();
-        new TextLagUpdater(null, textLag, null).setDisabled();
+        final TextLagUpdater textLagUpdater = new TextLagUpdater(combinedLocationManager, textLag, time);
+        textLagUpdater.reset(1000);
+        textLagUpdater.updateTextLag();
         PowerMock.verifyAll();
     }
 
