@@ -17,6 +17,7 @@ package com.google.code.geobeagle.activity.main;
 import com.google.code.geobeagle.ErrorDisplayer;
 import com.google.code.geobeagle.GeocacheFactory;
 import com.google.code.geobeagle.R;
+import com.google.code.geobeagle.activity.cachelist.CacheList;
 import com.google.code.geobeagle.activity.main.fieldnotes.FieldNoteSender;
 import com.google.code.geobeagle.activity.main.fieldnotes.FieldNoteSenderDI;
 import com.google.code.geobeagle.activity.main.view.CacheDetailsOnClickListener;
@@ -85,16 +86,17 @@ public class GeoBeagleDelegate {
         } else if (R.id.menu_settings == itemId) {
             mParent.startActivity(new Intent(mParent, EditPreferences.class));
             return true;
+        } else if (R.id.menu_cache_list == itemId) {
+            mParent.startActivity(new Intent(mParent, CacheList.class));
+            return true;
         } else if (R.id.menu_log_dnf == itemId || R.id.menu_log_find == itemId) {
             mParent.showDialog(itemId);
             return true;
-            
+
+        } else if (R.id.menu_search_online == itemId) {
+            mParent.startActivity(new Intent(mParent, SearchOnlineActivity.class));
+            return true;
         }
-        // else if (R.id.menu_search_online == itemId) {
-        // mParent.startActivity(new Intent(mParent,
-        // SearchOnlineActivity.class));
-        // return true;
-        // }
 
         return mParent.onOptionsItemSelected(item);
     }

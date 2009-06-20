@@ -24,11 +24,13 @@ public class MenuActions {
 
     public MenuActions(MenuActionSyncGpx menuActionSyncGpx,
             MenuActionMyLocation menuActionMyLocation,
-            MenuActionToggleFilter menuActionToggleFilter, CacheListRefresh cacheListRefresh) {
+            MenuActionToggleFilter menuActionToggleFilter, CacheListRefresh cacheListRefresh,
+            MenuActionSearchOnline menuActionSearchOnline) {
         mMenuActions = new HashMap<Integer, MenuAction>();
         mMenuActions.put(R.id.menu_sync, menuActionSyncGpx);
         mMenuActions.put(R.id.menu_toggle_filter, menuActionToggleFilter);
         mMenuActions.put(R.id.menu_my_location, menuActionMyLocation);
+        mMenuActions.put(R.id.menu_search_online, menuActionSearchOnline);
     }
 
     public void act(int id) {

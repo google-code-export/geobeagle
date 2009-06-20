@@ -19,6 +19,7 @@ import com.google.code.geobeagle.LocationControlBuffered;
 import com.google.code.geobeagle.LocationControlDi;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.Refresher;
+import com.google.code.geobeagle.activity.cachelist.CacheList;
 import com.google.code.geobeagle.activity.searchonline.JsInterface.JsInterfaceHelper;
 import com.google.code.geobeagle.formatting.DistanceFormatterMetric;
 import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidget;
@@ -27,11 +28,13 @@ import com.google.code.geobeagle.location.CombinedLocationManager;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.hardware.SensorManager;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.webkit.WebView;
 
@@ -79,6 +82,13 @@ public class SearchOnlineActivity extends Activity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.search_online_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        super.onOptionsItemSelected(item);
+        this.startActivity(new Intent(this, CacheList.class));
         return true;
     }
 

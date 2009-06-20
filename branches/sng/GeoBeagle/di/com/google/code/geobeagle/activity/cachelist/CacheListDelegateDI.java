@@ -24,6 +24,7 @@ import com.google.code.geobeagle.actions.context.ContextAction;
 import com.google.code.geobeagle.actions.context.ContextActionDelete;
 import com.google.code.geobeagle.actions.context.ContextActionView;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionMyLocation;
+import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionSearchOnline;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionSyncGpx;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionToggleFilter;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActions;
@@ -204,8 +205,10 @@ public class CacheListDelegateDI {
                 xmlPullParserWrapper, errorDisplayer, geocacheListPresenter, aborter);
         final MenuActionSyncGpx menuActionSyncGpx = new MenuActionSyncGpx(gpxImporter,
                 cacheListRefresh);
+        final MenuActionSearchOnline menuActionSearchOnline = new MenuActionSearchOnline(
+                listActivity);
         final MenuActions menuActions = new MenuActions(menuActionSyncGpx, menuActionMyLocation,
-                menuActionToggleFilter, cacheListRefresh);
+                menuActionToggleFilter, cacheListRefresh, menuActionSearchOnline);
 
         final ContextAction contextActions[] = CacheListDelegateDI.createContextActions(
                 listActivity, database, sqliteWrapper, cacheListData, cacheWriter, geocacheVectors,
