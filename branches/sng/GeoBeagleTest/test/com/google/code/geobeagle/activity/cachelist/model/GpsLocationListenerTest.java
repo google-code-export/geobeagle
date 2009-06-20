@@ -20,7 +20,7 @@ import static org.easymock.classextension.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.verify;
 import static org.junit.Assert.*;
 
-import com.google.code.geobeagle.activity.cachelist.model.LocationControlBuffered;
+import com.google.code.geobeagle.LocationControlBuffered;
 import com.google.code.geobeagle.location.CombinedLocationListener;
 
 import org.junit.Before;

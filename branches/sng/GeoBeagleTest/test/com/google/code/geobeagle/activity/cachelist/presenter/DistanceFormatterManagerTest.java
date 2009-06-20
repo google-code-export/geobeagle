@@ -14,6 +14,9 @@
 
 package com.google.code.geobeagle.activity.cachelist.presenter;
 
+import com.google.code.geobeagle.formatting.DistanceFormatterImperial;
+import com.google.code.geobeagle.formatting.DistanceFormatterMetric;
+
 import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;

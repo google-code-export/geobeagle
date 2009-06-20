@@ -7,8 +7,8 @@ import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVector;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVectors;
 import com.google.code.geobeagle.activity.cachelist.presenter.BearingFormatter;
-import com.google.code.geobeagle.activity.cachelist.presenter.DistanceFormatter;
 import com.google.code.geobeagle.activity.cachelist.view.GeocacheSummaryRowInflater.RowViews;
+import com.google.code.geobeagle.formatting.DistanceFormatter;
 
 import org.easymock.classextension.EasyMock;
 import org.junit.Test;

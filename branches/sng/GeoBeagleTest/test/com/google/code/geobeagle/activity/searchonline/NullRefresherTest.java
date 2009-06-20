@@ -12,27 +12,13 @@
  ** limitations under the License.
  */
 
-package com.google.code.geobeagle.activity.cachelist.presenter;
-
-import static org.junit.Assert.*;
-
-import com.google.code.geobeagle.formatting.DistanceFormatterImperial;
+package com.google.code.geobeagle.activity.searchonline;
 
 import org.junit.Test;
 
-public class DistanceFormatterImperialTest {
+public class NullRefresherTest {
     @Test
-    public void testFormatNegativeDistance() {
-        assertEquals("", new DistanceFormatterImperial().formatDistance(-1));
-    }
-
-    @Test
-    public void testMiles() {
-        assertEquals("1.00mi", new DistanceFormatterImperial().formatDistance(1609.344f));
-    }
-
-    @Test
-    public void testYards() {
-        assertEquals("1yd", new DistanceFormatterImperial().formatDistance(1.8288f));
+    public void test() {
+        new NullRefresher().refresh();
     }
 }

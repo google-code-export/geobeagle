@@ -18,13 +18,13 @@ import static org.easymock.EasyMock.expect;
 import static org.junit.Assert.assertEquals;
 
 import com.google.code.geobeagle.Geocache;
+import com.google.code.geobeagle.LocationControlBuffered;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVector;
-import com.google.code.geobeagle.activity.cachelist.model.LocationControlBuffered;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVector.LocationComparator;
 import com.google.code.geobeagle.activity.cachelist.presenter.BearingFormatter;
-import com.google.code.geobeagle.activity.cachelist.presenter.DistanceFormatterMetric;
 import com.google.code.geobeagle.activity.cachelist.presenter.DistanceSortStrategy;
 import com.google.code.geobeagle.activity.cachelist.presenter.NullSortStrategy;
+import com.google.code.geobeagle.formatting.DistanceFormatterMetric;
 
 import org.easymock.EasyMock;
 import org.junit.Test;

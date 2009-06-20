@@ -19,12 +19,12 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import com.google.code.geobeagle.Geocache;
+import com.google.code.geobeagle.LocationControlBuffered;
 import com.google.code.geobeagle.R;
+import com.google.code.geobeagle.LocationControlBuffered.IGpsLocation;
 import com.google.code.geobeagle.activity.cachelist.CacheListDelegateDI;
 import com.google.code.geobeagle.activity.cachelist.model.CacheListData;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVector;
-import com.google.code.geobeagle.activity.cachelist.model.LocationControlBuffered;
-import com.google.code.geobeagle.activity.cachelist.model.LocationControlBuffered.IGpsLocation;
 import com.google.code.geobeagle.activity.cachelist.presenter.ActionAndTolerance;
 import com.google.code.geobeagle.activity.cachelist.presenter.AdapterCachesSorter;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;

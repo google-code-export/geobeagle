@@ -5,9 +5,9 @@ import static org.junit.Assert.assertEquals;
 
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.GeocacheFactory;
+import com.google.code.geobeagle.LocationControlBuffered;
 import com.google.code.geobeagle.GeocacheFactory.Source;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheFromMyLocationFactory;
-import com.google.code.geobeagle.activity.cachelist.model.LocationControlBuffered;
 
 import org.easymock.classextension.EasyMock;
 import org.junit.Test;

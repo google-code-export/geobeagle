@@ -16,8 +16,8 @@ package com.google.code.geobeagle.cachelist;
 
 import static org.junit.Assert.assertEquals;
 
-import com.google.code.geobeagle.activity.cachelist.presenter.DistanceFormatterMetric;
-import com.google.code.geobeagle.activity.cachelist.presenter.DistanceFormatter;
+import com.google.code.geobeagle.formatting.DistanceFormatter;
+import com.google.code.geobeagle.formatting.DistanceFormatterMetric;
 
 import org.junit.Test;
 

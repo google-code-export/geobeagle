@@ -16,13 +16,14 @@ package com.google.code.geobeagle.activity.cachelist.presenter;
 
 import static org.easymock.EasyMock.expect;
 
+import com.google.code.geobeagle.CompassListener;
 import com.google.code.geobeagle.ErrorDisplayer;
+import com.google.code.geobeagle.LocationControlBuffered;
 import com.google.code.geobeagle.R;
+import com.google.code.geobeagle.Refresher;
 import com.google.code.geobeagle.activity.cachelist.GeocacheListController.CacheListOnCreateContextMenuListener;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVectors;
-import com.google.code.geobeagle.activity.cachelist.model.LocationControlBuffered;
 import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheListPresenter.CacheListRefreshLocationListener;
-import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheListPresenter.CompassListener;
 import com.google.code.geobeagle.database.Database;
 import com.google.code.geobeagle.database.DatabaseDI.SQLiteWrapper;
 import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidget;

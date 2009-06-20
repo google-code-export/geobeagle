@@ -17,10 +17,10 @@ package com.google.code.geobeagle.cachelist;
 import static org.junit.Assert.assertEquals;
 
 import com.google.code.geobeagle.Geocache;
+import com.google.code.geobeagle.LocationControlBuffered;
 import com.google.code.geobeagle.activity.cachelist.model.CacheListData;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVector;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVectors;
-import com.google.code.geobeagle.activity.cachelist.model.LocationControlBuffered;
 
 import org.easymock.EasyMock;
 import org.junit.Test;

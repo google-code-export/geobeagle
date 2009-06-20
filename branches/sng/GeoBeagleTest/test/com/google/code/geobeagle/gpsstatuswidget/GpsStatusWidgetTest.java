@@ -17,17 +17,11 @@ package com.google.code.geobeagle.gpsstatuswidget;
 import static org.easymock.EasyMock.expect;
 import static org.junit.Assert.assertEquals;
 
+import com.google.code.geobeagle.LocationControlBuffered;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.ResourceProvider;
 import com.google.code.geobeagle.Time;
-import com.google.code.geobeagle.activity.cachelist.model.LocationControlBuffered;
-import com.google.code.geobeagle.activity.cachelist.presenter.DistanceFormatter;
-import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidget;
-import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidgetDelegate;
-import com.google.code.geobeagle.gpsstatuswidget.MeterFader;
-import com.google.code.geobeagle.gpsstatuswidget.MeterView;
-import com.google.code.geobeagle.gpsstatuswidget.TextLagUpdater;
-import com.google.code.geobeagle.gpsstatuswidget.UpdateGpsWidgetRunnable;
+import com.google.code.geobeagle.formatting.DistanceFormatter;
 import com.google.code.geobeagle.location.CombinedLocationManager;
 
 import org.easymock.EasyMock;
@@ -253,6 +247,17 @@ public class GpsStatusWidgetTest {
     }
 
     @Test
+    public void testPaint() {
+        MeterFader meterFader = PowerMock.createMock(MeterFader.class);
+
+        meterFader.paint();
+
+        PowerMock.replayAll();
+        new GpsStatusWidgetDelegate(null, meterFader, null, null, null, null, null, null).paint();
+        PowerMock.verifyAll();
+    }
+
+    @Test
     public void testSetStatus() {
         ResourceProvider resourceProvider = PowerMock.createMock(ResourceProvider.class);
         TextView status = PowerMock.createMock(TextView.class);
@@ -300,7 +305,8 @@ public class GpsStatusWidgetTest {
         textLag.setText("4s");
 
         PowerMock.replayAll();
-        final TextLagUpdater textLagUpdater = new TextLagUpdater(combinedLocationManager, textLag, time);
+        final TextLagUpdater textLagUpdater = new TextLagUpdater(combinedLocationManager, textLag,
+                time);
         textLagUpdater.reset(1000);
         textLagUpdater.updateTextLag();
         PowerMock.verifyAll();
