@@ -14,7 +14,7 @@
 
 package com.google.code.geobeagle.gpsstatuswidget;
 
-import com.google.code.geobeagle.activity.cachelist.model.LocationControlBuffered;
+import com.google.code.geobeagle.LocationControlBuffered;
 
 import android.os.Handler;
 

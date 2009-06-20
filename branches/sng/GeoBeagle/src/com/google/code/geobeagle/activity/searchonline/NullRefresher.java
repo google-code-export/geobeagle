@@ -12,8 +12,11 @@
  ** limitations under the License.
  */
 
-package com.google.code.geobeagle.activity.cachelist.presenter;
+package com.google.code.geobeagle.activity.searchonline;
 
-public interface Refresher {
-    public void refresh();
+import com.google.code.geobeagle.Refresher;
+
+public class NullRefresher implements Refresher {
+    public void refresh() {
+    }
 }

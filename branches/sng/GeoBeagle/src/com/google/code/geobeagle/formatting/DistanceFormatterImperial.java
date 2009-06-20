@@ -1,5 +1,5 @@
 
-package com.google.code.geobeagle.activity.cachelist.presenter;
+package com.google.code.geobeagle.formatting;
 
 public class DistanceFormatterImperial implements DistanceFormatter {
 

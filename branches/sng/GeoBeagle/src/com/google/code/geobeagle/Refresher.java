@@ -12,10 +12,8 @@
  ** limitations under the License.
  */
 
-package com.google.code.geobeagle.activity.cachelist.presenter;
+package com.google.code.geobeagle;
 
-import com.google.code.geobeagle.formatting.DistanceFormatter;
-
-public interface HasDistanceFormatter {
-    public abstract void setDistanceFormatter(DistanceFormatter distanceFormatter);
+public interface Refresher {
+    public void refresh();
 }

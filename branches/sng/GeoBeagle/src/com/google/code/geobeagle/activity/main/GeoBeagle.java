@@ -14,17 +14,17 @@
 
 package com.google.code.geobeagle.activity.main;
 
+import com.google.code.geobeagle.CompassListener;
 import com.google.code.geobeagle.ErrorDisplayer;
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.GeocacheFactory;
+import com.google.code.geobeagle.LocationControlBuffered;
+import com.google.code.geobeagle.LocationControlDi;
 import com.google.code.geobeagle.R;
+import com.google.code.geobeagle.Refresher;
 import com.google.code.geobeagle.ResourceProvider;
 import com.google.code.geobeagle.GeocacheFactory.Source;
 import com.google.code.geobeagle.activity.cachelist.GeocacheListController;
-import com.google.code.geobeagle.activity.cachelist.model.LocationControlBuffered;
-import com.google.code.geobeagle.activity.cachelist.model.LocationControlDi;
-import com.google.code.geobeagle.activity.cachelist.presenter.Refresher;
-import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheListPresenter.CompassListener;
 import com.google.code.geobeagle.activity.main.intents.GeocacheToCachePage;
 import com.google.code.geobeagle.activity.main.intents.GeocacheToGoogleMap;
 import com.google.code.geobeagle.activity.main.intents.IntentFactory;

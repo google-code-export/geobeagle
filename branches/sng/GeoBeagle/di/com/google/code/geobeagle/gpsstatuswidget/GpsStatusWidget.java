@@ -14,12 +14,12 @@
 
 package com.google.code.geobeagle.gpsstatuswidget;
 
+import com.google.code.geobeagle.LocationControlBuffered;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.ResourceProvider;
 import com.google.code.geobeagle.Time;
-import com.google.code.geobeagle.activity.cachelist.model.LocationControlBuffered;
-import com.google.code.geobeagle.activity.cachelist.presenter.DistanceFormatter;
 import com.google.code.geobeagle.activity.cachelist.presenter.HasDistanceFormatter;
+import com.google.code.geobeagle.formatting.DistanceFormatter;
 import com.google.code.geobeagle.location.CombinedLocationManager;
 
 import android.content.Context;
@@ -92,7 +92,7 @@ public class GpsStatusWidget extends LinearLayout implements LocationListener, H
 
     @Override
     protected void dispatchDraw(Canvas canvas) {
-        mGpsStatusWidgetDelegate.mMeterFader.paint();
+        mGpsStatusWidgetDelegate.paint();
         // Log.v("GeoBeagle", "painting " + lastUpdateLag);
         // Log.v("GeoBeagle", "dispatch draw");
         super.dispatchDraw(canvas);

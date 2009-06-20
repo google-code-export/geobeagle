@@ -14,7 +14,7 @@
 
 package com.google.code.geobeagle.activity.cachelist.presenter;
 
-import com.google.code.geobeagle.activity.cachelist.model.LocationControlBuffered.IGpsLocation;
+import com.google.code.geobeagle.LocationControlBuffered.IGpsLocation;
 
 public interface ToleranceStrategy {
     public boolean exceedsTolerance(IGpsLocation here, float azimuth, long now);

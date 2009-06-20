@@ -15,6 +15,7 @@
 package com.google.code.geobeagle.activity.cachelist.model;
 
 import com.google.code.geobeagle.Geocache;
+import com.google.code.geobeagle.LocationControlBuffered;
 
 import java.util.ArrayList;
 

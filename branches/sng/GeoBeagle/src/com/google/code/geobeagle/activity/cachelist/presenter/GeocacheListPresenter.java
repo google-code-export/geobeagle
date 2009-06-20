@@ -15,10 +15,10 @@
 package com.google.code.geobeagle.activity.cachelist.presenter;
 
 import com.google.code.geobeagle.ErrorDisplayer;
+import com.google.code.geobeagle.LocationControlBuffered;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.cachelist.GeocacheListController.CacheListOnCreateContextMenuListener;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVectors;
-import com.google.code.geobeagle.activity.cachelist.model.LocationControlBuffered;
 import com.google.code.geobeagle.database.Database;
 import com.google.code.geobeagle.database.DatabaseDI.SQLiteWrapper;
 import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidget;
@@ -126,43 +126,6 @@ public class GeocacheListPresenter {
         mCombinedLocationManager.removeUpdates(mCombinedLocationListener);
         mSensorManager.unregisterListener(mCompassListener);
         mCombinedLocationManager.removeUpdates(mCacheListRefreshLocationListener);
-    }
-
-    // static public class CompassListener implements SensorEventListener {
-    @SuppressWarnings("deprecation")
-    static public class CompassListener implements SensorListener {
-
-        private final Refresher mRefresher;
-        private final LocationControlBuffered mLocationControlBuffered;
-        private float mLastAzimuth;
-
-        public CompassListener(Refresher refresher,
-                LocationControlBuffered locationControlBuffered, float lastAzimuth) {
-            mRefresher = refresher;
-            mLocationControlBuffered = locationControlBuffered;
-            mLastAzimuth = lastAzimuth;
-        }
-
-        // public void onAccuracyChanged(Sensor sensor, int accuracy) {
-        // }
-
-        // public void onSensorChanged(SensorEvent event) {
-        // onSensorChanged(SensorManager.SENSOR_ORIENTATION, event.values);
-        // }
-
-        public void onAccuracyChanged(int sensor, int accuracy) {
-        }
-
-        public void onSensorChanged(int sensor, float[] values) {
-            final float currentAzimuth = values[0];
-            if (Math.abs(currentAzimuth - mLastAzimuth) > 5) {
-                // Log.v("GeoBeagle", "azimuth now " + sensor +", " +
-                // currentAzimuth);
-                mLocationControlBuffered.setAzimuth(((int)currentAzimuth / 5) * 5);
-                mRefresher.refresh();
-                mLastAzimuth = currentAzimuth;
-            }
-        }
     }
 
     public void onResume() {

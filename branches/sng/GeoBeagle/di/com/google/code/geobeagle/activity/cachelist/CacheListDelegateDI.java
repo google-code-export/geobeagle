@@ -14,8 +14,12 @@
 
 package com.google.code.geobeagle.activity.cachelist;
 
+import com.google.code.geobeagle.CompassListener;
 import com.google.code.geobeagle.ErrorDisplayer;
 import com.google.code.geobeagle.GeocacheFactory;
+import com.google.code.geobeagle.LocationControlBuffered;
+import com.google.code.geobeagle.LocationControlDi;
+import com.google.code.geobeagle.LocationControlBuffered.GpsDisabledLocation;
 import com.google.code.geobeagle.actions.context.ContextAction;
 import com.google.code.geobeagle.actions.context.ContextActionDelete;
 import com.google.code.geobeagle.actions.context.ContextActionView;
@@ -28,16 +32,11 @@ import com.google.code.geobeagle.activity.cachelist.model.GeocacheFromMyLocation
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVector;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVectorFactory;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVectors;
-import com.google.code.geobeagle.activity.cachelist.model.LocationControlBuffered;
-import com.google.code.geobeagle.activity.cachelist.model.LocationControlDi;
-import com.google.code.geobeagle.activity.cachelist.model.LocationControlBuffered.GpsDisabledLocation;
 import com.google.code.geobeagle.activity.cachelist.presenter.ActionAndTolerance;
 import com.google.code.geobeagle.activity.cachelist.presenter.AdapterCachesSorter;
 import com.google.code.geobeagle.activity.cachelist.presenter.BearingFormatter;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
-import com.google.code.geobeagle.activity.cachelist.presenter.DistanceFormatterImperial;
 import com.google.code.geobeagle.activity.cachelist.presenter.DistanceFormatterManager;
-import com.google.code.geobeagle.activity.cachelist.presenter.DistanceFormatterMetric;
 import com.google.code.geobeagle.activity.cachelist.presenter.DistanceUpdater;
 import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheListAdapter;
 import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheListPresenter;
@@ -49,7 +48,6 @@ import com.google.code.geobeagle.activity.cachelist.presenter.TitleUpdater;
 import com.google.code.geobeagle.activity.cachelist.presenter.ToleranceStrategy;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh.ActionManager;
 import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheListPresenter.CacheListRefreshLocationListener;
-import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheListPresenter.CompassListener;
 import com.google.code.geobeagle.activity.cachelist.view.GeocacheSummaryRowInflater;
 import com.google.code.geobeagle.activity.main.GeoBeagle;
 import com.google.code.geobeagle.database.CacheWriter;
@@ -61,6 +59,8 @@ import com.google.code.geobeagle.database.LocationSaver;
 import com.google.code.geobeagle.database.WhereFactoryAllCaches;
 import com.google.code.geobeagle.database.WhereFactoryNearestCaches;
 import com.google.code.geobeagle.database.DatabaseDI.SQLiteWrapper;
+import com.google.code.geobeagle.formatting.DistanceFormatterImperial;
+import com.google.code.geobeagle.formatting.DistanceFormatterMetric;
 import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidget;
 import com.google.code.geobeagle.gpsstatuswidget.UpdateGpsWidgetRunnable;
 import com.google.code.geobeagle.location.CombinedLocationListener;

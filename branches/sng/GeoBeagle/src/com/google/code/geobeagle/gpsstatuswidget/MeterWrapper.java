@@ -14,7 +14,7 @@
 
 package com.google.code.geobeagle.gpsstatuswidget;
 
-import com.google.code.geobeagle.activity.cachelist.presenter.DistanceFormatter;
+import com.google.code.geobeagle.formatting.DistanceFormatter;
 
 import android.widget.TextView;
 

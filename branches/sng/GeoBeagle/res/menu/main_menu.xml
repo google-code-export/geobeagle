@@ -4,4 +4,5 @@
 	<item android:id="@+id/menu_log_dnf" android:title="Log DNF :-("/>
 	<item android:id="@+id/menu_edit_geocache" android:title="Edit Geocache"/>
 	<item android:id="@+id/menu_settings" android:title="Settings"/>
+<!-- 	<item android:id="@+id/menu_search_online" android:title="Search"/> -->
 </menu>

@@ -15,7 +15,7 @@
 	android:versionCode="75">
 	<uses-sdk android:minSdkVersion="1" />
 	<application android:icon="@drawable/icon" android:label="@string/app_name"
-		android:debuggable="false">
+		android:debuggable="true">
 		<activity android:name=".activity.main.GeoBeagle"
 			android:label="@string/app_name">
 			<intent-filter>
@@ -44,6 +44,12 @@
 				<category android:name="android.intent.category.DEFAULT" />
 				<category android:name="android.intent.category.BROWSABLE" />
 				<data android:mimeType="application/zip" />
+			</intent-filter>
+		</activity>
+		<activity android:name=".activity.searchonline.SearchOnlineActivity"
+			android:label="GeoBeagle: Search for caches online">
+			<intent-filter>
+				<action android:name="android.intent.action.VIEW" />
 			</intent-filter>
 		</activity>
 		<!--

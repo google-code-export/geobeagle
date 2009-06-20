@@ -16,7 +16,7 @@ package com.google.code.geobeagle.gpsstatuswidget;
 
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.ResourceProvider;
-import com.google.code.geobeagle.activity.cachelist.presenter.DistanceFormatter;
+import com.google.code.geobeagle.formatting.DistanceFormatter;
 import com.google.code.geobeagle.location.CombinedLocationManager;
 
 import android.location.Location;
@@ -26,13 +26,13 @@ import android.widget.TextView;
 
 public class GpsStatusWidgetDelegate {
     private final CombinedLocationManager mCombinedLocationManager;
-    final MeterFader mMeterFader;
+    private DistanceFormatter mDistanceFormatter;
+    private final MeterFader mMeterFader;
     private final MeterWrapper mMeterWrapper;
     private final TextView mProvider;
     private final ResourceProvider mResourceProvider;
     private final TextView mStatus;
     private final TextLagUpdater mTextLagUpdater;
-    private DistanceFormatter mDistanceFormatter;
 
     public GpsStatusWidgetDelegate(CombinedLocationManager combinedLocationManager,
             MeterFader meterFader, MeterWrapper meterWrapper, TextView provider,
@@ -90,7 +90,12 @@ public class GpsStatusWidgetDelegate {
         }
     }
 
+    public void paint() {
+        mMeterFader.paint();
+    }
+
     public void setDistanceFormatter(DistanceFormatter distanceFormatter) {
         mDistanceFormatter = distanceFormatter;
     }
 }
+

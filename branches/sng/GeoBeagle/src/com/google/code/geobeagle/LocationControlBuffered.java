@@ -12,8 +12,9 @@
  ** limitations under the License.
  */
 
-package com.google.code.geobeagle.activity.cachelist.model;
+package com.google.code.geobeagle;
 
+import com.google.code.geobeagle.activity.cachelist.model.GeocacheVector;
 import com.google.code.geobeagle.activity.cachelist.presenter.DistanceSortStrategy;
 import com.google.code.geobeagle.activity.cachelist.presenter.NullSortStrategy;
 import com.google.code.geobeagle.activity.cachelist.presenter.SortStrategy;
@@ -42,7 +43,7 @@ public class LocationControlBuffered implements LocationListener {
         private final float mLatitude;
         private final float mLongitude;
 
-        GpsEnabledLocation(float latitude, float longitude) {
+        public GpsEnabledLocation(float latitude, float longitude) {
             mLatitude = latitude;
             mLongitude = longitude;
         }
@@ -78,7 +79,7 @@ public class LocationControlBuffered implements LocationListener {
     private final NullSortStrategy mNullSortStrategy;
     private float mAzimuth;
 
-    LocationControlBuffered(LocationControl locationControl,
+    public LocationControlBuffered(LocationControl locationControl,
             DistanceSortStrategy distanceSortStrategy, NullSortStrategy nullSortStrategy,
             GpsDisabledLocation gpsDisabledLocation, IGpsLocation lastGpsLocation,
             Location lastLocation) {

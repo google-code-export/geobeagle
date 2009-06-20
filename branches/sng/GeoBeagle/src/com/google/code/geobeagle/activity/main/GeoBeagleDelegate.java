@@ -24,6 +24,7 @@ import com.google.code.geobeagle.activity.main.view.EditCacheActivity;
 import com.google.code.geobeagle.activity.main.view.GeocacheViewer;
 import com.google.code.geobeagle.activity.main.view.Misc;
 import com.google.code.geobeagle.activity.preferences.EditPreferences;
+import com.google.code.geobeagle.activity.searchonline.SearchOnlineActivity;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -83,12 +84,18 @@ public class GeoBeagleDelegate {
             return true;
         } else if (R.id.menu_settings == itemId) {
             mParent.startActivity(new Intent(mParent, EditPreferences.class));
-
             return true;
         } else if (R.id.menu_log_dnf == itemId || R.id.menu_log_find == itemId) {
             mParent.showDialog(itemId);
             return true;
+            
         }
+        // else if (R.id.menu_search_online == itemId) {
+        // mParent.startActivity(new Intent(mParent,
+        // SearchOnlineActivity.class));
+        // return true;
+        // }
+
         return mParent.onOptionsItemSelected(item);
     }
 

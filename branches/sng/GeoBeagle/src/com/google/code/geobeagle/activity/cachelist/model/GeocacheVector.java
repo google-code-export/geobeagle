@@ -15,8 +15,9 @@
 package com.google.code.geobeagle.activity.cachelist.model;
 
 import com.google.code.geobeagle.Geocache;
+import com.google.code.geobeagle.LocationControlBuffered;
 import com.google.code.geobeagle.activity.cachelist.presenter.BearingFormatter;
-import com.google.code.geobeagle.activity.cachelist.presenter.DistanceFormatter;
+import com.google.code.geobeagle.formatting.DistanceFormatter;
 
 import android.location.Location;
 import android.util.FloatMath;

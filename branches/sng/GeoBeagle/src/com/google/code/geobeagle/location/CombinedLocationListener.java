@@ -14,7 +14,7 @@
 
 package com.google.code.geobeagle.location;
 
-import com.google.code.geobeagle.activity.cachelist.model.LocationControlBuffered;
+import com.google.code.geobeagle.LocationControlBuffered;
 
 import android.location.Location;
 import android.location.LocationListener;

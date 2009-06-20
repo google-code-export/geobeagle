@@ -12,7 +12,7 @@
  ** limitations under the License.
  */
 
-package com.google.code.geobeagle.activity.cachelist.presenter;
+package com.google.code.geobeagle.formatting;
 
 public interface DistanceFormatter {
     public abstract CharSequence formatDistance(float distance);

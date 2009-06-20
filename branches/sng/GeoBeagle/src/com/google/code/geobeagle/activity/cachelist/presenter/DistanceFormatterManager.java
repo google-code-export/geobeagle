@@ -14,6 +14,10 @@
 
 package com.google.code.geobeagle.activity.cachelist.presenter;
 
+import com.google.code.geobeagle.formatting.DistanceFormatter;
+import com.google.code.geobeagle.formatting.DistanceFormatterImperial;
+import com.google.code.geobeagle.formatting.DistanceFormatterMetric;
+
 import android.content.SharedPreferences;
 
 import java.util.ArrayList;

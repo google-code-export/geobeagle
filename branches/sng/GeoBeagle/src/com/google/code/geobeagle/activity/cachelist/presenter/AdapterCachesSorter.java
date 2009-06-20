@@ -14,9 +14,9 @@
 
 package com.google.code.geobeagle.activity.cachelist.presenter;
 
+import com.google.code.geobeagle.LocationControlBuffered;
 import com.google.code.geobeagle.activity.cachelist.CacheListDelegateDI;
 import com.google.code.geobeagle.activity.cachelist.model.CacheListData;
-import com.google.code.geobeagle.activity.cachelist.model.LocationControlBuffered;
 
 public class AdapterCachesSorter implements RefreshAction {
     private final CacheListData mCacheListData;

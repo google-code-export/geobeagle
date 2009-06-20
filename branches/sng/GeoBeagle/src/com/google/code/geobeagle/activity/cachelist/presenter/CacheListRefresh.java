@@ -14,9 +14,10 @@
 
 package com.google.code.geobeagle.activity.cachelist.presenter;
 
+import com.google.code.geobeagle.LocationControlBuffered;
+import com.google.code.geobeagle.Refresher;
+import com.google.code.geobeagle.LocationControlBuffered.IGpsLocation;
 import com.google.code.geobeagle.activity.cachelist.CacheListDelegateDI;
-import com.google.code.geobeagle.activity.cachelist.model.LocationControlBuffered;
-import com.google.code.geobeagle.activity.cachelist.model.LocationControlBuffered.IGpsLocation;
 
 public class CacheListRefresh implements Refresher {
     public static class ActionManager {

@@ -30,6 +30,8 @@
 	<string name="radar">Radar</string>
 	<string name="app_name">GeoBeagle</string>
 	<string name="maps">Map</string>
+	<string name="map">Map</string>
+	<string name="list">Nearest Caches</string>
 	<string name="geocaching_map">Online Map</string>
 	<string name="nearest_caches">Online List</string>
 	<string name="sms_sent">SMS sent</string>
@@ -71,6 +73,9 @@
     <array name="nearest_objects">
 	  <item>http://www.atlasquest.com/results.html?gTypeId=2;gSort=5;gStatus=1209;gCoord=%1$.5f,%2$.5f</item>
 	  <item>http://www.geocaching.com/seek/nearest.aspx?lat=%1$.5f&amp;lng=%2$.5f&amp;f=1</item>
+	  <item>http://opencaching.cz/search.php?searchto=searchbydistance&amp;showresult=1&amp;output=HTML&amp;latNS=%1$s&amp;lat_h=%2$d&amp;lat_min=%3$.3f&amp;lonEW=%4$s&amp;lon_h=%5$d&amp;lon_min=%6$.3f&amp;distance=75&amp;unit=km</item>
+	  <item>http://opencaching.de/search.php?searchto=searchbydistance&amp;showresult=1&amp;output=HTML&amp;latNS=%1$s&amp;lat_h=%2$d&amp;lat_min=%3$.3f&amp;lonEW=%4$s&amp;lon_h=%5$d&amp;lon_min=%6$.3f&amp;distance=75&amp;unit=km</item>
+	  <item>http://opencaching.pl/search.php?searchto=searchbydistance&amp;showresult=1&amp;output=HTML&amp;latNS=%1$s&amp;lat_h=%2$d&amp;lat_min=%3$.3f&amp;lonEW=%4$s&amp;lon_h=%5$d&amp;lon_min=%6$.3f&amp;distance=75&amp;unit=km</item>
 	</array>
 	<array name="map_objects">
 	  <item>http://www.atlasquest.com/boxes/traditional/map.html?gTypeId=2;gStatus=1193;gSort=5;gCoord=%1$.5f,%2$.5f</item>
