@@ -513,8 +513,12 @@ public class RadarView extends View implements SensorListener, LocationListener 
     }
 
     private void updateBearing(double bearing) {
-        if (mHaveLocation)
-            mBearingView.setText(((int)bearing / 5) * 5 + "°");
+        bearing = (bearing + 720) % 360;
+        if (mHaveLocation) {
+            final String sBearing = ((int)bearing / 5) * 5 + "°";
+            
+            mBearingView.setText(sBearing);
+        }
     }
 
     /**
@@ -560,7 +564,7 @@ public class RadarView extends View implements SensorListener, LocationListener 
             accuracyStr = formatDistance(scaleChoices, displayUnitsPerKm, displayFormats);
 
         mDistanceView.setText(distanceStr);
-        mAccuracyView.setText(accuracyStr);
+        mAccuracyView.setText("+/-" + accuracyStr);
     }
 
     private String formatDistance(final double[] scaleChoices, final float[] displayUnitsPerKm,

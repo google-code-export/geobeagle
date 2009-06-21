@@ -28,17 +28,13 @@ import com.google.code.geobeagle.activity.cachelist.GeocacheListController;
 import com.google.code.geobeagle.activity.main.intents.GeocacheToCachePage;
 import com.google.code.geobeagle.activity.main.intents.GeocacheToGoogleMap;
 import com.google.code.geobeagle.activity.main.intents.IntentFactory;
-import com.google.code.geobeagle.activity.main.intents.IntentStarterLocation;
 import com.google.code.geobeagle.activity.main.intents.IntentStarterRadar;
 import com.google.code.geobeagle.activity.main.intents.IntentStarterViewUri;
-import com.google.code.geobeagle.activity.main.view.ContentSelector;
+import com.google.code.geobeagle.activity.main.view.CacheButtonOnClickListener;
 import com.google.code.geobeagle.activity.main.view.GeocacheViewer;
 import com.google.code.geobeagle.activity.main.view.Misc;
-import com.google.code.geobeagle.activity.main.view.MyLocationProvider;
 import com.google.code.geobeagle.activity.main.view.OnCacheButtonClickListenerBuilder;
-import com.google.code.geobeagle.activity.main.view.OnContentProviderSelectedListener;
 import com.google.code.geobeagle.activity.main.view.WebPageAndDetailsButtonEnabler;
-import com.google.code.geobeagle.cachelist.actions.click.GeocacheListOnClickListener;
 import com.google.code.geobeagle.database.Database;
 import com.google.code.geobeagle.database.DatabaseDI;
 import com.google.code.geobeagle.database.LocationSaver;
@@ -58,10 +54,9 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Button;
-import android.widget.Spinner;
+import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.TextView;
-import android.widget.Toast;
 
 /*
  * Main Activity for GeoBeagle.
@@ -73,7 +68,6 @@ public class GeoBeagle extends Activity implements LifecycleManager {
     }
 
     private CompassListener mCompassListener;
-    private ContentSelector mContentSelector;
     private final Database mDatabase;
     private final ErrorDisplayer mErrorDisplayer;
     private GeoBeagleDelegate mGeoBeagleDelegate;
@@ -159,8 +153,6 @@ public class GeoBeagle extends Activity implements LifecycleManager {
         // try {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
-        GeoBeagleBuilder builder = new GeoBeagleBuilder(this);
-        mContentSelector = builder.createContentSelector(getPreferences(Activity.MODE_PRIVATE));
         mLocationSaver = new LocationSaver(DatabaseDI.createCacheWriter(mSqliteWrapper));
         mWebPageButtonEnabler = Misc.create(this, findViewById(R.id.cache_page),
                 findViewById(R.id.cache_details));
@@ -182,9 +174,6 @@ public class GeoBeagle extends Activity implements LifecycleManager {
         mLocationControlBuffered.onLocationChanged(null);
         setCacheClickListeners();
 
-        ((Button)findViewById(R.id.go_to_list)).setOnClickListener(new GeocacheListOnClickListener(
-                this));
-
         // Register for location updates
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 1, mRadar);
         locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 1, mRadar);
@@ -193,15 +182,11 @@ public class GeoBeagle extends Activity implements LifecycleManager {
                 getPreferences(MODE_PRIVATE), new LifecycleManager[] {
                         this,
                         new LocationLifecycleManager(mLocationControlBuffered, locationManager),
-                        new LocationLifecycleManager(mRadar, locationManager), mContentSelector
+                        new LocationLifecycleManager(mRadar, locationManager)
                 });
         mGeoBeagleDelegate = GeoBeagleDelegate.buildGeoBeagleDelegate(this, appLifecycleManager,
                 mGeocacheViewer, mErrorDisplayer);
         mGeoBeagleDelegate.onCreate();
-
-        ((Spinner)findViewById(R.id.content_provider))
-                .setOnItemSelectedListener(new OnContentProviderSelectedListener(mResourceProvider,
-                        (TextView)findViewById(R.id.select_cache_prompt)));
 
         mCompassListener = new CompassListener(new NullRefresher(), mLocationControlBuffered,
                 -1440f);
@@ -283,19 +268,9 @@ public class GeoBeagle extends Activity implements LifecycleManager {
 
     private void setCacheClickListeners() {
         IntentFactory intentFactory = new IntentFactory(new UriParser());
-        Toast getCoordsToast = Toast.makeText(this, R.string.get_coords_toast, Toast.LENGTH_LONG);
-        MyLocationProvider myLocationProvider = new MyLocationProvider(mLocationControlBuffered,
-                mErrorDisplayer);
 
         OnCacheButtonClickListenerBuilder cacheClickListenerSetter = new OnCacheButtonClickListenerBuilder(
                 this, mErrorDisplayer);
-
-        cacheClickListenerSetter.set(R.id.object_map, new IntentStarterLocation(this,
-                mResourceProvider, intentFactory, myLocationProvider, mContentSelector,
-                R.array.map_objects, getCoordsToast), "");
-        cacheClickListenerSetter.set(R.id.nearest_objects, new IntentStarterLocation(this,
-                mResourceProvider, intentFactory, myLocationProvider, mContentSelector,
-                R.array.nearest_objects, getCoordsToast), "");
 
         cacheClickListenerSetter.set(R.id.maps, new IntentStarterViewUri(this, intentFactory,
                 mGeocacheViewer, new GeocacheToGoogleMap(mResourceProvider)), "");
@@ -303,6 +278,16 @@ public class GeoBeagle extends Activity implements LifecycleManager {
                 mGeocacheViewer, new GeocacheToCachePage(mResourceProvider)), "");
         cacheClickListenerSetter.set(R.id.radarview, new IntentStarterRadar(this),
                 "\nPlease install the Radar application to use Radar.");
+        findViewById(R.id.menu_log_find).setOnClickListener(new OnClickListener() {
+            public void onClick(View v) {
+                showDialog(R.id.menu_log_find);
+            }
+        });
+        findViewById(R.id.menu_log_dnf).setOnClickListener(new OnClickListener() {
+            public void onClick(View v) {
+                showDialog(R.id.menu_log_dnf);
+            }
+        });
     }
 
     void setGeocache(Geocache geocache) {
