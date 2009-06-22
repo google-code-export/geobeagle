@@ -16,6 +16,7 @@ package com.google.code.geobeagle.activity.searchonline;
 
 import com.google.code.geobeagle.CompassListener;
 import com.google.code.geobeagle.LocationControlBuffered;
+import com.google.code.geobeagle.activity.cachelist.presenter.DistanceFormatterManager;
 import com.google.code.geobeagle.location.CombinedLocationListener;
 import com.google.code.geobeagle.location.CombinedLocationManager;
 
@@ -42,17 +43,20 @@ public class SearchOnlineActivityDelegateTest {
                 .createMock(CombinedLocationListener.class);
         CombinedLocationManager combinedLocationManager = PowerMock
                 .createMock(CombinedLocationManager.class);
+        DistanceFormatterManager distanceFormatterManager = PowerMock
+                .createMock(DistanceFormatterManager.class);
 
         EasyMock.expect(
                 sensorManager.registerListener(compassListener, SensorManager.SENSOR_ORIENTATION,
                         SensorManager.SENSOR_DELAY_UI)).andReturn(true);
         combinedLocationManager.requestLocationUpdates(1000, 0, locationControlBuffered);
         combinedLocationManager.requestLocationUpdates(1000, 0, combinedLocationListener);
-
+        distanceFormatterManager.setFormatter();
+        
         PowerMock.replayAll();
         new SearchOnlineActivityDelegate(null, sensorManager, compassListener,
-                combinedLocationManager, combinedLocationListener, locationControlBuffered)
-                .onResume();
+                combinedLocationManager, combinedLocationListener, locationControlBuffered,
+                distanceFormatterManager).onResume();
         PowerMock.verifyAll();
     }
 
@@ -72,7 +76,7 @@ public class SearchOnlineActivityDelegateTest {
         webView.addJavascriptInterface(jsInterface, "gb");
 
         PowerMock.replayAll();
-        new SearchOnlineActivityDelegate(webView, null, null, null, null, null)
+        new SearchOnlineActivityDelegate(webView, null, null, null, null, null, null)
                 .configureWebView(jsInterface);
         PowerMock.verifyAll();
 
@@ -95,7 +99,7 @@ public class SearchOnlineActivityDelegateTest {
 
         PowerMock.replayAll();
         new SearchOnlineActivityDelegate(null, sensorManager, compassListener,
-                combinedLocationManager, combinedLocationListener, locationControlBuffered)
+                combinedLocationManager, combinedLocationListener, locationControlBuffered, null)
                 .onPause();
         PowerMock.verifyAll();
     }
