@@ -60,10 +60,11 @@ import com.google.code.geobeagle.database.LocationSaver;
 import com.google.code.geobeagle.database.WhereFactoryAllCaches;
 import com.google.code.geobeagle.database.WhereFactoryNearestCaches;
 import com.google.code.geobeagle.database.DatabaseDI.SQLiteWrapper;
-import com.google.code.geobeagle.formatting.DistanceFormatterImperial;
-import com.google.code.geobeagle.formatting.DistanceFormatterMetric;
 import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidget;
+import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidgetDelegate;
+import com.google.code.geobeagle.gpsstatuswidget.GpsWidgetAndUpdater;
 import com.google.code.geobeagle.gpsstatuswidget.UpdateGpsWidgetRunnable;
+import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidget.InflatedGpsStatusWidget;
 import com.google.code.geobeagle.location.CombinedLocationListener;
 import com.google.code.geobeagle.location.CombinedLocationManager;
 import com.google.code.geobeagle.xmlimport.GpxImporter;
@@ -74,13 +75,12 @@ import com.google.code.geobeagle.xmlimport.GpxToCacheDI.XmlPullParserWrapper;
 import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.hardware.SensorManager;
 import android.location.LocationManager;
-import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.widget.BaseAdapter;
+import android.widget.LinearLayout.LayoutParams;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -120,8 +120,8 @@ public class CacheListDelegateDI {
         final GeocachesSql geocachesSql = DatabaseDI.create(sqliteWrapper);
         final CacheWriter cacheWriter = DatabaseDI.createCacheWriter(sqliteWrapper);
         final BearingFormatter bearingFormatter = new BearingFormatter();
-        final DistanceFormatterMetric distanceFormatterMetric = new DistanceFormatterMetric();
-        final DistanceFormatterImperial distanceFormatterImperial = new DistanceFormatterImperial();
+        final DistanceFormatterManager distanceFormatterManager = DistanceFormatterManager
+                .create(listActivity);
         final LocationSaver locationSaver = new LocationSaver(cacheWriter);
         final GeocacheVectorFactory geocacheVectorFactory = new GeocacheVectorFactory();
         final ArrayList<GeocacheVector> geocacheVectorsList = new ArrayList<GeocacheVector>(10);
@@ -131,18 +131,36 @@ public class CacheListDelegateDI {
         final XmlPullParserWrapper xmlPullParserWrapper = new XmlPullParserWrapper();
 
         final GeocacheSummaryRowInflater geocacheSummaryRowInflater = new GeocacheSummaryRowInflater(
-                layoutInflater, geocacheVectors, distanceFormatterMetric, bearingFormatter);
+                layoutInflater, geocacheVectors, distanceFormatterManager.getFormatter(),
+                bearingFormatter);
 
         final GeocacheListAdapter geocacheListAdapter = new GeocacheListAdapter(geocacheVectors,
                 geocacheSummaryRowInflater);
 
-        final GpsStatusWidget gpsStatusWidget = GpsStatusWidget.CreateStatusWidget(listActivity,
-                locationControlBuffered, combinedLocationManager, distanceFormatterMetric, null);
-        final CombinedLocationListener mCombinedLocationListener = new CombinedLocationListener(
-                locationControlBuffered, gpsStatusWidget);
+        final InflatedGpsStatusWidget inflatedGpsStatusWidget = new InflatedGpsStatusWidget(
+                listActivity);
+        final GpsStatusWidget gpsStatusWidget = new GpsStatusWidget(listActivity);
 
-        final UpdateGpsWidgetRunnable updateGpsWidgetRunnable = GpsStatusWidget
-                .CreateUpdateGpsWidgetRunnable(gpsStatusWidget, locationControlBuffered);
+        /*
+         * gpsStatusWidget.addView(linedEditText, new LinearLayout.LayoutParams(
+         * LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT));
+         */
+        gpsStatusWidget.addView(inflatedGpsStatusWidget, LayoutParams.FILL_PARENT,
+                LayoutParams.WRAP_CONTENT);
+        GpsWidgetAndUpdater gpsWidgetAndUpdater = new GpsWidgetAndUpdater(listActivity,
+                gpsStatusWidget, locationControlBuffered, combinedLocationManager,
+                distanceFormatterManager.getFormatter());
+        final GpsStatusWidgetDelegate gpsStatusWidgetDelegate = gpsWidgetAndUpdater
+                .getGpsStatusWidgetDelegate();
+
+        inflatedGpsStatusWidget.setDelegate(gpsStatusWidgetDelegate);
+
+        final CombinedLocationListener mCombinedLocationListener = new CombinedLocationListener(
+                locationControlBuffered, gpsStatusWidgetDelegate);
+
+        final UpdateGpsWidgetRunnable updateGpsWidgetRunnable = gpsWidgetAndUpdater
+                .getUpdateGpsWidgetRunnable();
+        updateGpsWidgetRunnable.run();
 
         final WhereFactoryAllCaches whereFactoryAllCaches = new WhereFactoryAllCaches();
         final WhereFactoryNearestCaches whereFactoryNearestCaches = new WhereFactoryNearestCaches();
@@ -184,12 +202,9 @@ public class CacheListDelegateDI {
                 .getSystemService(Context.SENSOR_SERVICE);
         final CompassListener compassListener = new CompassListener(cacheListRefresh,
                 locationControlBuffered, 720);
-        final SharedPreferences defaultSharedPreferences = PreferenceManager
-                .getDefaultSharedPreferences(listActivity);
-        final DistanceFormatterManager distanceFormatterManager = new DistanceFormatterManager(
-                defaultSharedPreferences, distanceFormatterImperial, distanceFormatterMetric);
         distanceFormatterManager.addHasDistanceFormatter(geocacheSummaryRowInflater);
-        distanceFormatterManager.addHasDistanceFormatter(gpsStatusWidget);
+        distanceFormatterManager.addHasDistanceFormatter(gpsStatusWidgetDelegate);
+
         final GeocacheListPresenter geocacheListPresenter = new GeocacheListPresenter(
                 combinedLocationManager, locationControlBuffered, mCombinedLocationListener,
                 gpsStatusWidget, updateGpsWidgetRunnable, geocacheVectors,

@@ -14,7 +14,11 @@
 
 package com.google.code.geobeagle.gpsstatuswidget;
 
+import com.google.code.geobeagle.R;
+
+import android.content.Context;
 import android.graphics.Color;
+import android.view.View;
 import android.widget.TextView;
 
 class MeterView {
@@ -33,5 +37,11 @@ class MeterView {
 
     void setLag(long lag) {
         mTextView.setTextColor(Color.argb(mMeterFormatter.lagToAlpha(lag), 147, 190, 38));
+    }
+
+    public static MeterView create(Context context, View gpsWidget) {
+        final MeterFormatter meterFormatter = new MeterFormatter(context);
+        final TextView locationViewer = (TextView)gpsWidget.findViewById(R.id.location_viewer);
+        return new MeterView(locationViewer, meterFormatter);
     }
 }

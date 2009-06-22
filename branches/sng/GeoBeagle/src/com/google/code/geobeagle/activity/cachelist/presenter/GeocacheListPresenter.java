@@ -23,6 +23,7 @@ import com.google.code.geobeagle.database.Database;
 import com.google.code.geobeagle.database.DatabaseDI.SQLiteWrapper;
 import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidget;
 import com.google.code.geobeagle.gpsstatuswidget.UpdateGpsWidgetRunnable;
+import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidget.InflatedGpsStatusWidget;
 import com.google.code.geobeagle.location.CombinedLocationManager;
 
 import android.app.ListActivity;
@@ -32,13 +33,12 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.ListView;
 
 
 @SuppressWarnings("deprecation")
 public class GeocacheListPresenter {
-    static final int UPDATE_DELAY = 1000;
-
     public static class CacheListRefreshLocationListener implements LocationListener {
         private final CacheListRefresh mCacheListRefresh;
 
@@ -61,30 +61,32 @@ public class GeocacheListPresenter {
         }
     }
 
+    static final int UPDATE_DELAY = 1000;
+
     private final CacheListRefreshLocationListener mCacheListRefreshLocationListener;
-    private final CombinedLocationManager mCombinedLocationManager;
-    private final Database mDatabase;
-    private final ErrorDisplayer mErrorDisplayer;
-    private final GeocacheListAdapter mGeocacheListAdapter;
-    private final GeocacheVectors mGeocacheVectors;
     private final LocationListener mCombinedLocationListener;
-    private final GpsStatusWidget mGpsStatusWidget;
-    private final ListActivity mListActivity;
-    private final LocationControlBuffered mLocationControlBuffered;
-    private final SQLiteWrapper mSQLiteWrapper;
-    private final UpdateGpsWidgetRunnable mUpdateGpsWidgetRunnable;
-    private final SensorManager mSensorManager;
+    private final CombinedLocationManager mCombinedLocationManager;
     // private final SensorEventListener mCompassListener;
     @SuppressWarnings("deprecation")
     private final SensorListener mCompassListener;
+    private final Database mDatabase;
     private final DistanceFormatterManager mDistanceFormatterManager;
+    private final ErrorDisplayer mErrorDisplayer;
+    private final GeocacheListAdapter mGeocacheListAdapter;
+    private final GeocacheVectors mGeocacheVectors;
+    private final View mGpsStatusWidget;
+    private final ListActivity mListActivity;
+    private final LocationControlBuffered mLocationControlBuffered;
+    private final SensorManager mSensorManager;
+    private final SQLiteWrapper mSQLiteWrapper;
+    private final UpdateGpsWidgetRunnable mUpdateGpsWidgetRunnable;
 
     // private Sensor mCompassSensor;
 
     @SuppressWarnings("deprecation")
     public GeocacheListPresenter(CombinedLocationManager combinedLocationManager,
             LocationControlBuffered locationControlBuffered,
-            LocationListener gpsStatusWidgetLocationListener, GpsStatusWidget gpsWidgetView,
+            LocationListener gpsStatusWidgetLocationListener, View gpsStatusWidget,
             UpdateGpsWidgetRunnable updateGpsWidgetRunnable, GeocacheVectors geocacheVectors,
             CacheListRefreshLocationListener cacheListRefreshLocationListener,
             ListActivity listActivity, GeocacheListAdapter geocacheListAdapter,
@@ -94,7 +96,7 @@ public class GeocacheListPresenter {
         mCombinedLocationManager = combinedLocationManager;
         mLocationControlBuffered = locationControlBuffered;
         mCombinedLocationListener = gpsStatusWidgetLocationListener;
-        mGpsStatusWidget = gpsWidgetView;
+        mGpsStatusWidget = gpsStatusWidget;
         mUpdateGpsWidgetRunnable = updateGpsWidgetRunnable;
         mGeocacheVectors = geocacheVectors;
         mCacheListRefreshLocationListener = cacheListRefreshLocationListener;
@@ -116,6 +118,7 @@ public class GeocacheListPresenter {
         listView.setOnCreateContextMenuListener(new CacheListOnCreateContextMenuListener(
                 mGeocacheVectors));
         mUpdateGpsWidgetRunnable.run();
+
         // final List<Sensor> sensorList =
         // mSensorManager.getSensorList(Sensor.TYPE_ORIENTATION);
         // mCompassSensor = sensorList.get(0);

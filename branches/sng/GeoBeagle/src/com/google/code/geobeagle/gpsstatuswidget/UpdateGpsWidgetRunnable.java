@@ -24,9 +24,8 @@ public class UpdateGpsWidgetRunnable implements Runnable {
     private final MeterWrapper mMeterWrapper;
     private final TextLagUpdater mTextLagUpdater;
 
-    UpdateGpsWidgetRunnable(Handler handler,
-            LocationControlBuffered locationControlBuffered, MeterWrapper meterWrapper,
-            TextLagUpdater textLagUpdater) {
+    UpdateGpsWidgetRunnable(Handler handler, LocationControlBuffered locationControlBuffered,
+            MeterWrapper meterWrapper, TextLagUpdater textLagUpdater) {
         mMeterWrapper = meterWrapper;
         mLocationControlBuffered = locationControlBuffered;
         mTextLagUpdater = textLagUpdater;

@@ -18,7 +18,9 @@ import com.google.code.geobeagle.formatting.DistanceFormatter;
 import com.google.code.geobeagle.formatting.DistanceFormatterImperial;
 import com.google.code.geobeagle.formatting.DistanceFormatterMetric;
 
+import android.content.Context;
 import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 
 import java.util.ArrayList;
 
@@ -28,7 +30,17 @@ public class DistanceFormatterManager {
     private final DistanceFormatterImperial mDistanceFormatterImperial;
     private final SharedPreferences mDefaultSharedPreferences;
 
-    public DistanceFormatterManager(SharedPreferences defaultSharedPreferences,
+    public static DistanceFormatterManager create(Context context) {
+        final SharedPreferences sharedPreferences = PreferenceManager
+                .getDefaultSharedPreferences(context);
+
+        final DistanceFormatterMetric distanceFormatterMetric = new DistanceFormatterMetric();
+        final DistanceFormatterImperial distanceFormatterImperial = new DistanceFormatterImperial();
+        return new DistanceFormatterManager(sharedPreferences, distanceFormatterImperial,
+                distanceFormatterMetric);
+    }
+
+    DistanceFormatterManager(SharedPreferences defaultSharedPreferences,
             DistanceFormatterImperial distanceFormatterImperial,
             DistanceFormatterMetric distanceFormatterMetric) {
         mDistanceFormatterImperial = distanceFormatterImperial;
@@ -41,11 +53,15 @@ public class DistanceFormatterManager {
         mHasDistanceFormatters.add(hasDistanceFormatter);
     }
 
-    public void setFormatter() {
+    public DistanceFormatter getFormatter() {
         final boolean imperial = mDefaultSharedPreferences.getBoolean("imperial", false);
+        return imperial ? mDistanceFormatterImperial : mDistanceFormatterMetric;
+    }
+
+    public void setFormatter() {
+        final DistanceFormatter formatter = getFormatter();
         for (HasDistanceFormatter hasDistanceFormatter : mHasDistanceFormatters) {
-            final DistanceFormatter distanceFormatter = imperial ? mDistanceFormatterImperial
-                    : mDistanceFormatterMetric;
+            final DistanceFormatter distanceFormatter = formatter;
             hasDistanceFormatter.setDistanceFormatter(distanceFormatter);
         }
     }

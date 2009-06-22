@@ -19,6 +19,7 @@ import com.google.code.geobeagle.LocationControlBuffered;
 import android.location.Location;
 import android.location.LocationListener;
 import android.os.Bundle;
+import android.util.Log;
 
 /*
  * Listener for the Location control.
@@ -38,8 +39,7 @@ public class CombinedLocationListener implements LocationListener {
         // not be this one).
         // Log.v("GeoBeagle", "onLocationChanged:" + location);
         final Location chosenLocation = mLocationControlBuffered.getLocation();
-        // Log.v("GeoBeagle", "onLocationChanged chosen Location" +
-        // chosenLocation);
+        Log.v("GeoBeagle", "onLocationChanged chosen Location" + chosenLocation);
         mLocationListener.onLocationChanged(chosenLocation);
     }
 

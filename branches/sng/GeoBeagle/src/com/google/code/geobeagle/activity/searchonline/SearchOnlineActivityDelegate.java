@@ -3,6 +3,7 @@ package com.google.code.geobeagle.activity.searchonline;
 
 import com.google.code.geobeagle.CompassListener;
 import com.google.code.geobeagle.LocationControlBuffered;
+import com.google.code.geobeagle.activity.cachelist.presenter.DistanceFormatterManager;
 import com.google.code.geobeagle.location.CombinedLocationListener;
 import com.google.code.geobeagle.location.CombinedLocationManager;
 
@@ -19,17 +20,20 @@ public class SearchOnlineActivityDelegate {
     private final LocationControlBuffered mLocationControlBuffered;
     private final SensorManager mSensorManager;
     private final WebView mWebView;
+    private final DistanceFormatterManager mDistanceFormatterManager;
 
     public SearchOnlineActivityDelegate(WebView webView, SensorManager sensorManager,
             CompassListener compassListener, CombinedLocationManager combinedLocationManager,
             CombinedLocationListener combinedLocationListener,
-            LocationControlBuffered locationControlBuffered) {
+            LocationControlBuffered locationControlBuffered,
+            DistanceFormatterManager distanceFormatterManager) {
         mSensorManager = sensorManager;
         mCompassListener = compassListener;
         mCombinedLocationListener = combinedLocationListener;
         mCombinedLocationManager = combinedLocationManager;
         mLocationControlBuffered = locationControlBuffered;
         mWebView = webView;
+        mDistanceFormatterManager = distanceFormatterManager;
     }
 
     public void configureWebView(JsInterface jsInterface) {
@@ -44,12 +48,13 @@ public class SearchOnlineActivityDelegate {
     }
 
     public void onResume() {
-        mSensorManager.registerListener(mCompassListener, SensorManager.SENSOR_ORIENTATION,
-                SensorManager.SENSOR_DELAY_UI);
         mCombinedLocationManager.requestLocationUpdates(1000, 0, mLocationControlBuffered);
         mCombinedLocationManager.requestLocationUpdates(1000, 0, mCombinedLocationListener);
+        mSensorManager.registerListener(mCompassListener, SensorManager.SENSOR_ORIENTATION,
+                SensorManager.SENSOR_DELAY_UI);
+        mDistanceFormatterManager.setFormatter();
     }
-    
+
     public void onPause() {
         mCombinedLocationManager.removeUpdates(mLocationControlBuffered);
         mCombinedLocationManager.removeUpdates(mCombinedLocationListener);

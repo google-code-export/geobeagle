@@ -20,9 +20,11 @@ import com.google.code.geobeagle.LocationControlDi;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.Refresher;
 import com.google.code.geobeagle.activity.cachelist.CacheList;
+import com.google.code.geobeagle.activity.cachelist.presenter.DistanceFormatterManager;
 import com.google.code.geobeagle.activity.searchonline.JsInterface.JsInterfaceHelper;
-import com.google.code.geobeagle.formatting.DistanceFormatterMetric;
-import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidget;
+import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidgetDelegate;
+import com.google.code.geobeagle.gpsstatuswidget.GpsWidgetAndUpdater;
+import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidget.InflatedGpsStatusWidget;
 import com.google.code.geobeagle.location.CombinedLocationListener;
 import com.google.code.geobeagle.location.CombinedLocationManager;
 
@@ -35,7 +37,6 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.webkit.WebView;
 
 public class SearchOnlineActivity extends Activity {
@@ -49,16 +50,23 @@ public class SearchOnlineActivity extends Activity {
         setContentView(R.layout.search);
         final LocationManager locationManager = (LocationManager)this
                 .getSystemService(Context.LOCATION_SERVICE);
-        LocationControlBuffered mLocationControlBuffered = LocationControlDi
+        final LocationControlBuffered mLocationControlBuffered = LocationControlDi
                 .create(locationManager);
         final CombinedLocationManager mCombinedLocationManager = new CombinedLocationManager(
                 locationManager);
-        final DistanceFormatterMetric distanceFormatterMetric = new DistanceFormatterMetric();
-        final View gpsWidget = this.findViewById(R.id.gps_widget);
-        final GpsStatusWidget gpsStatusWidget = GpsStatusWidget.CreateStatusWidget(this,
-                mLocationControlBuffered, mCombinedLocationManager, distanceFormatterMetric,
-                gpsWidget);
-        gpsStatusWidget.setBackgroundColor(Color.BLACK);
+
+        final InflatedGpsStatusWidget mGpsStatusWidget = (InflatedGpsStatusWidget)this
+                .findViewById(R.id.gps_widget_view);
+        final DistanceFormatterManager distanceFormatterManager = DistanceFormatterManager
+                .create(this);
+        final GpsWidgetAndUpdater gpsWidgetAndUpdater = new GpsWidgetAndUpdater(this,
+                mGpsStatusWidget, mLocationControlBuffered, mCombinedLocationManager,
+                distanceFormatterManager.getFormatter());
+        final GpsStatusWidgetDelegate gpsStatusWidgetDelegate = gpsWidgetAndUpdater
+                .getGpsStatusWidgetDelegate();
+        gpsWidgetAndUpdater.getUpdateGpsWidgetRunnable().run();
+        mGpsStatusWidget.setDelegate(gpsStatusWidgetDelegate);
+        mGpsStatusWidget.setBackgroundColor(Color.BLACK);
 
         final Refresher refresher = new NullRefresher();
         final CompassListener mCompassListener = new CompassListener(refresher,
@@ -66,17 +74,17 @@ public class SearchOnlineActivity extends Activity {
         final SensorManager mSensorManager = (SensorManager)this
                 .getSystemService(Context.SENSOR_SERVICE);
         final CombinedLocationListener mCombinedLocationListener = new CombinedLocationListener(
-                mLocationControlBuffered, gpsStatusWidget);
+                mLocationControlBuffered, gpsStatusWidgetDelegate);
+        distanceFormatterManager.addHasDistanceFormatter(gpsStatusWidgetDelegate);
 
         mSearchOnlineActivityDelegate = new SearchOnlineActivityDelegate(
                 ((WebView)findViewById(R.id.help_contents)), mSensorManager, mCompassListener,
-                mCombinedLocationManager, mCombinedLocationListener, mLocationControlBuffered);
+                mCombinedLocationManager, mCombinedLocationListener, mLocationControlBuffered,
+                distanceFormatterManager);
 
         final JsInterfaceHelper jsInterfaceHelper = new JsInterfaceHelper(this);
         final JsInterface jsInterface = new JsInterface(mLocationControlBuffered, jsInterfaceHelper);
         mSearchOnlineActivityDelegate.configureWebView(jsInterface);
-        GpsStatusWidget.CreateUpdateGpsWidgetRunnable(gpsStatusWidget, mLocationControlBuffered)
-                .run();
     }
 
     @Override
@@ -88,7 +96,7 @@ public class SearchOnlineActivity extends Activity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         super.onOptionsItemSelected(item);
-        this.startActivity(new Intent(this, CacheList.class));
+        startActivity(new Intent(this, CacheList.class));
         return true;
     }
 

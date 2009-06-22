@@ -14,9 +14,11 @@
 
 package com.google.code.geobeagle.gpsstatuswidget;
 
+import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.Time;
 import com.google.code.geobeagle.location.CombinedLocationManager;
 
+import android.view.View;
 import android.widget.TextView;
 
 class TextLagUpdater {
@@ -49,7 +51,14 @@ class TextLagUpdater {
 
     void updateTextLag() {
         final long lag = mTime.getCurrentTime() - mLastTextLagUpdateTime;
-        if (mCombinedLocationManager.isProviderEnabled())
+        if (mCombinedLocationManager.isProviderEnabled()) {
             mTextLag.setText(formatTime(lag / 1000));
+        }
+    }
+
+    public static TextLagUpdater createTextLagUpdater(View gpsStatusWidget,
+            CombinedLocationManager combinedLocationManager, Time time) {
+        final TextView lag = (TextView)gpsStatusWidget.findViewById(R.id.lag);
+        return new TextLagUpdater(combinedLocationManager, lag, time);
     }
 }
