@@ -71,18 +71,6 @@ public class EventHandlerLocTest {
     }
 
     @Test
-    public void textWptLocTest() throws IOException {
-        CachePersisterFacade cachePersisterFacade = PowerMock
-                .createMock(CachePersisterFacade.class);
-
-        EasyMock.expect(cachePersisterFacade.gpxTime("2000-01-01T12:00:00")).andReturn(true);
-
-        PowerMock.replayAll();
-        assertTrue(new EventHandlerLoc(cachePersisterFacade).text(EventHandlerLoc.XPATH_LOC, null));
-        PowerMock.verifyAll();
-    }
-
-    @Test
     public void textWptNameTest() throws IOException {
         CachePersisterFacade cachePersisterFacade = PowerMock
                 .createMock(CachePersisterFacade.class);

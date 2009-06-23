@@ -145,5 +145,4 @@ public class CacheWriterTest {
         new CacheWriter(sqlite, null).writeGpx("foo.gpx", "2009-04-30 10:30");
         verify(sqlite);
     }
-
 }

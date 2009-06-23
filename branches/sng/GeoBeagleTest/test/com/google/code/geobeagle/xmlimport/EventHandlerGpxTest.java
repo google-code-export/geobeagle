@@ -117,7 +117,6 @@ public class EventHandlerGpxTest {
         CachePersisterFacade cachePersisterFacade = createMock(CachePersisterFacade.class);
 
         cachePersisterFacade.line("hello");
-        cachePersisterFacade.wptDesc("hello");
 
         replay(cachePersisterFacade);
         EventHandlerGpx eventHandlerGpx = new EventHandlerGpx(cachePersisterFacade);

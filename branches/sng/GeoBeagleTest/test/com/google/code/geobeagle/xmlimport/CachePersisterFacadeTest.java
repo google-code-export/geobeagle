@@ -3,6 +3,7 @@ package com.google.code.geobeagle.xmlimport;
 
 import static org.easymock.EasyMock.expect;
 import static org.easymock.classextension.EasyMock.createMock;
+import static org.junit.Assert.*;
 import static org.junit.Assert.assertTrue;
 
 import com.google.code.geobeagle.GeocacheFactory.Source;
@@ -50,9 +51,9 @@ public class CachePersisterFacadeTest {
     public void testEndTag() throws IOException {
         mCacheDetailsWriter.close();
         mCacheTagWriter.write(Source.GPX);
-
+        mMessageHandler.updateName("");
         PowerMock.replayAll();
-        new CachePersisterFacade(mCacheTagWriter, null, mCacheDetailsWriter, null, null)
+        new CachePersisterFacade(mCacheTagWriter, null, mCacheDetailsWriter, mMessageHandler, null)
                 .endTag(Source.GPX);
         PowerMock.verifyAll();
     }
@@ -75,6 +76,13 @@ public class CachePersisterFacadeTest {
         new CachePersisterFacade(mCacheTagWriter, null, null, mMessageHandler, null)
                 .groundspeakName("GC123");
         PowerMock.verifyAll();
+    }
+
+    @Test
+    public void testStripIllegalFileChars() {
+        assertEquals("boring", CacheDetailsWriter.replaceIllegalFileChars("boring"));
+        assertEquals("n_a__s_______t_y__", CacheDetailsWriter
+                .replaceIllegalFileChars("n<a\\/s:*?\"<>|t:y\t/"));
     }
 
     @Test
