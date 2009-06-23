@@ -18,61 +18,12 @@ import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.ResourceProvider;
 
+import android.util.Log;
+
+import java.net.URLEncoder;
 import java.util.Locale;
 
 public class GeocacheToGoogleMap implements GeocacheToUri {
-    public static String stringToHTMLString(CharSequence charSequence) {
-        StringBuffer sb = new StringBuffer(charSequence.length());
-        // true if last char was blank
-        boolean lastWasBlankChar = false;
-        int len = charSequence.length();
-        char c;
-
-        for (int i = 0; i < len; i++) {
-            c = charSequence.charAt(i);
-            if (c == ' ') {
-                // blank gets extra work,
-                // this solves the problem you get if you replace all
-                // blanks with &nbsp;, if you do that you loss
-                // word breaking
-                if (lastWasBlankChar) {
-                    lastWasBlankChar = false;
-                    sb.append("&nbsp;");
-                } else {
-                    lastWasBlankChar = true;
-                    sb.append(' ');
-                }
-            } else {
-                lastWasBlankChar = false;
-                //
-                // HTML Special Chars
-                if (c == '"')
-                    sb.append("&quot;");
-                else if (c == '&')
-                    sb.append("&amp;");
-                else if (c == '<')
-                    sb.append("&lt;");
-                else if (c == '>')
-                    sb.append("&gt;");
-                else if (c == '\n')
-                    // Handle Newline
-                    sb.append("&lt;br/&gt;");
-                else {
-                    int ci = 0xffff & c;
-                    if (ci < 160)
-                        // nothing special only 7 Bit
-                        sb.append(c);
-                    else {
-                        // Not 7 Bit use the unicode system
-                        sb.append("&#");
-                        sb.append(new Integer(ci).toString());
-                        sb.append(';');
-                    }
-                }
-            }
-        }
-        return sb.toString();
-    }
 
     private final ResourceProvider mResourceProvider;
 
@@ -82,8 +33,11 @@ public class GeocacheToGoogleMap implements GeocacheToUri {
 
     public String convert(Geocache geocache) {
         // "geo:%1$.5f,%2$.5f?name=cachename"
-        final CharSequence idAndName = stringToHTMLString(geocache.getIdAndName());
-        return String.format(Locale.US, mResourceProvider.getString(R.string.map_intent), geocache
-                .getLatitude(), geocache.getLongitude(), idAndName);
+        final CharSequence idAndName = URLEncoder.encode((String)geocache.getIdAndName());
+        final String format = String.format(Locale.US, mResourceProvider
+                .getString(R.string.map_intent), geocache.getLatitude(), geocache.getLongitude(),
+                idAndName);
+        Log.v("GeoBeagle", "FFFFFFFFFFF " + format);
+        return format;
     }
 }
