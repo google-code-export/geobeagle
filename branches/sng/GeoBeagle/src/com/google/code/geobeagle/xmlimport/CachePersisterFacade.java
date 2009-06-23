@@ -32,6 +32,7 @@ public class CachePersisterFacade {
     private final FileFactory mFileFactory;
     private final MessageHandler mMessageHandler;
     private final WakeLock mWakeLock;
+    String mCacheName = "";
 
     CachePersisterFacade(CacheTagWriter cacheTagWriter, FileFactory fileFactory,
             CacheDetailsWriter cacheDetailsWriter, MessageHandler messageHandler, WakeLock wakeLock) {
@@ -51,6 +52,10 @@ public class CachePersisterFacade {
     }
 
     void endTag(Source source) throws IOException {
+        if (mCacheName == "")
+            mMessageHandler.updateName("");
+        else
+            mCacheName = "";
         mCacheDetailsWriter.close();
         mCacheTagWriter.write(source);
     }
@@ -100,7 +105,8 @@ public class CachePersisterFacade {
     }
 
     public void wptDesc(String text) {
-        mMessageHandler.updateName(text);
+        mCacheName = text;
+        mMessageHandler.updateName(mCacheName);
         mCacheTagWriter.cacheName(text);
     }
 

@@ -43,6 +43,7 @@ public class CacheTagWriter {
         mId = mName = null;
         mLatitude = mLongitude = 0;
         mFound = false;
+        mSqlDate = "2000-01-01T12:00:00";
     }
 
     public void end() {

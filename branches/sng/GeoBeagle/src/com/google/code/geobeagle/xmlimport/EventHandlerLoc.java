@@ -50,8 +50,6 @@ class EventHandlerLoc implements EventHandler {
     }
 
     public boolean text(String mFullPath, String text) throws IOException {
-        if (mFullPath.equals(XPATH_LOC))
-            return mCachePersisterFacade.gpxTime("2000-01-01T12:00:00");
         if (mFullPath.equals(XPATH_WPTNAME))
             mCachePersisterFacade.groundspeakName(text.trim());
 

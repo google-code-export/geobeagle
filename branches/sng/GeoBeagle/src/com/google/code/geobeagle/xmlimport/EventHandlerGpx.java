@@ -29,7 +29,7 @@ class EventHandlerGpx implements EventHandler {
     static final String XPATH_HINT = "/gpx/wpt/groundspeak:cache/groundspeak:encoded_hints";
     static final String XPATH_LOGDATE = "/gpx/wpt/groundspeak:cache/groundspeak:logs/groundspeak:log/groundspeak:date";
     static final String[] XPATH_PLAINLINES = {
-            "/gpx/wpt/desc", "/gpx/wpt/groundspeak:cache/groundspeak:type",
+            "/gpx/wpt/cmt", "/gpx/wpt/desc", "/gpx/wpt/groundspeak:cache/groundspeak:type",
             "/gpx/wpt/groundspeak:cache/groundspeak:container",
             "/gpx/wpt/groundspeak:cache/groundspeak:short_description",
             "/gpx/wpt/groundspeak:cache/groundspeak:long_description",

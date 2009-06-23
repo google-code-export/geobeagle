@@ -30,7 +30,6 @@ import com.google.code.geobeagle.activity.main.intents.GeocacheToGoogleMap;
 import com.google.code.geobeagle.activity.main.intents.IntentFactory;
 import com.google.code.geobeagle.activity.main.intents.IntentStarterRadar;
 import com.google.code.geobeagle.activity.main.intents.IntentStarterViewUri;
-import com.google.code.geobeagle.activity.main.view.CacheButtonOnClickListener;
 import com.google.code.geobeagle.activity.main.view.GeocacheViewer;
 import com.google.code.geobeagle.activity.main.view.Misc;
 import com.google.code.geobeagle.activity.main.view.OnCacheButtonClickListenerBuilder;

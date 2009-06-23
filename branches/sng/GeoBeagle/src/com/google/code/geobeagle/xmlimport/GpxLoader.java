@@ -63,6 +63,9 @@ public class GpxLoader {
         } catch (XmlPullParserException e) {
             mErrorDisplayer.displayError(R.string.error_parsing_file, mGpxToCache.getSource()
                     + ": " + e.getMessage());
+        } catch (FileNotFoundException e) {
+            mErrorDisplayer.displayError(R.string.file_not_found, mGpxToCache.getSource()
+                    + ": " + e.getMessage());
         } catch (IOException e) {
             mErrorDisplayer.displayError(R.string.error_reading_file, mGpxToCache.getSource()
                     + ": " + e.getMessage());

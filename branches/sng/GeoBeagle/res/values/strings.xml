@@ -52,6 +52,7 @@
 	<string name="error_cant_get_location">"Location cannot be determined.  Please ensure that your GPS is enabled and try again."</string>
 	<string name="error_opening_file">Unable to open file '%1$s'.</string>
 	<string name="error_parsing_file">Error parsing file '%1$s'.</string>
+	<string name="file_not_found">File not found exception: '%1$s'.</string>
 	<string name="error_reading_file">Error reading file '%1$s'.</string>
 	<string name="error_writing_cache">Error writing cache: '%1$s'.</string>
 	<string name="error_no_gpx_files">No gpx files found in /sdcard/download folder.</string>
@@ -68,7 +69,7 @@
 	<string name="cache_list_title">%1$d nearest caches out of %2$d</string>
 	<string name="cache_list_title_all">%1$d caches out of %2$d</string>
 	<string name="no_nearby_caches">No caches near your current location; click Menu / Show all caches.</string>
-	<string name="no_caches">No Caches--import a cache using Online List on the previous page, or click Menu / Sync to import "Pocket Queries" downloaded from Geocaching.com.</string>
+	<string name="no_caches">No Caches--click Menu / Search Online to find a cache on the internet, or click Menu / Sync to import "Pocket Queries" downloaded from Geocaching.com.</string>
 	<string name="select_service_provider">Select service provider:</string>
     <array name="nearest_objects">
 	  <item>http://www.atlasquest.com/results.html?gTypeId=2;gSort=5;gStatus=1209;gCoord=%1$.5f,%2$.5f</item>

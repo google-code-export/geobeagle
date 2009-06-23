@@ -17,6 +17,8 @@ package com.google.code.geobeagle.database;
 import com.google.code.geobeagle.GeocacheFactory.Source;
 import com.google.code.geobeagle.database.Database.ISQLiteDatabase;
 
+import android.util.Log;
+
 /**
  * @author sng
  */
