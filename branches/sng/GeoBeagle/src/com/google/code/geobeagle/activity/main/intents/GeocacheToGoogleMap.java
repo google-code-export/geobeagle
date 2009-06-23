@@ -18,8 +18,6 @@ import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.ResourceProvider;
 
-import android.util.Log;
-
 import java.net.URLEncoder;
 import java.util.Locale;
 
@@ -37,7 +35,6 @@ public class GeocacheToGoogleMap implements GeocacheToUri {
         final String format = String.format(Locale.US, mResourceProvider
                 .getString(R.string.map_intent), geocache.getLatitude(), geocache.getLongitude(),
                 idAndName);
-        Log.v("GeoBeagle", "FFFFFFFFFFF " + format);
         return format;
     }
 }
