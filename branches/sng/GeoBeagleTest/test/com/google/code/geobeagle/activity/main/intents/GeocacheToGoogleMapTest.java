@@ -45,7 +45,7 @@ public class GeocacheToGoogleMapTest {
         replay(geocache);
         replay(resourceProvider);
         GeocacheToGoogleMap geocacheToCachePage = new GeocacheToGoogleMap(resourceProvider);
-        assertEquals("geo:0,0?q=37.12300,122.34500 (GCFOO pb &amp; j)", geocacheToCachePage.convert(geocache));
+        assertEquals("geo:0,0?q=37.12300,122.34500 (GCFOO+pb+%26+j)", geocacheToCachePage.convert(geocache));
         verify(geocache);
         verify(resourceProvider);
     }
