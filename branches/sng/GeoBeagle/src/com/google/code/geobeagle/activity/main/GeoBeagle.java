@@ -83,10 +83,6 @@ public class GeoBeagle extends Activity implements LifecycleManager {
 
     private WebPageAndDetailsButtonEnabler mWebPageButtonEnabler;
 
-    RadarView getRadar() {
-        return mRadar;
-    }
-
     public GeoBeagle() {
         super();
         mErrorDisplayer = new ErrorDisplayer(this);
@@ -121,6 +117,10 @@ public class GeoBeagle extends Activity implements LifecycleManager {
         return mGeocache;
     }
 
+    RadarView getRadar() {
+        return mRadar;
+    }
+
     private boolean maybeGetCoordinatesFromIntent() {
         final Intent intent = getIntent();
         if (intent != null) {
@@ -138,6 +138,15 @@ public class GeoBeagle extends Activity implements LifecycleManager {
             }
         }
         return false;
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see android.app.Activity#onRetainNonConfigurationInstance()
+     */
+    @Override
+    public Object onRetainNonConfigurationInstance() {
+        return getIntent();
     }
 
     @Override
@@ -190,6 +199,9 @@ public class GeoBeagle extends Activity implements LifecycleManager {
         mCompassListener = new CompassListener(new NullRefresher(), mLocationControlBuffered,
                 -1440f);
         mSensorManager = (SensorManager)getSystemService(Context.SENSOR_SERVICE);
+        if (getLastNonConfigurationInstance() != null) {
+            setIntent((Intent)getLastNonConfigurationInstance());
+        }
     }
 
     @Override
