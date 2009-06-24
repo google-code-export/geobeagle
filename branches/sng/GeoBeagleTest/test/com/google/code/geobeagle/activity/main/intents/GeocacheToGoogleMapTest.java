@@ -36,7 +36,7 @@ public class GeocacheToGoogleMapTest {
         
         ResourceProvider resourceProvider = createMock(ResourceProvider.class);
         Geocache geocache = createMock(Geocache.class);
-        expect(geocache.getIdAndName()).andReturn("GCFOO pb & j");
+        expect(geocache.getIdAndName()).andReturn("GCFOO pb & j(1.5/3)");
         expect(geocache.getLatitude()).andReturn(37.123);
         expect(geocache.getLongitude()).andReturn(122.345);
         expect(resourceProvider.getString(R.string.map_intent)).andReturn(
@@ -45,7 +45,7 @@ public class GeocacheToGoogleMapTest {
         replay(geocache);
         replay(resourceProvider);
         GeocacheToGoogleMap geocacheToCachePage = new GeocacheToGoogleMap(resourceProvider);
-        assertEquals("geo:0,0?q=37.12300,122.34500 (GCFOO+pb+%26+j)", geocacheToCachePage.convert(geocache));
+        assertEquals("geo:0,0?q=37.12300,122.34500 (GCFOO+pb+%26+j%5B1.5%2F3%5D)", geocacheToCachePage.convert(geocache));
         verify(geocache);
         verify(resourceProvider);
     }
