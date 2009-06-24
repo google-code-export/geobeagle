@@ -29,9 +29,18 @@ public class GeocacheToGoogleMap implements GeocacheToUri {
         mResourceProvider = resourceProvider;
     }
 
+    /*
+     * (non-Javadoc)
+     * @see
+     * com.google.code.geobeagle.activity.main.intents.GeocacheToUri#convert
+     * (com.google.code.geobeagle.Geocache)
+     */
     public String convert(Geocache geocache) {
         // "geo:%1$.5f,%2$.5f?name=cachename"
-        final CharSequence idAndName = URLEncoder.encode((String)geocache.getIdAndName());
+        String idAndName = (String)geocache.getIdAndName();
+        idAndName = idAndName.replace("(", "[");
+        idAndName = idAndName.replace(")", "]");
+        idAndName = URLEncoder.encode(idAndName);
         final String format = String.format(Locale.US, mResourceProvider
                 .getString(R.string.map_intent), geocache.getLatitude(), geocache.getLongitude(),
                 idAndName);
