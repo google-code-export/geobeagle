@@ -199,6 +199,7 @@ public class RadarView extends View implements SensorListener, LocationListener 
     private TextView mBearingView;
     private float mMyLocationAccuracy;
     private TextView mAccuracyView;
+    private final String mDegreesSymbol;
 
     public RadarView(Context context) {
         this(context, null);
@@ -211,6 +212,8 @@ public class RadarView extends View implements SensorListener, LocationListener 
     public RadarView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
 
+        mDegreesSymbol = context.getString(R.string.degrees_symbol);
+        
         // Paint used for the rings and ring text
         mGridPaint = new Paint();
         mGridPaint.setColor(0xFF00FF00);
@@ -515,7 +518,7 @@ public class RadarView extends View implements SensorListener, LocationListener 
     private void updateBearing(double bearing) {
         bearing = (bearing + 720) % 360;
         if (mHaveLocation) {
-            final String sBearing = ((int)bearing / 5) * 5 + "°";
+            final String sBearing = ((int)bearing / 5) * 5 + mDegreesSymbol;
             
             mBearingView.setText(sBearing);
         }

@@ -28,6 +28,7 @@
 	<string name="sms_delivered">Field Note SMS delivered!</string>
 	<string name="unknown_error">Unknown error</string>
 	<string name="radar">Radar</string>
+	<string name="degrees_symbol">°</string>
 	<string name="app_name">GeoBeagle</string>
 	<string name="maps">Map</string>
 	<string name="map">Map</string>

@@ -21,10 +21,12 @@ import android.content.Context;
 class MeterFormatter {
     private static String mMeterLeft;
     private static String mMeterRight;
+    private static String mDegreesSymbol;
 
     MeterFormatter(Context context) {
         mMeterLeft = context.getString(R.string.meter_left);
         mMeterRight = context.getString(R.string.meter_right);
+        mDegreesSymbol = context.getString(R.string.degrees_symbol);
     }
 
     int accuracyToBarCount(float accuracy) {
@@ -35,7 +37,7 @@ class MeterFormatter {
         // TODO re-use string builder.
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append('[').append(mMeterLeft.substring(mMeterLeft.length() - bars)).append(
-                center).append(mMeterRight.substring(0, bars)).append(']');
+                center + mDegreesSymbol).append(mMeterRight.substring(0, bars)).append(']');
         return stringBuilder.toString();
     }
 
