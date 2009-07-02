@@ -32,6 +32,7 @@ import org.xmlpull.v1.XmlPullParserException;
 
 import android.database.sqlite.SQLiteException;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.Reader;
 import java.text.ParseException;
@@ -163,6 +164,12 @@ public class GpxLoaderTest {
     public void testLoadCancelException() throws XmlPullParserException, IOException,
             ParseException, CancelException {
         loadRaiseAndDisplayNothing(CancelException.class);
+    }
+
+    @Test
+    public void testLoadFileNotFoundException() throws XmlPullParserException, IOException,
+            ParseException, CancelException {
+        loadRaiseAndDisplayCustomMessage(FileNotFoundException.class, R.string.file_not_found);
     }
 
     @Test

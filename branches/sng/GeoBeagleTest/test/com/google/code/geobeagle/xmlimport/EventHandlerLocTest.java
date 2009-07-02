@@ -31,7 +31,7 @@ public class EventHandlerLocTest {
         CachePersisterFacade cachePersisterFacade = PowerMock
                 .createMock(CachePersisterFacade.class);
 
-        cachePersisterFacade.endTag(Source.LOC);
+        cachePersisterFacade.endCache(Source.LOC);
 
         PowerMock.replayAll();
         new EventHandlerLoc(cachePersisterFacade).endTag(EventHandlerLoc.XPATH_WPT);
@@ -60,7 +60,7 @@ public class EventHandlerLocTest {
                 .createMock(CachePersisterFacade.class);
         XmlPullParserWrapper xmlPullParser = PowerMock.createMock(XmlPullParserWrapper.class);
 
-        cachePersisterFacade.newCache();
+        cachePersisterFacade.startCache();
         EasyMock.expect(xmlPullParser.getAttributeValue(null, "id")).andReturn("GCABC");
         cachePersisterFacade.wptName("GCABC");
 

@@ -19,7 +19,7 @@ import static org.junit.Assert.assertEquals;
 
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.gpsstatuswidget.MeterFormatter;
-import com.google.code.geobeagle.gpsstatuswidget.MeterView;
+import com.google.code.geobeagle.gpsstatuswidget.MeterBars;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -43,6 +43,7 @@ public class MeterViewTest {
 
         expect(context.getString(R.string.meter_left)).andReturn("<<...<...");
         expect(context.getString(R.string.meter_right)).andReturn("...>...>>");
+        expect(context.getString(R.string.degrees_symbol)).andReturn("°");
 
         PowerMock.replayAll();
         MeterFormatter meterFormatter = new MeterFormatter(context);
@@ -61,6 +62,7 @@ public class MeterViewTest {
         Context context = PowerMock.createMock(Context.class);
         expect(context.getString(R.string.meter_left)).andReturn("<<...<...");
         expect(context.getString(R.string.meter_right)).andReturn("...>...>>");
+        expect(context.getString(R.string.degrees_symbol)).andReturn("°");
 
         PowerMock.replayAll();
         MeterFormatter meterFormatter = new MeterFormatter(context);
@@ -78,12 +80,13 @@ public class MeterViewTest {
 
         expect(context.getString(R.string.meter_left)).andReturn("....1....2....");
         expect(context.getString(R.string.meter_right)).andReturn("....8....9....");
+        expect(context.getString(R.string.degrees_symbol)).andReturn("°");
 
         PowerMock.replayAll();
         MeterFormatter meterFormatter = new MeterFormatter(context);
-        assertEquals("[0]", meterFormatter.barsToMeterText(0, "0"));
-        assertEquals("[.15.]", meterFormatter.barsToMeterText(1, "15"));
-        assertEquals("[2....90....8]", meterFormatter.barsToMeterText(5, "90"));
+        assertEquals("[0°]", meterFormatter.barsToMeterText(0, "0"));
+        assertEquals("[.15°.]", meterFormatter.barsToMeterText(1, "15"));
+        assertEquals("[2....90°....8]", meterFormatter.barsToMeterText(5, "90"));
         PowerMock.verifyAll();
     }
 
@@ -94,11 +97,11 @@ public class MeterViewTest {
         PowerMock.mockStatic(Color.class);
 
         expect(meterFormatter.accuracyToBarCount(342)).andReturn(7);
-        expect(meterFormatter.barsToMeterText(7, "90°")).andReturn("<-90°->");
+        expect(meterFormatter.barsToMeterText(7, "90")).andReturn("<-90°->");
         textView.setText("<-90°->");
 
         PowerMock.replayAll();
-        new MeterView(textView, meterFormatter).set(342, 90);
+        new MeterBars(textView, meterFormatter).set(342, 90);
         PowerMock.verifyAll();
     }
 
@@ -113,7 +116,7 @@ public class MeterViewTest {
         textView.setTextColor(333);
 
         PowerMock.replayAll();
-        new MeterView(textView, meterFormatter).setLag(17);
+        new MeterBars(textView, meterFormatter).setLag(17);
         PowerMock.verifyAll();
     }
 

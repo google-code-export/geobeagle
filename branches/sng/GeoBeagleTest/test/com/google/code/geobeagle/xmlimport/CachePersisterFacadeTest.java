@@ -3,7 +3,7 @@ package com.google.code.geobeagle.xmlimport;
 
 import static org.easymock.EasyMock.expect;
 import static org.easymock.classextension.EasyMock.createMock;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import com.google.code.geobeagle.GeocacheFactory.Source;
@@ -52,9 +52,25 @@ public class CachePersisterFacadeTest {
         mCacheDetailsWriter.close();
         mCacheTagWriter.write(Source.GPX);
         mMessageHandler.updateName("");
+
         PowerMock.replayAll();
         new CachePersisterFacade(mCacheTagWriter, null, mCacheDetailsWriter, mMessageHandler, null)
-                .endTag(Source.GPX);
+                .endCache(Source.GPX);
+        PowerMock.verifyAll();
+    }
+
+    @Test
+    public void testEndTagName() throws IOException {
+        mCacheDetailsWriter.close();
+        mCacheTagWriter.write(Source.GPX);
+        mCacheTagWriter.cacheName("my cache");
+        mMessageHandler.updateName("my cache");
+
+        PowerMock.replayAll();
+        final CachePersisterFacade cachePersisterFacade = new CachePersisterFacade(mCacheTagWriter,
+                null, mCacheDetailsWriter, mMessageHandler, null);
+        cachePersisterFacade.wptDesc("my cache");
+        cachePersisterFacade.endCache(Source.GPX);
         PowerMock.verifyAll();
     }
 
@@ -76,13 +92,6 @@ public class CachePersisterFacadeTest {
         new CachePersisterFacade(mCacheTagWriter, null, null, mMessageHandler, null)
                 .groundspeakName("GC123");
         PowerMock.verifyAll();
-    }
-
-    @Test
-    public void testStripIllegalFileChars() {
-        assertEquals("boring", CacheDetailsWriter.replaceIllegalFileChars("boring"));
-        assertEquals("n_a__s_______t_y__", CacheDetailsWriter
-                .replaceIllegalFileChars("n<a\\/s:*?\"<>|t:y\t/"));
     }
 
     @Test
@@ -117,7 +126,7 @@ public class CachePersisterFacadeTest {
         mCacheTagWriter.clear();
 
         PowerMock.replayAll();
-        new CachePersisterFacade(mCacheTagWriter, null, null, null, null).newCache();
+        new CachePersisterFacade(mCacheTagWriter, null, null, null, null).startCache();
         PowerMock.verifyAll();
     }
 
@@ -146,6 +155,13 @@ public class CachePersisterFacadeTest {
     }
 
     @Test
+    public void testStripIllegalFileChars() {
+        assertEquals("boring", CacheDetailsWriter.replaceIllegalFileChars("boring"));
+        assertEquals("n_a__s_______t_y__", CacheDetailsWriter
+                .replaceIllegalFileChars("n<a\\/s:*?\"<>|t:y\t/"));
+    }
+
+    @Test
     public void testSymbol() throws IOException {
         mCacheTagWriter.symbol("Geocache Found");
 
@@ -167,7 +183,6 @@ public class CachePersisterFacadeTest {
 
     @Test
     public void testWptDesc() throws IOException {
-        mMessageHandler.updateName("GC123 by so and so");
         mCacheTagWriter.cacheName("GC123 by so and so");
 
         PowerMock.replayAll();
