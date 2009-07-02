@@ -70,7 +70,6 @@ class EventHandlerGpx implements EventHandler {
     }
 
     public boolean text(String mFullPath, String text) throws IOException {
-        Log.v("GeoBeagle", mFullPath + ", " + text);
         text = text.trim();
         if (mFullPath.equals(XPATH_WPTNAME)) {
             mCachePersisterFacade.wptName(text);
