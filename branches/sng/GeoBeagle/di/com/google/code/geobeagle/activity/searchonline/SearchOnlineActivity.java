@@ -21,6 +21,7 @@ import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.Refresher;
 import com.google.code.geobeagle.activity.cachelist.CacheList;
 import com.google.code.geobeagle.activity.cachelist.presenter.DistanceFormatterManager;
+import com.google.code.geobeagle.activity.cachelist.presenter.DistanceFormatterManagerDi;
 import com.google.code.geobeagle.activity.searchonline.JsInterface.JsInterfaceHelper;
 import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidgetDelegate;
 import com.google.code.geobeagle.gpsstatuswidget.GpsWidgetAndUpdater;
@@ -54,10 +55,9 @@ public class SearchOnlineActivity extends Activity {
                 .create(locationManager);
         final CombinedLocationManager mCombinedLocationManager = new CombinedLocationManager(
                 locationManager);
-
         final InflatedGpsStatusWidget mGpsStatusWidget = (InflatedGpsStatusWidget)this
                 .findViewById(R.id.gps_widget_view);
-        final DistanceFormatterManager distanceFormatterManager = DistanceFormatterManager
+        final DistanceFormatterManager distanceFormatterManager = DistanceFormatterManagerDi
                 .create(this);
         final GpsWidgetAndUpdater gpsWidgetAndUpdater = new GpsWidgetAndUpdater(this,
                 mGpsStatusWidget, mLocationControlBuffered, mCombinedLocationManager,

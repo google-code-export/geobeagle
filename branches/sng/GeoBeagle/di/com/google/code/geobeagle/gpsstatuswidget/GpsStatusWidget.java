@@ -15,17 +15,36 @@
 package com.google.code.geobeagle.gpsstatuswidget;
 
 import com.google.code.geobeagle.R;
+import com.google.code.geobeagle.ResourceProvider;
+import com.google.code.geobeagle.Time;
+import com.google.code.geobeagle.formatting.DistanceFormatter;
+import com.google.code.geobeagle.location.CombinedLocationManager;
 
 import android.content.Context;
 import android.graphics.Canvas;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 /**
  * @author sng Displays the GPS status (mAccuracy, availability, etc).
  */
 public class GpsStatusWidget extends LinearLayout {
+
+    static GpsStatusWidgetDelegate createGpsStatusWidgetDelegate(View gpsStatusWidget, Time time,
+            CombinedLocationManager combinedLocationManager, Meter meter,
+            ResourceProvider resourceProvider, DistanceFormatter distanceFormatter,
+            MeterBars meterBars, TextLagUpdater textLagUpdater) {
+        final TextView status = (TextView)gpsStatusWidget.findViewById(R.id.status);
+        final TextView provider = (TextView)gpsStatusWidget.findViewById(R.id.provider);
+        final MeterFader meterFader = new MeterFader(gpsStatusWidget, meterBars, time);
+
+        return new GpsStatusWidgetDelegate(combinedLocationManager, meterFader, meter, provider,
+                resourceProvider, status, textLagUpdater, distanceFormatter);
+    }
+
     public static class InflatedGpsStatusWidget extends LinearLayout {
         private GpsStatusWidgetDelegate mGpsStatusWidgetDelegate;
 
@@ -52,5 +71,22 @@ public class GpsStatusWidget extends LinearLayout {
 
     public GpsStatusWidget(Context context) {
         super(context);
+    }
+
+    public static MeterBars create(Context context, View gpsWidget) {
+        final MeterFormatter meterFormatter = new MeterFormatter(context);
+        final TextView locationViewer = (TextView)gpsWidget.findViewById(R.id.location_viewer);
+        return new MeterBars(locationViewer, meterFormatter);
+    }
+
+    public static Meter createMeterWrapper(View gpsStatusWidget, MeterBars meterBars) {
+        final TextView accuracyView = (TextView)gpsStatusWidget.findViewById(R.id.accuracy);
+        return new Meter(meterBars, accuracyView);
+    }
+
+    public static TextLagUpdater createTextLagUpdater(View gpsStatusWidget,
+            CombinedLocationManager combinedLocationManager, Time time) {
+        final TextView lag = (TextView)gpsStatusWidget.findViewById(R.id.lag);
+        return new TextLagUpdater(combinedLocationManager, lag, time);
     }
 }

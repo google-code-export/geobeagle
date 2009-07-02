@@ -16,7 +16,6 @@ package com.google.code.geobeagle.gpsstatuswidget;
 
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.ResourceProvider;
-import com.google.code.geobeagle.Time;
 import com.google.code.geobeagle.activity.cachelist.presenter.HasDistanceFormatter;
 import com.google.code.geobeagle.formatting.DistanceFormatter;
 import com.google.code.geobeagle.location.CombinedLocationManager;
@@ -25,38 +24,25 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationProvider;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.TextView;
 
 public class GpsStatusWidgetDelegate implements HasDistanceFormatter, LocationListener {
     private final CombinedLocationManager mCombinedLocationManager;
     private DistanceFormatter mDistanceFormatter;
     private final MeterFader mMeterFader;
-    private final MeterWrapper mMeterWrapper;
+    private final Meter mMeterWrapper;
     private final TextView mProvider;
     private final ResourceProvider mResourceProvider;
     private final TextView mStatus;
     private final TextLagUpdater mTextLagUpdater;
 
-    static GpsStatusWidgetDelegate createGpsStatusWidgetDelegate(View gpsStatusWidget, Time time,
-            CombinedLocationManager combinedLocationManager, MeterWrapper meterWrapper,
-            ResourceProvider resourceProvider, DistanceFormatter distanceFormatter,
-            MeterView meterView, TextLagUpdater textLagUpdater) {
-        final TextView status = (TextView)gpsStatusWidget.findViewById(R.id.status);
-        final TextView provider = (TextView)gpsStatusWidget.findViewById(R.id.provider);
-        final MeterFader meterFader = new MeterFader(gpsStatusWidget, meterView, time);
-
-        return new GpsStatusWidgetDelegate(combinedLocationManager, meterFader, meterWrapper,
-                provider, resourceProvider, status, textLagUpdater, distanceFormatter);
-    }
-
     public GpsStatusWidgetDelegate(CombinedLocationManager combinedLocationManager,
-            MeterFader meterFader, MeterWrapper meterWrapper, TextView provider,
+            MeterFader meterFader, Meter meter, TextView provider,
             ResourceProvider resourceProvider, TextView status, TextLagUpdater textLagUpdater,
             DistanceFormatter distanceFormatter) {
         mCombinedLocationManager = combinedLocationManager;
         mMeterFader = meterFader;
-        mMeterWrapper = meterWrapper;
+        mMeterWrapper = meter;
         mProvider = provider;
         mStatus = status;
         mTextLagUpdater = textLagUpdater;

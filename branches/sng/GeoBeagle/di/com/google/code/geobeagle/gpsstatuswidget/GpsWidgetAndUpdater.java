@@ -22,15 +22,15 @@ public class GpsWidgetAndUpdater {
         final ResourceProvider resourceProvider = new ResourceProvider(context);
         final Time time = new Time();
         final Handler handler = new Handler();
-        final MeterView meterView = MeterView.create(context, gpsWidgetView);
-        final MeterWrapper meterWrapper = MeterWrapper.create(gpsWidgetView, meterView);
-        final TextLagUpdater textLagUpdater = TextLagUpdater.createTextLagUpdater(gpsWidgetView,
+        final MeterBars meterBars = GpsStatusWidget.create(context, gpsWidgetView);
+        final Meter meter = GpsStatusWidget.createMeterWrapper(gpsWidgetView, meterBars);
+        final TextLagUpdater textLagUpdater = GpsStatusWidget.createTextLagUpdater(gpsWidgetView,
                 combinedLocationManager, time);
-        mUpdateGpsRunnable = new UpdateGpsWidgetRunnable(handler, mLocationControlBuffered,
-                meterWrapper, textLagUpdater);
-        mGpsStatusWidgetDelegate = GpsStatusWidgetDelegate.createGpsStatusWidgetDelegate(
-                gpsWidgetView, time, combinedLocationManager, meterWrapper, resourceProvider,
-                distanceFormatterMetric, meterView, textLagUpdater);
+        mUpdateGpsRunnable = new UpdateGpsWidgetRunnable(handler, mLocationControlBuffered, meter,
+                textLagUpdater);
+        mGpsStatusWidgetDelegate = GpsStatusWidget.createGpsStatusWidgetDelegate(gpsWidgetView,
+                time, combinedLocationManager, meter, resourceProvider, distanceFormatterMetric,
+                meterBars, textLagUpdater);
     }
 
     public GpsStatusWidgetDelegate getGpsStatusWidgetDelegate() {

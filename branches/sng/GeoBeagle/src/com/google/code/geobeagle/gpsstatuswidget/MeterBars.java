@@ -13,20 +13,19 @@
  */
 
 package com.google.code.geobeagle.gpsstatuswidget;
+/*
+ * Displays the accuracy (graphically) and azimuth of the gps.
+ */
 
-import com.google.code.geobeagle.R;
-
-import android.content.Context;
 import android.graphics.Color;
-import android.view.View;
 import android.widget.TextView;
 
-class MeterView {
+class MeterBars {
+    private final TextView mBarsAndAzimuth;
     private final MeterFormatter mMeterFormatter;
-    private final TextView mTextView;
 
-    MeterView(TextView textView, MeterFormatter meterFormatter) {
-        mTextView = textView;
+    MeterBars(TextView textView, MeterFormatter meterFormatter) {
+        mBarsAndAzimuth = textView;
         mMeterFormatter = meterFormatter;
     }
 
@@ -34,16 +33,10 @@ class MeterView {
         final String center = String.valueOf((int)azimuth);
         final int barCount = mMeterFormatter.accuracyToBarCount(accuracy);
         final String barsToMeterText = mMeterFormatter.barsToMeterText(barCount, center);
-        mTextView.setText(barsToMeterText);
+        mBarsAndAzimuth.setText(barsToMeterText);
     }
 
     void setLag(long lag) {
-        mTextView.setTextColor(Color.argb(mMeterFormatter.lagToAlpha(lag), 147, 190, 38));
-    }
-
-    public static MeterView create(Context context, View gpsWidget) {
-        final MeterFormatter meterFormatter = new MeterFormatter(context);
-        final TextView locationViewer = (TextView)gpsWidget.findViewById(R.id.location_viewer);
-        return new MeterView(locationViewer, meterFormatter);
+        mBarsAndAzimuth.setTextColor(Color.argb(mMeterFormatter.lagToAlpha(lag), 147, 190, 38));
     }
 }

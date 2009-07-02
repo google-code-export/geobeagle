@@ -35,7 +35,7 @@ class EventHandlerLoc implements EventHandler {
 
     public void endTag(String previousFullPath) throws IOException {
         if (previousFullPath.equals(XPATH_WPT)) {
-            mCachePersisterFacade.endTag(Source.LOC);
+            mCachePersisterFacade.endCache(Source.LOC);
         }
     }
 
@@ -44,7 +44,7 @@ class EventHandlerLoc implements EventHandler {
             mCachePersisterFacade.wpt(mXmlPullParser.getAttributeValue(null, "lat"), mXmlPullParser
                     .getAttributeValue(null, "lon"));
         } else if (mFullPath.equals(XPATH_WPTNAME)) {
-            mCachePersisterFacade.newCache();
+            mCachePersisterFacade.startCache();
             mCachePersisterFacade.wptName(mXmlPullParser.getAttributeValue(null, "id"));
         }
     }

@@ -18,9 +18,7 @@ import com.google.code.geobeagle.formatting.DistanceFormatter;
 import com.google.code.geobeagle.formatting.DistanceFormatterImperial;
 import com.google.code.geobeagle.formatting.DistanceFormatterMetric;
 
-import android.content.Context;
 import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 
 import java.util.ArrayList;
 
@@ -29,16 +27,6 @@ public class DistanceFormatterManager {
     private final DistanceFormatterMetric mDistanceFormatterMetric;
     private final DistanceFormatterImperial mDistanceFormatterImperial;
     private final SharedPreferences mDefaultSharedPreferences;
-
-    public static DistanceFormatterManager create(Context context) {
-        final SharedPreferences sharedPreferences = PreferenceManager
-                .getDefaultSharedPreferences(context);
-
-        final DistanceFormatterMetric distanceFormatterMetric = new DistanceFormatterMetric();
-        final DistanceFormatterImperial distanceFormatterImperial = new DistanceFormatterImperial();
-        return new DistanceFormatterManager(sharedPreferences, distanceFormatterImperial,
-                distanceFormatterMetric);
-    }
 
     DistanceFormatterManager(SharedPreferences defaultSharedPreferences,
             DistanceFormatterImperial distanceFormatterImperial,
@@ -61,8 +49,7 @@ public class DistanceFormatterManager {
     public void setFormatter() {
         final DistanceFormatter formatter = getFormatter();
         for (HasDistanceFormatter hasDistanceFormatter : mHasDistanceFormatters) {
-            final DistanceFormatter distanceFormatter = formatter;
-            hasDistanceFormatter.setDistanceFormatter(distanceFormatter);
+            hasDistanceFormatter.setDistanceFormatter(formatter);
         }
     }
 }

@@ -38,6 +38,7 @@ import com.google.code.geobeagle.activity.cachelist.presenter.AdapterCachesSorte
 import com.google.code.geobeagle.activity.cachelist.presenter.BearingFormatter;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
 import com.google.code.geobeagle.activity.cachelist.presenter.DistanceFormatterManager;
+import com.google.code.geobeagle.activity.cachelist.presenter.DistanceFormatterManagerDi;
 import com.google.code.geobeagle.activity.cachelist.presenter.DistanceUpdater;
 import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheListAdapter;
 import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheListPresenter;
@@ -120,7 +121,7 @@ public class CacheListDelegateDI {
         final GeocachesSql geocachesSql = DatabaseDI.create(sqliteWrapper);
         final CacheWriter cacheWriter = DatabaseDI.createCacheWriter(sqliteWrapper);
         final BearingFormatter bearingFormatter = new BearingFormatter();
-        final DistanceFormatterManager distanceFormatterManager = DistanceFormatterManager
+        final DistanceFormatterManager distanceFormatterManager = DistanceFormatterManagerDi
                 .create(listActivity);
         final LocationSaver locationSaver = new LocationSaver(cacheWriter);
         final GeocacheVectorFactory geocacheVectorFactory = new GeocacheVectorFactory();

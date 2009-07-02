@@ -20,13 +20,13 @@ import android.view.View;
 
 class MeterFader {
     private long mLastUpdateTime;
-    private final MeterView mMeterView;
+    private final MeterBars mMeterView;
     private final View mParent;
     private final Time mTime;
 
-    MeterFader(View parent, MeterView meterView, Time time) {
+    MeterFader(View parent, MeterBars meterBars, Time time) {
         mLastUpdateTime = -1;
-        mMeterView = meterView;
+        mMeterView = meterBars;
         mParent = parent;
         mTime = time;
     }

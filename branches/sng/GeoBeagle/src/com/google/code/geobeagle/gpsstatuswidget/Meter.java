@@ -14,26 +14,19 @@
 
 package com.google.code.geobeagle.gpsstatuswidget;
 
-import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.formatting.DistanceFormatter;
 
-import android.view.View;
 import android.widget.TextView;
 
-class MeterWrapper {
+class Meter {
     private float mAccuracy;
     private final TextView mAccuracyView;
     private float mAzimuth;
-    private final MeterView mMeterView;
+    private final MeterBars mMeterView;
 
-    public static MeterWrapper create(View gpsStatusWidget, MeterView meterView) {
-        final TextView accuracyView = (TextView)gpsStatusWidget.findViewById(R.id.accuracy);
-        return new MeterWrapper(meterView, accuracyView);
-    }
-
-    MeterWrapper(MeterView meterView, TextView accuracyView) {
+    Meter(MeterBars meterBars, TextView accuracyView) {
         mAccuracyView = accuracyView;
-        mMeterView = meterView;
+        mMeterView = meterBars;
     }
 
     void setAccuracy(float accuracy, DistanceFormatter distanceFormatter) {

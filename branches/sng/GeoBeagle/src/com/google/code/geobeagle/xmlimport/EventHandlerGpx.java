@@ -17,6 +17,8 @@ package com.google.code.geobeagle.xmlimport;
 import com.google.code.geobeagle.GeocacheFactory.Source;
 import com.google.code.geobeagle.xmlimport.GpxToCacheDI.XmlPullParserWrapper;
 
+import android.util.Log;
+
 import java.io.IOException;
 
 class EventHandlerGpx implements EventHandler {
@@ -55,19 +57,20 @@ class EventHandlerGpx implements EventHandler {
 
     public void endTag(String previousFullPath) throws IOException {
         if (previousFullPath.equals(XPATH_WPT)) {
-            mCachePersisterFacade.endTag(Source.GPX);
+            mCachePersisterFacade.endCache(Source.GPX);
         }
     }
 
     public void startTag(String mFullPath, XmlPullParserWrapper mXmlPullParser) {
         if (mFullPath.equals(XPATH_WPT)) {
-            mCachePersisterFacade.newCache();
+            mCachePersisterFacade.startCache();
             mCachePersisterFacade.wpt(mXmlPullParser.getAttributeValue(null, "lat"), mXmlPullParser
                     .getAttributeValue(null, "lon"));
         }
     }
 
     public boolean text(String mFullPath, String text) throws IOException {
+        Log.v("GeoBeagle", mFullPath + ", " + text);
         text = text.trim();
         if (mFullPath.equals(XPATH_WPTNAME)) {
             mCachePersisterFacade.wptName(text);

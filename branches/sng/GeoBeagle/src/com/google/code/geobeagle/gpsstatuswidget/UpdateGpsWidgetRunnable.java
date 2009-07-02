@@ -21,12 +21,12 @@ import android.os.Handler;
 public class UpdateGpsWidgetRunnable implements Runnable {
     private final Handler mHandler;
     private final LocationControlBuffered mLocationControlBuffered;
-    private final MeterWrapper mMeterWrapper;
+    private final Meter mMeterWrapper;
     private final TextLagUpdater mTextLagUpdater;
 
     UpdateGpsWidgetRunnable(Handler handler, LocationControlBuffered locationControlBuffered,
-            MeterWrapper meterWrapper, TextLagUpdater textLagUpdater) {
-        mMeterWrapper = meterWrapper;
+            Meter meter, TextLagUpdater textLagUpdater) {
+        mMeterWrapper = meter;
         mLocationControlBuffered = locationControlBuffered;
         mTextLagUpdater = textLagUpdater;
         mHandler = handler;
