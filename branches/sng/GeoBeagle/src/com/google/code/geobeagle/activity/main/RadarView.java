@@ -142,42 +142,28 @@ public class RadarView extends View implements SensorListener, LocationListener 
             "%.0fmi", "%.0fmi", "%.0fmi", "%.0fmi"
     };
 
-    // True when we have know our own location
-    private boolean mHaveLocation = false;
-
-    // The view that will display the distance text
+    private boolean mHaveLocation = false; // True when we have our location
     private TextView mDistanceView;
-
-    // Distance to target, in KM
-    private double mDistance;
-
-    // Bearing to target, in degrees
-    private double mBearing;
+    private double mDistance; // Distance to target, in KM
+    private double mBearing; // Bearing to target, in degrees
 
     // Ratio of the distance to the target to the radius of the outermost ring
     // on the radar screen
     private float mDistanceRatio;
-
-    // The bitmap used to draw the target
-    private Bitmap mBlip;
+    private Bitmap mBlip; // The bitmap used to draw the target
 
     // Used to draw the animated ring that sweeps out from the center
     private Paint mSweepPaint0;
-
-    // Used to draw the animated ring that sweeps out from the center
     private Paint mSweepPaint1;
-
-    // Used to draw the animated ring that sweeps out from the center
     private Paint mSweepPaint2;
 
-    // Time in millis when the most recent sweep began
-    private long mSweepTime;
+    private long mSweepTime; // Time in millis when the most recent sweep began
 
-    // True if the sweep has not yet intersected the blip
-    private boolean mSweepBefore;
+    private boolean mSweepBefore; // True if the sweep has not yet intersected
+    // the blip
 
-    // Time in millis when the sweep last crossed the blip
-    private long mBlipTime;
+    private long mBlipTime; // Time in millis when the sweep last crossed the
+    // blip
 
     // True if the display should use metric units; false if the display should
     // use standard units
@@ -190,8 +176,7 @@ public class RadarView extends View implements SensorListener, LocationListener 
     // get a location from GPS
     private Location mNetworkLocation;
 
-    // True if GPS is reporting a location
-    private boolean mGpsAvailable;
+    private boolean mGpsAvailable; // True if GPS is reporting a location
 
     // True if the network provider is reporting a location
     private boolean mNetworkAvailable;
@@ -200,6 +185,8 @@ public class RadarView extends View implements SensorListener, LocationListener 
     private float mMyLocationAccuracy;
     private TextView mAccuracyView;
     private final String mDegreesSymbol;
+    private Path mCompassPath;
+    private final Paint mCompassPaint;
 
     public RadarView(Context context) {
         this(context, null);
@@ -213,7 +200,7 @@ public class RadarView extends View implements SensorListener, LocationListener 
         super(context, attrs, defStyle);
 
         mDegreesSymbol = context.getString(R.string.degrees_symbol);
-        
+
         // Paint used for the rings and ring text
         mGridPaint = new Paint();
         mGridPaint.setColor(0xFF00FF00);
@@ -222,6 +209,14 @@ public class RadarView extends View implements SensorListener, LocationListener 
         mGridPaint.setStrokeWidth(1.0f);
         mGridPaint.setTextSize(10.0f);
         mGridPaint.setTextAlign(Align.CENTER);
+
+        mCompassPaint = new Paint();
+        mCompassPaint.setColor(0xFF00FF00);
+        mCompassPaint.setAntiAlias(true);
+        mCompassPaint.setStyle(Style.STROKE);
+        mCompassPaint.setStrokeWidth(1.0f);
+        mCompassPaint.setTextSize(10.0f);
+        mCompassPaint.setTextAlign(Align.CENTER);
 
         // Paint used to erase the rectangle behind the ring text
         mErasePaint = new Paint();
@@ -253,6 +248,7 @@ public class RadarView extends View implements SensorListener, LocationListener 
         mSweepPaint2.setAlpha(100);
 
         mBlip = ((BitmapDrawable)getResources().getDrawable(R.drawable.blip)).getBitmap();
+        mCompassPath = new Path();
     }
 
     /**
@@ -334,32 +330,8 @@ public class RadarView extends View implements SensorListener, LocationListener 
             float tipX = northX * (radius - 12), tipY = northY * (radius - 12);
             float baseX = northY * 8, baseY = -northX * 8;
 
-            // northern half
-            gridPaint.setStyle(Paint.Style.FILL_AND_STROKE);
-            final int saveColor = mGridPaint.getColor();
-            gridPaint.setColor(Color.RED);
-            gridPaint.setAlpha(180);
-            Path path = new Path();
-            path.moveTo(center + baseX, center + baseY);
-            path.lineTo(center + tipX, center + tipY);
-            path.lineTo(center - baseX, center - baseY);
-            path.close();
-            canvas.drawPath(path, gridPaint);
-
-            // southern half
-            gridPaint.setStyle(Paint.Style.FILL_AND_STROKE);
-            gridPaint.setColor(Color.GRAY);
-            gridPaint.setAlpha(180);
-            path.reset();
-            path.moveTo(center + baseX, center + baseY);
-            path.lineTo(center - tipX, center - tipY);
-            path.lineTo(center - baseX, center - baseY);
-            path.close();
-            canvas.drawPath(path, mGridPaint);
-            gridPaint.setStyle(Paint.Style.STROKE);
-
-            mGridPaint.setColor(saveColor);
-            mGridPaint.setAlpha(255);
+            drawCompassArrow(canvas, center, mCompassPaint, tipX, tipY, baseX, baseY, Color.RED);
+            drawCompassArrow(canvas, center, mCompassPaint, -tipX, -tipY, baseX, baseY, Color.GRAY);
 
             double bearingToTarget = mBearing - mOrientation;
             double drawingAngle = Math.toRadians(bearingToTarget) - (Math.PI / 2);
@@ -369,12 +341,26 @@ public class RadarView extends View implements SensorListener, LocationListener 
 
             // Draw the blip. Alpha is based on how long ago the sweep crossed
             // the blip.
-            long blipDifference = now - mBlipTime;
-            gridPaint.setAlpha(255 - (int)((128 * blipDifference) >> 10));
+            // long blipDifference = now - mBlipTime;
+            // gridPaint.setAlpha(255 - (int)((128 * blipDifference) >> 10));
+            gridPaint.setAlpha(255);
             canvas.drawBitmap(mBlip, center + (cos * blipRadius) - 8, center + (sin * blipRadius)
                     - 8, gridPaint);
-            gridPaint.setAlpha(255);
         }
+    }
+
+    private void drawCompassArrow(Canvas canvas, int center, final Paint gridPaint, float tipX,
+            float tipY, float baseX, float baseY, int color) {
+        gridPaint.setStyle(Paint.Style.FILL_AND_STROKE);
+        gridPaint.setColor(color);
+        gridPaint.setAlpha(180);
+        mCompassPath.reset();
+        mCompassPath.moveTo(center + baseX, center + baseY);
+        mCompassPath.lineTo(center + tipX, center + tipY);
+        mCompassPath.lineTo(center - baseX, center - baseY);
+        mCompassPath.close();
+        canvas.drawPath(mCompassPath, gridPaint);
+        gridPaint.setStyle(Paint.Style.STROKE);
     }
 
     public void onAccuracyChanged(int sensor, int accuracy) {
@@ -519,7 +505,7 @@ public class RadarView extends View implements SensorListener, LocationListener 
         bearing = (bearing + 720) % 360;
         if (mHaveLocation) {
             final String sBearing = ((int)bearing / 5) * 5 + mDegreesSymbol;
-            
+
             mBearingView.setText(sBearing);
         }
     }
@@ -587,8 +573,8 @@ public class RadarView extends View implements SensorListener, LocationListener 
      * Turn on the sweep animation starting with the next draw
      */
     public void startSweep() {
-        mSweepTime = SystemClock.uptimeMillis();
-        mSweepBefore = true;
+        // mSweepTime = SystemClock.uptimeMillis();
+        // mSweepBefore = true;
     }
 
     /**
