@@ -79,6 +79,8 @@ public class Geocache implements Parcelable {
             return Provider.MY_LOCATION;
         if (prefix.equals("LB"))
             return Provider.ATLAS_QUEST;
+        if (prefix.equals("OC"))
+            return Provider.OPENCACHING;
         else
             return Provider.GROUNDSPEAK;
     }

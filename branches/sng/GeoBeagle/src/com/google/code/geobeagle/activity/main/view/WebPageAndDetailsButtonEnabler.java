@@ -63,7 +63,8 @@ public class WebPageAndDetailsButtonEnabler {
         public void check(Geocache geocache) {
             final Provider contentProvider = geocache.getContentProvider();
             mWebPageButton.setEnabled(contentProvider == Provider.GROUNDSPEAK
-                    || contentProvider == GeocacheFactory.Provider.ATLAS_QUEST);
+                    || contentProvider == GeocacheFactory.Provider.ATLAS_QUEST
+                    || contentProvider == GeocacheFactory.Provider.OPENCACHING);
         }
     }
 

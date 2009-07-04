@@ -36,7 +36,7 @@ public class GeocacheFactory {
     }
 
     public static enum Provider {
-        ATLAS_QUEST(0), GROUNDSPEAK(1), MY_LOCATION(-1);
+        ATLAS_QUEST(0), GROUNDSPEAK(1), MY_LOCATION(-1), OPENCACHING(2);
 
         private final int mIx;
 
