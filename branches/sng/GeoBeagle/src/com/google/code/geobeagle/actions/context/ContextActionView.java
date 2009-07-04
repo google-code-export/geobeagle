@@ -23,17 +23,17 @@ import android.content.Intent;
 public class ContextActionView implements ContextAction {
     private final Context mContext;
     private final GeocacheVectors mGeocacheVectors;
-    private final Intent mIntent;
+    private final Intent mGeoBeagleMainIntent;
 
     public ContextActionView(GeocacheVectors geocacheVectors, Context context, Intent intent) {
         mGeocacheVectors = geocacheVectors;
         mContext = context;
-        mIntent = intent;
+        mGeoBeagleMainIntent = intent;
     }
 
     public void act(int position) {
-        mIntent.putExtra("geocache", mGeocacheVectors.get(position).getGeocache()).setAction(
-                GeocacheListController.SELECT_CACHE);
-        mContext.startActivity(mIntent);
+        mGeoBeagleMainIntent.putExtra("geocache", mGeocacheVectors.get(position).getGeocache())
+                .setAction(GeocacheListController.SELECT_CACHE);
+        mContext.startActivity(mGeoBeagleMainIntent);
     }
 }
