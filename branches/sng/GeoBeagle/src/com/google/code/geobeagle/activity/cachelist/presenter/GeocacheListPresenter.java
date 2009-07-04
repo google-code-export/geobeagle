@@ -21,9 +21,7 @@ import com.google.code.geobeagle.activity.cachelist.GeocacheListController.Cache
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVectors;
 import com.google.code.geobeagle.database.Database;
 import com.google.code.geobeagle.database.DatabaseDI.SQLiteWrapper;
-import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidget;
 import com.google.code.geobeagle.gpsstatuswidget.UpdateGpsWidgetRunnable;
-import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidget.InflatedGpsStatusWidget;
 import com.google.code.geobeagle.location.CombinedLocationManager;
 
 import android.app.ListActivity;
@@ -32,7 +30,6 @@ import android.hardware.SensorManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
 
@@ -47,7 +44,7 @@ public class GeocacheListPresenter {
         }
 
         public void onLocationChanged(Location location) {
-            Log.v("GeoBeagle", "location changed");
+//            Log.v("GeoBeagle", "location changed");
             mCacheListRefresh.refresh();
         }
 
