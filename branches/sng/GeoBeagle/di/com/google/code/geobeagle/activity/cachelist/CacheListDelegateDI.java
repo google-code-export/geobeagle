@@ -240,9 +240,9 @@ public class CacheListDelegateDI {
             SQLiteWrapper sqliteWrapper, CacheListData cacheListData, CacheWriter cacheWriter,
             GeocacheVectors geocacheVectors, ErrorDisplayer errorDisplayer,
             BaseAdapter geocacheListAdapter, TitleUpdater titleUpdater) {
-        final Intent intent = new Intent(parent, GeoBeagle.class);
+        final Intent geoBeagleMainIntent = new Intent(parent, GeoBeagle.class);
         final ContextActionView contextActionView = new ContextActionView(geocacheVectors, parent,
-                intent);
+                geoBeagleMainIntent);
         final ContextActionDelete contextActionDelete = new ContextActionDelete(
                 geocacheListAdapter, cacheWriter, geocacheVectors, titleUpdater);
         return new ContextAction[] {
