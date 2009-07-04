@@ -22,9 +22,6 @@ import android.view.View;
 import android.widget.TextView;
 
 public class GeocacheViewer {
-
-    public static final String FNAME_RECENT_LOCATIONS = "RECENT_LOCATIONS";
-    public static final String PREFS_LOCATION = "Location";
     private final TextView mId;
     private final TextView mName;
     private final RadarView mRadarView;
