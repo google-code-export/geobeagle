@@ -1,6 +1,6 @@
 #summary Tests which have to be done manually on the device
 
-= Restore last activity =
+=== Restore last activity ===
 
   * Launch !GeoBeagle
   * Navigate to cache list page
