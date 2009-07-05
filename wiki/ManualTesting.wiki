@@ -1,0 +1,15 @@
+#summary Tests which have to be done manually on the device
+
+= Restore last activity =
+
+  * Launch !GeoBeagle
+  * Navigate to cache list page
+  * Launch Task Manager (or similar app)
+  * Kill !GeoBeagle.
+  * Relaunch !GeoBeagle
+
+!GeoBeagle should open in the cache list page.
+
+Similarly, if you navigate to the cache details page, !GeoBeagle should restart at that cache page.
+
+Finally, ensure that navigating to the search page directly works from within the UI.
