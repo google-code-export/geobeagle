@@ -43,6 +43,7 @@ public class CacheList extends ListActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.v("GeoBeagle", "CacheList onCreate");
 
         mCacheListDelegate = CacheListDelegateDI.create(this, getLayoutInflater());
         mCacheListDelegate.onCreate();
@@ -78,6 +79,8 @@ public class CacheList extends ListActivity {
     @Override
     protected void onPause() {
         try {
+            Log.v("GeoBeagle", "CacheList onPause");
+
             super.onPause();
             mCacheListDelegate.onPause();
         } catch (Exception e) {
@@ -88,6 +91,8 @@ public class CacheList extends ListActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        Log.v("GeoBeagle", "CacheList onResume");
+
         mCacheListDelegate.onResume();
     }
 

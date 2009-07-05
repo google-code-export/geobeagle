@@ -45,7 +45,6 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
 import android.hardware.SensorManager;
 import android.location.LocationManager;
 import android.net.UrlQuerySanitizer;
@@ -60,7 +59,7 @@ import android.widget.TextView;
 /*
  * Main Activity for GeoBeagle.
  */
-public class GeoBeagle extends Activity implements LifecycleManager {
+public class GeoBeagle extends Activity {
     static class NullRefresher implements Refresher {
         public void refresh() {
         }
@@ -158,8 +157,10 @@ public class GeoBeagle extends Activity implements LifecycleManager {
 
     @Override
     public void onCreate(final Bundle savedInstanceState) {
-        // try {
         super.onCreate(savedInstanceState);
+
+        Log.v("GeoBeagle", "GeoBeagle onCreate");
+
         setContentView(R.layout.main);
         mLocationSaver = new LocationSaver(DatabaseDI.createCacheWriter(mSqliteWrapper));
         mWebPageButtonEnabler = Misc.create(this, findViewById(R.id.cache_page),
@@ -188,7 +189,6 @@ public class GeoBeagle extends Activity implements LifecycleManager {
 
         AppLifecycleManager appLifecycleManager = new AppLifecycleManager(
                 getPreferences(MODE_PRIVATE), new LifecycleManager[] {
-                        this,
                         new LocationLifecycleManager(mLocationControlBuffered, locationManager),
                         new LocationLifecycleManager(mRadar, locationManager)
                 });
@@ -224,13 +224,11 @@ public class GeoBeagle extends Activity implements LifecycleManager {
     @Override
     public void onPause() {
         super.onPause();
+        Log.v("GeoBeagle", "GeoBeagle onPause");
+
         mGeoBeagleDelegate.onPause();
         mSensorManager.unregisterListener(mCompassListener);
         mSensorManager.unregisterListener(mRadar);
-    }
-
-    public void onPause(Editor editor) {
-        getGeocache().writeToPrefs(editor);
     }
 
     /*
@@ -247,6 +245,8 @@ public class GeoBeagle extends Activity implements LifecycleManager {
     protected void onResume() {
         try {
             super.onResume();
+            Log.v("GeoBeagle", "GeoBeagle onResume");
+
             mRadar.handleUnknownLocation();
             mGeoBeagleDelegate.onResume();
             mSqliteWrapper.openWritableDatabase(mDatabase);
@@ -254,6 +254,8 @@ public class GeoBeagle extends Activity implements LifecycleManager {
                     SensorManager.SENSOR_DELAY_UI);
             mSensorManager.registerListener(mRadar, SensorManager.SENSOR_ORIENTATION,
                     SensorManager.SENSOR_DELAY_UI);
+
+            Log.v("GeoBeagle", "GeoBeagle action:" + getIntent().getAction());
 
             maybeGetCoordinatesFromIntent();
             mWebPageButtonEnabler.check();

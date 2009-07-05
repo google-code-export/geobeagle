@@ -15,13 +15,19 @@
 package com.google.code.geobeagle.activity.searchonline;
 
 import com.google.code.geobeagle.CompassListener;
+import com.google.code.geobeagle.GeocacheFactory;
 import com.google.code.geobeagle.LocationControlBuffered;
 import com.google.code.geobeagle.LocationControlDi;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.Refresher;
+import com.google.code.geobeagle.activity.ActivityDI;
+import com.google.code.geobeagle.activity.ActivityRestorer;
+import com.google.code.geobeagle.activity.ActivitySaver;
+import com.google.code.geobeagle.activity.ActivityDI.ActivityTypeFactory;
 import com.google.code.geobeagle.activity.cachelist.CacheList;
 import com.google.code.geobeagle.activity.cachelist.presenter.DistanceFormatterManager;
 import com.google.code.geobeagle.activity.cachelist.presenter.DistanceFormatterManagerDi;
+import com.google.code.geobeagle.activity.main.GeocacheFromPreferencesFactory;
 import com.google.code.geobeagle.activity.searchonline.JsInterface.JsInterfaceHelper;
 import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidgetDelegate;
 import com.google.code.geobeagle.gpsstatuswidget.GpsWidgetAndUpdater;
@@ -36,6 +42,7 @@ import android.graphics.Color;
 import android.hardware.SensorManager;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.webkit.WebView;
@@ -47,6 +54,7 @@ public class SearchOnlineActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.v("GeoBeagle", "SearchOnlineActivity onCreate");
 
         setContentView(R.layout.search);
         final LocationManager locationManager = (LocationManager)this
@@ -76,14 +84,25 @@ public class SearchOnlineActivity extends Activity {
         final CombinedLocationListener mCombinedLocationListener = new CombinedLocationListener(
                 mLocationControlBuffered, gpsStatusWidgetDelegate);
         distanceFormatterManager.addHasDistanceFormatter(gpsStatusWidgetDelegate);
+        final ActivitySaver activitySaver = ActivityDI.createActivitySaver(this);
+
+        final GeocacheFactory geocacheFactory = new GeocacheFactory();
+        final GeocacheFromPreferencesFactory geocacheFromPreferencesFactory = new GeocacheFromPreferencesFactory(
+                geocacheFactory);
+        final ActivityTypeFactory activityTypeFactory = new ActivityTypeFactory();
+
+        final ActivityRestorer activityRestorer = new ActivityRestorer(this,
+                geocacheFromPreferencesFactory, activityTypeFactory, getSharedPreferences(
+                        "GeoBeagle", Context.MODE_PRIVATE));
 
         mSearchOnlineActivityDelegate = new SearchOnlineActivityDelegate(
                 ((WebView)findViewById(R.id.help_contents)), mSensorManager, mCompassListener,
                 mCombinedLocationManager, mCombinedLocationListener, mLocationControlBuffered,
-                distanceFormatterManager);
+                distanceFormatterManager, activitySaver, activityRestorer);
 
         final JsInterfaceHelper jsInterfaceHelper = new JsInterfaceHelper(this);
         final JsInterface jsInterface = new JsInterface(mLocationControlBuffered, jsInterfaceHelper);
+
         mSearchOnlineActivityDelegate.configureWebView(jsInterface);
     }
 
@@ -103,12 +122,16 @@ public class SearchOnlineActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
-        mSearchOnlineActivityDelegate.onResume();
+        Log.v("GeoBeagle", "SearchOnlineActivity onResume");
+
+        mSearchOnlineActivityDelegate.onResume(getIntent());
     }
 
     @Override
     protected void onPause() {
         super.onPause();
+        Log.v("GeoBeagle", "SearchOnlineActivity onPause");
+
         mSearchOnlineActivityDelegate.onPause();
     }
 }

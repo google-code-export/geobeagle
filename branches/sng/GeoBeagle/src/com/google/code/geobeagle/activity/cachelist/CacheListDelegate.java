@@ -14,6 +14,8 @@
 
 package com.google.code.geobeagle.activity.cachelist;
 
+import com.google.code.geobeagle.activity.ActivitySaver;
+import com.google.code.geobeagle.activity.ActivityType;
 import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheListPresenter;
 
 import android.view.Menu;
@@ -24,10 +26,13 @@ import android.widget.ListView;
 public class CacheListDelegate {
     private final GeocacheListController mController;
     private final GeocacheListPresenter mPresenter;
+    private final ActivitySaver mActivitySaver;
 
-    public CacheListDelegate(GeocacheListController controller, GeocacheListPresenter presenter) {
+    public CacheListDelegate(ActivitySaver activitySaver, GeocacheListController controller,
+            GeocacheListPresenter presenter) {
         mController = controller;
         mPresenter = presenter;
+        mActivitySaver = activitySaver;
     }
 
     public boolean onContextItemSelected(MenuItem menuItem) {
@@ -58,6 +63,7 @@ public class CacheListDelegate {
     public void onPause() {
         mPresenter.onPause();
         mController.onPause();
+        mActivitySaver.save(ActivityType.CACHE_LIST);
     }
 
     public void onResume() {

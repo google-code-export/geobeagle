@@ -23,6 +23,8 @@ import com.google.code.geobeagle.LocationControlBuffered.GpsDisabledLocation;
 import com.google.code.geobeagle.actions.context.ContextAction;
 import com.google.code.geobeagle.actions.context.ContextActionDelete;
 import com.google.code.geobeagle.actions.context.ContextActionView;
+import com.google.code.geobeagle.activity.ActivityDI;
+import com.google.code.geobeagle.activity.ActivitySaver;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionMyLocation;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionSearchOnline;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionSyncGpx;
@@ -233,7 +235,9 @@ public class CacheListDelegateDI {
         final GeocacheListController geocacheListController = new GeocacheListController(
                 listActivity, menuActions, contextActions, sqliteWrapper, database, gpxImporter,
                 cacheListRefresh, filterNearestCaches, errorDisplayer);
-        return new CacheListDelegate(geocacheListController, geocacheListPresenter);
+        final ActivitySaver activitySaver = ActivityDI.createActivitySaver(listActivity);
+
+        return new CacheListDelegate(activitySaver, geocacheListController, geocacheListPresenter);
     }
 
     public static ContextAction[] createContextActions(ListActivity parent, Database database,

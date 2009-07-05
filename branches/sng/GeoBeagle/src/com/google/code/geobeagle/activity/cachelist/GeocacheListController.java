@@ -67,9 +67,9 @@ public class GeocacheListController {
     private final MenuActions mMenuActions;
     private final SQLiteWrapper mSqliteWrapper;
 
-    public GeocacheListController(ListActivity listActivity,
-            MenuActions menuActions, ContextAction[] contextActions, SQLiteWrapper sqliteWrapper,
-            Database database, GpxImporter gpxImporter, CacheListRefresh cacheListRefresh,
+    public GeocacheListController(ListActivity listActivity, MenuActions menuActions,
+            ContextAction[] contextActions, SQLiteWrapper sqliteWrapper, Database database,
+            GpxImporter gpxImporter, CacheListRefresh cacheListRefresh,
             FilterNearestCaches filterNearestCaches, ErrorDisplayer errorDisplayer) {
         mListActivity = listActivity;
         mErrorDisplayer = errorDisplayer;

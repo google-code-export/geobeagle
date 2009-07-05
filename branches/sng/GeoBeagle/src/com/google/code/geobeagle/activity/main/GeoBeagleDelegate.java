@@ -17,6 +17,9 @@ package com.google.code.geobeagle.activity.main;
 import com.google.code.geobeagle.ErrorDisplayer;
 import com.google.code.geobeagle.GeocacheFactory;
 import com.google.code.geobeagle.R;
+import com.google.code.geobeagle.activity.ActivityDI;
+import com.google.code.geobeagle.activity.ActivitySaver;
+import com.google.code.geobeagle.activity.ActivityType;
 import com.google.code.geobeagle.activity.cachelist.CacheList;
 import com.google.code.geobeagle.activity.main.fieldnotes.FieldNoteSender;
 import com.google.code.geobeagle.activity.main.fieldnotes.FieldNoteSenderDI;
@@ -47,8 +50,9 @@ public class GeoBeagleDelegate {
         final CacheDetailsOnClickListener cacheDetailsOnClickListener = Misc.create(parent,
                 cacheDetailsBuilder, geocacheViewer, errorDisplayer, layoutInflater);
         final FieldNoteSender fieldNoteSender = FieldNoteSenderDI.build(parent, layoutInflater);
-        return new GeoBeagleDelegate(parent, appLifecycleManager, cacheDetailsBuilder,
-                cacheDetailsOnClickListener, fieldNoteSender, errorDisplayer);
+        ActivitySaver activitySaver = ActivityDI.createActivitySaver(parent);
+        return new GeoBeagleDelegate(parent, activitySaver, appLifecycleManager,
+                cacheDetailsBuilder, cacheDetailsOnClickListener, fieldNoteSender, errorDisplayer);
     }
 
     private final AppLifecycleManager mAppLifecycleManager;
@@ -57,11 +61,14 @@ public class GeoBeagleDelegate {
     private final ErrorDisplayer mErrorDisplayer;
     private final GeoBeagle mParent;
     private final FieldNoteSender mFieldNoteSender;
+    private final ActivitySaver mActivitySaver;
 
-    public GeoBeagleDelegate(GeoBeagle parent, AppLifecycleManager appLifecycleManager,
-            Builder cacheDetailsBuilder, CacheDetailsOnClickListener cacheDetailsOnClickListener,
+    public GeoBeagleDelegate(GeoBeagle parent, ActivitySaver activitySaver,
+            AppLifecycleManager appLifecycleManager, Builder cacheDetailsBuilder,
+            CacheDetailsOnClickListener cacheDetailsOnClickListener,
             FieldNoteSender fieldNoteSender, ErrorDisplayer errorDisplayer) {
         mParent = parent;
+        mActivitySaver = activitySaver;
         mAppLifecycleManager = appLifecycleManager;
         mCacheDetailsBuilder = cacheDetailsBuilder;
         mCacheDetailsOnClickListener = cacheDetailsOnClickListener;
@@ -109,6 +116,7 @@ public class GeoBeagleDelegate {
     public void onPause() {
         try {
             mAppLifecycleManager.onPause();
+            mActivitySaver.save(ActivityType.VIEW_CACHE, mParent.getGeocache());
         } catch (Exception e) {
             mErrorDisplayer.displayErrorAndStack(e);
         }
