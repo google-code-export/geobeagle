@@ -53,9 +53,9 @@ public class CacheListPresenterTest {
     public void testBaseAdapterLocationListener() {
         PowerMock.mockStatic(Log.class);
         CacheListRefresh cacheListRefresh = PowerMock.createMock(CacheListRefresh.class);
-
+        
         EasyMock.expect(Log.v((String)EasyMock.anyObject(), (String)EasyMock.anyObject()))
-                .andReturn(0);
+                .andReturn(0).anyTimes();
         cacheListRefresh.refresh();
 
         PowerMock.replayAll();

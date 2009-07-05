@@ -24,10 +24,10 @@ public class GeocacheFromPreferencesFactoryTest {
         SharedPreferences preferences = PowerMock.createMock(SharedPreferences.class);
         Geocache geocache = PowerMock.createMock(Geocache.class);
 
-        EasyMock.expect(preferences.getString(Geocache.ID, "GCMEY7")).andReturn("GC123");
-        EasyMock.expect(preferences.getString(Geocache.NAME, "Google Falls")).andReturn("a cache");
-        EasyMock.expect(preferences.getFloat(Geocache.LATITUDE, 37.42235f)).andReturn(37f);
-        EasyMock.expect(preferences.getFloat(Geocache.LONGITUDE, -122.082217f)).andReturn(-122f);
+        EasyMock.expect(preferences.getString(Geocache.ID, null)).andReturn("GC123");
+        EasyMock.expect(preferences.getString(Geocache.NAME, null)).andReturn("a cache");
+        EasyMock.expect(preferences.getFloat(Geocache.LATITUDE, 0)).andReturn(37f);
+        EasyMock.expect(preferences.getFloat(Geocache.LONGITUDE, 0)).andReturn(-122f);
         EasyMock.expect(preferences.getInt(Geocache.SOURCE_TYPE, -1)).andReturn(
                 Source.MY_LOCATION.toInt());
         EasyMock.expect(geocacheFactory.sourceFromInt(Source.MY_LOCATION.toInt())).andReturn(
