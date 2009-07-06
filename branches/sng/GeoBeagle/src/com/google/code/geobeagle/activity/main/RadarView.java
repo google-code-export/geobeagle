@@ -187,6 +187,8 @@ public class RadarView extends View implements SensorListener, LocationListener 
     private final String mDegreesSymbol;
     private Path mCompassPath;
     private final Paint mCompassPaint;
+    private final Paint mArrowPaint;
+    private final Path mArrowPath;
 
     public RadarView(Context context) {
         this(context, null);
@@ -246,6 +248,15 @@ public class RadarView extends View implements SensorListener, LocationListener 
         mSweepPaint2.setStyle(Style.STROKE);
         mSweepPaint2.setStrokeWidth(2f);
         mSweepPaint2.setAlpha(100);
+
+        // Paint used for the arrow
+        mArrowPaint = new Paint();
+        mArrowPaint.setColor(Color.WHITE);
+        mArrowPaint.setAntiAlias(true);
+        mArrowPaint.setStyle(Style.STROKE);
+        mArrowPaint.setStrokeWidth(16);
+        mArrowPaint.setAlpha(228);
+        mArrowPath = new Path();
 
         mBlip = ((BitmapDrawable)getResources().getDrawable(R.drawable.blip)).getBitmap();
         mCompassPath = new Path();
@@ -319,19 +330,13 @@ public class RadarView extends View implements SensorListener, LocationListener 
         canvas.drawLine(center - (radius >> 2) + 6, center, center - radius - 6, center, gridPaint);
         canvas.drawLine(center + (radius >> 2) - 6, center, center + radius + 6, center, gridPaint);
 
-        // Draw X in the center of the screen
-        canvas.drawLine(center - 4, center - 4, center + 4, center + 4, gridPaint);
-        canvas.drawLine(center - 4, center + 4, center + 4, center - 4, gridPaint);
-
         if (mHaveLocation) {
             double northAngle = Math.toRadians(-mOrientation) - (Math.PI / 2);
             float northX = (float)Math.cos(northAngle);
             float northY = (float)Math.sin(northAngle);
-            float tipX = northX * (radius - 12), tipY = northY * (radius - 12);
+            final int compassLength = radius >> 2;
+            float tipX = northX * compassLength, tipY = northY * compassLength;
             float baseX = northY * 8, baseY = -northX * 8;
-
-            drawCompassArrow(canvas, center, mCompassPaint, tipX, tipY, baseX, baseY, Color.RED);
-            drawCompassArrow(canvas, center, mCompassPaint, -tipX, -tipY, baseX, baseY, Color.GRAY);
 
             double bearingToTarget = mBearing - mOrientation;
             double drawingAngle = Math.toRadians(bearingToTarget) - (Math.PI / 2);
@@ -343,9 +348,37 @@ public class RadarView extends View implements SensorListener, LocationListener 
             // the blip.
             // long blipDifference = now - mBlipTime;
             // gridPaint.setAlpha(255 - (int)((128 * blipDifference) >> 10));
+
+            mArrowPath.reset();
+            mArrowPath.moveTo(center - cos * radius, center - sin * radius);
+            mArrowPath.lineTo(center + cos * radius, center + sin * radius);
+
+            final double arrowRight = drawingAngle + Math.PI / 2;
+            final double arrowLeft = drawingAngle - Math.PI / 2;
+            mArrowPath.moveTo(center + (float)Math.cos(arrowRight) * radius, center
+                    + (float)Math.sin(arrowRight) * radius);
+            mArrowPath.lineTo(center + cos * radius, center + sin * radius);
+            mArrowPath.lineTo(center + (float)Math.cos(arrowLeft) * radius, center
+                    + (float)Math.sin(arrowLeft) * radius);
+
+            canvas.drawPath(mArrowPath, mArrowPaint);
+
+            drawCompassArrow(canvas, center, mCompassPaint, tipX, tipY, baseX, baseY, Color.RED);
+            drawCompassArrow(canvas, center, mCompassPaint, -tipX, -tipY, baseX, baseY, Color.GRAY);
+
             gridPaint.setAlpha(255);
             canvas.drawBitmap(mBlip, center + (cos * blipRadius) - 8, center + (sin * blipRadius)
                     - 8, gridPaint);
+
+            // final int lineWidth = 12;
+            // canvas.drawLine(center + (cos * blipRadius) - lineWidth, center +
+            // (sin * blipRadius)
+            // - lineWidth, center + (cos * blipRadius) + lineWidth, center
+            // + (sin * blipRadius) + lineWidth, gridPaint);
+            // canvas.drawLine(center + (cos * blipRadius) - lineWidth, center +
+            // (sin * blipRadius)
+            // + lineWidth, center + (cos * blipRadius) + lineWidth, center
+            // + (sin * blipRadius) - lineWidth, gridPaint);
         }
     }
 
@@ -353,7 +386,7 @@ public class RadarView extends View implements SensorListener, LocationListener 
             float tipY, float baseX, float baseY, int color) {
         gridPaint.setStyle(Paint.Style.FILL_AND_STROKE);
         gridPaint.setColor(color);
-        gridPaint.setAlpha(180);
+        gridPaint.setAlpha(255);
         mCompassPath.reset();
         mCompassPath.moveTo(center + baseX, center + baseY);
         mCompassPath.lineTo(center + tipX, center + tipY);
@@ -384,7 +417,7 @@ public class RadarView extends View implements SensorListener, LocationListener 
      * @see android.location.LocationListener#onLocationChanged(android.location.Location)
      */
     public void onLocationChanged(Location location) {
-        Log.v("GeoBeagle", "radarview::onLocationChanged");
+        // Log.v("GeoBeagle", "radarview::onLocationChanged");
         if (!mHaveLocation) {
             mHaveLocation = true;
         }
