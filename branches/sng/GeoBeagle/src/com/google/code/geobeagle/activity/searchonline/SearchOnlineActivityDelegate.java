@@ -69,6 +69,5 @@ public class SearchOnlineActivityDelegate {
         mSensorManager.registerListener(mCompassListener, SensorManager.SENSOR_ORIENTATION,
                 SensorManager.SENSOR_DELAY_UI);
         mDistanceFormatterManager.setFormatter();
-        mActivityRestorer.restore(intent.getFlags());
     }
 }

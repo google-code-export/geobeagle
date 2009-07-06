@@ -104,6 +104,7 @@ public class SearchOnlineActivity extends Activity {
         final JsInterface jsInterface = new JsInterface(mLocationControlBuffered, jsInterfaceHelper);
 
         mSearchOnlineActivityDelegate.configureWebView(jsInterface);
+        activityRestorer.restore(getIntent().getFlags());
     }
 
     @Override
