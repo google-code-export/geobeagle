@@ -7,7 +7,6 @@ import com.google.code.geobeagle.activity.cachelist.CacheList;
 import com.google.code.geobeagle.activity.cachelist.GeocacheListController;
 import com.google.code.geobeagle.activity.main.GeoBeagle;
 import com.google.code.geobeagle.activity.main.GeocacheFromPreferencesFactory;
-import com.google.code.geobeagle.activity.searchonline.SearchOnlineActivity;
 
 import org.easymock.EasyMock;
 import org.junit.Test;
@@ -40,6 +39,7 @@ public class ActivityRestorerTest {
         EasyMock.expect(activityTypeFactory.fromInt(cacheList)).andReturn(ActivityType.CACHE_LIST);
         PowerMock.expectNew(Intent.class, parent, CacheList.class).andReturn(intent);
         parent.startActivity(intent);
+        parent.finish();
 
         PowerMock.replayAll();
         new ActivityRestorer(parent, null, activityTypeFactory, sharedPreferences)
@@ -78,7 +78,6 @@ public class ActivityRestorerTest {
                 .createMock(ActivityDI.ActivityTypeFactory.class);
         SharedPreferences sharedPreferences = PowerMock.createMock(SharedPreferences.class);
         Activity parent = PowerMock.createMock(Activity.class);
-        Intent intent = PowerMock.createMock(Intent.class);
 
         final int searchOnline = ActivityType.SEARCH_ONLINE.toInt();
         EasyMock.expect(
@@ -86,8 +85,6 @@ public class ActivityRestorerTest {
                 .andReturn(searchOnline);
         EasyMock.expect(activityTypeFactory.fromInt(searchOnline)).andReturn(
                 ActivityType.SEARCH_ONLINE);
-        PowerMock.expectNew(Intent.class, parent, SearchOnlineActivity.class).andReturn(intent);
-        parent.startActivity(intent);
 
         PowerMock.replayAll();
         new ActivityRestorer(parent, null, activityTypeFactory, sharedPreferences)
@@ -117,6 +114,7 @@ public class ActivityRestorerTest {
         EasyMock.expect(intent.putExtra("geocache", geocache)).andReturn(intent);
         EasyMock.expect(intent.setAction(GeocacheListController.SELECT_CACHE)).andReturn(intent);
         parent.startActivity(intent);
+        parent.finish();
 
         PowerMock.replayAll();
         new ActivityRestorer(parent, geocacheFromPreferencesFactory, activityTypeFactory,
