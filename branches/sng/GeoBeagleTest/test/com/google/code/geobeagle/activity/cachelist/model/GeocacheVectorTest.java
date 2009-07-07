@@ -22,6 +22,7 @@ import com.google.code.geobeagle.LocationControlBuffered;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVector;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVector.LocationComparator;
 import com.google.code.geobeagle.activity.cachelist.presenter.BearingFormatter;
+import com.google.code.geobeagle.activity.cachelist.presenter.RelativeBearingFormatter;
 import com.google.code.geobeagle.activity.cachelist.presenter.DistanceSortStrategy;
 import com.google.code.geobeagle.activity.cachelist.presenter.NullSortStrategy;
 import com.google.code.geobeagle.formatting.DistanceFormatterMetric;
@@ -117,7 +118,7 @@ public class GeocacheVectorTest {
     public void testGetFormattedDistance() {
         DistanceFormatterMetric distanceFormatterMetric = PowerMock
                 .createMock(DistanceFormatterMetric.class);
-        BearingFormatter bearingFormatter = PowerMock.createMock(BearingFormatter.class);
+        BearingFormatter relativeBearingFormatter = PowerMock.createMock(RelativeBearingFormatter.class);
         LocationControlBuffered locationControlBuffered = PowerMock
                 .createMock(LocationControlBuffered.class);
         Location location = PowerMock.createMock(Location.class);
@@ -129,12 +130,12 @@ public class GeocacheVectorTest {
         expect(locationControlBuffered.getAzimuth()).andReturn(10f);
 
         expect(distanceFormatterMetric.formatDistance(3.5f)).andReturn("3.5m");
-        expect(bearingFormatter.formatBearing(270, 10)).andReturn(">");
+        expect(relativeBearingFormatter.formatBearing(270, 10)).andReturn(">");
 
         PowerMock.replayAll();
         GeocacheVector geocacheVector = new GeocacheVector(geocache, locationControlBuffered);
         assertEquals("3.5m >", geocacheVector.getFormattedDistance(distanceFormatterMetric,
-                bearingFormatter));
+                relativeBearingFormatter));
         PowerMock.verifyAll();
     }
 

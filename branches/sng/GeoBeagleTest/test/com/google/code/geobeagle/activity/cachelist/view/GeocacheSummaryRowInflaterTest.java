@@ -7,6 +7,7 @@ import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVector;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVectors;
 import com.google.code.geobeagle.activity.cachelist.presenter.BearingFormatter;
+import com.google.code.geobeagle.activity.cachelist.presenter.RelativeBearingFormatter;
 import com.google.code.geobeagle.activity.cachelist.view.GeocacheSummaryRowInflater.RowViews;
 import com.google.code.geobeagle.formatting.DistanceFormatter;
 
@@ -34,17 +35,17 @@ public class GeocacheSummaryRowInflaterTest {
         TextView txtDistance = PowerMock.createMock(TextView.class);
         GeocacheVector geocacheVector = PowerMock.createMock(GeocacheVector.class);
         DistanceFormatter distanceFormatter = PowerMock.createMock(DistanceFormatter.class);
-        BearingFormatter bearingFormatter = PowerMock.createMock(BearingFormatter.class);
+        BearingFormatter relativeBearingFormatter = PowerMock.createMock(RelativeBearingFormatter.class);
 
         EasyMock.expect(geocacheVector.getIdAndName()).andReturn("GC123 my cache");
-        EasyMock.expect(geocacheVector.getFormattedDistance(distanceFormatter, bearingFormatter))
+        EasyMock.expect(geocacheVector.getFormattedDistance(distanceFormatter, relativeBearingFormatter))
                 .andReturn("10m");
         txtCache.setText("GC123 my cache");
         txtDistance.setText("10m");
 
         PowerMock.replayAll();
         new GeocacheSummaryRowInflater.RowViews(txtCache, txtDistance).set(geocacheVector,
-                distanceFormatter, bearingFormatter);
+                distanceFormatter, relativeBearingFormatter);
         PowerMock.verifyAll();
     }
 
@@ -52,11 +53,11 @@ public class GeocacheSummaryRowInflaterTest {
     public void testInflateExisting() throws Exception {
         View convertView = PowerMock.createMock(View.class);
         DistanceFormatter distanceFormatter = PowerMock.createMock(DistanceFormatter.class);
-        BearingFormatter bearingFormatter = PowerMock.createMock(BearingFormatter.class);
+        BearingFormatter relativeBearingFormatter = PowerMock.createMock(RelativeBearingFormatter.class);
 
         PowerMock.replayAll();
         assertEquals(convertView, new GeocacheSummaryRowInflater(null, null, distanceFormatter,
-                bearingFormatter).inflate(convertView));
+                relativeBearingFormatter).inflate(convertView));
         PowerMock.verifyAll();
     }
 
@@ -68,7 +69,7 @@ public class GeocacheSummaryRowInflaterTest {
         TextView txtView = PowerMock.createMock(TextView.class);
         TextView txtDistance = PowerMock.createMock(TextView.class);
         DistanceFormatter distanceFormatter = PowerMock.createMock(DistanceFormatter.class);
-        BearingFormatter bearingFormatter = PowerMock.createMock(BearingFormatter.class);
+        BearingFormatter relativeBearingFormatter = PowerMock.createMock(RelativeBearingFormatter.class);
         PowerMock.mockStatic(Log.class);
 
         EasyMock.expect(Log.v((String)EasyMock.anyObject(), (String)EasyMock.anyObject()))
@@ -82,7 +83,7 @@ public class GeocacheSummaryRowInflaterTest {
 
         PowerMock.replayAll();
         assertEquals(view, new GeocacheSummaryRowInflater(layoutInflater, null, distanceFormatter,
-                bearingFormatter).inflate(null));
+                relativeBearingFormatter).inflate(null));
         PowerMock.verifyAll();
     }
 
@@ -92,17 +93,17 @@ public class GeocacheSummaryRowInflaterTest {
         TextView cache = PowerMock.createMock(TextView.class);
         TextView distance = PowerMock.createMock(TextView.class);
         DistanceFormatter distanceFormatter = PowerMock.createMock(DistanceFormatter.class);
-        BearingFormatter bearingFormatter = PowerMock.createMock(BearingFormatter.class);
+        BearingFormatter relativeBearingFormatter = PowerMock.createMock(RelativeBearingFormatter.class);
 
         EasyMock.expect(geocacheVector.getIdAndName()).andReturn("GC123 a cache");
         cache.setText("GC123 a cache");
-        EasyMock.expect(geocacheVector.getFormattedDistance(distanceFormatter, bearingFormatter))
+        EasyMock.expect(geocacheVector.getFormattedDistance(distanceFormatter, relativeBearingFormatter))
                 .andReturn("27m");
         distance.setText("27m");
 
         PowerMock.replayAll();
         RowViews rowViews = new RowViews(cache, distance);
-        rowViews.set(geocacheVector, distanceFormatter, bearingFormatter);
+        rowViews.set(geocacheVector, distanceFormatter, relativeBearingFormatter);
         PowerMock.verifyAll();
 
     }
@@ -115,15 +116,15 @@ public class GeocacheSummaryRowInflaterTest {
         RowViews rowViews = PowerMock.createMock(RowViews.class);
         DistanceFormatter distanceFormatter = PowerMock.createMock(DistanceFormatter.class);
         DistanceFormatter distanceFormatter2 = PowerMock.createMock(DistanceFormatter.class);
-        BearingFormatter bearingFormatter = PowerMock.createMock(BearingFormatter.class);
+        BearingFormatter relativeBearingFormatter = PowerMock.createMock(RelativeBearingFormatter.class);
 
         EasyMock.expect(geocacheVectors.get(18)).andReturn(geocacheVector);
         EasyMock.expect(view.getTag()).andReturn(rowViews);
-        rowViews.set(geocacheVector, distanceFormatter2, bearingFormatter);
+        rowViews.set(geocacheVector, distanceFormatter2, relativeBearingFormatter);
         
         PowerMock.replayAll();
         final GeocacheSummaryRowInflater geocacheSummaryRowInflater = new GeocacheSummaryRowInflater(
-                null, geocacheVectors, distanceFormatter, bearingFormatter);
+                null, geocacheVectors, distanceFormatter, relativeBearingFormatter);
         geocacheSummaryRowInflater.setDistanceFormatter(distanceFormatter2);
         geocacheSummaryRowInflater.setData(view, 18);
         PowerMock.verifyAll();
