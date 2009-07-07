@@ -140,6 +140,10 @@ public class GeoBeagleDelegate {
     }
 
     public void onSaveInstanceState(Bundle outState) {
-        mParent.getGeocache().saveToBundle(outState);
+        // apparently there are cases where getGeocache returns null, causing
+        // crashes
+        // with 0.7.7/0.7.8.
+        if (mParent.getGeocache() != null)
+            mParent.getGeocache().saveToBundle(outState);
     }
 }
