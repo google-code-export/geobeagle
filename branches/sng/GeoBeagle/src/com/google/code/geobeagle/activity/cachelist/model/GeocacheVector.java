@@ -85,9 +85,8 @@ public class GeocacheVector {
 
         final CharSequence formattedDistance = distanceFormatter
                 .formatDistance(distanceAndBearing[0]);
-        final String formattedBearing = bearingFormatter.formatBearing(distanceAndBearing[1]
-                - azimuth);
-
+        final String formattedBearing = bearingFormatter.formatBearing(distanceAndBearing[1],
+                azimuth);
         return formattedDistance + " " + formattedBearing;
     }
 

@@ -20,8 +20,7 @@ public class BearingFormatter {
             "^", ">", "v", "<",
     };
 
-    public String formatBearing(float currentBearing) {
-        return ARROWS[((((int)(currentBearing) + 45 + 720) % 360) / 90)];
+    public String formatBearing(float absBearing, float myHeading) {
+        return ARROWS[((((int)(absBearing - myHeading) + 45 + 720) % 360) / 90)];
     }
-
 }
