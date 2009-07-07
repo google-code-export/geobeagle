@@ -129,7 +129,7 @@ public class GeocacheVectorTest {
         expect(locationControlBuffered.getAzimuth()).andReturn(10f);
 
         expect(distanceFormatterMetric.formatDistance(3.5f)).andReturn("3.5m");
-        expect(bearingFormatter.formatBearing(260)).andReturn(">");
+        expect(bearingFormatter.formatBearing(270, 10)).andReturn(">");
 
         PowerMock.replayAll();
         GeocacheVector geocacheVector = new GeocacheVector(geocache, locationControlBuffered);
