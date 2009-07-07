@@ -19,6 +19,7 @@ import com.google.code.geobeagle.LocationControlBuffered;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.cachelist.GeocacheListController.CacheListOnCreateContextMenuListener;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVectors;
+import com.google.code.geobeagle.activity.cachelist.view.GeocacheSummaryRowInflater;
 import com.google.code.geobeagle.database.Database;
 import com.google.code.geobeagle.database.DatabaseDI.SQLiteWrapper;
 import com.google.code.geobeagle.gpsstatuswidget.UpdateGpsWidgetRunnable;
@@ -30,9 +31,9 @@ import android.hardware.SensorManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.View;
 import android.widget.ListView;
-
 
 @SuppressWarnings("deprecation")
 public class GeocacheListPresenter {
@@ -44,7 +45,7 @@ public class GeocacheListPresenter {
         }
 
         public void onLocationChanged(Location location) {
-//            Log.v("GeoBeagle", "location changed");
+            // Log.v("GeoBeagle", "location changed");
             mCacheListRefresh.refresh();
         }
 
@@ -77,6 +78,7 @@ public class GeocacheListPresenter {
     private final SensorManager mSensorManager;
     private final SQLiteWrapper mSQLiteWrapper;
     private final UpdateGpsWidgetRunnable mUpdateGpsWidgetRunnable;
+    private final GeocacheSummaryRowInflater mGeocacheSummaryRowInflater;
 
     // private Sensor mCompassSensor;
 
@@ -89,7 +91,8 @@ public class GeocacheListPresenter {
             ListActivity listActivity, GeocacheListAdapter geocacheListAdapter,
             ErrorDisplayer errorDisplayer, SQLiteWrapper sqliteWrapper, Database database,
             SensorManager sensorManager, SensorListener compassListener,
-            DistanceFormatterManager distanceFormatterManager) {
+            DistanceFormatterManager distanceFormatterManager,
+            GeocacheSummaryRowInflater geocacheSummaryRowInflater) {
         mCombinedLocationManager = combinedLocationManager;
         mLocationControlBuffered = locationControlBuffered;
         mCombinedLocationListener = gpsStatusWidgetLocationListener;
@@ -105,6 +108,7 @@ public class GeocacheListPresenter {
         mErrorDisplayer = errorDisplayer;
         mCompassListener = compassListener;
         mDistanceFormatterManager = distanceFormatterManager;
+        mGeocacheSummaryRowInflater = geocacheSummaryRowInflater;
     }
 
     public void onCreate() {
@@ -141,6 +145,13 @@ public class GeocacheListPresenter {
             // SensorManager.SENSOR_DELAY_UI);
             mSensorManager.registerListener(mCompassListener, SensorManager.SENSOR_ORIENTATION,
                     SensorManager.SENSOR_DELAY_UI);
+            final boolean absoluteBearing = PreferenceManager.getDefaultSharedPreferences(
+                    mListActivity).getBoolean("absolute-bearing", false);
+            if (absoluteBearing)
+                mGeocacheSummaryRowInflater.setBearingFormatter(new AbsoluteBearingFormatter());
+            else
+                mGeocacheSummaryRowInflater.setBearingFormatter(new RelativeBearingFormatter());
+
         } catch (final Exception e) {
             mErrorDisplayer.displayErrorAndStack(e);
         }

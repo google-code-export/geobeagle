@@ -127,6 +127,7 @@ public class GeoBeagleDelegate {
             mParent.getRadar().setUseMetric(
                     !PreferenceManager.getDefaultSharedPreferences(mParent).getBoolean("imperial",
                             false));
+            
             mAppLifecycleManager.onResume();
         } catch (Exception e) {
             mErrorDisplayer.displayErrorAndStack(e);

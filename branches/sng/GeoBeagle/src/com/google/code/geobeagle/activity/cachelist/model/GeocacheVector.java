@@ -74,7 +74,7 @@ public class GeocacheVector {
     }
 
     public CharSequence getFormattedDistance(DistanceFormatter distanceFormatter,
-            BearingFormatter bearingFormatter) {
+            BearingFormatter relativeBearingFormatter) {
         // Use the slower, more accurate distance for display.
         final float[] distanceAndBearing = mGeocache
                 .calculateDistanceAndBearing(mLocationControlBuffered.getLocation());
@@ -85,7 +85,7 @@ public class GeocacheVector {
 
         final CharSequence formattedDistance = distanceFormatter
                 .formatDistance(distanceAndBearing[0]);
-        final String formattedBearing = bearingFormatter.formatBearing(distanceAndBearing[1],
+        final String formattedBearing = relativeBearingFormatter.formatBearing(distanceAndBearing[1],
                 azimuth);
         return formattedDistance + " " + formattedBearing;
     }

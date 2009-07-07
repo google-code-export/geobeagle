@@ -37,25 +37,25 @@ public class GeocacheSummaryRowInflater implements HasDistanceFormatter {
         }
 
         void set(GeocacheVector geocacheVector, DistanceFormatter distanceFormatter,
-                BearingFormatter bearingFormatter) {
+                BearingFormatter relativeBearingFormatter) {
             mCache.setText(geocacheVector.getIdAndName());
             mDistance.setText(geocacheVector.getFormattedDistance(distanceFormatter,
-                    bearingFormatter));
+                    relativeBearingFormatter));
         }
     }
 
-    private final BearingFormatter mBearingFormatter;
+    private BearingFormatter mBearingFormatter;
     private DistanceFormatter mDistanceFormatter;
     private final GeocacheVectors mGeocacheVectors;
     private final LayoutInflater mLayoutInflater;
 
     public GeocacheSummaryRowInflater(LayoutInflater layoutInflater,
             GeocacheVectors geocacheVectors, DistanceFormatter distanceFormatter,
-            BearingFormatter bearingFormatter) {
+            BearingFormatter relativeBearingFormatter) {
         mLayoutInflater = layoutInflater;
         mGeocacheVectors = geocacheVectors;
         mDistanceFormatter = distanceFormatter;
-        mBearingFormatter = bearingFormatter;
+        mBearingFormatter = relativeBearingFormatter;
     }
 
     public View inflate(View convertView) {
@@ -77,5 +77,9 @@ public class GeocacheSummaryRowInflater implements HasDistanceFormatter {
 
     public void setDistanceFormatter(DistanceFormatter distanceFormatter) {
         mDistanceFormatter = distanceFormatter;
+    }
+
+    public void setBearingFormatter(BearingFormatter bearingFormatter) {
+        mBearingFormatter = bearingFormatter;
     }
 }
