@@ -90,7 +90,6 @@ public class SearchOnlineActivity extends Activity {
         final GeocacheFromPreferencesFactory geocacheFromPreferencesFactory = new GeocacheFromPreferencesFactory(
                 geocacheFactory);
         final ActivityTypeFactory activityTypeFactory = new ActivityTypeFactory();
-
         final ActivityRestorer activityRestorer = new ActivityRestorer(this,
                 geocacheFromPreferencesFactory, activityTypeFactory, getSharedPreferences(
                         "GeoBeagle", Context.MODE_PRIVATE));
@@ -98,7 +97,7 @@ public class SearchOnlineActivity extends Activity {
         mSearchOnlineActivityDelegate = new SearchOnlineActivityDelegate(
                 ((WebView)findViewById(R.id.help_contents)), mSensorManager, mCompassListener,
                 mCombinedLocationManager, mCombinedLocationListener, mLocationControlBuffered,
-                distanceFormatterManager, activitySaver, activityRestorer);
+                distanceFormatterManager, activitySaver);
 
         final JsInterfaceHelper jsInterfaceHelper = new JsInterfaceHelper(this);
         final JsInterface jsInterface = new JsInterface(mLocationControlBuffered, jsInterfaceHelper);
@@ -125,7 +124,7 @@ public class SearchOnlineActivity extends Activity {
         super.onResume();
         Log.v("GeoBeagle", "SearchOnlineActivity onResume");
 
-        mSearchOnlineActivityDelegate.onResume(getIntent());
+        mSearchOnlineActivityDelegate.onResume();
     }
 
     @Override

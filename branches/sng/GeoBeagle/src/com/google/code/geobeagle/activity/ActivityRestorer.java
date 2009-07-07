@@ -20,12 +20,10 @@ import com.google.code.geobeagle.activity.cachelist.CacheList;
 import com.google.code.geobeagle.activity.cachelist.GeocacheListController;
 import com.google.code.geobeagle.activity.main.GeoBeagle;
 import com.google.code.geobeagle.activity.main.GeocacheFromPreferencesFactory;
-import com.google.code.geobeagle.activity.searchonline.SearchOnlineActivity;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.util.Log;
 
 public class ActivityRestorer {
     private final Activity mActivity;
@@ -43,7 +41,6 @@ public class ActivityRestorer {
     }
 
     public void restore(int flags) {
-        Log.v("GeoBeagle", "flags: " + flags);
         if ((flags & Intent.FLAG_ACTIVITY_NEW_TASK) == 0)
             return;
 
@@ -63,11 +60,11 @@ public class ActivityRestorer {
                 intent = new Intent(mActivity, CacheList.class);
                 break;
             case SEARCH_ONLINE:
-                intent = new Intent(mActivity, SearchOnlineActivity.class);
-                break;
+                return;
             default:
                 return;
         }
         mActivity.startActivity(intent);
+        mActivity.finish();
     }
 }
