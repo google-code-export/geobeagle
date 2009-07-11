@@ -3,7 +3,7 @@
 
 `svn checkout https://geobeagle.googlecode.com/svn/`
 
-=Setting up GeoBeagle=
+=Setting up !GeoBeagle=
 
 
 Eclipse / New Android Project / Create Project From Existing Source / select !GeoBeagle dir
@@ -22,3 +22,5 @@ Eclipse / New Java Project / Create Project From Existing Source / select !GeoBe
 Properties / java build path / Projects / add / select !GeoBeagle project 
 
 Properties / Java build path / Libraries / add external jars... / add all powermock jars.
+
+Run / Run Configurations / Junit test / Arguments/ VM Arguments: -Xms256m -Xmx1024m -XX:MaxPermSize=256m
