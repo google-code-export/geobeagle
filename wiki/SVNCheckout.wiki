@@ -8,7 +8,7 @@
 
 Eclipse / New Android Project / Create Project From Existing Source / select !GeoBeagle dir
 
-Use GeoBeagle as the Application Name and the Project Name.  Choose Android 1.5 as the Build Target.
+Use !GeoBeagle as the Application Name and the Project Name.  Choose Android 1.5 as the Build Target.
 
 
 Eclipse / Preferences / Set Android SDK Location
@@ -20,6 +20,8 @@ Set java1.6
 Eclipse / New Java Project / Create Project From Existing Source / select !GeoBeagleTest dir
 
 Properties / java build path / Projects / add / select !GeoBeagle project 
+
+Download powermock with dependencies: http://code.google.com/p/powermock/downloads/list
 
 Properties / Java build path / Libraries / add external jars... / add all powermock jars.
 
