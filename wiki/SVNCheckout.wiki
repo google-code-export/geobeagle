@@ -3,13 +3,22 @@
 
 `svn checkout https://geobeagle.googlecode.com/svn/`
 
+=Setting up GeoBeagle=
+
+
 Eclipse / New Android Project / Create Project From Existing Source / select !GeoBeagle dir
 
-!GeoBeagle / Properties / Java Build Path / Add External Jars.... / android.jar
+Use GeoBeagle as the Application Name and the Project Name.  Choose Android 1.5 as the Build Target.
 
 
 Eclipse / Preferences / Set Android SDK Location
 
 Set java1.6
 
+=Setting up the tests=
+
 Eclipse / New Java Project / Create Project From Existing Source / select !GeoBeagleTest dir
+
+Properties / java build path / Projects / add / select !GeoBeagle project 
+
+Properties / Java build path / Libraries / add external jars... / add all powermock jars.
