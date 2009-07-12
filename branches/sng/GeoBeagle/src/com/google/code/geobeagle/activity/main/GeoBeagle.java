@@ -50,15 +50,21 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.hardware.SensorManager;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.net.UrlQuerySanitizer;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.text.format.DateFormat;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import java.io.File;
 
 /*
  * Main Activity for GeoBeagle.
@@ -69,6 +75,7 @@ public class GeoBeagle extends Activity {
         }
     }
 
+    private static int ACTIVITY_REQUEST_TAKE_PICTURE = 1;
     private CompassListener mCompassListener;
     private final Database mDatabase;
     private final ErrorDisplayer mErrorDisplayer;
@@ -83,7 +90,6 @@ public class GeoBeagle extends Activity {
     private final ResourceProvider mResourceProvider;
     private SensorManager mSensorManager;
     private final SQLiteWrapper mSqliteWrapper;
-
     private WebPageAndDetailsButtonEnabler mWebPageButtonEnabler;
 
     public GeoBeagle() {
@@ -143,20 +149,22 @@ public class GeoBeagle extends Activity {
         return false;
     }
 
-    /*
-     * (non-Javadoc)
-     * @see android.app.Activity#onRetainNonConfigurationInstance()
-     */
-    @Override
-    public Object onRetainNonConfigurationInstance() {
-        return getIntent();
-    }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == 0)
+        if (requestCode == ACTIVITY_REQUEST_TAKE_PICTURE) {
+            Log.v("GeoBeagle", "camera intent has returned.");
+        } else if (resultCode == 0)
             setIntent(data);
+    }
+
+    private void onCameraStart() {
+        String filename = "/sdcard/GeoBeagle/" + mGeocache.getId()
+                + DateFormat.format(" yyyy-MM-dd kk.mm.ss.jpg", System.currentTimeMillis());
+        Log.v("GeoBeagle", "capturing image to " + filename);
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(new File(filename)));
+        startActivityForResult(intent, ACTIVITY_REQUEST_TAKE_PICTURE);
     }
 
     @Override
@@ -229,6 +237,15 @@ public class GeoBeagle extends Activity {
     }
 
     @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_CAMERA && event.getRepeatCount() == 0) {
+            onCameraStart();
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         return mGeoBeagleDelegate.onOptionsItemSelected(item);
     }
@@ -279,6 +296,15 @@ public class GeoBeagle extends Activity {
     public void onResume(SharedPreferences preferences) {
         Log.v("GeoBeagle", "onResume");
         setGeocache(mGeocacheFromPreferencesFactory.create(preferences));
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see android.app.Activity#onRetainNonConfigurationInstance()
+     */
+    @Override
+    public Object onRetainNonConfigurationInstance() {
+        return getIntent();
     }
 
     /*
