@@ -140,6 +140,9 @@ public class GeoBeagle extends Activity {
                     return true;
                 } else if (action.equals(GeocacheListController.SELECT_CACHE)) {
                     mGeocache = intent.<Geocache> getParcelableExtra("geocache");
+                    if (mGeocache == null)
+                        mGeocache = new Geocache("", "", 0, 0, Source.MY_LOCATION, "",
+                                CacheType.NULL, 0, 0, 0);
                     mGeocacheViewer.set(mGeocache);
                     mWebPageButtonEnabler.check();
                     return true;
