@@ -13,14 +13,14 @@
 <LinearLayout android:orientation="horizontal"
 	android:layout_width="fill_parent" android:layout_height="wrap_content"
 	xmlns:android="http://schemas.android.com/apk/res/android">
-	<TextView android:id="@+id/txt_cache" android:textSize="18sp"
+	<ImageView android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/gc_row_icon"></ImageView><TextView android:id="@+id/txt_cache" android:textSize="18sp"
 		android:paddingBottom="4sp" android:paddingRight="8sp"
 		android:layout_width="wrap_content" android:gravity="left"
 		android:layout_height="wrap_content" android:text="GC1H6KX"
 		android:layout_weight="5" />
 	<TextView android:id="@+id/distance" android:gravity="right"
-		android:textColor="#93be26" android:textSize="16sp" android:minEms="6"
-		android:paddingBottom="4sp" android:layout_weight="1" android:paddingRight="4sp"
+		android:textColor="#93be26" android:textSize="16sp" android:paddingBottom="4sp" android:layout_weight="1" android:paddingRight="4sp"
 		android:layout_width="wrap_content" android:layout_height="wrap_content"
-		android:text="304m" />
+		android:text="304m" android:minEms="6"/>
+
 </LinearLayout>

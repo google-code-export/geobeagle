@@ -19,6 +19,7 @@ import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.isNull;
 import static org.junit.Assert.assertEquals;
 
+import com.google.code.geobeagle.CacheType;
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.GeocacheFactory;
 import com.google.code.geobeagle.GeocacheFactory.Source;
@@ -74,9 +75,16 @@ public class CacheReaderTest {
         expect(cursor.getString(2)).andReturn("GC123");
         expect(cursor.getString(3)).andReturn("name");
         expect(cursor.getString(4)).andReturn("cupertino");
+        expect(cursor.getString(5)).andReturn("0");
+        expect(cursor.getString(6)).andReturn("0");
+        expect(cursor.getString(7)).andReturn("0");
+        expect(cursor.getString(8)).andReturn("0");
+        expect(geocacheFactory.cacheTypeFromInt(0)).andReturn(CacheType.TRADITIONAL);
+
         expect(dbToGeocacheAdapter.sourceNameToSourceType("cupertino")).andReturn(Source.GPX);
-        expect(geocacheFactory.create("GC123", "name", 122.0, 37.0, Source.GPX, "cupertino"))
-                .andReturn(geocache);
+        expect(
+                geocacheFactory.create("GC123", "name", 122.0, 37.0, Source.GPX, "cupertino",
+                        CacheType.TRADITIONAL, 0, 0, 0)).andReturn(geocache);
 
         PowerMock.replayAll();
         assertEquals(geocache, new CacheReaderCursor(cursor, geocacheFactory, dbToGeocacheAdapter)

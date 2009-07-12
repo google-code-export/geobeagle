@@ -35,6 +35,10 @@ public class Geocache implements Parcelable {
     public static final String NAME = "name";
     public static final String SOURCE_NAME = "sourceName";
     public static final String SOURCE_TYPE = "sourceType";
+    public static final String CACHE_TYPE = "cacheType";
+    public static final String DIFFICULTY = "difficulty";
+    public static final String TERRAIN = "terrain";
+    public static final String CONTAINER = "container";
 
     private final CharSequence mId;
     private final double mLatitude;
@@ -43,15 +47,24 @@ public class Geocache implements Parcelable {
     private final String mSourceName;
     private final Source mSourceType;
     private float[] mDistanceAndBearing = new float[2];
+    private final CacheType mCacheType;
+    private final int mDifficulty;
+    private final int mTerrain;
+    private final int mContainer;
 
     public Geocache(CharSequence id, CharSequence name, double latitude, double longitude,
-            Source sourceType, String sourceName) {
+            Source sourceType, String sourceName, CacheType cacheType, int difficulty, int terrain,
+            int container) {
         mId = id;
         mName = name;
         mLatitude = latitude;
         mLongitude = longitude;
         mSourceType = sourceType;
         mSourceName = sourceName;
+        mCacheType = cacheType;
+        mDifficulty = difficulty;
+        mTerrain = terrain;
+        mContainer = container;
     }
 
     public float[] calculateDistanceAndBearing(Location here) {
@@ -106,6 +119,22 @@ public class Geocache implements Parcelable {
         return mLongitude;
     }
 
+    public CacheType getCacheType() {
+        return mCacheType;
+    }
+
+    public int getDifficulty() {
+        return mDifficulty;
+    }
+
+    public int getTerrain() {
+        return mTerrain;
+    }
+
+    public int getContainer() {
+        return mContainer;
+    }
+
     public CharSequence getName() {
         return mName;
     }
@@ -138,6 +167,10 @@ public class Geocache implements Parcelable {
         bundle.putDouble(LONGITUDE, mLongitude);
         bundle.putInt(SOURCE_TYPE, mSourceType.toInt());
         bundle.putString(SOURCE_NAME, mSourceName);
+        bundle.putInt(CACHE_TYPE, mCacheType.toInt());
+        bundle.putInt(DIFFICULTY, mDifficulty);
+        bundle.putInt(TERRAIN, mTerrain);
+        bundle.putInt(CONTAINER, mContainer);
     }
 
     public void writeToPrefs(Editor editor) {
@@ -148,5 +181,9 @@ public class Geocache implements Parcelable {
         editor.putFloat(LONGITUDE, (float)mLongitude);
         editor.putInt(SOURCE_TYPE, mSourceType.toInt());
         editor.putString(SOURCE_NAME, mSourceName);
+        editor.putInt(CACHE_TYPE, mCacheType.toInt());
+        editor.putInt(DIFFICULTY, mDifficulty);
+        editor.putInt(TERRAIN, mTerrain);
+        editor.putInt(CONTAINER, mContainer);
     }
 }

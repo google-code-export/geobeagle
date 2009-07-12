@@ -15,21 +15,81 @@
 package com.google.code.geobeagle.activity.main.view;
 
 import com.google.code.geobeagle.Geocache;
+import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.main.GeoUtils;
 import com.google.code.geobeagle.activity.main.RadarView;
 
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 public class GeocacheViewer {
-    private final TextView mId;
-    private final TextView mName;
-    private final RadarView mRadarView;
+    public static class AttributeViewer {
+        private final int[] mImages;
+        private final ImageView mImageView;
 
-    public GeocacheViewer(RadarView radarView, TextView gcid, TextView gcname) {
+        public AttributeViewer(int[] images, ImageView imageView) {
+            mImages = images;
+            mImageView = imageView;
+        }
+
+        void setImage(int attributeValue) {
+            if (attributeValue == 0) {
+                mImageView.setVisibility(View.GONE);
+                return;
+            }
+            mImageView.setImageResource(mImages[attributeValue - 1]);
+            mImageView.setVisibility(View.VISIBLE);
+        }
+    }
+
+    public static class NameViewer {
+        private final TextView mName;
+
+        public NameViewer(TextView name) {
+            mName = name;
+        }
+
+        void set(CharSequence name) {
+            if (name.length() == 0) {
+                mName.setVisibility(View.GONE);
+                return;
+            }
+            mName.setText(name);
+            mName.setVisibility(View.VISIBLE);
+        }
+    }
+
+    public static final int CACHE_TYPE_IMAGES[] = {
+            R.drawable.cache_tradi_big, R.drawable.cache_multi_big, R.drawable.cache_mystery_big,
+            R.drawable.blue_dot
+    };
+    public static final int CONTAINER_IMAGES[] = {
+            R.drawable.size_1, R.drawable.size_2, R.drawable.size_3, R.drawable.size_4
+    };
+    public static final int STAR_IMAGES[] = {
+            R.drawable.stars_1, R.drawable.stars_2, R.drawable.stars_3, R.drawable.stars_4,
+            R.drawable.stars_5, R.drawable.stars_6, R.drawable.stars_7, R.drawable.stars_8,
+            R.drawable.stars_9, R.drawable.stars_10
+    };
+    private final AttributeViewer mCacheType;
+    private final AttributeViewer mContainer;
+    private final AttributeViewer mDifficulty;
+    private final TextView mId;
+    private final NameViewer mName;
+    private final RadarView mRadarView;
+    private final AttributeViewer mTerrain;
+
+    public GeocacheViewer(RadarView radarView, TextView gcId, NameViewer gcName,
+            AttributeViewer gcCacheType, AttributeViewer gcDifficulty, AttributeViewer gcTerrain,
+            AttributeViewer gcContainer) {
         mRadarView = radarView;
-        mId = gcid;
-        mName = gcname;
+        mId = gcId;
+        mName = gcName;
+        mCacheType = gcCacheType;
+        mDifficulty = gcDifficulty;
+        mTerrain = gcTerrain;
+        mContainer = gcContainer;
     }
 
     public void set(Geocache geocache) {
@@ -38,11 +98,12 @@ public class GeocacheViewer {
         mRadarView.setTarget((int)(latitude * GeoUtils.MILLION),
                 (int)(longitude * GeoUtils.MILLION));
         mId.setText(geocache.getId());
-        final CharSequence name = geocache.getName();
-        if (name.length() > 0) {
-            mName.setText(name);
-            mName.setVisibility(View.VISIBLE);
-        } else
-            mName.setVisibility(View.GONE);
+
+        mCacheType.setImage(geocache.getCacheType().toInt());
+        mContainer.setImage(geocache.getContainer());
+        mDifficulty.setImage(geocache.getDifficulty());
+        mTerrain.setImage(geocache.getTerrain());
+
+        mName.set(geocache.getName());
     }
 }

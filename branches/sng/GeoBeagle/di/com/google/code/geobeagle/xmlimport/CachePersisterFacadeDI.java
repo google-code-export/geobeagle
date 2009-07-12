@@ -23,6 +23,7 @@ import com.google.code.geobeagle.database.DatabaseDI;
 import com.google.code.geobeagle.database.DatabaseDI.SQLiteWrapper;
 import com.google.code.geobeagle.xmlimport.CachePersisterFacade;
 import com.google.code.geobeagle.xmlimport.CacheTagWriter;
+import com.google.code.geobeagle.xmlimport.CacheTagWriter.CacheTagParser;
 import com.google.code.geobeagle.xmlimport.GpxImporterDI.MessageHandler;
 
 import android.app.Activity;
@@ -66,7 +67,8 @@ public class CachePersisterFacadeDI {
     public static CachePersisterFacade create(Activity activity, MessageHandler messageHandler,
             Database database, SQLiteWrapper sqliteWrapper) {
         final CacheWriter cacheWriter = DatabaseDI.createCacheWriter(sqliteWrapper);
-        final CacheTagWriter cacheTagWriter = new CacheTagWriter(cacheWriter);
+        final CacheTagParser cacheTagParser = new CacheTagParser();
+        final CacheTagWriter cacheTagWriter = new CacheTagWriter(cacheWriter, cacheTagParser);
         final FileFactory fileFactory = new FileFactory();
         final WriterWrapper writerWrapper = new WriterWrapper();
         final HtmlWriter htmlWriter = new HtmlWriter(writerWrapper);

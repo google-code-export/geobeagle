@@ -33,9 +33,12 @@ public class GeocacheFromParcelFactory {
     }
 
     public Geocache createFromBundle(Bundle bundle) {
-        return mGeocacheFactory.create(bundle.getCharSequence("id"),
-                bundle.getCharSequence("name"), bundle.getDouble("latitude"), bundle
-                        .getDouble("longitude"), mGeocacheFactory.sourceFromInt(bundle
-                        .getInt("sourceType")), bundle.getString("sourceName"));
+        return mGeocacheFactory.create(bundle.getCharSequence(Geocache.ID), bundle
+                .getCharSequence(Geocache.NAME), bundle.getDouble(Geocache.LATITUDE), bundle
+                .getDouble(Geocache.LONGITUDE), mGeocacheFactory.sourceFromInt(bundle
+                .getInt(Geocache.SOURCE_TYPE)), bundle.getString(Geocache.SOURCE_NAME),
+                mGeocacheFactory.cacheTypeFromInt(bundle.getInt(Geocache.CACHE_TYPE)), bundle
+                        .getInt(Geocache.DIFFICULTY), bundle.getInt(Geocache.TERRAIN), bundle
+                        .getInt(Geocache.CONTAINER));
     }
 }

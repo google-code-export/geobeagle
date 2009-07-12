@@ -16,6 +16,7 @@ package com.google.code.geobeagle.xmlimport;
 
 import static org.easymock.EasyMock.expect;
 
+import com.google.code.geobeagle.CacheType;
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.GeocacheFactory.Source;
 import com.google.code.geobeagle.database.CacheWriter;
@@ -41,7 +42,9 @@ public class LocationSaverTest {
         expect(geocache.getLongitude()).andReturn(37.0);
         expect(geocache.getSourceType()).andReturn(Source.GPX);
         expect(geocache.getSourceName()).andReturn("manhattan");
-        writer.insertAndUpdateCache("LB12345", "", 122, 37, Source.GPX, "manhattan");
+        expect(geocache.getCacheType()).andReturn(CacheType.TRADITIONAL);
+        writer.insertAndUpdateCache("LB12345", "", 122, 37, Source.GPX, "manhattan",
+                CacheType.TRADITIONAL, 0, 0, 0);
         writer.stopWriting();
 
         PowerMock.replayAll();

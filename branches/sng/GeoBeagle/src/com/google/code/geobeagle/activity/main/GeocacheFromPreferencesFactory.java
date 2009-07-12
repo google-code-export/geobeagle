@@ -14,6 +14,7 @@
 
 package com.google.code.geobeagle.activity.main;
 
+import com.google.code.geobeagle.CacheType;
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.GeocacheFactory;
 import com.google.code.geobeagle.GeocacheFactory.Source;
@@ -28,10 +29,15 @@ public class GeocacheFromPreferencesFactory {
     }
 
     public Geocache create(SharedPreferences preferences) {
-        final int iSource = preferences.getInt("sourceType", -1);
-        Source source = mGeocacheFactory.sourceFromInt(iSource);
-        return mGeocacheFactory.create(preferences.getString("id", null), preferences.getString(
-                "name", null), preferences.getFloat("latitude", 0), preferences.getFloat(
-                "longitude", 0), source, preferences.getString("sourceName", null));
+        final int iSource = preferences.getInt(Geocache.SOURCE_TYPE, -1);
+        final Source source = mGeocacheFactory.sourceFromInt(iSource);
+        final int iCacheType = preferences.getInt(Geocache.CACHE_TYPE, 0);
+        final CacheType cacheType = mGeocacheFactory.cacheTypeFromInt(iCacheType);
+        return mGeocacheFactory.create(preferences.getString(Geocache.ID, "GCMEY7"), preferences
+                .getString(Geocache.NAME, "Google Falls"), preferences.getFloat(Geocache.LATITUDE, 0),
+                preferences.getFloat(Geocache.LONGITUDE, 0), source, preferences.getString(
+                        Geocache.SOURCE_NAME, ""), cacheType, preferences.getInt(
+                        Geocache.DIFFICULTY, 0), preferences.getInt(Geocache.TERRAIN, 0),
+                preferences.getInt(Geocache.CONTAINER, 0));
     }
 }

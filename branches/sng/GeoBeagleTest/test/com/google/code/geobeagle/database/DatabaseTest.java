@@ -86,13 +86,13 @@ public class DatabaseTest {
     }
 
     // Previous schemas.
-    final static String schema6 = "CREATE TABLE CACHES (Id VARCHAR PRIMARY KEY,"
-            + " Description VARCHAR Latitude DOUBLE, Longitude DOUBLE, Source VARCHAR)";
-    final static String schema7 = "CREATE TABLE CACHES (Id VARCHAR PRIMARY KEY, "
-            + "Description VARCHAR, Latitude DOUBLE, Longitude DOUBLE, Source VARCHAR); "
-            + "CREATE INDEX IDX_LATITUDE on CACHES (Latitude); "
-            + "CREATE INDEX IDX_LONGITUDE on CACHES (Longitude); "
-            + "CREATE INDEX IDX_SOURCE on CACHES (Source); ";
+    final static String schema6 = Database.SQL_CREATE_CACHE_TABLE_V08;
+    final static String schema7 = Database.SQL_CREATE_CACHE_TABLE_V08
+            + Database.SQL_CREATE_IDX_LATITUDE + Database.SQL_CREATE_IDX_LONGITUDE
+            + Database.SQL_CREATE_IDX_SOURCE;
+    final static String schema10 = Database.SQL_CREATE_CACHE_TABLE_V10
+            + Database.SQL_CREATE_IDX_LATITUDE + Database.SQL_CREATE_IDX_LONGITUDE
+            + Database.SQL_CREATE_IDX_SOURCE + Database.SQL_CREATE_GPX_TABLE_V10;
 
     /**
      * <pre>
@@ -104,6 +104,11 @@ public class DatabaseTest {
      * version 9
      * fixes bug where INDEX wasn't being created on upgrade.
      * 
+     * version 10
+     * adds GPX table
+     * 
+     * version 11
+     * adds new CACHES columns: CacheType, Difficulty, Terrain, and Container
      * </pre>
      * 
      * @throws IOException
@@ -123,8 +128,8 @@ public class DatabaseTest {
     }
 
     static String currentSchema() {
-        String currentSchema = SQL(Database.SQL_CREATE_CACHE_TABLE)
-                + SQL(Database.SQL_CREATE_GPX_TABLE) + SQL(Database.SQL_CREATE_IDX_LATITUDE)
+        String currentSchema = SQL(Database.SQL_CREATE_CACHE_TABLE_V11)
+                + SQL(Database.SQL_CREATE_GPX_TABLE_V10) + SQL(Database.SQL_CREATE_IDX_LATITUDE)
                 + SQL(Database.SQL_CREATE_IDX_LONGITUDE) + SQL(Database.SQL_CREATE_IDX_SOURCE);
         return currentSchema;
     }
@@ -150,7 +155,7 @@ public class DatabaseTest {
     }
 
     private static String SQL(String s) {
-        return s + ";\n";
+        return s + "\n";
     }
 
     @Test
@@ -238,6 +243,22 @@ public class DatabaseTest {
 
         assertEquals(currentSchema(), schema);
         String data = db.dumpTable("CACHES");
-        assertEquals("GCABC||||intent|1\nGC123||||foo.gpx|1\n", data);
+        assertEquals("GCABC||||intent|1|0|0|0|0\nGC123||||foo.gpx|1|0|0|0|0\n", data);
+    }
+
+    @Test
+    public void testUpgradeFrom10() throws IOException {
+        DesktopSQLiteDatabase db = new DesktopSQLiteDatabase();
+        db.execSQL(schema10);
+        db.execSQL("INSERT INTO CACHES (Id, Source) VALUES (\"GCABC\", \"intent\")");
+        db.execSQL("INSERT INTO CACHES (Id, Source) VALUES (\"GC123\", \"foo.gpx\")");
+
+        OpenHelperDelegate openHelperDelegate = new OpenHelperDelegate();
+        openHelperDelegate.onUpgrade(db, 10, Database.DATABASE_VERSION);
+        String schema = db.dumpSchema();
+
+        assertEquals(currentSchema(), schema);
+        String data = db.dumpTable("CACHES");
+        assertEquals("GCABC||||intent|1|0|0|0|0\nGC123||||foo.gpx|1|0|0|0|0\n", data);
     }
 }

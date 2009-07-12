@@ -14,6 +14,7 @@
 
 package com.google.code.geobeagle.activity.cachelist.view;
 
+import com.google.code.geobeagle.CacheType;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVector;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVectors;
@@ -24,20 +25,25 @@ import com.google.code.geobeagle.formatting.DistanceFormatter;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 public class GeocacheSummaryRowInflater implements HasDistanceFormatter {
     static class RowViews {
+        private final ImageView mIcon;
         private final TextView mCache;
         private final TextView mDistance;
 
-        RowViews(TextView cache, TextView distance) {
+        RowViews(ImageView icon, TextView cache, TextView distance) {
+            mIcon = icon;
             mCache = cache;
             mDistance = distance;
         }
 
         void set(GeocacheVector geocacheVector, DistanceFormatter distanceFormatter,
                 BearingFormatter relativeBearingFormatter) {
+            CacheType type = geocacheVector.getGeocache().getCacheType();
+            mIcon.setImageResource(type.icon());
             mCache.setText(geocacheVector.getIdAndName());
             mDistance.setText(geocacheVector.getFormattedDistance(distanceFormatter,
                     relativeBearingFormatter));
@@ -64,8 +70,9 @@ public class GeocacheSummaryRowInflater implements HasDistanceFormatter {
         Log.v("GeoBeagle", "SummaryRow::inflate(" + convertView + ")");
 
         View view = mLayoutInflater.inflate(R.layout.cache_row, null);
-        RowViews rowViews = new RowViews(((TextView)view.findViewById(R.id.txt_cache)),
-                ((TextView)view.findViewById(R.id.distance)));
+        RowViews rowViews = new RowViews(((ImageView)view.findViewById(R.id.gc_row_icon)),
+                ((TextView)view.findViewById(R.id.txt_cache)), ((TextView)view
+                        .findViewById(R.id.distance)));
         view.setTag(rowViews);
         return view;
     }

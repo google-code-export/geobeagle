@@ -3,6 +3,7 @@ package com.google.code.geobeagle.activity.main.view;
 
 import static org.junit.Assert.assertEquals;
 
+import com.google.code.geobeagle.CacheType;
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.GeocacheFactory;
 import com.google.code.geobeagle.R;
@@ -136,9 +137,14 @@ public class EditCacheActivityDelegateTest {
         EasyMock.expect(longitude.getText()).andReturn(editableLongitude);
         EasyMock.expect(geocache.getSourceType()).andReturn(Source.GPX);
         EasyMock.expect(geocache.getSourceName()).andReturn("source");
+        EasyMock.expect(geocache.getCacheType()).andReturn(CacheType.TRADITIONAL);
+        EasyMock.expect(geocache.getDifficulty()).andReturn(3);
+        EasyMock.expect(geocache.getTerrain()).andReturn(2);
+        EasyMock.expect(geocache.getContainer()).andReturn(4);
+
         EasyMock.expect(
-                geocacheFactory.create(editableId, editableName, 37, -122.5, Source.GPX, "source"))
-                .andReturn(geocache);
+                geocacheFactory.create(editableId, editableName, 37, -122.5, Source.GPX, "source",
+                        CacheType.TRADITIONAL, 3, 2, 4)).andReturn(geocache);
 
         PowerMock.replayAll();
         EditCache editCache = new EditCache(geocacheFactory, id, name, latitude, longitude);

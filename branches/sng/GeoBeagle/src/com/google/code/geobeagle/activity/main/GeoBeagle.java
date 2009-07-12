@@ -14,6 +14,7 @@
 
 package com.google.code.geobeagle.activity.main;
 
+import com.google.code.geobeagle.CacheType;
 import com.google.code.geobeagle.CompassListener;
 import com.google.code.geobeagle.ErrorDisplayer;
 import com.google.code.geobeagle.Geocache;
@@ -34,6 +35,8 @@ import com.google.code.geobeagle.activity.main.view.GeocacheViewer;
 import com.google.code.geobeagle.activity.main.view.Misc;
 import com.google.code.geobeagle.activity.main.view.OnCacheButtonClickListenerBuilder;
 import com.google.code.geobeagle.activity.main.view.WebPageAndDetailsButtonEnabler;
+import com.google.code.geobeagle.activity.main.view.GeocacheViewer.AttributeViewer;
+import com.google.code.geobeagle.activity.main.view.GeocacheViewer.NameViewer;
 import com.google.code.geobeagle.database.Database;
 import com.google.code.geobeagle.database.DatabaseDI;
 import com.google.code.geobeagle.database.LocationSaver;
@@ -54,6 +57,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 /*
@@ -101,7 +105,7 @@ public class GeoBeagle extends Activity {
                 final CharSequence[] latlon = Util.splitLatLonDescription(sanitizedQuery);
                 mGeocache = mGeocacheFactory.create(latlon[2], latlon[3], Util
                         .parseCoordinate(latlon[0]), Util.parseCoordinate(latlon[1]),
-                        Source.WEB_URL, null);
+                        Source.WEB_URL, null, CacheType.NULL, 0, 0, 0);
                 mSqliteWrapper.openWritableDatabase(mDatabase);
                 mLocationSaver.saveLocation(mGeocache);
                 mSqliteWrapper.close();
@@ -171,14 +175,22 @@ public class GeoBeagle extends Activity {
         mGeocacheFactory = new GeocacheFactory();
         mGeocacheFromPreferencesFactory = new GeocacheFromPreferencesFactory(mGeocacheFactory);
         final TextView gcid = (TextView)findViewById(R.id.gcid);
-        final TextView gcname = (TextView)findViewById(R.id.gcname);
+        final AttributeViewer gcIcon = new AttributeViewer(GeocacheViewer.CACHE_TYPE_IMAGES,
+                ((ImageView)findViewById(R.id.gcicon)));
+        final AttributeViewer gcDifficulty = new AttributeViewer(GeocacheViewer.STAR_IMAGES,
+                (ImageView)findViewById(R.id.gc_difficulty));
+        final AttributeViewer gcTerrain = new AttributeViewer(GeocacheViewer.STAR_IMAGES,
+                (ImageView)findViewById(R.id.gc_terrain));
+        final AttributeViewer gcContainer = new AttributeViewer(GeocacheViewer.CONTAINER_IMAGES,
+                (ImageView)findViewById(R.id.gccontainer));
+        final NameViewer gcName = new NameViewer(((TextView)findViewById(R.id.gcname)));
         mRadar = (RadarView)findViewById(R.id.radarview);
         mRadar.setUseMetric(true);
-        // mRadar.startSweep();
         mRadar.setDistanceView((TextView)findViewById(R.id.radar_distance),
                 (TextView)findViewById(R.id.radar_bearing),
                 (TextView)findViewById(R.id.radar_accuracy));
-        mGeocacheViewer = new GeocacheViewer(mRadar, gcid, gcname);
+        mGeocacheViewer = new GeocacheViewer(mRadar, gcid, gcName, gcIcon, gcDifficulty, gcTerrain,
+                gcContainer);
 
         mLocationControlBuffered.onLocationChanged(null);
         setCacheClickListeners();

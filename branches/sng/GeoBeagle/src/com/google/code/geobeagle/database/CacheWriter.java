@@ -14,6 +14,7 @@
 
 package com.google.code.geobeagle.database;
 
+import com.google.code.geobeagle.CacheType;
 import com.google.code.geobeagle.GeocacheFactory.Source;
 import com.google.code.geobeagle.database.Database.ISQLiteDatabase;
 
@@ -52,9 +53,11 @@ public class CacheWriter {
     }
 
     public void insertAndUpdateCache(CharSequence id, CharSequence name, double latitude,
-            double longitude, Source sourceType, String sourceName) {
+            double longitude, Source sourceType, String sourceName, CacheType cacheType,
+            int difficulty, int terrain, int container) {
         mSqlite.execSQL(Database.SQL_REPLACE_CACHE, id, name, new Double(latitude), new Double(
-                longitude), mDbToGeocacheAdapter.sourceTypeToSourceName(sourceType, sourceName));
+                longitude), mDbToGeocacheAdapter.sourceTypeToSourceName(sourceType, sourceName),
+                cacheType.toInt(), difficulty, terrain, container);
     }
 
     /**

@@ -169,6 +169,14 @@ public class CachePersisterFacadeTest {
         new CachePersisterFacade(mCacheTagWriter, null, null, null, null).symbol("Geocache Found");
         PowerMock.verifyAll();
     }
+    @Test
+    public void testAttributes() throws IOException {
+        mCacheTagWriter.symbol("Geocache Found");
+
+        PowerMock.replayAll();
+        new CachePersisterFacade(mCacheTagWriter, null, null, null, null).symbol("Geocache Found");
+        PowerMock.verifyAll();
+    }
 
     @Test
     public void testWpt() throws IOException {

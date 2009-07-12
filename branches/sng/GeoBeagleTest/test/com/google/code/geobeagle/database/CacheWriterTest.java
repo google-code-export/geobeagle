@@ -9,6 +9,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import com.google.code.geobeagle.CacheType;
 import com.google.code.geobeagle.GeocacheFactory.Source;
 import com.google.code.geobeagle.database.CacheWriter;
 import com.google.code.geobeagle.database.Database;
@@ -52,8 +53,8 @@ public class CacheWriterTest {
         CacheWriter cacheWriter = new CacheWriter(db, null);
         cacheWriter.clearEarlierLoads();
 
-        assertEquals("GCTHISIMPORT|just loaded|||foo.gpx|1\n"
-                + "GCCLICKEDLINK|from a link|||intent|0\n", db.dumpTable("CACHES"));
+        assertEquals("GCTHISIMPORT|just loaded|||foo.gpx|1|0|0|0|0\n"
+                + "GCCLICKEDLINK|from a link|||intent|0|0|0|0|0\n", db.dumpTable("CACHES"));
         assertEquals("keep.gpx|2009-04-30|1\n", db.dumpTable("GPX"));
     }
 
@@ -74,14 +75,16 @@ public class CacheWriterTest {
         SQLiteWrapper sqlite = createMock(SQLiteWrapper.class);
         DbToGeocacheAdapter dbToGeocacheAdapter = createMock(DbToGeocacheAdapter.class);
 
-        sqlite.execSQL(Database.SQL_REPLACE_CACHE, "gc123", "a cache", 122.0, 37.0, "source");
+        sqlite.execSQL(Database.SQL_REPLACE_CACHE, "gc123", "a cache", 122.0, 37.0, "source", 0, 0,
+                0, 0);
         expect(dbToGeocacheAdapter.sourceTypeToSourceName(Source.GPX, "source"))
                 .andReturn("source");
 
         replay(sqlite);
         replay(dbToGeocacheAdapter);
         CacheWriter cacheWriter = new CacheWriter(sqlite, dbToGeocacheAdapter);
-        cacheWriter.insertAndUpdateCache("gc123", "a cache", 122, 37, Source.GPX, "source");
+        cacheWriter.insertAndUpdateCache("gc123", "a cache", 122, 37, Source.GPX, "source",
+                CacheType.NULL, 0, 0, 0);
         verify(sqlite);
     }
 

@@ -14,7 +14,7 @@
 
 package com.google.code.geobeagle;
 
-import com.google.code.geobeagle.Geocache;
+import com.google.code.geobeagle.CacheType.CacheTypeFactory;
 import com.google.code.geobeagle.GeocacheFactory.Source.SourceFactory;
 import com.google.code.geobeagle.activity.main.GeocacheFromParcelFactory;
 
@@ -76,14 +76,21 @@ public class GeocacheFactory {
         }
     }
 
+    private static CacheTypeFactory mCacheTypeFactory;
     private static SourceFactory mSourceFactory;
 
     public GeocacheFactory() {
         mSourceFactory = new SourceFactory();
+        mCacheTypeFactory = new CacheTypeFactory();
+    }
+
+    public CacheType cacheTypeFromInt(int cacheTypeIx) {
+        return mCacheTypeFactory.fromInt(cacheTypeIx);
     }
 
     public Geocache create(CharSequence id, CharSequence name, double latitude, double longitude,
-            Source sourceType, String sourceName) {
+            Source sourceType, String sourceName, CacheType cacheType, int difficulty, int terrain,
+            int container) {
         if (id.length() < 2) {
             // ID is missing for waypoints imported from the browser; create a
             // new id from the time.
@@ -91,11 +98,11 @@ public class GeocacheFactory {
         }
         if (name == null)
             name = "";
-        return new Geocache(id, name, latitude, longitude, sourceType, sourceName);
+        return new Geocache(id, name, latitude, longitude, sourceType, sourceName, cacheType,
+                difficulty, terrain, container);
     }
 
     public Source sourceFromInt(int sourceIx) {
         return mSourceFactory.fromInt(sourceIx);
     }
-
 }

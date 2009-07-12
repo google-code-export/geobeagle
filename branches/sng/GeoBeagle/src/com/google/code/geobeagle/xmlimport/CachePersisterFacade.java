@@ -96,6 +96,22 @@ public class CachePersisterFacade {
     void symbol(String text) {
         mCacheTagWriter.symbol(text);
     }
+    
+    void container(String text) {
+    	mCacheTagWriter.container(text);
+    }
+
+    void difficulty(String text) {
+    	mCacheTagWriter.difficulty(text);
+    }
+
+    void terrain(String text) {
+    	mCacheTagWriter.terrain(text);
+    }
+
+    void cacheType(String text) {
+    	mCacheTagWriter.cacheType(text);
+    }
 
     void wpt(String latitude, String longitude) {
         mCacheTagWriter.latitudeLongitude(latitude, longitude);

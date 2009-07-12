@@ -67,7 +67,9 @@ public class EditCacheActivityDelegate {
             return mGeocacheFactory.create(mId.getText(), mName.getText(), Util
                     .parseCoordinate(mLatitude.getText()), Util.parseCoordinate(mLongitude
                     .getText()), mOriginalGeocache.getSourceType(), mOriginalGeocache
-                    .getSourceName());
+                    .getSourceName(), mOriginalGeocache.getCacheType(), mOriginalGeocache
+                    .getDifficulty(), mOriginalGeocache.getTerrain(), mOriginalGeocache
+                    .getContainer());
         }
 
         void set(Geocache geocache) {

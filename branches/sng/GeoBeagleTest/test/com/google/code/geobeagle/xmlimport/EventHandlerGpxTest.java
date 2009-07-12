@@ -165,6 +165,26 @@ public class EventHandlerGpxTest {
     }
 
     @Test
+    public void testTextCacheType() throws IOException, ParseException {
+        CachePersisterFacade cachePersisterFacade = createMock(CachePersisterFacade.class);
+
+        cachePersisterFacade.cacheType("cache type");
+        cachePersisterFacade.line("cache type");
+        cachePersisterFacade.difficulty("difficulty");
+        cachePersisterFacade.terrain("terrain");
+        cachePersisterFacade.container("container");
+        cachePersisterFacade.line("container");
+
+        replay(cachePersisterFacade);
+        final EventHandlerGpx eventHandlerGpx = new EventHandlerGpx(cachePersisterFacade);
+        eventHandlerGpx.text(EventHandlerGpx.XPATH_CACHE_TYPE, "cache type");
+        eventHandlerGpx.text(EventHandlerGpx.XPATH_CACHE_DIFFICULTY, "difficulty");
+        eventHandlerGpx.text(EventHandlerGpx.XPATH_CACHE_TERRAIN, "terrain");
+        eventHandlerGpx.text(EventHandlerGpx.XPATH_CACHE_CONTAINER, "container");
+        verify(cachePersisterFacade);
+    }
+
+    @Test
     public void testTextWptName() throws IOException, ParseException {
         CachePersisterFacade cachePersisterFacade = createMock(CachePersisterFacade.class);
 

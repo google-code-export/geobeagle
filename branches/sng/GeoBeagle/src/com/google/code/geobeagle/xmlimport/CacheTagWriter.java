@@ -14,6 +14,7 @@
 
 package com.google.code.geobeagle.xmlimport;
 
+import com.google.code.geobeagle.CacheType;
 import com.google.code.geobeagle.GeocacheFactory.Source;
 import com.google.code.geobeagle.database.CacheWriter;
 
@@ -22,7 +23,45 @@ import com.google.code.geobeagle.database.CacheWriter;
  * @author sng
  */
 public class CacheTagWriter {
-    public final CacheWriter mCacheWriter;
+    public static class CacheTagParser {
+        CacheType cacheType(String type) {
+            if (type.equals("Traditional Cache")) {
+                return CacheType.TRADITIONAL;
+            } else if (type.equals("Multi-cache")) {
+                return CacheType.MULTI;
+            } else if (type.equals("Unknown Cache")) {
+                return CacheType.UNKNOWN;
+            }
+            return CacheType.NULL;
+        }
+
+        public int container(String container) {
+            if (container.equals("Micro")) {
+                return 1;
+            } else if (container.equals("Small")) {
+                return 2;
+            } else if (container.equals("Regular")) {
+                return 3;
+            } else if (container.equals("Large")) {
+                return 4;
+            }
+            return 0;
+        }
+
+        public int stars(String stars) {
+            try {
+                return (int)Math.round(Float.parseFloat(stars) * 2);
+            } catch (Exception ex) {
+                return 0;
+            }
+        }
+    }
+
+    private final CacheTagParser mCacheTagParser;
+    private CacheType mCacheType;
+    private final CacheWriter mCacheWriter;
+    private int mContainer;
+    private int mDifficulty;
     private boolean mFound;
     private String mGpxName;
     private CharSequence mId;
@@ -31,12 +70,19 @@ public class CacheTagWriter {
     private CharSequence mName;
     private String mSqlDate;
 
-    public CacheTagWriter(CacheWriter cacheWriter) {
+    private int mTerrain;
+
+    public CacheTagWriter(CacheWriter cacheWriter, CacheTagParser cacheTagParser) {
         mCacheWriter = cacheWriter;
+        mCacheTagParser = cacheTagParser;
     }
 
     public void cacheName(String name) {
         mName = name;
+    }
+
+    public void cacheType(String type) {
+        mCacheType = mCacheTagParser.cacheType(type);
     }
 
     public void clear() { // TODO: ensure source is not reset
@@ -44,6 +90,17 @@ public class CacheTagWriter {
         mLatitude = mLongitude = 0;
         mFound = false;
         mSqlDate = "2000-01-01T12:00:00";
+        mCacheType = CacheType.NULL;
+        mDifficulty = 0;
+        mTerrain = 0;
+    }
+
+    public void container(String container) {
+        mContainer = mCacheTagParser.container(container);
+    }
+
+    public void difficulty(String difficulty) {
+        mDifficulty = mCacheTagParser.stars(difficulty);
     }
 
     public void end() {
@@ -95,8 +152,13 @@ public class CacheTagWriter {
         mFound = symbol.equals("Geocache Found");
     }
 
+    public void terrain(String terrain) {
+        mTerrain = mCacheTagParser.stars(terrain);
+    }
+
     public void write(Source source) {
         if (!mFound)
-            mCacheWriter.insertAndUpdateCache(mId, mName, mLatitude, mLongitude, source, mGpxName);
+            mCacheWriter.insertAndUpdateCache(mId, mName, mLatitude, mLongitude, source, mGpxName,
+                    mCacheType, mDifficulty, mTerrain, mContainer);
     }
 }

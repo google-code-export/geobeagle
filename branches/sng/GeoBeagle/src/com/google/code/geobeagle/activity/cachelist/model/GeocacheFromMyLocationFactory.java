@@ -14,6 +14,7 @@
 
 package com.google.code.geobeagle.activity.cachelist.model;
 
+import com.google.code.geobeagle.CacheType;
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.GeocacheFactory;
 import com.google.code.geobeagle.LocationControlBuffered;
@@ -39,6 +40,6 @@ public class GeocacheFromMyLocationFactory {
         long time = location.getTime();
         return mGeocacheFactory.create(String.format("ML%1$tk%1$tM%1$tS", time), String.format(
                 "[%1$tk:%1$tM] My Location", time), location.getLatitude(),
-                location.getLongitude(), Source.MY_LOCATION, null);
+                location.getLongitude(), Source.MY_LOCATION, null, CacheType.MY_LOCATION, 0, 0, 0);
     }
 }
