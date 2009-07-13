@@ -26,3 +26,5 @@ Download powermock with dependencies: http://code.google.com/p/powermock/downloa
 Properties / Java build path / Libraries / add external jars... / add all powermock jars.
 
 Run / Run Configurations / Junit test / Arguments/ VM Arguments: -Xms256m -Xmx1024m -XX:MaxPermSize=256m
+
+See the following blog posting for more information on automated testing and GeoBeagle: googletesting.blogspot.com/2009/07/old-habits-die-hard.html#links
