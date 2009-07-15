@@ -216,7 +216,7 @@ public class MenuActionRefreshTest {
 
         PowerMock.mockStatic(Log.class);
         EasyMock.expect(Log.v((String)EasyMock.anyObject(), (String)EasyMock.anyObject()))
-                .andReturn(0);
+                .andReturn(0).anyTimes();
 
         PowerMock.replayAll();
         assertTrue(new LocationAndAzimuthTolerance(null, 0).exceedsTolerance(currentLocation, 110,

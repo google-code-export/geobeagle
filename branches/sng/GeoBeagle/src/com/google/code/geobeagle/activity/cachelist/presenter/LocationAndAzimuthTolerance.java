@@ -16,8 +16,6 @@ package com.google.code.geobeagle.activity.cachelist.presenter;
 
 import com.google.code.geobeagle.LocationControlBuffered.IGpsLocation;
 
-import android.util.Log;
-
 public class LocationAndAzimuthTolerance implements ToleranceStrategy {
     private float mLastAzimuth;
     LocationTolerance mLocationTolerance;
@@ -29,7 +27,7 @@ public class LocationAndAzimuthTolerance implements ToleranceStrategy {
 
     public boolean exceedsTolerance(IGpsLocation here, float currentAzimuth, long now) {
         if (mLastAzimuth != currentAzimuth) {
-            Log.v("GeoBeagle", "new azimuth: " + currentAzimuth);
+//            Log.v("GeoBeagle", "new azimuth: " + currentAzimuth);
             mLastAzimuth = currentAzimuth;
             return true;
         }
