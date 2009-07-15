@@ -43,32 +43,49 @@
 				android:textSize="26sp" android:gravity="right" />
 		</LinearLayout>
 
-<RelativeLayout android:layout_height="wrap_content" android:gravity="right" android:id="@+id/gc_cache_detail" android:layout_width="wrap_content">
-<ImageView android:layout_width="wrap_content" android:id="@+id/gcicon" android:layout_marginRight="6dip" android:layout_height="fill_parent" android:src="@drawable/cache_tradi_big"></ImageView>
-<TextView android:ellipsize="end" android:maxLines="1"
+		<RelativeLayout android:layout_height="wrap_content"
+			android:gravity="right" android:id="@+id/gc_cache_detail"
+			android:layout_width="wrap_content">
+			<ImageView android:layout_width="wrap_content" android:id="@+id/gcicon"
+				android:layout_marginRight="6dip" android:layout_height="fill_parent"
+				android:src="@drawable/cache_tradi_big" />
+			<TextView android:ellipsize="end" android:maxLines="1"
 				android:singleLine="true" android:id="@+id/gcid"
 				android:textColor="@android:color/primary_text_dark"
 				android:textStyle="bold" android:layout_height="wrap_content"
 				android:layout_width="wrap_content" android:layout_weight="1"
-				android:textSize="16sp" android:text="GC123 jfkd" android:layout_toRightOf="@+id/gcicon" android:layout_alignParentTop="true" android:layout_alignParentBottom="true"/>
-			
-			<ImageView android:layout_toRightOf="@+id/gcid" android:layout_width="wrap_content" android:layout_height="wrap_content" android:src="@drawable/size_1" android:layout_marginLeft="6dip" android:id="@+id/gccontainer" android:layout_marginTop="6dip"></ImageView><TextView android:id="@+id/gcname" android:textColor="@android:color/primary_text_dark"
+				android:textSize="16sp" android:text="GC123 jfkd"
+				android:layout_toRightOf="@+id/gcicon"
+				android:layout_alignParentTop="true"
+				android:layout_alignParentBottom="true" />
+
+			<ImageView android:layout_toRightOf="@+id/gcid"
+				android:layout_width="wrap_content" android:layout_height="wrap_content"
+				android:src="@drawable/size_1" android:layout_marginLeft="6dip"
+				android:id="@+id/gccontainer" android:layout_marginTop="6dip" />
+			<TextView android:id="@+id/gcname" android:textColor="@android:color/primary_text_dark"
 				android:layout_height="wrap_content" android:layout_width="wrap_content"
-				android:layout_weight="1" android:textSize="22sp" android:text="37 122" android:layout_toRightOf="@+id/gcicon" android:layout_below="@+id/gcid"/>
-<TextView android:layout_toRightOf="@+id/gcicon" android:layout_height="wrap_content" android:layout_width="wrap_content" android:layout_below="@+id/gcname" android:text="D:" android:id="@+id/gc_text_difficulty"></TextView>
-<ImageView android:layout_toRightOf="@+id/gc_text_difficulty" android:layout_width="wrap_content" android:layout_below="@+id/gcname" android:layout_height="wrap_content" android:id="@+id/gc_difficulty" android:src="@drawable/stars_0" android:layout_marginTop="4dip" android:layout_marginLeft="4dip"></ImageView>
-
-
-
-
-<TextView android:layout_below="@+id/gcname" android:layout_height="wrap_content" android:layout_width="wrap_content" android:text="T:" android:layout_marginLeft="6dip" android:layout_toRightOf="@+id/gc_difficulty" android:id="@+id/gc_text_terrain"></TextView>
-<ImageView android:layout_width="wrap_content" android:layout_below="@+id/gcname" android:layout_height="wrap_content" android:id="@+id/gc_terrain" android:layout_toRightOf="@+id/gc_text_terrain" android:src="@drawable/stars_0" android:layout_marginTop="4dip" android:layout_marginLeft="4dip"></ImageView>
-
-
-
-
-
-</RelativeLayout>
+				android:layout_weight="1" android:textSize="22sp" android:text="37 122"
+				android:layout_toRightOf="@+id/gcicon" android:layout_below="@+id/gcid" />
+			<TextView android:layout_toRightOf="@+id/gcicon"
+				android:layout_height="wrap_content" android:layout_width="wrap_content"
+				android:layout_below="@+id/gcname" android:text="D:"
+				android:id="@+id/gc_text_difficulty" />
+			<ImageView android:layout_toRightOf="@+id/gc_text_difficulty"
+				android:layout_width="wrap_content" android:layout_below="@+id/gcname"
+				android:layout_height="wrap_content" android:id="@+id/gc_difficulty"
+				android:src="@drawable/stars_0" android:layout_marginTop="4dip"
+				android:layout_marginLeft="4dip" />
+			<TextView android:layout_below="@+id/gcname"
+				android:layout_height="wrap_content" android:layout_width="wrap_content"
+				android:text="T:" android:layout_marginLeft="6dip"
+				android:layout_toRightOf="@+id/gc_difficulty" android:id="@+id/gc_text_terrain" />
+			<ImageView android:layout_width="wrap_content"
+				android:layout_below="@+id/gcname" android:layout_height="wrap_content"
+				android:id="@+id/gc_terrain" android:layout_toRightOf="@+id/gc_text_terrain"
+				android:src="@drawable/stars_0" android:layout_marginTop="4dip"
+				android:layout_marginLeft="4dip" />
+		</RelativeLayout>
 
 		<LinearLayout android:orientation="horizontal"
 			android:layout_height="wrap_content" android:layout_width="fill_parent">

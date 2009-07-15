@@ -24,16 +24,36 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 public class GeocacheViewer {
-    public static class AttributeViewer {
+    public interface AttributeViewer {
+        void setImage(int attributeValue);
+    }
+
+    public static class LabelledAttributeViewer implements AttributeViewer {
+        private final UnlabelledAttributeViewer mUnlabelledAttributeViewer;
+        private final TextView mLabel;
+
+        public LabelledAttributeViewer(int[] images, TextView label, ImageView imageView) {
+            mUnlabelledAttributeViewer = new UnlabelledAttributeViewer(images, imageView);
+            mLabel = label;
+        }
+
+        @Override
+        public void setImage(int attributeValue) {
+            mUnlabelledAttributeViewer.setImage(attributeValue);
+            mLabel.setVisibility(attributeValue == 0 ? View.GONE : View.VISIBLE);
+        }
+    }
+
+    public static class UnlabelledAttributeViewer implements AttributeViewer {
         private final int[] mImages;
         private final ImageView mImageView;
 
-        public AttributeViewer(int[] images, ImageView imageView) {
+        public UnlabelledAttributeViewer(int[] images, ImageView imageView) {
             mImages = images;
             mImageView = imageView;
         }
 
-        void setImage(int attributeValue) {
+        public void setImage(int attributeValue) {
             if (attributeValue == 0) {
                 mImageView.setVisibility(View.GONE);
                 return;
@@ -81,12 +101,12 @@ public class GeocacheViewer {
     private final AttributeViewer mTerrain;
 
     public GeocacheViewer(RadarView radarView, TextView gcId, NameViewer gcName,
-            AttributeViewer gcCacheType, AttributeViewer gcDifficulty, AttributeViewer gcTerrain,
-            AttributeViewer gcContainer) {
+            AttributeViewer gcIcon, AttributeViewer gcDifficulty, AttributeViewer gcTerrain,
+            UnlabelledAttributeViewer gcContainer) {
         mRadarView = radarView;
         mId = gcId;
         mName = gcName;
-        mCacheType = gcCacheType;
+        mCacheType = gcIcon;
         mDifficulty = gcDifficulty;
         mTerrain = gcTerrain;
         mContainer = gcContainer;

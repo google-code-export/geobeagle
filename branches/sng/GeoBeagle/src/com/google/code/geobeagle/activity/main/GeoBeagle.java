@@ -36,7 +36,9 @@ import com.google.code.geobeagle.activity.main.view.Misc;
 import com.google.code.geobeagle.activity.main.view.OnCacheButtonClickListenerBuilder;
 import com.google.code.geobeagle.activity.main.view.WebPageAndDetailsButtonEnabler;
 import com.google.code.geobeagle.activity.main.view.GeocacheViewer.AttributeViewer;
+import com.google.code.geobeagle.activity.main.view.GeocacheViewer.LabelledAttributeViewer;
 import com.google.code.geobeagle.activity.main.view.GeocacheViewer.NameViewer;
+import com.google.code.geobeagle.activity.main.view.GeocacheViewer.UnlabelledAttributeViewer;
 import com.google.code.geobeagle.database.Database;
 import com.google.code.geobeagle.database.DatabaseDI;
 import com.google.code.geobeagle.database.LocationSaver;
@@ -186,13 +188,15 @@ public class GeoBeagle extends Activity {
         mGeocacheFactory = new GeocacheFactory();
         mGeocacheFromPreferencesFactory = new GeocacheFromPreferencesFactory(mGeocacheFactory);
         final TextView gcid = (TextView)findViewById(R.id.gcid);
-        final AttributeViewer gcIcon = new AttributeViewer(GeocacheViewer.CACHE_TYPE_IMAGES,
+        final AttributeViewer gcIcon = new UnlabelledAttributeViewer(GeocacheViewer.CACHE_TYPE_IMAGES,
                 ((ImageView)findViewById(R.id.gcicon)));
-        final AttributeViewer gcDifficulty = new AttributeViewer(GeocacheViewer.STAR_IMAGES,
+        final AttributeViewer gcDifficulty = new LabelledAttributeViewer(GeocacheViewer.STAR_IMAGES,
+                (TextView)findViewById(R.id.gc_text_terrain),
                 (ImageView)findViewById(R.id.gc_difficulty));
-        final AttributeViewer gcTerrain = new AttributeViewer(GeocacheViewer.STAR_IMAGES,
+        final AttributeViewer gcTerrain = new LabelledAttributeViewer(GeocacheViewer.STAR_IMAGES,
+                (TextView)findViewById(R.id.gc_text_terrain),
                 (ImageView)findViewById(R.id.gc_terrain));
-        final AttributeViewer gcContainer = new AttributeViewer(GeocacheViewer.CONTAINER_IMAGES,
+        final UnlabelledAttributeViewer gcContainer = new UnlabelledAttributeViewer(GeocacheViewer.CONTAINER_IMAGES,
                 (ImageView)findViewById(R.id.gccontainer));
         final NameViewer gcName = new NameViewer(((TextView)findViewById(R.id.gcname)));
         mRadar = (RadarView)findViewById(R.id.radarview);

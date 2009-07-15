@@ -19,7 +19,7 @@ import static org.easymock.EasyMock.expect;
 import com.google.code.geobeagle.CacheType;
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.activity.main.RadarView;
-import com.google.code.geobeagle.activity.main.view.GeocacheViewer.AttributeViewer;
+import com.google.code.geobeagle.activity.main.view.GeocacheViewer.UnlabelledAttributeViewer;
 import com.google.code.geobeagle.activity.main.view.GeocacheViewer.NameViewer;
 
 import org.junit.Test;
@@ -43,8 +43,8 @@ public class GeocacheViewerTest {
         imageView.setVisibility(View.GONE);
 
         PowerMock.replayAll();
-        AttributeViewer attributeViewer = new AttributeViewer(null, imageView);
-        attributeViewer.setImage(0);
+        UnlabelledAttributeViewer unlabelledAttributeViewer = new UnlabelledAttributeViewer(null, imageView);
+        unlabelledAttributeViewer.setImage(0);
         PowerMock.verifyAll();
     }
 
@@ -58,8 +58,8 @@ public class GeocacheViewerTest {
         int images[] = {
                 111, 222, 333
         };
-        AttributeViewer attributeViewer = new AttributeViewer(images, imageView);
-        attributeViewer.setImage(3);
+        UnlabelledAttributeViewer unlabelledAttributeViewer = new UnlabelledAttributeViewer(images, imageView);
+        unlabelledAttributeViewer.setImage(3);
         PowerMock.verifyAll();
     }
 
@@ -92,10 +92,10 @@ public class GeocacheViewerTest {
         NameViewer name = PowerMock.createMock(NameViewer.class);
         Geocache geocache = PowerMock.createMock(Geocache.class);
         RadarView radar = PowerMock.createMock(RadarView.class);
-        AttributeViewer gcCacheType = PowerMock.createMock(AttributeViewer.class);
-        AttributeViewer gcDifficulty = PowerMock.createMock(AttributeViewer.class);
-        AttributeViewer gcContainer = PowerMock.createMock(AttributeViewer.class);
-        AttributeViewer gcTerrain = PowerMock.createMock(AttributeViewer.class);
+        UnlabelledAttributeViewer gcCacheType = PowerMock.createMock(UnlabelledAttributeViewer.class);
+        UnlabelledAttributeViewer gcDifficulty = PowerMock.createMock(UnlabelledAttributeViewer.class);
+        UnlabelledAttributeViewer gcContainer = PowerMock.createMock(UnlabelledAttributeViewer.class);
+        UnlabelledAttributeViewer gcTerrain = PowerMock.createMock(UnlabelledAttributeViewer.class);
         CacheType cacheType = PowerMock.createMock(CacheType.class);
 
         expect(geocache.getLatitude()).andReturn(37.0);
