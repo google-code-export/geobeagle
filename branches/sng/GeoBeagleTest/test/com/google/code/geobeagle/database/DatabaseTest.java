@@ -252,13 +252,16 @@ public class DatabaseTest {
         db.execSQL(schema10);
         db.execSQL("INSERT INTO CACHES (Id, Source) VALUES (\"GCABC\", \"intent\")");
         db.execSQL("INSERT INTO CACHES (Id, Source) VALUES (\"GC123\", \"foo.gpx\")");
+        db.execSQL("INSERT INTO GPX (Name, ExportTime, DeleteMe) VALUES (\"seattle.gpx\", \"6-1-2009\", 1)");
 
         OpenHelperDelegate openHelperDelegate = new OpenHelperDelegate();
         openHelperDelegate.onUpgrade(db, 10, Database.DATABASE_VERSION);
         String schema = db.dumpSchema();
 
         assertEquals(currentSchema(), schema);
-        String data = db.dumpTable("CACHES");
-        assertEquals("GCABC||||intent|1|0|0|0|0\nGC123||||foo.gpx|1|0|0|0|0\n", data);
+        String caches = db.dumpTable("CACHES");
+        assertEquals("GCABC||||intent|1|0|0|0|0\nGC123||||foo.gpx|1|0|0|0|0\n", caches);
+        String gpx = db.dumpTable("GPX");
+        assertEquals("seattle.gpx|1990-01-01|1\n", gpx);
     }
 }

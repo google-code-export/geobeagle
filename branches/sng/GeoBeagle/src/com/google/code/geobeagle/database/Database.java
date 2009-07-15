@@ -17,6 +17,7 @@ package com.google.code.geobeagle.database;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 public class Database {
     public static interface ISQLiteDatabase {
@@ -60,6 +61,8 @@ public class Database {
                 db.execSQL("ALTER TABLE CACHES ADD COLUMN " + S0_COLUMN_CONTAINER);
                 db.execSQL("ALTER TABLE CACHES ADD COLUMN " + S0_COLUMN_DIFFICULTY);
                 db.execSQL("ALTER TABLE CACHES ADD COLUMN " + S0_COLUMN_TERRAIN);
+                // This date has to precede 2000-01-01 (due to a bug in CacheTagWriter.java in v10).
+                db.execSQL("UPDATE GPX SET ExportTime = \"1990-01-01\"");
             }
         }
     }
@@ -100,7 +103,6 @@ public class Database {
     public static final String SQL_DELETE_OLD_CACHES = "DELETE FROM CACHES WHERE DeleteMe = 1";
     public static final String SQL_DELETE_OLD_GPX = "DELETE FROM GPX WHERE DeleteMe = 1";
     public static final String SQL_DROP_CACHE_TABLE = "DROP TABLE IF EXISTS CACHES";
-    public static final String SQL_ENHANCE_CACHE_TABLE = "ALTER TABLE CACHES ADD COLUMN ? ?";
     public static final String SQL_GPX_DONT_DELETE_ME = "UPDATE GPX SET DeleteMe = 0 WHERE Name = ?";
     public static final String SQL_MATCH_NAME_AND_EXPORTED_LATER = "Name = ? AND ExportTime >= ?";
     public static final String SQL_REPLACE_CACHE = "REPLACE INTO CACHES "
