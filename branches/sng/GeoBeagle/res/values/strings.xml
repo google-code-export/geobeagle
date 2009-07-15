@@ -48,7 +48,7 @@
 	<string name="available">AVAILABLE</string>
 	<string name="temporarily_unavailable">TEMPORARILY UNAVAILABLE</string>
 	<string name="getting_location_from_gps">getting location from gps...</string>
-	<string name="map_intent">geo:0,0?q=%1$.5f,%2$.5f (%3$s)</string>
+	<string name="map_intent">geo:0,0?q=loc:%1$.5f,%2$.5f (%3$s)</string>
 	<string name="get_coords_toast">&quot;To get the coords from the cache page, click: 'online maps...' / 'Google Maps'.&quot;</string>
 	<string name="error_cant_get_location">"Location cannot be determined.  Please ensure that your GPS is enabled and try again."</string>
 	<string name="error_opening_file">Unable to open file '%1$s'.</string>
