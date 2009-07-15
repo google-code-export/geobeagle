@@ -110,7 +110,7 @@ public class GeoBeagleDelegate {
 
     public Dialog onCreateDialog(int id) {
         return mFieldNoteSender.createDialog(mParent.getGeocache().getId(),
-                id == R.id.menu_log_dnf ? 0 : 1);
+                id == R.id.menu_log_dnf ? 0 : 1, mParent);
     }
 
     public void onPause() {
@@ -127,7 +127,7 @@ public class GeoBeagleDelegate {
             mParent.getRadar().setUseMetric(
                     !PreferenceManager.getDefaultSharedPreferences(mParent).getBoolean("imperial",
                             false));
-            
+
             mAppLifecycleManager.onResume();
         } catch (Exception e) {
             mErrorDisplayer.displayErrorAndStack(e);

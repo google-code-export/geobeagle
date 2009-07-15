@@ -104,7 +104,7 @@ class EventHandlerGpx implements EventHandler {
                 || fullPath.equals(XPATH_GEOCACHE_CONTAINER)) {
             mCachePersisterFacade.container(text);
         }
-
+        
         for (String writeLineMatch : XPATH_PLAINLINES) {
             if (fullPath.equals(writeLineMatch)) {
                 mCachePersisterFacade.line(text);

@@ -19,7 +19,9 @@ import com.google.code.geobeagle.R;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.AlertDialog.Builder;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.DialogInterface.OnClickListener;
 import android.content.res.Resources;
 import android.text.InputFilter;
@@ -74,23 +76,27 @@ public class FieldNoteSender {
     static class OnClickOk implements OnClickListener {
         private final EditText mEditText;
         private final CharSequence mPrefix;
-        private final SmsSender mSmsSender;
         private final Resources mResources;
         private final int mDnfIndex;
+        private final Context mContext;
 
-        public OnClickOk(Resources resources, int dnfIndex, SmsSender smsSender, EditText editText,
-                CharSequence prefix) {
+        public OnClickOk(Resources resources, int dnfIndex, EditText editText, CharSequence prefix,
+                Context context) {
             mEditText = editText;
             mPrefix = prefix;
-            mSmsSender = smsSender;
             mResources = resources;
             mDnfIndex = dnfIndex;
+            mContext = context;
         }
 
         public void onClick(DialogInterface dialog, int whichButton) {
-            mSmsSender.sendSMS("41411",
+            Intent sendIntent = new Intent(Intent.ACTION_VIEW);
+            sendIntent.putExtra("address", "41411");
+            sendIntent.putExtra("sms_body",
                     mResources.getStringArray(R.array.fieldnote_code)[mDnfIndex] + mPrefix
                             + mEditText.getText());
+            sendIntent.setType("vnd.android-dir/mms-sms");
+            mContext.startActivity(sendIntent);
             dialog.dismiss();
         }
     }
@@ -98,19 +104,17 @@ public class FieldNoteSender {
     private final Builder mDialogBuilder;
     private final DialogHelper mDialogHelper;
     private final LayoutInflater mLayoutInflater;
-    private final SmsSender mSmsSender;
     private final Resources mResources;
 
-    FieldNoteSender(LayoutInflater layoutInflater, SmsSender smsSender,
-            AlertDialog.Builder builder, DialogHelper dialogHelper, Resources resources) {
+    FieldNoteSender(LayoutInflater layoutInflater, AlertDialog.Builder builder,
+            DialogHelper dialogHelper, Resources resources) {
         mLayoutInflater = layoutInflater;
-        mSmsSender = smsSender;
         mDialogBuilder = builder;
         mDialogHelper = dialogHelper;
         mResources = resources;
     }
 
-    public Dialog createDialog(CharSequence geocacheId, int dnfIndex) {
+    public Dialog createDialog(CharSequence geocacheId, int dnfIndex, Context context) {
         View fieldNoteDialogView = mLayoutInflater.inflate(R.layout.fieldnote, null);
 
         Linkify.addLinks((TextView)fieldNoteDialogView.findViewById(R.id.fieldnote_caveat),
@@ -118,7 +122,7 @@ public class FieldNoteSender {
         CharSequence prefix = geocacheId + " ";
         EditText editText = mDialogHelper.createEditor(fieldNoteDialogView, prefix, dnfIndex,
                 mResources);
-        OnClickOk onClickOk = new OnClickOk(mResources, dnfIndex, mSmsSender, editText, prefix);
+        OnClickOk onClickOk = new OnClickOk(mResources, dnfIndex, editText, prefix, context);
         OnClickCancel onClickCancel = new OnClickCancel();
         return mDialogHelper.createDialog(mDialogBuilder, fieldNoteDialogView, onClickOk,
                 onClickCancel);
