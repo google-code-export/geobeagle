@@ -89,7 +89,6 @@ public class CacheTagWriter {
         mId = mName = null;
         mLatitude = mLongitude = 0;
         mFound = false;
-        mSqlDate = "2000-01-01T12:00:00";
         mCacheType = CacheType.NULL;
         mDifficulty = 0;
         mTerrain = 0;
@@ -139,6 +138,7 @@ public class CacheTagWriter {
     }
 
     public void startWriting() {
+        mSqlDate = "2000-01-01T12:00:00";
         mCacheWriter.startWriting();
     }
 
