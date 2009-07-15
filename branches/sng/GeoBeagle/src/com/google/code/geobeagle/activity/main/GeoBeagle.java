@@ -188,16 +188,16 @@ public class GeoBeagle extends Activity {
         mGeocacheFactory = new GeocacheFactory();
         mGeocacheFromPreferencesFactory = new GeocacheFromPreferencesFactory(mGeocacheFactory);
         final TextView gcid = (TextView)findViewById(R.id.gcid);
-        final AttributeViewer gcIcon = new UnlabelledAttributeViewer(GeocacheViewer.CACHE_TYPE_IMAGES,
-                ((ImageView)findViewById(R.id.gcicon)));
-        final AttributeViewer gcDifficulty = new LabelledAttributeViewer(GeocacheViewer.STAR_IMAGES,
-                (TextView)findViewById(R.id.gc_text_terrain),
+        final AttributeViewer gcIcon = new UnlabelledAttributeViewer(
+                GeocacheViewer.CACHE_TYPE_IMAGES, ((ImageView)findViewById(R.id.gcicon)));
+        final AttributeViewer gcDifficulty = new LabelledAttributeViewer(
+                GeocacheViewer.STAR_IMAGES, (TextView)findViewById(R.id.gc_text_terrain),
                 (ImageView)findViewById(R.id.gc_difficulty));
         final AttributeViewer gcTerrain = new LabelledAttributeViewer(GeocacheViewer.STAR_IMAGES,
                 (TextView)findViewById(R.id.gc_text_terrain),
                 (ImageView)findViewById(R.id.gc_terrain));
-        final UnlabelledAttributeViewer gcContainer = new UnlabelledAttributeViewer(GeocacheViewer.CONTAINER_IMAGES,
-                (ImageView)findViewById(R.id.gccontainer));
+        final UnlabelledAttributeViewer gcContainer = new UnlabelledAttributeViewer(
+                GeocacheViewer.CONTAINER_IMAGES, (ImageView)findViewById(R.id.gccontainer));
         final NameViewer gcName = new NameViewer(((TextView)findViewById(R.id.gcname)));
         mRadar = (RadarView)findViewById(R.id.radarview);
         mRadar.setUseMetric(true);
@@ -294,6 +294,11 @@ public class GeoBeagle extends Activity {
             Log.v("GeoBeagle", "GeoBeagle action:" + getIntent().getAction());
 
             maybeGetCoordinatesFromIntent();
+            // Possible fix for issue 53.
+            if (mGeocache == null)
+                mGeocache = new Geocache("", "", 0, 0, Source.MY_LOCATION, "", CacheType.NULL, 0,
+                        0, 0);
+            mGeocacheViewer.set(mGeocache);
             mWebPageButtonEnabler.check();
         } catch (final Exception e) {
             mErrorDisplayer.displayErrorAndStack(e);
