@@ -20,17 +20,20 @@ import com.google.code.geobeagle.xmlimport.GpxToCacheDI.XmlPullParserWrapper;
 import java.io.IOException;
 
 class EventHandlerGpx implements EventHandler {
+    static final String XPATH_CACHE_CONTAINER = "/gpx/wpt/groundspeak:cache/groundspeak:container";
+    static final String XPATH_CACHE_DIFFICULTY = "/gpx/wpt/groundspeak:cache/groundspeak:difficulty";
+    static final String XPATH_CACHE_TERRAIN = "/gpx/wpt/groundspeak:cache/groundspeak:terrain";
+    static final String XPATH_CACHE_TYPE = "/gpx/wpt/groundspeak:cache/groundspeak:type";
+    static final String XPATH_GEOCACHE_CONTAINER = "/gpx/wpt/geocache/container";
+    static final String XPATH_GEOCACHE_DIFFICULTY = "/gpx/wpt/geocache/difficulty";
+    static final String XPATH_GEOCACHE_TERRAIN = "/gpx/wpt/geocache/terrain";
+    static final String XPATH_GEOCACHE_TYPE = "/gpx/wpt/geocache/type";
     static final String XPATH_GEOCACHEHINT = "/gpx/wpt/geocache/hints";
     static final String XPATH_GEOCACHELOGDATE = "/gpx/wpt/geocache/logs/log/time";
     static final String XPATH_GEOCACHENAME = "/gpx/wpt/geocache/name";
     static final String XPATH_GPXNAME = "/gpx/name";
     static final String XPATH_GPXTIME = "/gpx/time";
     static final String XPATH_GROUNDSPEAKNAME = "/gpx/wpt/groundspeak:cache/groundspeak:name";
-    static final String XPATH_CACHE_TYPE = "/gpx/wpt/groundspeak:cache/groundspeak:type";
-    static final String XPATH_CACHE_DIFFICULTY = "/gpx/wpt/groundspeak:cache/groundspeak:difficulty";
-    static final String XPATH_CACHE_TERRAIN = "/gpx/wpt/groundspeak:cache/groundspeak:terrain";
-    static final String XPATH_CACHE_CONTAINER = "/gpx/wpt/groundspeak:cache/groundspeak:container";
-    
     static final String XPATH_HINT = "/gpx/wpt/groundspeak:cache/groundspeak:encoded_hints";
     static final String XPATH_LOGDATE = "/gpx/wpt/groundspeak:cache/groundspeak:logs/groundspeak:log/groundspeak:date";
     static final String[] XPATH_PLAINLINES = {
@@ -90,13 +93,15 @@ class EventHandlerGpx implements EventHandler {
             if (!text.equals("")) {
                 mCachePersisterFacade.hint(text);
             }
-        } else if (fullPath.equals(XPATH_CACHE_TYPE)) {
+        } else if (fullPath.equals(XPATH_CACHE_TYPE) || fullPath.equals(XPATH_GEOCACHE_TYPE)) {
             mCachePersisterFacade.cacheType(text);
-        } else if (fullPath.equals(XPATH_CACHE_DIFFICULTY)) {
+        } else if (fullPath.equals(XPATH_CACHE_DIFFICULTY)
+                || fullPath.equals(XPATH_GEOCACHE_DIFFICULTY)) {
             mCachePersisterFacade.difficulty(text);
-        } else if (fullPath.equals(XPATH_CACHE_TERRAIN)) {
+        } else if (fullPath.equals(XPATH_CACHE_TERRAIN) || fullPath.equals(XPATH_GEOCACHE_TERRAIN)) {
             mCachePersisterFacade.terrain(text);
-        } else if (fullPath.equals(XPATH_CACHE_CONTAINER)) {
+        } else if (fullPath.equals(XPATH_CACHE_CONTAINER)
+                || fullPath.equals(XPATH_GEOCACHE_CONTAINER)) {
             mCachePersisterFacade.container(text);
         }
 

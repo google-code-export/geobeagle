@@ -25,9 +25,9 @@ import com.google.code.geobeagle.database.CacheWriter;
 public class CacheTagWriter {
     public static class CacheTagParser {
         CacheType cacheType(String type) {
-            if (type.equals("Traditional Cache")) {
+            if (type.startsWith("Traditional")) {
                 return CacheType.TRADITIONAL;
-            } else if (type.equals("Multi-cache")) {
+            } else if (type.startsWith("Multi")) {
                 return CacheType.MULTI;
             } else if (type.equals("Unknown Cache")) {
                 return CacheType.UNKNOWN;

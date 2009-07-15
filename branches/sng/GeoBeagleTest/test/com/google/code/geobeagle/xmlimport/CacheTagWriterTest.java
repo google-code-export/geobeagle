@@ -143,7 +143,9 @@ public class CacheTagWriterTest {
         CacheTagParser cacheTagParser = new CacheTagParser();
         assertEquals(CacheType.NULL, cacheTagParser.cacheType("bad string"));
         assertEquals(CacheType.TRADITIONAL, cacheTagParser.cacheType("Traditional Cache"));
+        assertEquals(CacheType.TRADITIONAL, cacheTagParser.cacheType("Traditional"));
         assertEquals(CacheType.MULTI, cacheTagParser.cacheType("Multi-cache"));
+        assertEquals(CacheType.MULTI, cacheTagParser.cacheType("Multi"));
         assertEquals(CacheType.UNKNOWN, cacheTagParser.cacheType("Unknown Cache"));
     }
 
