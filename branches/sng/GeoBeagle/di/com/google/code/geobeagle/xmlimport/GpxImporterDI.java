@@ -153,7 +153,7 @@ public class GpxImporterDI {
 
         @Override
         public void handleMessage(Message msg) {
-            Log.v(GEOBEAGLE, "received msg: " + msg.what);
+//            Log.v(GEOBEAGLE, "received msg: " + msg.what);
             switch (msg.what) {
                 case MessageHandler.MSG_PROGRESS:
                     mProgressDialogWrapper.setMessage(mStatus);
