@@ -261,10 +261,10 @@ public class GeoBeagle extends Activity {
     public void onPause() {
         super.onPause();
         Log.v("GeoBeagle", "GeoBeagle onPause");
-
         mGeoBeagleDelegate.onPause();
         mSensorManager.unregisterListener(mCompassListener);
         mSensorManager.unregisterListener(mRadar);
+        mSqliteWrapper.close();
     }
 
     /*
