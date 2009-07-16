@@ -41,7 +41,7 @@
 			</intent-filter>
 		</activity>
 		<activity android:name=".activity.searchonline.SearchOnlineActivity"
-			android:label="GeoBeagle: Search for caches online">
+			android:label="GeoBeagle">
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN" />
 				<category android:name="android.intent.category.LAUNCHER" />
