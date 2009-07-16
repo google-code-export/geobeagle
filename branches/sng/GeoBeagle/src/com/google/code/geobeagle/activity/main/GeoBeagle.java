@@ -291,8 +291,6 @@ public class GeoBeagle extends Activity {
             mSensorManager.registerListener(mRadar, SensorManager.SENSOR_ORIENTATION,
                     SensorManager.SENSOR_DELAY_UI);
 
-            Log.v("GeoBeagle", "GeoBeagle action:" + getIntent().getAction());
-
             maybeGetCoordinatesFromIntent();
             // Possible fix for issue 53.
             if (mGeocache == null)
