@@ -22,11 +22,13 @@ class MeterFormatter {
     private static String mMeterLeft;
     private static String mMeterRight;
     private static String mDegreesSymbol;
+    private static StringBuilder mStringBuilder;
 
     MeterFormatter(Context context) {
         mMeterLeft = context.getString(R.string.meter_left);
         mMeterRight = context.getString(R.string.meter_right);
         mDegreesSymbol = context.getString(R.string.degrees_symbol);
+        mStringBuilder = new StringBuilder();
     }
 
     int accuracyToBarCount(float accuracy) {
@@ -34,11 +36,10 @@ class MeterFormatter {
     }
 
     String barsToMeterText(int bars, String center) {
-        // TODO re-use string builder.
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append('[').append(mMeterLeft.substring(mMeterLeft.length() - bars)).append(
+        mStringBuilder.setLength(0);
+        mStringBuilder.append('[').append(mMeterLeft.substring(mMeterLeft.length() - bars)).append(
                 center + mDegreesSymbol).append(mMeterRight.substring(0, bars)).append(']');
-        return stringBuilder.toString();
+        return mStringBuilder.toString();
     }
 
     int lagToAlpha(long milliseconds) {
