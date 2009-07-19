@@ -14,7 +14,6 @@
 
 package com.google.code.geobeagle.activity.cachelist;
 
-
 import android.app.ListActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -78,14 +77,10 @@ public class CacheList extends ListActivity {
 
     @Override
     protected void onPause() {
-        try {
-            Log.v("GeoBeagle", "CacheList onPause");
+        Log.v("GeoBeagle", "CacheList onPause");
 
-            super.onPause();
-            mCacheListDelegate.onPause();
-        } catch (Exception e) {
-            Log.v("GeoBeagle", e.getMessage());
-        }
+        super.onPause();
+        mCacheListDelegate.onPause();
     }
 
     @Override
