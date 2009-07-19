@@ -41,7 +41,6 @@ public class CacheListDelegate {
 
     public void onCreate() {
         mPresenter.onCreate();
-        mController.onCreate();
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
