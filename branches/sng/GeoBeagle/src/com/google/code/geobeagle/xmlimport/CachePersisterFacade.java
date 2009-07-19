@@ -36,15 +36,27 @@ public class CachePersisterFacade {
 
     CachePersisterFacade(CacheTagWriter cacheTagWriter, FileFactory fileFactory,
             CacheDetailsWriter cacheDetailsWriter, MessageHandler messageHandler, WakeLock wakeLock) {
+        mCacheDetailsWriter = cacheDetailsWriter;
         mCacheTagWriter = cacheTagWriter;
         mFileFactory = fileFactory;
-        mCacheDetailsWriter = cacheDetailsWriter;
         mMessageHandler = messageHandler;
         mWakeLock = wakeLock;
     }
 
+    void cacheType(String text) {
+        mCacheTagWriter.cacheType(text);
+    }
+
     void close(boolean success) {
         mCacheTagWriter.stopWriting(success);
+    }
+
+    void container(String text) {
+        mCacheTagWriter.container(text);
+    }
+
+    void difficulty(String text) {
+        mCacheTagWriter.difficulty(text);
     }
 
     void end() {
@@ -96,21 +108,9 @@ public class CachePersisterFacade {
     void symbol(String text) {
         mCacheTagWriter.symbol(text);
     }
-    
-    void container(String text) {
-    	mCacheTagWriter.container(text);
-    }
-
-    void difficulty(String text) {
-    	mCacheTagWriter.difficulty(text);
-    }
 
     void terrain(String text) {
-    	mCacheTagWriter.terrain(text);
-    }
-
-    void cacheType(String text) {
-    	mCacheTagWriter.cacheType(text);
+        mCacheTagWriter.terrain(text);
     }
 
     void wpt(String latitude, String longitude) {
@@ -130,4 +130,5 @@ public class CachePersisterFacade {
         mMessageHandler.updateWaypointId(wpt);
         mWakeLock.acquire(WAKELOCK_DURATION);
     }
+
 }
