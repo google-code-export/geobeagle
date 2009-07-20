@@ -24,8 +24,8 @@ public class LocationSaver {
     }
 
     public void saveLocation(Geocache geocache) {
-        CharSequence id = geocache.getId();
         // TODO: catch errors on open
+        final CharSequence id = geocache.getId();
         mCacheWriter.startWriting();
         mCacheWriter.insertAndUpdateCache(id, geocache.getName(), geocache.getLatitude(), geocache
                 .getLongitude(), geocache.getSourceType(), geocache.getSourceName(), geocache
