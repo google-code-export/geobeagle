@@ -26,10 +26,11 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 
 public class EditCacheActivity extends Activity {
-    private final EditCacheActivityDelegate mEditCacheActivityDelegate;
+    private EditCacheActivityDelegate mEditCacheActivityDelegate;
 
-    public EditCacheActivity() {
-        super();
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
         final CancelButtonOnClickListener cancelButtonOnClickListener = new CancelButtonOnClickListener(
                 this);
         final GeocacheFactory geocacheFactory = new GeocacheFactory();
@@ -37,16 +38,10 @@ public class EditCacheActivity extends Activity {
                 this);
         final SQLiteDatabase sqliteDatabaseWritable = geoBeagleSqliteOpenHelper
                 .getWritableDatabase();
-        final CacheWriter cacheWriter = DatabaseDI
-                .createCacheWriter(sqliteDatabaseWritable);
+        final CacheWriter cacheWriter = DatabaseDI.createCacheWriter(sqliteDatabaseWritable);
         final LocationSaver mLocationSaver = new LocationSaver(cacheWriter);
         mEditCacheActivityDelegate = new EditCacheActivityDelegate(this,
                 cancelButtonOnClickListener, geocacheFactory, mLocationSaver);
-    }
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
         mEditCacheActivityDelegate.onCreate(savedInstanceState);
     }
 
