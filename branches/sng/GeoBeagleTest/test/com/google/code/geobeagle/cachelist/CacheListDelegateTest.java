@@ -73,14 +73,11 @@ public class CacheListDelegateTest {
     public void testOnCreate() {
         GeocacheListPresenter geocacheListPresenter = PowerMock
                 .createStrictMock(GeocacheListPresenter.class);
-        GeocacheListController geocacheListController = PowerMock
-                .createStrictMock(GeocacheListController.class);
 
         geocacheListPresenter.onCreate();
-        geocacheListController.onCreate();
 
         PowerMock.replayAll();
-        new CacheListDelegate(null, geocacheListController, geocacheListPresenter).onCreate();
+        new CacheListDelegate(null, null, geocacheListPresenter).onCreate();
         PowerMock.verifyAll();
     }
 

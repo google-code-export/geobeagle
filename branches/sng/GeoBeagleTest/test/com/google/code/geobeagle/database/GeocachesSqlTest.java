@@ -38,12 +38,12 @@ public class GeocachesSqlTest {
 
     @Test
     public void testGetCount() {
-        CacheReader cacheReader = PowerMock.createMock(CacheReader.class);
+        CacheReader cacheReaderSql = PowerMock.createMock(CacheReader.class);
 
-        expect(cacheReader.getTotalCount()).andReturn(12);
+        expect(cacheReaderSql.getTotalCount()).andReturn(12);
 
         PowerMock.replayAll();
-        GeocachesSql geocachesSql = new GeocachesSql(cacheReader, null);
+        GeocachesSql geocachesSql = new GeocachesSql(cacheReaderSql, null);
         assertEquals(12, geocachesSql.getCount());
         PowerMock.verifyAll();
     }
@@ -63,13 +63,13 @@ public class GeocachesSqlTest {
     @Test
     public void testLoad() {
         Location location = PowerMock.createMock(Location.class);
-        CacheReader cacheReader = PowerMock.createMock(CacheReader.class);
+        CacheReader cacheReaderSql = PowerMock.createMock(CacheReader.class);
         Geocaches geocaches = PowerMock.createMock(Geocaches.class);
         CacheReaderCursor cursor = PowerMock.createMock(CacheReaderCursor.class);
         Geocache geocache = PowerMock.createMock(Geocache.class);
         WhereFactory whereFactory = PowerMock.createMock(WhereFactory.class);
 
-        expect(cacheReader.open(location, whereFactory)).andReturn(cursor);
+        expect(cacheReaderSql.open(location, whereFactory)).andReturn(cursor);
         geocaches.clear();
         expect(cursor.getCache()).andReturn(geocache);
         geocaches.add(geocache);
@@ -77,7 +77,7 @@ public class GeocachesSqlTest {
         cursor.close();
 
         PowerMock.replayAll();
-        new GeocachesSql(cacheReader, geocaches).loadCaches(location, whereFactory);
+        new GeocachesSql(cacheReaderSql, geocaches).loadCaches(location, whereFactory);
         PowerMock.verifyAll();
     }
 

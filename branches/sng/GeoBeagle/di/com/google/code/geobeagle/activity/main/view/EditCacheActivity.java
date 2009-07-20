@@ -15,15 +15,14 @@
 package com.google.code.geobeagle.activity.main.view;
 
 import com.google.code.geobeagle.GeocacheFactory;
-import com.google.code.geobeagle.activity.main.view.EditCacheActivityDelegate;
 import com.google.code.geobeagle.activity.main.view.EditCacheActivityDelegate.CancelButtonOnClickListener;
 import com.google.code.geobeagle.database.CacheWriter;
-import com.google.code.geobeagle.database.Database;
 import com.google.code.geobeagle.database.DatabaseDI;
 import com.google.code.geobeagle.database.LocationSaver;
-import com.google.code.geobeagle.database.DatabaseDI.SQLiteWrapper;
+import com.google.code.geobeagle.database.DatabaseDI.GeoBeagleSqliteOpenHelper;
 
 import android.app.Activity;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 
 public class EditCacheActivity extends Activity {
@@ -31,29 +30,24 @@ public class EditCacheActivity extends Activity {
 
     public EditCacheActivity() {
         super();
-
-        final SQLiteWrapper sqliteWrapper = new SQLiteWrapper(null);
-        final CacheWriter cacheWriter = DatabaseDI.createCacheWriter(sqliteWrapper);
-        final LocationSaver locationSaver = new LocationSaver(cacheWriter);
         final CancelButtonOnClickListener cancelButtonOnClickListener = new CancelButtonOnClickListener(
                 this);
-        final Database database = DatabaseDI.create(this);
         final GeocacheFactory geocacheFactory = new GeocacheFactory();
+        final GeoBeagleSqliteOpenHelper geoBeagleSqliteOpenHelper = new DatabaseDI.GeoBeagleSqliteOpenHelper(
+                this);
+        final SQLiteDatabase sqliteDatabaseWritable = geoBeagleSqliteOpenHelper
+                .getWritableDatabase();
+        final CacheWriter cacheWriter = DatabaseDI
+                .createCacheWriter(sqliteDatabaseWritable);
+        final LocationSaver mLocationSaver = new LocationSaver(cacheWriter);
         mEditCacheActivityDelegate = new EditCacheActivityDelegate(this,
-                cancelButtonOnClickListener, sqliteWrapper, database, locationSaver,
-                geocacheFactory);
+                cancelButtonOnClickListener, geocacheFactory, mLocationSaver);
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mEditCacheActivityDelegate.onCreate(savedInstanceState);
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        mEditCacheActivityDelegate.onPause();
     }
 
     @Override

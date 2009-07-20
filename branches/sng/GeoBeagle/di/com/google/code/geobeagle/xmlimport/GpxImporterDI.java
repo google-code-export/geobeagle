@@ -17,15 +17,7 @@ package com.google.code.geobeagle.xmlimport;
 import com.google.code.geobeagle.ErrorDisplayer;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
 import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheListPresenter;
-import com.google.code.geobeagle.database.Database;
-import com.google.code.geobeagle.database.DatabaseDI.SQLiteWrapper;
-import com.google.code.geobeagle.xmlimport.CachePersisterFacade;
-import com.google.code.geobeagle.xmlimport.EventHandlerGpx;
-import com.google.code.geobeagle.xmlimport.EventHandlerLoc;
-import com.google.code.geobeagle.xmlimport.EventHandlers;
-import com.google.code.geobeagle.xmlimport.GpxImporter;
-import com.google.code.geobeagle.xmlimport.GpxLoader;
-import com.google.code.geobeagle.xmlimport.ImportThreadDelegate;
+import com.google.code.geobeagle.database.DatabaseDI.GeoBeagleSqliteOpenHelper;
 import com.google.code.geobeagle.xmlimport.EventHelperDI.EventHelperFactory;
 import com.google.code.geobeagle.xmlimport.GpxToCache.Aborter;
 import com.google.code.geobeagle.xmlimport.GpxToCacheDI.XmlPullParserWrapper;
@@ -41,7 +33,6 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 import android.widget.Toast;
 
 import java.io.FilenameFilter;
@@ -153,7 +144,7 @@ public class GpxImporterDI {
 
         @Override
         public void handleMessage(Message msg) {
-//            Log.v(GEOBEAGLE, "received msg: " + msg.what);
+            // Log.v(GEOBEAGLE, "received msg: " + msg.what);
             switch (msg.what) {
                 case MessageHandler.MSG_PROGRESS:
                     mProgressDialogWrapper.setMessage(mStatus);
@@ -227,14 +218,11 @@ public class GpxImporterDI {
         }
     }
 
-    public static GpxImporter create(Database database, SQLiteWrapper sqliteWrapper,
+    public static GpxImporter create(GeoBeagleSqliteOpenHelper geoBeagleSqliteOpenHelper,
             ListActivity listActivity, XmlPullParserWrapper xmlPullParserWrapper,
             ErrorDisplayer errorDisplayer, GeocacheListPresenter geocacheListPresenter,
-            Aborter aborter) {
-        final MessageHandler messageHandler = MessageHandler.create(geocacheListPresenter,
-                listActivity);
-        final CachePersisterFacade cachePersisterFacade = CachePersisterFacadeDI.create(
-                listActivity, messageHandler, database, sqliteWrapper);
+            Aborter aborter, MessageHandler messageHandler,
+            CachePersisterFacade cachePersisterFacade) {
         final GpxLoader gpxLoader = GpxLoaderDI.create(cachePersisterFacade, xmlPullParserWrapper,
                 aborter, errorDisplayer);
         final ToastFactory toastFactory = new ToastFactory();

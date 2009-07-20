@@ -67,7 +67,6 @@ public class GeocacheListPresenter {
     // private final SensorEventListener mCompassListener;
     @SuppressWarnings("deprecation")
     private final SensorListener mCompassListener;
-    private final Database mDatabase;
     private final DistanceFormatterManager mDistanceFormatterManager;
     private final ErrorDisplayer mErrorDisplayer;
     private final GeocacheListAdapter mGeocacheListAdapter;
@@ -76,7 +75,6 @@ public class GeocacheListPresenter {
     private final ListActivity mListActivity;
     private final LocationControlBuffered mLocationControlBuffered;
     private final SensorManager mSensorManager;
-    private final SQLiteWrapper mSQLiteWrapper;
     private final UpdateGpsWidgetRunnable mUpdateGpsWidgetRunnable;
     private final GeocacheSummaryRowInflater mGeocacheSummaryRowInflater;
 
@@ -89,7 +87,7 @@ public class GeocacheListPresenter {
             UpdateGpsWidgetRunnable updateGpsWidgetRunnable, GeocacheVectors geocacheVectors,
             CacheListRefreshLocationListener cacheListRefreshLocationListener,
             ListActivity listActivity, GeocacheListAdapter geocacheListAdapter,
-            ErrorDisplayer errorDisplayer, SQLiteWrapper sqliteWrapper, Database database,
+            ErrorDisplayer errorDisplayer, 
             SensorManager sensorManager, SensorListener compassListener,
             DistanceFormatterManager distanceFormatterManager,
             GeocacheSummaryRowInflater geocacheSummaryRowInflater) {
@@ -101,8 +99,6 @@ public class GeocacheListPresenter {
         mGeocacheVectors = geocacheVectors;
         mCacheListRefreshLocationListener = cacheListRefreshLocationListener;
         mListActivity = listActivity;
-        mSQLiteWrapper = sqliteWrapper;
-        mDatabase = database;
         mGeocacheListAdapter = geocacheListAdapter;
         mSensorManager = sensorManager;
         mErrorDisplayer = errorDisplayer;

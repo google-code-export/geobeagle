@@ -20,16 +20,16 @@ import static org.junit.Assert.assertTrue;
 import com.google.code.geobeagle.ErrorDisplayer;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.actions.context.ContextAction;
-import com.google.code.geobeagle.activity.cachelist.GeocacheListController;
 import com.google.code.geobeagle.activity.cachelist.GeocacheListController.CacheListOnCreateContextMenuListener;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActions;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVector;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVectors;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
 import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheListPresenter;
-import com.google.code.geobeagle.database.Database;
+import com.google.code.geobeagle.database.CacheWriter;
+import com.google.code.geobeagle.database.DatabaseDI;
 import com.google.code.geobeagle.database.FilterNearestCaches;
-import com.google.code.geobeagle.database.DatabaseDI.SQLiteWrapper;
+import com.google.code.geobeagle.database.DatabaseDI.GeoBeagleSqliteOpenHelper;
 import com.google.code.geobeagle.xmlimport.GpxImporter;
 
 import org.easymock.EasyMock;
@@ -40,6 +40,7 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import android.app.ListActivity;
+import android.database.sqlite.SQLiteDatabase;
 import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -49,7 +50,7 @@ import android.widget.AdapterView.AdapterContextMenuInfo;
 @RunWith(PowerMockRunner.class)
 @PrepareForTest( {
         GeocacheListController.class, ListActivity.class, GeocacheListPresenter.class,
-        CacheListOnCreateContextMenuListener.class
+        CacheListOnCreateContextMenuListener.class, DatabaseDI.class
 })
 public class GeocacheListControllerTest {
 
@@ -89,32 +90,9 @@ public class GeocacheListControllerTest {
 
         PowerMock.replayAll();
         adapterContextMenuInfo.position = 76;
-        GeocacheListController geocacheListController = new GeocacheListController(null, null,
-                contextActions, null, null, null, null, null, null);
+        GeocacheListController geocacheListController = new GeocacheListController(null,
+                contextActions, null, null, null, null);
         assertTrue(geocacheListController.onContextItemSelected(menuItem));
-        PowerMock.verifyAll();
-    }
-
-    @Test
-    public void testOnContextItemSelectedError() {
-        MenuItem menuItem = PowerMock.createMock(MenuItem.class);
-        ErrorDisplayer errorDisplayer = PowerMock.createMock(ErrorDisplayer.class);
-
-        RuntimeException runtimeException = new RuntimeException();
-        expect(menuItem.getMenuInfo()).andThrow(runtimeException);
-        errorDisplayer.displayErrorAndStack(runtimeException);
-
-        PowerMock.replayAll();
-        GeocacheListController geocacheListController = new GeocacheListController(null, null,
-                null, null, null, null, null, null, errorDisplayer);
-        assertTrue(geocacheListController.onContextItemSelected(menuItem));
-        PowerMock.verifyAll();
-    }
-
-    @Test
-    public void testOnCreate() throws InterruptedException {
-        PowerMock.replayAll();
-        new GeocacheListController(null, null, null, null, null, null, null, null, null).onCreate();
         PowerMock.verifyAll();
     }
 
@@ -152,8 +130,8 @@ public class GeocacheListControllerTest {
         menuInflater.inflate(R.menu.cache_list_menu, menu);
 
         PowerMock.replayAll();
-        GeocacheListController geocacheListController = new GeocacheListController(listActivity,
-                null, null, null, null, null, null, null, null);
+        GeocacheListController geocacheListController = new GeocacheListController(null, null,
+                null, null, listActivity, null);
         assertTrue(geocacheListController.onCreateOptionsMenu(menu));
         PowerMock.verifyAll();
     }
@@ -168,26 +146,8 @@ public class GeocacheListControllerTest {
         contextAction.act(45);
 
         PowerMock.replayAll();
-        new GeocacheListController(null, null, contextActions, null, null, null, null, null, null)
-                .onListItemClick(null, null, 46, 0);
-        PowerMock.verifyAll();
-    }
-
-    @Test
-    public void testOnListItemClickError() {
-        final ContextAction contextAction = PowerMock.createMock(ContextAction.class);
-        ErrorDisplayer errorDisplayer = PowerMock.createMock(ErrorDisplayer.class);
-        ContextAction contextActions[] = {
-                null, contextAction
-        };
-        RuntimeException runtimeException = new RuntimeException();
-        contextAction.act(46);
-        EasyMock.expectLastCall().andThrow(runtimeException);
-        errorDisplayer.displayErrorAndStack(runtimeException);
-
-        PowerMock.replayAll();
-        new GeocacheListController(null, null, contextActions, null, null, null, null, null,
-                errorDisplayer).onListItemClick(null, null, 47, 0);
+        new GeocacheListController(null, contextActions, null, null, null, null).onListItemClick(
+                null, null, 46, 0);
         PowerMock.verifyAll();
     }
 
@@ -198,8 +158,8 @@ public class GeocacheListControllerTest {
         cacheListRefresh.forceRefresh();
 
         PowerMock.replayAll();
-        new GeocacheListController(null, null, null, null, null, null, cacheListRefresh, null, null)
-                .onListItemClick(null, null, 0, 0);
+        new GeocacheListController(cacheListRefresh, null, null, null, null, null).onListItemClick(
+                null, null, 0, 0);
         PowerMock.verifyAll();
     }
 
@@ -215,8 +175,8 @@ public class GeocacheListControllerTest {
         EasyMock.expect(menuItem.setTitle(R.string.menu_show_nearest_caches)).andReturn(menuItem);
 
         PowerMock.replayAll();
-        new GeocacheListController(null, null, null, null, null, null, null, filterNearestCaches,
-                null).onMenuOpened(0, menu);
+        new GeocacheListController(null, null, filterNearestCaches, null, null, null).onMenuOpened(
+                0, menu);
         PowerMock.verifyAll();
     }
 
@@ -229,86 +189,32 @@ public class GeocacheListControllerTest {
         menuActions.act(27);
 
         PowerMock.replayAll();
-        new GeocacheListController(null, menuActions, null, null, null, null, null, null, null)
+        new GeocacheListController(null, null, null, null, null, menuActions)
                 .onOptionsItemSelected(menuItem);
-        PowerMock.verifyAll();
-    }
-
-    @Test
-    public void testOnOptionsItemSelectedError() {
-        MenuActions menuActions = PowerMock.createMock(MenuActions.class);
-        MenuItem menuItem = PowerMock.createMock(MenuItem.class);
-        ErrorDisplayer errorDisplayer = PowerMock.createMock(ErrorDisplayer.class);
-
-        Exception exception = new RuntimeException();
-        expect(menuItem.getItemId()).andThrow(exception);
-        errorDisplayer.displayErrorAndStack(exception);
-
-        PowerMock.replayAll();
-        new GeocacheListController(null, menuActions, null, null, null, null, null, null,
-                errorDisplayer).onOptionsItemSelected(menuItem);
         PowerMock.verifyAll();
     }
 
     @Test
     public void testOnPause() throws InterruptedException {
         GpxImporter gpxImporter = PowerMock.createMock(GpxImporter.class);
-        SQLiteWrapper sqliteWrapper = PowerMock.createMock(SQLiteWrapper.class);
-        Database database = PowerMock.createMock(Database.class);
 
         gpxImporter.abort();
-        sqliteWrapper.close();
 
         PowerMock.replayAll();
-        new GeocacheListController(null, null, null, sqliteWrapper, database, gpxImporter, null,
-                null, null).onPause();
-        PowerMock.verifyAll();
-    }
-
-    @Test
-    public void testOnPauseError() throws InterruptedException {
-        GpxImporter gpxImporter = PowerMock.createMock(GpxImporter.class);
-
-        gpxImporter.abort();
-        EasyMock.expectLastCall().andThrow(new InterruptedException());
-
-        PowerMock.replayAll();
-        new GeocacheListController(null, null, null, null, null, gpxImporter, null, null, null)
-                .onPause();
+        final GeocacheListController geocacheListController = new GeocacheListController(null,
+                null, null, gpxImporter, null, null);
+        geocacheListController.onPause();
         PowerMock.verifyAll();
     }
 
     @Test
     public void testOnResume() throws InterruptedException {
         CacheListRefresh cacheListRefresh = PowerMock.createMock(CacheListRefresh.class);
-        SQLiteWrapper sqliteWrapper = PowerMock.createMock(SQLiteWrapper.class);
-        Database database = PowerMock.createMock(Database.class);
 
-        sqliteWrapper.openWritableDatabase(database);
         cacheListRefresh.forceRefresh();
 
         PowerMock.replayAll();
-        new GeocacheListController(null, null, null, sqliteWrapper, database, null, cacheListRefresh, null, null)
-                .onResume();
-        PowerMock.verifyAll();
-    }
-
-    @Test
-    public void testOnResumeError() throws InterruptedException {
-        CacheListRefresh cacheListRefresh = PowerMock.createMock(CacheListRefresh.class);
-        ErrorDisplayer errorDisplayer = PowerMock.createMock(ErrorDisplayer.class);
-        SQLiteWrapper sqliteWrapper = PowerMock.createMock(SQLiteWrapper.class);
-        Database database = PowerMock.createMock(Database.class);
-
-        sqliteWrapper.openWritableDatabase(database);
-        cacheListRefresh.forceRefresh();
-        RuntimeException runtimeException = new RuntimeException();
-        EasyMock.expectLastCall().andThrow(runtimeException);
-        errorDisplayer.displayErrorAndStack(runtimeException);
-
-        PowerMock.replayAll();
-        new GeocacheListController(null, null, null, sqliteWrapper, database, null,
-                cacheListRefresh, null, errorDisplayer).onResume();
+        new GeocacheListController(cacheListRefresh, null, null, null, null, null).onResume();
         PowerMock.verifyAll();
     }
 }

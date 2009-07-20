@@ -33,8 +33,8 @@ public class CacheWriterTest {
         sqlite.execSQL(Database.SQL_CLEAR_CACHES, "the source");
 
         replay(sqlite);
-        CacheWriter cacheWriter = new CacheWriter(sqlite, null);
-        cacheWriter.clearCaches("the source");
+        CacheWriter cacheWriterSql = new CacheWriter(sqlite, null);
+        cacheWriterSql.clearCaches("the source");
         verify(sqlite);
     }
 
@@ -50,8 +50,8 @@ public class CacheWriterTest {
         db.execSQL(INSERT_INTO_GPX + "VALUES ('nuke.gpx', '2009-04-30', 1)");
         db.execSQL(INSERT_INTO_GPX + "VALUES ('keep.gpx', '2009-04-30', 0)");
 
-        CacheWriter cacheWriter = new CacheWriter(db, null);
-        cacheWriter.clearEarlierLoads();
+        CacheWriter cacheWriterSql = new CacheWriter(db, null);
+        cacheWriterSql.clearEarlierLoads();
 
         assertEquals("GCTHISIMPORT|just loaded|||foo.gpx|1|0|0|0|0\n"
                 + "GCCLICKEDLINK|from a link|||intent|0|0|0|0|0\n", db.dumpTable("CACHES"));
@@ -65,8 +65,8 @@ public class CacheWriterTest {
         sqlite.execSQL(Database.SQL_DELETE_CACHE, "GC123");
 
         replay(sqlite);
-        CacheWriter cacheWriter = new CacheWriter(sqlite, null);
-        cacheWriter.deleteCache("GC123");
+        CacheWriter cacheWriterSql = new CacheWriter(sqlite, null);
+        cacheWriterSql.deleteCache("GC123");
         verify(sqlite);
     }
 
@@ -82,8 +82,8 @@ public class CacheWriterTest {
 
         replay(sqlite);
         replay(dbToGeocacheAdapter);
-        CacheWriter cacheWriter = new CacheWriter(sqlite, dbToGeocacheAdapter);
-        cacheWriter.insertAndUpdateCache("gc123", "a cache", 122, 37, Source.GPX, "source",
+        CacheWriter cacheWriterSql = new CacheWriter(sqlite, dbToGeocacheAdapter);
+        cacheWriterSql.insertAndUpdateCache("gc123", "a cache", 122, 37, Source.GPX, "source",
                 CacheType.NULL, 0, 0, 0);
         verify(sqlite);
     }
@@ -97,8 +97,8 @@ public class CacheWriterTest {
                         "04-30-2009")).andReturn(0);
 
         replay(sqlite);
-        CacheWriter cacheWriter = new CacheWriter(sqlite, null);
-        assertFalse(cacheWriter.isGpxAlreadyLoaded("foo.gpx", "04-30-2009"));
+        CacheWriter cacheWriterSql = new CacheWriter(sqlite, null);
+        assertFalse(cacheWriterSql.isGpxAlreadyLoaded("foo.gpx", "04-30-2009"));
         verify(sqlite);
     }
 
@@ -113,8 +113,8 @@ public class CacheWriterTest {
         sqlite.execSQL(Database.SQL_GPX_DONT_DELETE_ME, "foo.gpx");
 
         replay(sqlite);
-        CacheWriter cacheWriter = new CacheWriter(sqlite, null);
-        assertTrue(cacheWriter.isGpxAlreadyLoaded("foo.gpx", "04-30-2009"));
+        CacheWriter cacheWriterSql = new CacheWriter(sqlite, null);
+        assertTrue(cacheWriterSql.isGpxAlreadyLoaded("foo.gpx", "04-30-2009"));
         verify(sqlite);
     }
 

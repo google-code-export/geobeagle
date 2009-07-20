@@ -39,10 +39,10 @@ import com.google.code.geobeagle.activity.main.view.GeocacheViewer.AttributeView
 import com.google.code.geobeagle.activity.main.view.GeocacheViewer.LabelledAttributeViewer;
 import com.google.code.geobeagle.activity.main.view.GeocacheViewer.NameViewer;
 import com.google.code.geobeagle.activity.main.view.GeocacheViewer.UnlabelledAttributeViewer;
-import com.google.code.geobeagle.database.Database;
+import com.google.code.geobeagle.database.CacheWriter;
 import com.google.code.geobeagle.database.DatabaseDI;
 import com.google.code.geobeagle.database.LocationSaver;
-import com.google.code.geobeagle.database.DatabaseDI.SQLiteWrapper;
+import com.google.code.geobeagle.database.DatabaseDI.GeoBeagleSqliteOpenHelper;
 import com.google.code.geobeagle.location.LocationLifecycleManager;
 
 import android.app.Activity;
@@ -50,6 +50,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.sqlite.SQLiteDatabase;
 import android.hardware.SensorManager;
 import android.location.LocationManager;
 import android.net.Uri;
@@ -79,7 +80,6 @@ public class GeoBeagle extends Activity {
 
     private static int ACTIVITY_REQUEST_TAKE_PICTURE = 1;
     private CompassListener mCompassListener;
-    private final Database mDatabase;
     private final ErrorDisplayer mErrorDisplayer;
     private GeoBeagleDelegate mGeoBeagleDelegate;
     private Geocache mGeocache;
@@ -91,36 +91,25 @@ public class GeoBeagle extends Activity {
     private RadarView mRadar;
     private final ResourceProvider mResourceProvider;
     private SensorManager mSensorManager;
-    private final SQLiteWrapper mSqliteWrapper;
     private WebPageAndDetailsButtonEnabler mWebPageButtonEnabler;
 
     public GeoBeagle() {
         super();
         mErrorDisplayer = new ErrorDisplayer(this);
         mResourceProvider = new ResourceProvider(this);
-
-        mSqliteWrapper = new SQLiteWrapper(null);
-        mDatabase = DatabaseDI.create(this);
     }
 
     private void getCoordinatesFromIntent(Intent intent) {
-        try {
-            if (intent.getType() == null) {
-                final String query = intent.getData().getQuery();
-                final CharSequence sanitizedQuery = Util.parseHttpUri(query,
-                        new UrlQuerySanitizer(), UrlQuerySanitizer
-                                .getAllButNulAndAngleBracketsLegal());
-                final CharSequence[] latlon = Util.splitLatLonDescription(sanitizedQuery);
-                mGeocache = mGeocacheFactory.create(latlon[2], latlon[3], Util
-                        .parseCoordinate(latlon[0]), Util.parseCoordinate(latlon[1]),
-                        Source.WEB_URL, null, CacheType.NULL, 0, 0, 0);
-                mSqliteWrapper.openWritableDatabase(mDatabase);
-                mLocationSaver.saveLocation(mGeocache);
-                mSqliteWrapper.close();
-                mGeocacheViewer.set(mGeocache);
-            }
-        } catch (final Exception e) {
-            mErrorDisplayer.displayErrorAndStack(e);
+        if (intent.getType() == null) {
+            final String query = intent.getData().getQuery();
+            final CharSequence sanitizedQuery = Util.parseHttpUri(query, new UrlQuerySanitizer(),
+                    UrlQuerySanitizer.getAllButNulAndAngleBracketsLegal());
+            final CharSequence[] latlon = Util.splitLatLonDescription(sanitizedQuery);
+            mGeocache = mGeocacheFactory.create(latlon[2], latlon[3], Util
+                    .parseCoordinate(latlon[0]), Util.parseCoordinate(latlon[1]), Source.WEB_URL,
+                    null, CacheType.NULL, 0, 0, 0);
+            mLocationSaver.saveLocation(mGeocache);
+            mGeocacheViewer.set(mGeocache);
         }
     }
 
@@ -179,10 +168,14 @@ public class GeoBeagle extends Activity {
         Log.v("GeoBeagle", "GeoBeagle onCreate");
 
         setContentView(R.layout.main);
-        mLocationSaver = new LocationSaver(DatabaseDI.createCacheWriter(mSqliteWrapper));
+        final GeoBeagleSqliteOpenHelper geoBeagleSqliteOpenHelper = new GeoBeagleSqliteOpenHelper(
+                this);
+        final SQLiteDatabase sqliteDatabaseWritable = geoBeagleSqliteOpenHelper
+                .getWritableDatabase();
+        final CacheWriter cacheWriter = DatabaseDI.createCacheWriter(sqliteDatabaseWritable);
+        mLocationSaver = new LocationSaver(cacheWriter);
         mWebPageButtonEnabler = Misc.create(this, findViewById(R.id.cache_page),
                 findViewById(R.id.cache_details));
-
         final LocationManager locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
         mLocationControlBuffered = LocationControlDi.create(locationManager);
         mGeocacheFactory = new GeocacheFactory();
@@ -264,7 +257,6 @@ public class GeoBeagle extends Activity {
         mGeoBeagleDelegate.onPause();
         mSensorManager.unregisterListener(mCompassListener);
         mSensorManager.unregisterListener(mRadar);
-        mSqliteWrapper.close();
     }
 
     /*
@@ -285,7 +277,7 @@ public class GeoBeagle extends Activity {
 
             mRadar.handleUnknownLocation();
             mGeoBeagleDelegate.onResume();
-            mSqliteWrapper.openWritableDatabase(mDatabase);
+
             mSensorManager.registerListener(mCompassListener, SensorManager.SENSOR_ORIENTATION,
                     SensorManager.SENSOR_DELAY_UI);
             mSensorManager.registerListener(mRadar, SensorManager.SENSOR_ORIENTATION,

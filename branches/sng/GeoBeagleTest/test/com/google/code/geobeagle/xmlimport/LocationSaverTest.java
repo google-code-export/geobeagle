@@ -20,13 +20,18 @@ import com.google.code.geobeagle.CacheType;
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.GeocacheFactory.Source;
 import com.google.code.geobeagle.database.CacheWriter;
+import com.google.code.geobeagle.database.DatabaseDI;
 import com.google.code.geobeagle.database.LocationSaver;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.api.easymock.PowerMock;
+import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+@PrepareForTest( {
+    DatabaseDI.class
+})
 @RunWith(PowerMockRunner.class)
 public class LocationSaverTest {
 
@@ -34,6 +39,7 @@ public class LocationSaverTest {
     public void testSave() {
         CacheWriter writer = PowerMock.createMock(CacheWriter.class);
         Geocache geocache = PowerMock.createMock(Geocache.class);
+        PowerMock.mockStatic(DatabaseDI.class);
 
         writer.startWriting();
         expect(geocache.getId()).andReturn("LB12345");

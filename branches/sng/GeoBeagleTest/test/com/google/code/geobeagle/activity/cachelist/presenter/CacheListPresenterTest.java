@@ -25,8 +25,6 @@ import com.google.code.geobeagle.activity.cachelist.GeocacheListController.Cache
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVectors;
 import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheListPresenter.CacheListRefreshLocationListener;
 import com.google.code.geobeagle.activity.cachelist.view.GeocacheSummaryRowInflater;
-import com.google.code.geobeagle.database.Database;
-import com.google.code.geobeagle.database.DatabaseDI.SQLiteWrapper;
 import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidget;
 import com.google.code.geobeagle.gpsstatuswidget.UpdateGpsWidgetRunnable;
 import com.google.code.geobeagle.location.CombinedLocationManager;
@@ -96,7 +94,7 @@ public class CacheListPresenterTest {
         PowerMock.replayAll();
         new GeocacheListPresenter(null, locationControlBuffered, locationControlBuffered,
                 gpsStatusWidget, updateGpsWidgetRunnable, geocacheVectors, null, listActivity,
-                geocacheListAdapter, null, null, null, null, null, null, null).onCreate();
+                geocacheListAdapter, null, null, null, null, null).onCreate();
         PowerMock.verifyAll();
     }
 
@@ -108,7 +106,6 @@ public class CacheListPresenterTest {
                 .createMock(LocationListener.class);
         CacheListRefreshLocationListener cacheListRefreshLocationListener = PowerMock
                 .createMock(CacheListRefreshLocationListener.class);
-        SQLiteWrapper sqliteWrapper = PowerMock.createMock(SQLiteWrapper.class);
         LocationControlBuffered locationControlBuffered = PowerMock
                 .createMock(LocationControlBuffered.class);
         SensorManager sensorManager = PowerMock.createMock(SensorManager.class);
@@ -122,8 +119,8 @@ public class CacheListPresenterTest {
         PowerMock.replayAll();
         new GeocacheListPresenter(combinedLocationManager, locationControlBuffered,
                 gpsStatusWidgetLocationListener, null, null, null,
-                cacheListRefreshLocationListener, null, null, null, sqliteWrapper, null,
-                sensorManager, compassListener, null, null).onPause();
+                cacheListRefreshLocationListener, null, null, null, sensorManager, compassListener,
+                null, null).onPause();
         PowerMock.verifyAll();
     }
 
@@ -175,8 +172,6 @@ public class CacheListPresenterTest {
                 .createMock(CacheListRefreshLocationListener.class);
         LocationControlBuffered locationControlBuffered = PowerMock
                 .createMock(LocationControlBuffered.class);
-        SQLiteWrapper sqliteWrapper = PowerMock.createMock(SQLiteWrapper.class);
-        Database database = PowerMock.createMock(Database.class);
         SensorManager sensorManager = PowerMock.createMock(SensorManager.class);
         CompassListener compassListener = PowerMock.createMock(CompassListener.class);
         ListActivity listActivity = PowerMock.createMock(ListActivity.class);
@@ -207,14 +202,14 @@ public class CacheListPresenterTest {
         expect(sharedPreferences.getBoolean("absolute-bearing", false)).andReturn(true);
         PowerMock.expectNew(AbsoluteBearingFormatter.class).andReturn(absoluteBearingFormatter);
         geocacheSummaryRowInflater.setBearingFormatter(absoluteBearingFormatter);
-        
+
         PowerMock.replayAll();
         new GeocacheListPresenter(combinedLocationManager, locationControlBuffered,
                 gpsStatusWidgetLocationListener, gpsStatusWidget, null, null,
                 cacheListRefreshLocationListener, listActivity, geocacheListAdapter, null,
-                sqliteWrapper, database, sensorManager, compassListener, distanceFormatterManager,
+                sensorManager, compassListener, distanceFormatterManager,
                 geocacheSummaryRowInflater).onResume();
-        
+
         PowerMock.verifyAll();
     }
 
@@ -235,7 +230,7 @@ public class CacheListPresenterTest {
         PowerMock.replayAll();
         new GeocacheListPresenter(combinedLocationManager, locationControlBuffered,
                 locationControlBuffered, null, null, null, null, null, null, errorDisplayer, null,
-                null, null, null, null, null).onResume();
+                null, null, null).onResume();
         PowerMock.verifyAll();
     }
 
