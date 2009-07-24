@@ -132,7 +132,7 @@ public class CacheListDelegateDI {
         final SQLiteDatabase sqliteDatabaseWritable = geoBeagleSqliteOpenHelper
                 .getWritableDatabase();
         final CacheWriter cacheWriter = DatabaseDI.createCacheWriter(sqliteDatabaseWritable);
-        final LocationSaver locationSaver = new LocationSaver(null);
+        final LocationSaver locationSaver = new LocationSaver(cacheWriter);
         final GeocacheVectorFactory geocacheVectorFactory = new GeocacheVectorFactory();
         final ArrayList<GeocacheVector> geocacheVectorsList = new ArrayList<GeocacheVector>(10);
         final GeocacheVectors geocacheVectors = new GeocacheVectors(geocacheVectorFactory,
