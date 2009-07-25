@@ -18,6 +18,8 @@ import org.powermock.modules.junit4.PowerMockRunner;
 
 import android.location.Location;
 
+import java.util.Locale;
+
 @RunWith(PowerMockRunner.class)
 public class GeocacheFromMyLocationFactoryTest {
 
@@ -28,6 +30,7 @@ public class GeocacheFromMyLocationFactoryTest {
         Location location = PowerMock.createMock(Location.class);
         GeocacheFactory geocacheFactory = PowerMock.createMock(GeocacheFactory.class);
         Geocache geocache = PowerMock.createMock(Geocache.class);
+        Locale.setDefault(Locale.ENGLISH);
 
         EasyMock.expect(locationControlBuffered.getLocation()).andReturn(location);
         EasyMock.expect(location.getTime()).andReturn(1000000L);
@@ -39,9 +42,8 @@ public class GeocacheFromMyLocationFactoryTest {
                 geocache);
 
         PowerMock.replayAll();
-        GeocacheFromMyLocationFactory geocacheFromMyLocationFactory = new GeocacheFromMyLocationFactory(
-                geocacheFactory, locationControlBuffered);
-        assertEquals(geocache, geocacheFromMyLocationFactory.create());
+        assertEquals(geocache, new GeocacheFromMyLocationFactory(geocacheFactory,
+                locationControlBuffered).create());
         PowerMock.verifyAll();
     }
 
@@ -53,9 +55,8 @@ public class GeocacheFromMyLocationFactoryTest {
         EasyMock.expect(locationControlBuffered.getLocation()).andReturn(null);
 
         PowerMock.replayAll();
-        GeocacheFromMyLocationFactory geocacheFromMyLocationFactory = new GeocacheFromMyLocationFactory(
-                null, locationControlBuffered);
-        assertEquals(null, geocacheFromMyLocationFactory.create());
+        assertEquals(null, new GeocacheFromMyLocationFactory(null, locationControlBuffered)
+                .create());
         PowerMock.verifyAll();
     }
 }

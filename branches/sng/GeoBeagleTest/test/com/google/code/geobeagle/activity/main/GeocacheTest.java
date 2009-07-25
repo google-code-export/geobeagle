@@ -114,13 +114,17 @@ public class GeocacheTest {
     @Test
     public void testGetters() {
         Geocache geocache = new Geocache("GC123", "a cache", 37.5, -122.25, Source.GPX, "alameda",
-                null, 0, 0, 0);
+                CacheType.TRADITIONAL, 1, 2, 3);
         assertEquals("GC123", geocache.getId());
         assertEquals(37.5, geocache.getLatitude(), 0);
         assertEquals(-122.25, geocache.getLongitude(), 0);
         assertEquals("a cache", geocache.getName());
         assertEquals("alameda", geocache.getSourceName());
         assertEquals(Source.GPX, geocache.getSourceType());
+        assertEquals(CacheType.TRADITIONAL, geocache.getCacheType());
+        assertEquals(1, geocache.getDifficulty());
+        assertEquals(2, geocache.getTerrain());
+        assertEquals(3, geocache.getContainer());
     }
 
     @Test

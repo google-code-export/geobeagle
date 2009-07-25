@@ -54,7 +54,7 @@ public class GpxToCacheDI {
             return mXmlPullParser.next();
         }
 
-        public void open(String path, Reader reader) throws XmlPullParserException {
+        public void open(String path, Reader reader) throws XmlPullParserException  {
             final XmlPullParser newPullParser = XmlPullParserFactory.newInstance().newPullParser();
             newPullParser.setInput(reader);
             mSource = path;

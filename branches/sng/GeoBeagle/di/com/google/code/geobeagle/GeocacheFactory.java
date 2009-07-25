@@ -36,18 +36,28 @@ public class GeocacheFactory {
     }
 
     public static enum Provider {
-        ATLAS_QUEST(0), GROUNDSPEAK(1), MY_LOCATION(-1), OPENCACHING(2);
+        ATLAS_QUEST(0, "LB"), GROUNDSPEAK(1, "GC"), MY_LOCATION(-1, "ML"), OPENCACHING(2, "OC");
 
         private final int mIx;
+        private final String mPrefix;
 
-        Provider(int ix) {
+        Provider(int ix, String prefix) {
             mIx = ix;
+            mPrefix = prefix;
         }
 
         public int toInt() {
             return mIx;
         }
+
+        public String getPrefix() {
+            return mPrefix;
+        }
     }
+
+    public static Provider ALL_PROVIDERS[] = {
+            Provider.ATLAS_QUEST, Provider.GROUNDSPEAK, Provider.MY_LOCATION, Provider.OPENCACHING
+    };
 
     public static enum Source {
         GPX(0), LOC(3), MY_LOCATION(1), WEB_URL(2);

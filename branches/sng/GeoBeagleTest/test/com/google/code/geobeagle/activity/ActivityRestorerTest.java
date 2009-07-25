@@ -34,7 +34,7 @@ public class ActivityRestorerTest {
 
         final int cacheList = ActivityType.CACHE_LIST.toInt();
         EasyMock.expect(
-                sharedPreferences.getInt(ActivitySaver.LAST_ACTIVITY, ActivityType.NONE.mIx))
+                sharedPreferences.getInt(ActivitySaver.LAST_ACTIVITY, ActivityType.NONE.toInt()))
                 .andReturn(cacheList);
         EasyMock.expect(activityTypeFactory.fromInt(cacheList)).andReturn(ActivityType.CACHE_LIST);
         PowerMock.expectNew(Intent.class, parent, CacheList.class).andReturn(intent);
@@ -55,9 +55,10 @@ public class ActivityRestorerTest {
         Activity parent = PowerMock.createMock(Activity.class);
 
         EasyMock.expect(
-                sharedPreferences.getInt(ActivitySaver.LAST_ACTIVITY, ActivityType.NONE.mIx))
-                .andReturn(ActivityType.NONE.mIx);
-        EasyMock.expect(activityTypeFactory.fromInt(ActivityType.NONE.mIx)).andReturn(ActivityType.NONE);
+                sharedPreferences.getInt(ActivitySaver.LAST_ACTIVITY, ActivityType.NONE.toInt()))
+                .andReturn(ActivityType.NONE.toInt());
+        EasyMock.expect(activityTypeFactory.fromInt(ActivityType.NONE.toInt())).andReturn(
+                ActivityType.NONE);
 
         PowerMock.replayAll();
         new ActivityRestorer(parent, null, activityTypeFactory, sharedPreferences)
@@ -81,10 +82,29 @@ public class ActivityRestorerTest {
 
         final int searchOnline = ActivityType.SEARCH_ONLINE.toInt();
         EasyMock.expect(
-                sharedPreferences.getInt(ActivitySaver.LAST_ACTIVITY, ActivityType.NONE.mIx))
+                sharedPreferences.getInt(ActivitySaver.LAST_ACTIVITY, ActivityType.NONE.toInt()))
                 .andReturn(searchOnline);
         EasyMock.expect(activityTypeFactory.fromInt(searchOnline)).andReturn(
                 ActivityType.SEARCH_ONLINE);
+
+        PowerMock.replayAll();
+        new ActivityRestorer(parent, null, activityTypeFactory, sharedPreferences)
+                .restore(Intent.FLAG_ACTIVITY_NEW_TASK);
+        PowerMock.verifyAll();
+    }
+
+    @Test
+    public void activityTypeNone() throws Exception {
+        ActivityTypeFactory activityTypeFactory = PowerMock
+                .createMock(ActivityDI.ActivityTypeFactory.class);
+        SharedPreferences sharedPreferences = PowerMock.createMock(SharedPreferences.class);
+        Activity parent = PowerMock.createMock(Activity.class);
+
+        final int none = ActivityType.NONE.toInt();
+        EasyMock.expect(
+                sharedPreferences.getInt(ActivitySaver.LAST_ACTIVITY, ActivityType.NONE.toInt()))
+                .andReturn(none);
+        EasyMock.expect(activityTypeFactory.fromInt(none)).andReturn(ActivityType.SEARCH_ONLINE);
 
         PowerMock.replayAll();
         new ActivityRestorer(parent, null, activityTypeFactory, sharedPreferences)
@@ -105,7 +125,7 @@ public class ActivityRestorerTest {
 
         final int viewCache = ActivityType.VIEW_CACHE.toInt();
         EasyMock.expect(
-                sharedPreferences.getInt(ActivitySaver.LAST_ACTIVITY, ActivityType.NONE.mIx))
+                sharedPreferences.getInt(ActivitySaver.LAST_ACTIVITY, ActivityType.NONE.toInt()))
                 .andReturn(viewCache);
         EasyMock.expect(activityTypeFactory.fromInt(viewCache)).andReturn(ActivityType.VIEW_CACHE);
         EasyMock.expect(geocacheFromPreferencesFactory.create(sharedPreferences)).andReturn(

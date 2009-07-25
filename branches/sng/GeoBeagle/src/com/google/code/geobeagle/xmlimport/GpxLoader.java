@@ -64,8 +64,8 @@ public class GpxLoader {
             mErrorDisplayer.displayError(R.string.error_parsing_file, mGpxToCache.getSource()
                     + ": " + e.getMessage());
         } catch (FileNotFoundException e) {
-            mErrorDisplayer.displayError(R.string.file_not_found, mGpxToCache.getSource()
-                    + ": " + e.getMessage());
+            mErrorDisplayer.displayError(R.string.file_not_found, mGpxToCache.getSource() + ": "
+                    + e.getMessage());
         } catch (IOException e) {
             mErrorDisplayer.displayError(R.string.error_reading_file, mGpxToCache.getSource()
                     + ": " + e.getMessage());
@@ -75,8 +75,7 @@ public class GpxLoader {
         return continueLoading;
     }
 
-    public void open(String path, Reader reader) throws FileNotFoundException,
-            XmlPullParserException, IOException {
+    public void open(String path, Reader reader) throws XmlPullParserException, IOException {
         mGpxToCache.open(path, reader);
         mCachePersisterFacade.open(path);
     }

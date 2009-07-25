@@ -17,19 +17,16 @@ package com.google.code.geobeagle.activity.cachelist;
 import static org.easymock.EasyMock.expect;
 import static org.junit.Assert.assertTrue;
 
-import com.google.code.geobeagle.ErrorDisplayer;
 import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.actions.context.ContextAction;
 import com.google.code.geobeagle.activity.cachelist.GeocacheListController.CacheListOnCreateContextMenuListener;
+import com.google.code.geobeagle.activity.cachelist.actions.context.ContextAction;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActions;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVector;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVectors;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
 import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheListPresenter;
-import com.google.code.geobeagle.database.CacheWriter;
 import com.google.code.geobeagle.database.DatabaseDI;
 import com.google.code.geobeagle.database.FilterNearestCaches;
-import com.google.code.geobeagle.database.DatabaseDI.GeoBeagleSqliteOpenHelper;
 import com.google.code.geobeagle.xmlimport.GpxImporter;
 
 import org.easymock.EasyMock;
@@ -40,7 +37,6 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import android.app.ListActivity;
-import android.database.sqlite.SQLiteDatabase;
 import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -201,9 +197,19 @@ public class GeocacheListControllerTest {
         gpxImporter.abort();
 
         PowerMock.replayAll();
-        final GeocacheListController geocacheListController = new GeocacheListController(null,
-                null, null, gpxImporter, null, null);
-        geocacheListController.onPause();
+        new GeocacheListController(null, null, null, gpxImporter, null, null).onPause();
+        PowerMock.verifyAll();
+    }
+
+    @Test
+    public void testOnPauseInterrupted() throws InterruptedException {
+        GpxImporter gpxImporter = PowerMock.createMock(GpxImporter.class);
+
+        gpxImporter.abort();
+        EasyMock.expectLastCall().andThrow(new InterruptedException());
+
+        PowerMock.replayAll();
+        new GeocacheListController(null, null, null, gpxImporter, null, null).onPause();
         PowerMock.verifyAll();
     }
 

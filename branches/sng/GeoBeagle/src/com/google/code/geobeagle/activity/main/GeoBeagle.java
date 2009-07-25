@@ -17,12 +17,12 @@ package com.google.code.geobeagle.activity.main;
 import com.google.code.geobeagle.CacheType;
 import com.google.code.geobeagle.CompassListener;
 import com.google.code.geobeagle.ErrorDisplayer;
+import com.google.code.geobeagle.ErrorDisplayerDi;
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.GeocacheFactory;
 import com.google.code.geobeagle.LocationControlBuffered;
 import com.google.code.geobeagle.LocationControlDi;
 import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.Refresher;
 import com.google.code.geobeagle.ResourceProvider;
 import com.google.code.geobeagle.GeocacheFactory.Source;
 import com.google.code.geobeagle.activity.cachelist.GeocacheListController;
@@ -73,11 +73,6 @@ import java.io.File;
  * Main Activity for GeoBeagle.
  */
 public class GeoBeagle extends Activity {
-    static class NullRefresher implements Refresher {
-        public void refresh() {
-        }
-    }
-
     private static int ACTIVITY_REQUEST_TAKE_PICTURE = 1;
     private CompassListener mCompassListener;
     private final ErrorDisplayer mErrorDisplayer;
@@ -95,7 +90,7 @@ public class GeoBeagle extends Activity {
 
     public GeoBeagle() {
         super();
-        mErrorDisplayer = new ErrorDisplayer(this);
+        mErrorDisplayer = ErrorDisplayerDi.createErrorDisplayer(this);
         mResourceProvider = new ResourceProvider(this);
     }
 
@@ -212,7 +207,7 @@ public class GeoBeagle extends Activity {
                         new LocationLifecycleManager(mLocationControlBuffered, locationManager),
                         new LocationLifecycleManager(mRadar, locationManager)
                 });
-        mGeoBeagleDelegate = GeoBeagleDelegate.buildGeoBeagleDelegate(this, appLifecycleManager,
+        mGeoBeagleDelegate = GeoBeagleDelegateDi.createGeoBeagleDelegate(this, appLifecycleManager,
                 mGeocacheViewer, mErrorDisplayer);
         mGeoBeagleDelegate.onCreate();
 
@@ -271,28 +266,23 @@ public class GeoBeagle extends Activity {
 
     @Override
     protected void onResume() {
-        try {
-            super.onResume();
-            Log.v("GeoBeagle", "GeoBeagle onResume");
+        super.onResume();
+        Log.v("GeoBeagle", "GeoBeagle onResume");
 
-            mRadar.handleUnknownLocation();
-            mGeoBeagleDelegate.onResume();
+        mRadar.handleUnknownLocation();
+        mGeoBeagleDelegate.onResume();
 
-            mSensorManager.registerListener(mCompassListener, SensorManager.SENSOR_ORIENTATION,
-                    SensorManager.SENSOR_DELAY_UI);
-            mSensorManager.registerListener(mRadar, SensorManager.SENSOR_ORIENTATION,
-                    SensorManager.SENSOR_DELAY_UI);
+        mSensorManager.registerListener(mCompassListener, SensorManager.SENSOR_ORIENTATION,
+                SensorManager.SENSOR_DELAY_UI);
+        mSensorManager.registerListener(mRadar, SensorManager.SENSOR_ORIENTATION,
+                SensorManager.SENSOR_DELAY_UI);
 
-            maybeGetCoordinatesFromIntent();
-            // Possible fix for issue 53.
-            if (mGeocache == null)
-                mGeocache = new Geocache("", "", 0, 0, Source.MY_LOCATION, "", CacheType.NULL, 0,
-                        0, 0);
-            mGeocacheViewer.set(mGeocache);
-            mWebPageButtonEnabler.check();
-        } catch (final Exception e) {
-            mErrorDisplayer.displayErrorAndStack(e);
-        }
+        maybeGetCoordinatesFromIntent();
+        // Possible fix for issue 53.
+        if (mGeocache == null)
+            mGeocache = new Geocache("", "", 0, 0, Source.MY_LOCATION, "", CacheType.NULL, 0, 0, 0);
+        mGeocacheViewer.set(mGeocache);
+        mWebPageButtonEnabler.check();
     }
 
     public void onResume(SharedPreferences preferences) {
@@ -330,7 +320,7 @@ public class GeoBeagle extends Activity {
         cacheClickListenerSetter.set(R.id.cache_page, new IntentStarterViewUri(this, intentFactory,
                 mGeocacheViewer, new GeocacheToCachePage(mResourceProvider)), "");
         cacheClickListenerSetter.set(R.id.radarview, new IntentStarterRadar(this),
-                "\nPlease install the Radar application to use Radar.");
+                "Please install the Radar application to use Radar.");
         findViewById(R.id.menu_log_find).setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
                 showDialog(R.id.menu_log_find);

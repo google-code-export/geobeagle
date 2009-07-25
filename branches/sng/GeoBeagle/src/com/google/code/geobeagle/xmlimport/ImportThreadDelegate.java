@@ -57,8 +57,7 @@ public class ImportThreadDelegate {
                 mErrorDisplayer.displayError(R.string.error_no_gpx_files);
         }
 
-        public boolean processFile(IGpxReader gpxReader) throws FileNotFoundException,
-                XmlPullParserException, IOException {
+        public boolean processFile(IGpxReader gpxReader) throws XmlPullParserException, IOException {
             String filename = gpxReader.getFilename();
 
             mHasFiles = true;
@@ -87,14 +86,16 @@ public class ImportThreadDelegate {
             tryRun();
         } catch (final FileNotFoundException e) {
             mErrorDisplayer.displayError(R.string.error_opening_file, e.getMessage());
-        } catch (Exception e) {
-            mErrorDisplayer.displayErrorAndStack(e);
+        } catch (IOException e) {
+            mErrorDisplayer.displayError(R.string.error_reading_file, e.getMessage());
+        } catch (XmlPullParserException e) {
+            mErrorDisplayer.displayError(R.string.error_parsing_file, e.getMessage());
         } finally {
             mImportThreadHelper.cleanup();
         }
     }
 
-    protected void tryRun() throws FileNotFoundException, IOException, XmlPullParserException {
+    protected void tryRun() throws IOException, XmlPullParserException {
         GpxFilesAndZipFilesIter gpxFilesAndZipFilesIter = mGpxAndZipFiles.iterator();
         if (gpxFilesAndZipFilesIter == null) {
             mErrorDisplayer.displayError(R.string.error_cant_read_sd);

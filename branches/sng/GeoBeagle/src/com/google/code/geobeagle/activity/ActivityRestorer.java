@@ -26,45 +26,75 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 
 public class ActivityRestorer {
-    private final Activity mActivity;
-    private final GeocacheFromPreferencesFactory mGeocacheFromPreferencesFactory;
+    static class CacheListRestorer implements Restorer {
+        private final Activity mActivity;
+
+        public CacheListRestorer(Activity activity) {
+            mActivity = activity;
+        }
+
+        @Override
+        public void restore() {
+            mActivity.startActivity(new Intent(mActivity, CacheList.class));
+            mActivity.finish();
+        }
+
+    }
+
+    static class NullRestorer implements Restorer {
+        @Override
+        public void restore() {
+        }
+    }
+
+    interface Restorer {
+        void restore();
+    }
+
+    static class ViewCacheRestorer implements Restorer {
+        private final Activity mActivity;
+        private final GeocacheFromPreferencesFactory mGeocacheFromPreferencesFactory;
+        private final SharedPreferences mSharedPreferences;
+
+        public ViewCacheRestorer(GeocacheFromPreferencesFactory geocacheFromPreferencesFactory,
+                SharedPreferences sharedPreferences, Activity activity) {
+            mGeocacheFromPreferencesFactory = geocacheFromPreferencesFactory;
+            mSharedPreferences = sharedPreferences;
+            mActivity = activity;
+        }
+
+        @Override
+        public void restore() {
+            final Geocache geocache = mGeocacheFromPreferencesFactory.create(mSharedPreferences);
+            final Intent intent = new Intent(mActivity, GeoBeagle.class);
+            intent.putExtra("geocache", geocache).setAction(GeocacheListController.SELECT_CACHE);
+            mActivity.startActivity(intent);
+            mActivity.finish();
+        }
+    }
+
     private final ActivityTypeFactory mActivityTypeFactory;
+    private final Restorer[] mRestorers;
     private final SharedPreferences mSharedPreferences;
 
     public ActivityRestorer(Activity activity,
             GeocacheFromPreferencesFactory geocacheFromPreferencesFactory,
             ActivityTypeFactory activityTypeFactory, SharedPreferences sharedPreferences) {
-        mGeocacheFromPreferencesFactory = geocacheFromPreferencesFactory;
         mActivityTypeFactory = activityTypeFactory;
-        mActivity = activity;
         mSharedPreferences = sharedPreferences;
+        final NullRestorer nullRestorer = new NullRestorer();
+        mRestorers = new Restorer[] {
+                nullRestorer, new CacheListRestorer(activity), nullRestorer,
+                new ViewCacheRestorer(geocacheFromPreferencesFactory, sharedPreferences, activity)
+        };
     }
 
     public void restore(int flags) {
         if ((flags & Intent.FLAG_ACTIVITY_NEW_TASK) == 0)
             return;
-
         final int iLastActivity = mSharedPreferences.getInt(ActivitySaver.LAST_ACTIVITY,
                 ActivityType.NONE.toInt());
         final ActivityType activityType = mActivityTypeFactory.fromInt(iLastActivity);
-        Intent intent;
-        switch (activityType) {
-            case VIEW_CACHE:
-                final Geocache geocache = mGeocacheFromPreferencesFactory
-                        .create(mSharedPreferences);
-                intent = new Intent(mActivity, GeoBeagle.class);
-                intent.putExtra("geocache", geocache)
-                        .setAction(GeocacheListController.SELECT_CACHE);
-                break;
-            case CACHE_LIST:
-                intent = new Intent(mActivity, CacheList.class);
-                break;
-            case SEARCH_ONLINE:
-                return;
-            default:
-                return;
-        }
-        mActivity.startActivity(intent);
-        mActivity.finish();
+        mRestorers[activityType.toInt()].restore();
     }
 }

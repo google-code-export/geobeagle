@@ -27,7 +27,6 @@ import android.os.Parcelable;
  * Geocache or letterbox description, id, and coordinates.
  */
 public class Geocache implements Parcelable {
-
     public static Parcelable.Creator<Geocache> CREATOR = new GeocacheFactory.CreateGeocacheFromParcel();
     public static final String ID = "id";
     public static final String LATITUDE = "latitude";
@@ -88,14 +87,11 @@ public class Geocache implements Parcelable {
         // because editing the text in android produces a SpannableString rather
         // than a String, so the CharSequences won't be equal.
         String prefix = mId.subSequence(0, 2).toString();
-        if (prefix.equals("ML"))
-            return Provider.MY_LOCATION;
-        if (prefix.equals("LB"))
-            return Provider.ATLAS_QUEST;
-        if (prefix.equals("OC"))
-            return Provider.OPENCACHING;
-        else
-            return Provider.GROUNDSPEAK;
+        for (Provider provider : GeocacheFactory.ALL_PROVIDERS) {
+            if (prefix.equals(provider.getPrefix()))
+                return provider;
+        }
+        return Provider.GROUNDSPEAK;
     }
 
     public CharSequence getId() {

@@ -118,7 +118,8 @@ public class GeocacheVectorTest {
     public void testGetFormattedDistance() {
         DistanceFormatterMetric distanceFormatterMetric = PowerMock
                 .createMock(DistanceFormatterMetric.class);
-        BearingFormatter relativeBearingFormatter = PowerMock.createMock(RelativeBearingFormatter.class);
+        BearingFormatter relativeBearingFormatter = PowerMock
+                .createMock(RelativeBearingFormatter.class);
         LocationControlBuffered locationControlBuffered = PowerMock
                 .createMock(LocationControlBuffered.class);
         Location location = PowerMock.createMock(Location.class);
@@ -136,6 +137,23 @@ public class GeocacheVectorTest {
         GeocacheVector geocacheVector = new GeocacheVector(geocache, locationControlBuffered);
         assertEquals("3.5m >", geocacheVector.getFormattedDistance(distanceFormatterMetric,
                 relativeBearingFormatter));
+        PowerMock.verifyAll();
+    }
+
+    @Test
+    public void testGetFormattedDistanceEmpty() {
+        LocationControlBuffered locationControlBuffered = PowerMock
+                .createMock(LocationControlBuffered.class);
+        Location location = PowerMock.createMock(Location.class);
+
+        expect(locationControlBuffered.getLocation()).andReturn(location);
+        expect(geocache.calculateDistanceAndBearing(location)).andReturn(new float[] {
+                -1, 270
+        });
+
+        PowerMock.replayAll();
+        assertEquals("", new GeocacheVector(geocache, locationControlBuffered)
+                .getFormattedDistance(null, null));
         PowerMock.verifyAll();
     }
 

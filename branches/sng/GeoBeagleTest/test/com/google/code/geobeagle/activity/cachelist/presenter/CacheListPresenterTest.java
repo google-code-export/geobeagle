@@ -17,7 +17,6 @@ package com.google.code.geobeagle.activity.cachelist.presenter;
 import static org.easymock.EasyMock.expect;
 
 import com.google.code.geobeagle.CompassListener;
-import com.google.code.geobeagle.ErrorDisplayer;
 import com.google.code.geobeagle.LocationControlBuffered;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.Refresher;
@@ -184,8 +183,6 @@ public class CacheListPresenterTest {
         SharedPreferences sharedPreferences = PowerMock.createMock(SharedPreferences.class);
         GeocacheSummaryRowInflater geocacheSummaryRowInflater = PowerMock
                 .createMock(GeocacheSummaryRowInflater.class);
-        AbsoluteBearingFormatter absoluteBearingFormatter = PowerMock
-                .createMock(AbsoluteBearingFormatter.class);
 
         combinedLocationManager.requestLocationUpdates(GeocacheListPresenter.UPDATE_DELAY, 0,
                 gpsStatusWidgetLocationListener);
@@ -200,8 +197,7 @@ public class CacheListPresenterTest {
         expect(PreferenceManager.getDefaultSharedPreferences(listActivity)).andReturn(
                 sharedPreferences);
         expect(sharedPreferences.getBoolean("absolute-bearing", false)).andReturn(true);
-        PowerMock.expectNew(AbsoluteBearingFormatter.class).andReturn(absoluteBearingFormatter);
-        geocacheSummaryRowInflater.setBearingFormatter(absoluteBearingFormatter);
+        geocacheSummaryRowInflater.setBearingFormatter(true);
 
         PowerMock.replayAll();
         new GeocacheListPresenter(combinedLocationManager, locationControlBuffered,
@@ -212,26 +208,4 @@ public class CacheListPresenterTest {
 
         PowerMock.verifyAll();
     }
-
-    @Test
-    public void testOnResumeError() {
-        CombinedLocationManager combinedLocationManager = PowerMock
-                .createMock(CombinedLocationManager.class);
-        LocationControlBuffered locationControlBuffered = PowerMock
-                .createMock(LocationControlBuffered.class);
-        ErrorDisplayer errorDisplayer = PowerMock.createMock(ErrorDisplayer.class);
-
-        Exception e = new RuntimeException();
-        combinedLocationManager.requestLocationUpdates(GeocacheListPresenter.UPDATE_DELAY, 0,
-                locationControlBuffered);
-        EasyMock.expectLastCall().andThrow(e);
-        errorDisplayer.displayErrorAndStack(e);
-
-        PowerMock.replayAll();
-        new GeocacheListPresenter(combinedLocationManager, locationControlBuffered,
-                locationControlBuffered, null, null, null, null, null, null, errorDisplayer, null,
-                null, null, null).onResume();
-        PowerMock.verifyAll();
-    }
-
 }

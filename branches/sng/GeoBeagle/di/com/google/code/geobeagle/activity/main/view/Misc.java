@@ -31,13 +31,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 
 public class Misc {
-    public static CacheDetailsOnClickListener create(GeoBeagle geoBeagle,
-            Builder alertDialogBuilder, GeocacheViewer geocacheViewer,
+    public static CacheDetailsOnClickListener createCacheDetailsOnClickListener(
+            GeoBeagle geoBeagle, Builder alertDialogBuilder, GeocacheViewer geocacheViewer,
             ErrorDisplayer errorDisplayer, LayoutInflater layoutInflater) {
         final DetailsOpener detailsOpener = new DetailsOpener(geoBeagle);
         final CacheDetailsLoader cacheDetailsLoader = new CacheDetailsLoader(detailsOpener);
         return new CacheDetailsOnClickListener(geoBeagle, alertDialogBuilder, geocacheViewer,
-                layoutInflater, cacheDetailsLoader, errorDisplayer);
+                layoutInflater, cacheDetailsLoader);
     }
 
     public static WebPageAndDetailsButtonEnabler create(GeoBeagle geoBeagle, View webPageButton,

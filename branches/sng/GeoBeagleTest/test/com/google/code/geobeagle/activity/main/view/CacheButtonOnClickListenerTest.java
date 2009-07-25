@@ -15,6 +15,7 @@
 package com.google.code.geobeagle.activity.main.view;
 
 import com.google.code.geobeagle.ErrorDisplayer;
+import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.main.intents.IntentStarter;
 import com.google.code.geobeagle.activity.main.view.CacheButtonOnClickListener;
 
@@ -52,7 +53,7 @@ public class CacheButtonOnClickListenerTest {
         EasyMock.expect(activityNotFoundException.fillInStackTrace()).andReturn(
                 activityNotFoundException);
         EasyMock.expect(activityNotFoundException.getMessage()).andReturn("no radar");
-        errorDisplayer.displayError("Error: no radar problem");
+        errorDisplayer.displayError(R.string.error2, "no radar" , " problem");
 
         PowerMock.replayAll();
         new CacheButtonOnClickListener(intentStarter, " problem", errorDisplayer).onClick(null);
@@ -69,11 +70,11 @@ public class CacheButtonOnClickListenerTest {
         intentStarter.startIntent();
         EasyMock.expectLastCall().andThrow(numberFormatException);
         EasyMock.expect(numberFormatException.fillInStackTrace()).andReturn(numberFormatException);
-        EasyMock.expect(numberFormatException.getMessage()).andReturn("no radar");
-        errorDisplayer.displayError("Error: no radar");
+        EasyMock.expect(numberFormatException.getMessage()).andReturn("random problem");
+        errorDisplayer.displayError(R.string.error1, "random problem");
 
         PowerMock.replayAll();
-        new CacheButtonOnClickListener(intentStarter, " problem", errorDisplayer).onClick(null);
+        new CacheButtonOnClickListener(intentStarter, "", errorDisplayer).onClick(null);
         PowerMock.verifyAll();
     }
 }

@@ -12,8 +12,11 @@
  ** limitations under the License.
  */
 
-package com.google.code.geobeagle.actions.context;
+package com.google.code.geobeagle.activity.main;
 
-public interface ContextAction {
-    public void act(int position);
+import com.google.code.geobeagle.Refresher;
+
+class NullRefresher implements Refresher {
+    public void refresh() {
+    }
 }

@@ -8,6 +8,7 @@ import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVector;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVectors;
+import com.google.code.geobeagle.activity.cachelist.presenter.AbsoluteBearingFormatter;
 import com.google.code.geobeagle.activity.cachelist.presenter.BearingFormatter;
 import com.google.code.geobeagle.activity.cachelist.presenter.RelativeBearingFormatter;
 import com.google.code.geobeagle.activity.cachelist.view.GeocacheSummaryRowInflater.RowViews;
@@ -86,7 +87,7 @@ public class GeocacheSummaryRowInflaterTest {
         ImageView imageView = PowerMock.createMock(ImageView.class);
 
         EasyMock.expect(Log.v((String)EasyMock.anyObject(), (String)EasyMock.anyObject()))
-                .andReturn(0);
+                .andReturn(0).anyTimes();
         EasyMock.expect(layoutInflater.inflate(R.layout.cache_row, null)).andReturn(view);
         EasyMock.expect(view.findViewById(R.id.txt_cache)).andReturn(txtView);
         EasyMock.expect(view.findViewById(R.id.distance)).andReturn(txtDistance);
@@ -98,6 +99,33 @@ public class GeocacheSummaryRowInflaterTest {
         PowerMock.replayAll();
         assertEquals(view, new GeocacheSummaryRowInflater(layoutInflater, null, distanceFormatter,
                 relativeBearingFormatter).inflate(null));
+        PowerMock.verifyAll();
+    }
+
+    @Test
+    public void testSetBearingFormatterAbsolute() throws Exception {
+        AbsoluteBearingFormatter absoluteBearingFormatter = PowerMock
+                .createMock(AbsoluteBearingFormatter.class);
+        PowerMock.expectNew(AbsoluteBearingFormatter.class).andReturn(absoluteBearingFormatter);
+
+        PowerMock.replayAll();
+        final GeocacheSummaryRowInflater geocacheSummaryRowInflater = new GeocacheSummaryRowInflater(
+                null, null, null, null);
+        geocacheSummaryRowInflater.setBearingFormatter(true);
+        PowerMock.verifyAll();
+    }
+
+    @Test
+    public void testSetBearingFormatterRelative() throws Exception {
+        RelativeBearingFormatter relativeBearingFormatter = PowerMock
+                .createMock(RelativeBearingFormatter.class);
+        PowerMock.expectNew(RelativeBearingFormatter.class).andReturn(relativeBearingFormatter);
+
+        PowerMock.replayAll();
+        final GeocacheSummaryRowInflater geocacheSummaryRowInflater = new GeocacheSummaryRowInflater(
+                null, null, null, null);
+        geocacheSummaryRowInflater.setBearingFormatter(false);
+        assertEquals(relativeBearingFormatter, geocacheSummaryRowInflater.getBearingFormatter());
         PowerMock.verifyAll();
     }
 

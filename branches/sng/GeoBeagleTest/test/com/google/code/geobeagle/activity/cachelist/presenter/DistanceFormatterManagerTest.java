@@ -66,4 +66,5 @@ public class DistanceFormatterManagerTest {
         distanceFormatterManager.setFormatter();
         PowerMock.verifyAll();
     }
+
 }

@@ -15,7 +15,7 @@
 package com.google.code.geobeagle.activity.cachelist;
 
 import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.actions.context.ContextAction;
+import com.google.code.geobeagle.activity.cachelist.actions.context.ContextAction;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActions;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVectors;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
@@ -105,8 +105,6 @@ public class GeocacheListController {
         try {
             mGpxImporter.abort();
         } catch (InterruptedException e) {
-            // Nothing we can do here! There is no chance to communicate to
-            // the user.
         }
     }
 

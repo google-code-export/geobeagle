@@ -14,6 +14,6 @@
 
 package com.google.code.geobeagle.activity.cachelist.actions.menu;
 
-interface MenuAction {
+public interface MenuAction {
     public void act();
 }

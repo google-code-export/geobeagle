@@ -15,6 +15,7 @@
 package com.google.code.geobeagle.activity.main.view;
 
 import com.google.code.geobeagle.ErrorDisplayer;
+import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.main.intents.IntentStarter;
 
 import android.content.ActivityNotFoundException;
@@ -24,22 +25,23 @@ import android.view.View.OnClickListener;
 public class CacheButtonOnClickListener implements OnClickListener {
     private final IntentStarter mDestinationToIntentFactory;
     private final ErrorDisplayer mErrorDisplayer;
-    private final String mErrorMessage;
+    private final String mActivityNotFoundErrorMessage;
 
     public CacheButtonOnClickListener(IntentStarter intentStarter, String errorMessage,
             ErrorDisplayer errorDisplayer) {
         mDestinationToIntentFactory = intentStarter;
         mErrorDisplayer = errorDisplayer;
-        mErrorMessage = errorMessage;
+        mActivityNotFoundErrorMessage = errorMessage;
     }
 
     public void onClick(View view) {
         try {
             mDestinationToIntentFactory.startIntent();
         } catch (final ActivityNotFoundException e) {
-            mErrorDisplayer.displayError("Error: " + e.getMessage() + mErrorMessage);
+            mErrorDisplayer.displayError(R.string.error2, e.getMessage(),
+                    mActivityNotFoundErrorMessage);
         } catch (final Exception e) {
-            mErrorDisplayer.displayError("Error: " + e.getMessage());
+            mErrorDisplayer.displayError(R.string.error1, e.getMessage());
         }
     }
 }

@@ -18,11 +18,12 @@ import com.google.code.geobeagle.CacheType;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVector;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVectors;
+import com.google.code.geobeagle.activity.cachelist.presenter.AbsoluteBearingFormatter;
 import com.google.code.geobeagle.activity.cachelist.presenter.BearingFormatter;
 import com.google.code.geobeagle.activity.cachelist.presenter.HasDistanceFormatter;
+import com.google.code.geobeagle.activity.cachelist.presenter.RelativeBearingFormatter;
 import com.google.code.geobeagle.formatting.DistanceFormatter;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
@@ -67,7 +68,7 @@ public class GeocacheSummaryRowInflater implements HasDistanceFormatter {
     public View inflate(View convertView) {
         if (convertView != null)
             return convertView;
-        Log.v("GeoBeagle", "SummaryRow::inflate(" + convertView + ")");
+        // Log.v("GeoBeagle", "SummaryRow::inflate(" + convertView + ")");
 
         View view = mLayoutInflater.inflate(R.layout.cache_row, null);
         RowViews rowViews = new RowViews(((ImageView)view.findViewById(R.id.gc_row_icon)),
@@ -86,7 +87,12 @@ public class GeocacheSummaryRowInflater implements HasDistanceFormatter {
         mDistanceFormatter = distanceFormatter;
     }
 
-    public void setBearingFormatter(BearingFormatter bearingFormatter) {
-        mBearingFormatter = bearingFormatter;
+    public void setBearingFormatter(boolean absoluteBearing) {
+        mBearingFormatter = absoluteBearing ? new AbsoluteBearingFormatter()
+                : new RelativeBearingFormatter();
+    }
+
+    BearingFormatter getBearingFormatter() {
+        return mBearingFormatter;
     }
 }

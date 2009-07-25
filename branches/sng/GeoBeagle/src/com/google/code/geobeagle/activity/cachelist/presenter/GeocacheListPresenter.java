@@ -20,8 +20,6 @@ import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.cachelist.GeocacheListController.CacheListOnCreateContextMenuListener;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVectors;
 import com.google.code.geobeagle.activity.cachelist.view.GeocacheSummaryRowInflater;
-import com.google.code.geobeagle.database.Database;
-import com.google.code.geobeagle.database.DatabaseDI.SQLiteWrapper;
 import com.google.code.geobeagle.gpsstatuswidget.UpdateGpsWidgetRunnable;
 import com.google.code.geobeagle.location.CombinedLocationManager;
 
@@ -87,9 +85,8 @@ public class GeocacheListPresenter {
             UpdateGpsWidgetRunnable updateGpsWidgetRunnable, GeocacheVectors geocacheVectors,
             CacheListRefreshLocationListener cacheListRefreshLocationListener,
             ListActivity listActivity, GeocacheListAdapter geocacheListAdapter,
-            ErrorDisplayer errorDisplayer, 
-            SensorManager sensorManager, SensorListener compassListener,
-            DistanceFormatterManager distanceFormatterManager,
+            ErrorDisplayer errorDisplayer, SensorManager sensorManager,
+            SensorListener compassListener, DistanceFormatterManager distanceFormatterManager,
             GeocacheSummaryRowInflater geocacheSummaryRowInflater) {
         mCombinedLocationManager = combinedLocationManager;
         mLocationControlBuffered = locationControlBuffered;
@@ -129,27 +126,17 @@ public class GeocacheListPresenter {
     }
 
     public void onResume() {
-        try {
-            mCombinedLocationManager.requestLocationUpdates(UPDATE_DELAY, 0,
-                    mLocationControlBuffered);
-            mCombinedLocationManager.requestLocationUpdates(UPDATE_DELAY, 0,
-                    mCombinedLocationListener);
-            mCombinedLocationManager.requestLocationUpdates(UPDATE_DELAY, 0,
-                    mCacheListRefreshLocationListener);
-            mDistanceFormatterManager.setFormatter();
-            // mSensorManager.registerListener(mCompassListener, mCompassSensor,
-            // SensorManager.SENSOR_DELAY_UI);
-            mSensorManager.registerListener(mCompassListener, SensorManager.SENSOR_ORIENTATION,
-                    SensorManager.SENSOR_DELAY_UI);
-            final boolean absoluteBearing = PreferenceManager.getDefaultSharedPreferences(
-                    mListActivity).getBoolean("absolute-bearing", false);
-            if (absoluteBearing)
-                mGeocacheSummaryRowInflater.setBearingFormatter(new AbsoluteBearingFormatter());
-            else
-                mGeocacheSummaryRowInflater.setBearingFormatter(new RelativeBearingFormatter());
-
-        } catch (final Exception e) {
-            mErrorDisplayer.displayErrorAndStack(e);
-        }
+        mCombinedLocationManager.requestLocationUpdates(UPDATE_DELAY, 0, mLocationControlBuffered);
+        mCombinedLocationManager.requestLocationUpdates(UPDATE_DELAY, 0, mCombinedLocationListener);
+        mCombinedLocationManager.requestLocationUpdates(UPDATE_DELAY, 0,
+                mCacheListRefreshLocationListener);
+        mDistanceFormatterManager.setFormatter();
+        // mSensorManager.registerListener(mCompassListener, mCompassSensor,
+        // SensorManager.SENSOR_DELAY_UI);
+        mSensorManager.registerListener(mCompassListener, SensorManager.SENSOR_ORIENTATION,
+                SensorManager.SENSOR_DELAY_UI);
+        final boolean absoluteBearing = PreferenceManager
+                .getDefaultSharedPreferences(mListActivity).getBoolean("absolute-bearing", false);
+        mGeocacheSummaryRowInflater.setBearingFormatter(absoluteBearing);
     }
 }

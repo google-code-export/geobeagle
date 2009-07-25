@@ -23,7 +23,7 @@ public class ActivityDI {
 
         public ActivityTypeFactory() {
             for (ActivityType activityType : ActivityType.values())
-                mActivityTypes[activityType.mIx] = activityType;
+                mActivityTypes[activityType.toInt()] = activityType;
         }
 
         public ActivityType fromInt(int i) {

@@ -20,11 +20,11 @@ import com.google.code.geobeagle.GeocacheFactory;
 import com.google.code.geobeagle.LocationControlBuffered;
 import com.google.code.geobeagle.LocationControlDi;
 import com.google.code.geobeagle.LocationControlBuffered.GpsDisabledLocation;
-import com.google.code.geobeagle.actions.context.ContextAction;
-import com.google.code.geobeagle.actions.context.ContextActionDelete;
-import com.google.code.geobeagle.actions.context.ContextActionView;
 import com.google.code.geobeagle.activity.ActivityDI;
 import com.google.code.geobeagle.activity.ActivitySaver;
+import com.google.code.geobeagle.activity.cachelist.actions.context.ContextAction;
+import com.google.code.geobeagle.activity.cachelist.actions.context.ContextActionDelete;
+import com.google.code.geobeagle.activity.cachelist.actions.context.ContextActionView;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionMyLocation;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionSearchOnline;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionSyncGpx;
@@ -81,7 +81,9 @@ import com.google.code.geobeagle.xmlimport.GpxToCacheDI.XmlPullParserWrapper;
 
 import android.app.ListActivity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.DialogInterface.OnClickListener;
 import android.database.sqlite.SQLiteDatabase;
 import android.hardware.SensorManager;
 import android.location.LocationManager;
@@ -112,7 +114,11 @@ public class CacheListDelegateDI {
     }
 
     public static CacheListDelegate create(ListActivity listActivity, LayoutInflater layoutInflater) {
-        final ErrorDisplayer errorDisplayer = new ErrorDisplayer(listActivity);
+        final OnClickListener mOnClickListener = new OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+            }
+        };
+        final ErrorDisplayer errorDisplayer = new ErrorDisplayer(listActivity, mOnClickListener);
         final LocationManager locationManager = (LocationManager)listActivity
                 .getSystemService(Context.LOCATION_SERVICE);
         final CombinedLocationManager combinedLocationManager = new CombinedLocationManager(

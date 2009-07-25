@@ -12,18 +12,8 @@
  ** limitations under the License.
  */
 
-package com.google.code.geobeagle.activity.main.fieldnotes;
+package com.google.code.geobeagle.activity.cachelist.actions.context;
 
-import com.google.code.geobeagle.activity.main.GeoBeagle;
-
-import android.app.AlertDialog;
-import android.view.LayoutInflater;
-
-public class FieldNoteSenderDI {
-    public static FieldNoteSender build(GeoBeagle parent, LayoutInflater layoutInflater) {
-        final AlertDialog.Builder builder = new AlertDialog.Builder(parent);
-        final FieldNoteSender.DialogHelper dialogHelper = new FieldNoteSender.DialogHelper();
-        return new FieldNoteSender(layoutInflater, builder, dialogHelper);
-    }
-
+public interface ContextAction {
+    public void act(int position);
 }
