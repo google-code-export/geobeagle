@@ -1,17 +1,24 @@
+/*
+ ** Licensed under the Apache License, Version 2.0 (the "License");
+ ** you may not use this file except in compliance with the License.
+ ** You may obtain a copy of the License at
+ **
+ **     http://www.apache.org/licenses/LICENSE-2.0
+ **
+ ** Unless required by applicable law or agreed to in writing, software
+ ** distributed under the License is distributed on an "AS IS" BASIS,
+ ** WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ ** See the License for the specific language governing permissions and
+ ** limitations under the License.
+ */
+
 package com.google.code.geobeagle.activity.main;
 
 import com.google.code.geobeagle.ErrorDisplayer;
 import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.R.id;
 import com.google.code.geobeagle.activity.ActivityDI;
 import com.google.code.geobeagle.activity.ActivitySaver;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuAction;
-import com.google.code.geobeagle.activity.main.MenuActions.MenuActionCacheList;
-import com.google.code.geobeagle.activity.main.MenuActions.MenuActionEditGeocache;
-import com.google.code.geobeagle.activity.main.MenuActions.MenuActionLogDnf;
-import com.google.code.geobeagle.activity.main.MenuActions.MenuActionLogFind;
-import com.google.code.geobeagle.activity.main.MenuActions.MenuActionSearchOnline;
-import com.google.code.geobeagle.activity.main.MenuActions.MenuActionSettings;
 import com.google.code.geobeagle.activity.main.fieldnotes.FieldNoteSender;
 import com.google.code.geobeagle.activity.main.fieldnotes.FieldNoteSenderDI;
 import com.google.code.geobeagle.activity.main.view.CacheDetailsOnClickListener;
@@ -19,7 +26,6 @@ import com.google.code.geobeagle.activity.main.view.GeocacheViewer;
 import com.google.code.geobeagle.activity.main.view.Misc;
 
 import android.app.AlertDialog;
-import android.app.AlertDialog.Builder;
 import android.content.res.Resources;
 import android.view.LayoutInflater;
 
@@ -39,7 +45,7 @@ public class GeoBeagleDelegateDi {
         final ActivitySaver activitySaver = ActivityDI.createActivitySaver(parent);
         final HashMap<Integer, MenuAction> menuActions = new HashMap<Integer, MenuAction>();
         final Resources resources = parent.getResources();
-    
+
         menuActions.put(R.id.menu_cache_list, new MenuActions.MenuActionCacheList(parent));
         menuActions.put(R.id.menu_edit_geocache, new MenuActions.MenuActionEditGeocache(parent));
         menuActions.put(R.id.menu_log_dnf, new MenuActions.MenuActionLogDnf(parent));
