@@ -15,21 +15,19 @@
 package com.google.code.geobeagle;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.Dialog;
 import android.app.AlertDialog.Builder;
 import android.content.DialogInterface.OnClickListener;
 
 public class ErrorDisplayer {
     static class DisplayErrorRunnable implements Runnable {
-        private Dialog mAlertDialog;
+        private final Builder mAlertDialogBuilder;
 
-        public DisplayErrorRunnable(Dialog alertDialog) {
-            mAlertDialog = alertDialog;
+        DisplayErrorRunnable(Builder alertDialogBuilder) {
+            mAlertDialogBuilder = alertDialogBuilder;
         }
 
         public void run() {
-            mAlertDialog.show();
+            mAlertDialogBuilder.create().show();
         }
     }
 
@@ -44,9 +42,8 @@ public class ErrorDisplayer {
     public void displayError(int resId, Object... args) {
         final Builder alertDialogBuilder = new Builder(mActivity);
         alertDialogBuilder.setMessage(String.format((String)mActivity.getText(resId), args));
-        final AlertDialog alertDialog = alertDialogBuilder.setNeutralButton("Ok", mOnClickListener)
-                .create();
+        alertDialogBuilder.setNeutralButton("Ok", mOnClickListener);
 
-        mActivity.runOnUiThread(new DisplayErrorRunnable(alertDialog));
+        mActivity.runOnUiThread(new DisplayErrorRunnable(alertDialogBuilder));
     }
 }

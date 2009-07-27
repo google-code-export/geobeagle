@@ -25,6 +25,7 @@ public class ErrorDisplayerTest {
     public void displayErrorWithArgs() throws Exception {
         Activity activity = PowerMock.createMock(Activity.class);
         Builder alertDialogBuilder = PowerMock.createMock(Builder.class);
+
         PowerMock.expectNew(Builder.class, activity).andReturn(alertDialogBuilder);
         EasyMock.expect(activity.getText(17)).andReturn("hello, %1$s");
         EasyMock.expect(alertDialogBuilder.setMessage("hello, world"))
@@ -34,11 +35,9 @@ public class ErrorDisplayerTest {
                 .createMock(DisplayErrorRunnable.class);
         EasyMock.expect(alertDialogBuilder.setNeutralButton("Ok", onClickListener)).andReturn(
                 alertDialogBuilder);
-        AlertDialog alertDialog = PowerMock.createMock(AlertDialog.class);
-        EasyMock.expect(alertDialogBuilder.create()).andReturn(alertDialog);
 
-        PowerMock.expectNew(DisplayErrorRunnable.class, alertDialog)
-                .andReturn(displayErrorRunnable);
+        PowerMock.expectNew(DisplayErrorRunnable.class, alertDialogBuilder).andReturn(
+                displayErrorRunnable);
         activity.runOnUiThread(displayErrorRunnable);
 
         PowerMock.replayAll();
@@ -48,11 +47,14 @@ public class ErrorDisplayerTest {
 
     @Test
     public void displayErrorRunnable() {
+        Builder alertDialogBuilder = PowerMock.createMock(Builder.class);
         AlertDialog alertDialog = PowerMock.createMock(AlertDialog.class);
+
+        EasyMock.expect(alertDialogBuilder.create()).andReturn(alertDialog);
         alertDialog.show();
 
         PowerMock.replayAll();
-        new DisplayErrorRunnable(alertDialog).run();
+        new DisplayErrorRunnable(alertDialogBuilder).run();
         PowerMock.verifyAll();
     }
 }
