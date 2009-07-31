@@ -19,29 +19,35 @@ import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheFromMyLocationFactory;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
+import com.google.code.geobeagle.database.ISQLiteDatabase;
 import com.google.code.geobeagle.database.LocationSaver;
+import com.google.code.geobeagle.database.LocationSaverFactory;
 
 public class MenuActionMyLocation implements MenuAction {
     private final ErrorDisplayer mErrorDisplayer;
     private final GeocacheFromMyLocationFactory mGeocacheFromMyLocationFactory;
-    private final LocationSaver mLocationSaver;
+    private final LocationSaverFactory mLocationSaverFactory;
     private final CacheListRefresh mMenuActionRefresh;
+    private final ISQLiteDatabase mWritableDatabase;
 
-    public MenuActionMyLocation(LocationSaver locationSaver,
-            GeocacheFromMyLocationFactory geocacheFromMyLocationFactory,
-            CacheListRefresh cacheListRefresh, ErrorDisplayer errorDisplayer) {
-        mLocationSaver = locationSaver;
+    public MenuActionMyLocation(CacheListRefresh cacheListRefresh,
+            ErrorDisplayer errorDisplayer, GeocacheFromMyLocationFactory geocacheFromMyLocationFactory,
+            LocationSaverFactory locationSaverFactory, ISQLiteDatabase writableDatabase) {
         mGeocacheFromMyLocationFactory = geocacheFromMyLocationFactory;
         mErrorDisplayer = errorDisplayer;
         mMenuActionRefresh = cacheListRefresh;
+        mLocationSaverFactory = locationSaverFactory;
+        mWritableDatabase = writableDatabase;
     }
 
     public void act() {
-        Geocache myLocation = mGeocacheFromMyLocationFactory.create();
+        final Geocache myLocation = mGeocacheFromMyLocationFactory.create();
         if (myLocation == null) {
             mErrorDisplayer.displayError(R.string.current_location_null);
             return;
         }
+        final LocationSaver mLocationSaver = mLocationSaverFactory
+                .createLocationSaver(mWritableDatabase);
         mLocationSaver.saveLocation(myLocation);
         mMenuActionRefresh.forceRefresh();
     }

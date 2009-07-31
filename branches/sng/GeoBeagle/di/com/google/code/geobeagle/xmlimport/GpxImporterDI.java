@@ -17,7 +17,10 @@ package com.google.code.geobeagle.xmlimport;
 import com.google.code.geobeagle.ErrorDisplayer;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
 import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheListPresenter;
-import com.google.code.geobeagle.database.DatabaseDI.GeoBeagleSqliteOpenHelper;
+import com.google.code.geobeagle.database.CacheWriter;
+import com.google.code.geobeagle.database.CacheWriterFactory;
+import com.google.code.geobeagle.database.ISQLiteDatabase;
+import com.google.code.geobeagle.xmlimport.CachePersisterFacadeDI.CachePersisterFacadeFactory;
 import com.google.code.geobeagle.xmlimport.EventHelperDI.EventHelperFactory;
 import com.google.code.geobeagle.xmlimport.GpxToCache.Aborter;
 import com.google.code.geobeagle.xmlimport.GpxToCacheDI.XmlPullParserWrapper;
@@ -33,6 +36,8 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
+import android.os.PowerManager;
+import android.os.PowerManager.WakeLock;
 import android.widget.Toast;
 
 import java.io.FilenameFilter;
@@ -54,13 +59,13 @@ public class GpxImporterDI {
                     xmlPullParserWrapper);
             final ImportThreadHelper importThreadHelper = new ImportThreadHelper(gpxLoader,
                     messageHandler, eventHelperFactory, eventHandlers, errorDisplayer);
-            return new ImportThread(gpxAndZipFiles, importThreadHelper, errorDisplayer, aborter);
+            return new ImportThread(gpxAndZipFiles, importThreadHelper, errorDisplayer);
         }
 
         private final ImportThreadDelegate mImportThreadDelegate;
 
         public ImportThread(GpxAndZipFiles gpxAndZipFiles, ImportThreadHelper importThreadHelper,
-                ErrorDisplayer errorDisplayer, Aborter aborter) {
+                ErrorDisplayer errorDisplayer) {
             mImportThreadDelegate = new ImportThreadDelegate(gpxAndZipFiles, importThreadHelper,
                     errorDisplayer);
         }
@@ -73,10 +78,10 @@ public class GpxImporterDI {
 
     // Wrapper so that containers can follow the "constructors do no work" rule.
     public static class ImportThreadWrapper {
+        private final Aborter mAborter;
         private ImportThread mImportThread;
         private final MessageHandler mMessageHandler;
         private final XmlPullParserWrapper mXmlPullParserWrapper;
-        private final Aborter mAborter;
 
         public ImportThreadWrapper(MessageHandler messageHandler,
                 XmlPullParserWrapper xmlPullParserWrapper, Aborter aborter) {
@@ -91,9 +96,13 @@ public class GpxImporterDI {
             return false;
         }
 
-        public void join() throws InterruptedException {
+        public void join() {
             if (mImportThread != null)
-                mImportThread.join();
+                try {
+                    mImportThread.join();
+                } catch (InterruptedException e) {
+                    // Ignore; we are aborting anyway.
+                }
         }
 
         public void open(CacheListRefresh cacheListRefresh, GpxLoader gpxLoader,
@@ -119,7 +128,7 @@ public class GpxImporterDI {
                 ListActivity listActivity) {
             final ProgressDialogWrapper progressDialogWrapper = new ProgressDialogWrapper(
                     listActivity);
-            return new MessageHandler(progressDialogWrapper, geocacheListPresenter);
+            return new MessageHandler(geocacheListPresenter, progressDialogWrapper);
         }
 
         private int mCacheCount;
@@ -129,12 +138,10 @@ public class GpxImporterDI {
         private String mSource;
         private String mStatus;
         private String mWaypointId;
-        private GeocacheListPresenter mGeocacheListPresenter;
 
-        public MessageHandler(ProgressDialogWrapper progressDialogWrapper,
-                GeocacheListPresenter geocacheListPresenter) {
+        public MessageHandler(GeocacheListPresenter geocacheListPresenter,
+                ProgressDialogWrapper progressDialogWrapper) {
             mProgressDialogWrapper = progressDialogWrapper;
-            mGeocacheListPresenter = geocacheListPresenter;
         }
 
         public void abortLoad() {
@@ -153,7 +160,6 @@ public class GpxImporterDI {
                     if (!mLoadAborted) {
                         mProgressDialogWrapper.dismiss();
                         mMenuActionRefresh.forceRefresh();
-                        mGeocacheListPresenter.onResume();
                     }
                     break;
                 default:
@@ -218,13 +224,22 @@ public class GpxImporterDI {
         }
     }
 
-    public static GpxImporter create(GeoBeagleSqliteOpenHelper geoBeagleSqliteOpenHelper,
-            ListActivity listActivity, XmlPullParserWrapper xmlPullParserWrapper,
-            ErrorDisplayer errorDisplayer, GeocacheListPresenter geocacheListPresenter,
-            Aborter aborter, MessageHandler messageHandler,
-            CachePersisterFacade cachePersisterFacade) {
+    public static GpxImporter create(ListActivity listActivity,
+            XmlPullParserWrapper xmlPullParserWrapper, ErrorDisplayer errorDisplayer,
+            GeocacheListPresenter geocacheListPresenter, Aborter aborter,
+            MessageHandler messageHandler, CachePersisterFacadeFactory cachePersisterFacadeFactory,
+            CacheWriterFactory cacheWriterFactory, ISQLiteDatabase writableDatabase) {
+        final PowerManager powerManager = (PowerManager)listActivity
+                .getSystemService(Context.POWER_SERVICE);
+        final WakeLock wakeLock = powerManager.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK,
+                "Importing");
+
+        final CacheWriter cacheWriter = cacheWriterFactory.create(writableDatabase);
+        final CachePersisterFacade cachePersisterFacade = cachePersisterFacadeFactory.create(
+                cacheWriter, wakeLock);
+
         final GpxLoader gpxLoader = GpxLoaderDI.create(cachePersisterFacade, xmlPullParserWrapper,
-                aborter, errorDisplayer);
+                aborter, errorDisplayer, wakeLock);
         final ToastFactory toastFactory = new ToastFactory();
         final ImportThreadWrapper importThreadWrapper = new ImportThreadWrapper(messageHandler,
                 xmlPullParserWrapper, aborter);

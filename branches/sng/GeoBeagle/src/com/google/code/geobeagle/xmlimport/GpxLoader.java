@@ -21,6 +21,7 @@ import com.google.code.geobeagle.xmlimport.GpxToCache.CancelException;
 import org.xmlpull.v1.XmlPullParserException;
 
 import android.database.sqlite.SQLiteException;
+import android.os.PowerManager.WakeLock;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -30,12 +31,15 @@ public class GpxLoader {
     private final CachePersisterFacade mCachePersisterFacade;
     private final ErrorDisplayer mErrorDisplayer;
     private final GpxToCache mGpxToCache;
+    private final WakeLock mWakeLock;
+    public static final int WAKELOCK_DURATION = 15000;
 
-    GpxLoader(GpxToCache gpxToCache, CachePersisterFacade cachePersisterFacade,
-            ErrorDisplayer errorDisplayer) {
+    GpxLoader(CachePersisterFacade cachePersisterFacade, ErrorDisplayer errorDisplayer,
+            GpxToCache gpxToCache, WakeLock wakeLock) {
         mGpxToCache = gpxToCache;
         mCachePersisterFacade = cachePersisterFacade;
         mErrorDisplayer = errorDisplayer;
+        mWakeLock = wakeLock;
     }
 
     public void abort() {
@@ -54,6 +58,7 @@ public class GpxLoader {
         boolean markLoadAsComplete = false;
         boolean continueLoading = false;
         try {
+            mWakeLock.acquire(WAKELOCK_DURATION);
             boolean alreadyLoaded = mGpxToCache.load(eventHelper);
             markLoadAsComplete = !alreadyLoaded;
             continueLoading = true;

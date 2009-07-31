@@ -52,8 +52,7 @@ public class SearchOnlineActivityDelegate {
     }
 
     public void onPause() {
-        mCombinedLocationManager.removeUpdates(mLocationControlBuffered);
-        mCombinedLocationManager.removeUpdates(mCombinedLocationListener);
+        mCombinedLocationManager.removeUpdates();
         mSensorManager.unregisterListener(mCompassListener);
         mActivitySaver.save(ActivityType.SEARCH_ONLINE);
     }

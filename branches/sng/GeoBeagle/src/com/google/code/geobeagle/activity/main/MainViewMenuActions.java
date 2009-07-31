@@ -27,7 +27,7 @@ public class MainViewMenuActions extends MenuActions {
             MenuActionMyLocation menuActionMyLocation,
             MenuActionToggleFilter menuActionToggleFilter, CacheListRefresh cacheListRefresh,
             MenuActionSearchOnline menuActionSearchOnline) {
-        super(menuActionSyncGpx, menuActionMyLocation, menuActionToggleFilter, cacheListRefresh,
-                menuActionSearchOnline);
+        super(menuActionMyLocation, menuActionSearchOnline, menuActionSyncGpx,
+                menuActionToggleFilter);
     }
 }

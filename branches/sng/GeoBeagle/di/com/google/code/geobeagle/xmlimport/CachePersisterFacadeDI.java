@@ -22,35 +22,39 @@ import com.google.code.geobeagle.xmlimport.CacheTagWriter.CacheTagParser;
 import com.google.code.geobeagle.xmlimport.GpxImporterDI.MessageHandler;
 
 import android.app.Activity;
-import android.content.Context;
-import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 
 import java.io.File;
 
 public class CachePersisterFacadeDI {
 
+    public static class CachePersisterFacadeFactory {
+        private final CacheDetailsWriter mCacheDetailsWriter;
+        private final CacheTagParser mCacheTagParser;
+        private final FileFactory mFileFactory;
+        private final HtmlWriter mHtmlWriter;
+        private final MessageHandler mMessageHandler;
+        private final WriterWrapper mWriterWrapper;
+
+        public CachePersisterFacadeFactory(Activity activity, MessageHandler messageHandler) {
+            mMessageHandler = messageHandler;
+            mFileFactory = new FileFactory();
+            mWriterWrapper = new WriterWrapper();
+            mHtmlWriter = new HtmlWriter(mWriterWrapper);
+            mCacheDetailsWriter = new CacheDetailsWriter(mHtmlWriter);
+            mCacheTagParser = new CacheTagParser();
+        }
+
+        public CachePersisterFacade create(CacheWriter cacheWriter, WakeLock wakeLock) {
+            final CacheTagWriter cacheTagWriter = new CacheTagWriter(cacheWriter, mCacheTagParser);
+            return new CachePersisterFacade(cacheTagWriter, mFileFactory, mCacheDetailsWriter,
+                    mMessageHandler, wakeLock);
+        }
+    }
+
     public static class FileFactory {
         public File createFile(String path) {
             return new File(path);
         }
     }
-
-    public static CachePersisterFacade create(Activity activity, MessageHandler messageHandler,
-            CacheWriter cacheWriter) {
-        final FileFactory fileFactory = new FileFactory();
-        final WriterWrapper writerWrapper = new WriterWrapper();
-        final HtmlWriter htmlWriter = new HtmlWriter(writerWrapper);
-        final CacheDetailsWriter cacheDetailsWriter = new CacheDetailsWriter(htmlWriter);
-        final PowerManager powerManager = (PowerManager)activity
-                .getSystemService(Context.POWER_SERVICE);
-        final WakeLock wakeLock = powerManager.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK,
-                "Importing");
-
-        final CacheTagParser cacheTagParser = new CacheTagParser();
-        final CacheTagWriter cacheTagWriter = new CacheTagWriter(cacheWriter, cacheTagParser);
-        return new CachePersisterFacade(cacheTagWriter, fileFactory, cacheDetailsWriter,
-                messageHandler, wakeLock);
-    }
-
 }

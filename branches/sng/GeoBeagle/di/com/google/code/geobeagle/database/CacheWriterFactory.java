@@ -14,21 +14,9 @@
 
 package com.google.code.geobeagle.database;
 
-import com.google.code.geobeagle.Geocache;
 
-public class LocationSaver {
-    private final CacheWriter mCacheWriter;
-
-    LocationSaver(CacheWriter cacheWriter) {
-        mCacheWriter = cacheWriter;
-    }
-
-    public void saveLocation(Geocache geocache) {
-        final CharSequence id = geocache.getId();
-        mCacheWriter.startWriting();
-        mCacheWriter.insertAndUpdateCache(id, geocache.getName(), geocache.getLatitude(), geocache
-                .getLongitude(), geocache.getSourceType(), geocache.getSourceName(), geocache
-                .getCacheType(), 0, 0, 0);
-        mCacheWriter.stopWriting();
+public class CacheWriterFactory {
+    public CacheWriter create(ISQLiteDatabase writableDatabase) {
+        return DatabaseDI.createCacheWriter(writableDatabase);
     }
 }

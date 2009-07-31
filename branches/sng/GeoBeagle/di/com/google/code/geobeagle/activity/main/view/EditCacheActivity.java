@@ -16,13 +16,11 @@ package com.google.code.geobeagle.activity.main.view;
 
 import com.google.code.geobeagle.GeocacheFactory;
 import com.google.code.geobeagle.activity.main.view.EditCacheActivityDelegate.CancelButtonOnClickListener;
-import com.google.code.geobeagle.database.CacheWriter;
-import com.google.code.geobeagle.database.DatabaseDI;
-import com.google.code.geobeagle.database.LocationSaver;
+import com.google.code.geobeagle.database.CacheWriterFactory;
+import com.google.code.geobeagle.database.LocationSaverFactory;
 import com.google.code.geobeagle.database.DatabaseDI.GeoBeagleSqliteOpenHelper;
 
 import android.app.Activity;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 
 public class EditCacheActivity extends Activity {
@@ -34,15 +32,21 @@ public class EditCacheActivity extends Activity {
         final CancelButtonOnClickListener cancelButtonOnClickListener = new CancelButtonOnClickListener(
                 this);
         final GeocacheFactory geocacheFactory = new GeocacheFactory();
-        final GeoBeagleSqliteOpenHelper geoBeagleSqliteOpenHelper = new DatabaseDI.GeoBeagleSqliteOpenHelper(
+        final CacheWriterFactory cacheWriterFactory = new CacheWriterFactory();
+        final LocationSaverFactory locationSaverFactory = new LocationSaverFactory(
+                cacheWriterFactory);
+        final GeoBeagleSqliteOpenHelper geoBeagleSqliteOpenHelper = new GeoBeagleSqliteOpenHelper(
                 this);
-        final SQLiteDatabase sqliteDatabaseWritable = geoBeagleSqliteOpenHelper
-                .getWritableDatabase();
-        final CacheWriter cacheWriter = DatabaseDI.createCacheWriter(sqliteDatabaseWritable);
-        final LocationSaver mLocationSaver = new LocationSaver(cacheWriter);
         mEditCacheActivityDelegate = new EditCacheActivityDelegate(this,
-                cancelButtonOnClickListener, geocacheFactory, mLocationSaver);
+                cancelButtonOnClickListener, geocacheFactory, locationSaverFactory,
+                geoBeagleSqliteOpenHelper);
         mEditCacheActivityDelegate.onCreate(savedInstanceState);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mEditCacheActivityDelegate.onPause();
     }
 
     @Override

@@ -16,7 +16,13 @@ package com.google.code.geobeagle.activity.cachelist;
 
 import com.google.code.geobeagle.activity.ActivitySaver;
 import com.google.code.geobeagle.activity.ActivityType;
+import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
 import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheListPresenter;
+import com.google.code.geobeagle.activity.cachelist.presenter.TitleUpdater;
+import com.google.code.geobeagle.database.Closable;
+import com.google.code.geobeagle.database.NullClosable;
+import com.google.code.geobeagle.database.DatabaseDI.GeoBeagleSqliteOpenHelper;
+import com.google.code.geobeagle.database.DatabaseDI.SQLiteWrapper;
 
 import android.view.Menu;
 import android.view.MenuItem;
@@ -24,15 +30,34 @@ import android.view.View;
 import android.widget.ListView;
 
 public class CacheListDelegate {
-    private final GeocacheListController mController;
-    private final GeocacheListPresenter mPresenter;
     private final ActivitySaver mActivitySaver;
+    private final CacheListRefreshFactory mCacheListRefreshFactory;
+    private IGeocacheListController mController;
+    private GeoBeagleSqliteOpenHelper mGeoBeagleSqliteOpenHelper;
+    private GeocacheListControllerFactory mGeocacheListControllerFactory;
+    private final GeocacheListControllerNull mGeocacheListControllerNull;
+    private final GeocacheListPresenter mPresenter;
+    private final NullClosable mNullClosable;
+    private Closable mCloseWhenPaused;
+    private TitleUpdaterFactory mTitleUpdaterFactory;
 
-    public CacheListDelegate(ActivitySaver activitySaver, GeocacheListController controller,
-            GeocacheListPresenter presenter) {
-        mController = controller;
-        mPresenter = presenter;
+    public CacheListDelegate(ActivitySaver activitySaver,
+            CacheListRefreshFactory cacheListRefreshFactory,
+            GeocacheListControllerFactory geocacheListControllerFactory,
+            GeocacheListPresenter geocacheListPresenter,
+            GeoBeagleSqliteOpenHelper geoBeagleSqliteOpenHelper,
+            TitleUpdaterFactory titleUpdaterFactory,
+            GeocacheListControllerNull geocacheListControllerNull, NullClosable nullClosable) {
         mActivitySaver = activitySaver;
+        mCacheListRefreshFactory = cacheListRefreshFactory;
+        mController = geocacheListControllerNull;
+        mGeoBeagleSqliteOpenHelper = geoBeagleSqliteOpenHelper;
+        mGeocacheListControllerFactory = geocacheListControllerFactory;
+        mGeocacheListControllerNull = geocacheListControllerNull;
+        mPresenter = geocacheListPresenter;
+        mNullClosable = nullClosable;
+        mCloseWhenPaused = nullClosable;
+        mTitleUpdaterFactory = titleUpdaterFactory;
     }
 
     public boolean onContextItemSelected(MenuItem menuItem) {
@@ -63,10 +88,23 @@ public class CacheListDelegate {
         mPresenter.onPause();
         mController.onPause();
         mActivitySaver.save(ActivityType.CACHE_LIST);
+        mController = mGeocacheListControllerNull;
+        mCloseWhenPaused.close();
+        mCloseWhenPaused = mNullClosable;
     }
 
     public void onResume() {
-        mPresenter.onResume();
-        mController.onResume();
+        final SQLiteWrapper writableSqliteWrapper = mGeoBeagleSqliteOpenHelper
+                .getWritableSqliteWrapper();
+        mCloseWhenPaused = writableSqliteWrapper;
+
+        final TitleUpdater titleUpdater = mTitleUpdaterFactory.create(writableSqliteWrapper);
+        final CacheListRefresh cacheListRefresh = mCacheListRefreshFactory.create(titleUpdater,
+                writableSqliteWrapper);
+
+        mPresenter.onResume(cacheListRefresh);
+        mController = mGeocacheListControllerFactory.create(cacheListRefresh, titleUpdater,
+                writableSqliteWrapper);
+        mController.onResume(cacheListRefresh);
     }
 }

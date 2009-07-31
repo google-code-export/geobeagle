@@ -12,7 +12,7 @@
  ** limitations under the License.
  */
 
-package com.google.code.geobeagle.xmlimport;
+package com.google.code.geobeagle.database;
 
 import static org.easymock.EasyMock.expect;
 

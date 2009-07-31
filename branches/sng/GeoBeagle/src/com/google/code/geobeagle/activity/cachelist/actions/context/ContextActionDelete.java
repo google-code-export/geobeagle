@@ -17,25 +17,32 @@ package com.google.code.geobeagle.activity.cachelist.actions.context;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVectors;
 import com.google.code.geobeagle.activity.cachelist.presenter.TitleUpdater;
 import com.google.code.geobeagle.database.CacheWriter;
+import com.google.code.geobeagle.database.CacheWriterFactory;
+import com.google.code.geobeagle.database.ISQLiteDatabase;
 
 import android.widget.BaseAdapter;
 
 public class ContextActionDelete implements ContextAction {
-    private final CacheWriter mCacheWriter;
+    private final CacheWriterFactory mCacheWriterFactory;
     private final BaseAdapter mGeocacheListAdapter;
     private final GeocacheVectors mGeocacheVectors;
     private final TitleUpdater mTitleUpdater;
+    private ISQLiteDatabase mWritableDatabase;
 
-    public ContextActionDelete(BaseAdapter geocacheListAdapter, CacheWriter cacheWriter,
-            GeocacheVectors geocacheVectors, TitleUpdater titleUpdater) {
-        mGeocacheVectors = geocacheVectors;
-        mCacheWriter = cacheWriter;
+    public ContextActionDelete(CacheWriterFactory cacheWriterFactory,
+            BaseAdapter geocacheListAdapter, GeocacheVectors geocacheVectors,
+            TitleUpdater titleUpdater, ISQLiteDatabase writableDatabase) {
+        mCacheWriterFactory = cacheWriterFactory;
         mGeocacheListAdapter = geocacheListAdapter;
+        mGeocacheVectors = geocacheVectors;
         mTitleUpdater = titleUpdater;
+        mWritableDatabase = writableDatabase;
     }
 
     public void act(int position) {
-        mCacheWriter.deleteCache(mGeocacheVectors.get(position).getId());
+        final CacheWriter cacheWriter = mCacheWriterFactory.create(mWritableDatabase);
+
+        cacheWriter.deleteCache(mGeocacheVectors.get(position).getId());
 
         mGeocacheVectors.remove(position);
         mGeocacheListAdapter.notifyDataSetChanged();

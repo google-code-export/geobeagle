@@ -15,17 +15,16 @@
 package com.google.code.geobeagle.activity.cachelist.actions.menu;
 
 import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
 
 import java.util.HashMap;
 
 public class MenuActions {
     private final HashMap<Integer, MenuAction> mMenuActions;
 
-    public MenuActions(MenuActionSyncGpx menuActionSyncGpx,
-            MenuActionMyLocation menuActionMyLocation,
-            MenuActionToggleFilter menuActionToggleFilter, CacheListRefresh cacheListRefresh,
-            MenuActionSearchOnline menuActionSearchOnline) {
+    public MenuActions(MenuActionMyLocation menuActionMyLocation,
+            MenuActionSearchOnline menuActionSearchOnline,
+            MenuActionSyncGpx menuActionSyncGpx,
+            MenuActionToggleFilter menuActionToggleFilter) {
         mMenuActions = new HashMap<Integer, MenuAction>();
         mMenuActions.put(R.id.menu_sync, menuActionSyncGpx);
         mMenuActions.put(R.id.menu_toggle_filter, menuActionToggleFilter);

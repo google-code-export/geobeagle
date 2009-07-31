@@ -21,10 +21,12 @@ import com.google.code.geobeagle.xmlimport.GpxToCache;
 import com.google.code.geobeagle.xmlimport.GpxToCache.Aborter;
 import com.google.code.geobeagle.xmlimport.GpxToCacheDI.XmlPullParserWrapper;
 
+import android.os.PowerManager.WakeLock;
+
 public class GpxLoaderDI {
     public static GpxLoader create(CachePersisterFacade cachePersisterFacade,
-            XmlPullParserWrapper xmlPullParserFactory, Aborter aborter, ErrorDisplayer errorDisplayer) {
+            XmlPullParserWrapper xmlPullParserFactory, Aborter aborter, ErrorDisplayer errorDisplayer, WakeLock wakeLock) {
         final GpxToCache gpxToCache = new GpxToCache(xmlPullParserFactory, aborter);
-        return new GpxLoader(gpxToCache, cachePersisterFacade, errorDisplayer);
+        return new GpxLoader(cachePersisterFacade, errorDisplayer, gpxToCache, wakeLock);
     }
 }

@@ -1,3 +1,16 @@
+/*
+ ** Licensed under the Apache License, Version 2.0 (the "License");
+ ** you may not use this file except in compliance with the License.
+ ** You may obtain a copy of the License at
+ **
+ **     http://www.apache.org/licenses/LICENSE-2.0
+ **
+ ** Unless required by applicable law or agreed to in writing, software
+ ** distributed under the License is distributed on an "AS IS" BASIS,
+ ** WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ ** See the License for the specific language governing permissions and
+ ** limitations under the License.
+ */
 
 package com.google.code.geobeagle.xmlimport;
 
@@ -28,6 +41,25 @@ public class CachePersisterFacadeTest {
             .createMock(CacheDetailsWriter.class);
     private final CacheTagWriter mCacheTagWriter = PowerMock.createMock(CacheTagWriter.class);
     private final MessageHandler mMessageHandler = PowerMock.createMock(MessageHandler.class);
+
+    @Test
+    public void testAttributes() throws IOException {
+        mCacheTagWriter.symbol("Geocache Found");
+        mCacheTagWriter.container("big");
+        mCacheTagWriter.difficulty("difficult");
+        mCacheTagWriter.terrain("rocky");
+        mCacheTagWriter.cacheType("traditional");
+
+        PowerMock.replayAll();
+        final CachePersisterFacade cachePersisterFacade = new CachePersisterFacade(mCacheTagWriter,
+                null, null, null, null);
+        cachePersisterFacade.symbol("Geocache Found");
+        cachePersisterFacade.container("big");
+        cachePersisterFacade.difficulty("difficult");
+        cachePersisterFacade.terrain("rocky");
+        cachePersisterFacade.cacheType("traditional");
+        PowerMock.verifyAll();
+    }
 
     @Test
     public void testCloseTrue() {
@@ -172,15 +204,6 @@ public class CachePersisterFacadeTest {
     }
 
     @Test
-    public void testAttributes() throws IOException {
-        mCacheTagWriter.symbol("Geocache Found");
-
-        PowerMock.replayAll();
-        new CachePersisterFacade(mCacheTagWriter, null, null, null, null).symbol("Geocache Found");
-        PowerMock.verifyAll();
-    }
-
-    @Test
     public void testWpt() throws IOException {
         mCacheTagWriter.latitudeLongitude("37", "122");
         mCacheDetailsWriter.latitudeLongitude("37", "122");
@@ -209,7 +232,7 @@ public class CachePersisterFacadeTest {
         mCacheDetailsWriter.writeWptName("GC123");
         mCacheTagWriter.id("GC123");
         mMessageHandler.updateWaypointId("GC123");
-        wakeLock.acquire(CachePersisterFacade.WAKELOCK_DURATION);
+        wakeLock.acquire(GpxLoader.WAKELOCK_DURATION);
 
         PowerMock.replayAll();
         CachePersisterFacade cachePersisterFacade = new CachePersisterFacade(mCacheTagWriter, null,

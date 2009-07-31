@@ -19,11 +19,15 @@ import com.google.code.geobeagle.location.CombinedLocationManager;
 
 import android.widget.TextView;
 
+import java.util.Formatter;
+
 class TextLagUpdater {
     private long mLastTextLagUpdateTime;
     private final TextView mTextLag;
     private final Time mTime;
     private final CombinedLocationManager mCombinedLocationManager;
+    private final static StringBuilder stringBuilder = new StringBuilder();
+    private final static Formatter mFormatter = new Formatter(stringBuilder);
 
     TextLagUpdater(CombinedLocationManager combinedLocationManager, TextView textLag, Time time) {
         mCombinedLocationManager = combinedLocationManager;
@@ -32,11 +36,13 @@ class TextLagUpdater {
     }
 
     static String formatTime(long l) {
-        if (l < 60)
-            return String.valueOf(l) + "s";
-        else if (l < 3600)
-            return String.valueOf(l / 60) + "m " + String.valueOf(l % 60) + "s";
-        return String.valueOf(l / 3600) + "h " + String.valueOf((l % 3600) / 60) + "m";
+        stringBuilder.setLength(0);
+        if (l < 60) {
+            return mFormatter.format("%ds", l).toString();
+        } else if (l < 3600) {
+            return mFormatter.format("%dm %ds", l / 60, l % 60).toString();
+        }
+        return mFormatter.format("%dh %dm", l / 3600, (l % 3600) / 60).toString();
     }
 
     void reset(long time) {

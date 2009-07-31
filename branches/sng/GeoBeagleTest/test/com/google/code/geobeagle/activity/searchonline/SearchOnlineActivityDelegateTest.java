@@ -96,8 +96,7 @@ public class SearchOnlineActivityDelegateTest {
                 .createMock(CombinedLocationManager.class);
         ActivitySaver activitySaver = PowerMock.createMock(ActivitySaver.class);
 
-        combinedLocationManager.removeUpdates(locationControlBuffered);
-        combinedLocationManager.removeUpdates(combinedLocationListener);
+        combinedLocationManager.removeUpdates();
         sensorManager.unregisterListener(compassListener);
         activitySaver.save(ActivityType.SEARCH_ONLINE);
 

@@ -25,22 +25,10 @@ import com.google.code.geobeagle.LocationControlBuffered.IGpsLocation;
 import com.google.code.geobeagle.activity.cachelist.CacheListDelegateDI;
 import com.google.code.geobeagle.activity.cachelist.model.CacheListData;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVector;
-import com.google.code.geobeagle.activity.cachelist.presenter.ActionAndTolerance;
-import com.google.code.geobeagle.activity.cachelist.presenter.AdapterCachesSorter;
-import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
-import com.google.code.geobeagle.activity.cachelist.presenter.DistanceUpdater;
-import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheListAdapter;
-import com.google.code.geobeagle.activity.cachelist.presenter.ListTitleFormatter;
-import com.google.code.geobeagle.activity.cachelist.presenter.LocationAndAzimuthTolerance;
-import com.google.code.geobeagle.activity.cachelist.presenter.LocationTolerance;
-import com.google.code.geobeagle.activity.cachelist.presenter.RefreshAction;
-import com.google.code.geobeagle.activity.cachelist.presenter.SortStrategy;
-import com.google.code.geobeagle.activity.cachelist.presenter.SqlCacheLoader;
-import com.google.code.geobeagle.activity.cachelist.presenter.TitleUpdater;
-import com.google.code.geobeagle.activity.cachelist.presenter.ToleranceStrategy;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh.ActionManager;
 import com.google.code.geobeagle.database.FilterNearestCaches;
 import com.google.code.geobeagle.database.GeocachesSql;
+import com.google.code.geobeagle.database.ISQLiteDatabase;
 import com.google.code.geobeagle.database.WhereFactory;
 
 import org.easymock.EasyMock;
@@ -174,7 +162,7 @@ public class MenuActionRefreshTest {
         actionManager.performActions(here, 90, 0, 100000);
 
         PowerMock.replayAll();
-        new CacheListRefresh(actionManager, locationControlBuffered, timing).forceRefresh();
+        new CacheListRefresh(actionManager, timing, locationControlBuffered, null).forceRefresh();
         PowerMock.verifyAll();
     }
 
@@ -185,7 +173,9 @@ public class MenuActionRefreshTest {
         CacheListDelegateDI.Timing timing = PowerMock.createMock(CacheListDelegateDI.Timing.class);
         ActionManager actionManager = PowerMock.createMock(ActionManager.class);
         IGpsLocation here = PowerMock.createMock(IGpsLocation.class);
+        ISQLiteDatabase writableDatabase = PowerMock.createMock(ISQLiteDatabase.class);
 
+        EasyMock.expect(writableDatabase.isOpen()).andReturn(true);
         timing.start();
         EasyMock.expect(timing.getTime()).andReturn(10000L);
         EasyMock.expect(locationControlBuffered.getGpsLocation()).andReturn(here);
@@ -195,7 +185,22 @@ public class MenuActionRefreshTest {
         actionManager.performActions(here, 90, 3, 10000L);
 
         PowerMock.replayAll();
-        new CacheListRefresh(actionManager, locationControlBuffered, timing).refresh();
+        new CacheListRefresh(actionManager, timing, locationControlBuffered, writableDatabase)
+                .refresh();
+        PowerMock.verifyAll();
+    }
+
+    @Test
+    public void testCacheListRefresh_RefreshDbClosed() {
+        ISQLiteDatabase writableDatabase = PowerMock.createMock(ISQLiteDatabase.class);
+        PowerMock.mockStatic(Log.class);
+
+        EasyMock.expect(writableDatabase.isOpen()).andReturn(false);
+        EasyMock.expect(Log.d((String)EasyMock.anyObject(), (String)EasyMock.anyObject()))
+                .andReturn(0).anyTimes();
+
+        PowerMock.replayAll();
+        new CacheListRefresh(null, null, null, writableDatabase).refresh();
         PowerMock.verifyAll();
     }
 

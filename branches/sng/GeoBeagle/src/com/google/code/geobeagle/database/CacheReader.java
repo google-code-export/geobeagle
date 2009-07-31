@@ -15,7 +15,6 @@
 package com.google.code.geobeagle.database;
 
 import com.google.code.geobeagle.database.DatabaseDI.CacheReaderCursorFactory;
-import com.google.code.geobeagle.database.DatabaseDI.SQLiteWrapper;
 
 import android.database.Cursor;
 import android.location.Location;
@@ -23,10 +22,14 @@ import android.location.Location;
 public class CacheReader {
     public static final String SQL_QUERY_LIMIT = "1000";
     private final CacheReaderCursorFactory mCacheReaderCursorFactory;
-    private final SQLiteWrapper mSqliteWrapper;
+    private final ISQLiteDatabase mSqliteWrapper;
+    public static final String[] READER_COLUMNS = new String[] {
+            "Latitude", "Longitude", "Id", "Description", "Source", "CacheType", "Difficulty",
+            "Terrain", "Container"
+    };
 
     // TODO: rename to CacheSqlReader / CacheSqlWriter
-    CacheReader(SQLiteWrapper sqliteWrapper, CacheReaderCursorFactory cacheReaderCursorFactory) {
+    CacheReader(ISQLiteDatabase sqliteWrapper, CacheReaderCursorFactory cacheReaderCursorFactory) {
         mSqliteWrapper = sqliteWrapper;
         mCacheReaderCursorFactory = cacheReaderCursorFactory;
     }
@@ -43,7 +46,7 @@ public class CacheReader {
     public CacheReaderCursor open(Location location, WhereFactory whereFactory) {
         String where = whereFactory.getWhere(location);
 
-        Cursor cursor = mSqliteWrapper.query(Database.TBL_CACHES, Database.READER_COLUMNS, where,
+        Cursor cursor = mSqliteWrapper.query(Database.TBL_CACHES, CacheReader.READER_COLUMNS, where,
                 null, null, null, SQL_QUERY_LIMIT);
         if (!cursor.moveToFirst()) {
             cursor.close();

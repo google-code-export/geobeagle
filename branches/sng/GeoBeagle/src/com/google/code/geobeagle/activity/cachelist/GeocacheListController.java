@@ -16,11 +16,11 @@ package com.google.code.geobeagle.activity.cachelist;
 
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.cachelist.actions.context.ContextAction;
+import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionSyncGpx;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActions;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVectors;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
 import com.google.code.geobeagle.database.FilterNearestCaches;
-import com.google.code.geobeagle.xmlimport.GpxImporter;
 
 import android.app.ListActivity;
 import android.view.ContextMenu;
@@ -32,7 +32,7 @@ import android.view.View.OnCreateContextMenuListener;
 import android.widget.ListView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 
-public class GeocacheListController {
+public class GeocacheListController implements IGeocacheListController {
 
     public static class CacheListOnCreateContextMenuListener implements OnCreateContextMenuListener {
         private final GeocacheVectors mGeocacheVectors;
@@ -57,17 +57,17 @@ public class GeocacheListController {
     private final CacheListRefresh mCacheListRefresh;
     private final ContextAction mContextActions[];
     private final FilterNearestCaches mFilterNearestCaches;
-    private final GpxImporter mGpxImporter;
     private final ListActivity mListActivity;
     private final MenuActions mMenuActions;
+    private final MenuActionSyncGpx mMenuActionSyncGpx;
 
     public GeocacheListController(CacheListRefresh cacheListRefresh,
             ContextAction[] contextActions, FilterNearestCaches filterNearestCaches,
-            GpxImporter gpxImporter, ListActivity listActivity, MenuActions menuActions) {
+            MenuActionSyncGpx menuActionSyncGpx, ListActivity listActivity, MenuActions menuActions) {
         mCacheListRefresh = cacheListRefresh;
         mContextActions = contextActions;
         mFilterNearestCaches = filterNearestCaches;
-        mGpxImporter = gpxImporter;
+        mMenuActionSyncGpx = menuActionSyncGpx;
         mListActivity = listActivity;
         mMenuActions = menuActions;
     }
@@ -102,13 +102,10 @@ public class GeocacheListController {
     }
 
     public void onPause() {
-        try {
-            mGpxImporter.abort();
-        } catch (InterruptedException e) {
-        }
+        mMenuActionSyncGpx.abort();
     }
 
-    public void onResume() {
+    public void onResume(CacheListRefresh cacheListRefresh) {
         mCacheListRefresh.forceRefresh();
     }
 }

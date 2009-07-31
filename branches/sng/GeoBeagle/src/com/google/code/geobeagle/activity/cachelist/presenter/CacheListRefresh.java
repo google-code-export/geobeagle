@@ -18,6 +18,9 @@ import com.google.code.geobeagle.LocationControlBuffered;
 import com.google.code.geobeagle.Refresher;
 import com.google.code.geobeagle.LocationControlBuffered.IGpsLocation;
 import com.google.code.geobeagle.activity.cachelist.CacheListDelegateDI;
+import com.google.code.geobeagle.database.ISQLiteDatabase;
+
+import android.util.Log;
 
 public class CacheListRefresh implements Refresher {
     public static class ActionManager {
@@ -47,24 +50,31 @@ public class CacheListRefresh implements Refresher {
     private final ActionManager mActionManager;
     private final LocationControlBuffered mLocationControlBuffered;
     private final CacheListDelegateDI.Timing mTiming;
+    private final ISQLiteDatabase mSqliteWrapper;
 
-    public CacheListRefresh(ActionManager actionManager,
-            LocationControlBuffered locationControlBuffered, CacheListDelegateDI.Timing timing) {
+    public CacheListRefresh(ActionManager actionManager, CacheListDelegateDI.Timing timing,
+            LocationControlBuffered locationControlBuffered, ISQLiteDatabase sqliteWrapper) {
         mLocationControlBuffered = locationControlBuffered;
         mTiming = timing;
         mActionManager = actionManager;
+        mSqliteWrapper = sqliteWrapper;
     }
 
     public void forceRefresh() {
         mTiming.start();
-        long now = mTiming.getTime();
+        final long now = mTiming.getTime();
         mActionManager.performActions(mLocationControlBuffered.getGpsLocation(),
                 mLocationControlBuffered.getAzimuth(), 0, now);
     }
 
     public void refresh() {
+        if (!mSqliteWrapper.isOpen()) {
+            Log.d("GeoBeagle", "Refresh: database is closed, punting.");
+            return;
+        }
+
         mTiming.start();
-        long now = mTiming.getTime();
+        final long now = mTiming.getTime();
         final IGpsLocation here = mLocationControlBuffered.getGpsLocation();
         final float azimuth = mLocationControlBuffered.getAzimuth();
         final int minActionExceedingTolerance = mActionManager.getMinActionExceedingTolerance(here,

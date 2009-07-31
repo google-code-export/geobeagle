@@ -14,9 +14,10 @@
 
 package com.google.code.geobeagle.activity.cachelist.presenter;
 
-import com.google.code.geobeagle.ErrorDisplayer;
+import com.google.code.geobeagle.CompassListener;
 import com.google.code.geobeagle.LocationControlBuffered;
 import com.google.code.geobeagle.R;
+import com.google.code.geobeagle.activity.cachelist.CompassListenerFactory;
 import com.google.code.geobeagle.activity.cachelist.GeocacheListController.CacheListOnCreateContextMenuListener;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVectors;
 import com.google.code.geobeagle.activity.cachelist.view.GeocacheSummaryRowInflater;
@@ -24,7 +25,6 @@ import com.google.code.geobeagle.gpsstatuswidget.UpdateGpsWidgetRunnable;
 import com.google.code.geobeagle.location.CombinedLocationManager;
 
 import android.app.ListActivity;
-import android.hardware.SensorListener;
 import android.hardware.SensorManager;
 import android.location.Location;
 import android.location.LocationListener;
@@ -33,7 +33,6 @@ import android.preference.PreferenceManager;
 import android.view.View;
 import android.widget.ListView;
 
-@SuppressWarnings("deprecation")
 public class GeocacheListPresenter {
     public static class CacheListRefreshLocationListener implements LocationListener {
         private final CacheListRefresh mCacheListRefresh;
@@ -59,54 +58,49 @@ public class GeocacheListPresenter {
 
     static final int UPDATE_DELAY = 1000;
 
-    private final CacheListRefreshLocationListener mCacheListRefreshLocationListener;
     private final LocationListener mCombinedLocationListener;
     private final CombinedLocationManager mCombinedLocationManager;
     // private final SensorEventListener mCompassListener;
-    @SuppressWarnings("deprecation")
-    private final SensorListener mCompassListener;
+    // private final SensorListener mCompassListener;
+    private CompassListenerFactory mCompassListenerFactory;
     private final DistanceFormatterManager mDistanceFormatterManager;
-    private final ErrorDisplayer mErrorDisplayer;
     private final GeocacheListAdapter mGeocacheListAdapter;
+    private final GeocacheSummaryRowInflater mGeocacheSummaryRowInflater;
     private final GeocacheVectors mGeocacheVectors;
     private final View mGpsStatusWidget;
     private final ListActivity mListActivity;
     private final LocationControlBuffered mLocationControlBuffered;
-    private final SensorManager mSensorManager;
+    private SensorManagerWrapper mSensorManagerWrapper;
+
     private final UpdateGpsWidgetRunnable mUpdateGpsWidgetRunnable;
-    private final GeocacheSummaryRowInflater mGeocacheSummaryRowInflater;
 
-    // private Sensor mCompassSensor;
-
-    @SuppressWarnings("deprecation")
-    public GeocacheListPresenter(CombinedLocationManager combinedLocationManager,
+    public GeocacheListPresenter(LocationListener combinedLocationListener,
+            CombinedLocationManager combinedLocationManager,
+            CompassListenerFactory compassListenerFactory,
+            DistanceFormatterManager distanceFormatterManager,
+            GeocacheListAdapter geocacheListAdapter,
+            GeocacheSummaryRowInflater geocacheSummaryRowInflater, GeocacheVectors geocacheVectors,
+            View gpsStatusWidget, ListActivity listActivity,
             LocationControlBuffered locationControlBuffered,
-            LocationListener gpsStatusWidgetLocationListener, View gpsStatusWidget,
-            UpdateGpsWidgetRunnable updateGpsWidgetRunnable, GeocacheVectors geocacheVectors,
-            CacheListRefreshLocationListener cacheListRefreshLocationListener,
-            ListActivity listActivity, GeocacheListAdapter geocacheListAdapter,
-            ErrorDisplayer errorDisplayer, SensorManager sensorManager,
-            SensorListener compassListener, DistanceFormatterManager distanceFormatterManager,
-            GeocacheSummaryRowInflater geocacheSummaryRowInflater) {
+            SensorManagerWrapper sensorManagerWrapper,
+            UpdateGpsWidgetRunnable updateGpsWidgetRunnable) {
+        mCombinedLocationListener = combinedLocationListener;
         mCombinedLocationManager = combinedLocationManager;
-        mLocationControlBuffered = locationControlBuffered;
-        mCombinedLocationListener = gpsStatusWidgetLocationListener;
-        mGpsStatusWidget = gpsStatusWidget;
-        mUpdateGpsWidgetRunnable = updateGpsWidgetRunnable;
-        mGeocacheVectors = geocacheVectors;
-        mCacheListRefreshLocationListener = cacheListRefreshLocationListener;
-        mListActivity = listActivity;
-        mGeocacheListAdapter = geocacheListAdapter;
-        mSensorManager = sensorManager;
-        mErrorDisplayer = errorDisplayer;
-        mCompassListener = compassListener;
+        mCompassListenerFactory = compassListenerFactory;
         mDistanceFormatterManager = distanceFormatterManager;
+        mGeocacheListAdapter = geocacheListAdapter;
         mGeocacheSummaryRowInflater = geocacheSummaryRowInflater;
+        mGeocacheVectors = geocacheVectors;
+        mGpsStatusWidget = gpsStatusWidget;
+        mListActivity = listActivity;
+        mLocationControlBuffered = locationControlBuffered;
+        mUpdateGpsWidgetRunnable = updateGpsWidgetRunnable;
+        mSensorManagerWrapper = sensorManagerWrapper;
     }
 
     public void onCreate() {
         mListActivity.setContentView(R.layout.cache_list);
-        ListView listView = mListActivity.getListView();
+        final ListView listView = mListActivity.getListView();
         listView.addHeaderView(mGpsStatusWidget);
         mListActivity.setListAdapter(mGeocacheListAdapter);
         listView.setOnCreateContextMenuListener(new CacheListOnCreateContextMenuListener(
@@ -119,21 +113,23 @@ public class GeocacheListPresenter {
     }
 
     public void onPause() {
-        mCombinedLocationManager.removeUpdates(mLocationControlBuffered);
-        mCombinedLocationManager.removeUpdates(mCombinedLocationListener);
-        mSensorManager.unregisterListener(mCompassListener);
-        mCombinedLocationManager.removeUpdates(mCacheListRefreshLocationListener);
+        mCombinedLocationManager.removeUpdates();
+        mSensorManagerWrapper.unregisterListener();
     }
 
-    public void onResume() {
+    public void onResume(CacheListRefresh cacheListRefresh) {
+        final CacheListRefreshLocationListener cacheListRefreshLocationListener = new CacheListRefreshLocationListener(
+                cacheListRefresh);
+        final CompassListener mCompassListener = mCompassListenerFactory.create(cacheListRefresh);
         mCombinedLocationManager.requestLocationUpdates(UPDATE_DELAY, 0, mLocationControlBuffered);
         mCombinedLocationManager.requestLocationUpdates(UPDATE_DELAY, 0, mCombinedLocationListener);
         mCombinedLocationManager.requestLocationUpdates(UPDATE_DELAY, 0,
-                mCacheListRefreshLocationListener);
+                cacheListRefreshLocationListener);
         mDistanceFormatterManager.setFormatter();
         // mSensorManager.registerListener(mCompassListener, mCompassSensor,
         // SensorManager.SENSOR_DELAY_UI);
-        mSensorManager.registerListener(mCompassListener, SensorManager.SENSOR_ORIENTATION,
+
+        mSensorManagerWrapper.registerListener(mCompassListener, SensorManager.SENSOR_ORIENTATION,
                 SensorManager.SENSOR_DELAY_UI);
         final boolean absoluteBearing = PreferenceManager
                 .getDefaultSharedPreferences(mListActivity).getBoolean("absolute-bearing", false);

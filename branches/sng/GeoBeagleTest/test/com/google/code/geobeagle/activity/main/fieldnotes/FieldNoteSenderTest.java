@@ -34,6 +34,7 @@ import android.app.Dialog;
 import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.util.Linkify;
@@ -72,8 +73,8 @@ public class FieldNoteSenderTest {
         EasyMock.expect(
                 dialogHelper.createEditor(fieldNoteDialogView, "GC123 ", fieldNoteResources))
                 .andReturn(editText);
-        PowerMock.expectNew(OnClickOk.class, fieldNoteResources, editText, "GC123 ", context).andReturn(
-                onClickOk);
+        PowerMock.expectNew(OnClickOk.class, fieldNoteResources, editText, "GC123 ", context)
+                .andReturn(onClickOk);
         PowerMock.expectNew(OnClickCancel.class).andReturn(onClickCancel);
         EasyMock.expect(
                 dialogHelper.createDialog(dialogBuilder, fieldNoteDialogView, onClickOk,
@@ -95,7 +96,7 @@ public class FieldNoteSenderTest {
         InputFilter.LengthFilter lengthFilter = PowerMock
                 .createMock(InputFilter.LengthFilter.class);
         FieldNoteResources fieldNoteResources = PowerMock.createMock(FieldNoteResources.class);
-        
+
         EasyMock.expect(fieldNoteDialogView.findViewById(R.id.fieldnote)).andReturn(editText);
         PowerMock.mockStatic(DateFormat.class);
         EasyMock.expect(DateFormat.getTimeInstance(DateFormat.MEDIUM)).andReturn(dateFormat);
@@ -168,5 +169,21 @@ public class FieldNoteSenderTest {
         PowerMock.replayAll();
         new OnClickOk(fieldNoteResources, editText, editable, context).onClick(dialog, 0);
         PowerMock.verifyAll();
+    }
+
+    @Test
+    public void testFieldNoteResources() {
+        Resources resources = PowerMock.createMock(Resources.class);
+
+        String[] strings = new String[] {
+                "dnf", "find"
+        };
+        EasyMock.expect(resources.getStringArray(17)).andReturn(strings).times(2);
+
+        PowerMock.replayAll();
+        assertEquals("find", new FieldNoteResources(resources, R.id.menu_log_find).getString(17));
+        assertEquals("dnf", new FieldNoteResources(resources, R.id.menu_log_dnf).getString(17));
+        PowerMock.verifyAll();
+
     }
 }

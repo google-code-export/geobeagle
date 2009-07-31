@@ -32,7 +32,8 @@ public class MenuActionsTest {
         menuActionSyncGpx.act();
 
         PowerMock.replayAll();
-        new MenuActions(menuActionSyncGpx, null, null, null, null).act(R.id.menu_sync);
+        new MenuActions(null, null, menuActionSyncGpx, null).act(R.id.menu_sync);
         PowerMock.verifyAll();
     }
+
 }

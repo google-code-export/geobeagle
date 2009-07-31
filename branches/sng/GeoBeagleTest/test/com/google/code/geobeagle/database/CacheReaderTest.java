@@ -47,7 +47,7 @@ public class CacheReaderTest {
 
     private void expectQuery(SQLiteWrapper sqliteWrapper, Cursor cursor, String where) {
         expect(
-                sqliteWrapper.query(eq("CACHES"), eq(Database.READER_COLUMNS), eq(where),
+                sqliteWrapper.query(eq("CACHES"), eq(CacheReader.READER_COLUMNS), eq(where),
                         (String)isNull(), (String)isNull(), (String)isNull(),
                         eq(CacheReader.SQL_QUERY_LIMIT))).andReturn(cursor);
     }

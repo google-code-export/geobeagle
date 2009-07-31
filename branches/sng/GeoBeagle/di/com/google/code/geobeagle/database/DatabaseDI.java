@@ -15,13 +15,14 @@
 package com.google.code.geobeagle.database;
 
 import com.google.code.geobeagle.GeocacheFactory;
-import com.google.code.geobeagle.database.Database.ISQLiteDatabase;
-import com.google.code.geobeagle.database.Database.OpenHelperDelegate;
 
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
+
+import java.util.Arrays;
 
 public class DatabaseDI {
 
@@ -41,6 +42,10 @@ public class DatabaseDI {
             mOpenHelperDelegate = new OpenHelperDelegate();
         }
 
+        public SQLiteWrapper getWritableSqliteWrapper() {
+            return new SQLiteWrapper(this.getWritableDatabase());
+        }
+
         @Override
         public void onCreate(SQLiteDatabase db) {
             final SQLiteWrapper sqliteWrapper = new SQLiteWrapper(db);
@@ -54,7 +59,7 @@ public class DatabaseDI {
         }
     }
 
-    public static class SQLiteWrapper implements ISQLiteDatabase {
+    public static class SQLiteWrapper implements ISQLiteDatabase, Closable {
         private final SQLiteDatabase mSQLiteDatabase;
 
         public SQLiteWrapper(SQLiteDatabase writableDatabase) {
@@ -66,6 +71,9 @@ public class DatabaseDI {
         }
 
         public int countResults(String table, String selection, String... selectionArgs) {
+            Log.d("GeoBeagle", "SQL count results: " + selection + ", "
+                    + Arrays.toString(selectionArgs));
+
             Cursor cursor = mSQLiteDatabase.query(table, null, selection, selectionArgs, null,
                     null, null, null);
             int count = cursor.getCount();
@@ -78,10 +86,12 @@ public class DatabaseDI {
         }
 
         public void execSQL(String sql) {
+            Log.d("GeoBeagle", "SQL: " + sql);
             mSQLiteDatabase.execSQL(sql);
         }
 
         public void execSQL(String sql, Object... bindArgs) {
+            Log.d("GeoBeagle", "SQL: " + sql + ", " + Arrays.toString(bindArgs));
             mSQLiteDatabase.execSQL(sql, bindArgs);
         }
 
@@ -98,28 +108,34 @@ public class DatabaseDI {
         public void setTransactionSuccessful() {
             mSQLiteDatabase.setTransactionSuccessful();
         }
+
+        public void close() {
+            Log.d("GeoBeagle", "----------closing sqlite------");
+            mSQLiteDatabase.close();
+        }
+
+        public boolean isOpen() {
+            return mSQLiteDatabase.isOpen();
+        }
+
     }
 
-    public static Database create(Context context) {
-        final GeoBeagleSqliteOpenHelper sqliteOpenHelper = new GeoBeagleSqliteOpenHelper(context);
-        return new Database(sqliteOpenHelper);
-    }
-
-    public static GeocachesSql createGeocachesSql(SQLiteWrapper sqliteWrapper) {
+    public static GeocachesSql createGeocachesSql(ISQLiteDatabase sqliteWrapper) {
         final Geocaches geocaches = new Geocaches();
         final CacheReader cacheReader = createCacheReader(sqliteWrapper);
         return new GeocachesSql(cacheReader, geocaches);
     }
 
-    public static CacheReader createCacheReader(SQLiteWrapper sqliteWrapper) {
+    public static CacheReader createCacheReader(ISQLiteDatabase sqliteWrapper) {
         final CacheReaderCursorFactory cacheReaderCursorFactory = new CacheReaderCursorFactory();
         return new CacheReader(sqliteWrapper, cacheReaderCursorFactory);
     }
 
-    public static CacheWriter createCacheWriter(SQLiteDatabase sqliteDatabaseWritable) {
-        final SQLiteWrapper sqliteWrapper = new DatabaseDI.SQLiteWrapper(sqliteDatabaseWritable);
+    public static CacheWriter createCacheWriter(ISQLiteDatabase writableDatabase) {
+        // final SQLiteWrapper sqliteWrapper = new
+        // DatabaseDI.SQLiteWrapper(sqliteDatabaseWritable);
         final DbToGeocacheAdapter dbToGeocacheAdapter = new DbToGeocacheAdapter();
-        return new CacheWriter(sqliteWrapper, dbToGeocacheAdapter);
+        return new CacheWriter(writableDatabase, dbToGeocacheAdapter);
     }
 
 }

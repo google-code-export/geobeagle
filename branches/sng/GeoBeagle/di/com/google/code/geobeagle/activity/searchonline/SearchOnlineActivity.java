@@ -40,12 +40,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.hardware.SensorManager;
+import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.webkit.WebView;
+
+import java.util.ArrayList;
 
 public class SearchOnlineActivity extends Activity {
 
@@ -61,8 +64,9 @@ public class SearchOnlineActivity extends Activity {
                 .getSystemService(Context.LOCATION_SERVICE);
         final LocationControlBuffered mLocationControlBuffered = LocationControlDi
                 .create(locationManager);
+        final ArrayList<LocationListener> locationListeners = new ArrayList<LocationListener>(3);
         final CombinedLocationManager mCombinedLocationManager = new CombinedLocationManager(
-                locationManager);
+                locationManager, locationListeners);
         final InflatedGpsStatusWidget mGpsStatusWidget = (InflatedGpsStatusWidget)this
                 .findViewById(R.id.gps_widget_view);
         final DistanceFormatterManager distanceFormatterManager = DistanceFormatterManagerDi

@@ -25,8 +25,6 @@ import java.io.File;
 import java.io.IOException;
 
 public class CachePersisterFacade {
-    public static final int WAKELOCK_DURATION = 5000;
-
     private final CacheDetailsWriter mCacheDetailsWriter;
     private String mCacheName = "";
     private final CacheTagWriter mCacheTagWriter;
@@ -128,7 +126,7 @@ public class CachePersisterFacade {
         mCacheDetailsWriter.writeWptName(wpt);
         mCacheTagWriter.id(wpt);
         mMessageHandler.updateWaypointId(wpt);
-        mWakeLock.acquire(WAKELOCK_DURATION);
+        mWakeLock.acquire(GpxLoader.WAKELOCK_DURATION);
     }
 
 }
