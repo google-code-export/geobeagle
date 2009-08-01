@@ -15,9 +15,11 @@
 package com.google.code.geobeagle.activity.main.view;
 
 import com.google.code.geobeagle.GeocacheFactory;
+import com.google.code.geobeagle.activity.ActivityWithDatabaseLifecycleManager;
 import com.google.code.geobeagle.activity.main.view.EditCacheActivityDelegate.CancelButtonOnClickListener;
 import com.google.code.geobeagle.database.CacheWriterFactory;
 import com.google.code.geobeagle.database.LocationSaverFactory;
+import com.google.code.geobeagle.database.NullClosable;
 import com.google.code.geobeagle.database.DatabaseDI.GeoBeagleSqliteOpenHelper;
 
 import android.app.Activity;
@@ -25,6 +27,7 @@ import android.os.Bundle;
 
 public class EditCacheActivity extends Activity {
     private EditCacheActivityDelegate mEditCacheActivityDelegate;
+    private ActivityWithDatabaseLifecycleManager mActivityWithDatabaseLifecycleManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,21 +40,25 @@ public class EditCacheActivity extends Activity {
                 cacheWriterFactory);
         final GeoBeagleSqliteOpenHelper geoBeagleSqliteOpenHelper = new GeoBeagleSqliteOpenHelper(
                 this);
+        final NullClosable nullClosable = new NullClosable();
+
         mEditCacheActivityDelegate = new EditCacheActivityDelegate(this,
-                cancelButtonOnClickListener, geocacheFactory, locationSaverFactory,
-                geoBeagleSqliteOpenHelper);
+                cancelButtonOnClickListener, geocacheFactory, locationSaverFactory);
+        mActivityWithDatabaseLifecycleManager = new ActivityWithDatabaseLifecycleManager(
+                mEditCacheActivityDelegate, nullClosable, geoBeagleSqliteOpenHelper);
         mEditCacheActivityDelegate.onCreate(savedInstanceState);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
+        mActivityWithDatabaseLifecycleManager.onPause();
         mEditCacheActivityDelegate.onPause();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        mEditCacheActivityDelegate.onResume();
+        mActivityWithDatabaseLifecycleManager.onResume();
     }
 }

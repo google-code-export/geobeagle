@@ -17,12 +17,12 @@ package com.google.code.geobeagle.activity.main.view;
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.GeocacheFactory;
 import com.google.code.geobeagle.R;
+import com.google.code.geobeagle.activity.PausableWithDatabase;
 import com.google.code.geobeagle.activity.cachelist.GeocacheListController;
 import com.google.code.geobeagle.activity.main.Util;
 import com.google.code.geobeagle.database.ISQLiteDatabase;
 import com.google.code.geobeagle.database.LocationSaver;
 import com.google.code.geobeagle.database.LocationSaverFactory;
-import com.google.code.geobeagle.database.DatabaseDI.GeoBeagleSqliteOpenHelper;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -32,7 +32,7 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 
-public class EditCacheActivityDelegate {
+public class EditCacheActivityDelegate implements PausableWithDatabase {
     public static class CancelButtonOnClickListener implements OnClickListener {
         private final Activity mActivity;
 
@@ -111,26 +111,21 @@ public class EditCacheActivityDelegate {
     private final GeocacheFactory mGeocacheFactory;
     private final Activity mParent;
     private final LocationSaverFactory mLocationSaverFactory;
-    private ISQLiteDatabase mWritableDatabase;
-    private final GeoBeagleSqliteOpenHelper mGeoBeagleSqliteOpenHelper;
 
     public EditCacheActivityDelegate(Activity parent,
             CancelButtonOnClickListener cancelButtonOnClickListener,
-            GeocacheFactory geocacheFactory, LocationSaverFactory locationSaverFactory,
-            GeoBeagleSqliteOpenHelper geoBeagleSqliteOpenHelper) {
+            GeocacheFactory geocacheFactory, LocationSaverFactory locationSaverFactory) {
         mParent = parent;
         mCancelButtonOnClickListener = cancelButtonOnClickListener;
         mGeocacheFactory = geocacheFactory;
         mLocationSaverFactory = locationSaverFactory;
-        mGeoBeagleSqliteOpenHelper = geoBeagleSqliteOpenHelper;
     }
 
     public void onCreate(Bundle savedInstanceState) {
         mParent.setContentView(R.layout.cache_edit);
     }
 
-    public void onResume() {
-        mWritableDatabase = mGeoBeagleSqliteOpenHelper.getWritableSqliteWrapper();
+    public void onResume(ISQLiteDatabase writableDatabase) {
         final Intent intent = mParent.getIntent();
         final Geocache geocache = intent.<Geocache> getParcelableExtra("geocache");
         final EditCache editCache = new EditCache(mGeocacheFactory, (EditText)mParent
@@ -140,7 +135,7 @@ public class EditCacheActivityDelegate {
 
         editCache.set(geocache);
         final LocationSaver locationSaver = mLocationSaverFactory
-                .createLocationSaver(mWritableDatabase);
+                .createLocationSaver(writableDatabase);
         final SetButtonOnClickListener setButtonOnClickListener = new SetButtonOnClickListener(
                 mParent, editCache, locationSaver);
 
@@ -150,6 +145,5 @@ public class EditCacheActivityDelegate {
     }
 
     public void onPause() {
-        mWritableDatabase.close();
     }
 }

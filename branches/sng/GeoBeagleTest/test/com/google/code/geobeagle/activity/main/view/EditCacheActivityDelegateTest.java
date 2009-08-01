@@ -1,3 +1,16 @@
+/*
+ ** Licensed under the Apache License, Version 2.0 (the "License");
+ ** you may not use this file except in compliance with the License.
+ ** You may obtain a copy of the License at
+ **
+ **     http://www.apache.org/licenses/LICENSE-2.0
+ **
+ ** Unless required by applicable law or agreed to in writing, software
+ ** distributed under the License is distributed on an "AS IS" BASIS,
+ ** WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ ** See the License for the specific language governing permissions and
+ ** limitations under the License.
+ */
 
 package com.google.code.geobeagle.activity.main.view;
 
@@ -14,7 +27,6 @@ import com.google.code.geobeagle.activity.main.view.EditCacheActivityDelegate.Ed
 import com.google.code.geobeagle.activity.main.view.EditCacheActivityDelegate.SetButtonOnClickListener;
 import com.google.code.geobeagle.database.LocationSaver;
 import com.google.code.geobeagle.database.LocationSaverFactory;
-import com.google.code.geobeagle.database.DatabaseDI.GeoBeagleSqliteOpenHelper;
 import com.google.code.geobeagle.database.DatabaseDI.SQLiteWrapper;
 
 import org.easymock.classextension.EasyMock;
@@ -57,7 +69,7 @@ public class EditCacheActivityDelegateTest {
         activity.setContentView(R.layout.cache_edit);
 
         PowerMock.replayAll();
-        new EditCacheActivityDelegate(activity, null, null, null, null).onCreate(null);
+        new EditCacheActivityDelegate(activity, null, null, null).onCreate(null);
         PowerMock.verifyAll();
     }
 
@@ -81,12 +93,8 @@ public class EditCacheActivityDelegateTest {
         LocationSaver locationSaver = PowerMock.createMock(LocationSaver.class);
         LocationSaverFactory locationSaverFactory = PowerMock
                 .createMock(LocationSaverFactory.class);
-        GeoBeagleSqliteOpenHelper geoBeagleSqliteOpenHelper = PowerMock
-                .createMock(GeoBeagleSqliteOpenHelper.class);
         SQLiteWrapper writableDatabase = PowerMock.createMock(SQLiteWrapper.class);
 
-        EasyMock.expect(geoBeagleSqliteOpenHelper.getWritableSqliteWrapper()).andReturn(
-                writableDatabase);
         EasyMock.expect(activity.getIntent()).andReturn(intent);
         EasyMock.expect(intent.<Geocache> getParcelableExtra("geocache")).andReturn(geocache);
         EasyMock.expect(activity.findViewById(R.id.edit_id)).andReturn(id);
@@ -96,7 +104,8 @@ public class EditCacheActivityDelegateTest {
         PowerMock.expectNew(EditCache.class, geocacheFactory, id, name, latitude, longitude)
                 .andReturn(editCache);
         editCache.set(geocache);
-        EasyMock.expect(locationSaverFactory.createLocationSaver(writableDatabase)).andReturn(locationSaver);
+        EasyMock.expect(locationSaverFactory.createLocationSaver(writableDatabase)).andReturn(
+                locationSaver);
         PowerMock.expectNew(SetButtonOnClickListener.class, activity, editCache, locationSaver)
                 .andReturn(setButtonOnClickListener);
         EasyMock.expect(activity.findViewById(R.id.edit_set)).andReturn(set);
@@ -107,7 +116,7 @@ public class EditCacheActivityDelegateTest {
 
         PowerMock.replayAll();
         new EditCacheActivityDelegate(activity, cancelButtonOnClickListener, geocacheFactory,
-                locationSaverFactory, geoBeagleSqliteOpenHelper).onResume();
+                locationSaverFactory).onResume(writableDatabase);
         PowerMock.verifyAll();
     }
 
@@ -177,5 +186,10 @@ public class EditCacheActivityDelegateTest {
                 editCache, locationSaver);
         setButtonOnClickListener.onClick(null);
         PowerMock.verifyAll();
+    }
+
+    @Test
+    public void testOnPause() {
+        new EditCacheActivityDelegate(null, null, null, null).onPause();
     }
 }

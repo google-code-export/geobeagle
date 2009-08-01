@@ -12,12 +12,13 @@
  ** limitations under the License.
  */
 
-package com.google.code.geobeagle.database;
+package com.google.code.geobeagle.activity;
 
-// After you close a database, replace its handle with a NullClosable.  This makes the caller of close() idempotent.
+import com.google.code.geobeagle.database.ISQLiteDatabase;
 
-public class NullClosable implements Closable {
-    @Override
-    public void close() {
-    }
+public interface PausableWithDatabase {
+    void onPause();
+
+    void onResume(ISQLiteDatabase sqliteDatabase);
+
 }

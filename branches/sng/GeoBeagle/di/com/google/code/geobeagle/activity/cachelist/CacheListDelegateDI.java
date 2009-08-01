@@ -48,10 +48,8 @@ import com.google.code.geobeagle.activity.main.GeoBeagle;
 import com.google.code.geobeagle.database.CacheWriterFactory;
 import com.google.code.geobeagle.database.FilterNearestCaches;
 import com.google.code.geobeagle.database.LocationSaverFactory;
-import com.google.code.geobeagle.database.NullClosable;
 import com.google.code.geobeagle.database.WhereFactoryAllCaches;
 import com.google.code.geobeagle.database.WhereFactoryNearestCaches;
-import com.google.code.geobeagle.database.DatabaseDI.GeoBeagleSqliteOpenHelper;
 import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidget;
 import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidgetDelegate;
 import com.google.code.geobeagle.gpsstatuswidget.GpsWidgetAndUpdater;
@@ -117,8 +115,6 @@ public class CacheListDelegateDI {
         final BearingFormatter relativeBearingFormatter = new RelativeBearingFormatter();
         final DistanceFormatterManager distanceFormatterManager = DistanceFormatterManagerDi
                 .create(listActivity);
-        final GeoBeagleSqliteOpenHelper geoBeagleSqliteOpenHelper = new GeoBeagleSqliteOpenHelper(
-                listActivity);
         final GeocacheVectorFactory geocacheVectorFactory = new GeocacheVectorFactory();
         final ArrayList<GeocacheVector> geocacheVectorsList = new ArrayList<GeocacheVector>(10);
         final GeocacheVectors geocacheVectors = new GeocacheVectors(geocacheVectorFactory,
@@ -245,9 +241,9 @@ public class CacheListDelegateDI {
 
         final ActivitySaver activitySaver = ActivityDI.createActivitySaver(listActivity);
         final GeocacheListControllerNull geocacheListControllerNull = new GeocacheListControllerNull();
-        final NullClosable nullClosable = new NullClosable();
+
         return new CacheListDelegate(activitySaver, cacheListRefreshFactory,
-                geocacheListControllerFactory, geocacheListPresenter, geoBeagleSqliteOpenHelper,
-                titleUpdaterFactory, geocacheListControllerNull, nullClosable);
+                geocacheListControllerFactory, geocacheListPresenter, titleUpdaterFactory,
+                geocacheListControllerNull);
     }
 }
