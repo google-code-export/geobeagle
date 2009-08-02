@@ -28,7 +28,7 @@
 		</activity>
 
 		<activity android:name=".activity.cachelist.CacheList"
-			android:label="@string/cache_list_title">
+			android:label="@string/geobeagle">
 			<intent-filter>
 				<action android:name="android.intent.action.VIEW" />
 				<category android:name="android.intent.category.DEFAULT" />
