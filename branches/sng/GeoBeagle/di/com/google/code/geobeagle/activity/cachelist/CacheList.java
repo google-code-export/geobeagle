@@ -47,7 +47,7 @@ public class CacheList extends ListActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.v("GeoBeagle", "CacheList onCreate");
+        Log.d("GeoBeagle", "CacheList onCreate");
 
         mCacheListDelegate = CacheListDelegateDI.create(this, getLayoutInflater());
         final NullClosable nullClosable = new NullClosable();
@@ -88,7 +88,7 @@ public class CacheList extends ListActivity {
 
     @Override
     protected void onPause() {
-        Log.v("GeoBeagle", "CacheList onPause");
+        Log.d("GeoBeagle", "CacheList onPause");
 
         super.onPause();
         mActivityWithDatabaseLifecycleManager.onPause();
@@ -97,7 +97,7 @@ public class CacheList extends ListActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        Log.v("GeoBeagle", "CacheList onResume");
+        Log.d("GeoBeagle", "CacheList onResume");
 
         mActivityWithDatabaseLifecycleManager.onResume();
     }

@@ -68,7 +68,7 @@ public class GeocacheSummaryRowInflater implements HasDistanceFormatter {
     public View inflate(View convertView) {
         if (convertView != null)
             return convertView;
-        // Log.v("GeoBeagle", "SummaryRow::inflate(" + convertView + ")");
+        // Log.d("GeoBeagle", "SummaryRow::inflate(" + convertView + ")");
 
         View view = mLayoutInflater.inflate(R.layout.cache_row, null);
         RowViews rowViews = new RowViews(((ImageView)view.findViewById(R.id.gc_row_icon)),

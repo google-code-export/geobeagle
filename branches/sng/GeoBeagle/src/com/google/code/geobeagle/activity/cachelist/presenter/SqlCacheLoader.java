@@ -46,7 +46,7 @@ public class SqlCacheLoader implements RefreshAction {
 
     public void refresh() {
         final Location location = mLocationControlBuffered.getLocation();
-        // Log.v("GeoBeagle", "Location: " + location);
+        // Log.d("GeoBeagle", "Location: " + location);
         mGeocachesSql.loadCaches(location, mFilterNearestCaches.getWhereFactory());
         ArrayList<Geocache> geocaches = mGeocachesSql.getGeocaches();
         mTiming.lap("SQL time");

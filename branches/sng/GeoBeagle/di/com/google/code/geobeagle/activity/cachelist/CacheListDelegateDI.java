@@ -83,7 +83,7 @@ public class CacheListDelegateDI {
 
         public void lap(CharSequence msg) {
             long finishTime = Calendar.getInstance().getTimeInMillis();
-            Log.v("GeoBeagle", "****** " + msg + ": " + (finishTime - mStartTime));
+            Log.d("GeoBeagle", "****** " + msg + ": " + (finishTime - mStartTime));
             mStartTime = finishTime;
         }
 
@@ -243,7 +243,7 @@ public class CacheListDelegateDI {
         final GeocacheListControllerNull geocacheListControllerNull = new GeocacheListControllerNull();
 
         return new CacheListDelegate(activitySaver, cacheListRefreshFactory,
-                geocacheListControllerFactory, geocacheListPresenter, titleUpdaterFactory,
-                geocacheListControllerNull);
+                geocacheListControllerFactory, geocacheListControllerNull, geocacheListPresenter,
+                titleUpdaterFactory);
     }
 }

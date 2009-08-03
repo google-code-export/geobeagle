@@ -44,7 +44,7 @@ public class CompassListener implements SensorListener {
     public void onSensorChanged(int sensor, float[] values) {
         final float currentAzimuth = values[0];
         if (Math.abs(currentAzimuth - mLastAzimuth) > 5) {
-            // Log.v("GeoBeagle", "azimuth now " + sensor +", " +
+            // Log.d("GeoBeagle", "azimuth now " + sensor +", " +
             // currentAzimuth);
             mLocationControlBuffered.setAzimuth(((int)currentAzimuth / 5) * 5);
             mRefresher.refresh();

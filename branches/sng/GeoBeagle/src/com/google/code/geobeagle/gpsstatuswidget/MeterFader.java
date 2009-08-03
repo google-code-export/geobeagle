@@ -39,7 +39,7 @@ class MeterFader {
         mMeterView.setLag(lastUpdateLag);
         if (lastUpdateLag < 1000)
             mParent.postInvalidateDelayed(100);
-        // Log.v("GeoBeagle", "painting " + lastUpdateLag);
+        // Log.d("GeoBeagle", "painting " + lastUpdateLag);
     }
 
     void reset() {

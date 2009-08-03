@@ -417,7 +417,7 @@ public class RadarView extends View implements SensorListener, LocationListener 
      * @see android.location.LocationListener#onLocationChanged(android.location.Location)
      */
     public void onLocationChanged(Location location) {
-        // Log.v("GeoBeagle", "radarview::onLocationChanged");
+        // Log.d("GeoBeagle", "radarview::onLocationChanged");
         if (!mHaveLocation) {
             mHaveLocation = true;
         }
@@ -467,7 +467,7 @@ public class RadarView extends View implements SensorListener, LocationListener 
      *      int, android.os.Bundle)
      */
     public void onStatusChanged(String provider, int status, Bundle extras) {
-        Log.v("GeoBeagle", "onStatusChanged " + provider + ", " + status);
+        Log.d("GeoBeagle", "onStatusChanged " + provider + ", " + status);
         if (LocationManager.GPS_PROVIDER.equals(provider)) {
             switch (status) {
                 case LocationProvider.AVAILABLE:
@@ -513,7 +513,7 @@ public class RadarView extends View implements SensorListener, LocationListener 
      * Called when we no longer have a valid location.
      */
     public void handleUnknownLocation() {
-        Log.v("GeoBeagle", "!!!!!!unknown location");
+        Log.d("GeoBeagle", "!!!!!!unknown location");
         mHaveLocation = false;
         mDistanceView.setText("");
         mAccuracyView.setText("");

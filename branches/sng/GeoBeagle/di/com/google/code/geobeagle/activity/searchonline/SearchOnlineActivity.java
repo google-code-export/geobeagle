@@ -57,7 +57,7 @@ public class SearchOnlineActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.v("GeoBeagle", "SearchOnlineActivity onCreate");
+        Log.d("GeoBeagle", "SearchOnlineActivity onCreate");
 
         setContentView(R.layout.search);
         final LocationManager locationManager = (LocationManager)this
@@ -126,7 +126,7 @@ public class SearchOnlineActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
-        Log.v("GeoBeagle", "SearchOnlineActivity onResume");
+        Log.d("GeoBeagle", "SearchOnlineActivity onResume");
 
         mSearchOnlineActivityDelegate.onResume();
     }
@@ -134,7 +134,7 @@ public class SearchOnlineActivity extends Activity {
     @Override
     protected void onPause() {
         super.onPause();
-        Log.v("GeoBeagle", "SearchOnlineActivity onPause");
+        Log.d("GeoBeagle", "SearchOnlineActivity onPause");
 
         mSearchOnlineActivityDelegate.onPause();
     }

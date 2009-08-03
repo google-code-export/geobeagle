@@ -39,9 +39,9 @@ public class CacheListDelegate implements PausableWithDatabase {
     public CacheListDelegate(ActivitySaver activitySaver,
             CacheListRefreshFactory cacheListRefreshFactory,
             GeocacheListControllerFactory geocacheListControllerFactory,
+            GeocacheListControllerNull geocacheListControllerNull,
             GeocacheListPresenter geocacheListPresenter,
-            TitleUpdaterFactory titleUpdaterFactory,
-            GeocacheListControllerNull geocacheListControllerNull) {
+            TitleUpdaterFactory titleUpdaterFactory) {
         mActivitySaver = activitySaver;
         mCacheListRefreshFactory = cacheListRefreshFactory;
         mController = geocacheListControllerNull;

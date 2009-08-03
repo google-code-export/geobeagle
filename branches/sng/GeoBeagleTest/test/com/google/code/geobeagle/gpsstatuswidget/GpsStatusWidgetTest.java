@@ -58,7 +58,7 @@ public class GpsStatusWidgetTest {
 
         PowerMock.replayAll();
         new MeterFader(parent, meterBars, time).paint();
-        // Log.v("GeoBeagle", "painting " + lastUpdateLag);
+        // Log.d("GeoBeagle", "painting " + lastUpdateLag);
         PowerMock.verifyAll();
     }
 
@@ -79,7 +79,7 @@ public class GpsStatusWidgetTest {
         final MeterFader meterFader = new MeterFader(parent, meterBars, time);
         meterFader.paint();
         meterFader.paint();
-        // Log.v("GeoBeagle", "painting " + lastUpdateLag);
+        // Log.d("GeoBeagle", "painting " + lastUpdateLag);
         PowerMock.verifyAll();
     }
 
@@ -109,7 +109,7 @@ public class GpsStatusWidgetTest {
         meterFader.paint();
         meterFader.reset();
         meterFader.paint();
-        // Log.v("GeoBeagle", "painting " + lastUpdateLag);
+        // Log.d("GeoBeagle", "painting " + lastUpdateLag);
         PowerMock.verifyAll();
     }
 
@@ -131,7 +131,7 @@ public class GpsStatusWidgetTest {
         final MeterFader meterFader = new MeterFader(parent, meterBars, time);
         meterFader.paint();
         meterFader.paint();
-        // Log.v("GeoBeagle", "painting " + lastUpdateLag);
+        // Log.d("GeoBeagle", "painting " + lastUpdateLag);
         PowerMock.verifyAll();
     }
 

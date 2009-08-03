@@ -22,7 +22,7 @@ public class DistanceUpdater implements RefreshAction {
     }
 
     public void refresh() {
-        // Log.v("GeoBeagle", "notifyDataSetChanged");
+        // Log.d("GeoBeagle", "notifyDataSetChanged");
         mGeocacheListAdapter.notifyDataSetChanged();
     }
 }

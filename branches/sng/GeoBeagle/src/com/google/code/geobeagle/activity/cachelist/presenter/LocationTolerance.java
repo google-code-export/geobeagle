@@ -34,13 +34,13 @@ public class LocationTolerance implements ToleranceStrategy {
             if (now < mLastRefreshTime + mMinTimeBetweenRefresh)
                 return false;
             final float distanceTo = here.distanceTo(mLastRefreshLocation);
-//            Log.v("GeoBeagle", "distance, tolerance: " + distanceTo + ", " + mLocationTolerance);
+//            Log.d("GeoBeagle", "distance, tolerance: " + distanceTo + ", " + mLocationTolerance);
             final boolean fExceedsTolerance = distanceTo >= mLocationTolerance;
             return fExceedsTolerance;
         }
 
         public void updateLastRefreshed(IGpsLocation here, float azimuth, long now) {
-//            Log.v("GeoBeagle", "updateLastRefreshed here: " + here);
+//            Log.d("GeoBeagle", "updateLastRefreshed here: " + here);
             mLastRefreshLocation = here;
             mLastRefreshTime = now;
         }

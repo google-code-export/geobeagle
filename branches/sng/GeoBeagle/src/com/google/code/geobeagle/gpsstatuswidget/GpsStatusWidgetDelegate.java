@@ -51,7 +51,7 @@ public class GpsStatusWidgetDelegate implements HasDistanceFormatter, LocationLi
     }
 
     public void onLocationChanged(Location location) {
-//        Log.v("GeoBeagle", "GpsStatusWidget onLocationChanged " + location);
+//        Log.d("GeoBeagle", "GpsStatusWidget onLocationChanged " + location);
         if (location == null)
             return;
 

@@ -145,7 +145,7 @@ public class GeoBeagle extends Activity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == ACTIVITY_REQUEST_TAKE_PICTURE) {
-            Log.v("GeoBeagle", "camera intent has returned.");
+            Log.d("GeoBeagle", "camera intent has returned.");
         } else if (resultCode == 0)
             setIntent(data);
     }
@@ -153,7 +153,7 @@ public class GeoBeagle extends Activity {
     private void onCameraStart() {
         String filename = "/sdcard/GeoBeagle/" + mGeocache.getId()
                 + DateFormat.format(" yyyy-MM-dd kk.mm.ss.jpg", System.currentTimeMillis());
-        Log.v("GeoBeagle", "capturing image to " + filename);
+        Log.d("GeoBeagle", "capturing image to " + filename);
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(new File(filename)));
         startActivityForResult(intent, ACTIVITY_REQUEST_TAKE_PICTURE);
@@ -163,7 +163,7 @@ public class GeoBeagle extends Activity {
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Log.v("GeoBeagle", "GeoBeagle onCreate");
+        Log.d("GeoBeagle", "GeoBeagle onCreate");
 
         setContentView(R.layout.main);
         mGeoBeagleSqliteOpenHelper = new GeoBeagleSqliteOpenHelper(this);
@@ -247,7 +247,7 @@ public class GeoBeagle extends Activity {
     @Override
     public void onPause() {
         super.onPause();
-        Log.v("GeoBeagle", "GeoBeagle onPause");
+        Log.d("GeoBeagle", "GeoBeagle onPause");
         mGeoBeagleDelegate.onPause();
         mSensorManager.unregisterListener(mCompassListener);
         mSensorManager.unregisterListener(mRadar);
@@ -269,7 +269,7 @@ public class GeoBeagle extends Activity {
     protected void onResume() {
         super.onResume();
         mWritableDatabase = mGeoBeagleSqliteOpenHelper.getWritableSqliteWrapper();
-        Log.v("GeoBeagle", "GeoBeagle onResume");
+        Log.d("GeoBeagle", "GeoBeagle onResume");
 
         mRadar.handleUnknownLocation();
         mGeoBeagleDelegate.onResume();
