@@ -14,13 +14,13 @@
 	android:layout_width="fill_parent" android:layout_height="wrap_content"
 	android:scrollbars="vertical">
 
+
 	<LinearLayout android:orientation="vertical"
 		android:layout_width="fill_parent" android:layout_height="fill_parent">
-		<LinearLayout android:orientation="horizontal"
-			android:layout_width="fill_parent" android:layout_height="wrap_content"
-			android:gravity="center_horizontal" android:layout_weight="1">
+		<FrameLayout android:layout_width="fill_parent"
+			android:layout_height="wrap_content">
 			<LinearLayout android:orientation="vertical"
-				android:gravity="left" android:layout_width="wrap_content"
+				android:layout_gravity="left" android:layout_width="wrap_content"
 				android:layout_height="wrap_content">
 				<TextView android:id="@+id/radar_distance"
 					android:paddingTop="2sp" android:typeface="sans"
@@ -35,13 +35,15 @@
 			</LinearLayout>
 			<view android:id="@+id/radarview"
 				class="com.google.code.geobeagle.activity.main.RadarView"
-				android:layout_width="220sp" android:gravity="center_horizontal"
+				android:layout_width="220sp" android:layout_gravity="center_horizontal"
 				android:layout_height="220sp" android:layout_weight="1" />
 			<TextView android:id="@+id/radar_bearing" android:typeface="sans"
-				android:layout_width="55sp" android:layout_height="wrap_content"
-				android:text="9232" android:textColor="@android:color/primary_text_dark"
-				android:textSize="26sp" android:gravity="right" />
-		</LinearLayout>
+				android:layout_width="wrap_content" android:layout_height="wrap_content"
+				android:text="9232" android:paddingRight="5sp"
+				android:textColor="@android:color/primary_text_dark"
+				android:layout_gravity="right" android:textSize="26sp"
+				android:gravity="right" />
+		</FrameLayout>
 
 		<RelativeLayout android:layout_height="wrap_content"
 			android:gravity="right" android:id="@+id/gc_cache_detail"
@@ -101,7 +103,7 @@
 		</LinearLayout>
 
 		<LinearLayout android:orientation="horizontal"
-			android:layout_height="wrap_content" android:paddingTop="18sp"
+			android:layout_height="wrap_content" android:paddingTop="15sp"
 			android:layout_width="fill_parent">
 			<Button android:id="@+id/menu_log_find" android:layout_height="wrap_content"
 				android:layout_width="wrap_content" android:layout_weight="1"
