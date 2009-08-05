@@ -54,7 +54,7 @@ public class CacheListPresenterTest {
         PowerMock.mockStatic(Log.class);
         CacheListRefresh cacheListRefresh = PowerMock.createMock(CacheListRefresh.class);
 
-        EasyMock.expect(Log.v((String)EasyMock.anyObject(), (String)EasyMock.anyObject()))
+        EasyMock.expect(Log.d((String)EasyMock.anyObject(), (String)EasyMock.anyObject()))
                 .andReturn(0).anyTimes();
         cacheListRefresh.refresh();
 

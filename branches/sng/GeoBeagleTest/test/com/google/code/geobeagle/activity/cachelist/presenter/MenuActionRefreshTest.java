@@ -220,7 +220,7 @@ public class MenuActionRefreshTest {
         IGpsLocation currentLocation = PowerMock.createMock(IGpsLocation.class);
 
         PowerMock.mockStatic(Log.class);
-        EasyMock.expect(Log.v((String)EasyMock.anyObject(), (String)EasyMock.anyObject()))
+        EasyMock.expect(Log.d((String)EasyMock.anyObject(), (String)EasyMock.anyObject()))
                 .andReturn(0).anyTimes();
 
         PowerMock.replayAll();

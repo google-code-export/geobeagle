@@ -99,7 +99,7 @@ public class GeocacheSummaryRowInflaterTest {
         PowerMock.mockStatic(Log.class);
         ImageView imageView = PowerMock.createMock(ImageView.class);
 
-        EasyMock.expect(Log.v((String)EasyMock.anyObject(), (String)EasyMock.anyObject()))
+        EasyMock.expect(Log.d((String)EasyMock.anyObject(), (String)EasyMock.anyObject()))
                 .andReturn(0).anyTimes();
         EasyMock.expect(layoutInflater.inflate(R.layout.cache_row, null)).andReturn(view);
         EasyMock.expect(view.findViewById(R.id.txt_cache)).andReturn(txtView);
