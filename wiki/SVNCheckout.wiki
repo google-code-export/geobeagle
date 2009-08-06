@@ -1,37 +1,22 @@
 #summary How to check out using svn
 
-
-`svn checkout https://geobeagle.googlecode.com/svn/`
+`svn checkout https://geobeagle.googlecode.com/svn/branches/sng`
 
 =Setting up !GeoBeagle=
 
-
   # Eclipse / New Android Project / Create Project From Existing Source / select !GeoBeagle dir
-
   # Override the following settings: Use !GeoBeagle as the Application Name and the Project Name.  Choose Android 1.5 as the Build Target.
-
-  # Right click on "!GeoBeagle" in your Package Explorer window, select "Properties / Java Build Path / Source", and make sure the following *three* folders are in your source:
-  * GeoBeagle/di
-  * GeoBeagle/gen
-  * GeoBeagle/src
-  (otherwise, you'll get "source not found errors").
-
+  # Right click on "!GeoBeagle" in your Package Explorer window, select "Properties / Java Build Path / Source", and make sure the following *three* folders are in your source: "!GeoBeagle/di", "!GeoBeagle/gen", "!GeoBeagle/src" (otherwise, you'll get "source not found errors").
   # Eclipse / Preferences / Set Android SDK Location
-
-  # Set java1.6 (otherwise, you'll get "The method restore() of type ActivityRestorer.CacheListRestorer must override a superclass method" error).
+  # Set java1.6 (otherwise, you'll get "The method restore() of type !ActivityRestorer.!CacheListRestorer must override a superclass method" error).
 
 =Setting up the tests=
 
   # Eclipse / New Java Project / Create Project From Existing Source / select !GeoBeagleTest dir
-
   # Properties / java build path / Projects / add / select !GeoBeagle project 
-
   # Download powermock with dependencies: http://code.google.com/p/powermock/downloads/list, select powermock-1.2.5-with-dependencies.zip.
-
   # Properties / Java build path / Libraries / add external jars... / add all powermock jars.
-
   # Run / Run Configurations / Junit test / Arguments/ VM Arguments: -Xms256m -Xmx1024m -XX:MaxPermSize=256m
-
   # See the following blog posting for more information on automated testing and !GeoBeagle: googletesting.blogspot.com/2009/07/old-habits-die-hard.html#links
 
 See this blog for a few more tips: http://ntoll.org/article/hello-android
