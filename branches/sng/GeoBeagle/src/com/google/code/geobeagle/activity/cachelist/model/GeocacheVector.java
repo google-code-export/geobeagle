@@ -98,8 +98,12 @@ public class GeocacheVector {
         return mGeocache.getId();
     }
 
-    public CharSequence getIdAndName() {
-        return mGeocache.getIdAndName();
+    public CharSequence getName() {
+        return mGeocache.getName();
+    }
+
+    public CharSequence getFormattedAttributes() {
+        return mGeocache.getFormattedAttributes();
     }
 
 }

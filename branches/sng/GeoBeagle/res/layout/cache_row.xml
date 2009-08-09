@@ -13,22 +13,44 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	android:orientation="horizontal" android:layout_width="fill_parent"
 	android:layout_height="wrap_content">
+
 	<LinearLayout android:orientation="vertical"
-		android:layout_width="wrap_content" android:layout_height="fill_parent">
+		android:layout_width="25sp" android:layout_height="fill_parent">
 		<ImageView android:gravity="center_vertical"
-			android:paddingRight="1sp" android:layout_width="wrap_content"
-			android:layout_height="wrap_content" android:id="@+id/gc_row_icon"
+			android:paddingRight="3sp" android:layout_width="wrap_content"
+			android:layout_height="fill_parent" android:id="@+id/gc_row_icon"
 			android:layout_weight="1" />
 	</LinearLayout>
-	<TextView android:id="@+id/txt_cache" android:textSize="18sp"
-		android:paddingBottom="4sp" android:paddingRight="8sp"
-		android:layout_width="wrap_content" android:gravity="left"
-		android:layout_height="wrap_content" android:text="GC1H6KX"
-		android:layout_weight="5" />
-	<TextView android:id="@+id/distance" android:gravity="right"
-		android:textColor="#93be26" android:textSize="16sp"
-		android:paddingBottom="4sp" android:layout_weight="1"
-		android:paddingRight="4sp" android:layout_width="wrap_content"
-		android:layout_height="wrap_content" android:text="304m"
-		android:minEms="6" />
+
+	<LinearLayout android:orientation="vertical"
+		android:layout_width="fill_parent" android:layout_height="wrap_content">
+
+		<FrameLayout android:layout_width="fill_parent"
+			android:layout_height="wrap_content">
+
+			<TextView android:id="@+id/txt_gcattributes"
+				android:textSize="16sp" android:layout_width="wrap_content"
+				android:layout_gravity="center_horizontal" android:text="center"
+				android:layout_height="wrap_content" />
+
+			<LinearLayout android:orientation="horizontal"
+				android:layout_width="fill_parent" android:layout_height="wrap_content">
+				<TextView android:id="@+id/txt_gcid" android:textSize="16sp"
+					android:layout_width="wrap_content" android:gravity="left"
+					android:text="lsssfsdfs" android:layout_height="wrap_content" />
+
+				<TextView android:id="@+id/distance" android:gravity="right"
+					android:textColor="#93be26" android:textSize="16sp" android:text="right"
+					android:layout_width="wrap_content" android:layout_height="wrap_content"
+					android:layout_weight="1" />
+			</LinearLayout>
+		</FrameLayout>
+
+		<TextView android:id="@+id/txt_cache" android:textSize="20sp"
+			android:paddingBottom="0sp" android:paddingRight="0sp"
+			android:layout_width="fill_parent" android:gravity="left"
+			android:layout_height="wrap_content" android:text=""
+			android:textColor="#ffffff" android:lines="1" android:ellipsize="end"
+			android:scrollHorizontally="true" android:layout_weight="5" />
+	</LinearLayout>
 </LinearLayout>

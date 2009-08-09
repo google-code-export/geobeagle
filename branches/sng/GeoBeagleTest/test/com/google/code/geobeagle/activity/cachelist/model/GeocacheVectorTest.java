@@ -167,21 +167,31 @@ public class GeocacheVectorTest {
 
     @Test
     public void testGetId() {
-        expect(geocache.getId()).andReturn("a geocache");
+        expect(geocache.getId()).andReturn("GC123");
 
         PowerMock.replayAll();
         GeocacheVector geocacheVector = new GeocacheVector(geocache, null);
-        assertEquals("a geocache", geocacheVector.getId());
+        assertEquals("GC123", geocacheVector.getId());
         PowerMock.verifyAll();
     }
 
     @Test
-    public void testGetIdAndName() {
-        expect(geocache.getIdAndName()).andReturn("GC123: a geocache");
+    public void testGetName() {
+        expect(geocache.getName()).andReturn("a geocache");
 
         PowerMock.replayAll();
         GeocacheVector geocacheVector = new GeocacheVector(geocache, null);
-        assertEquals("GC123: a geocache", geocacheVector.getIdAndName());
+        assertEquals("a geocache", geocacheVector.getName());
+        PowerMock.verifyAll();
+    }
+
+    @Test
+    public void testGetFormattedAttributes() {
+        expect(geocache.getFormattedAttributes()).andReturn("2.5 / 3.5");
+
+        PowerMock.replayAll();
+        GeocacheVector geocacheVector = new GeocacheVector(geocache, null);
+        assertEquals("2.5 / 3.5", geocacheVector.getFormattedAttributes());
         PowerMock.verifyAll();
     }
 

@@ -31,13 +31,18 @@ import android.widget.TextView;
 
 public class GeocacheSummaryRowInflater implements HasDistanceFormatter {
     static class RowViews {
-        private final ImageView mIcon;
-        private final TextView mCache;
+        private final TextView mAttributes;
+        private final TextView mCacheName;
         private final TextView mDistance;
+        private final ImageView mIcon;
+        private final TextView mId;
 
-        RowViews(ImageView icon, TextView cache, TextView distance) {
+        RowViews(TextView attributes, TextView cacheName, TextView distance, ImageView icon,
+                TextView id) {
             mIcon = icon;
-            mCache = cache;
+            mCacheName = cacheName;
+            mId = id;
+            mAttributes = attributes;
             mDistance = distance;
         }
 
@@ -45,7 +50,9 @@ public class GeocacheSummaryRowInflater implements HasDistanceFormatter {
                 BearingFormatter relativeBearingFormatter) {
             CacheType type = geocacheVector.getGeocache().getCacheType();
             mIcon.setImageResource(type.icon());
-            mCache.setText(geocacheVector.getIdAndName());
+            mId.setText(geocacheVector.getId());
+            mAttributes.setText(geocacheVector.getFormattedAttributes());
+            mCacheName.setText(geocacheVector.getName());
             mDistance.setText(geocacheVector.getFormattedDistance(distanceFormatter,
                     relativeBearingFormatter));
         }
@@ -56,13 +63,17 @@ public class GeocacheSummaryRowInflater implements HasDistanceFormatter {
     private final GeocacheVectors mGeocacheVectors;
     private final LayoutInflater mLayoutInflater;
 
-    public GeocacheSummaryRowInflater(LayoutInflater layoutInflater,
-            GeocacheVectors geocacheVectors, DistanceFormatter distanceFormatter,
+    public GeocacheSummaryRowInflater(DistanceFormatter distanceFormatter,
+            GeocacheVectors geocacheVectors, LayoutInflater layoutInflater,
             BearingFormatter relativeBearingFormatter) {
         mLayoutInflater = layoutInflater;
         mGeocacheVectors = geocacheVectors;
         mDistanceFormatter = distanceFormatter;
         mBearingFormatter = relativeBearingFormatter;
+    }
+
+    BearingFormatter getBearingFormatter() {
+        return mBearingFormatter;
     }
 
     public View inflate(View convertView) {
@@ -71,11 +82,18 @@ public class GeocacheSummaryRowInflater implements HasDistanceFormatter {
         // Log.d("GeoBeagle", "SummaryRow::inflate(" + convertView + ")");
 
         View view = mLayoutInflater.inflate(R.layout.cache_row, null);
-        RowViews rowViews = new RowViews(((ImageView)view.findViewById(R.id.gc_row_icon)),
-                ((TextView)view.findViewById(R.id.txt_cache)), ((TextView)view
-                        .findViewById(R.id.distance)));
+        RowViews rowViews = new RowViews((TextView)view.findViewById(R.id.txt_gcattributes),
+                ((TextView)view
+                        .findViewById(R.id.txt_cache)), ((TextView)view.findViewById(R.id.distance)),
+                ((ImageView)view.findViewById(R.id.gc_row_icon)), ((TextView)view
+                        .findViewById(R.id.txt_gcid)));
         view.setTag(rowViews);
         return view;
+    }
+
+    public void setBearingFormatter(boolean absoluteBearing) {
+        mBearingFormatter = absoluteBearing ? new AbsoluteBearingFormatter()
+                : new RelativeBearingFormatter();
     }
 
     public void setData(View view, int position) {
@@ -85,14 +103,5 @@ public class GeocacheSummaryRowInflater implements HasDistanceFormatter {
 
     public void setDistanceFormatter(DistanceFormatter distanceFormatter) {
         mDistanceFormatter = distanceFormatter;
-    }
-
-    public void setBearingFormatter(boolean absoluteBearing) {
-        mBearingFormatter = absoluteBearing ? new AbsoluteBearingFormatter()
-                : new RelativeBearingFormatter();
-    }
-
-    BearingFormatter getBearingFormatter() {
-        return mBearingFormatter;
     }
 }

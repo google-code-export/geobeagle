@@ -19,6 +19,7 @@ import static org.easymock.EasyMock.expect;
 import com.google.code.geobeagle.CacheType;
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.activity.main.RadarView;
+import com.google.code.geobeagle.activity.main.view.GeocacheViewer.LabelledAttributeViewer;
 import com.google.code.geobeagle.activity.main.view.GeocacheViewer.UnlabelledAttributeViewer;
 import com.google.code.geobeagle.activity.main.view.GeocacheViewer.NameViewer;
 
@@ -34,7 +35,7 @@ import android.widget.TextView;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest( {
-        CacheType.class, TextView.class
+        CacheType.class, TextView.class, UnlabelledAttributeViewer.class, LabelledAttributeViewer.class
 })
 public class GeocacheViewerTest {
     @Test
@@ -43,8 +44,35 @@ public class GeocacheViewerTest {
         imageView.setVisibility(View.GONE);
 
         PowerMock.replayAll();
-        UnlabelledAttributeViewer unlabelledAttributeViewer = new UnlabelledAttributeViewer(null, imageView);
+        UnlabelledAttributeViewer unlabelledAttributeViewer = new UnlabelledAttributeViewer(null,
+                imageView);
         unlabelledAttributeViewer.setImage(0);
+        PowerMock.verifyAll();
+    }
+
+    @Test
+    public void testSetImageLabelledAttributeViewer() throws Exception {
+        ImageView imageView = PowerMock.createMock(ImageView.class);
+        TextView label = PowerMock.createMock(TextView.class);
+        UnlabelledAttributeViewer unlabelledAttributeViewer = PowerMock
+                .createMock(UnlabelledAttributeViewer.class);
+
+        int images[] = {
+                111, 222, 333
+        };
+        PowerMock.expectNew(UnlabelledAttributeViewer.class, images, imageView).andReturn(
+                unlabelledAttributeViewer);
+
+        unlabelledAttributeViewer.setImage(3);
+        label.setVisibility(View.GONE);
+        unlabelledAttributeViewer.setImage(0);
+        label.setVisibility(View.VISIBLE);
+
+        PowerMock.replayAll();
+        LabelledAttributeViewer labelledAttributeViewer = new LabelledAttributeViewer(images,
+                label, imageView);
+        labelledAttributeViewer.setImage(3);
+        labelledAttributeViewer.setImage(0);
         PowerMock.verifyAll();
     }
 
@@ -58,7 +86,8 @@ public class GeocacheViewerTest {
         int images[] = {
                 111, 222, 333
         };
-        UnlabelledAttributeViewer unlabelledAttributeViewer = new UnlabelledAttributeViewer(images, imageView);
+        UnlabelledAttributeViewer unlabelledAttributeViewer = new UnlabelledAttributeViewer(images,
+                imageView);
         unlabelledAttributeViewer.setImage(3);
         PowerMock.verifyAll();
     }
@@ -92,9 +121,12 @@ public class GeocacheViewerTest {
         NameViewer name = PowerMock.createMock(NameViewer.class);
         Geocache geocache = PowerMock.createMock(Geocache.class);
         RadarView radar = PowerMock.createMock(RadarView.class);
-        UnlabelledAttributeViewer gcCacheType = PowerMock.createMock(UnlabelledAttributeViewer.class);
-        UnlabelledAttributeViewer gcDifficulty = PowerMock.createMock(UnlabelledAttributeViewer.class);
-        UnlabelledAttributeViewer gcContainer = PowerMock.createMock(UnlabelledAttributeViewer.class);
+        UnlabelledAttributeViewer gcCacheType = PowerMock
+                .createMock(UnlabelledAttributeViewer.class);
+        UnlabelledAttributeViewer gcDifficulty = PowerMock
+                .createMock(UnlabelledAttributeViewer.class);
+        UnlabelledAttributeViewer gcContainer = PowerMock
+                .createMock(UnlabelledAttributeViewer.class);
         UnlabelledAttributeViewer gcTerrain = PowerMock.createMock(UnlabelledAttributeViewer.class);
         CacheType cacheType = PowerMock.createMock(CacheType.class);
 

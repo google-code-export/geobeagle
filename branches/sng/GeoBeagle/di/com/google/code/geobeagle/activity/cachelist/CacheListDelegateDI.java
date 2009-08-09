@@ -123,7 +123,7 @@ public class CacheListDelegateDI {
         final XmlPullParserWrapper xmlPullParserWrapper = new XmlPullParserWrapper();
 
         final GeocacheSummaryRowInflater geocacheSummaryRowInflater = new GeocacheSummaryRowInflater(
-                layoutInflater, geocacheVectors, distanceFormatterManager.getFormatter(),
+                distanceFormatterManager.getFormatter(), geocacheVectors, layoutInflater,
                 relativeBearingFormatter);
 
         final GeocacheListAdapter geocacheListAdapter = new GeocacheListAdapter(geocacheVectors,

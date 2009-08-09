@@ -130,7 +130,7 @@ public class GeoBeagle extends Activity {
                 } else if (action.equals(GeocacheListController.SELECT_CACHE)) {
                     mGeocache = intent.<Geocache> getParcelableExtra("geocache");
                     if (mGeocache == null)
-                        mGeocache = new Geocache("", "", 0, 0, Source.MY_LOCATION, "",
+                        mGeocache = mGeocacheFactory.create("", "", 0, 0, Source.MY_LOCATION, "",
                                 CacheType.NULL, 0, 0, 0);
                     mGeocacheViewer.set(mGeocache);
                     mWebPageButtonEnabler.check();
@@ -282,7 +282,8 @@ public class GeoBeagle extends Activity {
         maybeGetCoordinatesFromIntent();
         // Possible fix for issue 53.
         if (mGeocache == null)
-            mGeocache = new Geocache("", "", 0, 0, Source.MY_LOCATION, "", CacheType.NULL, 0, 0, 0);
+            mGeocache = mGeocacheFactory.create("", "", 0, 0, Source.MY_LOCATION, "",
+                    CacheType.NULL, 0, 0, 0);
         mGeocacheViewer.set(mGeocache);
         mWebPageButtonEnabler.check();
     }

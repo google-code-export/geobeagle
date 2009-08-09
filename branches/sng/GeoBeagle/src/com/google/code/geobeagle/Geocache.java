@@ -27,33 +27,53 @@ import android.os.Parcelable;
  * Geocache or letterbox description, id, and coordinates.
  */
 public class Geocache implements Parcelable {
+    static interface AttributeFormatter {
+        CharSequence formatAttributes(float difficulty, float terrain);
+    }
+
+    static class AttributeFormatterImpl implements AttributeFormatter {
+        public CharSequence formatAttributes(float difficulty, float terrain) {
+            return (difficulty / 2.0) + " / " + (terrain / 2.0);
+        }
+    }
+
+    static class AttributeFormatterNull implements AttributeFormatter {
+        public CharSequence formatAttributes(float difficulty, float terrain) {
+            return "";
+        }
+    }
+
+    public static final String CACHE_TYPE = "cacheType";
+    public static final String CONTAINER = "container";
     public static Parcelable.Creator<Geocache> CREATOR = new GeocacheFactory.CreateGeocacheFromParcel();
+    public static final String DIFFICULTY = "difficulty";
     public static final String ID = "id";
     public static final String LATITUDE = "latitude";
     public static final String LONGITUDE = "longitude";
     public static final String NAME = "name";
+
     public static final String SOURCE_NAME = "sourceName";
     public static final String SOURCE_TYPE = "sourceType";
-    public static final String CACHE_TYPE = "cacheType";
-    public static final String DIFFICULTY = "difficulty";
     public static final String TERRAIN = "terrain";
-    public static final String CONTAINER = "container";
-
+    private final AttributeFormatter mAttributeFormatter;
+    private final CacheType mCacheType;
+    private final int mContainer;
+    private final int mDifficulty;
+    private float[] mDistanceAndBearing = new float[2];
     private final CharSequence mId;
     private final double mLatitude;
     private final double mLongitude;
     private final CharSequence mName;
-    private final String mSourceName;
-    private final Source mSourceType;
-    private float[] mDistanceAndBearing = new float[2];
-    private final CacheType mCacheType;
-    private final int mDifficulty;
-    private final int mTerrain;
-    private final int mContainer;
 
-    public Geocache(CharSequence id, CharSequence name, double latitude, double longitude,
+    private final String mSourceName;
+
+    private final Source mSourceType;
+
+    private final int mTerrain;
+
+    Geocache(CharSequence id, CharSequence name, double latitude, double longitude,
             Source sourceType, String sourceName, CacheType cacheType, int difficulty, int terrain,
-            int container) {
+            int container, AttributeFormatter attributeFormatter) {
         mId = id;
         mName = name;
         mLatitude = latitude;
@@ -64,6 +84,7 @@ public class Geocache implements Parcelable {
         mDifficulty = difficulty;
         mTerrain = terrain;
         mContainer = container;
+        mAttributeFormatter = attributeFormatter;
     }
 
     public float[] calculateDistanceAndBearing(Location here) {
@@ -82,6 +103,14 @@ public class Geocache implements Parcelable {
         return 0;
     }
 
+    public CacheType getCacheType() {
+        return mCacheType;
+    }
+
+    public int getContainer() {
+        return mContainer;
+    }
+
     public GeocacheFactory.Provider getContentProvider() {
         // Must use toString() rather than mId.subSequence(0,2).equals("GC"),
         // because editing the text in android produces a SpannableString rather
@@ -92,6 +121,10 @@ public class Geocache implements Parcelable {
                 return provider;
         }
         return Provider.GROUNDSPEAK;
+    }
+
+    public int getDifficulty() {
+        return mDifficulty;
     }
 
     public CharSequence getId() {
@@ -115,24 +148,12 @@ public class Geocache implements Parcelable {
         return mLongitude;
     }
 
-    public CacheType getCacheType() {
-        return mCacheType;
-    }
-
-    public int getDifficulty() {
-        return mDifficulty;
-    }
-
-    public int getTerrain() {
-        return mTerrain;
-    }
-
-    public int getContainer() {
-        return mContainer;
-    }
-
     public CharSequence getName() {
         return mName;
+    }
+
+    public CharSequence getFormattedAttributes() {
+        return mAttributeFormatter.formatAttributes(mDifficulty, mTerrain);
     }
 
     public CharSequence getShortId() {
@@ -150,10 +171,8 @@ public class Geocache implements Parcelable {
         return mSourceType;
     }
 
-    public void writeToParcel(Parcel out, int flags) {
-        Bundle bundle = new Bundle();
-        saveToBundle(bundle);
-        out.writeBundle(bundle);
+    public int getTerrain() {
+        return mTerrain;
     }
 
     public void saveToBundle(Bundle bundle) {
@@ -167,6 +186,12 @@ public class Geocache implements Parcelable {
         bundle.putInt(DIFFICULTY, mDifficulty);
         bundle.putInt(TERRAIN, mTerrain);
         bundle.putInt(CONTAINER, mContainer);
+    }
+
+    public void writeToParcel(Parcel out, int flags) {
+        Bundle bundle = new Bundle();
+        saveToBundle(bundle);
+        out.writeBundle(bundle);
     }
 
     public void writeToPrefs(Editor editor) {

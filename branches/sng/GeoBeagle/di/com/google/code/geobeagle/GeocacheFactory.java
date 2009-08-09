@@ -15,6 +15,9 @@
 package com.google.code.geobeagle;
 
 import com.google.code.geobeagle.CacheType.CacheTypeFactory;
+import com.google.code.geobeagle.Geocache.AttributeFormatter;
+import com.google.code.geobeagle.Geocache.AttributeFormatterImpl;
+import com.google.code.geobeagle.Geocache.AttributeFormatterNull;
 import com.google.code.geobeagle.GeocacheFactory.Source.SourceFactory;
 import com.google.code.geobeagle.activity.main.GeocacheFromParcelFactory;
 
@@ -86,12 +89,32 @@ public class GeocacheFactory {
         }
     }
 
+    static class AttributeFormatterFactory {
+        private AttributeFormatterImpl mAttributeFormatterImpl;
+        private AttributeFormatterNull mAttributeFormatterNull;
+
+        public AttributeFormatterFactory(AttributeFormatterImpl attributeFormatterImpl,
+                AttributeFormatterNull attributeFormatterNull) {
+            mAttributeFormatterImpl = attributeFormatterImpl;
+            mAttributeFormatterNull = attributeFormatterNull;
+        }
+
+        AttributeFormatter getAttributeFormatter(Source sourceType) {
+            if (sourceType == Source.GPX)
+                return mAttributeFormatterImpl;
+            return mAttributeFormatterNull;
+        }
+    }
+
     private static CacheTypeFactory mCacheTypeFactory;
     private static SourceFactory mSourceFactory;
+    private AttributeFormatterFactory mAttributeFormatterFactory;
 
     public GeocacheFactory() {
         mSourceFactory = new SourceFactory();
         mCacheTypeFactory = new CacheTypeFactory();
+        mAttributeFormatterFactory = new AttributeFormatterFactory(new AttributeFormatterImpl(),
+                new AttributeFormatterNull());
     }
 
     public CacheType cacheTypeFromInt(int cacheTypeIx) {
@@ -108,8 +131,10 @@ public class GeocacheFactory {
         }
         if (name == null)
             name = "";
+        final AttributeFormatter attributeFormatter = mAttributeFormatterFactory
+                .getAttributeFormatter(sourceType);
         return new Geocache(id, name, latitude, longitude, sourceType, sourceName, cacheType,
-                difficulty, terrain, container);
+                difficulty, terrain, container, attributeFormatter);
     }
 
     public Source sourceFromInt(int sourceIx) {
