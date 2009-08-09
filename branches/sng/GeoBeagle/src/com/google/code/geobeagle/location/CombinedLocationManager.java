@@ -14,6 +14,7 @@
 
 package com.google.code.geobeagle.location;
 
+import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 
@@ -49,5 +50,12 @@ public class CombinedLocationManager {
         mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, minTime, minDistance,
                 locationListener);
         mLocationListeners.add(locationListener);
+    }
+
+    public Location getLastKnownLocation() {
+        Location gpsLocation = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        if (gpsLocation != null)
+            return gpsLocation;
+        return mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
     }
 }

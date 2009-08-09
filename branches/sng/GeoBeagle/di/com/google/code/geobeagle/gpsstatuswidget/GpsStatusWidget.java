@@ -18,6 +18,9 @@ import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.ResourceProvider;
 import com.google.code.geobeagle.Time;
 import com.google.code.geobeagle.formatting.DistanceFormatter;
+import com.google.code.geobeagle.gpsstatuswidget.TextLagUpdater.LagNull;
+import com.google.code.geobeagle.gpsstatuswidget.TextLagUpdater.LastKnownLocationUnavailable;
+import com.google.code.geobeagle.gpsstatuswidget.TextLagUpdater.LastLocationUnknown;
 import com.google.code.geobeagle.location.CombinedLocationManager;
 
 import android.content.Context;
@@ -41,8 +44,8 @@ public class GpsStatusWidget extends LinearLayout {
         final TextView provider = (TextView)gpsStatusWidget.findViewById(R.id.provider);
         final MeterFader meterFader = new MeterFader(gpsStatusWidget, meterBars, time);
 
-        return new GpsStatusWidgetDelegate(combinedLocationManager, meterFader, meter, provider,
-                resourceProvider, status, textLagUpdater, distanceFormatter);
+        return new GpsStatusWidgetDelegate(combinedLocationManager, distanceFormatter, meter,
+                meterFader, provider, resourceProvider, status, textLagUpdater);
     }
 
     public static class InflatedGpsStatusWidget extends LinearLayout {
@@ -87,6 +90,11 @@ public class GpsStatusWidget extends LinearLayout {
     public static TextLagUpdater createTextLagUpdater(View gpsStatusWidget,
             CombinedLocationManager combinedLocationManager, Time time) {
         final TextView lag = (TextView)gpsStatusWidget.findViewById(R.id.lag);
-        return new TextLagUpdater(combinedLocationManager, lag, time);
+        final LagNull lagNull = new LagNull();
+        final LastKnownLocationUnavailable lastKnownLocationUnavailable = new LastKnownLocationUnavailable(
+                lagNull);
+        final LastLocationUnknown lastLocationUnknown = new LastLocationUnknown(
+                combinedLocationManager, lastKnownLocationUnavailable);
+        return new TextLagUpdater(lastLocationUnknown, lag, time);
     }
 }

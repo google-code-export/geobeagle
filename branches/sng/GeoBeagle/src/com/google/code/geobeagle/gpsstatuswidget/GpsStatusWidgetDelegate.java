@@ -37,17 +37,17 @@ public class GpsStatusWidgetDelegate implements HasDistanceFormatter, LocationLi
     private final TextLagUpdater mTextLagUpdater;
 
     public GpsStatusWidgetDelegate(CombinedLocationManager combinedLocationManager,
-            MeterFader meterFader, Meter meter, TextView provider,
-            ResourceProvider resourceProvider, TextView status, TextLagUpdater textLagUpdater,
-            DistanceFormatter distanceFormatter) {
+            DistanceFormatter distanceFormatter, Meter meter, MeterFader meterFader,
+            TextView provider, ResourceProvider resourceProvider, TextView status,
+            TextLagUpdater textLagUpdater) {
         mCombinedLocationManager = combinedLocationManager;
+        mDistanceFormatter = distanceFormatter;
         mMeterFader = meterFader;
         mMeterWrapper = meter;
         mProvider = provider;
+        mResourceProvider = resourceProvider;
         mStatus = status;
         mTextLagUpdater = textLagUpdater;
-        mResourceProvider = resourceProvider;
-        mDistanceFormatter = distanceFormatter;
     }
 
     public void onLocationChanged(Location location) {
