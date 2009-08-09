@@ -152,19 +152,6 @@ public class RadarView extends View implements SensorListener, LocationListener 
     private float mDistanceRatio;
     private Bitmap mBlip; // The bitmap used to draw the target
 
-    // Used to draw the animated ring that sweeps out from the center
-    private Paint mSweepPaint0;
-    private Paint mSweepPaint1;
-    private Paint mSweepPaint2;
-
-    private long mSweepTime; // Time in millis when the most recent sweep began
-
-    private boolean mSweepBefore; // True if the sweep has not yet intersected
-    // the blip
-
-    private long mBlipTime; // Time in millis when the sweep last crossed the
-    // blip
-
     // True if the display should use metric units; false if the display should
     // use standard units
     private boolean mUseMetric;
@@ -225,30 +212,6 @@ public class RadarView extends View implements SensorListener, LocationListener 
         mErasePaint.setColor(0xFF191919);
         mErasePaint.setStyle(Style.FILL);
 
-        // Outer ring of the sweep
-        mSweepPaint0 = new Paint();
-        mSweepPaint0.setColor(0xFF33FF33);
-        mSweepPaint0.setAntiAlias(true);
-        mSweepPaint0.setStyle(Style.STROKE);
-        mSweepPaint0.setStrokeWidth(2f);
-        mSweepPaint0.setAlpha(100);
-
-        // Middle ring of the sweep
-        mSweepPaint1 = new Paint();
-        mSweepPaint1.setColor(0x7733FF33);
-        mSweepPaint1.setAntiAlias(true);
-        mSweepPaint1.setStyle(Style.STROKE);
-        mSweepPaint1.setStrokeWidth(2f);
-        mSweepPaint1.setAlpha(100);
-
-        // Inner ring of the sweep
-        mSweepPaint2 = new Paint();
-        mSweepPaint2.setColor(0x3333FF33);
-        mSweepPaint2.setAntiAlias(true);
-        mSweepPaint2.setStyle(Style.STROKE);
-        mSweepPaint2.setStrokeWidth(2f);
-        mSweepPaint2.setAlpha(100);
-
         // Paint used for the arrow
         mArrowPaint = new Paint();
         mArrowPaint.setColor(Color.WHITE);
@@ -300,29 +263,6 @@ public class RadarView extends View implements SensorListener, LocationListener 
         canvas.drawCircle(center, center, radius >> 2, gridPaint);
 
         int blipRadius = (int)(mDistanceRatio * radius);
-
-        final long now = SystemClock.uptimeMillis();
-        if (mSweepTime > 0 && mHaveLocation) {
-            // Draw the sweep. Radius is determined by how long ago it started
-            long sweepDifference = now - mSweepTime;
-            if (sweepDifference < 512L) {
-                int sweepRadius = (int)(((radius + 6) * sweepDifference) >> 9);
-                canvas.drawCircle(center, center, sweepRadius, mSweepPaint0);
-                canvas.drawCircle(center, center, sweepRadius - 2, mSweepPaint1);
-                canvas.drawCircle(center, center, sweepRadius - 4, mSweepPaint2);
-
-                // Note when the sweep has passed the blip
-                boolean before = sweepRadius < blipRadius;
-                if (!before && mSweepBefore) {
-                    mSweepBefore = false;
-                    mBlipTime = now;
-                }
-            } else {
-                mSweepTime = now + 1000;
-                mSweepBefore = true;
-            }
-            postInvalidate();
-        }
 
         // Draw horizontal and vertical lines
         canvas.drawLine(center, center - (radius >> 2) + 6, center, center - radius - 6, gridPaint);
@@ -472,10 +412,8 @@ public class RadarView extends View implements SensorListener, LocationListener 
             switch (status) {
                 case LocationProvider.AVAILABLE:
                     mGpsAvailable = true;
-                    startSweep();
                     break;
                 case LocationProvider.OUT_OF_SERVICE:
-                    stopSweep();
                 case LocationProvider.TEMPORARILY_UNAVAILABLE:
                     mGpsAvailable = false;
 
@@ -494,10 +432,8 @@ public class RadarView extends View implements SensorListener, LocationListener 
             switch (status) {
                 case LocationProvider.AVAILABLE:
                     mNetworkAvailable = true;
-                    startSweep();
                     break;
                 case LocationProvider.OUT_OF_SERVICE:
-                    stopSweep();
                 case LocationProvider.TEMPORARILY_UNAVAILABLE:
                     mNetworkAvailable = false;
 
@@ -602,18 +538,4 @@ public class RadarView extends View implements SensorListener, LocationListener 
         return "";
     }
 
-    /**
-     * Turn on the sweep animation starting with the next draw
-     */
-    public void startSweep() {
-        // mSweepTime = SystemClock.uptimeMillis();
-        // mSweepBefore = true;
-    }
-
-    /**
-     * Turn off the sweep animation
-     */
-    public void stopSweep() {
-        mSweepTime = 0L;
-    }
 }
