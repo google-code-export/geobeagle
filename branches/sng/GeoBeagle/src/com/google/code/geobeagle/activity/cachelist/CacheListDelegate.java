@@ -22,6 +22,8 @@ import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheListPresen
 import com.google.code.geobeagle.activity.cachelist.presenter.TitleUpdater;
 import com.google.code.geobeagle.database.ISQLiteDatabase;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -35,13 +37,13 @@ public class CacheListDelegate implements PausableWithDatabase {
     private final GeocacheListControllerNull mGeocacheListControllerNull;
     private final GeocacheListPresenter mPresenter;
     private final TitleUpdaterFactory mTitleUpdaterFactory;
+    private final ImportIntentManager mImportIntentManager;
 
-    public CacheListDelegate(ActivitySaver activitySaver,
+    public CacheListDelegate(ImportIntentManager importIntentManager, ActivitySaver activitySaver,
             CacheListRefreshFactory cacheListRefreshFactory,
             GeocacheListControllerFactory geocacheListControllerFactory,
             GeocacheListControllerNull geocacheListControllerNull,
-            GeocacheListPresenter geocacheListPresenter,
-            TitleUpdaterFactory titleUpdaterFactory) {
+            GeocacheListPresenter geocacheListPresenter, TitleUpdaterFactory titleUpdaterFactory) {
         mActivitySaver = activitySaver;
         mCacheListRefreshFactory = cacheListRefreshFactory;
         mController = geocacheListControllerNull;
@@ -49,6 +51,7 @@ public class CacheListDelegate implements PausableWithDatabase {
         mGeocacheListControllerNull = geocacheListControllerNull;
         mPresenter = geocacheListPresenter;
         mTitleUpdaterFactory = titleUpdaterFactory;
+        mImportIntentManager = importIntentManager;
     }
 
     public boolean onContextItemSelected(MenuItem menuItem) {
@@ -82,6 +85,36 @@ public class CacheListDelegate implements PausableWithDatabase {
         mController = mGeocacheListControllerNull;
     }
 
+    static class ImportIntentManager {
+        private final Activity mActivity;
+        static final String INTENT_EXTRA_IMPORT_TRIGGERED = "com.google.code.geabeagle.import_triggered";
+
+        ImportIntentManager(Activity activity) {
+            mActivity = activity;
+        }
+
+        boolean isImport() {
+            final Intent intent = mActivity.getIntent();
+            if (intent == null)
+                return false;
+
+            String action = intent.getAction();
+            if (action == null)
+                return false;
+
+            if (!action.equals("android.intent.action.VIEW"))
+                return false;
+
+            if (intent.getBooleanExtra(INTENT_EXTRA_IMPORT_TRIGGERED, false))
+                return false;
+
+            // Need to alter the intent so that the import isn't retriggered if pause/resume
+            // is a result of the phone going to sleep and then waking up again.
+            intent.putExtra(INTENT_EXTRA_IMPORT_TRIGGERED, true);
+            return true;
+        }
+    }
+
     public void onResume(ISQLiteDatabase sqliteDatabase) {
         final TitleUpdater titleUpdater = mTitleUpdaterFactory.create(sqliteDatabase);
         final CacheListRefresh cacheListRefresh = mCacheListRefreshFactory.create(titleUpdater,
@@ -90,6 +123,7 @@ public class CacheListDelegate implements PausableWithDatabase {
         mPresenter.onResume(cacheListRefresh);
         mController = mGeocacheListControllerFactory.create(cacheListRefresh, titleUpdater,
                 sqliteDatabase);
-        mController.onResume(cacheListRefresh);
+
+        mController.onResume(cacheListRefresh, mImportIntentManager.isImport());
     }
 }

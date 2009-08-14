@@ -52,7 +52,7 @@ public class GeocacheListControllerNull implements IGeocacheListController {
     }
 
     @Override
-    public void onResume(CacheListRefresh cacheListRefresh) {
+    public void onResume(CacheListRefresh cacheListRefresh, boolean fImport) {
     }
 
 }

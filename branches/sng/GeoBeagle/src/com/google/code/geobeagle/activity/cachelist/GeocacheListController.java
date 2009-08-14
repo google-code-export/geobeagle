@@ -21,8 +21,11 @@ import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActions;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVectors;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
 import com.google.code.geobeagle.database.FilterNearestCaches;
+import com.google.code.geobeagle.xmlimport.GpxImporter;
 
 import android.app.ListActivity;
+import android.content.Intent;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -105,7 +108,9 @@ public class GeocacheListController implements IGeocacheListController {
         mMenuActionSyncGpx.abort();
     }
 
-    public void onResume(CacheListRefresh cacheListRefresh) {
+    public void onResume(CacheListRefresh cacheListRefresh, boolean fImport) {
         mCacheListRefresh.forceRefresh();
+        if (fImport)
+            mMenuActionSyncGpx.act();
     }
 }

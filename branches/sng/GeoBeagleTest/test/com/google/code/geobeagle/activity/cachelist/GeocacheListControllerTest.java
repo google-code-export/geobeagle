@@ -208,8 +208,8 @@ public class GeocacheListControllerTest {
         cacheListRefresh.forceRefresh();
 
         PowerMock.replayAll();
-        new GeocacheListController(cacheListRefresh, null, null, null, null, null)
-                .onResume(cacheListRefresh);
+        new GeocacheListController(cacheListRefresh, null, null, null, null, null).onResume(
+                cacheListRefresh, false);
         PowerMock.verifyAll();
     }
 }

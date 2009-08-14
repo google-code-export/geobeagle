@@ -21,6 +21,7 @@ import com.google.code.geobeagle.LocationControlDi;
 import com.google.code.geobeagle.LocationControlBuffered.GpsDisabledLocation;
 import com.google.code.geobeagle.activity.ActivityDI;
 import com.google.code.geobeagle.activity.ActivitySaver;
+import com.google.code.geobeagle.activity.cachelist.CacheListDelegate.ImportIntentManager;
 import com.google.code.geobeagle.activity.cachelist.actions.context.ContextActionView;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.Abortable;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionSearchOnline;
@@ -241,8 +242,9 @@ public class CacheListDelegateDI {
 
         final ActivitySaver activitySaver = ActivityDI.createActivitySaver(listActivity);
         final GeocacheListControllerNull geocacheListControllerNull = new GeocacheListControllerNull();
+        final ImportIntentManager importIntentManager = new ImportIntentManager(listActivity);
 
-        return new CacheListDelegate(activitySaver, cacheListRefreshFactory,
+        return new CacheListDelegate(importIntentManager, activitySaver, cacheListRefreshFactory,
                 geocacheListControllerFactory, geocacheListControllerNull, geocacheListPresenter,
                 titleUpdaterFactory);
     }

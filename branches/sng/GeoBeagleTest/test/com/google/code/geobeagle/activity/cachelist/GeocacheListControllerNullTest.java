@@ -26,6 +26,6 @@ public class GeocacheListControllerNullTest {
         geocacheListControllerNull.onMenuOpened(0, null);
         geocacheListControllerNull.onOptionsItemSelected(null);
         geocacheListControllerNull.onPause();
-        geocacheListControllerNull.onResume(null);
+        geocacheListControllerNull.onResume(null, false);
     }
 }

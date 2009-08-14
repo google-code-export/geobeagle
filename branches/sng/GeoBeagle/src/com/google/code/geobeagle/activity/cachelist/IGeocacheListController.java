@@ -22,6 +22,5 @@ public interface IGeocacheListController {
 
     public abstract void onPause();
 
-    public abstract void onResume(CacheListRefresh cacheListRefresh);
-
+    public abstract void onResume(CacheListRefresh cacheListRefresh, boolean fImport);
 }
