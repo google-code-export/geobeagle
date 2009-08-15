@@ -101,13 +101,13 @@ public class Util {
     }
 
     public static CharSequence[] splitLatLon(CharSequence string) {
-        Matcher matcher = PAT_LATLON.matcher(string);
         Matcher matcherDecimal = PAT_LATLONDEC.matcher(string);
         if (matcherDecimal.matches()) {
             return new String[] {
                     matcherDecimal.group(1).trim(), matcherDecimal.group(2).trim()
             };
         }
+        Matcher matcher = PAT_LATLON.matcher(string);
         if (matcher.matches())
             return new String[] {
                     matcher.group(1).trim(), matcher.group(2).trim()
