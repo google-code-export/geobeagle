@@ -156,6 +156,7 @@ public class UtilTest {
         splitLatLonHelper("40:26:46N,79:56:55W", "40:26:46N", "79:56:55W");
         splitLatLonHelper("40:26:46.302N 79:56:55.903W", "40:26:46.302N", "79:56:55.903W");
         splitLatLonHelper("40¡26'21\"N 79¡58'36\"W", "40¡26'21\"N", "79¡58'36\"W");
+        splitLatLonHelper("40¡26'21\"S 79¡58'36\"E", "40¡26'21\"S", "79¡58'36\"E");
         splitLatLonHelper("40d 26' 21\" N 79d 58' 36\" W", "40d 26' 21\" N", "79d 58' 36\" W");
         splitLatLonHelper("40.446195N 79.948862W", "40.446195N", "79.948862W");
         splitLatLonHelper("40.446195, -79.948862", "40.446195", "-79.948862");
@@ -167,6 +168,10 @@ public class UtilTest {
 
         // atlasquest.com:
         splitLatLonHelper("37.258356797547,-122.0354267005", "37.258356797547", "-122.0354267005");
+
+        // opencaching.pl:
+        splitLatLonHelper("52.029483333333 20.464366666667", "52.029483333333", "20.464366666667");
+
     }
 
 }

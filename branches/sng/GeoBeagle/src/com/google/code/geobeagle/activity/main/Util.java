@@ -33,7 +33,7 @@ public class Util {
     private static final Pattern PAT_COORD_COMPONENT = Pattern.compile("([\\d.]+)[^\\d]*");
     private static final Pattern PAT_LATLON = Pattern
             .compile("([NS]?[^NSEW,]*[NS]?),?\\s*([EW]?.*)");
-
+    private static final Pattern PAT_LATLONDEC = Pattern.compile("([\\d.]+)\\s+([\\d.]+)");
     private static final Pattern PAT_NEGSIGN = Pattern.compile("[-WS]");
     private static final Pattern PAT_PAREN_FORMAT = Pattern.compile("([^(]*)\\(([^)]*).*");
     private static final Pattern PAT_SIGN = Pattern.compile("[-EWNS]");
@@ -102,6 +102,12 @@ public class Util {
 
     public static CharSequence[] splitLatLon(CharSequence string) {
         Matcher matcher = PAT_LATLON.matcher(string);
+        Matcher matcherDecimal = PAT_LATLONDEC.matcher(string);
+        if (matcherDecimal.matches()) {
+            return new String[] {
+                    matcherDecimal.group(1).trim(), matcherDecimal.group(2).trim()
+            };
+        }
         if (matcher.matches())
             return new String[] {
                     matcher.group(1).trim(), matcher.group(2).trim()
