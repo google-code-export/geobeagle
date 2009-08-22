@@ -28,17 +28,17 @@ import android.os.Parcelable;
  */
 public class Geocache implements Parcelable {
     static interface AttributeFormatter {
-        CharSequence formatAttributes(float difficulty, float terrain);
+        CharSequence formatAttributes(int difficulty, int terrain);
     }
 
     static class AttributeFormatterImpl implements AttributeFormatter {
-        public CharSequence formatAttributes(float difficulty, float terrain) {
+        public CharSequence formatAttributes(int difficulty, int terrain) {
             return (difficulty / 2.0) + " / " + (terrain / 2.0);
         }
     }
 
     static class AttributeFormatterNull implements AttributeFormatter {
-        public CharSequence formatAttributes(float difficulty, float terrain) {
+        public CharSequence formatAttributes(int difficulty, int terrain) {
             return "";
         }
     }

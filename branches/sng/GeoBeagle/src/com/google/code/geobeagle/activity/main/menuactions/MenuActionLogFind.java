@@ -12,8 +12,22 @@
  ** limitations under the License.
  */
 
-package com.google.code.geobeagle.activity.cachelist.actions.menu;
+package com.google.code.geobeagle.activity.main.menuactions;
 
-public interface MenuAction {
-    public void act();
+import com.google.code.geobeagle.R;
+import com.google.code.geobeagle.activity.MenuAction;
+
+import android.app.Activity;
+
+public class MenuActionLogFind implements MenuAction {
+    private final Activity mActivity;
+
+    public MenuActionLogFind(Activity activity) {
+        mActivity = activity;
+    }
+
+    @Override
+    public void act() {
+        mActivity.showDialog(R.id.menu_log_find);
+    }
 }

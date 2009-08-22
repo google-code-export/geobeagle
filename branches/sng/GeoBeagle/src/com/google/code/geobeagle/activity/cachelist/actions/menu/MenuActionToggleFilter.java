@@ -14,6 +14,7 @@
 
 package com.google.code.geobeagle.activity.cachelist.actions.menu;
 
+import com.google.code.geobeagle.activity.MenuAction;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
 import com.google.code.geobeagle.database.FilterNearestCaches;
 

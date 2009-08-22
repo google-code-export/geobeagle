@@ -212,4 +212,18 @@ public class GeocacheListControllerTest {
                 cacheListRefresh, false);
         PowerMock.verifyAll();
     }
+
+    @Test
+    public void testOnResumeAndImport() throws InterruptedException {
+        CacheListRefresh cacheListRefresh = PowerMock.createMock(CacheListRefresh.class);
+        MenuActionSyncGpx menuActionSyncGpx = PowerMock.createMock(MenuActionSyncGpx.class);
+
+        cacheListRefresh.forceRefresh();
+        menuActionSyncGpx.act();
+
+        PowerMock.replayAll();
+        new GeocacheListController(cacheListRefresh, null, null, menuActionSyncGpx, null, null)
+                .onResume(cacheListRefresh, true);
+        PowerMock.verifyAll();
+    }
 }

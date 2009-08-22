@@ -19,10 +19,12 @@ import static org.junit.Assert.assertEquals;
 import com.google.code.geobeagle.CacheType;
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.GeocacheFactory;
+import com.google.code.geobeagle.Geocache.AttributeFormatter;
 import com.google.code.geobeagle.GeocacheFactory.Source;
 import com.google.code.geobeagle.GeocacheFactory.Source.SourceFactory;
 import com.google.code.geobeagle.activity.main.GeocacheFromParcelFactory;
-
+import com.google.code.geobeagle.Geocache.AttributeFormatterImpl;
+import com.google.code.geobeagle.Geocache.AttributeFormatterNull;
 import org.easymock.classextension.EasyMock;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -40,6 +42,16 @@ import android.os.Parcel;
         Parcel.class, Bundle.class, Geocache.class, Location.class, System.class
 })
 public class GeocacheTest {
+
+    @Test
+    public void testAttributeFormatterImpl() {
+        assertEquals("4.0 / 3.0", new AttributeFormatterImpl().formatAttributes(8, 6));
+    }
+
+    @Test
+    public void testAttributeFormatterNull() {
+        assertEquals("", new AttributeFormatterNull().formatAttributes(8, 6));
+    }
 
     @Test
     public void testCalculateDistance() {
@@ -86,6 +98,18 @@ public class GeocacheTest {
 
         geocache = new Geocache("MLfoo", null, 0, 0, null, null, null, 0, 0, 0, null);
         assertEquals(GeocacheFactory.Provider.MY_LOCATION, geocache.getContentProvider());
+    }
+
+    @Test
+    public void testGetFormattedAttributes() {
+        AttributeFormatter attributeFormatter = PowerMock.createMock(AttributeFormatter.class);
+
+        EasyMock.expect(attributeFormatter.formatAttributes(4, 3)).andReturn("4, 3");
+
+        PowerMock.replayAll();
+        assertEquals("4, 3", new Geocache(null, null, 0, 0, null, null, null, 4, 3, 0,
+                attributeFormatter).getFormattedAttributes());
+        PowerMock.verifyAll();
     }
 
     @Test

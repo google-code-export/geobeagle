@@ -15,7 +15,7 @@ package com.google.code.geobeagle.activity.main;
 
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuAction;
+import com.google.code.geobeagle.activity.MenuAction;
 import com.google.code.geobeagle.activity.main.fieldnotes.FieldNoteSender;
 import com.google.code.geobeagle.activity.main.fieldnotes.FieldNoteSender.FieldNoteResources;
 import com.google.code.geobeagle.activity.main.view.CacheDetailsOnClickListener;

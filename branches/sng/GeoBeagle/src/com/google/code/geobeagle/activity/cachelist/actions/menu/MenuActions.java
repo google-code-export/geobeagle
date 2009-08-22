@@ -15,6 +15,7 @@
 package com.google.code.geobeagle.activity.cachelist.actions.menu;
 
 import com.google.code.geobeagle.R;
+import com.google.code.geobeagle.activity.MenuAction;
 
 import java.util.HashMap;
 

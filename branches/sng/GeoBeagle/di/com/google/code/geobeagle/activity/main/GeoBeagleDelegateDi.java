@@ -18,9 +18,15 @@ import com.google.code.geobeagle.ErrorDisplayer;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.ActivityDI;
 import com.google.code.geobeagle.activity.ActivitySaver;
-import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuAction;
+import com.google.code.geobeagle.activity.MenuAction;
 import com.google.code.geobeagle.activity.main.fieldnotes.FieldNoteSender;
 import com.google.code.geobeagle.activity.main.fieldnotes.FieldNoteSenderDI;
+import com.google.code.geobeagle.activity.main.menuactions.MenuActionCacheList;
+import com.google.code.geobeagle.activity.main.menuactions.MenuActionEditGeocache;
+import com.google.code.geobeagle.activity.main.menuactions.MenuActionLogDnf;
+import com.google.code.geobeagle.activity.main.menuactions.MenuActionLogFind;
+import com.google.code.geobeagle.activity.main.menuactions.MenuActionSearchOnline;
+import com.google.code.geobeagle.activity.main.menuactions.MenuActionSettings;
 import com.google.code.geobeagle.activity.main.view.CacheDetailsOnClickListener;
 import com.google.code.geobeagle.activity.main.view.GeocacheViewer;
 import com.google.code.geobeagle.activity.main.view.Misc;
@@ -46,12 +52,12 @@ public class GeoBeagleDelegateDi {
         final HashMap<Integer, MenuAction> menuActions = new HashMap<Integer, MenuAction>();
         final Resources resources = parent.getResources();
 
-        menuActions.put(R.id.menu_cache_list, new MenuActions.MenuActionCacheList(parent));
-        menuActions.put(R.id.menu_edit_geocache, new MenuActions.MenuActionEditGeocache(parent));
-        menuActions.put(R.id.menu_log_dnf, new MenuActions.MenuActionLogDnf(parent));
-        menuActions.put(R.id.menu_log_find, new MenuActions.MenuActionLogFind(parent));
-        menuActions.put(R.id.menu_search_online, new MenuActions.MenuActionSearchOnline(parent));
-        menuActions.put(R.id.menu_settings, new MenuActions.MenuActionSettings(parent));
+        menuActions.put(R.id.menu_cache_list, new MenuActionCacheList(parent));
+        menuActions.put(R.id.menu_edit_geocache, new MenuActionEditGeocache(parent));
+        menuActions.put(R.id.menu_log_dnf, new MenuActionLogDnf(parent));
+        menuActions.put(R.id.menu_log_find, new MenuActionLogFind(parent));
+        menuActions.put(R.id.menu_search_online, new MenuActionSearchOnline(parent));
+        menuActions.put(R.id.menu_settings, new MenuActionSettings(parent));
         return new GeoBeagleDelegate(parent, activitySaver, appLifecycleManager,
                 cacheDetailsOnClickListener, fieldNoteSender, menuActions, resources);
     }

@@ -12,22 +12,14 @@
  ** limitations under the License.
  */
 
-package com.google.code.geobeagle.activity.cachelist.actions.menu;
+package com.google.code.geobeagle.activity.main;
 
-import com.google.code.geobeagle.activity.MenuAction;
-import com.google.code.geobeagle.activity.searchonline.SearchOnlineActivity;
+import org.junit.Test;
 
-import android.app.Activity;
-import android.content.Intent;
+public class NullRefresherTest {
 
-public class MenuActionSearchOnline implements MenuAction {
-    private Activity mActivity;
-
-    public MenuActionSearchOnline(Activity activity) {
-        mActivity = activity;
-    }
-
-    public void act() {
-        mActivity.startActivity(new Intent(mActivity, SearchOnlineActivity.class));
+    @Test
+    public void test() {
+        new NullRefresher().refresh();
     }
 }

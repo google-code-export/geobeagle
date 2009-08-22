@@ -35,8 +35,9 @@ public class SensorManagerWrapperTest {
         sensorManager.unregisterListener(compassListener);
 
         PowerMock.replayAll();
-        sensorManager.registerListener(compassListener, 0, 1);
-        sensorManager.unregisterListener(compassListener);
+        SensorManagerWrapper sensorManagerWrapper = new SensorManagerWrapper(sensorManager);
+        sensorManagerWrapper.registerListener(compassListener, 0, 1);
+        sensorManagerWrapper.unregisterListener();
         PowerMock.verifyAll();
     }
 }
