@@ -42,7 +42,7 @@
 
 				<TextView android:id="@+id/distance" android:gravity="right"
 					android:textColor="#93be26" android:textSize="16sp" android:text="right"
-					android:layout_width="wrap_content" android:layout_height="wrap_content"
+					android:textStyle="bold" android:layout_width="wrap_content" android:layout_height="wrap_content"
 					android:layout_weight="1" />
 			</LinearLayout>
 		</FrameLayout>
