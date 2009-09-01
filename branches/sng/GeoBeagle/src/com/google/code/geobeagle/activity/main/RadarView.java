@@ -284,11 +284,6 @@ public class RadarView extends View implements SensorListener, LocationListener 
             float cos = (float)Math.cos(drawingAngle);
             float sin = (float)Math.sin(drawingAngle);
 
-            // Draw the blip. Alpha is based on how long ago the sweep crossed
-            // the blip.
-            // long blipDifference = now - mBlipTime;
-            // gridPaint.setAlpha(255 - (int)((128 * blipDifference) >> 10));
-
             mArrowPath.reset();
             mArrowPath.moveTo(center - cos * radius, center - sin * radius);
             mArrowPath.lineTo(center + cos * radius, center + sin * radius);
@@ -309,16 +304,6 @@ public class RadarView extends View implements SensorListener, LocationListener 
             gridPaint.setAlpha(255);
             canvas.drawBitmap(mBlip, center + (cos * blipRadius) - 8, center + (sin * blipRadius)
                     - 8, gridPaint);
-
-            // final int lineWidth = 12;
-            // canvas.drawLine(center + (cos * blipRadius) - lineWidth, center +
-            // (sin * blipRadius)
-            // - lineWidth, center + (cos * blipRadius) + lineWidth, center
-            // + (sin * blipRadius) + lineWidth, gridPaint);
-            // canvas.drawLine(center + (cos * blipRadius) - lineWidth, center +
-            // (sin * blipRadius)
-            // + lineWidth, center + (cos * blipRadius) + lineWidth, center
-            // + (sin * blipRadius) - lineWidth, gridPaint);
         }
     }
 
@@ -449,7 +434,6 @@ public class RadarView extends View implements SensorListener, LocationListener 
      * Called when we no longer have a valid location.
      */
     public void handleUnknownLocation() {
-        Log.d("GeoBeagle", "!!!!!!unknown location");
         mHaveLocation = false;
         mDistanceView.setText("");
         mAccuracyView.setText("");

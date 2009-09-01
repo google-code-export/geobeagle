@@ -18,6 +18,6 @@ import android.location.Location;
 
 public interface WhereFactory {
 
-    public abstract String getWhere(Location location);
+    public abstract String getWhere(ISQLiteDatabase sqliteWrapper, Location location);
 
 }

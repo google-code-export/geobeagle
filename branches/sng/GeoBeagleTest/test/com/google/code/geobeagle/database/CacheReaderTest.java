@@ -121,26 +121,7 @@ public class CacheReaderTest {
 
     @Test
     public void testGetWhereFactoryAllCaches() {
-        assertEquals(null, new WhereFactoryAllCaches().getWhere(null));
-    }
-
-    @Test
-    public void testGetWhere() {
-        Location location = PowerMock.createMock(Location.class);
-
-        expect(location.getLatitude()).andReturn(90.0);
-        expect(location.getLongitude()).andReturn(180.0);
-
-        PowerMock.replayAll();
-        assertEquals(
-                "Latitude > 89.92 AND Latitude < 90.08 AND Longitude > -180.0 AND Longitude < 180.0",
-                new WhereFactoryNearestCaches().getWhere(location));
-        PowerMock.verifyAll();
-    }
-
-    @Test
-    public void testGetWhereNullLocation() {
-        assertEquals(null, new WhereFactoryNearestCaches().getWhere(null));
+        assertEquals(null, new WhereFactoryAllCaches().getWhere(null, null));
     }
 
     @Test
@@ -155,7 +136,7 @@ public class CacheReaderTest {
         CacheReaderCursor cacheReaderCursor = PowerMock.createMock(CacheReaderCursor.class);
 
         String where = "Latitude > something AND Longitude < somethingelse";
-        expect(whereFactoryNearestCaches.getWhere(location)).andReturn(where);
+        expect(whereFactoryNearestCaches.getWhere(sqliteWrapper, location)).andReturn(where);
         expectQuery(sqliteWrapper, cursor, where);
         expect(cursor.moveToFirst()).andReturn(true);
         expect(cacheReaderCursorFactory.create(cursor)).andReturn(cacheReaderCursor);
@@ -173,7 +154,7 @@ public class CacheReaderTest {
         WhereFactory whereFactoryNearestCaches = PowerMock
                 .createMock(WhereFactoryNearestCaches.class);
 
-        expect(whereFactoryNearestCaches.getWhere(null)).andReturn("a=b");
+        expect(whereFactoryNearestCaches.getWhere(sqliteWrapper, null)).andReturn("a=b");
         expectQuery(sqliteWrapper, cursor, "a=b");
         expect(cursor.moveToFirst()).andReturn(false);
         cursor.close();

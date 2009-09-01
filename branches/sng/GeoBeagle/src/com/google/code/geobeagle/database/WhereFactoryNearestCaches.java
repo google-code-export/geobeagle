@@ -14,27 +14,138 @@
 
 package com.google.code.geobeagle.database;
 
+import com.google.code.geobeagle.database.DatabaseDI.SearchFactory;
+
+import android.database.Cursor;
 import android.location.Location;
+import android.util.Log;
 
 public class WhereFactoryNearestCaches implements WhereFactory {
+    static class BoundingBox {
+        public static final String[] ID_COLUMN = new String[] {
+            "Id"
+        };
+        private final Location mLocation;
+        private final ISQLiteDatabase mSqliteWrapper;
+        private final WhereStringFactory mWhereStringFactory;
+
+        BoundingBox(Location location, ISQLiteDatabase sqliteWrapper,
+                WhereStringFactory whereStringFactory) {
+            mLocation = location;
+            mSqliteWrapper = sqliteWrapper;
+            mWhereStringFactory = whereStringFactory;
+        }
+
+        int getCount(float degreesDelta, int maxCount) {
+            String where = mWhereStringFactory.getWhereString(mLocation, degreesDelta);
+
+            Cursor cursor = mSqliteWrapper.query(Database.TBL_CACHES, ID_COLUMN, where, null, null,
+                    null, "" + maxCount);
+            int count = cursor.getCount();
+            Log.d("GeoBeagle", "search: " + degreesDelta + ", count/maxCount: " + count + "/"
+                    + maxCount + " where: " + where);
+            cursor.close();
+             
+             return count;
+        }
+    }
+
+    static class Search {
+        private final BoundingBox mBoundingBox;
+        private final SearchDown mSearchDown;
+        private final SearchUp mSearchUp;
+
+        public Search(BoundingBox boundingBox, SearchDown searchDown, SearchUp searchUp) {
+            mBoundingBox = boundingBox;
+            mSearchDown = searchDown;
+            mSearchUp = searchUp;
+        }
+
+        public float search(float guess, int target) {
+            if (mBoundingBox.getCount(guess, target + 1) > target)
+                return mSearchDown.search(guess, target);
+            return mSearchUp.search(guess, target);
+        }
+    }
+
+    static public class SearchDown {
+        private final BoundingBox mHasValue;
+        private final float mMin;
+
+        public SearchDown(BoundingBox boundingBox, float min) {
+            mHasValue = boundingBox;
+            mMin = min;
+        }
+
+        public float search(float guess, int targetMin) {
+            final float lowerGuess = guess / WhereFactoryNearestCaches.DISTANCE_MULTIPLIER;
+            if (lowerGuess < mMin)
+                return guess;
+            if (mHasValue.getCount(lowerGuess, targetMin + 1) >= targetMin)
+                return search(lowerGuess, targetMin);
+            return guess;
+        }
+    }
+
+    static class SearchUp {
+        private final BoundingBox mBoundingBox;
+        private final float mMax;
+
+        public SearchUp(BoundingBox boundingBox, float max) {
+            mBoundingBox = boundingBox;
+            mMax = max;
+        }
+
+        public float search(float guess, int targetMin) {
+            final float nextGuess = guess * WhereFactoryNearestCaches.DISTANCE_MULTIPLIER;
+            if (nextGuess > mMax)
+                return guess;
+            if (mBoundingBox.getCount(guess, targetMin) < targetMin) {
+                return search(nextGuess, targetMin);
+            }
+            return guess;
+        }
+    }
+
     // 1 degree ~= 111km
-    public static final double DEGREES_DELTA = 0.08;
+    static final float DEGREES_DELTA = 0.1f;
+    static final float DISTANCE_MULTIPLIER = 1.414f;
+    static final int GUESS_MAX = 180;
+    static final float GUESS_MIN = 0.01f;
+    static final int MAX_NUMBER_OF_CACHES = 30;
 
-    public String getWhere(Location location) {
-        if (location == null)
-            return null;
-        double latitude = location.getLatitude();
-        double longitude = location.getLongitude();
+    public static class WhereStringFactory {
+        String getWhereString(Location location, float degrees) {
+            if (location == null)
+                return null;
+            double latitude = location.getLatitude();
+            double longitude = location.getLongitude();
 
-        double latLow = latitude - WhereFactoryNearestCaches.DEGREES_DELTA;
-        double latHigh = latitude + WhereFactoryNearestCaches.DEGREES_DELTA;
-        double lat_radians = Math.toRadians(latitude);
-        double cos_lat = Math.cos(lat_radians);
-        double lonLow = Math.max(-180, longitude - WhereFactoryNearestCaches.DEGREES_DELTA
-                / cos_lat);
-        double lonHigh = Math.min(180, longitude + WhereFactoryNearestCaches.DEGREES_DELTA
-                / cos_lat);
-        return "Latitude > " + latLow + " AND Latitude < " + latHigh + " AND Longitude > " + lonLow
-                + " AND Longitude < " + lonHigh;
+            double latLow = latitude - degrees;
+            double latHigh = latitude + degrees;
+            double lat_radians = Math.toRadians(latitude);
+            double cos_lat = Math.cos(lat_radians);
+            double lonLow = Math.max(-180, longitude - degrees / cos_lat);
+            double lonHigh = Math.min(180, longitude + degrees / cos_lat);
+            return "Latitude > " + latLow + " AND Latitude < " + latHigh + " AND Longitude > "
+                    + lonLow + " AND Longitude < " + lonHigh;
+        }
+    }
+
+    private float mLastGuess = 0.1f;
+    private final SearchFactory mSearchFactory;
+    private final WhereStringFactory mWhereStringFactory;
+
+    public WhereFactoryNearestCaches(SearchFactory searchFactory,
+            WhereStringFactory whereStringFactory) {
+        mSearchFactory = searchFactory;
+        mWhereStringFactory = whereStringFactory;
+    }
+
+    @Override
+    public String getWhere(ISQLiteDatabase sqliteWrapper, Location location) {
+        mLastGuess = mSearchFactory.createSearch(location, GUESS_MIN, GUESS_MAX, sqliteWrapper)
+                .search(mLastGuess, MAX_NUMBER_OF_CACHES);
+        return mWhereStringFactory.getWhereString(location, mLastGuess);
     }
 }

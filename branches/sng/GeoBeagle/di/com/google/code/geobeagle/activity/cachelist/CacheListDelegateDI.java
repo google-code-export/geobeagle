@@ -51,6 +51,8 @@ import com.google.code.geobeagle.database.FilterNearestCaches;
 import com.google.code.geobeagle.database.LocationSaverFactory;
 import com.google.code.geobeagle.database.WhereFactoryAllCaches;
 import com.google.code.geobeagle.database.WhereFactoryNearestCaches;
+import com.google.code.geobeagle.database.DatabaseDI.SearchFactory;
+import com.google.code.geobeagle.database.WhereFactoryNearestCaches.WhereStringFactory;
 import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidget;
 import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidgetDelegate;
 import com.google.code.geobeagle.gpsstatuswidget.GpsWidgetAndUpdater;
@@ -156,7 +158,11 @@ public class CacheListDelegateDI {
         updateGpsWidgetRunnable.run();
 
         final WhereFactoryAllCaches whereFactoryAllCaches = new WhereFactoryAllCaches();
-        final WhereFactoryNearestCaches whereFactoryNearestCaches = new WhereFactoryNearestCaches();
+        final SearchFactory searchFactory = new SearchFactory();
+        final WhereStringFactory whereStringFactory = new WhereStringFactory();
+        final WhereFactoryNearestCaches whereFactoryNearestCaches = new WhereFactoryNearestCaches(
+                searchFactory, whereStringFactory);
+
         final FilterNearestCaches filterNearestCaches = new FilterNearestCaches(
                 whereFactoryAllCaches, whereFactoryNearestCaches);
         final ListTitleFormatter listTitleFormatter = new ListTitleFormatter();
