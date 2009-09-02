@@ -16,6 +16,7 @@ package com.google.code.geobeagle.activity.cachelist;
 
 import com.google.code.geobeagle.activity.cachelist.actions.context.ContextAction;
 import com.google.code.geobeagle.activity.cachelist.actions.context.ContextActionDelete;
+import com.google.code.geobeagle.activity.cachelist.actions.context.ContextActionEdit;
 import com.google.code.geobeagle.activity.cachelist.actions.context.ContextActionView;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionSyncGpx;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActions;
@@ -33,14 +34,17 @@ public class GeocacheListControllerFactory {
     private final ListActivity mListActivity;
     private final MenuActionsFactory mMenuActionsFactory;
     private final MenuActionSyncGpxFactory mMenuActionSyncGpxFactory;
+    private final ContextActionEdit mContextActionEdit;
 
     public GeocacheListControllerFactory(ContextActionDeleteFactory contextActionDeleteFactory,
-            ContextActionView contextActionView, FilterNearestCaches filterNearestCaches,
-            ListActivity listActivity, MenuActionsFactory menuActionsFactory,
-            MenuActionSyncGpxFactory menuActionSyncGpxFactory) {
+            ContextActionEdit contextActionEdit, ContextActionView contextActionView,
+            FilterNearestCaches filterNearestCaches, ListActivity listActivity,
+            MenuActionsFactory menuActionsFactory, MenuActionSyncGpxFactory menuActionSyncGpxFactory) {
         mFilterNearestCaches = filterNearestCaches;
         mMenuActionSyncGpxFactory = menuActionSyncGpxFactory;
         mListActivity = listActivity;
+        mContextActionEdit = contextActionEdit;
+
         mContextActionView = contextActionView;
         mMenuActionsFactory = menuActionsFactory;
         mContextActionDeleteFactory = contextActionDeleteFactory;
@@ -56,7 +60,7 @@ public class GeocacheListControllerFactory {
         MenuActions menuActions = mMenuActionsFactory.create(menuActionSyncGpx, cacheListRefresh,
                 writableDatabase);
         final ContextAction[] contextActions = new ContextAction[] {
-                contextActionDelete, mContextActionView
+                contextActionDelete, mContextActionView, mContextActionEdit
         };
         return new GeocacheListController(cacheListRefresh, contextActions, mFilterNearestCaches,
                 menuActionSyncGpx, mListActivity, menuActions);

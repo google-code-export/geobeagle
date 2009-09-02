@@ -61,7 +61,8 @@ public class GeocacheListControllerTest {
         expect(geocacheVector.getId()).andReturn("GC123");
         expect(menu.setHeaderTitle("GC123")).andReturn(menu);
         expect(menu.add(0, GeocacheListController.MENU_VIEW, 0, "View")).andReturn(null);
-        expect(menu.add(0, GeocacheListController.MENU_DELETE, 1, "Delete")).andReturn(null);
+        expect(menu.add(0, GeocacheListController.MENU_EDIT, 1, "Edit")).andReturn(null);
+        expect(menu.add(0, GeocacheListController.MENU_DELETE, 2, "Delete")).andReturn(null);
 
         PowerMock.replayAll();
         menuInfo.position = 12;
@@ -107,7 +108,9 @@ public class GeocacheListControllerTest {
         EasyMock.expect(contextMenu.setHeaderTitle("GCABC")).andReturn(contextMenu);
         EasyMock.expect(contextMenu.add(0, GeocacheListController.MENU_VIEW, 0, "View")).andReturn(
                 menuItem);
-        EasyMock.expect(contextMenu.add(0, GeocacheListController.MENU_DELETE, 1, "Delete"))
+        EasyMock.expect(contextMenu.add(0, GeocacheListController.MENU_EDIT, 1, "Edit")).andReturn(
+                menuItem);
+        EasyMock.expect(contextMenu.add(0, GeocacheListController.MENU_DELETE, 2, "Delete"))
                 .andReturn(menuItem);
 
         PowerMock.replayAll();

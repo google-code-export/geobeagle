@@ -46,13 +46,15 @@ public class GeocacheListController implements IGeocacheListController {
             if (acmi.position > 0) {
                 menu.setHeaderTitle(mGeocacheVectors.get(acmi.position - 1).getId());
                 menu.add(0, MENU_VIEW, 0, "View");
-                menu.add(0, MENU_DELETE, 1, "Delete");
+                menu.add(0, MENU_EDIT, 1, "Edit");
+                menu.add(0, MENU_DELETE, 2, "Delete");
             }
         }
     }
 
     static final int MENU_DELETE = 0;
     static final int MENU_VIEW = 1;
+    static final int MENU_EDIT = 2;
     public static final String SELECT_CACHE = "SELECT_CACHE";
     private final CacheListRefresh mCacheListRefresh;
     private final ContextAction mContextActions[];

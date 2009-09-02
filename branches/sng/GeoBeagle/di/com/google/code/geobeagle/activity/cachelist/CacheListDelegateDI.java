@@ -22,6 +22,7 @@ import com.google.code.geobeagle.LocationControlBuffered.GpsDisabledLocation;
 import com.google.code.geobeagle.activity.ActivityDI;
 import com.google.code.geobeagle.activity.ActivitySaver;
 import com.google.code.geobeagle.activity.cachelist.CacheListDelegate.ImportIntentManager;
+import com.google.code.geobeagle.activity.cachelist.actions.context.ContextActionEdit;
 import com.google.code.geobeagle.activity.cachelist.actions.context.ContextActionView;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.Abortable;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionSearchOnline;
@@ -238,13 +239,14 @@ public class CacheListDelegateDI {
         final Intent geoBeagleMainIntent = new Intent(listActivity, GeoBeagle.class);
         final ContextActionView contextActionView = new ContextActionView(geocacheVectors,
                 listActivity, geoBeagleMainIntent);
+        final ContextActionEdit contextActionEdit = new ContextActionEdit(geocacheVectors,
+                listActivity);
 
         final ContextActionDeleteFactory contextActionDeleteFactory = new ContextActionDeleteFactory(
                 cacheWriterFactory, geocacheListAdapter, geocacheVectors);
-
         final GeocacheListControllerFactory geocacheListControllerFactory = new GeocacheListControllerFactory(
-                contextActionDeleteFactory, contextActionView, filterNearestCaches, listActivity,
-                menuActionsFactory, menuActionSyncGpxFactory);
+                contextActionDeleteFactory, contextActionEdit, contextActionView,
+                filterNearestCaches, listActivity, menuActionsFactory, menuActionSyncGpxFactory);
 
         final ActivitySaver activitySaver = ActivityDI.createActivitySaver(listActivity);
         final GeocacheListControllerNull geocacheListControllerNull = new GeocacheListControllerNull();
