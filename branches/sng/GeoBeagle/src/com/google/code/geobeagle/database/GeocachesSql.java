@@ -16,8 +16,6 @@ package com.google.code.geobeagle.database;
 
 import com.google.code.geobeagle.Geocache;
 
-import android.location.Location;
-
 import java.util.ArrayList;
 
 public class GeocachesSql {

@@ -17,7 +17,6 @@ package com.google.code.geobeagle.database;
 import com.google.code.geobeagle.database.DatabaseDI.CacheReaderCursorFactory;
 
 import android.database.Cursor;
-import android.location.Location;
 
 public class CacheReader {
     public static final String[] READER_COLUMNS = new String[] {
