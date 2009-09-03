@@ -14,10 +14,8 @@
 
 package com.google.code.geobeagle.database;
 
-import android.location.Location;
-
 public interface WhereFactory {
 
-    public abstract String getWhere(ISQLiteDatabase sqliteWrapper, Location location);
+    public abstract String getWhere(ISQLiteDatabase sqliteWrapper, double latitude, double longitude);
 
 }

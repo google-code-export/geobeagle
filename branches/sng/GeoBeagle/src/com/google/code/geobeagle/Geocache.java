@@ -14,8 +14,10 @@
 
 package com.google.code.geobeagle;
 
+import com.google.android.maps.GeoPoint;
 import com.google.code.geobeagle.GeocacheFactory.Provider;
 import com.google.code.geobeagle.GeocacheFactory.Source;
+import com.google.code.geobeagle.activity.main.GeoUtils;
 
 import android.content.SharedPreferences.Editor;
 import android.location.Location;
@@ -60,15 +62,13 @@ public class Geocache implements Parcelable {
     private final int mContainer;
     private final int mDifficulty;
     private float[] mDistanceAndBearing = new float[2];
+    private GeoPoint mGeoPoint;
     private final CharSequence mId;
     private final double mLatitude;
     private final double mLongitude;
     private final CharSequence mName;
-
     private final String mSourceName;
-
     private final Source mSourceType;
-
     private final int mTerrain;
 
     Geocache(CharSequence id, CharSequence name, double latitude, double longitude,
@@ -127,6 +127,19 @@ public class Geocache implements Parcelable {
         return mDifficulty;
     }
 
+    public CharSequence getFormattedAttributes() {
+        return mAttributeFormatter.formatAttributes(mDifficulty, mTerrain);
+    }
+
+    public GeoPoint getGeoPoint() {
+        if (mGeoPoint == null) {
+            int latE6 = (int)(mLatitude * GeoUtils.MILLION);
+            int lonE6 = (int)(mLongitude * GeoUtils.MILLION);
+            mGeoPoint = new GeoPoint(latE6, lonE6);
+        }
+        return mGeoPoint;
+    }
+
     public CharSequence getId() {
         return mId;
     }
@@ -150,10 +163,6 @@ public class Geocache implements Parcelable {
 
     public CharSequence getName() {
         return mName;
-    }
-
-    public CharSequence getFormattedAttributes() {
-        return mAttributeFormatter.formatAttributes(mDifficulty, mTerrain);
     }
 
     public CharSequence getShortId() {

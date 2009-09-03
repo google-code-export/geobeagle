@@ -19,18 +19,19 @@ import com.google.code.geobeagle.activity.main.GeoBeagle;
 
 import android.content.Intent;
 
-public class IntentStarterRadar implements IntentStarter {
+public class IntentStarterGeo implements IntentStarter {
     private final GeoBeagle mGeoBeagle;
+    private final Intent mIntent;
 
-    public IntentStarterRadar(GeoBeagle geoBeagle) {
+    public IntentStarterGeo(GeoBeagle geoBeagle, Intent intent) {
         mGeoBeagle = geoBeagle;
+        mIntent = intent;
     }
 
     public void startIntent() {
         final Geocache geocache = mGeoBeagle.getGeocache();
-        final Intent intent = new Intent("com.google.android.radar.SHOW_RADAR");
-        intent.putExtra("latitude", (float)geocache.getLatitude());
-        intent.putExtra("longitude", (float)geocache.getLongitude());
-        mGeoBeagle.startActivity(intent);
+        mIntent.putExtra("latitude", (float)geocache.getLatitude());
+        mIntent.putExtra("longitude", (float)geocache.getLongitude());
+        mGeoBeagle.startActivity(mIntent);
     }
 }

@@ -18,7 +18,7 @@ import static org.easymock.EasyMock.expect;
 
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.activity.main.GeoBeagle;
-import com.google.code.geobeagle.activity.main.intents.IntentStarterRadar;
+import com.google.code.geobeagle.activity.main.intents.IntentStarterGeo;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -30,7 +30,7 @@ import android.content.Intent;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest( {
-        Intent.class, IntentStarterRadar.class
+        Intent.class, IntentStarterGeo.class
 })
 public class IntentStarterRadarTest {
 
@@ -41,7 +41,6 @@ public class IntentStarterRadarTest {
         Geocache geocache = PowerMock.createMock(Geocache.class);
 
         expect(geoBeagle.getGeocache()).andReturn(geocache);
-        PowerMock.expectNew(Intent.class, "com.google.android.radar.SHOW_RADAR").andReturn(intent);
         expect(geocache.getLatitude()).andReturn(37.175d);
         expect(intent.putExtra("latitude", 37.175f)).andReturn(intent);
         expect(geocache.getLongitude()).andReturn(122.8375d);
@@ -49,7 +48,7 @@ public class IntentStarterRadarTest {
         geoBeagle.startActivity(intent);
 
         PowerMock.replayAll();
-        new IntentStarterRadar(geoBeagle).startIntent();
+        new IntentStarterGeo(geoBeagle, intent).startIntent();
         PowerMock.verifyAll();
     }
 }

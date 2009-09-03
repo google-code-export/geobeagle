@@ -17,7 +17,6 @@ package com.google.code.geobeagle.database;
 import com.google.code.geobeagle.database.DatabaseDI.SearchFactory;
 
 import android.database.Cursor;
-import android.location.Location;
 import android.util.Log;
 
 public class WhereFactoryNearestCaches implements WhereFactory {
@@ -25,19 +24,21 @@ public class WhereFactoryNearestCaches implements WhereFactory {
         public static final String[] ID_COLUMN = new String[] {
             "Id"
         };
-        private final Location mLocation;
         private final ISQLiteDatabase mSqliteWrapper;
         private final WhereStringFactory mWhereStringFactory;
+        private final double mLatitude;
+        private final double mLongitude;
 
-        BoundingBox(Location location, ISQLiteDatabase sqliteWrapper,
+        BoundingBox(double latitude, double longitude, ISQLiteDatabase sqliteWrapper,
                 WhereStringFactory whereStringFactory) {
-            mLocation = location;
+            mLatitude = latitude;
+            mLongitude = longitude;
             mSqliteWrapper = sqliteWrapper;
             mWhereStringFactory = whereStringFactory;
         }
 
         int getCount(float degreesDelta, int maxCount) {
-            String where = mWhereStringFactory.getWhereString(mLocation, degreesDelta);
+            String where = mWhereStringFactory.getWhereString(mLatitude, mLongitude, degreesDelta);
 
             Cursor cursor = mSqliteWrapper.query(Database.TBL_CACHES, ID_COLUMN, where, null, null,
                     null, "" + maxCount);
@@ -45,8 +46,8 @@ public class WhereFactoryNearestCaches implements WhereFactory {
             Log.d("GeoBeagle", "search: " + degreesDelta + ", count/maxCount: " + count + "/"
                     + maxCount + " where: " + where);
             cursor.close();
-             
-             return count;
+
+            return count;
         }
     }
 
@@ -115,12 +116,7 @@ public class WhereFactoryNearestCaches implements WhereFactory {
     static final int MAX_NUMBER_OF_CACHES = 30;
 
     public static class WhereStringFactory {
-        String getWhereString(Location location, float degrees) {
-            if (location == null)
-                return null;
-            double latitude = location.getLatitude();
-            double longitude = location.getLongitude();
-
+        String getWhereString(double latitude, double longitude, float degrees) {
             double latLow = latitude - degrees;
             double latHigh = latitude + degrees;
             double lat_radians = Math.toRadians(latitude);
@@ -143,9 +139,10 @@ public class WhereFactoryNearestCaches implements WhereFactory {
     }
 
     @Override
-    public String getWhere(ISQLiteDatabase sqliteWrapper, Location location) {
-        mLastGuess = mSearchFactory.createSearch(location, GUESS_MIN, GUESS_MAX, sqliteWrapper)
-                .search(mLastGuess, MAX_NUMBER_OF_CACHES);
-        return mWhereStringFactory.getWhereString(location, mLastGuess);
+    public String getWhere(ISQLiteDatabase sqliteWrapper, double latitude, double longitude) {
+        mLastGuess = mSearchFactory.createSearch(latitude, longitude, GUESS_MIN, GUESS_MAX,
+                sqliteWrapper).search(mLastGuess, MAX_NUMBER_OF_CACHES);
+        return mWhereStringFactory.getWhereString(latitude, longitude, mLastGuess);
     }
+
 }

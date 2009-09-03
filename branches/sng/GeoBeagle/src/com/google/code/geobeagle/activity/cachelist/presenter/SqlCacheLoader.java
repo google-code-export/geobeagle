@@ -16,7 +16,7 @@ package com.google.code.geobeagle.activity.cachelist.presenter;
 
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.LocationControlBuffered;
-import com.google.code.geobeagle.activity.cachelist.CacheListDelegateDI;
+import com.google.code.geobeagle.activity.cachelist.CacheListDelegateDI.Timing;
 import com.google.code.geobeagle.activity.cachelist.model.CacheListData;
 import com.google.code.geobeagle.database.FilterNearestCaches;
 import com.google.code.geobeagle.database.GeocachesSql;
@@ -30,12 +30,12 @@ public class SqlCacheLoader implements RefreshAction {
     private final FilterNearestCaches mFilterNearestCaches;
     private final GeocachesSql mGeocachesSql;
     private final LocationControlBuffered mLocationControlBuffered;
-    private final CacheListDelegateDI.Timing mTiming;
+    private final Timing mTiming;
     private final TitleUpdater mTitleUpdater;
 
     public SqlCacheLoader(GeocachesSql geocachesSql, FilterNearestCaches filterNearestCaches,
             CacheListData cacheListData, LocationControlBuffered locationControlBuffered,
-            TitleUpdater titleUpdater, CacheListDelegateDI.Timing timing) {
+            TitleUpdater titleUpdater, Timing timing) {
         mGeocachesSql = geocachesSql;
         mFilterNearestCaches = filterNearestCaches;
         mCacheListData = cacheListData;
@@ -46,8 +46,14 @@ public class SqlCacheLoader implements RefreshAction {
 
     public void refresh() {
         final Location location = mLocationControlBuffered.getLocation();
+        double latitude = 0;
+        double longitude = 0;
+        if (location != null) {
+            latitude = location.getLatitude();
+            longitude = location.getLongitude();
+        }
         // Log.d("GeoBeagle", "Location: " + location);
-        mGeocachesSql.loadCaches(location, mFilterNearestCaches.getWhereFactory());
+        mGeocachesSql.loadCaches(latitude, longitude, mFilterNearestCaches.getWhereFactory());
         ArrayList<Geocache> geocaches = mGeocachesSql.getGeocaches();
         mTiming.lap("SQL time");
 

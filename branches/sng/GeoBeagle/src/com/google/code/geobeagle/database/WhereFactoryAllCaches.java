@@ -14,11 +14,11 @@
 
 package com.google.code.geobeagle.database;
 
-import android.location.Location;
 
 public class WhereFactoryAllCaches implements WhereFactory {
+
     @Override
-    public String getWhere(ISQLiteDatabase sqliteWrapper, Location location) {
+    public String getWhere(ISQLiteDatabase sqliteWrapper, double latitude, double longitude) {
         return null;
     }
 }

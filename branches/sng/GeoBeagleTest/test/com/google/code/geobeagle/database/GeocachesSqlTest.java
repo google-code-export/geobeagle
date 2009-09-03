@@ -24,8 +24,6 @@ import org.junit.runner.RunWith;
 import org.powermock.api.easymock.PowerMock;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import android.location.Location;
-
 import java.util.ArrayList;
 
 @RunWith(PowerMockRunner.class)
@@ -57,14 +55,13 @@ public class GeocachesSqlTest {
 
     @Test
     public void testLoad() {
-        Location location = PowerMock.createMock(Location.class);
         CacheReader cacheReaderSql = PowerMock.createMock(CacheReader.class);
         Geocaches geocaches = PowerMock.createMock(Geocaches.class);
         CacheReaderCursor cursor = PowerMock.createMock(CacheReaderCursor.class);
         Geocache geocache = PowerMock.createMock(Geocache.class);
         WhereFactory whereFactory = PowerMock.createMock(WhereFactory.class);
 
-        expect(cacheReaderSql.open(location, whereFactory)).andReturn(cursor);
+        expect(cacheReaderSql.open(122, 37, whereFactory)).andReturn(cursor);
         geocaches.clear();
         expect(cursor.getCache()).andReturn(geocache);
         geocaches.add(geocache);
@@ -72,7 +69,7 @@ public class GeocachesSqlTest {
         cursor.close();
 
         PowerMock.replayAll();
-        new GeocachesSql(cacheReaderSql, geocaches).loadCaches(location, whereFactory);
+        new GeocachesSql(cacheReaderSql, geocaches).loadCaches(122, 37, whereFactory);
         PowerMock.verifyAll();
     }
 

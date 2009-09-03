@@ -16,6 +16,7 @@ package com.google.code.geobeagle.database;
 
 import com.google.code.geobeagle.GeocacheFactory;
 import com.google.code.geobeagle.database.WhereFactoryNearestCaches.BoundingBox;
+import com.google.code.geobeagle.database.WhereFactoryNearestCaches.Search;
 import com.google.code.geobeagle.database.WhereFactoryNearestCaches.SearchDown;
 import com.google.code.geobeagle.database.WhereFactoryNearestCaches.SearchUp;
 import com.google.code.geobeagle.database.WhereFactoryNearestCaches.WhereStringFactory;
@@ -24,7 +25,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.location.Location;
 import android.util.Log;
 
 import java.util.Arrays;
@@ -129,14 +129,16 @@ public class DatabaseDI {
     }
 
     static public class SearchFactory {
-        public WhereFactoryNearestCaches.Search createSearch(Location location, float min,
-                float max, ISQLiteDatabase sqliteWrapper) {
+        public Search createSearch(double latitude, double longitude, float min, float max,
+                ISQLiteDatabase sqliteWrapper) {
             WhereStringFactory whereStringFactory = new WhereStringFactory();
-            BoundingBox boundingBox = new BoundingBox(location, sqliteWrapper, whereStringFactory);
+            BoundingBox boundingBox = new BoundingBox(latitude, longitude, sqliteWrapper,
+                    whereStringFactory);
             SearchDown searchDown = new SearchDown(boundingBox, min);
             SearchUp searchUp = new SearchUp(boundingBox, max);
             return new WhereFactoryNearestCaches.Search(boundingBox, searchDown, searchUp);
         }
+
     }
 
     public static GeocachesSql createGeocachesSql(ISQLiteDatabase sqliteWrapper) {

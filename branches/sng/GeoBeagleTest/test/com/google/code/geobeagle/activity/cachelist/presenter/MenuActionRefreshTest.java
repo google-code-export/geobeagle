@@ -325,8 +325,10 @@ public class MenuActionRefreshTest {
         EasyMock.expectLastCall().anyTimes();
         EasyMock.expect(locationControlBuffered.getLocation()).andReturn(location);
         EasyMock.expect(filterNearestCaches.getWhereFactory()).andReturn(whereFactory);
+        EasyMock.expect(location.getLatitude()).andReturn(122.0);
+        EasyMock.expect(location.getLongitude()).andReturn(37.0);
 
-        geocachesSql.loadCaches(location, whereFactory);
+        geocachesSql.loadCaches(122, 37, whereFactory);
         ArrayList<Geocache> geocaches = new ArrayList<Geocache>();
         EasyMock.expect(geocachesSql.getGeocaches()).andReturn(geocaches);
         cacheListData.add(geocaches, locationControlBuffered);
