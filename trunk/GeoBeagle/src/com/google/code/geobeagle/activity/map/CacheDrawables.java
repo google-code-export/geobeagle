@@ -26,7 +26,7 @@ class CacheDrawables {
         Drawable drawable = resources.getDrawable(res);
         int width = drawable.getIntrinsicWidth();
         int height = drawable.getIntrinsicHeight();
-        drawable.setBounds(-width / 2, -height / 2, width / 2, height / 2);
+		drawable.setBounds(-width/2, -height, width/2, 0);
         return drawable;
     }
 
