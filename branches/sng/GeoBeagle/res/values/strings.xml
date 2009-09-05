@@ -11,7 +11,9 @@
 		License.
 	-->
 <resources>
-    <string name="geobeagle">GeoBeagle</string>
+	<string name="satellite_view">Satellite view</string>
+	<string name="map_view">Map view</string>
+	<string name="geobeagle">GeoBeagle</string>
 	<string name="error1">Error: %1$s</string>
 	<string name="error2">Error: %1$s\n%2$s</string>
 	<string name="meter_right">····›····»····</string>
