@@ -20,6 +20,7 @@ import com.google.android.maps.MapView;
 import com.google.android.maps.MyLocationOverlay;
 import com.google.android.maps.Overlay;
 import com.google.code.geobeagle.R;
+import com.google.code.geobeagle.activity.MenuAction;
 import com.google.code.geobeagle.database.DatabaseDI;
 import com.google.code.geobeagle.database.GeocachesSql;
 import com.google.code.geobeagle.database.ISQLiteDatabase;
@@ -28,6 +29,8 @@ import com.google.code.geobeagle.database.DatabaseDI.GeoBeagleSqliteOpenHelper;
 import com.google.code.geobeagle.database.DatabaseDI.SearchFactory;
 import com.google.code.geobeagle.database.WhereFactoryNearestCaches.WhereStringFactory;
 
+import android.content.Context;
+import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -63,10 +66,20 @@ public class GeoMapActivity extends MapActivity {
         final MyLocationOverlay myLocationOverlay = new MyLocationOverlay(this, mapView);
         final MapController mapController = mapView.getController();
         final List<Overlay> mapOverlays = mapView.getOverlays();
+        final Intent intent = this.getIntent();
+        final MenuAction menuActionArray[] = {
+                new GeoMapActivityDelegate.MenuActionToggleSatellite(mapView),
+                new GeoMapActivityDelegate.MenuActionCacheList(this)
+        };
+        final int menuIdArray[] = {
+                R.id.menu_toggle_satellite, R.id.menu_cache_list
+        };
+        final MenuActions menuActions = new MenuActions(menuActionArray, menuIdArray);
+        final Context applicationContext = getApplicationContext();
 
-        mGeoMapActivityDelegate = new GeoMapActivityDelegate(this, mapView,
-                getApplicationContext(), myLocationOverlay);
-        mGeoMapActivityDelegate.initialize(geocachesSql, whereFactory, mapItemizedOverlay,
+        mGeoMapActivityDelegate = new GeoMapActivityDelegate(this, mapView, applicationContext,
+                myLocationOverlay, menuActions);
+        mGeoMapActivityDelegate.initialize(intent, geocachesSql, whereFactory, mapItemizedOverlay,
                 mapController, mapOverlays);
         open.close();
     }
