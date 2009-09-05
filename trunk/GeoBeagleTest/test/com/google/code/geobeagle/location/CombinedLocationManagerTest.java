@@ -14,10 +14,9 @@
 
 package com.google.code.geobeagle.location;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-
-import com.google.code.geobeagle.location.CombinedLocationManager;
 
 import org.easymock.EasyMock;
 import org.junit.Test;
@@ -25,20 +24,43 @@ import org.junit.runner.RunWith;
 import org.powermock.api.easymock.PowerMock;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+
+import java.util.ArrayList;
 
 @RunWith(PowerMockRunner.class)
 public class CombinedLocationManagerTest {
     @Test
-    public void testRemoveUpdates() {
+    public void testGetLastKnownLocation() {
         LocationManager locationManager = PowerMock.createMock(LocationManager.class);
-        LocationListener locationListener = PowerMock.createMock(LocationListener.class);
+        Location location = PowerMock.createMock(Location.class);
 
-        locationManager.removeUpdates(locationListener);
+        EasyMock.expect(locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER))
+                .andReturn(location);
 
         PowerMock.replayAll();
-        new CombinedLocationManager(locationManager).removeUpdates(locationListener);
+        assertEquals(location, new CombinedLocationManager(locationManager, null)
+                .getLastKnownLocation());
+
+        PowerMock.verifyAll();
+    }
+
+    @Test
+    public void testGetLastKnownLocationNetwork() {
+        LocationManager locationManager = PowerMock.createMock(LocationManager.class);
+        Location location = PowerMock.createMock(Location.class);
+
+        EasyMock.expect(locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER))
+                .andReturn(null);
+        EasyMock.expect(locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER))
+                .andReturn(location);
+
+        PowerMock.replayAll();
+        assertEquals(location, new CombinedLocationManager(locationManager, null)
+                .getLastKnownLocation());
+
         PowerMock.verifyAll();
     }
 
@@ -50,7 +72,7 @@ public class CombinedLocationManagerTest {
         EasyMock.expect(locationManager.isProviderEnabled("network")).andReturn(true);
 
         PowerMock.replayAll();
-        assertTrue(new CombinedLocationManager(locationManager).isProviderEnabled());
+        assertTrue(new CombinedLocationManager(locationManager, null).isProviderEnabled());
         PowerMock.verifyAll();
     }
 
@@ -62,13 +84,29 @@ public class CombinedLocationManagerTest {
         EasyMock.expect(locationManager.isProviderEnabled("network")).andReturn(false);
 
         PowerMock.replayAll();
-        assertFalse(new CombinedLocationManager(locationManager).isProviderEnabled());
+        assertFalse(new CombinedLocationManager(locationManager, null).isProviderEnabled());
         PowerMock.verifyAll();
     }
+
+    @Test
+    public void testRemoveUpdates() {
+        LocationManager locationManager = PowerMock.createMock(LocationManager.class);
+        LocationListener locationListener = PowerMock.createMock(LocationListener.class);
+
+        final ArrayList<LocationListener> locationListeners = new ArrayList<LocationListener>(3);
+        locationListeners.add(locationListener);
+        locationManager.removeUpdates(locationListener);
+
+        PowerMock.replayAll();
+        new CombinedLocationManager(locationManager, locationListeners).removeUpdates();
+        PowerMock.verifyAll();
+    }
+
     @Test
     public void testRequestLocationUpdates() {
         LocationManager locationManager = PowerMock.createMock(LocationManager.class);
         LocationListener locationListener = PowerMock.createMock(LocationListener.class);
+        final ArrayList<LocationListener> locationListeners = new ArrayList<LocationListener>(3);
 
         locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 7, 4,
                 locationListener);
@@ -76,7 +114,9 @@ public class CombinedLocationManagerTest {
                 .requestLocationUpdates(LocationManager.GPS_PROVIDER, 7, 4, locationListener);
 
         PowerMock.replayAll();
-        new CombinedLocationManager(locationManager).requestLocationUpdates(7, 4, locationListener);
+        new CombinedLocationManager(locationManager, locationListeners).requestLocationUpdates(7,
+                4, locationListener);
+        assertEquals(locationListener, locationListeners.get(0));
         PowerMock.verifyAll();
     }
 }

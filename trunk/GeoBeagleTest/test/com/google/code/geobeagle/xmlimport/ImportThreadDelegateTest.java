@@ -1,3 +1,16 @@
+/*
+ ** Licensed under the Apache License, Version 2.0 (the "License");
+ ** you may not use this file except in compliance with the License.
+ ** You may obtain a copy of the License at
+ **
+ **     http://www.apache.org/licenses/LICENSE-2.0
+ **
+ ** Unless required by applicable law or agreed to in writing, software
+ ** distributed under the License is distributed on an "AS IS" BASIS,
+ ** WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ ** See the License for the specific language governing permissions and
+ ** limitations under the License.
+ */
 
 package com.google.code.geobeagle.xmlimport;
 
@@ -97,7 +110,8 @@ public class ImportThreadDelegateTest {
     @Test
     public void testRun() throws FileNotFoundException, XmlPullParserException, IOException {
         GpxAndZipFiles gpxAndZipFiles = PowerMock.createMock(GpxAndZipFiles.class);
-        GpxFilesAndZipFilesIter gpxFilesAndZipFilesIter = PowerMock.createMock(GpxFilesAndZipFilesIter.class);
+        GpxFilesAndZipFilesIter gpxFilesAndZipFilesIter = PowerMock
+                .createMock(GpxFilesAndZipFilesIter.class);
         ImportThreadHelper importThreadHelper = PowerMock.createMock(ImportThreadHelper.class);
         IGpxReader iGpxFile = PowerMock.createMock(IGpxReader.class);
 
@@ -118,7 +132,8 @@ public class ImportThreadDelegateTest {
     @Test
     public void testRunAborted() throws FileNotFoundException, XmlPullParserException, IOException {
         GpxAndZipFiles gpxAndZipFiles = PowerMock.createMock(GpxAndZipFiles.class);
-        GpxFilesAndZipFilesIter gpxFilesAndZipFilesIter = PowerMock.createMock(GpxFilesAndZipFilesIter.class);
+        GpxFilesAndZipFilesIter gpxFilesAndZipFilesIter = PowerMock
+                .createMock(GpxFilesAndZipFilesIter.class);
         ImportThreadHelper importThreadHelper = PowerMock.createMock(ImportThreadHelper.class);
         IGpxReader iGpxFile = PowerMock.createMock(IGpxReader.class);
 
@@ -159,15 +174,40 @@ public class ImportThreadDelegateTest {
     }
 
     @Test
+    public void testRunXmlPullParserException() throws FileNotFoundException,
+            XmlPullParserException, IOException {
+        GpxAndZipFiles gpxAndZipFiles = PowerMock.createMock(GpxAndZipFiles.class);
+        ImportThreadHelper importThreadHelper = PowerMock.createMock(ImportThreadHelper.class);
+        ErrorDisplayer errorDisplayer = PowerMock.createMock(ErrorDisplayer.class);
+        final XmlPullParserException e = PowerMock.createMock(XmlPullParserException.class);
+
+        EasyMock.expect(e.getMessage()).andReturn("xml exception");
+        errorDisplayer.displayError(R.string.error_parsing_file, "xml exception");
+        importThreadHelper.cleanup();
+
+        PowerMock.replayAll();
+        ImportThreadDelegate importThreadDelegate = new ImportThreadDelegate(gpxAndZipFiles,
+                importThreadHelper, errorDisplayer) {
+            @Override
+            protected void tryRun() throws XmlPullParserException {
+                throw e;
+            }
+        };
+        importThreadDelegate.run();
+        PowerMock.verifyAll();
+
+    }
+
+    @Test
     public void testRunIOException() throws FileNotFoundException, XmlPullParserException,
             IOException {
         GpxAndZipFiles gpxAndZipFiles = PowerMock.createMock(GpxAndZipFiles.class);
         ImportThreadHelper importThreadHelper = PowerMock.createMock(ImportThreadHelper.class);
         ErrorDisplayer errorDisplayer = PowerMock.createMock(ErrorDisplayer.class);
         final IOException e = PowerMock.createMock(IOException.class);
-
-        errorDisplayer.displayErrorAndStack(e);
+        EasyMock.expect(e.getMessage()).andReturn("problem reading file");
         importThreadHelper.cleanup();
+        errorDisplayer.displayError(R.string.error_reading_file, "problem reading file");
 
         PowerMock.replayAll();
         ImportThreadDelegate importThreadDelegate = new ImportThreadDelegate(gpxAndZipFiles,
@@ -202,7 +242,8 @@ public class ImportThreadDelegateTest {
     @Test
     public void testRunNoFiles() throws FileNotFoundException, XmlPullParserException, IOException {
         GpxAndZipFiles gpxAndZipFiles = PowerMock.createMock(GpxAndZipFiles.class);
-        GpxFilesAndZipFilesIter gpxFilesAndZipFilesIter = PowerMock.createMock(GpxFilesAndZipFilesIter.class);
+        GpxFilesAndZipFilesIter gpxFilesAndZipFilesIter = PowerMock
+                .createMock(GpxFilesAndZipFilesIter.class);
         ImportThreadHelper importThreadHelper = PowerMock.createMock(ImportThreadHelper.class);
 
         expect(gpxAndZipFiles.iterator()).andReturn(gpxFilesAndZipFilesIter);
@@ -220,7 +261,8 @@ public class ImportThreadDelegateTest {
     public void testRunNoFilesToImport() throws FileNotFoundException, XmlPullParserException,
             IOException {
         GpxAndZipFiles gpxAndZipFiles = PowerMock.createMock(GpxAndZipFiles.class);
-        GpxFilesAndZipFilesIter gpxFilesAndZipFilesIter = PowerMock.createMock(GpxFilesAndZipFilesIter.class);
+        GpxFilesAndZipFilesIter gpxFilesAndZipFilesIter = PowerMock
+                .createMock(GpxFilesAndZipFilesIter.class);
         ImportThreadHelper importThreadHelper = PowerMock.createMock(ImportThreadHelper.class);
 
         expect(gpxAndZipFiles.iterator()).andReturn(gpxFilesAndZipFilesIter);

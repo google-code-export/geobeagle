@@ -14,8 +14,10 @@
 
 package com.google.code.geobeagle;
 
+import com.google.android.maps.GeoPoint;
 import com.google.code.geobeagle.GeocacheFactory.Provider;
 import com.google.code.geobeagle.GeocacheFactory.Source;
+import com.google.code.geobeagle.activity.main.GeoUtils;
 
 import android.content.SharedPreferences.Editor;
 import android.location.Location;
@@ -27,31 +29,62 @@ import android.os.Parcelable;
  * Geocache or letterbox description, id, and coordinates.
  */
 public class Geocache implements Parcelable {
+    static interface AttributeFormatter {
+        CharSequence formatAttributes(int difficulty, int terrain);
+    }
 
+    static class AttributeFormatterImpl implements AttributeFormatter {
+        public CharSequence formatAttributes(int difficulty, int terrain) {
+            return (difficulty / 2.0) + " / " + (terrain / 2.0);
+        }
+    }
+
+    static class AttributeFormatterNull implements AttributeFormatter {
+        public CharSequence formatAttributes(int difficulty, int terrain) {
+            return "";
+        }
+    }
+
+    public static final String CACHE_TYPE = "cacheType";
+    public static final String CONTAINER = "container";
     public static Parcelable.Creator<Geocache> CREATOR = new GeocacheFactory.CreateGeocacheFromParcel();
+    public static final String DIFFICULTY = "difficulty";
     public static final String ID = "id";
     public static final String LATITUDE = "latitude";
     public static final String LONGITUDE = "longitude";
     public static final String NAME = "name";
+
     public static final String SOURCE_NAME = "sourceName";
     public static final String SOURCE_TYPE = "sourceType";
-
+    public static final String TERRAIN = "terrain";
+    private final AttributeFormatter mAttributeFormatter;
+    private final CacheType mCacheType;
+    private final int mContainer;
+    private final int mDifficulty;
+    private float[] mDistanceAndBearing = new float[2];
+    private GeoPoint mGeoPoint;
     private final CharSequence mId;
     private final double mLatitude;
     private final double mLongitude;
     private final CharSequence mName;
     private final String mSourceName;
     private final Source mSourceType;
-    private float[] mDistanceAndBearing = new float[2];
+    private final int mTerrain;
 
-    public Geocache(CharSequence id, CharSequence name, double latitude, double longitude,
-            Source sourceType, String sourceName) {
+    Geocache(CharSequence id, CharSequence name, double latitude, double longitude,
+            Source sourceType, String sourceName, CacheType cacheType, int difficulty, int terrain,
+            int container, AttributeFormatter attributeFormatter) {
         mId = id;
         mName = name;
         mLatitude = latitude;
         mLongitude = longitude;
         mSourceType = sourceType;
         mSourceName = sourceName;
+        mCacheType = cacheType;
+        mDifficulty = difficulty;
+        mTerrain = terrain;
+        mContainer = container;
+        mAttributeFormatter = attributeFormatter;
     }
 
     public float[] calculateDistanceAndBearing(Location here) {
@@ -70,17 +103,41 @@ public class Geocache implements Parcelable {
         return 0;
     }
 
+    public CacheType getCacheType() {
+        return mCacheType;
+    }
+
+    public int getContainer() {
+        return mContainer;
+    }
+
     public GeocacheFactory.Provider getContentProvider() {
         // Must use toString() rather than mId.subSequence(0,2).equals("GC"),
         // because editing the text in android produces a SpannableString rather
         // than a String, so the CharSequences won't be equal.
         String prefix = mId.subSequence(0, 2).toString();
-        if (prefix.equals("ML"))
-            return Provider.MY_LOCATION;
-        if (prefix.equals("LB"))
-            return Provider.ATLAS_QUEST;
-        else
-            return Provider.GROUNDSPEAK;
+        for (Provider provider : GeocacheFactory.ALL_PROVIDERS) {
+            if (prefix.equals(provider.getPrefix()))
+                return provider;
+        }
+        return Provider.GROUNDSPEAK;
+    }
+
+    public int getDifficulty() {
+        return mDifficulty;
+    }
+
+    public CharSequence getFormattedAttributes() {
+        return mAttributeFormatter.formatAttributes(mDifficulty, mTerrain);
+    }
+
+    public GeoPoint getGeoPoint() {
+        if (mGeoPoint == null) {
+            int latE6 = (int)(mLatitude * GeoUtils.MILLION);
+            int lonE6 = (int)(mLongitude * GeoUtils.MILLION);
+            mGeoPoint = new GeoPoint(latE6, lonE6);
+        }
+        return mGeoPoint;
     }
 
     public CharSequence getId() {
@@ -123,10 +180,8 @@ public class Geocache implements Parcelable {
         return mSourceType;
     }
 
-    public void writeToParcel(Parcel out, int flags) {
-        Bundle bundle = new Bundle();
-        saveToBundle(bundle);
-        out.writeBundle(bundle);
+    public int getTerrain() {
+        return mTerrain;
     }
 
     public void saveToBundle(Bundle bundle) {
@@ -136,6 +191,16 @@ public class Geocache implements Parcelable {
         bundle.putDouble(LONGITUDE, mLongitude);
         bundle.putInt(SOURCE_TYPE, mSourceType.toInt());
         bundle.putString(SOURCE_NAME, mSourceName);
+        bundle.putInt(CACHE_TYPE, mCacheType.toInt());
+        bundle.putInt(DIFFICULTY, mDifficulty);
+        bundle.putInt(TERRAIN, mTerrain);
+        bundle.putInt(CONTAINER, mContainer);
+    }
+
+    public void writeToParcel(Parcel out, int flags) {
+        Bundle bundle = new Bundle();
+        saveToBundle(bundle);
+        out.writeBundle(bundle);
     }
 
     public void writeToPrefs(Editor editor) {
@@ -146,5 +211,9 @@ public class Geocache implements Parcelable {
         editor.putFloat(LONGITUDE, (float)mLongitude);
         editor.putInt(SOURCE_TYPE, mSourceType.toInt());
         editor.putString(SOURCE_NAME, mSourceName);
+        editor.putInt(CACHE_TYPE, mCacheType.toInt());
+        editor.putInt(DIFFICULTY, mDifficulty);
+        editor.putInt(TERRAIN, mTerrain);
+        editor.putInt(CONTAINER, mContainer);
     }
 }

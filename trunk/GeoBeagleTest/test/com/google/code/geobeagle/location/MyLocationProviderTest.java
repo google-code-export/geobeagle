@@ -21,9 +21,9 @@ import static org.easymock.classextension.EasyMock.verify;
 import static org.junit.Assert.assertEquals;
 
 import com.google.code.geobeagle.ErrorDisplayer;
+import com.google.code.geobeagle.LocationControlBuffered;
 import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.cachelistactivity.model.LocationControlBuffered;
-import com.google.code.geobeagle.mainactivity.view.MyLocationProvider;
+import com.google.code.geobeagle.activity.main.view.MyLocationProvider;
 
 import org.junit.Test;
 

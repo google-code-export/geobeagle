@@ -16,8 +16,9 @@ package com.google.code.geobeagle.xmlimport;
 
 import com.google.code.geobeagle.ErrorDisplayer;
 import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.cachelistactivity.presenter.CacheListRefresh;
-import com.google.code.geobeagle.cachelistactivity.presenter.GeocacheListPresenter;
+import com.google.code.geobeagle.activity.cachelist.actions.menu.Abortable;
+import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
+import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheListPresenter;
 import com.google.code.geobeagle.xmlimport.GpxImporterDI.ImportThreadWrapper;
 import com.google.code.geobeagle.xmlimport.GpxImporterDI.MessageHandler;
 import com.google.code.geobeagle.xmlimport.GpxImporterDI.ToastFactory;
@@ -25,7 +26,7 @@ import com.google.code.geobeagle.xmlimport.GpxImporterDI.ToastFactory;
 import android.app.ListActivity;
 import android.widget.Toast;
 
-public class GpxImporter {
+public class GpxImporter implements Abortable {
 
     private final ErrorDisplayer mErrorDisplayer;
     private final EventHandlers mEventHandlers;
@@ -50,7 +51,7 @@ public class GpxImporter {
         mGeocacheListPresenter = geocacheListPresenter;
     }
 
-    public void abort() throws InterruptedException {
+    public void abort() {
         mMessageHandler.abortLoad();
         mGpxLoader.abort();
         if (mImportThreadWrapper.isAlive()) {

@@ -129,7 +129,8 @@ public class CacheDetailsLoader {
     }
 
     public String load(CharSequence cacheId) {
-        String path = DETAILS_DIR + cacheId + ".html";
+        final String sanitized = CacheDetailsWriter.replaceIllegalFileChars(cacheId.toString());
+        String path = DETAILS_DIR + sanitized + ".html";
         File file = new File(path);
         DetailsReader detailsReader = mDetailsOpener.open(file);
         Details details = detailsReader.read();

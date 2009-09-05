@@ -17,9 +17,10 @@ package com.google.code.geobeagle.actions.context;
 import static org.easymock.EasyMock.expect;
 
 import com.google.code.geobeagle.Geocache;
-import com.google.code.geobeagle.cachelistactivity.GeocacheListController;
-import com.google.code.geobeagle.cachelistactivity.model.GeocacheVector;
-import com.google.code.geobeagle.cachelistactivity.model.GeocacheVectors;
+import com.google.code.geobeagle.activity.cachelist.GeocacheListController;
+import com.google.code.geobeagle.activity.cachelist.actions.context.ContextActionView;
+import com.google.code.geobeagle.activity.cachelist.model.GeocacheVector;
+import com.google.code.geobeagle.activity.cachelist.model.GeocacheVectors;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

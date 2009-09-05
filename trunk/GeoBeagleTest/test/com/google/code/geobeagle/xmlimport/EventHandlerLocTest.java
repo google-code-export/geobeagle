@@ -31,7 +31,7 @@ public class EventHandlerLocTest {
         CachePersisterFacade cachePersisterFacade = PowerMock
                 .createMock(CachePersisterFacade.class);
 
-        cachePersisterFacade.endTag(Source.LOC);
+        cachePersisterFacade.endCache(Source.LOC);
 
         PowerMock.replayAll();
         new EventHandlerLoc(cachePersisterFacade).endTag(EventHandlerLoc.XPATH_WPT);
@@ -60,25 +60,13 @@ public class EventHandlerLocTest {
                 .createMock(CachePersisterFacade.class);
         XmlPullParserWrapper xmlPullParser = PowerMock.createMock(XmlPullParserWrapper.class);
 
-        cachePersisterFacade.newCache();
+        cachePersisterFacade.startCache();
         EasyMock.expect(xmlPullParser.getAttributeValue(null, "id")).andReturn("GCABC");
         cachePersisterFacade.wptName("GCABC");
 
         PowerMock.replayAll();
         new EventHandlerLoc(cachePersisterFacade).startTag(EventHandlerLoc.XPATH_WPTNAME,
                 xmlPullParser);
-        PowerMock.verifyAll();
-    }
-
-    @Test
-    public void textWptLocTest() throws IOException {
-        CachePersisterFacade cachePersisterFacade = PowerMock
-                .createMock(CachePersisterFacade.class);
-
-        EasyMock.expect(cachePersisterFacade.gpxTime("2000-01-01T12:00:00")).andReturn(true);
-
-        PowerMock.replayAll();
-        assertTrue(new EventHandlerLoc(cachePersisterFacade).text(EventHandlerLoc.XPATH_LOC, null));
         PowerMock.verifyAll();
     }
 

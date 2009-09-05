@@ -16,65 +16,34 @@ package com.google.code.geobeagle;
 
 import android.app.Activity;
 import android.app.AlertDialog.Builder;
-import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 
-// TODO: this class needs tests.
 public class ErrorDisplayer {
-    private class DisplayErrorRunnable implements Runnable {
-        private DisplayErrorRunnable() {
+    static class DisplayErrorRunnable implements Runnable {
+        private final Builder mAlertDialogBuilder;
+
+        DisplayErrorRunnable(Builder alertDialogBuilder) {
+            mAlertDialogBuilder = alertDialogBuilder;
         }
 
         public void run() {
-            mAlertDialogBuilder.setNeutralButton("Ok", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int which) {
-                }
-            });
             mAlertDialogBuilder.create().show();
         }
     }
 
-    public static String getStackTrace(Exception e) {
-        final StackTraceElement stack[] = e.getStackTrace();
-        final StringBuilder sb = new StringBuilder();
-        for (final StackTraceElement s : stack) {
-            sb.append(s.toString() + "\n");
-        }
-        return sb.toString();
-    }
-
     private final Activity mActivity;
+    private final OnClickListener mOnClickListener;
 
-    private Builder mAlertDialogBuilder;
-
-    public ErrorDisplayer(Activity activity) {
+    public ErrorDisplayer(Activity activity, OnClickListener onClickListener) {
         mActivity = activity;
-    }
-
-    public void displayError(int resourceId) {
-        mAlertDialogBuilder = new Builder(mActivity);
-        mAlertDialogBuilder.setMessage(resourceId);
-        mActivity.runOnUiThread(new DisplayErrorRunnable());
+        mOnClickListener = onClickListener;
     }
 
     public void displayError(int resId, Object... args) {
-        displayError(String.format((String)mActivity.getText(resId), args));
-    }
+        final Builder alertDialogBuilder = new Builder(mActivity);
+        alertDialogBuilder.setMessage(String.format((String)mActivity.getText(resId), args));
+        alertDialogBuilder.setNeutralButton("Ok", mOnClickListener);
 
-    public void displayError(String string) {
-        mAlertDialogBuilder = new Builder(mActivity);
-        mAlertDialogBuilder.setMessage(string);
-        mActivity.runOnUiThread(new DisplayErrorRunnable());
-    }
-
-    public void displayErrorAndStack(Exception e) {
-        displayErrorAndStack("", e);
-    }
-
-    public void displayErrorAndStack(String msg, Exception e) {
-        mAlertDialogBuilder = new Builder(mActivity);
-        mAlertDialogBuilder
-                .setMessage(("Error " + msg + ": " + e.toString() + "\n\n" + ErrorDisplayer
-                        .getStackTrace(e)));
-        mActivity.runOnUiThread(new DisplayErrorRunnable());
+        mActivity.runOnUiThread(new DisplayErrorRunnable(alertDialogBuilder));
     }
 }

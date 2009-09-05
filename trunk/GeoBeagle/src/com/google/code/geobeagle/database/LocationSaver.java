@@ -19,16 +19,16 @@ import com.google.code.geobeagle.Geocache;
 public class LocationSaver {
     private final CacheWriter mCacheWriter;
 
-    public LocationSaver(CacheWriter cacheWriter) {
+    LocationSaver(CacheWriter cacheWriter) {
         mCacheWriter = cacheWriter;
     }
 
     public void saveLocation(Geocache geocache) {
-        CharSequence id = geocache.getId();
-        // TODO: catch errors on open
+        final CharSequence id = geocache.getId();
         mCacheWriter.startWriting();
         mCacheWriter.insertAndUpdateCache(id, geocache.getName(), geocache.getLatitude(), geocache
-                .getLongitude(), geocache.getSourceType(), geocache.getSourceName());
+                .getLongitude(), geocache.getSourceType(), geocache.getSourceName(), geocache
+                .getCacheType(), 0, 0, 0);
         mCacheWriter.stopWriting();
     }
 }

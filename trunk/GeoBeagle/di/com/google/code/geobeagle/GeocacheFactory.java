@@ -14,9 +14,12 @@
 
 package com.google.code.geobeagle;
 
-import com.google.code.geobeagle.Geocache;
+import com.google.code.geobeagle.CacheType.CacheTypeFactory;
+import com.google.code.geobeagle.Geocache.AttributeFormatter;
+import com.google.code.geobeagle.Geocache.AttributeFormatterImpl;
+import com.google.code.geobeagle.Geocache.AttributeFormatterNull;
 import com.google.code.geobeagle.GeocacheFactory.Source.SourceFactory;
-import com.google.code.geobeagle.mainactivity.GeocacheFromParcelFactory;
+import com.google.code.geobeagle.activity.main.GeocacheFromParcelFactory;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -36,18 +39,28 @@ public class GeocacheFactory {
     }
 
     public static enum Provider {
-        ATLAS_QUEST(0), GROUNDSPEAK(1), MY_LOCATION(-1);
+        ATLAS_QUEST(0, "LB"), GROUNDSPEAK(1, "GC"), MY_LOCATION(-1, "ML"), OPENCACHING(2, "OC");
 
         private final int mIx;
+        private final String mPrefix;
 
-        Provider(int ix) {
+        Provider(int ix, String prefix) {
             mIx = ix;
+            mPrefix = prefix;
         }
 
         public int toInt() {
             return mIx;
         }
+
+        public String getPrefix() {
+            return mPrefix;
+        }
     }
+
+    public static Provider ALL_PROVIDERS[] = {
+            Provider.ATLAS_QUEST, Provider.GROUNDSPEAK, Provider.MY_LOCATION, Provider.OPENCACHING
+    };
 
     public static enum Source {
         GPX(0), LOC(3), MY_LOCATION(1), WEB_URL(2);
@@ -76,14 +89,41 @@ public class GeocacheFactory {
         }
     }
 
+    static class AttributeFormatterFactory {
+        private AttributeFormatterImpl mAttributeFormatterImpl;
+        private AttributeFormatterNull mAttributeFormatterNull;
+
+        public AttributeFormatterFactory(AttributeFormatterImpl attributeFormatterImpl,
+                AttributeFormatterNull attributeFormatterNull) {
+            mAttributeFormatterImpl = attributeFormatterImpl;
+            mAttributeFormatterNull = attributeFormatterNull;
+        }
+
+        AttributeFormatter getAttributeFormatter(Source sourceType) {
+            if (sourceType == Source.GPX)
+                return mAttributeFormatterImpl;
+            return mAttributeFormatterNull;
+        }
+    }
+
+    private static CacheTypeFactory mCacheTypeFactory;
     private static SourceFactory mSourceFactory;
+    private AttributeFormatterFactory mAttributeFormatterFactory;
 
     public GeocacheFactory() {
         mSourceFactory = new SourceFactory();
+        mCacheTypeFactory = new CacheTypeFactory();
+        mAttributeFormatterFactory = new AttributeFormatterFactory(new AttributeFormatterImpl(),
+                new AttributeFormatterNull());
+    }
+
+    public CacheType cacheTypeFromInt(int cacheTypeIx) {
+        return mCacheTypeFactory.fromInt(cacheTypeIx);
     }
 
     public Geocache create(CharSequence id, CharSequence name, double latitude, double longitude,
-            Source sourceType, String sourceName) {
+            Source sourceType, String sourceName, CacheType cacheType, int difficulty, int terrain,
+            int container) {
         if (id.length() < 2) {
             // ID is missing for waypoints imported from the browser; create a
             // new id from the time.
@@ -91,11 +131,13 @@ public class GeocacheFactory {
         }
         if (name == null)
             name = "";
-        return new Geocache(id, name, latitude, longitude, sourceType, sourceName);
+        final AttributeFormatter attributeFormatter = mAttributeFormatterFactory
+                .getAttributeFormatter(sourceType);
+        return new Geocache(id, name, latitude, longitude, sourceType, sourceName, cacheType,
+                difficulty, terrain, container, attributeFormatter);
     }
 
     public Source sourceFromInt(int sourceIx) {
         return mSourceFactory.fromInt(sourceIx);
     }
-
 }

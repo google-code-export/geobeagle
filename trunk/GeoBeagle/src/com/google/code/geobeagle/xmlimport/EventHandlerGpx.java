@@ -20,6 +20,14 @@ import com.google.code.geobeagle.xmlimport.GpxToCacheDI.XmlPullParserWrapper;
 import java.io.IOException;
 
 class EventHandlerGpx implements EventHandler {
+    static final String XPATH_CACHE_CONTAINER = "/gpx/wpt/groundspeak:cache/groundspeak:container";
+    static final String XPATH_CACHE_DIFFICULTY = "/gpx/wpt/groundspeak:cache/groundspeak:difficulty";
+    static final String XPATH_CACHE_TERRAIN = "/gpx/wpt/groundspeak:cache/groundspeak:terrain";
+    static final String XPATH_CACHE_TYPE = "/gpx/wpt/groundspeak:cache/groundspeak:type";
+    static final String XPATH_GEOCACHE_CONTAINER = "/gpx/wpt/geocache/container";
+    static final String XPATH_GEOCACHE_DIFFICULTY = "/gpx/wpt/geocache/difficulty";
+    static final String XPATH_GEOCACHE_TERRAIN = "/gpx/wpt/geocache/terrain";
+    static final String XPATH_GEOCACHE_TYPE = "/gpx/wpt/geocache/type";
     static final String XPATH_GEOCACHEHINT = "/gpx/wpt/geocache/hints";
     static final String XPATH_GEOCACHELOGDATE = "/gpx/wpt/geocache/logs/log/time";
     static final String XPATH_GEOCACHENAME = "/gpx/wpt/geocache/name";
@@ -29,7 +37,7 @@ class EventHandlerGpx implements EventHandler {
     static final String XPATH_HINT = "/gpx/wpt/groundspeak:cache/groundspeak:encoded_hints";
     static final String XPATH_LOGDATE = "/gpx/wpt/groundspeak:cache/groundspeak:logs/groundspeak:log/groundspeak:date";
     static final String[] XPATH_PLAINLINES = {
-            "/gpx/wpt/desc", "/gpx/wpt/groundspeak:cache/groundspeak:type",
+            "/gpx/wpt/cmt", "/gpx/wpt/desc", "/gpx/wpt/groundspeak:cache/groundspeak:type",
             "/gpx/wpt/groundspeak:cache/groundspeak:container",
             "/gpx/wpt/groundspeak:cache/groundspeak:short_description",
             "/gpx/wpt/groundspeak:cache/groundspeak:long_description",
@@ -55,40 +63,50 @@ class EventHandlerGpx implements EventHandler {
 
     public void endTag(String previousFullPath) throws IOException {
         if (previousFullPath.equals(XPATH_WPT)) {
-            mCachePersisterFacade.endTag(Source.GPX);
+            mCachePersisterFacade.endCache(Source.GPX);
         }
     }
 
-    public void startTag(String mFullPath, XmlPullParserWrapper mXmlPullParser) {
-        if (mFullPath.equals(XPATH_WPT)) {
-            mCachePersisterFacade.newCache();
-            mCachePersisterFacade.wpt(mXmlPullParser.getAttributeValue(null, "lat"), mXmlPullParser
+    public void startTag(String fullPath, XmlPullParserWrapper xmlPullParser) {
+        if (fullPath.equals(XPATH_WPT)) {
+            mCachePersisterFacade.startCache();
+            mCachePersisterFacade.wpt(xmlPullParser.getAttributeValue(null, "lat"), xmlPullParser
                     .getAttributeValue(null, "lon"));
         }
     }
 
-    public boolean text(String mFullPath, String text) throws IOException {
+    public boolean text(String fullPath, String text) throws IOException {
         text = text.trim();
-        if (mFullPath.equals(XPATH_WPTNAME)) {
+        if (fullPath.equals(XPATH_WPTNAME)) {
             mCachePersisterFacade.wptName(text);
-        } else if (mFullPath.equals(XPATH_WPTDESC)) {
+        } else if (fullPath.equals(XPATH_WPTDESC)) {
             mCachePersisterFacade.wptDesc(text);
-        } else if (mFullPath.equals(XPATH_GPXTIME)) {
+        } else if (fullPath.equals(XPATH_GPXTIME)) {
             return mCachePersisterFacade.gpxTime(text);
-        } else if (mFullPath.equals(XPATH_GROUNDSPEAKNAME) || mFullPath.equals(XPATH_GEOCACHENAME)) {
+        } else if (fullPath.equals(XPATH_GROUNDSPEAKNAME) || fullPath.equals(XPATH_GEOCACHENAME)) {
             mCachePersisterFacade.groundspeakName(text);
-        } else if (mFullPath.equals(XPATH_LOGDATE) || mFullPath.equals(XPATH_GEOCACHELOGDATE)) {
+        } else if (fullPath.equals(XPATH_LOGDATE) || fullPath.equals(XPATH_GEOCACHELOGDATE)) {
             mCachePersisterFacade.logDate(text);
-        } else if (mFullPath.equals(XPATH_SYM)) {
+        } else if (fullPath.equals(XPATH_SYM)) {
             mCachePersisterFacade.symbol(text);
-        } else if (mFullPath.equals(XPATH_HINT) || mFullPath.equals(XPATH_GEOCACHEHINT)) {
+        } else if (fullPath.equals(XPATH_HINT) || fullPath.equals(XPATH_GEOCACHEHINT)) {
             if (!text.equals("")) {
                 mCachePersisterFacade.hint(text);
             }
+        } else if (fullPath.equals(XPATH_CACHE_TYPE) || fullPath.equals(XPATH_GEOCACHE_TYPE)) {
+            mCachePersisterFacade.cacheType(text);
+        } else if (fullPath.equals(XPATH_CACHE_DIFFICULTY)
+                || fullPath.equals(XPATH_GEOCACHE_DIFFICULTY)) {
+            mCachePersisterFacade.difficulty(text);
+        } else if (fullPath.equals(XPATH_CACHE_TERRAIN) || fullPath.equals(XPATH_GEOCACHE_TERRAIN)) {
+            mCachePersisterFacade.terrain(text);
+        } else if (fullPath.equals(XPATH_CACHE_CONTAINER)
+                || fullPath.equals(XPATH_GEOCACHE_CONTAINER)) {
+            mCachePersisterFacade.container(text);
         }
-
+        
         for (String writeLineMatch : XPATH_PLAINLINES) {
-            if (mFullPath.equals(writeLineMatch)) {
+            if (fullPath.equals(writeLineMatch)) {
                 mCachePersisterFacade.line(text);
                 return true;
             }

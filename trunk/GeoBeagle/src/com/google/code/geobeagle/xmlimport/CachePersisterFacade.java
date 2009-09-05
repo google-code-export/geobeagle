@@ -25,9 +25,8 @@ import java.io.File;
 import java.io.IOException;
 
 public class CachePersisterFacade {
-    public static final int WAKELOCK_DURATION = 5000;
-
     private final CacheDetailsWriter mCacheDetailsWriter;
+    private String mCacheName = "";
     private final CacheTagWriter mCacheTagWriter;
     private final FileFactory mFileFactory;
     private final MessageHandler mMessageHandler;
@@ -35,27 +34,40 @@ public class CachePersisterFacade {
 
     CachePersisterFacade(CacheTagWriter cacheTagWriter, FileFactory fileFactory,
             CacheDetailsWriter cacheDetailsWriter, MessageHandler messageHandler, WakeLock wakeLock) {
+        mCacheDetailsWriter = cacheDetailsWriter;
         mCacheTagWriter = cacheTagWriter;
         mFileFactory = fileFactory;
-        mCacheDetailsWriter = cacheDetailsWriter;
         mMessageHandler = messageHandler;
         mWakeLock = wakeLock;
     }
 
-    public void close(boolean success) {
+    void cacheType(String text) {
+        mCacheTagWriter.cacheType(text);
+    }
+
+    void close(boolean success) {
         mCacheTagWriter.stopWriting(success);
     }
 
-    public void end() {
+    void container(String text) {
+        mCacheTagWriter.container(text);
+    }
+
+    void difficulty(String text) {
+        mCacheTagWriter.difficulty(text);
+    }
+
+    void end() {
         mCacheTagWriter.end();
     }
 
-    void endTag(Source source) throws IOException {
+    void endCache(Source source) throws IOException {
+        mMessageHandler.updateName(mCacheName);
         mCacheDetailsWriter.close();
         mCacheTagWriter.write(source);
     }
 
-    public boolean gpxTime(String gpxTime) {
+    boolean gpxTime(String gpxTime) {
         return mCacheTagWriter.gpxTime(gpxTime);
     }
 
@@ -63,7 +75,7 @@ public class CachePersisterFacade {
         mCacheTagWriter.cacheName(text);
     }
 
-    public void hint(String text) throws IOException {
+    void hint(String text) throws IOException {
         mCacheDetailsWriter.writeHint(text);
     }
 
@@ -75,14 +87,10 @@ public class CachePersisterFacade {
         mCacheDetailsWriter.writeLogDate(text);
     }
 
-    void newCache() {
-        mCacheTagWriter.clear();
-    }
-
-    void open(String text) {
-        mMessageHandler.updateSource(text);
+    void open(String path) {
+        mMessageHandler.updateSource(path);
         mCacheTagWriter.startWriting();
-        mCacheTagWriter.gpxName(text);
+        mCacheTagWriter.gpxName(path);
     }
 
     void start() {
@@ -90,8 +98,17 @@ public class CachePersisterFacade {
         file.mkdirs();
     }
 
-    public void symbol(String text) {
+    void startCache() {
+        mCacheName = "";
+        mCacheTagWriter.clear();
+    }
+
+    void symbol(String text) {
         mCacheTagWriter.symbol(text);
+    }
+
+    void terrain(String text) {
+        mCacheTagWriter.terrain(text);
     }
 
     void wpt(String latitude, String longitude) {
@@ -99,9 +116,9 @@ public class CachePersisterFacade {
         mCacheDetailsWriter.latitudeLongitude(latitude, longitude);
     }
 
-    public void wptDesc(String text) {
-        mMessageHandler.updateName(text);
-        mCacheTagWriter.cacheName(text);
+    void wptDesc(String cacheName) {
+        mCacheName = cacheName;
+        mCacheTagWriter.cacheName(cacheName);
     }
 
     void wptName(String wpt) throws IOException {
@@ -109,7 +126,7 @@ public class CachePersisterFacade {
         mCacheDetailsWriter.writeWptName(wpt);
         mCacheTagWriter.id(wpt);
         mMessageHandler.updateWaypointId(wpt);
-        mWakeLock.acquire(WAKELOCK_DURATION);
+        mWakeLock.acquire(GpxLoader.WAKELOCK_DURATION);
     }
 
 }

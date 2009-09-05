@@ -21,7 +21,7 @@ public class FilterNearestCaches {
     private final WhereFactory mWhereFactories[];
 
     public FilterNearestCaches(WhereFactoryAllCaches whereFactoryAllCaches,
-            WhereFactoryNearestCaches whereFactoryNearestCaches) {
+            WhereFactory whereFactoryNearestCaches) {
         mWhereFactories = new WhereFactory[] {
                 whereFactoryAllCaches, whereFactoryNearestCaches
         };

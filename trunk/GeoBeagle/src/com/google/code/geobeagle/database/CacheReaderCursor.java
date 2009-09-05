@@ -14,6 +14,7 @@
 
 package com.google.code.geobeagle.database;
 
+import com.google.code.geobeagle.CacheType;
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.GeocacheFactory;
 
@@ -37,9 +38,16 @@ public class CacheReaderCursor {
 
     public Geocache getCache() {
         String sourceName = mCursor.getString(4);
+
+        CacheType cacheType = mGeocacheFactory.cacheTypeFromInt(Integer.parseInt(mCursor
+                .getString(5)));
+        int difficulty = Integer.parseInt(mCursor.getString(6));
+        int terrain = Integer.parseInt(mCursor.getString(7));
+        int container = Integer.parseInt(mCursor.getString(8));
         return mGeocacheFactory.create(mCursor.getString(2), mCursor.getString(3), mCursor
                 .getDouble(0), mCursor.getDouble(1), mDbToGeocacheAdapter
-                .sourceNameToSourceType(sourceName), sourceName);
+                .sourceNameToSourceType(sourceName), sourceName, cacheType, difficulty, terrain,
+                container);
     }
 
     boolean moveToNext() {

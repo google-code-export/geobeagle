@@ -14,21 +14,12 @@
 
 package com.google.code.geobeagle.database;
 
-import static org.easymock.EasyMock.expect;
-import static org.easymock.classextension.EasyMock.createMock;
-import static org.easymock.classextension.EasyMock.replay;
-import static org.easymock.classextension.EasyMock.verify;
 import static org.junit.Assert.assertEquals;
 
-import com.google.code.geobeagle.database.Database;
-import com.google.code.geobeagle.database.Database.ISQLiteDatabase;
-import com.google.code.geobeagle.database.Database.OpenHelperDelegate;
 
 import org.junit.Test;
 
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -48,6 +39,9 @@ public class DatabaseTest {
         }
 
         public void beginTransaction() {
+        }
+
+        public void close() {
         }
 
         public int countResults(String table, String sql, String... args) {
@@ -81,18 +75,30 @@ public class DatabaseTest {
             return null;
         }
 
+        @Override
+        public Cursor rawQuery(String string, String[] object) {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
         public void setTransactionSuccessful() {
+        }
+
+        @Override
+        public boolean isOpen() {
+            // TODO Auto-generated method stub
+            return false;
         }
     }
 
+    final static String schema10 = Database.SQL_CREATE_CACHE_TABLE_V10
+            + Database.SQL_CREATE_IDX_LATITUDE + Database.SQL_CREATE_IDX_LONGITUDE
+            + Database.SQL_CREATE_IDX_SOURCE + Database.SQL_CREATE_GPX_TABLE_V10;
     // Previous schemas.
-    final static String schema6 = "CREATE TABLE CACHES (Id VARCHAR PRIMARY KEY,"
-            + " Description VARCHAR Latitude DOUBLE, Longitude DOUBLE, Source VARCHAR)";
-    final static String schema7 = "CREATE TABLE CACHES (Id VARCHAR PRIMARY KEY, "
-            + "Description VARCHAR, Latitude DOUBLE, Longitude DOUBLE, Source VARCHAR); "
-            + "CREATE INDEX IDX_LATITUDE on CACHES (Latitude); "
-            + "CREATE INDEX IDX_LONGITUDE on CACHES (Longitude); "
-            + "CREATE INDEX IDX_SOURCE on CACHES (Source); ";
+    final static String schema6 = Database.SQL_CREATE_CACHE_TABLE_V08;
+    final static String schema7 = Database.SQL_CREATE_CACHE_TABLE_V08
+            + Database.SQL_CREATE_IDX_LATITUDE + Database.SQL_CREATE_IDX_LONGITUDE
+            + Database.SQL_CREATE_IDX_SOURCE;
 
     /**
      * <pre>
@@ -104,11 +110,15 @@ public class DatabaseTest {
      * version 9
      * fixes bug where INDEX wasn't being created on upgrade.
      * 
+     * version 10
+     * adds GPX table
+     * 
+     * version 11
+     * adds new CACHES columns: CacheType, Difficulty, Terrain, and Container
      * </pre>
      * 
      * @throws IOException
      */
-
     private static String convertStreamToString(InputStream is) throws IOException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(is));
         StringBuilder sb = new StringBuilder();
@@ -123,8 +133,8 @@ public class DatabaseTest {
     }
 
     static String currentSchema() {
-        String currentSchema = SQL(Database.SQL_CREATE_CACHE_TABLE)
-                + SQL(Database.SQL_CREATE_GPX_TABLE) + SQL(Database.SQL_CREATE_IDX_LATITUDE)
+        String currentSchema = SQL(Database.SQL_CREATE_CACHE_TABLE_V11)
+                + SQL(Database.SQL_CREATE_GPX_TABLE_V10) + SQL(Database.SQL_CREATE_IDX_LATITUDE)
                 + SQL(Database.SQL_CREATE_IDX_LONGITUDE) + SQL(Database.SQL_CREATE_IDX_SOURCE);
         return currentSchema;
     }
@@ -150,37 +160,7 @@ public class DatabaseTest {
     }
 
     private static String SQL(String s) {
-        return s + ";\n";
-    }
-
-    @Test
-    public void testDatabaseGetReableDatabase() {
-        SQLiteDatabase sqlite = createMock(SQLiteDatabase.class);
-        SQLiteOpenHelper sqliteOpenHelper = createMock(SQLiteOpenHelper.class);
-
-        expect(sqliteOpenHelper.getReadableDatabase()).andReturn(sqlite);
-
-        replay(sqlite);
-        replay(sqliteOpenHelper);
-        Database database = new Database(sqliteOpenHelper);
-        assertEquals(sqlite, database.getReadableDatabase());
-        verify(sqliteOpenHelper);
-        verify(sqlite);
-    }
-
-    @Test
-    public void testDatabaseGetWritableDatabase() {
-        SQLiteDatabase sqlite = createMock(SQLiteDatabase.class);
-        SQLiteOpenHelper sqliteOpenHelper = createMock(SQLiteOpenHelper.class);
-
-        expect(sqliteOpenHelper.getWritableDatabase()).andReturn(sqlite);
-
-        replay(sqlite);
-        replay(sqliteOpenHelper);
-        Database database = new Database(sqliteOpenHelper);
-        assertEquals(sqlite, database.getWritableDatabase());
-        verify(sqliteOpenHelper);
-        verify(sqlite);
+        return s + "\n";
     }
 
     @Test
@@ -191,6 +171,26 @@ public class DatabaseTest {
         String schema = db.dumpSchema();
 
         assertEquals(currentSchema(), schema);
+    }
+
+    @Test
+    public void testUpgradeFrom10() throws IOException {
+        DesktopSQLiteDatabase db = new DesktopSQLiteDatabase();
+        db.execSQL(schema10);
+        db.execSQL("INSERT INTO CACHES (Id, Source) VALUES (\"GCABC\", \"intent\")");
+        db.execSQL("INSERT INTO CACHES (Id, Source) VALUES (\"GC123\", \"foo.gpx\")");
+        db
+                .execSQL("INSERT INTO GPX (Name, ExportTime, DeleteMe) VALUES (\"seattle.gpx\", \"6-1-2009\", 1)");
+
+        OpenHelperDelegate openHelperDelegate = new OpenHelperDelegate();
+        openHelperDelegate.onUpgrade(db, 10, Database.DATABASE_VERSION);
+        String schema = db.dumpSchema();
+
+        assertEquals(currentSchema(), schema);
+        String caches = db.dumpTable("CACHES");
+        assertEquals("GCABC||||intent|1|0|0|0|0\nGC123||||foo.gpx|1|0|0|0|0\n", caches);
+        String gpx = db.dumpTable("GPX");
+        assertEquals("seattle.gpx|1990-01-01|1\n", gpx);
     }
 
     @Test
@@ -222,7 +222,6 @@ public class DatabaseTest {
         assertEquals("", data);
 
         assertEquals(currentSchema(), schema);
-
     }
 
     @Test
@@ -238,6 +237,13 @@ public class DatabaseTest {
 
         assertEquals(currentSchema(), schema);
         String data = db.dumpTable("CACHES");
-        assertEquals("GCABC||||intent|1\nGC123||||foo.gpx|1\n", data);
+        assertEquals("GCABC||||intent|1|0|0|0|0\nGC123||||foo.gpx|1|0|0|0|0\n", data);
     }
+
+    @Test
+    public void testSqliteDatabaseNull() {
+        final NullClosable db = new NullClosable();
+        db.close();
+    }
+
 }

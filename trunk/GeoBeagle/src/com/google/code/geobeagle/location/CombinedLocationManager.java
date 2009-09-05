@@ -14,15 +14,21 @@
 
 package com.google.code.geobeagle.location;
 
+import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 
+import java.util.ArrayList;
+
 public class CombinedLocationManager {
 
+    private final ArrayList<LocationListener> mLocationListeners;
     private final LocationManager mLocationManager;
 
-    public CombinedLocationManager(LocationManager locationManager) {
+    public CombinedLocationManager(LocationManager locationManager,
+            ArrayList<LocationListener> locationListeners) {
         mLocationManager = locationManager;
+        mLocationListeners = locationListeners;
     }
 
     public boolean isProviderEnabled() {
@@ -30,8 +36,11 @@ public class CombinedLocationManager {
                 || mLocationManager.isProviderEnabled("network");
     }
 
-    public void removeUpdates(LocationListener locationListener) {
-        mLocationManager.removeUpdates(locationListener);
+    public void removeUpdates() {
+        for (LocationListener locationListener : mLocationListeners) {
+            mLocationManager.removeUpdates(locationListener);
+        }
+        mLocationListeners.clear();
     }
 
     public void requestLocationUpdates(int minTime, int minDistance,
@@ -40,5 +49,13 @@ public class CombinedLocationManager {
                 minDistance, locationListener);
         mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, minTime, minDistance,
                 locationListener);
+        mLocationListeners.add(locationListener);
+    }
+
+    public Location getLastKnownLocation() {
+        Location gpsLocation = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        if (gpsLocation != null)
+            return gpsLocation;
+        return mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
     }
 }

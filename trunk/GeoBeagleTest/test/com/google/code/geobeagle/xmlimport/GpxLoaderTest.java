@@ -31,7 +31,9 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import org.xmlpull.v1.XmlPullParserException;
 
 import android.database.sqlite.SQLiteException;
+import android.os.PowerManager.WakeLock;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.Reader;
 import java.text.ParseException;
@@ -47,7 +49,9 @@ public class GpxLoaderTest {
         Throwable e = (Throwable)PowerMock.createMock(exceptionClass);
         ErrorDisplayer errorDisplayer = PowerMock.createMock(ErrorDisplayer.class);
         EventHelper eventHelper = PowerMock.createMock(EventHelper.class);
+        WakeLock wakeLock = PowerMock.createMock(WakeLock.class);
 
+        wakeLock.acquire(15000);
         expect(gpxToCache.load(eventHelper)).andStubReturn(false);
         expectLastCall().andThrow(e);
         expect(gpxToCache.getSource()).andReturn("foo.gpx");
@@ -57,7 +61,7 @@ public class GpxLoaderTest {
         cachePersisterFacade.close(false);
 
         PowerMock.replayAll();
-        assertFalse(new GpxLoader(gpxToCache, cachePersisterFacade, errorDisplayer)
+        assertFalse(new GpxLoader(cachePersisterFacade, errorDisplayer, gpxToCache, wakeLock)
                 .load(eventHelper));
         PowerMock.verifyAll();
     }
@@ -69,7 +73,9 @@ public class GpxLoaderTest {
         Throwable e = (Throwable)PowerMock.createMock(exceptionClass);
         ErrorDisplayer errorDisplayer = PowerMock.createMock(ErrorDisplayer.class);
         EventHelper eventHelper = PowerMock.createMock(EventHelper.class);
+        WakeLock wakeLock = PowerMock.createMock(WakeLock.class);
 
+        wakeLock.acquire(15000);
         gpxToCache.load(eventHelper);
         expectLastCall().andThrow(e);
         expect(e.getMessage()).andReturn("a problem of some sort");
@@ -79,7 +85,7 @@ public class GpxLoaderTest {
         cachePersisterFacade.close(false);
 
         PowerMock.replayAll();
-        assertFalse(new GpxLoader(gpxToCache, cachePersisterFacade, errorDisplayer)
+        assertFalse(new GpxLoader(cachePersisterFacade, errorDisplayer, gpxToCache, wakeLock)
                 .load(eventHelper));
         PowerMock.verifyAll();
     }
@@ -92,14 +98,16 @@ public class GpxLoaderTest {
         Throwable e = (Throwable)PowerMock.createMock(exceptionClass);
         ErrorDisplayer errorDisplayer = PowerMock.createMock(ErrorDisplayer.class);
         EventHelper eventHelper = PowerMock.createMock(EventHelper.class);
+        WakeLock wakeLock = PowerMock.createMock(WakeLock.class);
 
+        wakeLock.acquire(15000);
         expect(gpxToCache.load(eventHelper)).andStubReturn(false);
         expectLastCall().andThrow(e);
         expect(e.fillInStackTrace()).andReturn(e);
         cachePersisterFacade.close(false);
 
         PowerMock.replayAll();
-        assertFalse(new GpxLoader(gpxToCache, cachePersisterFacade, errorDisplayer)
+        assertFalse(new GpxLoader(cachePersisterFacade, errorDisplayer, gpxToCache, wakeLock)
                 .load(eventHelper));
         PowerMock.verifyAll();
     }
@@ -111,7 +119,7 @@ public class GpxLoaderTest {
         gpxToCache.abort();
 
         PowerMock.replayAll();
-        new GpxLoader(gpxToCache, null, null).abort();
+        new GpxLoader(null, null, gpxToCache, null).abort();
         PowerMock.verifyAll();
     }
 
@@ -123,7 +131,7 @@ public class GpxLoaderTest {
         cachePersisterFacade.end();
 
         PowerMock.replayAll();
-        new GpxLoader(null, cachePersisterFacade, null).end();
+        new GpxLoader(cachePersisterFacade, null, null, null).end();
         PowerMock.verifyAll();
     }
 
@@ -134,12 +142,15 @@ public class GpxLoaderTest {
                 .createMock(CachePersisterFacade.class);
         GpxToCache gpxToCache = PowerMock.createMock(GpxToCache.class);
         EventHelper eventHelper = PowerMock.createMock(EventHelper.class);
+        WakeLock wakeLock = PowerMock.createMock(WakeLock.class);
 
+        wakeLock.acquire(15000);
         expect(gpxToCache.load(eventHelper)).andReturn(false);
         cachePersisterFacade.close(true);
 
         PowerMock.replayAll();
-        assertTrue(new GpxLoader(gpxToCache, cachePersisterFacade, null).load(eventHelper));
+        assertTrue(new GpxLoader(cachePersisterFacade, null, gpxToCache, wakeLock)
+                .load(eventHelper));
         PowerMock.verifyAll();
     }
 
@@ -150,12 +161,15 @@ public class GpxLoaderTest {
                 .createMock(CachePersisterFacade.class);
         GpxToCache gpxToCache = PowerMock.createMock(GpxToCache.class);
         EventHelper eventHelper = PowerMock.createMock(EventHelper.class);
+        WakeLock wakeLock = PowerMock.createMock(WakeLock.class);
 
+        wakeLock.acquire(15000);
         expect(gpxToCache.load(eventHelper)).andReturn(true);
         cachePersisterFacade.close(false);
 
         PowerMock.replayAll();
-        assertTrue(new GpxLoader(gpxToCache, cachePersisterFacade, null).load(eventHelper));
+        assertTrue(new GpxLoader(cachePersisterFacade, null, gpxToCache, wakeLock)
+                .load(eventHelper));
         PowerMock.verifyAll();
     }
 
@@ -163,6 +177,12 @@ public class GpxLoaderTest {
     public void testLoadCancelException() throws XmlPullParserException, IOException,
             ParseException, CancelException {
         loadRaiseAndDisplayNothing(CancelException.class);
+    }
+
+    @Test
+    public void testLoadFileNotFoundException() throws XmlPullParserException, IOException,
+            ParseException, CancelException {
+        loadRaiseAndDisplayCustomMessage(FileNotFoundException.class, R.string.file_not_found);
     }
 
     @Test
@@ -195,7 +215,7 @@ public class GpxLoaderTest {
         cachePersisterFacade.open("/sdcard/foo.gpx");
 
         PowerMock.replayAll();
-        new GpxLoader(gpxToCache, cachePersisterFacade, null).open("/sdcard/foo.gpx", reader);
+        new GpxLoader(cachePersisterFacade, null, gpxToCache, null).open("/sdcard/foo.gpx", reader);
         PowerMock.verifyAll();
     }
 
@@ -207,7 +227,7 @@ public class GpxLoaderTest {
         cachePersisterFacade.start();
 
         PowerMock.replayAll();
-        new GpxLoader(null, cachePersisterFacade, null).start();
+        new GpxLoader(cachePersisterFacade, null, null, null).start();
         PowerMock.verifyAll();
     }
 }

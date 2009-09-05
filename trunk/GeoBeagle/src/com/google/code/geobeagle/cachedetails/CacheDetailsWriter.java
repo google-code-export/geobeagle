@@ -37,7 +37,12 @@ public class CacheDetailsWriter {
     }
 
     public void open(String wpt) throws IOException {
-        mHtmlWriter.open(CacheDetailsWriter.GEOBEAGLE_DIR + "/" + wpt + ".html");
+        final String sanitized = replaceIllegalFileChars(wpt);
+        mHtmlWriter.open(CacheDetailsWriter.GEOBEAGLE_DIR + "/" + sanitized + ".html");
+    }
+
+    public static String replaceIllegalFileChars(String wpt) {
+        return wpt.replaceAll("[<\\\\/:\\*\\?\">| \\t]", "_");
     }
 
     public void writeHint(String text) throws IOException {

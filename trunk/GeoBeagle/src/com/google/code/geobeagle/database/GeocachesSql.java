@@ -16,8 +16,6 @@ package com.google.code.geobeagle.database;
 
 import com.google.code.geobeagle.Geocache;
 
-import android.location.Location;
-
 import java.util.ArrayList;
 
 public class GeocachesSql {
@@ -37,8 +35,8 @@ public class GeocachesSql {
         return mGeocaches.getAll();
     }
 
-    public void loadCaches(Location location, WhereFactory whereFactory) {
-        CacheReaderCursor cursor = mCacheReader.open(location, whereFactory);
+    public void loadCaches(double latitude, double longitude, WhereFactory whereFactory) {
+        CacheReaderCursor cursor = mCacheReader.open(latitude, longitude, whereFactory);
         mGeocaches.clear();
         if (cursor != null) {
             read(cursor);
