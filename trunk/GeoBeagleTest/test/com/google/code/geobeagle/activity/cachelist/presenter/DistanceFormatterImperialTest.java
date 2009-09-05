@@ -20,6 +20,8 @@ import com.google.code.geobeagle.formatting.DistanceFormatterImperial;
 
 import org.junit.Test;
 
+import java.util.Locale;
+
 public class DistanceFormatterImperialTest {
     @Test
     public void testFormatNegativeDistance() {
@@ -28,11 +30,13 @@ public class DistanceFormatterImperialTest {
 
     @Test
     public void testMiles() {
-        assertEquals("1.00mi", new DistanceFormatterImperial().formatDistance(1609.344f));
+        Locale.setDefault(Locale.GERMANY);
+        assertEquals("1,00mi", new DistanceFormatterImperial().formatDistance(1609.344f));
     }
 
     @Test
     public void testYards() {
+        Locale.setDefault(Locale.GERMANY);
         assertEquals("1yd", new DistanceFormatterImperial().formatDistance(1.8288f));
     }
 }

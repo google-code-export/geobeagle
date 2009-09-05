@@ -27,6 +27,7 @@ import com.google.code.geobeagle.ResourceProvider;
 import com.google.code.geobeagle.GeocacheFactory.Source;
 import com.google.code.geobeagle.activity.cachelist.GeocacheListController;
 import com.google.code.geobeagle.activity.main.intents.GeocacheToCachePage;
+import com.google.code.geobeagle.activity.main.intents.GeocacheToGoogleMap;
 import com.google.code.geobeagle.activity.main.intents.IntentFactory;
 import com.google.code.geobeagle.activity.main.intents.IntentStarterGeo;
 import com.google.code.geobeagle.activity.main.intents.IntentStarterViewUri;
@@ -195,7 +196,8 @@ public class GeoBeagle extends Activity {
                 gcContainer);
 
         mLocationControlBuffered.onLocationChanged(null);
-        setCacheClickListeners();
+        IntentFactory intentFactory = new IntentFactory(new UriParser());
+        setCacheClickListeners(intentFactory);
 
         // Register for location updates
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 1, mRadar);
@@ -206,8 +208,11 @@ public class GeoBeagle extends Activity {
                         new LocationLifecycleManager(mLocationControlBuffered, locationManager),
                         new LocationLifecycleManager(mRadar, locationManager)
                 });
+
+        final IntentStarterViewUri intentStarterViewUri = new IntentStarterViewUri(this,
+                intentFactory, new GeocacheToGoogleMap(mResourceProvider));
         mGeoBeagleDelegate = GeoBeagleDelegateDi.createGeoBeagleDelegate(this, appLifecycleManager,
-                mGeocacheViewer, mErrorDisplayer);
+                mGeocacheViewer, mErrorDisplayer, intentStarterViewUri);
         mGeoBeagleDelegate.onCreate();
 
         mCompassListener = new CompassListener(new NullRefresher(), mLocationControlBuffered,
@@ -307,16 +312,14 @@ public class GeoBeagle extends Activity {
         mGeoBeagleDelegate.onSaveInstanceState(outState);
     }
 
-    private void setCacheClickListeners() {
-        IntentFactory intentFactory = new IntentFactory(new UriParser());
-
+    private void setCacheClickListeners(IntentFactory intentFactory) {
         OnCacheButtonClickListenerBuilder cacheClickListenerSetter = new OnCacheButtonClickListenerBuilder(
                 this, mErrorDisplayer);
 
         cacheClickListenerSetter.set(R.id.maps, new IntentStarterGeo(this, new Intent(this,
                 GeoMapActivity.class)), "Map error");
         cacheClickListenerSetter.set(R.id.cache_page, new IntentStarterViewUri(this, intentFactory,
-                mGeocacheViewer, new GeocacheToCachePage(mResourceProvider)), "");
+                new GeocacheToCachePage(mResourceProvider)), "");
         cacheClickListenerSetter.set(R.id.radarview, new IntentStarterGeo(this, new Intent(
                 "com.google.android.radar.SHOW_RADAR")),
                 "Please install the Radar application to use Radar.");

@@ -21,6 +21,7 @@ import com.google.code.geobeagle.activity.ActivitySaver;
 import com.google.code.geobeagle.activity.MenuAction;
 import com.google.code.geobeagle.activity.main.fieldnotes.FieldNoteSender;
 import com.google.code.geobeagle.activity.main.fieldnotes.FieldNoteSenderDI;
+import com.google.code.geobeagle.activity.main.intents.IntentStarterViewUri;
 import com.google.code.geobeagle.activity.main.menuactions.MenuActionCacheList;
 import com.google.code.geobeagle.activity.main.menuactions.MenuActionEditGeocache;
 import com.google.code.geobeagle.activity.main.menuactions.MenuActionLogDnf;
@@ -41,7 +42,7 @@ public class GeoBeagleDelegateDi {
 
     public static GeoBeagleDelegate createGeoBeagleDelegate(GeoBeagle parent,
             AppLifecycleManager appLifecycleManager, GeocacheViewer geocacheViewer,
-            ErrorDisplayer errorDisplayer) {
+            ErrorDisplayer errorDisplayer, IntentStarterViewUri intentStarterViewGoogleMaps) {
         final AlertDialog.Builder cacheDetailsBuilder = new AlertDialog.Builder(parent);
         final LayoutInflater layoutInflater = LayoutInflater.from(parent);
         final CacheDetailsOnClickListener cacheDetailsOnClickListener = Misc
@@ -58,6 +59,8 @@ public class GeoBeagleDelegateDi {
         menuActions.put(R.id.menu_log_find, new MenuActionLogFind(parent));
         menuActions.put(R.id.menu_search_online, new MenuActionSearchOnline(parent));
         menuActions.put(R.id.menu_settings, new MenuActionSettings(parent));
+        menuActions.put(R.id.menu_google_maps,
+                new MenuActionGoogleMaps(intentStarterViewGoogleMaps));
         return new GeoBeagleDelegate(parent, activitySaver, appLifecycleManager,
                 cacheDetailsOnClickListener, fieldNoteSender, menuActions, resources);
     }
