@@ -14,47 +14,36 @@
 
 package com.google.code.geobeagle.activity.main.intents;
 
-import static org.easymock.EasyMock.expect;
-import static org.easymock.classextension.EasyMock.createMock;
-import static org.easymock.classextension.EasyMock.replay;
-import static org.easymock.classextension.EasyMock.verify;
-
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.activity.main.GeoBeagle;
-import com.google.code.geobeagle.activity.main.intents.GeocacheToUri;
-import com.google.code.geobeagle.activity.main.intents.IntentFactory;
-import com.google.code.geobeagle.activity.main.intents.IntentStarterViewUri;
-import com.google.code.geobeagle.activity.main.view.GeocacheViewer;
 
+import org.easymock.EasyMock;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.powermock.api.easymock.PowerMock;
+import org.powermock.modules.junit4.PowerMockRunner;
 
 import android.content.Intent;
 
+@RunWith(PowerMockRunner.class)
 public class IntentStarterViewUriTest {
     @Test
     public void testStartIntent() {
-        GeoBeagle geoBeagle = createMock(GeoBeagle.class);
-        IntentFactory intentFactory = createMock(IntentFactory.class);
-        GeocacheViewer geocacheViewer = createMock(GeocacheViewer.class);
-        GeocacheToUri geocacheToUri = createMock(GeocacheToUri.class);
-        Intent intent = createMock(Intent.class);
+        GeoBeagle geoBeagle = PowerMock.createMock(GeoBeagle.class);
+        IntentFactory intentFactory = PowerMock.createMock(IntentFactory.class);
+        GeocacheToUri geocacheToUri = PowerMock.createMock(GeocacheToUri.class);
+        Intent intent = PowerMock.createMock(Intent.class);
+        Geocache geocache = PowerMock.createMock(Geocache.class);
 
-        Geocache geocache = createMock(Geocache.class);
-        expect(geoBeagle.getGeocache()).andReturn(geocache);
-        expect(geocacheToUri.convert(geocache)).andReturn("destination uri");
-        expect(intentFactory.createIntent(Intent.ACTION_VIEW, "destination uri")).andReturn(intent);
+        EasyMock.expect(geoBeagle.getGeocache()).andReturn(geocache);
+        EasyMock.expect(geocacheToUri.convert(geocache)).andReturn("destination uri");
+        EasyMock.expect(intentFactory.createIntent(Intent.ACTION_VIEW, "destination uri"))
+                .andReturn(intent);
         geoBeagle.startActivity(intent);
 
-        replay(geocacheViewer);
-        replay(geocacheToUri);
-        replay(intentFactory);
-        replay(geoBeagle);
-        new IntentStarterViewUri(geoBeagle, intentFactory, geocacheViewer, geocacheToUri)
-                .startIntent();
-        verify(geocacheViewer);
-        verify(geocacheToUri);
-        verify(intentFactory);
-        verify(geoBeagle);
+        PowerMock.replayAll();
+        new IntentStarterViewUri(geoBeagle, intentFactory, geocacheToUri).startIntent();
+        PowerMock.verifyAll();
     }
 
 }
