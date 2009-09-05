@@ -53,7 +53,6 @@ public class EditCacheActivity extends Activity {
     protected void onPause() {
         super.onPause();
         mActivityWithDatabaseLifecycleManager.onPause();
-        mEditCacheActivityDelegate.onPause();
     }
 
     @Override
