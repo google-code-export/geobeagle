@@ -69,7 +69,7 @@ public class GeoMapActivityDelegateTest {
         EasyMock.expect(intent.getFloatExtra("longitude", 0)).andReturn(37.0f);
         PowerMock.expectNew(GeoPoint.class, 122000000, 37000000).andReturn(geoPoint);
         mapController.setCenter(geoPoint);
-
+        EasyMock.expect(mapController.setZoom(14)).andReturn(14);
         cachesOverlay.addCaches(context, 122, 37, geocachesSql, whereFactory);
 
         PowerMock.replayAll();

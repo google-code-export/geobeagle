@@ -30,6 +30,8 @@ import com.google.code.geobeagle.database.WhereFactoryNearestCaches;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -66,6 +68,7 @@ public class GeoMapActivityDelegate {
     private final MapView mMapView;
     private final MenuActions mMenuActions;
     private final MyLocationOverlay mMyLocationOverlay;
+    private static boolean fZoomed = false;
 
     public GeoMapActivityDelegate(Activity parent, MapView mapView, Context context,
             MyLocationOverlay myLocationOverlay, MenuActions menuActions) {
@@ -81,14 +84,16 @@ public class GeoMapActivityDelegate {
         mMapView.setBuiltInZoomControls(true);
         // mMapView.setOnLongClickListener()
         mMapView.setSatellite(false);
-
         double latitude = intent.getFloatExtra("latitude", 0);
         double longitude = intent.getFloatExtra("longitude", 0);
         GeoPoint center = new GeoPoint((int)(latitude * GeoUtils.MILLION),
                 (int)(longitude * GeoUtils.MILLION));
 
         mapController.setCenter(center);
-        // controller.setZoom(14);
+        if (!fZoomed) {
+            mapController.setZoom(14);
+            fZoomed = true;
+        }
 
         mapOverlays.add(cachesOverlay);
         mapOverlays.add(mMyLocationOverlay);
