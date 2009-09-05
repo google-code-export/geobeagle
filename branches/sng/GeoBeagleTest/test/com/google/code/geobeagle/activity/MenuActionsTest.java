@@ -12,11 +12,14 @@
  ** limitations under the License.
  */
 
-package com.google.code.geobeagle.cachelist;
+package com.google.code.geobeagle.activity;
+
+import static org.junit.Assert.*;
 
 import com.google.code.geobeagle.R;
+import com.google.code.geobeagle.activity.MenuAction;
+import com.google.code.geobeagle.activity.MenuActions;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionSyncGpx;
-import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActions;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -32,7 +35,13 @@ public class MenuActionsTest {
         menuActionSyncGpx.act();
 
         PowerMock.replayAll();
-        new MenuActions(null, null, menuActionSyncGpx, null).act(R.id.menu_sync);
+        final MenuActions menuActions = new MenuActions(new MenuAction[] {
+            menuActionSyncGpx
+        }, new int[] {
+            R.id.menu_sync
+        });
+        assertTrue(menuActions.act(R.id.menu_sync));
+        assertFalse(menuActions.act(R.id.menu_cache_list));
         PowerMock.verifyAll();
     }
 

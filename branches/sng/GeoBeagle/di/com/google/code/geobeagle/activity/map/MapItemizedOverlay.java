@@ -29,12 +29,16 @@ import java.util.ArrayList;
 
 public class MapItemizedOverlay extends ItemizedOverlay<CacheItem> {
 
-    private ArrayList<CacheItem> mOverlays = new ArrayList<CacheItem>();
-    private Context mContext;
+    private final CacheItemFactory mCacheItemFactory;
+    private final Context mContext;
+    private final ArrayList<CacheItem> mOverlays;
 
-    public MapItemizedOverlay(Context context, Drawable defaultMarker) {
+    public MapItemizedOverlay(Context context, Drawable defaultMarker,
+            CacheItemFactory cacheItemFactory) {
         super(boundCenter(defaultMarker));
         mContext = context;
+        mCacheItemFactory = cacheItemFactory;
+        mOverlays = new ArrayList<CacheItem>();
     }
 
     public void addCaches(Context context, double latitude, double longitude,
@@ -45,15 +49,10 @@ public class MapItemizedOverlay extends ItemizedOverlay<CacheItem> {
         ArrayList<Geocache> list = geocachesSql.getGeocaches();
 
         for (Geocache cache : list) {
-            CacheItem item = CacheItem.Create(context.getResources(), cache);
+            CacheItem item = mCacheItemFactory.createCacheItem(cache);
             if (item != null)
                 addOverlay(item);
         }
-        populate();
-    }
-
-    public void clearOverlays() {
-        mOverlays.clear();
         populate();
     }
 
@@ -62,7 +61,8 @@ public class MapItemizedOverlay extends ItemizedOverlay<CacheItem> {
         // populate();
     }
 
-    public void doPopulate() {
+    public void clearOverlays() {
+        mOverlays.clear();
         populate();
     }
 
@@ -71,9 +71,8 @@ public class MapItemizedOverlay extends ItemizedOverlay<CacheItem> {
         return mOverlays.get(i);
     }
 
-    @Override
-    public int size() {
-        return mOverlays.size();
+    public void doPopulate() {
+        populate();
     }
 
     @Override
@@ -91,5 +90,10 @@ public class MapItemizedOverlay extends ItemizedOverlay<CacheItem> {
         mContext.startActivity(intent);
 
         return true;
+    }
+
+    @Override
+    public int size() {
+        return mOverlays.size();
     }
 }

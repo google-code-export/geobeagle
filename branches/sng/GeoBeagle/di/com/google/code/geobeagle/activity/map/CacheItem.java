@@ -12,14 +12,21 @@
  ** limitations under the License.
  */
 
-package com.google.code.geobeagle.activity.main;
+package com.google.code.geobeagle.activity.map;
 
-import com.google.code.geobeagle.activity.MenuAction;
-import com.google.code.geobeagle.activity.MenuActions;
+import com.google.android.maps.GeoPoint;
+import com.google.android.maps.OverlayItem;
+import com.google.code.geobeagle.Geocache;
 
-public class MainViewMenuActions extends MenuActions {
+class CacheItem extends OverlayItem {
+    private final Geocache mGeocache;
 
-    public MainViewMenuActions(MenuAction[] menuActions, int menuIds[]) {
-        super(menuActions, menuIds);
+    CacheItem(GeoPoint geoPoint, String id, Geocache geocache) {
+        super(geoPoint, id, "");
+        mGeocache = geocache;
+    }
+
+    Geocache getGeocache() {
+        return mGeocache;
     }
 }

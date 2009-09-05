@@ -14,11 +14,13 @@
 
 package com.google.code.geobeagle.activity.cachelist;
 
+import com.google.code.geobeagle.R;
+import com.google.code.geobeagle.activity.MenuAction;
+import com.google.code.geobeagle.activity.MenuActions;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionMyLocation;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionSearchOnline;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionSyncGpx;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionToggleFilter;
-import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActions;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
 import com.google.code.geobeagle.database.FilterNearestCaches;
 import com.google.code.geobeagle.database.ISQLiteDatabase;
@@ -42,7 +44,15 @@ public class MenuActionsFactory {
                 mFilterNearestCaches, cacheListRefresh);
         final MenuActionMyLocation menuActionMyLocation = mMenuActionMyLocationFactory.create(
                 cacheListRefresh, writableDatabase);
-        return new MenuActions(menuActionMyLocation, mMenuActionSearchOnline, menuActionSyncGpx,
-                mMenuActionToggleFilter);
+        final MenuAction menuActions[] = {
+                menuActionSyncGpx, mMenuActionToggleFilter, menuActionMyLocation,
+                mMenuActionSearchOnline
+        };
+        final int menuIds[] = {
+                R.id.menu_sync, R.id.menu_toggle_filter, R.id.menu_my_location,
+                R.id.menu_search_online,
+        };
+
+        return new MenuActions(menuActions, menuIds);
     }
 }

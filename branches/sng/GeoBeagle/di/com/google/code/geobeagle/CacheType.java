@@ -15,11 +15,11 @@
 package com.google.code.geobeagle;
 
 public enum CacheType {
-    NULL(0, R.drawable.blank, R.drawable.blank, false), MULTI(2, R.drawable.cache_multi,
-            R.drawable.cache_multi_big), TRADITIONAL(1, R.drawable.cache_tradi,
-            R.drawable.cache_tradi_big), UNKNOWN(3, R.drawable.cache_mystery,
-            R.drawable.cache_mystery_big), MY_LOCATION(4, R.drawable.blue_dot,
-            R.drawable.blue_dot);
+    NULL(0, R.drawable.blank, R.drawable.blank, R.drawable.blank, false), MULTI(2,
+            R.drawable.cache_multi, R.drawable.cache_multi_big, R.drawable.map_multi), TRADITIONAL(
+            1, R.drawable.cache_tradi, R.drawable.cache_tradi_big, R.drawable.map_tradi), UNKNOWN(
+            3, R.drawable.cache_mystery, R.drawable.cache_mystery_big, R.drawable.map_mystery), MY_LOCATION(
+            4, R.drawable.blue_dot, R.drawable.blue_dot, R.drawable.blue_dot);
 
     public static class CacheTypeFactory {
         private final CacheType mCacheTypes[] = new CacheType[values().length];
@@ -38,18 +38,21 @@ public enum CacheType {
     private final int mIconIdBig;
     private final int mIx;
     private final boolean mVisible;
+    private final int mIconIdMap;
 
-    CacheType(int ix, int drawableId, int drawableIdBig) {
+    CacheType(int ix, int drawableId, int drawableIdBig, int drawableIdMap) {
         mIx = ix;
         mIconId = drawableId;
         mIconIdBig = drawableIdBig;
+        mIconIdMap = drawableIdMap;
         mVisible = true;
     }
 
-    CacheType(int ix, int drawableId, int drawableIdBig, boolean visible) {
+    CacheType(int ix, int drawableId, int drawableIdBig, int drawableIdMap, boolean visible) {
         mIx = ix;
         mIconId = drawableId;
         mIconIdBig = drawableIdBig;
+        mIconIdMap = drawableIdMap;
         mVisible = visible;
     }
 
@@ -67,5 +70,9 @@ public enum CacheType {
 
     public boolean isVisible() {
         return mVisible;
+    }
+
+    public int iconMap() {
+        return mIconIdMap;
     }
 }

@@ -21,6 +21,7 @@ import com.google.android.maps.MyLocationOverlay;
 import com.google.android.maps.Overlay;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.MenuAction;
+import com.google.code.geobeagle.activity.MenuActions;
 import com.google.code.geobeagle.database.DatabaseDI;
 import com.google.code.geobeagle.database.GeocachesSql;
 import com.google.code.geobeagle.database.ISQLiteDatabase;
@@ -31,6 +32,7 @@ import com.google.code.geobeagle.database.WhereFactoryNearestCaches.WhereStringF
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -61,8 +63,12 @@ public class GeoMapActivity extends MapActivity {
         final SearchFactory searchFactory = new SearchFactory();
         final WhereFactoryNearestCaches whereFactory = new WhereFactoryNearestCaches(searchFactory,
                 whereStringFactory);
-        final Drawable drawable = getResources().getDrawable(R.drawable.map_others);
-        final MapItemizedOverlay mapItemizedOverlay = new MapItemizedOverlay(this, drawable);
+        final Resources resources = getResources();
+        final Drawable defaultMarker = resources.getDrawable(R.drawable.map_others);
+        final CacheDrawables cacheDrawables = new CacheDrawables(resources);
+        final CacheItemFactory cacheItemFactory = new CacheItemFactory(cacheDrawables);
+        final MapItemizedOverlay mapItemizedOverlay = new MapItemizedOverlay(this, defaultMarker,
+                cacheItemFactory);
         final MyLocationOverlay myLocationOverlay = new MyLocationOverlay(this, mapView);
         final MapController mapController = mapView.getController();
         final List<Overlay> mapOverlays = mapView.getOverlays();

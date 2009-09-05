@@ -12,9 +12,8 @@
  ** limitations under the License.
  */
 
-package com.google.code.geobeagle.activity.map;
+package com.google.code.geobeagle.activity;
 
-import com.google.code.geobeagle.activity.MenuAction;
 
 import java.util.HashMap;
 
@@ -22,10 +21,9 @@ public class MenuActions {
     private final HashMap<Integer, MenuAction> mMenuActions;
 
     public MenuActions(MenuAction[] menuActions, int[] menuIds) {
-        mMenuActions = new HashMap<Integer, MenuAction>();
-        int ix = 0;
-        for (MenuAction menuAction : menuActions) {
-            mMenuActions.put(menuIds[ix++], menuAction);
+        mMenuActions = new HashMap<Integer, MenuAction>(menuIds.length);
+        for (int ix = 0; ix < menuIds.length; ix++) {
+            mMenuActions.put(menuIds[ix], menuActions[ix]);
         }
     }
 

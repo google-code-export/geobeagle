@@ -22,6 +22,7 @@ import com.google.android.maps.MapView;
 import com.google.android.maps.MyLocationOverlay;
 import com.google.android.maps.Overlay;
 import com.google.code.geobeagle.R;
+import com.google.code.geobeagle.activity.MenuActions;
 import com.google.code.geobeagle.activity.cachelist.CacheList;
 import com.google.code.geobeagle.database.GeocachesSql;
 import com.google.code.geobeagle.database.WhereFactoryNearestCaches;

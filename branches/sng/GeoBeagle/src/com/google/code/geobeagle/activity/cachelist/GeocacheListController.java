@@ -15,9 +15,9 @@
 package com.google.code.geobeagle.activity.cachelist;
 
 import com.google.code.geobeagle.R;
+import com.google.code.geobeagle.activity.MenuActions;
 import com.google.code.geobeagle.activity.cachelist.actions.context.ContextAction;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionSyncGpx;
-import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActions;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVectors;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
 import com.google.code.geobeagle.database.FilterNearestCaches;
@@ -99,8 +99,7 @@ public class GeocacheListController implements IGeocacheListController {
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {
-        mMenuActions.act(item.getItemId());
-        return true;
+        return mMenuActions.act(item.getItemId());
     }
 
     public void onPause() {

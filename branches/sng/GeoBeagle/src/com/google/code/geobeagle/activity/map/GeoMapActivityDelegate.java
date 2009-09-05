@@ -21,6 +21,7 @@ import com.google.android.maps.MyLocationOverlay;
 import com.google.android.maps.Overlay;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.MenuAction;
+import com.google.code.geobeagle.activity.MenuActions;
 import com.google.code.geobeagle.activity.cachelist.CacheList;
 import com.google.code.geobeagle.activity.main.GeoUtils;
 import com.google.code.geobeagle.database.GeocachesSql;
@@ -97,7 +98,7 @@ public class GeoMapActivityDelegate {
 
     public boolean onMenuOpened(int featureId, Menu menu) {
         menu.findItem(R.id.menu_toggle_satellite).setTitle(
-                mMapView.isSatellite() ? R.string.satellite_view : R.string.map_view);
+                mMapView.isSatellite() ? R.string.map_view : R.string.satellite_view);
         return true;
     }
 
