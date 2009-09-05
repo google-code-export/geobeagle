@@ -15,11 +15,11 @@
 package com.google.code.geobeagle;
 
 public enum CacheType {
-    NULL(0, R.drawable.blank, R.drawable.blank, R.drawable.blank, false), MULTI(2,
-            R.drawable.cache_multi, R.drawable.cache_multi_big, R.drawable.map_multi), TRADITIONAL(
-            1, R.drawable.cache_tradi, R.drawable.cache_tradi_big, R.drawable.map_tradi), UNKNOWN(
-            3, R.drawable.cache_mystery, R.drawable.cache_mystery_big, R.drawable.map_mystery), MY_LOCATION(
-            4, R.drawable.blue_dot, R.drawable.blue_dot, R.drawable.blue_dot);
+    NULL(0, R.drawable.blank, R.drawable.blank, R.drawable.blank, false), 
+    MULTI(2, R.drawable.cache_multi, R.drawable.cache_multi_big, R.drawable.map_pin2_multi), 
+    TRADITIONAL(1, R.drawable.cache_tradi, R.drawable.cache_tradi_big, R.drawable.map_pin2_tradi), 
+    UNKNOWN(3, R.drawable.cache_mystery, R.drawable.cache_mystery_big, R.drawable.map_pin2_mystery), 
+    MY_LOCATION(4, R.drawable.blue_dot, R.drawable.blue_dot, R.drawable.map_pin2_empty);
 
     public static class CacheTypeFactory {
         private final CacheType mCacheTypes[] = new CacheType[values().length];

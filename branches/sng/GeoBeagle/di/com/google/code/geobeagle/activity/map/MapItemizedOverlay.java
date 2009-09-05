@@ -35,7 +35,7 @@ public class MapItemizedOverlay extends ItemizedOverlay<CacheItem> {
 
     public MapItemizedOverlay(Context context, Drawable defaultMarker,
             CacheItemFactory cacheItemFactory) {
-        super(boundCenter(defaultMarker));
+        super(boundCenterBottom(defaultMarker));
         mContext = context;
         mCacheItemFactory = cacheItemFactory;
         mOverlays = new ArrayList<CacheItem>();
