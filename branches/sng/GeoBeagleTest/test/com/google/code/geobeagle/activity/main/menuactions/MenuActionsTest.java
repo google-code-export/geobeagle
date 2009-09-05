@@ -18,15 +18,9 @@ import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.cachelist.CacheList;
 import com.google.code.geobeagle.activity.main.GeoBeagle;
-import com.google.code.geobeagle.activity.main.menuactions.MenuActionCacheList;
-import com.google.code.geobeagle.activity.main.menuactions.MenuActionEditGeocache;
-import com.google.code.geobeagle.activity.main.menuactions.MenuActionLogDnf;
-import com.google.code.geobeagle.activity.main.menuactions.MenuActionLogFind;
-import com.google.code.geobeagle.activity.main.menuactions.MenuActionSearchOnline;
-import com.google.code.geobeagle.activity.main.menuactions.MenuActionSettings;
 import com.google.code.geobeagle.activity.main.view.EditCacheActivity;
-import com.google.code.geobeagle.activity.searchonline.SearchOnlineActivity;
 import com.google.code.geobeagle.activity.preferences.EditPreferences;
+import com.google.code.geobeagle.activity.searchonline.SearchOnlineActivity;
 
 import org.easymock.EasyMock;
 import org.junit.Test;
@@ -38,15 +32,13 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import android.app.Activity;
 import android.content.Intent;
 
-import junit.framework.TestCase;
-
 @RunWith(PowerMockRunner.class)
 @PrepareForTest( {
         MenuActionCacheList.class, MenuActionEditGeocache.class, MenuActionSettings.class,
         MenuActionSearchOnline.class, MenuActionLogDnf.class, MenuActionLogFind.class,
         Activity.class
 })
-public class MenuActionsTest extends TestCase {
+public class MenuActionsTest {
 
     @Test
     public void testMenuActionCacheList() throws Exception {
