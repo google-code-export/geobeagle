@@ -32,7 +32,6 @@ public class ContextActionEdit implements ContextAction {
 
     public void act(int position) {
         Geocache selected = mGeocacheVectors.get(position).getGeocache();
-        assert (selected != null);
         Intent intent = new Intent(mContext, EditCacheActivity.class);
         intent.putExtra("geocache", selected);
         mContext.startActivity(intent);

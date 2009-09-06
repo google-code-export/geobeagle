@@ -14,6 +14,7 @@
 
 package com.google.code.geobeagle.activity.main;
 
+import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.GeocacheFactory;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.ActivitySaver;
@@ -24,9 +25,9 @@ import com.google.code.geobeagle.activity.main.fieldnotes.FieldNoteSender.FieldN
 import com.google.code.geobeagle.activity.main.view.CacheDetailsOnClickListener;
 
 import android.app.Dialog;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.view.MenuItem;
 import android.widget.Button;
 
@@ -41,12 +42,15 @@ public class GeoBeagleDelegate {
     private final HashMap<Integer, MenuAction> mMenuActions;
     private final GeoBeagle mParent;
     private final Resources mResources;
+    private Geocache mGeocache;
+    private final SharedPreferences mSharedPreferences;
+    private final RadarView mRadarView;
 
     public GeoBeagleDelegate(GeoBeagle parent, ActivitySaver activitySaver,
             AppLifecycleManager appLifecycleManager,
             CacheDetailsOnClickListener cacheDetailsOnClickListener,
             FieldNoteSender fieldNoteSender, HashMap<Integer, MenuAction> menuActions,
-            Resources resources) {
+            Resources resources, SharedPreferences sharedPreferences, RadarView radarView) {
         mParent = parent;
         mActivitySaver = activitySaver;
         mAppLifecycleManager = appLifecycleManager;
@@ -54,6 +58,8 @@ public class GeoBeagleDelegate {
         mFieldNoteSender = fieldNoteSender;
         mMenuActions = menuActions;
         mResources = resources;
+        mSharedPreferences = sharedPreferences;
+        mRadarView = radarView;
     }
 
     public void onCreate() {
@@ -63,8 +69,7 @@ public class GeoBeagleDelegate {
 
     public Dialog onCreateDialog(int id) {
         FieldNoteResources fieldNoteResources = new FieldNoteResources(mResources, id);
-        return mFieldNoteSender.createDialog(mParent.getGeocache().getId(), fieldNoteResources,
-                mParent);
+        return mFieldNoteSender.createDialog(mGeocache.getId(), fieldNoteResources, mParent);
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -74,27 +79,32 @@ public class GeoBeagleDelegate {
 
     public void onPause() {
         mAppLifecycleManager.onPause();
-        mActivitySaver.save(ActivityType.VIEW_CACHE, mParent.getGeocache());
+        mActivitySaver.save(ActivityType.VIEW_CACHE, mGeocache);
     }
 
     public void onRestoreInstanceState(Bundle savedInstanceState) {
         GeocacheFromParcelFactory geocacheFromParcelFactory = new GeocacheFromParcelFactory(
                 new GeocacheFactory());
-        mParent.setGeocache(geocacheFromParcelFactory.createFromBundle(savedInstanceState));
+        mGeocache = geocacheFromParcelFactory.createFromBundle(savedInstanceState);
     }
 
     public void onResume() {
-        mParent.getRadar().setUseMetric(
-                !PreferenceManager.getDefaultSharedPreferences(mParent).getBoolean("imperial",
-                        false));
-
+        mRadarView.setUseMetric(!mSharedPreferences.getBoolean("imperial", false));
         mAppLifecycleManager.onResume();
     }
 
     public void onSaveInstanceState(Bundle outState) {
         // apparently there are cases where getGeocache returns null, causing
         // crashes with 0.7.7/0.7.8.
-        if (mParent.getGeocache() != null)
-            mParent.getGeocache().saveToBundle(outState);
+        if (mGeocache != null)
+            mGeocache.saveToBundle(outState);
+    }
+
+    public void setGeocache(Geocache geocache) {
+        mGeocache = geocache;
+    }
+
+    public Geocache getGeocache() {
+        return mGeocache;
     }
 }
