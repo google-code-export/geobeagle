@@ -15,7 +15,6 @@
 package com.google.code.geobeagle.gpsstatuswidget;
 
 import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.ResourceProvider;
 import com.google.code.geobeagle.Time;
 import com.google.code.geobeagle.formatting.DistanceFormatter;
 import com.google.code.geobeagle.gpsstatuswidget.TextLagUpdater.LagNull;
@@ -38,14 +37,14 @@ public class GpsStatusWidget extends LinearLayout {
 
     static GpsStatusWidgetDelegate createGpsStatusWidgetDelegate(View gpsStatusWidget, Time time,
             CombinedLocationManager combinedLocationManager, Meter meter,
-            ResourceProvider resourceProvider, DistanceFormatter distanceFormatter,
-            MeterBars meterBars, TextLagUpdater textLagUpdater) {
+            DistanceFormatter distanceFormatter, MeterBars meterBars,
+            TextLagUpdater textLagUpdater, Context parent) {
         final TextView status = (TextView)gpsStatusWidget.findViewById(R.id.status);
         final TextView provider = (TextView)gpsStatusWidget.findViewById(R.id.provider);
         final MeterFader meterFader = new MeterFader(gpsStatusWidget, meterBars, time);
 
         return new GpsStatusWidgetDelegate(combinedLocationManager, distanceFormatter, meter,
-                meterFader, provider, resourceProvider, status, textLagUpdater);
+                meterFader, provider, parent, status, textLagUpdater);
     }
 
     public static class InflatedGpsStatusWidget extends LinearLayout {

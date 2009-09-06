@@ -64,7 +64,7 @@ public class GeoMapActivity extends MapActivity {
         final WhereFactoryNearestCaches whereFactory = new WhereFactoryNearestCaches(searchFactory,
                 whereStringFactory);
         final Resources resources = getResources();
-        final Drawable defaultMarker = resources.getDrawable(R.drawable.map_others);
+        final Drawable defaultMarker = resources.getDrawable(R.drawable.map_pin2_others);
         final CacheDrawables cacheDrawables = new CacheDrawables(resources);
         final CacheItemFactory cacheItemFactory = new CacheItemFactory(cacheDrawables);
         final MapItemizedOverlay mapItemizedOverlay = new MapItemizedOverlay(this, defaultMarker,

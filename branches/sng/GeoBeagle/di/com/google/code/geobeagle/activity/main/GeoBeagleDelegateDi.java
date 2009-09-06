@@ -33,7 +33,9 @@ import com.google.code.geobeagle.activity.main.view.GeocacheViewer;
 import com.google.code.geobeagle.activity.main.view.Misc;
 
 import android.app.AlertDialog;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
+import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 
 import java.util.HashMap;
@@ -42,7 +44,8 @@ public class GeoBeagleDelegateDi {
 
     public static GeoBeagleDelegate createGeoBeagleDelegate(GeoBeagle parent,
             AppLifecycleManager appLifecycleManager, GeocacheViewer geocacheViewer,
-            ErrorDisplayer errorDisplayer, IntentStarterViewUri intentStarterViewGoogleMaps) {
+            ErrorDisplayer errorDisplayer, IntentStarterViewUri intentStarterViewGoogleMaps,
+            RadarView radar) {
         final AlertDialog.Builder cacheDetailsBuilder = new AlertDialog.Builder(parent);
         final LayoutInflater layoutInflater = LayoutInflater.from(parent);
         final CacheDetailsOnClickListener cacheDetailsOnClickListener = Misc
@@ -61,8 +64,11 @@ public class GeoBeagleDelegateDi {
         menuActions.put(R.id.menu_settings, new MenuActionSettings(parent));
         menuActions.put(R.id.menu_google_maps,
                 new MenuActionGoogleMaps(intentStarterViewGoogleMaps));
+        final SharedPreferences defaultSharedPreferences = PreferenceManager
+                .getDefaultSharedPreferences(parent);
         return new GeoBeagleDelegate(parent, activitySaver, appLifecycleManager,
-                cacheDetailsOnClickListener, fieldNoteSender, menuActions, resources);
+                cacheDetailsOnClickListener, fieldNoteSender, menuActions, resources,
+                defaultSharedPreferences, radar);
     }
 
 }

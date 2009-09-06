@@ -18,7 +18,6 @@ import static org.easymock.EasyMock.expect;
 
 import com.google.code.geobeagle.LocationControlBuffered;
 import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.ResourceProvider;
 import com.google.code.geobeagle.Time;
 import com.google.code.geobeagle.formatting.DistanceFormatter;
 import com.google.code.geobeagle.location.CombinedLocationManager;
@@ -30,6 +29,7 @@ import org.powermock.api.easymock.PowerMock;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import android.content.Context;
 import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationProvider;
@@ -42,7 +42,7 @@ import android.widget.TextView;
 @RunWith(PowerMockRunner.class)
 @PrepareForTest( {
         Bundle.class, Color.class, Handler.class, LinearLayout.class, TextView.class,
-        GpsStatusWidget.class
+        GpsStatusWidget.class, Context.class
 })
 public class GpsStatusWidgetTest {
     @Test
@@ -258,15 +258,15 @@ public class GpsStatusWidgetTest {
 
     @Test
     public void testSetStatus() {
-        ResourceProvider resourceProvider = PowerMock.createMock(ResourceProvider.class);
+        Context context = PowerMock.createMock(Context.class);
         TextView status = PowerMock.createMock(TextView.class);
         DistanceFormatter distanceFormatter = PowerMock.createMock(DistanceFormatter.class);
 
         PowerMock.suppressConstructor(LinearLayout.class);
 
-        expect(resourceProvider.getString(R.string.out_of_service)).andReturn("OUT OF SERVICE");
-        expect(resourceProvider.getString(R.string.available)).andReturn("AVAILABLE");
-        expect(resourceProvider.getString(R.string.temporarily_unavailable)).andReturn(
+        expect(context.getString(R.string.out_of_service)).andReturn("OUT OF SERVICE");
+        expect(context.getString(R.string.available)).andReturn("AVAILABLE");
+        expect(context.getString(R.string.temporarily_unavailable)).andReturn(
                 "TEMPORARILY UNAVAILABLE");
         status.setText("gps status: OUT OF SERVICE");
         status.setText("network status: AVAILABLE");
@@ -274,7 +274,7 @@ public class GpsStatusWidgetTest {
 
         PowerMock.replayAll();
         GpsStatusWidgetDelegate gpsStatusWidget = new GpsStatusWidgetDelegate(null,
-                distanceFormatter, null, null, null, resourceProvider, status, null);
+                distanceFormatter, null, null, null, context, status, null);
         gpsStatusWidget.onStatusChanged("gps", LocationProvider.OUT_OF_SERVICE, null);
         gpsStatusWidget.onStatusChanged("network", LocationProvider.AVAILABLE, null);
         gpsStatusWidget.onStatusChanged("gps", LocationProvider.TEMPORARILY_UNAVAILABLE, null);

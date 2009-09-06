@@ -23,7 +23,6 @@ import com.google.code.geobeagle.GeocacheFactory;
 import com.google.code.geobeagle.LocationControlBuffered;
 import com.google.code.geobeagle.LocationControlDi;
 import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.ResourceProvider;
 import com.google.code.geobeagle.GeocacheFactory.Source;
 import com.google.code.geobeagle.activity.cachelist.GeocacheListController;
 import com.google.code.geobeagle.activity.main.intents.GeocacheToCachePage;
@@ -77,12 +76,10 @@ public class GeoBeagle extends Activity {
     private CompassListener mCompassListener;
     private final ErrorDisplayer mErrorDisplayer;
     private GeoBeagleDelegate mGeoBeagleDelegate;
-    private Geocache mGeocache;
     private GeocacheFactory mGeocacheFactory;
     private GeocacheViewer mGeocacheViewer;
     private LocationControlBuffered mLocationControlBuffered;
     private RadarView mRadar;
-    private final ResourceProvider mResourceProvider;
     private SensorManager mSensorManager;
     private WebPageAndDetailsButtonEnabler mWebPageButtonEnabler;
     private LocationSaverFactory mLocationSaverFactory;
@@ -92,7 +89,6 @@ public class GeoBeagle extends Activity {
     public GeoBeagle() {
         super();
         mErrorDisplayer = ErrorDisplayerDi.createErrorDisplayer(this);
-        mResourceProvider = new ResourceProvider(this);
     }
 
     private void getCoordinatesFromIntent(Intent intent) {
@@ -101,23 +97,21 @@ public class GeoBeagle extends Activity {
             final CharSequence sanitizedQuery = Util.parseHttpUri(query, new UrlQuerySanitizer(),
                     UrlQuerySanitizer.getAllButNulAndAngleBracketsLegal());
             final CharSequence[] latlon = Util.splitLatLonDescription(sanitizedQuery);
-            mGeocache = mGeocacheFactory.create(latlon[2], latlon[3], Util
+
+            Geocache geocache = mGeocacheFactory.create(latlon[2], latlon[3], Util
                     .parseCoordinate(latlon[0]), Util.parseCoordinate(latlon[1]), Source.WEB_URL,
                     null, CacheType.NULL, 0, 0, 0);
 
             final LocationSaver mLocationSaver = mLocationSaverFactory
                     .createLocationSaver(mWritableDatabase);
-            mLocationSaver.saveLocation(mGeocache);
-            mGeocacheViewer.set(mGeocache);
+            mLocationSaver.saveLocation(geocache);
+            mGeocacheViewer.set(geocache);
+            mGeoBeagleDelegate.setGeocache(geocache);
         }
     }
 
     public Geocache getGeocache() {
-        return mGeocache;
-    }
-
-    RadarView getRadar() {
-        return mRadar;
+        return mGeoBeagleDelegate.getGeocache();
     }
 
     private boolean maybeGetCoordinatesFromIntent() {
@@ -129,11 +123,12 @@ public class GeoBeagle extends Activity {
                     getCoordinatesFromIntent(intent);
                     return true;
                 } else if (action.equals(GeocacheListController.SELECT_CACHE)) {
-                    mGeocache = intent.<Geocache> getParcelableExtra("geocache");
-                    if (mGeocache == null)
-                        mGeocache = mGeocacheFactory.create("", "", 0, 0, Source.MY_LOCATION, "",
+                    Geocache geocache = intent.<Geocache> getParcelableExtra("geocache");
+                    if (geocache == null)
+                        geocache = mGeocacheFactory.create("", "", 0, 0, Source.MY_LOCATION, "",
                                 CacheType.NULL, 0, 0, 0);
-                    mGeocacheViewer.set(mGeocache);
+                    mGeocacheViewer.set(geocache);
+                    mGeoBeagleDelegate.setGeocache(geocache);
                     mWebPageButtonEnabler.check();
                     return true;
                 }
@@ -152,7 +147,7 @@ public class GeoBeagle extends Activity {
     }
 
     private void onCameraStart() {
-        String filename = "/sdcard/GeoBeagle/" + mGeocache.getId()
+        String filename = "/sdcard/GeoBeagle/" + mGeoBeagleDelegate.getGeocache().getId()
                 + DateFormat.format(" yyyy-MM-dd kk.mm.ss.jpg", System.currentTimeMillis());
         Log.d("GeoBeagle", "capturing image to " + filename);
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -210,9 +205,9 @@ public class GeoBeagle extends Activity {
                 });
 
         final IntentStarterViewUri intentStarterViewUri = new IntentStarterViewUri(this,
-                intentFactory, new GeocacheToGoogleMap(mResourceProvider));
+                intentFactory, new GeocacheToGoogleMap(this));
         mGeoBeagleDelegate = GeoBeagleDelegateDi.createGeoBeagleDelegate(this, appLifecycleManager,
-                mGeocacheViewer, mErrorDisplayer, intentStarterViewUri);
+                mGeocacheViewer, mErrorDisplayer, intentStarterViewUri, mRadar);
         mGeoBeagleDelegate.onCreate();
 
         mCompassListener = new CompassListener(new NullRefresher(), mLocationControlBuffered,
@@ -286,9 +281,12 @@ public class GeoBeagle extends Activity {
 
         maybeGetCoordinatesFromIntent();
         // Possible fix for issue 53.
-        if (mGeocache == null)
+        Geocache mGeocache = mGeoBeagleDelegate.getGeocache();
+        if (mGeocache == null) {
             mGeocache = mGeocacheFactory.create("", "", 0, 0, Source.MY_LOCATION, "",
                     CacheType.NULL, 0, 0, 0);
+            mGeoBeagleDelegate.setGeocache(mGeocache);
+        }
         mGeocacheViewer.set(mGeocache);
         mWebPageButtonEnabler.check();
     }
@@ -319,7 +317,7 @@ public class GeoBeagle extends Activity {
         cacheClickListenerSetter.set(R.id.maps, new IntentStarterGeo(this, new Intent(this,
                 GeoMapActivity.class)), "Map error");
         cacheClickListenerSetter.set(R.id.cache_page, new IntentStarterViewUri(this, intentFactory,
-                new GeocacheToCachePage(mResourceProvider)), "");
+                new GeocacheToCachePage(this.getResources())), "");
         cacheClickListenerSetter.set(R.id.radarview, new IntentStarterGeo(this, new Intent(
                 "com.google.android.radar.SHOW_RADAR")),
                 "Please install the Radar application to use Radar.");
@@ -336,7 +334,7 @@ public class GeoBeagle extends Activity {
     }
 
     void setGeocache(Geocache geocache) {
-        mGeocache = geocache;
-        mGeocacheViewer.set(getGeocache());
+        mGeoBeagleDelegate.setGeocache(geocache);
+        mGeocacheViewer.set(geocache);
     }
 }
