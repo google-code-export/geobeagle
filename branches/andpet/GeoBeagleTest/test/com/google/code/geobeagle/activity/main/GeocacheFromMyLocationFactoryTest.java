@@ -32,6 +32,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import android.location.Location;
 
 import java.util.Locale;
+import java.util.TimeZone;
 
 @RunWith(PowerMockRunner.class)
 public class GeocacheFromMyLocationFactoryTest {
@@ -44,6 +45,7 @@ public class GeocacheFromMyLocationFactoryTest {
         GeocacheFactory geocacheFactory = PowerMock.createMock(GeocacheFactory.class);
         Geocache geocache = PowerMock.createMock(Geocache.class);
         Locale.setDefault(Locale.ENGLISH);
+        TimeZone.setDefault(TimeZone.getTimeZone("America/Los_Angeles"));
 
         EasyMock.expect(locationControlBuffered.getLocation()).andReturn(location);
         EasyMock.expect(location.getTime()).andReturn(1000000L);
