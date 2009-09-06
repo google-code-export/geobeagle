@@ -93,8 +93,6 @@ public class GeoMapActivityDelegate {
         // controller.setZoom(14);
 
         mCachesOverlay = cachesOverlay;
-
-        refreshCaches();
     }
     
     public boolean onMenuOpened(int featureId, Menu menu) {
@@ -121,6 +119,7 @@ public class GeoMapActivityDelegate {
         int latSpanE6Proj = lowerRight.getLatitudeE6() - upperLeft.getLatitudeE6();
         int lonSpanE6Proj = lowerRight.getLongitudeE6() - upperLeft.getLongitudeE6();
         
+        Log.d("GeoBeagle", "getMeasuredWidth " + mMapView.getMeasuredWidth());
         Log.d("GeoBeagle", "Lower right is " + mMapView.getRight() + " " + mMapView.getBottom());
         Log.d("GeoBeagle", "refreshCaches area " + latSpanE6 + " " + lonSpanE6 + ", zoom = " + zoomLevel);
         Log.d("GeoBeagle", "  projection says " + latSpanE6Proj + " " + lonSpanE6Proj);
@@ -133,10 +132,14 @@ public class GeoMapActivityDelegate {
         //SearchFactory searchFactory = new SearchFactory();
         ArrayList<Geocache> list = mGeocachesLoader.loadCaches(lat, lon, new WhereFactoryWithinRange(latSpanE6/1000000.0, lonSpanE6/1000000.0));
         Log.d("GeoBeagle", "refreshCaches will load " + list.size() + " caches");
-        
         mCachesOverlay.setCacheListUsingGuiThread(list);
     }
 
+    /** Also call this when the layout is first determined */
+    public void onLayoutChange() {
+    	refreshCaches();    	
+    }
+    
     public void onScrollChange() {
     	refreshCaches();
     }

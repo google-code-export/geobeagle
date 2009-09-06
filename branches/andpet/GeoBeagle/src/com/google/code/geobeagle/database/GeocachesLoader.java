@@ -30,7 +30,6 @@ public class GeocachesLoader {
 	CacheReader mCacheReader;
 	Context mContext;
 	GeoBeagleSqliteOpenHelper open;
-	GeocachesSql mGeocachesSql;
 	boolean mIsDatabaseOpen;
 	
 	public GeocachesLoader(Context context) {
@@ -49,9 +48,7 @@ public class GeocachesLoader {
         final ISQLiteDatabase database = new DatabaseDI.SQLiteWrapper(sqDb);
         DatabaseDI.createGeocachesSql(database);
 		
-        final Geocaches geocaches = new Geocaches();
         mCacheReader = DatabaseDI.createCacheReader(database);
-        mGeocachesSql = new GeocachesSql(mCacheReader, geocaches);
 	}
 	
 	public void closeDatabase() {

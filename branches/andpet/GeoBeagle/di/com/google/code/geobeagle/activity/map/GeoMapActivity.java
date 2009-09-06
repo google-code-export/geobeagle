@@ -75,11 +75,7 @@ public class GeoMapActivity extends MapActivity {
         mapOverlays.add(mMyLocationOverlay);
         
         mGeoMapActivityDelegate = new GeoMapActivityDelegate(mMapView, menuActions);
-    }
-    
-    @Override
-    public void onStart() {
-    	super.onStart();
+
         mGeocachesLoader = new GeocachesLoader(this);
         final Intent intent = this.getIntent();
         final MapController mapController = mMapView.getController();
@@ -88,7 +84,7 @@ public class GeoMapActivity extends MapActivity {
 
         mZoomSupervisor = new ZoomSupervisor(mMapView, mGeoMapActivityDelegate);
     }
-
+    
     @Override
     public void onResume() {
         super.onResume();

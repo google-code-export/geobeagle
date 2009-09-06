@@ -39,6 +39,14 @@ public class GeoMapView extends MapView {
 		mListener = listener;
 	}
 	
+    @Override
+    protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
+    	super.onLayout(changed, left, top, right, bottom);
+    	if (changed && mListener != null) {
+			mListener.onLayoutChange();
+    	}
+    }
+    
 	@Override
 	public boolean onTouchEvent(android.view.MotionEvent ev) {
 		boolean result = super.onTouchEvent(ev);
