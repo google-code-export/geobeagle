@@ -62,7 +62,7 @@ public class GeoMapActivityDelegateTest {
                 mapOverlays, cacheItemFactory);
                 */
         new GeoMapActivityDelegate(mapView, null)
-                .initialize(intent, geocachesLoader, cachesOverlay, mapController);
+                .initialize(intent, geocachesLoader, cachesOverlay, mapController, null);
         PowerMock.verifyAll();
     }
 
