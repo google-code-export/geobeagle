@@ -67,6 +67,7 @@ public class GeoMapActivityDelegate {
 	private CachePinsOverlay mCachesOverlay;
 	private GeocachesLoader mGeocachesLoader;
     private static boolean fZoomed = false;
+    private DensityOverlay mDensityOverlay;
 
 	public GeoMapActivityDelegate(GeoMapView mapView,
 	                              MenuActions menuActions) {
@@ -77,7 +78,8 @@ public class GeoMapActivityDelegate {
 	public void initialize(Intent intent, 
 	                       GeocachesLoader geocachesLoader,
 	                       CachePinsOverlay cachesOverlay,
-	                       MapController mapController) {
+	                       MapController mapController,
+	                       DensityOverlay densityOverlay) {
     	mGeocachesLoader = geocachesLoader;
         mMapView.setBuiltInZoomControls(true);
         // mMapView.setOnLongClickListener()
@@ -96,6 +98,7 @@ public class GeoMapActivityDelegate {
         }
 
         mCachesOverlay = cachesOverlay;
+        mDensityOverlay = densityOverlay;
     }
     
     public boolean onMenuOpened(int featureId, Menu menu) {
@@ -115,40 +118,49 @@ public class GeoMapActivityDelegate {
         
         int latSpanE6 = mMapView.getLatitudeSpan();
         int lonSpanE6 = mMapView.getLongitudeSpan();
-        int zoomLevel = mMapView.getZoomLevel();
-		Projection proj = mMapView.getProjection();
-		GeoPoint upperLeft = proj.fromPixels(0, 0);
-		GeoPoint lowerRight = proj.fromPixels(mMapView.getRight(), mMapView.getBottom());
-        int latSpanE6Proj = lowerRight.getLatitudeE6() - upperLeft.getLatitudeE6();
-        int lonSpanE6Proj = lowerRight.getLongitudeE6() - upperLeft.getLongitudeE6();
+        //int zoomLevel = mMapView.getZoomLevel();
+		//Projection proj = mMapView.getProjection();
+		//GeoPoint upperLeft = proj.fromPixels(0, 0);
+		//GeoPoint lowerRight = proj.fromPixels(mMapView.getRight(), mMapView.getBottom());
+        //int latSpanE6Proj = lowerRight.getLatitudeE6() - upperLeft.getLatitudeE6();
+        //int lonSpanE6Proj = lowerRight.getLongitudeE6() - upperLeft.getLongitudeE6();
         
-        Log.d("GeoBeagle", "getMeasuredWidth " + mMapView.getMeasuredWidth());
-        Log.d("GeoBeagle", "Lower right is " + mMapView.getRight() + " " + mMapView.getBottom());
-        Log.d("GeoBeagle", "refreshCaches area " + latSpanE6 + " " + lonSpanE6 + ", zoom = " + zoomLevel);
-        Log.d("GeoBeagle", "  projection says " + latSpanE6Proj + " " + lonSpanE6Proj);
+        //Log.d("GeoBeagle", "getMeasuredWidth " + mMapView.getMeasuredWidth());
+        //Log.d("GeoBeagle", "Lower right is " + mMapView.getRight() + " " + mMapView.getBottom());
+        //Log.d("GeoBeagle", "refreshCaches area " + latSpanE6 + " " + lonSpanE6 + ", zoom = " + zoomLevel);
+        //Log.d("GeoBeagle", "  projection says " + latSpanE6Proj + " " + lonSpanE6Proj);
         //Minimum size of area to fetch geocaches. (The user is likely to zoom out and request more caches)
-        latSpanE6 = Math.max(latSpanE6, 100);
-        lonSpanE6 = Math.max(lonSpanE6, 100);
+        //latSpanE6 = Math.max(latSpanE6, 100);
+        //lonSpanE6 = Math.max(lonSpanE6, 100);
         //mWhereFactory.setSpan(latSpanE6/1000000.0, lonSpanE6/1000000.0);
         
         //WhereStringFactory whereStringFactory = new WhereStringFactory();
         //SearchFactory searchFactory = new SearchFactory();
         ArrayList<Geocache> list = mGeocachesLoader.loadCaches(lat, lon, new WhereFactoryWithinRange(latSpanE6/1000000.0, lonSpanE6/1000000.0));
         Log.d("GeoBeagle", "refreshCaches will load " + list.size() + " caches");
-        mCachesOverlay.setCacheListUsingGuiThread(list);
+        ArrayList<Geocache> empty = new ArrayList<Geocache>();
+        if (list.size() > 40) {
+            mDensityOverlay.setCacheListUsingGuiThread(list);
+            mCachesOverlay.setCacheListUsingGuiThread(empty);
+        } else {
+            mDensityOverlay.setCacheListUsingGuiThread(empty);
+            mCachesOverlay.setCacheListUsingGuiThread(list);
+        }
     }
 
     /** Also call this when the layout is first determined */
     public void onLayoutChange() {
-    	refreshCaches();    	
+    	//Log.d("GeoBeagle", "onLayoutChange");
+    	refreshCaches();
     }
     
     public void onScrollChange() {
+    	//Log.d("GeoBeagle", "onScrollChange");
     	refreshCaches();
     }
     
     public void onZoomChange(int prevZoom, int newZoom) {
-    	Log.d("GeoBeagle", "New zoom level: " + newZoom);
+    	//Log.d("GeoBeagle", "New zoom level: " + newZoom);
     	refreshCaches();
     }
     
