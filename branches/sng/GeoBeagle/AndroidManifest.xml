@@ -11,8 +11,8 @@
 		License.
 	-->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-	package="com.google.code.geobeagle" android:versionName="0.9.0"
-	android:versionCode="103">
+	package="com.google.code.geobeagle" android:versionName="0.9.1"
+	android:versionCode="104">
 	<uses-sdk android:minSdkVersion="3" />
 	<application android:icon="@drawable/icon" android:label="@string/app_name"
 		android:debuggable="false">
