@@ -5,7 +5,7 @@
 =Setting up !GeoBeagle=
 
   # Eclipse / New Android Project / Create Project From Existing Source / select !GeoBeagle dir
-  # Override the following settings: Use !GeoBeagle as the Application Name and the Project Name.  Choose Android 1.5 as the Build Target.
+  # Override the following settings: Use !GeoBeagle as the Application Name and the Project Name.  Choose Google APIs as the Build Target.
   # Right click on "!GeoBeagle" in your Package Explorer window, select "Properties / Java Build Path / Source", and make sure the following *three* folders are in your source: "!GeoBeagle/di", "!GeoBeagle/gen", "!GeoBeagle/src" (otherwise, you'll get "source not found errors").
   # Eclipse / Preferences / Set Android SDK Location
   # Set java1.6 (otherwise, you'll get "The method restore() of type !ActivityRestorer.!CacheListRestorer must override a superclass method" error).
