@@ -66,6 +66,7 @@ public class GeoMapActivityDelegate {
     private final MenuActions mMenuActions;
 	private MapItemizedOverlay mCachesOverlay;
 	private GeocachesLoader mGeocachesLoader;
+    private static boolean fZoomed = false;
 
 	public GeoMapActivityDelegate(GeoMapView mapView,
 	                              MenuActions menuActions) {
@@ -81,7 +82,6 @@ public class GeoMapActivityDelegate {
         mMapView.setBuiltInZoomControls(true);
         // mMapView.setOnLongClickListener()
         mMapView.setSatellite(false);
-
 		mMapView.setScrollListener(this);
         
         double latitude = intent.getFloatExtra("latitude", 0);
@@ -90,7 +90,10 @@ public class GeoMapActivityDelegate {
                 (int)(longitude * GeoUtils.MILLION));
 
         mapController.setCenter(center);
-        // controller.setZoom(14);
+        if (!fZoomed) {
+            mapController.setZoom(14);
+            fZoomed = true;
+        }
 
         mCachesOverlay = cachesOverlay;
     }
