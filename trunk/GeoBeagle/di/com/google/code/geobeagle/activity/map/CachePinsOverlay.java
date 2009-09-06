@@ -18,61 +18,62 @@ import com.google.android.maps.ItemizedOverlay;
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.activity.cachelist.GeocacheListController;
 import com.google.code.geobeagle.activity.main.GeoBeagle;
-import com.google.code.geobeagle.database.GeocachesSql;
-import com.google.code.geobeagle.database.WhereFactory;
 
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.os.Handler;
 
 import java.util.ArrayList;
 
-public class MapItemizedOverlay extends ItemizedOverlay<CacheItem> {
+public class CachePinsOverlay extends ItemizedOverlay<CacheItem> {
 
     private final CacheItemFactory mCacheItemFactory;
     private final Context mContext;
     private final ArrayList<CacheItem> mOverlays;
+	private Handler mGuiThreadHandler;
 
-    public MapItemizedOverlay(Context context, Drawable defaultMarker,
+	/** Execute on the gui thread to avoid ArrayIndexOutOfBoundsException */
+    private class CacheListUpdater implements Runnable {
+    	ArrayList<Geocache> mCacheList;
+    	public CacheListUpdater(ArrayList<Geocache> list) {
+    		mCacheList = list;
+    	}
+    	public void run() {
+            mOverlays.clear();
+    		for (Geocache cache : mCacheList) {
+    			CacheItem item = mCacheItemFactory.createCacheItem(cache);
+    			if (item != null)
+    				mOverlays.add(item);
+    		}
+    		populate();
+    	}
+    };
+    
+    public CachePinsOverlay(Context context, Drawable defaultMarker,
             CacheItemFactory cacheItemFactory) {
         super(boundCenterBottom(defaultMarker));
         mContext = context;
         mCacheItemFactory = cacheItemFactory;
         mOverlays = new ArrayList<CacheItem>();
+        mGuiThreadHandler = new Handler();
     }
 
-    public void addCaches(Context context, double latitude, double longitude,
-            GeocachesSql geocachesSql, WhereFactory whereFactory) {
-        clearOverlays();
-
-        geocachesSql.loadCaches(latitude, longitude, whereFactory);
-        ArrayList<Geocache> list = geocachesSql.getGeocaches();
-
-        for (Geocache cache : list) {
-            CacheItem item = mCacheItemFactory.createCacheItem(cache);
-            if (item != null)
-                addOverlay(item);
-        }
-        populate();
+    /** Replaces all caches on the map with the supplied ones. */
+    public void setCacheListUsingGuiThread(ArrayList<Geocache> list) {
+        mGuiThreadHandler.post(new CacheListUpdater(list));
     }
 
-    public void addOverlay(CacheItem overlay) {
+    /*
+    public void addCache(CacheItem overlay) {
         mOverlays.add(overlay);
         // populate();
     }
-
-    public void clearOverlays() {
-        mOverlays.clear();
-        populate();
-    }
+    */
 
     @Override
     protected CacheItem createItem(int i) {
         return mOverlays.get(i);
-    }
-
-    public void doPopulate() {
-        populate();
     }
 
     @Override

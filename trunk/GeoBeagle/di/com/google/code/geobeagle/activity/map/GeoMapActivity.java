@@ -14,35 +14,29 @@
 
 package com.google.code.geobeagle.activity.map;
 
-import com.google.android.maps.MapActivity;
-import com.google.android.maps.MapController;
-import com.google.android.maps.MapView;
-import com.google.android.maps.MyLocationOverlay;
-import com.google.android.maps.Overlay;
-import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.activity.MenuAction;
-import com.google.code.geobeagle.activity.MenuActions;
-import com.google.code.geobeagle.database.DatabaseDI;
-import com.google.code.geobeagle.database.GeocachesSql;
-import com.google.code.geobeagle.database.ISQLiteDatabase;
-import com.google.code.geobeagle.database.WhereFactoryNearestCaches;
-import com.google.code.geobeagle.database.DatabaseDI.GeoBeagleSqliteOpenHelper;
-import com.google.code.geobeagle.database.DatabaseDI.SearchFactory;
-import com.google.code.geobeagle.database.WhereFactoryNearestCaches.WhereStringFactory;
+import java.util.List;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
-import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import java.util.List;
+import com.google.android.maps.MapActivity;
+import com.google.android.maps.MapController;
+import com.google.android.maps.MyLocationOverlay;
+import com.google.android.maps.Overlay;
+import com.google.code.geobeagle.R;
+import com.google.code.geobeagle.activity.MenuAction;
+import com.google.code.geobeagle.activity.MenuActions;
+import com.google.code.geobeagle.database.GeocachesLoader;
 
 public class GeoMapActivity extends MapActivity {
     GeoMapActivityDelegate mGeoMapActivityDelegate;
+	private ZoomSupervisor mZoomSupervisor;
+	private MyLocationOverlay mMyLocationOverlay;
+	private GeocachesLoader mGeocachesLoader;
 
     @Override
     protected boolean isRouteDisplayed() {
@@ -50,55 +44,62 @@ public class GeoMapActivity extends MapActivity {
         return false;
     }
 
+    GeoMapView mMapView;
+    CachePinsOverlay mMapItemizedOverlay;
+    
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    	super.onCreate(savedInstanceState);
         setContentView(R.layout.map);
-        final MapView mapView = (MapView)findViewById(R.id.mapview);
-        final GeoBeagleSqliteOpenHelper open = new GeoBeagleSqliteOpenHelper(this);
-        final SQLiteDatabase sqDb = open.getReadableDatabase();
-        final ISQLiteDatabase database = new DatabaseDI.SQLiteWrapper(sqDb);
-        final GeocachesSql geocachesSql = DatabaseDI.createGeocachesSql(database);
-        final WhereStringFactory whereStringFactory = new WhereStringFactory();
-        final SearchFactory searchFactory = new SearchFactory();
-        final WhereFactoryNearestCaches whereFactory = new WhereFactoryNearestCaches(searchFactory,
-                whereStringFactory);
+        mMapView = (GeoMapView)findViewById(R.id.mapview);
+
         final Resources resources = getResources();
-        final Drawable defaultMarker = resources.getDrawable(R.drawable.map_others);
+        final Drawable defaultMarker = resources.getDrawable(R.drawable.map_pin2_others);
         final CacheDrawables cacheDrawables = new CacheDrawables(resources);
         final CacheItemFactory cacheItemFactory = new CacheItemFactory(cacheDrawables);
-        final MapItemizedOverlay mapItemizedOverlay = new MapItemizedOverlay(this, defaultMarker,
-                cacheItemFactory);
-        final MyLocationOverlay myLocationOverlay = new MyLocationOverlay(this, mapView);
-        final MapController mapController = mapView.getController();
-        final List<Overlay> mapOverlays = mapView.getOverlays();
-        final Intent intent = this.getIntent();
+        mMapItemizedOverlay = new CachePinsOverlay(this, defaultMarker,
+                                                     cacheItemFactory);
+        
+        mMyLocationOverlay = new MyLocationOverlay(this, mMapView);
+        final List<Overlay> mapOverlays = mMapView.getOverlays();
         final MenuAction menuActionArray[] = {
-                new GeoMapActivityDelegate.MenuActionToggleSatellite(mapView),
+                new GeoMapActivityDelegate.MenuActionToggleSatellite(mMapView),
                 new GeoMapActivityDelegate.MenuActionCacheList(this)
         };
         final int menuIdArray[] = {
                 R.id.menu_toggle_satellite, R.id.menu_cache_list
         };
         final MenuActions menuActions = new MenuActions(menuActionArray, menuIdArray);
-        final Context applicationContext = getApplicationContext();
 
-        mGeoMapActivityDelegate = new GeoMapActivityDelegate(this, mapView, applicationContext,
-                myLocationOverlay, menuActions);
-        mGeoMapActivityDelegate.initialize(intent, geocachesSql, whereFactory, mapItemizedOverlay,
-                mapController, mapOverlays);
-        open.close();
+        mapOverlays.add(mMapItemizedOverlay);
+        mapOverlays.add(mMyLocationOverlay);
+        
+        mGeoMapActivityDelegate = new GeoMapActivityDelegate(mMapView, menuActions);
+
+        mGeocachesLoader = new GeocachesLoader(this);
+        final Intent intent = this.getIntent();
+        final MapController mapController = mMapView.getController();
+        mGeoMapActivityDelegate.initialize(intent, mGeocachesLoader,
+                                           mMapItemizedOverlay, mapController);
+
+        mZoomSupervisor = new ZoomSupervisor(mMapView, mGeoMapActivityDelegate);
     }
-
+    
     @Override
     public void onResume() {
         super.onResume();
-        mGeoMapActivityDelegate.onResume();
+        mMyLocationOverlay.enableMyLocation();
+        mMyLocationOverlay.enableCompass();
+        mGeocachesLoader.openDatabase();
+        mZoomSupervisor.start();
     }
 
     @Override
     public void onPause() {
-        mGeoMapActivityDelegate.onPause();
+        mZoomSupervisor.stop();
+        mMyLocationOverlay.disableMyLocation();
+        mMyLocationOverlay.disableCompass();
+        mGeocachesLoader.closeDatabase();
         super.onPause();
     }
 
