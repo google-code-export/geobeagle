@@ -14,26 +14,26 @@
 
 package com.google.code.geobeagle.activity.map;
 
+import java.util.ArrayList;
+
+import android.app.Activity;
+import android.content.Intent;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
+
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapController;
 import com.google.android.maps.MapView;
-import com.google.android.maps.MyLocationOverlay;
-import com.google.android.maps.Overlay;
+import com.google.android.maps.Projection;
+import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.MenuAction;
 import com.google.code.geobeagle.activity.MenuActions;
 import com.google.code.geobeagle.activity.cachelist.CacheList;
 import com.google.code.geobeagle.activity.main.GeoUtils;
-import com.google.code.geobeagle.database.GeocachesSql;
-import com.google.code.geobeagle.database.WhereFactoryNearestCaches;
-
-import android.app.Activity;
-import android.content.Context;
-import android.content.Intent;
-import android.view.Menu;
-import android.view.MenuItem;
-
-import java.util.List;
+import com.google.code.geobeagle.database.GeocachesLoader;
+import com.google.code.geobeagle.database.WhereFactoryWithinRange;
 
 public class GeoMapActivityDelegate {
     static class MenuActionCacheList implements MenuAction {
@@ -62,26 +62,28 @@ public class GeoMapActivityDelegate {
         }
     }
 
-    private final Context mContext;
-    private final MapView mMapView;
+    private final GeoMapView mMapView;
     private final MenuActions mMenuActions;
-    private final MyLocationOverlay mMyLocationOverlay;
+	private MapItemizedOverlay mCachesOverlay;
+	private GeocachesLoader mGeocachesLoader;
 
-    public GeoMapActivityDelegate(Activity parent, MapView mapView, Context context,
-            MyLocationOverlay myLocationOverlay, MenuActions menuActions) {
-        mContext = context;
+	public GeoMapActivityDelegate(GeoMapView mapView,
+	                              MenuActions menuActions) {
         mMapView = mapView;
-        mMyLocationOverlay = myLocationOverlay;
         mMenuActions = menuActions;
     }
 
-    public void initialize(Intent intent, GeocachesSql geocachesSql,
-            WhereFactoryNearestCaches whereFactory, MapItemizedOverlay cachesOverlay,
-            MapController mapController, List<Overlay> mapOverlays) {
+	public void initialize(Intent intent, 
+	                       GeocachesLoader geocachesLoader,
+	                       MapItemizedOverlay cachesOverlay,
+	                       MapController mapController) {
+    	mGeocachesLoader = geocachesLoader;
         mMapView.setBuiltInZoomControls(true);
         // mMapView.setOnLongClickListener()
         mMapView.setSatellite(false);
 
+		mMapView.setScrollListener(this);
+        
         double latitude = intent.getFloatExtra("latitude", 0);
         double longitude = intent.getFloatExtra("longitude", 0);
         GeoPoint center = new GeoPoint((int)(latitude * GeoUtils.MILLION),
@@ -90,12 +92,11 @@ public class GeoMapActivityDelegate {
         mapController.setCenter(center);
         // controller.setZoom(14);
 
-        mapOverlays.add(cachesOverlay);
-        mapOverlays.add(mMyLocationOverlay);
+        mCachesOverlay = cachesOverlay;
 
-        cachesOverlay.addCaches(mContext, latitude, longitude, geocachesSql, whereFactory);
+        refreshCaches();
     }
-
+    
     public boolean onMenuOpened(int featureId, Menu menu) {
         menu.findItem(R.id.menu_toggle_satellite).setTitle(
                 mMapView.isSatellite() ? R.string.map_view : R.string.satellite_view);
@@ -106,13 +107,43 @@ public class GeoMapActivityDelegate {
         return mMenuActions.act(item.getItemId());
     }
 
-    public void onPause() {
-        mMyLocationOverlay.disableMyLocation();
-        mMyLocationOverlay.disableCompass();
+    public void refreshCaches() {
+		GeoPoint center = mMapView.getMapCenter();
+		double lat = center.getLatitudeE6() / 1000000.0;
+		double lon = center.getLongitudeE6() / 1000000.0;
+        
+        int latSpanE6 = mMapView.getLatitudeSpan();
+        int lonSpanE6 = mMapView.getLongitudeSpan();
+        int zoomLevel = mMapView.getZoomLevel();
+		Projection proj = mMapView.getProjection();
+		GeoPoint upperLeft = proj.fromPixels(0, 0);
+		GeoPoint lowerRight = proj.fromPixels(mMapView.getRight(), mMapView.getBottom());
+        int latSpanE6Proj = lowerRight.getLatitudeE6() - upperLeft.getLatitudeE6();
+        int lonSpanE6Proj = lowerRight.getLongitudeE6() - upperLeft.getLongitudeE6();
+        
+        Log.d("GeoBeagle", "Lower right is " + mMapView.getRight() + " " + mMapView.getBottom());
+        Log.d("GeoBeagle", "refreshCaches area " + latSpanE6 + " " + lonSpanE6 + ", zoom = " + zoomLevel);
+        Log.d("GeoBeagle", "  projection says " + latSpanE6Proj + " " + lonSpanE6Proj);
+        //Minimum size of area to fetch geocaches. (The user is likely to zoom out and request more caches)
+        latSpanE6 = Math.max(latSpanE6, 100);
+        lonSpanE6 = Math.max(lonSpanE6, 100);
+        //mWhereFactory.setSpan(latSpanE6/1000000.0, lonSpanE6/1000000.0);
+        
+        //WhereStringFactory whereStringFactory = new WhereStringFactory();
+        //SearchFactory searchFactory = new SearchFactory();
+        ArrayList<Geocache> list = mGeocachesLoader.loadCaches(lat, lon, new WhereFactoryWithinRange(latSpanE6/1000000.0, lonSpanE6/1000000.0));
+        Log.d("GeoBeagle", "refreshCaches will load " + list.size() + " caches");
+        
+        mCachesOverlay.setCacheListUsingGuiThread(list);
     }
 
-    public void onResume() {
-        mMyLocationOverlay.enableMyLocation();
-        mMyLocationOverlay.enableCompass();
+    public void onScrollChange() {
+    	refreshCaches();
     }
+    
+    public void onZoomChange(int prevZoom, int newZoom) {
+    	Log.d("GeoBeagle", "New zoom level: " + newZoom);
+    	refreshCaches();
+    }
+    
 }

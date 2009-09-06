@@ -4,18 +4,18 @@
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	android:layout_width="fill_parent" android:layout_height="fill_parent">
 	<!--
-		<com.google.android.maps.MapView android:id="@+id/mapview"
+		<com.google.code.geobeagle.activity.map.GeoMapView android:id="@+id/mapview"
 		android:layout_width="fill_parent" android:layout_height="fill_parent"
 		android:apiKey="0Xe4rXevZqTGeKidvnkP_1rIPEsIQgSE0Etn-ZQ"
 		android:clickable="true" />
-	<com.google.android.maps.MapView
+	<com.google.code.geobeagle.activity.map.GeoMapView
 		android:id="@+id/mapview" android:layout_width="fill_parent"
 		android:layout_height="fill_parent" android:apiKey="0Xe4rXevZqTHMtvU0p3f- -FFgEoYPtznk-b8uUw"
 		android:clickable="true" />
 	-->
 
 <!--  Anders debug version -->
-	<com.google.android.maps.MapView
+	<com.google.code.geobeagle.activity.map.GeoMapView
 		android:id="@+id/mapview" android:layout_width="fill_parent"
 		android:layout_height="fill_parent" android:apiKey="0Y8hxV81kFkP7BACX5T0_vKLcHMHrV83GKYbrrQ"
 		android:clickable="true" />
