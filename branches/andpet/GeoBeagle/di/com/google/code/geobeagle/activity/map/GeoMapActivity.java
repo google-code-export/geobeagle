@@ -45,7 +45,7 @@ public class GeoMapActivity extends MapActivity {
     }
 
     GeoMapView mMapView;
-    MapItemizedOverlay mMapItemizedOverlay;
+    CachePinsOverlay mMapItemizedOverlay;
     
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -57,7 +57,7 @@ public class GeoMapActivity extends MapActivity {
         final Drawable defaultMarker = resources.getDrawable(R.drawable.map_pin2_others);
         final CacheDrawables cacheDrawables = new CacheDrawables(resources);
         final CacheItemFactory cacheItemFactory = new CacheItemFactory(cacheDrawables);
-        mMapItemizedOverlay = new MapItemizedOverlay(this, defaultMarker,
+        mMapItemizedOverlay = new CachePinsOverlay(this, defaultMarker,
                                                      cacheItemFactory);
         
         mMyLocationOverlay = new MyLocationOverlay(this, mMapView);

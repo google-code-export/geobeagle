@@ -26,7 +26,7 @@ import android.os.Handler;
 
 import java.util.ArrayList;
 
-public class MapItemizedOverlay extends ItemizedOverlay<CacheItem> {
+public class CachePinsOverlay extends ItemizedOverlay<CacheItem> {
 
     private final CacheItemFactory mCacheItemFactory;
     private final Context mContext;
@@ -50,7 +50,7 @@ public class MapItemizedOverlay extends ItemizedOverlay<CacheItem> {
     	}
     };
     
-    public MapItemizedOverlay(Context context, Drawable defaultMarker,
+    public CachePinsOverlay(Context context, Drawable defaultMarker,
             CacheItemFactory cacheItemFactory) {
         super(boundCenterBottom(defaultMarker));
         mContext = context;

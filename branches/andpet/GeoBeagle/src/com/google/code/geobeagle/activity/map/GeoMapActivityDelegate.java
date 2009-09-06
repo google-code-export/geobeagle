@@ -64,7 +64,7 @@ public class GeoMapActivityDelegate {
 
     private final GeoMapView mMapView;
     private final MenuActions mMenuActions;
-	private MapItemizedOverlay mCachesOverlay;
+	private CachePinsOverlay mCachesOverlay;
 	private GeocachesLoader mGeocachesLoader;
     private static boolean fZoomed = false;
 
@@ -76,7 +76,7 @@ public class GeoMapActivityDelegate {
 
 	public void initialize(Intent intent, 
 	                       GeocachesLoader geocachesLoader,
-	                       MapItemizedOverlay cachesOverlay,
+	                       CachePinsOverlay cachesOverlay,
 	                       MapController mapController) {
     	mGeocachesLoader = geocachesLoader;
         mMapView.setBuiltInZoomControls(true);
