@@ -48,21 +48,19 @@ public class GeoMapActivityDelegateTest {
         GeoPoint geoPoint = PowerMock.createMock(GeoPoint.class);
         MapController mapController = PowerMock.createMock(MapController.class);
 
+        final GeoMapActivityDelegate geoMapActivityDelegate = new GeoMapActivityDelegate(mapView,
+                null);
         mapView.setBuiltInZoomControls(true);
         mapView.setSatellite(false);
+        mapView.setScrollListener(geoMapActivityDelegate);
         EasyMock.expect(intent.getFloatExtra("latitude", 0)).andReturn(122.0f);
         EasyMock.expect(intent.getFloatExtra("longitude", 0)).andReturn(37.0f);
         PowerMock.expectNew(GeoPoint.class, 122000000, 37000000).andReturn(geoPoint);
         mapController.setCenter(geoPoint);
         EasyMock.expect(mapController.setZoom(14)).andReturn(14);
+
         PowerMock.replayAll();
-        /*
-        new GeoMapActivityDelegate(geoMapActivity, mapView, context, myLocationOverlay, null)
-        .initialize(intent, geocachesSql, whereFactory, cachesOverlay, mapController,
-                mapOverlays, cacheItemFactory);
-                */
-        new GeoMapActivityDelegate(mapView, null)
-                .initialize(intent, geocachesLoader, cachesOverlay, mapController);
+        geoMapActivityDelegate.initialize(intent, geocachesLoader, cachesOverlay, mapController);
         PowerMock.verifyAll();
     }
 
@@ -81,7 +79,7 @@ public class GeoMapActivityDelegateTest {
         EasyMock.expect(menuItem.setTitle(R.string.satellite_view)).andReturn(menuItem);
 
         PowerMock.replayAll();
-        final GeoMapActivityDelegate geoMapActivityDelegate = new GeoMapActivityDelegate(null,
+        final GeoMapActivityDelegate geoMapActivityDelegate = new GeoMapActivityDelegate(mapView,
                 null);
         geoMapActivityDelegate.onMenuOpened(0, menu);
         geoMapActivityDelegate.onMenuOpened(0, menu);
@@ -97,8 +95,7 @@ public class GeoMapActivityDelegateTest {
         EasyMock.expect(menuActions.act(12)).andReturn(true);
 
         PowerMock.replayAll();
-        new GeoMapActivityDelegate(null, menuActions)
-                .onOptionsItemSelected(menuItem);
+        new GeoMapActivityDelegate(null, menuActions).onOptionsItemSelected(menuItem);
         PowerMock.verifyAll();
     }
 

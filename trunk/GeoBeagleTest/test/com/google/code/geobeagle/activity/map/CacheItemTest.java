@@ -53,7 +53,7 @@ public class CacheItemTest {
         EasyMock.expect(drawable.getIntrinsicHeight()).andReturn(22).anyTimes();
         drawable.setBounds(-9, -22, 9, 0);
         EasyMock.expectLastCall().anyTimes();
-
+        
         PowerMock.replayAll();
         assertEquals(drawable, new CacheDrawables(resources).get(CacheType.MULTI));
         PowerMock.verifyAll();
