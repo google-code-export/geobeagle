@@ -43,7 +43,7 @@ public class GeoMapActivityDelegateTest {
     public void testInitialize() throws Exception {
         GeoMapView mapView = PowerMock.createMock(GeoMapView.class);
         GeocachesLoader geocachesLoader = PowerMock.createMock(GeocachesLoader.class);
-        MapItemizedOverlay cachesOverlay = PowerMock.createMock(MapItemizedOverlay.class);
+        CachePinsOverlay cachesOverlay = PowerMock.createMock(CachePinsOverlay.class);
         Intent intent = PowerMock.createMock(Intent.class);
         GeoPoint geoPoint = PowerMock.createMock(GeoPoint.class);
         MapController mapController = PowerMock.createMock(MapController.class);
