@@ -6,7 +6,6 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import com.google.android.maps.GeoPoint;
-
 import com.google.code.geobeagle.Geocache;
 
 public class DensityMatrix {

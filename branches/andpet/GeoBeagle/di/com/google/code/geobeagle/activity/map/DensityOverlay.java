@@ -1,6 +1,5 @@
 package com.google.code.geobeagle.activity.map;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import android.graphics.Canvas;
@@ -8,31 +7,28 @@ import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.os.Handler;
-import android.util.Log;
 
 import com.google.android.maps.MapView;
 import com.google.android.maps.Overlay;
 import com.google.android.maps.Projection;
-import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.activity.map.DensityMatrix.DensityPatch;
 
 public class DensityOverlay extends Overlay {
-
-	//private DensityMatrix mDensityMatrix;
 	private List<DensityPatch> mDensityPatches;
 	private Handler mGuiThreadHandler;
 
 	/** Execute on the gui thread to avoid ArrayIndexOutOfBoundsException */
     private class CacheListUpdater implements Runnable {
-    	ArrayList<Geocache> mCacheList;
-    	public CacheListUpdater(ArrayList<Geocache> list) {
-    		mCacheList = list;
+    	DensityMatrix mDensityMatrix;
+    	public CacheListUpdater(DensityMatrix densityMatrix) {
+    		mDensityMatrix = densityMatrix;
     	}
     	public void run() {
-    		DensityMatrix densityMatrix = new DensityMatrix(0.01, 0.02); 
-    		densityMatrix.addCaches(mCacheList);
-    		mDensityPatches = densityMatrix.getDensityPatches();
-    		Log.d("GeoBeagle", "DensityOverlay loaded " + mDensityPatches.size() + " patches");
+    		if (mDensityMatrix != null) {
+    			mDensityPatches = mDensityMatrix.getDensityPatches();
+    		} else {
+    			mDensityPatches = null;
+    		}
     	}
     };
 
@@ -63,13 +59,14 @@ public class DensityOverlay extends Overlay {
 			tempRect.left = Math.min(screenLow.x, screenHigh.x);
 			tempRect.right = Math.max(screenLow.x, screenHigh.x);
 			int count = patch.getCacheCount();
-			bluePaint.setAlpha(Math.min(192, 10+32*count));  //Never draw completely opaque
+			bluePaint.setAlpha(Math.min(210, 10+32*count));  //Never draw completely opaque
 			canvas.drawRect(tempRect, bluePaint);
 		}
 	}
 
+    
     /** Replaces all caches on the map with the supplied ones. */
-    public void setCacheListUsingGuiThread(ArrayList<Geocache> list) {
-        mGuiThreadHandler.post(new CacheListUpdater(list));
+    public void setCacheListUsingGuiThread(DensityMatrix matrix) {
+        mGuiThreadHandler.post(new CacheListUpdater(matrix));
     }
 }

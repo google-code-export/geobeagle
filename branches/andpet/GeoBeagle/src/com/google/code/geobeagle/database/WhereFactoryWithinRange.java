@@ -23,18 +23,6 @@ public class WhereFactoryWithinRange implements WhereFactory {
 		mSpanLon = spanLon;
     }
 
-/*
-    public void setSpan(GeoPoint geopoint) {
-		setSpan(geopoint.getLatitudeE6() / 1000000.0,
-
-	}
-*/
-
-    public void setSpan(double spanLat, double spanLon) {
-		mSpanLat = spanLat;
-		mSpanLon = spanLon;
-    }
-
     @Override
     public String getWhere(ISQLiteDatabase sqliteWrapper, double latitude, double longitude) {
 
@@ -43,7 +31,7 @@ public class WhereFactoryWithinRange implements WhereFactory {
         double lonLow = longitude - mSpanLon/2.0;
         double lonHigh = longitude + mSpanLon/2.0;
 
-        return "Latitude > " + latLow + " AND Latitude < " + latHigh + " AND Longitude > " + lonLow
-                + " AND Longitude < " + lonHigh;
+        return "Latitude > " + latLow + " AND Latitude < " + latHigh + 
+               " AND Longitude > " + lonLow + " AND Longitude < " + lonHigh;
     }
 }

@@ -43,8 +43,9 @@ public class GeoMapView extends MapView {
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
     	super.onLayout(changed, left, top, right, bottom);
     	if (changed && mListener != null) {
-    		if (left != 0 || right != 0 || top != 0 || bottom != 0)
+    		if (left != 0 || right != 0 || top != 0 || bottom != 0) {
     			mListener.onLayoutChange();
+    		}
     	}
     }
     
@@ -57,5 +58,5 @@ public class GeoMapView extends MapView {
 		}
 		return result;
 	}
-    
+
 }
