@@ -445,8 +445,8 @@ public class RadarView extends View implements SensorListener, LocationListener 
      * 
      * @param useMetric True if the display should use metric units
      */
-    public void setUseMetric(boolean useMetric) {
-        mUseMetric = useMetric;
+    public void setUseImperial(boolean useImperial) {
+        mUseMetric = !useImperial;
         mLastScale = -1;
         if (mHaveLocation) {
             updateDistance(mDistance);

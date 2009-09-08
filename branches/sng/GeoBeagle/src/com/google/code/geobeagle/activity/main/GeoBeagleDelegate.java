@@ -14,62 +14,123 @@
 
 package com.google.code.geobeagle.activity.main;
 
+import com.google.code.geobeagle.CacheType;
+import com.google.code.geobeagle.CompassListener;
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.GeocacheFactory;
-import com.google.code.geobeagle.R;
+import com.google.code.geobeagle.GeocacheFactory.Source;
 import com.google.code.geobeagle.activity.ActivitySaver;
 import com.google.code.geobeagle.activity.ActivityType;
 import com.google.code.geobeagle.activity.MenuAction;
 import com.google.code.geobeagle.activity.main.fieldnotes.FieldNoteSender;
 import com.google.code.geobeagle.activity.main.fieldnotes.FieldNoteSender.FieldNoteResources;
-import com.google.code.geobeagle.activity.main.view.CacheDetailsOnClickListener;
+import com.google.code.geobeagle.activity.main.view.GeocacheViewer;
+import com.google.code.geobeagle.activity.main.view.WebPageAndDetailsButtonEnabler;
+import com.google.code.geobeagle.database.ISQLiteDatabase;
+import com.google.code.geobeagle.database.DatabaseDI.GeoBeagleSqliteOpenHelper;
 
 import android.app.Dialog;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
+import android.hardware.SensorManager;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.text.format.DateFormat;
+import android.util.Log;
+import android.view.KeyEvent;
 import android.view.MenuItem;
-import android.widget.Button;
+import android.view.View;
+import android.view.View.OnClickListener;
 
+import java.io.File;
 import java.util.HashMap;
 
 public class GeoBeagleDelegate {
 
+    public static class LogFindClickListener implements OnClickListener {
+        private final GeoBeagle mGeoBeagle;
+        private final int mIdDialog;
+
+        LogFindClickListener(GeoBeagle geoBeagle, int idDialog) {
+            mGeoBeagle = geoBeagle;
+            mIdDialog = idDialog;
+        }
+
+        public void onClick(View v) {
+            mGeoBeagle.showDialog(mIdDialog);
+        }
+    }
+
+    static int ACTIVITY_REQUEST_TAKE_PICTURE = 1;
     private final ActivitySaver mActivitySaver;
     private final AppLifecycleManager mAppLifecycleManager;
-    private final CacheDetailsOnClickListener mCacheDetailsOnClickListener;
+    private final CompassListener mCompassListener;
     private final FieldNoteSender mFieldNoteSender;
+    private final GeoBeagleSqliteOpenHelper mGeoBeagleSqliteOpenHelper;
+    private Geocache mGeocache;
+    private final GeocacheFactory mGeocacheFactory;
+    private final GeocacheViewer mGeocacheViewer;
     private final HashMap<Integer, MenuAction> mMenuActions;
     private final GeoBeagle mParent;
-    private final Resources mResources;
-    private Geocache mGeocache;
-    private final SharedPreferences mSharedPreferences;
     private final RadarView mRadarView;
+    private final Resources mResources;
+    private final SensorManager mSensorManager;
+    private final SharedPreferences mSharedPreferences;
+    private final WebPageAndDetailsButtonEnabler mWebPageButtonEnabler;
+    private ISQLiteDatabase mWritableDatabase;
+    private final IncomingIntentHandler mIncomingIntentHandler;
 
-    public GeoBeagleDelegate(GeoBeagle parent, ActivitySaver activitySaver,
-            AppLifecycleManager appLifecycleManager,
-            CacheDetailsOnClickListener cacheDetailsOnClickListener,
-            FieldNoteSender fieldNoteSender, HashMap<Integer, MenuAction> menuActions,
-            Resources resources, SharedPreferences sharedPreferences, RadarView radarView) {
+    public GeoBeagleDelegate(ActivitySaver activitySaver, AppLifecycleManager appLifecycleManager,
+            CompassListener compassListener, FieldNoteSender fieldNoteSender, GeoBeagle parent,
+            GeoBeagleSqliteOpenHelper geoBeagleSqliteOpenHelper, GeocacheFactory geocacheFactory,
+            GeocacheViewer geocacheViewer, HashMap<Integer, MenuAction> menuActions,
+            IncomingIntentHandler incomingIntentHandler, ISQLiteDatabase sqliteDatabase,
+            RadarView radarView, Resources resources, SensorManager sensorManager,
+            SharedPreferences sharedPreferences, WebPageAndDetailsButtonEnabler webPageButtonEnabler) {
         mParent = parent;
         mActivitySaver = activitySaver;
         mAppLifecycleManager = appLifecycleManager;
-        mCacheDetailsOnClickListener = cacheDetailsOnClickListener;
         mFieldNoteSender = fieldNoteSender;
         mMenuActions = menuActions;
         mResources = resources;
         mSharedPreferences = sharedPreferences;
         mRadarView = radarView;
+        mCompassListener = compassListener;
+        mSensorManager = sensorManager;
+        mGeoBeagleSqliteOpenHelper = geoBeagleSqliteOpenHelper;
+        mWritableDatabase = sqliteDatabase;
+        mGeocacheViewer = geocacheViewer;
+        mWebPageButtonEnabler = webPageButtonEnabler;
+        mGeocacheFactory = geocacheFactory;
+        mIncomingIntentHandler = incomingIntentHandler;
     }
 
-    public void onCreate() {
-        ((Button)mParent.findViewById(R.id.cache_details))
-                .setOnClickListener(mCacheDetailsOnClickListener);
+    public Geocache getGeocache() {
+        return mGeocache;
+    }
+
+    private void onCameraStart() {
+        String filename = "/sdcard/GeoBeagle/" + mGeocache.getId()
+                + DateFormat.format(" yyyy-MM-dd kk.mm.ss.jpg", System.currentTimeMillis());
+        Log.d("GeoBeagle", "capturing image to " + filename);
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(new File(filename)));
+        mParent.startActivityForResult(intent, GeoBeagleDelegate.ACTIVITY_REQUEST_TAKE_PICTURE);
     }
 
     public Dialog onCreateDialog(int id) {
-        FieldNoteResources fieldNoteResources = new FieldNoteResources(mResources, id);
+        final FieldNoteResources fieldNoteResources = new FieldNoteResources(mResources, id);
         return mFieldNoteSender.createDialog(mGeocache.getId(), fieldNoteResources, mParent);
+    }
+
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_CAMERA && event.getRepeatCount() == 0) {
+            onCameraStart();
+            return true;
+        }
+        return false;
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -80,17 +141,38 @@ public class GeoBeagleDelegate {
     public void onPause() {
         mAppLifecycleManager.onPause();
         mActivitySaver.save(ActivityType.VIEW_CACHE, mGeocache);
+        mSensorManager.unregisterListener(mRadarView);
+        mSensorManager.unregisterListener(mCompassListener);
+        mWritableDatabase.close();
     }
 
     public void onRestoreInstanceState(Bundle savedInstanceState) {
+        // see http://www.androidguys.com/2008/11/07/rotational-forces-part-two/
         GeocacheFromParcelFactory geocacheFromParcelFactory = new GeocacheFromParcelFactory(
                 new GeocacheFactory());
         mGeocache = geocacheFromParcelFactory.createFromBundle(savedInstanceState);
+        mWritableDatabase = mGeoBeagleSqliteOpenHelper.getWritableSqliteWrapper();
     }
 
     public void onResume() {
-        mRadarView.setUseMetric(!mSharedPreferences.getBoolean("imperial", false));
+        mRadarView.handleUnknownLocation();
+        mWritableDatabase = mGeoBeagleSqliteOpenHelper.getWritableSqliteWrapper();
+        mRadarView.setUseImperial(mSharedPreferences.getBoolean("imperial", false));
         mAppLifecycleManager.onResume();
+        mSensorManager.registerListener(mRadarView, SensorManager.SENSOR_ORIENTATION,
+                SensorManager.SENSOR_DELAY_UI);
+        mSensorManager.registerListener(mCompassListener, SensorManager.SENSOR_ORIENTATION,
+                SensorManager.SENSOR_DELAY_UI);
+        mGeocache = mIncomingIntentHandler.maybeGetGeocacheFromIntent(mParent.getIntent(),
+                mGeocache, mWritableDatabase);
+
+        // Possible fix for issue 53.
+        if (mGeocache == null) {
+            mGeocache = mGeocacheFactory.create("", "", 0, 0, Source.MY_LOCATION, "",
+                    CacheType.NULL, 0, 0, 0);
+        }
+        mGeocacheViewer.set(mGeocache);
+        mWebPageButtonEnabler.check();
     }
 
     public void onSaveInstanceState(Bundle outState) {
@@ -102,9 +184,5 @@ public class GeoBeagleDelegate {
 
     public void setGeocache(Geocache geocache) {
         mGeocache = geocache;
-    }
-
-    public Geocache getGeocache() {
-        return mGeocache;
     }
 }
