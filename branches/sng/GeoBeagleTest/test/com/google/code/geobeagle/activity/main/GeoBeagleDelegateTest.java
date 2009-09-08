@@ -27,7 +27,7 @@ import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.GeocacheFactory.Source;
 import com.google.code.geobeagle.activity.ActivitySaver;
 import com.google.code.geobeagle.activity.ActivityType;
-import com.google.code.geobeagle.activity.MenuAction;
+import com.google.code.geobeagle.activity.MenuActions;
 import com.google.code.geobeagle.activity.cachelist.GeocacheListController;
 import com.google.code.geobeagle.activity.main.fieldnotes.FieldNoteSender;
 import com.google.code.geobeagle.activity.main.fieldnotes.FieldNoteSender.FieldNoteResources;
@@ -61,7 +61,6 @@ import android.view.MenuItem;
 import android.view.View;
 
 import java.io.File;
-import java.util.HashMap;
 
 @PrepareForTest( {
         KeyEvent.class, DateFormat.class, Intent.class, Bundle.class, FieldNoteResources.class,
@@ -216,20 +215,18 @@ public class GeoBeagleDelegateTest {
 
     @Test
     public void testOnOptionsItemSelected() {
-        MenuAction menuAction = PowerMock.createMock(MenuAction.class);
+        MenuActions menuActions = PowerMock.createMock(MenuActions.class);
         MenuItem item = PowerMock.createMock(MenuItem.class);
         IncomingIntentHandler incomingIntentHandler = PowerMock
                 .createMock(IncomingIntentHandler.class);
 
         EasyMock.expect(item.getItemId()).andReturn(12);
-        menuAction.act();
-
+        EasyMock.expect(menuActions.act(12)).andReturn(true);
         PowerMock.replayAll();
-        HashMap<Integer, MenuAction> menuActions = new HashMap<Integer, MenuAction>(0);
-        menuActions.put(12, menuAction);
-        new GeoBeagleDelegate(null, null, null, null, null, null, null, null, menuActions,
-                incomingIntentHandler, null, null, null, null, null, null)
-                .onOptionsItemSelected(item);
+
+        assertTrue(new GeoBeagleDelegate(null, null, null, null, null, null, null, null,
+                menuActions, incomingIntentHandler, null, null, null, null, null, null)
+                .onOptionsItemSelected(item));
         PowerMock.verifyAll();
     }
 

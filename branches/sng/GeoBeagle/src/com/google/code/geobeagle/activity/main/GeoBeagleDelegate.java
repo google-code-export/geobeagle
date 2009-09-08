@@ -21,7 +21,7 @@ import com.google.code.geobeagle.GeocacheFactory;
 import com.google.code.geobeagle.GeocacheFactory.Source;
 import com.google.code.geobeagle.activity.ActivitySaver;
 import com.google.code.geobeagle.activity.ActivityType;
-import com.google.code.geobeagle.activity.MenuAction;
+import com.google.code.geobeagle.activity.MenuActions;
 import com.google.code.geobeagle.activity.main.fieldnotes.FieldNoteSender;
 import com.google.code.geobeagle.activity.main.fieldnotes.FieldNoteSender.FieldNoteResources;
 import com.google.code.geobeagle.activity.main.view.GeocacheViewer;
@@ -45,7 +45,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 
 import java.io.File;
-import java.util.HashMap;
 
 public class GeoBeagleDelegate {
 
@@ -72,7 +71,7 @@ public class GeoBeagleDelegate {
     private Geocache mGeocache;
     private final GeocacheFactory mGeocacheFactory;
     private final GeocacheViewer mGeocacheViewer;
-    private final HashMap<Integer, MenuAction> mMenuActions;
+    private final MenuActions mMenuActions;
     private final GeoBeagle mParent;
     private final RadarView mRadarView;
     private final Resources mResources;
@@ -85,7 +84,7 @@ public class GeoBeagleDelegate {
     public GeoBeagleDelegate(ActivitySaver activitySaver, AppLifecycleManager appLifecycleManager,
             CompassListener compassListener, FieldNoteSender fieldNoteSender, GeoBeagle parent,
             GeoBeagleSqliteOpenHelper geoBeagleSqliteOpenHelper, GeocacheFactory geocacheFactory,
-            GeocacheViewer geocacheViewer, HashMap<Integer, MenuAction> menuActions,
+            GeocacheViewer geocacheViewer, MenuActions menuActions,
             IncomingIntentHandler incomingIntentHandler, ISQLiteDatabase sqliteDatabase,
             RadarView radarView, Resources resources, SensorManager sensorManager,
             SharedPreferences sharedPreferences, WebPageAndDetailsButtonEnabler webPageButtonEnabler) {
@@ -134,8 +133,7 @@ public class GeoBeagleDelegate {
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {
-        mMenuActions.get(item.getItemId()).act();
-        return true;
+        return mMenuActions.act(item.getItemId());
     }
 
     public void onPause() {

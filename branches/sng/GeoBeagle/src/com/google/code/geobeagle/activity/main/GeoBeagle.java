@@ -26,6 +26,7 @@ import com.google.code.geobeagle.R.id;
 import com.google.code.geobeagle.activity.ActivityDI;
 import com.google.code.geobeagle.activity.ActivitySaver;
 import com.google.code.geobeagle.activity.MenuAction;
+import com.google.code.geobeagle.activity.MenuActions;
 import com.google.code.geobeagle.activity.main.GeoBeagleDelegate.LogFindClickListener;
 import com.google.code.geobeagle.activity.main.fieldnotes.FieldNoteSender;
 import com.google.code.geobeagle.activity.main.fieldnotes.FieldNoteSenderDI;
@@ -74,8 +75,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import java.util.HashMap;
 
 /*
  * Main Activity for GeoBeagle.
@@ -156,16 +155,19 @@ public class GeoBeagle extends Activity {
         final LayoutInflater layoutInflater = LayoutInflater.from(this);
         final FieldNoteSender fieldNoteSender = FieldNoteSenderDI.build(this, layoutInflater);
         final ActivitySaver activitySaver = ActivityDI.createActivitySaver(this);
-        final HashMap<Integer, MenuAction> menuActions = new HashMap<Integer, MenuAction>();
+        MenuAction[] menuActionArray = {
+                new MenuActionCacheList(this), new MenuActionEditGeocache(this),
+                new MenuActionLogDnf(this), new MenuActionLogFind(this),
+                new MenuActionSearchOnline(this), new MenuActionSettings(this),
+                new MenuActionGoogleMaps(intentStarterViewUri)
+        };
+        int[] menuIdArray = {
+                R.id.menu_cache_list, R.id.menu_edit_geocache, R.id.menu_log_dnf,
+                R.id.menu_log_find, R.id.menu_search_online, R.id.menu_settings,
+                R.id.menu_google_maps
+        };
+        final MenuActions menuActions = new MenuActions(menuActionArray, menuIdArray);
         final Resources resources = this.getResources();
-
-        menuActions.put(R.id.menu_cache_list, new MenuActionCacheList(this));
-        menuActions.put(R.id.menu_edit_geocache, new MenuActionEditGeocache(this));
-        menuActions.put(R.id.menu_log_dnf, new MenuActionLogDnf(this));
-        menuActions.put(R.id.menu_log_find, new MenuActionLogFind(this));
-        menuActions.put(R.id.menu_search_online, new MenuActionSearchOnline(this));
-        menuActions.put(R.id.menu_settings, new MenuActionSettings(this));
-        menuActions.put(R.id.menu_google_maps, new MenuActionGoogleMaps(intentStarterViewUri));
         final SharedPreferences defaultSharedPreferences = PreferenceManager
                 .getDefaultSharedPreferences(this);
         final GeocacheFromIntentFactory geocacheFromIntentFactory = new GeocacheFromIntentFactory(
