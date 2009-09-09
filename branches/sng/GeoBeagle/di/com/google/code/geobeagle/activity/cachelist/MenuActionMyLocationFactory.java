@@ -18,26 +18,22 @@ import com.google.code.geobeagle.ErrorDisplayer;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionMyLocation;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheFromMyLocationFactory;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
-import com.google.code.geobeagle.database.ISQLiteDatabase;
-import com.google.code.geobeagle.database.LocationSaverFactory;
+import com.google.code.geobeagle.database.LocationSaver;
 
 public class MenuActionMyLocationFactory {
 
     private final ErrorDisplayer mErrorDisplayer;
     private final GeocacheFromMyLocationFactory mGeocacheFromMyLocationFactory;
-    private final LocationSaverFactory mLocationSaverFactory;
 
     public MenuActionMyLocationFactory(ErrorDisplayer errorDisplayer,
-            GeocacheFromMyLocationFactory geocacheFromMyLocationFactory,
-            LocationSaverFactory locationSaverFactory) {
+            GeocacheFromMyLocationFactory geocacheFromMyLocationFactory) {
         mErrorDisplayer = errorDisplayer;
         mGeocacheFromMyLocationFactory = geocacheFromMyLocationFactory;
-        mLocationSaverFactory = locationSaverFactory;
     }
 
     public MenuActionMyLocation create(CacheListRefresh cacheListRefresh,
-            ISQLiteDatabase writableDatabase) {
+            LocationSaver locationSaver) {
         return new MenuActionMyLocation(cacheListRefresh, mErrorDisplayer,
-                mGeocacheFromMyLocationFactory, mLocationSaverFactory, writableDatabase);
+                mGeocacheFromMyLocationFactory, locationSaver);
     }
 }

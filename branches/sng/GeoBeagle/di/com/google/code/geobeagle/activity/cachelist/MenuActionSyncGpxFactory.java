@@ -17,7 +17,7 @@ package com.google.code.geobeagle.activity.cachelist;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.Abortable;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionSyncGpx;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
-import com.google.code.geobeagle.database.ISQLiteDatabase;
+import com.google.code.geobeagle.database.CacheWriter;
 
 public class MenuActionSyncGpxFactory {
 
@@ -29,10 +29,9 @@ public class MenuActionSyncGpxFactory {
         mNullAbortable = nullAbortable;
     }
 
-    public MenuActionSyncGpx create(CacheListRefresh cacheListRefresh,
-            ISQLiteDatabase writableDatabase) {
+    public MenuActionSyncGpx create(CacheListRefresh cacheListRefresh, CacheWriter cacheWriter) {
         return new MenuActionSyncGpx(mNullAbortable, cacheListRefresh, mGpxImporterFactory,
-                writableDatabase);
+                cacheWriter);
     }
 
 }

@@ -47,7 +47,6 @@ import com.google.code.geobeagle.activity.cachelist.presenter.SensorManagerWrapp
 import com.google.code.geobeagle.activity.cachelist.presenter.ToleranceStrategy;
 import com.google.code.geobeagle.activity.cachelist.view.GeocacheSummaryRowInflater;
 import com.google.code.geobeagle.activity.main.GeoBeagle;
-import com.google.code.geobeagle.database.CacheWriterFactory;
 import com.google.code.geobeagle.database.FilterNearestCaches;
 import com.google.code.geobeagle.database.LocationSaverFactory;
 import com.google.code.geobeagle.database.WhereFactoryAllCaches;
@@ -195,11 +194,8 @@ public class CacheListDelegateDI {
         final CacheListRefreshFactory cacheListRefreshFactory = new CacheListRefreshFactory(
                 actionManagerFactory, locationControlBuffered, sqlCacheLoaderFactory, timing);
 
-        final CacheWriterFactory cacheWriterFactory = new CacheWriterFactory();
-        final LocationSaverFactory locationSaverFactory = new LocationSaverFactory(
-                cacheWriterFactory);
         final MenuActionMyLocationFactory menuActionMyLocationFactory = new MenuActionMyLocationFactory(
-                errorDisplayer, geocacheFromMyLocationFactory, locationSaverFactory);
+                errorDisplayer, geocacheFromMyLocationFactory);
 
         final SensorManager sensorManager = (SensorManager)listActivity
                 .getSystemService(Context.SENSOR_SERVICE);
@@ -216,14 +212,13 @@ public class CacheListDelegateDI {
                 sensorManagerWrapper, updateGpsWidgetRunnable);
 
         final Aborter aborter = new Aborter();
-        final MessageHandler messageHandler = MessageHandler.create(geocacheListPresenter,
-                listActivity);
+        final MessageHandler messageHandler = MessageHandler.create(listActivity);
         final CachePersisterFacadeFactory cachePersisterFacadeFactory = new CachePersisterFacadeFactory(
-                listActivity, messageHandler);
+                messageHandler);
 
         final GpxImporterFactory gpxImporterFactory = new GpxImporterFactory(aborter,
-                cachePersisterFacadeFactory, cacheWriterFactory, errorDisplayer,
-                geocacheListPresenter, listActivity, messageHandler, xmlPullParserWrapper);
+                cachePersisterFacadeFactory, errorDisplayer, geocacheListPresenter, listActivity,
+                messageHandler, xmlPullParserWrapper);
 
         final MenuActionSearchOnline menuActionSearchOnline = new MenuActionSearchOnline(
                 listActivity);
@@ -243,10 +238,12 @@ public class CacheListDelegateDI {
                 listActivity);
 
         final ContextActionDeleteFactory contextActionDeleteFactory = new ContextActionDeleteFactory(
-                cacheWriterFactory, geocacheListAdapter, geocacheVectors);
+                geocacheListAdapter, geocacheVectors);
+        final LocationSaverFactory locationSaverFactory = new LocationSaverFactory();
         final GeocacheListControllerFactory geocacheListControllerFactory = new GeocacheListControllerFactory(
                 contextActionDeleteFactory, contextActionEdit, contextActionView,
-                filterNearestCaches, listActivity, menuActionsFactory, menuActionSyncGpxFactory);
+                filterNearestCaches, listActivity, menuActionsFactory, menuActionSyncGpxFactory,
+                locationSaverFactory);
 
         final ActivitySaver activitySaver = ActivityDI.createActivitySaver(listActivity);
         final GeocacheListControllerNull geocacheListControllerNull = new GeocacheListControllerNull();

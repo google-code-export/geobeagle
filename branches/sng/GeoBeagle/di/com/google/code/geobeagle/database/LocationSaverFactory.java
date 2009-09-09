@@ -14,17 +14,8 @@
 
 package com.google.code.geobeagle.database;
 
-
 public class LocationSaverFactory {
-
-    public LocationSaverFactory(CacheWriterFactory cacheWriterFactory) {
-        mCacheWriterFactory = cacheWriterFactory;
-    }
-
-    private final CacheWriterFactory mCacheWriterFactory;
-
     public LocationSaver createLocationSaver(ISQLiteDatabase writableDatabase) {
-        final CacheWriter cacheWriter = mCacheWriterFactory.create(writableDatabase);
-        return new LocationSaver(cacheWriter);
+        return new LocationSaver(DatabaseDI.createCacheWriter(writableDatabase));
     }
 }

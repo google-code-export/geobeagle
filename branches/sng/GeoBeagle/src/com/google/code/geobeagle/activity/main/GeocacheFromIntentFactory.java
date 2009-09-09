@@ -18,28 +18,19 @@ import com.google.code.geobeagle.CacheType;
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.GeocacheFactory;
 import com.google.code.geobeagle.GeocacheFactory.Source;
-import com.google.code.geobeagle.database.ISQLiteDatabase;
 import com.google.code.geobeagle.database.LocationSaver;
-import com.google.code.geobeagle.database.LocationSaverFactory;
 
 import android.content.Intent;
 import android.net.UrlQuerySanitizer;
 
 public class GeocacheFromIntentFactory {
     private final GeocacheFactory mGeocacheFactory;
-    private final LocationSaverFactory mLocationSaverFactory;
 
-    GeocacheFromIntentFactory(GeocacheFactory geocacheFactory,
-            LocationSaverFactory locationSaverFactory) {
+    GeocacheFromIntentFactory(GeocacheFactory geocacheFactory) {
         mGeocacheFactory = geocacheFactory;
-        mLocationSaverFactory = locationSaverFactory;
     }
 
-    static String[] getStrings() {
-        return null;
-    }
-
-    Geocache viewCacheFromMapsIntent(Intent intent, ISQLiteDatabase writableDatabase) {
+    Geocache viewCacheFromMapsIntent(Intent intent, LocationSaver locationSaver) {
         final String query = intent.getData().getQuery();
         final CharSequence sanitizedQuery = Util.parseHttpUri(query, new UrlQuerySanitizer(),
                 UrlQuerySanitizer.getAllButNulAndAngleBracketsLegal());
@@ -47,8 +38,6 @@ public class GeocacheFromIntentFactory {
         final Geocache geocache = mGeocacheFactory.create(latlon[2], latlon[3], Util
                 .parseCoordinate(latlon[0]), Util.parseCoordinate(latlon[1]), Source.WEB_URL, null,
                 CacheType.NULL, 0, 0, 0);
-        final LocationSaver locationSaver = mLocationSaverFactory
-                .createLocationSaver(writableDatabase);
         locationSaver.saveLocation(geocache);
         return geocache;
     }

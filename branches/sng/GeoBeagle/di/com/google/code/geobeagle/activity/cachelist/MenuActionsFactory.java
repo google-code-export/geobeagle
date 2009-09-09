@@ -23,7 +23,7 @@ import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionSyncG
 import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionToggleFilter;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
 import com.google.code.geobeagle.database.FilterNearestCaches;
-import com.google.code.geobeagle.database.ISQLiteDatabase;
+import com.google.code.geobeagle.database.LocationSaver;
 
 public class MenuActionsFactory {
     private final FilterNearestCaches mFilterNearestCaches;
@@ -39,11 +39,11 @@ public class MenuActionsFactory {
     }
 
     public MenuActions create(MenuActionSyncGpx menuActionSyncGpx,
-            CacheListRefresh cacheListRefresh, ISQLiteDatabase writableDatabase) {
+            CacheListRefresh cacheListRefresh, LocationSaver locationSaver) {
         final MenuActionToggleFilter mMenuActionToggleFilter = new MenuActionToggleFilter(
                 mFilterNearestCaches, cacheListRefresh);
         final MenuActionMyLocation menuActionMyLocation = mMenuActionMyLocationFactory.create(
-                cacheListRefresh, writableDatabase);
+                cacheListRefresh, locationSaver);
         final MenuAction menuActions[] = {
                 menuActionSyncGpx, mMenuActionToggleFilter, menuActionMyLocation,
                 mMenuActionSearchOnline
