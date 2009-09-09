@@ -18,8 +18,6 @@ import com.google.code.geobeagle.ErrorDisplayer;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
 import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheListPresenter;
 import com.google.code.geobeagle.database.CacheWriter;
-import com.google.code.geobeagle.database.CacheWriterFactory;
-import com.google.code.geobeagle.database.ISQLiteDatabase;
 import com.google.code.geobeagle.xmlimport.CachePersisterFacadeDI.CachePersisterFacadeFactory;
 import com.google.code.geobeagle.xmlimport.EventHelperDI.EventHelperFactory;
 import com.google.code.geobeagle.xmlimport.GpxToCache.Aborter;
@@ -124,11 +122,10 @@ public class GpxImporterDI {
         static final int MSG_DONE = 1;
         static final int MSG_PROGRESS = 0;
 
-        public static MessageHandler create(GeocacheListPresenter geocacheListPresenter,
-                ListActivity listActivity) {
+        public static MessageHandler create(ListActivity listActivity) {
             final ProgressDialogWrapper progressDialogWrapper = new ProgressDialogWrapper(
                     listActivity);
-            return new MessageHandler(geocacheListPresenter, progressDialogWrapper);
+            return new MessageHandler(progressDialogWrapper);
         }
 
         private int mCacheCount;
@@ -139,8 +136,7 @@ public class GpxImporterDI {
         private String mStatus;
         private String mWaypointId;
 
-        public MessageHandler(GeocacheListPresenter geocacheListPresenter,
-                ProgressDialogWrapper progressDialogWrapper) {
+        public MessageHandler(ProgressDialogWrapper progressDialogWrapper) {
             mProgressDialogWrapper = progressDialogWrapper;
         }
 
@@ -228,13 +224,12 @@ public class GpxImporterDI {
             XmlPullParserWrapper xmlPullParserWrapper, ErrorDisplayer errorDisplayer,
             GeocacheListPresenter geocacheListPresenter, Aborter aborter,
             MessageHandler messageHandler, CachePersisterFacadeFactory cachePersisterFacadeFactory,
-            CacheWriterFactory cacheWriterFactory, ISQLiteDatabase writableDatabase) {
+            CacheWriter cacheWriter) {
         final PowerManager powerManager = (PowerManager)listActivity
                 .getSystemService(Context.POWER_SERVICE);
         final WakeLock wakeLock = powerManager.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK,
                 "Importing");
 
-        final CacheWriter cacheWriter = cacheWriterFactory.create(writableDatabase);
         final CachePersisterFacade cachePersisterFacade = cachePersisterFacadeFactory.create(
                 cacheWriter, wakeLock);
 

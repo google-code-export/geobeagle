@@ -23,7 +23,7 @@ public class OpenHelperDelegate {
         db.execSQL(Database.SQL_CREATE_IDX_SOURCE);
     }
 
-    public void onUpgrade(ISQLiteDatabase db, int oldVersion, int newVersion) {
+    public void onUpgrade(ISQLiteDatabase db, int oldVersion) {
         if (oldVersion < 9) {
             db.execSQL(Database.SQL_DROP_CACHE_TABLE);
             db.execSQL(Database.SQL_CREATE_CACHE_TABLE_V08);

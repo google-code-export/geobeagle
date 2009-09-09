@@ -60,7 +60,7 @@ public class DatabaseDI {
         @Override
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
             final SQLiteWrapper sqliteWrapper = new SQLiteWrapper(db);
-            mOpenHelperDelegate.onUpgrade(sqliteWrapper, oldVersion, newVersion);
+            mOpenHelperDelegate.onUpgrade(sqliteWrapper, oldVersion);
         }
     }
 
