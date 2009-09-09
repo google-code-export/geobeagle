@@ -36,13 +36,12 @@ import android.os.PowerManager.WakeLock;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.Reader;
-import java.text.ParseException;
 
 @RunWith(PowerMockRunner.class)
 public class GpxLoaderTest {
 
     private <T> void loadRaiseAndDisplayCustomMessage(Class<T> exceptionClass, int errorResource)
-            throws XmlPullParserException, IOException, ParseException, CancelException {
+            throws XmlPullParserException, IOException, CancelException {
         CachePersisterFacade cachePersisterFacade = PowerMock
                 .createMock(CachePersisterFacade.class);
         GpxToCache gpxToCache = PowerMock.createMock(GpxToCache.class);
@@ -67,7 +66,7 @@ public class GpxLoaderTest {
     }
 
     private <T> void loadRaiseAndDisplayExceptionMessage(int errorMessage, Class<T> exceptionClass)
-            throws XmlPullParserException, IOException, ParseException, CancelException {
+            throws XmlPullParserException, IOException, CancelException {
         CachePersisterFacade cachePersisterFacade = createMock(CachePersisterFacade.class);
         GpxToCache gpxToCache = PowerMock.createMock(GpxToCache.class);
         Throwable e = (Throwable)PowerMock.createMock(exceptionClass);
@@ -91,7 +90,7 @@ public class GpxLoaderTest {
     }
 
     private <T> void loadRaiseAndDisplayNothing(Class<T> exceptionClass)
-            throws XmlPullParserException, IOException, ParseException, CancelException {
+            throws XmlPullParserException, IOException, CancelException {
         CachePersisterFacade cachePersisterFacade = PowerMock
                 .createMock(CachePersisterFacade.class);
         GpxToCache gpxToCache = PowerMock.createMock(GpxToCache.class);
@@ -113,7 +112,7 @@ public class GpxLoaderTest {
     }
 
     @Test
-    public void testAbortLoad() throws XmlPullParserException, IOException {
+    public void testAbortLoad() {
         GpxToCache gpxToCache = PowerMock.createMock(GpxToCache.class);
 
         gpxToCache.abort();
@@ -136,8 +135,7 @@ public class GpxLoaderTest {
     }
 
     @Test
-    public void testLoad() throws XmlPullParserException, IOException, ParseException,
-            CancelException {
+    public void testLoad() throws XmlPullParserException, IOException, CancelException {
         CachePersisterFacade cachePersisterFacade = PowerMock
                 .createMock(CachePersisterFacade.class);
         GpxToCache gpxToCache = PowerMock.createMock(GpxToCache.class);
@@ -155,8 +153,7 @@ public class GpxLoaderTest {
     }
 
     @Test
-    public void testLoadAlreadyLoaded() throws XmlPullParserException, IOException, ParseException,
-            CancelException {
+    public void testLoadAlreadyLoaded() throws XmlPullParserException, IOException, CancelException {
         CachePersisterFacade cachePersisterFacade = PowerMock
                 .createMock(CachePersisterFacade.class);
         GpxToCache gpxToCache = PowerMock.createMock(GpxToCache.class);
@@ -175,37 +172,36 @@ public class GpxLoaderTest {
 
     @Test
     public void testLoadCancelException() throws XmlPullParserException, IOException,
-            ParseException, CancelException {
+            CancelException {
         loadRaiseAndDisplayNothing(CancelException.class);
     }
 
     @Test
     public void testLoadFileNotFoundException() throws XmlPullParserException, IOException,
-            ParseException, CancelException {
+            CancelException {
         loadRaiseAndDisplayCustomMessage(FileNotFoundException.class, R.string.file_not_found);
     }
 
     @Test
-    public void testLoadIOException() throws XmlPullParserException, IOException, ParseException,
-            CancelException {
+    public void testLoadIOException() throws XmlPullParserException, IOException, CancelException {
         loadRaiseAndDisplayCustomMessage(IOException.class, R.string.error_reading_file);
     }
 
     @Test
     public void testLoadPullParserException() throws XmlPullParserException, IOException,
-            ParseException, CancelException {
+            CancelException {
         loadRaiseAndDisplayExceptionMessage(R.string.error_parsing_file,
                 XmlPullParserException.class);
     }
 
     @Test
     public void testLoadSqliteException() throws XmlPullParserException, IOException,
-            ParseException, CancelException {
+            CancelException {
         loadRaiseAndDisplayExceptionMessage(R.string.error_writing_cache, SQLiteException.class);
     }
 
     @Test
-    public void testOpen() throws XmlPullParserException, IOException {
+    public void testOpen() throws XmlPullParserException {
         CachePersisterFacade cachePersisterFacade = PowerMock
                 .createMock(CachePersisterFacade.class);
         GpxToCache gpxToCache = PowerMock.createMock(GpxToCache.class);

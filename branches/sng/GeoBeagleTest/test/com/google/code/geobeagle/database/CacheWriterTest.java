@@ -11,15 +11,10 @@ import static org.junit.Assert.assertTrue;
 
 import com.google.code.geobeagle.CacheType;
 import com.google.code.geobeagle.GeocacheFactory.Source;
-import com.google.code.geobeagle.database.CacheWriter;
-import com.google.code.geobeagle.database.Database;
-import com.google.code.geobeagle.database.DbToGeocacheAdapter;
 import com.google.code.geobeagle.database.DatabaseDI.SQLiteWrapper;
 import com.google.code.geobeagle.database.DatabaseTest.DesktopSQLiteDatabase;
 
 import org.junit.Test;
-
-import java.io.IOException;
 
 public class CacheWriterTest {
 
@@ -39,7 +34,7 @@ public class CacheWriterTest {
     }
 
     @Test
-    public void testClearEarlierLoads() throws IOException {
+    public void testClearEarlierLoads() {
         DesktopSQLiteDatabase db = new DesktopSQLiteDatabase();
         db.execSQL(DatabaseTest.currentSchema());
 

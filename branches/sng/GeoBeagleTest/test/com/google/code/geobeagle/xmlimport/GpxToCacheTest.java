@@ -33,7 +33,6 @@ import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.IOException;
 import java.io.Reader;
-import java.text.ParseException;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest( {
@@ -55,7 +54,7 @@ public class GpxToCacheTest {
     }
 
     @Test
-    public void testLoadAbort() throws XmlPullParserException, IOException, ParseException {
+    public void testLoadAbort() throws XmlPullParserException, IOException {
         XmlPullParserWrapper xmlPullParser = PowerMock.createMock(XmlPullParserWrapper.class);
         EventHelper eventHelper = PowerMock.createMock(EventHelper.class);
 
@@ -73,8 +72,7 @@ public class GpxToCacheTest {
     }
 
     @Test
-    public void testLoadNone() throws XmlPullParserException, IOException, ParseException,
-            CancelException {
+    public void testLoadNone() throws XmlPullParserException, IOException, CancelException {
         XmlPullParserWrapper xmlPullParser = PowerMock.createMock(XmlPullParserWrapper.class);
         EventHelper eventHelper = PowerMock.createMock(EventHelper.class);
 
@@ -88,8 +86,7 @@ public class GpxToCacheTest {
     }
 
     @Test
-    public void testLoadOne() throws XmlPullParserException, IOException, ParseException,
-            CancelException {
+    public void testLoadOne() throws XmlPullParserException, IOException, CancelException {
         XmlPullParserWrapper xmlPullParser = PowerMock.createMock(XmlPullParserWrapper.class);
         EventHelper eventHelper = PowerMock.createMock(EventHelper.class);
 
@@ -115,8 +112,7 @@ public class GpxToCacheTest {
     }
 
     @Test
-    public void testLoadSkipThisFile() throws XmlPullParserException, IOException, ParseException,
-            CancelException {
+    public void testLoadSkipThisFile() throws XmlPullParserException, IOException, CancelException {
         XmlPullParserWrapper xmlPullParser = PowerMock.createMock(XmlPullParserWrapper.class);
         EventHelper eventHelper = PowerMock.createMock(EventHelper.class);
 
@@ -130,8 +126,7 @@ public class GpxToCacheTest {
     }
 
     @Test
-    public void testLoadTwo() throws XmlPullParserException, IOException, ParseException,
-            CancelException {
+    public void testLoadTwo() throws XmlPullParserException, IOException, CancelException {
         XmlPullParserWrapper xmlPullParser = PowerMock.createMock(XmlPullParserWrapper.class);
         EventHelper eventHelper = PowerMock.createMock(EventHelper.class);
 

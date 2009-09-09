@@ -21,14 +21,11 @@ import org.junit.runner.RunWith;
 import org.powermock.api.easymock.PowerMock;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-import org.xmlpull.v1.XmlPullParserException;
 
 import android.app.ListActivity;
 import android.widget.Toast;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest( {
@@ -38,7 +35,7 @@ import java.io.IOException;
 public class GpxImporterTest {
 
     @Test
-    public void testAbort() throws InterruptedException {
+    public void testAbort() {
         GpxLoader gpxLoader = PowerMock.createMock(GpxLoader.class);
         ImportThreadWrapper importThreadWrapper = PowerMock.createMock(ImportThreadWrapper.class);
         MessageHandler messageHandler = PowerMock.createMock(MessageHandler.class);
@@ -54,7 +51,7 @@ public class GpxImporterTest {
     }
 
     @Test
-    public void testAbortThreadAlive() throws InterruptedException {
+    public void testAbortThreadAlive() {
         GpxLoader gpxLoader = PowerMock.createMock(GpxLoader.class);
         ImportThreadWrapper importThreadWrapper = PowerMock.createMock(ImportThreadWrapper.class);
         MessageHandler messageHandler = PowerMock.createMock(MessageHandler.class);
@@ -74,7 +71,7 @@ public class GpxImporterTest {
     }
 
     @Test
-    public void testImportGpxs() throws FileNotFoundException, XmlPullParserException, IOException {
+    public void testImportGpxs() {
         CacheListRefresh cacheListRefresh = PowerMock.createMock(CacheListRefresh.class);
         GpxLoader gpxLoader = PowerMock.createMock(GpxLoader.class);
         ImportThreadWrapper importThreadWrapper = PowerMock.createMock(ImportThreadWrapper.class);

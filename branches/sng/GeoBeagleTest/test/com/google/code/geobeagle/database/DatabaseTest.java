@@ -16,7 +16,6 @@ package com.google.code.geobeagle.database;
 
 import static org.junit.Assert.assertEquals;
 
-
 import org.junit.Test;
 
 import android.database.Cursor;
@@ -33,7 +32,7 @@ public class DatabaseTest {
     static class DesktopSQLiteDatabase implements ISQLiteDatabase {
         Writer mWriter;
 
-        DesktopSQLiteDatabase() throws IOException {
+        DesktopSQLiteDatabase() {
             File db = new File("GeoBeagle.db");
             db.delete();
         }
@@ -67,11 +66,6 @@ public class DatabaseTest {
 
         public Cursor query(String table, String[] columns, String selection, String groupBy,
                 String having, String orderBy, String limit, String... selectionArgs) {
-            return null;
-        }
-
-        public Cursor query(String table, String[] columns, String selection,
-                String[] selectionArgs, String groupBy, String having, String orderBy, String limit) {
             return null;
         }
 
@@ -164,7 +158,7 @@ public class DatabaseTest {
     }
 
     @Test
-    public void testOnCreate() throws IOException {
+    public void testOnCreate() {
         DesktopSQLiteDatabase db = new DesktopSQLiteDatabase();
         OpenHelperDelegate openHelperDelegate = new OpenHelperDelegate();
         openHelperDelegate.onCreate(db);
@@ -174,7 +168,7 @@ public class DatabaseTest {
     }
 
     @Test
-    public void testUpgradeFrom10() throws IOException {
+    public void testUpgradeFrom10() {
         DesktopSQLiteDatabase db = new DesktopSQLiteDatabase();
         db.execSQL(schema10);
         db.execSQL("INSERT INTO CACHES (Id, Source) VALUES (\"GCABC\", \"intent\")");
@@ -183,7 +177,7 @@ public class DatabaseTest {
                 .execSQL("INSERT INTO GPX (Name, ExportTime, DeleteMe) VALUES (\"seattle.gpx\", \"6-1-2009\", 1)");
 
         OpenHelperDelegate openHelperDelegate = new OpenHelperDelegate();
-        openHelperDelegate.onUpgrade(db, 10, Database.DATABASE_VERSION);
+        openHelperDelegate.onUpgrade(db, 10);
         String schema = db.dumpSchema();
 
         assertEquals(currentSchema(), schema);
@@ -194,12 +188,12 @@ public class DatabaseTest {
     }
 
     @Test
-    public void testUpgradeFrom6() throws IOException {
+    public void testUpgradeFrom6() {
         DesktopSQLiteDatabase db = new DesktopSQLiteDatabase();
         db.execSQL(schema6);
         db.execSQL("INSERT INTO CACHES (Id, Source) VALUES (\"GCABC\", \"intent\")");
         OpenHelperDelegate openHelperDelegate = new OpenHelperDelegate();
-        openHelperDelegate.onUpgrade(db, 6, Database.DATABASE_VERSION);
+        openHelperDelegate.onUpgrade(db, 6);
         String schema = db.dumpSchema();
 
         assertEquals(currentSchema(), schema);
@@ -209,12 +203,12 @@ public class DatabaseTest {
     }
 
     @Test
-    public void testUpgradeFrom8() throws IOException {
+    public void testUpgradeFrom8() {
         DesktopSQLiteDatabase db = new DesktopSQLiteDatabase();
         db.execSQL(schema7);
         db.execSQL("INSERT INTO CACHES (Id, Source) VALUES (\"GCABC\", \"intent\")");
         OpenHelperDelegate openHelperDelegate = new OpenHelperDelegate();
-        openHelperDelegate.onUpgrade(db, 8, Database.DATABASE_VERSION);
+        openHelperDelegate.onUpgrade(db, 8);
         String schema = db.dumpSchema();
 
         // Need to blow away all data from v8.
@@ -225,14 +219,14 @@ public class DatabaseTest {
     }
 
     @Test
-    public void testUpgradeFrom9() throws IOException {
+    public void testUpgradeFrom9() {
         DesktopSQLiteDatabase db = new DesktopSQLiteDatabase();
         db.execSQL(schema7);
         db.execSQL("INSERT INTO CACHES (Id, Source) VALUES (\"GCABC\", \"intent\")");
         db.execSQL("INSERT INTO CACHES (Id, Source) VALUES (\"GC123\", \"foo.gpx\")");
 
         OpenHelperDelegate openHelperDelegate = new OpenHelperDelegate();
-        openHelperDelegate.onUpgrade(db, 9, Database.DATABASE_VERSION);
+        openHelperDelegate.onUpgrade(db, 9);
         String schema = db.dumpSchema();
 
         assertEquals(currentSchema(), schema);

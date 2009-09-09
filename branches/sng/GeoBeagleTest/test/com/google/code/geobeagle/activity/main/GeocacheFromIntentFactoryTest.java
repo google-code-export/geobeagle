@@ -8,8 +8,6 @@ import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.GeocacheFactory;
 import com.google.code.geobeagle.GeocacheFactory.Source;
 import com.google.code.geobeagle.database.LocationSaver;
-import com.google.code.geobeagle.database.LocationSaverFactory;
-import com.google.code.geobeagle.database.DatabaseDI.SQLiteWrapper;
 
 import org.easymock.EasyMock;
 import org.junit.Test;
@@ -37,10 +35,7 @@ public class GeocacheFromIntentFactoryTest {
         ValueSanitizer valueSanitizer = PowerMock.createMock(ValueSanitizer.class);
         GeocacheFactory geocacheFactory = PowerMock.createMock(GeocacheFactory.class);
         Geocache geocache = PowerMock.createMock(Geocache.class);
-        LocationSaverFactory locationSaverFactory = PowerMock
-                .createMock(LocationSaverFactory.class);
         LocationSaver locationSaver = PowerMock.createMock(LocationSaver.class);
-        SQLiteWrapper sqliteWrapper = PowerMock.createMock(SQLiteWrapper.class);
 
         PowerMock.mockStatic(Util.class);
         PowerMock.mockStatic(UrlQuerySanitizer.class);
@@ -61,13 +56,11 @@ public class GeocacheFromIntentFactoryTest {
         EasyMock.expect(
                 geocacheFactory.create("first", "second", 122.0, 37.0, Source.WEB_URL, null,
                         CacheType.NULL, 0, 0, 0)).andReturn(geocache);
-        EasyMock.expect(locationSaverFactory.createLocationSaver(sqliteWrapper)).andReturn(
-                locationSaver);
         locationSaver.saveLocation(geocache);
 
         PowerMock.replayAll();
-        assertEquals(geocache, new GeocacheFromIntentFactory(geocacheFactory, locationSaverFactory)
-                .viewCacheFromMapsIntent(intent, sqliteWrapper));
+        assertEquals(geocache, new GeocacheFromIntentFactory(geocacheFactory)
+                .viewCacheFromMapsIntent(intent, locationSaver));
         PowerMock.verifyAll();
     }
 }

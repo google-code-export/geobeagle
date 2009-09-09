@@ -27,13 +27,12 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import org.xmlpull.v1.XmlPullParser;
 
 import java.io.IOException;
-import java.text.ParseException;
 
 @RunWith(PowerMockRunner.class)
 public class EventHelperTest {
 
     @Test
-    public void testEventHelperEnd() throws IOException, ParseException {
+    public void testEventHelperEnd() throws IOException {
         XmlPathBuilder xmlPathBuilder = PowerMock.createMock(XmlPathBuilder.class);
         EventHandlerGpx eventHandlerGpx = PowerMock.createMock(EventHandlerGpx.class);
         XmlPullParserWrapper xmlPullParser = PowerMock.createMock(XmlPullParserWrapper.class);
@@ -50,7 +49,7 @@ public class EventHelperTest {
     }
 
     @Test
-    public void testEventHelperStart() throws IOException, ParseException {
+    public void testEventHelperStart() throws IOException {
         XmlPathBuilder xmlPathBuilder = PowerMock.createMock(XmlPathBuilder.class);
         EventHandlerGpx eventHandlerGpx = PowerMock.createMock(EventHandlerGpx.class);
         XmlPullParserWrapper xmlPullParser = PowerMock.createMock(XmlPullParserWrapper.class);
@@ -67,7 +66,7 @@ public class EventHelperTest {
     }
 
     @Test
-    public void testEventHelperText() throws IOException, ParseException {
+    public void testEventHelperText() throws IOException {
         XmlPathBuilder xmlPathBuilder = PowerMock.createMock(XmlPathBuilder.class);
         EventHandlerGpx eventHandlerGpx = PowerMock.createMock(EventHandlerGpx.class);
         XmlPullParserWrapper xmlPullParser = PowerMock.createMock(XmlPullParserWrapper.class);
