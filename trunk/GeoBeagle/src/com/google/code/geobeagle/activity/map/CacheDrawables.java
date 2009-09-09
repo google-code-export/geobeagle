@@ -14,12 +14,12 @@
 
 package com.google.code.geobeagle.activity.map;
 
-import com.google.code.geobeagle.CacheType;
+import java.util.HashMap;
 
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 
-import java.util.HashMap;
+import com.google.code.geobeagle.CacheType;
 
 class CacheDrawables {
     private static Drawable loadAndSizeDrawable(Resources resources, int res) {

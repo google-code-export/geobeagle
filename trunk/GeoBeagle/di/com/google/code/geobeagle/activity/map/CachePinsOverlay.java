@@ -30,7 +30,7 @@ public class CachePinsOverlay extends ItemizedOverlay<CacheItem> {
 
     private final CacheItemFactory mCacheItemFactory;
     private final Context mContext;
-    private final ArrayList<CacheItem> mOverlays;
+    private final ArrayList<CacheItem> mCacheItems;
 	private Handler mGuiThreadHandler;
 
 	/** Execute on the gui thread to avoid ArrayIndexOutOfBoundsException */
@@ -40,11 +40,11 @@ public class CachePinsOverlay extends ItemizedOverlay<CacheItem> {
     		mCacheList = list;
     	}
     	public void run() {
-            mOverlays.clear();
+            mCacheItems.clear();
     		for (Geocache cache : mCacheList) {
     			CacheItem item = mCacheItemFactory.createCacheItem(cache);
     			if (item != null)
-    				mOverlays.add(item);
+    				mCacheItems.add(item);
     		}
     		populate();
     	}
@@ -55,8 +55,10 @@ public class CachePinsOverlay extends ItemizedOverlay<CacheItem> {
         super(boundCenterBottom(defaultMarker));
         mContext = context;
         mCacheItemFactory = cacheItemFactory;
-        mOverlays = new ArrayList<CacheItem>();
+        mCacheItems = new ArrayList<CacheItem>();
         mGuiThreadHandler = new Handler();
+        //Must call populate at least once to avoid NullPointerException in the platform!
+        populate();
     }
 
     /** Replaces all caches on the map with the supplied ones. */
@@ -73,12 +75,12 @@ public class CachePinsOverlay extends ItemizedOverlay<CacheItem> {
 
     @Override
     protected CacheItem createItem(int i) {
-        return mOverlays.get(i);
+        return mCacheItems.get(i);
     }
 
     @Override
     protected boolean onTap(int i) {
-        Geocache geocache = mOverlays.get(i).getGeocache();
+        Geocache geocache = mCacheItems.get(i).getGeocache();
         if (geocache == null)
             return false;
 
@@ -95,6 +97,6 @@ public class CachePinsOverlay extends ItemizedOverlay<CacheItem> {
 
     @Override
     public int size() {
-        return mOverlays.size();
+        return mCacheItems.size();
     }
 }
