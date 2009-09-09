@@ -32,7 +32,7 @@ public class GpxZipInputStream {
         return mNextEntry;
     }
 
-    InputStream getStream() throws IOException {
+    InputStream getStream() {
         return mZipInputStream;
     }
 }

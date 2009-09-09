@@ -88,7 +88,7 @@ public class GpxToCache {
         return false;
     }
 
-    public void open(String source, Reader reader) throws XmlPullParserException, IOException {
+    public void open(String source, Reader reader) throws XmlPullParserException {
         mXmlPullParserWrapper.open(source, reader);
     }
 }
