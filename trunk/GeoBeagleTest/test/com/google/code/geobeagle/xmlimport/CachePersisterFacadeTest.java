@@ -43,7 +43,7 @@ public class CachePersisterFacadeTest {
     private final MessageHandler mMessageHandler = PowerMock.createMock(MessageHandler.class);
 
     @Test
-    public void testAttributes() throws IOException {
+    public void testAttributes() {
         mCacheTagWriter.symbol("Geocache Found");
         mCacheTagWriter.container("big");
         mCacheTagWriter.difficulty("difficult");
@@ -72,7 +72,7 @@ public class CachePersisterFacadeTest {
     }
 
     @Test
-    public void testEnd() throws IOException {
+    public void testEnd() {
         mCacheTagWriter.end();
 
         PowerMock.replayAll();
@@ -118,7 +118,7 @@ public class CachePersisterFacadeTest {
     }
 
     @Test
-    public void testGroundspeakName() throws IOException {
+    public void testGroundspeakName() {
         mCacheTagWriter.cacheName("GC123");
 
         PowerMock.replayAll();
@@ -155,7 +155,7 @@ public class CachePersisterFacadeTest {
     }
 
     @Test
-    public void testNewCache() throws IOException {
+    public void testNewCache() {
         mCacheTagWriter.clear();
 
         PowerMock.replayAll();
@@ -195,7 +195,7 @@ public class CachePersisterFacadeTest {
     }
 
     @Test
-    public void testSymbol() throws IOException {
+    public void testSymbol() {
         mCacheTagWriter.symbol("Geocache Found");
 
         PowerMock.replayAll();
@@ -204,7 +204,7 @@ public class CachePersisterFacadeTest {
     }
 
     @Test
-    public void testWpt() throws IOException {
+    public void testWpt() {
         mCacheTagWriter.latitudeLongitude("37", "122");
         mCacheDetailsWriter.latitudeLongitude("37", "122");
 
@@ -215,7 +215,7 @@ public class CachePersisterFacadeTest {
     }
 
     @Test
-    public void testWptDesc() throws IOException {
+    public void testWptDesc() {
         mCacheTagWriter.cacheName("GC123 by so and so");
 
         PowerMock.replayAll();

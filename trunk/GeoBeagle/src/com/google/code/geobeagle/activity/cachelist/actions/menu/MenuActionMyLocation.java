@@ -20,25 +20,20 @@ import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.MenuAction;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheFromMyLocationFactory;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
-import com.google.code.geobeagle.database.ISQLiteDatabase;
 import com.google.code.geobeagle.database.LocationSaver;
-import com.google.code.geobeagle.database.LocationSaverFactory;
 
 public class MenuActionMyLocation implements MenuAction {
     private final ErrorDisplayer mErrorDisplayer;
     private final GeocacheFromMyLocationFactory mGeocacheFromMyLocationFactory;
-    private final LocationSaverFactory mLocationSaverFactory;
     private final CacheListRefresh mMenuActionRefresh;
-    private final ISQLiteDatabase mWritableDatabase;
+    private final LocationSaver mLocationSaver;
 
-    public MenuActionMyLocation(CacheListRefresh cacheListRefresh,
-            ErrorDisplayer errorDisplayer, GeocacheFromMyLocationFactory geocacheFromMyLocationFactory,
-            LocationSaverFactory locationSaverFactory, ISQLiteDatabase writableDatabase) {
+    public MenuActionMyLocation(CacheListRefresh cacheListRefresh, ErrorDisplayer errorDisplayer,
+            GeocacheFromMyLocationFactory geocacheFromMyLocationFactory, LocationSaver locationSaver) {
         mGeocacheFromMyLocationFactory = geocacheFromMyLocationFactory;
         mErrorDisplayer = errorDisplayer;
         mMenuActionRefresh = cacheListRefresh;
-        mLocationSaverFactory = locationSaverFactory;
-        mWritableDatabase = writableDatabase;
+        mLocationSaver = locationSaver;
     }
 
     public void act() {
@@ -47,8 +42,6 @@ public class MenuActionMyLocation implements MenuAction {
             mErrorDisplayer.displayError(R.string.current_location_null);
             return;
         }
-        final LocationSaver mLocationSaver = mLocationSaverFactory
-                .createLocationSaver(mWritableDatabase);
         mLocationSaver.saveLocation(myLocation);
         mMenuActionRefresh.forceRefresh();
     }

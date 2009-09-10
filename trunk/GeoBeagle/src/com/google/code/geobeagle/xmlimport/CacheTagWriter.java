@@ -50,7 +50,7 @@ public class CacheTagWriter {
 
         public int stars(String stars) {
             try {
-                return (int)Math.round(Float.parseFloat(stars) * 2);
+                return Math.round(Float.parseFloat(stars) * 2);
             } catch (Exception ex) {
                 return 0;
             }

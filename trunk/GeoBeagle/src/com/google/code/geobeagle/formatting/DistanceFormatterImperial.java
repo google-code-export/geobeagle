@@ -10,9 +10,7 @@ public class DistanceFormatterImperial implements DistanceFormatter {
         final float miles = distance / 1609.344f;
         if (miles > 0.05)
             return String.format("%1$1.2fmi", miles);
-        else {
-            final int yards = (int)(miles * (5280 / 3));
-            return String.format("%1$1dyd", yards);
-        }
+        final int yards = (int)(miles * (5280 / 3));
+        return String.format("%1$1dyd", yards);
     }
 }

@@ -168,8 +168,7 @@ public class Geocache implements Parcelable {
     public CharSequence getShortId() {
         if (mId.length() > 2)
             return mId.subSequence(2, mId.length());
-        else
-            return "";
+        return "";
     }
 
     public String getSourceName() {

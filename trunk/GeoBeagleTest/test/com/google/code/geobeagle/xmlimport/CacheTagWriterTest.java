@@ -16,8 +16,6 @@ import org.junit.runner.RunWith;
 import org.powermock.api.easymock.PowerMock;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import java.text.ParseException;
-
 @RunWith(PowerMockRunner.class)
 public class CacheTagWriterTest {
     private final CacheWriter mCacheWriter = PowerMock.createMock(CacheWriter.class);
@@ -67,7 +65,7 @@ public class CacheTagWriterTest {
     }
 
     @Test
-    public void testIsoTimeToSql() throws ParseException {
+    public void testIsoTimeToSql() {
         assertEquals("2008-04-15 16:10:30", new CacheTagWriter(null, null)
                 .isoTimeToSql("2008-04-15T16:10:30.7369220-08:00"));
     }

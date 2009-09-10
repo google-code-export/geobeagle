@@ -1,10 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
+	<!--
+		Licensed under the Apache License, Version 2.0 (the "License"); you
+		may not use this file except in compliance with the License. You may
+		obtain a copy of the License at:
+		http://www.apache.org/licenses/LICENSE-2.0. Unless required by
+		applicable law or agreed to in writing, software distributed under the
+		License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+		CONDITIONS OF ANY KIND, either express or implied. See the License for
+		the specific language governing permissions and limitations under the
+		License.
+	-->
 <FrameLayout android:id="@+id/maplayout"
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	android:layout_width="fill_parent" android:layout_height="fill_parent">
 	<com.google.code.geobeagle.activity.map.GeoMapView
 		android:id="@+id/mapview" android:layout_width="fill_parent"
-		android:layout_height="fill_parent" android:apiKey="0Xe4rXevZqTGeKidvnkP_1rIPEsIQgSE0Etn-ZQ"
+		android:layout_height="fill_parent" android:apiKey="0Xe4rXevZqTHMtvU0p3f--FFgEoYPtznk-b8uUw"
 		android:clickable="true" />
 </FrameLayout>

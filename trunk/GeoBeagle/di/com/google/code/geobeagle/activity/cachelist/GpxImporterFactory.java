@@ -16,8 +16,7 @@ package com.google.code.geobeagle.activity.cachelist;
 
 import com.google.code.geobeagle.ErrorDisplayer;
 import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheListPresenter;
-import com.google.code.geobeagle.database.CacheWriterFactory;
-import com.google.code.geobeagle.database.ISQLiteDatabase;
+import com.google.code.geobeagle.database.CacheWriter;
 import com.google.code.geobeagle.xmlimport.GpxImporter;
 import com.google.code.geobeagle.xmlimport.GpxImporterDI;
 import com.google.code.geobeagle.xmlimport.CachePersisterFacadeDI.CachePersisterFacadeFactory;
@@ -31,7 +30,6 @@ public class GpxImporterFactory {
 
     private final Aborter mAborter;
     private final CachePersisterFacadeFactory mCachePersisterFacadeFactory;
-    private final CacheWriterFactory mCacheWriterFactory;
     private final ErrorDisplayer mErrorDisplayer;
     private final GeocacheListPresenter mGeocacheListPresenter;
     private final ListActivity mListActivity;
@@ -39,13 +37,11 @@ public class GpxImporterFactory {
     private final XmlPullParserWrapper mXmlPullParserWrapper;
 
     public GpxImporterFactory(Aborter aborter,
-            CachePersisterFacadeFactory cachePersisterFacadeFactory,
-            CacheWriterFactory cacheWriterFactory, ErrorDisplayer errorDisplayer,
+            CachePersisterFacadeFactory cachePersisterFacadeFactory, ErrorDisplayer errorDisplayer,
             GeocacheListPresenter geocacheListPresenter, ListActivity listActivity,
             MessageHandler messageHandler, XmlPullParserWrapper xmlPullParserWrapper) {
         mAborter = aborter;
         mCachePersisterFacadeFactory = cachePersisterFacadeFactory;
-        mCacheWriterFactory = cacheWriterFactory;
         mErrorDisplayer = errorDisplayer;
         mGeocacheListPresenter = geocacheListPresenter;
         mListActivity = listActivity;
@@ -53,9 +49,9 @@ public class GpxImporterFactory {
         mXmlPullParserWrapper = xmlPullParserWrapper;
     }
 
-    public GpxImporter create(ISQLiteDatabase writableDatabase) {
+    public GpxImporter create(CacheWriter cacheWriter) {
         return GpxImporterDI.create(mListActivity, mXmlPullParserWrapper, mErrorDisplayer,
                 mGeocacheListPresenter, mAborter, mMessageHandler, mCachePersisterFacadeFactory,
-                mCacheWriterFactory, writableDatabase);
+                cacheWriter);
     }
 }

@@ -45,7 +45,6 @@ public class CacheDetailsOnClickListenerTest {
         Builder builder = PowerMock.createMock(Builder.class);
         AlertDialog alertDialog = PowerMock.createMock(AlertDialog.class);
         LayoutInflater env = PowerMock.createMock(LayoutInflater.class);
-        GeocacheViewer geocacheViewer = PowerMock.createMock(GeocacheViewer.class);
         CacheDetailsLoader cacheDetailsLoader = PowerMock.createMock(CacheDetailsLoader.class);
         View detailsView = PowerMock.createMock(View.class);
         WebView webView = PowerMock.createMock(WebView.class);
@@ -63,8 +62,7 @@ public class CacheDetailsOnClickListenerTest {
         alertDialog.show();
 
         PowerMock.replayAll();
-        new CacheDetailsOnClickListener(geobeagle, builder, geocacheViewer, env, cacheDetailsLoader)
-                .onClick(null);
+        new CacheDetailsOnClickListener(geobeagle, builder, env, cacheDetailsLoader).onClick(null);
         PowerMock.verifyAll();
     }
 }

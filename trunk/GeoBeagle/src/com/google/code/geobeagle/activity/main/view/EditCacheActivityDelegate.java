@@ -26,7 +26,6 @@ import com.google.code.geobeagle.database.LocationSaverFactory;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -121,7 +120,7 @@ public class EditCacheActivityDelegate implements PausableWithDatabase {
         mLocationSaverFactory = locationSaverFactory;
     }
 
-    public void onCreate(Bundle savedInstanceState) {
+    public void onCreate() {
         mParent.setContentView(R.layout.cache_edit);
     }
 

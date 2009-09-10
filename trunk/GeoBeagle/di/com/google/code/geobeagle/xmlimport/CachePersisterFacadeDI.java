@@ -21,7 +21,6 @@ import com.google.code.geobeagle.database.CacheWriter;
 import com.google.code.geobeagle.xmlimport.CacheTagWriter.CacheTagParser;
 import com.google.code.geobeagle.xmlimport.GpxImporterDI.MessageHandler;
 
-import android.app.Activity;
 import android.os.PowerManager.WakeLock;
 
 import java.io.File;
@@ -36,7 +35,7 @@ public class CachePersisterFacadeDI {
         private final MessageHandler mMessageHandler;
         private final WriterWrapper mWriterWrapper;
 
-        public CachePersisterFacadeFactory(Activity activity, MessageHandler messageHandler) {
+        public CachePersisterFacadeFactory(MessageHandler messageHandler) {
             mMessageHandler = messageHandler;
             mFileFactory = new FileFactory();
             mWriterWrapper = new WriterWrapper();

@@ -64,13 +64,12 @@ public class GeoMapActivityDelegate {
 
     private final GeoMapView mMapView;
     private final MenuActions mMenuActions;
-	private CachePinsOverlay mCachesOverlay;
-	private GeocachesLoader mGeocachesLoader;
+    private CachePinsOverlay mCachesOverlay;
+    private GeocachesLoader mGeocachesLoader;
     private static boolean fZoomed = false;
     private DensityOverlay mDensityOverlay;
 
-	public GeoMapActivityDelegate(GeoMapView mapView,
-	                              MenuActions menuActions) {
+    public GeoMapActivityDelegate(GeoMapView mapView, MenuActions menuActions) {
         mMapView = mapView;
         mMenuActions = menuActions;
     }
@@ -84,8 +83,8 @@ public class GeoMapActivityDelegate {
         mMapView.setBuiltInZoomControls(true);
         // mMapView.setOnLongClickListener()
         mMapView.setSatellite(false);
-		mMapView.setScrollListener(this);
-        
+        mMapView.setScrollListener(this);
+
         double latitude = intent.getFloatExtra("latitude", 0);
         double longitude = intent.getFloatExtra("longitude", 0);
         GeoPoint center = new GeoPoint((int)(latitude * GeoUtils.MILLION),
@@ -100,7 +99,10 @@ public class GeoMapActivityDelegate {
         mCachesOverlay = cachesOverlay;
         mDensityOverlay = densityOverlay;
     }
-    
+
+    /**
+     * @param featureId
+     */
     public boolean onMenuOpened(int featureId, Menu menu) {
         menu.findItem(R.id.menu_toggle_satellite).setTitle(
                 mMapView.isSatellite() ? R.string.map_view : R.string.satellite_view);
@@ -115,12 +117,11 @@ public class GeoMapActivityDelegate {
 		//GeoPoint center = mMapView.getMapCenter();
 		//double lat = center.getLatitudeE6() / 1000000.0;
 		//double lon = center.getLongitudeE6() / 1000000.0;
-        
         //int zoomLevel = mMapView.getZoomLevel();
 		//Projection proj = mMapView.getProjection();
         //int latSpanE6Proj = lowerRight.getLatitudeE6() - upperLeft.getLatitudeE6();
         //int lonSpanE6Proj = lowerRight.getLongitudeE6() - upperLeft.getLongitudeE6();
-        
+
         //WhereStringFactory whereStringFactory = new WhereStringFactory();
     	//GeoPoint pt2 = proj.fromPixels(35, 35);  //grid size, in pixels
         /*
@@ -174,15 +175,18 @@ public class GeoMapActivityDelegate {
     	//Log.d("GeoBeagle", "onLayoutChange");
     	refreshCaches();
     }
-    
+
     public void onScrollChange() {
     	//Log.d("GeoBeagle", "onScrollChange");
     	refreshCaches();
     }
-    
+
+    /**
+     * @param prevZoom
+     */
     public void onZoomChange(int prevZoom, int newZoom) {
     	//Log.d("GeoBeagle", "New zoom level: " + newZoom);
     	refreshCaches();
     }
-    
+
 }

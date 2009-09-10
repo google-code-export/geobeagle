@@ -22,9 +22,7 @@ import com.google.code.geobeagle.activity.cachelist.model.GeocacheVectors;
 import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheListAdapter;
 import com.google.code.geobeagle.activity.cachelist.presenter.TitleUpdater;
 import com.google.code.geobeagle.database.CacheWriter;
-import com.google.code.geobeagle.database.CacheWriterFactory;
 
-import org.easymock.EasyMock;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.api.easymock.PowerMock;
@@ -35,24 +33,22 @@ public class ContextActionDeleteTest {
 
     @Test
     public void testActionDelete() {
-        CacheWriterFactory cacheWriterFactory = PowerMock.createMock(CacheWriterFactory.class);
-        CacheWriter cacheWriterSql = PowerMock.createMock(CacheWriter.class);
+        CacheWriter cacheWriter = PowerMock.createMock(CacheWriter.class);
         GeocacheListAdapter geocacheListAdapter = PowerMock.createMock(GeocacheListAdapter.class);
         GeocacheVectors geocacheVectors = PowerMock.createMock(GeocacheVectors.class);
         GeocacheVector geocacheVector = PowerMock.createMock(GeocacheVector.class);
         TitleUpdater titleUpdater = PowerMock.createMock(TitleUpdater.class);
 
-        EasyMock.expect(cacheWriterFactory.create(null)).andReturn(cacheWriterSql);
         expect(geocacheVectors.get(17)).andReturn(geocacheVector);
         expect(geocacheVector.getId()).andReturn("GC123");
-        cacheWriterSql.deleteCache("GC123");
+        cacheWriter.deleteCache("GC123");
         geocacheVectors.remove(17);
         geocacheListAdapter.notifyDataSetChanged();
         titleUpdater.update();
 
         PowerMock.replayAll();
-        new ContextActionDelete(cacheWriterFactory, geocacheListAdapter, geocacheVectors,
-                titleUpdater, null).act(17);
+        new ContextActionDelete(geocacheListAdapter, geocacheVectors, titleUpdater, cacheWriter)
+                .act(17);
         PowerMock.verifyAll();
     }
 }

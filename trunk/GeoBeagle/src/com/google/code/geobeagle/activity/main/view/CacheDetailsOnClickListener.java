@@ -31,7 +31,7 @@ public class CacheDetailsOnClickListener implements View.OnClickListener {
     private final GeoBeagle mGeoBeagle;
 
     public CacheDetailsOnClickListener(GeoBeagle geoBeagle, Builder alertDialogBuilder,
-            GeocacheViewer geocacheViewer, LayoutInflater env, CacheDetailsLoader cacheDetailsLoader) {
+            LayoutInflater env, CacheDetailsLoader cacheDetailsLoader) {
         mAlertDialogBuilder = alertDialogBuilder;
         mEnv = env;
         mCacheDetailsLoader = cacheDetailsLoader;
