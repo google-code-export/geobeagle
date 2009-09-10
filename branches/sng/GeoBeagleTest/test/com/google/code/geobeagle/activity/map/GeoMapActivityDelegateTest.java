@@ -58,14 +58,8 @@ public class GeoMapActivityDelegateTest {
 
         EasyMock.expect(mapController.setZoom(14)).andReturn(14);
         PowerMock.replayAll();
-        /*
-         * new GeoMapActivityDelegate(geoMapActivity, mapView, context,
-         * myLocationOverlay, null) .initialize(intent, geocachesSql,
-         * whereFactory, cachesOverlay, mapController, mapOverlays,
-         * cacheItemFactory);
-         */
         new GeoMapActivityDelegate(mapView, null).initialize(intent, geocachesLoader,
-                cachesOverlay, mapController);
+                cachesOverlay, mapController, null);
         PowerMock.verifyAll();
     }
 

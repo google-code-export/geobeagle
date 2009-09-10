@@ -36,6 +36,8 @@ public class GeoMapActivity extends MapActivity {
     GeoMapActivityDelegate mGeoMapActivityDelegate;
 	private ZoomSupervisor mZoomSupervisor;
 	private MyLocationOverlay mMyLocationOverlay;
+	//private DensityMatrix mDensityMatrix;
+	private DensityOverlay mDensityOverlay;
 	private GeocachesLoader mGeocachesLoader;
 
     @Override
@@ -45,7 +47,7 @@ public class GeoMapActivity extends MapActivity {
     }
 
     GeoMapView mMapView;
-    CachePinsOverlay mMapItemizedOverlay;
+    CachePinsOverlay mCachePinsOverlay;
     
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -57,9 +59,11 @@ public class GeoMapActivity extends MapActivity {
         final Drawable defaultMarker = resources.getDrawable(R.drawable.map_pin2_others);
         final CacheDrawables cacheDrawables = new CacheDrawables(resources);
         final CacheItemFactory cacheItemFactory = new CacheItemFactory(cacheDrawables);
-        mMapItemizedOverlay = new CachePinsOverlay(this, defaultMarker,
+        mCachePinsOverlay = new CachePinsOverlay(this, defaultMarker,
                                                      cacheItemFactory);
-        
+
+        //mDensityMatrix = new DensityMatrix(0.01, 0.01);
+        mDensityOverlay = new DensityOverlay();
         mMyLocationOverlay = new MyLocationOverlay(this, mMapView);
         final List<Overlay> mapOverlays = mMapView.getOverlays();
         final MenuAction menuActionArray[] = {
@@ -71,7 +75,9 @@ public class GeoMapActivity extends MapActivity {
         };
         final MenuActions menuActions = new MenuActions(menuActionArray, menuIdArray);
 
-        mapOverlays.add(mMapItemizedOverlay);
+        //Add the overlays in the intended z-order:
+        mapOverlays.add(mDensityOverlay);
+        mapOverlays.add(mCachePinsOverlay);
         mapOverlays.add(mMyLocationOverlay);
         
         mGeoMapActivityDelegate = new GeoMapActivityDelegate(mMapView, menuActions);
@@ -80,8 +86,8 @@ public class GeoMapActivity extends MapActivity {
         final Intent intent = this.getIntent();
         final MapController mapController = mMapView.getController();
         mGeoMapActivityDelegate.initialize(intent, mGeocachesLoader,
-                                           mMapItemizedOverlay, mapController);
-
+                                           mCachePinsOverlay, mapController,
+                                           mDensityOverlay);
         mZoomSupervisor = new ZoomSupervisor(mMapView, mGeoMapActivityDelegate);
     }
     
