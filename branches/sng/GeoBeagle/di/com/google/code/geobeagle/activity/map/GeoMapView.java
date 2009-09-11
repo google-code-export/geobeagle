@@ -11,52 +11,51 @@
  ** See the License for the specific language governing permissions and
  ** limitations under the License.
  */
- 
+
 package com.google.code.geobeagle.activity.map;
+
+import com.google.android.maps.MapView;
 
 import android.content.Context;
 import android.util.AttributeSet;
 
-import com.google.android.maps.MapView;
-
 public class GeoMapView extends MapView {
 
-	private GeoMapActivityDelegate mListener;
-	
-	public GeoMapView(Context context, String mapKey) {
-		super(context, mapKey);
-	}
+    private GeoMapActivityDelegate mListener;
 
-	public GeoMapView(Context context, AttributeSet attrs) {
-		super(context, attrs);
-	}
-	
-	public GeoMapView(Context context, AttributeSet attrs, int defStyle) {
-		super(context, attrs, defStyle);
-	}
+    public GeoMapView(Context context, String mapKey) {
+        super(context, mapKey);
+    }
 
-	public void setScrollListener(GeoMapActivityDelegate listener) {
-		mListener = listener;
-	}
-	
+    public GeoMapView(Context context, AttributeSet attrs) {
+        super(context, attrs);
+    }
+
+    public GeoMapView(Context context, AttributeSet attrs, int defStyle) {
+        super(context, attrs, defStyle);
+    }
+
+    public void setScrollListener(GeoMapActivityDelegate listener) {
+        mListener = listener;
+    }
+
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
-    	super.onLayout(changed, left, top, right, bottom);
-    	if (changed && mListener != null) {
-    		if (left != 0 || right != 0 || top != 0 || bottom != 0) {
-    			mListener.onLayoutChange();
-    		}
-    	}
+        super.onLayout(changed, left, top, right, bottom);
+        if (changed && mListener != null) {
+            if (left != 0 || right != 0 || top != 0 || bottom != 0) {
+                mListener.onLayoutChange();
+            }
+        }
     }
-    
-	@Override
-	public boolean onTouchEvent(android.view.MotionEvent ev) {
-		boolean result = super.onTouchEvent(ev);
-		if (ev.getAction() == android.view.MotionEvent.ACTION_UP
-			&& mListener != null) {
-			mListener.onScrollChange();
-		}
-		return result;
-	}
+
+    @Override
+    public boolean onTouchEvent(android.view.MotionEvent ev) {
+        boolean result = super.onTouchEvent(ev);
+        if (ev.getAction() == android.view.MotionEvent.ACTION_UP && mListener != null) {
+            mListener.onScrollChange();
+        }
+        return result;
+    }
 
 }

@@ -14,15 +14,6 @@
 
 package com.google.code.geobeagle.activity.map;
 
-import java.util.List;
-
-import android.content.Intent;
-import android.content.res.Resources;
-import android.graphics.drawable.Drawable;
-import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
-
 import com.google.android.maps.MapActivity;
 import com.google.android.maps.MapController;
 import com.google.android.maps.MyLocationOverlay;
@@ -32,13 +23,20 @@ import com.google.code.geobeagle.activity.MenuAction;
 import com.google.code.geobeagle.activity.MenuActions;
 import com.google.code.geobeagle.database.GeocachesLoader;
 
+import android.content.Intent;
+import android.content.res.Resources;
+import android.graphics.drawable.Drawable;
+import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
+
+import java.util.List;
+
 public class GeoMapActivity extends MapActivity {
-    GeoMapActivityDelegate mGeoMapActivityDelegate;
-	private ZoomSupervisor mZoomSupervisor;
-	private MyLocationOverlay mMyLocationOverlay;
-	//private DensityMatrix mDensityMatrix;
-	private DensityOverlay mDensityOverlay;
-	private GeocachesLoader mGeocachesLoader;
+    private GeoMapActivityDelegate mGeoMapActivityDelegate;
+    private ZoomSupervisor mZoomSupervisor;
+    private MyLocationOverlay mMyLocationOverlay;
+    private GeocachesLoader mGeocachesLoader;
 
     @Override
     protected boolean isRouteDisplayed() {
@@ -46,12 +44,11 @@ public class GeoMapActivity extends MapActivity {
         return false;
     }
 
-    GeoMapView mMapView;
-    CachePinsOverlay mCachePinsOverlay;
-    
+    private GeoMapView mMapView;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
-    	super.onCreate(savedInstanceState);
+        super.onCreate(savedInstanceState);
         setContentView(R.layout.map);
         mMapView = (GeoMapView)findViewById(R.id.mapview);
 
@@ -59,11 +56,7 @@ public class GeoMapActivity extends MapActivity {
         final Drawable defaultMarker = resources.getDrawable(R.drawable.map_pin2_others);
         final CacheDrawables cacheDrawables = new CacheDrawables(resources);
         final CacheItemFactory cacheItemFactory = new CacheItemFactory(cacheDrawables);
-        mCachePinsOverlay = new CachePinsOverlay(this, defaultMarker,
-                                                     cacheItemFactory);
 
-        //mDensityMatrix = new DensityMatrix(0.01, 0.01);
-        mDensityOverlay = new DensityOverlay();
         mMyLocationOverlay = new MyLocationOverlay(this, mMapView);
         final List<Overlay> mapOverlays = mMapView.getOverlays();
         final MenuAction menuActionArray[] = {
@@ -75,22 +68,15 @@ public class GeoMapActivity extends MapActivity {
         };
         final MenuActions menuActions = new MenuActions(menuActionArray, menuIdArray);
 
-        //Add the overlays in the intended z-order:
-        mapOverlays.add(mDensityOverlay);
-        mapOverlays.add(mCachePinsOverlay);
-        mapOverlays.add(mMyLocationOverlay);
-        
-        mGeoMapActivityDelegate = new GeoMapActivityDelegate(mMapView, menuActions);
-
         mGeocachesLoader = new GeocachesLoader(this);
-        final Intent intent = this.getIntent();
+        final Intent intent = getIntent();
         final MapController mapController = mMapView.getController();
-        mGeoMapActivityDelegate.initialize(intent, mGeocachesLoader,
-                                           mCachePinsOverlay, mapController,
-                                           mDensityOverlay);
-        mZoomSupervisor = new ZoomSupervisor(mMapView, mGeoMapActivityDelegate);
+        mGeoMapActivityDelegate = new GeoMapActivityDelegate(mMapView, menuActions, intent,
+                mGeocachesLoader, mapController, mapOverlays, this, defaultMarker,
+                cacheItemFactory, mMyLocationOverlay);
+//        mZoomSupervisor = new ZoomSupervisor(mMapView, mGeoMapActivityDelegate);
     }
-    
+
     @Override
     public void onResume() {
         super.onResume();
@@ -113,7 +99,6 @@ public class GeoMapActivity extends MapActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
         getMenuInflater().inflate(R.menu.map_menu, menu);
-        // return mCacheListDelegate.onCreateOptionsMenu(menu);
 
         return true;
     }

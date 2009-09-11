@@ -15,9 +15,12 @@
 package com.google.code.geobeagle.activity.map;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -25,6 +28,8 @@ import android.view.MenuItem;
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapController;
 import com.google.android.maps.MapView;
+import com.google.android.maps.MyLocationOverlay;
+import com.google.android.maps.Overlay;
 import com.google.android.maps.Projection;
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.R;
@@ -64,22 +69,23 @@ public class GeoMapActivityDelegate {
 
     private final GeoMapView mMapView;
     private final MenuActions mMenuActions;
-    private CachePinsOverlay mCachesOverlay;
-    private GeocachesLoader mGeocachesLoader;
+    private final GeocachesLoader mGeocachesLoader;
     private static boolean fZoomed = false;
-    private DensityOverlay mDensityOverlay;
+    private final List<Overlay> mMapOverlays;
+    private final Context mContext;
+    private final Drawable mDefaultMarker;
+    private final CacheItemFactory mCacheItemFactory;
+    private final MyLocationOverlay mMyLocationOverlay;
 
-    public GeoMapActivityDelegate(GeoMapView mapView, MenuActions menuActions) {
+    public GeoMapActivityDelegate(GeoMapView mapView, MenuActions menuActions, Intent intent,
+            GeocachesLoader geocachesLoader, MapController mapController,
+            List<Overlay> mapOverlays, Context context, Drawable defaultMarker,
+            CacheItemFactory cacheItemFactory, MyLocationOverlay myLocationOverlay) {
         mMapView = mapView;
         mMenuActions = menuActions;
-    }
-
-	public void initialize(Intent intent, 
-	                       GeocachesLoader geocachesLoader,
-	                       CachePinsOverlay cachesOverlay,
-	                       MapController mapController,
-	                       DensityOverlay densityOverlay) {
-    	mGeocachesLoader = geocachesLoader;
+        mGeocachesLoader = geocachesLoader;
+        mMapOverlays = mapOverlays;
+        mMyLocationOverlay = myLocationOverlay;
         mMapView.setBuiltInZoomControls(true);
         // mMapView.setOnLongClickListener()
         mMapView.setSatellite(false);
@@ -96,8 +102,10 @@ public class GeoMapActivityDelegate {
             fZoomed = true;
         }
 
-        mCachesOverlay = cachesOverlay;
-        mDensityOverlay = densityOverlay;
+        mContext = context;
+        mDefaultMarker = defaultMarker;
+        mCacheItemFactory = cacheItemFactory;
+        refreshCaches();
     }
 
     /**
@@ -114,79 +122,65 @@ public class GeoMapActivityDelegate {
     }
 
     public void refreshCaches() {
-		//GeoPoint center = mMapView.getMapCenter();
-		//double lat = center.getLatitudeE6() / 1000000.0;
-		//double lon = center.getLongitudeE6() / 1000000.0;
-        //int zoomLevel = mMapView.getZoomLevel();
-		//Projection proj = mMapView.getProjection();
-        //int latSpanE6Proj = lowerRight.getLatitudeE6() - upperLeft.getLatitudeE6();
-        //int lonSpanE6Proj = lowerRight.getLongitudeE6() - upperLeft.getLongitudeE6();
+        Log.d("GeoBeagle", "**************refreshCaches");
 
-        //WhereStringFactory whereStringFactory = new WhereStringFactory();
-    	//GeoPoint pt2 = proj.fromPixels(35, 35);  //grid size, in pixels
-        /*
-        double latResolution = 
-        	Math.abs(pt2.getLatitudeE6()-pt1.getLatitudeE6()) / 1000000.0;
-        double lonResolution = 
-        	Math.abs(pt2.getLongitudeE6()-pt1.getLongitudeE6()) / 1000000.0;
-        	*/
-        
-    	Projection proj = mMapView.getProjection();
-    	GeoPoint pt1 = proj.fromPixels(0, 0);
+        Projection proj = mMapView.getProjection();
+        GeoPoint pt1 = proj.fromPixels(0, 0);
         GeoPoint pt3 = proj.fromPixels(mMapView.getRight(), mMapView.getBottom());
-        
+
         double latMin = Math.min(pt1.getLatitudeE6(), pt3.getLatitudeE6()) / 1000000.0;
         double lonMin = Math.min(pt1.getLongitudeE6(), pt3.getLongitudeE6()) / 1000000.0;
         double latMax = Math.max(pt1.getLatitudeE6(), pt3.getLatitudeE6()) / 1000000.0;
         double lonMax = Math.max(pt1.getLongitudeE6(), pt3.getLongitudeE6()) / 1000000.0;
-        
-    	//TODO: Adjust to look square on the screen, no matter the latitude
-        double lonResolution = 0.02;  //((int)(lonResolution*1E4)) / 1.0E4;
-        double latResolution = 0.01;   //lonResolution * Math.cos(latMin/90.0 * Math.PI/2.0);
-        
-        //Expand area to cover whole density patches:
+
+        // TODO: Adjust to look square on the screen, no matter the latitude
+        double lonResolution = 0.02; // ((int)(lonResolution*1E4)) / 1.0E4;
+        double latResolution = 0.01; // lonResolution * Math.cos(latMin/90.0 *
+        // Math.PI/2.0);
+
+        // Expand area to cover whole density patches:
         latMin = Math.floor(latMin / latResolution) * latResolution;
         lonMin = Math.floor(lonMin / lonResolution) * lonResolution;
         latMax = Math.ceil(latMax / latResolution) * latResolution;
         lonMax = Math.ceil(lonMax / lonResolution) * lonResolution;
-        
-		WhereFactoryFixedArea where = 
-			new WhereFactoryFixedArea(latMin, lonMin, latMax, lonMax);
-		
-        ArrayList<Geocache> list = mGeocachesLoader.loadCaches(0, 0, where);
-        Log.d("GeoBeagle", "GeoMapActivityDelegate.refreshCaches will load " 
-              + list.size() + " caches");
 
-        if (list.size() > 50) {
-            DensityMatrix densityMatrix = new DensityMatrix(latResolution,
-                                                            lonResolution);
+        WhereFactoryFixedArea where = new WhereFactoryFixedArea(latMin, lonMin, latMax, lonMax);
+
+        ArrayList<Geocache> list = mGeocachesLoader.loadCaches(0, 0, where);
+        Log.d("GeoBeagle", "GeoMapActivityDelegate.refreshCaches will load " + list.size()
+                + " caches");
+
+        mMapOverlays.clear();
+        if (list.size() > 150) {
+            DensityMatrix densityMatrix = new DensityMatrix(latResolution, lonResolution);
             densityMatrix.addCaches(list);
-            mDensityOverlay.setCacheListUsingGuiThread(densityMatrix);
-            ArrayList<Geocache> empty = new ArrayList<Geocache>();
-            mCachesOverlay.setCacheListUsingGuiThread(empty);
+            DensityOverlay densityOverlay = new DensityOverlay(densityMatrix);
+            mMapOverlays.add(densityOverlay);
         } else {
-            mDensityOverlay.setCacheListUsingGuiThread(null);
-            mCachesOverlay.setCacheListUsingGuiThread(list);
+            CachePinsOverlay cachesOverlay = new CachePinsOverlay(mContext, mDefaultMarker,
+                    mCacheItemFactory, list);
+            mMapOverlays.add(cachesOverlay);
         }
+        mMapOverlays.add(mMyLocationOverlay);
     }
 
     /** Also call this when the layout is first determined */
     public void onLayoutChange() {
-    	//Log.d("GeoBeagle", "onLayoutChange");
-    	refreshCaches();
+        Log.d("GeoBeagle", "onLayoutChange");
+        refreshCaches();
     }
 
     public void onScrollChange() {
-    	//Log.d("GeoBeagle", "onScrollChange");
-    	refreshCaches();
+        Log.d("GeoBeagle", "onScrollChange");
+        refreshCaches();
     }
 
     /**
      * @param prevZoom
      */
     public void onZoomChange(int prevZoom, int newZoom) {
-    	//Log.d("GeoBeagle", "New zoom level: " + newZoom);
-    	refreshCaches();
+        Log.d("GeoBeagle", "New zoom level: " + newZoom);
+        refreshCaches();
     }
 
 }
