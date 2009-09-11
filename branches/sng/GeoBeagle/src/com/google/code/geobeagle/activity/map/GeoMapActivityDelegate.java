@@ -21,6 +21,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.os.Handler;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -76,11 +77,13 @@ public class GeoMapActivityDelegate {
     private final Drawable mDefaultMarker;
     private final CacheItemFactory mCacheItemFactory;
     private final MyLocationOverlay mMyLocationOverlay;
+    private final Handler mGuiThreadHandler;
 
-    public GeoMapActivityDelegate(GeoMapView mapView, MenuActions menuActions, Intent intent,
+    public GeoMapActivityDelegate(GeoMapView mapView, MenuActions menuActions,
             GeocachesLoader geocachesLoader, MapController mapController,
             List<Overlay> mapOverlays, Context context, Drawable defaultMarker,
-            CacheItemFactory cacheItemFactory, MyLocationOverlay myLocationOverlay) {
+            CacheItemFactory cacheItemFactory, MyLocationOverlay myLocationOverlay,
+            double latitude, double longitude) {
         mMapView = mapView;
         mMenuActions = menuActions;
         mGeocachesLoader = geocachesLoader;
@@ -91,9 +94,7 @@ public class GeoMapActivityDelegate {
         mMapView.setSatellite(false);
         mMapView.setScrollListener(this);
 
-        double latitude = intent.getFloatExtra("latitude", 0);
-        double longitude = intent.getFloatExtra("longitude", 0);
-        GeoPoint center = new GeoPoint((int)(latitude * GeoUtils.MILLION),
+        final GeoPoint center = new GeoPoint((int)(latitude * GeoUtils.MILLION),
                 (int)(longitude * GeoUtils.MILLION));
 
         mapController.setCenter(center);
@@ -105,6 +106,8 @@ public class GeoMapActivityDelegate {
         mContext = context;
         mDefaultMarker = defaultMarker;
         mCacheItemFactory = cacheItemFactory;
+        mGuiThreadHandler = new Handler();
+
         refreshCaches();
     }
 
@@ -150,19 +153,33 @@ public class GeoMapActivityDelegate {
         Log.d("GeoBeagle", "GeoMapActivityDelegate.refreshCaches will load " + list.size()
                 + " caches");
 
-        mMapOverlays.clear();
+        Overlay cachesOverlay;
         if (list.size() > 150) {
             DensityMatrix densityMatrix = new DensityMatrix(latResolution, lonResolution);
             densityMatrix.addCaches(list);
-            DensityOverlay densityOverlay = new DensityOverlay(densityMatrix);
-            mMapOverlays.add(densityOverlay);
+            cachesOverlay = new DensityOverlay(densityMatrix);
         } else {
-            CachePinsOverlay cachesOverlay = new CachePinsOverlay(mContext, mDefaultMarker,
-                    mCacheItemFactory, list);
-            mMapOverlays.add(cachesOverlay);
+            cachesOverlay = new CachePinsOverlay(mContext, mDefaultMarker, mCacheItemFactory, list);
         }
-        mMapOverlays.add(mMyLocationOverlay);
+        // synchronized per
+        // http://code.google.com/android/add-ons/google-apis/reference/com/google/android/maps/MapView.html#getOverlays()
+        mGuiThreadHandler.post(new CacheListUpdater(cachesOverlay));
     }
+
+    private class CacheListUpdater implements Runnable {
+        private Overlay mOverlay;
+
+        public CacheListUpdater(Overlay overlay) {
+            mOverlay = overlay;
+        }
+
+        public void run() {
+            mMapOverlays.clear();
+            mMapOverlays.add(mOverlay);
+            mMapOverlays.add(mMyLocationOverlay);
+            mMapView.postInvalidate();
+        }
+    };
 
     /** Also call this when the layout is first determined */
     public void onLayoutChange() {

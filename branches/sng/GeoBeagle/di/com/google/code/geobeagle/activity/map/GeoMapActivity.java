@@ -71,10 +71,13 @@ public class GeoMapActivity extends MapActivity {
         mGeocachesLoader = new GeocachesLoader(this);
         final Intent intent = getIntent();
         final MapController mapController = mMapView.getController();
-        mGeoMapActivityDelegate = new GeoMapActivityDelegate(mMapView, menuActions, intent,
+        double latitude = intent.getFloatExtra("latitude", 0);
+        double longitude = intent.getFloatExtra("longitude", 0);
+
+        mGeoMapActivityDelegate = new GeoMapActivityDelegate(mMapView, menuActions,
                 mGeocachesLoader, mapController, mapOverlays, this, defaultMarker,
-                cacheItemFactory, mMyLocationOverlay);
-//        mZoomSupervisor = new ZoomSupervisor(mMapView, mGeoMapActivityDelegate);
+                cacheItemFactory, mMyLocationOverlay, latitude, longitude);
+        mZoomSupervisor = new ZoomSupervisor(mMapView, mGeoMapActivityDelegate);
     }
 
     @Override

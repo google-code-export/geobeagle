@@ -22,6 +22,7 @@ import com.google.code.geobeagle.activity.main.GeoBeagle;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.util.Log;
 
 import java.util.ArrayList;
 
@@ -29,7 +30,7 @@ public class CachePinsOverlay extends ItemizedOverlay<CacheItem> {
 
     private final CacheItemFactory mCacheItemFactory;
     private final Context mContext;
-    private ArrayList<Geocache> mCacheList;
+    private final ArrayList<Geocache> mCacheList;
 
     public CachePinsOverlay(Context context, Drawable defaultMarker,
             CacheItemFactory cacheItemFactory, ArrayList<Geocache> list) {
@@ -42,6 +43,7 @@ public class CachePinsOverlay extends ItemizedOverlay<CacheItem> {
 
     @Override
     protected CacheItem createItem(int i) {
+        Log.d("GeoBeagle", "CachePinsOverlay::createItem " + i);
         Geocache geocache = mCacheList.get(i);
         return mCacheItemFactory.createCacheItem(geocache);
     }
@@ -63,6 +65,7 @@ public class CachePinsOverlay extends ItemizedOverlay<CacheItem> {
 
     @Override
     public int size() {
+        Log.d("GeoBeagle", "CachePinsOverlay::size " + mCacheList.size());
         return mCacheList.size();
     }
 }
