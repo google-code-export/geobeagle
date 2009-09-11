@@ -14,18 +14,6 @@
 
 package com.google.code.geobeagle.activity.map;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import android.app.Activity;
-import android.content.Context;
-import android.content.Intent;
-import android.graphics.drawable.Drawable;
-import android.os.Handler;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
-
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapController;
 import com.google.android.maps.MapView;
@@ -41,7 +29,21 @@ import com.google.code.geobeagle.activity.main.GeoUtils;
 import com.google.code.geobeagle.database.GeocachesLoader;
 import com.google.code.geobeagle.database.WhereFactoryFixedArea;
 
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
+import android.graphics.drawable.Drawable;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
+
+import java.util.ArrayList;
+import java.util.List;
+
 public class GeoMapActivityDelegate {
+    private final class NullOverlay extends Overlay {
+    }
+
     static class MenuActionCacheList implements MenuAction {
         private final Activity mActivity;
 
@@ -76,8 +78,6 @@ public class GeoMapActivityDelegate {
     private final Context mContext;
     private final Drawable mDefaultMarker;
     private final CacheItemFactory mCacheItemFactory;
-    private final MyLocationOverlay mMyLocationOverlay;
-    private final Handler mGuiThreadHandler;
 
     public GeoMapActivityDelegate(GeoMapView mapView, MenuActions menuActions,
             GeocachesLoader geocachesLoader, MapController mapController,
@@ -88,7 +88,6 @@ public class GeoMapActivityDelegate {
         mMenuActions = menuActions;
         mGeocachesLoader = geocachesLoader;
         mMapOverlays = mapOverlays;
-        mMyLocationOverlay = myLocationOverlay;
         mMapView.setBuiltInZoomControls(true);
         // mMapView.setOnLongClickListener()
         mMapView.setSatellite(false);
@@ -106,8 +105,9 @@ public class GeoMapActivityDelegate {
         mContext = context;
         mDefaultMarker = defaultMarker;
         mCacheItemFactory = cacheItemFactory;
-        mGuiThreadHandler = new Handler();
-
+        Overlay nullOverlay = new NullOverlay();
+        mMapOverlays.add(nullOverlay);
+        mMapOverlays.add(myLocationOverlay);
         refreshCaches();
     }
 
@@ -161,25 +161,9 @@ public class GeoMapActivityDelegate {
         } else {
             cachesOverlay = new CachePinsOverlay(mContext, mDefaultMarker, mCacheItemFactory, list);
         }
-        // synchronized per
-        // http://code.google.com/android/add-ons/google-apis/reference/com/google/android/maps/MapView.html#getOverlays()
-        mGuiThreadHandler.post(new CacheListUpdater(cachesOverlay));
+        mMapOverlays.set(0, cachesOverlay);
+        mMapView.postInvalidate();
     }
-
-    private class CacheListUpdater implements Runnable {
-        private Overlay mOverlay;
-
-        public CacheListUpdater(Overlay overlay) {
-            mOverlay = overlay;
-        }
-
-        public void run() {
-            mMapOverlays.clear();
-            mMapOverlays.add(mOverlay);
-            mMapOverlays.add(mMyLocationOverlay);
-            mMapView.postInvalidate();
-        }
-    };
 
     /** Also call this when the layout is first determined */
     public void onLayoutChange() {
