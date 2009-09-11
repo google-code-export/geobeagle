@@ -69,7 +69,7 @@ public class EditCacheActivityDelegateTest {
         activity.setContentView(R.layout.cache_edit);
 
         PowerMock.replayAll();
-        new EditCacheActivityDelegate(activity, null, null, null).onCreate(null);
+        new EditCacheActivityDelegate(activity, null, null, null).onCreate();
         PowerMock.verifyAll();
     }
 
@@ -91,9 +91,9 @@ public class EditCacheActivityDelegateTest {
                 .createMock(CancelButtonOnClickListener.class);
         Button cancel = PowerMock.createMock(Button.class);
         LocationSaver locationSaver = PowerMock.createMock(LocationSaver.class);
+        SQLiteWrapper writableDatabase = PowerMock.createMock(SQLiteWrapper.class);
         LocationSaverFactory locationSaverFactory = PowerMock
                 .createMock(LocationSaverFactory.class);
-        SQLiteWrapper writableDatabase = PowerMock.createMock(SQLiteWrapper.class);
 
         EasyMock.expect(activity.getIntent()).andReturn(intent);
         EasyMock.expect(intent.<Geocache> getParcelableExtra("geocache")).andReturn(geocache);
@@ -104,6 +104,7 @@ public class EditCacheActivityDelegateTest {
         PowerMock.expectNew(EditCache.class, geocacheFactory, id, name, latitude, longitude)
                 .andReturn(editCache);
         editCache.set(geocache);
+
         EasyMock.expect(locationSaverFactory.createLocationSaver(writableDatabase)).andReturn(
                 locationSaver);
         PowerMock.expectNew(SetButtonOnClickListener.class, activity, editCache, locationSaver)

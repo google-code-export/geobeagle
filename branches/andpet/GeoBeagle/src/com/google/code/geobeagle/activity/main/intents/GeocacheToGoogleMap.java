@@ -16,17 +16,18 @@ package com.google.code.geobeagle.activity.main.intents;
 
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.ResourceProvider;
+
+import android.content.Context;
 
 import java.net.URLEncoder;
 import java.util.Locale;
 
 public class GeocacheToGoogleMap implements GeocacheToUri {
 
-    private final ResourceProvider mResourceProvider;
+    private final Context mContext;
 
-    public GeocacheToGoogleMap(ResourceProvider resourceProvider) {
-        mResourceProvider = resourceProvider;
+    public GeocacheToGoogleMap(Context context) {
+        mContext = context;
     }
 
     /*
@@ -41,7 +42,7 @@ public class GeocacheToGoogleMap implements GeocacheToUri {
         idAndName = idAndName.replace("(", "[");
         idAndName = idAndName.replace(")", "]");
         idAndName = URLEncoder.encode(idAndName);
-        final String format = String.format(Locale.US, mResourceProvider
+        final String format = String.format(Locale.US, mContext
                 .getString(R.string.map_intent), geocache.getLatitude(), geocache.getLongitude(),
                 idAndName);
         return format;

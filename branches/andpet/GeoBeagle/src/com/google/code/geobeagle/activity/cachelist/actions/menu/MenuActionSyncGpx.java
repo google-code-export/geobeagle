@@ -17,21 +17,21 @@ package com.google.code.geobeagle.activity.cachelist.actions.menu;
 import com.google.code.geobeagle.activity.MenuAction;
 import com.google.code.geobeagle.activity.cachelist.GpxImporterFactory;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
-import com.google.code.geobeagle.database.ISQLiteDatabase;
+import com.google.code.geobeagle.database.CacheWriter;
 import com.google.code.geobeagle.xmlimport.GpxImporter;
 
 public class MenuActionSyncGpx implements MenuAction {
     private Abortable mAbortable;
     private final CacheListRefresh mCacheListRefresh;
     private final GpxImporterFactory mGpxImporterFactory;
-    private final ISQLiteDatabase mWritableDatabase;
+    private final CacheWriter mCacheWriter;
 
     public MenuActionSyncGpx(Abortable abortable, CacheListRefresh cacheListRefresh,
-            GpxImporterFactory gpxImporterFactory, ISQLiteDatabase writableDatabase) {
+            GpxImporterFactory gpxImporterFactory, CacheWriter cacheWriter) {
         mAbortable = abortable;
         mCacheListRefresh = cacheListRefresh;
         mGpxImporterFactory = gpxImporterFactory;
-        mWritableDatabase = writableDatabase;
+        mCacheWriter = cacheWriter;
     }
 
     public void abort() {
@@ -39,7 +39,7 @@ public class MenuActionSyncGpx implements MenuAction {
     }
 
     public void act() {
-        final GpxImporter gpxImporter = mGpxImporterFactory.create(mWritableDatabase);
+        final GpxImporter gpxImporter = mGpxImporterFactory.create(mCacheWriter);
         mAbortable = gpxImporter;
         gpxImporter.importGpxs(mCacheListRefresh);
     }

@@ -14,11 +14,7 @@
 
 package com.google.code.geobeagle.activity.main.view;
 
-import com.google.code.geobeagle.ErrorDisplayer;
 import com.google.code.geobeagle.activity.main.GeoBeagle;
-import com.google.code.geobeagle.activity.main.view.CacheDetailsOnClickListener;
-import com.google.code.geobeagle.activity.main.view.GeocacheViewer;
-import com.google.code.geobeagle.activity.main.view.WebPageAndDetailsButtonEnabler;
 import com.google.code.geobeagle.activity.main.view.WebPageAndDetailsButtonEnabler.CheckButton;
 import com.google.code.geobeagle.activity.main.view.WebPageAndDetailsButtonEnabler.CheckButtons;
 import com.google.code.geobeagle.activity.main.view.WebPageAndDetailsButtonEnabler.CheckDetailsButton;
@@ -32,12 +28,11 @@ import android.view.View;
 
 public class Misc {
     public static CacheDetailsOnClickListener createCacheDetailsOnClickListener(
-            GeoBeagle geoBeagle, Builder alertDialogBuilder, GeocacheViewer geocacheViewer,
-            ErrorDisplayer errorDisplayer, LayoutInflater layoutInflater) {
+            GeoBeagle geoBeagle, Builder alertDialogBuilder, LayoutInflater layoutInflater) {
         final DetailsOpener detailsOpener = new DetailsOpener(geoBeagle);
         final CacheDetailsLoader cacheDetailsLoader = new CacheDetailsLoader(detailsOpener);
-        return new CacheDetailsOnClickListener(geoBeagle, alertDialogBuilder, geocacheViewer,
-                layoutInflater, cacheDetailsLoader);
+        return new CacheDetailsOnClickListener(geoBeagle, alertDialogBuilder, layoutInflater,
+                cacheDetailsLoader);
     }
 
     public static WebPageAndDetailsButtonEnabler create(GeoBeagle geoBeagle, View webPageButton,

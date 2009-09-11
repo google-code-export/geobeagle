@@ -16,21 +16,22 @@ package com.google.code.geobeagle.activity.main.intents;
 
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.ResourceProvider;
+
+import android.content.res.Resources;
 
 /*
  * Convert a Geocache to the cache page url.
  */
 public class GeocacheToCachePage implements GeocacheToUri {
-    private final ResourceProvider mResourceProvider;
+    private final Resources mResources;
 
-    public GeocacheToCachePage(ResourceProvider resourceProvider) {
-        mResourceProvider = resourceProvider;
+    public GeocacheToCachePage(Resources resources) {
+        mResources = resources;
     }
 
     // TODO: move strings into Provider enum.
     public String convert(Geocache geocache) {
-        return String.format(mResourceProvider.getStringArray(R.array.cache_page_url)[geocache
+        return String.format(mResources.getStringArray(R.array.cache_page_url)[geocache
                 .getContentProvider().toInt()], geocache.getShortId());
     }
 

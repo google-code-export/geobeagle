@@ -194,7 +194,7 @@ public class GeocacheListControllerTest {
     }
 
     @Test
-    public void testOnPause() throws InterruptedException {
+    public void testOnPause() {
         MenuActionSyncGpx menuActionSync = PowerMock.createMock(MenuActionSyncGpx.class);
 
         menuActionSync.abort();
@@ -205,7 +205,7 @@ public class GeocacheListControllerTest {
     }
 
     @Test
-    public void testOnResume() throws InterruptedException {
+    public void testOnResume() {
         CacheListRefresh cacheListRefresh = PowerMock.createMock(CacheListRefresh.class);
 
         cacheListRefresh.forceRefresh();
@@ -217,7 +217,7 @@ public class GeocacheListControllerTest {
     }
 
     @Test
-    public void testOnResumeAndImport() throws InterruptedException {
+    public void testOnResumeAndImport() {
         CacheListRefresh cacheListRefresh = PowerMock.createMock(CacheListRefresh.class);
         MenuActionSyncGpx menuActionSyncGpx = PowerMock.createMock(MenuActionSyncGpx.class);
 

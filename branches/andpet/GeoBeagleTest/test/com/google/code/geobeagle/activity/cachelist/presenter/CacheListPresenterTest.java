@@ -137,7 +137,7 @@ public class CacheListPresenterTest {
     }
 
     @Test
-    public void testOnPause() throws InterruptedException {
+    public void testOnPause() {
         CombinedLocationManager combinedLocationManager = PowerMock
                 .createMock(CombinedLocationManager.class);
         SensorManagerWrapper sensorManagerWrapper = PowerMock

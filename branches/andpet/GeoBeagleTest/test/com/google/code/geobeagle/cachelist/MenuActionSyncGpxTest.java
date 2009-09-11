@@ -18,7 +18,7 @@ import com.google.code.geobeagle.activity.cachelist.GpxImporterFactory;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.Abortable;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionSyncGpx;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
-import com.google.code.geobeagle.database.ISQLiteDatabase;
+import com.google.code.geobeagle.database.CacheWriter;
 import com.google.code.geobeagle.xmlimport.GpxImporter;
 
 import org.easymock.EasyMock;
@@ -34,25 +34,25 @@ public class MenuActionSyncGpxTest {
         GpxImporter gpxImporter = PowerMock.createMock(GpxImporter.class);
         CacheListRefresh cacheListRefresh = PowerMock.createMock(CacheListRefresh.class);
         GpxImporterFactory gpxImporterFactory = PowerMock.createMock(GpxImporterFactory.class);
-        ISQLiteDatabase writableDatabase = PowerMock.createMock(ISQLiteDatabase.class);
+        CacheWriter cacheWriter = PowerMock.createMock(CacheWriter.class);
 
-        EasyMock.expect(gpxImporterFactory.create(writableDatabase)).andReturn(gpxImporter);
+        EasyMock.expect(gpxImporterFactory.create(cacheWriter)).andReturn(gpxImporter);
         gpxImporter.importGpxs(cacheListRefresh);
 
         PowerMock.replayAll();
-        new MenuActionSyncGpx(null, cacheListRefresh, gpxImporterFactory, writableDatabase).act();
+        new MenuActionSyncGpx(null, cacheListRefresh, gpxImporterFactory, cacheWriter).act();
         PowerMock.verifyAll();
     }
 
     @Test
     public void testAbort() {
         Abortable abortable = PowerMock.createMock(Abortable.class);
-        ISQLiteDatabase writableDatabase = PowerMock.createMock(ISQLiteDatabase.class);
+        CacheWriter cacheWriter = PowerMock.createMock(CacheWriter.class);
 
         abortable.abort();
 
         PowerMock.replayAll();
-        new MenuActionSyncGpx(abortable, null, null, writableDatabase).abort();
+        new MenuActionSyncGpx(abortable, null, null, cacheWriter).abort();
         PowerMock.verifyAll();
     }
 }

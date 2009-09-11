@@ -22,8 +22,12 @@ import com.google.code.geobeagle.activity.cachelist.actions.context.ContextActio
 import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionSyncGpx;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
 import com.google.code.geobeagle.activity.cachelist.presenter.TitleUpdater;
+import com.google.code.geobeagle.database.CacheWriter;
+import com.google.code.geobeagle.database.DatabaseDI;
 import com.google.code.geobeagle.database.FilterNearestCaches;
 import com.google.code.geobeagle.database.ISQLiteDatabase;
+import com.google.code.geobeagle.database.LocationSaver;
+import com.google.code.geobeagle.database.LocationSaverFactory;
 
 import android.app.ListActivity;
 
@@ -35,30 +39,36 @@ public class GeocacheListControllerFactory {
     private final MenuActionsFactory mMenuActionsFactory;
     private final MenuActionSyncGpxFactory mMenuActionSyncGpxFactory;
     private final ContextActionEdit mContextActionEdit;
+    private final LocationSaverFactory mLocationSaverFactory;
 
     public GeocacheListControllerFactory(ContextActionDeleteFactory contextActionDeleteFactory,
             ContextActionEdit contextActionEdit, ContextActionView contextActionView,
             FilterNearestCaches filterNearestCaches, ListActivity listActivity,
-            MenuActionsFactory menuActionsFactory, MenuActionSyncGpxFactory menuActionSyncGpxFactory) {
+            MenuActionsFactory menuActionsFactory,
+            MenuActionSyncGpxFactory menuActionSyncGpxFactory,
+            LocationSaverFactory locationSaverFactory) {
         mFilterNearestCaches = filterNearestCaches;
         mMenuActionSyncGpxFactory = menuActionSyncGpxFactory;
         mListActivity = listActivity;
         mContextActionEdit = contextActionEdit;
-
         mContextActionView = contextActionView;
         mMenuActionsFactory = menuActionsFactory;
         mContextActionDeleteFactory = contextActionDeleteFactory;
+        mLocationSaverFactory = locationSaverFactory;
     }
 
     public IGeocacheListController create(CacheListRefresh cacheListRefresh,
             TitleUpdater titleUpdater, ISQLiteDatabase writableDatabase) {
+        final CacheWriter cacheWriter = DatabaseDI.createCacheWriter(writableDatabase);
         final ContextActionDelete contextActionDelete = mContextActionDeleteFactory.create(
-                titleUpdater, writableDatabase);
+                titleUpdater, cacheWriter);
 
         final MenuActionSyncGpx menuActionSyncGpx = mMenuActionSyncGpxFactory.create(
-                cacheListRefresh, writableDatabase);
-        MenuActions menuActions = mMenuActionsFactory.create(menuActionSyncGpx, cacheListRefresh,
-                writableDatabase);
+                cacheListRefresh, cacheWriter);
+        final LocationSaver locationSaver = mLocationSaverFactory
+                .createLocationSaver(writableDatabase);
+        final MenuActions menuActions = mMenuActionsFactory.create(menuActionSyncGpx,
+                cacheListRefresh, locationSaver);
         final ContextAction[] contextActions = new ContextAction[] {
                 contextActionDelete, mContextActionView, mContextActionEdit
         };

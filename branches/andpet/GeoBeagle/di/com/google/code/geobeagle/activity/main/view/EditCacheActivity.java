@@ -17,7 +17,6 @@ package com.google.code.geobeagle.activity.main.view;
 import com.google.code.geobeagle.GeocacheFactory;
 import com.google.code.geobeagle.activity.ActivityWithDatabaseLifecycleManager;
 import com.google.code.geobeagle.activity.main.view.EditCacheActivityDelegate.CancelButtonOnClickListener;
-import com.google.code.geobeagle.database.CacheWriterFactory;
 import com.google.code.geobeagle.database.LocationSaverFactory;
 import com.google.code.geobeagle.database.NullClosable;
 import com.google.code.geobeagle.database.DatabaseDI.GeoBeagleSqliteOpenHelper;
@@ -35,18 +34,15 @@ public class EditCacheActivity extends Activity {
         final CancelButtonOnClickListener cancelButtonOnClickListener = new CancelButtonOnClickListener(
                 this);
         final GeocacheFactory geocacheFactory = new GeocacheFactory();
-        final CacheWriterFactory cacheWriterFactory = new CacheWriterFactory();
-        final LocationSaverFactory locationSaverFactory = new LocationSaverFactory(
-                cacheWriterFactory);
         final GeoBeagleSqliteOpenHelper geoBeagleSqliteOpenHelper = new GeoBeagleSqliteOpenHelper(
                 this);
         final NullClosable nullClosable = new NullClosable();
-
+        final LocationSaverFactory locationSaverFactory = new LocationSaverFactory();
         mEditCacheActivityDelegate = new EditCacheActivityDelegate(this,
                 cancelButtonOnClickListener, geocacheFactory, locationSaverFactory);
         mActivityWithDatabaseLifecycleManager = new ActivityWithDatabaseLifecycleManager(
                 mEditCacheActivityDelegate, nullClosable, geoBeagleSqliteOpenHelper);
-        mEditCacheActivityDelegate.onCreate(savedInstanceState);
+        mEditCacheActivityDelegate.onCreate();
     }
 
     @Override

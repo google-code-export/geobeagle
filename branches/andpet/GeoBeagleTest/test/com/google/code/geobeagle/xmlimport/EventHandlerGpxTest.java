@@ -27,7 +27,6 @@ import org.junit.runner.RunWith;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import java.io.IOException;
-import java.text.ParseException;
 
 @RunWith(PowerMockRunner.class)
 public class EventHandlerGpxTest {
@@ -35,7 +34,7 @@ public class EventHandlerGpxTest {
     private final CachePersisterFacade mCachePersisterFacade = createMock(CachePersisterFacade.class);
 
     @Test
-    public void testDesc() throws IOException, ParseException {
+    public void testDesc() throws IOException {
         CachePersisterFacade cachePersisterFacade = createMock(CachePersisterFacade.class);
 
         cachePersisterFacade.wptDesc("a cache");
@@ -56,7 +55,7 @@ public class EventHandlerGpxTest {
     }
 
     @Test
-    public void testGpxTime() throws IOException, ParseException {
+    public void testGpxTime() throws IOException {
         CachePersisterFacade cachePersisterFacade = createMock(CachePersisterFacade.class);
 
         expect(cachePersisterFacade.gpxTime("today")).andReturn(true);
@@ -67,7 +66,7 @@ public class EventHandlerGpxTest {
     }
 
     @Test
-    public void testGroundspeakName() throws IOException, ParseException {
+    public void testGroundspeakName() throws IOException {
         CachePersisterFacade cachePersisterFacade = createMock(CachePersisterFacade.class);
 
         cachePersisterFacade.groundspeakName("my wpt");
@@ -79,7 +78,7 @@ public class EventHandlerGpxTest {
     }
 
     @Test
-    public void testHint() throws IOException, ParseException {
+    public void testHint() throws IOException {
         CachePersisterFacade cachePersisterFacade = createMock(CachePersisterFacade.class);
 
         cachePersisterFacade.hint("look under the rock");
@@ -91,7 +90,7 @@ public class EventHandlerGpxTest {
     }
 
     @Test
-    public void testHintEmpty() throws IOException, ParseException {
+    public void testHintEmpty() throws IOException {
         CachePersisterFacade cachePersisterFacade = createMock(CachePersisterFacade.class);
 
         replay(cachePersisterFacade);
@@ -100,7 +99,7 @@ public class EventHandlerGpxTest {
     }
 
     @Test
-    public void testLogDate() throws IOException, ParseException {
+    public void testLogDate() throws IOException {
         CachePersisterFacade cachePersisterFacade = createMock(CachePersisterFacade.class);
 
         cachePersisterFacade.logDate("date");
@@ -111,7 +110,7 @@ public class EventHandlerGpxTest {
     }
 
     @Test
-    public void testMatchNothing() throws IOException, ParseException {
+    public void testMatchNothing() throws IOException {
         CachePersisterFacade cachePersisterFacade = createMock(CachePersisterFacade.class);
 
         replay(cachePersisterFacade);
@@ -120,7 +119,7 @@ public class EventHandlerGpxTest {
     }
 
     @Test
-    public void testPlainLine() throws IOException, ParseException {
+    public void testPlainLine() throws IOException {
         CachePersisterFacade cachePersisterFacade = createMock(CachePersisterFacade.class);
 
         cachePersisterFacade.line("hello");
@@ -132,7 +131,7 @@ public class EventHandlerGpxTest {
     }
 
     @Test
-    public void testStartTagCache() throws IOException {
+    public void testStartTagCache() {
         XmlPullParserWrapper xmlPullParser = createMock(XmlPullParserWrapper.class);
         CachePersisterFacade cachePersisterFacade = createMock(CachePersisterFacade.class);
 
@@ -149,12 +148,12 @@ public class EventHandlerGpxTest {
     }
 
     @Test
-    public void testStartTagNotCache() throws IOException {
+    public void testStartTagNotCache() {
         new EventHandlerGpx(null).startTag("/gpx/wptNot", null);
     }
 
     @Test
-    public void testTextSymbol() throws IOException, ParseException {
+    public void testTextSymbol() throws IOException {
         CachePersisterFacade cachePersisterFacade = createMock(CachePersisterFacade.class);
 
         cachePersisterFacade.symbol("Geocache Found");
@@ -165,7 +164,7 @@ public class EventHandlerGpxTest {
     }
 
     @Test
-    public void testTextCacheType() throws IOException, ParseException {
+    public void testTextCacheType() throws IOException {
         CachePersisterFacade cachePersisterFacade = createMock(CachePersisterFacade.class);
 
         cachePersisterFacade.cacheType("cache type");
@@ -185,7 +184,7 @@ public class EventHandlerGpxTest {
     }
 
     @Test
-    public void testTextWptName() throws IOException, ParseException {
+    public void testTextWptName() throws IOException {
         CachePersisterFacade cachePersisterFacade = createMock(CachePersisterFacade.class);
 
         cachePersisterFacade.wptName("my wpt");

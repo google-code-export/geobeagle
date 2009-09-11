@@ -18,24 +18,21 @@ import com.google.code.geobeagle.activity.cachelist.actions.context.ContextActio
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVectors;
 import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheListAdapter;
 import com.google.code.geobeagle.activity.cachelist.presenter.TitleUpdater;
-import com.google.code.geobeagle.database.CacheWriterFactory;
-import com.google.code.geobeagle.database.ISQLiteDatabase;
+import com.google.code.geobeagle.database.CacheWriter;
 
 public class ContextActionDeleteFactory {
 
     private final GeocacheListAdapter mGeocacheListAdapter;
     private final GeocacheVectors mGeocacheVectors;
-    private final CacheWriterFactory mCacheWriterFactory;
 
-    public ContextActionDeleteFactory(CacheWriterFactory cacheWriterFactory,
-            GeocacheListAdapter geocacheListAdapter, GeocacheVectors geocacheVectors) {
+    public ContextActionDeleteFactory(GeocacheListAdapter geocacheListAdapter,
+            GeocacheVectors geocacheVectors) {
         mGeocacheListAdapter = geocacheListAdapter;
         mGeocacheVectors = geocacheVectors;
-        mCacheWriterFactory = cacheWriterFactory;
     }
 
-    public ContextActionDelete create(TitleUpdater titleUpdater, ISQLiteDatabase writableDatabase) {
-        return new ContextActionDelete(mCacheWriterFactory, mGeocacheListAdapter, mGeocacheVectors,
-                titleUpdater, writableDatabase);
+    public ContextActionDelete create(TitleUpdater titleUpdater, CacheWriter cacheWriter) {
+        return new ContextActionDelete(mGeocacheListAdapter, mGeocacheVectors, titleUpdater,
+                cacheWriter);
     }
 }

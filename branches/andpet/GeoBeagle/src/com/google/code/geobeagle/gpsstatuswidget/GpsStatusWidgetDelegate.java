@@ -15,11 +15,11 @@
 package com.google.code.geobeagle.gpsstatuswidget;
 
 import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.ResourceProvider;
 import com.google.code.geobeagle.activity.cachelist.presenter.HasDistanceFormatter;
 import com.google.code.geobeagle.formatting.DistanceFormatter;
 import com.google.code.geobeagle.location.CombinedLocationManager;
 
+import android.content.Context;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationProvider;
@@ -32,26 +32,25 @@ public class GpsStatusWidgetDelegate implements HasDistanceFormatter, LocationLi
     private final MeterFader mMeterFader;
     private final Meter mMeterWrapper;
     private final TextView mProvider;
-    private final ResourceProvider mResourceProvider;
+    private final Context mContext;
     private final TextView mStatus;
     private final TextLagUpdater mTextLagUpdater;
 
     public GpsStatusWidgetDelegate(CombinedLocationManager combinedLocationManager,
             DistanceFormatter distanceFormatter, Meter meter, MeterFader meterFader,
-            TextView provider, ResourceProvider resourceProvider, TextView status,
-            TextLagUpdater textLagUpdater) {
+            TextView provider, Context context, TextView status, TextLagUpdater textLagUpdater) {
         mCombinedLocationManager = combinedLocationManager;
         mDistanceFormatter = distanceFormatter;
         mMeterFader = meterFader;
         mMeterWrapper = meter;
         mProvider = provider;
-        mResourceProvider = resourceProvider;
+        mContext = context;
         mStatus = status;
         mTextLagUpdater = textLagUpdater;
     }
 
     public void onLocationChanged(Location location) {
-//        Log.d("GeoBeagle", "GpsStatusWidget onLocationChanged " + location);
+        // Log.d("GeoBeagle", "GpsStatusWidget onLocationChanged " + location);
         if (location == null)
             return;
 
@@ -78,15 +77,14 @@ public class GpsStatusWidgetDelegate implements HasDistanceFormatter, LocationLi
         switch (status) {
             case LocationProvider.OUT_OF_SERVICE:
                 mStatus.setText(provider + " status: "
-                        + mResourceProvider.getString(R.string.out_of_service));
+                        + mContext.getString(R.string.out_of_service));
                 break;
             case LocationProvider.AVAILABLE:
-                mStatus.setText(provider + " status: "
-                        + mResourceProvider.getString(R.string.available));
+                mStatus.setText(provider + " status: " + mContext.getString(R.string.available));
                 break;
             case LocationProvider.TEMPORARILY_UNAVAILABLE:
                 mStatus.setText(provider + " status: "
-                        + mResourceProvider.getString(R.string.temporarily_unavailable));
+                        + mContext.getString(R.string.temporarily_unavailable));
                 break;
         }
     }

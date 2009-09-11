@@ -80,7 +80,7 @@ public class GpxLoader {
         return continueLoading;
     }
 
-    public void open(String path, Reader reader) throws XmlPullParserException, IOException {
+    public void open(String path, Reader reader) throws XmlPullParserException {
         mGpxToCache.open(path, reader);
         mCachePersisterFacade.open(path);
     }
