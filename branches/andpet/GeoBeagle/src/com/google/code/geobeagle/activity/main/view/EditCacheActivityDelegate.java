@@ -22,7 +22,6 @@ import com.google.code.geobeagle.activity.cachelist.GeocacheListController;
 import com.google.code.geobeagle.activity.main.Util;
 import com.google.code.geobeagle.database.ISQLiteDatabase;
 import com.google.code.geobeagle.database.LocationSaver;
-import com.google.code.geobeagle.database.LocationSaverFactory;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -109,21 +108,22 @@ public class EditCacheActivityDelegate implements PausableWithDatabase {
     private final CancelButtonOnClickListener mCancelButtonOnClickListener;
     private final GeocacheFactory mGeocacheFactory;
     private final Activity mParent;
-    private final LocationSaverFactory mLocationSaverFactory;
+    private final LocationSaver mLocationSaver;
 
     public EditCacheActivityDelegate(Activity parent,
             CancelButtonOnClickListener cancelButtonOnClickListener,
-            GeocacheFactory geocacheFactory, LocationSaverFactory locationSaverFactory) {
+            GeocacheFactory geocacheFactory, LocationSaver locationSaver) {
         mParent = parent;
         mCancelButtonOnClickListener = cancelButtonOnClickListener;
         mGeocacheFactory = geocacheFactory;
-        mLocationSaverFactory = locationSaverFactory;
+        mLocationSaver = locationSaver;
     }
 
     public void onCreate() {
         mParent.setContentView(R.layout.cache_edit);
     }
 
+    //TODO: Remove ISQLiteDatabase argument
     public void onResume(ISQLiteDatabase writableDatabase) {
         final Intent intent = mParent.getIntent();
         final Geocache geocache = intent.<Geocache> getParcelableExtra("geocache");
@@ -133,10 +133,8 @@ public class EditCacheActivityDelegate implements PausableWithDatabase {
                         .findViewById(R.id.edit_longitude));
 
         editCache.set(geocache);
-        final LocationSaver locationSaver = mLocationSaverFactory
-                .createLocationSaver(writableDatabase);
         final SetButtonOnClickListener setButtonOnClickListener = new SetButtonOnClickListener(
-                mParent, editCache, locationSaver);
+                mParent, editCache, mLocationSaver);
 
         ((Button)mParent.findViewById(R.id.edit_set)).setOnClickListener(setButtonOnClickListener);
         ((Button)mParent.findViewById(R.id.edit_cancel))

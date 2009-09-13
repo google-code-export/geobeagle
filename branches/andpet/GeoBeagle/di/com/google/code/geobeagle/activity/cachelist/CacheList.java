@@ -26,6 +26,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
 
+//TODO: Rename to CacheListActivity
 public class CacheList extends ListActivity {
     private CacheListDelegate mCacheListDelegate;
     private ActivityWithDatabaseLifecycleManager mActivityWithDatabaseLifecycleManager;

@@ -20,6 +20,7 @@ import com.google.code.geobeagle.activity.PausableWithDatabase;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
 import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheListPresenter;
 import com.google.code.geobeagle.activity.cachelist.presenter.TitleUpdater;
+import com.google.code.geobeagle.database.DbFrontend;
 import com.google.code.geobeagle.database.ISQLiteDatabase;
 
 import android.app.Activity;
@@ -36,22 +37,25 @@ public class CacheListDelegate implements PausableWithDatabase {
     private final GeocacheListControllerFactory mGeocacheListControllerFactory;
     private final GeocacheListControllerNull mGeocacheListControllerNull;
     private final GeocacheListPresenter mPresenter;
-    private final TitleUpdaterFactory mTitleUpdaterFactory;
+    private final TitleUpdater mTitleUpdater;
     private final ImportIntentManager mImportIntentManager;
+    private final DbFrontend mDbFrontend;
 
     public CacheListDelegate(ImportIntentManager importIntentManager, ActivitySaver activitySaver,
             CacheListRefreshFactory cacheListRefreshFactory,
             GeocacheListControllerFactory geocacheListControllerFactory,
             GeocacheListControllerNull geocacheListControllerNull,
-            GeocacheListPresenter geocacheListPresenter, TitleUpdaterFactory titleUpdaterFactory) {
+            GeocacheListPresenter geocacheListPresenter, TitleUpdater titleUpdater,
+            DbFrontend dbFrontend) {
         mActivitySaver = activitySaver;
         mCacheListRefreshFactory = cacheListRefreshFactory;
         mController = geocacheListControllerNull;
         mGeocacheListControllerFactory = geocacheListControllerFactory;
         mGeocacheListControllerNull = geocacheListControllerNull;
         mPresenter = geocacheListPresenter;
-        mTitleUpdaterFactory = titleUpdaterFactory;
+        mTitleUpdater = titleUpdater;
         mImportIntentManager = importIntentManager;
+        mDbFrontend = dbFrontend;
     }
 
     public boolean onContextItemSelected(MenuItem menuItem) {
@@ -83,6 +87,7 @@ public class CacheListDelegate implements PausableWithDatabase {
         mController.onPause();
         mActivitySaver.save(ActivityType.CACHE_LIST);
         mController = mGeocacheListControllerNull;
+        mDbFrontend.onPause();
     }
 
     static class ImportIntentManager {
@@ -115,13 +120,13 @@ public class CacheListDelegate implements PausableWithDatabase {
         }
     }
 
+    //TODO: Remove argument (use DbFrontend instead)
     public void onResume(ISQLiteDatabase sqliteDatabase) {
-        final TitleUpdater titleUpdater = mTitleUpdaterFactory.create(sqliteDatabase);
-        final CacheListRefresh cacheListRefresh = mCacheListRefreshFactory.create(titleUpdater,
+        final CacheListRefresh cacheListRefresh = mCacheListRefreshFactory.create(mTitleUpdater,
                 sqliteDatabase);
 
         mPresenter.onResume(cacheListRefresh);
-        mController = mGeocacheListControllerFactory.create(cacheListRefresh, titleUpdater,
+        mController = mGeocacheListControllerFactory.create(cacheListRefresh, mTitleUpdater,
                 sqliteDatabase);
 
         mController.onResume(cacheListRefresh, mImportIntentManager.isImport());

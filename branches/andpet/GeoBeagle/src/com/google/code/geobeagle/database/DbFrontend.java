@@ -21,18 +21,23 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import com.google.code.geobeagle.Geocache;
+import com.google.code.geobeagle.activity.PausableWithDatabase;
 import com.google.code.geobeagle.database.DatabaseDI;
 import com.google.code.geobeagle.database.DatabaseDI.GeoBeagleSqliteOpenHelper;
 
-/** Takes complete responsibility of opening and accessing a database to
- * load geocaches. */
-public class GeocachesLoader {
+/** Will develop to represent the front-end to access a database.
+ * It takes responsibility to open and close the actual database connection
+ * without involving the clients of this class. 
+ */
+public class DbFrontend implements PausableWithDatabase {
 	CacheReader mCacheReader;
 	Context mContext;
 	GeoBeagleSqliteOpenHelper open;
 	boolean mIsDatabaseOpen;
+	CacheWriter mCacheWriter;
+	ISQLiteDatabase mDatabase;
 	
-	public GeocachesLoader(Context context) {
+	public DbFrontend(Context context) {
 		mContext = context;
 		mIsDatabaseOpen = false;
 	}
@@ -40,24 +45,26 @@ public class GeocachesLoader {
 	public void openDatabase() {
 		if (mIsDatabaseOpen)
 			return;
-		Log.d("GeoBeagle", "GeocachesLoader.openDatabase()");
+		Log.d("GeoBeagle", "DbFrontend.openDatabase()");
 		mIsDatabaseOpen = true;
 		
         open = new GeoBeagleSqliteOpenHelper(mContext);
         final SQLiteDatabase sqDb = open.getReadableDatabase();
-        final ISQLiteDatabase database = new DatabaseDI.SQLiteWrapper(sqDb);
-        DatabaseDI.createGeocachesSql(database);
+        mDatabase = new DatabaseDI.SQLiteWrapper(sqDb);
+        DatabaseDI.createGeocachesSql(mDatabase);
 		
-        mCacheReader = DatabaseDI.createCacheReader(database);
+        mCacheReader = DatabaseDI.createCacheReader(mDatabase);
 	}
 	
 	public void closeDatabase() {
 		if (!mIsDatabaseOpen)
 			return;
-		Log.d("GeoBeagle", "GeocachesLoader.closeDatabase()");
+		Log.d("GeoBeagle", "DbFrontend.closeDatabase()");
 		mIsDatabaseOpen = false;
 		
-		open.close();
+        open.close();
+		mCacheWriter = null;
+		mDatabase = null;
 	}
 
     public ArrayList<Geocache> loadCaches(double latitude, double longitude, 
@@ -75,4 +82,22 @@ public class GeocachesLoader {
     	return geocaches;
     }
     
+    public CacheWriter getCacheWriter() {
+        if (mCacheWriter != null)
+            return mCacheWriter;
+        openDatabase();
+        mCacheWriter = DatabaseDI.createCacheWriter(mDatabase);
+        return mCacheWriter;
+    }
+    
+    @Override
+    public void onPause() {
+        closeDatabase();
+    }
+
+    @Override
+    public void onResume(ISQLiteDatabase sqliteDatabase) {
+        //TODO: Should anything be done up-front or is lazy just as good?
+        //openDatabase();
+    }
 }

@@ -26,8 +26,6 @@ import com.google.code.geobeagle.activity.main.view.EditCacheActivityDelegate.Ca
 import com.google.code.geobeagle.activity.main.view.EditCacheActivityDelegate.EditCache;
 import com.google.code.geobeagle.activity.main.view.EditCacheActivityDelegate.SetButtonOnClickListener;
 import com.google.code.geobeagle.database.LocationSaver;
-import com.google.code.geobeagle.database.LocationSaverFactory;
-import com.google.code.geobeagle.database.DatabaseDI.SQLiteWrapper;
 
 import org.easymock.classextension.EasyMock;
 import org.junit.Test;
@@ -91,9 +89,6 @@ public class EditCacheActivityDelegateTest {
                 .createMock(CancelButtonOnClickListener.class);
         Button cancel = PowerMock.createMock(Button.class);
         LocationSaver locationSaver = PowerMock.createMock(LocationSaver.class);
-        SQLiteWrapper writableDatabase = PowerMock.createMock(SQLiteWrapper.class);
-        LocationSaverFactory locationSaverFactory = PowerMock
-                .createMock(LocationSaverFactory.class);
 
         EasyMock.expect(activity.getIntent()).andReturn(intent);
         EasyMock.expect(intent.<Geocache> getParcelableExtra("geocache")).andReturn(geocache);
@@ -105,8 +100,6 @@ public class EditCacheActivityDelegateTest {
                 .andReturn(editCache);
         editCache.set(geocache);
 
-        EasyMock.expect(locationSaverFactory.createLocationSaver(writableDatabase)).andReturn(
-                locationSaver);
         PowerMock.expectNew(SetButtonOnClickListener.class, activity, editCache, locationSaver)
                 .andReturn(setButtonOnClickListener);
         EasyMock.expect(activity.findViewById(R.id.edit_set)).andReturn(set);
@@ -117,7 +110,7 @@ public class EditCacheActivityDelegateTest {
 
         PowerMock.replayAll();
         new EditCacheActivityDelegate(activity, cancelButtonOnClickListener, geocacheFactory,
-                locationSaverFactory).onResume(writableDatabase);
+                locationSaver).onResume(null);
         PowerMock.verifyAll();
     }
 
@@ -187,10 +180,5 @@ public class EditCacheActivityDelegateTest {
                 editCache, locationSaver);
         setButtonOnClickListener.onClick(null);
         PowerMock.verifyAll();
-    }
-
-    @Test
-    public void testOnPause() {
-        new EditCacheActivityDelegate(null, null, null, null).onPause();
     }
 }

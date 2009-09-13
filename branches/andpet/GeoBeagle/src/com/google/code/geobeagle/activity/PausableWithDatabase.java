@@ -16,6 +16,7 @@ package com.google.code.geobeagle.activity;
 
 import com.google.code.geobeagle.database.ISQLiteDatabase;
 
+//TODO: Remove
 public interface PausableWithDatabase {
     void onPause();
 

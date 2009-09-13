@@ -15,35 +15,26 @@
 package com.google.code.geobeagle.activity.cachelist.presenter;
 
 import com.google.code.geobeagle.activity.cachelist.CacheListDelegateDI;
-import com.google.code.geobeagle.activity.cachelist.model.CacheListData;
 import com.google.code.geobeagle.database.FilterNearestCaches;
-import com.google.code.geobeagle.database.GeocachesSql;
 
 import android.app.ListActivity;
 import android.widget.TextView;
 
 public class TitleUpdater {
-    private final CacheListData mCacheListData;
     private final FilterNearestCaches mFilterNearestCaches;
-    private final GeocachesSql mGeocachesSql;
     private final ListActivity mListActivity;
     private final ListTitleFormatter mListTitleFormatter;
     private final CacheListDelegateDI.Timing mTiming;
 
-    public TitleUpdater(GeocachesSql geocachesSql, ListActivity listActivity,
-            FilterNearestCaches filterNearestCaches, CacheListData cacheListData,
+    public TitleUpdater(ListActivity listActivity, FilterNearestCaches filterNearestCaches, 
             ListTitleFormatter listTitleFormatter, CacheListDelegateDI.Timing timing) {
-        mGeocachesSql = geocachesSql;
         mListActivity = listActivity;
         mFilterNearestCaches = filterNearestCaches;
-        mCacheListData = cacheListData;
         mListTitleFormatter = listTitleFormatter;
         mTiming = timing;
     }
 
-    public void update() {
-        final int sqlCount = mGeocachesSql.getCount();
-        final int nearestCachesCount = mCacheListData.size();
+    public void update(int sqlCount, int nearestCachesCount) {
         mListActivity.setTitle(mListActivity.getString(mFilterNearestCaches.getTitleText(),
                 nearestCachesCount, sqlCount));
         if (0 == nearestCachesCount) {

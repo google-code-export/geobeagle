@@ -23,10 +23,14 @@ import com.google.code.geobeagle.LocationControlBuffered;
 import com.google.code.geobeagle.LocationControlDi;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.R.id;
+import com.google.code.geobeagle.actions.MenuAction;
+import com.google.code.geobeagle.actions.MenuActionCacheList;
+import com.google.code.geobeagle.actions.MenuActionEditGeocache;
+import com.google.code.geobeagle.actions.MenuActionSearchOnline;
+import com.google.code.geobeagle.actions.MenuActionSettings;
+import com.google.code.geobeagle.actions.MenuActions;
 import com.google.code.geobeagle.activity.ActivityDI;
 import com.google.code.geobeagle.activity.ActivitySaver;
-import com.google.code.geobeagle.activity.MenuAction;
-import com.google.code.geobeagle.activity.MenuActions;
 import com.google.code.geobeagle.activity.main.GeoBeagleDelegate.LogFindClickListener;
 import com.google.code.geobeagle.activity.main.fieldnotes.FieldNoteSender;
 import com.google.code.geobeagle.activity.main.fieldnotes.FieldNoteSenderDI;
@@ -35,12 +39,9 @@ import com.google.code.geobeagle.activity.main.intents.GeocacheToGoogleMap;
 import com.google.code.geobeagle.activity.main.intents.IntentFactory;
 import com.google.code.geobeagle.activity.main.intents.IntentStarterGeo;
 import com.google.code.geobeagle.activity.main.intents.IntentStarterViewUri;
-import com.google.code.geobeagle.activity.main.menuactions.MenuActionCacheList;
-import com.google.code.geobeagle.activity.main.menuactions.MenuActionEditGeocache;
+import com.google.code.geobeagle.activity.main.menuactions.MenuActionGoogleMaps;
 import com.google.code.geobeagle.activity.main.menuactions.MenuActionLogDnf;
 import com.google.code.geobeagle.activity.main.menuactions.MenuActionLogFind;
-import com.google.code.geobeagle.activity.main.menuactions.MenuActionSearchOnline;
-import com.google.code.geobeagle.activity.main.menuactions.MenuActionSettings;
 import com.google.code.geobeagle.activity.main.view.CacheButtonOnClickListener;
 import com.google.code.geobeagle.activity.main.view.CacheDetailsOnClickListener;
 import com.google.code.geobeagle.activity.main.view.GeocacheViewer;
@@ -52,9 +53,7 @@ import com.google.code.geobeagle.activity.main.view.GeocacheViewer.LabelledAttri
 import com.google.code.geobeagle.activity.main.view.GeocacheViewer.NameViewer;
 import com.google.code.geobeagle.activity.main.view.GeocacheViewer.UnlabelledAttributeViewer;
 import com.google.code.geobeagle.activity.map.GeoMapActivity;
-import com.google.code.geobeagle.database.ISQLiteDatabase;
-import com.google.code.geobeagle.database.LocationSaverFactory;
-import com.google.code.geobeagle.database.DatabaseDI.GeoBeagleSqliteOpenHelper;
+import com.google.code.geobeagle.database.DbFrontend;
 import com.google.code.geobeagle.location.LocationLifecycleManager;
 
 import android.app.Activity;
@@ -81,7 +80,7 @@ import android.widget.TextView;
  */
 public class GeoBeagle extends Activity {
     private GeoBeagleDelegate mGeoBeagleDelegate;
-    private ISQLiteDatabase mWritableDatabase;
+    private DbFrontend mDbFrontend;
 
     public Geocache getGeocache() {
         return mGeoBeagleDelegate.getGeocache();
@@ -153,16 +152,11 @@ public class GeoBeagle extends Activity {
         final ActivitySaver activitySaver = ActivityDI.createActivitySaver(this);
         final MenuAction[] menuActionArray = {
                 new MenuActionCacheList(this), new MenuActionEditGeocache(this),
-                new MenuActionLogDnf(this), new MenuActionLogFind(this),
+//                new MenuActionLogDnf(this), new MenuActionLogFind(this),
                 new MenuActionSearchOnline(this), new MenuActionSettings(this),
                 new MenuActionGoogleMaps(intentStarterViewUri)
         };
-        final int[] menuIdArray = {
-                R.id.menu_cache_list, R.id.menu_edit_geocache, R.id.menu_log_dnf,
-                R.id.menu_log_find, R.id.menu_search_online, R.id.menu_settings,
-                R.id.menu_google_maps
-        };
-        final MenuActions menuActions = new MenuActions(menuActionArray, menuIdArray);
+        final MenuActions menuActions = new MenuActions(getResources(), menuActionArray);
         final Resources resources = this.getResources();
         final SharedPreferences defaultSharedPreferences = PreferenceManager
                 .getDefaultSharedPreferences(this);
@@ -172,11 +166,11 @@ public class GeoBeagle extends Activity {
                 geocacheFactory, geocacheFromIntentFactory);
         final GeocacheFromParcelFactory geocacheFromParcelFactory = new GeocacheFromParcelFactory(
                 geocacheFactory);
-        final LocationSaverFactory locationSaverFactory = new LocationSaverFactory();
+        mDbFrontend = new DbFrontend(this);
         mGeoBeagleDelegate = new GeoBeagleDelegate(activitySaver, appLifecycleManager,
                 compassListener, fieldNoteSender, this, geocacheFactory, geocacheViewer,
                 incomingIntentHandler, menuActions, geocacheFromParcelFactory,
-                locationSaverFactory, radar, resources, sensorManager, defaultSharedPreferences,
+                mDbFrontend, radar, resources, sensorManager, defaultSharedPreferences,
                 webPageButtonEnabler);
 
         // see http://www.androidguys.com/2008/11/07/rotational-forces-part-two/
@@ -224,8 +218,9 @@ public class GeoBeagle extends Activity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main_menu, menu);
-        return true;
+        return mGeoBeagleDelegate.onCreateOptionsMenu(menu);
+        //getMenuInflater().inflate(R.menu.main_menu, menu);
+        //return true;
     }
 
     @Override
@@ -244,7 +239,7 @@ public class GeoBeagle extends Activity {
     public void onPause() {
         super.onPause();
         Log.d("GeoBeagle", "GeoBeagle onPause");
-        mGeoBeagleDelegate.onPause(mWritableDatabase);
+        mGeoBeagleDelegate.onPause();
     }
 
     /*
@@ -261,10 +256,7 @@ public class GeoBeagle extends Activity {
     protected void onResume() {
         super.onResume();
         Log.d("GeoBeagle", "GeoBeagle onResume");
-        final GeoBeagleSqliteOpenHelper geoBeagleSqliteOpenHelper = new GeoBeagleSqliteOpenHelper(
-                this);
-        mWritableDatabase = geoBeagleSqliteOpenHelper.getWritableSqliteWrapper();
-        mGeoBeagleDelegate.onResume(mWritableDatabase);
+        mGeoBeagleDelegate.onResume();
     }
 
     /*

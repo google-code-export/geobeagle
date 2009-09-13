@@ -28,7 +28,6 @@ import java.io.InputStreamReader;
 import java.io.Writer;
 
 public class DatabaseTest {
-
     static class DesktopSQLiteDatabase implements ISQLiteDatabase {
         Writer mWriter;
 
@@ -156,6 +155,7 @@ public class DatabaseTest {
     private static String SQL(String s) {
         return s + "\n";
     }
+/*
 
     @Test
     public void testOnCreate() {
@@ -239,5 +239,5 @@ public class DatabaseTest {
         final NullClosable db = new NullClosable();
         db.close();
     }
-
+*/
 }

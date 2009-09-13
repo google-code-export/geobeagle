@@ -28,9 +28,9 @@ import com.google.android.maps.MapController;
 import com.google.android.maps.MyLocationOverlay;
 import com.google.android.maps.Overlay;
 import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.activity.MenuAction;
-import com.google.code.geobeagle.activity.MenuActions;
-import com.google.code.geobeagle.database.GeocachesLoader;
+import com.google.code.geobeagle.actions.MenuActionCacheList;
+import com.google.code.geobeagle.actions.MenuActions;
+import com.google.code.geobeagle.database.DbFrontend;
 
 public class GeoMapActivity extends MapActivity {
     GeoMapActivityDelegate mGeoMapActivityDelegate;
@@ -38,7 +38,7 @@ public class GeoMapActivity extends MapActivity {
 	private MyLocationOverlay mMyLocationOverlay;
 	//private DensityMatrix mDensityMatrix;
 	private DensityOverlay mDensityOverlay;
-	private GeocachesLoader mGeocachesLoader;
+	private DbFrontend mDbFrontend;
 
     @Override
     protected boolean isRouteDisplayed() {
@@ -66,14 +66,10 @@ public class GeoMapActivity extends MapActivity {
         mDensityOverlay = new DensityOverlay();
         mMyLocationOverlay = new MyLocationOverlay(this, mMapView);
         final List<Overlay> mapOverlays = mMapView.getOverlays();
-        final MenuAction menuActionArray[] = {
-                new GeoMapActivityDelegate.MenuActionToggleSatellite(mMapView),
-                new GeoMapActivityDelegate.MenuActionCacheList(this)
-        };
-        final int menuIdArray[] = {
-                R.id.menu_toggle_satellite, R.id.menu_cache_list
-        };
-        final MenuActions menuActions = new MenuActions(menuActionArray, menuIdArray);
+
+        MenuActions menuActions = new MenuActions(getResources());
+        menuActions.add(new GeoMapActivityDelegate.MenuActionToggleSatellite(mMapView));
+        menuActions.add(new MenuActionCacheList(this));
 
         //Add the overlays in the intended z-order:
         mapOverlays.add(mDensityOverlay);
@@ -82,10 +78,10 @@ public class GeoMapActivity extends MapActivity {
         
         mGeoMapActivityDelegate = new GeoMapActivityDelegate(mMapView, menuActions);
 
-        mGeocachesLoader = new GeocachesLoader(this);
+        mDbFrontend = new DbFrontend(this);
         final Intent intent = this.getIntent();
         final MapController mapController = mMapView.getController();
-        mGeoMapActivityDelegate.initialize(intent, mGeocachesLoader,
+        mGeoMapActivityDelegate.initialize(intent, mDbFrontend,
                                            mCachePinsOverlay, mapController,
                                            mDensityOverlay);
         mZoomSupervisor = new ZoomSupervisor(mMapView, mGeoMapActivityDelegate);
@@ -96,7 +92,7 @@ public class GeoMapActivity extends MapActivity {
         super.onResume();
         mMyLocationOverlay.enableMyLocation();
         mMyLocationOverlay.enableCompass();
-        mGeocachesLoader.openDatabase();
+        mDbFrontend.openDatabase();
         mZoomSupervisor.start();
     }
 
@@ -105,17 +101,15 @@ public class GeoMapActivity extends MapActivity {
         mZoomSupervisor.stop();
         mMyLocationOverlay.disableMyLocation();
         mMyLocationOverlay.disableCompass();
-        mGeocachesLoader.closeDatabase();
+        mDbFrontend.closeDatabase();
         super.onPause();
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        super.onCreateOptionsMenu(menu);
-        getMenuInflater().inflate(R.menu.map_menu, menu);
-        // return mCacheListDelegate.onCreateOptionsMenu(menu);
-
-        return true;
+        //super.onCreateOptionsMenu(menu);
+        //getMenuInflater().inflate(R.menu.map_menu, menu);
+        return mGeoMapActivityDelegate.onCreateOptionsMenu(menu);
     }
 
     @Override

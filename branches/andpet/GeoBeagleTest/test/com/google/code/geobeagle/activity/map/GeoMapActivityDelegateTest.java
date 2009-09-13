@@ -14,6 +14,13 @@
 
 package com.google.code.geobeagle.activity.map;
 
+import com.google.android.maps.GeoPoint;
+import com.google.android.maps.MapController;
+import com.google.android.maps.MapView;
+import com.google.code.geobeagle.R;
+import com.google.code.geobeagle.actions.MenuActions;
+import com.google.code.geobeagle.database.DbFrontend;
+
 import org.easymock.EasyMock;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -21,28 +28,19 @@ import org.powermock.api.easymock.PowerMock;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.google.android.maps.GeoPoint;
-import com.google.android.maps.MapController;
-import com.google.android.maps.MapView;
-import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.activity.MenuActions;
-import com.google.code.geobeagle.activity.cachelist.CacheList;
-import com.google.code.geobeagle.database.GeocachesLoader;
-
 @RunWith(PowerMockRunner.class)
 @PrepareForTest( {
-        MapView.class, MapController.class, GeoMapActivityDelegate.class
+        GeoMapView.class, MapController.class, GeoMapActivityDelegate.class
 })
 public class GeoMapActivityDelegateTest {
     @Test
     public void testInitialize() throws Exception {
         GeoMapView mapView = PowerMock.createMock(GeoMapView.class);
-        GeocachesLoader geocachesLoader = PowerMock.createMock(GeocachesLoader.class);
+        DbFrontend dbFrontend = PowerMock.createMock(DbFrontend.class);
         CachePinsOverlay cachesOverlay = PowerMock.createMock(CachePinsOverlay.class);
         Intent intent = PowerMock.createMock(Intent.class);
         GeoPoint geoPoint = PowerMock.createMock(GeoPoint.class);
@@ -59,7 +57,7 @@ public class GeoMapActivityDelegateTest {
         EasyMock.expect(mapController.setZoom(14)).andReturn(14);
 
         PowerMock.replayAll();
-        new GeoMapActivityDelegate(mapView, null).initialize(intent, geocachesLoader,
+        new GeoMapActivityDelegate(mapView, null).initialize(intent, dbFrontend,
                 cachesOverlay, mapController, null);
         PowerMock.verifyAll();
     }
@@ -71,11 +69,11 @@ public class GeoMapActivityDelegateTest {
         GeoMapView mapView = PowerMock.createMock(GeoMapView.class);
 
         EasyMock.expect(mapView.isSatellite()).andReturn(false);
-        EasyMock.expect(menu.findItem(R.id.menu_toggle_satellite)).andReturn(menuItem);
+        EasyMock.expect(menu.findItem(R.string.menu_toggle_satellite)).andReturn(menuItem);
         EasyMock.expect(menuItem.setTitle(R.string.map_view)).andReturn(menuItem);
 
         EasyMock.expect(mapView.isSatellite()).andReturn(true);
-        EasyMock.expect(menu.findItem(R.id.menu_toggle_satellite)).andReturn(menuItem);
+        EasyMock.expect(menu.findItem(R.string.menu_toggle_satellite)).andReturn(menuItem);
         EasyMock.expect(menuItem.setTitle(R.string.satellite_view)).andReturn(menuItem);
 
         PowerMock.replayAll();
@@ -113,19 +111,6 @@ public class GeoMapActivityDelegateTest {
                 mapView);
         menuActionToggleSatellite.act();
         menuActionToggleSatellite.act();
-        PowerMock.verifyAll();
-    }
-
-    @Test
-    public void testMenuActionCacheList() throws Exception {
-        Intent intent = PowerMock.createMock(Intent.class);
-        Activity activity = PowerMock.createMock(Activity.class);
-
-        PowerMock.expectNew(Intent.class, activity, CacheList.class).andReturn(intent);
-        activity.startActivity(intent);
-
-        PowerMock.replayAll();
-        new GeoMapActivityDelegate.MenuActionCacheList(activity).act();
         PowerMock.verifyAll();
     }
 }

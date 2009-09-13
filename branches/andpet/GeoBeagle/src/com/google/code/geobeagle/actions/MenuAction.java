@@ -12,23 +12,12 @@
  ** limitations under the License.
  */
 
-package com.google.code.geobeagle.activity.main.menuactions;
+package com.google.code.geobeagle.actions;
 
-import com.google.code.geobeagle.activity.MenuAction;
-import com.google.code.geobeagle.activity.cachelist.CacheList;
+public interface MenuAction {
 
-import android.app.Activity;
-import android.content.Intent;
-
-public class MenuActionCacheList implements MenuAction {
-    private Activity mActivity;
-
-    public MenuActionCacheList(Activity activity) {
-        mActivity = activity;
-    }
-
-    @Override
-    public void act() {
-        mActivity.startActivity(new Intent(mActivity, CacheList.class));
-    }
+    public void act();
+    
+    /** Must be the id of a resource string - used to set label */
+    public int getId();
 }

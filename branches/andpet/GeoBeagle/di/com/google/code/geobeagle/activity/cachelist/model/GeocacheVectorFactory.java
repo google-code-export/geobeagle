@@ -17,6 +17,7 @@ package com.google.code.geobeagle.activity.cachelist.model;
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.LocationControlBuffered;
 
+//TODO: Remove
 public class GeocacheVectorFactory {
     public GeocacheVector create(Geocache geocache, LocationControlBuffered locationControlBuffered) {
         return new GeocacheVector(geocache, locationControlBuffered);

@@ -39,6 +39,7 @@ public class ContextActionDelete implements ContextAction {
 
         mGeocacheVectors.remove(position);
         mGeocacheListAdapter.notifyDataSetChanged();
-        mTitleUpdater.update();
+        //TODO: How to get correct values?
+        mTitleUpdater.update(mGeocacheVectors.size(), mGeocacheVectors.size());
     }
 }

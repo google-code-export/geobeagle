@@ -21,7 +21,6 @@ import static org.easymock.classextension.EasyMock.verify;
 
 import com.google.code.geobeagle.activity.main.AppLifecycleManager;
 import com.google.code.geobeagle.activity.main.LifecycleManager;
-import com.google.code.geobeagle.activity.main.view.ContentSelector;
 import com.google.code.geobeagle.location.LocationLifecycleManager;
 
 import org.junit.Test;
@@ -60,20 +59,16 @@ public class AppLifecycleManagerTest {
     public void testOnResume() {
         LifecycleManager gpsLifecycleManager = createMock(LocationLifecycleManager.class);
         SharedPreferences sharedPreferences = createMock(SharedPreferences.class);
-        ContentSelector contentSelector = createMock(ContentSelector.class);
         gpsLifecycleManager.onResume(sharedPreferences);
-        contentSelector.onResume(sharedPreferences);
 
         replay(sharedPreferences);
         replay(gpsLifecycleManager);
-        replay(contentSelector);
         AppLifecycleManager appLifecycleManager = new AppLifecycleManager(sharedPreferences,
                 new LifecycleManager[] {
-                        contentSelector, gpsLifecycleManager,
+                        gpsLifecycleManager,
                 });
         appLifecycleManager.onResume();
         verify(sharedPreferences);
         verify(gpsLifecycleManager);
-        verify(contentSelector);
     }
 }

@@ -14,7 +14,8 @@
 
 package com.google.code.geobeagle.activity.cachelist.actions.menu;
 
-import com.google.code.geobeagle.activity.MenuAction;
+import com.google.code.geobeagle.R;
+import com.google.code.geobeagle.actions.MenuAction;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
 import com.google.code.geobeagle.database.FilterNearestCaches;
 
@@ -31,5 +32,10 @@ public class MenuActionToggleFilter implements MenuAction {
     public void act() {
         mFilterNearestCaches.toggle();
         mMenuActionRefresh.forceRefresh();
+    }
+
+    @Override
+    public int getId() {
+        return R.string.menu_toggle_filter;
     }
 }

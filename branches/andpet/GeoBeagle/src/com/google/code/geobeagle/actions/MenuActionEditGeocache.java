@@ -12,28 +12,30 @@
  ** limitations under the License.
  */
 
-package com.google.code.geobeagle.activity.main.menuactions;
+package com.google.code.geobeagle.actions;
 
 import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.actions.MenuAction;
+import com.google.code.geobeagle.activity.main.GeoBeagle;
+import com.google.code.geobeagle.activity.main.view.EditCacheActivity;
 
-import android.app.Activity;
+import android.content.Intent;
 
-public class MenuActionLogDnf implements MenuAction {
-    private final Activity mActivity;
+public class MenuActionEditGeocache implements MenuAction {
+    private final GeoBeagle mParent;
 
-    public MenuActionLogDnf(Activity activity) {
-        mActivity = activity;
+    public MenuActionEditGeocache(GeoBeagle parent) {
+        mParent = parent;
     }
 
     @Override
     public void act() {
-        mActivity.showDialog(R.id.menu_log_dnf);
+        final Intent intent = new Intent(mParent, EditCacheActivity.class);
+        intent.putExtra("geocache", mParent.getGeocache());
+        mParent.startActivityForResult(intent, 0);
     }
 
     @Override
     public int getId() {
-        return R.string.menu_log_dnf;
+        return R.string.menu_edit_geocache;
     }
-
 }

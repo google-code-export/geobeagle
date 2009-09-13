@@ -16,7 +16,6 @@ package com.google.code.geobeagle.activity.map;
 
 import java.util.ArrayList;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.util.Log;
 import android.view.Menu;
@@ -28,26 +27,13 @@ import com.google.android.maps.MapView;
 import com.google.android.maps.Projection;
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.activity.MenuAction;
-import com.google.code.geobeagle.activity.MenuActions;
-import com.google.code.geobeagle.activity.cachelist.CacheList;
+import com.google.code.geobeagle.actions.MenuAction;
+import com.google.code.geobeagle.actions.MenuActions;
 import com.google.code.geobeagle.activity.main.GeoUtils;
-import com.google.code.geobeagle.database.GeocachesLoader;
+import com.google.code.geobeagle.database.DbFrontend;
 import com.google.code.geobeagle.database.WhereFactoryFixedArea;
 
 public class GeoMapActivityDelegate {
-    static class MenuActionCacheList implements MenuAction {
-        private final Activity mActivity;
-
-        MenuActionCacheList(Activity activity) {
-            mActivity = activity;
-        }
-
-        @Override
-        public void act() {
-            mActivity.startActivity(new Intent(mActivity, CacheList.class));
-        }
-    }
 
     public static class MenuActionToggleSatellite implements MenuAction {
         private final MapView mMapView;
@@ -60,12 +46,17 @@ public class GeoMapActivityDelegate {
         public void act() {
             mMapView.setSatellite(!mMapView.isSatellite());
         }
+
+        @Override
+        public int getId() {
+            return R.string.menu_toggle_satellite;
+        }
     }
 
     private final GeoMapView mMapView;
     private final MenuActions mMenuActions;
     private CachePinsOverlay mCachesOverlay;
-    private GeocachesLoader mGeocachesLoader;
+    private DbFrontend mDbFrontend;
     private static boolean fZoomed = false;
     private DensityOverlay mDensityOverlay;
 
@@ -75,11 +66,11 @@ public class GeoMapActivityDelegate {
     }
 
 	public void initialize(Intent intent, 
-	                       GeocachesLoader geocachesLoader,
+	                       DbFrontend dbFrontend,
 	                       CachePinsOverlay cachesOverlay,
 	                       MapController mapController,
 	                       DensityOverlay densityOverlay) {
-    	mGeocachesLoader = geocachesLoader;
+    	mDbFrontend = dbFrontend;
         mMapView.setBuiltInZoomControls(true);
         // mMapView.setOnLongClickListener()
         mMapView.setSatellite(false);
@@ -104,7 +95,8 @@ public class GeoMapActivityDelegate {
      * @param featureId
      */
     public boolean onMenuOpened(int featureId, Menu menu) {
-        menu.findItem(R.id.menu_toggle_satellite).setTitle(
+        //TODO: implement   mMenuActions.onMenuOpened(featureId, menu);
+        menu.findItem(R.string.menu_toggle_satellite).setTitle(
                 mMapView.isSatellite() ? R.string.map_view : R.string.satellite_view);
         return true;
     }
@@ -153,7 +145,7 @@ public class GeoMapActivityDelegate {
 		WhereFactoryFixedArea where = 
 			new WhereFactoryFixedArea(latMin, lonMin, latMax, lonMax);
 		
-        ArrayList<Geocache> list = mGeocachesLoader.loadCaches(0, 0, where);
+        ArrayList<Geocache> list = mDbFrontend.loadCaches(0, 0, where);
         Log.d("GeoBeagle", "GeoMapActivityDelegate.refreshCaches will load " 
               + list.size() + " caches");
 
@@ -187,6 +179,10 @@ public class GeoMapActivityDelegate {
     public void onZoomChange(int prevZoom, int newZoom) {
     	//Log.d("GeoBeagle", "New zoom level: " + newZoom);
     	refreshCaches();
+    }
+
+    public boolean onCreateOptionsMenu(Menu menu) {
+        return mMenuActions.onCreateOptionsMenu(menu);
     }
 
 }

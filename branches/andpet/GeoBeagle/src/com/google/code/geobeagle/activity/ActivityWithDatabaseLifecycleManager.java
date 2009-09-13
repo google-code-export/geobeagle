@@ -19,6 +19,7 @@ import com.google.code.geobeagle.database.NullClosable;
 import com.google.code.geobeagle.database.DatabaseDI.GeoBeagleSqliteOpenHelper;
 import com.google.code.geobeagle.database.DatabaseDI.SQLiteWrapper;
 
+//TODO: Remove
 public class ActivityWithDatabaseLifecycleManager {
     private final PausableWithDatabase mPausable;
     private final NullClosable mNullClosable;

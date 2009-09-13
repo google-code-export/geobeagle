@@ -12,24 +12,28 @@
  ** limitations under the License.
  */
 
-package com.google.code.geobeagle.cachelist.actions.click;
+package com.google.code.geobeagle.actions;
 
+import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.cachelist.CacheList;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.view.View;
-import android.view.View.OnClickListener;
 
-public class GeocacheListOnClickListener implements OnClickListener {
+public class MenuActionCacheList implements MenuAction {
+    private Activity mActivity;
 
-    final private Activity mActivity;
-
-    public GeocacheListOnClickListener(Activity activity) {
+    public MenuActionCacheList(Activity activity) {
         mActivity = activity;
     }
 
-    public void onClick(View v) {
+    @Override
+    public void act() {
         mActivity.startActivity(new Intent(mActivity, CacheList.class));
+    }
+
+    @Override
+    public int getId() {
+        return R.string.menu_cache_list;
     }
 }

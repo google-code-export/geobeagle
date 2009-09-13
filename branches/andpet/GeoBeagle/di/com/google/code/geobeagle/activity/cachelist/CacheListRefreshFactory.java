@@ -24,6 +24,7 @@ import com.google.code.geobeagle.database.DatabaseDI;
 import com.google.code.geobeagle.database.GeocachesSql;
 import com.google.code.geobeagle.database.ISQLiteDatabase;
 
+//TODO: Remove
 public class CacheListRefreshFactory {
 
     private final ActionManagerFactory mActionManagerFactory;
@@ -45,6 +46,6 @@ public class CacheListRefreshFactory {
         final SqlCacheLoader sqlCacheLoader = mSqlCacheLoaderFactory.create(geocachesSql,
                 titleUpdater);
         final ActionManager actionManager = mActionManagerFactory.create(sqlCacheLoader);
-        return new CacheListRefresh(actionManager, mTiming, mLocationControlBuffered, sqliteWrapper);
+        return new CacheListRefresh(actionManager, mTiming, mLocationControlBuffered);
     }
 }

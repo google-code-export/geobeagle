@@ -16,18 +16,22 @@ package com.google.code.geobeagle.activity.main.view;
 
 import com.google.code.geobeagle.GeocacheFactory;
 import com.google.code.geobeagle.activity.ActivityWithDatabaseLifecycleManager;
+import com.google.code.geobeagle.activity.PausableWithDatabase;
 import com.google.code.geobeagle.activity.main.view.EditCacheActivityDelegate.CancelButtonOnClickListener;
-import com.google.code.geobeagle.database.LocationSaverFactory;
+import com.google.code.geobeagle.database.DbFrontend;
+import com.google.code.geobeagle.database.LocationSaver;
 import com.google.code.geobeagle.database.NullClosable;
 import com.google.code.geobeagle.database.DatabaseDI.GeoBeagleSqliteOpenHelper;
 
 import android.app.Activity;
 import android.os.Bundle;
 
+//TODO: Move to another package
 public class EditCacheActivity extends Activity {
     private EditCacheActivityDelegate mEditCacheActivityDelegate;
     private ActivityWithDatabaseLifecycleManager mActivityWithDatabaseLifecycleManager;
-
+    private DbFrontend mDbFrontend;
+    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,9 +41,11 @@ public class EditCacheActivity extends Activity {
         final GeoBeagleSqliteOpenHelper geoBeagleSqliteOpenHelper = new GeoBeagleSqliteOpenHelper(
                 this);
         final NullClosable nullClosable = new NullClosable();
-        final LocationSaverFactory locationSaverFactory = new LocationSaverFactory();
+        mDbFrontend = new DbFrontend(this);
+        LocationSaver locationSaver = new LocationSaver(mDbFrontend);
         mEditCacheActivityDelegate = new EditCacheActivityDelegate(this,
-                cancelButtonOnClickListener, geocacheFactory, locationSaverFactory);
+                cancelButtonOnClickListener, geocacheFactory, locationSaver);
+        
         mActivityWithDatabaseLifecycleManager = new ActivityWithDatabaseLifecycleManager(
                 mEditCacheActivityDelegate, nullClosable, geoBeagleSqliteOpenHelper);
         mEditCacheActivityDelegate.onCreate();
@@ -49,6 +55,7 @@ public class EditCacheActivity extends Activity {
     protected void onPause() {
         super.onPause();
         mActivityWithDatabaseLifecycleManager.onPause();
+        mDbFrontend.onPause();
     }
 
     @Override

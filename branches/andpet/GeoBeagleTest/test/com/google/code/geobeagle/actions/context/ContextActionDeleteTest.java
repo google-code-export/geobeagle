@@ -43,8 +43,9 @@ public class ContextActionDeleteTest {
         expect(geocacheVector.getId()).andReturn("GC123");
         cacheWriter.deleteCache("GC123");
         geocacheVectors.remove(17);
+        expect(geocacheVectors.size()).andReturn(16).anyTimes();
         geocacheListAdapter.notifyDataSetChanged();
-        titleUpdater.update();
+        titleUpdater.update(16, 16);
 
         PowerMock.replayAll();
         new ContextActionDelete(geocacheListAdapter, geocacheVectors, titleUpdater, cacheWriter)

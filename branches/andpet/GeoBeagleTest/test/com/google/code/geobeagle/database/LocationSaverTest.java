@@ -39,6 +39,8 @@ public class LocationSaverTest {
     public void testSave() {
         CacheWriter writer = PowerMock.createMock(CacheWriter.class);
         Geocache geocache = PowerMock.createMock(Geocache.class);
+        DbFrontend dbFrontend = PowerMock.createMock(DbFrontend.class);
+        expect(dbFrontend.getCacheWriter()).andReturn(writer);                
         PowerMock.mockStatic(DatabaseDI.class);
 
         writer.startWriting();
@@ -54,7 +56,7 @@ public class LocationSaverTest {
         writer.stopWriting();
 
         PowerMock.replayAll();
-        new LocationSaver(writer).saveLocation(geocache);
+        new LocationSaver(dbFrontend).saveLocation(geocache);
         PowerMock.verifyAll();
     }
 }

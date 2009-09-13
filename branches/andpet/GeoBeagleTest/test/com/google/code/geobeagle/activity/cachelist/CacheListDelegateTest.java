@@ -54,7 +54,7 @@ public class CacheListDelegateTest {
 
         PowerMock.replayAll();
         CacheListDelegate cacheListDelegate = new CacheListDelegate(null, null, null, null,
-                geocacheListControllerNull, null, null);
+                geocacheListControllerNull, null, null, null);
         cacheListDelegate.onContextItemSelected(menuItem);
         cacheListDelegate.onListItemClick(listView, view, 28, 42);
         cacheListDelegate.onOptionsItemSelected(menuItem);
@@ -70,7 +70,7 @@ public class CacheListDelegateTest {
         EasyMock.expect(geocacheListControllerNull.onContextItemSelected(menuItem)).andReturn(true);
 
         PowerMock.replayAll();
-        new CacheListDelegate(null, null, null, null, geocacheListControllerNull, null, null)
+        new CacheListDelegate(null, null, null, null, geocacheListControllerNull, null, null, null)
                 .onContextItemSelected(menuItem);
         PowerMock.verifyAll();
     }
@@ -83,7 +83,7 @@ public class CacheListDelegateTest {
         geocacheListPresenter.onCreate();
 
         PowerMock.replayAll();
-        new CacheListDelegate(null, null, null, null, null, geocacheListPresenter, null).onCreate();
+        new CacheListDelegate(null, null, null, null, null, geocacheListPresenter, null, null).onCreate();
         PowerMock.verifyAll();
     }
 
@@ -97,7 +97,7 @@ public class CacheListDelegateTest {
 
         PowerMock.replayAll();
         assertTrue(new CacheListDelegate(null, null, null, null, geocacheListControllerNull, null,
-                null).onCreateOptionsMenu(menu));
+                null, null).onCreateOptionsMenu(menu));
         PowerMock.verifyAll();
     }
 
@@ -111,7 +111,7 @@ public class CacheListDelegateTest {
         geocacheListControllerNull.onListItemClick(listView, view, 28, 42);
 
         PowerMock.replayAll();
-        new CacheListDelegate(null, null, null, null, geocacheListControllerNull, null, null)
+        new CacheListDelegate(null, null, null, null, geocacheListControllerNull, null, null, null)
                 .onListItemClick(listView, view, 28, 42);
         PowerMock.verifyAll();
     }
@@ -125,7 +125,7 @@ public class CacheListDelegateTest {
         EasyMock.expect(geocacheListControllerNull.onMenuOpened(27, menu)).andReturn(true);
 
         PowerMock.replayAll();
-        new CacheListDelegate(null, null, null, null, geocacheListControllerNull, null, null)
+        new CacheListDelegate(null, null, null, null, geocacheListControllerNull, null, null, null)
                 .onMenuOpened(27, menu);
         PowerMock.verifyAll();
     }
@@ -139,7 +139,7 @@ public class CacheListDelegateTest {
         EasyMock.expect(geocacheListControllerNull.onOptionsItemSelected(menuItem)).andReturn(true);
 
         PowerMock.replayAll();
-        new CacheListDelegate(null, null, null, null, geocacheListControllerNull, null, null)
+        new CacheListDelegate(null, null, null, null, geocacheListControllerNull, null, null, null)
                 .onOptionsItemSelected(menuItem);
         PowerMock.verifyAll();
     }
@@ -158,7 +158,7 @@ public class CacheListDelegateTest {
 
         PowerMock.replayAll();
         new CacheListDelegate(null, activitySaver, null, null, geocacheListControllerNull,
-                geocacheListPresenter, null).onPause();
+                geocacheListPresenter, null, null).onPause();
         PowerMock.verifyAll();
     }
 
@@ -240,7 +240,6 @@ public class CacheListDelegateTest {
         GeocacheListControllerNull geocacheListControllerNull = PowerMock
                 .createStrictMock(GeocacheListControllerNull.class);
         SQLiteWrapper sqliteWrapper = PowerMock.createMock(SQLiteWrapper.class);
-        TitleUpdaterFactory titleUpdaterFactory = PowerMock.createMock(TitleUpdaterFactory.class);
         TitleUpdater titleUpdater = PowerMock.createMock(TitleUpdater.class);
         CacheListRefreshFactory cacheListRefreshFactory = PowerMock
                 .createMock(CacheListRefreshFactory.class);
@@ -250,7 +249,6 @@ public class CacheListDelegateTest {
         IGeocacheListController controller = PowerMock.createMock(IGeocacheListController.class);
         ImportIntentManager importIntentManager = PowerMock.createMock(ImportIntentManager.class);
 
-        EasyMock.expect(titleUpdaterFactory.create(sqliteWrapper)).andReturn(titleUpdater);
         EasyMock.expect(cacheListRefreshFactory.create(titleUpdater, sqliteWrapper)).andReturn(
                 cacheListRefresh);
         geocacheListPresenter.onResume(cacheListRefresh);
@@ -264,7 +262,7 @@ public class CacheListDelegateTest {
         PowerMock.replayAll();
         new CacheListDelegate(importIntentManager, null, cacheListRefreshFactory,
                 geocacheListControllerFactory, geocacheListControllerNull, geocacheListPresenter,
-                titleUpdaterFactory).onResume(sqliteWrapper);
+                null, null).onResume(sqliteWrapper);
         PowerMock.verifyAll();
     }
 }

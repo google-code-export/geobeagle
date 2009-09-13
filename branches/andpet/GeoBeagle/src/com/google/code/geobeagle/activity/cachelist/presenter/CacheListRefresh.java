@@ -18,9 +18,6 @@ import com.google.code.geobeagle.LocationControlBuffered;
 import com.google.code.geobeagle.Refresher;
 import com.google.code.geobeagle.LocationControlBuffered.IGpsLocation;
 import com.google.code.geobeagle.activity.cachelist.CacheListDelegateDI;
-import com.google.code.geobeagle.database.ISQLiteDatabase;
-
-import android.util.Log;
 
 public class CacheListRefresh implements Refresher {
     public static class ActionManager {
@@ -50,14 +47,12 @@ public class CacheListRefresh implements Refresher {
     private final ActionManager mActionManager;
     private final LocationControlBuffered mLocationControlBuffered;
     private final CacheListDelegateDI.Timing mTiming;
-    private final ISQLiteDatabase mSqliteWrapper;
 
     public CacheListRefresh(ActionManager actionManager, CacheListDelegateDI.Timing timing,
-            LocationControlBuffered locationControlBuffered, ISQLiteDatabase sqliteWrapper) {
+            LocationControlBuffered locationControlBuffered) {
         mLocationControlBuffered = locationControlBuffered;
         mTiming = timing;
         mActionManager = actionManager;
-        mSqliteWrapper = sqliteWrapper;
     }
 
     public void forceRefresh() {
@@ -68,10 +63,13 @@ public class CacheListRefresh implements Refresher {
     }
 
     public void refresh() {
+            //TODO: Why this check?
+        /*
         if (!mSqliteWrapper.isOpen()) {
             Log.d("GeoBeagle", "Refresh: database is closed, punting.");
             return;
         }
+        */
 
         mTiming.start();
         final long now = mTiming.getTime();
