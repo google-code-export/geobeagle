@@ -20,8 +20,6 @@ import static org.junit.Assert.assertTrue;
 import com.google.code.geobeagle.activity.cachelist.CacheListDelegate.ImportIntentManager;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
 import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheListPresenter;
-import com.google.code.geobeagle.database.DatabaseDI.SQLiteWrapper;
-
 import org.easymock.classextension.EasyMock;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -217,7 +215,6 @@ public class CacheListDelegateTest {
     public void testOnResume() {
         GeocacheListPresenter geocacheListPresenter = PowerMock
                 .createStrictMock(GeocacheListPresenter.class);
-        SQLiteWrapper sqliteWrapper = PowerMock.createMock(SQLiteWrapper.class);
         CacheListRefresh cacheListRefresh = PowerMock.createMock(CacheListRefresh.class);
         GeocacheListController controller = PowerMock.createMock(GeocacheListController.class);
         ImportIntentManager importIntentManager = PowerMock.createMock(ImportIntentManager.class);
@@ -229,7 +226,7 @@ public class CacheListDelegateTest {
         PowerMock.replayAll();
         new CacheListDelegate(importIntentManager, null, cacheListRefresh,
                 controller, geocacheListPresenter,
-                null).onResume(sqliteWrapper);
+                null).onResume();
         PowerMock.verifyAll();
     }
 }

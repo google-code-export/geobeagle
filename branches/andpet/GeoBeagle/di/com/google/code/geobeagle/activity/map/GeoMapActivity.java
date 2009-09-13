@@ -92,7 +92,6 @@ public class GeoMapActivity extends MapActivity {
         super.onResume();
         mMyLocationOverlay.enableMyLocation();
         mMyLocationOverlay.enableCompass();
-        mDbFrontend.openDatabase();
         mZoomSupervisor.start();
     }
 

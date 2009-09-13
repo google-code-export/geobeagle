@@ -14,10 +14,6 @@
 
 package com.google.code.geobeagle.activity.cachelist;
 
-import com.google.code.geobeagle.activity.ActivityWithDatabaseLifecycleManager;
-import com.google.code.geobeagle.database.NullClosable;
-import com.google.code.geobeagle.database.DatabaseDI.GeoBeagleSqliteOpenHelper;
-
 import android.app.ListActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -28,7 +24,6 @@ import android.widget.ListView;
 
 public class CacheListActivity extends ListActivity {
     private CacheListDelegate mCacheListDelegate;
-    private ActivityWithDatabaseLifecycleManager mActivityWithDatabaseLifecycleManager;
 
     // This is the ctor that Android will use.
     public CacheListActivity() {
@@ -50,11 +45,6 @@ public class CacheListActivity extends ListActivity {
         Log.d("GeoBeagle", "CacheListActivity onCreate");
 
         mCacheListDelegate = CacheListDelegateDI.create(this, getLayoutInflater());
-        final NullClosable nullClosable = new NullClosable();
-        final GeoBeagleSqliteOpenHelper geoBeagleSqliteOpenHelper = new GeoBeagleSqliteOpenHelper(
-                this);
-        mActivityWithDatabaseLifecycleManager = new ActivityWithDatabaseLifecycleManager(
-                mCacheListDelegate, nullClosable, geoBeagleSqliteOpenHelper);
 
         mCacheListDelegate.onCreate();
     }
@@ -91,15 +81,14 @@ public class CacheListActivity extends ListActivity {
         Log.d("GeoBeagle", "CacheListActivity onPause");
 
         super.onPause();
-        mActivityWithDatabaseLifecycleManager.onPause();
+        mCacheListDelegate.onPause();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         Log.d("GeoBeagle", "CacheListActivity onResume");
-
-        mActivityWithDatabaseLifecycleManager.onResume();
+        mCacheListDelegate.onResume();
     }
 
 }

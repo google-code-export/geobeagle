@@ -36,7 +36,7 @@ public class CacheWriterTest {
     @Test
     public void testClearEarlierLoads() {
         DesktopSQLiteDatabase db = new DesktopSQLiteDatabase();
-        db.execSQL(DatabaseTest.currentSchema());
+        db.execSQL(DatabaseTest.currentSchema());  //andpe: Error "table CACHES already exists"
 
         db.execSQL(INSERT_INTO_CACHES + "VALUES ('GCTHISIMPORT', 'just loaded', 'foo.gpx', 0)");
         db.execSQL(INSERT_INTO_CACHES + "VALUES ('GCCLICKEDLINK', 'from a link', '"

@@ -35,7 +35,6 @@ import com.google.code.geobeagle.actions.MenuActions;
 import com.google.code.geobeagle.activity.cachelist.model.CacheListData;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheFromMyLocationFactory;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVector;
-import com.google.code.geobeagle.activity.cachelist.model.GeocacheVectorFactory;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVectors;
 import com.google.code.geobeagle.activity.cachelist.presenter.ActionAndTolerance;
 import com.google.code.geobeagle.activity.cachelist.presenter.AdapterCachesSorter;
@@ -129,10 +128,8 @@ public class CacheListDelegateDI {
         final BearingFormatter relativeBearingFormatter = new RelativeBearingFormatter();
         final DistanceFormatterManager distanceFormatterManager = DistanceFormatterManagerDi
                 .create(listActivity);
-        final GeocacheVectorFactory geocacheVectorFactory = new GeocacheVectorFactory();
         final ArrayList<GeocacheVector> geocacheVectorsList = new ArrayList<GeocacheVector>(10);
-        final GeocacheVectors geocacheVectors = new GeocacheVectors(geocacheVectorFactory,
-                geocacheVectorsList);
+        final GeocacheVectors geocacheVectors = new GeocacheVectors(geocacheVectorsList);
         final CacheListData cacheListData = new CacheListData(geocacheVectors);
         final XmlPullParserWrapper xmlPullParserWrapper = new XmlPullParserWrapper();
 

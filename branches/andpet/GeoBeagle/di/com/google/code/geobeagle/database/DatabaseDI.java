@@ -141,12 +141,6 @@ public class DatabaseDI {
 
     }
 
-    public static GeocachesSql createGeocachesSql(ISQLiteDatabase sqliteWrapper) {
-        final Geocaches geocaches = new Geocaches();
-        final CacheReader cacheReader = createCacheReader(sqliteWrapper);
-        return new GeocachesSql(cacheReader, geocaches);
-    }
-
     public static CacheReader createCacheReader(ISQLiteDatabase sqliteWrapper) {
         final CacheReaderCursorFactory cacheReaderCursorFactory = new CacheReaderCursorFactory();
         return new CacheReader(sqliteWrapper, cacheReaderCursorFactory);

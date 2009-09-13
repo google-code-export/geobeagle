@@ -14,10 +14,8 @@
 
 package com.google.code.geobeagle.database;
 
-import static org.easymock.EasyMock.expect;
 import static org.junit.Assert.assertEquals;
 
-import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.database.DatabaseDI.SearchFactory;
 import com.google.code.geobeagle.database.WhereFactoryNearestCaches.BoundingBox;
 import com.google.code.geobeagle.database.WhereFactoryNearestCaches.Search;
@@ -48,41 +46,8 @@ public class WhereFactoryNearestCachesTest {
         PowerMock.verifyAll();
     }
 
-    @Test
-    public void testReadOne() {
-        Geocaches geocaches = PowerMock.createMock(Geocaches.class);
-        CacheReaderCursor cursor = PowerMock.createMock(CacheReaderCursor.class);
-        Geocache geocache = PowerMock.createMock(Geocache.class);
-
-        expect(cursor.getCache()).andReturn(geocache);
-        expect(cursor.moveToNext()).andReturn(false);
-        geocaches.add(geocache);
-
-        PowerMock.replayAll();
-        GeocachesSql geocachesSql = new GeocachesSql(null, geocaches);
-        geocachesSql.read(cursor);
-        PowerMock.verifyAll();
-    }
-
-    @Test
-    public void testReadTwo() {
-        Geocaches geocaches = PowerMock.createMock(Geocaches.class);
-        CacheReaderCursor cursor = PowerMock.createMock(CacheReaderCursor.class);
-        Geocache geocache1 = PowerMock.createMock(Geocache.class);
-        Geocache geocache2 = PowerMock.createMock(Geocache.class);
-
-        expect(cursor.getCache()).andReturn(geocache1);
-        geocaches.add(geocache1);
-        expect(cursor.moveToNext()).andReturn(true);
-        expect(cursor.getCache()).andReturn(geocache2);
-        geocaches.add(geocache2);
-        expect(cursor.moveToNext()).andReturn(false);
-
-        PowerMock.replayAll();
-        GeocachesSql geocachesSql = new GeocachesSql(null, geocaches);
-        geocachesSql.read(cursor);
-        PowerMock.verifyAll();
-    }
+    
+    //andpe: testReadOne and testReadTwo removed since I didn't see how they tested WhereFactoryNearestCaches
 
     @Test
     public void testBinarySearchUpOne() {

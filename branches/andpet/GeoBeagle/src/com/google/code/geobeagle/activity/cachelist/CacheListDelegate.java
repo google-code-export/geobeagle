@@ -16,11 +16,9 @@ package com.google.code.geobeagle.activity.cachelist;
 
 import com.google.code.geobeagle.activity.ActivitySaver;
 import com.google.code.geobeagle.activity.ActivityType;
-import com.google.code.geobeagle.activity.PausableWithDatabase;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
 import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheListPresenter;
 import com.google.code.geobeagle.database.DbFrontend;
-import com.google.code.geobeagle.database.ISQLiteDatabase;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -29,7 +27,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
 
-public class CacheListDelegate implements PausableWithDatabase {
+public class CacheListDelegate {
     private final ActivitySaver mActivitySaver;
     private final CacheListRefresh mCacheListRefresh;
     private GeocacheListController mController;
@@ -78,7 +76,7 @@ public class CacheListDelegate implements PausableWithDatabase {
         mPresenter.onPause();
         mController.onPause();
         mActivitySaver.save(ActivityType.CACHE_LIST);
-        mDbFrontend.onPause();
+        mDbFrontend.closeDatabase();
     }
 
     static class ImportIntentManager {
@@ -111,8 +109,8 @@ public class CacheListDelegate implements PausableWithDatabase {
         }
     }
 
-    //TODO: Remove argument (use DbFrontend instead)
-    public void onResume(ISQLiteDatabase sqliteDatabase) {
+    public void onResume() {
+        //TODO: No need to re-initialize these
         mPresenter.onResume(mCacheListRefresh);
         mController.onResume(mCacheListRefresh, mImportIntentManager.isImport());
     }

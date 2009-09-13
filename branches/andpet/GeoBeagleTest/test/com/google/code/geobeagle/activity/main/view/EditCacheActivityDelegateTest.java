@@ -110,7 +110,7 @@ public class EditCacheActivityDelegateTest {
 
         PowerMock.replayAll();
         new EditCacheActivityDelegate(activity, cancelButtonOnClickListener, geocacheFactory,
-                locationSaver).onResume(null);
+                locationSaver).onResume();
         PowerMock.verifyAll();
     }
 

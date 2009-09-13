@@ -15,10 +15,10 @@
 package com.google.code.geobeagle.actions.context;
 
 import com.google.code.geobeagle.Geocache;
+import com.google.code.geobeagle.activity.EditCacheActivity;
 import com.google.code.geobeagle.activity.cachelist.actions.context.ContextActionEdit;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVector;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVectors;
-import com.google.code.geobeagle.activity.main.view.EditCacheActivity;
 
 import org.easymock.EasyMock;
 import org.junit.Test;

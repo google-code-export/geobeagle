@@ -21,7 +21,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import com.google.code.geobeagle.Geocache;
-import com.google.code.geobeagle.activity.PausableWithDatabase;
 import com.google.code.geobeagle.database.DatabaseDI;
 import com.google.code.geobeagle.database.DatabaseDI.GeoBeagleSqliteOpenHelper;
 
@@ -29,7 +28,7 @@ import com.google.code.geobeagle.database.DatabaseDI.GeoBeagleSqliteOpenHelper;
  * It takes responsibility to open and close the actual database connection
  * without involving the clients of this class. 
  */
-public class DbFrontend implements PausableWithDatabase {
+public class DbFrontend {
 	CacheReader mCacheReader;
 	Context mContext;
 	GeoBeagleSqliteOpenHelper open;
@@ -88,15 +87,16 @@ public class DbFrontend implements PausableWithDatabase {
         mCacheWriter = DatabaseDI.createCacheWriter(mDatabase);
         return mCacheWriter;
     }
-    
-    @Override
+
+    /*
     public void onPause() {
         closeDatabase();
     }
+    */
 
-    @Override
-    public void onResume(ISQLiteDatabase sqliteDatabase) {
-        //TODO: Should anything be done up-front or is lazy just as good?
-        //openDatabase();
+    /*
+    public void onResume() {
+        //Lazy evaluation - open database when needed
     }
+    */
 }

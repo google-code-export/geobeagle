@@ -20,9 +20,9 @@ import com.google.code.geobeagle.actions.MenuActionCacheList;
 import com.google.code.geobeagle.actions.MenuActionEditGeocache;
 import com.google.code.geobeagle.actions.MenuActionSearchOnline;
 import com.google.code.geobeagle.actions.MenuActionSettings;
+import com.google.code.geobeagle.activity.EditCacheActivity;
 import com.google.code.geobeagle.activity.cachelist.CacheListActivity;
 import com.google.code.geobeagle.activity.main.GeoBeagle;
-import com.google.code.geobeagle.activity.main.view.EditCacheActivity;
 import com.google.code.geobeagle.activity.preferences.EditPreferences;
 import com.google.code.geobeagle.activity.searchonline.SearchOnlineActivity;
 

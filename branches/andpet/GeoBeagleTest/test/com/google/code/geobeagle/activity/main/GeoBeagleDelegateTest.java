@@ -247,7 +247,7 @@ public class GeoBeagleDelegateTest {
                 appLifecycleManager, compassListener, null, null, null, null, null, null, null,
                 dbFrontend, radarView, null, sensorManager, null, null);
         geoBeagleDelegate.setGeocache(geocache);
-        geoBeagleDelegate.onPause();
+        geoBeagleDelegate.onPause();  //andpe: Why does this give an error?
         PowerMock.verifyAll();
     }
 
@@ -309,7 +309,7 @@ public class GeoBeagleDelegateTest {
                 incomingIntentHandler, null, null, null, radarView, null,
                 sensorManager, sharedPreferences, webPageButtonEnabler);
         geoBeagleDelegate.setGeocache(geocache);
-        geoBeagleDelegate.onResume();
+        geoBeagleDelegate.onResume();  //andpe: Why does this give an error?
         PowerMock.verifyAll();
     }
 

@@ -15,8 +15,8 @@
 package com.google.code.geobeagle.actions;
 
 import com.google.code.geobeagle.R;
+import com.google.code.geobeagle.activity.EditCacheActivity;
 import com.google.code.geobeagle.activity.main.GeoBeagle;
-import com.google.code.geobeagle.activity.main.view.EditCacheActivity;
 
 import android.content.Intent;
 

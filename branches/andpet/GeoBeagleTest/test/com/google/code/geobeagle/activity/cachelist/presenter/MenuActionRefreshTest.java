@@ -321,7 +321,7 @@ public class MenuActionRefreshTest {
 
         PowerMock.replayAll();
         new TitleUpdater(listActivity, filterNearestCaches, null,
-                timing).update(5, 12);
+                timing).update(12, 5);
         PowerMock.verifyAll();
 
     }
@@ -346,7 +346,7 @@ public class MenuActionRefreshTest {
         textView.setText(R.string.no_nearby_caches);
 
         PowerMock.replayAll();
-        new TitleUpdater(listActivity, filterNearestCaches, listTitleFormatter, timing).update(0, 12);
+        new TitleUpdater(listActivity, filterNearestCaches, listTitleFormatter, timing).update(12, 0);
         PowerMock.verifyAll();
     }
 }

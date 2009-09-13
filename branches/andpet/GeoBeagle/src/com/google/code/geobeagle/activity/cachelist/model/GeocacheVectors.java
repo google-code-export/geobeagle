@@ -33,12 +33,10 @@ import com.google.code.geobeagle.LocationControlBuffered;
 import java.util.ArrayList;
 
 public class GeocacheVectors {
-    private final GeocacheVectorFactory mGeocacheVectorFactory;
     private final ArrayList<GeocacheVector> mGeocacheVectorsList;
 
-    public GeocacheVectors(GeocacheVectorFactory geocacheVectorFactory, ArrayList<GeocacheVector> geocacheVectorsList) {
+    public GeocacheVectors(ArrayList<GeocacheVector> geocacheVectorsList) {
         mGeocacheVectorsList = geocacheVectorsList;
-        mGeocacheVectorFactory = geocacheVectorFactory;
     }
 
     public void add(GeocacheVector destinationVector) {
@@ -48,7 +46,7 @@ public class GeocacheVectors {
     public void addLocations(ArrayList<Geocache> geocaches,
             LocationControlBuffered locationControlBuffered) {
         for (Geocache geocache : geocaches) {
-            add(mGeocacheVectorFactory.create(geocache, locationControlBuffered));
+            add(new GeocacheVector(geocache, locationControlBuffered));
         }
     }
 

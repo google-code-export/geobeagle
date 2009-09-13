@@ -17,10 +17,8 @@ package com.google.code.geobeagle.activity.main.view;
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.GeocacheFactory;
 import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.activity.PausableWithDatabase;
 import com.google.code.geobeagle.activity.cachelist.GeocacheListController;
 import com.google.code.geobeagle.activity.main.Util;
-import com.google.code.geobeagle.database.ISQLiteDatabase;
 import com.google.code.geobeagle.database.LocationSaver;
 
 import android.app.Activity;
@@ -30,7 +28,7 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 
-public class EditCacheActivityDelegate implements PausableWithDatabase {
+public class EditCacheActivityDelegate {
     public static class CancelButtonOnClickListener implements OnClickListener {
         private final Activity mActivity;
 
@@ -123,8 +121,7 @@ public class EditCacheActivityDelegate implements PausableWithDatabase {
         mParent.setContentView(R.layout.cache_edit);
     }
 
-    //TODO: Remove ISQLiteDatabase argument
-    public void onResume(ISQLiteDatabase writableDatabase) {
+    public void onResume() {
         final Intent intent = mParent.getIntent();
         final Geocache geocache = intent.<Geocache> getParcelableExtra("geocache");
         final EditCache editCache = new EditCache(mGeocacheFactory, (EditText)mParent
@@ -139,8 +136,5 @@ public class EditCacheActivityDelegate implements PausableWithDatabase {
         ((Button)mParent.findViewById(R.id.edit_set)).setOnClickListener(setButtonOnClickListener);
         ((Button)mParent.findViewById(R.id.edit_cancel))
                 .setOnClickListener(mCancelButtonOnClickListener);
-    }
-
-    public void onPause() {
     }
 }

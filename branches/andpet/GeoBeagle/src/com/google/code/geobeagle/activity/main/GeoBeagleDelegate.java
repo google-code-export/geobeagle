@@ -143,7 +143,7 @@ public class GeoBeagleDelegate {
         mActivitySaver.save(ActivityType.VIEW_CACHE, mGeocache);
         mSensorManager.unregisterListener(mRadarView);
         mSensorManager.unregisterListener(mCompassListener);
-        mDbFrontend.onPause();
+        mDbFrontend.closeDatabase();
     }
 
     public void onRestoreInstanceState(Bundle savedInstanceState) {
