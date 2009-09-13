@@ -16,7 +16,6 @@ package com.google.code.geobeagle.activity.main.view;
 
 import com.google.code.geobeagle.GeocacheFactory;
 import com.google.code.geobeagle.activity.ActivityWithDatabaseLifecycleManager;
-import com.google.code.geobeagle.activity.PausableWithDatabase;
 import com.google.code.geobeagle.activity.main.view.EditCacheActivityDelegate.CancelButtonOnClickListener;
 import com.google.code.geobeagle.database.DbFrontend;
 import com.google.code.geobeagle.database.LocationSaver;

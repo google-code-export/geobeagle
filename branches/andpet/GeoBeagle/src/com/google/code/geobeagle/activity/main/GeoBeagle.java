@@ -40,8 +40,6 @@ import com.google.code.geobeagle.activity.main.intents.IntentFactory;
 import com.google.code.geobeagle.activity.main.intents.IntentStarterGeo;
 import com.google.code.geobeagle.activity.main.intents.IntentStarterViewUri;
 import com.google.code.geobeagle.activity.main.menuactions.MenuActionGoogleMaps;
-import com.google.code.geobeagle.activity.main.menuactions.MenuActionLogDnf;
-import com.google.code.geobeagle.activity.main.menuactions.MenuActionLogFind;
 import com.google.code.geobeagle.activity.main.view.CacheButtonOnClickListener;
 import com.google.code.geobeagle.activity.main.view.CacheDetailsOnClickListener;
 import com.google.code.geobeagle.activity.main.view.GeocacheViewer;

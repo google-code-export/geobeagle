@@ -16,7 +16,7 @@ package com.google.code.geobeagle.activity.cachelist.actions.context;
 
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVectors;
 import com.google.code.geobeagle.activity.cachelist.presenter.TitleUpdater;
-import com.google.code.geobeagle.database.CacheWriter;
+import com.google.code.geobeagle.database.DbFrontend;
 
 import android.widget.BaseAdapter;
 
@@ -24,18 +24,18 @@ public class ContextActionDelete implements ContextAction {
     private final BaseAdapter mGeocacheListAdapter;
     private final GeocacheVectors mGeocacheVectors;
     private final TitleUpdater mTitleUpdater;
-    private final CacheWriter mCacheWriter;
+    private final DbFrontend mDbFrontend;
 
     public ContextActionDelete(BaseAdapter geocacheListAdapter, GeocacheVectors geocacheVectors,
-            TitleUpdater titleUpdater, CacheWriter cacheWriter) {
+            TitleUpdater titleUpdater, DbFrontend dbFrontend) {
         mGeocacheListAdapter = geocacheListAdapter;
         mGeocacheVectors = geocacheVectors;
         mTitleUpdater = titleUpdater;
-        mCacheWriter = cacheWriter;
+        mDbFrontend = dbFrontend;
     }
 
     public void act(int position) {
-        mCacheWriter.deleteCache(mGeocacheVectors.get(position).getId());
+        mDbFrontend.getCacheWriter().deleteCache(mGeocacheVectors.get(position).getId());
 
         mGeocacheVectors.remove(position);
         mGeocacheListAdapter.notifyDataSetChanged();

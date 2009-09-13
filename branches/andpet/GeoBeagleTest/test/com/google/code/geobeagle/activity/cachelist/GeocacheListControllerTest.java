@@ -39,7 +39,6 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import android.app.ListActivity;
 import android.view.ContextMenu;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 
@@ -87,7 +86,7 @@ public class GeocacheListControllerTest {
 
         PowerMock.replayAll();
         adapterContextMenuInfo.position = 76;
-        IGeocacheListController geocacheListController = new GeocacheListController(null,
+        GeocacheListController geocacheListController = new GeocacheListController(null,
                 contextActions, null, null, null);
         assertTrue(geocacheListController.onContextItemSelected(menuItem));
         PowerMock.verifyAll();

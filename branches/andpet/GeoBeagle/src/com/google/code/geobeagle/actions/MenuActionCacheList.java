@@ -15,7 +15,7 @@
 package com.google.code.geobeagle.actions;
 
 import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.activity.cachelist.CacheList;
+import com.google.code.geobeagle.activity.cachelist.CacheListActivity;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -29,7 +29,7 @@ public class MenuActionCacheList implements MenuAction {
 
     @Override
     public void act() {
-        mActivity.startActivity(new Intent(mActivity, CacheList.class));
+        mActivity.startActivity(new Intent(mActivity, CacheListActivity.class));
     }
 
     @Override

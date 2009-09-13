@@ -16,7 +16,6 @@ package com.google.code.geobeagle.cachelist;
 
 import static org.easymock.EasyMock.expect;
 
-import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.activity.cachelist.GpxImporterFactory;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.Abortable;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionSyncGpx;

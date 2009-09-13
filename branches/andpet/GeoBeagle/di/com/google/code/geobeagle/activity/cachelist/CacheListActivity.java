@@ -26,17 +26,16 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
 
-//TODO: Rename to CacheListActivity
-public class CacheList extends ListActivity {
+public class CacheListActivity extends ListActivity {
     private CacheListDelegate mCacheListDelegate;
     private ActivityWithDatabaseLifecycleManager mActivityWithDatabaseLifecycleManager;
 
     // This is the ctor that Android will use.
-    public CacheList() {
+    public CacheListActivity() {
     }
 
     // This is the ctor for testing.
-    public CacheList(CacheListDelegate cacheListDelegate) {
+    public CacheListActivity(CacheListDelegate cacheListDelegate) {
         mCacheListDelegate = cacheListDelegate;
     }
 
@@ -48,7 +47,7 @@ public class CacheList extends ListActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d("GeoBeagle", "CacheList onCreate");
+        Log.d("GeoBeagle", "CacheListActivity onCreate");
 
         mCacheListDelegate = CacheListDelegateDI.create(this, getLayoutInflater());
         final NullClosable nullClosable = new NullClosable();
@@ -89,7 +88,7 @@ public class CacheList extends ListActivity {
 
     @Override
     protected void onPause() {
-        Log.d("GeoBeagle", "CacheList onPause");
+        Log.d("GeoBeagle", "CacheListActivity onPause");
 
         super.onPause();
         mActivityWithDatabaseLifecycleManager.onPause();
@@ -98,7 +97,7 @@ public class CacheList extends ListActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        Log.d("GeoBeagle", "CacheList onResume");
+        Log.d("GeoBeagle", "CacheListActivity onResume");
 
         mActivityWithDatabaseLifecycleManager.onResume();
     }

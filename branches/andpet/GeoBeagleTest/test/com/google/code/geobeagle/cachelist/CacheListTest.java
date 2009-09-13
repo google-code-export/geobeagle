@@ -14,7 +14,7 @@
 
 package com.google.code.geobeagle.cachelist;
 
-import com.google.code.geobeagle.activity.cachelist.CacheList;
+import com.google.code.geobeagle.activity.cachelist.CacheListActivity;
 import com.google.code.geobeagle.activity.cachelist.CacheListDelegate;
 
 import org.easymock.classextension.EasyMock;
@@ -30,7 +30,7 @@ import android.view.MenuItem;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest( {
-        Activity.class, CacheList.class, ListActivity.class
+        Activity.class, CacheListActivity.class, ListActivity.class
 })
 public class CacheListTest {
     @Test
@@ -44,7 +44,7 @@ public class CacheListTest {
         EasyMock.expect(cacheListDelegate.onContextItemSelected(menuItem)).andReturn(true);
 
         PowerMock.replayAll();
-        new CacheList(cacheListDelegate).onContextItemSelected(menuItem);
+        new CacheListActivity(cacheListDelegate).onContextItemSelected(menuItem);
         PowerMock.verifyAll();
     }
 }

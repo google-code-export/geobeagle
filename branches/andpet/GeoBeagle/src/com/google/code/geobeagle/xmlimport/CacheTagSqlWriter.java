@@ -18,11 +18,10 @@ import com.google.code.geobeagle.CacheType;
 import com.google.code.geobeagle.GeocacheFactory.Source;
 import com.google.code.geobeagle.database.CacheWriter;
 
-// TODO: Rename to CacheTagSqlWriter.
 /**
  * @author sng
  */
-public class CacheTagWriter {
+public class CacheTagSqlWriter {
     public static class CacheTagParser {
         CacheType cacheType(String type) {
             if (type.startsWith("Traditional")) {
@@ -72,7 +71,7 @@ public class CacheTagWriter {
 
     private int mTerrain;
 
-    public CacheTagWriter(CacheWriter cacheWriter, CacheTagParser cacheTagParser) {
+    public CacheTagSqlWriter(CacheWriter cacheWriter, CacheTagParser cacheTagParser) {
         mCacheWriter = cacheWriter;
         mCacheTagParser = cacheTagParser;
     }

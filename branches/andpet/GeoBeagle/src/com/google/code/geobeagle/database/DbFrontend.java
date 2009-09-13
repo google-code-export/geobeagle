@@ -51,7 +51,6 @@ public class DbFrontend implements PausableWithDatabase {
         open = new GeoBeagleSqliteOpenHelper(mContext);
         final SQLiteDatabase sqDb = open.getReadableDatabase();
         mDatabase = new DatabaseDI.SQLiteWrapper(sqDb);
-        DatabaseDI.createGeocachesSql(mDatabase);
 		
         mCacheReader = DatabaseDI.createCacheReader(mDatabase);
 	}

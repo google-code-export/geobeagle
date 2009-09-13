@@ -18,7 +18,7 @@ import com.google.code.geobeagle.cachedetails.CacheDetailsWriter;
 import com.google.code.geobeagle.cachedetails.HtmlWriter;
 import com.google.code.geobeagle.cachedetails.WriterWrapper;
 import com.google.code.geobeagle.database.CacheWriter;
-import com.google.code.geobeagle.xmlimport.CacheTagWriter.CacheTagParser;
+import com.google.code.geobeagle.xmlimport.CacheTagSqlWriter.CacheTagParser;
 import com.google.code.geobeagle.xmlimport.GpxImporterDI.MessageHandler;
 
 import android.os.PowerManager.WakeLock;
@@ -45,8 +45,8 @@ public class CachePersisterFacadeDI {
         }
 
         public CachePersisterFacade create(CacheWriter cacheWriter, WakeLock wakeLock) {
-            final CacheTagWriter cacheTagWriter = new CacheTagWriter(cacheWriter, mCacheTagParser);
-            return new CachePersisterFacade(cacheTagWriter, mFileFactory, mCacheDetailsWriter,
+            final CacheTagSqlWriter cacheTagSqlWriter = new CacheTagSqlWriter(cacheWriter, mCacheTagParser);
+            return new CachePersisterFacade(cacheTagSqlWriter, mFileFactory, mCacheDetailsWriter,
                     mMessageHandler, wakeLock);
         }
     }

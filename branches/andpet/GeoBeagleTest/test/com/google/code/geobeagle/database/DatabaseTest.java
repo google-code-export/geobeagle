@@ -14,10 +14,6 @@
 
 package com.google.code.geobeagle.database;
 
-import static org.junit.Assert.assertEquals;
-
-import org.junit.Test;
-
 import android.database.Cursor;
 
 import java.io.BufferedReader;

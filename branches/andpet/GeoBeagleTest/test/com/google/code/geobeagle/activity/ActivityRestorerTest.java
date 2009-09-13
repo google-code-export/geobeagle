@@ -16,7 +16,7 @@ package com.google.code.geobeagle.activity;
 
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.activity.ActivityDI.ActivityTypeFactory;
-import com.google.code.geobeagle.activity.cachelist.CacheList;
+import com.google.code.geobeagle.activity.cachelist.CacheListActivity;
 import com.google.code.geobeagle.activity.cachelist.GeocacheListController;
 import com.google.code.geobeagle.activity.main.GeoBeagle;
 import com.google.code.geobeagle.activity.main.GeocacheFromPreferencesFactory;
@@ -50,7 +50,7 @@ public class ActivityRestorerTest {
                 sharedPreferences.getInt(ActivitySaver.LAST_ACTIVITY, ActivityType.NONE.toInt()))
                 .andReturn(cacheList);
         EasyMock.expect(activityTypeFactory.fromInt(cacheList)).andReturn(ActivityType.CACHE_LIST);
-        PowerMock.expectNew(Intent.class, parent, CacheList.class).andReturn(intent);
+        PowerMock.expectNew(Intent.class, parent, CacheListActivity.class).andReturn(intent);
         parent.startActivity(intent);
         parent.finish();
 
