@@ -64,7 +64,7 @@ public class DatabaseDI {
         }
     }
 
-    public static class SQLiteWrapper implements ISQLiteDatabase, Closable {
+    public static class SQLiteWrapper implements ISQLiteDatabase {
         private final SQLiteDatabase mSQLiteDatabase;
 
         public SQLiteWrapper(SQLiteDatabase writableDatabase) {
