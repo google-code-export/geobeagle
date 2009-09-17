@@ -18,6 +18,7 @@ import com.google.code.geobeagle.ErrorDisplayer;
 import com.google.code.geobeagle.GeocacheFactory;
 import com.google.code.geobeagle.LocationControlBuffered;
 import com.google.code.geobeagle.LocationControlDi;
+import com.google.code.geobeagle.CacheTypeFactory;
 import com.google.code.geobeagle.LocationControlBuffered.GpsDisabledLocation;
 import com.google.code.geobeagle.activity.ActivityDI;
 import com.google.code.geobeagle.activity.ActivitySaver;
@@ -219,11 +220,12 @@ public class CacheListDelegateDI {
                 distanceFormatterManager, geocacheListAdapter, geocacheSummaryRowInflater,
                 geocacheVectors, gpsStatusWidget, listActivity, locationControlBuffered,
                 sensorManagerWrapper, updateGpsWidgetRunnable);
+        final CacheTypeFactory cacheTypeFactory = new CacheTypeFactory();
 
         final Aborter aborter = new Aborter();
         final MessageHandler messageHandler = MessageHandler.create(listActivity);
         final CachePersisterFacadeFactory cachePersisterFacadeFactory = new CachePersisterFacadeFactory(
-                messageHandler);
+                messageHandler, cacheTypeFactory);
 
         final GpxImporterFactory gpxImporterFactory = new GpxImporterFactory(aborter,
                 cachePersisterFacadeFactory, errorDisplayer, geocacheListPresenter, listActivity,

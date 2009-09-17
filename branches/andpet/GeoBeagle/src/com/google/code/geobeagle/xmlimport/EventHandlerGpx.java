@@ -55,6 +55,8 @@ class EventHandlerGpx implements EventHandler {
     static final String XPATH_WPTDESC = "/gpx/wpt/desc";
     static final String XPATH_WPTNAME = "/gpx/wpt/name";
 
+    static final String XPATH_WAYPOINT_TYPE = "/gpx/wpt/type";
+    
     private final CachePersisterFacade mCachePersisterFacade;
 
     public EventHandlerGpx(CachePersisterFacade cachePersisterFacade) {
@@ -77,6 +79,7 @@ class EventHandlerGpx implements EventHandler {
 
     public boolean text(String fullPath, String text) throws IOException {
         text = text.trim();
+        //Log.d("GeoBeagle", "fullPath " + fullPath + ", text " + text);
         if (fullPath.equals(XPATH_WPTNAME)) {
             mCachePersisterFacade.wptName(text);
         } else if (fullPath.equals(XPATH_WPTDESC)) {
@@ -93,7 +96,9 @@ class EventHandlerGpx implements EventHandler {
             if (!text.equals("")) {
                 mCachePersisterFacade.hint(text);
             }
-        } else if (fullPath.equals(XPATH_CACHE_TYPE) || fullPath.equals(XPATH_GEOCACHE_TYPE)) {
+        } else if (fullPath.equals(XPATH_CACHE_TYPE) || fullPath.equals(XPATH_GEOCACHE_TYPE)
+                || fullPath.equals(XPATH_WAYPOINT_TYPE)) {
+            //Log.d("GeoBeagle", "Setting cache type " + text);
             mCachePersisterFacade.cacheType(text);
         } else if (fullPath.equals(XPATH_CACHE_DIFFICULTY)
                 || fullPath.equals(XPATH_GEOCACHE_DIFFICULTY)) {

@@ -15,6 +15,7 @@
 package com.google.code.geobeagle.xmlimport;
 
 import com.google.code.geobeagle.CacheType;
+import com.google.code.geobeagle.CacheTypeFactory;
 import com.google.code.geobeagle.GeocacheFactory.Source;
 import com.google.code.geobeagle.database.CacheWriter;
 
@@ -22,41 +23,8 @@ import com.google.code.geobeagle.database.CacheWriter;
  * @author sng
  */
 public class CacheTagSqlWriter {
-    public static class CacheTagParser {
-        CacheType cacheType(String type) {
-            if (type.startsWith("Traditional")) {
-                return CacheType.TRADITIONAL;
-            } else if (type.startsWith("Multi")) {
-                return CacheType.MULTI;
-            } else if (type.equals("Unknown Cache")) {
-                return CacheType.UNKNOWN;
-            }
-            return CacheType.NULL;
-        }
-
-        public int container(String container) {
-            if (container.equals("Micro")) {
-                return 1;
-            } else if (container.equals("Small")) {
-                return 2;
-            } else if (container.equals("Regular")) {
-                return 3;
-            } else if (container.equals("Large")) {
-                return 4;
-            }
-            return 0;
-        }
-
-        public int stars(String stars) {
-            try {
-                return Math.round(Float.parseFloat(stars) * 2);
-            } catch (Exception ex) {
-                return 0;
-            }
-        }
-    }
-
-    private final CacheTagParser mCacheTagParser;
+    private final CacheTypeFactory mCacheTypeFactory;
+    
     private CacheType mCacheType;
     private final CacheWriter mCacheWriter;
     private int mContainer;
@@ -71,9 +39,10 @@ public class CacheTagSqlWriter {
 
     private int mTerrain;
 
-    public CacheTagSqlWriter(CacheWriter cacheWriter, CacheTagParser cacheTagParser) {
+    public CacheTagSqlWriter(CacheWriter cacheWriter, 
+            CacheTypeFactory cacheTypeFactory) {
         mCacheWriter = cacheWriter;
-        mCacheTagParser = cacheTagParser;
+        mCacheTypeFactory = cacheTypeFactory;
     }
 
     public void cacheName(String name) {
@@ -81,7 +50,7 @@ public class CacheTagSqlWriter {
     }
 
     public void cacheType(String type) {
-        mCacheType = mCacheTagParser.cacheType(type);
+        mCacheType = mCacheTypeFactory.fromTag(type);
     }
 
     public void clear() { // TODO: ensure source is not reset
@@ -94,11 +63,11 @@ public class CacheTagSqlWriter {
     }
 
     public void container(String container) {
-        mContainer = mCacheTagParser.container(container);
+        mContainer = mCacheTypeFactory.container(container);
     }
 
     public void difficulty(String difficulty) {
-        mDifficulty = mCacheTagParser.stars(difficulty);
+        mDifficulty = mCacheTypeFactory.stars(difficulty);
     }
 
     public void end() {
@@ -152,7 +121,7 @@ public class CacheTagSqlWriter {
     }
 
     public void terrain(String terrain) {
-        mTerrain = mCacheTagParser.stars(terrain);
+        mTerrain = mCacheTypeFactory.stars(terrain);
     }
 
     public void write(Source source) {

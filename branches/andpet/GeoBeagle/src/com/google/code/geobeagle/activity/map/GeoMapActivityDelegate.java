@@ -149,7 +149,7 @@ public class GeoMapActivityDelegate {
         Log.d("GeoBeagle", "GeoMapActivityDelegate.refreshCaches will load " 
               + list.size() + " caches");
 
-        if (list.size() > 50) {
+        if (list.size() > 100) {
             DensityMatrix densityMatrix = new DensityMatrix(latResolution,
                                                             lonResolution);
             densityMatrix.addCaches(list);

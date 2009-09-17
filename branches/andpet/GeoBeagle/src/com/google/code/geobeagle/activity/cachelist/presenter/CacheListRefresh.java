@@ -63,7 +63,7 @@ public class CacheListRefresh implements Refresher {
     }
 
     public void refresh() {
-            //TODO: Why this check?
+            //TODO: Is this check still necessary?
         /*
         if (!mSqliteWrapper.isOpen()) {
             Log.d("GeoBeagle", "Refresh: database is closed, punting.");

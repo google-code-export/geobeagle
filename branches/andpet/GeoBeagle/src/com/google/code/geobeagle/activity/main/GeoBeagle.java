@@ -108,8 +108,6 @@ public class GeoBeagle extends Activity {
                 .create(locationManager);
         final GeocacheFactory geocacheFactory = new GeocacheFactory();
         final TextView gcid = (TextView)findViewById(R.id.gcid);
-        final AttributeViewer gcIcon = new UnlabelledAttributeViewer(
-                GeocacheViewer.CACHE_TYPE_IMAGES, ((ImageView)findViewById(R.id.gcicon)));
         final AttributeViewer gcDifficulty = new LabelledAttributeViewer(
                 GeocacheViewer.STAR_IMAGES, (TextView)findViewById(R.id.gc_text_difficulty),
                 (ImageView)findViewById(R.id.gc_difficulty));
@@ -124,7 +122,8 @@ public class GeoBeagle extends Activity {
         radar.setDistanceView((TextView)findViewById(R.id.radar_distance),
                 (TextView)findViewById(R.id.radar_bearing),
                 (TextView)findViewById(R.id.radar_accuracy));
-        final GeocacheViewer geocacheViewer = new GeocacheViewer(radar, gcid, gcName, gcIcon,
+        final GeocacheViewer geocacheViewer = new GeocacheViewer(radar, gcid, gcName,
+                (ImageView)findViewById(R.id.gcicon),
                 gcDifficulty, gcTerrain, gcContainer);
 
         locationControlBuffered.onLocationChanged(null);
