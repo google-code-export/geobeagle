@@ -26,7 +26,15 @@ public class CacheTypeFactory {
             return CacheType.TRADITIONAL;
         if (tag.equals("Multi-cache"))
             return CacheType.MULTI;
-        
+        if (tag.equals("Virtual"))
+            return CacheType.VIRTUAL;
+        if (tag.equals("Event"))
+            return CacheType.EVENT;
+        if (tag.equals("Webcam"))
+            return CacheType.WEBCAM;
+        if (tag.equals("Earth"))
+            return CacheType.EARTHCACHE;
+
         return CacheType.NULL;
     }
 

@@ -31,7 +31,21 @@ public enum CacheType {
             R.drawable.map_pin2_default, "Earthcache"),
     VIRTUAL(6, R.drawable.cache_default, R.drawable.cache_default_big,
             R.drawable.map_pin2_default, "Virtual Cache"),
-
+    LETTERBOX_HYBRID(7, R.drawable.cache_default, R.drawable.cache_default_big,
+            R.drawable.map_pin2_default, "Letterbox Hybrid"),
+    EVENT(8, R.drawable.cache_default, R.drawable.cache_default_big,
+            R.drawable.map_pin2_default, "Event Cache"),
+    WEBCAM(9, R.drawable.cache_default, R.drawable.cache_default_big,
+            R.drawable.map_pin2_default, "Webcam Cache"),
+    CITO(10, R.drawable.cache_default, R.drawable.cache_default_big,
+            R.drawable.map_pin2_default, "Cache In Trash Out Event"),
+    LOCATIONLESS(11, R.drawable.cache_default, R.drawable.cache_default_big,
+                    R.drawable.map_pin2_default, "Locationless (Reverse) Cache"),
+    APE(12, R.drawable.cache_default, R.drawable.cache_default_big,
+            R.drawable.map_pin2_default, "Project APE Cache"),
+    MEGA(13, R.drawable.cache_default, R.drawable.cache_default_big,
+            R.drawable.map_pin2_default, "Mega-Event Cache"),
+            
     //Waypoint types
     WAYPOINT(20, R.drawable.cache_default, R.drawable.cache_default_big, 
             R.drawable.map_pin2_default, "Waypoint"),   //Not actually seen in GPX...
