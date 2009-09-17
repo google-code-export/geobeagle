@@ -7,9 +7,9 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import com.google.code.geobeagle.CacheType;
+import com.google.code.geobeagle.CacheTypeFactory;
 import com.google.code.geobeagle.GeocacheFactory.Source;
 import com.google.code.geobeagle.database.CacheWriter;
-import com.google.code.geobeagle.xmlimport.CacheTagSqlWriter.CacheTagParser;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -108,10 +108,14 @@ public class CacheTagWriterTest {
     public void testWrite() {
         mCacheWriter.insertAndUpdateCache("GC123", "my cache", 122, 37, Source.GPX, "foo.gpx",
                 CacheType.TRADITIONAL, 6, 5, 1);
-        CacheTagParser cacheTagParser = new CacheTagParser();
-
+        CacheTypeFactory cacheTypeFactory = PowerMock.createMock(CacheTypeFactory.class);
+        expect(cacheTypeFactory.container("Micro")).andReturn(1);
+        expect(cacheTypeFactory.stars("2.5")).andReturn(5);
+        expect(cacheTypeFactory.stars("3")).andReturn(6);
+        expect(cacheTypeFactory.fromTag("Traditional Cache")).andReturn(CacheType.TRADITIONAL);
+        
         PowerMock.replayAll();
-        CacheTagSqlWriter cacheTagSqlWriter = new CacheTagSqlWriter(mCacheWriter, cacheTagParser);
+        CacheTagSqlWriter cacheTagSqlWriter = new CacheTagSqlWriter(mCacheWriter, cacheTypeFactory);
         cacheTagSqlWriter.id("GC123");
         cacheTagSqlWriter.cacheName("my cache");
         cacheTagSqlWriter.latitudeLongitude("122", "37");
@@ -123,37 +127,6 @@ public class CacheTagWriterTest {
         cacheTagSqlWriter.cacheType("Traditional Cache");
         cacheTagSqlWriter.write(Source.GPX);
         PowerMock.verifyAll();
-    }
-
-    @Test
-    public void testContainer() {
-        CacheTagParser cacheTagParser = new CacheTagParser();
-        assertEquals(0, cacheTagParser.container("bad string"));
-        assertEquals(1, cacheTagParser.container("Micro"));
-        assertEquals(2, cacheTagParser.container("Small"));
-        assertEquals(3, cacheTagParser.container("Regular"));
-        assertEquals(4, cacheTagParser.container("Large"));
-    }
-    
-
-    @Test
-    public void testCacheType() {
-        CacheTagParser cacheTagParser = new CacheTagParser();
-        assertEquals(CacheType.NULL, cacheTagParser.cacheType("bad string"));
-        assertEquals(CacheType.TRADITIONAL, cacheTagParser.cacheType("Traditional Cache"));
-        assertEquals(CacheType.TRADITIONAL, cacheTagParser.cacheType("Traditional"));
-        assertEquals(CacheType.MULTI, cacheTagParser.cacheType("Multi-cache"));
-        assertEquals(CacheType.MULTI, cacheTagParser.cacheType("Multi"));
-        assertEquals(CacheType.UNKNOWN, cacheTagParser.cacheType("Unknown Cache"));
-    }
-
-    @Test
-    public void testStars() {
-        CacheTagParser cacheTagParser = new CacheTagParser();
-        assertEquals(0, cacheTagParser.stars("0"));
-        assertEquals(1, cacheTagParser.stars("0.5"));
-        assertEquals(2, cacheTagParser.stars("1"));
-        assertEquals(0, cacheTagParser.stars("foo"));
     }
 
     @Test
