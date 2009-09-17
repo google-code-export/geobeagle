@@ -1,10 +1,23 @@
+/*
+ ** Licensed under the Apache License, Version 2.0 (the "License");
+ ** you may not use this file except in compliance with the License.
+ ** You may obtain a copy of the License at
+ **
+ **     http://www.apache.org/licenses/LICENSE-2.0
+ **
+ ** Unless required by applicable law or agreed to in writing, software
+ ** distributed under the License is distributed on an "AS IS" BASIS,
+ ** WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ ** See the License for the specific language governing permissions and
+ ** limitations under the License.
+ */
 
 package com.google.code.geobeagle.activity.map;
 
+import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapView;
 import com.google.android.maps.Overlay;
-import com.google.android.maps.Projection;
-import com.google.code.geobeagle.activity.map.DensityMatrix.DensityPatch;
+import com.google.code.geobeagle.database.GeocachesLoader;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -14,38 +27,31 @@ import android.graphics.Rect;
 import java.util.List;
 
 public class DensityOverlay extends Overlay {
-    private List<DensityPatch> mDensityPatches;
-    private final DensityMatrix mDensityMatrix;
+    // Create delegate because it's not possible to test classes that extend
+    // Android classes.
 
-    public DensityOverlay(DensityMatrix matrix) {
-        mDensityMatrix = matrix;
-        mDensityPatches = mDensityMatrix.getDensityPatches();
+    public static DensityOverlayDelegate createDelegate(List<DensityMatrix.DensityPatch> patches,
+            GeocachesLoader geocachesLoader, GeoPoint topLeft, GeoPoint bottomRight) {
+        Rect patchRect = new Rect();
+        Paint paint = new Paint();
+        paint.setARGB(128, 255, 0, 0);
+        Point screenLow = new Point();
+        Point screenHigh = new Point();
+        DensityPatchManager densityPatchManager = new DensityPatchManager(patches, topLeft,
+                bottomRight, geocachesLoader);
+        return new DensityOverlayDelegate(patchRect, paint, screenLow, screenHigh, geocachesLoader,
+                topLeft, bottomRight, densityPatchManager);
+    }
+
+    private DensityOverlayDelegate mDelegate;
+
+    public DensityOverlay(DensityOverlayDelegate densityOverlayDelegate) {
+        mDelegate = densityOverlayDelegate;
     }
 
     @Override
     public void draw(Canvas canvas, MapView mapView, boolean shadow) {
-        if (shadow)
-            return; // No shadow layer
-
-        final Projection proj = mapView.getProjection();
-
-        Rect tempRect = new Rect();
-        Paint bluePaint = new Paint();
-        bluePaint.setARGB(128, 255, 0, 0);
-        Point screenLow = new Point();
-        Point screenHigh = new Point();
-        for (DensityPatch patch : mDensityPatches) {
-            proj.toPixels(patch.getExtentLow(), screenLow);
-            proj.toPixels(patch.getExtentHigh(), screenHigh);
-            tempRect.bottom = Math.max(screenLow.y, screenHigh.y);
-            tempRect.top = Math.min(screenLow.y, screenHigh.y);
-            tempRect.left = Math.min(screenLow.x, screenHigh.x);
-            tempRect.right = Math.max(screenLow.x, screenHigh.x);
-            int count = patch.getCacheCount();
-            // Never draw completely opaque
-            bluePaint.setAlpha(Math.min(210, 10 + 32 * count));
-            canvas.drawRect(tempRect, bluePaint);
-        }
+        super.draw(canvas, mapView, shadow);
+        mDelegate.draw(canvas, mapView, shadow);
     }
-
 }

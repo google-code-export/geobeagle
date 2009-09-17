@@ -32,7 +32,7 @@ public class CacheReaderCursor {
         mDbToGeocacheAdapter = dbToGeocacheAdapter;
     }
 
-    void close() {
+    public void close() {
         mCursor.close();
     }
 
@@ -50,7 +50,11 @@ public class CacheReaderCursor {
                 container);
     }
 
-    boolean moveToNext() {
+    public int count() {
+        return mCursor.getCount();
+    }
+
+    public boolean moveToNext() {
         return mCursor.moveToNext();
     }
 }

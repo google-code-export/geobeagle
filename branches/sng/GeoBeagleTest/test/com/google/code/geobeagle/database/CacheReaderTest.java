@@ -39,8 +39,8 @@ public class CacheReaderTest {
     private void expectQuery(SQLiteWrapper sqliteWrapper, Cursor cursor, String where) {
         expect(
                 sqliteWrapper.query(eq("CACHES"), eq(CacheReader.READER_COLUMNS), eq(where),
-                        (String)isNull(), (String)isNull(), (String)isNull(),
-                        eq(CacheReader.SQL_QUERY_LIMIT))).andReturn(cursor);
+                        (String)isNull(), (String)isNull(), (String)isNull(), (String)isNull()))
+                .andReturn(cursor);
     }
 
     @Test
@@ -133,7 +133,7 @@ public class CacheReaderTest {
 
         PowerMock.replayAll();
         assertEquals(cacheReaderCursor, new CacheReader(sqliteWrapper, cacheReaderCursorFactory)
-                .open(122, 37, whereFactoryNearestCaches));
+                .open(122, 37, whereFactoryNearestCaches, null));
         PowerMock.verifyAll();
     }
 
@@ -150,7 +150,7 @@ public class CacheReaderTest {
         cursor.close();
 
         PowerMock.replayAll();
-        new CacheReader(sqliteWrapper, null).open(0, 0, whereFactoryNearestCaches);
+        new CacheReader(sqliteWrapper, null).open(0, 0, whereFactoryNearestCaches, null);
         PowerMock.verifyAll();
     }
 }

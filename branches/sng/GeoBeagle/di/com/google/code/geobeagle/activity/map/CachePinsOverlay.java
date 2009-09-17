@@ -15,14 +15,15 @@
 package com.google.code.geobeagle.activity.map;
 
 import com.google.android.maps.ItemizedOverlay;
+import com.google.android.maps.MapView;
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.activity.cachelist.GeocacheListController;
 import com.google.code.geobeagle.activity.main.GeoBeagle;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
-import android.util.Log;
 
 import java.util.ArrayList;
 
@@ -32,8 +33,8 @@ public class CachePinsOverlay extends ItemizedOverlay<CacheItem> {
     private final Context mContext;
     private final ArrayList<Geocache> mCacheList;
 
-    public CachePinsOverlay(Context context, Drawable defaultMarker,
-            CacheItemFactory cacheItemFactory, ArrayList<Geocache> list) {
+    public CachePinsOverlay(CacheItemFactory cacheItemFactory, Context context,
+            Drawable defaultMarker, ArrayList<Geocache> list) {
         super(boundCenterBottom(defaultMarker));
         mContext = context;
         mCacheItemFactory = cacheItemFactory;
@@ -41,11 +42,12 @@ public class CachePinsOverlay extends ItemizedOverlay<CacheItem> {
         populate();
     }
 
+    /* (non-Javadoc)
+     * @see com.google.android.maps.Overlay#draw(android.graphics.Canvas, com.google.android.maps.MapView, boolean, long)
+     */
     @Override
-    protected CacheItem createItem(int i) {
-        Log.d("GeoBeagle", "CachePinsOverlay::createItem " + i);
-        Geocache geocache = mCacheList.get(i);
-        return mCacheItemFactory.createCacheItem(geocache);
+    public boolean draw(Canvas canvas, MapView mapView, boolean shadow, long when) {
+        return super.draw(canvas, mapView, shadow, when);
     }
 
     @Override
@@ -64,8 +66,12 @@ public class CachePinsOverlay extends ItemizedOverlay<CacheItem> {
     }
 
     @Override
+    protected CacheItem createItem(int i) {
+        return mCacheItemFactory.createCacheItem(mCacheList.get(i));
+    }
+
+    @Override
     public int size() {
-        Log.d("GeoBeagle", "CachePinsOverlay::size " + mCacheList.size());
         return mCacheList.size();
     }
 }

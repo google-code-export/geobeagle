@@ -14,13 +14,17 @@
 
 package com.google.code.geobeagle.activity.map;
 
+import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapActivity;
 import com.google.android.maps.MapController;
 import com.google.android.maps.MyLocationOverlay;
 import com.google.android.maps.Overlay;
+import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.MenuAction;
 import com.google.code.geobeagle.activity.MenuActions;
+import com.google.code.geobeagle.activity.main.GeoUtils;
+import com.google.code.geobeagle.activity.map.DensityMatrix.DensityPatch;
 import com.google.code.geobeagle.database.GeocachesLoader;
 
 import android.content.Intent;
@@ -30,13 +34,19 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class GeoMapActivity extends MapActivity {
-    private GeoMapActivityDelegate mGeoMapActivityDelegate;
-    private ZoomSupervisor mZoomSupervisor;
-    private MyLocationOverlay mMyLocationOverlay;
+    private static final int DEFAULT_ZOOM_LEVEL = 12;
+    private static boolean fZoomed = false;
+    private static final int menuIdArray[] = {
+            R.id.menu_toggle_satellite, R.id.menu_cache_list
+    };
     private GeocachesLoader mGeocachesLoader;
+    private GeoMapActivityDelegate mGeoMapActivityDelegate;
+    private GeoMapView mMapView;
+    private MyLocationOverlay mMyLocationOverlay;
 
     @Override
     protected boolean isRouteDisplayed() {
@@ -44,13 +54,14 @@ public class GeoMapActivity extends MapActivity {
         return false;
     }
 
-    private GeoMapView mMapView;
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.map);
+
         mMapView = (GeoMapView)findViewById(R.id.mapview);
+        mMapView.setBuiltInZoomControls(true);
+        mMapView.setSatellite(false);
 
         final Resources resources = getResources();
         final Drawable defaultMarker = resources.getDrawable(R.drawable.map_pin2_others);
@@ -63,39 +74,47 @@ public class GeoMapActivity extends MapActivity {
                 new GeoMapActivityDelegate.MenuActionToggleSatellite(mMapView),
                 new GeoMapActivityDelegate.MenuActionCacheList(this)
         };
-        final int menuIdArray[] = {
-                R.id.menu_toggle_satellite, R.id.menu_cache_list
-        };
         final MenuActions menuActions = new MenuActions(menuActionArray, menuIdArray);
 
         mGeocachesLoader = new GeocachesLoader(this);
         final Intent intent = getIntent();
         final MapController mapController = mMapView.getController();
-        double latitude = intent.getFloatExtra("latitude", 0);
-        double longitude = intent.getFloatExtra("longitude", 0);
+        final double latitude = intent.getFloatExtra("latitude", 0);
+        final double longitude = intent.getFloatExtra("longitude", 0);
+        final Overlay nullOverlay = new GeoMapActivityDelegate.NullOverlay();
 
-        mGeoMapActivityDelegate = new GeoMapActivityDelegate(mMapView, menuActions,
-                mGeocachesLoader, mapController, mapOverlays, this, defaultMarker,
-                cacheItemFactory, mMyLocationOverlay, latitude, longitude);
-        mZoomSupervisor = new ZoomSupervisor(mMapView, mGeoMapActivityDelegate);
-    }
+        // South Pole, as east as possible
+        final GeoPoint topLeft = new GeoPoint(-90 * GeoUtils.MILLION, 360 * GeoUtils.MILLION);
+        // North Pole, as west as possible
+        final GeoPoint bottomRight = new GeoPoint(90 * GeoUtils.MILLION, 0 * GeoUtils.MILLION);
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        mMyLocationOverlay.enableMyLocation();
-        mMyLocationOverlay.enableCompass();
-        mGeocachesLoader.openDatabase();
-        mZoomSupervisor.start();
-    }
+        mapOverlays.add(nullOverlay);
+        mapOverlays.add(mMyLocationOverlay);
+        final List<DensityPatch> densityPatches = new ArrayList<DensityPatch>();
 
-    @Override
-    public void onPause() {
-        mZoomSupervisor.stop();
-        mMyLocationOverlay.disableMyLocation();
-        mMyLocationOverlay.disableCompass();
-        mGeocachesLoader.closeDatabase();
-        super.onPause();
+        final DensityOverlayDelegate densityOverlayDelegate = DensityOverlay.createDelegate(
+                densityPatches, mGeocachesLoader, topLeft, bottomRight);
+        final DensityOverlay densityOverlay = new DensityOverlay(densityOverlayDelegate);
+        final ArrayList<Geocache> geocacheList = new ArrayList<Geocache>();
+        final CachePinsOverlay cachePinsOverlay = new CachePinsOverlay(cacheItemFactory, this,
+                defaultMarker, geocacheList);
+        final OverlayManager overlayManager = new OverlayManager(topLeft, bottomRight, mMapView,
+                mGeocachesLoader, this, defaultMarker, cacheItemFactory, mapOverlays, nullOverlay,
+                densityOverlay, cachePinsOverlay);
+        mGeoMapActivityDelegate = new GeoMapActivityDelegate(mMapView, menuActions);
+
+        final GeoPoint center = new GeoPoint((int)(latitude * GeoUtils.MILLION),
+                (int)(longitude * GeoUtils.MILLION));
+
+        mapController.setCenter(center);
+        mMapView.setScrollListener(overlayManager);
+
+        if (!fZoomed) {
+            mapController.setZoom(DEFAULT_ZOOM_LEVEL);
+            fZoomed = true;
+        }
+
+        overlayManager.refreshCaches();
     }
 
     @Override
@@ -108,11 +127,27 @@ public class GeoMapActivity extends MapActivity {
 
     @Override
     public boolean onMenuOpened(int featureId, Menu menu) {
-        return mGeoMapActivityDelegate.onMenuOpened(featureId, menu);
+        return mGeoMapActivityDelegate.onMenuOpened(menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         return mGeoMapActivityDelegate.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onPause() {
+        mMyLocationOverlay.disableMyLocation();
+        mMyLocationOverlay.disableCompass();
+        mGeocachesLoader.closeDatabase();
+        super.onPause();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mMyLocationOverlay.enableMyLocation();
+        mMyLocationOverlay.enableCompass();
+        mGeocachesLoader.openDatabase();
     }
 }

@@ -104,8 +104,10 @@ public class DatabaseDI {
                 String having, String orderBy, String limit, String... selectionArgs) {
             final Cursor query = mSQLiteDatabase.query(table, columns, selection, selectionArgs,
                     groupBy, orderBy, having, limit);
-            Log.d("GeoBeagle", "limit: " + limit + ", count: " + query.getCount() + ", query: "
-                    + selection);
+            // Log.d("GeoBeagle", "limit: " + limit + ", count: " +
+            // query.getCount() + ", query: "
+            // + selection);
+            Log.d("GeoBeagle", "limit: " + limit + ", query: " + selection);
             return query;
         }
 

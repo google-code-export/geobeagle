@@ -18,44 +18,28 @@ import com.google.android.maps.MapView;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.util.Log;
 
 public class GeoMapView extends MapView {
 
-    private GeoMapActivityDelegate mListener;
-
-    public GeoMapView(Context context, String mapKey) {
-        super(context, mapKey);
-    }
+    private OverlayManager mOverlayManager;
 
     public GeoMapView(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public GeoMapView(Context context, AttributeSet attrs, int defStyle) {
-        super(context, attrs, defStyle);
-    }
-
-    public void setScrollListener(GeoMapActivityDelegate listener) {
-        mListener = listener;
-    }
-
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         super.onLayout(changed, left, top, right, bottom);
-        if (changed && mListener != null) {
-            if (left != 0 || right != 0 || top != 0 || bottom != 0) {
-                mListener.onLayoutChange();
-            }
+        Log.d("GeoBeagle", "~~~~~~~~~~onLayout " + changed + ", " + left + ", " + top + ", "
+                + right + ", " + bottom);
+        if (mOverlayManager != null) {
+            mOverlayManager.refreshCaches();
         }
     }
 
-    @Override
-    public boolean onTouchEvent(android.view.MotionEvent ev) {
-        boolean result = super.onTouchEvent(ev);
-        if (ev.getAction() == android.view.MotionEvent.ACTION_UP && mListener != null) {
-            mListener.onScrollChange();
-        }
-        return result;
+    public void setScrollListener(OverlayManager overlayManager) {
+        mOverlayManager = overlayManager;
     }
 
 }

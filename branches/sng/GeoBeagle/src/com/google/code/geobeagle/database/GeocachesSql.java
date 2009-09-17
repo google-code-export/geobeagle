@@ -36,7 +36,8 @@ public class GeocachesSql {
     }
 
     public void loadCaches(double latitude, double longitude, WhereFactory whereFactory) {
-        CacheReaderCursor cursor = mCacheReader.open(latitude, longitude, whereFactory);
+        CacheReaderCursor cursor = mCacheReader.open(latitude, longitude, whereFactory,
+                CacheReader.SQL_QUERY_LIMIT);
         mGeocaches.clear();
         if (cursor != null) {
             read(cursor);
