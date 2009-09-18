@@ -29,70 +29,70 @@ import android.graphics.Rect;
 import java.util.List;
 
 public class DensityOverlayDelegate {
-        private static final double RESOLUTION_LATITUDE_E6 = (OverlayManager.RESOLUTION_LATITUDE * 1E6);
-        private static final double RESOLUTION_LONGITUDE_E6 = (OverlayManager.RESOLUTION_LONGITUDE * 1E6);
-        private final Paint mPaint;
-        private final Rect mPatchRect;
-        private final Point mScreenBottomRight;
-        private final Point mScreenTopLeft;
-        private final CacheListDelegateDI.Timing mTiming;
-        private final DensityPatchManager mDensityPatchManager;
+    private static final double RESOLUTION_LATITUDE_E6 = (OverlayManager.RESOLUTION_LATITUDE * 1E6);
+    private static final double RESOLUTION_LONGITUDE_E6 = (OverlayManager.RESOLUTION_LONGITUDE * 1E6);
+    private final Paint mPaint;
+    private final Rect mPatchRect;
+    private final Point mScreenBottomRight;
+    private final Point mScreenTopLeft;
+    private final CacheListDelegateDI.Timing mTiming;
+    private final DensityPatchManager mDensityPatchManager;
 
-        public DensityOverlayDelegate(Rect patchRect, Paint paint, Point screenLow,
-                Point screenHigh, GeocachesLoader geocachesLoader, GeoPoint topLeft,
-                GeoPoint bottomRight, DensityPatchManager densityPatchManager) {
-            mTiming = new CacheListDelegateDI.Timing();
-            mPatchRect = patchRect;
-            mPaint = paint;
-            mScreenTopLeft = screenLow;
-            mScreenBottomRight = screenHigh;
-            mDensityPatchManager = densityPatchManager;
-        }
-
-        public void draw(Canvas canvas, MapView mapView, boolean shadow) {
-            if (shadow)
-                return; // No shadow layer
-            // Log.d("GeoBeagle", ">>>>>>>>>>Starting draw");
-
-            List<DensityMatrix.DensityPatch> densityPatches = mDensityPatchManager
-                    .getDensityPatches(mapView);
-
-            mTiming.start();
-            final Projection projection = mapView.getProjection();
-            final GeoPoint newGeoTopLeft = projection.fromPixels(0, 0);
-            final GeoPoint newGeoBottomRight = projection.fromPixels(mapView.getRight(), mapView
-                    .getBottom());
-
-            projection.toPixels(newGeoTopLeft, mScreenTopLeft);
-            projection.toPixels(newGeoBottomRight, mScreenBottomRight);
-            final int topLatitudeE6 = newGeoTopLeft.getLatitudeE6();
-            final int leftLongitudeE6 = newGeoTopLeft.getLongitudeE6();
-            final int bottomLatitudeE6 = newGeoBottomRight.getLatitudeE6();
-            final int rightLongitudeE6 = newGeoBottomRight.getLongitudeE6();
-            final double pixelsPerLatE6Degrees = (double)(mScreenBottomRight.y - mScreenTopLeft.y)
-                    / (double)(bottomLatitudeE6 - topLatitudeE6);
-            final double pixelsPerLonE6Degrees = (double)(mScreenBottomRight.x - mScreenTopLeft.x)
-                    / (double)(rightLongitudeE6 - leftLongitudeE6);
-
-            int patchCount = 0;
-
-            for (DensityPatch patch : densityPatches) {
-                final int patchLatLowE6 = patch.getLatLowE6();
-                final int patchLonLowE6 = patch.getLonLowE6();
-                int xOffset = (int)((patchLonLowE6 - leftLongitudeE6) * pixelsPerLonE6Degrees);
-                int xEnd = (int)((patchLonLowE6 + RESOLUTION_LONGITUDE_E6 - leftLongitudeE6) * pixelsPerLonE6Degrees);
-                int yOffset = (int)((patchLatLowE6 - topLatitudeE6) * pixelsPerLatE6Degrees);
-                int yEnd = (int)((patchLatLowE6 + RESOLUTION_LATITUDE_E6 - topLatitudeE6) * pixelsPerLatE6Degrees);
-                mPatchRect.set(xOffset, yEnd, xEnd, yOffset);
-//                Log.d("GeoBeagle", "patchrect: " + mPatchRect.bottom + ", " + mPatchRect.left
-//                        + ", " + mPatchRect.top + ", " + mPatchRect.right);
-
-                mPaint.setAlpha(patch.getAlpha());
-                canvas.drawRect(mPatchRect, mPaint);
-                patchCount++;
-            }
-            // mTiming.lap("Done drawing");
-            // Log.d("GeoBeagle", "patchcount: " + patchCount);
-        }
-
+    public DensityOverlayDelegate(Rect patchRect, Paint paint, Point screenLow, Point screenHigh,
+            GeocachesLoader geocachesLoader, DensityPatchManager densityPatchManager) {
+        mTiming = new CacheListDelegateDI.Timing();
+        mPatchRect = patchRect;
+        mPaint = paint;
+        mScreenTopLeft = screenLow;
+        mScreenBottomRight = screenHigh;
+        mDensityPatchManager = densityPatchManager;
     }
+
+    public void draw(Canvas canvas, MapView mapView, boolean shadow) {
+        if (shadow)
+            return; // No shadow layer
+        // Log.d("GeoBeagle", ">>>>>>>>>>Starting draw");
+
+        List<DensityMatrix.DensityPatch> densityPatches = mDensityPatchManager
+                .getDensityPatches(mapView);
+
+        mTiming.start();
+        final Projection projection = mapView.getProjection();
+        final GeoPoint newGeoTopLeft = projection.fromPixels(0, 0);
+        final GeoPoint newGeoBottomRight = projection.fromPixels(mapView.getRight(), mapView
+                .getBottom());
+
+        projection.toPixels(newGeoTopLeft, mScreenTopLeft);
+        projection.toPixels(newGeoBottomRight, mScreenBottomRight);
+        final int topLatitudeE6 = newGeoTopLeft.getLatitudeE6();
+        final int leftLongitudeE6 = newGeoTopLeft.getLongitudeE6();
+        final int bottomLatitudeE6 = newGeoBottomRight.getLatitudeE6();
+        final int rightLongitudeE6 = newGeoBottomRight.getLongitudeE6();
+        final double pixelsPerLatE6Degrees = (double)(mScreenBottomRight.y - mScreenTopLeft.y)
+                / (double)(bottomLatitudeE6 - topLatitudeE6);
+        final double pixelsPerLonE6Degrees = (double)(mScreenBottomRight.x - mScreenTopLeft.x)
+                / (double)(rightLongitudeE6 - leftLongitudeE6);
+
+        int patchCount = 0;
+
+        for (DensityPatch patch : densityPatches) {
+            final int patchLatLowE6 = patch.getLatLowE6();
+            final int patchLonLowE6 = patch.getLonLowE6();
+            int xOffset = (int)((patchLonLowE6 - leftLongitudeE6) * pixelsPerLonE6Degrees);
+            int xEnd = (int)((patchLonLowE6 + RESOLUTION_LONGITUDE_E6 - leftLongitudeE6) * pixelsPerLonE6Degrees);
+            int yOffset = (int)((patchLatLowE6 - topLatitudeE6) * pixelsPerLatE6Degrees);
+            int yEnd = (int)((patchLatLowE6 + RESOLUTION_LATITUDE_E6 - topLatitudeE6) * pixelsPerLatE6Degrees);
+            mPatchRect.set(xOffset, yEnd, xEnd, yOffset);
+            // Log.d("GeoBeagle", "patchrect: " + mPatchRect.bottom + ", " +
+            // mPatchRect.left
+            // + ", " + mPatchRect.top + ", " + mPatchRect.right);
+
+            mPaint.setAlpha(patch.getAlpha());
+            canvas.drawRect(mPatchRect, mPaint);
+            patchCount++;
+        }
+        // mTiming.lap("Done drawing");
+        // Log.d("GeoBeagle", "patchcount: " + patchCount);
+    }
+
+}

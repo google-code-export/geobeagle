@@ -83,24 +83,21 @@ public class GeoMapActivity extends MapActivity {
         final double longitude = intent.getFloatExtra("longitude", 0);
         final Overlay nullOverlay = new GeoMapActivityDelegate.NullOverlay();
 
-        // South Pole, as east as possible
-        final GeoPoint topLeft = new GeoPoint(-90 * GeoUtils.MILLION, 360 * GeoUtils.MILLION);
-        // North Pole, as west as possible
-        final GeoPoint bottomRight = new GeoPoint(90 * GeoUtils.MILLION, 0 * GeoUtils.MILLION);
+        final GeoPoint nullGeoPoint = new GeoPoint(0, 0);
 
         mapOverlays.add(nullOverlay);
         mapOverlays.add(mMyLocationOverlay);
         final List<DensityPatch> densityPatches = new ArrayList<DensityPatch>();
 
         final DensityOverlayDelegate densityOverlayDelegate = DensityOverlay.createDelegate(
-                densityPatches, mGeocachesLoader, topLeft, bottomRight);
+                densityPatches, mGeocachesLoader, nullGeoPoint);
         final DensityOverlay densityOverlay = new DensityOverlay(densityOverlayDelegate);
         final ArrayList<Geocache> geocacheList = new ArrayList<Geocache>();
         final CachePinsOverlay cachePinsOverlay = new CachePinsOverlay(cacheItemFactory, this,
                 defaultMarker, geocacheList);
-        final OverlayManager overlayManager = new OverlayManager(topLeft, bottomRight, mMapView,
-                mGeocachesLoader, this, defaultMarker, cacheItemFactory, mapOverlays, nullOverlay,
-                densityOverlay, cachePinsOverlay);
+        final OverlayManager overlayManager = new OverlayManager(nullGeoPoint, nullGeoPoint,
+                mMapView, mGeocachesLoader, this, defaultMarker, cacheItemFactory, mapOverlays,
+                nullOverlay, densityOverlay, cachePinsOverlay);
         mGeoMapActivityDelegate = new GeoMapActivityDelegate(mMapView, menuActions);
 
         final GeoPoint center = new GeoPoint((int)(latitude * GeoUtils.MILLION),

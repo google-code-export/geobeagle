@@ -42,7 +42,7 @@ public class DensityOverlayTest {
     @Test
     public void testDensityOverlayShadow() {
         DensityOverlayDelegate densityOverlayDelegate = new DensityOverlayDelegate(null, null,
-                null, null, null, null, null, null);
+                null, null, null, null);
         densityOverlayDelegate.draw(null, null, true);
     }
 
@@ -55,7 +55,6 @@ public class DensityOverlayTest {
         Rect screenRect = PowerMock.createMock(Rect.class);
         Paint paint = PowerMock.createMock(Paint.class);
         Projection projection = PowerMock.createMock(Projection.class);
-        GeoPoint mapCenter = PowerMock.createMock(GeoPoint.class);
         DensityPatchManager densityPatchManager = PowerMock.createMock(DensityPatchManager.class);
         DensityMatrix.DensityPatch densityPatch = PowerMock
                 .createMock(DensityMatrix.DensityPatch.class);
@@ -96,8 +95,7 @@ public class DensityOverlayTest {
 
         PowerMock.replayAll();
         DensityOverlayDelegate densityOverlayDelegate = new DensityOverlayDelegate(screenRect,
-                paint, screenTopLeft, screenBottomRight, null, mapCenter, mapCenter,
-                densityPatchManager);
+                paint, screenTopLeft, screenBottomRight, null, densityPatchManager);
         densityOverlayDelegate.draw(canvas, mapView, false);
         PowerMock.verifyAll();
     }

@@ -77,19 +77,20 @@ public class GeocachesLoader {
         mCacheReader = DatabaseDI.createCacheReader(mDatabase);
     }
 
-    public ArrayList<Geocache> loadCaches(int latitude, int longitude,
-            WhereFactoryFixedArea whereFactory, int limit) {
+    public int count(int latitude, int longitude, WhereFactoryFixedArea whereFactory) {
         openDatabase();
-
         Cursor countCursor = mDatabase.rawQuery("SELECT COUNT(*) FROM " + Database.TBL_CACHES
                 + " WHERE " + whereFactory.getWhere(mDatabase, latitude, longitude), null);
         countCursor.moveToFirst();
         int count = countCursor.getInt(0);
         countCursor.close();
         Log.d("GeoBeagle", "COUNT:" + count);
-        if (count > 1500)
-            return null;
+        return count;
+    }
 
+    public ArrayList<Geocache> loadCaches(int latitude, int longitude,
+            WhereFactoryFixedArea whereFactory) {
+        openDatabase();
         CacheReaderCursor cursor = mCacheReader.open(latitude, longitude, whereFactory, null);
         ArrayList<Geocache> geocaches = new ArrayList<Geocache>();
         if (cursor != null) {

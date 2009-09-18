@@ -17,13 +17,16 @@ package com.google.code.geobeagle.activity.map;
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapView;
 import com.google.android.maps.Overlay;
+import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.database.GeocachesLoader;
-
+import com.google.code.geobeagle.activity.map.DensityPatchManager.PeggedLoader;
+import com.google.code.geobeagle.activity.map.DensityPatchManager.QueryManager;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class DensityOverlay extends Overlay {
@@ -31,16 +34,22 @@ public class DensityOverlay extends Overlay {
     // Android classes.
 
     public static DensityOverlayDelegate createDelegate(List<DensityMatrix.DensityPatch> patches,
-            GeocachesLoader geocachesLoader, GeoPoint topLeft, GeoPoint bottomRight) {
-        Rect patchRect = new Rect();
-        Paint paint = new Paint();
+            GeocachesLoader geocachesLoader, GeoPoint nullGeoPoint) {
+        final Rect patchRect = new Rect();
+        final Paint paint = new Paint();
         paint.setARGB(128, 255, 0, 0);
-        Point screenLow = new Point();
-        Point screenHigh = new Point();
-        DensityPatchManager densityPatchManager = new DensityPatchManager(patches, topLeft,
-                bottomRight, geocachesLoader);
+        final Point screenLow = new Point();
+        final Point screenHigh = new Point();
+        ArrayList<Geocache> nullList = new ArrayList<Geocache>();
+        PeggedLoader peggedLoader = new PeggedLoader(geocachesLoader, nullList);
+        int[] initialLatLonMinMax = {
+                0, 0, 0, 0
+        };
+        final QueryManager queryManager = new QueryManager(peggedLoader, initialLatLonMinMax);
+        final DensityPatchManager densityPatchManager = new DensityPatchManager(patches,
+                queryManager);
         return new DensityOverlayDelegate(patchRect, paint, screenLow, screenHigh, geocachesLoader,
-                topLeft, bottomRight, densityPatchManager);
+                densityPatchManager);
     }
 
     private DensityOverlayDelegate mDelegate;

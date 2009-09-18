@@ -47,6 +47,8 @@ public class OverlayManager {
     private static final int DENSITY_MAP_ZOOM_THRESHOLD = 14;
     public static final double RESOLUTION_LATITUDE = 0.01;
     public static final double RESOLUTION_LONGITUDE = 0.02;
+    public static final int RESOLUTION_LATITUDE_E6 = (int)(RESOLUTION_LATITUDE * 1E6);
+    public static final int RESOLUTION_LONGITUDE_E6 = (int)(RESOLUTION_LONGITUDE * 1E6);
     private GeoPoint mBottomRight;
     private final CacheItemFactory mCacheItemFactory;
     private final Context mContext;
