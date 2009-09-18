@@ -24,7 +24,7 @@ import com.google.code.geobeagle.activity.ActivityDI;
 import com.google.code.geobeagle.activity.ActivityRestorer;
 import com.google.code.geobeagle.activity.ActivitySaver;
 import com.google.code.geobeagle.activity.ActivityDI.ActivityTypeFactory;
-import com.google.code.geobeagle.activity.cachelist.CacheList;
+import com.google.code.geobeagle.activity.cachelist.CacheListActivity;
 import com.google.code.geobeagle.activity.cachelist.presenter.DistanceFormatterManager;
 import com.google.code.geobeagle.activity.cachelist.presenter.DistanceFormatterManagerDi;
 import com.google.code.geobeagle.activity.main.GeocacheFromPreferencesFactory;
@@ -119,7 +119,7 @@ public class SearchOnlineActivity extends Activity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         super.onOptionsItemSelected(item);
-        startActivity(new Intent(this, CacheList.class));
+        startActivity(new Intent(this, CacheListActivity.class));
         return true;
     }
 

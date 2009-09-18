@@ -16,9 +16,13 @@ package com.google.code.geobeagle.activity.main.menuactions;
 
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.activity.cachelist.CacheList;
+import com.google.code.geobeagle.actions.MenuActionCacheList;
+import com.google.code.geobeagle.actions.MenuActionEditGeocache;
+import com.google.code.geobeagle.actions.MenuActionSearchOnline;
+import com.google.code.geobeagle.actions.MenuActionSettings;
+import com.google.code.geobeagle.activity.EditCacheActivity;
+import com.google.code.geobeagle.activity.cachelist.CacheListActivity;
 import com.google.code.geobeagle.activity.main.GeoBeagle;
-import com.google.code.geobeagle.activity.main.view.EditCacheActivity;
 import com.google.code.geobeagle.activity.preferences.EditPreferences;
 import com.google.code.geobeagle.activity.searchonline.SearchOnlineActivity;
 
@@ -45,7 +49,7 @@ public class MenuActionsTest {
         Activity activity = PowerMock.createMock(Activity.class);
         Intent intent = PowerMock.createMock(Intent.class);
 
-        PowerMock.expectNew(Intent.class, activity, CacheList.class).andReturn(intent);
+        PowerMock.expectNew(Intent.class, activity, CacheListActivity.class).andReturn(intent);
         activity.startActivity(intent);
 
         PowerMock.replayAll();

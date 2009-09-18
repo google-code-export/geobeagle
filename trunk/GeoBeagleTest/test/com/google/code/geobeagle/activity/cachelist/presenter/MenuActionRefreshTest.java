@@ -18,7 +18,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.LocationControlBuffered;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.LocationControlBuffered.IGpsLocation;
@@ -27,9 +26,6 @@ import com.google.code.geobeagle.activity.cachelist.model.CacheListData;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVector;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh.ActionManager;
 import com.google.code.geobeagle.database.FilterNearestCaches;
-import com.google.code.geobeagle.database.GeocachesSql;
-import com.google.code.geobeagle.database.ISQLiteDatabase;
-import com.google.code.geobeagle.database.WhereFactory;
 
 import org.easymock.EasyMock;
 import org.junit.Test;
@@ -39,7 +35,6 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import android.app.ListActivity;
-import android.location.Location;
 import android.os.Handler;
 import android.util.Log;
 import android.widget.TextView;
@@ -162,7 +157,7 @@ public class MenuActionRefreshTest {
         actionManager.performActions(here, 90, 0, 100000);
 
         PowerMock.replayAll();
-        new CacheListRefresh(actionManager, timing, locationControlBuffered, null).forceRefresh();
+        new CacheListRefresh(actionManager, timing, locationControlBuffered).forceRefresh();
         PowerMock.verifyAll();
     }
 
@@ -173,9 +168,7 @@ public class MenuActionRefreshTest {
         CacheListDelegateDI.Timing timing = PowerMock.createMock(CacheListDelegateDI.Timing.class);
         ActionManager actionManager = PowerMock.createMock(ActionManager.class);
         IGpsLocation here = PowerMock.createMock(IGpsLocation.class);
-        ISQLiteDatabase writableDatabase = PowerMock.createMock(ISQLiteDatabase.class);
 
-        EasyMock.expect(writableDatabase.isOpen()).andReturn(true);
         timing.start();
         EasyMock.expect(timing.getTime()).andReturn(10000L);
         EasyMock.expect(locationControlBuffered.getGpsLocation()).andReturn(here);
@@ -185,11 +178,13 @@ public class MenuActionRefreshTest {
         actionManager.performActions(here, 90, 3, 10000L);
 
         PowerMock.replayAll();
-        new CacheListRefresh(actionManager, timing, locationControlBuffered, writableDatabase)
+        new CacheListRefresh(actionManager, timing, locationControlBuffered)
                 .refresh();
         PowerMock.verifyAll();
     }
 
+    /*
+     //Is this test relevant any longer?
     @Test
     public void testCacheListRefresh_RefreshDbClosed() {
         ISQLiteDatabase writableDatabase = PowerMock.createMock(ISQLiteDatabase.class);
@@ -200,9 +195,10 @@ public class MenuActionRefreshTest {
                 .andReturn(0).anyTimes();
 
         PowerMock.replayAll();
-        new CacheListRefresh(null, null, null, writableDatabase).refresh();
+        new CacheListRefresh(null, null, null).refresh();
         PowerMock.verifyAll();
     }
+    */
 
     @Test
     public void testDistanceUpdater() {
@@ -310,67 +306,30 @@ public class MenuActionRefreshTest {
     }
 
     @Test
-    public void testSqlCacheLoader() {
-        GeocachesSql geocachesSql = PowerMock.createMock(GeocachesSql.class);
-        FilterNearestCaches filterNearestCaches = PowerMock.createMock(FilterNearestCaches.class);
-        CacheListData cacheListData = PowerMock.createMock(CacheListData.class);
-        LocationControlBuffered locationControlBuffered = PowerMock
-                .createMock(LocationControlBuffered.class);
-        WhereFactory whereFactory = PowerMock.createMock(WhereFactory.class);
-        Location location = PowerMock.createMock(Location.class);
-        TitleUpdater titleUpdater = PowerMock.createMock(TitleUpdater.class);
-        CacheListDelegateDI.Timing timing = PowerMock.createMock(CacheListDelegateDI.Timing.class);
-
-        timing.lap(EasyMock.isA(String.class));
-        EasyMock.expectLastCall().anyTimes();
-        EasyMock.expect(locationControlBuffered.getLocation()).andReturn(location);
-        EasyMock.expect(filterNearestCaches.getWhereFactory()).andReturn(whereFactory);
-        EasyMock.expect(location.getLatitude()).andReturn(122.0);
-        EasyMock.expect(location.getLongitude()).andReturn(37.0);
-
-        geocachesSql.loadCaches(122, 37, whereFactory);
-        ArrayList<Geocache> geocaches = new ArrayList<Geocache>();
-        EasyMock.expect(geocachesSql.getGeocaches()).andReturn(geocaches);
-        cacheListData.add(geocaches, locationControlBuffered);
-        titleUpdater.update();
-
-        PowerMock.replayAll();
-        new SqlCacheLoader(geocachesSql, filterNearestCaches, cacheListData,
-                locationControlBuffered, titleUpdater, timing).refresh();
-        PowerMock.verifyAll();
-    }
-
-    @Test
     public void testTitleUpdater() {
-        GeocachesSql geocachesSql = PowerMock.createMock(GeocachesSql.class);
         ListActivity listActivity = PowerMock.createMock(ListActivity.class);
         FilterNearestCaches filterNearestCaches = PowerMock.createMock(FilterNearestCaches.class);
-        CacheListData cacheListData = PowerMock.createMock(CacheListData.class);
         CacheListDelegateDI.Timing timing = PowerMock.createMock(CacheListDelegateDI.Timing.class);
 
         timing.lap(EasyMock.isA(String.class));
         EasyMock.expectLastCall().anyTimes();
 
-        EasyMock.expect(geocachesSql.getCount()).andReturn(12);
-        EasyMock.expect(cacheListData.size()).andReturn(5);
         EasyMock.expect(filterNearestCaches.getTitleText()).andReturn(R.string.cache_list_title);
         EasyMock.expect(listActivity.getString(R.string.cache_list_title, 5, 12)).andReturn(
                 "new title");
         listActivity.setTitle("new title");
 
         PowerMock.replayAll();
-        new TitleUpdater(geocachesSql, listActivity, filterNearestCaches, cacheListData, null,
-                timing).update();
+        new TitleUpdater(listActivity, filterNearestCaches, null,
+                timing).update(12, 5);
         PowerMock.verifyAll();
 
     }
 
     @Test
     public void testTitleUpdaterEmpty() {
-        GeocachesSql geocachesSql = PowerMock.createMock(GeocachesSql.class);
         ListActivity listActivity = PowerMock.createMock(ListActivity.class);
         FilterNearestCaches filterNearestCaches = PowerMock.createMock(FilterNearestCaches.class);
-        CacheListData cacheListData = PowerMock.createMock(CacheListData.class);
         ListTitleFormatter listTitleFormatter = PowerMock.createMock(ListTitleFormatter.class);
         CacheListDelegateDI.Timing timing = PowerMock.createMock(CacheListDelegateDI.Timing.class);
         TextView textView = PowerMock.createMock(TextView.class);
@@ -378,8 +337,6 @@ public class MenuActionRefreshTest {
         timing.lap(EasyMock.isA(String.class));
         EasyMock.expectLastCall().anyTimes();
 
-        EasyMock.expect(geocachesSql.getCount()).andReturn(12);
-        EasyMock.expect(cacheListData.size()).andReturn(0);
         EasyMock.expect(filterNearestCaches.getTitleText()).andReturn(R.string.cache_list_title);
         listActivity.setTitle("new title");
         EasyMock.expect(listActivity.getString(R.string.cache_list_title, 0, 12)).andReturn(
@@ -389,8 +346,7 @@ public class MenuActionRefreshTest {
         textView.setText(R.string.no_nearby_caches);
 
         PowerMock.replayAll();
-        new TitleUpdater(geocachesSql, listActivity, filterNearestCaches, cacheListData,
-                listTitleFormatter, timing).update();
+        new TitleUpdater(listActivity, filterNearestCaches, listTitleFormatter, timing).update(12, 0);
         PowerMock.verifyAll();
     }
 }

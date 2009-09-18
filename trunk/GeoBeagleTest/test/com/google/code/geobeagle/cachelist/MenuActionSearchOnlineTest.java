@@ -1,7 +1,7 @@
 
 package com.google.code.geobeagle.cachelist;
 
-import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionSearchOnline;
+import com.google.code.geobeagle.actions.MenuActionSearchOnline;
 import com.google.code.geobeagle.activity.searchonline.SearchOnlineActivity;
 
 import org.junit.Test;

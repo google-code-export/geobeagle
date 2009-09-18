@@ -14,11 +14,14 @@
 
 package com.google.code.geobeagle.cachelist;
 
+import static org.easymock.EasyMock.expect;
+
 import com.google.code.geobeagle.activity.cachelist.GpxImporterFactory;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.Abortable;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionSyncGpx;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
 import com.google.code.geobeagle.database.CacheWriter;
+import com.google.code.geobeagle.database.DbFrontend;
 import com.google.code.geobeagle.xmlimport.GpxImporter;
 
 import org.easymock.EasyMock;
@@ -36,23 +39,25 @@ public class MenuActionSyncGpxTest {
         GpxImporterFactory gpxImporterFactory = PowerMock.createMock(GpxImporterFactory.class);
         CacheWriter cacheWriter = PowerMock.createMock(CacheWriter.class);
 
+        DbFrontend dbFrontend = PowerMock.createMock(DbFrontend.class);
+        expect(dbFrontend.getCacheWriter()).andReturn(cacheWriter);
+
         EasyMock.expect(gpxImporterFactory.create(cacheWriter)).andReturn(gpxImporter);
         gpxImporter.importGpxs(cacheListRefresh);
 
         PowerMock.replayAll();
-        new MenuActionSyncGpx(null, cacheListRefresh, gpxImporterFactory, cacheWriter).act();
+        new MenuActionSyncGpx(null, cacheListRefresh, gpxImporterFactory, dbFrontend).act();
         PowerMock.verifyAll();
     }
 
     @Test
     public void testAbort() {
         Abortable abortable = PowerMock.createMock(Abortable.class);
-        CacheWriter cacheWriter = PowerMock.createMock(CacheWriter.class);
 
         abortable.abort();
 
         PowerMock.replayAll();
-        new MenuActionSyncGpx(abortable, null, null, cacheWriter).abort();
+        new MenuActionSyncGpx(abortable, null, null, null).abort();
         PowerMock.verifyAll();
     }
 }

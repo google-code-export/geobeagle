@@ -39,7 +39,7 @@ public class CachePersisterFacadeTest {
 
     private final CacheDetailsWriter mCacheDetailsWriter = PowerMock
             .createMock(CacheDetailsWriter.class);
-    private final CacheTagWriter mCacheTagWriter = PowerMock.createMock(CacheTagWriter.class);
+    private final CacheTagSqlWriter mCacheTagWriter = PowerMock.createMock(CacheTagSqlWriter.class);
     private final MessageHandler mMessageHandler = PowerMock.createMock(MessageHandler.class);
 
     @Test

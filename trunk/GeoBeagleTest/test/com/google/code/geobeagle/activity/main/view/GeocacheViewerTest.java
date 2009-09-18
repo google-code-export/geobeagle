@@ -121,14 +121,13 @@ public class GeocacheViewerTest {
         NameViewer name = PowerMock.createMock(NameViewer.class);
         Geocache geocache = PowerMock.createMock(Geocache.class);
         RadarView radar = PowerMock.createMock(RadarView.class);
-        UnlabelledAttributeViewer gcCacheType = PowerMock
-                .createMock(UnlabelledAttributeViewer.class);
         UnlabelledAttributeViewer gcDifficulty = PowerMock
                 .createMock(UnlabelledAttributeViewer.class);
         UnlabelledAttributeViewer gcContainer = PowerMock
                 .createMock(UnlabelledAttributeViewer.class);
         UnlabelledAttributeViewer gcTerrain = PowerMock.createMock(UnlabelledAttributeViewer.class);
         CacheType cacheType = PowerMock.createMock(CacheType.class);
+        ImageView gcTypeImageView = PowerMock.createMock(ImageView.class);
 
         expect(geocache.getLatitude()).andReturn(37.0);
         expect(geocache.getLongitude()).andReturn(-122.0);
@@ -136,21 +135,21 @@ public class GeocacheViewerTest {
         expect(geocache.getId()).andReturn("GC123");
         expect(geocache.getName()).andReturn("a cache");
         expect(geocache.getCacheType()).andReturn(cacheType);
-        expect(cacheType.toInt()).andReturn(12);
+        expect(cacheType.iconBig()).andReturn(50);
         expect(geocache.getContainer()).andReturn(6);
         expect(geocache.getDifficulty()).andReturn(8);
         expect(geocache.getTerrain()).andReturn(5);
-        gcCacheType.setImage(12);
         gcContainer.setImage(6);
         gcDifficulty.setImage(8);
         gcTerrain.setImage(5);
+        gcTypeImageView.setImageResource(50);
 
         id.setText("GC123");
         name.set("a cache");
 
         PowerMock.replayAll();
-        new GeocacheViewer(radar, id, name, gcCacheType, gcDifficulty, gcTerrain, gcContainer)
-                .set(geocache);
+        new GeocacheViewer(radar, id, name, gcTypeImageView, gcDifficulty, 
+                gcTerrain, gcContainer).set(geocache);
         PowerMock.verifyAll();
     }
 }

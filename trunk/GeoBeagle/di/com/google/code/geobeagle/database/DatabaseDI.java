@@ -64,7 +64,7 @@ public class DatabaseDI {
         }
     }
 
-    public static class SQLiteWrapper implements ISQLiteDatabase, Closable {
+    public static class SQLiteWrapper implements ISQLiteDatabase {
         private final SQLiteDatabase mSQLiteDatabase;
 
         public SQLiteWrapper(SQLiteDatabase writableDatabase) {
@@ -139,12 +139,6 @@ public class DatabaseDI {
             return new WhereFactoryNearestCaches.Search(boundingBox, searchDown, searchUp);
         }
 
-    }
-
-    public static GeocachesSql createGeocachesSql(ISQLiteDatabase sqliteWrapper) {
-        final Geocaches geocaches = new Geocaches();
-        final CacheReader cacheReader = createCacheReader(sqliteWrapper);
-        return new GeocachesSql(cacheReader, geocaches);
     }
 
     public static CacheReader createCacheReader(ISQLiteDatabase sqliteWrapper) {

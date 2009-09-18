@@ -15,7 +15,7 @@
 package com.google.code.geobeagle.activity.main.menuactions;
 
 import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.activity.MenuAction;
+import com.google.code.geobeagle.actions.MenuAction;
 
 import android.app.Activity;
 
@@ -29,5 +29,10 @@ public class MenuActionLogFind implements MenuAction {
     @Override
     public void act() {
         mActivity.showDialog(R.id.menu_log_find);
+    }
+
+    @Override
+    public int getId() {
+        return R.string.menu_log_find;
     }
 }

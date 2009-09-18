@@ -14,10 +14,6 @@
 
 package com.google.code.geobeagle.database;
 
-import static org.junit.Assert.assertEquals;
-
-import org.junit.Test;
-
 import android.database.Cursor;
 
 import java.io.BufferedReader;
@@ -28,7 +24,6 @@ import java.io.InputStreamReader;
 import java.io.Writer;
 
 public class DatabaseTest {
-
     static class DesktopSQLiteDatabase implements ISQLiteDatabase {
         Writer mWriter;
 
@@ -156,6 +151,7 @@ public class DatabaseTest {
     private static String SQL(String s) {
         return s + "\n";
     }
+/*
 
     @Test
     public void testOnCreate() {
@@ -239,5 +235,5 @@ public class DatabaseTest {
         final NullClosable db = new NullClosable();
         db.close();
     }
-
+*/
 }

@@ -17,31 +17,32 @@ package com.google.code.geobeagle.activity;
 import static org.junit.Assert.*;
 
 import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.activity.MenuAction;
-import com.google.code.geobeagle.activity.MenuActions;
+import com.google.code.geobeagle.actions.MenuActions;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionSyncGpx;
 
+import org.easymock.EasyMock;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.api.easymock.PowerMock;
 import org.powermock.modules.junit4.PowerMockRunner;
+
+import android.content.res.Resources;
 
 @RunWith(PowerMockRunner.class)
 public class MenuActionsTest {
     @Test
     public void testAct() {
         MenuActionSyncGpx menuActionSyncGpx = PowerMock.createMock(MenuActionSyncGpx.class);
-
+        Resources resources = PowerMock.createMock(Resources.class);
+        EasyMock.expect(menuActionSyncGpx.getId()).andReturn(R.string.menu_sync).anyTimes();
         menuActionSyncGpx.act();
 
         PowerMock.replayAll();
-        final MenuActions menuActions = new MenuActions(new MenuAction[] {
-            menuActionSyncGpx
-        }, new int[] {
-            R.id.menu_sync
-        });
-        assertTrue(menuActions.act(R.id.menu_sync));
-        assertFalse(menuActions.act(R.id.menu_cache_list));
+        final MenuActions menuActions = new MenuActions(resources);
+        menuActions.add(menuActionSyncGpx);
+
+        assertTrue(menuActions.act(R.string.menu_sync));
+        assertFalse(menuActions.act(R.string.menu_cache_list));
         PowerMock.verifyAll();
     }
 

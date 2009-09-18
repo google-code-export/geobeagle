@@ -50,7 +50,6 @@ import android.location.LocationProvider;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -392,7 +391,7 @@ public class RadarView extends View implements SensorListener, LocationListener 
      *      int, android.os.Bundle)
      */
     public void onStatusChanged(String provider, int status, Bundle extras) {
-        Log.d("GeoBeagle", "onStatusChanged " + provider + ", " + status);
+        //Log.d("GeoBeagle", "onStatusChanged " + provider + ", " + status);
         if (LocationManager.GPS_PROVIDER.equals(provider)) {
             switch (status) {
                 case LocationProvider.AVAILABLE:

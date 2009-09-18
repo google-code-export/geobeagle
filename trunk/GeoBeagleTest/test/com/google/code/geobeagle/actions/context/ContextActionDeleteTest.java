@@ -22,6 +22,7 @@ import com.google.code.geobeagle.activity.cachelist.model.GeocacheVectors;
 import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheListAdapter;
 import com.google.code.geobeagle.activity.cachelist.presenter.TitleUpdater;
 import com.google.code.geobeagle.database.CacheWriter;
+import com.google.code.geobeagle.database.DbFrontend;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -38,16 +39,19 @@ public class ContextActionDeleteTest {
         GeocacheVectors geocacheVectors = PowerMock.createMock(GeocacheVectors.class);
         GeocacheVector geocacheVector = PowerMock.createMock(GeocacheVector.class);
         TitleUpdater titleUpdater = PowerMock.createMock(TitleUpdater.class);
+        DbFrontend dbFrontend = PowerMock.createMock(DbFrontend.class);
 
+        expect(dbFrontend.getCacheWriter()).andReturn(cacheWriter);
         expect(geocacheVectors.get(17)).andReturn(geocacheVector);
         expect(geocacheVector.getId()).andReturn("GC123");
         cacheWriter.deleteCache("GC123");
         geocacheVectors.remove(17);
+        expect(geocacheVectors.size()).andReturn(16).anyTimes();
         geocacheListAdapter.notifyDataSetChanged();
-        titleUpdater.update();
+        titleUpdater.update(16, 16);
 
         PowerMock.replayAll();
-        new ContextActionDelete(geocacheListAdapter, geocacheVectors, titleUpdater, cacheWriter)
+        new ContextActionDelete(geocacheListAdapter, geocacheVectors, titleUpdater, dbFrontend)
                 .act(17);
         PowerMock.verifyAll();
     }

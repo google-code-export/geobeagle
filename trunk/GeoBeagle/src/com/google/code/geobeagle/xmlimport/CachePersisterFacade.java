@@ -27,15 +27,15 @@ import java.io.IOException;
 public class CachePersisterFacade {
     private final CacheDetailsWriter mCacheDetailsWriter;
     private String mCacheName = "";
-    private final CacheTagWriter mCacheTagWriter;
+    private final CacheTagSqlWriter mCacheTagWriter;
     private final FileFactory mFileFactory;
     private final MessageHandler mMessageHandler;
     private final WakeLock mWakeLock;
 
-    CachePersisterFacade(CacheTagWriter cacheTagWriter, FileFactory fileFactory,
+    CachePersisterFacade(CacheTagSqlWriter cacheTagSqlWriter, FileFactory fileFactory,
             CacheDetailsWriter cacheDetailsWriter, MessageHandler messageHandler, WakeLock wakeLock) {
         mCacheDetailsWriter = cacheDetailsWriter;
-        mCacheTagWriter = cacheTagWriter;
+        mCacheTagWriter = cacheTagSqlWriter;
         mFileFactory = fileFactory;
         mMessageHandler = messageHandler;
         mWakeLock = wakeLock;
