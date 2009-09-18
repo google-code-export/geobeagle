@@ -25,9 +25,9 @@ import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.GeocacheFactory;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.GeocacheFactory.Source;
+import com.google.code.geobeagle.actions.MenuActions;
 import com.google.code.geobeagle.activity.ActivitySaver;
 import com.google.code.geobeagle.activity.ActivityType;
-import com.google.code.geobeagle.actions.MenuActions;
 import com.google.code.geobeagle.activity.cachelist.GeocacheListController;
 import com.google.code.geobeagle.activity.main.fieldnotes.FieldNoteSender;
 import com.google.code.geobeagle.activity.main.fieldnotes.FieldNoteSender.FieldNoteResources;
@@ -35,7 +35,6 @@ import com.google.code.geobeagle.activity.main.view.GeocacheViewer;
 import com.google.code.geobeagle.activity.main.view.WebPageAndDetailsButtonEnabler;
 import com.google.code.geobeagle.database.DatabaseDI;
 import com.google.code.geobeagle.database.DbFrontend;
-import com.google.code.geobeagle.database.ISQLiteDatabase;
 import com.google.code.geobeagle.database.LocationSaver;
 
 import org.easymock.EasyMock;
@@ -233,21 +232,20 @@ public class GeoBeagleDelegateTest {
         SensorManager sensorManager = PowerMock.createMock(SensorManager.class);
         RadarView radarView = PowerMock.createMock(RadarView.class);
         CompassListener compassListener = PowerMock.createMock(CompassListener.class);
-        ISQLiteDatabase writableDatabase = PowerMock.createMock(ISQLiteDatabase.class);
         DbFrontend dbFrontend = PowerMock.createMock(DbFrontend.class);
 
         appLifecycleManager.onPause();
         activitySaver.save(ActivityType.VIEW_CACHE, geocache);
         sensorManager.unregisterListener(radarView);
         sensorManager.unregisterListener(compassListener);
-        writableDatabase.close();
+        dbFrontend.closeDatabase();
 
         PowerMock.replayAll();
         final GeoBeagleDelegate geoBeagleDelegate = new GeoBeagleDelegate(activitySaver,
                 appLifecycleManager, compassListener, null, null, null, null, null, null, null,
                 dbFrontend, radarView, null, sensorManager, null, null);
         geoBeagleDelegate.setGeocache(geocache);
-        geoBeagleDelegate.onPause();  //andpe: Why does this give an error?
+        geoBeagleDelegate.onPause();
         PowerMock.verifyAll();
     }
 
@@ -268,7 +266,7 @@ public class GeoBeagleDelegateTest {
     }
 
     @Test
-    public void onResume() {
+    public void onResume() throws Exception {
         RadarView radarView = PowerMock.createMock(RadarView.class);
         SharedPreferences sharedPreferences = PowerMock.createMock(SharedPreferences.class);
         AppLifecycleManager appLifecycleManager = PowerMock.createMock(AppLifecycleManager.class);
@@ -283,8 +281,8 @@ public class GeoBeagleDelegateTest {
         WebPageAndDetailsButtonEnabler webPageButtonEnabler = PowerMock
                 .createMock(WebPageAndDetailsButtonEnabler.class);
         LocationSaver locationSaver = PowerMock.createMock(LocationSaver.class);
-
         PowerMock.mockStatic(DatabaseDI.class);
+        DbFrontend dbFrontEnd = PowerMock.createMock(DbFrontend.class);
 
         radarView.handleUnknownLocation();
         EasyMock.expect(sharedPreferences.getBoolean("imperial", false)).andReturn(true);
@@ -296,6 +294,7 @@ public class GeoBeagleDelegateTest {
                 sensorManager.registerListener(compassListener, SensorManager.SENSOR_ORIENTATION,
                         SensorManager.SENSOR_DELAY_UI)).andReturn(true);
         appLifecycleManager.onResume();
+        PowerMock.expectNew(LocationSaver.class, dbFrontEnd).andReturn(locationSaver);
         EasyMock.expect(geobeagle.getIntent()).andReturn(intent);
         EasyMock.expect(
                 incomingIntentHandler.maybeGetGeocacheFromIntent(intent, geocache, locationSaver))
@@ -306,10 +305,10 @@ public class GeoBeagleDelegateTest {
         PowerMock.replayAll();
         final GeoBeagleDelegate geoBeagleDelegate = new GeoBeagleDelegate(null,
                 appLifecycleManager, compassListener, null, geobeagle, null, geocacheViewer,
-                incomingIntentHandler, null, null, null, radarView, null,
-                sensorManager, sharedPreferences, webPageButtonEnabler);
+                incomingIntentHandler, null, null, dbFrontEnd, radarView, null, sensorManager,
+                sharedPreferences, webPageButtonEnabler);
         geoBeagleDelegate.setGeocache(geocache);
-        geoBeagleDelegate.onResume();  //andpe: Why does this give an error?
+        geoBeagleDelegate.onResume();
         PowerMock.verifyAll();
     }
 
