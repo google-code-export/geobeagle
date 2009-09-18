@@ -14,7 +14,18 @@
 
 package com.google.code.geobeagle.activity.map;
 
-import java.util.List;
+import com.google.android.maps.GeoPoint;
+import com.google.android.maps.MapActivity;
+import com.google.android.maps.MapController;
+import com.google.android.maps.MyLocationOverlay;
+import com.google.android.maps.Overlay;
+import com.google.code.geobeagle.Geocache;
+import com.google.code.geobeagle.R;
+import com.google.code.geobeagle.actions.MenuActionCacheList;
+import com.google.code.geobeagle.actions.MenuActions;
+import com.google.code.geobeagle.activity.main.GeoUtils;
+import com.google.code.geobeagle.activity.map.DensityMatrix.DensityPatch;
+import com.google.code.geobeagle.database.DbFrontend;
 
 import android.content.Intent;
 import android.content.res.Resources;
@@ -23,22 +34,20 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.google.android.maps.MapActivity;
-import com.google.android.maps.MapController;
-import com.google.android.maps.MyLocationOverlay;
-import com.google.android.maps.Overlay;
-import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.actions.MenuActionCacheList;
-import com.google.code.geobeagle.actions.MenuActions;
-import com.google.code.geobeagle.database.DbFrontend;
+import java.util.ArrayList;
+import java.util.List;
 
 public class GeoMapActivity extends MapActivity {
-    GeoMapActivityDelegate mGeoMapActivityDelegate;
-	private ZoomSupervisor mZoomSupervisor;
-	private MyLocationOverlay mMyLocationOverlay;
-	//private DensityMatrix mDensityMatrix;
-	private DensityOverlay mDensityOverlay;
+
 	private DbFrontend mDbFrontend;
+    private static class NullOverlay extends Overlay {
+    }
+
+    private static final int DEFAULT_ZOOM_LEVEL = 14;
+    private static boolean fZoomed = false;
+    private GeoMapActivityDelegate mGeoMapActivityDelegate;
+    private GeoMapView mMapView;
+    private MyLocationOverlay mMyLocationOverlay;
 
     @Override
     protected boolean isRouteDisplayed() {
@@ -46,58 +55,89 @@ public class GeoMapActivity extends MapActivity {
         return false;
     }
 
-    GeoMapView mMapView;
-    CachePinsOverlay mCachePinsOverlay;
-    
     @Override
     public void onCreate(Bundle savedInstanceState) {
-    	super.onCreate(savedInstanceState);
+        super.onCreate(savedInstanceState);
         setContentView(R.layout.map);
+
         mMapView = (GeoMapView)findViewById(R.id.mapview);
+        mMapView.setBuiltInZoomControls(true);
+        mMapView.setSatellite(false);
 
         final Resources resources = getResources();
         final Drawable defaultMarker = resources.getDrawable(R.drawable.map_pin2_others);
         final CacheDrawables cacheDrawables = new CacheDrawables(resources);
         final CacheItemFactory cacheItemFactory = new CacheItemFactory(cacheDrawables);
-        mCachePinsOverlay = new CachePinsOverlay(this, defaultMarker,
-                                                     cacheItemFactory);
 
-        //mDensityMatrix = new DensityMatrix(0.01, 0.01);
-        mDensityOverlay = new DensityOverlay();
         mMyLocationOverlay = new MyLocationOverlay(this, mMapView);
         final List<Overlay> mapOverlays = mMapView.getOverlays();
-
         MenuActions menuActions = new MenuActions(getResources());
         menuActions.add(new GeoMapActivityDelegate.MenuActionToggleSatellite(mMapView));
         menuActions.add(new MenuActionCacheList(this));
 
-        //Add the overlays in the intended z-order:
-        mapOverlays.add(mDensityOverlay);
-        mapOverlays.add(mCachePinsOverlay);
-        mapOverlays.add(mMyLocationOverlay);
-        
-        mGeoMapActivityDelegate = new GeoMapActivityDelegate(mMapView, menuActions);
-
-        mDbFrontend = new DbFrontend(this);
-        final Intent intent = this.getIntent();
+        final Intent intent = getIntent();
         final MapController mapController = mMapView.getController();
-        mGeoMapActivityDelegate.initialize(intent, mDbFrontend,
-                                           mCachePinsOverlay, mapController,
-                                           mDensityOverlay);
-        mZoomSupervisor = new ZoomSupervisor(mMapView, mGeoMapActivityDelegate);
+        final double latitude = intent.getFloatExtra("latitude", 0);
+        final double longitude = intent.getFloatExtra("longitude", 0);
+        final Overlay nullOverlay = new GeoMapActivity.NullOverlay();
+        final GeoPoint nullGeoPoint = new GeoPoint(0, 0);
+
+        mapOverlays.add(nullOverlay);
+        mapOverlays.add(mMyLocationOverlay);
+
+        ArrayList<Geocache> nullList = new ArrayList<Geocache>();
+        final List<DensityPatch> densityPatches = new ArrayList<DensityPatch>();
+        QueryManager.PeggedLoader peggedLoader = new QueryManager.PeggedLoader(
+                mDbFrontend, nullList);
+        int[] initialLatLonMinMax = {
+                0, 0, 0, 0
+        };
+
+        final QueryManager queryManager = new QueryManager(peggedLoader, initialLatLonMinMax);
+        final DensityOverlayDelegate densityOverlayDelegate = DensityOverlay.createDelegate(
+                densityPatches, nullGeoPoint, queryManager);
+        final DensityOverlay densityOverlay = new DensityOverlay(densityOverlayDelegate);
+        final ArrayList<Geocache> geocacheList = new ArrayList<Geocache>();
+        final CachePinsOverlay cachePinsOverlay = new CachePinsOverlay(cacheItemFactory, this,
+                defaultMarker, geocacheList);
+        final CachePinsOverlayFactory cachePinsOverlayFactory = new CachePinsOverlayFactory(
+                mMapView, this, defaultMarker, cacheItemFactory, cachePinsOverlay, queryManager);
+        mGeoMapActivityDelegate = new GeoMapActivityDelegate(mMapView, menuActions);
+        mDbFrontend = new DbFrontend(this);
+
+        final GeoPoint center = new GeoPoint((int)(latitude * GeoUtils.MILLION),
+                (int)(longitude * GeoUtils.MILLION));
+
+        mapController.setCenter(center);
+        final OverlayManager overlayManager = new OverlayManager(mMapView, mapOverlays,
+                densityOverlay, cachePinsOverlayFactory, false);
+        mMapView.setScrollListener(overlayManager);
+
+        if (!fZoomed) {
+            mapController.setZoom(DEFAULT_ZOOM_LEVEL);
+            fZoomed = true;
+        }
+
+        overlayManager.selectOverlay();
     }
-    
+
     @Override
-    public void onResume() {
-        super.onResume();
-        mMyLocationOverlay.enableMyLocation();
-        mMyLocationOverlay.enableCompass();
-        mZoomSupervisor.start();
+    public boolean onCreateOptionsMenu(Menu menu) {
+        return mGeoMapActivityDelegate.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onMenuOpened(int featureId, Menu menu) {
+        return mGeoMapActivityDelegate.onMenuOpened(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        return mGeoMapActivityDelegate.onOptionsItemSelected(item);
     }
 
     @Override
     public void onPause() {
-        mZoomSupervisor.stop();
         mMyLocationOverlay.disableMyLocation();
         mMyLocationOverlay.disableCompass();
         mDbFrontend.closeDatabase();
@@ -105,19 +145,10 @@ public class GeoMapActivity extends MapActivity {
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        //super.onCreateOptionsMenu(menu);
-        //getMenuInflater().inflate(R.menu.map_menu, menu);
-        return mGeoMapActivityDelegate.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onMenuOpened(int featureId, Menu menu) {
-        return mGeoMapActivityDelegate.onMenuOpened(featureId, menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        return mGeoMapActivityDelegate.onOptionsItemSelected(item);
+    public void onResume() {
+        super.onResume();
+        mMyLocationOverlay.enableMyLocation();
+        mMyLocationOverlay.enableCompass();
+        mDbFrontend.openDatabase();
     }
 }

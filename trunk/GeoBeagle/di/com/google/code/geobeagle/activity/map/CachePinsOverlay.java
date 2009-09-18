@@ -15,14 +15,15 @@
 package com.google.code.geobeagle.activity.map;
 
 import com.google.android.maps.ItemizedOverlay;
+import com.google.android.maps.MapView;
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.activity.cachelist.GeocacheListController;
 import com.google.code.geobeagle.activity.main.GeoBeagle;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
-import android.os.Handler;
 
 import java.util.ArrayList;
 
@@ -30,63 +31,32 @@ public class CachePinsOverlay extends ItemizedOverlay<CacheItem> {
 
     private final CacheItemFactory mCacheItemFactory;
     private final Context mContext;
-    private final ArrayList<CacheItem> mCacheItems;
-	private Handler mGuiThreadHandler;
+    private final ArrayList<Geocache> mCacheList;
 
-	/** Execute on the gui thread to avoid ArrayIndexOutOfBoundsException */
-    private class CacheListUpdater implements Runnable {
-    	ArrayList<Geocache> mCacheList;
-    	public CacheListUpdater(ArrayList<Geocache> list) {
-    		mCacheList = list;
-    	}
-    	public void run() {
-            mCacheItems.clear();
-    		for (Geocache cache : mCacheList) {
-    			CacheItem item = mCacheItemFactory.createCacheItem(cache);
-    			if (item != null)
-    				mCacheItems.add(item);
-    		}
-    		populate();
-    	}
-    };
-    
-    public CachePinsOverlay(Context context, Drawable defaultMarker,
-            CacheItemFactory cacheItemFactory) {
+    public CachePinsOverlay(CacheItemFactory cacheItemFactory, Context context,
+            Drawable defaultMarker, ArrayList<Geocache> list) {
         super(boundCenterBottom(defaultMarker));
         mContext = context;
         mCacheItemFactory = cacheItemFactory;
-        mCacheItems = new ArrayList<CacheItem>();
-        mGuiThreadHandler = new Handler();
-        //Must call populate at least once to avoid NullPointerException in the platform!
+        mCacheList = list;
         populate();
     }
 
-    /** Replaces all caches on the map with the supplied ones. */
-    public void setCacheListUsingGuiThread(ArrayList<Geocache> list) {
-        mGuiThreadHandler.post(new CacheListUpdater(list));
-    }
-
-    /*
-    public void addCache(CacheItem overlay) {
-        mOverlays.add(overlay);
-        // populate();
-    }
-    */
-
+    /* (non-Javadoc)
+     * @see com.google.android.maps.Overlay#draw(android.graphics.Canvas, com.google.android.maps.MapView, boolean, long)
+     */
     @Override
-    protected CacheItem createItem(int i) {
-        return mCacheItems.get(i);
+    public boolean draw(Canvas canvas, MapView mapView, boolean shadow, long when) {
+        return super.draw(canvas, mapView, shadow, when);
     }
 
     @Override
     protected boolean onTap(int i) {
-        Geocache geocache = mCacheItems.get(i).getGeocache();
+        Geocache geocache = getItem(i).getGeocache();
         if (geocache == null)
             return false;
 
-        // Intent intent = new Intent(GeocacheListController.SELECT_CACHE);
-
-        Intent intent = new Intent(mContext, GeoBeagle.class);
+        final Intent intent = new Intent(mContext, GeoBeagle.class);
         intent.setAction(GeocacheListController.SELECT_CACHE);
         intent.putExtra("geocache", geocache);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -96,7 +66,12 @@ public class CachePinsOverlay extends ItemizedOverlay<CacheItem> {
     }
 
     @Override
+    protected CacheItem createItem(int i) {
+        return mCacheItemFactory.createCacheItem(mCacheList.get(i));
+    }
+
+    @Override
     public int size() {
-        return mCacheItems.size();
+        return mCacheList.size();
     }
 }
