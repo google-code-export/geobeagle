@@ -34,7 +34,7 @@ public class GeoMapView extends MapView {
         Log.d("GeoBeagle", "~~~~~~~~~~onLayout " + changed + ", " + left + ", " + top + ", "
                 + right + ", " + bottom);
         if (mOverlayManager != null) {
-            mOverlayManager.refreshCaches();
+            mOverlayManager.selectOverlay();
         }
     }
 

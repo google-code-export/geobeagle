@@ -15,7 +15,6 @@
 package com.google.code.geobeagle.activity.map;
 
 import com.google.android.maps.MapView;
-import com.google.android.maps.Overlay;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.MenuAction;
 import com.google.code.geobeagle.activity.MenuActions;
@@ -65,9 +64,6 @@ public class GeoMapActivityDelegate {
         public void act() {
             mMapView.setSatellite(!mMapView.isSatellite());
         }
-    }
-
-    public static class NullOverlay extends Overlay {
     }
 
     private final GeoMapView mMapView;

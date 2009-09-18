@@ -14,118 +14,42 @@
 
 package com.google.code.geobeagle.activity.map;
 
-import com.google.android.maps.GeoPoint;
-import com.google.android.maps.MapView;
 import com.google.android.maps.Overlay;
-import com.google.android.maps.Projection;
-import com.google.code.geobeagle.Geocache;
-import com.google.code.geobeagle.activity.cachelist.CacheListDelegateDI;
-import com.google.code.geobeagle.database.GeocachesLoader;
-import com.google.code.geobeagle.database.WhereFactoryFixedArea;
 
-import android.content.Context;
-import android.graphics.Canvas;
-import android.graphics.drawable.Drawable;
 import android.util.Log;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class OverlayManager {
-    static class DensityMatrix2 {
-
-    }
-
-    public class TestOverlay extends Overlay {
-        @Override
-        public void draw(Canvas canvas, MapView mapView, boolean shadow) {
-            super.draw(canvas, mapView, shadow);
-            // Log.d("GeoBeagle", "testoverlay draw: " + shadow);
-        }
-    }
-
-    private static final int DENSITY_MAP_ZOOM_THRESHOLD = 14;
-    public static final double RESOLUTION_LATITUDE = 0.01;
-    public static final double RESOLUTION_LONGITUDE = 0.02;
-    public static final int RESOLUTION_LATITUDE_E6 = (int)(RESOLUTION_LATITUDE * 1E6);
-    public static final int RESOLUTION_LONGITUDE_E6 = (int)(RESOLUTION_LONGITUDE * 1E6);
-    private GeoPoint mBottomRight;
-    private final CacheItemFactory mCacheItemFactory;
-    private final Context mContext;
-    private final Drawable mDefaultMarker;
-    private final GeocachesLoader mGeocachesLoader;
+    static final int DENSITY_MAP_ZOOM_THRESHOLD = 12;
+    private final CachePinsOverlayFactory mCachePinsOverlayFactory;
+    private final DensityOverlay mDensityOverlay;
     private final GeoMapView mGeoMapView;
     private final List<Overlay> mMapOverlays;
-    private GeoPoint mTopLeft;
-
     private boolean mUsesDensityMap;
-    private final DensityOverlay mDensityOverlay;
-    private CachePinsOverlay mCachePinsOverlay;
 
-    public OverlayManager(GeoPoint topLeft, GeoPoint bottomRight, GeoMapView geoMapView,
-            GeocachesLoader geocachesLoader, Context context, Drawable defaultMarker,
-            CacheItemFactory cacheItemFactory, List<Overlay> mapOverlays,
-            Overlay myLocationOverlay, DensityOverlay densityOverlay,
-            CachePinsOverlay cachePinsOverlay) {
-        mTopLeft = topLeft;
-        mBottomRight = bottomRight;
+    public OverlayManager(GeoMapView geoMapView, List<Overlay> mapOverlays,
+            DensityOverlay densityOverlay, CachePinsOverlayFactory cachePinsOverlayFactory,
+            boolean usesDensityMap) {
         mGeoMapView = geoMapView;
-        mGeocachesLoader = geocachesLoader;
-        mContext = context;
-        mDefaultMarker = defaultMarker;
-        mCacheItemFactory = cacheItemFactory;
         mMapOverlays = mapOverlays;
         mDensityOverlay = densityOverlay;
-        mCachePinsOverlay = cachePinsOverlay;
+        mCachePinsOverlayFactory = cachePinsOverlayFactory;
+        mUsesDensityMap = usesDensityMap;
     }
 
-    public boolean selectOverlay() {
-        Log.d("GeoBeagle", "Zoom: " + mGeoMapView.getZoomLevel());
-        boolean newZoomUsesDensityMap = mGeoMapView.getZoomLevel() < DENSITY_MAP_ZOOM_THRESHOLD;
-        if (newZoomUsesDensityMap == mUsesDensityMap)
-            return false;
+    public void selectOverlay() {
+        final int zoomLevel = mGeoMapView.getZoomLevel();
+        Log.d("GeoBeagle", "Zoom: " + zoomLevel);
+        boolean newZoomUsesDensityMap = zoomLevel < OverlayManager.DENSITY_MAP_ZOOM_THRESHOLD;
+        if (newZoomUsesDensityMap && mUsesDensityMap)
+            return;
         mUsesDensityMap = newZoomUsesDensityMap;
-        mMapOverlays.set(0, mUsesDensityMap ? mDensityOverlay : mCachePinsOverlay);
-        return true;
+        mMapOverlays.set(0, mUsesDensityMap ? mDensityOverlay : mCachePinsOverlayFactory
+                .getCachePinsOverlay());
     }
 
-    public void refreshCaches() {
-        Log.d("GeoBeagle", "refresh Caches");
-        final CacheListDelegateDI.Timing timing = new CacheListDelegateDI.Timing();
-
-        Projection projection = mGeoMapView.getProjection();
-        GeoPoint newTopLeft = projection.fromPixels(0, 0);
-        GeoPoint newBottomRight = projection.fromPixels(mGeoMapView.getRight(), mGeoMapView
-                .getBottom());
-
-        // Further top/North is bigger, further left/West is smaller.
-        if (!selectOverlay() && newTopLeft.getLatitudeE6() <= mTopLeft.getLatitudeE6()
-                && newTopLeft.getLongitudeE6() >= mTopLeft.getLongitudeE6()
-                && newBottomRight.getLatitudeE6() >= mBottomRight.getLatitudeE6()
-                && newBottomRight.getLongitudeE6() <= mBottomRight.getLongitudeE6()) {
-            Log.d("GeoBeagle", "refresh caches punting");
-            return;
-        }
-        mTopLeft = newTopLeft;
-        mBottomRight = newBottomRight;
-
-        timing.lap("Loaded caches");
-
-        if (mUsesDensityMap) {
-            return;
-        }
-
-        double latMin = newBottomRight.getLatitudeE6() / 1000000.0;
-        double lonMin = newTopLeft.getLongitudeE6() / 1000000.0;
-        double latMax = newTopLeft.getLatitudeE6() / 1000000.0;
-        double lonMax = newBottomRight.getLongitudeE6() / 1000000.0;
-
-        final WhereFactoryFixedArea where = new WhereFactoryFixedArea(latMin, lonMin, latMax,
-                lonMax);
-
-        timing.start();
-        ArrayList<Geocache> list = mGeocachesLoader.loadCaches(0, 0, where);
-        mCachePinsOverlay = new CachePinsOverlay(mCacheItemFactory, mContext, mDefaultMarker, list);
-        mMapOverlays.set(0, mCachePinsOverlay);
+    public boolean usesDensityMap() {
+        return mUsesDensityMap;
     }
 }

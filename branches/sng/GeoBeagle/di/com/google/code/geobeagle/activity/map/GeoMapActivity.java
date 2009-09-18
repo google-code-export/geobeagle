@@ -38,7 +38,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GeoMapActivity extends MapActivity {
-    private static final int DEFAULT_ZOOM_LEVEL = 12;
+    private static class NullOverlay extends Overlay {
+    }
+
+    private static final int DEFAULT_ZOOM_LEVEL = 14;
     private static boolean fZoomed = false;
     private static final int menuIdArray[] = {
             R.id.menu_toggle_satellite, R.id.menu_cache_list
@@ -81,29 +84,37 @@ public class GeoMapActivity extends MapActivity {
         final MapController mapController = mMapView.getController();
         final double latitude = intent.getFloatExtra("latitude", 0);
         final double longitude = intent.getFloatExtra("longitude", 0);
-        final Overlay nullOverlay = new GeoMapActivityDelegate.NullOverlay();
-
+        final Overlay nullOverlay = new GeoMapActivity.NullOverlay();
         final GeoPoint nullGeoPoint = new GeoPoint(0, 0);
 
         mapOverlays.add(nullOverlay);
         mapOverlays.add(mMyLocationOverlay);
-        final List<DensityPatch> densityPatches = new ArrayList<DensityPatch>();
 
+        ArrayList<Geocache> nullList = new ArrayList<Geocache>();
+        final List<DensityPatch> densityPatches = new ArrayList<DensityPatch>();
+        QueryManager.PeggedLoader peggedLoader = new QueryManager.PeggedLoader(mGeocachesLoader,
+                nullList);
+        int[] initialLatLonMinMax = {
+                0, 0, 0, 0
+        };
+
+        final QueryManager queryManager = new QueryManager(peggedLoader, initialLatLonMinMax);
         final DensityOverlayDelegate densityOverlayDelegate = DensityOverlay.createDelegate(
-                densityPatches, mGeocachesLoader, nullGeoPoint);
+                densityPatches, mGeocachesLoader, nullGeoPoint, queryManager);
         final DensityOverlay densityOverlay = new DensityOverlay(densityOverlayDelegate);
         final ArrayList<Geocache> geocacheList = new ArrayList<Geocache>();
         final CachePinsOverlay cachePinsOverlay = new CachePinsOverlay(cacheItemFactory, this,
                 defaultMarker, geocacheList);
-        final OverlayManager overlayManager = new OverlayManager(nullGeoPoint, nullGeoPoint,
-                mMapView, mGeocachesLoader, this, defaultMarker, cacheItemFactory, mapOverlays,
-                nullOverlay, densityOverlay, cachePinsOverlay);
+        final CachePinsOverlayFactory cachePinsOverlayFactory = new CachePinsOverlayFactory(
+                mMapView, this, defaultMarker, cacheItemFactory, cachePinsOverlay, queryManager);
         mGeoMapActivityDelegate = new GeoMapActivityDelegate(mMapView, menuActions);
 
         final GeoPoint center = new GeoPoint((int)(latitude * GeoUtils.MILLION),
                 (int)(longitude * GeoUtils.MILLION));
 
         mapController.setCenter(center);
+        final OverlayManager overlayManager = new OverlayManager(mMapView, mapOverlays,
+                densityOverlay, cachePinsOverlayFactory, false);
         mMapView.setScrollListener(overlayManager);
 
         if (!fZoomed) {
@@ -111,7 +122,7 @@ public class GeoMapActivity extends MapActivity {
             fZoomed = true;
         }
 
-        overlayManager.refreshCaches();
+        overlayManager.selectOverlay();
     }
 
     @Override

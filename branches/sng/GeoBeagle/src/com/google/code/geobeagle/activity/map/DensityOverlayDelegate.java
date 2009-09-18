@@ -29,8 +29,8 @@ import android.graphics.Rect;
 import java.util.List;
 
 public class DensityOverlayDelegate {
-    private static final double RESOLUTION_LATITUDE_E6 = (OverlayManager.RESOLUTION_LATITUDE * 1E6);
-    private static final double RESOLUTION_LONGITUDE_E6 = (OverlayManager.RESOLUTION_LONGITUDE * 1E6);
+    private static final double RESOLUTION_LATITUDE_E6 = (DensityPatchManager.RESOLUTION_LATITUDE * 1E6);
+    private static final double RESOLUTION_LONGITUDE_E6 = (DensityPatchManager.RESOLUTION_LONGITUDE * 1E6);
     private final Paint mPaint;
     private final Rect mPatchRect;
     private final Point mScreenBottomRight;
