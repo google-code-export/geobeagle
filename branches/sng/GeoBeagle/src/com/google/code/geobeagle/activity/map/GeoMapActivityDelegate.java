@@ -16,9 +16,11 @@ package com.google.code.geobeagle.activity.map;
 
 import com.google.android.maps.MapView;
 import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.activity.MenuAction;
-import com.google.code.geobeagle.activity.MenuActions;
-import com.google.code.geobeagle.activity.cachelist.CacheList;
+import com.google.code.geobeagle.actions.MenuAction;
+import com.google.code.geobeagle.actions.MenuActions;
+
+import android.view.Menu;
+import android.view.MenuItem;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -39,20 +41,6 @@ import android.view.MenuItem;
  ** limitations under the License.
  */
 public class GeoMapActivityDelegate {
-
-    static class MenuActionCacheList implements MenuAction {
-        private final Activity mActivity;
-
-        MenuActionCacheList(Activity activity) {
-            mActivity = activity;
-        }
-
-        @Override
-        public void act() {
-            mActivity.startActivity(new Intent(mActivity, CacheList.class));
-        }
-    }
-
     public static class MenuActionToggleSatellite implements MenuAction {
         private final MapView mMapView;
 
@@ -64,6 +52,11 @@ public class GeoMapActivityDelegate {
         public void act() {
             mMapView.setSatellite(!mMapView.isSatellite());
         }
+
+        @Override
+        public int getId() {
+            return R.string.menu_toggle_satellite;
+        }
     }
 
     private final GeoMapView mMapView;
@@ -74,8 +67,13 @@ public class GeoMapActivityDelegate {
         mMenuActions = menuActions;
     }
 
+    public boolean onCreateOptionsMenu(Menu menu) {
+        return mMenuActions.onCreateOptionsMenu(menu);
+    }
+
     public boolean onMenuOpened(Menu menu) {
-        menu.findItem(R.id.menu_toggle_satellite).setTitle(
+        // TODO: implement mMenuActions.onMenuOpened(featureId, menu);
+        menu.findItem(R.string.menu_toggle_satellite).setTitle(
                 mMapView.isSatellite() ? R.string.map_view : R.string.satellite_view);
         return true;
     }
@@ -83,4 +81,5 @@ public class GeoMapActivityDelegate {
     public boolean onOptionsItemSelected(MenuItem item) {
         return mMenuActions.act(item.getItemId());
     }
+
 }

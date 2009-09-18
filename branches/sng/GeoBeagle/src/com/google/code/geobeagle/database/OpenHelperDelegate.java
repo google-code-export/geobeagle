@@ -41,7 +41,7 @@ public class OpenHelperDelegate {
             db.execSQL("ALTER TABLE CACHES ADD COLUMN " + Database.S0_COLUMN_DIFFICULTY);
             db.execSQL("ALTER TABLE CACHES ADD COLUMN " + Database.S0_COLUMN_TERRAIN);
             // This date has to precede 2000-01-01 (due to a bug in
-            // CacheTagWriter.java in v10).
+            // CacheTagSqlWriter.java in v10).
             db.execSQL("UPDATE GPX SET ExportTime = \"1990-01-01\"");
         }
     }

@@ -12,13 +12,12 @@
  ** limitations under the License.
  */
 
-package com.google.code.geobeagle.activity;
+package com.google.code.geobeagle.actions;
 
-import com.google.code.geobeagle.database.ISQLiteDatabase;
+public interface MenuAction {
 
-public interface PausableWithDatabase {
-    void onPause();
-
-    void onResume(ISQLiteDatabase sqliteDatabase);
-
+    public void act();
+    
+    /** Must be the id of a resource string - used to set label */
+    public int getId();
 }

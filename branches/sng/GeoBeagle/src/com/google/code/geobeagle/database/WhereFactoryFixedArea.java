@@ -18,10 +18,10 @@ package com.google.code.geobeagle.database;
  * Where clause with limits set during construction, not when calling getWhere()
  */
 public class WhereFactoryFixedArea implements WhereFactory {
-    private double mLatLow;
-    private double mLonLow;
-    private double mLatHigh;
-    private double mLonHigh;
+    private final double mLatLow;
+    private final double mLonLow;
+    private final double mLatHigh;
+    private final double mLonHigh;
 
     public WhereFactoryFixedArea(double latLow, double lonLow, double latHigh, double lonHigh) {
         mLatLow = Math.min(latLow, latHigh);
@@ -32,6 +32,7 @@ public class WhereFactoryFixedArea implements WhereFactory {
 
     @Override
     public String getWhere(ISQLiteDatabase sqliteWrapper, double latitude, double longitude) {
+
         return "Latitude >= " + mLatLow + " AND Latitude < " + mLatHigh + " AND Longitude >= "
                 + mLonLow + " AND Longitude < " + mLonHigh;
     }

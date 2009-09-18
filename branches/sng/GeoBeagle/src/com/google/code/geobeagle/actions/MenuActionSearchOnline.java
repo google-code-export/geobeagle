@@ -12,23 +12,28 @@
  ** limitations under the License.
  */
 
-package com.google.code.geobeagle.activity.main.menuactions;
+package com.google.code.geobeagle.actions;
 
-import com.google.code.geobeagle.activity.MenuAction;
-import com.google.code.geobeagle.activity.preferences.EditPreferences;
+import com.google.code.geobeagle.R;
+import com.google.code.geobeagle.activity.searchonline.SearchOnlineActivity;
 
 import android.app.Activity;
 import android.content.Intent;
 
-public class MenuActionSettings implements MenuAction {
+public class MenuActionSearchOnline implements MenuAction {
     private final Activity mActivity;
 
-    public MenuActionSettings(Activity activity) {
+    public MenuActionSearchOnline(Activity activity) {
         mActivity = activity;
     }
 
     @Override
     public void act() {
-        mActivity.startActivity(new Intent(mActivity, EditPreferences.class));
+        mActivity.startActivity(new Intent(mActivity, SearchOnlineActivity.class));
+    }
+
+    @Override
+    public int getId() {
+        return R.string.menu_search_online;
     }
 }

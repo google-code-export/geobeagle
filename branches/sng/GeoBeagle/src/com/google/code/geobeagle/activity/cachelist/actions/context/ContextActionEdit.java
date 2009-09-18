@@ -15,8 +15,8 @@
 package com.google.code.geobeagle.activity.cachelist.actions.context;
 
 import com.google.code.geobeagle.Geocache;
+import com.google.code.geobeagle.activity.EditCacheActivity;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVectors;
-import com.google.code.geobeagle.activity.main.view.EditCacheActivity;
 
 import android.content.Context;
 import android.content.Intent;

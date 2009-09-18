@@ -16,7 +16,7 @@ package com.google.code.geobeagle.activity;
 
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.activity.ActivityDI.ActivityTypeFactory;
-import com.google.code.geobeagle.activity.cachelist.CacheList;
+import com.google.code.geobeagle.activity.cachelist.CacheListActivity;
 import com.google.code.geobeagle.activity.cachelist.GeocacheListController;
 import com.google.code.geobeagle.activity.main.GeoBeagle;
 import com.google.code.geobeagle.activity.main.GeocacheFromPreferencesFactory;
@@ -35,7 +35,7 @@ public class ActivityRestorer {
 
         @Override
         public void restore() {
-            mActivity.startActivity(new Intent(mActivity, CacheList.class));
+            mActivity.startActivity(new Intent(mActivity, CacheListActivity.class));
             mActivity.finish();
         }
 

@@ -14,10 +14,6 @@
 
 package com.google.code.geobeagle.activity.cachelist;
 
-import com.google.code.geobeagle.activity.ActivityWithDatabaseLifecycleManager;
-import com.google.code.geobeagle.database.NullClosable;
-import com.google.code.geobeagle.database.DatabaseDI.GeoBeagleSqliteOpenHelper;
-
 import android.app.ListActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -26,16 +22,15 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
 
-public class CacheList extends ListActivity {
+public class CacheListActivity extends ListActivity {
     private CacheListDelegate mCacheListDelegate;
-    private ActivityWithDatabaseLifecycleManager mActivityWithDatabaseLifecycleManager;
 
     // This is the ctor that Android will use.
-    public CacheList() {
+    public CacheListActivity() {
     }
 
     // This is the ctor for testing.
-    public CacheList(CacheListDelegate cacheListDelegate) {
+    public CacheListActivity(CacheListDelegate cacheListDelegate) {
         mCacheListDelegate = cacheListDelegate;
     }
 
@@ -47,14 +42,9 @@ public class CacheList extends ListActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d("GeoBeagle", "CacheList onCreate");
+        Log.d("GeoBeagle", "CacheListActivity onCreate");
 
         mCacheListDelegate = CacheListDelegateDI.create(this, getLayoutInflater());
-        final NullClosable nullClosable = new NullClosable();
-        final GeoBeagleSqliteOpenHelper geoBeagleSqliteOpenHelper = new GeoBeagleSqliteOpenHelper(
-                this);
-        mActivityWithDatabaseLifecycleManager = new ActivityWithDatabaseLifecycleManager(
-                mCacheListDelegate, nullClosable, geoBeagleSqliteOpenHelper);
 
         mCacheListDelegate.onCreate();
     }
@@ -88,18 +78,17 @@ public class CacheList extends ListActivity {
 
     @Override
     protected void onPause() {
-        Log.d("GeoBeagle", "CacheList onPause");
+        Log.d("GeoBeagle", "CacheListActivity onPause");
 
         super.onPause();
-        mActivityWithDatabaseLifecycleManager.onPause();
+        mCacheListDelegate.onPause();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        Log.d("GeoBeagle", "CacheList onResume");
-
-        mActivityWithDatabaseLifecycleManager.onResume();
+        Log.d("GeoBeagle", "CacheListActivity onResume");
+        mCacheListDelegate.onResume();
     }
 
 }

@@ -14,11 +14,11 @@
 
 package com.google.code.geobeagle.xmlimport;
 
+import com.google.code.geobeagle.CacheTypeFactory;
 import com.google.code.geobeagle.cachedetails.CacheDetailsWriter;
 import com.google.code.geobeagle.cachedetails.HtmlWriter;
 import com.google.code.geobeagle.cachedetails.WriterWrapper;
 import com.google.code.geobeagle.database.CacheWriter;
-import com.google.code.geobeagle.xmlimport.CacheTagWriter.CacheTagParser;
 import com.google.code.geobeagle.xmlimport.GpxImporterDI.MessageHandler;
 
 import android.os.PowerManager.WakeLock;
@@ -27,26 +27,28 @@ import java.io.File;
 
 public class CachePersisterFacadeDI {
 
+    //TODO: Remove class CachePersisterFacadeFactory
     public static class CachePersisterFacadeFactory {
         private final CacheDetailsWriter mCacheDetailsWriter;
-        private final CacheTagParser mCacheTagParser;
+        private final CacheTypeFactory mCacheTypeFactory;
         private final FileFactory mFileFactory;
         private final HtmlWriter mHtmlWriter;
         private final MessageHandler mMessageHandler;
         private final WriterWrapper mWriterWrapper;
 
-        public CachePersisterFacadeFactory(MessageHandler messageHandler) {
+        public CachePersisterFacadeFactory(MessageHandler messageHandler,
+                CacheTypeFactory cacheTypeFactory) {
             mMessageHandler = messageHandler;
             mFileFactory = new FileFactory();
             mWriterWrapper = new WriterWrapper();
             mHtmlWriter = new HtmlWriter(mWriterWrapper);
             mCacheDetailsWriter = new CacheDetailsWriter(mHtmlWriter);
-            mCacheTagParser = new CacheTagParser();
+            mCacheTypeFactory = cacheTypeFactory;
         }
 
         public CachePersisterFacade create(CacheWriter cacheWriter, WakeLock wakeLock) {
-            final CacheTagWriter cacheTagWriter = new CacheTagWriter(cacheWriter, mCacheTagParser);
-            return new CachePersisterFacade(cacheTagWriter, mFileFactory, mCacheDetailsWriter,
+            final CacheTagSqlWriter cacheTagSqlWriter = new CacheTagSqlWriter(cacheWriter, mCacheTypeFactory);
+            return new CachePersisterFacade(cacheTagSqlWriter, mFileFactory, mCacheDetailsWriter,
                     mMessageHandler, wakeLock);
         }
     }

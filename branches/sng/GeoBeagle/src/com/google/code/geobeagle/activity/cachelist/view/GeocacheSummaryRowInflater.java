@@ -24,7 +24,6 @@ import com.google.code.geobeagle.activity.cachelist.presenter.HasDistanceFormatt
 import com.google.code.geobeagle.activity.cachelist.presenter.RelativeBearingFormatter;
 import com.google.code.geobeagle.formatting.DistanceFormatter;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
@@ -80,7 +79,7 @@ public class GeocacheSummaryRowInflater implements HasDistanceFormatter {
     public View inflate(View convertView) {
         if (convertView != null)
             return convertView;
-        Log.d("GeoBeagle", "SummaryRow::inflate(" + convertView + ")");
+        //Log.d("GeoBeagle", "SummaryRow::inflate(" + convertView + ")");
 
         View view = mLayoutInflater.inflate(R.layout.cache_row, null);
         RowViews rowViews = new RowViews((TextView)view.findViewById(R.id.txt_gcattributes),

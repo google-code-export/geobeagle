@@ -14,7 +14,7 @@
 
 package com.google.code.geobeagle;
 
-import com.google.code.geobeagle.CacheType.CacheTypeFactory;
+import com.google.code.geobeagle.CacheTypeFactory;
 import com.google.code.geobeagle.Geocache.AttributeFormatter;
 import com.google.code.geobeagle.Geocache.AttributeFormatterImpl;
 import com.google.code.geobeagle.Geocache.AttributeFormatterNull;

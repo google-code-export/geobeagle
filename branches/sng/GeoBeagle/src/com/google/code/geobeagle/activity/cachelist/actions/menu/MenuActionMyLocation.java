@@ -17,7 +17,7 @@ package com.google.code.geobeagle.activity.cachelist.actions.menu;
 import com.google.code.geobeagle.ErrorDisplayer;
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.activity.MenuAction;
+import com.google.code.geobeagle.actions.MenuAction;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheFromMyLocationFactory;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
 import com.google.code.geobeagle.database.LocationSaver;
@@ -36,6 +36,7 @@ public class MenuActionMyLocation implements MenuAction {
         mLocationSaver = locationSaver;
     }
 
+    @Override
     public void act() {
         final Geocache myLocation = mGeocacheFromMyLocationFactory.create();
         if (myLocation == null) {
@@ -44,5 +45,10 @@ public class MenuActionMyLocation implements MenuAction {
         }
         mLocationSaver.saveLocation(myLocation);
         mMenuActionRefresh.forceRefresh();
+    }
+    
+    @Override
+    public int getId() {
+        return R.string.menu_add_my_location;
     }
 }

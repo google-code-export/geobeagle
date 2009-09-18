@@ -18,8 +18,8 @@ import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.LocationControlBuffered;
 import com.google.code.geobeagle.activity.cachelist.CacheListDelegateDI.Timing;
 import com.google.code.geobeagle.activity.cachelist.model.CacheListData;
+import com.google.code.geobeagle.database.DbFrontend;
 import com.google.code.geobeagle.database.FilterNearestCaches;
-import com.google.code.geobeagle.database.GeocachesSql;
 
 import android.location.Location;
 
@@ -28,15 +28,15 @@ import java.util.ArrayList;
 public class SqlCacheLoader implements RefreshAction {
     private final CacheListData mCacheListData;
     private final FilterNearestCaches mFilterNearestCaches;
-    private final GeocachesSql mGeocachesSql;
+    private final DbFrontend mDbFrontend;
     private final LocationControlBuffered mLocationControlBuffered;
     private final Timing mTiming;
     private final TitleUpdater mTitleUpdater;
 
-    public SqlCacheLoader(GeocachesSql geocachesSql, FilterNearestCaches filterNearestCaches,
+    public SqlCacheLoader(DbFrontend dbFrontend, FilterNearestCaches filterNearestCaches,
             CacheListData cacheListData, LocationControlBuffered locationControlBuffered,
             TitleUpdater titleUpdater, Timing timing) {
-        mGeocachesSql = geocachesSql;
+        mDbFrontend = dbFrontend;
         mFilterNearestCaches = filterNearestCaches;
         mCacheListData = cacheListData;
         mLocationControlBuffered = locationControlBuffered;
@@ -53,13 +53,15 @@ public class SqlCacheLoader implements RefreshAction {
             longitude = location.getLongitude();
         }
         // Log.d("GeoBeagle", "Location: " + location);
-        mGeocachesSql.loadCaches(latitude, longitude, mFilterNearestCaches.getWhereFactory());
-        ArrayList<Geocache> geocaches = mGeocachesSql.getGeocaches();
+        ArrayList<Geocache> geocaches = 
+            mDbFrontend.loadCaches(latitude, longitude, mFilterNearestCaches.getWhereFactory());
         mTiming.lap("SQL time");
 
         mCacheListData.add(geocaches, mLocationControlBuffered);
         mTiming.lap("add to list time");
 
-        mTitleUpdater.update();
+        final int sqlCount = geocaches.size();
+        final int nearestCachesCount = mCacheListData.size();        
+        mTitleUpdater.update(sqlCount, nearestCachesCount);
     }
 }

@@ -12,48 +12,44 @@
  ** limitations under the License.
  */
 
-package com.google.code.geobeagle.activity.main.view;
+package com.google.code.geobeagle.activity;
 
 import com.google.code.geobeagle.GeocacheFactory;
-import com.google.code.geobeagle.activity.ActivityWithDatabaseLifecycleManager;
+import com.google.code.geobeagle.activity.main.view.EditCacheActivityDelegate;
 import com.google.code.geobeagle.activity.main.view.EditCacheActivityDelegate.CancelButtonOnClickListener;
-import com.google.code.geobeagle.database.LocationSaverFactory;
-import com.google.code.geobeagle.database.NullClosable;
-import com.google.code.geobeagle.database.DatabaseDI.GeoBeagleSqliteOpenHelper;
+import com.google.code.geobeagle.database.DbFrontend;
+import com.google.code.geobeagle.database.LocationSaver;
 
 import android.app.Activity;
 import android.os.Bundle;
 
 public class EditCacheActivity extends Activity {
     private EditCacheActivityDelegate mEditCacheActivityDelegate;
-    private ActivityWithDatabaseLifecycleManager mActivityWithDatabaseLifecycleManager;
-
+    private DbFrontend mDbFrontend;
+    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         final CancelButtonOnClickListener cancelButtonOnClickListener = new CancelButtonOnClickListener(
                 this);
         final GeocacheFactory geocacheFactory = new GeocacheFactory();
-        final GeoBeagleSqliteOpenHelper geoBeagleSqliteOpenHelper = new GeoBeagleSqliteOpenHelper(
-                this);
-        final NullClosable nullClosable = new NullClosable();
-        final LocationSaverFactory locationSaverFactory = new LocationSaverFactory();
+        mDbFrontend = new DbFrontend(this);
+        LocationSaver locationSaver = new LocationSaver(mDbFrontend);
         mEditCacheActivityDelegate = new EditCacheActivityDelegate(this,
-                cancelButtonOnClickListener, geocacheFactory, locationSaverFactory);
-        mActivityWithDatabaseLifecycleManager = new ActivityWithDatabaseLifecycleManager(
-                mEditCacheActivityDelegate, nullClosable, geoBeagleSqliteOpenHelper);
+                cancelButtonOnClickListener, geocacheFactory, locationSaver);
+        
         mEditCacheActivityDelegate.onCreate();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        mActivityWithDatabaseLifecycleManager.onPause();
+        mDbFrontend.closeDatabase();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        mActivityWithDatabaseLifecycleManager.onResume();
+        mEditCacheActivityDelegate.onResume();
     }
 }

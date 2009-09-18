@@ -80,10 +80,6 @@ public class GeocacheViewer {
         }
     }
 
-    public static final int CACHE_TYPE_IMAGES[] = {
-            R.drawable.cache_tradi_big, R.drawable.cache_multi_big, R.drawable.cache_mystery_big,
-            R.drawable.blue_dot
-    };
     public static final int CONTAINER_IMAGES[] = {
             R.drawable.size_1, R.drawable.size_2, R.drawable.size_3, R.drawable.size_4
     };
@@ -92,7 +88,7 @@ public class GeocacheViewer {
             R.drawable.stars_5, R.drawable.stars_6, R.drawable.stars_7, R.drawable.stars_8,
             R.drawable.stars_9, R.drawable.stars_10
     };
-    private final AttributeViewer mCacheType;
+    private final ImageView mCacheTypeImageView;
     private final AttributeViewer mContainer;
     private final AttributeViewer mDifficulty;
     private final TextView mId;
@@ -101,12 +97,12 @@ public class GeocacheViewer {
     private final AttributeViewer mTerrain;
 
     public GeocacheViewer(RadarView radarView, TextView gcId, NameViewer gcName,
-            AttributeViewer gcIcon, AttributeViewer gcDifficulty, AttributeViewer gcTerrain,
+            ImageView cacheTypeImageView, AttributeViewer gcDifficulty, AttributeViewer gcTerrain,
             UnlabelledAttributeViewer gcContainer) {
         mRadarView = radarView;
         mId = gcId;
         mName = gcName;
-        mCacheType = gcIcon;
+        mCacheTypeImageView = cacheTypeImageView;
         mDifficulty = gcDifficulty;
         mTerrain = gcTerrain;
         mContainer = gcContainer;
@@ -119,7 +115,7 @@ public class GeocacheViewer {
                 (int)(longitude * GeoUtils.MILLION));
         mId.setText(geocache.getId());
 
-        mCacheType.setImage(geocache.getCacheType().toInt());
+        mCacheTypeImageView.setImageResource(geocache.getCacheType().iconBig());
         mContainer.setImage(geocache.getContainer());
         mDifficulty.setImage(geocache.getDifficulty());
         mTerrain.setImage(geocache.getTerrain());
