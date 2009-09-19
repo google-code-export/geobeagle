@@ -25,6 +25,7 @@ import com.google.code.geobeagle.actions.MenuActionCacheList;
 import com.google.code.geobeagle.actions.MenuActions;
 import com.google.code.geobeagle.activity.main.GeoUtils;
 import com.google.code.geobeagle.activity.map.DensityMatrix.DensityPatch;
+import com.google.code.geobeagle.activity.map.QueryManager.PeggedLoader;
 import com.google.code.geobeagle.database.DbFrontend;
 
 import android.content.Intent;
@@ -39,12 +40,13 @@ import java.util.List;
 
 public class GeoMapActivity extends MapActivity {
 
-	private DbFrontend mDbFrontend;
     private static class NullOverlay extends Overlay {
     }
 
     private static final int DEFAULT_ZOOM_LEVEL = 14;
+
     private static boolean fZoomed = false;
+    private DbFrontend mDbFrontend;
     private GeoMapActivityDelegate mGeoMapActivityDelegate;
     private GeoMapView mMapView;
     private MyLocationOverlay mMyLocationOverlay;
@@ -60,7 +62,11 @@ public class GeoMapActivity extends MapActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.map);
 
+        // Set member variables first, in case anyone after this needs them.
         mMapView = (GeoMapView)findViewById(R.id.mapview);
+        mDbFrontend = new DbFrontend(this);
+        mMyLocationOverlay = new MyLocationOverlay(this, mMapView);
+
         mMapView.setBuiltInZoomControls(true);
         mMapView.setSatellite(false);
 
@@ -69,9 +75,8 @@ public class GeoMapActivity extends MapActivity {
         final CacheDrawables cacheDrawables = new CacheDrawables(resources);
         final CacheItemFactory cacheItemFactory = new CacheItemFactory(cacheDrawables);
 
-        mMyLocationOverlay = new MyLocationOverlay(this, mMapView);
         final List<Overlay> mapOverlays = mMapView.getOverlays();
-        MenuActions menuActions = new MenuActions(getResources());
+        final MenuActions menuActions = new MenuActions(getResources());
         menuActions.add(new GeoMapActivityDelegate.MenuActionToggleSatellite(mMapView));
         menuActions.add(new MenuActionCacheList(this));
 
@@ -85,11 +90,10 @@ public class GeoMapActivity extends MapActivity {
         mapOverlays.add(nullOverlay);
         mapOverlays.add(mMyLocationOverlay);
 
-        ArrayList<Geocache> nullList = new ArrayList<Geocache>();
+        final ArrayList<Geocache> nullList = new ArrayList<Geocache>();
         final List<DensityPatch> densityPatches = new ArrayList<DensityPatch>();
-        QueryManager.PeggedLoader peggedLoader = new QueryManager.PeggedLoader(
-                mDbFrontend, nullList);
-        int[] initialLatLonMinMax = {
+        final PeggedLoader peggedLoader = new QueryManager.PeggedLoader(mDbFrontend, nullList);
+        final int[] initialLatLonMinMax = {
                 0, 0, 0, 0
         };
 
@@ -103,7 +107,6 @@ public class GeoMapActivity extends MapActivity {
         final CachePinsOverlayFactory cachePinsOverlayFactory = new CachePinsOverlayFactory(
                 mMapView, this, defaultMarker, cacheItemFactory, cachePinsOverlay, queryManager);
         mGeoMapActivityDelegate = new GeoMapActivityDelegate(mMapView, menuActions);
-        mDbFrontend = new DbFrontend(this);
 
         final GeoPoint center = new GeoPoint((int)(latitude * GeoUtils.MILLION),
                 (int)(longitude * GeoUtils.MILLION));
