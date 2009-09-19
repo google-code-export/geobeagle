@@ -2,6 +2,7 @@
 
 
   * Download android-formatting.xml and android.importorder files and import them into Eclipse.  Use them to format your code before checking in.
+  * Use Eclipse Source / Sort Members
   * Make sure new files have unix line-endings, not DOS.
   * Make sure all the tests pass!
   * Even better, install `EclEmma`, and make sure you have 100% test coverage for your new code.
