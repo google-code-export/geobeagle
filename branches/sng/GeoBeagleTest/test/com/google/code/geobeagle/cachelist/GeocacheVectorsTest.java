@@ -19,34 +19,42 @@ import static org.easymock.classextension.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.verify;
 import static org.junit.Assert.assertEquals;
 
+import com.google.code.geobeagle.Geocache;
+import com.google.code.geobeagle.LocationControlBuffered;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVector;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVectors;
 
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.powermock.api.easymock.PowerMock;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 
 import java.util.ArrayList;
 
+@RunWith(PowerMockRunner.class)
+@PrepareForTest( {
+    GeocacheVectors.class
+})
 public class GeocacheVectorsTest {
 
-    //Need to be adjusted to create a mock GeocacheVector
-    /*
     @Test
-    public void testAddLocations() {
+    public void testAddLocations() throws Exception {
         LocationControlBuffered here = createMock(LocationControlBuffered.class);
-        Geocache geocache = createMock(Geocache.class);
+        Geocache geocache = PowerMock.createMock(Geocache.class);
         GeocacheVector geocacheVector = createMock(GeocacheVector.class);
-
         ArrayList<Geocache> locations = new ArrayList<Geocache>(0);
         ArrayList<GeocacheVector> geocacheVectorsList = new ArrayList<GeocacheVector>(0);
+
+        PowerMock.expectNew(GeocacheVector.class, geocache, here).andReturn(geocacheVector);
         locations.add(geocache);
 
-        //replayAll();
+        PowerMock.replayAll();
         GeocacheVectors geocacheVectors = new GeocacheVectors(geocacheVectorsList);
         geocacheVectors.addLocations(locations, here);
         assertEquals(geocacheVector, geocacheVectors.get(0));
-        //verify(geocacheVectorFactory);
+        PowerMock.verifyAll();
     }
-    */
 
     @Test
     public void testDelete() {
