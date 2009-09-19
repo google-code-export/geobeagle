@@ -19,7 +19,7 @@ import static org.junit.Assert.assertEquals;
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapView;
 import com.google.code.geobeagle.Geocache;
-import com.google.code.geobeagle.database.GeocachesLoader;
+import com.google.code.geobeagle.database.DbFrontend;
 import com.google.code.geobeagle.database.WhereFactoryFixedArea;
 
 import org.easymock.EasyMock;
@@ -103,7 +103,7 @@ public class QueryManagerTest {
 
     @Test
     public void testPeggedLoader() {
-        GeocachesLoader geocachesLoader = PowerMock.createMock(GeocachesLoader.class);
+        DbFrontend geocachesLoader = PowerMock.createMock(DbFrontend.class);
         WhereFactoryFixedArea where = PowerMock.createMock(WhereFactoryFixedArea.class);
         ArrayList<Geocache> nullList = new ArrayList<Geocache>();
         int[] newBounds = {
@@ -125,7 +125,7 @@ public class QueryManagerTest {
 
     @Test
     public void testPeggedLoaderTooMany() {
-        GeocachesLoader geocachesLoader = PowerMock.createMock(GeocachesLoader.class);
+        DbFrontend geocachesLoader = PowerMock.createMock(DbFrontend.class);
         WhereFactoryFixedArea where = PowerMock.createMock(WhereFactoryFixedArea.class);
         ArrayList<Geocache> nullList = new ArrayList<Geocache>();
         int[] newBounds = {
