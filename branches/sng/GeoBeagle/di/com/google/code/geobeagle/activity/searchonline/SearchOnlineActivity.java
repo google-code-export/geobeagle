@@ -83,8 +83,7 @@ public class SearchOnlineActivity extends Activity {
         final Refresher refresher = new NullRefresher();
         final CompassListener mCompassListener = new CompassListener(refresher,
                 mLocationControlBuffered, 720);
-        final SensorManager mSensorManager = (SensorManager)this
-                .getSystemService(Context.SENSOR_SERVICE);
+        final SensorManager mSensorManager = (SensorManager)getSystemService(Context.SENSOR_SERVICE);
         final CombinedLocationListener mCombinedLocationListener = new CombinedLocationListener(
                 mLocationControlBuffered, gpsStatusWidgetDelegate);
         distanceFormatterManager.addHasDistanceFormatter(gpsStatusWidgetDelegate);
