@@ -25,8 +25,10 @@ import com.google.code.geobeagle.actions.MenuActionCacheList;
 import com.google.code.geobeagle.actions.MenuActions;
 import com.google.code.geobeagle.activity.main.GeoUtils;
 import com.google.code.geobeagle.activity.map.DensityMatrix.DensityPatch;
+import com.google.code.geobeagle.activity.map.QueryManager.CachedNeedsLoading;
 import com.google.code.geobeagle.activity.map.QueryManager.PeggedLoader;
 import com.google.code.geobeagle.database.DbFrontend;
+import com.google.code.geobeagle.xmlimport.GpxImporterDI.Toaster;
 
 import android.content.Intent;
 import android.content.res.Resources;
@@ -34,6 +36,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -92,12 +95,16 @@ public class GeoMapActivity extends MapActivity {
 
         final ArrayList<Geocache> nullList = new ArrayList<Geocache>();
         final List<DensityPatch> densityPatches = new ArrayList<DensityPatch>();
-        final PeggedLoader peggedLoader = new QueryManager.PeggedLoader(mDbFrontend, nullList);
+        final Toaster toaster = new Toaster(this, R.string.too_many_caches, Toast.LENGTH_SHORT);
+        final PeggedLoader peggedLoader = new QueryManager.PeggedLoader(mDbFrontend, nullList,
+                toaster);
         final int[] initialLatLonMinMax = {
                 0, 0, 0, 0
         };
 
-        final QueryManager queryManager = new QueryManager(peggedLoader, initialLatLonMinMax);
+        CachedNeedsLoading cachedNeedsLoading = new CachedNeedsLoading(nullGeoPoint, nullGeoPoint);
+        final QueryManager queryManager = new QueryManager(peggedLoader, cachedNeedsLoading,
+                initialLatLonMinMax);
         final DensityOverlayDelegate densityOverlayDelegate = DensityOverlay.createDelegate(
                 densityPatches, nullGeoPoint, queryManager);
         final DensityOverlay densityOverlay = new DensityOverlay(densityOverlayDelegate);
