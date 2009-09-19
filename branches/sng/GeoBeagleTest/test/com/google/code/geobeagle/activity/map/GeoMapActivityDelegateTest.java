@@ -14,6 +14,8 @@
 
 package com.google.code.geobeagle.activity.map;
 
+import static org.junit.Assert.*;
+
 import com.google.android.maps.MapController;
 import com.google.android.maps.MapView;
 import com.google.code.geobeagle.R;
@@ -84,6 +86,7 @@ public class GeoMapActivityDelegateTest {
                 mapView);
         menuActionToggleSatellite.act();
         menuActionToggleSatellite.act();
+        assertEquals(R.string.menu_toggle_satellite, menuActionToggleSatellite.getId());
         PowerMock.verifyAll();
     }
 }

@@ -19,6 +19,8 @@ import com.google.code.geobeagle.Refresher;
 import com.google.code.geobeagle.LocationControlBuffered.IGpsLocation;
 import com.google.code.geobeagle.activity.cachelist.CacheListDelegateDI;
 
+import android.util.Log;
+
 public class CacheListRefresh implements Refresher {
     public static class ActionManager {
         private final ActionAndTolerance mActionAndTolerances[];
@@ -44,15 +46,30 @@ public class CacheListRefresh implements Refresher {
         }
     }
 
+    public static class UpdateFlag {
+        private boolean mUpdateFlag = true;
+
+        public void setUpdatesEnabled(boolean enabled) {
+            Log.d("GeoBeagle", "Update enabled: " + enabled);
+            mUpdateFlag = enabled;
+        }
+
+        boolean updatesEnabled() {
+            return mUpdateFlag;
+        }
+    }
+
     private final ActionManager mActionManager;
     private final LocationControlBuffered mLocationControlBuffered;
     private final CacheListDelegateDI.Timing mTiming;
+    private final UpdateFlag mUpdateFlag;
 
     public CacheListRefresh(ActionManager actionManager, CacheListDelegateDI.Timing timing,
-            LocationControlBuffered locationControlBuffered) {
+            LocationControlBuffered locationControlBuffered, UpdateFlag updateFlag) {
         mLocationControlBuffered = locationControlBuffered;
         mTiming = timing;
         mActionManager = actionManager;
+        mUpdateFlag = updateFlag;
     }
 
     public void forceRefresh() {
@@ -63,14 +80,15 @@ public class CacheListRefresh implements Refresher {
     }
 
     public void refresh() {
-            //TODO: Is this check still necessary?
+        // TODO: Is this check still necessary?
         /*
-        if (!mSqliteWrapper.isOpen()) {
-            Log.d("GeoBeagle", "Refresh: database is closed, punting.");
-            return;
-        }
-        */
+         * if (!mSqliteWrapper.isOpen()) { Log.d("GeoBeagle",
+         * "Refresh: database is closed, punting."); return; }
+         */
 
+        if (!mUpdateFlag.updatesEnabled())
+            return;
+        Log.d("GeoBeagle", "CacheListRefresh.refresh");
         mTiming.start();
         final long now = mTiming.getTime();
         final IGpsLocation here = mLocationControlBuffered.getGpsLocation();
