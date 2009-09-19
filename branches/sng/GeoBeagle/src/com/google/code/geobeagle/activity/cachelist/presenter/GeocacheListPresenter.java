@@ -62,7 +62,7 @@ public class GeocacheListPresenter {
     private final CombinedLocationManager mCombinedLocationManager;
     // private final SensorEventListener mCompassListener;
     // private final SensorListener mCompassListener;
-    private CompassListenerFactory mCompassListenerFactory;
+    private final CompassListenerFactory mCompassListenerFactory;
     private final DistanceFormatterManager mDistanceFormatterManager;
     private final GeocacheListAdapter mGeocacheListAdapter;
     private final GeocacheSummaryRowInflater mGeocacheSummaryRowInflater;
@@ -70,8 +70,7 @@ public class GeocacheListPresenter {
     private final View mGpsStatusWidget;
     private final ListActivity mListActivity;
     private final LocationControlBuffered mLocationControlBuffered;
-    private SensorManagerWrapper mSensorManagerWrapper;
-
+    private final SensorManagerWrapper mSensorManagerWrapper;
     private final UpdateGpsWidgetRunnable mUpdateGpsWidgetRunnable;
 
     public GeocacheListPresenter(LocationListener combinedLocationListener,
