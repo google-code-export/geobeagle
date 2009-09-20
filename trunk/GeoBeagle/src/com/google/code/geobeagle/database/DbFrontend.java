@@ -69,6 +69,7 @@ public class DbFrontend {
 
     public ArrayList<Geocache> loadCaches(double latitude, double longitude,
             WhereFactory whereFactory) {
+        Log.d("GeoBeagle", "DbFrontend.loadCaches");
         openDatabase();
 
         CacheReaderCursor cursor = mCacheReader.open(latitude, longitude, whereFactory, null);
@@ -97,7 +98,7 @@ public class DbFrontend {
         countCursor.moveToFirst();
         int count = countCursor.getInt(0);
         countCursor.close();
-        Log.d("GeoBeagle", "COUNT:" + count);
+        Log.d("GeoBeagle", "DbFrontEnd.count:" + count);
         return count;
     }
 

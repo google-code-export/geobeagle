@@ -20,20 +20,16 @@ import com.google.code.geobeagle.activity.cachelist.CacheListActivity;
 import android.app.Activity;
 import android.content.Intent;
 
-public class MenuActionCacheList implements MenuAction {
+public class MenuActionCacheList extends MenuActionBase {
     private Activity mActivity;
 
     public MenuActionCacheList(Activity activity) {
+        super(R.string.menu_cache_list);
         mActivity = activity;
     }
 
     @Override
     public void act() {
         mActivity.startActivity(new Intent(mActivity, CacheListActivity.class));
-    }
-
-    @Override
-    public int getId() {
-        return R.string.menu_cache_list;
     }
 }

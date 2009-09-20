@@ -11,6 +11,8 @@
 		License.
 	-->
 <resources>
+	<string name="too_many_caches">Too many caches to display--zoom in to see
+		caches.</string>
 	<string name="satellite_view">Satellite view</string>
 	<string name="map_view">Map view</string>
 	<string name="geobeagle">GeoBeagle</string>

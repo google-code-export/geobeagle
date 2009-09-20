@@ -220,6 +220,22 @@ public class GpxImporterDI {
         }
     }
 
+    public static class Toaster {
+        private final Context mContext;
+        private final int mResId;
+        private final int mDuration;
+
+        public Toaster(Context context, int resId, int duration) {
+            mContext = context;
+            mResId = resId;
+            mDuration = duration;
+        }
+
+        public void showToast() {
+            Toast.makeText(mContext, mResId, mDuration).show();
+        }
+    }
+
     public static GpxImporter create(ListActivity listActivity,
             XmlPullParserWrapper xmlPullParserWrapper, ErrorDisplayer errorDisplayer,
             GeocacheListPresenter geocacheListPresenter, Aborter aborter,

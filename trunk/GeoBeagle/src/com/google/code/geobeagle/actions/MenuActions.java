@@ -14,7 +14,6 @@
 
 package com.google.code.geobeagle.actions;
 
-
 import android.content.res.Resources;
 import android.util.Log;
 import android.view.Menu;
@@ -23,12 +22,12 @@ import java.util.ArrayList;
 
 public class MenuActions {
     private ArrayList<MenuAction> mMenuActions = new ArrayList<MenuAction>();
-    private Resources mResources;
+    private final Resources mResources;
 
     public MenuActions(Resources resources) {
         mResources = resources;
     }
-    
+
     public MenuActions(Resources resources, MenuAction[] menuActions) {
         mResources = resources;
         for (int ix = 0; ix < menuActions.length; ix++) {
@@ -43,10 +42,10 @@ public class MenuActions {
                 return true;
             }
         }
-        
+
         return false;
     }
-    
+
     public void add(MenuAction action) {
         mMenuActions.add(action);
     }
@@ -61,7 +60,8 @@ public class MenuActions {
         menu.clear();
         int ix = 0;
         for (MenuAction action : mMenuActions) {
-            menu.add(0, action.getId(), ix, mResources.getString(action.getId()));
+            final int id = action.getId();
+            menu.add(0, id, ix, mResources.getString(id));
             ix++;
         }
         return true;
