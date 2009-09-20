@@ -17,6 +17,7 @@ package com.google.code.geobeagle.activity.map;
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.Projection;
 import com.google.code.geobeagle.Geocache;
+import com.google.code.geobeagle.activity.cachelist.CacheListDelegateDI;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
@@ -45,20 +46,19 @@ public class CachePinsOverlayFactory {
 
     public CachePinsOverlay getCachePinsOverlay() {
         Log.d("GeoBeagle", "refresh Caches");
-        // final CacheListDelegateDI.Timing timing = new
-        // CacheListDelegateDI.Timing();
+        final CacheListDelegateDI.Timing timing = new CacheListDelegateDI.Timing();
 
         Projection projection = mGeoMapView.getProjection();
         GeoPoint newTopLeft = projection.fromPixels(0, 0);
         GeoPoint newBottomRight = projection.fromPixels(mGeoMapView.getRight(), mGeoMapView
                 .getBottom());
 
+        timing.start();
         if (!mQueryManager.needsLoading(newTopLeft, newBottomRight))
             return mCachePinsOverlay;
-        // timing.lap("Loaded caches");
 
-        // timing.start();
         ArrayList<Geocache> list = mQueryManager.load(newTopLeft, newBottomRight);
+        timing.lap("Loaded caches");
         mCachePinsOverlay = new CachePinsOverlay(mCacheItemFactory, mContext, mDefaultMarker, list);
         return mCachePinsOverlay;
     }

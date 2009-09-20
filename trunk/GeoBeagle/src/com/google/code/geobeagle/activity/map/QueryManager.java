@@ -20,6 +20,8 @@ import com.google.code.geobeagle.database.DbFrontend;
 import com.google.code.geobeagle.database.WhereFactoryFixedArea;
 import com.google.code.geobeagle.xmlimport.GpxImporterDI.Toaster;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 
 class QueryManager {
@@ -39,10 +41,13 @@ class QueryManager {
         }
 
         boolean needsLoading(GeoPoint newTopLeft, GeoPoint newBottomRight) {
-            if (mOldTopLeft.equals(newTopLeft) && mOldBottomRight.equals(newBottomRight))
+            if (mOldTopLeft.equals(newTopLeft) && mOldBottomRight.equals(newBottomRight)) {
+                Log.d("GeoBeagle", "QueryManager.needsLoading: false");
                 return false;
+            }
             mOldTopLeft = newTopLeft;
             mOldBottomRight = newBottomRight;
+            Log.d("GeoBeagle", "QueryManager.needsLoading: true");
             return true;
         }
     }
@@ -62,9 +67,12 @@ class QueryManager {
 
         ArrayList<Geocache> load(int latMin, int lonMin, int latMax, int lonMax,
                 WhereFactoryFixedArea where, int[] newBounds) {
+            Log.d("GeoBeagle", "PeggedLoader.load" + latMin + ", " + lonMin + ", " + latMax + ", "
+                    + lonMax);
             if (mDbFrontend.count(0, 0, where) > 1500) {
                 latMin = latMax = lonMin = lonMax = 0;
                 if (!mTooManyCaches) {
+                    Log.d("GeoBeagle", "QueryManager.load: too many caches");
                     mToaster.showToast();
                     mTooManyCaches = true;
                 }
@@ -94,6 +102,7 @@ class QueryManager {
         // Expand the area by the resolution so we get complete patches for the
         // density map. This isn't needed for the pins overlay, but it doesn't
         // hurt either.
+        Log.d("GeoBeagle", "QueryManager.load" + newTopLeft + ", " + newBottomRight);
         final int lonMin = newTopLeft.getLongitudeE6()
                 - DensityPatchManager.RESOLUTION_LONGITUDE_E6;
         final int latMax = newTopLeft.getLatitudeE6() + DensityPatchManager.RESOLUTION_LATITUDE_E6;

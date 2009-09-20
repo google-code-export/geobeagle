@@ -27,19 +27,29 @@ import com.google.code.geobeagle.database.WhereFactoryFixedArea;
 import com.google.code.geobeagle.xmlimport.GpxImporterDI.Toaster;
 
 import org.easymock.EasyMock;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.api.easymock.PowerMock;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest( {
-        DensityPatchManager.class, MapView.class, QueryManager.class
+        DensityPatchManager.class, Log.class, MapView.class, QueryManager.class
 })
 public class QueryManagerTest {
+    @Before
+    public void ignoreLogs() {
+        PowerMock.mockStatic(Log.class);
+        EasyMock.expect(Log.d((String)EasyMock.anyObject(), (String)EasyMock.anyObject()))
+                .andReturn(0).anyTimes();
+    }
+
     @Test
     public void testLoad() throws Exception {
         GeoPoint topLeft = PowerMock.createMock(GeoPoint.class);
@@ -139,11 +149,13 @@ public class QueryManagerTest {
     public void testCachedNeedsLoading() {
         GeoPoint topLeft = PowerMock.createMock(GeoPoint.class);
         GeoPoint bottomRight = PowerMock.createMock(GeoPoint.class);
-        
+
+        PowerMock.replayAll();
         CachedNeedsLoading cachedNeedsLoading = new CachedNeedsLoading(topLeft, bottomRight);
         assertFalse(cachedNeedsLoading.needsLoading(topLeft, bottomRight));
         assertTrue(cachedNeedsLoading.needsLoading(bottomRight, topLeft));
         assertFalse(cachedNeedsLoading.needsLoading(bottomRight, topLeft));
+        PowerMock.verifyAll();
     }
 
     @Test
