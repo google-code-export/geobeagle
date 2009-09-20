@@ -61,10 +61,9 @@ public class CacheListDelegate {
 
     private final ActivitySaver mActivitySaver;
     private final CacheListRefresh mCacheListRefresh;
-    private GeocacheListController mController;
+    private final GeocacheListController mController;
     private final DbFrontend mDbFrontend;
     private final ImportIntentManager mImportIntentManager;
-
     private final GeocacheListPresenter mPresenter;
 
     public CacheListDelegate(ImportIntentManager importIntentManager, ActivitySaver activitySaver,

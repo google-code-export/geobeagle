@@ -43,8 +43,9 @@ public class MenuActionMyLocationTest {
         locationSaver.saveLocation(geocache);
 
         PowerMock.replayAll();
-        new MenuActionMyLocation(cacheListRefresh, null, geocacheFromMyLocationFactory,
-                locationSaver).act();
+        final MenuActionMyLocation menuActionMyLocation = new MenuActionMyLocation(
+                cacheListRefresh, null, geocacheFromMyLocationFactory, locationSaver);
+        menuActionMyLocation.act();
         PowerMock.verifyAll();
     }
 

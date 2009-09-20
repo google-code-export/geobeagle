@@ -12,23 +12,17 @@
  ** limitations under the License.
  */
 
-package com.google.code.geobeagle.activity.main.menuactions;
+package com.google.code.geobeagle.actions;
 
-import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.actions.MenuActionBase;
+public abstract class MenuActionBase implements MenuAction {
+    private final int mId;
 
-import android.app.Activity;
-
-public class MenuActionLogFind extends MenuActionBase {
-    private final Activity mActivity;
-
-    public MenuActionLogFind(Activity activity) {
-        super(R.string.menu_log_find);
-        mActivity = activity;
+    public MenuActionBase(int id) {
+        mId = id;
     }
 
     @Override
-    public void act() {
-        mActivity.showDialog(R.id.menu_log_find);
+    public int getId() {
+        return mId;
     }
 }

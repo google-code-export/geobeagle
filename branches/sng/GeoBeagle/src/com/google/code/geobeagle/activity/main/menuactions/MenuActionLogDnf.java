@@ -15,14 +15,15 @@
 package com.google.code.geobeagle.activity.main.menuactions;
 
 import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.actions.MenuAction;
+import com.google.code.geobeagle.actions.MenuActionBase;
 
 import android.app.Activity;
 
-public class MenuActionLogDnf implements MenuAction {
+public class MenuActionLogDnf extends MenuActionBase {
     private final Activity mActivity;
 
     public MenuActionLogDnf(Activity activity) {
+        super(R.string.menu_log_dnf);
         mActivity = activity;
     }
 
@@ -30,10 +31,4 @@ public class MenuActionLogDnf implements MenuAction {
     public void act() {
         mActivity.showDialog(R.id.menu_log_dnf);
     }
-
-    @Override
-    public int getId() {
-        return R.string.menu_log_dnf;
-    }
-
 }

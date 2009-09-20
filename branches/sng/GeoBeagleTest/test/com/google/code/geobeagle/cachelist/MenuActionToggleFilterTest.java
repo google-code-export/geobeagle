@@ -34,7 +34,9 @@ public class MenuActionToggleFilterTest {
         cacheListRefresh.forceRefresh();
 
         PowerMock.replayAll();
-        new MenuActionToggleFilter(filterNearestCaches, cacheListRefresh).act();
+        final MenuActionToggleFilter menuActionToggleFilter = new MenuActionToggleFilter(
+                filterNearestCaches, cacheListRefresh);
+        menuActionToggleFilter.act();
         PowerMock.verifyAll();
     }
 }

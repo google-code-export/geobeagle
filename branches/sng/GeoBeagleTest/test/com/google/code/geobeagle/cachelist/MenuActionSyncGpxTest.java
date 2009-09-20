@@ -46,7 +46,9 @@ public class MenuActionSyncGpxTest {
         gpxImporter.importGpxs(cacheListRefresh);
 
         PowerMock.replayAll();
-        new MenuActionSyncGpx(null, cacheListRefresh, gpxImporterFactory, dbFrontend).act();
+        final MenuActionSyncGpx menuActionSyncGpx = new MenuActionSyncGpx(null, cacheListRefresh,
+                gpxImporterFactory, dbFrontend);
+        menuActionSyncGpx.act();
         PowerMock.verifyAll();
     }
 
