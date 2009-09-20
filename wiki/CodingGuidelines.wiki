@@ -4,7 +4,7 @@
   * Download android-formatting.xml and android.importorder files and import them into Eclipse.  Use them to format your code before checking in.
   * Use Eclipse Source / Sort Members
   * Make sure new files have unix line-endings, not DOS.
-  * Watch the Google "clean code talks" video, and read the doc for PowerMock.
+  * Watch the Google "clean code talks" video, and read the doc for `PowerMock`.
   * Make sure all the tests pass!
   * Don't do any work in constructors--work in constructors is work that has to repeated for each test case.
   * Even better, install `EclEmma`, and make sure you have 100% test coverage for your new code.
@@ -13,8 +13,8 @@
 = The DI folder=
 "Untestable" code goes into the "di" directory.  (Untestable is different from untested!)  The following code does not need unit tests:
   * one-time object constructors and graph construction.
-  * One-time object configuration (e.g. setting up a MapView).
+  * One-time object configuration (e.g. setting up a `MapView`).
   * Code derived from Android classes (but put most of the work into a delegate, so *that* can be tested.
   * Enums--but only because there is a bug in Emma which makes it impossible to get 100% code coverage for an enum.
 
-A lot of the early code in GeoBeagle was written before PowerMock was used for testing.  Without PowerMock, it is impossible to test constructors, so a lot of factory classes were created.  Now that we have PowerMock, many (but not all) of the factory classes can go away.
+A lot of the early code in `GeoBeagle` was written before `PowerMock` was used for testing.  Without `PowerMock`, it is impossible to test constructors, so a lot of factory classes were created.  Now that we have `PowerMock`, many (but not all) of the factory classes can go away.
