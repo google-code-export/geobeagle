@@ -12,31 +12,27 @@
  ** limitations under the License.
  */
 
-package com.google.code.geobeagle.cachelist;
-
-import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionToggleFilter;
-import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
-import com.google.code.geobeagle.database.FilterNearestCaches;
+package com.google.code.geobeagle.activity.cachelist.presenter;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.api.easymock.PowerMock;
+import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+@PrepareForTest( {})
 @RunWith(PowerMockRunner.class)
-public class MenuActionToggleFilterTest {
-    @Test
-    public void testAct() {
-        FilterNearestCaches filterNearestCaches = PowerMock.createMock(FilterNearestCaches.class);
-        CacheListRefresh cacheListRefresh = PowerMock.createMock(CacheListRefresh.class);
+public class DistanceUpdaterTest {
 
-        filterNearestCaches.toggle();
-        cacheListRefresh.forceRefresh();
+    @Test
+    public void testDistanceUpdater() {
+        GeocacheListAdapter geocacheListAdapter = PowerMock.createMock(GeocacheListAdapter.class);
+
+        geocacheListAdapter.notifyDataSetChanged();
 
         PowerMock.replayAll();
-        final MenuActionToggleFilter menuActionToggleFilter = new MenuActionToggleFilter(
-                filterNearestCaches, cacheListRefresh);
-        menuActionToggleFilter.act();
+        new DistanceUpdater(geocacheListAdapter).refresh();
         PowerMock.verifyAll();
     }
+
 }

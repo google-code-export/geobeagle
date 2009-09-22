@@ -25,9 +25,9 @@ import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.GeocacheFactory;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.GeocacheFactory.Source;
+import com.google.code.geobeagle.actions.MenuActions;
 import com.google.code.geobeagle.activity.ActivitySaver;
 import com.google.code.geobeagle.activity.ActivityType;
-import com.google.code.geobeagle.actions.MenuActions;
 import com.google.code.geobeagle.activity.cachelist.GeocacheListController;
 import com.google.code.geobeagle.activity.main.fieldnotes.FieldNoteSender;
 import com.google.code.geobeagle.activity.main.fieldnotes.FieldNoteSender.FieldNoteResources;
@@ -35,6 +35,7 @@ import com.google.code.geobeagle.activity.main.view.GeocacheViewer;
 import com.google.code.geobeagle.activity.main.view.WebPageAndDetailsButtonEnabler;
 import com.google.code.geobeagle.database.DatabaseDI;
 import com.google.code.geobeagle.database.DbFrontend;
+
 import org.easymock.EasyMock;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -264,7 +265,7 @@ public class GeoBeagleDelegateTest {
     }
 
     @Test
-    public void onResume() {
+    public void onResume() throws Exception {
         RadarView radarView = PowerMock.createMock(RadarView.class);
         SharedPreferences sharedPreferences = PowerMock.createMock(SharedPreferences.class);
         AppLifecycleManager appLifecycleManager = PowerMock.createMock(AppLifecycleManager.class);
@@ -279,7 +280,6 @@ public class GeoBeagleDelegateTest {
         WebPageAndDetailsButtonEnabler webPageButtonEnabler = PowerMock
                 .createMock(WebPageAndDetailsButtonEnabler.class);
         DbFrontend dbFrontend = PowerMock.createMock(DbFrontend.class);
-
         PowerMock.mockStatic(DatabaseDI.class);
 
         radarView.handleUnknownLocation();

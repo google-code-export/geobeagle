@@ -59,6 +59,7 @@ public class EditCacheActivityDelegateTest {
     }
 
     @Test
+
     public void testGeocacheViewGetAndSet() {
         EditText id = PowerMock.createMock(EditText.class);
         EditText name = PowerMock.createMock(EditText.class);

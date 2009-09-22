@@ -14,12 +14,12 @@
 
 package com.google.code.geobeagle.activity.map;
 
-import com.google.android.maps.GeoPoint;
+import static org.junit.Assert.*;
+
 import com.google.android.maps.MapController;
 import com.google.android.maps.MapView;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.actions.MenuActions;
-import com.google.code.geobeagle.database.DbFrontend;
 
 import org.easymock.EasyMock;
 import org.junit.Test;
@@ -28,7 +28,6 @@ import org.powermock.api.easymock.PowerMock;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import android.content.Intent;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -37,28 +36,33 @@ import android.view.MenuItem;
         GeoMapView.class, MapController.class, GeoMapActivityDelegate.class
 })
 public class GeoMapActivityDelegateTest {
+
     @Test
-    public void testInitialize() throws Exception {
-        GeoMapView mapView = PowerMock.createMock(GeoMapView.class);
-        DbFrontend dbFrontend = PowerMock.createMock(DbFrontend.class);
-        CachePinsOverlay cachesOverlay = PowerMock.createMock(CachePinsOverlay.class);
-        Intent intent = PowerMock.createMock(Intent.class);
-        GeoPoint geoPoint = PowerMock.createMock(GeoPoint.class);
-        MapController mapController = PowerMock.createMock(MapController.class);
+    public void testMenuActionToggleSatellite() {
+        MapView mapView = PowerMock.createMock(MapView.class);
 
-        mapView.setBuiltInZoomControls(true);
+        EasyMock.expect(mapView.isSatellite()).andReturn(true);
         mapView.setSatellite(false);
-        mapView.setScrollListener((GeoMapActivityDelegate)EasyMock.anyObject());
-        EasyMock.expect(intent.getFloatExtra("latitude", 0)).andReturn(122.0f);
-        EasyMock.expect(intent.getFloatExtra("longitude", 0)).andReturn(37.0f);
-        PowerMock.expectNew(GeoPoint.class, 122000000, 37000000).andReturn(geoPoint);
-        mapController.setCenter(geoPoint);
-
-        EasyMock.expect(mapController.setZoom(14)).andReturn(14);
+        EasyMock.expect(mapView.isSatellite()).andReturn(false);
+        mapView.setSatellite(true);
 
         PowerMock.replayAll();
-        new GeoMapActivityDelegate(mapView, null).initialize(intent, dbFrontend,
-                cachesOverlay, mapController, null);
+        final GeoMapActivityDelegate.MenuActionToggleSatellite menuActionToggleSatellite = new GeoMapActivityDelegate.MenuActionToggleSatellite(
+                mapView);
+        menuActionToggleSatellite.act();
+        menuActionToggleSatellite.act();
+        PowerMock.verifyAll();
+    }
+
+    @Test
+    public void testOnCreateOptionsMenu() {
+        MenuActions menuActions = PowerMock.createMock(MenuActions.class);
+        Menu menu = PowerMock.createMock(Menu.class);
+
+        EasyMock.expect(menuActions.onCreateOptionsMenu(menu)).andReturn(true);
+
+        PowerMock.replayAll();
+        assertTrue(new GeoMapActivityDelegate(null, menuActions).onCreateOptionsMenu(menu));
         PowerMock.verifyAll();
     }
 
@@ -79,8 +83,8 @@ public class GeoMapActivityDelegateTest {
         PowerMock.replayAll();
         final GeoMapActivityDelegate geoMapActivityDelegate = new GeoMapActivityDelegate(mapView,
                 null);
-        geoMapActivityDelegate.onMenuOpened(0, menu);
-        geoMapActivityDelegate.onMenuOpened(0, menu);
+        geoMapActivityDelegate.onMenuOpened(menu);
+        geoMapActivityDelegate.onMenuOpened(menu);
         PowerMock.verifyAll();
     }
 
@@ -94,23 +98,6 @@ public class GeoMapActivityDelegateTest {
 
         PowerMock.replayAll();
         new GeoMapActivityDelegate(null, menuActions).onOptionsItemSelected(menuItem);
-        PowerMock.verifyAll();
-    }
-
-    @Test
-    public void testMenuActionToggleSatellite() {
-        MapView mapView = PowerMock.createMock(MapView.class);
-
-        EasyMock.expect(mapView.isSatellite()).andReturn(true);
-        mapView.setSatellite(false);
-        EasyMock.expect(mapView.isSatellite()).andReturn(false);
-        mapView.setSatellite(true);
-
-        PowerMock.replayAll();
-        final GeoMapActivityDelegate.MenuActionToggleSatellite menuActionToggleSatellite = new GeoMapActivityDelegate.MenuActionToggleSatellite(
-                mapView);
-        menuActionToggleSatellite.act();
-        menuActionToggleSatellite.act();
         PowerMock.verifyAll();
     }
 }

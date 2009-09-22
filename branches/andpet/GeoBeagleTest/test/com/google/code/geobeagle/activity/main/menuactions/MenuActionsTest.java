@@ -108,7 +108,8 @@ public class MenuActionsTest {
         activity.showDialog(R.id.menu_log_dnf);
 
         PowerMock.replayAll();
-        new MenuActionLogDnf(activity).act();
+        final MenuActionLogDnf menuActionLogDnf = new MenuActionLogDnf(activity);
+        menuActionLogDnf.act();
         PowerMock.verifyAll();
     }
 
@@ -119,7 +120,8 @@ public class MenuActionsTest {
         activity.showDialog(R.id.menu_log_find);
 
         PowerMock.replayAll();
-        new MenuActionLogFind(activity).act();
+        final MenuActionLogFind menuActionLogFind = new MenuActionLogFind(activity);
+        menuActionLogFind.act();
         PowerMock.verifyAll();
     }
 }

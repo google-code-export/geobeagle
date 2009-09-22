@@ -28,6 +28,7 @@ import com.google.code.geobeagle.activity.cachelist.view.GeocacheSummaryRowInfla
 import com.google.code.geobeagle.formatting.DistanceFormatter;
 
 import org.easymock.classextension.EasyMock;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.api.easymock.PowerMock;
@@ -45,6 +46,13 @@ import android.widget.TextView;
 })
 @RunWith(PowerMockRunner.class)
 public class GeocacheSummaryRowInflaterTest {
+
+    @Before
+    public void allowLogging() {
+        PowerMock.mockStatic(Log.class);
+        EasyMock.expect(Log.d((String)EasyMock.anyObject(), (String)EasyMock.anyObject()))
+                .andReturn(0).anyTimes();
+    }
 
     @Test
     public void testCacheRowViewsSet() {
