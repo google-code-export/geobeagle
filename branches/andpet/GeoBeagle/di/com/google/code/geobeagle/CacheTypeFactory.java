@@ -17,11 +17,14 @@ public class CacheTypeFactory {
 
     public CacheType fromTag(String tag) {
         String tagLower = tag.toLowerCase();
+        int longestMatch = 0;
 
         CacheType result = CacheType.NULL;
         for (CacheType cacheType : mCacheTypes.values()) {
-            if (cacheType.getTag().contains(tagLower)) {
+            if (tagLower.contains(cacheType.getTag()) 
+                    && cacheType.getTag().length() > longestMatch) {
                 result = cacheType;
+                longestMatch = cacheType.getTag().length();
                 //Necessary to continue the search to find mega-events and 
                 //individual waypoint types.
             }

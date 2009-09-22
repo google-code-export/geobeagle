@@ -190,7 +190,7 @@ public class Geocache implements Parcelable {
         cacheWriter.startWriting();
         cacheWriter.insertAndUpdateCache(getId(), getName(), getLatitude(), 
                 getLongitude(), getSourceType(), getSourceName(), 
-                getCacheType(), 0, 0, 0);
+                getCacheType(), getDifficulty(), getTerrain(), getContainer());
         cacheWriter.stopWriting();
     }
 
