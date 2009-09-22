@@ -61,7 +61,8 @@ public class MenuActions {
         menu.clear();
         int ix = 0;
         for (MenuAction action : mMenuActions) {
-            menu.add(0, action.getId(), ix, mResources.getString(action.getId()));
+            final int id = action.getId();
+            menu.add(0, id, ix, mResources.getString(id));
             ix++;
         }
         return true;

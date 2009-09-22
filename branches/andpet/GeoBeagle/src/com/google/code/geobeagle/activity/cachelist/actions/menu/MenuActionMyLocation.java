@@ -17,12 +17,12 @@ package com.google.code.geobeagle.activity.cachelist.actions.menu;
 import com.google.code.geobeagle.ErrorDisplayer;
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.actions.MenuAction;
+import com.google.code.geobeagle.actions.MenuActionBase;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheFromMyLocationFactory;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
 import com.google.code.geobeagle.database.DbFrontend;
 
-public class MenuActionMyLocation implements MenuAction {
+public class MenuActionMyLocation extends MenuActionBase {
     private final ErrorDisplayer mErrorDisplayer;
     private final GeocacheFromMyLocationFactory mGeocacheFromMyLocationFactory;
     private final CacheListRefresh mMenuActionRefresh;
@@ -30,6 +30,7 @@ public class MenuActionMyLocation implements MenuAction {
 
     public MenuActionMyLocation(CacheListRefresh cacheListRefresh, ErrorDisplayer errorDisplayer,
             GeocacheFromMyLocationFactory geocacheFromMyLocationFactory, DbFrontend dbFrontend) {
+        super(R.string.menu_add_my_location);
         mGeocacheFromMyLocationFactory = geocacheFromMyLocationFactory;
         mErrorDisplayer = errorDisplayer;
         mMenuActionRefresh = cacheListRefresh;

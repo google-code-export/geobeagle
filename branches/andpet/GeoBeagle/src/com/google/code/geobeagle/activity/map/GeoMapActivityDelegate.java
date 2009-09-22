@@ -14,31 +14,20 @@
 
 package com.google.code.geobeagle.activity.map;
 
-import java.util.ArrayList;
+import com.google.android.maps.MapView;
+import com.google.code.geobeagle.R;
+import com.google.code.geobeagle.actions.MenuActionBase;
+import com.google.code.geobeagle.actions.MenuActions;
 
-import android.content.Intent;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.google.android.maps.GeoPoint;
-import com.google.android.maps.MapController;
-import com.google.android.maps.MapView;
-import com.google.android.maps.Projection;
-import com.google.code.geobeagle.Geocache;
-import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.actions.MenuAction;
-import com.google.code.geobeagle.actions.MenuActions;
-import com.google.code.geobeagle.activity.main.GeoUtils;
-import com.google.code.geobeagle.database.DbFrontend;
-import com.google.code.geobeagle.database.WhereFactoryFixedArea;
-
 public class GeoMapActivityDelegate {
-
-    public static class MenuActionToggleSatellite implements MenuAction {
+    public static class MenuActionToggleSatellite extends MenuActionBase {
         private final MapView mMapView;
 
         public MenuActionToggleSatellite(MapView mapView) {
+            super(R.string.menu_toggle_satellite);
             mMapView = mapView;
         }
 
@@ -46,56 +35,21 @@ public class GeoMapActivityDelegate {
         public void act() {
             mMapView.setSatellite(!mMapView.isSatellite());
         }
-
-        @Override
-        public int getId() {
-            return R.string.menu_toggle_satellite;
-        }
     }
 
     private final GeoMapView mMapView;
     private final MenuActions mMenuActions;
-    private CachePinsOverlay mCachesOverlay;
-    private DbFrontend mDbFrontend;
-    private static boolean fZoomed = false;
-    private DensityOverlay mDensityOverlay;
 
     public GeoMapActivityDelegate(GeoMapView mapView, MenuActions menuActions) {
         mMapView = mapView;
         mMenuActions = menuActions;
     }
 
-	public void initialize(Intent intent, 
-	                       DbFrontend dbFrontend,
-	                       CachePinsOverlay cachesOverlay,
-	                       MapController mapController,
-	                       DensityOverlay densityOverlay) {
-    	mDbFrontend = dbFrontend;
-        mMapView.setBuiltInZoomControls(true);
-        // mMapView.setOnLongClickListener()
-        mMapView.setSatellite(false);
-        mMapView.setScrollListener(this);
-
-        double latitude = intent.getFloatExtra("latitude", 0);
-        double longitude = intent.getFloatExtra("longitude", 0);
-        GeoPoint center = new GeoPoint((int)(latitude * GeoUtils.MILLION),
-                (int)(longitude * GeoUtils.MILLION));
-
-        mapController.setCenter(center);
-        if (!fZoomed) {
-            mapController.setZoom(14);
-            fZoomed = true;
-        }
-
-        mCachesOverlay = cachesOverlay;
-        mDensityOverlay = densityOverlay;
+    public boolean onCreateOptionsMenu(Menu menu) {
+        return mMenuActions.onCreateOptionsMenu(menu);
     }
 
-    /**
-     * @param featureId
-     */
-    public boolean onMenuOpened(int featureId, Menu menu) {
-        //TODO: implement   mMenuActions.onMenuOpened(featureId, menu);
+    public boolean onMenuOpened(Menu menu) {
         menu.findItem(R.string.menu_toggle_satellite).setTitle(
                 mMapView.isSatellite() ? R.string.map_view : R.string.satellite_view);
         return true;
@@ -103,86 +57,6 @@ public class GeoMapActivityDelegate {
 
     public boolean onOptionsItemSelected(MenuItem item) {
         return mMenuActions.act(item.getItemId());
-    }
-
-    public void refreshCaches() {
-		//GeoPoint center = mMapView.getMapCenter();
-		//double lat = center.getLatitudeE6() / 1000000.0;
-		//double lon = center.getLongitudeE6() / 1000000.0;
-        //int zoomLevel = mMapView.getZoomLevel();
-		//Projection proj = mMapView.getProjection();
-        //int latSpanE6Proj = lowerRight.getLatitudeE6() - upperLeft.getLatitudeE6();
-        //int lonSpanE6Proj = lowerRight.getLongitudeE6() - upperLeft.getLongitudeE6();
-
-        //WhereStringFactory whereStringFactory = new WhereStringFactory();
-    	//GeoPoint pt2 = proj.fromPixels(35, 35);  //grid size, in pixels
-        /*
-        double latResolution = 
-        	Math.abs(pt2.getLatitudeE6()-pt1.getLatitudeE6()) / 1000000.0;
-        double lonResolution = 
-        	Math.abs(pt2.getLongitudeE6()-pt1.getLongitudeE6()) / 1000000.0;
-        	*/
-        
-    	Projection proj = mMapView.getProjection();
-    	GeoPoint pt1 = proj.fromPixels(0, 0);
-        GeoPoint pt3 = proj.fromPixels(mMapView.getRight(), mMapView.getBottom());
-        
-        double latMin = Math.min(pt1.getLatitudeE6(), pt3.getLatitudeE6()) / 1000000.0;
-        double lonMin = Math.min(pt1.getLongitudeE6(), pt3.getLongitudeE6()) / 1000000.0;
-        double latMax = Math.max(pt1.getLatitudeE6(), pt3.getLatitudeE6()) / 1000000.0;
-        double lonMax = Math.max(pt1.getLongitudeE6(), pt3.getLongitudeE6()) / 1000000.0;
-        
-    	//TODO: Adjust to look square on the screen, no matter the latitude
-        double lonResolution = 0.02;  //((int)(lonResolution*1E4)) / 1.0E4;
-        double latResolution = 0.01;   //lonResolution * Math.cos(latMin/90.0 * Math.PI/2.0);
-        
-        //Expand area to cover whole density patches:
-        latMin = Math.floor(latMin / latResolution) * latResolution;
-        lonMin = Math.floor(lonMin / lonResolution) * lonResolution;
-        latMax = Math.ceil(latMax / latResolution) * latResolution;
-        lonMax = Math.ceil(lonMax / lonResolution) * lonResolution;
-        
-		WhereFactoryFixedArea where = 
-			new WhereFactoryFixedArea(latMin, lonMin, latMax, lonMax);
-		
-        ArrayList<Geocache> list = mDbFrontend.loadCaches(0, 0, where);
-        Log.d("GeoBeagle", "GeoMapActivityDelegate.refreshCaches will load " 
-              + list.size() + " caches");
-
-        if (list.size() > 100) {
-            DensityMatrix densityMatrix = new DensityMatrix(latResolution,
-                                                            lonResolution);
-            densityMatrix.addCaches(list);
-            mDensityOverlay.setCacheListUsingGuiThread(densityMatrix);
-            ArrayList<Geocache> empty = new ArrayList<Geocache>();
-            mCachesOverlay.setCacheListUsingGuiThread(empty);
-        } else {
-            mDensityOverlay.setCacheListUsingGuiThread(null);
-            mCachesOverlay.setCacheListUsingGuiThread(list);
-        }
-    }
-
-    /** Also call this when the layout is first determined */
-    public void onLayoutChange() {
-    	//Log.d("GeoBeagle", "onLayoutChange");
-    	refreshCaches();
-    }
-
-    public void onScrollChange() {
-    	//Log.d("GeoBeagle", "onScrollChange");
-    	refreshCaches();
-    }
-
-    /**
-     * @param prevZoom
-     */
-    public void onZoomChange(int prevZoom, int newZoom) {
-    	//Log.d("GeoBeagle", "New zoom level: " + newZoom);
-    	refreshCaches();
-    }
-
-    public boolean onCreateOptionsMenu(Menu menu) {
-        return mMenuActions.onCreateOptionsMenu(menu);
     }
 
 }

@@ -26,10 +26,10 @@ public class CacheTypeFilter {
         boolean isFirst = true;
         for (CacheType cacheType : mEnabledTypes) {
             if (isFirst) {
-                result.append(" CacheType == ");
+                result.append(" CacheType = ");
                 isFirst = false;
             } else {
-                result.append(" AND CacheType == ");
+                result.append(" OR CacheType = ");
             }
             result.append(cacheType.toInt());
         }

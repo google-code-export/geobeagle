@@ -14,24 +14,15 @@
 
 package com.google.code.geobeagle.actions;
 
-import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.activity.EditCacheActivity;
-import com.google.code.geobeagle.activity.main.GeoBeagle;
+public abstract class MenuActionBase implements MenuAction {
+    private final int mId;
 
-import android.content.Intent;
-
-public class MenuActionEditGeocache extends MenuActionBase {
-    private final GeoBeagle mParent;
-
-    public MenuActionEditGeocache(GeoBeagle parent) {
-        super(R.string.menu_edit_geocache);
-        mParent = parent;
+    public MenuActionBase(int id) {
+        mId = id;
     }
 
     @Override
-    public void act() {
-        final Intent intent = new Intent(mParent, EditCacheActivity.class);
-        intent.putExtra("geocache", mParent.getGeocache());
-        mParent.startActivityForResult(intent, 0);
+    public int getId() {
+        return mId;
     }
 }

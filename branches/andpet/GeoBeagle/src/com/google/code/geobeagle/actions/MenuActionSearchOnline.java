@@ -20,20 +20,16 @@ import com.google.code.geobeagle.activity.searchonline.SearchOnlineActivity;
 import android.app.Activity;
 import android.content.Intent;
 
-public class MenuActionSearchOnline implements MenuAction {
+public class MenuActionSearchOnline extends MenuActionBase {
     private final Activity mActivity;
 
     public MenuActionSearchOnline(Activity activity) {
+        super(R.string.menu_search_online);
         mActivity = activity;
     }
 
     @Override
     public void act() {
         mActivity.startActivity(new Intent(mActivity, SearchOnlineActivity.class));
-    }
-
-    @Override
-    public int getId() {
-        return R.string.menu_search_online;
     }
 }

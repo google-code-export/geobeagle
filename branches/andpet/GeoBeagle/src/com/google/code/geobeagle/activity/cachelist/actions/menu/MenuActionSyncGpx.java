@@ -15,13 +15,13 @@
 package com.google.code.geobeagle.activity.cachelist.actions.menu;
 
 import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.actions.MenuAction;
+import com.google.code.geobeagle.actions.MenuActionBase;
 import com.google.code.geobeagle.activity.cachelist.GpxImporterFactory;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
 import com.google.code.geobeagle.database.DbFrontend;
 import com.google.code.geobeagle.xmlimport.GpxImporter;
 
-public class MenuActionSyncGpx implements MenuAction {
+public class MenuActionSyncGpx extends MenuActionBase {
     private Abortable mAbortable;
     private final CacheListRefresh mCacheListRefresh;
     private final GpxImporterFactory mGpxImporterFactory;
@@ -29,6 +29,7 @@ public class MenuActionSyncGpx implements MenuAction {
 
     public MenuActionSyncGpx(Abortable abortable, CacheListRefresh cacheListRefresh,
             GpxImporterFactory gpxImporterFactory, DbFrontend dbFrontend) {
+        super(R.string.menu_sync);
         mAbortable = abortable;
         mCacheListRefresh = cacheListRefresh;
         mGpxImporterFactory = gpxImporterFactory;
@@ -44,10 +45,4 @@ public class MenuActionSyncGpx implements MenuAction {
         mAbortable = gpxImporter;
         gpxImporter.importGpxs(mCacheListRefresh);
     }
-
-    @Override
-    public int getId() {
-        return R.string.menu_sync;
-    }
-    
 }

@@ -16,10 +16,10 @@ package com.google.code.geobeagle.database;
 
 /** Where clause with limits set during construction, not when calling getWhere() */
 public class WhereFactoryFixedArea implements WhereFactory {
-	private double mLatLow;
-	private double mLonLow;
-	private double mLatHigh;
-	private double mLonHigh;
+	private final double mLatLow;
+	private final double mLonLow;
+	private final double mLatHigh;
+	private final double mLonHigh;
 
 	public WhereFactoryFixedArea(double latLow, double lonLow,
 	                             double latHigh, double lonHigh) {
@@ -35,7 +35,5 @@ public class WhereFactoryFixedArea implements WhereFactory {
 
 		return "Latitude >= " + mLatLow + " AND Latitude < " + mLatHigh + 
 		       " AND Longitude >= " + mLonLow + " AND Longitude < " + mLonHigh;
-		
-		// + " AND (CacheType = 1 OR CacheType = 2 OR CacheType = 3 OR CacheType = 4)";
 	}
 }

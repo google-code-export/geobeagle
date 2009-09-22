@@ -1,72 +1,56 @@
+/*
+ ** Licensed under the Apache License, Version 2.0 (the "License");
+ ** you may not use this file except in compliance with the License.
+ ** You may obtain a copy of the License at
+ **
+ **     http://www.apache.org/licenses/LICENSE-2.0
+ **
+ ** Unless required by applicable law or agreed to in writing, software
+ ** distributed under the License is distributed on an "AS IS" BASIS,
+ ** WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ ** See the License for the specific language governing permissions and
+ ** limitations under the License.
+ */
+
 package com.google.code.geobeagle.activity.map;
 
-import java.util.List;
+import com.google.android.maps.GeoPoint;
+import com.google.android.maps.MapView;
+import com.google.android.maps.Overlay;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
-import android.os.Handler;
 
-import com.google.android.maps.MapView;
-import com.google.android.maps.Overlay;
-import com.google.android.maps.Projection;
-import com.google.code.geobeagle.activity.map.DensityMatrix.DensityPatch;
+import java.util.List;
 
 public class DensityOverlay extends Overlay {
-	private List<DensityPatch> mDensityPatches;
-	private Handler mGuiThreadHandler;
+    // Create delegate because it's not possible to test classes that extend
+    // Android classes.
 
-	/** Execute on the gui thread to avoid ArrayIndexOutOfBoundsException */
-    private class CacheListUpdater implements Runnable {
-    	DensityMatrix mDensityMatrix;
-    	public CacheListUpdater(DensityMatrix densityMatrix) {
-    		mDensityMatrix = densityMatrix;
-    	}
-    	public void run() {
-    		if (mDensityMatrix != null) {
-    			mDensityPatches = mDensityMatrix.getDensityPatches();
-    		} else {
-    			mDensityPatches = null;
-    		}
-    	}
-    };
+    public static DensityOverlayDelegate createDelegate(List<DensityMatrix.DensityPatch> patches,
+             GeoPoint nullGeoPoint, QueryManager queryManager) {
+        final Rect patchRect = new Rect();
+        final Paint paint = new Paint();
+        paint.setARGB(128, 255, 0, 0);
+        final Point screenLow = new Point();
+        final Point screenHigh = new Point();
+        final DensityPatchManager densityPatchManager = new DensityPatchManager(patches,
+                queryManager);
+        return new DensityOverlayDelegate(patchRect, paint, screenLow, screenHigh, 
+                densityPatchManager);
+    }
 
-    
-	public DensityOverlay() {
-		mGuiThreadHandler = new Handler();
-	}
-	
-	@Override
-	public void draw(Canvas canvas, MapView mapView, boolean shadow) {
-		if (shadow)
-			return;  //No shadow layer
-		if (mDensityPatches == null)
-			return; //No patches
-		
-		final Projection proj = mapView.getProjection();
+    private DensityOverlayDelegate mDelegate;
 
-		Rect tempRect = new Rect();
-		Paint bluePaint = new Paint();
-		bluePaint.setARGB(128, 255, 0, 0);
-		Point screenLow = new Point();
-		Point screenHigh = new Point();
-		for (DensityPatch patch : mDensityPatches) {
-			proj.toPixels(patch.getExtentLow(), screenLow);
-			proj.toPixels(patch.getExtentHigh(), screenHigh);
-			tempRect.bottom = Math.max(screenLow.y, screenHigh.y);
-			tempRect.top = Math.min(screenLow.y, screenHigh.y);
-			tempRect.left = Math.min(screenLow.x, screenHigh.x);
-			tempRect.right = Math.max(screenLow.x, screenHigh.x);
-			int count = patch.getCacheCount();
-			bluePaint.setAlpha(Math.min(210, 10+32*count));  //Never draw completely opaque
-			canvas.drawRect(tempRect, bluePaint);
-		}
-	}
+    public DensityOverlay(DensityOverlayDelegate densityOverlayDelegate) {
+        mDelegate = densityOverlayDelegate;
+    }
 
-    
-    /** Replaces all caches on the map with the supplied ones. */
-    public void setCacheListUsingGuiThread(DensityMatrix matrix) {
-        mGuiThreadHandler.post(new CacheListUpdater(matrix));
+    @Override
+    public void draw(Canvas canvas, MapView mapView, boolean shadow) {
+        super.draw(canvas, mapView, shadow);
+        mDelegate.draw(canvas, mapView, shadow);
     }
 }

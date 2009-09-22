@@ -80,8 +80,6 @@ public class GeocacheListController {
 
     public boolean onCreateOptionsMenu(Menu menu) {
         return mMenuActions.onCreateOptionsMenu(menu);
-        //mListActivity.getMenuInflater().inflate(R.menu.cache_list_menu, menu);
-        //return true;
     }
 
     public void onListItemClick(ListView l, View v, int position, long id) {

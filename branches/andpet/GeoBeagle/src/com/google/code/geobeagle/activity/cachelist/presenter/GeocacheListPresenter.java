@@ -17,7 +17,9 @@ package com.google.code.geobeagle.activity.cachelist.presenter;
 import com.google.code.geobeagle.CompassListener;
 import com.google.code.geobeagle.LocationControlBuffered;
 import com.google.code.geobeagle.R;
+import com.google.code.geobeagle.activity.cachelist.CacheListView;
 import com.google.code.geobeagle.activity.cachelist.CompassListenerFactory;
+import com.google.code.geobeagle.activity.cachelist.CacheListView.ScrollListener;
 import com.google.code.geobeagle.activity.cachelist.GeocacheListController.CacheListOnCreateContextMenuListener;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVectors;
 import com.google.code.geobeagle.activity.cachelist.view.GeocacheSummaryRowInflater;
@@ -62,7 +64,7 @@ public class GeocacheListPresenter {
     private final CombinedLocationManager mCombinedLocationManager;
     // private final SensorEventListener mCompassListener;
     // private final SensorListener mCompassListener;
-    private CompassListenerFactory mCompassListenerFactory;
+    private final CompassListenerFactory mCompassListenerFactory;
     private final DistanceFormatterManager mDistanceFormatterManager;
     private final GeocacheListAdapter mGeocacheListAdapter;
     private final GeocacheSummaryRowInflater mGeocacheSummaryRowInflater;
@@ -70,9 +72,9 @@ public class GeocacheListPresenter {
     private final View mGpsStatusWidget;
     private final ListActivity mListActivity;
     private final LocationControlBuffered mLocationControlBuffered;
-    private SensorManagerWrapper mSensorManagerWrapper;
-
+    private final SensorManagerWrapper mSensorManagerWrapper;
     private final UpdateGpsWidgetRunnable mUpdateGpsWidgetRunnable;
+    private final CacheListView.ScrollListener mScrollListener;
 
     public GeocacheListPresenter(LocationListener combinedLocationListener,
             CombinedLocationManager combinedLocationManager,
@@ -83,7 +85,7 @@ public class GeocacheListPresenter {
             View gpsStatusWidget, ListActivity listActivity,
             LocationControlBuffered locationControlBuffered,
             SensorManagerWrapper sensorManagerWrapper,
-            UpdateGpsWidgetRunnable updateGpsWidgetRunnable) {
+            UpdateGpsWidgetRunnable updateGpsWidgetRunnable, ScrollListener scrollListener) {
         mCombinedLocationListener = combinedLocationListener;
         mCombinedLocationManager = combinedLocationManager;
         mCompassListenerFactory = compassListenerFactory;
@@ -96,6 +98,7 @@ public class GeocacheListPresenter {
         mLocationControlBuffered = locationControlBuffered;
         mUpdateGpsWidgetRunnable = updateGpsWidgetRunnable;
         mSensorManagerWrapper = sensorManagerWrapper;
+        mScrollListener = scrollListener;
     }
 
     public void onCreate() {
@@ -105,6 +108,7 @@ public class GeocacheListPresenter {
         mListActivity.setListAdapter(mGeocacheListAdapter);
         listView.setOnCreateContextMenuListener(new CacheListOnCreateContextMenuListener(
                 mGeocacheVectors));
+        listView.setOnScrollListener(mScrollListener);
         mUpdateGpsWidgetRunnable.run();
 
         // final List<Sensor> sensorList =
