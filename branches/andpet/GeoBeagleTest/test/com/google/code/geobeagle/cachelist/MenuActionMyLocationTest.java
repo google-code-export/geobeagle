@@ -20,7 +20,7 @@ import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionMyLocation;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheFromMyLocationFactory;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
-import com.google.code.geobeagle.database.LocationSaver;
+import com.google.code.geobeagle.database.DbFrontend;
 
 import org.easymock.classextension.EasyMock;
 import org.junit.Test;
@@ -37,14 +37,14 @@ public class MenuActionMyLocationTest {
                 .createMock(GeocacheFromMyLocationFactory.class);
         CacheListRefresh cacheListRefresh = PowerMock.createMock(CacheListRefresh.class);
         Geocache geocache = PowerMock.createMock(Geocache.class);
-        LocationSaver locationSaver = PowerMock.createMock(LocationSaver.class);
+        DbFrontend dbFrontend = PowerMock.createMock(DbFrontend.class);
         EasyMock.expect(geocacheFromMyLocationFactory.create()).andReturn(geocache);
         cacheListRefresh.forceRefresh();
-        locationSaver.saveLocation(geocache);
+        geocache.saveLocation(dbFrontend);
 
         PowerMock.replayAll();
         new MenuActionMyLocation(cacheListRefresh, null, geocacheFromMyLocationFactory,
-                locationSaver).act();
+                dbFrontend).act();
         PowerMock.verifyAll();
     }
 

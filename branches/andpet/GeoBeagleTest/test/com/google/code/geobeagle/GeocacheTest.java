@@ -14,6 +14,7 @@
 
 package com.google.code.geobeagle;
 
+import static org.easymock.EasyMock.expect;
 import static org.junit.Assert.assertEquals;
 
 import com.google.code.geobeagle.CacheType;
@@ -23,6 +24,9 @@ import com.google.code.geobeagle.Geocache.AttributeFormatter;
 import com.google.code.geobeagle.GeocacheFactory.Source;
 import com.google.code.geobeagle.GeocacheFactory.Source.SourceFactory;
 import com.google.code.geobeagle.activity.main.GeocacheFromParcelFactory;
+import com.google.code.geobeagle.database.CacheWriter;
+import com.google.code.geobeagle.database.DatabaseDI;
+import com.google.code.geobeagle.database.DbFrontend;
 import com.google.code.geobeagle.Geocache.AttributeFormatterImpl;
 import com.google.code.geobeagle.Geocache.AttributeFormatterNull;
 import org.easymock.classextension.EasyMock;
@@ -244,4 +248,24 @@ public class GeocacheTest {
         geocache.writeToPrefs(editor);
         PowerMock.verifyAll();
     }
+    
+    @Test
+    public void testSave() {
+        CacheWriter writer = PowerMock.createMock(CacheWriter.class);
+        DbFrontend dbFrontend = PowerMock.createMock(DbFrontend.class);
+        expect(dbFrontend.getCacheWriter()).andReturn(writer);                
+        PowerMock.mockStatic(DatabaseDI.class);
+
+        writer.startWriting();
+        writer.insertAndUpdateCache("GC123", "a cache", 37.5, -122.25, Source.MY_LOCATION, "manhattan",
+                CacheType.TRADITIONAL, 2, 4, 3);
+        writer.stopWriting();
+
+        PowerMock.replayAll();
+        Geocache geocache = new Geocache("GC123", "a cache", 37.5, -122.25, Source.MY_LOCATION,
+                "manhattan", CacheType.TRADITIONAL, 2, 4, 3, null);
+        geocache.saveLocation(dbFrontend);
+        PowerMock.verifyAll();
+    }
+    
 }

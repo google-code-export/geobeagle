@@ -15,8 +15,10 @@
 package com.google.code.geobeagle.activity.main.view;
 
 import com.google.code.geobeagle.ErrorDisplayer;
+import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.activity.main.intents.IntentStarter;
+import com.google.code.geobeagle.actions.CacheAction;
+import com.google.code.geobeagle.activity.main.GeoBeagle;
 import com.google.code.geobeagle.activity.main.view.CacheButtonOnClickListener;
 
 import org.easymock.classextension.EasyMock;
@@ -31,24 +33,16 @@ import android.content.ActivityNotFoundException;
 public class CacheButtonOnClickListenerTest {
 
     @Test
-    public void testOnClick() {
-        IntentStarter intentStarter = PowerMock.createMock(IntentStarter.class);
-
-        intentStarter.startIntent();
-
-        PowerMock.replayAll();
-        new CacheButtonOnClickListener(intentStarter, null, null).onClick(null);
-        PowerMock.verifyAll();
-    }
-
-    @Test
     public void testOnClick_ActivityNotFound() {
-        IntentStarter intentStarter = PowerMock.createMock(IntentStarter.class);
+        CacheAction cacheAction = PowerMock.createMock(CacheAction.class);
+        GeoBeagle geoBeagle = PowerMock.createMock(GeoBeagle.class);
+        Geocache geocache = PowerMock.createMock(Geocache.class);
         ErrorDisplayer errorDisplayer = PowerMock.createMock(ErrorDisplayer.class);
         ActivityNotFoundException activityNotFoundException = PowerMock
                 .createMock(ActivityNotFoundException.class);
 
-        intentStarter.startIntent();
+        EasyMock.expect(geoBeagle.getGeocache()).andReturn(geocache);
+        cacheAction.act(geocache);
         EasyMock.expectLastCall().andThrow(activityNotFoundException);
         EasyMock.expect(activityNotFoundException.fillInStackTrace()).andReturn(
                 activityNotFoundException);
@@ -56,25 +50,28 @@ public class CacheButtonOnClickListenerTest {
         errorDisplayer.displayError(R.string.error2, "no radar" , " problem");
 
         PowerMock.replayAll();
-        new CacheButtonOnClickListener(intentStarter, " problem", errorDisplayer).onClick(null);
+        new CacheButtonOnClickListener(cacheAction, geoBeagle, " problem", errorDisplayer).onClick(null);
         PowerMock.verifyAll();
     }
 
     @Test
     public void testOnClick_RandomError() {
-        IntentStarter intentStarter = PowerMock.createMock(IntentStarter.class);
+        CacheAction cacheAction = PowerMock.createMock(CacheAction.class);
+        GeoBeagle geoBeagle = PowerMock.createMock(GeoBeagle.class);
+        Geocache geocache = PowerMock.createMock(Geocache.class);
         ErrorDisplayer errorDisplayer = PowerMock.createMock(ErrorDisplayer.class);
         NumberFormatException numberFormatException = PowerMock
                 .createMock(NumberFormatException.class);
 
-        intentStarter.startIntent();
+        EasyMock.expect(geoBeagle.getGeocache()).andReturn(geocache);
+        cacheAction.act(geocache);
         EasyMock.expectLastCall().andThrow(numberFormatException);
         EasyMock.expect(numberFormatException.fillInStackTrace()).andReturn(numberFormatException);
         EasyMock.expect(numberFormatException.getMessage()).andReturn("random problem");
         errorDisplayer.displayError(R.string.error1, "random problem");
 
         PowerMock.replayAll();
-        new CacheButtonOnClickListener(intentStarter, "", errorDisplayer).onClick(null);
+        new CacheButtonOnClickListener(cacheAction, geoBeagle, " problem", errorDisplayer).onClick(null);
         PowerMock.verifyAll();
     }
 }

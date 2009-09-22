@@ -18,6 +18,8 @@ import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.actions.MenuActionCacheList;
 import com.google.code.geobeagle.actions.MenuActionEditGeocache;
+import com.google.code.geobeagle.actions.MenuActionLogDnf;
+import com.google.code.geobeagle.actions.MenuActionLogFind;
 import com.google.code.geobeagle.actions.MenuActionSearchOnline;
 import com.google.code.geobeagle.actions.MenuActionSettings;
 import com.google.code.geobeagle.activity.EditCacheActivity;

@@ -15,6 +15,7 @@
 package com.google.code.geobeagle.activity.main.intents;
 
 import com.google.code.geobeagle.Geocache;
+import com.google.code.geobeagle.actions.CacheActionViewUri;
 import com.google.code.geobeagle.activity.main.GeoBeagle;
 
 import org.easymock.EasyMock;
@@ -35,14 +36,13 @@ public class IntentStarterViewUriTest {
         Intent intent = PowerMock.createMock(Intent.class);
         Geocache geocache = PowerMock.createMock(Geocache.class);
 
-        EasyMock.expect(geoBeagle.getGeocache()).andReturn(geocache);
         EasyMock.expect(geocacheToUri.convert(geocache)).andReturn("destination uri");
         EasyMock.expect(intentFactory.createIntent(Intent.ACTION_VIEW, "destination uri"))
                 .andReturn(intent);
         geoBeagle.startActivity(intent);
 
         PowerMock.replayAll();
-        new IntentStarterViewUri(geoBeagle, intentFactory, geocacheToUri).startIntent();
+        new CacheActionViewUri(geoBeagle, intentFactory, geocacheToUri).act(geocache);
         PowerMock.verifyAll();
     }
 
