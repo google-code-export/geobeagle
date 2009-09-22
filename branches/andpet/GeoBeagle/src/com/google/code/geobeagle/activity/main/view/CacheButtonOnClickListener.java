@@ -15,28 +15,35 @@
 package com.google.code.geobeagle.activity.main.view;
 
 import com.google.code.geobeagle.ErrorDisplayer;
+import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.activity.main.intents.IntentStarter;
+import com.google.code.geobeagle.actions.CacheAction;
+import com.google.code.geobeagle.activity.main.GeoBeagle;
 
 import android.content.ActivityNotFoundException;
 import android.view.View;
 import android.view.View.OnClickListener;
 
 public class CacheButtonOnClickListener implements OnClickListener {
-    private final IntentStarter mDestinationToIntentFactory;
+    private final CacheAction mCacheAction;
     private final ErrorDisplayer mErrorDisplayer;
     private final String mActivityNotFoundErrorMessage;
+    private final GeoBeagle mGeoBeagle;
 
-    public CacheButtonOnClickListener(IntentStarter intentStarter, String errorMessage,
+    public CacheButtonOnClickListener(CacheAction cacheAction, 
+            GeoBeagle geoBeagle,
+            String errorMessage,
             ErrorDisplayer errorDisplayer) {
-        mDestinationToIntentFactory = intentStarter;
+        mCacheAction = cacheAction;
+        mGeoBeagle = geoBeagle;
         mErrorDisplayer = errorDisplayer;
         mActivityNotFoundErrorMessage = errorMessage;
     }
 
     public void onClick(View view) {
+        Geocache geocache = mGeoBeagle.getGeocache();
         try {
-            mDestinationToIntentFactory.startIntent();
+            mCacheAction.act(geocache);
         } catch (final ActivityNotFoundException e) {
             mErrorDisplayer.displayError(R.string.error2, e.getMessage(),
                     mActivityNotFoundErrorMessage);

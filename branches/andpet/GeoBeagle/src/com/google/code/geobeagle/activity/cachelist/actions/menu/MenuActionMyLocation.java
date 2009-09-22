@@ -20,20 +20,20 @@ import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.actions.MenuAction;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheFromMyLocationFactory;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
-import com.google.code.geobeagle.database.LocationSaver;
+import com.google.code.geobeagle.database.DbFrontend;
 
 public class MenuActionMyLocation implements MenuAction {
     private final ErrorDisplayer mErrorDisplayer;
     private final GeocacheFromMyLocationFactory mGeocacheFromMyLocationFactory;
     private final CacheListRefresh mMenuActionRefresh;
-    private final LocationSaver mLocationSaver;
+    private final DbFrontend mDbFrontend;
 
     public MenuActionMyLocation(CacheListRefresh cacheListRefresh, ErrorDisplayer errorDisplayer,
-            GeocacheFromMyLocationFactory geocacheFromMyLocationFactory, LocationSaver locationSaver) {
+            GeocacheFromMyLocationFactory geocacheFromMyLocationFactory, DbFrontend dbFrontend) {
         mGeocacheFromMyLocationFactory = geocacheFromMyLocationFactory;
         mErrorDisplayer = errorDisplayer;
         mMenuActionRefresh = cacheListRefresh;
-        mLocationSaver = locationSaver;
+        mDbFrontend = dbFrontend;
     }
 
     @Override
@@ -43,7 +43,7 @@ public class MenuActionMyLocation implements MenuAction {
             mErrorDisplayer.displayError(R.string.current_location_null);
             return;
         }
-        mLocationSaver.saveLocation(myLocation);
+        myLocation.saveLocation(mDbFrontend);
         mMenuActionRefresh.forceRefresh();
     }
     

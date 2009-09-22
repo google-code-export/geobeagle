@@ -19,7 +19,7 @@ import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.GeocacheFactory;
 import com.google.code.geobeagle.GeocacheFactory.Source;
 import com.google.code.geobeagle.activity.cachelist.GeocacheListController;
-import com.google.code.geobeagle.database.LocationSaver;
+import com.google.code.geobeagle.database.DbFrontend;
 
 import android.content.Intent;
 
@@ -34,13 +34,13 @@ public class IncomingIntentHandler {
     }
 
     Geocache maybeGetGeocacheFromIntent(Intent intent, Geocache defaultGeocache,
-            LocationSaver locationSaver) {
+            DbFrontend dbFrontend) {
         if (intent != null) {
             final String action = intent.getAction();
             if (action != null) {
                 if (action.equals(Intent.ACTION_VIEW) && intent.getType() == null) {
                     return mGeocacheFromIntentFactory
-                            .viewCacheFromMapsIntent(intent, locationSaver);
+                            .viewCacheFromMapsIntent(intent);
                 } else if (action.equals(GeocacheListController.SELECT_CACHE)) {
                     Geocache geocache = intent.<Geocache> getParcelableExtra("geocache");
                     if (geocache == null)

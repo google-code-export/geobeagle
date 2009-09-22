@@ -18,19 +18,22 @@ import com.google.code.geobeagle.CacheType;
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.GeocacheFactory;
 import com.google.code.geobeagle.GeocacheFactory.Source;
-import com.google.code.geobeagle.database.LocationSaver;
+import com.google.code.geobeagle.database.DbFrontend;
 
 import android.content.Intent;
 import android.net.UrlQuerySanitizer;
 
 public class GeocacheFromIntentFactory {
     private final GeocacheFactory mGeocacheFactory;
-
-    GeocacheFromIntentFactory(GeocacheFactory geocacheFactory) {
+    DbFrontend mDbFrontend;
+    
+    GeocacheFromIntentFactory(GeocacheFactory geocacheFactory,
+            DbFrontend dbFrontend) {
         mGeocacheFactory = geocacheFactory;
+        mDbFrontend = dbFrontend;
     }
 
-    Geocache viewCacheFromMapsIntent(Intent intent, LocationSaver locationSaver) {
+    Geocache viewCacheFromMapsIntent(Intent intent) {
         final String query = intent.getData().getQuery();
         final CharSequence sanitizedQuery = Util.parseHttpUri(query, new UrlQuerySanitizer(),
                 UrlQuerySanitizer.getAllButNulAndAngleBracketsLegal());
@@ -38,7 +41,7 @@ public class GeocacheFromIntentFactory {
         final Geocache geocache = mGeocacheFactory.create(latlon[2], latlon[3], Util
                 .parseCoordinate(latlon[0]), Util.parseCoordinate(latlon[1]), Source.WEB_URL, null,
                 CacheType.NULL, 0, 0, 0);
-        locationSaver.saveLocation(geocache);
+        geocache.saveLocation(mDbFrontend);
         return geocache;
     }
 }

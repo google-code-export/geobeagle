@@ -101,4 +101,6 @@
 <string name="menu_add_my_location">Add My Location</string>
 <string name="menu_sync">Sync /sdcard/download</string>
 <string name="menu_toggle_filter">Show All Caches</string>
+<string name="menu_map">Show Map</string>
+<string name="menu_cache_map">Show on Map</string>
 </resources>

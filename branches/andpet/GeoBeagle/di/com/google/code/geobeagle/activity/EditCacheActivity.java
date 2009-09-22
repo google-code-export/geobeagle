@@ -18,7 +18,6 @@ import com.google.code.geobeagle.GeocacheFactory;
 import com.google.code.geobeagle.activity.main.view.EditCacheActivityDelegate;
 import com.google.code.geobeagle.activity.main.view.EditCacheActivityDelegate.CancelButtonOnClickListener;
 import com.google.code.geobeagle.database.DbFrontend;
-import com.google.code.geobeagle.database.LocationSaver;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -34,22 +33,13 @@ public class EditCacheActivity extends Activity {
                 this);
         final GeocacheFactory geocacheFactory = new GeocacheFactory();
         mDbFrontend = new DbFrontend(this);
-        LocationSaver locationSaver = new LocationSaver(mDbFrontend);
         mEditCacheActivityDelegate = new EditCacheActivityDelegate(this,
-                cancelButtonOnClickListener, geocacheFactory, locationSaver);
-        
-        mEditCacheActivityDelegate.onCreate();
+                cancelButtonOnClickListener, geocacheFactory, mDbFrontend);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         mDbFrontend.closeDatabase();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        mEditCacheActivityDelegate.onResume();
     }
 }

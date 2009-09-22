@@ -16,6 +16,6 @@ package com.google.code.geobeagle.activity.main.intents;
 
 import com.google.code.geobeagle.Geocache;
 
-interface GeocacheToUri {
+public interface GeocacheToUri {
     public String convert(Geocache geocache);
 }

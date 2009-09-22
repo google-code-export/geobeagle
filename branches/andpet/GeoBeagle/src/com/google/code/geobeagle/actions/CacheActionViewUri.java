@@ -12,26 +12,36 @@
  ** limitations under the License.
  */
 
-package com.google.code.geobeagle.activity.main.intents;
+package com.google.code.geobeagle.actions;
 
+import com.google.code.geobeagle.Geocache;
+import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.main.GeoBeagle;
+import com.google.code.geobeagle.activity.main.intents.GeocacheToUri;
+import com.google.code.geobeagle.activity.main.intents.IntentFactory;
 
 import android.content.Intent;
 
-public class IntentStarterViewUri implements IntentStarter {
+public class CacheActionViewUri implements CacheAction {
     private final GeoBeagle mGeoBeagle;
     private final GeocacheToUri mGeocacheToUri;
     private final IntentFactory mIntentFactory;
 
-    public IntentStarterViewUri(GeoBeagle geoBeagle, IntentFactory intentFactory,
+    public CacheActionViewUri(GeoBeagle geoBeagle, IntentFactory intentFactory,
             GeocacheToUri geocacheToUri) {
         mGeoBeagle = geoBeagle;
         mGeocacheToUri = geocacheToUri;
         mIntentFactory = intentFactory;
     }
 
-    public void startIntent() {
-        mGeoBeagle.startActivity(mIntentFactory.createIntent(Intent.ACTION_VIEW, mGeocacheToUri
-                .convert(mGeoBeagle.getGeocache())));
+    @Override
+    public void act(Geocache cache) {
+        mGeoBeagle.startActivity(mIntentFactory.createIntent(Intent.ACTION_VIEW, 
+                mGeocacheToUri.convert(cache)));
+    }
+
+    @Override
+    public int getId() {
+        return R.string.cache_page;
     }
 }

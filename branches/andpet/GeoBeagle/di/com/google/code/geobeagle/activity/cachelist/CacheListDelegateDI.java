@@ -59,7 +59,6 @@ import com.google.code.geobeagle.activity.cachelist.view.GeocacheSummaryRowInfla
 import com.google.code.geobeagle.activity.main.GeoBeagle;
 import com.google.code.geobeagle.database.FilterNearestCaches;
 import com.google.code.geobeagle.database.DbFrontend;
-import com.google.code.geobeagle.database.LocationSaver;
 import com.google.code.geobeagle.database.WhereFactoryAllCaches;
 import com.google.code.geobeagle.database.WhereFactoryNearestCaches;
 import com.google.code.geobeagle.database.DatabaseDI.SearchFactory;
@@ -242,7 +241,7 @@ public class CacheListDelegateDI {
         menuActions.add(menuActionSyncGpx);
         menuActions.add(new MenuActionToggleFilter(filterNearestCaches, cacheListRefresh));
         menuActions.add(new MenuActionMyLocation(cacheListRefresh, errorDisplayer,
-                geocacheFromMyLocationFactory, new LocationSaver(dbFrontend)));
+                geocacheFromMyLocationFactory, dbFrontend));
         menuActions.add(new MenuActionSearchOnline(listActivity));
         //menuActions.add(new MenuActionChooseFilter(listActivity));
         

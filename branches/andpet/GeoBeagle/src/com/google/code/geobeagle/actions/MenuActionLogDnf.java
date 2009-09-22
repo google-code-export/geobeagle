@@ -12,13 +12,14 @@
  ** limitations under the License.
  */
 
-package com.google.code.geobeagle.activity.main.menuactions;
+package com.google.code.geobeagle.actions;
 
 import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.actions.MenuAction;
 
 import android.app.Activity;
 
+//Could be changed into a CacheAction but then a "CacheAction as MenuAction" 
+//wrapper is needed to launch from a button
 public class MenuActionLogDnf implements MenuAction {
     private final Activity mActivity;
 

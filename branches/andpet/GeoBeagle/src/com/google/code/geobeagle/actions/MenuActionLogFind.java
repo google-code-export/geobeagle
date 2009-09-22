@@ -12,24 +12,28 @@
  ** limitations under the License.
  */
 
-package com.google.code.geobeagle.activity.main.view;
+package com.google.code.geobeagle.actions;
 
-import com.google.code.geobeagle.ErrorDisplayer;
-import com.google.code.geobeagle.activity.main.intents.IntentStarter;
+import com.google.code.geobeagle.R;
 
 import android.app.Activity;
 
-public class OnCacheButtonClickListenerBuilder {
+//Could be changed into a CacheAction but then a "CacheAction as MenuAction" 
+//wrapper is needed to launch from a button
+public class MenuActionLogFind implements MenuAction {
     private final Activity mActivity;
-    private final ErrorDisplayer mErrorDisplayer;
 
-    public OnCacheButtonClickListenerBuilder(Activity activity, ErrorDisplayer errorDisplayer) {
-        mErrorDisplayer = errorDisplayer;
+    public MenuActionLogFind(Activity activity) {
         mActivity = activity;
     }
 
-    public void set(int id, IntentStarter intentStarter, String errorString) {
-        mActivity.findViewById(id).setOnClickListener(new CacheButtonOnClickListener(
-                intentStarter, errorString, mErrorDisplayer));
+    @Override
+    public void act() {
+        mActivity.showDialog(R.id.menu_log_find);
+    }
+
+    @Override
+    public int getId() {
+        return R.string.menu_log_find;
     }
 }

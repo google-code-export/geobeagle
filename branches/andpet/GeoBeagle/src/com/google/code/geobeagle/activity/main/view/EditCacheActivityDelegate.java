@@ -19,7 +19,7 @@ import com.google.code.geobeagle.GeocacheFactory;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.cachelist.GeocacheListController;
 import com.google.code.geobeagle.activity.main.Util;
-import com.google.code.geobeagle.database.LocationSaver;
+import com.google.code.geobeagle.database.DbFrontend;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -83,18 +83,18 @@ public class EditCacheActivityDelegate {
     public static class SetButtonOnClickListener implements OnClickListener {
         private final Activity mActivity;
         private final EditCache mGeocacheView;
-        private final LocationSaver mLocationSaver;
+        private final DbFrontend mDbFrontend;
 
         public SetButtonOnClickListener(Activity activity, EditCache editCache,
-                LocationSaver locationSaver) {
+                DbFrontend dbFrontend) {
             mActivity = activity;
             mGeocacheView = editCache;
-            mLocationSaver = locationSaver;
+            mDbFrontend = dbFrontend;
         }
 
         public void onClick(View v) {
             final Geocache geocache = mGeocacheView.get();
-            mLocationSaver.saveLocation(geocache);
+            geocache.saveLocation(mDbFrontend);
             final Intent i = new Intent();
             i.setAction(GeocacheListController.SELECT_CACHE);
             i.putExtra("geocache", geocache);
@@ -106,22 +106,16 @@ public class EditCacheActivityDelegate {
     private final CancelButtonOnClickListener mCancelButtonOnClickListener;
     private final GeocacheFactory mGeocacheFactory;
     private final Activity mParent;
-    private final LocationSaver mLocationSaver;
 
+    //TODO: Refactor instantiation into parent class to ease testing?
     public EditCacheActivityDelegate(Activity parent,
             CancelButtonOnClickListener cancelButtonOnClickListener,
-            GeocacheFactory geocacheFactory, LocationSaver locationSaver) {
+            GeocacheFactory geocacheFactory, DbFrontend dbFrontend) {
         mParent = parent;
         mCancelButtonOnClickListener = cancelButtonOnClickListener;
         mGeocacheFactory = geocacheFactory;
-        mLocationSaver = locationSaver;
-    }
-
-    public void onCreate() {
+        
         mParent.setContentView(R.layout.cache_edit);
-    }
-
-    public void onResume() {
         final Intent intent = mParent.getIntent();
         final Geocache geocache = intent.<Geocache> getParcelableExtra("geocache");
         final EditCache editCache = new EditCache(mGeocacheFactory, (EditText)mParent
@@ -130,8 +124,9 @@ public class EditCacheActivityDelegate {
                         .findViewById(R.id.edit_longitude));
 
         editCache.set(geocache);
-        final SetButtonOnClickListener setButtonOnClickListener = new SetButtonOnClickListener(
-                mParent, editCache, mLocationSaver);
+        
+        SetButtonOnClickListener setButtonOnClickListener = 
+            new SetButtonOnClickListener(mParent, editCache, dbFrontend);
 
         ((Button)mParent.findViewById(R.id.edit_set)).setOnClickListener(setButtonOnClickListener);
         ((Button)mParent.findViewById(R.id.edit_cancel))

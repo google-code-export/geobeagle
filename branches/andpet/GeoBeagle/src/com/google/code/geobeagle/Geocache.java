@@ -18,6 +18,8 @@ import com.google.android.maps.GeoPoint;
 import com.google.code.geobeagle.GeocacheFactory.Provider;
 import com.google.code.geobeagle.GeocacheFactory.Source;
 import com.google.code.geobeagle.activity.main.GeoUtils;
+import com.google.code.geobeagle.database.CacheWriter;
+import com.google.code.geobeagle.database.DbFrontend;
 
 import android.content.SharedPreferences.Editor;
 import android.location.Location;
@@ -181,6 +183,15 @@ public class Geocache implements Parcelable {
 
     public int getTerrain() {
         return mTerrain;
+    }
+
+    public void saveLocation(DbFrontend dbFrontend) {
+        CacheWriter cacheWriter = dbFrontend.getCacheWriter();
+        cacheWriter.startWriting();
+        cacheWriter.insertAndUpdateCache(getId(), getName(), getLatitude(), 
+                getLongitude(), getSourceType(), getSourceName(), 
+                getCacheType(), 0, 0, 0);
+        cacheWriter.stopWriting();
     }
 
     public void saveToBundle(Bundle bundle) {

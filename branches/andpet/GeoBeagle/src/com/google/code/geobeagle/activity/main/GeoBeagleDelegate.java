@@ -27,7 +27,6 @@ import com.google.code.geobeagle.activity.main.fieldnotes.FieldNoteSender.FieldN
 import com.google.code.geobeagle.activity.main.view.GeocacheViewer;
 import com.google.code.geobeagle.activity.main.view.WebPageAndDetailsButtonEnabler;
 import com.google.code.geobeagle.database.DbFrontend;
-import com.google.code.geobeagle.database.LocationSaver;
 
 import android.app.Dialog;
 import android.content.Intent;
@@ -163,7 +162,7 @@ public class GeoBeagleDelegate {
         mSensorManager.registerListener(mCompassListener, SensorManager.SENSOR_ORIENTATION,
                 SensorManager.SENSOR_DELAY_UI);
         mGeocache = mIncomingIntentHandler.maybeGetGeocacheFromIntent(mParent.getIntent(),
-                mGeocache, new LocationSaver(mDbFrontend));
+                mGeocache, mDbFrontend);
 
         // Possible fix for issue 53.
         if (mGeocache == null) {
