@@ -54,12 +54,16 @@ public class CachePinsOverlayFactory {
                 .getBottom());
 
         timing.start();
-        if (!mQueryManager.needsLoading(newTopLeft, newBottomRight))
-            return mCachePinsOverlay;
+        ArrayList<Geocache> cacheList;
+        if (mQueryManager.needsLoading(newTopLeft, newBottomRight)) {
+            Log.d("GeoBeagle", "CachePinsOverlay.needsLoading: true ");
+            cacheList = mQueryManager.load(newTopLeft, newBottomRight);
+        } else
+            cacheList = mQueryManager.getLastLoad();
 
-        ArrayList<Geocache> list = mQueryManager.load(newTopLeft, newBottomRight);
         timing.lap("Loaded caches");
-        mCachePinsOverlay = new CachePinsOverlay(mCacheItemFactory, mContext, mDefaultMarker, list);
+        mCachePinsOverlay = new CachePinsOverlay(mCacheItemFactory, mContext, mDefaultMarker,
+                cacheList);
         return mCachePinsOverlay;
     }
 }

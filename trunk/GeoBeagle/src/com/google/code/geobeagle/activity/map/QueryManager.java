@@ -42,12 +42,12 @@ class QueryManager {
 
         boolean needsLoading(GeoPoint newTopLeft, GeoPoint newBottomRight) {
             if (mOldTopLeft.equals(newTopLeft) && mOldBottomRight.equals(newBottomRight)) {
-                Log.d("GeoBeagle", "QueryManager.needsLoading: false");
+                Log.d("GeoBeagle", "CachedNeedsLoading.needsLoading: false");
                 return false;
             }
             mOldTopLeft = newTopLeft;
             mOldBottomRight = newBottomRight;
-            Log.d("GeoBeagle", "QueryManager.needsLoading: true");
+            Log.d("GeoBeagle", "CachedNeedsLoading.needsLoading: true");
             return true;
         }
     }
@@ -67,8 +67,8 @@ class QueryManager {
 
         ArrayList<Geocache> load(int latMin, int lonMin, int latMax, int lonMax,
                 WhereFactoryFixedArea where, int[] newBounds) {
-            Log.d("GeoBeagle", "PeggedLoader.load" + latMin + ", " + lonMin + ", " + latMax + ", "
-                    + lonMax);
+            Log.d("GeoBeagle", "PeggedLoader.load: " + latMin + ", " + lonMin + ", " + latMax
+                    + ", " + lonMax);
             if (mDbFrontend.count(0, 0, where) > 1500) {
                 latMin = latMax = lonMin = lonMax = 0;
                 if (!mTooManyCaches) {
@@ -90,6 +90,7 @@ class QueryManager {
     private final CachedNeedsLoading mCachedNeedsLoading;
     private int[] mLatLonMinMax; // i.e. latmin, lonmin, latmax, lonmax
     private final PeggedLoader mPeggedLoader;
+    private ArrayList<Geocache> mList;
 
     QueryManager(PeggedLoader peggedLoader, CachedNeedsLoading cachedNeedsLoading,
             int[] latLonMinMax) {
@@ -102,7 +103,7 @@ class QueryManager {
         // Expand the area by the resolution so we get complete patches for the
         // density map. This isn't needed for the pins overlay, but it doesn't
         // hurt either.
-        Log.d("GeoBeagle", "QueryManager.load" + newTopLeft + ", " + newBottomRight);
+        Log.d("GeoBeagle", "QueryManager.load: " + newTopLeft + ", " + newBottomRight);
         final int lonMin = newTopLeft.getLongitudeE6()
                 - DensityPatchManager.RESOLUTION_LONGITUDE_E6;
         final int latMax = newTopLeft.getLatitudeE6() + DensityPatchManager.RESOLUTION_LATITUDE_E6;
@@ -113,16 +114,25 @@ class QueryManager {
         final WhereFactoryFixedArea where = new WhereFactoryFixedArea((double)latMin / 1E6,
                 (double)lonMin / 1E6, (double)latMax / 1E6, (double)lonMax / 1E6);
 
-        ArrayList<Geocache> list = mPeggedLoader.load(latMin, lonMin, latMax, lonMax, where,
-                mLatLonMinMax);
-        return list;
+        mList = mPeggedLoader.load(latMin, lonMin, latMax, lonMax, where, mLatLonMinMax);
+        return mList;
+    }
+
+    ArrayList<Geocache> getLastLoad() {
+        return mList;
     }
 
     boolean needsLoading(GeoPoint newTopLeft, GeoPoint newBottomRight) {
-        return mCachedNeedsLoading.needsLoading(newTopLeft, newBottomRight)
-                && (newTopLeft.getLatitudeE6() > mLatLonMinMax[2]
-                        || newTopLeft.getLongitudeE6() < mLatLonMinMax[1]
-                        || newBottomRight.getLatitudeE6() < mLatLonMinMax[0] || newBottomRight
-                        .getLongitudeE6() > mLatLonMinMax[3]);
+        Log.d("GeoBeagle", "QueryManager.needsLoading new Points: " + newTopLeft + ", "
+                + newBottomRight);
+        Log.d("GeoBeagle", "QueryManager.needsLoading old Points: " + mLatLonMinMax[0] + ", "
+                + mLatLonMinMax[1] + ", " + mLatLonMinMax[2] + ", " + mLatLonMinMax[3]);
+        final boolean needsLoading = newTopLeft.getLatitudeE6() > mLatLonMinMax[2]
+                || newTopLeft.getLongitudeE6() < mLatLonMinMax[1]
+                || newBottomRight.getLatitudeE6() < mLatLonMinMax[0]
+                || newBottomRight.getLongitudeE6() > mLatLonMinMax[3];
+        Log.d("GeoBeagle", "QueryManager.needsLoading: " + needsLoading);
+
+        return mCachedNeedsLoading.needsLoading(newTopLeft, newBottomRight) && needsLoading;
     }
 }
