@@ -24,6 +24,7 @@ public class WhereFactoryFixedArea implements WhereFactory {
     private final double mLonHigh;
 
     public WhereFactoryFixedArea(double latLow, double lonLow, double latHigh, double lonHigh) {
+        //TODO(sng): I don't think these min/max'es should be necessary; try removing them.
         mLatLow = Math.min(latLow, latHigh);
         mLonLow = Math.min(lonLow, lonHigh);
         mLatHigh = Math.max(latLow, latHigh);

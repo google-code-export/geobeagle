@@ -14,6 +14,10 @@
 
 package com.google.code.geobeagle.database;
 
+import static org.junit.Assert.*;
+
+import org.junit.Test;
+
 import android.database.Cursor;
 
 import java.io.BufferedReader;
@@ -83,8 +87,10 @@ public class DatabaseTest {
     final static String schema10 = Database.SQL_CREATE_CACHE_TABLE_V10
             + Database.SQL_CREATE_IDX_LATITUDE + Database.SQL_CREATE_IDX_LONGITUDE
             + Database.SQL_CREATE_IDX_SOURCE + Database.SQL_CREATE_GPX_TABLE_V10;
+
     // Previous schemas.
     final static String schema6 = Database.SQL_CREATE_CACHE_TABLE_V08;
+
     final static String schema7 = Database.SQL_CREATE_CACHE_TABLE_V08
             + Database.SQL_CREATE_IDX_LATITUDE + Database.SQL_CREATE_IDX_LONGITUDE
             + Database.SQL_CREATE_IDX_SOURCE;
@@ -151,7 +157,6 @@ public class DatabaseTest {
     private static String SQL(String s) {
         return s + "\n";
     }
-/*
 
     @Test
     public void testOnCreate() {
@@ -230,10 +235,4 @@ public class DatabaseTest {
         assertEquals("GCABC||||intent|1|0|0|0|0\nGC123||||foo.gpx|1|0|0|0|0\n", data);
     }
 
-    @Test
-    public void testSqliteDatabaseNull() {
-        final NullClosable db = new NullClosable();
-        db.close();
-    }
-*/
 }
