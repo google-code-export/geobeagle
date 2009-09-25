@@ -72,8 +72,9 @@ public class SqlCacheLoaderTest {
         EasyMock.expect(locationControlBuffered.getLocation()).andReturn(location);
         EasyMock.expect(dbFrontend.loadCaches(37.0, -122.0, whereFactory)).andReturn(geocaches);
         EasyMock.expect(cacheListData.size()).andReturn(100);
+        EasyMock.expect(dbFrontend.countAll()).andReturn(2300);
         cacheListData.add(geocaches, locationControlBuffered);
-        titleUpdater.update(0, 100);
+        titleUpdater.update(2300, 100);
 
         PowerMock.replayAll();
         new SqlCacheLoader(dbFrontend, filterNearestCaches, cacheListData, locationControlBuffered,

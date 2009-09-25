@@ -27,33 +27,20 @@ import com.google.code.geobeagle.database.DatabaseDI.GeoBeagleSqliteOpenHelper;
 
 /**
  * Will develop to represent the front-end to access a database. It takes
- * responsibility to open and close the actual database connection without
- * involving the clients of this class.
+ * responsibility to mSqliteOpenHelper and close the actual database connection
+ * without involving the clients of this class.
  */
 public class DbFrontend {
-    CacheReader mCacheReader;
-    Context mContext;
-    GeoBeagleSqliteOpenHelper open;
-    boolean mIsDatabaseOpen;
-    CacheWriter mCacheWriter;
-    ISQLiteDatabase mDatabase;
+    private CacheReader mCacheReader;
+    private CacheWriter mCacheWriter;
+    private final Context mContext;
+    private ISQLiteDatabase mDatabase;
+    private boolean mIsDatabaseOpen;
+    private GeoBeagleSqliteOpenHelper mSqliteOpenHelper;
 
     public DbFrontend(Context context) {
         mContext = context;
         mIsDatabaseOpen = false;
-    }
-
-    public void openDatabase() {
-        if (mIsDatabaseOpen)
-            return;
-        Log.d("GeoBeagle", "DbFrontend.openDatabase()");
-        mIsDatabaseOpen = true;
-
-        open = new GeoBeagleSqliteOpenHelper(mContext);
-        final SQLiteDatabase sqDb = open.getReadableDatabase();
-        mDatabase = new DatabaseDI.SQLiteWrapper(sqDb);
-
-        mCacheReader = DatabaseDI.createCacheReader(mDatabase);
     }
 
     public void closeDatabase() {
@@ -62,9 +49,39 @@ public class DbFrontend {
         Log.d("GeoBeagle", "DbFrontend.closeDatabase()");
         mIsDatabaseOpen = false;
 
-        open.close();
+        mSqliteOpenHelper.close();
         mCacheWriter = null;
         mDatabase = null;
+    }
+
+    public int count(int latitude, int longitude, WhereFactoryFixedArea whereFactory) {
+        openDatabase();
+        Cursor countCursor = mDatabase.rawQuery("SELECT COUNT(*) FROM " + Database.TBL_CACHES
+                + " WHERE " + whereFactory.getWhere(mDatabase, latitude, longitude), null);
+        countCursor.moveToFirst();
+        int count = countCursor.getInt(0);
+        countCursor.close();
+        Log.d("GeoBeagle", "DbFrontEnd.count:" + count);
+        return count;
+    }
+
+    public int countAll() {
+        openDatabase();
+        Cursor countCursor = mDatabase
+                .rawQuery("SELECT COUNT(*) FROM " + Database.TBL_CACHES, null);
+        countCursor.moveToFirst();
+        int count = countCursor.getInt(0);
+        countCursor.close();
+        Log.d("GeoBeagle", "DbFrontEnd.count all:" + count);
+        return count;
+    }
+
+    public CacheWriter getCacheWriter() {
+        if (mCacheWriter != null)
+            return mCacheWriter;
+        openDatabase();
+        mCacheWriter = DatabaseDI.createCacheWriter(mDatabase);
+        return mCacheWriter;
     }
 
     public ArrayList<Geocache> loadCaches(double latitude, double longitude,
@@ -83,23 +100,17 @@ public class DbFrontend {
         return geocaches;
     }
 
-    public CacheWriter getCacheWriter() {
-        if (mCacheWriter != null)
-            return mCacheWriter;
-        openDatabase();
-        mCacheWriter = DatabaseDI.createCacheWriter(mDatabase);
-        return mCacheWriter;
-    }
+    public void openDatabase() {
+        if (mIsDatabaseOpen)
+            return;
+        Log.d("GeoBeagle", "DbFrontend.openDatabase()");
+        mIsDatabaseOpen = true;
 
-    public int count(int latitude, int longitude, WhereFactoryFixedArea whereFactory) {
-        openDatabase();
-        Cursor countCursor = mDatabase.rawQuery("SELECT COUNT(*) FROM " + Database.TBL_CACHES
-                + " WHERE " + whereFactory.getWhere(mDatabase, latitude, longitude), null);
-        countCursor.moveToFirst();
-        int count = countCursor.getInt(0);
-        countCursor.close();
-        Log.d("GeoBeagle", "DbFrontEnd.count:" + count);
-        return count;
+        mSqliteOpenHelper = new GeoBeagleSqliteOpenHelper(mContext);
+        final SQLiteDatabase sqDb = mSqliteOpenHelper.getReadableDatabase();
+        mDatabase = new DatabaseDI.SQLiteWrapper(sqDb);
+
+        mCacheReader = DatabaseDI.createCacheReader(mDatabase);
     }
 
     /*
@@ -107,6 +118,7 @@ public class DbFrontend {
      */
 
     /*
-     * public void onResume() { //Lazy evaluation - open database when needed }
+     * public void onResume() { //Lazy evaluation - mSqliteOpenHelper database
+     * when needed }
      */
 }
