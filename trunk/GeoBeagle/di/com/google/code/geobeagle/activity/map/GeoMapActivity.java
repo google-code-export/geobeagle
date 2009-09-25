@@ -26,6 +26,7 @@ import com.google.code.geobeagle.actions.MenuActions;
 import com.google.code.geobeagle.activity.main.GeoUtils;
 import com.google.code.geobeagle.activity.map.DensityMatrix.DensityPatch;
 import com.google.code.geobeagle.activity.map.QueryManager.CachedNeedsLoading;
+import com.google.code.geobeagle.activity.map.QueryManager.LoaderImpl;
 import com.google.code.geobeagle.activity.map.QueryManager.PeggedLoader;
 import com.google.code.geobeagle.database.DbFrontend;
 import com.google.code.geobeagle.xmlimport.GpxImporterDI.Toaster;
@@ -96,23 +97,33 @@ public class GeoMapActivity extends MapActivity {
         final ArrayList<Geocache> nullList = new ArrayList<Geocache>();
         final List<DensityPatch> densityPatches = new ArrayList<DensityPatch>();
         final Toaster toaster = new Toaster(this, R.string.too_many_caches, Toast.LENGTH_SHORT);
+        final LoaderImpl loaderImpl = new QueryManager.LoaderImpl(mDbFrontend);
         final PeggedLoader peggedLoader = new QueryManager.PeggedLoader(mDbFrontend, nullList,
-                toaster);
-        final int[] initialLatLonMinMax = {
+                toaster, loaderImpl);
+        final int[] densityMapInitialLatLonMinMax = {
                 0, 0, 0, 0
         };
 
-        CachedNeedsLoading cachedNeedsLoading = new CachedNeedsLoading(nullGeoPoint, nullGeoPoint);
-        final QueryManager queryManager = new QueryManager(peggedLoader, cachedNeedsLoading,
-                initialLatLonMinMax);
+        final CachedNeedsLoading densityMapCachedNeedsLoading = new CachedNeedsLoading(
+                nullGeoPoint, nullGeoPoint);
+        final QueryManager densityMapQueryManager = new QueryManager(peggedLoader,
+                densityMapCachedNeedsLoading, densityMapInitialLatLonMinMax);
         final DensityOverlayDelegate densityOverlayDelegate = DensityOverlay.createDelegate(
-                densityPatches, nullGeoPoint, queryManager);
+                densityPatches, nullGeoPoint, densityMapQueryManager);
         final DensityOverlay densityOverlay = new DensityOverlay(densityOverlayDelegate);
         final ArrayList<Geocache> geocacheList = new ArrayList<Geocache>();
         final CachePinsOverlay cachePinsOverlay = new CachePinsOverlay(cacheItemFactory, this,
                 defaultMarker, geocacheList);
+        CachedNeedsLoading cachePinsCachedNeedsLoading = new CachedNeedsLoading(nullGeoPoint,
+                nullGeoPoint);
+        final int[] cachePinsInitialLatLonMinMax = {
+                0, 0, 0, 0
+        };
+        final QueryManager cachePinsQueryManager = new QueryManager(loaderImpl,
+                cachePinsCachedNeedsLoading, cachePinsInitialLatLonMinMax);
         final CachePinsOverlayFactory cachePinsOverlayFactory = new CachePinsOverlayFactory(
-                mMapView, this, defaultMarker, cacheItemFactory, cachePinsOverlay, queryManager);
+                mMapView, this, defaultMarker, cacheItemFactory, cachePinsOverlay,
+                cachePinsQueryManager);
         mGeoMapActivityDelegate = new GeoMapActivityDelegate(mMapView, menuActions);
 
         final GeoPoint center = new GeoPoint((int)(latitude * GeoUtils.MILLION),
@@ -159,6 +170,7 @@ public class GeoMapActivity extends MapActivity {
         super.onResume();
         mMyLocationOverlay.enableMyLocation();
         mMyLocationOverlay.enableCompass();
+        // Is this necessary?  Or should we remove it and make openDatabase private?
         mDbFrontend.openDatabase();
     }
 }

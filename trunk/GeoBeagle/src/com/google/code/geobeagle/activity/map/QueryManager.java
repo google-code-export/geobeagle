@@ -52,20 +52,47 @@ class QueryManager {
         }
     }
 
-    static class PeggedLoader {
+    static interface Loader {
+        ArrayList<Geocache> load(int latMin, int lonMin, int latMax, int lonMax,
+                WhereFactoryFixedArea where, int[] newBounds);
+    }
+
+    static class LoaderImpl implements Loader {
         private final DbFrontend mDbFrontend;
+
+        LoaderImpl(DbFrontend dbFrontend) {
+            mDbFrontend = dbFrontend;
+        }
+
+        public ArrayList<Geocache> load(int latMin, int lonMin, int latMax, int lonMax,
+                WhereFactoryFixedArea where, int[] newBounds) {
+            Log.d("GeoBeagle", "LoaderImpl.load: " + latMin + ", " + lonMin + ", " + latMax + ", "
+                    + lonMax);
+            newBounds[0] = latMin;
+            newBounds[1] = lonMin;
+            newBounds[2] = latMax;
+            newBounds[3] = lonMax;
+            return mDbFrontend.loadCaches(0, 0, where);
+        }
+    }
+
+    static class PeggedLoader implements Loader {
+        private final DbFrontend mDbFrontend;
+        private final LoaderImpl mLoader;
         private final ArrayList<Geocache> mNullList;
         private final Toaster mToaster;
         private boolean mTooManyCaches;
 
-        PeggedLoader(DbFrontend dbFrontend, ArrayList<Geocache> nullList, Toaster toaster) {
+        PeggedLoader(DbFrontend dbFrontend, ArrayList<Geocache> nullList, Toaster toaster,
+                LoaderImpl loaderImpl) {
             mNullList = nullList;
             mDbFrontend = dbFrontend;
             mToaster = toaster;
             mTooManyCaches = false;
+            mLoader = loaderImpl;
         }
 
-        ArrayList<Geocache> load(int latMin, int lonMin, int latMax, int lonMax,
+        public ArrayList<Geocache> load(int latMin, int lonMin, int latMax, int lonMax,
                 WhereFactoryFixedArea where, int[] newBounds) {
             Log.d("GeoBeagle", "PeggedLoader.load: " + latMin + ", " + lonMin + ", " + latMax
                     + ", " + lonMax);
@@ -79,23 +106,18 @@ class QueryManager {
                 return mNullList;
             }
             mTooManyCaches = false;
-            newBounds[0] = latMin;
-            newBounds[1] = lonMin;
-            newBounds[2] = latMax;
-            newBounds[3] = lonMax;
-            return mDbFrontend.loadCaches(0, 0, where);
+            return mLoader.load(latMin, lonMin, latMax, lonMax, where, newBounds);
         }
     }
 
     private final CachedNeedsLoading mCachedNeedsLoading;
     private int[] mLatLonMinMax; // i.e. latmin, lonmin, latmax, lonmax
-    private final PeggedLoader mPeggedLoader;
     private ArrayList<Geocache> mList;
+    private final Loader mLoader;
 
-    QueryManager(PeggedLoader peggedLoader, CachedNeedsLoading cachedNeedsLoading,
-            int[] latLonMinMax) {
+    QueryManager(Loader loader, CachedNeedsLoading cachedNeedsLoading, int[] latLonMinMax) {
         mLatLonMinMax = latLonMinMax;
-        mPeggedLoader = peggedLoader;
+        mLoader = loader;
         mCachedNeedsLoading = cachedNeedsLoading;
     }
 
@@ -114,11 +136,7 @@ class QueryManager {
         final WhereFactoryFixedArea where = new WhereFactoryFixedArea((double)latMin / 1E6,
                 (double)lonMin / 1E6, (double)latMax / 1E6, (double)lonMax / 1E6);
 
-        mList = mPeggedLoader.load(latMin, lonMin, latMax, lonMax, where, mLatLonMinMax);
-        return mList;
-    }
-
-    ArrayList<Geocache> getLastLoad() {
+        mList = mLoader.load(latMin, lonMin, latMax, lonMax, where, mLatLonMinMax);
         return mList;
     }
 
