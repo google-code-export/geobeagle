@@ -83,7 +83,9 @@ public class GeoMapActivity extends MapActivity {
         final MenuActions menuActions = new MenuActions(getResources());
         menuActions.add(new GeoMapActivityDelegate.MenuActionToggleSatellite(mMapView));
         menuActions.add(new MenuActionCacheList(this));
-
+        menuActions.add(new GeoMapActivityDelegate.MenuActionCenterLocation(mMapView,
+                mMyLocationOverlay));
+        
         final Intent intent = getIntent();
         final MapController mapController = mMapView.getController();
         final double latitude = intent.getFloatExtra("latitude", 0);
@@ -170,7 +172,8 @@ public class GeoMapActivity extends MapActivity {
         super.onResume();
         mMyLocationOverlay.enableMyLocation();
         mMyLocationOverlay.enableCompass();
-        // Is this necessary?  Or should we remove it and make openDatabase private?
+        // Is this necessary? Or should we remove it and make openDatabase
+        // private?
         mDbFrontend.openDatabase();
     }
 }
