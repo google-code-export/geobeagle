@@ -66,13 +66,12 @@ public class DbFrontend {
         mCacheWriter = null;
         mDatabase = null;
     }
-
-    public ArrayList<Geocache> loadCaches(double latitude, double longitude,
-            WhereFactory whereFactory) {
-        Log.d("GeoBeagle", "DbFrontend.loadCaches " + latitude + ", " + longitude);
+    
+    /** If 'where' is null, returns all caches */
+    public ArrayList<Geocache> loadCaches(String where) {
         openDatabase();
 
-        CacheReaderCursor cursor = mCacheReader.open(latitude, longitude, whereFactory, null);
+        CacheReaderCursor cursor = mCacheReader.open(where, null);
         ArrayList<Geocache> geocaches = new ArrayList<Geocache>();
         if (cursor != null) {
             do {
@@ -91,10 +90,16 @@ public class DbFrontend {
         return mCacheWriter;
     }
 
-    public int count(int latitude, int longitude, WhereFactoryFixedArea whereFactory) {
+    /** If 'where' is null, returns the total number of caches */
+    public int count(String where) {
         openDatabase();
-        Cursor countCursor = mDatabase.rawQuery("SELECT COUNT(*) FROM " + Database.TBL_CACHES
-                + " WHERE " + whereFactory.getWhere(mDatabase, latitude, longitude), null);
+        
+        Cursor countCursor;
+        if (where == null)
+            countCursor = mDatabase.rawQuery("SELECT COUNT(*) FROM " + Database.TBL_CACHES, null);
+        else
+            countCursor = mDatabase.rawQuery("SELECT COUNT(*) FROM " + Database.TBL_CACHES
+                    + " WHERE " + where, null);
         countCursor.moveToFirst();
         int count = countCursor.getInt(0);
         countCursor.close();

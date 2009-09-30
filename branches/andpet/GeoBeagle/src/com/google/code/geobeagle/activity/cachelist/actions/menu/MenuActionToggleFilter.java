@@ -17,21 +17,21 @@ package com.google.code.geobeagle.activity.cachelist.actions.menu;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.actions.MenuActionBase;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
-import com.google.code.geobeagle.database.FilterNearestCaches;
+import com.google.code.geobeagle.database.CachesProviderToggler;
 
 public class MenuActionToggleFilter extends MenuActionBase {
-    private final FilterNearestCaches mFilterNearestCaches;
+    private final CachesProviderToggler mCachesProviderToggler;
     private final CacheListRefresh mMenuActionRefresh;
 
-    public MenuActionToggleFilter(FilterNearestCaches filterNearestCaches,
+    public MenuActionToggleFilter(CachesProviderToggler cachesProviderToggler,
             CacheListRefresh cacheListRefresh) {
         super(R.string.menu_toggle_filter);
-        mFilterNearestCaches = filterNearestCaches;
+        mCachesProviderToggler = cachesProviderToggler;
         mMenuActionRefresh = cacheListRefresh;
     }
 
     public void act() {
-        mFilterNearestCaches.toggle();
+        mCachesProviderToggler.toggle();
         mMenuActionRefresh.forceRefresh();
     }
 }

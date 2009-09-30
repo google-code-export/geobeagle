@@ -15,11 +15,6 @@
 package com.google.code.geobeagle.database;
 
 import com.google.code.geobeagle.GeocacheFactory;
-import com.google.code.geobeagle.database.WhereFactoryNearestCaches.BoundingBox;
-import com.google.code.geobeagle.database.WhereFactoryNearestCaches.Search;
-import com.google.code.geobeagle.database.WhereFactoryNearestCaches.SearchDown;
-import com.google.code.geobeagle.database.WhereFactoryNearestCaches.SearchUp;
-import com.google.code.geobeagle.database.WhereFactoryNearestCaches.WhereStringFactory;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -130,27 +125,12 @@ public class DatabaseDI {
 
     }
 
-    static public class SearchFactory {
-        public Search createSearch(double latitude, double longitude, float min, float max,
-                ISQLiteDatabase sqliteWrapper) {
-            WhereStringFactory whereStringFactory = new WhereStringFactory();
-            BoundingBox boundingBox = new BoundingBox(latitude, longitude, sqliteWrapper,
-                    whereStringFactory);
-            SearchDown searchDown = new SearchDown(boundingBox, min);
-            SearchUp searchUp = new SearchUp(boundingBox, max);
-            return new WhereFactoryNearestCaches.Search(boundingBox, searchDown, searchUp);
-        }
-
-    }
-
     public static CacheReader createCacheReader(ISQLiteDatabase sqliteWrapper) {
         final CacheReaderCursorFactory cacheReaderCursorFactory = new CacheReaderCursorFactory();
         return new CacheReader(sqliteWrapper, cacheReaderCursorFactory);
     }
 
     public static CacheWriter createCacheWriter(ISQLiteDatabase writableDatabase) {
-        // final SQLiteWrapper sqliteWrapper = new
-        // DatabaseDI.SQLiteWrapper(sqliteDatabaseWritable);
         final DbToGeocacheAdapter dbToGeocacheAdapter = new DbToGeocacheAdapter();
         return new CacheWriter(writableDatabase, dbToGeocacheAdapter);
     }

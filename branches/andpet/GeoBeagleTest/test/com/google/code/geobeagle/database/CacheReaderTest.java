@@ -111,11 +111,6 @@ public class CacheReaderTest {
     }
 
     @Test
-    public void testGetWhereFactoryAllCaches() {
-        assertEquals(null, new WhereFactoryAllCaches().getWhere(null, 0, 0));
-    }
-
-    @Test
     public void testOpen() {
         WhereFactory whereFactoryNearestCaches = PowerMock
                 .createMock(WhereFactoryNearestCaches.class);

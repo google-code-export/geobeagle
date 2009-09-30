@@ -20,7 +20,7 @@ import com.google.code.geobeagle.activity.cachelist.actions.context.ContextActio
 import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionSyncGpx;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVectors;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
-import com.google.code.geobeagle.database.FilterNearestCaches;
+import com.google.code.geobeagle.database.CachesProviderToggler;
 
 import android.view.ContextMenu;
 import android.view.Menu;
@@ -57,16 +57,16 @@ public class GeocacheListController {
     public static final String SELECT_CACHE = "SELECT_CACHE";
     private final CacheListRefresh mCacheListRefresh;
     private final ContextAction mContextActions[];
-    private final FilterNearestCaches mFilterNearestCaches;
+    private final CachesProviderToggler mCachesProviderToggler;
     private final MenuActions mMenuActions;
     private final MenuActionSyncGpx mMenuActionSyncGpx;
 
     public GeocacheListController(CacheListRefresh cacheListRefresh,
-            ContextAction[] contextActions, FilterNearestCaches filterNearestCaches,
+            ContextAction[] contextActions, CachesProviderToggler cachesProviderToggler,
             MenuActionSyncGpx menuActionSyncGpx, MenuActions menuActions) {
         mCacheListRefresh = cacheListRefresh;
         mContextActions = contextActions;
-        mFilterNearestCaches = filterNearestCaches;
+        mCachesProviderToggler = cachesProviderToggler;
         mMenuActionSyncGpx = menuActionSyncGpx;
         mMenuActions = menuActions;
     }
@@ -90,7 +90,9 @@ public class GeocacheListController {
     }
 
     public boolean onMenuOpened(int featureId, Menu menu) {
-        menu.findItem(R.string.menu_toggle_filter).setTitle(mFilterNearestCaches.getMenuString());
+        boolean nearest = mCachesProviderToggler.isShowingNearest();
+        int menuString = nearest ? R.string.menu_show_all_caches : R.string.menu_show_nearest_caches;
+        menu.findItem(R.string.menu_toggle_filter).setTitle(menuString);
         return true;
     }
 

@@ -21,7 +21,7 @@ import android.util.Log;
 import java.util.List;
 
 public class OverlayManager {
-    static final int DENSITY_MAP_ZOOM_THRESHOLD = 13;
+    static final int DENSITY_MAP_ZOOM_THRESHOLD = 12;
     private final CachePinsOverlayFactory mCachePinsOverlayFactory;
     private final DensityOverlay mDensityOverlay;
     private final GeoMapView mGeoMapView;

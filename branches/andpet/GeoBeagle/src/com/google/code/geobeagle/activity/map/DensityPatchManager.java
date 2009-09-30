@@ -40,11 +40,16 @@ class DensityPatchManager {
         GeoPoint newTopLeft = projection.fromPixels(0, 0);
         GeoPoint newBottomRight = projection.fromPixels(mMapView.getRight(), mMapView.getBottom());
 
-        if (!mQueryManager.needsLoading(newTopLeft, newBottomRight)) {
+        double latLow = newBottomRight.getLatitudeE6() / 1.0E6;
+        double latHigh = newTopLeft.getLatitudeE6() / 1.0E6;
+        double lonLow = newBottomRight.getLongitudeE6() / 1.0E6;
+        double lonHigh = newTopLeft.getLongitudeE6() / 1.0E6;
+        mQueryManager.setBounds(latLow, lonLow, latHigh, lonHigh);
+        if (!mQueryManager.hasChanged()) {
             return mDensityPatches;
         }
 
-        ArrayList<Geocache> list = mQueryManager.load(newTopLeft, newBottomRight);
+        ArrayList<Geocache> list = mQueryManager.getCaches();
         DensityMatrix densityMatrix = new DensityMatrix(DensityPatchManager.RESOLUTION_LATITUDE,
                 DensityPatchManager.RESOLUTION_LONGITUDE);
         densityMatrix.addCaches(list);

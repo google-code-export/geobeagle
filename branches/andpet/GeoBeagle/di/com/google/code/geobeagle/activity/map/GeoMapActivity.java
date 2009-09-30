@@ -22,12 +22,13 @@ import com.google.android.maps.Overlay;
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.actions.MenuActionCacheList;
+import com.google.code.geobeagle.actions.MenuActionChooseFilter;
 import com.google.code.geobeagle.actions.MenuActions;
 import com.google.code.geobeagle.activity.main.GeoUtils;
 import com.google.code.geobeagle.activity.map.DensityMatrix.DensityPatch;
-import com.google.code.geobeagle.activity.map.QueryManager.CachedNeedsLoading;
-import com.google.code.geobeagle.activity.map.QueryManager.PeggedLoader;
+import com.google.code.geobeagle.database.CachesProviderArea;
 import com.google.code.geobeagle.database.DbFrontend;
+import com.google.code.geobeagle.database.ICachesProviderArea;
 import com.google.code.geobeagle.xmlimport.GpxImporterDI.Toaster;
 
 import android.content.Intent;
@@ -81,7 +82,9 @@ public class GeoMapActivity extends MapActivity {
         final List<Overlay> mapOverlays = mMapView.getOverlays();
         final MenuActions menuActions = new MenuActions(getResources());
         menuActions.add(new GeoMapActivityDelegate.MenuActionToggleSatellite(mMapView));
+        menuActions.add(new GeoMapActivityDelegate.MenuActionCenterLocation(mMapView, mMyLocationOverlay));
         menuActions.add(new MenuActionCacheList(this));
+        //menuActions.add(new MenuActionChooseFilter(this));
 
         final Intent intent = getIntent();
         final MapController mapController = mMapView.getController();
@@ -96,15 +99,9 @@ public class GeoMapActivity extends MapActivity {
         final ArrayList<Geocache> nullList = new ArrayList<Geocache>();
         final List<DensityPatch> densityPatches = new ArrayList<DensityPatch>();
         final Toaster toaster = new Toaster(this, R.string.too_many_caches, Toast.LENGTH_SHORT);
-        final PeggedLoader peggedLoader = new QueryManager.PeggedLoader(mDbFrontend, nullList,
-                toaster);
-        final int[] initialLatLonMinMax = {
-                0, 0, 0, 0
-        };
+        ICachesProviderArea cachesProviderArea = new CachesProviderArea(mDbFrontend);
 
-        CachedNeedsLoading cachedNeedsLoading = new CachedNeedsLoading(nullGeoPoint, nullGeoPoint);
-        final QueryManager queryManager = new QueryManager(peggedLoader, cachedNeedsLoading,
-                initialLatLonMinMax);
+        final QueryManager queryManager = new QueryManager(cachesProviderArea, toaster);
         final DensityOverlayDelegate densityOverlayDelegate = DensityOverlay.createDelegate(
                 densityPatches, nullGeoPoint, queryManager);
         final DensityOverlay densityOverlay = new DensityOverlay(densityOverlayDelegate);

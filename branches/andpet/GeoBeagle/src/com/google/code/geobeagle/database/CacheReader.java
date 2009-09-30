@@ -42,9 +42,7 @@ public class CacheReader {
         return count;
     }
 
-    public CacheReaderCursor open(double latitude, double longitude, WhereFactory whereFactory,
-            String limit) {
-        String where = whereFactory.getWhere(mSqliteWrapper, latitude, longitude);
+    public CacheReaderCursor open(String where, String limit) {
         Cursor cursor = mSqliteWrapper.query(Database.TBL_CACHES, CacheReader.READER_COLUMNS,
                 where, null, null, null, limit);
         if (!cursor.moveToFirst()) {

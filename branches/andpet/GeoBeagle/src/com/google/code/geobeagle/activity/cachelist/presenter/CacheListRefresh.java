@@ -88,7 +88,7 @@ public class CacheListRefresh implements Refresher {
 
         if (!mUpdateFlag.updatesEnabled())
             return;
-        Log.d("GeoBeagle", "CacheListRefresh.refresh");
+        //Log.d("GeoBeagle", "CacheListRefresh.refresh");
         mTiming.start();
         final long now = mTiming.getTime();
         final IGpsLocation here = mLocationControlBuffered.getGpsLocation();

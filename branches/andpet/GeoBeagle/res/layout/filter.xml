@@ -16,10 +16,11 @@
 	android:layout_height="wrap_content">
 
   <TextView android:id="@+id/TextView01" android:text="Select cache types to show" 
-     android:layout_width="fill_parent" android:layout_height="wrap_content">
+     android:layout_width="fill_parent" android:layout_height="wrap_content"
+     android:gravity="center_horizontal" android:textSize="20sp">
   </TextView>
 
-  <CheckBox android:id="@+id/CheckBoxTrad" android:text="Traditional" 
+    <CheckBox android:id="@+id/CheckBoxTrad" android:text="Traditional" 
      android:layout_width="fill_parent" android:layout_height="wrap_content">
   </CheckBox>
 
@@ -34,5 +35,12 @@
   <CheckBox android:id="@+id/CheckBoxMyLocation" android:text="My location" 
      android:layout_width="fill_parent" android:layout_height="wrap_content">
   </CheckBox>
+
+  <CheckBox android:id="@+id/CheckBoxWaypoints" android:text="Waypoints" 
+     android:layout_width="fill_parent" android:layout_height="wrap_content">
+  </CheckBox>
+
+<Button android:text="Apply filter" android:id="@+id/ButtonApplyFilter" 
+android:layout_width="wrap_content" android:layout_height="wrap_content"></Button>
 
 </LinearLayout>

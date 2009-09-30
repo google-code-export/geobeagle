@@ -14,115 +14,111 @@
 
 package com.google.code.geobeagle.activity.map;
 
-import com.google.android.maps.GeoPoint;
 import com.google.code.geobeagle.Geocache;
-import com.google.code.geobeagle.database.DbFrontend;
-import com.google.code.geobeagle.database.WhereFactoryFixedArea;
+import com.google.code.geobeagle.database.ICachesProviderArea;
 import com.google.code.geobeagle.xmlimport.GpxImporterDI.Toaster;
-
-import android.util.Log;
 
 import java.util.ArrayList;
 
-class QueryManager {
-    /**
-     * We need to cache "needs loading" status because we might be zoomed out so
-     * far we see no caches. In that situation, the compass will attempt to
-     * refresh us every second, and we'll query the database over and over again
-     * to learn that we have too many caches for the same set of points.
-     */
-    static class CachedNeedsLoading {
-        private GeoPoint mOldBottomRight;
-        private GeoPoint mOldTopLeft;
+/** Strategy to only invalidate/reload the list of caches when the bounds are
+ * changed to outside the previous bounds. Also returns an empty list if the count is 
+ * greater than MAX_COUNT. */
+class QueryManager implements ICachesProviderArea {
 
-        public CachedNeedsLoading(GeoPoint topLeft, GeoPoint bottomRight) {
-            mOldTopLeft = topLeft;
-            mOldBottomRight = bottomRight;
-        }
+    //The bounds of the loaded area
+    private double mLatLow;
+    private double mLonLow;
+    private double mLatHigh;
+    private double mLonHigh;
+    /** If the user of this instance thinks the list has changed */
+    private boolean mHasChanged = true;
+    private boolean mTooManyCaches = false;
+    /** Maximum number of caches to show */
+    public static final int MAX_COUNT = 1500;
+    private final Toaster mToaster;
+    private static final ArrayList<Geocache> NULL_LIST = new ArrayList<Geocache>();
+    
+    private final ICachesProviderArea mCachesProviderArea;
 
-        boolean needsLoading(GeoPoint newTopLeft, GeoPoint newBottomRight) {
-            if (mOldTopLeft.equals(newTopLeft) && mOldBottomRight.equals(newBottomRight)) {
-                //Log.d("GeoBeagle", "QueryManager.needsLoading: false");
-                return false;
-            }
-            mOldTopLeft = newTopLeft;
-            mOldBottomRight = newBottomRight;
-            //Log.d("GeoBeagle", "QueryManager.needsLoading: true");
-            return true;
-        }
+    QueryManager(ICachesProviderArea cachesProviderArea,
+                Toaster toaster) {
+        mCachesProviderArea = cachesProviderArea;
+        mToaster = toaster;
     }
 
-    static class PeggedLoader {
-        private final DbFrontend mDbFrontend;
-        private final ArrayList<Geocache> mNullList;
-        private final Toaster mToaster;
-        private boolean mTooManyCaches;
-
-        PeggedLoader(DbFrontend dbFrontend, ArrayList<Geocache> nullList, Toaster toaster) {
-            mNullList = nullList;
-            mDbFrontend = dbFrontend;
-            mToaster = toaster;
-            mTooManyCaches = false;
+    @Override
+    public void setBounds(double latLow, double lonLow, double latHigh, double lonHigh) {
+        if (latLow < mLatLow || lonLow < mLonLow 
+            || latHigh > mLatHigh || lonHigh > mLonHigh) {
+            if (mTooManyCaches && latLow <= mLatLow && lonLow <= mLonLow 
+                    && latHigh >= mLatHigh && lonHigh >= mLonHigh) {
+                //The new bounds are strictly bigger but the old ones 
+                //already contained too many caches
+                return;
+            }
+            mLatLow = latLow;
+            mLonLow = lonLow;
+            mLatHigh = latHigh;
+            mLonHigh = lonHigh;
+            mCachesProviderArea.setBounds(latLow, lonLow, latHigh, lonHigh);
+            mHasChanged = true;
         }
-
-        ArrayList<Geocache> load(int latMin, int lonMin, int latMax, int lonMax,
-                WhereFactoryFixedArea where, int[] newBounds) {
-            Log.d("GeoBeagle", "PeggedLoader.load" + latMin + ", " + lonMin + ", " + latMax + ", "
-                    + lonMax);
-            if (mDbFrontend.count(0, 0, where) > 1500) {
-                latMin = latMax = lonMin = lonMax = 0;
-                if (!mTooManyCaches) {
-                    Log.d("GeoBeagle", "QueryManager.load: too many caches");
+    }
+    
+    @Override
+    public ArrayList<Geocache> getCaches() {
+        if (mCachesProviderArea.hasChanged()) {
+            int count = mCachesProviderArea.getCount();
+            mCachesProviderArea.setChanged(false);
+            if (count > MAX_COUNT) {
+                if (!mTooManyCaches)
                     mToaster.showToast();
-                    mTooManyCaches = true;
-                }
-                return mNullList;
+                mTooManyCaches = true;
+            } else {
+                mTooManyCaches = false;
             }
-            mTooManyCaches = false;
-            newBounds[0] = latMin;
-            newBounds[1] = lonMin;
-            newBounds[2] = latMax;
-            newBounds[3] = lonMax;
-            return mDbFrontend.loadCaches(0, 0, where);
         }
+        if (mTooManyCaches) {
+            return NULL_LIST;
+        }
+        return mCachesProviderArea.getCaches();
     }
 
-    private final CachedNeedsLoading mCachedNeedsLoading;
-    private int[] mLatLonMinMax; // i.e. latmin, lonmin, latmax, lonmax
-    private final PeggedLoader mPeggedLoader;
+    @Override
+    public int getCount() {
+        if (mCachesProviderArea.hasChanged()) {
+            int count = mCachesProviderArea.getCount();
+            mCachesProviderArea.setChanged(false);
+            if (count > MAX_COUNT) {
+                if (!mTooManyCaches)
+                    mToaster.showToast();
+                mTooManyCaches = true;
+            } else {
+                mTooManyCaches = false;
+                return count;
+            }
+        }
 
-    QueryManager(PeggedLoader peggedLoader, CachedNeedsLoading cachedNeedsLoading,
-            int[] latLonMinMax) {
-        mLatLonMinMax = latLonMinMax;
-        mPeggedLoader = peggedLoader;
-        mCachedNeedsLoading = cachedNeedsLoading;
+        if (mTooManyCaches)
+            return 0;
+
+        return mCachesProviderArea.getCount();
     }
 
-    ArrayList<Geocache> load(GeoPoint newTopLeft, GeoPoint newBottomRight) {
-        // Expand the area by the resolution so we get complete patches for the
-        // density map. This isn't needed for the pins overlay, but it doesn't
-        // hurt either.
-        Log.d("GeoBeagle", "QueryManager.load" + newTopLeft + ", " + newBottomRight);
-        final int lonMin = newTopLeft.getLongitudeE6()
-                - DensityPatchManager.RESOLUTION_LONGITUDE_E6;
-        final int latMax = newTopLeft.getLatitudeE6() + DensityPatchManager.RESOLUTION_LATITUDE_E6;
-        final int latMin = newBottomRight.getLatitudeE6()
-                - DensityPatchManager.RESOLUTION_LATITUDE_E6;
-        final int lonMax = newBottomRight.getLongitudeE6()
-                + DensityPatchManager.RESOLUTION_LONGITUDE_E6;
-        final WhereFactoryFixedArea where = new WhereFactoryFixedArea((double)latMin / 1E6,
-                (double)lonMin / 1E6, (double)latMax / 1E6, (double)lonMax / 1E6);
-
-        ArrayList<Geocache> list = mPeggedLoader.load(latMin, lonMin, latMax, lonMax, where,
-                mLatLonMinMax);
-        return list;
+    @Override
+    public boolean hasChanged() {
+        return mHasChanged || mCachesProviderArea.hasChanged();
     }
 
-    boolean needsLoading(GeoPoint newTopLeft, GeoPoint newBottomRight) {
-        return mCachedNeedsLoading.needsLoading(newTopLeft, newBottomRight)
-                && (newTopLeft.getLatitudeE6() > mLatLonMinMax[2]
-                        || newTopLeft.getLongitudeE6() < mLatLonMinMax[1]
-                        || newBottomRight.getLatitudeE6() < mLatLonMinMax[0] || newBottomRight
-                        .getLongitudeE6() > mLatLonMinMax[3]);
+    @Override
+    public void setChanged(boolean changed) {
+        mHasChanged = changed;
+        if (!changed)
+            mCachesProviderArea.setChanged(false);
+    }
+
+    @Override
+    public void setExtraCondition(String condition) {
+        mCachesProviderArea.setExtraCondition(condition);
     }
 }

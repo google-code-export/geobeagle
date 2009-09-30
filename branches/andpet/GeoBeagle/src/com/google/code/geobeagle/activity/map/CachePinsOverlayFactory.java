@@ -54,10 +54,16 @@ public class CachePinsOverlayFactory {
                 .getBottom());
 
         timing.start();
-        if (!mQueryManager.needsLoading(newTopLeft, newBottomRight))
+        
+        double latLow = newBottomRight.getLatitudeE6() / 1.0E6;
+        double latHigh = newTopLeft.getLatitudeE6() / 1.0E6;
+        double lonLow = newBottomRight.getLongitudeE6() / 1.0E6;
+        double lonHigh = newTopLeft.getLongitudeE6() / 1.0E6;
+        mQueryManager.setBounds(latLow, lonLow, latHigh, lonHigh);
+        if (!mQueryManager.hasChanged())
             return mCachePinsOverlay;
 
-        ArrayList<Geocache> list = mQueryManager.load(newTopLeft, newBottomRight);
+        ArrayList<Geocache> list = mQueryManager.getCaches();
         timing.lap("Loaded caches");
         mCachePinsOverlay = new CachePinsOverlay(mCacheItemFactory, mContext, mDefaultMarker, list);
         return mCachePinsOverlay;
