@@ -18,6 +18,7 @@ import com.google.android.maps.GeoPoint;
 import com.google.android.maps.Projection;
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.activity.cachelist.CacheListDelegateDI;
+import com.google.code.geobeagle.database.CachesProviderLazyArea;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
@@ -31,17 +32,17 @@ public class CachePinsOverlayFactory {
     private final Context mContext;
     private final Drawable mDefaultMarker;
     private final GeoMapView mGeoMapView;
-    private QueryManager mQueryManager;
+    private CachesProviderLazyArea mLazyArea;
 
     public CachePinsOverlayFactory(GeoMapView geoMapView, Context context, Drawable defaultMarker,
             CacheItemFactory cacheItemFactory, CachePinsOverlay cachePinsOverlay,
-            QueryManager queryManager) {
+            CachesProviderLazyArea queryManager) {
         mGeoMapView = geoMapView;
         mContext = context;
         mDefaultMarker = defaultMarker;
         mCacheItemFactory = cacheItemFactory;
         mCachePinsOverlay = cachePinsOverlay;
-        mQueryManager = queryManager;
+        mLazyArea = queryManager;
     }
 
     public CachePinsOverlay getCachePinsOverlay() {
@@ -59,11 +60,11 @@ public class CachePinsOverlayFactory {
         double latHigh = newTopLeft.getLatitudeE6() / 1.0E6;
         double lonLow = newBottomRight.getLongitudeE6() / 1.0E6;
         double lonHigh = newTopLeft.getLongitudeE6() / 1.0E6;
-        mQueryManager.setBounds(latLow, lonLow, latHigh, lonHigh);
-        if (!mQueryManager.hasChanged())
+        mLazyArea.setBounds(latLow, lonLow, latHigh, lonHigh);
+        if (!mLazyArea.hasChanged())
             return mCachePinsOverlay;
 
-        ArrayList<Geocache> list = mQueryManager.getCaches();
+        ArrayList<Geocache> list = mLazyArea.getCaches();
         timing.lap("Loaded caches");
         mCachePinsOverlay = new CachePinsOverlay(mCacheItemFactory, mContext, mDefaultMarker, list);
         return mCachePinsOverlay;

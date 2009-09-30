@@ -27,6 +27,7 @@ import com.google.code.geobeagle.actions.MenuActions;
 import com.google.code.geobeagle.activity.main.GeoUtils;
 import com.google.code.geobeagle.activity.map.DensityMatrix.DensityPatch;
 import com.google.code.geobeagle.database.CachesProviderArea;
+import com.google.code.geobeagle.database.CachesProviderLazyArea;
 import com.google.code.geobeagle.database.DbFrontend;
 import com.google.code.geobeagle.database.ICachesProviderArea;
 import com.google.code.geobeagle.xmlimport.GpxImporterDI.Toaster;
@@ -101,15 +102,15 @@ public class GeoMapActivity extends MapActivity {
         final Toaster toaster = new Toaster(this, R.string.too_many_caches, Toast.LENGTH_SHORT);
         ICachesProviderArea cachesProviderArea = new CachesProviderArea(mDbFrontend);
 
-        final QueryManager queryManager = new QueryManager(cachesProviderArea, toaster);
+        final CachesProviderLazyArea lazyArea = new CachesProviderLazyArea(cachesProviderArea, toaster);
         final DensityOverlayDelegate densityOverlayDelegate = DensityOverlay.createDelegate(
-                densityPatches, nullGeoPoint, queryManager);
+                densityPatches, nullGeoPoint, lazyArea);
         final DensityOverlay densityOverlay = new DensityOverlay(densityOverlayDelegate);
         final ArrayList<Geocache> geocacheList = new ArrayList<Geocache>();
         final CachePinsOverlay cachePinsOverlay = new CachePinsOverlay(cacheItemFactory, this,
                 defaultMarker, geocacheList);
         final CachePinsOverlayFactory cachePinsOverlayFactory = new CachePinsOverlayFactory(
-                mMapView, this, defaultMarker, cacheItemFactory, cachePinsOverlay, queryManager);
+                mMapView, this, defaultMarker, cacheItemFactory, cachePinsOverlay, lazyArea);
         mGeoMapActivityDelegate = new GeoMapActivityDelegate(mMapView, menuActions);
 
         final GeoPoint center = new GeoPoint((int)(latitude * GeoUtils.MILLION),

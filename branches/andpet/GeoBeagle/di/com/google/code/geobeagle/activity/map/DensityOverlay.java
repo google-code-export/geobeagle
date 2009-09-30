@@ -17,6 +17,7 @@ package com.google.code.geobeagle.activity.map;
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapView;
 import com.google.android.maps.Overlay;
+import com.google.code.geobeagle.database.CachesProviderLazyArea;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -30,7 +31,7 @@ public class DensityOverlay extends Overlay {
     // Android classes.
 
     public static DensityOverlayDelegate createDelegate(List<DensityMatrix.DensityPatch> patches,
-             GeoPoint nullGeoPoint, QueryManager queryManager) {
+             GeoPoint nullGeoPoint, CachesProviderLazyArea queryManager) {
         final Rect patchRect = new Rect();
         final Paint paint = new Paint();
         paint.setARGB(128, 255, 0, 0);

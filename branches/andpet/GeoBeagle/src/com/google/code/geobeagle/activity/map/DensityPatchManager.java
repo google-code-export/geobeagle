@@ -18,19 +18,20 @@ import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapView;
 import com.google.android.maps.Projection;
 import com.google.code.geobeagle.Geocache;
+import com.google.code.geobeagle.database.CachesProviderLazyArea;
 
 import java.util.ArrayList;
 import java.util.List;
 
 class DensityPatchManager {
     private List<DensityMatrix.DensityPatch> mDensityPatches;
-    private final QueryManager mQueryManager;
+    private final CachesProviderLazyArea mQueryManager;
     public static final double RESOLUTION_LATITUDE = 0.01;
     public static final double RESOLUTION_LONGITUDE = 0.02;
     public static final int RESOLUTION_LATITUDE_E6 = (int)(RESOLUTION_LATITUDE * 1E6);
     public static final int RESOLUTION_LONGITUDE_E6 = (int)(RESOLUTION_LONGITUDE * 1E6);
 
-    DensityPatchManager(List<DensityMatrix.DensityPatch> patches, QueryManager queryManager) {
+    DensityPatchManager(List<DensityMatrix.DensityPatch> patches, CachesProviderLazyArea queryManager) {
         mDensityPatches = patches;
         mQueryManager = queryManager;
     }

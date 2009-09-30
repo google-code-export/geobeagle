@@ -12,10 +12,9 @@
  ** limitations under the License.
  */
 
-package com.google.code.geobeagle.activity.map;
+package com.google.code.geobeagle.database;
 
 import com.google.code.geobeagle.Geocache;
-import com.google.code.geobeagle.database.ICachesProviderArea;
 import com.google.code.geobeagle.xmlimport.GpxImporterDI.Toaster;
 
 import java.util.ArrayList;
@@ -23,7 +22,7 @@ import java.util.ArrayList;
 /** Strategy to only invalidate/reload the list of caches when the bounds are
  * changed to outside the previous bounds. Also returns an empty list if the count is 
  * greater than MAX_COUNT. */
-class QueryManager implements ICachesProviderArea {
+public class CachesProviderLazyArea implements ICachesProviderArea {
 
     //The bounds of the loaded area
     private double mLatLow;
@@ -40,7 +39,7 @@ class QueryManager implements ICachesProviderArea {
     
     private final ICachesProviderArea mCachesProviderArea;
 
-    QueryManager(ICachesProviderArea cachesProviderArea,
+    public CachesProviderLazyArea(ICachesProviderArea cachesProviderArea,
                 Toaster toaster) {
         mCachesProviderArea = cachesProviderArea;
         mToaster = toaster;
