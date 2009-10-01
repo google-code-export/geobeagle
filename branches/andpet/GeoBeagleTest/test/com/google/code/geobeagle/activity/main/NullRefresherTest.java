@@ -14,6 +14,8 @@
 
 package com.google.code.geobeagle.activity.main;
 
+import com.google.code.geobeagle.activity.NullRefresher;
+
 import org.junit.Test;
 
 public class NullRefresherTest {
@@ -21,5 +23,10 @@ public class NullRefresherTest {
     @Test
     public void test() {
         new NullRefresher().refresh();
+    }
+
+    @Test
+    public void testForce() {
+        new NullRefresher().forceRefresh();
     }
 }

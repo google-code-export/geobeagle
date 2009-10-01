@@ -29,7 +29,7 @@ public class CachesProviderCountTest {
 
         CachesProviderCount provider = new CachesProviderCount(area, 10, 100);
         assertEquals(provider.getCount(), 0);
-        assertTrue(area.getSetRadiusCalls() <= CachesProviderCount.MAX_ITERATIONS);
+        assertTrue(area.getSetBoundsCalls() <= CachesProviderCount.MAX_ITERATIONS);
     }
 
     @Test
@@ -41,7 +41,7 @@ public class CachesProviderCountTest {
 
         CachesProviderCount provider = new CachesProviderCount(area, 10, 100);
         assertEquals(provider.getCount(), 1);
-        assertTrue(area.getSetRadiusCalls() <= CachesProviderCount.MAX_ITERATIONS);
+        assertTrue(area.getSetBoundsCalls() <= CachesProviderCount.MAX_ITERATIONS);
     }
 
     @Test
@@ -55,7 +55,7 @@ public class CachesProviderCountTest {
         CachesProviderCount provider = new CachesProviderCount(area, 1, 5);
         assertEquals(provider.getCount(), 10);
         //Expect maximum number of searches:
-        assertTrue(area.getSetRadiusCalls() == CachesProviderCount.MAX_ITERATIONS);
+        assertTrue(area.getSetBoundsCalls() == CachesProviderCount.MAX_ITERATIONS);
     }
 
     @Test
@@ -68,7 +68,7 @@ public class CachesProviderCountTest {
 
         CachesProviderCount provider = new CachesProviderCount(area, 5, 5);
         assertEquals(5, provider.getCount());
-        assertTrue(area.getSetRadiusCalls() <= CachesProviderCount.MAX_ITERATIONS);
+        assertTrue(area.getSetBoundsCalls() <= CachesProviderCount.MAX_ITERATIONS);
     }
     
     @Test

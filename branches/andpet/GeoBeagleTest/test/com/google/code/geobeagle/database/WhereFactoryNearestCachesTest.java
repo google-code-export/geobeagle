@@ -16,11 +16,6 @@ package com.google.code.geobeagle.database;
 
 import static org.junit.Assert.assertEquals;
 
-import com.google.code.geobeagle.database.DatabaseDI.SearchFactory;
-import com.google.code.geobeagle.database.WhereFactoryNearestCaches.BoundingBox;
-import com.google.code.geobeagle.database.WhereFactoryNearestCaches.Search;
-import com.google.code.geobeagle.database.WhereFactoryNearestCaches.WhereStringFactory;
-
 import org.easymock.EasyMock;
 import org.junit.Test;
 import org.junit.runner.RunWith;

@@ -21,9 +21,7 @@ import static org.junit.Assert.assertTrue;
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapView;
 import com.google.code.geobeagle.Geocache;
-import com.google.code.geobeagle.activity.map.QueryManager.CachedNeedsLoading;
 import com.google.code.geobeagle.database.DbFrontend;
-import com.google.code.geobeagle.database.WhereFactoryFixedArea;
 import com.google.code.geobeagle.xmlimport.GpxImporterDI.Toaster;
 
 import org.easymock.EasyMock;

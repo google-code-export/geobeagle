@@ -18,9 +18,8 @@ public class CachesProviderStub implements ICachesProviderArea {
     public void addCache(Geocache geocache) {
         mGeocaches.add(geocache);
     }
-    
-    @Override
-    public ArrayList<Geocache> getCaches() {
+
+    private ArrayList<Geocache> fetchCaches() {
         ArrayList<Geocache> selection = new ArrayList<Geocache>();
         for (Geocache geocache : mGeocaches) {
             if (geocache.getLatitude() >= mLatLow
@@ -32,13 +31,18 @@ public class CachesProviderStub implements ICachesProviderArea {
         }
         return selection;
     }
+    
+    @Override
+    public ArrayList<Geocache> getCaches() {
+        return fetchCaches();
+    }
 
     @Override
     public int getCount() {
-        return getCaches().size();
+        return fetchCaches().size();
     }
 
-    public int getSetRadiusCalls() {
+    public int getSetBoundsCalls() {
         return mBoundsCalls;
     }
 

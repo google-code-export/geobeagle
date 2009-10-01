@@ -17,10 +17,6 @@ package com.google.code.geobeagle.cachelist;
 import static org.junit.Assert.assertEquals;
 
 import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.database.FilterNearestCaches;
-import com.google.code.geobeagle.database.WhereFactory;
-import com.google.code.geobeagle.database.WhereFactoryAllCaches;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.api.easymock.PowerMock;
