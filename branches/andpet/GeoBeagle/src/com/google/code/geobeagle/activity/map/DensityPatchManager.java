@@ -20,20 +20,22 @@ import com.google.android.maps.Projection;
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.database.CachesProviderLazyArea;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.List;
 
 class DensityPatchManager {
     private List<DensityMatrix.DensityPatch> mDensityPatches;
-    private final CachesProviderLazyArea mQueryManager;
+    private final CachesProviderLazyArea mLazyArea;
     public static final double RESOLUTION_LATITUDE = 0.01;
     public static final double RESOLUTION_LONGITUDE = 0.02;
     public static final int RESOLUTION_LATITUDE_E6 = (int)(RESOLUTION_LATITUDE * 1E6);
     public static final int RESOLUTION_LONGITUDE_E6 = (int)(RESOLUTION_LONGITUDE * 1E6);
 
-    DensityPatchManager(List<DensityMatrix.DensityPatch> patches, CachesProviderLazyArea queryManager) {
+    DensityPatchManager(List<DensityMatrix.DensityPatch> patches, CachesProviderLazyArea lazyArea) {
         mDensityPatches = patches;
-        mQueryManager = queryManager;
+        mLazyArea = lazyArea;
     }
 
     public List<DensityMatrix.DensityPatch> getDensityPatches(MapView mMapView) {
@@ -45,17 +47,18 @@ class DensityPatchManager {
         double latHigh = newTopLeft.getLatitudeE6() / 1.0E6;
         double lonLow = newBottomRight.getLongitudeE6() / 1.0E6;
         double lonHigh = newTopLeft.getLongitudeE6() / 1.0E6;
-        mQueryManager.setBounds(latLow, lonLow, latHigh, lonHigh);
-        if (!mQueryManager.hasChanged()) {
+        mLazyArea.setBounds(latLow, lonLow, latHigh, lonHigh);
+        if (!mLazyArea.hasChanged()) {
             return mDensityPatches;
         }
 
-        ArrayList<Geocache> list = mQueryManager.getCaches();
+        ArrayList<Geocache> list = mLazyArea.getCaches();
+        mLazyArea.setChanged(false);
         DensityMatrix densityMatrix = new DensityMatrix(DensityPatchManager.RESOLUTION_LATITUDE,
                 DensityPatchManager.RESOLUTION_LONGITUDE);
         densityMatrix.addCaches(list);
         mDensityPatches = densityMatrix.getDensityPatches();
-        // Log.d("GeoBeagle", "Density patches:" + mDensityPatches.size());
+        Log.d("GeoBeagle", "Density patches:" + mDensityPatches.size());
         return mDensityPatches;
     }
 }

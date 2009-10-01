@@ -103,7 +103,7 @@ public class DbFrontend {
         countCursor.moveToFirst();
         int count = countCursor.getInt(0);
         countCursor.close();
-        Log.d("GeoBeagle", "DbFrontEnd.count:" + count);
+        Log.d("GeoBeagle", "DbFrontEnd.count: " + count);
         return count;
     }
 

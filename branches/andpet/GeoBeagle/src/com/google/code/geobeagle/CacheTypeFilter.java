@@ -1,9 +1,8 @@
 package com.google.code.geobeagle;
 
+import android.app.Activity;
 import android.content.SharedPreferences;
 import android.util.Log;
-
-import java.util.ArrayList;
 
 public class CacheTypeFilter {
     private static class FilterOption {
@@ -27,13 +26,22 @@ public class CacheTypeFilter {
             new FilterOption("Waypoints", "Waypoints", "(CacheType >= 20 AND CacheType <= 25)"),
             };
 
-    public void loadFromPrefs(SharedPreferences prefs) {
+    public CacheTypeFilter() {        
+    }
+    
+    public CacheTypeFilter(Activity activity) {
+        loadFromPrefs(activity);
+    }
+    
+    public void loadFromPrefs(Activity activity) {
+        SharedPreferences prefs = activity.getSharedPreferences("Filter", 0);
         for (FilterOption option : mOptions) {
             option.Selected = prefs.getBoolean(option.PrefsName, true);
         }
     }
 
-    public void saveToPrefs(SharedPreferences prefs) {
+    public void saveToPrefs(Activity activity) {
+        SharedPreferences prefs = activity.getSharedPreferences("Filter", 0);
         SharedPreferences.Editor editor  = prefs.edit();
         for (FilterOption option : mOptions) {
             editor.putBoolean(option.PrefsName, option.Selected);

@@ -72,6 +72,7 @@ public class CacheListRefresh implements Refresher {
         mUpdateFlag = updateFlag;
     }
 
+    @Override
     public void forceRefresh() {
         mTiming.start();
         final long now = mTiming.getTime();
@@ -79,6 +80,7 @@ public class CacheListRefresh implements Refresher {
                 mLocationControlBuffered.getAzimuth(), 0, now);
     }
 
+    @Override
     public void refresh() {
         // TODO: Is this check still necessary?
         /*

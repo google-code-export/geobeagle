@@ -162,14 +162,6 @@ public class CacheListDelegateDI {
         final UpdateGpsWidgetRunnable updateGpsWidgetRunnable = gpsWidgetAndUpdater
                 .getUpdateGpsWidgetRunnable();
         updateGpsWidgetRunnable.run();
-
-        /*
-        final WhereFactoryAllCaches whereFactoryAllCaches = new WhereFactoryAllCaches();
-        final SearchFactory searchFactory = new SearchFactory();
-        final WhereStringFactory whereStringFactory = new WhereStringFactory();
-        final WhereFactoryNearestCaches whereFactoryNearestCaches = new WhereFactoryNearestCaches(
-                searchFactory, whereStringFactory);
-*/
         
         final ListTitleFormatter listTitleFormatter = new ListTitleFormatter();
         final CacheListDelegateDI.Timing timing = new CacheListDelegateDI.Timing();
@@ -193,10 +185,14 @@ public class CacheListDelegateDI {
         final ActionManagerFactory actionManagerFactory = new ActionManagerFactory(
                 actionAndTolerances, sqlCacheLoaderTolerance);
 
+        final CacheTypeFilter cacheTypeFilter = new CacheTypeFilter(listActivity);
+        
         final DbFrontend dbFrontend = new DbFrontend(listActivity);
         final CachesProviderArea cachesProviderArea = new CachesProviderArea(dbFrontend);
+        cachesProviderArea.setExtraCondition(cacheTypeFilter.getSqlWhereClause());
         final CachesProviderCount cachesProviderCount = new CachesProviderCount(cachesProviderArea, 15, 30);
         final CachesProviderArea cachesProviderAll = new CachesProviderArea(dbFrontend);
+        cachesProviderAll.setExtraCondition(cacheTypeFilter.getSqlWhereClause());
         final CachesProviderToggler cachesProviderToggler = 
             new CachesProviderToggler(cachesProviderCount, cachesProviderAll);
         final TitleUpdater titleUpdater = new TitleUpdater(listActivity, 
@@ -240,8 +236,6 @@ public class CacheListDelegateDI {
             }
         };
 
-        final CacheTypeFilter cacheTypeFilter = new CacheTypeFilter();
-        
         final MenuActionSyncGpx menuActionSyncGpx = new MenuActionSyncGpx(nullAbortable,
                 cacheListRefresh, gpxImporterFactory, dbFrontend);
         final MenuActions menuActions = new MenuActions(listActivity.getResources());
@@ -250,7 +244,8 @@ public class CacheListDelegateDI {
         menuActions.add(new MenuActionMyLocation(cacheListRefresh, errorDisplayer,
                 geocacheFromMyLocationFactory, dbFrontend));
         menuActions.add(new MenuActionSearchOnline(listActivity));
-        menuActions.add(new MenuActionChooseFilter(listActivity, cacheTypeFilter, cachesProviderToggler, cacheListRefresh));
+        menuActions.add(new MenuActionChooseFilter(listActivity, cacheTypeFilter, 
+                cachesProviderToggler, cacheListRefresh));
         menuActions.add(new MenuActionMap(listActivity, locationControlBuffered));
         
         final Intent geoBeagleMainIntent = new Intent(listActivity, GeoBeagle.class);

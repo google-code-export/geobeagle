@@ -15,12 +15,13 @@
 package com.google.code.geobeagle.activity.map;
 
 import com.google.android.maps.Overlay;
+import com.google.code.geobeagle.Refresher;
 
 import android.util.Log;
 
 import java.util.List;
 
-public class OverlayManager {
+public class OverlayManager implements Refresher {
     static final int DENSITY_MAP_ZOOM_THRESHOLD = 12;
     private final CachePinsOverlayFactory mCachePinsOverlayFactory;
     private final DensityOverlay mDensityOverlay;
@@ -51,5 +52,15 @@ public class OverlayManager {
 
     public boolean usesDensityMap() {
         return mUsesDensityMap;
+    }
+
+    @Override
+    public void forceRefresh() {
+        selectOverlay();
+    }
+
+    @Override
+    public void refresh() {
+        selectOverlay();
     }
 }

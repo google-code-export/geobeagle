@@ -100,7 +100,6 @@ public class CachesProviderLazyArea implements ICachesProviderArea {
 
         if (mTooManyCaches)
             return 0;
-
         return mCachesProviderArea.getCount();
     }
 

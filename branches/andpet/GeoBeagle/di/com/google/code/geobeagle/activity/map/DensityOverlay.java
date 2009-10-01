@@ -31,14 +31,14 @@ public class DensityOverlay extends Overlay {
     // Android classes.
 
     public static DensityOverlayDelegate createDelegate(List<DensityMatrix.DensityPatch> patches,
-             GeoPoint nullGeoPoint, CachesProviderLazyArea queryManager) {
+             GeoPoint nullGeoPoint, CachesProviderLazyArea lazyArea) {
         final Rect patchRect = new Rect();
         final Paint paint = new Paint();
         paint.setARGB(128, 255, 0, 0);
         final Point screenLow = new Point();
         final Point screenHigh = new Point();
         final DensityPatchManager densityPatchManager = new DensityPatchManager(patches,
-                queryManager);
+                lazyArea);
         return new DensityOverlayDelegate(patchRect, paint, screenLow, screenHigh, 
                 densityPatchManager);
     }

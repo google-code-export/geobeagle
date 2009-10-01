@@ -65,6 +65,7 @@ public class CachePinsOverlayFactory {
             return mCachePinsOverlay;
 
         ArrayList<Geocache> list = mLazyArea.getCaches();
+        mLazyArea.setChanged(false);
         timing.lap("Loaded caches");
         mCachePinsOverlay = new CachePinsOverlay(mCacheItemFactory, mContext, mDefaultMarker, list);
         return mCachePinsOverlay;

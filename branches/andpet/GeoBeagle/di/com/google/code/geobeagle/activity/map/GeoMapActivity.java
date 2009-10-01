@@ -19,6 +19,7 @@ import com.google.android.maps.MapActivity;
 import com.google.android.maps.MapController;
 import com.google.android.maps.MyLocationOverlay;
 import com.google.android.maps.Overlay;
+import com.google.code.geobeagle.CacheTypeFilter;
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.actions.MenuActionCacheList;
@@ -80,11 +81,9 @@ public class GeoMapActivity extends MapActivity {
         final CacheDrawables cacheDrawables = new CacheDrawables(resources);
         final CacheItemFactory cacheItemFactory = new CacheItemFactory(cacheDrawables);
 
+        final CacheTypeFilter cacheTypeFilter = new CacheTypeFilter(this);
+        
         final List<Overlay> mapOverlays = mMapView.getOverlays();
-        final MenuActions menuActions = new MenuActions(getResources());
-        menuActions.add(new GeoMapActivityDelegate.MenuActionToggleSatellite(mMapView));
-        menuActions.add(new GeoMapActivityDelegate.MenuActionCenterLocation(mMapView, mMyLocationOverlay));
-        menuActions.add(new MenuActionCacheList(this));
         //menuActions.add(new MenuActionChooseFilter(this));
 
         final Intent intent = getIntent();
@@ -97,29 +96,34 @@ public class GeoMapActivity extends MapActivity {
         mapOverlays.add(nullOverlay);
         mapOverlays.add(mMyLocationOverlay);
 
-        final ArrayList<Geocache> nullList = new ArrayList<Geocache>();
         final List<DensityPatch> densityPatches = new ArrayList<DensityPatch>();
         final Toaster toaster = new Toaster(this, R.string.too_many_caches, Toast.LENGTH_SHORT);
         ICachesProviderArea cachesProviderArea = new CachesProviderArea(mDbFrontend);
-
+        cachesProviderArea.setExtraCondition(cacheTypeFilter.getSqlWhereClause());
         final CachesProviderLazyArea lazyArea = new CachesProviderLazyArea(cachesProviderArea, toaster);
         final DensityOverlayDelegate densityOverlayDelegate = DensityOverlay.createDelegate(
                 densityPatches, nullGeoPoint, lazyArea);
         final DensityOverlay densityOverlay = new DensityOverlay(densityOverlayDelegate);
+        
         final ArrayList<Geocache> geocacheList = new ArrayList<Geocache>();
         final CachePinsOverlay cachePinsOverlay = new CachePinsOverlay(cacheItemFactory, this,
                 defaultMarker, geocacheList);
         final CachePinsOverlayFactory cachePinsOverlayFactory = new CachePinsOverlayFactory(
                 mMapView, this, defaultMarker, cacheItemFactory, cachePinsOverlay, lazyArea);
-        mGeoMapActivityDelegate = new GeoMapActivityDelegate(mMapView, menuActions);
-
         final GeoPoint center = new GeoPoint((int)(latitude * GeoUtils.MILLION),
                 (int)(longitude * GeoUtils.MILLION));
-
         mapController.setCenter(center);
         final OverlayManager overlayManager = new OverlayManager(mMapView, mapOverlays,
                 densityOverlay, cachePinsOverlayFactory, false);
         mMapView.setScrollListener(overlayManager);
+
+        final MenuActions menuActions = new MenuActions(getResources());
+        menuActions.add(new GeoMapActivityDelegate.MenuActionToggleSatellite(mMapView));
+        menuActions.add(new GeoMapActivityDelegate.MenuActionCenterLocation(mMapView, mMyLocationOverlay));
+        menuActions.add(new MenuActionCacheList(this));
+        menuActions.add(new MenuActionChooseFilter(this, cacheTypeFilter, cachesProviderArea, overlayManager));
+        
+        mGeoMapActivityDelegate = new GeoMapActivityDelegate(mMapView, menuActions);
 
         if (!fZoomed) {
             mapController.setZoom(DEFAULT_ZOOM_LEVEL);

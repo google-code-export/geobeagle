@@ -12,11 +12,15 @@
  ** limitations under the License.
  */
 
-package com.google.code.geobeagle.activity.main;
+package com.google.code.geobeagle.activity;
 
 import com.google.code.geobeagle.Refresher;
 
-class NullRefresher implements Refresher {
+public class NullRefresher implements Refresher {
     public void refresh() {
+    }
+
+    @Override
+    public void forceRefresh() {
     }
 }
