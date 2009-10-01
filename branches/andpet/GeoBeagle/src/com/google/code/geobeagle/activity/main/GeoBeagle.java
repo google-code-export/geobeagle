@@ -157,13 +157,13 @@ public class GeoBeagle extends Activity {
         final Resources resources = this.getResources();
         final SharedPreferences defaultSharedPreferences = PreferenceManager
                 .getDefaultSharedPreferences(this);
+        mDbFrontend = new DbFrontend(this);
         final GeocacheFromIntentFactory geocacheFromIntentFactory = new GeocacheFromIntentFactory(
                 geocacheFactory, mDbFrontend);
         final IncomingIntentHandler incomingIntentHandler = new IncomingIntentHandler(
                 geocacheFactory, geocacheFromIntentFactory);
         final GeocacheFromParcelFactory geocacheFromParcelFactory = new GeocacheFromParcelFactory(
                 geocacheFactory);
-        mDbFrontend = new DbFrontend(this);
         mGeoBeagleDelegate = new GeoBeagleDelegate(activitySaver, appLifecycleManager,
                 compassListener, fieldNoteSender, this, geocacheFactory, geocacheViewer,
                 incomingIntentHandler, menuActions, geocacheFromParcelFactory,
