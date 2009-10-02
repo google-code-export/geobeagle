@@ -21,7 +21,6 @@ import com.google.code.geobeagle.activity.cachelist.model.GeocacheVector.Locatio
 import com.google.code.geobeagle.activity.cachelist.presenter.DistanceSortStrategy;
 import com.google.code.geobeagle.activity.cachelist.presenter.SqlCacheLoader;
 import com.google.code.geobeagle.activity.cachelist.presenter.TitleUpdater;
-import com.google.code.geobeagle.database.DbFrontend;
 import com.google.code.geobeagle.database.ICachesProviderCenter;
 
 import org.easymock.EasyMock;
@@ -67,6 +66,8 @@ public class SqlCacheLoaderTest {
         EasyMock.expect(location.getLongitude()).andReturn(-122.0);
         EasyMock.expect(locationControlBuffered.getLocation()).andReturn(location);
         EasyMock.expect(cacheListData.size()).andReturn(100);
+        EasyMock.expect(cachesProviderCenter.getCaches()).andReturn(geocaches);
+        cachesProviderCenter.setCenter(37.0, -122.0);
         cacheListData.add(geocaches, locationControlBuffered);
         titleUpdater.update(0, 100);
 

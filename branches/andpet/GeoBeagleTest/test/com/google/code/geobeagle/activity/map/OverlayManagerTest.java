@@ -16,6 +16,7 @@ package com.google.code.geobeagle.activity.map;
 
 import static org.junit.Assert.*;
 
+import com.google.android.maps.MapView;
 import com.google.android.maps.Overlay;
 
 import org.easymock.EasyMock;
@@ -33,7 +34,7 @@ import java.util.List;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest( {
-    Log.class, OverlayManager.class
+    Log.class, OverlayManager.class, MapView.class, GeoMapView.class
 })
 public class OverlayManagerTest {
     @Before

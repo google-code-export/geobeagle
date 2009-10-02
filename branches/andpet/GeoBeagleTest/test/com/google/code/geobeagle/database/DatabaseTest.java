@@ -131,7 +131,8 @@ public class DatabaseTest {
     private static String exec(String s) {
         String output = null;
         try {
-            String path = "C:\\Program\\android-sdk-windows-1.5_r3\\tools\\";
+            //String path = "C:\\Program\\android-sdk-windows-1.5_r3\\tools\\";
+            String path = "";
             ProcessBuilder processBuilder = new ProcessBuilder(path+"sqlite3", "GeoBeagle.db", s);
             processBuilder.redirectErrorStream(true);
             InputStream shellIn = null;

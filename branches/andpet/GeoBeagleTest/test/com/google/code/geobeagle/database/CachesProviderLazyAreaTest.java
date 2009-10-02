@@ -43,6 +43,8 @@ public class CachesProviderLazyAreaTest {
         assertTrue(lazyArea.hasChanged());
         lazyArea.setChanged(false);
         assertFalse(lazyArea.hasChanged());
+        lazyArea.setExtraCondition("condition");
+        assertTrue(lazyArea.hasChanged());
     }
 
     @Test
@@ -62,11 +64,28 @@ public class CachesProviderLazyAreaTest {
         CachesProviderLazyArea lazyArea = new CachesProviderLazyArea(mArea, mToaster);
         lazyArea.setBounds(0, 0, 5, 5);
         lazyArea.getCaches();
+        assertTrue(lazyArea.hasChanged());
         assertEquals(1, mArea.getSetBoundsCalls());
+        
+        lazyArea.setChanged(false);
         lazyArea.setBounds(0, 1, 4, 5);
         lazyArea.getCaches();
         //No more calls to setBounds
         assertEquals(1, mArea.getSetBoundsCalls());
+        assertFalse(lazyArea.hasChanged());
     }
-    
+
+    @Test
+    public void testCachesChanges() {
+        Geocache cache2 = mockGeocache(2, 2);
+        mArea.addCache(mockGeocache(1, 1));
+        PowerMock.replayAll();
+
+        CachesProviderLazyArea lazyArea = new CachesProviderLazyArea(mArea, mToaster);
+        lazyArea.setBounds(0, 0, 5, 5);
+        assertEquals(1, lazyArea.getCount());
+        lazyArea.setChanged(false);
+        mArea.addCache(cache2);
+        assertEquals(2, lazyArea.getCount());
+    }
 }

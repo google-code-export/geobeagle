@@ -68,5 +68,6 @@ public class CachesProviderStub implements ICachesProviderArea {
 
     @Override
     public void setExtraCondition(String condition) {
+        mHasChanged = true;
     }
 }

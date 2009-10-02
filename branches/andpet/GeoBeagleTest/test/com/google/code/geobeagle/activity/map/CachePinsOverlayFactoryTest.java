@@ -38,7 +38,8 @@ import java.util.ArrayList;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest( {
-        View.class, Log.class, CachePinsOverlay.class
+        View.class, Log.class, CachePinsOverlay.class, GeoMapView.class,
+        Context.class, Drawable.class, GeoPoint.class
 })
 public class CachePinsOverlayFactoryTest {
     @Before
@@ -54,7 +55,7 @@ public class CachePinsOverlayFactoryTest {
         Context context = PowerMock.createMock(Context.class);
         Drawable defaultMarker = PowerMock.createMock(Drawable.class);
         CacheItemFactory cacheItemFactory = PowerMock.createMock(CacheItemFactory.class);
-        CachesProviderLazyArea queryManager = PowerMock.createMock(CachesProviderLazyArea.class);
+        CachesProviderLazyArea lazyArea = PowerMock.createMock(CachesProviderLazyArea.class);
         CachePinsOverlay cachePinsOverlay = PowerMock.createMock(CachePinsOverlay.class);
         Projection projection = PowerMock.createMock(Projection.class);
         GeoPoint newTopLeft = PowerMock.createMock(GeoPoint.class);
@@ -66,15 +67,15 @@ public class CachePinsOverlayFactoryTest {
         EasyMock.expect(geoMapView.getRight()).andReturn(100);
         EasyMock.expect(geoMapView.getBottom()).andReturn(200);
         EasyMock.expect(projection.fromPixels(100, 200)).andReturn(newBottomRight);
-        EasyMock.expect(queryManager.needsLoading(newTopLeft, newBottomRight)).andReturn(true);
+        //EasyMock.expect(lazyArea.needsLoading(newTopLeft, newBottomRight)).andReturn(true);
 
-        EasyMock.expect(queryManager.load(newTopLeft, newBottomRight)).andReturn(list);
+        //EasyMock.expect(lazyArea.load(newTopLeft, newBottomRight)).andReturn(list);
         PowerMock.expectNew(CachePinsOverlay.class, cacheItemFactory, context, defaultMarker, list)
                 .andReturn(cachePinsOverlay);
 
         PowerMock.replayAll();
         final CachePinsOverlayFactory cachePinsOverlayFactory = new CachePinsOverlayFactory(
-                geoMapView, context, defaultMarker, cacheItemFactory, null, queryManager);
+                geoMapView, context, defaultMarker, cacheItemFactory, null, lazyArea);
         assertEquals(cachePinsOverlay, cachePinsOverlayFactory.getCachePinsOverlay());
         PowerMock.verifyAll();
     }
@@ -82,7 +83,7 @@ public class CachePinsOverlayFactoryTest {
     @Test
     public void testGetCachePinsOverlayDoesntNeedLoading() throws Exception {
         GeoMapView geoMapView = PowerMock.createMock(GeoMapView.class);
-        CachesProviderLazyArea queryManager = PowerMock.createMock(CachesProviderLazyArea.class);
+        CachesProviderLazyArea lazyArea = PowerMock.createMock(CachesProviderLazyArea.class);
         CachePinsOverlay cachePinsOverlay = PowerMock.createMock(CachePinsOverlay.class);
         Projection projection = PowerMock.createMock(Projection.class);
         GeoPoint newTopLeft = PowerMock.createMock(GeoPoint.class);
@@ -93,11 +94,11 @@ public class CachePinsOverlayFactoryTest {
         EasyMock.expect(geoMapView.getRight()).andReturn(100);
         EasyMock.expect(geoMapView.getBottom()).andReturn(200);
         EasyMock.expect(projection.fromPixels(100, 200)).andReturn(newBottomRight);
-        EasyMock.expect(queryManager.needsLoading(newTopLeft, newBottomRight)).andReturn(false);
+        //EasyMock.expect(lazyArea.needsLoading(newTopLeft, newBottomRight)).andReturn(false);
 
         PowerMock.replayAll();
         final CachePinsOverlayFactory cachePinsOverlayFactory = new CachePinsOverlayFactory(
-                geoMapView, null, null, null, cachePinsOverlay, queryManager);
+                geoMapView, null, null, null, cachePinsOverlay, lazyArea);
         assertEquals(cachePinsOverlay, cachePinsOverlayFactory.getCachePinsOverlay());
         PowerMock.verifyAll();
     }
