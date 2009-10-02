@@ -33,9 +33,11 @@ public class CachesProviderArea implements ICachesProviderArea {
             return;
         }
 
+        //Log.d("GeoBeagle", "area.setExtraCondition " + condition);
         mWhere = null;
         mExtraCondition = condition;
         mHasChanged = true;
+        mCaches = null;
     }
     
     private String getWhere() {

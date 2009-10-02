@@ -45,8 +45,8 @@ class DensityPatchManager {
 
         double latLow = newBottomRight.getLatitudeE6() / 1.0E6;
         double latHigh = newTopLeft.getLatitudeE6() / 1.0E6;
-        double lonLow = newBottomRight.getLongitudeE6() / 1.0E6;
-        double lonHigh = newTopLeft.getLongitudeE6() / 1.0E6;
+        double lonLow = newTopLeft.getLongitudeE6() / 1.0E6;
+        double lonHigh = newBottomRight.getLongitudeE6() / 1.0E6;
         mLazyArea.setBounds(latLow, lonLow, latHigh, lonHigh);
         if (!mLazyArea.hasChanged()) {
             return mDensityPatches;

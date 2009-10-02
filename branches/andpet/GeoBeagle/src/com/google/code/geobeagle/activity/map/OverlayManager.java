@@ -41,13 +41,16 @@ public class OverlayManager implements Refresher {
 
     public void selectOverlay() {
         final int zoomLevel = mGeoMapView.getZoomLevel();
-        Log.d("GeoBeagle", "Zoom: " + zoomLevel);
+        Log.d("GeoBeagle", "selectOverlay Zoom: " + zoomLevel);
         boolean newZoomUsesDensityMap = zoomLevel < OverlayManager.DENSITY_MAP_ZOOM_THRESHOLD;
         if (newZoomUsesDensityMap && mUsesDensityMap)
             return;
         mUsesDensityMap = newZoomUsesDensityMap;
-        mMapOverlays.set(0, mUsesDensityMap ? mDensityOverlay : mCachePinsOverlayFactory
-                .getCachePinsOverlay());
+        if (mUsesDensityMap) {
+            mMapOverlays.set(0, mDensityOverlay);
+        } else {
+            mMapOverlays.set(0, mCachePinsOverlayFactory.getCachePinsOverlay());
+        }
     }
 
     public boolean usesDensityMap() {
@@ -57,6 +60,8 @@ public class OverlayManager implements Refresher {
     @Override
     public void forceRefresh() {
         selectOverlay();
+        //Must be called from the GUI thread:
+        mGeoMapView.invalidate();
     }
 
     @Override

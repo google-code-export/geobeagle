@@ -9,7 +9,6 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnDismissListener;
 import android.content.DialogInterface.OnMultiChoiceClickListener;
-import android.widget.Toast;
 
 /** Show a dialog to let the user decide which geocaches to show */
 public class MenuActionChooseFilter extends MenuActionBase {
@@ -43,8 +42,6 @@ public class MenuActionChooseFilter extends MenuActionBase {
             @Override
             public void onDismiss(DialogInterface arg0) {
                 mFilter.saveToPrefs(mActivity);
-                Toast.makeText(mActivity.getApplicationContext(), "Saved filter", 
-                        Toast.LENGTH_SHORT).show();
                 mCachesProvider.setExtraCondition(mFilter.getSqlWhereClause());
                 mRefresher.forceRefresh();
             }

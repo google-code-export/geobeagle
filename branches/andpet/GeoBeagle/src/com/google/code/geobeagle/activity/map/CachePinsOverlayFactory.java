@@ -36,17 +36,17 @@ public class CachePinsOverlayFactory {
 
     public CachePinsOverlayFactory(GeoMapView geoMapView, Context context, Drawable defaultMarker,
             CacheItemFactory cacheItemFactory, CachePinsOverlay cachePinsOverlay,
-            CachesProviderLazyArea queryManager) {
+            CachesProviderLazyArea lazyArea) {
         mGeoMapView = geoMapView;
         mContext = context;
         mDefaultMarker = defaultMarker;
         mCacheItemFactory = cacheItemFactory;
         mCachePinsOverlay = cachePinsOverlay;
-        mLazyArea = queryManager;
+        mLazyArea = lazyArea;
     }
 
     public CachePinsOverlay getCachePinsOverlay() {
-        Log.d("GeoBeagle", "refresh Caches");
+        //Log.d("GeoBeagle", "CachePinsOverlayFactory.getCachePinsOverlay()");
         final CacheListDelegateDI.Timing timing = new CacheListDelegateDI.Timing();
 
         Projection projection = mGeoMapView.getProjection();
@@ -58,15 +58,15 @@ public class CachePinsOverlayFactory {
         
         double latLow = newBottomRight.getLatitudeE6() / 1.0E6;
         double latHigh = newTopLeft.getLatitudeE6() / 1.0E6;
-        double lonLow = newBottomRight.getLongitudeE6() / 1.0E6;
-        double lonHigh = newTopLeft.getLongitudeE6() / 1.0E6;
+        double lonLow = newTopLeft.getLongitudeE6() / 1.0E6;
+        double lonHigh = newBottomRight.getLongitudeE6() / 1.0E6;
         mLazyArea.setBounds(latLow, lonLow, latHigh, lonHigh);
         if (!mLazyArea.hasChanged())
             return mCachePinsOverlay;
-
         ArrayList<Geocache> list = mLazyArea.getCaches();
+        //Log.d("GeoBeagle", "CachesProvider for pin layer changed to " + list.size() + " caches");
         mLazyArea.setChanged(false);
-        timing.lap("Loaded caches");
+        timing.lap("Timing for loading caches");
         mCachePinsOverlay = new CachePinsOverlay(mCacheItemFactory, mContext, mDefaultMarker, list);
         return mCachePinsOverlay;
     }
