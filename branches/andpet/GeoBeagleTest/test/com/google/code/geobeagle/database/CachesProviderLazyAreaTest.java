@@ -65,6 +65,7 @@ public class CachesProviderLazyAreaTest {
         assertEquals(1, mArea.getSetBoundsCalls());
         lazyArea.setBounds(0, 1, 4, 5);
         lazyArea.getCaches();
+        //No more calls to setBounds
         assertEquals(1, mArea.getSetBoundsCalls());
     }
     

@@ -19,6 +19,7 @@ import static org.junit.Assert.*;
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.Projection;
 import com.google.code.geobeagle.Geocache;
+import com.google.code.geobeagle.database.CachesProviderLazyArea;
 
 import org.easymock.EasyMock;
 import org.junit.Before;
@@ -53,7 +54,7 @@ public class CachePinsOverlayFactoryTest {
         Context context = PowerMock.createMock(Context.class);
         Drawable defaultMarker = PowerMock.createMock(Drawable.class);
         CacheItemFactory cacheItemFactory = PowerMock.createMock(CacheItemFactory.class);
-        QueryManager queryManager = PowerMock.createMock(QueryManager.class);
+        CachesProviderLazyArea queryManager = PowerMock.createMock(CachesProviderLazyArea.class);
         CachePinsOverlay cachePinsOverlay = PowerMock.createMock(CachePinsOverlay.class);
         Projection projection = PowerMock.createMock(Projection.class);
         GeoPoint newTopLeft = PowerMock.createMock(GeoPoint.class);
@@ -81,7 +82,7 @@ public class CachePinsOverlayFactoryTest {
     @Test
     public void testGetCachePinsOverlayDoesntNeedLoading() throws Exception {
         GeoMapView geoMapView = PowerMock.createMock(GeoMapView.class);
-        QueryManager queryManager = PowerMock.createMock(QueryManager.class);
+        CachesProviderLazyArea queryManager = PowerMock.createMock(CachesProviderLazyArea.class);
         CachePinsOverlay cachePinsOverlay = PowerMock.createMock(CachePinsOverlay.class);
         Projection projection = PowerMock.createMock(Projection.class);
         GeoPoint newTopLeft = PowerMock.createMock(GeoPoint.class);

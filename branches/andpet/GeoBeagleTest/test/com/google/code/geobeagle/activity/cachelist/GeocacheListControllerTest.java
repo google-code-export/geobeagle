@@ -26,6 +26,7 @@ import com.google.code.geobeagle.activity.cachelist.model.GeocacheVector;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVectors;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
 import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheListPresenter;
+import com.google.code.geobeagle.database.CachesProviderToggler;
 import com.google.code.geobeagle.database.DatabaseDI;
 import org.easymock.EasyMock;
 import org.junit.Test;
@@ -160,15 +161,14 @@ public class GeocacheListControllerTest {
     public void testOnMenuOpened() {
         Menu menu = PowerMock.createMock(Menu.class);
         MenuItem menuItem = PowerMock.createMock(MenuItem.class);
-        FilterNearestCaches filterNearestCaches = PowerMock.createMock(FilterNearestCaches.class);
+        CachesProviderToggler toggler = PowerMock.createMock(CachesProviderToggler.class);
 
         EasyMock.expect(menu.findItem(R.string.menu_toggle_filter)).andReturn(menuItem);
-        EasyMock.expect(filterNearestCaches.getMenuString()).andReturn(
-                R.string.menu_show_nearest_caches);
+        EasyMock.expect(toggler.isShowingNearest()).andReturn(false);
         EasyMock.expect(menuItem.setTitle(R.string.menu_show_nearest_caches)).andReturn(menuItem);
 
         PowerMock.replayAll();
-        new GeocacheListController(null, null, filterNearestCaches, null, null).onMenuOpened(0,
+        new GeocacheListController(null, null, toggler, null, null).onMenuOpened(0,
                 menu);
         PowerMock.verifyAll();
     }

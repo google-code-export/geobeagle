@@ -22,6 +22,8 @@ import com.google.code.geobeagle.activity.cachelist.presenter.DistanceSortStrate
 import com.google.code.geobeagle.activity.cachelist.presenter.SqlCacheLoader;
 import com.google.code.geobeagle.activity.cachelist.presenter.TitleUpdater;
 import com.google.code.geobeagle.database.DbFrontend;
+import com.google.code.geobeagle.database.ICachesProviderCenter;
+
 import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
@@ -56,24 +58,20 @@ public class SqlCacheLoaderTest {
         LocationControlBuffered locationControlBuffered = PowerMock
                 .createMock(LocationControlBuffered.class);
         Location location = PowerMock.createMock(Location.class);
-        DbFrontend dbFrontend = PowerMock.createMock(DbFrontend.class);
-        WhereFactory whereFactory = PowerMock.createMock(WhereFactory.class);
         CacheListData cacheListData = PowerMock.createMock(CacheListData.class);
         TitleUpdater titleUpdater = PowerMock.createMock(TitleUpdater.class);
-        FilterNearestCaches filterNearestCaches = PowerMock.createMock(FilterNearestCaches.class);
         ArrayList<Geocache> geocaches = new ArrayList<Geocache>();
+        ICachesProviderCenter cachesProviderCenter = PowerMock.createMock(ICachesProviderCenter.class);
 
         EasyMock.expect(location.getLatitude()).andReturn(37.0);
         EasyMock.expect(location.getLongitude()).andReturn(-122.0);
-        EasyMock.expect(filterNearestCaches.getWhereFactory()).andReturn(whereFactory);
         EasyMock.expect(locationControlBuffered.getLocation()).andReturn(location);
-        EasyMock.expect(dbFrontend.loadCaches(37.0, -122.0, whereFactory)).andReturn(geocaches);
         EasyMock.expect(cacheListData.size()).andReturn(100);
         cacheListData.add(geocaches, locationControlBuffered);
         titleUpdater.update(0, 100);
 
         PowerMock.replayAll();
-        new SqlCacheLoader(dbFrontend, filterNearestCaches, cacheListData, locationControlBuffered,
+        new SqlCacheLoader(cachesProviderCenter, cacheListData, locationControlBuffered,
                 titleUpdater, mTiming).refresh();
         PowerMock.verifyAll();
     }

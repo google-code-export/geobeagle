@@ -20,6 +20,7 @@ import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapView;
 import com.google.android.maps.Projection;
 import com.google.code.geobeagle.Geocache;
+import com.google.code.geobeagle.database.CachesProviderLazyArea;
 
 import org.easymock.EasyMock;
 import org.junit.Test;
@@ -38,7 +39,7 @@ public class DensityPatchManagerTest {
    
     @Test
     public void testDensityPatchManager() throws Exception {
-        QueryManager queryManager = PowerMock.createMock(QueryManager.class);
+        CachesProviderLazyArea queryManager = PowerMock.createMock(CachesProviderLazyArea.class);
         MapView mapView = PowerMock.createMock(MapView.class);
         ArrayList<DensityMatrix.DensityPatch> patches = new ArrayList<DensityMatrix.DensityPatch>();
         Projection projection = PowerMock.createMock(Projection.class);
@@ -68,7 +69,7 @@ public class DensityPatchManagerTest {
 
     @Test
     public void testDensityPatchManagerCached() throws Exception {
-        QueryManager queryManager = PowerMock.createMock(QueryManager.class);
+        CachesProviderLazyArea queryManager = PowerMock.createMock(CachesProviderLazyArea.class);
         MapView mapView = PowerMock.createMock(MapView.class);
         ArrayList<DensityMatrix.DensityPatch> patches = new ArrayList<DensityMatrix.DensityPatch>();
         Projection projection = PowerMock.createMock(Projection.class);
