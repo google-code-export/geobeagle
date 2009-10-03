@@ -15,10 +15,23 @@
 	android:orientation="vertical" android:layout_width="fill_parent"
 	android:layout_height="wrap_content">
 
-  <TextView android:id="@+id/TextView01" android:text="Select cache types to show" 
-     android:layout_width="fill_parent" android:layout_height="wrap_content"
-     android:gravity="center_horizontal" android:textSize="20sp">
+  <TextView android:id="@+id/TextView01" android:layout_width="fill_parent" android:layout_height="wrap_content"
+     android:gravity="center_horizontal" android:textSize="20sp" android:text="Cache types to show">
   </TextView>
+
+<ScrollView
+		android:id="@+id/scrollview"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:layout_weight="1"
+		>
+
+	<LinearLayout
+		android:id="@+id/widget30"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:orientation="vertical"
+		>
 
     <CheckBox android:id="@+id/CheckBoxTrad" android:text="Traditional" 
      android:layout_width="fill_parent" android:layout_height="wrap_content">
@@ -36,11 +49,23 @@
      android:layout_width="fill_parent" android:layout_height="wrap_content">
   </CheckBox>
 
+  <CheckBox android:id="@+id/CheckBoxOthers" android:text="Other types" 
+     android:layout_width="fill_parent" android:layout_height="wrap_content">
+  </CheckBox>
+
   <CheckBox android:id="@+id/CheckBoxWaypoints" android:text="Waypoints" 
      android:layout_width="fill_parent" android:layout_height="wrap_content">
   </CheckBox>
 
-<Button android:text="Apply filter" android:id="@+id/ButtonApplyFilter" 
+  <EditText android:id="@+id/FilterString" android:text="&lt;Filter string&gt;" 
+    android:layout_height="wrap_content" android:layout_width="fill_parent" android:singleLine="true">
+  </EditText>
+  
+  <Button android:text="Apply filter" android:id="@+id/ButtonApplyFilter" 
 android:layout_width="wrap_content" android:layout_height="wrap_content"></Button>
+
+</LinearLayout>
+
+</ScrollView>
 
 </LinearLayout>

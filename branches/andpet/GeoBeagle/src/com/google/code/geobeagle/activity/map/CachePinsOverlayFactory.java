@@ -22,8 +22,6 @@ import com.google.code.geobeagle.database.CachesProviderLazyArea;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
-import android.util.Log;
-
 import java.util.ArrayList;
 
 public class CachePinsOverlayFactory {

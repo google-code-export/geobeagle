@@ -15,7 +15,7 @@
 package com.google.code.geobeagle.activity.cachelist;
 
 import com.google.code.geobeagle.CacheTypeFactory;
-import com.google.code.geobeagle.CacheTypeFilter;
+import com.google.code.geobeagle.CacheFilter;
 import com.google.code.geobeagle.ErrorDisplayer;
 import com.google.code.geobeagle.GeocacheFactory;
 import com.google.code.geobeagle.LocationControlBuffered;
@@ -185,14 +185,14 @@ public class CacheListDelegateDI {
         final ActionManagerFactory actionManagerFactory = new ActionManagerFactory(
                 actionAndTolerances, sqlCacheLoaderTolerance);
 
-        final CacheTypeFilter cacheTypeFilter = new CacheTypeFilter(listActivity);
+        final CacheFilter cacheFilter = new CacheFilter(listActivity);
         
         final DbFrontend dbFrontend = new DbFrontend(listActivity);
         final CachesProviderArea cachesProviderArea = new CachesProviderArea(dbFrontend);
-        cachesProviderArea.setExtraCondition(cacheTypeFilter.getSqlWhereClause());
+        cachesProviderArea.setExtraCondition(cacheFilter.getSqlWhereClause());
         final CachesProviderCount cachesProviderCount = new CachesProviderCount(cachesProviderArea, 15, 30);
         final CachesProviderArea cachesProviderAll = new CachesProviderArea(dbFrontend);
-        cachesProviderAll.setExtraCondition(cacheTypeFilter.getSqlWhereClause());
+        cachesProviderAll.setExtraCondition(cacheFilter.getSqlWhereClause());
         final CachesProviderToggler cachesProviderToggler = 
             new CachesProviderToggler(cachesProviderCount, cachesProviderAll);
         final TitleUpdater titleUpdater = new TitleUpdater(listActivity, 
@@ -244,7 +244,7 @@ public class CacheListDelegateDI {
         menuActions.add(new MenuActionMyLocation(cacheListRefresh, errorDisplayer,
                 geocacheFromMyLocationFactory, dbFrontend));
         menuActions.add(new MenuActionSearchOnline(listActivity));
-        menuActions.add(new MenuActionChooseFilter(listActivity, cacheTypeFilter, 
+        menuActions.add(new MenuActionChooseFilter(listActivity, cacheFilter, 
                 cachesProviderToggler, cacheListRefresh));
         menuActions.add(new MenuActionMap(listActivity, locationControlBuffered));
         

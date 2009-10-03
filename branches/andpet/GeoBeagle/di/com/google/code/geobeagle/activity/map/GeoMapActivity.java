@@ -19,7 +19,7 @@ import com.google.android.maps.MapActivity;
 import com.google.android.maps.MapController;
 import com.google.android.maps.MyLocationOverlay;
 import com.google.android.maps.Overlay;
-import com.google.code.geobeagle.CacheTypeFilter;
+import com.google.code.geobeagle.CacheFilter;
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.actions.MenuActionCacheList;
@@ -81,7 +81,7 @@ public class GeoMapActivity extends MapActivity {
         final CacheDrawables cacheDrawables = new CacheDrawables(resources);
         final CacheItemFactory cacheItemFactory = new CacheItemFactory(cacheDrawables);
 
-        final CacheTypeFilter cacheTypeFilter = new CacheTypeFilter(this);
+        final CacheFilter cacheFilter = new CacheFilter(this);
         
         final List<Overlay> mapOverlays = mMapView.getOverlays();
         //menuActions.add(new MenuActionChooseFilter(this));
@@ -99,7 +99,7 @@ public class GeoMapActivity extends MapActivity {
         final List<DensityPatch> densityPatches = new ArrayList<DensityPatch>();
         final Toaster toaster = new Toaster(this, R.string.too_many_caches, Toast.LENGTH_SHORT);
         ICachesProviderArea cachesProviderArea = new CachesProviderArea(mDbFrontend);
-        cachesProviderArea.setExtraCondition(cacheTypeFilter.getSqlWhereClause());
+        cachesProviderArea.setExtraCondition(cacheFilter.getSqlWhereClause());
         final CachesProviderLazyArea lazyArea = new CachesProviderLazyArea(cachesProviderArea, toaster);
         final DensityOverlayDelegate densityOverlayDelegate = DensityOverlay.createDelegate(
                 densityPatches, nullGeoPoint, lazyArea);
@@ -121,7 +121,7 @@ public class GeoMapActivity extends MapActivity {
         menuActions.add(new GeoMapActivityDelegate.MenuActionToggleSatellite(mMapView));
         menuActions.add(new GeoMapActivityDelegate.MenuActionCenterLocation(mMapView, mMyLocationOverlay));
         menuActions.add(new MenuActionCacheList(this));
-        menuActions.add(new MenuActionChooseFilter(this, cacheTypeFilter, cachesProviderArea, overlayManager));
+        menuActions.add(new MenuActionChooseFilter(this, cacheFilter, cachesProviderArea, overlayManager));
         
         mGeoMapActivityDelegate = new GeoMapActivityDelegate(mMapView, menuActions);
 

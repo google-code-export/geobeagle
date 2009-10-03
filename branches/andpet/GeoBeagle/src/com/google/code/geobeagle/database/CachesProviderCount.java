@@ -2,6 +2,8 @@ package com.google.code.geobeagle.database;
 
 import com.google.code.geobeagle.Geocache;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 
 public class CachesProviderCount implements ICachesProviderCenter {
@@ -86,6 +88,7 @@ public class CachesProviderCount implements ICachesProviderCenter {
         return mCachesProviderRadius.getCount();
     }
 
+    //TODO: Don't create CountAndRadius instances all the time
     private class CountAndRadius {
         public int Count;
         public double Radius;
@@ -103,11 +106,13 @@ public class CachesProviderCount implements ICachesProviderCenter {
         int count = countHitsUsingRadius(mRadius);
         int iterationsLeft = MAX_ITERATIONS - 1;
         double radiusToTry = mRadius;
+        Log.d("GeoBeagle", "CachesProviderCount first count = " + count);
         if (count > mMaxCount) {
             while (count > mMaxCount && iterationsLeft > 1) {
                 radiusToTry /= DISTANCE_MULTIPLIER;
                 count = countHitsUsingRadius(radiusToTry);
                 iterationsLeft -= 1;
+                Log.d("GeoBeagle", "CachesProviderCount search inward count = " + count);
             }
             return findWithinLimits(radiusToTry, radiusToTry * DISTANCE_MULTIPLIER, 
                     iterationsLeft);
@@ -118,6 +123,7 @@ public class CachesProviderCount implements ICachesProviderCenter {
                 radiusToTry *= DISTANCE_MULTIPLIER;
                 count = countHitsUsingRadius(radiusToTry);
                 iterationsLeft -= 1;
+                Log.d("GeoBeagle", "CachesProviderCount search outward count = " + count);
             }
             return findWithinLimits(radiusToTry / DISTANCE_MULTIPLIER, radiusToTry, 
                     iterationsLeft);
@@ -129,16 +135,18 @@ public class CachesProviderCount implements ICachesProviderCenter {
             int iterationsLeft) {
         double radiusToTry = (minRadius + maxRadius) / 2.0;
         int count = countHitsUsingRadius(radiusToTry);
+        if (count <= mMaxCount && count >= mMinCount) {
+            Log.d("GeoBeagle", "CachesProviderCount.findWithinLimits: Found count = " + count);            
+            return new CountAndRadius(count, radiusToTry);
+        }
         if (iterationsLeft <= 1) {
+            Log.d("GeoBeagle", "CachesProviderCount.findWithinLimits: Giving up with count = " + count);
             return new CountAndRadius(count, radiusToTry);
         }
         if (count > mMaxCount) {
             return findWithinLimits(minRadius, radiusToTry, iterationsLeft - 1);
         }
-        if (count < mMinCount) {
-            return findWithinLimits(radiusToTry, maxRadius, iterationsLeft - 1);
-        }
-        return new CountAndRadius(count, radiusToTry);
+        return findWithinLimits(radiusToTry, maxRadius, iterationsLeft - 1);
     }
 
     @Override

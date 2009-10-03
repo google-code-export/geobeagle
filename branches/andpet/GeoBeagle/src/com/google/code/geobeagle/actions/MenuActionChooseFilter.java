@@ -1,24 +1,25 @@
 package com.google.code.geobeagle.actions;
 
-import com.google.code.geobeagle.CacheTypeFilter;
+import com.google.code.geobeagle.CacheFilter;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.Refresher;
 import com.google.code.geobeagle.database.CachesProvider;
 import android.app.Activity;
-import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnDismissListener;
-import android.content.DialogInterface.OnMultiChoiceClickListener;
+import android.widget.CheckBox;
+import android.widget.EditText;
 
 /** Show a dialog to let the user decide which geocaches to show */
 public class MenuActionChooseFilter extends MenuActionBase {
     private final Activity mActivity;
-    private final CacheTypeFilter mFilter;
+    private final CacheFilter mFilter;
     private final CachesProvider mCachesProvider;
     private final Refresher mRefresher;
     
     public MenuActionChooseFilter(Activity activity,
-            CacheTypeFilter filter, CachesProvider cachesProvider,
+            CacheFilter filter, CachesProvider cachesProvider,
             Refresher refresher) {
         super(R.string.menu_choose_filter);
         mActivity = activity;
@@ -27,44 +28,50 @@ public class MenuActionChooseFilter extends MenuActionBase {
         mRefresher = refresher;
     }
 
+    private class DialogSettingsProvider implements CacheFilter.SettingsProvider {
+        private Dialog mDialog;
+        public DialogSettingsProvider(Dialog dialog) {
+            mDialog = dialog;
+        }
+        @Override
+        public boolean getBoolean(int id) {
+            return ((CheckBox)mDialog.findViewById(id)).isChecked();
+        }
+        @Override
+        public String getString(int id) {
+            return ((EditText)mDialog.findViewById(R.id.FilterString)).getText().toString();
+        }
+        @Override
+        public void setBoolean(int id, boolean value) {
+            ((CheckBox)mDialog.findViewById(id)).setChecked(value);
+        }
+        @Override
+        public void setString(int id, String value) {
+            ((EditText)mDialog.findViewById(R.id.FilterString)).setText(value);
+        }
+    };
+    
     @Override
     public void act() {
         mFilter.loadFromPrefs(mActivity);
 
-        OnMultiChoiceClickListener clickListener = new OnMultiChoiceClickListener() {
-            @Override
-            public void onClick(DialogInterface arg0, int ix, boolean enable) {
-                mFilter.setEnabled(ix, enable);
-            }
-        };
+        final Dialog dialog = new Dialog(mActivity);
+        final DialogSettingsProvider provider = new DialogSettingsProvider(dialog);
         
         OnDismissListener dismissListener = new OnDismissListener() {
             @Override
             public void onDismiss(DialogInterface arg0) {
+                mFilter.setFromProvider(provider);
                 mFilter.saveToPrefs(mActivity);
                 mCachesProvider.setExtraCondition(mFilter.getSqlWhereClause());
                 mRefresher.forceRefresh();
             }
         };
-        
-        AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
-        builder.setTitle("Cache types to show");
-        final CharSequence[] items = mFilter.getOptionLabels();
-        final boolean[] selected = mFilter.getSelection();
-        builder.setMultiChoiceItems(items, selected, clickListener);
-        AlertDialog alert = builder.create();
-        alert.setOnDismissListener(dismissListener);
 
-        alert.show();
-
-        /*
-        Context context = mActivity;
-        Dialog dialog = new Dialog(context);
-        //setOwnerActivity(Activity)
         dialog.setContentView(R.layout.filter);
-        dialog.setTitle("Custom Dialog");
+        mFilter.pushToProvider(provider);
+        dialog.setOnDismissListener(dismissListener);
         dialog.show();
-        */
     }
 
 }
