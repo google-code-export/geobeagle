@@ -70,7 +70,7 @@ public class GeocacheTest {
         EasyMock.expect(here.getLongitude()).andReturn(123.0);
 
         PowerMock.replayAll();
-        Geocache geocache = new Geocache(null, null, 37, 122, null, null, null, 0, 0, 0, null);
+        Geocache geocache = new Geocache(null, null, 37, 122, null, null, null, 0, 0, 0, null, null);
         assertEquals(0.0f, geocache.calculateDistanceAndBearing(here)[0], 0);
         PowerMock.verifyAll();
     }
@@ -78,29 +78,29 @@ public class GeocacheTest {
     @Test
     public void testCalculateDistanceNullHere() {
         PowerMock.replayAll();
-        Geocache geocache = new Geocache(null, null, 37, 122, null, null, null, 0, 0, 0, null);
+        Geocache geocache = new Geocache(null, null, 37, 122, null, null, null, 0, 0, 0, null, null);
         assertEquals(-1f, geocache.calculateDistanceAndBearing(null)[0], 0);
         PowerMock.verifyAll();
     }
 
     @Test
     public void testDescribeContents() {
-        Geocache geocache = new Geocache(null, null, 0, 0, null, null, null, 0, 0, 0, null);
+        Geocache geocache = new Geocache(null, null, 0, 0, null, null, null, 0, 0, 0, null, null);
         assertEquals(0, geocache.describeContents());
     }
 
     @Test
     public void testGetContentProvider() {
-        Geocache geocache = new Geocache("GC123", null, 0, 0, null, null, null, 0, 0, 0, null);
+        Geocache geocache = new Geocache("GC123", null, 0, 0, null, null, null, 0, 0, 0, null, null);
         assertEquals(GeocacheFactory.Provider.GROUNDSPEAK, geocache.getContentProvider());
 
-        geocache = new Geocache("PK123", null, 0, 0, null, null, null, 0, 0, 0, null);
+        geocache = new Geocache("PK123", null, 0, 0, null, null, null, 0, 0, 0, null, null);
         assertEquals(GeocacheFactory.Provider.GROUNDSPEAK, geocache.getContentProvider());
 
-        geocache = new Geocache("LBabc", null, 0, 0, null, null, null, 0, 0, 0, null);
+        geocache = new Geocache("LBabc", null, 0, 0, null, null, null, 0, 0, 0, null, null);
         assertEquals(GeocacheFactory.Provider.ATLAS_QUEST, geocache.getContentProvider());
 
-        geocache = new Geocache("MLfoo", null, 0, 0, null, null, null, 0, 0, 0, null);
+        geocache = new Geocache("MLfoo", null, 0, 0, null, null, null, 0, 0, 0, null, null);
         assertEquals(GeocacheFactory.Provider.MY_LOCATION, geocache.getContentProvider());
     }
 
@@ -112,19 +112,19 @@ public class GeocacheTest {
 
         PowerMock.replayAll();
         assertEquals("4, 3", new Geocache(null, null, 0, 0, null, null, null, 4, 3, 0,
-                attributeFormatter).getFormattedAttributes());
+                attributeFormatter, null).getFormattedAttributes());
         PowerMock.verifyAll();
     }
 
     @Test
     public void testGetIdAndName() {
-        Geocache geocache = new Geocache("", "hello", 0, 0, null, null, null, 0, 0, 0, null);
+        Geocache geocache = new Geocache("", "hello", 0, 0, null, null, null, 0, 0, 0, null, null);
         assertEquals("hello", geocache.getIdAndName());
 
-        geocache = new Geocache("idonly", "", 0, 0, null, null, null, 0, 0, 0, null);
+        geocache = new Geocache("idonly", "", 0, 0, null, null, null, 0, 0, 0, null, null);
         assertEquals("idonly", geocache.getIdAndName());
 
-        geocache = new Geocache("id", "hello", 0, 0, null, null, null, 0, 0, 0, null);
+        geocache = new Geocache("id", "hello", 0, 0, null, null, null, 0, 0, 0, null, null);
         assertEquals("id: hello", geocache.getIdAndName());
 
     }
@@ -132,18 +132,18 @@ public class GeocacheTest {
     @Test
     public void testGetShortId() {
         Geocache geocache = new Geocache("GC123", "a cache", 37.5, -122.25, Source.GPX, "alameda",
-                null, 0, 0, 0, null);
+                null, 0, 0, 0, null, null);
         assertEquals("123", geocache.getShortId());
 
         geocache = new Geocache("", "a cache", 37.5, -122.25, Source.GPX, "alameda", null, 0, 0, 0,
-                null);
+                null, null);
         assertEquals("", geocache.getShortId());
     }
 
     @Test
     public void testGetters() {
         Geocache geocache = new Geocache("GC123", "a cache", 37.5, -122.25, Source.GPX, "alameda",
-                CacheType.TRADITIONAL, 1, 2, 3, null);
+                CacheType.TRADITIONAL, 1, 2, 3, null, null);
         assertEquals("GC123", geocache.getId());
         assertEquals(37.5, geocache.getLatitude(), 0);
         assertEquals(-122.25, geocache.getLongitude(), 0);
@@ -220,7 +220,7 @@ public class GeocacheTest {
 
         PowerMock.replayAll();
         Geocache geocache = new Geocache("GC123", "a cache", 37.5, -122.25, Source.GPX, "alameda",
-                CacheType.TRADITIONAL, 4, 3, 1, null);
+                CacheType.TRADITIONAL, 4, 3, 1, null, null);
         geocache.writeToParcel(parcel, 0);
         PowerMock.verifyAll();
     }
@@ -244,7 +244,7 @@ public class GeocacheTest {
 
         PowerMock.replayAll();
         Geocache geocache = new Geocache("GC123", "a cache", 37.5, -122.25, Source.MY_LOCATION,
-                null, CacheType.TRADITIONAL, 2, 4, 3, null);
+                null, CacheType.TRADITIONAL, 2, 4, 3, null, null);
         geocache.writeToPrefs(editor);
         PowerMock.verifyAll();
     }
@@ -263,7 +263,7 @@ public class GeocacheTest {
 
         PowerMock.replayAll();
         Geocache geocache = new Geocache("GC123", "a cache", 37.5, -122.25, Source.MY_LOCATION,
-                "manhattan", CacheType.TRADITIONAL, 2, 4, 3, null);
+                "manhattan", CacheType.TRADITIONAL, 2, 4, 3, null, null);
         geocache.saveLocation(dbFrontend);
         PowerMock.verifyAll();
     }
