@@ -17,6 +17,7 @@ package com.google.code.geobeagle;
 
 import android.hardware.SensorListener;
 
+//TODO: Merge CompassListener into LocationControlBuffered and remove CompassListenerFactory
 @SuppressWarnings("deprecation")
 public class CompassListener implements SensorListener {
 
