@@ -21,6 +21,7 @@ import com.google.android.maps.MyLocationOverlay;
 import com.google.android.maps.Overlay;
 import com.google.code.geobeagle.CacheFilter;
 import com.google.code.geobeagle.Geocache;
+import com.google.code.geobeagle.GeocacheFactory;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.actions.MenuActionCacheList;
 import com.google.code.geobeagle.actions.MenuActionChooseFilter;
@@ -70,7 +71,7 @@ public class GeoMapActivity extends MapActivity {
 
         // Set member variables first, in case anyone after this needs them.
         mMapView = (GeoMapView)findViewById(R.id.mapview);
-        mDbFrontend = new DbFrontend(this);
+        mDbFrontend = new DbFrontend(this, new GeocacheFactory(mMapView.getResources()));
         mMyLocationOverlay = new MyLocationOverlay(this, mMapView);
 
         mMapView.setBuiltInZoomControls(true);

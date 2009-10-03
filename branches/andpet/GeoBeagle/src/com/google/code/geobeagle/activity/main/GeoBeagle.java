@@ -107,7 +107,7 @@ public class GeoBeagle extends Activity {
         final LocationManager locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
         final LocationControlBuffered locationControlBuffered = LocationControlDi
                 .create(locationManager);
-        final GeocacheFactory geocacheFactory = new GeocacheFactory();
+        final GeocacheFactory geocacheFactory = new GeocacheFactory(getResources());
         final TextView gcid = (TextView)findViewById(R.id.gcid);
         final AttributeViewer gcDifficulty = new LabelledAttributeViewer(
                 GeocacheViewer.STAR_IMAGES, (TextView)findViewById(R.id.gc_text_difficulty),
@@ -158,7 +158,7 @@ public class GeoBeagle extends Activity {
         final Resources resources = this.getResources();
         final SharedPreferences defaultSharedPreferences = PreferenceManager
                 .getDefaultSharedPreferences(this);
-        mDbFrontend = new DbFrontend(this);
+        mDbFrontend = new DbFrontend(this, geocacheFactory);
         final GeocacheFromIntentFactory geocacheFromIntentFactory = new GeocacheFromIntentFactory(
                 geocacheFactory, mDbFrontend);
         final IncomingIntentHandler incomingIntentHandler = new IncomingIntentHandler(

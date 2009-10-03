@@ -21,13 +21,15 @@ import com.google.code.geobeagle.Geocache.AttributeFormatterNull;
 import com.google.code.geobeagle.GeocacheFactory.Source.SourceFactory;
 import com.google.code.geobeagle.activity.main.GeocacheFromParcelFactory;
 
+import android.content.res.Resources;
 import android.os.Parcel;
 import android.os.Parcelable;
 
 public class GeocacheFactory {
     public static class CreateGeocacheFromParcel implements Parcelable.Creator<Geocache> {
+        //TODO: Argument can't be null
         private final GeocacheFromParcelFactory mGeocacheFromParcelFactory = new GeocacheFromParcelFactory(
-                new GeocacheFactory());
+                new GeocacheFactory(null));
 
         public Geocache createFromParcel(Parcel in) {
             return mGeocacheFromParcelFactory.create(in);
@@ -109,12 +111,14 @@ public class GeocacheFactory {
     private static CacheTypeFactory mCacheTypeFactory;
     private static SourceFactory mSourceFactory;
     private AttributeFormatterFactory mAttributeFormatterFactory;
+    private final Resources mResources;
 
-    public GeocacheFactory() {
+    public GeocacheFactory(Resources resources) {
         mSourceFactory = new SourceFactory();
         mCacheTypeFactory = new CacheTypeFactory();
         mAttributeFormatterFactory = new AttributeFormatterFactory(new AttributeFormatterImpl(),
                 new AttributeFormatterNull());
+        mResources = resources;
     }
 
     public CacheType cacheTypeFromInt(int cacheTypeIx) {
@@ -134,7 +138,7 @@ public class GeocacheFactory {
         final AttributeFormatter attributeFormatter = mAttributeFormatterFactory
                 .getAttributeFormatter(sourceType);
         return new Geocache(id, name, latitude, longitude, sourceType, sourceName, cacheType,
-                difficulty, terrain, container, attributeFormatter);
+                difficulty, terrain, container, attributeFormatter, mResources);
     }
 
     public Source sourceFromInt(int sourceIx) {

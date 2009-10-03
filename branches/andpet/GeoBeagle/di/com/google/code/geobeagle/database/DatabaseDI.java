@@ -27,10 +27,13 @@ import java.util.Arrays;
 public class DatabaseDI {
 
     public static class CacheReaderCursorFactory {
+        private GeocacheFactory mGeocacheFactory;
+        CacheReaderCursorFactory(GeocacheFactory geocacheFactory) {
+            mGeocacheFactory = geocacheFactory;
+        }
         public CacheReaderCursor create(Cursor cursor) {
-            final GeocacheFactory geocacheFactory = new GeocacheFactory();
             final DbToGeocacheAdapter dbToGeocacheAdapter = new DbToGeocacheAdapter();
-            return new CacheReaderCursor(cursor, geocacheFactory, dbToGeocacheAdapter);
+            return new CacheReaderCursor(cursor, mGeocacheFactory, dbToGeocacheAdapter);
         }
     }
 
@@ -125,8 +128,10 @@ public class DatabaseDI {
 
     }
 
-    public static CacheReader createCacheReader(ISQLiteDatabase sqliteWrapper) {
-        final CacheReaderCursorFactory cacheReaderCursorFactory = new CacheReaderCursorFactory();
+    public static CacheReader createCacheReader(ISQLiteDatabase sqliteWrapper, 
+            GeocacheFactory geocacheFactory) {
+        final CacheReaderCursorFactory cacheReaderCursorFactory = 
+            new CacheReaderCursorFactory(geocacheFactory);
         return new CacheReader(sqliteWrapper, cacheReaderCursorFactory);
     }
 

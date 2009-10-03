@@ -31,8 +31,8 @@ public class EditCacheActivity extends Activity {
         super.onCreate(savedInstanceState);
         final CancelButtonOnClickListener cancelButtonOnClickListener = new CancelButtonOnClickListener(
                 this);
-        final GeocacheFactory geocacheFactory = new GeocacheFactory();
-        mDbFrontend = new DbFrontend(this);
+        final GeocacheFactory geocacheFactory = new GeocacheFactory(getResources());
+        mDbFrontend = new DbFrontend(this, geocacheFactory);
         mEditCacheActivityDelegate = new EditCacheActivityDelegate(this,
                 cancelButtonOnClickListener, geocacheFactory, mDbFrontend);
     }

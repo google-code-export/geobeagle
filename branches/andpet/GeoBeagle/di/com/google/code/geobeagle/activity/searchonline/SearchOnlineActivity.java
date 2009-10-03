@@ -90,7 +90,7 @@ public class SearchOnlineActivity extends Activity {
         distanceFormatterManager.addHasDistanceFormatter(gpsStatusWidgetDelegate);
         final ActivitySaver activitySaver = ActivityDI.createActivitySaver(this);
 
-        final GeocacheFactory geocacheFactory = new GeocacheFactory();
+        final GeocacheFactory geocacheFactory = new GeocacheFactory(getResources());
         final GeocacheFromPreferencesFactory geocacheFromPreferencesFactory = new GeocacheFromPreferencesFactory(
                 geocacheFactory);
         final ActivityTypeFactory activityTypeFactory = new ActivityTypeFactory();

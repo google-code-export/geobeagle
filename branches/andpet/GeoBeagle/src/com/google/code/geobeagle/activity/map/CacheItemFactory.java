@@ -26,7 +26,7 @@ class CacheItemFactory {
     CacheItem createCacheItem(Geocache geocache) {
         final CacheItem cacheItem = new CacheItem(geocache.getGeoPoint(), (String)geocache
                 .getId(), geocache);
-        cacheItem.setMarker(mCacheDrawables.get(geocache.getCacheType()));
+        cacheItem.setMarker(geocache.getIconMap());
         return cacheItem;
     }
 }

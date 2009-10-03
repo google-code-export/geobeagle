@@ -22,6 +22,15 @@ import com.google.code.geobeagle.database.CacheWriter;
 import com.google.code.geobeagle.database.DbFrontend;
 
 import android.content.SharedPreferences.Editor;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Rect;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Parcel;
@@ -62,6 +71,7 @@ public class Geocache implements Parcelable {
     private final AttributeFormatter mAttributeFormatter;
     private final CacheType mCacheType;
     private final int mContainer;
+    /** Difficulty rating * 2 (difficulty=1.5 => mDifficulty=3) */
     private final int mDifficulty;
     private float[] mDistanceAndBearing = new float[2];
     private GeoPoint mGeoPoint;
@@ -72,10 +82,15 @@ public class Geocache implements Parcelable {
     private final String mSourceName;
     private final Source mSourceType;
     private final int mTerrain;
+    
+    private final Resources mResources;
+    private Drawable mIcon = null;
+    //private Drawable mIconBig = null;
+    private Drawable mIconMap = null;
 
     Geocache(CharSequence id, CharSequence name, double latitude, double longitude,
             Source sourceType, String sourceName, CacheType cacheType, int difficulty, int terrain,
-            int container, AttributeFormatter attributeFormatter) {
+            int container, AttributeFormatter attributeFormatter, Resources resources) {
         mId = id;
         mName = name;
         mLatitude = latitude;
@@ -87,6 +102,7 @@ public class Geocache implements Parcelable {
         mTerrain = terrain;
         mContainer = container;
         mAttributeFormatter = attributeFormatter;
+        mResources = resources;
     }
 
     public float[] calculateDistanceAndBearing(Location here) {
@@ -112,7 +128,67 @@ public class Geocache implements Parcelable {
     public int getContainer() {
         return mContainer;
     }
+    
+    private static Paint mTempPaint = new Paint();
+    private static Rect mTempRect = new Rect();
+    private Drawable createIcon(int id, int thickness, int bottom) {
+        Paint paint = new Paint();
+        paint.setColor(Color.RED);
+        Bitmap bitmap = BitmapFactory.decodeResource(mResources, id);
+        Bitmap copy = bitmap.copy(Bitmap.Config.ARGB_8888, true);
+        Canvas canvas = new Canvas(copy);
 
+        int imageHeight = bitmap.getHeight();
+        int imageWidth = bitmap.getWidth();
+
+        mTempPaint.setColor(Color.RED);
+        int diffHeight = (int)((imageHeight - bottom - 1) * (mDifficulty/10.0));
+        mTempRect.set(1, imageHeight-1-diffHeight-bottom, thickness+1, imageHeight-1-bottom);
+        canvas.drawRect(mTempRect, mTempPaint);
+
+        mTempPaint.setARGB(255, 0xDB, 0xA1, 0x09);
+        int terrHeight = (int)((imageHeight - bottom - 1) * (mTerrain/10.0));
+        mTempRect.set(imageWidth-thickness-1, imageHeight-1-terrHeight-bottom, 
+                imageWidth-1, imageHeight-1-bottom);
+        canvas.drawRect(mTempRect, mTempPaint);
+
+        return new BitmapDrawable(copy);
+    }
+
+    public Drawable getIcon() {
+        if (mIcon == null) {
+            if (mResources == null)
+                return null;
+            mIcon = createIcon(getCacheType().icon(), 3, 1);
+        }
+        return mIcon;
+    }        
+
+    /*
+    public Drawable getIconBig() {
+        if (mIconBig == null) {
+            if (mResources == null)
+                return null;
+            mIconBig = createIcon(getCacheType().iconBig(), 6, 1);
+            Log.d("GeoBeagle", "Created iconBig " + mIconBig.getIntrinsicWidth() + 
+                    " x " + mIconBig.getIntrinsicHeight());
+        }
+        return mIconBig;
+    }
+    */
+
+    public Drawable getIconMap() {
+        if (mIconMap == null) {
+            if (mResources == null)
+                return null;
+            mIconMap = createIcon(getCacheType().iconMap(), 2, 5);
+            int width = mIconMap.getIntrinsicWidth();
+            int height = mIconMap.getIntrinsicHeight();
+            mIconMap.setBounds(-width/2, -height, width/2, 0);
+        }
+        return mIconMap;
+    }
+    
     public GeocacheFactory.Provider getContentProvider() {
         // Must use toString() rather than mId.subSequence(0,2).equals("GC"),
         // because editing the text in android produces a SpannableString rather

@@ -14,7 +14,6 @@
 
 package com.google.code.geobeagle.activity.cachelist.view;
 
-import com.google.code.geobeagle.CacheType;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVector;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVectors;
@@ -48,8 +47,9 @@ public class GeocacheSummaryRowInflater implements HasDistanceFormatter {
 
         void set(GeocacheVector geocacheVector, DistanceFormatter distanceFormatter,
                 BearingFormatter relativeBearingFormatter) {
-            CacheType type = geocacheVector.getGeocache().getCacheType();
-            mIcon.setImageResource(type.icon());
+            //CacheType type = geocacheVector.getGeocache().getCacheType();
+            //mIcon.setImageResource(type.icon());
+            mIcon.setImageDrawable(geocacheVector.getGeocache().getIcon());
             mId.setText(geocacheVector.getId());
             mAttributes.setText(geocacheVector.getFormattedAttributes());
             mCacheName.setText(geocacheVector.getName());

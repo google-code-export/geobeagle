@@ -124,7 +124,7 @@ public class CacheListDelegateDI {
                 locationManager, locationListeners);
         final LocationControlBuffered locationControlBuffered = LocationControlDi
                 .create(locationManager);
-        final GeocacheFactory geocacheFactory = new GeocacheFactory();
+        final GeocacheFactory geocacheFactory = new GeocacheFactory(listActivity.getResources());
         final GeocacheFromMyLocationFactory geocacheFromMyLocationFactory = new GeocacheFromMyLocationFactory(
                 geocacheFactory, locationControlBuffered);
         final BearingFormatter relativeBearingFormatter = new RelativeBearingFormatter();
@@ -187,7 +187,7 @@ public class CacheListDelegateDI {
 
         final CacheFilter cacheFilter = new CacheFilter(listActivity);
         
-        final DbFrontend dbFrontend = new DbFrontend(listActivity);
+        final DbFrontend dbFrontend = new DbFrontend(listActivity, geocacheFactory);
         final CachesProviderArea cachesProviderArea = new CachesProviderArea(dbFrontend);
         cachesProviderArea.setExtraCondition(cacheFilter.getSqlWhereClause());
         final CachesProviderCount cachesProviderCount = new CachesProviderCount(cachesProviderArea, 15, 30);
