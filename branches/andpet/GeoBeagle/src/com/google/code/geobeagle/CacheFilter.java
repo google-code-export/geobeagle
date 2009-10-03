@@ -5,7 +5,7 @@ import android.content.SharedPreferences;
 
 public class CacheFilter {
     
-    public static interface SettingsProvider {
+    public static interface FilterGui {
         public boolean getBoolean(int id);
         public String getString(int id);
         public void setBoolean(int id, boolean value);
@@ -36,24 +36,30 @@ public class CacheFilter {
             new FilterOption("Waypoints", "Waypoints", "(CacheType >= 20 AND CacheType <= 25)", R.id.CheckBoxWaypoints),
             };
     private String mFilterString;
+    private Activity mActivity;
 
     public CacheFilter() {
     }
     
     public CacheFilter(Activity activity) {
-        loadFromPrefs(activity);
+        mActivity = activity;
+        reload();
     }
-    
-    public void loadFromPrefs(Activity activity) {
-        SharedPreferences prefs = activity.getSharedPreferences("Filter", 0);
+
+    /** 
+     * Load the values from SharedPreferences.
+     * @return true if any value in the filter was changed
+     */
+    public void reload() {
+        SharedPreferences prefs = mActivity.getSharedPreferences("Filter", 0);
         for (FilterOption option : mOptions) {
             option.Selected = prefs.getBoolean(option.PrefsName, true);
         }
         mFilterString = prefs.getString("FilterString", null);
     }
 
-    public void saveToPrefs(Activity activity) {
-        SharedPreferences prefs = activity.getSharedPreferences("Filter", 0);
+    public void saveToPrefs(/*Activity activity*/) {
+        SharedPreferences prefs = mActivity.getSharedPreferences("Filter", 0);
         SharedPreferences.Editor editor  = prefs.edit();
         for (FilterOption option : mOptions) {
             editor.putBoolean(option.PrefsName, option.Selected);
@@ -115,7 +121,7 @@ public class CacheFilter {
         return !string.equals(string.toLowerCase());
     }
     
-    public void setFromProvider(SettingsProvider provider) {
+    public void loadFromGui(FilterGui provider) {
         for (FilterOption option : mOptions) {
             option.Selected = provider.getBoolean(option.ViewResource);
         }
@@ -123,7 +129,7 @@ public class CacheFilter {
     }
 
     /** Set up the view from the values in this CacheFilter. */
-    public void pushToProvider(SettingsProvider provider) {
+    public void pushToGui(FilterGui provider) {
         for (FilterOption option : mOptions) {
             provider.setBoolean(option.ViewResource, option.Selected);
         }

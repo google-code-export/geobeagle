@@ -16,17 +16,18 @@ package com.google.code.geobeagle.activity.map;
 
 import com.google.code.geobeagle.Geocache;
 
-class CacheItemFactory {
-    private final CacheDrawables mCacheDrawables;
+import android.content.res.Resources;
 
-    CacheItemFactory(CacheDrawables cacheDrawables) {
-        mCacheDrawables = cacheDrawables;
+class CacheItemFactory {
+    private final Resources mResources;
+
+    CacheItemFactory(Resources resources) {
+        mResources = resources; 
     }
 
     CacheItem createCacheItem(Geocache geocache) {
-        final CacheItem cacheItem = new CacheItem(geocache.getGeoPoint(), (String)geocache
-                .getId(), geocache);
-        cacheItem.setMarker(geocache.getIconMap());
+        final CacheItem cacheItem = new CacheItem(geocache.getGeoPoint(), geocache);
+        cacheItem.setMarker(geocache.getIconMap(mResources));
         return cacheItem;
     }
 }

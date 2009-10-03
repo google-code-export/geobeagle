@@ -113,5 +113,5 @@ public class CacheListDelegate {
         // TODO: No need to re-initialize these
         mPresenter.onResume(mCacheListRefresh);
         mController.onResume(mCacheListRefresh, mImportIntentManager.isImport());
-        }
+    }
 }

@@ -124,7 +124,7 @@ public class CacheListDelegateDI {
                 locationManager, locationListeners);
         final LocationControlBuffered locationControlBuffered = LocationControlDi
                 .create(locationManager);
-        final GeocacheFactory geocacheFactory = new GeocacheFactory(listActivity.getResources());
+        final GeocacheFactory geocacheFactory = new GeocacheFactory();
         final GeocacheFromMyLocationFactory geocacheFromMyLocationFactory = new GeocacheFromMyLocationFactory(
                 geocacheFactory, locationControlBuffered);
         final BearingFormatter relativeBearingFormatter = new RelativeBearingFormatter();
@@ -137,7 +137,7 @@ public class CacheListDelegateDI {
 
         final GeocacheSummaryRowInflater geocacheSummaryRowInflater = new GeocacheSummaryRowInflater(
                 distanceFormatterManager.getFormatter(), geocacheVectors, layoutInflater,
-                relativeBearingFormatter);
+                relativeBearingFormatter, listActivity.getResources());
         final UpdateFlag updateFlag = new UpdateFlag();
         final GeocacheListAdapter geocacheListAdapter = new GeocacheListAdapter(geocacheVectors,
                 geocacheSummaryRowInflater);
@@ -188,11 +188,9 @@ public class CacheListDelegateDI {
         final CacheFilter cacheFilter = new CacheFilter(listActivity);
         
         final DbFrontend dbFrontend = new DbFrontend(listActivity, geocacheFactory);
-        final CachesProviderArea cachesProviderArea = new CachesProviderArea(dbFrontend);
-        cachesProviderArea.setExtraCondition(cacheFilter.getSqlWhereClause());
+        final CachesProviderArea cachesProviderArea = new CachesProviderArea(dbFrontend, cacheFilter);
         final CachesProviderCount cachesProviderCount = new CachesProviderCount(cachesProviderArea, 15, 30);
-        final CachesProviderArea cachesProviderAll = new CachesProviderArea(dbFrontend);
-        cachesProviderAll.setExtraCondition(cacheFilter.getSqlWhereClause());
+        final CachesProviderArea cachesProviderAll = new CachesProviderArea(dbFrontend, cacheFilter);
         final CachesProviderToggler cachesProviderToggler = 
             new CachesProviderToggler(cachesProviderCount, cachesProviderAll);
         final TitleUpdater titleUpdater = new TitleUpdater(listActivity, 
@@ -201,9 +199,9 @@ public class CacheListDelegateDI {
         final SqlCacheLoader sqlCacheLoader = new SqlCacheLoader(cachesProviderToggler,
                 cacheListData, locationControlBuffered, titleUpdater, timing);
         final ActionManager actionManager = actionManagerFactory.create(sqlCacheLoader);
+        CachesProviderArea[] areas = { cachesProviderArea, cachesProviderAll };
         final CacheListRefresh cacheListRefresh = new CacheListRefresh(actionManager, timing,
-                locationControlBuffered, updateFlag);
-
+                locationControlBuffered, updateFlag, areas);
         
         final SensorManager sensorManager = (SensorManager)listActivity
                 .getSystemService(Context.SENSOR_SERVICE);
@@ -245,7 +243,7 @@ public class CacheListDelegateDI {
                 geocacheFromMyLocationFactory, dbFrontend));
         menuActions.add(new MenuActionSearchOnline(listActivity));
         menuActions.add(new MenuActionChooseFilter(listActivity, cacheFilter, 
-                cachesProviderToggler, cacheListRefresh));
+                cacheListRefresh));
         menuActions.add(new MenuActionMap(listActivity, locationControlBuffered));
         
         final Intent geoBeagleMainIntent = new Intent(listActivity, GeoBeagle.class);

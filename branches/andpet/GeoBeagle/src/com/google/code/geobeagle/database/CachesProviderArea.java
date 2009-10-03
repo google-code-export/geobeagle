@@ -1,5 +1,6 @@
 package com.google.code.geobeagle.database;
 
+import com.google.code.geobeagle.CacheFilter;
 import com.google.code.geobeagle.Geocache;
 
 import java.util.ArrayList;
@@ -16,40 +17,28 @@ public class CachesProviderArea implements ICachesProviderArea {
     private String mWhere = null;
     private ArrayList<Geocache> mCaches;
     private boolean mHasChanged = true;
-    private String mExtraCondition = null;
     private boolean mHasLimits = false;
+    private final CacheFilter mCacheFilter;
+    private String mFilter;
 
-    public CachesProviderArea(DbFrontend dbFrontend) {
+    public CachesProviderArea(DbFrontend dbFrontend, CacheFilter cacheFilter) {
         mDbFrontend = dbFrontend;
-        //TODO: Must initialize bounds too?
+        mCacheFilter = cacheFilter;
     }
 
-    @Override
-    public void setExtraCondition(String condition) {
-        if (condition == null) {
-            if (mExtraCondition == null) 
-                return;
-        } else if (condition.equals(mExtraCondition)) {
-            return;
-        }
-
-        //Log.d("GeoBeagle", "area.setExtraCondition " + condition);
-        mWhere = null;
-        mExtraCondition = condition;
-        mHasChanged = true;
-        mCaches = null;
-    }
-    
     private String getWhere() {
         if (mWhere == null) {
+            if (mFilter == null)
+                mFilter = mCacheFilter.getSqlWhereClause();
+
             if (mHasLimits) {
                 mWhere = "Latitude >= " + mLatLow + " AND Latitude < " + mLatHigh + 
                 " AND Longitude >= " + mLonLow + " AND Longitude < " + mLonHigh;
-                if (mExtraCondition != null)
-                    mWhere += " AND " + mExtraCondition;
+                if (mFilter != null)
+                    mWhere += " AND " + mFilter;
             } else {
-                if (mExtraCondition != null)
-                    mWhere = mExtraCondition;
+                if (mFilter != null)
+                    mWhere = mFilter;
             }
         }
         return mWhere;
@@ -96,5 +85,17 @@ public class CachesProviderArea implements ICachesProviderArea {
     @Override
     public void setChanged(boolean changed) {
         mHasChanged = changed;
+    }
+
+    public void reloadFilter() {
+        mCacheFilter.reload();
+        String newFilter = mCacheFilter.getSqlWhereClause();
+        if ((newFilter == null && mFilter != null) 
+                || (newFilter != null && !newFilter.equals(mFilter))) {
+            mHasChanged = true;
+            mFilter = newFilter;
+            mWhere = null;  //Flush
+            mCaches = null;  //Flush old caches
+        }
     }
 }

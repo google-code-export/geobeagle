@@ -3,7 +3,6 @@ package com.google.code.geobeagle.actions;
 import com.google.code.geobeagle.CacheFilter;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.Refresher;
-import com.google.code.geobeagle.database.CachesProvider;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.DialogInterface;
@@ -15,22 +14,19 @@ import android.widget.EditText;
 public class MenuActionChooseFilter extends MenuActionBase {
     private final Activity mActivity;
     private final CacheFilter mFilter;
-    private final CachesProvider mCachesProvider;
     private final Refresher mRefresher;
     
     public MenuActionChooseFilter(Activity activity,
-            CacheFilter filter, CachesProvider cachesProvider,
-            Refresher refresher) {
+            CacheFilter filter, Refresher refresher) {
         super(R.string.menu_choose_filter);
         mActivity = activity;
         mFilter = filter;
-        mCachesProvider  = cachesProvider;
         mRefresher = refresher;
     }
 
-    private class DialogSettingsProvider implements CacheFilter.SettingsProvider {
+    private class DialogFilterGui implements CacheFilter.FilterGui {
         private Dialog mDialog;
-        public DialogSettingsProvider(Dialog dialog) {
+        public DialogFilterGui(Dialog dialog) {
             mDialog = dialog;
         }
         @Override
@@ -53,23 +49,21 @@ public class MenuActionChooseFilter extends MenuActionBase {
     
     @Override
     public void act() {
-        mFilter.loadFromPrefs(mActivity);
-
         final Dialog dialog = new Dialog(mActivity);
-        final DialogSettingsProvider provider = new DialogSettingsProvider(dialog);
+        final DialogFilterGui gui = new DialogFilterGui(dialog);
         
         OnDismissListener dismissListener = new OnDismissListener() {
             @Override
             public void onDismiss(DialogInterface arg0) {
-                mFilter.setFromProvider(provider);
-                mFilter.saveToPrefs(mActivity);
-                mCachesProvider.setExtraCondition(mFilter.getSqlWhereClause());
+                mFilter.loadFromGui(gui);
+                mFilter.saveToPrefs();
                 mRefresher.forceRefresh();
             }
         };
 
         dialog.setContentView(R.layout.filter);
-        mFilter.pushToProvider(provider);
+        mFilter.reload();
+        mFilter.pushToGui(gui);
         dialog.setOnDismissListener(dismissListener);
         dialog.show();
     }

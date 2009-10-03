@@ -17,11 +17,6 @@ public class CachesProviderSearch implements CachesProvider {
     public CachesProviderSearch(CachesProvider provider) {
         mProvider = provider;
     }
-    
-    @Override
-    public void setExtraCondition(String condition) {
-        mProvider.setExtraCondition(condition);
-    }
 
     @Override
     public ArrayList<Geocache> getCaches() {

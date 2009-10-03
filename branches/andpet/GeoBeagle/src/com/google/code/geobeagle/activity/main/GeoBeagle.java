@@ -107,7 +107,7 @@ public class GeoBeagle extends Activity {
         final LocationManager locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
         final LocationControlBuffered locationControlBuffered = LocationControlDi
                 .create(locationManager);
-        final GeocacheFactory geocacheFactory = new GeocacheFactory(getResources());
+        final GeocacheFactory geocacheFactory = new GeocacheFactory();
         final TextView gcid = (TextView)findViewById(R.id.gcid);
         final AttributeViewer gcDifficulty = new LabelledAttributeViewer(
                 GeocacheViewer.STAR_IMAGES, (TextView)findViewById(R.id.gc_text_difficulty),

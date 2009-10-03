@@ -14,11 +14,6 @@ public class CachesProviderRadius implements ICachesProviderCenter {
     public CachesProviderRadius(ICachesProviderArea area) {
         mCachesProviderArea = area;
     }
-
-    @Override
-    public void setExtraCondition(String condition) {
-        mCachesProviderArea.setExtraCondition(condition);
-    }
     
     @Override
     public ArrayList<Geocache> getCaches() {

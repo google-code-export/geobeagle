@@ -18,12 +18,6 @@ public class CachesProviderToggler implements ICachesProviderCenter {
         mHasChanged = true;
     }
 
-    @Override
-    public void setExtraCondition(String condition) {
-        mCachesProviderCenter.setExtraCondition(condition);
-        mCachesProviderAll.setExtraCondition(condition);
-    }
-
     public void toggle() {
         mNearest = !mNearest;
         mHasChanged = true;

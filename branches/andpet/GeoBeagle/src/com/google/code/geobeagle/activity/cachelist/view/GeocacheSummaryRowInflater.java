@@ -23,6 +23,7 @@ import com.google.code.geobeagle.activity.cachelist.presenter.HasDistanceFormatt
 import com.google.code.geobeagle.activity.cachelist.presenter.RelativeBearingFormatter;
 import com.google.code.geobeagle.formatting.DistanceFormatter;
 
+import android.content.res.Resources;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
@@ -35,21 +36,23 @@ public class GeocacheSummaryRowInflater implements HasDistanceFormatter {
         private final TextView mDistance;
         private final ImageView mIcon;
         private final TextView mId;
+        private final Resources mResources;
 
         RowViews(TextView attributes, TextView cacheName, TextView distance, ImageView icon,
-                TextView id) {
+                TextView id, Resources resources) {
             mAttributes = attributes;
             mCacheName = cacheName;
             mDistance = distance;
             mIcon = icon;
             mId = id;
+            mResources = resources;
         }
 
         void set(GeocacheVector geocacheVector, DistanceFormatter distanceFormatter,
                 BearingFormatter relativeBearingFormatter) {
             //CacheType type = geocacheVector.getGeocache().getCacheType();
             //mIcon.setImageResource(type.icon());
-            mIcon.setImageDrawable(geocacheVector.getGeocache().getIcon());
+            mIcon.setImageDrawable(geocacheVector.getGeocache().getIcon(mResources));
             mId.setText(geocacheVector.getId());
             mAttributes.setText(geocacheVector.getFormattedAttributes());
             mCacheName.setText(geocacheVector.getName());
@@ -62,14 +65,16 @@ public class GeocacheSummaryRowInflater implements HasDistanceFormatter {
     private DistanceFormatter mDistanceFormatter;
     private final GeocacheVectors mGeocacheVectors;
     private final LayoutInflater mLayoutInflater;
+    private final Resources mResources;
 
     public GeocacheSummaryRowInflater(DistanceFormatter distanceFormatter,
             GeocacheVectors geocacheVectors, LayoutInflater layoutInflater,
-            BearingFormatter relativeBearingFormatter) {
+            BearingFormatter relativeBearingFormatter, Resources resources) {
         mLayoutInflater = layoutInflater;
         mGeocacheVectors = geocacheVectors;
         mDistanceFormatter = distanceFormatter;
         mBearingFormatter = relativeBearingFormatter;
+        mResources = resources;
     }
 
     BearingFormatter getBearingFormatter() {
@@ -86,7 +91,7 @@ public class GeocacheSummaryRowInflater implements HasDistanceFormatter {
                 ((TextView)view.findViewById(R.id.txt_cache)), ((TextView)view
                         .findViewById(R.id.distance)), ((ImageView)view
                         .findViewById(R.id.gc_row_icon)), ((TextView)view
-                        .findViewById(R.id.txt_gcid)));
+                        .findViewById(R.id.txt_gcid)), mResources);
         view.setTag(rowViews);
         return view;
     }

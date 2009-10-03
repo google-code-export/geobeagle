@@ -7,9 +7,6 @@ import java.util.ArrayList;
 /** Interface to access a subset of the cache database. */
 public interface CachesProvider {
 
-    /** Sets the condition for the sql query. */
-    public void setExtraCondition(String condition);
-    
     /** Returns true if the result of getCaches() may have changed since the 
      * last call to setChanged(false) */
     public boolean hasChanged();

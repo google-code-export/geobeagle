@@ -36,11 +36,6 @@ public class CachesProviderCount implements ICachesProviderCenter {
         mRadius = 0.1;  //TODO: default value; tweak
         mIsCountValid = false;
     }
-
-    @Override
-    public void setExtraCondition(String condition) {
-        mCachesProviderRadius.setExtraCondition(condition);
-    }
     
     @Override
     public void setCenter(double latitude, double longitude) {

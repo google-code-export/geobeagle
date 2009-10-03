@@ -114,9 +114,4 @@ public class CachesProviderLazyArea implements ICachesProviderArea {
         if (!changed)
             mCachesProviderArea.setChanged(false);
     }
-
-    @Override
-    public void setExtraCondition(String condition) {
-        mCachesProviderArea.setExtraCondition(condition);
-    }
 }

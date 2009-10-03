@@ -31,7 +31,6 @@ import com.google.code.geobeagle.activity.map.DensityMatrix.DensityPatch;
 import com.google.code.geobeagle.database.CachesProviderArea;
 import com.google.code.geobeagle.database.CachesProviderLazyArea;
 import com.google.code.geobeagle.database.DbFrontend;
-import com.google.code.geobeagle.database.ICachesProviderArea;
 import com.google.code.geobeagle.xmlimport.GpxImporterDI.Toaster;
 
 import android.content.Intent;
@@ -57,6 +56,7 @@ public class GeoMapActivity extends MapActivity {
     private GeoMapActivityDelegate mGeoMapActivityDelegate;
     private GeoMapView mMapView;
     private MyLocationOverlay mMyLocationOverlay;
+    private OverlayManager mOverlayManager;
 
     @Override
     protected boolean isRouteDisplayed() {
@@ -71,7 +71,7 @@ public class GeoMapActivity extends MapActivity {
 
         // Set member variables first, in case anyone after this needs them.
         mMapView = (GeoMapView)findViewById(R.id.mapview);
-        mDbFrontend = new DbFrontend(this, new GeocacheFactory(mMapView.getResources()));
+        mDbFrontend = new DbFrontend(this, new GeocacheFactory());
         mMyLocationOverlay = new MyLocationOverlay(this, mMapView);
 
         mMapView.setBuiltInZoomControls(true);
@@ -79,8 +79,7 @@ public class GeoMapActivity extends MapActivity {
 
         final Resources resources = getResources();
         final Drawable defaultMarker = resources.getDrawable(R.drawable.map_pin2_others);
-        final CacheDrawables cacheDrawables = new CacheDrawables(resources);
-        final CacheItemFactory cacheItemFactory = new CacheItemFactory(cacheDrawables);
+        final CacheItemFactory cacheItemFactory = new CacheItemFactory(getResources());
 
         final CacheFilter cacheFilter = new CacheFilter(this);
         
@@ -99,8 +98,7 @@ public class GeoMapActivity extends MapActivity {
 
         final List<DensityPatch> densityPatches = new ArrayList<DensityPatch>();
         final Toaster toaster = new Toaster(this, R.string.too_many_caches, Toast.LENGTH_SHORT);
-        ICachesProviderArea cachesProviderArea = new CachesProviderArea(mDbFrontend);
-        cachesProviderArea.setExtraCondition(cacheFilter.getSqlWhereClause());
+        CachesProviderArea cachesProviderArea = new CachesProviderArea(mDbFrontend, cacheFilter);
         final CachesProviderLazyArea lazyArea = new CachesProviderLazyArea(cachesProviderArea, toaster);
         final DensityOverlayDelegate densityOverlayDelegate = DensityOverlay.createDelegate(
                 densityPatches, nullGeoPoint, lazyArea);
@@ -114,15 +112,15 @@ public class GeoMapActivity extends MapActivity {
         final GeoPoint center = new GeoPoint((int)(latitude * GeoUtils.MILLION),
                 (int)(longitude * GeoUtils.MILLION));
         mapController.setCenter(center);
-        final OverlayManager overlayManager = new OverlayManager(mMapView, mapOverlays,
-                densityOverlay, cachePinsOverlayFactory, false);
-        mMapView.setScrollListener(overlayManager);
+        mOverlayManager = new OverlayManager(mMapView, mapOverlays,
+                densityOverlay, cachePinsOverlayFactory, false, cachesProviderArea);
+        mMapView.setScrollListener(mOverlayManager);
 
         final MenuActions menuActions = new MenuActions(getResources());
         menuActions.add(new GeoMapActivityDelegate.MenuActionToggleSatellite(mMapView));
         menuActions.add(new GeoMapActivityDelegate.MenuActionCenterLocation(mMapView, mMyLocationOverlay));
         menuActions.add(new MenuActionCacheList(this));
-        menuActions.add(new MenuActionChooseFilter(this, cacheFilter, cachesProviderArea, overlayManager));
+        menuActions.add(new MenuActionChooseFilter(this, cacheFilter, mOverlayManager));
         
         mGeoMapActivityDelegate = new GeoMapActivityDelegate(mMapView, menuActions);
 
@@ -131,7 +129,7 @@ public class GeoMapActivity extends MapActivity {
             fZoomed = true;
         }
 
-        overlayManager.selectOverlay();
+        mOverlayManager.selectOverlay();
     }
 
     @Override
@@ -160,6 +158,7 @@ public class GeoMapActivity extends MapActivity {
     @Override
     public void onResume() {
         super.onResume();
+        mOverlayManager.forceRefresh();  //The cache filter might have changed
         mMyLocationOverlay.enableMyLocation();
         mMyLocationOverlay.enableCompass();
         mDbFrontend.openDatabase();

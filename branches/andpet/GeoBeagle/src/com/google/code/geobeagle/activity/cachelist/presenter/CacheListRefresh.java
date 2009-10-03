@@ -18,6 +18,7 @@ import com.google.code.geobeagle.LocationControlBuffered;
 import com.google.code.geobeagle.Refresher;
 import com.google.code.geobeagle.LocationControlBuffered.IGpsLocation;
 import com.google.code.geobeagle.activity.cachelist.CacheListDelegateDI;
+import com.google.code.geobeagle.database.CachesProviderArea;
 
 import android.util.Log;
 
@@ -63,19 +64,25 @@ public class CacheListRefresh implements Refresher {
     private final LocationControlBuffered mLocationControlBuffered;
     private final CacheListDelegateDI.Timing mTiming;
     private final UpdateFlag mUpdateFlag;
+    private final CachesProviderArea[] mCachesProviders;
 
     public CacheListRefresh(ActionManager actionManager, CacheListDelegateDI.Timing timing,
-            LocationControlBuffered locationControlBuffered, UpdateFlag updateFlag) {
+            LocationControlBuffered locationControlBuffered, UpdateFlag updateFlag,
+            CachesProviderArea[] providers) {
         mLocationControlBuffered = locationControlBuffered;
         mTiming = timing;
         mActionManager = actionManager;
         mUpdateFlag = updateFlag;
+        mCachesProviders = providers;
     }
 
     @Override
     public void forceRefresh() {
         mTiming.start();
         final long now = mTiming.getTime();
+        for (CachesProviderArea area : mCachesProviders) {
+            area.reloadFilter();
+        }
         mActionManager.performActions(mLocationControlBuffered.getGpsLocation(),
                 mLocationControlBuffered.getAzimuth(), 0, now);
     }

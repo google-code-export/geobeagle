@@ -21,8 +21,8 @@ import com.google.code.geobeagle.Geocache;
 class CacheItem extends OverlayItem {
     private final Geocache mGeocache;
 
-    CacheItem(GeoPoint geoPoint, String id, Geocache geocache) {
-        super(geoPoint, id, "");
+    CacheItem(GeoPoint geoPoint, Geocache geocache) {
+        super(geoPoint, (String)geocache.getId(), "");
         mGeocache = geocache;
     }
 

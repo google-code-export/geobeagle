@@ -83,14 +83,13 @@ public class Geocache implements Parcelable {
     private final Source mSourceType;
     private final int mTerrain;
     
-    private final Resources mResources;
     private Drawable mIcon = null;
     //private Drawable mIconBig = null;
     private Drawable mIconMap = null;
 
     Geocache(CharSequence id, CharSequence name, double latitude, double longitude,
             Source sourceType, String sourceName, CacheType cacheType, int difficulty, int terrain,
-            int container, AttributeFormatter attributeFormatter, Resources resources) {
+            int container, AttributeFormatter attributeFormatter) {
         mId = id;
         mName = name;
         mLatitude = latitude;
@@ -102,7 +101,6 @@ public class Geocache implements Parcelable {
         mTerrain = terrain;
         mContainer = container;
         mAttributeFormatter = attributeFormatter;
-        mResources = resources;
     }
 
     public float[] calculateDistanceAndBearing(Location here) {
@@ -131,10 +129,9 @@ public class Geocache implements Parcelable {
     
     private static Paint mTempPaint = new Paint();
     private static Rect mTempRect = new Rect();
-    private Drawable createIcon(int id, int thickness, int bottom) {
+    private Drawable createIcon(Bitmap bitmap, int thickness, int bottom) {
         Paint paint = new Paint();
         paint.setColor(Color.RED);
-        Bitmap bitmap = BitmapFactory.decodeResource(mResources, id);
         Bitmap copy = bitmap.copy(Bitmap.Config.ARGB_8888, true);
         Canvas canvas = new Canvas(copy);
 
@@ -155,17 +152,16 @@ public class Geocache implements Parcelable {
         return new BitmapDrawable(copy);
     }
 
-    public Drawable getIcon() {
+    public Drawable getIcon(Resources resources) {
         if (mIcon == null) {
-            if (mResources == null)
-                return null;
-            mIcon = createIcon(getCacheType().icon(), 3, 1);
+            Bitmap bitmap = BitmapFactory.decodeResource(resources, getCacheType().icon());
+            mIcon = createIcon(bitmap, 3, 1);
         }
         return mIcon;
-    }        
+    }
 
     /*
-    public Drawable getIconBig() {
+    public Drawable getIconBig(Resources resources) {
         if (mIconBig == null) {
             if (mResources == null)
                 return null;
@@ -177,11 +173,10 @@ public class Geocache implements Parcelable {
     }
     */
 
-    public Drawable getIconMap() {
+    public Drawable getIconMap(Resources resources) {
         if (mIconMap == null) {
-            if (mResources == null)
-                return null;
-            mIconMap = createIcon(getCacheType().iconMap(), 2, 5);
+            Bitmap bitmap = BitmapFactory.decodeResource(resources, getCacheType().iconMap());
+            mIconMap = createIcon(bitmap, 2, 5);
             int width = mIconMap.getIntrinsicWidth();
             int height = mIconMap.getIntrinsicHeight();
             mIconMap.setBounds(-width/2, -height, width/2, 0);
