@@ -20,6 +20,7 @@ import com.google.code.geobeagle.GeocacheFactory;
 import com.google.code.geobeagle.LocationControlBuffered;
 import com.google.code.geobeagle.LocationControlDi;
 import com.google.code.geobeagle.LocationControlBuffered.GpsDisabledLocation;
+import com.google.code.geobeagle.actions.MenuActionMap;
 import com.google.code.geobeagle.actions.MenuActionSearchOnline;
 import com.google.code.geobeagle.actions.MenuActions;
 import com.google.code.geobeagle.activity.ActivityDI;
@@ -241,6 +242,7 @@ public class CacheListDelegateDI {
         menuActions.add(new MenuActionMyLocation(cacheListRefresh, errorDisplayer,
                 geocacheFromMyLocationFactory, new LocationSaver(dbFrontend)));
         menuActions.add(new MenuActionSearchOnline(listActivity));
+        menuActions.add(new MenuActionMap(listActivity, locationControlBuffered));
         // menuActions.add(new MenuActionChooseFilter(listActivity));
 
         final Intent geoBeagleMainIntent = new Intent(listActivity, GeoBeagle.class);
