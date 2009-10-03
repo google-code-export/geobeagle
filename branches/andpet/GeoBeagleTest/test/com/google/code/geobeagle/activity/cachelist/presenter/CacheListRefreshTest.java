@@ -24,6 +24,7 @@ import com.google.code.geobeagle.activity.cachelist.CacheListDelegateDI;
 import com.google.code.geobeagle.activity.cachelist.CacheListDelegateDI.Timing;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh.ActionManager;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh.UpdateFlag;
+import com.google.code.geobeagle.database.CachesProviderArea;
 
 import org.easymock.EasyMock;
 import org.junit.Before;
@@ -109,7 +110,9 @@ public class CacheListRefreshTest {
         CacheListDelegateDI.Timing timing = PowerMock.createMock(CacheListDelegateDI.Timing.class);
         ActionManager actionManager = PowerMock.createMock(ActionManager.class);
         IGpsLocation here = PowerMock.createMock(IGpsLocation.class);
+        CachesProviderArea cachesProviderArea = PowerMock.createMock(CachesProviderArea.class);
 
+        cachesProviderArea.reloadFilter();
         EasyMock.expect(timing.getTime()).andReturn(100000L);
         timing.start();
         EasyMock.expect(locationControlBuffered.getGpsLocation()).andReturn(here);
@@ -117,7 +120,8 @@ public class CacheListRefreshTest {
         actionManager.performActions(here, 90, 0, 100000);
 
         PowerMock.replayAll();
-        new CacheListRefresh(actionManager, timing, locationControlBuffered, null).forceRefresh();
+        CachesProviderArea[] areas = { cachesProviderArea };
+        new CacheListRefresh(actionManager, timing, locationControlBuffered, null, areas).forceRefresh();
         PowerMock.verifyAll();
     }
 
@@ -137,7 +141,7 @@ public class CacheListRefreshTest {
         actionManager.performActions(here, 90, 3, 10000L);
 
         PowerMock.replayAll();
-        new CacheListRefresh(actionManager, mTiming, locationControlBuffered, updateFlag).refresh();
+        new CacheListRefresh(actionManager, mTiming, locationControlBuffered, updateFlag, null).refresh();
         PowerMock.verifyAll();
     }
 
@@ -148,7 +152,7 @@ public class CacheListRefreshTest {
         EasyMock.expect(updateFlag.updatesEnabled()).andReturn(false);
 
         PowerMock.replayAll();
-        new CacheListRefresh(null, null, null, updateFlag).refresh();
+        new CacheListRefresh(null, null, null, updateFlag, null).refresh();
         PowerMock.verifyAll();
     }
 

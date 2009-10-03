@@ -52,7 +52,7 @@ public class OverlayManagerTest {
                 OverlayManager.DENSITY_MAP_ZOOM_THRESHOLD - 1);
 
         PowerMock.replayAll();
-        final OverlayManager overlayManager = new OverlayManager(geoMapView, null, null, null, true);
+        final OverlayManager overlayManager = new OverlayManager(geoMapView, null, null, null, true, null);
         overlayManager.selectOverlay();
         assertTrue(overlayManager.usesDensityMap());
         PowerMock.verifyAll();
@@ -70,7 +70,7 @@ public class OverlayManagerTest {
 
         PowerMock.replayAll();
         final OverlayManager overlayManager = new OverlayManager(geoMapView, overlays,
-                densityOverlay, null, false);
+                densityOverlay, null, false, null);
         overlayManager.selectOverlay();
         assertTrue(overlayManager.usesDensityMap());
         assertEquals(densityOverlay, overlays.get(0));
@@ -92,7 +92,7 @@ public class OverlayManagerTest {
 
         PowerMock.replayAll();
         final OverlayManager overlayManager = new OverlayManager(geoMapView, overlays, null,
-                cachePinsOverlayFactory, true);
+                cachePinsOverlayFactory, true, null);
         overlayManager.selectOverlay();
         assertFalse(overlayManager.usesDensityMap());
         assertEquals(cachePinsOverlay, overlays.get(0));

@@ -20,7 +20,7 @@ public class CacheFilterTest {
 
     @Test
     public void testAllSelected() {
-        CacheFilter.SettingsProvider provider = new CacheFilter.SettingsProvider() {
+        CacheFilter.FilterGui provider = new CacheFilter.FilterGui() {
             @Override
             public boolean getBoolean(int id) { return true; }
             @Override
@@ -32,13 +32,13 @@ public class CacheFilterTest {
         };
 
         CacheFilter cacheFilter = new CacheFilter();
-        cacheFilter.setFromProvider(provider);
+        cacheFilter.loadFromGui(provider);
         assertEquals(null, cacheFilter.getSqlWhereClause());
     }
 
     @Test
     public void testNoneSelected() {
-        CacheFilter.SettingsProvider provider = new CacheFilter.SettingsProvider() {
+        CacheFilter.FilterGui provider = new CacheFilter.FilterGui() {
             @Override
             public boolean getBoolean(int id) { return false; }
             @Override
@@ -50,13 +50,13 @@ public class CacheFilterTest {
         };
 
         CacheFilter cacheFilter = new CacheFilter();
-        cacheFilter.setFromProvider(provider);
+        cacheFilter.loadFromGui(provider);
         assertEquals(null, cacheFilter.getSqlWhereClause());
     }
     
     @Test
     public void testCaseInsensitive() {
-        CacheFilter.SettingsProvider provider = new CacheFilter.SettingsProvider() {
+        CacheFilter.FilterGui provider = new CacheFilter.FilterGui() {
             @Override
             public boolean getBoolean(int id) { return true; }
             @Override
@@ -68,13 +68,13 @@ public class CacheFilterTest {
         };
 
         CacheFilter cacheFilter = new CacheFilter();
-        cacheFilter.setFromProvider(provider);
+        cacheFilter.loadFromGui(provider);
         assertTrue(cacheFilter.getSqlWhereClause().contains("lower"));
     }
 
     @Test
     public void testCaseSensitive() {
-        CacheFilter.SettingsProvider provider = new CacheFilter.SettingsProvider() {
+        CacheFilter.FilterGui provider = new CacheFilter.FilterGui() {
             @Override
             public boolean getBoolean(int id) { return true; }
             @Override
@@ -86,7 +86,7 @@ public class CacheFilterTest {
         };
 
         CacheFilter cacheFilter = new CacheFilter();
-        cacheFilter.setFromProvider(provider);
+        cacheFilter.loadFromGui(provider);
         assertFalse(cacheFilter.getSqlWhereClause().contains("lower"));
     }
 }

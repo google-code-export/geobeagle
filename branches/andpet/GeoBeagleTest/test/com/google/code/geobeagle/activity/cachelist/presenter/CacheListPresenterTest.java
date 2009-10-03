@@ -15,6 +15,7 @@
 package com.google.code.geobeagle.activity.cachelist.presenter;
 
 import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.isA;
 
 import com.google.code.geobeagle.CompassListener;
 import com.google.code.geobeagle.LocationControlBuffered;
@@ -55,8 +56,7 @@ public class CacheListPresenterTest {
         PowerMock.mockStatic(Log.class);
         CacheListRefresh cacheListRefresh = PowerMock.createMock(CacheListRefresh.class);
 
-        EasyMock.expect(Log.d((String)EasyMock.anyObject(), (String)EasyMock.anyObject()))
-                .andReturn(0).anyTimes();
+        expect(Log.d(isA(String.class), isA(String.class))).andReturn(0).anyTimes();
         cacheListRefresh.refresh();
 
         PowerMock.replayAll();

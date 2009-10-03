@@ -43,8 +43,6 @@ public class CachesProviderLazyAreaTest {
         assertTrue(lazyArea.hasChanged());
         lazyArea.setChanged(false);
         assertFalse(lazyArea.hasChanged());
-        lazyArea.setExtraCondition("condition");
-        assertTrue(lazyArea.hasChanged());
     }
 
     @Test
