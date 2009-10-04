@@ -88,6 +88,11 @@ public class GeocacheViewer {
             R.drawable.stars_5, R.drawable.stars_6, R.drawable.stars_7, R.drawable.stars_8,
             R.drawable.stars_9, R.drawable.stars_10
     };
+    public static final int PAW_IMAGES[] = {
+        R.drawable.paws_1, R.drawable.paws_2, R.drawable.paws_3, R.drawable.paws_4,
+        R.drawable.paws_5, R.drawable.paws_6, R.drawable.paws_7, R.drawable.paws_8,
+        R.drawable.paws_9, R.drawable.paws_10
+};
     private final ImageView mCacheTypeImageView;
     private final AttributeViewer mContainer;
     private final AttributeViewer mDifficulty;

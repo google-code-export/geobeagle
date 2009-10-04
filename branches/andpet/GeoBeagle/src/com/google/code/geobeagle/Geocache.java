@@ -143,7 +143,8 @@ public class Geocache implements Parcelable {
         mTempRect.set(1, imageHeight-1-diffHeight-bottom, thickness+1, imageHeight-1-bottom);
         canvas.drawRect(mTempRect, mTempPaint);
 
-        mTempPaint.setARGB(255, 0xDB, 0xA1, 0x09);
+        mTempPaint.setARGB(255, 0xDB, 0xA1, 0x09);  //a lighter brown
+        //mTempPaint.setARGB(255, 139, 94, 23);  //same color as paws
         int terrHeight = (int)((imageHeight - bottom - 1) * (mTerrain/10.0));
         mTempRect.set(imageWidth-thickness-1, imageHeight-1-terrHeight-bottom, 
                 imageWidth-1, imageHeight-1-bottom);

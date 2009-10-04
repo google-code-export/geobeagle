@@ -112,7 +112,7 @@ public class GeoBeagle extends Activity {
         final AttributeViewer gcDifficulty = new LabelledAttributeViewer(
                 GeocacheViewer.STAR_IMAGES, (TextView)findViewById(R.id.gc_text_difficulty),
                 (ImageView)findViewById(R.id.gc_difficulty));
-        final AttributeViewer gcTerrain = new LabelledAttributeViewer(GeocacheViewer.STAR_IMAGES,
+        final AttributeViewer gcTerrain = new LabelledAttributeViewer(GeocacheViewer.PAW_IMAGES,
                 (TextView)findViewById(R.id.gc_text_terrain),
                 (ImageView)findViewById(R.id.gc_terrain));
         final UnlabelledAttributeViewer gcContainer = new UnlabelledAttributeViewer(
