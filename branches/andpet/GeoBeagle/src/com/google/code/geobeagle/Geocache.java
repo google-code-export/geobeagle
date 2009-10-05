@@ -127,60 +127,16 @@ public class Geocache implements Parcelable {
         return mContainer;
     }
     
-    private static Paint mTempPaint = new Paint();
-    private static Rect mTempRect = new Rect();
-    private Drawable createIcon(Bitmap bitmap, int thickness, int bottom) {
-        Paint paint = new Paint();
-        paint.setColor(Color.RED);
-        Bitmap copy = bitmap.copy(Bitmap.Config.ARGB_8888, true);
-        Canvas canvas = new Canvas(copy);
-
-        int imageHeight = bitmap.getHeight();
-        int imageWidth = bitmap.getWidth();
-
-        mTempPaint.setColor(Color.RED);
-        int diffHeight = (int)((imageHeight - bottom - 1) * (mDifficulty/10.0));
-        mTempRect.set(1, imageHeight-1-diffHeight-bottom, thickness+1, imageHeight-1-bottom);
-        canvas.drawRect(mTempRect, mTempPaint);
-
-        mTempPaint.setARGB(255, 0xDB, 0xA1, 0x09);  //a lighter brown
-        //mTempPaint.setARGB(255, 139, 94, 23);  //same color as paws
-        int terrHeight = (int)((imageHeight - bottom - 1) * (mTerrain/10.0));
-        mTempRect.set(imageWidth-thickness-1, imageHeight-1-terrHeight-bottom, 
-                imageWidth-1, imageHeight-1-bottom);
-        canvas.drawRect(mTempRect, mTempPaint);
-
-        return new BitmapDrawable(copy);
-    }
-
     public Drawable getIcon(Resources resources) {
         if (mIcon == null) {
-            Bitmap bitmap = BitmapFactory.decodeResource(resources, getCacheType().icon());
-            mIcon = createIcon(bitmap, 3, 1);
+            mIcon = GraphicsGenerator.createIcon(this, resources);
         }
         return mIcon;
     }
 
-    /*
-    public Drawable getIconBig(Resources resources) {
-        if (mIconBig == null) {
-            if (mResources == null)
-                return null;
-            mIconBig = createIcon(getCacheType().iconBig(), 6, 1);
-            Log.d("GeoBeagle", "Created iconBig " + mIconBig.getIntrinsicWidth() + 
-                    " x " + mIconBig.getIntrinsicHeight());
-        }
-        return mIconBig;
-    }
-    */
-
     public Drawable getIconMap(Resources resources) {
         if (mIconMap == null) {
-            Bitmap bitmap = BitmapFactory.decodeResource(resources, getCacheType().iconMap());
-            mIconMap = createIcon(bitmap, 2, 5);
-            int width = mIconMap.getIntrinsicWidth();
-            int height = mIconMap.getIntrinsicHeight();
-            mIconMap.setBounds(-width/2, -height, width/2, 0);
+            mIconMap = GraphicsGenerator.createIconMap(this, resources);
         }
         return mIconMap;
     }

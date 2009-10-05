@@ -42,6 +42,18 @@ public class CachesProviderCount implements ICachesProviderCenter {
         mCachesProviderRadius.setCenter(latitude, longitude);
     }
     
+    /** Returns the radius used to get the current set of caches*/
+    public double getRadius() {
+        if (!mIsCountValid || mCachesProviderRadius.hasChanged()) {
+            CountAndRadius car = findRadius();
+            mCount = car.Count;
+            mRadius = car.Radius;
+            mIsCountValid = true;
+            mCachesProviderRadius.setChanged(false);
+        }
+        return mRadius;
+    }
+    
     @Override
     public ArrayList<Geocache> getCaches() {
         if (mCachesProviderRadius.hasChanged()) {
@@ -109,10 +121,8 @@ public class CachesProviderCount implements ICachesProviderCenter {
                 iterationsLeft -= 1;
                 Log.d("GeoBeagle", "CachesProviderCount search inward count = " + count);
             }
-            return findWithinLimits(radiusToTry, radiusToTry * DISTANCE_MULTIPLIER, 
-                    iterationsLeft);
         }
-        if (count < mMinCount) {
+        else if (count < mMinCount) {
             while (count < mMinCount && radiusToTry < MAX_RADIUS / DISTANCE_MULTIPLIER
                     && iterationsLeft > 1) {
                 radiusToTry *= DISTANCE_MULTIPLIER;
@@ -120,10 +130,14 @@ public class CachesProviderCount implements ICachesProviderCenter {
                 iterationsLeft -= 1;
                 Log.d("GeoBeagle", "CachesProviderCount search outward count = " + count);
             }
+        }
+        if (count < mMinCount && iterationsLeft > 0)
+            return findWithinLimits(radiusToTry, radiusToTry * DISTANCE_MULTIPLIER, 
+                    iterationsLeft);
+        else if (count > mMaxCount && iterationsLeft > 0)
             return findWithinLimits(radiusToTry / DISTANCE_MULTIPLIER, radiusToTry, 
                     iterationsLeft);
-        }
-        return new CountAndRadius(count, mRadius);  //Initial value was ok
+        return new CountAndRadius(count, mRadius);  //Value is ok
     }
 
     private CountAndRadius findWithinLimits(double minRadius, double maxRadius, 

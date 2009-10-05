@@ -19,6 +19,7 @@ import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.main.GeoUtils;
 import com.google.code.geobeagle.activity.main.RadarView;
 
+import android.graphics.drawable.Drawable;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -32,7 +33,7 @@ public class GeocacheViewer {
         private final UnlabelledAttributeViewer mUnlabelledAttributeViewer;
         private final TextView mLabel;
 
-        public LabelledAttributeViewer(int[] images, TextView label, ImageView imageView) {
+        public LabelledAttributeViewer(Drawable[] images, TextView label, ImageView imageView) {
             mUnlabelledAttributeViewer = new UnlabelledAttributeViewer(images, imageView);
             mLabel = label;
         }
@@ -46,19 +47,31 @@ public class GeocacheViewer {
 
     public static class UnlabelledAttributeViewer implements AttributeViewer {
         private final int[] mImages;
+        private final Drawable[] mDrawables;
         private final ImageView mImageView;
 
         public UnlabelledAttributeViewer(int[] images, ImageView imageView) {
             mImages = images;
             mImageView = imageView;
+            mDrawables = null;
         }
 
+        public UnlabelledAttributeViewer(Drawable[] drawables, ImageView imageView) {
+            mImages = null;
+            mImageView = imageView;
+            mDrawables = drawables;
+        }
+        
         public void setImage(int attributeValue) {
             if (attributeValue == 0) {
                 mImageView.setVisibility(View.GONE);
                 return;
             }
-            mImageView.setImageResource(mImages[attributeValue - 1]);
+            if (mDrawables != null) {
+                mImageView.setImageDrawable(mDrawables[attributeValue - 1]);                
+            } else {
+                mImageView.setImageResource(mImages[attributeValue - 1]);
+            }
             mImageView.setVisibility(View.VISIBLE);
         }
     }
@@ -83,16 +96,14 @@ public class GeocacheViewer {
     public static final int CONTAINER_IMAGES[] = {
             R.drawable.size_1, R.drawable.size_2, R.drawable.size_3, R.drawable.size_4
     };
+    
+    //TODO: Remove this arrays
     public static final int STAR_IMAGES[] = {
             R.drawable.stars_1, R.drawable.stars_2, R.drawable.stars_3, R.drawable.stars_4,
             R.drawable.stars_5, R.drawable.stars_6, R.drawable.stars_7, R.drawable.stars_8,
             R.drawable.stars_9, R.drawable.stars_10
     };
-    public static final int PAW_IMAGES[] = {
-        R.drawable.paws_1, R.drawable.paws_2, R.drawable.paws_3, R.drawable.paws_4,
-        R.drawable.paws_5, R.drawable.paws_6, R.drawable.paws_7, R.drawable.paws_8,
-        R.drawable.paws_9, R.drawable.paws_10
-};
+    
     private final ImageView mCacheTypeImageView;
     private final AttributeViewer mContainer;
     private final AttributeViewer mDifficulty;

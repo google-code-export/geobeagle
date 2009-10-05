@@ -66,6 +66,9 @@
 		<activity android:name=".activity.map.GeoMapActivity"
 			android:label="GeoBeagle map">
 		</activity>
+		<activity android:name=".activity.prox.ProximityActivity"
+			android:label="GeoBeagle proximity">
+		</activity>
 
 	</application>
 
