@@ -18,6 +18,7 @@ import static org.easymock.EasyMock.expect;
 
 import com.google.code.geobeagle.CacheType;
 import com.google.code.geobeagle.Geocache;
+import com.google.code.geobeagle.GraphicsGenerator;
 import com.google.code.geobeagle.activity.main.RadarView;
 import com.google.code.geobeagle.activity.main.view.GeocacheViewer.LabelledAttributeViewer;
 import com.google.code.geobeagle.activity.main.view.GeocacheViewer.UnlabelledAttributeViewer;
@@ -29,13 +30,15 @@ import org.powermock.api.easymock.PowerMock;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import android.graphics.drawable.Drawable;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest( {
-        CacheType.class, TextView.class, UnlabelledAttributeViewer.class, LabelledAttributeViewer.class
+        CacheType.class, TextView.class, UnlabelledAttributeViewer.class, 
+        LabelledAttributeViewer.class, Geocache.class
 })
 public class GeocacheViewerTest {
     @Test
@@ -44,7 +47,7 @@ public class GeocacheViewerTest {
         imageView.setVisibility(View.GONE);
 
         PowerMock.replayAll();
-        UnlabelledAttributeViewer unlabelledAttributeViewer = new UnlabelledAttributeViewer(null,
+        UnlabelledAttributeViewer unlabelledAttributeViewer = new UnlabelledAttributeViewer((int[])null,
                 imageView);
         unlabelledAttributeViewer.setImage(0);
         PowerMock.verifyAll();
@@ -56,9 +59,12 @@ public class GeocacheViewerTest {
         TextView label = PowerMock.createMock(TextView.class);
         UnlabelledAttributeViewer unlabelledAttributeViewer = PowerMock
                 .createMock(UnlabelledAttributeViewer.class);
+        Drawable drawable1 = PowerMock.createMock(Drawable.class);
+        Drawable drawable2 = PowerMock.createMock(Drawable.class);
+        Drawable drawable3 = PowerMock.createMock(Drawable.class);
 
-        int images[] = {
-                111, 222, 333
+        Drawable images[] = {
+                drawable1, drawable2, drawable3
         };
         PowerMock.expectNew(UnlabelledAttributeViewer.class, images, imageView).andReturn(
                 unlabelledAttributeViewer);
@@ -119,6 +125,8 @@ public class GeocacheViewerTest {
     public void testSet() {
         TextView id = PowerMock.createMock(TextView.class);
         NameViewer name = PowerMock.createMock(NameViewer.class);
+        PowerMock.mockStatic(GraphicsGenerator.class);
+        PowerMock.replay(GraphicsGenerator.class);
         Geocache geocache = PowerMock.createMock(Geocache.class);
         RadarView radar = PowerMock.createMock(RadarView.class);
         UnlabelledAttributeViewer gcDifficulty = PowerMock
