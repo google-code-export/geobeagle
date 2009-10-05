@@ -9,8 +9,10 @@ import com.google.code.geobeagle.database.ICachesProviderCenter;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.RadialGradient;
 import android.graphics.Shader;
 import android.graphics.Paint.Style;
+import android.graphics.Shader.TileMode;
 import android.os.SystemClock;
 import android.util.Log;
 
@@ -72,9 +74,10 @@ public class ProximityPainter {
     private Paint mDistancePaint;
     private Paint mCachePaint;
     private Paint mUserPaint;
+    private Paint mUserBlurPaint;
     private Paint mCompassNorthPaint;
     private Paint mCompassSouthPaint;
-    //private Shader mUserShader;
+    private Shader mUserShader;
     private final CachesProviderCount mCachesProvider;
     //private ArrayList<Geocache> mCaches = new ArrayList<Geocache>();
     
@@ -119,18 +122,28 @@ public class ProximityPainter {
         mCachePaint.setARGB(255, 200, 200, 248);
         mCachePaint.setStyle(Style.STROKE);
         mCachePaint.setStrokeWidth(2);
+        mCachePaint.setAntiAlias(true);
+
+        //mUserShader = new RadialGradient(0, 0, 
+        //        (int)mGpsAccuracy.get(), 0x2000ff00, 0xc000ff00, TileMode.CLAMP);
+        mUserBlurPaint = new Paint();
+        //mUserBlurPaint.setShader(mUserShader);
+        mUserBlurPaint.setStyle(Style.FILL);
         
         mUserPaint = new Paint();
-        mUserPaint.setARGB(128, 0, 255, 0); //half transparent
+        mUserPaint.setARGB(255, 216, 176, 128);
         mUserPaint.setStyle(Style.STROKE);
-        mUserPaint.setStrokeWidth(7);
+        mUserPaint.setStrokeWidth(4);
+        mUserPaint.setAntiAlias(true);
         
         mCompassNorthPaint = new Paint();
         mCompassNorthPaint.setARGB(192, 255, 0, 0);
-        mCompassNorthPaint.setStrokeWidth(2);
+        mCompassNorthPaint.setStrokeWidth(3);
+        mCompassNorthPaint.setAntiAlias(true);
         mCompassSouthPaint = new Paint();
         mCompassSouthPaint.setARGB(192, 230, 230, 230);
-        mCompassSouthPaint.setStrokeWidth(2);
+        mCompassSouthPaint.setStrokeWidth(3);
+        mCompassSouthPaint.setAntiAlias(true);
     }
     
     public void setUserLocation(double latitude, double longitude, float accuracy) {
@@ -165,6 +178,16 @@ public class ProximityPainter {
         int accuracyScreenRadius = transformDistanceToScreen(mGpsAccuracy.get());
         double direction = mDeviceDirection.get();
 
+        //Draw user representation
+        if (accuracyScreenRadius > 0) {
+            //TODO: Wasting objects!
+            mUserShader = new RadialGradient(mCenterX, mUserY,
+                    accuracyScreenRadius, 0xa000ff00, 0x4000ff00, TileMode.CLAMP);
+            mUserBlurPaint.setShader(mUserShader);
+            canvas.drawCircle(mCenterX, mUserY, accuracyScreenRadius, mUserBlurPaint);
+            canvas.drawCircle(mCenterX, mUserY, accuracyScreenRadius, mUserPaint);
+        }
+        
         //North
         int x1 = xRelativeUser(maxScreenRadius, Math.toRadians(270-direction));
         int y1 = yRelativeUser(maxScreenRadius, Math.toRadians(270-direction));
@@ -218,7 +241,6 @@ public class ProximityPainter {
                 canvas.drawLine(x5, y5, x6, y6, mCachePaint);
             }
         }
-        canvas.drawCircle(mCenterX, mUserY, accuracyScreenRadius, mUserPaint);
     }
 
     /** angle is in radians */
