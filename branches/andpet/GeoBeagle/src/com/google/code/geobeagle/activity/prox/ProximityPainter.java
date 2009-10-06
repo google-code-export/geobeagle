@@ -19,41 +19,6 @@ import android.util.Log;
 import java.util.ArrayList;
 
 public class ProximityPainter {
-    /** Contains the value of a single parameter. This abstraction allows for 
-     * animating arbitrary parameters smoothly to their current value. */
-    class Parameter {
-        /** Max change in movement towards target value, in delta / (sec^2) */
-        private final double mMaxAccel;
-        private double mValue;
-        private double mTargetValue;
-        /** Delta per second for mValue. Updated to move mValue towards mTargetValue */
-        private double mChangePerSec;
-        public Parameter(double maxAccel) {
-            mMaxAccel = maxAccel;
-        }
-        public double get() { return mValue; }
-        public void set(double value) { mTargetValue = value; }
-        /** Animate the value towards its goal given that deltaSec time 
-         * elapsed since last update */
-        public void update(double deltaSec) {
-            //First update mChangePerSec, then update mValue
-            //There is an ideal mChangePerSec for every distance. Move towards it.
-            double distance = mTargetValue - mValue;
-            double idealSpeed = Math.signum(distance) * Math.sqrt(Math.abs(distance) * mMaxAccel);
-            mChangePerSec = moveTowards(mChangePerSec, idealSpeed, mMaxAccel*deltaSec);
-            mValue += mChangePerSec * deltaSec;
-        }
-        
-        private double moveTowards(double now, double target, double maxChange) {
-            if (now == target)
-                return target;
-            if (target > now) {
-                return Math.min(target, now + maxChange);
-            }
-            return Math.max(target, now - maxChange);
-        }
-    }
-    
     //private int mUserX;
     /** Where on the display to show the user's location */
     private int mUserY;
@@ -68,7 +33,6 @@ public class ProximityPainter {
     
     /** Higher value means that big distances are compressed relatively more */
     private double mLogScale = 1.25;
-    private double mScaleFactor = 12.0;
 
     private Paint mTextPaint;
     private Paint mDistancePaint;
@@ -84,8 +48,6 @@ public class ProximityPainter {
     /** This class contains all parameters needed to render the proximity view.
      */
     class ProximityParameters {
-        /** Higher value means that big distances are compressed relatively more */
-        private double mLogScale = 1.3;
         private final double mScaleFactor = 12.0;
         private ArrayList<Geocache> mCaches;
         /** The last point in time when we got a GPS reading */
@@ -98,11 +60,13 @@ public class ProximityPainter {
 
     /** Which direction the device is pointed, in degrees */
     //TODO: Create new class DegreesParameter
-    private Parameter mDeviceDirection = new Parameter(10.0);
+    private Parameter mDeviceDirection = new AngularParameter(0.03, 0.3);
 
     /** Location reading accuracy in meters */
-    private Parameter mGpsAccuracy = new Parameter(1.5);
-    
+    private Parameter mGpsAccuracy = new ScalarParameter(4.0);
+
+    private Parameter mScaleFactor = new ScalarParameter(12.0);
+
     private Parameter[] allParameters = { mDeviceDirection, mGpsAccuracy };
     
     public ProximityPainter(CachesProviderCount cachesProvider) {
@@ -133,15 +97,15 @@ public class ProximityPainter {
         mUserPaint = new Paint();
         mUserPaint.setARGB(255, 216, 176, 128);
         mUserPaint.setStyle(Style.STROKE);
-        mUserPaint.setStrokeWidth(4);
+        mUserPaint.setStrokeWidth(6);
         mUserPaint.setAntiAlias(true);
         
         mCompassNorthPaint = new Paint();
-        mCompassNorthPaint.setARGB(192, 255, 0, 0);
+        mCompassNorthPaint.setARGB(255, 255, 0, 0);
         mCompassNorthPaint.setStrokeWidth(3);
         mCompassNorthPaint.setAntiAlias(true);
         mCompassSouthPaint = new Paint();
-        mCompassSouthPaint.setARGB(192, 230, 230, 230);
+        mCompassSouthPaint.setARGB(255, 230, 230, 230);
         mCompassSouthPaint.setStrokeWidth(3);
         mCompassSouthPaint.setAntiAlias(true);
     }
@@ -155,21 +119,11 @@ public class ProximityPainter {
         //TODO: What unit is 'radius'??
         double radius = mCachesProvider.getRadius();
         //mScaleFactor = 
-        mScaleFactor = mUserY * Math.log(mLogScale) / Math.log(radius*100000);
-    }
-
-    /** Update animations */
-    public void update() {
-        long time = SystemClock.uptimeMillis();
-        double timeDelta = Math.min((time - mLastUpdateMillis) / 1000.0, 0.3);
-        for (Parameter param : allParameters) {
-            param.update(timeDelta);
-        }
+        mScaleFactor.set(mUserY * Math.log(mLogScale) / Math.log(radius*100000));
     }
     
     private long mLastUpdateMillis = 0;
     public void draw(Canvas canvas) {
-        update();
         canvas.drawColor(Color.BLACK); //Clear screen
 
         mCenterX = canvas.getWidth() / 2;
@@ -177,15 +131,15 @@ public class ProximityPainter {
         int maxScreenRadius = (int)Math.ceil(Math.sqrt(mCenterX*mCenterX + mUserY*mUserY));
         int accuracyScreenRadius = transformDistanceToScreen(mGpsAccuracy.get());
         double direction = mDeviceDirection.get();
+        int userScreenRadius = 30;
 
-        //Draw user representation
+        //Draw accuracy blur field
         if (accuracyScreenRadius > 0) {
             //TODO: Wasting objects!
             mUserShader = new RadialGradient(mCenterX, mUserY,
-                    accuracyScreenRadius, 0xa000ff00, 0x4000ff00, TileMode.CLAMP);
+                    accuracyScreenRadius, 0x80ffff00, 0x20ffff00, TileMode.CLAMP);
             mUserBlurPaint.setShader(mUserShader);
             canvas.drawCircle(mCenterX, mUserY, accuracyScreenRadius, mUserBlurPaint);
-            canvas.drawCircle(mCenterX, mUserY, accuracyScreenRadius, mUserPaint);
         }
         
         //North
@@ -221,6 +175,7 @@ public class ProximityPainter {
             }
         }
         
+        //Draw all geocaches and lines to them
         for (Geocache geocache : mCachesProvider.getCaches()) {
             double angle = Math.toRadians(GeoUtils.bearing(mLatitude, mLongitude, 
                     geocache.getLatitude(), geocache.getLongitude()) - direction);
@@ -229,18 +184,27 @@ public class ProximityPainter {
             double screenDist = transformDistanceToScreen(distanceM);
             int cacheScreenRadius = (int)scaleFactorAtDistance(distanceM);
             mCachePaint.setStrokeWidth((int)Math.ceil(0.5*scaleFactorAtDistance(distanceM)));
+            mCachePaint.setAlpha(255);
             int x = mCenterX + (int)(screenDist * Math.cos(angle));
             int y = mUserY + (int)(screenDist * Math.sin(angle));
             canvas.drawCircle(x, y, cacheScreenRadius, mCachePaint);
-            if (screenDist > accuracyScreenRadius + cacheScreenRadius) {
-                int x5 = xRelativeUser(accuracyScreenRadius, angle);
-                int y5 = yRelativeUser(accuracyScreenRadius, angle);
+            
+            //Lines to geocaches
+            if (screenDist > userScreenRadius + cacheScreenRadius) {
+                //Cache is outside accuracy circle
+                int x5 = xRelativeUser(userScreenRadius, angle);
+                int y5 = yRelativeUser(userScreenRadius, angle);
                 int x6 = xRelativeUser(screenDist-cacheScreenRadius, angle);
                 int y6 = yRelativeUser(screenDist-cacheScreenRadius, angle);
-                //Cache is outside accuracy circle
+                mCachePaint.setStrokeWidth(Math.min(6, cacheScreenRadius/2));
+                double closeness = 1 - (0.7*screenDist)/maxScreenRadius;
+                mCachePaint.setAlpha((int)Math.min(255, 256 * closeness));
                 canvas.drawLine(x5, y5, x6, y6, mCachePaint);
             }
         }
+        
+        canvas.drawCircle(mCenterX, mUserY, userScreenRadius, mUserPaint);
+        
     }
 
     /** angle is in radians */
@@ -255,8 +219,8 @@ public class ProximityPainter {
     /** Return the distance in pixels for a real-world distance in meters
      * Argument must be positive */
     private int transformDistanceToScreen(double meters) {
-        int distance = (int)(mScaleFactor * myLog(meters));
-        return Math.max(0, distance - 40);
+        int distance = (int)(mScaleFactor.get() * myLog(meters));
+        return Math.max(20, distance - 40);
     }
 
     /** At distance 'meters', draw a meter as these many pixels */
@@ -265,7 +229,7 @@ public class ProximityPainter {
             meters = 1;
         else
             meters -= 5;
-        return (int)(2000.0/(mScaleFactor * myLog(meters)));
+        return (int)(2000.0/(mScaleFactor.get() * myLog(meters)));
     }
 
     /** Returns logarithm of x in base mLogScale */
@@ -275,5 +239,12 @@ public class ProximityPainter {
     
     public void setUserDirection(double degrees) {
         mDeviceDirection.set(degrees);
+    }
+
+    /** Update animations timeDelta seconds (preferably much less than a sec) */
+    public void advanceTime(double timeDelta) {
+        for (Parameter param : allParameters) {
+            param.update(timeDelta);
+        }
     }
 }
