@@ -38,6 +38,7 @@ public class ProximityPainter {
     private Paint mDistancePaint;
     private Paint mCachePaint;
     private Paint mUserPaint;
+    private Paint mSpeedPaint;
     private Paint mUserBlurPaint;
     private Paint mCompassNorthPaint;
     private Paint mCompassSouthPaint;
@@ -48,14 +49,9 @@ public class ProximityPainter {
     /** This class contains all parameters needed to render the proximity view.
      */
     class ProximityParameters {
-        private final double mScaleFactor = 12.0;
         private ArrayList<Geocache> mCaches;
         /** The last point in time when we got a GPS reading */
         private long mLastPositioningTime;
-        /** The speed of the user, measured using GPS */
-        private double mUserSpeed;
-        /** Which way the user is moving */
-        private double mSpeedDirection;
     }
 
     /** Which direction the device is pointed, in degrees */
@@ -67,7 +63,13 @@ public class ProximityPainter {
 
     private Parameter mScaleFactor = new ScalarParameter(12.0);
 
-    private Parameter[] allParameters = { mDeviceDirection, mGpsAccuracy };
+    /** The speed of the user, measured using GPS */
+    private Parameter mUserSpeed = new ScalarParameter(0);
+    /** Which way the user is moving */
+    private Parameter mUserDirection = new AngularParameter(0.03, 0.3);
+    
+    private Parameter[] allParameters = { mDeviceDirection, mGpsAccuracy,
+            mScaleFactor, mUserSpeed, mUserDirection };
     
     public ProximityPainter(CachesProviderCount cachesProvider) {
         mCachesProvider = cachesProvider;
@@ -99,6 +101,12 @@ public class ProximityPainter {
         mUserPaint.setStyle(Style.STROKE);
         mUserPaint.setStrokeWidth(6);
         mUserPaint.setAntiAlias(true);
+        
+        mSpeedPaint = new Paint();
+        mSpeedPaint.setARGB(255, 0, 255, 0);
+        mSpeedPaint.setStrokeWidth(7);
+        mSpeedPaint.setStyle(Style.STROKE);
+        mSpeedPaint.setAntiAlias(true);
         
         mCompassNorthPaint = new Paint();
         mCompassNorthPaint.setARGB(255, 255, 0, 0);
@@ -141,6 +149,12 @@ public class ProximityPainter {
             mUserBlurPaint.setShader(mUserShader);
             canvas.drawCircle(mCenterX, mUserY, accuracyScreenRadius, mUserBlurPaint);
         }
+        
+        //Draw user speed vector
+        int speedRadius = transformDistanceToScreen(mUserSpeed.get()*3.6);
+        int x7 = xRelativeUser(speedRadius, Math.toRadians(mUserDirection.get()-direction));
+        int y7 = yRelativeUser(speedRadius, Math.toRadians(mUserDirection.get()-direction));
+        canvas.drawLine(mCenterX, mUserY, x7, y7, mSpeedPaint);
         
         //North
         int x1 = xRelativeUser(maxScreenRadius, Math.toRadians(270-direction));
@@ -241,6 +255,11 @@ public class ProximityPainter {
         mDeviceDirection.set(degrees);
     }
 
+    public void setUserMovement(double bearing, double speed) {
+        mUserSpeed.set(speed);
+        mUserDirection.set(bearing);
+    }
+    
     /** Update animations timeDelta seconds (preferably much less than a sec) */
     public void advanceTime(double timeDelta) {
         for (Parameter param : allParameters) {

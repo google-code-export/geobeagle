@@ -97,6 +97,10 @@ LocationListener {
         if (useLocation) {
             mProximityPainter.setUserLocation(location.getLatitude(),
                     location.getLongitude(), location.getAccuracy());
+            if (location.hasBearing() && location.hasSpeed()) {
+                mProximityPainter.setUserMovement(location.getBearing(),
+                        location.getSpeed());
+            }
         }
     }
 
