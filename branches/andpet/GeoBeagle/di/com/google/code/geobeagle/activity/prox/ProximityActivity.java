@@ -20,7 +20,7 @@ public class ProximityActivity extends Activity implements SurfaceHolder.Callbac
 
     private ProximityView mProximityView;
     ProximityPainter mProximityPainter;
-    DataCollector mProximityEventHandler;
+    DataCollector mDataCollector;
     private AnimatorThread mAnimatorThread;
     private boolean mStartWhenSurfaceCreated = false;  //TODO: Needed?
 
@@ -53,13 +53,13 @@ public class ProximityActivity extends Activity implements SurfaceHolder.Callbac
         super.onStart();
         SurfaceHolder holder = mProximityView.getHolder();
         holder.addCallback(this); 
-        mProximityEventHandler = new DataCollector(this, holder, mProximityPainter);
+        mDataCollector = new DataCollector(this, holder, mProximityPainter);
     }
     
     @Override
     protected void onResume() {
         super.onResume();
-        mProximityEventHandler.start();
+        mDataCollector.start();
         if (mAnimatorThread == null)
             mStartWhenSurfaceCreated = true;
         else
@@ -69,8 +69,9 @@ public class ProximityActivity extends Activity implements SurfaceHolder.Callbac
     @Override
     protected void onPause() {
         super.onPause();
-        mProximityEventHandler.pause();
-        mAnimatorThread.stop();
+        mDataCollector.pause();
+        if (mAnimatorThread != null)
+            mAnimatorThread.stop();
     }
     
     

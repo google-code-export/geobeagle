@@ -8,7 +8,10 @@ import com.google.code.geobeagle.database.ICachesProviderCenter;
 
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.DashPathEffect;
+import android.graphics.DiscretePathEffect;
 import android.graphics.Paint;
+import android.graphics.PathEffect;
 import android.graphics.RadialGradient;
 import android.graphics.Shader;
 import android.graphics.Paint.Style;
@@ -26,11 +29,6 @@ public class ProximityPainter {
     /* X center of display */
     private int mCenterX;
     
-    private double mLatitude;
-    private double mLongitude;
-    /** Which direction the device is pointed, in degrees */
-    //private double mDirection = 0;
-    
     /** Higher value means that big distances are compressed relatively more */
     private double mLogScale = 1.25;
 
@@ -39,7 +37,7 @@ public class ProximityPainter {
     private Paint mCachePaint;
     private Paint mUserPaint;
     private Paint mSpeedPaint;
-    private Paint mUserBlurPaint;
+    private Paint mAccuracyPaint;
     private Paint mCompassNorthPaint;
     private Paint mCompassSouthPaint;
     private Shader mUserShader;
@@ -68,6 +66,9 @@ public class ProximityPainter {
     /** Which way the user is moving */
     private Parameter mUserDirection = new AngularParameter(0.03, 0.3);
     
+    private Parameter mLatitude = new ScalarParameter();
+    private Parameter mLongitude = new ScalarParameter();
+    
     private Parameter[] allParameters = { mDeviceDirection, mGpsAccuracy,
             mScaleFactor, mUserSpeed, mUserDirection };
     
@@ -90,14 +91,19 @@ public class ProximityPainter {
         mCachePaint.setStrokeWidth(2);
         mCachePaint.setAntiAlias(true);
 
+        int userColor = Color.argb(255, 216, 176, 128);
         //mUserShader = new RadialGradient(0, 0, 
         //        (int)mGpsAccuracy.get(), 0x2000ff00, 0xc000ff00, TileMode.CLAMP);
-        mUserBlurPaint = new Paint();
-        //mUserBlurPaint.setShader(mUserShader);
-        mUserBlurPaint.setStyle(Style.FILL);
+        mAccuracyPaint = new Paint();
+        //mAccuracyPaint.setShader(mUserShader);
+        mAccuracyPaint.setStrokeWidth(6);
+        mAccuracyPaint.setStyle(Style.STROKE);
+        mAccuracyPaint.setColor(userColor);
+        float[] intervals = { 20, 10};
+        mAccuracyPaint.setPathEffect(new DashPathEffect(intervals, 5));
         
         mUserPaint = new Paint();
-        mUserPaint.setARGB(255, 216, 176, 128);
+        mUserPaint.setColor(userColor);
         mUserPaint.setStyle(Style.STROKE);
         mUserPaint.setStrokeWidth(6);
         mUserPaint.setAntiAlias(true);
@@ -120,8 +126,8 @@ public class ProximityPainter {
     
     public void setUserLocation(double latitude, double longitude, float accuracy) {
         Log.d("GeoBeagle", "setUserLocation with accuracy = " + accuracy);
-        mLatitude = latitude;
-        mLongitude = longitude;
+        mLatitude.set(latitude);
+        mLongitude.set(longitude);
         mGpsAccuracy.set(accuracy);
         mCachesProvider.setCenter(latitude, longitude);
         //TODO: What unit is 'radius'??
@@ -139,22 +145,26 @@ public class ProximityPainter {
         int maxScreenRadius = (int)Math.ceil(Math.sqrt(mCenterX*mCenterX + mUserY*mUserY));
         int accuracyScreenRadius = transformDistanceToScreen(mGpsAccuracy.get());
         double direction = mDeviceDirection.get();
-        int userScreenRadius = 30;
+        int userScreenRadius = 25;
 
         //Draw accuracy blur field
         if (accuracyScreenRadius > 0) {
             //TODO: Wasting objects!
+            /*
             mUserShader = new RadialGradient(mCenterX, mUserY,
                     accuracyScreenRadius, 0x80ffff00, 0x20ffff00, TileMode.CLAMP);
-            mUserBlurPaint.setShader(mUserShader);
-            canvas.drawCircle(mCenterX, mUserY, accuracyScreenRadius, mUserBlurPaint);
+            mAccuracyPaint.setShader(mUserShader);
+            */
+            canvas.drawCircle(mCenterX, mUserY, accuracyScreenRadius, mAccuracyPaint);
         }
         
         //Draw user speed vector
-        int speedRadius = transformDistanceToScreen(mUserSpeed.get()*3.6);
-        int x7 = xRelativeUser(speedRadius, Math.toRadians(mUserDirection.get()-direction));
-        int y7 = yRelativeUser(speedRadius, Math.toRadians(mUserDirection.get()-direction));
-        canvas.drawLine(mCenterX, mUserY, x7, y7, mSpeedPaint);
+        if (mUserSpeed.get() > 0) {
+            int speedRadius = transformDistanceToScreen(mUserSpeed.get()*3.6);
+            int x7 = xRelativeUser(speedRadius, Math.toRadians(mUserDirection.get()-direction));
+            int y7 = yRelativeUser(speedRadius, Math.toRadians(mUserDirection.get()-direction));
+            canvas.drawLine(mCenterX, mUserY, x7, y7, mSpeedPaint);
+        }
         
         //North
         int x1 = xRelativeUser(maxScreenRadius, Math.toRadians(270-direction));
@@ -191,9 +201,9 @@ public class ProximityPainter {
         
         //Draw all geocaches and lines to them
         for (Geocache geocache : mCachesProvider.getCaches()) {
-            double angle = Math.toRadians(GeoUtils.bearing(mLatitude, mLongitude, 
+            double angle = Math.toRadians(GeoUtils.bearing(mLatitude.get(), mLongitude.get(), 
                     geocache.getLatitude(), geocache.getLongitude()) - direction);
-            double distanceM = GeoUtils.distanceKm(mLatitude, mLongitude, 
+            double distanceM = GeoUtils.distanceKm(mLatitude.get(), mLongitude.get(), 
                     geocache.getLatitude(), geocache.getLongitude()) * 1000;
             double screenDist = transformDistanceToScreen(distanceM);
             int cacheScreenRadius = (int)scaleFactorAtDistance(distanceM);
@@ -210,9 +220,9 @@ public class ProximityPainter {
                 int y5 = yRelativeUser(userScreenRadius, angle);
                 int x6 = xRelativeUser(screenDist-cacheScreenRadius, angle);
                 int y6 = yRelativeUser(screenDist-cacheScreenRadius, angle);
-                mCachePaint.setStrokeWidth(Math.min(6, cacheScreenRadius/2));
+                mCachePaint.setStrokeWidth(Math.min(8, cacheScreenRadius));
                 double closeness = 1 - (0.7*screenDist)/maxScreenRadius;
-                mCachePaint.setAlpha((int)Math.min(255, 256 * closeness));
+                mCachePaint.setAlpha((int)Math.min(255, 256 * 1.5 * closeness));
                 canvas.drawLine(x5, y5, x6, y6, mCachePaint);
             }
         }
