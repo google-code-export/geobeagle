@@ -10,6 +10,8 @@ import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 
+import java.nio.Buffer;
+
 public class GraphicsGenerator {
 
     public static Drawable createRating(Drawable unselected, Drawable halfSelected,
@@ -60,32 +62,43 @@ public class GraphicsGenerator {
     private static Drawable createOverlay(Geocache geocache, int thickness, int bottom, 
             int backdropId, Resources resources) {
         Bitmap bitmap = BitmapFactory.decodeResource(resources, backdropId);
-        
-        Bitmap copy = bitmap.copy(Bitmap.Config.ARGB_8888, true);
-        Canvas canvas = new Canvas(copy);
-
         int imageHeight = bitmap.getHeight();
         int imageWidth = bitmap.getWidth();
+        
+        Bitmap copy;
+        if (bottom >= 0) {
+            copy = bitmap.copy(Bitmap.Config.ARGB_8888, true);
+        } else {
+            copy = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight()-bottom, 
+                    Bitmap.Config.ARGB_8888);
+            int[] pixels = new int[imageWidth*imageHeight];
+            bitmap.getPixels(pixels, 0, imageWidth, 0, 0, imageWidth, imageHeight);
+            copy.setPixels(pixels, 0, imageWidth, 0, 0, imageWidth, imageHeight);
+            imageHeight = copy.getHeight();
+            bottom = 0;
+        }
+
+        Canvas canvas = new Canvas(copy);
 
         //mTempPaint.setColor(Color.BLUE);
         mTempPaint.setARGB(255, 0x20, 0x20, 0xFF);  //light blue
         int diffWidth = (int)(imageWidth * (geocache.getDifficulty()/10.0));
-        mTempRect.set(0, imageHeight-bottom-2*thickness-1, 
-                diffWidth, imageHeight-bottom-thickness-1);
+        mTempRect.set(0, imageHeight-bottom-2*thickness-2, 
+                diffWidth, imageHeight-bottom-thickness-2);
         canvas.drawRect(mTempRect, mTempPaint);
         
         mTempPaint.setARGB(255, 0xDB, 0xA1, 0x09);  //a lighter brown
         //mTempPaint.setARGB(255, 139, 94, 23);  //same color as paws
         int terrWidth = (int)(imageWidth * (geocache.getTerrain()/10.0));
-        mTempRect.set(imageWidth-terrWidth, imageHeight-bottom-thickness,
-                imageWidth-1, imageHeight-bottom);
+        mTempRect.set(imageWidth-terrWidth, imageHeight-bottom-thickness-1,
+                imageWidth-1, imageHeight-bottom-1);
         canvas.drawRect(mTempRect, mTempPaint);
 
         return new BitmapDrawable(copy);
     }
     
     public static Drawable createIcon(Geocache geocache, Resources resources) {
-        return createOverlay(geocache, 3, 0, geocache.getCacheType().icon(), 
+        return createOverlay(geocache, 3, -5, geocache.getCacheType().icon(), 
                 resources);
     }
     
