@@ -67,28 +67,30 @@ public class GraphicsGenerator {
         int imageHeight = bitmap.getHeight();
         int imageWidth = bitmap.getWidth();
 
-        mTempPaint.setColor(Color.RED);
-        int diffHeight = (int)((imageHeight - bottom - 1) * (geocache.getDifficulty()/10.0));
-        mTempRect.set(1, imageHeight-1-diffHeight-bottom, thickness+1, imageHeight-1-bottom);
+        //mTempPaint.setColor(Color.BLUE);
+        mTempPaint.setARGB(255, 0x20, 0x20, 0xFF);  //light blue
+        int diffWidth = (int)(imageWidth * (geocache.getDifficulty()/10.0));
+        mTempRect.set(0, imageHeight-bottom-2*thickness-1, 
+                diffWidth, imageHeight-bottom-thickness-1);
         canvas.drawRect(mTempRect, mTempPaint);
-
+        
         mTempPaint.setARGB(255, 0xDB, 0xA1, 0x09);  //a lighter brown
         //mTempPaint.setARGB(255, 139, 94, 23);  //same color as paws
-        int terrHeight = (int)((imageHeight - bottom - 1) * (geocache.getTerrain()/10.0));
-        mTempRect.set(imageWidth-thickness-1, imageHeight-1-terrHeight-bottom, 
-                imageWidth-1, imageHeight-1-bottom);
+        int terrWidth = (int)(imageWidth * (geocache.getTerrain()/10.0));
+        mTempRect.set(imageWidth-terrWidth, imageHeight-bottom-thickness,
+                imageWidth-1, imageHeight-bottom);
         canvas.drawRect(mTempRect, mTempPaint);
 
         return new BitmapDrawable(copy);
     }
-
+    
     public static Drawable createIcon(Geocache geocache, Resources resources) {
-        return createOverlay(geocache, 3, 1, geocache.getCacheType().icon(), 
+        return createOverlay(geocache, 3, 0, geocache.getCacheType().icon(), 
                 resources);
     }
     
     public static Drawable createIconMap(Geocache geocache, Resources resources) {
-        Drawable iconMap = createOverlay(geocache, 3, 1, 
+        Drawable iconMap = createOverlay(geocache, 3, 3, 
                 geocache.getCacheType().iconMap(), resources);
         int width = iconMap.getIntrinsicWidth();
         int height = iconMap.getIntrinsicHeight();
