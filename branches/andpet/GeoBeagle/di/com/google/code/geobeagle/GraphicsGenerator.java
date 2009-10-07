@@ -90,8 +90,12 @@ public class GraphicsGenerator {
         mTempPaint.setARGB(255, 0xDB, 0xA1, 0x09);  //a lighter brown
         //mTempPaint.setARGB(255, 139, 94, 23);  //same color as paws
         int terrWidth = (int)(imageWidth * (geocache.getTerrain()/10.0));
-        mTempRect.set(imageWidth-terrWidth, imageHeight-bottom-thickness-1,
-                imageWidth-1, imageHeight-bottom-1);
+        //Draw on right side:
+        //mTempRect.set(imageWidth-terrWidth, imageHeight-bottom-thickness-1,
+        //        imageWidth-1, imageHeight-bottom-1);
+        //Draw on left side:
+        mTempRect.set(0, imageHeight-bottom-thickness-1,
+                terrWidth, imageHeight-bottom-1);
         canvas.drawRect(mTempRect, mTempPaint);
 
         return new BitmapDrawable(copy);
