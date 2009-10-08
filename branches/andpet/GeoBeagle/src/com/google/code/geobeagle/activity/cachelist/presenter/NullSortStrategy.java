@@ -18,6 +18,7 @@ import com.google.code.geobeagle.activity.cachelist.model.GeocacheVector;
 
 import java.util.ArrayList;
 
+//TODO: Remove this class
 public class NullSortStrategy implements SortStrategy {
     public void sort(ArrayList<GeocacheVector> arrayList) {
         return;

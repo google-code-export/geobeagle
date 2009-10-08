@@ -99,6 +99,7 @@ public class LocationControlBuffered implements LocationListener {
         return mLocation;
     }
 
+    //TODO: Remove method getSortStrategy()
     public SortStrategy getSortStrategy() {
         if (mLocation == null)
             return mNullSortStrategy;

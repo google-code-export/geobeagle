@@ -62,6 +62,7 @@ public class GeocacheVector {
         mDistance = f;
     }
 
+    //TODO: Remove LocationControlBuffered from this class
     public GeocacheVector(Geocache geocache, LocationControlBuffered locationControlBuffered) {
         mGeocache = geocache;
         mLocationControlBuffered = locationControlBuffered;

@@ -18,6 +18,7 @@ import com.google.code.geobeagle.activity.cachelist.model.GeocacheVector;
 
 import java.util.ArrayList;
 
+//TODO: Remove this interface
 public interface SortStrategy {
     public void sort(ArrayList<GeocacheVector> arrayList);
 }

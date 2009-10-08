@@ -20,6 +20,7 @@ import com.google.code.geobeagle.activity.cachelist.model.GeocacheVector.Locatio
 import java.util.ArrayList;
 import java.util.Collections;
 
+//TODO: Remove this class
 public class DistanceSortStrategy implements SortStrategy {
     private final LocationComparator mLocationComparator;
 

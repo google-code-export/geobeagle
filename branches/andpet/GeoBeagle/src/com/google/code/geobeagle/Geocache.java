@@ -28,6 +28,7 @@ import android.location.Location;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.FloatMath;
 
 /**
  * Geocache or letterbox description, id, and coordinates.
@@ -150,6 +151,18 @@ public class Geocache implements Parcelable {
         return mDifficulty;
     }
 
+    //Formerly calculateDistanceFast
+    public float getDistanceTo(double latitude, double longitude) {
+        double dLat = Math.toRadians(latitude - mLatitude);
+        double dLon = Math.toRadians(longitude - mLongitude);
+        final float sinDLat = FloatMath.sin((float)(dLat / 2));
+        final float sinDLon = FloatMath.sin((float)(dLon / 2));
+        float a = sinDLat * sinDLat + FloatMath.cos((float)Math.toRadians(mLatitude))
+                * FloatMath.cos((float)Math.toRadians(latitude)) * sinDLon * sinDLon;
+        float c = (float)(2 * Math.atan2(FloatMath.sqrt(a), FloatMath.sqrt(1 - a)));
+        return 6371000 * c;
+    }
+    
     public CharSequence getFormattedAttributes() {
         return mAttributeFormatter.formatAttributes(mDifficulty, mTerrain);
     }

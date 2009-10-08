@@ -18,6 +18,7 @@ import com.google.code.geobeagle.LocationControlBuffered;
 import com.google.code.geobeagle.activity.cachelist.CacheListDelegateDI;
 import com.google.code.geobeagle.activity.cachelist.model.CacheListData;
 
+//TODO: Remove this class
 public class AdapterCachesSorter implements RefreshAction {
     private final CacheListData mCacheListData;
     private final LocationControlBuffered mLocationControlBuffered;
