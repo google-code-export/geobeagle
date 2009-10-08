@@ -12,9 +12,8 @@
  ** limitations under the License.
  */
 
-package com.google.code.geobeagle.activity;
+package com.google.code.geobeagle;
 
-import com.google.code.geobeagle.Refresher;
 
 public class NullRefresher implements Refresher {
     public void refresh() {

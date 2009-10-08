@@ -23,15 +23,16 @@ public class ProximityActivity extends Activity implements SurfaceHolder.Callbac
     DataCollector mDataCollector;
     private AnimatorThread mAnimatorThread;
     private boolean mStartWhenSurfaceCreated = false;  //TODO: Needed?
+    private DbFrontend mDbFrontend;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         GeocacheFactory geocacheFactory = new GeocacheFactory();
-        DbFrontend dbFrontend = new DbFrontend(this, geocacheFactory);
+        mDbFrontend = new DbFrontend(this, geocacheFactory);
         CacheFilter cacheFilter = new CacheFilter(this);
-        CachesProviderArea cachesProviderArea = new CachesProviderArea(dbFrontend, cacheFilter);
+        CachesProviderArea cachesProviderArea = new CachesProviderArea(mDbFrontend, cacheFilter);
         //CachesProviderRadius cachesProviderRadius = new CachesProviderRadius(cachesProviderArea);
         CachesProviderCount cachesProviderCount = new CachesProviderCount(cachesProviderArea, 5, 10);
         //cachesProviderRadius.setRadius(0.01);
@@ -72,6 +73,8 @@ public class ProximityActivity extends Activity implements SurfaceHolder.Callbac
         mDataCollector.pause();
         if (mAnimatorThread != null)
             mAnimatorThread.stop();
+        //TODO: The animatorThread might still use the database?
+        mDbFrontend.closeDatabase();
     }
     
     
