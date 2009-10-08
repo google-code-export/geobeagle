@@ -14,7 +14,7 @@
 
 package com.google.code.geobeagle.activity.main;
 
-import com.google.code.geobeagle.activity.NullRefresher;
+import com.google.code.geobeagle.NullRefresher;
 
 import org.junit.Test;
 
