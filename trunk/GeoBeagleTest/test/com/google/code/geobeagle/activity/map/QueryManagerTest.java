@@ -19,7 +19,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import com.google.android.maps.GeoPoint;
-import com.google.android.maps.MapView;
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.activity.map.QueryManager.CachedNeedsLoading;
 import com.google.code.geobeagle.activity.map.QueryManager.LoaderImpl;
@@ -41,7 +40,7 @@ import java.util.ArrayList;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest( {
-        DensityPatchManager.class, Log.class, MapView.class, QueryManager.class
+        DensityPatchManager.class, Log.class, QueryManager.class
 })
 public class QueryManagerTest {
     @Before
