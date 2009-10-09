@@ -39,8 +39,8 @@ public class IncomingIntentHandler {
             final String action = intent.getAction();
             if (action != null) {
                 if (action.equals(Intent.ACTION_VIEW) && intent.getType() == null) {
-                    return mGeocacheFromIntentFactory
-                            .viewCacheFromMapsIntent(intent, locationSaver);
+                    return mGeocacheFromIntentFactory.viewCacheFromMapsIntent(intent,
+                            locationSaver, defaultGeocache);
                 } else if (action.equals(GeocacheListController.SELECT_CACHE)) {
                     Geocache geocache = intent.<Geocache> getParcelableExtra("geocache");
                     if (geocache == null)

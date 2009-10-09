@@ -28,7 +28,7 @@ import android.net.UrlQuerySanitizer.ValueSanitizer;
 public class GeocacheFromIntentFactoryTest {
 
     @Test
-    public void geocacheFromIntentFactory() throws Exception {
+    public void testGeocacheFromIntentFactory() throws Exception {
         Intent intent = PowerMock.createMock(Intent.class);
         Uri uri = PowerMock.createMock(Uri.class);
         UrlQuerySanitizer urlQuerySanitizer = PowerMock.createMock(UrlQuerySanitizer.class);
@@ -60,7 +60,34 @@ public class GeocacheFromIntentFactoryTest {
 
         PowerMock.replayAll();
         assertEquals(geocache, new GeocacheFromIntentFactory(geocacheFactory)
-                .viewCacheFromMapsIntent(intent, locationSaver));
+                .viewCacheFromMapsIntent(intent, locationSaver, null));
+        PowerMock.verifyAll();
+    }
+
+    @Test
+    public void testGeocacheFromIntentFactoryBadQuery() throws Exception {
+        Intent intent = PowerMock.createMock(Intent.class);
+        Uri uri = PowerMock.createMock(Uri.class);
+        UrlQuerySanitizer urlQuerySanitizer = PowerMock.createMock(UrlQuerySanitizer.class);
+        ValueSanitizer valueSanitizer = PowerMock.createMock(ValueSanitizer.class);
+        GeocacheFactory geocacheFactory = PowerMock.createMock(GeocacheFactory.class);
+        Geocache defaultGeocache = PowerMock.createMock(Geocache.class);
+        LocationSaver locationSaver = PowerMock.createMock(LocationSaver.class);
+
+        PowerMock.mockStatic(Util.class);
+        PowerMock.mockStatic(UrlQuerySanitizer.class);
+
+        EasyMock.expect(intent.getData()).andReturn(uri);
+        EasyMock.expect(uri.getQuery()).andReturn("http://map_query");
+        PowerMock.expectNew(UrlQuerySanitizer.class).andReturn(urlQuerySanitizer);
+        EasyMock.expect(UrlQuerySanitizer.getAllButNulAndAngleBracketsLegal()).andReturn(
+                valueSanitizer);
+        EasyMock.expect(Util.parseHttpUri("http://map_query", urlQuerySanitizer, valueSanitizer))
+                .andReturn(null);
+
+        PowerMock.replayAll();
+        assertEquals(defaultGeocache, new GeocacheFromIntentFactory(geocacheFactory)
+                .viewCacheFromMapsIntent(intent, locationSaver, defaultGeocache));
         PowerMock.verifyAll();
     }
 }
