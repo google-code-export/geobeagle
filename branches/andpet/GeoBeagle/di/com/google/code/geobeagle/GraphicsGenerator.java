@@ -38,8 +38,8 @@ public class GraphicsGenerator {
     }
     
     public static Drawable[] getDifficultyRatings(Resources r) {
-        Drawable[] ratings = new Drawable[9];
-        for (int i = 1; i < 10; i++) {
+        Drawable[] ratings = new Drawable[10];
+        for (int i = 1; i <= 10; i++) {
             ratings[i-1] = createRating(r.getDrawable(R.drawable.ribbon_unselected_dark),
                     r.getDrawable(R.drawable.ribbon_half_bright),
                     r.getDrawable(R.drawable.ribbon_selected_bright), i);
@@ -48,8 +48,8 @@ public class GraphicsGenerator {
     }
 
     public static Drawable[] getTerrainRatings(Resources r) {
-        Drawable[] ratings = new Drawable[9];
-        for (int i = 1; i < 10; i++) {
+        Drawable[] ratings = new Drawable[10];
+        for (int i = 1; i <= 10; i++) {
             ratings[i-1] = createRating(r.getDrawable(R.drawable.paw_unselected_dark),
                     r.getDrawable(R.drawable.paw_half_light),
                     r.getDrawable(R.drawable.paw_selected_light), i);
