@@ -13,7 +13,6 @@ import android.location.LocationManager;
 import android.location.LocationProvider;
 import android.os.Bundle;
 import android.os.SystemClock;
-import android.util.Log;
 import android.view.SurfaceHolder;
 
 @SuppressWarnings("deprecation")

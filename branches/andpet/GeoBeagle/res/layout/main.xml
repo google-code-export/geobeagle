@@ -76,7 +76,7 @@
 			<ImageView android:layout_toRightOf="@+id/gc_text_difficulty"
 				android:layout_width="wrap_content" android:layout_below="@+id/gcname"
 				android:layout_height="wrap_content" android:id="@+id/gc_difficulty"
-				android:src="@drawable/stars_0" android:layout_marginTop="4dip"
+				android:layout_marginTop="4dip"
 				android:layout_marginLeft="4dip" />
 			<TextView android:layout_below="@+id/gcname"
 				android:layout_height="wrap_content" android:layout_width="wrap_content"
@@ -85,7 +85,7 @@
 			<ImageView android:layout_width="wrap_content"
 				android:layout_below="@+id/gcname" android:layout_height="wrap_content"
 				android:id="@+id/gc_terrain" android:layout_toRightOf="@+id/gc_text_terrain"
-				android:src="@drawable/stars_0" android:layout_marginTop="4dip"
+				android:layout_marginTop="4dip"
 				android:layout_marginLeft="4dip" />
 		</RelativeLayout>
 

@@ -97,13 +97,6 @@ public class GeocacheViewer {
             R.drawable.size_1, R.drawable.size_2, R.drawable.size_3, R.drawable.size_4
     };
     
-    //TODO: Remove this arrays
-    public static final int STAR_IMAGES[] = {
-            R.drawable.stars_1, R.drawable.stars_2, R.drawable.stars_3, R.drawable.stars_4,
-            R.drawable.stars_5, R.drawable.stars_6, R.drawable.stars_7, R.drawable.stars_8,
-            R.drawable.stars_9, R.drawable.stars_10
-    };
-    
     private final ImageView mCacheTypeImageView;
     private final AttributeViewer mContainer;
     private final AttributeViewer mDifficulty;

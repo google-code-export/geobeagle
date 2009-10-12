@@ -1,10 +1,8 @@
 package com.google.code.geobeagle.activity.prox;
 
 import android.graphics.Canvas;
-import android.hardware.SensorManager;
 import android.os.SystemClock;
 import android.util.Log;
-import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 
 public class AnimatorThread {

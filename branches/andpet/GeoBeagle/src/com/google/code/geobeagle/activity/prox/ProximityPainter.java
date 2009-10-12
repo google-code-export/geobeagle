@@ -2,21 +2,15 @@ package com.google.code.geobeagle.activity.prox;
 
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.activity.main.GeoUtils;
-import com.google.code.geobeagle.database.CachesProvider;
 import com.google.code.geobeagle.database.CachesProviderCount;
-import com.google.code.geobeagle.database.ICachesProviderCenter;
-
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.DashPathEffect;
-import android.graphics.DiscretePathEffect;
 import android.graphics.Paint;
-import android.graphics.PathEffect;
 import android.graphics.RadialGradient;
 import android.graphics.Shader;
 import android.graphics.Paint.Style;
 import android.graphics.Shader.TileMode;
-import android.os.SystemClock;
 import android.util.Log;
 
 import java.util.ArrayList;

@@ -78,7 +78,7 @@ public class GeoMapActivity extends MapActivity {
         mMapView.setSatellite(false);
 
         final Resources resources = getResources();
-        final Drawable defaultMarker = resources.getDrawable(R.drawable.map_pin2_others);
+        final Drawable defaultMarker = resources.getDrawable(R.drawable.pin_default);
         final CacheItemFactory cacheItemFactory = new CacheItemFactory(getResources());
 
         final CacheFilter cacheFilter = new CacheFilter(this);

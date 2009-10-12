@@ -26,33 +26,33 @@ public enum CacheType {
     MY_LOCATION(4, R.drawable.blue_dot, R.drawable.blue_dot, 
             R.drawable.pin_default, "my location"),
 
+    //Caches without unique icons
     EARTHCACHE(5, R.drawable.cache_earth, R.drawable.cache_earth_big, 
             R.drawable.pin_earth, "earth"),
-    //TODO: map pin for virtual cache
     VIRTUAL(6, R.drawable.cache_virtual, R.drawable.cache_virtual_big,
-            R.drawable.map_pin2_default, "virtual"),
-    LETTERBOX_HYBRID(7, R.drawable.cache_letter, R.drawable.cache_letter_big,
+            R.drawable.pin_virtual, "virtual"),
+    LETTERBOX_HYBRID(7, R.drawable.cache_letterbox, R.drawable.cache_letterbox_big,
             R.drawable.pin_letter, "letterbox"),
     EVENT(8, R.drawable.cache_event, R.drawable.cache_event_big,
             R.drawable.pin_event, "event"),
     WEBCAM(9, R.drawable.cache_webcam, R.drawable.cache_webcam_big,
             R.drawable.pin_webcam, "webcam"),
-    MEGA(13, R.drawable.cache_mega, R.drawable.cache_mega_big,
-            R.drawable.pin_mega, "mega-event"),
-            
+
     //Caches without unique icons
     CITO(10, R.drawable.cache_default, R.drawable.cache_default_big,
-            R.drawable.map_pin2_default, "cache in trash out"),
+            R.drawable.pin_default, "cache in trash out"),
     LOCATIONLESS(11, R.drawable.cache_default, R.drawable.cache_default_big,
-                    R.drawable.map_pin2_default, "reverse"),
+            R.drawable.pin_default, "reverse"),
     APE(12, R.drawable.cache_default, R.drawable.cache_default_big,
-            R.drawable.map_pin2_default, "project ape"),
+            R.drawable.pin_default, "project ape"),
+    MEGA(13, R.drawable.cache_mega, R.drawable.cache_mega_big,
+            R.drawable.pin_mega, "mega-event"),
     WHERIGO(14, R.drawable.cache_default, R.drawable.cache_default_big,
-                    R.drawable.map_pin2_default, "wherigo"),
+            R.drawable.pin_default, "wherigo"),
             
     //Waypoint types
     WAYPOINT(20, R.drawable.cache_default, R.drawable.cache_default_big, 
-            R.drawable.map_pin2_default, "waypoint"),   //Not actually seen in GPX...
+            R.drawable.pin_default, "waypoint"),   //Not actually seen in GPX...
     WAYPOINT_PARKING(21, R.drawable.cache_waypoint_p, R.drawable.cache_waypoint_p_big, 
             R.drawable.map_pin2_wp_p, "waypoint|parking area"),
     WAYPOINT_REFERENCE(22, R.drawable.cache_waypoint_r, R.drawable.cache_waypoint_r_big, 
