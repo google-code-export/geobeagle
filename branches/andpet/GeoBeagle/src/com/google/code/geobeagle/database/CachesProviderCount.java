@@ -33,7 +33,7 @@ public class CachesProviderCount implements ICachesProviderCenter {
         mCachesProviderRadius = new CachesProviderRadius(area);
         mMinCount = minCount;
         mMaxCount = maxCount;
-        mRadius = 0.1;  //TODO: default value; tweak
+        mRadius = 0.04;  //TODO: default value; tweak
         mIsCountValid = false;
     }
     
@@ -45,7 +45,7 @@ public class CachesProviderCount implements ICachesProviderCenter {
     /** Returns the radius used to get the current set of caches*/
     public double getRadius() {
         if (!mIsCountValid || mCachesProviderRadius.hasChanged()) {
-            CountAndRadius car = findRadius();
+            CountAndRadius car = findRadius(mRadius);
             mCount = car.Count;
             mRadius = car.Radius;
             mIsCountValid = true;
@@ -65,7 +65,7 @@ public class CachesProviderCount implements ICachesProviderCenter {
             return mCaches;
 
         if (!mIsCountValid) {
-            CountAndRadius car = findRadius();
+            CountAndRadius car = findRadius(mRadius);
             mCount = car.Count;
             mRadius = car.Radius;
             mIsCountValid = true;
@@ -80,7 +80,7 @@ public class CachesProviderCount implements ICachesProviderCenter {
     @Override
     public int getCount() {
         if (!mIsCountValid || mCachesProviderRadius.hasChanged()) {
-            CountAndRadius car = findRadius();
+            CountAndRadius car = findRadius(mRadius);
             mCount = car.Count;
             mRadius = car.Radius;
             mIsCountValid = true;
@@ -109,10 +109,9 @@ public class CachesProviderCount implements ICachesProviderCenter {
      * @param radiusToTry Starting radius (in degrees) in search
      * @return Radius setting that satisfy mMinCount <= count <= mMaxCount
      */
-    private CountAndRadius findRadius() {
-        int count = countHitsUsingRadius(mRadius);
+    private CountAndRadius findRadius(double radiusToTry) {
+        int count = countHitsUsingRadius(radiusToTry);
         int iterationsLeft = MAX_ITERATIONS - 1;
-        double radiusToTry = mRadius;
         Log.d("GeoBeagle", "CachesProviderCount first count = " + count);
         if (count > mMaxCount) {
             while (count > mMaxCount && iterationsLeft > 1) {
@@ -137,7 +136,7 @@ public class CachesProviderCount implements ICachesProviderCenter {
         else if (count > mMaxCount && iterationsLeft > 0)
             return findWithinLimits(radiusToTry / DISTANCE_MULTIPLIER, radiusToTry, 
                     iterationsLeft);
-        return new CountAndRadius(count, mRadius);  //Value is ok
+        return new CountAndRadius(count, radiusToTry);  //Value is ok
     }
 
     private CountAndRadius findWithinLimits(double minRadius, double maxRadius, 

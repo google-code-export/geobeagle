@@ -43,20 +43,9 @@ public class ProximityPainter {
     private Paint mCompassNorthPaint;
     private Paint mCompassSouthPaint;
     private Paint mGlowPaint;
-    private Shader mGlowShader;
     private final CachesProviderCount mCachesProvider;
-    //private ArrayList<Geocache> mCaches = new ArrayList<Geocache>();
-    
-    /** This class contains all parameters needed to render the proximity view.
-     */
-    class ProximityParameters {
-        private ArrayList<Geocache> mCaches;
-        /** The last point in time when we got a GPS reading */
-        private long mLastPositioningTime;
-    }
 
     /** Which direction the device is pointed, in degrees */
-    //TODO: Create new class DegreesParameter
     private Parameter mDeviceDirection = new AngularParameter(0.03, 0.3);
 
     /** Location reading accuracy in meters */
@@ -130,7 +119,7 @@ public class ProximityPainter {
         mCompassSouthPaint.setAntiAlias(true);
         
         mGlowPaint = new Paint();
-        mGlowPaint.setStyle(Style.FILL);
+        mGlowPaint.setStyle(Style.STROKE);
     }
     
     public void setUserLocation(double latitude, double longitude, float accuracy) {
@@ -207,8 +196,13 @@ public class ProximityPainter {
             }
         }
         
+        ArrayList<Geocache> caches = mCachesProvider.getCaches();
         //Draw all geocaches and lines to them
-        for (Geocache geocache : mCachesProvider.getCaches()) {
+        if (mCachesProvider.hasChanged()) {
+            Log.d("GeoBeagle", "ProximityPainter drawing " + caches.size() + " caches");
+            mCachesProvider.setChanged(false);
+        }
+        for (Geocache geocache : caches) {
             double angle = Math.toRadians(GeoUtils.bearing(mLatitude.get(), mLongitude.get(), 
                     geocache.getLatitude(), geocache.getLongitude()) - direction - 90);
             double distanceM = GeoUtils.distanceKm(mLatitude.get(), mLongitude.get(), 
@@ -219,7 +213,8 @@ public class ProximityPainter {
             mCachePaint.setAlpha(255);
             int x = mCenterX + (int)(screenDist * Math.cos(angle));
             int y = mUserY + (int)(screenDist * Math.sin(angle));
-            drawGlow(canvas, x, y, cacheScreenRadius, (int)(mCachePaint.getStrokeWidth() * (1.0 + Math.abs(Math.sin(mTime)))));
+            //int glowTh = (int)(mCachePaint.getStrokeWidth() * 2); //(1.0 + Math.abs(Math.sin(mTime))));
+            //drawGlow(canvas, x, y, (int)(cacheScreenRadius+mCachePaint.getStrokeWidth()/2), glowTh);
             canvas.drawCircle(x, y, cacheScreenRadius, mCachePaint);
             //Lines to geocaches
             if (screenDist > mUserScreenRadius + cacheScreenRadius) {
@@ -240,15 +235,22 @@ public class ProximityPainter {
         //drawGlow(canvas, mCenterX, mUserY, mUserScreenRadius, 10);
     }
 
+    /** 
+     * @param radius The smallest radius that will glow
+     * @param thickness Thickness of glow
+     */
     private void drawGlow(Canvas c, int x, int y, int radius, int thickness) {
-        int[] colors = { Color.BLACK, Color.YELLOW, 0x00000000};
-        //float[] positions = { radius-thickness, radius, radius+thickness };
-        float ratio = thickness / (float)radius;
-        float[] positions = { 1 - 2*ratio, 1 - ratio, 1 };
+        int color = Color.argb(255, 200, 200, 248);
+        int[] colors = { color, color, 0x00000000};
+        float[] positions = { 0, ((float)radius)/(radius+thickness), 1f };
+        //float[] positions = { 0, (radius + 0.5f*thickness)/(radius+thickness), 1f };
+        //float[] positions = { 0.5f, 0.9f, 1f };
         //TODO: Wastes objects
-        mGlowShader = new RadialGradient(x, y, radius+thickness, colors, positions, TileMode.CLAMP);
-        mGlowPaint.setShader(mGlowShader);
-        c.drawCircle(x, y, radius+2*thickness, mGlowPaint);
+        Shader glowShader;
+        glowShader = new RadialGradient(x, y, radius+thickness*1.5f, colors, positions, TileMode.MIRROR);
+        mGlowPaint.setShader(glowShader);
+        mGlowPaint.setStrokeWidth(radius);
+        c.drawCircle(x, y, radius+thickness/2, mGlowPaint);
     }
     
     /** angle is in radians */
