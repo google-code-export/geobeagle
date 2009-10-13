@@ -68,7 +68,7 @@ public class CachesProviderLazyArea implements ICachesProviderArea {
     public ArrayList<Geocache> getCaches() {
         if (mCachesProviderArea.hasChanged()) {
             int count = mCachesProviderArea.getCount();
-            mCachesProviderArea.setChanged(false);
+            mCachesProviderArea.resetChanged();
             if (count > MAX_COUNT) {
                 if (!mTooManyCaches)
                     mToaster.showToast();
@@ -87,7 +87,7 @@ public class CachesProviderLazyArea implements ICachesProviderArea {
     public int getCount() {
         if (mCachesProviderArea.hasChanged()) {
             int count = mCachesProviderArea.getCount();
-            mCachesProviderArea.setChanged(false);
+            mCachesProviderArea.resetChanged();
             if (count > MAX_COUNT) {
                 if (!mTooManyCaches)
                     mToaster.showToast();
@@ -109,9 +109,8 @@ public class CachesProviderLazyArea implements ICachesProviderArea {
     }
 
     @Override
-    public void setChanged(boolean changed) {
-        mHasChanged = changed;
-        if (!changed)
-            mCachesProviderArea.setChanged(false);
+    public void resetChanged() {
+        mHasChanged = false;
+        mCachesProviderArea.resetChanged();
     }
 }

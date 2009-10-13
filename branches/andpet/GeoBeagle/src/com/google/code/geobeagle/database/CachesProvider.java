@@ -8,12 +8,11 @@ import java.util.ArrayList;
 public interface CachesProvider {
 
     /** Returns true if the result of getCaches() may have changed since the 
-     * last call to setChanged(false) */
+     * last call to resetChanged() */
     public boolean hasChanged();
     
-    /** Reset the change flag (not done from within the class)
-     * or indicate the possibility of updated values */
-    public void setChanged(boolean changed);
+    /** Reset the change flag (never done from within the class) */
+    public void resetChanged();
 
     public int getCount();
     

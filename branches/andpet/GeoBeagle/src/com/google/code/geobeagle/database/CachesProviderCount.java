@@ -49,7 +49,7 @@ public class CachesProviderCount implements ICachesProviderCenter {
             mCount = car.Count;
             mRadius = car.Radius;
             mIsCountValid = true;
-            mCachesProviderRadius.setChanged(false);
+            mCachesProviderRadius.resetChanged();
         }
         return mRadius;
     }
@@ -73,7 +73,7 @@ public class CachesProviderCount implements ICachesProviderCenter {
         
         mCachesProviderRadius.setRadius(mRadius);
         mCaches = mCachesProviderRadius.getCaches();
-        mCachesProviderRadius.setChanged(false);
+        mCachesProviderRadius.resetChanged();
         return mCaches;
     }
 
@@ -84,7 +84,7 @@ public class CachesProviderCount implements ICachesProviderCenter {
             mCount = car.Count;
             mRadius = car.Radius;
             mIsCountValid = true;
-            mCachesProviderRadius.setChanged(false);
+            mCachesProviderRadius.resetChanged();
         }
 
         return mCount;
@@ -163,9 +163,8 @@ public class CachesProviderCount implements ICachesProviderCenter {
     }
 
     @Override
-    public void setChanged(boolean changed) {
-        mHasChanged = changed;
-        if (!changed)
-            mCachesProviderRadius.setChanged(false);
+    public void resetChanged() {
+        mHasChanged = false;
+        mCachesProviderRadius.resetChanged();
     }
 }

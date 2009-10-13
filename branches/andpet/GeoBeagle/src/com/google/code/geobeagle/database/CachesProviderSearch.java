@@ -4,7 +4,7 @@ import com.google.code.geobeagle.Geocache;
 
 import java.util.ArrayList;
 
-/** SKETCH
+/** SKETCH -- currently not used
  * Does asynchronous database calls for free-text search.
  */
 public class CachesProviderSearch implements CachesProvider {
@@ -53,10 +53,9 @@ public class CachesProviderSearch implements CachesProvider {
     }
 
     @Override
-    public void setChanged(boolean changed) {
-        mHasChanged = changed;
-        if (!changed)
-            mProvider.setChanged(false);
+    public void resetChanged() {
+        mHasChanged = false;
+        mProvider.resetChanged();
     }
 
 }

@@ -49,10 +49,8 @@ public class CachesProviderToggler implements ICachesProviderCenter {
     }
 
     @Override
-    public void setChanged(boolean changed) {
-        mHasChanged = changed;
-        if (!changed) {
-            (mNearest ? mCachesProviderCenter : mCachesProviderAll).setChanged(false);
-        }
+    public void resetChanged() {
+        mHasChanged = false;
+        (mNearest ? mCachesProviderCenter : mCachesProviderAll).resetChanged();
     }
 }

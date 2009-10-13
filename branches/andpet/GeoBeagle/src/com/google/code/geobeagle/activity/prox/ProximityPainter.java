@@ -194,7 +194,7 @@ public class ProximityPainter {
         //Draw all geocaches and lines to them
         if (mCachesProvider.hasChanged()) {
             Log.d("GeoBeagle", "ProximityPainter drawing " + caches.size() + " caches");
-            mCachesProvider.setChanged(false);
+            mCachesProvider.resetChanged();
         }
         for (Geocache geocache : caches) {
             double angle = Math.toRadians(GeoUtils.bearing(mLatitude.get(), mLongitude.get(), 

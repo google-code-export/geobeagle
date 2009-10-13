@@ -63,7 +63,7 @@ public class CachePinsOverlayFactory {
             return mCachePinsOverlay;
         ArrayList<Geocache> list = mLazyArea.getCaches();
         //Log.d("GeoBeagle", "CachesProvider for pin layer changed to " + list.size() + " caches");
-        mLazyArea.setChanged(false);
+        mLazyArea.resetChanged();
         timing.lap("Timing for loading caches");
         mCachePinsOverlay = new CachePinsOverlay(mCacheItemFactory, mContext, mDefaultMarker, list);
         return mCachePinsOverlay;

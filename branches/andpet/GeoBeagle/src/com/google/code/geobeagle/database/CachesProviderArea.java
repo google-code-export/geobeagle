@@ -83,8 +83,8 @@ public class CachesProviderArea implements ICachesProviderArea {
     }
 
     @Override
-    public void setChanged(boolean changed) {
-        mHasChanged = changed;
+    public void resetChanged() {
+        mHasChanged = false;
     }
 
     public void reloadFilter() {

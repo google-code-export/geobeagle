@@ -69,10 +69,9 @@ public class CachesProviderSorted implements ICachesProviderCenter {
     }
 
     @Override
-    public void setChanged(boolean changed) {
-        mHasChanged = changed;
-        if (!changed)
-            mCachesProvider.setChanged(changed);
+    public void resetChanged() {
+        mHasChanged = false;
+        mCachesProvider.resetChanged();
     }
 
     @Override

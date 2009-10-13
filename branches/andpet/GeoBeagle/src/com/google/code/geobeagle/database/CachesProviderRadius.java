@@ -31,8 +31,8 @@ public class CachesProviderRadius implements ICachesProviderCenter {
     }
 
     @Override
-    public void setChanged(boolean changed) {
-        mCachesProviderArea.setChanged(changed);
+    public void resetChanged() {
+        mCachesProviderArea.resetChanged();
     }
     
     public void setRadius(double radius) {

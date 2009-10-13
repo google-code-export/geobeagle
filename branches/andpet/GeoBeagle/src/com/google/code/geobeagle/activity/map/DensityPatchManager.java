@@ -53,7 +53,7 @@ class DensityPatchManager {
         }
 
         ArrayList<Geocache> list = mLazyArea.getCaches();
-        mLazyArea.setChanged(false);
+        mLazyArea.resetChanged();
         DensityMatrix densityMatrix = new DensityMatrix(DensityPatchManager.RESOLUTION_LATITUDE,
                 DensityPatchManager.RESOLUTION_LONGITUDE);
         densityMatrix.addCaches(list);
