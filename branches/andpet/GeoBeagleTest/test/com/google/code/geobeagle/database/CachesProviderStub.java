@@ -62,6 +62,10 @@ public class CachesProviderStub implements ICachesProviderArea {
     }
 
     @Override
+    public void resetChanged() {
+        mHasChanged = false;
+    }
+
     public void setChanged(boolean changed) {
         mHasChanged = changed;
     }

@@ -41,7 +41,7 @@ public class CachesProviderAreaTest {
         expect(mCacheFilter.getSqlWhereClause()).andReturn("2");
         PowerMock.replayAll();
         
-        mCachesProviderArea.setChanged(false);
+        mCachesProviderArea.resetChanged();
         mCachesProviderArea.reloadFilter();
         assertTrue(mCachesProviderArea.hasChanged());
     }
@@ -54,7 +54,7 @@ public class CachesProviderAreaTest {
         PowerMock.replayAll();
         
         mCachesProviderArea.getCount();  //will load the filter
-        mCachesProviderArea.setChanged(false);
+        mCachesProviderArea.resetChanged();
         mCachesProviderArea.reloadFilter();
         assertFalse(mCachesProviderArea.hasChanged());
     }
@@ -71,7 +71,7 @@ public class CachesProviderAreaTest {
         PowerMock.replayAll();
         
         mCachesProviderArea.getCaches();
-        mCachesProviderArea.setChanged(false);
+        mCachesProviderArea.resetChanged();
         mCachesProviderArea.reloadFilter();
         mCachesProviderArea.getCaches();
 

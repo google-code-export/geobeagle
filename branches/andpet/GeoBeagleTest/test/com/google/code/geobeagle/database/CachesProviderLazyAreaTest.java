@@ -37,11 +37,11 @@ public class CachesProviderLazyAreaTest {
         
         CachesProviderLazyArea lazyArea = new CachesProviderLazyArea(mArea, mToaster);
         assertTrue(lazyArea.hasChanged());
-        lazyArea.setChanged(false);
+        lazyArea.resetChanged();
         assertFalse(lazyArea.hasChanged());
         mArea.setChanged(true);
         assertTrue(lazyArea.hasChanged());
-        lazyArea.setChanged(false);
+        lazyArea.resetChanged();
         assertFalse(lazyArea.hasChanged());
     }
 
@@ -65,7 +65,7 @@ public class CachesProviderLazyAreaTest {
         assertTrue(lazyArea.hasChanged());
         assertEquals(1, mArea.getSetBoundsCalls());
         
-        lazyArea.setChanged(false);
+        lazyArea.resetChanged();
         lazyArea.setBounds(0, 1, 4, 5);
         lazyArea.getCaches();
         //No more calls to setBounds
@@ -82,7 +82,7 @@ public class CachesProviderLazyAreaTest {
         CachesProviderLazyArea lazyArea = new CachesProviderLazyArea(mArea, mToaster);
         lazyArea.setBounds(0, 0, 5, 5);
         assertEquals(1, lazyArea.getCount());
-        lazyArea.setChanged(false);
+        lazyArea.resetChanged();
         mArea.addCache(cache2);
         assertEquals(2, lazyArea.getCount());
     }

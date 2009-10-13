@@ -87,16 +87,9 @@ public class CachesProviderCountTest {
     public void testHasChanged() {
         CachesProviderCount provider = new CachesProviderCount(mArea, 10, 100);
         assertTrue(provider.hasChanged());
-        provider.setChanged(false);
+        provider.resetChanged();
         assertTrue(!provider.hasChanged());
-        provider.setChanged(true);
-        assertTrue(provider.hasChanged());
-        provider.setChanged(false);
         provider.setCenter(1, 0);
-        assertTrue(provider.hasChanged());
-        
-        provider.setChanged(false);
-        mArea.setChanged(true);
         assertTrue(provider.hasChanged());
     }
 }
