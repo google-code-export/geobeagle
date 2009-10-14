@@ -19,9 +19,6 @@ import static org.easymock.EasyMock.expect;
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.actions.CacheActionView;
 import com.google.code.geobeagle.activity.cachelist.GeocacheListController;
-import com.google.code.geobeagle.activity.cachelist.model.GeocacheVector;
-import com.google.code.geobeagle.activity.cachelist.model.GeocacheVectors;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.api.easymock.PowerMock;

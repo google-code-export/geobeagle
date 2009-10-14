@@ -51,7 +51,7 @@ public class TitleUpdaterTest {
         listActivity.setTitle("new title");
 
         PowerMock.replayAll();
-        new TitleUpdater(listActivity, cachesProviderToggler, null, timing).update(12, 5);
+        new TitleUpdater(listActivity, cachesProviderToggler, null, timing, null).refresh();
         PowerMock.verifyAll();
 
     }
@@ -78,8 +78,7 @@ public class TitleUpdaterTest {
         textView.setText(R.string.no_nearby_caches);
 
         PowerMock.replayAll();
-        new TitleUpdater(listActivity, cachesProviderToggler, listTitleFormatter, timing).update(12,
-                0);
+        new TitleUpdater(listActivity, cachesProviderToggler, listTitleFormatter, timing, null).refresh();
         PowerMock.verifyAll();
     }
 }

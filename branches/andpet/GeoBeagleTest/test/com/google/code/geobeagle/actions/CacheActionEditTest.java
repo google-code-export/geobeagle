@@ -17,9 +17,6 @@ package com.google.code.geobeagle.actions;
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.actions.CacheActionEdit;
 import com.google.code.geobeagle.activity.EditCacheActivity;
-import com.google.code.geobeagle.activity.cachelist.model.GeocacheVector;
-import com.google.code.geobeagle.activity.cachelist.model.GeocacheVectors;
-
 import org.easymock.EasyMock;
 import org.junit.Test;
 import org.junit.runner.RunWith;
