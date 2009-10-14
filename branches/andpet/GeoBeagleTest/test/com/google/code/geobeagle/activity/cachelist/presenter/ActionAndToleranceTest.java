@@ -14,11 +14,12 @@
 
 package com.google.code.geobeagle.activity.cachelist.presenter;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import com.google.code.geobeagle.LocationControlBuffered.IGpsLocation;
 
 import org.easymock.EasyMock;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.api.easymock.PowerMock;
@@ -28,43 +29,67 @@ import org.powermock.modules.junit4.PowerMockRunner;
 @PrepareForTest( {})
 @RunWith(PowerMockRunner.class)
 public class ActionAndToleranceTest {
+    IGpsLocation mLastLocation;
+    IGpsLocation mHere;
 
+    @Before
+    public void setUp() {
+        mLastLocation = PowerMock.createMock(IGpsLocation.class);
+        mHere = PowerMock.createMock(IGpsLocation.class);
+        EasyMock.expect(mHere.distanceTo(mLastLocation)).andReturn(20f).anyTimes();
+    }
+    
     @Test
-    public void testActionAndTolerance_ExceedsTolerance() {
-        ToleranceStrategy toleranceStrategy = PowerMock.createMock(ToleranceStrategy.class);
-        IGpsLocation here = PowerMock.createMock(IGpsLocation.class);
-
-        EasyMock.expect(toleranceStrategy.exceedsTolerance(here, 90, 0)).andReturn(true);
-
+    public void testWithinTolerance() {
         PowerMock.replayAll();
-        final ActionAndTolerance actionAndTolerance = new ActionAndTolerance(null,
-                toleranceStrategy);
-        assertTrue(actionAndTolerance.exceedsTolerance(here, 90, 0));
+        final ActionAndTolerance actionAndTolerance = new ActionAndTolerance(null, 21, mLastLocation, 0, false);
+        assertFalse(actionAndTolerance.exceedsTolerance(mHere, 90, 0));
         PowerMock.verifyAll();
     }
 
     @Test
-    public void testActionAndTolerance_Refresh() {
+    public void testLocationTolerance() {
+        PowerMock.replayAll();
+        final ActionAndTolerance actionAndTolerance = new ActionAndTolerance(null, 19, mLastLocation, 0, false);
+        assertTrue(actionAndTolerance.exceedsTolerance(mHere, 90, 0));
+        PowerMock.verifyAll();
+    }
+    
+    @Test
+    public void testTooSoonForUpdate() {
+        PowerMock.replayAll();
+        final ActionAndTolerance actionAndTolerance = new ActionAndTolerance(null, 21, mLastLocation, 15, false);
+        assertFalse(actionAndTolerance.exceedsTolerance(mHere, 90, 10));
+        PowerMock.verifyAll();
+    }
+    
+    @Test
+    public void testAzimuthChanged() {
+        PowerMock.replayAll();
+        final ActionAndTolerance actionAndTolerance = new ActionAndTolerance(null, 21, mLastLocation, 0, true);
+        assertTrue(actionAndTolerance.exceedsTolerance(mHere, 90, 0));
+        PowerMock.verifyAll();
+    }
+
+    @Test
+    public void testUpdateLastRefreshed() {
+        //Changing the time stamp so a refresh is avoided
+        PowerMock.replayAll();
+        final ActionAndTolerance actionAndTolerance = new ActionAndTolerance(null, 19, mLastLocation, 5, false);
+        actionAndTolerance.updateLastRefreshed(mLastLocation, 80, 8);
+        assertFalse(actionAndTolerance.exceedsTolerance(mHere, 90, 10));
+        PowerMock.verifyAll();
+    }
+
+    @Test
+    public void testRefresh() {
         RefreshAction refreshAction = PowerMock.createMock(RefreshAction.class);
-
         refreshAction.refresh();
-
         PowerMock.replayAll();
-        new ActionAndTolerance(refreshAction, null).refresh();
+
+        final ActionAndTolerance actionAndTolerance = new ActionAndTolerance(refreshAction, 19, null, 5, false);
+        actionAndTolerance.refresh();
         PowerMock.verifyAll();
     }
 
-    @Test
-    public void testActionAndTolerance_UpdateLoastRefreshed() {
-        ToleranceStrategy toleranceStrategy = PowerMock.createMock(ToleranceStrategy.class);
-        IGpsLocation here = PowerMock.createMock(IGpsLocation.class);
-
-        toleranceStrategy.updateLastRefreshed(here, 90, 0);
-
-        PowerMock.replayAll();
-        final ActionAndTolerance actionAndTolerance = new ActionAndTolerance(null,
-                toleranceStrategy);
-        actionAndTolerance.updateLastRefreshed(here, 90, 0);
-        PowerMock.verifyAll();
-    }
 }
