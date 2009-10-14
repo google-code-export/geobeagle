@@ -22,6 +22,9 @@ import com.google.code.geobeagle.LocationControlBuffered;
 import com.google.code.geobeagle.LocationControlDi;
 import com.google.code.geobeagle.LocationControlBuffered.GpsDisabledLocation;
 import com.google.code.geobeagle.actions.CacheAction;
+import com.google.code.geobeagle.actions.CacheActionDelete;
+import com.google.code.geobeagle.actions.CacheActionEdit;
+import com.google.code.geobeagle.actions.CacheActionView;
 import com.google.code.geobeagle.actions.MenuActionChooseFilter;
 import com.google.code.geobeagle.actions.MenuActionMap;
 import com.google.code.geobeagle.actions.MenuActionSearchOnline;
@@ -29,9 +32,6 @@ import com.google.code.geobeagle.actions.MenuActions;
 import com.google.code.geobeagle.activity.ActivityDI;
 import com.google.code.geobeagle.activity.ActivitySaver;
 import com.google.code.geobeagle.activity.cachelist.CacheListDelegate.ImportIntentManager;
-import com.google.code.geobeagle.activity.cachelist.actions.context.ContextActionDelete;
-import com.google.code.geobeagle.activity.cachelist.actions.context.ContextActionEdit;
-import com.google.code.geobeagle.activity.cachelist.actions.context.CacheActionViewGeocache;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.Abortable;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionMyLocation;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionSyncGpx;
@@ -247,14 +247,14 @@ public class CacheListDelegateDI {
         menuActions.add(new MenuActionMap(listActivity, locationControlBuffered));
         
         final Intent geoBeagleMainIntent = new Intent(listActivity, GeoBeagle.class);
-        final CacheActionViewGeocache cacheActionViewGeocache = new CacheActionViewGeocache(
+        final CacheActionView cacheActionView = new CacheActionView(
                 listActivity, geoBeagleMainIntent);
-        final ContextActionEdit contextActionEdit = new ContextActionEdit(listActivity);
-        final ContextActionDelete contextActionDelete = 
-            new ContextActionDelete(geocacheListAdapter, sqlCacheLoader, dbFrontend);
+        final CacheActionEdit cacheActionEdit = new CacheActionEdit(listActivity);
+        final CacheActionDelete cacheActionDelete = 
+            new CacheActionDelete(geocacheListAdapter, sqlCacheLoader, dbFrontend);
             
         final CacheAction[] contextActions = new CacheAction[] {
-                contextActionDelete, cacheActionViewGeocache, contextActionEdit
+                cacheActionDelete, cacheActionView, cacheActionEdit
         };
         final GeocacheListController geocacheListController = 
             new GeocacheListController(cacheListRefresh, contextActions, cachesProviderToggler,
