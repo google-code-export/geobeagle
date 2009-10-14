@@ -178,12 +178,6 @@ public class CacheListDelegateDI {
                 gpsDisabledLocation, 1000);
         final ToleranceStrategy distanceUpdaterTolerance = new LocationAndAzimuthTolerance(
                 distanceUpdaterLocationTolerance, 720);
-        final ActionAndTolerance[] actionAndTolerances = new ActionAndTolerance[] {
-                null, new ActionAndTolerance(adapterCachesSorter, adapterCachesSorterTolerance),
-                new ActionAndTolerance(distanceUpdater, distanceUpdaterTolerance)
-        };
-        final ActionManagerFactory actionManagerFactory = new ActionManagerFactory(
-                actionAndTolerances, sqlCacheLoaderTolerance);
 
         final CacheFilter cacheFilter = new CacheFilter(listActivity);
         
@@ -198,7 +192,12 @@ public class CacheListDelegateDI {
 
         final SqlCacheLoader sqlCacheLoader = new SqlCacheLoader(cachesProviderToggler,
                 cacheListData, locationControlBuffered, titleUpdater, timing);
-        final ActionManager actionManager = actionManagerFactory.create(sqlCacheLoader);
+        final ActionAndTolerance[] actionAndTolerances = new ActionAndTolerance[] {
+                new ActionAndTolerance(sqlCacheLoader, sqlCacheLoaderTolerance),
+                new ActionAndTolerance(adapterCachesSorter, adapterCachesSorterTolerance),
+                new ActionAndTolerance(distanceUpdater, distanceUpdaterTolerance)
+        };
+        final ActionManager actionManager = new ActionManager(actionAndTolerances);
         CachesProviderArea[] areas = { cachesProviderArea, cachesProviderAll };
         final CacheListRefresh cacheListRefresh = new CacheListRefresh(actionManager, timing,
                 locationControlBuffered, updateFlag, areas);
