@@ -14,6 +14,6 @@
 
 package com.google.code.geobeagle.activity.cachelist.presenter;
 
-interface RefreshAction {
+public interface RefreshAction {
     public void refresh();
 }

@@ -14,26 +14,32 @@
 
 package com.google.code.geobeagle.activity.cachelist.actions.context;
 
+import com.google.code.geobeagle.Geocache;
+import com.google.code.geobeagle.R;
+import com.google.code.geobeagle.actions.CacheAction;
 import com.google.code.geobeagle.activity.cachelist.GeocacheListController;
-import com.google.code.geobeagle.activity.cachelist.model.GeocacheVectors;
 
 import android.content.Context;
 import android.content.Intent;
 
-public class ContextActionView implements ContextAction {
+public class CacheActionViewGeocache implements CacheAction {
     private final Context mContext;
-    private final GeocacheVectors mGeocacheVectors;
     private final Intent mGeoBeagleMainIntent;
 
-    public ContextActionView(GeocacheVectors geocacheVectors, Context context, Intent intent) {
-        mGeocacheVectors = geocacheVectors;
+    public CacheActionViewGeocache(Context context, Intent intent) {
         mContext = context;
         mGeoBeagleMainIntent = intent;
     }
 
-    public void act(int position) {
-        mGeoBeagleMainIntent.putExtra("geocache", mGeocacheVectors.get(position).getGeocache())
-                .setAction(GeocacheListController.SELECT_CACHE);
+    @Override
+    public void act(Geocache cache) {
+        mGeoBeagleMainIntent.putExtra("geocache", cache)
+          .setAction(GeocacheListController.SELECT_CACHE);
         mContext.startActivity(mGeoBeagleMainIntent);
+    }
+
+    @Override
+    public int getId() {
+        return R.string.menu_view_geocache;
     }
 }

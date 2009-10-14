@@ -107,4 +107,6 @@
 <string name="menu_cache_map">Show on Map</string>
 <string name="menu_center_location">My location</string>
 <string name="menu_proximity">Proximity View</string>
+<string name="menu_delete_cache">Delete</string>
+<string name="menu_view_geocache">View</string>
 </resources>

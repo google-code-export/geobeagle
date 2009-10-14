@@ -15,25 +15,29 @@
 package com.google.code.geobeagle.activity.cachelist.actions.context;
 
 import com.google.code.geobeagle.Geocache;
+import com.google.code.geobeagle.R;
+import com.google.code.geobeagle.actions.CacheAction;
 import com.google.code.geobeagle.activity.EditCacheActivity;
-import com.google.code.geobeagle.activity.cachelist.model.GeocacheVectors;
 
 import android.content.Context;
 import android.content.Intent;
 
-public class ContextActionEdit implements ContextAction {
+public class ContextActionEdit implements CacheAction {
     private final Context mContext;
-    private final GeocacheVectors mGeocacheVectors;
 
-    public ContextActionEdit(GeocacheVectors geocacheVectors, Context context) {
-        mGeocacheVectors = geocacheVectors;
+    public ContextActionEdit(Context context) {
         mContext = context;
     }
 
-    public void act(int position) {
-        Geocache selected = mGeocacheVectors.get(position).getGeocache();
+    @Override
+    public void act(Geocache cache) {
         Intent intent = new Intent(mContext, EditCacheActivity.class);
-        intent.putExtra("geocache", selected);
+        intent.putExtra("geocache", cache);
         mContext.startActivity(intent);
+    }
+
+    @Override
+    public int getId() {
+        return R.string.menu_edit_geocache;
     }
 }

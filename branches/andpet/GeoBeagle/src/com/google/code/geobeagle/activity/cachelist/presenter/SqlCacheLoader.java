@@ -55,8 +55,6 @@ public class SqlCacheLoader implements RefreshAction {
         mCacheListData.add(geocaches, mLocationControlBuffered);
         mTiming.lap("add to list time");
 
-        final int sqlCount = geocaches.size();
-        final int nearestCachesCount = mCacheListData.size();
-        mTitleUpdater.update(sqlCount, nearestCachesCount);
+        mTitleUpdater.refresh();
     }
 }

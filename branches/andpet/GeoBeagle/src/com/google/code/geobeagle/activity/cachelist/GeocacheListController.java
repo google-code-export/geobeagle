@@ -14,9 +14,10 @@
 
 package com.google.code.geobeagle.activity.cachelist;
 
+import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.R;
+import com.google.code.geobeagle.actions.CacheAction;
 import com.google.code.geobeagle.actions.MenuActions;
-import com.google.code.geobeagle.activity.cachelist.actions.context.ContextAction;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionSyncGpx;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVectors;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
@@ -33,6 +34,7 @@ import android.widget.AdapterView.AdapterContextMenuInfo;
 
 public class GeocacheListController {
 
+    //TODO: Remove class CacheListOnCreateContextMenuListener
     public static class CacheListOnCreateContextMenuListener implements OnCreateContextMenuListener {
         private final GeocacheVectors mGeocacheVectors;
 
@@ -56,37 +58,46 @@ public class GeocacheListController {
     static final int MENU_EDIT = 2;
     public static final String SELECT_CACHE = "SELECT_CACHE";
     private final CacheListRefresh mCacheListRefresh;
-    private final ContextAction mContextActions[];
+    private final CacheAction mCacheActions[];
     private final CachesProviderToggler mCachesProviderToggler;
     private final MenuActions mMenuActions;
     private final MenuActionSyncGpx mMenuActionSyncGpx;
+    private final GeocacheVectors mGeocacheVectors;
 
     public GeocacheListController(CacheListRefresh cacheListRefresh,
-            ContextAction[] contextActions, CachesProviderToggler cachesProviderToggler,
-            MenuActionSyncGpx menuActionSyncGpx, MenuActions menuActions) {
+            CacheAction[] cacheActions, CachesProviderToggler cachesProviderToggler,
+            MenuActionSyncGpx menuActionSyncGpx, MenuActions menuActions,
+            GeocacheVectors geocacheVectors) {
         mCacheListRefresh = cacheListRefresh;
-        mContextActions = contextActions;
+        mCacheActions = cacheActions;
         mCachesProviderToggler = cachesProviderToggler;
         mMenuActionSyncGpx = menuActionSyncGpx;
         mMenuActions = menuActions;
+        mGeocacheVectors = geocacheVectors;
     }
 
     public boolean onContextItemSelected(MenuItem menuItem) {
-        AdapterContextMenuInfo adapterContextMenuInfo = (AdapterContextMenuInfo)menuItem
-                .getMenuInfo();
-        mContextActions[menuItem.getItemId()].act(adapterContextMenuInfo.position - 1);
+        AdapterContextMenuInfo adapterContextMenuInfo = 
+            (AdapterContextMenuInfo)menuItem.getMenuInfo();
+        int index = adapterContextMenuInfo.position - 1;
+        mCacheActions[menuItem.getItemId()].act(getGeocacheAt(index));
         return true;
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
         return mMenuActions.onCreateOptionsMenu(menu);
     }
+    
+    private Geocache getGeocacheAt(int listIndex) {
+        return mGeocacheVectors.get(listIndex).getGeocache();
+    }
 
     public void onListItemClick(ListView l, View v, int position, long id) {
-        if (position > 0)
-            mContextActions[MENU_VIEW].act(position - 1);
-        else
+        if (position > 0) {
+            mCacheActions[MENU_VIEW].act(getGeocacheAt(position - 1));
+        } else {
             mCacheListRefresh.forceRefresh();
+        }
     }
 
     public boolean onMenuOpened(int featureId, Menu menu) {

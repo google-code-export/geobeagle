@@ -21,6 +21,7 @@ import com.google.code.geobeagle.GeocacheFactory;
 import com.google.code.geobeagle.LocationControlBuffered;
 import com.google.code.geobeagle.LocationControlDi;
 import com.google.code.geobeagle.LocationControlBuffered.GpsDisabledLocation;
+import com.google.code.geobeagle.actions.CacheAction;
 import com.google.code.geobeagle.actions.MenuActionChooseFilter;
 import com.google.code.geobeagle.actions.MenuActionMap;
 import com.google.code.geobeagle.actions.MenuActionSearchOnline;
@@ -28,10 +29,9 @@ import com.google.code.geobeagle.actions.MenuActions;
 import com.google.code.geobeagle.activity.ActivityDI;
 import com.google.code.geobeagle.activity.ActivitySaver;
 import com.google.code.geobeagle.activity.cachelist.CacheListDelegate.ImportIntentManager;
-import com.google.code.geobeagle.activity.cachelist.actions.context.ContextAction;
 import com.google.code.geobeagle.activity.cachelist.actions.context.ContextActionDelete;
 import com.google.code.geobeagle.activity.cachelist.actions.context.ContextActionEdit;
-import com.google.code.geobeagle.activity.cachelist.actions.context.ContextActionView;
+import com.google.code.geobeagle.activity.cachelist.actions.context.CacheActionViewGeocache;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.Abortable;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionMyLocation;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionSyncGpx;
@@ -194,7 +194,7 @@ public class CacheListDelegateDI {
         final CachesProviderToggler cachesProviderToggler = 
             new CachesProviderToggler(cachesProviderCount, cachesProviderAll);
         final TitleUpdater titleUpdater = new TitleUpdater(listActivity, 
-                cachesProviderToggler, listTitleFormatter, timing);
+                cachesProviderToggler, listTitleFormatter, timing, dbFrontend);
 
         final SqlCacheLoader sqlCacheLoader = new SqlCacheLoader(cachesProviderToggler,
                 cacheListData, locationControlBuffered, titleUpdater, timing);
@@ -247,21 +247,18 @@ public class CacheListDelegateDI {
         menuActions.add(new MenuActionMap(listActivity, locationControlBuffered));
         
         final Intent geoBeagleMainIntent = new Intent(listActivity, GeoBeagle.class);
-        final ContextActionView contextActionView = new ContextActionView(geocacheVectors,
+        final CacheActionViewGeocache cacheActionViewGeocache = new CacheActionViewGeocache(
                 listActivity, geoBeagleMainIntent);
-        final ContextActionEdit contextActionEdit = new ContextActionEdit(geocacheVectors,
-                listActivity);
+        final ContextActionEdit contextActionEdit = new ContextActionEdit(listActivity);
         final ContextActionDelete contextActionDelete = 
-            new ContextActionDelete(geocacheListAdapter, geocacheVectors, titleUpdater,
-                    dbFrontend);
+            new ContextActionDelete(geocacheListAdapter, sqlCacheLoader, dbFrontend);
             
-        final ContextAction[] contextActions = new ContextAction[] {
-                contextActionDelete, contextActionView, contextActionEdit
+        final CacheAction[] contextActions = new CacheAction[] {
+                contextActionDelete, cacheActionViewGeocache, contextActionEdit
         };
         final GeocacheListController geocacheListController = 
             new GeocacheListController(cacheListRefresh, contextActions, cachesProviderToggler,
-                menuActionSyncGpx, menuActions);
-
+                menuActionSyncGpx, menuActions, geocacheVectors);
         
         final ActivitySaver activitySaver = ActivityDI.createActivitySaver(listActivity);
         final ImportIntentManager importIntentManager = new ImportIntentManager(listActivity);

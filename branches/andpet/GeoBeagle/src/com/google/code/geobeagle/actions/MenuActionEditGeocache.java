@@ -20,6 +20,7 @@ import com.google.code.geobeagle.activity.main.GeoBeagle;
 
 import android.content.Intent;
 
+//TODO: Merge with CacheActionEditGeocache
 public class MenuActionEditGeocache extends MenuActionBase {
     private final GeoBeagle mParent;
 

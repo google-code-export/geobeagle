@@ -14,32 +14,35 @@
 
 package com.google.code.geobeagle.activity.cachelist.actions.context;
 
-import com.google.code.geobeagle.activity.cachelist.model.GeocacheVectors;
-import com.google.code.geobeagle.activity.cachelist.presenter.TitleUpdater;
+import com.google.code.geobeagle.Geocache;
+import com.google.code.geobeagle.R;
+import com.google.code.geobeagle.actions.CacheAction;
+import com.google.code.geobeagle.activity.cachelist.presenter.RefreshAction;
 import com.google.code.geobeagle.database.DbFrontend;
 
 import android.widget.BaseAdapter;
 
-public class ContextActionDelete implements ContextAction {
+public class ContextActionDelete implements CacheAction {
     private final BaseAdapter mGeocacheListAdapter;
-    private final GeocacheVectors mGeocacheVectors;
-    private final TitleUpdater mTitleUpdater;
     private final DbFrontend mDbFrontend;
+    private final RefreshAction mCacheListRefresher;
 
-    public ContextActionDelete(BaseAdapter geocacheListAdapter, GeocacheVectors geocacheVectors,
-            TitleUpdater titleUpdater, DbFrontend dbFrontend) {
+    public ContextActionDelete(BaseAdapter geocacheListAdapter, RefreshAction cacheListRefresh,
+            DbFrontend dbFrontend) {
         mGeocacheListAdapter = geocacheListAdapter;
-        mGeocacheVectors = geocacheVectors;
-        mTitleUpdater = titleUpdater;
+        mCacheListRefresher = cacheListRefresh;
         mDbFrontend = dbFrontend;
     }
 
-    public void act(int position) {
-        mDbFrontend.getCacheWriter().deleteCache(mGeocacheVectors.get(position).getId());
-
-        mGeocacheVectors.remove(position);
+    @Override
+    public void act(Geocache cache) {
+        mDbFrontend.getCacheWriter().deleteCache(cache.getId());
+        mCacheListRefresher.refresh();  //Reload the cache list from the database
         mGeocacheListAdapter.notifyDataSetChanged();
-        //TODO: How to get correct values?
-        mTitleUpdater.update(mGeocacheVectors.size(), mGeocacheVectors.size());
+    }
+
+    @Override
+    public int getId() {
+        return R.string.menu_delete_cache;
     }
 }
