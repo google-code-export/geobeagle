@@ -74,8 +74,8 @@
 	<string name="menu_show_all_caches">Show All Caches</string>
 	<string name="sorting">Filtering / Sorting...</string>
 	<string name="search_for">Search for</string>
-	<string name="cache_list_title">GeoBeagle: Nearest caches (%2$d total)</string>
-	<string name="cache_list_title_all">%1$d caches out of %2$d</string>
+	<string name="cache_list_title">GeoBeagle: %1$d nearest caches (total %2$d)</string>
+	<string name="cache_list_title_all">GeoBeagle: Unordered view (%1$d of %2$d)</string>
 	<string name="no_nearby_caches">No caches near your current location; click Menu / Show all caches.</string>
 	<string name="no_caches">No Caches--click Menu / Search Online to find a cache on the internet, or click Menu / Sync to import "Pocket Queries" downloaded from Geocaching.com.</string>
     <array name="nearest_objects">
