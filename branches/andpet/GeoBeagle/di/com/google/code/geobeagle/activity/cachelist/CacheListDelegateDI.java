@@ -50,13 +50,10 @@ import com.google.code.geobeagle.activity.cachelist.presenter.DistanceUpdater;
 import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheListAdapter;
 import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheListPresenter;
 import com.google.code.geobeagle.activity.cachelist.presenter.ListTitleFormatter;
-import com.google.code.geobeagle.activity.cachelist.presenter.LocationAndAzimuthTolerance;
-import com.google.code.geobeagle.activity.cachelist.presenter.LocationTolerance;
 import com.google.code.geobeagle.activity.cachelist.presenter.RelativeBearingFormatter;
 import com.google.code.geobeagle.activity.cachelist.presenter.SensorManagerWrapper;
 import com.google.code.geobeagle.activity.cachelist.presenter.SqlCacheLoader;
 import com.google.code.geobeagle.activity.cachelist.presenter.TitleUpdater;
-import com.google.code.geobeagle.activity.cachelist.presenter.ToleranceStrategy;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh.UpdateFlag;
 import com.google.code.geobeagle.activity.cachelist.view.GeocacheSummaryRowInflater;
 import com.google.code.geobeagle.activity.main.GeoBeagle;
@@ -169,15 +166,6 @@ public class CacheListDelegateDI {
                 timing, locationControlBuffered);
         final GpsDisabledLocation gpsDisabledLocation = new GpsDisabledLocation();
         final DistanceUpdater distanceUpdater = new DistanceUpdater(geocacheListAdapter);
-        final ToleranceStrategy sqlCacheLoaderTolerance = new LocationTolerance(500,
-                gpsDisabledLocation, 1000);
-        final ToleranceStrategy adapterCachesSorterTolerance = new LocationTolerance(6,
-                gpsDisabledLocation, 1000);
-        final LocationTolerance distanceUpdaterLocationTolerance = new LocationTolerance(1,
-                gpsDisabledLocation, 1000);
-        final ToleranceStrategy distanceUpdaterTolerance = new LocationAndAzimuthTolerance(
-                distanceUpdaterLocationTolerance, 720);
-
         final CacheFilter cacheFilter = new CacheFilter(listActivity);
         
         final DbFrontend dbFrontend = new DbFrontend(listActivity, geocacheFactory);
@@ -192,9 +180,9 @@ public class CacheListDelegateDI {
         final SqlCacheLoader sqlCacheLoader = new SqlCacheLoader(cachesProviderToggler,
                 cacheListData, locationControlBuffered, titleUpdater, timing);
         final ActionAndTolerance[] actionAndTolerances = new ActionAndTolerance[] {
-                new ActionAndTolerance(sqlCacheLoader, sqlCacheLoaderTolerance),
-                new ActionAndTolerance(adapterCachesSorter, adapterCachesSorterTolerance),
-                new ActionAndTolerance(distanceUpdater, distanceUpdaterTolerance)
+                new ActionAndTolerance(sqlCacheLoader, 500, gpsDisabledLocation, 1000, false),
+                new ActionAndTolerance(adapterCachesSorter, 6, gpsDisabledLocation, 1000, false),
+                new ActionAndTolerance(distanceUpdater, 1, gpsDisabledLocation, 1000, true)
         };
         CachesProviderArea[] areas = { cachesProviderArea, cachesProviderAll };
         final CacheListRefresh cacheListRefresh = new CacheListRefresh(actionAndTolerances, timing,

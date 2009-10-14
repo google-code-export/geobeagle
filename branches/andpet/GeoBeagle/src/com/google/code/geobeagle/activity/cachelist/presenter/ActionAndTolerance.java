@@ -18,22 +18,47 @@ import com.google.code.geobeagle.LocationControlBuffered.IGpsLocation;
 
 public class ActionAndTolerance {
     private final RefreshAction mRefreshAction;
-    private final ToleranceStrategy mToleranceStrategy;
+    private IGpsLocation mLastRefreshLocation;
+    private final float mLocationTolerance;
+    private final int mMinTimeBetweenRefresh;
+    private long mLastRefreshTime;
+    private boolean mCareAboutAzimuth;
+    private float mLastAzimuth;
 
-    public ActionAndTolerance(RefreshAction refreshAction, ToleranceStrategy toleranceStrategy) {
+    public ActionAndTolerance(RefreshAction refreshAction, float locationTolerance, 
+                IGpsLocation lastRefreshed, int minTimeBetweenRefresh, boolean careAboutAzimuth) {
         mRefreshAction = refreshAction;
-        mToleranceStrategy = toleranceStrategy;
+        mLocationTolerance = locationTolerance;
+        mLastRefreshLocation = lastRefreshed;
+        mMinTimeBetweenRefresh = minTimeBetweenRefresh;
+        mLastRefreshTime = 0;
+        mCareAboutAzimuth = careAboutAzimuth;
+        mLastAzimuth = 720f;
     }
 
     public boolean exceedsTolerance(IGpsLocation here, float azimuth, long now) {
-        return mToleranceStrategy.exceedsTolerance(here, azimuth, now);
+        if (now < mLastRefreshTime + mMinTimeBetweenRefresh)
+            return false;
+        if (mCareAboutAzimuth && azimuth != mLastAzimuth) {
+            mLastAzimuth = azimuth;
+            return true;
+        }
+        final float distanceTo = here.distanceTo(mLastRefreshLocation);
+        // Log.d("GeoBeagle", "distance, tolerance: " + distanceTo + ", " +
+        // mLocationTolerance);
+        final boolean fExceedsTolerance = (distanceTo >= mLocationTolerance);
+        return fExceedsTolerance;
     }
 
+    public void updateLastRefreshed(IGpsLocation here, float azimuth, long now) {
+        // Log.d("GeoBeagle", "updateLastRefreshed here: " + here);
+        mLastRefreshLocation = here;
+        mLastRefreshTime = now;
+    }
+
+    
     public void refresh() {
         mRefreshAction.refresh();
     }
 
-    public void updateLastRefreshed(IGpsLocation here, float azimuth, long now) {
-        mToleranceStrategy.updateLastRefreshed(here, azimuth, now);
-    }
 }
