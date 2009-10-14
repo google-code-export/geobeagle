@@ -57,7 +57,6 @@ import com.google.code.geobeagle.activity.cachelist.presenter.SensorManagerWrapp
 import com.google.code.geobeagle.activity.cachelist.presenter.SqlCacheLoader;
 import com.google.code.geobeagle.activity.cachelist.presenter.TitleUpdater;
 import com.google.code.geobeagle.activity.cachelist.presenter.ToleranceStrategy;
-import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh.ActionManager;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh.UpdateFlag;
 import com.google.code.geobeagle.activity.cachelist.view.GeocacheSummaryRowInflater;
 import com.google.code.geobeagle.activity.main.GeoBeagle;
@@ -197,9 +196,8 @@ public class CacheListDelegateDI {
                 new ActionAndTolerance(adapterCachesSorter, adapterCachesSorterTolerance),
                 new ActionAndTolerance(distanceUpdater, distanceUpdaterTolerance)
         };
-        final ActionManager actionManager = new ActionManager(actionAndTolerances);
         CachesProviderArea[] areas = { cachesProviderArea, cachesProviderAll };
-        final CacheListRefresh cacheListRefresh = new CacheListRefresh(actionManager, timing,
+        final CacheListRefresh cacheListRefresh = new CacheListRefresh(actionAndTolerances, timing,
                 locationControlBuffered, updateFlag, areas);
         
         final SensorManager sensorManager = (SensorManager)listActivity

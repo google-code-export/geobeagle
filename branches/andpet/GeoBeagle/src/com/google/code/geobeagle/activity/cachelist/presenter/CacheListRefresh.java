@@ -23,27 +23,20 @@ import com.google.code.geobeagle.database.CachesProviderArea;
 import android.util.Log;
 
 public class CacheListRefresh implements Refresher {
-    public static class ActionManager {
-        private final ActionAndTolerance mActionAndTolerances[];
 
-        public ActionManager(ActionAndTolerance actionAndTolerances[]) {
-            mActionAndTolerances = actionAndTolerances;
+    private int getMinActionExceedingTolerance(IGpsLocation here, float azimuth, long now) {
+        int i;
+        for (i = 0; i < mActionAndTolerances.length; i++) {
+            if (mActionAndTolerances[i].exceedsTolerance(here, azimuth, now))
+                break;
         }
+        return i;
+    }
 
-        public int getMinActionExceedingTolerance(IGpsLocation here, float azimuth, long now) {
-            int i;
-            for (i = 0; i < mActionAndTolerances.length; i++) {
-                if (mActionAndTolerances[i].exceedsTolerance(here, azimuth, now))
-                    break;
-            }
-            return i;
-        }
-
-        public void performActions(IGpsLocation here, float azimuth, int startingAction, long now) {
-            for (int i = startingAction; i < mActionAndTolerances.length; i++) {
-                mActionAndTolerances[i].refresh();
-                mActionAndTolerances[i].updateLastRefreshed(here, azimuth, now);
-            }
+    private void performActions(IGpsLocation here, float azimuth, int startingAction, long now) {
+        for (int i = startingAction; i < mActionAndTolerances.length; i++) {
+            mActionAndTolerances[i].refresh();
+            mActionAndTolerances[i].updateLastRefreshed(here, azimuth, now);
         }
     }
 
@@ -60,18 +53,18 @@ public class CacheListRefresh implements Refresher {
         }
     }
 
-    private final ActionManager mActionManager;
+    private final ActionAndTolerance mActionAndTolerances[];
     private final LocationControlBuffered mLocationControlBuffered;
     private final CacheListDelegateDI.Timing mTiming;
     private final UpdateFlag mUpdateFlag;
     private final CachesProviderArea[] mCachesProviders;
 
-    public CacheListRefresh(ActionManager actionManager, CacheListDelegateDI.Timing timing,
+    public CacheListRefresh(ActionAndTolerance[] actionAndTolerances, CacheListDelegateDI.Timing timing,
             LocationControlBuffered locationControlBuffered, UpdateFlag updateFlag,
             CachesProviderArea[] providers) {
         mLocationControlBuffered = locationControlBuffered;
         mTiming = timing;
-        mActionManager = actionManager;
+        mActionAndTolerances = actionAndTolerances;
         mUpdateFlag = updateFlag;
         mCachesProviders = providers;
     }
@@ -83,7 +76,7 @@ public class CacheListRefresh implements Refresher {
         for (CachesProviderArea area : mCachesProviders) {
             area.reloadFilter();
         }
-        mActionManager.performActions(mLocationControlBuffered.getGpsLocation(),
+        performActions(mLocationControlBuffered.getGpsLocation(),
                 mLocationControlBuffered.getAzimuth(), 0, now);
     }
 
@@ -102,8 +95,8 @@ public class CacheListRefresh implements Refresher {
         final long now = mTiming.getTime();
         final IGpsLocation here = mLocationControlBuffered.getGpsLocation();
         final float azimuth = mLocationControlBuffered.getAzimuth();
-        final int minActionExceedingTolerance = mActionManager.getMinActionExceedingTolerance(here,
+        final int minActionExceedingTolerance = getMinActionExceedingTolerance(here,
                 azimuth, now);
-        mActionManager.performActions(here, azimuth, minActionExceedingTolerance, now);
+        performActions(here, azimuth, minActionExceedingTolerance, now);
     }
 }
