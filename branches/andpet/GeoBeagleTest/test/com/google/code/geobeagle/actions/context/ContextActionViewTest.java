@@ -18,7 +18,7 @@ import static org.easymock.EasyMock.expect;
 
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.activity.cachelist.GeocacheListController;
-import com.google.code.geobeagle.activity.cachelist.actions.context.ContextActionView;
+import com.google.code.geobeagle.activity.cachelist.actions.context.CacheActionViewGeocache;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVector;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVectors;
 
@@ -37,18 +37,14 @@ public class ContextActionViewTest {
     public void testActionView() {
         Intent intent = PowerMock.createMock(Intent.class);
         Context context = PowerMock.createMock(Context.class);
-        GeocacheVectors geocacheVectors = PowerMock.createMock(GeocacheVectors.class);
-        GeocacheVector geocacheVector = PowerMock.createMock(GeocacheVector.class);
         Geocache geocache = PowerMock.createMock(Geocache.class);
 
-        expect(geocacheVectors.get(34)).andReturn(geocacheVector);
-        expect(geocacheVector.getGeocache()).andReturn(geocache);
         expect(intent.setAction(GeocacheListController.SELECT_CACHE)).andReturn(intent);
         expect(intent.putExtra("geocache", geocache)).andReturn(intent);
         context.startActivity(intent);
 
         PowerMock.replayAll();
-        new ContextActionView(geocacheVectors, context, intent).act(34);
+        new CacheActionViewGeocache(context, intent).act(geocache);
         PowerMock.verifyAll();
     }
 }

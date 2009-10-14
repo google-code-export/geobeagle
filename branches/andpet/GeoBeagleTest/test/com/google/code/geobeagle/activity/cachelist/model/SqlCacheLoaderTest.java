@@ -69,7 +69,7 @@ public class SqlCacheLoaderTest {
         EasyMock.expect(cachesProviderCenter.getCaches()).andReturn(geocaches);
         cachesProviderCenter.setCenter(37.0, -122.0);
         cacheListData.add(geocaches, locationControlBuffered);
-        titleUpdater.update(0, 100);
+        titleUpdater.refresh();
 
         PowerMock.replayAll();
         new SqlCacheLoader(cachesProviderCenter, cacheListData, locationControlBuffered,

@@ -37,20 +37,16 @@ import android.content.Intent;
 public class ContextActionEditTest {
     @Test
     public void testAct() throws Exception {
-        GeocacheVectors geocacheVectors = PowerMock.createMock(GeocacheVectors.class);
         Context context = PowerMock.createMock(Context.class);
-        GeocacheVector geocacheVector = PowerMock.createMock(GeocacheVector.class);
         Intent intent = PowerMock.createMock(Intent.class);
         Geocache geocache = PowerMock.createMock(Geocache.class);
 
-        EasyMock.expect(geocacheVectors.get(12)).andReturn(geocacheVector);
-        EasyMock.expect(geocacheVector.getGeocache()).andReturn(geocache);
         PowerMock.expectNew(Intent.class, context, EditCacheActivity.class).andReturn(intent);
         EasyMock.expect(intent.putExtra("geocache", geocache)).andReturn(intent);
         context.startActivity(intent);
 
         PowerMock.replayAll();
-        new ContextActionEdit(geocacheVectors, context).act(12);
+        new ContextActionEdit(context).act(geocache);
         PowerMock.verifyAll();
     }
 }
