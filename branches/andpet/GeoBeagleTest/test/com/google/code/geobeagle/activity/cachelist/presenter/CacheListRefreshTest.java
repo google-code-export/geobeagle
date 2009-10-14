@@ -22,7 +22,6 @@ import com.google.code.geobeagle.LocationControlBuffered;
 import com.google.code.geobeagle.LocationControlBuffered.IGpsLocation;
 import com.google.code.geobeagle.activity.cachelist.CacheListDelegateDI;
 import com.google.code.geobeagle.activity.cachelist.CacheListDelegateDI.Timing;
-import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh.ActionManager;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh.UpdateFlag;
 import com.google.code.geobeagle.database.CachesProviderArea;
 
@@ -70,78 +69,51 @@ public class CacheListRefreshTest {
     }
 
     @Test
-    public void testActionManager_getMinActionExceedingTolerance() {
+    public void testSomeActionsExecuted() {
         IGpsLocation here = PowerMock.createMock(IGpsLocation.class);
         ActionAndTolerance actionAndTolerance0 = PowerMock.createMock(ActionAndTolerance.class);
         ActionAndTolerance actionAndTolerance1 = PowerMock.createMock(ActionAndTolerance.class);
-
-        EasyMock.expect(actionAndTolerance0.exceedsTolerance(here, 90, 0)).andReturn(false);
-        EasyMock.expect(actionAndTolerance1.exceedsTolerance(here, 90, 0)).andReturn(true);
-
-        PowerMock.replayAll();
-        assertEquals(1, new ActionManager(new ActionAndTolerance[] {
-                actionAndTolerance0, actionAndTolerance1
-        }).getMinActionExceedingTolerance(here, 90, 0));
-        PowerMock.verifyAll();
-
-    }
-
-    @Test
-    public void testActionManager_performActions() {
-        IGpsLocation here = PowerMock.createMock(IGpsLocation.class);
-        ActionAndTolerance actionAndTolerance0 = PowerMock.createMock(ActionAndTolerance.class);
-        ActionAndTolerance actionAndTolerance1 = PowerMock.createMock(ActionAndTolerance.class);
-
-        actionAndTolerance1.refresh();
-        actionAndTolerance1.updateLastRefreshed(here, 90, 0);
-
-        PowerMock.replayAll();
-        new ActionManager(new ActionAndTolerance[] {
-                actionAndTolerance0, actionAndTolerance1
-        }).performActions(here, 90, 1, 0);
-        PowerMock.verifyAll();
-
-    }
-
-    @Test
-    public void testCacheListRefresh_ForceRefresh() {
-        LocationControlBuffered locationControlBuffered = PowerMock
-                .createMock(LocationControlBuffered.class);
-        CacheListDelegateDI.Timing timing = PowerMock.createMock(CacheListDelegateDI.Timing.class);
-        ActionManager actionManager = PowerMock.createMock(ActionManager.class);
-        IGpsLocation here = PowerMock.createMock(IGpsLocation.class);
+        LocationControlBuffered locationControlBuffered = PowerMock.createMock(LocationControlBuffered.class);
+        ActionAndTolerance[] actionAndTolerances = { actionAndTolerance0, actionAndTolerance1 };
         CachesProviderArea cachesProviderArea = PowerMock.createMock(CachesProviderArea.class);
 
-        cachesProviderArea.reloadFilter();
-        EasyMock.expect(timing.getTime()).andReturn(100000L);
-        timing.start();
+        EasyMock.expect(actionAndTolerance0.exceedsTolerance(here, 90, 10000)).andReturn(false);
+        EasyMock.expect(actionAndTolerance1.exceedsTolerance(here, 90, 10000)).andReturn(true);
         EasyMock.expect(locationControlBuffered.getGpsLocation()).andReturn(here);
         EasyMock.expect(locationControlBuffered.getAzimuth()).andReturn(90f);
-        actionManager.performActions(here, 90, 0, 100000);
+        cachesProviderArea.reloadFilter();
+        actionAndTolerance1.refresh();
+        actionAndTolerance1.updateLastRefreshed(here, 90f, 10000);
 
         PowerMock.replayAll();
+
         CachesProviderArea[] areas = { cachesProviderArea };
-        new CacheListRefresh(actionManager, timing, locationControlBuffered, null, areas).forceRefresh();
+        new CacheListRefresh(actionAndTolerances, mTiming, locationControlBuffered, null, areas).forceRefresh();
+
         PowerMock.verifyAll();
     }
 
     @Test
     public void testCacheListRefresh_Refresh() {
-        LocationControlBuffered locationControlBuffered = PowerMock
-                .createMock(LocationControlBuffered.class);
-        ActionManager actionManager = PowerMock.createMock(ActionManager.class);
         IGpsLocation here = PowerMock.createMock(IGpsLocation.class);
-        UpdateFlag updateFlag = PowerMock.createMock(UpdateFlag.class);
+        ActionAndTolerance actionAndTolerance0 = PowerMock.createMock(ActionAndTolerance.class);
+        ActionAndTolerance actionAndTolerance1 = PowerMock.createMock(ActionAndTolerance.class);
+        LocationControlBuffered locationControlBuffered = PowerMock.createMock(LocationControlBuffered.class);
+        ActionAndTolerance[] actionAndTolerances = { actionAndTolerance0, actionAndTolerance1 };
+        CachesProviderArea cachesProviderArea = PowerMock.createMock(CachesProviderArea.class);
 
-        EasyMock.expect(updateFlag.updatesEnabled()).andReturn(true);
+        EasyMock.expect(actionAndTolerance0.exceedsTolerance(here, 90, 10000)).andReturn(false);
+        EasyMock.expect(actionAndTolerance1.exceedsTolerance(here, 90, 10000)).andReturn(true);
         EasyMock.expect(locationControlBuffered.getGpsLocation()).andReturn(here);
         EasyMock.expect(locationControlBuffered.getAzimuth()).andReturn(90f);
-        EasyMock.expect(actionManager.getMinActionExceedingTolerance(here, 90, 10000L))
-                .andReturn(3);
-        actionManager.performActions(here, 90, 3, 10000L);
+        actionAndTolerance0.refresh();
+        actionAndTolerance0.updateLastRefreshed(here, 90f, 10000);
 
         PowerMock.replayAll();
-        new CacheListRefresh(actionManager, mTiming, locationControlBuffered, updateFlag, null).refresh();
+
+        CachesProviderArea[] areas = { cachesProviderArea };
+        new CacheListRefresh(actionAndTolerances, mTiming, locationControlBuffered, null, areas).forceRefresh();
+
         PowerMock.verifyAll();
     }
 
