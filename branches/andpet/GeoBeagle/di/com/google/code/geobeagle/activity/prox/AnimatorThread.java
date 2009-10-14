@@ -7,6 +7,10 @@ import android.view.SurfaceHolder;
 
 public class AnimatorThread {
 
+    public interface IThreadStoppedListener {
+        void OnThreadStopped();
+    }
+    
 	//////////////////////////////////////////////////////////////
 	// PRIVATE MEMBERS
 
@@ -34,7 +38,7 @@ public class AnimatorThread {
 		mCurrentTickDelta = (now - mCurrentTimeMillis) / 1000.0;
 		mCurrentTimeMillis = now;
 		if (mCurrentTickDelta > 0.3) {
-			Log.w(this.getClass().getName(), "Elapsed time " + mCurrentTickDelta +
+			Log.w("GeoBeagle", "Elapsed time " + mCurrentTickDelta +
 			      " capped at 0.3 sec");
 			mCurrentTickDelta = 0.3;
 		}
@@ -47,7 +51,6 @@ public class AnimatorThread {
 				Canvas c = null;
 				try {
 					c = mSurfaceHolder.lockCanvas(null);
-					//assert (c != null);  //TODO: Remove 'if' when not needed anymore
 					if (c == null) {
 						Log.w(this.getClass().getName(), 
 						      "run(): lockCanvas returned null");
@@ -165,10 +168,15 @@ public class AnimatorThread {
 		mThread = new TimingThread(nrOfTicks);
 		//mThread.start();
 	}
-	
-	public void stop() {
-		if (!mIsRunning)
+
+	/** @param listener is invoked after the thread has stopped or at once if
+	 * the thread wasn't running */
+	public void stop(IThreadStoppedListener listener) {
+		if (!mIsRunning) {
+		    if (listener != null)
+		        listener.OnThreadStopped();
 			return;
+		}
 		boolean retry = true;
 		mShouldRun = false;
 		while (retry) {
@@ -176,6 +184,7 @@ public class AnimatorThread {
 				mThread.join();
 				retry = false;
 				mThread = null;
+                listener.OnThreadStopped();
 			} catch (InterruptedException e) {
 			}
 		}

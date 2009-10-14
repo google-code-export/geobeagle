@@ -71,10 +71,16 @@ public class ProximityActivity extends Activity implements SurfaceHolder.Callbac
     protected void onPause() {
         super.onPause();
         mDataCollector.pause();
-        if (mAnimatorThread != null)
-            mAnimatorThread.stop();
-        //TODO: The animatorThread might still use the database?
-        mDbFrontend.closeDatabase();
+        if (mAnimatorThread != null) {
+            AnimatorThread.IThreadStoppedListener listener = new
+            AnimatorThread.IThreadStoppedListener() {
+                @Override
+                public void OnThreadStopped() {
+                    mDbFrontend.closeDatabase();
+                }
+            };
+            mAnimatorThread.stop(listener);
+        }
     }
     
     
