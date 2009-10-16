@@ -4,6 +4,7 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
@@ -78,7 +79,8 @@ public class GraphicsGenerator {
         Canvas canvas = new Canvas(copy);
 
         //mTempPaint.setColor(Color.BLUE);
-        mTempPaint.setARGB(255, 0x20, 0x20, 0xFF);  //light blue
+        //mTempPaint.setARGB(255, 0x20, 0x20, 0xFF);  //light blue
+        mTempPaint.setColor(Color.YELLOW);
         int diffWidth = (int)(imageWidth * (geocache.getDifficulty()/10.0));
         mTempRect.set(0, imageHeight-bottom-2*thickness-2, 
                 diffWidth, imageHeight-bottom-thickness-2);

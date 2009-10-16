@@ -24,6 +24,7 @@ import android.location.Location;
 
 import java.util.ArrayList;
 
+/** Reload the cache list from DB, centered on current location */
 public class SqlCacheLoader implements RefreshAction {
     private final CacheListData mCacheListData;
     private final ICachesProviderCenter mCachesProviderCenter;
