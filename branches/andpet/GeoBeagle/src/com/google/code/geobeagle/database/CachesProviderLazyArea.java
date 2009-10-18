@@ -29,6 +29,7 @@ public class CachesProviderLazyArea implements ICachesProviderArea {
     private double mLonLow;
     private double mLatHigh;
     private double mLonHigh;
+    private double mExpandRatio;
     /** If the user of this instance thinks the list has changed */
     private boolean mHasChanged = true;
     private boolean mTooManyCaches = false;
@@ -40,9 +41,10 @@ public class CachesProviderLazyArea implements ICachesProviderArea {
     private final ICachesProviderArea mCachesProviderArea;
 
     public CachesProviderLazyArea(ICachesProviderArea cachesProviderArea,
-                Toaster toaster) {
+                Toaster toaster, double expandRatio) {
         mCachesProviderArea = cachesProviderArea;
         mToaster = toaster;
+        mExpandRatio = expandRatio;
     }
 
     @Override
@@ -55,11 +57,13 @@ public class CachesProviderLazyArea implements ICachesProviderArea {
                 //already contained too many caches
                 return;
             }
-            mLatLow = latLow;
-            mLonLow = lonLow;
-            mLatHigh = latHigh;
-            mLonHigh = lonHigh;
-            mCachesProviderArea.setBounds(latLow, lonLow, latHigh, lonHigh);
+            double latExpand = (latHigh - latLow) * mExpandRatio / 2.0;
+            double lonExpand = (lonHigh - lonLow) * mExpandRatio / 2.0;
+            mLatLow = latLow - latExpand;
+            mLonLow = lonLow - lonExpand;
+            mLatHigh = latHigh + latExpand;
+            mLonHigh = lonHigh + lonExpand;
+            mCachesProviderArea.setBounds(mLatLow, mLonLow, mLatHigh, mLonHigh);
             mHasChanged = true;
         }
     }
