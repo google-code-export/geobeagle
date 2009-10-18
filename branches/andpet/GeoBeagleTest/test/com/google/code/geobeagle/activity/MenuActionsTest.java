@@ -19,7 +19,7 @@ import static org.junit.Assert.*;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.actions.MenuAction;
 import com.google.code.geobeagle.actions.MenuActions;
-import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionSyncGpx;
+import com.google.code.geobeagle.activity.cachelist.actions.MenuActionSyncGpx;
 
 import org.easymock.EasyMock;
 import org.junit.Before;
