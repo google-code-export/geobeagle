@@ -14,7 +14,6 @@
 
 package com.google.code.geobeagle.activity.cachelist.presenter;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
