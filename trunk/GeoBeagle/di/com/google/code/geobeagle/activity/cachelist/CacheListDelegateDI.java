@@ -30,6 +30,7 @@ import com.google.code.geobeagle.activity.cachelist.actions.context.ContextActio
 import com.google.code.geobeagle.activity.cachelist.actions.context.ContextActionDelete;
 import com.google.code.geobeagle.activity.cachelist.actions.context.ContextActionEdit;
 import com.google.code.geobeagle.activity.cachelist.actions.context.ContextActionView;
+import com.google.code.geobeagle.activity.cachelist.actions.context.ContextActionDelete.ContextActionDeleteDialogHelper;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.Abortable;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionMyLocation;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionSyncGpx;
@@ -251,11 +252,16 @@ public class CacheListDelegateDI {
         final ContextActionEdit contextActionEdit = new ContextActionEdit(geocacheVectors,
                 listActivity);
         final ContextActionDelete contextActionDelete = new ContextActionDelete(
-                geocacheListAdapter, geocacheVectors, titleUpdater, dbFrontend);
+                geocacheListAdapter, geocacheVectors, titleUpdater, dbFrontend, listActivity, 0);
 
         final ContextAction[] contextActions = new ContextAction[] {
                 contextActionDelete, contextActionView, contextActionEdit
         };
+        final OnClickListener contextActionDeleteOnClickOkListener = new ContextActionDelete.OnClickOk(
+                contextActionDelete);
+        final ContextActionDeleteDialogHelper contextActionDeleteDialogHelper = new ContextActionDeleteDialogHelper(
+                contextActionDelete, contextActionDeleteOnClickOkListener);
+
         final GeocacheListController geocacheListController = new GeocacheListController(
                 cacheListRefresh, contextActions, filterNearestCaches, menuActionSyncGpx,
                 menuActions);
@@ -263,6 +269,7 @@ public class CacheListDelegateDI {
         final ActivitySaver activitySaver = ActivityDI.createActivitySaver(listActivity);
         final ImportIntentManager importIntentManager = new ImportIntentManager(listActivity);
         return new CacheListDelegate(importIntentManager, activitySaver, cacheListRefresh,
-                geocacheListController, geocacheListPresenter, dbFrontend);
+                geocacheListController, geocacheListPresenter, dbFrontend,
+                contextActionDeleteDialogHelper);
     }
 }

@@ -14,32 +14,95 @@
 
 package com.google.code.geobeagle.activity.cachelist.actions.context;
 
+import com.google.code.geobeagle.R;
+import com.google.code.geobeagle.activity.cachelist.model.GeocacheVector;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVectors;
 import com.google.code.geobeagle.activity.cachelist.presenter.TitleUpdater;
 import com.google.code.geobeagle.database.DbFrontend;
 
+import android.app.Activity;
+import android.app.Dialog;
+import android.app.AlertDialog.Builder;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.widget.BaseAdapter;
+import android.widget.TextView;
 
 public class ContextActionDelete implements ContextAction {
+    public static final int CACHE_LIST_DIALOG_CONFIRM_DELETE = 0;
+
+    public static class ContextActionDeleteDialogHelper {
+        private final ContextActionDelete mContextActionDelete;
+        private final OnClickListener mOnClickOk;
+
+        public ContextActionDeleteDialogHelper(ContextActionDelete contextActionDelete,
+                OnClickListener onClickOk) {
+            mContextActionDelete = contextActionDelete;
+            mOnClickOk = onClickOk;
+        }
+
+        public Dialog onCreateDialog(Builder builder) {
+            return builder.setPositiveButton(R.string.delete_cache, mOnClickOk).create();
+        }
+
+        public void onPrepareDialog(int id, Dialog dialog) {
+            dialog.setTitle(mContextActionDelete.getConfirmDeleteTitle());
+            final TextView textView = (TextView)dialog.findViewById(R.id.delete_cache);
+            textView.setText(mContextActionDelete.getConfirmDeleteBodyText());
+        }
+    }
+
+    public static class OnClickOk implements OnClickListener {
+        private final ContextActionDelete mContextActionDelete;
+
+        public OnClickOk(ContextActionDelete contextActionDelete) {
+            mContextActionDelete = contextActionDelete;
+        }
+
+        public void onClick(DialogInterface dialog, int whichButton) {
+            mContextActionDelete.delete();
+            dialog.dismiss();
+        }
+    }
+
+    private final Activity mActivity;
+    private final DbFrontend mDbFrontend;
     private final BaseAdapter mGeocacheListAdapter;
     private final GeocacheVectors mGeocacheVectors;
+    private int mPosition;
     private final TitleUpdater mTitleUpdater;
-    private final DbFrontend mDbFrontend;
 
     public ContextActionDelete(BaseAdapter geocacheListAdapter, GeocacheVectors geocacheVectors,
-            TitleUpdater titleUpdater, DbFrontend dbFrontend) {
+            TitleUpdater titleUpdater, DbFrontend dbFrontend, Activity activity, int position) {
         mGeocacheListAdapter = geocacheListAdapter;
         mGeocacheVectors = geocacheVectors;
         mTitleUpdater = titleUpdater;
         mDbFrontend = dbFrontend;
+        mActivity = activity;
+        mPosition = position;
     }
 
     public void act(int position) {
-        mDbFrontend.getCacheWriter().deleteCache(mGeocacheVectors.get(position).getId());
+        mPosition = position;
+        mActivity.showDialog(CACHE_LIST_DIALOG_CONFIRM_DELETE);
+    }
 
-        mGeocacheVectors.remove(position);
+    void delete() {
+        mDbFrontend.getCacheWriter().deleteCache(mGeocacheVectors.get(mPosition).getId());
+        mGeocacheVectors.remove(mPosition);
         mGeocacheListAdapter.notifyDataSetChanged();
-        //TODO: How to get correct values?
+        // TODO: How to get correct values?
         mTitleUpdater.update(mGeocacheVectors.size(), mGeocacheVectors.size());
+    }
+
+    public CharSequence getConfirmDeleteBodyText() {
+        final GeocacheVector geocacheVector = mGeocacheVectors.get(mPosition);
+        return String.format(mActivity.getString(R.string.confirm_delete_body_text), geocacheVector
+                .getId(), geocacheVector.getName());
+    }
+
+    public CharSequence getConfirmDeleteTitle() {
+        return String.format(mActivity.getString(R.string.confirm_delete_title), mGeocacheVectors
+                .get(mPosition).getId());
     }
 }

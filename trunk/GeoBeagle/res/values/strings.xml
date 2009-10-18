@@ -11,6 +11,10 @@
 		License.
 	-->
 <resources>
+    <string name="confirm_delete_negative">Do not delete</string>
+    <string name="confirm_delete_title">Confirm delete %1$s</string>
+    <string name="confirm_delete_body_text">Delete %1$s: "%2$s"?</string>
+    <string name="delete_cache">Delete cache</string>
 	<string name="too_many_caches">Too many caches to display--zoom in to see
 		caches.</string>
 	<string name="menu_center_location">My Location</string>

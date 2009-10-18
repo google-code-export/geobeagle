@@ -16,11 +16,14 @@ package com.google.code.geobeagle.activity.cachelist;
 
 import com.google.code.geobeagle.activity.ActivitySaver;
 import com.google.code.geobeagle.activity.ActivityType;
+import com.google.code.geobeagle.activity.cachelist.actions.context.ContextActionDelete.ContextActionDeleteDialogHelper;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
 import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheListPresenter;
 import com.google.code.geobeagle.database.DbFrontend;
 
 import android.app.Activity;
+import android.app.Dialog;
+import android.app.AlertDialog.Builder;
 import android.content.Intent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -65,16 +68,19 @@ public class CacheListDelegate {
     private final DbFrontend mDbFrontend;
     private final ImportIntentManager mImportIntentManager;
     private final GeocacheListPresenter mPresenter;
+    private final ContextActionDeleteDialogHelper mContextActionDeleteDialogHelper;
 
     public CacheListDelegate(ImportIntentManager importIntentManager, ActivitySaver activitySaver,
             CacheListRefresh cacheListRefresh, GeocacheListController geocacheListController,
-            GeocacheListPresenter geocacheListPresenter, DbFrontend dbFrontend) {
+            GeocacheListPresenter geocacheListPresenter, DbFrontend dbFrontend,
+            ContextActionDeleteDialogHelper contextActionDeleteDialogHelper) {
         mActivitySaver = activitySaver;
         mCacheListRefresh = cacheListRefresh;
         mController = geocacheListController;
         mPresenter = geocacheListPresenter;
         mImportIntentManager = importIntentManager;
         mDbFrontend = dbFrontend;
+        mContextActionDeleteDialogHelper = contextActionDeleteDialogHelper;
     }
 
     public boolean onContextItemSelected(MenuItem menuItem) {
@@ -112,5 +118,13 @@ public class CacheListDelegate {
         // TODO: No need to re-initialize these
         mPresenter.onResume(mCacheListRefresh);
         mController.onResume(mCacheListRefresh, mImportIntentManager.isImport());
+    }
+
+    public Dialog onCreateDialog(Builder builder) {
+        return mContextActionDeleteDialogHelper.onCreateDialog(builder);
+    }
+
+    public void onPrepareDialog(int id, Dialog dialog) {
+        mContextActionDeleteDialogHelper.onPrepareDialog(id, dialog);
     }
 }

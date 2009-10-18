@@ -14,15 +14,28 @@
 
 package com.google.code.geobeagle.activity.cachelist;
 
+import com.google.code.geobeagle.R;
+
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.ListActivity;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
 
 public class CacheListActivity extends ListActivity {
+    static class OnClickCancel implements OnClickListener {
+        public void onClick(DialogInterface dialog, int whichButton) {
+            dialog.dismiss();
+        }
+    }
+
     private CacheListDelegate mCacheListDelegate;
 
     // This is the ctor that Android will use.
@@ -47,6 +60,19 @@ public class CacheListActivity extends ListActivity {
         mCacheListDelegate = CacheListDelegateDI.create(this, getLayoutInflater());
 
         mCacheListDelegate.onCreate();
+    }
+
+    @Override
+    public Dialog onCreateDialog(int idDialog) {
+        // idDialog must be CACHE_LIST_DIALOG_CONFIRM_DELETE.
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        final View confirmDeleteCacheView = LayoutInflater.from(this).inflate(
+                R.layout.confirm_delete_cache, null);
+
+        builder.setNegativeButton(R.string.confirm_delete_negative, new OnClickCancel());
+        builder.setView(confirmDeleteCacheView);
+
+        return mCacheListDelegate.onCreateDialog(builder);
     }
 
     @Override
@@ -82,6 +108,11 @@ public class CacheListActivity extends ListActivity {
 
         super.onPause();
         mCacheListDelegate.onPause();
+    }
+
+    @Override
+    protected void onPrepareDialog(int id, Dialog dialog) {
+        mCacheListDelegate.onPrepareDialog(id, dialog);
     }
 
     @Override

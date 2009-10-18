@@ -86,10 +86,9 @@ public class GeoBeagleDelegate {
             CompassListener compassListener, FieldNoteSender fieldNoteSender, GeoBeagle parent,
             GeocacheFactory geocacheFactory, GeocacheViewer geocacheViewer,
             IncomingIntentHandler incomingIntentHandler, MenuActions menuActions,
-            GeocacheFromParcelFactory geocacheFromParcelFactory,
-            DbFrontend dbFrontend, RadarView radarView, Resources resources,
-            SensorManager sensorManager, SharedPreferences sharedPreferences,
-            WebPageAndDetailsButtonEnabler webPageButtonEnabler) {
+            GeocacheFromParcelFactory geocacheFromParcelFactory, DbFrontend dbFrontend,
+            RadarView radarView, Resources resources, SensorManager sensorManager,
+            SharedPreferences sharedPreferences, WebPageAndDetailsButtonEnabler webPageButtonEnabler) {
         mParent = parent;
         mActivitySaver = activitySaver;
         mAppLifecycleManager = appLifecycleManager;

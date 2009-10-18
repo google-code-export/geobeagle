@@ -30,9 +30,10 @@ public class GeocacheFromIntentFactory {
         mGeocacheFactory = geocacheFactory;
     }
 
-    Geocache viewCacheFromMapsIntent(Intent intent, LocationSaver locationSaver, Geocache defaultGeocache) {
+    Geocache viewCacheFromMapsIntent(Intent intent, LocationSaver locationSaver,
+            Geocache defaultGeocache) {
         final String query = intent.getData().getQuery();
-        final CharSequence sanitizedQuery = Util.parseHttpUri(query, new UrlQuerySanitizer(),
+        CharSequence sanitizedQuery = Util.parseHttpUri(query, new UrlQuerySanitizer(),
                 UrlQuerySanitizer.getAllButNulAndAngleBracketsLegal());
         if (sanitizedQuery == null)
             return defaultGeocache;
