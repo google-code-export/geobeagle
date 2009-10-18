@@ -40,7 +40,7 @@ public class LocationSaverTest {
         CacheWriter writer = PowerMock.createMock(CacheWriter.class);
         Geocache geocache = PowerMock.createMock(Geocache.class);
         DbFrontend dbFrontend = PowerMock.createMock(DbFrontend.class);
-        expect(dbFrontend.getCacheWriter()).andReturn(writer);                
+        expect(dbFrontend.getCacheWriter()).andReturn(writer);
         PowerMock.mockStatic(DatabaseDI.class);
 
         writer.startWriting();
@@ -51,8 +51,11 @@ public class LocationSaverTest {
         expect(geocache.getSourceType()).andReturn(Source.GPX);
         expect(geocache.getSourceName()).andReturn("manhattan");
         expect(geocache.getCacheType()).andReturn(CacheType.TRADITIONAL);
+        expect(geocache.getDifficulty()).andReturn(3);
+        expect(geocache.getTerrain()).andReturn(1);
+        expect(geocache.getContainer()).andReturn(2);
         writer.insertAndUpdateCache("LB12345", "", 122, 37, Source.GPX, "manhattan",
-                CacheType.TRADITIONAL, 0, 0, 0);
+                CacheType.TRADITIONAL, 3, 1, 2);
         writer.stopWriting();
 
         PowerMock.replayAll();

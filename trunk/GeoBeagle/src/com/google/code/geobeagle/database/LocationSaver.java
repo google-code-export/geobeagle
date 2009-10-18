@@ -30,7 +30,8 @@ public class LocationSaver {
         cacheWriter.startWriting();
         cacheWriter.insertAndUpdateCache(id, geocache.getName(), geocache.getLatitude(), geocache
                 .getLongitude(), geocache.getSourceType(), geocache.getSourceName(), geocache
-                .getCacheType(), 0, 0, 0);
+                .getCacheType(), geocache.getDifficulty(), geocache.getTerrain(), geocache
+                .getContainer());
         cacheWriter.stopWriting();
     }
 }
