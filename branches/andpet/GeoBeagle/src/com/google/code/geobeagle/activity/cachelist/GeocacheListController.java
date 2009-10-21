@@ -23,6 +23,7 @@ import com.google.code.geobeagle.activity.cachelist.model.GeocacheVectors;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
 import com.google.code.geobeagle.database.CachesProviderToggler;
 
+import android.content.res.Resources;
 import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -32,48 +33,44 @@ import android.view.View.OnCreateContextMenuListener;
 import android.widget.ListView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 
-public class GeocacheListController {
+public class GeocacheListController implements OnCreateContextMenuListener {
 
-    //TODO: Remove class CacheListOnCreateContextMenuListener
-    public static class CacheListOnCreateContextMenuListener implements OnCreateContextMenuListener {
-        private final GeocacheVectors mGeocacheVectors;
-
-        public CacheListOnCreateContextMenuListener(GeocacheVectors geocacheVectors) {
-            mGeocacheVectors = geocacheVectors;
-        }
-
-        public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
-            AdapterContextMenuInfo acmi = (AdapterContextMenuInfo)menuInfo;
-            if (acmi.position > 0) {
-                menu.setHeaderTitle(mGeocacheVectors.get(acmi.position - 1).getId());
-                menu.add(0, MENU_VIEW, 0, "View");
-                menu.add(0, MENU_EDIT, 1, "Edit");
-                menu.add(0, MENU_DELETE, 2, "Delete");
-            }
-        }
-    }
-
-    static final int MENU_DELETE = 0;
-    static final int MENU_VIEW = 1;
-    static final int MENU_EDIT = 2;
     public static final String SELECT_CACHE = "SELECT_CACHE";
     private final CacheListRefresh mCacheListRefresh;
-    private final CacheAction mCacheActions[];
+    private final CacheAction[] mCacheActions;
     private final CachesProviderToggler mCachesProviderToggler;
     private final MenuActions mMenuActions;
     private final MenuActionSyncGpx mMenuActionSyncGpx;
     private final GeocacheVectors mGeocacheVectors;
+    private final CacheAction mSelectAction;
+    private final Resources mResources;
 
     public GeocacheListController(CacheListRefresh cacheListRefresh,
+            CacheAction selectAction,
             CacheAction[] cacheActions, CachesProviderToggler cachesProviderToggler,
             MenuActionSyncGpx menuActionSyncGpx, MenuActions menuActions,
-            GeocacheVectors geocacheVectors) {
+            GeocacheVectors geocacheVectors,
+            Resources resources) {
         mCacheListRefresh = cacheListRefresh;
         mCacheActions = cacheActions;
         mCachesProviderToggler = cachesProviderToggler;
         mMenuActionSyncGpx = menuActionSyncGpx;
         mMenuActions = menuActions;
         mGeocacheVectors = geocacheVectors;
+        mSelectAction = selectAction;
+        mResources = resources;
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
+        AdapterContextMenuInfo acmi = (AdapterContextMenuInfo)menuInfo;
+        if (acmi.position > 0) {
+            menu.setHeaderTitle(mGeocacheVectors.get(acmi.position - 1).getId());
+            for (int ix = 0; ix < mCacheActions.length; ix++) {
+                CacheAction action = mCacheActions[ix];
+                menu.add(0, action.getId(), ix, mResources.getString(action.getId()));
+            }
+        }
     }
 
     public boolean onContextItemSelected(MenuItem menuItem) {
@@ -94,7 +91,7 @@ public class GeocacheListController {
 
     public void onListItemClick(ListView l, View v, int position, long id) {
         if (position > 0) {
-            mCacheActions[MENU_VIEW].act(getGeocacheAt(position - 1));
+            mSelectAction.act(getGeocacheAt(position - 1));
         } else {
             mCacheListRefresh.forceRefresh();
         }

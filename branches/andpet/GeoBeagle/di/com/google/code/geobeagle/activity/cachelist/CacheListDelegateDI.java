@@ -242,7 +242,7 @@ public class CacheListDelegateDI {
                 cacheActionDelete, cacheActionView, cacheActionEdit
         };
         final GeocacheListController geocacheListController = 
-            new GeocacheListController(cacheListRefresh, contextActions, cachesProviderToggler,
+            new GeocacheListController(cacheListRefresh, cacheActionView, contextActions, cachesProviderToggler,
                 menuActionSyncGpx, menuActions, geocacheVectors);
         
         final ActivitySaver activitySaver = ActivityDI.createActivitySaver(listActivity);

@@ -22,6 +22,7 @@ import com.google.code.geobeagle.database.CachesProviderArea;
 
 import android.util.Log;
 
+/** Decides what sort of cache list refreshing to do and carries it out. */
 public class CacheListRefresh implements Refresher {
 
     private int getMinActionExceedingTolerance(IGpsLocation here, float azimuth, long now) {
