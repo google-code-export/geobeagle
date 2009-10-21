@@ -242,9 +242,9 @@ public class CacheListDelegateDI {
                 cacheActionDelete, cacheActionView, cacheActionEdit
         };
         final GeocacheListController geocacheListController = 
-            new GeocacheListController(cacheListRefresh, cacheActionView, contextActions, cachesProviderToggler,
-                menuActionSyncGpx, menuActions, geocacheVectors);
-        
+            new GeocacheListController(cacheListRefresh, contextActions, cachesProviderToggler,
+                    menuActionSyncGpx, menuActions, geocacheVectors);
+
         final ActivitySaver activitySaver = ActivityDI.createActivitySaver(listActivity);
         final ImportIntentManager importIntentManager = new ImportIntentManager(listActivity);
 
