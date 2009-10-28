@@ -14,36 +14,17 @@
 
 package com.google.code.geobeagle;
 
-import com.google.code.geobeagle.LocationControlBuffered.GpsDisabledLocation;
-import com.google.code.geobeagle.LocationControlBuffered.GpsEnabledLocation;
-import com.google.code.geobeagle.LocationControlBuffered.IGpsLocation;
-import com.google.code.geobeagle.activity.cachelist.model.GeocacheVector.LocationComparator;
-import com.google.code.geobeagle.activity.cachelist.presenter.DistanceSortStrategy;
-import com.google.code.geobeagle.activity.cachelist.presenter.NullSortStrategy;
-import com.google.code.geobeagle.location.LocationControl;
-import com.google.code.geobeagle.location.LocationControl.LocationChooser;
-
-import android.location.Location;
+import android.app.Activity;
+import android.content.Context;
+import android.hardware.SensorManager;
 import android.location.LocationManager;
 
 public class LocationControlDi {
-    public static LocationControlBuffered create(LocationManager locationManager) {
-        final LocationChooser locationChooser = new LocationChooser();
-        final LocationControl locationControl = new LocationControl(locationManager,
-                locationChooser);
-        final NullSortStrategy nullSortStrategy = new NullSortStrategy();
-        final LocationComparator locationComparator = new LocationComparator();
-        final DistanceSortStrategy distanceSortStrategy = new DistanceSortStrategy(
-                locationComparator);
-        final GpsDisabledLocation gpsDisabledLocation = new GpsDisabledLocation();
-        IGpsLocation lastGpsLocation;
-        final Location lastKnownLocation = locationManager.getLastKnownLocation("gps");
-        if (lastKnownLocation == null)
-            lastGpsLocation = gpsDisabledLocation;
-        else
-            lastGpsLocation = new GpsEnabledLocation((float)lastKnownLocation.getLatitude(),
-                    (float)lastKnownLocation.getLongitude());
-        return new LocationControlBuffered(locationControl, distanceSortStrategy, nullSortStrategy,
-                gpsDisabledLocation, lastGpsLocation, lastKnownLocation);
+    public static LocationControlBuffered create(Activity activity) {
+        final LocationManager locationManager = (LocationManager)activity
+        .getSystemService(Context.LOCATION_SERVICE);
+        final SensorManager sensorManager = (SensorManager)activity
+        .getSystemService(Context.SENSOR_SERVICE);
+        return new LocationControlBuffered(locationManager, sensorManager);
     }
 }

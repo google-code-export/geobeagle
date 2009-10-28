@@ -14,20 +14,20 @@
 
 package com.google.code.geobeagle.gpsstatuswidget;
 
+import com.google.code.geobeagle.LocationControlBuffered;
 import com.google.code.geobeagle.R;
+import com.google.code.geobeagle.Refresher;
 import com.google.code.geobeagle.activity.cachelist.presenter.HasDistanceFormatter;
 import com.google.code.geobeagle.formatting.DistanceFormatter;
-import com.google.code.geobeagle.location.CombinedLocationManager;
 
 import android.content.Context;
 import android.location.Location;
-import android.location.LocationListener;
 import android.location.LocationProvider;
 import android.os.Bundle;
 import android.widget.TextView;
 
-public class GpsStatusWidgetDelegate implements HasDistanceFormatter, LocationListener {
-    private final CombinedLocationManager mCombinedLocationManager;
+public class GpsStatusWidgetDelegate implements HasDistanceFormatter, Refresher {
+    private final LocationControlBuffered mLocationControlBuffered;
     private DistanceFormatter mDistanceFormatter;
     private final MeterFader mMeterFader;
     private final Meter mMeterWrapper;
@@ -36,10 +36,10 @@ public class GpsStatusWidgetDelegate implements HasDistanceFormatter, LocationLi
     private final TextView mStatus;
     private final TextLagUpdater mTextLagUpdater;
 
-    public GpsStatusWidgetDelegate(CombinedLocationManager combinedLocationManager,
+    public GpsStatusWidgetDelegate(LocationControlBuffered locationControlBuffered,
             DistanceFormatter distanceFormatter, Meter meter, MeterFader meterFader,
             TextView provider, Context context, TextView status, TextLagUpdater textLagUpdater) {
-        mCombinedLocationManager = combinedLocationManager;
+        mLocationControlBuffered = locationControlBuffered;
         mDistanceFormatter = distanceFormatter;
         mMeterFader = meterFader;
         mMeterWrapper = meter;
@@ -49,12 +49,13 @@ public class GpsStatusWidgetDelegate implements HasDistanceFormatter, LocationLi
         mTextLagUpdater = textLagUpdater;
     }
 
-    public void onLocationChanged(Location location) {
+    public void refresh() {
+        Location location = mLocationControlBuffered.getLocation();
         // Log.d("GeoBeagle", "GpsStatusWidget onLocationChanged " + location);
         if (location == null)
             return;
 
-        if (!mCombinedLocationManager.isProviderEnabled()) {
+        if (!mLocationControlBuffered.isProviderEnabled()) {
             mMeterWrapper.setDisabled();
             mTextLagUpdater.setDisabled();
             return;
@@ -63,14 +64,6 @@ public class GpsStatusWidgetDelegate implements HasDistanceFormatter, LocationLi
         mMeterWrapper.setAccuracy(location.getAccuracy(), mDistanceFormatter);
         mMeterFader.reset();
         mTextLagUpdater.reset(location.getTime());
-    }
-
-    public void onProviderDisabled(String provider) {
-        mStatus.setText(provider + " DISABLED");
-    }
-
-    public void onProviderEnabled(String provider) {
-        mStatus.setText(provider + " ENABLED");
     }
 
     public void onStatusChanged(String provider, int status, Bundle extras) {
@@ -95,5 +88,10 @@ public class GpsStatusWidgetDelegate implements HasDistanceFormatter, LocationLi
 
     public void setDistanceFormatter(DistanceFormatter distanceFormatter) {
         mDistanceFormatter = distanceFormatter;
+    }
+
+    @Override
+    public void forceRefresh() {
+        refresh();
     }
 }

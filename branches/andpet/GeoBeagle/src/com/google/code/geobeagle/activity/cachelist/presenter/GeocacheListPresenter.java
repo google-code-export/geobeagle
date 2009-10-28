@@ -14,91 +14,44 @@
 
 package com.google.code.geobeagle.activity.cachelist.presenter;
 
-import com.google.code.geobeagle.CompassListener;
-import com.google.code.geobeagle.LocationControlBuffered;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.cachelist.CacheListView;
-import com.google.code.geobeagle.activity.cachelist.CompassListenerFactory;
 import com.google.code.geobeagle.activity.cachelist.CacheListView.ScrollListener;
 import com.google.code.geobeagle.activity.cachelist.GeocacheListController.CacheListOnCreateContextMenuListener;
-import com.google.code.geobeagle.activity.cachelist.model.GeocacheVectors;
 import com.google.code.geobeagle.activity.cachelist.view.GeocacheSummaryRowInflater;
+import com.google.code.geobeagle.database.CachesProvider;
 import com.google.code.geobeagle.gpsstatuswidget.UpdateGpsWidgetRunnable;
-import com.google.code.geobeagle.location.CombinedLocationManager;
 
 import android.app.ListActivity;
-import android.hardware.SensorManager;
-import android.location.Location;
-import android.location.LocationListener;
-import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.View;
 import android.widget.ListView;
 
 public class GeocacheListPresenter {
-    public static class CacheListRefreshLocationListener implements LocationListener {
-        private final CacheListRefresh mCacheListRefresh;
-
-        public CacheListRefreshLocationListener(CacheListRefresh cacheListRefresh) {
-            mCacheListRefresh = cacheListRefresh;
-        }
-
-        public void onLocationChanged(Location location) {
-            // Log.d("GeoBeagle", "location changed");
-            mCacheListRefresh.refresh();
-        }
-
-        public void onProviderDisabled(String provider) {
-        }
-
-        public void onProviderEnabled(String provider) {
-        }
-
-        public void onStatusChanged(String provider, int status, Bundle extras) {
-        }
-    }
-
-    static final int UPDATE_DELAY = 1000;
-
-    private final LocationListener mCombinedLocationListener;
-    private final CombinedLocationManager mCombinedLocationManager;
-    // private final SensorEventListener mCompassListener;
-    // private final SensorListener mCompassListener;
-    private final CompassListenerFactory mCompassListenerFactory;
     private final DistanceFormatterManager mDistanceFormatterManager;
-    private final GeocacheListAdapter mGeocacheListAdapter;
+    private final CacheList mGeocacheListAdapter;
     private final GeocacheSummaryRowInflater mGeocacheSummaryRowInflater;
-    private final GeocacheVectors mGeocacheVectors;
     private final View mGpsStatusWidget;
     private final ListActivity mListActivity;
-    private final LocationControlBuffered mLocationControlBuffered;
-    private final SensorManagerWrapper mSensorManagerWrapper;
     private final UpdateGpsWidgetRunnable mUpdateGpsWidgetRunnable;
     private final CacheListView.ScrollListener mScrollListener;
-
-    public GeocacheListPresenter(LocationListener combinedLocationListener,
-            CombinedLocationManager combinedLocationManager,
-            CompassListenerFactory compassListenerFactory,
+    private final CachesProvider mCachesProvider;
+    
+    public GeocacheListPresenter(
             DistanceFormatterManager distanceFormatterManager,
-            GeocacheListAdapter geocacheListAdapter,
-            GeocacheSummaryRowInflater geocacheSummaryRowInflater, GeocacheVectors geocacheVectors,
+            CacheList geocacheListAdapter,
+            GeocacheSummaryRowInflater geocacheSummaryRowInflater,
             View gpsStatusWidget, ListActivity listActivity,
-            LocationControlBuffered locationControlBuffered,
-            SensorManagerWrapper sensorManagerWrapper,
-            UpdateGpsWidgetRunnable updateGpsWidgetRunnable, ScrollListener scrollListener) {
-        mCombinedLocationListener = combinedLocationListener;
-        mCombinedLocationManager = combinedLocationManager;
-        mCompassListenerFactory = compassListenerFactory;
+            UpdateGpsWidgetRunnable updateGpsWidgetRunnable, ScrollListener scrollListener,
+            CachesProvider cachesProvider) {
         mDistanceFormatterManager = distanceFormatterManager;
         mGeocacheListAdapter = geocacheListAdapter;
         mGeocacheSummaryRowInflater = geocacheSummaryRowInflater;
-        mGeocacheVectors = geocacheVectors;
         mGpsStatusWidget = gpsStatusWidget;
         mListActivity = listActivity;
-        mLocationControlBuffered = locationControlBuffered;
         mUpdateGpsWidgetRunnable = updateGpsWidgetRunnable;
-        mSensorManagerWrapper = sensorManagerWrapper;
         mScrollListener = scrollListener;
+        mCachesProvider = cachesProvider;
     }
 
     public void onCreate() {
@@ -107,34 +60,14 @@ public class GeocacheListPresenter {
         listView.addHeaderView(mGpsStatusWidget);
         mListActivity.setListAdapter(mGeocacheListAdapter);
         listView.setOnCreateContextMenuListener(new CacheListOnCreateContextMenuListener(
-                mGeocacheVectors));
+                mCachesProvider));
         listView.setOnScrollListener(mScrollListener);
         mUpdateGpsWidgetRunnable.run();
-
-        // final List<Sensor> sensorList =
-        // mSensorManager.getSensorList(Sensor.TYPE_ORIENTATION);
-        // mCompassSensor = sensorList.get(0);
     }
 
-    public void onPause() {
-        mCombinedLocationManager.removeUpdates();
-        mSensorManagerWrapper.unregisterListener();
-    }
-
-    public void onResume(CacheListRefresh cacheListRefresh) {
-        final CacheListRefreshLocationListener cacheListRefreshLocationListener = new CacheListRefreshLocationListener(
-                cacheListRefresh);
-        final CompassListener mCompassListener = mCompassListenerFactory.create(cacheListRefresh);
-        mCombinedLocationManager.requestLocationUpdates(UPDATE_DELAY, 0, mLocationControlBuffered);
-        mCombinedLocationManager.requestLocationUpdates(UPDATE_DELAY, 0, mCombinedLocationListener);
-        mCombinedLocationManager.requestLocationUpdates(UPDATE_DELAY, 0,
-                cacheListRefreshLocationListener);
+    public void onResume() {
         mDistanceFormatterManager.setFormatter();
-        // mSensorManager.registerListener(mCompassListener, mCompassSensor,
-        // SensorManager.SENSOR_DELAY_UI);
 
-        mSensorManagerWrapper.registerListener(mCompassListener, SensorManager.SENSOR_ORIENTATION,
-                SensorManager.SENSOR_DELAY_UI);
         final boolean absoluteBearing = PreferenceManager
                 .getDefaultSharedPreferences(mListActivity).getBoolean("absolute-bearing", false);
         mGeocacheSummaryRowInflater.setBearingFormatter(absoluteBearing);

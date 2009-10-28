@@ -15,10 +15,10 @@
 package com.google.code.geobeagle.xmlimport;
 
 import com.google.code.geobeagle.ErrorDisplayer;
+import com.google.code.geobeagle.LocationControlBuffered;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.cachelist.actions.Abortable;
-import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
-import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheListPresenter;
+import com.google.code.geobeagle.activity.cachelist.presenter.CacheList;
 import com.google.code.geobeagle.xmlimport.GpxImporterDI.ImportThreadWrapper;
 import com.google.code.geobeagle.xmlimport.GpxImporterDI.MessageHandler;
 import com.google.code.geobeagle.xmlimport.GpxImporterDI.ToastFactory;
@@ -35,9 +35,9 @@ public class GpxImporter implements Abortable {
     private final ListActivity mListActivity;
     private final MessageHandler mMessageHandler;
     private final ToastFactory mToastFactory;
-    private final GeocacheListPresenter mGeocacheListPresenter;
+    LocationControlBuffered mLocationControlBuffered;
 
-    GpxImporter(GeocacheListPresenter geocacheListPresenter, GpxLoader gpxLoader,
+    GpxImporter(LocationControlBuffered locationControlBuffered, GpxLoader gpxLoader,
             ListActivity listActivity, ImportThreadWrapper importThreadWrapper,
             MessageHandler messageHandler, ToastFactory toastFactory, EventHandlers eventHandlers,
             ErrorDisplayer errorDisplayer) {
@@ -48,7 +48,7 @@ public class GpxImporter implements Abortable {
         mMessageHandler = messageHandler;
         mErrorDisplayer = errorDisplayer;
         mToastFactory = toastFactory;
-        mGeocacheListPresenter = geocacheListPresenter;
+        mLocationControlBuffered = locationControlBuffered;
     }
 
     public void abort() {
@@ -58,12 +58,12 @@ public class GpxImporter implements Abortable {
             mImportThreadWrapper.join();
             mToastFactory.showToast(mListActivity, R.string.import_canceled, Toast.LENGTH_SHORT);
         }
+        //TODO: Resume list updates?
     }
 
-    public void importGpxs(CacheListRefresh cacheListRefresh) {
-        mGeocacheListPresenter.onPause();
-
-        mImportThreadWrapper.open(cacheListRefresh, mGpxLoader, mEventHandlers, mErrorDisplayer);
+    public void importGpxs(CacheList cacheList) {
+        mLocationControlBuffered.onPause();
+        mImportThreadWrapper.open(cacheList, mGpxLoader, mEventHandlers, mErrorDisplayer);
         mImportThreadWrapper.start();
     }
 }

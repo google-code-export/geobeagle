@@ -14,8 +14,8 @@
 
 package com.google.code.geobeagle.gpsstatuswidget;
 
-import com.google.code.geobeagle.Time;
-import com.google.code.geobeagle.location.CombinedLocationManager;
+import com.google.code.geobeagle.Clock;
+import com.google.code.geobeagle.LocationControlBuffered;
 
 import android.location.Location;
 import android.widget.TextView;
@@ -77,18 +77,18 @@ class TextLagUpdater {
     }
 
     static class LastLocationUnknown implements LastLocation {
-        private final CombinedLocationManager mCombinedLocationManager;
+        private final LocationControlBuffered mLocationControlBuffered;
         private final LastKnownLocationUnavailable mLastKnownLocationUnavailable;
 
-        public LastLocationUnknown(CombinedLocationManager combinedLocationManager,
+        public LastLocationUnknown(LocationControlBuffered locationControlBuffered,
                 LastKnownLocationUnavailable lastKnownLocationUnavailable) {
-            mCombinedLocationManager = combinedLocationManager;
+            mLocationControlBuffered = locationControlBuffered;
             mLastKnownLocationUnavailable = lastKnownLocationUnavailable;
         }
 
         @Override
         public Lag getLag() {
-            return getLastLocation(mCombinedLocationManager.getLastKnownLocation()).getLag();
+            return getLastLocation(mLocationControlBuffered.getLastKnownLocation()).getLag();
         }
 
         private LastLocation getLastLocation(Location lastKnownLocation) {
@@ -113,9 +113,9 @@ class TextLagUpdater {
 
     private LastLocation mLastLocation;
     private final TextView mTextLag;
-    private final Time mTime;
+    private final Clock mTime;
 
-    TextLagUpdater(LastLocationUnknown lastLocationUnknown, TextView textLag, Time time) {
+    TextLagUpdater(LastLocationUnknown lastLocationUnknown, TextView textLag, Clock time) {
         mLastLocation = lastLocationUnknown;
         mTextLag = textLag;
         mTime = time;

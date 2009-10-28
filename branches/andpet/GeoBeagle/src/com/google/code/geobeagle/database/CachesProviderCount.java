@@ -10,8 +10,8 @@ public class CachesProviderCount implements ICachesProviderCenter {
     private static final double MAX_RADIUS = 180;
     /** Maximum number of times a search is allowed to call the underlying 
      * CachesProvider before yielding a best-effort result */
-    public static final int MAX_ITERATIONS = 7;
-    private static final float DISTANCE_MULTIPLIER = 1.414f;
+    public static final int MAX_ITERATIONS = 10;
+    private static final float DISTANCE_MULTIPLIER = 1.8f;  //1.414f;
     
     private CachesProviderRadius mCachesProviderRadius;
     /** The least acceptable number of caches */

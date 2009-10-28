@@ -14,7 +14,7 @@
 
 package com.google.code.geobeagle.gpsstatuswidget;
 
-import com.google.code.geobeagle.Time;
+import com.google.code.geobeagle.Clock;
 
 import android.view.View;
 
@@ -22,9 +22,9 @@ class MeterFader {
     private long mLastUpdateTime;
     private final MeterBars mMeterView;
     private final View mParent;
-    private final Time mTime;
+    private final Clock mTime;
 
-    MeterFader(View parent, MeterBars meterBars, Time time) {
+    MeterFader(View parent, MeterBars meterBars, Clock time) {
         mLastUpdateTime = -1;
         mMeterView = meterBars;
         mParent = parent;

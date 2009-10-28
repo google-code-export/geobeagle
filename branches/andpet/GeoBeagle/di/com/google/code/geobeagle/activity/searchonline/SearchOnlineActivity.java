@@ -14,13 +14,10 @@
 
 package com.google.code.geobeagle.activity.searchonline;
 
-import com.google.code.geobeagle.CompassListener;
 import com.google.code.geobeagle.GeocacheFactory;
 import com.google.code.geobeagle.LocationControlBuffered;
 import com.google.code.geobeagle.LocationControlDi;
-import com.google.code.geobeagle.NullRefresher;
 import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.Refresher;
 import com.google.code.geobeagle.activity.ActivityDI;
 import com.google.code.geobeagle.activity.ActivityRestorer;
 import com.google.code.geobeagle.activity.ActivitySaver;
@@ -33,23 +30,16 @@ import com.google.code.geobeagle.activity.searchonline.JsInterface.JsInterfaceHe
 import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidgetDelegate;
 import com.google.code.geobeagle.gpsstatuswidget.GpsWidgetAndUpdater;
 import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidget.InflatedGpsStatusWidget;
-import com.google.code.geobeagle.location.CombinedLocationListener;
-import com.google.code.geobeagle.location.CombinedLocationManager;
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.hardware.SensorManager;
-import android.location.LocationListener;
-import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.webkit.WebView;
-
-import java.util.ArrayList;
 
 public class SearchOnlineActivity extends Activity {
 
@@ -61,19 +51,16 @@ public class SearchOnlineActivity extends Activity {
         Log.d("GeoBeagle", "SearchOnlineActivity onCreate");
 
         setContentView(R.layout.search);
-        final LocationManager locationManager = (LocationManager)this
-                .getSystemService(Context.LOCATION_SERVICE);
-        final LocationControlBuffered mLocationControlBuffered = LocationControlDi
-                .create(locationManager);
-        final ArrayList<LocationListener> locationListeners = new ArrayList<LocationListener>(3);
-        final CombinedLocationManager mCombinedLocationManager = new CombinedLocationManager(
-                locationManager, locationListeners);
+        
+        final LocationControlBuffered mLocationControlBuffered = 
+            LocationControlDi.create(this);
+
         final InflatedGpsStatusWidget mGpsStatusWidget = (InflatedGpsStatusWidget)this
                 .findViewById(R.id.gps_widget_view);
         final DistanceFormatterManager distanceFormatterManager = DistanceFormatterManagerDi
                 .create(this);
         final GpsWidgetAndUpdater gpsWidgetAndUpdater = new GpsWidgetAndUpdater(this,
-                mGpsStatusWidget, mLocationControlBuffered, mCombinedLocationManager,
+                mGpsStatusWidget, mLocationControlBuffered,
                 distanceFormatterManager.getFormatter());
         final GpsStatusWidgetDelegate gpsStatusWidgetDelegate = gpsWidgetAndUpdater
                 .getGpsStatusWidgetDelegate();
@@ -81,12 +68,6 @@ public class SearchOnlineActivity extends Activity {
         mGpsStatusWidget.setDelegate(gpsStatusWidgetDelegate);
         mGpsStatusWidget.setBackgroundColor(Color.BLACK);
 
-        final Refresher refresher = new NullRefresher();
-        final CompassListener mCompassListener = new CompassListener(refresher,
-                mLocationControlBuffered, 720);
-        final SensorManager mSensorManager = (SensorManager)getSystemService(Context.SENSOR_SERVICE);
-        final CombinedLocationListener mCombinedLocationListener = new CombinedLocationListener(
-                mLocationControlBuffered, gpsStatusWidgetDelegate);
         distanceFormatterManager.addHasDistanceFormatter(gpsStatusWidgetDelegate);
         final ActivitySaver activitySaver = ActivityDI.createActivitySaver(this);
 
@@ -99,8 +80,8 @@ public class SearchOnlineActivity extends Activity {
                         "GeoBeagle", Context.MODE_PRIVATE));
 
         mSearchOnlineActivityDelegate = new SearchOnlineActivityDelegate(
-                ((WebView)findViewById(R.id.help_contents)), mSensorManager, mCompassListener,
-                mCombinedLocationManager, mCombinedLocationListener, mLocationControlBuffered,
+                ((WebView)findViewById(R.id.help_contents)),
+                mLocationControlBuffered,
                 distanceFormatterManager, activitySaver);
 
         final JsInterfaceHelper jsInterfaceHelper = new JsInterfaceHelper(this);

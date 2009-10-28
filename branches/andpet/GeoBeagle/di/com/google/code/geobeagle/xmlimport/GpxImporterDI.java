@@ -15,8 +15,8 @@
 package com.google.code.geobeagle.xmlimport;
 
 import com.google.code.geobeagle.ErrorDisplayer;
-import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
-import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheListPresenter;
+import com.google.code.geobeagle.LocationControlBuffered;
+import com.google.code.geobeagle.activity.cachelist.presenter.CacheList;
 import com.google.code.geobeagle.database.CacheWriter;
 import com.google.code.geobeagle.xmlimport.CachePersisterFacadeDI.CachePersisterFacadeFactory;
 import com.google.code.geobeagle.xmlimport.EventHelperDI.EventHelperFactory;
@@ -103,9 +103,9 @@ public class GpxImporterDI {
                 }
         }
 
-        public void open(CacheListRefresh cacheListRefresh, GpxLoader gpxLoader,
+        public void open(CacheList cacheList, GpxLoader gpxLoader,
                 EventHandlers eventHandlers, ErrorDisplayer mErrorDisplayer) {
-            mMessageHandler.start(cacheListRefresh);
+            mMessageHandler.start(cacheList);
             mImportThread = ImportThread.create(mMessageHandler, gpxLoader, eventHandlers,
                     mXmlPullParserWrapper, mErrorDisplayer, mAborter);
         }
@@ -130,7 +130,7 @@ public class GpxImporterDI {
 
         private int mCacheCount;
         private boolean mLoadAborted;
-        private CacheListRefresh mMenuActionRefresh;
+        private CacheList mCacheList;
         private final ProgressDialogWrapper mProgressDialogWrapper;
         private String mSource;
         private String mStatus;
@@ -155,7 +155,7 @@ public class GpxImporterDI {
                 case MessageHandler.MSG_DONE:
                     if (!mLoadAborted) {
                         mProgressDialogWrapper.dismiss();
-                        mMenuActionRefresh.forceRefresh();
+                        mCacheList.forceRefresh();
                     }
                     break;
                 default:
@@ -167,10 +167,10 @@ public class GpxImporterDI {
             sendEmptyMessage(MessageHandler.MSG_DONE);
         }
 
-        public void start(CacheListRefresh cacheListRefresh) {
+        public void start(CacheList cacheList) {
             mCacheCount = 0;
             mLoadAborted = false;
-            mMenuActionRefresh = cacheListRefresh;
+            mCacheList = cacheList;
             // TODO: move text into resource.
             mProgressDialogWrapper.show("Syncing caches", "Please wait...");
         }
@@ -238,7 +238,7 @@ public class GpxImporterDI {
 
     public static GpxImporter create(ListActivity listActivity,
             XmlPullParserWrapper xmlPullParserWrapper, ErrorDisplayer errorDisplayer,
-            GeocacheListPresenter geocacheListPresenter, Aborter aborter,
+            LocationControlBuffered locationControlBuffered, Aborter aborter,
             MessageHandler messageHandler, CachePersisterFacadeFactory cachePersisterFacadeFactory,
             CacheWriter cacheWriter) {
         final PowerManager powerManager = (PowerManager)listActivity
@@ -261,7 +261,7 @@ public class GpxImporterDI {
         eventHandlers.add(".gpx", eventHandlerGpx);
         eventHandlers.add(".loc", eventHandlerLoc);
 
-        return new GpxImporter(geocacheListPresenter, gpxLoader, listActivity, importThreadWrapper,
+        return new GpxImporter(locationControlBuffered, gpxLoader, listActivity, importThreadWrapper,
                 messageHandler, toastFactory, eventHandlers, errorDisplayer);
     }
 

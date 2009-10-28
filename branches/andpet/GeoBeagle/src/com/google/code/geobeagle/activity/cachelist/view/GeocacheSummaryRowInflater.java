@@ -14,13 +14,13 @@
 
 package com.google.code.geobeagle.activity.cachelist.view;
 
+import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.activity.cachelist.model.GeocacheVector;
-import com.google.code.geobeagle.activity.cachelist.model.GeocacheVectors;
 import com.google.code.geobeagle.activity.cachelist.presenter.AbsoluteBearingFormatter;
 import com.google.code.geobeagle.activity.cachelist.presenter.BearingFormatter;
 import com.google.code.geobeagle.activity.cachelist.presenter.HasDistanceFormatter;
 import com.google.code.geobeagle.activity.cachelist.presenter.RelativeBearingFormatter;
+import com.google.code.geobeagle.database.DistanceAndBearing;
 import com.google.code.geobeagle.formatting.DistanceFormatter;
 
 import android.content.res.Resources;
@@ -48,30 +48,48 @@ public class GeocacheSummaryRowInflater implements HasDistanceFormatter {
             mResources = resources;
         }
 
-        void set(GeocacheVector geocacheVector, DistanceFormatter distanceFormatter,
+        private CharSequence getFormattedDistance(DistanceAndBearing geocacheVector, 
+                float azimuth, 
+                DistanceFormatter distanceFormatter,
+                BearingFormatter relativeBearingFormatter) {
+            // Use the slower, more accurate distance for display.
+            double distance = geocacheVector.getDistance();
+            if (distance == -1) {
+                return "";
+            }
+
+            final CharSequence formattedDistance = distanceFormatter
+                    .formatDistance((float)distance);
+            float bearing = (float)geocacheVector.getBearing();
+            final String formattedBearing = relativeBearingFormatter.formatBearing(bearing,
+                    azimuth);
+            return formattedDistance + " " + formattedBearing;
+        }
+
+        void set(DistanceAndBearing geocacheVector, float azimuth, 
+                DistanceFormatter distanceFormatter,
                 BearingFormatter relativeBearingFormatter) {
             //CacheType type = geocacheVector.getGeocache().getCacheType();
             //mIcon.setImageResource(type.icon());
-            mIcon.setImageDrawable(geocacheVector.getGeocache().getIcon(mResources));
-            mId.setText(geocacheVector.getId());
-            mAttributes.setText(geocacheVector.getFormattedAttributes());
-            mCacheName.setText(geocacheVector.getName());
-            mDistance.setText(geocacheVector.getFormattedDistance(distanceFormatter,
+            Geocache geocache = geocacheVector.getGeocache();
+            mIcon.setImageDrawable(geocache.getIcon(mResources));
+            mId.setText(geocache.getId());
+            mAttributes.setText(geocache.getFormattedAttributes());
+            mCacheName.setText(geocache.getName());
+            mDistance.setText(getFormattedDistance(geocacheVector, azimuth, distanceFormatter,
                     relativeBearingFormatter));
         }
     }
 
     private BearingFormatter mBearingFormatter;
     private DistanceFormatter mDistanceFormatter;
-    private final GeocacheVectors mGeocacheVectors;
     private final LayoutInflater mLayoutInflater;
     private final Resources mResources;
 
     public GeocacheSummaryRowInflater(DistanceFormatter distanceFormatter,
-            GeocacheVectors geocacheVectors, LayoutInflater layoutInflater,
+            LayoutInflater layoutInflater,
             BearingFormatter relativeBearingFormatter, Resources resources) {
         mLayoutInflater = layoutInflater;
-        mGeocacheVectors = geocacheVectors;
         mDistanceFormatter = distanceFormatter;
         mBearingFormatter = relativeBearingFormatter;
         mResources = resources;
@@ -101,8 +119,8 @@ public class GeocacheSummaryRowInflater implements HasDistanceFormatter {
                 : new RelativeBearingFormatter();
     }
 
-    public void setData(View view, int position) {
-        ((RowViews)view.getTag()).set(mGeocacheVectors.get(position), mDistanceFormatter,
+    public void setData(View view, DistanceAndBearing geocacheVector, float azimuth) {
+        ((RowViews)view.getTag()).set(geocacheVector, azimuth, mDistanceFormatter,
                 mBearingFormatter);
     }
 

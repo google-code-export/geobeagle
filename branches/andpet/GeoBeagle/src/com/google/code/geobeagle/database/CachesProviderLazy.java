@@ -1,7 +1,7 @@
 package com.google.code.geobeagle.database;
 
 import com.google.code.geobeagle.Geocache;
-import com.google.code.geobeagle.Time;
+import com.google.code.geobeagle.Clock;
 import com.google.code.geobeagle.activity.main.GeoUtils;
 
 import java.util.ArrayList;
@@ -22,15 +22,16 @@ public class CachesProviderLazy implements ICachesProviderCenter {
     private long mLastUpdateTime;
     private boolean mHasChanged;
     private double mMinDistanceKm;
-    private Time mTime;
+    private Clock mClock;
     private final long mMinTimeDiff;
     
     public CachesProviderLazy(ICachesProviderCenter provider, double minDistanceKm, 
-            long minTimeDiff, Time time) {
+            long minTimeDiff, Clock clock) {
         mProvider = provider;
         mMinDistanceKm = minDistanceKm;
         mMinTimeDiff = minTimeDiff;
         mBufferedList = null;
+        mClock = clock;
     }
     
     @Override
@@ -40,7 +41,7 @@ public class CachesProviderLazy implements ICachesProviderCenter {
         
         if (mBufferedList == null)
             return;
-        if (mTime.getCurrentTime() - mLastUpdateTime < mMinTimeDiff)
+        if (mClock.getCurrentTime() - mLastUpdateTime < mMinTimeDiff)
             return;
         
         if (GeoUtils.distanceKm(mBufferedLat, mBufferedLon, latitude, longitude) > mMinDistanceKm) {
@@ -54,7 +55,7 @@ public class CachesProviderLazy implements ICachesProviderCenter {
         if (mBufferedList == null) {
             mBufferedList = mProvider.getCaches();
             mProvider.resetChanged();
-            mLastUpdateTime = mTime.getCurrentTime();
+            mLastUpdateTime = mClock.getCurrentTime();
         }
         return mBufferedList;
     }
@@ -70,7 +71,7 @@ public class CachesProviderLazy implements ICachesProviderCenter {
             return true;
 
         //Update mHasChanged
-        if (mTime.getCurrentTime() - mLastUpdateTime >= mMinTimeDiff) {
+        if (mClock.getCurrentTime() - mLastUpdateTime >= mMinTimeDiff) {
             if (GeoUtils.distanceKm(mBufferedLat, mBufferedLon, mLastLat, mLastLon) > mMinDistanceKm)
                 mHasChanged = true;
             else

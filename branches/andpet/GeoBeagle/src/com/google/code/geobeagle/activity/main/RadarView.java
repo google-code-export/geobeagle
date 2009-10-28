@@ -42,21 +42,13 @@ import android.graphics.Path;
 import android.graphics.Paint.Align;
 import android.graphics.Paint.Style;
 import android.graphics.drawable.BitmapDrawable;
-import android.hardware.SensorListener;
 import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
-import android.location.LocationProvider;
-import android.os.Bundle;
-import android.os.SystemClock;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.TextView;
 
-@SuppressWarnings("deprecation")
-public class RadarView extends View implements SensorListener, LocationListener {
+public class RadarView extends View {
 
-    private static final long RETAIN_GPS_MILLIS = 10000L;
     private Paint mGridPaint;
     private Paint mErasePaint;
     private float mOrientation;
@@ -154,18 +146,6 @@ public class RadarView extends View implements SensorListener, LocationListener 
     // True if the display should use metric units; false if the display should
     // use standard units
     private boolean mUseMetric;
-
-    // Time in millis for the last time GPS reported a location
-    private long mLastGpsFixTime = 0L;
-
-    // The last location reported by the network provider. Use this if we can't
-    // get a location from GPS
-    private Location mNetworkLocation;
-
-    private boolean mGpsAvailable; // True if GPS is reporting a location
-
-    // True if the network provider is reporting a location
-    private boolean mNetworkAvailable;
 
     private TextView mBearingView;
     private float mMyLocationAccuracy;
@@ -320,113 +300,21 @@ public class RadarView extends View implements SensorListener, LocationListener 
         gridPaint.setStyle(Paint.Style.STROKE);
     }
 
-    public void onAccuracyChanged(int sensor, int accuracy) {
-    }
+    public void setLocation(Location location, float azimuth) {
+        // Log.d("GeoBeagle", "radarview::onLocationChanged");
+        mHaveLocation = true;
+        mMyLocationLat = location.getLatitude();
+        mMyLocationLon = location.getLongitude();
+        mMyLocationAccuracy = location.getAccuracy();
+        mOrientation = azimuth;
 
-    /**
-     * Called when we get a new value from the compass
-     * 
-     * @see android.hardware.SensorListener#onSensorChanged(int, float[])
-     */
-    public void onSensorChanged(int sensor, float[] values) {
-        mOrientation = values[0];
+        mDistance = GeoUtils.distanceKm(mMyLocationLat, mMyLocationLon, mTargetLat, mTargetLon);
+        mBearing = GeoUtils.bearing(mMyLocationLat, mMyLocationLon, mTargetLat, mTargetLon);
+
+        updateDistance(mDistance);
         double bearingToTarget = mBearing - mOrientation;
         updateBearing(bearingToTarget);
         postInvalidate();
-    }
-
-    /**
-     * Called when a location provider has a new location to report
-     * 
-     * @see android.location.LocationListener#onLocationChanged(android.location.Location)
-     */
-    public void onLocationChanged(Location location) {
-        // Log.d("GeoBeagle", "radarview::onLocationChanged");
-        if (!mHaveLocation) {
-            mHaveLocation = true;
-        }
-
-        final long now = SystemClock.uptimeMillis();
-        boolean useLocation = false;
-        final String provider = location.getProvider();
-        if (LocationManager.GPS_PROVIDER.equals(provider)) {
-            // Use GPS if available
-            mLastGpsFixTime = SystemClock.uptimeMillis();
-            useLocation = true;
-        } else if (LocationManager.NETWORK_PROVIDER.equals(provider)) {
-            // Use network provider if GPS is getting stale
-            useLocation = now - mLastGpsFixTime > RETAIN_GPS_MILLIS;
-            if (mNetworkLocation == null) {
-                mNetworkLocation = new Location(location);
-            } else {
-                mNetworkLocation.set(location);
-            }
-
-            mLastGpsFixTime = 0L;
-        }
-        if (useLocation) {
-            mMyLocationLat = location.getLatitude();
-            mMyLocationLon = location.getLongitude();
-            mMyLocationAccuracy = location.getAccuracy();
-
-            mDistance = GeoUtils.distanceKm(mMyLocationLat, mMyLocationLon, mTargetLat, mTargetLon);
-            mBearing = GeoUtils.bearing(mMyLocationLat, mMyLocationLon, mTargetLat, mTargetLon);
-
-            updateDistance(mDistance);
-            double bearingToTarget = mBearing - mOrientation;
-            updateBearing(bearingToTarget);
-        }
-    }
-
-    public void onProviderDisabled(String provider) {
-    }
-
-    public void onProviderEnabled(String provider) {
-    }
-
-    /**
-     * Called when a location provider has changed its availability.
-     * 
-     * @see android.location.LocationListener#onStatusChanged(java.lang.String,
-     *      int, android.os.Bundle)
-     */
-    public void onStatusChanged(String provider, int status, Bundle extras) {
-        //Log.d("GeoBeagle", "onStatusChanged " + provider + ", " + status);
-        if (LocationManager.GPS_PROVIDER.equals(provider)) {
-            switch (status) {
-                case LocationProvider.AVAILABLE:
-                    mGpsAvailable = true;
-                    break;
-                case LocationProvider.OUT_OF_SERVICE:
-                case LocationProvider.TEMPORARILY_UNAVAILABLE:
-                    mGpsAvailable = false;
-
-                    if (mNetworkLocation != null && mNetworkAvailable) {
-                        // Fallback to network location
-                        mLastGpsFixTime = 0L;
-                        onLocationChanged(mNetworkLocation);
-                    } else {
-                        handleUnknownLocation();
-                    }
-
-                    break;
-            }
-
-        } else if (LocationManager.NETWORK_PROVIDER.equals(provider)) {
-            switch (status) {
-                case LocationProvider.AVAILABLE:
-                    mNetworkAvailable = true;
-                    break;
-                case LocationProvider.OUT_OF_SERVICE:
-                case LocationProvider.TEMPORARILY_UNAVAILABLE:
-                    mNetworkAvailable = false;
-
-                    if (!mGpsAvailable) {
-                        handleUnknownLocation();
-                    }
-                    break;
-            }
-        }
     }
 
     /**

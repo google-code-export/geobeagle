@@ -16,22 +16,22 @@ package com.google.code.geobeagle.activity.cachelist.actions;
 
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.actions.MenuActionBase;
-import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
+import com.google.code.geobeagle.activity.cachelist.presenter.CacheList;
 import com.google.code.geobeagle.database.CachesProviderToggler;
 
 public class MenuActionToggleFilter extends MenuActionBase {
     private final CachesProviderToggler mCachesProviderToggler;
-    private final CacheListRefresh mMenuActionRefresh;
+    private final CacheList mListRefresher;
 
     public MenuActionToggleFilter(CachesProviderToggler cachesProviderToggler,
-            CacheListRefresh cacheListRefresh) {
+            CacheList cacheListRefresh) {
         super(R.string.menu_toggle_filter);
         mCachesProviderToggler = cachesProviderToggler;
-        mMenuActionRefresh = cacheListRefresh;
+        mListRefresher = cacheListRefresh;
     }
 
     public void act() {
         mCachesProviderToggler.toggle();
-        mMenuActionRefresh.forceRefresh();
+        mListRefresher.forceRefresh();
     }
 }

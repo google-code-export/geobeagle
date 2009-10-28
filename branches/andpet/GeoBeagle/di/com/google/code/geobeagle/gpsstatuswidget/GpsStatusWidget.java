@@ -14,13 +14,13 @@
 
 package com.google.code.geobeagle.gpsstatuswidget;
 
+import com.google.code.geobeagle.LocationControlBuffered;
 import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.Time;
+import com.google.code.geobeagle.Clock;
 import com.google.code.geobeagle.formatting.DistanceFormatter;
 import com.google.code.geobeagle.gpsstatuswidget.TextLagUpdater.LagNull;
 import com.google.code.geobeagle.gpsstatuswidget.TextLagUpdater.LastKnownLocationUnavailable;
 import com.google.code.geobeagle.gpsstatuswidget.TextLagUpdater.LastLocationUnknown;
-import com.google.code.geobeagle.location.CombinedLocationManager;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -35,15 +35,15 @@ import android.widget.TextView;
  */
 public class GpsStatusWidget extends LinearLayout {
 
-    static GpsStatusWidgetDelegate createGpsStatusWidgetDelegate(View gpsStatusWidget, Time time,
-            CombinedLocationManager combinedLocationManager, Meter meter,
+    static GpsStatusWidgetDelegate createGpsStatusWidgetDelegate(View gpsStatusWidget, Clock time,
+            LocationControlBuffered locationControlBuffered, Meter meter,
             DistanceFormatter distanceFormatter, MeterBars meterBars,
             TextLagUpdater textLagUpdater, Context parent) {
         final TextView status = (TextView)gpsStatusWidget.findViewById(R.id.status);
         final TextView provider = (TextView)gpsStatusWidget.findViewById(R.id.provider);
         final MeterFader meterFader = new MeterFader(gpsStatusWidget, meterBars, time);
 
-        return new GpsStatusWidgetDelegate(combinedLocationManager, distanceFormatter, meter,
+        return new GpsStatusWidgetDelegate(locationControlBuffered, distanceFormatter, meter,
                 meterFader, provider, parent, status, textLagUpdater);
     }
 
@@ -87,13 +87,13 @@ public class GpsStatusWidget extends LinearLayout {
     }
 
     public static TextLagUpdater createTextLagUpdater(View gpsStatusWidget,
-            CombinedLocationManager combinedLocationManager, Time time) {
+            LocationControlBuffered locationControlBuffered, Clock time) {
         final TextView lag = (TextView)gpsStatusWidget.findViewById(R.id.lag);
         final LagNull lagNull = new LagNull();
         final LastKnownLocationUnavailable lastKnownLocationUnavailable = new LastKnownLocationUnavailable(
                 lagNull);
         final LastLocationUnknown lastLocationUnknown = new LastLocationUnknown(
-                combinedLocationManager, lastKnownLocationUnavailable);
+                locationControlBuffered, lastKnownLocationUnavailable);
         return new TextLagUpdater(lastLocationUnknown, lag, time);
     }
 }

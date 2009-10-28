@@ -14,106 +14,76 @@
 
 package com.google.code.geobeagle;
 
-import com.google.code.geobeagle.activity.cachelist.model.GeocacheVector;
-import com.google.code.geobeagle.activity.cachelist.presenter.DistanceSortStrategy;
-import com.google.code.geobeagle.activity.cachelist.presenter.NullSortStrategy;
-import com.google.code.geobeagle.activity.cachelist.presenter.SortStrategy;
-import com.google.code.geobeagle.location.LocationControl;
-
+import android.hardware.SensorListener;
+import android.hardware.SensorManager;
 import android.location.Location;
 import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 
-public class LocationControlBuffered implements LocationListener {
-    public static class GpsDisabledLocation implements IGpsLocation {
-        public float distanceTo(IGpsLocation dest) {
-            return Float.MAX_VALUE;
-        }
+import java.util.ArrayList;
 
-        public float distanceToGpsDisabledLocation(GpsDisabledLocation gpsLocation) {
-            return Float.MAX_VALUE;
-        }
-
-        public float distanceToGpsEnabledLocation(GpsEnabledLocation gpsEnabledLocation) {
-            return Float.MAX_VALUE;
-        }
-    }
-
-    public static class GpsEnabledLocation implements IGpsLocation {
-        private final float mLatitude;
-        private final float mLongitude;
-
-        public GpsEnabledLocation(float latitude, float longitude) {
-            mLatitude = latitude;
-            mLongitude = longitude;
-        }
-
-        public float distanceTo(IGpsLocation gpsLocation) {
-            return gpsLocation.distanceToGpsEnabledLocation(this);
-        }
-
-        public float distanceToGpsDisabledLocation(GpsDisabledLocation gpsLocation) {
-            return Float.MAX_VALUE;
-        }
-
-        public float distanceToGpsEnabledLocation(GpsEnabledLocation gpsEnabledLocation) {
-            final float calculateDistanceFast = GeocacheVector.calculateDistanceFast(mLatitude,
-                    mLongitude, gpsEnabledLocation.mLatitude, gpsEnabledLocation.mLongitude);
-            return calculateDistanceFast;
-        }
-    }
-
-    public static interface IGpsLocation {
-        public float distanceTo(IGpsLocation dest);
-
-        float distanceToGpsDisabledLocation(GpsDisabledLocation gpsLocation);
-
-        float distanceToGpsEnabledLocation(GpsEnabledLocation gpsEnabledLocation);
-    }
-
-    private final DistanceSortStrategy mDistanceSortStrategy;
-    private GpsDisabledLocation mGpsDisabledLocation;
-    private IGpsLocation mGpsLocation;
+//TODO: Rename class
+/** Responsible for providing an up-to-date location and compass direction */
+@SuppressWarnings("deprecation")
+public class LocationControlBuffered implements LocationListener, SensorListener {
     private Location mLocation;
-    private LocationControl mLocationControl;
-    private final NullSortStrategy mNullSortStrategy;
+    private final LocationManager mLocationManager;
     private float mAzimuth;
+    /** A refresh is sent whenever a sensor changes */
+    private final ArrayList<Refresher> mObservers = new ArrayList<Refresher>();
+    private final SensorManager mSensorManager;
 
-    public LocationControlBuffered(LocationControl locationControl,
-            DistanceSortStrategy distanceSortStrategy, NullSortStrategy nullSortStrategy,
-            GpsDisabledLocation gpsDisabledLocation, IGpsLocation lastGpsLocation,
-            Location lastLocation) {
-        mLocationControl = locationControl;
-        mDistanceSortStrategy = distanceSortStrategy;
-        mNullSortStrategy = nullSortStrategy;
-        mGpsDisabledLocation = gpsDisabledLocation;
-        mGpsLocation = lastGpsLocation;
-        mLocation = lastLocation;
-    }
-
-    public IGpsLocation getGpsLocation() {
-        return mGpsLocation;
+    public LocationControlBuffered(LocationManager locationManager,
+            SensorManager sensorManager) {
+        mLocationManager = locationManager;
+        mSensorManager = sensorManager;
     }
 
     public Location getLocation() {
+        if (mLocation == null)
+            mLocation = getLastKnownLocation();
         return mLocation;
     }
 
-    //TODO: Remove method getSortStrategy()
-    public SortStrategy getSortStrategy() {
-        if (mLocation == null)
-            return mNullSortStrategy;
-        return mDistanceSortStrategy;
+    public void addObserver(Refresher refresher) {
+        if (!mObservers.contains(refresher))
+            mObservers.add(refresher);
+    }
+
+    private void notifyObservers() {
+        for (Refresher refresher : mObservers) {
+            refresher.refresh();
+        }
+    }
+    
+    /**
+     * Choose the better of two locations: If one location is newer and more
+     * accurate, choose that. (This favors the gps). Otherwise, if one
+     * location is newer, less accurate, but farther away than the sum of
+     * the two accuracies, choose that. (This favors the network locator if
+     * you've driven a distance and haven't been able to get a gps fix yet.)
+     */
+    private static Location choose(Location location1, Location location2) {
+        if (location1 == null)
+            return location2;
+        if (location2 == null)
+            return location1;
+
+        if (location2.getTime() > location1.getTime()) {
+            if (location2.getAccuracy() <= location1.getAccuracy())
+                return location2;
+            else if (location1.distanceTo(location2) >= location1.getAccuracy()
+                    + location2.getAccuracy()) {
+                return location2;
+            }
+        }
+        return location1;
     }
 
     public void onLocationChanged(Location location) {
-        mLocation = mLocationControl.getLocation();
-        if (location == null) {
-            mGpsLocation = mGpsDisabledLocation;
-        } else {
-            mGpsLocation = new GpsEnabledLocation((float)location.getLatitude(), (float)location
-                    .getLongitude());
-        }
+        mLocation = choose(mLocation, location);
+        notifyObservers();
     }
 
     public void onProviderDisabled(String provider) {
@@ -125,10 +95,45 @@ public class LocationControlBuffered implements LocationListener {
     public void onStatusChanged(String provider, int status, Bundle extras) {
     }
 
-    public void setAzimuth(float azimuth) {
-        mAzimuth = azimuth;
+    public void onAccuracyChanged(int sensor, int accuracy) {
     }
 
+    public void onSensorChanged(int sensor, float[] values) {
+        final float currentAzimuth = values[0];
+        if (Math.abs(currentAzimuth - mAzimuth) > 5) {
+            // Log.d("GeoBeagle", "azimuth now " + sensor +", " +
+            // currentAzimuth);
+            mAzimuth = currentAzimuth;
+            notifyObservers();
+        }
+    }
+
+    public void onResume() {
+        mSensorManager.registerListener(this, SensorManager.SENSOR_ORIENTATION,
+                SensorManager.SENSOR_DELAY_UI);
+        mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, 
+                this);
+        mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 0,
+                this);
+    }
+    
+    public void onPause() {
+        mSensorManager.unregisterListener(this);        
+    }
+    
+    public boolean isProviderEnabled() {
+        return mLocationManager.isProviderEnabled("gps")
+                || mLocationManager.isProviderEnabled("network");
+    }
+
+    //TODO: Remove this method -- getLocation should be the same thing
+    public Location getLastKnownLocation() {
+        Location gpsLocation = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        if (gpsLocation != null)
+            return gpsLocation;
+        return mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+    }
+    
     public float getAzimuth() {
         return mAzimuth;
     }

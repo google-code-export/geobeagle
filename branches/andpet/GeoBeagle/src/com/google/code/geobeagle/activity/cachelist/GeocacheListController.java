@@ -19,8 +19,8 @@ import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.actions.CacheAction;
 import com.google.code.geobeagle.actions.MenuActions;
 import com.google.code.geobeagle.activity.cachelist.actions.MenuActionSyncGpx;
-import com.google.code.geobeagle.activity.cachelist.model.GeocacheVectors;
-import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
+import com.google.code.geobeagle.activity.cachelist.presenter.CacheList;
+import com.google.code.geobeagle.database.CachesProvider;
 import com.google.code.geobeagle.database.CachesProviderToggler;
 
 import android.view.ContextMenu;
@@ -36,16 +36,17 @@ public class GeocacheListController {
 
     //TODO: Remove class CacheListOnCreateContextMenuListener
     public static class CacheListOnCreateContextMenuListener implements OnCreateContextMenuListener {
-        private final GeocacheVectors mGeocacheVectors;
+        private final CachesProvider mCachesProvider;
 
-        public CacheListOnCreateContextMenuListener(GeocacheVectors geocacheVectors) {
-            mGeocacheVectors = geocacheVectors;
+        public CacheListOnCreateContextMenuListener(CachesProvider cachesProvider) {
+            mCachesProvider = cachesProvider;
         }
 
         public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
             AdapterContextMenuInfo acmi = (AdapterContextMenuInfo)menuInfo;
             if (acmi.position > 0) {
-                menu.setHeaderTitle(mGeocacheVectors.get(acmi.position - 1).getId());
+                Geocache geocache = mCachesProvider.getCaches().get(acmi.position - 1);
+                menu.setHeaderTitle(geocache.getId());
                 menu.add(0, MENU_VIEW, 0, "View");
                 menu.add(0, MENU_EDIT, 1, "Edit");
                 menu.add(0, MENU_DELETE, 2, "Delete");
@@ -57,23 +58,23 @@ public class GeocacheListController {
     static final int MENU_VIEW = 1;
     static final int MENU_EDIT = 2;
     public static final String SELECT_CACHE = "SELECT_CACHE";
-    private final CacheListRefresh mCacheListRefresh;
+    private final CacheList mCacheList;
     private final CacheAction mCacheActions[];
     private final CachesProviderToggler mCachesProviderToggler;
     private final MenuActions mMenuActions;
     private final MenuActionSyncGpx mMenuActionSyncGpx;
-    private final GeocacheVectors mGeocacheVectors;
+    private final CachesProvider mCachesProvider;
 
-    public GeocacheListController(CacheListRefresh cacheListRefresh,
+    public GeocacheListController(CacheList cacheList,
             CacheAction[] cacheActions, CachesProviderToggler cachesProviderToggler,
             MenuActionSyncGpx menuActionSyncGpx, MenuActions menuActions,
-            GeocacheVectors geocacheVectors) {
-        mCacheListRefresh = cacheListRefresh;
+            CachesProvider cachesProvider) {
+        mCacheList = cacheList;
         mCacheActions = cacheActions;
         mCachesProviderToggler = cachesProviderToggler;
         mMenuActionSyncGpx = menuActionSyncGpx;
         mMenuActions = menuActions;
-        mGeocacheVectors = geocacheVectors;
+        mCachesProvider = cachesProvider;
     }
 
     public boolean onContextItemSelected(MenuItem menuItem) {
@@ -89,14 +90,14 @@ public class GeocacheListController {
     }
     
     private Geocache getGeocacheAt(int listIndex) {
-        return mGeocacheVectors.get(listIndex).getGeocache();
+        return mCachesProvider.getCaches().get(listIndex);
     }
 
     public void onListItemClick(ListView l, View v, int position, long id) {
         if (position > 0) {
             mCacheActions[MENU_VIEW].act(getGeocacheAt(position - 1));
         } else {
-            mCacheListRefresh.forceRefresh();
+            mCacheList.forceRefresh();
         }
     }
 
@@ -115,8 +116,8 @@ public class GeocacheListController {
         mMenuActionSyncGpx.abort();
     }
 
-    public void onResume(CacheListRefresh cacheListRefresh, boolean fImport) {
-        mCacheListRefresh.forceRefresh();
+    public void onResume(boolean fImport) {
+        mCacheList.forceRefresh();
         if (fImport)
             mMenuActionSyncGpx.act();
     }

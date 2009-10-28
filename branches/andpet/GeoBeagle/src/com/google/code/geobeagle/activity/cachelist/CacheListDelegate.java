@@ -14,9 +14,9 @@
 
 package com.google.code.geobeagle.activity.cachelist;
 
+import com.google.code.geobeagle.LocationControlBuffered;
 import com.google.code.geobeagle.activity.ActivitySaver;
 import com.google.code.geobeagle.activity.ActivityType;
-import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
 import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheListPresenter;
 import com.google.code.geobeagle.database.DbFrontend;
 
@@ -60,22 +60,22 @@ public class CacheListDelegate {
     }
 
     private final ActivitySaver mActivitySaver;
-    private final CacheListRefresh mCacheListRefresh;
     private final GeocacheListController mController;
     private final DbFrontend mDbFrontend;
     private final ImportIntentManager mImportIntentManager;
     private final GeocacheListPresenter mPresenter;
+    private final LocationControlBuffered mLocationControlBuffered;
 
     public CacheListDelegate(ImportIntentManager importIntentManager, ActivitySaver activitySaver,
-            CacheListRefresh cacheListRefresh, GeocacheListController geocacheListController,
-            GeocacheListPresenter geocacheListPresenter, DbFrontend dbFrontend) {
-
+            GeocacheListController geocacheListController,
+            GeocacheListPresenter geocacheListPresenter, DbFrontend dbFrontend,
+            LocationControlBuffered locationControlBuffered) {
         mActivitySaver = activitySaver;
-        mCacheListRefresh = cacheListRefresh;
         mController = geocacheListController;
         mPresenter = geocacheListPresenter;
         mImportIntentManager = importIntentManager;
         mDbFrontend = dbFrontend;
+        mLocationControlBuffered = locationControlBuffered;
     }
 
     public boolean onContextItemSelected(MenuItem menuItem) {
@@ -103,15 +103,15 @@ public class CacheListDelegate {
     }
 
     public void onPause() {
-        mPresenter.onPause();
+        mLocationControlBuffered.onPause();
         mController.onPause();
         mActivitySaver.save(ActivityType.CACHE_LIST);
         mDbFrontend.closeDatabase();
     }
 
     public void onResume() {
-        // TODO: No need to re-initialize these
-        mPresenter.onResume(mCacheListRefresh);
-        mController.onResume(mCacheListRefresh, mImportIntentManager.isImport());
+        mPresenter.onResume();
+        mController.onResume(mImportIntentManager.isImport());
+        mLocationControlBuffered.onResume();
     }
 }

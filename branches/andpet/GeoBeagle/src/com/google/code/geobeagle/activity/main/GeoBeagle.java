@@ -14,7 +14,6 @@
 
 package com.google.code.geobeagle.activity.main;
 
-import com.google.code.geobeagle.CompassListener;
 import com.google.code.geobeagle.ErrorDisplayer;
 import com.google.code.geobeagle.ErrorDisplayerDi;
 import com.google.code.geobeagle.Geocache;
@@ -22,7 +21,6 @@ import com.google.code.geobeagle.GeocacheFactory;
 import com.google.code.geobeagle.GraphicsGenerator;
 import com.google.code.geobeagle.LocationControlBuffered;
 import com.google.code.geobeagle.LocationControlDi;
-import com.google.code.geobeagle.NullRefresher;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.R.id;
 import com.google.code.geobeagle.actions.CacheActionMap;
@@ -54,18 +52,14 @@ import com.google.code.geobeagle.activity.main.view.GeocacheViewer.LabelledAttri
 import com.google.code.geobeagle.activity.main.view.GeocacheViewer.NameViewer;
 import com.google.code.geobeagle.activity.main.view.GeocacheViewer.UnlabelledAttributeViewer;
 import com.google.code.geobeagle.database.DbFrontend;
-import com.google.code.geobeagle.location.LocationLifecycleManager;
 
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
-import android.hardware.SensorManager;
-import android.location.LocationManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -82,7 +76,7 @@ import android.widget.TextView;
 public class GeoBeagle extends Activity {
     private GeoBeagleDelegate mGeoBeagleDelegate;
     private DbFrontend mDbFrontend;
-
+    
     public Geocache getGeocache() {
         return mGeoBeagleDelegate.getGeocache();
     }
@@ -106,9 +100,8 @@ public class GeoBeagle extends Activity {
         final ErrorDisplayer errorDisplayer = ErrorDisplayerDi.createErrorDisplayer(this);
         final WebPageAndDetailsButtonEnabler webPageButtonEnabler = Misc.create(this,
                 findViewById(R.id.cache_page), findViewById(R.id.cache_details));
-        final LocationManager locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
-        final LocationControlBuffered locationControlBuffered = LocationControlDi
-                .create(locationManager);
+
+        final LocationControlBuffered locationControlBuffered = LocationControlDi.create(this);
         final GeocacheFactory geocacheFactory = new GeocacheFactory();
         final TextView gcid = (TextView)findViewById(R.id.gcid);
         final Drawable[] pawImages = GraphicsGenerator.getTerrainRatings(getResources());
@@ -122,7 +115,7 @@ public class GeoBeagle extends Activity {
         final UnlabelledAttributeViewer gcContainer = new UnlabelledAttributeViewer(
                 GeocacheViewer.CONTAINER_IMAGES, (ImageView)findViewById(R.id.gccontainer));
         final NameViewer gcName = new NameViewer(((TextView)findViewById(R.id.gcname)));
-        final RadarView radar = (RadarView)findViewById(R.id.radarview);
+        RadarView radar = (RadarView)findViewById(R.id.radarview);
         radar.setUseImperial(false);
         radar.setDistanceView((TextView)findViewById(R.id.radar_distance),
                 (TextView)findViewById(R.id.radar_bearing),
@@ -131,24 +124,14 @@ public class GeoBeagle extends Activity {
                 (ImageView)findViewById(R.id.gcicon),
                 gcDifficulty, gcTerrain, gcContainer);
 
-        locationControlBuffered.onLocationChanged(null);
+        //locationControlBuffered.onLocationChanged(null);
+        GeoBeagleDelegate.RadarViewRefresher radarViewRefresher = 
+            new GeoBeagleDelegate.RadarViewRefresher(radar, locationControlBuffered);
+        locationControlBuffered.addObserver(radarViewRefresher);
         final IntentFactory intentFactory = new IntentFactory(new UriParser());
-
-        // Register for location updates
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 1, radar);
-        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 1, radar);
-
-        final AppLifecycleManager appLifecycleManager = new AppLifecycleManager(
-                getPreferences(MODE_PRIVATE), new LifecycleManager[] {
-                        new LocationLifecycleManager(locationControlBuffered, locationManager),
-                        new LocationLifecycleManager(radar, locationManager)
-                });
 
         final CacheActionViewUri intentStarterViewUri = new CacheActionViewUri(this,
                 intentFactory, new GeocacheToGoogleMap(this));
-        final SensorManager sensorManager = (SensorManager)getSystemService(Context.SENSOR_SERVICE);
-        final CompassListener compassListener = new CompassListener(new NullRefresher(),
-                locationControlBuffered, -1440f);
         final LayoutInflater layoutInflater = LayoutInflater.from(this);
         final FieldNoteSender fieldNoteSender = FieldNoteSenderDI.build(this, layoutInflater);
         final ActivitySaver activitySaver = ActivityDI.createActivitySaver(this);
@@ -170,11 +153,11 @@ public class GeoBeagle extends Activity {
                 geocacheFactory, geocacheFromIntentFactory);
         final GeocacheFromParcelFactory geocacheFromParcelFactory = new GeocacheFromParcelFactory(
                 geocacheFactory);
-        mGeoBeagleDelegate = new GeoBeagleDelegate(activitySaver, appLifecycleManager,
-                compassListener, fieldNoteSender, this, geocacheFactory, geocacheViewer,
+        mGeoBeagleDelegate = new GeoBeagleDelegate(activitySaver,
+                fieldNoteSender, this, geocacheFactory, geocacheViewer,
                 incomingIntentHandler, menuActions, geocacheFromParcelFactory,
-                mDbFrontend, radar, resources, sensorManager, defaultSharedPreferences,
-                webPageButtonEnabler);
+                mDbFrontend, radar, resources, defaultSharedPreferences,
+                webPageButtonEnabler, locationControlBuffered);
 
         // see http://www.androidguys.com/2008/11/07/rotational-forces-part-two/
         if (getLastNonConfigurationInstance() != null) {

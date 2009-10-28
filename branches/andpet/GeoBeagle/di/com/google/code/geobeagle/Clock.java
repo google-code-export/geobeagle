@@ -12,13 +12,10 @@
  ** limitations under the License.
  */
 
-package com.google.code.geobeagle.activity.cachelist.presenter;
+package com.google.code.geobeagle;
 
-import com.google.code.geobeagle.activity.cachelist.model.GeocacheVector;
-
-import java.util.ArrayList;
-
-//TODO: Remove this interface
-public interface SortStrategy {
-    public void sort(ArrayList<GeocacheVector> arrayList);
+public class Clock {
+    public long getCurrentTime() {
+        return System.currentTimeMillis();
+    }
 }
