@@ -12,6 +12,8 @@ public class CacheTypeFactory {
     }
 
     public CacheType fromInt(int i) {
+        if (!mCacheTypes.containsKey(i))
+            return CacheType.NULL;
         return mCacheTypes.get(i);
     }
 
