@@ -15,19 +15,28 @@
 package com.google.code.geobeagle.activity.map;
 
 import com.google.code.geobeagle.Geocache;
+import com.google.code.geobeagle.R;
 
 import android.content.res.Resources;
 
 class CacheItemFactory {
     private final Resources mResources;
+    private Geocache mSelected;
 
     CacheItemFactory(Resources resources) {
         mResources = resources; 
     }
 
+    void setSelectedGeocache(Geocache geocache) {
+        mSelected = geocache;
+    }
+    
     CacheItem createCacheItem(Geocache geocache) {
         final CacheItem cacheItem = new CacheItem(geocache.getGeoPoint(), geocache);
-        cacheItem.setMarker(geocache.getIconMap(mResources));
+        if (geocache == mSelected)
+            cacheItem.setMarker(mResources.getDrawable(R.drawable.glow));
+        else
+            cacheItem.setMarker(geocache.getIconMap(mResources));
         return cacheItem;
     }
 }

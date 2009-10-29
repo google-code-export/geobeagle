@@ -19,7 +19,7 @@ import static org.junit.Assert.assertEquals;
 import com.google.code.geobeagle.CacheType;
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.GeocacheFactory;
-import com.google.code.geobeagle.LocationControlBuffered;
+import com.google.code.geobeagle.LocationAndDirection;
 import com.google.code.geobeagle.GeocacheFactory.Source;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheFromMyLocationFactory;
 
@@ -39,15 +39,15 @@ public class GeocacheFromMyLocationFactoryTest {
 
     @Test
     public void testCreate() {
-        LocationControlBuffered locationControlBuffered = PowerMock
-                .createMock(LocationControlBuffered.class);
+        LocationAndDirection locationAndDirection = PowerMock
+                .createMock(LocationAndDirection.class);
         Location location = PowerMock.createMock(Location.class);
         GeocacheFactory geocacheFactory = PowerMock.createMock(GeocacheFactory.class);
         Geocache geocache = PowerMock.createMock(Geocache.class);
         Locale.setDefault(Locale.ENGLISH);
         TimeZone.setDefault(TimeZone.getTimeZone("America/Los_Angeles"));
 
-        EasyMock.expect(locationControlBuffered.getLocation()).andReturn(location);
+        EasyMock.expect(locationAndDirection.getLocation()).andReturn(location);
         EasyMock.expect(location.getTime()).andReturn(1000000L);
         EasyMock.expect(location.getLatitude()).andReturn(37.0);
         EasyMock.expect(location.getLongitude()).andReturn(-122.0);
@@ -58,19 +58,19 @@ public class GeocacheFromMyLocationFactoryTest {
 
         PowerMock.replayAll();
         assertEquals(geocache, new GeocacheFromMyLocationFactory(geocacheFactory,
-                locationControlBuffered).create());
+                locationAndDirection).create());
         PowerMock.verifyAll();
     }
 
     @Test
     public void testCreateNullLocation() {
-        LocationControlBuffered locationControlBuffered = PowerMock
-                .createMock(LocationControlBuffered.class);
+        LocationAndDirection locationAndDirection = PowerMock
+                .createMock(LocationAndDirection.class);
 
-        EasyMock.expect(locationControlBuffered.getLocation()).andReturn(null);
+        EasyMock.expect(locationAndDirection.getLocation()).andReturn(null);
 
         PowerMock.replayAll();
-        assertEquals(null, new GeocacheFromMyLocationFactory(null, locationControlBuffered)
+        assertEquals(null, new GeocacheFromMyLocationFactory(null, locationAndDirection)
                 .create());
         PowerMock.verifyAll();
     }

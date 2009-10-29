@@ -15,7 +15,7 @@
 package com.google.code.geobeagle.activity.searchonline;
 
 import com.google.code.geobeagle.GeocacheFactory;
-import com.google.code.geobeagle.LocationControlBuffered;
+import com.google.code.geobeagle.LocationAndDirection;
 import com.google.code.geobeagle.LocationControlDi;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.ActivityDI;
@@ -52,7 +52,7 @@ public class SearchOnlineActivity extends Activity {
 
         setContentView(R.layout.search);
         
-        final LocationControlBuffered mLocationControlBuffered = 
+        final LocationAndDirection mLocationAndDirection = 
             LocationControlDi.create(this);
 
         final InflatedGpsStatusWidget mGpsStatusWidget = (InflatedGpsStatusWidget)this
@@ -60,7 +60,7 @@ public class SearchOnlineActivity extends Activity {
         final DistanceFormatterManager distanceFormatterManager = DistanceFormatterManagerDi
                 .create(this);
         final GpsWidgetAndUpdater gpsWidgetAndUpdater = new GpsWidgetAndUpdater(this,
-                mGpsStatusWidget, mLocationControlBuffered,
+                mGpsStatusWidget, mLocationAndDirection,
                 distanceFormatterManager.getFormatter());
         final GpsStatusWidgetDelegate gpsStatusWidgetDelegate = gpsWidgetAndUpdater
                 .getGpsStatusWidgetDelegate();
@@ -81,11 +81,11 @@ public class SearchOnlineActivity extends Activity {
 
         mSearchOnlineActivityDelegate = new SearchOnlineActivityDelegate(
                 ((WebView)findViewById(R.id.help_contents)),
-                mLocationControlBuffered,
+                mLocationAndDirection,
                 distanceFormatterManager, activitySaver);
 
         final JsInterfaceHelper jsInterfaceHelper = new JsInterfaceHelper(this);
-        final JsInterface jsInterface = new JsInterface(mLocationControlBuffered, jsInterfaceHelper);
+        final JsInterface jsInterface = new JsInterface(mLocationAndDirection, jsInterfaceHelper);
 
         mSearchOnlineActivityDelegate.configureWebView(jsInterface);
         activityRestorer.restore(getIntent().getFlags());

@@ -14,7 +14,7 @@
 
 package com.google.code.geobeagle.gpsstatuswidget;
 
-import com.google.code.geobeagle.LocationControlBuffered;
+import com.google.code.geobeagle.LocationAndDirection;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.Refresher;
 import com.google.code.geobeagle.activity.cachelist.presenter.HasDistanceFormatter;
@@ -27,7 +27,7 @@ import android.os.Bundle;
 import android.widget.TextView;
 
 public class GpsStatusWidgetDelegate implements HasDistanceFormatter, Refresher {
-    private final LocationControlBuffered mLocationControlBuffered;
+    private final LocationAndDirection mLocationAndDirection;
     private DistanceFormatter mDistanceFormatter;
     private final MeterFader mMeterFader;
     private final Meter mMeterWrapper;
@@ -36,10 +36,10 @@ public class GpsStatusWidgetDelegate implements HasDistanceFormatter, Refresher 
     private final TextView mStatus;
     private final TextLagUpdater mTextLagUpdater;
 
-    public GpsStatusWidgetDelegate(LocationControlBuffered locationControlBuffered,
+    public GpsStatusWidgetDelegate(LocationAndDirection locationAndDirection,
             DistanceFormatter distanceFormatter, Meter meter, MeterFader meterFader,
             TextView provider, Context context, TextView status, TextLagUpdater textLagUpdater) {
-        mLocationControlBuffered = locationControlBuffered;
+        mLocationAndDirection = locationAndDirection;
         mDistanceFormatter = distanceFormatter;
         mMeterFader = meterFader;
         mMeterWrapper = meter;
@@ -50,12 +50,12 @@ public class GpsStatusWidgetDelegate implements HasDistanceFormatter, Refresher 
     }
 
     public void refresh() {
-        Location location = mLocationControlBuffered.getLocation();
+        Location location = mLocationAndDirection.getLocation();
         // Log.d("GeoBeagle", "GpsStatusWidget onLocationChanged " + location);
         if (location == null)
             return;
 
-        if (!mLocationControlBuffered.isProviderEnabled()) {
+        if (!mLocationAndDirection.isProviderEnabled()) {
             mMeterWrapper.setDisabled();
             mTextLagUpdater.setDisabled();
             return;

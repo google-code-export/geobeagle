@@ -24,6 +24,8 @@ import com.google.code.geobeagle.activity.main.GeocacheFromParcelFactory;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.util.WeakHashMap;
+
 public class GeocacheFactory {
     public static class CreateGeocacheFromParcel implements Parcelable.Creator<Geocache> {
         private final GeocacheFromParcelFactory mGeocacheFromParcelFactory = new GeocacheFromParcelFactory(
@@ -121,6 +123,9 @@ public class GeocacheFactory {
         return mCacheTypeFactory.fromInt(cacheTypeIx);
     }
 
+    private WeakHashMap<CharSequence, Geocache> mGeocaches = 
+        new WeakHashMap<CharSequence, Geocache>();
+    
     public Geocache create(CharSequence id, CharSequence name, double latitude, double longitude,
             Source sourceType, String sourceName, CacheType cacheType, int difficulty, int terrain,
             int container) {
@@ -131,10 +136,26 @@ public class GeocacheFactory {
         }
         if (name == null)
             name = "";
+        
+        Geocache cached = mGeocaches.get(id);
+        if (cached != null
+                && cached.getName().equals(name)
+                && cached.getLatitude() == latitude
+                && cached.getLongitude() == longitude
+                && cached.getSourceType().equals(sourceType)
+                && cached.getSourceName().equals(sourceName)
+                && cached.getCacheType() == cacheType
+                && cached.getDifficulty() == difficulty
+                && cached.getTerrain() == terrain
+                && cached.getContainer() == container)
+            return cached;
+                
         final AttributeFormatter attributeFormatter = mAttributeFormatterFactory
                 .getAttributeFormatter(sourceType);
-        return new Geocache(id, name, latitude, longitude, sourceType, sourceName, cacheType,
+        cached = new Geocache(id, name, latitude, longitude, sourceType, sourceName, cacheType,
                 difficulty, terrain, container, attributeFormatter);
+        mGeocaches.put(id, cached);
+        return cached;
     }
 
     public Source sourceFromInt(int sourceIx) {

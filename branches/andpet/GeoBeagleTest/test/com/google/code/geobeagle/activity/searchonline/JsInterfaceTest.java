@@ -3,7 +3,7 @@ package com.google.code.geobeagle.activity.searchonline;
 
 import static org.junit.Assert.*;
 
-import com.google.code.geobeagle.LocationControlBuffered;
+import com.google.code.geobeagle.LocationAndDirection;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.searchonline.JsInterface.JsInterfaceHelper;
 
@@ -67,38 +67,38 @@ public class JsInterfaceTest {
     @Test
     public void testAtlasQuestOrGroundspeak() {
         Location location = PowerMock.createMock(Location.class);
-        LocationControlBuffered locationControlBuffered = PowerMock
-                .createMock(LocationControlBuffered.class);
+        LocationAndDirection locationAndDirection = PowerMock
+                .createMock(LocationAndDirection.class);
         JsInterfaceHelper helper = PowerMock.createMock(JsInterfaceHelper.class);
         EasyMock.expect(location.getLatitude()).andReturn(122.3);
         EasyMock.expect(location.getLongitude()).andReturn(37.8);
 
-        EasyMock.expect(locationControlBuffered.getLocation()).andReturn(location);
+        EasyMock.expect(locationAndDirection.getLocation()).andReturn(location);
         EasyMock.expect(helper.getTemplate(3)).andReturn("%1$f, %2$f");
         helper.launch("122.300000, 37.800000");
 
         PowerMock.replayAll();
-        assertEquals(0, new JsInterface(locationControlBuffered, helper).atlasQuestOrGroundspeak(3));
+        assertEquals(0, new JsInterface(locationAndDirection, helper).atlasQuestOrGroundspeak(3));
         PowerMock.verifyAll();
     }
 
     @Test
     public void testOpencaching() {
         Location location = PowerMock.createMock(Location.class);
-        LocationControlBuffered locationControlBuffered = PowerMock
-                .createMock(LocationControlBuffered.class);
+        LocationAndDirection locationAndDirection = PowerMock
+                .createMock(LocationAndDirection.class);
         JsInterfaceHelper helper = PowerMock.createMock(JsInterfaceHelper.class);
         EasyMock.expect(location.getLatitude()).andReturn(37.7773);
         EasyMock.expect(location.getLongitude()).andReturn(-122.1134);
 
         EasyMock.expect(helper.getNS(37.7773)).andReturn("N");
         EasyMock.expect(helper.getEW(-122.1134)).andReturn("W");
-        EasyMock.expect(locationControlBuffered.getLocation()).andReturn(location);
+        EasyMock.expect(locationAndDirection.getLocation()).andReturn(location);
         EasyMock.expect(helper.getTemplate(3)).andReturn("%1$s, %2$d, %3$.3f, %4$s, %5$d, %6$.3f");
         helper.launch("N, 37, 46.638, W, 122, 6.804");
 
         PowerMock.replayAll();
-        assertEquals(0, new JsInterface(locationControlBuffered, helper).openCaching(3));
+        assertEquals(0, new JsInterface(locationAndDirection, helper).openCaching(3));
         PowerMock.verifyAll();
     }
 }

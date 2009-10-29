@@ -20,9 +20,9 @@ import com.google.code.geobeagle.actions.CacheAction;
 import com.google.code.geobeagle.actions.MenuActions;
 import com.google.code.geobeagle.activity.cachelist.actions.MenuActionSyncGpx;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheList;
-import com.google.code.geobeagle.database.CachesProvider;
+import com.google.code.geobeagle.database.ICachesProvider;
 import com.google.code.geobeagle.database.CachesProviderToggler;
-
+import android.content.res.Resources;
 import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -34,12 +34,17 @@ import android.widget.AdapterView.AdapterContextMenuInfo;
 
 public class GeocacheListController {
 
-    //TODO: Remove class CacheListOnCreateContextMenuListener
+    //TODO: Resources should be provided to individual CacheAction instead
     public static class CacheListOnCreateContextMenuListener implements OnCreateContextMenuListener {
-        private final CachesProvider mCachesProvider;
+        private final ICachesProvider mCachesProvider;
+        private final CacheAction mCacheActions[];
+        private final Resources mResources;
 
-        public CacheListOnCreateContextMenuListener(CachesProvider cachesProvider) {
+        public CacheListOnCreateContextMenuListener(ICachesProvider cachesProvider,
+                CacheAction cacheActions[], Resources resources) {
             mCachesProvider = cachesProvider;
+            mCacheActions = cacheActions;
+            mResources = resources;
         }
 
         public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
@@ -47,34 +52,37 @@ public class GeocacheListController {
             if (acmi.position > 0) {
                 Geocache geocache = mCachesProvider.getCaches().get(acmi.position - 1);
                 menu.setHeaderTitle(geocache.getId());
-                menu.add(0, MENU_VIEW, 0, "View");
-                menu.add(0, MENU_EDIT, 1, "Edit");
-                menu.add(0, MENU_DELETE, 2, "Delete");
+                for (int ix = 0; ix < mCacheActions.length; ix++) {
+                    menu.add(0, Menu.NONE, ix, mResources.getString(mCacheActions[ix].getId()));
+                }
             }
         }
     }
 
-    static final int MENU_DELETE = 0;
-    static final int MENU_VIEW = 1;
-    static final int MENU_EDIT = 2;
+    //static final int MENU_DELETE = 0;
+    //static final int MENU_VIEW = 1;
+    //static final int MENU_EDIT = 2;
     public static final String SELECT_CACHE = "SELECT_CACHE";
     private final CacheList mCacheList;
     private final CacheAction mCacheActions[];
     private final CachesProviderToggler mCachesProviderToggler;
     private final MenuActions mMenuActions;
     private final MenuActionSyncGpx mMenuActionSyncGpx;
-    private final CachesProvider mCachesProvider;
+    private final ICachesProvider mCachesProvider;
+    private final CacheAction mDefaultCacheAction;
 
     public GeocacheListController(CacheList cacheList,
             CacheAction[] cacheActions, CachesProviderToggler cachesProviderToggler,
             MenuActionSyncGpx menuActionSyncGpx, MenuActions menuActions,
-            CachesProvider cachesProvider) {
+            CacheAction defaultCacheAction,
+            ICachesProvider cachesProvider) {
         mCacheList = cacheList;
         mCacheActions = cacheActions;
         mCachesProviderToggler = cachesProviderToggler;
         mMenuActionSyncGpx = menuActionSyncGpx;
         mMenuActions = menuActions;
         mCachesProvider = cachesProvider;
+        mDefaultCacheAction = defaultCacheAction;
     }
 
     public boolean onContextItemSelected(MenuItem menuItem) {
@@ -95,7 +103,7 @@ public class GeocacheListController {
 
     public void onListItemClick(ListView l, View v, int position, long id) {
         if (position > 0) {
-            mCacheActions[MENU_VIEW].act(getGeocacheAt(position - 1));
+            mDefaultCacheAction.act(getGeocacheAt(position - 1));
         } else {
             mCacheList.forceRefresh();
         }

@@ -52,6 +52,5 @@ public class TitleUpdater implements RefreshAction {
             TextView textView = (TextView)mListActivity.findViewById(android.R.id.empty);
             textView.setText(mListTitleFormatter.getBodyText(sqlCount));
         }
-        mTiming.lap("update title time");
     }
 }

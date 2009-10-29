@@ -20,13 +20,11 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
-
 import java.util.ArrayList;
 
-//TODO: Rename class
 /** Responsible for providing an up-to-date location and compass direction */
 @SuppressWarnings("deprecation")
-public class LocationControlBuffered implements LocationListener, SensorListener {
+public class LocationAndDirection implements LocationListener, SensorListener {
     private Location mLocation;
     private final LocationManager mLocationManager;
     private float mAzimuth;
@@ -34,10 +32,11 @@ public class LocationControlBuffered implements LocationListener, SensorListener
     private final ArrayList<Refresher> mObservers = new ArrayList<Refresher>();
     private final SensorManager mSensorManager;
 
-    public LocationControlBuffered(LocationManager locationManager,
+    public LocationAndDirection(LocationManager locationManager,
             SensorManager sensorManager) {
         mLocationManager = locationManager;
         mSensorManager = sensorManager;
+        mLocation = getLastKnownLocation();  //work in constructor..
     }
 
     public Location getLocation() {
@@ -101,8 +100,7 @@ public class LocationControlBuffered implements LocationListener, SensorListener
     public void onSensorChanged(int sensor, float[] values) {
         final float currentAzimuth = values[0];
         if (Math.abs(currentAzimuth - mAzimuth) > 5) {
-            // Log.d("GeoBeagle", "azimuth now " + sensor +", " +
-            // currentAzimuth);
+            //Log.d("GeoBeagle", "azimuth now " + sensor +", " + currentAzimuth);
             mAzimuth = currentAzimuth;
             notifyObservers();
         }
@@ -118,7 +116,8 @@ public class LocationControlBuffered implements LocationListener, SensorListener
     }
     
     public void onPause() {
-        mSensorManager.unregisterListener(this);        
+        mSensorManager.unregisterListener(this);
+        mLocationManager.removeUpdates(this);
     }
     
     public boolean isProviderEnabled() {

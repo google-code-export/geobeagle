@@ -14,11 +14,8 @@
 
 package com.google.code.geobeagle.activity.cachelist.presenter;
 
-import com.google.code.geobeagle.LocationControlBuffered;
+import com.google.code.geobeagle.LocationAndDirection;
 import com.google.code.geobeagle.activity.cachelist.CacheListDelegateDI;
-import com.google.code.geobeagle.activity.cachelist.model.CacheListData;
-import com.google.code.geobeagle.activity.cachelist.model.GeocacheVector;
-
 import org.easymock.EasyMock;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -36,19 +33,19 @@ public class AdapterCachesSorterTest {
     public void testAdapterCachesSorter() {
         CacheListData cacheListData = PowerMock.createMock(CacheListData.class);
         CacheListDelegateDI.Timing timing = PowerMock.createMock(CacheListDelegateDI.Timing.class);
-        LocationControlBuffered locationControlBuffered = PowerMock
-                .createMock(LocationControlBuffered.class);
+        LocationAndDirection locationAndDirection = PowerMock
+                .createMock(LocationAndDirection.class);
         SortStrategy sortStrategy = PowerMock.createMock(SortStrategy.class);
         ArrayList<GeocacheVector> arrayList = new ArrayList<GeocacheVector>();
 
         timing.lap(EasyMock.isA(String.class));
         EasyMock.expectLastCall().anyTimes();
         EasyMock.expect(cacheListData.get()).andReturn(arrayList);
-        EasyMock.expect(locationControlBuffered.getSortStrategy()).andReturn(sortStrategy);
+        EasyMock.expect(locationAndDirection.getSortStrategy()).andReturn(sortStrategy);
         sortStrategy.sort(arrayList);
 
         PowerMock.replayAll();
-        new AdapterCachesSorter(cacheListData, timing, locationControlBuffered).refresh();
+        new AdapterCachesSorter(cacheListData, timing, locationAndDirection).refresh();
         PowerMock.verifyAll();
     }
 }

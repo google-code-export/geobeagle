@@ -120,7 +120,7 @@ public class GeoMapActivity extends MapActivity {
         menuActions.add(new GeoMapActivityDelegate.MenuActionToggleSatellite(mMapView));
         menuActions.add(new GeoMapActivityDelegate.MenuActionCenterLocation(mMapView, mMyLocationOverlay));
         menuActions.add(new MenuActionCacheList(this));
-        menuActions.add(new MenuActionChooseFilter(this, cacheFilter, mOverlayManager));
+        menuActions.add(new MenuActionChooseFilter(this, cacheFilter, cachesProviderArea, mOverlayManager));
         
         mGeoMapActivityDelegate = new GeoMapActivityDelegate(mMapView, menuActions);
 

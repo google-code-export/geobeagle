@@ -24,7 +24,6 @@ import com.google.code.geobeagle.database.DbFrontend;
 import android.content.SharedPreferences.Editor;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
-import android.location.Location;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -97,6 +96,7 @@ public class Geocache implements Parcelable {
         mAttributeFormatter = attributeFormatter;
     }
 
+    /*
     public float[] calculateDistanceAndBearing(Location here) {
         if (here != null) {
             Location.distanceBetween(here.getLatitude(), here.getLongitude(), getLatitude(),
@@ -108,6 +108,7 @@ public class Geocache implements Parcelable {
         mDistanceAndBearing[1] = -1;
         return mDistanceAndBearing;
     }
+    */
 
     public int describeContents() {
         return 0;

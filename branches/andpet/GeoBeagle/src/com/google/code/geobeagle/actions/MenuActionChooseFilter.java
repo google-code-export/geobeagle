@@ -3,6 +3,8 @@ package com.google.code.geobeagle.actions;
 import com.google.code.geobeagle.CacheFilter;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.Refresher;
+import com.google.code.geobeagle.database.CachesProviderArea;
+
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.DialogInterface;
@@ -14,13 +16,16 @@ import android.widget.EditText;
 public class MenuActionChooseFilter extends MenuActionBase {
     private final Activity mActivity;
     private final CacheFilter mFilter;
+    private final CachesProviderArea mCachesProviderArea;
     private final Refresher mRefresher;
     
     public MenuActionChooseFilter(Activity activity,
-            CacheFilter filter, Refresher refresher) {
+            CacheFilter filter, CachesProviderArea cachesProviderArea,
+            Refresher refresher) {
         super(R.string.menu_choose_filter);
         mActivity = activity;
         mFilter = filter;
+        mCachesProviderArea = cachesProviderArea;
         mRefresher = refresher;
     }
 
@@ -57,6 +62,8 @@ public class MenuActionChooseFilter extends MenuActionBase {
             public void onDismiss(DialogInterface arg0) {
                 mFilter.loadFromGui(gui);
                 mFilter.saveToPrefs();
+                if (mCachesProviderArea != null)
+                    mCachesProviderArea.reloadFilter();
                 mRefresher.forceRefresh();
             }
         };

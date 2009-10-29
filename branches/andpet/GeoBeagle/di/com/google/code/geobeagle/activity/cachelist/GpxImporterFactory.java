@@ -15,7 +15,7 @@
 package com.google.code.geobeagle.activity.cachelist;
 
 import com.google.code.geobeagle.ErrorDisplayer;
-import com.google.code.geobeagle.LocationControlBuffered;
+import com.google.code.geobeagle.LocationAndDirection;
 import com.google.code.geobeagle.database.CacheWriter;
 import com.google.code.geobeagle.xmlimport.GpxImporter;
 import com.google.code.geobeagle.xmlimport.GpxImporterDI;
@@ -31,19 +31,19 @@ public class GpxImporterFactory {
     private final Aborter mAborter;
     private final CachePersisterFacadeFactory mCachePersisterFacadeFactory;
     private final ErrorDisplayer mErrorDisplayer;
-    private final LocationControlBuffered mLocationControlBuffered;
+    private final LocationAndDirection mLocationAndDirection;
     private final ListActivity mListActivity;
     private final MessageHandler mMessageHandler;
     private final XmlPullParserWrapper mXmlPullParserWrapper;
 
     public GpxImporterFactory(Aborter aborter,
             CachePersisterFacadeFactory cachePersisterFacadeFactory, ErrorDisplayer errorDisplayer,
-            LocationControlBuffered locationControlBuffered, ListActivity listActivity,
+            LocationAndDirection locationAndDirection, ListActivity listActivity,
             MessageHandler messageHandler, XmlPullParserWrapper xmlPullParserWrapper) {
         mAborter = aborter;
         mCachePersisterFacadeFactory = cachePersisterFacadeFactory;
         mErrorDisplayer = errorDisplayer;
-        mLocationControlBuffered = locationControlBuffered;
+        mLocationAndDirection = locationAndDirection;
         mListActivity = listActivity;
         mMessageHandler = messageHandler;
         mXmlPullParserWrapper = xmlPullParserWrapper;
@@ -51,7 +51,7 @@ public class GpxImporterFactory {
 
     public GpxImporter create(CacheWriter cacheWriter) {
         return GpxImporterDI.create(mListActivity, mXmlPullParserWrapper, mErrorDisplayer,
-                mLocationControlBuffered, mAborter, mMessageHandler, mCachePersisterFacadeFactory,
+                mLocationAndDirection, mAborter, mMessageHandler, mCachePersisterFacadeFactory,
                 cacheWriter);
     }
 }

@@ -4,10 +4,9 @@ import com.google.code.geobeagle.Geocache;
 
 import java.util.ArrayList;
 
-//TODO: Rename to ICachesProvider
 /** Interface to access a subset of the cache database. 
  * Used to form a Decorator pattern. */
-public interface CachesProvider {
+public interface ICachesProvider {
 
     /** Returns true if the result of getCaches() may have changed since the 
      * last call to resetChanged() */

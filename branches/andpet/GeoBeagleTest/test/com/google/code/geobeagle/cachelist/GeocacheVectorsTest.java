@@ -20,10 +20,7 @@ import static org.easymock.classextension.EasyMock.verify;
 import static org.junit.Assert.assertEquals;
 
 import com.google.code.geobeagle.Geocache;
-import com.google.code.geobeagle.LocationControlBuffered;
-import com.google.code.geobeagle.activity.cachelist.model.GeocacheVector;
-import com.google.code.geobeagle.activity.cachelist.model.GeocacheVectors;
-
+import com.google.code.geobeagle.LocationAndDirection;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.api.easymock.PowerMock;
@@ -40,7 +37,7 @@ public class GeocacheVectorsTest {
 
     @Test
     public void testAddLocations() throws Exception {
-        LocationControlBuffered here = createMock(LocationControlBuffered.class);
+        LocationAndDirection here = createMock(LocationAndDirection.class);
         Geocache geocache = PowerMock.createMock(Geocache.class);
         GeocacheVector geocacheVector = createMock(GeocacheVector.class);
         ArrayList<Geocache> locations = new ArrayList<Geocache>(0);

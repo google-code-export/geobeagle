@@ -14,20 +14,20 @@
 
 package com.google.code.geobeagle.gpsstatuswidget;
 
-import com.google.code.geobeagle.LocationControlBuffered;
+import com.google.code.geobeagle.LocationAndDirection;
 
 import android.os.Handler;
 
 public class UpdateGpsWidgetRunnable implements Runnable {
     private final Handler mHandler;
-    private final LocationControlBuffered mLocationControlBuffered;
+    private final LocationAndDirection mLocationAndDirection;
     private final Meter mMeterWrapper;
     private final TextLagUpdater mTextLagUpdater;
 
-    UpdateGpsWidgetRunnable(Handler handler, LocationControlBuffered locationControlBuffered,
+    UpdateGpsWidgetRunnable(Handler handler, LocationAndDirection locationAndDirection,
             Meter meter, TextLagUpdater textLagUpdater) {
         mMeterWrapper = meter;
-        mLocationControlBuffered = locationControlBuffered;
+        mLocationAndDirection = locationAndDirection;
         mTextLagUpdater = textLagUpdater;
         mHandler = handler;
     }
@@ -35,7 +35,7 @@ public class UpdateGpsWidgetRunnable implements Runnable {
     public void run() {
         // Update the lag time and the orientation.
         mTextLagUpdater.updateTextLag();
-        mMeterWrapper.setAzimuth(mLocationControlBuffered.getAzimuth());
+        mMeterWrapper.setAzimuth(mLocationAndDirection.getAzimuth());
         mHandler.postDelayed(this, 500);
     }
 }

@@ -19,20 +19,21 @@ import com.google.code.geobeagle.ErrorDisplayerDi;
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.GeocacheFactory;
 import com.google.code.geobeagle.GraphicsGenerator;
-import com.google.code.geobeagle.LocationControlBuffered;
+import com.google.code.geobeagle.LocationAndDirection;
 import com.google.code.geobeagle.LocationControlDi;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.R.id;
+import com.google.code.geobeagle.actions.CacheActionEdit;
 import com.google.code.geobeagle.actions.CacheActionMap;
+import com.google.code.geobeagle.actions.CacheActionProximity;
 import com.google.code.geobeagle.actions.CacheActionRadar;
 import com.google.code.geobeagle.actions.CacheActionViewUri;
 import com.google.code.geobeagle.actions.MenuAction;
 import com.google.code.geobeagle.actions.MenuActionCacheList;
-import com.google.code.geobeagle.actions.MenuActionEditGeocache;
 import com.google.code.geobeagle.actions.MenuActionGoogleMaps;
-import com.google.code.geobeagle.actions.MenuActionProximity;
 import com.google.code.geobeagle.actions.MenuActionSearchOnline;
 import com.google.code.geobeagle.actions.MenuActionSettings;
+import com.google.code.geobeagle.actions.MenuActionFromCacheAction;
 import com.google.code.geobeagle.actions.MenuActions;
 import com.google.code.geobeagle.activity.ActivityDI;
 import com.google.code.geobeagle.activity.ActivitySaver;
@@ -101,7 +102,7 @@ public class GeoBeagle extends Activity {
         final WebPageAndDetailsButtonEnabler webPageButtonEnabler = Misc.create(this,
                 findViewById(R.id.cache_page), findViewById(R.id.cache_details));
 
-        final LocationControlBuffered locationControlBuffered = LocationControlDi.create(this);
+        final LocationAndDirection locationAndDirection = LocationControlDi.create(this);
         final GeocacheFactory geocacheFactory = new GeocacheFactory();
         final TextView gcid = (TextView)findViewById(R.id.gcid);
         final Drawable[] pawImages = GraphicsGenerator.getTerrainRatings(getResources());
@@ -124,10 +125,10 @@ public class GeoBeagle extends Activity {
                 (ImageView)findViewById(R.id.gcicon),
                 gcDifficulty, gcTerrain, gcContainer);
 
-        //locationControlBuffered.onLocationChanged(null);
+        //locationAndDirection.onLocationChanged(null);
         GeoBeagleDelegate.RadarViewRefresher radarViewRefresher = 
-            new GeoBeagleDelegate.RadarViewRefresher(radar, locationControlBuffered);
-        locationControlBuffered.addObserver(radarViewRefresher);
+            new GeoBeagleDelegate.RadarViewRefresher(radar, locationAndDirection);
+        locationAndDirection.addObserver(radarViewRefresher);
         final IntentFactory intentFactory = new IntentFactory(new UriParser());
 
         final CacheActionViewUri intentStarterViewUri = new CacheActionViewUri(this,
@@ -135,29 +136,31 @@ public class GeoBeagle extends Activity {
         final LayoutInflater layoutInflater = LayoutInflater.from(this);
         final FieldNoteSender fieldNoteSender = FieldNoteSenderDI.build(this, layoutInflater);
         final ActivitySaver activitySaver = ActivityDI.createActivitySaver(this);
-        final MenuAction[] menuActionArray = {
-                new MenuActionCacheList(this), new MenuActionEditGeocache(this),
-//                new MenuActionLogDnf(this), new MenuActionLogFind(this),
-                new MenuActionSearchOnline(this), new MenuActionSettings(this),
-                new MenuActionGoogleMaps(this, intentStarterViewUri),
-                new MenuActionProximity(this)
-        };
-        final MenuActions menuActions = new MenuActions(getResources(), menuActionArray);
-        final Resources resources = this.getResources();
-        final SharedPreferences defaultSharedPreferences = PreferenceManager
-                .getDefaultSharedPreferences(this);
         mDbFrontend = new DbFrontend(this, geocacheFactory);
         final GeocacheFromIntentFactory geocacheFromIntentFactory = new GeocacheFromIntentFactory(
                 geocacheFactory, mDbFrontend);
         final IncomingIntentHandler incomingIntentHandler = new IncomingIntentHandler(
                 geocacheFactory, geocacheFromIntentFactory);
+        Geocache geocache = incomingIntentHandler.maybeGetGeocacheFromIntent(getIntent(), null, mDbFrontend);
+        final MenuAction[] menuActionArray = {
+                new MenuActionCacheList(this), 
+                new MenuActionFromCacheAction(new CacheActionEdit(this), geocache),
+//                new MenuActionLogDnf(this), new MenuActionLogFind(this),
+                new MenuActionSearchOnline(this), new MenuActionSettings(this),
+                new MenuActionGoogleMaps(this, intentStarterViewUri),
+                new MenuActionFromCacheAction(new CacheActionProximity(this), geocache)
+        };
+        final MenuActions menuActions = new MenuActions(getResources(), menuActionArray);
+        final Resources resources = this.getResources();
+        final SharedPreferences defaultSharedPreferences = PreferenceManager
+                .getDefaultSharedPreferences(this);
         final GeocacheFromParcelFactory geocacheFromParcelFactory = new GeocacheFromParcelFactory(
                 geocacheFactory);
         mGeoBeagleDelegate = new GeoBeagleDelegate(activitySaver,
                 fieldNoteSender, this, geocacheFactory, geocacheViewer,
                 incomingIntentHandler, menuActions, geocacheFromParcelFactory,
                 mDbFrontend, radar, resources, defaultSharedPreferences,
-                webPageButtonEnabler, locationControlBuffered);
+                webPageButtonEnabler, locationAndDirection);
 
         // see http://www.androidguys.com/2008/11/07/rotational-forces-part-two/
         if (getLastNonConfigurationInstance() != null) {

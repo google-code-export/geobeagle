@@ -11,17 +11,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
-/** Update the gui cache list when the location or azimuth changes
- * (but not too often) */
+//TODO: Rename this class
+/** Feeds the caches in a CachesProvider to the GUI list view */
 public class CacheList extends BaseAdapter implements Refresher {
-    //TODO: Should be Lazy
     private final CachesProviderToggler mProvider;
     private final IDistanceAndBearingProvider mDistances;
     private final GeocacheSummaryRowInflater mGeocacheSummaryRowInflater;
     private final TitleUpdater mTitleUpdater;
     //private ArrayList<Geocache> mListData;
     private float mAzimuth;
-    private boolean mUpdatesEnabled;
+    private boolean mUpdatesEnabled = true;
 
     public CacheList(CachesProviderToggler provider, 
             IDistanceAndBearingProvider distances,
@@ -31,14 +30,11 @@ public class CacheList extends BaseAdapter implements Refresher {
         mGeocacheSummaryRowInflater = inflater;
         mTitleUpdater = titleUpdater;
         mDistances = distances;
-    }    
-    
-    public void setLocation(double latitude, double longitude) {
-        mProvider.setCenter(latitude, longitude);
     }
-
+    
     public void enableUpdates(boolean enable) {
         mUpdatesEnabled = enable;
+        refresh();
     }
     
     public void setAzimuth (float azimuth) {
@@ -56,6 +52,7 @@ public class CacheList extends BaseAdapter implements Refresher {
     }
 
     public void forceRefresh() {
+        //TODO: Take this back?
         //mProvider.resetChanged();
         mTitleUpdater.refresh();
         notifyDataSetChanged();

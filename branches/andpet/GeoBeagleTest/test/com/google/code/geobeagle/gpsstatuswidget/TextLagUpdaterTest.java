@@ -16,15 +16,12 @@ package com.google.code.geobeagle.gpsstatuswidget;
 
 import static org.junit.Assert.assertEquals;
 
-import com.google.code.geobeagle.Time;
 import com.google.code.geobeagle.gpsstatuswidget.TextLagUpdater.Lag;
 import com.google.code.geobeagle.gpsstatuswidget.TextLagUpdater.LagImpl;
 import com.google.code.geobeagle.gpsstatuswidget.TextLagUpdater.LagNull;
 import com.google.code.geobeagle.gpsstatuswidget.TextLagUpdater.LastKnownLocation;
 import com.google.code.geobeagle.gpsstatuswidget.TextLagUpdater.LastKnownLocationUnavailable;
 import com.google.code.geobeagle.gpsstatuswidget.TextLagUpdater.LastLocationUnknown;
-import com.google.code.geobeagle.location.CombinedLocationManager;
-
 import org.easymock.EasyMock;
 import org.junit.Test;
 import org.junit.runner.RunWith;

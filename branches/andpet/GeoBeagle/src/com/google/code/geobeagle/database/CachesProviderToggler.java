@@ -6,12 +6,12 @@ import java.util.ArrayList;
 
 public class CachesProviderToggler implements ICachesProviderCenter {
     private ICachesProviderCenter mCachesProviderCenter;
-    private CachesProvider mCachesProviderAll;
+    private ICachesProvider mCachesProviderAll;
     private boolean mNearest;
     private boolean mHasChanged;
 
     public CachesProviderToggler(ICachesProviderCenter cachesProviderCenter,
-            CachesProvider cachesProviderAll) {
+            ICachesProvider cachesProviderAll) {
         mCachesProviderCenter = cachesProviderCenter;
         mCachesProviderAll = cachesProviderAll;
         mNearest = true;

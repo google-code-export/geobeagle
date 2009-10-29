@@ -1,8 +1,9 @@
 package com.google.code.geobeagle.activity.prox;
 
 import com.google.code.geobeagle.CacheFilter;
+import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.GeocacheFactory;
-import com.google.code.geobeagle.LocationControlBuffered;
+import com.google.code.geobeagle.LocationAndDirection;
 import com.google.code.geobeagle.LocationControlDi;
 import com.google.code.geobeagle.Refresher;
 import com.google.code.geobeagle.database.CachesProviderArea;
@@ -25,8 +26,8 @@ public class ProximityActivity extends Activity implements SurfaceHolder.Callbac
 
         @Override
         public void refresh() {
-            mProximityPainter.setUserDirection(mLocationControlBuffered.getAzimuth());
-            Location location = mLocationControlBuffered.getLocation();
+            mProximityPainter.setUserDirection(mLocationAndDirection.getAzimuth());
+            Location location = mLocationAndDirection.getLocation();
             mProximityPainter.setUserLocation(location.getLatitude(),
                     location.getLongitude(), location.getAccuracy());
         }
@@ -38,7 +39,7 @@ public class ProximityActivity extends Activity implements SurfaceHolder.Callbac
     private AnimatorThread mAnimatorThread;
     private boolean mStartWhenSurfaceCreated = false;  //TODO: Needed?
     private DbFrontend mDbFrontend;
-    private LocationControlBuffered mLocationControlBuffered;
+    private LocationAndDirection mLocationAndDirection;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,15 +65,20 @@ public class ProximityActivity extends Activity implements SurfaceHolder.Callbac
         SurfaceHolder holder = mProximityView.getHolder();
         holder.addCallback(this); 
         mDataCollector = new DataCollector();
-        mLocationControlBuffered = LocationControlDi.create(this);
-        Location location = mLocationControlBuffered.getLocation();
+        mLocationAndDirection = LocationControlDi.create(this);
+        mLocationAndDirection.addObserver(mDataCollector);
+        Location location = mLocationAndDirection.getLocation();
         mProximityPainter.setUserLocation(location.getLatitude(), location.getLongitude(), location.getAccuracy());
     }
     
     @Override
     protected void onResume() {
         super.onResume();
-        mLocationControlBuffered.onResume();
+        
+        Geocache geocache = getIntent().<Geocache> getParcelableExtra("geocache");
+        mProximityPainter.setSelectedGeocache(geocache);
+        
+        mLocationAndDirection.onResume();
         if (mAnimatorThread == null)
             mStartWhenSurfaceCreated = true;
         else
@@ -82,7 +88,7 @@ public class ProximityActivity extends Activity implements SurfaceHolder.Callbac
     @Override
     protected void onPause() {
         super.onPause();
-        mLocationControlBuffered.onPause();
+        mLocationAndDirection.onPause();
         if (mAnimatorThread != null) {
             AnimatorThread.IThreadStoppedListener listener = new
             AnimatorThread.IThreadStoppedListener() {

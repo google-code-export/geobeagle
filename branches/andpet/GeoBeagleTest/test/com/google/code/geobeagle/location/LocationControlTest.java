@@ -17,9 +17,6 @@ package com.google.code.geobeagle.location;
 import static org.easymock.EasyMock.expect;
 import static org.junit.Assert.assertEquals;
 
-import com.google.code.geobeagle.location.LocationControl;
-import com.google.code.geobeagle.location.LocationControl.LocationChooser;
-
 import org.easymock.classextension.EasyMock;
 import org.junit.Test;
 import org.junit.runner.RunWith;

@@ -17,11 +17,7 @@ package com.google.code.geobeagle.cachelist;
 import static org.junit.Assert.assertEquals;
 
 import com.google.code.geobeagle.Geocache;
-import com.google.code.geobeagle.LocationControlBuffered;
-import com.google.code.geobeagle.activity.cachelist.model.CacheListData;
-import com.google.code.geobeagle.activity.cachelist.model.GeocacheVector;
-import com.google.code.geobeagle.activity.cachelist.model.GeocacheVectors;
-
+import com.google.code.geobeagle.LocationAndDirection;
 import org.easymock.EasyMock;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -36,15 +32,15 @@ public class CacheListDataTest {
     @Test
     public void testAdd() {
         GeocacheVectors geocacheVectors = PowerMock.createMock(GeocacheVectors.class);
-        LocationControlBuffered locationControlBuffered = PowerMock
-                .createMock(LocationControlBuffered.class);
+        LocationAndDirection locationAndDirection = PowerMock
+                .createMock(LocationAndDirection.class);
 
         ArrayList<Geocache> geocaches = new ArrayList<Geocache>(0);
         geocacheVectors.reset(0);
-        geocacheVectors.addLocations(geocaches, locationControlBuffered);
+        geocacheVectors.addLocations(geocaches, locationAndDirection);
 
         PowerMock.replayAll();
-        new CacheListData(geocacheVectors).add(geocaches, locationControlBuffered);
+        new CacheListData(geocacheVectors).add(geocaches, locationAndDirection);
         PowerMock.verifyAll();
     }
 

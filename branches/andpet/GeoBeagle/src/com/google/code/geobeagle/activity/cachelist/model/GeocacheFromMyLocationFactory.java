@@ -17,17 +17,17 @@ package com.google.code.geobeagle.activity.cachelist.model;
 import com.google.code.geobeagle.CacheType;
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.GeocacheFactory;
-import com.google.code.geobeagle.LocationControlBuffered;
+import com.google.code.geobeagle.LocationAndDirection;
 import com.google.code.geobeagle.GeocacheFactory.Source;
 
 import android.location.Location;
 
 public class GeocacheFromMyLocationFactory {
     private final GeocacheFactory mGeocacheFactory;
-    private final LocationControlBuffered mLocationControl;
+    private final LocationAndDirection mLocationControl;
 
     public GeocacheFromMyLocationFactory(GeocacheFactory geocacheFactory,
-            LocationControlBuffered locationControl) {
+            LocationAndDirection locationControl) {
         mGeocacheFactory = geocacheFactory;
         mLocationControl = locationControl;
     }

@@ -14,14 +14,21 @@
 
 package com.google.code.geobeagle.activity.cachelist;
 
-import com.google.code.geobeagle.LocationControlBuffered;
+import com.google.code.geobeagle.LocationAndDirection;
+import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.ActivitySaver;
 import com.google.code.geobeagle.activity.ActivityType;
-import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheListPresenter;
+import com.google.code.geobeagle.activity.cachelist.GeocacheListController.CacheListOnCreateContextMenuListener;
+import com.google.code.geobeagle.activity.cachelist.presenter.CacheList;
+import com.google.code.geobeagle.activity.cachelist.presenter.DistanceFormatterManager;
+import com.google.code.geobeagle.activity.cachelist.view.GeocacheSummaryRowInflater;
 import com.google.code.geobeagle.database.DbFrontend;
+import com.google.code.geobeagle.gpsstatuswidget.UpdateGpsWidgetRunnable;
 
 import android.app.Activity;
+import android.app.ListActivity;
 import android.content.Intent;
+import android.preference.PreferenceManager;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -63,19 +70,41 @@ public class CacheListDelegate {
     private final GeocacheListController mController;
     private final DbFrontend mDbFrontend;
     private final ImportIntentManager mImportIntentManager;
-    private final GeocacheListPresenter mPresenter;
-    private final LocationControlBuffered mLocationControlBuffered;
+    private final LocationAndDirection mLocationAndDirection;
+    private final UpdateGpsWidgetRunnable mUpdateGpsWidgetRunnable;
+    private final CacheListView.ScrollListener mScrollListener;
+    private final CacheListOnCreateContextMenuListener mMenuCreator;
+    private final CacheList mCacheList;
+    private final View mGpsStatusWidget;
+    private final ListActivity mListActivity;
+    private final DistanceFormatterManager mDistanceFormatterManager;
+    private final GeocacheSummaryRowInflater mGeocacheSummaryRowInflater;
 
     public CacheListDelegate(ImportIntentManager importIntentManager, ActivitySaver activitySaver,
             GeocacheListController geocacheListController,
-            GeocacheListPresenter geocacheListPresenter, DbFrontend dbFrontend,
-            LocationControlBuffered locationControlBuffered) {
+            DbFrontend dbFrontend,
+            LocationAndDirection locationAndDirection,
+            UpdateGpsWidgetRunnable updateGpsWidgetRunnable,
+            View gpsStatusWidget,
+            CacheListOnCreateContextMenuListener menuCreator,
+            CacheList cacheList,
+            GeocacheSummaryRowInflater geocacheSummaryRowInflater,
+            ListActivity listActivity,
+            CacheListView.ScrollListener scrollListener,
+            DistanceFormatterManager distanceFormatterManager) {
         mActivitySaver = activitySaver;
         mController = geocacheListController;
-        mPresenter = geocacheListPresenter;
         mImportIntentManager = importIntentManager;
         mDbFrontend = dbFrontend;
-        mLocationControlBuffered = locationControlBuffered;
+        mLocationAndDirection = locationAndDirection;
+        mUpdateGpsWidgetRunnable = updateGpsWidgetRunnable;
+        mGpsStatusWidget = gpsStatusWidget;
+        mMenuCreator = menuCreator;
+        mCacheList = cacheList;
+        mGeocacheSummaryRowInflater = geocacheSummaryRowInflater;
+        mListActivity = listActivity;
+        mScrollListener = scrollListener;
+        mDistanceFormatterManager = distanceFormatterManager;
     }
 
     public boolean onContextItemSelected(MenuItem menuItem) {
@@ -83,7 +112,13 @@ public class CacheListDelegate {
     }
 
     public void onCreate() {
-        mPresenter.onCreate();
+        mListActivity.setContentView(R.layout.cache_list);
+        final ListView listView = mListActivity.getListView();
+        listView.addHeaderView(mGpsStatusWidget);
+        mListActivity.setListAdapter(mCacheList);
+        listView.setOnCreateContextMenuListener(mMenuCreator);
+        listView.setOnScrollListener(mScrollListener);
+        mUpdateGpsWidgetRunnable.run();
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -103,15 +138,19 @@ public class CacheListDelegate {
     }
 
     public void onPause() {
-        mLocationControlBuffered.onPause();
+        mLocationAndDirection.onPause();
         mController.onPause();
         mActivitySaver.save(ActivityType.CACHE_LIST);
         mDbFrontend.closeDatabase();
     }
 
     public void onResume() {
-        mPresenter.onResume();
+        mDistanceFormatterManager.setFormatter();
+        final boolean absoluteBearing = PreferenceManager
+                .getDefaultSharedPreferences(mListActivity).getBoolean("absolute-bearing", false);
+        mGeocacheSummaryRowInflater.setBearingFormatter(absoluteBearing);
+
         mController.onResume(mImportIntentManager.isImport());
-        mLocationControlBuffered.onResume();
+        mLocationAndDirection.onResume();
     }
 }

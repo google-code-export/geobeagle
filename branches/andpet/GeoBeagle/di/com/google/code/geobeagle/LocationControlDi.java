@@ -20,11 +20,11 @@ import android.hardware.SensorManager;
 import android.location.LocationManager;
 
 public class LocationControlDi {
-    public static LocationControlBuffered create(Activity activity) {
+    public static LocationAndDirection create(Activity activity) {
         final LocationManager locationManager = (LocationManager)activity
         .getSystemService(Context.LOCATION_SERVICE);
         final SensorManager sensorManager = (SensorManager)activity
         .getSystemService(Context.SENSOR_SERVICE);
-        return new LocationControlBuffered(locationManager, sensorManager);
+        return new LocationAndDirection(locationManager, sensorManager);
     }
 }

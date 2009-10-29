@@ -16,8 +16,6 @@ package com.google.code.geobeagle.activity.cachelist.presenter;
 
 import static org.junit.Assert.*;
 
-import com.google.code.geobeagle.LocationControlBuffered.IGpsLocation;
-
 import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;

@@ -19,10 +19,6 @@ import static org.easymock.classextension.EasyMock.createMock;
 import static org.easymock.classextension.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.verify;
 
-import com.google.code.geobeagle.activity.main.AppLifecycleManager;
-import com.google.code.geobeagle.activity.main.LifecycleManager;
-import com.google.code.geobeagle.location.LocationLifecycleManager;
-
 import org.junit.Test;
 
 import android.content.SharedPreferences;

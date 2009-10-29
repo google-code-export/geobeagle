@@ -7,14 +7,14 @@ import java.util.ArrayList;
 /** SKETCH -- currently not used
  * Does asynchronous database calls for free-text search.
  */
-public class CachesProviderSearch implements CachesProvider {
-    private CachesProvider mProvider;
+public class CachesProviderSearch implements ICachesProvider {
+    private ICachesProvider mProvider;
     private String mSubstring;
     private boolean mIsBusy;
     private boolean mApplyingSubstring;
     private boolean mHasChanged;
     
-    public CachesProviderSearch(CachesProvider provider) {
+    public CachesProviderSearch(ICachesProvider provider) {
         mProvider = provider;
     }
 

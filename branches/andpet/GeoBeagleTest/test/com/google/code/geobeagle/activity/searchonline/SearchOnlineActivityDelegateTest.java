@@ -14,14 +14,10 @@
 
 package com.google.code.geobeagle.activity.searchonline;
 
-import com.google.code.geobeagle.CompassListener;
-import com.google.code.geobeagle.LocationControlBuffered;
+import com.google.code.geobeagle.LocationAndDirection;
 import com.google.code.geobeagle.activity.ActivitySaver;
 import com.google.code.geobeagle.activity.ActivityType;
 import com.google.code.geobeagle.activity.cachelist.presenter.DistanceFormatterManager;
-import com.google.code.geobeagle.location.CombinedLocationListener;
-import com.google.code.geobeagle.location.CombinedLocationManager;
-
 import org.easymock.EasyMock;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -39,8 +35,8 @@ public class SearchOnlineActivityDelegateTest {
     public void onResume() {
         SensorManager sensorManager = PowerMock.createMock(SensorManager.class);
         CompassListener compassListener = PowerMock.createMock(CompassListener.class);
-        LocationControlBuffered locationControlBuffered = PowerMock
-                .createMock(LocationControlBuffered.class);
+        LocationAndDirection locationAndDirection = PowerMock
+                .createMock(LocationAndDirection.class);
         CombinedLocationListener combinedLocationListener = PowerMock
                 .createMock(CombinedLocationListener.class);
         CombinedLocationManager combinedLocationManager = PowerMock
@@ -51,13 +47,13 @@ public class SearchOnlineActivityDelegateTest {
         EasyMock.expect(
                 sensorManager.registerListener(compassListener, SensorManager.SENSOR_ORIENTATION,
                         SensorManager.SENSOR_DELAY_UI)).andReturn(true);
-        combinedLocationManager.requestLocationUpdates(1000, 0, locationControlBuffered);
+        combinedLocationManager.requestLocationUpdates(1000, 0, locationAndDirection);
         combinedLocationManager.requestLocationUpdates(1000, 0, combinedLocationListener);
         distanceFormatterManager.setFormatter();
 
         PowerMock.replayAll();
         new SearchOnlineActivityDelegate(null, sensorManager, compassListener,
-                combinedLocationManager, combinedLocationListener, locationControlBuffered,
+                combinedLocationManager, combinedLocationListener, locationAndDirection,
                 distanceFormatterManager, null).onResume();
         PowerMock.verifyAll();
     }
@@ -88,8 +84,8 @@ public class SearchOnlineActivityDelegateTest {
     public void onPause() {
         SensorManager sensorManager = PowerMock.createMock(SensorManager.class);
         CompassListener compassListener = PowerMock.createMock(CompassListener.class);
-        LocationControlBuffered locationControlBuffered = PowerMock
-                .createMock(LocationControlBuffered.class);
+        LocationAndDirection locationAndDirection = PowerMock
+                .createMock(LocationAndDirection.class);
         CombinedLocationListener combinedLocationListener = PowerMock
                 .createMock(CombinedLocationListener.class);
         CombinedLocationManager combinedLocationManager = PowerMock
@@ -102,7 +98,7 @@ public class SearchOnlineActivityDelegateTest {
 
         PowerMock.replayAll();
         new SearchOnlineActivityDelegate(null, sensorManager, compassListener,
-                combinedLocationManager, combinedLocationListener, locationControlBuffered, null,
+                combinedLocationManager, combinedLocationListener, locationAndDirection, null,
                 activitySaver).onPause();
         PowerMock.verifyAll();
     }

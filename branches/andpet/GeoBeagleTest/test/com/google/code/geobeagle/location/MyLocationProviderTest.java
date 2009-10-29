@@ -21,7 +21,7 @@ import static org.easymock.classextension.EasyMock.verify;
 import static org.junit.Assert.assertEquals;
 
 import com.google.code.geobeagle.ErrorDisplayer;
-import com.google.code.geobeagle.LocationControlBuffered;
+import com.google.code.geobeagle.LocationAndDirection;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.main.view.MyLocationProvider;
 
@@ -32,33 +32,33 @@ import android.location.Location;
 public class MyLocationProviderTest {
     @Test
     public void test() {
-        LocationControlBuffered locationControlBuffered = createMock(LocationControlBuffered.class);
+        LocationAndDirection locationAndDirection = createMock(LocationAndDirection.class);
         ErrorDisplayer errorDisplayer = createMock(ErrorDisplayer.class);
         Location location = createMock(Location.class);
 
-        expect(locationControlBuffered.getLocation()).andReturn(location);
+        expect(locationAndDirection.getLocation()).andReturn(location);
 
-        replay(locationControlBuffered);
-        MyLocationProvider myLocationProvider = new MyLocationProvider(locationControlBuffered,
+        replay(locationAndDirection);
+        MyLocationProvider myLocationProvider = new MyLocationProvider(locationAndDirection,
                 errorDisplayer);
         assertEquals(location, myLocationProvider.getLocation());
-        verify(locationControlBuffered);
+        verify(locationAndDirection);
     }
 
     @Test
     public void testNullLocation() {
-        LocationControlBuffered locationControlBuffered = createMock(LocationControlBuffered.class);
+        LocationAndDirection locationAndDirection = createMock(LocationAndDirection.class);
         ErrorDisplayer errorDisplayer = createMock(ErrorDisplayer.class);
-        expect(locationControlBuffered.getLocation()).andReturn(null);
+        expect(locationAndDirection.getLocation()).andReturn(null);
 
         errorDisplayer.displayError(R.string.error_cant_get_location);
 
-        replay(locationControlBuffered);
+        replay(locationAndDirection);
         replay(errorDisplayer);
-        MyLocationProvider myLocationProvider = new MyLocationProvider(locationControlBuffered,
+        MyLocationProvider myLocationProvider = new MyLocationProvider(locationAndDirection,
                 errorDisplayer);
         assertEquals(null, myLocationProvider.getLocation());
-        verify(locationControlBuffered);
+        verify(locationAndDirection);
         verify(errorDisplayer);
     }
 }

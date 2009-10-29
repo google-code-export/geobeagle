@@ -1,10 +1,10 @@
 package com.google.code.geobeagle.database;
 
-import static org.easymock.EasyMock.expect;
 import static org.junit.Assert.*;
 
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.xmlimport.GpxImporterDI.Toaster;
+import static com.google.code.geobeagle.Common.mockGeocache;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -18,13 +18,6 @@ public class CachesProviderLazyAreaTest {
     Toaster mToaster;
     CachesProviderStub mArea;
 
-    private Geocache mockGeocache(double latitude, double longitude) {
-        Geocache geocache = PowerMock.createMock(Geocache.class);
-        expect(geocache.getLatitude()).andReturn(latitude).anyTimes();
-        expect(geocache.getLongitude()).andReturn(longitude).anyTimes();
-        return geocache;
-    }    
-    
     @Before
     public void setUp() {
         mToaster = PowerMock.createMock(Toaster.class);

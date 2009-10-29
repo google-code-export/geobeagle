@@ -6,7 +6,6 @@ import com.google.code.geobeagle.activity.main.GeoUtils;
 
 import java.util.ArrayList;
 
-//TODO: This class won't be used and should be removed
 public class CachesProviderLazy implements ICachesProviderCenter {
 
     private final ICachesProviderCenter mProvider;

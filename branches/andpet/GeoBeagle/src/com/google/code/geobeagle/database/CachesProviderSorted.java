@@ -18,7 +18,7 @@ import java.util.Map;
 public class CachesProviderSorted implements ICachesProviderCenter,
 IDistanceAndBearingProvider {
 
-    private final CachesProvider mCachesProvider;
+    private final ICachesProvider mCachesProvider;
     private boolean mHasChanged = true;
     private double mLatitude;
     private double mLongitude;
@@ -26,7 +26,7 @@ IDistanceAndBearingProvider {
     private DistanceComparator mDistanceComparator;
     private boolean isInitialized = false;
 
-    public class DistanceComparator implements Comparator<Geocache> {
+    private class DistanceComparator implements Comparator<Geocache> {
         public int compare(Geocache geocache1, Geocache geocache2) {
             final float d1 = getDistanceAndBearing(geocache1).getDistance();
             final float d2 = getDistanceAndBearing(geocache2).getDistance();
@@ -38,7 +38,7 @@ IDistanceAndBearingProvider {
         }
     }
     
-    public CachesProviderSorted(CachesProvider cachesProvider) {
+    public CachesProviderSorted(ICachesProvider cachesProvider) {
         mCachesProvider = cachesProvider;
         mDistanceComparator = new DistanceComparator();
         isInitialized = false;
@@ -92,11 +92,11 @@ IDistanceAndBearingProvider {
         return mHasChanged || mCachesProvider.hasChanged();
     }
 
-    //TODO: If the list hasn't been updated when doing resetChanged,
-    //the object will forget that the underlaying list changed
     @Override
     public void resetChanged() {
         mHasChanged = false;
+        if (mCachesProvider.hasChanged())
+            mSortedList = null;
         mCachesProvider.resetChanged();
     }
 
@@ -105,6 +105,7 @@ IDistanceAndBearingProvider {
         //TODO: Not good enough to compare doubles with '=='?
         if (isInitialized && latitude == mLatitude && longitude == mLongitude)
             return;
+        Log.d("GeoBeagle", "Sorted setCenter = " + latitude + " " + longitude);
         mLatitude = latitude;
         mLongitude = longitude;
         mHasChanged = true;
