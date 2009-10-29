@@ -14,37 +14,27 @@
 
 package com.google.code.geobeagle.actions;
 
-
-import android.content.res.Resources;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
 
 import java.util.ArrayList;
 
 public class MenuActions {
     private ArrayList<MenuAction> mMenuActions = new ArrayList<MenuAction>();
-    private Resources mResources;
 
-    public MenuActions(Resources resources) {
-        mResources = resources;
+    public MenuActions() {
     }
     
-    public MenuActions(Resources resources, MenuAction[] menuActions) {
-        mResources = resources;
+    public MenuActions(MenuAction[] menuActions) {
         for (int ix = 0; ix < menuActions.length; ix++) {
             add(menuActions[ix]);
         }
     }
 
     public boolean act(int itemId) {
-        for (MenuAction action : mMenuActions) {
-            if (action.getId() == itemId) {
-                action.act();
-                return true;
-            }
-        }
-        
-        return false;
+        mMenuActions.get(itemId).act();
+        return true;
     }
     
     public void add(MenuAction action) {
@@ -61,8 +51,20 @@ public class MenuActions {
         menu.clear();
         int ix = 0;
         for (MenuAction action : mMenuActions) {
-            final int id = action.getId();
-            menu.add(0, id, ix, mResources.getString(id));
+            menu.add(0, ix, ix, action.getLabel());
+            ix++;
+        }
+        return true;
+    }
+ 
+    /** Give the menu items a chance to update the text */
+    public boolean onMenuOpened(Menu menu) {
+        int ix = 0;
+        for (MenuAction action : mMenuActions) {
+            MenuItem item = menu.getItem(ix);
+            String label = action.getLabel();
+            if (!item.getTitle().equals(label))
+                item.setTitle(label);
             ix++;
         }
         return true;

@@ -15,14 +15,12 @@
 package com.google.code.geobeagle.activity.cachelist;
 
 import com.google.code.geobeagle.Geocache;
-import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.actions.CacheAction;
 import com.google.code.geobeagle.actions.MenuActions;
 import com.google.code.geobeagle.activity.cachelist.actions.MenuActionSyncGpx;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheList;
 import com.google.code.geobeagle.database.ICachesProvider;
-import com.google.code.geobeagle.database.CachesProviderToggler;
-import android.content.res.Resources;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -38,13 +36,11 @@ public class GeocacheListController {
     public static class CacheListOnCreateContextMenuListener implements OnCreateContextMenuListener {
         private final ICachesProvider mCachesProvider;
         private final CacheAction mCacheActions[];
-        private final Resources mResources;
 
         public CacheListOnCreateContextMenuListener(ICachesProvider cachesProvider,
-                CacheAction cacheActions[], Resources resources) {
+                CacheAction cacheActions[]) {
             mCachesProvider = cachesProvider;
             mCacheActions = cacheActions;
-            mResources = resources;
         }
 
         public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
@@ -53,35 +49,27 @@ public class GeocacheListController {
                 Geocache geocache = mCachesProvider.getCaches().get(acmi.position - 1);
                 menu.setHeaderTitle(geocache.getId());
                 for (int ix = 0; ix < mCacheActions.length; ix++) {
-                    menu.add(0, Menu.NONE, ix, mResources.getString(mCacheActions[ix].getId()));
+                    menu.add(0, ix, ix, mCacheActions[ix].getLabel());
                 }
             }
         }
     }
 
-    //static final int MENU_DELETE = 0;
-    //static final int MENU_VIEW = 1;
-    //static final int MENU_EDIT = 2;
     public static final String SELECT_CACHE = "SELECT_CACHE";
     private final CacheList mCacheList;
     private final CacheAction mCacheActions[];
-    private final CachesProviderToggler mCachesProviderToggler;
     private final MenuActions mMenuActions;
     private final MenuActionSyncGpx mMenuActionSyncGpx;
-    private final ICachesProvider mCachesProvider;
     private final CacheAction mDefaultCacheAction;
 
     public GeocacheListController(CacheList cacheList,
-            CacheAction[] cacheActions, CachesProviderToggler cachesProviderToggler,
+            CacheAction[] cacheActions,
             MenuActionSyncGpx menuActionSyncGpx, MenuActions menuActions,
-            CacheAction defaultCacheAction,
-            ICachesProvider cachesProvider) {
+            CacheAction defaultCacheAction) {
         mCacheList = cacheList;
         mCacheActions = cacheActions;
-        mCachesProviderToggler = cachesProviderToggler;
         mMenuActionSyncGpx = menuActionSyncGpx;
         mMenuActions = menuActions;
-        mCachesProvider = cachesProvider;
         mDefaultCacheAction = defaultCacheAction;
     }
 
@@ -89,7 +77,9 @@ public class GeocacheListController {
         AdapterContextMenuInfo adapterContextMenuInfo = 
             (AdapterContextMenuInfo)menuItem.getMenuInfo();
         int index = adapterContextMenuInfo.position - 1;
-        mCacheActions[menuItem.getItemId()].act(getGeocacheAt(index));
+        Log.d("GeoBeagle", "Act doing action " + menuItem.getItemId() + " = " +
+                mCacheActions[menuItem.getItemId()].toString());
+        mCacheActions[menuItem.getItemId()].act(mCacheList.getGeocacheAt(index));
         return true;
     }
 
@@ -97,23 +87,16 @@ public class GeocacheListController {
         return mMenuActions.onCreateOptionsMenu(menu);
     }
     
-    private Geocache getGeocacheAt(int listIndex) {
-        return mCachesProvider.getCaches().get(listIndex);
-    }
-
     public void onListItemClick(ListView l, View v, int position, long id) {
         if (position > 0) {
-            mDefaultCacheAction.act(getGeocacheAt(position - 1));
+            mDefaultCacheAction.act(mCacheList.getGeocacheAt(position - 1));
         } else {
             mCacheList.forceRefresh();
         }
     }
 
     public boolean onMenuOpened(int featureId, Menu menu) {
-        boolean nearest = mCachesProviderToggler.isShowingNearest();
-        int menuString = nearest ? R.string.menu_show_all_caches : R.string.menu_show_nearest_caches;
-        menu.findItem(R.string.menu_toggle_filter).setTitle(menuString);
-        return true;
+        return mMenuActions.onMenuOpened(menu);
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {

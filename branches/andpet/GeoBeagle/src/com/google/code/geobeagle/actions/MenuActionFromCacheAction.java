@@ -2,12 +2,11 @@ package com.google.code.geobeagle.actions;
 
 import com.google.code.geobeagle.Geocache;
 
-public class MenuActionFromCacheAction extends MenuActionBase {
+public class MenuActionFromCacheAction implements MenuAction {
     private CacheAction mCacheAction;
     private Geocache mTarget;
     
     public MenuActionFromCacheAction(CacheAction cacheAction, Geocache target) {
-        super(cacheAction.getId());
         mCacheAction = cacheAction;
         mTarget = target;
     }
@@ -17,4 +16,7 @@ public class MenuActionFromCacheAction extends MenuActionBase {
         mCacheAction.act(mTarget);
     }
 
+    public String getLabel() {
+        return mCacheAction.getLabel();
+    }
 }

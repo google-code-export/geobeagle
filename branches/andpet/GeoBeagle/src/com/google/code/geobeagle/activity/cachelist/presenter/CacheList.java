@@ -11,6 +11,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
+import java.util.ArrayList;
+
 //TODO: Rename this class
 /** Feeds the caches in a CachesProvider to the GUI list view */
 public class CacheList extends BaseAdapter implements Refresher {
@@ -18,7 +20,7 @@ public class CacheList extends BaseAdapter implements Refresher {
     private final IDistanceAndBearingProvider mDistances;
     private final GeocacheSummaryRowInflater mGeocacheSummaryRowInflater;
     private final TitleUpdater mTitleUpdater;
-    //private ArrayList<Geocache> mListData;
+    private ArrayList<Geocache> mListData;
     private float mAzimuth;
     private boolean mUpdatesEnabled = true;
 
@@ -54,12 +56,16 @@ public class CacheList extends BaseAdapter implements Refresher {
     public void forceRefresh() {
         //TODO: Take this back?
         //mProvider.resetChanged();
+        mListData = mProvider.getCaches();
         mTitleUpdater.refresh();
         notifyDataSetChanged();
     }
-    
+
+    //TODO: Cache the list in this class to avoid partial updates and such
     public int getCount() {
-        return mProvider.getCount();
+        if (mListData == null)
+            return 0;
+        return mListData.size();
     }
 
     public Object getItem(int position) {
@@ -70,9 +76,19 @@ public class CacheList extends BaseAdapter implements Refresher {
         return position;
     }
 
+    /** Get the geocache for a certain row in the displayed list, starting with zero */
+    public Geocache getGeocacheAt(int position) {
+        if (mListData == null)
+            return null;
+        Geocache cache = mListData.get(position);
+        return cache;
+    }
+    
     public View getView(int position, View convertView, ViewGroup parent) {
+        if (mListData == null)
+            return null; //What happens in this case?
         View view = mGeocacheSummaryRowInflater.inflate(convertView);
-        Geocache cache = mProvider.getCaches().get(position);
+        Geocache cache = mListData.get(position);
         DistanceAndBearing geocacheVector = mDistances.getDistanceAndBearing(cache);
         mGeocacheSummaryRowInflater.setData(view, geocacheVector, mAzimuth);
         return view;

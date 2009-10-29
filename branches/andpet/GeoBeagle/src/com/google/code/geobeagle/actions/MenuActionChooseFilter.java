@@ -13,7 +13,7 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 
 /** Show a dialog to let the user decide which geocaches to show */
-public class MenuActionChooseFilter extends MenuActionBase {
+public class MenuActionChooseFilter implements MenuAction {
     private final Activity mActivity;
     private final CacheFilter mFilter;
     private final CachesProviderArea mCachesProviderArea;
@@ -22,13 +22,17 @@ public class MenuActionChooseFilter extends MenuActionBase {
     public MenuActionChooseFilter(Activity activity,
             CacheFilter filter, CachesProviderArea cachesProviderArea,
             Refresher refresher) {
-        super(R.string.menu_choose_filter);
         mActivity = activity;
         mFilter = filter;
         mCachesProviderArea = cachesProviderArea;
         mRefresher = refresher;
     }
 
+    @Override
+    public String getLabel() {
+        return mActivity.getResources().getString(R.string.menu_choose_filter);
+    }
+    
     private class DialogFilterGui implements CacheFilter.FilterGui {
         private Dialog mDialog;
         public DialogFilterGui(Dialog dialog) {

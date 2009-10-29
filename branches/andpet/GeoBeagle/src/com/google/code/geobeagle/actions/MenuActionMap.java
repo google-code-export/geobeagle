@@ -30,8 +30,7 @@ public class MenuActionMap implements MenuAction {
     }
 
     @Override
-    public int getId() {
-        return R.string.menu_map;
+    public String getLabel() {
+        return mActivity.getResources().getString(R.string.menu_map);
     }
-
 }

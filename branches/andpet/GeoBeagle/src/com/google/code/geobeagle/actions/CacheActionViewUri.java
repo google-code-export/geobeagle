@@ -41,7 +41,7 @@ public class CacheActionViewUri implements CacheAction {
     }
 
     @Override
-    public int getId() {
-        return R.string.cache_page;
+    public String getLabel() {
+        return mGeoBeagle.getResources().getString(R.string.cache_page);
     }
 }

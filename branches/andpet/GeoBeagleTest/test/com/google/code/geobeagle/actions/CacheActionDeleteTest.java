@@ -46,7 +46,7 @@ public class CacheActionDeleteTest {
         titleUpdater.refresh();
 
         PowerMock.replayAll();
-        new CacheActionDelete(cacheList, titleUpdater, dbFrontend).act(geocache);
+        new CacheActionDelete(cacheList, titleUpdater, dbFrontend, null).act(geocache);
         PowerMock.verifyAll();
     }
 }

@@ -33,7 +33,7 @@ public class MenuActionCacheList implements MenuAction {
     }
 
     @Override
-    public int getId() {
-        return R.string.menu_cache_list;
+    public String getLabel() {
+        return mActivity.getResources().getString(R.string.menu_cache_list);
     }
 }

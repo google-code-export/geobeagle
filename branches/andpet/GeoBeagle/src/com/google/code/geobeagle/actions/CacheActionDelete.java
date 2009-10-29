@@ -20,16 +20,20 @@ import com.google.code.geobeagle.activity.cachelist.presenter.CacheList;
 import com.google.code.geobeagle.activity.cachelist.presenter.RefreshAction;
 import com.google.code.geobeagle.database.DbFrontend;
 
+import android.content.res.Resources;
+
 public class CacheActionDelete implements CacheAction {
     private final CacheList mCacheList;
     private final DbFrontend mDbFrontend;
     private final RefreshAction mCacheListRefresher;
+    private final Resources mResources;
 
     public CacheActionDelete(CacheList cacheList, RefreshAction cacheListRefresh,
-            DbFrontend dbFrontend) {
+            DbFrontend dbFrontend, Resources resources) {
         mCacheList = cacheList;
         mCacheListRefresher = cacheListRefresh;
         mDbFrontend = dbFrontend;
+        mResources = resources;
     }
 
     @Override
@@ -40,7 +44,8 @@ public class CacheActionDelete implements CacheAction {
     }
 
     @Override
-    public int getId() {
-        return R.string.menu_delete_cache;
+    public String getLabel() {
+        return mResources.getString(R.string.menu_proximity);
     }
+
 }

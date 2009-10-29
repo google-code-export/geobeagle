@@ -24,8 +24,8 @@ public class CacheActionMap implements CacheAction {
     }
 
     @Override
-    public int getId() {
-        return R.string.menu_cache_map;
+    public String getLabel() {
+        return mActivity.getResources().getString(R.string.menu_cache_map);
     }
 
 }

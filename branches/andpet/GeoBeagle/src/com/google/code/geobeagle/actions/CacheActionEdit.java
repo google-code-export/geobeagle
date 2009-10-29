@@ -36,7 +36,7 @@ public class CacheActionEdit implements CacheAction {
     }
 
     @Override
-    public int getId() {
-        return R.string.menu_edit_geocache;
+    public String getLabel() {
+        return mContext.getResources().getString(R.string.menu_edit_geocache);
     }
 }

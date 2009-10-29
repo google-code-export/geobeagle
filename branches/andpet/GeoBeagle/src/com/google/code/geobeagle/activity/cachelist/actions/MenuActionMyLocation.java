@@ -17,24 +17,28 @@ package com.google.code.geobeagle.activity.cachelist.actions;
 import com.google.code.geobeagle.ErrorDisplayer;
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.actions.MenuActionBase;
+import com.google.code.geobeagle.actions.MenuAction;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheFromMyLocationFactory;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheList;
 import com.google.code.geobeagle.database.DbFrontend;
 
-public class MenuActionMyLocation extends MenuActionBase {
+import android.content.res.Resources;
+
+public class MenuActionMyLocation implements MenuAction {
     private final ErrorDisplayer mErrorDisplayer;
     private final GeocacheFromMyLocationFactory mGeocacheFromMyLocationFactory;
     private final CacheList mListRefresher;
     private final DbFrontend mDbFrontend;
+    private final Resources mResources;
 
     public MenuActionMyLocation(CacheList cacheList, ErrorDisplayer errorDisplayer,
-            GeocacheFromMyLocationFactory geocacheFromMyLocationFactory, DbFrontend dbFrontend) {
-        super(R.string.menu_add_my_location);
+            GeocacheFromMyLocationFactory geocacheFromMyLocationFactory, DbFrontend dbFrontend,
+            Resources resources) {
         mGeocacheFromMyLocationFactory = geocacheFromMyLocationFactory;
         mErrorDisplayer = errorDisplayer;
         mListRefresher = cacheList;
         mDbFrontend = dbFrontend;
+        mResources = resources;
     }
 
     @Override
@@ -49,7 +53,7 @@ public class MenuActionMyLocation extends MenuActionBase {
     }
     
     @Override
-    public int getId() {
-        return R.string.menu_add_my_location;
+    public String getLabel() {
+        return mResources.getString(R.string.menu_add_my_location);
     }
 }

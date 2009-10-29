@@ -69,6 +69,7 @@ import android.app.ListActivity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.DialogInterface.OnClickListener;
+import android.content.res.Resources;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.widget.LinearLayout.LayoutParams;
@@ -176,13 +177,14 @@ public class CacheListDelegateDI {
             }
         };
 
+        final Resources resources = listActivity.getResources();
         final MenuActionSyncGpx menuActionSyncGpx = new MenuActionSyncGpx(nullAbortable,
-                cacheList, gpxImporterFactory, dbFrontend);
-        final MenuActions menuActions = new MenuActions(listActivity.getResources());
+                cacheList, gpxImporterFactory, dbFrontend, resources);
+        final MenuActions menuActions = new MenuActions();
         menuActions.add(menuActionSyncGpx);
-        menuActions.add(new MenuActionToggleFilter(cachesProviderToggler, cacheList));
+        menuActions.add(new MenuActionToggleFilter(cachesProviderToggler, cacheList, resources));
         menuActions.add(new MenuActionMyLocation(cacheList, errorDisplayer,
-                geocacheFromMyLocationFactory, dbFrontend));
+                geocacheFromMyLocationFactory, dbFrontend, resources));
         menuActions.add(new MenuActionSearchOnline(listActivity));
         menuActions.add(new MenuActionChooseFilter(listActivity, cacheFilter, 
                 cachesProviderArea, cacheList));
@@ -193,19 +195,18 @@ public class CacheListDelegateDI {
                 listActivity, geoBeagleMainIntent);
         final CacheActionEdit cacheActionEdit = new CacheActionEdit(listActivity);
         final CacheActionDelete cacheActionDelete = 
-            new CacheActionDelete(cacheList, titleUpdater, dbFrontend);
+            new CacheActionDelete(cacheList, titleUpdater, dbFrontend, resources);
             
         final CacheAction[] contextActions = new CacheAction[] {
-                cacheActionDelete, cacheActionView, cacheActionEdit
+                cacheActionView, cacheActionEdit, cacheActionDelete
         };
         final GeocacheListController geocacheListController = 
-            new GeocacheListController(cacheList, contextActions, cachesProviderToggler,
-                    menuActionSyncGpx, menuActions, cacheActionView, cachesProviderToggler);
+            new GeocacheListController(cacheList, contextActions, menuActionSyncGpx, menuActions, cacheActionView);
 
         final ActivitySaver activitySaver = ActivityDI.createActivitySaver(listActivity);
         final ImportIntentManager importIntentManager = new ImportIntentManager(listActivity);
         final CacheListOnCreateContextMenuListener menuCreator = 
-            new CacheListOnCreateContextMenuListener(cachesProviderToggler, contextActions, listActivity.getResources());
+            new CacheListOnCreateContextMenuListener(cachesProviderToggler, contextActions);
 
         return new CacheListDelegate(importIntentManager, activitySaver,
                 geocacheListController, dbFrontend, locationAndDirection, updateGpsWidgetRunnable, gpsStatusWidget, menuCreator, cacheList, geocacheSummaryRowInflater, listActivity, scrollListener, distanceFormatterManager);

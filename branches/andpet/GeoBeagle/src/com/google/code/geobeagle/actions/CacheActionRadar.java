@@ -23,8 +23,7 @@ public class CacheActionRadar implements CacheAction {
     }
 
     @Override
-    public int getId() {
-        return R.string.radar;
+    public String getLabel() {
+        return mActivity.getResources().getString(R.string.radar);
     }
-
 }

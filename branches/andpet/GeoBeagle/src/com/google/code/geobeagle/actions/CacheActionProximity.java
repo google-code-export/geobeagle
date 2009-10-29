@@ -22,7 +22,7 @@ public class CacheActionProximity implements CacheAction {
     }
 
     @Override
-    public int getId() {
-        return R.string.menu_proximity;
+    public String getLabel() {
+        return mActivity.getResources().getString(R.string.menu_proximity);
     }
 }

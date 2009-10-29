@@ -30,7 +30,7 @@ import com.google.code.geobeagle.actions.CacheActionRadar;
 import com.google.code.geobeagle.actions.CacheActionViewUri;
 import com.google.code.geobeagle.actions.MenuAction;
 import com.google.code.geobeagle.actions.MenuActionCacheList;
-import com.google.code.geobeagle.actions.MenuActionGoogleMaps;
+import com.google.code.geobeagle.actions.CacheActionGoogleMaps;
 import com.google.code.geobeagle.actions.MenuActionSearchOnline;
 import com.google.code.geobeagle.actions.MenuActionSettings;
 import com.google.code.geobeagle.actions.MenuActionFromCacheAction;
@@ -142,16 +142,16 @@ public class GeoBeagle extends Activity {
         final IncomingIntentHandler incomingIntentHandler = new IncomingIntentHandler(
                 geocacheFactory, geocacheFromIntentFactory);
         Geocache geocache = incomingIntentHandler.maybeGetGeocacheFromIntent(getIntent(), null, mDbFrontend);
+        final Resources resources = this.getResources();
         final MenuAction[] menuActionArray = {
                 new MenuActionCacheList(this), 
                 new MenuActionFromCacheAction(new CacheActionEdit(this), geocache),
 //                new MenuActionLogDnf(this), new MenuActionLogFind(this),
                 new MenuActionSearchOnline(this), new MenuActionSettings(this),
-                new MenuActionGoogleMaps(this, intentStarterViewUri),
+                new MenuActionFromCacheAction(new CacheActionGoogleMaps(intentStarterViewUri, resources), geocache),
                 new MenuActionFromCacheAction(new CacheActionProximity(this), geocache)
         };
-        final MenuActions menuActions = new MenuActions(getResources(), menuActionArray);
-        final Resources resources = this.getResources();
+        final MenuActions menuActions = new MenuActions(menuActionArray);
         final SharedPreferences defaultSharedPreferences = PreferenceManager
                 .getDefaultSharedPreferences(this);
         final GeocacheFromParcelFactory geocacheFromParcelFactory = new GeocacheFromParcelFactory(

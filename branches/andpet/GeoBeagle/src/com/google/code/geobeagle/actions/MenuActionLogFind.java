@@ -18,8 +18,7 @@ import com.google.code.geobeagle.R;
 
 import android.app.Activity;
 
-//Could be changed into a CacheAction but then a "CacheAction as MenuAction" 
-//wrapper is needed to launch from a button
+//Could be changed into a CacheAction
 public class MenuActionLogFind implements MenuAction {
     private final Activity mActivity;
 
@@ -33,7 +32,7 @@ public class MenuActionLogFind implements MenuAction {
     }
 
     @Override
-    public int getId() {
-        return R.string.menu_log_find;
+    public String getLabel() {
+        return mActivity.getResources().getString(R.string.menu_log_find);
     }
 }
