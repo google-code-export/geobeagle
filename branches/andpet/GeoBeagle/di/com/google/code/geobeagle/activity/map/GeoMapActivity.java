@@ -79,7 +79,7 @@ public class GeoMapActivity extends MapActivity {
 
         final Resources resources = getResources();
         final Drawable defaultMarker = resources.getDrawable(R.drawable.pin_default);
-        final CacheItemFactory cacheItemFactory = new CacheItemFactory(getResources());
+        final CacheItemFactory cacheItemFactory = new CacheItemFactory(resources);
 
         final CacheFilter cacheFilter = new CacheFilter(this);
         
@@ -92,6 +92,11 @@ public class GeoMapActivity extends MapActivity {
         final double longitude = intent.getFloatExtra("longitude", 0);
         final Overlay nullOverlay = new GeoMapActivity.NullOverlay();
         final GeoPoint nullGeoPoint = new GeoPoint(0, 0);
+        String geocacheId = intent.getStringExtra("geocacheId");
+        if (geocacheId != null) {
+            Geocache selected = mDbFrontend.loadCacheFromId(geocacheId);
+            cacheItemFactory.setSelectedGeocache(selected);
+        }
 
         mapOverlays.add(nullOverlay);
         mapOverlays.add(mMyLocationOverlay);
@@ -107,8 +112,10 @@ public class GeoMapActivity extends MapActivity {
         final ArrayList<Geocache> geocacheList = new ArrayList<Geocache>();
         final CachePinsOverlay cachePinsOverlay = new CachePinsOverlay(cacheItemFactory, this,
                 defaultMarker, geocacheList);
+        CachesProviderArea cachesProviderAreaPins = new CachesProviderArea(mDbFrontend, cacheFilter);
+        final CachesProviderLazyArea lazyAreaPins = new CachesProviderLazyArea(cachesProviderAreaPins, toaster, 1.0);
         final CachePinsOverlayFactory cachePinsOverlayFactory = new CachePinsOverlayFactory(
-                mMapView, this, defaultMarker, cacheItemFactory, cachePinsOverlay, lazyArea);
+                mMapView, this, defaultMarker, cacheItemFactory, cachePinsOverlay, lazyAreaPins);
         final GeoPoint center = new GeoPoint((int)(latitude * GeoUtils.MILLION),
                 (int)(longitude * GeoUtils.MILLION));
         mapController.setCenter(center);
@@ -116,7 +123,7 @@ public class GeoMapActivity extends MapActivity {
                 densityOverlay, cachePinsOverlayFactory, false, cachesProviderArea);
         mMapView.setScrollListener(mOverlayManager);
 
-        final MenuActions menuActions = new MenuActions(getResources());
+        final MenuActions menuActions = new MenuActions();
         menuActions.add(new GeoMapActivityDelegate.MenuActionToggleSatellite(mMapView));
         menuActions.add(new GeoMapActivityDelegate.MenuActionCenterLocation(mMapView, mMyLocationOverlay));
         menuActions.add(new MenuActionCacheList(this));

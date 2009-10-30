@@ -9,6 +9,7 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.util.Log;
 
 public class GraphicsGenerator {
 
@@ -112,6 +113,25 @@ public class GraphicsGenerator {
         int height = iconMap.getIntrinsicHeight();
         iconMap.setBounds(-width/2, -height, width/2, 0);
         return iconMap;
+    }
+
+    /** Returns a new Drawable that is 'top' over 'bottom'. 
+     * Top is assumed to be smaller and is centered over bottom. */
+    public static Drawable superimpose(Drawable top, Drawable bottom) {
+        int width = bottom.getIntrinsicWidth();
+        int height = bottom.getIntrinsicHeight();
+        Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        Canvas c = new Canvas(bitmap);
+        bottom.setBounds(0, 0, width-1, height-1);
+        int topWidth = top.getIntrinsicWidth();
+        int topHeight = top.getIntrinsicHeight();
+        top.setBounds(width/2 - topWidth/2, height/2 - topHeight/2, 
+                width/2 - topWidth/2 + topWidth, height/2 - topHeight/2 + topHeight);
+        bottom.draw(c);
+        top.draw(c);
+        BitmapDrawable bd = new BitmapDrawable(bitmap);
+        bd.setBounds(-width/2, -height, width/2, 0);  //Necessary!
+        return bd;
     }
     
 }

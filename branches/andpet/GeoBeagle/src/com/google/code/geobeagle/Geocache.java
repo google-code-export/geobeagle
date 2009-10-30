@@ -51,6 +51,7 @@ public class Geocache implements Parcelable {
 
     public static final String CACHE_TYPE = "cacheType";
     public static final String CONTAINER = "container";
+    //TODO: Don't use Parcelable -- it creates a second GeocacheFactory.
     public static Parcelable.Creator<Geocache> CREATOR = new GeocacheFactory.CreateGeocacheFromParcel();
     public static final String DIFFICULTY = "difficulty";
     public static final String ID = "id";

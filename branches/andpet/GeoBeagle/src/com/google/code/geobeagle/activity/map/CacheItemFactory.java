@@ -15,9 +15,11 @@
 package com.google.code.geobeagle.activity.map;
 
 import com.google.code.geobeagle.Geocache;
+import com.google.code.geobeagle.GraphicsGenerator;
 import com.google.code.geobeagle.R;
 
 import android.content.res.Resources;
+import android.graphics.drawable.Drawable;
 
 class CacheItemFactory {
     private final Resources mResources;
@@ -33,10 +35,13 @@ class CacheItemFactory {
     
     CacheItem createCacheItem(Geocache geocache) {
         final CacheItem cacheItem = new CacheItem(geocache.getGeoPoint(), geocache);
-        if (geocache == mSelected)
-            cacheItem.setMarker(mResources.getDrawable(R.drawable.glow));
-        else
+        if (geocache == mSelected) {
+            Drawable selected = GraphicsGenerator.superimpose(geocache.getIconMap(mResources),
+                    mResources.getDrawable(R.drawable.glow_40px));
+            cacheItem.setMarker(selected);
+        } else {
             cacheItem.setMarker(geocache.getIconMap(mResources));
+        }
         return cacheItem;
     }
 }

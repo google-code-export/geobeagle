@@ -85,6 +85,17 @@ public class DbFrontend {
         return geocaches;
     }
 
+    /** @return null if the cache id is not in the database */
+    public Geocache loadCacheFromId(String id) {
+        openDatabase();
+        CacheReaderCursor cursor = mCacheReader.open("Id='"+id+"'", null);
+        if (cursor == null)
+            return null;
+        Geocache geocache = cursor.getCache();
+        cursor.close();
+        return geocache;
+    }
+    
     public CacheWriter getCacheWriter() {
         if (mCacheWriter != null)
             return mCacheWriter;

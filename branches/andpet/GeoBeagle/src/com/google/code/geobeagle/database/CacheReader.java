@@ -42,6 +42,7 @@ public class CacheReader {
         return count;
     }
 
+    /** Returns null if no caches were found to match. */
     public CacheReaderCursor open(String where, String limit) {
         Cursor cursor = mSqliteWrapper.query(Database.TBL_CACHES, CacheReader.READER_COLUMNS,
                 where, null, null, null, limit);

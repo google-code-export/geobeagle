@@ -20,6 +20,7 @@ public class CacheActionMap implements CacheAction {
             new Intent(mActivity, GeoMapActivity.class);
         intent.putExtra("latitude", (float)cache.getLatitude());
         intent.putExtra("longitude", (float)cache.getLongitude());
+        intent.putExtra("geocacheId", cache.getId());
         mActivity.startActivity(intent);
     }
 
