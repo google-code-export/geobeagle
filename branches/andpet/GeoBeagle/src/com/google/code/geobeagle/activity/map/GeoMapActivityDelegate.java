@@ -14,6 +14,7 @@
 
 package com.google.code.geobeagle.activity.map;
 
+import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapView;
 import com.google.android.maps.MyLocationOverlay;
 import com.google.code.geobeagle.R;
@@ -37,7 +38,9 @@ public class GeoMapActivityDelegate {
 
         @Override
         public void act() {
-            mMapView.getController().animateTo(mMyLocationOverlay.getMyLocation());
+            GeoPoint geopoint = mMyLocationOverlay.getMyLocation();
+            if (geopoint != null)
+                mMapView.getController().animateTo(geopoint);
         }
         
         @Override
