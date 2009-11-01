@@ -112,6 +112,7 @@ public class GeoMapActivity extends MapActivity {
         final ArrayList<Geocache> geocacheList = new ArrayList<Geocache>();
         final CachePinsOverlay cachePinsOverlay = new CachePinsOverlay(cacheItemFactory, this,
                 defaultMarker, geocacheList);
+        //Pin overlay and Density overlay can't share providers because the provider wouldn't report hasChanged() when switching between them
         CachesProviderArea cachesProviderAreaPins = new CachesProviderArea(mDbFrontend, cacheFilter);
         final CachesProviderLazyArea lazyAreaPins = new CachesProviderLazyArea(cachesProviderAreaPins, toaster, 1.0);
         final CachePinsOverlayFactory cachePinsOverlayFactory = new CachePinsOverlayFactory(
