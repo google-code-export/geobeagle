@@ -130,7 +130,7 @@ public class GeoMapActivity extends MapActivity {
         menuActions.add(new MenuActionCacheList(this));
         menuActions.add(new MenuActionChooseFilter(this, cacheFilter, cachesProviderArea, mOverlayManager));
         
-        mGeoMapActivityDelegate = new GeoMapActivityDelegate(mMapView, menuActions);
+        mGeoMapActivityDelegate = new GeoMapActivityDelegate(menuActions);
 
         if (!fZoomed) {
             mapController.setZoom(DEFAULT_ZOOM_LEVEL);

@@ -59,15 +59,14 @@ public class GeoMapActivityDelegate {
         }
         @Override
         public String getLabel() {
-            return mMapView.getResources().getString(R.string.menu_toggle_satellite);
+            int stringId = mMapView.isSatellite() ? R.string.map_view : R.string.menu_toggle_satellite;
+            return mMapView.getResources().getString(stringId);
         }
     }
 
-    private final GeoMapView mMapView;
     private final MenuActions mMenuActions;
 
-    public GeoMapActivityDelegate(GeoMapView mapView, MenuActions menuActions) {
-        mMapView = mapView;
+    public GeoMapActivityDelegate(MenuActions menuActions) {
         mMenuActions = menuActions;
     }
 
@@ -76,9 +75,7 @@ public class GeoMapActivityDelegate {
     }
 
     public boolean onMenuOpened(Menu menu) {
-        menu.findItem(R.string.menu_toggle_satellite).setTitle(
-                mMapView.isSatellite() ? R.string.map_view : R.string.satellite_view);
-        return true;
+        return mMenuActions.onMenuOpened(menu);
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {
