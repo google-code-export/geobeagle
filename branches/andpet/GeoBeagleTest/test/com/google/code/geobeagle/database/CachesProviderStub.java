@@ -14,12 +14,16 @@ public class CachesProviderStub implements ICachesProviderArea {
     private boolean mHasChanged = true;
 
     private int mBoundsCalls = 0;
+    private boolean mIsInitialized = false;
     
     public void addCache(Geocache geocache) {
         mGeocaches.add(geocache);
     }
 
     private ArrayList<Geocache> fetchCaches() {
+        if (!mIsInitialized)
+            return mGeocaches;
+        
         ArrayList<Geocache> selection = new ArrayList<Geocache>();
         for (Geocache geocache : mGeocaches) {
             if (geocache.getLatitude() >= mLatLow
@@ -54,6 +58,7 @@ public class CachesProviderStub implements ICachesProviderArea {
         mLonLow = lonLow;
         mLonHigh = lonHigh;
         mHasChanged = true;
+        mIsInitialized = true;
     }
 
     @Override

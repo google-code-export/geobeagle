@@ -39,4 +39,13 @@ public class CachesProviderSortedTest {
         CachesProviderSorted sorted = new CachesProviderSorted(mProvider);
         assertEquals(mSorted, sorted.getCaches());
     }
+
+    @Test
+    public void testSortedAfterSetCenter() {
+        PowerMock.replayAll();
+
+        CachesProviderSorted sorted = new CachesProviderSorted(mProvider);
+        sorted.setCenter(0, 0);
+        assertEquals(mSorted, sorted.getCaches());
+    }
 }

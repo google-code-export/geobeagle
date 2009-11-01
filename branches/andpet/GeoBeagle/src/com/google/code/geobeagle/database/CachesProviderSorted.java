@@ -1,6 +1,7 @@
 package com.google.code.geobeagle.database;
 
 import com.google.code.geobeagle.Geocache;
+import com.google.code.geobeagle.activity.main.GeoUtils;
 import com.google.code.geobeagle.database.DistanceAndBearing.IDistanceAndBearingProvider;
 
 import android.util.Log;
@@ -10,6 +11,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.WeakHashMap;
 
 //TODO: Use this class from prox.DataCollector to determine the real outer limit
 /** Wraps another CachesProvider to make it sorted. Geocaches closer to 
@@ -44,15 +46,16 @@ IDistanceAndBearingProvider {
         isInitialized = false;
     }
 
-    //TODO: Should be weak references to Geocaches
-    private Map<Geocache, DistanceAndBearing> mDistances =
-        new HashMap<Geocache, DistanceAndBearing>();
+    private WeakHashMap<Geocache, DistanceAndBearing> mDistances =
+        new WeakHashMap<Geocache, DistanceAndBearing>();
     
     public DistanceAndBearing getDistanceAndBearing(Geocache cache) {
         DistanceAndBearing d = mDistances.get(cache);
         if (d == null) {
             float distance = cache.getDistanceTo(mLatitude, mLongitude);
-            d = new DistanceAndBearing(cache, distance);
+            float bearing = (float)GeoUtils.bearing(mLatitude, mLongitude,
+                    cache.getLatitude(), cache.getLongitude());
+            d = new DistanceAndBearing(cache, distance, bearing);
             mDistances.put(cache, d);
         }
         return d;
@@ -105,7 +108,6 @@ IDistanceAndBearingProvider {
         //TODO: Not good enough to compare doubles with '=='?
         if (isInitialized && latitude == mLatitude && longitude == mLongitude)
             return;
-        Log.d("GeoBeagle", "Sorted setCenter = " + latitude + " " + longitude);
         mLatitude = latitude;
         mLongitude = longitude;
         mHasChanged = true;

@@ -2,7 +2,6 @@ package com.google.code.geobeagle.database;
 
 import com.google.code.geobeagle.Geocache;
 
-//TODO: Rename to GeocacheVector
 public class DistanceAndBearing {
 
     public interface IDistanceAndBearingProvider {
@@ -12,9 +11,11 @@ public class DistanceAndBearing {
     private Geocache mGeocache;
     private float mDistance;
     private float mBearing;
-    public DistanceAndBearing(Geocache geocache, float distance) {
+    public DistanceAndBearing(Geocache geocache, float distance,
+            float bearing) {
         mGeocache = geocache;
         mDistance = distance;
+        mBearing = bearing;
     }
     /** Which unit? */
     public float getDistance() {
