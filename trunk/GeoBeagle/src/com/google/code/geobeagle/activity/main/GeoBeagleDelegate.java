@@ -22,17 +22,13 @@ import com.google.code.geobeagle.GeocacheFactory.Source;
 import com.google.code.geobeagle.actions.MenuActions;
 import com.google.code.geobeagle.activity.ActivitySaver;
 import com.google.code.geobeagle.activity.ActivityType;
-import com.google.code.geobeagle.activity.main.fieldnotes.FieldNoteSender;
-import com.google.code.geobeagle.activity.main.fieldnotes.FieldNoteSender.FieldNoteResources;
 import com.google.code.geobeagle.activity.main.view.GeocacheViewer;
 import com.google.code.geobeagle.activity.main.view.WebPageAndDetailsButtonEnabler;
 import com.google.code.geobeagle.database.DbFrontend;
 import com.google.code.geobeagle.database.LocationSaver;
 
-import android.app.Dialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.Resources;
 import android.hardware.SensorManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -67,34 +63,30 @@ public class GeoBeagleDelegate {
     private final ActivitySaver mActivitySaver;
     private final AppLifecycleManager mAppLifecycleManager;
     private final CompassListener mCompassListener;
-    private final FieldNoteSender mFieldNoteSender;
+    private final DbFrontend mDbFrontend;
     private Geocache mGeocache;
     private final GeocacheFactory mGeocacheFactory;
     private final GeocacheFromParcelFactory mGeocacheFromParcelFactory;
     private final GeocacheViewer mGeocacheViewer;
     private final IncomingIntentHandler mIncomingIntentHandler;
-    private final DbFrontend mDbFrontend;
     private final MenuActions mMenuActions;
     private final GeoBeagle mParent;
     private final RadarView mRadarView;
-    private final Resources mResources;
     private final SensorManager mSensorManager;
     private final SharedPreferences mSharedPreferences;
     private final WebPageAndDetailsButtonEnabler mWebPageButtonEnabler;
 
     public GeoBeagleDelegate(ActivitySaver activitySaver, AppLifecycleManager appLifecycleManager,
-            CompassListener compassListener, FieldNoteSender fieldNoteSender, GeoBeagle parent,
+            CompassListener compassListener, GeoBeagle parent,
             GeocacheFactory geocacheFactory, GeocacheViewer geocacheViewer,
             IncomingIntentHandler incomingIntentHandler, MenuActions menuActions,
             GeocacheFromParcelFactory geocacheFromParcelFactory, DbFrontend dbFrontend,
-            RadarView radarView, Resources resources, SensorManager sensorManager,
+            RadarView radarView, SensorManager sensorManager,
             SharedPreferences sharedPreferences, WebPageAndDetailsButtonEnabler webPageButtonEnabler) {
         mParent = parent;
         mActivitySaver = activitySaver;
         mAppLifecycleManager = appLifecycleManager;
-        mFieldNoteSender = fieldNoteSender;
         mMenuActions = menuActions;
-        mResources = resources;
         mSharedPreferences = sharedPreferences;
         mRadarView = radarView;
         mCompassListener = compassListener;
@@ -120,9 +112,8 @@ public class GeoBeagleDelegate {
         mParent.startActivityForResult(intent, GeoBeagleDelegate.ACTIVITY_REQUEST_TAKE_PICTURE);
     }
 
-    public Dialog onCreateDialog(int idMenu) {
-        final FieldNoteResources fieldNoteResources = new FieldNoteResources(mResources, idMenu);
-        return mFieldNoteSender.createDialog(mGeocache.getId(), fieldNoteResources, mParent);
+    public boolean onCreateOptionsMenu(Menu menu) {
+        return mMenuActions.onCreateOptionsMenu(menu);
     }
 
     public boolean onKeyDown(int keyCode, KeyEvent event) {
@@ -182,9 +173,5 @@ public class GeoBeagleDelegate {
 
     public void setGeocache(Geocache geocache) {
         mGeocache = geocache;
-    }
-
-    public boolean onCreateOptionsMenu(Menu menu) {
-        return mMenuActions.onCreateOptionsMenu(menu);
     }
 }

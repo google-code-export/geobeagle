@@ -15,4 +15,6 @@
 		android:title="Use Imperial System" android:summary="Miles and feet instead of meters" />
 	<CheckBoxPreference android:key="absolute-bearing"
 		android:title="Absolute Bearing in List" android:summary="Letters (NS) instead of arrows (^v)" />
+	<CheckBoxPreference android:key="field-note-text-file"
+		android:title="Log Caches to File" android:summary="Log field notes to a file instead of using SMS" />
 </PreferenceScreen>

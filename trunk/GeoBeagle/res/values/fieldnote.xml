@@ -12,4 +12,8 @@
 		<item>GEOC x</item>
 		<item>GEOC @</item>
 	</array>
+	<array name="fieldnote_file_code">
+		<item>Didn't find it</item>
+		<item>Found it</item>
+	</array>
 </resources>

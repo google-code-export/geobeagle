@@ -32,8 +32,18 @@ import com.google.code.geobeagle.actions.MenuActions;
 import com.google.code.geobeagle.activity.ActivityDI;
 import com.google.code.geobeagle.activity.ActivitySaver;
 import com.google.code.geobeagle.activity.main.GeoBeagleDelegate.LogFindClickListener;
-import com.google.code.geobeagle.activity.main.fieldnotes.FieldNoteSender;
-import com.google.code.geobeagle.activity.main.fieldnotes.FieldNoteSenderDI;
+import com.google.code.geobeagle.activity.main.fieldnotes.CacheLogger;
+import com.google.code.geobeagle.activity.main.fieldnotes.DateFormatter;
+import com.google.code.geobeagle.activity.main.fieldnotes.DialogHelperCommon;
+import com.google.code.geobeagle.activity.main.fieldnotes.DialogHelperFile;
+import com.google.code.geobeagle.activity.main.fieldnotes.DialogHelperSms;
+import com.google.code.geobeagle.activity.main.fieldnotes.FieldnoteLogger;
+import com.google.code.geobeagle.activity.main.fieldnotes.FieldnoteStringsFVsDnf;
+import com.google.code.geobeagle.activity.main.fieldnotes.FileLogger;
+import com.google.code.geobeagle.activity.main.fieldnotes.SmsLogger;
+
+import com.google.code.geobeagle.activity.main.fieldnotes.FieldnoteLogger.OnClickCancel;
+import com.google.code.geobeagle.activity.main.fieldnotes.FieldnoteLogger.OnClickOk;
 import com.google.code.geobeagle.activity.main.intents.GeocacheToCachePage;
 import com.google.code.geobeagle.activity.main.intents.GeocacheToGoogleMap;
 import com.google.code.geobeagle.activity.main.intents.IntentFactory;
@@ -53,6 +63,7 @@ import com.google.code.geobeagle.activity.main.view.GeocacheViewer.UnlabelledAtt
 import com.google.code.geobeagle.activity.map.GeoMapActivity;
 import com.google.code.geobeagle.database.DbFrontend;
 import com.google.code.geobeagle.location.LocationLifecycleManager;
+import com.google.code.geobeagle.xmlimport.GpxImporterDI.Toaster;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -60,7 +71,6 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.Resources;
 import android.hardware.SensorManager;
 import android.location.LocationManager;
 import android.os.Bundle;
@@ -70,15 +80,27 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /*
  * Main Activity for GeoBeagle.
  */
 public class GeoBeagle extends Activity {
+    private static final SimpleDateFormat simpleDateFormat = new SimpleDateFormat(
+            "yyyy-MM-dd'T'HH:mm'Z'");
     private GeoBeagleDelegate mGeoBeagleDelegate;
     private DbFrontend mDbFrontend;
+    private FieldnoteLogger mFieldNoteSender;
+    private static final DateFormat mLocalDateFormat = DateFormat
+            .getTimeInstance(DateFormat.MEDIUM);
 
     public Geocache getGeocache() {
         return mGeoBeagleDelegate.getGeocache();
@@ -123,8 +145,7 @@ public class GeoBeagle extends Activity {
                 (TextView)findViewById(R.id.radar_bearing),
                 (TextView)findViewById(R.id.radar_accuracy));
         final GeocacheViewer geocacheViewer = new GeocacheViewer(radar, gcid, gcName,
-                (ImageView)findViewById(R.id.gcicon),
-                gcDifficulty, gcTerrain, gcContainer);
+                (ImageView)findViewById(R.id.gcicon), gcDifficulty, gcTerrain, gcContainer);
 
         locationControlBuffered.onLocationChanged(null);
         final IntentFactory intentFactory = new IntentFactory(new UriParser());
@@ -145,16 +166,14 @@ public class GeoBeagle extends Activity {
         final CompassListener compassListener = new CompassListener(new NullRefresher(),
                 locationControlBuffered, -1440f);
         final LayoutInflater layoutInflater = LayoutInflater.from(this);
-        final FieldNoteSender fieldNoteSender = FieldNoteSenderDI.build(this, layoutInflater);
         final ActivitySaver activitySaver = ActivityDI.createActivitySaver(this);
         final MenuAction[] menuActionArray = {
                 new MenuActionCacheList(this), new MenuActionEditGeocache(this),
-//                new MenuActionLogDnf(this), new MenuActionLogFind(this),
+                // new MenuActionLogDnf(this), new MenuActionLogFind(this),
                 new MenuActionSearchOnline(this), new MenuActionSettings(this),
                 new MenuActionGoogleMaps(intentStarterViewUri)
         };
         final MenuActions menuActions = new MenuActions(getResources(), menuActionArray);
-        final Resources resources = this.getResources();
         final SharedPreferences defaultSharedPreferences = PreferenceManager
                 .getDefaultSharedPreferences(this);
         final GeocacheFromIntentFactory geocacheFromIntentFactory = new GeocacheFromIntentFactory(
@@ -165,10 +184,9 @@ public class GeoBeagle extends Activity {
                 geocacheFactory);
         mDbFrontend = new DbFrontend(this);
         mGeoBeagleDelegate = new GeoBeagleDelegate(activitySaver, appLifecycleManager,
-                compassListener, fieldNoteSender, this, geocacheFactory, geocacheViewer,
-                incomingIntentHandler, menuActions, geocacheFromParcelFactory,
-                mDbFrontend, radar, resources, sensorManager, defaultSharedPreferences,
-                webPageButtonEnabler);
+                compassListener, this, geocacheFactory, geocacheViewer, incomingIntentHandler,
+                menuActions, geocacheFromParcelFactory, mDbFrontend, radar, sensorManager,
+                defaultSharedPreferences, webPageButtonEnabler);
 
         // see http://www.androidguys.com/2008/11/07/rotational-forces-part-two/
         if (getLastNonConfigurationInstance() != null) {
@@ -210,14 +228,57 @@ public class GeoBeagle extends Activity {
     @Override
     protected Dialog onCreateDialog(int id) {
         super.onCreateDialog(id);
-        return mGeoBeagleDelegate.onCreateDialog(id);
+        final FieldnoteStringsFVsDnf fieldnoteStringsFVsDnf = new FieldnoteStringsFVsDnf(
+                getResources());
+        final Toaster toaster = new Toaster(this, R.string.error_writing_cache_log,
+                Toast.LENGTH_LONG);
+        final DateFormatter dateFormatter = new DateFormatter(simpleDateFormat);
+        final FileLogger fileLogger = new FileLogger(fieldnoteStringsFVsDnf, dateFormatter, toaster);
+        final SmsLogger smsLogger = new SmsLogger(fieldnoteStringsFVsDnf, this);
+        final SharedPreferences defaultSharedPreferences = PreferenceManager
+                .getDefaultSharedPreferences(this);
+        final CacheLogger cacheLogger = new CacheLogger(defaultSharedPreferences, fileLogger,
+                smsLogger);
+        final OnClickCancel onClickCancel = new OnClickCancel();
+        final LayoutInflater layoutInflater = LayoutInflater.from(this);
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        final View fieldNoteDialogView = layoutInflater.inflate(R.layout.fieldnote, null);
+        final TextView fieldnoteCaveat = (TextView)fieldNoteDialogView
+                .findViewById(R.id.fieldnote_caveat);
+
+        final CharSequence geocacheId = mGeoBeagleDelegate.getGeocache().getId();
+        final boolean fDnf = id == R.id.menu_log_dnf;
+        final EditText editText = (EditText)fieldNoteDialogView.findViewById(R.id.fieldnote);
+        final DialogHelperCommon dialogHelperCommon = new DialogHelperCommon(
+                fieldnoteStringsFVsDnf, editText, fDnf, fieldnoteCaveat);
+
+        final DialogHelperFile dialogHelperFile = new DialogHelperFile(fieldnoteCaveat, this);
+        final DialogHelperSms dialogHelperSms = new DialogHelperSms(geocacheId.length(),
+                fieldnoteStringsFVsDnf, editText, fDnf, fieldnoteCaveat);
+
+        mFieldNoteSender = new FieldnoteLogger(dialogHelperCommon, dialogHelperFile,
+                dialogHelperSms);
+
+        final OnClickOk onClickOk = new OnClickOk(geocacheId, editText, cacheLogger, fDnf);
+        builder.setTitle(R.string.field_note_title);
+        builder.setView(fieldNoteDialogView);
+        builder.setNegativeButton(R.string.cancel, onClickCancel);
+        builder.setPositiveButton(R.string.log_cache, onClickOk);
+        return builder.create();
+    }
+
+    @Override
+    protected void onPrepareDialog(int id, Dialog dialog) {
+        super.onCreateDialog(id);
+        final SharedPreferences defaultSharedPreferences = PreferenceManager
+                .getDefaultSharedPreferences(this);
+        mFieldNoteSender.onPrepareDialog(dialog, defaultSharedPreferences, mLocalDateFormat
+                .format(new Date()));
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         return mGeoBeagleDelegate.onCreateOptionsMenu(menu);
-        //getMenuInflater().inflate(R.menu.main_menu, menu);
-        //return true;
     }
 
     @Override
