@@ -7,8 +7,9 @@ import com.google.code.geobeagle.database.CachesProviderArea;
 
 import android.app.Activity;
 import android.app.Dialog;
-import android.content.DialogInterface;
-import android.content.DialogInterface.OnDismissListener;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 
@@ -16,11 +17,11 @@ import android.widget.EditText;
 public class MenuActionChooseFilter implements MenuAction {
     private final Activity mActivity;
     private final CacheFilter mFilter;
-    private final CachesProviderArea mCachesProviderArea;
+    private final CachesProviderArea[] mCachesProviderArea;
     private final Refresher mRefresher;
     
     public MenuActionChooseFilter(Activity activity,
-            CacheFilter filter, CachesProviderArea cachesProviderArea,
+            CacheFilter filter, CachesProviderArea[] cachesProviderArea,
             Refresher refresher) {
         mActivity = activity;
         mFilter = filter;
@@ -61,13 +62,15 @@ public class MenuActionChooseFilter implements MenuAction {
         final Dialog dialog = new Dialog(mActivity);
         final DialogFilterGui gui = new DialogFilterGui(dialog);
         
-        OnDismissListener dismissListener = new OnDismissListener() {
+        final OnClickListener mOnApply = new OnClickListener() {
             @Override
-            public void onDismiss(DialogInterface arg0) {
+            public void onClick(View v) {
                 mFilter.loadFromGui(gui);
                 mFilter.saveToPrefs();
-                if (mCachesProviderArea != null)
-                    mCachesProviderArea.reloadFilter();
+                dialog.dismiss();
+                for (CachesProviderArea provider : mCachesProviderArea) {
+                    provider.reloadFilter();
+                }
                 mRefresher.forceRefresh();
             }
         };
@@ -75,7 +78,8 @@ public class MenuActionChooseFilter implements MenuAction {
         dialog.setContentView(R.layout.filter);
         mFilter.reload();
         mFilter.pushToGui(gui);
-        dialog.setOnDismissListener(dismissListener);
+        Button apply = (Button) dialog.findViewById(R.id.ButtonApplyFilter);
+        apply.setOnClickListener(mOnApply);
         dialog.show();
     }
 

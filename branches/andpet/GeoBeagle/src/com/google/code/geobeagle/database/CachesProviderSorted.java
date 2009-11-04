@@ -9,8 +9,6 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.WeakHashMap;
 
 //TODO: Use this class from prox.DataCollector to determine the real outer limit

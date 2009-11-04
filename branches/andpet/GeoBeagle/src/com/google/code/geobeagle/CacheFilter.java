@@ -35,6 +35,10 @@ public class CacheFilter {
             new FilterOption("Others", "Others", "CacheType = 0 OR (CacheType >= 5 AND CacheType <= 14)", R.id.CheckBoxOthers),
             new FilterOption("Waypoints", "Waypoints", "(CacheType >= 20 AND CacheType <= 25)", R.id.CheckBoxWaypoints),
             };
+    
+    //This SQL is for the false condition!
+    private FilterOption mMicroOption = 
+        new FilterOption("Include micro's", "Micro", "Container != 1", R.id.CheckBoxMicro);
     private String mFilterString;
     private Activity mActivity;
 
@@ -55,6 +59,7 @@ public class CacheFilter {
         for (FilterOption option : mOptions) {
             option.Selected = prefs.getBoolean(option.PrefsName, true);
         }
+        mMicroOption.Selected = prefs.getBoolean(mMicroOption.PrefsName, true);
         mFilterString = prefs.getString("FilterString", null);
     }
 
@@ -64,6 +69,7 @@ public class CacheFilter {
         for (FilterOption option : mOptions) {
             editor.putBoolean(option.PrefsName, option.Selected);
         }
+        editor.putBoolean(mMicroOption.PrefsName, mMicroOption.Selected);
         editor.putString("FilterString", mFilterString);
         editor.commit();
     }
@@ -112,6 +118,15 @@ public class CacheFilter {
             }
         }
 
+        if (!mMicroOption.Selected) {
+            if (isFirst) {
+                isFirst = false;
+            } else {
+                result.append(" AND ");
+            }
+            result.append(mMicroOption.SqlClause);
+        }
+            
         if (result.length() == 0)
             return null;
         return result.toString();
@@ -125,6 +140,7 @@ public class CacheFilter {
         for (FilterOption option : mOptions) {
             option.Selected = provider.getBoolean(option.ViewResource);
         }
+        mMicroOption.Selected = provider.getBoolean(mMicroOption.ViewResource);
         mFilterString = provider.getString(R.id.FilterString);
     }
 
@@ -133,6 +149,7 @@ public class CacheFilter {
         for (FilterOption option : mOptions) {
             provider.setBoolean(option.ViewResource, option.Selected);
         }
+        provider.setBoolean(mMicroOption.ViewResource, mMicroOption.Selected);
         String filter = mFilterString == null ? "" : mFilterString;
         provider.setString(R.id.FilterString, filter);
     }

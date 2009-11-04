@@ -57,6 +57,10 @@
      android:layout_width="fill_parent" android:layout_height="wrap_content">
   </CheckBox>
 
+  <CheckBox android:id="@+id/CheckBoxMicro" android:text="Include micro's" 
+     android:layout_width="fill_parent" android:layout_height="wrap_content">
+  </CheckBox>
+  
   <EditText android:id="@+id/FilterString" android:text="&lt;Filter string&gt;" 
     android:layout_height="wrap_content" android:layout_width="fill_parent" android:singleLine="true">
   </EditText>

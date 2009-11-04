@@ -103,7 +103,7 @@ public class GeoMapActivity extends MapActivity {
 
         final List<DensityPatch> densityPatches = new ArrayList<DensityPatch>();
         final Toaster toaster = new Toaster(this, R.string.too_many_caches, Toast.LENGTH_SHORT);
-        CachesProviderArea cachesProviderArea = new CachesProviderArea(mDbFrontend, cacheFilter);
+        final CachesProviderArea cachesProviderArea = new CachesProviderArea(mDbFrontend, cacheFilter);
         final CachesProviderLazyArea lazyArea = new CachesProviderLazyArea(cachesProviderArea, toaster, 1.0);
         final DensityOverlayDelegate densityOverlayDelegate = DensityOverlay.createDelegate(
                 densityPatches, nullGeoPoint, lazyArea);
@@ -128,7 +128,8 @@ public class GeoMapActivity extends MapActivity {
         menuActions.add(new GeoMapActivityDelegate.MenuActionToggleSatellite(mMapView));
         menuActions.add(new GeoMapActivityDelegate.MenuActionCenterLocation(mMapView, mMyLocationOverlay));
         menuActions.add(new MenuActionCacheList(this));
-        menuActions.add(new MenuActionChooseFilter(this, cacheFilter, cachesProviderArea, mOverlayManager));
+        final CachesProviderArea[] providers = { cachesProviderArea, cachesProviderAreaPins };
+        menuActions.add(new MenuActionChooseFilter(this, cacheFilter, providers, mOverlayManager));
         
         mGeoMapActivityDelegate = new GeoMapActivityDelegate(menuActions);
 

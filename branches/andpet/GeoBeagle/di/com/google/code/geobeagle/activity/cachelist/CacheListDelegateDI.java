@@ -16,7 +16,6 @@ package com.google.code.geobeagle.activity.cachelist;
 
 import com.google.code.geobeagle.CacheTypeFactory;
 import com.google.code.geobeagle.CacheFilter;
-import com.google.code.geobeagle.Clock;
 import com.google.code.geobeagle.ErrorDisplayer;
 import com.google.code.geobeagle.GeocacheFactory;
 import com.google.code.geobeagle.LocationAndDirection;
@@ -96,11 +95,11 @@ public class CacheListDelegateDI {
     }
 
     public static CacheListDelegate create(ListActivity listActivity, LayoutInflater layoutInflater) {
-        final OnClickListener mOnClickListener = new OnClickListener() {
+        final OnClickListener onClickListener = new OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
             }
         };
-        final ErrorDisplayer errorDisplayer = new ErrorDisplayer(listActivity, mOnClickListener);
+        final ErrorDisplayer errorDisplayer = new ErrorDisplayer(listActivity, onClickListener);
         final LocationAndDirection locationAndDirection = 
             LocationControlDi.create(listActivity);
         final GeocacheFactory geocacheFactory = new GeocacheFactory();
@@ -142,7 +141,7 @@ public class CacheListDelegateDI {
         final CachesProviderArea cachesProviderArea = new CachesProviderArea(dbFrontend, cacheFilter);
         final ICachesProviderCenter cachesProviderCount = new CachesProviderWaitForInit(new CachesProviderCount(cachesProviderArea, 15, 30));
         final CachesProviderSorted cachesProviderSorted = new CachesProviderSorted(cachesProviderCount);
-        final Clock clock = new Clock();
+        //final Clock clock = new Clock();
         //TODO: Use Lazy
         //final CachesProviderLazy cachesProviderLazy = new CachesProviderLazy(cachesProviderSorted, 0.01, 2000, clock);
         ICachesProviderCenter cachesProviderLazy = cachesProviderSorted;
@@ -186,8 +185,9 @@ public class CacheListDelegateDI {
         menuActions.add(new MenuActionMyLocation(cacheList, errorDisplayer,
                 geocacheFromMyLocationFactory, dbFrontend, resources));
         menuActions.add(new MenuActionSearchOnline(listActivity));
+        final CachesProviderArea[] providers = { cachesProviderArea, };
         menuActions.add(new MenuActionChooseFilter(listActivity, cacheFilter, 
-                cachesProviderArea, cacheList));
+                providers, cacheList));
         menuActions.add(new MenuActionMap(listActivity, locationAndDirection));
         
         final Intent geoBeagleMainIntent = new Intent(listActivity, GeoBeagle.class);
