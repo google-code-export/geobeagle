@@ -6,6 +6,7 @@ import com.google.code.geobeagle.activity.ActivitySaver;
 import com.google.code.geobeagle.activity.ActivityType;
 import com.google.code.geobeagle.activity.cachelist.presenter.DistanceFormatterManager;
 
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -16,14 +17,18 @@ public class SearchOnlineActivityDelegate {
     private final DistanceFormatterManager mDistanceFormatterManager;
     private final LocationAndDirection mLocationAndDirection;
     private final WebView mWebView;
+    private final SharedPreferences mSharedPreferences;
 
     public SearchOnlineActivityDelegate(WebView webView,
             LocationAndDirection locationAndDirection,
-            DistanceFormatterManager distanceFormatterManager, ActivitySaver activitySaver) {
+            DistanceFormatterManager distanceFormatterManager, 
+            ActivitySaver activitySaver,
+            SharedPreferences sharedPreferences) {
         mLocationAndDirection = locationAndDirection;
         mWebView = webView;
         mDistanceFormatterManager = distanceFormatterManager;
         mActivitySaver = activitySaver;
+        mSharedPreferences = sharedPreferences;
     }
 
     public void configureWebView(JsInterface jsInterface) {
@@ -43,7 +48,7 @@ public class SearchOnlineActivityDelegate {
     }
 
     public void onResume() {
-        mLocationAndDirection.onResume();
+        mLocationAndDirection.onResume(mSharedPreferences);
         mDistanceFormatterManager.setFormatter();
     }
 }

@@ -16,6 +16,7 @@ package com.google.code.geobeagle.activity.cachelist;
 
 import com.google.code.geobeagle.CacheTypeFactory;
 import com.google.code.geobeagle.CacheFilter;
+import com.google.code.geobeagle.Clock;
 import com.google.code.geobeagle.ErrorDisplayer;
 import com.google.code.geobeagle.GeocacheFactory;
 import com.google.code.geobeagle.LocationAndDirection;
@@ -42,7 +43,6 @@ import com.google.code.geobeagle.activity.cachelist.presenter.CacheList;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListUpdater;
 import com.google.code.geobeagle.activity.cachelist.presenter.DistanceFormatterManager;
 import com.google.code.geobeagle.activity.cachelist.presenter.DistanceFormatterManagerDi;
-import com.google.code.geobeagle.activity.cachelist.presenter.ListTitleFormatter;
 import com.google.code.geobeagle.activity.cachelist.presenter.RelativeBearingFormatter;
 import com.google.code.geobeagle.activity.cachelist.presenter.TitleUpdater;
 import com.google.code.geobeagle.activity.cachelist.view.GeocacheSummaryRowInflater;
@@ -132,7 +132,6 @@ public class CacheListDelegateDI {
                 .getUpdateGpsWidgetRunnable();
         updateGpsWidgetRunnable.run();
         
-        final ListTitleFormatter listTitleFormatter = new ListTitleFormatter();
         final CacheListDelegateDI.Timing timing = new CacheListDelegateDI.Timing();
 
         final CacheFilter cacheFilter = new CacheFilter(listActivity);
@@ -141,7 +140,7 @@ public class CacheListDelegateDI {
         final CachesProviderArea cachesProviderArea = new CachesProviderArea(dbFrontend, cacheFilter);
         final ICachesProviderCenter cachesProviderCount = new CachesProviderWaitForInit(new CachesProviderCount(cachesProviderArea, 15, 30));
         final CachesProviderSorted cachesProviderSorted = new CachesProviderSorted(cachesProviderCount);
-        //final Clock clock = new Clock();
+        final Clock clock = new Clock();
         //TODO: Use Lazy
         //final CachesProviderLazy cachesProviderLazy = new CachesProviderLazy(cachesProviderSorted, 0.01, 2000, clock);
         ICachesProviderCenter cachesProviderLazy = cachesProviderSorted;
@@ -149,7 +148,7 @@ public class CacheListDelegateDI {
         final CachesProviderToggler cachesProviderToggler = 
             new CachesProviderToggler(cachesProviderLazy, cachesProviderAll);
         final TitleUpdater titleUpdater = new TitleUpdater(listActivity, 
-                cachesProviderToggler, listTitleFormatter, timing, dbFrontend);
+                cachesProviderToggler, timing, dbFrontend);
 
         distanceFormatterManager.addHasDistanceFormatter(geocacheSummaryRowInflater);
         distanceFormatterManager.addHasDistanceFormatter(gpsStatusWidgetDelegate);

@@ -28,6 +28,7 @@ import com.google.code.geobeagle.gpsstatuswidget.UpdateGpsWidgetRunnable;
 import android.app.Activity;
 import android.app.ListActivity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -146,11 +147,12 @@ public class CacheListDelegate {
 
     public void onResume() {
         mDistanceFormatterManager.setFormatter();
-        final boolean absoluteBearing = PreferenceManager
-                .getDefaultSharedPreferences(mListActivity).getBoolean("absolute-bearing", false);
+        final SharedPreferences sharedPreferences = PreferenceManager
+        .getDefaultSharedPreferences(mListActivity);
+        final boolean absoluteBearing = sharedPreferences.getBoolean("absolute-bearing", false);
         mGeocacheSummaryRowInflater.setBearingFormatter(absoluteBearing);
 
         mController.onResume(mImportIntentManager.isImport());
-        mLocationAndDirection.onResume();
+        mLocationAndDirection.onResume(sharedPreferences);
     }
 }

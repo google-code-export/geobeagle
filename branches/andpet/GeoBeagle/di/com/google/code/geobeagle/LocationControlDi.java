@@ -25,6 +25,7 @@ public class LocationControlDi {
         .getSystemService(Context.LOCATION_SERVICE);
         final SensorManager sensorManager = (SensorManager)activity
         .getSystemService(Context.SENSOR_SERVICE);
+                
         return new LocationAndDirection(locationManager, sensorManager);
     }
 }

@@ -22,6 +22,7 @@ import com.google.code.geobeagle.GeocacheFactory.Source;
 
 import android.location.Location;
 
+//TODO: Merge into the MenuActionMyLocation class
 public class GeocacheFromMyLocationFactory {
     private final GeocacheFactory mGeocacheFactory;
     private final LocationAndDirection mLocationControl;

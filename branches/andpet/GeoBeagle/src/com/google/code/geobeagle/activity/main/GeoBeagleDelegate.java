@@ -75,8 +75,11 @@ public class GeoBeagleDelegate {
         }
         @Override
         public void refresh() {
-            mRadarView.setLocation(mLocationAndDirection.getLocation(),
-                    mLocationAndDirection.getAzimuth());
+            if (mLocationAndDirection.isProviderEnabled())
+                mRadarView.setLocation(mLocationAndDirection.getLocation(),
+                        mLocationAndDirection.getAzimuth());
+            else
+                mRadarView.handleUnknownLocation();
         }
     }
 
@@ -166,7 +169,7 @@ public class GeoBeagleDelegate {
 
     public void onResume() {
         mRadarView.handleUnknownLocation();
-        mLocationAndDirection.onResume();
+        mLocationAndDirection.onResume(mSharedPreferences);
 
         mRadarView.setUseImperial(mSharedPreferences.getBoolean("imperial", false));
         mGeocache = mIncomingIntentHandler.maybeGetGeocacheFromIntent(mParent.getIntent(),

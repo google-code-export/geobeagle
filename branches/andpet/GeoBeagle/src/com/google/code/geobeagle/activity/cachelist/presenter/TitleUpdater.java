@@ -25,16 +25,14 @@ import android.widget.TextView;
 public class TitleUpdater implements RefreshAction {
     private final CachesProviderToggler mCachesProviderToggler;
     private final ListActivity mListActivity;
-    private final ListTitleFormatter mListTitleFormatter;
     private final CacheListDelegateDI.Timing mTiming;
     private final DbFrontend mDbFrontend;
 
     public TitleUpdater(ListActivity listActivity, CachesProviderToggler cachesProviderToggler, 
-            ListTitleFormatter listTitleFormatter, CacheListDelegateDI.Timing timing,
+            CacheListDelegateDI.Timing timing,
             DbFrontend dbFrontend) {
         mListActivity = listActivity;
         mCachesProviderToggler = cachesProviderToggler;
-        mListTitleFormatter = listTitleFormatter;
         mTiming = timing;
         mDbFrontend = dbFrontend;
     }
@@ -49,7 +47,7 @@ public class TitleUpdater implements RefreshAction {
         mListActivity.setTitle(mListActivity.getString(title, nearestCachesCount, sqlCount));
         if (0 == nearestCachesCount) {
             TextView textView = (TextView)mListActivity.findViewById(android.R.id.empty);
-            textView.setText(mListTitleFormatter.getBodyText(sqlCount));
+            textView.setText(sqlCount > 0 ? R.string.no_nearby_caches : R.string.no_caches);
         }
     }
 }

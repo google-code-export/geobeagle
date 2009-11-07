@@ -14,12 +14,15 @@
 
 package com.google.code.geobeagle;
 
+import android.content.SharedPreferences;
 import android.hardware.SensorListener;
 import android.hardware.SensorManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.util.Log;
+
 import java.util.ArrayList;
 
 /** Responsible for providing an up-to-date location and compass direction */
@@ -31,14 +34,29 @@ public class LocationAndDirection implements LocationListener, SensorListener {
     /** A refresh is sent whenever a sensor changes */
     private final ArrayList<Refresher> mObservers = new ArrayList<Refresher>();
     private final SensorManager mSensorManager;
+    private boolean mUseNetwork = true;
 
     public LocationAndDirection(LocationManager locationManager,
             SensorManager sensorManager) {
         mLocationManager = locationManager;
         mSensorManager = sensorManager;
-        mLocation = getLastKnownLocation();  //work in constructor..
+        //mLocation = getLastKnownLocation();  //work in constructor..
     }
 
+   
+    /** Enable/disable getting the position from the cell network,
+     * in addition to GPS. Default is 'enabled'. */
+    /*
+    public void setUseNetwork(boolean useNetwork) {
+        if (mUseNetwork == useNetwork)
+            return;
+        mUseNetwork = useNetwork;
+        //Hack to only register for the correct providers:
+        onPause();
+        onResume();
+    }
+    */
+    
     public Location getLocation() {
         if (mLocation == null)
             mLocation = getLastKnownLocation();
@@ -63,21 +81,21 @@ public class LocationAndDirection implements LocationListener, SensorListener {
      * the two accuracies, choose that. (This favors the network locator if
      * you've driven a distance and haven't been able to get a gps fix yet.)
      */
-    private static Location choose(Location location1, Location location2) {
-        if (location1 == null)
-            return location2;
-        if (location2 == null)
-            return location1;
+    private static Location choose(Location oldLocation, Location newLocation) {
+        if (oldLocation == null)
+            return newLocation;
+        if (newLocation == null)
+            return oldLocation;
 
-        if (location2.getTime() > location1.getTime()) {
-            if (location2.getAccuracy() <= location1.getAccuracy())
-                return location2;
-            else if (location1.distanceTo(location2) >= location1.getAccuracy()
-                    + location2.getAccuracy()) {
-                return location2;
+        if (newLocation.getTime() > oldLocation.getTime()) {
+            if (newLocation.getAccuracy() <= oldLocation.getAccuracy())
+                return newLocation;
+            else if (oldLocation.distanceTo(newLocation) >= oldLocation.getAccuracy()
+                    + newLocation.getAccuracy()) {
+                return newLocation;
             }
         }
-        return location1;
+        return oldLocation;
     }
 
     public void onLocationChanged(Location location) {
@@ -95,6 +113,7 @@ public class LocationAndDirection implements LocationListener, SensorListener {
     }
 
     public void onAccuracyChanged(int sensor, int accuracy) {
+        //Log.d("GeoBeagle", "onAccuracyChanged " + sensor + " accuracy " + accuracy);
     }
 
     public void onSensorChanged(int sensor, float[] values) {
@@ -106,13 +125,20 @@ public class LocationAndDirection implements LocationListener, SensorListener {
         }
     }
 
-    public void onResume() {
+    public void onResume(SharedPreferences sharedPreferences) {
+        mUseNetwork = sharedPreferences.getBoolean("use-network-location", true);
+        
         mSensorManager.registerListener(this, SensorManager.SENSOR_ORIENTATION,
                 SensorManager.SENSOR_DELAY_UI);
-        mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, 
-                this);
-        mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 0,
-                this);
+        long minTime = 1000;  //ms
+        float minDistance = 0;  //sec
+        mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 
+                minTime, minDistance, this);
+        if (mUseNetwork)
+            mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,
+                    minTime, minDistance, this);
+        
+        onLocationChanged(getLastKnownLocation());
     }
     
     public void onPause() {
@@ -122,15 +148,17 @@ public class LocationAndDirection implements LocationListener, SensorListener {
     
     public boolean isProviderEnabled() {
         return mLocationManager.isProviderEnabled("gps")
-                || mLocationManager.isProviderEnabled("network");
+                || (mUseNetwork && mLocationManager.isProviderEnabled("network"));
     }
 
-    //TODO: Remove this method -- getLocation should be the same thing
+    //TODO: Remove this method? Should getLocation be the same thing?
     public Location getLastKnownLocation() {
         Location gpsLocation = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
         if (gpsLocation != null)
             return gpsLocation;
-        return mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+        if (mUseNetwork)
+            return mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+        return null;
     }
     
     public float getAzimuth() {

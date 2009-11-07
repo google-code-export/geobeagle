@@ -34,8 +34,10 @@ import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidget.InflatedGpsStat
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -78,11 +80,14 @@ public class SearchOnlineActivity extends Activity {
         final ActivityRestorer activityRestorer = new ActivityRestorer(this,
                 geocacheFromPreferencesFactory, activityTypeFactory, getSharedPreferences(
                         "GeoBeagle", Context.MODE_PRIVATE));
-
+        final SharedPreferences defaultSharedPreferences = PreferenceManager
+        .getDefaultSharedPreferences(this);
+        
         mSearchOnlineActivityDelegate = new SearchOnlineActivityDelegate(
                 ((WebView)findViewById(R.id.help_contents)),
                 mLocationAndDirection,
-                distanceFormatterManager, activitySaver);
+                distanceFormatterManager, activitySaver,
+                defaultSharedPreferences);
 
         final JsInterfaceHelper jsInterfaceHelper = new JsInterfaceHelper(this);
         final JsInterface jsInterface = new JsInterface(mLocationAndDirection, jsInterfaceHelper);
