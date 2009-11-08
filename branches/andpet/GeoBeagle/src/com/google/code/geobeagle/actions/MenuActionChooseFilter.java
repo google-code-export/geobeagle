@@ -8,6 +8,7 @@ import com.google.code.geobeagle.database.CachesProviderArea;
 import android.app.Activity;
 import android.app.Dialog;
 import android.view.View;
+import android.view.Window;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -75,7 +76,9 @@ public class MenuActionChooseFilter implements MenuAction {
             }
         };
 
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.filter);
+        //dialog.setTitle("Cache types to show");
         mFilter.reload();
         mFilter.pushToGui(gui);
         Button apply = (Button) dialog.findViewById(R.id.ButtonApplyFilter);

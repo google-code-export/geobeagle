@@ -13,7 +13,8 @@
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	android:orientation="vertical" android:layout_width="fill_parent"
-	android:layout_height="wrap_content">
+	android:layout_height="wrap_content"
+	android:minWidth="280px">
 
   <TextView android:id="@+id/TextView01" android:layout_width="fill_parent" android:layout_height="wrap_content"
      android:gravity="center_horizontal" android:textSize="20sp" android:text="Cache types to show">
@@ -23,15 +24,14 @@
 		android:id="@+id/scrollview"
 		android:layout_width="fill_parent"
 		android:layout_height="wrap_content"
-		android:layout_weight="1"
-		>
+		android:layout_weight="1">
 
 	<LinearLayout
 		android:id="@+id/widget30"
 		android:layout_width="fill_parent"
 		android:layout_height="wrap_content"
 		android:orientation="vertical"
-		>
+        android:padding="10px">
 
     <CheckBox android:id="@+id/CheckBoxTrad" android:text="Traditional" 
      android:layout_width="fill_parent" android:layout_height="wrap_content">
@@ -61,15 +61,26 @@
      android:layout_width="fill_parent" android:layout_height="wrap_content">
   </CheckBox>
   
-  <EditText android:id="@+id/FilterString" android:text="&lt;Filter string&gt;" 
-    android:layout_height="wrap_content" android:layout_width="fill_parent" android:singleLine="true">
-  </EditText>
-  
-  <Button android:text="Apply filter" android:id="@+id/ButtonApplyFilter" 
-android:layout_width="wrap_content" android:layout_height="wrap_content"></Button>
+  <LinearLayout
+		android:id="@+id/widget31"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:orientation="horizontal">
+    <TextView android:id="@+id/TextView02" android:layout_width="wrap_content" 
+      android:layout_height="wrap_content" android:text="Required text">
+    </TextView>
+    <EditText android:id="@+id/FilterString" android:text="&lt;Filter string&gt;" 
+      android:layout_height="wrap_content" android:layout_width="fill_parent" 
+      android:singleLine="true">
+    </EditText>
+  </LinearLayout>
 
 </LinearLayout>
 
 </ScrollView>
+
+  <Button android:text="Apply filter" android:id="@+id/ButtonApplyFilter" 
+    android:layout_width="fill_parent" android:layout_height="wrap_content"
+    android:gravity="center_horizontal"></Button>
 
 </LinearLayout>
