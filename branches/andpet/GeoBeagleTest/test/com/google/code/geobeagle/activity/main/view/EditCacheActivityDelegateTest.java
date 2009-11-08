@@ -23,7 +23,7 @@ import com.google.code.geobeagle.GeocacheFactory.Source;
 import com.google.code.geobeagle.activity.cachelist.GeocacheListController;
 import com.google.code.geobeagle.activity.main.view.EditCacheActivityDelegate.CancelButtonOnClickListener;
 import com.google.code.geobeagle.activity.main.view.EditCacheActivityDelegate.EditCache;
-import com.google.code.geobeagle.activity.main.view.EditCacheActivityDelegate.SetButtonOnClickListener;
+import com.google.code.geobeagle.activity.main.view.EditCacheActivityDelegate.CacheSaverOnClickListener;
 import com.google.code.geobeagle.database.DbFrontend;
 
 import org.easymock.classextension.EasyMock;
@@ -39,7 +39,7 @@ import android.widget.EditText;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest( {
-        Activity.class, EditText.class, Intent.class, SetButtonOnClickListener.class,
+        Activity.class, EditText.class, Intent.class, CacheSaverOnClickListener.class,
         EditCacheActivityDelegate.class
 })
 public class EditCacheActivityDelegateTest {
@@ -121,7 +121,7 @@ public class EditCacheActivityDelegateTest {
         activity.finish();
 
         PowerMock.replayAll();
-        SetButtonOnClickListener setButtonOnClickListener = new SetButtonOnClickListener(activity,
+        CacheSaverOnClickListener setButtonOnClickListener = new CacheSaverOnClickListener(activity,
                 editCache, dbFrontend);
         setButtonOnClickListener.onClick(null);
         PowerMock.verifyAll();
