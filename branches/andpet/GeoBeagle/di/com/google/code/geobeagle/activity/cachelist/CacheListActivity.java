@@ -15,6 +15,7 @@
 package com.google.code.geobeagle.activity.cachelist;
 
 import android.app.ListActivity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -42,10 +43,8 @@ public class CacheListActivity extends ListActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d("GeoBeagle", "CacheListActivity onCreate");
-
+        //Log.d("GeoBeagle", "CacheListActivity onCreate");
         mCacheListDelegate = CacheListDelegateDI.create(this, getLayoutInflater());
-
         mCacheListDelegate.onCreate();
     }
 
@@ -78,8 +77,7 @@ public class CacheListActivity extends ListActivity {
 
     @Override
     protected void onPause() {
-        Log.d("GeoBeagle", "CacheListActivity onPause");
-
+        //Log.d("GeoBeagle", "CacheListActivity onPause");
         super.onPause();
         mCacheListDelegate.onPause();
     }
@@ -87,8 +85,13 @@ public class CacheListActivity extends ListActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        Log.d("GeoBeagle", "CacheListActivity onResume");
+        //Log.d("GeoBeagle", "CacheListActivity onResume");
         mCacheListDelegate.onResume();
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        mCacheListDelegate.onActivityResult();
+    }
+    
 }

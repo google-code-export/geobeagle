@@ -5,6 +5,7 @@ import com.google.code.geobeagle.Geocache;
 
 import java.util.ArrayList;
 
+//TODO: Rename to CachesProviderDb
 /** Uses a DB to fetch the caches within a defined region, or all caches if no 
  * bounds were specified */
 public class CachesProviderArea implements ICachesProviderArea {
@@ -87,6 +88,10 @@ public class CachesProviderArea implements ICachesProviderArea {
         mHasChanged = false;
     }
 
+    public void notifyOfDbChange() {
+        mHasChanged = true;
+    }
+    
     public void reloadFilter() {
         mCacheFilter.reload();
         String newFilter = mCacheFilter.getSqlWhereClause();

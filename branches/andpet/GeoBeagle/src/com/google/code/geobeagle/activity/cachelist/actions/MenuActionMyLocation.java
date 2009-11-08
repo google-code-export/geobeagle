@@ -14,42 +14,61 @@
 
 package com.google.code.geobeagle.activity.cachelist.actions;
 
+import com.google.code.geobeagle.CacheType;
 import com.google.code.geobeagle.ErrorDisplayer;
 import com.google.code.geobeagle.Geocache;
+import com.google.code.geobeagle.GeocacheFactory;
+import com.google.code.geobeagle.LocationAndDirection;
 import com.google.code.geobeagle.R;
+import com.google.code.geobeagle.GeocacheFactory.Source;
+import com.google.code.geobeagle.actions.CacheAction;
 import com.google.code.geobeagle.actions.MenuAction;
-import com.google.code.geobeagle.activity.cachelist.model.GeocacheFromMyLocationFactory;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheList;
 import com.google.code.geobeagle.database.DbFrontend;
 
 import android.content.res.Resources;
+import android.location.Location;
 
 public class MenuActionMyLocation implements MenuAction {
     private final ErrorDisplayer mErrorDisplayer;
-    private final GeocacheFromMyLocationFactory mGeocacheFromMyLocationFactory;
     private final CacheList mListRefresher;
     private final DbFrontend mDbFrontend;
     private final Resources mResources;
+    private final GeocacheFactory mGeocacheFactory;
+    private final LocationAndDirection mLocationControl;
+    private final CacheAction mCacheActionEdit;
 
     public MenuActionMyLocation(CacheList cacheList, ErrorDisplayer errorDisplayer,
-            GeocacheFromMyLocationFactory geocacheFromMyLocationFactory, DbFrontend dbFrontend,
-            Resources resources) {
-        mGeocacheFromMyLocationFactory = geocacheFromMyLocationFactory;
+            GeocacheFactory geocacheFactory,
+            LocationAndDirection locationControl, DbFrontend dbFrontend,
+            Resources resources, CacheAction cacheActionEdit) {
         mErrorDisplayer = errorDisplayer;
         mListRefresher = cacheList;
+        mGeocacheFactory = geocacheFactory;
+        mLocationControl = locationControl;
         mDbFrontend = dbFrontend;
         mResources = resources;
+        mCacheActionEdit = cacheActionEdit;
     }
 
     @Override
     public void act() {
-        final Geocache myLocation = mGeocacheFromMyLocationFactory.create();
-        if (myLocation == null) {
+        Location location = mLocationControl.getLocation();
+        if (location == null)
+            return;
+
+        long time = location.getTime();
+        final Geocache newCache = mGeocacheFactory.create(String.format("ML%1$tk%1$tM%1$tS", time), String.format(
+                "[%1$tk:%1$tM] My Location", time), location.getLatitude(),
+                location.getLongitude(), Source.MY_LOCATION, null, CacheType.MY_LOCATION, 0, 0, 0);
+
+        if (newCache == null) {
             mErrorDisplayer.displayError(R.string.current_location_null);
             return;
         }
-        myLocation.saveLocation(mDbFrontend);
-        mListRefresher.forceRefresh();
+        newCache.saveLocation(mDbFrontend);
+        mCacheActionEdit.act(newCache);
+        //mListRefresher.forceRefresh();
     }
     
     @Override

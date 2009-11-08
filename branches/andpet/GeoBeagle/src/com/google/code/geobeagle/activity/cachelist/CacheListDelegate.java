@@ -22,7 +22,9 @@ import com.google.code.geobeagle.activity.cachelist.GeocacheListController.Cache
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheList;
 import com.google.code.geobeagle.activity.cachelist.presenter.DistanceFormatterManager;
 import com.google.code.geobeagle.activity.cachelist.view.GeocacheSummaryRowInflater;
+import com.google.code.geobeagle.database.CachesProviderArea;
 import com.google.code.geobeagle.database.DbFrontend;
+import com.google.code.geobeagle.database.ICachesProvider;
 import com.google.code.geobeagle.gpsstatuswidget.UpdateGpsWidgetRunnable;
 
 import android.app.Activity;
@@ -30,6 +32,7 @@ import android.app.ListActivity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -80,6 +83,7 @@ public class CacheListDelegate {
     private final ListActivity mListActivity;
     private final DistanceFormatterManager mDistanceFormatterManager;
     private final GeocacheSummaryRowInflater mGeocacheSummaryRowInflater;
+    private final CachesProviderArea mCachesToFlush;
 
     public CacheListDelegate(ImportIntentManager importIntentManager, ActivitySaver activitySaver,
             GeocacheListController geocacheListController,
@@ -92,7 +96,8 @@ public class CacheListDelegate {
             GeocacheSummaryRowInflater geocacheSummaryRowInflater,
             ListActivity listActivity,
             CacheListView.ScrollListener scrollListener,
-            DistanceFormatterManager distanceFormatterManager) {
+            DistanceFormatterManager distanceFormatterManager,
+            CachesProviderArea cachesToFlush) {
         mActivitySaver = activitySaver;
         mController = geocacheListController;
         mImportIntentManager = importIntentManager;
@@ -106,6 +111,7 @@ public class CacheListDelegate {
         mListActivity = listActivity;
         mScrollListener = scrollListener;
         mDistanceFormatterManager = distanceFormatterManager;
+        mCachesToFlush = cachesToFlush;
     }
 
     public boolean onContextItemSelected(MenuItem menuItem) {
@@ -146,6 +152,8 @@ public class CacheListDelegate {
     }
 
     public void onResume() {
+        Log.d("GeoBeagle", "CacheListDelegate.onResume()");
+        //if (mListActivity.getApplicationContext().g)
         mDistanceFormatterManager.setFormatter();
         final SharedPreferences sharedPreferences = PreferenceManager
         .getDefaultSharedPreferences(mListActivity);
@@ -154,5 +162,11 @@ public class CacheListDelegate {
 
         mController.onResume(mImportIntentManager.isImport());
         mLocationAndDirection.onResume(sharedPreferences);
+    }
+
+    public void onActivityResult() {
+        Log.d("GeoBeagle", "CacheListDelegate.onActivityResult()");
+        mCachesToFlush.notifyOfDbChange();
+        mCacheList.forceRefresh();
     }
 }

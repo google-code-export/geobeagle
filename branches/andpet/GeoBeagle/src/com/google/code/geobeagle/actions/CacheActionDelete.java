@@ -45,7 +45,7 @@ public class CacheActionDelete implements CacheAction {
 
     @Override
     public String getLabel() {
-        return mResources.getString(R.string.menu_proximity);
+        return mResources.getString(R.string.menu_delete_cache);
     }
 
 }

@@ -37,7 +37,6 @@ import com.google.code.geobeagle.activity.cachelist.actions.Abortable;
 import com.google.code.geobeagle.activity.cachelist.actions.MenuActionMyLocation;
 import com.google.code.geobeagle.activity.cachelist.actions.MenuActionSyncGpx;
 import com.google.code.geobeagle.activity.cachelist.actions.MenuActionToggleFilter;
-import com.google.code.geobeagle.activity.cachelist.model.GeocacheFromMyLocationFactory;
 import com.google.code.geobeagle.activity.cachelist.presenter.BearingFormatter;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheList;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListUpdater;
@@ -103,8 +102,6 @@ public class CacheListDelegateDI {
         final LocationAndDirection locationAndDirection = 
             LocationControlDi.create(listActivity);
         final GeocacheFactory geocacheFactory = new GeocacheFactory();
-        final GeocacheFromMyLocationFactory geocacheFromMyLocationFactory = new GeocacheFromMyLocationFactory(
-                geocacheFactory, locationAndDirection);
         final BearingFormatter relativeBearingFormatter = new RelativeBearingFormatter();
         final DistanceFormatterManager distanceFormatterManager = DistanceFormatterManagerDi
                 .create(listActivity);
@@ -178,11 +175,12 @@ public class CacheListDelegateDI {
         final Resources resources = listActivity.getResources();
         final MenuActionSyncGpx menuActionSyncGpx = new MenuActionSyncGpx(nullAbortable,
                 cacheList, gpxImporterFactory, dbFrontend, resources);
+        final CacheActionEdit cacheActionEdit = new CacheActionEdit(listActivity);
         final MenuActions menuActions = new MenuActions();
         menuActions.add(menuActionSyncGpx);
         menuActions.add(new MenuActionToggleFilter(cachesProviderToggler, cacheList, resources));
         menuActions.add(new MenuActionMyLocation(cacheList, errorDisplayer,
-                geocacheFromMyLocationFactory, dbFrontend, resources));
+                geocacheFactory, locationAndDirection, dbFrontend, resources, cacheActionEdit));
         menuActions.add(new MenuActionSearchOnline(listActivity));
         final CachesProviderArea[] providers = { cachesProviderArea, };
         menuActions.add(new MenuActionChooseFilter(listActivity, cacheFilter, 
@@ -192,7 +190,6 @@ public class CacheListDelegateDI {
         final Intent geoBeagleMainIntent = new Intent(listActivity, GeoBeagle.class);
         final CacheActionView cacheActionView = new CacheActionView(
                 listActivity, geoBeagleMainIntent);
-        final CacheActionEdit cacheActionEdit = new CacheActionEdit(listActivity);
         final CacheActionDelete cacheActionDelete = 
             new CacheActionDelete(cacheList, titleUpdater, dbFrontend, resources);
             
@@ -207,7 +204,8 @@ public class CacheListDelegateDI {
         final CacheListOnCreateContextMenuListener menuCreator = 
             new CacheListOnCreateContextMenuListener(cachesProviderToggler, contextActions);
 
+        //TODO: It is currently a bug to send cachesProviderArea since cachesProviderAll also need to be notified of db changes.
         return new CacheListDelegate(importIntentManager, activitySaver,
-                geocacheListController, dbFrontend, locationAndDirection, updateGpsWidgetRunnable, gpsStatusWidget, menuCreator, cacheList, geocacheSummaryRowInflater, listActivity, scrollListener, distanceFormatterManager);
+                geocacheListController, dbFrontend, locationAndDirection, updateGpsWidgetRunnable, gpsStatusWidget, menuCreator, cacheList, geocacheSummaryRowInflater, listActivity, scrollListener, distanceFormatterManager, cachesProviderArea);
     }
 }

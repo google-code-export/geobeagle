@@ -37,8 +37,7 @@ public class EditCacheActivityDelegate {
         }
 
         public void onClick(View v) {
-            // TODO: replace magic number.
-            mActivity.setResult(-1, null);
+            mActivity.setResult(Activity.RESULT_CANCELED, null);
             mActivity.finish();
         }
     }
@@ -80,12 +79,12 @@ public class EditCacheActivityDelegate {
         }
     }
 
-    public static class SetButtonOnClickListener implements OnClickListener {
+    public static class CacheSaverOnClickListener implements OnClickListener {
         private final Activity mActivity;
         private final EditCache mGeocacheView;
         private final DbFrontend mDbFrontend;
 
-        public SetButtonOnClickListener(Activity activity, EditCache editCache,
+        public CacheSaverOnClickListener(Activity activity, EditCache editCache,
                 DbFrontend dbFrontend) {
             mActivity = activity;
             mGeocacheView = editCache;
@@ -98,7 +97,7 @@ public class EditCacheActivityDelegate {
             final Intent i = new Intent();
             i.setAction(GeocacheListController.SELECT_CACHE);
             i.putExtra("geocache", geocache);
-            mActivity.setResult(0, i);
+            mActivity.setResult(Activity.RESULT_OK, i);
             mActivity.finish();
         }
     }
@@ -125,10 +124,10 @@ public class EditCacheActivityDelegate {
 
         editCache.set(geocache);
         
-        SetButtonOnClickListener setButtonOnClickListener = 
-            new SetButtonOnClickListener(mParent, editCache, dbFrontend);
+        CacheSaverOnClickListener cacheSaver = 
+            new CacheSaverOnClickListener(mParent, editCache, dbFrontend);
 
-        ((Button)mParent.findViewById(R.id.edit_set)).setOnClickListener(setButtonOnClickListener);
+        ((Button)mParent.findViewById(R.id.edit_set)).setOnClickListener(cacheSaver);
         ((Button)mParent.findViewById(R.id.edit_cancel))
                 .setOnClickListener(mCancelButtonOnClickListener);
     }

@@ -18,25 +18,26 @@ import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.EditCacheActivity;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 
 public class CacheActionEdit implements CacheAction {
-    private final Context mContext;
+    private final Activity mActivity;
 
-    public CacheActionEdit(Context context) {
-        mContext = context;
+    public CacheActionEdit(Activity activity) {
+        mActivity = activity;
     }
 
     @Override
     public void act(Geocache cache) {
-        Intent intent = new Intent(mContext, EditCacheActivity.class);
+        Intent intent = new Intent(mActivity, EditCacheActivity.class);
         intent.putExtra("geocache", cache);
-        mContext.startActivity(intent);
+        mActivity.startActivityForResult(intent, 0);
     }
 
     @Override
     public String getLabel() {
-        return mContext.getResources().getString(R.string.menu_edit_geocache);
+        return mActivity.getResources().getString(R.string.menu_edit_geocache);
     }
 }

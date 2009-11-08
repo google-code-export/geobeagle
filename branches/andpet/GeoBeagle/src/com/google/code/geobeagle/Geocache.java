@@ -221,6 +221,7 @@ public class Geocache implements Parcelable {
         return mTerrain;
     }
 
+    //TODO: Rename to "saveToDb"
     public void saveLocation(DbFrontend dbFrontend) {
         CacheWriter cacheWriter = dbFrontend.getCacheWriter();
         cacheWriter.startWriting();
