@@ -120,7 +120,8 @@ public class GeoBeagle extends Activity {
         radar.setUseImperial(false);
         radar.setDistanceView((TextView)findViewById(R.id.radar_distance),
                 (TextView)findViewById(R.id.radar_bearing),
-                (TextView)findViewById(R.id.radar_accuracy));
+                (TextView)findViewById(R.id.radar_accuracy),
+                (TextView)findViewById(R.id.radar_lag));
         final GeocacheViewer geocacheViewer = new GeocacheViewer(radar, gcid, gcName,
                 (ImageView)findViewById(R.id.gcicon),
                 gcDifficulty, gcTerrain, gcContainer);

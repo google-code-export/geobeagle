@@ -56,6 +56,8 @@ public class RadarView extends View {
     private double mTargetLon;
     private double mMyLocationLat;
     private double mMyLocationLon;
+    /** When the location was updated, in UTC ms since 1970 */
+    private long mMyLocationTime;
     private int mLastScale = -1;
 
     private static float KM_PER_METERS = 0.001f;
@@ -150,6 +152,7 @@ public class RadarView extends View {
     private TextView mBearingView;
     private float mMyLocationAccuracy;
     private TextView mAccuracyView;
+    private TextView mLagView;
     private final String mDegreesSymbol;
     private Path mCompassPath;
     private final Paint mCompassPaint;
@@ -220,10 +223,12 @@ public class RadarView extends View {
      * 
      * @param t The text view used to report distance
      */
-    public void setDistanceView(TextView d, TextView b, TextView a) {
+    public void setDistanceView(TextView d, TextView b, TextView a,
+            TextView lag) {
         mDistanceView = d;
         mBearingView = b;
         mAccuracyView = a;
+        mLagView = lag;
     }
 
     @Override
@@ -306,6 +311,7 @@ public class RadarView extends View {
         mMyLocationLat = location.getLatitude();
         mMyLocationLon = location.getLongitude();
         mMyLocationAccuracy = location.getAccuracy();
+        mMyLocationTime = location.getTime();
         mOrientation = azimuth;
 
         mDistance = GeoUtils.distanceKm(mMyLocationLat, mMyLocationLon, mTargetLat, mTargetLon);
@@ -324,6 +330,7 @@ public class RadarView extends View {
         mHaveLocation = false;
         mDistanceView.setText("");
         mAccuracyView.setText("");
+        mLagView.setText("");
         mBearingView.setText("");
     }
 
@@ -362,7 +369,6 @@ public class RadarView extends View {
         final float[] displayUnitsPerKm;
         final String[] displayFormats;
         String distanceStr = null;
-        String accuracyStr = null;
 
         if (mUseMetric) {
             scaleChoices = mMetricScaleChoices;
@@ -389,11 +395,38 @@ public class RadarView extends View {
             }
         }
 
-        if (mMyLocationAccuracy != 0.0)
-            accuracyStr = formatDistance(scaleChoices, displayUnitsPerKm, displayFormats);
+        if (mMyLocationAccuracy != 0.0) {
+            String accuracyStr = formatDistance(scaleChoices, displayUnitsPerKm, displayFormats);
+            mAccuracyView.setText("+/-" + accuracyStr);
+        }
 
         mDistanceView.setText(distanceStr);
-        mAccuracyView.setText("+/-" + accuracyStr);
+        
+        float lagSec = (System.currentTimeMillis() - mMyLocationTime) / 1000f;
+        if (lagSec > 3600 * 10) {  // > 10 hour
+            int lagHours = (int)(lagSec/3600);
+            mLagView.setText(lagHours + "h");
+        } else if (lagSec > 3600) {  // > 1 hour
+            int lagHours = (int)(lagSec/3600);
+            int lagMin = (int)(lagSec/60 - lagHours*60);
+            if (lagMin > 0)
+                mLagView.setText(lagHours + "h " + lagMin + "m");
+            else
+                mLagView.setText(lagHours + "h");
+        } else if (lagSec > 60) {
+            int lagMin = (int)(lagSec/60);
+            lagSec = lagSec - lagMin*60;
+            //lagSec = ((int)(lagSec*10)) / 10f;  //round
+            if ((int)lagSec > 0)
+                mLagView.setText(lagMin + "m " + ((int)lagSec) + "s");
+            else
+                mLagView.setText(lagMin + "m");
+        } else if (lagSec >= 2) {
+            mLagView.setText(((int)lagSec) + "s");            
+        } else {
+            //Not enough lag to be worth showing
+            mLagView.setText("");
+        }
     }
 
     private String formatDistance(final double[] scaleChoices, final float[] displayUnitsPerKm,
