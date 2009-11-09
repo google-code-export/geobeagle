@@ -15,6 +15,7 @@
 package com.google.code.geobeagle.cachelist;
 
 import com.google.code.geobeagle.activity.cachelist.actions.MenuActionToggleFilter;
+import com.google.code.geobeagle.activity.cachelist.presenter.CacheListAdapter;
 import com.google.code.geobeagle.database.CachesProviderToggler;
 
 import org.junit.Test;
@@ -27,14 +28,14 @@ public class MenuActionToggleFilterTest {
     @Test
     public void testAct() {
         CachesProviderToggler cachesProviderToggler = PowerMock.createMock(CachesProviderToggler.class);
-        CacheListRefresh cacheListRefresh = PowerMock.createMock(CacheListRefresh.class);
+        CacheListAdapter cacheListAdapter = PowerMock.createMock(CacheListAdapter.class);
 
         cachesProviderToggler.toggle();
-        cacheListRefresh.forceRefresh();
+        cacheListAdapter.forceRefresh();
 
         PowerMock.replayAll();
         final MenuActionToggleFilter menuActionToggleFilter = new MenuActionToggleFilter(
-                cachesProviderToggler, cacheListRefresh);
+                cachesProviderToggler, cacheListAdapter, null);
         menuActionToggleFilter.act();
         PowerMock.verifyAll();
     }

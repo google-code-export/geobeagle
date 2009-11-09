@@ -14,17 +14,14 @@
 
 package com.google.code.geobeagle.activity.cachelist;
 
-import static org.easymock.EasyMock.expect;
 import static org.junit.Assert.assertTrue;
 
 import com.google.code.geobeagle.Geocache;
-import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.actions.CacheAction;
 import com.google.code.geobeagle.actions.MenuActions;
 import com.google.code.geobeagle.activity.cachelist.GeocacheListController.CacheListOnCreateContextMenuListener;
 import com.google.code.geobeagle.activity.cachelist.actions.MenuActionSyncGpx;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListAdapter;
-import com.google.code.geobeagle.database.CachesProviderToggler;
 import com.google.code.geobeagle.database.DatabaseDI;
 import org.easymock.EasyMock;
 import org.junit.Test;
@@ -34,14 +31,11 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import android.app.ListActivity;
-import android.view.ContextMenu;
 import android.view.Menu;
-import android.view.MenuItem;
-import android.widget.AdapterView.AdapterContextMenuInfo;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest( {
-        GeocacheListController.class, ListActivity.class, GeocacheListPresenter.class,
+        GeocacheListController.class, ListActivity.class,
         CacheListOnCreateContextMenuListener.class, DatabaseDI.class
 })
 public class GeocacheListControllerTest {
@@ -62,20 +56,18 @@ public class GeocacheListControllerTest {
 
     @Test
     public void testOnListItemClick() {
-        GeocacheVector geocacheVector = PowerMock.createMock(GeocacheVector.class);
-        GeocacheVectors geocacheVectors = PowerMock.createMock(GeocacheVectors.class);
         Geocache geocache = PowerMock.createMock(Geocache.class);
         final CacheAction cacheAction = PowerMock.createMock(CacheAction.class);
         CacheAction cacheActions[] = {
                 null, cacheAction
         };
 
-        expect(geocacheVectors.get(45)).andReturn(geocacheVector);
-        expect(geocacheVector.getGeocache()).andReturn(geocache);
+        //expect(geocacheVectors.get(45)).andReturn(geocacheVector);
+        //expect(geocacheVector.getGeocache()).andReturn(geocache);
         cacheAction.act(geocache);
 
         PowerMock.replayAll();
-        new GeocacheListController(null, cacheActions, null, null, null, geocacheVectors).
+        new GeocacheListController(null, cacheActions, null, null, null).
           onListItemClick(null, null, 46, 0);
         PowerMock.verifyAll();
     }

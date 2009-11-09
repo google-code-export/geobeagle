@@ -19,6 +19,7 @@ import static org.easymock.EasyMock.expect;
 import com.google.code.geobeagle.activity.cachelist.GpxImporterFactory;
 import com.google.code.geobeagle.activity.cachelist.actions.Abortable;
 import com.google.code.geobeagle.activity.cachelist.actions.MenuActionSyncGpx;
+import com.google.code.geobeagle.activity.cachelist.presenter.CacheListAdapter;
 import com.google.code.geobeagle.database.CacheWriter;
 import com.google.code.geobeagle.database.DbFrontend;
 import com.google.code.geobeagle.xmlimport.GpxImporter;
@@ -34,7 +35,7 @@ public class MenuActionSyncGpxTest {
     @Test
     public void testAct() {
         GpxImporter gpxImporter = PowerMock.createMock(GpxImporter.class);
-        CacheListRefresh cacheListRefresh = PowerMock.createMock(CacheListRefresh.class);
+        CacheListAdapter cacheListAdapter = PowerMock.createMock(CacheListAdapter.class);
         GpxImporterFactory gpxImporterFactory = PowerMock.createMock(GpxImporterFactory.class);
         CacheWriter cacheWriter = PowerMock.createMock(CacheWriter.class);
 
@@ -42,11 +43,11 @@ public class MenuActionSyncGpxTest {
         expect(dbFrontend.getCacheWriter()).andReturn(cacheWriter);
 
         EasyMock.expect(gpxImporterFactory.create(cacheWriter)).andReturn(gpxImporter);
-        gpxImporter.importGpxs(cacheListRefresh);
+        gpxImporter.importGpxs(cacheListAdapter);
 
         PowerMock.replayAll();
-        final MenuActionSyncGpx menuActionSyncGpx = new MenuActionSyncGpx(null, cacheListRefresh,
-                gpxImporterFactory, dbFrontend);
+        final MenuActionSyncGpx menuActionSyncGpx = new MenuActionSyncGpx(null, cacheListAdapter,
+                gpxImporterFactory, dbFrontend, null);
         menuActionSyncGpx.act();
         PowerMock.verifyAll();
     }
@@ -58,7 +59,7 @@ public class MenuActionSyncGpxTest {
         abortable.abort();
 
         PowerMock.replayAll();
-        new MenuActionSyncGpx(abortable, null, null, null).abort();
+        new MenuActionSyncGpx(abortable, null, null, null, null).abort();
         PowerMock.verifyAll();
     }
 }
