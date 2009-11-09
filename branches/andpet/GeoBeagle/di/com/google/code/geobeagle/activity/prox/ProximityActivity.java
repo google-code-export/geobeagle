@@ -6,7 +6,7 @@ import com.google.code.geobeagle.GeocacheFactory;
 import com.google.code.geobeagle.LocationAndDirection;
 import com.google.code.geobeagle.LocationControlDi;
 import com.google.code.geobeagle.Refresher;
-import com.google.code.geobeagle.database.CachesProviderArea;
+import com.google.code.geobeagle.database.CachesProviderDb;
 import com.google.code.geobeagle.database.CachesProviderCount;
 import com.google.code.geobeagle.database.DbFrontend;
 
@@ -50,7 +50,7 @@ public class ProximityActivity extends Activity implements SurfaceHolder.Callbac
         GeocacheFactory geocacheFactory = new GeocacheFactory();
         mDbFrontend = new DbFrontend(this, geocacheFactory);
         CacheFilter cacheFilter = new CacheFilter(this);
-        CachesProviderArea cachesProviderArea = new CachesProviderArea(mDbFrontend, cacheFilter);
+        CachesProviderDb cachesProviderArea = new CachesProviderDb(mDbFrontend, cacheFilter);
         //CachesProviderRadius cachesProviderRadius = new CachesProviderRadius(cachesProviderArea);
         CachesProviderCount cachesProviderCount = new CachesProviderCount(cachesProviderArea, 5, 10);
         //cachesProviderRadius.setRadius(0.01);

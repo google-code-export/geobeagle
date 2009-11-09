@@ -5,10 +5,9 @@ import com.google.code.geobeagle.Geocache;
 
 import java.util.ArrayList;
 
-//TODO: Rename to CachesProviderDb
 /** Uses a DB to fetch the caches within a defined region, or all caches if no 
  * bounds were specified */
-public class CachesProviderArea implements ICachesProviderArea {
+public class CachesProviderDb implements ICachesProviderArea {
 
     private DbFrontend mDbFrontend;
     private double mLatLow;
@@ -22,7 +21,7 @@ public class CachesProviderArea implements ICachesProviderArea {
     private final CacheFilter mCacheFilter;
     private String mFilter;
 
-    public CachesProviderArea(DbFrontend dbFrontend, CacheFilter cacheFilter) {
+    public CachesProviderDb(DbFrontend dbFrontend, CacheFilter cacheFilter) {
         mDbFrontend = dbFrontend;
         mCacheFilter = cacheFilter;
     }

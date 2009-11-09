@@ -16,7 +16,7 @@ package com.google.code.geobeagle.activity.map;
 
 import com.google.android.maps.Overlay;
 import com.google.code.geobeagle.Refresher;
-import com.google.code.geobeagle.database.CachesProviderArea;
+import com.google.code.geobeagle.database.CachesProviderDb;
 
 import android.util.Log;
 
@@ -29,11 +29,11 @@ public class OverlayManager implements Refresher {
     private final GeoMapView mGeoMapView;
     private final List<Overlay> mMapOverlays;
     private boolean mUsesDensityMap;
-    private final CachesProviderArea mCachesProviderArea;
+    private final CachesProviderDb mCachesProviderArea;
 
     public OverlayManager(GeoMapView geoMapView, List<Overlay> mapOverlays,
             DensityOverlay densityOverlay, CachePinsOverlayFactory cachePinsOverlayFactory,
-            boolean usesDensityMap, CachesProviderArea cachesProviderArea) {
+            boolean usesDensityMap, CachesProviderDb cachesProviderArea) {
         mGeoMapView = geoMapView;
         mMapOverlays = mapOverlays;
         mDensityOverlay = densityOverlay;

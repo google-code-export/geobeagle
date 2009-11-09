@@ -28,7 +28,7 @@ import com.google.code.geobeagle.actions.MenuActionChooseFilter;
 import com.google.code.geobeagle.actions.MenuActions;
 import com.google.code.geobeagle.activity.main.GeoUtils;
 import com.google.code.geobeagle.activity.map.DensityMatrix.DensityPatch;
-import com.google.code.geobeagle.database.CachesProviderArea;
+import com.google.code.geobeagle.database.CachesProviderDb;
 import com.google.code.geobeagle.database.CachesProviderLazyArea;
 import com.google.code.geobeagle.database.DbFrontend;
 import com.google.code.geobeagle.xmlimport.GpxImporterDI.Toaster;
@@ -103,7 +103,7 @@ public class GeoMapActivity extends MapActivity {
 
         final List<DensityPatch> densityPatches = new ArrayList<DensityPatch>();
         final Toaster toaster = new Toaster(this, R.string.too_many_caches, Toast.LENGTH_SHORT);
-        final CachesProviderArea cachesProviderArea = new CachesProviderArea(mDbFrontend, cacheFilter);
+        final CachesProviderDb cachesProviderArea = new CachesProviderDb(mDbFrontend, cacheFilter);
         final CachesProviderLazyArea lazyArea = new CachesProviderLazyArea(cachesProviderArea, toaster, 1.0);
         final DensityOverlayDelegate densityOverlayDelegate = DensityOverlay.createDelegate(
                 densityPatches, nullGeoPoint, lazyArea);
@@ -113,7 +113,7 @@ public class GeoMapActivity extends MapActivity {
         final CachePinsOverlay cachePinsOverlay = new CachePinsOverlay(cacheItemFactory, this,
                 defaultMarker, geocacheList);
         //Pin overlay and Density overlay can't share providers because the provider wouldn't report hasChanged() when switching between them
-        CachesProviderArea cachesProviderAreaPins = new CachesProviderArea(mDbFrontend, cacheFilter);
+        CachesProviderDb cachesProviderAreaPins = new CachesProviderDb(mDbFrontend, cacheFilter);
         final CachesProviderLazyArea lazyAreaPins = new CachesProviderLazyArea(cachesProviderAreaPins, toaster, 1.0);
         final CachePinsOverlayFactory cachePinsOverlayFactory = new CachePinsOverlayFactory(
                 mMapView, this, defaultMarker, cacheItemFactory, cachePinsOverlay, lazyAreaPins);
@@ -128,7 +128,7 @@ public class GeoMapActivity extends MapActivity {
         menuActions.add(new GeoMapActivityDelegate.MenuActionToggleSatellite(mMapView));
         menuActions.add(new GeoMapActivityDelegate.MenuActionCenterLocation(mMapView, mMyLocationOverlay));
         menuActions.add(new MenuActionCacheList(this));
-        final CachesProviderArea[] providers = { cachesProviderArea, cachesProviderAreaPins };
+        final CachesProviderDb[] providers = { cachesProviderArea, cachesProviderAreaPins };
         menuActions.add(new MenuActionChooseFilter(this, cacheFilter, providers, mOverlayManager));
         
         mGeoMapActivityDelegate = new GeoMapActivityDelegate(menuActions);

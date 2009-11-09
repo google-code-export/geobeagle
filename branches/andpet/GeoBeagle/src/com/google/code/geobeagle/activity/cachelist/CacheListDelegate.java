@@ -22,7 +22,7 @@ import com.google.code.geobeagle.activity.cachelist.GeocacheListController.Cache
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListAdapter;
 import com.google.code.geobeagle.activity.cachelist.presenter.DistanceFormatterManager;
 import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheSummaryRowInflater;
-import com.google.code.geobeagle.database.CachesProviderArea;
+import com.google.code.geobeagle.database.CachesProviderDb;
 import com.google.code.geobeagle.database.DbFrontend;
 import com.google.code.geobeagle.database.ICachesProvider;
 import com.google.code.geobeagle.gpsstatuswidget.UpdateGpsWidgetRunnable;
@@ -83,7 +83,7 @@ public class CacheListDelegate {
     private final ListActivity mListActivity;
     private final DistanceFormatterManager mDistanceFormatterManager;
     private final GeocacheSummaryRowInflater mGeocacheSummaryRowInflater;
-    private final CachesProviderArea mCachesToFlush;
+    private final CachesProviderDb mCachesToFlush;
 
     public CacheListDelegate(ImportIntentManager importIntentManager, ActivitySaver activitySaver,
             GeocacheListController geocacheListController,
@@ -97,7 +97,7 @@ public class CacheListDelegate {
             ListActivity listActivity,
             CacheListView.ScrollListener scrollListener,
             DistanceFormatterManager distanceFormatterManager,
-            CachesProviderArea cachesToFlush) {
+            CachesProviderDb cachesToFlush) {
         mActivitySaver = activitySaver;
         mController = geocacheListController;
         mImportIntentManager = importIntentManager;

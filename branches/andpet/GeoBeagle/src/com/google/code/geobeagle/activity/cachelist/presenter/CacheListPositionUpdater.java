@@ -7,15 +7,14 @@ import com.google.code.geobeagle.database.ICachesProviderCenter;
 
 import android.location.Location;
 
-//TODO: Rename to CacheListPositionUpdater
 /** Sends location and azimuth updates to CacheList */
-public class CacheListUpdater implements Refresher {
+public class CacheListPositionUpdater implements Refresher {
     private final CacheListAdapter mCacheList;
     private final LocationAndDirection mLocationAndDirection;
     private final ICachesProviderCenter mSearchCenter;
     private final CachesProviderSorted mSortCenter;
 
-    public CacheListUpdater(LocationAndDirection locationAndDirection,
+    public CacheListPositionUpdater(LocationAndDirection locationAndDirection,
             CacheListAdapter cacheList, ICachesProviderCenter searchCenter,
             CachesProviderSorted sortCenter) {
         mLocationAndDirection = locationAndDirection;

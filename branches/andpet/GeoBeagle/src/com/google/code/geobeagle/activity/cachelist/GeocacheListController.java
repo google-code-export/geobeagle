@@ -32,7 +32,6 @@ import android.widget.AdapterView.AdapterContextMenuInfo;
 
 public class GeocacheListController {
 
-    //TODO: Resources should be provided to individual CacheAction instead
     public static class CacheListOnCreateContextMenuListener implements OnCreateContextMenuListener {
         private final ICachesProvider mCachesProvider;
         private final CacheAction mCacheActions[];

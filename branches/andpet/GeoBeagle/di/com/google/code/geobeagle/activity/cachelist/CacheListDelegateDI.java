@@ -39,14 +39,14 @@ import com.google.code.geobeagle.activity.cachelist.actions.MenuActionSyncGpx;
 import com.google.code.geobeagle.activity.cachelist.actions.MenuActionToggleFilter;
 import com.google.code.geobeagle.activity.cachelist.presenter.BearingFormatter;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListAdapter;
-import com.google.code.geobeagle.activity.cachelist.presenter.CacheListUpdater;
+import com.google.code.geobeagle.activity.cachelist.presenter.CacheListPositionUpdater;
 import com.google.code.geobeagle.activity.cachelist.presenter.DistanceFormatterManager;
 import com.google.code.geobeagle.activity.cachelist.presenter.DistanceFormatterManagerDi;
 import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheSummaryRowInflater;
 import com.google.code.geobeagle.activity.cachelist.presenter.RelativeBearingFormatter;
 import com.google.code.geobeagle.activity.cachelist.presenter.TitleUpdater;
 import com.google.code.geobeagle.activity.main.GeoBeagle;
-import com.google.code.geobeagle.database.CachesProviderArea;
+import com.google.code.geobeagle.database.CachesProviderDb;
 import com.google.code.geobeagle.database.CachesProviderCount;
 import com.google.code.geobeagle.database.CachesProviderSorted;
 import com.google.code.geobeagle.database.CachesProviderToggler;
@@ -134,14 +134,14 @@ public class CacheListDelegateDI {
         final CacheFilter cacheFilter = new CacheFilter(listActivity);
         
         final DbFrontend dbFrontend = new DbFrontend(listActivity, geocacheFactory);
-        final CachesProviderArea cachesProviderArea = new CachesProviderArea(dbFrontend, cacheFilter);
+        final CachesProviderDb cachesProviderArea = new CachesProviderDb(dbFrontend, cacheFilter);
         final ICachesProviderCenter cachesProviderCount = new CachesProviderWaitForInit(new CachesProviderCount(cachesProviderArea, 15, 30));
         final CachesProviderSorted cachesProviderSorted = new CachesProviderSorted(cachesProviderCount);
         final Clock clock = new Clock();
         //TODO: Use Lazy
         //final CachesProviderLazy cachesProviderLazy = new CachesProviderLazy(cachesProviderSorted, 0.01, 2000, clock);
         ICachesProviderCenter cachesProviderLazy = cachesProviderSorted;
-        final CachesProviderArea cachesProviderAll = new CachesProviderArea(dbFrontend, cacheFilter);
+        final CachesProviderDb cachesProviderAll = new CachesProviderDb(dbFrontend, cacheFilter);
         final CachesProviderToggler cachesProviderToggler = 
             new CachesProviderToggler(cachesProviderLazy, cachesProviderAll);
         final TitleUpdater titleUpdater = new TitleUpdater(listActivity, 
@@ -151,7 +151,7 @@ public class CacheListDelegateDI {
         distanceFormatterManager.addHasDistanceFormatter(gpsStatusWidgetDelegate);
         final CacheListAdapter cacheList = new CacheListAdapter(cachesProviderToggler, 
                 cachesProviderSorted, geocacheSummaryRowInflater, titleUpdater);
-        final CacheListUpdater cacheListUpdater = new CacheListUpdater(
+        final CacheListPositionUpdater cacheListUpdater = new CacheListPositionUpdater(
                 locationAndDirection, cacheList, cachesProviderCount, cachesProviderSorted);
         locationAndDirection.addObserver(cacheListUpdater);
         final CacheListView.ScrollListener scrollListener = new CacheListView.ScrollListener(
@@ -182,7 +182,7 @@ public class CacheListDelegateDI {
         menuActions.add(new MenuActionMyLocation(cacheList, errorDisplayer,
                 geocacheFactory, locationAndDirection, dbFrontend, resources, cacheActionEdit));
         menuActions.add(new MenuActionSearchOnline(listActivity));
-        final CachesProviderArea[] providers = { cachesProviderArea, };
+        final CachesProviderDb[] providers = { cachesProviderArea, };
         menuActions.add(new MenuActionChooseFilter(listActivity, cacheFilter, 
                 providers, cacheList));
         menuActions.add(new MenuActionMap(listActivity, locationAndDirection));

@@ -20,10 +20,10 @@ import java.util.ArrayList;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(Log.class)
-public class CachesProviderAreaTest {
+public class CachesProviderDbTest {
     private DbFrontend mDbFrontend;
     private CacheFilter mCacheFilter;
-    CachesProviderArea mCachesProviderArea;
+    CachesProviderDb mCachesProviderArea;
 
     @Before
     public void setUp() {
@@ -31,7 +31,7 @@ public class CachesProviderAreaTest {
         expect(Log.d(isA(String.class), isA(String.class))).andReturn(0).anyTimes();
         mDbFrontend = PowerMock.createMock(DbFrontend.class);
         mCacheFilter = PowerMock.createMock(CacheFilter.class);
-        mCachesProviderArea = new CachesProviderArea(mDbFrontend, mCacheFilter);
+        mCachesProviderArea = new CachesProviderDb(mDbFrontend, mCacheFilter);
     }
     
     @Test

@@ -20,7 +20,7 @@ import static org.junit.Assert.assertTrue;
 import com.google.code.geobeagle.LocationAndDirection;
 import com.google.code.geobeagle.activity.cachelist.CacheListDelegateDI;
 import com.google.code.geobeagle.activity.cachelist.CacheListDelegateDI.Timing;
-import com.google.code.geobeagle.database.CachesProviderArea;
+import com.google.code.geobeagle.database.CachesProviderDb;
 
 import org.easymock.EasyMock;
 import org.junit.Before;
@@ -72,7 +72,7 @@ public class CacheListRefreshTest {
         ActionAndTolerance actionAndTolerance1 = PowerMock.createMock(ActionAndTolerance.class);
         LocationAndDirection locationAndDirection = PowerMock.createMock(LocationAndDirection.class);
         ActionAndTolerance[] actionAndTolerances = { actionAndTolerance0, actionAndTolerance1 };
-        CachesProviderArea cachesProviderArea = PowerMock.createMock(CachesProviderArea.class);
+        CachesProviderDb cachesProviderArea = PowerMock.createMock(CachesProviderDb.class);
 
         EasyMock.expect(actionAndTolerance0.exceedsTolerance(here, 90, 10000)).andReturn(false);
         EasyMock.expect(actionAndTolerance1.exceedsTolerance(here, 90, 10000)).andReturn(true);
@@ -84,7 +84,7 @@ public class CacheListRefreshTest {
 
         PowerMock.replayAll();
 
-        CachesProviderArea[] areas = { cachesProviderArea };
+        CachesProviderDb[] areas = { cachesProviderArea };
         new CacheListRefresh(actionAndTolerances, mTiming, locationAndDirection, null, areas).forceRefresh();
 
         PowerMock.verifyAll();
@@ -97,7 +97,7 @@ public class CacheListRefreshTest {
         ActionAndTolerance actionAndTolerance1 = PowerMock.createMock(ActionAndTolerance.class);
         LocationAndDirection locationAndDirection = PowerMock.createMock(LocationAndDirection.class);
         ActionAndTolerance[] actionAndTolerances = { actionAndTolerance0, actionAndTolerance1 };
-        CachesProviderArea cachesProviderArea = PowerMock.createMock(CachesProviderArea.class);
+        CachesProviderDb cachesProviderArea = PowerMock.createMock(CachesProviderDb.class);
 
         EasyMock.expect(actionAndTolerance0.exceedsTolerance(here, 90, 10000)).andReturn(false);
         EasyMock.expect(actionAndTolerance1.exceedsTolerance(here, 90, 10000)).andReturn(true);
@@ -108,7 +108,7 @@ public class CacheListRefreshTest {
 
         PowerMock.replayAll();
 
-        CachesProviderArea[] areas = { cachesProviderArea };
+        CachesProviderDb[] areas = { cachesProviderArea };
         new CacheListRefresh(actionAndTolerances, mTiming, locationAndDirection, null, areas).forceRefresh();
 
         PowerMock.verifyAll();
