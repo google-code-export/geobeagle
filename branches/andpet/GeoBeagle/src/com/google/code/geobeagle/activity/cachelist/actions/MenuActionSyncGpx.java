@@ -17,7 +17,7 @@ package com.google.code.geobeagle.activity.cachelist.actions;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.actions.MenuAction;
 import com.google.code.geobeagle.activity.cachelist.GpxImporterFactory;
-import com.google.code.geobeagle.activity.cachelist.presenter.CacheList;
+import com.google.code.geobeagle.activity.cachelist.presenter.CacheListAdapter;
 import com.google.code.geobeagle.database.DbFrontend;
 import com.google.code.geobeagle.xmlimport.GpxImporter;
 
@@ -25,12 +25,12 @@ import android.content.res.Resources;
 
 public class MenuActionSyncGpx implements MenuAction {
     private Abortable mAbortable;
-    private final CacheList mCacheList;
+    private final CacheListAdapter mCacheList;
     private final GpxImporterFactory mGpxImporterFactory;
     private final DbFrontend mDbFrontend;
     private final Resources mResources;
 
-    public MenuActionSyncGpx(Abortable abortable, CacheList cacheList,
+    public MenuActionSyncGpx(Abortable abortable, CacheListAdapter cacheList,
             GpxImporterFactory gpxImporterFactory, DbFrontend dbFrontend,
             Resources resources) {
         mAbortable = abortable;

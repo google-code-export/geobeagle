@@ -18,7 +18,7 @@ import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.actions.CacheAction;
 import com.google.code.geobeagle.actions.MenuActions;
 import com.google.code.geobeagle.activity.cachelist.actions.MenuActionSyncGpx;
-import com.google.code.geobeagle.activity.cachelist.presenter.CacheList;
+import com.google.code.geobeagle.activity.cachelist.presenter.CacheListAdapter;
 import com.google.code.geobeagle.database.ICachesProvider;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -56,13 +56,13 @@ public class GeocacheListController {
     }
 
     public static final String SELECT_CACHE = "SELECT_CACHE";
-    private final CacheList mCacheList;
+    private final CacheListAdapter mCacheList;
     private final CacheAction mCacheActions[];
     private final MenuActions mMenuActions;
     private final MenuActionSyncGpx mMenuActionSyncGpx;
     private final CacheAction mDefaultCacheAction;
 
-    public GeocacheListController(CacheList cacheList,
+    public GeocacheListController(CacheListAdapter cacheList,
             CacheAction[] cacheActions,
             MenuActionSyncGpx menuActionSyncGpx, MenuActions menuActions,
             CacheAction defaultCacheAction) {

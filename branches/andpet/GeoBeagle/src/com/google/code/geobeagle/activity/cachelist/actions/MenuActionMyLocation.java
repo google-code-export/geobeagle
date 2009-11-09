@@ -23,7 +23,7 @@ import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.GeocacheFactory.Source;
 import com.google.code.geobeagle.actions.CacheAction;
 import com.google.code.geobeagle.actions.MenuAction;
-import com.google.code.geobeagle.activity.cachelist.presenter.CacheList;
+import com.google.code.geobeagle.activity.cachelist.presenter.CacheListAdapter;
 import com.google.code.geobeagle.database.DbFrontend;
 
 import android.content.res.Resources;
@@ -31,14 +31,14 @@ import android.location.Location;
 
 public class MenuActionMyLocation implements MenuAction {
     private final ErrorDisplayer mErrorDisplayer;
-    private final CacheList mListRefresher;
+    private final CacheListAdapter mListRefresher;
     private final DbFrontend mDbFrontend;
     private final Resources mResources;
     private final GeocacheFactory mGeocacheFactory;
     private final LocationAndDirection mLocationControl;
     private final CacheAction mCacheActionEdit;
 
-    public MenuActionMyLocation(CacheList cacheList, ErrorDisplayer errorDisplayer,
+    public MenuActionMyLocation(CacheListAdapter cacheList, ErrorDisplayer errorDisplayer,
             GeocacheFactory geocacheFactory,
             LocationAndDirection locationControl, DbFrontend dbFrontend,
             Resources resources, CacheAction cacheActionEdit) {

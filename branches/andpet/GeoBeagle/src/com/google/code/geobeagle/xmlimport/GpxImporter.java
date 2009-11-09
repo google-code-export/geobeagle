@@ -18,7 +18,7 @@ import com.google.code.geobeagle.ErrorDisplayer;
 import com.google.code.geobeagle.LocationAndDirection;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.cachelist.actions.Abortable;
-import com.google.code.geobeagle.activity.cachelist.presenter.CacheList;
+import com.google.code.geobeagle.activity.cachelist.presenter.CacheListAdapter;
 import com.google.code.geobeagle.xmlimport.GpxImporterDI.ImportThreadWrapper;
 import com.google.code.geobeagle.xmlimport.GpxImporterDI.MessageHandler;
 import com.google.code.geobeagle.xmlimport.GpxImporterDI.ToastFactory;
@@ -61,7 +61,7 @@ public class GpxImporter implements Abortable {
         //TODO: Resume list updates?
     }
 
-    public void importGpxs(CacheList cacheList) {
+    public void importGpxs(CacheListAdapter cacheList) {
         mLocationAndDirection.onPause();
         mImportThreadWrapper.open(cacheList, mGpxLoader, mEventHandlers, mErrorDisplayer);
         mImportThreadWrapper.start();

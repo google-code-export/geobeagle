@@ -10,13 +10,13 @@ import android.location.Location;
 //TODO: Rename to CacheListPositionUpdater
 /** Sends location and azimuth updates to CacheList */
 public class CacheListUpdater implements Refresher {
-    private final CacheList mCacheList;
+    private final CacheListAdapter mCacheList;
     private final LocationAndDirection mLocationAndDirection;
     private final ICachesProviderCenter mSearchCenter;
     private final CachesProviderSorted mSortCenter;
 
     public CacheListUpdater(LocationAndDirection locationAndDirection,
-            CacheList cacheList, ICachesProviderCenter searchCenter,
+            CacheListAdapter cacheList, ICachesProviderCenter searchCenter,
             CachesProviderSorted sortCenter) {
         mLocationAndDirection = locationAndDirection;
         mCacheList = cacheList;

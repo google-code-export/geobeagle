@@ -16,7 +16,7 @@ package com.google.code.geobeagle.xmlimport;
 
 import com.google.code.geobeagle.ErrorDisplayer;
 import com.google.code.geobeagle.LocationAndDirection;
-import com.google.code.geobeagle.activity.cachelist.presenter.CacheList;
+import com.google.code.geobeagle.activity.cachelist.presenter.CacheListAdapter;
 import com.google.code.geobeagle.database.CacheWriter;
 import com.google.code.geobeagle.xmlimport.CachePersisterFacadeDI.CachePersisterFacadeFactory;
 import com.google.code.geobeagle.xmlimport.EventHelperDI.EventHelperFactory;
@@ -103,7 +103,7 @@ public class GpxImporterDI {
                 }
         }
 
-        public void open(CacheList cacheList, GpxLoader gpxLoader,
+        public void open(CacheListAdapter cacheList, GpxLoader gpxLoader,
                 EventHandlers eventHandlers, ErrorDisplayer mErrorDisplayer) {
             mMessageHandler.start(cacheList);
             mImportThread = ImportThread.create(mMessageHandler, gpxLoader, eventHandlers,
@@ -130,7 +130,7 @@ public class GpxImporterDI {
 
         private int mCacheCount;
         private boolean mLoadAborted;
-        private CacheList mCacheList;
+        private CacheListAdapter mCacheList;
         private final ProgressDialogWrapper mProgressDialogWrapper;
         private String mSource;
         private String mStatus;
@@ -167,7 +167,7 @@ public class GpxImporterDI {
             sendEmptyMessage(MessageHandler.MSG_DONE);
         }
 
-        public void start(CacheList cacheList) {
+        public void start(CacheListAdapter cacheList) {
             mCacheCount = 0;
             mLoadAborted = false;
             mCacheList = cacheList;

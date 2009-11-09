@@ -19,9 +19,9 @@ import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.ActivitySaver;
 import com.google.code.geobeagle.activity.ActivityType;
 import com.google.code.geobeagle.activity.cachelist.GeocacheListController.CacheListOnCreateContextMenuListener;
-import com.google.code.geobeagle.activity.cachelist.presenter.CacheList;
+import com.google.code.geobeagle.activity.cachelist.presenter.CacheListAdapter;
 import com.google.code.geobeagle.activity.cachelist.presenter.DistanceFormatterManager;
-import com.google.code.geobeagle.activity.cachelist.view.GeocacheSummaryRowInflater;
+import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheSummaryRowInflater;
 import com.google.code.geobeagle.database.CachesProviderArea;
 import com.google.code.geobeagle.database.DbFrontend;
 import com.google.code.geobeagle.database.ICachesProvider;
@@ -78,7 +78,7 @@ public class CacheListDelegate {
     private final UpdateGpsWidgetRunnable mUpdateGpsWidgetRunnable;
     private final CacheListView.ScrollListener mScrollListener;
     private final CacheListOnCreateContextMenuListener mMenuCreator;
-    private final CacheList mCacheList;
+    private final CacheListAdapter mCacheList;
     private final View mGpsStatusWidget;
     private final ListActivity mListActivity;
     private final DistanceFormatterManager mDistanceFormatterManager;
@@ -92,7 +92,7 @@ public class CacheListDelegate {
             UpdateGpsWidgetRunnable updateGpsWidgetRunnable,
             View gpsStatusWidget,
             CacheListOnCreateContextMenuListener menuCreator,
-            CacheList cacheList,
+            CacheListAdapter cacheList,
             GeocacheSummaryRowInflater geocacheSummaryRowInflater,
             ListActivity listActivity,
             CacheListView.ScrollListener scrollListener,

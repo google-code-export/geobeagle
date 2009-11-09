@@ -16,19 +16,19 @@ package com.google.code.geobeagle.actions;
 
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.activity.cachelist.presenter.CacheList;
+import com.google.code.geobeagle.activity.cachelist.presenter.CacheListAdapter;
 import com.google.code.geobeagle.activity.cachelist.presenter.RefreshAction;
 import com.google.code.geobeagle.database.DbFrontend;
 
 import android.content.res.Resources;
 
 public class CacheActionDelete implements CacheAction {
-    private final CacheList mCacheList;
+    private final CacheListAdapter mCacheList;
     private final DbFrontend mDbFrontend;
     private final RefreshAction mCacheListRefresher;
     private final Resources mResources;
 
-    public CacheActionDelete(CacheList cacheList, RefreshAction cacheListRefresh,
+    public CacheActionDelete(CacheListAdapter cacheList, RefreshAction cacheListRefresh,
             DbFrontend dbFrontend, Resources resources) {
         mCacheList = cacheList;
         mCacheListRefresher = cacheListRefresh;

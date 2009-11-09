@@ -2,7 +2,6 @@ package com.google.code.geobeagle.activity.cachelist.presenter;
 
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.Refresher;
-import com.google.code.geobeagle.activity.cachelist.view.GeocacheSummaryRowInflater;
 import com.google.code.geobeagle.database.CachesProviderToggler;
 import com.google.code.geobeagle.database.DistanceAndBearing;
 import com.google.code.geobeagle.database.DistanceAndBearing.IDistanceAndBearingProvider;
@@ -13,9 +12,8 @@ import android.widget.BaseAdapter;
 
 import java.util.ArrayList;
 
-//TODO: Rename this class
 /** Feeds the caches in a CachesProvider to the GUI list view */
-public class CacheList extends BaseAdapter implements Refresher {
+public class CacheListAdapter extends BaseAdapter implements Refresher {
     private final CachesProviderToggler mProvider;
     private final IDistanceAndBearingProvider mDistances;
     private final GeocacheSummaryRowInflater mGeocacheSummaryRowInflater;
@@ -24,7 +22,7 @@ public class CacheList extends BaseAdapter implements Refresher {
     private float mAzimuth;
     private boolean mUpdatesEnabled = true;
 
-    public CacheList(CachesProviderToggler provider, 
+    public CacheListAdapter(CachesProviderToggler provider, 
             IDistanceAndBearingProvider distances,
             GeocacheSummaryRowInflater inflater,
             TitleUpdater titleUpdater) {
@@ -61,7 +59,6 @@ public class CacheList extends BaseAdapter implements Refresher {
         notifyDataSetChanged();
     }
 
-    //TODO: Cache the list in this class to avoid partial updates and such
     public int getCount() {
         if (mListData == null)
             return 0;

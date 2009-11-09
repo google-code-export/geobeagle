@@ -16,18 +16,18 @@ package com.google.code.geobeagle.activity.cachelist.actions;
 
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.actions.MenuAction;
-import com.google.code.geobeagle.activity.cachelist.presenter.CacheList;
+import com.google.code.geobeagle.activity.cachelist.presenter.CacheListAdapter;
 import com.google.code.geobeagle.database.CachesProviderToggler;
 
 import android.content.res.Resources;
 
 public class MenuActionToggleFilter implements MenuAction {
     private final CachesProviderToggler mCachesProviderToggler;
-    private final CacheList mListRefresher;
+    private final CacheListAdapter mListRefresher;
     private final Resources mResources;
 
     public MenuActionToggleFilter(CachesProviderToggler cachesProviderToggler,
-            CacheList cacheListRefresh, Resources resources) {
+            CacheListAdapter cacheListRefresh, Resources resources) {
         mCachesProviderToggler = cachesProviderToggler;
         mListRefresher = cacheListRefresh;
         mResources = resources;

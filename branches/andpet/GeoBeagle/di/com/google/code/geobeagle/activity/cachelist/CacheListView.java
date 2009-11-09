@@ -14,7 +14,7 @@
 
 package com.google.code.geobeagle.activity.cachelist;
 
-import com.google.code.geobeagle.activity.cachelist.presenter.CacheList;
+import com.google.code.geobeagle.activity.cachelist.presenter.CacheListAdapter;
 //import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh.UpdateFlag;
 
 import android.content.Context;
@@ -26,9 +26,9 @@ import android.widget.ListView;
 public class CacheListView extends ListView {
 
     public static class ScrollListener implements OnScrollListener {
-        private final CacheList mUpdateFlag;
+        private final CacheListAdapter mUpdateFlag;
 
-        public ScrollListener(CacheList updateFlag) {
+        public ScrollListener(CacheListAdapter updateFlag) {
             mUpdateFlag = updateFlag;
         }
 
