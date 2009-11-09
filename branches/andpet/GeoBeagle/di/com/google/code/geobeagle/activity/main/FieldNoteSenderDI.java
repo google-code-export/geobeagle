@@ -12,6 +12,7 @@
  ** limitations under the License.
  */
 
+//TODO: Rename package 'main' into 'compass'
 package com.google.code.geobeagle.activity.main;
 
 import com.google.code.geobeagle.activity.main.FieldNoteSender;

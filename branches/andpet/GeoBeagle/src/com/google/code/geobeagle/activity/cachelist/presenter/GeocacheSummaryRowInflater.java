@@ -62,17 +62,17 @@ public class GeocacheSummaryRowInflater implements HasDistanceFormatter {
             return formattedDistance + " " + formattedBearing;
         }
 
-        void set(DistanceAndBearing geocacheVector, float azimuth, 
+        void set(DistanceAndBearing distanceAndBearing, float azimuth, 
                 DistanceFormatter distanceFormatter,
                 BearingFormatter relativeBearingFormatter) {
             //CacheType type = geocacheVector.getGeocache().getCacheType();
             //mIcon.setImageResource(type.icon());
-            Geocache geocache = geocacheVector.getGeocache();
+            Geocache geocache = distanceAndBearing.getGeocache();
             mIcon.setImageDrawable(geocache.getIcon(mResources));
             mId.setText(geocache.getId());
             mAttributes.setText(geocache.getFormattedAttributes());
             mCacheName.setText(geocache.getName());
-            mDistance.setText(getFormattedDistance(geocacheVector, azimuth, distanceFormatter,
+            mDistance.setText(getFormattedDistance(distanceAndBearing, azimuth, distanceFormatter,
                     relativeBearingFormatter));
         }
     }

@@ -24,26 +24,27 @@ import org.powermock.api.easymock.PowerMock;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 
 @PrepareForTest( {
-    CacheActionEdit.class
+    Activity.class, CacheActionEdit.class
 })
 @RunWith(PowerMockRunner.class)
 public class CacheActionEditTest {
     @Test
     public void testAct() throws Exception {
-        Context context = PowerMock.createMock(Context.class);
+        Activity activity = PowerMock.createMock(Activity.class);
         Intent intent = PowerMock.createMock(Intent.class);
         Geocache geocache = PowerMock.createMock(Geocache.class);
 
-        PowerMock.expectNew(Intent.class, context, EditCacheActivity.class).andReturn(intent);
+        PowerMock.expectNew(Intent.class, activity, EditCacheActivity.class).andReturn(intent);
         EasyMock.expect(intent.putExtra("geocache", geocache)).andReturn(intent);
-        context.startActivity(intent);
+        activity.startActivityForResult(intent, 0);
 
         PowerMock.replayAll();
-        new CacheActionEdit(context).act(geocache);
+        new CacheActionEdit(activity).act(geocache);
         PowerMock.verifyAll();
     }
 }
