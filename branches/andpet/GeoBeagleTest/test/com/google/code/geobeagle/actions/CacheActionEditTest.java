@@ -25,7 +25,6 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 
 @PrepareForTest( {

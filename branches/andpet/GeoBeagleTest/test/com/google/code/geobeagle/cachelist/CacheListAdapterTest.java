@@ -16,7 +16,10 @@ package com.google.code.geobeagle.cachelist;
 
 import static org.junit.Assert.assertEquals;
 
+import com.google.code.geobeagle.activity.cachelist.presenter.CacheListAdapter;
 import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheSummaryRowInflater;
+import com.google.code.geobeagle.database.CachesProviderToggler;
+import com.google.code.geobeagle.database.DistanceAndBearing;
 
 import org.easymock.classextension.EasyMock;
 import org.junit.Test;
@@ -31,39 +34,37 @@ import android.widget.TextView;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest( {
-        GeocacheListAdapter.class, TextView.class
+        CacheListAdapter.class, TextView.class
 })
-public class GeocacheListAdapterTest {
+public class CacheListAdapterTest {
 
     @Test
     public void testGetCount() {
         PowerMock.suppressConstructor(BaseAdapter.class);
-        GeocacheVectors geocacheVectors = PowerMock.createMock(GeocacheVectors.class);
+        CachesProviderToggler toggler = PowerMock.createMock(CachesProviderToggler.class);
 
-        EasyMock.expect(geocacheVectors.size()).andReturn(34);
+        EasyMock.expect(toggler.getCount()).andReturn(34);
 
         PowerMock.replayAll();
-        assertEquals(34, new GeocacheListAdapter(geocacheVectors, null).getCount());
+        assertEquals(34, new CacheListAdapter(toggler, null, null, null).getCount());
         PowerMock.verifyAll();
     }
 
     @Test
     public void testGetItem() {
         PowerMock.suppressConstructor(BaseAdapter.class);
-        GeocacheVectors geocacheVectors = PowerMock.createMock(GeocacheVectors.class);
 
         PowerMock.replayAll();
-        assertEquals(1763, new GeocacheListAdapter(geocacheVectors, null).getItem(1763));
+        assertEquals(1763, new CacheListAdapter(null, null, null, null).getItem(1763));
         PowerMock.verifyAll();
     }
 
     @Test
     public void testGetItemId() {
         PowerMock.suppressConstructor(BaseAdapter.class);
-        GeocacheVectors geocacheVectors = PowerMock.createMock(GeocacheVectors.class);
 
         PowerMock.replayAll();
-        assertEquals(1763L, new GeocacheListAdapter(geocacheVectors, null).getItemId(1763));
+        assertEquals(1763L, new CacheListAdapter(null, null, null, null).getItemId(1763));
         PowerMock.verifyAll();
     }
 
@@ -74,12 +75,13 @@ public class GeocacheListAdapterTest {
         PowerMock.suppressConstructor(BaseAdapter.class);
         View convertView = PowerMock.createMock(View.class);
         View newConvertView = PowerMock.createMock(View.class);
+        DistanceAndBearing distanceAndBearing = PowerMock.createMock(DistanceAndBearing.class);
 
         EasyMock.expect(geocacheSummaryRowInflater.inflate(convertView)).andReturn(newConvertView);
-        geocacheSummaryRowInflater.setData(newConvertView, 17);
+        geocacheSummaryRowInflater.setData(newConvertView, distanceAndBearing, 17);
 
         PowerMock.replayAll();
-        assertEquals(newConvertView, new GeocacheListAdapter(null, geocacheSummaryRowInflater)
+        assertEquals(newConvertView, new CacheListAdapter(null, null, geocacheSummaryRowInflater, null)
                 .getView(17, convertView, null));
         PowerMock.verifyAll();
     }

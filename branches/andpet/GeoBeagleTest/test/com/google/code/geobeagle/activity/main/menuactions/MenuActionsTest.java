@@ -14,20 +14,16 @@
 
 package com.google.code.geobeagle.activity.main.menuactions;
 
-import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.actions.MenuActionCacheList;
 import com.google.code.geobeagle.actions.MenuActionLogDnf;
 import com.google.code.geobeagle.actions.MenuActionLogFind;
 import com.google.code.geobeagle.actions.MenuActionSearchOnline;
 import com.google.code.geobeagle.actions.MenuActionSettings;
-import com.google.code.geobeagle.activity.EditCacheActivity;
 import com.google.code.geobeagle.activity.cachelist.CacheListActivity;
-import com.google.code.geobeagle.activity.main.GeoBeagle;
 import com.google.code.geobeagle.activity.preferences.EditPreferences;
 import com.google.code.geobeagle.activity.searchonline.SearchOnlineActivity;
 
-import org.easymock.EasyMock;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.api.easymock.PowerMock;

@@ -22,7 +22,6 @@ import com.google.code.geobeagle.activity.cachelist.actions.MenuActionMyLocation
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListAdapter;
 import com.google.code.geobeagle.database.DbFrontend;
 
-import org.easymock.classextension.EasyMock;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.api.easymock.PowerMock;

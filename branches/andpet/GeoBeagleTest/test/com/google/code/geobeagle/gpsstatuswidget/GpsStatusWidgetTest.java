@@ -16,6 +16,7 @@ package com.google.code.geobeagle.gpsstatuswidget;
 
 import static org.easymock.EasyMock.expect;
 
+import com.google.code.geobeagle.Clock;
 import com.google.code.geobeagle.LocationAndDirection;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.formatting.DistanceFormatter;
@@ -45,15 +46,15 @@ public class GpsStatusWidgetTest {
     @Test
     public void testFadeMeter() {
         View parent = PowerMock.createMock(View.class);
-        Time time = PowerMock.createMock(Time.class);
+        Clock clock = PowerMock.createMock(Clock.class);
         MeterBars meterBars = PowerMock.createMock(MeterBars.class);
 
-        expect(time.getCurrentTime()).andReturn(1000L);
+        expect(clock.getCurrentTime()).andReturn(1000L);
         meterBars.setLag(0);
         parent.postInvalidateDelayed(100);
 
         PowerMock.replayAll();
-        new MeterFader(parent, meterBars, time).paint();
+        new MeterFader(parent, meterBars, clock).paint();
         // Log.d("GeoBeagle", "painting " + lastUpdateLag);
         PowerMock.verifyAll();
     }
@@ -61,18 +62,18 @@ public class GpsStatusWidgetTest {
     @Test
     public void testFadeMeterLastDelay() {
         View parent = PowerMock.createMock(View.class);
-        Time time = PowerMock.createMock(Time.class);
+        Clock clock = PowerMock.createMock(Clock.class);
         MeterBars meterBars = PowerMock.createMock(MeterBars.class);
 
-        expect(time.getCurrentTime()).andReturn(1000L);
+        expect(clock.getCurrentTime()).andReturn(1000L);
         meterBars.setLag(0);
         parent.postInvalidateDelayed(100);
 
-        expect(time.getCurrentTime()).andReturn(2000L);
+        expect(clock.getCurrentTime()).andReturn(2000L);
         meterBars.setLag(1000);
 
         PowerMock.replayAll();
-        final MeterFader meterFader = new MeterFader(parent, meterBars, time);
+        final MeterFader meterFader = new MeterFader(parent, meterBars, clock);
         meterFader.paint();
         meterFader.paint();
         // Log.d("GeoBeagle", "painting " + lastUpdateLag);
@@ -82,25 +83,25 @@ public class GpsStatusWidgetTest {
     @Test
     public void testFadeMeterReset() {
         View parent = PowerMock.createMock(View.class);
-        Time time = PowerMock.createMock(Time.class);
+        Clock clock = PowerMock.createMock(Clock.class);
         MeterBars meterBars = PowerMock.createMock(MeterBars.class);
 
-        expect(time.getCurrentTime()).andReturn(1000L);
+        expect(clock.getCurrentTime()).andReturn(1000L);
         meterBars.setLag(0);
         parent.postInvalidateDelayed(100);
 
-        expect(time.getCurrentTime()).andReturn(1100L);
+        expect(clock.getCurrentTime()).andReturn(1100L);
         meterBars.setLag(100);
         parent.postInvalidateDelayed(100);
 
         parent.postInvalidate();
 
-        expect(time.getCurrentTime()).andReturn(1200L);
+        expect(clock.getCurrentTime()).andReturn(1200L);
         meterBars.setLag(0);
         parent.postInvalidateDelayed(100);
 
         PowerMock.replayAll();
-        final MeterFader meterFader = new MeterFader(parent, meterBars, time);
+        final MeterFader meterFader = new MeterFader(parent, meterBars, clock);
         meterFader.paint();
         meterFader.paint();
         meterFader.reset();
@@ -112,19 +113,19 @@ public class GpsStatusWidgetTest {
     @Test
     public void testFadeMeterTwice() {
         View parent = PowerMock.createMock(View.class);
-        Time time = PowerMock.createMock(Time.class);
+        Clock clock = PowerMock.createMock(Clock.class);
         MeterBars meterBars = PowerMock.createMock(MeterBars.class);
 
-        expect(time.getCurrentTime()).andReturn(1000L);
+        expect(clock.getCurrentTime()).andReturn(1000L);
         meterBars.setLag(0);
         parent.postInvalidateDelayed(100);
 
-        expect(time.getCurrentTime()).andReturn(1100L);
+        expect(clock.getCurrentTime()).andReturn(1100L);
         meterBars.setLag(100);
         parent.postInvalidateDelayed(100);
 
         PowerMock.replayAll();
-        final MeterFader meterFader = new MeterFader(parent, meterBars, time);
+        final MeterFader meterFader = new MeterFader(parent, meterBars, clock);
         meterFader.paint();
         meterFader.paint();
         // Log.d("GeoBeagle", "painting " + lastUpdateLag);
@@ -135,8 +136,7 @@ public class GpsStatusWidgetTest {
     public void testGpsStatusWidget_OnLocationChangedNullLocation() {
         PowerMock.suppressConstructor(LinearLayout.class);
 
-        new GpsStatusWidgetDelegate(null, null, null, null, null, null, null, null)
-                .onLocationChanged(null);
+        new GpsStatusWidgetDelegate(null, null, null, null, null, null, null, null).refresh();
     }
 
     @Test
@@ -150,6 +150,7 @@ public class GpsStatusWidgetTest {
         PowerMock.replayAll();
         GpsStatusWidgetDelegate gpsStatusWidget = new GpsStatusWidgetDelegate(null, null, null,
                 null, null, null, status, null);
+        //TODO: GPS widget no longer gets provider status changes... it should get the info somehow
         gpsStatusWidget.onProviderEnabled("gps");
         gpsStatusWidget.onProviderDisabled("gps");
         PowerMock.verifyAll();
@@ -202,11 +203,10 @@ public class GpsStatusWidgetTest {
         TextLagUpdater textLagUpdater = PowerMock.createMock(TextLagUpdater.class);
         TextView provider = PowerMock.createMock(TextView.class);
         Location location = PowerMock.createMock(Location.class);
-        CombinedLocationManager combinedLocationManager = PowerMock
-                .createMock(CombinedLocationManager.class);
+        LocationAndDirection locationAndDirection = PowerMock.createMock(LocationAndDirection.class);
         DistanceFormatter distanceFormatter = PowerMock.createMock(DistanceFormatter.class);
 
-        expect(combinedLocationManager.isProviderEnabled()).andReturn(true);
+        expect(locationAndDirection.getLocation()).andReturn(location);
         expect(location.getProvider()).andReturn("gps");
         expect(location.getAccuracy()).andReturn(1.2f);
         expect(location.getTime()).andReturn(1000L);
@@ -217,10 +217,10 @@ public class GpsStatusWidgetTest {
 
         PowerMock.replayAll();
         final GpsStatusWidgetDelegate gpsStatusWidgetDelegate = new GpsStatusWidgetDelegate(
-                combinedLocationManager, null, meter, meterFader, provider, null, null,
+                locationAndDirection, null, meter, meterFader, provider, null, null,
                 textLagUpdater);
         gpsStatusWidgetDelegate.setDistanceFormatter(distanceFormatter);
-        gpsStatusWidgetDelegate.onLocationChanged(location);
+        gpsStatusWidgetDelegate.refresh();
         PowerMock.verifyAll();
     }
 
@@ -229,16 +229,16 @@ public class GpsStatusWidgetTest {
         Meter meter = PowerMock.createMock(Meter.class);
         TextLagUpdater textLagUpdater = PowerMock.createMock(TextLagUpdater.class);
         Location location = PowerMock.createMock(Location.class);
-        CombinedLocationManager combinedLocationManager = PowerMock
-                .createMock(CombinedLocationManager.class);
+        LocationAndDirection locationAndDirection = PowerMock.createMock(LocationAndDirection.class);
 
-        expect(combinedLocationManager.isProviderEnabled()).andReturn(false);
+        expect(locationAndDirection.isProviderEnabled()).andReturn(false);
+        expect(locationAndDirection.getLocation()).andReturn(location);
         textLagUpdater.setDisabled();
         meter.setDisabled();
 
         PowerMock.replayAll();
-        new GpsStatusWidgetDelegate(combinedLocationManager, null, meter, null, null, null, null,
-                textLagUpdater).onLocationChanged(location);
+        new GpsStatusWidgetDelegate(locationAndDirection, null, meter, null, null, null, null,
+                textLagUpdater).refresh();
         PowerMock.verifyAll();
     }
 

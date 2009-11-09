@@ -25,7 +25,6 @@ import org.powermock.api.easymock.PowerMock;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import android.graphics.Color;
-import android.hardware.SensorManager;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 
@@ -33,28 +32,18 @@ import android.webkit.WebView;
 public class SearchOnlineActivityDelegateTest {
     @Test
     public void onResume() {
-        SensorManager sensorManager = PowerMock.createMock(SensorManager.class);
-        CompassListener compassListener = PowerMock.createMock(CompassListener.class);
+        //SensorManager sensorManager = PowerMock.createMock(SensorManager.class);
         LocationAndDirection locationAndDirection = PowerMock
                 .createMock(LocationAndDirection.class);
-        CombinedLocationListener combinedLocationListener = PowerMock
-                .createMock(CombinedLocationListener.class);
-        CombinedLocationManager combinedLocationManager = PowerMock
-                .createMock(CombinedLocationManager.class);
         DistanceFormatterManager distanceFormatterManager = PowerMock
                 .createMock(DistanceFormatterManager.class);
 
-        EasyMock.expect(
-                sensorManager.registerListener(compassListener, SensorManager.SENSOR_ORIENTATION,
-                        SensorManager.SENSOR_DELAY_UI)).andReturn(true);
-        combinedLocationManager.requestLocationUpdates(1000, 0, locationAndDirection);
-        combinedLocationManager.requestLocationUpdates(1000, 0, combinedLocationListener);
         distanceFormatterManager.setFormatter();
 
         PowerMock.replayAll();
-        new SearchOnlineActivityDelegate(null, sensorManager, compassListener,
-                combinedLocationManager, combinedLocationListener, locationAndDirection,
-                distanceFormatterManager, null).onResume();
+        new SearchOnlineActivityDelegate(null,
+                locationAndDirection,
+                distanceFormatterManager, null, null).onResume();
         PowerMock.verifyAll();
     }
 
@@ -74,7 +63,7 @@ public class SearchOnlineActivityDelegateTest {
         webView.addJavascriptInterface(jsInterface, "gb");
 
         PowerMock.replayAll();
-        new SearchOnlineActivityDelegate(webView, null, null, null, null, null, null, null)
+        new SearchOnlineActivityDelegate(webView, null, null, null, null)
                 .configureWebView(jsInterface);
         PowerMock.verifyAll();
 
@@ -82,24 +71,17 @@ public class SearchOnlineActivityDelegateTest {
 
     @Test
     public void onPause() {
-        SensorManager sensorManager = PowerMock.createMock(SensorManager.class);
-        CompassListener compassListener = PowerMock.createMock(CompassListener.class);
+        //SensorManager sensorManager = PowerMock.createMock(SensorManager.class);
         LocationAndDirection locationAndDirection = PowerMock
                 .createMock(LocationAndDirection.class);
-        CombinedLocationListener combinedLocationListener = PowerMock
-                .createMock(CombinedLocationListener.class);
-        CombinedLocationManager combinedLocationManager = PowerMock
-                .createMock(CombinedLocationManager.class);
         ActivitySaver activitySaver = PowerMock.createMock(ActivitySaver.class);
 
-        combinedLocationManager.removeUpdates();
-        sensorManager.unregisterListener(compassListener);
         activitySaver.save(ActivityType.SEARCH_ONLINE);
 
         PowerMock.replayAll();
-        new SearchOnlineActivityDelegate(null, sensorManager, compassListener,
-                combinedLocationManager, combinedLocationListener, locationAndDirection, null,
-                activitySaver).onPause();
+        new SearchOnlineActivityDelegate(null,
+                locationAndDirection, null,
+                activitySaver, null).onPause();
         PowerMock.verifyAll();
     }
 }
