@@ -12,7 +12,7 @@
  ** limitations under the License.
  */
 
-package com.google.code.geobeagle.activity.cachelist.view;
+package com.google.code.geobeagle.activity.cachelist.presenter;
 
 import static org.junit.Assert.assertEquals;
 
@@ -21,8 +21,9 @@ import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.cachelist.presenter.AbsoluteBearingFormatter;
 import com.google.code.geobeagle.activity.cachelist.presenter.BearingFormatter;
+import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheSummaryRowInflater;
 import com.google.code.geobeagle.activity.cachelist.presenter.RelativeBearingFormatter;
-import com.google.code.geobeagle.activity.cachelist.view.GeocacheSummaryRowInflater.RowViews;
+import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheSummaryRowInflater.RowViews;
 import com.google.code.geobeagle.formatting.DistanceFormatter;
 
 import org.easymock.classextension.EasyMock;

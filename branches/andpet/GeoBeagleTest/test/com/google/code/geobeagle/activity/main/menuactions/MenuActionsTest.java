@@ -39,7 +39,7 @@ import android.content.Intent;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest( {
-        MenuActionCacheList.class, MenuActionEditGeocache.class, MenuActionSettings.class,
+        MenuActionCacheList.class, MenuActionSettings.class,
         MenuActionSearchOnline.class, MenuActionLogDnf.class, MenuActionLogFind.class,
         Activity.class
 })
@@ -81,22 +81,6 @@ public class MenuActionsTest {
 
         PowerMock.replayAll();
         new MenuActionSearchOnline(activity).act();
-        PowerMock.verifyAll();
-    }
-
-    @Test
-    public void testMenuActionEditGeocache() throws Exception {
-        GeoBeagle geobeagle = PowerMock.createMock(GeoBeagle.class);
-        Intent intent = PowerMock.createMock(Intent.class);
-        Geocache geocache = PowerMock.createMock(Geocache.class);
-
-        PowerMock.expectNew(Intent.class, geobeagle, EditCacheActivity.class).andReturn(intent);
-        EasyMock.expect(geobeagle.getGeocache()).andReturn(geocache);
-        EasyMock.expect(intent.putExtra("geocache", geocache)).andReturn(intent);
-        geobeagle.startActivityForResult(intent, 0);
-
-        PowerMock.replayAll();
-        new MenuActionEditGeocache(geobeagle).act();
         PowerMock.verifyAll();
     }
 

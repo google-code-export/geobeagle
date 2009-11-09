@@ -16,9 +16,10 @@ package com.google.code.geobeagle.cachelist;
 
 import com.google.code.geobeagle.ErrorDisplayer;
 import com.google.code.geobeagle.Geocache;
+import com.google.code.geobeagle.GeocacheFactory;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.cachelist.actions.MenuActionMyLocation;
-import com.google.code.geobeagle.activity.cachelist.model.GeocacheFromMyLocationFactory;
+import com.google.code.geobeagle.activity.cachelist.presenter.CacheListAdapter;
 import com.google.code.geobeagle.database.DbFrontend;
 
 import org.easymock.classextension.EasyMock;
@@ -32,31 +33,27 @@ public class MenuActionMyLocationTest {
 
     @Test
     public void testAct() {
-        GeocacheFromMyLocationFactory geocacheFromMyLocationFactory = PowerMock
-                .createMock(GeocacheFromMyLocationFactory.class);
-        CacheListRefresh cacheListRefresh = PowerMock.createMock(CacheListRefresh.class);
+        CacheListAdapter cacheListAdapter = PowerMock.createMock(CacheListAdapter.class);
         Geocache geocache = PowerMock.createMock(Geocache.class);
         DbFrontend dbFrontend = PowerMock.createMock(DbFrontend.class);
-        EasyMock.expect(geocacheFromMyLocationFactory.create()).andReturn(geocache);
-        cacheListRefresh.forceRefresh();
+        //ErrorDisplayer errorDisplayer = PowerMock.createMock(ErrorDisplayer.class);
+        GeocacheFactory geocacheFactory = PowerMock.createMock(GeocacheFactory.class);
+        cacheListAdapter.forceRefresh();
         geocache.saveLocation(dbFrontend);
 
         PowerMock.replayAll();
-        new MenuActionMyLocation(cacheListRefresh, null, geocacheFromMyLocationFactory,
-                dbFrontend).act();
+        new MenuActionMyLocation(cacheListAdapter, null,
+                geocacheFactory, null, dbFrontend, null, null).act();
         PowerMock.verifyAll();
     }
 
     @Test
     public void testActNullLocation() {
-        GeocacheFromMyLocationFactory geocacheFromMyLocationFactory = PowerMock
-                .createMock(GeocacheFromMyLocationFactory.class);
         ErrorDisplayer errorDisplayer = PowerMock.createMock(ErrorDisplayer.class);
-        EasyMock.expect(geocacheFromMyLocationFactory.create()).andReturn(null);
         errorDisplayer.displayError(R.string.current_location_null);
 
         PowerMock.replayAll();
-        new MenuActionMyLocation(null, errorDisplayer, geocacheFromMyLocationFactory, null).act();
+        new MenuActionMyLocation(null, errorDisplayer, null, null, null, null, null).act();
         PowerMock.verifyAll();
     }
 }

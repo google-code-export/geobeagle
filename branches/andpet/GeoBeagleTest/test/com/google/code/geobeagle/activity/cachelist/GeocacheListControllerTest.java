@@ -23,7 +23,7 @@ import com.google.code.geobeagle.actions.CacheAction;
 import com.google.code.geobeagle.actions.MenuActions;
 import com.google.code.geobeagle.activity.cachelist.GeocacheListController.CacheListOnCreateContextMenuListener;
 import com.google.code.geobeagle.activity.cachelist.actions.MenuActionSyncGpx;
-import com.google.code.geobeagle.activity.cachelist.presenter.CacheList;
+import com.google.code.geobeagle.activity.cachelist.presenter.CacheListAdapter;
 import com.google.code.geobeagle.database.CachesProviderToggler;
 import com.google.code.geobeagle.database.DatabaseDI;
 import org.easymock.EasyMock;
@@ -93,7 +93,7 @@ public class GeocacheListControllerTest {
 
     @Test
     public void testOnResume() {
-        CacheList cacheList = PowerMock.createMock(CacheList.class);
+        CacheListAdapter cacheList = PowerMock.createMock(CacheListAdapter.class);
 
         cacheList.forceRefresh();
 
@@ -105,7 +105,7 @@ public class GeocacheListControllerTest {
 
     @Test
     public void testOnResumeAndImport() {
-        CacheList cacheList = PowerMock.createMock(CacheList.class);
+        CacheListAdapter cacheList = PowerMock.createMock(CacheListAdapter.class);
         MenuActionSyncGpx menuActionSyncGpx = PowerMock.createMock(MenuActionSyncGpx.class);
 
         cacheList.forceRefresh();

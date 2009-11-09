@@ -32,7 +32,7 @@ import android.view.MenuItem;
 @PrepareForTest( {
         Activity.class, CacheListActivity.class, ListActivity.class
 })
-public class CacheListTest {
+public class CacheListActivityTest {
     @Test
     public void testOnContextItemSelected() {
         if (true)

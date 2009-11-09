@@ -3,7 +3,9 @@ package com.google.code.geobeagle.xmlimport;
 
 import static org.easymock.EasyMock.expect;
 
+import com.google.code.geobeagle.LocationAndDirection;
 import com.google.code.geobeagle.R;
+import com.google.code.geobeagle.activity.cachelist.presenter.CacheListAdapter;
 import com.google.code.geobeagle.xmlimport.GpxImporterDI.ImportThreadWrapper;
 import com.google.code.geobeagle.xmlimport.GpxImporterDI.MessageHandler;
 import com.google.code.geobeagle.xmlimport.GpxImporterDI.ToastFactory;
@@ -70,20 +72,21 @@ public class GpxImporterTest {
 
     @Test
     public void testImportGpxs() {
-        CacheListRefresh cacheListRefresh = PowerMock.createMock(CacheListRefresh.class);
+        CacheListAdapter cacheListAdapter = PowerMock.createMock(CacheListAdapter.class);
         GpxLoader gpxLoader = PowerMock.createMock(GpxLoader.class);
         ImportThreadWrapper importThreadWrapper = PowerMock.createMock(ImportThreadWrapper.class);
         EventHandlers eventHandlers = PowerMock.createMock(EventHandlers.class);
-        GeocacheListPresenter geocacheListPresenter = PowerMock
-                .createMock(GeocacheListPresenter.class);
+        LocationAndDirection locationAndDirection = PowerMock.createMock(LocationAndDirection.class);
+        //GeocacheListPresenter geocacheListPresenter = PowerMock
+        //        .createMock(GeocacheListPresenter.class);
 
-        geocacheListPresenter.onPause();
-        importThreadWrapper.open(cacheListRefresh, gpxLoader, eventHandlers, null);
+        locationAndDirection.onPause();
+        importThreadWrapper.open(cacheListAdapter, gpxLoader, eventHandlers, null);
         importThreadWrapper.start();
 
         PowerMock.replayAll();
-        new GpxImporter(geocacheListPresenter, gpxLoader, null, importThreadWrapper, null, null,
-                eventHandlers, null).importGpxs(cacheListRefresh);
+        new GpxImporter(locationAndDirection, gpxLoader, null, importThreadWrapper, null, null,
+                eventHandlers, null).importGpxs(cacheListAdapter);
         PowerMock.verifyAll();
     }
 }
