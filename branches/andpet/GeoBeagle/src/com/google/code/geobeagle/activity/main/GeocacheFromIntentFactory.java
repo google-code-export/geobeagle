@@ -41,7 +41,7 @@ public class GeocacheFromIntentFactory {
         final Geocache geocache = mGeocacheFactory.create(latlon[2], latlon[3], Util
                 .parseCoordinate(latlon[0]), Util.parseCoordinate(latlon[1]), Source.WEB_URL, null,
                 CacheType.NULL, 0, 0, 0);
-        geocache.saveLocation(mDbFrontend);
+        geocache.saveToDb(mDbFrontend);
         return geocache;
     }
 }

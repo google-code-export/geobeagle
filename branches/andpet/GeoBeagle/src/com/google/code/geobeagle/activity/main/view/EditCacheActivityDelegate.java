@@ -93,7 +93,7 @@ public class EditCacheActivityDelegate {
 
         public void onClick(View v) {
             final Geocache geocache = mGeocacheView.get();
-            geocache.saveLocation(mDbFrontend);
+            geocache.saveToDb(mDbFrontend);
             final Intent i = new Intent();
             i.setAction(GeocacheListController.SELECT_CACHE);
             i.putExtra("geocache", geocache);

@@ -39,7 +39,7 @@ public class MenuActionMyLocationTest {
         //ErrorDisplayer errorDisplayer = PowerMock.createMock(ErrorDisplayer.class);
         GeocacheFactory geocacheFactory = PowerMock.createMock(GeocacheFactory.class);
         cacheListAdapter.forceRefresh();
-        geocache.saveLocation(dbFrontend);
+        geocache.saveToDb(dbFrontend);
 
         PowerMock.replayAll();
         new MenuActionMyLocation(cacheListAdapter, null,

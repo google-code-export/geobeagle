@@ -112,7 +112,7 @@ public class EditCacheActivityDelegateTest {
         Geocache geocache = PowerMock.createMock(Geocache.class);
         DbFrontend dbFrontend = PowerMock.createMock(DbFrontend.class);
 
-        geocache.saveLocation(dbFrontend);
+        geocache.saveToDb(dbFrontend);
         EasyMock.expect(intent.setAction(GeocacheListController.SELECT_CACHE)).andReturn(intent);
         PowerMock.expectNew(Intent.class).andReturn(intent);
         EasyMock.expect(editCache.get()).andReturn(geocache);

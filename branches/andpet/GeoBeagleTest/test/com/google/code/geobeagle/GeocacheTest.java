@@ -254,7 +254,7 @@ public class GeocacheTest {
         PowerMock.replayAll();
         Geocache geocache = new Geocache("GC123", "a cache", 37.5, -122.25, Source.MY_LOCATION,
                 "manhattan", CacheType.TRADITIONAL, 2, 4, 3, null);
-        geocache.saveLocation(dbFrontend);
+        geocache.saveToDb(dbFrontend);
         PowerMock.verifyAll();
     }
     

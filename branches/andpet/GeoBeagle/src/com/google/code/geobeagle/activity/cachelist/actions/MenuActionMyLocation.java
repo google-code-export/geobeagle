@@ -66,7 +66,7 @@ public class MenuActionMyLocation implements MenuAction {
             mErrorDisplayer.displayError(R.string.current_location_null);
             return;
         }
-        newCache.saveLocation(mDbFrontend);
+        newCache.saveToDb(mDbFrontend);
         mCacheActionEdit.act(newCache);
         //mListRefresher.forceRefresh();
     }
