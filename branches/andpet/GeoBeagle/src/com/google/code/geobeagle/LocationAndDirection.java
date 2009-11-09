@@ -21,8 +21,6 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.util.Log;
-
 import java.util.ArrayList;
 
 /** Responsible for providing an up-to-date location and compass direction */
@@ -146,6 +144,7 @@ public class LocationAndDirection implements LocationListener, SensorListener {
         mLocationManager.removeUpdates(this);
     }
     
+    //TODO: Rename to "areUpdatesEnabled" or something
     public boolean isProviderEnabled() {
         return mLocationManager.isProviderEnabled("gps")
                 || (mUseNetwork && mLocationManager.isProviderEnabled("network"));

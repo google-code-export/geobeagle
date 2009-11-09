@@ -67,7 +67,6 @@ public class Geocache implements Parcelable {
     private final int mContainer;
     /** Difficulty rating * 2 (difficulty=1.5 => mDifficulty=3) */
     private final int mDifficulty;
-    private float[] mDistanceAndBearing = new float[2];
     private GeoPoint mGeoPoint;
     private final CharSequence mId;
     private final double mLatitude;

@@ -24,7 +24,6 @@ import com.google.code.geobeagle.activity.cachelist.presenter.DistanceFormatterM
 import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheSummaryRowInflater;
 import com.google.code.geobeagle.database.CachesProviderDb;
 import com.google.code.geobeagle.database.DbFrontend;
-import com.google.code.geobeagle.database.ICachesProvider;
 import com.google.code.geobeagle.gpsstatuswidget.UpdateGpsWidgetRunnable;
 
 import android.app.Activity;

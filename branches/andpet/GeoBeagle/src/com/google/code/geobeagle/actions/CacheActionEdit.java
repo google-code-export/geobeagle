@@ -19,7 +19,6 @@ import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.EditCacheActivity;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 
 public class CacheActionEdit implements CacheAction {
