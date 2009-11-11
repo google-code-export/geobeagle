@@ -14,11 +14,8 @@
 
 package com.google.code.geobeagle.database;
 
-import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.GeocacheList;
 import com.google.code.geobeagle.xmlimport.GpxImporterDI.Toaster;
-
-import java.util.ArrayList;
 
 /** Strategy to only invalidate/reload the list of caches when the bounds are
  * changed to outside the previous bounds. Also returns an empty list if the count is 

@@ -16,14 +16,12 @@ package com.google.code.geobeagle.activity.map;
 
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.Projection;
-import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.GeocacheList;
 import com.google.code.geobeagle.activity.cachelist.CacheListDelegateDI;
 import com.google.code.geobeagle.database.CachesProviderLazyArea;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
-import java.util.ArrayList;
 
 public class CachePinsOverlayFactory {
     private final CacheItemFactory mCacheItemFactory;

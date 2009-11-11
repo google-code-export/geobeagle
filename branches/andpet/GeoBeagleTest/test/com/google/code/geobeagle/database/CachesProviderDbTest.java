@@ -5,7 +5,6 @@ import static org.easymock.EasyMock.isA;
 import static org.junit.Assert.*;
 
 import com.google.code.geobeagle.CacheFilter;
-import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.GeocacheList;
 
 import org.junit.Before;
@@ -16,8 +15,6 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import android.util.Log;
-
-import java.util.ArrayList;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(Log.class)

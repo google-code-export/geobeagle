@@ -1,11 +1,8 @@
 package com.google.code.geobeagle.database;
 
-import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.GeocacheList;
 
 import android.util.Log;
-
-import java.util.ArrayList;
 
 public class CachesProviderCount implements ICachesProviderCenter {
     private static final double MAX_RADIUS = 180;

@@ -18,7 +18,6 @@ import static org.junit.Assert.*;
 
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.Projection;
-import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.GeocacheList;
 import com.google.code.geobeagle.database.CachesProviderLazyArea;
 
@@ -34,8 +33,6 @@ import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.view.View;
-
-import java.util.ArrayList;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest( {

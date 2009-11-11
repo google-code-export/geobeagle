@@ -15,8 +15,6 @@ import android.graphics.Paint.Style;
 import android.graphics.Shader.TileMode;
 import android.util.Log;
 
-import java.util.ArrayList;
-
 public class ProximityPainter {
     //private int mUserX;
     /** Where on the display to show the user's location */

@@ -1,9 +1,6 @@
 package com.google.code.geobeagle.database;
 
-import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.GeocacheList;
-
-import java.util.ArrayList;
 
 public class CachesProviderWaitForInit implements ICachesProviderCenter {
     private final ICachesProviderCenter mProvider;

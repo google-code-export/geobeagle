@@ -1,11 +1,8 @@
 package com.google.code.geobeagle.database;
 
-import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.Clock;
 import com.google.code.geobeagle.GeocacheList;
 import com.google.code.geobeagle.activity.main.GeoUtils;
-
-import java.util.ArrayList;
 
 public class CachesProviderLazy implements ICachesProviderCenter {
 

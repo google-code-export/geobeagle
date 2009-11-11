@@ -11,8 +11,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
-import java.util.ArrayList;
-
 /** Feeds the caches in a CachesProvider to the GUI list view */
 public class CacheListAdapter extends BaseAdapter implements Refresher {
     private final CachesProviderToggler mProvider;
