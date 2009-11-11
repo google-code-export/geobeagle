@@ -17,6 +17,7 @@ package com.google.code.geobeagle.gpsstatuswidget;
 import static org.easymock.EasyMock.expect;
 
 import com.google.code.geobeagle.Clock;
+import com.google.code.geobeagle.GeoFix;
 import com.google.code.geobeagle.LocationAndDirection;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.formatting.DistanceFormatter;
@@ -202,7 +203,7 @@ public class GpsStatusWidgetTest {
         Meter meter = PowerMock.createMock(Meter.class);
         TextLagUpdater textLagUpdater = PowerMock.createMock(TextLagUpdater.class);
         TextView provider = PowerMock.createMock(TextView.class);
-        Location location = PowerMock.createMock(Location.class);
+        GeoFix location = PowerMock.createMock(GeoFix.class);
         LocationAndDirection locationAndDirection = PowerMock.createMock(LocationAndDirection.class);
         DistanceFormatter distanceFormatter = PowerMock.createMock(DistanceFormatter.class);
 
@@ -228,7 +229,7 @@ public class GpsStatusWidgetTest {
     public void testOnLocationChangedProviderDisabled() {
         Meter meter = PowerMock.createMock(Meter.class);
         TextLagUpdater textLagUpdater = PowerMock.createMock(TextLagUpdater.class);
-        Location location = PowerMock.createMock(Location.class);
+        GeoFix location = PowerMock.createMock(GeoFix.class);
         LocationAndDirection locationAndDirection = PowerMock.createMock(LocationAndDirection.class);
 
         expect(locationAndDirection.isProviderEnabled()).andReturn(false);

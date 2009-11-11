@@ -31,7 +31,6 @@ import org.powermock.api.easymock.PowerMock;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import android.location.Location;
 import android.widget.TextView;
 
 @RunWith(PowerMockRunner.class)
@@ -74,9 +73,7 @@ public class TextLagUpdaterTest {
         LocationAndDirection locationAndDirection = PowerMock.createMock(LocationAndDirection.class);
         Lag lag = PowerMock.createMock(Lag.class);
         LastKnownLocation lastKnownLocation = PowerMock.createMock(LastKnownLocation.class);
-        Location location = PowerMock.createMock(Location.class);
 
-        EasyMock.expect(location.getTime()).andReturn(1000L);
         PowerMock.expectNew(LastKnownLocation.class, 1000L).andReturn(lastKnownLocation);
         EasyMock.expect(lastKnownLocation.getLag()).andReturn(lag);
 

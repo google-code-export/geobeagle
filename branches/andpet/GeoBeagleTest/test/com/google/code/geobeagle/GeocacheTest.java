@@ -37,14 +37,13 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import android.content.SharedPreferences.Editor;
-import android.location.Location;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.util.FloatMath;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest( {
-        Parcel.class, Bundle.class, Geocache.class, Location.class, System.class
+        Parcel.class, Bundle.class, Geocache.class, System.class
 })
 public class GeocacheTest {
 

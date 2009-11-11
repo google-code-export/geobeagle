@@ -1,6 +1,8 @@
+
 package com.google.code.geobeagle.actions;
 
 import com.google.code.geobeagle.CacheType;
+import com.google.code.geobeagle.GeoFix;
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.GeocacheFactory;
 import com.google.code.geobeagle.LocationAndDirection;
@@ -13,8 +15,6 @@ import org.junit.runner.RunWith;
 import org.powermock.api.easymock.PowerMock;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import android.location.Location;
-
 import java.util.Locale;
 import java.util.TimeZone;
 
@@ -25,7 +25,7 @@ public class MenuActionMyLocationTest {
     public void testCreate() {
         LocationAndDirection locationAndDirection = PowerMock
                 .createMock(LocationAndDirection.class);
-        Location location = PowerMock.createMock(Location.class);
+        GeoFix location = PowerMock.createMock(GeoFix.class);
         GeocacheFactory geocacheFactory = PowerMock.createMock(GeocacheFactory.class);
         Geocache geocache = PowerMock.createMock(Geocache.class);
         Locale.setDefault(Locale.ENGLISH);

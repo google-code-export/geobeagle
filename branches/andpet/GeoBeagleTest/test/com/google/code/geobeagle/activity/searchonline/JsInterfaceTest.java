@@ -3,6 +3,7 @@ package com.google.code.geobeagle.activity.searchonline;
 
 import static org.junit.Assert.*;
 
+import com.google.code.geobeagle.GeoFix;
 import com.google.code.geobeagle.LocationAndDirection;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.searchonline.JsInterface.JsInterfaceHelper;
@@ -17,7 +18,6 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Resources;
-import android.location.Location;
 import android.net.Uri;
 
 @RunWith(PowerMockRunner.class)
@@ -66,7 +66,7 @@ public class JsInterfaceTest {
 
     @Test
     public void testAtlasQuestOrGroundspeak() {
-        Location location = PowerMock.createMock(Location.class);
+        GeoFix location = PowerMock.createMock(GeoFix.class);
         LocationAndDirection locationAndDirection = PowerMock
                 .createMock(LocationAndDirection.class);
         JsInterfaceHelper helper = PowerMock.createMock(JsInterfaceHelper.class);
@@ -84,7 +84,7 @@ public class JsInterfaceTest {
 
     @Test
     public void testOpencaching() {
-        Location location = PowerMock.createMock(Location.class);
+        GeoFix location = PowerMock.createMock(GeoFix.class);
         LocationAndDirection locationAndDirection = PowerMock
                 .createMock(LocationAndDirection.class);
         JsInterfaceHelper helper = PowerMock.createMock(JsInterfaceHelper.class);
