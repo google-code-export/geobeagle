@@ -14,12 +14,12 @@
 
 package com.google.code.geobeagle.activity.searchonline;
 
+import com.google.code.geobeagle.GeoFix;
 import com.google.code.geobeagle.LocationAndDirection;
 import com.google.code.geobeagle.R;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.location.Location;
 import android.net.Uri;
 
 import java.util.Locale;
@@ -59,7 +59,7 @@ class JsInterface {
     }
 
     public int atlasQuestOrGroundspeak(int ix) {
-        final Location location = mLocationAndDirection.getLocation();
+        final GeoFix location = mLocationAndDirection.getLocation();
         final String uriTemplate = mHelper.getTemplate(ix);
         mHelper.launch(String.format(Locale.US, uriTemplate, location.getLatitude(), location
                 .getLongitude()));
@@ -67,7 +67,7 @@ class JsInterface {
     }
 
     public int openCaching(int ix) {
-        final Location location = mLocationAndDirection.getLocation();
+        final GeoFix location = mLocationAndDirection.getLocation();
         final String uriTemplate = mHelper.getTemplate(ix);
         final double latitude = location.getLatitude();
         final double longitude = location.getLongitude();

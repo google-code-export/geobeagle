@@ -1,6 +1,7 @@
 package com.google.code.geobeagle.activity.prox;
 
 import com.google.code.geobeagle.CacheFilter;
+import com.google.code.geobeagle.GeoFix;
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.GeocacheFactory;
 import com.google.code.geobeagle.LocationAndDirection;
@@ -12,7 +13,6 @@ import com.google.code.geobeagle.database.DbFrontend;
 
 import android.app.Activity;
 import android.content.SharedPreferences;
-import android.location.Location;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -29,7 +29,7 @@ public class ProximityActivity extends Activity implements SurfaceHolder.Callbac
         @Override
         public void refresh() {
             mProximityPainter.setUserDirection(mLocationAndDirection.getAzimuth());
-            Location location = mLocationAndDirection.getLocation();
+            GeoFix location = mLocationAndDirection.getLocation();
             mProximityPainter.setUserLocation(location.getLatitude(),
                     location.getLongitude(), location.getAccuracy());
         }
@@ -69,7 +69,7 @@ public class ProximityActivity extends Activity implements SurfaceHolder.Callbac
         mDataCollector = new DataCollector();
         mLocationAndDirection = LocationControlDi.create(this);
         mLocationAndDirection.addObserver(mDataCollector);
-        Location location = mLocationAndDirection.getLocation();
+        GeoFix location = mLocationAndDirection.getLocation();
         mProximityPainter.setUserLocation(location.getLatitude(), location.getLongitude(), location.getAccuracy());
     }
     

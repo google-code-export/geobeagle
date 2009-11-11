@@ -1,11 +1,10 @@
 package com.google.code.geobeagle.activity.cachelist.presenter;
 
+import com.google.code.geobeagle.GeoFix;
 import com.google.code.geobeagle.LocationAndDirection;
 import com.google.code.geobeagle.Refresher;
 import com.google.code.geobeagle.database.CachesProviderSorted;
 import com.google.code.geobeagle.database.ICachesProviderCenter;
-
-import android.location.Location;
 
 /** Sends location and azimuth updates to CacheList */
 public class CacheListPositionUpdater implements Refresher {
@@ -24,7 +23,7 @@ public class CacheListPositionUpdater implements Refresher {
     }
 
     public void refresh() {
-        final Location location = mLocationAndDirection.getLocation();
+        final GeoFix location = mLocationAndDirection.getLocation();
         if (location != null) {
             double latitude = location.getLatitude();
             double longitude = location.getLongitude();

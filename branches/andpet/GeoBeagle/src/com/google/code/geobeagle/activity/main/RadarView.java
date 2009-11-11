@@ -31,6 +31,7 @@ package com.google.code.geobeagle.activity.main;
  * limitations under the License.
  */
 
+import com.google.code.geobeagle.GeoFix;
 import com.google.code.geobeagle.R;
 
 import android.content.Context;
@@ -42,7 +43,6 @@ import android.graphics.Path;
 import android.graphics.Paint.Align;
 import android.graphics.Paint.Style;
 import android.graphics.drawable.BitmapDrawable;
-import android.location.Location;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.TextView;
@@ -305,7 +305,7 @@ public class RadarView extends View {
         gridPaint.setStyle(Paint.Style.STROKE);
     }
 
-    public void setLocation(Location location, float azimuth) {
+    public void setLocation(GeoFix location, float azimuth) {
         // Log.d("GeoBeagle", "radarview::onLocationChanged");
         mHaveLocation = true;
         mMyLocationLat = location.getLatitude();

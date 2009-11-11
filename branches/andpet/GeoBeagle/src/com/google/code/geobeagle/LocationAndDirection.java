@@ -23,10 +23,13 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import java.util.ArrayList;
 
+//TODO: Rename to GeoFixProviderLive
+//TODO: Replace all uses of this class with interface GeoFixProvider
 /** Responsible for providing an up-to-date location and compass direction */
 @SuppressWarnings("deprecation")
-public class LocationAndDirection implements LocationListener, SensorListener {
-    private Location mLocation;
+public class LocationAndDirection implements LocationListener, SensorListener,
+GeoFixProvider {
+    private GeoFix mLocation;
     private final LocationManager mLocationManager;
     private float mAzimuth;
     /** A refresh is sent whenever a sensor changes */
@@ -38,6 +41,7 @@ public class LocationAndDirection implements LocationListener, SensorListener {
             SensorManager sensorManager) {
         mLocationManager = locationManager;
         mSensorManager = sensorManager;
+
         //mLocation = getLastKnownLocation();  //work in constructor..
     }
 
@@ -55,9 +59,9 @@ public class LocationAndDirection implements LocationListener, SensorListener {
     }
     */
     
-    public Location getLocation() {
+    public GeoFix getLocation() {
         if (mLocation == null)
-            mLocation = getLastKnownLocation();
+            mLocation = new GeoFix(getLastKnownLocation());
         return mLocation;
     }
 
@@ -79,7 +83,7 @@ public class LocationAndDirection implements LocationListener, SensorListener {
      * the two accuracies, choose that. (This favors the network locator if
      * you've driven a distance and haven't been able to get a gps fix yet.)
      */
-    private static Location choose(Location oldLocation, Location newLocation) {
+    private static GeoFix choose(GeoFix oldLocation, GeoFix newLocation) {
         if (oldLocation == null)
             return newLocation;
         if (newLocation == null)
@@ -96,24 +100,30 @@ public class LocationAndDirection implements LocationListener, SensorListener {
         return oldLocation;
     }
 
+    @Override
     public void onLocationChanged(Location location) {
-        mLocation = choose(mLocation, location);
+        mLocation = choose(mLocation, new GeoFix(location));
         notifyObservers();
     }
 
+    @Override
     public void onProviderDisabled(String provider) {
     }
 
+    @Override
     public void onProviderEnabled(String provider) {
     }
 
+    @Override
     public void onStatusChanged(String provider, int status, Bundle extras) {
     }
 
+    @Override
     public void onAccuracyChanged(int sensor, int accuracy) {
         //Log.d("GeoBeagle", "onAccuracyChanged " + sensor + " accuracy " + accuracy);
     }
 
+    @Override
     public void onSensorChanged(int sensor, float[] values) {
         final float currentAzimuth = values[0];
         if (Math.abs(currentAzimuth - mAzimuth) > 5) {
@@ -144,14 +154,13 @@ public class LocationAndDirection implements LocationListener, SensorListener {
         mLocationManager.removeUpdates(this);
     }
     
-    //TODO: Rename to "areUpdatesEnabled" or something
     public boolean isProviderEnabled() {
         return mLocationManager.isProviderEnabled("gps")
                 || (mUseNetwork && mLocationManager.isProviderEnabled("network"));
     }
 
     //TODO: Remove this method? Should getLocation be the same thing?
-    public Location getLastKnownLocation() {
+    private Location getLastKnownLocation() {
         Location gpsLocation = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
         if (gpsLocation != null)
             return gpsLocation;

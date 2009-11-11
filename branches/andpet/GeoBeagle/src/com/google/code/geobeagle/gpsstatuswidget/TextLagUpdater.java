@@ -15,9 +15,9 @@
 package com.google.code.geobeagle.gpsstatuswidget;
 
 import com.google.code.geobeagle.Clock;
+import com.google.code.geobeagle.GeoFix;
 import com.google.code.geobeagle.LocationAndDirection;
 
-import android.location.Location;
 import android.widget.TextView;
 
 import java.util.Formatter;
@@ -88,13 +88,13 @@ class TextLagUpdater {
 
         @Override
         public Lag getLag() {
-            return getLastLocation(mLocationAndDirection.getLastKnownLocation()).getLag();
+            return getLastLocation(mLocationAndDirection.getLocation()).getLag();
         }
 
-        private LastLocation getLastLocation(Location lastKnownLocation) {
-            if (lastKnownLocation == null)
+        private LastLocation getLastLocation(GeoFix geoFix) {
+            if (geoFix == null)
                 return mLastKnownLocationUnavailable;
-            return new LastKnownLocation(lastKnownLocation.getTime());
+            return new LastKnownLocation(geoFix.getTime());
         }
     }
 

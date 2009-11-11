@@ -16,6 +16,7 @@ package com.google.code.geobeagle.activity.cachelist.actions;
 
 import com.google.code.geobeagle.CacheType;
 import com.google.code.geobeagle.ErrorDisplayer;
+import com.google.code.geobeagle.GeoFix;
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.GeocacheFactory;
 import com.google.code.geobeagle.LocationAndDirection;
@@ -27,7 +28,6 @@ import com.google.code.geobeagle.activity.cachelist.presenter.CacheListAdapter;
 import com.google.code.geobeagle.database.DbFrontend;
 
 import android.content.res.Resources;
-import android.location.Location;
 
 public class MenuActionMyLocation implements MenuAction {
     private final ErrorDisplayer mErrorDisplayer;
@@ -53,7 +53,7 @@ public class MenuActionMyLocation implements MenuAction {
 
     @Override
     public void act() {
-        Location location = mLocationControl.getLocation();
+        GeoFix location = mLocationControl.getLocation();
         if (location == null)
             return;
 
