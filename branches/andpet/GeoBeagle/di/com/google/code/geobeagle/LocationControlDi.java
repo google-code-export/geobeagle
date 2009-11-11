@@ -20,12 +20,12 @@ import android.hardware.SensorManager;
 import android.location.LocationManager;
 
 public class LocationControlDi {
-    public static LocationAndDirection create(Activity activity) {
+    public static GeoFixProvider create(Activity activity) {
         final LocationManager locationManager = (LocationManager)activity
         .getSystemService(Context.LOCATION_SERVICE);
         final SensorManager sensorManager = (SensorManager)activity
         .getSystemService(Context.SENSOR_SERVICE);
                 
-        return new LocationAndDirection(locationManager, sensorManager);
+        return new GeoFixProviderLive(locationManager, sensorManager);
     }
 }

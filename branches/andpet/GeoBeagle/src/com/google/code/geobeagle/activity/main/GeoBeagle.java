@@ -16,10 +16,10 @@ package com.google.code.geobeagle.activity.main;
 
 import com.google.code.geobeagle.ErrorDisplayer;
 import com.google.code.geobeagle.ErrorDisplayerDi;
+import com.google.code.geobeagle.GeoFixProvider;
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.GeocacheFactory;
 import com.google.code.geobeagle.GraphicsGenerator;
-import com.google.code.geobeagle.LocationAndDirection;
 import com.google.code.geobeagle.LocationControlDi;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.R.id;
@@ -102,7 +102,7 @@ public class GeoBeagle extends Activity {
         final WebPageAndDetailsButtonEnabler webPageButtonEnabler = Misc.create(this,
                 findViewById(R.id.cache_page), findViewById(R.id.cache_details));
 
-        final LocationAndDirection locationAndDirection = LocationControlDi.create(this);
+        final GeoFixProvider geoFixProvider = LocationControlDi.create(this);
         final GeocacheFactory geocacheFactory = new GeocacheFactory();
         final TextView gcid = (TextView)findViewById(R.id.gcid);
         final Drawable[] pawImages = GraphicsGenerator.getTerrainRatings(getResources());
@@ -126,10 +126,10 @@ public class GeoBeagle extends Activity {
                 (ImageView)findViewById(R.id.gcicon),
                 gcDifficulty, gcTerrain, gcContainer);
 
-        //locationAndDirection.onLocationChanged(null);
+        //geoFixProvider.onLocationChanged(null);
         GeoBeagleDelegate.RadarViewRefresher radarViewRefresher = 
-            new GeoBeagleDelegate.RadarViewRefresher(radar, locationAndDirection);
-        locationAndDirection.addObserver(radarViewRefresher);
+            new GeoBeagleDelegate.RadarViewRefresher(radar, geoFixProvider);
+        geoFixProvider.addObserver(radarViewRefresher);
         final IntentFactory intentFactory = new IntentFactory(new UriParser());
 
         final CacheActionViewUri intentStarterViewUri = new CacheActionViewUri(this,
@@ -161,7 +161,7 @@ public class GeoBeagle extends Activity {
                 fieldNoteSender, this, geocacheFactory, geocacheViewer,
                 incomingIntentHandler, menuActions, geocacheFromParcelFactory,
                 mDbFrontend, radar, resources, defaultSharedPreferences,
-                webPageButtonEnabler, locationAndDirection);
+                webPageButtonEnabler, geoFixProvider);
 
         // see http://www.androidguys.com/2008/11/07/rotational-forces-part-two/
         if (getLastNonConfigurationInstance() != null) {

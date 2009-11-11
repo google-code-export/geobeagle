@@ -3,7 +3,8 @@ package com.google.code.geobeagle.xmlimport;
 
 import static org.easymock.EasyMock.expect;
 
-import com.google.code.geobeagle.LocationAndDirection;
+import com.google.code.geobeagle.GeoFixProvider;
+import com.google.code.geobeagle.GeoFixProviderLive;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListAdapter;
 import com.google.code.geobeagle.xmlimport.GpxImporterDI.ImportThreadWrapper;
@@ -76,16 +77,16 @@ public class GpxImporterTest {
         GpxLoader gpxLoader = PowerMock.createMock(GpxLoader.class);
         ImportThreadWrapper importThreadWrapper = PowerMock.createMock(ImportThreadWrapper.class);
         EventHandlers eventHandlers = PowerMock.createMock(EventHandlers.class);
-        LocationAndDirection locationAndDirection = PowerMock.createMock(LocationAndDirection.class);
+        GeoFixProvider geoFixProvider = PowerMock.createMock(GeoFixProviderLive.class);
         //GeocacheListPresenter geocacheListPresenter = PowerMock
         //        .createMock(GeocacheListPresenter.class);
 
-        locationAndDirection.onPause();
+        geoFixProvider.onPause();
         importThreadWrapper.open(cacheListAdapter, gpxLoader, eventHandlers, null);
         importThreadWrapper.start();
 
         PowerMock.replayAll();
-        new GpxImporter(locationAndDirection, gpxLoader, null, importThreadWrapper, null, null,
+        new GpxImporter(geoFixProvider, gpxLoader, null, importThreadWrapper, null, null,
                 eventHandlers, null).importGpxs(cacheListAdapter);
         PowerMock.verifyAll();
     }

@@ -14,7 +14,8 @@
 
 package com.google.code.geobeagle.activity.searchonline;
 
-import com.google.code.geobeagle.LocationAndDirection;
+import com.google.code.geobeagle.GeoFixProvider;
+import com.google.code.geobeagle.GeoFixProviderLive;
 import com.google.code.geobeagle.activity.ActivitySaver;
 import com.google.code.geobeagle.activity.ActivityType;
 import com.google.code.geobeagle.activity.cachelist.presenter.DistanceFormatterManager;
@@ -33,8 +34,8 @@ public class SearchOnlineActivityDelegateTest {
     @Test
     public void onResume() {
         //SensorManager sensorManager = PowerMock.createMock(SensorManager.class);
-        LocationAndDirection locationAndDirection = PowerMock
-                .createMock(LocationAndDirection.class);
+        GeoFixProvider geoFixProvider = PowerMock
+                .createMock(GeoFixProviderLive.class);
         DistanceFormatterManager distanceFormatterManager = PowerMock
                 .createMock(DistanceFormatterManager.class);
 
@@ -42,7 +43,7 @@ public class SearchOnlineActivityDelegateTest {
 
         PowerMock.replayAll();
         new SearchOnlineActivityDelegate(null,
-                locationAndDirection,
+                geoFixProvider,
                 distanceFormatterManager, null, null).onResume();
         PowerMock.verifyAll();
     }
@@ -72,15 +73,15 @@ public class SearchOnlineActivityDelegateTest {
     @Test
     public void onPause() {
         //SensorManager sensorManager = PowerMock.createMock(SensorManager.class);
-        LocationAndDirection locationAndDirection = PowerMock
-                .createMock(LocationAndDirection.class);
+        GeoFixProvider geoFixProvider = PowerMock
+                .createMock(GeoFixProviderLive.class);
         ActivitySaver activitySaver = PowerMock.createMock(ActivitySaver.class);
 
         activitySaver.save(ActivityType.SEARCH_ONLINE);
 
         PowerMock.replayAll();
         new SearchOnlineActivityDelegate(null,
-                locationAndDirection, null,
+                geoFixProvider, null,
                 activitySaver, null).onPause();
         PowerMock.verifyAll();
     }

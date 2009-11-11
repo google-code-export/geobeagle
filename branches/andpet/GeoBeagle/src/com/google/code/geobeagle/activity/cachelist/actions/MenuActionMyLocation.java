@@ -17,9 +17,9 @@ package com.google.code.geobeagle.activity.cachelist.actions;
 import com.google.code.geobeagle.CacheType;
 import com.google.code.geobeagle.ErrorDisplayer;
 import com.google.code.geobeagle.GeoFix;
+import com.google.code.geobeagle.GeoFixProvider;
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.GeocacheFactory;
-import com.google.code.geobeagle.LocationAndDirection;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.GeocacheFactory.Source;
 import com.google.code.geobeagle.actions.CacheAction;
@@ -35,12 +35,12 @@ public class MenuActionMyLocation implements MenuAction {
     private final DbFrontend mDbFrontend;
     private final Resources mResources;
     private final GeocacheFactory mGeocacheFactory;
-    private final LocationAndDirection mLocationControl;
+    private final GeoFixProvider mLocationControl;
     private final CacheAction mCacheActionEdit;
 
     public MenuActionMyLocation(CacheListAdapter cacheList, ErrorDisplayer errorDisplayer,
             GeocacheFactory geocacheFactory,
-            LocationAndDirection locationControl, DbFrontend dbFrontend,
+            GeoFixProvider locationControl, DbFrontend dbFrontend,
             Resources resources, CacheAction cacheActionEdit) {
         mErrorDisplayer = errorDisplayer;
         mListRefresher = cacheList;

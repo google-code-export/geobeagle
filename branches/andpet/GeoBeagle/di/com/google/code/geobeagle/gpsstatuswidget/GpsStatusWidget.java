@@ -14,7 +14,7 @@
 
 package com.google.code.geobeagle.gpsstatuswidget;
 
-import com.google.code.geobeagle.LocationAndDirection;
+import com.google.code.geobeagle.GeoFixProvider;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.Clock;
 import com.google.code.geobeagle.formatting.DistanceFormatter;
@@ -36,14 +36,14 @@ import android.widget.TextView;
 public class GpsStatusWidget extends LinearLayout {
 
     static GpsStatusWidgetDelegate createGpsStatusWidgetDelegate(View gpsStatusWidget, Clock time,
-            LocationAndDirection locationAndDirection, Meter meter,
+            GeoFixProvider geoFixProvider, Meter meter,
             DistanceFormatter distanceFormatter, MeterBars meterBars,
             TextLagUpdater textLagUpdater, Context parent) {
         final TextView status = (TextView)gpsStatusWidget.findViewById(R.id.status);
         final TextView provider = (TextView)gpsStatusWidget.findViewById(R.id.provider);
         final MeterFader meterFader = new MeterFader(gpsStatusWidget, meterBars, time);
 
-        return new GpsStatusWidgetDelegate(locationAndDirection, distanceFormatter, meter,
+        return new GpsStatusWidgetDelegate(geoFixProvider, distanceFormatter, meter,
                 meterFader, provider, parent, status, textLagUpdater);
     }
 
@@ -87,13 +87,13 @@ public class GpsStatusWidget extends LinearLayout {
     }
 
     public static TextLagUpdater createTextLagUpdater(View gpsStatusWidget,
-            LocationAndDirection locationAndDirection, Clock time) {
+            GeoFixProvider geoFixProvider, Clock time) {
         final TextView lag = (TextView)gpsStatusWidget.findViewById(R.id.lag);
         final LagNull lagNull = new LagNull();
         final LastKnownLocationUnavailable lastKnownLocationUnavailable = new LastKnownLocationUnavailable(
                 lagNull);
         final LastLocationUnknown lastLocationUnknown = new LastLocationUnknown(
-                locationAndDirection, lastKnownLocationUnavailable);
+                geoFixProvider, lastKnownLocationUnavailable);
         return new TextLagUpdater(lastLocationUnknown, lag, time);
     }
 }

@@ -1,7 +1,7 @@
 
 package com.google.code.geobeagle.gpsstatuswidget;
 
-import com.google.code.geobeagle.LocationAndDirection;
+import com.google.code.geobeagle.GeoFixProvider;
 import com.google.code.geobeagle.Clock;
 import com.google.code.geobeagle.formatting.DistanceFormatter;
 
@@ -14,18 +14,18 @@ public class GpsWidgetAndUpdater {
     private final UpdateGpsWidgetRunnable mUpdateGpsRunnable;
 
     public GpsWidgetAndUpdater(Context context, View gpsWidgetView,
-            LocationAndDirection locationAndDirection,            
+            GeoFixProvider geoFixProvider,            
             DistanceFormatter distanceFormatterMetric) {
         final Clock time = new Clock();
         final Handler handler = new Handler();
         final MeterBars meterBars = GpsStatusWidget.create(context, gpsWidgetView);
         final Meter meter = GpsStatusWidget.createMeterWrapper(gpsWidgetView, meterBars);
         final TextLagUpdater textLagUpdater = GpsStatusWidget.createTextLagUpdater(gpsWidgetView,
-                locationAndDirection, time);
-        mUpdateGpsRunnable = new UpdateGpsWidgetRunnable(handler, locationAndDirection, meter,
+                geoFixProvider, time);
+        mUpdateGpsRunnable = new UpdateGpsWidgetRunnable(handler, geoFixProvider, meter,
                 textLagUpdater);
         mGpsStatusWidgetDelegate = GpsStatusWidget.createGpsStatusWidgetDelegate(gpsWidgetView,
-                time, locationAndDirection, meter, distanceFormatterMetric, meterBars,
+                time, geoFixProvider, meter, distanceFormatterMetric, meterBars,
                 textLagUpdater, context);
     }
 

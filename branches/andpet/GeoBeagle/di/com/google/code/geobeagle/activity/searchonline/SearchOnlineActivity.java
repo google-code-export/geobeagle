@@ -14,8 +14,8 @@
 
 package com.google.code.geobeagle.activity.searchonline;
 
+import com.google.code.geobeagle.GeoFixProvider;
 import com.google.code.geobeagle.GeocacheFactory;
-import com.google.code.geobeagle.LocationAndDirection;
 import com.google.code.geobeagle.LocationControlDi;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.ActivityDI;
@@ -54,7 +54,7 @@ public class SearchOnlineActivity extends Activity {
 
         setContentView(R.layout.search);
         
-        final LocationAndDirection mLocationAndDirection = 
+        final GeoFixProvider mGeoFixProvider = 
             LocationControlDi.create(this);
 
         final InflatedGpsStatusWidget mGpsStatusWidget = (InflatedGpsStatusWidget)this
@@ -62,7 +62,7 @@ public class SearchOnlineActivity extends Activity {
         final DistanceFormatterManager distanceFormatterManager = DistanceFormatterManagerDi
                 .create(this);
         final GpsWidgetAndUpdater gpsWidgetAndUpdater = new GpsWidgetAndUpdater(this,
-                mGpsStatusWidget, mLocationAndDirection,
+                mGpsStatusWidget, mGeoFixProvider,
                 distanceFormatterManager.getFormatter());
         final GpsStatusWidgetDelegate gpsStatusWidgetDelegate = gpsWidgetAndUpdater
                 .getGpsStatusWidgetDelegate();
@@ -85,12 +85,12 @@ public class SearchOnlineActivity extends Activity {
         
         mSearchOnlineActivityDelegate = new SearchOnlineActivityDelegate(
                 ((WebView)findViewById(R.id.help_contents)),
-                mLocationAndDirection,
+                mGeoFixProvider,
                 distanceFormatterManager, activitySaver,
                 defaultSharedPreferences);
 
         final JsInterfaceHelper jsInterfaceHelper = new JsInterfaceHelper(this);
-        final JsInterface jsInterface = new JsInterface(mLocationAndDirection, jsInterfaceHelper);
+        final JsInterface jsInterface = new JsInterface(mGeoFixProvider, jsInterfaceHelper);
 
         mSearchOnlineActivityDelegate.configureWebView(jsInterface);
         activityRestorer.restore(getIntent().getFlags());

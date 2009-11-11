@@ -17,7 +17,8 @@ package com.google.code.geobeagle.gpsstatuswidget;
 import static org.junit.Assert.assertEquals;
 
 import com.google.code.geobeagle.Clock;
-import com.google.code.geobeagle.LocationAndDirection;
+import com.google.code.geobeagle.GeoFixProvider;
+import com.google.code.geobeagle.GeoFixProviderLive;
 import com.google.code.geobeagle.gpsstatuswidget.TextLagUpdater.Lag;
 import com.google.code.geobeagle.gpsstatuswidget.TextLagUpdater.LagImpl;
 import com.google.code.geobeagle.gpsstatuswidget.TextLagUpdater.LagNull;
@@ -70,7 +71,7 @@ public class TextLagUpdaterTest {
 
     @Test
     public void testLastLocationUnknown() throws Exception {
-        LocationAndDirection locationAndDirection = PowerMock.createMock(LocationAndDirection.class);
+        GeoFixProvider geoFixProvider = PowerMock.createMock(GeoFixProviderLive.class);
         Lag lag = PowerMock.createMock(Lag.class);
         LastKnownLocation lastKnownLocation = PowerMock.createMock(LastKnownLocation.class);
 
@@ -78,13 +79,13 @@ public class TextLagUpdaterTest {
         EasyMock.expect(lastKnownLocation.getLag()).andReturn(lag);
 
         PowerMock.replayAll();
-        assertEquals(lag, new LastLocationUnknown(locationAndDirection, null).getLag());
+        assertEquals(lag, new LastLocationUnknown(geoFixProvider, null).getLag());
         PowerMock.verifyAll();
     }
 
     @Test
     public void testLastLocationUnknown_Null() throws Exception {
-        LocationAndDirection locationAndDirection = PowerMock.createMock(LocationAndDirection.class);
+        GeoFixProvider geoFixProvider = PowerMock.createMock(GeoFixProviderLive.class);
         LagNull lagNull = PowerMock.createMock(LagNull.class);
         LastKnownLocationUnavailable lastKnownLocationUnavailable = PowerMock
                 .createMock(LastKnownLocationUnavailable.class);
@@ -92,7 +93,7 @@ public class TextLagUpdaterTest {
         EasyMock.expect(lastKnownLocationUnavailable.getLag()).andReturn(lagNull);
 
         PowerMock.replayAll();
-        assertEquals(lagNull, new LastLocationUnknown(locationAndDirection,
+        assertEquals(lagNull, new LastLocationUnknown(geoFixProvider,
                 lastKnownLocationUnavailable).getLag());
         PowerMock.verifyAll();
     }

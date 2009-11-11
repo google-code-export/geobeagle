@@ -16,7 +16,7 @@ package com.google.code.geobeagle.gpsstatuswidget;
 
 import com.google.code.geobeagle.Clock;
 import com.google.code.geobeagle.GeoFix;
-import com.google.code.geobeagle.LocationAndDirection;
+import com.google.code.geobeagle.GeoFixProvider;
 
 import android.widget.TextView;
 
@@ -77,18 +77,18 @@ class TextLagUpdater {
     }
 
     static class LastLocationUnknown implements LastLocation {
-        private final LocationAndDirection mLocationAndDirection;
+        private final GeoFixProvider mGeoFixProvider;
         private final LastKnownLocationUnavailable mLastKnownLocationUnavailable;
 
-        public LastLocationUnknown(LocationAndDirection locationAndDirection,
+        public LastLocationUnknown(GeoFixProvider geoFixProvider,
                 LastKnownLocationUnavailable lastKnownLocationUnavailable) {
-            mLocationAndDirection = locationAndDirection;
+            mGeoFixProvider = geoFixProvider;
             mLastKnownLocationUnavailable = lastKnownLocationUnavailable;
         }
 
         @Override
         public Lag getLag() {
-            return getLastLocation(mLocationAndDirection.getLocation()).getLag();
+            return getLastLocation(mGeoFixProvider.getLocation()).getLag();
         }
 
         private LastLocation getLastLocation(GeoFix geoFix) {

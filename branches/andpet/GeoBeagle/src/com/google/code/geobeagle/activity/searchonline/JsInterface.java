@@ -15,7 +15,7 @@
 package com.google.code.geobeagle.activity.searchonline;
 
 import com.google.code.geobeagle.GeoFix;
-import com.google.code.geobeagle.LocationAndDirection;
+import com.google.code.geobeagle.GeoFixProvider;
 import com.google.code.geobeagle.R;
 
 import android.app.Activity;
@@ -25,7 +25,7 @@ import android.net.Uri;
 import java.util.Locale;
 
 class JsInterface {
-    private final LocationAndDirection mLocationAndDirection;
+    private final GeoFixProvider mGeoFixProvider;
     private final JsInterfaceHelper mHelper;
 
     static class JsInterfaceHelper {
@@ -52,14 +52,14 @@ class JsInterface {
         }
     }
 
-    public JsInterface(LocationAndDirection locationAndDirection,
+    public JsInterface(GeoFixProvider geoFixProvider,
             JsInterfaceHelper jsInterfaceHelper) {
         mHelper = jsInterfaceHelper;
-        mLocationAndDirection = locationAndDirection;
+        mGeoFixProvider = geoFixProvider;
     }
 
     public int atlasQuestOrGroundspeak(int ix) {
-        final GeoFix location = mLocationAndDirection.getLocation();
+        final GeoFix location = mGeoFixProvider.getLocation();
         final String uriTemplate = mHelper.getTemplate(ix);
         mHelper.launch(String.format(Locale.US, uriTemplate, location.getLatitude(), location
                 .getLongitude()));
@@ -67,7 +67,7 @@ class JsInterface {
     }
 
     public int openCaching(int ix) {
-        final GeoFix location = mLocationAndDirection.getLocation();
+        final GeoFix location = mGeoFixProvider.getLocation();
         final String uriTemplate = mHelper.getTemplate(ix);
         final double latitude = location.getLatitude();
         final double longitude = location.getLongitude();

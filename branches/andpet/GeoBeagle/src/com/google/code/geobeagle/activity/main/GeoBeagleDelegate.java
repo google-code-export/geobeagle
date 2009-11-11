@@ -15,9 +15,9 @@
 package com.google.code.geobeagle.activity.main;
 
 import com.google.code.geobeagle.CacheType;
+import com.google.code.geobeagle.GeoFixProvider;
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.GeocacheFactory;
-import com.google.code.geobeagle.LocationAndDirection;
 import com.google.code.geobeagle.Refresher;
 import com.google.code.geobeagle.GeocacheFactory.Source;
 import com.google.code.geobeagle.actions.MenuActions;
@@ -63,11 +63,11 @@ public class GeoBeagleDelegate {
 
     static class RadarViewRefresher implements Refresher {
         private final RadarView mRadarView;
-        private final LocationAndDirection mLocationAndDirection;
+        private final GeoFixProvider mGeoFixProvider;
         public RadarViewRefresher(RadarView radarView,
-                LocationAndDirection locationAndDirection) {
+                GeoFixProvider geoFixProvider) {
             mRadarView = radarView;
-            mLocationAndDirection = locationAndDirection;
+            mGeoFixProvider = geoFixProvider;
         }
         @Override
         public void forceRefresh() {
@@ -75,9 +75,9 @@ public class GeoBeagleDelegate {
         }
         @Override
         public void refresh() {
-            if (mLocationAndDirection.isProviderEnabled())
-                mRadarView.setLocation(mLocationAndDirection.getLocation(),
-                        mLocationAndDirection.getAzimuth());
+            if (mGeoFixProvider.isProviderEnabled())
+                mRadarView.setLocation(mGeoFixProvider.getLocation(),
+                        mGeoFixProvider.getAzimuth());
             else
                 mRadarView.handleUnknownLocation();
         }
@@ -98,7 +98,7 @@ public class GeoBeagleDelegate {
     private final Resources mResources;
     private final SharedPreferences mSharedPreferences;
     private final WebPageAndDetailsButtonEnabler mWebPageButtonEnabler;
-    private final LocationAndDirection mLocationAndDirection;
+    private final GeoFixProvider mGeoFixProvider;
 
     public GeoBeagleDelegate(ActivitySaver activitySaver, FieldNoteSender fieldNoteSender, GeoBeagle parent,
             GeocacheFactory geocacheFactory, GeocacheViewer geocacheViewer,
@@ -107,7 +107,7 @@ public class GeoBeagleDelegate {
             DbFrontend dbFrontend, RadarView radarView, Resources resources,
             SharedPreferences sharedPreferences,
             WebPageAndDetailsButtonEnabler webPageButtonEnabler,
-            LocationAndDirection locationAndDirection) {
+            GeoFixProvider geoFixProvider) {
         mParent = parent;
         mActivitySaver = activitySaver;
         mFieldNoteSender = fieldNoteSender;
@@ -121,7 +121,7 @@ public class GeoBeagleDelegate {
         mIncomingIntentHandler = incomingIntentHandler;
         mDbFrontend = dbFrontend;
         mGeocacheFromParcelFactory = geocacheFromParcelFactory;
-        mLocationAndDirection = locationAndDirection;
+        mGeoFixProvider = geoFixProvider;
     }
 
     public Geocache getGeocache() {
@@ -155,7 +155,7 @@ public class GeoBeagleDelegate {
     }
 
     public void onPause() {
-        mLocationAndDirection.onPause();
+        mGeoFixProvider.onPause();
         mActivitySaver.save(ActivityType.VIEW_CACHE, mGeocache);
         mDbFrontend.closeDatabase();
     }
@@ -169,7 +169,7 @@ public class GeoBeagleDelegate {
 
     public void onResume() {
         mRadarView.handleUnknownLocation();
-        mLocationAndDirection.onResume(mSharedPreferences);
+        mGeoFixProvider.onResume(mSharedPreferences);
 
         mRadarView.setUseImperial(mSharedPreferences.getBoolean("imperial", false));
         mGeocache = mIncomingIntentHandler.maybeGetGeocacheFromIntent(mParent.getIntent(),

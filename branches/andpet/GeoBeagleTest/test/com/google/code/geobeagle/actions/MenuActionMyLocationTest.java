@@ -3,9 +3,10 @@ package com.google.code.geobeagle.actions;
 
 import com.google.code.geobeagle.CacheType;
 import com.google.code.geobeagle.GeoFix;
+import com.google.code.geobeagle.GeoFixProvider;
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.GeocacheFactory;
-import com.google.code.geobeagle.LocationAndDirection;
+import com.google.code.geobeagle.GeoFixProviderLive;
 import com.google.code.geobeagle.GeocacheFactory.Source;
 import com.google.code.geobeagle.activity.cachelist.actions.MenuActionMyLocation;
 
@@ -23,15 +24,15 @@ public class MenuActionMyLocationTest {
 
     @Test
     public void testCreate() {
-        LocationAndDirection locationAndDirection = PowerMock
-                .createMock(LocationAndDirection.class);
+        GeoFixProvider geoFixProvider = PowerMock
+                .createMock(GeoFixProviderLive.class);
         GeoFix location = PowerMock.createMock(GeoFix.class);
         GeocacheFactory geocacheFactory = PowerMock.createMock(GeocacheFactory.class);
         Geocache geocache = PowerMock.createMock(Geocache.class);
         Locale.setDefault(Locale.ENGLISH);
         TimeZone.setDefault(TimeZone.getTimeZone("America/Los_Angeles"));
 
-        EasyMock.expect(locationAndDirection.getLocation()).andReturn(location);
+        EasyMock.expect(geoFixProvider.getLocation()).andReturn(location);
         EasyMock.expect(location.getTime()).andReturn(1000000L);
         EasyMock.expect(location.getLatitude()).andReturn(37.0);
         EasyMock.expect(location.getLongitude()).andReturn(-122.0);
@@ -41,7 +42,7 @@ public class MenuActionMyLocationTest {
                 geocache);
 
         PowerMock.replayAll();
-        new MenuActionMyLocation(null, null, geocacheFactory, locationAndDirection, null, null, null).act();
+        new MenuActionMyLocation(null, null, geocacheFactory, geoFixProvider, null, null, null).act();
         PowerMock.verifyAll();
     }
 

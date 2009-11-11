@@ -15,7 +15,7 @@
 package com.google.code.geobeagle.xmlimport;
 
 import com.google.code.geobeagle.ErrorDisplayer;
-import com.google.code.geobeagle.LocationAndDirection;
+import com.google.code.geobeagle.GeoFixProvider;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListAdapter;
 import com.google.code.geobeagle.database.CacheWriter;
 import com.google.code.geobeagle.xmlimport.CachePersisterFacadeDI.CachePersisterFacadeFactory;
@@ -238,7 +238,7 @@ public class GpxImporterDI {
 
     public static GpxImporter create(ListActivity listActivity,
             XmlPullParserWrapper xmlPullParserWrapper, ErrorDisplayer errorDisplayer,
-            LocationAndDirection locationAndDirection, Aborter aborter,
+            GeoFixProvider geoFixProvider, Aborter aborter,
             MessageHandler messageHandler, CachePersisterFacadeFactory cachePersisterFacadeFactory,
             CacheWriter cacheWriter) {
         final PowerManager powerManager = (PowerManager)listActivity
@@ -261,7 +261,7 @@ public class GpxImporterDI {
         eventHandlers.add(".gpx", eventHandlerGpx);
         eventHandlers.add(".loc", eventHandlerLoc);
 
-        return new GpxImporter(locationAndDirection, gpxLoader, listActivity, importThreadWrapper,
+        return new GpxImporter(geoFixProvider, gpxLoader, listActivity, importThreadWrapper,
                 messageHandler, toastFactory, eventHandlers, errorDisplayer);
     }
 

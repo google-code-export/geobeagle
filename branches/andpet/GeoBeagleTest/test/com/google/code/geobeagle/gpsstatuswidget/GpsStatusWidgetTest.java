@@ -18,7 +18,8 @@ import static org.easymock.EasyMock.expect;
 
 import com.google.code.geobeagle.Clock;
 import com.google.code.geobeagle.GeoFix;
-import com.google.code.geobeagle.LocationAndDirection;
+import com.google.code.geobeagle.GeoFixProvider;
+import com.google.code.geobeagle.GeoFixProviderLive;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.formatting.DistanceFormatter;
 import org.easymock.EasyMock;
@@ -204,10 +205,10 @@ public class GpsStatusWidgetTest {
         TextLagUpdater textLagUpdater = PowerMock.createMock(TextLagUpdater.class);
         TextView provider = PowerMock.createMock(TextView.class);
         GeoFix location = PowerMock.createMock(GeoFix.class);
-        LocationAndDirection locationAndDirection = PowerMock.createMock(LocationAndDirection.class);
+        GeoFixProvider geoFixProvider = PowerMock.createMock(GeoFixProviderLive.class);
         DistanceFormatter distanceFormatter = PowerMock.createMock(DistanceFormatter.class);
 
-        expect(locationAndDirection.getLocation()).andReturn(location);
+        expect(geoFixProvider.getLocation()).andReturn(location);
         expect(location.getProvider()).andReturn("gps");
         expect(location.getAccuracy()).andReturn(1.2f);
         expect(location.getTime()).andReturn(1000L);
@@ -218,7 +219,7 @@ public class GpsStatusWidgetTest {
 
         PowerMock.replayAll();
         final GpsStatusWidgetDelegate gpsStatusWidgetDelegate = new GpsStatusWidgetDelegate(
-                locationAndDirection, null, meter, meterFader, provider, null, null,
+                geoFixProvider, null, meter, meterFader, provider, null, null,
                 textLagUpdater);
         gpsStatusWidgetDelegate.setDistanceFormatter(distanceFormatter);
         gpsStatusWidgetDelegate.refresh();
@@ -230,15 +231,15 @@ public class GpsStatusWidgetTest {
         Meter meter = PowerMock.createMock(Meter.class);
         TextLagUpdater textLagUpdater = PowerMock.createMock(TextLagUpdater.class);
         GeoFix location = PowerMock.createMock(GeoFix.class);
-        LocationAndDirection locationAndDirection = PowerMock.createMock(LocationAndDirection.class);
+        GeoFixProvider geoFixProvider = PowerMock.createMock(GeoFixProviderLive.class);
 
-        expect(locationAndDirection.isProviderEnabled()).andReturn(false);
-        expect(locationAndDirection.getLocation()).andReturn(location);
+        expect(geoFixProvider.isProviderEnabled()).andReturn(false);
+        expect(geoFixProvider.getLocation()).andReturn(location);
         textLagUpdater.setDisabled();
         meter.setDisabled();
 
         PowerMock.replayAll();
-        new GpsStatusWidgetDelegate(locationAndDirection, null, meter, null, null, null, null,
+        new GpsStatusWidgetDelegate(geoFixProvider, null, meter, null, null, null, null,
                 textLagUpdater).refresh();
         PowerMock.verifyAll();
     }
@@ -282,13 +283,13 @@ public class GpsStatusWidgetTest {
     @Test
     public void testUpdateGpsWidgetRunnable() {
         TextLagUpdater textLagUpdater = PowerMock.createMock(TextLagUpdater.class);
-        LocationAndDirection locationAndDirection = PowerMock
-                .createMock(LocationAndDirection.class);
+        GeoFixProvider geoFixProvider = PowerMock
+                .createMock(GeoFixProviderLive.class);
         Meter meter = PowerMock.createMock(Meter.class);
         Handler handler = PowerMock.createMock(Handler.class);
 
         textLagUpdater.updateTextLag();
-        expect(locationAndDirection.getAzimuth()).andReturn(42f);
+        expect(geoFixProvider.getAzimuth()).andReturn(42f);
         meter.setAzimuth(42f);
         EasyMock
                 .expect(
@@ -296,7 +297,7 @@ public class GpsStatusWidgetTest {
                                 .eq(500L))).andReturn(true);
 
         PowerMock.replayAll();
-        new UpdateGpsWidgetRunnable(handler, locationAndDirection, meter, textLagUpdater).run();
+        new UpdateGpsWidgetRunnable(handler, geoFixProvider, meter, textLagUpdater).run();
         PowerMock.verifyAll();
     }
 }

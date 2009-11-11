@@ -2,9 +2,9 @@ package com.google.code.geobeagle.activity.prox;
 
 import com.google.code.geobeagle.CacheFilter;
 import com.google.code.geobeagle.GeoFix;
+import com.google.code.geobeagle.GeoFixProvider;
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.GeocacheFactory;
-import com.google.code.geobeagle.LocationAndDirection;
 import com.google.code.geobeagle.LocationControlDi;
 import com.google.code.geobeagle.Refresher;
 import com.google.code.geobeagle.database.CachesProviderDb;
@@ -28,8 +28,8 @@ public class ProximityActivity extends Activity implements SurfaceHolder.Callbac
 
         @Override
         public void refresh() {
-            mProximityPainter.setUserDirection(mLocationAndDirection.getAzimuth());
-            GeoFix location = mLocationAndDirection.getLocation();
+            mProximityPainter.setUserDirection(mGeoFixProvider.getAzimuth());
+            GeoFix location = mGeoFixProvider.getLocation();
             mProximityPainter.setUserLocation(location.getLatitude(),
                     location.getLongitude(), location.getAccuracy());
         }
@@ -41,7 +41,7 @@ public class ProximityActivity extends Activity implements SurfaceHolder.Callbac
     private AnimatorThread mAnimatorThread;
     private boolean mStartWhenSurfaceCreated = false;  //TODO: Needed?
     private DbFrontend mDbFrontend;
-    private LocationAndDirection mLocationAndDirection;
+    private GeoFixProvider mGeoFixProvider;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,9 +67,9 @@ public class ProximityActivity extends Activity implements SurfaceHolder.Callbac
         SurfaceHolder holder = mProximityView.getHolder();
         holder.addCallback(this); 
         mDataCollector = new DataCollector();
-        mLocationAndDirection = LocationControlDi.create(this);
-        mLocationAndDirection.addObserver(mDataCollector);
-        GeoFix location = mLocationAndDirection.getLocation();
+        mGeoFixProvider = LocationControlDi.create(this);
+        mGeoFixProvider.addObserver(mDataCollector);
+        GeoFix location = mGeoFixProvider.getLocation();
         mProximityPainter.setUserLocation(location.getLatitude(), location.getLongitude(), location.getAccuracy());
     }
     
@@ -82,7 +82,7 @@ public class ProximityActivity extends Activity implements SurfaceHolder.Callbac
                 
         final SharedPreferences sharedPreferences = PreferenceManager
         .getDefaultSharedPreferences(this);
-        mLocationAndDirection.onResume(sharedPreferences);
+        mGeoFixProvider.onResume(sharedPreferences);
         if (mAnimatorThread == null)
             mStartWhenSurfaceCreated = true;
         else
@@ -92,7 +92,7 @@ public class ProximityActivity extends Activity implements SurfaceHolder.Callbac
     @Override
     protected void onPause() {
         super.onPause();
-        mLocationAndDirection.onPause();
+        mGeoFixProvider.onPause();
         if (mAnimatorThread != null) {
             AnimatorThread.IThreadStoppedListener listener = new
             AnimatorThread.IThreadStoppedListener() {

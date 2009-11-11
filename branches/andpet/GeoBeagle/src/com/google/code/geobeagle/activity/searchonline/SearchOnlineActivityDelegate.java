@@ -1,7 +1,7 @@
 
 package com.google.code.geobeagle.activity.searchonline;
 
-import com.google.code.geobeagle.LocationAndDirection;
+import com.google.code.geobeagle.GeoFixProvider;
 import com.google.code.geobeagle.activity.ActivitySaver;
 import com.google.code.geobeagle.activity.ActivityType;
 import com.google.code.geobeagle.activity.cachelist.presenter.DistanceFormatterManager;
@@ -15,16 +15,16 @@ public class SearchOnlineActivityDelegate {
 
     private final ActivitySaver mActivitySaver;
     private final DistanceFormatterManager mDistanceFormatterManager;
-    private final LocationAndDirection mLocationAndDirection;
+    private final GeoFixProvider mGeoFixProvider;
     private final WebView mWebView;
     private final SharedPreferences mSharedPreferences;
 
     public SearchOnlineActivityDelegate(WebView webView,
-            LocationAndDirection locationAndDirection,
+            GeoFixProvider geoFixProvider,
             DistanceFormatterManager distanceFormatterManager, 
             ActivitySaver activitySaver,
             SharedPreferences sharedPreferences) {
-        mLocationAndDirection = locationAndDirection;
+        mGeoFixProvider = geoFixProvider;
         mWebView = webView;
         mDistanceFormatterManager = distanceFormatterManager;
         mActivitySaver = activitySaver;
@@ -43,12 +43,12 @@ public class SearchOnlineActivityDelegate {
     }
 
     public void onPause() {
-        mLocationAndDirection.onPause();
+        mGeoFixProvider.onPause();
         mActivitySaver.save(ActivityType.SEARCH_ONLINE);
     }
 
     public void onResume() {
-        mLocationAndDirection.onResume(mSharedPreferences);
+        mGeoFixProvider.onResume(mSharedPreferences);
         mDistanceFormatterManager.setFormatter();
     }
 }

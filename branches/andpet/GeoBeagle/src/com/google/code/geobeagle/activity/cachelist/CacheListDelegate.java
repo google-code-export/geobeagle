@@ -14,7 +14,7 @@
 
 package com.google.code.geobeagle.activity.cachelist;
 
-import com.google.code.geobeagle.LocationAndDirection;
+import com.google.code.geobeagle.GeoFixProvider;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.ActivitySaver;
 import com.google.code.geobeagle.activity.ActivityType;
@@ -73,7 +73,7 @@ public class CacheListDelegate {
     private final GeocacheListController mController;
     private final DbFrontend mDbFrontend;
     private final ImportIntentManager mImportIntentManager;
-    private final LocationAndDirection mLocationAndDirection;
+    private final GeoFixProvider mGeoFixProvider;
     private final UpdateGpsWidgetRunnable mUpdateGpsWidgetRunnable;
     private final CacheListView.ScrollListener mScrollListener;
     private final CacheListOnCreateContextMenuListener mMenuCreator;
@@ -87,7 +87,7 @@ public class CacheListDelegate {
     public CacheListDelegate(ImportIntentManager importIntentManager, ActivitySaver activitySaver,
             GeocacheListController geocacheListController,
             DbFrontend dbFrontend,
-            LocationAndDirection locationAndDirection,
+            GeoFixProvider geoFixProvider,
             UpdateGpsWidgetRunnable updateGpsWidgetRunnable,
             View gpsStatusWidget,
             CacheListOnCreateContextMenuListener menuCreator,
@@ -101,7 +101,7 @@ public class CacheListDelegate {
         mController = geocacheListController;
         mImportIntentManager = importIntentManager;
         mDbFrontend = dbFrontend;
-        mLocationAndDirection = locationAndDirection;
+        mGeoFixProvider = geoFixProvider;
         mUpdateGpsWidgetRunnable = updateGpsWidgetRunnable;
         mGpsStatusWidget = gpsStatusWidget;
         mMenuCreator = menuCreator;
@@ -144,7 +144,7 @@ public class CacheListDelegate {
     }
 
     public void onPause() {
-        mLocationAndDirection.onPause();
+        mGeoFixProvider.onPause();
         mController.onPause();
         mActivitySaver.save(ActivityType.CACHE_LIST);
         mDbFrontend.closeDatabase();
@@ -160,7 +160,7 @@ public class CacheListDelegate {
         mGeocacheSummaryRowInflater.setBearingFormatter(absoluteBearing);
 
         mController.onResume(mImportIntentManager.isImport());
-        mLocationAndDirection.onResume(sharedPreferences);
+        mGeoFixProvider.onResume(sharedPreferences);
     }
 
     public void onActivityResult() {

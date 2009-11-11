@@ -23,11 +23,9 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import java.util.ArrayList;
 
-//TODO: Rename to GeoFixProviderLive
-//TODO: Replace all uses of this class with interface GeoFixProvider
 /** Responsible for providing an up-to-date location and compass direction */
 @SuppressWarnings("deprecation")
-public class LocationAndDirection implements LocationListener, SensorListener,
+public class GeoFixProviderLive implements LocationListener, SensorListener,
 GeoFixProvider {
     private GeoFix mLocation;
     private final LocationManager mLocationManager;
@@ -37,7 +35,7 @@ GeoFixProvider {
     private final SensorManager mSensorManager;
     private boolean mUseNetwork = true;
 
-    public LocationAndDirection(LocationManager locationManager,
+    public GeoFixProviderLive(LocationManager locationManager,
             SensorManager sensorManager) {
         mLocationManager = locationManager;
         mSensorManager = sensorManager;
