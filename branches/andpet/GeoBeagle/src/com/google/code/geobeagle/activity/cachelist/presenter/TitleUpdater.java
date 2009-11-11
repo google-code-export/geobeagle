@@ -22,6 +22,7 @@ import com.google.code.geobeagle.database.DbFrontend;
 import android.app.ListActivity;
 import android.widget.TextView;
 
+//TODO: Remove unused field mTiming
 public class TitleUpdater implements RefreshAction {
     private final CachesProviderToggler mCachesProviderToggler;
     private final ListActivity mListActivity;

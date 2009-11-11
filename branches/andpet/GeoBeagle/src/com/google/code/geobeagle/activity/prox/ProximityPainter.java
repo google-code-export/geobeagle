@@ -60,7 +60,7 @@ public class ProximityPainter {
     private Rect mTempBounds = new Rect();
     
     private Parameter[] allParameters = { mDeviceDirection, mGpsAccuracy,
-            mScaleFactor, mUserSpeed, mUserDirection };
+            mScaleFactor, mUserSpeed, mUserDirection, mLatitude, mLongitude };
     
     public ProximityPainter(CachesProviderCount cachesProvider) {
         mCachesProvider = cachesProvider;

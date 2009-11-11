@@ -20,6 +20,13 @@ import android.hardware.SensorManager;
 import android.location.LocationManager;
 
 public class LocationControlDi {
+    //Enable this version of create() to use fake locations
+    /*
+    public static GeoFixProvider create(Activity activity) {
+        return new GeoFixProviderFake(GeoFixProviderFake.YOKOHAMA);
+    }
+    */
+    
     public static GeoFixProvider create(Activity activity) {
         final LocationManager locationManager = (LocationManager)activity
         .getSystemService(Context.LOCATION_SERVICE);

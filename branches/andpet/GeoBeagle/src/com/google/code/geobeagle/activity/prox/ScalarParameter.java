@@ -21,8 +21,7 @@ class ScalarParameter extends Parameter {
         super();
     }
 
-    /** Animate the value towards its goal given that deltaSec time 
-     * elapsed since last update */
+    @Override
     public void update(double deltaSec) {
         if (!mIsInited || (mTargetValue == mValue && mChangePerSec == 0))
             return;

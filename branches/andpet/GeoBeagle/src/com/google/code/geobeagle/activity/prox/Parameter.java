@@ -65,6 +65,7 @@ public class Parameter {
     }
 
     //Override this!
+    /** Animate the value towards its goal given that deltaSec time 
+     * elapsed since last update */
     public void update(double deltaSec) { };
-    //public void initialize(double value);   //Jumps to 'value' directly
 }

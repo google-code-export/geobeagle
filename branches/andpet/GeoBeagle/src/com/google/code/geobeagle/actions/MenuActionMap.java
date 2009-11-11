@@ -2,7 +2,6 @@ package com.google.code.geobeagle.actions;
 
 import com.google.code.geobeagle.GeoFix;
 import com.google.code.geobeagle.GeoFixProvider;
-import com.google.code.geobeagle.GeoFixProviderLive;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.map.GeoMapActivity;
 
