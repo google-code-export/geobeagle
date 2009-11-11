@@ -1,12 +1,14 @@
 package com.google.code.geobeagle.database;
 
 import com.google.code.geobeagle.Geocache;
+import com.google.code.geobeagle.GeocacheList;
 
 import java.util.ArrayList;
 
 public class CachesProviderWaitForInit implements ICachesProviderCenter {
     private final ICachesProviderCenter mProvider;
     private boolean mInited = false;
+    private static final GeocacheList EMPTYLIST = new GeocacheList();
     
     public CachesProviderWaitForInit(ICachesProviderCenter provider) {
         mProvider = provider;
@@ -19,9 +21,9 @@ public class CachesProviderWaitForInit implements ICachesProviderCenter {
     }
 
     @Override
-    public ArrayList<Geocache> getCaches() {
+    public GeocacheList getCaches() {
         if (!mInited)
-            return new ArrayList<Geocache>();
+            return EMPTYLIST;
         return mProvider.getCaches();
     }
 

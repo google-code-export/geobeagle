@@ -22,6 +22,7 @@ import com.google.android.maps.Overlay;
 import com.google.code.geobeagle.CacheFilter;
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.GeocacheFactory;
+import com.google.code.geobeagle.GeocacheList;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.actions.MenuActionCacheList;
 import com.google.code.geobeagle.actions.MenuActionChooseFilter;
@@ -109,7 +110,7 @@ public class GeoMapActivity extends MapActivity {
                 densityPatches, nullGeoPoint, lazyArea);
         final DensityOverlay densityOverlay = new DensityOverlay(densityOverlayDelegate);
         
-        final ArrayList<Geocache> geocacheList = new ArrayList<Geocache>();
+        final GeocacheList geocacheList = new GeocacheList();
         final CachePinsOverlay cachePinsOverlay = new CachePinsOverlay(cacheItemFactory, this,
                 defaultMarker, geocacheList);
         //Pin overlay and Density overlay can't share providers because the provider wouldn't report hasChanged() when switching between them

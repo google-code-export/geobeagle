@@ -18,6 +18,7 @@ import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapView;
 import com.google.android.maps.Projection;
 import com.google.code.geobeagle.Geocache;
+import com.google.code.geobeagle.GeocacheList;
 import com.google.code.geobeagle.database.CachesProviderLazyArea;
 
 import android.util.Log;
@@ -52,7 +53,7 @@ class DensityPatchManager {
             return mDensityPatches;
         }
 
-        ArrayList<Geocache> list = mLazyArea.getCaches();
+        GeocacheList list = mLazyArea.getCaches();
         mLazyArea.resetChanged();
         DensityMatrix densityMatrix = new DensityMatrix(DensityPatchManager.RESOLUTION_LATITUDE,
                 DensityPatchManager.RESOLUTION_LONGITUDE);

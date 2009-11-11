@@ -23,6 +23,7 @@ import android.util.Log;
 
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.GeocacheFactory;
+import com.google.code.geobeagle.GeocacheList;
 import com.google.code.geobeagle.database.DatabaseDI;
 import com.google.code.geobeagle.database.DatabaseDI.GeoBeagleSqliteOpenHelper;
 
@@ -71,7 +72,7 @@ public class DbFrontend {
     }
     
     /** If 'where' is null, returns all caches */
-    public ArrayList<Geocache> loadCaches(String where) {
+    public GeocacheList loadCaches(String where) {
         openDatabase();
 
         CacheReaderCursor cursor = mCacheReader.open(where, null);
@@ -82,7 +83,7 @@ public class DbFrontend {
             } while (cursor.moveToNext());
             cursor.close();
         }
-        return geocaches;
+        return new GeocacheList(geocaches);
     }
 
     /** @return null if the cache id is not in the database */

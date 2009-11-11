@@ -1,8 +1,7 @@
 package com.google.code.geobeagle.database;
 
-import com.google.code.geobeagle.Geocache;
+import com.google.code.geobeagle.GeocacheList;
 
-import java.util.ArrayList;
 
 public class CachesProviderRadius implements ICachesProviderCenter {
 
@@ -16,7 +15,7 @@ public class CachesProviderRadius implements ICachesProviderCenter {
     }
     
     @Override
-    public ArrayList<Geocache> getCaches() {
+    public GeocacheList getCaches() {
         return mCachesProviderArea.getCaches();
     }
 

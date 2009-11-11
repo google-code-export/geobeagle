@@ -1,12 +1,13 @@
 package com.google.code.geobeagle.database;
 
 import com.google.code.geobeagle.Geocache;
+import com.google.code.geobeagle.GeocacheList;
 
 import java.util.ArrayList;
 
 public class CachesProviderStub implements ICachesProviderArea {
 
-    private ArrayList<Geocache> mGeocaches = new ArrayList<Geocache>();
+    private GeocacheList mGeocaches = new GeocacheList();
     private double mLatLow = 0.0;
     private double mLatHigh = 0.0;
     private double mLonLow = 0.0;
@@ -20,7 +21,7 @@ public class CachesProviderStub implements ICachesProviderArea {
         mGeocaches.add(geocache);
     }
 
-    private ArrayList<Geocache> fetchCaches() {
+    private GeocacheList fetchCaches() {
         if (!mIsInitialized)
             return mGeocaches;
         
@@ -33,11 +34,11 @@ public class CachesProviderStub implements ICachesProviderArea {
                 selection.add(geocache);
             }
         }
-        return selection;
+        return new GeocacheList(selection);
     }
     
     @Override
-    public ArrayList<Geocache> getCaches() {
+    public GeocacheList getCaches() {
         return fetchCaches();
     }
 

@@ -2,6 +2,7 @@ package com.google.code.geobeagle.database;
 
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.Clock;
+import com.google.code.geobeagle.GeocacheList;
 import com.google.code.geobeagle.activity.main.GeoUtils;
 
 import java.util.ArrayList;
@@ -12,7 +13,7 @@ public class CachesProviderLazy implements ICachesProviderCenter {
     /** The position mBufferedList reflects */
     private double mBufferedLat;
     private double mBufferedLon;
-    private ArrayList<Geocache> mBufferedList;
+    private GeocacheList mBufferedList;
     
     /** The current center as asked for by the user of this object */
     private double mLastLat;
@@ -50,7 +51,7 @@ public class CachesProviderLazy implements ICachesProviderCenter {
     }
 
     @Override
-    public ArrayList<Geocache> getCaches() {
+    public GeocacheList getCaches() {
         if (mBufferedList == null) {
             mBufferedList = mProvider.getCaches();
             mProvider.resetChanged();

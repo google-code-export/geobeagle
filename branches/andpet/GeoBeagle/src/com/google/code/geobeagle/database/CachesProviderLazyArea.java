@@ -15,6 +15,7 @@
 package com.google.code.geobeagle.database;
 
 import com.google.code.geobeagle.Geocache;
+import com.google.code.geobeagle.GeocacheList;
 import com.google.code.geobeagle.xmlimport.GpxImporterDI.Toaster;
 
 import java.util.ArrayList;
@@ -36,7 +37,7 @@ public class CachesProviderLazyArea implements ICachesProviderArea {
     /** Maximum number of caches to show */
     public static final int MAX_COUNT = 1500;
     private final Toaster mToaster;
-    private static final ArrayList<Geocache> NULL_LIST = new ArrayList<Geocache>();
+    private static final GeocacheList NULL_LIST = new GeocacheList();
     
     private final ICachesProviderArea mCachesProviderArea;
 
@@ -69,7 +70,7 @@ public class CachesProviderLazyArea implements ICachesProviderArea {
     }
     
     @Override
-    public ArrayList<Geocache> getCaches() {
+    public GeocacheList getCaches() {
         if (mCachesProviderArea.hasChanged()) {
             int count = mCachesProviderArea.getCount();
             mCachesProviderArea.resetChanged();

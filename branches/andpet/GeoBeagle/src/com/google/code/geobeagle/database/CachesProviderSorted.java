@@ -1,6 +1,7 @@
 package com.google.code.geobeagle.database;
 
 import com.google.code.geobeagle.Geocache;
+import com.google.code.geobeagle.GeocacheList;
 import com.google.code.geobeagle.activity.main.GeoUtils;
 import com.google.code.geobeagle.database.DistanceAndBearing.IDistanceAndBearingProvider;
 
@@ -22,7 +23,8 @@ IDistanceAndBearingProvider {
     private boolean mHasChanged = true;
     private double mLatitude;
     private double mLongitude;
-    private ArrayList<Geocache> mSortedList = null;
+    /** Value is null if the list needs to be re-sorted */
+    private GeocacheList mSortedList = null;
     private DistanceComparator mDistanceComparator;
     private boolean isInitialized = false;
 
@@ -65,16 +67,15 @@ IDistanceAndBearingProvider {
             //No need to update
             return;
 
-        final ArrayList<Geocache> unsortedList = mCachesProvider.getCaches();
-        //TODO: Which variant is faster?
-        mSortedList = (ArrayList<Geocache>)unsortedList.clone();
-        //mSortedList = new ArrayList<Geocache>(unsortedList);
+        final GeocacheList unsortedList = mCachesProvider.getCaches();
+        ArrayList<Geocache> sortedList = new ArrayList<Geocache>(unsortedList);
 
-        Collections.sort(mSortedList, mDistanceComparator);
+        Collections.sort(sortedList, mDistanceComparator);
+        mSortedList = new GeocacheList(sortedList);
     }
 
     @Override
-    public ArrayList<Geocache> getCaches() {
+    public GeocacheList getCaches() {
         if (!isInitialized) {
             return mCachesProvider.getCaches();
         }

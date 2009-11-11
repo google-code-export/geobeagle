@@ -1,6 +1,7 @@
 package com.google.code.geobeagle.activity.cachelist.presenter;
 
 import com.google.code.geobeagle.Geocache;
+import com.google.code.geobeagle.GeocacheList;
 import com.google.code.geobeagle.Refresher;
 import com.google.code.geobeagle.database.CachesProviderToggler;
 import com.google.code.geobeagle.database.DistanceAndBearing;
@@ -18,7 +19,7 @@ public class CacheListAdapter extends BaseAdapter implements Refresher {
     private final IDistanceAndBearingProvider mDistances;
     private final GeocacheSummaryRowInflater mGeocacheSummaryRowInflater;
     private final TitleUpdater mTitleUpdater;
-    private ArrayList<Geocache> mListData;
+    private GeocacheList mListData;
     private float mAzimuth;
     private boolean mUpdatesEnabled = true;
 

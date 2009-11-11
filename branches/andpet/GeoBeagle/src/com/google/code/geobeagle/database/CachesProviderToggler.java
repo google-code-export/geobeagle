@@ -1,8 +1,7 @@
 package com.google.code.geobeagle.database;
 
-import com.google.code.geobeagle.Geocache;
+import com.google.code.geobeagle.GeocacheList;
 
-import java.util.ArrayList;
 
 public class CachesProviderToggler implements ICachesProviderCenter {
     private ICachesProviderCenter mCachesProviderCenter;
@@ -28,7 +27,7 @@ public class CachesProviderToggler implements ICachesProviderCenter {
     }
     
     @Override
-    public ArrayList<Geocache> getCaches() {
+    public GeocacheList getCaches() {
         return (mNearest ? mCachesProviderCenter : mCachesProviderAll).getCaches();
     }
 

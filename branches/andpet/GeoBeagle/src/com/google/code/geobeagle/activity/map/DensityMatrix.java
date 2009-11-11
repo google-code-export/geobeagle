@@ -17,6 +17,7 @@ package com.google.code.geobeagle.activity.map;
 import com.google.code.geobeagle.Geocache;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -65,7 +66,7 @@ public class DensityMatrix {
         mLonResolution = lonResolution;
     }
 
-    public void addCaches(ArrayList<Geocache> list) {
+    public void addCaches(Collection<Geocache> list) {
         for (Geocache cache : list) {
             incrementBucket(cache.getLatitude(), cache.getLongitude());
         }

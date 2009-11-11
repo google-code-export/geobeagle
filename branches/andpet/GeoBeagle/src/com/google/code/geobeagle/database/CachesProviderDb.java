@@ -2,6 +2,7 @@ package com.google.code.geobeagle.database;
 
 import com.google.code.geobeagle.CacheFilter;
 import com.google.code.geobeagle.Geocache;
+import com.google.code.geobeagle.GeocacheList;
 
 import java.util.ArrayList;
 
@@ -15,7 +16,7 @@ public class CachesProviderDb implements ICachesProviderArea {
     private double mLatHigh;
     private double mLonHigh;
     private String mWhere = null;
-    private ArrayList<Geocache> mCaches;
+    private GeocacheList mCaches;
     private boolean mHasChanged = true;
     private boolean mHasLimits = false;
     private final CacheFilter mCacheFilter;
@@ -45,7 +46,7 @@ public class CachesProviderDb implements ICachesProviderArea {
     }
     
     @Override
-    public ArrayList<Geocache> getCaches() {
+    public GeocacheList getCaches() {
         if (mCaches == null) {
             mCaches = mDbFrontend.loadCaches(getWhere());
         }
