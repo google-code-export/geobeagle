@@ -26,7 +26,11 @@ public class GeocacheList extends AbstractCollection<Geocache> {
         mList.add(extra);
     }
 
+    //TODO: Is this method used or the generic Object.equals ?
     public boolean equals(GeocacheList otherList) {
+        if (otherList == this || otherList.mList == mList)
+            return true;
+        
         if (mList.size() != otherList.mList.size())
             return false;
         

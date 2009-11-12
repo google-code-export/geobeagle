@@ -83,6 +83,11 @@ public class GeoFixProviderFake implements GeoFixProvider {
                            new GeoFix(128, 40, 0.001, -0.0001, 5000, "gps"),        
                            new GeoFix(8, 40, 0.002, -0.0001, 7000, "gps"),
     });
+    //A single location
+    public static FakeDataset TOKYO = new FakeDataset(10000, 
+            35.690448, 139.756225, 10000,
+            new GeoFix[] { new GeoFix(16, 10, 0, 0, 0, "gps"),
+    });
     
     private final FakeDataset mFakeDataset;
     
