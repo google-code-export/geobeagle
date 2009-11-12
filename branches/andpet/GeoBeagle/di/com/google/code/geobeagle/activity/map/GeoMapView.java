@@ -18,7 +18,6 @@ import com.google.android.maps.MapView;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.util.Log;
 
 public class GeoMapView extends MapView {
 
@@ -31,8 +30,8 @@ public class GeoMapView extends MapView {
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         super.onLayout(changed, left, top, right, bottom);
-        Log.d("GeoBeagle", "~~~~~~~~~~onLayout " + changed + ", " + left + ", " + top + ", "
-                + right + ", " + bottom);
+        //Log.d("GeoBeagle", "~~~~~~~~~~onLayout " + changed + ", " + left + ", " + top + ", "
+        //        + right + ", " + bottom);
         if (mOverlayManager != null) {
             mOverlayManager.selectOverlay();
         }
