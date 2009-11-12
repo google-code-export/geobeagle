@@ -18,8 +18,6 @@ import com.google.android.maps.Overlay;
 import com.google.code.geobeagle.Refresher;
 import com.google.code.geobeagle.database.CachesProviderDb;
 
-import android.util.Log;
-
 import java.util.List;
 
 public class OverlayManager implements Refresher {
@@ -44,7 +42,7 @@ public class OverlayManager implements Refresher {
 
     public void selectOverlay() {
         final int zoomLevel = mGeoMapView.getZoomLevel();
-        Log.d("GeoBeagle", "selectOverlay Zoom: " + zoomLevel);
+        //Log.d("GeoBeagle", "selectOverlay Zoom: " + zoomLevel);
         boolean newZoomUsesDensityMap = zoomLevel < OverlayManager.DENSITY_MAP_ZOOM_THRESHOLD;
         if (newZoomUsesDensityMap && mUsesDensityMap)
             return;
