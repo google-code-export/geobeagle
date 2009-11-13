@@ -124,15 +124,10 @@ public class ProximityPainter {
     }
     
     public void setUserLocation(double latitude, double longitude, float accuracy) {
-        Log.d("GeoBeagle", "setUserLocation with accuracy = " + accuracy);
         mLatitude.set(latitude);
         mLongitude.set(longitude);
         mGpsAccuracy.set(accuracy);
         mCachesProvider.setCenter(latitude, longitude);
-        //TODO: What unit is 'radius'??
-        double radius = mCachesProvider.getRadius();
-        //mScaleFactor = 
-        mScaleFactor.set(mUserY * Math.log(mLogScale) / Math.log(radius*100000));
     }
 
     public void setSelectedGeocache(Geocache geocache) {
@@ -219,12 +214,15 @@ public class ProximityPainter {
         if (mSelectedGeocache != null && !caches.contains(mSelectedGeocache)) {
             caches = new GeocacheList(caches, mSelectedGeocache);
         }
-        
+
+        double maxDistanceM = 0;
         for (Geocache geocache : caches) {
             double angle = Math.toRadians(GeoUtils.bearing(mLatitude.get(), mLongitude.get(), 
                     geocache.getLatitude(), geocache.getLongitude()) - direction - 90);
             double distanceM = GeoUtils.distanceKm(mLatitude.get(), mLongitude.get(), 
                     geocache.getLatitude(), geocache.getLongitude()) * 1000;
+            if (distanceM > maxDistanceM)
+                maxDistanceM = distanceM;
             double screenDist = transformDistanceToScreen(distanceM);
             int cacheScreenRadius = (int)(2*scaleFactorAtDistance(distanceM*2));
             mCachePaint.setStrokeWidth((int)Math.ceil(0.5*scaleFactorAtDistance(distanceM)));
@@ -250,9 +248,9 @@ public class ProximityPainter {
             }
         }
         
-        canvas.drawCircle(mCenterX, mUserY, mUserScreenRadius, mUserPaint);
+        mScaleFactor.set(mUserY * Math.log(mLogScale) / Math.log(maxDistanceM/2f));
         
-        //drawGlow(canvas, mCenterX, mUserY, mUserScreenRadius, 10);
+        canvas.drawCircle(mCenterX, mUserY, mUserScreenRadius, mUserPaint);
     }
 
     /** 
