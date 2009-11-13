@@ -78,8 +78,6 @@ public class AnimatorThread {
 
 	private double mSecsPerTick = 0;
 
-	private long mLastTouchEvent = 0;
-	
 	private int mNextTickNo = 0;
 
 	private class TimingThread extends Thread {

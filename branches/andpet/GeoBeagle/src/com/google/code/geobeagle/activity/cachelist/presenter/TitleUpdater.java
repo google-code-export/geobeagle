@@ -26,15 +26,12 @@ import android.widget.TextView;
 public class TitleUpdater implements RefreshAction {
     private final CachesProviderToggler mCachesProviderToggler;
     private final ListActivity mListActivity;
-    private final CacheListDelegateDI.Timing mTiming;
     private final DbFrontend mDbFrontend;
 
     public TitleUpdater(ListActivity listActivity, CachesProviderToggler cachesProviderToggler, 
-            CacheListDelegateDI.Timing timing,
             DbFrontend dbFrontend) {
         mListActivity = listActivity;
         mCachesProviderToggler = cachesProviderToggler;
-        mTiming = timing;
         mDbFrontend = dbFrontend;
     }
 

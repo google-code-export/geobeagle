@@ -74,6 +74,8 @@ public class EditCacheActivityDelegate {
             mName.setText(geocache.getName());
             mLatitude.setText(Util.formatDegreesAsDecimalDegreesString(geocache.getLatitude()));
             mLongitude.setText(Util.formatDegreesAsDecimalDegreesString(geocache.getLongitude()));
+            //mLatitude.setText(Double.toString(geocache.getLatitude()));
+            //mLongitude.setText(Double.toString(geocache.getLongitude()));
 
             mLatitude.requestFocus();
         }

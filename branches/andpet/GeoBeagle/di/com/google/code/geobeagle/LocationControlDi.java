@@ -20,20 +20,17 @@ import android.hardware.SensorManager;
 import android.location.LocationManager;
 
 public class LocationControlDi {
-    //Enable this version of create() to use fake locations
-/*    
     public static GeoFixProvider create(Activity activity) {
-        //return new GeoFixProviderFake(GeoFixProviderFake.TOKYO);
-        return new GeoFixProviderFake(GeoFixProviderFake.YOKOHAMA);
-    }
-    */
+        if (false) {   //Set to true to use fake locations
+            //return new GeoFixProviderFake(GeoFixProviderFake.TOKYO);
+            return new GeoFixProviderFake(GeoFixProviderFake.YOKOHAMA);
+        } else {
+            final LocationManager locationManager = (LocationManager)activity
+            .getSystemService(Context.LOCATION_SERVICE);
+            final SensorManager sensorManager = (SensorManager)activity
+            .getSystemService(Context.SENSOR_SERVICE);
 
-    public static GeoFixProvider create(Activity activity) {
-        final LocationManager locationManager = (LocationManager)activity
-        .getSystemService(Context.LOCATION_SERVICE);
-        final SensorManager sensorManager = (SensorManager)activity
-        .getSystemService(Context.SENSOR_SERVICE);
-                
-        return new GeoFixProviderLive(locationManager, sensorManager);
+            return new GeoFixProviderLive(locationManager, sensorManager);
+        }
     }
 }
