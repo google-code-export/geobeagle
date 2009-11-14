@@ -88,12 +88,16 @@ GeoFixProvider {
             return oldLocation;
 
         if (newLocation.getTime() > oldLocation.getTime()) {
+            //TODO: Handle network and gps different
+            return newLocation;
+            /*
             if (newLocation.getAccuracy() <= oldLocation.getAccuracy())
                 return newLocation;
             else if (oldLocation.distanceTo(newLocation) >= oldLocation.getAccuracy()
                     + newLocation.getAccuracy()) {
                 return newLocation;
             }
+            */
         }
         return oldLocation;
     }
