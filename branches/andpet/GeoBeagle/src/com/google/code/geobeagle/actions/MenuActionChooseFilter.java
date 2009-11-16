@@ -18,6 +18,7 @@ import android.widget.EditText;
 public class MenuActionChooseFilter implements MenuAction {
     private final Activity mActivity;
     private final CacheFilter mFilter;
+    //TODO: Rename all mCachesProviderArea to mCachesProviderDb
     private final CachesProviderDb[] mCachesProviderArea;
     private final Refresher mRefresher;
     

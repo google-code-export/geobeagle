@@ -50,6 +50,7 @@ public class GeoFix {
         return mTime;
     }
     
+    /** @result Approximate distance in meters */
     public float distanceTo(GeoFix fix) {
         float results[] = { 0 };
         Location.distanceBetween(mLatitude, mLongitude, 
