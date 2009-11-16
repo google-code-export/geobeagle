@@ -20,6 +20,7 @@ import com.google.code.geobeagle.GeocacheFactory;
 
 import android.database.Cursor;
 
+//TODO: Merge class CacheReaderCursor into DbFrontend?
 public class CacheReaderCursor {
     private final Cursor mCursor;
     private final DbToGeocacheAdapter mDbToGeocacheAdapter;

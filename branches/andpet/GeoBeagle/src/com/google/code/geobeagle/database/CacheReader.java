@@ -18,13 +18,14 @@ import com.google.code.geobeagle.database.DatabaseDI.CacheReaderCursorFactory;
 
 import android.database.Cursor;
 
+//TODO: Merge into DbFrontend
 public class CacheReader {
     public static final String[] READER_COLUMNS = new String[] {
             "Latitude", "Longitude", "Id", "Description", "Source", "CacheType", "Difficulty",
             "Terrain", "Container"
     };
 
-    public static final String SQL_QUERY_LIMIT = "1000";
+    //public static final String SQL_QUERY_LIMIT = "1000";
     private final CacheReaderCursorFactory mCacheReaderCursorFactory;
     private final ISQLiteDatabase mSqliteWrapper;
 
