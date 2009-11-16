@@ -18,6 +18,10 @@ public class CachesProviderDb implements ICachesProviderArea {
     private boolean mHasLimits = false;
     private final CacheFilter mCacheFilter;
     private String mFilter;
+    private boolean mIsFirstListLoad = true;
+    /** If greater than zero, this is the max number that mCaches 
+     * was allowed to contain when loaded. (This limit can change on subsequent loads) */
+    private int mCachesCappedToCount = 0;
 
     public CachesProviderDb(DbFrontend dbFrontend, CacheFilter cacheFilter) {
         mDbFrontend = dbFrontend;
@@ -44,15 +48,35 @@ public class CachesProviderDb implements ICachesProviderArea {
     
     @Override
     public GeocacheList getCaches() {
-        if (mCaches == null) {
-            mCaches = mDbFrontend.loadCaches(getWhere());
+        if (mCaches == null || mCachesCappedToCount > 0) {
+            String where = getWhere();
+            if (mIsFirstListLoad && where != null) {
+                mCaches = mDbFrontend.loadCachesPrecomputed(where);
+            } else {
+                mCaches = mDbFrontend.loadCaches(where);
+            }
+            mIsFirstListLoad = false;
         }
         return mCaches;
     }
 
     @Override
+    public GeocacheList getCaches(int maxResults) {
+        if (mCaches == null || (mCachesCappedToCount > 0 && 
+                                mCachesCappedToCount < maxResults)) {
+            mCaches = mDbFrontend.loadCaches(getWhere(), maxResults);
+            if (mCaches.size() == maxResults)
+                mCachesCappedToCount = maxResults;
+            else
+                //The cap didn't limit the search result
+                mCachesCappedToCount = 0;
+        }
+        return mCaches;
+    }
+    
+    @Override
     public int getCount() {
-        if (mCaches == null) {
+        if (mCaches == null || mCachesCappedToCount > 0) {
             return mDbFrontend.count(getWhere());
         }
         return mCaches.size();
@@ -85,7 +109,10 @@ public class CachesProviderDb implements ICachesProviderArea {
         mHasChanged = false;
     }
 
+    /** Tells this class that the contents in the database have changed. 
+     * The cached list isn't reliable any more. */
     public void notifyOfDbChange() {
+        mCaches = null;
         mHasChanged = true;
     }
     

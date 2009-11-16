@@ -14,7 +14,7 @@
 
 package com.google.code.geobeagle.activity.cachelist;
 
-import com.google.code.geobeagle.GeoFixProvider;
+import com.google.code.geobeagle.IPausable;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.ActivitySaver;
 import com.google.code.geobeagle.activity.ActivityType;
@@ -73,7 +73,6 @@ public class CacheListDelegate {
     private final GeocacheListController mController;
     private final DbFrontend mDbFrontend;
     private final ImportIntentManager mImportIntentManager;
-    private final GeoFixProvider mGeoFixProvider;
     private final UpdateGpsWidgetRunnable mUpdateGpsWidgetRunnable;
     private final CacheListView.ScrollListener mScrollListener;
     private final CacheListOnCreateContextMenuListener mMenuCreator;
@@ -83,11 +82,11 @@ public class CacheListDelegate {
     private final DistanceFormatterManager mDistanceFormatterManager;
     private final GeocacheSummaryRowInflater mGeocacheSummaryRowInflater;
     private final CachesProviderDb mCachesToFlush;
+    private final IPausable[] mPausables;
 
     public CacheListDelegate(ImportIntentManager importIntentManager, ActivitySaver activitySaver,
             GeocacheListController geocacheListController,
             DbFrontend dbFrontend,
-            GeoFixProvider geoFixProvider,
             UpdateGpsWidgetRunnable updateGpsWidgetRunnable,
             View gpsStatusWidget,
             CacheListOnCreateContextMenuListener menuCreator,
@@ -96,12 +95,12 @@ public class CacheListDelegate {
             ListActivity listActivity,
             CacheListView.ScrollListener scrollListener,
             DistanceFormatterManager distanceFormatterManager,
-            CachesProviderDb cachesToFlush) {
+            CachesProviderDb cachesToFlush,
+            IPausable[] pausables) {
         mActivitySaver = activitySaver;
         mController = geocacheListController;
         mImportIntentManager = importIntentManager;
         mDbFrontend = dbFrontend;
-        mGeoFixProvider = geoFixProvider;
         mUpdateGpsWidgetRunnable = updateGpsWidgetRunnable;
         mGpsStatusWidget = gpsStatusWidget;
         mMenuCreator = menuCreator;
@@ -111,6 +110,7 @@ public class CacheListDelegate {
         mScrollListener = scrollListener;
         mDistanceFormatterManager = distanceFormatterManager;
         mCachesToFlush = cachesToFlush;
+        mPausables = pausables;
     }
 
     public boolean onContextItemSelected(MenuItem menuItem) {
@@ -144,7 +144,8 @@ public class CacheListDelegate {
     }
 
     public void onPause() {
-        mGeoFixProvider.onPause();
+        for (IPausable pausable : mPausables)
+            pausable.onPause();
         mController.onPause();
         mActivitySaver.save(ActivityType.CACHE_LIST);
         mDbFrontend.closeDatabase();
@@ -160,7 +161,8 @@ public class CacheListDelegate {
         mGeocacheSummaryRowInflater.setBearingFormatter(absoluteBearing);
 
         mController.onResume(mImportIntentManager.isImport());
-        mGeoFixProvider.onResume(sharedPreferences);
+        for (IPausable pausable : mPausables)
+            pausable.onResume();
     }
 
     public void onActivityResult() {

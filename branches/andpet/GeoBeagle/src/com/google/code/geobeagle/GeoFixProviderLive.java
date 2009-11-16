@@ -34,29 +34,16 @@ GeoFixProvider {
     private final ArrayList<Refresher> mObservers = new ArrayList<Refresher>();
     private final SensorManager mSensorManager;
     private boolean mUseNetwork = true;
-
+    private final SharedPreferences mSharedPreferences;
+    
     public GeoFixProviderLive(LocationManager locationManager,
-            SensorManager sensorManager) {
+            SensorManager sensorManager, SharedPreferences sharedPreferences) {
         mLocationManager = locationManager;
         mSensorManager = sensorManager;
-
+        mSharedPreferences = sharedPreferences;
         //mLocation = getLastKnownLocation();  //work in constructor..
     }
-
    
-    /** Enable/disable getting the position from the cell network,
-     * in addition to GPS. Default is 'enabled'. */
-    /*
-    public void setUseNetwork(boolean useNetwork) {
-        if (mUseNetwork == useNetwork)
-            return;
-        mUseNetwork = useNetwork;
-        //Hack to only register for the correct providers:
-        onPause();
-        onResume();
-    }
-    */
-    
     public GeoFix getLocation() {
         if (mLocation == null)
             mLocation = new GeoFix(getLastKnownLocation());
@@ -88,7 +75,13 @@ GeoFixProvider {
             return oldLocation;
 
         if (newLocation.getTime() > oldLocation.getTime()) {
+            float distance = newLocation.distanceTo(oldLocation);
+            //Log.d("GeoBeagle", "onLocationChanged distance="+distance +
+            //        "  provider=" + newLocation.getProvider());
+            if (distance < 1)  //doesn't take changing accuracy into account
+                return oldLocation;
             //TODO: Handle network and gps different
+
             return newLocation;
             /*
             if (newLocation.getAccuracy() <= oldLocation.getAccuracy())
@@ -104,8 +97,11 @@ GeoFixProvider {
 
     @Override
     public void onLocationChanged(Location location) {
-        mLocation = choose(mLocation, new GeoFix(location));
-        notifyObservers();
+        GeoFix chosen = choose(mLocation, new GeoFix(location));
+        if (chosen != mLocation) {
+            mLocation = chosen;
+            notifyObservers();
+        }
     }
 
     @Override
@@ -135,13 +131,13 @@ GeoFixProvider {
         }
     }
 
-    public void onResume(SharedPreferences sharedPreferences) {
-        mUseNetwork = sharedPreferences.getBoolean("use-network-location", true);
+    public void onResume() {
+        mUseNetwork = mSharedPreferences.getBoolean("use-network-location", true);
         
         mSensorManager.registerListener(this, SensorManager.SENSOR_ORIENTATION,
                 SensorManager.SENSOR_DELAY_UI);
         long minTime = 1000;  //ms
-        float minDistance = 0;  //sec
+        float minDistance = 1;  //meters
         mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 
                 minTime, minDistance, this);
         if (mUseNetwork)

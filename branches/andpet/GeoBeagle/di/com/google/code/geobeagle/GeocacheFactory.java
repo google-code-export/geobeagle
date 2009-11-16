@@ -123,8 +123,14 @@ public class GeocacheFactory {
         return mCacheTypeFactory.fromInt(cacheTypeIx);
     }
 
+    /** Mapping from cacheId to Geocache for all loaded geocaches */
     private WeakHashMap<CharSequence, Geocache> mGeocaches = 
         new WeakHashMap<CharSequence, Geocache>();
+
+    /** @return the geocache if it is already loaded, otherwise null */
+    public Geocache getFromId(CharSequence id) {
+        return mGeocaches.get(id);
+    }
     
     public Geocache create(CharSequence id, CharSequence name, double latitude, double longitude,
             Source sourceType, String sourceName, CacheType cacheType, int difficulty, int terrain,

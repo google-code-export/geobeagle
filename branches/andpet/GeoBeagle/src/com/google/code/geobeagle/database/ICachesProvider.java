@@ -2,7 +2,7 @@ package com.google.code.geobeagle.database;
 
 import com.google.code.geobeagle.GeocacheList;
 
-
+//TODO: Move this and all implementations from the .database package to "data"
 /** Interface to access a subset of the cache database. 
  * Used to form a Decorator pattern. */
 public interface ICachesProvider {
@@ -15,8 +15,11 @@ public interface ICachesProvider {
     public void resetChanged();
 
     public int getCount();
-    
-    //Need to get size of returned list, so it can't be an Iterable
+
+    /** If the count is bigger than maxRelevantCount, the implementation may 
+     * return maxRelevantCount if that is more efficient. */
+    //public int getCount(int maxRelevantCount);
+
     /** The returned list is considered immutable */
     public GeocacheList getCaches();
 }

@@ -61,6 +61,14 @@
      android:layout_width="fill_parent" android:layout_height="wrap_content">
   </CheckBox>
   
+  <CheckBox android:id="@+id/CheckBoxSmall" android:text="Include small" 
+     android:layout_width="fill_parent" android:layout_height="wrap_content">
+  </CheckBox>
+
+  <CheckBox android:id="@+id/CheckBoxUnknownSize" android:text="Include unknown sizes" 
+     android:layout_width="fill_parent" android:layout_height="wrap_content">
+  </CheckBox>
+
   <LinearLayout
 		android:id="@+id/widget31"
 		android:layout_width="fill_parent"

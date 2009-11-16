@@ -62,7 +62,7 @@ public class DensityPatchManagerTest {
         EasyMock.expect(densityMatrix.getDensityPatches()).andReturn(patches);
 
         PowerMock.replayAll();
-        assertEquals(patches, new DensityPatchManager(null, lazyArea)
+        assertEquals(patches, new DensityPatchManager(null, lazyArea, null)
                 .getDensityPatches(mapView));
         PowerMock.verifyAll();
     }
@@ -84,7 +84,7 @@ public class DensityPatchManagerTest {
         //EasyMock.expect(lazyArea.needsLoading(newTopLeft, newBottomRight)).andReturn(false);
 
         PowerMock.replayAll();
-        assertEquals(patches, new DensityPatchManager(patches, lazyArea)
+        assertEquals(patches, new DensityPatchManager(patches, lazyArea, null)
                 .getDensityPatches(mapView));
         PowerMock.verifyAll();
     }

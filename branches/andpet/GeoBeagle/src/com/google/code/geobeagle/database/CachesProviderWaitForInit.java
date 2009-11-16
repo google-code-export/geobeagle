@@ -1,11 +1,11 @@
 package com.google.code.geobeagle.database;
 
 import com.google.code.geobeagle.GeocacheList;
+import com.google.code.geobeagle.GeocacheListPrecomputed;
 
 public class CachesProviderWaitForInit implements ICachesProviderCenter {
     private final ICachesProviderCenter mProvider;
     private boolean mInited = false;
-    private static final GeocacheList EMPTYLIST = new GeocacheList();
     
     public CachesProviderWaitForInit(ICachesProviderCenter provider) {
         mProvider = provider;
@@ -20,7 +20,7 @@ public class CachesProviderWaitForInit implements ICachesProviderCenter {
     @Override
     public GeocacheList getCaches() {
         if (!mInited)
-            return EMPTYLIST;
+            return GeocacheListPrecomputed.EMPTY;
         return mProvider.getCaches();
     }
 

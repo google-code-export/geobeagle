@@ -41,8 +41,7 @@ public class MenuActionMyLocationTest {
         geocache.saveToDb(dbFrontend);
 
         PowerMock.replayAll();
-        new MenuActionMyLocation(cacheListAdapter, null,
-                geocacheFactory, null, dbFrontend, null, null).act();
+        new MenuActionMyLocation(null, geocacheFactory, null, dbFrontend, null, null).act();
         PowerMock.verifyAll();
     }
 
@@ -52,7 +51,7 @@ public class MenuActionMyLocationTest {
         errorDisplayer.displayError(R.string.current_location_null);
 
         PowerMock.replayAll();
-        new MenuActionMyLocation(null, errorDisplayer, null, null, null, null, null).act();
+        new MenuActionMyLocation(errorDisplayer, null, null, null, null, null).act();
         PowerMock.verifyAll();
     }
 }

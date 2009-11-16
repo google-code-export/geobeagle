@@ -3,7 +3,6 @@ package com.google.code.geobeagle.database;
 import static org.junit.Assert.*;
 
 import com.google.code.geobeagle.Geocache;
-import com.google.code.geobeagle.xmlimport.GpxImporterDI.Toaster;
 import static com.google.code.geobeagle.Common.mockGeocache;
 
 import org.junit.Before;
@@ -14,13 +13,10 @@ import org.powermock.modules.junit4.PowerMockRunner;
 
 @RunWith(PowerMockRunner.class)
 public class CachesProviderLazyAreaTest {
-
-    Toaster mToaster;
     CachesProviderStub mArea;
 
     @Before
     public void setUp() {
-        mToaster = PowerMock.createMock(Toaster.class);
         mArea = new CachesProviderStub();
     }
     
@@ -28,7 +24,7 @@ public class CachesProviderLazyAreaTest {
     public void testHasChanged() {
         mArea.setChanged(false);
         
-        CachesProviderLazyArea lazyArea = new CachesProviderLazyArea(mArea, mToaster, 0);
+        CachesProviderLazyArea lazyArea = new CachesProviderLazyArea(mArea, 0);
         assertTrue(lazyArea.hasChanged());
         lazyArea.resetChanged();
         assertFalse(lazyArea.hasChanged());
@@ -44,7 +40,7 @@ public class CachesProviderLazyAreaTest {
             mArea.addCache(mockGeocache(i, 0));
         PowerMock.replayAll();
         
-        CachesProviderLazyArea lazyArea = new CachesProviderLazyArea(mArea, mToaster, 0);
+        CachesProviderLazyArea lazyArea = new CachesProviderLazyArea(mArea, 0);
         lazyArea.setBounds(0, -1, 3.5, 1);
         assertEquals(4, lazyArea.getCount());
         assertEquals(4, lazyArea.getCaches().size());
@@ -52,7 +48,7 @@ public class CachesProviderLazyAreaTest {
 
     @Test
     public void testSmallerArea() {
-        CachesProviderLazyArea lazyArea = new CachesProviderLazyArea(mArea, mToaster, 0);
+        CachesProviderLazyArea lazyArea = new CachesProviderLazyArea(mArea, 0);
         lazyArea.setBounds(0, 0, 5, 5);
         lazyArea.getCaches();
         assertTrue(lazyArea.hasChanged());
@@ -72,7 +68,7 @@ public class CachesProviderLazyAreaTest {
         mArea.addCache(mockGeocache(1, 1));
         PowerMock.replayAll();
 
-        CachesProviderLazyArea lazyArea = new CachesProviderLazyArea(mArea, mToaster, 0);
+        CachesProviderLazyArea lazyArea = new CachesProviderLazyArea(mArea, 0);
         lazyArea.setBounds(0, 0, 5, 5);
         assertEquals(1, lazyArea.getCount());
         lazyArea.resetChanged();

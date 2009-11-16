@@ -1,16 +1,14 @@
 package com.google.code.geobeagle;
 
-import android.content.SharedPreferences;
+public interface GeoFixProvider extends IPausable {
 
-public interface GeoFixProvider {
+    //From IPausableAndResumable:
+    public void onResume();
+    public void onPause();
 
     public GeoFix getLocation();
 
     public void addObserver(Refresher refresher);
-
-    public void onResume(SharedPreferences sharedPreferences);
-
-    public void onPause();
 
     //TODO: Rename to "areUpdatesEnabled" or something
     public boolean isProviderEnabled();

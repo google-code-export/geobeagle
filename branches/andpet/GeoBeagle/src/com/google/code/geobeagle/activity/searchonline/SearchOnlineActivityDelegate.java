@@ -1,12 +1,11 @@
 
 package com.google.code.geobeagle.activity.searchonline;
 
-import com.google.code.geobeagle.GeoFixProvider;
+import com.google.code.geobeagle.IPausable;
 import com.google.code.geobeagle.activity.ActivitySaver;
 import com.google.code.geobeagle.activity.ActivityType;
 import com.google.code.geobeagle.activity.cachelist.presenter.DistanceFormatterManager;
 
-import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -15,20 +14,17 @@ public class SearchOnlineActivityDelegate {
 
     private final ActivitySaver mActivitySaver;
     private final DistanceFormatterManager mDistanceFormatterManager;
-    private final GeoFixProvider mGeoFixProvider;
+    private final IPausable mPausable;
     private final WebView mWebView;
-    private final SharedPreferences mSharedPreferences;
 
     public SearchOnlineActivityDelegate(WebView webView,
-            GeoFixProvider geoFixProvider,
+            IPausable pausable,
             DistanceFormatterManager distanceFormatterManager, 
-            ActivitySaver activitySaver,
-            SharedPreferences sharedPreferences) {
-        mGeoFixProvider = geoFixProvider;
+            ActivitySaver activitySaver) {
+        mPausable = pausable;
         mWebView = webView;
         mDistanceFormatterManager = distanceFormatterManager;
         mActivitySaver = activitySaver;
-        mSharedPreferences = sharedPreferences;
     }
 
     public void configureWebView(JsInterface jsInterface) {
@@ -43,12 +39,12 @@ public class SearchOnlineActivityDelegate {
     }
 
     public void onPause() {
-        mGeoFixProvider.onPause();
+        mPausable.onPause();
         mActivitySaver.save(ActivityType.SEARCH_ONLINE);
     }
 
     public void onResume() {
-        mGeoFixProvider.onResume(mSharedPreferences);
+        mPausable.onResume();
         mDistanceFormatterManager.setFormatter();
     }
 }

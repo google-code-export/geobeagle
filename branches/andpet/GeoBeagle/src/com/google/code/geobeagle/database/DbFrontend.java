@@ -21,9 +21,12 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
+import com.google.code.geobeagle.Clock;
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.GeocacheFactory;
 import com.google.code.geobeagle.GeocacheList;
+import com.google.code.geobeagle.GeocacheListLazy;
+import com.google.code.geobeagle.GeocacheListPrecomputed;
 import com.google.code.geobeagle.database.DatabaseDI;
 import com.google.code.geobeagle.database.DatabaseDI.GeoBeagleSqliteOpenHelper;
 
@@ -33,13 +36,16 @@ import com.google.code.geobeagle.database.DatabaseDI.GeoBeagleSqliteOpenHelper;
  * involving the clients of this class.
  */
 public class DbFrontend {
-    CacheReader mCacheReader;
-    Context mContext;
-    GeoBeagleSqliteOpenHelper open;
-    boolean mIsDatabaseOpen;
-    CacheWriter mCacheWriter;
-    ISQLiteDatabase mDatabase;
-    final GeocacheFactory mGeocacheFactory;
+    private CacheReader mCacheReader;
+    private Context mContext;
+    private GeoBeagleSqliteOpenHelper open;
+    private boolean mIsDatabaseOpen;
+    private CacheWriter mCacheWriter;
+    private ISQLiteDatabase mDatabase;
+    private final GeocacheFactory mGeocacheFactory;
+    private final Clock mClock = new Clock();
+    /** -1 means not initialized */
+    private int mTotalCacheCount = -1;
     
     public DbFrontend(Context context, GeocacheFactory geocacheFactory) {
         mContext = context;
@@ -70,12 +76,22 @@ public class DbFrontend {
         mCacheWriter = null;
         mDatabase = null;
     }
-    
-    /** If 'where' is null, returns all caches */
-    public GeocacheList loadCaches(String where) {
+
+    public GeocacheList loadCachesPrecomputed(String where) {
+        return loadCachesPrecomputed(where, -1);
+    }
+
+    /** If 'where' is null, returns all caches 
+     * @param maxResults if <= 0, means no limit */
+    public GeocacheList loadCachesPrecomputed(String where, int maxResults) {
         openDatabase();
 
-        CacheReaderCursor cursor = mCacheReader.open(where, null);
+        String limit = null;
+        if (maxResults > 0) {
+            limit = "0, " + maxResults;
+        }
+        long start = mClock.getCurrentTime();
+        CacheReaderCursor cursor = mCacheReader.open(where, limit);
         ArrayList<Geocache> geocaches = new ArrayList<Geocache>();
         if (cursor != null) {
             do {
@@ -83,11 +99,55 @@ public class DbFrontend {
             } while (cursor.moveToNext());
             cursor.close();
         }
-        return new GeocacheList(geocaches);
+        Log.d("GeoBeagle", "DbFrontend.loadCachesPrecomputed took " + (mClock.getCurrentTime()-start) 
+                + " ms (loaded " + geocaches.size() + " caches)");
+        return new GeocacheListPrecomputed(geocaches);
     }
 
+    /** If 'where' is null, returns all caches */
+    public GeocacheList loadCaches(String where) {
+        return loadCaches(where, -1);
+    }
+
+    /** If 'where' is null, returns all caches.
+     * Loads the caches when first used, not from this method.
+     * @param maxResults if <= 0, means no limit */
+    public GeocacheList loadCaches(String where, int maxResults) {
+        openDatabase();
+
+        String limit = null;
+        if (maxResults > 0) {
+            limit = "0, " + maxResults;
+        }
+        long start = mClock.getCurrentTime();
+        final String fields[] = { "Id" };
+        Cursor cursor = mDatabase.query(Database.TBL_CACHES, fields,
+                where, null, null, null, limit);
+
+        if (!cursor.moveToFirst()) {
+            cursor.close();
+            return new GeocacheListPrecomputed();
+        }
+
+        ArrayList<Object> idList = new ArrayList<Object>();
+        if (cursor != null) {
+            do {
+                idList.add(cursor.getString(0));
+            } while (cursor.moveToNext());
+            cursor.close();
+        }
+        Log.d("GeoBeagle", "DbFrontend.loadCachesLazy took " + (mClock.getCurrentTime()-start) 
+                + " ms (loaded " + idList.size() + " caches)");
+        return new GeocacheListLazy(this, idList);
+    }
+    
     /** @return null if the cache id is not in the database */
     public Geocache loadCacheFromId(String id) {
+        Geocache loadedGeocache = mGeocacheFactory.getFromId(id);
+        if (loadedGeocache != null) {
+            return loadedGeocache;
+        }
+        
         openDatabase();
         CacheReaderCursor cursor = mCacheReader.open("Id='"+id+"'", null);
         if (cursor == null)
@@ -105,28 +165,39 @@ public class DbFrontend {
         return mCacheWriter;
     }
 
-    /** If 'where' is null, returns the total number of caches */
-    public int count(String where) {
+    private int countAll() {
+        if (mTotalCacheCount != -1)
+            return mTotalCacheCount;
+        
         openDatabase();
         
+        long start = mClock.getCurrentTime();
         Cursor countCursor;
-        if (where == null)
             countCursor = mDatabase.rawQuery("SELECT COUNT(*) FROM " + Database.TBL_CACHES, null);
-        else
-            countCursor = mDatabase.rawQuery("SELECT COUNT(*) FROM " + Database.TBL_CACHES
-                    + " WHERE " + where, null);
+        countCursor.moveToFirst();
+        mTotalCacheCount = countCursor.getInt(0);
+        countCursor.close();
+        Log.d("GeoBeagle", "DbFrontend.countAll took " + (mClock.getCurrentTime()-start) + " ms (" 
+                + mTotalCacheCount + " caches)");
+        return mTotalCacheCount;
+    }
+    
+    /** If 'where' is null, returns the total number of caches */
+    public int count(String where) {
+        if (where == null)
+            return countAll();
+
+        openDatabase();
+        long start = mClock.getCurrentTime();
+        
+        Cursor countCursor;
+        countCursor = mDatabase.rawQuery("SELECT COUNT(*) FROM " + Database.TBL_CACHES
+                + " WHERE " + where, null);
         countCursor.moveToFirst();
         int count = countCursor.getInt(0);
         countCursor.close();
-        //Log.d("GeoBeagle", "DbFrontEnd.count: " + count);
+        Log.d("GeoBeagle", "DbFrontend.count took " + (mClock.getCurrentTime()-start) + " ms (" 
+                + count + " caches)");
         return count;
     }
-
-    /*
-     * public void onPause() { closeDatabase(); }
-     */
-
-    /*
-     * public void onResume() { //Lazy evaluation - open database when needed }
-     */
 }

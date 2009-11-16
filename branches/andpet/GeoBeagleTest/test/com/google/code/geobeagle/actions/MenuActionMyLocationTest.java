@@ -42,7 +42,7 @@ public class MenuActionMyLocationTest {
                 geocache);
 
         PowerMock.replayAll();
-        new MenuActionMyLocation(null, null, geocacheFactory, geoFixProvider, null, null, null).act();
+        new MenuActionMyLocation(null, geocacheFactory, geoFixProvider, null, null, null).act();
         PowerMock.verifyAll();
     }
 

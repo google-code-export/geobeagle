@@ -16,21 +16,26 @@ package com.google.code.geobeagle;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.hardware.SensorManager;
 import android.location.LocationManager;
+import android.preference.PreferenceManager;
 
 public class LocationControlDi {
     public static GeoFixProvider create(Activity activity) {
         if (false) {   //Set to true to use fake locations
-            //return new GeoFixProviderFake(GeoFixProviderFake.TOKYO);
-            return new GeoFixProviderFake(GeoFixProviderFake.YOKOHAMA);
+            return new GeoFixProviderFake(GeoFixProviderFake.TOKYO);
+            //return new GeoFixProviderFake(GeoFixProviderFake.YOKOHAMA);
         } else {
             final LocationManager locationManager = (LocationManager)activity
             .getSystemService(Context.LOCATION_SERVICE);
             final SensorManager sensorManager = (SensorManager)activity
             .getSystemService(Context.SENSOR_SERVICE);
+            final SharedPreferences sharedPreferences = PreferenceManager
+            .getDefaultSharedPreferences(activity);
 
-            return new GeoFixProviderLive(locationManager, sensorManager);
+            return new GeoFixProviderLive(locationManager, sensorManager,
+                    sharedPreferences);
         }
     }
 }

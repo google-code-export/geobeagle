@@ -2,7 +2,7 @@ package com.google.code.geobeagle.database;
 
 import com.google.code.geobeagle.GeocacheList;
 
-
+//TODO: Remove this class and replace by a mechanism to change CachesProvider in CacheListAdapter
 public class CachesProviderToggler implements ICachesProviderCenter {
     private ICachesProviderCenter mCachesProviderCenter;
     private ICachesProvider mCachesProviderAll;

@@ -6,6 +6,7 @@ import static org.junit.Assert.*;
 
 import com.google.code.geobeagle.CacheFilter;
 import com.google.code.geobeagle.GeocacheList;
+import com.google.code.geobeagle.GeocacheListPrecomputed;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -59,7 +60,7 @@ public class CachesProviderDbTest {
     
     @Test
     public void testExtraConditionGetNewCaches() {
-        GeocacheList list1 = new GeocacheList();
+        GeocacheList list1 = new GeocacheListPrecomputed();
         expect(mDbFrontend.loadCaches(null)).andReturn(list1);
         expect(mDbFrontend.loadCaches("CacheType = 1")).andReturn(list1);
         expect(mCacheFilter.getSqlWhereClause()).andReturn(null);

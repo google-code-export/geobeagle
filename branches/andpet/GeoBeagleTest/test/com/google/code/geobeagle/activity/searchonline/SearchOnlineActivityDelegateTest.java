@@ -44,7 +44,7 @@ public class SearchOnlineActivityDelegateTest {
         PowerMock.replayAll();
         new SearchOnlineActivityDelegate(null,
                 geoFixProvider,
-                distanceFormatterManager, null, null).onResume();
+                distanceFormatterManager, null).onResume();
         PowerMock.verifyAll();
     }
 
@@ -64,7 +64,7 @@ public class SearchOnlineActivityDelegateTest {
         webView.addJavascriptInterface(jsInterface, "gb");
 
         PowerMock.replayAll();
-        new SearchOnlineActivityDelegate(webView, null, null, null, null)
+        new SearchOnlineActivityDelegate(webView, null, null, null)
                 .configureWebView(jsInterface);
         PowerMock.verifyAll();
 
@@ -81,8 +81,7 @@ public class SearchOnlineActivityDelegateTest {
 
         PowerMock.replayAll();
         new SearchOnlineActivityDelegate(null,
-                geoFixProvider, null,
-                activitySaver, null).onPause();
+                geoFixProvider, null, activitySaver).onPause();
         PowerMock.verifyAll();
     }
 }

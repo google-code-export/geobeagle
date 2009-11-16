@@ -2,6 +2,7 @@ package com.google.code.geobeagle.database;
 
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.GeocacheList;
+import com.google.code.geobeagle.GeocacheListPrecomputed;
 import com.google.code.geobeagle.activity.main.GeoUtils;
 import com.google.code.geobeagle.database.DistanceAndBearing.IDistanceAndBearingProvider;
 
@@ -71,7 +72,7 @@ IDistanceAndBearingProvider {
         ArrayList<Geocache> sortedList = new ArrayList<Geocache>(unsortedList);
 
         Collections.sort(sortedList, mDistanceComparator);
-        mSortedList = new GeocacheList(sortedList);
+        mSortedList = new GeocacheListPrecomputed(sortedList);
     }
 
     @Override
@@ -107,6 +108,8 @@ IDistanceAndBearingProvider {
         //TODO: Not good enough to compare doubles with '=='?
         if (isInitialized && latitude == mLatitude && longitude == mLongitude)
             return;
+        //This only sets what position the caches are sorted against,
+        //not which caches are selected for sorting!
         mLatitude = latitude;
         mLongitude = longitude;
         mHasChanged = true;

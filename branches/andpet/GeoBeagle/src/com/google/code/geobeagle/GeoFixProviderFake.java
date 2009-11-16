@@ -1,6 +1,5 @@
 package com.google.code.geobeagle;
 
-import android.content.SharedPreferences;
 import android.os.Handler;
 
 import java.util.ArrayList;
@@ -162,7 +161,7 @@ public class GeoFixProviderFake implements GeoFixProvider {
     }
 
     @Override
-    public void onResume(SharedPreferences sharedPreferences) {
+    public void onResume() {
         mUpdatesEnabled = true;
         mFixTimer = new FixTimer();
         mFixTimer.start();

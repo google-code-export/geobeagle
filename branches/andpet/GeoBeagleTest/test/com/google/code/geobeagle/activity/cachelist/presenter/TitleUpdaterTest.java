@@ -51,7 +51,7 @@ public class TitleUpdaterTest {
         listActivity.setTitle("new title");
 
         PowerMock.replayAll();
-        new TitleUpdater(listActivity, cachesProviderToggler, null, null).refresh();
+        new TitleUpdater(listActivity, cachesProviderToggler, null).refresh();
         PowerMock.verifyAll();
 
     }
@@ -60,11 +60,9 @@ public class TitleUpdaterTest {
     public void testTitleUpdaterEmpty() {
         ListActivity listActivity = PowerMock.createMock(ListActivity.class);
         //FilterNearestCaches filterNearestCaches = PowerMock.createMock(FilterNearestCaches.class);
-        CacheListDelegateDI.Timing timing = PowerMock.createMock(CacheListDelegateDI.Timing.class);
         TextView textView = PowerMock.createMock(TextView.class);
         CachesProviderToggler cachesProviderToggler = PowerMock.createMock(CachesProviderToggler.class);
 
-        timing.lap(EasyMock.isA(String.class));
         EasyMock.expectLastCall().anyTimes();
 
         //EasyMock.expect(filterNearestCaches.getTitleText()).andReturn(R.string.cache_list_title);
@@ -76,7 +74,7 @@ public class TitleUpdaterTest {
         textView.setText(R.string.no_nearby_caches);
 
         PowerMock.replayAll();
-        new TitleUpdater(listActivity, cachesProviderToggler, timing, null).refresh();
+        new TitleUpdater(listActivity, cachesProviderToggler, null).refresh();
         PowerMock.verifyAll();
     }
 }

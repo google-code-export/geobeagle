@@ -19,6 +19,7 @@ import static org.junit.Assert.*;
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.Projection;
 import com.google.code.geobeagle.GeocacheList;
+import com.google.code.geobeagle.GeocacheListPrecomputed;
 import com.google.code.geobeagle.database.CachesProviderLazyArea;
 
 import org.easymock.EasyMock;
@@ -58,7 +59,7 @@ public class CachePinsOverlayFactoryTest {
         Projection projection = PowerMock.createMock(Projection.class);
         GeoPoint newTopLeft = PowerMock.createMock(GeoPoint.class);
         GeoPoint newBottomRight = PowerMock.createMock(GeoPoint.class);
-        GeocacheList list = new GeocacheList();
+        GeocacheList list = new GeocacheListPrecomputed();
 
         EasyMock.expect(geoMapView.getProjection()).andReturn(projection);
         EasyMock.expect(projection.fromPixels(0, 0)).andReturn(newTopLeft);
@@ -73,7 +74,7 @@ public class CachePinsOverlayFactoryTest {
 
         PowerMock.replayAll();
         final CachePinsOverlayFactory cachePinsOverlayFactory = new CachePinsOverlayFactory(
-                geoMapView, context, defaultMarker, cacheItemFactory, null, lazyArea);
+                geoMapView, context, defaultMarker, cacheItemFactory, null, lazyArea, null);
         assertEquals(cachePinsOverlay, cachePinsOverlayFactory.getCachePinsOverlay());
         PowerMock.verifyAll();
     }
@@ -96,7 +97,7 @@ public class CachePinsOverlayFactoryTest {
 
         PowerMock.replayAll();
         final CachePinsOverlayFactory cachePinsOverlayFactory = new CachePinsOverlayFactory(
-                geoMapView, null, null, null, cachePinsOverlay, lazyArea);
+                geoMapView, null, null, null, cachePinsOverlay, lazyArea, null);
         assertEquals(cachePinsOverlay, cachePinsOverlayFactory.getCachePinsOverlay());
         PowerMock.verifyAll();
     }

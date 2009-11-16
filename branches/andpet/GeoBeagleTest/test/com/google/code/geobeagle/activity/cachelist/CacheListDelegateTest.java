@@ -167,7 +167,7 @@ public class CacheListDelegateTest {
         geocacheListController.onListItemClick(listView, view, 28, 42);
 
         PowerMock.replayAll();
-        new CacheListDelegate(null, null, geocacheListController, null, null, null, view, null, null, null, null, null, null, null)
+        new CacheListDelegate(null, null, geocacheListController, null, null, null, null, null, null, null, null, null, null, null)
                 .onListItemClick(listView, view, 28, 42);
         PowerMock.verifyAll();
     }

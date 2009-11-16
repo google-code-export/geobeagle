@@ -2,6 +2,7 @@ package com.google.code.geobeagle.activity.prox;
 
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.GeocacheList;
+import com.google.code.geobeagle.GeocacheListPrecomputed;
 import com.google.code.geobeagle.activity.main.GeoUtils;
 import com.google.code.geobeagle.database.CachesProviderCount;
 import android.graphics.Canvas;
@@ -212,7 +213,7 @@ public class ProximityPainter {
         }
 
         if (mSelectedGeocache != null && !caches.contains(mSelectedGeocache)) {
-            caches = new GeocacheList(caches, mSelectedGeocache);
+            caches = new GeocacheListPrecomputed(caches, mSelectedGeocache);
         }
 
         double maxDistanceM = 0;

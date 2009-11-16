@@ -12,9 +12,7 @@ import com.google.code.geobeagle.database.CachesProviderCount;
 import com.google.code.geobeagle.database.DbFrontend;
 
 import android.app.Activity;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.SurfaceHolder;
 
@@ -78,9 +76,7 @@ public class ProximityActivity extends Activity implements SurfaceHolder.Callbac
         Geocache geocache = getIntent().<Geocache> getParcelableExtra("geocache");
         mProximityPainter.setSelectedGeocache(geocache);
                 
-        final SharedPreferences sharedPreferences = PreferenceManager
-        .getDefaultSharedPreferences(this);
-        mGeoFixProvider.onResume(sharedPreferences);
+        mGeoFixProvider.onResume();
         
         GeoFix location = mGeoFixProvider.getLocation();
         mProximityPainter.setUserLocation(location.getLatitude(), location.getLongitude(), location.getAccuracy());

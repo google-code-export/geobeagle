@@ -34,6 +34,8 @@ public class CacheWriter {
     }
 
     public void clearCaches(String source) {
+        //TODO: Remove cache from the list in GeocacheFactory
+        //TODO: Flush mTotalCacheCount in DbFrontend
         mSqlite.execSQL(Database.SQL_CLEAR_CACHES, source);
     }
 
@@ -48,12 +50,15 @@ public class CacheWriter {
     }
 
     public void deleteCache(CharSequence id) {
+        //TODO: Remove cache from the list in GeocacheFactory
+        //TODO: Flush mTotalCacheCount in DbFrontend
         mSqlite.execSQL(Database.SQL_DELETE_CACHE, id);
     }
 
     public void insertAndUpdateCache(CharSequence id, CharSequence name, double latitude,
             double longitude, Source sourceType, String sourceName, CacheType cacheType,
             int difficulty, int terrain, int container) {
+        //TODO: Remove cache from the list in GeocacheFactory
         mSqlite.execSQL(Database.SQL_REPLACE_CACHE, id, name, new Double(latitude), new Double(
                 longitude), mDbToGeocacheAdapter.sourceTypeToSourceName(sourceType, sourceName),
                 cacheType.toInt(), difficulty, terrain, container);

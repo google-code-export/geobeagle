@@ -14,6 +14,8 @@
 
 package com.google.code.geobeagle.database;
 
+import android.util.Log;
+
 public class OpenHelperDelegate {
     public void onCreate(ISQLiteDatabase db) {
         db.execSQL(Database.SQL_CREATE_CACHE_TABLE_V11);
@@ -21,9 +23,10 @@ public class OpenHelperDelegate {
         db.execSQL(Database.SQL_CREATE_IDX_LATITUDE);
         db.execSQL(Database.SQL_CREATE_IDX_LONGITUDE);
         db.execSQL(Database.SQL_CREATE_IDX_SOURCE);
-    }
+        }
 
     public void onUpgrade(ISQLiteDatabase db, int oldVersion) {
+        Log.i("GeoBeagle", "database onUpgrade oldVersion="+ oldVersion);
         if (oldVersion < 9) {
             db.execSQL(Database.SQL_DROP_CACHE_TABLE);
             db.execSQL(Database.SQL_CREATE_CACHE_TABLE_V08);

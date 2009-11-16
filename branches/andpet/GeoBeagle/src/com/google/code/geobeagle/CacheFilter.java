@@ -36,9 +36,12 @@ public class CacheFilter {
             new FilterOption("Waypoints", "Waypoints", "(CacheType >= 20 AND CacheType <= 25)", R.id.CheckBoxWaypoints),
             };
     
-    //This SQL is for the false condition!
-    private FilterOption mMicroOption = 
-        new FilterOption("Include micro's", "Micro", "Container != 1", R.id.CheckBoxMicro);
+    //These SQL are to be used when deselected!
+    private final FilterOption[] mSizeOptions = { 
+        new FilterOption("Include micro's", "Micro", "Container != 1", R.id.CheckBoxMicro),
+        new FilterOption("Include small", "Small", "Container != 2", R.id.CheckBoxSmall),
+        new FilterOption("Include unknown sizes", "UnknownSize", "Container != 0", R.id.CheckBoxUnknownSize),
+    };
     private String mFilterString;
     private Activity mActivity;
 
@@ -59,7 +62,9 @@ public class CacheFilter {
         for (FilterOption option : mOptions) {
             option.Selected = prefs.getBoolean(option.PrefsName, true);
         }
-        mMicroOption.Selected = prefs.getBoolean(mMicroOption.PrefsName, true);
+        for (FilterOption option : mSizeOptions) {
+            option.Selected = prefs.getBoolean(option.PrefsName, true);
+        }
         mFilterString = prefs.getString("FilterString", null);
     }
 
@@ -69,7 +74,9 @@ public class CacheFilter {
         for (FilterOption option : mOptions) {
             editor.putBoolean(option.PrefsName, option.Selected);
         }
-        editor.putBoolean(mMicroOption.PrefsName, mMicroOption.Selected);
+        for (FilterOption option : mSizeOptions) {
+            editor.putBoolean(option.PrefsName, option.Selected);
+        }
         editor.putString("FilterString", mFilterString);
         editor.commit();
     }
@@ -118,13 +125,15 @@ public class CacheFilter {
             }
         }
 
-        if (!mMicroOption.Selected) {
-            if (isFirst) {
-                isFirst = false;
-            } else {
-                result.append(" AND ");
+        for (FilterOption option : mSizeOptions) {
+            if (!option.Selected) {
+                if (isFirst) {
+                    isFirst = false;
+                } else {
+                    result.append(" AND ");
+                }
+                result.append(option.SqlClause);
             }
-            result.append(mMicroOption.SqlClause);
         }
             
         if (result.length() == 0)
@@ -140,7 +149,9 @@ public class CacheFilter {
         for (FilterOption option : mOptions) {
             option.Selected = provider.getBoolean(option.ViewResource);
         }
-        mMicroOption.Selected = provider.getBoolean(mMicroOption.ViewResource);
+        for (FilterOption option : mSizeOptions) {
+            option.Selected = provider.getBoolean(option.ViewResource);
+        }
         mFilterString = provider.getString(R.id.FilterString);
     }
 
@@ -149,7 +160,9 @@ public class CacheFilter {
         for (FilterOption option : mOptions) {
             provider.setBoolean(option.ViewResource, option.Selected);
         }
-        provider.setBoolean(mMicroOption.ViewResource, mMicroOption.Selected);
+        for (FilterOption option : mSizeOptions) {
+            provider.setBoolean(option.ViewResource, option.Selected);
+        }
         String filter = mFilterString == null ? "" : mFilterString;
         provider.setString(R.id.FilterString, filter);
     }

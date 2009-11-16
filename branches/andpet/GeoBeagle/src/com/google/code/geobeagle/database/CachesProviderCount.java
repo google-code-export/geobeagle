@@ -1,11 +1,12 @@
 package com.google.code.geobeagle.database;
 
+import com.google.code.geobeagle.Clock;
 import com.google.code.geobeagle.GeocacheList;
 
 import android.util.Log;
 
 public class CachesProviderCount implements ICachesProviderCenter {
-    private static final double MAX_RADIUS = 180;
+    private static final double MAX_RADIUS = 1; //180;
     /** Maximum number of times a search is allowed to call the underlying 
      * CachesProvider before yielding a best-effort result */
     public static final int MAX_ITERATIONS = 10;
@@ -40,16 +41,6 @@ public class CachesProviderCount implements ICachesProviderCenter {
         mCachesProviderRadius.setCenter(latitude, longitude);
     }
     
-    /** Returns the radius used to get the current set of caches*/
-    public double getRadius() {
-        if (!mIsCountValid || mCachesProviderRadius.hasChanged()) {
-            findRadius(mRadius);
-            mIsCountValid = true;
-            mCachesProviderRadius.resetChanged();
-        }
-        return mRadius;
-    }
-    
     @Override
     public GeocacheList getCaches() {
         if (mCachesProviderRadius.hasChanged()) {
@@ -61,7 +52,11 @@ public class CachesProviderCount implements ICachesProviderCenter {
             return mCaches;
 
         if (!mIsCountValid) {
+            Clock clock = new Clock();
+            long start = clock.getCurrentTime();
             findRadius(mRadius);
+            Log.d("GeoBeagle", "CachesProviderCount calculated in " +
+                    (clock.getCurrentTime()-start) + " ms");
             mIsCountValid = true;
         }
         

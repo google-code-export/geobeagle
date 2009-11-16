@@ -2,12 +2,13 @@ package com.google.code.geobeagle.database;
 
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.GeocacheList;
+import com.google.code.geobeagle.GeocacheListPrecomputed;
 
 import java.util.ArrayList;
 
 public class CachesProviderStub implements ICachesProviderArea {
 
-    private GeocacheList mGeocaches = new GeocacheList();
+    private GeocacheList mGeocaches = GeocacheListPrecomputed.EMPTY;
     private double mLatLow = 0.0;
     private double mLatHigh = 0.0;
     private double mLonLow = 0.0;
@@ -21,7 +22,8 @@ public class CachesProviderStub implements ICachesProviderArea {
         mGeocaches.add(geocache);
     }
 
-    private GeocacheList fetchCaches() {
+    /** maxCount <= 0 means no limit */
+    private GeocacheList fetchCaches(int maxCount) {
         if (!mIsInitialized)
             return mGeocaches;
         
@@ -32,19 +34,26 @@ public class CachesProviderStub implements ICachesProviderArea {
                 && geocache.getLongitude() >= mLonLow
                 && geocache.getLongitude() <= mLonHigh) {
                 selection.add(geocache);
+                if (selection.size() == maxCount)
+                    break;
             }
         }
-        return new GeocacheList(selection);
+        return new GeocacheListPrecomputed(selection);
     }
     
     @Override
     public GeocacheList getCaches() {
-        return fetchCaches();
+        return fetchCaches(-1);
     }
 
     @Override
+    public GeocacheList getCaches(int maxCount) {
+        return fetchCaches(maxCount);
+    }
+    
+    @Override
     public int getCount() {
-        return fetchCaches().size();
+        return fetchCaches(-1).size();
     }
 
     public int getSetBoundsCalls() {

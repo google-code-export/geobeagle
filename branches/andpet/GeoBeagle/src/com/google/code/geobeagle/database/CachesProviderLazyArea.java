@@ -15,7 +15,7 @@
 package com.google.code.geobeagle.database;
 
 import com.google.code.geobeagle.GeocacheList;
-import com.google.code.geobeagle.xmlimport.GpxImporterDI.Toaster;
+import com.google.code.geobeagle.GeocacheListPrecomputed;
 
 /** Strategy to only invalidate/reload the list of caches when the bounds are
  * changed to outside the previous bounds. Also returns an empty list if the count is 
@@ -30,31 +30,30 @@ public class CachesProviderLazyArea implements ICachesProviderArea {
     private double mExpandRatio;
     /** If the user of this instance thinks the list has changed */
     private boolean mHasChanged = true;
+    /** True if the last getCaches() was capped because too high cache count */
     private boolean mTooManyCaches = false;
     /** Maximum number of caches to show */
-    public static final int MAX_COUNT = 1500;
-    private final Toaster mToaster;
-    private static final GeocacheList NULL_LIST = new GeocacheList();
-    
+    public static final int MAX_COUNT = 1000;
+
     private final ICachesProviderArea mCachesProviderArea;
 
     public CachesProviderLazyArea(ICachesProviderArea cachesProviderArea,
-                Toaster toaster, double expandRatio) {
+                double expandRatio) {
         mCachesProviderArea = cachesProviderArea;
-        mToaster = toaster;
         mExpandRatio = expandRatio;
     }
 
     @Override
     public void setBounds(double latLow, double lonLow, double latHigh, double lonHigh) {
-        if (latLow < mLatLow || lonLow < mLonLow 
-            || latHigh > mLatHigh || lonHigh > mLonHigh) {
-            if (mTooManyCaches && latLow <= mLatLow && lonLow <= mLonLow 
-                    && latHigh >= mLatHigh && lonHigh >= mLonHigh) {
-                //The new bounds are strictly bigger but the old ones 
-                //already contained too many caches
-                return;
-            }
+        if (mTooManyCaches && latLow <= mLatLow && lonLow <= mLonLow 
+                && latHigh >= mLatHigh && lonHigh >= mLonHigh) {
+            //The new bounds are strictly bigger but the old ones 
+            //already contained too many caches
+            return;
+        }
+        if (mTooManyCaches 
+                || latLow < mLatLow || lonLow < mLonLow 
+                || latHigh > mLatHigh || lonHigh > mLonHigh) {
             double latExpand = (latHigh - latLow) * mExpandRatio / 2.0;
             double lonExpand = (lonHigh - lonLow) * mExpandRatio / 2.0;
             mLatLow = latLow - latExpand;
@@ -68,41 +67,28 @@ public class CachesProviderLazyArea implements ICachesProviderArea {
     
     @Override
     public GeocacheList getCaches() {
-        if (mCachesProviderArea.hasChanged()) {
-            int count = mCachesProviderArea.getCount();
-            mCachesProviderArea.resetChanged();
-            if (count > MAX_COUNT) {
-                if (!mTooManyCaches)
-                    mToaster.showToast();
-                mTooManyCaches = true;
-            } else {
-                mTooManyCaches = false;
-            }
-        }
-        if (mTooManyCaches) {
-            return NULL_LIST;
-        }
-        return mCachesProviderArea.getCaches();
+        return getCaches(MAX_COUNT);
     }
 
     @Override
-    public int getCount() {
-        if (mCachesProviderArea.hasChanged()) {
-            int count = mCachesProviderArea.getCount();
-            mCachesProviderArea.resetChanged();
-            if (count > MAX_COUNT) {
-                if (!mTooManyCaches)
-                    mToaster.showToast();
-                mTooManyCaches = true;
-            } else {
-                mTooManyCaches = false;
-                return count;
-            }
+    public GeocacheList getCaches(int maxCount) {
+        //Reading one extra cache allows us to learn whether there were too many
+        GeocacheList caches = mCachesProviderArea.getCaches(maxCount + 1);
+        mCachesProviderArea.resetChanged();
+        mTooManyCaches = (caches.size() > maxCount);
+        if (mTooManyCaches) {
+            return GeocacheListPrecomputed.EMPTY;
         }
+        return caches;
+    }
 
-        if (mTooManyCaches)
-            return 0;
-        return mCachesProviderArea.getCount();
+    public boolean tooManyCaches() {
+        return mTooManyCaches;
+    }
+    
+    public int getCount() {
+        //Not perfectly efficient but it's not used anyway
+        return getCaches().size();
     }
 
     @Override

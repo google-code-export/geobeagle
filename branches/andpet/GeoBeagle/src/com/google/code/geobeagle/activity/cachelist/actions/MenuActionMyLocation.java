@@ -24,26 +24,23 @@ import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.GeocacheFactory.Source;
 import com.google.code.geobeagle.actions.CacheAction;
 import com.google.code.geobeagle.actions.MenuAction;
-import com.google.code.geobeagle.activity.cachelist.presenter.CacheListAdapter;
 import com.google.code.geobeagle.database.DbFrontend;
 
 import android.content.res.Resources;
 
 public class MenuActionMyLocation implements MenuAction {
     private final ErrorDisplayer mErrorDisplayer;
-    private final CacheListAdapter mListRefresher;
     private final DbFrontend mDbFrontend;
     private final Resources mResources;
     private final GeocacheFactory mGeocacheFactory;
     private final GeoFixProvider mLocationControl;
     private final CacheAction mCacheActionEdit;
 
-    public MenuActionMyLocation(CacheListAdapter cacheList, ErrorDisplayer errorDisplayer,
+    public MenuActionMyLocation(ErrorDisplayer errorDisplayer,
             GeocacheFactory geocacheFactory,
             GeoFixProvider locationControl, DbFrontend dbFrontend,
             Resources resources, CacheAction cacheActionEdit) {
         mErrorDisplayer = errorDisplayer;
-        mListRefresher = cacheList;
         mGeocacheFactory = geocacheFactory;
         mLocationControl = locationControl;
         mDbFrontend = dbFrontend;
@@ -68,6 +65,7 @@ public class MenuActionMyLocation implements MenuAction {
         }
         newCache.saveToDb(mDbFrontend);
         mCacheActionEdit.act(newCache);
+        //Since the Edit activity will refresh the list, we don't need to do it
         //mListRefresher.forceRefresh();
     }
     

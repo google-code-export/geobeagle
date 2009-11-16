@@ -18,6 +18,7 @@ import com.google.code.geobeagle.CacheType;
 import com.google.code.geobeagle.GeoFixProvider;
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.GeocacheFactory;
+import com.google.code.geobeagle.IPausable;
 import com.google.code.geobeagle.Refresher;
 import com.google.code.geobeagle.GeocacheFactory.Source;
 import com.google.code.geobeagle.actions.MenuActions;
@@ -98,7 +99,7 @@ public class GeoBeagleDelegate {
     private final Resources mResources;
     private final SharedPreferences mSharedPreferences;
     private final WebPageAndDetailsButtonEnabler mWebPageButtonEnabler;
-    private final GeoFixProvider mGeoFixProvider;
+    private final IPausable mGeoFixProvider;
 
     public GeoBeagleDelegate(ActivitySaver activitySaver, FieldNoteSender fieldNoteSender, GeoBeagle parent,
             GeocacheFactory geocacheFactory, GeocacheViewer geocacheViewer,
@@ -107,7 +108,7 @@ public class GeoBeagleDelegate {
             DbFrontend dbFrontend, RadarView radarView, Resources resources,
             SharedPreferences sharedPreferences,
             WebPageAndDetailsButtonEnabler webPageButtonEnabler,
-            GeoFixProvider geoFixProvider) {
+            IPausable geoFixProvider) {
         mParent = parent;
         mActivitySaver = activitySaver;
         mFieldNoteSender = fieldNoteSender;
@@ -162,14 +163,11 @@ public class GeoBeagleDelegate {
 
     public void onRestoreInstanceState(Bundle savedInstanceState) {
         mGeocache = mGeocacheFromParcelFactory.createFromBundle(savedInstanceState);
-        // Is this really needed???
-        // mWritableDatabase =
-        // mGeoBeagleSqliteOpenHelper.getWritableSqliteWrapper();
     }
 
     public void onResume() {
         mRadarView.handleUnknownLocation();
-        mGeoFixProvider.onResume(mSharedPreferences);
+        mGeoFixProvider.onResume();
 
         mRadarView.setUseImperial(mSharedPreferences.getBoolean("imperial", false));
         mGeocache = mIncomingIntentHandler.maybeGetGeocacheFromIntent(mParent.getIntent(),
