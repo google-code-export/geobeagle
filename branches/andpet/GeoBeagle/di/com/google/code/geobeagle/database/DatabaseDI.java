@@ -26,6 +26,7 @@ import java.util.Arrays;
 
 public class DatabaseDI {
 
+    //TODO: Remove, merge into DbFrontend
     public static class CacheReaderCursorFactory {
         private GeocacheFactory mGeocacheFactory;
         CacheReaderCursorFactory(GeocacheFactory geocacheFactory) {
@@ -89,12 +90,12 @@ public class DatabaseDI {
         }
 
         public void execSQL(String sql) {
-            Log.d("GeoBeagle", "SQL: " + sql);
+            //Log.d("GeoBeagle", "SQL: " + sql);
             mSQLiteDatabase.execSQL(sql);
         }
 
         public void execSQL(String sql, Object... bindArgs) {
-            Log.d("GeoBeagle", "SQL: " + sql + ", " + Arrays.toString(bindArgs));
+            //Log.d("GeoBeagle", "SQL: " + sql + ", " + Arrays.toString(bindArgs));
             mSQLiteDatabase.execSQL(sql, bindArgs);
         }
 
@@ -102,7 +103,7 @@ public class DatabaseDI {
                 String having, String orderBy, String limit, String... selectionArgs) {
             final Cursor query = mSQLiteDatabase.query(table, columns, selection, selectionArgs,
                     groupBy, orderBy, having, limit);
-            Log.d("GeoBeagle", "limit: " + limit + ", query: " + selection);
+            //Log.d("GeoBeagle", "limit: " + limit + ", query: " + selection);
             return query;
         }
 
