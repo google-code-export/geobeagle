@@ -68,7 +68,7 @@ public class CacheWriterTest {
     @Test
     public void testInsertAndUpdate() {
         SQLiteWrapper sqlite = createMock(SQLiteWrapper.class);
-        DbToGeocacheAdapter dbToGeocacheAdapter = createMock(DbToGeocacheAdapter.class);
+        SourceNameTranslator dbToGeocacheAdapter = createMock(SourceNameTranslator.class);
 
         sqlite.execSQL(Database.SQL_REPLACE_CACHE, "gc123", "a cache", 122.0, 37.0, "source", 0, 0,
                 0, 0);

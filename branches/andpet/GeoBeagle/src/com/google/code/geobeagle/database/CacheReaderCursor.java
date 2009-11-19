@@ -23,11 +23,11 @@ import android.database.Cursor;
 //TODO: Merge class CacheReaderCursor into DbFrontend?
 public class CacheReaderCursor {
     private final Cursor mCursor;
-    private final DbToGeocacheAdapter mDbToGeocacheAdapter;
+    private final SourceNameTranslator mDbToGeocacheAdapter;
     private final GeocacheFactory mGeocacheFactory;
 
     public CacheReaderCursor(Cursor cursor, GeocacheFactory geocacheFactory,
-            DbToGeocacheAdapter dbToGeocacheAdapter) {
+            SourceNameTranslator dbToGeocacheAdapter) {
         mCursor = cursor;
         mGeocacheFactory = geocacheFactory;
         mDbToGeocacheAdapter = dbToGeocacheAdapter;

@@ -59,7 +59,7 @@ public class CacheReaderTest {
         Cursor cursor = PowerMock.createMock(Cursor.class);
         GeocacheFactory geocacheFactory = PowerMock.createMock(GeocacheFactory.class);
         Geocache geocache = PowerMock.createMock(Geocache.class);
-        DbToGeocacheAdapter dbToGeocacheAdapter = PowerMock.createMock(DbToGeocacheAdapter.class);
+        SourceNameTranslator dbToGeocacheAdapter = PowerMock.createMock(SourceNameTranslator.class);
 
         expect(cursor.getDouble(0)).andReturn(122.0);
         expect(cursor.getDouble(1)).andReturn(37.0);

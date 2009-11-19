@@ -33,7 +33,7 @@ public class DatabaseDI {
             mGeocacheFactory = geocacheFactory;
         }
         public CacheReaderCursor create(Cursor cursor) {
-            final DbToGeocacheAdapter dbToGeocacheAdapter = new DbToGeocacheAdapter();
+            final SourceNameTranslator dbToGeocacheAdapter = new SourceNameTranslator();
             return new CacheReaderCursor(cursor, mGeocacheFactory, dbToGeocacheAdapter);
         }
     }
@@ -134,7 +134,7 @@ public class DatabaseDI {
     }
 
     public static CacheWriter createCacheWriter(ISQLiteDatabase writableDatabase) {
-        final DbToGeocacheAdapter dbToGeocacheAdapter = new DbToGeocacheAdapter();
+        final SourceNameTranslator dbToGeocacheAdapter = new SourceNameTranslator();
         return new CacheWriter(writableDatabase, dbToGeocacheAdapter);
     }
 

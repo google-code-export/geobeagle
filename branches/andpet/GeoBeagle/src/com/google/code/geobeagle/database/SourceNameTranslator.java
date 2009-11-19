@@ -16,8 +16,7 @@ package com.google.code.geobeagle.database;
 
 import com.google.code.geobeagle.GeocacheFactory.Source;
 
-//TODO: Merge class DbToGeocacheAdapter with GeocacheFactory
-public class DbToGeocacheAdapter {
+public class SourceNameTranslator {
     public Source sourceNameToSourceType(String sourceName) {
         if (sourceName.equals("intent"))
             return Source.WEB_URL;

@@ -18,7 +18,8 @@ public class CachesProviderDb implements ICachesProviderArea {
     private boolean mHasLimits = false;
     private final CacheFilter mCacheFilter;
     private String mFilter;
-    private boolean mIsFirstListLoad = true;
+    //TODO: mIsFirstListLoad currently disabled. Beneficial to use?
+    private boolean mIsFirstListLoad = false;
     /** If greater than zero, this is the max number that mCaches 
      * was allowed to contain when loaded. (This limit can change on subsequent loads) */
     private int mCachesCappedToCount = 0;

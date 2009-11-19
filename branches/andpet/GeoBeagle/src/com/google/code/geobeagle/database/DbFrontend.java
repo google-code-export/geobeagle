@@ -126,7 +126,7 @@ public class DbFrontend {
 
         if (!cursor.moveToFirst()) {
             cursor.close();
-            return new GeocacheListPrecomputed();
+            return GeocacheListPrecomputed.EMPTY;
         }
 
         ArrayList<Object> idList = new ArrayList<Object>();

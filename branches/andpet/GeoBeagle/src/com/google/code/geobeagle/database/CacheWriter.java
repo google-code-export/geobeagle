@@ -25,10 +25,10 @@ public class CacheWriter {
             Database.SQL_DELETE_OLD_CACHES, Database.SQL_DELETE_OLD_GPX,
             Database.SQL_RESET_DELETE_ME_CACHES, Database.SQL_RESET_DELETE_ME_GPX
     };
-    private final DbToGeocacheAdapter mDbToGeocacheAdapter;
+    private final SourceNameTranslator mDbToGeocacheAdapter;
     private final ISQLiteDatabase mSqlite;
 
-    CacheWriter(ISQLiteDatabase sqlite, DbToGeocacheAdapter dbToGeocacheAdapter) {
+    CacheWriter(ISQLiteDatabase sqlite, SourceNameTranslator dbToGeocacheAdapter) {
         mSqlite = sqlite;
         mDbToGeocacheAdapter = dbToGeocacheAdapter;
     }

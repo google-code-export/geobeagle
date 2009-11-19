@@ -4,7 +4,7 @@ package com.google.code.geobeagle.xmlimport;
 import static org.junit.Assert.assertEquals;
 
 import com.google.code.geobeagle.GeocacheFactory.Source;
-import com.google.code.geobeagle.database.DbToGeocacheAdapter;
+import com.google.code.geobeagle.database.SourceNameTranslator;
 
 import org.junit.Test;
 
@@ -12,7 +12,7 @@ public class DbToGeocacheAdapterTest {
 
     @Test
     public void testSourceNameToSourceType() {
-        DbToGeocacheAdapter dbToGeocacheAdapter = new DbToGeocacheAdapter();
+        SourceNameTranslator dbToGeocacheAdapter = new SourceNameTranslator();
         assertEquals(Source.WEB_URL, dbToGeocacheAdapter.sourceNameToSourceType("intent"));
         assertEquals(Source.MY_LOCATION, dbToGeocacheAdapter.sourceNameToSourceType("mylocation"));
         assertEquals(Source.GPX, dbToGeocacheAdapter.sourceNameToSourceType("foo"));
@@ -21,7 +21,7 @@ public class DbToGeocacheAdapterTest {
 
     @Test
     public void testSourceTypeToSourceName() {
-        DbToGeocacheAdapter dbToGeocacheAdapter = new DbToGeocacheAdapter();
+        SourceNameTranslator dbToGeocacheAdapter = new SourceNameTranslator();
 
         assertEquals("mylocation", dbToGeocacheAdapter.sourceTypeToSourceName(Source.MY_LOCATION,
                 "foo"));
