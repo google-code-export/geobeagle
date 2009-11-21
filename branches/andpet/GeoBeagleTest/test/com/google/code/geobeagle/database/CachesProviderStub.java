@@ -84,4 +84,8 @@ public class CachesProviderStub implements ICachesProviderArea {
     public void setChanged(boolean changed) {
         mHasChanged = changed;
     }
+
+    public int getTotalCount() {
+        return mGeocaches.size();
+    }
 }

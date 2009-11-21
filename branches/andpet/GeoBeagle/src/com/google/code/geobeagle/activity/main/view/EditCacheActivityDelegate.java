@@ -98,7 +98,7 @@ public class EditCacheActivityDelegate {
             geocache.saveToDb(mDbFrontend);
             final Intent i = new Intent();
             i.setAction(GeocacheListController.SELECT_CACHE);
-            i.putExtra("geocache", geocache);
+            i.putExtra("geocacheId", geocache.getId());
             mActivity.setResult(Activity.RESULT_OK, i);
             mActivity.finish();
         }
@@ -118,7 +118,7 @@ public class EditCacheActivityDelegate {
         
         mParent.setContentView(R.layout.cache_edit);
         final Intent intent = mParent.getIntent();
-        final Geocache geocache = intent.<Geocache> getParcelableExtra("geocache");
+        Geocache geocache = dbFrontend.loadCacheFromId(intent.getStringExtra("geocacheId"));
         final EditCache editCache = new EditCache(mGeocacheFactory, (EditText)mParent
                 .findViewById(R.id.edit_id), (EditText)mParent.findViewById(R.id.edit_name),
                 (EditText)mParent.findViewById(R.id.edit_latitude), (EditText)mParent

@@ -16,7 +16,7 @@ package com.google.code.geobeagle.xmlimport;
 
 import com.google.code.geobeagle.GeocacheFactory.Source;
 import com.google.code.geobeagle.cachedetails.CacheDetailsWriter;
-import com.google.code.geobeagle.xmlimport.CachePersisterFacadeDI.FileFactory;
+import com.google.code.geobeagle.xmlimport.FileFactory;
 import com.google.code.geobeagle.xmlimport.GpxImporterDI.MessageHandler;
 
 import android.os.PowerManager.WakeLock;

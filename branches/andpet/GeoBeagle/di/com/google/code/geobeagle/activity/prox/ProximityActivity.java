@@ -7,6 +7,7 @@ import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.GeocacheFactory;
 import com.google.code.geobeagle.LocationControlDi;
 import com.google.code.geobeagle.Refresher;
+import com.google.code.geobeagle.CacheFilter.CacheFilterFactory;
 import com.google.code.geobeagle.database.CachesProviderDb;
 import com.google.code.geobeagle.database.CachesProviderCount;
 import com.google.code.geobeagle.database.DbFrontend;
@@ -37,7 +38,7 @@ public class ProximityActivity extends Activity implements SurfaceHolder.Callbac
     ProximityPainter mProximityPainter;
     DataCollector mDataCollector;
     private AnimatorThread mAnimatorThread;
-    private boolean mStartWhenSurfaceCreated = false;  //TODO: Needed?
+    private boolean mStartWhenSurfaceCreated = false;  //TODO: Is mStartWhenSurfaceCreated needed?
     private DbFrontend mDbFrontend;
     private GeoFixProvider mGeoFixProvider;
 
@@ -47,7 +48,7 @@ public class ProximityActivity extends Activity implements SurfaceHolder.Callbac
 
         GeocacheFactory geocacheFactory = new GeocacheFactory();
         mDbFrontend = new DbFrontend(this, geocacheFactory);
-        CacheFilter cacheFilter = new CacheFilter(this);
+        CacheFilter cacheFilter = CacheFilterFactory.loadActiveFilter(this);
         CachesProviderDb cachesProviderArea = new CachesProviderDb(mDbFrontend, cacheFilter);
         //CachesProviderRadius cachesProviderRadius = new CachesProviderRadius(cachesProviderArea);
         CachesProviderCount cachesProviderCount = new CachesProviderCount(cachesProviderArea, 5, 10);
@@ -73,7 +74,8 @@ public class ProximityActivity extends Activity implements SurfaceHolder.Callbac
     protected void onResume() {
         super.onResume();
         
-        Geocache geocache = getIntent().<Geocache> getParcelableExtra("geocache");
+        String id = getIntent().getStringExtra("geocacheId");
+        Geocache geocache = mDbFrontend.loadCacheFromId(id);
         mProximityPainter.setSelectedGeocache(geocache);
                 
         mGeoFixProvider.onResume();

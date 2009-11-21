@@ -69,6 +69,9 @@
 		<activity android:name=".activity.prox.ProximityActivity"
 			android:label="GeoBeagle proximity">
 		</activity>
+		<activity android:name=".activity.filterlist.FilterListActivity"
+			android:label="GeoBeagle filters">
+		</activity>
 
 	</application>
 

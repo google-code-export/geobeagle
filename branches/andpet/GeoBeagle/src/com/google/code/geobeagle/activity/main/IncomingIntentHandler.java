@@ -26,11 +26,14 @@ import android.content.Intent;
 public class IncomingIntentHandler {
     private GeocacheFactory mGeocacheFactory;
     private GeocacheFromIntentFactory mGeocacheFromIntentFactory;
+    private final DbFrontend mDbFrontend;
 
     IncomingIntentHandler(GeocacheFactory geocacheFactory,
-            GeocacheFromIntentFactory geocacheFromIntentFactory) {
+            GeocacheFromIntentFactory geocacheFromIntentFactory,
+            DbFrontend dbFrontend) {
         mGeocacheFactory = geocacheFactory;
         mGeocacheFromIntentFactory = geocacheFromIntentFactory;
+        mDbFrontend = dbFrontend;
     }
 
     Geocache maybeGetGeocacheFromIntent(Intent intent, Geocache defaultGeocache,
@@ -42,7 +45,8 @@ public class IncomingIntentHandler {
                     return mGeocacheFromIntentFactory
                             .viewCacheFromMapsIntent(intent);
                 } else if (action.equals(GeocacheListController.SELECT_CACHE)) {
-                    Geocache geocache = intent.<Geocache> getParcelableExtra("geocache");
+                    String id = intent.getStringExtra("geocacheId");
+                    Geocache geocache = mDbFrontend.loadCacheFromId(id);
                     if (geocache == null)
                         geocache = mGeocacheFactory.create("", "", 0, 0, Source.MY_LOCATION, "",
                                 CacheType.NULL, 0, 0, 0);

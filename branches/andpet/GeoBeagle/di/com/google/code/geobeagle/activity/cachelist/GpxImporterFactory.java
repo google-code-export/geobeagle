@@ -14,12 +14,12 @@
 
 package com.google.code.geobeagle.activity.cachelist;
 
+import com.google.code.geobeagle.CacheTypeFactory;
 import com.google.code.geobeagle.ErrorDisplayer;
 import com.google.code.geobeagle.GeoFixProvider;
 import com.google.code.geobeagle.database.CacheWriter;
 import com.google.code.geobeagle.xmlimport.GpxImporter;
 import com.google.code.geobeagle.xmlimport.GpxImporterDI;
-import com.google.code.geobeagle.xmlimport.CachePersisterFacadeDI.CachePersisterFacadeFactory;
 import com.google.code.geobeagle.xmlimport.GpxImporterDI.MessageHandler;
 import com.google.code.geobeagle.xmlimport.GpxToCache.Aborter;
 import com.google.code.geobeagle.xmlimport.GpxToCacheDI.XmlPullParserWrapper;
@@ -29,29 +29,30 @@ import android.app.ListActivity;
 public class GpxImporterFactory {
 
     private final Aborter mAborter;
-    private final CachePersisterFacadeFactory mCachePersisterFacadeFactory;
     private final ErrorDisplayer mErrorDisplayer;
     private final GeoFixProvider mGeoFixProvider;
     private final ListActivity mListActivity;
     private final MessageHandler mMessageHandler;
     private final XmlPullParserWrapper mXmlPullParserWrapper;
+    private final CacheTypeFactory mCacheTypeFactory;
 
     public GpxImporterFactory(Aborter aborter,
-            CachePersisterFacadeFactory cachePersisterFacadeFactory, ErrorDisplayer errorDisplayer,
+            ErrorDisplayer errorDisplayer,
             GeoFixProvider geoFixProvider, ListActivity listActivity,
-            MessageHandler messageHandler, XmlPullParserWrapper xmlPullParserWrapper) {
+            MessageHandler messageHandler, XmlPullParserWrapper xmlPullParserWrapper,
+            CacheTypeFactory cacheTypeFactory) {
         mAborter = aborter;
-        mCachePersisterFacadeFactory = cachePersisterFacadeFactory;
         mErrorDisplayer = errorDisplayer;
         mGeoFixProvider = geoFixProvider;
         mListActivity = listActivity;
         mMessageHandler = messageHandler;
         mXmlPullParserWrapper = xmlPullParserWrapper;
+        mCacheTypeFactory = cacheTypeFactory;
     }
 
     public GpxImporter create(CacheWriter cacheWriter) {
         return GpxImporterDI.create(mListActivity, mXmlPullParserWrapper, mErrorDisplayer,
-                mGeoFixProvider, mAborter, mMessageHandler, mCachePersisterFacadeFactory,
-                cacheWriter);
+                mGeoFixProvider, mAborter, mMessageHandler,
+                cacheWriter, mCacheTypeFactory);
     }
 }

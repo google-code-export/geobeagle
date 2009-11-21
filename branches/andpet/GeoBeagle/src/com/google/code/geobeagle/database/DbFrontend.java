@@ -29,28 +29,38 @@ import com.google.code.geobeagle.GeocacheListLazy;
 import com.google.code.geobeagle.GeocacheListPrecomputed;
 import com.google.code.geobeagle.database.DatabaseDI;
 import com.google.code.geobeagle.database.DatabaseDI.GeoBeagleSqliteOpenHelper;
+import com.google.code.geobeagle.database.DatabaseDI.SQLiteWrapper;
 
 /**
- * Will develop to represent the front-end to access a database. It takes
+ * Represents the front-end to access a database. It takes
  * responsibility to open and close the actual database connection without
  * involving the clients of this class.
  */
 public class DbFrontend {
-    private CacheReader mCacheReader;
     private Context mContext;
-    private GeoBeagleSqliteOpenHelper open;
+    private GeoBeagleSqliteOpenHelper mOpenHelper;
     private boolean mIsDatabaseOpen;
     private CacheWriter mCacheWriter;
     private ISQLiteDatabase mDatabase;
     private final GeocacheFactory mGeocacheFactory;
     private final Clock mClock = new Clock();
-    /** -1 means not initialized */
+    /** The total number of geocaches and waypoints in the database. 
+     * -1 means not initialized */
     private int mTotalCacheCount = -1;
+    private SourceNameTranslator mSourceNameTranslator;
+
+    private SQLiteWrapper mSqliteWrapper;
+
+    private static final String[] READER_COLUMNS = new String[] {
+        "Latitude", "Longitude", "Id", "Description", "Source", "CacheType", "Difficulty",
+        "Terrain", "Container"
+    };
     
     public DbFrontend(Context context, GeocacheFactory geocacheFactory) {
         mContext = context;
         mIsDatabaseOpen = false;
         mGeocacheFactory = geocacheFactory;
+        mSourceNameTranslator = new SourceNameTranslator();
     }
 
     public void openDatabase() {
@@ -59,11 +69,10 @@ public class DbFrontend {
         Log.d("GeoBeagle", "DbFrontend.openDatabase()");
         mIsDatabaseOpen = true;
 
-        open = new GeoBeagleSqliteOpenHelper(mContext);
-        final SQLiteDatabase sqDb = open.getReadableDatabase();
+        mOpenHelper = new GeoBeagleSqliteOpenHelper(mContext);
+        final SQLiteDatabase sqDb = mOpenHelper.getReadableDatabase();
         mDatabase = new DatabaseDI.SQLiteWrapper(sqDb);
-
-        mCacheReader = DatabaseDI.createCacheReader(mDatabase, mGeocacheFactory);
+        mSqliteWrapper = mOpenHelper.getWritableSqliteWrapper();
     }
 
     public void closeDatabase() {
@@ -72,7 +81,7 @@ public class DbFrontend {
         Log.d("GeoBeagle", "DbFrontend.closeDatabase()");
         mIsDatabaseOpen = false;
 
-        open.close();
+        mOpenHelper.close();
         mCacheWriter = null;
         mDatabase = null;
     }
@@ -91,14 +100,20 @@ public class DbFrontend {
             limit = "0, " + maxResults;
         }
         long start = mClock.getCurrentTime();
-        CacheReaderCursor cursor = mCacheReader.open(where, limit);
-        ArrayList<Geocache> geocaches = new ArrayList<Geocache>();
-        if (cursor != null) {
-            do {
-                geocaches.add(cursor.getCache());
-            } while (cursor.moveToNext());
+        //CacheReaderCursor cursor = mCacheReader.open(where, limit);
+        Cursor cursor = mSqliteWrapper.query(Database.TBL_CACHES, READER_COLUMNS,
+                where, null, null, null, limit);
+        if (!cursor.moveToFirst()) {
             cursor.close();
+            return GeocacheListPrecomputed.EMPTY;
         }
+
+        ArrayList<Geocache> geocaches = new ArrayList<Geocache>();
+        do {
+            Geocache geocache = mGeocacheFactory.fromCursor(cursor, mSourceNameTranslator);
+            geocaches.add(geocache);
+        } while (cursor.moveToNext());
+        cursor.close();
         Log.d("GeoBeagle", "DbFrontend.loadCachesPrecomputed took " + (mClock.getCurrentTime()-start) 
                 + " ms (loaded " + geocaches.size() + " caches)");
         return new GeocacheListPrecomputed(geocaches);
@@ -140,6 +155,32 @@ public class DbFrontend {
                 + " ms (loaded " + idList.size() + " caches)");
         return new GeocacheListLazy(this, idList);
     }
+
+    /** @param sqlQuery A complete SQL query to be executed. 
+     * The query must return the id's of geocaches. */
+    public GeocacheList loadCachesRaw(String sqlQuery) {
+        openDatabase();
+
+        long start = mClock.getCurrentTime();
+        Log.d("GeoBeagle", "DbFrontend.loadCachesRaw(" + sqlQuery + ")");
+        Cursor cursor = mDatabase.rawQuery(sqlQuery, new String[]{} );
+
+        if (!cursor.moveToFirst()) {
+            cursor.close();
+            return GeocacheListPrecomputed.EMPTY;
+        }
+
+        ArrayList<Object> idList = new ArrayList<Object>();
+        if (cursor != null) {
+            do {
+                idList.add(cursor.getString(0));
+            } while (cursor.moveToNext());
+            cursor.close();
+        }
+        Log.d("GeoBeagle", "DbFrontend.loadCachesRaw took " + (mClock.getCurrentTime()-start) 
+                + " ms (loaded " + idList.size() + " caches)");
+        return new GeocacheListLazy(this, idList);
+    }
     
     /** @return null if the cache id is not in the database */
     public Geocache loadCacheFromId(String id) {
@@ -149,10 +190,15 @@ public class DbFrontend {
         }
         
         openDatabase();
-        CacheReaderCursor cursor = mCacheReader.open("Id='"+id+"'", null);
-        if (cursor == null)
+
+        Cursor cursor = mSqliteWrapper.query(Database.TBL_CACHES, READER_COLUMNS,
+                "Id='"+id+"'", null, null, null, null);
+        if (!cursor.moveToFirst()) {
+            cursor.close();
             return null;
-        Geocache geocache = cursor.getCache();
+        }
+
+        Geocache geocache = mGeocacheFactory.fromCursor(cursor, mSourceNameTranslator);
         cursor.close();
         return geocache;
     }
@@ -161,7 +207,8 @@ public class DbFrontend {
         if (mCacheWriter != null)
             return mCacheWriter;
         openDatabase();
-        mCacheWriter = DatabaseDI.createCacheWriter(mDatabase);
+        
+        mCacheWriter = DatabaseDI.createCacheWriter(mDatabase, mGeocacheFactory, this);
         return mCacheWriter;
     }
 
@@ -190,14 +237,44 @@ public class DbFrontend {
         openDatabase();
         long start = mClock.getCurrentTime();
         
-        Cursor countCursor;
-        countCursor = mDatabase.rawQuery("SELECT COUNT(*) FROM " + Database.TBL_CACHES
-                + " WHERE " + where, null);
+        Cursor countCursor = mDatabase.rawQuery("SELECT COUNT(*) FROM " + 
+                Database.TBL_CACHES + " WHERE " + where, null);
         countCursor.moveToFirst();
         int count = countCursor.getInt(0);
         countCursor.close();
         Log.d("GeoBeagle", "DbFrontend.count took " + (mClock.getCurrentTime()-start) + " ms (" 
                 + count + " caches)");
         return count;
+    }
+
+    public void flushTotalCount() {
+        mTotalCacheCount = -1;
+    }
+    
+    public boolean geocacheHasLabel(CharSequence geocacheId, int labelId) {
+        openDatabase();
+        Cursor cursor = mDatabase.rawQuery("SELECT COUNT(*) FROM " + 
+                Database.TBL_CACHELABELS + " WHERE CacheId='" + geocacheId 
+                + "' AND LabelId=" + labelId, null);
+        if (cursor == null) {
+            return false;
+        }
+        cursor.moveToFirst();
+        int count = cursor.getInt(0);        
+        cursor.close();
+        Log.d("GeoBeagle", "geocacheHasLabel hit count is " + count);
+        return (count > 0);
+    }
+    
+    public void setGeocacheLabel(CharSequence geocacheId, int labelId) {
+        openDatabase();
+        Log.d("GeoBeagle", "setGeocacheLabel(" + geocacheId + ", " + labelId + ")");
+        mSqliteWrapper.execSQL(Database.SQL_REPLACE_CACHELABEL, geocacheId, labelId);
+    }
+
+    public void unsetGeocacheLabel(CharSequence geocacheId, int labelId) {
+        openDatabase();
+        Log.d("GeoBeagle", "unsetGeocacheLabel(" + geocacheId + ", " + labelId + ")");
+        mSqliteWrapper.execSQL(Database.SQL_DELETE_CACHELABEL, geocacheId, labelId);
     }
 }

@@ -21,13 +21,16 @@ import com.google.code.geobeagle.GeoFixProvider;
 import com.google.code.geobeagle.GeocacheFactory;
 import com.google.code.geobeagle.IPausable;
 import com.google.code.geobeagle.LocationControlDi;
+import com.google.code.geobeagle.CacheFilter.CacheFilterFactory;
 import com.google.code.geobeagle.actions.CacheAction;
 import com.google.code.geobeagle.actions.CacheActionDelete;
 import com.google.code.geobeagle.actions.CacheActionEdit;
 import com.google.code.geobeagle.actions.CacheActionView;
-import com.google.code.geobeagle.actions.MenuActionChooseFilter;
+import com.google.code.geobeagle.actions.MenuActionEditFilter;
+import com.google.code.geobeagle.actions.MenuActionFilterList;
 import com.google.code.geobeagle.actions.MenuActionMap;
 import com.google.code.geobeagle.actions.MenuActionSearchOnline;
+import com.google.code.geobeagle.actions.MenuActionSettings;
 import com.google.code.geobeagle.actions.MenuActions;
 import com.google.code.geobeagle.activity.ActivityDI;
 import com.google.code.geobeagle.activity.ActivitySaver;
@@ -59,7 +62,6 @@ import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidgetDelegate;
 import com.google.code.geobeagle.gpsstatuswidget.GpsWidgetAndUpdater;
 import com.google.code.geobeagle.gpsstatuswidget.UpdateGpsWidgetRunnable;
 import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidget.InflatedGpsStatusWidget;
-import com.google.code.geobeagle.xmlimport.CachePersisterFacadeDI.CachePersisterFacadeFactory;
 import com.google.code.geobeagle.xmlimport.GpxImporterDI.MessageHandler;
 import com.google.code.geobeagle.xmlimport.GpxToCache.Aborter;
 import com.google.code.geobeagle.xmlimport.GpxToCacheDI.XmlPullParserWrapper;
@@ -130,13 +132,12 @@ public class CacheListDelegateDI {
                 .getUpdateGpsWidgetRunnable();
         updateGpsWidgetRunnable.run();
         
-        final CacheFilter cacheFilter = new CacheFilter(listActivity);
+        final CacheFilter cacheFilter = CacheFilterFactory.loadActiveFilter(listActivity);
         
         final DbFrontend dbFrontend = new DbFrontend(listActivity, geocacheFactory);
         final CachesProviderDb cachesProviderArea = new CachesProviderDb(dbFrontend, cacheFilter);
         final ICachesProviderCenter cachesProviderCount = new CachesProviderWaitForInit(new CachesProviderCount(cachesProviderArea, 15, 30));
         final CachesProviderSorted cachesProviderSorted = new CachesProviderSorted(cachesProviderCount);
-        //TODO: Use Lazy
         //final CachesProviderLazy cachesProviderLazy = new CachesProviderLazy(cachesProviderSorted, 0.01, 2000, clock);
         ICachesProviderCenter cachesProviderLazy = cachesProviderSorted;
 
@@ -160,12 +161,12 @@ public class CacheListDelegateDI {
 
         final Aborter aborter = new Aborter();
         final MessageHandler messageHandler = MessageHandler.create(listActivity);
-        final CachePersisterFacadeFactory cachePersisterFacadeFactory = new CachePersisterFacadeFactory(
-                messageHandler, cacheTypeFactory);
+        //final CachePersisterFacadeFactory cachePersisterFacadeFactory = new CachePersisterFacadeFactory(
+        //        messageHandler, cacheTypeFactory);
 
         final GpxImporterFactory gpxImporterFactory = new GpxImporterFactory(aborter,
-                cachePersisterFacadeFactory, errorDisplayer, geoFixProvider, listActivity,
-                messageHandler, xmlPullParserWrapper);
+                errorDisplayer, geoFixProvider, listActivity,
+                messageHandler, xmlPullParserWrapper, cacheTypeFactory);
 
         final Abortable nullAbortable = new Abortable() {
             public void abort() {
@@ -183,10 +184,12 @@ public class CacheListDelegateDI {
                 geocacheFactory, geoFixProvider, dbFrontend, resources, cacheActionEdit));
         menuActions.add(new MenuActionSearchOnline(listActivity));
         final CachesProviderDb[] providers = { cachesProviderArea, };
-        menuActions.add(new MenuActionChooseFilter(listActivity, cacheFilter, 
+        //SharedPreferences prefs = CacheFilterFactory.getActivePreferences(listActivity);
+        menuActions.add(new MenuActionEditFilter(listActivity, 
                 providers, cacheList));
         menuActions.add(new MenuActionMap(listActivity, geoFixProvider));
-        
+        menuActions.add(new MenuActionFilterList(listActivity));
+        menuActions.add(new MenuActionSettings(listActivity));
         final Intent geoBeagleMainIntent = new Intent(listActivity, GeoBeagle.class);
         final CacheActionView cacheActionView = new CacheActionView(
                 listActivity, geoBeagleMainIntent);

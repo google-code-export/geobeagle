@@ -5,6 +5,9 @@ import com.google.code.geobeagle.GeocacheList;
 
 import android.util.Log;
 
+/**
+ * Finds the caches that are closest to a certain point. 
+ */
 public class CachesProviderCount implements ICachesProviderCenter {
     private static final double MAX_RADIUS = 1; //180;
     /** Maximum number of times a search is allowed to call the underlying 
@@ -12,6 +15,7 @@ public class CachesProviderCount implements ICachesProviderCenter {
     public static final int MAX_ITERATIONS = 10;
     private static final float DISTANCE_MULTIPLIER = 1.8f;  //1.414f;
     
+    private ICachesProviderArea mCachesProviderArea;
     private CachesProviderRadius mCachesProviderRadius;
     /** The least acceptable number of caches */
     private int mMinCount;
@@ -29,6 +33,7 @@ public class CachesProviderCount implements ICachesProviderCenter {
     
     public CachesProviderCount(ICachesProviderArea area,
             int minCount, int maxCount) {
+        mCachesProviderArea = area;
         mCachesProviderRadius = new CachesProviderRadius(area);
         mMinCount = minCount;
         mMaxCount = maxCount;
@@ -46,6 +51,16 @@ public class CachesProviderCount implements ICachesProviderCenter {
         if (mCachesProviderRadius.hasChanged()) {
             mCaches = null;
             mIsCountValid = false;
+            //TODO: Is this test fast enough to be worth the effort?
+            int total = mCachesProviderArea.getTotalCount();
+            if (total <= mMaxCount) {
+                Log.d("GeoBeagle", "CachesProviderCount.getCaches: Total number is few enough");
+                mCaches = mCachesProviderArea.getCaches();
+                mCount = total;
+                mIsCountValid = true;
+                mCachesProviderRadius.resetChanged();
+                return mCaches;
+            }
         }
             
         if (mCaches != null)

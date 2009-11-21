@@ -10,10 +10,12 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import com.google.code.geobeagle.CacheType;
+import com.google.code.geobeagle.GeocacheFactory;
 import com.google.code.geobeagle.GeocacheFactory.Source;
 import com.google.code.geobeagle.database.DatabaseDI.SQLiteWrapper;
 import com.google.code.geobeagle.database.DatabaseTest.DesktopSQLiteDatabase;
 
+import org.junit.Before;
 import org.junit.Test;
 
 public class CacheWriterTest {
@@ -21,16 +23,28 @@ public class CacheWriterTest {
     private static final String INSERT_INTO_CACHES = "INSERT INTO CACHES (Id, Description, Source, DeleteMe) ";
     private static final String INSERT_INTO_GPX = "INSERT INTO GPX (Name, ExportTime, DeleteMe) ";
 
+    private SQLiteWrapper mSqlite;
+    SourceNameTranslator mSourceNameTranslator;
+    GeocacheFactory mFactory;
+    DbFrontend mDbFrontend;
+    
+    @Before
+    public void setUp() {
+        mSqlite = createMock(SQLiteWrapper.class);
+        mSourceNameTranslator = createMock(SourceNameTranslator.class);
+        mFactory = createMock(GeocacheFactory.class);
+        mDbFrontend = createMock(DbFrontend.class);        
+    }
+    
     @Test
     public void testClearCaches() {
-        SQLiteWrapper sqlite = createMock(SQLiteWrapper.class);
+        mSqlite.execSQL(Database.SQL_CLEAR_CACHES, "the source");
+        mFactory.flushCache();
 
-        sqlite.execSQL(Database.SQL_CLEAR_CACHES, "the source");
-
-        replay(sqlite);
-        CacheWriter cacheWriterSql = new CacheWriter(sqlite, null);
+        replay(mSqlite);
+        CacheWriter cacheWriterSql = new CacheWriter(mSqlite, null, mSourceNameTranslator, null);
         cacheWriterSql.clearCaches("the source");
-        verify(sqlite);
+        verify(mSqlite);
     }
 
     @Test
@@ -45,7 +59,7 @@ public class CacheWriterTest {
         db.execSQL(INSERT_INTO_GPX + "VALUES ('nuke.gpx', '2009-04-30', 1)");
         db.execSQL(INSERT_INTO_GPX + "VALUES ('keep.gpx', '2009-04-30', 0)");
 
-        CacheWriter cacheWriterSql = new CacheWriter(db, null);
+        CacheWriter cacheWriterSql = new CacheWriter(db, null, null, null);
         cacheWriterSql.clearEarlierLoads();
 
         assertEquals("GCTHISIMPORT|just loaded|||foo.gpx|1|0|0|0|0\n"
@@ -55,92 +69,82 @@ public class CacheWriterTest {
 
     @Test
     public void testDeleteCache() {
-        SQLiteWrapper sqlite = createMock(SQLiteWrapper.class);
+        mSqlite.execSQL(Database.SQL_DELETE_CACHE, "GC123");
 
-        sqlite.execSQL(Database.SQL_DELETE_CACHE, "GC123");
-
-        replay(sqlite);
-        CacheWriter cacheWriterSql = new CacheWriter(sqlite, null);
+        replay(mSqlite);
+        CacheWriter cacheWriterSql = new CacheWriter(mSqlite, null, null, null);
         cacheWriterSql.deleteCache("GC123");
-        verify(sqlite);
+        verify(mSqlite);
     }
 
     @Test
     public void testInsertAndUpdate() {
-        SQLiteWrapper sqlite = createMock(SQLiteWrapper.class);
-        SourceNameTranslator dbToGeocacheAdapter = createMock(SourceNameTranslator.class);
 
-        sqlite.execSQL(Database.SQL_REPLACE_CACHE, "gc123", "a cache", 122.0, 37.0, "source", 0, 0,
+        mSqlite.execSQL(Database.SQL_REPLACE_CACHE, "gc123", "a cache", 122.0, 37.0, "source", 0, 0,
                 0, 0);
-        expect(dbToGeocacheAdapter.sourceTypeToSourceName(Source.GPX, "source"))
+        expect(mSourceNameTranslator.sourceTypeToSourceName(Source.GPX, "source"))
                 .andReturn("source");
+        mDbFrontend.flushTotalCount();
 
-        replay(sqlite);
-        replay(dbToGeocacheAdapter);
-        CacheWriter cacheWriterSql = new CacheWriter(sqlite, dbToGeocacheAdapter);
+        replay(mSqlite);
+        replay(mSourceNameTranslator);
+        CacheWriter cacheWriterSql = new CacheWriter(mSqlite, null, mSourceNameTranslator, null);
         cacheWriterSql.insertAndUpdateCache("gc123", "a cache", 122, 37, Source.GPX, "source",
                 CacheType.NULL, 0, 0, 0);
-        verify(sqlite);
+        verify(mSqlite);
     }
 
     @Test
     public void testIsGpxAlreadyLoadedFalse() {
-        SQLiteWrapper sqlite = createMock(SQLiteWrapper.class);
-
         expect(
-                sqlite.countResults(Database.TBL_GPX, "Name = ? AND ExportTime >= ?", "foo.gpx",
+                mSqlite.countResults(Database.TBL_GPX, "Name = ? AND ExportTime >= ?", "foo.gpx",
                         "04-30-2009")).andReturn(0);
 
-        replay(sqlite);
-        CacheWriter cacheWriterSql = new CacheWriter(sqlite, null);
+        replay(mSqlite);
+        CacheWriter cacheWriterSql = new CacheWriter(mSqlite, mDbFrontend, mSourceNameTranslator, mFactory);
         assertFalse(cacheWriterSql.isGpxAlreadyLoaded("foo.gpx", "04-30-2009"));
-        verify(sqlite);
+        verify(mSqlite);
     }
 
     @Test
     public void testIsGpxAlreadyLoadedTrue() {
-        SQLiteWrapper sqlite = createMock(SQLiteWrapper.class);
-
         expect(
-                sqlite.countResults(Database.TBL_GPX, Database.SQL_MATCH_NAME_AND_EXPORTED_LATER,
+                mSqlite.countResults(Database.TBL_GPX, Database.SQL_MATCH_NAME_AND_EXPORTED_LATER,
                         "foo.gpx", "04-30-2009")).andReturn(1);
-        sqlite.execSQL(Database.SQL_CACHES_DONT_DELETE_ME, "foo.gpx");
-        sqlite.execSQL(Database.SQL_GPX_DONT_DELETE_ME, "foo.gpx");
+        mSqlite.execSQL(Database.SQL_CACHES_DONT_DELETE_ME, "foo.gpx");
+        mSqlite.execSQL(Database.SQL_GPX_DONT_DELETE_ME, "foo.gpx");
 
-        replay(sqlite);
-        CacheWriter cacheWriterSql = new CacheWriter(sqlite, null);
+        replay(mSqlite);
+        CacheWriter cacheWriterSql = new CacheWriter(mSqlite, mDbFrontend, mSourceNameTranslator, mFactory);
         assertTrue(cacheWriterSql.isGpxAlreadyLoaded("foo.gpx", "04-30-2009"));
-        verify(sqlite);
+        verify(mSqlite);
     }
 
     @Test
     public void testStartWriting() {
-        SQLiteWrapper sqlite = createMock(SQLiteWrapper.class);
-        sqlite.beginTransaction();
+        mSqlite.beginTransaction();
 
-        replay(sqlite);
-        new CacheWriter(sqlite, null).startWriting();
-        verify(sqlite);
+        replay(mSqlite);
+        new CacheWriter(mSqlite, mDbFrontend, mSourceNameTranslator, mFactory).startWriting();
+        verify(mSqlite);
     }
 
     @Test
     public void testStopWriting() {
-        SQLiteWrapper sqlite = createMock(SQLiteWrapper.class);
-        sqlite.setTransactionSuccessful();
-        sqlite.endTransaction();
+        mSqlite.setTransactionSuccessful();
+        mSqlite.endTransaction();
 
-        replay(sqlite);
-        new CacheWriter(sqlite, null).stopWriting();
-        verify(sqlite);
+        replay(mSqlite);
+        new CacheWriter(mSqlite, mDbFrontend, mSourceNameTranslator, mFactory).stopWriting();
+        verify(mSqlite);
     }
 
     @Test
     public void testWriteGpx() {
-        SQLiteWrapper sqlite = createMock(SQLiteWrapper.class);
-        sqlite.execSQL(Database.SQL_REPLACE_GPX, "foo.gpx", "2009-04-30 10:30");
+        mSqlite.execSQL(Database.SQL_REPLACE_GPX, "foo.gpx", "2009-04-30 10:30");
 
-        replay(sqlite);
-        new CacheWriter(sqlite, null).writeGpx("foo.gpx", "2009-04-30 10:30");
-        verify(sqlite);
+        replay(mSqlite);
+        new CacheWriter(mSqlite, mDbFrontend, mSourceNameTranslator, mFactory).writeGpx("foo.gpx", "2009-04-30 10:30");
+        verify(mSqlite);
     }
 }

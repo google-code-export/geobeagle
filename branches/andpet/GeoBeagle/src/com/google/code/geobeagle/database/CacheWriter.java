@@ -15,6 +15,7 @@
 package com.google.code.geobeagle.database;
 
 import com.google.code.geobeagle.CacheType;
+import com.google.code.geobeagle.GeocacheFactory;
 import com.google.code.geobeagle.GeocacheFactory.Source;
 
 /**
@@ -27,15 +28,20 @@ public class CacheWriter {
     };
     private final SourceNameTranslator mDbToGeocacheAdapter;
     private final ISQLiteDatabase mSqlite;
+    private final GeocacheFactory mGeocacheFactory;
+    private final DbFrontend mDbFrontend;
 
-    CacheWriter(ISQLiteDatabase sqlite, SourceNameTranslator dbToGeocacheAdapter) {
+    CacheWriter(ISQLiteDatabase sqlite, DbFrontend dbFrontend,
+            SourceNameTranslator dbToGeocacheAdapter, GeocacheFactory geocacheFactory) {
         mSqlite = sqlite;
         mDbToGeocacheAdapter = dbToGeocacheAdapter;
+        mGeocacheFactory = geocacheFactory;
+        mDbFrontend = dbFrontend;
     }
 
     public void clearCaches(String source) {
-        //TODO: Remove cache from the list in GeocacheFactory
-        //TODO: Flush mTotalCacheCount in DbFrontend
+        mGeocacheFactory.flushCache();
+        mDbFrontend.flushTotalCount();
         mSqlite.execSQL(Database.SQL_CLEAR_CACHES, source);
     }
 
@@ -50,15 +56,15 @@ public class CacheWriter {
     }
 
     public void deleteCache(CharSequence id) {
-        //TODO: Remove cache from the list in GeocacheFactory
-        //TODO: Flush mTotalCacheCount in DbFrontend
+        mGeocacheFactory.flushGeocache(id);
+        mDbFrontend.flushTotalCount();
         mSqlite.execSQL(Database.SQL_DELETE_CACHE, id);
     }
 
     public void insertAndUpdateCache(CharSequence id, CharSequence name, double latitude,
             double longitude, Source sourceType, String sourceName, CacheType cacheType,
             int difficulty, int terrain, int container) {
-        //TODO: Remove cache from the list in GeocacheFactory
+        mGeocacheFactory.flushGeocache(id);
         mSqlite.execSQL(Database.SQL_REPLACE_CACHE, id, name, new Double(latitude), new Double(
                 longitude), mDbToGeocacheAdapter.sourceTypeToSourceName(sourceType, sourceName),
                 cacheType.toInt(), difficulty, terrain, container);

@@ -19,27 +19,15 @@ import com.google.code.geobeagle.Geocache.AttributeFormatter;
 import com.google.code.geobeagle.Geocache.AttributeFormatterImpl;
 import com.google.code.geobeagle.Geocache.AttributeFormatterNull;
 import com.google.code.geobeagle.GeocacheFactory.Source.SourceFactory;
-import com.google.code.geobeagle.activity.main.GeocacheFromParcelFactory;
+import com.google.code.geobeagle.database.SourceNameTranslator;
 
-import android.os.Parcel;
-import android.os.Parcelable;
+import android.database.Cursor;
 
 import java.util.WeakHashMap;
 
+//TODO: Make GeocacheFactory call DbFrontend and not the other way around.
+//TODO: Make GeocacheFactory is a global object, common to all Activities of GeoBeagle. Solves GeocacheFactory flushing in other activites when a geocache is changed.
 public class GeocacheFactory {
-    public static class CreateGeocacheFromParcel implements Parcelable.Creator<Geocache> {
-        private final GeocacheFromParcelFactory mGeocacheFromParcelFactory = new GeocacheFromParcelFactory(
-                new GeocacheFactory());
-
-        public Geocache createFromParcel(Parcel in) {
-            return mGeocacheFromParcelFactory.create(in);
-        }
-
-        public Geocache[] newArray(int size) {
-            return new Geocache[size];
-        }
-    }
-
     public static enum Provider {
         ATLAS_QUEST(0, "LB"), GROUNDSPEAK(1, "GC"), MY_LOCATION(-1, "ML"), OPENCACHING(2, "OC");
 
@@ -131,7 +119,8 @@ public class GeocacheFactory {
     public Geocache getFromId(CharSequence id) {
         return mGeocaches.get(id);
     }
-    
+
+    //TODO: This method should only be for creating a new geocache in the database
     public Geocache create(CharSequence id, CharSequence name, double latitude, double longitude,
             Source sourceType, String sourceName, CacheType cacheType, int difficulty, int terrain,
             int container) {
@@ -167,4 +156,29 @@ public class GeocacheFactory {
     public Source sourceFromInt(int sourceIx) {
         return mSourceFactory.fromInt(sourceIx);
     }
+
+    /** Remove all cached geocache instances. Future references will reload from the database. */
+    public void flushCache() {
+        mGeocaches.clear();
+    }
+
+    /** Forces the geocache to be reloaded from the database the next time it is needed. */
+    public void flushGeocache(CharSequence geocacheId) {
+        mGeocaches.remove(geocacheId.toString());
+    }
+
+    public Geocache fromCursor(Cursor cursor, SourceNameTranslator translator) {
+        String sourceName = cursor.getString(4);
+
+        CacheType cacheType = cacheTypeFromInt(Integer.parseInt(cursor
+                .getString(5)));
+        int difficulty = Integer.parseInt(cursor.getString(6));
+        int terrain = Integer.parseInt(cursor.getString(7));
+        int container = Integer.parseInt(cursor.getString(8));
+        return create(cursor.getString(2), cursor.getString(3), cursor
+                .getDouble(0), cursor.getDouble(1), translator
+                .sourceNameToSourceType(sourceName), sourceName, cacheType, difficulty, terrain,
+                container);
+    }
+    
 }

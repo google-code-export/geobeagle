@@ -15,29 +15,36 @@
 package com.google.code.geobeagle.activity.map;
 
 import com.google.android.maps.Overlay;
+import com.google.code.geobeagle.CacheFilter;
 import com.google.code.geobeagle.Refresher;
+import com.google.code.geobeagle.CacheFilter.CacheFilterFactory;
 import com.google.code.geobeagle.database.CachesProviderDb;
+
+import android.app.Activity;
 
 import java.util.List;
 
 public class OverlayManager implements Refresher {
     static final int DENSITY_MAP_ZOOM_THRESHOLD = 12;
+    private final Activity mActivity;
     private final CachePinsOverlayFactory mCachePinsOverlayFactory;
     private final DensityOverlay mDensityOverlay;
     private final GeoMapView mGeoMapView;
     private final List<Overlay> mMapOverlays;
     private boolean mUsesDensityMap;
-    private final CachesProviderDb mCachesProviderArea;
+    private final CachesProviderDb mCachesProviderDb;
 
-    public OverlayManager(GeoMapView geoMapView, List<Overlay> mapOverlays,
+    public OverlayManager(Activity activity,
+            GeoMapView geoMapView, List<Overlay> mapOverlays,
             DensityOverlay densityOverlay, CachePinsOverlayFactory cachePinsOverlayFactory,
             boolean usesDensityMap, CachesProviderDb cachesProviderArea) {
+        mActivity = activity;
         mGeoMapView = geoMapView;
         mMapOverlays = mapOverlays;
         mDensityOverlay = densityOverlay;
         mCachePinsOverlayFactory = cachePinsOverlayFactory;
         mUsesDensityMap = usesDensityMap;
-        mCachesProviderArea = cachesProviderArea;
+        mCachesProviderDb = cachesProviderArea;
     }
 
     public void selectOverlay() {
@@ -60,7 +67,8 @@ public class OverlayManager implements Refresher {
 
     @Override
     public void forceRefresh() {
-        mCachesProviderArea.reloadFilter();
+        CacheFilter cacheFilter = CacheFilterFactory.loadActiveFilter(mActivity);
+        mCachesProviderDb.setFilter(cacheFilter);
         selectOverlay();
         //Must be called from the GUI thread:
         mGeoMapView.invalidate();

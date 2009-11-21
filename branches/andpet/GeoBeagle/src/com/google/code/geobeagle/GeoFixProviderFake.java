@@ -4,7 +4,7 @@ import android.os.Handler;
 
 import java.util.ArrayList;
 
-//TODO: Add support for faking azimuth
+//Doesn't have support for faking azimuth at the moment
 /** Change LocationControlDi.create() to return an instance of this class 
  * to use fake locations everywhere but in the Map view. */
 public class GeoFixProviderFake implements GeoFixProvider {

@@ -34,13 +34,23 @@ public class GeocacheListLazy extends GeocacheList {
         for (int i = 0; i < mList.size(); i++) {
             if (mList.get(i) == otherList.mList.get(i))
                 continue;
-            //TODO! Incomplete comparison - implement equals() in Geocache class instead
             Object obj = mList.get(i);
+            Object obj2 = otherList.mList.get(i);
+            CharSequence id1;
             if (obj instanceof Geocache) {
-                if (((Geocache)obj).getId().equals(otherList.mList.get(i)))
-                    continue;
+                id1 = ((Geocache)obj).getId();
+            } else {
+                id1 = (CharSequence)obj;
             }
-            return false;
+            CharSequence id2;
+            if (obj2 instanceof Geocache) {
+                id2 = ((Geocache)obj2).getId();
+            } else {
+                id2 = (CharSequence)obj2;
+            }
+            
+            if (!id1.equals(id2))
+                return false;
         }
         return true;
     }

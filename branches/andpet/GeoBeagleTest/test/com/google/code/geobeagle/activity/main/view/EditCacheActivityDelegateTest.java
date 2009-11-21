@@ -116,7 +116,7 @@ public class EditCacheActivityDelegateTest {
         EasyMock.expect(intent.setAction(GeocacheListController.SELECT_CACHE)).andReturn(intent);
         PowerMock.expectNew(Intent.class).andReturn(intent);
         EasyMock.expect(editCache.get()).andReturn(geocache);
-        EasyMock.expect(intent.putExtra("geocache", geocache)).andReturn(intent);
+        EasyMock.expect(intent.putExtra("geocacheId", "id1")).andReturn(intent);
         activity.setResult(0, intent);
         activity.finish();
 

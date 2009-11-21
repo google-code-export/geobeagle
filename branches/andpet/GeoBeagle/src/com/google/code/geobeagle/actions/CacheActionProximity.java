@@ -17,7 +17,7 @@ public class CacheActionProximity implements CacheAction {
     public void act(Geocache cache) {
         final Intent intent = 
             new Intent(mActivity, ProximityActivity.class);
-        intent.putExtra("geocache", cache);
+        intent.putExtra("geocacheId", cache.getId());
         mActivity.startActivity(intent);
     }
 

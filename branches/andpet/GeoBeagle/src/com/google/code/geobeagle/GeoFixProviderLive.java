@@ -157,7 +157,6 @@ GeoFixProvider {
                 || (mUseNetwork && mLocationManager.isProviderEnabled("network"));
     }
 
-    //TODO: Remove this method? Should getLocation be the same thing?
     private Location getLastKnownLocation() {
         Location gpsLocation = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
         if (gpsLocation != null)

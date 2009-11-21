@@ -32,7 +32,7 @@ public class CacheActionView implements CacheAction {
 
     @Override
     public void act(Geocache cache) {
-        mGeoBeagleMainIntent.putExtra("geocache", cache)
+        mGeoBeagleMainIntent.putExtra("geocacheId", cache.getId())
           .setAction(GeocacheListController.SELECT_CACHE);
         mContext.startActivity(mGeoBeagleMainIntent);
     }

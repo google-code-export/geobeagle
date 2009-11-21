@@ -3,6 +3,7 @@ package com.google.code.geobeagle;
 import android.app.Activity;
 import android.content.SharedPreferences;
 
+//TODO: Allow filtering on Source
 public class CacheFilter {
     
     public static interface FilterGui {
@@ -12,13 +13,13 @@ public class CacheFilter {
         public void setString(int id, String value);
     }
     
-    private static class FilterOption {
+    private static class BooleanOption {
         public final String Label;
         public final String PrefsName;
         public final String SqlClause;
         public boolean Selected;
         public int ViewResource;
-        public FilterOption(String label, String prefsName, String sqlClause, 
+        public BooleanOption(String label, String prefsName, String sqlClause, 
                 int viewResource) {
             Label = label;
             PrefsName = prefsName;
@@ -27,64 +28,83 @@ public class CacheFilter {
             ViewResource = viewResource;
         }
     }
-    private final FilterOption[] mOptions = { 
-            new FilterOption("Traditional", "Traditional", "CacheType = 1", R.id.CheckBoxTrad),
-            new FilterOption("Multi", "Multi", "CacheType = 2", R.id.CheckBoxMulti),
-            new FilterOption("Mystery", "Unknown", "CacheType = 3", R.id.CheckBoxMystery),
-            new FilterOption("My location", "MyLocation", "CacheType = 4", R.id.CheckBoxMyLocation),
-            new FilterOption("Others", "Others", "CacheType = 0 OR (CacheType >= 5 AND CacheType <= 14)", R.id.CheckBoxOthers),
-            new FilterOption("Waypoints", "Waypoints", "(CacheType >= 20 AND CacheType <= 25)", R.id.CheckBoxWaypoints),
+    private final BooleanOption[] mOptions = { 
+            new BooleanOption("Traditional", "Traditional", "CacheType = 1", R.id.CheckBoxTrad),
+            new BooleanOption("Multi", "Multi", "CacheType = 2", R.id.CheckBoxMulti),
+            new BooleanOption("Mystery", "Unknown", "CacheType = 3", R.id.CheckBoxMystery),
+            new BooleanOption("My location", "MyLocation", "CacheType = 4", R.id.CheckBoxMyLocation),
+            new BooleanOption("Others", "Others", "CacheType = 0 OR (CacheType >= 5 AND CacheType <= 14)", R.id.CheckBoxOthers),
+            new BooleanOption("Waypoints", "Waypoints", "(CacheType >= 20 AND CacheType <= 25)", R.id.CheckBoxWaypoints),
             };
     
-    //These SQL are to be used when deselected!
-    private final FilterOption[] mSizeOptions = { 
-        new FilterOption("Include micro's", "Micro", "Container != 1", R.id.CheckBoxMicro),
-        new FilterOption("Include small", "Small", "Container != 2", R.id.CheckBoxSmall),
-        new FilterOption("Include unknown sizes", "UnknownSize", "Container != 0", R.id.CheckBoxUnknownSize),
+    //These SQL are to be applied when the option is deselected!
+    private final BooleanOption[] mSizeOptions = { 
+        new BooleanOption("Include micro's", "Micro", "Container != 1", R.id.CheckBoxMicro),
+        new BooleanOption("Include small", "Small", "Container != 2", R.id.CheckBoxSmall),
+        new BooleanOption("Include unknown sizes", "UnknownSize", "Container != 0", R.id.CheckBoxUnknownSize),
     };
+       
     private String mFilterString;
-    private Activity mActivity;
+    /** Limits the filter to only include geocaches with this label. 
+     * Zero means no limit. */
+    private int mLabel;
+    
+    private SharedPreferences mPreferences;
 
-    public CacheFilter() {
+    //TODO: Move into FilterTypeCollection
+    public static class CacheFilterFactory {
+        /** Return the SharedPreferences that stores the current CacheFilter */
+        public static SharedPreferences getActivePreferences(Activity activity) {
+            return activity.getSharedPreferences("Filter", 0);            
+        }
+        /** Loads the current active filter */
+        public static CacheFilter loadActiveFilter(Activity activity) {
+            SharedPreferences prefs = getActivePreferences(activity);
+            CacheFilter cacheFilter = new CacheFilter(prefs);
+            return cacheFilter;
+        }
     }
     
-    public CacheFilter(Activity activity) {
-        mActivity = activity;
-        reload();
+    public CacheFilter() {
+    }
+
+    public CacheFilter(SharedPreferences sharedPreferences) {
+        mPreferences = sharedPreferences;
+        loadFromPreferences(sharedPreferences);
     }
 
     /** 
      * Load the values from SharedPreferences.
      * @return true if any value in the filter was changed
      */
-    public void reload() {
-        SharedPreferences prefs = mActivity.getSharedPreferences("Filter", 0);
-        for (FilterOption option : mOptions) {
-            option.Selected = prefs.getBoolean(option.PrefsName, true);
+    private void loadFromPreferences(SharedPreferences preferences) {
+        for (BooleanOption option : mOptions) {
+            option.Selected = preferences.getBoolean(option.PrefsName, true);
         }
-        for (FilterOption option : mSizeOptions) {
-            option.Selected = prefs.getBoolean(option.PrefsName, true);
+        for (BooleanOption option : mSizeOptions) {
+            option.Selected = preferences.getBoolean(option.PrefsName, true);
         }
-        mFilterString = prefs.getString("FilterString", null);
+        mFilterString = preferences.getString("FilterString", null);
+        mLabel = preferences.getInt("FilterLabel", 0);
     }
 
-    public void saveToPrefs(/*Activity activity*/) {
-        SharedPreferences prefs = mActivity.getSharedPreferences("Filter", 0);
-        SharedPreferences.Editor editor  = prefs.edit();
-        for (FilterOption option : mOptions) {
+    public void saveToPreferences() {
+        SharedPreferences.Editor editor  = mPreferences.edit();
+        for (BooleanOption option : mOptions) {
             editor.putBoolean(option.PrefsName, option.Selected);
         }
-        for (FilterOption option : mSizeOptions) {
+        for (BooleanOption option : mSizeOptions) {
             editor.putBoolean(option.PrefsName, option.Selected);
         }
         editor.putString("FilterString", mFilterString);
+        editor.putInt("FilterLabel", mLabel);
         editor.commit();
     }
         
     /** @return A number of conditions separated by AND */
     public String getSqlWhereClause() {
         int count = 0;
-        for (FilterOption option : mOptions) {
+        for (BooleanOption option : mOptions) {
             if (option.Selected)
                 count++;
         }
@@ -93,7 +113,7 @@ public class CacheFilter {
         boolean isFirst = true;
         
         if (count != mOptions.length && count != 0) {
-            for (FilterOption option : mOptions) {
+            for (BooleanOption option : mOptions) {
                 if (!option.Selected)
                     continue;
                 if (isFirst) {
@@ -125,7 +145,7 @@ public class CacheFilter {
             }
         }
 
-        for (FilterOption option : mSizeOptions) {
+        for (BooleanOption option : mSizeOptions) {
             if (!option.Selected) {
                 if (isFirst) {
                     isFirst = false;
@@ -140,30 +160,36 @@ public class CacheFilter {
             return null;
         return result.toString();
     }
+    
+    public int getLabel() {
+        return mLabel;
+    }
 
     private boolean containsUppercase(String string) {
         return !string.equals(string.toLowerCase());
     }
     
     public void loadFromGui(FilterGui provider) {
-        for (FilterOption option : mOptions) {
+        for (BooleanOption option : mOptions) {
             option.Selected = provider.getBoolean(option.ViewResource);
         }
-        for (FilterOption option : mSizeOptions) {
+        for (BooleanOption option : mSizeOptions) {
             option.Selected = provider.getBoolean(option.ViewResource);
         }
         mFilterString = provider.getString(R.id.FilterString);
+        mLabel = provider.getBoolean(R.id.CheckBoxOnlyFavorites) ? Labels.FAVORITES : Labels.NULL;
     }
 
     /** Set up the view from the values in this CacheFilter. */
     public void pushToGui(FilterGui provider) {
-        for (FilterOption option : mOptions) {
+        for (BooleanOption option : mOptions) {
             provider.setBoolean(option.ViewResource, option.Selected);
         }
-        for (FilterOption option : mSizeOptions) {
+        for (BooleanOption option : mSizeOptions) {
             provider.setBoolean(option.ViewResource, option.Selected);
         }
         String filter = mFilterString == null ? "" : mFilterString;
         provider.setString(R.id.FilterString, filter);
+        provider.setBoolean(R.id.CheckBoxOnlyFavorites, mLabel == Labels.FAVORITES);
     }
 }

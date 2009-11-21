@@ -23,6 +23,8 @@ import com.google.code.geobeagle.GraphicsGenerator;
 import com.google.code.geobeagle.LocationControlDi;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.R.id;
+import com.google.code.geobeagle.actions.MenuActionSettings;
+import com.google.code.geobeagle.actions.MenuActionToggleFavorite;
 import com.google.code.geobeagle.actions.CacheActionEdit;
 import com.google.code.geobeagle.actions.CacheActionMap;
 import com.google.code.geobeagle.actions.CacheActionProximity;
@@ -31,8 +33,6 @@ import com.google.code.geobeagle.actions.CacheActionViewUri;
 import com.google.code.geobeagle.actions.MenuAction;
 import com.google.code.geobeagle.actions.MenuActionCacheList;
 import com.google.code.geobeagle.actions.CacheActionGoogleMaps;
-import com.google.code.geobeagle.actions.MenuActionSearchOnline;
-import com.google.code.geobeagle.actions.MenuActionSettings;
 import com.google.code.geobeagle.actions.MenuActionFromCacheAction;
 import com.google.code.geobeagle.actions.MenuActions;
 import com.google.code.geobeagle.activity.ActivityDI;
@@ -141,16 +141,18 @@ public class GeoBeagle extends Activity {
         final GeocacheFromIntentFactory geocacheFromIntentFactory = new GeocacheFromIntentFactory(
                 geocacheFactory, mDbFrontend);
         final IncomingIntentHandler incomingIntentHandler = new IncomingIntentHandler(
-                geocacheFactory, geocacheFromIntentFactory);
+                geocacheFactory, geocacheFromIntentFactory, mDbFrontend);
         Geocache geocache = incomingIntentHandler.maybeGetGeocacheFromIntent(getIntent(), null, mDbFrontend);
         final Resources resources = this.getResources();
         final MenuAction[] menuActionArray = {
                 new MenuActionCacheList(this), 
                 new MenuActionFromCacheAction(new CacheActionEdit(this), geocache),
 //                new MenuActionLogDnf(this), new MenuActionLogFind(this),
-                new MenuActionSearchOnline(this), new MenuActionSettings(this),
+                //new MenuActionSearchOnline(this), 
+                new MenuActionSettings(this),
                 new MenuActionFromCacheAction(new CacheActionGoogleMaps(intentStarterViewUri, resources), geocache),
-                new MenuActionFromCacheAction(new CacheActionProximity(this), geocache)
+                new MenuActionFromCacheAction(new CacheActionProximity(this), geocache),
+                new MenuActionToggleFavorite(mDbFrontend, geocache),
         };
         final MenuActions menuActions = new MenuActions(menuActionArray);
         final SharedPreferences defaultSharedPreferences = PreferenceManager

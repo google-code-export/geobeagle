@@ -2,7 +2,6 @@ package com.google.code.geobeagle.database;
 
 import com.google.code.geobeagle.GeocacheList;
 
-//TODO: Move this and all implementations from the .database package to "data"
 /** Interface to access a subset of the cache database. 
  * Used to form a Decorator pattern. */
 public interface ICachesProvider {

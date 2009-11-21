@@ -101,4 +101,9 @@ public class CachesProviderLazyArea implements ICachesProviderArea {
         mHasChanged = false;
         mCachesProviderArea.resetChanged();
     }
+
+    @Override
+    public int getTotalCount() {
+        return mCachesProviderArea.getTotalCount();
+    }
 }

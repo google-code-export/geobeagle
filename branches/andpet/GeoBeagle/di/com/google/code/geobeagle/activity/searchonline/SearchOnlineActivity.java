@@ -15,7 +15,6 @@
 package com.google.code.geobeagle.activity.searchonline;
 
 import com.google.code.geobeagle.GeoFixProvider;
-import com.google.code.geobeagle.GeocacheFactory;
 import com.google.code.geobeagle.LocationControlDi;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.ActivityDI;
@@ -25,7 +24,6 @@ import com.google.code.geobeagle.activity.ActivityDI.ActivityTypeFactory;
 import com.google.code.geobeagle.activity.cachelist.CacheListActivity;
 import com.google.code.geobeagle.activity.cachelist.presenter.DistanceFormatterManager;
 import com.google.code.geobeagle.activity.cachelist.presenter.DistanceFormatterManagerDi;
-import com.google.code.geobeagle.activity.main.GeocacheFromPreferencesFactory;
 import com.google.code.geobeagle.activity.searchonline.JsInterface.JsInterfaceHelper;
 import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidgetDelegate;
 import com.google.code.geobeagle.gpsstatuswidget.GpsWidgetAndUpdater;
@@ -71,12 +69,9 @@ public class SearchOnlineActivity extends Activity {
         distanceFormatterManager.addHasDistanceFormatter(gpsStatusWidgetDelegate);
         final ActivitySaver activitySaver = ActivityDI.createActivitySaver(this);
 
-        final GeocacheFactory geocacheFactory = new GeocacheFactory();
-        final GeocacheFromPreferencesFactory geocacheFromPreferencesFactory = new GeocacheFromPreferencesFactory(
-                geocacheFactory);
         final ActivityTypeFactory activityTypeFactory = new ActivityTypeFactory();
         final ActivityRestorer activityRestorer = new ActivityRestorer(this,
-                geocacheFromPreferencesFactory, activityTypeFactory, getSharedPreferences(
+                activityTypeFactory, getSharedPreferences(
                         "GeoBeagle", Context.MODE_PRIVATE));
         
         mSearchOnlineActivityDelegate = new SearchOnlineActivityDelegate(

@@ -14,6 +14,8 @@
 
 package com.google.code.geobeagle.database;
 
+import com.google.code.geobeagle.Labels;
+
 import android.util.Log;
 
 public class OpenHelperDelegate {
@@ -46,6 +48,16 @@ public class OpenHelperDelegate {
             // This date has to precede 2000-01-01 (due to a bug in
             // CacheTagSqlWriter.java in v10).
             db.execSQL("UPDATE GPX SET ExportTime = \"1990-01-01\"");
+        }
+        if (oldVersion < 12) {
+            Log.i("GeoBeagle", "Upgrading database to v12");
+            db.execSQL(Database.SQL_CREATE_LABELS_TABLE_V12);
+            db.execSQL(Database.SQL_REPLACE_LABEL, Labels.FOUND, "Found", true);
+            db.execSQL(Database.SQL_REPLACE_LABEL, Labels.DNF, "DNF", true);
+            db.execSQL(Database.SQL_REPLACE_LABEL, Labels.FAVORITES, "Favorites", true);
+            
+            db.execSQL(Database.SQL_CREATE_CACHELABELS_TABLE_V12);
+            db.execSQL(Database.SQL_CREATE_IDX_CACHELABELS);
         }
     }
 }

@@ -21,41 +21,41 @@ import android.util.Log;
 @PrepareForTest(Log.class)
 public class CachesProviderDbTest {
     private DbFrontend mDbFrontend;
-    private CacheFilter mCacheFilter;
-    CachesProviderDb mCachesProviderArea;
+    private CacheFilter mCacheFilter1;
+    private CacheFilter mCacheFilter2;
+    CachesProviderDb mCachesProviderDb;
 
     @Before
     public void setUp() {
         PowerMock.mockStatic(Log.class);
         expect(Log.d(isA(String.class), isA(String.class))).andReturn(0).anyTimes();
         mDbFrontend = PowerMock.createMock(DbFrontend.class);
-        mCacheFilter = PowerMock.createMock(CacheFilter.class);
-        mCachesProviderArea = new CachesProviderDb(mDbFrontend, mCacheFilter);
+        mCacheFilter1 = PowerMock.createMock(CacheFilter.class);
+        mCacheFilter2 = PowerMock.createMock(CacheFilter.class);
+        mCachesProviderDb = new CachesProviderDb(mDbFrontend, mCacheFilter1);
     }
     
     @Test
     public void testFilterUpdateSetsChanged() {
-        expect(mCacheFilter.getSqlWhereClause()).andReturn("1");
-        mCacheFilter.reload();
-        expect(mCacheFilter.getSqlWhereClause()).andReturn("2");
+        expect(mCacheFilter1.getSqlWhereClause()).andReturn("1");
+        expect(mCacheFilter2.getSqlWhereClause()).andReturn("2");
         PowerMock.replayAll();
         
-        mCachesProviderArea.resetChanged();
-        mCachesProviderArea.reloadFilter();
-        assertTrue(mCachesProviderArea.hasChanged());
+        mCachesProviderDb.resetChanged();
+        mCachesProviderDb.setFilter(mCacheFilter2);
+        assertTrue(mCachesProviderDb.hasChanged());
     }
 
     @Test
     public void testUnchangedFilter() {
-        expect(mCacheFilter.getSqlWhereClause()).andReturn("CacheType = 1").anyTimes();
-        mCacheFilter.reload();
+        expect(mCacheFilter1.getSqlWhereClause()).andReturn("CacheType = 1").anyTimes();
         expect(mDbFrontend.count("CacheType = 1")).andReturn(5);
         PowerMock.replayAll();
         
-        mCachesProviderArea.getCount();  //will load the filter
-        mCachesProviderArea.resetChanged();
-        mCachesProviderArea.reloadFilter();
-        assertFalse(mCachesProviderArea.hasChanged());
+        mCachesProviderDb.getCount();  //will load the filter
+        mCachesProviderDb.resetChanged();
+        mCachesProviderDb.setFilter(mCacheFilter2);
+        assertFalse(mCachesProviderDb.hasChanged());
     }
     
     @Test
@@ -63,16 +63,15 @@ public class CachesProviderDbTest {
         GeocacheList list1 = new GeocacheListPrecomputed();
         expect(mDbFrontend.loadCaches(null)).andReturn(list1);
         expect(mDbFrontend.loadCaches("CacheType = 1")).andReturn(list1);
-        expect(mCacheFilter.getSqlWhereClause()).andReturn(null);
-        mCacheFilter.reload();
-        expect(mCacheFilter.getSqlWhereClause()).andReturn("CacheType = 1");
+        expect(mCacheFilter1.getSqlWhereClause()).andReturn(null);
+        expect(mCacheFilter1.getSqlWhereClause()).andReturn("CacheType = 1");
 
         PowerMock.replayAll();
         
-        mCachesProviderArea.getCaches();
-        mCachesProviderArea.resetChanged();
-        mCachesProviderArea.reloadFilter();
-        mCachesProviderArea.getCaches();
+        mCachesProviderDb.getCaches();
+        mCachesProviderDb.resetChanged();
+        mCachesProviderDb.setFilter(mCacheFilter2);
+        mCachesProviderDb.getCaches();
 
         PowerMock.verifyAll();        
     }

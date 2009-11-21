@@ -57,7 +57,7 @@ public class CachePinsOverlay extends ItemizedOverlay<CacheItem> {
 
         final Intent intent = new Intent(mContext, GeoBeagle.class);
         intent.setAction(GeocacheListController.SELECT_CACHE);
-        intent.putExtra("geocache", geocache);
+        intent.putExtra("geocacheId", geocache.getId());
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         mContext.startActivity(intent);
 

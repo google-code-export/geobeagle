@@ -28,6 +28,7 @@ public class GeocacheListPrecomputed extends GeocacheList {
         mList.add(extra);
     }
 
+    //Actually the default AbstractList implementation might suffice
     public boolean equals(GeocacheListPrecomputed otherList) {
         if (otherList == this || otherList.mList == mList)
             return true;
@@ -36,13 +37,8 @@ public class GeocacheListPrecomputed extends GeocacheList {
             return false;
         
         for (int i = 0; i < mList.size(); i++) {
-            if (mList.get(i) == otherList.mList.get(i))
-                continue;
-            //TODO: This is a secondary test that shouldn't be necessary
-            //(GeocacheFactory should produce the same object)
-            if (mList.get(i).getId() == otherList.mList.get(i))
-                continue;
-            return false;
+            if (mList.get(i) != otherList.mList.get(i))
+                return false;
         }
         return true;
     }

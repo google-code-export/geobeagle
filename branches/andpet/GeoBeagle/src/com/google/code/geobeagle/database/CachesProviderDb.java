@@ -2,6 +2,7 @@ package com.google.code.geobeagle.database;
 
 import com.google.code.geobeagle.CacheFilter;
 import com.google.code.geobeagle.GeocacheList;
+import com.google.code.geobeagle.Labels;
 
 /** Uses a DB to fetch the caches within a defined region, or all caches if no 
  * bounds were specified */
@@ -16,8 +17,9 @@ public class CachesProviderDb implements ICachesProviderArea {
     private GeocacheList mCaches;
     private boolean mHasChanged = true;
     private boolean mHasLimits = false;
-    private final CacheFilter mCacheFilter;
     private String mFilter;
+    //TODO: Don't store filtered label separately. Store complete SQL query instead
+    private int mLabel;
     //TODO: mIsFirstListLoad currently disabled. Beneficial to use?
     private boolean mIsFirstListLoad = false;
     /** If greater than zero, this is the max number that mCaches 
@@ -26,14 +28,12 @@ public class CachesProviderDb implements ICachesProviderArea {
 
     public CachesProviderDb(DbFrontend dbFrontend, CacheFilter cacheFilter) {
         mDbFrontend = dbFrontend;
-        mCacheFilter = cacheFilter;
+        mFilter = cacheFilter.getSqlWhereClause();
+        mLabel = cacheFilter.getLabel();
     }
 
     private String getWhere() {
         if (mWhere == null) {
-            if (mFilter == null)
-                mFilter = mCacheFilter.getSqlWhereClause();
-
             if (mHasLimits) {
                 mWhere = "Latitude >= " + mLatLow + " AND Latitude < " + mLatHigh + 
                 " AND Longitude >= " + mLonLow + " AND Longitude < " + mLonHigh;
@@ -51,7 +51,16 @@ public class CachesProviderDb implements ICachesProviderArea {
     public GeocacheList getCaches() {
         if (mCaches == null || mCachesCappedToCount > 0) {
             String where = getWhere();
-            if (mIsFirstListLoad && where != null) {
+            if (mLabel != Labels.NULL) {
+                if (where == null)
+                    where = "";
+                else if (!where.equals(""))
+                    where = " AND " + where;
+                String sql = "SELECT Id FROM CACHES, CACHELABELS WHERE LabelId=" + mLabel
+                  + " AND Id=CacheId" + where;
+                mCaches = mDbFrontend.loadCachesRaw(sql);
+            }
+            else if (mIsFirstListLoad && where != null) {
                 mCaches = mDbFrontend.loadCachesPrecomputed(where);
             } else {
                 mCaches = mDbFrontend.loadCaches(where);
@@ -117,15 +126,21 @@ public class CachesProviderDb implements ICachesProviderArea {
         mHasChanged = true;
     }
     
-    public void reloadFilter() {
-        mCacheFilter.reload();
-        String newFilter = mCacheFilter.getSqlWhereClause();
+    public void setFilter(CacheFilter cacheFilter) {
+        String newFilter = cacheFilter.getSqlWhereClause();
+        int newLabel = cacheFilter.getLabel();
+        //TODO: Compare with old filter even with labels
         if ((newFilter == null && mFilter != null) 
-                || (newFilter != null && !newFilter.equals(mFilter))) {
+                || (newFilter != null /* && !newFilter.equals(mFilter) */)) {
             mHasChanged = true;
             mFilter = newFilter;
+            mLabel = newLabel;
             mWhere = null;  //Flush
             mCaches = null;  //Flush old caches
         }
+    }
+    
+    public int getTotalCount() {
+        return mDbFrontend.count(mFilter);
     }
 }

@@ -14,11 +14,15 @@
 
 package com.google.code.geobeagle.xmlimport;
 
+import com.google.code.geobeagle.CacheTypeFactory;
 import com.google.code.geobeagle.ErrorDisplayer;
 import com.google.code.geobeagle.GeoFixProvider;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListAdapter;
+import com.google.code.geobeagle.cachedetails.CacheDetailsWriter;
+import com.google.code.geobeagle.cachedetails.HtmlWriter;
+import com.google.code.geobeagle.cachedetails.WriterWrapper;
 import com.google.code.geobeagle.database.CacheWriter;
-import com.google.code.geobeagle.xmlimport.CachePersisterFacadeDI.CachePersisterFacadeFactory;
+import com.google.code.geobeagle.xmlimport.FileFactory;
 import com.google.code.geobeagle.xmlimport.EventHelperDI.EventHelperFactory;
 import com.google.code.geobeagle.xmlimport.GpxToCache.Aborter;
 import com.google.code.geobeagle.xmlimport.GpxToCacheDI.XmlPullParserWrapper;
@@ -239,15 +243,20 @@ public class GpxImporterDI {
     public static GpxImporter create(ListActivity listActivity,
             XmlPullParserWrapper xmlPullParserWrapper, ErrorDisplayer errorDisplayer,
             GeoFixProvider geoFixProvider, Aborter aborter,
-            MessageHandler messageHandler, CachePersisterFacadeFactory cachePersisterFacadeFactory,
-            CacheWriter cacheWriter) {
+            MessageHandler messageHandler,
+            CacheWriter cacheWriter, CacheTypeFactory cacheTypeFactory) {
         final PowerManager powerManager = (PowerManager)listActivity
                 .getSystemService(Context.POWER_SERVICE);
         final WakeLock wakeLock = powerManager.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK,
                 "Importing");
-
-        final CachePersisterFacade cachePersisterFacade = cachePersisterFacadeFactory.create(
-                cacheWriter, wakeLock);
+        FileFactory fileFactory = new FileFactory();
+        WriterWrapper writerWrapper = new WriterWrapper();
+        HtmlWriter htmlWriter = new HtmlWriter(writerWrapper);
+        CacheDetailsWriter cacheDetailsWriter = new CacheDetailsWriter(htmlWriter);
+        final CacheTagSqlWriter cacheTagSqlWriter = new CacheTagSqlWriter(cacheWriter, cacheTypeFactory);
+        
+        final CachePersisterFacade cachePersisterFacade = new CachePersisterFacade(cacheTagSqlWriter, 
+                fileFactory, cacheDetailsWriter, messageHandler, wakeLock);
 
         final GpxLoader gpxLoader = GpxLoaderDI.create(cachePersisterFacade, xmlPullParserWrapper,
                 aborter, errorDisplayer, wakeLock);

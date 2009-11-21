@@ -26,18 +26,6 @@ import java.util.Arrays;
 
 public class DatabaseDI {
 
-    //TODO: Remove, merge into DbFrontend
-    public static class CacheReaderCursorFactory {
-        private GeocacheFactory mGeocacheFactory;
-        CacheReaderCursorFactory(GeocacheFactory geocacheFactory) {
-            mGeocacheFactory = geocacheFactory;
-        }
-        public CacheReaderCursor create(Cursor cursor) {
-            final SourceNameTranslator dbToGeocacheAdapter = new SourceNameTranslator();
-            return new CacheReaderCursor(cursor, mGeocacheFactory, dbToGeocacheAdapter);
-        }
-    }
-
     public static class GeoBeagleSqliteOpenHelper extends SQLiteOpenHelper {
         private final OpenHelperDelegate mOpenHelperDelegate;
 
@@ -123,19 +111,13 @@ public class DatabaseDI {
         public boolean isOpen() {
             return mSQLiteDatabase.isOpen();
         }
-
     }
 
-    public static CacheReader createCacheReader(ISQLiteDatabase sqliteWrapper, 
-            GeocacheFactory geocacheFactory) {
-        final CacheReaderCursorFactory cacheReaderCursorFactory = 
-            new CacheReaderCursorFactory(geocacheFactory);
-        return new CacheReader(sqliteWrapper, cacheReaderCursorFactory);
-    }
-
-    public static CacheWriter createCacheWriter(ISQLiteDatabase writableDatabase) {
+    public static CacheWriter createCacheWriter(ISQLiteDatabase writableDatabase,
+            GeocacheFactory geocacheFactory, DbFrontend dbFrontend) {
         final SourceNameTranslator dbToGeocacheAdapter = new SourceNameTranslator();
-        return new CacheWriter(writableDatabase, dbToGeocacheAdapter);
+        return new CacheWriter(writableDatabase, dbFrontend, 
+                dbToGeocacheAdapter, geocacheFactory);
     }
 
 }

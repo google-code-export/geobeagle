@@ -26,13 +26,12 @@ import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Parcel;
-import android.os.Parcelable;
 import android.util.FloatMath;
 
 /**
  * Geocache or letterbox description, id, and coordinates.
  */
-public class Geocache implements Parcelable {
+public class Geocache {
     static interface AttributeFormatter {
         CharSequence formatAttributes(int difficulty, int terrain);
     }
@@ -51,8 +50,6 @@ public class Geocache implements Parcelable {
 
     public static final String CACHE_TYPE = "cacheType";
     public static final String CONTAINER = "container";
-    //TODO: Don't use Parcelable -- it creates a second GeocacheFactory.
-    public static Parcelable.Creator<Geocache> CREATOR = new GeocacheFactory.CreateGeocacheFromParcel();
     public static final String DIFFICULTY = "difficulty";
     public static final String ID = "id";
     public static final String LATITUDE = "latitude";

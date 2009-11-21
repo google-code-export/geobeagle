@@ -31,7 +31,7 @@ public class CacheActionEdit implements CacheAction {
     @Override
     public void act(Geocache cache) {
         Intent intent = new Intent(mActivity, EditCacheActivity.class);
-        intent.putExtra("geocache", cache);
+        intent.putExtra("geocacheId", cache.getId());
         mActivity.startActivityForResult(intent, 0);
     }
 

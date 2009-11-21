@@ -4,6 +4,9 @@ import com.google.code.geobeagle.Clock;
 import com.google.code.geobeagle.GeocacheList;
 import com.google.code.geobeagle.activity.main.GeoUtils;
 
+/** Currently this class doesn't serve a purpose since the same functionality 
+ * is in GeoFixProviderLive.
+ */
 public class CachesProviderLazy implements ICachesProviderCenter {
 
     private final ICachesProviderCenter mProvider;

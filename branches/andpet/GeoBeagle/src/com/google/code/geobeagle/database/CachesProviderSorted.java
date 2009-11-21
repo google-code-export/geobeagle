@@ -13,7 +13,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.WeakHashMap;
 
-//TODO: Use this class from prox.DataCollector to determine the real outer limit
 /** Wraps another CachesProvider to make it sorted. Geocaches closer to 
  * the provided center come first in the getCaches list. 
  * Until setCenter has been called, the list will not be sorted. */
