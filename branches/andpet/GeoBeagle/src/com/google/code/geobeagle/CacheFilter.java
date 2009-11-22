@@ -1,10 +1,30 @@
 package com.google.code.geobeagle;
 
+import com.google.code.geobeagle.database.CachesProviderDb;
+import com.google.code.geobeagle.database.DbFrontend;
+import com.google.code.geobeagle.database.ICachesProviderArea;
+
 import android.app.Activity;
 import android.content.SharedPreferences;
 
 //TODO: Allow filtering on Source
 public class CacheFilter {
+
+    private final Activity mActivity;
+    
+    /** The name of this filter as visible to the user */
+    private String mName;
+
+    /** The string used in Preferences to identify this filter */
+    public final String mId;
+    
+    public ICachesProviderArea getProvider(DbFrontend dbFrontend) {
+        return new CachesProviderDb(dbFrontend, this);
+    }
+
+    public String getName() {
+        return mName;
+    }
     
     public static interface FilterGui {
         public boolean getBoolean(int id);
@@ -49,27 +69,17 @@ public class CacheFilter {
      * Zero means no limit. */
     private int mLabel;
     
-    private SharedPreferences mPreferences;
-
-    //TODO: Move into FilterTypeCollection
-    public static class CacheFilterFactory {
-        /** Return the SharedPreferences that stores the current CacheFilter */
-        public static SharedPreferences getActivePreferences(Activity activity) {
-            return activity.getSharedPreferences("Filter", 0);            
-        }
-        /** Loads the current active filter */
-        public static CacheFilter loadActiveFilter(Activity activity) {
-            SharedPreferences prefs = getActivePreferences(activity);
-            CacheFilter cacheFilter = new CacheFilter(prefs);
-            return cacheFilter;
-        }
+    public CacheFilter(String id, Activity activity) {
+        mId = id;
+        mActivity = activity;
+        SharedPreferences preferences = mActivity.getSharedPreferences(mId, 0);
+        loadFromPreferences(preferences);
     }
     
-    public CacheFilter() {
-    }
-
-    public CacheFilter(SharedPreferences sharedPreferences) {
-        mPreferences = sharedPreferences;
+    public CacheFilter(String id, Activity activity,
+            SharedPreferences sharedPreferences) {
+        mId = id;
+        mActivity = activity;
         loadFromPreferences(sharedPreferences);
     }
 
@@ -86,10 +96,12 @@ public class CacheFilter {
         }
         mFilterString = preferences.getString("FilterString", null);
         mLabel = preferences.getInt("FilterLabel", 0);
+        mName = preferences.getString("FilterName", "Unnamed");
     }
 
     public void saveToPreferences() {
-        SharedPreferences.Editor editor  = mPreferences.edit();
+        SharedPreferences preferences = mActivity.getSharedPreferences(mId, 0);
+        SharedPreferences.Editor editor  = preferences.edit();
         for (BooleanOption option : mOptions) {
             editor.putBoolean(option.PrefsName, option.Selected);
         }
@@ -98,9 +110,10 @@ public class CacheFilter {
         }
         editor.putString("FilterString", mFilterString);
         editor.putInt("FilterLabel", mLabel);
+        editor.putString("FilterName", mName);
         editor.commit();
     }
-        
+    
     /** @return A number of conditions separated by AND */
     public String getSqlWhereClause() {
         int count = 0;

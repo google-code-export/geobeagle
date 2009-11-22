@@ -24,10 +24,10 @@ import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.GeocacheFactory;
 import com.google.code.geobeagle.GeocacheListPrecomputed;
 import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.CacheFilter.CacheFilterFactory;
 import com.google.code.geobeagle.actions.MenuActionCacheList;
 import com.google.code.geobeagle.actions.MenuActionEditFilter;
 import com.google.code.geobeagle.actions.MenuActions;
+import com.google.code.geobeagle.activity.filterlist.FilterTypeCollection;
 import com.google.code.geobeagle.activity.main.GeoUtils;
 import com.google.code.geobeagle.activity.map.DensityMatrix.DensityPatch;
 import com.google.code.geobeagle.database.CachesProviderDb;
@@ -83,7 +83,8 @@ public class GeoMapActivity extends MapActivity {
         final Drawable defaultMarker = resources.getDrawable(R.drawable.pin_default);
         final CacheItemFactory cacheItemFactory = new CacheItemFactory(resources);
 
-        final CacheFilter cacheFilter = CacheFilterFactory.loadActiveFilter(this);
+        final FilterTypeCollection filterTypeCollection = new FilterTypeCollection(this);
+        final CacheFilter cacheFilter = filterTypeCollection.getActiveFilter();
         
         final List<Overlay> mapOverlays = mMapView.getOverlays();
         //menuActions.add(new MenuActionChooseFilter(this));
@@ -121,8 +122,8 @@ public class GeoMapActivity extends MapActivity {
         final GeoPoint center = new GeoPoint((int)(latitude * GeoUtils.MILLION),
                 (int)(longitude * GeoUtils.MILLION));
         mapController.setCenter(center);
-        mOverlayManager = new OverlayManager(this, mMapView, mapOverlays,
-                densityOverlay, cachePinsOverlayFactory, false, cachesProviderArea);
+        mOverlayManager = new OverlayManager(mMapView, mapOverlays,
+                densityOverlay, cachePinsOverlayFactory, false, cachesProviderArea, filterTypeCollection);
         mMapView.setScrollListener(mOverlayManager);
 
         final MenuActions menuActions = new MenuActions();
@@ -130,8 +131,7 @@ public class GeoMapActivity extends MapActivity {
         menuActions.add(new GeoMapActivityDelegate.MenuActionCenterLocation(mMapView, mMyLocationOverlay));
         menuActions.add(new MenuActionCacheList(this));
         final CachesProviderDb[] providers = { cachesProviderArea, cachesProviderAreaPins };
-        //SharedPreferences prefs = CacheFilterFactory.getActivePreferences(this);
-        menuActions.add(new MenuActionEditFilter(this, providers, mOverlayManager));
+        menuActions.add(new MenuActionEditFilter(this, providers, mOverlayManager, filterTypeCollection));
         
         mGeoMapActivityDelegate = new GeoMapActivityDelegate(menuActions);
 

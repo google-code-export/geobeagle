@@ -2,106 +2,109 @@ package com.google.code.geobeagle.activity.filterlist;
 
 import com.google.code.geobeagle.CacheFilter;
 import com.google.code.geobeagle.Labels;
-import com.google.code.geobeagle.database.CachesProviderDb;
-import com.google.code.geobeagle.database.DbFrontend;
-import com.google.code.geobeagle.database.ICachesProviderArea;
-
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 public class FilterTypeCollection {
-
-    public static class FilterType {
-        /** The text visible to the user */
-        private final String mLabel;
-        /** The string used in Preferences to store a reference to this object */
-        public final String mId;
-        private final CacheFilter mCacheFilter;
-        
-        public FilterType(String label, String id, CacheFilter cacheFilter) {
-            mLabel = label;
-            mId = id;
-            mCacheFilter = cacheFilter;
-        }
-        
-        public ICachesProviderArea getProvider(DbFrontend dbFrontend) {
-            return new CachesProviderDb(dbFrontend, mCacheFilter);
-        }
-
-        public Map<String, String> getMap() {
-            HashMap<String, String> item1 = new HashMap<String, String>();
-            item1.put("label", mLabel);
-            return item1;
-        }
+    private static final String FILTER_PREFS = "Filter";
+    private final Activity mActivity;
+    private ArrayList<CacheFilter> mFilterTypes = new ArrayList<CacheFilter>();
+    
+    public FilterTypeCollection(Activity activity) {
+        mActivity = activity;
+        load();
     }
     
-    
-    ArrayList<FilterType> mFilterTypes = new ArrayList<FilterType>();
-    
-    public FilterTypeCollection() {
-        CacheFilter allCaches = new CacheFilter(new FilterPreferences());
-        add(new FilterType("All caches", "All", allCaches));
+    private void load() {
+        SharedPreferences prefs = mActivity.getSharedPreferences(FILTER_PREFS, 0);
+        String ids = prefs.getString("FilterList", "");
+        String[] idArray = ids.split(", ");
+        if (idArray.length == 1 && idArray[0].equals("")) {
+            firstSetup();
+        } else {
+            for (String id : idArray) {
+                mFilterTypes.add(new CacheFilter(id, mActivity));
+            }
+        }
+    }
 
-        {   FilterPreferences favoritesPref = new FilterPreferences();
+    private void firstSetup() {
+        Log.d("GeoBeagle", "FilterTypeCollection first setup");
+        add(new CacheFilter("All", mActivity, new FilterPreferences("All caches")));
+
+        {   FilterPreferences favoritesPref = new FilterPreferences("Favorites");
             favoritesPref.setInteger("FilterLabel", Labels.FAVORITES);
-            CacheFilter favoriteCaches = new CacheFilter(favoritesPref);
-            add(new FilterType("Favorites", "Favorites", favoriteCaches));
+            add(new CacheFilter("Favorites", mActivity, favoritesPref));
         }
 
-        {   FilterPreferences foundPref = new FilterPreferences();
+        {   FilterPreferences foundPref = new FilterPreferences("Found");
             foundPref.setInteger("FilterLabel", Labels.FOUND);
-            CacheFilter foundCaches = new CacheFilter(foundPref);
-            add(new FilterType("Found", "Found", foundCaches));
+            add(new CacheFilter("Found", mActivity, foundPref));
         }
 
-        {   FilterPreferences dnfPref = new FilterPreferences();
+        {   FilterPreferences dnfPref = new FilterPreferences("Did Not Find");
             dnfPref.setInteger("FilterLabel", Labels.DNF);
-            CacheFilter dnfCaches = new CacheFilter(dnfPref);
-            add(new FilterType("Did Not Find", "DNF", dnfCaches));
+            add(new CacheFilter("DNF", mActivity, dnfPref));
         }
-    
+        
+        String filterList = null;
+        for (CacheFilter cacheFilter : mFilterTypes) {
+            cacheFilter.saveToPreferences();
+            if (filterList == null)
+                filterList = cacheFilter.mId;
+            else
+                filterList = filterList + ", " + cacheFilter.mId;
+        }
+        SharedPreferences prefs = mActivity.getSharedPreferences(FILTER_PREFS, 0);
+        Editor editor = prefs.edit();
+        editor.putString("FilterList", filterList);
+        editor.commit();
     }
-
-    private void add(FilterType filterType) {
-        mFilterTypes.add(filterType);
+    
+    private void add(CacheFilter cacheFilter) {
+        mFilterTypes.add(cacheFilter);
     }
     
-    private FilterType getFromId(String id) {
-        for (FilterType filterType : mFilterTypes)
-            if (filterType.mId.equals(id))
-                return filterType;
+    private CacheFilter getFromId(String id) {
+        for (CacheFilter cacheFilter : mFilterTypes)
+            if (cacheFilter.mId.equals(id))
+                return cacheFilter;
         return null;
     }
     
-    public FilterType getActiveFilter(Activity activity) {
-        SharedPreferences prefs = activity.getSharedPreferences("Filter", 0);
+    public CacheFilter getActiveFilter() {
+        SharedPreferences prefs = mActivity.getSharedPreferences(FILTER_PREFS, 0);
         String id = prefs.getString("ActiveFilter", "All");
         return getFromId(id);
     }
     
-    public void setActiveFilter(Activity activity, FilterType filterType) {
-        SharedPreferences prefs = activity.getSharedPreferences("Filter", 0);
+    public void setActiveFilter(CacheFilter cacheFilter) {
+        SharedPreferences prefs = mActivity.getSharedPreferences(FILTER_PREFS, 0);
         Editor editor = prefs.edit();
-        editor.putString("ActiveFilter", filterType.mId);
+        editor.putString("ActiveFilter", cacheFilter.mId);
     }
     
     public ArrayList<Map<String, String>> getAdapterData() {
         ArrayList<Map<String, String>> data = new ArrayList<Map<String, String>>();
-        for (FilterType filterType : mFilterTypes)
-            data.add(filterType.getMap());
+        for (CacheFilter cacheFilter : mFilterTypes) {
+            HashMap<String, String> item = new HashMap<String, String>();
+            item.put("label", cacheFilter.getName());
+            data.add(item);
+        }
         return data;
     }
 
-    public FilterType get(int position) {
+    public CacheFilter get(int position) {
         return mFilterTypes.get(position);
     }
     
-    public int getIndexOf(FilterType filterType) {
-        return mFilterTypes.indexOf(filterType);
+    public int getIndexOf(CacheFilter cacheFilter) {
+        return mFilterTypes.indexOf(cacheFilter);
     }
 }

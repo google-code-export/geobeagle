@@ -7,7 +7,7 @@ import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.GeocacheFactory;
 import com.google.code.geobeagle.LocationControlDi;
 import com.google.code.geobeagle.Refresher;
-import com.google.code.geobeagle.CacheFilter.CacheFilterFactory;
+import com.google.code.geobeagle.activity.filterlist.FilterTypeCollection;
 import com.google.code.geobeagle.database.CachesProviderDb;
 import com.google.code.geobeagle.database.CachesProviderCount;
 import com.google.code.geobeagle.database.DbFrontend;
@@ -48,11 +48,10 @@ public class ProximityActivity extends Activity implements SurfaceHolder.Callbac
 
         GeocacheFactory geocacheFactory = new GeocacheFactory();
         mDbFrontend = new DbFrontend(this, geocacheFactory);
-        CacheFilter cacheFilter = CacheFilterFactory.loadActiveFilter(this);
+        final FilterTypeCollection filterTypeCollection = new FilterTypeCollection(this);
+        final CacheFilter cacheFilter = filterTypeCollection.getActiveFilter();
         CachesProviderDb cachesProviderArea = new CachesProviderDb(mDbFrontend, cacheFilter);
-        //CachesProviderRadius cachesProviderRadius = new CachesProviderRadius(cachesProviderArea);
         CachesProviderCount cachesProviderCount = new CachesProviderCount(cachesProviderArea, 5, 10);
-        //cachesProviderRadius.setRadius(0.01);
         
         mProximityPainter = new ProximityPainter(cachesProviderCount);
 

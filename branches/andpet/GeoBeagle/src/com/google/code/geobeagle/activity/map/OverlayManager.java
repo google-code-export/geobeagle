@@ -17,34 +17,33 @@ package com.google.code.geobeagle.activity.map;
 import com.google.android.maps.Overlay;
 import com.google.code.geobeagle.CacheFilter;
 import com.google.code.geobeagle.Refresher;
-import com.google.code.geobeagle.CacheFilter.CacheFilterFactory;
+import com.google.code.geobeagle.activity.filterlist.FilterTypeCollection;
 import com.google.code.geobeagle.database.CachesProviderDb;
-
-import android.app.Activity;
 
 import java.util.List;
 
 public class OverlayManager implements Refresher {
     static final int DENSITY_MAP_ZOOM_THRESHOLD = 12;
-    private final Activity mActivity;
     private final CachePinsOverlayFactory mCachePinsOverlayFactory;
     private final DensityOverlay mDensityOverlay;
     private final GeoMapView mGeoMapView;
     private final List<Overlay> mMapOverlays;
     private boolean mUsesDensityMap;
     private final CachesProviderDb mCachesProviderDb;
+    private final FilterTypeCollection mFilterTypeCollection;
 
-    public OverlayManager(Activity activity,
+    public OverlayManager(
             GeoMapView geoMapView, List<Overlay> mapOverlays,
             DensityOverlay densityOverlay, CachePinsOverlayFactory cachePinsOverlayFactory,
-            boolean usesDensityMap, CachesProviderDb cachesProviderArea) {
-        mActivity = activity;
+            boolean usesDensityMap, CachesProviderDb cachesProviderArea,
+            FilterTypeCollection filterTypeCollection) {
         mGeoMapView = geoMapView;
         mMapOverlays = mapOverlays;
         mDensityOverlay = densityOverlay;
         mCachePinsOverlayFactory = cachePinsOverlayFactory;
         mUsesDensityMap = usesDensityMap;
         mCachesProviderDb = cachesProviderArea;
+        mFilterTypeCollection = filterTypeCollection;
     }
 
     public void selectOverlay() {
@@ -67,7 +66,7 @@ public class OverlayManager implements Refresher {
 
     @Override
     public void forceRefresh() {
-        CacheFilter cacheFilter = CacheFilterFactory.loadActiveFilter(mActivity);
+        CacheFilter cacheFilter = mFilterTypeCollection.getActiveFilter();
         mCachesProviderDb.setFilter(cacheFilter);
         selectOverlay();
         //Must be called from the GUI thread:

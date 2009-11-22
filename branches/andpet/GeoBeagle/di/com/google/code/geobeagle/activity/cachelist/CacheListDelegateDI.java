@@ -21,7 +21,6 @@ import com.google.code.geobeagle.GeoFixProvider;
 import com.google.code.geobeagle.GeocacheFactory;
 import com.google.code.geobeagle.IPausable;
 import com.google.code.geobeagle.LocationControlDi;
-import com.google.code.geobeagle.CacheFilter.CacheFilterFactory;
 import com.google.code.geobeagle.actions.CacheAction;
 import com.google.code.geobeagle.actions.CacheActionDelete;
 import com.google.code.geobeagle.actions.CacheActionEdit;
@@ -48,6 +47,7 @@ import com.google.code.geobeagle.activity.cachelist.presenter.DistanceFormatterM
 import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheSummaryRowInflater;
 import com.google.code.geobeagle.activity.cachelist.presenter.RelativeBearingFormatter;
 import com.google.code.geobeagle.activity.cachelist.presenter.TitleUpdater;
+import com.google.code.geobeagle.activity.filterlist.FilterTypeCollection;
 import com.google.code.geobeagle.activity.main.GeoBeagle;
 import com.google.code.geobeagle.database.CachesProviderCenterThread;
 import com.google.code.geobeagle.database.CachesProviderDb;
@@ -132,7 +132,8 @@ public class CacheListDelegateDI {
                 .getUpdateGpsWidgetRunnable();
         updateGpsWidgetRunnable.run();
         
-        final CacheFilter cacheFilter = CacheFilterFactory.loadActiveFilter(listActivity);
+        final FilterTypeCollection filterTypeCollection = new FilterTypeCollection(listActivity);
+        final CacheFilter cacheFilter = filterTypeCollection.getActiveFilter();
         
         final DbFrontend dbFrontend = new DbFrontend(listActivity, geocacheFactory);
         final CachesProviderDb cachesProviderArea = new CachesProviderDb(dbFrontend, cacheFilter);
@@ -186,7 +187,7 @@ public class CacheListDelegateDI {
         final CachesProviderDb[] providers = { cachesProviderArea, };
         //SharedPreferences prefs = CacheFilterFactory.getActivePreferences(listActivity);
         menuActions.add(new MenuActionEditFilter(listActivity, 
-                providers, cacheList));
+                providers, cacheList, filterTypeCollection));
         menuActions.add(new MenuActionMap(listActivity, geoFixProvider));
         menuActions.add(new MenuActionFilterList(listActivity));
         menuActions.add(new MenuActionSettings(listActivity));

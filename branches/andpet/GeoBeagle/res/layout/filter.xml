@@ -16,7 +16,7 @@
 	android:layout_height="wrap_content"
 	android:minWidth="280px">
 
-  <TextView android:id="@+id/TextView01" android:layout_width="fill_parent" android:layout_height="wrap_content"
+  <TextView android:id="@+id/TextFilterTitle" android:layout_width="fill_parent" android:layout_height="wrap_content"
      android:gravity="center_horizontal" android:textSize="20sp" android:text="Cache types to show">
   </TextView>
 

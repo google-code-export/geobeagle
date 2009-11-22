@@ -8,9 +8,11 @@ import java.util.Map;
 class FilterPreferences implements SharedPreferences {
     private HashMap<String, Object> mValues;
     
-    public FilterPreferences() {
+    public FilterPreferences(String filterName) {
         mValues = new HashMap<String, Object>();
+        setString("FilterName", filterName);
         //Default values
+        /*
         setBoolean("Traditional", true);            
         setBoolean("Multi", true);
         setBoolean("Unknown", true);
@@ -24,6 +26,7 @@ class FilterPreferences implements SharedPreferences {
 
         setString("FilterString", "");
         setInteger("FilterLabel", 0);
+        */
     };
 
     public void setBoolean(String key, boolean value) {
