@@ -13,12 +13,6 @@ import android.view.View;
 public class CacheFilterTest {
 
     @Test
-    public void testFindAllByDefault() {
-        CacheFilter cacheFilter = new CacheFilter();
-        assertEquals(null, cacheFilter.getSqlWhereClause());
-    }
-
-    @Test
     public void testAllSelected() {
         CacheFilter.FilterGui provider = new CacheFilter.FilterGui() {
             @Override
@@ -31,7 +25,7 @@ public class CacheFilterTest {
             public void setString(int id, String value) { }
         };
 
-        CacheFilter cacheFilter = new CacheFilter();
+        CacheFilter cacheFilter = new CacheFilter(null, null);
         cacheFilter.loadFromGui(provider);
         assertEquals(null, cacheFilter.getSqlWhereClause());
     }
@@ -49,7 +43,7 @@ public class CacheFilterTest {
             public void setString(int id, String value) { }
         };
 
-        CacheFilter cacheFilter = new CacheFilter();
+        CacheFilter cacheFilter = new CacheFilter(null, null);
         cacheFilter.loadFromGui(provider);
         assertEquals(null, cacheFilter.getSqlWhereClause());
     }
@@ -67,7 +61,7 @@ public class CacheFilterTest {
             public void setString(int id, String value) { }
         };
 
-        CacheFilter cacheFilter = new CacheFilter();
+        CacheFilter cacheFilter = new CacheFilter(null, null);
         cacheFilter.loadFromGui(provider);
         assertTrue(cacheFilter.getSqlWhereClause().contains("lower"));
     }
@@ -85,7 +79,7 @@ public class CacheFilterTest {
             public void setString(int id, String value) { }
         };
 
-        CacheFilter cacheFilter = new CacheFilter();
+        CacheFilter cacheFilter = new CacheFilter(null, null);
         cacheFilter.loadFromGui(provider);
         assertFalse(cacheFilter.getSqlWhereClause().contains("lower"));
     }

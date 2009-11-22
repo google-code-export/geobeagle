@@ -52,7 +52,8 @@ public class OverlayManagerTest {
                 OverlayManager.DENSITY_MAP_ZOOM_THRESHOLD - 1);
 
         PowerMock.replayAll();
-        final OverlayManager overlayManager = new OverlayManager(null, geoMapView, null, null, null, true, null);
+        final OverlayManager overlayManager = new OverlayManager(geoMapView, 
+                null, null, null, true, null, null);
         overlayManager.selectOverlay();
         assertTrue(overlayManager.usesDensityMap());
         PowerMock.verifyAll();
@@ -69,8 +70,8 @@ public class OverlayManagerTest {
                 OverlayManager.DENSITY_MAP_ZOOM_THRESHOLD - 1);
 
         PowerMock.replayAll();
-        final OverlayManager overlayManager = new OverlayManager(null, geoMapView, overlays,
-                densityOverlay, null, false, null);
+        final OverlayManager overlayManager = new OverlayManager(geoMapView, overlays,
+                densityOverlay, null, false, null, null);
         overlayManager.selectOverlay();
         assertTrue(overlayManager.usesDensityMap());
         assertEquals(densityOverlay, overlays.get(0));
@@ -91,8 +92,8 @@ public class OverlayManagerTest {
         EasyMock.expect(cachePinsOverlayFactory.getCachePinsOverlay()).andReturn(cachePinsOverlay);
 
         PowerMock.replayAll();
-        final OverlayManager overlayManager = new OverlayManager(null, geoMapView, overlays, null,
-                cachePinsOverlayFactory, true, null);
+        final OverlayManager overlayManager = new OverlayManager(geoMapView, overlays, null,
+                cachePinsOverlayFactory, true, null, null);
         overlayManager.selectOverlay();
         assertFalse(overlayManager.usesDensityMap());
         assertEquals(cachePinsOverlay, overlays.get(0));

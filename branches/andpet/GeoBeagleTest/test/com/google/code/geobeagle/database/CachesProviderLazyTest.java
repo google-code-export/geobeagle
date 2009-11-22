@@ -3,8 +3,8 @@ package com.google.code.geobeagle.database;
 import static org.easymock.EasyMock.expect;
 import static org.junit.Assert.*;
 
-import com.google.code.geobeagle.Geocache;
-import com.google.code.geobeagle.Time;
+import com.google.code.geobeagle.Clock;
+import com.google.code.geobeagle.GeocacheList;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -12,32 +12,30 @@ import org.junit.runner.RunWith;
 import org.powermock.api.easymock.PowerMock;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import java.util.ArrayList;
-
 @RunWith(PowerMockRunner.class)
 public class CachesProviderLazyTest {
     ICachesProviderCenter mProvider;
-    Time mTime;
-    ArrayList<Geocache> mList1;
-    ArrayList<Geocache> mList2;
+    Clock mClock;
+    GeocacheList mList1;
+    GeocacheList mList2;
     final double MINDIST = 2.0;
     final long MINTIME = 1000;
 
     @Before
     public void setUp() {
         mProvider = PowerMock.createMock(ICachesProviderCenter.class);
-        mTime = PowerMock.createMock(Time.class);
-        mList1 = new ArrayList<Geocache>();
-        mList2 = new ArrayList<Geocache>();
+        mClock = PowerMock.createMock(Clock.class);
+        mList1 = PowerMock.createMock(GeocacheList.class);
+        mList2 = PowerMock.createMock(GeocacheList.class);
         mList2.add(null);
-        expect(mTime.getCurrentTime()).andReturn(0L);
+        expect(mClock.getCurrentTime()).andReturn(0L);
     }
     
     @Test
     public void testHasChangedAtStartup() {
         PowerMock.replayAll();
         
-        CachesProviderLazy lazy = new CachesProviderLazy(mProvider, MINDIST, MINTIME, mTime);
+        CachesProviderLazy lazy = new CachesProviderLazy(mProvider, MINDIST, MINTIME, mClock);
 
         assertTrue(lazy.hasChanged());
         lazy.resetChanged();
@@ -52,7 +50,7 @@ public class CachesProviderLazyTest {
         expect(mProvider.getCaches()).andReturn(mList1);
         PowerMock.replayAll();
         
-        CachesProviderLazy lazy = new CachesProviderLazy(mProvider, MINDIST, MINTIME, mTime);
+        CachesProviderLazy lazy = new CachesProviderLazy(mProvider, MINDIST, MINTIME, mClock);
 
         assertEquals(mList1, lazy.getCaches());
         PowerMock.verifyAll();
@@ -64,7 +62,7 @@ public class CachesProviderLazyTest {
         expect(mProvider.getCaches()).andReturn(mList1);
         PowerMock.replayAll();
         
-        CachesProviderLazy lazy = new CachesProviderLazy(mProvider, MINDIST, MINTIME, mTime);
+        CachesProviderLazy lazy = new CachesProviderLazy(mProvider, MINDIST, MINTIME, mClock);
 
         assertEquals(mList1, lazy.getCaches());
         assertEquals(mList1, lazy.getCaches());
@@ -74,13 +72,13 @@ public class CachesProviderLazyTest {
     @Test
     /** Move the center and expect a new list to be loaded */
     public void testChanged() {
-        expect(mTime.getCurrentTime()).andReturn(2000L);
+        expect(mClock.getCurrentTime()).andReturn(2000L);
         expect(mProvider.getCaches()).andReturn(mList1);
         mProvider.setCenter(1, 1);
         expect(mProvider.getCaches()).andReturn(mList2);
         PowerMock.replayAll();
 
-        CachesProviderLazy lazy = new CachesProviderLazy(mProvider, MINDIST, MINTIME, mTime);
+        CachesProviderLazy lazy = new CachesProviderLazy(mProvider, MINDIST, MINTIME, mClock);
         assertEquals(mList1, lazy.getCaches());
         lazy.setCenter(1, 1);
         assertTrue(lazy.hasChanged());
@@ -91,11 +89,11 @@ public class CachesProviderLazyTest {
     @Test
     /** Not enough time passed for the change to become visible */
     public void testChangedTooSoon() {
-        expect(mTime.getCurrentTime()).andReturn(500L);
+        expect(mClock.getCurrentTime()).andReturn(500L);
         mProvider.setCenter(1, 1);
         PowerMock.replayAll();
 
-        CachesProviderLazy lazy = new CachesProviderLazy(mProvider, MINDIST, MINTIME, mTime);
+        CachesProviderLazy lazy = new CachesProviderLazy(mProvider, MINDIST, MINTIME, mClock);
         lazy.resetChanged();
         lazy.setCenter(1, 1);
         assertFalse(lazy.hasChanged());
@@ -105,14 +103,14 @@ public class CachesProviderLazyTest {
     @Test
     /** A large enough change will be carried out once enough time passed */
     public void testDelayedChange() {
-        expect(mTime.getCurrentTime()).andReturn(500L);
+        expect(mClock.getCurrentTime()).andReturn(500L);
         expect(mProvider.getCaches()).andReturn(mList1);
         mProvider.setCenter(1, 1);
         expect(mProvider.getCaches()).andReturn(mList2);
-        expect(mTime.getCurrentTime()).andReturn(1500L);
+        expect(mClock.getCurrentTime()).andReturn(1500L);
         PowerMock.replayAll();
 
-        CachesProviderLazy lazy = new CachesProviderLazy(mProvider, MINDIST, MINTIME, mTime);
+        CachesProviderLazy lazy = new CachesProviderLazy(mProvider, MINDIST, MINTIME, mClock);
         lazy.resetChanged();
         lazy.setCenter(1, 1);
         assertFalse(lazy.hasChanged());
@@ -128,11 +126,11 @@ public class CachesProviderLazyTest {
     @Test
     /** The change is not big enough to signal with hasChanged() */
     public void testChangeTooSmall() {
-        expect(mTime.getCurrentTime()).andReturn(2000L);
+        expect(mClock.getCurrentTime()).andReturn(2000L);
         mProvider.setCenter(0.0001, 0.0001);
         PowerMock.replayAll();
 
-        CachesProviderLazy lazy = new CachesProviderLazy(mProvider, MINDIST, MINTIME, mTime);
+        CachesProviderLazy lazy = new CachesProviderLazy(mProvider, MINDIST, MINTIME, mClock);
         lazy.resetChanged();
         lazy.setCenter(1, 1);
         assertFalse(lazy.hasChanged());
@@ -142,13 +140,13 @@ public class CachesProviderLazyTest {
     @Test
     /** A small change won't be carried out even after enough time passed */
     public void testDelayedNoChange() {
-        expect(mTime.getCurrentTime()).andReturn(500L);
+        expect(mClock.getCurrentTime()).andReturn(500L);
         expect(mProvider.getCaches()).andReturn(mList1);
         mProvider.setCenter(0.0001, 0.0001);
-        expect(mTime.getCurrentTime()).andReturn(1500L);
+        expect(mClock.getCurrentTime()).andReturn(1500L);
         PowerMock.replayAll();
 
-        CachesProviderLazy lazy = new CachesProviderLazy(mProvider, MINDIST, MINTIME, mTime);
+        CachesProviderLazy lazy = new CachesProviderLazy(mProvider, MINDIST, MINTIME, mClock);
         lazy.resetChanged();
         lazy.setCenter(1, 1);
         assertFalse(lazy.hasChanged());
