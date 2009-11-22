@@ -48,6 +48,12 @@
 				android:textColor="@android:color/primary_text_dark"
 				android:layout_gravity="right" android:textSize="26sp"
 				android:gravity="right" />
+			<view android:id="@+id/gcfavorite" 
+			    class="com.google.code.geobeagle.activity.main.view.FavoriteView"
+			    android:layout_gravity="right|bottom"
+				android:layout_width="wrap_content" android:layout_height="wrap_content"
+				android:src="@drawable/btn_rating_star_off_normal" android:layout_marginRight="15dip"
+				android:layout_marginBottom="-10dip" />
 		</FrameLayout>
 
 		<RelativeLayout android:layout_height="wrap_content"

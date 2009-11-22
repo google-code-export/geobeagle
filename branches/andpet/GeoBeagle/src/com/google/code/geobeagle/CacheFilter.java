@@ -65,6 +65,8 @@ public class CacheFilter {
     };
        
     private String mFilterString;
+    
+    //TODO: Replace use of 'label' with 'tag' to lessen confusion
     /** Limits the filter to only include geocaches with this label. 
      * Zero means no limit. */
     private int mLabel;

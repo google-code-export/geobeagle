@@ -153,7 +153,6 @@ public class CacheListDelegate {
 
     public void onResume() {
         Log.d("GeoBeagle", "CacheListDelegate.onResume()");
-        //if (mListActivity.getApplicationContext().g)
         mDistanceFormatterManager.setFormatter();
         final SharedPreferences sharedPreferences = PreferenceManager
         .getDefaultSharedPreferences(mListActivity);

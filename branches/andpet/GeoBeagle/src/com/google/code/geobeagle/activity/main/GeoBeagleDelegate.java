@@ -19,12 +19,14 @@ import com.google.code.geobeagle.GeoFixProvider;
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.GeocacheFactory;
 import com.google.code.geobeagle.IPausable;
+import com.google.code.geobeagle.Labels;
 import com.google.code.geobeagle.Refresher;
 import com.google.code.geobeagle.GeocacheFactory.Source;
 import com.google.code.geobeagle.actions.MenuActions;
 import com.google.code.geobeagle.activity.ActivitySaver;
 import com.google.code.geobeagle.activity.ActivityType;
 import com.google.code.geobeagle.activity.main.FieldNoteSender.FieldNoteResources;
+import com.google.code.geobeagle.activity.main.view.FavoriteView;
 import com.google.code.geobeagle.activity.main.view.GeocacheViewer;
 import com.google.code.geobeagle.activity.main.view.WebPageAndDetailsButtonEnabler;
 import com.google.code.geobeagle.database.DbFrontend;
@@ -100,6 +102,7 @@ public class GeoBeagleDelegate {
     private final SharedPreferences mSharedPreferences;
     private final WebPageAndDetailsButtonEnabler mWebPageButtonEnabler;
     private final IPausable mGeoFixProvider;
+    private final FavoriteView mFavoriteView;
 
     public GeoBeagleDelegate(ActivitySaver activitySaver, FieldNoteSender fieldNoteSender, GeoBeagle parent,
             GeocacheFactory geocacheFactory, GeocacheViewer geocacheViewer,
@@ -108,7 +111,7 @@ public class GeoBeagleDelegate {
             DbFrontend dbFrontend, RadarView radarView, Resources resources,
             SharedPreferences sharedPreferences,
             WebPageAndDetailsButtonEnabler webPageButtonEnabler,
-            IPausable geoFixProvider) {
+            IPausable geoFixProvider, FavoriteView favoriteView) {
         mParent = parent;
         mActivitySaver = activitySaver;
         mFieldNoteSender = fieldNoteSender;
@@ -123,6 +126,7 @@ public class GeoBeagleDelegate {
         mDbFrontend = dbFrontend;
         mGeocacheFromParcelFactory = geocacheFromParcelFactory;
         mGeoFixProvider = geoFixProvider;
+        mFavoriteView = favoriteView;
     }
 
     public Geocache getGeocache() {
@@ -179,6 +183,7 @@ public class GeoBeagleDelegate {
                     CacheType.NULL, 0, 0, 0);
         }
         mGeocacheViewer.set(mGeocache);
+        mFavoriteView.setGeocache(mDbFrontend, mGeocache.getId());
         mWebPageButtonEnabler.check();
     }
 

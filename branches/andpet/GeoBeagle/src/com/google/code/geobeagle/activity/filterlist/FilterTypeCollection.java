@@ -89,17 +89,11 @@ public class FilterTypeCollection {
         Editor editor = prefs.edit();
         editor.putString("ActiveFilter", cacheFilter.mId);
     }
-    
-    public ArrayList<Map<String, String>> getAdapterData() {
-        ArrayList<Map<String, String>> data = new ArrayList<Map<String, String>>();
-        for (CacheFilter cacheFilter : mFilterTypes) {
-            HashMap<String, String> item = new HashMap<String, String>();
-            item.put("label", cacheFilter.getName());
-            data.add(item);
-        }
-        return data;
-    }
 
+    public int getCount() {
+        return mFilterTypes.size();
+    }
+    
     public CacheFilter get(int position) {
         return mFilterTypes.get(position);
     }

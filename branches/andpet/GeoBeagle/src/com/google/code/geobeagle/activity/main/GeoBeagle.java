@@ -45,6 +45,7 @@ import com.google.code.geobeagle.activity.main.intents.IntentFactory;
 
 import com.google.code.geobeagle.activity.main.view.CacheButtonOnClickListener;
 import com.google.code.geobeagle.activity.main.view.CacheDetailsOnClickListener;
+import com.google.code.geobeagle.activity.main.view.FavoriteView;
 import com.google.code.geobeagle.activity.main.view.GeocacheViewer;
 import com.google.code.geobeagle.activity.main.view.Misc;
 import com.google.code.geobeagle.activity.main.view.WebPageAndDetailsButtonEnabler;
@@ -122,9 +123,10 @@ public class GeoBeagle extends Activity {
                 (TextView)findViewById(R.id.radar_bearing),
                 (TextView)findViewById(R.id.radar_accuracy),
                 (TextView)findViewById(R.id.radar_lag));
+        FavoriteView favorite = (FavoriteView) findViewById(R.id.gcfavorite);
         final GeocacheViewer geocacheViewer = new GeocacheViewer(radar, gcid, gcName,
                 (ImageView)findViewById(R.id.gcicon),
-                gcDifficulty, gcTerrain, gcContainer);
+                gcDifficulty, gcTerrain, gcContainer/*, favorite*/);
 
         //geoFixProvider.onLocationChanged(null);
         GeoBeagleDelegate.RadarViewRefresher radarViewRefresher = 
@@ -152,7 +154,7 @@ public class GeoBeagle extends Activity {
                 new MenuActionSettings(this),
                 new MenuActionFromCacheAction(new CacheActionGoogleMaps(intentStarterViewUri, resources), geocache),
                 new MenuActionFromCacheAction(new CacheActionProximity(this), geocache),
-                new MenuActionToggleFavorite(mDbFrontend, geocache),
+                //new MenuActionToggleFavorite(mDbFrontend, geocache),
         };
         final MenuActions menuActions = new MenuActions(menuActionArray);
         final SharedPreferences defaultSharedPreferences = PreferenceManager
@@ -163,7 +165,7 @@ public class GeoBeagle extends Activity {
                 fieldNoteSender, this, geocacheFactory, geocacheViewer,
                 incomingIntentHandler, menuActions, geocacheFromParcelFactory,
                 mDbFrontend, radar, resources, defaultSharedPreferences,
-                webPageButtonEnabler, geoFixProvider);
+                webPageButtonEnabler, geoFixProvider, favorite);
 
         // see http://www.androidguys.com/2008/11/07/rotational-forces-part-two/
         if (getLastNonConfigurationInstance() != null) {
@@ -207,8 +209,6 @@ public class GeoBeagle extends Activity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         return mGeoBeagleDelegate.onCreateOptionsMenu(menu);
-        //getMenuInflater().inflate(R.menu.main_menu, menu);
-        //return true;
     }
 
     @Override

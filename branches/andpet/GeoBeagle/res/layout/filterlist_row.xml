@@ -14,11 +14,15 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	android:orientation="horizontal" android:layout_width="fill_parent"
 	android:layout_height="wrap_content">
-	
-		<TextView android:id="@+id/txt_filter" android:textSize="26sp"
-			android:layout_width="fill_parent" android:gravity="left"
-			android:layout_height="wrap_content" android:text=""
-			android:textColor="#ffffff" android:lines="1" android:ellipsize="end"
-			android:scrollHorizontally="true" android:padding="4sp" />
+
+    <ImageView android:id="@+id/icon"
+        android:layout_width="48dip"
+        android:layout_height="48dip" />
+
+	<TextView android:id="@+id/txt_filter" android:textSize="26sp"
+		android:layout_width="fill_parent" android:gravity="left"
+		android:layout_height="wrap_content" android:text=""
+		android:textColor="#ffffff" android:lines="1" android:ellipsize="end"
+		android:scrollHorizontally="true" android:padding="4sp" />
 
 </LinearLayout>

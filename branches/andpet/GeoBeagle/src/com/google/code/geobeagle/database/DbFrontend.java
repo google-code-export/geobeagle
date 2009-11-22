@@ -27,6 +27,7 @@ import com.google.code.geobeagle.GeocacheFactory;
 import com.google.code.geobeagle.GeocacheList;
 import com.google.code.geobeagle.GeocacheListLazy;
 import com.google.code.geobeagle.GeocacheListPrecomputed;
+import com.google.code.geobeagle.Labels;
 import com.google.code.geobeagle.database.DatabaseDI;
 import com.google.code.geobeagle.database.DatabaseDI.GeoBeagleSqliteOpenHelper;
 import com.google.code.geobeagle.database.DatabaseDI.SQLiteWrapper;
@@ -265,7 +266,7 @@ public class DbFrontend {
         Log.d("GeoBeagle", "geocacheHasLabel hit count is " + count);
         return (count > 0);
     }
-    
+        
     public void setGeocacheLabel(CharSequence geocacheId, int labelId) {
         openDatabase();
         Log.d("GeoBeagle", "setGeocacheLabel(" + geocacheId + ", " + labelId + ")");

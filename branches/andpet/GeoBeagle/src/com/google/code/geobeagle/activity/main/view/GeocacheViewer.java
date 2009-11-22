@@ -117,6 +117,7 @@ public class GeocacheViewer {
         mContainer = gcContainer;
     }
 
+    
     public void set(Geocache geocache) {
         final double latitude = geocache.getLatitude();
         final double longitude = geocache.getLongitude();
