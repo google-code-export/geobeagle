@@ -14,12 +14,15 @@
 
 package com.google.code.geobeagle.activity.map;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 
+import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapController;
 import com.google.android.maps.MapView;
+import com.google.android.maps.MyLocationOverlay;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.actions.MenuActions;
+import com.google.code.geobeagle.activity.map.GeoMapActivityDelegate.MenuActionCenterLocation;
 
 import org.easymock.EasyMock;
 import org.junit.Test;
@@ -36,6 +39,35 @@ import android.view.MenuItem;
         GeoMapView.class, MapController.class, GeoMapActivityDelegate.class
 })
 public class GeoMapActivityDelegateTest {
+
+    @Test
+    public void testMenuActionCenterLocation() {
+        MyLocationOverlay myLocationOverlay = PowerMock.createMock(MyLocationOverlay.class);
+        GeoPoint geoPoint = PowerMock.createMock(GeoPoint.class);
+        MapController mapController = PowerMock.createMock(MapController.class);
+
+        EasyMock.expect(myLocationOverlay.getMyLocation()).andReturn(geoPoint);
+        mapController.animateTo(geoPoint);
+
+        PowerMock.replayAll();
+        MenuActionCenterLocation menuActionCenterLocation = new MenuActionCenterLocation(
+                mapController, myLocationOverlay);
+        menuActionCenterLocation.act();
+        PowerMock.verifyAll();
+    }
+
+    @Test
+    public void testMenuActionCenterLocationNull() {
+        MyLocationOverlay myLocationOverlay = PowerMock.createMock(MyLocationOverlay.class);
+
+        EasyMock.expect(myLocationOverlay.getMyLocation()).andReturn(null);
+
+        PowerMock.replayAll();
+        MenuActionCenterLocation menuActionCenterLocation = new MenuActionCenterLocation(
+                null, myLocationOverlay);
+        menuActionCenterLocation.act();
+        PowerMock.verifyAll();
+    }
 
     @Test
     public void testMenuActionToggleSatellite() {

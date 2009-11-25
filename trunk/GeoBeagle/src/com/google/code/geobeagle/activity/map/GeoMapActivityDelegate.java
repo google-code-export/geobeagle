@@ -28,6 +28,7 @@
 package com.google.code.geobeagle.activity.map;
 
 import com.google.android.maps.GeoPoint;
+import com.google.android.maps.MapController;
 import com.google.android.maps.MapView;
 import com.google.android.maps.MyLocationOverlay;
 import com.google.code.geobeagle.R;
@@ -39,15 +40,14 @@ import android.view.MenuItem;
 
 public class GeoMapActivityDelegate {
     public static class MenuActionCenterLocation extends MenuActionBase {
-        private final MapView mMapView;
         private final MyLocationOverlay mMyLocationOverlay;
+        private final MapController mMapController;
 
-        public MenuActionCenterLocation(MapView mapView,
-
-        MyLocationOverlay myLocationOverlay) {
+        public MenuActionCenterLocation(MapController mapController,
+                MyLocationOverlay myLocationOverlay) {
             super(R.string.menu_center_location);
-            mMapView = mapView;
             mMyLocationOverlay = myLocationOverlay;
+            mMapController = mapController;
         }
 
         @Override
@@ -55,7 +55,7 @@ public class GeoMapActivityDelegate {
             final GeoPoint myLocation = mMyLocationOverlay.getMyLocation();
             if (myLocation == null)
                 return;
-            mMapView.getController().animateTo(myLocation);
+            mMapController.animateTo(myLocation);
         }
     }
 

@@ -69,7 +69,8 @@ public class GeoMapActivity extends MapActivity {
         // Set member variables first, in case anyone after this needs them.
         mMapView = (GeoMapView)findViewById(R.id.mapview);
         mDbFrontend = new DbFrontend(this);
-        mMyLocationOverlay = new MyLocationOverlay(this, mMapView);
+        // mMyLocationOverlay = new MyLocationOverlay(this, mMapView);
+        mMyLocationOverlay = new FixedMyLocationOverlay(this, mMapView);
 
         mMapView.setBuiltInZoomControls(true);
         mMapView.setSatellite(false);
@@ -83,11 +84,11 @@ public class GeoMapActivity extends MapActivity {
         final MenuActions menuActions = new MenuActions(getResources());
         menuActions.add(new GeoMapActivityDelegate.MenuActionToggleSatellite(mMapView));
         menuActions.add(new MenuActionCacheList(this));
-        menuActions.add(new GeoMapActivityDelegate.MenuActionCenterLocation(mMapView,
-                mMyLocationOverlay));
-        
-        final Intent intent = getIntent();
         final MapController mapController = mMapView.getController();
+        menuActions.add(new GeoMapActivityDelegate.MenuActionCenterLocation(mapController,
+                mMyLocationOverlay));
+
+        final Intent intent = getIntent();
         final double latitude = intent.getFloatExtra("latitude", 0);
         final double longitude = intent.getFloatExtra("longitude", 0);
         final Overlay nullOverlay = new GeoMapActivity.NullOverlay();
