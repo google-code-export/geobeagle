@@ -44,7 +44,7 @@ public class CacheActionDelete implements CacheAction {
     }
 
     @Override
-    public String getLabel() {
+    public String getLabel(Geocache geocache) {
         return mResources.getString(R.string.menu_delete_cache);
     }
 

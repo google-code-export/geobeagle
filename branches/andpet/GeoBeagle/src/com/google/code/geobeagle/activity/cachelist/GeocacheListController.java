@@ -48,7 +48,7 @@ public class GeocacheListController {
                 Geocache geocache = mCachesProvider.getCaches().get(acmi.position - 1);
                 menu.setHeaderTitle(geocache.getId());
                 for (int ix = 0; ix < mCacheActions.length; ix++) {
-                    menu.add(0, ix, ix, mCacheActions[ix].getLabel());
+                    menu.add(0, ix, ix, mCacheActions[ix].getLabel(geocache));
                 }
             }
         }

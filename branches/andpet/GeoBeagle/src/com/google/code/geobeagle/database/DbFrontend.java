@@ -27,7 +27,6 @@ import com.google.code.geobeagle.GeocacheFactory;
 import com.google.code.geobeagle.GeocacheList;
 import com.google.code.geobeagle.GeocacheListLazy;
 import com.google.code.geobeagle.GeocacheListPrecomputed;
-import com.google.code.geobeagle.Labels;
 import com.google.code.geobeagle.database.DatabaseDI;
 import com.google.code.geobeagle.database.DatabaseDI.GeoBeagleSqliteOpenHelper;
 import com.google.code.geobeagle.database.DatabaseDI.SQLiteWrapper;

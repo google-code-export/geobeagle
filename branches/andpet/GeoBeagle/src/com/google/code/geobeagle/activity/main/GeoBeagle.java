@@ -24,7 +24,6 @@ import com.google.code.geobeagle.LocationControlDi;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.R.id;
 import com.google.code.geobeagle.actions.MenuActionSettings;
-import com.google.code.geobeagle.actions.MenuActionToggleFavorite;
 import com.google.code.geobeagle.actions.CacheActionEdit;
 import com.google.code.geobeagle.actions.CacheActionMap;
 import com.google.code.geobeagle.actions.CacheActionProximity;
@@ -154,7 +153,6 @@ public class GeoBeagle extends Activity {
                 new MenuActionSettings(this),
                 new MenuActionFromCacheAction(new CacheActionGoogleMaps(intentStarterViewUri, resources), geocache),
                 new MenuActionFromCacheAction(new CacheActionProximity(this), geocache),
-                //new MenuActionToggleFavorite(mDbFrontend, geocache),
         };
         final MenuActions menuActions = new MenuActions(menuActionArray);
         final SharedPreferences defaultSharedPreferences = PreferenceManager

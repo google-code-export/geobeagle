@@ -21,15 +21,15 @@ import android.widget.TextView;
 public class MenuActionEditFilter implements MenuAction {
     private final Activity mActivity;
     private final FilterTypeCollection mFilterTypeCollection;
-    private final CachesProviderDb[] mCachesProviderDb;
+    private final CacheFilterUpdater mCacheFilterUpdater;
     private final Refresher mRefresher;
     private CacheFilter mFilter;
     
     public MenuActionEditFilter(Activity activity,
-            CachesProviderDb[] cachesProviderArea,
+            CacheFilterUpdater cacheFilterUpdater,
             Refresher refresher, FilterTypeCollection filterTypeCollection) {
         mActivity = activity;
-        mCachesProviderDb = cachesProviderArea;
+        mCacheFilterUpdater = cacheFilterUpdater;
         mRefresher = refresher;
         mFilterTypeCollection = filterTypeCollection;
     }
@@ -73,9 +73,7 @@ public class MenuActionEditFilter implements MenuAction {
                 mFilter.loadFromGui(gui);
                 mFilter.saveToPreferences();
                 dialog.dismiss();
-                for (CachesProviderDb provider : mCachesProviderDb) {
-                    provider.setFilter(mFilter);
-                }
+                mCacheFilterUpdater.loadActiveFilter();
                 mRefresher.forceRefresh();
             }
         };

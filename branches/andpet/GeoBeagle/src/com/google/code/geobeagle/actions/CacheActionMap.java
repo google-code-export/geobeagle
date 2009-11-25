@@ -25,7 +25,7 @@ public class CacheActionMap implements CacheAction {
     }
 
     @Override
-    public String getLabel() {
+    public String getLabel(Geocache geocache) {
         return mActivity.getResources().getString(R.string.menu_cache_map);
     }
 

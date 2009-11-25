@@ -19,7 +19,6 @@ import com.google.code.geobeagle.GeoFixProvider;
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.GeocacheFactory;
 import com.google.code.geobeagle.IPausable;
-import com.google.code.geobeagle.Labels;
 import com.google.code.geobeagle.Refresher;
 import com.google.code.geobeagle.GeocacheFactory.Source;
 import com.google.code.geobeagle.actions.MenuActions;

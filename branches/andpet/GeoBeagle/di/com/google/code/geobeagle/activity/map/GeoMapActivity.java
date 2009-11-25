@@ -24,6 +24,7 @@ import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.GeocacheFactory;
 import com.google.code.geobeagle.GeocacheListPrecomputed;
 import com.google.code.geobeagle.R;
+import com.google.code.geobeagle.actions.CacheFilterUpdater;
 import com.google.code.geobeagle.actions.MenuActionCacheList;
 import com.google.code.geobeagle.actions.MenuActionEditFilter;
 import com.google.code.geobeagle.actions.MenuActions;
@@ -130,8 +131,13 @@ public class GeoMapActivity extends MapActivity {
         menuActions.add(new GeoMapActivityDelegate.MenuActionToggleSatellite(mMapView));
         menuActions.add(new GeoMapActivityDelegate.MenuActionCenterLocation(mMapView, mMyLocationOverlay));
         menuActions.add(new MenuActionCacheList(this));
-        final CachesProviderDb[] providers = { cachesProviderArea, cachesProviderAreaPins };
-        menuActions.add(new MenuActionEditFilter(this, providers, mOverlayManager, filterTypeCollection));
+        final List<CachesProviderDb> providers = new ArrayList<CachesProviderDb>();
+        providers.add(cachesProviderArea);
+        providers.add(cachesProviderAreaPins);
+        final CacheFilterUpdater cacheFilterUpdater = 
+            new CacheFilterUpdater(filterTypeCollection, providers);
+        menuActions.add(new MenuActionEditFilter(this, cacheFilterUpdater, 
+                mOverlayManager, filterTypeCollection));
         
         mGeoMapActivityDelegate = new GeoMapActivityDelegate(menuActions);
 

@@ -8,8 +8,6 @@ import android.content.SharedPreferences.Editor;
 import android.util.Log;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 public class FilterTypeCollection {
     private static final String FILTER_PREFS = "Filter";

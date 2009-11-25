@@ -36,7 +36,7 @@ public class CacheActionEdit implements CacheAction {
     }
 
     @Override
-    public String getLabel() {
+    public String getLabel(Geocache geocache) {
         return mActivity.getResources().getString(R.string.menu_edit_geocache);
     }
 }

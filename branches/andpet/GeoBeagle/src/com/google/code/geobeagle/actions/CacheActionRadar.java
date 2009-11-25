@@ -23,7 +23,7 @@ public class CacheActionRadar implements CacheAction {
     }
 
     @Override
-    public String getLabel() {
+    public String getLabel(Geocache geocache) {
         return mActivity.getResources().getString(R.string.radar);
     }
 }

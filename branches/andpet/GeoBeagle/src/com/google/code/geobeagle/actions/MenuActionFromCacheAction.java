@@ -17,6 +17,6 @@ public class MenuActionFromCacheAction implements MenuAction {
     }
 
     public String getLabel() {
-        return mCacheAction.getLabel();
+        return mCacheAction.getLabel(mTarget);
     }
 }

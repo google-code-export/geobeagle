@@ -41,7 +41,7 @@ public class CacheActionViewUri implements CacheAction {
     }
 
     @Override
-    public String getLabel() {
+    public String getLabel(Geocache geocache) {
         return mGeoBeagle.getResources().getString(R.string.cache_page);
     }
 }

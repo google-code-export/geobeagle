@@ -22,7 +22,7 @@ public class CacheActionGoogleMaps implements CacheAction {
     }
 
     @Override
-    public String getLabel() {
+    public String getLabel(Geocache geocache) {
         return mResources.getString(R.string.menu_google_maps);
     }
 
