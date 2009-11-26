@@ -1,3 +1,16 @@
+/*
+ ** Licensed under the Apache License, Version 2.0 (the "License");
+ ** you may not use this file except in compliance with the License.
+ ** You may obtain a copy of the License at
+ **
+ **     http://www.apache.org/licenses/LICENSE-2.0
+ **
+ ** Unless required by applicable law or agreed to in writing, software
+ ** distributed under the License is distributed on an "AS IS" BASIS,
+ ** WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ ** See the License for the specific language governing permissions and
+ ** limitations under the License.
+ */
 
 package com.google.code.geobeagle.database;
 
@@ -27,22 +40,24 @@ public class CacheWriterTest {
     SourceNameTranslator mSourceNameTranslator;
     GeocacheFactory mFactory;
     DbFrontend mDbFrontend;
-    
+
     @Before
     public void setUp() {
         mSqlite = createMock(SQLiteWrapper.class);
         mSourceNameTranslator = createMock(SourceNameTranslator.class);
         mFactory = createMock(GeocacheFactory.class);
-        mDbFrontend = createMock(DbFrontend.class);        
+        mDbFrontend = createMock(DbFrontend.class);
     }
-    
+
     @Test
     public void testClearCaches() {
-        mSqlite.execSQL(Database.SQL_CLEAR_CACHES, "the source");
         mFactory.flushCache();
+        mDbFrontend.flushTotalCount();
+        mSqlite.execSQL(Database.SQL_CLEAR_CACHES, "the source");
 
         replay(mSqlite);
-        CacheWriter cacheWriterSql = new CacheWriter(mSqlite, null, mSourceNameTranslator, null);
+        CacheWriter cacheWriterSql = new CacheWriter(mSqlite, mDbFrontend, mSourceNameTranslator,
+                mFactory);
         cacheWriterSql.clearCaches("the source");
         verify(mSqlite);
     }
@@ -50,7 +65,8 @@ public class CacheWriterTest {
     @Test
     public void testClearEarlierLoads() {
         DesktopSQLiteDatabase db = new DesktopSQLiteDatabase();
-        db.execSQL(DatabaseTest.currentSchema());  //andpe: Error "table CACHES already exists"
+        db.execSQL(DatabaseTest.currentSchema()); // andpe: Error
+        // "table CACHES already exists"
 
         db.execSQL(INSERT_INTO_CACHES + "VALUES ('GCTHISIMPORT', 'just loaded', 'foo.gpx', 0)");
         db.execSQL(INSERT_INTO_CACHES + "VALUES ('GCCLICKEDLINK', 'from a link', '"
@@ -69,26 +85,29 @@ public class CacheWriterTest {
 
     @Test
     public void testDeleteCache() {
+        mFactory.flushCache();
+        mDbFrontend.flushTotalCount();
         mSqlite.execSQL(Database.SQL_DELETE_CACHE, "GC123");
 
         replay(mSqlite);
-        CacheWriter cacheWriterSql = new CacheWriter(mSqlite, null, null, null);
+        CacheWriter cacheWriterSql = new CacheWriter(mSqlite, mDbFrontend, mSourceNameTranslator,
+                mFactory);
         cacheWriterSql.deleteCache("GC123");
         verify(mSqlite);
     }
 
     @Test
     public void testInsertAndUpdate() {
-
-        mSqlite.execSQL(Database.SQL_REPLACE_CACHE, "gc123", "a cache", 122.0, 37.0, "source", 0, 0,
-                0, 0);
-        expect(mSourceNameTranslator.sourceTypeToSourceName(Source.GPX, "source"))
-                .andReturn("source");
+        mSqlite.execSQL(Database.SQL_REPLACE_CACHE, "gc123", "a cache", 122.0, 37.0, "source", 0,
+                0, 0, 0);
+        expect(mSourceNameTranslator.sourceTypeToSourceName(Source.GPX, "source")).andReturn(
+                "source");
         mDbFrontend.flushTotalCount();
 
         replay(mSqlite);
         replay(mSourceNameTranslator);
-        CacheWriter cacheWriterSql = new CacheWriter(mSqlite, null, mSourceNameTranslator, null);
+        CacheWriter cacheWriterSql = new CacheWriter(mSqlite, mDbFrontend, mSourceNameTranslator,
+                mFactory);
         cacheWriterSql.insertAndUpdateCache("gc123", "a cache", 122, 37, Source.GPX, "source",
                 CacheType.NULL, 0, 0, 0);
         verify(mSqlite);
@@ -101,7 +120,8 @@ public class CacheWriterTest {
                         "04-30-2009")).andReturn(0);
 
         replay(mSqlite);
-        CacheWriter cacheWriterSql = new CacheWriter(mSqlite, mDbFrontend, mSourceNameTranslator, mFactory);
+        CacheWriter cacheWriterSql = new CacheWriter(mSqlite, mDbFrontend, mSourceNameTranslator,
+                mFactory);
         assertFalse(cacheWriterSql.isGpxAlreadyLoaded("foo.gpx", "04-30-2009"));
         verify(mSqlite);
     }
@@ -115,7 +135,8 @@ public class CacheWriterTest {
         mSqlite.execSQL(Database.SQL_GPX_DONT_DELETE_ME, "foo.gpx");
 
         replay(mSqlite);
-        CacheWriter cacheWriterSql = new CacheWriter(mSqlite, mDbFrontend, mSourceNameTranslator, mFactory);
+        CacheWriter cacheWriterSql = new CacheWriter(mSqlite, mDbFrontend, mSourceNameTranslator,
+                mFactory);
         assertTrue(cacheWriterSql.isGpxAlreadyLoaded("foo.gpx", "04-30-2009"));
         verify(mSqlite);
     }
@@ -144,7 +165,8 @@ public class CacheWriterTest {
         mSqlite.execSQL(Database.SQL_REPLACE_GPX, "foo.gpx", "2009-04-30 10:30");
 
         replay(mSqlite);
-        new CacheWriter(mSqlite, mDbFrontend, mSourceNameTranslator, mFactory).writeGpx("foo.gpx", "2009-04-30 10:30");
+        new CacheWriter(mSqlite, mDbFrontend, mSourceNameTranslator, mFactory).writeGpx("foo.gpx",
+                "2009-04-30 10:30");
         verify(mSqlite);
     }
 }
