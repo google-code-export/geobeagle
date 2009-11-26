@@ -11,14 +11,26 @@
  ** See the License for the specific language governing permissions and
  ** limitations under the License.
  */
+/*
+ ** Licensed under the Apache License, Version 2.0 (the "License");
+ ** you may not use this file except in compliance with the License.
+ ** You may obtain a copy of the License at
+ **
+ **     http://www.apache.org/licenses/LICENSE-2.0
+ **
+ ** Unless required by applicable law or agreed to in writing, software
+ ** distributed under the License is distributed on an "AS IS" BASIS,
+ ** WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ ** See the License for the specific language governing permissions and
+ ** limitations under the License.
+ */
 
 package com.google.code.geobeagle.activity.map;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 
 import com.google.android.maps.MapController;
 import com.google.android.maps.MapView;
-import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.actions.MenuActions;
 
 import org.easymock.EasyMock;
@@ -33,7 +45,7 @@ import android.view.MenuItem;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest( {
-    GeoMapView.class, MapController.class, GeoMapActivityDelegate.class
+        GeoMapView.class, MapController.class, GeoMapActivityDelegate.class
 })
 public class GeoMapActivityDelegateTest {
 
@@ -68,23 +80,15 @@ public class GeoMapActivityDelegateTest {
 
     @Test
     public void testOnMenuOpened() {
+        MenuActions menuActions = PowerMock.createMock(MenuActions.class);
         Menu menu = PowerMock.createMock(Menu.class);
-        MenuItem menuItem = PowerMock.createMock(MenuItem.class);
-        GeoMapView mapView = PowerMock.createMock(GeoMapView.class);
 
-        EasyMock.expect(mapView.isSatellite()).andReturn(false);
-        EasyMock.expect(menu.findItem(R.string.menu_toggle_satellite)).andReturn(menuItem);
-        EasyMock.expect(menuItem.setTitle(R.string.map_view)).andReturn(menuItem);
-
-        EasyMock.expect(mapView.isSatellite()).andReturn(true);
-        EasyMock.expect(menu.findItem(R.string.menu_toggle_satellite)).andReturn(menuItem);
-        EasyMock.expect(menuItem.setTitle(R.string.satellite_view)).andReturn(menuItem);
+        EasyMock.expect(menuActions.onMenuOpened(menu)).andReturn(true);
 
         PowerMock.replayAll();
-        final GeoMapActivityDelegate geoMapActivityDelegate = 
-            new GeoMapActivityDelegate(null);
-        geoMapActivityDelegate.onMenuOpened(menu);
-        geoMapActivityDelegate.onMenuOpened(menu);
+        final GeoMapActivityDelegate geoMapActivityDelegate = new GeoMapActivityDelegate(
+                menuActions);
+        assertTrue(geoMapActivityDelegate.onMenuOpened(menu));
         PowerMock.verifyAll();
     }
 
