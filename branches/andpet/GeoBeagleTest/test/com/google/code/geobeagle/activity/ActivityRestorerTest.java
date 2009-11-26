@@ -14,12 +14,13 @@
 
 package com.google.code.geobeagle.activity;
 
-import com.google.code.geobeagle.Geocache;
-import com.google.code.geobeagle.activity.ActivityDI.ActivityTypeFactory;
+import com.google.code.geobeagle.activity.ActivityRestorer.CacheListRestorer;
+import com.google.code.geobeagle.activity.ActivityRestorer.NullRestorer;
+import com.google.code.geobeagle.activity.ActivityRestorer.Restorer;
+import com.google.code.geobeagle.activity.ActivityRestorer.ViewCacheRestorer;
 import com.google.code.geobeagle.activity.cachelist.CacheListActivity;
 import com.google.code.geobeagle.activity.cachelist.GeocacheListController;
 import com.google.code.geobeagle.activity.main.GeoBeagle;
-import com.google.code.geobeagle.activity.main.GeocacheFromPreferencesFactory;
 
 import org.easymock.EasyMock;
 import org.junit.Test;
@@ -39,119 +40,70 @@ import android.content.SharedPreferences;
 public class ActivityRestorerTest {
     @Test
     public void createCacheListIntent() throws Exception {
-        ActivityTypeFactory activityTypeFactory = PowerMock
-                .createMock(ActivityDI.ActivityTypeFactory.class);
-        SharedPreferences sharedPreferences = PowerMock.createMock(SharedPreferences.class);
         Activity parent = PowerMock.createMock(Activity.class);
         Intent intent = PowerMock.createMock(Intent.class);
 
-        final int cacheList = ActivityType.CACHE_LIST.toInt();
-        EasyMock.expect(
-                sharedPreferences.getInt(ActivitySaver.LAST_ACTIVITY, ActivityType.NONE.toInt()))
-                .andReturn(cacheList);
-        EasyMock.expect(activityTypeFactory.fromInt(cacheList)).andReturn(ActivityType.CACHE_LIST);
         PowerMock.expectNew(Intent.class, parent, CacheListActivity.class).andReturn(intent);
         parent.startActivity(intent);
         parent.finish();
 
         PowerMock.replayAll();
-        new ActivityRestorer(parent, null, sharedPreferences)
-                .restore(Intent.FLAG_ACTIVITY_NEW_TASK);
+        new CacheListRestorer(parent).restore();
         PowerMock.verifyAll();
     }
 
     @Test
-    public void createNull() throws Exception {
-        ActivityTypeFactory activityTypeFactory = PowerMock
-                .createMock(ActivityDI.ActivityTypeFactory.class);
-        SharedPreferences sharedPreferences = PowerMock.createMock(SharedPreferences.class);
-        Activity parent = PowerMock.createMock(Activity.class);
-
-        EasyMock.expect(
-                sharedPreferences.getInt(ActivitySaver.LAST_ACTIVITY, ActivityType.NONE.toInt()))
-                .andReturn(ActivityType.NONE.toInt());
-        EasyMock.expect(activityTypeFactory.fromInt(ActivityType.NONE.toInt())).andReturn(
-                ActivityType.NONE);
-
+    public void NullRestorerTest() throws Exception {
         PowerMock.replayAll();
-        new ActivityRestorer(parent, null, sharedPreferences)
-                .restore(Intent.FLAG_ACTIVITY_NEW_TASK);
+        new NullRestorer().restore();
         PowerMock.verifyAll();
     }
 
     @Test
-    public void notNewTask() throws Exception {
+    public void notNewTaskTest() throws Exception {
         PowerMock.replayAll();
         new ActivityRestorer(null, null, null).restore(0);
         PowerMock.verifyAll();
     }
 
     @Test
-    public void createSearchOnlineIntent() throws Exception {
-        ActivityTypeFactory activityTypeFactory = PowerMock
-                .createMock(ActivityDI.ActivityTypeFactory.class);
-        SharedPreferences sharedPreferences = PowerMock.createMock(SharedPreferences.class);
+    public void viewCacheRestorerTest() throws Exception {
         Activity parent = PowerMock.createMock(Activity.class);
+        Intent intent = PowerMock.createMock(Intent.class);
+        SharedPreferences sharedPreferences = PowerMock.createMock(SharedPreferences.class);
 
-        final int searchOnline = ActivityType.SEARCH_ONLINE.toInt();
-        EasyMock.expect(
-                sharedPreferences.getInt(ActivitySaver.LAST_ACTIVITY, ActivityType.NONE.toInt()))
-                .andReturn(searchOnline);
-        EasyMock.expect(activityTypeFactory.fromInt(searchOnline)).andReturn(
-                ActivityType.SEARCH_ONLINE);
+        EasyMock.expect(sharedPreferences.getString("geocacheId", "")).andReturn("gcabc");
+        PowerMock.expectNew(Intent.class, parent, GeoBeagle.class).andReturn(intent);
+        EasyMock.expect(intent.putExtra("geocacheId", "gcabc")).andReturn(intent);
+        EasyMock.expect(intent.setAction(GeocacheListController.SELECT_CACHE)).andReturn(intent);
+        parent.startActivity(intent);
+        parent.finish();
 
         PowerMock.replayAll();
-        new ActivityRestorer(parent, null, sharedPreferences)
-                .restore(Intent.FLAG_ACTIVITY_NEW_TASK);
+        new ViewCacheRestorer(sharedPreferences, parent).restore();
         PowerMock.verifyAll();
     }
 
     @Test
-    public void activityTypeNone() throws Exception {
-        ActivityTypeFactory activityTypeFactory = PowerMock
-                .createMock(ActivityDI.ActivityTypeFactory.class);
-        SharedPreferences sharedPreferences = PowerMock.createMock(SharedPreferences.class);
-        Activity parent = PowerMock.createMock(Activity.class);
-
-        final int none = ActivityType.NONE.toInt();
-        EasyMock.expect(
-                sharedPreferences.getInt(ActivitySaver.LAST_ACTIVITY, ActivityType.NONE.toInt()))
-                .andReturn(none);
-        EasyMock.expect(activityTypeFactory.fromInt(none)).andReturn(ActivityType.SEARCH_ONLINE);
-
-        PowerMock.replayAll();
-        new ActivityRestorer(parent, null, sharedPreferences)
-                .restore(Intent.FLAG_ACTIVITY_NEW_TASK);
-        PowerMock.verifyAll();
-    }
-
-    @Test
-    public void createViewCache() throws Exception {
+    public void activityRestorerTest() throws Exception {
         ActivityDI.ActivityTypeFactory activityTypeFactory = PowerMock
                 .createMock(ActivityDI.ActivityTypeFactory.class);
         SharedPreferences sharedPreferences = PowerMock.createMock(SharedPreferences.class);
-        Activity parent = PowerMock.createMock(Activity.class);
-        GeocacheFromPreferencesFactory geocacheFromPreferencesFactory = PowerMock
-                .createMock(GeocacheFromPreferencesFactory.class);
-        Geocache geocache = PowerMock.createMock(Geocache.class);
-        Intent intent = PowerMock.createMock(Intent.class);
+        Restorer restorer = PowerMock.createMock(Restorer.class);
+        Restorer restorers[] = {
+                null, null, null, restorer
+        };
 
         final int viewCache = ActivityType.VIEW_CACHE.toInt();
         EasyMock.expect(
                 sharedPreferences.getInt(ActivitySaver.LAST_ACTIVITY, ActivityType.NONE.toInt()))
                 .andReturn(viewCache);
         EasyMock.expect(activityTypeFactory.fromInt(viewCache)).andReturn(ActivityType.VIEW_CACHE);
-        EasyMock.expect(geocacheFromPreferencesFactory.create(sharedPreferences)).andReturn(
-                geocache);
-        PowerMock.expectNew(Intent.class, parent, GeoBeagle.class).andReturn(intent);
-        EasyMock.expect(intent.putExtra("geocacheId", "id1")).andReturn(intent);
-        EasyMock.expect(intent.setAction(GeocacheListController.SELECT_CACHE)).andReturn(intent);
-        parent.startActivity(intent);
-        parent.finish();
+        restorer.restore();
 
         PowerMock.replayAll();
-        new ActivityRestorer(parent, activityTypeFactory,
-                sharedPreferences).restore(Intent.FLAG_ACTIVITY_NEW_TASK);
+        new ActivityRestorer(activityTypeFactory, sharedPreferences, restorers)
+                .restore(Intent.FLAG_ACTIVITY_NEW_TASK);
         PowerMock.verifyAll();
     }
 }

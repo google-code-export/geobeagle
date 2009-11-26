@@ -21,6 +21,10 @@ import com.google.code.geobeagle.activity.ActivityDI;
 import com.google.code.geobeagle.activity.ActivityRestorer;
 import com.google.code.geobeagle.activity.ActivitySaver;
 import com.google.code.geobeagle.activity.ActivityDI.ActivityTypeFactory;
+import com.google.code.geobeagle.activity.ActivityRestorer.CacheListRestorer;
+import com.google.code.geobeagle.activity.ActivityRestorer.NullRestorer;
+import com.google.code.geobeagle.activity.ActivityRestorer.Restorer;
+import com.google.code.geobeagle.activity.ActivityRestorer.ViewCacheRestorer;
 import com.google.code.geobeagle.activity.cachelist.CacheListActivity;
 import com.google.code.geobeagle.activity.cachelist.presenter.DistanceFormatterManager;
 import com.google.code.geobeagle.activity.cachelist.presenter.DistanceFormatterManagerDi;
@@ -32,6 +36,7 @@ import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidget.InflatedGpsStat
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
@@ -49,17 +54,15 @@ public class SearchOnlineActivity extends Activity {
         Log.d("GeoBeagle", "SearchOnlineActivity onCreate");
 
         setContentView(R.layout.search);
-        
-        final GeoFixProvider mGeoFixProvider = 
-            LocationControlDi.create(this);
+
+        final GeoFixProvider mGeoFixProvider = LocationControlDi.create(this);
 
         final InflatedGpsStatusWidget mGpsStatusWidget = (InflatedGpsStatusWidget)this
                 .findViewById(R.id.gps_widget_view);
         final DistanceFormatterManager distanceFormatterManager = DistanceFormatterManagerDi
                 .create(this);
         final GpsWidgetAndUpdater gpsWidgetAndUpdater = new GpsWidgetAndUpdater(this,
-                mGpsStatusWidget, mGeoFixProvider,
-                distanceFormatterManager.getFormatter());
+                mGpsStatusWidget, mGeoFixProvider, distanceFormatterManager.getFormatter());
         final GpsStatusWidgetDelegate gpsStatusWidgetDelegate = gpsWidgetAndUpdater
                 .getGpsStatusWidgetDelegate();
         gpsWidgetAndUpdater.getUpdateGpsWidgetRunnable().run();
@@ -69,14 +72,21 @@ public class SearchOnlineActivity extends Activity {
         distanceFormatterManager.addHasDistanceFormatter(gpsStatusWidgetDelegate);
         final ActivitySaver activitySaver = ActivityDI.createActivitySaver(this);
 
+        final SharedPreferences sharedPreferences = getSharedPreferences("GeoBeagle",
+                Context.MODE_PRIVATE);
         final ActivityTypeFactory activityTypeFactory = new ActivityTypeFactory();
-        final ActivityRestorer activityRestorer = new ActivityRestorer(this,
-                activityTypeFactory, getSharedPreferences(
-                        "GeoBeagle", Context.MODE_PRIVATE));
-        
+        final NullRestorer nullRestorer = new NullRestorer();
+        final CacheListRestorer cacheListRestorer = new CacheListRestorer(this);
+        final ViewCacheRestorer viewCacheRestorer = new ViewCacheRestorer(sharedPreferences, this);
+        final Restorer restorers[] = new Restorer[] {
+                nullRestorer, cacheListRestorer, nullRestorer,
+                viewCacheRestorer
+        };
+        final ActivityRestorer activityRestorer = new ActivityRestorer(activityTypeFactory,
+                sharedPreferences, restorers);
+
         mSearchOnlineActivityDelegate = new SearchOnlineActivityDelegate(
-                ((WebView)findViewById(R.id.help_contents)),
-                mGeoFixProvider,
+                ((WebView)findViewById(R.id.help_contents)), mGeoFixProvider,
                 distanceFormatterManager, activitySaver);
 
         final JsInterfaceHelper jsInterfaceHelper = new JsInterfaceHelper(this);

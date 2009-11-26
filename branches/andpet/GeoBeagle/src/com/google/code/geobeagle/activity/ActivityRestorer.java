@@ -18,13 +18,14 @@ import com.google.code.geobeagle.activity.ActivityDI.ActivityTypeFactory;
 import com.google.code.geobeagle.activity.cachelist.CacheListActivity;
 import com.google.code.geobeagle.activity.cachelist.GeocacheListController;
 import com.google.code.geobeagle.activity.main.GeoBeagle;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 
 /** Invoked from SearchOnlineActivity to restore the last GeoBeagle activity */
 public class ActivityRestorer {
-    static class CacheListRestorer implements Restorer {
+    public static class CacheListRestorer implements Restorer {
         private final Activity mActivity;
 
         public CacheListRestorer(Activity activity) {
@@ -39,17 +40,17 @@ public class ActivityRestorer {
 
     }
 
-    static class NullRestorer implements Restorer {
+    public static class NullRestorer implements Restorer {
         @Override
         public void restore() {
         }
     }
 
-    interface Restorer {
+    public interface Restorer {
         void restore();
     }
 
-    static class ViewCacheRestorer implements Restorer {
+    public static class ViewCacheRestorer implements Restorer {
         private final Activity mActivity;
         private final SharedPreferences mSharedPreferences;
 
@@ -72,15 +73,11 @@ public class ActivityRestorer {
     private final Restorer[] mRestorers;
     private final SharedPreferences mSharedPreferences;
 
-    public ActivityRestorer(Activity activity,
-            ActivityTypeFactory activityTypeFactory, SharedPreferences sharedPreferences) {
+    public ActivityRestorer(ActivityTypeFactory activityTypeFactory,
+            SharedPreferences sharedPreferences, Restorer[] restorers) {
         mActivityTypeFactory = activityTypeFactory;
         mSharedPreferences = sharedPreferences;
-        final NullRestorer nullRestorer = new NullRestorer();
-        mRestorers = new Restorer[] {
-                nullRestorer, new CacheListRestorer(activity), nullRestorer,
-                new ViewCacheRestorer(sharedPreferences, activity)
-        };
+        mRestorers = restorers;
     }
 
     public void restore(int flags) {
