@@ -17,7 +17,7 @@ import com.google.android.maps.Projection;
 import com.google.code.geobeagle.R;
 
 public class FixedMyLocationOverlay extends MyLocationOverlay {
-    private boolean bugged = true;
+    private boolean bugged = false;
 
     private Paint accuracyPaint;
     private Point center;
