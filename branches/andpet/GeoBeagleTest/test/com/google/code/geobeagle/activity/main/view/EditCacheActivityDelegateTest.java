@@ -48,7 +48,7 @@ public class EditCacheActivityDelegateTest {
     public void testCancelButtonOnClickListener() {
         Activity activity = PowerMock.createMock(Activity.class);
 
-        activity.setResult(-1, null);
+        activity.setResult(Activity.RESULT_CANCELED, null);
         activity.finish();
 
         PowerMock.replay(activity);
@@ -59,7 +59,6 @@ public class EditCacheActivityDelegateTest {
     }
 
     @Test
-
     public void testGeocacheViewGetAndSet() {
         EditText id = PowerMock.createMock(EditText.class);
         EditText name = PowerMock.createMock(EditText.class);
@@ -112,17 +111,18 @@ public class EditCacheActivityDelegateTest {
         Geocache geocache = PowerMock.createMock(Geocache.class);
         DbFrontend dbFrontend = PowerMock.createMock(DbFrontend.class);
 
-        geocache.saveToDb(dbFrontend);
-        EasyMock.expect(intent.setAction(GeocacheListController.SELECT_CACHE)).andReturn(intent);
-        PowerMock.expectNew(Intent.class).andReturn(intent);
         EasyMock.expect(editCache.get()).andReturn(geocache);
-        EasyMock.expect(intent.putExtra("geocacheId", "id1")).andReturn(intent);
-        activity.setResult(0, intent);
+        geocache.saveToDb(dbFrontend);
+        PowerMock.expectNew(Intent.class).andReturn(intent);
+        EasyMock.expect(intent.setAction(GeocacheListController.SELECT_CACHE)).andReturn(intent);
+        EasyMock.expect(geocache.getId()).andReturn("gc123");
+        EasyMock.expect(intent.putExtra("geocacheId", (CharSequence)"gc123")).andReturn(intent);
+        activity.setResult(Activity.RESULT_OK, intent);
         activity.finish();
 
         PowerMock.replayAll();
-        CacheSaverOnClickListener setButtonOnClickListener = new CacheSaverOnClickListener(activity,
-                editCache, dbFrontend);
+        CacheSaverOnClickListener setButtonOnClickListener = new CacheSaverOnClickListener(
+                activity, editCache, dbFrontend);
         setButtonOnClickListener.onClick(null);
         PowerMock.verifyAll();
     }
