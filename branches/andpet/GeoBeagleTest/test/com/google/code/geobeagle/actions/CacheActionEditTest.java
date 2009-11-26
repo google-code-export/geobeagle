@@ -39,7 +39,8 @@ public class CacheActionEditTest {
         Geocache geocache = PowerMock.createMock(Geocache.class);
 
         PowerMock.expectNew(Intent.class, activity, EditCacheActivity.class).andReturn(intent);
-        EasyMock.expect(intent.putExtra("geocacheId", "id1")).andReturn(intent);
+        EasyMock.expect(intent.putExtra("geocacheId", (CharSequence) "id1")).andReturn(intent);
+        EasyMock.expect(geocache.getId()).andReturn("id1");
         activity.startActivityForResult(intent, 0);
 
         PowerMock.replayAll();
