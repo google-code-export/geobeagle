@@ -45,7 +45,9 @@ import android.view.View;
 import android.widget.ListView;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({CacheListDelegate.class, Log.class, PreferenceManager.class})
+@PrepareForTest( {
+        CacheListDelegate.class, Log.class, PreferenceManager.class
+})
 public class CacheListDelegateTest {
     @Before
     public void mockLogging() {
@@ -63,13 +65,16 @@ public class CacheListDelegateTest {
         GeocacheListController geocacheListController = PowerMock
                 .createStrictMock(GeocacheListController.class);
 
-        EasyMock.expect(geocacheListController.onContextItemSelected(menuItem)).andReturn(true);
+        EasyMock.expect(geocacheListController.onContextItemSelected(menuItem))
+                .andReturn(true);
         geocacheListController.onListItemClick(listView, view, 28, 42);
-        EasyMock.expect(geocacheListController.onOptionsItemSelected(menuItem)).andReturn(true);
+        EasyMock.expect(geocacheListController.onOptionsItemSelected(menuItem))
+                .andReturn(true);
 
         PowerMock.replayAll();
         CacheListDelegate cacheListDelegate = new CacheListDelegate(null, null,
-                geocacheListController, null, null, null, null, null, null, null, null, null, null, null);
+                geocacheListController, null, null, null, null, null, null,
+                null, null, null, null, null);
         cacheListDelegate.onContextItemSelected(menuItem);
         cacheListDelegate.onListItemClick(listView, view, 28, 42);
         cacheListDelegate.onOptionsItemSelected(menuItem);
@@ -82,10 +87,12 @@ public class CacheListDelegateTest {
         Intent intent = PowerMock.createMock(Intent.class);
 
         EasyMock.expect(activity.getIntent()).andReturn(intent);
-        EasyMock.expect(intent.getAction()).andReturn("android.intent.action.VIEW");
+        EasyMock.expect(intent.getAction()).andReturn(
+                "android.intent.action.VIEW");
         EasyMock.expect(
-                intent.getBooleanExtra(ImportIntentManager.INTENT_EXTRA_IMPORT_TRIGGERED, false))
-                .andReturn(true);
+                intent.getBooleanExtra(
+                        ImportIntentManager.INTENT_EXTRA_IMPORT_TRIGGERED,
+                        false)).andReturn(true);
 
         PowerMock.replayAll();
         assertFalse(new ImportIntentManager(activity).isImport());
@@ -111,7 +118,8 @@ public class CacheListDelegateTest {
         Intent intent = PowerMock.createMock(Intent.class);
 
         EasyMock.expect(activity.getIntent()).andReturn(intent);
-        EasyMock.expect(intent.getAction()).andReturn("android.intent.action.EDIT");
+        EasyMock.expect(intent.getAction()).andReturn(
+                "android.intent.action.EDIT");
 
         PowerMock.replayAll();
         assertFalse(new ImportIntentManager(activity).isImport());
@@ -135,12 +143,16 @@ public class CacheListDelegateTest {
         Intent intent = PowerMock.createMock(Intent.class);
 
         EasyMock.expect(activity.getIntent()).andReturn(intent);
-        EasyMock.expect(intent.getAction()).andReturn("android.intent.action.VIEW");
-        EasyMock.expect(
-                intent.getBooleanExtra(ImportIntentManager.INTENT_EXTRA_IMPORT_TRIGGERED, false))
-                .andReturn(false);
-        EasyMock.expect(intent.putExtra(ImportIntentManager.INTENT_EXTRA_IMPORT_TRIGGERED, true))
-                .andReturn(intent);
+        EasyMock.expect(intent.getAction()).andReturn(
+                "android.intent.action.VIEW");
+
+        final boolean booleanExtra = intent.getBooleanExtra(
+                ImportIntentManager.INTENT_EXTRA_IMPORT_TRIGGERED, false);
+        EasyMock.expect(booleanExtra).andReturn(false);
+
+        final Intent putExtra = intent.putExtra(
+                ImportIntentManager.INTENT_EXTRA_IMPORT_TRIGGERED, true);
+        EasyMock.expect(putExtra).andReturn(intent);
 
         PowerMock.replayAll();
         assertTrue(new ImportIntentManager(activity).isImport());
@@ -153,10 +165,12 @@ public class CacheListDelegateTest {
         GeocacheListController geocacheListController = PowerMock
                 .createStrictMock(GeocacheListController.class);
 
-        EasyMock.expect(geocacheListController.onContextItemSelected(menuItem)).andReturn(true);
+        EasyMock.expect(geocacheListController.onContextItemSelected(menuItem))
+                .andReturn(true);
 
         PowerMock.replayAll();
-        new CacheListDelegate(null, null, geocacheListController, null, null, null, null, null, null, null, null, null, null, null)
+        new CacheListDelegate(null, null, geocacheListController, null, null,
+                null, null, null, null, null, null, null, null, null)
                 .onContextItemSelected(menuItem);
         PowerMock.verifyAll();
     }
@@ -167,11 +181,13 @@ public class CacheListDelegateTest {
         GeocacheListController geocacheListController = PowerMock
                 .createStrictMock(GeocacheListController.class);
 
-        EasyMock.expect(geocacheListController.onCreateOptionsMenu(menu)).andReturn(true);
+        EasyMock.expect(geocacheListController.onCreateOptionsMenu(menu))
+                .andReturn(true);
 
         PowerMock.replayAll();
-        assertTrue(new CacheListDelegate(null, null, geocacheListController, null, null, null, null, null, null, null, null, null, null, null)
-                .onCreateOptionsMenu(menu));
+        assertTrue(new CacheListDelegate(null, null, geocacheListController,
+                null, null, null, null, null, null, null, null, null, null,
+                null).onCreateOptionsMenu(menu));
         PowerMock.verifyAll();
     }
 
@@ -185,7 +201,8 @@ public class CacheListDelegateTest {
         geocacheListController.onListItemClick(listView, view, 28, 42);
 
         PowerMock.replayAll();
-        new CacheListDelegate(null, null, geocacheListController, null, null, null, null, null, null, null, null, null, null, null)
+        new CacheListDelegate(null, null, geocacheListController, null, null,
+                null, null, null, null, null, null, null, null, null)
                 .onListItemClick(listView, view, 28, 42);
         PowerMock.verifyAll();
     }
@@ -196,11 +213,13 @@ public class CacheListDelegateTest {
                 .createStrictMock(GeocacheListController.class);
         Menu menu = PowerMock.createMock(Menu.class);
 
-        EasyMock.expect(geocacheListController.onMenuOpened(27, menu)).andReturn(true);
+        EasyMock.expect(geocacheListController.onMenuOpened(27, menu))
+                .andReturn(true);
 
         PowerMock.replayAll();
-        new CacheListDelegate(null, null, geocacheListController, null, null, null, null, null, null, null, null, null, null, null).onMenuOpened(
-                27, menu);
+        new CacheListDelegate(null, null, geocacheListController, null, null,
+                null, null, null, null, null, null, null, null, null)
+                .onMenuOpened(27, menu);
         PowerMock.verifyAll();
     }
 
@@ -210,10 +229,12 @@ public class CacheListDelegateTest {
                 .createStrictMock(GeocacheListController.class);
         MenuItem menuItem = PowerMock.createMock(MenuItem.class);
 
-        EasyMock.expect(geocacheListController.onOptionsItemSelected(menuItem)).andReturn(true);
+        EasyMock.expect(geocacheListController.onOptionsItemSelected(menuItem))
+                .andReturn(true);
 
         PowerMock.replayAll();
-        new CacheListDelegate(null, null, geocacheListController, null, null, null, null, null, null, null, null, null, null, null)
+        new CacheListDelegate(null, null, geocacheListController, null, null,
+                null, null, null, null, null, null, null, null, null)
                 .onOptionsItemSelected(menuItem);
         PowerMock.verifyAll();
     }
@@ -243,29 +264,38 @@ public class CacheListDelegateTest {
 
     @Test
     public void testOnResume() {
-        DistanceFormatterManager distanceFormatterManager = PowerMock.createMock(DistanceFormatterManager.class);
+        DistanceFormatterManager distanceFormatterManager = PowerMock
+                .createMock(DistanceFormatterManager.class);
         GeocacheListController controller = PowerMock
                 .createMock(GeocacheListController.class);
         ImportIntentManager importIntentManager = PowerMock
                 .createMock(ImportIntentManager.class);
         ListActivity context = PowerMock.createMock(ListActivity.class);
-        SharedPreferences sharedPreferences = PowerMock.createMock(SharedPreferences.class);
+        SharedPreferences sharedPreferences = PowerMock
+                .createMock(SharedPreferences.class);
         PowerMock.mockStatic(PreferenceManager.class);
-        GeocacheSummaryRowInflater geocacheSummaryRowInflater = PowerMock.createMock(GeocacheSummaryRowInflater.class);
+        GeocacheSummaryRowInflater geocacheSummaryRowInflater = PowerMock
+                .createMock(GeocacheSummaryRowInflater.class);
         IPausable pausable = PowerMock.createMock(IPausable.class);
-        IPausable pausables[] = { pausable };
-        
+        IPausable pausables[] = {
+            pausable
+        };
+
         distanceFormatterManager.setFormatter();
-        EasyMock.expect(PreferenceManager.getDefaultSharedPreferences(context)).andReturn(sharedPreferences);
-        EasyMock.expect(sharedPreferences.getBoolean("absolute-bearing", false)).andReturn(true);
+        EasyMock.expect(PreferenceManager.getDefaultSharedPreferences(context))
+                .andReturn(sharedPreferences);
+        EasyMock
+                .expect(sharedPreferences.getBoolean("absolute-bearing", false))
+                .andReturn(true);
         geocacheSummaryRowInflater.setBearingFormatter(true);
         controller.onResume(true);
         pausable.onResume();
         EasyMock.expect(importIntentManager.isImport()).andReturn(true);
 
         PowerMock.replayAll();
-        new CacheListDelegate(importIntentManager, null, controller, null, null, null, null, null, geocacheSummaryRowInflater, context, null, distanceFormatterManager, null, pausables)
-                .onResume();
+        new CacheListDelegate(importIntentManager, null, controller, null,
+                null, null, null, null, geocacheSummaryRowInflater, context,
+                null, distanceFormatterManager, null, pausables).onResume();
         PowerMock.verifyAll();
     }
 }
