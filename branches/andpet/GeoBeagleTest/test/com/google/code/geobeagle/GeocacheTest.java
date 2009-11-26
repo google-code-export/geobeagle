@@ -43,7 +43,7 @@ import android.util.FloatMath;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest( {
-        Parcel.class, Bundle.class, Geocache.class, System.class
+        Parcel.class, Bundle.class, FloatMath.class, Geocache.class, System.class, 
 })
 public class GeocacheTest {
 
