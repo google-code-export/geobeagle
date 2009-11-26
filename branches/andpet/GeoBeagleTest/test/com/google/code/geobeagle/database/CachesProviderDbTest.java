@@ -1,8 +1,10 @@
+
 package com.google.code.geobeagle.database;
 
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.isA;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import com.google.code.geobeagle.CacheFilter;
 import com.google.code.geobeagle.GeocacheList;
@@ -32,32 +34,37 @@ public class CachesProviderDbTest {
         mDbFrontend = PowerMock.createMock(DbFrontend.class);
         mCacheFilter1 = PowerMock.createMock(CacheFilter.class);
         mCacheFilter2 = PowerMock.createMock(CacheFilter.class);
-        mCachesProviderDb = new CachesProviderDb(mDbFrontend, mCacheFilter1);
     }
-    
+
     @Test
     public void testFilterUpdateSetsChanged() {
         expect(mCacheFilter1.getSqlWhereClause()).andReturn("1");
+        expect(mCacheFilter1.getLabel()).andReturn(11);
         expect(mCacheFilter2.getSqlWhereClause()).andReturn("2");
+        expect(mCacheFilter2.getLabel()).andReturn(22);
+
         PowerMock.replayAll();
-        
+        mCachesProviderDb = new CachesProviderDb(mDbFrontend, mCacheFilter1);
         mCachesProviderDb.resetChanged();
         mCachesProviderDb.setFilter(mCacheFilter2);
         assertTrue(mCachesProviderDb.hasChanged());
+        PowerMock.verifyAll();
     }
 
     @Test
     public void testUnchangedFilter() {
         expect(mCacheFilter1.getSqlWhereClause()).andReturn("CacheType = 1").anyTimes();
         expect(mDbFrontend.count("CacheType = 1")).andReturn(5);
+
         PowerMock.replayAll();
-        
-        mCachesProviderDb.getCount();  //will load the filter
+        mCachesProviderDb = new CachesProviderDb(mDbFrontend, mCacheFilter1);
+        mCachesProviderDb.getCount(); // will load the filter
         mCachesProviderDb.resetChanged();
         mCachesProviderDb.setFilter(mCacheFilter2);
         assertFalse(mCachesProviderDb.hasChanged());
+        PowerMock.verifyAll();
     }
-    
+
     @Test
     public void testExtraConditionGetNewCaches() {
         GeocacheList list1 = new GeocacheListPrecomputed();
@@ -67,12 +74,11 @@ public class CachesProviderDbTest {
         expect(mCacheFilter1.getSqlWhereClause()).andReturn("CacheType = 1");
 
         PowerMock.replayAll();
-        
+        mCachesProviderDb = new CachesProviderDb(mDbFrontend, mCacheFilter1);
         mCachesProviderDb.getCaches();
         mCachesProviderDb.resetChanged();
         mCachesProviderDb.setFilter(mCacheFilter2);
         mCachesProviderDb.getCaches();
-
-        PowerMock.verifyAll();        
+        PowerMock.verifyAll();
     }
 }
