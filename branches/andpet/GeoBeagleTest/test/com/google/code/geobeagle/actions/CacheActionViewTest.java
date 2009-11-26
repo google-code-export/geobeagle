@@ -36,8 +36,9 @@ public class CacheActionViewTest {
         Context context = PowerMock.createMock(Context.class);
         Geocache geocache = PowerMock.createMock(Geocache.class);
 
+        expect(geocache.getId()).andReturn("id1");
         expect(intent.setAction(GeocacheListController.SELECT_CACHE)).andReturn(intent);
-        expect(intent.putExtra("geocacheId", "id1")).andReturn(intent);
+        expect(intent.putExtra("geocacheId", (CharSequence) "id1")).andReturn(intent);
         context.startActivity(intent);
 
         PowerMock.replayAll();
