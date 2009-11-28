@@ -22,6 +22,7 @@ import com.google.code.geobeagle.GeoFixProvider;
 import com.google.code.geobeagle.GeoFixProviderLive;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.formatting.DistanceFormatter;
+
 import org.easymock.EasyMock;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -31,7 +32,6 @@ import org.powermock.modules.junit4.PowerMockRunner;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.location.Location;
 import android.location.LocationProvider;
 import android.os.Bundle;
 import android.os.Handler;
@@ -137,8 +137,13 @@ public class GpsStatusWidgetTest {
     @Test
     public void testGpsStatusWidget_OnLocationChangedNullLocation() {
         PowerMock.suppressConstructor(LinearLayout.class);
-
-        new GpsStatusWidgetDelegate(null, null, null, null, null, null, null, null).refresh();
+        GeoFixProvider geoFixProvider = PowerMock.createMock(GeoFixProvider.class);
+        
+        EasyMock.expect(geoFixProvider.getLocation()).andReturn(null);
+        
+        PowerMock.replayAll();
+        new GpsStatusWidgetDelegate(geoFixProvider, null, null, null, null, null, null, null).refresh();
+        PowerMock.verifyAll();
     }
 
     @Test
@@ -153,8 +158,8 @@ public class GpsStatusWidgetTest {
         GpsStatusWidgetDelegate gpsStatusWidget = new GpsStatusWidgetDelegate(null, null, null,
                 null, null, null, status, null);
         //TODO: GPS widget no longer gets provider status changes... it should get the info somehow
-        gpsStatusWidget.onProviderEnabled("gps");
-        gpsStatusWidget.onProviderDisabled("gps");
+//        gpsStatusWidget.onProviderEnabled("gps");
+//        gpsStatusWidget.onProviderDisabled("gps");
         PowerMock.verifyAll();
     }
 
@@ -208,6 +213,7 @@ public class GpsStatusWidgetTest {
         GeoFixProvider geoFixProvider = PowerMock.createMock(GeoFixProviderLive.class);
         DistanceFormatter distanceFormatter = PowerMock.createMock(DistanceFormatter.class);
 
+        EasyMock.expect(geoFixProvider.isProviderEnabled()).andReturn(true);
         expect(geoFixProvider.getLocation()).andReturn(location);
         expect(location.getProvider()).andReturn("gps");
         expect(location.getAccuracy()).andReturn(1.2f);
