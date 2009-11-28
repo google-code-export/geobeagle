@@ -19,46 +19,68 @@ import static org.junit.Assert.assertEquals;
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapView;
 import com.google.android.maps.Projection;
-import com.google.code.geobeagle.Geocache;
+import com.google.code.geobeagle.GeocacheList;
 import com.google.code.geobeagle.database.CachesProviderLazyArea;
 
 import org.easymock.EasyMock;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.api.easymock.PowerMock;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest( {
-        DensityPatchManager.class, MapView.class
+        DensityPatchManager.class, Log.class, MapView.class 
 })
 public class DensityPatchManagerTest {
-   
+    @Before
+    public void allowLogging() {
+        PowerMock.mockStatic(Log.class);
+        EasyMock.expect(
+                Log.d((String)EasyMock.anyObject(), (String)EasyMock
+                        .anyObject())).andReturn(0).anyTimes();
+    }
+
     @Test
     public void testDensityPatchManager() throws Exception {
-        CachesProviderLazyArea lazyArea = PowerMock.createMock(CachesProviderLazyArea.class);
+        CachesProviderLazyArea lazyArea = PowerMock
+                .createMock(CachesProviderLazyArea.class);
         MapView mapView = PowerMock.createMock(MapView.class);
         ArrayList<DensityMatrix.DensityPatch> patches = new ArrayList<DensityMatrix.DensityPatch>();
         Projection projection = PowerMock.createMock(Projection.class);
         GeoPoint newTopLeft = PowerMock.createMock(GeoPoint.class);
         GeoPoint newBottomRight = PowerMock.createMock(GeoPoint.class);
-        ArrayList<Geocache> list = new ArrayList<Geocache>();
         DensityMatrix densityMatrix = PowerMock.createMock(DensityMatrix.class);
+        GeocacheList geocacheList = PowerMock.createMock(GeocacheList.class);
 
         EasyMock.expect(mapView.getProjection()).andReturn(projection);
         EasyMock.expect(projection.fromPixels(0, 0)).andReturn(newTopLeft);
         EasyMock.expect(mapView.getRight()).andReturn(100);
         EasyMock.expect(mapView.getBottom()).andReturn(200);
-        EasyMock.expect(projection.fromPixels(100, 200)).andReturn(newBottomRight);
-        //EasyMock.expect(lazyArea.needsLoading(newTopLeft, newBottomRight)).andReturn(true);
+        EasyMock.expect(projection.fromPixels(100, 200)).andReturn(
+                newBottomRight);
 
-        //EasyMock.expect(lazyArea.load(newTopLeft, newBottomRight)).andReturn(list);
-        PowerMock.expectNew(DensityMatrix.class, DensityPatchManager.RESOLUTION_LATITUDE,
-                DensityPatchManager.RESOLUTION_LONGITUDE).andReturn(densityMatrix);
-        densityMatrix.addCaches(list);
+        EasyMock.expect(newTopLeft.getLatitudeE6()).andReturn(38000000);
+        EasyMock.expect(newTopLeft.getLongitudeE6()).andReturn(-123000000);
+        EasyMock.expect(newBottomRight.getLatitudeE6()).andReturn(37000000);
+        EasyMock.expect(newBottomRight.getLongitudeE6()).andReturn(-122000000);
+        lazyArea.setBounds(37.0, -123.0, 38.0, -122.0);
+        EasyMock.expect(lazyArea.hasChanged()).andReturn(true);
+        EasyMock.expect(lazyArea.getCaches()).andReturn(geocacheList);
+        EasyMock.expect(lazyArea.tooManyCaches()).andReturn(false);
+        lazyArea.resetChanged();
+
+        PowerMock.expectNew(DensityMatrix.class,
+                DensityPatchManager.RESOLUTION_LATITUDE,
+                DensityPatchManager.RESOLUTION_LONGITUDE).andReturn(
+                densityMatrix);
+        densityMatrix.addCaches(geocacheList);
         EasyMock.expect(densityMatrix.getDensityPatches()).andReturn(patches);
 
         PowerMock.replayAll();
@@ -69,7 +91,8 @@ public class DensityPatchManagerTest {
 
     @Test
     public void testDensityPatchManagerCached() throws Exception {
-        CachesProviderLazyArea lazyArea = PowerMock.createMock(CachesProviderLazyArea.class);
+        CachesProviderLazyArea lazyArea = PowerMock
+                .createMock(CachesProviderLazyArea.class);
         MapView mapView = PowerMock.createMock(MapView.class);
         ArrayList<DensityMatrix.DensityPatch> patches = new ArrayList<DensityMatrix.DensityPatch>();
         Projection projection = PowerMock.createMock(Projection.class);
@@ -80,8 +103,15 @@ public class DensityPatchManagerTest {
         EasyMock.expect(projection.fromPixels(0, 0)).andReturn(newTopLeft);
         EasyMock.expect(mapView.getRight()).andReturn(100);
         EasyMock.expect(mapView.getBottom()).andReturn(200);
-        EasyMock.expect(projection.fromPixels(100, 200)).andReturn(newBottomRight);
-        //EasyMock.expect(lazyArea.needsLoading(newTopLeft, newBottomRight)).andReturn(false);
+        EasyMock.expect(projection.fromPixels(100, 200)).andReturn(
+                newBottomRight);
+
+        EasyMock.expect(newTopLeft.getLatitudeE6()).andReturn(38000000);
+        EasyMock.expect(newTopLeft.getLongitudeE6()).andReturn(-123000000);
+        EasyMock.expect(newBottomRight.getLatitudeE6()).andReturn(37000000);
+        EasyMock.expect(newBottomRight.getLongitudeE6()).andReturn(-122000000);
+        lazyArea.setBounds(37.0, -123.0, 38.0, -122.0);
+        EasyMock.expect(lazyArea.hasChanged()).andReturn(false);
 
         PowerMock.replayAll();
         assertEquals(patches, new DensityPatchManager(patches, lazyArea, null)
