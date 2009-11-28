@@ -16,6 +16,7 @@ package com.google.code.geobeagle.activity.searchonline;
 
 import com.google.code.geobeagle.GeoFixProvider;
 import com.google.code.geobeagle.GeoFixProviderLive;
+import com.google.code.geobeagle.IPausable;
 import com.google.code.geobeagle.activity.ActivitySaver;
 import com.google.code.geobeagle.activity.ActivityType;
 import com.google.code.geobeagle.activity.cachelist.presenter.DistanceFormatterManager;
@@ -33,12 +34,12 @@ import android.webkit.WebView;
 public class SearchOnlineActivityDelegateTest {
     @Test
     public void onResume() {
-        //SensorManager sensorManager = PowerMock.createMock(SensorManager.class);
         GeoFixProvider geoFixProvider = PowerMock
                 .createMock(GeoFixProviderLive.class);
         DistanceFormatterManager distanceFormatterManager = PowerMock
                 .createMock(DistanceFormatterManager.class);
 
+        geoFixProvider.onResume();
         distanceFormatterManager.setFormatter();
 
         PowerMock.replayAll();
@@ -72,16 +73,15 @@ public class SearchOnlineActivityDelegateTest {
 
     @Test
     public void onPause() {
-        //SensorManager sensorManager = PowerMock.createMock(SensorManager.class);
-        GeoFixProvider geoFixProvider = PowerMock
-                .createMock(GeoFixProviderLive.class);
         ActivitySaver activitySaver = PowerMock.createMock(ActivitySaver.class);
+        IPausable pausable = PowerMock.createMock(IPausable.class);
 
+        pausable.onPause();
         activitySaver.save(ActivityType.SEARCH_ONLINE);
 
         PowerMock.replayAll();
         new SearchOnlineActivityDelegate(null,
-                geoFixProvider, null, activitySaver).onPause();
+                pausable, null, activitySaver).onPause();
         PowerMock.verifyAll();
     }
 }
