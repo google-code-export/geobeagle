@@ -38,7 +38,7 @@ public class GeocacheToGoogleMap implements GeocacheToUri {
      */
     public String convert(Geocache geocache) {
         // "geo:%1$.5f,%2$.5f?name=cachename"
-        String idAndName = (String)geocache.getIdAndName();
+        String idAndName = geocache.getIdAndName().toString();
         idAndName = idAndName.replace("(", "[");
         idAndName = idAndName.replace(")", "]");
         idAndName = URLEncoder.encode(idAndName);
