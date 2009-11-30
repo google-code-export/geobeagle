@@ -156,7 +156,7 @@ public class CacheListDelegateDI {
         distanceFormatterManager.addHasDistanceFormatter(geocacheSummaryRowInflater);
         distanceFormatterManager.addHasDistanceFormatter(gpsStatusWidgetDelegate);
         final CacheListAdapter cacheList = new CacheListAdapter(cachesProviderToggler, 
-                cachesProviderSorted, geocacheSummaryRowInflater, titleUpdater);
+                cachesProviderSorted, geocacheSummaryRowInflater, titleUpdater, null);
         final CacheListPositionUpdater cacheListUpdater = new CacheListPositionUpdater(
                 geoFixProvider, cacheList, cachesProviderCount, thread /*cachesProviderSorted*/);
         geoFixProvider.addObserver(cacheListUpdater);
