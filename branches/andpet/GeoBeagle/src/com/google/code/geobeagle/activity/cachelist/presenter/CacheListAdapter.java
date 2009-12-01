@@ -24,11 +24,12 @@ public class CacheListAdapter extends BaseAdapter implements Refresher {
     public CacheListAdapter(CachesProviderToggler provider, 
             IDistanceAndBearingProvider distances,
             GeocacheSummaryRowInflater inflater,
-            TitleUpdater titleUpdater) {
+            TitleUpdater titleUpdater, GeocacheList listData) {
         mProvider = provider;
         mGeocacheSummaryRowInflater = inflater;
         mTitleUpdater = titleUpdater;
         mDistances = distances;
+        mListData = listData;
     }
     
     public void enableUpdates(boolean enable) {
