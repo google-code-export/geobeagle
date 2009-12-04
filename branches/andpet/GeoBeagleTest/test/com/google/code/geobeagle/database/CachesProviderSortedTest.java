@@ -18,7 +18,9 @@ import static org.junit.Assert.assertEquals;
 import static com.google.code.geobeagle.Common.mockGeocache;
 
 import com.google.code.geobeagle.Geocache;
+import com.google.code.geobeagle.GeocacheListPrecomputed;
 
+import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -38,6 +40,8 @@ public class CachesProviderSortedTest {
         mSorted = new ArrayList<Geocache>();
         Geocache cache1 = mockGeocache(1, 1);
         Geocache cache2 = mockGeocache(1, 2);
+        EasyMock.expect(cache1.getDistanceTo(0.0, 0.0)).andReturn(1.4f);
+        EasyMock.expect(cache2.getDistanceTo(0.0, 0.0)).andReturn(2.2f);
         mSorted.add(cache1);
         mSorted.add(cache2);
         
@@ -47,11 +51,11 @@ public class CachesProviderSortedTest {
     }
     
     @Test
-    public void testSortedAtStart() {
+    public void testUnsortedAtStart() {
         PowerMock.replayAll();
 
         CachesProviderSorted sorted = new CachesProviderSorted(mProvider);
-        assertEquals(mSorted, sorted.getCaches());
+        assertEquals(mProvider.getCaches(), sorted.getCaches());
     }
 
     @Test
@@ -60,6 +64,6 @@ public class CachesProviderSortedTest {
 
         CachesProviderSorted sorted = new CachesProviderSorted(mProvider);
         sorted.setCenter(0, 0);
-        assertEquals(mSorted, sorted.getCaches());
+        assertEquals(new GeocacheListPrecomputed(mSorted), sorted.getCaches());
     }
 }

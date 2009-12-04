@@ -16,7 +16,6 @@ package com.google.code.geobeagle.activity;
 
 import static org.junit.Assert.*;
 
-import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.actions.MenuAction;
 import com.google.code.geobeagle.actions.MenuActions;
 import com.google.code.geobeagle.activity.cachelist.actions.MenuActionSyncGpx;
@@ -57,8 +56,8 @@ public class MenuActionsTest {
         final MenuActions menuActions = new MenuActions();
         menuActions.add(menuActionSyncGpx);
 
-        assertTrue(menuActions.act(R.string.menu_sync));
-        assertFalse(menuActions.act(R.string.menu_cache_list));
+        assertTrue(menuActions.act(0));
+        assertFalse(menuActions.act(1));
         PowerMock.verifyAll();
     }
 
@@ -74,7 +73,7 @@ public class MenuActionsTest {
 
         PowerMock.replayAll();
         MenuActions menuActions = new MenuActions(menuActionsArray);
-        assertTrue(menuActions.act(1));
+        assertTrue(menuActions.act(0));
         PowerMock.verifyAll();
     }
 
@@ -92,6 +91,7 @@ public class MenuActionsTest {
     @Test
     public void testCreateOptionsMenu() {
         MenuAction menuAction = PowerMock.createMock(MenuAction.class);
+        EasyMock.expect(menuAction.getLabel()).andReturn("menuitem");
         MenuAction[] menuActionsArray = {
             menuAction
         };
@@ -100,7 +100,7 @@ public class MenuActionsTest {
 
         menu.clear();
         //EasyMock.expect(menuAction.getId()).andReturn(1);
-        EasyMock.expect(menu.add(0, 1, 0, "my menu")).andReturn(menuItem);
+        EasyMock.expect(menu.add(0, 0, 0, "menuitem")).andReturn(menuItem);
 
         PowerMock.replayAll();
         MenuActions menuActions = new MenuActions(menuActionsArray);

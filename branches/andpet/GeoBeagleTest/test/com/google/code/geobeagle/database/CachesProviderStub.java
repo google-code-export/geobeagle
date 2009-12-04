@@ -21,7 +21,7 @@ import java.util.ArrayList;
 
 public class CachesProviderStub implements ICachesProviderArea {
 
-    private GeocacheList mGeocaches = GeocacheListPrecomputed.EMPTY;
+    private ArrayList<Geocache> mGeocaches = new ArrayList<Geocache>();
     private double mLatLow = 0.0;
     private double mLatHigh = 0.0;
     private double mLonLow = 0.0;
@@ -38,7 +38,7 @@ public class CachesProviderStub implements ICachesProviderArea {
     /** maxCount <= 0 means no limit */
     private GeocacheList fetchCaches(int maxCount) {
         if (!mIsInitialized)
-            return mGeocaches;
+            return new GeocacheListPrecomputed(mGeocaches);
         
         ArrayList<Geocache> selection = new ArrayList<Geocache>();
         for (Geocache geocache : mGeocaches) {

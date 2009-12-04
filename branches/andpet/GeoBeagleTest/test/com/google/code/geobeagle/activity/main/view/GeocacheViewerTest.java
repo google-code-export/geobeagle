@@ -38,7 +38,7 @@ import android.widget.TextView;
 @RunWith(PowerMockRunner.class)
 @PrepareForTest( {
         CacheType.class, TextView.class, UnlabelledAttributeViewer.class, 
-        LabelledAttributeViewer.class, Geocache.class
+        LabelledAttributeViewer.class, Geocache.class, GraphicsGenerator.class
 })
 public class GeocacheViewerTest {
     @Test

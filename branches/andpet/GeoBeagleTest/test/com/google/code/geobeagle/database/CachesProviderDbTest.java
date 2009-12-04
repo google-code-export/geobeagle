@@ -10,6 +10,7 @@ import com.google.code.geobeagle.CacheFilter;
 import com.google.code.geobeagle.GeocacheList;
 import com.google.code.geobeagle.GeocacheListPrecomputed;
 
+import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -39,12 +40,13 @@ public class CachesProviderDbTest {
     @Test
     public void testFilterUpdateSetsChanged() {
         expect(mCacheFilter1.getSqlWhereClause()).andReturn("1");
-        expect(mCacheFilter1.getLabel()).andReturn(11);
+        expect(mCacheFilter1.getRequiredTag()).andReturn(11);
         expect(mCacheFilter2.getSqlWhereClause()).andReturn("2");
-        expect(mCacheFilter2.getLabel()).andReturn(22);
+        expect(mCacheFilter2.getRequiredTag()).andReturn(22);
 
         PowerMock.replayAll();
-        mCachesProviderDb = new CachesProviderDb(mDbFrontend, mCacheFilter1);
+        mCachesProviderDb = new CachesProviderDb(mDbFrontend);
+        mCachesProviderDb.setFilter(mCacheFilter1);
         mCachesProviderDb.resetChanged();
         mCachesProviderDb.setFilter(mCacheFilter2);
         assertTrue(mCachesProviderDb.hasChanged());
@@ -54,10 +56,14 @@ public class CachesProviderDbTest {
     @Test
     public void testUnchangedFilter() {
         expect(mCacheFilter1.getSqlWhereClause()).andReturn("CacheType = 1").anyTimes();
-        expect(mDbFrontend.count("CacheType = 1")).andReturn(5);
+        expect(mCacheFilter1.getRequiredTag()).andReturn(0).anyTimes();
+        expect(mCacheFilter2.getSqlWhereClause()).andReturn("CacheType = 1").anyTimes();
+        expect(mCacheFilter2.getRequiredTag()).andReturn(0).anyTimes();
+        expect(mDbFrontend.countRaw((String)EasyMock.anyObject())).andReturn(5).anyTimes();
 
         PowerMock.replayAll();
-        mCachesProviderDb = new CachesProviderDb(mDbFrontend, mCacheFilter1);
+        mCachesProviderDb = new CachesProviderDb(mDbFrontend);
+        mCachesProviderDb.setFilter(mCacheFilter1);
         mCachesProviderDb.getCount(); // will load the filter
         mCachesProviderDb.resetChanged();
         mCachesProviderDb.setFilter(mCacheFilter2);
@@ -68,13 +74,17 @@ public class CachesProviderDbTest {
     @Test
     public void testExtraConditionGetNewCaches() {
         GeocacheList list1 = new GeocacheListPrecomputed();
-        expect(mDbFrontend.loadCaches(null)).andReturn(list1);
-        expect(mDbFrontend.loadCaches("CacheType = 1")).andReturn(list1);
-        expect(mCacheFilter1.getSqlWhereClause()).andReturn(null);
-        expect(mCacheFilter1.getSqlWhereClause()).andReturn("CacheType = 1");
+        expect(mDbFrontend.loadCachesRaw("SELECT Id FROM CACHES")).andReturn(list1);
+        expect(mDbFrontend.loadCachesRaw("SELECT Id FROM CACHES WHERE CacheType = 1")).andReturn(list1);
+        expect(mDbFrontend.countRaw((String)EasyMock.anyObject())).andReturn(0).anyTimes();
+        expect(mCacheFilter1.getRequiredTag()).andReturn(0).anyTimes();
+        expect(mCacheFilter1.getSqlWhereClause()).andReturn("");
+        expect(mCacheFilter2.getRequiredTag()).andReturn(0).anyTimes();
+        expect(mCacheFilter2.getSqlWhereClause()).andReturn("CacheType = 1");
 
         PowerMock.replayAll();
-        mCachesProviderDb = new CachesProviderDb(mDbFrontend, mCacheFilter1);
+        mCachesProviderDb = new CachesProviderDb(mDbFrontend);
+        mCachesProviderDb.setFilter(mCacheFilter1);
         mCachesProviderDb.getCaches();
         mCachesProviderDb.resetChanged();
         mCachesProviderDb.setFilter(mCacheFilter2);
