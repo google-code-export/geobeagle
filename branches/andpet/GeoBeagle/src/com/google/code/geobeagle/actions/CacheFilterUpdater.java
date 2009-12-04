@@ -19,6 +19,7 @@ public class CacheFilterUpdater {
     
     public void loadActiveFilter() {
         CacheFilter filter = mFilterTypeCollection.getActiveFilter();
+        //Log.d("GeoBeagle", "CacheFilterUpdater loading " + filter.mId);
         for (CachesProviderDb provider : mCachesProviderDb) {
             provider.setFilter(filter);
         }

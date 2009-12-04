@@ -4,6 +4,8 @@ import com.google.code.geobeagle.CacheFilter;
 import com.google.code.geobeagle.GeocacheList;
 import com.google.code.geobeagle.Labels;
 
+import android.util.Log;
+
 /** Uses a DB to fetch the caches within a defined region, or all caches if no 
  * bounds were specified */
 public class CachesProviderDb implements ICachesProviderArea {
@@ -13,15 +15,16 @@ public class CachesProviderDb implements ICachesProviderArea {
     private double mLonLow;
     private double mLatHigh;
     private double mLonHigh;
-    private String mWhere = null;
+    /** The complete SQL query for the current coordinates and settings,
+     *  except from 'SELECT x'. If null, mSql needs to be re-calculated. */
+    private String mSql = null;
     private GeocacheList mCaches;
     private boolean mHasChanged = true;
     private boolean mHasLimits = false;
+    /** The 'where' part of the SQL clause that comes from the active CacheFilter */ 
     private String mFilter;
-    //TODO: Don't store filtered label separately. Store complete SQL query instead
+    /** The tag used for filtering. Zero means any tag allowed. */
     private int mLabel;
-    //TODO: mIsFirstListLoad currently disabled. Beneficial to use?
-    private boolean mIsFirstListLoad = false;
     /** If greater than zero, this is the max number that mCaches 
      * was allowed to contain when loaded. (This limit can change on subsequent loads) */
     private int mCachesCappedToCount = 0;
@@ -31,41 +34,42 @@ public class CachesProviderDb implements ICachesProviderArea {
         mFilter = cacheFilter.getSqlWhereClause();
         mLabel = cacheFilter.getLabel();
     }
-
-    private String getWhere() {
-        if (mWhere == null) {
+    
+    /** Returns a complete SQL query except from 'SELECT x' */
+    private String getSql() {
+        if (mSql == null) {
+            String where = null;
             if (mHasLimits) {
-                mWhere = "Latitude >= " + mLatLow + " AND Latitude < " + mLatHigh + 
+                where = "Latitude >= " + mLatLow + " AND Latitude < " + mLatHigh + 
                 " AND Longitude >= " + mLonLow + " AND Longitude < " + mLonHigh;
                 if (mFilter != null)
-                    mWhere += " AND " + mFilter;
+                    where += " AND " + mFilter;
             } else {
-                if (mFilter != null)
-                    mWhere = mFilter;
+                where = mFilter;
             }
+
+            if (mLabel == Labels.NULL) {
+                if (where == null)
+                    mSql = "FROM CACHES";  //Return all caches
+                else
+                    mSql = "FROM CACHES WHERE " + where;
+            } else {
+                if (where == null)
+                    mSql = "FROM CACHES, CACHELABELS WHERE LabelId=" + mLabel
+                      + " AND Id=CacheId";
+                else
+                    mSql = "FROM CACHES, CACHELABELS WHERE LabelId=" + mLabel
+                      + " AND Id=CacheId AND " + where;
+            }
+            Log.d("GeoBeagle", "CachesProviderDb created sql " + mSql);
         }
-        return mWhere;
+        return mSql;
     }
     
     @Override
     public GeocacheList getCaches() {
         if (mCaches == null || mCachesCappedToCount > 0) {
-            String where = getWhere();
-            if (mLabel != Labels.NULL) {
-                if (where == null)
-                    where = "";
-                else if (!where.equals(""))
-                    where = " AND " + where;
-                String sql = "SELECT Id FROM CACHES, CACHELABELS WHERE LabelId=" + mLabel
-                  + " AND Id=CacheId" + where;
-                mCaches = mDbFrontend.loadCachesRaw(sql);
-            }
-            else if (mIsFirstListLoad && where != null) {
-                mCaches = mDbFrontend.loadCachesPrecomputed(where);
-            } else {
-                mCaches = mDbFrontend.loadCaches(where);
-            }
-            mIsFirstListLoad = false;
+            mCaches = mDbFrontend.loadCachesRaw("SELECT Id " + getSql());
         }
         return mCaches;
     }
@@ -74,7 +78,7 @@ public class CachesProviderDb implements ICachesProviderArea {
     public GeocacheList getCaches(int maxResults) {
         if (mCaches == null || (mCachesCappedToCount > 0 && 
                                 mCachesCappedToCount < maxResults)) {
-            mCaches = mDbFrontend.loadCaches(getWhere(), maxResults);
+            mCaches = mDbFrontend.loadCachesRaw("SELECT Id " + getSql() + " LIMIT 0, " + maxResults);
             if (mCaches.size() == maxResults)
                 mCachesCappedToCount = maxResults;
             else
@@ -87,7 +91,7 @@ public class CachesProviderDb implements ICachesProviderArea {
     @Override
     public int getCount() {
         if (mCaches == null || mCachesCappedToCount > 0) {
-            return mDbFrontend.count(getWhere());
+            return mDbFrontend.countRaw("SELECT COUNT(*) " + getSql());
         }
         return mCaches.size();
     }
@@ -104,7 +108,7 @@ public class CachesProviderDb implements ICachesProviderArea {
         mLonLow = lonLow;
         mLonHigh = lonHigh;
         mCaches = null;  //Flush old caches
-        mWhere = null;
+        mSql = null;
         mHasChanged = true;
         mHasLimits = true;
     }
@@ -127,17 +131,11 @@ public class CachesProviderDb implements ICachesProviderArea {
     }
     
     public void setFilter(CacheFilter cacheFilter) {
-        String newFilter = cacheFilter.getSqlWhereClause();
-        int newLabel = cacheFilter.getLabel();
-        //TODO: Compare with old filter even with labels
-        if ((newFilter == null && mFilter != null) 
-                || (newFilter != null /* && !newFilter.equals(mFilter) */)) {
-            mHasChanged = true;
-            mFilter = newFilter;
-            mLabel = newLabel;
-            mWhere = null;  //Flush
-            mCaches = null;  //Flush old caches
-        }
+        mHasChanged = true;
+        mFilter = cacheFilter.getSqlWhereClause();
+        mLabel = cacheFilter.getLabel();
+        mSql = null;   //Flush
+        mCaches = null;  //Flush old caches
     }
     
     public int getTotalCount() {

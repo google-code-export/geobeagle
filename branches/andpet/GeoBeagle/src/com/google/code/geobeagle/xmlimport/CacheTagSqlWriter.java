@@ -125,6 +125,7 @@ public class CacheTagSqlWriter {
     }
 
     public void write(Source source) {
+        //TODO: Do write found caches. Save a tag "Found" for the cache for later handling.
         if (!mFound)
             mCacheWriter.insertAndUpdateCache(mId, mName, mLatitude, mLongitude, source, mGpxName,
                     mCacheType, mDifficulty, mTerrain, mContainer);

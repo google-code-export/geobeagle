@@ -27,6 +27,7 @@ import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.actions.CacheFilterUpdater;
 import com.google.code.geobeagle.actions.MenuActionCacheList;
 import com.google.code.geobeagle.actions.MenuActionEditFilter;
+import com.google.code.geobeagle.actions.MenuActionFilterListPopup;
 import com.google.code.geobeagle.actions.MenuActions;
 import com.google.code.geobeagle.activity.filterlist.FilterTypeCollection;
 import com.google.code.geobeagle.activity.main.GeoUtils;
@@ -127,6 +128,7 @@ public class GeoMapActivity extends MapActivity {
                 densityOverlay, cachePinsOverlayFactory, false, cachesProviderArea, filterTypeCollection);
         mMapView.setScrollListener(mOverlayManager);
 
+        // *** BUILD MENU ***
         final MenuActions menuActions = new MenuActions();
         menuActions.add(new GeoMapActivityDelegate.MenuActionToggleSatellite(mMapView));
         menuActions.add(new GeoMapActivityDelegate.MenuActionCenterLocation(mMapView, mMyLocationOverlay));
@@ -137,6 +139,8 @@ public class GeoMapActivity extends MapActivity {
         final CacheFilterUpdater cacheFilterUpdater = 
             new CacheFilterUpdater(filterTypeCollection, providers);
         menuActions.add(new MenuActionEditFilter(this, cacheFilterUpdater, 
+                mOverlayManager, filterTypeCollection));
+        menuActions.add(new MenuActionFilterListPopup(this, cacheFilterUpdater, 
                 mOverlayManager, filterTypeCollection));
         
         mGeoMapActivityDelegate = new GeoMapActivityDelegate(menuActions);

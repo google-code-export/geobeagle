@@ -7,6 +7,7 @@ import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.GeocacheFactory;
 import com.google.code.geobeagle.LocationControlDi;
 import com.google.code.geobeagle.Refresher;
+import com.google.code.geobeagle.actions.CacheFilterUpdater;
 import com.google.code.geobeagle.activity.filterlist.FilterTypeCollection;
 import com.google.code.geobeagle.database.CachesProviderDb;
 import com.google.code.geobeagle.database.CachesProviderCount;
@@ -16,6 +17,9 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.SurfaceHolder;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ProximityActivity extends Activity implements SurfaceHolder.Callback {
 
@@ -41,6 +45,7 @@ public class ProximityActivity extends Activity implements SurfaceHolder.Callbac
     private boolean mStartWhenSurfaceCreated = false;  //TODO: Is mStartWhenSurfaceCreated needed?
     private DbFrontend mDbFrontend;
     private GeoFixProvider mGeoFixProvider;
+    private CacheFilterUpdater mCacheFilterUpdater;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,8 +55,11 @@ public class ProximityActivity extends Activity implements SurfaceHolder.Callbac
         mDbFrontend = new DbFrontend(this, geocacheFactory);
         final FilterTypeCollection filterTypeCollection = new FilterTypeCollection(this);
         final CacheFilter cacheFilter = filterTypeCollection.getActiveFilter();
-        CachesProviderDb cachesProviderArea = new CachesProviderDb(mDbFrontend, cacheFilter);
-        CachesProviderCount cachesProviderCount = new CachesProviderCount(cachesProviderArea, 5, 10);
+        CachesProviderDb cachesProviderDb = new CachesProviderDb(mDbFrontend, cacheFilter);
+        CachesProviderCount cachesProviderCount = new CachesProviderCount(cachesProviderDb, 5, 10);
+        List<CachesProviderDb> list = new ArrayList<CachesProviderDb>();
+        list.add(cachesProviderDb);
+        mCacheFilterUpdater = new CacheFilterUpdater(filterTypeCollection, list);
         
         mProximityPainter = new ProximityPainter(cachesProviderCount);
 
@@ -74,9 +82,12 @@ public class ProximityActivity extends Activity implements SurfaceHolder.Callbac
         super.onResume();
         
         String id = getIntent().getStringExtra("geocacheId");
-        Geocache geocache = mDbFrontend.loadCacheFromId(id);
-        mProximityPainter.setSelectedGeocache(geocache);
+        if (!id.equals("")) {
+            Geocache geocache = mDbFrontend.loadCacheFromId(id);
+            mProximityPainter.setSelectedGeocache(geocache);
+        }
                 
+        mCacheFilterUpdater.loadActiveFilter();
         mGeoFixProvider.onResume();
         
         GeoFix location = mGeoFixProvider.getLocation();

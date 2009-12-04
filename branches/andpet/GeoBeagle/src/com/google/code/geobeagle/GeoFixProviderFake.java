@@ -74,18 +74,25 @@ public class GeoFixProviderFake implements GeoFixProvider {
         }
     }
 
-    //This particular location is in Yokohama south of Tokyo. 
-    //Customize to your neighborhood...
+    /** This particular location is in Yokohama south of Tokyo. 
+      * Customize to your neighborhood... */
     public static FakeDataset YOKOHAMA = new FakeDataset(2000, 
             35.4583162355423, 139.62289574623108, 10000,
             new GeoFix[] { new GeoFix(192, 40, 0, 0, 0, "gps"),
                            new GeoFix(128, 40, 0.001, -0.0001, 5000, "gps"),        
                            new GeoFix(8, 40, 0.002, -0.0001, 7000, "gps"),
     });
-    //A single location
+    
+    /** A single location */
     public static FakeDataset TOKYO = new FakeDataset(10000, 
             35.690448, 139.756225, 10000,
             new GeoFix[] { new GeoFix(16, 10, 0, 0, 0, "gps"),
+    });
+
+    /** Another single location */
+    public static FakeDataset LINKOPING = new FakeDataset(10000, 
+            58.398050, 15.612208, 10000,
+            new GeoFix[] { new GeoFix(8, 20, 0, 0, 0, "gps"),
     });
     
     private final FakeDataset mFakeDataset;

@@ -66,7 +66,7 @@ public class DbFrontend {
     public void openDatabase() {
         if (mIsDatabaseOpen)
             return;
-        Log.d("GeoBeagle", "DbFrontend.openDatabase()");
+        //Log.d("GeoBeagle", "DbFrontend.openDatabase()");
         mIsDatabaseOpen = true;
 
         mOpenHelper = new GeoBeagleSqliteOpenHelper(mContext);
@@ -78,7 +78,7 @@ public class DbFrontend {
     public void closeDatabase() {
         if (!mIsDatabaseOpen)
             return;
-        Log.d("GeoBeagle", "DbFrontend.closeDatabase()");
+        //Log.d("GeoBeagle", "DbFrontend.closeDatabase()");
         mIsDatabaseOpen = false;
 
         mOpenHelper.close();
@@ -247,6 +247,21 @@ public class DbFrontend {
         return count;
     }
 
+    /** 'sql' must be a complete SQL query that returns a single row 
+     * with the result in the first column  */
+    public int countRaw(String sql) {
+        openDatabase();
+        long start = mClock.getCurrentTime();
+        
+        Cursor countCursor = mDatabase.rawQuery(sql, null);
+        countCursor.moveToFirst();
+        int count = countCursor.getInt(0);
+        countCursor.close();
+        Log.d("GeoBeagle", "DbFrontend.countRaw took " + (mClock.getCurrentTime()-start) + " ms (" 
+                + count + " caches)");
+        return count;
+    }
+    
     public void flushTotalCount() {
         mTotalCacheCount = -1;
     }

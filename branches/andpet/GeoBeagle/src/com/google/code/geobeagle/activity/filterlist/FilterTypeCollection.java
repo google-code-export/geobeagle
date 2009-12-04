@@ -41,6 +41,7 @@ public class FilterTypeCollection {
             add(new CacheFilter("Favorites", mActivity, favoritesPref));
         }
 
+        /*
         {   FilterPreferences foundPref = new FilterPreferences("Found");
             foundPref.setInteger("FilterLabel", Labels.FOUND);
             add(new CacheFilter("Found", mActivity, foundPref));
@@ -50,6 +51,7 @@ public class FilterTypeCollection {
             dnfPref.setInteger("FilterLabel", Labels.DNF);
             add(new CacheFilter("DNF", mActivity, dnfPref));
         }
+        */
         
         String filterList = null;
         for (CacheFilter cacheFilter : mFilterTypes) {
@@ -86,6 +88,7 @@ public class FilterTypeCollection {
         SharedPreferences prefs = mActivity.getSharedPreferences(FILTER_PREFS, 0);
         Editor editor = prefs.edit();
         editor.putString("ActiveFilter", cacheFilter.mId);
+        editor.commit();
     }
 
     public int getCount() {

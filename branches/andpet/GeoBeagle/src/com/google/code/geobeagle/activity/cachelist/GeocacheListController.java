@@ -16,6 +16,7 @@ package com.google.code.geobeagle.activity.cachelist;
 
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.actions.CacheAction;
+import com.google.code.geobeagle.actions.CacheFilterUpdater;
 import com.google.code.geobeagle.actions.MenuActions;
 import com.google.code.geobeagle.activity.cachelist.actions.MenuActionSyncGpx;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListAdapter;
@@ -55,21 +56,23 @@ public class GeocacheListController {
     }
 
     public static final String SELECT_CACHE = "SELECT_CACHE";
-    private final CacheListAdapter mCacheList;
+    private final CacheListAdapter mCacheListAdapter;
     private final CacheAction mCacheActions[];
     private final MenuActions mMenuActions;
     private final MenuActionSyncGpx mMenuActionSyncGpx;
     private final CacheAction mDefaultCacheAction;
+    private final CacheFilterUpdater mCacheFilterUpdater;
 
-    public GeocacheListController(CacheListAdapter cacheList,
+    public GeocacheListController(CacheListAdapter cacheListAdapter,
             CacheAction[] cacheActions,
             MenuActionSyncGpx menuActionSyncGpx, MenuActions menuActions,
-            CacheAction defaultCacheAction) {
-        mCacheList = cacheList;
+            CacheAction defaultCacheAction, CacheFilterUpdater cacheFilterUpdater) {
+        mCacheListAdapter = cacheListAdapter;
         mCacheActions = cacheActions;
         mMenuActionSyncGpx = menuActionSyncGpx;
         mMenuActions = menuActions;
         mDefaultCacheAction = defaultCacheAction;
+        mCacheFilterUpdater = cacheFilterUpdater;
     }
 
     public boolean onContextItemSelected(MenuItem menuItem) {
@@ -78,7 +81,7 @@ public class GeocacheListController {
         int index = adapterContextMenuInfo.position - 1;
         Log.d("GeoBeagle", "Act doing action " + menuItem.getItemId() + " = " +
                 mCacheActions[menuItem.getItemId()].toString());
-        mCacheActions[menuItem.getItemId()].act(mCacheList.getGeocacheAt(index));
+        mCacheActions[menuItem.getItemId()].act(mCacheListAdapter.getGeocacheAt(index));
         return true;
     }
 
@@ -88,9 +91,9 @@ public class GeocacheListController {
     
     public void onListItemClick(ListView l, View v, int position, long id) {
         if (position > 0) {
-            mDefaultCacheAction.act(mCacheList.getGeocacheAt(position - 1));
+            mDefaultCacheAction.act(mCacheListAdapter.getGeocacheAt(position - 1));
         } else {
-            mCacheList.forceRefresh();
+            mCacheListAdapter.forceRefresh();
         }
     }
 
@@ -107,7 +110,8 @@ public class GeocacheListController {
     }
 
     public void onResume(boolean fImport) {
-        mCacheList.forceRefresh();
+        mCacheFilterUpdater.loadActiveFilter();
+        mCacheListAdapter.forceRefresh();
         if (fImport)
             mMenuActionSyncGpx.act();
     }

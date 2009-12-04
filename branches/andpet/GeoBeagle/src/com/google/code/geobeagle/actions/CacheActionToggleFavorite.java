@@ -3,7 +3,6 @@ package com.google.code.geobeagle.actions;
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.Labels;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListAdapter;
-import com.google.code.geobeagle.activity.cachelist.presenter.RefreshAction;
 import com.google.code.geobeagle.database.DbFrontend;
 
 public class CacheActionToggleFavorite implements CacheAction {

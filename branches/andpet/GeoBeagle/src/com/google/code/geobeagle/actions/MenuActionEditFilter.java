@@ -4,8 +4,6 @@ import com.google.code.geobeagle.CacheFilter;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.Refresher;
 import com.google.code.geobeagle.activity.filterlist.FilterTypeCollection;
-import com.google.code.geobeagle.database.CachesProviderDb;
-
 import android.app.Activity;
 import android.app.Dialog;
 import android.view.View;
@@ -36,7 +34,7 @@ public class MenuActionEditFilter implements MenuAction {
 
     @Override
     public String getLabel() {
-        return mActivity.getResources().getString(R.string.menu_choose_filter);
+        return mActivity.getResources().getString(R.string.menu_edit_filter);
     }
     
     private class DialogFilterGui implements CacheFilter.FilterGui {
