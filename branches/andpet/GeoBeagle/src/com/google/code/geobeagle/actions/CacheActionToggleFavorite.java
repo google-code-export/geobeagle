@@ -1,7 +1,7 @@
 package com.google.code.geobeagle.actions;
 
 import com.google.code.geobeagle.Geocache;
-import com.google.code.geobeagle.Labels;
+import com.google.code.geobeagle.Tags;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListAdapter;
 import com.google.code.geobeagle.database.DbFrontend;
 
@@ -19,20 +19,20 @@ public class CacheActionToggleFavorite implements CacheAction {
     
     @Override
     public void act(Geocache geocache) {
-        boolean isFavorite = mDbFrontend.geocacheHasLabel(geocache.getId(), 
-                Labels.FAVORITES);
+        boolean isFavorite = mDbFrontend.geocacheHasTag(geocache.getId(), 
+                Tags.FAVORITES);
         if (isFavorite)
-            mDbFrontend.unsetGeocacheLabel(geocache.getId(), Labels.FAVORITES);
+            mDbFrontend.removeGeocacheTag(geocache.getId(), Tags.FAVORITES);
         else
-            mDbFrontend.setGeocacheLabel(geocache.getId(), Labels.FAVORITES);
+            mDbFrontend.addGeocacheTag(geocache.getId(), Tags.FAVORITES);
         mCacheFilterUpdater.loadActiveFilter();
         mCacheList.forceRefresh();
     }
 
     @Override
     public String getLabel(Geocache geocache) {
-        boolean isFavorite = mDbFrontend.geocacheHasLabel(geocache.getId(), 
-                Labels.FAVORITES);
+        boolean isFavorite = mDbFrontend.geocacheHasTag(geocache.getId(), 
+                Tags.FAVORITES);
         return isFavorite ? "Remove from Favorites" : "Add to Favorites";
     }
 

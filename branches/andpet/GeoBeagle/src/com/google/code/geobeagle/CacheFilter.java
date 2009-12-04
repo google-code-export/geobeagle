@@ -1,9 +1,5 @@
 package com.google.code.geobeagle;
 
-import com.google.code.geobeagle.database.CachesProviderDb;
-import com.google.code.geobeagle.database.DbFrontend;
-import com.google.code.geobeagle.database.ICachesProviderArea;
-
 import android.app.Activity;
 import android.content.SharedPreferences;
 
@@ -18,9 +14,11 @@ public class CacheFilter {
     /** The string used in Preferences to identify this filter */
     public final String mId;
     
+    /*
     public ICachesProviderArea getProvider(DbFrontend dbFrontend) {
         return new CachesProviderDb(dbFrontend, this);
     }
+    */
 
     public String getName() {
         return mName;
@@ -66,10 +64,9 @@ public class CacheFilter {
        
     private String mFilterString;
     
-    //TODO: Replace use of 'label' with 'tag' to lessen confusion
-    /** Limits the filter to only include geocaches with this label. 
+    /** Limits the filter to only include geocaches with this tag. 
      * Zero means no limit. */
-    private int mLabel;
+    private int mRequiredTag;
     
     public CacheFilter(String id, Activity activity) {
         mId = id;
@@ -97,7 +94,7 @@ public class CacheFilter {
             option.Selected = preferences.getBoolean(option.PrefsName, true);
         }
         mFilterString = preferences.getString("FilterString", null);
-        mLabel = preferences.getInt("FilterLabel", 0);
+        mRequiredTag = preferences.getInt("FilterTag", 0);
         mName = preferences.getString("FilterName", "Unnamed");
     }
 
@@ -111,12 +108,13 @@ public class CacheFilter {
             editor.putBoolean(option.PrefsName, option.Selected);
         }
         editor.putString("FilterString", mFilterString);
-        editor.putInt("FilterLabel", mLabel);
+        editor.putInt("FilterTag", mRequiredTag);
         editor.putString("FilterName", mName);
         editor.commit();
     }
     
-    /** @return A number of conditions separated by AND */
+    /** @return A number of conditions separated by AND, 
+     *  or an empty string if there isn't any limit */
     public String getSqlWhereClause() {
         int count = 0;
         for (BooleanOption option : mOptions) {
@@ -171,13 +169,11 @@ public class CacheFilter {
             }
         }
             
-        if (result.length() == 0)
-            return null;
         return result.toString();
     }
     
-    public int getLabel() {
-        return mLabel;
+    public int getRequiredTag() {
+        return mRequiredTag;
     }
 
     private boolean containsUppercase(String string) {
@@ -192,7 +188,7 @@ public class CacheFilter {
             option.Selected = provider.getBoolean(option.ViewResource);
         }
         mFilterString = provider.getString(R.id.FilterString);
-        mLabel = provider.getBoolean(R.id.CheckBoxOnlyFavorites) ? Labels.FAVORITES : Labels.NULL;
+        mRequiredTag = provider.getBoolean(R.id.CheckBoxOnlyFavorites) ? Tags.FAVORITES : Tags.NULL;
     }
 
     /** Set up the view from the values in this CacheFilter. */
@@ -205,6 +201,6 @@ public class CacheFilter {
         }
         String filter = mFilterString == null ? "" : mFilterString;
         provider.setString(R.id.FilterString, filter);
-        provider.setBoolean(R.id.CheckBoxOnlyFavorites, mLabel == Labels.FAVORITES);
+        provider.setBoolean(R.id.CheckBoxOnlyFavorites, mRequiredTag == Tags.FAVORITES);
     }
 }

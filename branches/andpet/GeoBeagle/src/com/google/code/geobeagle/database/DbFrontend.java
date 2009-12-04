@@ -266,30 +266,30 @@ public class DbFrontend {
         mTotalCacheCount = -1;
     }
     
-    public boolean geocacheHasLabel(CharSequence geocacheId, int labelId) {
+    public boolean geocacheHasTag(CharSequence geocacheId, int tagId) {
         openDatabase();
         Cursor cursor = mDatabase.rawQuery("SELECT COUNT(*) FROM " + 
-                Database.TBL_CACHELABELS + " WHERE CacheId='" + geocacheId 
-                + "' AND LabelId=" + labelId, null);
+                Database.TBL_CACHETAGS + " WHERE CacheId='" + geocacheId 
+                + "' AND TagId=" + tagId, null);
         if (cursor == null) {
             return false;
         }
         cursor.moveToFirst();
         int count = cursor.getInt(0);        
         cursor.close();
-        Log.d("GeoBeagle", "geocacheHasLabel hit count is " + count);
+        Log.d("GeoBeagle", "geocacheHasTag hit count is " + count);
         return (count > 0);
     }
         
-    public void setGeocacheLabel(CharSequence geocacheId, int labelId) {
+    public void addGeocacheTag(CharSequence geocacheId, int tagId) {
         openDatabase();
-        Log.d("GeoBeagle", "setGeocacheLabel(" + geocacheId + ", " + labelId + ")");
-        mSqliteWrapper.execSQL(Database.SQL_REPLACE_CACHELABEL, geocacheId, labelId);
+        Log.d("GeoBeagle", "setGeocacheTag(" + geocacheId + ", " + tagId + ")");
+        mSqliteWrapper.execSQL(Database.SQL_REPLACE_CACHETAG, geocacheId, tagId);
     }
 
-    public void unsetGeocacheLabel(CharSequence geocacheId, int labelId) {
+    public void removeGeocacheTag(CharSequence geocacheId, int tagId) {
         openDatabase();
-        Log.d("GeoBeagle", "unsetGeocacheLabel(" + geocacheId + ", " + labelId + ")");
-        mSqliteWrapper.execSQL(Database.SQL_DELETE_CACHELABEL, geocacheId, labelId);
+        Log.d("GeoBeagle", "unsetGeocacheTag(" + geocacheId + ", " + tagId + ")");
+        mSqliteWrapper.execSQL(Database.SQL_DELETE_CACHETAG, geocacheId, tagId);
     }
 }

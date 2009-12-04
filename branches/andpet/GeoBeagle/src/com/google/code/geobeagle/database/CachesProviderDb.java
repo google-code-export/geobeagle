@@ -2,7 +2,7 @@ package com.google.code.geobeagle.database;
 
 import com.google.code.geobeagle.CacheFilter;
 import com.google.code.geobeagle.GeocacheList;
-import com.google.code.geobeagle.Labels;
+import com.google.code.geobeagle.Tags;
 
 import android.util.Log;
 
@@ -22,43 +22,41 @@ public class CachesProviderDb implements ICachesProviderArea {
     private boolean mHasChanged = true;
     private boolean mHasLimits = false;
     /** The 'where' part of the SQL clause that comes from the active CacheFilter */ 
-    private String mFilter;
-    /** The tag used for filtering. Zero means any tag allowed. */
-    private int mLabel;
+    private String mFilter = "";
+    /** The tag used for filtering. Tags.NULL means any tag allowed. */
+    private int mRequiredTag = Tags.NULL;
     /** If greater than zero, this is the max number that mCaches 
      * was allowed to contain when loaded. (This limit can change on subsequent loads) */
     private int mCachesCappedToCount = 0;
 
-    public CachesProviderDb(DbFrontend dbFrontend, CacheFilter cacheFilter) {
+    public CachesProviderDb(DbFrontend dbFrontend) {
         mDbFrontend = dbFrontend;
-        mFilter = cacheFilter.getSqlWhereClause();
-        mLabel = cacheFilter.getLabel();
     }
     
     /** Returns a complete SQL query except from 'SELECT x' */
     private String getSql() {
         if (mSql == null) {
-            String where = null;
+            String where = "";
             if (mHasLimits) {
                 where = "Latitude >= " + mLatLow + " AND Latitude < " + mLatHigh + 
                 " AND Longitude >= " + mLonLow + " AND Longitude < " + mLonHigh;
-                if (mFilter != null)
+                if (!mFilter.equals(""))
                     where += " AND " + mFilter;
             } else {
                 where = mFilter;
             }
 
-            if (mLabel == Labels.NULL) {
-                if (where == null)
+            if (mRequiredTag == Tags.NULL) {
+                if (where.equals(""))
                     mSql = "FROM CACHES";  //Return all caches
                 else
                     mSql = "FROM CACHES WHERE " + where;
             } else {
-                if (where == null)
-                    mSql = "FROM CACHES, CACHELABELS WHERE LabelId=" + mLabel
+                if (where.equals(""))
+                    mSql = "FROM CACHES, CACHETAGS WHERE TagId=" + mRequiredTag
                       + " AND Id=CacheId";
                 else
-                    mSql = "FROM CACHES, CACHELABELS WHERE LabelId=" + mLabel
+                    mSql = "FROM CACHES, CACHETAGS WHERE TagId=" + mRequiredTag
                       + " AND Id=CacheId AND " + where;
             }
             Log.d("GeoBeagle", "CachesProviderDb created sql " + mSql);
@@ -131,9 +129,15 @@ public class CachesProviderDb implements ICachesProviderArea {
     }
     
     public void setFilter(CacheFilter cacheFilter) {
+        String newFilter = cacheFilter.getSqlWhereClause();
+        int newTag = cacheFilter.getRequiredTag();
+        
+        if (newFilter.equals(mFilter) && newTag == mRequiredTag)
+            return;
+        
         mHasChanged = true;
-        mFilter = cacheFilter.getSqlWhereClause();
-        mLabel = cacheFilter.getLabel();
+        mFilter = newFilter;
+        mRequiredTag = newTag;
         mSql = null;   //Flush
         mCaches = null;  //Flush old caches
     }

@@ -33,6 +33,8 @@ public class MenuActions {
     }
 
     public boolean act(int itemId) {
+        if (itemId < 0 || itemId >= mMenuActions.size())
+            return false;
         mMenuActions.get(itemId).act();
         return true;
     }

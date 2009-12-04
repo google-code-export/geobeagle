@@ -25,7 +25,7 @@ class FilterPreferences implements SharedPreferences {
         setBoolean("UnknownSize", true);
 
         setString("FilterString", "");
-        setInteger("FilterLabel", 0);
+        setInteger("FilterTag", 0);
         */
     };
 

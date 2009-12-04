@@ -1,6 +1,6 @@
 package com.google.code.geobeagle.activity.main.view;
 
-import com.google.code.geobeagle.Labels;
+import com.google.code.geobeagle.Tags;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.database.DbFrontend;
 
@@ -39,7 +39,7 @@ public class FavoriteView extends ImageView {
     public void setGeocache(DbFrontend dbFrontend, CharSequence geocacheId) {
         mDbFrontend = dbFrontend;
         mGeocacheId = geocacheId;
-        mIsFavorite = mDbFrontend.geocacheHasLabel(mGeocacheId, Labels.FAVORITES);
+        mIsFavorite = mDbFrontend.geocacheHasTag(mGeocacheId, Tags.FAVORITES);
         updateImage();
     }
     
@@ -51,9 +51,9 @@ public class FavoriteView extends ImageView {
     private void setFavorite(boolean favorite) {
         mIsFavorite = favorite;
         if (favorite)
-            mDbFrontend.setGeocacheLabel(mGeocacheId, Labels.FAVORITES);
+            mDbFrontend.addGeocacheTag(mGeocacheId, Tags.FAVORITES);
         else
-            mDbFrontend.unsetGeocacheLabel(mGeocacheId, Labels.FAVORITES);
+            mDbFrontend.removeGeocacheTag(mGeocacheId, Tags.FAVORITES);
         updateImage();
     }
     

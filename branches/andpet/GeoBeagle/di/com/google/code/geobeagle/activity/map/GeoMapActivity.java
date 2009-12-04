@@ -19,7 +19,6 @@ import com.google.android.maps.MapActivity;
 import com.google.android.maps.MapController;
 import com.google.android.maps.MyLocationOverlay;
 import com.google.android.maps.Overlay;
-import com.google.code.geobeagle.CacheFilter;
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.GeocacheFactory;
 import com.google.code.geobeagle.GeocacheListPrecomputed;
@@ -86,7 +85,6 @@ public class GeoMapActivity extends MapActivity {
         final CacheItemFactory cacheItemFactory = new CacheItemFactory(resources);
 
         final FilterTypeCollection filterTypeCollection = new FilterTypeCollection(this);
-        final CacheFilter cacheFilter = filterTypeCollection.getActiveFilter();
         
         final List<Overlay> mapOverlays = mMapView.getOverlays();
         //menuActions.add(new MenuActionChooseFilter(this));
@@ -108,7 +106,7 @@ public class GeoMapActivity extends MapActivity {
 
         final List<DensityPatch> densityPatches = new ArrayList<DensityPatch>();
         final Toaster toaster = new Toaster(this, R.string.too_many_caches, Toast.LENGTH_SHORT);
-        final CachesProviderDb cachesProviderArea = new CachesProviderDb(mDbFrontend, cacheFilter);
+        final CachesProviderDb cachesProviderArea = new CachesProviderDb(mDbFrontend);
         final CachesProviderLazyArea lazyArea = new CachesProviderLazyArea(cachesProviderArea, 1.0);
         final DensityOverlayDelegate densityOverlayDelegate = DensityOverlay.createDelegate(
                 densityPatches, nullGeoPoint, lazyArea, toaster);
@@ -117,7 +115,7 @@ public class GeoMapActivity extends MapActivity {
         final CachePinsOverlay cachePinsOverlay = new CachePinsOverlay(cacheItemFactory, this,
                 defaultMarker, GeocacheListPrecomputed.EMPTY);
         //Pin overlay and Density overlay can't share providers because the provider wouldn't report hasChanged() when switching between them
-        CachesProviderDb cachesProviderAreaPins = new CachesProviderDb(mDbFrontend, cacheFilter);
+        CachesProviderDb cachesProviderAreaPins = new CachesProviderDb(mDbFrontend);
         final CachesProviderLazyArea lazyAreaPins = new CachesProviderLazyArea(cachesProviderAreaPins, 1.0);
         final CachePinsOverlayFactory cachePinsOverlayFactory = new CachePinsOverlayFactory(
                 mMapView, this, defaultMarker, cacheItemFactory, cachePinsOverlay, lazyAreaPins, toaster);

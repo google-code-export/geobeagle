@@ -1,7 +1,7 @@
 package com.google.code.geobeagle.activity.filterlist;
 
 import com.google.code.geobeagle.CacheFilter;
-import com.google.code.geobeagle.Labels;
+import com.google.code.geobeagle.Tags;
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
@@ -21,7 +21,7 @@ public class FilterTypeCollection {
     
     private void load() {
         SharedPreferences prefs = mActivity.getSharedPreferences(FILTER_PREFS, 0);
-        String ids = prefs.getString("FilterList", "");
+        String ids = prefs.getString("FilterTag", "");
         String[] idArray = ids.split(", ");
         if (idArray.length == 1 && idArray[0].equals("")) {
             firstSetup();
@@ -37,18 +37,18 @@ public class FilterTypeCollection {
         add(new CacheFilter("All", mActivity, new FilterPreferences("All caches")));
 
         {   FilterPreferences favoritesPref = new FilterPreferences("Favorites");
-            favoritesPref.setInteger("FilterLabel", Labels.FAVORITES);
+            favoritesPref.setInteger("FilterTag", Tags.FAVORITES);
             add(new CacheFilter("Favorites", mActivity, favoritesPref));
         }
 
         /*
         {   FilterPreferences foundPref = new FilterPreferences("Found");
-            foundPref.setInteger("FilterLabel", Labels.FOUND);
+            foundPref.setInteger("FilterTag", Tags.FOUND);
             add(new CacheFilter("Found", mActivity, foundPref));
         }
 
         {   FilterPreferences dnfPref = new FilterPreferences("Did Not Find");
-            dnfPref.setInteger("FilterLabel", Labels.DNF);
+            dnfPref.setInteger("FilterTag", Tags.DNF);
             add(new CacheFilter("DNF", mActivity, dnfPref));
         }
         */

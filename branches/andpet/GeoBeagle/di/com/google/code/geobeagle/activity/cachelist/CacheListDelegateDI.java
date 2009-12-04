@@ -15,7 +15,6 @@
 package com.google.code.geobeagle.activity.cachelist;
 
 import com.google.code.geobeagle.CacheTypeFactory;
-import com.google.code.geobeagle.CacheFilter;
 import com.google.code.geobeagle.ErrorDisplayer;
 import com.google.code.geobeagle.GeoFixProvider;
 import com.google.code.geobeagle.GeocacheFactory;
@@ -134,16 +133,15 @@ public class CacheListDelegateDI {
         updateGpsWidgetRunnable.run();
         
         final FilterTypeCollection filterTypeCollection = new FilterTypeCollection(listActivity);
-        final CacheFilter cacheFilter = filterTypeCollection.getActiveFilter();
         
         final DbFrontend dbFrontend = new DbFrontend(listActivity, geocacheFactory);
-        final CachesProviderDb cachesProviderDb = new CachesProviderDb(dbFrontend, cacheFilter);
+        final CachesProviderDb cachesProviderDb = new CachesProviderDb(dbFrontend);
         final ICachesProviderCenter cachesProviderCount = new CachesProviderWaitForInit(new CachesProviderCount(cachesProviderDb, 15, 30));
         final CachesProviderSorted cachesProviderSorted = new CachesProviderSorted(cachesProviderCount);
         //final CachesProviderLazy cachesProviderLazy = new CachesProviderLazy(cachesProviderSorted, 0.01, 2000, clock);
         ICachesProviderCenter cachesProviderLazy = cachesProviderSorted;
 
-        final CachesProviderDb cachesProviderAll = new CachesProviderDb(dbFrontend, cacheFilter);
+        final CachesProviderDb cachesProviderAll = new CachesProviderDb(dbFrontend);
         final CachesProviderToggler cachesProviderToggler = 
             new CachesProviderToggler(cachesProviderLazy, cachesProviderAll);
         CachesProviderCenterThread thread = new CachesProviderCenterThread(cachesProviderToggler);

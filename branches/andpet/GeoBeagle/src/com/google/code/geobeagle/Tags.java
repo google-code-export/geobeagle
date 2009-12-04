@@ -1,6 +1,6 @@
 package com.google.code.geobeagle;
 
-public class Labels {
+public class Tags {
     /** This id must never occur in the database */
     public final static int NULL = 0;
 

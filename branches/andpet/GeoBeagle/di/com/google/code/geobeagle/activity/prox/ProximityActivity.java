@@ -1,6 +1,5 @@
 package com.google.code.geobeagle.activity.prox;
 
-import com.google.code.geobeagle.CacheFilter;
 import com.google.code.geobeagle.GeoFix;
 import com.google.code.geobeagle.GeoFixProvider;
 import com.google.code.geobeagle.Geocache;
@@ -54,8 +53,7 @@ public class ProximityActivity extends Activity implements SurfaceHolder.Callbac
         GeocacheFactory geocacheFactory = new GeocacheFactory();
         mDbFrontend = new DbFrontend(this, geocacheFactory);
         final FilterTypeCollection filterTypeCollection = new FilterTypeCollection(this);
-        final CacheFilter cacheFilter = filterTypeCollection.getActiveFilter();
-        CachesProviderDb cachesProviderDb = new CachesProviderDb(mDbFrontend, cacheFilter);
+        CachesProviderDb cachesProviderDb = new CachesProviderDb(mDbFrontend);
         CachesProviderCount cachesProviderCount = new CachesProviderCount(cachesProviderDb, 5, 10);
         List<CachesProviderDb> list = new ArrayList<CachesProviderDb>();
         list.add(cachesProviderDb);
