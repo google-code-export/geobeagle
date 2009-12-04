@@ -51,7 +51,7 @@ public class GeocacheListControllerTest {
 
         PowerMock.replayAll();
         assertTrue(new GeocacheListController(null, null, null, menuActions,
-                defaultCacheAction).onCreateOptionsMenu(menu));
+                defaultCacheAction, null).onCreateOptionsMenu(menu));
         PowerMock.verifyAll();
     }
 
@@ -71,7 +71,7 @@ public class GeocacheListControllerTest {
 
         PowerMock.replayAll();
         new GeocacheListController(cacheListAdapter, cacheActions, null, null,
-                defaultCacheAction).onListItemClick(null, null, 46, 0);
+                defaultCacheAction, null).onListItemClick(null, null, 46, 0);
         PowerMock.verifyAll();
     }
 
@@ -83,7 +83,7 @@ public class GeocacheListControllerTest {
         menuActionSync.abort();
 
         PowerMock.replayAll();
-        new GeocacheListController(null, null, menuActionSync, null, null)
+        new GeocacheListController(null, null, menuActionSync, null, null, null)
                 .onPause();
         PowerMock.verifyAll();
     }
@@ -96,7 +96,7 @@ public class GeocacheListControllerTest {
         cacheList.forceRefresh();
 
         PowerMock.replayAll();
-        new GeocacheListController(cacheList, null, null, null, null)
+        new GeocacheListController(cacheList, null, null, null, null, null)
                 .onResume(false);
         PowerMock.verifyAll();
     }
@@ -113,7 +113,7 @@ public class GeocacheListControllerTest {
 
         PowerMock.replayAll();
         new GeocacheListController(cacheList, null, menuActionSyncGpx, null,
-                null).onResume(true);
+                null, null).onResume(true);
         PowerMock.verifyAll();
     }
 }
