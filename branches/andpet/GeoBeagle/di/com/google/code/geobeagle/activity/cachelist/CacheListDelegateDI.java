@@ -49,7 +49,6 @@ import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheSummaryRow
 import com.google.code.geobeagle.activity.cachelist.presenter.RelativeBearingFormatter;
 import com.google.code.geobeagle.activity.cachelist.presenter.TitleUpdater;
 import com.google.code.geobeagle.activity.filterlist.FilterTypeCollection;
-import com.google.code.geobeagle.activity.main.GeoBeagle;
 import com.google.code.geobeagle.database.CachesProviderCenterThread;
 import com.google.code.geobeagle.database.CachesProviderDb;
 import com.google.code.geobeagle.database.CachesProviderCount;
@@ -69,7 +68,6 @@ import com.google.code.geobeagle.xmlimport.GpxToCacheDI.XmlPullParserWrapper;
 
 import android.app.ListActivity;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.DialogInterface.OnClickListener;
 import android.content.res.Resources;
 import android.util.Log;
@@ -200,10 +198,7 @@ public class CacheListDelegateDI {
         menuActions.add(new MenuActionSettings(listActivity));
         menuActions.add(new MenuActionFilterListPopup(listActivity, cacheFilterUpdater, 
                 cacheListAdapter, filterTypeCollection));
-        //TODO: Remove geoBeagleMainIntent
-        final Intent geoBeagleMainIntent = new Intent(listActivity, GeoBeagle.class);
-        final CacheActionView cacheActionView = new CacheActionView(
-                listActivity, geoBeagleMainIntent);
+        final CacheActionView cacheActionView = new CacheActionView(listActivity);
         final CacheActionToggleFavorite cacheActionToggleFavorite = 
             new CacheActionToggleFavorite(dbFrontend, cacheListAdapter, cacheFilterUpdater);
         final CacheActionDelete cacheActionDelete = 

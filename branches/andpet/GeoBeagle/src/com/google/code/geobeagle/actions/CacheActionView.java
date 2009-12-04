@@ -23,18 +23,17 @@ import android.content.Intent;
 
 public class CacheActionView implements CacheAction {
     private final Context mContext;
-    private final Intent mGeoBeagleMainIntent;
 
-    public CacheActionView(Context context, Intent intent) {
+    public CacheActionView(Context context) {
         mContext = context;
-        mGeoBeagleMainIntent = intent;
     }
 
     @Override
     public void act(Geocache cache) {
-        mGeoBeagleMainIntent.putExtra("geocacheId", cache.getId())
-          .setAction(GeocacheListController.SELECT_CACHE);
-        mContext.startActivity(mGeoBeagleMainIntent);
+        final Intent intent = new Intent();
+        intent.putExtra("geocacheId", cache.getId());
+        intent.setAction(GeocacheListController.SELECT_CACHE);
+        mContext.startActivity(intent);
     }
 
     @Override
