@@ -22,19 +22,23 @@ import com.google.code.geobeagle.activity.cachelist.GeocacheListController;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.api.easymock.PowerMock;
+import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import android.content.Context;
 import android.content.Intent;
 
+@PrepareForTest({ CacheActionView.class })
+
 @RunWith(PowerMockRunner.class)
 public class CacheActionViewTest {
 
     @Test
-    public void testActionView() {
+    public void testActionView() throws Exception {
         Intent intent = PowerMock.createMock(Intent.class);
         Context context = PowerMock.createMock(Context.class);
         Geocache geocache = PowerMock.createMock(Geocache.class);
+        PowerMock.expectNew(Intent.class).andReturn(intent);
 
         expect(geocache.getId()).andReturn("id1");
         expect(intent.setAction(GeocacheListController.SELECT_CACHE)).andReturn(intent);
@@ -42,7 +46,7 @@ public class CacheActionViewTest {
         context.startActivity(intent);
 
         PowerMock.replayAll();
-        new CacheActionView(context, intent).act(geocache);
+        new CacheActionView(context).act(geocache);
         PowerMock.verifyAll();
     }
 }
