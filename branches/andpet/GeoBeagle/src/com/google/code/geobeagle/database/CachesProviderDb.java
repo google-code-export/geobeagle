@@ -59,7 +59,7 @@ public class CachesProviderDb implements ICachesProviderArea {
                     mSql = "FROM CACHES, CACHETAGS WHERE TagId=" + mRequiredTag
                       + " AND Id=CacheId AND " + where;
             }
-            Log.d("GeoBeagle", "CachesProviderDb created sql " + mSql);
+            //Log.d("GeoBeagle", "CachesProviderDb created sql " + mSql);
         }
         return mSql;
     }

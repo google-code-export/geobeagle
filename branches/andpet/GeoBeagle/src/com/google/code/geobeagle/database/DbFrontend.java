@@ -229,9 +229,9 @@ public class DbFrontend {
         return mTotalCacheCount;
     }
     
-    /** If 'where' is null, returns the total number of caches */
+    /** If 'where' is empty, returns the total number of caches */
     public int count(String where) {
-        if (where == null)
+        if (where == null || where.equals(""))
             return countAll();
 
         openDatabase();
