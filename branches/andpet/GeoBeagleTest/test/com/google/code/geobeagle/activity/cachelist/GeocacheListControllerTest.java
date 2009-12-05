@@ -18,6 +18,7 @@ import static org.junit.Assert.assertTrue;
 
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.actions.CacheAction;
+import com.google.code.geobeagle.actions.CacheFilterUpdater;
 import com.google.code.geobeagle.actions.MenuActions;
 import com.google.code.geobeagle.activity.cachelist.GeocacheListController.CacheListOnCreateContextMenuListener;
 import com.google.code.geobeagle.activity.cachelist.actions.MenuActionSyncGpx;
@@ -90,30 +91,33 @@ public class GeocacheListControllerTest {
 
     @Test
     public void testOnResume() {
-        CacheListAdapter cacheList = PowerMock
-                .createMock(CacheListAdapter.class);
+        CacheFilterUpdater cacheFilterUpdater = PowerMock.createMock(CacheFilterUpdater.class);
+        CacheListAdapter cacheListAdapter = PowerMock.createMock(CacheListAdapter.class);
 
-        cacheList.forceRefresh();
+        cacheFilterUpdater.loadActiveFilter();
+        cacheListAdapter.forceRefresh();
 
         PowerMock.replayAll();
-        new GeocacheListController(cacheList, null, null, null, null, null)
+        new GeocacheListController(cacheListAdapter, null, null, null, null, cacheFilterUpdater)
                 .onResume(false);
         PowerMock.verifyAll();
     }
 
     @Test
     public void testOnResumeAndImport() {
+        CacheFilterUpdater cacheFilterUpdater = PowerMock.createMock(CacheFilterUpdater.class);
         CacheListAdapter cacheList = PowerMock
                 .createMock(CacheListAdapter.class);
         MenuActionSyncGpx menuActionSyncGpx = PowerMock
                 .createMock(MenuActionSyncGpx.class);
 
+        cacheFilterUpdater.loadActiveFilter();
         cacheList.forceRefresh();
         menuActionSyncGpx.act();
 
         PowerMock.replayAll();
         new GeocacheListController(cacheList, null, menuActionSyncGpx, null,
-                null, null).onResume(true);
+                null, cacheFilterUpdater).onResume(true);
         PowerMock.verifyAll();
     }
 }
