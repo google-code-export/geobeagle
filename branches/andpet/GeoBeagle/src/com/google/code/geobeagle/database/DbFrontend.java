@@ -276,7 +276,6 @@ public class DbFrontend {
         cursor.moveToFirst();
         int count = cursor.getInt(0);        
         cursor.close();
-        Log.d("GeoBeagle", "geocacheHasTag hit count is " + count);
         return (count > 0);
     }
         

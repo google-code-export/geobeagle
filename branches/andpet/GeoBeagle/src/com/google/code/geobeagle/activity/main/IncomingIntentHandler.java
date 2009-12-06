@@ -38,22 +38,25 @@ public class IncomingIntentHandler {
 
     Geocache maybeGetGeocacheFromIntent(Intent intent, Geocache defaultGeocache,
             DbFrontend dbFrontend) {
-        if (intent != null) {
-            final String action = intent.getAction();
-            if (action != null) {
-                if (action.equals(Intent.ACTION_VIEW) && intent.getType() == null) {
-                    return mGeocacheFromIntentFactory
-                            .viewCacheFromMapsIntent(intent);
-                } else if (action.equals(GeocacheListController.SELECT_CACHE)) {
-                    String id = intent.getStringExtra("geocacheId");
-                    Geocache geocache = mDbFrontend.loadCacheFromId(id);
-                    if (geocache == null)
-                        geocache = mGeocacheFactory.create("", "", 0, 0, Source.MY_LOCATION, "",
-                                CacheType.NULL, 0, 0, 0);
-                    return geocache;
-                }
-            }
+        if (intent == null) {
+            return defaultGeocache;
         }
-        return defaultGeocache;
+        final String action = intent.getAction();
+        if (action == null) {
+            return defaultGeocache;
+        }
+
+        if (action.equals(Intent.ACTION_VIEW) && intent.getType() == null) {
+            return mGeocacheFromIntentFactory.viewCacheFromMapsIntent(intent, defaultGeocache);
+        } else if (action.equals(GeocacheListController.SELECT_CACHE)) {
+            String id = intent.getStringExtra("geocacheId");
+            Geocache geocache = mDbFrontend.loadCacheFromId(id);
+            if (geocache == null)
+                geocache = mGeocacheFactory.create("", "", 0, 0, Source.MY_LOCATION, "",
+                        CacheType.NULL, 0, 0, 0);
+            return geocache;
+        } else {
+            return defaultGeocache;
+        }
     }
 }

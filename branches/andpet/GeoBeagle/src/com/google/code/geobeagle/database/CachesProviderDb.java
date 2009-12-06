@@ -4,8 +4,6 @@ import com.google.code.geobeagle.CacheFilter;
 import com.google.code.geobeagle.GeocacheList;
 import com.google.code.geobeagle.Tags;
 
-import android.util.Log;
-
 /** Uses a DB to fetch the caches within a defined region, or all caches if no 
  * bounds were specified */
 public class CachesProviderDb implements ICachesProviderArea {

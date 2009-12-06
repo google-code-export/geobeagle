@@ -33,10 +33,12 @@ public class GeocacheFromIntentFactory {
         mDbFrontend = dbFrontend;
     }
 
-    Geocache viewCacheFromMapsIntent(Intent intent) {
+    Geocache viewCacheFromMapsIntent(Intent intent, Geocache defaultGeocache) {
         final String query = intent.getData().getQuery();
         final CharSequence sanitizedQuery = Util.parseHttpUri(query, new UrlQuerySanitizer(),
                 UrlQuerySanitizer.getAllButNulAndAngleBracketsLegal());
+        if (sanitizedQuery == null)
+            return defaultGeocache;
         final CharSequence[] latlon = Util.splitLatLonDescription(sanitizedQuery);
         final Geocache geocache = mGeocacheFactory.create(latlon[2], latlon[3], Util
                 .parseCoordinate(latlon[0]), Util.parseCoordinate(latlon[1]), Source.WEB_URL, null,
