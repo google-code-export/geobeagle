@@ -21,9 +21,10 @@ public class FilterTypeCollection {
     
     private void load() {
         SharedPreferences prefs = mActivity.getSharedPreferences(FILTER_PREFS, 0);
-        String ids = prefs.getString("FilterTag", "");
+        String ids = prefs.getString("FilterList", "");
         String[] idArray = ids.split(", ");
         if (idArray.length == 1 && idArray[0].equals("")) {
+            //No filters were registered. Setup the default ones
             firstSetup();
         } else {
             for (String id : idArray) {
@@ -34,11 +35,29 @@ public class FilterTypeCollection {
 
     private void firstSetup() {
         Log.d("GeoBeagle", "FilterTypeCollection first setup");
-        add(new CacheFilter("All", mActivity, new FilterPreferences("All caches")));
+        {   FilterPreferences pref = new FilterPreferences("All caches");
+            pref.setBoolean("Waypoints", false);
+            add(new CacheFilter("All", mActivity, pref));
+        }
 
         {   FilterPreferences favoritesPref = new FilterPreferences("Favorites");
             favoritesPref.setInteger("FilterTag", Tags.FAVORITES);
             add(new CacheFilter("Favorites", mActivity, favoritesPref));
+        }
+
+        {   FilterPreferences pref = new FilterPreferences("Custom 1");
+            pref.setBoolean("Waypoints", false);
+            add(new CacheFilter("Filter1", mActivity, pref));
+        }
+        
+        {   FilterPreferences pref = new FilterPreferences("Custom 2");
+            pref.setBoolean("Waypoints", false);
+            add(new CacheFilter("Filter2", mActivity, pref));
+        }
+
+        {   FilterPreferences pref = new FilterPreferences("Custom 3");
+            pref.setBoolean("Waypoints", false);
+            add(new CacheFilter("Filter3", mActivity, pref));
         }
 
         /*

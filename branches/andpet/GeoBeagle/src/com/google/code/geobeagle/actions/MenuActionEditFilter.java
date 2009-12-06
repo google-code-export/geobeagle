@@ -48,7 +48,7 @@ public class MenuActionEditFilter implements MenuAction {
         }
         @Override
         public String getString(int id) {
-            return ((EditText)mDialog.findViewById(R.id.FilterString)).getText().toString();
+            return ((EditText)mDialog.findViewById(id)).getText().toString();
         }
         @Override
         public void setBoolean(int id, boolean value) {
@@ -56,7 +56,7 @@ public class MenuActionEditFilter implements MenuAction {
         }
         @Override
         public void setString(int id, String value) {
-            ((EditText)mDialog.findViewById(R.id.FilterString)).setText(value);
+            ((EditText)mDialog.findViewById(id)).setText(value);
         }
     };
     

@@ -20,6 +20,7 @@ public class CacheFilter {
     }
     */
 
+    /** The name of this filter as visible to the user */
     public String getName() {
         return mName;
     }
@@ -181,6 +182,10 @@ public class CacheFilter {
     }
     
     public void loadFromGui(FilterGui provider) {
+        String newName = provider.getString(R.id.NameOfFilter);
+        if (!newName.trim().equals("")) {
+            mName = newName;
+        }
         for (BooleanOption option : mOptions) {
             option.Selected = provider.getBoolean(option.ViewResource);
         }
@@ -193,6 +198,7 @@ public class CacheFilter {
 
     /** Set up the view from the values in this CacheFilter. */
     public void pushToGui(FilterGui provider) {
+        provider.setString(R.id.NameOfFilter, mName);
         for (BooleanOption option : mOptions) {
             provider.setBoolean(option.ViewResource, option.Selected);
         }

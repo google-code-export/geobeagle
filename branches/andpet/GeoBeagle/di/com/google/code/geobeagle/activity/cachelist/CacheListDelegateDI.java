@@ -26,6 +26,7 @@ import com.google.code.geobeagle.actions.CacheActionEdit;
 import com.google.code.geobeagle.actions.CacheActionToggleFavorite;
 import com.google.code.geobeagle.actions.CacheActionView;
 import com.google.code.geobeagle.actions.CacheFilterUpdater;
+import com.google.code.geobeagle.actions.MenuActionEditFilter;
 import com.google.code.geobeagle.actions.MenuActionFilterListPopup;
 import com.google.code.geobeagle.actions.MenuActionMap;
 import com.google.code.geobeagle.actions.MenuActionSearchOnline;
@@ -173,29 +174,31 @@ public class CacheListDelegateDI {
             }
         };
 
+        // *** BUILD MENU ***
         final Resources resources = listActivity.getResources();
         final MenuActionSyncGpx menuActionSyncGpx = new MenuActionSyncGpx(nullAbortable,
                 cacheListAdapter, gpxImporterFactory, dbFrontend, resources);
         final CacheActionEdit cacheActionEdit = new CacheActionEdit(listActivity);
         final MenuActions menuActions = new MenuActions();
-        menuActions.add(menuActionSyncGpx);
         menuActions.add(new MenuActionToggleFilter(cachesProviderToggler, cacheListAdapter, resources));
-        menuActions.add(new MenuActionMyLocation(errorDisplayer,
-                geocacheFactory, geoFixProvider, dbFrontend, resources, cacheActionEdit));
         menuActions.add(new MenuActionSearchOnline(listActivity));
         List<CachesProviderDb> providers = new ArrayList<CachesProviderDb>();
         providers.add(cachesProviderDb);
         providers.add(cachesProviderAll);
-        //SharedPreferences prefs = CacheFilterFactory.getActivePreferences(listActivity);
         final CacheFilterUpdater cacheFilterUpdater = 
             new CacheFilterUpdater(filterTypeCollection, providers);
-        //menuActions.add(new MenuActionEditFilter(listActivity, 
-        //        cacheFilterUpdater, cacheList, filterTypeCollection));
         menuActions.add(new MenuActionMap(listActivity, geoFixProvider));
         //menuActions.add(new MenuActionFilterList(listActivity));
-        menuActions.add(new MenuActionSettings(listActivity));
+        menuActions.add(new MenuActionEditFilter(listActivity, cacheFilterUpdater, 
+                cacheListAdapter, filterTypeCollection));
         menuActions.add(new MenuActionFilterListPopup(listActivity, cacheFilterUpdater, 
                 cacheListAdapter, filterTypeCollection));
+        menuActions.add(new MenuActionMyLocation(errorDisplayer,
+                geocacheFactory, geoFixProvider, dbFrontend, resources, cacheActionEdit));
+        menuActions.add(menuActionSyncGpx);
+        menuActions.add(new MenuActionSettings(listActivity));
+        
+        // *** BUILD CONTEXT MENU ***
         final CacheActionView cacheActionView = new CacheActionView(listActivity);
         final CacheActionToggleFavorite cacheActionToggleFavorite = 
             new CacheActionToggleFavorite(dbFrontend, cacheListAdapter, cacheFilterUpdater);

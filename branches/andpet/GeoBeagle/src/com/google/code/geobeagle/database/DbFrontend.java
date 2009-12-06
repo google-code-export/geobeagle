@@ -162,7 +162,6 @@ public class DbFrontend {
         openDatabase();
 
         long start = mClock.getCurrentTime();
-        Log.d("GeoBeagle", "DbFrontend.loadCachesRaw(" + sqlQuery + ")");
         Cursor cursor = mDatabase.rawQuery(sqlQuery, new String[]{} );
 
         if (!cursor.moveToFirst()) {
@@ -178,7 +177,7 @@ public class DbFrontend {
             cursor.close();
         }
         Log.d("GeoBeagle", "DbFrontend.loadCachesRaw took " + (mClock.getCurrentTime()-start) 
-                + " ms (loaded " + idList.size() + " caches)");
+                + " ms to load " + idList.size() + " caches from query " + sqlQuery);
         return new GeocacheListLazy(this, idList);
     }
     

@@ -87,7 +87,6 @@ public class GeoMapActivity extends MapActivity {
         final FilterTypeCollection filterTypeCollection = new FilterTypeCollection(this);
         
         final List<Overlay> mapOverlays = mMapView.getOverlays();
-        //menuActions.add(new MenuActionChooseFilter(this));
 
         final Intent intent = getIntent();
         final MapController mapController = mMapView.getController();
