@@ -27,18 +27,19 @@ import android.os.Bundle;
 import android.widget.TextView;
 
 public class GpsStatusWidgetDelegate implements HasDistanceFormatter, Refresher {
-    private final GeoFixProvider mGeoFixProvider;
+    private final Context mContext;
     private DistanceFormatter mDistanceFormatter;
+    private final GeoFixProvider mGeoFixProvider;
     private final MeterFader mMeterFader;
     private final Meter mMeterWrapper;
     private final TextView mProvider;
-    private final Context mContext;
     private final TextView mStatus;
     private final TextLagUpdater mTextLagUpdater;
 
     public GpsStatusWidgetDelegate(GeoFixProvider geoFixProvider,
-            DistanceFormatter distanceFormatter, Meter meter, MeterFader meterFader,
-            TextView provider, Context context, TextView status, TextLagUpdater textLagUpdater) {
+            DistanceFormatter distanceFormatter, Meter meter,
+            MeterFader meterFader, TextView provider, Context context,
+            TextView status, TextLagUpdater textLagUpdater) {
         mGeoFixProvider = geoFixProvider;
         mDistanceFormatter = distanceFormatter;
         mMeterFader = meterFader;
@@ -49,6 +50,34 @@ public class GpsStatusWidgetDelegate implements HasDistanceFormatter, Refresher 
         mTextLagUpdater = textLagUpdater;
     }
 
+    @Override
+    public void forceRefresh() {
+        refresh();
+    }
+
+    // TODO: onStatusChanged is never called as of now
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+        switch (status) {
+            case LocationProvider.OUT_OF_SERVICE:
+                mStatus.setText(provider + " status: "
+                        + mContext.getString(R.string.out_of_service));
+                break;
+            case LocationProvider.AVAILABLE:
+                mStatus.setText(provider + " status: "
+                        + mContext.getString(R.string.available));
+                break;
+            case LocationProvider.TEMPORARILY_UNAVAILABLE:
+                mStatus.setText(provider + " status: "
+                        + mContext.getString(R.string.temporarily_unavailable));
+                break;
+        }
+    }
+
+    public void paint() {
+        mMeterFader.paint();
+    }
+
+    @Override
     public void refresh() {
         GeoFix location = mGeoFixProvider.getLocation();
         // Log.d("GeoBeagle", "GpsStatusWidget onLocationChanged " + location);
@@ -66,33 +95,7 @@ public class GpsStatusWidgetDelegate implements HasDistanceFormatter, Refresher 
         mTextLagUpdater.reset(location.getTime());
     }
 
-    //TODO: onStatusChanged is never called as of now
-    public void onStatusChanged(String provider, int status, Bundle extras) {
-        switch (status) {
-            case LocationProvider.OUT_OF_SERVICE:
-                mStatus.setText(provider + " status: "
-                        + mContext.getString(R.string.out_of_service));
-                break;
-            case LocationProvider.AVAILABLE:
-                mStatus.setText(provider + " status: " + mContext.getString(R.string.available));
-                break;
-            case LocationProvider.TEMPORARILY_UNAVAILABLE:
-                mStatus.setText(provider + " status: "
-                        + mContext.getString(R.string.temporarily_unavailable));
-                break;
-        }
-    }
-
-    public void paint() {
-        mMeterFader.paint();
-    }
-
     public void setDistanceFormatter(DistanceFormatter distanceFormatter) {
         mDistanceFormatter = distanceFormatter;
-    }
-
-    @Override
-    public void forceRefresh() {
-        refresh();
     }
 }
