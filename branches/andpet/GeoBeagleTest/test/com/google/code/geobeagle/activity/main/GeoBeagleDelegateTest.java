@@ -76,7 +76,7 @@ public class GeoBeagleDelegateTest {
 
         EasyMock.expect(intent.getAction()).andReturn(Intent.ACTION_VIEW);
         EasyMock.expect(intent.getType()).andReturn(null);
-        EasyMock.expect(geocacheFromIntentFactory.viewCacheFromMapsIntent(intent)).andReturn(null);
+        EasyMock.expect(geocacheFromIntentFactory.viewCacheFromMapsIntent(intent, null)).andReturn(null);
 
         PowerMock.replayAll();
         assertNull(new IncomingIntentHandler(null, geocacheFromIntentFactory, null)

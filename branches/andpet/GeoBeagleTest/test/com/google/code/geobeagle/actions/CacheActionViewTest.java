@@ -18,6 +18,7 @@ import static org.easymock.EasyMock.expect;
 
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.actions.CacheActionView;
+import com.google.code.geobeagle.activity.cachelist.GeocacheListController;
 import com.google.code.geobeagle.activity.main.GeoBeagle;
 
 import org.junit.Test;
@@ -42,7 +43,7 @@ public class CacheActionViewTest {
         PowerMock.expectNew(Intent.class, context, GeoBeagle.class).andReturn(intent);
 
         expect(geocache.getId()).andReturn("id1");
-        //expect(intent.setAction(GeocacheListController.SELECT_CACHE)).andReturn(intent);
+        expect(intent.setAction(GeocacheListController.SELECT_CACHE)).andReturn(intent);
         expect(intent.putExtra("geocacheId", (CharSequence) "id1")).andReturn(intent);
         context.startActivity(intent);
 
