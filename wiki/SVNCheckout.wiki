@@ -23,9 +23,9 @@ To run the tests, don't use the SDK android-sdk-windows-1.5_r2. Versions `r1` an
   # Properties / java build path / Projects / add / select !GeoBeagle project 
   # Download powermock with dependencies: http://code.google.com/p/powermock/downloads/list, select powermock-1.2.5-with-dependencies.zip.
   # Add the following using Properties / Java build path / Libraries / add external jars... :
-    # All powermock jars. 
-    # android.jar (android-sdk-XXX/platforms/android-X.X/android.jar.
-    # The Google Maps lib (android-sdk-XXX/add-ons/google_apis-3/libs/maps.jar
+    # All powermock jars
+    # android.jar (android-sdk-XXX/platforms/android-X.X/android.jar)
+    # The Google Maps lib (android-sdk-XXX/add-ons/google_apis-3/libs/maps.jar)
   # Run / Run Configurations / Junit test / Arguments/ VM Arguments: `-Xms256m -Xmx1024m -XX:!MaxPermSize=256m`
   # See the following blog posting for more information on automated testing and !GeoBeagle: http://googletesting.blogspot.com/2009/07/old-habits-die-hard.html
 See this blog for a few more tips: http://ntoll.org/article/hello-android
