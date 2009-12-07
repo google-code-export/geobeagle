@@ -41,12 +41,12 @@ public class CacheItemTest {
         Drawable iconMap = PowerMock.createMock(Drawable.class);
 
         EasyMock.expect(geocache.getGeoPoint()).andReturn(geoPoint);
-        EasyMock.expect(geocache.getIconMap(resources)).andReturn(iconMap);
+        EasyMock.expect(geocache.getIconMap(resources, null)).andReturn(iconMap);
         PowerMock.suppressConstructor(CacheItem.class);
         PowerMock.suppressMethod(CacheItem.class, "setMarker");
 
         PowerMock.replayAll();
-        new CacheItemFactory(resources).createCacheItem(geocache);
+        new CacheItemFactory(resources, null).createCacheItem(geocache);
         PowerMock.verifyAll();
     }
 }

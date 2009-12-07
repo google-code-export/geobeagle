@@ -119,16 +119,16 @@ public class Geocache {
         return mContainer;
     }
     
-    public Drawable getIcon(Resources resources) {
+    public Drawable getIcon(Resources resources, GraphicsGenerator graphicsGenerator) {
         if (mIcon == null) {
-            mIcon = GraphicsGenerator.createIcon(this, resources);
+            mIcon = graphicsGenerator.createIcon(this, resources);
         }
         return mIcon;
     }
 
-    public Drawable getIconMap(Resources resources) {
+    public Drawable getIconMap(Resources resources, GraphicsGenerator graphicsGenerator) {
         if (mIconMap == null) {
-            mIconMap = GraphicsGenerator.createIconMap(this, resources);
+            mIconMap = graphicsGenerator.createIconMap(this, resources);
         }
         return mIconMap;
     }

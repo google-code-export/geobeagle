@@ -126,7 +126,6 @@ public class GeocacheViewerTest {
     public void testSet() {
         TextView id = PowerMock.createMock(TextView.class);
         NameViewer name = PowerMock.createMock(NameViewer.class);
-        PowerMock.mockStatic(GraphicsGenerator.class);
         PowerMock.replay(GraphicsGenerator.class);
         Geocache geocache = PowerMock.createMock(Geocache.class);
         RadarView radar = PowerMock.createMock(RadarView.class);

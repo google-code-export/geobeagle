@@ -69,7 +69,7 @@ public class GeocacheSummaryRowInflaterTest {
         Drawable drawable = PowerMock.createMock(Drawable.class);
 
         EasyMock.expect(distanceAndBearing.getGeocache()).andReturn(geocache);
-        EasyMock.expect(geocache.getIcon(resources)).andReturn(drawable);
+        EasyMock.expect(geocache.getIcon(resources, null)).andReturn(drawable);
         imageView.setImageDrawable(drawable);
         EasyMock.expect(geocache.getId()).andReturn("GC123");
         EasyMock.expect(geocache.getName()).andReturn("my cache");
@@ -89,7 +89,7 @@ public class GeocacheSummaryRowInflaterTest {
 
         PowerMock.replayAll();
         new GeocacheSummaryRowInflater.RowViews(txtAttributes, txtCacheName, txtDistance,
-                imageView, txtId, resources).set(distanceAndBearing, 0, distanceFormatter, relativeBearingFormatter);
+                imageView, txtId, resources).set(distanceAndBearing, 0, distanceFormatter, relativeBearingFormatter, null);
         PowerMock.verifyAll();
     }
 
@@ -100,7 +100,7 @@ public class GeocacheSummaryRowInflaterTest {
 
         PowerMock.replayAll();
         assertEquals(convertView, new GeocacheSummaryRowInflater(distanceFormatter, null, null,
-                null).inflate(convertView));
+                null, null).inflate(convertView));
         PowerMock.verifyAll();
     }
 
@@ -134,7 +134,9 @@ public class GeocacheSummaryRowInflaterTest {
         view.setTag(rowViews);
 
         PowerMock.replayAll();
-        assertEquals(view, new GeocacheSummaryRowInflater(distanceFormatter, layoutInflater, relativeBearingFormatter, resources).inflate(null));
+        assertEquals(view, new GeocacheSummaryRowInflater(distanceFormatter,
+                layoutInflater, relativeBearingFormatter, resources, null)
+                .inflate(null));
         PowerMock.verifyAll();
     }
 
@@ -146,7 +148,7 @@ public class GeocacheSummaryRowInflaterTest {
 
         PowerMock.replayAll();
         final GeocacheSummaryRowInflater geocacheSummaryRowInflater = new GeocacheSummaryRowInflater(
-                null, null, null, null);
+                null, null, null, null, null);
         geocacheSummaryRowInflater.setBearingFormatter(true);
         PowerMock.verifyAll();
     }
@@ -159,7 +161,7 @@ public class GeocacheSummaryRowInflaterTest {
 
         PowerMock.replayAll();
         final GeocacheSummaryRowInflater geocacheSummaryRowInflater = new GeocacheSummaryRowInflater(
-                null, null, null, null);
+                null, null, null, null, null);
         geocacheSummaryRowInflater.setBearingFormatter(false);
         assertEquals(relativeBearingFormatter, geocacheSummaryRowInflater.getBearingFormatter());
         PowerMock.verifyAll();
@@ -177,11 +179,11 @@ public class GeocacheSummaryRowInflaterTest {
 
         //EasyMock.expect(geocacheVectors.get(18)).andReturn(geocacheVector);
         EasyMock.expect(view.getTag()).andReturn(rowViews);
-        rowViews.set(distanceAndBearing, 18, distanceFormatter2, relativeBearingFormatter);
+        rowViews.set(distanceAndBearing, 18, distanceFormatter2, relativeBearingFormatter, null);
 
         PowerMock.replayAll();
         final GeocacheSummaryRowInflater geocacheSummaryRowInflater = new GeocacheSummaryRowInflater(
-                distanceFormatter, null, relativeBearingFormatter, null);
+                distanceFormatter, null, relativeBearingFormatter, null, null);
         geocacheSummaryRowInflater.setDistanceFormatter(distanceFormatter2);
         geocacheSummaryRowInflater.setData(view, distanceAndBearing, 18);
         PowerMock.verifyAll();

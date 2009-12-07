@@ -11,8 +11,13 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 
 public class GraphicsGenerator {
+    
+    public GraphicsGenerator() {
+        mTempPaint = new Paint();
+        mTempRect = new Rect();
+    }
 
-    public static Drawable createRating(Drawable unselected, Drawable halfSelected,
+    public Drawable createRating(Drawable unselected, Drawable halfSelected,
             Drawable selected, int rating) {
         int width = unselected.getIntrinsicWidth();
         int height = unselected.getIntrinsicHeight();
@@ -35,7 +40,7 @@ public class GraphicsGenerator {
         return new BitmapDrawable(bitmap);
     }
     
-    public static Drawable[] getDifficultyRatings(Resources r) {
+    public Drawable[] getDifficultyRatings(Resources r) {
         Drawable[] ratings = new Drawable[10];
         for (int i = 1; i <= 10; i++) {
             ratings[i-1] = createRating(r.getDrawable(R.drawable.ribbon_unselected_dark),
@@ -45,7 +50,7 @@ public class GraphicsGenerator {
         return ratings;
     }
 
-    public static Drawable[] getTerrainRatings(Resources r) {
+    public Drawable[] getTerrainRatings(Resources r) {
         Drawable[] ratings = new Drawable[10];
         for (int i = 1; i <= 10; i++) {
             ratings[i-1] = createRating(r.getDrawable(R.drawable.paw_unselected_dark),
@@ -55,9 +60,9 @@ public class GraphicsGenerator {
         return ratings;
     }
     
-    private static Paint mTempPaint = new Paint();
-    private static Rect mTempRect = new Rect();
-    private static Drawable createOverlay(Geocache geocache, int thickness, int bottom, 
+    private final Paint mTempPaint;
+    private final Rect mTempRect;
+    private Drawable createOverlay(Geocache geocache, int thickness, int bottom, 
             int backdropId, Resources resources) {
         Bitmap bitmap = BitmapFactory.decodeResource(resources, backdropId);
         int imageHeight = bitmap.getHeight();
@@ -100,12 +105,12 @@ public class GraphicsGenerator {
         return new BitmapDrawable(copy);
     }
     
-    public static Drawable createIcon(Geocache geocache, Resources resources) {
+    public Drawable createIcon(Geocache geocache, Resources resources) {
         return createOverlay(geocache, 3, -5, geocache.getCacheType().icon(), 
                 resources);
     }
     
-    public static Drawable createIconMap(Geocache geocache, Resources resources) {
+    public Drawable createIconMap(Geocache geocache, Resources resources) {
         Drawable iconMap = createOverlay(geocache, 3, 3, 
                 geocache.getCacheType().iconMap(), resources);
         int width = iconMap.getIntrinsicWidth();
@@ -116,7 +121,7 @@ public class GraphicsGenerator {
 
     /** Returns a new Drawable that is 'top' over 'bottom'. 
      * Top is assumed to be smaller and is centered over bottom. */
-    public static Drawable superimpose(Drawable top, Drawable bottom) {
+    public Drawable superimpose(Drawable top, Drawable bottom) {
         int width = bottom.getIntrinsicWidth();
         int height = bottom.getIntrinsicHeight();
         Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);

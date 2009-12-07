@@ -105,8 +105,9 @@ public class GeoBeagle extends Activity {
         final GeoFixProvider geoFixProvider = LocationControlDi.create(this);
         final GeocacheFactory geocacheFactory = new GeocacheFactory();
         final TextView gcid = (TextView)findViewById(R.id.gcid);
-        final Drawable[] pawImages = GraphicsGenerator.getTerrainRatings(getResources());
-        final Drawable[] ribbonImages = GraphicsGenerator.getDifficultyRatings(getResources());
+        final GraphicsGenerator graphicsGenerator = new GraphicsGenerator();
+        final Drawable[] pawImages = graphicsGenerator.getTerrainRatings(getResources());
+        final Drawable[] ribbonImages = graphicsGenerator.getDifficultyRatings(getResources());
         final AttributeViewer gcDifficulty = new LabelledAttributeViewer(
                 ribbonImages, (TextView)findViewById(R.id.gc_text_difficulty),
                 (ImageView)findViewById(R.id.gc_difficulty));

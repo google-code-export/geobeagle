@@ -18,6 +18,7 @@ import com.google.code.geobeagle.CacheTypeFactory;
 import com.google.code.geobeagle.ErrorDisplayer;
 import com.google.code.geobeagle.GeoFixProvider;
 import com.google.code.geobeagle.GeocacheFactory;
+import com.google.code.geobeagle.GraphicsGenerator;
 import com.google.code.geobeagle.IPausable;
 import com.google.code.geobeagle.LocationControlDi;
 import com.google.code.geobeagle.actions.CacheAction;
@@ -97,7 +98,8 @@ public class CacheListDelegateDI {
         }
     }
 
-    public static CacheListDelegate create(ListActivity listActivity, LayoutInflater layoutInflater) {
+    public static CacheListDelegate create(ListActivity listActivity,
+            LayoutInflater layoutInflater) {
         final OnClickListener onClickListener = new OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
             }
@@ -111,9 +113,10 @@ public class CacheListDelegateDI {
                 .create(listActivity);
         final XmlPullParserWrapper xmlPullParserWrapper = new XmlPullParserWrapper();
 
+        final GraphicsGenerator graphicsGenerator = new GraphicsGenerator();
         final GeocacheSummaryRowInflater geocacheSummaryRowInflater = new GeocacheSummaryRowInflater(
                 distanceFormatterManager.getFormatter(), layoutInflater,
-                relativeBearingFormatter, listActivity.getResources());
+                relativeBearingFormatter, listActivity.getResources(), graphicsGenerator);
 
         final InflatedGpsStatusWidget inflatedGpsStatusWidget = new InflatedGpsStatusWidget(
                 listActivity);

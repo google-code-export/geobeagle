@@ -22,6 +22,7 @@ import com.google.android.maps.Overlay;
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.GeocacheFactory;
 import com.google.code.geobeagle.GeocacheListPrecomputed;
+import com.google.code.geobeagle.GraphicsGenerator;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.Toaster;
 import com.google.code.geobeagle.Toaster.OneTimeToaster;
@@ -83,7 +84,8 @@ public class GeoMapActivity extends MapActivity {
 
         final Resources resources = getResources();
         final Drawable defaultMarker = resources.getDrawable(R.drawable.pin_default);
-        final CacheItemFactory cacheItemFactory = new CacheItemFactory(resources);
+        final GraphicsGenerator graphicsGenerator = new GraphicsGenerator();
+        final CacheItemFactory cacheItemFactory = new CacheItemFactory(resources, graphicsGenerator );
 
         final FilterTypeCollection filterTypeCollection = new FilterTypeCollection(this);
         

@@ -24,24 +24,30 @@ import android.graphics.drawable.Drawable;
 class CacheItemFactory {
     private final Resources mResources;
     private Geocache mSelected;
+    private final GraphicsGenerator mGraphicsGenerator;
 
-    CacheItemFactory(Resources resources) {
-        mResources = resources; 
+    CacheItemFactory(Resources resources, GraphicsGenerator graphicsGenerator) {
+        mResources = resources;
+        mGraphicsGenerator = graphicsGenerator;
     }
 
     void setSelectedGeocache(Geocache geocache) {
         mSelected = geocache;
     }
-    
+
     CacheItem createCacheItem(Geocache geocache) {
-        final CacheItem cacheItem = new CacheItem(geocache.getGeoPoint(), geocache);
+        final CacheItem cacheItem = new CacheItem(geocache.getGeoPoint(),
+                geocache);
         if (geocache == mSelected) {
-            Drawable selected = GraphicsGenerator.superimpose(geocache.getIconMap(mResources),
-                    mResources.getDrawable(R.drawable.glow_40px));
+            Drawable selected = mGraphicsGenerator.superimpose(geocache
+                    .getIconMap(mResources, mGraphicsGenerator), mResources
+                    .getDrawable(R.drawable.glow_40px));
             cacheItem.setMarker(selected);
         } else {
-            cacheItem.setMarker(geocache.getIconMap(mResources));
+            cacheItem.setMarker(geocache.getIconMap(mResources,
+                    mGraphicsGenerator));
         }
         return cacheItem;
     }
 }
+
