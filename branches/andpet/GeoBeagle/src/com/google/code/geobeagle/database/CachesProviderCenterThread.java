@@ -55,7 +55,7 @@ public class CachesProviderCenterThread implements ICachesProvider, IPausable {
         }
         @Override
         public void run() {
-            //Log.d("GeoBeagle", "Thread starting to calculate");
+            Log.d("GeoBeagle", "Thread starting to calculate");
             /*
             try {
                 sleep(2000);
@@ -81,12 +81,13 @@ public class CachesProviderCenterThread implements ICachesProvider, IPausable {
             GeocacheList geocacheList, boolean changed) {
         mCalculatedLatitude = latitude;
         mCalculatedLongitude = longitude;
-        mHasChanged = true;
         mGeocaches = geocacheList;
         mIsCalculating = false;  //Thread will die soon
         mThread = null;
-        if (changed)
+        if (changed) {
+            mHasChanged = true;
             mHandler.post(mObserverNotifier);
+        }
     }
     
     public CachesProviderCenterThread(ICachesProviderCenter provider) {
@@ -111,8 +112,9 @@ public class CachesProviderCenterThread implements ICachesProvider, IPausable {
         if (mIsPaused)
             return;
         if (mCalculatedLatitude == mNextLatitude
-                && mCalculatedLongitude == mNextLongitude)
+                && mCalculatedLongitude == mNextLongitude) {
             return;  //No need to calculate again
+        }
         Log.d("GeoBeagle", "startCalculation starts thread for coordinate diff latitude="+
                 (mNextLatitude-mCalculatedLatitude) + " longitude=" + (mNextLongitude-mCalculatedLongitude));
 

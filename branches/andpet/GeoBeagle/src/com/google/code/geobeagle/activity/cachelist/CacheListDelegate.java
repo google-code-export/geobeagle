@@ -74,7 +74,7 @@ public class CacheListDelegate {
     private final DbFrontend mDbFrontend;
     private final ImportIntentManager mImportIntentManager;
     private final UpdateGpsWidgetRunnable mUpdateGpsWidgetRunnable;
-    private final CacheListView.ScrollListener mScrollListener;
+    private final CacheListAdapter.ScrollListener mScrollListener;
     private final CacheListOnCreateContextMenuListener mMenuCreator;
     private final CacheListAdapter mCacheList;
     private final View mGpsStatusWidget;
@@ -93,7 +93,7 @@ public class CacheListDelegate {
             CacheListAdapter cacheList,
             GeocacheSummaryRowInflater geocacheSummaryRowInflater,
             ListActivity listActivity,
-            CacheListView.ScrollListener scrollListener,
+            CacheListAdapter.ScrollListener scrollListener,
             DistanceFormatterManager distanceFormatterManager,
             CachesProviderDb cachesToFlush,
             IPausable[] pausables) {

@@ -24,7 +24,8 @@ import android.preference.PreferenceManager;
 public class LocationControlDi {
     public static GeoFixProvider create(Activity activity) {
         if (false) {   //Set to true to use fake locations
-            return new GeoFixProviderFake(GeoFixProviderFake.LINKOPING);
+            return new GeoFixProviderFake(GeoFixProviderFake.CAR_JOURNEY);
+            //return new GeoFixProviderFake(GeoFixProviderFake.LINKOPING);
             //return new GeoFixProviderFake(GeoFixProviderFake.TOKYO);
             //return new GeoFixProviderFake(GeoFixProviderFake.YOKOHAMA);
         } else {

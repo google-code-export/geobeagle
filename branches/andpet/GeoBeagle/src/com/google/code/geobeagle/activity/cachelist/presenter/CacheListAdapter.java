@@ -9,7 +9,9 @@ import com.google.code.geobeagle.database.DistanceAndBearing.IDistanceAndBearing
 
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.BaseAdapter;
+import android.widget.AbsListView.OnScrollListener;
 
 /** Feeds the caches in a CachesProvider to the GUI list view */
 public class CacheListAdapter extends BaseAdapter implements Refresher {
@@ -21,6 +23,24 @@ public class CacheListAdapter extends BaseAdapter implements Refresher {
     private float mAzimuth;
     private boolean mUpdatesEnabled = true;
 
+    public static class ScrollListener implements OnScrollListener {
+        private final CacheListAdapter mCacheListAdapter;
+
+        public ScrollListener(CacheListAdapter updateFlag) {
+            mCacheListAdapter = updateFlag;
+        }
+
+        @Override
+        public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount,
+                int totalItemCount) {
+        }
+
+        @Override
+        public void onScrollStateChanged(AbsListView view, int scrollState) {
+            mCacheListAdapter.enableUpdates(scrollState == SCROLL_STATE_IDLE);
+        }
+    }    
+    
     public CacheListAdapter(CachesProviderToggler provider, 
             IDistanceAndBearingProvider distances,
             GeocacheSummaryRowInflater inflater,
@@ -34,7 +54,8 @@ public class CacheListAdapter extends BaseAdapter implements Refresher {
     
     public void enableUpdates(boolean enable) {
         mUpdatesEnabled = enable;
-        refresh();
+        if (enable)
+            refresh();
     }
     
     public void setAzimuth (float azimuth) {
@@ -52,9 +73,8 @@ public class CacheListAdapter extends BaseAdapter implements Refresher {
     }
 
     public void forceRefresh() {
-        //TODO: Take this back?
-        //mProvider.resetChanged();
         mListData = mProvider.getCaches();
+        mProvider.resetChanged();
         mTitleUpdater.refresh();
         notifyDataSetChanged();
     }

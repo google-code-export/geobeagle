@@ -105,8 +105,7 @@ public class CacheListDelegateDI {
             }
         };
         final ErrorDisplayer errorDisplayer = new ErrorDisplayer(listActivity, onClickListener);
-        final GeoFixProvider geoFixProvider = 
-            LocationControlDi.create(listActivity);
+        final GeoFixProvider geoFixProvider = LocationControlDi.create(listActivity);
         final GeocacheFactory geocacheFactory = new GeocacheFactory();
         final BearingFormatter relativeBearingFormatter = new RelativeBearingFormatter();
         final DistanceFormatterManager distanceFormatterManager = DistanceFormatterManagerDi
@@ -159,7 +158,7 @@ public class CacheListDelegateDI {
         final CacheListPositionUpdater cacheListPositionUpdater = new CacheListPositionUpdater(
                 geoFixProvider, cacheListAdapter, cachesProviderCount, thread /*cachesProviderSorted*/);
         geoFixProvider.addObserver(cacheListPositionUpdater);
-        final CacheListView.ScrollListener scrollListener = new CacheListView.ScrollListener(
+        final CacheListAdapter.ScrollListener scrollListener = new CacheListAdapter.ScrollListener(
                 cacheListAdapter);
         final CacheTypeFactory cacheTypeFactory = new CacheTypeFactory();
 

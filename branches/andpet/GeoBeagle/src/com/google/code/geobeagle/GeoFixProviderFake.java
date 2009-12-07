@@ -1,7 +1,6 @@
 package com.google.code.geobeagle;
 
 import android.os.Handler;
-
 import java.util.ArrayList;
 
 //Doesn't have support for faking azimuth at the moment
@@ -18,7 +17,7 @@ public class GeoFixProviderFake implements GeoFixProvider {
         private final double mLatStart;
         private final double mLonStart;
 
-        /** The period of the fix list loop */
+        /** The period of the fix list loop, in millisec */
         private final long mLoopTime;
         
         /** A number of GeoFixes with values relative some starting point.
@@ -35,12 +34,13 @@ public class GeoFixProviderFake implements GeoFixProvider {
             mFixes = fixes;
         }
         
+        /** @param time in millisec */
         public GeoFix getGeoFixAtTime(long time) {
             long relTime = time % mLoopTime;
             //Initialize to avoid compiler warning
             GeoFix lastFix = mFixes[0];
             GeoFix nextFix = mFixes[0];
-            float ratio = 0;
+            float ratio = 0;  //Between 0 and 1
             
             if (relTime > mFixes[mFixes.length - 1].getTime()) {
                 lastFix = mFixes[mFixes.length - 1];
@@ -48,7 +48,7 @@ public class GeoFixProviderFake implements GeoFixProvider {
                 ratio = ((relTime-lastFix.getTime()) / 
                         (mLoopTime-lastFix.getTime()));
             } else {
-                for (int i = 0; i < mFixes.length; i++) {
+                for (int i = 1; i < mFixes.length; i++) {
                     if (mFixes[i].getTime() == relTime) {
                         lastFix = mFixes[i];
                         nextFix = mFixes[i];
@@ -57,7 +57,8 @@ public class GeoFixProviderFake implements GeoFixProvider {
                     } else if (mFixes[i].getTime() > relTime) {
                         lastFix = mFixes[i-1];
                         nextFix = mFixes[i];
-                        ratio = ((relTime-lastFix.getTime()) / 
+                        //Must convert to float to avoid integer division:
+                        ratio = (((float)relTime-lastFix.getTime()) / 
                                  (nextFix.getTime()-lastFix.getTime()));
                         break;
                     }
@@ -94,6 +95,16 @@ public class GeoFixProviderFake implements GeoFixProvider {
             58.398050, 15.612208, 10000,
             new GeoFix[] { new GeoFix(8, 20, 0, 0, 0, "gps"),
     });
+
+    /** Simulate moving at highway speeds and report location every second */
+    public static FakeDataset CAR_JOURNEY = new FakeDataset(1000, 
+            58.398050, 15.612208, 70*60*1000,
+            new GeoFix[] { new GeoFix(8, 20, 0, 0, 0, "gps"),
+                           new GeoFix(16, 30, 58.432729-58.398050, 15.669937-15.612208, 5*60*1000, "gps"),
+                           new GeoFix(32, 40, 58.591698-58.398050, 16.12896-15.612208, 35*60*1000, "gps"),
+                           new GeoFix(24, 30, 58.432729-58.398050, 15.669937-15.612208,65*60*1000, "gps"),
+    });
+    
     
     private final FakeDataset mFakeDataset;
     
@@ -148,7 +159,6 @@ public class GeoFixProviderFake implements GeoFixProvider {
 
     @Override
     public float getAzimuth() {
-        // TODO Auto-generated method stub
         return 0;
     }
 
