@@ -135,6 +135,17 @@ public class GpsStatusWidgetTest {
     }
 
     @Test
+    public void testForceRefresh() {
+        MeterFader meterFader = PowerMock.createMock(MeterFader.class);
+
+        meterFader.paint();
+
+        PowerMock.replayAll();
+        new GpsStatusWidgetDelegate(null, null, null, meterFader, null, null, null, null).paint();
+        PowerMock.verifyAll();
+    }
+    
+    @Test
     public void testGpsStatusWidget_OnLocationChangedNullLocation() {
         PowerMock.suppressConstructor(LinearLayout.class);
         GeoFixProvider geoFixProvider = PowerMock.createMock(GeoFixProvider.class);
