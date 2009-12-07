@@ -17,6 +17,7 @@ package com.google.code.geobeagle.gpsstatuswidget;
 import static org.junit.Assert.assertEquals;
 
 import com.google.code.geobeagle.Clock;
+import com.google.code.geobeagle.GeoFix;
 import com.google.code.geobeagle.GeoFixProvider;
 import com.google.code.geobeagle.GeoFixProviderLive;
 import com.google.code.geobeagle.gpsstatuswidget.TextLagUpdater.Lag;
@@ -74,7 +75,10 @@ public class TextLagUpdaterTest {
         GeoFixProvider geoFixProvider = PowerMock.createMock(GeoFixProviderLive.class);
         Lag lag = PowerMock.createMock(Lag.class);
         LastKnownLocation lastKnownLocation = PowerMock.createMock(LastKnownLocation.class);
+        GeoFix geoFix = PowerMock.createMock(GeoFix.class);
 
+        EasyMock.expect(geoFixProvider.getLocation()).andReturn(geoFix);
+        EasyMock.expect(geoFix.getTime()).andReturn(1000L);
         PowerMock.expectNew(LastKnownLocation.class, 1000L).andReturn(lastKnownLocation);
         EasyMock.expect(lastKnownLocation.getLag()).andReturn(lag);
 
@@ -90,6 +94,7 @@ public class TextLagUpdaterTest {
         LastKnownLocationUnavailable lastKnownLocationUnavailable = PowerMock
                 .createMock(LastKnownLocationUnavailable.class);
 
+        EasyMock.expect(geoFixProvider.getLocation()).andReturn(null);
         EasyMock.expect(lastKnownLocationUnavailable.getLag()).andReturn(lagNull);
 
         PowerMock.replayAll();
