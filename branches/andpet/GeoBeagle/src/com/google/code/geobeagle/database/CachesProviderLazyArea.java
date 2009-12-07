@@ -16,6 +16,7 @@ package com.google.code.geobeagle.database;
 
 import com.google.code.geobeagle.GeocacheList;
 import com.google.code.geobeagle.GeocacheListPrecomputed;
+import com.google.code.geobeagle.Toaster.OneTimeToaster;
 
 /** Strategy to only invalidate/reload the list of caches when the bounds are
  * changed to outside the previous bounds. Also returns an empty list if the count is 
@@ -32,15 +33,18 @@ public class CachesProviderLazyArea implements ICachesProviderArea {
     private boolean mHasChanged = true;
     /** True if the last getCaches() was capped because too high cache count */
     private boolean mTooManyCaches = false;
+    private final OneTimeToaster mOneTimeToaster;
+
     /** Maximum number of caches to show */
     public static final int MAX_COUNT = 1000;
 
     private final ICachesProviderArea mCachesProviderArea;
 
     public CachesProviderLazyArea(ICachesProviderArea cachesProviderArea,
-                double expandRatio) {
+                double expandRatio, OneTimeToaster oneTimeToaster) {
         mCachesProviderArea = cachesProviderArea;
         mExpandRatio = expandRatio;
+        mOneTimeToaster = oneTimeToaster;
     }
 
     @Override
@@ -105,5 +109,11 @@ public class CachesProviderLazyArea implements ICachesProviderArea {
     @Override
     public int getTotalCount() {
         return mCachesProviderArea.getTotalCount();
+    }
+
+    public GeocacheList getCachesAndWarnIfTooMany() {
+        if (mTooManyCaches)
+            mOneTimeToaster.showToast();
+        return getCaches(MAX_COUNT);
     }
 }

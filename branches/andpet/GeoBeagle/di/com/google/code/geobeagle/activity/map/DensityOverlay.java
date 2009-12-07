@@ -17,8 +17,8 @@ package com.google.code.geobeagle.activity.map;
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapView;
 import com.google.android.maps.Overlay;
+import com.google.code.geobeagle.Toaster;
 import com.google.code.geobeagle.database.CachesProviderLazyArea;
-import com.google.code.geobeagle.xmlimport.GpxImporterDI.Toaster;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;

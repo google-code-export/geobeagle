@@ -23,6 +23,8 @@ import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.GeocacheFactory;
 import com.google.code.geobeagle.GeocacheListPrecomputed;
 import com.google.code.geobeagle.R;
+import com.google.code.geobeagle.Toaster;
+import com.google.code.geobeagle.Toaster.OneTimeToaster;
 import com.google.code.geobeagle.actions.CacheFilterUpdater;
 import com.google.code.geobeagle.actions.MenuActionCacheList;
 import com.google.code.geobeagle.actions.MenuActionEditFilter;
@@ -34,7 +36,6 @@ import com.google.code.geobeagle.activity.map.DensityMatrix.DensityPatch;
 import com.google.code.geobeagle.database.CachesProviderDb;
 import com.google.code.geobeagle.database.CachesProviderLazyArea;
 import com.google.code.geobeagle.database.DbFrontend;
-import com.google.code.geobeagle.xmlimport.GpxImporterDI.Toaster;
 
 import android.content.Intent;
 import android.content.res.Resources;
@@ -106,7 +107,8 @@ public class GeoMapActivity extends MapActivity {
         final List<DensityPatch> densityPatches = new ArrayList<DensityPatch>();
         final Toaster toaster = new Toaster(this, R.string.too_many_caches, Toast.LENGTH_SHORT);
         final CachesProviderDb cachesProviderArea = new CachesProviderDb(mDbFrontend);
-        final CachesProviderLazyArea lazyArea = new CachesProviderLazyArea(cachesProviderArea, 1.0);
+        final OneTimeToaster oneTimeToaster = new OneTimeToaster(toaster);
+        final CachesProviderLazyArea lazyArea = new CachesProviderLazyArea(cachesProviderArea, 1.0, oneTimeToaster);
         final DensityOverlayDelegate densityOverlayDelegate = DensityOverlay.createDelegate(
                 densityPatches, nullGeoPoint, lazyArea, toaster);
         final DensityOverlay densityOverlay = new DensityOverlay(densityOverlayDelegate);
@@ -115,9 +117,9 @@ public class GeoMapActivity extends MapActivity {
                 defaultMarker, GeocacheListPrecomputed.EMPTY);
         //Pin overlay and Density overlay can't share providers because the provider wouldn't report hasChanged() when switching between them
         CachesProviderDb cachesProviderAreaPins = new CachesProviderDb(mDbFrontend);
-        final CachesProviderLazyArea lazyAreaPins = new CachesProviderLazyArea(cachesProviderAreaPins, 1.0);
+        final CachesProviderLazyArea lazyAreaPins = new CachesProviderLazyArea(cachesProviderAreaPins, 1.0, oneTimeToaster);
         final CachePinsOverlayFactory cachePinsOverlayFactory = new CachePinsOverlayFactory(
-                mMapView, this, defaultMarker, cacheItemFactory, cachePinsOverlay, lazyAreaPins, toaster);
+                mMapView, this, defaultMarker, cacheItemFactory, cachePinsOverlay, lazyAreaPins);
         final GeoPoint center = new GeoPoint((int)(latitude * GeoUtils.MILLION),
                 (int)(longitude * GeoUtils.MILLION));
         mapController.setCenter(center);

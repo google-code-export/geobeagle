@@ -19,7 +19,6 @@ import com.google.android.maps.Projection;
 import com.google.code.geobeagle.GeocacheList;
 import com.google.code.geobeagle.activity.cachelist.CacheListDelegateDI;
 import com.google.code.geobeagle.database.CachesProviderLazyArea;
-import com.google.code.geobeagle.xmlimport.GpxImporterDI.Toaster;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
@@ -31,20 +30,16 @@ public class CachePinsOverlayFactory {
     private final Drawable mDefaultMarker;
     private final GeoMapView mGeoMapView;
     private CachesProviderLazyArea mLazyArea;
-    /** If the last created overlay made us show a toast (if so, don't do it again) */
-    private boolean mHasShownToaster = false;
-    private final Toaster mToaster;
 
-    public CachePinsOverlayFactory(GeoMapView geoMapView, Context context, Drawable defaultMarker,
-            CacheItemFactory cacheItemFactory, CachePinsOverlay cachePinsOverlay,
-            CachesProviderLazyArea lazyArea, Toaster toaster) {
+    public CachePinsOverlayFactory(GeoMapView geoMapView, Context context,
+            Drawable defaultMarker, CacheItemFactory cacheItemFactory,
+            CachePinsOverlay cachePinsOverlay, CachesProviderLazyArea lazyArea) {
         mGeoMapView = geoMapView;
         mContext = context;
         mDefaultMarker = defaultMarker;
         mCacheItemFactory = cacheItemFactory;
         mCachePinsOverlay = cachePinsOverlay;
         mLazyArea = lazyArea;
-        mToaster = toaster;
     }
 
     public CachePinsOverlay getCachePinsOverlay() {
@@ -57,7 +52,6 @@ public class CachePinsOverlayFactory {
                 .getBottom());
 
         timing.start();
-        
         double latLow = newBottomRight.getLatitudeE6() / 1.0E6;
         double latHigh = newTopLeft.getLatitudeE6() / 1.0E6;
         double lonLow = newTopLeft.getLongitudeE6() / 1.0E6;
@@ -65,15 +59,7 @@ public class CachePinsOverlayFactory {
         mLazyArea.setBounds(latLow, lonLow, latHigh, lonHigh);
         if (!mLazyArea.hasChanged())
             return mCachePinsOverlay;
-        GeocacheList list = mLazyArea.getCaches();
-        if (mLazyArea.tooManyCaches()) {
-            if (!mHasShownToaster) {
-                mToaster.showToast();
-                mHasShownToaster = true;
-            }
-        } else {
-            mHasShownToaster = false;
-        }
+        GeocacheList list = mLazyArea.getCachesAndWarnIfTooMany();
         mLazyArea.resetChanged();
         mCachePinsOverlay = new CachePinsOverlay(mCacheItemFactory, mContext, mDefaultMarker, list);
         timing.lap("getCachePinsOverlay took");

@@ -30,6 +30,7 @@ import org.powermock.api.easymock.PowerMock;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import android.view.View;
 import android.widget.ImageView;
@@ -38,7 +39,7 @@ import android.widget.TextView;
 @RunWith(PowerMockRunner.class)
 @PrepareForTest( {
         CacheType.class, TextView.class, UnlabelledAttributeViewer.class, 
-        LabelledAttributeViewer.class, Geocache.class, GraphicsGenerator.class
+        LabelledAttributeViewer.class, Geocache.class, Paint.class, GraphicsGenerator.class
 })
 public class GeocacheViewerTest {
     @Test

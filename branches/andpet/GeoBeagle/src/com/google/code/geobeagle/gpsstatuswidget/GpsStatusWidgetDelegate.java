@@ -17,7 +17,6 @@ package com.google.code.geobeagle.gpsstatuswidget;
 import com.google.code.geobeagle.GeoFix;
 import com.google.code.geobeagle.GeoFixProvider;
 import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.Refresher;
 import com.google.code.geobeagle.activity.cachelist.presenter.HasDistanceFormatter;
 import com.google.code.geobeagle.formatting.DistanceFormatter;
 
@@ -26,7 +25,7 @@ import android.location.LocationProvider;
 import android.os.Bundle;
 import android.widget.TextView;
 
-public class GpsStatusWidgetDelegate implements HasDistanceFormatter, Refresher {
+public class GpsStatusWidgetDelegate implements HasDistanceFormatter  {
     private final Context mContext;
     private DistanceFormatter mDistanceFormatter;
     private final GeoFixProvider mGeoFixProvider;
@@ -48,11 +47,6 @@ public class GpsStatusWidgetDelegate implements HasDistanceFormatter, Refresher 
         mContext = context;
         mStatus = status;
         mTextLagUpdater = textLagUpdater;
-    }
-
-    @Override
-    public void forceRefresh() {
-        refresh();
     }
 
     // TODO: onStatusChanged is never called as of now
@@ -77,7 +71,6 @@ public class GpsStatusWidgetDelegate implements HasDistanceFormatter, Refresher 
         mMeterFader.paint();
     }
 
-    @Override
     public void refresh() {
         GeoFix location = mGeoFixProvider.getLocation();
         // Log.d("GeoBeagle", "GpsStatusWidget onLocationChanged " + location);

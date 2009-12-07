@@ -24,7 +24,7 @@ public class CachesProviderLazyAreaTest {
     public void testHasChanged() {
         mArea.setChanged(false);
         
-        CachesProviderLazyArea lazyArea = new CachesProviderLazyArea(mArea, 0);
+        CachesProviderLazyArea lazyArea = new CachesProviderLazyArea(mArea, 0, null);
         assertTrue(lazyArea.hasChanged());
         lazyArea.resetChanged();
         assertFalse(lazyArea.hasChanged());
@@ -40,7 +40,7 @@ public class CachesProviderLazyAreaTest {
             mArea.addCache(mockGeocache(i, 0));
         PowerMock.replayAll();
         
-        CachesProviderLazyArea lazyArea = new CachesProviderLazyArea(mArea, 0);
+        CachesProviderLazyArea lazyArea = new CachesProviderLazyArea(mArea, 0, null);
         lazyArea.setBounds(0, -1, 3.5, 1);
         assertEquals(4, lazyArea.getCount());
         assertEquals(4, lazyArea.getCaches().size());
@@ -48,7 +48,7 @@ public class CachesProviderLazyAreaTest {
 
     @Test
     public void testSmallerArea() {
-        CachesProviderLazyArea lazyArea = new CachesProviderLazyArea(mArea, 0);
+        CachesProviderLazyArea lazyArea = new CachesProviderLazyArea(mArea, 0, null);
         lazyArea.setBounds(0, 0, 5, 5);
         lazyArea.getCaches();
         assertTrue(lazyArea.hasChanged());
@@ -68,7 +68,7 @@ public class CachesProviderLazyAreaTest {
         mArea.addCache(mockGeocache(1, 1));
         PowerMock.replayAll();
 
-        CachesProviderLazyArea lazyArea = new CachesProviderLazyArea(mArea, 0);
+        CachesProviderLazyArea lazyArea = new CachesProviderLazyArea(mArea, 0, null);
         lazyArea.setBounds(0, 0, 5, 5);
         assertEquals(1, lazyArea.getCount());
         lazyArea.resetChanged();
