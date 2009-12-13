@@ -21,6 +21,7 @@ import com.google.code.geobeagle.actions.CacheActionDelete;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListAdapter;
 import com.google.code.geobeagle.activity.cachelist.presenter.TitleUpdater;
 import com.google.code.geobeagle.database.CacheWriter;
+import com.google.code.geobeagle.database.CachesProviderDb;
 import com.google.code.geobeagle.database.DbFrontend;
 
 import org.junit.Test;
@@ -38,15 +39,17 @@ public class CacheActionDeleteTest {
         Geocache geocache = PowerMock.createMock(Geocache.class);
         TitleUpdater titleUpdater = PowerMock.createMock(TitleUpdater.class);
         DbFrontend dbFrontend = PowerMock.createMock(DbFrontend.class);
+        CachesProviderDb cachesProviderDb = PowerMock.createMock(CachesProviderDb.class);
 
         expect(dbFrontend.getCacheWriter()).andReturn(cacheWriter);
         expect(geocache.getId()).andReturn("GC123");
         cacheWriter.deleteCache("GC123");
         cacheList.forceRefresh();
         titleUpdater.refresh();
+        cachesProviderDb.notifyOfDbChange();
 
         PowerMock.replayAll();
-        new CacheActionDelete(cacheList, titleUpdater, dbFrontend, null).act(geocache);
+        new CacheActionDelete(cacheList, titleUpdater, dbFrontend, cachesProviderDb, null).act(geocache);
         PowerMock.verifyAll();
     }
 }
