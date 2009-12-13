@@ -17,6 +17,7 @@ package com.google.code.geobeagle.activity.map;
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.OverlayItem;
 import com.google.code.geobeagle.Geocache;
+import com.google.code.geobeagle.database.DbFrontend;
 
 import org.easymock.EasyMock;
 import org.junit.Test;
@@ -39,14 +40,15 @@ public class CacheItemTest {
         GeoPoint geoPoint = PowerMock.createMock(GeoPoint.class);
         Resources resources = PowerMock.createMock(Resources.class);
         Drawable iconMap = PowerMock.createMock(Drawable.class);
+        DbFrontend dbFrontend = PowerMock.createMock(DbFrontend.class);
 
         EasyMock.expect(geocache.getGeoPoint()).andReturn(geoPoint);
-        EasyMock.expect(geocache.getIconMap(resources, null)).andReturn(iconMap);
+        EasyMock.expect(geocache.getIconMap(resources, null, dbFrontend)).andReturn(iconMap);
         PowerMock.suppressConstructor(CacheItem.class);
         PowerMock.suppressMethod(CacheItem.class, "setMarker");
 
         PowerMock.replayAll();
-        new CacheItemFactory(resources, null).createCacheItem(geocache);
+        new CacheItemFactory(resources, null, dbFrontend).createCacheItem(geocache);
         PowerMock.verifyAll();
     }
 }
