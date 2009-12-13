@@ -17,30 +17,34 @@ package com.google.code.geobeagle.actions;
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListAdapter;
-import com.google.code.geobeagle.activity.cachelist.presenter.RefreshAction;
+import com.google.code.geobeagle.activity.cachelist.presenter.TitleUpdater;
+import com.google.code.geobeagle.database.CachesProviderDb;
 import com.google.code.geobeagle.database.DbFrontend;
 
 import android.content.res.Resources;
 
 public class CacheActionDelete implements CacheAction {
-    private final CacheListAdapter mCacheList;
+    private final CacheListAdapter mCacheListAdapter;
     private final DbFrontend mDbFrontend;
-    private final RefreshAction mCacheListRefresher;
+    private final TitleUpdater mTitleUpdater;
+    private final CachesProviderDb mCachesToFlush;
     private final Resources mResources;
 
-    public CacheActionDelete(CacheListAdapter cacheList, RefreshAction cacheListRefresh,
-            DbFrontend dbFrontend, Resources resources) {
-        mCacheList = cacheList;
-        mCacheListRefresher = cacheListRefresh;
+    public CacheActionDelete(CacheListAdapter cacheListAdapter, TitleUpdater titleUpdater,
+            DbFrontend dbFrontend, CachesProviderDb cachesToFlush, Resources resources) {
+        mCacheListAdapter = cacheListAdapter;
+        mTitleUpdater = titleUpdater;
         mDbFrontend = dbFrontend;
+        mCachesToFlush = cachesToFlush;
         mResources = resources;
     }
 
     @Override
     public void act(Geocache cache) {
         mDbFrontend.getCacheWriter().deleteCache(cache.getId());
-        mCacheListRefresher.refresh();  //Reload the cache list from the database
-        mCacheList.forceRefresh();
+        mCachesToFlush.notifyOfDbChange();  //Reload the cache list from the database
+        mTitleUpdater.refresh();
+        mCacheListAdapter.forceRefresh();
     }
 
     @Override

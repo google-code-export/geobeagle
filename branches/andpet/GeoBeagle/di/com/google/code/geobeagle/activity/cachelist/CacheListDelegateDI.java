@@ -22,6 +22,7 @@ import com.google.code.geobeagle.GraphicsGenerator;
 import com.google.code.geobeagle.IPausable;
 import com.google.code.geobeagle.LocationControlDi;
 import com.google.code.geobeagle.actions.CacheAction;
+import com.google.code.geobeagle.actions.CacheActionConfirm;
 import com.google.code.geobeagle.actions.CacheActionDelete;
 import com.google.code.geobeagle.actions.CacheActionEdit;
 import com.google.code.geobeagle.actions.CacheActionToggleFavorite;
@@ -67,6 +68,7 @@ import com.google.code.geobeagle.xmlimport.GpxImporterDI.MessageHandler;
 import com.google.code.geobeagle.xmlimport.GpxToCache.Aborter;
 import com.google.code.geobeagle.xmlimport.GpxToCacheDI.XmlPullParserWrapper;
 
+import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
@@ -204,12 +206,17 @@ public class CacheListDelegateDI {
         final CacheActionView cacheActionView = new CacheActionView(listActivity);
         final CacheActionToggleFavorite cacheActionToggleFavorite = 
             new CacheActionToggleFavorite(dbFrontend, cacheListAdapter, cacheFilterUpdater);
+        //TODO: It is currently a bug to send cachesProviderDb since cachesProviderAll also need to be notified of db changes.
         final CacheActionDelete cacheActionDelete = 
-            new CacheActionDelete(cacheListAdapter, titleUpdater, dbFrontend, resources);
-            
+            new CacheActionDelete(cacheListAdapter, titleUpdater, dbFrontend, cachesProviderDb, resources);
+        
+        final AlertDialog.Builder builder = new AlertDialog.Builder(listActivity);
+        final CacheActionConfirm cacheActionConfirmDelete =
+            new CacheActionConfirm(listActivity, builder, cacheActionDelete);
+        
         final CacheAction[] contextActions = new CacheAction[] {
                 cacheActionView, cacheActionToggleFavorite, 
-                cacheActionEdit, cacheActionDelete
+                cacheActionEdit, cacheActionConfirmDelete
         };
         final GeocacheListController geocacheListController = 
             new GeocacheListController(cacheListAdapter, contextActions, menuActionSyncGpx, 
@@ -221,7 +228,7 @@ public class CacheListDelegateDI {
             new CacheListOnCreateContextMenuListener(cachesProviderToggler, contextActions);
         final IPausable pausables[] = { geoFixProvider, thread };
 
-        //TODO: It is currently a bug to send cachesProviderArea since cachesProviderAll also need to be notified of db changes.
+        //TODO: It is currently a bug to send cachesProviderDb since cachesProviderAll also need to be notified of db changes.
         return new CacheListDelegate(importIntentManager, activitySaver,
                 geocacheListController, dbFrontend, updateGpsWidgetRunnable, 
                 gpsStatusWidget, menuCreator, cacheListAdapter, geocacheSummaryRowInflater, listActivity, 

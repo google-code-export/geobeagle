@@ -73,7 +73,7 @@ public class MenuActionFilterListPopup implements MenuAction {
         radioGroup.check(selected);
         
         //dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialog.setTitle("Choose filter!");
+        dialog.setTitle("Choose filter");
         
         //dialog.setContentView(R.layout.filterlist);
         dialog.setContentView(radioGroup);

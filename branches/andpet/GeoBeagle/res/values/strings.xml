@@ -111,4 +111,8 @@
 <string name="menu_view_geocache">View</string>
 <string name="menu_filterlist">Filters...</string>
 <string name="menu_edit_filter">Edit Filter</string>
+<string name="confirm_delete_negative">Do not delete</string>
+<string name="confirm_delete_title">Confirm delete %1$s</string>
+<string name="confirm_delete_body_text">Delete %1$s: "%2$s"?</string>
+<string name="delete_cache">Delete cache</string>
 </resources>
