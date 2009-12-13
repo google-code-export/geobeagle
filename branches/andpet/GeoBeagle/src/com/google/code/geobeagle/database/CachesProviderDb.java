@@ -23,6 +23,7 @@ public class CachesProviderDb implements ICachesProviderArea {
     private String mFilter = "";
     /** The tag used for filtering. Tags.NULL means any tag allowed. */
     private int mRequiredTag = Tags.NULL;
+    private int mForbiddenTag = Tags.NULL;
     /** If greater than zero, this is the max number that mCaches 
      * was allowed to contain when loaded. (This limit can change on subsequent loads) */
     private int mCachesCappedToCount = 0;
@@ -45,11 +46,19 @@ public class CachesProviderDb implements ICachesProviderArea {
             }
 
             if (mRequiredTag == Tags.NULL) {
-                if (where.equals(""))
-                    mSql = "FROM CACHES";  //Return all caches
-                else
-                    mSql = "FROM CACHES WHERE " + where;
+                if (mForbiddenTag == Tags.NULL) {
+                    if (where.equals(""))
+                        mSql = "FROM CACHES";  //Return all caches
+                    else
+                        mSql = "FROM CACHES WHERE " + where;
+                } else {
+                    mSql = "from caches left outer join (select CacheId from cachetags where TagId="
+                        + mForbiddenTag + ") as FoundTags on caches.Id = FoundTags.CacheId where FoundTags.CacheId is NULL";
+                    if (!where.equals(""))
+                        mSql += " AND " + where;
+                }
             } else {
+            //TODO: Handle mForbiddenTag together with mRequiredTag
                 if (where.equals(""))
                     mSql = "FROM CACHES, CACHETAGS WHERE TagId=" + mRequiredTag
                       + " AND Id=CacheId";
@@ -129,13 +138,16 @@ public class CachesProviderDb implements ICachesProviderArea {
     public void setFilter(CacheFilter cacheFilter) {
         String newFilter = cacheFilter.getSqlWhereClause();
         int newTag = cacheFilter.getRequiredTag();
+        int newForbiddenTag = cacheFilter.getForbiddenTag();
         
-        if (newFilter.equals(mFilter) && newTag == mRequiredTag)
+        if (newFilter.equals(mFilter) && newTag == mRequiredTag &&
+                newForbiddenTag == mForbiddenTag)
             return;
         
         mHasChanged = true;
         mFilter = newFilter;
         mRequiredTag = newTag;
+        mForbiddenTag = newForbiddenTag;
         mSql = null;   //Flush
         mCaches = null;  //Flush old caches
     }

@@ -115,10 +115,11 @@ public class CacheListDelegateDI {
                 .create(listActivity);
         final XmlPullParserWrapper xmlPullParserWrapper = new XmlPullParserWrapper();
 
+        final DbFrontend dbFrontend = new DbFrontend(listActivity, geocacheFactory);
         final GraphicsGenerator graphicsGenerator = new GraphicsGenerator();
         final GeocacheSummaryRowInflater geocacheSummaryRowInflater = new GeocacheSummaryRowInflater(
                 distanceFormatterManager.getFormatter(), layoutInflater,
-                relativeBearingFormatter, listActivity.getResources(), graphicsGenerator);
+                relativeBearingFormatter, listActivity.getResources(), graphicsGenerator, dbFrontend);
 
         final InflatedGpsStatusWidget inflatedGpsStatusWidget = new InflatedGpsStatusWidget(
                 listActivity);
@@ -140,7 +141,6 @@ public class CacheListDelegateDI {
         
         final FilterTypeCollection filterTypeCollection = new FilterTypeCollection(listActivity);
         
-        final DbFrontend dbFrontend = new DbFrontend(listActivity, geocacheFactory);
         final CachesProviderDb cachesProviderDb = new CachesProviderDb(dbFrontend);
         final ICachesProviderCenter cachesProviderCount = new CachesProviderWaitForInit(new CachesProviderCount(cachesProviderDb, 15, 30));
         final CachesProviderSorted cachesProviderSorted = new CachesProviderSorted(cachesProviderCount);

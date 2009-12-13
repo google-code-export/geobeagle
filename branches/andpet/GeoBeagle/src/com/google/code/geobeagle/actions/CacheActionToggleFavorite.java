@@ -21,10 +21,7 @@ public class CacheActionToggleFavorite implements CacheAction {
     public void act(Geocache geocache) {
         boolean isFavorite = mDbFrontend.geocacheHasTag(geocache.getId(), 
                 Tags.FAVORITES);
-        if (isFavorite)
-            mDbFrontend.removeGeocacheTag(geocache.getId(), Tags.FAVORITES);
-        else
-            mDbFrontend.addGeocacheTag(geocache.getId(), Tags.FAVORITES);
+        mDbFrontend.setGeocacheTag(geocache.getId(), Tags.FAVORITES, !isFavorite);
         mCacheFilterUpdater.loadActiveFilter();
         mCacheList.forceRefresh();
     }

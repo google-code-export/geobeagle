@@ -18,8 +18,10 @@ public class FilterTypeCollection {
         mActivity = activity;
         load();
     }
-    
+
+    /** Loads/reloads the list of filters from the Preferences */
     private void load() {
+        mFilterTypes.clear();
         SharedPreferences prefs = mActivity.getSharedPreferences(FILTER_PREFS, 0);
         String ids = prefs.getString("FilterList", "");
         String[] idArray = ids.split(", ");

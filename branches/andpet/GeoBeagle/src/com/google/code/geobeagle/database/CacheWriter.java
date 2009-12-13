@@ -70,6 +70,10 @@ public class CacheWriter {
                 cacheType.toInt(), difficulty, terrain, container);
     }
 
+    public void updateTag(CharSequence id, int tag, boolean set) {
+        mDbFrontend.setGeocacheTag(id, tag, set);
+    }
+    
     /**
      * Return True if the gpx is already loaded. Mark this gpx and its caches in
      * the database to protect them from being nuked when the load is complete.

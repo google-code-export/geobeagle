@@ -63,7 +63,7 @@ public class GraphicsGenerator {
     private final Paint mTempPaint;
     private final Rect mTempRect;
     private Drawable createOverlay(Geocache geocache, int thickness, int bottom, 
-            int backdropId, Resources resources) {
+            int backdropId, Drawable overlayIcon, Resources resources) {
         Bitmap bitmap = BitmapFactory.decodeResource(resources, backdropId);
         int imageHeight = bitmap.getHeight();
         int imageWidth = bitmap.getWidth();
@@ -101,18 +101,28 @@ public class GraphicsGenerator {
         mTempRect.set(0, imageHeight-bottom-thickness-1,
                 terrWidth, imageHeight-bottom-1);
         canvas.drawRect(mTempRect, mTempPaint);
-
+        
+        if (overlayIcon != null) {
+            overlayIcon.setBounds(imageWidth-1-overlayIcon.getIntrinsicWidth(),
+                    0, imageWidth-1, overlayIcon.getIntrinsicHeight()-1);
+            overlayIcon.draw(canvas);
+        }
+            
         return new BitmapDrawable(copy);
     }
     
-    public Drawable createIcon(Geocache geocache, Resources resources) {
+    /** Creates the icon to use in the list view */
+    public Drawable createIcon(Geocache geocache, Drawable overlayIcon, 
+            Resources resources) {
         return createOverlay(geocache, 3, -5, geocache.getCacheType().icon(), 
-                resources);
+                overlayIcon, resources);
     }
     
-    public Drawable createIconMap(Geocache geocache, Resources resources) {
+    /** Creates the icon to use in the map view */
+    public Drawable createIconMap(Geocache geocache, Drawable overlayIcon, 
+            Resources resources) {
         Drawable iconMap = createOverlay(geocache, 3, 3, 
-                geocache.getCacheType().iconMap(), resources);
+                geocache.getCacheType().iconMap(), overlayIcon, resources);
         int width = iconMap.getIntrinsicWidth();
         int height = iconMap.getIntrinsicHeight();
         iconMap.setBounds(-width/2, -height, width/2, 0);

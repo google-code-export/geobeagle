@@ -17,6 +17,7 @@ package com.google.code.geobeagle.activity.cachelist.presenter;
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.GraphicsGenerator;
 import com.google.code.geobeagle.R;
+import com.google.code.geobeagle.database.DbFrontend;
 import com.google.code.geobeagle.database.DistanceAndBearing;
 import com.google.code.geobeagle.formatting.DistanceFormatter;
 
@@ -65,11 +66,13 @@ public class GeocacheSummaryRowInflater implements HasDistanceFormatter {
 
         void set(DistanceAndBearing distanceAndBearing, float azimuth, 
                 DistanceFormatter distanceFormatter,
-                BearingFormatter relativeBearingFormatter, GraphicsGenerator graphicsGenerator) {
+                BearingFormatter relativeBearingFormatter, 
+                GraphicsGenerator graphicsGenerator,
+                DbFrontend dbFrontend) {
             //CacheType type = geocacheVector.getGeocache().getCacheType();
             //mIcon.setImageResource(type.icon());
             Geocache geocache = distanceAndBearing.getGeocache();
-            mIcon.setImageDrawable(geocache.getIcon(mResources, graphicsGenerator));
+            mIcon.setImageDrawable(geocache.getIcon(mResources, graphicsGenerator, dbFrontend));
             mId.setText(geocache.getId());
             mAttributes.setText(geocache.getFormattedAttributes());
             mCacheName.setText(geocache.getName());
@@ -83,15 +86,18 @@ public class GeocacheSummaryRowInflater implements HasDistanceFormatter {
     private final LayoutInflater mLayoutInflater;
     private final Resources mResources;
     private final GraphicsGenerator mGraphicsGenerator;
+    private final DbFrontend mDbFrontend;
 
     public GeocacheSummaryRowInflater(DistanceFormatter distanceFormatter,
             LayoutInflater layoutInflater,
-            BearingFormatter relativeBearingFormatter, Resources resources, GraphicsGenerator graphicsGenerator) {
+            BearingFormatter relativeBearingFormatter, Resources resources, 
+            GraphicsGenerator graphicsGenerator, DbFrontend dbFrontend) {
         mLayoutInflater = layoutInflater;
         mDistanceFormatter = distanceFormatter;
         mBearingFormatter = relativeBearingFormatter;
         mResources = resources;
         mGraphicsGenerator = graphicsGenerator;
+        mDbFrontend = dbFrontend;        
     }
 
     BearingFormatter getBearingFormatter() {
@@ -120,7 +126,7 @@ public class GeocacheSummaryRowInflater implements HasDistanceFormatter {
 
     public void setData(View view, DistanceAndBearing geocacheVector, float azimuth) {
         ((RowViews)view.getTag()).set(geocacheVector, azimuth, mDistanceFormatter,
-                mBearingFormatter, mGraphicsGenerator);
+                mBearingFormatter, mGraphicsGenerator, mDbFrontend);
     }
 
     public void setDistanceFormatter(DistanceFormatter distanceFormatter) {

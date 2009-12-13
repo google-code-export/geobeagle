@@ -68,6 +68,10 @@ public class CacheFilter {
     /** Limits the filter to only include geocaches with this tag. 
      * Zero means no limit. */
     private int mRequiredTag;
+
+    /** Caches with this tag are not included in the results no matter what. 
+     * Zero means no restriction. */
+    private int mForbiddenTag;
     
     public CacheFilter(String id, Activity activity) {
         mId = id;
@@ -96,6 +100,7 @@ public class CacheFilter {
         }
         mFilterString = preferences.getString("FilterString", null);
         mRequiredTag = preferences.getInt("FilterTag", 0);
+        mForbiddenTag = preferences.getInt("FilterForbiddenTag", 0);
         mName = preferences.getString("FilterName", "Unnamed");
     }
 
@@ -110,6 +115,7 @@ public class CacheFilter {
         }
         editor.putString("FilterString", mFilterString);
         editor.putInt("FilterTag", mRequiredTag);
+        editor.putInt("FilterForbiddenTag", mForbiddenTag);
         editor.putString("FilterName", mName);
         editor.commit();
     }
@@ -194,6 +200,7 @@ public class CacheFilter {
         }
         mFilterString = provider.getString(R.id.FilterString);
         mRequiredTag = provider.getBoolean(R.id.CheckBoxOnlyFavorites) ? Tags.FAVORITES : Tags.NULL;
+        mForbiddenTag = provider.getBoolean(R.id.CheckBoxIncludeFinds) ? Tags.NULL : Tags.FOUND;
     }
 
     /** Set up the view from the values in this CacheFilter. */
@@ -207,6 +214,11 @@ public class CacheFilter {
         }
         String filter = mFilterString == null ? "" : mFilterString;
         provider.setString(R.id.FilterString, filter);
+        provider.setBoolean(R.id.CheckBoxIncludeFinds, mForbiddenTag != Tags.FOUND);
         provider.setBoolean(R.id.CheckBoxOnlyFavorites, mRequiredTag == Tags.FAVORITES);
+    }
+
+    public int getForbiddenTag() {
+        return mForbiddenTag;
     }
 }

@@ -14,6 +14,7 @@
 
 package com.google.code.geobeagle.xmlimport;
 
+import com.google.code.geobeagle.Tags;
 import com.google.code.geobeagle.GeocacheFactory.Source;
 import com.google.code.geobeagle.cachedetails.CacheDetailsWriter;
 import com.google.code.geobeagle.xmlimport.FileFactory;
@@ -62,6 +63,7 @@ public class CachePersisterFacade {
     }
 
     void endCache(Source source) throws IOException {
+        mCacheTagWriter.setTag(Tags.NEW, true);
         mMessageHandler.updateName(mCacheName);
         mCacheDetailsWriter.close();
         mCacheTagWriter.write(source);
@@ -103,8 +105,8 @@ public class CachePersisterFacade {
         mCacheTagWriter.clear();
     }
 
-    void symbol(String text) {
-        mCacheTagWriter.symbol(text);
+    public void setTag(int tag, boolean set) {
+        mCacheTagWriter.setTag(tag, set);
     }
 
     void terrain(String text) {

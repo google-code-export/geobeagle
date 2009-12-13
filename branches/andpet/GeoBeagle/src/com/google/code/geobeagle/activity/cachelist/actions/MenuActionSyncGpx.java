@@ -15,6 +15,7 @@
 package com.google.code.geobeagle.activity.cachelist.actions;
 
 import com.google.code.geobeagle.R;
+import com.google.code.geobeagle.Tags;
 import com.google.code.geobeagle.actions.MenuAction;
 import com.google.code.geobeagle.activity.cachelist.GpxImporterFactory;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListAdapter;
@@ -46,6 +47,8 @@ public class MenuActionSyncGpx implements MenuAction {
 
     @Override
     public void act() {
+        //Only the most recent batch of caches is shown as 'new'
+        mDbFrontend.clearTagForAllCaches(Tags.NEW);
         final GpxImporter gpxImporter = mGpxImporterFactory.create(mDbFrontend.getCacheWriter());
         mAbortable = gpxImporter;
         gpxImporter.importGpxs(mCacheList);

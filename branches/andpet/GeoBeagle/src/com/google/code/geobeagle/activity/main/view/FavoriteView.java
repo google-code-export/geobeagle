@@ -50,10 +50,7 @@ public class FavoriteView extends ImageView {
 
     private void setFavorite(boolean favorite) {
         mIsFavorite = favorite;
-        if (favorite)
-            mDbFrontend.addGeocacheTag(mGeocacheId, Tags.FAVORITES);
-        else
-            mDbFrontend.removeGeocacheTag(mGeocacheId, Tags.FAVORITES);
+        mDbFrontend.setGeocacheTag(mGeocacheId, Tags.FAVORITES, favorite);
         updateImage();
     }
     

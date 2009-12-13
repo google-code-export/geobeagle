@@ -19,6 +19,8 @@ import com.google.code.geobeagle.CacheTypeFactory;
 import com.google.code.geobeagle.GeocacheFactory.Source;
 import com.google.code.geobeagle.database.CacheWriter;
 
+import java.util.Hashtable;
+
 /**
  * @author sng
  */
@@ -29,13 +31,16 @@ public class CacheTagSqlWriter {
     private final CacheWriter mCacheWriter;
     private int mContainer;
     private int mDifficulty;
-    private boolean mFound;
     private String mGpxName;
     private CharSequence mId;
     private double mLatitude;
     private double mLongitude;
     private CharSequence mName;
     private String mSqlDate;
+
+    /** An entry here means that the tag is to be removed or added. 
+     * Other tags are left as they are. */
+    private Hashtable<Integer, Boolean> mTags = new Hashtable<Integer, Boolean>();
 
     private int mTerrain;
 
@@ -56,10 +61,10 @@ public class CacheTagSqlWriter {
     public void clear() { // TODO: ensure source is not reset
         mId = mName = null;
         mLatitude = mLongitude = 0;
-        mFound = false;
         mCacheType = CacheType.NULL;
         mDifficulty = 0;
         mTerrain = 0;
+        mTags.clear();
     }
 
     public void container(String container) {
@@ -115,9 +120,9 @@ public class CacheTagSqlWriter {
         if (successfulGpxImport)
             mCacheWriter.writeGpx(mGpxName, mSqlDate);
     }
-
-    public void symbol(String symbol) {
-        mFound = symbol.equals("Geocache Found");
+    
+    public void setTag(int tag, boolean set) {
+        mTags.put(tag, set);
     }
 
     public void terrain(String terrain) {
@@ -125,9 +130,10 @@ public class CacheTagSqlWriter {
     }
 
     public void write(Source source) {
-        //TODO: Do write found caches. Save a tag "Found" for the cache for later handling.
-        if (!mFound)
-            mCacheWriter.insertAndUpdateCache(mId, mName, mLatitude, mLongitude, source, mGpxName,
-                    mCacheType, mDifficulty, mTerrain, mContainer);
+        for (Integer tag : mTags.keySet())
+            mCacheWriter.updateTag(mId, tag, mTags.get(tag));
+        
+        mCacheWriter.insertAndUpdateCache(mId, mName, mLatitude, mLongitude, source, mGpxName,
+                mCacheType, mDifficulty, mTerrain, mContainer);
     }
 }

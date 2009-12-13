@@ -278,16 +278,21 @@ public class DbFrontend {
         cursor.close();
         return (count > 0);
     }
-        
-    public void addGeocacheTag(CharSequence geocacheId, int tagId) {
+    
+    /** Sets or clear a tag for a geocache */
+    public void setGeocacheTag(CharSequence geocacheId, int tagId, boolean set) {
         openDatabase();
-        Log.d("GeoBeagle", "setGeocacheTag(" + geocacheId + ", " + tagId + ")");
-        mSqliteWrapper.execSQL(Database.SQL_REPLACE_CACHETAG, geocacheId, tagId);
+        //Log.d("GeoBeagle", "setGeocacheTag(" + geocacheId + ", " + tagId 
+        //      + ", " + (set?"true":"false")+ ")");
+        if (set)
+            mSqliteWrapper.execSQL(Database.SQL_REPLACE_CACHETAG, geocacheId, tagId);
+        else
+            mSqliteWrapper.execSQL(Database.SQL_DELETE_CACHETAG, geocacheId, tagId);
     }
 
-    public void removeGeocacheTag(CharSequence geocacheId, int tagId) {
+    public void clearTagForAllCaches(int tag) {
         openDatabase();
-        Log.d("GeoBeagle", "unsetGeocacheTag(" + geocacheId + ", " + tagId + ")");
-        mSqliteWrapper.execSQL(Database.SQL_DELETE_CACHETAG, geocacheId, tagId);
+        //TODO: Flush the icons of all caches that had the 'new' tag
+        mSqliteWrapper.execSQL(Database.SQL_DELETE_ALL_TAGS, tag);
     }
 }

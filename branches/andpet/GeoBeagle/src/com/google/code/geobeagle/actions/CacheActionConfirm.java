@@ -1,8 +1,6 @@
 package com.google.code.geobeagle.actions;
 
 import com.google.code.geobeagle.Geocache;
-import com.google.code.geobeagle.R;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;

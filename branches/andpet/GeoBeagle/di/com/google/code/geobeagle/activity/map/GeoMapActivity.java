@@ -85,7 +85,7 @@ public class GeoMapActivity extends MapActivity {
         final Resources resources = getResources();
         final Drawable defaultMarker = resources.getDrawable(R.drawable.pin_default);
         final GraphicsGenerator graphicsGenerator = new GraphicsGenerator();
-        final CacheItemFactory cacheItemFactory = new CacheItemFactory(resources, graphicsGenerator );
+        final CacheItemFactory cacheItemFactory = new CacheItemFactory(resources, graphicsGenerator, mDbFrontend);
 
         final FilterTypeCollection filterTypeCollection = new FilterTypeCollection(this);
         

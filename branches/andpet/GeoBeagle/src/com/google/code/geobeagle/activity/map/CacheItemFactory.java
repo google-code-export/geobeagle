@@ -17,6 +17,7 @@ package com.google.code.geobeagle.activity.map;
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.GraphicsGenerator;
 import com.google.code.geobeagle.R;
+import com.google.code.geobeagle.database.DbFrontend;
 
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
@@ -25,10 +26,13 @@ class CacheItemFactory {
     private final Resources mResources;
     private Geocache mSelected;
     private final GraphicsGenerator mGraphicsGenerator;
+    private final DbFrontend mDbFrontend;
 
-    CacheItemFactory(Resources resources, GraphicsGenerator graphicsGenerator) {
+    CacheItemFactory(Resources resources, GraphicsGenerator graphicsGenerator, 
+            DbFrontend dbFrontend) {
         mResources = resources;
         mGraphicsGenerator = graphicsGenerator;
+        mDbFrontend = dbFrontend;
     }
 
     void setSelectedGeocache(Geocache geocache) {
@@ -40,12 +44,12 @@ class CacheItemFactory {
                 geocache);
         if (geocache == mSelected) {
             Drawable selected = mGraphicsGenerator.superimpose(geocache
-                    .getIconMap(mResources, mGraphicsGenerator), mResources
+                    .getIconMap(mResources, mGraphicsGenerator, mDbFrontend), mResources
                     .getDrawable(R.drawable.glow_40px));
             cacheItem.setMarker(selected);
         } else {
             cacheItem.setMarker(geocache.getIconMap(mResources,
-                    mGraphicsGenerator));
+                    mGraphicsGenerator, mDbFrontend));
         }
         return cacheItem;
     }

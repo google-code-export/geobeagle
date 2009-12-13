@@ -14,6 +14,7 @@
 
 package com.google.code.geobeagle.xmlimport;
 
+import com.google.code.geobeagle.Tags;
 import com.google.code.geobeagle.GeocacheFactory.Source;
 import com.google.code.geobeagle.xmlimport.GpxToCacheDI.XmlPullParserWrapper;
 
@@ -51,6 +52,7 @@ class EventHandlerGpx implements EventHandler {
 
     };
     static final String XPATH_SYM = "/gpx/wpt/sym";
+    static final String XPATH_CACHE = "/gpx/wpt/groundspeak:cache";
     static final String XPATH_WPT = "/gpx/wpt";
     static final String XPATH_WPTDESC = "/gpx/wpt/desc";
     static final String XPATH_WPTNAME = "/gpx/wpt/name";
@@ -74,6 +76,11 @@ class EventHandlerGpx implements EventHandler {
             mCachePersisterFacade.startCache();
             mCachePersisterFacade.wpt(xmlPullParser.getAttributeValue(null, "lat"), xmlPullParser
                     .getAttributeValue(null, "lon"));
+        } else if (fullPath.equals(XPATH_CACHE)) {
+            boolean available = xmlPullParser.getAttributeValue(null, "available").equalsIgnoreCase("true");
+            boolean archived = xmlPullParser.getAttributeValue(null, "archived").equalsIgnoreCase("true");
+            mCachePersisterFacade.setTag(Tags.UNAVAILABLE, !available);
+            mCachePersisterFacade.setTag(Tags.ARCHIVED, archived);
         }
     }
 
@@ -91,7 +98,8 @@ class EventHandlerGpx implements EventHandler {
         } else if (fullPath.equals(XPATH_LOGDATE) || fullPath.equals(XPATH_GEOCACHELOGDATE)) {
             mCachePersisterFacade.logDate(text);
         } else if (fullPath.equals(XPATH_SYM)) {
-            mCachePersisterFacade.symbol(text);
+            if (text.equals("Geocache Found"))
+                mCachePersisterFacade.setTag(Tags.FOUND, true);
         } else if (fullPath.equals(XPATH_HINT) || fullPath.equals(XPATH_GEOCACHEHINT)) {
             if (!text.equals("")) {
                 mCachePersisterFacade.hint(text);

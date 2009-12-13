@@ -119,16 +119,38 @@ public class Geocache {
         return mContainer;
     }
     
-    public Drawable getIcon(Resources resources, GraphicsGenerator graphicsGenerator) {
+    public Drawable getIcon(Resources resources, GraphicsGenerator graphicsGenerator,
+            DbFrontend dbFrontend) {
         if (mIcon == null) {
-            mIcon = graphicsGenerator.createIcon(this, resources);
+            Drawable overlayIcon = null;
+            if (dbFrontend.geocacheHasTag(getId(), Tags.MINE))
+                overlayIcon = resources.getDrawable(R.drawable.overlay_mine_cacheview);
+            else if (dbFrontend.geocacheHasTag(getId(), Tags.FOUND))
+                overlayIcon = resources.getDrawable(R.drawable.overlay_found_cacheview);
+            else if (dbFrontend.geocacheHasTag(getId(), Tags.DNF))
+                overlayIcon = resources.getDrawable(R.drawable.overlay_dnf_cacheview);
+            else if (dbFrontend.geocacheHasTag(getId(), Tags.NEW))
+                overlayIcon = resources.getDrawable(R.drawable.overlay_new_cacheview);
+            
+            mIcon = graphicsGenerator.createIcon(this, overlayIcon, resources);
         }
         return mIcon;
     }
 
-    public Drawable getIconMap(Resources resources, GraphicsGenerator graphicsGenerator) {
+    public Drawable getIconMap(Resources resources, GraphicsGenerator graphicsGenerator,
+            DbFrontend dbFrontend) {
         if (mIconMap == null) {
-            mIconMap = graphicsGenerator.createIconMap(this, resources);
+            Drawable overlayIcon = null;
+            if (dbFrontend.geocacheHasTag(getId(), Tags.MINE))
+                overlayIcon = resources.getDrawable(R.drawable.overlay_mine);
+            else if (dbFrontend.geocacheHasTag(getId(), Tags.FOUND))
+                overlayIcon = resources.getDrawable(R.drawable.overlay_found);
+            else if (dbFrontend.geocacheHasTag(getId(), Tags.DNF))
+                overlayIcon = resources.getDrawable(R.drawable.overlay_dnf);
+            else if (dbFrontend.geocacheHasTag(getId(), Tags.NEW))
+                overlayIcon = resources.getDrawable(R.drawable.overlay_new);
+            
+            mIconMap = graphicsGenerator.createIconMap(this, overlayIcon, resources);
         }
         return mIconMap;
     }
