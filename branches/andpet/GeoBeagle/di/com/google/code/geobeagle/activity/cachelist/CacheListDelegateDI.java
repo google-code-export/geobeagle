@@ -21,6 +21,7 @@ import com.google.code.geobeagle.GeocacheFactory;
 import com.google.code.geobeagle.GraphicsGenerator;
 import com.google.code.geobeagle.IPausable;
 import com.google.code.geobeagle.LocationControlDi;
+import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.actions.CacheAction;
 import com.google.code.geobeagle.actions.CacheActionConfirm;
 import com.google.code.geobeagle.actions.CacheActionDelete;
@@ -212,7 +213,9 @@ public class CacheListDelegateDI {
         
         final AlertDialog.Builder builder = new AlertDialog.Builder(listActivity);
         final CacheActionConfirm cacheActionConfirmDelete =
-            new CacheActionConfirm(listActivity, builder, cacheActionDelete);
+            new CacheActionConfirm(listActivity, builder, cacheActionDelete, 
+                    listActivity.getString(R.string.confirm_delete_title), 
+                    listActivity.getString(R.string.confirm_delete_body_text));
         
         final CacheAction[] contextActions = new CacheAction[] {
                 cacheActionView, cacheActionToggleFavorite, 

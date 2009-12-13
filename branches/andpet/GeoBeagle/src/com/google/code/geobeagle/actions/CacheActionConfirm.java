@@ -14,19 +14,21 @@ public class CacheActionConfirm implements CacheAction {
     private final CacheAction mCacheAction;
     //May Builder only be used once?
     private final AlertDialog.Builder mBuilder;
+    private final String mTitle;
+    private final String mBody;
     
     public CacheActionConfirm(Activity activity, AlertDialog.Builder builder,
-            CacheAction cacheAction) {
+            CacheAction cacheAction, String title, String body) {
         mActivity = activity;
         mBuilder = builder;
         mCacheAction = cacheAction;
+        mTitle = title;
+        mBody = body;
     }
 
     private AlertDialog buildAlertDialog(final Geocache cache) {
-        final String title = String.format(mActivity.getString(R.string.confirm_delete_title), 
-                cache.getId());
-        final String message = String.format(mActivity.getString(R.string.confirm_delete_body_text), 
-                cache.getId(), cache.getName());
+        final String title = String.format(mTitle, cache.getId());
+        final String message = String.format(mBody, cache.getId(), cache.getName());
         mBuilder.setTitle(title);
         mBuilder.setMessage(message)
         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
