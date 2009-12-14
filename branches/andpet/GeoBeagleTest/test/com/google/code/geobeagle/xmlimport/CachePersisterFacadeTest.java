@@ -19,7 +19,6 @@ import static org.easymock.classextension.EasyMock.createMock;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import com.google.code.geobeagle.Tags;
 import com.google.code.geobeagle.GeocacheFactory.Source;
 import com.google.code.geobeagle.cachedetails.CacheDetailsWriter;
 import com.google.code.geobeagle.xmlimport.FileFactory;
@@ -86,7 +85,6 @@ public class CachePersisterFacadeTest {
         mCacheDetailsWriter.close();
         mCacheTagWriter.write(Source.GPX);
         mMessageHandler.updateName("");
-        mCacheTagWriter.setTag(Tags.NEW, true);
 
         PowerMock.replayAll();
         new CachePersisterFacade(mCacheTagWriter, null, mCacheDetailsWriter, mMessageHandler, null)
@@ -100,7 +98,6 @@ public class CachePersisterFacadeTest {
         mCacheTagWriter.write(Source.GPX);
         mCacheTagWriter.cacheName("my cache");
         mMessageHandler.updateName("my cache");
-        mCacheTagWriter.setTag(Tags.NEW, true);
 
         PowerMock.replayAll();
         final CachePersisterFacade cachePersisterFacade = new CachePersisterFacade(mCacheTagWriter,

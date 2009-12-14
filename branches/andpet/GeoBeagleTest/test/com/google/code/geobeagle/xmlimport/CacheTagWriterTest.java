@@ -8,6 +8,7 @@ import static org.junit.Assert.assertTrue;
 
 import com.google.code.geobeagle.CacheType;
 import com.google.code.geobeagle.CacheTypeFactory;
+import com.google.code.geobeagle.Tags;
 import com.google.code.geobeagle.GeocacheFactory.Source;
 import com.google.code.geobeagle.database.CacheWriter;
 
@@ -22,9 +23,10 @@ public class CacheTagWriterTest {
 
     @Test
     public void testClear() {
-        mCacheWriter.insertAndUpdateCache(null, null, 0, 0, Source.GPX, null, CacheType.NULL, 0, 0,
-                0);
-
+        expect(mCacheWriter.insertAndUpdateCache(null, null, 0, 0, 
+                Source.GPX, null, CacheType.NULL, 0, 0, 0)).andReturn(true);
+        mCacheWriter.updateTag(null, Tags.NEW, true);
+        
         PowerMock.replayAll();
         CacheTagSqlWriter cacheTagSqlWriter = new CacheTagSqlWriter(mCacheWriter, null);
         cacheTagSqlWriter.clear();
@@ -106,8 +108,8 @@ public class CacheTagWriterTest {
 
     @Test
     public void testWrite() {
-        mCacheWriter.insertAndUpdateCache("GC123", "my cache", 122, 37, Source.GPX, "foo.gpx",
-                CacheType.TRADITIONAL, 6, 5, 1);
+        expect(mCacheWriter.insertAndUpdateCache("GC123", "my cache", 122, 37, Source.GPX, "foo.gpx",
+                CacheType.TRADITIONAL, 6, 5, 1)).andReturn(false);
         CacheTypeFactory cacheTypeFactory = PowerMock.createMock(CacheTypeFactory.class);
         expect(cacheTypeFactory.container("Micro")).andReturn(1);
         expect(cacheTypeFactory.stars("2.5")).andReturn(5);

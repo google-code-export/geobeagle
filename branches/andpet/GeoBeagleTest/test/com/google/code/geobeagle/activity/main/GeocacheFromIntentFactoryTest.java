@@ -56,7 +56,7 @@ public class GeocacheFromIntentFactoryTest {
         EasyMock.expect(
                 geocacheFactory.create("first", "second", 122.0, 37.0, Source.WEB_URL, null,
                         CacheType.NULL, 0, 0, 0)).andReturn(geocache);
-        geocache.saveToDb(dbFrontend);
+        EasyMock.expect(geocache.saveToDb(dbFrontend)).andReturn(true);
 
         PowerMock.replayAll();
         assertEquals(geocache, new GeocacheFromIntentFactory(geocacheFactory, dbFrontend)

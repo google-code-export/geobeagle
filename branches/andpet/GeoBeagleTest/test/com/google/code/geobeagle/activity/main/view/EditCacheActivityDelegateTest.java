@@ -19,6 +19,7 @@ import static org.junit.Assert.assertEquals;
 import com.google.code.geobeagle.CacheType;
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.GeocacheFactory;
+import com.google.code.geobeagle.Tags;
 import com.google.code.geobeagle.GeocacheFactory.Source;
 import com.google.code.geobeagle.activity.cachelist.GeocacheListController;
 import com.google.code.geobeagle.activity.main.view.EditCacheActivityDelegate.CancelButtonOnClickListener;
@@ -112,11 +113,12 @@ public class EditCacheActivityDelegateTest {
         DbFrontend dbFrontend = PowerMock.createMock(DbFrontend.class);
 
         EasyMock.expect(editCache.get()).andReturn(geocache);
-        geocache.saveToDb(dbFrontend);
+        EasyMock.expect(geocache.saveToDb(dbFrontend)).andReturn(true);
         PowerMock.expectNew(Intent.class).andReturn(intent);
         EasyMock.expect(intent.setAction(GeocacheListController.SELECT_CACHE)).andReturn(intent);
-        EasyMock.expect(geocache.getId()).andReturn("gc123");
+        EasyMock.expect(geocache.getId()).andReturn("gc123").anyTimes();
         EasyMock.expect(intent.putExtra("geocacheId", (CharSequence)"gc123")).andReturn(intent);
+        dbFrontend.setGeocacheTag("gc123", Tags.LOCKED_FROM_OVERWRITING, true);
         activity.setResult(Activity.RESULT_OK, intent);
         activity.finish();
 
