@@ -19,6 +19,7 @@ import static org.easymock.classextension.EasyMock.createMock;
 import static org.easymock.classextension.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.verify;
 
+import com.google.code.geobeagle.Tags;
 import com.google.code.geobeagle.GeocacheFactory.Source;
 import com.google.code.geobeagle.xmlimport.GpxToCacheDI.XmlPullParserWrapper;
 
@@ -156,7 +157,7 @@ public class EventHandlerGpxTest {
     public void testTextSymbol() throws IOException {
         CachePersisterFacade cachePersisterFacade = createMock(CachePersisterFacade.class);
 
-        cachePersisterFacade.symbol("Geocache Found");
+        cachePersisterFacade.setTag(Tags.FOUND, true);
 
         replay(cachePersisterFacade);
         new EventHandlerGpx(cachePersisterFacade).text(EventHandlerGpx.XPATH_SYM, "Geocache Found");

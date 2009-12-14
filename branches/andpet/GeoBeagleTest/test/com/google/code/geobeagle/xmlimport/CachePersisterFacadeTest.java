@@ -19,6 +19,7 @@ import static org.easymock.classextension.EasyMock.createMock;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import com.google.code.geobeagle.Tags;
 import com.google.code.geobeagle.GeocacheFactory.Source;
 import com.google.code.geobeagle.cachedetails.CacheDetailsWriter;
 import com.google.code.geobeagle.xmlimport.FileFactory;
@@ -44,7 +45,7 @@ public class CachePersisterFacadeTest {
 
     @Test
     public void testAttributes() {
-        mCacheTagWriter.symbol("Geocache Found");
+        mCacheTagWriter.setTag(3, true);
         mCacheTagWriter.container("big");
         mCacheTagWriter.difficulty("difficult");
         mCacheTagWriter.terrain("rocky");
@@ -53,7 +54,7 @@ public class CachePersisterFacadeTest {
         PowerMock.replayAll();
         final CachePersisterFacade cachePersisterFacade = new CachePersisterFacade(mCacheTagWriter,
                 null, null, null, null);
-        cachePersisterFacade.symbol("Geocache Found");
+        cachePersisterFacade.setTag(3, true);
         cachePersisterFacade.container("big");
         cachePersisterFacade.difficulty("difficult");
         cachePersisterFacade.terrain("rocky");
@@ -85,6 +86,7 @@ public class CachePersisterFacadeTest {
         mCacheDetailsWriter.close();
         mCacheTagWriter.write(Source.GPX);
         mMessageHandler.updateName("");
+        mCacheTagWriter.setTag(Tags.NEW, true);
 
         PowerMock.replayAll();
         new CachePersisterFacade(mCacheTagWriter, null, mCacheDetailsWriter, mMessageHandler, null)
@@ -98,6 +100,7 @@ public class CachePersisterFacadeTest {
         mCacheTagWriter.write(Source.GPX);
         mCacheTagWriter.cacheName("my cache");
         mMessageHandler.updateName("my cache");
+        mCacheTagWriter.setTag(Tags.NEW, true);
 
         PowerMock.replayAll();
         final CachePersisterFacade cachePersisterFacade = new CachePersisterFacade(mCacheTagWriter,
@@ -195,11 +198,11 @@ public class CachePersisterFacadeTest {
     }
 
     @Test
-    public void testSymbol() {
-        mCacheTagWriter.symbol("Geocache Found");
+    public void testSetTag() {
+        mCacheTagWriter.setTag(3, true);
 
         PowerMock.replayAll();
-        new CachePersisterFacade(mCacheTagWriter, null, null, null, null).symbol("Geocache Found");
+        new CachePersisterFacade(mCacheTagWriter, null, null, null, null).setTag(3, true);;
         PowerMock.verifyAll();
     }
 

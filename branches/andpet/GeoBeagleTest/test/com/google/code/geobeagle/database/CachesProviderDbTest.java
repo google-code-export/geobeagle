@@ -41,8 +41,10 @@ public class CachesProviderDbTest {
     public void testFilterUpdateSetsChanged() {
         expect(mCacheFilter1.getSqlWhereClause()).andReturn("1");
         expect(mCacheFilter1.getRequiredTag()).andReturn(11);
+        expect(mCacheFilter1.getForbiddenTag()).andReturn(0);
         expect(mCacheFilter2.getSqlWhereClause()).andReturn("2");
         expect(mCacheFilter2.getRequiredTag()).andReturn(22);
+        expect(mCacheFilter2.getForbiddenTag()).andReturn(0);
 
         PowerMock.replayAll();
         mCachesProviderDb = new CachesProviderDb(mDbFrontend);
@@ -57,8 +59,10 @@ public class CachesProviderDbTest {
     public void testUnchangedFilter() {
         expect(mCacheFilter1.getSqlWhereClause()).andReturn("CacheType = 1").anyTimes();
         expect(mCacheFilter1.getRequiredTag()).andReturn(0).anyTimes();
+        expect(mCacheFilter1.getForbiddenTag()).andReturn(0);
         expect(mCacheFilter2.getSqlWhereClause()).andReturn("CacheType = 1").anyTimes();
         expect(mCacheFilter2.getRequiredTag()).andReturn(0).anyTimes();
+        expect(mCacheFilter2.getForbiddenTag()).andReturn(0);
         expect(mDbFrontend.countRaw((String)EasyMock.anyObject())).andReturn(5).anyTimes();
 
         PowerMock.replayAll();
@@ -78,8 +82,10 @@ public class CachesProviderDbTest {
         expect(mDbFrontend.loadCachesRaw("SELECT Id FROM CACHES WHERE CacheType = 1")).andReturn(list1);
         expect(mDbFrontend.countRaw((String)EasyMock.anyObject())).andReturn(0).anyTimes();
         expect(mCacheFilter1.getRequiredTag()).andReturn(0).anyTimes();
+        expect(mCacheFilter1.getForbiddenTag()).andReturn(0);
         expect(mCacheFilter1.getSqlWhereClause()).andReturn("");
         expect(mCacheFilter2.getRequiredTag()).andReturn(0).anyTimes();
+        expect(mCacheFilter2.getForbiddenTag()).andReturn(0);
         expect(mCacheFilter2.getSqlWhereClause()).andReturn("CacheType = 1");
 
         PowerMock.replayAll();

@@ -129,13 +129,4 @@ public class CacheTagWriterTest {
         PowerMock.verifyAll();
     }
 
-    @Test
-    public void testWriteFound() {
-        PowerMock.replayAll();
-        CacheTagSqlWriter cacheTagSqlWriter = new CacheTagSqlWriter(mCacheWriter, null);
-        cacheTagSqlWriter.symbol("Geocache Found");
-        cacheTagSqlWriter.write(Source.GPX);
-        PowerMock.verifyAll();
-    }
-
 }

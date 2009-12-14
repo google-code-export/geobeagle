@@ -16,6 +16,7 @@ package com.google.code.geobeagle.cachelist;
 
 import static org.easymock.EasyMock.expect;
 
+import com.google.code.geobeagle.Tags;
 import com.google.code.geobeagle.activity.cachelist.GpxImporterFactory;
 import com.google.code.geobeagle.activity.cachelist.actions.Abortable;
 import com.google.code.geobeagle.activity.cachelist.actions.MenuActionSyncGpx;
@@ -40,6 +41,7 @@ public class MenuActionSyncGpxTest {
         CacheWriter cacheWriter = PowerMock.createMock(CacheWriter.class);
 
         DbFrontend dbFrontend = PowerMock.createMock(DbFrontend.class);
+        dbFrontend.clearTagForAllCaches(Tags.NEW);
         expect(dbFrontend.getCacheWriter()).andReturn(cacheWriter);
 
         EasyMock.expect(gpxImporterFactory.create(cacheWriter)).andReturn(gpxImporter);
