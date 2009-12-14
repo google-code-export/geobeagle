@@ -239,13 +239,16 @@ public class Geocache {
         return mTerrain;
     }
 
-    public void saveToDb(DbFrontend dbFrontend) {
+    /** @return true if the database needed to be updated */
+    public boolean saveToDb(DbFrontend dbFrontend) {
         CacheWriter cacheWriter = dbFrontend.getCacheWriter();
         cacheWriter.startWriting();
-        cacheWriter.insertAndUpdateCache(getId(), getName(), getLatitude(), 
-                getLongitude(), getSourceType(), getSourceName(), 
-                getCacheType(), getDifficulty(), getTerrain(), getContainer());
+        boolean changed =
+            cacheWriter.insertAndUpdateCache(getId(), getName(), getLatitude(), 
+                    getLongitude(), getSourceType(), getSourceName(), 
+                    getCacheType(), getDifficulty(), getTerrain(), getContainer());
         cacheWriter.stopWriting();
+        return changed;
     }
 
     public void saveToBundle(Bundle bundle) {

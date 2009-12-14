@@ -15,8 +15,10 @@
 package com.google.code.geobeagle.database;
 
 import com.google.code.geobeagle.CacheType;
+import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.GeocacheFactory;
 import com.google.code.geobeagle.GeocacheFactory.Source;
+import com.google.code.geobeagle.activity.main.Util;
 
 /**
  * @author sng
@@ -61,13 +63,29 @@ public class CacheWriter {
         mSqlite.execSQL(Database.SQL_DELETE_CACHE, id);
     }
 
-    public void insertAndUpdateCache(CharSequence id, CharSequence name, double latitude,
+    /** @return true if the cache needed to be updated in the database */
+    public boolean insertAndUpdateCache(CharSequence id, CharSequence name, double latitude,
             double longitude, Source sourceType, String sourceName, CacheType cacheType,
             int difficulty, int terrain, int container) {
+        Geocache geocache = mDbFrontend.loadCacheFromId((String)id);
+        //TODO: What is wrong with this comparison?
+        if (geocache != null 
+                && geocache.getName().equals(name)
+                && Util.approxEquals(geocache.getLatitude(), latitude)
+                && Util.approxEquals(geocache.getLongitude(), longitude)
+                && geocache.getSourceType().equals(sourceType)
+                && geocache.getSourceName().equals(sourceName)
+                && geocache.getCacheType() == cacheType
+                && geocache.getDifficulty() == difficulty
+                && geocache.getTerrain() == terrain
+                && geocache.getContainer() == container)
+            return false;
+                
         mGeocacheFactory.flushGeocache(id);
         mSqlite.execSQL(Database.SQL_REPLACE_CACHE, id, name, new Double(latitude), new Double(
                 longitude), mDbToGeocacheAdapter.sourceTypeToSourceName(sourceType, sourceName),
                 cacheType.toInt(), difficulty, terrain, container);
+        return true;
     }
 
     public void updateTag(CharSequence id, int tag, boolean set) {

@@ -17,6 +17,7 @@ package com.google.code.geobeagle.activity.main.view;
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.GeocacheFactory;
 import com.google.code.geobeagle.R;
+import com.google.code.geobeagle.Tags;
 import com.google.code.geobeagle.activity.cachelist.GeocacheListController;
 import com.google.code.geobeagle.activity.main.Util;
 import com.google.code.geobeagle.database.DbFrontend;
@@ -95,7 +96,9 @@ public class EditCacheActivityDelegate {
 
         public void onClick(View v) {
             final Geocache geocache = mGeocacheView.get();
-            geocache.saveToDb(mDbFrontend);
+            if (geocache.saveToDb(mDbFrontend))
+                mDbFrontend.setGeocacheTag(geocache.getId(), Tags.LOCKED_FROM_OVERWRITING, true);
+                
             final Intent i = new Intent();
             i.setAction(GeocacheListController.SELECT_CACHE);
             i.putExtra("geocacheId", geocache.getId());

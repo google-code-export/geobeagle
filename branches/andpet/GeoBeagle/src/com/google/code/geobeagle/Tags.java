@@ -20,4 +20,7 @@ public class Tags {
     /** No logs for this cache */
     public final static int FOUND_BY_NOONE = 8;
 
+    /** Indicates that the user has edited the cache. 
+     * Don't overwrite when importing a newer GPX. */
+    public final static int LOCKED_FROM_OVERWRITING = 9;
 }

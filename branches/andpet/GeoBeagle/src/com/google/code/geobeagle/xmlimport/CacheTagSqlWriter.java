@@ -16,6 +16,7 @@ package com.google.code.geobeagle.xmlimport;
 
 import com.google.code.geobeagle.CacheType;
 import com.google.code.geobeagle.CacheTypeFactory;
+import com.google.code.geobeagle.Tags;
 import com.google.code.geobeagle.GeocacheFactory.Source;
 import com.google.code.geobeagle.database.CacheWriter;
 
@@ -133,7 +134,11 @@ public class CacheTagSqlWriter {
         for (Integer tag : mTags.keySet())
             mCacheWriter.updateTag(mId, tag, mTags.get(tag));
         
-        mCacheWriter.insertAndUpdateCache(mId, mName, mLatitude, mLongitude, source, mGpxName,
-                mCacheType, mDifficulty, mTerrain, mContainer);
+        boolean changed =
+            mCacheWriter.insertAndUpdateCache(mId, mName, mLatitude, mLongitude, 
+                    source, mGpxName, mCacheType, mDifficulty, mTerrain, mContainer);
+        if (changed)
+            mCacheWriter.updateTag(mId, Tags.NEW, true);
+        
     }
 }

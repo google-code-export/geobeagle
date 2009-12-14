@@ -125,4 +125,8 @@ public class Util {
         };
     }
 
+    /** Rounding errors might make equal floating point numbers seem to differ. */
+    public static boolean approxEquals(double a, double b) {
+        return (Math.abs(a - b) < 1.0e-9);
+    }
 }
