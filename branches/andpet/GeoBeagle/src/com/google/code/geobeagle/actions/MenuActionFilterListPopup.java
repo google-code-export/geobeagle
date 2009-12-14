@@ -39,7 +39,6 @@ public class MenuActionFilterListPopup implements MenuAction {
     public void act() {
         final Dialog dialog = new Dialog(mActivity);
 
-        //TODO: Inflate the view and findView R.id.filterlist_radiogroup instead?
         final RadioGroup radioGroup = new RadioGroup(mActivity);
         LinearLayout.LayoutParams layoutParams = new RadioGroup.LayoutParams(
                 RadioGroup.LayoutParams.WRAP_CONTENT,

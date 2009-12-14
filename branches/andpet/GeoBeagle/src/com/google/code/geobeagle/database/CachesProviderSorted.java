@@ -18,6 +18,7 @@ import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.GeocacheList;
 import com.google.code.geobeagle.GeocacheListPrecomputed;
 import com.google.code.geobeagle.activity.main.GeoUtils;
+import com.google.code.geobeagle.activity.main.Util;
 import com.google.code.geobeagle.database.DistanceAndBearing.IDistanceAndBearingProvider;
 
 import android.util.Log;
@@ -118,8 +119,9 @@ IDistanceAndBearingProvider {
 
     @Override
     public void setCenter(double latitude, double longitude) {
-        //TODO: Not good enough to compare doubles with '=='?
-        if (isInitialized && latitude == mLatitude && longitude == mLongitude)
+        if (isInitialized 
+                && Util.approxEquals(latitude, mLatitude) 
+                && Util.approxEquals(longitude, mLongitude))
             return;
         //This only sets what position the caches are sorted against,
         //not which caches are selected for sorting!

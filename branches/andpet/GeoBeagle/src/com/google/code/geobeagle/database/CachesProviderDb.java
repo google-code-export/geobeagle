@@ -3,6 +3,7 @@ package com.google.code.geobeagle.database;
 import com.google.code.geobeagle.CacheFilter;
 import com.google.code.geobeagle.GeocacheList;
 import com.google.code.geobeagle.Tags;
+import com.google.code.geobeagle.activity.main.Util;
 
 /** Uses a DB to fetch the caches within a defined region, or all caches if no 
  * bounds were specified */
@@ -103,9 +104,10 @@ public class CachesProviderDb implements ICachesProviderArea {
 
     @Override
     public void setBounds(double latLow, double lonLow, double latHigh, double lonHigh) {
-        //TODO: OK to compare doubles?
-        if (latLow == mLatLow && latHigh == mLatHigh 
-                && lonLow == mLonLow && lonHigh == mLonHigh) {
+        if (Util.approxEquals(latLow, mLatLow) 
+                && Util.approxEquals(latHigh, mLatHigh) 
+                && Util.approxEquals(lonLow, mLonLow)
+                && Util.approxEquals(lonHigh, mLonHigh)) {
             return;
         }
         mLatLow = latLow;
