@@ -57,7 +57,7 @@ public class MenuActionMyLocationTest {
                 geocacheFactory.create("ML161640", "[16:16] My Location", 37.0, -122.0,
                         Source.MY_LOCATION, null, CacheType.MY_LOCATION, 0, 0, 0)).andReturn(
                 geocache);
-        geocache.saveToDb(dbFrontend);
+        EasyMock.expect(geocache.saveToDb(dbFrontend)).andReturn(true);
         cacheActionEdit.act(geocache);
         
         PowerMock.replayAll();

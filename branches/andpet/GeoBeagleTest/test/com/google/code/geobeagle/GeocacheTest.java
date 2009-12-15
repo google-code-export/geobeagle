@@ -246,8 +246,8 @@ public class GeocacheTest {
         PowerMock.mockStatic(DatabaseDI.class);
 
         writer.startWriting();
-        writer.insertAndUpdateCache("GC123", "a cache", 37.5, -122.25, Source.MY_LOCATION, "manhattan",
-                CacheType.TRADITIONAL, 2, 4, 3);
+        EasyMock.expect(writer.insertAndUpdateCache("GC123", "a cache", 37.5, -122.25, Source.MY_LOCATION, "manhattan",
+                CacheType.TRADITIONAL, 2, 4, 3)).andReturn(true);
         writer.stopWriting();
 
         PowerMock.replayAll();
