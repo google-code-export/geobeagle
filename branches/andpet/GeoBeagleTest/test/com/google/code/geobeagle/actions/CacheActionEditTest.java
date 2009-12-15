@@ -44,7 +44,7 @@ public class CacheActionEditTest {
         activity.startActivityForResult(intent, 0);
 
         PowerMock.replayAll();
-        new CacheActionEdit(activity).act(geocache);
+        new CacheActionEdit(activity, null).act(geocache);
         PowerMock.verifyAll();
     }
 }

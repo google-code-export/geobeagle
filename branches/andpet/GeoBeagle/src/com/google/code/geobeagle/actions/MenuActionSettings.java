@@ -19,21 +19,18 @@ import com.google.code.geobeagle.activity.preferences.EditPreferences;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.Resources;
 
-public class MenuActionSettings implements MenuAction {
+public class MenuActionSettings extends ActionStaticLabel implements MenuAction {
     private final Activity mActivity;
 
-    public MenuActionSettings(Activity activity) {
+    public MenuActionSettings(Activity activity, Resources resources) {
+        super(resources, R.string.menu_settings);
         mActivity = activity;
     }
 
     @Override
     public void act() {
         mActivity.startActivity(new Intent(mActivity, EditPreferences.class));
-    }
-
-    @Override
-    public String getLabel() {
-        return mActivity.getResources().getString(R.string.menu_settings);
     }
 }

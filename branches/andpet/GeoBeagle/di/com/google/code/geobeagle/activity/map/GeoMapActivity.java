@@ -133,16 +133,16 @@ public class GeoMapActivity extends MapActivity {
         final MenuActions menuActions = new MenuActions();
         menuActions.add(new GeoMapActivityDelegate.MenuActionToggleSatellite(mMapView));
         menuActions.add(new GeoMapActivityDelegate.MenuActionCenterLocation(mMapView, mMyLocationOverlay));
-        menuActions.add(new MenuActionCacheList(this));
+        menuActions.add(new MenuActionCacheList(this, resources));
         final List<CachesProviderDb> providers = new ArrayList<CachesProviderDb>();
         providers.add(cachesProviderArea);
         providers.add(cachesProviderAreaPins);
         final CacheFilterUpdater cacheFilterUpdater = 
             new CacheFilterUpdater(filterTypeCollection, providers);
         menuActions.add(new MenuActionEditFilter(this, cacheFilterUpdater, 
-                mOverlayManager, filterTypeCollection));
+                mOverlayManager, filterTypeCollection, resources));
         menuActions.add(new MenuActionFilterListPopup(this, cacheFilterUpdater, 
-                mOverlayManager, filterTypeCollection));
+                mOverlayManager, filterTypeCollection, resources));
         
         mGeoMapActivityDelegate = new GeoMapActivityDelegate(menuActions);
 

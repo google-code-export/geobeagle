@@ -134,8 +134,9 @@ public class GeoBeagle extends Activity {
         geoFixProvider.addObserver(radarViewRefresher);
         final IntentFactory intentFactory = new IntentFactory(new UriParser());
 
+        final Resources resources = this.getResources();
         final CacheActionViewUri intentStarterViewUri = new CacheActionViewUri(this,
-                intentFactory, new GeocacheToGoogleMap(this));
+                intentFactory, new GeocacheToGoogleMap(this), resources);
         final LayoutInflater layoutInflater = LayoutInflater.from(this);
         final FieldNoteSender fieldNoteSender = FieldNoteSenderDI.build(this, layoutInflater);
         final ActivitySaver activitySaver = ActivityDI.createActivitySaver(this);
@@ -145,15 +146,14 @@ public class GeoBeagle extends Activity {
         final IncomingIntentHandler incomingIntentHandler = new IncomingIntentHandler(
                 geocacheFactory, geocacheFromIntentFactory, mDbFrontend);
         Geocache geocache = incomingIntentHandler.maybeGetGeocacheFromIntent(getIntent(), null, mDbFrontend);
-        final Resources resources = this.getResources();
         final MenuAction[] menuActionArray = {
-                new MenuActionCacheList(this), 
-                new MenuActionFromCacheAction(new CacheActionEdit(this), geocache),
+                new MenuActionCacheList(this, resources), 
+                new MenuActionFromCacheAction(new CacheActionEdit(this, resources), geocache),
 //                new MenuActionLogDnf(this), new MenuActionLogFind(this),
                 //new MenuActionSearchOnline(this), 
-                new MenuActionSettings(this),
+                new MenuActionSettings(this, resources),
                 new MenuActionFromCacheAction(new CacheActionGoogleMaps(intentStarterViewUri, resources), geocache),
-                new MenuActionFromCacheAction(new CacheActionProximity(this), geocache),
+                new MenuActionFromCacheAction(new CacheActionProximity(this, resources), geocache),
         };
         final MenuActions menuActions = new MenuActions(menuActionArray);
         final SharedPreferences defaultSharedPreferences = PreferenceManager
@@ -171,7 +171,7 @@ public class GeoBeagle extends Activity {
             setIntent((Intent)getLastNonConfigurationInstance());
         }
 
-        final CacheActionMap cacheActionMap = new CacheActionMap(this);
+        final CacheActionMap cacheActionMap = new CacheActionMap(this, resources);
         final CacheButtonOnClickListener mapsButtonOnClickListener = 
             new CacheButtonOnClickListener(cacheActionMap, this, "Map error", errorDisplayer);
         findViewById(id.maps).setOnClickListener(mapsButtonOnClickListener);
@@ -184,13 +184,13 @@ public class GeoBeagle extends Activity {
 
         final GeocacheToCachePage geocacheToCachePage = new GeocacheToCachePage(getResources());
         final CacheActionViewUri cachePageIntentStarter = new CacheActionViewUri(this,
-                intentFactory, geocacheToCachePage);
+                intentFactory, geocacheToCachePage, resources);
         final CacheButtonOnClickListener cacheButtonOnClickListener = 
             new CacheButtonOnClickListener(cachePageIntentStarter, this, "", errorDisplayer);
         findViewById(id.cache_page).setOnClickListener(cacheButtonOnClickListener);
 
         findViewById(id.radarview).setOnClickListener(new CacheButtonOnClickListener(
-                new CacheActionRadar(this), this, "Please install the Radar application to use Radar.", 
+                new CacheActionRadar(this, resources), this, "Please install the Radar application to use Radar.", 
                 errorDisplayer));
 
         findViewById(id.menu_log_find).setOnClickListener(

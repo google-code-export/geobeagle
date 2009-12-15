@@ -19,21 +19,18 @@ import com.google.code.geobeagle.activity.searchonline.SearchOnlineActivity;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.Resources;
 
-public class MenuActionSearchOnline implements MenuAction {
+public class MenuActionSearchOnline  extends ActionStaticLabel implements MenuAction {
     private final Activity mActivity;
 
-    public MenuActionSearchOnline(Activity activity) {
+    public MenuActionSearchOnline(Activity activity, Resources resources) {
+        super(resources, R.string.menu_search_online);
         mActivity = activity;
     }
 
     @Override
     public void act() {
         mActivity.startActivity(new Intent(mActivity, SearchOnlineActivity.class));
-    }
-
-    @Override
-    public String getLabel() {
-        return mActivity.getResources().getString(R.string.menu_search_online);
     }
 }

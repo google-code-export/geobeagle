@@ -21,14 +21,16 @@ import com.google.code.geobeagle.activity.main.intents.GeocacheToUri;
 import com.google.code.geobeagle.activity.main.intents.IntentFactory;
 
 import android.content.Intent;
+import android.content.res.Resources;
 
-public class CacheActionViewUri implements CacheAction {
+public class CacheActionViewUri extends ActionStaticLabel implements CacheAction {
     private final GeoBeagle mGeoBeagle;
     private final GeocacheToUri mGeocacheToUri;
     private final IntentFactory mIntentFactory;
 
     public CacheActionViewUri(GeoBeagle geoBeagle, IntentFactory intentFactory,
-            GeocacheToUri geocacheToUri) {
+            GeocacheToUri geocacheToUri, Resources resources) {
+        super(resources, R.string.cache_page);
         mGeoBeagle = geoBeagle;
         mGeocacheToUri = geocacheToUri;
         mIntentFactory = intentFactory;
@@ -38,10 +40,5 @@ public class CacheActionViewUri implements CacheAction {
     public void act(Geocache cache) {
         mGeoBeagle.startActivity(mIntentFactory.createIntent(Intent.ACTION_VIEW, 
                 mGeocacheToUri.convert(cache)));
-    }
-
-    @Override
-    public String getLabel(Geocache geocache) {
-        return mGeoBeagle.getResources().getString(R.string.cache_page);
     }
 }

@@ -183,28 +183,28 @@ public class CacheListDelegateDI {
         final Resources resources = listActivity.getResources();
         final MenuActionSyncGpx menuActionSyncGpx = new MenuActionSyncGpx(nullAbortable,
                 cacheListAdapter, gpxImporterFactory, dbFrontend, resources);
-        final CacheActionEdit cacheActionEdit = new CacheActionEdit(listActivity);
+        final CacheActionEdit cacheActionEdit = new CacheActionEdit(listActivity, resources);
         final MenuActions menuActions = new MenuActions();
         menuActions.add(new MenuActionToggleFilter(cachesProviderToggler, cacheListAdapter, resources));
-        menuActions.add(new MenuActionSearchOnline(listActivity));
+        menuActions.add(new MenuActionSearchOnline(listActivity, resources));
         List<CachesProviderDb> providers = new ArrayList<CachesProviderDb>();
         providers.add(cachesProviderDb);
         providers.add(cachesProviderAll);
         final CacheFilterUpdater cacheFilterUpdater = 
             new CacheFilterUpdater(filterTypeCollection, providers);
-        menuActions.add(new MenuActionMap(listActivity, geoFixProvider));
+        menuActions.add(new MenuActionMap(listActivity, geoFixProvider, resources));
         //menuActions.add(new MenuActionFilterList(listActivity));
         menuActions.add(new MenuActionEditFilter(listActivity, cacheFilterUpdater, 
-                cacheListAdapter, filterTypeCollection));
+                cacheListAdapter, filterTypeCollection, resources));
         menuActions.add(new MenuActionFilterListPopup(listActivity, cacheFilterUpdater, 
-                cacheListAdapter, filterTypeCollection));
+                cacheListAdapter, filterTypeCollection, resources));
         menuActions.add(new MenuActionMyLocation(errorDisplayer,
                 geocacheFactory, geoFixProvider, dbFrontend, resources, cacheActionEdit));
         menuActions.add(menuActionSyncGpx);
-        menuActions.add(new MenuActionSettings(listActivity));
+        menuActions.add(new MenuActionSettings(listActivity, resources));
         
         // *** BUILD CONTEXT MENU ***
-        final CacheActionView cacheActionView = new CacheActionView(listActivity);
+        final CacheActionView cacheActionView = new CacheActionView(listActivity, resources);
         final CacheActionToggleFavorite cacheActionToggleFavorite = 
             new CacheActionToggleFavorite(dbFrontend, cacheListAdapter, cacheFilterUpdater);
         //TODO: It is currently a bug to send cachesProviderDb since cachesProviderAll also need to be notified of db changes.

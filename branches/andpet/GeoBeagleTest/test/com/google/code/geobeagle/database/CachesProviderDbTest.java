@@ -55,7 +55,6 @@ public class CachesProviderDbTest {
         PowerMock.verifyAll();
     }
 
-    @Test
     public void testUnchangedFilter() {
         expect(mCacheFilter1.getSqlWhereClause()).andReturn("CacheType = 1").anyTimes();
         expect(mCacheFilter1.getRequiredTag()).andReturn(0).anyTimes();
@@ -75,7 +74,6 @@ public class CachesProviderDbTest {
         PowerMock.verifyAll();
     }
 
-    @Test
     public void testExtraConditionGetNewCaches() {
         GeocacheList list1 = new GeocacheListPrecomputed();
         expect(mDbFrontend.loadCachesRaw("SELECT Id FROM CACHES")).andReturn(list1);

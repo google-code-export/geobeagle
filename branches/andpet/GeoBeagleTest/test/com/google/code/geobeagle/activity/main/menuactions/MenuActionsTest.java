@@ -50,7 +50,7 @@ public class MenuActionsTest {
         activity.startActivity(intent);
 
         PowerMock.replayAll();
-        new MenuActionCacheList(activity).act();
+        new MenuActionCacheList(activity, null).act();
         PowerMock.verifyAll();
     }
 
@@ -63,7 +63,7 @@ public class MenuActionsTest {
         activity.startActivity(intent);
 
         PowerMock.replayAll();
-        new MenuActionSettings(activity).act();
+        new MenuActionSettings(activity, null).act();
         PowerMock.verifyAll();
     }
 
@@ -76,7 +76,7 @@ public class MenuActionsTest {
         activity.startActivity(intent);
 
         PowerMock.replayAll();
-        new MenuActionSearchOnline(activity).act();
+        new MenuActionSearchOnline(activity, null).act();
         PowerMock.verifyAll();
     }
 
@@ -87,7 +87,7 @@ public class MenuActionsTest {
         activity.showDialog(R.id.menu_log_dnf);
 
         PowerMock.replayAll();
-        final MenuActionLogDnf menuActionLogDnf = new MenuActionLogDnf(activity);
+        final MenuActionLogDnf menuActionLogDnf = new MenuActionLogDnf(activity, null);
         menuActionLogDnf.act();
         PowerMock.verifyAll();
     }
@@ -99,7 +99,7 @@ public class MenuActionsTest {
         activity.showDialog(R.id.menu_log_find);
 
         PowerMock.replayAll();
-        final MenuActionLogFind menuActionLogFind = new MenuActionLogFind(activity);
+        final MenuActionLogFind menuActionLogFind = new MenuActionLogFind(activity, null);
         menuActionLogFind.act();
         PowerMock.verifyAll();
     }

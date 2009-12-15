@@ -20,11 +20,13 @@ import com.google.code.geobeagle.activity.EditCacheActivity;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.Resources;
 
-public class CacheActionEdit implements CacheAction {
+public class CacheActionEdit extends ActionStaticLabel implements CacheAction {
     private final Activity mActivity;
 
-    public CacheActionEdit(Activity activity) {
+    public CacheActionEdit(Activity activity, Resources resources) {
+        super(resources, R.string.menu_edit_geocache);
         mActivity = activity;
     }
 
@@ -33,10 +35,5 @@ public class CacheActionEdit implements CacheAction {
         Intent intent = new Intent(mActivity, EditCacheActivity.class);
         intent.putExtra("geocacheId", cache.getId());
         mActivity.startActivityForResult(intent, 0);
-    }
-
-    @Override
-    public String getLabel(Geocache geocache) {
-        return mActivity.getResources().getString(R.string.menu_edit_geocache);
     }
 }

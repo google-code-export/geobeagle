@@ -17,22 +17,19 @@ package com.google.code.geobeagle.actions;
 import com.google.code.geobeagle.R;
 
 import android.app.Activity;
+import android.content.res.Resources;
 
 //Could be changed into a CacheAction
-public class MenuActionLogDnf implements MenuAction {
+public class MenuActionLogDnf extends ActionStaticLabel implements MenuAction {
     private final Activity mActivity;
 
-    public MenuActionLogDnf(Activity activity) {
+    public MenuActionLogDnf(Activity activity, Resources resources) {
+        super(resources, R.string.menu_log_dnf);
         mActivity = activity;
     }
 
     @Override
     public void act() {
         mActivity.showDialog(R.id.menu_log_dnf);
-    }
-
-    @Override
-    public String getLabel() {
-        return mActivity.getResources().getString(R.string.menu_log_dnf);
     }
 }

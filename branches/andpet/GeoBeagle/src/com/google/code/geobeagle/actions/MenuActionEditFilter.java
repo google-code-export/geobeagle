@@ -6,6 +6,7 @@ import com.google.code.geobeagle.Refresher;
 import com.google.code.geobeagle.activity.filterlist.FilterTypeCollection;
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.res.Resources;
 import android.view.View;
 import android.view.Window;
 import android.view.View.OnClickListener;
@@ -16,7 +17,7 @@ import android.widget.TextView;
 
 /** Show a dialog to let the user edit the current filter 
  * for which geocaches to display */
-public class MenuActionEditFilter implements MenuAction {
+public class MenuActionEditFilter extends ActionStaticLabel implements MenuAction {
     private final Activity mActivity;
     private final FilterTypeCollection mFilterTypeCollection;
     private final CacheFilterUpdater mCacheFilterUpdater;
@@ -25,7 +26,8 @@ public class MenuActionEditFilter implements MenuAction {
     
     public MenuActionEditFilter(Activity activity,
             CacheFilterUpdater cacheFilterUpdater,
-            Refresher refresher, FilterTypeCollection filterTypeCollection) {
+            Refresher refresher, FilterTypeCollection filterTypeCollection, Resources resources) {
+        super(resources, R.string.menu_edit_filter);
         mActivity = activity;
         mCacheFilterUpdater = cacheFilterUpdater;
         mRefresher = refresher;

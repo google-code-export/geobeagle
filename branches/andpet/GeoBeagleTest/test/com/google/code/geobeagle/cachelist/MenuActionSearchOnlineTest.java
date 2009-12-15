@@ -27,7 +27,7 @@ public class MenuActionSearchOnlineTest {
         activity.startActivity(intent);
 
         PowerMock.replayAll();
-        new MenuActionSearchOnline(activity).act();
+        new MenuActionSearchOnline(activity, null).act();
         PowerMock.verifyAll();
     }
 }

@@ -19,21 +19,18 @@ import com.google.code.geobeagle.activity.cachelist.CacheListActivity;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.Resources;
 
-public class MenuActionCacheList implements MenuAction {
+public class MenuActionCacheList extends ActionStaticLabel implements MenuAction {
     private Activity mActivity;
 
-    public MenuActionCacheList(Activity activity) {
+    public MenuActionCacheList(Activity activity, Resources resources) {
+        super(resources, R.string.menu_cache_list);
         mActivity = activity;
     }
 
     @Override
     public void act() {
         mActivity.startActivity(new Intent(mActivity, CacheListActivity.class));
-    }
-
-    @Override
-    public String getLabel() {
-        return mActivity.getResources().getString(R.string.menu_cache_list);
     }
 }

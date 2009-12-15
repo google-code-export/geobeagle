@@ -48,7 +48,7 @@ public class CacheActionViewTest {
         context.startActivity(intent);
 
         PowerMock.replayAll();
-        new CacheActionView(context).act(geocache);
+        new CacheActionView(context, null).act(geocache);
         PowerMock.verifyAll();
     }
 }

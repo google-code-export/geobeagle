@@ -48,7 +48,7 @@ public class CacheActionRadarTest {
         PowerMock.expectNew(Intent.class, "com.google.android.radar.SHOW_RADAR").andReturn(intent);
         
         PowerMock.replayAll();
-        new CacheActionRadar(activity).act(geocache);
+        new CacheActionRadar(activity, null).act(geocache);
         PowerMock.verifyAll();
     }
 }

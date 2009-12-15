@@ -6,6 +6,7 @@ import com.google.code.geobeagle.Refresher;
 import com.google.code.geobeagle.activity.filterlist.FilterTypeCollection;
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.res.Resources;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -14,7 +15,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
 /** Show a popup dialog to let the user choose what filter to use */
-public class MenuActionFilterListPopup implements MenuAction {
+public class MenuActionFilterListPopup extends ActionStaticLabel implements MenuAction {
     private final Activity mActivity;
     private final FilterTypeCollection mFilterTypeCollection;
     private final CacheFilterUpdater mCacheFilterUpdater;
@@ -22,19 +23,14 @@ public class MenuActionFilterListPopup implements MenuAction {
     
     public MenuActionFilterListPopup(Activity activity,
             CacheFilterUpdater cacheFilterUpdater,
-            Refresher refresher, FilterTypeCollection filterTypeCollection) {
+            Refresher refresher, FilterTypeCollection filterTypeCollection, Resources resources) {
+        super(resources, R.string.menu_choose_filter);
         mActivity = activity;
         mCacheFilterUpdater = cacheFilterUpdater;
         mRefresher = refresher;
         mFilterTypeCollection = filterTypeCollection;
     }
 
-    @Override
-    public String getLabel() {
-        return mActivity.getResources().getString(R.string.menu_choose_filter);
-    }
-    
-    
     @Override
     public void act() {
         final Dialog dialog = new Dialog(mActivity);

@@ -42,7 +42,7 @@ public class IntentStarterViewUriTest {
         geoBeagle.startActivity(intent);
 
         PowerMock.replayAll();
-        new CacheActionViewUri(geoBeagle, intentFactory, geocacheToUri).act(geocache);
+        new CacheActionViewUri(geoBeagle, intentFactory, geocacheToUri, null).act(geocache);
         PowerMock.verifyAll();
     }
 

@@ -23,20 +23,19 @@ import com.google.code.geobeagle.database.DbFrontend;
 
 import android.content.res.Resources;
 
-public class CacheActionDelete implements CacheAction {
+public class CacheActionDelete extends ActionStaticLabel implements CacheAction {
     private final CacheListAdapter mCacheListAdapter;
     private final DbFrontend mDbFrontend;
     private final TitleUpdater mTitleUpdater;
     private final CachesProviderDb mCachesToFlush;
-    private final Resources mResources;
 
     public CacheActionDelete(CacheListAdapter cacheListAdapter, TitleUpdater titleUpdater,
             DbFrontend dbFrontend, CachesProviderDb cachesToFlush, Resources resources) {
+        super(resources, R.string.menu_delete_cache);
         mCacheListAdapter = cacheListAdapter;
         mTitleUpdater = titleUpdater;
         mDbFrontend = dbFrontend;
         mCachesToFlush = cachesToFlush;
-        mResources = resources;
     }
 
     @Override
@@ -45,11 +44,6 @@ public class CacheActionDelete implements CacheAction {
         mCachesToFlush.notifyOfDbChange();  //Reload the cache list from the database
         mTitleUpdater.refresh();
         mCacheListAdapter.forceRefresh();
-    }
-
-    @Override
-    public String getLabel(Geocache geocache) {
-        return mResources.getString(R.string.menu_delete_cache);
     }
 
 }

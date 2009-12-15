@@ -19,7 +19,7 @@ import com.google.code.geobeagle.GeocacheListPrecomputed;
 
 import java.util.ArrayList;
 
-public class CachesProviderStub implements ICachesProviderArea {
+class CachesProviderStub implements ICachesProviderArea {
 
     private ArrayList<Geocache> mGeocaches = new ArrayList<Geocache>();
     private double mLatLow = 0.0;
@@ -30,7 +30,13 @@ public class CachesProviderStub implements ICachesProviderArea {
 
     private int mBoundsCalls = 0;
     private boolean mIsInitialized = false;
-    
+    public CachesProviderStub() {
+        
+    }
+    public CachesProviderStub(ArrayList<Geocache> geocacheList)  {
+        mGeocaches = geocacheList;
+    }
+
     public void addCache(Geocache geocache) {
         mGeocaches.add(geocache);
     }
