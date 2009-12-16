@@ -283,4 +283,10 @@ public class Geocache {
         editor.putInt(TERRAIN, mTerrain);
         editor.putInt(CONTAINER, mContainer);
     }
+
+    /** The icons will be recalculated the next time they are needed. */
+    public void flushIcons() {
+        mIcon = null;
+        mIconMap = null;
+    }
 }

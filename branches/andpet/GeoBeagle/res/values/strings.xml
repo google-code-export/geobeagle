@@ -115,4 +115,5 @@
 <string name="confirm_delete_title">Confirm delete %1$s</string>
 <string name="confirm_delete_body_text">Delete %1$s: "%2$s"?</string>
 <string name="delete_cache">Delete cache</string>
+<string name="assign_tags">Assign tags</string>
 </resources>

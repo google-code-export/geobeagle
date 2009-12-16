@@ -23,12 +23,15 @@ import com.google.code.geobeagle.IPausable;
 import com.google.code.geobeagle.LocationControlDi;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.actions.CacheAction;
+import com.google.code.geobeagle.actions.CacheActionAssignTags;
 import com.google.code.geobeagle.actions.CacheActionConfirm;
 import com.google.code.geobeagle.actions.CacheActionDelete;
 import com.google.code.geobeagle.actions.CacheActionEdit;
 import com.google.code.geobeagle.actions.CacheActionToggleFavorite;
 import com.google.code.geobeagle.actions.CacheActionView;
+import com.google.code.geobeagle.actions.CacheContextMenu;
 import com.google.code.geobeagle.actions.CacheFilterUpdater;
+import com.google.code.geobeagle.actions.MenuActionClearTagNew;
 import com.google.code.geobeagle.actions.MenuActionEditFilter;
 import com.google.code.geobeagle.actions.MenuActionFilterListPopup;
 import com.google.code.geobeagle.actions.MenuActionMap;
@@ -38,7 +41,6 @@ import com.google.code.geobeagle.actions.MenuActions;
 import com.google.code.geobeagle.activity.ActivityDI;
 import com.google.code.geobeagle.activity.ActivitySaver;
 import com.google.code.geobeagle.activity.cachelist.CacheListDelegate.ImportIntentManager;
-import com.google.code.geobeagle.activity.cachelist.GeocacheListController.CacheListOnCreateContextMenuListener;
 import com.google.code.geobeagle.activity.cachelist.actions.Abortable;
 import com.google.code.geobeagle.activity.cachelist.actions.MenuActionMyLocation;
 import com.google.code.geobeagle.activity.cachelist.actions.MenuActionSyncGpx;
@@ -83,6 +85,7 @@ import java.util.Calendar;
 import java.util.List;
 
 public class CacheListDelegateDI {
+    //TODO: Remove class Timing and replace uses by Clock
     public static class Timing {
         private long mStartTime;
 
@@ -198,6 +201,7 @@ public class CacheListDelegateDI {
                 cacheListAdapter, filterTypeCollection, resources));
         menuActions.add(new MenuActionFilterListPopup(listActivity, cacheFilterUpdater, 
                 cacheListAdapter, filterTypeCollection, resources));
+        menuActions.add(new MenuActionClearTagNew(dbFrontend, geocacheFactory, cacheListAdapter));
         menuActions.add(new MenuActionMyLocation(errorDisplayer,
                 geocacheFactory, geoFixProvider, dbFrontend, resources, cacheActionEdit));
         menuActions.add(menuActionSyncGpx);
@@ -212,6 +216,8 @@ public class CacheListDelegateDI {
             new CacheActionDelete(cacheListAdapter, titleUpdater, dbFrontend, cachesProviderDb, resources);
         
         final AlertDialog.Builder builder = new AlertDialog.Builder(listActivity);
+        CacheActionAssignTags cacheActionAssignTags = 
+            new CacheActionAssignTags(listActivity, dbFrontend, cacheListAdapter);
         final CacheActionConfirm cacheActionConfirmDelete =
             new CacheActionConfirm(listActivity, builder, cacheActionDelete, 
                     listActivity.getString(R.string.confirm_delete_title), 
@@ -219,22 +225,24 @@ public class CacheListDelegateDI {
         
         final CacheAction[] contextActions = new CacheAction[] {
                 cacheActionView, cacheActionToggleFavorite, 
-                cacheActionEdit, cacheActionConfirmDelete
+                cacheActionEdit, cacheActionAssignTags,
+                cacheActionConfirmDelete
         };
-        final GeocacheListController geocacheListController = 
-            new GeocacheListController(cacheListAdapter, contextActions, menuActionSyncGpx, 
-                    menuActions, cacheActionView, cacheFilterUpdater);
 
         final ActivitySaver activitySaver = ActivityDI.createActivitySaver(listActivity);
         final ImportIntentManager importIntentManager = new ImportIntentManager(listActivity);
-        final CacheListOnCreateContextMenuListener menuCreator = 
-            new CacheListOnCreateContextMenuListener(cachesProviderToggler, contextActions);
+        final CacheContextMenu contextMenu = 
+            new CacheContextMenu(cachesProviderToggler, contextActions);
         final IPausable pausables[] = { geoFixProvider, thread };
 
+        final GeocacheListController geocacheListController = 
+            new GeocacheListController(cacheListAdapter, menuActionSyncGpx, 
+                    menuActions, cacheActionView, cacheFilterUpdater);
+        
         //TODO: It is currently a bug to send cachesProviderDb since cachesProviderAll also need to be notified of db changes.
         return new CacheListDelegate(importIntentManager, activitySaver,
                 geocacheListController, dbFrontend, updateGpsWidgetRunnable, 
-                gpsStatusWidget, menuCreator, cacheListAdapter, geocacheSummaryRowInflater, listActivity, 
+                gpsStatusWidget, contextMenu, cacheListAdapter, geocacheSummaryRowInflater, listActivity, 
                 scrollListener, distanceFormatterManager, cachesProviderDb, pausables);
     }
 }

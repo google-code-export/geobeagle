@@ -161,6 +161,12 @@ public class GeocacheFactory {
     public void flushCache() {
         mGeocaches.clear();
     }
+    
+    public void flushCacheIcons() {
+        for (Geocache geocache : mGeocaches.values()) {
+            geocache.flushIcons();
+        }
+    }
 
     /** Forces the geocache to be reloaded from the database the next time it is needed. */
     public void flushGeocache(CharSequence geocacheId) {

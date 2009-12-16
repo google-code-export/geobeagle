@@ -16,9 +16,9 @@ package com.google.code.geobeagle.activity.cachelist;
 
 import com.google.code.geobeagle.IPausable;
 import com.google.code.geobeagle.R;
+import com.google.code.geobeagle.actions.CacheContextMenu;
 import com.google.code.geobeagle.activity.ActivitySaver;
 import com.google.code.geobeagle.activity.ActivityType;
-import com.google.code.geobeagle.activity.cachelist.GeocacheListController.CacheListOnCreateContextMenuListener;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListAdapter;
 import com.google.code.geobeagle.activity.cachelist.presenter.DistanceFormatterManager;
 import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheSummaryRowInflater;
@@ -75,7 +75,7 @@ public class CacheListDelegate {
     private final ImportIntentManager mImportIntentManager;
     private final UpdateGpsWidgetRunnable mUpdateGpsWidgetRunnable;
     private final CacheListAdapter.ScrollListener mScrollListener;
-    private final CacheListOnCreateContextMenuListener mMenuCreator;
+    private final CacheContextMenu mContextMenu;
     private final CacheListAdapter mCacheList;
     private final View mGpsStatusWidget;
     private final ListActivity mListActivity;
@@ -89,7 +89,7 @@ public class CacheListDelegate {
             DbFrontend dbFrontend,
             UpdateGpsWidgetRunnable updateGpsWidgetRunnable,
             View gpsStatusWidget,
-            CacheListOnCreateContextMenuListener menuCreator,
+            CacheContextMenu menuCreator,
             CacheListAdapter cacheList,
             GeocacheSummaryRowInflater geocacheSummaryRowInflater,
             ListActivity listActivity,
@@ -103,7 +103,7 @@ public class CacheListDelegate {
         mDbFrontend = dbFrontend;
         mUpdateGpsWidgetRunnable = updateGpsWidgetRunnable;
         mGpsStatusWidget = gpsStatusWidget;
-        mMenuCreator = menuCreator;
+        mContextMenu = menuCreator;
         mCacheList = cacheList;
         mGeocacheSummaryRowInflater = geocacheSummaryRowInflater;
         mListActivity = listActivity;
@@ -114,7 +114,7 @@ public class CacheListDelegate {
     }
 
     public boolean onContextItemSelected(MenuItem menuItem) {
-        return mController.onContextItemSelected(menuItem);
+        return mContextMenu.onContextItemSelected(menuItem);
     }
 
     public void onCreate() {
@@ -122,7 +122,7 @@ public class CacheListDelegate {
         final ListView listView = mListActivity.getListView();
         listView.addHeaderView(mGpsStatusWidget);
         mListActivity.setListAdapter(mCacheList);
-        listView.setOnCreateContextMenuListener(mMenuCreator);
+        listView.setOnCreateContextMenuListener(mContextMenu);
         listView.setOnScrollListener(mScrollListener);
         mUpdateGpsWidgetRunnable.run();
     }
