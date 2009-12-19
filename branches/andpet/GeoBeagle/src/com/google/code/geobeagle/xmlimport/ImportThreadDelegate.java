@@ -57,6 +57,7 @@ public class ImportThreadDelegate {
                 mErrorDisplayer.displayError(R.string.error_no_gpx_files);
         }
 
+        /** @return true if we should continue to load files */
         public boolean processFile(IGpxReader gpxReader) throws XmlPullParserException, IOException {
             String filename = gpxReader.getFilename();
 

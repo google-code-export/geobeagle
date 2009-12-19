@@ -17,15 +17,20 @@ package com.google.code.geobeagle.activity.cachelist.presenter;
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.GraphicsGenerator;
 import com.google.code.geobeagle.R;
+import com.google.code.geobeagle.Tags;
 import com.google.code.geobeagle.database.DbFrontend;
 import com.google.code.geobeagle.database.DistanceAndBearing;
 import com.google.code.geobeagle.formatting.DistanceFormatter;
 
 import android.content.res.Resources;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import java.awt.font.TextAttribute;
 
 public class GeocacheSummaryRowInflater implements HasDistanceFormatter {
     static class RowViews {
@@ -64,6 +69,12 @@ public class GeocacheSummaryRowInflater implements HasDistanceFormatter {
             return formattedDistance + " " + formattedBearing;
         }
 
+        private static void setStrikethrough(TextView textView, boolean set) {
+            if (set)
+                textView.setPaintFlags(textView.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+            else
+                textView.setPaintFlags(textView.getPaintFlags() & ~Paint.STRIKE_THRU_TEXT_FLAG);
+        }
         void set(DistanceAndBearing distanceAndBearing, float azimuth, 
                 DistanceFormatter distanceFormatter,
                 BearingFormatter relativeBearingFormatter, 
@@ -76,6 +87,16 @@ public class GeocacheSummaryRowInflater implements HasDistanceFormatter {
             mId.setText(geocache.getId());
             mAttributes.setText(geocache.getFormattedAttributes());
             mCacheName.setText(geocache.getName());
+            if (dbFrontend.geocacheHasTag(geocache.getId(), Tags.ARCHIVED)) {
+                mCacheName.setTextColor(Color.DKGRAY);
+                setStrikethrough(mCacheName, true);
+            } else if (dbFrontend.geocacheHasTag(geocache.getId(), Tags.UNAVAILABLE)) {
+                mCacheName.setTextColor(Color.LTGRAY);
+                setStrikethrough(mCacheName, true);
+            } else {
+                mCacheName.setTextColor(Color.WHITE);
+                setStrikethrough(mCacheName, false);
+            }
             mDistance.setText(getFormattedDistance(distanceAndBearing, azimuth, distanceFormatter,
                     relativeBearingFormatter));
         }

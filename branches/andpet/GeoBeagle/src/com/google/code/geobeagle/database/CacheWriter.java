@@ -20,6 +20,8 @@ import com.google.code.geobeagle.GeocacheFactory;
 import com.google.code.geobeagle.GeocacheFactory.Source;
 import com.google.code.geobeagle.activity.main.Util;
 
+import android.util.Log;
+
 /**
  * @author sng
  */
@@ -69,7 +71,7 @@ public class CacheWriter {
             int difficulty, int terrain, int container) {
         Geocache geocache = mDbFrontend.loadCacheFromId((String)id);
         //TODO: What is wrong with this comparison?
-        if (geocache != null 
+        if (geocache != null
                 && geocache.getName().equals(name)
                 && Util.approxEquals(geocache.getLatitude(), latitude)
                 && Util.approxEquals(geocache.getLongitude(), longitude)
@@ -80,7 +82,32 @@ public class CacheWriter {
                 && geocache.getTerrain() == terrain
                 && geocache.getContainer() == container)
             return false;
-                
+
+/*
+        if (geocache != null) {
+            if (!geocache.getName().equals(name))
+                Log.d("GeoBeagle", "CacheWriter updating "+id+" because of name");
+            if (!Util.approxEquals(geocache.getLatitude(), latitude))
+                Log.d("GeoBeagle", "CacheWriter updating "+id+" because of lat");
+            if (!Util.approxEquals(geocache.getLongitude(), longitude))
+                Log.d("GeoBeagle", "CacheWriter updating "+id+" because of long");
+            if (!geocache.getSourceType().equals(sourceType))
+                Log.d("GeoBeagle", "CacheWriter updating "+id+" because of sourceType");
+            if (!geocache.getSourceName().equals(sourceName))
+                Log.d("GeoBeagle", "CacheWriter updating "+id+" because of sourceName");
+            if (geocache.getCacheType() != cacheType)
+                Log.d("GeoBeagle", "CacheWriter updating "+id+" because of type");
+            if (geocache.getDifficulty() != difficulty)
+                Log.d("GeoBeagle", "CacheWriter updating "+id+" because of diff");
+            if (geocache.getTerrain() != terrain)
+                Log.d("GeoBeagle", "CacheWriter updating "+id+" because of terrain");
+            if (geocache.getContainer() != container)
+                Log.d("GeoBeagle", "CacheWriter updating "+id+" because of container");
+        } else {
+            Log.d("GeoBeagle", "CacheWriter creating cache "+id);
+        }
+*/
+        
         mGeocacheFactory.flushGeocache(id);
         mSqlite.execSQL(Database.SQL_REPLACE_CACHE, id, name, new Double(latitude), new Double(
                 longitude), mDbToGeocacheAdapter.sourceTypeToSourceName(sourceType, sourceName),

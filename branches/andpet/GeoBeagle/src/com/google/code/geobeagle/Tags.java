@@ -35,6 +35,7 @@ public class Tags {
         map.put(FAVORITES, "Favorite");
         map.put(NEW, "New");
         map.put(MINE, "Mine");
+        map.put(UNAVAILABLE, "Unavailable");
         return map;
     }
 }
