@@ -29,6 +29,7 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 
+//TODO: Create a separate package for edit
 public class EditCacheActivityDelegate {
     public static class CancelButtonOnClickListener implements OnClickListener {
         private final Activity mActivity;

@@ -20,6 +20,8 @@ import com.google.code.geobeagle.Tags;
 import com.google.code.geobeagle.GeocacheFactory.Source;
 import com.google.code.geobeagle.database.CacheWriter;
 
+import android.util.Log;
+
 import java.util.Hashtable;
 
 /**
@@ -131,6 +133,11 @@ public class CacheTagSqlWriter {
     }
 
     public void write(Source source) {
+        if (mCacheWriter.isLockedFromUpdating(mId)) {
+            Log.i("GeoBeagle", "Not updating " + mId + " because it is locked");
+            return;
+        }
+        
         for (Integer tag : mTags.keySet())
             mCacheWriter.updateTag(mId, tag, mTags.get(tag));
         

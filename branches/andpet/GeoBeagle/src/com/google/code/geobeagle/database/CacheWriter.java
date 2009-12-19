@@ -17,6 +17,7 @@ package com.google.code.geobeagle.database;
 import com.google.code.geobeagle.CacheType;
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.GeocacheFactory;
+import com.google.code.geobeagle.Tags;
 import com.google.code.geobeagle.GeocacheFactory.Source;
 import com.google.code.geobeagle.activity.main.Util;
 
@@ -69,8 +70,7 @@ public class CacheWriter {
     public boolean insertAndUpdateCache(CharSequence id, CharSequence name, double latitude,
             double longitude, Source sourceType, String sourceName, CacheType cacheType,
             int difficulty, int terrain, int container) {
-        Geocache geocache = mDbFrontend.loadCacheFromId((String)id);
-        //TODO: What is wrong with this comparison?
+        Geocache geocache = mDbFrontend.loadCacheFromId(id.toString());
         if (geocache != null
                 && geocache.getName().equals(name)
                 && Util.approxEquals(geocache.getLatitude(), latitude)
@@ -117,6 +117,10 @@ public class CacheWriter {
 
     public void updateTag(CharSequence id, int tag, boolean set) {
         mDbFrontend.setGeocacheTag(id, tag, set);
+    }
+
+    public boolean isLockedFromUpdating(CharSequence id) {
+        return mDbFrontend.geocacheHasTag(id, Tags.LOCKED_FROM_OVERWRITING);
     }
     
     /**
