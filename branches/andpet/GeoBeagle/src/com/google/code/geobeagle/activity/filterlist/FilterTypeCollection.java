@@ -43,7 +43,8 @@ public class FilterTypeCollection {
         }
 
         {   FilterPreferences favoritesPref = new FilterPreferences("Favorites");
-            favoritesPref.setInteger("FilterTag", Tags.FAVORITES);
+            favoritesPref.setString("FilterTags", 
+                Integer.toString(Tags.FAVORITES));
             add(new CacheFilter("Favorites", mActivity, favoritesPref));
         }
 

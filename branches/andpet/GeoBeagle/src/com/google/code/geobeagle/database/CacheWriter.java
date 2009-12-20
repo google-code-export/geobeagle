@@ -21,8 +21,6 @@ import com.google.code.geobeagle.Tags;
 import com.google.code.geobeagle.GeocacheFactory.Source;
 import com.google.code.geobeagle.activity.main.Util;
 
-import android.util.Log;
-
 /**
  * @author sng
  */

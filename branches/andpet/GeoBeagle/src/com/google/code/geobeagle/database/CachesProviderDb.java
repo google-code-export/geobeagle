@@ -2,8 +2,11 @@ package com.google.code.geobeagle.database;
 
 import com.google.code.geobeagle.CacheFilter;
 import com.google.code.geobeagle.GeocacheList;
-import com.google.code.geobeagle.Tags;
 import com.google.code.geobeagle.activity.main.Util;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 /** Uses a DB to fetch the caches within a defined region, or all caches if no 
  * bounds were specified */
@@ -23,8 +26,8 @@ public class CachesProviderDb implements ICachesProviderArea {
     /** The 'where' part of the SQL clause that comes from the active CacheFilter */ 
     private String mFilter = "";
     /** The tag used for filtering. Tags.NULL means any tag allowed. */
-    private int mRequiredTag = Tags.NULL;
-    private int mForbiddenTag = Tags.NULL;
+    private Set<Integer> mRequiredTags = new HashSet<Integer>();
+    private Set<Integer> mForbiddenTags = new HashSet<Integer>();
     /** If greater than zero, this is the max number that mCaches 
      * was allowed to contain when loaded. (This limit can change on subsequent loads) */
     private int mCachesCappedToCount = 0;
@@ -32,43 +35,81 @@ public class CachesProviderDb implements ICachesProviderArea {
     public CachesProviderDb(DbFrontend dbFrontend) {
         mDbFrontend = dbFrontend;
     }
+
+    /** @param start is prepended if there are any parts
+     */
+     /*
+    private static String BuildConjunction(String start, List<String> parts) {
+        StringBuffer buffer = new StringBuffer();
+        boolean first = true;
+        for (String part : parts) {
+            if (first) {
+                buffer.append(start);
+                first = false;
+            } else {
+                buffer.append(" AND ");
+            }
+            buffer.append(part);
+        }
+        return buffer.toString();
+    }
+*/
     
     /** Returns a complete SQL query except from 'SELECT x' */
     private String getSql() {
-        if (mSql == null) {
-            String where = "";
-            if (mHasLimits) {
-                where = "Latitude >= " + mLatLow + " AND Latitude < " + mLatHigh + 
-                " AND Longitude >= " + mLonLow + " AND Longitude < " + mLonHigh;
-                if (!mFilter.equals(""))
-                    where += " AND " + mFilter;
-            } else {
-                where = mFilter;
-            }
+        if (mSql != null)
+            return mSql;
 
-            if (mRequiredTag == Tags.NULL) {
-                if (mForbiddenTag == Tags.NULL) {
-                    if (where.equals(""))
-                        mSql = "FROM CACHES";  //Return all caches
-                    else
-                        mSql = "FROM CACHES WHERE " + where;
-                } else {
-                    mSql = "from caches left outer join (select CacheId from cachetags where TagId="
-                        + mForbiddenTag + ") as FoundTags on caches.Id = FoundTags.CacheId where FoundTags.CacheId is NULL";
-                    if (!where.equals(""))
-                        mSql += " AND " + where;
-                }
-            } else {
-            //TODO: Handle mForbiddenTag together with mRequiredTag
-                if (where.equals(""))
-                    mSql = "FROM CACHES, CACHETAGS WHERE TagId=" + mRequiredTag
-                      + " AND Id=CacheId";
-                else
-                    mSql = "FROM CACHES, CACHETAGS WHERE TagId=" + mRequiredTag
-                      + " AND Id=CacheId AND " + where;
-            }
-            //Log.d("GeoBeagle", "CachesProviderDb created sql " + mSql);
+        ArrayList<String> where = new ArrayList<String>(4);
+        if (mHasLimits) {
+            where.add("Latitude >= " + mLatLow + " AND Latitude < " + mLatHigh + 
+                    " AND Longitude >= " + mLonLow + " AND Longitude < " + mLonHigh);
         }
+
+        if (!mFilter.equals(""))
+            where.add(mFilter);
+
+        String join = "";
+        if (mForbiddenTags.size() > 0) {
+            StringBuffer forbidden = new StringBuffer();
+            boolean first = true;
+            for (Integer tagId : mForbiddenTags) {
+                if (first) {
+                    first = false;
+                } else {
+                    forbidden.append(" or ");
+                }
+                forbidden.append("TagId=" + tagId);
+            }
+            join = " left outer join (select CacheId from cachetags where "
+                + forbidden + ") as FoundTags on caches.Id = FoundTags.CacheId";
+            where.add("FoundTags.CacheId is NULL");
+        }
+        
+        StringBuffer tables = new StringBuffer("FROM CACHES");
+        int ix = 1;
+        for (Integer tagId : mRequiredTags) {
+            String table = "tags" + ix;
+            tables.append(", CACHETAGS " + table);
+            where.add(table+".TagId=" + tagId + " AND " + table + ".CacheId=Id");
+            ix++;
+        }
+        
+        StringBuffer completeSql = tables;  //new StringBuffer(tables);
+        completeSql.append(join);
+        boolean first = true;
+        for (String part : where) {
+            if (first) {
+                completeSql.append(" WHERE ");
+                first = false;
+            } else {
+                completeSql.append(" AND ");
+            }
+            completeSql.append(part);
+        }
+        
+        mSql = completeSql.toString();        
+        //Log.d("GeoBeagle", "CachesProviderDb created sql " + mSql);
         return mSql;
     }
     
@@ -139,17 +180,17 @@ public class CachesProviderDb implements ICachesProviderArea {
     
     public void setFilter(CacheFilter cacheFilter) {
         String newFilter = cacheFilter.getSqlWhereClause();
-        int newTag = cacheFilter.getRequiredTag();
-        int newForbiddenTag = cacheFilter.getForbiddenTag();
+        Set<Integer> newTags = cacheFilter.getRequiredTags();
+        Set<Integer> newForbiddenTags = cacheFilter.getForbiddenTags();
         
-        if (newFilter.equals(mFilter) && newTag == mRequiredTag &&
-                newForbiddenTag == mForbiddenTag)
+        if (newFilter.equals(mFilter) && newTags.equals(mRequiredTags) &&
+                newForbiddenTags.equals(mForbiddenTags))
             return;
         
         mHasChanged = true;
         mFilter = newFilter;
-        mRequiredTag = newTag;
-        mForbiddenTag = newForbiddenTag;
+        mRequiredTags = newTags;
+        mForbiddenTags = newForbiddenTags;
         mSql = null;   //Flush
         mCaches = null;  //Flush old caches
     }

@@ -3,6 +3,9 @@ package com.google.code.geobeagle;
 import android.app.Activity;
 import android.content.SharedPreferences;
 
+import java.util.HashSet;
+import java.util.Set;
+
 //TODO: Allow filtering on Source
 public class CacheFilter {
 
@@ -64,14 +67,16 @@ public class CacheFilter {
     };
        
     private String mFilterString;
+
+    private static final Set<Integer> EMPTY_SET = new HashSet<Integer>();
     
     /** Limits the filter to only include geocaches with this tag. 
      * Zero means no limit. */
-    private int mRequiredTag;
+    private Set<Integer> mRequiredTags = EMPTY_SET;
 
     /** Caches with this tag are not included in the results no matter what. 
      * Zero means no restriction. */
-    private int mForbiddenTag;
+    private Set<Integer> mForbiddenTags = EMPTY_SET;
     
     public CacheFilter(String id, Activity activity) {
         mId = id;
@@ -99,8 +104,13 @@ public class CacheFilter {
             option.Selected = preferences.getBoolean(option.PrefsName, true);
         }
         mFilterString = preferences.getString("FilterString", null);
-        mRequiredTag = preferences.getInt("FilterTag", 0);
-        mForbiddenTag = preferences.getInt("FilterForbiddenTag", 0);
+
+        String required = preferences.getString("FilterTags", "");
+        mRequiredTags = StringToIntegerSet(required);
+        
+        String forbidden = preferences.getString("FilterForbiddenTags", "");
+        mForbiddenTags = StringToIntegerSet(forbidden);
+        
         mName = preferences.getString("FilterName", "Unnamed");
     }
 
@@ -114,10 +124,34 @@ public class CacheFilter {
             editor.putBoolean(option.PrefsName, option.Selected);
         }
         editor.putString("FilterString", mFilterString);
-        editor.putInt("FilterTag", mRequiredTag);
-        editor.putInt("FilterForbiddenTag", mForbiddenTag);
+        editor.putString("FilterTags", SetToString(mRequiredTags));
+        editor.putString("FilterForbiddenTags", SetToString(mForbiddenTags));
         editor.putString("FilterName", mName);
         editor.commit();
+    }
+
+    private static String SetToString(Set<Integer> set) {
+        StringBuffer buffer = new StringBuffer();
+        boolean first = true;
+        for (int i : set) {
+            if (first)
+                first = false;
+            else 
+                buffer.append(' ');
+            buffer.append(i);
+        }
+        return buffer.toString();
+    }
+
+    private static Set<Integer> StringToIntegerSet(String string) {
+        if (string.equals(""))
+            return EMPTY_SET;
+        Set<Integer> set = new HashSet<Integer>();
+        String[] parts = string.split(" ");
+        for (String part : parts) {
+            set.add(Integer.decode(part));
+        }
+        return set;
     }
     
     /** @return A number of conditions separated by AND, 
@@ -179,11 +213,11 @@ public class CacheFilter {
         return result.toString();
     }
     
-    public int getRequiredTag() {
-        return mRequiredTag;
+    public Set<Integer> getRequiredTags() {
+        return mRequiredTags;
     }
 
-    private boolean containsUppercase(String string) {
+    private static boolean containsUppercase(String string) {
         return !string.equals(string.toLowerCase());
     }
     
@@ -199,8 +233,12 @@ public class CacheFilter {
             option.Selected = provider.getBoolean(option.ViewResource);
         }
         mFilterString = provider.getString(R.id.FilterString);
-        mRequiredTag = provider.getBoolean(R.id.CheckBoxOnlyFavorites) ? Tags.FAVORITES : Tags.NULL;
-        mForbiddenTag = provider.getBoolean(R.id.CheckBoxIncludeFinds) ? Tags.NULL : Tags.FOUND;
+        mRequiredTags = new HashSet<Integer>();
+        if (provider.getBoolean(R.id.CheckBoxOnlyFavorites))
+            mRequiredTags.add(Tags.FAVORITES);
+        mForbiddenTags = new HashSet<Integer>();
+        if (!provider.getBoolean(R.id.CheckBoxIncludeFinds))
+            mForbiddenTags.add(Tags.FOUND);
     }
 
     /** Set up the view from the values in this CacheFilter. */
@@ -214,11 +252,11 @@ public class CacheFilter {
         }
         String filter = mFilterString == null ? "" : mFilterString;
         provider.setString(R.id.FilterString, filter);
-        provider.setBoolean(R.id.CheckBoxIncludeFinds, mForbiddenTag != Tags.FOUND);
-        provider.setBoolean(R.id.CheckBoxOnlyFavorites, mRequiredTag == Tags.FAVORITES);
+        provider.setBoolean(R.id.CheckBoxIncludeFinds, !mForbiddenTags.contains(Tags.FOUND));
+        provider.setBoolean(R.id.CheckBoxOnlyFavorites, mRequiredTags.contains(Tags.FAVORITES));
     }
 
-    public int getForbiddenTag() {
-        return mForbiddenTag;
+    public Set<Integer> getForbiddenTags() {
+        return mForbiddenTags;
     }
 }
