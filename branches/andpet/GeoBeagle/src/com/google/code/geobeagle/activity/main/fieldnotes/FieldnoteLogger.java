@@ -14,6 +14,9 @@
 
 package com.google.code.geobeagle.activity.main.fieldnotes;
 
+import com.google.code.geobeagle.Tags;
+import com.google.code.geobeagle.database.DbFrontend;
+
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
@@ -32,19 +35,23 @@ public class FieldnoteLogger {
         private final CacheLogger mCacheLogger;
         private final boolean mDnf;
         private final EditText mEditText;
+        private final DbFrontend mDbFrontend;
         private final CharSequence mGeocacheId;
 
-        public OnClickOk(CharSequence geocacheId, EditText editText, CacheLogger cacheLogger,
-                boolean dnf) {
+        public OnClickOk(CharSequence geocacheId, EditText editText, 
+                CacheLogger cacheLogger, DbFrontend dbFrontend, boolean dnf) {
             mGeocacheId = geocacheId;
             mEditText = editText;
             mCacheLogger = cacheLogger;
+            mDbFrontend = dbFrontend;
             mDnf = dnf;
         }
 
         @Override
         public void onClick(DialogInterface arg0, int arg1) {
             mCacheLogger.log(mGeocacheId, mEditText.getText(), mDnf);
+            mDbFrontend.setGeocacheTag(mGeocacheId, Tags.DNF, mDnf);
+            mDbFrontend.setGeocacheTag(mGeocacheId, Tags.FOUND, !mDnf);
         }
     }
 

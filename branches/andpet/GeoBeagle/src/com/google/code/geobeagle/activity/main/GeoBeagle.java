@@ -256,7 +256,7 @@ public class GeoBeagle extends Activity {
         mFieldNoteSender = new FieldnoteLogger(dialogHelperCommon, dialogHelperFile,
                 dialogHelperSms);
 
-        final OnClickOk onClickOk = new OnClickOk(geocacheId, editText, cacheLogger, fDnf);
+        final OnClickOk onClickOk = new OnClickOk(geocacheId, editText, cacheLogger, mDbFrontend, fDnf);
         builder.setTitle(R.string.field_note_title);
         builder.setView(fieldNoteDialogView);
         builder.setNegativeButton(R.string.cancel, onClickCancel);

@@ -17,9 +17,11 @@ package com.google.code.geobeagle.activity.main.fieldnotes;
 import static org.junit.Assert.assertEquals;
 
 import com.google.code.geobeagle.R;
+import com.google.code.geobeagle.Tags;
 import com.google.code.geobeagle.activity.main.DateFormatter;
 import com.google.code.geobeagle.activity.main.fieldnotes.FieldnoteLogger.OnClickCancel;
 import com.google.code.geobeagle.activity.main.fieldnotes.FieldnoteLogger.OnClickOk;
+import com.google.code.geobeagle.database.DbFrontend;
 import com.google.code.geobeagle.Toaster;
 
 import org.easymock.EasyMock;
@@ -288,11 +290,15 @@ public class FieldNoteSenderTest {
         EditText editText = PowerMock.createMock(EditText.class);
         CacheLogger cacheLogger = PowerMock.createMock(CacheLogger.class);
         Editable e = PowerMock.createMock(Editable.class);
+        DbFrontend dbFrontend = PowerMock.createMock(DbFrontend.class);
 
         EasyMock.expect(editText.getText()).andReturn(e);
         cacheLogger.log("GC123", e, false);
+        dbFrontend.setGeocacheTag("GC123", Tags.DNF, false);
+        dbFrontend.setGeocacheTag("GC123", Tags.FOUND, true);
         PowerMock.replayAll();
-        new OnClickOk("GC123", editText, cacheLogger, false).onClick(null, 0);
+        
+        new OnClickOk("GC123", editText, cacheLogger, dbFrontend, false).onClick(null, 0);
         PowerMock.verifyAll();
     }
 
