@@ -29,9 +29,10 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import android.content.Context;
 
 import java.util.Locale;
+import android.text.SpannableString;
 
 @PrepareForTest( {
-    Context.class
+    Context.class, SpannableString.class
 })
 @RunWith(PowerMockRunner.class)
 public class GeocacheToGoogleMapTest {
@@ -41,8 +42,11 @@ public class GeocacheToGoogleMapTest {
 
         Context context = PowerMock.createMock(Context.class);
         Geocache geocache = PowerMock.createMock(Geocache.class);
-
-        EasyMock.expect(geocache.getIdAndName()).andReturn("GCFOO pb & j(1.5/3)");
+        SpannableString ss = PowerMock.createMock(SpannableString.class);
+        
+        EasyMock.expect(geocache.getIdAndName()).andReturn(ss);
+        EasyMock.expect(ss.toString()).andReturn("GCFOO pb & j(1.5/3)");
+        
         EasyMock.expect(geocache.getLatitude()).andReturn(37.123);
         EasyMock.expect(geocache.getLongitude()).andReturn(122.345);
         EasyMock.expect(context.getString(R.string.map_intent)).andReturn(
