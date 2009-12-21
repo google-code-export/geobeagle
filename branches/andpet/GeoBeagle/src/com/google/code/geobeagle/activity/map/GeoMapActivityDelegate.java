@@ -15,24 +15,28 @@
 package com.google.code.geobeagle.activity.map;
 
 import com.google.android.maps.GeoPoint;
+import com.google.android.maps.MapController;
 import com.google.android.maps.MapView;
 import com.google.android.maps.MyLocationOverlay;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.actions.MenuAction;
 import com.google.code.geobeagle.actions.MenuActions;
 
+import android.content.res.Resources;
 import android.view.Menu;
 import android.view.MenuItem;
 
 public class GeoMapActivityDelegate {
     
     public static class MenuActionCenterLocation implements MenuAction {
-        private final MapView mMapView;
+        private final Resources mResources;
+        private final MapController mMapController;
         private final MyLocationOverlay mMyLocationOverlay;
 
-        public MenuActionCenterLocation(MapView mapView,
+        public MenuActionCenterLocation(Resources resources, MapController mapController,
                 MyLocationOverlay myLocationOverlay) {
-            mMapView = mapView;
+            mResources = resources;
+            mMapController = mapController;
             mMyLocationOverlay = myLocationOverlay;
         }
 
@@ -40,12 +44,12 @@ public class GeoMapActivityDelegate {
         public void act() {
             GeoPoint geopoint = mMyLocationOverlay.getMyLocation();
             if (geopoint != null)
-                mMapView.getController().animateTo(geopoint);
+                mMapController.animateTo(geopoint);
         }
         
         @Override
         public String getLabel() {
-            return mMapView.getResources().getString(R.string.menu_center_location);
+            return mResources.getString(R.string.menu_center_location);
         }
     }
     

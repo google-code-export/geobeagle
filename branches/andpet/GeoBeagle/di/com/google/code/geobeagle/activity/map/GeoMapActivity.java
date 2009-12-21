@@ -77,7 +77,8 @@ public class GeoMapActivity extends MapActivity {
         // Set member variables first, in case anyone after this needs them.
         mMapView = (GeoMapView)findViewById(R.id.mapview);
         mDbFrontend = new DbFrontend(this, new GeocacheFactory());
-        mMyLocationOverlay = new MyLocationOverlay(this, mMapView);
+        //mMyLocationOverlay = new MyLocationOverlay(this, mMapView);
+        mMyLocationOverlay = new FixedMyLocationOverlay(this, mMapView);
 
         mMapView.setBuiltInZoomControls(true);
         mMapView.setSatellite(false);
@@ -132,7 +133,7 @@ public class GeoMapActivity extends MapActivity {
         // *** BUILD MENU ***
         final MenuActions menuActions = new MenuActions();
         menuActions.add(new GeoMapActivityDelegate.MenuActionToggleSatellite(mMapView));
-        menuActions.add(new GeoMapActivityDelegate.MenuActionCenterLocation(mMapView, mMyLocationOverlay));
+        menuActions.add(new GeoMapActivityDelegate.MenuActionCenterLocation(resources, mapController, mMyLocationOverlay));
         menuActions.add(new MenuActionCacheList(this, resources));
         final List<CachesProviderDb> providers = new ArrayList<CachesProviderDb>();
         providers.add(cachesProviderArea);
