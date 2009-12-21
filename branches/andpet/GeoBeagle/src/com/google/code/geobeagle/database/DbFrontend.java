@@ -267,6 +267,8 @@ public class DbFrontend {
     }
     
     public boolean geocacheHasTag(CharSequence geocacheId, int tagId) {
+        if (geocacheId == null)  //Work-around for unexplained crash
+            return false;
         openDatabase();
         Cursor cursor = mDatabase.rawQuery("SELECT COUNT(*) FROM " + 
                 Database.TBL_CACHETAGS + " WHERE CacheId='" + geocacheId 
