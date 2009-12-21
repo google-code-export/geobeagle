@@ -34,34 +34,32 @@ public class CacheFilter {
     }
     
     private static class BooleanOption {
-        public final String Label;
         public final String PrefsName;
         public final String SqlClause;
         public boolean Selected;
         public int ViewResource;
-        public BooleanOption(String label, String prefsName, String sqlClause, 
+        public BooleanOption(String prefsName, String sqlClause, 
                 int viewResource) {
-            Label = label;
             PrefsName = prefsName;
             SqlClause = sqlClause;
             Selected = true;
             ViewResource = viewResource;
         }
     }
-    private final BooleanOption[] mOptions = { 
-            new BooleanOption("Traditional", "Traditional", "CacheType = 1", R.id.CheckBoxTrad),
-            new BooleanOption("Multi", "Multi", "CacheType = 2", R.id.CheckBoxMulti),
-            new BooleanOption("Mystery", "Unknown", "CacheType = 3", R.id.CheckBoxMystery),
-            new BooleanOption("My location", "MyLocation", "CacheType = 4", R.id.CheckBoxMyLocation),
-            new BooleanOption("Others", "Others", "CacheType = 0 OR (CacheType >= 5 AND CacheType <= 14)", R.id.CheckBoxOthers),
-            new BooleanOption("Waypoints", "Waypoints", "(CacheType >= 20 AND CacheType <= 25)", R.id.CheckBoxWaypoints),
+    private final BooleanOption[] mTypeOptions = { 
+            new BooleanOption("Traditional", "CacheType = 1", R.id.ToggleButtonTrad),
+            new BooleanOption("Multi", "CacheType = 2", R.id.ToggleButtonMulti),
+            new BooleanOption("Unknown", "CacheType = 3", R.id.ToggleButtonMystery),
+            new BooleanOption("MyLocation", "CacheType = 4", R.id.ToggleButtonMyLocation),
+            new BooleanOption("Others", "CacheType = 0 OR (CacheType >= 5 AND CacheType <= 14)", R.id.ToggleButtonOthers),
+            new BooleanOption("Waypoints", "(CacheType >= 20 AND CacheType <= 25)", R.id.ToggleButtonWaypoints),
             };
     
     //These SQL are to be applied when the option is deselected!
     private final BooleanOption[] mSizeOptions = { 
-        new BooleanOption("Include micro's", "Micro", "Container != 1", R.id.CheckBoxMicro),
-        new BooleanOption("Include small", "Small", "Container != 2", R.id.CheckBoxSmall),
-        new BooleanOption("Include unknown sizes", "UnknownSize", "Container != 0", R.id.CheckBoxUnknownSize),
+        new BooleanOption("Micro", "Container != 1", R.id.ToggleButtonMicro),
+        new BooleanOption("Small", "Container != 2", R.id.ToggleButtonSmall),
+        new BooleanOption("UnknownSize", "Container != 0", R.id.ToggleButtonUnknownSize),
     };
        
     private String mFilterString;
@@ -95,7 +93,7 @@ public class CacheFilter {
      * @return true if any value in the filter was changed
      */
     private void loadFromPreferences(SharedPreferences preferences) {
-        for (BooleanOption option : mOptions) {
+        for (BooleanOption option : mTypeOptions) {
             option.Selected = preferences.getBoolean(option.PrefsName, true);
         }
         for (BooleanOption option : mSizeOptions) {
@@ -115,7 +113,7 @@ public class CacheFilter {
     public void saveToPreferences() {
         SharedPreferences preferences = mActivity.getSharedPreferences(mId, 0);
         SharedPreferences.Editor editor  = preferences.edit();
-        for (BooleanOption option : mOptions) {
+        for (BooleanOption option : mTypeOptions) {
             editor.putBoolean(option.PrefsName, option.Selected);
         }
         for (BooleanOption option : mSizeOptions) {
@@ -156,7 +154,7 @@ public class CacheFilter {
      *  or an empty string if there isn't any limit */
     public String getSqlWhereClause() {
         int count = 0;
-        for (BooleanOption option : mOptions) {
+        for (BooleanOption option : mTypeOptions) {
             if (option.Selected)
                 count++;
         }
@@ -164,8 +162,8 @@ public class CacheFilter {
         StringBuilder result = new StringBuilder();
         boolean isFirst = true;
         
-        if (count != mOptions.length && count != 0) {
-            for (BooleanOption option : mOptions) {
+        if (count != mTypeOptions.length && count != 0) {
+            for (BooleanOption option : mTypeOptions) {
                 if (!option.Selected)
                     continue;
                 if (isFirst) {
@@ -224,7 +222,7 @@ public class CacheFilter {
         if (!newName.trim().equals("")) {
             mName = newName;
         }
-        for (BooleanOption option : mOptions) {
+        for (BooleanOption option : mTypeOptions) {
             option.Selected = provider.getBoolean(option.ViewResource);
         }
         for (BooleanOption option : mSizeOptions) {
@@ -255,7 +253,7 @@ public class CacheFilter {
     /** Set up the view from the values in this CacheFilter. */
     public void pushToGui(FilterGui provider) {
         provider.setString(R.id.NameOfFilter, mName);
-        for (BooleanOption option : mOptions) {
+        for (BooleanOption option : mTypeOptions) {
             provider.setBoolean(option.ViewResource, option.Selected);
         }
         for (BooleanOption option : mSizeOptions) {

@@ -12,6 +12,7 @@ import android.view.Window;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -46,7 +47,7 @@ public class MenuActionEditFilter extends ActionStaticLabel implements MenuActio
         }
         @Override
         public boolean getBoolean(int id) {
-            return ((CheckBox)mDialog.findViewById(id)).isChecked();
+            return ((CompoundButton)mDialog.findViewById(id)).isChecked();
         }
         @Override
         public String getString(int id) {
@@ -54,7 +55,7 @@ public class MenuActionEditFilter extends ActionStaticLabel implements MenuActio
         }
         @Override
         public void setBoolean(int id, boolean value) {
-            ((CheckBox)mDialog.findViewById(id)).setChecked(value);
+            ((CompoundButton)mDialog.findViewById(id)).setChecked(value);
         }
         @Override
         public void setString(int id, String value) {

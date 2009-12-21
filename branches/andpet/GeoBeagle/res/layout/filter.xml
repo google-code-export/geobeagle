@@ -16,8 +16,10 @@
 	android:layout_height="wrap_content"
 	android:minWidth="280px">
 
-  <TextView android:id="@+id/TextFilterTitle" android:layout_width="fill_parent" android:layout_height="wrap_content"
-     android:gravity="center_horizontal" android:textSize="20sp" android:text="Cache types to show">
+  <TextView android:id="@+id/TextFilterTitle" 
+    android:layout_width="fill_parent" android:layout_height="wrap_content"
+     android:gravity="center_horizontal" android:textSize="20sp" 
+     android:text="Editing filter XX">
   </TextView>
 
 <ScrollView
@@ -47,43 +49,71 @@
     </EditText>
   </LinearLayout>
 
-    <CheckBox android:id="@+id/CheckBoxTrad" android:text="Traditional" 
-     android:layout_width="fill_parent" android:layout_height="wrap_content">
-  </CheckBox>
-
-  <CheckBox android:id="@+id/CheckBoxMulti" android:text="Multi" 
-     android:layout_width="fill_parent" android:layout_height="wrap_content">
-  </CheckBox>
-
-  <CheckBox android:id="@+id/CheckBoxMystery" android:text="Mystery" 
-     android:layout_width="fill_parent" android:layout_height="wrap_content">
-  </CheckBox>
-
-  <CheckBox android:id="@+id/CheckBoxMyLocation" android:text="My location" 
-     android:layout_width="fill_parent" android:layout_height="wrap_content">
-  </CheckBox>
-
-  <CheckBox android:id="@+id/CheckBoxOthers" android:text="Other types" 
-     android:layout_width="fill_parent" android:layout_height="wrap_content">
-  </CheckBox>
-
-  <CheckBox android:id="@+id/CheckBoxWaypoints" android:text="Waypoints" 
-     android:layout_width="fill_parent" android:layout_height="wrap_content">
-  </CheckBox>
-
-  <CheckBox android:id="@+id/CheckBoxMicro" android:text="Include micro's" 
-     android:layout_width="fill_parent" android:layout_height="wrap_content">
-  </CheckBox>
+  <TextView android:text="Cache types" android:id="@+id/TextView01" 
+    android:layout_width="wrap_content" android:layout_height="wrap_content"/>
   
-  <CheckBox android:id="@+id/CheckBoxSmall" android:text="Include small" 
-     android:layout_width="fill_parent" android:layout_height="wrap_content">
-  </CheckBox>
+  <LinearLayout
+		android:id="@+id/widget32"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:orientation="horizontal"
+        android:gravity="fill_horizontal">
+    <ToggleButton android:id="@+id/ToggleButtonTrad" 
+      android:textOff="Traditional" android:textOn="Traditional"
+      android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+    <ToggleButton android:id="@+id/ToggleButtonMulti" 
+      android:textOff="Multi" android:textOn="Multi"
+       android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+    <ToggleButton android:id="@+id/ToggleButtonMystery" 
+      android:textOff="Mystery" android:textOn="Mystery"
+      android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+  </LinearLayout>
+  <LinearLayout
+		android:id="@+id/widget33"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:orientation="horizontal">
+    <ToggleButton android:id="@+id/ToggleButtonMyLocation" 
+      android:textOff="My location" android:textOn="My location"
+      android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+    <ToggleButton android:id="@+id/ToggleButtonOthers" 
+      android:textOff="Others" android:textOn="Others"
+      android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+    <ToggleButton android:id="@+id/ToggleButtonWaypoints" 
+      android:textOff="Waypoints" android:textOn="Waypoints"
+      android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+  </LinearLayout>
 
-  <CheckBox android:id="@+id/CheckBoxUnknownSize" android:text="Include unknown sizes" 
-     android:layout_width="fill_parent" android:layout_height="wrap_content">
-  </CheckBox>
+  <TextView android:text="Cache sizes" android:id="@+id/TextView04" 
+    android:layout_width="wrap_content" android:layout_height="wrap_content"/>
 
+  <LinearLayout
+		android:id="@+id/widget33"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:orientation="horizontal"
+        android:gravity="fill_horizontal">
+    <ToggleButton android:id="@+id/ToggleButtonMicro" 
+      android:textOff="Micro" android:textOn="Micro"
+      android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+    <ToggleButton android:id="@+id/ToggleButtonSmall" 
+      android:textOff="Small" android:textOn="Small"
+      android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+    <ToggleButton android:id="@+id/ToggleButtonUnknownSize" 
+      android:textOff="Unknown" android:textOn="Unknown"
+      android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+  </LinearLayout>
 
+  <LinearLayout
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:orientation="horizontal">
+    <TextView android:text="Require "
+      android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+    <TextView android:text="Hide"
+      android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+  </LinearLayout>
+  
   <LinearLayout
 		android:layout_width="fill_parent"
 		android:layout_height="wrap_content"
@@ -133,6 +163,8 @@
       android:singleLine="true">
     </EditText>
   </LinearLayout>
+
+
 
 
 </LinearLayout>
