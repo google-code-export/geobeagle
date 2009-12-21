@@ -58,6 +58,8 @@ public class Database {
     public static final String SQL_DELETE_OLD_GPX = "DELETE FROM GPX WHERE DeleteMe = 1";
     public static final String SQL_DELETE_CACHETAG = "DELETE FROM CACHETAGS WHERE CacheId = ? AND TagId = ?";
     public static final String SQL_DELETE_ALL_TAGS = "DELETE FROM CACHETAGS WHERE TagId = ?";
+    public static final String SQL_DELETE_ALL_CACHES = "DELETE FROM CACHES";
+    public static final String SQL_DELETE_ALL_GPX = "DELETE FROM GPX";
     
     public static final String SQL_DROP_CACHE_TABLE = "DROP TABLE IF EXISTS CACHES";
     public static final String SQL_GPX_DONT_DELETE_ME = "UPDATE GPX SET DeleteMe = 0 WHERE Name = ?";

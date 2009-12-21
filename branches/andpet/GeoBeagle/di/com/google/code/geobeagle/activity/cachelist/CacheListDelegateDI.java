@@ -32,6 +32,8 @@ import com.google.code.geobeagle.actions.CacheActionView;
 import com.google.code.geobeagle.actions.CacheContextMenu;
 import com.google.code.geobeagle.actions.CacheFilterUpdater;
 import com.google.code.geobeagle.actions.MenuActionClearTagNew;
+import com.google.code.geobeagle.actions.MenuActionConfirm;
+import com.google.code.geobeagle.actions.MenuActionDeleteAll;
 import com.google.code.geobeagle.actions.MenuActionEditFilter;
 import com.google.code.geobeagle.actions.MenuActionFilterListPopup;
 import com.google.code.geobeagle.actions.MenuActionMap;
@@ -170,8 +172,6 @@ public class CacheListDelegateDI {
 
         final Aborter aborter = new Aborter();
         final MessageHandler messageHandler = MessageHandler.create(listActivity);
-        //final CachePersisterFacadeFactory cachePersisterFacadeFactory = new CachePersisterFacadeFactory(
-        //        messageHandler, cacheTypeFactory);
 
         final GpxImporterFactory gpxImporterFactory = new GpxImporterFactory(aborter,
                 errorDisplayer, geoFixProvider, listActivity,
@@ -188,6 +188,9 @@ public class CacheListDelegateDI {
                 cacheListAdapter, gpxImporterFactory, dbFrontend, resources);
         final CacheActionEdit cacheActionEdit = new CacheActionEdit(listActivity, resources);
         final MenuActions menuActions = new MenuActions();
+        final AlertDialog.Builder builder1 = new AlertDialog.Builder(listActivity);
+        final MenuActionDeleteAll deleteAll = new MenuActionDeleteAll(dbFrontend, resources, 
+                cachesProviderAll, cacheListAdapter, titleUpdater, R.string.delete_all_caches);
         menuActions.add(new MenuActionToggleFilter(cachesProviderToggler, cacheListAdapter, resources));
         menuActions.add(new MenuActionSearchOnline(listActivity, resources));
         List<CachesProviderDb> providers = new ArrayList<CachesProviderDb>();
@@ -205,6 +208,9 @@ public class CacheListDelegateDI {
         menuActions.add(new MenuActionMyLocation(errorDisplayer,
                 geocacheFactory, geoFixProvider, dbFrontend, resources, cacheActionEdit));
         menuActions.add(menuActionSyncGpx);
+        menuActions.add(new MenuActionConfirm(listActivity, builder1, deleteAll,
+                resources.getString(R.string.delete_all_caches),
+                resources.getString(R.string.confirm_delete_all_caches)));
         menuActions.add(new MenuActionSettings(listActivity, resources));
         
         // *** BUILD CONTEXT MENU ***
