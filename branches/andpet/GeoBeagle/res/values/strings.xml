@@ -11,8 +11,13 @@
 		License.
 	-->
 <resources>
-	<string name="too_many_caches">Too many caches to display--zoom in to see
-		caches.</string>
+	<string name="log_cache_with_sms">Log cache with SMS</string>
+	<string name="log_cache_to_file">Log cache to file</string>
+	<string name="field_note_file_caveat">Caches logged to sdcard. Upload with your desktop to http://geocaching.com/my/uploadfieldnotes.aspx</string>
+	<string name="sms_caveat">To set up SMS logging, see http://coord.info/textmark.aspx</string>
+	<string name="error_writing_cache_log">Error writing cache log to sdcard.</string>
+	<string name="log_cache">Log Cache</string>
+	<string name="too_many_caches">Too many caches to display--zoom in to see caches.</string>
 	<string name="satellite_view">Satellite view</string>
 	<string name="map_view">Map view</string>
 	<string name="geobeagle">GeoBeagle</string>
@@ -46,6 +51,7 @@
 	<string name="my_location">My Location</string>
 	<string name="field_note_title">Log cache using Field Note</string>
 	<string name="send_sms">Send SMS</string>
+	<string name="log_fieldnote_to_file">Log field note</string>
 	<string name="cancel">Cancel</string>
 	<string name="cache_page">Web Page</string>
 	<string name="recent_locations">Recent locations</string>
@@ -90,30 +96,29 @@
 	  <item>http://www.geocaching.com/seek/cache_details.aspx?wp=GC%1$s</item>
 	  <item>http://www.opencaching.de/viewcache.php?wp=OC%1$s</item>
 	</array>
-<string name="menu_choose_filter">Choose filter</string>
-
-<string name="menu_cache_list">Cache List</string>
-<string name="menu_search_online">Search Online</string>
-<string name="menu_settings">Settings</string>
-<string name="menu_edit_geocache">Edit</string>
-<string name="menu_google_maps">Google Maps</string>
-<string name="menu_log_dnf">Log DNF :-(</string>
-<string name="menu_log_find">Log Find :-)</string>
-<string name="menu_toggle_satellite">Satellite view</string>
-<string name="menu_add_my_location">Add My Location</string>
-<string name="menu_sync">Sync /sdcard/download</string>
-<string name="menu_toggle_filter">Show All Caches</string>
-<string name="menu_map">Show Map</string>
-<string name="menu_cache_map">Show on Map</string>
-<string name="menu_center_location">My location</string>
-<string name="menu_proximity">Proximity View</string>
-<string name="menu_delete_cache">Delete</string>
-<string name="menu_view_geocache">View</string>
-<string name="menu_filterlist">Filters...</string>
-<string name="menu_edit_filter">Edit Filter</string>
-<string name="confirm_delete_negative">Do not delete</string>
-<string name="confirm_delete_title">Confirm delete %1$s</string>
-<string name="confirm_delete_body_text">Delete %1$s: "%2$s"?</string>
-<string name="delete_cache">Delete cache</string>
-<string name="assign_tags">Assign tags</string>
+	<string name="menu_choose_filter">Choose filter</string>
+	<string name="menu_cache_list">Cache List</string>
+	<string name="menu_search_online">Search Online</string>
+	<string name="menu_settings">Settings</string>
+	<string name="menu_edit_geocache">Edit</string>
+	<string name="menu_google_maps">Google Maps</string>
+	<string name="menu_log_dnf">Log DNF :-(</string>
+	<string name="menu_log_find">Log Find :-)</string>
+	<string name="menu_toggle_satellite">Satellite view</string>
+	<string name="menu_add_my_location">Add My Location</string>
+	<string name="menu_sync">Sync /sdcard/download</string>
+	<string name="menu_toggle_filter">Show All Caches</string>
+	<string name="menu_map">Show Map</string>
+	<string name="menu_cache_map">Show on Map</string>
+	<string name="menu_center_location">My location</string>
+	<string name="menu_proximity">Proximity View</string>
+	<string name="menu_delete_cache">Delete</string>
+	<string name="menu_view_geocache">View</string>
+	<string name="menu_filterlist">Filters...</string>
+	<string name="menu_edit_filter">Edit Filter</string>
+	<string name="confirm_delete_negative">Do not delete</string>
+	<string name="confirm_delete_title">Confirm delete %1$s</string>
+	<string name="confirm_delete_body_text">Delete %1$s: "%2$s"?</string>
+	<string name="delete_cache">Delete cache</string>
+	<string name="assign_tags">Assign tags</string>
 </resources>

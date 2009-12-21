@@ -33,7 +33,7 @@ public class GeocacheFromIntentFactory {
         mDbFrontend = dbFrontend;
     }
 
-    Geocache viewCacheFromMapsIntent(Intent intent, Geocache defaultGeocache) {
+    public Geocache viewCacheFromMapsIntent(Intent intent, Geocache defaultGeocache) {
         final String query = intent.getData().getQuery();
         final CharSequence sanitizedQuery = Util.parseHttpUri(query, new UrlQuerySanitizer(),
                 UrlQuerySanitizer.getAllButNulAndAngleBracketsLegal());

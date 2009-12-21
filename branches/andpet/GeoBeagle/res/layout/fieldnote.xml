@@ -17,7 +17,6 @@
 	android:layout_height="wrap_content">
 
 	<TextView android:gravity="center" android:id="@+id/fieldnote_caveat"
-		android:text="Before using this feature, read http://coord.info/textmark.aspx"
 		android:layout_width="wrap_content" android:layout_height="wrap_content"
 		android:textAppearance="?android:attr/textAppearanceMedium"
 		android:paddingTop="12sp" android:paddingBottom="12sp" />

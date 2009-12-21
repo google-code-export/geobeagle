@@ -28,7 +28,7 @@ public class IncomingIntentHandler {
     private GeocacheFromIntentFactory mGeocacheFromIntentFactory;
     private final DbFrontend mDbFrontend;
 
-    IncomingIntentHandler(GeocacheFactory geocacheFactory,
+    public IncomingIntentHandler(GeocacheFactory geocacheFactory,
             GeocacheFromIntentFactory geocacheFromIntentFactory,
             DbFrontend dbFrontend) {
         mGeocacheFactory = geocacheFactory;
@@ -36,7 +36,7 @@ public class IncomingIntentHandler {
         mDbFrontend = dbFrontend;
     }
 
-    Geocache maybeGetGeocacheFromIntent(Intent intent, Geocache defaultGeocache,
+    public Geocache maybeGetGeocacheFromIntent(Intent intent, Geocache defaultGeocache,
             DbFrontend dbFrontend) {
         if (intent == null) {
             return defaultGeocache;

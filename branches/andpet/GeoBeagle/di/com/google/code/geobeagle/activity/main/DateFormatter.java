@@ -12,20 +12,19 @@
  ** limitations under the License.
  */
 
-//TODO: Rename package 'main' into 'compass'
 package com.google.code.geobeagle.activity.main;
 
-import com.google.code.geobeagle.activity.main.FieldNoteSender;
-import com.google.code.geobeagle.activity.main.GeoBeagle;
+import java.text.DateFormat;
+import java.util.Date;
 
-import android.app.AlertDialog;
-import android.view.LayoutInflater;
+public class DateFormatter {
+    private static DateFormat mDateFormat;
 
-public class FieldNoteSenderDI {
-    public static FieldNoteSender build(GeoBeagle parent, LayoutInflater layoutInflater) {
-        final AlertDialog.Builder builder = new AlertDialog.Builder(parent);
-        final FieldNoteSender.DialogHelper dialogHelper = new FieldNoteSender.DialogHelper();
-        return new FieldNoteSender(layoutInflater, builder, dialogHelper);
+    public DateFormatter(DateFormat dateFormat) {
+        mDateFormat = dateFormat;
     }
 
+    public String format(Date date) {
+        return mDateFormat.format(date);
+    }
 }
