@@ -82,7 +82,7 @@ public class GeoBeagleDelegate {
         }
     }
 
-    static int ACTIVITY_REQUEST_TAKE_PICTURE = 1;
+    public static int ACTIVITY_REQUEST_TAKE_PICTURE = 1;
     private final ActivitySaver mActivitySaver;
     private Geocache mGeocache;
     private final GeocacheFactory mGeocacheFactory;

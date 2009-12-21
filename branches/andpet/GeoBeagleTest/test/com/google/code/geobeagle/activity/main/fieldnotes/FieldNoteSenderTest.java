@@ -17,9 +17,10 @@ package com.google.code.geobeagle.activity.main.fieldnotes;
 import static org.junit.Assert.assertEquals;
 
 import com.google.code.geobeagle.R;
+import com.google.code.geobeagle.activity.main.DateFormatter;
 import com.google.code.geobeagle.activity.main.fieldnotes.FieldnoteLogger.OnClickCancel;
 import com.google.code.geobeagle.activity.main.fieldnotes.FieldnoteLogger.OnClickOk;
-import com.google.code.geobeagle.xmlimport.GpxImporterDI.Toaster;
+import com.google.code.geobeagle.Toaster;
 
 import org.easymock.EasyMock;
 import org.junit.Test;
