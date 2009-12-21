@@ -7,8 +7,12 @@ import java.util.HashSet;
 import java.util.Set;
 
 //TODO: Allow filtering on Source
+/**
+ * A CacheFilter determines which of all geocaches that should be 
+ * visible in the list and map views.
+ * It can be translated into a SQL constraint for accessing the database.
+ */
 public class CacheFilter {
-
     private final Activity mActivity;
     
     /** The name of this filter as visible to the user */
@@ -17,12 +21,6 @@ public class CacheFilter {
     /** The string used in Preferences to identify this filter */
     public final String mId;
     
-    /*
-    public ICachesProviderArea getProvider(DbFrontend dbFrontend) {
-        return new CachesProviderDb(dbFrontend, this);
-    }
-    */
-
     /** The name of this filter as visible to the user */
     public String getName() {
         return mName;
@@ -233,12 +231,25 @@ public class CacheFilter {
             option.Selected = provider.getBoolean(option.ViewResource);
         }
         mFilterString = provider.getString(R.id.FilterString);
+
         mRequiredTags = new HashSet<Integer>();
-        if (provider.getBoolean(R.id.CheckBoxOnlyFavorites))
-            mRequiredTags.add(Tags.FAVORITES);
         mForbiddenTags = new HashSet<Integer>();
-        if (!provider.getBoolean(R.id.CheckBoxIncludeFinds))
+        
+        if (provider.getBoolean(R.id.CheckBoxRequireFavorites))
+            mRequiredTags.add(Tags.FAVORITES);
+        else if (provider.getBoolean(R.id.CheckBoxForbidFavorites))
+            mForbiddenTags.add(Tags.FAVORITES);
+
+        if (provider.getBoolean(R.id.CheckBoxRequireFound))
+            mRequiredTags.add(Tags.FOUND);
+        else if (provider.getBoolean(R.id.CheckBoxForbidFound))
             mForbiddenTags.add(Tags.FOUND);
+        
+        if (provider.getBoolean(R.id.CheckBoxRequireDNF))
+            mRequiredTags.add(Tags.DNF);
+        else if (provider.getBoolean(R.id.CheckBoxForbidDNF))
+            mForbiddenTags.add(Tags.DNF);
+       
     }
 
     /** Set up the view from the values in this CacheFilter. */
@@ -252,8 +263,18 @@ public class CacheFilter {
         }
         String filter = mFilterString == null ? "" : mFilterString;
         provider.setString(R.id.FilterString, filter);
-        provider.setBoolean(R.id.CheckBoxIncludeFinds, !mForbiddenTags.contains(Tags.FOUND));
-        provider.setBoolean(R.id.CheckBoxOnlyFavorites, mRequiredTags.contains(Tags.FAVORITES));
+        provider.setBoolean(R.id.CheckBoxRequireFavorites, 
+                mRequiredTags.contains(Tags.FAVORITES));
+        provider.setBoolean(R.id.CheckBoxForbidFavorites, 
+                mForbiddenTags.contains(Tags.FAVORITES));
+        provider.setBoolean(R.id.CheckBoxRequireFound, 
+                mRequiredTags.contains(Tags.FOUND));
+        provider.setBoolean(R.id.CheckBoxForbidFound, 
+                mForbiddenTags.contains(Tags.FOUND));
+        provider.setBoolean(R.id.CheckBoxRequireDNF, 
+                mRequiredTags.contains(Tags.DNF));
+        provider.setBoolean(R.id.CheckBoxForbidDNF, 
+                mForbiddenTags.contains(Tags.DNF));
     }
 
     public Set<Integer> getForbiddenTags() {

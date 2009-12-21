@@ -30,8 +30,6 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.awt.font.TextAttribute;
-
 public class GeocacheSummaryRowInflater implements HasDistanceFormatter {
     static class RowViews {
         private final TextView mAttributes;

@@ -5,28 +5,14 @@ import android.content.SharedPreferences;
 import java.util.HashMap;
 import java.util.Map;
 
+/** Used to simulate a SharedPreferences when initializing 
+ * a FilterType for the first time. */
 class FilterPreferences implements SharedPreferences {
     private HashMap<String, Object> mValues;
     
     public FilterPreferences(String filterName) {
         mValues = new HashMap<String, Object>();
         setString("FilterName", filterName);
-        //Default values
-        /*
-        setBoolean("Traditional", true);            
-        setBoolean("Multi", true);
-        setBoolean("Unknown", true);
-        setBoolean("MyLocation", true);
-        setBoolean("Others", true);
-        setBoolean("Waypoints", false);
-
-        setBoolean("Micro", true);
-        setBoolean("Small", true);
-        setBoolean("UnknownSize", true);
-
-        setString("FilterString", "");
-        setInteger("FilterTag", 0);
-        */
     };
 
     public void setBoolean(String key, boolean value) {

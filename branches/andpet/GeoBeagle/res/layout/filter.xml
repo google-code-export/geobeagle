@@ -83,14 +83,43 @@
      android:layout_width="fill_parent" android:layout_height="wrap_content">
   </CheckBox>
 
-  <CheckBox android:id="@+id/CheckBoxOnlyFavorites" android:text="Only Favorites" 
-     android:layout_width="fill_parent" android:layout_height="wrap_content">
-  </CheckBox>
 
-  <CheckBox android:id="@+id/CheckBoxIncludeFinds" android:text="Include My Finds" 
-     android:layout_width="fill_parent" android:layout_height="wrap_content">
-  </CheckBox>
+  <LinearLayout
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:orientation="horizontal">
+    <CheckBox android:id="@+id/CheckBoxRequireFavorites" android:text="" 
+       android:layout_width="wrap_content" android:layout_height="wrap_content">
+    </CheckBox>
+    <CheckBox android:id="@+id/CheckBoxForbidFavorites" android:text="Favorites" 
+       android:layout_width="fill_parent" android:layout_height="wrap_content">
+    </CheckBox>
+  </LinearLayout>
 
+  <LinearLayout
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:orientation="horizontal">
+    <CheckBox android:id="@+id/CheckBoxRequireFound" android:text="" 
+       android:layout_width="wrap_content" android:layout_height="wrap_content">
+    </CheckBox>
+    <CheckBox android:id="@+id/CheckBoxForbidFound" android:text="Found" 
+       android:layout_width="fill_parent" android:layout_height="wrap_content">
+    </CheckBox>
+  </LinearLayout>
+
+  <LinearLayout
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:orientation="horizontal">
+    <CheckBox android:id="@+id/CheckBoxRequireDNF" android:text="" 
+       android:layout_width="wrap_content" android:layout_height="wrap_content">
+    </CheckBox>
+    <CheckBox android:id="@+id/CheckBoxForbidDNF" android:text="Did Not Find" 
+       android:layout_width="fill_parent" android:layout_height="wrap_content">
+    </CheckBox>
+  </LinearLayout>
+  
   <LinearLayout
 		android:id="@+id/widget31"
 		android:layout_width="fill_parent"
@@ -105,6 +134,7 @@
     </EditText>
   </LinearLayout>
 
+
 </LinearLayout>
 
 </ScrollView>
@@ -112,5 +142,6 @@
   <Button android:text="Apply filter" android:id="@+id/ButtonApplyFilter" 
     android:layout_width="fill_parent" android:layout_height="wrap_content"
     android:gravity="center_horizontal"></Button>
+
 
 </LinearLayout>

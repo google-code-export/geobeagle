@@ -36,7 +36,7 @@ public class FilterTypeCollection {
     }
 
     private void firstSetup() {
-        Log.d("GeoBeagle", "FilterTypeCollection first setup");
+        Log.i("GeoBeagle", "FilterTypeCollection first setup");
         {   FilterPreferences pref = new FilterPreferences("All caches");
             pref.setBoolean("Waypoints", false);
             add(new CacheFilter("All", mActivity, pref));

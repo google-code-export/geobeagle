@@ -66,7 +66,7 @@ public class MenuActionEditFilter extends ActionStaticLabel implements MenuActio
     public void act() {
         final Dialog dialog = new Dialog(mActivity);
         final DialogFilterGui gui = new DialogFilterGui(dialog);
-        
+
         final OnClickListener mOnApply = new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -80,6 +80,14 @@ public class MenuActionEditFilter extends ActionStaticLabel implements MenuActio
 
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.filter);
+
+        SetOpposingCheckBoxes(dialog, R.id.CheckBoxRequireFavorites, 
+                R.id.CheckBoxForbidFavorites);
+        SetOpposingCheckBoxes(dialog, R.id.CheckBoxRequireFound, 
+                R.id.CheckBoxForbidFound);
+        SetOpposingCheckBoxes(dialog, R.id.CheckBoxRequireDNF, 
+                R.id.CheckBoxForbidDNF);
+        
         mFilter = mFilterTypeCollection.getActiveFilter();
         TextView title = (TextView)dialog.findViewById(R.id.TextFilterTitle);
         title.setText("Editing filter \"" + mFilter.getName() + "\"");
@@ -89,4 +97,24 @@ public class MenuActionEditFilter extends ActionStaticLabel implements MenuActio
         dialog.show();
     }
 
+    private static final OnClickListener OnCheck = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            final CheckBox checkBox = (CheckBox)v;
+            if (checkBox.isChecked())
+                ((CheckBox)checkBox.getTag()).setChecked(false);
+        }
+    };
+    
+    /** Registers two checkboxes to be opposing -- 
+     * selecting one will unselect the other */
+    private static void SetOpposingCheckBoxes(Dialog dialog, int id1, int id2) {
+        CheckBox checkBox1 = (CheckBox)dialog.findViewById(id1);
+        CheckBox checkBox2 = (CheckBox)dialog.findViewById(id2);
+        checkBox1.setTag(checkBox2);
+        checkBox1.setOnClickListener(OnCheck);
+        checkBox2.setTag(checkBox1);
+        checkBox2.setOnClickListener(OnCheck);
+    }
+    
 }
