@@ -18,6 +18,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import com.google.code.geobeagle.IPausable;
+import com.google.code.geobeagle.actions.CacheContextMenu;
 import com.google.code.geobeagle.activity.ActivitySaver;
 import com.google.code.geobeagle.activity.ActivityType;
 import com.google.code.geobeagle.activity.cachelist.CacheListDelegate.ImportIntentManager;
@@ -59,25 +60,15 @@ public class CacheListDelegateTest {
 
     @Test
     public void testController() {
-        ListView listView = PowerMock.createMock(ListView.class);
-        View view = PowerMock.createMock(View.class);
         MenuItem menuItem = PowerMock.createMock(MenuItem.class);
-        GeocacheListController geocacheListController = PowerMock
-                .createStrictMock(GeocacheListController.class);
+        GeocacheListController geocacheListController = PowerMock.createMock(GeocacheListController.class);
 
-        EasyMock.expect(geocacheListController.onContextItemSelected(menuItem))
-                .andReturn(true);
-        geocacheListController.onListItemClick(listView, view, 28, 42);
         EasyMock.expect(geocacheListController.onOptionsItemSelected(menuItem))
                 .andReturn(true);
 
         PowerMock.replayAll();
-        CacheListDelegate cacheListDelegate = new CacheListDelegate(null, null,
-                geocacheListController, null, null, null, null, null, null,
-                null, null, null, null, null);
-        cacheListDelegate.onContextItemSelected(menuItem);
-        cacheListDelegate.onListItemClick(listView, view, 28, 42);
-        cacheListDelegate.onOptionsItemSelected(menuItem);
+        CacheListDelegate cacheListDelegate = new CacheListDelegate(null, null, geocacheListController, null, null, null, null, null, null, null, null, null, null, null);
+        assertTrue(cacheListDelegate.onOptionsItemSelected(menuItem));
         PowerMock.verifyAll();
     }
 
@@ -164,14 +155,14 @@ public class CacheListDelegateTest {
         MenuItem menuItem = PowerMock.createMock(MenuItem.class);
         GeocacheListController geocacheListController = PowerMock
                 .createStrictMock(GeocacheListController.class);
-
-        EasyMock.expect(geocacheListController.onContextItemSelected(menuItem))
-                .andReturn(true);
+        CacheContextMenu menuCreater = PowerMock.createMock(CacheContextMenu.class);
+        
+        EasyMock.expect(menuCreater.onContextItemSelected(menuItem)).andReturn(true);
 
         PowerMock.replayAll();
-        new CacheListDelegate(null, null, geocacheListController, null, null,
-                null, null, null, null, null, null, null, null, null)
-                .onContextItemSelected(menuItem);
+        assertTrue(new CacheListDelegate(null, null, geocacheListController, null, null,
+                null, menuCreater, null, null, null, null, null, null, null)
+                .onContextItemSelected(menuItem));
         PowerMock.verifyAll();
     }
 
