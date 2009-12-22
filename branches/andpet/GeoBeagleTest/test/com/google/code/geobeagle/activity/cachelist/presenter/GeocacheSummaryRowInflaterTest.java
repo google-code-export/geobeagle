@@ -18,7 +18,9 @@ import static org.junit.Assert.assertEquals;
 
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.R;
+import com.google.code.geobeagle.Tags;
 import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheSummaryRowInflater.RowViews;
+import com.google.code.geobeagle.database.DbFrontend;
 import com.google.code.geobeagle.database.DistanceAndBearing;
 import com.google.code.geobeagle.formatting.DistanceFormatter;
 
@@ -31,6 +33,8 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import android.content.res.Resources;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -67,11 +71,12 @@ public class GeocacheSummaryRowInflaterTest {
         DistanceAndBearing distanceAndBearing = PowerMock.createMock(DistanceAndBearing.class);
         Resources resources = PowerMock.createMock(Resources.class);
         Drawable drawable = PowerMock.createMock(Drawable.class);
+        DbFrontend dbFrontend = PowerMock.createMock(DbFrontend.class);
 
         EasyMock.expect(distanceAndBearing.getGeocache()).andReturn(geocache);
-        EasyMock.expect(geocache.getIcon(resources, null, null)).andReturn(drawable);
+        EasyMock.expect(geocache.getIcon(resources, null, dbFrontend)).andReturn(drawable);
         imageView.setImageDrawable(drawable);
-        EasyMock.expect(geocache.getId()).andReturn("GC123");
+        EasyMock.expect(geocache.getId()).andReturn("GC123").anyTimes();
         EasyMock.expect(geocache.getName()).andReturn("my cache");
         EasyMock.expect(geocache.getFormattedAttributes()).andReturn("3.5 / 2.5");
         EasyMock.expect(distanceAndBearing.getDistance()).andReturn(10f);
@@ -83,6 +88,11 @@ public class GeocacheSummaryRowInflaterTest {
                 .andReturn("10m");
 
         txtId.setText("GC123");
+        EasyMock.expect(dbFrontend.geocacheHasTag("GC123", Tags.ARCHIVED)).andReturn(false);
+        EasyMock.expect(dbFrontend.geocacheHasTag("GC123", Tags.UNAVAILABLE)).andReturn(false);
+        EasyMock.expect(txtCacheName.getPaintFlags()).andReturn(1);
+        txtCacheName.setPaintFlags(1 & ~Paint.STRIKE_THRU_TEXT_FLAG);
+        txtCacheName.setTextColor(Color.WHITE);
         txtCacheName.setText("my cache");
         txtDistance.setText("10m >");
         txtAttributes.setText("3.5 / 2.5");
@@ -90,7 +100,7 @@ public class GeocacheSummaryRowInflaterTest {
         PowerMock.replayAll();
         new GeocacheSummaryRowInflater.RowViews(txtAttributes, txtCacheName, txtDistance,
                 imageView, txtId, resources).set(distanceAndBearing, 0, distanceFormatter, 
-                        relativeBearingFormatter, null, null);
+                        relativeBearingFormatter, null, dbFrontend);
         PowerMock.verifyAll();
     }
 
