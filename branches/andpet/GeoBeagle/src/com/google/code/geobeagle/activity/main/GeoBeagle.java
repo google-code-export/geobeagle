@@ -176,7 +176,7 @@ public class GeoBeagle extends Activity {
                 //new MenuActionSearchOnline(this), 
                 new MenuActionSettings(this, resources),
                 new MenuActionFromCacheAction(new CacheActionGoogleMaps(intentStarterViewUri, resources), geocache),
-                new MenuActionFromCacheAction(new CacheActionProximity(this, resources), geocache),
+                //new MenuActionFromCacheAction(new CacheActionProximity(this, resources), geocache),
         };
         final MenuActions menuActions = new MenuActions(menuActionArray);
         final SharedPreferences defaultSharedPreferences = PreferenceManager
