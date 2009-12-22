@@ -116,4 +116,9 @@ public class CachesProviderLazyArea implements ICachesProviderArea {
             mOneTimeToaster.showToast();
         return getCaches(MAX_COUNT);
     }
+
+    @Override
+    public void clearBounds() {
+        mCachesProviderArea.clearBounds();
+    }
 }

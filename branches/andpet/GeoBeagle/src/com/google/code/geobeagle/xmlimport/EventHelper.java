@@ -48,6 +48,7 @@ public class EventHelper {
         mEventHandler = eventHandler;
     }
 
+    /** @return false if this file has already been loaded */
     public boolean handleEvent(int eventType) throws IOException {
         switch (eventType) {
             case XmlPullParser.START_TAG:

@@ -144,6 +144,16 @@ public class CachesProviderDb implements ICachesProviderArea {
     }
 
     @Override
+    public void clearBounds() {
+        if (!mHasLimits)
+            return;
+        mHasLimits = false;
+        mCaches = null;  //Flush old caches
+        mSql = null;
+        mHasChanged = true;        
+    }
+    
+    @Override
     public void setBounds(double latLow, double lonLow, double latHigh, double lonHigh) {
         if (Util.approxEquals(latLow, mLatLow) 
                 && Util.approxEquals(latHigh, mLatHigh) 

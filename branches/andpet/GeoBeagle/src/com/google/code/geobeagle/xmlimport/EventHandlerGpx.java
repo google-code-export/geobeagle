@@ -35,6 +35,7 @@ class EventHandlerGpx implements EventHandler {
     static final String XPATH_GPXNAME = "/gpx/name";
     static final String XPATH_GPXTIME = "/gpx/time";
     static final String XPATH_GROUNDSPEAKNAME = "/gpx/wpt/groundspeak:cache/groundspeak:name";
+    static final String XPATH_PLACEDBY = "/gpx/wpt/groundspeak:cache/groundspeak:placed_by";
     static final String XPATH_HINT = "/gpx/wpt/groundspeak:cache/groundspeak:encoded_hints";
     static final String XPATH_LOGDATE = "/gpx/wpt/groundspeak:cache/groundspeak:logs/groundspeak:log/groundspeak:date";
     static final String[] XPATH_PLAINLINES = {
@@ -95,6 +96,8 @@ class EventHandlerGpx implements EventHandler {
             return mCachePersisterFacade.gpxTime(text);
         } else if (fullPath.equals(XPATH_GROUNDSPEAKNAME) || fullPath.equals(XPATH_GEOCACHENAME)) {
             mCachePersisterFacade.groundspeakName(text);
+        } else if (fullPath.equals(XPATH_PLACEDBY)) {
+            mCachePersisterFacade.placedBy(text);
         } else if (fullPath.equals(XPATH_LOGDATE) || fullPath.equals(XPATH_GEOCACHELOGDATE)) {
             mCachePersisterFacade.logDate(text);
         } else if (fullPath.equals(XPATH_SYM)) {

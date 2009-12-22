@@ -175,7 +175,7 @@ public class CacheListDelegateDI {
 
         final GpxImporterFactory gpxImporterFactory = new GpxImporterFactory(aborter,
                 errorDisplayer, geoFixProvider, listActivity,
-                messageHandler, xmlPullParserWrapper, cacheTypeFactory);
+                messageHandler, xmlPullParserWrapper, cacheTypeFactory, geocacheFactory);
 
         final Abortable nullAbortable = new Abortable() {
             public void abort() {

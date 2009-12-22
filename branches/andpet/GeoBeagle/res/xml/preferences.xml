@@ -18,5 +18,10 @@
 	<CheckBoxPreference android:key="field-note-text-file"
 		android:title="Log Caches to File" android:summary="Log field notes to a file instead of using SMS" />
 	<CheckBoxPreference android:key="use-network-location"
-		android:title="Use location from cell network" android:summary="When there isn't a GPS lock, use the network provided location" />
+		android:title="Use location from cell network" 
+		android:summary="When there isn't a GPS lock, use the network provided location" />
+	<EditTextPreference android:key="username"
+		android:title="User name"
+		android:summary="Used to determine if you are the owner of imported geocaches"
+		android:dialogTitle="Username on geocaching.com" />
 </PreferenceScreen>

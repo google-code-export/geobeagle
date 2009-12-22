@@ -26,7 +26,6 @@ import com.google.code.geobeagle.R.id;
 import com.google.code.geobeagle.actions.MenuActionSettings;
 import com.google.code.geobeagle.actions.CacheActionEdit;
 import com.google.code.geobeagle.actions.CacheActionMap;
-import com.google.code.geobeagle.actions.CacheActionProximity;
 import com.google.code.geobeagle.actions.CacheActionRadar;
 import com.google.code.geobeagle.actions.CacheActionViewUri;
 import com.google.code.geobeagle.actions.MenuAction;

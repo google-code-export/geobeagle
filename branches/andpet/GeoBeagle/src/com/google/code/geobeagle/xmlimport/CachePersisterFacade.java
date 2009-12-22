@@ -14,12 +14,14 @@
 
 package com.google.code.geobeagle.xmlimport;
 
+import com.google.code.geobeagle.Tags;
 import com.google.code.geobeagle.GeocacheFactory.Source;
 import com.google.code.geobeagle.cachedetails.CacheDetailsWriter;
 import com.google.code.geobeagle.xmlimport.FileFactory;
 import com.google.code.geobeagle.xmlimport.GpxImporterDI.MessageHandler;
 
 import android.os.PowerManager.WakeLock;
+import android.util.Log;
 
 import java.io.File;
 import java.io.IOException;
@@ -31,14 +33,17 @@ public class CachePersisterFacade {
     private final FileFactory mFileFactory;
     private final MessageHandler mMessageHandler;
     private final WakeLock mWakeLock;
+    private final String mUsername;
 
     CachePersisterFacade(CacheTagSqlWriter cacheTagSqlWriter, FileFactory fileFactory,
-            CacheDetailsWriter cacheDetailsWriter, MessageHandler messageHandler, WakeLock wakeLock) {
+            CacheDetailsWriter cacheDetailsWriter, MessageHandler messageHandler, 
+            WakeLock wakeLock, String username) {
         mCacheDetailsWriter = cacheDetailsWriter;
         mCacheTagWriter = cacheTagSqlWriter;
         mFileFactory = fileFactory;
         mMessageHandler = messageHandler;
         mWakeLock = wakeLock;
+        mUsername = username;
     }
 
     void cacheType(String text) {
@@ -127,6 +132,12 @@ public class CachePersisterFacade {
         mCacheTagWriter.id(wpt);
         mMessageHandler.updateWaypointId(wpt);
         mWakeLock.acquire(GpxLoader.WAKELOCK_DURATION);
+    }
+
+    public void placedBy(String text) {
+        boolean isMine = (!mUsername.equals("") 
+                && mUsername.equalsIgnoreCase(text));
+        mCacheTagWriter.setTag(Tags.MINE, isMine);
     }
 
 }

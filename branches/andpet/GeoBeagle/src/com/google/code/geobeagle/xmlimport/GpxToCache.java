@@ -65,7 +65,7 @@ public class GpxToCache {
 
     /**
      * @param eventHelper
-     * @return false if this file has already been loaded.
+     * @return true if this file has already been loaded.
      * @throws XmlPullParserException
      * @throws IOException
      * @throws CancelException

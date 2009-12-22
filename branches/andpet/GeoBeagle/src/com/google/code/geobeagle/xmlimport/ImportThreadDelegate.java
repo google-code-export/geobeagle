@@ -15,6 +15,7 @@
 package com.google.code.geobeagle.xmlimport;
 
 import com.google.code.geobeagle.ErrorDisplayer;
+import com.google.code.geobeagle.GeocacheFactory;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.xmlimport.EventHelperDI.EventHelperFactory;
 import com.google.code.geobeagle.xmlimport.GpxImporterDI.MessageHandler;
@@ -35,16 +36,18 @@ public class ImportThreadDelegate {
         private final GpxLoader mGpxLoader;
         private boolean mHasFiles;
         private final MessageHandler mMessageHandler;
+        private final GeocacheFactory mGeocacheFactory;
 
         public ImportThreadHelper(GpxLoader gpxLoader, MessageHandler messageHandler,
                 EventHelperFactory eventHelperFactory, EventHandlers eventHandlers,
-                ErrorDisplayer errorDisplayer) {
+                ErrorDisplayer errorDisplayer, GeocacheFactory geocacheFactory) {
             mErrorDisplayer = errorDisplayer;
             mGpxLoader = gpxLoader;
             mMessageHandler = messageHandler;
             mEventHelperFactory = eventHelperFactory;
             mEventHandlers = eventHandlers;
             mHasFiles = false;
+            mGeocacheFactory = geocacheFactory;
         }
 
         public void cleanup() {
@@ -55,6 +58,7 @@ public class ImportThreadDelegate {
             mGpxLoader.end();
             if (!mHasFiles)
                 mErrorDisplayer.displayError(R.string.error_no_gpx_files);
+            mGeocacheFactory.flushCacheIcons();
         }
 
         /** @return true if we should continue to load files */

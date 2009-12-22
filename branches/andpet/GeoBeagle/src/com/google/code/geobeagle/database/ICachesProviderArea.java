@@ -12,4 +12,6 @@ public interface ICachesProviderArea extends ICachesProvider {
 
     /** @return The number of caches returned if there aren't any bounds. */
     int getTotalCount();
+
+    void clearBounds();
 }

@@ -16,6 +16,7 @@ package com.google.code.geobeagle.xmlimport;
 
 import com.google.code.geobeagle.ErrorDisplayer;
 import com.google.code.geobeagle.GeoFixProvider;
+import com.google.code.geobeagle.GeocacheFactory;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.cachelist.actions.Abortable;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListAdapter;
@@ -35,12 +36,13 @@ public class GpxImporter implements Abortable {
     private final ListActivity mListActivity;
     private final MessageHandler mMessageHandler;
     private final ToastFactory mToastFactory;
+    private final GeocacheFactory mGeocacheFactory;
     GeoFixProvider mGeoFixProvider;
 
     GpxImporter(GeoFixProvider geoFixProvider, GpxLoader gpxLoader,
             ListActivity listActivity, ImportThreadWrapper importThreadWrapper,
             MessageHandler messageHandler, ToastFactory toastFactory, EventHandlers eventHandlers,
-            ErrorDisplayer errorDisplayer) {
+            ErrorDisplayer errorDisplayer, GeocacheFactory geocacheFactory) {
         mListActivity = listActivity;
         mGpxLoader = gpxLoader;
         mEventHandlers = eventHandlers;
@@ -49,6 +51,7 @@ public class GpxImporter implements Abortable {
         mErrorDisplayer = errorDisplayer;
         mToastFactory = toastFactory;
         mGeoFixProvider = geoFixProvider;
+        mGeocacheFactory = geocacheFactory;
     }
 
     public void abort() {
@@ -63,7 +66,8 @@ public class GpxImporter implements Abortable {
 
     public void importGpxs(CacheListAdapter cacheList) {
         mGeoFixProvider.onPause();
-        mImportThreadWrapper.open(cacheList, mGpxLoader, mEventHandlers, mErrorDisplayer);
+        mImportThreadWrapper.open(cacheList, mGpxLoader, mEventHandlers, 
+                mErrorDisplayer, mGeocacheFactory);
         mImportThreadWrapper.start();
     }
 }

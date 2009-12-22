@@ -55,6 +55,7 @@ public class CachesProviderCount implements ICachesProviderCenter {
             int total = mCachesProviderArea.getTotalCount();
             if (total <= mMaxCount) {
                 Log.d("GeoBeagle", "CachesProviderCount.getCaches: Total number is few enough");
+                mCachesProviderArea.clearBounds();
                 mCaches = mCachesProviderArea.getCaches();
                 mCount = total;
                 mIsCountValid = true;

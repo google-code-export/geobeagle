@@ -104,7 +104,13 @@ class CachesProviderStub implements ICachesProviderArea {
         mHasChanged = changed;
     }
 
+    @Override
     public int getTotalCount() {
         return mGeocaches.size();
+    }
+    
+    @Override
+    public void clearBounds() {
+        mIsInitialized = false;
     }
 }
