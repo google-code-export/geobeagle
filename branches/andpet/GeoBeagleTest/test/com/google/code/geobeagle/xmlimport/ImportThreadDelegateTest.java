@@ -18,6 +18,7 @@ import static org.easymock.EasyMock.expect;
 import static org.junit.Assert.assertTrue;
 
 import com.google.code.geobeagle.ErrorDisplayer;
+import com.google.code.geobeagle.GeocacheFactory;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.xmlimport.EventHelperDI.EventHelperFactory;
 import com.google.code.geobeagle.xmlimport.GpxImporterDI.MessageHandler;
@@ -53,7 +54,7 @@ public class ImportThreadDelegateTest {
         messageHandler.loadComplete();
 
         PowerMock.replayAll();
-        new ImportThreadHelper(null, messageHandler, null, null, null).cleanup();
+        new ImportThreadHelper(null, messageHandler, null, null, null, null).cleanup();
         PowerMock.verifyAll();
     }
 
@@ -61,12 +62,14 @@ public class ImportThreadDelegateTest {
     public void testHelperEndNoFiles() {
         GpxLoader gpxLoader = PowerMock.createMock(GpxLoader.class);
         ErrorDisplayer errorDisplayer = PowerMock.createMock(ErrorDisplayer.class);
+        GeocacheFactory geocacheFactory = PowerMock.createMock(GeocacheFactory.class);
 
         errorDisplayer.displayError(R.string.error_no_gpx_files);
         gpxLoader.end();
+        geocacheFactory.flushCacheIcons();
 
         PowerMock.replayAll();
-        new ImportThreadHelper(gpxLoader, null, null, null, errorDisplayer).end();
+        new ImportThreadHelper(gpxLoader, null, null, null, errorDisplayer, geocacheFactory).end();
         PowerMock.verifyAll();
     }
 
@@ -79,6 +82,7 @@ public class ImportThreadDelegateTest {
         EventHelper eventHelper = PowerMock.createMock(EventHelper.class);
         EventHandler eventHandler = PowerMock.createMock(EventHandler.class);
         EventHandlers eventHandlers = PowerMock.createMock(EventHandlers.class);
+        GeocacheFactory geocacheFactory = PowerMock.createMock(GeocacheFactory.class);
 
         EasyMock.expect(gpxFile.getFilename()).andReturn("foo.gpx");
         EasyMock.expect(eventHandlers.get("foo.gpx")).andReturn(eventHandler);
@@ -87,10 +91,12 @@ public class ImportThreadDelegateTest {
         gpxLoader.open("foo.gpx", reader);
         EasyMock.expect(gpxLoader.load(eventHelper)).andReturn(true);
         gpxLoader.end();
-
+        geocacheFactory.flushCacheIcons();
+        
         PowerMock.replayAll();
-        ImportThreadHelper importThreadHelper = new ImportThreadHelper(gpxLoader, null,
-                eventHelperFactory, eventHandlers, null);
+        ImportThreadHelper importThreadHelper = new ImportThreadHelper(
+                gpxLoader, null, eventHelperFactory, eventHandlers, null,
+                geocacheFactory);
         assertTrue(importThreadHelper.processFile(gpxFile));
         importThreadHelper.end();
         PowerMock.verifyAll();
@@ -103,7 +109,7 @@ public class ImportThreadDelegateTest {
         gpxLoader.start();
 
         PowerMock.replayAll();
-        new ImportThreadHelper(gpxLoader, null, null, null, null).start();
+        new ImportThreadHelper(gpxLoader, null, null, null, null, null).start();
         PowerMock.verifyAll();
     }
 
