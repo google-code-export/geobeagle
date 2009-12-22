@@ -23,6 +23,8 @@ public class CacheTagWriterTest {
 
     @Test
     public void testClear() {
+        expect(mCacheWriter.isLockedFromUpdating(null)).andReturn(false);
+
         expect(mCacheWriter.insertAndUpdateCache(null, null, 0, 0, 
                 Source.GPX, null, CacheType.NULL, 0, 0, 0)).andReturn(true);
         mCacheWriter.updateTag(null, Tags.NEW, true);
@@ -108,6 +110,7 @@ public class CacheTagWriterTest {
 
     @Test
     public void testWrite() {
+        expect(mCacheWriter.isLockedFromUpdating("GC123")).andReturn(false);
         expect(mCacheWriter.insertAndUpdateCache("GC123", "my cache", 122, 37, Source.GPX, "foo.gpx",
                 CacheType.TRADITIONAL, 6, 5, 1)).andReturn(false);
         CacheTypeFactory cacheTypeFactory = PowerMock.createMock(CacheTypeFactory.class);
