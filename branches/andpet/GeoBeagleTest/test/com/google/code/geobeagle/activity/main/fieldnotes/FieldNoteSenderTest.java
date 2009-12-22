@@ -296,9 +296,15 @@ public class FieldNoteSenderTest {
         cacheLogger.log("GC123", e, false);
         dbFrontend.setGeocacheTag("GC123", Tags.DNF, false);
         dbFrontend.setGeocacheTag("GC123", Tags.FOUND, true);
-        PowerMock.replayAll();
         
+        EasyMock.expect(editText.getText()).andReturn(e);
+        cacheLogger.log("GC123", e, true);
+        dbFrontend.setGeocacheTag("GC123", Tags.DNF, true);
+        dbFrontend.setGeocacheTag("GC123", Tags.FOUND, false);
+        PowerMock.replayAll();
+
         new OnClickOk("GC123", editText, cacheLogger, dbFrontend, false).onClick(null, 0);
+        new OnClickOk("GC123", editText, cacheLogger, dbFrontend, true).onClick(null, 0);
         PowerMock.verifyAll();
     }
 
