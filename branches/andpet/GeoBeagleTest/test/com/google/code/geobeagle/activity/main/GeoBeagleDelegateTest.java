@@ -113,8 +113,8 @@ public class GeoBeagleDelegateTest {
         geoFixProvider.onResume();
 
         PowerMock.replayAll();
-        final GeoBeagleDelegate geoBeagleDelegate = new GeoBeagleDelegate(null, null, null, geocacheViewer, incomingIntentHandler, null, null, dbFrontend, radarView,
-                null, webPageButtonEnabler, geoFixProvider, favoriteView);
+        final GeoBeagleDelegate geoBeagleDelegate = new GeoBeagleDelegate(null, geobeagle, null, geocacheViewer, incomingIntentHandler, null, null, dbFrontend, radarView,
+                sharedPreferences, webPageButtonEnabler, geoFixProvider, favoriteView);
         geoBeagleDelegate.setGeocache(geocache);
         geoBeagleDelegate.onResume();
         PowerMock.verifyAll();
@@ -221,7 +221,7 @@ public class GeoBeagleDelegateTest {
         geoBeagle.startActivityForResult(intent, GeoBeagleDelegate.ACTIVITY_REQUEST_TAKE_PICTURE);
 
         PowerMock.replayAll();
-        final GeoBeagleDelegate geoBeagleDelegate = new GeoBeagleDelegate(null, null, null, null, null, null, null, null, null, null, null, null, null);
+        final GeoBeagleDelegate geoBeagleDelegate = new GeoBeagleDelegate(null, geoBeagle, null, null, null, null, null, null, null, null, null, null, null);
         geoBeagleDelegate.setGeocache(geocache);
         assertTrue(geoBeagleDelegate.onKeyDown(KeyEvent.KEYCODE_CAMERA, keyEvent));
         PowerMock.verifyAll();
@@ -247,8 +247,7 @@ public class GeoBeagleDelegateTest {
         EasyMock.expect(menuActions.act(12)).andReturn(true);
         PowerMock.replayAll();
 
-        assertTrue(new GeoBeagleDelegate(null, null, null, null, null, null, null,
-                null, null, null, null, null, null).onOptionsItemSelected(item));
+        assertTrue(new GeoBeagleDelegate(null, null, null, null, null, menuActions, null, null, null, null, null, null, null).onOptionsItemSelected(item));
         PowerMock.verifyAll();
     }
 
@@ -264,9 +263,9 @@ public class GeoBeagleDelegateTest {
         dbFrontend.closeDatabase();
 
         PowerMock.replayAll();
-        final GeoBeagleDelegate geoBeagleDelegate = new GeoBeagleDelegate(activitySaver, null,
-                null, null, null, null, null, null, null, null, null, null,
-                null);
+        final GeoBeagleDelegate geoBeagleDelegate = new GeoBeagleDelegate(
+                activitySaver, null, null, null, null, null, null, dbFrontend,
+                null, null, null, geoFixProvider, null);
         geoBeagleDelegate.setGeocache(geocache);
         geoBeagleDelegate.onPause();
         PowerMock.verifyAll();
@@ -282,7 +281,9 @@ public class GeoBeagleDelegateTest {
         EasyMock.expect(geocacheFromParcelFactory.createFromBundle(bundle)).andReturn(geocache);
 
         PowerMock.replayAll();
-        new GeoBeagleDelegate(null, null, null, null, null, null, null, null, null, null, null, null, null).onRestoreInstanceState(bundle);
+        new GeoBeagleDelegate(null, null, null, null, null, null,
+                geocacheFromParcelFactory, null, null, null, null, null, null)
+                .onRestoreInstanceState(bundle);
         PowerMock.verifyAll();
     }
 
