@@ -30,6 +30,9 @@ import org.junit.runner.RunWith;
 import org.powermock.api.easymock.PowerMock;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import java.util.Locale;
+import java.util.TimeZone;
+
 @RunWith(PowerMockRunner.class)
 public class MenuActionMyLocationTest {
 
@@ -41,6 +44,9 @@ public class MenuActionMyLocationTest {
         CacheAction cacheAction = PowerMock.createMock(CacheAction.class);
         GeocacheFactory geocacheFactory = PowerMock.createMock(GeocacheFactory.class);
         GeoFix geoFix = PowerMock.createMock(GeoFix.class);
+
+        Locale.setDefault(Locale.ENGLISH);
+        TimeZone.setDefault(TimeZone.getTimeZone("America/Los_Angeles"));
 
         EasyMock.expect(geoFix.getTime()).andReturn(1000L);
         EasyMock.expect(geoFixProvider.getLocation()).andReturn(geoFix);
