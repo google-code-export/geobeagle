@@ -18,23 +18,25 @@ import com.google.code.geobeagle.GeoFixProvider;
 
 import android.os.Handler;
 
+/** Updates the Gps widget two times a second */
 public class UpdateGpsWidgetRunnable implements Runnable {
     private final Handler mHandler;
     private final GeoFixProvider mGeoFixProvider;
     private final Meter mMeter;
-    private final TextLagUpdater mTextLagUpdater;
+    private final GpsStatusWidgetDelegate mGpsStatusWidgetDelegate;
 
     UpdateGpsWidgetRunnable(Handler handler, GeoFixProvider geoFixProvider,
-            Meter meter, TextLagUpdater textLagUpdater) {
+            Meter meter, GpsStatusWidgetDelegate gpsStatusWidgetDelegate) {
         mMeter = meter;
         mGeoFixProvider = geoFixProvider;
-        mTextLagUpdater = textLagUpdater;
         mHandler = handler;
+        mGpsStatusWidgetDelegate = gpsStatusWidgetDelegate;
     }
 
     public void run() {
         // Update the lag time and the orientation.
-        mTextLagUpdater.updateTextLag();
+        long systemTime = System.currentTimeMillis();
+        mGpsStatusWidgetDelegate.updateLagText(systemTime);
         mMeter.setAzimuth(mGeoFixProvider.getAzimuth());
         mHandler.postDelayed(this, 500);
     }

@@ -17,16 +17,16 @@ package com.google.code.geobeagle.gpsstatuswidget;
 import com.google.code.geobeagle.GeoFix;
 import com.google.code.geobeagle.GeoFixProvider;
 import com.google.code.geobeagle.R;
+import com.google.code.geobeagle.Refresher;
 import com.google.code.geobeagle.activity.cachelist.presenter.HasDistanceFormatter;
 import com.google.code.geobeagle.formatting.DistanceFormatter;
 
 import android.content.Context;
 import android.location.LocationProvider;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.TextView;
 
-public class GpsStatusWidgetDelegate implements HasDistanceFormatter  {
+public class GpsStatusWidgetDelegate implements HasDistanceFormatter, Refresher  {
     private final Context mContext;
     private DistanceFormatter mDistanceFormatter;
     private final GeoFixProvider mGeoFixProvider;
@@ -34,12 +34,14 @@ public class GpsStatusWidgetDelegate implements HasDistanceFormatter  {
     private final Meter mMeter;
     private final TextView mProvider;
     private final TextView mStatus;
-    private final TextLagUpdater mTextLagUpdater;
+    private final TextView mLagTextView;
+    private GeoFix mGeoFix;
 
     public GpsStatusWidgetDelegate(GeoFixProvider geoFixProvider,
             DistanceFormatter distanceFormatter, Meter meter,
             MeterFader meterFader, TextView provider, Context context,
-            TextView status, TextLagUpdater textLagUpdater) {
+            TextView status, TextView lagTextView,
+            GeoFix initialGeoFix) {
         mGeoFixProvider = geoFixProvider;
         mDistanceFormatter = distanceFormatter;
         mMeterFader = meterFader;
@@ -47,10 +49,10 @@ public class GpsStatusWidgetDelegate implements HasDistanceFormatter  {
         mProvider = provider;
         mContext = context;
         mStatus = status;
-        mTextLagUpdater = textLagUpdater;
+        mLagTextView = lagTextView;
+        mGeoFix = initialGeoFix;
     }
 
-    // TODO: onStatusChanged is never called as of now
     public void onStatusChanged(String provider, int status, Bundle extras) {
         switch (status) {
             case LocationProvider.OUT_OF_SERVICE:
@@ -72,24 +74,35 @@ public class GpsStatusWidgetDelegate implements HasDistanceFormatter  {
         mMeterFader.paint();
     }
 
+    /** Called when the location changed */
     public void refresh() {
-        GeoFix location = mGeoFixProvider.getLocation();
-        Log.d("GeoBeagle", "GpsStatusWidget onLocationChanged " + location);
-        if (location == null)
-            return;
+        mGeoFix = mGeoFixProvider.getLocation();
+        //Log.d("GeoBeagle", "GpsStatusWidget onLocationChanged " + mGeoFix);
 
+        /*
         if (!mGeoFixProvider.isProviderEnabled()) {
             mMeter.setDisabled();
             mTextLagUpdater.setDisabled();
             return;
         }
-        mProvider.setText(location.getProvider());
-        mMeter.setAccuracy(location.getAccuracy(), mDistanceFormatter);
+        */
+        mProvider.setText(mGeoFix.getProvider());
+        mMeter.setAccuracy(mGeoFix.getAccuracy(), mDistanceFormatter);
         mMeterFader.reset();
-        mTextLagUpdater.reset(location.getTime());
+        long systemTime = System.currentTimeMillis();
+        mLagTextView.setText(mGeoFix.getLagString(systemTime));
     }
 
     public void setDistanceFormatter(DistanceFormatter distanceFormatter) {
         mDistanceFormatter = distanceFormatter;
+    }
+    
+    public void updateLagText(long systemTime) {
+        mLagTextView.setText(mGeoFix.getLagString(systemTime));
+    }
+
+    @Override
+    public void forceRefresh() {
+        refresh();
     }
 }

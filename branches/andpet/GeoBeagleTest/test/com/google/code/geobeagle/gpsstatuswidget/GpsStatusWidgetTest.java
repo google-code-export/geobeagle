@@ -141,7 +141,7 @@ public class GpsStatusWidgetTest {
         meterFader.paint();
 
         PowerMock.replayAll();
-        new GpsStatusWidgetDelegate(null, null, null, meterFader, null, null, null, null).paint();
+        new GpsStatusWidgetDelegate(null, null, null, meterFader, null, null, null, null, null).paint();
         PowerMock.verifyAll();
     }
     
@@ -153,7 +153,7 @@ public class GpsStatusWidgetTest {
         EasyMock.expect(geoFixProvider.getLocation()).andReturn(null);
         
         PowerMock.replayAll();
-        new GpsStatusWidgetDelegate(geoFixProvider, null, null, null, null, null, null, null).refresh();
+        new GpsStatusWidgetDelegate(geoFixProvider, null, null, null, null, null, null, null, null).refresh();
         PowerMock.verifyAll();
     }
 
@@ -167,7 +167,7 @@ public class GpsStatusWidgetTest {
 
         PowerMock.replayAll();
         GpsStatusWidgetDelegate gpsStatusWidget = new GpsStatusWidgetDelegate(null, null, null,
-                null, null, null, status, null);
+                null, null, null, status, null, null);
         //TODO: GPS widget no longer gets provider status changes... it should get the info somehow
 //        gpsStatusWidget.onProviderEnabled("gps");
 //        gpsStatusWidget.onProviderDisabled("gps");
@@ -218,7 +218,6 @@ public class GpsStatusWidgetTest {
     public void testOnLocationChanged() {
         MeterFader meterFader = PowerMock.createMock(MeterFader.class);
         Meter meter = PowerMock.createMock(Meter.class);
-        TextLagUpdater textLagUpdater = PowerMock.createMock(TextLagUpdater.class);
         TextView provider = PowerMock.createMock(TextView.class);
         GeoFix location = PowerMock.createMock(GeoFix.class);
         GeoFixProvider geoFixProvider = PowerMock.createMock(GeoFixProviderLive.class);
@@ -232,12 +231,10 @@ public class GpsStatusWidgetTest {
         provider.setText("gps");
         meter.setAccuracy(1.2f, distanceFormatter);
         meterFader.reset();
-        textLagUpdater.reset(1000);
 
         PowerMock.replayAll();
         final GpsStatusWidgetDelegate gpsStatusWidgetDelegate = new GpsStatusWidgetDelegate(
-                geoFixProvider, null, meter, meterFader, provider, null, null,
-                textLagUpdater);
+                geoFixProvider, null, meter, meterFader, provider, null, null, null, null);
         gpsStatusWidgetDelegate.setDistanceFormatter(distanceFormatter);
         gpsStatusWidgetDelegate.refresh();
         PowerMock.verifyAll();
@@ -246,18 +243,16 @@ public class GpsStatusWidgetTest {
     @Test
     public void testOnLocationChangedProviderDisabled() {
         Meter meter = PowerMock.createMock(Meter.class);
-        TextLagUpdater textLagUpdater = PowerMock.createMock(TextLagUpdater.class);
         GeoFix location = PowerMock.createMock(GeoFix.class);
         GeoFixProvider geoFixProvider = PowerMock.createMock(GeoFixProviderLive.class);
 
         expect(geoFixProvider.isProviderEnabled()).andReturn(false);
         expect(geoFixProvider.getLocation()).andReturn(location);
-        textLagUpdater.setDisabled();
         meter.setDisabled();
 
         PowerMock.replayAll();
         new GpsStatusWidgetDelegate(geoFixProvider, null, meter, null, null, null, null,
-                textLagUpdater).refresh();
+                null, null).refresh();
         PowerMock.verifyAll();
     }
 
@@ -268,7 +263,7 @@ public class GpsStatusWidgetTest {
         meterFader.paint();
 
         PowerMock.replayAll();
-        new GpsStatusWidgetDelegate(null, null, null, meterFader, null, null, null, null).paint();
+        new GpsStatusWidgetDelegate(null, null, null, meterFader, null, null, null, null, null).paint();
         PowerMock.verifyAll();
     }
 
@@ -290,7 +285,7 @@ public class GpsStatusWidgetTest {
 
         PowerMock.replayAll();
         GpsStatusWidgetDelegate gpsStatusWidget = new GpsStatusWidgetDelegate(null,
-                distanceFormatter, null, null, null, context, status, null);
+                distanceFormatter, null, null, null, context, status, null, null);
         gpsStatusWidget.onStatusChanged("gps", LocationProvider.OUT_OF_SERVICE, null);
         gpsStatusWidget.onStatusChanged("network", LocationProvider.AVAILABLE, null);
         gpsStatusWidget.onStatusChanged("gps", LocationProvider.TEMPORARILY_UNAVAILABLE, null);
@@ -299,13 +294,11 @@ public class GpsStatusWidgetTest {
 
     @Test
     public void testUpdateGpsWidgetRunnable() {
-        TextLagUpdater textLagUpdater = PowerMock.createMock(TextLagUpdater.class);
         GeoFixProvider geoFixProvider = PowerMock
                 .createMock(GeoFixProviderLive.class);
         Meter meter = PowerMock.createMock(Meter.class);
         Handler handler = PowerMock.createMock(Handler.class);
 
-        textLagUpdater.updateTextLag();
         expect(geoFixProvider.getAzimuth()).andReturn(42f);
         meter.setAzimuth(42f);
         EasyMock
@@ -314,7 +307,7 @@ public class GpsStatusWidgetTest {
                                 .eq(500L))).andReturn(true);
 
         PowerMock.replayAll();
-        new UpdateGpsWidgetRunnable(handler, geoFixProvider, meter, textLagUpdater).run();
+        new UpdateGpsWidgetRunnable(handler, geoFixProvider, meter, null).run();
         PowerMock.verifyAll();
     }
 }

@@ -166,6 +166,7 @@ public class CacheListDelegateDI {
         final CacheListPositionUpdater cacheListPositionUpdater = new CacheListPositionUpdater(
                 geoFixProvider, cacheListAdapter, cachesProviderCount, thread /*cachesProviderSorted*/);
         geoFixProvider.addObserver(cacheListPositionUpdater);
+        geoFixProvider.addObserver(gpsStatusWidgetDelegate);
         final CacheListAdapter.ScrollListener scrollListener = new CacheListAdapter.ScrollListener(
                 cacheListAdapter);
         final CacheTypeFactory cacheTypeFactory = new CacheTypeFactory();

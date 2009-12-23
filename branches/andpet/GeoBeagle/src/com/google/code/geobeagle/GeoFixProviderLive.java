@@ -21,6 +21,8 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.util.Log;
+
 import java.util.ArrayList;
 
 /** Responsible for providing an up-to-date location and compass direction */
@@ -106,10 +108,12 @@ GeoFixProvider {
 
     @Override
     public void onProviderDisabled(String provider) {
+        Log.d("GeoBeagle", "onProviderDisabled("+provider+")");
     }
 
     @Override
     public void onProviderEnabled(String provider) {
+        Log.d("GeoBeagle", "onProviderEnabled("+provider+")");
     }
 
     @Override
