@@ -16,7 +16,7 @@
 
 	<!-- <include layout="@layout/gps_widget" />  -->
 	<view
-		class="com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidget$InflatedGpsStatusWidget"
+		class="com.google.code.geobeagle.gpsstatuswidget.InflatedGpsStatusView"
 		android:id="@+id/gps_widget_view" android:layout_width="fill_parent"
 		android:layout_height="wrap_content" />
 	<WebView android:id="@+id/help_contents" android:layout_width="fill_parent"
