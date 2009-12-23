@@ -23,6 +23,7 @@ import com.google.code.geobeagle.formatting.DistanceFormatter;
 import android.content.Context;
 import android.location.LocationProvider;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.TextView;
 
 public class GpsStatusWidgetDelegate implements HasDistanceFormatter  {
@@ -30,7 +31,7 @@ public class GpsStatusWidgetDelegate implements HasDistanceFormatter  {
     private DistanceFormatter mDistanceFormatter;
     private final GeoFixProvider mGeoFixProvider;
     private final MeterFader mMeterFader;
-    private final Meter mMeterWrapper;
+    private final Meter mMeter;
     private final TextView mProvider;
     private final TextView mStatus;
     private final TextLagUpdater mTextLagUpdater;
@@ -42,7 +43,7 @@ public class GpsStatusWidgetDelegate implements HasDistanceFormatter  {
         mGeoFixProvider = geoFixProvider;
         mDistanceFormatter = distanceFormatter;
         mMeterFader = meterFader;
-        mMeterWrapper = meter;
+        mMeter = meter;
         mProvider = provider;
         mContext = context;
         mStatus = status;
@@ -73,17 +74,17 @@ public class GpsStatusWidgetDelegate implements HasDistanceFormatter  {
 
     public void refresh() {
         GeoFix location = mGeoFixProvider.getLocation();
-        // Log.d("GeoBeagle", "GpsStatusWidget onLocationChanged " + location);
+        Log.d("GeoBeagle", "GpsStatusWidget onLocationChanged " + location);
         if (location == null)
             return;
 
         if (!mGeoFixProvider.isProviderEnabled()) {
-            mMeterWrapper.setDisabled();
+            mMeter.setDisabled();
             mTextLagUpdater.setDisabled();
             return;
         }
         mProvider.setText(location.getProvider());
-        mMeterWrapper.setAccuracy(location.getAccuracy(), mDistanceFormatter);
+        mMeter.setAccuracy(location.getAccuracy(), mDistanceFormatter);
         mMeterFader.reset();
         mTextLagUpdater.reset(location.getTime());
     }

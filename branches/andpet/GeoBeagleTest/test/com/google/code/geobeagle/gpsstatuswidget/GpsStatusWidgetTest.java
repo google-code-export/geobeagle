@@ -42,7 +42,7 @@ import android.widget.TextView;
 @RunWith(PowerMockRunner.class)
 @PrepareForTest( {
         Bundle.class, Color.class, Handler.class, LinearLayout.class, TextView.class,
-        GpsStatusWidget.class, Context.class
+        Context.class
 })
 public class GpsStatusWidgetTest {
     @Test

@@ -21,8 +21,6 @@ import com.google.code.geobeagle.xmlimport.FileFactory;
 import com.google.code.geobeagle.xmlimport.GpxImporterDI.MessageHandler;
 
 import android.os.PowerManager.WakeLock;
-import android.util.Log;
-
 import java.io.File;
 import java.io.IOException;
 

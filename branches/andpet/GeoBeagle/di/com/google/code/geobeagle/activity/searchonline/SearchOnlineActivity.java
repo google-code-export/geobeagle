@@ -31,7 +31,7 @@ import com.google.code.geobeagle.activity.cachelist.presenter.DistanceFormatterM
 import com.google.code.geobeagle.activity.searchonline.JsInterface.JsInterfaceHelper;
 import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidgetDelegate;
 import com.google.code.geobeagle.gpsstatuswidget.GpsWidgetAndUpdater;
-import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidget.InflatedGpsStatusWidget;
+import com.google.code.geobeagle.gpsstatuswidget.InflatedGpsStatusView;
 
 import android.app.Activity;
 import android.content.Context;
@@ -57,7 +57,7 @@ public class SearchOnlineActivity extends Activity {
 
         final GeoFixProvider mGeoFixProvider = LocationControlDi.create(this);
 
-        final InflatedGpsStatusWidget mGpsStatusWidget = (InflatedGpsStatusWidget)this
+        final InflatedGpsStatusView mGpsStatusWidget = (InflatedGpsStatusView)this
                 .findViewById(R.id.gps_widget_view);
         final DistanceFormatterManager distanceFormatterManager = DistanceFormatterManagerDi
                 .create(this);

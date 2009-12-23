@@ -6,9 +6,8 @@ import com.google.code.geobeagle.Refresher;
 import com.google.code.geobeagle.database.CachesProviderCenterThread;
 import com.google.code.geobeagle.database.ICachesProviderCenter;
 
-import android.util.Log;
-
-/** Sends location and azimuth updates to CacheList */
+/** Sends location and azimuth updates to CacheList 
+ * when the user position changes. */
 public class CacheListPositionUpdater implements Refresher {
     private final CacheListAdapter mCacheList;
     private final GeoFixProvider mGeoFixProvider;
@@ -25,7 +24,6 @@ public class CacheListPositionUpdater implements Refresher {
     }
 
     public void refresh() {
-        Log.d("GeoBeagle", "refresh()");
         final GeoFix location = mGeoFixProvider.getLocation();
         if (location != null) {
             double latitude = location.getLatitude();

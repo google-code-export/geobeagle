@@ -21,12 +21,12 @@ import android.os.Handler;
 public class UpdateGpsWidgetRunnable implements Runnable {
     private final Handler mHandler;
     private final GeoFixProvider mGeoFixProvider;
-    private final Meter mMeterWrapper;
+    private final Meter mMeter;
     private final TextLagUpdater mTextLagUpdater;
 
     UpdateGpsWidgetRunnable(Handler handler, GeoFixProvider geoFixProvider,
             Meter meter, TextLagUpdater textLagUpdater) {
-        mMeterWrapper = meter;
+        mMeter = meter;
         mGeoFixProvider = geoFixProvider;
         mTextLagUpdater = textLagUpdater;
         mHandler = handler;
@@ -35,7 +35,7 @@ public class UpdateGpsWidgetRunnable implements Runnable {
     public void run() {
         // Update the lag time and the orientation.
         mTextLagUpdater.updateTextLag();
-        mMeterWrapper.setAzimuth(mGeoFixProvider.getAzimuth());
+        mMeter.setAzimuth(mGeoFixProvider.getAzimuth());
         mHandler.postDelayed(this, 500);
     }
 }

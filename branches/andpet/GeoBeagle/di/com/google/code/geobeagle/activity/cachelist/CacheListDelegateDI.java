@@ -64,11 +64,10 @@ import com.google.code.geobeagle.database.CachesProviderToggler;
 import com.google.code.geobeagle.database.CachesProviderWaitForInit;
 import com.google.code.geobeagle.database.DbFrontend;
 import com.google.code.geobeagle.database.ICachesProviderCenter;
-import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidget;
 import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidgetDelegate;
 import com.google.code.geobeagle.gpsstatuswidget.GpsWidgetAndUpdater;
 import com.google.code.geobeagle.gpsstatuswidget.UpdateGpsWidgetRunnable;
-import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidget.InflatedGpsStatusWidget;
+import com.google.code.geobeagle.gpsstatuswidget.InflatedGpsStatusView;
 import com.google.code.geobeagle.xmlimport.GpxImporterDI.MessageHandler;
 import com.google.code.geobeagle.xmlimport.GpxToCache.Aborter;
 import com.google.code.geobeagle.xmlimport.GpxToCacheDI.XmlPullParserWrapper;
@@ -80,6 +79,7 @@ import android.content.DialogInterface.OnClickListener;
 import android.content.res.Resources;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 
 import java.util.ArrayList;
@@ -126,9 +126,9 @@ public class CacheListDelegateDI {
                 distanceFormatterManager.getFormatter(), layoutInflater,
                 relativeBearingFormatter, listActivity.getResources(), graphicsGenerator, dbFrontend);
 
-        final InflatedGpsStatusWidget inflatedGpsStatusWidget = new InflatedGpsStatusWidget(
+        final InflatedGpsStatusView inflatedGpsStatusWidget = new InflatedGpsStatusView(
                 listActivity);
-        final GpsStatusWidget gpsStatusWidget = new GpsStatusWidget(listActivity);
+        final LinearLayout gpsStatusWidget = new LinearLayout(listActivity);
 
         gpsStatusWidget.addView(inflatedGpsStatusWidget, LayoutParams.FILL_PARENT,
                 LayoutParams.WRAP_CONTENT);
