@@ -22,16 +22,16 @@ import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.GeocacheFactory;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.GeocacheFactory.Source;
+import com.google.code.geobeagle.actions.ActionStaticLabel;
 import com.google.code.geobeagle.actions.CacheAction;
 import com.google.code.geobeagle.actions.MenuAction;
 import com.google.code.geobeagle.database.DbFrontend;
 
 import android.content.res.Resources;
 
-public class MenuActionMyLocation implements MenuAction {
+public class MenuActionMyLocation extends ActionStaticLabel implements MenuAction {
     private final ErrorDisplayer mErrorDisplayer;
     private final DbFrontend mDbFrontend;
-    private final Resources mResources;
     private final GeocacheFactory mGeocacheFactory;
     private final GeoFixProvider mLocationControl;
     private final CacheAction mCacheActionEdit;
@@ -40,11 +40,11 @@ public class MenuActionMyLocation implements MenuAction {
             GeocacheFactory geocacheFactory,
             GeoFixProvider locationControl, DbFrontend dbFrontend,
             Resources resources, CacheAction cacheActionEdit) {
+        super(resources, R.string.menu_add_my_location);
         mErrorDisplayer = errorDisplayer;
         mGeocacheFactory = geocacheFactory;
         mLocationControl = locationControl;
         mDbFrontend = dbFrontend;
-        mResources = resources;
         mCacheActionEdit = cacheActionEdit;
     }
 
@@ -67,10 +67,5 @@ public class MenuActionMyLocation implements MenuAction {
         mCacheActionEdit.act(newCache);
         //Since the Edit activity will refresh the list, we don't need to do it
         //mListRefresher.forceRefresh();
-    }
-    
-    @Override
-    public String getLabel() {
-        return mResources.getString(R.string.menu_add_my_location);
     }
 }

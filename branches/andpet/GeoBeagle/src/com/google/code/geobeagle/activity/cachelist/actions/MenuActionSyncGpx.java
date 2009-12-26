@@ -16,6 +16,7 @@ package com.google.code.geobeagle.activity.cachelist.actions;
 
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.Tags;
+import com.google.code.geobeagle.actions.ActionStaticLabel;
 import com.google.code.geobeagle.actions.MenuAction;
 import com.google.code.geobeagle.activity.cachelist.GpxImporterFactory;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListAdapter;
@@ -24,21 +25,20 @@ import com.google.code.geobeagle.xmlimport.GpxImporter;
 
 import android.content.res.Resources;
 
-public class MenuActionSyncGpx implements MenuAction {
+public class MenuActionSyncGpx extends ActionStaticLabel implements MenuAction {
     private Abortable mAbortable;
     private final CacheListAdapter mCacheList;
     private final GpxImporterFactory mGpxImporterFactory;
     private final DbFrontend mDbFrontend;
-    private final Resources mResources;
 
     public MenuActionSyncGpx(Abortable abortable, CacheListAdapter cacheList,
             GpxImporterFactory gpxImporterFactory, DbFrontend dbFrontend,
             Resources resources) {
+        super(resources, R.string.menu_sync);
         mAbortable = abortable;
         mCacheList = cacheList;
         mGpxImporterFactory = gpxImporterFactory;
         mDbFrontend = dbFrontend;
-        mResources = resources;
     }
 
     public void abort() {
@@ -52,10 +52,5 @@ public class MenuActionSyncGpx implements MenuAction {
         final GpxImporter gpxImporter = mGpxImporterFactory.create(mDbFrontend.getCacheWriter());
         mAbortable = gpxImporter;
         gpxImporter.importGpxs(mCacheList);
-    }
-    
-    @Override
-    public String getLabel() {
-        return mResources.getString(R.string.menu_sync);
     }
 }
