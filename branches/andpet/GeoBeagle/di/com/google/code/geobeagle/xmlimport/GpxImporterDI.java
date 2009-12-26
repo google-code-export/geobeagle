@@ -24,6 +24,7 @@ import com.google.code.geobeagle.cachedetails.HtmlWriter;
 import com.google.code.geobeagle.cachedetails.WriterWrapper;
 import com.google.code.geobeagle.database.CacheWriter;
 import com.google.code.geobeagle.xmlimport.FileFactory;
+import com.google.code.geobeagle.xmlimport.CachePersisterFacade.TextHandler;
 import com.google.code.geobeagle.xmlimport.EventHelperDI.EventHelperFactory;
 import com.google.code.geobeagle.xmlimport.GpxToCache.Aborter;
 import com.google.code.geobeagle.xmlimport.GpxToCacheDI.XmlPullParserWrapper;
@@ -46,6 +47,7 @@ import android.preference.PreferenceManager;
 import android.widget.Toast;
 
 import java.io.FilenameFilter;
+import java.util.HashMap;
 
 public class GpxImporterDI {
     // Can't test this due to final methods in base.
@@ -258,7 +260,8 @@ public class GpxImporterDI {
         final ToastFactory toastFactory = new ToastFactory();
         final ImportThreadWrapper importThreadWrapper = new ImportThreadWrapper(messageHandler,
                 xmlPullParserWrapper, aborter);
-        final EventHandlerGpx eventHandlerGpx = new EventHandlerGpx(cachePersisterFacade);
+        final HashMap<String, TextHandler> textHandlers = GpxImporterDI.initializeTextHandlers(cachePersisterFacade);
+        final EventHandlerGpx eventHandlerGpx = new EventHandlerGpx(cachePersisterFacade, textHandlers );
         final EventHandlerLoc eventHandlerLoc = new EventHandlerLoc(cachePersisterFacade);
 
         final EventHandlers eventHandlers = new EventHandlers();
@@ -268,6 +271,34 @@ public class GpxImporterDI {
         return new GpxImporter(geoFixProvider, gpxLoader, listActivity, importThreadWrapper,
                 messageHandler, toastFactory, eventHandlers, errorDisplayer,
                 geocacheFactory);
+    }
+
+    public static HashMap<String, TextHandler> initializeTextHandlers(CachePersisterFacade cachePersisterFacade) {
+        HashMap<String, TextHandler> textHandlers = new HashMap<String, TextHandler>(); 
+        textHandlers.put(EventHandlerGpx.XPATH_WPTNAME, cachePersisterFacade.wptName);
+        textHandlers.put(EventHandlerGpx.XPATH_WPTDESC, cachePersisterFacade.wptDesc);
+        textHandlers.put(EventHandlerGpx.XPATH_GROUNDSPEAKNAME, cachePersisterFacade.groundspeakName);
+        textHandlers.put(EventHandlerGpx.XPATH_GEOCACHENAME, cachePersisterFacade.groundspeakName);
+        textHandlers.put(EventHandlerGpx.XPATH_PLACEDBY, cachePersisterFacade.placedBy);
+        textHandlers.put(EventHandlerGpx.XPATH_LOGDATE, cachePersisterFacade.logDate);
+        textHandlers.put(EventHandlerGpx.XPATH_GEOCACHELOGDATE, cachePersisterFacade.logDate);
+        
+        textHandlers.put(EventHandlerGpx.XPATH_HINT, cachePersisterFacade.hint);
+        textHandlers.put(EventHandlerGpx.XPATH_GEOCACHEHINT, cachePersisterFacade.hint);
+        
+        textHandlers.put(EventHandlerGpx.XPATH_CACHE_TYPE, cachePersisterFacade.cacheType);
+        textHandlers.put(EventHandlerGpx.XPATH_GEOCACHE_TYPE, cachePersisterFacade.cacheType);
+        textHandlers.put(EventHandlerGpx.XPATH_WAYPOINT_TYPE, cachePersisterFacade.cacheType);
+        
+        textHandlers.put(EventHandlerGpx.XPATH_CACHE_DIFFICULTY, cachePersisterFacade.difficulty);
+        textHandlers.put(EventHandlerGpx.XPATH_GEOCACHE_DIFFICULTY, cachePersisterFacade.difficulty);
+    
+        textHandlers.put(EventHandlerGpx.XPATH_CACHE_TERRAIN, cachePersisterFacade.terrain);
+        textHandlers.put(EventHandlerGpx.XPATH_GEOCACHE_TERRAIN, cachePersisterFacade.terrain);
+        
+        textHandlers.put(EventHandlerGpx.XPATH_CACHE_CONTAINER, cachePersisterFacade.container);
+        textHandlers.put(EventHandlerGpx.XPATH_GEOCACHE_CONTAINER, cachePersisterFacade.container);
+        return textHandlers;
     }
 
 }

@@ -33,9 +33,91 @@ public class CachePersisterFacade {
     private final WakeLock mWakeLock;
     private final String mUsername;
 
-    CachePersisterFacade(CacheTagSqlWriter cacheTagSqlWriter, FileFactory fileFactory,
-            CacheDetailsWriter cacheDetailsWriter, MessageHandler messageHandler, 
-            WakeLock wakeLock, String username) {
+    static interface TextHandler {
+        public void text(String fullpath) throws IOException;
+    }
+
+    TextHandler wptName = new TextHandler() {
+        @Override
+        public void text(String fullpath) throws IOException {
+            mCacheDetailsWriter.open(fullpath);
+            mCacheDetailsWriter.writeWptName(fullpath);
+            mCacheTagWriter.id(fullpath);
+            mMessageHandler.updateWaypointId(fullpath);
+            mWakeLock.acquire(GpxLoader.WAKELOCK_DURATION);
+        }
+    };
+
+    TextHandler wptDesc = new TextHandler() {
+        @Override
+        public void text(String fullpath) throws IOException {
+            mCacheName = fullpath;
+            mCacheTagWriter.cacheName(fullpath);
+        }
+    };
+
+    TextHandler logDate = new TextHandler() {
+        @Override
+        public void text(String fullpath) throws IOException {
+            mCacheDetailsWriter.writeLogDate(fullpath);
+        }
+    };
+
+    TextHandler hint = new TextHandler() {
+        @Override
+        public void text(String fullpath) throws IOException {
+            if (!fullpath.equals(""))
+                mCacheDetailsWriter.writeHint(fullpath);
+        }
+    };
+    
+    TextHandler cacheType = new TextHandler() {
+        @Override
+        public void text(String fullpath) throws IOException {
+            mCacheTagWriter.cacheType(fullpath);
+        }
+    };
+
+    TextHandler difficulty = new TextHandler() {
+        @Override
+        public void text(String fullpath) throws IOException {
+            mCacheTagWriter.difficulty(fullpath);
+        }
+    };
+
+    TextHandler container = new TextHandler() {
+        @Override
+        public void text(String fullpath) throws IOException {
+            mCacheTagWriter.container(fullpath);
+        }
+    };
+
+    TextHandler terrain = new TextHandler() {
+        @Override
+        public void text(String fullpath) throws IOException {
+            mCacheTagWriter.terrain(fullpath);
+        }
+    };
+
+    TextHandler groundspeakName = new TextHandler() {
+        @Override
+        public void text(String fullpath) throws IOException {
+            mCacheTagWriter.cacheName(fullpath);
+        }
+    };
+
+    TextHandler placedBy = new TextHandler() {
+        @Override
+        public void text(String fullpath) throws IOException {
+            boolean isMine = (!mUsername.equals("") && mUsername
+                    .equalsIgnoreCase(fullpath));
+            mCacheTagWriter.setTag(Tags.MINE, isMine);
+        }
+    };
+
+    CachePersisterFacade(CacheTagSqlWriter cacheTagSqlWriter,
+            FileFactory fileFactory, CacheDetailsWriter cacheDetailsWriter,
+            MessageHandler messageHandler, WakeLock wakeLock, String username) {
         mCacheDetailsWriter = cacheDetailsWriter;
         mCacheTagWriter = cacheTagSqlWriter;
         mFileFactory = fileFactory;
@@ -44,20 +126,8 @@ public class CachePersisterFacade {
         mUsername = username;
     }
 
-    void cacheType(String text) {
-        mCacheTagWriter.cacheType(text);
-    }
-
     void close(boolean success) {
         mCacheTagWriter.stopWriting(success);
-    }
-
-    void container(String text) {
-        mCacheTagWriter.container(text);
-    }
-
-    void difficulty(String text) {
-        mCacheTagWriter.difficulty(text);
     }
 
     void end() {
@@ -74,20 +144,8 @@ public class CachePersisterFacade {
         return mCacheTagWriter.gpxTime(gpxTime);
     }
 
-    void groundspeakName(String text) {
-        mCacheTagWriter.cacheName(text);
-    }
-
-    void hint(String text) throws IOException {
-        mCacheDetailsWriter.writeHint(text);
-    }
-
     void line(String text) throws IOException {
         mCacheDetailsWriter.writeLine(text);
-    }
-
-    void logDate(String text) throws IOException {
-        mCacheDetailsWriter.writeLogDate(text);
     }
 
     void open(String path) {
@@ -110,32 +168,9 @@ public class CachePersisterFacade {
         mCacheTagWriter.setTag(tag, set);
     }
 
-    void terrain(String text) {
-        mCacheTagWriter.terrain(text);
-    }
-
     void wpt(String latitude, String longitude) {
         mCacheTagWriter.latitudeLongitude(latitude, longitude);
         mCacheDetailsWriter.latitudeLongitude(latitude, longitude);
-    }
-
-    void wptDesc(String cacheName) {
-        mCacheName = cacheName;
-        mCacheTagWriter.cacheName(cacheName);
-    }
-
-    void wptName(String wpt) throws IOException {
-        mCacheDetailsWriter.open(wpt);
-        mCacheDetailsWriter.writeWptName(wpt);
-        mCacheTagWriter.id(wpt);
-        mMessageHandler.updateWaypointId(wpt);
-        mWakeLock.acquire(GpxLoader.WAKELOCK_DURATION);
-    }
-
-    public void placedBy(String text) {
-        boolean isMine = (!mUsername.equals("") 
-                && mUsername.equalsIgnoreCase(text));
-        mCacheTagWriter.setTag(Tags.MINE, isMine);
     }
 
 }

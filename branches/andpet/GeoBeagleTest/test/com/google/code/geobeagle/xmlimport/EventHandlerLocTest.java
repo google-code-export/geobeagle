@@ -4,6 +4,7 @@ package com.google.code.geobeagle.xmlimport;
 import static org.junit.Assert.assertTrue;
 
 import com.google.code.geobeagle.GeocacheFactory.Source;
+import com.google.code.geobeagle.xmlimport.CachePersisterFacade.TextHandler;
 import com.google.code.geobeagle.xmlimport.GpxToCacheDI.XmlPullParserWrapper;
 
 import org.easymock.EasyMock;
@@ -59,10 +60,12 @@ public class EventHandlerLocTest {
         CachePersisterFacade cachePersisterFacade = PowerMock
                 .createMock(CachePersisterFacade.class);
         XmlPullParserWrapper xmlPullParser = PowerMock.createMock(XmlPullParserWrapper.class);
-
+        TextHandler textHandler = PowerMock.createMock(TextHandler.class);
+        
+        cachePersisterFacade.wptName = textHandler;
         cachePersisterFacade.startCache();
         EasyMock.expect(xmlPullParser.getAttributeValue(null, "id")).andReturn("GCABC");
-        cachePersisterFacade.wptName("GCABC");
+        cachePersisterFacade.wptName.text("GCABC");
 
         PowerMock.replayAll();
         new EventHandlerLoc(cachePersisterFacade).startTag(EventHandlerLoc.XPATH_WPTNAME,
@@ -74,8 +77,10 @@ public class EventHandlerLocTest {
     public void textWptNameTest() throws IOException {
         CachePersisterFacade cachePersisterFacade = PowerMock
                 .createMock(CachePersisterFacade.class);
-
-        cachePersisterFacade.groundspeakName("a nice little cache");
+        TextHandler textHandler = PowerMock.createMock(TextHandler.class);
+        
+        cachePersisterFacade.groundspeakName = textHandler;
+        cachePersisterFacade.groundspeakName.text("a nice little cache");
 
         PowerMock.replayAll();
         assertTrue(new EventHandlerLoc(cachePersisterFacade).text(EventHandlerLoc.XPATH_WPTNAME,

@@ -16,28 +16,30 @@ package com.google.code.geobeagle.xmlimport;
 
 import com.google.code.geobeagle.Tags;
 import com.google.code.geobeagle.GeocacheFactory.Source;
+import com.google.code.geobeagle.xmlimport.CachePersisterFacade.TextHandler;
 import com.google.code.geobeagle.xmlimport.GpxToCacheDI.XmlPullParserWrapper;
 
 import java.io.IOException;
+import java.util.HashMap;
 
-class EventHandlerGpx implements EventHandler {
-    static final String XPATH_CACHE_CONTAINER = "/gpx/wpt/groundspeak:cache/groundspeak:container";
-    static final String XPATH_CACHE_DIFFICULTY = "/gpx/wpt/groundspeak:cache/groundspeak:difficulty";
-    static final String XPATH_CACHE_TERRAIN = "/gpx/wpt/groundspeak:cache/groundspeak:terrain";
-    static final String XPATH_CACHE_TYPE = "/gpx/wpt/groundspeak:cache/groundspeak:type";
-    static final String XPATH_GEOCACHE_CONTAINER = "/gpx/wpt/geocache/container";
-    static final String XPATH_GEOCACHE_DIFFICULTY = "/gpx/wpt/geocache/difficulty";
-    static final String XPATH_GEOCACHE_TERRAIN = "/gpx/wpt/geocache/terrain";
-    static final String XPATH_GEOCACHE_TYPE = "/gpx/wpt/geocache/type";
-    static final String XPATH_GEOCACHEHINT = "/gpx/wpt/geocache/hints";
-    static final String XPATH_GEOCACHELOGDATE = "/gpx/wpt/geocache/logs/log/time";
-    static final String XPATH_GEOCACHENAME = "/gpx/wpt/geocache/name";
+public class EventHandlerGpx implements EventHandler {
+    public static final String XPATH_CACHE_CONTAINER = "/gpx/wpt/groundspeak:cache/groundspeak:container";
+    public static final String XPATH_CACHE_DIFFICULTY = "/gpx/wpt/groundspeak:cache/groundspeak:difficulty";
+    public static final String XPATH_CACHE_TERRAIN = "/gpx/wpt/groundspeak:cache/groundspeak:terrain";
+    public static final String XPATH_CACHE_TYPE = "/gpx/wpt/groundspeak:cache/groundspeak:type";
+    public static final String XPATH_GEOCACHE_CONTAINER = "/gpx/wpt/geocache/container";
+    public static final String XPATH_GEOCACHE_DIFFICULTY = "/gpx/wpt/geocache/difficulty";
+    public static final String XPATH_GEOCACHE_TERRAIN = "/gpx/wpt/geocache/terrain";
+    public static final String XPATH_GEOCACHE_TYPE = "/gpx/wpt/geocache/type";
+    public static final String XPATH_GEOCACHEHINT = "/gpx/wpt/geocache/hints";
+    public static final String XPATH_GEOCACHELOGDATE = "/gpx/wpt/geocache/logs/log/time";
+    public static final String XPATH_GEOCACHENAME = "/gpx/wpt/geocache/name";
     static final String XPATH_GPXNAME = "/gpx/name";
     static final String XPATH_GPXTIME = "/gpx/time";
-    static final String XPATH_GROUNDSPEAKNAME = "/gpx/wpt/groundspeak:cache/groundspeak:name";
-    static final String XPATH_PLACEDBY = "/gpx/wpt/groundspeak:cache/groundspeak:placed_by";
-    static final String XPATH_HINT = "/gpx/wpt/groundspeak:cache/groundspeak:encoded_hints";
-    static final String XPATH_LOGDATE = "/gpx/wpt/groundspeak:cache/groundspeak:logs/groundspeak:log/groundspeak:date";
+    public static final String XPATH_GROUNDSPEAKNAME = "/gpx/wpt/groundspeak:cache/groundspeak:name";
+    public static final String XPATH_PLACEDBY = "/gpx/wpt/groundspeak:cache/groundspeak:placed_by";
+    public static final String XPATH_HINT = "/gpx/wpt/groundspeak:cache/groundspeak:encoded_hints";
+    public static final String XPATH_LOGDATE = "/gpx/wpt/groundspeak:cache/groundspeak:logs/groundspeak:log/groundspeak:date";
     static final String[] XPATH_PLAINLINES = {
             "/gpx/wpt/cmt", "/gpx/wpt/desc", "/gpx/wpt/groundspeak:cache/groundspeak:type",
             "/gpx/wpt/groundspeak:cache/groundspeak:container",
@@ -55,15 +57,16 @@ class EventHandlerGpx implements EventHandler {
     static final String XPATH_SYM = "/gpx/wpt/sym";
     static final String XPATH_CACHE = "/gpx/wpt/groundspeak:cache";
     static final String XPATH_WPT = "/gpx/wpt";
-    static final String XPATH_WPTDESC = "/gpx/wpt/desc";
-    static final String XPATH_WPTNAME = "/gpx/wpt/name";
-
-    static final String XPATH_WAYPOINT_TYPE = "/gpx/wpt/type";
+    public static final String XPATH_WPTDESC = "/gpx/wpt/desc";
+    public static final String XPATH_WPTNAME = "/gpx/wpt/name";
+    public static final String XPATH_WAYPOINT_TYPE = "/gpx/wpt/type";
     
     private final CachePersisterFacade mCachePersisterFacade;
+    private final HashMap<String, TextHandler> mTextHandlers;
 
-    public EventHandlerGpx(CachePersisterFacade cachePersisterFacade) {
+    public EventHandlerGpx(CachePersisterFacade cachePersisterFacade, HashMap<String, TextHandler> textHandlers) {
         mCachePersisterFacade = cachePersisterFacade;
+        mTextHandlers = textHandlers;
     }
 
     public void endTag(String previousFullPath) throws IOException {
@@ -87,38 +90,16 @@ class EventHandlerGpx implements EventHandler {
 
     public boolean text(String fullPath, String text) throws IOException {
         text = text.trim();
+        
+        if (mTextHandlers.containsKey(fullPath))
+            mTextHandlers.get(fullPath).text(text);
+        
         //Log.d("GeoBeagle", "fullPath " + fullPath + ", text " + text);
-        if (fullPath.equals(XPATH_WPTNAME)) {
-            mCachePersisterFacade.wptName(text);
-        } else if (fullPath.equals(XPATH_WPTDESC)) {
-            mCachePersisterFacade.wptDesc(text);
-        } else if (fullPath.equals(XPATH_GPXTIME)) {
+        if (fullPath.equals(XPATH_GPXTIME)) {
             return mCachePersisterFacade.gpxTime(text);
-        } else if (fullPath.equals(XPATH_GROUNDSPEAKNAME) || fullPath.equals(XPATH_GEOCACHENAME)) {
-            mCachePersisterFacade.groundspeakName(text);
-        } else if (fullPath.equals(XPATH_PLACEDBY)) {
-            mCachePersisterFacade.placedBy(text);
-        } else if (fullPath.equals(XPATH_LOGDATE) || fullPath.equals(XPATH_GEOCACHELOGDATE)) {
-            mCachePersisterFacade.logDate(text);
         } else if (fullPath.equals(XPATH_SYM)) {
             if (text.equals("Geocache Found"))
                 mCachePersisterFacade.setTag(Tags.FOUND, true);
-        } else if (fullPath.equals(XPATH_HINT) || fullPath.equals(XPATH_GEOCACHEHINT)) {
-            if (!text.equals("")) {
-                mCachePersisterFacade.hint(text);
-            }
-        } else if (fullPath.equals(XPATH_CACHE_TYPE) || fullPath.equals(XPATH_GEOCACHE_TYPE)
-                || fullPath.equals(XPATH_WAYPOINT_TYPE)) {
-            //Log.d("GeoBeagle", "Setting cache type " + text);
-            mCachePersisterFacade.cacheType(text);
-        } else if (fullPath.equals(XPATH_CACHE_DIFFICULTY)
-                || fullPath.equals(XPATH_GEOCACHE_DIFFICULTY)) {
-            mCachePersisterFacade.difficulty(text);
-        } else if (fullPath.equals(XPATH_CACHE_TERRAIN) || fullPath.equals(XPATH_GEOCACHE_TERRAIN)) {
-            mCachePersisterFacade.terrain(text);
-        } else if (fullPath.equals(XPATH_CACHE_CONTAINER)
-                || fullPath.equals(XPATH_GEOCACHE_CONTAINER)) {
-            mCachePersisterFacade.container(text);
         }
         
         for (String writeLineMatch : XPATH_PLAINLINES) {

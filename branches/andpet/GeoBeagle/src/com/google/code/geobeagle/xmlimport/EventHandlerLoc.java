@@ -45,13 +45,13 @@ class EventHandlerLoc implements EventHandler {
                     .getAttributeValue(null, "lon"));
         } else if (mFullPath.equals(XPATH_WPTNAME)) {
             mCachePersisterFacade.startCache();
-            mCachePersisterFacade.wptName(mXmlPullParser.getAttributeValue(null, "id"));
+            mCachePersisterFacade.wptName.text(mXmlPullParser.getAttributeValue(null, "id"));
         }
     }
 
     public boolean text(String mFullPath, String text) throws IOException {
         if (mFullPath.equals(XPATH_WPTNAME))
-            mCachePersisterFacade.groundspeakName(text.trim());
+            mCachePersisterFacade.groundspeakName.text(text.trim());
 
         return true;
     }

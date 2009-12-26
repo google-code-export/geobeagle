@@ -25,7 +25,9 @@ public class OpenHelperDelegate {
         db.execSQL(Database.SQL_CREATE_IDX_LATITUDE);
         db.execSQL(Database.SQL_CREATE_IDX_LONGITUDE);
         db.execSQL(Database.SQL_CREATE_IDX_SOURCE);
-        }
+        db.execSQL(Database.SQL_CREATE_CACHETAGS_TABLE_V12);
+        db.execSQL(Database.SQL_CREATE_IDX_CACHETAGS);
+    }
 
     public void onUpgrade(ISQLiteDatabase db, int oldVersion) {
         Log.i("GeoBeagle", "database onUpgrade oldVersion="+ oldVersion);

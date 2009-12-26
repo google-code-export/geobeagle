@@ -19,6 +19,7 @@ import static org.easymock.classextension.EasyMock.createMock;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import com.google.code.geobeagle.Tags;
 import com.google.code.geobeagle.GeocacheFactory.Source;
 import com.google.code.geobeagle.cachedetails.CacheDetailsWriter;
 import com.google.code.geobeagle.xmlimport.FileFactory;
@@ -43,7 +44,7 @@ public class CachePersisterFacadeTest {
     private final MessageHandler mMessageHandler = PowerMock.createMock(MessageHandler.class);
 
     @Test
-    public void testAttributes() {
+    public void testAttributes() throws IOException {
         mCacheTagWriter.setTag(3, true);
         mCacheTagWriter.container("big");
         mCacheTagWriter.difficulty("difficult");
@@ -54,10 +55,10 @@ public class CachePersisterFacadeTest {
         final CachePersisterFacade cachePersisterFacade = new CachePersisterFacade(mCacheTagWriter,
                 null, null, null, null, null);
         cachePersisterFacade.setTag(3, true);
-        cachePersisterFacade.container("big");
-        cachePersisterFacade.difficulty("difficult");
-        cachePersisterFacade.terrain("rocky");
-        cachePersisterFacade.cacheType("traditional");
+        cachePersisterFacade.container.text("big");
+        cachePersisterFacade.difficulty.text("difficult");
+        cachePersisterFacade.terrain.text("rocky");
+        cachePersisterFacade.cacheType.text("traditional");
         PowerMock.verifyAll();
     }
 
@@ -102,7 +103,7 @@ public class CachePersisterFacadeTest {
         PowerMock.replayAll();
         final CachePersisterFacade cachePersisterFacade = new CachePersisterFacade(mCacheTagWriter,
                 null, mCacheDetailsWriter, mMessageHandler, null, null);
-        cachePersisterFacade.wptDesc("my cache");
+        cachePersisterFacade.wptDesc.text("my cache");
         cachePersisterFacade.endCache(Source.GPX);
         PowerMock.verifyAll();
     }
@@ -118,12 +119,12 @@ public class CachePersisterFacadeTest {
     }
 
     @Test
-    public void testGroundspeakName() {
+    public void testGroundspeakName() throws IOException {
         mCacheTagWriter.cacheName("GC123");
 
         PowerMock.replayAll();
         new CachePersisterFacade(mCacheTagWriter, null, null, mMessageHandler, null, null)
-                .groundspeakName("GC123");
+                .groundspeakName.text("GC123");
         PowerMock.verifyAll();
     }
 
@@ -132,7 +133,16 @@ public class CachePersisterFacadeTest {
         mCacheDetailsWriter.writeHint("a hint");
 
         PowerMock.replayAll();
-        new CachePersisterFacade(null, null, mCacheDetailsWriter, null, null, null).hint("a hint");
+        new CachePersisterFacade(null, null, mCacheDetailsWriter, null, null,
+                null).hint.text("a hint");
+        PowerMock.verifyAll();
+    }
+
+    @Test
+    public void testEmptyHint() throws IOException {
+        PowerMock.replayAll();
+        new CachePersisterFacade(null, null, mCacheDetailsWriter, null, null,
+                null).hint.text("");
         PowerMock.verifyAll();
     }
 
@@ -150,7 +160,8 @@ public class CachePersisterFacadeTest {
         mCacheDetailsWriter.writeLogDate("04/30/99");
 
         PowerMock.replayAll();
-        new CachePersisterFacade(null, null, mCacheDetailsWriter, null, null, null).logDate("04/30/99");
+        new CachePersisterFacade(null, null, mCacheDetailsWriter, null, null,
+                null).logDate.text("04/30/99");
         PowerMock.verifyAll();
     }
 
@@ -174,6 +185,28 @@ public class CachePersisterFacadeTest {
         PowerMock.verifyAll();
     }
 
+    @Test
+    public void testPlacedBy() throws IOException {
+        mCacheTagWriter.setTag(Tags.MINE, false);
+        
+        PowerMock.replayAll();
+        new CachePersisterFacade(mCacheTagWriter, null, mCacheDetailsWriter,
+                mMessageHandler, null, "bob").placedBy.text("");
+        PowerMock.verifyAll();
+        
+    }
+
+    @Test
+    public void testPlacedByMe() throws IOException {
+        mCacheTagWriter.setTag(Tags.MINE, true);
+        
+        PowerMock.replayAll();
+        new CachePersisterFacade(mCacheTagWriter, null, mCacheDetailsWriter,
+                mMessageHandler, null, "bob").placedBy.text("bob");
+        PowerMock.verifyAll();
+        
+    }
+    
     @Test
     public void testStart() {
         FileFactory fileFactory = PowerMock.createMock(FileFactory.class);
@@ -215,12 +248,12 @@ public class CachePersisterFacadeTest {
     }
 
     @Test
-    public void testWptDesc() {
+    public void testWptDesc() throws IOException {
         mCacheTagWriter.cacheName("GC123 by so and so");
 
         PowerMock.replayAll();
         new CachePersisterFacade(mCacheTagWriter, null, null, mMessageHandler, null, null)
-                .wptDesc("GC123 by so and so");
+                .wptDesc.text("GC123 by so and so");
         PowerMock.verifyAll();
     }
 
@@ -237,7 +270,7 @@ public class CachePersisterFacadeTest {
         PowerMock.replayAll();
         CachePersisterFacade cachePersisterFacade = new CachePersisterFacade(mCacheTagWriter, null,
                 mCacheDetailsWriter, mMessageHandler, wakeLock, null);
-        cachePersisterFacade.wptName("GC123");
+        cachePersisterFacade.wptName.text("GC123");
         PowerMock.verifyAll();
     }
 }
