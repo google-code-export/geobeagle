@@ -1,3 +1,16 @@
+/*
+ ** Licensed under the Apache License, Version 2.0 (the "License");
+ ** you may not use this file except in compliance with the License.
+ ** You may obtain a copy of the License at
+ **
+ **     http://www.apache.org/licenses/LICENSE-2.0
+ **
+ ** Unless required by applicable law or agreed to in writing, software
+ ** distributed under the License is distributed on an "AS IS" BASIS,
+ ** WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ ** See the License for the specific language governing permissions and
+ ** limitations under the License.
+ */
 
 package com.google.code.geobeagle.xmlimport;
 
@@ -12,15 +25,35 @@ import com.google.code.geobeagle.Tags;
 import com.google.code.geobeagle.GeocacheFactory.Source;
 import com.google.code.geobeagle.database.CacheWriter;
 
+import org.easymock.classextension.EasyMock;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.api.easymock.PowerMock;
+import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
+
+import android.util.Log;
+
+@PrepareForTest( {
+    Log.class
+})
 
 @RunWith(PowerMockRunner.class)
 public class CacheTagWriterTest {
     private final CacheWriter mCacheWriter = PowerMock.createMock(CacheWriter.class);
-
+    
+    @Before
+    public void allowLogging() {
+        PowerMock.mockStatic(Log.class);
+        EasyMock.expect(
+                Log.d((String)EasyMock.anyObject(), (String)EasyMock
+                        .anyObject())).andReturn(0).anyTimes();
+        EasyMock.expect(
+                Log.i((String)EasyMock.anyObject(), (String)EasyMock
+                        .anyObject())).andReturn(0).anyTimes();
+    }
+    
     @Test
     public void testClear() {
         expect(mCacheWriter.isLockedFromUpdating(null)).andReturn(false);
@@ -118,6 +151,7 @@ public class CacheTagWriterTest {
         expect(cacheTypeFactory.stars("2.5")).andReturn(5);
         expect(cacheTypeFactory.stars("3")).andReturn(6);
         expect(cacheTypeFactory.fromTag("Traditional Cache")).andReturn(CacheType.TRADITIONAL);
+        mCacheWriter.updateTag("GC123", 13, true);
         
         PowerMock.replayAll();
         CacheTagSqlWriter cacheTagSqlWriter = new CacheTagSqlWriter(mCacheWriter, cacheTypeFactory);
@@ -127,9 +161,22 @@ public class CacheTagWriterTest {
         cacheTagSqlWriter.container("Micro");
         cacheTagSqlWriter.terrain("2.5");
         cacheTagSqlWriter.difficulty("3");
+        cacheTagSqlWriter.setTag(13, true);
         
         cacheTagSqlWriter.gpxName("foo.gpx");
         cacheTagSqlWriter.cacheType("Traditional Cache");
+        cacheTagSqlWriter.write(Source.GPX);
+        PowerMock.verifyAll();
+    }
+
+    @Test
+    public void testWriteLockedCache() {
+        expect(mCacheWriter.isLockedFromUpdating("GC123")).andReturn(true);
+        CacheTypeFactory cacheTypeFactory = PowerMock.createMock(CacheTypeFactory.class);
+        
+        PowerMock.replayAll();
+        CacheTagSqlWriter cacheTagSqlWriter = new CacheTagSqlWriter(mCacheWriter, cacheTypeFactory);
+        cacheTagSqlWriter.id("GC123");
         cacheTagSqlWriter.write(Source.GPX);
         PowerMock.verifyAll();
     }
