@@ -32,6 +32,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 
 import android.app.ListActivity;
 import android.view.Menu;
+import android.view.MenuItem;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest( {
@@ -69,6 +70,46 @@ public class GeocacheListControllerTest {
         PowerMock.verifyAll();
     }
 
+    @Test
+    public void testOnListItemClickForceRefresh() {
+        CacheListAdapter cacheListAdapter = PowerMock
+                .createMock(CacheListAdapter.class);
+
+        cacheListAdapter.forceRefresh();
+
+        PowerMock.replayAll();
+        new GeocacheListController(cacheListAdapter, null, null, null, null)
+                .onListItemClick(null, null, 0, 0);
+        PowerMock.verifyAll();
+    }
+    
+    @Test
+    public void testOnMenuOpened() {
+        Menu menu = PowerMock.createMock(Menu.class);
+        MenuActions menuActions = PowerMock.createMock(MenuActions.class);
+
+        EasyMock.expect(menuActions.onMenuOpened(menu)).andReturn(true);
+
+        PowerMock.replayAll();
+        new GeocacheListController(null, null, menuActions, null, null)
+                .onMenuOpened(0, menu);
+        PowerMock.verifyAll();
+    }
+
+    @Test
+    public void testOnOptionsItemSelected() {
+        MenuActions menuActions = PowerMock.createMock(MenuActions.class);
+        MenuItem menuItem = PowerMock.createMock(MenuItem.class);
+        
+        EasyMock.expect(menuItem.getItemId()).andReturn(17);
+        EasyMock.expect(menuActions.act(17)).andReturn(true);
+
+        PowerMock.replayAll();
+        new GeocacheListController(null, null, menuActions, null, null)
+                .onOptionsItemSelected(menuItem);
+        PowerMock.verifyAll();
+    }
+    
     @Test
     public void testOnPause() {
         MenuActionSyncGpx menuActionSync = PowerMock
