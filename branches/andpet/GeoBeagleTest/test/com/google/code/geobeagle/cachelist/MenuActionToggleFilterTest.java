@@ -14,14 +14,20 @@
 
 package com.google.code.geobeagle.cachelist;
 
+import static org.junit.Assert.assertEquals;
+
+import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.cachelist.actions.MenuActionToggleFilter;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListAdapter;
 import com.google.code.geobeagle.database.CachesProviderToggler;
 
+import org.easymock.EasyMock;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.api.easymock.PowerMock;
 import org.powermock.modules.junit4.PowerMockRunner;
+
+import android.content.res.Resources;
 
 @RunWith(PowerMockRunner.class)
 public class MenuActionToggleFilterTest {
@@ -37,6 +43,26 @@ public class MenuActionToggleFilterTest {
         final MenuActionToggleFilter menuActionToggleFilter = new MenuActionToggleFilter(
                 cachesProviderToggler, cacheListAdapter, null);
         menuActionToggleFilter.act();
+        PowerMock.verifyAll();
+    }
+    
+    @Test
+    public void testGetLabel() {
+        CachesProviderToggler cachesProviderToggler = PowerMock.createMock(CachesProviderToggler.class);
+        CacheListAdapter cacheListAdapter = PowerMock.createMock(CacheListAdapter.class);
+        Resources resources = PowerMock.createMock(Resources.class);
+
+        EasyMock.expect(cachesProviderToggler.isShowingNearest()).andReturn(true);
+        EasyMock.expect(resources.getString(R.string.menu_show_all_caches)).andReturn("show all caches");
+
+        EasyMock.expect(cachesProviderToggler.isShowingNearest()).andReturn(false);
+        EasyMock.expect(resources.getString(R.string.menu_show_nearest_caches)).andReturn("show nearest caches");
+
+        PowerMock.replayAll();
+        final MenuActionToggleFilter menuActionToggleFilter = new MenuActionToggleFilter(
+                cachesProviderToggler, cacheListAdapter, resources);
+        assertEquals("show all caches", menuActionToggleFilter.getLabel());
+        assertEquals("show nearest caches", menuActionToggleFilter.getLabel());
         PowerMock.verifyAll();
     }
 }
