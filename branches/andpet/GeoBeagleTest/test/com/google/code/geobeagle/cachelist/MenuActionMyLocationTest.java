@@ -15,10 +15,12 @@
 package com.google.code.geobeagle.cachelist;
 
 import com.google.code.geobeagle.CacheType;
+import com.google.code.geobeagle.ErrorDisplayer;
 import com.google.code.geobeagle.GeoFix;
 import com.google.code.geobeagle.GeoFixProvider;
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.GeocacheFactory;
+import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.GeocacheFactory.Source;
 import com.google.code.geobeagle.actions.CacheAction;
 import com.google.code.geobeagle.activity.cachelist.actions.MenuActionMyLocation;
@@ -66,6 +68,36 @@ public class MenuActionMyLocationTest {
         PowerMock.verifyAll();
     }
 
+    @Test
+    public void testActNullCache() {
+        DbFrontend dbFrontend = PowerMock.createMock(DbFrontend.class);
+        GeoFixProvider geoFixProvider = PowerMock.createMock(GeoFixProvider.class);
+        CacheAction cacheAction = PowerMock.createMock(CacheAction.class);
+        GeocacheFactory geocacheFactory = PowerMock.createMock(GeocacheFactory.class);
+        GeoFix geoFix = PowerMock.createMock(GeoFix.class);
+        ErrorDisplayer errorDisplayer = PowerMock.createMock(ErrorDisplayer.class);
+        
+        Locale.setDefault(Locale.ENGLISH);
+        TimeZone.setDefault(TimeZone.getTimeZone("America/Los_Angeles"));
+
+        EasyMock.expect(geoFix.getTime()).andReturn(1000L);
+        EasyMock.expect(geoFixProvider.getLocation()).andReturn(geoFix);
+        EasyMock.expect(geoFix.getLatitude()).andReturn(122.0);
+        EasyMock.expect(geoFix.getLongitude()).andReturn(-37.0);
+
+        EasyMock.expect(
+                geocacheFactory.create("ML160001", "[16:00] My Location", 122.0, -37.0,
+                        Source.MY_LOCATION, null, CacheType.MY_LOCATION, 0, 0, 0)).andReturn(
+                null);
+        errorDisplayer.displayError(R.string.current_location_null);
+        
+        PowerMock.replayAll();
+        new MenuActionMyLocation(errorDisplayer, geocacheFactory, geoFixProvider, dbFrontend, null,
+                cacheAction).act();
+        PowerMock.verifyAll();
+    }
+
+    
     @Test
     public void testActNullLocation() {
         GeoFixProvider geoFixProvider = PowerMock.createMock(GeoFixProvider.class);
