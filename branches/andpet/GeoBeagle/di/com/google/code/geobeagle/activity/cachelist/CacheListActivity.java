@@ -14,6 +14,8 @@
 
 package com.google.code.geobeagle.activity.cachelist;
 
+import com.google.code.geobeagle.R;
+
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -44,7 +46,6 @@ public class CacheListActivity extends ListActivity {
         super.onCreate(savedInstanceState);
         //Log.d("GeoBeagle", "CacheListActivity onCreate");
         mCacheListDelegate = CacheListDelegateDI.create(this, getLayoutInflater());
-        mCacheListDelegate.onCreate();
     }
 
     @Override

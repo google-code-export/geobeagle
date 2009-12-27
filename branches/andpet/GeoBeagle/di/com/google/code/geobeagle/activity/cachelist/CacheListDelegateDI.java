@@ -80,6 +80,7 @@ import android.content.res.Resources;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.LinearLayout.LayoutParams;
 
 import java.util.ArrayList;
@@ -247,9 +248,20 @@ public class CacheListDelegateDI {
                     menuActions, cacheActionView, cacheFilterUpdater);
         
         //TODO: It is currently a bug to send cachesProviderDb since cachesProviderAll also need to be notified of db changes.
-        return new CacheListDelegate(importIntentManager, activitySaver,
-                geocacheListController, dbFrontend, updateGpsWidgetRunnable, 
-                gpsStatusWidget, contextMenu, cacheListAdapter, geocacheSummaryRowInflater, listActivity, 
-                scrollListener, distanceFormatterManager, cachesProviderDb, pausables);
+        final CacheListDelegate cacheListDelegate = new CacheListDelegate(importIntentManager, activitySaver,
+                geocacheListController, dbFrontend, contextMenu, cacheListAdapter, geocacheSummaryRowInflater, listActivity, 
+                distanceFormatterManager, cachesProviderDb, pausables);
+
+        listActivity.setContentView(R.layout.cache_list);
+
+        final ListView listView = listActivity.getListView();
+        listView.addHeaderView(gpsStatusWidget);
+        listActivity.setListAdapter(cacheListAdapter);
+        
+        listView.setOnCreateContextMenuListener(contextMenu);
+        listView.setOnScrollListener(scrollListener);
+        updateGpsWidgetRunnable.run();
+
+        return cacheListDelegate;
     }
 }

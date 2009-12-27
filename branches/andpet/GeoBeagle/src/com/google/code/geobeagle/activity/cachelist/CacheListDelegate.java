@@ -15,7 +15,6 @@
 package com.google.code.geobeagle.activity.cachelist;
 
 import com.google.code.geobeagle.IPausable;
-import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.actions.CacheContextMenu;
 import com.google.code.geobeagle.activity.ActivitySaver;
 import com.google.code.geobeagle.activity.ActivityType;
@@ -24,7 +23,6 @@ import com.google.code.geobeagle.activity.cachelist.presenter.DistanceFormatterM
 import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheSummaryRowInflater;
 import com.google.code.geobeagle.database.CachesProviderDb;
 import com.google.code.geobeagle.database.DbFrontend;
-import com.google.code.geobeagle.gpsstatuswidget.UpdateGpsWidgetRunnable;
 
 import android.app.Activity;
 import android.app.ListActivity;
@@ -73,11 +71,8 @@ public class CacheListDelegate {
     private final GeocacheListController mController;
     private final DbFrontend mDbFrontend;
     private final ImportIntentManager mImportIntentManager;
-    private final UpdateGpsWidgetRunnable mUpdateGpsWidgetRunnable;
-    private final CacheListAdapter.ScrollListener mScrollListener;
     private final CacheContextMenu mContextMenu;
     private final CacheListAdapter mCacheList;
-    private final View mGpsStatusWidget;
     private final ListActivity mListActivity;
     private final DistanceFormatterManager mDistanceFormatterManager;
     private final GeocacheSummaryRowInflater mGeocacheSummaryRowInflater;
@@ -87,13 +82,10 @@ public class CacheListDelegate {
     public CacheListDelegate(ImportIntentManager importIntentManager, ActivitySaver activitySaver,
             GeocacheListController geocacheListController,
             DbFrontend dbFrontend,
-            UpdateGpsWidgetRunnable updateGpsWidgetRunnable,
-            View gpsStatusWidget,
             CacheContextMenu menuCreator,
             CacheListAdapter cacheList,
             GeocacheSummaryRowInflater geocacheSummaryRowInflater,
             ListActivity listActivity,
-            CacheListAdapter.ScrollListener scrollListener,
             DistanceFormatterManager distanceFormatterManager,
             CachesProviderDb cachesToFlush,
             IPausable[] pausables) {
@@ -101,13 +93,10 @@ public class CacheListDelegate {
         mController = geocacheListController;
         mImportIntentManager = importIntentManager;
         mDbFrontend = dbFrontend;
-        mUpdateGpsWidgetRunnable = updateGpsWidgetRunnable;
-        mGpsStatusWidget = gpsStatusWidget;
         mContextMenu = menuCreator;
         mCacheList = cacheList;
         mGeocacheSummaryRowInflater = geocacheSummaryRowInflater;
         mListActivity = listActivity;
-        mScrollListener = scrollListener;
         mDistanceFormatterManager = distanceFormatterManager;
         mCachesToFlush = cachesToFlush;
         mPausables = pausables;
@@ -115,16 +104,6 @@ public class CacheListDelegate {
 
     public boolean onContextItemSelected(MenuItem menuItem) {
         return mContextMenu.onContextItemSelected(menuItem);
-    }
-
-    public void onCreate() {
-        mListActivity.setContentView(R.layout.cache_list);
-        final ListView listView = mListActivity.getListView();
-        listView.addHeaderView(mGpsStatusWidget);
-        mListActivity.setListAdapter(mCacheList);
-        listView.setOnCreateContextMenuListener(mContextMenu);
-        listView.setOnScrollListener(mScrollListener);
-        mUpdateGpsWidgetRunnable.run();
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
