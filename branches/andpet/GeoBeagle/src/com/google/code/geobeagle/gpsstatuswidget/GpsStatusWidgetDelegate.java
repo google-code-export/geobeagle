@@ -36,12 +36,17 @@ public class GpsStatusWidgetDelegate implements HasDistanceFormatter, Refresher 
     private final TextView mStatus;
     private final TextView mLagTextView;
     private GeoFix mGeoFix;
+    private final TimeProvider mTimeProvider;
 
+    public static interface TimeProvider {
+        long getTime();
+    }
+    
     public GpsStatusWidgetDelegate(GeoFixProvider geoFixProvider,
             DistanceFormatter distanceFormatter, Meter meter,
             MeterFader meterFader, TextView provider, Context context,
             TextView status, TextView lagTextView,
-            GeoFix initialGeoFix) {
+            GeoFix initialGeoFix, TimeProvider timeProvider) {
         mGeoFixProvider = geoFixProvider;
         mDistanceFormatter = distanceFormatter;
         mMeterFader = meterFader;
@@ -51,6 +56,7 @@ public class GpsStatusWidgetDelegate implements HasDistanceFormatter, Refresher 
         mStatus = status;
         mLagTextView = lagTextView;
         mGeoFix = initialGeoFix;
+        mTimeProvider = timeProvider;
     }
 
     public void onStatusChanged(String provider, int status, Bundle extras) {
@@ -89,8 +95,7 @@ public class GpsStatusWidgetDelegate implements HasDistanceFormatter, Refresher 
         mProvider.setText(mGeoFix.getProvider());
         mMeter.setAccuracy(mGeoFix.getAccuracy(), mDistanceFormatter);
         mMeterFader.reset();
-        long systemTime = System.currentTimeMillis();
-        mLagTextView.setText(mGeoFix.getLagString(systemTime));
+        mLagTextView.setText(mGeoFix.getLagString(mTimeProvider.getTime()));
     }
 
     public void setDistanceFormatter(DistanceFormatter distanceFormatter) {

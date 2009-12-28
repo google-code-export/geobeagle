@@ -15,6 +15,7 @@
 package com.google.code.geobeagle.gpsstatuswidget;
 
 import com.google.code.geobeagle.GeoFixProvider;
+import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidgetDelegate.TimeProvider;
 
 import android.os.Handler;
 
@@ -24,18 +25,21 @@ public class UpdateGpsWidgetRunnable implements Runnable {
     private final GeoFixProvider mGeoFixProvider;
     private final Meter mMeter;
     private final GpsStatusWidgetDelegate mGpsStatusWidgetDelegate;
+    private final TimeProvider mTimeProvider;
 
     UpdateGpsWidgetRunnable(Handler handler, GeoFixProvider geoFixProvider,
-            Meter meter, GpsStatusWidgetDelegate gpsStatusWidgetDelegate) {
+            Meter meter, GpsStatusWidgetDelegate gpsStatusWidgetDelegate, 
+            TimeProvider timeProvider) {
         mMeter = meter;
         mGeoFixProvider = geoFixProvider;
         mHandler = handler;
         mGpsStatusWidgetDelegate = gpsStatusWidgetDelegate;
+        mTimeProvider = timeProvider;
     }
 
     public void run() {
         // Update the lag time and the orientation.
-        long systemTime = System.currentTimeMillis();
+        long systemTime = mTimeProvider.getTime();
         mGpsStatusWidgetDelegate.updateLagText(systemTime);
         mMeter.setAzimuth(mGeoFixProvider.getAzimuth());
         mHandler.postDelayed(this, 500);
