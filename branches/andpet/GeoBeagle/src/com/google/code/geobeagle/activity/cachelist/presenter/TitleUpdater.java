@@ -25,25 +25,40 @@ public class TitleUpdater implements RefreshAction {
     private final CachesProviderToggler mCachesProviderToggler;
     private final ListActivity mListActivity;
     private final DbFrontend mDbFrontend;
-
+    private final TextView mEmptyTextView;
+    private final TextSelector mTextSelector;
+    
+    public static class TextSelector {
+        int getTitle(boolean isShowingNearest) {
+            return isShowingNearest ? R.string.cache_list_title
+                    : R.string.cache_list_title_all;
+        }
+        
+        int getNoNearbyCachesText(int allCachesCount) {
+            return allCachesCount > 0 ? R.string.no_nearby_caches
+                    : R.string.no_caches;
+        }
+        
+    }
     public TitleUpdater(ListActivity listActivity, CachesProviderToggler cachesProviderToggler, 
-            DbFrontend dbFrontend) {
+            DbFrontend dbFrontend, TextView emptyTextView, TextSelector textSelector) {
         mListActivity = listActivity;
         mCachesProviderToggler = cachesProviderToggler;
         mDbFrontend = dbFrontend;
+        mEmptyTextView = emptyTextView;
+        mTextSelector = textSelector;
     }
 
     public void refresh() {
-        int sqlCount = mDbFrontend.count(null); //count all caches
+        int sqlCount = mDbFrontend.count(null); // count all caches
         int nearestCachesCount = mCachesProviderToggler.getCount();
-        int title =
-            mCachesProviderToggler.isShowingNearest() ? 
-                    R.string.cache_list_title : R.string.cache_list_title_all;
-        
-        mListActivity.setTitle(mListActivity.getString(title, nearestCachesCount, sqlCount));
+        int title = mTextSelector.getTitle(mCachesProviderToggler.isShowingNearest());
+
+        mListActivity.setTitle(mListActivity.getString(title,
+                nearestCachesCount, sqlCount));
         if (0 == nearestCachesCount) {
-            TextView textView = (TextView)mListActivity.findViewById(android.R.id.empty);
-            textView.setText(sqlCount > 0 ? R.string.no_nearby_caches : R.string.no_caches);
+            mEmptyTextView.setText(mTextSelector
+                    .getNoNearbyCachesText(sqlCount));
         }
     }
 }

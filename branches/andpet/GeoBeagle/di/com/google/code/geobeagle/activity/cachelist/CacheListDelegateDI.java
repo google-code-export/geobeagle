@@ -55,6 +55,7 @@ import com.google.code.geobeagle.activity.cachelist.presenter.DistanceFormatterM
 import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheSummaryRowInflater;
 import com.google.code.geobeagle.activity.cachelist.presenter.RelativeBearingFormatter;
 import com.google.code.geobeagle.activity.cachelist.presenter.TitleUpdater;
+import com.google.code.geobeagle.activity.cachelist.presenter.TitleUpdater.TextSelector;
 import com.google.code.geobeagle.activity.filterlist.FilterTypeCollection;
 import com.google.code.geobeagle.database.CachesProviderCenterThread;
 import com.google.code.geobeagle.database.CachesProviderDb;
@@ -81,6 +82,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.LinearLayout.LayoutParams;
 
 import java.util.ArrayList;
@@ -157,8 +159,13 @@ public class CacheListDelegateDI {
         final CachesProviderToggler cachesProviderToggler = 
             new CachesProviderToggler(cachesProviderLazy, cachesProviderAll);
         CachesProviderCenterThread thread = new CachesProviderCenterThread(cachesProviderToggler);
-        final TitleUpdater titleUpdater = new TitleUpdater(listActivity, 
-                cachesProviderToggler, dbFrontend);
+
+        final TextView emptyTextView = (TextView)listActivity
+                .findViewById(android.R.id.empty);
+        
+        final TextSelector textSelector = new TextSelector();
+        final TitleUpdater titleUpdater = new TitleUpdater(listActivity,
+                cachesProviderToggler, dbFrontend, emptyTextView, textSelector);
 
         distanceFormatterManager.addHasDistanceFormatter(geocacheSummaryRowInflater);
         distanceFormatterManager.addHasDistanceFormatter(gpsStatusWidgetDelegate);

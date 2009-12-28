@@ -14,7 +14,10 @@
 
 package com.google.code.geobeagle.activity.cachelist.presenter;
 
+import static org.junit.Assert.assertEquals;
+
 import com.google.code.geobeagle.R;
+import com.google.code.geobeagle.activity.cachelist.presenter.TitleUpdater.TextSelector;
 import com.google.code.geobeagle.database.CachesProviderToggler;
 import com.google.code.geobeagle.database.DbFrontend;
 
@@ -52,7 +55,7 @@ public class TitleUpdaterTest {
         listActivity.setTitle("new title");
 
         PowerMock.replayAll();
-        new TitleUpdater(listActivity, cachesProviderToggler, dbFrontend).refresh();
+        new TitleUpdater(listActivity, cachesProviderToggler, dbFrontend, null, new TextSelector()).refresh();
         PowerMock.verifyAll();
     }
 
@@ -71,11 +74,24 @@ public class TitleUpdaterTest {
         EasyMock.expect(listActivity.getString(R.string.cache_list_title, 0, 12)).andReturn(
                 "new title");
         listActivity.setTitle("new title");
-        EasyMock.expect(listActivity.findViewById(android.R.id.empty)).andReturn(textView);
         textView.setText(R.string.no_nearby_caches);
+        
 
         PowerMock.replayAll();
-        new TitleUpdater(listActivity, cachesProviderToggler, dbFrontend).refresh();
+        new TitleUpdater(listActivity, cachesProviderToggler, dbFrontend, textView, new TextSelector()).refresh();
         PowerMock.verifyAll();
+    }
+    
+    @Test
+    public void testGetTitle() {
+        assertEquals(new TextSelector().getTitle(true),
+                R.string.cache_list_title);
+        assertEquals(new TextSelector().getTitle(false),
+                R.string.cache_list_title_all);
+
+        assertEquals(new TextSelector().getNoNearbyCachesText(100),
+                R.string.no_nearby_caches);
+        assertEquals(new TextSelector().getNoNearbyCachesText(0),
+                R.string.no_caches);
     }
 }
