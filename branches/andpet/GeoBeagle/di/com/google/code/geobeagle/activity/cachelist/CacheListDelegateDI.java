@@ -55,11 +55,12 @@ import com.google.code.geobeagle.activity.cachelist.presenter.DistanceFormatterM
 import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheSummaryRowInflater;
 import com.google.code.geobeagle.activity.cachelist.presenter.RelativeBearingFormatter;
 import com.google.code.geobeagle.activity.cachelist.presenter.TitleUpdater;
+import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheSummaryRowInflater.RowViews.CacheNameAttributes;
 import com.google.code.geobeagle.activity.cachelist.presenter.TitleUpdater.TextSelector;
 import com.google.code.geobeagle.activity.filterlist.FilterTypeCollection;
 import com.google.code.geobeagle.database.CachesProviderCenterThread;
-import com.google.code.geobeagle.database.CachesProviderDb;
 import com.google.code.geobeagle.database.CachesProviderCount;
+import com.google.code.geobeagle.database.CachesProviderDb;
 import com.google.code.geobeagle.database.CachesProviderSorted;
 import com.google.code.geobeagle.database.CachesProviderToggler;
 import com.google.code.geobeagle.database.CachesProviderWaitForInit;
@@ -67,8 +68,8 @@ import com.google.code.geobeagle.database.DbFrontend;
 import com.google.code.geobeagle.database.ICachesProviderCenter;
 import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidgetDelegate;
 import com.google.code.geobeagle.gpsstatuswidget.GpsWidgetAndUpdater;
-import com.google.code.geobeagle.gpsstatuswidget.UpdateGpsWidgetRunnable;
 import com.google.code.geobeagle.gpsstatuswidget.InflatedGpsStatusView;
+import com.google.code.geobeagle.gpsstatuswidget.UpdateGpsWidgetRunnable;
 import com.google.code.geobeagle.xmlimport.GpxImporterDI.MessageHandler;
 import com.google.code.geobeagle.xmlimport.GpxToCache.Aborter;
 import com.google.code.geobeagle.xmlimport.GpxToCacheDI.XmlPullParserWrapper;
@@ -125,9 +126,10 @@ public class CacheListDelegateDI {
 
         final DbFrontend dbFrontend = new DbFrontend(listActivity, geocacheFactory);
         final GraphicsGenerator graphicsGenerator = new GraphicsGenerator();
+        final CacheNameAttributes cacheNameAttributes = new CacheNameAttributes();
         final GeocacheSummaryRowInflater geocacheSummaryRowInflater = new GeocacheSummaryRowInflater(
                 distanceFormatterManager.getFormatter(), layoutInflater,
-                relativeBearingFormatter, listActivity.getResources(), graphicsGenerator, dbFrontend);
+                relativeBearingFormatter, listActivity.getResources(), graphicsGenerator, dbFrontend, cacheNameAttributes);
 
         final InflatedGpsStatusView inflatedGpsStatusWidget = new InflatedGpsStatusView(
                 listActivity);

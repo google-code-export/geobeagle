@@ -18,6 +18,7 @@ import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.GraphicsGenerator;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.Tags;
+import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheSummaryRowInflater.RowViews.CacheNameAttributes;
 import com.google.code.geobeagle.database.DbFrontend;
 import com.google.code.geobeagle.database.DistanceAndBearing;
 import com.google.code.geobeagle.formatting.DistanceFormatter;
@@ -31,26 +32,51 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 public class GeocacheSummaryRowInflater implements HasDistanceFormatter {
-    static class RowViews {
+    public static class RowViews {
         private final TextView mAttributes;
         private final TextView mCacheName;
         private final TextView mDistance;
         private final ImageView mIcon;
         private final TextView mId;
         private final Resources mResources;
+        private final CacheNameAttributes mCacheNameAttributes;
 
         RowViews(TextView attributes, TextView cacheName, TextView distance, ImageView icon,
-                TextView id, Resources resources) {
+                TextView id, Resources resources, CacheNameAttributes cacheNameAttributes) {
             mAttributes = attributes;
             mCacheName = cacheName;
             mDistance = distance;
             mIcon = icon;
             mId = id;
             mResources = resources;
+            mCacheNameAttributes = cacheNameAttributes;
         }
 
-        private CharSequence getFormattedDistance(DistanceAndBearing distanceAndBearing, 
-                float azimuth, 
+        public static class CacheNameAttributes {
+
+            void setTextColor(CharSequence geocacheId, boolean fArchived,
+                    boolean fUnavailable, TextView cacheName) {
+                if (fArchived)
+                    cacheName.setTextColor(Color.DKGRAY);
+                else if (fUnavailable)
+                    cacheName.setTextColor(Color.LTGRAY);
+                else
+                    cacheName.setTextColor(Color.WHITE);
+            }
+
+            void setStrikethrough(CharSequence geocacheId, boolean fArchived,
+                    boolean fUnavailable, TextView cacheName) {
+                if (fArchived || fUnavailable)
+                    cacheName.setPaintFlags(cacheName.getPaintFlags()
+                            | Paint.STRIKE_THRU_TEXT_FLAG);
+                else
+                    cacheName.setPaintFlags(cacheName.getPaintFlags()
+                            & ~Paint.STRIKE_THRU_TEXT_FLAG);
+            }
+        }
+        
+        private CharSequence getFormattedDistance(
+                DistanceAndBearing distanceAndBearing, float azimuth,
                 DistanceFormatter distanceFormatter,
                 BearingFormatter relativeBearingFormatter) {
             // Use the slower, more accurate distance for display.
@@ -67,34 +93,26 @@ public class GeocacheSummaryRowInflater implements HasDistanceFormatter {
             return formattedDistance + " " + formattedBearing;
         }
 
-        private static void setStrikethrough(TextView textView, boolean set) {
-            if (set)
-                textView.setPaintFlags(textView.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-            else
-                textView.setPaintFlags(textView.getPaintFlags() & ~Paint.STRIKE_THRU_TEXT_FLAG);
-        }
-        void set(DistanceAndBearing distanceAndBearing, float azimuth, 
+        void set(DistanceAndBearing distanceAndBearing, float azimuth,
                 DistanceFormatter distanceFormatter,
-                BearingFormatter relativeBearingFormatter, 
-                GraphicsGenerator graphicsGenerator,
-                DbFrontend dbFrontend) {
+                BearingFormatter relativeBearingFormatter,
+                GraphicsGenerator graphicsGenerator, DbFrontend dbFrontend) {
             //CacheType type = geocacheVector.getGeocache().getCacheType();
             //mIcon.setImageResource(type.icon());
             Geocache geocache = distanceAndBearing.getGeocache();
             mIcon.setImageDrawable(geocache.getIcon(mResources, graphicsGenerator, dbFrontend));
-            mId.setText(geocache.getId());
+            CharSequence geocacheId = geocache.getId();
+            mId.setText(geocacheId);
             mAttributes.setText(geocache.getFormattedAttributes());
             mCacheName.setText(geocache.getName());
-            if (dbFrontend.geocacheHasTag(geocache.getId(), Tags.ARCHIVED)) {
-                mCacheName.setTextColor(Color.DKGRAY);
-                setStrikethrough(mCacheName, true);
-            } else if (dbFrontend.geocacheHasTag(geocache.getId(), Tags.UNAVAILABLE)) {
-                mCacheName.setTextColor(Color.LTGRAY);
-                setStrikethrough(mCacheName, true);
-            } else {
-                mCacheName.setTextColor(Color.WHITE);
-                setStrikethrough(mCacheName, false);
-            }
+            boolean fArchived = dbFrontend.geocacheHasTag(geocacheId,
+                    Tags.ARCHIVED);
+            boolean fUnavailable = dbFrontend.geocacheHasTag(geocacheId,
+                    Tags.UNAVAILABLE);
+            mCacheNameAttributes.setTextColor(geocacheId, fArchived,
+                    fUnavailable, mCacheName);
+            mCacheNameAttributes.setStrikethrough(geocacheId, fArchived,
+                    fUnavailable, mCacheName);
             mDistance.setText(getFormattedDistance(distanceAndBearing, azimuth, distanceFormatter,
                     relativeBearingFormatter));
         }
@@ -106,17 +124,20 @@ public class GeocacheSummaryRowInflater implements HasDistanceFormatter {
     private final Resources mResources;
     private final GraphicsGenerator mGraphicsGenerator;
     private final DbFrontend mDbFrontend;
+    private final CacheNameAttributes mCacheNameAttributes;
 
     public GeocacheSummaryRowInflater(DistanceFormatter distanceFormatter,
             LayoutInflater layoutInflater,
-            BearingFormatter relativeBearingFormatter, Resources resources, 
-            GraphicsGenerator graphicsGenerator, DbFrontend dbFrontend) {
+            BearingFormatter relativeBearingFormatter, Resources resources,
+            GraphicsGenerator graphicsGenerator, DbFrontend dbFrontend,
+            CacheNameAttributes cacheNameAttributes) {
         mLayoutInflater = layoutInflater;
         mDistanceFormatter = distanceFormatter;
         mBearingFormatter = relativeBearingFormatter;
         mResources = resources;
         mGraphicsGenerator = graphicsGenerator;
         mDbFrontend = dbFrontend;        
+        mCacheNameAttributes = cacheNameAttributes;
     }
 
     BearingFormatter getBearingFormatter() {
@@ -126,14 +147,15 @@ public class GeocacheSummaryRowInflater implements HasDistanceFormatter {
     public View inflate(View convertView) {
         if (convertView != null)
             return convertView;
-        //Log.d("GeoBeagle", "SummaryRow::inflate(" + convertView + ")");
+        // Log.d("GeoBeagle", "SummaryRow::inflate(" + convertView + ")");
 
         View view = mLayoutInflater.inflate(R.layout.cache_row, null);
-        RowViews rowViews = new RowViews((TextView)view.findViewById(R.id.txt_gcattributes),
-                ((TextView)view.findViewById(R.id.txt_cache)), ((TextView)view
-                        .findViewById(R.id.distance)), ((ImageView)view
-                        .findViewById(R.id.gc_row_icon)), ((TextView)view
-                        .findViewById(R.id.txt_gcid)), mResources);
+        RowViews rowViews = new RowViews((TextView)view
+                .findViewById(R.id.txt_gcattributes), ((TextView)view
+                .findViewById(R.id.txt_cache)), ((TextView)view
+                .findViewById(R.id.distance)), ((ImageView)view
+                .findViewById(R.id.gc_row_icon)), ((TextView)view
+                .findViewById(R.id.txt_gcid)), mResources, mCacheNameAttributes);
         view.setTag(rowViews);
         return view;
     }
