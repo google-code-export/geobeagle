@@ -18,7 +18,7 @@ import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapView;
 import com.google.android.maps.Projection;
 import com.google.code.geobeagle.GeocacheList;
-import com.google.code.geobeagle.Toaster;
+import com.google.code.geobeagle.Toaster.OneTimeToaster;
 import com.google.code.geobeagle.database.CachesProviderLazyArea;
 
 import android.util.Log;
@@ -32,15 +32,13 @@ class DensityPatchManager {
     public static final double RESOLUTION_LONGITUDE = 0.02;
     public static final int RESOLUTION_LATITUDE_E6 = (int)(RESOLUTION_LATITUDE * 1E6);
     public static final int RESOLUTION_LONGITUDE_E6 = (int)(RESOLUTION_LONGITUDE * 1E6);
-    /** If the last created overlay made us show a toast (if so, don't do it again) */
-    private boolean mHasShownToaster = false;
-    private final Toaster mToaster;
+    private final OneTimeToaster mToaster;
 
     DensityPatchManager(List<DensityMatrix.DensityPatch> patches, CachesProviderLazyArea lazyArea,
-            Toaster toaster) {
+            OneTimeToaster densityOverlayToaster) {
         mDensityPatches = patches;
         mLazyArea = lazyArea;
-        mToaster = toaster;
+        mToaster = densityOverlayToaster;
     }
 
     public List<DensityMatrix.DensityPatch> getDensityPatches(MapView mMapView) {
@@ -58,14 +56,7 @@ class DensityPatchManager {
         }
 
         GeocacheList list = mLazyArea.getCaches();
-        if (mLazyArea.tooManyCaches()) {
-            if (!mHasShownToaster) {
-                mToaster.showToast();
-                mHasShownToaster = true;
-            }
-        } else {
-            mHasShownToaster = false;
-        }
+        mToaster.showToast(mLazyArea.tooManyCaches());
         
         mLazyArea.resetChanged();
         DensityMatrix densityMatrix = new DensityMatrix(DensityPatchManager.RESOLUTION_LATITUDE,

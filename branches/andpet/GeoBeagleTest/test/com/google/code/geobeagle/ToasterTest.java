@@ -36,8 +36,8 @@ public class ToasterTest {
 
         PowerMock.replayAll();
         final OneTimeToaster oneTimeToaster = new OneTimeToaster(toaster);
-        oneTimeToaster.showToast();
-        oneTimeToaster.showToast();
+        oneTimeToaster.showToast(true);
+        oneTimeToaster.showToast(true);
         PowerMock.verifyAll();
     }
 
@@ -48,7 +48,7 @@ public class ToasterTest {
 
         PowerMock.replayAll();
         final OneTimeToaster oneTimeToaster = new OneTimeToaster(toaster);
-        oneTimeToaster.showToast();
+        oneTimeToaster.showToast(true);
         PowerMock.verifyAll();
     }
 

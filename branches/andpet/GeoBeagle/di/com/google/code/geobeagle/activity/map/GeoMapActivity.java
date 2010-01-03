@@ -111,9 +111,10 @@ public class GeoMapActivity extends MapActivity {
         final Toaster toaster = new Toaster(this, R.string.too_many_caches, Toast.LENGTH_SHORT);
         final CachesProviderDb cachesProviderArea = new CachesProviderDb(mDbFrontend);
         final OneTimeToaster oneTimeToaster = new OneTimeToaster(toaster);
+        final OneTimeToaster densityOverlayToaster = new OneTimeToaster(toaster);
         final CachesProviderLazyArea lazyArea = new CachesProviderLazyArea(cachesProviderArea, 1.0, oneTimeToaster);
         final DensityOverlayDelegate densityOverlayDelegate = DensityOverlay.createDelegate(
-                densityPatches, nullGeoPoint, lazyArea, toaster);
+                densityPatches, nullGeoPoint, lazyArea, densityOverlayToaster);
         final DensityOverlay densityOverlay = new DensityOverlay(densityOverlayDelegate);
         
         final CachePinsOverlay cachePinsOverlay = new CachePinsOverlay(cacheItemFactory, this,

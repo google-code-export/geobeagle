@@ -113,7 +113,7 @@ public class CachesProviderLazyArea implements ICachesProviderArea {
 
     public GeocacheList getCachesAndWarnIfTooMany() {
         if (mTooManyCaches)
-            mOneTimeToaster.showToast();
+            mOneTimeToaster.showToast(mTooManyCaches);
         return getCaches(MAX_COUNT);
     }
 

@@ -26,8 +26,8 @@ public class Toaster {
             mToaster = toaster;
         }
 
-        public void showToast() {
-            if (!mHasShownToaster) {
+        public void showToast(boolean fCondition) {
+            if (fCondition && !mHasShownToaster) {
                 mToaster.showToast();
                 mHasShownToaster = true;
             }

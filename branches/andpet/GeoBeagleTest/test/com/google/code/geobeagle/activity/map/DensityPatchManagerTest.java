@@ -20,6 +20,7 @@ import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapView;
 import com.google.android.maps.Projection;
 import com.google.code.geobeagle.GeocacheList;
+import com.google.code.geobeagle.Toaster.OneTimeToaster;
 import com.google.code.geobeagle.database.CachesProviderLazyArea;
 
 import org.easymock.EasyMock;
@@ -58,6 +59,7 @@ public class DensityPatchManagerTest {
         GeoPoint newBottomRight = PowerMock.createMock(GeoPoint.class);
         DensityMatrix densityMatrix = PowerMock.createMock(DensityMatrix.class);
         GeocacheList geocacheList = PowerMock.createMock(GeocacheList.class);
+        OneTimeToaster oneTimeToaster = PowerMock.createMock(OneTimeToaster.class);
 
         EasyMock.expect(mapView.getProjection()).andReturn(projection);
         EasyMock.expect(projection.fromPixels(0, 0)).andReturn(newTopLeft);
@@ -74,6 +76,7 @@ public class DensityPatchManagerTest {
         EasyMock.expect(lazyArea.hasChanged()).andReturn(true);
         EasyMock.expect(lazyArea.getCaches()).andReturn(geocacheList);
         EasyMock.expect(lazyArea.tooManyCaches()).andReturn(false);
+        oneTimeToaster.showToast(false);
         lazyArea.resetChanged();
 
         PowerMock.expectNew(DensityMatrix.class,
@@ -84,7 +87,7 @@ public class DensityPatchManagerTest {
         EasyMock.expect(densityMatrix.getDensityPatches()).andReturn(patches);
 
         PowerMock.replayAll();
-        assertEquals(patches, new DensityPatchManager(null, lazyArea, null)
+        assertEquals(patches, new DensityPatchManager(null, lazyArea, oneTimeToaster)
                 .getDensityPatches(mapView));
         PowerMock.verifyAll();
     }
