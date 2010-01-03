@@ -34,6 +34,7 @@ import com.google.code.geobeagle.actions.MenuActions;
 import com.google.code.geobeagle.activity.filterlist.FilterTypeCollection;
 import com.google.code.geobeagle.activity.main.GeoUtils;
 import com.google.code.geobeagle.activity.map.DensityMatrix.DensityPatch;
+import com.google.code.geobeagle.activity.map.OverlayManager.OverlaySelector;
 import com.google.code.geobeagle.database.CachesProviderDb;
 import com.google.code.geobeagle.database.CachesProviderLazyArea;
 import com.google.code.geobeagle.database.DbFrontend;
@@ -127,8 +128,10 @@ public class GeoMapActivity extends MapActivity {
         final GeoPoint center = new GeoPoint((int)(latitude * GeoUtils.MILLION),
                 (int)(longitude * GeoUtils.MILLION));
         mapController.setCenter(center);
+        final OverlaySelector overlaySelector = new OverlaySelector();
         mOverlayManager = new OverlayManager(mMapView, mapOverlays,
-                densityOverlay, cachePinsOverlayFactory, false, cachesProviderArea, filterTypeCollection);
+                densityOverlay, cachePinsOverlayFactory, false,
+                cachesProviderArea, filterTypeCollection, overlaySelector );
         mMapView.setScrollListener(mOverlayManager);
 
         // *** BUILD MENU ***

@@ -31,12 +31,33 @@ public class OverlayManager implements Refresher {
     private boolean mUsesDensityMap;
     private final CachesProviderDb mCachesProviderDb;
     private final FilterTypeCollection mFilterTypeCollection;
+    private final OverlaySelector mOverlaySelector;
 
-    public OverlayManager(
-            GeoMapView geoMapView, List<Overlay> mapOverlays,
-            DensityOverlay densityOverlay, CachePinsOverlayFactory cachePinsOverlayFactory,
+    static class OverlaySelector {
+        boolean selectOverlay(OverlayManager overlayManager, int zoomLevel,
+                boolean fUsesDensityMap, List<Overlay> mapOverlays,
+                Overlay densityOverlay,
+                CachePinsOverlayFactory cachePinsOverlayFactory) {
+            // Log.d("GeoBeagle", "selectOverlay Zoom: " + zoomLevel);
+            boolean newZoomUsesDensityMap = zoomLevel < DENSITY_MAP_ZOOM_THRESHOLD;
+            if (newZoomUsesDensityMap && fUsesDensityMap)
+                return newZoomUsesDensityMap;
+            if (newZoomUsesDensityMap) {
+                mapOverlays.set(0, densityOverlay);
+            } else {
+                mapOverlays.set(0, cachePinsOverlayFactory
+                        .getCachePinsOverlay());
+            }
+            return newZoomUsesDensityMap;
+        }
+    }
+
+    public OverlayManager(GeoMapView geoMapView, List<Overlay> mapOverlays,
+            DensityOverlay densityOverlay,
+            CachePinsOverlayFactory cachePinsOverlayFactory,
             boolean usesDensityMap, CachesProviderDb cachesProviderArea,
-            FilterTypeCollection filterTypeCollection) {
+            FilterTypeCollection filterTypeCollection,
+            OverlaySelector overlaySelector) {
         mGeoMapView = geoMapView;
         mMapOverlays = mapOverlays;
         mDensityOverlay = densityOverlay;
@@ -44,20 +65,13 @@ public class OverlayManager implements Refresher {
         mUsesDensityMap = usesDensityMap;
         mCachesProviderDb = cachesProviderArea;
         mFilterTypeCollection = filterTypeCollection;
+        mOverlaySelector = overlaySelector;
     }
 
     public void selectOverlay() {
-        final int zoomLevel = mGeoMapView.getZoomLevel();
-        //Log.d("GeoBeagle", "selectOverlay Zoom: " + zoomLevel);
-        boolean newZoomUsesDensityMap = zoomLevel < OverlayManager.DENSITY_MAP_ZOOM_THRESHOLD;
-        if (newZoomUsesDensityMap && mUsesDensityMap)
-            return;
-        mUsesDensityMap = newZoomUsesDensityMap;
-        if (mUsesDensityMap) {
-            mMapOverlays.set(0, mDensityOverlay);
-        } else {
-            mMapOverlays.set(0, mCachePinsOverlayFactory.getCachePinsOverlay());
-        }
+        mUsesDensityMap = mOverlaySelector.selectOverlay(this, mGeoMapView
+                .getZoomLevel(), mUsesDensityMap, mMapOverlays,
+                mDensityOverlay, mCachePinsOverlayFactory);
     }
 
     public boolean usesDensityMap() {
@@ -69,7 +83,7 @@ public class OverlayManager implements Refresher {
         CacheFilter cacheFilter = mFilterTypeCollection.getActiveFilter();
         mCachesProviderDb.setFilter(cacheFilter);
         selectOverlay();
-        //Must be called from the GUI thread:
+        // Must be called from the GUI thread:
         mGeoMapView.invalidate();
     }
 
