@@ -19,6 +19,7 @@ import com.google.android.maps.MapController;
 import com.google.android.maps.MapView;
 import com.google.android.maps.MyLocationOverlay;
 import com.google.code.geobeagle.R;
+import com.google.code.geobeagle.actions.ActionStaticLabel;
 import com.google.code.geobeagle.actions.MenuAction;
 import com.google.code.geobeagle.actions.MenuActions;
 
@@ -28,14 +29,14 @@ import android.view.MenuItem;
 
 public class GeoMapActivityDelegate {
     
-    public static class MenuActionCenterLocation implements MenuAction {
-        private final Resources mResources;
+    public static class MenuActionCenterLocation extends ActionStaticLabel
+            implements MenuAction {
         private final MapController mMapController;
         private final MyLocationOverlay mMyLocationOverlay;
 
         public MenuActionCenterLocation(Resources resources, MapController mapController,
                 MyLocationOverlay myLocationOverlay) {
-            mResources = resources;
+            super(resources, R.string.menu_center_location);
             mMapController = mapController;
             mMyLocationOverlay = myLocationOverlay;
         }
@@ -47,10 +48,6 @@ public class GeoMapActivityDelegate {
                 mMapController.animateTo(geopoint);
         }
         
-        @Override
-        public String getLabel() {
-            return mResources.getString(R.string.menu_center_location);
-        }
     }
     
     public static class MenuActionToggleSatellite implements MenuAction {
