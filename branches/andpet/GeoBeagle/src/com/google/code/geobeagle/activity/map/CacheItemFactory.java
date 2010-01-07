@@ -28,7 +28,7 @@ class CacheItemFactory {
     private final GraphicsGenerator mGraphicsGenerator;
     private final DbFrontend mDbFrontend;
 
-    CacheItemFactory(Resources resources, GraphicsGenerator graphicsGenerator, 
+    CacheItemFactory(Resources resources, GraphicsGenerator graphicsGenerator,
             DbFrontend dbFrontend) {
         mResources = resources;
         mGraphicsGenerator = graphicsGenerator;
@@ -42,16 +42,13 @@ class CacheItemFactory {
     CacheItem createCacheItem(Geocache geocache) {
         final CacheItem cacheItem = new CacheItem(geocache.getGeoPoint(),
                 geocache);
+        Drawable marker = geocache.getIconMap(mResources, mGraphicsGenerator,
+                mDbFrontend);
         if (geocache == mSelected) {
-            Drawable selected = mGraphicsGenerator.superimpose(geocache
-                    .getIconMap(mResources, mGraphicsGenerator, mDbFrontend), mResources
+            marker = mGraphicsGenerator.superimpose(marker, mResources
                     .getDrawable(R.drawable.glow_40px));
-            cacheItem.setMarker(selected);
-        } else {
-            cacheItem.setMarker(geocache.getIconMap(mResources,
-                    mGraphicsGenerator, mDbFrontend));
         }
+        cacheItem.setMarker(marker);
         return cacheItem;
     }
 }
-
