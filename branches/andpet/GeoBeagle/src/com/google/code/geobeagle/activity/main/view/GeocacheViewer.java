@@ -33,8 +33,10 @@ public class GeocacheViewer {
         private final UnlabelledAttributeViewer mUnlabelledAttributeViewer;
         private final TextView mLabel;
 
-        public LabelledAttributeViewer(Drawable[] images, TextView label, ImageView imageView) {
-            mUnlabelledAttributeViewer = new UnlabelledAttributeViewer(images, imageView);
+        public LabelledAttributeViewer(TextView label, ImageView imageView,
+                AttributeViewer imageCollection) {
+            mUnlabelledAttributeViewer = new UnlabelledAttributeViewer(
+                    imageView, imageCollection);
             mLabel = label;
         }
 
@@ -45,33 +47,52 @@ public class GeocacheViewer {
         }
     }
 
-    public static class UnlabelledAttributeViewer implements AttributeViewer {
-        private final int[] mImages;
+    public static class DrawableImages implements AttributeViewer {
         private final Drawable[] mDrawables;
         private final ImageView mImageView;
 
-        public UnlabelledAttributeViewer(int[] images, ImageView imageView) {
-            mImages = images;
-            mImageView = imageView;
-            mDrawables = null;
-        }
-
-        public UnlabelledAttributeViewer(Drawable[] drawables, ImageView imageView) {
-            mImages = null;
+        public DrawableImages(ImageView imageView, Drawable[] drawables) {
             mImageView = imageView;
             mDrawables = drawables;
         }
-        
+
+        @Override
+        public void setImage(int attributeValue) {
+            mImageView.setImageDrawable(mDrawables[attributeValue]);
+        }
+    }
+
+    public static class ResourceImages implements AttributeViewer {
+        private final int[] mResources;
+        private final ImageView mImageView;
+
+        public ResourceImages(ImageView imageView, int[] resources) {
+            mImageView = imageView;
+            mResources = resources;
+        }
+
+        @Override
+        public void setImage(int attributeValue) {
+            mImageView.setImageResource(mResources[attributeValue]);
+        }
+    }
+    
+    public static class UnlabelledAttributeViewer implements AttributeViewer {
+        private final ImageView mImageView;
+        private final AttributeViewer mImageCollection;
+
+        public UnlabelledAttributeViewer(ImageView imageView,
+                AttributeViewer imageCollection) {
+            mImageView = imageView;
+            mImageCollection = imageCollection;
+        }
+
         public void setImage(int attributeValue) {
             if (attributeValue == 0) {
                 mImageView.setVisibility(View.GONE);
                 return;
             }
-            if (mDrawables != null) {
-                mImageView.setImageDrawable(mDrawables[attributeValue - 1]);                
-            } else {
-                mImageView.setImageResource(mImages[attributeValue - 1]);
-            }
+            mImageCollection.setImage(attributeValue - 1);
             mImageView.setVisibility(View.VISIBLE);
         }
     }

@@ -58,8 +58,10 @@ import com.google.code.geobeagle.activity.main.view.GeocacheViewer;
 import com.google.code.geobeagle.activity.main.view.Misc;
 import com.google.code.geobeagle.activity.main.view.WebPageAndDetailsButtonEnabler;
 import com.google.code.geobeagle.activity.main.view.GeocacheViewer.AttributeViewer;
+import com.google.code.geobeagle.activity.main.view.GeocacheViewer.DrawableImages;
 import com.google.code.geobeagle.activity.main.view.GeocacheViewer.LabelledAttributeViewer;
 import com.google.code.geobeagle.activity.main.view.GeocacheViewer.NameViewer;
+import com.google.code.geobeagle.activity.main.view.GeocacheViewer.ResourceImages;
 import com.google.code.geobeagle.activity.main.view.GeocacheViewer.UnlabelledAttributeViewer;
 import com.google.code.geobeagle.database.DbFrontend;
 import com.google.code.geobeagle.Toaster;
@@ -129,17 +131,33 @@ public class GeoBeagle extends Activity {
         final GeocacheFactory geocacheFactory = new GeocacheFactory();
         final TextView gcid = (TextView)findViewById(R.id.gcid);
         final GraphicsGenerator graphicsGenerator = new GraphicsGenerator();
-        final Drawable[] pawImages = graphicsGenerator.getTerrainRatings(getResources());
-        final Drawable[] ribbonImages = graphicsGenerator.getDifficultyRatings(getResources());
+        
+        final Drawable[] pawImages = graphicsGenerator
+                .getTerrainRatings(getResources());
+        
+        final Drawable[] ribbonImages = graphicsGenerator
+                .getDifficultyRatings(getResources());
+        final ImageView difficultyImageView = (ImageView)findViewById(R.id.gc_difficulty);
+        final TextView terrainTextView = (TextView)findViewById(R.id.gc_text_terrain);
+        final ImageView terrainImageView = (ImageView)findViewById(R.id.gc_terrain);
+        final TextView difficultyTextView = (TextView)findViewById(R.id.gc_text_difficulty);
+        final ImageView containerImageView = (ImageView)findViewById(R.id.gccontainer);
+        final DrawableImages ribbonImagesOnDifficulty = new DrawableImages(
+                difficultyImageView, ribbonImages);
         final AttributeViewer gcDifficulty = new LabelledAttributeViewer(
-                ribbonImages, (TextView)findViewById(R.id.gc_text_difficulty),
-                (ImageView)findViewById(R.id.gc_difficulty));
-        final AttributeViewer gcTerrain = new LabelledAttributeViewer(pawImages,
-                (TextView)findViewById(R.id.gc_text_terrain),
-                (ImageView)findViewById(R.id.gc_terrain));
+                difficultyTextView, difficultyImageView,
+                ribbonImagesOnDifficulty);
+        final DrawableImages pawImagesOnTerrain = new DrawableImages(
+                terrainImageView, pawImages);
+        final AttributeViewer gcTerrain = new LabelledAttributeViewer(
+                terrainTextView, terrainImageView, pawImagesOnTerrain);
+        final ResourceImages containerImagesOnContainer = new ResourceImages(
+                containerImageView, GeocacheViewer.CONTAINER_IMAGES);
         final UnlabelledAttributeViewer gcContainer = new UnlabelledAttributeViewer(
-                GeocacheViewer.CONTAINER_IMAGES, (ImageView)findViewById(R.id.gccontainer));
-        final NameViewer gcName = new NameViewer(((TextView)findViewById(R.id.gcname)));
+                containerImageView, containerImagesOnContainer);
+        
+        final NameViewer gcName = new NameViewer(
+                ((TextView)findViewById(R.id.gcname)));
         RadarView radar = (RadarView)findViewById(R.id.radarview);
         radar.setUseImperial(false);
         radar.setDistanceView((TextView)findViewById(R.id.radar_distance),
