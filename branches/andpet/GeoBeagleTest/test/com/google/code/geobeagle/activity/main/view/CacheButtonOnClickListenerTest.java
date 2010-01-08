@@ -33,6 +33,21 @@ import android.content.ActivityNotFoundException;
 public class CacheButtonOnClickListenerTest {
 
     @Test
+    public void testOnClick() {
+        CacheAction cacheAction = PowerMock.createMock(CacheAction.class);
+        GeoBeagle geoBeagle = PowerMock.createMock(GeoBeagle.class);
+        Geocache geocache = PowerMock.createMock(Geocache.class);
+
+        EasyMock.expect(geoBeagle.getGeocache()).andReturn(geocache);
+        cacheAction.act(geocache);
+
+        PowerMock.replayAll();
+        new CacheButtonOnClickListener(cacheAction, geoBeagle, " problem", null)
+                .onClick(null);
+        PowerMock.verifyAll();
+    }
+
+    @Test
     public void testOnClick_ActivityNotFound() {
         CacheAction cacheAction = PowerMock.createMock(CacheAction.class);
         GeoBeagle geoBeagle = PowerMock.createMock(GeoBeagle.class);
@@ -53,7 +68,7 @@ public class CacheButtonOnClickListenerTest {
         new CacheButtonOnClickListener(cacheAction, geoBeagle, " problem", errorDisplayer).onClick(null);
         PowerMock.verifyAll();
     }
-
+    
     @Test
     public void testOnClick_RandomError() {
         CacheAction cacheAction = PowerMock.createMock(CacheAction.class);
