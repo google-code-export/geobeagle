@@ -14,27 +14,44 @@
 
 package com.google.code.geobeagle.activity;
 
+import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.GeocacheFactory;
-import com.google.code.geobeagle.activity.main.view.EditCacheActivityDelegate;
-import com.google.code.geobeagle.activity.main.view.EditCacheActivityDelegate.CancelButtonOnClickListener;
+import com.google.code.geobeagle.R;
+import com.google.code.geobeagle.activity.main.view.EditCache;
 import com.google.code.geobeagle.database.DbFrontend;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
+import android.widget.Button;
+import android.widget.EditText;
 
 public class EditCacheActivity extends Activity {
-    private EditCacheActivityDelegate mEditCacheActivityDelegate;
     private DbFrontend mDbFrontend;
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        final CancelButtonOnClickListener cancelButtonOnClickListener = new CancelButtonOnClickListener(
+        final EditCache.CancelButtonOnClickListener cancelButtonOnClickListener = new EditCache.CancelButtonOnClickListener(
                 this);
         final GeocacheFactory geocacheFactory = new GeocacheFactory();
         mDbFrontend = new DbFrontend(this, geocacheFactory);
-        mEditCacheActivityDelegate = new EditCacheActivityDelegate(this,
-                cancelButtonOnClickListener, geocacheFactory, mDbFrontend);
+        setContentView(R.layout.cache_edit);
+        final Intent intent = getIntent();
+        final EditCache editCache = new EditCache(geocacheFactory,
+                (EditText)findViewById(R.id.edit_id),
+                (EditText)findViewById(R.id.edit_name),
+                (EditText)findViewById(R.id.edit_latitude),
+                (EditText)findViewById(R.id.edit_longitude));
+        
+        EditCache.CacheSaverOnClickListener cacheSaver = new EditCache.CacheSaverOnClickListener(
+                this, editCache, mDbFrontend);
+        ((Button)findViewById(R.id.edit_set)).setOnClickListener(cacheSaver);
+        ((Button)findViewById(R.id.edit_cancel))
+                .setOnClickListener(cancelButtonOnClickListener);
+
+        Geocache geocache = mDbFrontend.loadCacheFromId(intent.getStringExtra("geocacheId"));
+        editCache.set(geocache);
     }
 
     @Override

@@ -22,9 +22,6 @@ import com.google.code.geobeagle.GeocacheFactory;
 import com.google.code.geobeagle.Tags;
 import com.google.code.geobeagle.GeocacheFactory.Source;
 import com.google.code.geobeagle.activity.cachelist.GeocacheListController;
-import com.google.code.geobeagle.activity.main.view.EditCacheActivityDelegate.CancelButtonOnClickListener;
-import com.google.code.geobeagle.activity.main.view.EditCacheActivityDelegate.EditCache;
-import com.google.code.geobeagle.activity.main.view.EditCacheActivityDelegate.CacheSaverOnClickListener;
 import com.google.code.geobeagle.database.DbFrontend;
 
 import org.easymock.classextension.EasyMock;
@@ -40,10 +37,10 @@ import android.widget.EditText;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest( {
-        Activity.class, EditText.class, Intent.class, CacheSaverOnClickListener.class,
-        EditCacheActivityDelegate.class
+        Activity.class, EditText.class, Intent.class,
+        EditCache.CacheSaverOnClickListener.class,
 })
-public class EditCacheActivityDelegateTest {
+public class EditCacheTest {
 
     @Test
     public void testCancelButtonOnClickListener() {
@@ -53,7 +50,7 @@ public class EditCacheActivityDelegateTest {
         activity.finish();
 
         PowerMock.replay(activity);
-        CancelButtonOnClickListener cancelButtonOnClickListener = new CancelButtonOnClickListener(
+        EditCache.CancelButtonOnClickListener cancelButtonOnClickListener = new EditCache.CancelButtonOnClickListener(
                 activity);
         cancelButtonOnClickListener.onClick(null);
         PowerMock.verifyAll();
@@ -123,7 +120,7 @@ public class EditCacheActivityDelegateTest {
         activity.finish();
 
         PowerMock.replayAll();
-        CacheSaverOnClickListener setButtonOnClickListener = new CacheSaverOnClickListener(
+        EditCache.CacheSaverOnClickListener setButtonOnClickListener = new EditCache.CacheSaverOnClickListener(
                 activity, editCache, dbFrontend);
         setButtonOnClickListener.onClick(null);
         PowerMock.verifyAll();
