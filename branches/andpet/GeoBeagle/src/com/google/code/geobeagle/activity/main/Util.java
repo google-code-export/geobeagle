@@ -22,6 +22,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Util {
+    static final double APPROX_EQUALS_PRECISION = 1.0e-9;
+
     public static final String[] geocachingQueryParam = new String[] {
         "q"
     };
@@ -127,6 +129,6 @@ public class Util {
 
     /** Rounding errors might make equal floating point numbers seem to differ. */
     public static boolean approxEquals(double a, double b) {
-        return (Math.abs(a - b) < 1.0e-9);
+        return (Math.abs(a - b) < APPROX_EQUALS_PRECISION);
     }
 }
