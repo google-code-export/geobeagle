@@ -87,10 +87,15 @@ public class FavoriteViewTest {
         dbFrontend.setGeocacheTag("GC123", Tags.FAVORITES, true);
         suppress(method(ImageView.class, "setImageResource"));
 
+        dbFrontend.setGeocacheTag("GC123", Tags.FAVORITES, false);
+        suppress(method(ImageView.class, "setImageResource"));
+
         PowerMock.replayAll();
         final FavoriteView favoriteView = new FavoriteView(context);
         favoriteView.setGeocache(dbFrontend, "GC123");
-        favoriteView.setFavorite(true);
+        favoriteView.toggleFavorite();
+        favoriteView.toggleFavorite();
+        
         PowerMock.verifyAll();
     }
 
@@ -115,31 +120,22 @@ public class FavoriteViewTest {
     public void testClickFavorite() {
         FavoriteView favoriteView = PowerMock.createMock(FavoriteView.class);
 
-        favoriteView.setFavorite(true);
+        favoriteView.toggleFavorite();
 
         PowerMock.replayAll();
-        favoriteView.new OnFavoriteClick().onClick(null);
+        new FavoriteView.OnFavoriteClick(favoriteView).onClick(null);
         PowerMock.verifyAll();
     }
 
     @Test
-    public void testClickFavoriteUnset() {
-        DbFrontend dbFrontend = PowerMock.createMock(DbFrontend.class);
+    public void testClickUnFavorite() {
+        FavoriteView favoriteView = PowerMock.createMock(FavoriteView.class);
 
-        suppress(constructor(ImageView.class, Context.class));
-        suppress(method(ImageView.class, "setOnClickListener"));
-        FavoriteView favoriteView = new FavoriteView(null);
-
-        EasyMock.expect(dbFrontend.geocacheHasTag("GC123", Tags.FAVORITES))
-                .andReturn(true);
-        suppress(method(ImageView.class, "setImageResource"));
-
-        dbFrontend.setGeocacheTag("GC123", Tags.FAVORITES, false);
-        suppress(method(ImageView.class, "setImageResource"));
+        favoriteView.toggleFavorite();
 
         PowerMock.replayAll();
-        favoriteView.setGeocache(dbFrontend, "GC123");
-        favoriteView.new OnFavoriteClick().onClick(null);
+        new FavoriteView.OnFavoriteClick(favoriteView).onClick(null);
         PowerMock.verifyAll();
     }
+
 }

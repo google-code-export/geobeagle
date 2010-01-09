@@ -26,10 +26,16 @@ import android.widget.ImageView;
 /** Handles the star graphics showing if the geocache is a favorite */
 public class FavoriteView extends ImageView {
 
-    class OnFavoriteClick implements OnClickListener {
+    static class OnFavoriteClick implements OnClickListener {
+        private final FavoriteView mFavoriteView;
+        
+        OnFavoriteClick(FavoriteView favoriteView) {
+            mFavoriteView = favoriteView;
+        }
+        
         @Override
         public void onClick(View v) {
-            setFavorite(!mIsFavorite);
+            mFavoriteView.toggleFavorite();
         }
     }
 
@@ -39,15 +45,15 @@ public class FavoriteView extends ImageView {
     
     public FavoriteView(Context context) {
         super(context);
-        setOnClickListener(new OnFavoriteClick());
+        setOnClickListener(new OnFavoriteClick(this));
     }
     public FavoriteView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        setOnClickListener(new OnFavoriteClick());
+        setOnClickListener(new OnFavoriteClick(this));
     }
     public FavoriteView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-        setOnClickListener(new OnFavoriteClick());
+        setOnClickListener(new OnFavoriteClick(this));
     }
 
     public void setGeocache(DbFrontend dbFrontend, CharSequence geocacheId) {
@@ -62,9 +68,9 @@ public class FavoriteView extends ImageView {
             R.drawable.btn_rating_star_off_normal);
     }
 
-    void setFavorite(boolean favorite) {
-        mIsFavorite = favorite;
-        mDbFrontend.setGeocacheTag(mGeocacheId, Tags.FAVORITES, favorite);
+    void toggleFavorite() {
+        mIsFavorite = !mIsFavorite;
+        mDbFrontend.setGeocacheTag(mGeocacheId, Tags.FAVORITES, mIsFavorite);
         updateImage();
     }
     
