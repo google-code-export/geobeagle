@@ -26,52 +26,87 @@ import android.widget.ImageView;
 /** Handles the star graphics showing if the geocache is a favorite */
 public class FavoriteView extends ImageView {
 
+    public static class FavoriteState {
+        private final DbFrontend mDbFrontend;
+        private final CharSequence mGeocacheId;
+        private boolean mIsFavorite;
+
+        public FavoriteState(DbFrontend dbFrontend, CharSequence geocacheId) {
+            mDbFrontend = dbFrontend;
+            mGeocacheId = geocacheId;
+            mIsFavorite = dbFrontend.geocacheHasTag(geocacheId, Tags.FAVORITES);
+        }
+
+        public boolean isFavorite() {
+            return mIsFavorite;
+        }
+
+        public void toggleFavorite() {
+            mIsFavorite = !mIsFavorite;
+            mDbFrontend
+                    .setGeocacheTag(mGeocacheId, Tags.FAVORITES, mIsFavorite);
+        }
+    }
+
+    public static class FavoriteViewDelegate {
+        private final FavoriteState mFavoriteState;
+        private final FavoriteView mFavoriteView;
+
+        public FavoriteViewDelegate(FavoriteView favoriteView,
+                FavoriteState favoriteState) {
+            mFavoriteView = favoriteView;
+            mFavoriteState = favoriteState;
+        }
+
+        void toggleFavorite() {
+            mFavoriteState.toggleFavorite();
+            updateImage();
+        }
+
+        void updateImage() {
+            mFavoriteView
+                    .setImageResource(mFavoriteState.isFavorite() ? R.drawable.btn_rating_star_on_normal
+                            : R.drawable.btn_rating_star_off_normal);
+        }
+    }
+
     static class OnFavoriteClick implements OnClickListener {
         private final FavoriteView mFavoriteView;
-        
+
         OnFavoriteClick(FavoriteView favoriteView) {
             mFavoriteView = favoriteView;
         }
-        
+
         @Override
         public void onClick(View v) {
             mFavoriteView.toggleFavorite();
         }
     }
 
-    private DbFrontend mDbFrontend;
-    private CharSequence mGeocacheId;
-    private boolean mIsFavorite;
-    
+    private FavoriteViewDelegate mFavoriteViewDelegate;
+
     public FavoriteView(Context context) {
         super(context);
         setOnClickListener(new OnFavoriteClick(this));
     }
+
     public FavoriteView(Context context, AttributeSet attrs) {
         super(context, attrs);
         setOnClickListener(new OnFavoriteClick(this));
     }
+
     public FavoriteView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         setOnClickListener(new OnFavoriteClick(this));
     }
 
-    public void setGeocache(DbFrontend dbFrontend, CharSequence geocacheId) {
-        mDbFrontend = dbFrontend;
-        mGeocacheId = geocacheId;
-        mIsFavorite = mDbFrontend.geocacheHasTag(mGeocacheId, Tags.FAVORITES);
-        updateImage();
-    }
-    
-    private void updateImage() {
-        setImageResource(mIsFavorite ? R.drawable.btn_rating_star_on_normal :
-            R.drawable.btn_rating_star_off_normal);
+    public void setGeocache(FavoriteViewDelegate favoriteViewDelegate) {
+        mFavoriteViewDelegate = favoriteViewDelegate;
+        mFavoriteViewDelegate.updateImage();
     }
 
     void toggleFavorite() {
-        mIsFavorite = !mIsFavorite;
-        mDbFrontend.setGeocacheTag(mGeocacheId, Tags.FAVORITES, mIsFavorite);
-        updateImage();
+        mFavoriteViewDelegate.toggleFavorite();
     }
-    
+
 }

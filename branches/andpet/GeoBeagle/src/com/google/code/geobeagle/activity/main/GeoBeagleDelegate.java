@@ -27,6 +27,8 @@ import com.google.code.geobeagle.activity.ActivityType;
 import com.google.code.geobeagle.activity.main.view.FavoriteView;
 import com.google.code.geobeagle.activity.main.view.GeocacheViewer;
 import com.google.code.geobeagle.activity.main.view.WebPageAndDetailsButtonEnabler;
+import com.google.code.geobeagle.activity.main.view.FavoriteView.FavoriteState;
+import com.google.code.geobeagle.activity.main.view.FavoriteView.FavoriteViewDelegate;
 import com.google.code.geobeagle.database.DbFrontend;
 
 import android.content.Intent;
@@ -174,7 +176,11 @@ public class GeoBeagleDelegate {
                     CacheType.NULL, 0, 0, 0);
         }
         mGeocacheViewer.set(mGeocache);
-        mFavoriteView.setGeocache(mDbFrontend, mGeocache.getId());
+        final FavoriteState favoriteState = new FavoriteState(mDbFrontend,
+                mGeocache.getId());
+        final FavoriteViewDelegate favoriteViewDelegate = new FavoriteViewDelegate(
+                mFavoriteView, favoriteState);
+        mFavoriteView.setGeocache(favoriteViewDelegate);
         mWebPageButtonEnabler.check();
     }
 

@@ -40,6 +40,8 @@ import com.google.code.geobeagle.activity.main.fieldnotes.FieldnoteStringsFVsDnf
 import com.google.code.geobeagle.activity.main.view.FavoriteView;
 import com.google.code.geobeagle.activity.main.view.GeocacheViewer;
 import com.google.code.geobeagle.activity.main.view.WebPageAndDetailsButtonEnabler;
+import com.google.code.geobeagle.activity.main.view.FavoriteView.FavoriteState;
+import com.google.code.geobeagle.activity.main.view.FavoriteView.FavoriteViewDelegate;
 import com.google.code.geobeagle.database.DatabaseDI;
 import com.google.code.geobeagle.database.DbFrontend;
 
@@ -97,6 +99,9 @@ public class GeoBeagleDelegateTest {
         PowerMock.mockStatic(DatabaseDI.class);
         GeoFixProvider geoFixProvider = PowerMock.createMock(GeoFixProvider.class);
         FavoriteView favoriteView = PowerMock.createMock(FavoriteView.class);
+        FavoriteViewDelegate favoriteViewDelegate = PowerMock
+                .createMock(FavoriteViewDelegate.class);
+        FavoriteState favoriteState = PowerMock.createMock(FavoriteState.class);
 
         radarView.handleUnknownLocation();
         EasyMock.expect(sharedPreferences.getBoolean("imperial", false)).andReturn(true);
@@ -109,7 +114,11 @@ public class GeoBeagleDelegateTest {
         geocacheViewer.set(geocache);
         webPageButtonEnabler.check();
         EasyMock.expect(geocache.getId()).andReturn("gc123");
-        favoriteView.setGeocache(dbFrontend, "gc123");
+        PowerMock.expectNew(FavoriteState.class, dbFrontend, "gc123")
+                .andReturn(favoriteState);
+        PowerMock.expectNew(FavoriteViewDelegate.class, favoriteView,
+                favoriteState).andReturn(favoriteViewDelegate);
+        favoriteView.setGeocache(favoriteViewDelegate);
         geoFixProvider.onResume();
 
         PowerMock.replayAll();

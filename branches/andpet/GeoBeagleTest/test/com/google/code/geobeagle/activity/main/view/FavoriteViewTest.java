@@ -14,11 +14,16 @@
 
 package com.google.code.geobeagle.activity.main.view;
 
+import static org.junit.Assert.*;
 import static org.powermock.api.support.membermodification.MemberMatcher.constructor;
 import static org.powermock.api.support.membermodification.MemberMatcher.method;
 import static org.powermock.api.support.membermodification.MemberModifier.suppress;
 
+import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.Tags;
+import com.google.code.geobeagle.activity.main.view.FavoriteView.FavoriteState;
+import com.google.code.geobeagle.activity.main.view.FavoriteView.FavoriteViewDelegate;
+
 import com.google.code.geobeagle.database.DbFrontend;
 
 import org.easymock.EasyMock;
@@ -37,6 +42,62 @@ import android.widget.ImageView;
     FavoriteView.class
 })
 public class FavoriteViewTest {
+    @Test
+    public void testFavoriteStateIsFavorite() {
+        DbFrontend dbFrontend = PowerMock.createMock(DbFrontend.class);
+
+        EasyMock.expect(dbFrontend.geocacheHasTag("GC123", Tags.FAVORITES))
+                .andReturn(false);
+
+        PowerMock.replayAll();
+        FavoriteState favoriteState = new FavoriteState(dbFrontend, "GC123");
+        assertFalse(favoriteState.isFavorite());
+        PowerMock.verifyAll();
+    }
+
+    @Test
+    public void testFavoriteStateToggleFavorite() {
+        DbFrontend dbFrontend = PowerMock.createMock(DbFrontend.class);
+
+        EasyMock.expect(dbFrontend.geocacheHasTag("GC123", Tags.FAVORITES))
+                .andReturn(true);
+        dbFrontend.setGeocacheTag("GC123", Tags.FAVORITES, false);
+
+        PowerMock.replayAll();
+        FavoriteState favoriteState = new FavoriteState(dbFrontend, "GC123");
+        favoriteState.toggleFavorite();
+        assertFalse(favoriteState.isFavorite());
+        PowerMock.verifyAll();
+    }
+
+    @Test
+    public void FavoriteViewDelegateToggleFavorite() {
+        FavoriteView favoriteView = PowerMock.createMock(FavoriteView.class);
+        FavoriteState favoriteState = PowerMock.createMock(FavoriteState.class);
+
+        favoriteState.toggleFavorite();
+        EasyMock.expect(favoriteState.isFavorite()).andReturn(true);
+        favoriteView.setImageResource(R.drawable.btn_rating_star_on_normal);
+
+        PowerMock.replayAll();
+        new FavoriteViewDelegate(favoriteView, favoriteState).toggleFavorite();
+        PowerMock.verifyAll();
+    }
+
+    @Test
+    public void FavoriteViewDelegateUpdateImage() {
+        FavoriteView favoriteView = PowerMock.createMock(FavoriteView.class);
+        FavoriteState favoriteState = PowerMock.createMock(FavoriteState.class);
+
+        EasyMock.expect(favoriteState.isFavorite()).andReturn(false);
+        favoriteView.setImageResource(R.drawable.btn_rating_star_off_normal);
+        suppress(method(ImageView.class, "setImageResource"));
+
+        PowerMock.replayAll();
+        new FavoriteViewDelegate(favoriteView, favoriteState).updateImage();
+        PowerMock.verifyAll();
+    }
+
     @Test
     public void testCreateFavoriteView() {
         Context context = PowerMock.createMock(Context.class);
@@ -58,77 +119,42 @@ public class FavoriteViewTest {
     }
 
     @Test
-    public void testSetGeoCacheToFavorite() {
+    public void testSetGeocache() {
         Context context = PowerMock.createMock(Context.class);
-        DbFrontend dbFrontend = PowerMock.createMock(DbFrontend.class);
+        FavoriteViewDelegate favoriteViewDelegate = PowerMock
+                .createMock(FavoriteViewDelegate.class);
 
         suppress(method(ImageView.class, "setOnClickListener"));
         suppress(constructor(ImageView.class, Context.class));
 
-        EasyMock.expect(dbFrontend.geocacheHasTag("GC123", Tags.FAVORITES))
-                .andReturn(false);
-        suppress(method(ImageView.class, "setImageResource"));
+        favoriteViewDelegate.updateImage();
 
         PowerMock.replayAll();
-        new FavoriteView(context).setGeocache(dbFrontend, "GC123");
+        new FavoriteView(context).setGeocache(favoriteViewDelegate);
+
         PowerMock.verifyAll();
     }
 
     @Test
-    public void testSetFavorite() {
+    public void testToggleFavorite() {
         Context context = PowerMock.createMock(Context.class);
-        DbFrontend dbFrontend = PowerMock.createMock(DbFrontend.class);
+        FavoriteViewDelegate favoriteViewDelegate = PowerMock
+                .createMock(FavoriteViewDelegate.class);
 
-        suppress(method(ImageView.class, "setOnClickListener"));
         suppress(constructor(ImageView.class, Context.class));
-        EasyMock.expect(dbFrontend.geocacheHasTag("GC123", Tags.FAVORITES))
-                .andReturn(true);
-        suppress(method(ImageView.class, "setImageResource"));
-        dbFrontend.setGeocacheTag("GC123", Tags.FAVORITES, true);
-        suppress(method(ImageView.class, "setImageResource"));
-
-        dbFrontend.setGeocacheTag("GC123", Tags.FAVORITES, false);
-        suppress(method(ImageView.class, "setImageResource"));
+        suppress(method(ImageView.class, "setOnClickListener"));
+        favoriteViewDelegate.updateImage();
+        favoriteViewDelegate.toggleFavorite();
 
         PowerMock.replayAll();
         final FavoriteView favoriteView = new FavoriteView(context);
-        favoriteView.setGeocache(dbFrontend, "GC123");
+        favoriteView.setGeocache(favoriteViewDelegate);
         favoriteView.toggleFavorite();
-        favoriteView.toggleFavorite();
-        
-        PowerMock.verifyAll();
-    }
-
-    @Test
-    public void testSetGeoCacheToUnfavorite() {
-        Context context = PowerMock.createMock(Context.class);
-        DbFrontend dbFrontend = PowerMock.createMock(DbFrontend.class);
-
-        suppress(constructor(ImageView.class, Context.class));
-        suppress(method(ImageView.class, "setOnClickListener"));
-
-        EasyMock.expect(dbFrontend.geocacheHasTag("GC123", Tags.FAVORITES))
-                .andReturn(true);
-        suppress(method(ImageView.class, "setImageResource"));
-
-        PowerMock.replayAll();
-        new FavoriteView(context).setGeocache(dbFrontend, "GC123");
         PowerMock.verifyAll();
     }
 
     @Test
     public void testClickFavorite() {
-        FavoriteView favoriteView = PowerMock.createMock(FavoriteView.class);
-
-        favoriteView.toggleFavorite();
-
-        PowerMock.replayAll();
-        new FavoriteView.OnFavoriteClick(favoriteView).onClick(null);
-        PowerMock.verifyAll();
-    }
-
-    @Test
-    public void testClickUnFavorite() {
         FavoriteView favoriteView = PowerMock.createMock(FavoriteView.class);
 
         favoriteView.toggleFavorite();
