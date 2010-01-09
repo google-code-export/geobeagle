@@ -62,11 +62,14 @@ public class FavoriteViewTest {
         EasyMock.expect(dbFrontend.geocacheHasTag("GC123", Tags.FAVORITES))
                 .andReturn(true);
         dbFrontend.setGeocacheTag("GC123", Tags.FAVORITES, false);
+        dbFrontend.setGeocacheTag("GC123", Tags.FAVORITES, true);
 
         PowerMock.replayAll();
         FavoriteState favoriteState = new FavoriteState(dbFrontend, "GC123");
         favoriteState.toggleFavorite();
         assertFalse(favoriteState.isFavorite());
+        favoriteState.toggleFavorite();
+        assertTrue(favoriteState.isFavorite());
         PowerMock.verifyAll();
     }
 
