@@ -55,14 +55,14 @@ public class TitleUpdaterTest {
         listActivity.setTitle("new title");
 
         PowerMock.replayAll();
-        new TitleUpdater(listActivity, cachesProviderToggler, dbFrontend, null, new TextSelector()).refresh();
+        new TitleUpdater(listActivity, cachesProviderToggler, dbFrontend, new TextSelector()).refresh();
         PowerMock.verifyAll();
     }
 
     @Test
     public void testTitleUpdaterEmpty() {
         ListActivity listActivity = PowerMock.createMock(ListActivity.class);
-        TextView textView = PowerMock.createMock(TextView.class);
+        TextView emptyTextView = PowerMock.createMock(TextView.class);
         CachesProviderToggler cachesProviderToggler = PowerMock
                 .createMock(CachesProviderToggler.class);
         DbFrontend dbFrontend = PowerMock.createMock(DbFrontend.class);
@@ -74,11 +74,11 @@ public class TitleUpdaterTest {
         EasyMock.expect(listActivity.getString(R.string.cache_list_title, 0, 12)).andReturn(
                 "new title");
         listActivity.setTitle("new title");
-        textView.setText(R.string.no_nearby_caches);
-        
+        EasyMock.expect(listActivity.findViewById(android.R.id.empty)).andReturn(emptyTextView);
+        emptyTextView.setText(R.string.no_nearby_caches);
 
         PowerMock.replayAll();
-        new TitleUpdater(listActivity, cachesProviderToggler, dbFrontend, textView, new TextSelector()).refresh();
+        new TitleUpdater(listActivity, cachesProviderToggler, dbFrontend, new TextSelector()).refresh();
         PowerMock.verifyAll();
     }
     

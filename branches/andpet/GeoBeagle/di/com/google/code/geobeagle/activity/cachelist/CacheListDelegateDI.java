@@ -162,12 +162,9 @@ public class CacheListDelegateDI {
             new CachesProviderToggler(cachesProviderLazy, cachesProviderAll);
         CachesProviderCenterThread thread = new CachesProviderCenterThread(cachesProviderToggler);
 
-        final TextView emptyTextView = (TextView)listActivity
-                .findViewById(android.R.id.empty);
-        
         final TextSelector textSelector = new TextSelector();
         final TitleUpdater titleUpdater = new TitleUpdater(listActivity,
-                cachesProviderToggler, dbFrontend, emptyTextView, textSelector);
+                cachesProviderToggler, dbFrontend, textSelector);
 
         distanceFormatterManager.addHasDistanceFormatter(geocacheSummaryRowInflater);
         distanceFormatterManager.addHasDistanceFormatter(gpsStatusWidgetDelegate);

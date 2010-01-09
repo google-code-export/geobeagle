@@ -25,7 +25,6 @@ public class TitleUpdater implements RefreshAction {
     private final CachesProviderToggler mCachesProviderToggler;
     private final ListActivity mListActivity;
     private final DbFrontend mDbFrontend;
-    private final TextView mEmptyTextView;
     private final TextSelector mTextSelector;
     
     public static class TextSelector {
@@ -41,11 +40,10 @@ public class TitleUpdater implements RefreshAction {
         
     }
     public TitleUpdater(ListActivity listActivity, CachesProviderToggler cachesProviderToggler, 
-            DbFrontend dbFrontend, TextView emptyTextView, TextSelector textSelector) {
+            DbFrontend dbFrontend, TextSelector textSelector) {
         mListActivity = listActivity;
         mCachesProviderToggler = cachesProviderToggler;
         mDbFrontend = dbFrontend;
-        mEmptyTextView = emptyTextView;
         mTextSelector = textSelector;
     }
 
@@ -57,8 +55,11 @@ public class TitleUpdater implements RefreshAction {
         mListActivity.setTitle(mListActivity.getString(title,
                 nearestCachesCount, sqlCount));
         if (0 == nearestCachesCount) {
-            mEmptyTextView.setText(mTextSelector
-                    .getNoNearbyCachesText(sqlCount));
+            final int noNearbyCachesText = mTextSelector
+                    .getNoNearbyCachesText(sqlCount);
+            final TextView emptyTextView = (TextView)mListActivity
+                    .findViewById(android.R.id.empty);
+            emptyTextView.setText(noNearbyCachesText);
         }
     }
 }
