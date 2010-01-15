@@ -43,7 +43,8 @@ public class Util {
     public static CharSequence formatDegreesAsDecimalDegreesString(double fDegrees) {
         final double fAbsDegrees = Math.abs(fDegrees);
         final int dAbsDegrees = (int)fAbsDegrees;
-        return String.format(Locale.US, (fDegrees < 0 ? "-" : "") + "%1$d %2$06.3f", dAbsDegrees,
+        return String.format(Locale.US, (fDegrees < 0 ? "-" : "")
+                + "%1$d %2$06.3f", dAbsDegrees,
                 60.0 * (fAbsDegrees - dAbsDegrees));
     }
 
@@ -110,11 +111,10 @@ public class Util {
             };
         }
         Matcher matcher = PAT_LATLON.matcher(string);
-        if (matcher.matches())
-            return new String[] {
-                    matcher.group(1).trim(), matcher.group(2).trim()
-            };
-        return null;
+        matcher.matches();
+        return new String[] {
+                matcher.group(1).trim(), matcher.group(2).trim()
+        };
     }
 
     public static CharSequence[] splitLatLonDescription(CharSequence location) {

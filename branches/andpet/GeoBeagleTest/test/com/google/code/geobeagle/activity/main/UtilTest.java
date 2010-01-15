@@ -42,6 +42,7 @@ public class UtilTest {
         // locale.
         // TODO: add locale-specific parsing/formatting.
         Locale.setDefault(Locale.GERMANY);
+        assertEquals("122 30.000", Util.formatDegreesAsDecimalDegreesString(122.5));
         assertEquals("-122 30.000", Util.formatDegreesAsDecimalDegreesString(-122.5));
         assertEquals("-122 30.600", Util.formatDegreesAsDecimalDegreesString(-122.51));
         assertEquals("-122 03.000", Util.formatDegreesAsDecimalDegreesString(-122.05));
@@ -171,6 +172,12 @@ public class UtilTest {
 
         // opencaching.pl:
         splitLatLonHelper("52.029483333333 20.464366666667", "52.029483333333", "20.464366666667");
+    }
+    
+    @Test
+    // http://stuffthathappens.com/blog/2007/11/26/the-problem-with-emma/
+    public void testUtil() {
+        new Util();
     }
     
     @Test
