@@ -47,6 +47,7 @@ import com.google.code.geobeagle.activity.main.fieldnotes.SmsLogger;
 
 import com.google.code.geobeagle.activity.main.fieldnotes.FieldnoteLogger.OnClickCancel;
 import com.google.code.geobeagle.activity.main.fieldnotes.FieldnoteLogger.OnClickOk;import com.google.code.geobeagle.activity.main.GeoBeagleDelegate.LogFindClickListener;
+import com.google.code.geobeagle.activity.main.GeoBeagleDelegate.OptionsMenu;
 import com.google.code.geobeagle.activity.main.intents.GeocacheToCachePage;
 import com.google.code.geobeagle.activity.main.intents.GeocacheToGoogleMap;
 import com.google.code.geobeagle.activity.main.intents.IntentFactory;
@@ -100,6 +101,7 @@ public class GeoBeagle extends Activity {
     private GeoBeagleDelegate mGeoBeagleDelegate;
     private DbFrontend mDbFrontend;
     private FieldnoteLogger mFieldNoteSender;
+    private OptionsMenu mOptionsMenu;
     private static final DateFormat mLocalDateFormat = DateFormat
     .getTimeInstance(DateFormat.MEDIUM);
     
@@ -186,6 +188,17 @@ public class GeoBeagle extends Activity {
         final IncomingIntentHandler incomingIntentHandler = new IncomingIntentHandler(
                 geocacheFactory, geocacheFromIntentFactory, mDbFrontend);
         Geocache geocache = incomingIntentHandler.maybeGetGeocacheFromIntent(getIntent(), null, mDbFrontend);
+
+        final SharedPreferences defaultSharedPreferences = PreferenceManager
+                .getDefaultSharedPreferences(this);
+        final GeocacheFromParcelFactory geocacheFromParcelFactory = new GeocacheFromParcelFactory(
+                geocacheFactory);
+        mGeoBeagleDelegate = new GeoBeagleDelegate(activitySaver,
+                this, geocacheFactory, geocacheViewer,
+                incomingIntentHandler, geocacheFromParcelFactory,
+                mDbFrontend, radar, defaultSharedPreferences,
+                webPageButtonEnabler, geoFixProvider, favorite);
+
         final MenuAction[] menuActionArray = {
                 new MenuActionCacheList(this, resources), 
                 new MenuActionFromCacheAction(new CacheActionEdit(this, resources), geocache),
@@ -196,16 +209,8 @@ public class GeoBeagle extends Activity {
                 //new MenuActionFromCacheAction(new CacheActionProximity(this, resources), geocache),
         };
         final MenuActions menuActions = new MenuActions(menuActionArray);
-        final SharedPreferences defaultSharedPreferences = PreferenceManager
-                .getDefaultSharedPreferences(this);
-        final GeocacheFromParcelFactory geocacheFromParcelFactory = new GeocacheFromParcelFactory(
-                geocacheFactory);
-        mGeoBeagleDelegate = new GeoBeagleDelegate(activitySaver,
-                this, geocacheFactory, geocacheViewer,
-                incomingIntentHandler, menuActions, geocacheFromParcelFactory,
-                mDbFrontend, radar, defaultSharedPreferences,
-                webPageButtonEnabler, geoFixProvider, favorite);
-
+        mOptionsMenu = new GeoBeagleDelegate.OptionsMenu(menuActions);
+        
         // see http://www.androidguys.com/2008/11/07/rotational-forces-part-two/
         if (getLastNonConfigurationInstance() != null) {
             setIntent((Intent)getLastNonConfigurationInstance());
@@ -292,7 +297,7 @@ public class GeoBeagle extends Activity {
     
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        return mGeoBeagleDelegate.onCreateOptionsMenu(menu);
+        return mOptionsMenu.onCreateOptionsMenu(menu);
     }
 
     @Override
@@ -304,7 +309,7 @@ public class GeoBeagle extends Activity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        return mGeoBeagleDelegate.onOptionsItemSelected(item);
+        return mOptionsMenu.onOptionsItemSelected(item);
     }
 
     @Override

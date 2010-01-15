@@ -84,6 +84,21 @@ public class GeoBeagleDelegate {
         }
     }
 
+    static class OptionsMenu {
+        private final MenuActions mMenuActions;
+
+        public OptionsMenu(MenuActions menuActions) {
+            mMenuActions = menuActions;
+        }
+
+        public boolean onCreateOptionsMenu(Menu menu) {
+            return mMenuActions.onCreateOptionsMenu(menu);
+        }
+
+        public boolean onOptionsItemSelected(MenuItem item) {
+            return mMenuActions.act(item.getItemId());
+        }
+    }
     public static int ACTIVITY_REQUEST_TAKE_PICTURE = 1;
     private final ActivitySaver mActivitySaver;
     private Geocache mGeocache;
@@ -92,7 +107,6 @@ public class GeoBeagleDelegate {
     private final GeocacheViewer mGeocacheViewer;
     private final IncomingIntentHandler mIncomingIntentHandler;
     private final DbFrontend mDbFrontend;
-    private final MenuActions mMenuActions;
     private final GeoBeagle mParent;
     private final RadarView mRadarView;
     private final SharedPreferences mSharedPreferences;
@@ -102,7 +116,7 @@ public class GeoBeagleDelegate {
 
     public GeoBeagleDelegate(ActivitySaver activitySaver, GeoBeagle parent,
             GeocacheFactory geocacheFactory, GeocacheViewer geocacheViewer,
-            IncomingIntentHandler incomingIntentHandler, MenuActions menuActions,
+            IncomingIntentHandler incomingIntentHandler,
             GeocacheFromParcelFactory geocacheFromParcelFactory,
             DbFrontend dbFrontend, RadarView radarView,
             SharedPreferences sharedPreferences,
@@ -110,7 +124,6 @@ public class GeoBeagleDelegate {
             IPausable geoFixProvider, FavoriteView favoriteView) {
         mParent = parent;
         mActivitySaver = activitySaver;
-        mMenuActions = menuActions;
         mSharedPreferences = sharedPreferences;
         mRadarView = radarView;
         mGeocacheViewer = geocacheViewer;
@@ -136,20 +149,12 @@ public class GeoBeagleDelegate {
         mParent.startActivityForResult(intent, GeoBeagleDelegate.ACTIVITY_REQUEST_TAKE_PICTURE);
     }
 
-    public boolean onCreateOptionsMenu(Menu menu) {
-        return mMenuActions.onCreateOptionsMenu(menu);
-    }
-
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_CAMERA && event.getRepeatCount() == 0) {
             onCameraStart();
             return true;
         }
         return false;
-    }
-
-    public boolean onOptionsItemSelected(MenuItem item) {
-        return mMenuActions.act(item.getItemId());
     }
 
     public void onPause() {
