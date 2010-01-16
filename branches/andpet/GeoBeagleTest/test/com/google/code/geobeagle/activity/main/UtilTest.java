@@ -152,6 +152,11 @@ public class UtilTest {
     }
 
     @Test
+    public void testDistanceKm() {
+        assertEquals(471.12, GeoUtils.distanceKm(-122, 37, -122, 45), 0.01);
+    }
+    
+    @Test
     public void testSplitLatLon() {
         // http://en.wikipedia.org/wiki/Geographic_coordinate_conversion.
         splitLatLonHelper("40:26:46N,79:56:55W", "40:26:46N", "79:56:55W");
@@ -178,6 +183,7 @@ public class UtilTest {
     // http://stuffthathappens.com/blog/2007/11/26/the-problem-with-emma/
     public void testUtil() {
         new Util();
+        new GeoUtils();
     }
     
     @Test
