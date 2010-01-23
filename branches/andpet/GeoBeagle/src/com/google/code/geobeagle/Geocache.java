@@ -77,7 +77,7 @@ public class Geocache {
     //private Drawable mIconBig = null;
     private Drawable mIconMap = null;
 
-    Geocache(CharSequence id, CharSequence name, double latitude, double longitude,
+    public Geocache(CharSequence id, CharSequence name, double latitude, double longitude,
             Source sourceType, String sourceName, CacheType cacheType, int difficulty, int terrain,
             int container, AttributeFormatter attributeFormatter) {
         mId = id;
