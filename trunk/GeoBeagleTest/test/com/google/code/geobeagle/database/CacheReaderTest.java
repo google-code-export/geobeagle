@@ -26,6 +26,7 @@ import com.google.code.geobeagle.GeocacheFactory.Source;
 import com.google.code.geobeagle.database.DatabaseDI.CacheReaderCursorFactory;
 import com.google.code.geobeagle.database.DatabaseDI.SQLiteWrapper;
 
+import org.easymock.EasyMock;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.api.easymock.PowerMock;
@@ -83,6 +84,17 @@ public class CacheReaderTest {
         PowerMock.verifyAll();
     }
 
+    @Test
+    public void testGetCount() {
+        Cursor cursor = PowerMock.createMock(Cursor.class);
+        EasyMock.expect(cursor.getCount()).andReturn(27);
+
+        PowerMock.replayAll();
+        assertEquals(27, new CacheReaderCursor(cursor, null, null).count());
+        PowerMock.verifyAll();
+
+    }
+    
     @Test
     public void testCursorMoveToNext() {
         Cursor cursor = PowerMock.createMock(Cursor.class);

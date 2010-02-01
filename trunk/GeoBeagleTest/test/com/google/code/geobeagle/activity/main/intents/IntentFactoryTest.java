@@ -16,9 +16,6 @@ package com.google.code.geobeagle.activity.main.intents;
 
 import static org.junit.Assert.assertEquals;
 
-import com.google.code.geobeagle.activity.main.UriParser;
-import com.google.code.geobeagle.activity.main.intents.IntentFactory;
-
 import org.easymock.EasyMock;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -31,20 +28,22 @@ import android.net.Uri;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest( {
-    IntentFactory.class
+    IntentFactory.class, Uri.class
 })
 public class IntentFactoryTest {
+    
     @Test
     public void testCreateIntent() throws Exception {
-        UriParser uriParser = PowerMock.createMock(UriParser.class);
         Uri uri = PowerMock.createMock(Uri.class);
         Intent intent = PowerMock.createMock(Intent.class);
 
-        EasyMock.expect(uriParser.parse("http://maps.google.com/etc")).andReturn(uri);
+        PowerMock.mockStatic(Uri.class);
+        EasyMock.expect(Uri.parse("http://maps.google.com/etc")).andReturn(uri);
+        
         PowerMock.expectNew(Intent.class, "action", uri).andReturn(intent);
 
         PowerMock.replayAll();
-        assertEquals(intent, new IntentFactory(uriParser).createIntent("action",
+        assertEquals(intent, new IntentFactory().createIntent("action",
                 "http://maps.google.com/etc"));
         PowerMock.verifyAll();
     }
