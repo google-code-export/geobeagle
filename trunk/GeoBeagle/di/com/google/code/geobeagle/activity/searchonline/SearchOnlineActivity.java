@@ -34,6 +34,7 @@ import com.google.code.geobeagle.gpsstatuswidget.GpsWidgetAndUpdater;
 import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidget.InflatedGpsStatusWidget;
 import com.google.code.geobeagle.location.CombinedLocationListener;
 import com.google.code.geobeagle.location.CombinedLocationManager;
+import com.google.code.geobeagle.xmlimport.GpxImporterDI;
 
 import android.app.Activity;
 import android.content.Context;
@@ -103,7 +104,9 @@ public class SearchOnlineActivity extends Activity {
                 distanceFormatterManager, activitySaver);
 
         final JsInterfaceHelper jsInterfaceHelper = new JsInterfaceHelper(this);
-        final JsInterface jsInterface = new JsInterface(mLocationControlBuffered, jsInterfaceHelper);
+        final JsInterface jsInterface = new JsInterface(
+                mLocationControlBuffered, jsInterfaceHelper,
+                new GpxImporterDI.ToastFactory(), this);
 
         mSearchOnlineActivityDelegate.configureWebView(jsInterface);
         activityRestorer.restore(getIntent().getFlags());

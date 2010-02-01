@@ -18,6 +18,7 @@ import com.google.code.geobeagle.CompassListener;
 import com.google.code.geobeagle.LocationControlBuffered;
 import com.google.code.geobeagle.activity.ActivitySaver;
 import com.google.code.geobeagle.activity.ActivityType;
+import com.google.code.geobeagle.activity.cachelist.GeoBeagleTest;
 import com.google.code.geobeagle.activity.cachelist.presenter.DistanceFormatterManager;
 import com.google.code.geobeagle.location.CombinedLocationListener;
 import com.google.code.geobeagle.location.CombinedLocationManager;
@@ -34,7 +35,7 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 
 @RunWith(PowerMockRunner.class)
-public class SearchOnlineActivityDelegateTest {
+public class SearchOnlineActivityDelegateTest extends GeoBeagleTest {
     @Test
     public void onResume() {
         SensorManager sensorManager = PowerMock.createMock(SensorManager.class);
