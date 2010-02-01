@@ -112,6 +112,13 @@ public class DbFrontend {
 
         mCacheReader = DatabaseDI.createCacheReader(mDatabase);
     }
+    
+    public Geocache getCache(CharSequence cacheId) {
+        CacheReaderCursor cacheReader = mCacheReader.open(cacheId);
+        Geocache cache = cacheReader.getCache();
+        cacheReader.close();
+        return cache;
+    }
 
     /*
      * public void onPause() { closeDatabase(); }

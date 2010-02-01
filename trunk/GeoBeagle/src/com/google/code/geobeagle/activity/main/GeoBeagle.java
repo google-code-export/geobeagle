@@ -146,9 +146,10 @@ public class GeoBeagle extends Activity {
                 (TextView)findViewById(R.id.radar_accuracy));
         final GeocacheViewer geocacheViewer = new GeocacheViewer(radar, gcid, gcName,
                 (ImageView)findViewById(R.id.gcicon), gcDifficulty, gcTerrain, gcContainer);
+        mDbFrontend = new DbFrontend(this);
 
         locationControlBuffered.onLocationChanged(null);
-        final IntentFactory intentFactory = new IntentFactory(new UriParser());
+        final IntentFactory intentFactory = new IntentFactory();
 
         // Register for location updates
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 1, radar);
@@ -177,12 +178,11 @@ public class GeoBeagle extends Activity {
         final SharedPreferences defaultSharedPreferences = PreferenceManager
                 .getDefaultSharedPreferences(this);
         final GeocacheFromIntentFactory geocacheFromIntentFactory = new GeocacheFromIntentFactory(
-                geocacheFactory);
+                geocacheFactory, mDbFrontend);
         final IncomingIntentHandler incomingIntentHandler = new IncomingIntentHandler(
                 geocacheFactory, geocacheFromIntentFactory);
         final GeocacheFromParcelFactory geocacheFromParcelFactory = new GeocacheFromParcelFactory(
                 geocacheFactory);
-        mDbFrontend = new DbFrontend(this);
         mGeoBeagleDelegate = new GeoBeagleDelegate(activitySaver, appLifecycleManager,
                 compassListener, this, geocacheFactory, geocacheViewer, incomingIntentHandler,
                 menuActions, geocacheFromParcelFactory, mDbFrontend, radar, sensorManager,

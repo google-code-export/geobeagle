@@ -14,18 +14,12 @@
 
 package com.google.code.geobeagle.activity.main.intents;
 
-import com.google.code.geobeagle.activity.main.UriParser;
-
 import android.content.Intent;
+import android.net.Uri;
 
 public class IntentFactory {
-    private final UriParser mUriParser;
-
-    public IntentFactory(UriParser uriParser) {
-        mUriParser = uriParser;
-    }
 
     public Intent createIntent(String action, String uri) {
-        return new Intent(action, mUriParser.parse(uri));
+        return new Intent(action, Uri.parse(uri));
     }
 }

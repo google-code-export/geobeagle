@@ -53,4 +53,14 @@ public class CacheReader {
         }
         return mCacheReaderCursorFactory.create(cursor);
     }
+
+    public CacheReaderCursor open(CharSequence cacheId) {
+        Cursor cursor = mSqliteWrapper.query(Database.TBL_CACHES, CacheReader.READER_COLUMNS,
+                "Id='" + cacheId + "'", null, null, null, null);
+        if (!cursor.moveToFirst()) {
+            cursor.close();
+            return null;
+        }
+        return mCacheReaderCursorFactory.create(cursor);   
+    }
 }
