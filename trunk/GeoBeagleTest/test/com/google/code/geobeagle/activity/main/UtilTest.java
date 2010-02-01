@@ -37,15 +37,35 @@ public class UtilTest {
     }
 
     @Test
+    public void testDistanceKm() {
+        assertEquals(2759.2, GeoUtils.distanceKm(180, 45, 160, 30), 0.5);
+    }
+
+    @Test
+    public void testCtorForStatics() {
+        new GeoUtils();
+        new Util();
+    }
+
+    @Test
+    public void testBearing() {
+        assertEquals(210, GeoUtils.bearing(90, 120, 75, 90), .1);
+    }
+
+    @Test
     public void testConvertDegreesToMinutes() {
         // Make sure formatting is US even if the phone is in a different
         // locale.
         // TODO: add locale-specific parsing/formatting.
         Locale.setDefault(Locale.GERMANY);
-        assertEquals("-122 30.000", Util.formatDegreesAsDecimalDegreesString(-122.5));
-        assertEquals("-122 30.600", Util.formatDegreesAsDecimalDegreesString(-122.51));
-        assertEquals("-122 03.000", Util.formatDegreesAsDecimalDegreesString(-122.05));
-        assertEquals("-0 03.000", Util.formatDegreesAsDecimalDegreesString(-0.05));
+        assertEquals("-122 30.000", Util
+                .formatDegreesAsDecimalDegreesString(-122.5));
+        assertEquals("-122 30.600", Util
+                .formatDegreesAsDecimalDegreesString(-122.51));
+        assertEquals("-122 03.000", Util
+                .formatDegreesAsDecimalDegreesString(-122.05));
+        assertEquals("-0 03.000", Util
+                .formatDegreesAsDecimalDegreesString(-0.05));
     }
 
     @Test
@@ -88,7 +108,8 @@ public class UtilTest {
         assertEquals(37.25275, Util.parseCoordinate("N+37¡+15.165 "), 0.00001);
 
         assertEquals(40.446195, Util.parseCoordinate("40¡ 26.7717"), 0);
-        assertEquals(40.446195, Util.parseCoordinate("40:26:46.302N"), 0.0000001);
+        assertEquals(40.446195, Util.parseCoordinate("40:26:46.302N"),
+                0.0000001);
         assertEquals(40.4461, Util.parseCoordinate("40¡26'46\"N"), 0.0001);
         assertEquals(40.4461, Util.parseCoordinate("40d 26' 46\" N"), 0.0001);
         assertEquals(40.446195, Util.parseCoordinate("40.446195N"), 0.0000001);
@@ -119,7 +140,8 @@ public class UtilTest {
         expect(sanitizer.getValue("q")).andReturn(sanitizedQuery);
 
         replay(sanitizer);
-        assertEquals(sanitizedQuery, Util.parseHttpUri(unsanitizedQuery, sanitizer, valueSanitizer));
+        assertEquals(sanitizedQuery, Util.parseHttpUri(unsanitizedQuery,
+                sanitizer, valueSanitizer));
         verify(sanitizer);
     }
 
@@ -143,9 +165,11 @@ public class UtilTest {
         coordsAndDescription = Util
                 .splitCoordsAndDescription("Wildwood Park, Saratoga, CA(The Nut Case #89882)@37.258356797547,-122.0354267005 ");
         assertEquals("37.258356797547,-122.0354267005", coordsAndDescription[0]);
-        assertEquals("Wildwood Park, Saratoga, CA(The Nut Case #89882)", coordsAndDescription[1]);
+        assertEquals("Wildwood Park, Saratoga, CA(The Nut Case #89882)",
+                coordsAndDescription[1]);
 
-        coordsAndDescription = Util.splitCoordsAndDescription("37.258356797547,-122.0354267005");
+        coordsAndDescription = Util
+                .splitCoordsAndDescription("37.258356797547,-122.0354267005");
         assertEquals("37.258356797547,-122.0354267005", coordsAndDescription[0]);
         assertEquals("", coordsAndDescription[1]);
     }
@@ -154,23 +178,32 @@ public class UtilTest {
     public void testSplitLatLon() {
         // http://en.wikipedia.org/wiki/Geographic_coordinate_conversion.
         splitLatLonHelper("40:26:46N,79:56:55W", "40:26:46N", "79:56:55W");
-        splitLatLonHelper("40:26:46.302N 79:56:55.903W", "40:26:46.302N", "79:56:55.903W");
-        splitLatLonHelper("40¡26'21\"N 79¡58'36\"W", "40¡26'21\"N", "79¡58'36\"W");
-        splitLatLonHelper("40¡26'21\"S 79¡58'36\"E", "40¡26'21\"S", "79¡58'36\"E");
-        splitLatLonHelper("40d 26' 21\" N 79d 58' 36\" W", "40d 26' 21\" N", "79d 58' 36\" W");
+        splitLatLonHelper("40:26:46.302N 79:56:55.903W", "40:26:46.302N",
+                "79:56:55.903W");
+        splitLatLonHelper("40¡26'21\"N 79¡58'36\"W", "40¡26'21\"N",
+                "79¡58'36\"W");
+        splitLatLonHelper("40¡26'21\"S 79¡58'36\"E", "40¡26'21\"S",
+                "79¡58'36\"E");
+        splitLatLonHelper("40d 26' 21\" N 79d 58' 36\" W", "40d 26' 21\" N",
+                "79d 58' 36\" W");
         splitLatLonHelper("40.446195N 79.948862W", "40.446195N", "79.948862W");
         splitLatLonHelper("40.446195, -79.948862", "40.446195", "-79.948862");
-        splitLatLonHelper("40¡ 26.7717, -79¡ 56.93172", "40¡ 26.7717", "-79¡ 56.93172");
+        splitLatLonHelper("40¡ 26.7717, -79¡ 56.93172", "40¡ 26.7717",
+                "-79¡ 56.93172");
 
         // Geocaching.com:
-        splitLatLonHelper("N37¡ 15.165 W 122¡ 02.620", "N37¡ 15.165", "W 122¡ 02.620");
-        splitLatLonHelper("N+37¡+15.165+W+122¡+02.620+", "N+37¡+15.165+", "W+122¡+02.620+");
+        splitLatLonHelper("N37¡ 15.165 W 122¡ 02.620", "N37¡ 15.165",
+                "W 122¡ 02.620");
+        splitLatLonHelper("N+37¡+15.165+W+122¡+02.620+", "N+37¡+15.165+",
+                "W+122¡+02.620+");
 
         // atlasquest.com:
-        splitLatLonHelper("37.258356797547,-122.0354267005", "37.258356797547", "-122.0354267005");
+        splitLatLonHelper("37.258356797547,-122.0354267005", "37.258356797547",
+                "-122.0354267005");
 
         // opencaching.pl:
-        splitLatLonHelper("52.029483333333 20.464366666667", "52.029483333333", "20.464366666667");
+        splitLatLonHelper("52.029483333333 20.464366666667", "52.029483333333",
+                "20.464366666667");
 
     }
 
