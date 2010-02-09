@@ -35,8 +35,10 @@ public class DistanceFormatterImperialTest {
     }
 
     @Test
-    public void testYards() {
+    public void testFeet() {
         Locale.setDefault(Locale.GERMANY);
-        assertEquals("1yd", new DistanceFormatterImperial().formatDistance(1.8288f));
+        assertEquals("2ft", new DistanceFormatterImperial().formatDistance(0.914f));
+        assertEquals("3ft", new DistanceFormatterImperial().formatDistance(0.915f));
+        assertEquals("3ft", new DistanceFormatterImperial().formatDistance(0.916f));
     }
 }
