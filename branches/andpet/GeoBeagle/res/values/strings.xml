@@ -123,5 +123,4 @@
 	<string name="assign_tags">Assign tags</string>
 	<string name="delete_all_caches">Delete all caches</string>
 	<string name="confirm_delete_all_caches">Do you want to delete all caches in the database?</string>
-	<string name="test">Just testing commit</string>
 </resources>
