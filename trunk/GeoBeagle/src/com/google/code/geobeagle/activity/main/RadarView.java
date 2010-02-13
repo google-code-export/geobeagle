@@ -100,9 +100,9 @@ public class RadarView extends View implements SensorListener, LocationListener 
             "%.0fkm", "%.0fkm"
     };
 
-    private static float KM_PER_YARDS = 0.0009144f;
+    private static float KM_PER_FEET = 0.0003048f;
     private static float KM_PER_MILES = 1.609344f;
-    private static float YARDS_PER_KM = 1093.6133f;
+    private static float FEET_PER_KM = 3280.8399f;
     private static float MILES_PER_KM = 0.621371192f;
 
     /**
@@ -111,7 +111,7 @@ public class RadarView extends View implements SensorListener, LocationListener 
      * is used to choose the scale of the radar display.
      */
     private static double mEnglishScaleChoices[] = {
-            100 * KM_PER_YARDS, 200 * KM_PER_YARDS, 400 * KM_PER_YARDS, 1000 * KM_PER_YARDS,
+            100 * KM_PER_FEET, 200 * KM_PER_FEET, 400 * KM_PER_FEET, 1000 * KM_PER_FEET,
             1 * KM_PER_MILES, 2 * KM_PER_MILES, 4 * KM_PER_MILES, 8 * KM_PER_MILES,
             20 * KM_PER_MILES, 40 * KM_PER_MILES, 100 * KM_PER_MILES, 200 * KM_PER_MILES,
             400 * KM_PER_MILES, 1000 * KM_PER_MILES, 2000 * KM_PER_MILES, 4000 * KM_PER_MILES,
@@ -121,11 +121,11 @@ public class RadarView extends View implements SensorListener, LocationListener 
     /**
      * Once the scale is chosen, this array is used to convert the number of
      * kilometers on the screen to an integer. (Note that for short distances we
-     * use meters, so we multiply the distance by {@link #YARDS_PER_KM}. (This
+     * use meters, so we multiply the distance by {@link #FEET_PER_KM}. (This
      * array is for standard measurements.)
      */
     private static float mEnglishDisplayUnitsPerKm[] = {
-            YARDS_PER_KM, YARDS_PER_KM, YARDS_PER_KM, YARDS_PER_KM, MILES_PER_KM, MILES_PER_KM,
+            FEET_PER_KM, FEET_PER_KM, FEET_PER_KM, FEET_PER_KM, MILES_PER_KM, MILES_PER_KM,
             MILES_PER_KM, MILES_PER_KM, MILES_PER_KM, MILES_PER_KM, MILES_PER_KM, MILES_PER_KM,
             MILES_PER_KM, MILES_PER_KM, MILES_PER_KM, MILES_PER_KM, MILES_PER_KM, MILES_PER_KM,
             MILES_PER_KM, MILES_PER_KM
@@ -136,7 +136,7 @@ public class RadarView extends View implements SensorListener, LocationListener 
      * the target. (This array is for standard measurements.)
      */
     private static String mEnglishDisplayFormats[] = {
-            "%.0fyd", "%.0fyd", "%.0fyd", "%.0fyd", "%.1fmi", "%.1fmi", "%.1fmi", "%.1fmi",
+            "%.0fft", "%.0fft", "%.0fft", "%.0fft", "%.1fmi", "%.1fmi", "%.1fmi", "%.1fmi",
             "%.0fmi", "%.0fmi", "%.0fmi", "%.0fmi", "%.0fmi", "%.0fmi", "%.0fmi", "%.0fmi",
             "%.0fmi", "%.0fmi", "%.0fmi", "%.0fmi"
     };
