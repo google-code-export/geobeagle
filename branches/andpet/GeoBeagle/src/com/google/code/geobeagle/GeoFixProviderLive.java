@@ -28,7 +28,7 @@ import java.util.ArrayList;
 /** Responsible for providing an up-to-date location and compass direction */
 @SuppressWarnings("deprecation")
 public class GeoFixProviderLive implements LocationListener, SensorListener,
-GeoFixProvider {
+        GeoFixProvider {
     private GeoFix mLocation;
     private final LocationManager mLocationManager;
     private float mAzimuth;
@@ -37,18 +37,23 @@ GeoFixProvider {
     private final SensorManager mSensorManager;
     private boolean mUseNetwork = true;
     private final SharedPreferences mSharedPreferences;
-    
+
     public GeoFixProviderLive(LocationManager locationManager,
             SensorManager sensorManager, SharedPreferences sharedPreferences) {
         mLocationManager = locationManager;
         mSensorManager = sensorManager;
         mSharedPreferences = sharedPreferences;
-        //mLocation = getLastKnownLocation();  //work in constructor..
+        // mLocation = getLastKnownLocation(); //work in constructor..
     }
-   
+
     public GeoFix getLocation() {
-        if (mLocation == null)
-            mLocation = new GeoFix(getLastKnownLocation());
+        if (mLocation == null) {
+            Location lastKnownLocation = getLastKnownLocation();
+            if (lastKnownLocation != null)
+                mLocation = new GeoFix(lastKnownLocation);
+            else
+                mLocation = GeoFix.NO_FIX;
+        }
         return mLocation;
     }
 
@@ -62,13 +67,13 @@ GeoFixProvider {
             refresher.refresh();
         }
     }
-    
+
     /**
      * Choose the better of two locations: If one location is newer and more
-     * accurate, choose that. (This favors the gps). Otherwise, if one
-     * location is newer, less accurate, but farther away than the sum of
-     * the two accuracies, choose that. (This favors the network locator if
-     * you've driven a distance and haven't been able to get a gps fix yet.)
+     * accurate, choose that. (This favors the gps). Otherwise, if one location
+     * is newer, less accurate, but farther away than the sum of the two
+     * accuracies, choose that. (This favors the network locator if you've
+     * driven a distance and haven't been able to get a gps fix yet.)
      */
     private static GeoFix choose(GeoFix oldLocation, GeoFix newLocation) {
         if (oldLocation == null)
@@ -78,21 +83,19 @@ GeoFixProvider {
 
         if (newLocation.getTime() > oldLocation.getTime()) {
             float distance = newLocation.distanceTo(oldLocation);
-            //Log.d("GeoBeagle", "onLocationChanged distance="+distance +
-            //        "  provider=" + newLocation.getProvider());
-            if (distance < 1)  //doesn't take changing accuracy into account
+            // Log.d("GeoBeagle", "onLocationChanged distance="+distance +
+            // "  provider=" + newLocation.getProvider());
+            if (distance < 1) // doesn't take changing accuracy into account
                 return oldLocation;
-            //TODO: Handle network and gps different
+            // TODO: Handle network and gps different
 
             return newLocation;
             /*
-            if (newLocation.getAccuracy() <= oldLocation.getAccuracy())
-                return newLocation;
-            else if (oldLocation.distanceTo(newLocation) >= oldLocation.getAccuracy()
-                    + newLocation.getAccuracy()) {
-                return newLocation;
-            }
-            */
+             * if (newLocation.getAccuracy() <= oldLocation.getAccuracy())
+             * return newLocation; else if (oldLocation.distanceTo(newLocation)
+             * >= oldLocation.getAccuracy() + newLocation.getAccuracy()) {
+             * return newLocation; }
+             */
         }
         return oldLocation;
     }
@@ -108,12 +111,12 @@ GeoFixProvider {
 
     @Override
     public void onProviderDisabled(String provider) {
-        Log.d("GeoBeagle", "onProviderDisabled("+provider+")");
+        Log.d("GeoBeagle", "onProviderDisabled(" + provider + ")");
     }
 
     @Override
     public void onProviderEnabled(String provider) {
-        Log.d("GeoBeagle", "onProviderEnabled("+provider+")");
+        Log.d("GeoBeagle", "onProviderEnabled(" + provider + ")");
     }
 
     @Override
@@ -122,54 +125,61 @@ GeoFixProvider {
 
     @Override
     public void onAccuracyChanged(int sensor, int accuracy) {
-        //Log.d("GeoBeagle", "onAccuracyChanged " + sensor + " accuracy " + accuracy);
+        // Log.d("GeoBeagle", "onAccuracyChanged " + sensor + " accuracy " +
+        // accuracy);
     }
 
     @Override
     public void onSensorChanged(int sensor, float[] values) {
         final float currentAzimuth = values[0];
         if (Math.abs(currentAzimuth - mAzimuth) > 5) {
-            //Log.d("GeoBeagle", "azimuth now " + sensor +", " + currentAzimuth);
+            // Log.d("GeoBeagle", "azimuth now " + sensor +", " +
+            // currentAzimuth);
             mAzimuth = currentAzimuth;
             notifyObservers();
         }
     }
 
     public void onResume() {
-        mUseNetwork = mSharedPreferences.getBoolean("use-network-location", true);
-        
+        mUseNetwork = mSharedPreferences.getBoolean("use-network-location",
+                true);
+
         mSensorManager.registerListener(this, SensorManager.SENSOR_ORIENTATION,
                 SensorManager.SENSOR_DELAY_UI);
-        long minTime = 1000;  //ms
-        float minDistance = 1;  //meters
-        mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 
+        long minTime = 1000; // ms
+        float minDistance = 1; // meters
+        mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
                 minTime, minDistance, this);
         if (mUseNetwork)
-            mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,
-                    minTime, minDistance, this);
-        
+            mLocationManager.requestLocationUpdates(
+                    LocationManager.NETWORK_PROVIDER, minTime, minDistance,
+                    this);
+
         onLocationChanged(getLastKnownLocation());
     }
-    
+
     public void onPause() {
         mSensorManager.unregisterListener(this);
         mLocationManager.removeUpdates(this);
     }
-    
+
     public boolean isProviderEnabled() {
         return mLocationManager.isProviderEnabled("gps")
-                || (mUseNetwork && mLocationManager.isProviderEnabled("network"));
+                || (mUseNetwork && mLocationManager
+                        .isProviderEnabled("network"));
     }
 
     private Location getLastKnownLocation() {
-        Location gpsLocation = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        Location gpsLocation = mLocationManager
+                .getLastKnownLocation(LocationManager.GPS_PROVIDER);
         if (gpsLocation != null)
             return gpsLocation;
         if (mUseNetwork)
-            return mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+            return mLocationManager
+                    .getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
         return null;
     }
-    
+
     public float getAzimuth() {
         return mAzimuth;
     }
