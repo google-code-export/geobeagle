@@ -15,60 +15,75 @@
 package com.google.code.geobeagle.database;
 
 import com.google.code.geobeagle.GeocacheList;
-import com.google.code.geobeagle.GeocacheListPrecomputed;
-import com.google.code.geobeagle.Toaster.OneTimeToaster;
 
-/** Strategy to only invalidate/reload the list of caches when the bounds are
- * changed to outside the previous bounds. Also returns an empty list if the count is 
- * greater than MAX_COUNT. */
+/**
+ * Strategy to only invalidate/reload the list of caches when the bounds are
+ * changed to outside the previous bounds. Also returns an empty list if the
+ * count is greater than MAX_COUNT.
+ */
 public class CachesProviderLazyArea implements ICachesProviderArea {
 
-    //The bounds of the loaded area
-    private double mLatLow;
-    private double mLonLow;
-    private double mLatHigh;
-    private double mLonHigh;
-    private double mExpandRatio;
-    /** If the user of this instance thinks the list has changed */
-    private boolean mHasChanged = true;
-    /** True if the last getCaches() was capped because too high cache count */
-    private boolean mTooManyCaches = false;
-    private final OneTimeToaster mOneTimeToaster;
+    public static class CoordinateManager {
 
-    /** Maximum number of caches to show */
-    public static final int MAX_COUNT = 1000;
+        private final double mExpandRatio;
+        // The bounds of the loaded area
+        private double mLatLow;
+        private double mLatHigh;
+        private double mLonLow;
+        private double mLonHigh;
 
-    private final ICachesProviderArea mCachesProviderArea;
-
-    public CachesProviderLazyArea(ICachesProviderArea cachesProviderArea,
-                double expandRatio, OneTimeToaster oneTimeToaster) {
-        mCachesProviderArea = cachesProviderArea;
-        mExpandRatio = expandRatio;
-        mOneTimeToaster = oneTimeToaster;
-    }
-
-    @Override
-    public void setBounds(double latLow, double lonLow, double latHigh, double lonHigh) {
-        if (mTooManyCaches && latLow <= mLatLow && lonLow <= mLonLow 
-                && latHigh >= mLatHigh && lonHigh >= mLonHigh) {
-            //The new bounds are strictly bigger but the old ones 
-            //already contained too many caches
-            return;
+        public CoordinateManager(double expandRatio) {
+            mExpandRatio = expandRatio;
         }
-        if (mTooManyCaches 
-                || latLow < mLatLow || lonLow < mLonLow 
-                || latHigh > mLatHigh || lonHigh > mLonHigh) {
+
+        boolean atLeastOneSideIsSmaller(double latLow, double lonLow,
+                double latHigh, double lonHigh) {
+            boolean fAtLeastOneSideIsSmaller = latLow < mLatLow
+                    || lonLow < mLonLow || latHigh > mLatHigh
+                    || lonHigh > mLonHigh;
+            return fAtLeastOneSideIsSmaller;
+        }
+
+        boolean everySideIsBigger(double latLow, double lonLow, double latHigh,
+                double lonHigh) {
+            return latLow <= mLatLow && lonLow <= mLonLow
+                    && latHigh >= mLatHigh && lonHigh >= mLonHigh;
+        }
+
+        void expandCoordinates(double latLow, double lonLow, double latHigh,
+                double lonHigh) {
             double latExpand = (latHigh - latLow) * mExpandRatio / 2.0;
             double lonExpand = (lonHigh - lonLow) * mExpandRatio / 2.0;
             mLatLow = latLow - latExpand;
             mLonLow = lonLow - lonExpand;
             mLatHigh = latHigh + latExpand;
             mLonHigh = lonHigh + lonExpand;
-            mCachesProviderArea.setBounds(mLatLow, mLonLow, mLatHigh, mLonHigh);
-            mHasChanged = true;
         }
+
     }
-    
+
+    /** Maximum number of caches to show */
+    public static final int MAX_COUNT = 1000;
+    private final ICachesProviderArea mCachesProviderArea;
+    private final CoordinateManager mCoordinateManager;
+
+    /** If the user of this instance thinks the list has changed */
+    private boolean mHasChanged = true;
+    private final PeggedCacheProvider mPeggedCacheProvider;
+
+    public CachesProviderLazyArea(ICachesProviderArea cachesProviderArea,
+            PeggedCacheProvider peggedCacheProvider,
+            CoordinateManager coordinateManager) {
+        mCachesProviderArea = cachesProviderArea;
+        mPeggedCacheProvider = peggedCacheProvider;
+        mCoordinateManager = coordinateManager;
+    }
+
+    @Override
+    public void clearBounds() {
+        mCachesProviderArea.clearBounds();
+    }
+
     @Override
     public GeocacheList getCaches() {
         return getCaches(MAX_COUNT);
@@ -76,23 +91,20 @@ public class CachesProviderLazyArea implements ICachesProviderArea {
 
     @Override
     public GeocacheList getCaches(int maxCount) {
-        //Reading one extra cache allows us to learn whether there were too many
+        // Reading one extra cache to see if there are too many
         GeocacheList caches = mCachesProviderArea.getCaches(maxCount + 1);
         mCachesProviderArea.resetChanged();
-        mTooManyCaches = (caches.size() > maxCount);
-        if (mTooManyCaches) {
-            return GeocacheListPrecomputed.EMPTY;
-        }
-        return caches;
+        return mPeggedCacheProvider.pegCaches(maxCount, caches);
     }
 
-    public boolean tooManyCaches() {
-        return mTooManyCaches;
-    }
-    
     public int getCount() {
-        //Not perfectly efficient but it's not used anyway
+        // Not perfectly efficient but it's not used anyway
         return getCaches().size();
+    }
+
+    @Override
+    public int getTotalCount() {
+        return mCachesProviderArea.getTotalCount();
     }
 
     @Override
@@ -107,18 +119,33 @@ public class CachesProviderLazyArea implements ICachesProviderArea {
     }
 
     @Override
-    public int getTotalCount() {
-        return mCachesProviderArea.getTotalCount();
+    public void setBounds(double latLow, double lonLow, double latHigh,
+            double lonHigh) {
+        boolean tooManyCaches = mPeggedCacheProvider.isTooManyCaches();
+        if (tooManyCaches
+                && mCoordinateManager.everySideIsBigger(latLow, lonLow,
+                        latHigh, lonHigh)) {
+            // The new bounds are strictly bigger but the old ones
+            // already contained too many caches
+            return;
+        }
+        if (tooManyCaches
+                || mCoordinateManager.atLeastOneSideIsSmaller(latLow, lonLow,
+                        latHigh, lonHigh)) {
+            mCoordinateManager.expandCoordinates(latLow, lonLow, latHigh,
+                    lonHigh);
+            mCachesProviderArea.setBounds(mCoordinateManager.mLatLow,
+                    mCoordinateManager.mLonLow, mCoordinateManager.mLatHigh,
+                    mCoordinateManager.mLonHigh);
+            mHasChanged = true;
+        }
     }
 
-    public GeocacheList getCachesAndWarnIfTooMany() {
-        if (mTooManyCaches)
-            mOneTimeToaster.showToast(mTooManyCaches);
-        return getCaches(MAX_COUNT);
+    public void showToastIfTooManyCaches() {
+        mPeggedCacheProvider.showToastIfTooManyCaches();
     }
 
-    @Override
-    public void clearBounds() {
-        mCachesProviderArea.clearBounds();
+    public boolean tooManyCaches() {
+        return mPeggedCacheProvider.isTooManyCaches();
     }
 }

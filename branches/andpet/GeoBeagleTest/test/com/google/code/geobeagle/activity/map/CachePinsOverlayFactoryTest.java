@@ -71,8 +71,9 @@ public class CachePinsOverlayFactoryTest {
         EasyMock.expect(newBottomRight.getLatitudeE6()).andReturn(37000000);
         EasyMock.expect(newBottomRight.getLongitudeE6()).andReturn(-121000000);
         lazyArea.setBounds(37, -122, 38, -121);
+        lazyArea.showToastIfTooManyCaches();
         EasyMock.expect(lazyArea.hasChanged()).andReturn(true);
-        EasyMock.expect(lazyArea.getCachesAndWarnIfTooMany()).andReturn(list);
+        EasyMock.expect(lazyArea.getCaches()).andReturn(list);
         lazyArea.resetChanged();
         PowerMock.expectNew(CachePinsOverlay.class, cacheItemFactory, context, defaultMarker, list)
                 .andReturn(cachePinsOverlay);

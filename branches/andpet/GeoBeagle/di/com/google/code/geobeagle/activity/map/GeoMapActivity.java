@@ -38,6 +38,8 @@ import com.google.code.geobeagle.activity.map.OverlayManager.OverlaySelector;
 import com.google.code.geobeagle.database.CachesProviderDb;
 import com.google.code.geobeagle.database.CachesProviderLazyArea;
 import com.google.code.geobeagle.database.DbFrontend;
+import com.google.code.geobeagle.database.PeggedCacheProvider;
+import com.google.code.geobeagle.database.CachesProviderLazyArea.CoordinateManager;
 
 import android.content.Intent;
 import android.content.res.Resources;
@@ -113,7 +115,10 @@ public class GeoMapActivity extends MapActivity {
         final CachesProviderDb cachesProviderArea = new CachesProviderDb(mDbFrontend);
         final OneTimeToaster oneTimeToaster = new OneTimeToaster(toaster);
         final OneTimeToaster densityOverlayToaster = new OneTimeToaster(toaster);
-        final CachesProviderLazyArea lazyArea = new CachesProviderLazyArea(cachesProviderArea, 1.0, oneTimeToaster);
+        final PeggedCacheProvider peggedCacheProvider = new PeggedCacheProvider(oneTimeToaster);
+        final CoordinateManager coordinateManager = new CoordinateManager(1.0);
+        final CachesProviderLazyArea lazyArea = new CachesProviderLazyArea(
+                cachesProviderArea, peggedCacheProvider, coordinateManager);
         final DensityOverlayDelegate densityOverlayDelegate = DensityOverlay.createDelegate(
                 densityPatches, nullGeoPoint, lazyArea, densityOverlayToaster);
         final DensityOverlay densityOverlay = new DensityOverlay(densityOverlayDelegate);
@@ -122,7 +127,10 @@ public class GeoMapActivity extends MapActivity {
                 defaultMarker, GeocacheListPrecomputed.EMPTY);
         //Pin overlay and Density overlay can't share providers because the provider wouldn't report hasChanged() when switching between them
         CachesProviderDb cachesProviderAreaPins = new CachesProviderDb(mDbFrontend);
-        final CachesProviderLazyArea lazyAreaPins = new CachesProviderLazyArea(cachesProviderAreaPins, 1.0, oneTimeToaster);
+        final CoordinateManager coordinateManagerPins = new CoordinateManager(1.0);
+        final CachesProviderLazyArea lazyAreaPins = new CachesProviderLazyArea(
+                cachesProviderAreaPins, peggedCacheProvider,
+                coordinateManagerPins);
         final CachePinsOverlayFactory cachePinsOverlayFactory = new CachePinsOverlayFactory(
                 mMapView, this, defaultMarker, cacheItemFactory, cachePinsOverlay, lazyAreaPins);
         final GeoPoint center = new GeoPoint((int)(latitude * GeoUtils.MILLION),

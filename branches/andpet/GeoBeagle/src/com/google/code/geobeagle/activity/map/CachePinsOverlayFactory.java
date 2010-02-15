@@ -59,7 +59,8 @@ public class CachePinsOverlayFactory {
         mLazyArea.setBounds(latLow, lonLow, latHigh, lonHigh);
         if (!mLazyArea.hasChanged())
             return mCachePinsOverlay;
-        GeocacheList list = mLazyArea.getCachesAndWarnIfTooMany();
+        mLazyArea.showToastIfTooManyCaches();
+        GeocacheList list = mLazyArea.getCaches();
         mLazyArea.resetChanged();
         mCachePinsOverlay = new CachePinsOverlay(mCacheItemFactory, mContext, mDefaultMarker, list);
         timing.lap("getCachePinsOverlay took");
