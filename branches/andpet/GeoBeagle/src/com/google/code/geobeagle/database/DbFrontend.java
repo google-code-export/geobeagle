@@ -64,7 +64,8 @@ public class DbFrontend {
         mSourceNameTranslator = new SourceNameTranslator();
     }
 
-    public void openDatabase() {
+    //TODO: Redesign the threads so synchronized isn't needed for database access
+    public synchronized void openDatabase() {
         if (mIsDatabaseOpen)
             return;
         //Log.d("GeoBeagle", "DbFrontend.openDatabase()");
@@ -76,7 +77,7 @@ public class DbFrontend {
         mSqliteWrapper = mOpenHelper.getWritableSqliteWrapper();
     }
 
-    public void closeDatabase() {
+    public synchronized void closeDatabase() {
         if (!mIsDatabaseOpen)
             return;
         //Log.d("GeoBeagle", "DbFrontend.closeDatabase()");
@@ -271,7 +272,8 @@ public class DbFrontend {
             return false;
         openDatabase();
         if (mDatabase == null) {
-            //TODO: Remove. This should not occur... but does anyway??
+            //TODO: Remove. This only occurs when there's a 
+            //thread interleaving bug which seems to be fixed.
             Log.e("GeoBeagle", "DbFrontend.geocacheHasTag: mDatabase=null");
             return false;
         }
