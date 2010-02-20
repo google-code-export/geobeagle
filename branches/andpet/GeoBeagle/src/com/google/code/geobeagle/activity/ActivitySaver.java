@@ -33,7 +33,7 @@ public class ActivitySaver {
 
     public void save(ActivityType activityType, Geocache geocache) {
         mEditor.putInt("lastActivity", activityType.toInt());
-        geocache.writeToPrefs(mEditor);
+        mEditor.putString(Geocache.ID, geocache.getId().toString());
         mEditor.commit();
     }
 }

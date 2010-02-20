@@ -104,6 +104,7 @@ public class GeoBeagle extends Activity {
     private OptionsMenu mOptionsMenu;
     private static final DateFormat mLocalDateFormat = DateFormat
     .getTimeInstance(DateFormat.MEDIUM);
+    private GeocacheFactory mGeocacheFactory;
     
     public Geocache getGeocache() {
         return mGeoBeagleDelegate.getGeocache();
@@ -112,6 +113,8 @@ public class GeoBeagle extends Activity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        Log.d("GeoBeagle", "GeoBeagle.onActivityResult");
+        mGeocacheFactory.flushCache();
         if (requestCode == GeoBeagleDelegate.ACTIVITY_REQUEST_TAKE_PICTURE) {
             Log.d("GeoBeagle", "camera intent has returned.");
         } else if (resultCode == 0)
@@ -130,7 +133,7 @@ public class GeoBeagle extends Activity {
                 findViewById(R.id.cache_page), findViewById(R.id.cache_details));
 
         final GeoFixProvider geoFixProvider = LocationControlDi.create(this);
-        final GeocacheFactory geocacheFactory = new GeocacheFactory();
+        mGeocacheFactory = new GeocacheFactory();
         final TextView gcid = (TextView)findViewById(R.id.gcid);
         final GraphicsGenerator graphicsGenerator = new GraphicsGenerator();
         
@@ -182,20 +185,18 @@ public class GeoBeagle extends Activity {
                 intentFactory, new GeocacheToGoogleMap(this), resources);
         final LayoutInflater layoutInflater = LayoutInflater.from(this);
         final ActivitySaver activitySaver = ActivityDI.createActivitySaver(this);
-        mDbFrontend = new DbFrontend(this, geocacheFactory);
+        mDbFrontend = new DbFrontend(this, mGeocacheFactory);
         final GeocacheFromIntentFactory geocacheFromIntentFactory = new GeocacheFromIntentFactory(
-                geocacheFactory, mDbFrontend);
+                mGeocacheFactory, mDbFrontend);
         final IncomingIntentHandler incomingIntentHandler = new IncomingIntentHandler(
-                geocacheFactory, geocacheFromIntentFactory, mDbFrontend);
+                mGeocacheFactory, geocacheFromIntentFactory, mDbFrontend);
         Geocache geocache = incomingIntentHandler.maybeGetGeocacheFromIntent(getIntent(), null, mDbFrontend);
 
         final SharedPreferences defaultSharedPreferences = PreferenceManager
                 .getDefaultSharedPreferences(this);
-        final GeocacheFromParcelFactory geocacheFromParcelFactory = new GeocacheFromParcelFactory(
-                geocacheFactory);
         mGeoBeagleDelegate = new GeoBeagleDelegate(activitySaver,
-                this, geocacheFactory, geocacheViewer,
-                incomingIntentHandler, geocacheFromParcelFactory,
+                this, mGeocacheFactory, geocacheViewer,
+                incomingIntentHandler,
                 mDbFrontend, radar, defaultSharedPreferences,
                 webPageButtonEnabler, geoFixProvider, favorite);
 

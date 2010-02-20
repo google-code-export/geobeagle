@@ -103,7 +103,6 @@ public class GeoBeagleDelegate {
     private final ActivitySaver mActivitySaver;
     private Geocache mGeocache;
     private final GeocacheFactory mGeocacheFactory;
-    private final GeocacheFromParcelFactory mGeocacheFromParcelFactory;
     private final GeocacheViewer mGeocacheViewer;
     private final IncomingIntentHandler mIncomingIntentHandler;
     private final DbFrontend mDbFrontend;
@@ -117,7 +116,6 @@ public class GeoBeagleDelegate {
     public GeoBeagleDelegate(ActivitySaver activitySaver, GeoBeagle parent,
             GeocacheFactory geocacheFactory, GeocacheViewer geocacheViewer,
             IncomingIntentHandler incomingIntentHandler,
-            GeocacheFromParcelFactory geocacheFromParcelFactory,
             DbFrontend dbFrontend, RadarView radarView,
             SharedPreferences sharedPreferences,
             WebPageAndDetailsButtonEnabler webPageButtonEnabler,
@@ -131,7 +129,6 @@ public class GeoBeagleDelegate {
         mGeocacheFactory = geocacheFactory;
         mIncomingIntentHandler = incomingIntentHandler;
         mDbFrontend = dbFrontend;
-        mGeocacheFromParcelFactory = geocacheFromParcelFactory;
         mGeoFixProvider = geoFixProvider;
         mFavoriteView = favoriteView;
     }
@@ -164,7 +161,14 @@ public class GeoBeagleDelegate {
     }
 
     public void onRestoreInstanceState(Bundle savedInstanceState) {
-        mGeocache = mGeocacheFromParcelFactory.createFromBundle(savedInstanceState);
+        CharSequence id = savedInstanceState.getCharSequence(Geocache.ID);
+        if (id == null || id.equals(""))
+            mGeocache = null;
+        else
+            mGeocache = mDbFrontend.loadCacheFromId(id.toString());
+        if (mGeocache == null)
+            mGeocache = mGeocacheFactory.create("", "", 0, 0, Source.MY_LOCATION, "",
+                    CacheType.NULL, 0, 0, 0);
     }
 
     public void onResume() {
@@ -192,8 +196,10 @@ public class GeoBeagleDelegate {
     public void onSaveInstanceState(Bundle outState) {
         // apparently there are cases where getGeocache returns null, causing
         // crashes with 0.7.7/0.7.8.
-        if (mGeocache != null)
-            mGeocache.saveToBundle(outState);
+        if (mGeocache == null)
+            outState.putCharSequence(Geocache.ID, "");
+        else
+            outState.putCharSequence(Geocache.ID, mGeocache.getId());
     }
 
     public void setGeocache(Geocache geocache) {

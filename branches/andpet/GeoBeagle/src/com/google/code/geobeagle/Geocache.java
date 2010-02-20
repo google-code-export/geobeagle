@@ -21,11 +21,8 @@ import com.google.code.geobeagle.activity.main.GeoUtils;
 import com.google.code.geobeagle.database.CacheWriter;
 import com.google.code.geobeagle.database.DbFrontend;
 
-import android.content.SharedPreferences.Editor;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
-import android.os.Bundle;
-import android.os.Parcel;
 import android.util.FloatMath;
 
 /**
@@ -249,39 +246,6 @@ public class Geocache {
                     getCacheType(), getDifficulty(), getTerrain(), getContainer());
         cacheWriter.stopWriting();
         return changed;
-    }
-
-    public void saveToBundle(Bundle bundle) {
-        bundle.putCharSequence(ID, mId);
-        bundle.putCharSequence(NAME, mName);
-        bundle.putDouble(LATITUDE, mLatitude);
-        bundle.putDouble(LONGITUDE, mLongitude);
-        bundle.putInt(SOURCE_TYPE, mSourceType.toInt());
-        bundle.putString(SOURCE_NAME, mSourceName);
-        bundle.putInt(CACHE_TYPE, mCacheType.toInt());
-        bundle.putInt(DIFFICULTY, mDifficulty);
-        bundle.putInt(TERRAIN, mTerrain);
-        bundle.putInt(CONTAINER, mContainer);
-    }
-
-    public void writeToParcel(Parcel out, int flags) {
-        Bundle bundle = new Bundle();
-        saveToBundle(bundle);
-        out.writeBundle(bundle);
-    }
-
-    public void writeToPrefs(Editor editor) {
-        // Must use toString(), see comment above in getCommentProvider.
-        editor.putString(ID, mId.toString());
-        editor.putString(NAME, mName.toString());
-        editor.putFloat(LATITUDE, (float)mLatitude);
-        editor.putFloat(LONGITUDE, (float)mLongitude);
-        editor.putInt(SOURCE_TYPE, mSourceType.toInt());
-        editor.putString(SOURCE_NAME, mSourceName);
-        editor.putInt(CACHE_TYPE, mCacheType.toInt());
-        editor.putInt(DIFFICULTY, mDifficulty);
-        editor.putInt(TERRAIN, mTerrain);
-        editor.putInt(CONTAINER, mContainer);
     }
 
     /** The icons will be recalculated the next time they are needed. */

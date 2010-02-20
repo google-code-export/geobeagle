@@ -270,6 +270,11 @@ public class DbFrontend {
         if (geocacheId == null)  //Work-around for unexplained crash
             return false;
         openDatabase();
+        if (mDatabase == null) {
+            //TODO: Remove. This should not occur... but does anyway??
+            Log.e("GeoBeagle", "DbFrontend.geocacheHasTag: mDatabase=null");
+            return false;
+        }
         Cursor cursor = mDatabase.rawQuery("SELECT COUNT(*) FROM " + 
                 Database.TBL_CACHETAGS + " WHERE CacheId='" + geocacheId 
                 + "' AND TagId=" + tagId, null);
