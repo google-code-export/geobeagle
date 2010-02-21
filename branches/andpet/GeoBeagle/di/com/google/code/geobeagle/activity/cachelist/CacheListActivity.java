@@ -14,8 +14,6 @@
 
 package com.google.code.geobeagle.activity.cachelist;
 
-import com.google.code.geobeagle.R;
-
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -26,6 +24,11 @@ import android.widget.ListView;
 
 public class CacheListActivity extends ListActivity {
     private CacheListDelegate mCacheListDelegate;
+
+    // For testing.
+    public CacheListDelegate getCacheListDelegate() {
+        return mCacheListDelegate;
+    }
 
     // This is the ctor that Android will use.
     public CacheListActivity() {

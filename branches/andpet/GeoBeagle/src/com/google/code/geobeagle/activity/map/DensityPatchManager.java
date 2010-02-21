@@ -18,7 +18,7 @@ import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapView;
 import com.google.android.maps.Projection;
 import com.google.code.geobeagle.GeocacheList;
-import com.google.code.geobeagle.Toaster.OneTimeToaster;
+import com.google.code.geobeagle.IToaster;
 import com.google.code.geobeagle.database.CachesProviderLazyArea;
 
 import android.util.Log;
@@ -32,10 +32,10 @@ class DensityPatchManager {
     public static final double RESOLUTION_LONGITUDE = 0.02;
     public static final int RESOLUTION_LATITUDE_E6 = (int)(RESOLUTION_LATITUDE * 1E6);
     public static final int RESOLUTION_LONGITUDE_E6 = (int)(RESOLUTION_LONGITUDE * 1E6);
-    private final OneTimeToaster mToaster;
+    private final IToaster mToaster;
 
     DensityPatchManager(List<DensityMatrix.DensityPatch> patches, CachesProviderLazyArea lazyArea,
-            OneTimeToaster densityOverlayToaster) {
+            IToaster densityOverlayToaster) {
         mDensityPatches = patches;
         mLazyArea = lazyArea;
         mToaster = densityOverlayToaster;

@@ -17,6 +17,7 @@ package com.google.code.geobeagle.activity.map;
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapView;
 import com.google.android.maps.Overlay;
+import com.google.code.geobeagle.IToaster;
 import com.google.code.geobeagle.Toaster.OneTimeToaster;
 import com.google.code.geobeagle.database.CachesProviderLazyArea;
 
@@ -32,7 +33,7 @@ public class DensityOverlay extends Overlay {
     // Android classes.
 
     public static DensityOverlayDelegate createDelegate(List<DensityMatrix.DensityPatch> patches,
-             GeoPoint nullGeoPoint, CachesProviderLazyArea lazyArea, OneTimeToaster densityOverlayToaster) {
+             GeoPoint nullGeoPoint, CachesProviderLazyArea lazyArea, IToaster densityOverlayToaster) {
         final Rect patchRect = new Rect();
         final Paint paint = new Paint();
         paint.setARGB(128, 255, 0, 0);

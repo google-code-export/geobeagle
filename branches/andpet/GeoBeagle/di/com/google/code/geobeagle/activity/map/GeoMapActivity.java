@@ -23,6 +23,7 @@ import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.GeocacheFactory;
 import com.google.code.geobeagle.GeocacheListPrecomputed;
 import com.google.code.geobeagle.GraphicsGenerator;
+import com.google.code.geobeagle.IToaster;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.Toaster;
 import com.google.code.geobeagle.Toaster.OneTimeToaster;
@@ -53,6 +54,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GeoMapActivity extends MapActivity {
+
+    public static Toaster.ToasterFactory peggedCacheProviderToasterFactory = new OneTimeToaster.OneTimeToasterFactory();
 
     private static class NullOverlay extends Overlay {
     }
@@ -113,9 +116,9 @@ public class GeoMapActivity extends MapActivity {
         final List<DensityPatch> densityPatches = new ArrayList<DensityPatch>();
         final Toaster toaster = new Toaster(this, R.string.too_many_caches, Toast.LENGTH_SHORT);
         final CachesProviderDb cachesProviderArea = new CachesProviderDb(mDbFrontend);
-        final OneTimeToaster oneTimeToaster = new OneTimeToaster(toaster);
-        final OneTimeToaster densityOverlayToaster = new OneTimeToaster(toaster);
-        final PeggedCacheProvider peggedCacheProvider = new PeggedCacheProvider(oneTimeToaster);
+        final IToaster densityOverlayToaster = new OneTimeToaster(toaster);
+        final PeggedCacheProvider peggedCacheProvider = new PeggedCacheProvider(
+                peggedCacheProviderToasterFactory.getToaster(toaster));
         final CoordinateManager coordinateManager = new CoordinateManager(1.0);
         final CachesProviderLazyArea lazyArea = new CachesProviderLazyArea(
                 cachesProviderArea, peggedCacheProvider, coordinateManager);
@@ -165,6 +168,10 @@ public class GeoMapActivity extends MapActivity {
         }
 
         mOverlayManager.selectOverlay();
+    }
+
+    public OverlayManager getOverlayManager() {
+        return mOverlayManager;
     }
 
     @Override

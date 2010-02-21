@@ -17,8 +17,15 @@ package com.google.code.geobeagle;
 import android.content.Context;
 import android.widget.Toast;
 
-public class Toaster {
-    static public class OneTimeToaster {
+public class Toaster  {
+    static public class OneTimeToaster implements IToaster {
+        public static class OneTimeToasterFactory implements Toaster.ToasterFactory {
+            @Override
+            public IToaster getToaster(Toaster toaster) {
+                return new OneTimeToaster(toaster);
+            }
+        }
+
         private boolean mHasShownToaster = false;
         private final Toaster mToaster;
 
@@ -32,6 +39,10 @@ public class Toaster {
                 mHasShownToaster = true;
             }
         }
+    }
+
+    public static interface ToasterFactory {
+        IToaster getToaster(Toaster toaster);
     }
 
     private final Context mContext;

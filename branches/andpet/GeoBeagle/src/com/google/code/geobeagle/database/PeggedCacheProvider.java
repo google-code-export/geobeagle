@@ -16,15 +16,17 @@ package com.google.code.geobeagle.database;
 
 import com.google.code.geobeagle.GeocacheList;
 import com.google.code.geobeagle.GeocacheListPrecomputed;
-import com.google.code.geobeagle.Toaster.OneTimeToaster;
+import com.google.code.geobeagle.IToaster;
+
+import android.util.Log;
 
 public class PeggedCacheProvider {
     /** True if the last getCaches() was capped because too high cache count */
     private boolean mTooManyCaches = false;
-    private final OneTimeToaster mOneTimeToaster;
+    private final IToaster mOneTimeToaster;
 
-    public PeggedCacheProvider(OneTimeToaster oneTimeToaster) {
-        mOneTimeToaster = oneTimeToaster;
+    public PeggedCacheProvider(IToaster toaster) {
+        mOneTimeToaster = toaster;
     }
 
     GeocacheList pegCaches(int maxCount, GeocacheList caches) {
@@ -33,6 +35,14 @@ public class PeggedCacheProvider {
             return GeocacheListPrecomputed.EMPTY;
         }
         return caches;
+    }
+
+    private void logStack() {
+        StackTraceElement[] stackTrace = new Exception().getStackTrace();
+        for (StackTraceElement e : stackTrace) {
+            Log.d("GeoBeagle", "stack: " + " " + e.getClassName() + ":"
+                    + e.getMethodName() + "[" + e.getLineNumber() + "]");
+        }
     }
 
     void showToastIfTooManyCaches() {
