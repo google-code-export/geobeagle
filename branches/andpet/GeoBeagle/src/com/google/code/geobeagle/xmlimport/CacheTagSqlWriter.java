@@ -142,7 +142,7 @@ public class CacheTagSqlWriter {
             mCacheWriter.updateTag(mId, tag, mTags.get(tag));
         
         boolean changed =
-            mCacheWriter.insertAndUpdateCache(mId, mName, mLatitude, mLongitude, 
+            mCacheWriter.conditionallyWriteCache(mId, mName, mLatitude, mLongitude, 
                     source, mGpxName, mCacheType, mDifficulty, mTerrain, mContainer);
         if (changed)
             mCacheWriter.updateTag(mId, Tags.NEW, true);

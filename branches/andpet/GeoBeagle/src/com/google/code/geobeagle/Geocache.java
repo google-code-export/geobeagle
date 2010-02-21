@@ -237,15 +237,24 @@ public class Geocache {
     }
 
     /** @return true if the database needed to be updated */
-    public boolean saveToDb(DbFrontend dbFrontend) {
+    public boolean saveToDbIfNeeded(DbFrontend dbFrontend) {
         CacheWriter cacheWriter = dbFrontend.getCacheWriter();
         cacheWriter.startWriting();
         boolean changed =
-            cacheWriter.insertAndUpdateCache(getId(), getName(), getLatitude(), 
-                    getLongitude(), getSourceType(), getSourceName(), 
-                    getCacheType(), getDifficulty(), getTerrain(), getContainer());
+        cacheWriter.conditionallyWriteCache(getId(), getName(), getLatitude(), 
+                getLongitude(), getSourceType(), getSourceName(), 
+                getCacheType(), getDifficulty(), getTerrain(), getContainer());
         cacheWriter.stopWriting();
-        return changed;
+        return changed;        
+    }
+    
+    public void saveToDb(DbFrontend dbFrontend) {
+        CacheWriter cacheWriter = dbFrontend.getCacheWriter();
+        cacheWriter.startWriting();
+        cacheWriter.insertAndUpdateCache(getId(), getName(), getLatitude(), 
+                getLongitude(), getSourceType(), getSourceName(), 
+                getCacheType(), getDifficulty(), getTerrain(), getContainer());
+        cacheWriter.stopWriting();
     }
 
     /** The icons will be recalculated the next time they are needed. */

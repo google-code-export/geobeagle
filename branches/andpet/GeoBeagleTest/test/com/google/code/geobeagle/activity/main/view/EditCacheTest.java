@@ -110,7 +110,7 @@ public class EditCacheTest {
         DbFrontend dbFrontend = PowerMock.createMock(DbFrontend.class);
 
         EasyMock.expect(editCache.get()).andReturn(geocache);
-        EasyMock.expect(geocache.saveToDb(dbFrontend)).andReturn(true);
+        EasyMock.expect(geocache.saveToDbIfNeeded(dbFrontend)).andReturn(true);
         PowerMock.expectNew(Intent.class).andReturn(intent);
         EasyMock.expect(intent.setAction(GeocacheListController.SELECT_CACHE)).andReturn(intent);
         EasyMock.expect(geocache.getId()).andReturn("gc123").anyTimes();

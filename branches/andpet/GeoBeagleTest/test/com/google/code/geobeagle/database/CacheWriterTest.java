@@ -144,7 +144,7 @@ public class CacheWriterTest {
         PowerMock.replayAll();
         CacheWriter cacheWriterSql = new CacheWriter(mSqlite, mDbFrontend,
                 mSourceNameTranslator, mFactory);
-        assertTrue(cacheWriterSql.insertAndUpdateCache("gc123", "a cache", 122,
+        assertTrue(cacheWriterSql.conditionallyWriteCache("gc123", "a cache", 122,
                 37, Source.GPX, "source", CacheType.NULL, 0, 0, 0));
         PowerMock.verifyAll();
     }
@@ -159,7 +159,7 @@ public class CacheWriterTest {
         PowerMock.replayAll();
         CacheWriter cacheWriterSql = new CacheWriter(mSqlite, mDbFrontend,
                 mSourceNameTranslator, mFactory);
-        assertFalse(cacheWriterSql.insertAndUpdateCache("gc123", "a cache",
+        assertFalse(cacheWriterSql.conditionallyWriteCache("gc123", "a cache",
                 122, 37, Source.GPX, "source", CacheType.NULL, 0, 0, 0));
         PowerMock.verifyAll();
     }

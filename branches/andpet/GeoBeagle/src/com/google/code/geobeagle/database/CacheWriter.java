@@ -64,8 +64,10 @@ public class CacheWriter {
         mSqlite.execSQL(Database.SQL_DELETE_CACHE, id);
     }
 
-    /** @return true if the cache needed to be updated in the database */
-    public boolean insertAndUpdateCache(CharSequence id, CharSequence name, double latitude,
+    /** Checks if the geocache is different from the previously existing one.
+     * @return True if the geocache was updated in the database.
+     */
+    public boolean conditionallyWriteCache(CharSequence id, CharSequence name, double latitude,
             double longitude, Source sourceType, String sourceName, CacheType cacheType,
             int difficulty, int terrain, int container) {
         Geocache geocache = mDbFrontend.loadCacheFromId(id.toString());
@@ -81,7 +83,7 @@ public class CacheWriter {
                 && geocache.getContainer() == container)
             return false;
 
-/*
+        /*
         if (geocache != null) {
             if (!geocache.getName().equals(name))
                 Log.d("GeoBeagle", "CacheWriter updating "+id+" because of name");
@@ -104,13 +106,21 @@ public class CacheWriter {
         } else {
             Log.d("GeoBeagle", "CacheWriter creating cache "+id);
         }
-*/
+         */
         
+        insertAndUpdateCache(id, name, latitude, longitude, sourceType, 
+                sourceName, cacheType, difficulty, terrain, container);
+        return true;
+    }
+    
+    /** Unconditionally update the geocache in the database */
+    public void insertAndUpdateCache(CharSequence id, CharSequence name, double latitude,
+            double longitude, Source sourceType, String sourceName, CacheType cacheType,
+            int difficulty, int terrain, int container) {
         mGeocacheFactory.flushGeocache(id);
         mSqlite.execSQL(Database.SQL_REPLACE_CACHE, id, name, new Double(latitude), new Double(
                 longitude), mDbToGeocacheAdapter.sourceTypeToSourceName(sourceType, sourceName),
                 cacheType.toInt(), difficulty, terrain, container);
-        return true;
     }
 
     public void updateTag(CharSequence id, int tag, boolean set) {

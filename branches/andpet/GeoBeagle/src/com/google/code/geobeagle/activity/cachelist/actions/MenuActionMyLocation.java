@@ -57,7 +57,7 @@ public class MenuActionMyLocation extends ActionStaticLabel implements MenuActio
         long time = location.getTime();
         final Geocache newCache = mGeocacheFactory.create(String.format("ML%1$tk%1$tM%1$tS", time), String.format(
                 "[%1$tk:%1$tM] My Location", time), location.getLatitude(),
-                location.getLongitude(), Source.MY_LOCATION, null, CacheType.MY_LOCATION, 0, 0, 0);
+                location.getLongitude(), Source.MY_LOCATION, "mylocation", CacheType.MY_LOCATION, 0, 0, 0);
 
         if (newCache == null) {
             mErrorDisplayer.displayError(R.string.current_location_null);

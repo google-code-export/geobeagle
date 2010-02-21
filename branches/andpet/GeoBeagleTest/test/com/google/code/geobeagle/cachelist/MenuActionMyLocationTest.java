@@ -57,9 +57,9 @@ public class MenuActionMyLocationTest {
 
         EasyMock.expect(
                 geocacheFactory.create("ML160001", "[16:00] My Location", 122.0, -37.0,
-                        Source.MY_LOCATION, null, CacheType.MY_LOCATION, 0, 0, 0)).andReturn(
+                        Source.MY_LOCATION, "mylocation", CacheType.MY_LOCATION, 0, 0, 0)).andReturn(
                 geocache);
-        EasyMock.expect(geocache.saveToDb(dbFrontend)).andReturn(true);
+        geocache.saveToDb(dbFrontend);
         cacheAction.act(geocache);
 
         PowerMock.replayAll();
@@ -87,7 +87,7 @@ public class MenuActionMyLocationTest {
 
         EasyMock.expect(
                 geocacheFactory.create("ML160001", "[16:00] My Location", 122.0, -37.0,
-                        Source.MY_LOCATION, null, CacheType.MY_LOCATION, 0, 0, 0)).andReturn(
+                        Source.MY_LOCATION, "mylocation", CacheType.MY_LOCATION, 0, 0, 0)).andReturn(
                 null);
         errorDisplayer.displayError(R.string.current_location_null);
         

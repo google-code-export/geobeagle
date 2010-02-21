@@ -44,9 +44,10 @@ public class ActivitySaverTest {
         Editor editor = PowerMock.createMock(Editor.class);
         Geocache geocache = PowerMock.createMock(Geocache.class);
 
+        EasyMock.expect(geocache.getId()).andReturn("id1");
         EasyMock.expect(editor.putInt("lastActivity", ActivityType.CACHE_LIST.toInt())).andReturn(
                 editor);
-        geocache.writeToPrefs(editor);
+        EasyMock.expect(editor.putString("id", "id1")).andReturn(editor);        
         EasyMock.expect(editor.commit()).andReturn(true);
 
         PowerMock.replayAll();

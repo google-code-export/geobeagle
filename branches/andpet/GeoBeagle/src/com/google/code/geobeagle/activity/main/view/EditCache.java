@@ -55,7 +55,7 @@ public class EditCache {
     
         public void onClick(View v) {
             final Geocache geocache = mGeocacheView.get();
-            if (geocache.saveToDb(mDbFrontend))
+            if (geocache.saveToDbIfNeeded(mDbFrontend))
                 mDbFrontend.setGeocacheTag(geocache.getId(), Tags.LOCKED_FROM_OVERWRITING, true);
                 
             final Intent i = new Intent();
