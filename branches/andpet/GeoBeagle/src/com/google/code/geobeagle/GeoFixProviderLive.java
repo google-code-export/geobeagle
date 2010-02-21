@@ -102,6 +102,8 @@ public class GeoFixProviderLive implements LocationListener, SensorListener,
 
     @Override
     public void onLocationChanged(Location location) {
+        if (location == null)
+            return;
         GeoFix chosen = choose(mLocation, new GeoFix(location));
         if (chosen != mLocation) {
             mLocation = chosen;
