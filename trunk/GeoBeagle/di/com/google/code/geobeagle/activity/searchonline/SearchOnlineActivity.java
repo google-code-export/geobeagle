@@ -36,7 +36,8 @@ import com.google.code.geobeagle.location.CombinedLocationListener;
 import com.google.code.geobeagle.location.CombinedLocationManager;
 import com.google.code.geobeagle.xmlimport.GpxImporterDI;
 
-import android.app.Activity;
+import roboguice.activity.GuiceActivity;
+
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -51,14 +52,14 @@ import android.webkit.WebView;
 
 import java.util.ArrayList;
 
-public class SearchOnlineActivity extends Activity {
+public class SearchOnlineActivity extends GuiceActivity {
 
     private SearchOnlineActivityDelegate mSearchOnlineActivityDelegate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
         Log.d("GeoBeagle", "SearchOnlineActivity onCreate");
+        super.onCreate(savedInstanceState);
 
         setContentView(R.layout.search);
         final LocationManager locationManager = (LocationManager)this
