@@ -24,7 +24,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
 import android.net.Uri;
-import android.util.Log;
 import android.widget.Toast;
 
 import java.util.Locale;
