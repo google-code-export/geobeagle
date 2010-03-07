@@ -14,9 +14,10 @@
 
 package com.google.code.geobeagle.activity.searchonline;
 
+import com.google.code.geobeagle.LocationControlBuffered;
+import com.google.code.geobeagle.LocationControlProvider;
 import com.google.code.geobeagle.activity.searchonline.JsInterface.JsInterfaceHelper;
 import com.google.code.geobeagle.activity.searchonline.JsInterface.JsInterfaceHelperFactory;
-import com.google.inject.Provider;
 import com.google.inject.assistedinject.FactoryProvider;
 
 import roboguice.config.AbstractAndroidModule;
@@ -25,9 +26,10 @@ public class SearchOnlineModule extends AbstractAndroidModule {
 
     @Override
     protected void configure() {
-        Provider<JsInterfaceHelperFactory> factory = FactoryProvider.newFactory(
-                JsInterfaceHelperFactory.class, JsInterfaceHelper.class);
-        bind(JsInterfaceHelperFactory.class).toProvider(factory);
-
+        bind(JsInterfaceHelperFactory.class)
+                .toProvider(
+                        FactoryProvider.newFactory(JsInterfaceHelperFactory.class,
+                                JsInterfaceHelper.class));
+        bind(LocationControlBuffered.class).toProvider(LocationControlProvider.class);
     }
 }

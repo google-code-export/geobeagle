@@ -18,7 +18,6 @@ import com.google.code.geobeagle.CacheTypeFactory;
 import com.google.code.geobeagle.ErrorDisplayer;
 import com.google.code.geobeagle.GeocacheFactory;
 import com.google.code.geobeagle.LocationControlBuffered;
-import com.google.code.geobeagle.LocationControlDi;
 import com.google.code.geobeagle.LocationControlBuffered.GpsDisabledLocation;
 import com.google.code.geobeagle.actions.MenuActionMap;
 import com.google.code.geobeagle.actions.MenuActionSearchOnline;
@@ -79,7 +78,8 @@ import com.google.code.geobeagle.xmlimport.GpxImporterDI.MessageHandler;
 import com.google.code.geobeagle.xmlimport.GpxToCache.Aborter;
 import com.google.code.geobeagle.xmlimport.GpxToCacheDI.XmlPullParserWrapper;
 
-import android.app.ListActivity;
+import roboguice.activity.GuiceListActivity;
+
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -113,7 +113,7 @@ public class CacheListDelegateDI {
         }
     }
 
-    public static CacheListDelegate create(ListActivity listActivity, LayoutInflater layoutInflater) {
+    public static CacheListDelegate create(GuiceListActivity listActivity, LayoutInflater layoutInflater, LocationControlBuffered locationControlBuffered) {
         final OnClickListener mOnClickListener = new OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
             }
@@ -124,8 +124,6 @@ public class CacheListDelegateDI {
         ArrayList<LocationListener> locationListeners = new ArrayList<LocationListener>(3);
         final CombinedLocationManager combinedLocationManager = new CombinedLocationManager(
                 locationManager, locationListeners);
-        final LocationControlBuffered locationControlBuffered = LocationControlDi
-                .create(locationManager);
         final GeocacheFactory geocacheFactory = new GeocacheFactory();
         final GeocacheFromMyLocationFactory geocacheFromMyLocationFactory = new GeocacheFromMyLocationFactory(
                 geocacheFactory, locationControlBuffered);

@@ -14,11 +14,14 @@
 
 package com.google.code.geobeagle.activity.cachelist;
 
+import com.google.code.geobeagle.LocationControlBuffered;
 import com.google.code.geobeagle.R;
+import com.google.inject.Inject;
+
+import roboguice.activity.GuiceListActivity;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.ListActivity;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
@@ -29,7 +32,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
 
-public class CacheListActivity extends ListActivity {
+public class CacheListActivity extends GuiceListActivity {
     static class OnClickCancel implements OnClickListener {
         public void onClick(DialogInterface dialog, int whichButton) {
             dialog.dismiss();
@@ -37,6 +40,9 @@ public class CacheListActivity extends ListActivity {
     }
 
     private CacheListDelegate mCacheListDelegate;
+    
+    @Inject
+    LocationControlBuffered locationControlBuffered;
 
     // This is the ctor that Android will use.
     public CacheListActivity() {
@@ -57,7 +63,7 @@ public class CacheListActivity extends ListActivity {
         super.onCreate(savedInstanceState);
         Log.d("GeoBeagle", "CacheListActivity onCreate");
 
-        mCacheListDelegate = CacheListDelegateDI.create(this, getLayoutInflater());
+        mCacheListDelegate = CacheListDelegateDI.create(this, getLayoutInflater(), locationControlBuffered);
 
         mCacheListDelegate.onCreate();
     }

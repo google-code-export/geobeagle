@@ -20,7 +20,6 @@ import com.google.code.geobeagle.ErrorDisplayerDi;
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.GeocacheFactory;
 import com.google.code.geobeagle.LocationControlBuffered;
-import com.google.code.geobeagle.LocationControlDi;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.R.id;
 import com.google.code.geobeagle.actions.MenuAction;
@@ -41,7 +40,6 @@ import com.google.code.geobeagle.activity.main.fieldnotes.FieldnoteLogger;
 import com.google.code.geobeagle.activity.main.fieldnotes.FieldnoteStringsFVsDnf;
 import com.google.code.geobeagle.activity.main.fieldnotes.FileLogger;
 import com.google.code.geobeagle.activity.main.fieldnotes.SmsLogger;
-
 import com.google.code.geobeagle.activity.main.fieldnotes.FieldnoteLogger.OnClickCancel;
 import com.google.code.geobeagle.activity.main.fieldnotes.FieldnoteLogger.OnClickOk;
 import com.google.code.geobeagle.activity.main.intents.GeocacheToCachePage;
@@ -64,8 +62,10 @@ import com.google.code.geobeagle.activity.map.GeoMapActivity;
 import com.google.code.geobeagle.database.DbFrontend;
 import com.google.code.geobeagle.location.LocationLifecycleManager;
 import com.google.code.geobeagle.xmlimport.GpxImporterDI.Toaster;
+import com.google.inject.Inject;
 
-import android.app.Activity;
+import roboguice.activity.GuiceActivity;
+
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
@@ -93,7 +93,7 @@ import java.util.Date;
 /*
  * Main Activity for GeoBeagle.
  */
-public class GeoBeagle extends Activity {
+public class GeoBeagle extends GuiceActivity {
     private static final SimpleDateFormat simpleDateFormat = new SimpleDateFormat(
             "yyyy-MM-dd'T'HH:mm'Z'");
     private GeoBeagleDelegate mGeoBeagleDelegate;
@@ -101,6 +101,9 @@ public class GeoBeagle extends Activity {
     private FieldnoteLogger mFieldNoteSender;
     private static final DateFormat mLocalDateFormat = DateFormat
             .getTimeInstance(DateFormat.MEDIUM);
+    
+    @Inject
+    LocationControlBuffered locationControlBuffered;
 
     public Geocache getGeocache() {
         return mGeoBeagleDelegate.getGeocache();
@@ -126,8 +129,6 @@ public class GeoBeagle extends Activity {
         final WebPageAndDetailsButtonEnabler webPageButtonEnabler = Misc.create(this,
                 findViewById(R.id.cache_page), findViewById(R.id.cache_details));
         final LocationManager locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
-        final LocationControlBuffered locationControlBuffered = LocationControlDi
-                .create(locationManager);
         final GeocacheFactory geocacheFactory = new GeocacheFactory();
         final TextView gcid = (TextView)findViewById(R.id.gcid);
         final AttributeViewer gcDifficulty = new LabelledAttributeViewer(

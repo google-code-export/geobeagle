@@ -27,10 +27,8 @@ public class GeoBeagleModule extends AbstractAndroidModule {
     @Override
     protected void configure() {
         bind(Refresher.class).to(NullRefresher.class);
-        bind(SensorManager.class)
-                .toProvider(
-                        new SystemServiceProvider<SensorManager>(
-                                Context.SENSOR_SERVICE));
-}
-
+        bind(SensorManager.class).toProvider(
+                new SystemServiceProvider<SensorManager>(Context.SENSOR_SERVICE));
+    }
+    
 }
