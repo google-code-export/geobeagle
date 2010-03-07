@@ -12,25 +12,22 @@
  ** limitations under the License.
  */
 
-package com.google.code.geobeagle;
+package com.google.code.geobeagle.activity.searchonline;
 
-import com.google.code.geobeagle.activity.searchonline.NullRefresher;
+import com.google.code.geobeagle.activity.searchonline.JsInterface.JsInterfaceHelper;
+import com.google.code.geobeagle.activity.searchonline.JsInterface.JsInterfaceHelperFactory;
+import com.google.inject.Provider;
+import com.google.inject.assistedinject.FactoryProvider;
 
 import roboguice.config.AbstractAndroidModule;
-import roboguice.inject.SystemServiceProvider;
 
-import android.content.Context;
-import android.hardware.SensorManager;
-
-public class GeoBeagleModule extends AbstractAndroidModule {
+public class SearchOnlineModule extends AbstractAndroidModule {
 
     @Override
     protected void configure() {
-        bind(Refresher.class).to(NullRefresher.class);
-        bind(SensorManager.class)
-                .toProvider(
-                        new SystemServiceProvider<SensorManager>(
-                                Context.SENSOR_SERVICE));
-}
+        Provider<JsInterfaceHelperFactory> factory = FactoryProvider.newFactory(
+                JsInterfaceHelperFactory.class, JsInterfaceHelper.class);
+        bind(JsInterfaceHelperFactory.class).toProvider(factory);
 
+    }
 }

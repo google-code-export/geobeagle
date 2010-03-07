@@ -18,6 +18,7 @@ import com.google.code.geobeagle.LocationControlBuffered;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.xmlimport.GpxImporterDI;
 import com.google.code.geobeagle.xmlimport.GpxImporterDI.ToastFactory;
+import com.google.inject.Inject;
 
 import android.app.Activity;
 import android.content.Context;
@@ -34,9 +35,14 @@ class JsInterface {
     private ToastFactory mToastFactory;
     private Context mContext;
 
+    interface JsInterfaceHelperFactory {
+        public JsInterfaceHelper create(Activity activity);
+    }
+
     static class JsInterfaceHelper {
         private final Activity mActivity;
 
+        @Inject
         public JsInterfaceHelper(Activity activity) {
             mActivity = activity;
         }

@@ -14,6 +14,7 @@
 
 package com.google.code.geobeagle;
 
+import com.google.code.geobeagle.activity.searchonline.SearchOnlineModule;
 import com.google.inject.Module;
 
 import roboguice.application.GuiceApplication;
@@ -24,6 +25,7 @@ public class GeoBeagleApplication extends GuiceApplication {
     @Override
     protected void addApplicationModules(List<Module> modules) {
         modules.add(new GeoBeagleModule());
+        modules.add(new SearchOnlineModule());
     }
 
 }

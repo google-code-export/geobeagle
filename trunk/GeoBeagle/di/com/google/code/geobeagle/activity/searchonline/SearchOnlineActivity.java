@@ -15,7 +15,6 @@
 package com.google.code.geobeagle.activity.searchonline;
 
 import com.google.code.geobeagle.CompassListener;
-import com.google.code.geobeagle.GeocacheFactory;
 import com.google.code.geobeagle.LocationControlBuffered;
 import com.google.code.geobeagle.LocationControlDi;
 import com.google.code.geobeagle.R;
@@ -28,6 +27,7 @@ import com.google.code.geobeagle.activity.cachelist.CacheListActivity;
 import com.google.code.geobeagle.activity.cachelist.presenter.DistanceFormatterManager;
 import com.google.code.geobeagle.activity.cachelist.presenter.DistanceFormatterManagerDi;
 import com.google.code.geobeagle.activity.main.GeocacheFromPreferencesFactory;
+import com.google.code.geobeagle.activity.searchonline.JsInterface.JsInterfaceHelperFactory;
 import com.google.code.geobeagle.activity.searchonline.JsInterface.JsInterfaceHelper;
 import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidgetDelegate;
 import com.google.code.geobeagle.gpsstatuswidget.GpsWidgetAndUpdater;
@@ -35,8 +35,10 @@ import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidget.InflatedGpsStat
 import com.google.code.geobeagle.location.CombinedLocationListener;
 import com.google.code.geobeagle.location.CombinedLocationManager;
 import com.google.code.geobeagle.xmlimport.GpxImporterDI;
+import com.google.inject.Inject;
 
 import roboguice.activity.GuiceActivity;
+import roboguice.inject.InjectView;
 
 import android.content.Context;
 import android.content.Intent;
@@ -55,6 +57,29 @@ import java.util.ArrayList;
 public class SearchOnlineActivity extends GuiceActivity {
 
     private SearchOnlineActivityDelegate mSearchOnlineActivityDelegate;
+    
+    @InjectView(R.id.gps_widget_view)
+    private InflatedGpsStatusWidget gpsStatusWidget;
+
+    @Inject
+    LocationManager locationManager;
+
+    @Inject
+    GeocacheFromPreferencesFactory geocacheFromPreferencesFactory;
+
+    @Inject
+    Refresher refresher;
+
+    @Inject
+    SensorManager sensorManager;
+
+    @Inject
+    ActivityTypeFactory activityTypeFactory;
+
+    JsInterfaceHelper jsInterfaceHelper;
+
+    @Inject
+    GpxImporterDI.ToastFactory toastFactory;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,52 +87,46 @@ public class SearchOnlineActivity extends GuiceActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.search);
-        final LocationManager locationManager = (LocationManager)this
-                .getSystemService(Context.LOCATION_SERVICE);
+        
         final LocationControlBuffered mLocationControlBuffered = LocationControlDi
                 .create(locationManager);
         final ArrayList<LocationListener> locationListeners = new ArrayList<LocationListener>(3);
         final CombinedLocationManager mCombinedLocationManager = new CombinedLocationManager(
                 locationManager, locationListeners);
-        final InflatedGpsStatusWidget mGpsStatusWidget = (InflatedGpsStatusWidget)this
-                .findViewById(R.id.gps_widget_view);
+
         final DistanceFormatterManager distanceFormatterManager = DistanceFormatterManagerDi
                 .create(this);
         final GpsWidgetAndUpdater gpsWidgetAndUpdater = new GpsWidgetAndUpdater(this,
-                mGpsStatusWidget, mLocationControlBuffered, mCombinedLocationManager,
+                gpsStatusWidget, mLocationControlBuffered, mCombinedLocationManager,
                 distanceFormatterManager.getFormatter());
         final GpsStatusWidgetDelegate gpsStatusWidgetDelegate = gpsWidgetAndUpdater
                 .getGpsStatusWidgetDelegate();
         gpsWidgetAndUpdater.getUpdateGpsWidgetRunnable().run();
-        mGpsStatusWidget.setDelegate(gpsStatusWidgetDelegate);
-        mGpsStatusWidget.setBackgroundColor(Color.BLACK);
+        gpsStatusWidget.setDelegate(gpsStatusWidgetDelegate);
+        gpsStatusWidget.setBackgroundColor(Color.BLACK);
 
-        final Refresher refresher = new NullRefresher();
         final CompassListener mCompassListener = new CompassListener(refresher,
                 mLocationControlBuffered, 720);
-        final SensorManager mSensorManager = (SensorManager)getSystemService(Context.SENSOR_SERVICE);
         final CombinedLocationListener mCombinedLocationListener = new CombinedLocationListener(
                 mLocationControlBuffered, gpsStatusWidgetDelegate);
         distanceFormatterManager.addHasDistanceFormatter(gpsStatusWidgetDelegate);
         final ActivitySaver activitySaver = ActivityDI.createActivitySaver(this);
 
-        final GeocacheFactory geocacheFactory = new GeocacheFactory();
-        final GeocacheFromPreferencesFactory geocacheFromPreferencesFactory = new GeocacheFromPreferencesFactory(
-                geocacheFactory);
-        final ActivityTypeFactory activityTypeFactory = new ActivityTypeFactory();
         final ActivityRestorer activityRestorer = new ActivityRestorer(this,
                 geocacheFromPreferencesFactory, activityTypeFactory, getSharedPreferences(
                         "GeoBeagle", Context.MODE_PRIVATE));
 
         mSearchOnlineActivityDelegate = new SearchOnlineActivityDelegate(
-                ((WebView)findViewById(R.id.help_contents)), mSensorManager, mCompassListener,
+                ((WebView)findViewById(R.id.help_contents)), sensorManager, mCompassListener,
                 mCombinedLocationManager, mCombinedLocationListener, mLocationControlBuffered,
                 distanceFormatterManager, activitySaver);
 
-        final JsInterfaceHelper jsInterfaceHelper = new JsInterfaceHelper(this);
+        jsInterfaceHelper = this.getInjector().getInstance(
+                JsInterfaceHelperFactory.class).create(this);
+
         final JsInterface jsInterface = new JsInterface(
                 mLocationControlBuffered, jsInterfaceHelper,
-                new GpxImporterDI.ToastFactory(), this);
+                toastFactory, this);
 
         mSearchOnlineActivityDelegate.configureWebView(jsInterface);
         activityRestorer.restore(getIntent().getFlags());

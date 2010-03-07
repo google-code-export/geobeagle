@@ -18,12 +18,15 @@ import com.google.code.geobeagle.CacheType;
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.GeocacheFactory;
 import com.google.code.geobeagle.GeocacheFactory.Source;
+import com.google.inject.Inject;
 
 import android.content.SharedPreferences;
 
 public class GeocacheFromPreferencesFactory {
+    
     private final GeocacheFactory mGeocacheFactory;
 
+    @Inject
     public GeocacheFromPreferencesFactory(GeocacheFactory geocacheFactory) {
         mGeocacheFactory = geocacheFactory;
     }
