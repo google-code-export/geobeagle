@@ -22,7 +22,6 @@ import com.google.code.geobeagle.LocationControlBuffered.GpsDisabledLocation;
 import com.google.code.geobeagle.actions.MenuActionMap;
 import com.google.code.geobeagle.actions.MenuActionSearchOnline;
 import com.google.code.geobeagle.actions.MenuActions;
-import com.google.code.geobeagle.activity.ActivityDI;
 import com.google.code.geobeagle.activity.ActivitySaver;
 import com.google.code.geobeagle.activity.cachelist.CacheListDelegate.ImportIntentManager;
 import com.google.code.geobeagle.activity.cachelist.actions.context.ContextAction;
@@ -43,7 +42,6 @@ import com.google.code.geobeagle.activity.cachelist.presenter.AdapterCachesSorte
 import com.google.code.geobeagle.activity.cachelist.presenter.BearingFormatter;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
 import com.google.code.geobeagle.activity.cachelist.presenter.DistanceFormatterManager;
-import com.google.code.geobeagle.activity.cachelist.presenter.DistanceFormatterManagerDi;
 import com.google.code.geobeagle.activity.cachelist.presenter.DistanceUpdater;
 import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheListAdapter;
 import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheListPresenter;
@@ -113,7 +111,8 @@ public class CacheListDelegateDI {
         }
     }
 
-    public static CacheListDelegate create(GuiceListActivity listActivity, LayoutInflater layoutInflater, LocationControlBuffered locationControlBuffered) {
+    public static CacheListDelegate create(GuiceListActivity listActivity,
+            LayoutInflater layoutInflater, LocationControlBuffered locationControlBuffered) {
         final OnClickListener mOnClickListener = new OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
             }
@@ -128,8 +127,8 @@ public class CacheListDelegateDI {
         final GeocacheFromMyLocationFactory geocacheFromMyLocationFactory = new GeocacheFromMyLocationFactory(
                 geocacheFactory, locationControlBuffered);
         final BearingFormatter relativeBearingFormatter = new RelativeBearingFormatter();
-        final DistanceFormatterManager distanceFormatterManager = DistanceFormatterManagerDi
-                .create(listActivity);
+        final DistanceFormatterManager distanceFormatterManager = listActivity.getInjector()
+                .getInstance(DistanceFormatterManager.class);
         final ArrayList<GeocacheVector> geocacheVectorsList = new ArrayList<GeocacheVector>(10);
         final GeocacheVectors geocacheVectors = new GeocacheVectors(geocacheVectorsList);
         final CacheListData cacheListData = new CacheListData(geocacheVectors);
@@ -263,8 +262,7 @@ public class CacheListDelegateDI {
         final GeocacheListController geocacheListController = new GeocacheListController(
                 cacheListRefresh, contextActions, filterNearestCaches, menuActionSyncGpx,
                 menuActions);
-
-        final ActivitySaver activitySaver = ActivityDI.createActivitySaver(listActivity);
+        final ActivitySaver activitySaver = listActivity.getInjector().getInstance(ActivitySaver.class);
         final ImportIntentManager importIntentManager = new ImportIntentManager(listActivity);
         return new CacheListDelegate(importIntentManager, activitySaver, cacheListRefresh,
                 geocacheListController, geocacheListPresenter, dbFrontend,

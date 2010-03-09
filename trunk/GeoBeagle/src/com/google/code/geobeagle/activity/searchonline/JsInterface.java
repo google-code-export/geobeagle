@@ -35,10 +35,6 @@ class JsInterface {
     private ToastFactory mToastFactory;
     private Context mContext;
 
-    interface JsInterfaceHelperFactory {
-        public JsInterfaceHelper create(Activity activity);
-    }
-
     static class JsInterfaceHelper {
         private final Activity mActivity;
 
@@ -64,6 +60,7 @@ class JsInterface {
         }
     }
 
+    @Inject
     public JsInterface(LocationControlBuffered locationControlBuffered,
             JsInterfaceHelper jsInterfaceHelper,
             GpxImporterDI.ToastFactory toastFactory, Context context) {

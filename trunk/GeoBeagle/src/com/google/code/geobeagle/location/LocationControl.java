@@ -14,6 +14,8 @@
 
 package com.google.code.geobeagle.location;
 
+import com.google.inject.Inject;
+
 import android.location.Location;
 import android.location.LocationManager;
 
@@ -48,6 +50,7 @@ public class LocationControl {
     private final LocationChooser mLocationChooser;
     private final LocationManager mLocationManager;
 
+    @Inject
     public LocationControl(LocationManager locationManager, LocationChooser locationChooser) {
         mLocationManager = locationManager;
         mLocationChooser = locationChooser;

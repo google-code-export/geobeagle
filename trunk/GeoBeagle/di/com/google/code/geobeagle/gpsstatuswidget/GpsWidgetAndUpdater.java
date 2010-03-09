@@ -5,6 +5,8 @@ import com.google.code.geobeagle.LocationControlBuffered;
 import com.google.code.geobeagle.Time;
 import com.google.code.geobeagle.formatting.DistanceFormatter;
 import com.google.code.geobeagle.location.CombinedLocationManager;
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
 
 import android.content.Context;
 import android.os.Handler;
@@ -14,10 +16,15 @@ public class GpsWidgetAndUpdater {
     private final GpsStatusWidgetDelegate mGpsStatusWidgetDelegate;
     private final UpdateGpsWidgetRunnable mUpdateGpsRunnable;
 
-    public GpsWidgetAndUpdater(Context context, View gpsWidgetView,
+    public interface GpsWidgetAndUpdaterFactory {
+        public GpsWidgetAndUpdater create(View gpsWidgetView);
+    }
+
+    @Inject
+    public GpsWidgetAndUpdater(Context context, @Assisted View gpsWidgetView,
             LocationControlBuffered mLocationControlBuffered,
             CombinedLocationManager combinedLocationManager,
-            DistanceFormatter distanceFormatterMetric) {
+            DistanceFormatter distanceFormatter) {
         final Time time = new Time();
         final Handler handler = new Handler();
         final MeterBars meterBars = GpsStatusWidget.create(context, gpsWidgetView);
@@ -27,7 +34,7 @@ public class GpsWidgetAndUpdater {
         mUpdateGpsRunnable = new UpdateGpsWidgetRunnable(handler, mLocationControlBuffered, meter,
                 textLagUpdater);
         mGpsStatusWidgetDelegate = GpsStatusWidget.createGpsStatusWidgetDelegate(gpsWidgetView,
-                time, combinedLocationManager, meter, distanceFormatterMetric, meterBars,
+                time, combinedLocationManager, meter, distanceFormatter, meterBars,
                 textLagUpdater, context);
     }
 

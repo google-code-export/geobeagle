@@ -16,6 +16,7 @@ package com.google.code.geobeagle.activity.cachelist.presenter;
 
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVector;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVector.LocationComparator;
+import com.google.inject.Inject;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -23,6 +24,7 @@ import java.util.Collections;
 public class DistanceSortStrategy implements SortStrategy {
     private final LocationComparator mLocationComparator;
 
+    @Inject
     public DistanceSortStrategy(LocationComparator locationComparator) {
         mLocationComparator = locationComparator;
     }

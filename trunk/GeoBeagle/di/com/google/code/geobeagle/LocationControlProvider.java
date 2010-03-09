@@ -17,11 +17,9 @@ package com.google.code.geobeagle;
 import com.google.code.geobeagle.LocationControlBuffered.GpsDisabledLocation;
 import com.google.code.geobeagle.LocationControlBuffered.GpsEnabledLocation;
 import com.google.code.geobeagle.LocationControlBuffered.IGpsLocation;
-import com.google.code.geobeagle.activity.cachelist.model.GeocacheVector.LocationComparator;
 import com.google.code.geobeagle.activity.cachelist.presenter.DistanceSortStrategy;
 import com.google.code.geobeagle.activity.cachelist.presenter.NullSortStrategy;
 import com.google.code.geobeagle.location.LocationControl;
-import com.google.code.geobeagle.location.LocationControl.LocationChooser;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
@@ -29,35 +27,33 @@ import android.location.Location;
 import android.location.LocationManager;
 
 public class LocationControlProvider implements Provider<LocationControlBuffered> {
-    private LocationChooser locationChooser;
-    private LocationControl locationControl;
-    private NullSortStrategy nullSortStrategy;
-    private LocationComparator locationComparator;
-    private DistanceSortStrategy distanceSortStrategy;
-    private GpsDisabledLocation gpsDisabledLocation;
-    private LocationManager locationManager;
+    private LocationControl mLocationControl;
+    private NullSortStrategy mNullSortStrategy;
+    private DistanceSortStrategy mDistanceSortStrategy;
+    private GpsDisabledLocation mGpsDisabledLocation;
+    private LocationManager mLocationManager;
 
     @Inject
-    public LocationControlProvider(LocationManager locationManager, LocationChooser locationChooser) {
-        this.locationChooser = locationChooser;
-        locationControl = new LocationControl(locationManager, locationChooser);
-        nullSortStrategy = new NullSortStrategy();
-        locationComparator = new LocationComparator();
-        distanceSortStrategy = new DistanceSortStrategy(locationComparator);
-        gpsDisabledLocation = new GpsDisabledLocation();
-        this.locationManager = locationManager;
+    public LocationControlProvider(LocationManager locationManager,
+            LocationControl locationControl, NullSortStrategy nullSortStrategy,
+            DistanceSortStrategy distanceSortStrategy, GpsDisabledLocation gpsDisabledLocation) {
+        mLocationControl = locationControl;
+        mNullSortStrategy = nullSortStrategy;
+        mDistanceSortStrategy = distanceSortStrategy;
+        mGpsDisabledLocation = gpsDisabledLocation;
+        mLocationManager = locationManager;
     }
 
     @Override
     public LocationControlBuffered get() {
         IGpsLocation lastGpsLocation;
-        final Location lastKnownLocation = locationManager.getLastKnownLocation("gps");
+        final Location lastKnownLocation = mLocationManager.getLastKnownLocation("gps");
         if (lastKnownLocation == null)
-            lastGpsLocation = gpsDisabledLocation;
+            lastGpsLocation = mGpsDisabledLocation;
         else
             lastGpsLocation = new GpsEnabledLocation((float)lastKnownLocation.getLatitude(),
                     (float)lastKnownLocation.getLongitude());
-        return new LocationControlBuffered(locationControl, distanceSortStrategy, nullSortStrategy,
-                gpsDisabledLocation, lastGpsLocation, lastKnownLocation);
+        return new LocationControlBuffered(mLocationControl, mDistanceSortStrategy,
+                mNullSortStrategy, mGpsDisabledLocation, lastGpsLocation, lastKnownLocation);
     }
 }

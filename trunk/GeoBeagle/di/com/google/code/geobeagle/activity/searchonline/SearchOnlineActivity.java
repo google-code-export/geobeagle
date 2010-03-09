@@ -14,123 +14,115 @@
 
 package com.google.code.geobeagle.activity.searchonline;
 
-import com.google.code.geobeagle.CompassListener;
-import com.google.code.geobeagle.LocationControlBuffered;
 import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.Refresher;
-import com.google.code.geobeagle.activity.ActivityDI;
 import com.google.code.geobeagle.activity.ActivityRestorer;
-import com.google.code.geobeagle.activity.ActivitySaver;
-import com.google.code.geobeagle.activity.ActivityDI.ActivityTypeFactory;
 import com.google.code.geobeagle.activity.cachelist.CacheListActivity;
 import com.google.code.geobeagle.activity.cachelist.presenter.DistanceFormatterManager;
-import com.google.code.geobeagle.activity.cachelist.presenter.DistanceFormatterManagerDi;
-import com.google.code.geobeagle.activity.main.GeocacheFromPreferencesFactory;
-import com.google.code.geobeagle.activity.searchonline.JsInterface.JsInterfaceHelper;
-import com.google.code.geobeagle.activity.searchonline.JsInterface.JsInterfaceHelperFactory;
+import com.google.code.geobeagle.activity.searchonline.SearchOnlineActivityDelegate.SearchOnlineActivityDelegateFactory;
 import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidgetDelegate;
 import com.google.code.geobeagle.gpsstatuswidget.GpsWidgetAndUpdater;
 import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidget.InflatedGpsStatusWidget;
+import com.google.code.geobeagle.gpsstatuswidget.GpsWidgetAndUpdater.GpsWidgetAndUpdaterFactory;
 import com.google.code.geobeagle.location.CombinedLocationListener;
-import com.google.code.geobeagle.location.CombinedLocationManager;
-import com.google.code.geobeagle.xmlimport.GpxImporterDI;
+import com.google.code.geobeagle.location.CombinedLocationListener.CombinedLocationListenerFactory;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 
 import roboguice.activity.GuiceActivity;
 import roboguice.inject.InjectView;
 
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.hardware.SensorManager;
-import android.location.LocationListener;
-import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.webkit.WebView;
 
-import java.util.ArrayList;
-
 public class SearchOnlineActivity extends GuiceActivity {
 
-    private SearchOnlineActivityDelegate mSearchOnlineActivityDelegate;
-    
+    @Inject
+    private ActivityRestorer mActivityRestorer;
+
+    private CombinedLocationListener mCombinedLocationListener;
+
+    @Inject
+    private DistanceFormatterManager mDistanceFormatterManager;
+
     @InjectView(R.id.gps_widget_view)
-    private InflatedGpsStatusWidget gpsStatusWidget;
+    private InflatedGpsStatusWidget mGpsStatusWidget;
+
+    private GpsWidgetAndUpdater mGpsWidgetAndUpdater;
+
+    @InjectView(R.id.help_contents)
+    private WebView mHelpContentsView;
 
     @Inject
-    LocationManager locationManager;
+    private JsInterface mJsInterface;
 
-    @Inject
-    GeocacheFromPreferencesFactory geocacheFromPreferencesFactory;
+    private SearchOnlineActivityDelegate mSearchOnlineActivityDelegate;
 
-    @Inject
-    Refresher refresher;
+    public ActivityRestorer getActivityRestorer() {
+        return mActivityRestorer;
+    }
 
-    @Inject
-    SensorManager sensorManager;
+    public CombinedLocationListener getCombinedLocationListener() {
+        return mCombinedLocationListener;
+    }
 
-    @Inject
-    ActivityTypeFactory activityTypeFactory;
+    DistanceFormatterManager getDistanceFormatterManager() {
+        return mDistanceFormatterManager;
+    }
 
-    JsInterfaceHelper jsInterfaceHelper;
+    InflatedGpsStatusWidget getGpsStatusWidget() {
+        return mGpsStatusWidget;
+    }
 
-    @Inject
-    GpxImporterDI.ToastFactory toastFactory;
+    GpsWidgetAndUpdater getGpsWidgetAndUpdater() {
+        return mGpsWidgetAndUpdater;
+    }
 
-    @Inject
-    LocationControlBuffered locationControlBuffered;
+    WebView getHelpContentsView() {
+        return mHelpContentsView;
+    }
+
+    JsInterface getJsInterface() {
+        return mJsInterface;
+    }
+
+    SearchOnlineActivityDelegate getMSearchOnlineActivityDelegate() {
+        return mSearchOnlineActivityDelegate;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Log.d("GeoBeagle", "SearchOnlineActivity onCreate");
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.search);
+
+        Log.d("GeoBeagle", "SearchOnlineActivity onCreate");
+        
         Injector injector = this.getInjector();
- 
-        final ArrayList<LocationListener> locationListeners = new ArrayList<LocationListener>(3);
-        final CombinedLocationManager mCombinedLocationManager = new CombinedLocationManager(
-                locationManager, locationListeners);
 
-        final DistanceFormatterManager distanceFormatterManager = DistanceFormatterManagerDi
-                .create(this);
-        final GpsWidgetAndUpdater gpsWidgetAndUpdater = new GpsWidgetAndUpdater(this,
-                gpsStatusWidget, locationControlBuffered, mCombinedLocationManager,
-                distanceFormatterManager.getFormatter());
-        final GpsStatusWidgetDelegate gpsStatusWidgetDelegate = gpsWidgetAndUpdater
+        mGpsWidgetAndUpdater = injector.getInstance(GpsWidgetAndUpdaterFactory.class).create(
+                mGpsStatusWidget);
+        
+        GpsStatusWidgetDelegate gpsStatusWidgetDelegate = mGpsWidgetAndUpdater
                 .getGpsStatusWidgetDelegate();
-        gpsWidgetAndUpdater.getUpdateGpsWidgetRunnable().run();
-        gpsStatusWidget.setDelegate(gpsStatusWidgetDelegate);
-        gpsStatusWidget.setBackgroundColor(Color.BLACK);
+        mGpsWidgetAndUpdater.getUpdateGpsWidgetRunnable().run();
+        mGpsStatusWidget.setDelegate(gpsStatusWidgetDelegate);
+        mGpsStatusWidget.setBackgroundColor(Color.BLACK);
 
-        final CompassListener mCompassListener = new CompassListener(refresher,
-                locationControlBuffered, 720);
-        final CombinedLocationListener mCombinedLocationListener = new CombinedLocationListener(
-                locationControlBuffered, gpsStatusWidgetDelegate);
-        distanceFormatterManager.addHasDistanceFormatter(gpsStatusWidgetDelegate);
-        final ActivitySaver activitySaver = ActivityDI.createActivitySaver(this);
+        mCombinedLocationListener = injector.getInstance(CombinedLocationListenerFactory.class)
+                .create(gpsStatusWidgetDelegate);
+        
+        mDistanceFormatterManager.addHasDistanceFormatter(gpsStatusWidgetDelegate);
 
-        final ActivityRestorer activityRestorer = new ActivityRestorer(this,
-                geocacheFromPreferencesFactory, activityTypeFactory, getSharedPreferences(
-                        "GeoBeagle", Context.MODE_PRIVATE));
+        mSearchOnlineActivityDelegate = injector.getInstance(
+                SearchOnlineActivityDelegateFactory.class).create(
+                mHelpContentsView, mCombinedLocationListener);
 
-        mSearchOnlineActivityDelegate = new SearchOnlineActivityDelegate(
-                ((WebView)findViewById(R.id.help_contents)), sensorManager, mCompassListener,
-                mCombinedLocationManager, mCombinedLocationListener, locationControlBuffered,
-                distanceFormatterManager, activitySaver);
-
-        jsInterfaceHelper = injector.getInstance(JsInterfaceHelperFactory.class).create(this);
-
-        final JsInterface jsInterface = new JsInterface(
-                locationControlBuffered, jsInterfaceHelper,
-                toastFactory, this);
-
-        mSearchOnlineActivityDelegate.configureWebView(jsInterface);
-        activityRestorer.restore(getIntent().getFlags());
+        mSearchOnlineActivityDelegate.configureWebView(mJsInterface);
+        mActivityRestorer.restore(getIntent().getFlags());
     }
 
     @Override
@@ -147,18 +139,18 @@ public class SearchOnlineActivity extends GuiceActivity {
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        Log.d("GeoBeagle", "SearchOnlineActivity onResume");
-
-        mSearchOnlineActivityDelegate.onResume();
-    }
-
-    @Override
     protected void onPause() {
         super.onPause();
         Log.d("GeoBeagle", "SearchOnlineActivity onPause");
 
         mSearchOnlineActivityDelegate.onPause();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.d("GeoBeagle", "SearchOnlineActivity onResume");
+
+        mSearchOnlineActivityDelegate.onResume();
     }
 }

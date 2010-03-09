@@ -16,20 +16,60 @@ package com.google.code.geobeagle.activity.searchonline;
 
 import com.google.code.geobeagle.LocationControlBuffered;
 import com.google.code.geobeagle.LocationControlProvider;
-import com.google.code.geobeagle.activity.searchonline.JsInterface.JsInterfaceHelper;
-import com.google.code.geobeagle.activity.searchonline.JsInterface.JsInterfaceHelperFactory;
+import com.google.code.geobeagle.CompassListener.Azimuth;
+import com.google.code.geobeagle.activity.ActivityDI;
+import com.google.code.geobeagle.activity.ActivitySaver;
+import com.google.code.geobeagle.activity.cachelist.presenter.DistanceFormatterManager;
+import com.google.code.geobeagle.activity.cachelist.presenter.DistanceFormatterManagerProvider;
+import com.google.code.geobeagle.activity.searchonline.SearchOnlineActivityDelegate.SearchOnlineActivityDelegateFactory;
+import com.google.code.geobeagle.formatting.DistanceFormatter;
+import com.google.code.geobeagle.gpsstatuswidget.GpsWidgetAndUpdater;
+import com.google.code.geobeagle.gpsstatuswidget.GpsWidgetAndUpdater.GpsWidgetAndUpdaterFactory;
+import com.google.code.geobeagle.location.CombinedLocationListener;
+import com.google.code.geobeagle.location.CombinedLocationManager;
+import com.google.code.geobeagle.location.CombinedLocationListener.CombinedLocationListenerFactory;
+import com.google.inject.Provides;
 import com.google.inject.assistedinject.FactoryProvider;
 
 import roboguice.config.AbstractAndroidModule;
+import roboguice.inject.SharedPreferencesName;
+
+import android.location.LocationListener;
+import android.location.LocationManager;
+
+import java.util.ArrayList;
 
 public class SearchOnlineModule extends AbstractAndroidModule {
 
     @Override
     protected void configure() {
-        bind(JsInterfaceHelperFactory.class)
-                .toProvider(
-                        FactoryProvider.newFactory(JsInterfaceHelperFactory.class,
-                                JsInterfaceHelper.class));
+        bindConstant().annotatedWith(SharedPreferencesName.class).to("GeoBeagle");
+        bindConstant().annotatedWith(Azimuth.class).to(720f);
+
         bind(LocationControlBuffered.class).toProvider(LocationControlProvider.class);
+        bind(DistanceFormatterManager.class).toProvider(DistanceFormatterManagerProvider.class);
+        bind(ActivitySaver.class).toProvider(ActivityDI.class);
+
+        bind(GpsWidgetAndUpdaterFactory.class).toProvider(
+                FactoryProvider.newFactory(GpsWidgetAndUpdaterFactory.class,
+                        GpsWidgetAndUpdater.class));
+        bind(CombinedLocationListenerFactory.class).toProvider(
+                FactoryProvider.newFactory(CombinedLocationListenerFactory.class,
+                        CombinedLocationListener.class));
+        bind(SearchOnlineActivityDelegateFactory.class).toProvider(
+                FactoryProvider.newFactory(SearchOnlineActivityDelegateFactory.class,
+                        SearchOnlineActivityDelegate.class));
     }
+
+    @Provides
+    CombinedLocationManager provideCombinedLocationManager(LocationManager locationManager) {
+        final ArrayList<LocationListener> locationListeners = new ArrayList<LocationListener>(3);
+        return new CombinedLocationManager(locationManager, locationListeners);
+    }
+
+    @Provides
+    DistanceFormatter providesDistanceFormatter(DistanceFormatterManager distanceFormatterManager) {
+        return distanceFormatterManager.getFormatter();
+    }
+
 }

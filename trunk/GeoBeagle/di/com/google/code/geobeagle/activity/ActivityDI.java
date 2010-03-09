@@ -14,9 +14,12 @@
 
 package com.google.code.geobeagle.activity;
 
+import com.google.inject.Inject;
+import com.google.inject.Provider;
+
 import android.content.Context;
 
-public class ActivityDI {
+public class ActivityDI implements Provider<ActivitySaver> {
 
     public static class ActivityTypeFactory {
         private final ActivityType mActivityTypes[] = new ActivityType[ActivityType.values().length];
@@ -31,8 +34,16 @@ public class ActivityDI {
         }
     }
 
-    public static ActivitySaver createActivitySaver(Context context) {
-        return new ActivitySaver(context.getSharedPreferences("GeoBeagle", Context.MODE_PRIVATE)
+    private Context mContext;
+
+    @Inject
+    public ActivityDI(Context context) {
+        mContext = context;
+    }
+
+    @Override
+    public ActivitySaver get() {
+        return new ActivitySaver(mContext.getSharedPreferences("GeoBeagle", Context.MODE_PRIVATE)
                 .edit());
     }
 

@@ -28,7 +28,6 @@ import com.google.code.geobeagle.actions.MenuActionEditGeocache;
 import com.google.code.geobeagle.actions.MenuActionSearchOnline;
 import com.google.code.geobeagle.actions.MenuActionSettings;
 import com.google.code.geobeagle.actions.MenuActions;
-import com.google.code.geobeagle.activity.ActivityDI;
 import com.google.code.geobeagle.activity.ActivitySaver;
 import com.google.code.geobeagle.activity.main.GeoBeagleDelegate.LogFindClickListener;
 import com.google.code.geobeagle.activity.main.fieldnotes.CacheLogger;
@@ -104,6 +103,9 @@ public class GeoBeagle extends GuiceActivity {
     
     @Inject
     LocationControlBuffered locationControlBuffered;
+    
+    @Inject
+    ActivitySaver activitySaver;
 
     public Geocache getGeocache() {
         return mGeoBeagleDelegate.getGeocache();
@@ -168,7 +170,6 @@ public class GeoBeagle extends GuiceActivity {
         final CompassListener compassListener = new CompassListener(new NullRefresher(),
                 locationControlBuffered, -1440f);
         final LayoutInflater layoutInflater = LayoutInflater.from(this);
-        final ActivitySaver activitySaver = ActivityDI.createActivitySaver(this);
         final MenuAction[] menuActionArray = {
                 new MenuActionCacheList(this), new MenuActionEditGeocache(this),
                 // new MenuActionLogDnf(this), new MenuActionLogFind(this),

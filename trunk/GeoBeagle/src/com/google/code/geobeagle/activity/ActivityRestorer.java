@@ -20,12 +20,14 @@ import com.google.code.geobeagle.activity.cachelist.CacheListActivity;
 import com.google.code.geobeagle.activity.cachelist.GeocacheListController;
 import com.google.code.geobeagle.activity.main.GeoBeagle;
 import com.google.code.geobeagle.activity.main.GeocacheFromPreferencesFactory;
+import com.google.inject.Inject;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 
 public class ActivityRestorer {
+    
     static class CacheListRestorer implements Restorer {
         private final Activity mActivity;
 
@@ -77,6 +79,14 @@ public class ActivityRestorer {
     private final Restorer[] mRestorers;
     private final SharedPreferences mSharedPreferences;
 
+    /**
+     * @return the mSharedPreferences
+     */
+    public SharedPreferences getSharedPreferences() {
+        return mSharedPreferences;
+    }
+
+    @Inject
     public ActivityRestorer(Activity activity,
             GeocacheFromPreferencesFactory geocacheFromPreferencesFactory,
             ActivityTypeFactory activityTypeFactory, SharedPreferences sharedPreferences) {
