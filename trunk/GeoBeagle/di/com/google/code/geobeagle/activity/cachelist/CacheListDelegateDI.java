@@ -75,6 +75,7 @@ import com.google.code.geobeagle.xmlimport.CachePersisterFacadeDI.CachePersister
 import com.google.code.geobeagle.xmlimport.GpxImporterDI.MessageHandler;
 import com.google.code.geobeagle.xmlimport.GpxToCache.Aborter;
 import com.google.code.geobeagle.xmlimport.GpxToCacheDI.XmlPullParserWrapper;
+import com.google.inject.Injector;
 
 import roboguice.activity.GuiceListActivity;
 
@@ -112,7 +113,7 @@ public class CacheListDelegateDI {
     }
 
     public static CacheListDelegate create(GuiceListActivity listActivity,
-            LayoutInflater layoutInflater, LocationControlBuffered locationControlBuffered) {
+            LayoutInflater layoutInflater) {
         final OnClickListener mOnClickListener = new OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
             }
@@ -124,10 +125,12 @@ public class CacheListDelegateDI {
         final CombinedLocationManager combinedLocationManager = new CombinedLocationManager(
                 locationManager, locationListeners);
         final GeocacheFactory geocacheFactory = new GeocacheFactory();
+        Injector injector = listActivity.getInjector();
+        LocationControlBuffered locationControlBuffered = injector.getInstance(LocationControlBuffered.class);
         final GeocacheFromMyLocationFactory geocacheFromMyLocationFactory = new GeocacheFromMyLocationFactory(
                 geocacheFactory, locationControlBuffered);
         final BearingFormatter relativeBearingFormatter = new RelativeBearingFormatter();
-        final DistanceFormatterManager distanceFormatterManager = listActivity.getInjector()
+        final DistanceFormatterManager distanceFormatterManager = injector
                 .getInstance(DistanceFormatterManager.class);
         final ArrayList<GeocacheVector> geocacheVectorsList = new ArrayList<GeocacheVector>(10);
         final GeocacheVectors geocacheVectors = new GeocacheVectors(geocacheVectorsList);
@@ -262,7 +265,7 @@ public class CacheListDelegateDI {
         final GeocacheListController geocacheListController = new GeocacheListController(
                 cacheListRefresh, contextActions, filterNearestCaches, menuActionSyncGpx,
                 menuActions);
-        final ActivitySaver activitySaver = listActivity.getInjector().getInstance(ActivitySaver.class);
+        final ActivitySaver activitySaver = injector.getInstance(ActivitySaver.class);
         final ImportIntentManager importIntentManager = new ImportIntentManager(listActivity);
         return new CacheListDelegate(importIntentManager, activitySaver, cacheListRefresh,
                 geocacheListController, geocacheListPresenter, dbFrontend,

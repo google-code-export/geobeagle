@@ -14,9 +14,7 @@
 
 package com.google.code.geobeagle.activity.cachelist;
 
-import com.google.code.geobeagle.LocationControlBuffered;
 import com.google.code.geobeagle.R;
-import com.google.inject.Inject;
 
 import roboguice.activity.GuiceListActivity;
 
@@ -41,9 +39,6 @@ public class CacheListActivity extends GuiceListActivity {
 
     private CacheListDelegate mCacheListDelegate;
     
-    @Inject
-    LocationControlBuffered locationControlBuffered;
-
     // This is the ctor that Android will use.
     public CacheListActivity() {
     }
@@ -63,7 +58,7 @@ public class CacheListActivity extends GuiceListActivity {
         super.onCreate(savedInstanceState);
         Log.d("GeoBeagle", "CacheListActivity onCreate");
 
-        mCacheListDelegate = CacheListDelegateDI.create(this, getLayoutInflater(), locationControlBuffered);
+        mCacheListDelegate = CacheListDelegateDI.create(this, getLayoutInflater());
 
         mCacheListDelegate.onCreate();
     }
