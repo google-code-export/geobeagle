@@ -24,8 +24,10 @@ public class MenuActionMap implements MenuAction {
         Location location = mLocationControl.getLocation();
         final Intent intent = 
             new Intent(mActivity, GeoMapActivity.class);
-        intent.putExtra("latitude", (float)location.getLatitude());
-        intent.putExtra("longitude", (float)location.getLongitude());
+        if (location != null) {
+            intent.putExtra("latitude", (float)location.getLatitude());
+            intent.putExtra("longitude", (float)location.getLongitude());
+        }
         mActivity.startActivity(intent);
     }
 
