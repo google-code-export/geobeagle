@@ -52,16 +52,9 @@ public class GeocacheViewerTest {
 
     @Test
     public void testSetImageLabelledAttributeViewer() throws Exception {
-        ImageView imageView = PowerMock.createMock(ImageView.class);
         TextView label = PowerMock.createMock(TextView.class);
         UnlabelledAttributeViewer unlabelledAttributeViewer = PowerMock
                 .createMock(UnlabelledAttributeViewer.class);
-
-        int images[] = {
-                111, 222, 333
-        };
-        PowerMock.expectNew(UnlabelledAttributeViewer.class, images, imageView).andReturn(
-                unlabelledAttributeViewer);
 
         unlabelledAttributeViewer.setImage(3);
         label.setVisibility(View.GONE);
@@ -69,8 +62,8 @@ public class GeocacheViewerTest {
         label.setVisibility(View.VISIBLE);
 
         PowerMock.replayAll();
-        LabelledAttributeViewer labelledAttributeViewer = new LabelledAttributeViewer(images,
-                label, imageView);
+        LabelledAttributeViewer labelledAttributeViewer = new LabelledAttributeViewer(
+                label, unlabelledAttributeViewer);
         labelledAttributeViewer.setImage(3);
         labelledAttributeViewer.setImage(0);
         PowerMock.verifyAll();

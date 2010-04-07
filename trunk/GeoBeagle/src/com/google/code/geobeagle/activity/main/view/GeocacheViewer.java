@@ -29,11 +29,11 @@ public class GeocacheViewer {
     }
 
     public static class LabelledAttributeViewer implements AttributeViewer {
-        private final UnlabelledAttributeViewer mUnlabelledAttributeViewer;
+        private final AttributeViewer mUnlabelledAttributeViewer;
         private final TextView mLabel;
 
-        public LabelledAttributeViewer(int[] images, TextView label, ImageView imageView) {
-            mUnlabelledAttributeViewer = new UnlabelledAttributeViewer(images, imageView);
+        public LabelledAttributeViewer(TextView label, AttributeViewer unlabelledAttributeViewer) {
+            mUnlabelledAttributeViewer = unlabelledAttributeViewer;
             mLabel = label;
         }
 

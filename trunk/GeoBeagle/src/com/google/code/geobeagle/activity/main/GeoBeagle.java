@@ -134,11 +134,11 @@ public class GeoBeagle extends GuiceActivity {
         final GeocacheFactory geocacheFactory = new GeocacheFactory();
         final TextView gcid = (TextView)findViewById(R.id.gcid);
         final AttributeViewer gcDifficulty = new LabelledAttributeViewer(
-                GeocacheViewer.STAR_IMAGES, (TextView)findViewById(R.id.gc_text_difficulty),
-                (ImageView)findViewById(R.id.gc_difficulty));
-        final AttributeViewer gcTerrain = new LabelledAttributeViewer(GeocacheViewer.STAR_IMAGES,
-                (TextView)findViewById(R.id.gc_text_terrain),
-                (ImageView)findViewById(R.id.gc_terrain));
+                (TextView)findViewById(R.id.gc_text_difficulty), new UnlabelledAttributeViewer(
+                        GeocacheViewer.STAR_IMAGES, (ImageView)findViewById(R.id.gc_difficulty)));
+        final AttributeViewer gcTerrain = new LabelledAttributeViewer(
+                (TextView)findViewById(R.id.gc_text_terrain), new UnlabelledAttributeViewer(
+                        GeocacheViewer.STAR_IMAGES, (ImageView)findViewById(R.id.gc_terrain)));
         final UnlabelledAttributeViewer gcContainer = new UnlabelledAttributeViewer(
                 GeocacheViewer.CONTAINER_IMAGES, (ImageView)findViewById(R.id.gccontainer));
         final NameViewer gcName = new NameViewer(((TextView)findViewById(R.id.gcname)));
