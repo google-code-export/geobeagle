@@ -33,7 +33,7 @@ public class GraphicsGenerator {
             while (i < rating / 2) {
                 draw(width, height, c, i++, selected);
             }
-            if (i % 2 == 1) {
+            if (rating % 2 == 1) {
                 draw(width, height, c, i++, halfSelected);
             }
             while (i < 5) {
@@ -47,25 +47,12 @@ public class GraphicsGenerator {
             drawable.draw(c);
         }
     }
-    
-    public Drawable[] getDifficultyRatings(Resources r) {
-        Drawable[] ratings = new Drawable[10];
-        for (int i = 1; i <= 10; i++) {
-            ratings[i - 1] = mRatingsGenerator.createRating(r
-                    .getDrawable(R.drawable.ribbon_unselected_dark), r
-                    .getDrawable(R.drawable.ribbon_half_bright), r
-                    .getDrawable(R.drawable.ribbon_selected_bright), i);
-        }
-        return ratings;
-    }
 
-    public Drawable[] getTerrainRatings(Resources r) {
+    public Drawable[] getRatings(Drawable drawables[]) {
         Drawable[] ratings = new Drawable[10];
         for (int i = 1; i <= 10; i++) {
-            ratings[i - 1] = mRatingsGenerator.createRating(r
-                    .getDrawable(R.drawable.paw_unselected_dark), r
-                    .getDrawable(R.drawable.paw_half_light), r
-                    .getDrawable(R.drawable.paw_selected_light), i);
+            ratings[i - 1] = mRatingsGenerator.createRating(drawables[0], drawables[1],
+                    drawables[2], i);
         }
         return ratings;
     }

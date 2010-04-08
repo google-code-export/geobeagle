@@ -33,7 +33,7 @@ import android.graphics.drawable.Drawable;
 public class GraphicsGeneratorTest {
 
     @Test
-    public void testCreateRating() throws Exception {
+    public void testCreateRating3() throws Exception {
         Drawable unselected = PowerMock.createMock(Drawable.class);
         Drawable halfSelected = PowerMock.createMock(Drawable.class);
         Drawable selected = PowerMock.createMock(Drawable.class);
@@ -66,6 +66,43 @@ public class GraphicsGeneratorTest {
         PowerMock.replayAll();
         new GraphicsGenerator.RatingsGenerator().createRating(unselected,
                 halfSelected, selected, 3);
+        PowerMock.verifyAll();
+    }
+
+    @Test
+    public void testCreateRating1() throws Exception {
+        Drawable unselected = PowerMock.createMock(Drawable.class);
+        Drawable halfSelected = PowerMock.createMock(Drawable.class);
+        Drawable selected = PowerMock.createMock(Drawable.class);
+        Bitmap bitmap = PowerMock.createMock(Bitmap.class);
+        Canvas canvas = PowerMock.createMock(Canvas.class);
+        BitmapDrawable bitmapDrawable = PowerMock
+                .createMock(BitmapDrawable.class);
+
+        EasyMock.expect(unselected.getIntrinsicWidth()).andReturn(10);
+        EasyMock.expect(unselected.getIntrinsicHeight()).andReturn(5);
+        PowerMock.mockStatic(Bitmap.class);
+        EasyMock.expect(Bitmap.createBitmap(50, 16, Bitmap.Config.ARGB_8888))
+                .andReturn(bitmap);
+        PowerMock.expectNew(Canvas.class, bitmap).andReturn(canvas);
+
+        halfSelected.setBounds(0, 0, 9, 4);
+        halfSelected.draw(canvas);
+        unselected.setBounds(10, 0, 19, 4);
+        unselected.draw(canvas);
+        unselected.setBounds(20, 0, 29, 4);
+        unselected.draw(canvas);
+        unselected.setBounds(30, 0, 39, 4);
+        unselected.draw(canvas);
+        unselected.setBounds(40, 0, 49, 4);
+        unselected.draw(canvas);
+
+        PowerMock.expectNew(BitmapDrawable.class, bitmap).andReturn(
+                bitmapDrawable);
+
+        PowerMock.replayAll();
+        new GraphicsGenerator.RatingsGenerator().createRating(unselected,
+                halfSelected, selected, 1);
         PowerMock.verifyAll();
     }
 }
