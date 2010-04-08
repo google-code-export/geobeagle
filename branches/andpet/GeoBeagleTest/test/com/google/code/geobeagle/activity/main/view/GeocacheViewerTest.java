@@ -21,10 +21,8 @@ import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.GraphicsGenerator;
 import com.google.code.geobeagle.activity.main.RadarView;
 import com.google.code.geobeagle.activity.main.view.GeocacheViewer.AttributeViewer;
-import com.google.code.geobeagle.activity.main.view.GeocacheViewer.DrawableImages;
 import com.google.code.geobeagle.activity.main.view.GeocacheViewer.LabelledAttributeViewer;
 import com.google.code.geobeagle.activity.main.view.GeocacheViewer.NameViewer;
-import com.google.code.geobeagle.activity.main.view.GeocacheViewer.ResourceImages;
 import com.google.code.geobeagle.activity.main.view.GeocacheViewer.UnlabelledAttributeViewer;
 
 import org.junit.Test;
@@ -60,45 +58,23 @@ public class GeocacheViewerTest {
 
     @Test
     public void testSetImageLabelledAttributeViewer() throws Exception {
-        ImageView imageView = PowerMock.createMock(ImageView.class);
         TextView label = PowerMock.createMock(TextView.class);
-        UnlabelledAttributeViewer unlabelledAttributeViewer = PowerMock
-                .createMock(UnlabelledAttributeViewer.class);
         AttributeViewer imageCollection = PowerMock
                 .createMock(AttributeViewer.class);
 
-        PowerMock.expectNew(UnlabelledAttributeViewer.class, imageView,
-                imageCollection).andReturn(unlabelledAttributeViewer);
-
-        unlabelledAttributeViewer.setImage(3);
+        imageCollection.setImage(3);
         label.setVisibility(View.GONE);
-        unlabelledAttributeViewer.setImage(0);
+        imageCollection.setImage(0);
         label.setVisibility(View.VISIBLE);
 
         PowerMock.replayAll();
         LabelledAttributeViewer labelledAttributeViewer = new LabelledAttributeViewer(
-                label, imageView, imageCollection);
+                label, imageCollection);
         labelledAttributeViewer.setImage(3);
         labelledAttributeViewer.setImage(0);
         PowerMock.verifyAll();
     }
-
-    @Test
-    public void testSetImage() {
-        ImageView imageView = PowerMock.createMock(ImageView.class);
-        imageView.setImageResource(333);
-        imageView.setVisibility(View.VISIBLE);
-
-        PowerMock.replayAll();
-        int images[] = {
-                111, 222, 333
-        };
-        UnlabelledAttributeViewer unlabelledAttributeViewer = new UnlabelledAttributeViewer(
-                imageView, new ResourceImages(imageView, images));
-        unlabelledAttributeViewer.setImage(3);
-        PowerMock.verifyAll();
-    }
-
+    
     @Test
     public void testSetImageDrawables() {
         ImageView imageView = PowerMock.createMock(ImageView.class);
@@ -112,7 +88,7 @@ public class GeocacheViewerTest {
 
         PowerMock.replayAll();
         UnlabelledAttributeViewer unlabelledAttributeViewer = new UnlabelledAttributeViewer(
-                imageView, new DrawableImages(imageView, drawables));
+                imageView, drawables);
         unlabelledAttributeViewer.setImage(1);
         PowerMock.verifyAll();
     }
