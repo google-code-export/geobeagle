@@ -19,6 +19,7 @@ import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.main.GeoUtils;
 import com.google.code.geobeagle.activity.main.RadarView;
 
+import android.graphics.drawable.Drawable;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -45,24 +46,40 @@ public class GeocacheViewer {
     }
 
     public static class UnlabelledAttributeViewer implements AttributeViewer {
-        private final int[] mImages;
+        private final Drawable[] mDrawables;
         private final ImageView mImageView;
 
-        public UnlabelledAttributeViewer(int[] images, ImageView imageView) {
-            mImages = images;
+        public UnlabelledAttributeViewer(ImageView imageView, Drawable[] drawables) {
             mImageView = imageView;
+            mDrawables = drawables;
         }
 
+        @Override
         public void setImage(int attributeValue) {
             if (attributeValue == 0) {
                 mImageView.setVisibility(View.GONE);
                 return;
             }
-            mImageView.setImageResource(mImages[attributeValue - 1]);
+            mImageView.setImageDrawable(mDrawables[attributeValue-1]);
             mImageView.setVisibility(View.VISIBLE);
         }
     }
 
+    public static class ResourceImages implements AttributeViewer {
+        private final int[] mResources;
+        private final ImageView mImageView;
+
+        public ResourceImages(ImageView imageView, int[] resources) {
+            mImageView = imageView;
+            mResources = resources;
+        }
+
+        @Override
+        public void setImage(int attributeValue) {
+            mImageView.setImageResource(mResources[attributeValue]);
+        }
+    }
+ 
     public static class NameViewer {
         private final TextView mName;
 
@@ -98,7 +115,7 @@ public class GeocacheViewer {
 
     public GeocacheViewer(RadarView radarView, TextView gcId, NameViewer gcName,
             ImageView cacheTypeImageView, AttributeViewer gcDifficulty, AttributeViewer gcTerrain,
-            UnlabelledAttributeViewer gcContainer) {
+            AttributeViewer gcContainer) {
         mRadarView = radarView;
         mId = gcId;
         mName = gcName;

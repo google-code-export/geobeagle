@@ -19,6 +19,7 @@ import com.google.code.geobeagle.ErrorDisplayer;
 import com.google.code.geobeagle.ErrorDisplayerDi;
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.GeocacheFactory;
+import com.google.code.geobeagle.GraphicsGenerator;
 import com.google.code.geobeagle.LocationControlBuffered;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.R.id;
@@ -56,6 +57,7 @@ import com.google.code.geobeagle.activity.main.view.WebPageAndDetailsButtonEnabl
 import com.google.code.geobeagle.activity.main.view.GeocacheViewer.AttributeViewer;
 import com.google.code.geobeagle.activity.main.view.GeocacheViewer.LabelledAttributeViewer;
 import com.google.code.geobeagle.activity.main.view.GeocacheViewer.NameViewer;
+import com.google.code.geobeagle.activity.main.view.GeocacheViewer.ResourceImages;
 import com.google.code.geobeagle.activity.main.view.GeocacheViewer.UnlabelledAttributeViewer;
 import com.google.code.geobeagle.activity.map.GeoMapActivity;
 import com.google.code.geobeagle.database.DbFrontend;
@@ -70,6 +72,8 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
+import android.graphics.drawable.Drawable;
 import android.hardware.SensorManager;
 import android.location.LocationManager;
 import android.os.Bundle;
@@ -133,14 +137,43 @@ public class GeoBeagle extends GuiceActivity {
         final LocationManager locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
         final GeocacheFactory geocacheFactory = new GeocacheFactory();
         final TextView gcid = (TextView)findViewById(R.id.gcid);
+        
+        final Resources resources = this.getResources();
+        final GraphicsGenerator graphicsGenerator = new GraphicsGenerator(
+                new GraphicsGenerator.RatingsGenerator());
+
+        final Drawable[] pawDrawables = {
+                resources.getDrawable(R.drawable.paw_unselected_dark),
+                resources.getDrawable(R.drawable.paw_half_light),
+                resources.getDrawable(R.drawable.paw_selected_light)
+        };
+        final Drawable[] pawImages = graphicsGenerator.getRatings(pawDrawables, 10);
+        final Drawable[] ribbonDrawables = {
+                resources.getDrawable(R.drawable.ribbon_unselected_dark),
+                resources.getDrawable(R.drawable.ribbon_half_bright),
+                resources.getDrawable(R.drawable.ribbon_selected_bright)
+        };
+        final Drawable[] ribbonImages = graphicsGenerator.getRatings(ribbonDrawables, 10);
+        
+        TextView difficultyTextView = (TextView)findViewById(R.id.gc_text_difficulty);
+        ImageView difficultyImageView = (ImageView)findViewById(R.id.gc_difficulty);
+        final UnlabelledAttributeViewer ribbonImagesOnDifficulty = new UnlabelledAttributeViewer(
+                difficultyImageView, ribbonImages);
         final AttributeViewer gcDifficulty = new LabelledAttributeViewer(
-                (TextView)findViewById(R.id.gc_text_difficulty), new UnlabelledAttributeViewer(
-                        GeocacheViewer.STAR_IMAGES, (ImageView)findViewById(R.id.gc_difficulty)));
-        final AttributeViewer gcTerrain = new LabelledAttributeViewer(
-                (TextView)findViewById(R.id.gc_text_terrain), new UnlabelledAttributeViewer(
-                        GeocacheViewer.STAR_IMAGES, (ImageView)findViewById(R.id.gc_terrain)));
-        final UnlabelledAttributeViewer gcContainer = new UnlabelledAttributeViewer(
-                GeocacheViewer.CONTAINER_IMAGES, (ImageView)findViewById(R.id.gccontainer));
+                difficultyTextView, ribbonImagesOnDifficulty);
+        final TextView terrainTextView = (TextView)findViewById(R.id.gc_text_terrain);
+        final ImageView terrainImageView = (ImageView)findViewById(R.id.gc_terrain);
+        final ImageView containerImageView = (ImageView)findViewById(R.id.gccontainer);
+
+        final UnlabelledAttributeViewer pawImagesOnTerrain = new UnlabelledAttributeViewer(
+                terrainImageView, pawImages);
+
+        final AttributeViewer gcTerrain = new LabelledAttributeViewer(terrainTextView,
+                pawImagesOnTerrain);
+
+        final ResourceImages containerImagesOnContainer = new ResourceImages(
+                containerImageView, GeocacheViewer.CONTAINER_IMAGES);
+
         final NameViewer gcName = new NameViewer(((TextView)findViewById(R.id.gcname)));
         final RadarView radar = (RadarView)findViewById(R.id.radarview);
         radar.setUseImperial(false);
@@ -148,7 +181,7 @@ public class GeoBeagle extends GuiceActivity {
                 (TextView)findViewById(R.id.radar_bearing),
                 (TextView)findViewById(R.id.radar_accuracy));
         final GeocacheViewer geocacheViewer = new GeocacheViewer(radar, gcid, gcName,
-                (ImageView)findViewById(R.id.gcicon), gcDifficulty, gcTerrain, gcContainer);
+                (ImageView)findViewById(R.id.gcicon), gcDifficulty, gcTerrain, containerImagesOnContainer);
         mDbFrontend = new DbFrontend(this);
 
         locationControlBuffered.onLocationChanged(null);
