@@ -29,20 +29,22 @@ public class GraphicsGenerator {
             Bitmap bitmap = Bitmap.createBitmap(5 * width, 16, Bitmap.Config.ARGB_8888);
 
             Canvas c = new Canvas(bitmap);
-            for (int i = 0; i < rating / 2; i++) {
-                selected.setBounds(width * i, 0, width * (i + 1) - 1, height - 1);
-                selected.draw(c);
+            int i = 0;
+            while (i < rating / 2) {
+                draw(width, height, c, i++, selected);
             }
-            if (rating % 2 == 1) {
-                int i = rating / 2;
-                halfSelected.setBounds(width * i, 0, width * (i + 1) - 1, height - 1);
-                halfSelected.draw(c);
+            if (i % 2 == 1) {
+                draw(width, height, c, i++, halfSelected);
             }
-            for (int i = rating / 2 + (rating % 2); i < 5; i++) {
-                unselected.setBounds(width * i, 0, width * (i + 1) - 1, height - 1);
-                unselected.draw(c);
+            while (i < 5) {
+                draw(width, height, c, i++, unselected);
             }
             return new BitmapDrawable(bitmap);
+        }
+
+        private void draw(int width, int height, Canvas c, int i, Drawable drawable) {
+            drawable.setBounds(width * i, 0, width * (i + 1) - 1, height - 1);
+            drawable.draw(c);
         }
     }
     
