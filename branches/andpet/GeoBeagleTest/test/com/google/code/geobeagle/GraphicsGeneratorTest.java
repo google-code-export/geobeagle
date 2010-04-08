@@ -14,6 +14,8 @@
 
 package com.google.code.geobeagle;
 
+import static org.junit.Assert.*;
+
 import org.easymock.EasyMock;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -103,6 +105,31 @@ public class GraphicsGeneratorTest {
         PowerMock.replayAll();
         new GraphicsGenerator.RatingsGenerator().createRating(unselected,
                 halfSelected, selected, 1);
+        PowerMock.verifyAll();
+    }
+
+    @Test
+    public void testGetRatings() {
+        Drawable drawable0 = PowerMock.createMock(Drawable.class);
+        Drawable drawable1 = PowerMock.createMock(Drawable.class);
+        Drawable drawable2 = PowerMock.createMock(Drawable.class);
+        Drawable drawables[] = {
+                drawable0, drawable1, drawable2
+        };
+        GraphicsGenerator.RatingsGenerator ratingsGenerator = PowerMock
+                .createMock(GraphicsGenerator.RatingsGenerator.class);
+        Drawable rating = PowerMock.createMock(Drawable.class);
+
+        EasyMock.expect(
+                ratingsGenerator.createRating(drawable0, drawable1, drawable2,
+                        1)).andReturn(null);
+        EasyMock.expect(
+                ratingsGenerator.createRating(drawable0, drawable1, drawable2,
+                        2)).andReturn(rating);
+        PowerMock.replayAll();
+        Drawable ratings[] = new GraphicsGenerator(ratingsGenerator, null, null)
+                .getRatings(drawables, 2);
+        assertEquals(rating, ratings[1]);
         PowerMock.verifyAll();
     }
 }

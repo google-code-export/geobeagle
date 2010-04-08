@@ -48,15 +48,15 @@ public class GraphicsGenerator {
         }
     }
 
-    public Drawable[] getRatings(Drawable drawables[]) {
-        Drawable[] ratings = new Drawable[10];
-        for (int i = 1; i <= 10; i++) {
+    public Drawable[] getRatings(Drawable drawables[], int maxRatings) {
+        Drawable[] ratings = new Drawable[maxRatings];
+        for (int i = 1; i <= maxRatings; i++) {
             ratings[i - 1] = mRatingsGenerator.createRating(drawables[0], drawables[1],
                     drawables[2], i);
         }
         return ratings;
     }
-    
+
     private Drawable createOverlay(Geocache geocache, int thickness, int bottom, 
             int backdropId, Drawable overlayIcon, Resources resources) {
         Bitmap bitmap = BitmapFactory.decodeResource(resources, backdropId);
