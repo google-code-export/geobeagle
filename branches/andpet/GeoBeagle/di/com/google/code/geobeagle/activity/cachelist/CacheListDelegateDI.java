@@ -79,6 +79,8 @@ import android.app.ListActivity;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.res.Resources;
+import android.graphics.Paint;
+import android.graphics.Rect;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.widget.LinearLayout;
@@ -125,7 +127,8 @@ public class CacheListDelegateDI {
         final XmlPullParserWrapper xmlPullParserWrapper = new XmlPullParserWrapper();
 
         final DbFrontend dbFrontend = new DbFrontend(listActivity, geocacheFactory);
-        final GraphicsGenerator graphicsGenerator = new GraphicsGenerator();
+        final GraphicsGenerator graphicsGenerator = new GraphicsGenerator(
+                new GraphicsGenerator.RatingsGenerator(), new Paint(), new Rect());
         final CacheNameAttributes cacheNameAttributes = new CacheNameAttributes();
         final GeocacheSummaryRowInflater geocacheSummaryRowInflater = new GeocacheSummaryRowInflater(
                 distanceFormatterManager.getFormatter(), layoutInflater,

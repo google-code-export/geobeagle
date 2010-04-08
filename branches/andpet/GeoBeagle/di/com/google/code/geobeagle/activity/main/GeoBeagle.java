@@ -72,6 +72,8 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
+import android.graphics.Paint;
+import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -134,7 +136,8 @@ public class GeoBeagle extends Activity {
         final GeoFixProvider geoFixProvider = LocationControlDi.create(this);
         mGeocacheFactory = new GeocacheFactory();
         final TextView gcid = (TextView)findViewById(R.id.gcid);
-        final GraphicsGenerator graphicsGenerator = new GraphicsGenerator();
+        final GraphicsGenerator graphicsGenerator = new GraphicsGenerator(
+                new GraphicsGenerator.RatingsGenerator(), new Paint(), new Rect());
         
         final Drawable[] pawImages = graphicsGenerator
                 .getTerrainRatings(getResources());

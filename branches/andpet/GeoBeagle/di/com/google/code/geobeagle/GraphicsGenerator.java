@@ -11,41 +11,48 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 
 public class GraphicsGenerator {
-    
-    public GraphicsGenerator() {
-        mTempPaint = new Paint();
-        mTempRect = new Rect();
+    private final Paint mTempPaint;
+    private final Rect mTempRect;
+    private final RatingsGenerator mRatingsGenerator;
+
+    public GraphicsGenerator(RatingsGenerator ratingsGenerator, Paint paint, Rect rect) {
+        mTempPaint = paint;
+        mTempRect = rect;
+        mRatingsGenerator = ratingsGenerator;
     }
 
-    public Drawable createRating(Drawable unselected, Drawable halfSelected,
-            Drawable selected, int rating) {
-        int width = unselected.getIntrinsicWidth();
-        int height = unselected.getIntrinsicHeight();
-        Bitmap bitmap = Bitmap.createBitmap(5*width, 16, Bitmap.Config.ARGB_8888);
-        
-        Canvas c = new Canvas(bitmap);
-        for (int i = 0; i < rating / 2; i++) {
-            selected.setBounds(width*i, 0, width*(i+1)-1, height-1);
-            selected.draw(c);
+    public static class RatingsGenerator {
+        public Drawable createRating(Drawable unselected, Drawable halfSelected, Drawable selected,
+                int rating) {
+            int width = unselected.getIntrinsicWidth();
+            int height = unselected.getIntrinsicHeight();
+            Bitmap bitmap = Bitmap.createBitmap(5 * width, 16, Bitmap.Config.ARGB_8888);
+
+            Canvas c = new Canvas(bitmap);
+            for (int i = 0; i < rating / 2; i++) {
+                selected.setBounds(width * i, 0, width * (i + 1) - 1, height - 1);
+                selected.draw(c);
+            }
+            if (rating % 2 == 1) {
+                int i = rating / 2;
+                halfSelected.setBounds(width * i, 0, width * (i + 1) - 1, height - 1);
+                halfSelected.draw(c);
+            }
+            for (int i = rating / 2 + (rating % 2); i < 5; i++) {
+                unselected.setBounds(width * i, 0, width * (i + 1) - 1, height - 1);
+                unselected.draw(c);
+            }
+            return new BitmapDrawable(bitmap);
         }
-        if (rating % 2 == 1) {
-            int i = rating / 2;
-            halfSelected.setBounds(width*i, 0, width*(i+1)-1, height-1);
-            halfSelected.draw(c);
-        }
-        for (int i = rating / 2 + (rating % 2); i < 5; i++) {
-            unselected.setBounds(width*i, 0, width*(i+1)-1, height-1);
-            unselected.draw(c);
-        }
-        return new BitmapDrawable(bitmap);
     }
     
     public Drawable[] getDifficultyRatings(Resources r) {
         Drawable[] ratings = new Drawable[10];
         for (int i = 1; i <= 10; i++) {
-            ratings[i-1] = createRating(r.getDrawable(R.drawable.ribbon_unselected_dark),
-                    r.getDrawable(R.drawable.ribbon_half_bright),
-                    r.getDrawable(R.drawable.ribbon_selected_bright), i);
+            ratings[i - 1] = mRatingsGenerator.createRating(r
+                    .getDrawable(R.drawable.ribbon_unselected_dark), r
+                    .getDrawable(R.drawable.ribbon_half_bright), r
+                    .getDrawable(R.drawable.ribbon_selected_bright), i);
         }
         return ratings;
     }
@@ -53,15 +60,14 @@ public class GraphicsGenerator {
     public Drawable[] getTerrainRatings(Resources r) {
         Drawable[] ratings = new Drawable[10];
         for (int i = 1; i <= 10; i++) {
-            ratings[i-1] = createRating(r.getDrawable(R.drawable.paw_unselected_dark),
-                    r.getDrawable(R.drawable.paw_half_light),
-                    r.getDrawable(R.drawable.paw_selected_light), i);
+            ratings[i - 1] = mRatingsGenerator.createRating(r
+                    .getDrawable(R.drawable.paw_unselected_dark), r
+                    .getDrawable(R.drawable.paw_half_light), r
+                    .getDrawable(R.drawable.paw_selected_light), i);
         }
         return ratings;
     }
     
-    private final Paint mTempPaint;
-    private final Rect mTempRect;
     private Drawable createOverlay(Geocache geocache, int thickness, int bottom, 
             int backdropId, Drawable overlayIcon, Resources resources) {
         Bitmap bitmap = BitmapFactory.decodeResource(resources, backdropId);

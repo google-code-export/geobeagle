@@ -44,6 +44,8 @@ import com.google.code.geobeagle.database.CachesProviderLazyArea.CoordinateManag
 
 import android.content.Intent;
 import android.content.res.Resources;
+import android.graphics.Paint;
+import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.Menu;
@@ -91,7 +93,8 @@ public class GeoMapActivity extends MapActivity {
 
         final Resources resources = getResources();
         final Drawable defaultMarker = resources.getDrawable(R.drawable.pin_default);
-        final GraphicsGenerator graphicsGenerator = new GraphicsGenerator();
+        final GraphicsGenerator graphicsGenerator = new GraphicsGenerator(
+                new GraphicsGenerator.RatingsGenerator(), new Paint(), new Rect());
         final CacheItemFactory cacheItemFactory = new CacheItemFactory(resources, graphicsGenerator, mDbFrontend);
 
         final FilterTypeCollection filterTypeCollection = new FilterTypeCollection(this);
