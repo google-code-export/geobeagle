@@ -138,12 +138,20 @@ public class GeoBeagle extends Activity {
         final TextView gcid = (TextView)findViewById(R.id.gcid);
         final GraphicsGenerator graphicsGenerator = new GraphicsGenerator(
                 new GraphicsGenerator.RatingsGenerator(), new Paint(), new Rect());
+        final Resources resources = this.getResources();
         
-        final Drawable[] pawImages = graphicsGenerator
-                .getTerrainRatings(getResources());
-        
-        final Drawable[] ribbonImages = graphicsGenerator
-                .getDifficultyRatings(getResources());
+        final Drawable[] pawDrawables = {
+                resources.getDrawable(R.drawable.paw_unselected_dark),
+                resources.getDrawable(R.drawable.paw_half_light),
+                resources.getDrawable(R.drawable.paw_selected_light)
+        };
+        final Drawable[] pawImages = graphicsGenerator.getRatings(pawDrawables, 10);
+        final Drawable[] ribbonDrawables = {
+                resources.getDrawable(R.drawable.ribbon_unselected_dark),
+                resources.getDrawable(R.drawable.ribbon_half_bright),
+                resources.getDrawable(R.drawable.ribbon_selected_bright)
+        };
+        final Drawable[] ribbonImages = graphicsGenerator.getRatings(ribbonDrawables, 10);
         final ImageView difficultyImageView = (ImageView)findViewById(R.id.gc_difficulty);
         final TextView terrainTextView = (TextView)findViewById(R.id.gc_text_terrain);
         final ImageView terrainImageView = (ImageView)findViewById(R.id.gc_terrain);
@@ -179,7 +187,6 @@ public class GeoBeagle extends Activity {
         geoFixProvider.addObserver(radarViewRefresher);
         final IntentFactory intentFactory = new IntentFactory(new UriParser());
 
-        final Resources resources = this.getResources();
         final CacheActionViewUri intentStarterViewUri = new CacheActionViewUri(this,
                 intentFactory, new GeocacheToGoogleMap(this), resources);
         final LayoutInflater layoutInflater = LayoutInflater.from(this);
