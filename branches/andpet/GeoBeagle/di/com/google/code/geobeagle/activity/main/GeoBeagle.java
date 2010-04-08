@@ -59,11 +59,10 @@ import com.google.code.geobeagle.activity.main.view.GeocacheViewer;
 import com.google.code.geobeagle.activity.main.view.Misc;
 import com.google.code.geobeagle.activity.main.view.WebPageAndDetailsButtonEnabler;
 import com.google.code.geobeagle.activity.main.view.GeocacheViewer.AttributeViewer;
-import com.google.code.geobeagle.activity.main.view.GeocacheViewer.DrawableImages;
+import com.google.code.geobeagle.activity.main.view.GeocacheViewer.UnlabelledAttributeViewer;
 import com.google.code.geobeagle.activity.main.view.GeocacheViewer.LabelledAttributeViewer;
 import com.google.code.geobeagle.activity.main.view.GeocacheViewer.NameViewer;
 import com.google.code.geobeagle.activity.main.view.GeocacheViewer.ResourceImages;
-import com.google.code.geobeagle.activity.main.view.GeocacheViewer.UnlabelledAttributeViewer;
 import com.google.code.geobeagle.database.DbFrontend;
 import com.google.code.geobeagle.Toaster;
 
@@ -147,19 +146,16 @@ public class GeoBeagle extends Activity {
         final ImageView terrainImageView = (ImageView)findViewById(R.id.gc_terrain);
         final TextView difficultyTextView = (TextView)findViewById(R.id.gc_text_difficulty);
         final ImageView containerImageView = (ImageView)findViewById(R.id.gccontainer);
-        final DrawableImages ribbonImagesOnDifficulty = new DrawableImages(
+        final UnlabelledAttributeViewer ribbonImagesOnDifficulty = new UnlabelledAttributeViewer(
                 difficultyImageView, ribbonImages);
         final AttributeViewer gcDifficulty = new LabelledAttributeViewer(
-                difficultyTextView, difficultyImageView,
-                ribbonImagesOnDifficulty);
-        final DrawableImages pawImagesOnTerrain = new DrawableImages(
+                difficultyTextView, ribbonImagesOnDifficulty);
+        final UnlabelledAttributeViewer pawImagesOnTerrain = new UnlabelledAttributeViewer(
                 terrainImageView, pawImages);
-        final AttributeViewer gcTerrain = new LabelledAttributeViewer(
-                terrainTextView, terrainImageView, pawImagesOnTerrain);
+        final AttributeViewer gcTerrain = new LabelledAttributeViewer(terrainTextView,
+                pawImagesOnTerrain);
         final ResourceImages containerImagesOnContainer = new ResourceImages(
                 containerImageView, GeocacheViewer.CONTAINER_IMAGES);
-        final UnlabelledAttributeViewer gcContainer = new UnlabelledAttributeViewer(
-                containerImageView, containerImagesOnContainer);
         
         final NameViewer gcName = new NameViewer(
                 ((TextView)findViewById(R.id.gcname)));
@@ -172,7 +168,7 @@ public class GeoBeagle extends Activity {
         FavoriteView favorite = (FavoriteView) findViewById(R.id.gcfavorite);
         final GeocacheViewer geocacheViewer = new GeocacheViewer(radar, gcid, gcName,
                 (ImageView)findViewById(R.id.gcicon),
-                gcDifficulty, gcTerrain, gcContainer/*, favorite*/);
+                gcDifficulty, gcTerrain, containerImagesOnContainer/*, favorite*/);
 
         //geoFixProvider.onLocationChanged(null);
         GeoBeagleDelegate.RadarViewRefresher radarViewRefresher = 

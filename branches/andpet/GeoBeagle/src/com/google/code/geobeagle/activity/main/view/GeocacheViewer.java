@@ -30,13 +30,11 @@ public class GeocacheViewer {
     }
 
     public static class LabelledAttributeViewer implements AttributeViewer {
-        private final UnlabelledAttributeViewer mUnlabelledAttributeViewer;
+        private final AttributeViewer mUnlabelledAttributeViewer;
         private final TextView mLabel;
 
-        public LabelledAttributeViewer(TextView label, ImageView imageView,
-                AttributeViewer imageCollection) {
-            mUnlabelledAttributeViewer = new UnlabelledAttributeViewer(
-                    imageView, imageCollection);
+        public LabelledAttributeViewer(TextView label, AttributeViewer unlabelledAttributeViewer) {
+            mUnlabelledAttributeViewer = unlabelledAttributeViewer;
             mLabel = label;
         }
 
@@ -47,18 +45,23 @@ public class GeocacheViewer {
         }
     }
 
-    public static class DrawableImages implements AttributeViewer {
+    public static class UnlabelledAttributeViewer implements AttributeViewer {
         private final Drawable[] mDrawables;
         private final ImageView mImageView;
 
-        public DrawableImages(ImageView imageView, Drawable[] drawables) {
+        public UnlabelledAttributeViewer(ImageView imageView, Drawable[] drawables) {
             mImageView = imageView;
             mDrawables = drawables;
         }
 
         @Override
         public void setImage(int attributeValue) {
-            mImageView.setImageDrawable(mDrawables[attributeValue]);
+            if (attributeValue == 0) {
+                mImageView.setVisibility(View.GONE);
+                return;
+            }
+            mImageView.setImageDrawable(mDrawables[attributeValue-1]);
+            mImageView.setVisibility(View.VISIBLE);
         }
     }
 
@@ -74,26 +77,6 @@ public class GeocacheViewer {
         @Override
         public void setImage(int attributeValue) {
             mImageView.setImageResource(mResources[attributeValue]);
-        }
-    }
-    
-    public static class UnlabelledAttributeViewer implements AttributeViewer {
-        private final ImageView mImageView;
-        private final AttributeViewer mImageCollection;
-
-        public UnlabelledAttributeViewer(ImageView imageView,
-                AttributeViewer imageCollection) {
-            mImageView = imageView;
-            mImageCollection = imageCollection;
-        }
-
-        public void setImage(int attributeValue) {
-            if (attributeValue == 0) {
-                mImageView.setVisibility(View.GONE);
-                return;
-            }
-            mImageCollection.setImage(attributeValue - 1);
-            mImageView.setVisibility(View.VISIBLE);
         }
     }
 
@@ -128,7 +111,7 @@ public class GeocacheViewer {
 
     public GeocacheViewer(RadarView radarView, TextView gcId, NameViewer gcName,
             ImageView cacheTypeImageView, AttributeViewer gcDifficulty, AttributeViewer gcTerrain,
-            UnlabelledAttributeViewer gcContainer) {
+            AttributeViewer gcContainer) {
         mRadarView = radarView;
         mId = gcId;
         mName = gcName;
@@ -138,7 +121,6 @@ public class GeocacheViewer {
         mContainer = gcContainer;
     }
 
-    
     public void set(Geocache geocache) {
         final double latitude = geocache.getLatitude();
         final double longitude = geocache.getLongitude();
