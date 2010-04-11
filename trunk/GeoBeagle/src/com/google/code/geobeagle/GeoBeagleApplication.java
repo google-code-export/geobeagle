@@ -14,6 +14,8 @@
 
 package com.google.code.geobeagle;
 
+import com.google.code.geobeagle.activity.main.GeoBeagleModule;
+import com.google.code.geobeagle.activity.main.fieldnotes.FieldnotesModule;
 import com.google.code.geobeagle.activity.searchonline.SearchOnlineModule;
 import com.google.inject.Module;
 
@@ -26,6 +28,6 @@ public class GeoBeagleApplication extends GuiceApplication {
     protected void addApplicationModules(List<Module> modules) {
         modules.add(new GeoBeagleModule());
         modules.add(new SearchOnlineModule());
+        modules.add(new FieldnotesModule());
     }
-
 }

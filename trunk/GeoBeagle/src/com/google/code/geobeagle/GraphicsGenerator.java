@@ -14,6 +14,8 @@
 
 package com.google.code.geobeagle;
 
+import com.google.inject.Inject;
+
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.drawable.BitmapDrawable;
@@ -22,6 +24,7 @@ import android.graphics.drawable.Drawable;
 public class GraphicsGenerator {
     private final RatingsGenerator mRatingsGenerator;
 
+    @Inject
     public GraphicsGenerator(RatingsGenerator ratingsGenerator) {
         mRatingsGenerator = ratingsGenerator;
     }

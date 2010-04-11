@@ -15,6 +15,7 @@
 package com.google.code.geobeagle.activity.main.fieldnotes;
 
 import com.google.code.geobeagle.R;
+import com.google.inject.Inject;
 
 import android.content.Context;
 import android.content.Intent;
@@ -23,6 +24,7 @@ public class SmsLogger implements ICacheLogger {
     private final Context mContext;
     private final FieldnoteStringsFVsDnf mFieldNoteStringsFoundVsDnf;
 
+    @Inject
     public SmsLogger(FieldnoteStringsFVsDnf fieldnoteStringsFVsDnf, Context context) {
         mFieldNoteStringsFoundVsDnf = fieldnoteStringsFVsDnf;
         mContext = context;

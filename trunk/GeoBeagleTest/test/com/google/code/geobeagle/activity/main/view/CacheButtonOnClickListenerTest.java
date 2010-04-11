@@ -19,7 +19,7 @@ import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.main.intents.IntentStarter;
 import com.google.code.geobeagle.activity.main.view.CacheButtonOnClickListener;
 
-import org.easymock.classextension.EasyMock;
+import org.easymock.EasyMock;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.api.easymock.PowerMock;
@@ -57,24 +57,6 @@ public class CacheButtonOnClickListenerTest {
 
         PowerMock.replayAll();
         new CacheButtonOnClickListener(intentStarter, " problem", errorDisplayer).onClick(null);
-        PowerMock.verifyAll();
-    }
-
-    @Test
-    public void testOnClick_RandomError() {
-        IntentStarter intentStarter = PowerMock.createMock(IntentStarter.class);
-        ErrorDisplayer errorDisplayer = PowerMock.createMock(ErrorDisplayer.class);
-        NumberFormatException numberFormatException = PowerMock
-                .createMock(NumberFormatException.class);
-
-        intentStarter.startIntent();
-        EasyMock.expectLastCall().andThrow(numberFormatException);
-        EasyMock.expect(numberFormatException.fillInStackTrace()).andReturn(numberFormatException);
-        EasyMock.expect(numberFormatException.getMessage()).andReturn("random problem");
-        errorDisplayer.displayError(R.string.error1, "random problem");
-
-        PowerMock.replayAll();
-        new CacheButtonOnClickListener(intentStarter, "", errorDisplayer).onClick(null);
         PowerMock.verifyAll();
     }
 }

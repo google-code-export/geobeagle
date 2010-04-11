@@ -16,6 +16,7 @@ package com.google.code.geobeagle.activity.main.intents;
 
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.R;
+import com.google.inject.Inject;
 
 import android.content.Context;
 
@@ -25,7 +26,7 @@ import java.util.Locale;
 public class GeocacheToGoogleMap implements GeocacheToUri {
 
     private final Context mContext;
-
+    @Inject
     public GeocacheToGoogleMap(Context context) {
         mContext = context;
     }

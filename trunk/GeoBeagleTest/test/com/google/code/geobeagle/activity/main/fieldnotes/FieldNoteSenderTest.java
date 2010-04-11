@@ -101,7 +101,7 @@ public class FieldNoteSenderTest {
         editText.setText("(12:36 PM/fwgb) TFTC! ");
         editText.setSelection(16, 22);
         PowerMock.replayAll();
-        new DialogHelperCommon(fieldnoteStringsFVsDnf, editText, false, editText)
+        new DialogHelperCommon(fieldnoteStringsFVsDnf, editText, editText)
                 .configureEditor("12:36 PM");
         PowerMock.verifyAll();
     }
@@ -114,7 +114,7 @@ public class FieldNoteSenderTest {
         EasyMock.expect(Linkify.addLinks(fieldNoteCaveat, Linkify.WEB_URLS)).andReturn(true);
 
         PowerMock.replayAll();
-        new DialogHelperCommon(null, null, false, fieldNoteCaveat).configureDialogText();
+        new DialogHelperCommon(null, null, fieldNoteCaveat).configureDialogText();
         PowerMock.verifyAll();
     }
 
@@ -155,7 +155,7 @@ public class FieldNoteSenderTest {
         editText.setFilters((InputFilter[])EasyMock.anyObject());
 
         PowerMock.replayAll();
-        new DialogHelperSms(5, fieldnoteStringsFVsDnf, editText, false, editText).configureEditor();
+        new DialogHelperSms(fieldnoteStringsFVsDnf, editText, editText).configureEditor();
         PowerMock.verifyAll();
     }
 
@@ -168,7 +168,7 @@ public class FieldNoteSenderTest {
         dialog.setTitle(R.string.log_cache_with_sms);
 
         PowerMock.replayAll();
-        new DialogHelperSms(0, null, null, false, fieldNoteCaveat).configureDialogText(dialog);
+        new DialogHelperSms(null, null, fieldNoteCaveat).configureDialogText(dialog);
         PowerMock.verifyAll();
     }
 

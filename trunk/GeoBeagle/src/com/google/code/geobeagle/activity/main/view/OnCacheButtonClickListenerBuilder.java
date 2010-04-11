@@ -16,6 +16,7 @@ package com.google.code.geobeagle.activity.main.view;
 
 import com.google.code.geobeagle.ErrorDisplayer;
 import com.google.code.geobeagle.activity.main.intents.IntentStarter;
+import com.google.inject.Inject;
 
 import android.app.Activity;
 
@@ -23,6 +24,7 @@ public class OnCacheButtonClickListenerBuilder {
     private final Activity mActivity;
     private final ErrorDisplayer mErrorDisplayer;
 
+    @Inject
     public OnCacheButtonClickListenerBuilder(Activity activity, ErrorDisplayer errorDisplayer) {
         mErrorDisplayer = errorDisplayer;
         mActivity = activity;

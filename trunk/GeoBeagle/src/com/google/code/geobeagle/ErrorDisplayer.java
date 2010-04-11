@@ -14,6 +14,8 @@
 
 package com.google.code.geobeagle;
 
+import com.google.inject.Inject;
+
 import android.app.Activity;
 import android.app.AlertDialog.Builder;
 import android.content.DialogInterface.OnClickListener;
@@ -34,6 +36,7 @@ public class ErrorDisplayer {
     private final Activity mActivity;
     private final OnClickListener mOnClickListener;
 
+    @Inject
     public ErrorDisplayer(Activity activity, OnClickListener onClickListener) {
         mActivity = activity;
         mOnClickListener = onClickListener;

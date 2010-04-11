@@ -48,7 +48,7 @@ public class IntentStarterRadarTest {
         geoBeagle.startActivity(intent);
 
         PowerMock.replayAll();
-        new IntentStarterGeo(geoBeagle, intent).startIntent();
+        new IntentStarterGeo.IntentStarterMap(geoBeagle, intent).startIntent();
         PowerMock.verifyAll();
     }
 }

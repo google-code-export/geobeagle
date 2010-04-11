@@ -26,6 +26,7 @@ import com.google.code.geobeagle.activity.main.view.GeocacheViewer;
 import com.google.code.geobeagle.activity.main.view.WebPageAndDetailsButtonEnabler;
 import com.google.code.geobeagle.database.DbFrontend;
 import com.google.code.geobeagle.database.LocationSaver;
+import com.google.inject.Inject;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -76,12 +77,12 @@ public class GeoBeagleDelegate {
     private final SharedPreferences mSharedPreferences;
     private final WebPageAndDetailsButtonEnabler mWebPageButtonEnabler;
 
+    @Inject
     public GeoBeagleDelegate(ActivitySaver activitySaver, AppLifecycleManager appLifecycleManager,
-            CompassListener compassListener, GeoBeagle parent,
-            GeocacheFactory geocacheFactory, GeocacheViewer geocacheViewer,
-            IncomingIntentHandler incomingIntentHandler, MenuActions menuActions,
-            GeocacheFromParcelFactory geocacheFromParcelFactory, DbFrontend dbFrontend,
-            RadarView radarView, SensorManager sensorManager,
+            CompassListener compassListener, GeoBeagle parent, GeocacheFactory geocacheFactory,
+            GeocacheViewer geocacheViewer, IncomingIntentHandler incomingIntentHandler,
+            MenuActions menuActions, GeocacheFromParcelFactory geocacheFromParcelFactory,
+            DbFrontend dbFrontend, RadarView radarView, SensorManager sensorManager,
             SharedPreferences sharedPreferences, WebPageAndDetailsButtonEnabler webPageButtonEnabler) {
         mParent = parent;
         mActivitySaver = activitySaver;

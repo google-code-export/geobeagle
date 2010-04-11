@@ -14,15 +14,27 @@
 
 package com.google.code.geobeagle.activity.main.view;
 
+import static java.lang.annotation.ElementType.FIELD;
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.ElementType.PARAMETER;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
+
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.main.GeoUtils;
 import com.google.code.geobeagle.activity.main.RadarView;
+import com.google.inject.BindingAnnotation;
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
 
 import android.graphics.drawable.Drawable;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
+import java.util.List;
 
 public class GeocacheViewer {
     public interface AttributeViewer {
@@ -45,6 +57,12 @@ public class GeocacheViewer {
         }
     }
 
+    @BindingAnnotation @Target({ FIELD, PARAMETER, METHOD }) @Retention(RUNTIME)
+    public @interface RibbonImages {}
+
+    @BindingAnnotation @Target({ FIELD, PARAMETER, METHOD }) @Retention(RUNTIME)
+    public @interface PawImages {}
+
     public static class UnlabelledAttributeViewer implements AttributeViewer {
         private final Drawable[] mDrawables;
         private final ImageView mImageView;
@@ -66,24 +84,25 @@ public class GeocacheViewer {
     }
 
     public static class ResourceImages implements AttributeViewer {
-        private final int[] mResources;
+        private final List<Integer> mResources;
         private final ImageView mImageView;
 
-        public ResourceImages(ImageView imageView, int[] resources) {
+        public ResourceImages(ImageView imageView, List<Integer> resources) {
             mImageView = imageView;
             mResources = resources;
         }
 
         @Override
         public void setImage(int attributeValue) {
-            mImageView.setImageResource(mResources[attributeValue]);
+            mImageView.setImageResource(mResources.get(attributeValue));
         }
     }
  
     public static class NameViewer {
         private final TextView mName;
 
-        public NameViewer(TextView name) {
+        @Inject
+        public NameViewer(@Named("GeocacheName") TextView name) {
             mName = name;
         }
 
@@ -97,14 +116,10 @@ public class GeocacheViewer {
         }
     }
 
-    public static final int CONTAINER_IMAGES[] = {
+    public static final Integer CONTAINER_IMAGES[] = {
             R.drawable.size_1, R.drawable.size_2, R.drawable.size_3, R.drawable.size_4
     };
-    public static final int STAR_IMAGES[] = {
-            R.drawable.stars_1, R.drawable.stars_2, R.drawable.stars_3, R.drawable.stars_4,
-            R.drawable.stars_5, R.drawable.stars_6, R.drawable.stars_7, R.drawable.stars_8,
-            R.drawable.stars_9, R.drawable.stars_10
-    };
+
     private final ImageView mCacheTypeImageView;
     private final AttributeViewer mContainer;
     private final AttributeViewer mDifficulty;
@@ -113,9 +128,11 @@ public class GeocacheViewer {
     private final RadarView mRadarView;
     private final AttributeViewer mTerrain;
 
-    public GeocacheViewer(RadarView radarView, TextView gcId, NameViewer gcName,
-            ImageView cacheTypeImageView, AttributeViewer gcDifficulty, AttributeViewer gcTerrain,
-            AttributeViewer gcContainer) {
+    @Inject
+    public GeocacheViewer(RadarView radarView, @Named("GeocacheId") TextView gcId,
+            NameViewer gcName, @Named("GeocacheIcon") ImageView cacheTypeImageView,
+            @Named("GeocacheDifficulty") AttributeViewer gcDifficulty,
+            @Named("GeocacheTerrain") AttributeViewer gcTerrain, ResourceImages gcContainer) {
         mRadarView = radarView;
         mId = gcId;
         mName = gcName;

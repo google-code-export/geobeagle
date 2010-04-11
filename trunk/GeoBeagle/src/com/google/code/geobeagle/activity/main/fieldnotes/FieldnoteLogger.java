@@ -14,6 +14,10 @@
 
 package com.google.code.geobeagle.activity.main.fieldnotes;
 
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
+import com.google.inject.name.Named;
+
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
@@ -28,14 +32,19 @@ public class FieldnoteLogger {
         }
     }
 
+    public interface OnClickOkFactory {
+        public OnClickOk create(boolean dnf);
+    }
+    
     public static class OnClickOk implements OnClickListener {
         private final CacheLogger mCacheLogger;
         private final boolean mDnf;
         private final EditText mEditText;
         private final CharSequence mGeocacheId;
 
-        public OnClickOk(CharSequence geocacheId, EditText editText, CacheLogger cacheLogger,
-                boolean dnf) {
+        @Inject
+        public OnClickOk(CharSequence geocacheId, @Named("FieldNoteEditText") EditText editText,
+                CacheLogger cacheLogger, @Assisted boolean dnf) {
             mGeocacheId = geocacheId;
             mEditText = editText;
             mCacheLogger = cacheLogger;
@@ -52,24 +61,27 @@ public class FieldnoteLogger {
     private final DialogHelperCommon mDialogHelperCommon;
     private final DialogHelperFile mDialogHelperFile;
     private final DialogHelperSms mDialogHelperSms;
+    private final SharedPreferences mSharedPreferences;
 
+    @Inject
     public FieldnoteLogger(DialogHelperCommon dialogHelperCommon,
-            DialogHelperFile dialogHelperFile, DialogHelperSms dialogHelperSms) {
+            DialogHelperFile dialogHelperFile, DialogHelperSms dialogHelperSms,
+            SharedPreferences sharedPreferences) {
         mDialogHelperSms = dialogHelperSms;
         mDialogHelperFile = dialogHelperFile;
         mDialogHelperCommon = dialogHelperCommon;
+        mSharedPreferences = sharedPreferences;
     }
 
-    public void onPrepareDialog(Dialog dialog, SharedPreferences defaultSharedPreferences,
-            String localDate) {
-        final boolean fieldNoteTextFile = defaultSharedPreferences.getBoolean(
-                "field-note-text-file", false);
+    public void onPrepareDialog(Dialog dialog, String localDate, boolean dnf, int cacheIdLength) {
+        final boolean fieldNoteTextFile = mSharedPreferences.getBoolean("field-note-text-file",
+                false);
         DialogHelper dialogHelper = fieldNoteTextFile ? mDialogHelperFile : mDialogHelperSms;
 
         dialogHelper.configureDialogText(dialog);
         mDialogHelperCommon.configureDialogText();
 
-        dialogHelper.configureEditor();
-        mDialogHelperCommon.configureEditor(localDate);
+        dialogHelper.configureEditor(cacheIdLength, dnf);
+        mDialogHelperCommon.configureEditor(localDate, dnf);
     }
 }

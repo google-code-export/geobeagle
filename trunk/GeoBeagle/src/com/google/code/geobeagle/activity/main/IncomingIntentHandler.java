@@ -20,6 +20,7 @@ import com.google.code.geobeagle.GeocacheFactory;
 import com.google.code.geobeagle.GeocacheFactory.Source;
 import com.google.code.geobeagle.activity.cachelist.GeocacheListController;
 import com.google.code.geobeagle.database.LocationSaver;
+import com.google.inject.Inject;
 
 import android.content.Intent;
 
@@ -27,6 +28,7 @@ public class IncomingIntentHandler {
     private GeocacheFactory mGeocacheFactory;
     private GeocacheFromIntentFactory mGeocacheFromIntentFactory;
 
+    @Inject
     IncomingIntentHandler(GeocacheFactory geocacheFactory,
             GeocacheFromIntentFactory geocacheFromIntentFactory) {
         mGeocacheFactory = geocacheFactory;

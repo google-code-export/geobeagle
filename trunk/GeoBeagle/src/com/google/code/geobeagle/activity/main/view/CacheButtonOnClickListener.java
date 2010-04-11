@@ -17,6 +17,11 @@ package com.google.code.geobeagle.activity.main.view;
 import com.google.code.geobeagle.ErrorDisplayer;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.main.intents.IntentStarter;
+import com.google.code.geobeagle.activity.main.intents.IntentStarterGeo;
+import com.google.code.geobeagle.activity.main.intents.IntentStarterViewUri;
+import com.google.code.geobeagle.activity.main.intents.IntentStarterGeo.IntentStarterMap;
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
 
 import android.content.ActivityNotFoundException;
 import android.view.View;
@@ -27,6 +32,23 @@ public class CacheButtonOnClickListener implements OnClickListener {
     private final ErrorDisplayer mErrorDisplayer;
     private final String mActivityNotFoundErrorMessage;
 
+    public static class MapsButtonOnClickListener extends CacheButtonOnClickListener {
+        @Inject
+        public MapsButtonOnClickListener(@IntentStarterMap IntentStarterGeo intentStarter,
+                @Named("OpenMapError") String errorMessage, ErrorDisplayer errorDisplayer) {
+            super(intentStarter, errorMessage, errorDisplayer);
+        }
+    }
+
+    public static class CachePageButtonOnClickListener extends CacheButtonOnClickListener {
+        @Inject
+        public CachePageButtonOnClickListener(
+                @Named("IntentStarterViewCachePage") IntentStarterViewUri intentStarter,
+                @Named("OpenUriError") String errorMessage, ErrorDisplayer errorDisplayer) {
+            super(intentStarter, errorMessage, errorDisplayer);
+        }
+    }
+    
     public CacheButtonOnClickListener(IntentStarter intentStarter, String errorMessage,
             ErrorDisplayer errorDisplayer) {
         mDestinationToIntentFactory = intentStarter;
@@ -40,8 +62,6 @@ public class CacheButtonOnClickListener implements OnClickListener {
         } catch (final ActivityNotFoundException e) {
             mErrorDisplayer.displayError(R.string.error2, e.getMessage(),
                     mActivityNotFoundErrorMessage);
-        } catch (final Exception e) {
-            mErrorDisplayer.displayError(R.string.error1, e.getMessage());
         }
     }
 }

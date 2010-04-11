@@ -16,6 +16,7 @@ package com.google.code.geobeagle.activity.main.fieldnotes;
 
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.xmlimport.GpxImporterDI.Toaster;
+import com.google.inject.Inject;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -35,6 +36,7 @@ public class FileLogger implements ICacheLogger {
     private final FieldnoteStringsFVsDnf mFieldnoteStringsFVsDnf;
     private final DateFormatter mSimpleDateFormat;
 
+    @Inject
     public FileLogger(FieldnoteStringsFVsDnf fieldnoteStringsFVsDnf, DateFormatter simpleDateFormat,
             Toaster errorToaster) {
         mFieldnoteStringsFVsDnf = fieldnoteStringsFVsDnf;

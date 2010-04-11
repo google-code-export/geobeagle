@@ -16,6 +16,7 @@ package com.google.code.geobeagle.activity.main;
 
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.GeocacheFactory;
+import com.google.inject.Inject;
 
 import android.os.Bundle;
 import android.os.Parcel;
@@ -23,6 +24,7 @@ import android.os.Parcel;
 public class GeocacheFromParcelFactory {
     private final GeocacheFactory mGeocacheFactory;
 
+    @Inject
     public GeocacheFromParcelFactory(GeocacheFactory geocacheFactory) {
         mGeocacheFactory = geocacheFactory;
     }

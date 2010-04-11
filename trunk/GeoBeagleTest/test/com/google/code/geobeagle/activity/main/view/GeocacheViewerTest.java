@@ -20,6 +20,7 @@ import com.google.code.geobeagle.CacheType;
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.activity.main.RadarView;
 import com.google.code.geobeagle.activity.main.view.GeocacheViewer.LabelledAttributeViewer;
+import com.google.code.geobeagle.activity.main.view.GeocacheViewer.ResourceImages;
 import com.google.code.geobeagle.activity.main.view.GeocacheViewer.UnlabelledAttributeViewer;
 import com.google.code.geobeagle.activity.main.view.GeocacheViewer.NameViewer;
 
@@ -33,6 +34,8 @@ import android.graphics.drawable.Drawable;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import java.util.Arrays;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest( {
@@ -119,14 +122,15 @@ public class GeocacheViewerTest {
     @Test
     public void testResourceImages() {
         ImageView imageView = PowerMock.createMock(ImageView.class);
-        int[] resources = {
+        Integer[] resources = {
                 19, 27
         };
 
         imageView.setImageResource(27);
 
         PowerMock.replayAll();
-        new GeocacheViewer.ResourceImages(imageView, resources).setImage(1);
+        new GeocacheViewer.ResourceImages(imageView, Arrays.asList(resources))
+                .setImage(1);
         PowerMock.verifyAll();
     }
 
@@ -138,8 +142,7 @@ public class GeocacheViewerTest {
         RadarView radar = PowerMock.createMock(RadarView.class);
         UnlabelledAttributeViewer gcDifficulty = PowerMock
                 .createMock(UnlabelledAttributeViewer.class);
-        UnlabelledAttributeViewer gcContainer = PowerMock
-                .createMock(UnlabelledAttributeViewer.class);
+        ResourceImages gcContainer = PowerMock.createMock(ResourceImages.class);
         UnlabelledAttributeViewer gcTerrain = PowerMock
                 .createMock(UnlabelledAttributeViewer.class);
         CacheType cacheType = PowerMock.createMock(CacheType.class);

@@ -15,21 +15,24 @@
 package com.google.code.geobeagle.activity.main.fieldnotes;
 
 import com.google.code.geobeagle.R;
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
 
 import android.text.util.Linkify;
+import android.util.Log;
 import android.widget.EditText;
 import android.widget.TextView;
 
 public class DialogHelperCommon {
-    private final boolean mDnf;
     private final EditText mEditText;
     private final TextView mFieldnoteCaveat;
     private final FieldnoteStringsFVsDnf mFieldnoteStringsFVsDnf;
 
-    public DialogHelperCommon(FieldnoteStringsFVsDnf fieldnoteStringsFVsDnf, EditText editText,
-            boolean dnf, TextView fieldnoteCaveat) {
+    @Inject
+    public DialogHelperCommon(FieldnoteStringsFVsDnf fieldnoteStringsFVsDnf,
+            @Named("FieldNoteEditText") EditText editText,
+            @Named("FieldNoteCaveat") TextView fieldnoteCaveat) {
         mFieldnoteStringsFVsDnf = fieldnoteStringsFVsDnf;
-        mDnf = dnf;
         mEditText = editText;
         mFieldnoteCaveat = fieldnoteCaveat;
     }
@@ -38,10 +41,10 @@ public class DialogHelperCommon {
         Linkify.addLinks(mFieldnoteCaveat, Linkify.WEB_URLS);
     }
 
-    public void configureEditor(String localDate) {
-        final String defaultMessage = mFieldnoteStringsFVsDnf.getString(R.array.default_msg, mDnf);
+    public void configureEditor(String localDate, boolean dnf) {
+        final String defaultMessage = mFieldnoteStringsFVsDnf.getString(R.array.default_msg, dnf);
         final String msg = String.format("(%1$s/%2$s) %3$s", localDate, mFieldnoteStringsFVsDnf
-                .getString(R.array.geobeagle_sig, mDnf), defaultMessage);
+                .getString(R.array.geobeagle_sig, dnf), defaultMessage);
         mEditText.setText(msg);
         final int len = msg.length();
         mEditText.setSelection(len - defaultMessage.length(), len);

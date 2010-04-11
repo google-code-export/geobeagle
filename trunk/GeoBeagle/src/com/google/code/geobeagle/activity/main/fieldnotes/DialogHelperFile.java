@@ -15,22 +15,25 @@
 package com.google.code.geobeagle.activity.main.fieldnotes;
 
 import com.google.code.geobeagle.R;
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
 
 import android.app.Dialog;
 import android.content.Context;
 import android.widget.TextView;
 
 public class DialogHelperFile implements DialogHelper {
-    private Context mContext;
+    private final Context mContext;
     private final TextView mFieldnoteCaveat;
 
-    public DialogHelperFile(TextView fieldNoteCaveat, Context context) {
+    @Inject
+    public DialogHelperFile(@Named("FieldNoteCaveat") TextView fieldNoteCaveat, Context context) {
         mFieldnoteCaveat = fieldNoteCaveat;
         mContext = context;
     }
 
     @Override
-    public void configureEditor() {
+    public void configureEditor(int geocacheIdLength, boolean fDnf) {
     }
 
     @Override

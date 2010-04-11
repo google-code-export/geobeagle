@@ -18,7 +18,7 @@ import android.app.Dialog;
 
 public interface DialogHelper {
 
-    public abstract void configureEditor();
+    public abstract void configureEditor(int GeocacheIdLength, boolean fDnf);
 
     public abstract void configureDialogText(Dialog dialog);
 }

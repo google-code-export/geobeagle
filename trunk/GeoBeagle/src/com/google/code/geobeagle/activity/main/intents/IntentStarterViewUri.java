@@ -15,6 +15,7 @@
 package com.google.code.geobeagle.activity.main.intents;
 
 import com.google.code.geobeagle.activity.main.GeoBeagle;
+import com.google.inject.Inject;
 
 import android.content.Intent;
 
@@ -23,6 +24,7 @@ public class IntentStarterViewUri implements IntentStarter {
     private final GeocacheToUri mGeocacheToUri;
     private final IntentFactory mIntentFactory;
 
+    @Inject
     public IntentStarterViewUri(GeoBeagle geoBeagle, IntentFactory intentFactory,
             GeocacheToUri geocacheToUri) {
         mGeoBeagle = geoBeagle;

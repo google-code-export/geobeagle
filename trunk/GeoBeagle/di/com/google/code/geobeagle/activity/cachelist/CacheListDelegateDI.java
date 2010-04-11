@@ -125,7 +125,7 @@ public class CacheListDelegateDI {
         final CombinedLocationManager combinedLocationManager = new CombinedLocationManager(
                 locationManager, locationListeners);
         final GeocacheFactory geocacheFactory = new GeocacheFactory();
-        Injector injector = listActivity.getInjector();
+        final Injector injector = listActivity.getInjector();
         LocationControlBuffered locationControlBuffered = injector.getInstance(LocationControlBuffered.class);
         final GeocacheFromMyLocationFactory geocacheFromMyLocationFactory = new GeocacheFromMyLocationFactory(
                 geocacheFactory, locationControlBuffered);

@@ -24,6 +24,7 @@ import android.util.Log;
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.database.DatabaseDI;
 import com.google.code.geobeagle.database.DatabaseDI.GeoBeagleSqliteOpenHelper;
+import com.google.inject.Inject;
 
 /**
  * Will develop to represent the front-end to access a database. It takes
@@ -38,6 +39,7 @@ public class DbFrontend {
     private boolean mIsDatabaseOpen;
     private GeoBeagleSqliteOpenHelper mSqliteOpenHelper;
 
+    @Inject
     public DbFrontend(Context context) {
         mContext = context;
         mIsDatabaseOpen = false;

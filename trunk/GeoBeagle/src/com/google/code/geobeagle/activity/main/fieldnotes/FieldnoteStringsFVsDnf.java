@@ -14,11 +14,14 @@
 
 package com.google.code.geobeagle.activity.main.fieldnotes;
 
+import com.google.inject.Inject;
+
 import android.content.res.Resources;
 
 public class FieldnoteStringsFVsDnf {
     private final Resources mResources;
 
+    @Inject
     public FieldnoteStringsFVsDnf(Resources resources) {
         mResources = resources;
     }

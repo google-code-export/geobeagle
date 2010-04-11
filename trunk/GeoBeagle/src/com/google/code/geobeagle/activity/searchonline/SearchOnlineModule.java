@@ -16,7 +16,6 @@ package com.google.code.geobeagle.activity.searchonline;
 
 import com.google.code.geobeagle.LocationControlBuffered;
 import com.google.code.geobeagle.LocationControlProvider;
-import com.google.code.geobeagle.CompassListener.Azimuth;
 import com.google.code.geobeagle.activity.ActivityDI;
 import com.google.code.geobeagle.activity.ActivitySaver;
 import com.google.code.geobeagle.activity.cachelist.presenter.DistanceFormatterManager;
@@ -44,7 +43,6 @@ public class SearchOnlineModule extends AbstractAndroidModule {
     @Override
     protected void configure() {
         bindConstant().annotatedWith(SharedPreferencesName.class).to("GeoBeagle");
-        bindConstant().annotatedWith(Azimuth.class).to(720f);
 
         bind(LocationControlBuffered.class).toProvider(LocationControlProvider.class);
         bind(DistanceFormatterManager.class).toProvider(DistanceFormatterManagerProvider.class);
