@@ -14,7 +14,10 @@
 
 package com.google.code.geobeagle.database;
 
-import com.google.code.geobeagle.GeocacheList;
+import com.google.code.geobeagle.Geocache;
+
+import java.util.AbstractList;
+
 
 /**
  * Strategy to only invalidate/reload the list of caches when the bounds are
@@ -85,14 +88,14 @@ public class CachesProviderLazyArea implements ICachesProviderArea {
     }
 
     @Override
-    public GeocacheList getCaches() {
+    public AbstractList<Geocache> getCaches() {
         return getCaches(MAX_COUNT);
     }
 
     @Override
-    public GeocacheList getCaches(int maxCount) {
+    public AbstractList<Geocache> getCaches(int maxCount) {
         // Reading one extra cache to see if there are too many
-        GeocacheList caches = mCachesProviderArea.getCaches(maxCount + 1);
+        AbstractList<Geocache> caches = mCachesProviderArea.getCaches(maxCount + 1);
         mCachesProviderArea.resetChanged();
         return mPeggedCacheProvider.pegCaches(maxCount, caches);
     }

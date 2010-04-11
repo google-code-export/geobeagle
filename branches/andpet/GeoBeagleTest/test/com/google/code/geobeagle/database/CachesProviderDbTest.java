@@ -7,7 +7,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import com.google.code.geobeagle.CacheFilter;
-import com.google.code.geobeagle.GeocacheList;
+import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.GeocacheListPrecomputed;
 
 import org.easymock.EasyMock;
@@ -20,6 +20,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 
 import android.util.Log;
 
+import java.util.AbstractList;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -95,7 +96,7 @@ public class CachesProviderDbTest {
         Set<Integer> tags = new HashSet<Integer>();
         tags.add(0);
         
-        GeocacheList list1 = new GeocacheListPrecomputed();
+        AbstractList<Geocache> list1 = new GeocacheListPrecomputed();
         expect(mDbFrontend.loadCachesRaw("SELECT Id FROM CACHES")).andReturn(list1);
         expect(mDbFrontend.loadCachesRaw("SELECT Id FROM CACHES WHERE CacheType = 1")).andReturn(list1);
         expect(mDbFrontend.countRaw((String)EasyMock.anyObject())).andReturn(0).anyTimes();

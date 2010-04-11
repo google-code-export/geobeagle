@@ -1,9 +1,11 @@
 package com.google.code.geobeagle.database;
 
 import com.google.code.geobeagle.Clock;
-import com.google.code.geobeagle.GeocacheList;
+import com.google.code.geobeagle.Geocache;
 
 import android.util.Log;
+
+import java.util.AbstractList;
 
 /**
  * Finds the caches that are closest to a certain point. 
@@ -22,7 +24,7 @@ public class CachesProviderCount implements ICachesProviderCenter {
     /* The max acceptable number of caches */
     private int mMaxCount;
     private double mRadius;
-    private GeocacheList mCaches;
+    private AbstractList<Geocache> mCaches;
     
     /** Number of caches within mRadius */
     private int mCount;
@@ -47,7 +49,7 @@ public class CachesProviderCount implements ICachesProviderCenter {
     }
     
     @Override
-    public GeocacheList getCaches() {
+    public AbstractList<Geocache> getCaches() {
         if (mCachesProviderRadius.hasChanged()) {
             mCaches = null;
             mIsCountValid = false;

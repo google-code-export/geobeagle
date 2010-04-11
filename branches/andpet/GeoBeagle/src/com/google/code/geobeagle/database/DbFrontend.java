@@ -14,23 +14,22 @@
 
 package com.google.code.geobeagle.database;
 
-import java.util.ArrayList;
+import com.google.code.geobeagle.Clock;
+import com.google.code.geobeagle.Geocache;
+import com.google.code.geobeagle.GeocacheFactory;
+import com.google.code.geobeagle.GeocacheListLazy;
+import com.google.code.geobeagle.GeocacheListPrecomputed;
+import com.google.code.geobeagle.Tags;
+import com.google.code.geobeagle.database.DatabaseDI.GeoBeagleSqliteOpenHelper;
+import com.google.code.geobeagle.database.DatabaseDI.SQLiteWrapper;
 
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
-import com.google.code.geobeagle.Clock;
-import com.google.code.geobeagle.Geocache;
-import com.google.code.geobeagle.GeocacheFactory;
-import com.google.code.geobeagle.GeocacheList;
-import com.google.code.geobeagle.GeocacheListLazy;
-import com.google.code.geobeagle.GeocacheListPrecomputed;
-import com.google.code.geobeagle.Tags;
-import com.google.code.geobeagle.database.DatabaseDI;
-import com.google.code.geobeagle.database.DatabaseDI.GeoBeagleSqliteOpenHelper;
-import com.google.code.geobeagle.database.DatabaseDI.SQLiteWrapper;
+import java.util.AbstractList;
+import java.util.ArrayList;
 
 /**
  * Represents the front-end to access a database. It takes
@@ -88,13 +87,13 @@ public class DbFrontend {
         mDatabase = null;
     }
 
-    public GeocacheList loadCachesPrecomputed(String where) {
+    public AbstractList<Geocache> loadCachesPrecomputed(String where) {
         return loadCachesPrecomputed(where, -1);
     }
 
     /** If 'where' is null, returns all caches 
      * @param maxResults if <= 0, means no limit */
-    public GeocacheList loadCachesPrecomputed(String where, int maxResults) {
+    public AbstractList<Geocache> loadCachesPrecomputed(String where, int maxResults) {
         openDatabase();
 
         String limit = null;
@@ -122,14 +121,14 @@ public class DbFrontend {
     }
 
     /** If 'where' is null, returns all caches */
-    public GeocacheList loadCaches(String where) {
+    public AbstractList<Geocache> loadCaches(String where) {
         return loadCaches(where, -1);
     }
 
     /** If 'where' is null, returns all caches.
      * Loads the caches when first used, not from this method.
      * @param maxResults if <= 0, means no limit */
-    public GeocacheList loadCaches(String where, int maxResults) {
+    public AbstractList<Geocache> loadCaches(String where, int maxResults) {
         openDatabase();
 
         String limit = null;
@@ -160,7 +159,7 @@ public class DbFrontend {
 
     /** @param sqlQuery A complete SQL query to be executed. 
      * The query must return the id's of geocaches. */
-    public GeocacheList loadCachesRaw(String sqlQuery) {
+    public AbstractList<Geocache> loadCachesRaw(String sqlQuery) {
         openDatabase();
 
         long start = mClock.getCurrentTime();

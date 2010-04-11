@@ -1,6 +1,8 @@
 package com.google.code.geobeagle.database;
 
-import com.google.code.geobeagle.GeocacheList;
+import com.google.code.geobeagle.Geocache;
+
+import java.util.AbstractList;
 
 //TODO: Remove this class and replace by a mechanism to change CachesProvider in CacheListAdapter
 public class CachesProviderToggler implements ICachesProviderCenter {
@@ -27,7 +29,7 @@ public class CachesProviderToggler implements ICachesProviderCenter {
     }
     
     @Override
-    public GeocacheList getCaches() {
+    public AbstractList<Geocache> getCaches() {
         return (mNearest ? mCachesProviderCenter : mCachesProviderAll).getCaches();
     }
 

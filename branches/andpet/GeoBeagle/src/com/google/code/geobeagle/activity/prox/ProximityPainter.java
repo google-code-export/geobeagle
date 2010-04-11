@@ -1,10 +1,10 @@
 package com.google.code.geobeagle.activity.prox;
 
 import com.google.code.geobeagle.Geocache;
-import com.google.code.geobeagle.GeocacheList;
 import com.google.code.geobeagle.GeocacheListPrecomputed;
 import com.google.code.geobeagle.activity.main.GeoUtils;
 import com.google.code.geobeagle.database.CachesProviderCount;
+
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.DashPathEffect;
@@ -15,6 +15,8 @@ import android.graphics.Shader;
 import android.graphics.Paint.Style;
 import android.graphics.Shader.TileMode;
 import android.util.Log;
+
+import java.util.AbstractList;
 
 public class ProximityPainter {
     //private int mUserX;
@@ -205,7 +207,7 @@ public class ProximityPainter {
             }
         }
         
-        GeocacheList caches = mCachesProvider.getCaches();
+        AbstractList<Geocache> caches = mCachesProvider.getCaches();
         //Draw all geocaches and lines to them
         if (mCachesProvider.hasChanged()) {
             Log.d("GeoBeagle", "ProximityPainter drawing " + caches.size() + " caches");

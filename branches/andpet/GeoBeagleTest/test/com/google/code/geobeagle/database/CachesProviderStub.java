@@ -14,7 +14,6 @@
 package com.google.code.geobeagle.database;
 
 import com.google.code.geobeagle.Geocache;
-import com.google.code.geobeagle.GeocacheList;
 import com.google.code.geobeagle.GeocacheListPrecomputed;
 
 import java.util.ArrayList;
@@ -42,7 +41,7 @@ class CachesProviderStub implements ICachesProviderArea {
     }
 
     /** maxCount <= 0 means no limit */
-    private GeocacheList fetchCaches(int maxCount) {
+    private GeocacheListPrecomputed fetchCaches(int maxCount) {
         if (!mIsInitialized)
             return new GeocacheListPrecomputed(mGeocaches);
         
@@ -61,12 +60,12 @@ class CachesProviderStub implements ICachesProviderArea {
     }
     
     @Override
-    public GeocacheList getCaches() {
+    public GeocacheListPrecomputed getCaches() {
         return fetchCaches(-1);
     }
 
     @Override
-    public GeocacheList getCaches(int maxCount) {
+    public GeocacheListPrecomputed getCaches(int maxCount) {
         return fetchCaches(maxCount);
     }
     

@@ -1,12 +1,14 @@
 package com.google.code.geobeagle.database;
 
-import com.google.code.geobeagle.GeocacheList;
+import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.GeocacheListPrecomputed;
 import com.google.code.geobeagle.IPausable;
 import com.google.code.geobeagle.Refresher;
 
 import android.os.Handler;
 import android.util.Log;
+
+import java.util.AbstractList;
 
 /** Runs the decorated ICachesProviderCenter asynchronously. 
  * setCenter() therefore takes an extra parameter.
@@ -26,7 +28,7 @@ public class CachesProviderCenterThread implements ICachesProvider, IPausable {
     private final ICachesProviderCenter mProvider;
 
     /** Only replaced from the extra thread */
-    private GeocacheList mGeocaches = GeocacheListPrecomputed.EMPTY;
+    private AbstractList<Geocache> mGeocaches = GeocacheListPrecomputed.EMPTY;
     
     private boolean mHasChanged = true;
 
@@ -64,7 +66,7 @@ public class CachesProviderCenterThread implements ICachesProvider, IPausable {
             Log.d("GeoBeagle", "Thread has slept for 2 sec");
             */
             mProvider.setCenter(mLatitude, mLongitude);
-            GeocacheList result = mProvider.getCaches();
+            AbstractList<Geocache> result = mProvider.getCaches();
             if (result.equals(mGeocaches)) {
                 Log.d("GeoBeagle", "Thread finished calculating: the list didn't change");
                 registerResult(mLatitude, mLongitude, mGeocaches, false);
@@ -78,7 +80,7 @@ public class CachesProviderCenterThread implements ICachesProvider, IPausable {
 
     /** Called by the extra thread to atomically update the state */
     private synchronized void registerResult(double latitude, double longitude,
-            GeocacheList geocacheList, boolean changed) {
+            AbstractList<Geocache> geocacheList, boolean changed) {
         mCalculatedLatitude = latitude;
         mCalculatedLongitude = longitude;
         mGeocaches = geocacheList;
@@ -131,7 +133,7 @@ public class CachesProviderCenterThread implements ICachesProvider, IPausable {
     }
     
     @Override
-    public GeocacheList getCaches() {
+    public AbstractList<Geocache> getCaches() {
         //Don't calculate anything here -- just present previous results
         return mGeocaches;
     }

@@ -15,7 +15,6 @@
 package com.google.code.geobeagle.database;
 
 import com.google.code.geobeagle.Geocache;
-import com.google.code.geobeagle.GeocacheList;
 import com.google.code.geobeagle.GeocacheListPrecomputed;
 import com.google.code.geobeagle.activity.main.GeoUtils;
 import com.google.code.geobeagle.activity.main.Util;
@@ -23,6 +22,7 @@ import com.google.code.geobeagle.database.DistanceAndBearing.IDistanceAndBearing
 
 import android.util.Log;
 
+import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -39,7 +39,7 @@ IDistanceAndBearingProvider {
     private double mLatitude;
     private double mLongitude;
     /** Value is null if the list needs to be re-sorted */
-    private GeocacheList mSortedList = null;
+    private AbstractList<Geocache> mSortedList = null;
     private DistanceComparator mDistanceComparator;
     private boolean isInitialized = false;
 
@@ -82,7 +82,7 @@ IDistanceAndBearingProvider {
             //No need to update
             return;
 
-        final GeocacheList unsortedList = mCachesProvider.getCaches();
+        final AbstractList<Geocache> unsortedList = mCachesProvider.getCaches();
         ArrayList<Geocache> sortedList = new ArrayList<Geocache>(unsortedList);
 
         Collections.sort(sortedList, mDistanceComparator);
@@ -90,7 +90,7 @@ IDistanceAndBearingProvider {
     }
 
     @Override
-    public GeocacheList getCaches() {
+    public AbstractList<Geocache> getCaches() {
         if (!isInitialized) {
             return mCachesProvider.getCaches();
         }

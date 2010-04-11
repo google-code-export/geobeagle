@@ -14,11 +14,10 @@
 
 package com.google.code.geobeagle.activity.map;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.Projection;
-import com.google.code.geobeagle.GeocacheList;
 import com.google.code.geobeagle.GeocacheListPrecomputed;
 import com.google.code.geobeagle.database.CachesProviderLazyArea;
 
@@ -59,7 +58,7 @@ public class CachePinsOverlayFactoryTest {
         Projection projection = PowerMock.createMock(Projection.class);
         GeoPoint newTopLeft = PowerMock.createMock(GeoPoint.class);
         GeoPoint newBottomRight = PowerMock.createMock(GeoPoint.class);
-        GeocacheList list = new GeocacheListPrecomputed();
+        GeocacheListPrecomputed list = new GeocacheListPrecomputed();
 
         EasyMock.expect(geoMapView.getProjection()).andReturn(projection);
         EasyMock.expect(projection.fromPixels(0, 0)).andReturn(newTopLeft);

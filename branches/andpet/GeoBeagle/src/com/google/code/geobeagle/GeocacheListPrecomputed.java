@@ -1,5 +1,6 @@
 package com.google.code.geobeagle;
 
+import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -8,7 +9,7 @@ import java.util.Iterator;
  * 
  * A future implementation can fetch 
  * the geocaches from the database when first needed */
-public class GeocacheListPrecomputed extends GeocacheList {
+public class GeocacheListPrecomputed extends AbstractList<Geocache> {
     private final ArrayList<Geocache> mList;
 
     public static GeocacheListPrecomputed EMPTY =
@@ -23,24 +24,9 @@ public class GeocacheListPrecomputed extends GeocacheList {
     }
     
     /** 'Special' constructor used by ProximityPainter */
-    public GeocacheListPrecomputed(GeocacheList list, Geocache extra) {
+    public GeocacheListPrecomputed(AbstractList<Geocache> list, Geocache extra) {
         mList = new ArrayList<Geocache>(list);
         mList.add(extra);
-    }
-
-    //Actually the default AbstractList implementation might suffice
-    public boolean equals(GeocacheListPrecomputed otherList) {
-        if (otherList == this || otherList.mList == mList)
-            return true;
-        
-        if (mList.size() != otherList.mList.size())
-            return false;
-        
-        for (int i = 0; i < mList.size(); i++) {
-            if (mList.get(i) != otherList.mList.get(i))
-                return false;
-        }
-        return true;
     }
 
     @Override
@@ -53,6 +39,7 @@ public class GeocacheListPrecomputed extends GeocacheList {
         return mList.size();
     }
     
+    @Override
     public Geocache get(int position) {
         return mList.get(position);
     }

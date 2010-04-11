@@ -17,12 +17,13 @@ package com.google.code.geobeagle.activity.map;
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapView;
 import com.google.android.maps.Projection;
-import com.google.code.geobeagle.GeocacheList;
+import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.IToaster;
 import com.google.code.geobeagle.database.CachesProviderLazyArea;
 
 import android.util.Log;
 
+import java.util.AbstractList;
 import java.util.List;
 
 class DensityPatchManager {
@@ -55,7 +56,7 @@ class DensityPatchManager {
             return mDensityPatches;
         }
 
-        GeocacheList list = mLazyArea.getCaches();
+        AbstractList<Geocache> list = mLazyArea.getCaches();
         mToaster.showToast(mLazyArea.tooManyCaches());
         
         mLazyArea.resetChanged();

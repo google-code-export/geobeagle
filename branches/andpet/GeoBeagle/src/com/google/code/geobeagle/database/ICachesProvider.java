@@ -1,6 +1,8 @@
 package com.google.code.geobeagle.database;
 
-import com.google.code.geobeagle.GeocacheList;
+import com.google.code.geobeagle.Geocache;
+
+import java.util.AbstractList;
 
 /** Interface to access a subset of the cache database. 
  * Used to form a Decorator pattern. */
@@ -20,5 +22,5 @@ public interface ICachesProvider {
     //public int getCount(int maxRelevantCount);
 
     /** The returned list is considered immutable */
-    public GeocacheList getCaches();
+    public AbstractList<Geocache> getCaches();
 }

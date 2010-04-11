@@ -1,7 +1,9 @@
 package com.google.code.geobeagle.database;
 
-import com.google.code.geobeagle.GeocacheList;
+import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.GeocacheListPrecomputed;
+
+import java.util.AbstractList;
 
 public class CachesProviderWaitForInit implements ICachesProviderCenter {
     private final ICachesProviderCenter mProvider;
@@ -18,7 +20,7 @@ public class CachesProviderWaitForInit implements ICachesProviderCenter {
     }
 
     @Override
-    public GeocacheList getCaches() {
+    public AbstractList<Geocache> getCaches() {
         if (!mInited)
             return GeocacheListPrecomputed.EMPTY;
         return mProvider.getCaches();

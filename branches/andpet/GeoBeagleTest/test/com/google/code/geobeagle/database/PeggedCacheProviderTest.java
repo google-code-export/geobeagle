@@ -14,9 +14,11 @@
 
 package com.google.code.geobeagle.database;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
-import com.google.code.geobeagle.GeocacheList;
+import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.GeocacheListPrecomputed;
 import com.google.code.geobeagle.Toaster.OneTimeToaster;
 
@@ -26,11 +28,14 @@ import org.junit.runner.RunWith;
 import org.powermock.api.easymock.PowerMock;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import java.util.AbstractList;
+import java.util.ArrayList;
+
 @RunWith(PowerMockRunner.class)
 public class PeggedCacheProviderTest {
     @Test
     public void testPegCachesNotPegged() {
-        GeocacheList caches = PowerMock.createMock(GeocacheList.class);
+        AbstractList<Geocache> caches = new ArrayList<Geocache>();
         OneTimeToaster oneTimeToaster = PowerMock
                 .createMock(OneTimeToaster.class);
 
@@ -48,7 +53,7 @@ public class PeggedCacheProviderTest {
 
     @Test
     public void testPegCachesPegged() {
-        GeocacheList caches = PowerMock.createMock(GeocacheList.class);
+        AbstractList<Geocache> caches = new ArrayList<Geocache>();
         OneTimeToaster oneTimeToaster = PowerMock
                 .createMock(OneTimeToaster.class);
 

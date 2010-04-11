@@ -20,7 +20,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import com.google.code.geobeagle.Geocache;
-import com.google.code.geobeagle.GeocacheList;
 import com.google.code.geobeagle.GeocacheListPrecomputed;
 import com.google.code.geobeagle.database.CachesProviderLazyArea.CoordinateManager;
 
@@ -30,6 +29,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.api.easymock.PowerMock;
 import org.powermock.modules.junit4.PowerMockRunner;
+
+import java.util.AbstractList;
+import java.util.ArrayList;
 
 @RunWith(PowerMockRunner.class)
 public class CachesProviderLazyAreaTest {
@@ -52,7 +54,7 @@ public class CachesProviderLazyAreaTest {
         EasyMock.expect(peggedCacheProvider.isTooManyCaches()).andReturn(false);
         EasyMock.expect(coordinateManager.atLeastOneSideIsSmaller(0, 0, 5, 5))
                 .andReturn(false);
-        GeocacheList caches = mCachesProviderStub.getCaches();
+        GeocacheListPrecomputed caches = mCachesProviderStub.getCaches();
         EasyMock.expect(peggedCacheProvider.pegCaches(1000, caches)).andReturn(
                 caches).anyTimes();
         mCachesProviderStub.addCache(cache1);
@@ -84,11 +86,11 @@ public class CachesProviderLazyAreaTest {
     public void testGetCaches() {
         ICachesProviderArea area = PowerMock
                 .createMock(ICachesProviderArea.class);
-        GeocacheList cacheList = PowerMock.createMock(GeocacheList.class);
         PeggedCacheProvider peggedCacheProvider = PowerMock
                 .createMock(PeggedCacheProvider.class);
-        GeocacheList peggedCacheList = PowerMock.createMock(GeocacheList.class);
 
+        AbstractList<Geocache> peggedCacheList = new ArrayList<Geocache>();
+        AbstractList<Geocache> cacheList = new ArrayList<Geocache>();
         EasyMock.expect(area.getCaches(CachesProviderLazyArea.MAX_COUNT + 1))
                 .andReturn(cacheList);
         area.resetChanged();
@@ -135,7 +137,7 @@ public class CachesProviderLazyAreaTest {
     public void testGetCachesTooMany() {
         ICachesProviderArea area = PowerMock
                 .createMock(ICachesProviderArea.class);
-        GeocacheList cacheList = PowerMock.createMock(GeocacheList.class);
+        AbstractList<Geocache> cacheList = new ArrayList<Geocache>();
         PeggedCacheProvider peggedCacheProvider = PowerMock
                 .createMock(PeggedCacheProvider.class);
 

@@ -1,9 +1,10 @@
 package com.google.code.geobeagle.database;
 
 import com.google.code.geobeagle.CacheFilter;
-import com.google.code.geobeagle.GeocacheList;
+import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.activity.main.Util;
 
+import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
@@ -20,7 +21,7 @@ public class CachesProviderDb implements ICachesProviderArea {
     /** The complete SQL query for the current coordinates and settings,
      *  except from 'SELECT x'. If null, mSql needs to be re-calculated. */
     private String mSql = null;
-    private GeocacheList mCaches;
+    private AbstractList<Geocache> mCaches;
     private boolean mHasChanged = true;
     private boolean mHasLimits = false;
     /** The 'where' part of the SQL clause that comes from the active CacheFilter */ 
@@ -114,7 +115,7 @@ public class CachesProviderDb implements ICachesProviderArea {
     }
     
     @Override
-    public GeocacheList getCaches() {
+    public AbstractList<Geocache> getCaches() {
         if (mCaches == null || mCachesCappedToCount > 0) {
             mCaches = mDbFrontend.loadCachesRaw("SELECT Id " + getSql());
         }
@@ -122,7 +123,7 @@ public class CachesProviderDb implements ICachesProviderArea {
     }
 
     @Override
-    public GeocacheList getCaches(int maxResults) {
+    public AbstractList<Geocache> getCaches(int maxResults) {
         if (mCaches == null || (mCachesCappedToCount > 0 && 
                                 mCachesCappedToCount < maxResults)) {
             mCaches = mDbFrontend.loadCachesRaw("SELECT Id " + getSql() + " LIMIT 0, " + maxResults);

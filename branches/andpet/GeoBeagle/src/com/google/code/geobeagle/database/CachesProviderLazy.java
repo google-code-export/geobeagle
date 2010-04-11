@@ -1,8 +1,10 @@
 package com.google.code.geobeagle.database;
 
 import com.google.code.geobeagle.Clock;
-import com.google.code.geobeagle.GeocacheList;
+import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.activity.main.GeoUtils;
+
+import java.util.AbstractList;
 
 /** Currently this class doesn't serve a purpose since the same functionality 
  * is in GeoFixProviderLive.
@@ -13,7 +15,7 @@ public class CachesProviderLazy implements ICachesProviderCenter {
     /** The position mBufferedList reflects */
     private double mBufferedLat;
     private double mBufferedLon;
-    private GeocacheList mBufferedList;
+    private AbstractList<Geocache> mBufferedList;
     
     /** The current center as asked for by the user of this object */
     private double mLastLat;
@@ -51,7 +53,7 @@ public class CachesProviderLazy implements ICachesProviderCenter {
     }
 
     @Override
-    public GeocacheList getCaches() {
+    public AbstractList<Geocache> getCaches() {
         if (mBufferedList == null) {
             mBufferedList = mProvider.getCaches();
             mProvider.resetChanged();
