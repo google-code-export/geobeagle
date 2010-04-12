@@ -126,8 +126,8 @@ public class Geocache {
                 overlayIcon = resources.getDrawable(R.drawable.overlay_found_cacheview);
             else if (dbFrontend.geocacheHasTag(getId(), Tags.DNF))
                 overlayIcon = resources.getDrawable(R.drawable.overlay_dnf_cacheview);
-            else if (dbFrontend.geocacheHasTag(getId(), Tags.NEW))
-                overlayIcon = resources.getDrawable(R.drawable.overlay_new_cacheview);
+//            else if (dbFrontend.geocacheHasTag(getId(), Tags.NEW))
+//                overlayIcon = resources.getDrawable(R.drawable.overlay_new_cacheview);
             
             mIcon = graphicsGenerator.createIcon(this, overlayIcon, resources);
         }
