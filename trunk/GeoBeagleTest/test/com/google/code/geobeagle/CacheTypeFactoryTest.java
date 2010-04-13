@@ -31,10 +31,15 @@ public class CacheTypeFactoryTest {
         CacheTypeFactory cacheTypeFactory = new CacheTypeFactory();
         assertEquals(CacheType.NULL, cacheTypeFactory.fromTag("bad string"));
         assertEquals(CacheType.TRADITIONAL, cacheTypeFactory.fromTag("Traditional Cache"));
+        assertEquals(CacheType.EARTHCACHE, cacheTypeFactory.fromTag("Earthcache"));
+        assertEquals(CacheType.TRADITIONAL, cacheTypeFactory.fromTag("Traditional"));
         assertEquals(CacheType.TRADITIONAL, cacheTypeFactory.fromTag("traditional"));
         assertEquals(CacheType.MULTI, cacheTypeFactory.fromTag("Multi-cache"));
-        assertEquals(CacheType.MULTI, cacheTypeFactory.fromTag("multi"));
-        assertEquals(CacheType.UNKNOWN, cacheTypeFactory.fromTag("unknown"));
+        assertEquals(CacheType.MULTI, cacheTypeFactory.fromTag("Multi"));
+        assertEquals(CacheType.UNKNOWN, cacheTypeFactory.fromTag("Unknown Cache"));
+        assertEquals(CacheType.EVENT, cacheTypeFactory.fromTag("Event Cache"));
+        assertEquals(CacheType.EVENT, cacheTypeFactory.fromTag("Event"));
+        assertEquals(CacheType.MEGA, cacheTypeFactory.fromTag("Mega-Event"));
     }
 
     @Test

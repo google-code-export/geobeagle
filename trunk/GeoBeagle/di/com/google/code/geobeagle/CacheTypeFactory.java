@@ -16,26 +16,20 @@ public class CacheTypeFactory {
     }
 
     public CacheType fromTag(String tag) {
-        for (CacheType cacheType : mCacheTypes.values()) {
-            if (tag.equals(cacheType.getTag()))
-                return cacheType;
-        }
-        
-        //Quick-n-dirty way of implementing additional names for certain cache types
-        if (tag.equals("Traditional Cache"))
-            return CacheType.TRADITIONAL;
-        if (tag.equals("Multi-cache"))
-            return CacheType.MULTI;
-        if (tag.equals("Virtual"))
-            return CacheType.VIRTUAL;
-        if (tag.equals("Event"))
-            return CacheType.EVENT;
-        if (tag.equals("Webcam"))
-            return CacheType.WEBCAM;
-        if (tag.equals("Earth"))
-            return CacheType.EARTHCACHE;
+        String tagLower = tag.toLowerCase();
+        int longestMatch = 0;
 
-        return CacheType.NULL;
+        CacheType result = CacheType.NULL;
+        for (CacheType cacheType : mCacheTypes.values()) {
+            if (tagLower.contains(cacheType.getTag()) && cacheType.getTag().length() > longestMatch) {
+                result = cacheType;
+                longestMatch = cacheType.getTag().length();
+                // Necessary to continue the search to find mega-events and
+                // individual waypoint types.
+            }
+        }
+
+        return result;
     }
 
     public int container(String container) {
