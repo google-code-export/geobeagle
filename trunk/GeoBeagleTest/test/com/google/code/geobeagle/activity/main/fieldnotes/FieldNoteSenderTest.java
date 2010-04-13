@@ -102,7 +102,7 @@ public class FieldNoteSenderTest {
         editText.setSelection(16, 22);
         PowerMock.replayAll();
         new DialogHelperCommon(fieldnoteStringsFVsDnf, editText, editText)
-                .configureEditor("12:36 PM");
+                .configureEditor("12:36 PM", false);
         PowerMock.verifyAll();
     }
 
@@ -155,7 +155,7 @@ public class FieldNoteSenderTest {
         editText.setFilters((InputFilter[])EasyMock.anyObject());
 
         PowerMock.replayAll();
-        new DialogHelperSms(fieldnoteStringsFVsDnf, editText, editText).configureEditor();
+        new DialogHelperSms(fieldnoteStringsFVsDnf, editText, editText, 5, false).configureEditor();
         PowerMock.verifyAll();
     }
 
@@ -168,7 +168,7 @@ public class FieldNoteSenderTest {
         dialog.setTitle(R.string.log_cache_with_sms);
 
         PowerMock.replayAll();
-        new DialogHelperSms(null, null, fieldNoteCaveat).configureDialogText(dialog);
+        new DialogHelperSms(null, null, fieldNoteCaveat, 0, false).configureDialogText(dialog);
         PowerMock.verifyAll();
     }
 
@@ -199,12 +199,11 @@ public class FieldNoteSenderTest {
                 .andReturn(true);
         dialogHelperCommon.configureDialogText();
         dialogHelperFile.configureDialogText(dialog);
-        dialogHelperCommon.configureEditor(null);
+        dialogHelperCommon.configureEditor(null, false);
         dialogHelperFile.configureEditor();
 
         PowerMock.replayAll();
-        new FieldnoteLogger(dialogHelperCommon, dialogHelperFile, null).onPrepareDialog(dialog,
-                defaultSharedPreferences, null);
+        new FieldnoteLogger(dialogHelperCommon, dialogHelperFile, null, defaultSharedPreferences).onPrepareDialog(dialog, null, false);
         PowerMock.verifyAll();
     }
 
@@ -219,12 +218,12 @@ public class FieldNoteSenderTest {
                 .andReturn(false);
         dialogHelperCommon.configureDialogText();
         dialogHelperSms.configureDialogText(dialog);
-        dialogHelperCommon.configureEditor(null);
+        dialogHelperCommon.configureEditor(null, false);
         dialogHelperSms.configureEditor();
 
         PowerMock.replayAll();
-        new FieldnoteLogger(dialogHelperCommon, null, dialogHelperSms).onPrepareDialog(dialog,
-                defaultSharedPreferences, null);
+        new FieldnoteLogger(dialogHelperCommon, null, dialogHelperSms,
+                defaultSharedPreferences).onPrepareDialog(dialog, null, false);
         PowerMock.verifyAll();
     }
 

@@ -33,7 +33,7 @@ public class DialogHelperFile implements DialogHelper {
     }
 
     @Override
-    public void configureEditor(int geocacheIdLength, boolean fDnf) {
+    public void configureEditor() {
     }
 
     @Override

@@ -16,6 +16,7 @@ package com.google.code.geobeagle.activity.main.fieldnotes;
 
 import com.google.code.geobeagle.R;
 import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
 import com.google.inject.name.Named;
 
 import android.app.Dialog;
@@ -28,21 +29,30 @@ public class DialogHelperSms implements DialogHelper {
     private final EditText mEditText;
     private final TextView mFieldnoteCaveat;
     private final FieldnoteStringsFVsDnf mFieldnoteStringsFVsDnf;
+    private final int mGeocacheIdLength;
+    private final boolean mFDnf;
 
+    public interface DialogHelperSmsFactory {
+        public DialogHelperSms create(int geocacheIdLength, boolean fDnf);
+    }
+    
     @Inject
     public DialogHelperSms(FieldnoteStringsFVsDnf fieldnoteStringsFVsDnf,
             @Named("FieldNoteEditText") EditText editText,
-            @Named("FieldNoteCaveat") TextView fieldnoteCaveat) {
+            @Named("FieldNoteCaveat") TextView fieldnoteCaveat,
+            @Assisted int geocacheIdLength, @Assisted boolean fDnf) {
         mFieldnoteStringsFVsDnf = fieldnoteStringsFVsDnf;
         mEditText = editText;
         mFieldnoteCaveat = fieldnoteCaveat;
+        mGeocacheIdLength = geocacheIdLength;
+        mFDnf = fDnf;
     }
 
     @Override
-    public void configureEditor(int geocacheIdLength, boolean fDnf) {
+    public void configureEditor() {
         final LengthFilter lengthFilter = new LengthFilter(
-                160 - (geocacheIdLength + 1 + mFieldnoteStringsFVsDnf.getString(
-                        R.array.fieldnote_code, fDnf).length()));
+                160 - (mGeocacheIdLength + 1 + mFieldnoteStringsFVsDnf.getString(
+                        R.array.fieldnote_code, mFDnf).length()));
         mEditText.setFilters(new InputFilter[] {
             lengthFilter
         });

@@ -35,7 +35,7 @@ public class FieldnoteLogger {
     public interface OnClickOkFactory {
         public OnClickOk create(boolean dnf);
     }
-    
+
     public static class OnClickOk implements OnClickListener {
         private final CacheLogger mCacheLogger;
         private final boolean mDnf;
@@ -57,6 +57,10 @@ public class FieldnoteLogger {
         }
     }
 
+    public static interface FieldnoteLoggerFactory {
+        public FieldnoteLogger create(DialogHelperSms dialogHelperSms);
+    }
+
     static final String FIELDNOTES_FILE = "/sdcard/GeoBeagleFieldNotes.txt";
     private final DialogHelperCommon mDialogHelperCommon;
     private final DialogHelperFile mDialogHelperFile;
@@ -65,7 +69,7 @@ public class FieldnoteLogger {
 
     @Inject
     public FieldnoteLogger(DialogHelperCommon dialogHelperCommon,
-            DialogHelperFile dialogHelperFile, DialogHelperSms dialogHelperSms,
+            DialogHelperFile dialogHelperFile, @Assisted DialogHelperSms dialogHelperSms,
             SharedPreferences sharedPreferences) {
         mDialogHelperSms = dialogHelperSms;
         mDialogHelperFile = dialogHelperFile;
@@ -73,7 +77,7 @@ public class FieldnoteLogger {
         mSharedPreferences = sharedPreferences;
     }
 
-    public void onPrepareDialog(Dialog dialog, String localDate, boolean dnf, int cacheIdLength) {
+    public void onPrepareDialog(Dialog dialog, String localDate, boolean dnf) {
         final boolean fieldNoteTextFile = mSharedPreferences.getBoolean("field-note-text-file",
                 false);
         DialogHelper dialogHelper = fieldNoteTextFile ? mDialogHelperFile : mDialogHelperSms;
@@ -81,7 +85,7 @@ public class FieldnoteLogger {
         dialogHelper.configureDialogText(dialog);
         mDialogHelperCommon.configureDialogText();
 
-        dialogHelper.configureEditor(cacheIdLength, dnf);
+        dialogHelper.configureEditor();
         mDialogHelperCommon.configureEditor(localDate, dnf);
     }
 }

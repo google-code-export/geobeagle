@@ -16,6 +16,8 @@ package com.google.code.geobeagle.activity.main.fieldnotes;
 
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.main.GeoBeagle;
+import com.google.code.geobeagle.activity.main.fieldnotes.DialogHelperSms.DialogHelperSmsFactory;
+import com.google.code.geobeagle.activity.main.fieldnotes.FieldnoteLogger.FieldnoteLoggerFactory;
 import com.google.code.geobeagle.activity.main.fieldnotes.FieldnoteLogger.OnClickOk;
 import com.google.code.geobeagle.activity.main.fieldnotes.FieldnoteLogger.OnClickOkFactory;
 import com.google.code.geobeagle.xmlimport.GpxImporterDI.Toaster;
@@ -43,6 +45,10 @@ public class FieldnotesModule extends AbstractAndroidModule {
         bind(DateFormat.class).toInstance(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'"));
         bind(OnClickOkFactory.class).toProvider(
                 FactoryProvider.newFactory(OnClickOkFactory.class, OnClickOk.class));
+        bind(DialogHelperSmsFactory.class).toProvider(
+                FactoryProvider.newFactory(DialogHelperSmsFactory.class, DialogHelperSms.class));
+        bind(FieldnoteLoggerFactory.class).toProvider(
+                FactoryProvider.newFactory(FieldnoteLoggerFactory.class, FieldnoteLogger.class));
     }
 
     @Provides
@@ -58,7 +64,7 @@ public class FieldnotesModule extends AbstractAndroidModule {
     CharSequence providesGeocacheId(GeoBeagle geoBeagle) {
         return geoBeagle.getGeocache().getId();
     }
-    
+
     @Provides
     @Named("FieldNoteDialogView")
     View providesFieldNoteDialogView(GeoBeagle geoBeagle, LayoutInflater layoutInflater) {

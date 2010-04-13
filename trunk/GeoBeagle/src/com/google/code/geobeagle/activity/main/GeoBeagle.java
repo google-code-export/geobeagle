@@ -19,8 +19,11 @@ import com.google.code.geobeagle.LocationControlBuffered;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.R.id;
 import com.google.code.geobeagle.activity.main.GeoBeagleDelegate.LogFindClickListener;
+import com.google.code.geobeagle.activity.main.fieldnotes.DialogHelperSms;
 import com.google.code.geobeagle.activity.main.fieldnotes.FieldnoteLogger;
 import com.google.code.geobeagle.activity.main.fieldnotes.FieldnotesModule;
+import com.google.code.geobeagle.activity.main.fieldnotes.DialogHelperSms.DialogHelperSmsFactory;
+import com.google.code.geobeagle.activity.main.fieldnotes.FieldnoteLogger.FieldnoteLoggerFactory;
 import com.google.code.geobeagle.activity.main.fieldnotes.FieldnoteLogger.OnClickCancel;
 import com.google.code.geobeagle.activity.main.fieldnotes.FieldnoteLogger.OnClickOk;
 import com.google.code.geobeagle.activity.main.fieldnotes.FieldnoteLogger.OnClickOkFactory;
@@ -36,7 +39,6 @@ import com.google.inject.Key;
 import com.google.inject.name.Names;
 
 import roboguice.activity.GuiceActivity;
-import roboguice.inject.InjectView;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -131,9 +133,9 @@ public class GeoBeagle extends GuiceActivity {
         final View fieldnoteDialogView = injector.getInstance(Key.get(View.class, Names
                 .named("FieldNoteDialogView")));
 
-        final boolean dnf = id == R.id.menu_log_dnf;
+        final boolean fDnf = id == R.id.menu_log_dnf;
 
-        final OnClickOk onClickOk = injector.getInstance(OnClickOkFactory.class).create(dnf);
+        final OnClickOk onClickOk = injector.getInstance(OnClickOkFactory.class).create(fDnf);
         builder.setTitle(R.string.field_note_title);
         builder.setView(fieldnoteDialogView);
         builder.setNegativeButton(R.string.cancel, injector.getInstance(OnClickCancel.class));
@@ -148,9 +150,13 @@ public class GeoBeagle extends GuiceActivity {
         final Injector injector = getInjector();
 
         final boolean fDnf = id == R.id.menu_log_dnf;
-        final CharSequence geocacheId = mGeoBeagleDelegate.getGeocache().getId();
-        injector.getInstance(FieldnoteLogger.class).onPrepareDialog(dialog,
-                mLocalDateFormat.format(new Date()), fDnf, geocacheId.length());
+
+        final DialogHelperSms dialogHelperSms = injector.getInstance(DialogHelperSmsFactory.class)
+                .create(mGeoBeagleDelegate.getGeocache().getId().length(), fDnf);
+        final FieldnoteLogger fieldnoteLogger = injector.getInstance(FieldnoteLoggerFactory.class)
+                .create(dialogHelperSms);
+        
+        fieldnoteLogger.onPrepareDialog(dialog, mLocalDateFormat.format(new Date()), fDnf);
     }
 
     @Override
