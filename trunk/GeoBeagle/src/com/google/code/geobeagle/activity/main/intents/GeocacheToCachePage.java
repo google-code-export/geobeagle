@@ -19,7 +19,6 @@ import com.google.code.geobeagle.R;
 import com.google.inject.Inject;
 
 import android.content.res.Resources;
-import android.util.Log;
 
 /*
  * Convert a Geocache to the cache page url.
@@ -30,7 +29,6 @@ public class GeocacheToCachePage implements GeocacheToUri {
     @Inject
     public GeocacheToCachePage(Resources resources) {
         mResources = resources;
-        Log.d("GeoBeagle", "!!!!!!!!!!!!! gtocp");
     }
 
     // TODO: move strings into Provider enum.
