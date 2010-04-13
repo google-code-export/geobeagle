@@ -19,7 +19,6 @@ import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
 import android.text.util.Linkify;
-import android.util.Log;
 import android.widget.EditText;
 import android.widget.TextView;
 
