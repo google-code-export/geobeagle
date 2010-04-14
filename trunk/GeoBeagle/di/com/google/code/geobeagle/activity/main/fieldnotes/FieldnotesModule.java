@@ -23,22 +23,15 @@ import com.google.code.geobeagle.activity.main.fieldnotes.FieldnoteLogger.OnClic
 import com.google.code.geobeagle.xmlimport.GpxImporterDI.Toaster;
 import com.google.inject.Provides;
 import com.google.inject.assistedinject.FactoryProvider;
-import com.google.inject.name.Named;
 
 import roboguice.config.AbstractAndroidModule;
 
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
 public class FieldnotesModule extends AbstractAndroidModule {
-    private static View mView;
 
     @Override
     protected void configure() {
@@ -56,40 +49,8 @@ public class FieldnotesModule extends AbstractAndroidModule {
         return new Toaster(geoBeagle, R.string.error_writing_cache_log, Toast.LENGTH_LONG);
     }
 
-    public static void resetView() {
-        mView = null;
-    }
-
     @Provides
     CharSequence providesGeocacheId(GeoBeagle geoBeagle) {
         return geoBeagle.getGeocache().getId();
     }
-
-    @Provides
-    @Named("FieldNoteDialogView")
-    View providesFieldNoteDialogView(GeoBeagle geoBeagle, LayoutInflater layoutInflater) {
-        if (mView == null) {
-            mView = layoutInflater.inflate(R.layout.fieldnote, null);
-        }
-        Log.d("GeoBeagle", "provider gb, layoutInflater: " + geoBeagle + ", " + layoutInflater);
-        return mView;
-    }
-
-    @Provides
-    @Named("FieldNoteEditText")
-    EditText providesFieldNoteEditText(@Named("FieldNoteDialogView") View view) {
-        EditText editText = (EditText)view.findViewById(R.id.fieldnote);
-        Log.d("GeoBeagle", "Getting edit text: " + editText);
-        return editText;
-    }
-
-    @Provides
-    @Named("FieldNoteCaveat")
-    TextView providesFieldNoteCaveat(@Named("FieldNoteDialogView") View view) {
-        Log.d("GeoBeagle", "Binding caveat: " + view);
-        TextView textView = (TextView)view.findViewById(R.id.fieldnote_caveat);
-        Log.d("GeoBeagle", "Getting textView: " + textView);
-        return textView;
-    }
-
 }

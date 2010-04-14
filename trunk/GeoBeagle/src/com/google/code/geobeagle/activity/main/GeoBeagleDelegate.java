@@ -22,6 +22,7 @@ import com.google.code.geobeagle.GeocacheFactory.Source;
 import com.google.code.geobeagle.actions.MenuActions;
 import com.google.code.geobeagle.activity.ActivitySaver;
 import com.google.code.geobeagle.activity.ActivityType;
+import com.google.code.geobeagle.activity.main.GeoBeagleModule.DefaultSharedPreferences;
 import com.google.code.geobeagle.activity.main.view.GeocacheViewer;
 import com.google.code.geobeagle.activity.main.view.WebPageAndDetailsButtonEnabler;
 import com.google.code.geobeagle.database.DbFrontend;
@@ -83,7 +84,8 @@ public class GeoBeagleDelegate {
             GeocacheViewer geocacheViewer, IncomingIntentHandler incomingIntentHandler,
             MenuActions menuActions, GeocacheFromParcelFactory geocacheFromParcelFactory,
             DbFrontend dbFrontend, RadarView radarView, SensorManager sensorManager,
-            SharedPreferences sharedPreferences, WebPageAndDetailsButtonEnabler webPageButtonEnabler) {
+            @DefaultSharedPreferences SharedPreferences sharedPreferences,
+            WebPageAndDetailsButtonEnabler webPageButtonEnabler) {
         mParent = parent;
         mActivitySaver = activitySaver;
         mAppLifecycleManager = appLifecycleManager;

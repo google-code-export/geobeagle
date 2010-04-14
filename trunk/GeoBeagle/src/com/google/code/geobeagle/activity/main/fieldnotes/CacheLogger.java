@@ -15,6 +15,7 @@
 package com.google.code.geobeagle.activity.main.fieldnotes;
 
 
+import com.google.code.geobeagle.activity.main.GeoBeagleModule.DefaultSharedPreferences;
 import com.google.inject.Inject;
 
 import android.content.SharedPreferences;
@@ -25,7 +26,7 @@ public class CacheLogger implements ICacheLogger {
     private final SmsLogger mSmsLogger;
 
     @Inject
-    public CacheLogger(SharedPreferences sharedPreferences, FileLogger fileLogger,
+    public CacheLogger(@DefaultSharedPreferences SharedPreferences sharedPreferences, FileLogger fileLogger,
             SmsLogger smsLogger) {
         mSharedPreferences = sharedPreferences;
         mFileLogger = fileLogger;

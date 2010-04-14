@@ -31,7 +31,6 @@ import com.google.inject.Provides;
 import com.google.inject.assistedinject.FactoryProvider;
 
 import roboguice.config.AbstractAndroidModule;
-import roboguice.inject.SharedPreferencesName;
 
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -42,8 +41,6 @@ public class SearchOnlineModule extends AbstractAndroidModule {
 
     @Override
     protected void configure() {
-        bindConstant().annotatedWith(SharedPreferencesName.class).to("GeoBeagle");
-
         bind(LocationControlBuffered.class).toProvider(LocationControlProvider.class);
         bind(DistanceFormatterManager.class).toProvider(DistanceFormatterManagerProvider.class);
         bind(ActivitySaver.class).toProvider(ActivityDI.class);

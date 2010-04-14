@@ -14,15 +14,17 @@
 
 package com.google.code.geobeagle.activity.main.fieldnotes;
 
+import com.google.code.geobeagle.R;
+import com.google.code.geobeagle.activity.main.GeoBeagleModule.DefaultSharedPreferences;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
-import com.google.inject.name.Named;
 
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.DialogInterface.OnClickListener;
 import android.widget.EditText;
+import android.widget.TextView;
 
 public class FieldnoteLogger {
     // TODO: share one onClickCancel across app.
@@ -33,7 +35,7 @@ public class FieldnoteLogger {
     }
 
     public interface OnClickOkFactory {
-        public OnClickOk create(boolean dnf);
+        public OnClickOk create(EditText editText, boolean dnf);
     }
 
     public static class OnClickOk implements OnClickListener {
@@ -43,7 +45,7 @@ public class FieldnoteLogger {
         private final CharSequence mGeocacheId;
 
         @Inject
-        public OnClickOk(CharSequence geocacheId, @Named("FieldNoteEditText") EditText editText,
+        public OnClickOk(CharSequence geocacheId, @Assisted EditText editText,
                 CacheLogger cacheLogger, @Assisted boolean dnf) {
             mGeocacheId = geocacheId;
             mEditText = editText;
@@ -70,7 +72,7 @@ public class FieldnoteLogger {
     @Inject
     public FieldnoteLogger(DialogHelperCommon dialogHelperCommon,
             DialogHelperFile dialogHelperFile, @Assisted DialogHelperSms dialogHelperSms,
-            SharedPreferences sharedPreferences) {
+            @DefaultSharedPreferences SharedPreferences sharedPreferences) {
         mDialogHelperSms = dialogHelperSms;
         mDialogHelperFile = dialogHelperFile;
         mDialogHelperCommon = dialogHelperCommon;
@@ -81,11 +83,12 @@ public class FieldnoteLogger {
         final boolean fieldNoteTextFile = mSharedPreferences.getBoolean("field-note-text-file",
                 false);
         DialogHelper dialogHelper = fieldNoteTextFile ? mDialogHelperFile : mDialogHelperSms;
+        TextView fieldnoteCaveat = ((TextView)dialog.findViewById(R.id.fieldnote_caveat));
+        dialogHelper.configureDialogText(dialog, fieldnoteCaveat);
+        EditText editText = ((EditText)dialog.findViewById(R.id.fieldnote));
+        mDialogHelperCommon.configureDialogText(fieldnoteCaveat);
 
-        dialogHelper.configureDialogText(dialog);
-        mDialogHelperCommon.configureDialogText();
-
-        dialogHelper.configureEditor();
-        mDialogHelperCommon.configureEditor(localDate, dnf);
+        dialogHelper.configureEditor(dialog);
+        mDialogHelperCommon.configureEditor(editText, localDate, dnf);
     }
 }

@@ -21,7 +21,6 @@ import com.google.code.geobeagle.R.id;
 import com.google.code.geobeagle.activity.main.GeoBeagleDelegate.LogFindClickListener;
 import com.google.code.geobeagle.activity.main.fieldnotes.DialogHelperSms;
 import com.google.code.geobeagle.activity.main.fieldnotes.FieldnoteLogger;
-import com.google.code.geobeagle.activity.main.fieldnotes.FieldnotesModule;
 import com.google.code.geobeagle.activity.main.fieldnotes.DialogHelperSms.DialogHelperSmsFactory;
 import com.google.code.geobeagle.activity.main.fieldnotes.FieldnoteLogger.FieldnoteLoggerFactory;
 import com.google.code.geobeagle.activity.main.fieldnotes.FieldnoteLogger.OnClickCancel;
@@ -36,7 +35,6 @@ import com.google.code.geobeagle.activity.main.view.CacheButtonOnClickListener.M
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Key;
-import com.google.inject.name.Names;
 
 import roboguice.activity.GuiceActivity;
 
@@ -47,9 +45,11 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 
 import java.text.DateFormat;
 import java.util.Date;
@@ -127,15 +127,15 @@ public class GeoBeagle extends GuiceActivity {
     protected Dialog onCreateDialog(int id) {
         super.onCreateDialog(id);
         final Injector injector = getInjector();
-        FieldnotesModule.resetView();
         
         final AlertDialog.Builder builder = injector.getInstance(AlertDialog.Builder.class);
-        final View fieldnoteDialogView = injector.getInstance(Key.get(View.class, Names
-                .named("FieldNoteDialogView")));
+        final View fieldnoteDialogView = LayoutInflater.from(this)
+                .inflate(R.layout.fieldnote, null);
 
         final boolean fDnf = id == R.id.menu_log_dnf;
 
-        final OnClickOk onClickOk = injector.getInstance(OnClickOkFactory.class).create(fDnf);
+        final OnClickOk onClickOk = injector.getInstance(OnClickOkFactory.class).create(
+                (EditText)fieldnoteDialogView.findViewById(R.id.fieldnote), fDnf);
         builder.setTitle(R.string.field_note_title);
         builder.setView(fieldnoteDialogView);
         builder.setNegativeButton(R.string.cancel, injector.getInstance(OnClickCancel.class));

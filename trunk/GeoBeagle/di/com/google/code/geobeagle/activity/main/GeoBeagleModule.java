@@ -14,6 +14,11 @@
 
 package com.google.code.geobeagle.activity.main;
 
+import static java.lang.annotation.ElementType.FIELD;
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.ElementType.PARAMETER;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
+
 import com.google.code.geobeagle.GraphicsGenerator;
 import com.google.code.geobeagle.LocationControlBuffered;
 import com.google.code.geobeagle.R;
@@ -48,6 +53,7 @@ import com.google.code.geobeagle.activity.main.view.GeocacheViewer.UnlabelledAtt
 import com.google.code.geobeagle.activity.map.GeoMapActivity;
 import com.google.code.geobeagle.activity.searchonline.NullRefresher;
 import com.google.code.geobeagle.location.LocationLifecycleManager;
+import com.google.inject.BindingAnnotation;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.Provides;
@@ -68,13 +74,33 @@ import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.hardware.SensorManager;
 import android.location.LocationManager;
+import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
 import java.util.Arrays;
 
 public class GeoBeagleModule extends AbstractAndroidModule {
+
+    @BindingAnnotation @Target({ FIELD, PARAMETER, METHOD }) @Retention(RUNTIME)
+    public static @interface DefaultSharedPreferences {}
+
+    static final class DefaultSharedPreferencesProvider implements Provider<SharedPreferences> {
+        private final Context mContext;
+
+        @Inject
+        DefaultSharedPreferencesProvider(Context context) {
+            mContext = context;
+        }
+
+        @Override
+        public SharedPreferences get() {
+            return PreferenceManager.getDefaultSharedPreferences(mContext);
+        }
+    }
 
     static class GeoMapIntentProvider implements Provider<Intent> {
         private final Activity activity;
@@ -89,7 +115,7 @@ public class GeoBeagleModule extends AbstractAndroidModule {
             return new Intent(activity, GeoMapActivity.class);
         }
     }
-
+    
     static final class IntentStarterMapProvider implements Provider<IntentStarterGeo> {
         private final GeoBeagle geoBeagle;
         private final Intent intent;
@@ -122,6 +148,7 @@ public class GeoBeagleModule extends AbstractAndroidModule {
         }
     }
 
+    
     @Override
     protected void configure() {
         bind(Refresher.class).to(NullRefresher.class);
@@ -138,6 +165,8 @@ public class GeoBeagleModule extends AbstractAndroidModule {
                 IntentStarterMapProvider.class);
         bind(IntentStarterGeo.class).annotatedWith(IntentStarterRadar.class).toProvider(
                 IntentStarterRadarProvider.class);
+        bind(SharedPreferences.class).annotatedWith(DefaultSharedPreferences.class).toProvider(
+                DefaultSharedPreferencesProvider.class);
     }
 
     private UnlabelledAttributeViewer getImagesOnDifficulty(GraphicsGenerator graphicsGenerator,
@@ -152,8 +181,9 @@ public class GeoBeagleModule extends AbstractAndroidModule {
     }
 
     @Provides
-    AppLifecycleManager providesAppLifecycleManager(SharedPreferences sharedPreferences,
-            RadarView radarView, LocationControlBuffered locationControlBuffered,
+    AppLifecycleManager providesAppLifecycleManager(
+            @DefaultSharedPreferences SharedPreferences sharedPreferences, RadarView radarView,
+            LocationControlBuffered locationControlBuffered,
             LocationManager locationManager) {
         return new AppLifecycleManager(sharedPreferences, new LifecycleManager[] {
                 new LocationLifecycleManager(locationControlBuffered, locationManager),
@@ -205,6 +235,18 @@ public class GeoBeagleModule extends AbstractAndroidModule {
             @PawImages UnlabelledAttributeViewer pawImages) {
         return new LabelledAttributeViewer((TextView)activity.findViewById(R.id.gc_text_terrain),
                 pawImages);
+    }
+
+    @Provides
+    @Named("ImageViewDifficulty")
+    ImageView providesImageViewDifficulty(GeoBeagle geoBeagle) {
+        return (ImageView)geoBeagle.findViewById(R.id.gc_difficulty);
+    }
+
+    @Provides
+    @Named("ImageViewTerrain")
+    ImageView providesImageViewTerrain(GeoBeagle geoBeagle) {
+        return (ImageView)geoBeagle.findViewById(R.id.gc_terrain);
     }
 
     @Provides
@@ -284,18 +326,6 @@ public class GeoBeagleModule extends AbstractAndroidModule {
                 resources.getDrawable(R.drawable.ribbon_selected_bright)
         };
         return getImagesOnDifficulty(graphicsGenerator, ribbonDrawables, imageView);
-    }
-
-    @Provides
-    @Named("ImageViewTerrain")
-    ImageView providesImageViewTerrain(GeoBeagle geoBeagle) {
-        return (ImageView)geoBeagle.findViewById(R.id.gc_terrain);
-    }
-
-    @Provides
-    @Named("ImageViewDifficulty")
-    ImageView providesImageViewDifficulty(GeoBeagle geoBeagle) {
-        return (ImageView)geoBeagle.findViewById(R.id.gc_difficulty);
     }
 
     @Provides

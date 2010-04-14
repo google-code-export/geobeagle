@@ -16,7 +16,6 @@ package com.google.code.geobeagle.activity.main.fieldnotes;
 
 import com.google.code.geobeagle.R;
 import com.google.inject.Inject;
-import com.google.inject.name.Named;
 
 import android.app.Dialog;
 import android.content.Context;
@@ -24,23 +23,20 @@ import android.widget.TextView;
 
 public class DialogHelperFile implements DialogHelper {
     private final Context mContext;
-    private final TextView mFieldnoteCaveat;
 
     @Inject
-    public DialogHelperFile(@Named("FieldNoteCaveat") TextView fieldNoteCaveat, Context context) {
-        mFieldnoteCaveat = fieldNoteCaveat;
+    public DialogHelperFile(Context context) {
         mContext = context;
     }
 
     @Override
-    public void configureEditor() {
+    public void configureEditor(Dialog dialog) {
     }
 
     @Override
-    public void configureDialogText(Dialog dialog) {
-        mFieldnoteCaveat.setText(String.format(mContext.getString(R.string.field_note_file_caveat),
-                FieldnoteLogger.FIELDNOTES_FILE));
+    public void configureDialogText(Dialog dialog, TextView fieldnoteCaveat) {
+        fieldnoteCaveat.setText(String.format(mContext
+                .getString(R.string.field_note_file_caveat), FieldnoteLogger.FIELDNOTES_FILE));
         dialog.setTitle(R.string.log_cache_to_file);
     }
-
 }

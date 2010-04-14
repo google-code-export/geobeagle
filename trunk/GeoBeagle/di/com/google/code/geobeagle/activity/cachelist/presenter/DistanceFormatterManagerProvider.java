@@ -14,32 +14,28 @@
 
 package com.google.code.geobeagle.activity.cachelist.presenter;
 
+import com.google.code.geobeagle.activity.main.GeoBeagleModule.DefaultSharedPreferences;
 import com.google.code.geobeagle.formatting.DistanceFormatterImperial;
 import com.google.code.geobeagle.formatting.DistanceFormatterMetric;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
-import android.content.Context;
 import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 
 public class DistanceFormatterManagerProvider implements Provider<DistanceFormatterManager> {
 
-    private Context context;
+    private final SharedPreferences mSharedPreferences;
 
     @Inject
-    public DistanceFormatterManagerProvider(Context context) {
-        this.context = context;
+    public DistanceFormatterManagerProvider(@DefaultSharedPreferences SharedPreferences sharedPreferences) {
+        mSharedPreferences = sharedPreferences;
     }
 
     @Override
     public DistanceFormatterManager get() {
-        final SharedPreferences sharedPreferences = PreferenceManager
-                .getDefaultSharedPreferences(context);
-
         final DistanceFormatterMetric distanceFormatterMetric = new DistanceFormatterMetric();
         final DistanceFormatterImperial distanceFormatterImperial = new DistanceFormatterImperial();
-        return new DistanceFormatterManager(sharedPreferences, distanceFormatterImperial,
+        return new DistanceFormatterManager(mSharedPreferences, distanceFormatterImperial,
                 distanceFormatterMetric);
     }
 }
