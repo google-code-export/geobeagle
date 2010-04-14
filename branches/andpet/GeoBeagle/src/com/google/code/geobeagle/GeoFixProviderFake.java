@@ -158,7 +158,10 @@ public class GeoFixProviderFake implements GeoFixProvider {
 
     @Override
     public float getAzimuth() {
-        return 0;
+        //Reports a new azimuth once a second
+        int degreesPerSecond = 10;
+        long time = System.currentTimeMillis();
+        return (time/1000 * degreesPerSecond) % 360;
     }
 
     @Override

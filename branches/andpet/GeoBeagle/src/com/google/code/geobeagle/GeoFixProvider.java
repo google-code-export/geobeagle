@@ -13,5 +13,6 @@ public interface GeoFixProvider extends IPausable {
     //TODO: Rename to "areUpdatesEnabled" or something
     public boolean isProviderEnabled();
 
+    /* Returns the direction the device is pointing, measured in degrees. */
     public float getAzimuth();
 }
