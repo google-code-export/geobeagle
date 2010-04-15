@@ -88,7 +88,7 @@ public class FieldnoteLogger {
         EditText editText = ((EditText)dialog.findViewById(R.id.fieldnote));
         mDialogHelperCommon.configureDialogText(fieldnoteCaveat);
 
-        dialogHelper.configureEditor(dialog);
+        dialogHelper.configureEditor(editText);
         mDialogHelperCommon.configureEditor(editText, localDate, dnf);
     }
 }

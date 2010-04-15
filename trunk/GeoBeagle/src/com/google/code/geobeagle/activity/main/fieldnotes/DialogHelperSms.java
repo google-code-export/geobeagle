@@ -42,11 +42,11 @@ public class DialogHelperSms implements DialogHelper {
     }
 
     @Override
-    public void configureEditor(Dialog dialog) {
+    public void configureEditor(EditText fieldNote) {
         final LengthFilter lengthFilter = new LengthFilter(
                 160 - (mGeocacheIdLength + 1 + mFieldnoteStringsFVsDnf.getString(
                         R.array.fieldnote_code, mFDnf).length()));
-        ((EditText)dialog.findViewById(R.id.fieldnote)).setFilters(new InputFilter[] {
+        fieldNote.setFilters(new InputFilter[] {
             lengthFilter
         });
     }

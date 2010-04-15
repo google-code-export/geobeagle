@@ -19,6 +19,7 @@ import com.google.inject.Inject;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.widget.EditText;
 import android.widget.TextView;
 
 public class DialogHelperFile implements DialogHelper {
@@ -30,7 +31,7 @@ public class DialogHelperFile implements DialogHelper {
     }
 
     @Override
-    public void configureEditor(Dialog dialog) {
+    public void configureEditor(EditText fieldNote) {
     }
 
     @Override
@@ -39,4 +40,5 @@ public class DialogHelperFile implements DialogHelper {
                 .getString(R.string.field_note_file_caveat), FieldnoteLogger.FIELDNOTES_FILE));
         dialog.setTitle(R.string.log_cache_to_file);
     }
+
 }

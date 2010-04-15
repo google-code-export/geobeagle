@@ -15,11 +15,12 @@
 package com.google.code.geobeagle.activity.main.fieldnotes;
 
 import android.app.Dialog;
+import android.widget.EditText;
 import android.widget.TextView;
 
 public interface DialogHelper {
 
-    public abstract void configureEditor(Dialog dialog);
+    public abstract void configureEditor(EditText fieldNote);
 
     public abstract void configureDialogText(Dialog dialog, TextView fieldnoteCaveat);
 }

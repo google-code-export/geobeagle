@@ -114,7 +114,7 @@ public class FieldNoteSenderTest {
         EasyMock.expect(Linkify.addLinks(fieldNoteCaveat, Linkify.WEB_URLS)).andReturn(true);
 
         PowerMock.replayAll();
-        new DialogHelperCommon(null, null, fieldNoteCaveat).configureDialogText();
+        new DialogHelperCommon(null).configureDialogText(fieldNoteCaveat);
         PowerMock.verifyAll();
     }
 
@@ -135,10 +135,9 @@ public class FieldNoteSenderTest {
                 ("file logging: %1$s"));
         fieldNoteCaveat.setText("file logging: " + FieldnoteLogger.FIELDNOTES_FILE);
         dialog.setTitle(R.string.log_cache_to_file);
-        EasyMock.expect(dialog.findViewById(R.id.fieldnote_caveat)).andReturn(fieldNoteCaveat);
 
         PowerMock.replayAll();
-        new DialogHelperFile(context).configureDialogText(dialog);
+        new DialogHelperFile(context).configureDialogText(dialog, fieldNoteCaveat);
         PowerMock.verifyAll();
     }
 
@@ -156,7 +155,7 @@ public class FieldNoteSenderTest {
         editText.setFilters((InputFilter[])EasyMock.anyObject());
 
         PowerMock.replayAll();
-        new DialogHelperSms(fieldnoteStringsFVsDnf, 5, false).configureEditor(null);
+        new DialogHelperSms(fieldnoteStringsFVsDnf, 5, false).configureEditor(editText);
         PowerMock.verifyAll();
     }
 
@@ -169,7 +168,7 @@ public class FieldNoteSenderTest {
         dialog.setTitle(R.string.log_cache_with_sms);
 
         PowerMock.replayAll();
-        new DialogHelperSms(null, 0, false).configureDialogText(dialog);
+        new DialogHelperSms(null, 0, false).configureDialogText(dialog, fieldNoteCaveat);
         PowerMock.verifyAll();
     }
 
@@ -194,17 +193,27 @@ public class FieldNoteSenderTest {
         DialogHelperCommon dialogHelperCommon = PowerMock.createMock(DialogHelperCommon.class);
         DialogHelperFile dialogHelperFile = PowerMock.createMock(DialogHelperFile.class);
         Dialog dialog = PowerMock.createMock(Dialog.class);
-        SharedPreferences defaultSharedPreferences = PowerMock.createMock(SharedPreferences.class);
+        EditText editText = PowerMock.createMock(EditText.class);
+        TextView fieldnoteCaveat = PowerMock.createMock(TextView.class);
+        SharedPreferences defaultSharedPreferences = PowerMock
+                .createMock(SharedPreferences.class);
 
-        EasyMock.expect(defaultSharedPreferences.getBoolean("field-note-text-file", false))
-                .andReturn(true);
-        dialogHelperCommon.configureDialogText();
-        dialogHelperFile.configureDialogText(dialog);
-        dialogHelperCommon.configureEditor(null, false);
-        dialogHelperFile.configureEditor(dialog);
+        EasyMock.expect(
+                defaultSharedPreferences.getBoolean("field-note-text-file",
+                        false)).andReturn(true);
+        EasyMock.expect(dialog.findViewById(R.id.fieldnote_caveat)).andReturn(
+                fieldnoteCaveat);
+        dialogHelperFile.configureDialogText(dialog, fieldnoteCaveat);
+        dialogHelperCommon.configureEditor(editText, null, false);
+        EasyMock.expect(dialog.findViewById(R.id.fieldnote))
+                .andReturn(editText);
+
+        dialogHelperFile.configureEditor(editText);
+        dialogHelperCommon.configureDialogText(fieldnoteCaveat);
 
         PowerMock.replayAll();
-        new FieldnoteLogger(dialogHelperCommon, dialogHelperFile, null, defaultSharedPreferences).onPrepareDialog(dialog, null, false);
+        new FieldnoteLogger(dialogHelperCommon, dialogHelperFile, null,
+                defaultSharedPreferences).onPrepareDialog(dialog, null, false);
         PowerMock.verifyAll();
     }
 
@@ -213,14 +222,23 @@ public class FieldNoteSenderTest {
         DialogHelperCommon dialogHelperCommon = PowerMock.createMock(DialogHelperCommon.class);
         DialogHelperSms dialogHelperSms = PowerMock.createMock(DialogHelperSms.class);
         Dialog dialog = PowerMock.createMock(Dialog.class);
-        SharedPreferences defaultSharedPreferences = PowerMock.createMock(SharedPreferences.class);
+        EditText editText = PowerMock.createMock(EditText.class);
+        TextView fieldnoteCaveat = PowerMock.createMock(TextView.class);
+        SharedPreferences defaultSharedPreferences = PowerMock
+                .createMock(SharedPreferences.class);
 
-        EasyMock.expect(defaultSharedPreferences.getBoolean("field-note-text-file", false))
-                .andReturn(false);
-        dialogHelperCommon.configureDialogText();
-        dialogHelperSms.configureDialogText(dialog);
-        dialogHelperCommon.configureEditor(null, false);
-        dialogHelperSms.configureEditor(dialog);
+        EasyMock.expect(
+                defaultSharedPreferences.getBoolean("field-note-text-file",
+                        false)).andReturn(false);
+        EasyMock.expect(dialog.findViewById(R.id.fieldnote_caveat)).andReturn(
+                fieldnoteCaveat);
+        dialogHelperSms.configureDialogText(dialog, fieldnoteCaveat);
+        dialogHelperCommon.configureEditor(editText, null, false);
+        EasyMock.expect(dialog.findViewById(R.id.fieldnote))
+                .andReturn(editText);
+
+        dialogHelperSms.configureEditor(editText);
+        dialogHelperCommon.configureDialogText(fieldnoteCaveat);
 
         PowerMock.replayAll();
         new FieldnoteLogger(dialogHelperCommon, null, dialogHelperSms,
