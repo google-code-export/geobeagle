@@ -23,16 +23,58 @@ import org.powermock.api.easymock.PowerMock;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest( {
-        Bitmap.class, Canvas.class, GraphicsGenerator.class
+        Bitmap.class, Canvas.class, GraphicsGenerator.class, Rect.class
 })
 public class GraphicsGeneratorTest {
+
+    @Test
+    public void testCreateOverlay() throws Exception {
+        PowerMock.mockStatic(BitmapFactory.class);
+        Resources resources = PowerMock.createMock(Resources.class);
+        Bitmap bitmap = PowerMock.createMock(Bitmap.class);
+        Bitmap copy = PowerMock.createMock(Bitmap.class);
+        Canvas canvas = PowerMock.createMock(Canvas.class);
+        Paint tempPaint = PowerMock.createMock(Paint.class);
+        Geocache geocache = PowerMock.createMock(Geocache.class);
+        Rect tempRect = PowerMock.createMock(Rect.class);
+        BitmapDrawable bitmapDrawable = PowerMock.createMock(BitmapDrawable.class);
+
+        EasyMock
+                .expect(
+                        BitmapFactory.decodeResource(resources,
+                                R.drawable.cache_earth)).andReturn(bitmap);
+        EasyMock.expect(bitmap.getHeight()).andReturn(100);
+        EasyMock.expect(bitmap.getWidth()).andReturn(200);
+        EasyMock.expect(bitmap.copy(Bitmap.Config.ARGB_8888, true)).andReturn(
+                copy);
+        PowerMock.expectNew(Canvas.class, copy).andReturn(canvas);
+        tempPaint.setARGB(255, 0x20, 0x20, 0xFF);
+        EasyMock.expect(geocache.getDifficulty()).andReturn(8);
+        tempRect.set(0, 88, 160, 91);
+        canvas.drawRect(tempRect, tempPaint);
+        
+        tempPaint.setARGB(255, 0xDB, 0xA1, 0x09);
+        EasyMock.expect(geocache.getTerrain()).andReturn(6);
+        tempRect.set(0, 92, 120, 95);
+        canvas.drawRect(tempRect, tempPaint);
+        
+        PowerMock.expectNew(BitmapDrawable.class, copy).andReturn(bitmapDrawable);
+        PowerMock.replayAll();
+        new GraphicsGenerator(null, tempPaint, tempRect).createOverlay(geocache, 3,
+                4, R.drawable.cache_earth, null, resources);
+        PowerMock.verifyAll();
+    }
 
     @Test
     public void testCreateRating3() throws Exception {
