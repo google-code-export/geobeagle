@@ -171,12 +171,10 @@ public class DbFrontend {
         }
 
         ArrayList<Object> idList = new ArrayList<Object>();
-        if (cursor != null) {
-            do {
-                idList.add(cursor.getString(0));
-            } while (cursor.moveToNext());
-            cursor.close();
-        }
+        do {
+            idList.add(cursor.getString(0));
+        } while (cursor.moveToNext());
+        cursor.close();
         Log.d("GeoBeagle", "DbFrontend.loadCachesRaw took " + (mClock.getCurrentTime()-start) 
                 + " ms to load " + idList.size() + " caches from query " + sqlQuery);
         return new GeocacheListLazy(this, idList);
