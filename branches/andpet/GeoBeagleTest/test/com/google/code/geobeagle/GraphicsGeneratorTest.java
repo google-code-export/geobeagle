@@ -64,15 +64,15 @@ public class GraphicsGeneratorTest {
         PowerMock.expectNew(Canvas.class, copy).andReturn(canvas);
         EasyMock.expect(geocache.getDifficulty()).andReturn(8);
         EasyMock.expect(Color.argb(255, 0x20, 0x20, 0xFF)).andReturn(27);
-        attributePainter.drawAttribute(1, 3, 4, 100, 200, canvas, 8, 27);
+        attributePainter.drawAttribute(1, 4, 100, 200, canvas, 8, 27);
 
         EasyMock.expect(geocache.getTerrain()).andReturn(6);
         EasyMock.expect(Color.argb(255, 0xDB, 0xA1, 0x09)).andReturn(99);
-        attributePainter.drawAttribute(0, 3, 4, 100, 200, canvas, 6, 99);        
+        attributePainter.drawAttribute(0, 4, 100, 200, canvas, 6, 99);        
         PowerMock.expectNew(BitmapDrawable.class, copy).andReturn(bitmapDrawable);
         PowerMock.replayAll();
         new GraphicsGenerator(null, attributePainter)
-                .createOverlay(geocache, 3, 4, R.drawable.cache_earth, null,
+                .createOverlay(geocache, 4, R.drawable.cache_earth, null,
                         resources);
         PowerMock.verifyAll();
     }
