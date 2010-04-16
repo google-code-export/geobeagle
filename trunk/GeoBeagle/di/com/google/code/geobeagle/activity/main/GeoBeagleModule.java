@@ -71,6 +71,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.DialogInterface.OnClickListener;
 import android.content.res.Resources;
+import android.graphics.Paint;
+import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.hardware.SensorManager;
 import android.location.LocationManager;
@@ -167,6 +169,8 @@ public class GeoBeagleModule extends AbstractAndroidModule {
                 IntentStarterRadarProvider.class);
         bind(SharedPreferences.class).annotatedWith(DefaultSharedPreferences.class).toProvider(
                 DefaultSharedPreferencesProvider.class);
+        bind(Paint.class).toInstance(new Paint());
+        bind(Rect.class).toInstance(new Rect());
     }
 
     private UnlabelledAttributeViewer getImagesOnDifficulty(GraphicsGenerator graphicsGenerator,

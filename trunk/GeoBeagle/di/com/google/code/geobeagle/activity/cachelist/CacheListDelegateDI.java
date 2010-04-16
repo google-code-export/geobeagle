@@ -17,7 +17,10 @@ package com.google.code.geobeagle.activity.cachelist;
 import com.google.code.geobeagle.CacheTypeFactory;
 import com.google.code.geobeagle.ErrorDisplayer;
 import com.google.code.geobeagle.GeocacheFactory;
+import com.google.code.geobeagle.GraphicsGenerator;
 import com.google.code.geobeagle.LocationControlBuffered;
+import com.google.code.geobeagle.GraphicsGenerator.AttributePainter;
+import com.google.code.geobeagle.GraphicsGenerator.RatingsGenerator;
 import com.google.code.geobeagle.LocationControlBuffered.GpsDisabledLocation;
 import com.google.code.geobeagle.actions.MenuActionMap;
 import com.google.code.geobeagle.actions.MenuActionSearchOnline;
@@ -83,6 +86,9 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.DialogInterface.OnClickListener;
+import android.content.res.Resources;
+import android.graphics.Paint;
+import android.graphics.Rect;
 import android.hardware.SensorManager;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -137,8 +143,12 @@ public class CacheListDelegateDI {
         final CacheListData cacheListData = new CacheListData(geocacheVectors);
         final XmlPullParserWrapper xmlPullParserWrapper = new XmlPullParserWrapper();
 
+        final Resources resources = listActivity.getResources();
+        final GraphicsGenerator graphicsGenerator = new GraphicsGenerator(new RatingsGenerator(),
+                new AttributePainter(new Paint(), new Rect()), resources);
         final GeocacheSummaryRowInflater geocacheSummaryRowInflater = new GeocacheSummaryRowInflater(
-                distanceFormatterManager.getFormatter(), layoutInflater, relativeBearingFormatter);
+                distanceFormatterManager.getFormatter(), layoutInflater, relativeBearingFormatter,
+                graphicsGenerator);
         final UpdateFlag updateFlag = new UpdateFlag();
         final GeocacheListAdapter geocacheListAdapter = new GeocacheListAdapter(geocacheVectors,
                 geocacheSummaryRowInflater);
@@ -236,7 +246,7 @@ public class CacheListDelegateDI {
 
         final MenuActionSyncGpx menuActionSyncGpx = new MenuActionSyncGpx(nullAbortable,
                 cacheListRefresh, gpxImporterFactory, dbFrontend);
-        final MenuActions menuActions = new MenuActions(listActivity.getResources());
+        final MenuActions menuActions = new MenuActions(resources);
         menuActions.add(menuActionSyncGpx);
         menuActions.add(new MenuActionToggleFilter(filterNearestCaches, cacheListRefresh));
         menuActions.add(new MenuActionMyLocation(cacheListRefresh, errorDisplayer,

@@ -127,7 +127,7 @@ public class GraphicsGeneratorTest {
                 ratingsGenerator.createRating(drawable0, drawable1, drawable2,
                         2)).andReturn(rating);
         PowerMock.replayAll();
-        Drawable ratings[] = new GraphicsGenerator(ratingsGenerator)
+        Drawable ratings[] = new GraphicsGenerator(ratingsGenerator, null, null)
                 .getRatings(drawables, 2);
         assertEquals(rating, ratings[1]);
         PowerMock.verifyAll();
