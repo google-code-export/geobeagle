@@ -129,7 +129,7 @@ public class Geocache {
 //            else if (dbFrontend.geocacheHasTag(getId(), Tags.NEW))
 //                overlayIcon = resources.getDrawable(R.drawable.overlay_new_cacheview);
             
-            mIcon = graphicsGenerator.createIcon(this, overlayIcon, resources);
+            mIcon = graphicsGenerator.createIconListView(this, overlayIcon, resources);
         }
         return mIcon;
     }
@@ -147,7 +147,7 @@ public class Geocache {
             else if (dbFrontend.geocacheHasTag(getId(), Tags.NEW))
                 overlayIcon = resources.getDrawable(R.drawable.overlay_new);
             
-            mIconMap = graphicsGenerator.createIconMap(this, overlayIcon, resources);
+            mIconMap = graphicsGenerator.createIconMapView(this, overlayIcon, resources);
         }
         return mIconMap;
     }
