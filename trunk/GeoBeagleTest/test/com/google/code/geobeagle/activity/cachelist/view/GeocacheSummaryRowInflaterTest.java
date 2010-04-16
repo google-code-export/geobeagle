@@ -27,7 +27,7 @@ import com.google.code.geobeagle.activity.cachelist.presenter.RelativeBearingFor
 import com.google.code.geobeagle.activity.cachelist.view.GeocacheSummaryRowInflater.RowViews;
 import com.google.code.geobeagle.formatting.DistanceFormatter;
 
-import org.easymock.classextension.EasyMock;
+import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -172,7 +172,6 @@ public class GeocacheSummaryRowInflaterTest {
         BearingFormatter relativeBearingFormatter = PowerMock
                 .createMock(RelativeBearingFormatter.class);
 
-        EasyMock.expect(geocacheVectors.get(18)).andReturn(geocacheVector);
         EasyMock.expect(view.getTag()).andReturn(rowViews);
         rowViews.set(geocacheVector, distanceFormatter2, relativeBearingFormatter);
 
@@ -180,7 +179,7 @@ public class GeocacheSummaryRowInflaterTest {
         final GeocacheSummaryRowInflater geocacheSummaryRowInflater = new GeocacheSummaryRowInflater(
                 distanceFormatter, geocacheVectors, null, relativeBearingFormatter);
         geocacheSummaryRowInflater.setDistanceFormatter(distanceFormatter2);
-        geocacheSummaryRowInflater.setData(view, 18);
+        geocacheSummaryRowInflater.setData(view, geocacheVector);
         PowerMock.verifyAll();
     }
 }

@@ -15,6 +15,7 @@
 package com.google.code.geobeagle.activity.cachelist.view;
 
 import com.google.code.geobeagle.CacheType;
+import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVector;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVectors;
@@ -96,8 +97,8 @@ public class GeocacheSummaryRowInflater implements HasDistanceFormatter {
                 : new RelativeBearingFormatter();
     }
 
-    public void setData(View view, int position) {
-        ((RowViews)view.getTag()).set(mGeocacheVectors.get(position), mDistanceFormatter,
+    public void setData(View view, GeocacheVector geocacheVector) {
+        ((RowViews)view.getTag()).set(geocacheVector, mDistanceFormatter,
                 mBearingFormatter);
     }
 

@@ -16,11 +16,12 @@ package com.google.code.geobeagle.cachelist;
 
 import static org.junit.Assert.assertEquals;
 
+import com.google.code.geobeagle.activity.cachelist.model.GeocacheVector;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVectors;
 import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheListAdapter;
 import com.google.code.geobeagle.activity.cachelist.view.GeocacheSummaryRowInflater;
 
-import org.easymock.classextension.EasyMock;
+import org.easymock.EasyMock;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.api.easymock.PowerMock;
@@ -76,12 +77,15 @@ public class GeocacheListAdapterTest {
         PowerMock.suppressConstructor(BaseAdapter.class);
         View convertView = PowerMock.createMock(View.class);
         View newConvertView = PowerMock.createMock(View.class);
+        GeocacheVector geocacheVector = PowerMock.createMock(GeocacheVector.class);
+        GeocacheVectors geocacheVectors = PowerMock.createMock(GeocacheVectors.class);
 
         EasyMock.expect(geocacheSummaryRowInflater.inflate(convertView)).andReturn(newConvertView);
-        geocacheSummaryRowInflater.setData(newConvertView, 17);
+        EasyMock.expect(geocacheVectors.get(17)).andReturn(geocacheVector);
+        geocacheSummaryRowInflater.setData(newConvertView, geocacheVector);
 
         PowerMock.replayAll();
-        assertEquals(newConvertView, new GeocacheListAdapter(null, geocacheSummaryRowInflater)
+        assertEquals(newConvertView, new GeocacheListAdapter(geocacheVectors, geocacheSummaryRowInflater)
                 .getView(17, convertView, null));
         PowerMock.verifyAll();
     }
