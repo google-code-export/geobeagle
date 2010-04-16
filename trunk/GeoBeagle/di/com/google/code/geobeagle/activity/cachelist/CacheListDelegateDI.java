@@ -94,7 +94,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.widget.LinearLayout.LayoutParams;
+import android.view.ViewGroup;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -157,8 +157,8 @@ public class CacheListDelegateDI {
                 listActivity);
         final GpsStatusWidget gpsStatusWidget = new GpsStatusWidget(listActivity);
 
-        gpsStatusWidget.addView(inflatedGpsStatusWidget, LayoutParams.FILL_PARENT,
-                LayoutParams.WRAP_CONTENT);
+        gpsStatusWidget.addView(inflatedGpsStatusWidget, ViewGroup.LayoutParams.FILL_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT);
         final GpsWidgetAndUpdater gpsWidgetAndUpdater = new GpsWidgetAndUpdater(listActivity,
                 gpsStatusWidget, locationControlBuffered, combinedLocationManager,
                 distanceFormatterManager.getFormatter());
