@@ -63,22 +63,23 @@ public class GraphicsGenerator {
             mTempPaint = tempPaint;
             mTempRect = tempRect;
         }
-        
-        void drawAttribute(int position, int thickness, int bottom, int imageHeight,
-                int imageWidth, Canvas canvas, double attribute, int color) {
+
+        void drawAttribute(int position, int bottom, int imageHeight, int imageWidth,
+                Canvas canvas, double attribute, int color) {
             final int diffWidth = (int)(imageWidth * (attribute / 10.0));
             final int MARGIN = 1;
+            final int THICKNESS = 3;
             final int base = imageHeight - bottom - MARGIN;
-            final int attributeBottom = base - position * (thickness + 1);
-            final int attributeTop = attributeBottom - thickness;
+            final int attributeBottom = base - position * (THICKNESS + 1);
+            final int attributeTop = attributeBottom - THICKNESS;
             mTempPaint.setColor(color);
             mTempRect.set(0, attributeTop, diffWidth, attributeBottom);
             canvas.drawRect(mTempRect, mTempPaint);
         }
     }
     
-    Drawable createOverlay(Geocache geocache, int thickness, int bottom, 
-            int backdropId, Drawable overlayIcon, Resources resources) {
+    Drawable createOverlay(Geocache geocache, int bottom, int backdropId, Drawable overlayIcon,
+            Resources resources) {
         Bitmap bitmap = BitmapFactory.decodeResource(resources, backdropId);
         int imageHeight = bitmap.getHeight();
         int imageWidth = bitmap.getWidth();
@@ -87,8 +88,7 @@ public class GraphicsGenerator {
         if (bottom >= 0) {
             copy = bitmap.copy(Bitmap.Config.ARGB_8888, true);
         } else {
-            copy = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight() - bottom,
-                    Bitmap.Config.ARGB_8888);
+            copy = Bitmap.createBitmap(imageWidth, imageHeight - bottom, Bitmap.Config.ARGB_8888);
             int[] pixels = new int[imageWidth * imageHeight];
             bitmap.getPixels(pixels, 0, imageWidth, 0, 0, imageWidth, imageHeight);
             copy.setPixels(pixels, 0, imageWidth, 0, 0, imageWidth, imageHeight);
@@ -97,9 +97,9 @@ public class GraphicsGenerator {
         }
 
         Canvas canvas = new Canvas(copy);
-        mAttributePainter.drawAttribute(1, thickness, bottom, imageHeight, imageWidth, canvas,
+        mAttributePainter.drawAttribute(1, bottom, imageHeight, imageWidth, canvas,
                 geocache.getDifficulty(), Color.argb(255, 0x20, 0x20, 0xFF));
-        mAttributePainter.drawAttribute(0, thickness, bottom, imageHeight, imageWidth, canvas,
+        mAttributePainter.drawAttribute(0, bottom, imageHeight, imageWidth, canvas,
                 geocache.getTerrain(), Color.argb(255, 0xDB, 0xA1, 0x09));
         
         drawOverlay(overlayIcon, imageWidth, canvas);
@@ -117,14 +117,13 @@ public class GraphicsGenerator {
     
     public Drawable createIconListView(Geocache geocache, Drawable overlayIcon, 
             Resources resources) {
-        return createOverlay(geocache, 3, -5, geocache.getCacheType().icon(), 
-                overlayIcon, resources);
+        return createOverlay(geocache, -5, geocache.getCacheType().icon(), overlayIcon, resources);
     }
     
     public Drawable createIconMapView(Geocache geocache, Drawable overlayIcon, 
             Resources resources) {
-        Drawable iconMap = createOverlay(geocache, 3, 3, 
-                geocache.getCacheType().iconMap(), overlayIcon, resources);
+        Drawable iconMap = createOverlay(geocache, 3, geocache.getCacheType().iconMap(),
+                overlayIcon, resources);
         int width = iconMap.getIntrinsicWidth();
         int height = iconMap.getIntrinsicHeight();
         iconMap.setBounds(-width/2, -height, width/2, 0);
