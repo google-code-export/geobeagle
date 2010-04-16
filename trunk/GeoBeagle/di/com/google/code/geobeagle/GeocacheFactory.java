@@ -64,6 +64,8 @@ public class GeocacheFactory {
 
     public static enum Source {
         GPX(0), LOC(3), MY_LOCATION(1), WEB_URL(2);
+        public final static int MIN_SOURCE = 0;
+        public final static int MAX_SOURCE = 3;
 
         public static class SourceFactory {
             private final Source mSources[] = new Source[values().length];

@@ -33,7 +33,8 @@ public class GeocacheFromPreferencesFactory {
 
     public Geocache create(SharedPreferences preferences) {
         final int iSource = preferences.getInt(Geocache.SOURCE_TYPE, -1);
-        final Source source = mGeocacheFactory.sourceFromInt(iSource);
+        final Source source = mGeocacheFactory.sourceFromInt(Math.max(Source.MIN_SOURCE, Math.min(
+                iSource, Source.MAX_SOURCE)));
         final int iCacheType = preferences.getInt(Geocache.CACHE_TYPE, 0);
         final CacheType cacheType = mGeocacheFactory.cacheTypeFromInt(iCacheType);
         return mGeocacheFactory.create(preferences.getString(Geocache.ID, "GCMEY7"), preferences
