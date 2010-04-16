@@ -22,6 +22,7 @@ import com.google.code.geobeagle.GraphicsGenerator;
 import com.google.code.geobeagle.IPausable;
 import com.google.code.geobeagle.LocationControlDi;
 import com.google.code.geobeagle.R;
+import com.google.code.geobeagle.GraphicsGenerator.AttributePainter;
 import com.google.code.geobeagle.actions.CacheAction;
 import com.google.code.geobeagle.actions.CacheActionAssignTags;
 import com.google.code.geobeagle.actions.CacheActionConfirm;
@@ -128,7 +129,8 @@ public class CacheListDelegateDI {
 
         final DbFrontend dbFrontend = new DbFrontend(listActivity, geocacheFactory);
         final GraphicsGenerator graphicsGenerator = new GraphicsGenerator(
-                new GraphicsGenerator.RatingsGenerator(), new Paint(), new Rect());
+                new GraphicsGenerator.RatingsGenerator(), new Paint(), new Rect(),
+                new AttributePainter());
         final CacheNameAttributes cacheNameAttributes = new CacheNameAttributes();
         final GeocacheSummaryRowInflater geocacheSummaryRowInflater = new GeocacheSummaryRowInflater(
                 distanceFormatterManager.getFormatter(), layoutInflater,

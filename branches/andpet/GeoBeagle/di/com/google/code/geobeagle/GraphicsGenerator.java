@@ -13,11 +13,13 @@ public class GraphicsGenerator {
     private final Paint mTempPaint;
     private final Rect mTempRect;
     private final RatingsGenerator mRatingsGenerator;
+    private final AttributePainter mAttributePainter;
 
-    public GraphicsGenerator(RatingsGenerator ratingsGenerator, Paint paint, Rect rect) {
+    public GraphicsGenerator(RatingsGenerator ratingsGenerator, Paint paint, Rect rect, AttributePainter attributePainter) {
         mTempPaint = paint;
         mTempRect = rect;
         mRatingsGenerator = ratingsGenerator;
+        mAttributePainter = attributePainter;
     }
 
     public static class RatingsGenerator {
@@ -56,6 +58,19 @@ public class GraphicsGenerator {
         return ratings;
     }
 
+    public static class AttributePainter {
+        void drawAttribute(int position, int thickness, int bottom, int imageHeight,
+                int imageWidth, Canvas canvas, double attribute, Rect tempRect, Paint tempPaint) {
+            final int diffWidth = (int)(imageWidth * (attribute / 10.0));
+            final int MARGIN = 1;
+            final int base = imageHeight - bottom - MARGIN;
+            final int attributeBottom = base - position * (thickness + 1);
+            final int attributeTop = attributeBottom - thickness;
+            tempRect.set(0, attributeTop, diffWidth, attributeBottom);
+            canvas.drawRect(tempRect, tempPaint);
+        }
+    }
+    
     Drawable createOverlay(Geocache geocache, int thickness, int bottom, 
             int backdropId, Drawable overlayIcon, Resources resources) {
         Bitmap bitmap = BitmapFactory.decodeResource(resources, backdropId);
@@ -78,25 +93,16 @@ public class GraphicsGenerator {
         Canvas canvas = new Canvas(copy);
 
         mTempPaint.setARGB(255, 0x20, 0x20, 0xFF); // light blue
-        drawAttribute(1, thickness, bottom, imageHeight, imageWidth, canvas, geocache.getDifficulty());
+        mAttributePainter.drawAttribute(1, thickness, bottom, imageHeight, imageWidth, canvas,
+                geocache.getDifficulty(), mTempRect, mTempPaint);
 
         mTempPaint.setARGB(255, 0xDB, 0xA1, 0x09); // a lighter brown
-        drawAttribute(0, thickness, bottom, imageHeight, imageWidth, canvas, geocache.getTerrain());
+        mAttributePainter.drawAttribute(0, thickness, bottom, imageHeight, imageWidth, canvas,
+                geocache.getTerrain(), mTempRect, mTempPaint);
         
         drawOverlay(overlayIcon, imageWidth, canvas);
             
         return new BitmapDrawable(copy);
-    }
-
-    private void drawAttribute(int position, int thickness, int bottom, int imageHeight,
-            int imageWidth, Canvas canvas, double attribute) {
-        final int diffWidth = (int)(imageWidth * (attribute / 10.0));
-        final int MARGIN = 1;
-        final int base = imageHeight - bottom - MARGIN;
-        final int attributeBottom = base - position * (thickness + 1);
-        final int attributeTop = attributeBottom - thickness;
-        mTempRect.set(0, attributeTop, diffWidth, attributeBottom);
-        canvas.drawRect(mTempRect, mTempPaint);
     }
 
     private void drawOverlay(Drawable overlayIcon, int imageWidth, Canvas canvas) {

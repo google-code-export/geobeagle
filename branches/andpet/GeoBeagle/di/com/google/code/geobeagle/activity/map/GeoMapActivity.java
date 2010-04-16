@@ -26,6 +26,7 @@ import com.google.code.geobeagle.GraphicsGenerator;
 import com.google.code.geobeagle.IToaster;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.Toaster;
+import com.google.code.geobeagle.GraphicsGenerator.AttributePainter;
 import com.google.code.geobeagle.Toaster.OneTimeToaster;
 import com.google.code.geobeagle.actions.CacheFilterUpdater;
 import com.google.code.geobeagle.actions.MenuActionCacheList;
@@ -94,7 +95,7 @@ public class GeoMapActivity extends MapActivity {
         final Resources resources = getResources();
         final Drawable defaultMarker = resources.getDrawable(R.drawable.pin_default);
         final GraphicsGenerator graphicsGenerator = new GraphicsGenerator(
-                new GraphicsGenerator.RatingsGenerator(), new Paint(), new Rect());
+                new GraphicsGenerator.RatingsGenerator(), new Paint(), new Rect(), new AttributePainter());
         final CacheItemFactory cacheItemFactory = new CacheItemFactory(resources, graphicsGenerator, mDbFrontend);
 
         final FilterTypeCollection filterTypeCollection = new FilterTypeCollection(this);
