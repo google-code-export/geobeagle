@@ -23,12 +23,12 @@ public class CacheTypeFactory {
 
         CacheType result = CacheType.NULL;
         for (CacheType cacheType : mCacheTypes.values()) {
-            if (tagLower.contains(cacheType.getTag()) 
-                    && cacheType.getTag().length() > longestMatch) {
+            String cacheTypeTag = cacheType.getTag();
+            if (tagLower.contains(cacheTypeTag) && cacheTypeTag.length() > longestMatch) {
                 result = cacheType;
-                longestMatch = cacheType.getTag().length();
-                //Necessary to continue the search to find mega-events and 
-                //individual waypoint types.
+                // Necessary to continue the search to find mega-events and
+                // individual waypoint types.
+                longestMatch = cacheTypeTag.length();
             }
         }
 
