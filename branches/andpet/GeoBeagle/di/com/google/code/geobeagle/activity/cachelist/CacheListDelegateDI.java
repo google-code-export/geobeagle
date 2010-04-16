@@ -129,8 +129,8 @@ public class CacheListDelegateDI {
 
         final DbFrontend dbFrontend = new DbFrontend(listActivity, geocacheFactory);
         final GraphicsGenerator graphicsGenerator = new GraphicsGenerator(
-                new GraphicsGenerator.RatingsGenerator(), new Paint(), new Rect(),
-                new AttributePainter());
+                new GraphicsGenerator.RatingsGenerator(), new AttributePainter(new Paint(),
+                        new Rect()));
         final CacheNameAttributes cacheNameAttributes = new CacheNameAttributes();
         final GeocacheSummaryRowInflater geocacheSummaryRowInflater = new GeocacheSummaryRowInflater(
                 distanceFormatterManager.getFormatter(), layoutInflater,

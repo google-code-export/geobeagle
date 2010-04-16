@@ -4,20 +4,17 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 
 public class GraphicsGenerator {
-    private final Paint mTempPaint;
-    private final Rect mTempRect;
     private final RatingsGenerator mRatingsGenerator;
     private final AttributePainter mAttributePainter;
 
-    public GraphicsGenerator(RatingsGenerator ratingsGenerator, Paint paint, Rect rect, AttributePainter attributePainter) {
-        mTempPaint = paint;
-        mTempRect = rect;
+    public GraphicsGenerator(RatingsGenerator ratingsGenerator, AttributePainter attributePainter) {
         mRatingsGenerator = ratingsGenerator;
         mAttributePainter = attributePainter;
     }
@@ -59,15 +56,24 @@ public class GraphicsGenerator {
     }
 
     public static class AttributePainter {
+        private final Paint mTempPaint;
+        private final Rect mTempRect;
+        
+        public AttributePainter(Paint tempPaint, Rect tempRect) {
+            mTempPaint = tempPaint;
+            mTempRect = tempRect;
+        }
+        
         void drawAttribute(int position, int thickness, int bottom, int imageHeight,
-                int imageWidth, Canvas canvas, double attribute, Rect tempRect, Paint tempPaint) {
+                int imageWidth, Canvas canvas, double attribute, int color) {
             final int diffWidth = (int)(imageWidth * (attribute / 10.0));
             final int MARGIN = 1;
             final int base = imageHeight - bottom - MARGIN;
             final int attributeBottom = base - position * (thickness + 1);
             final int attributeTop = attributeBottom - thickness;
-            tempRect.set(0, attributeTop, diffWidth, attributeBottom);
-            canvas.drawRect(tempRect, tempPaint);
+            mTempPaint.setColor(color);
+            mTempRect.set(0, attributeTop, diffWidth, attributeBottom);
+            canvas.drawRect(mTempRect, mTempPaint);
         }
     }
     
@@ -91,14 +97,10 @@ public class GraphicsGenerator {
         }
 
         Canvas canvas = new Canvas(copy);
-
-        mTempPaint.setARGB(255, 0x20, 0x20, 0xFF); // light blue
         mAttributePainter.drawAttribute(1, thickness, bottom, imageHeight, imageWidth, canvas,
-                geocache.getDifficulty(), mTempRect, mTempPaint);
-
-        mTempPaint.setARGB(255, 0xDB, 0xA1, 0x09); // a lighter brown
+                geocache.getDifficulty(), Color.argb(255, 0x20, 0x20, 0xFF));
         mAttributePainter.drawAttribute(0, thickness, bottom, imageHeight, imageWidth, canvas,
-                geocache.getTerrain(), mTempRect, mTempPaint);
+                geocache.getTerrain(), Color.argb(255, 0xDB, 0xA1, 0x09));
         
         drawOverlay(overlayIcon, imageWidth, canvas);
             

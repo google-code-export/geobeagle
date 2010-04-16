@@ -29,6 +29,7 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
@@ -36,7 +37,7 @@ import android.graphics.drawable.Drawable;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest( {
-        Bitmap.class, Canvas.class, GraphicsGenerator.class, Rect.class
+        Bitmap.class, Canvas.class, Color.class, GraphicsGenerator.class, Rect.class
 })
 public class GraphicsGeneratorTest {
 
@@ -49,10 +50,9 @@ public class GraphicsGeneratorTest {
         Canvas canvas = PowerMock.createMock(Canvas.class);
         Geocache geocache = PowerMock.createMock(Geocache.class);
         BitmapDrawable bitmapDrawable = PowerMock.createMock(BitmapDrawable.class);
-        Paint tempPaint = PowerMock.createMock(Paint.class);
-        Rect tempRect = PowerMock.createMock(Rect.class);
         AttributePainter attributePainter = PowerMock.createMock(AttributePainter.class);
-
+        PowerMock.mockStatic(Color.class);
+        
         EasyMock
                 .expect(
                         BitmapFactory.decodeResource(resources,
@@ -62,18 +62,16 @@ public class GraphicsGeneratorTest {
         EasyMock.expect(bitmap.copy(Bitmap.Config.ARGB_8888, true)).andReturn(
                 copy);
         PowerMock.expectNew(Canvas.class, copy).andReturn(canvas);
-        tempPaint.setARGB(255, 0x20, 0x20, 0xFF);
         EasyMock.expect(geocache.getDifficulty()).andReturn(8);
-        attributePainter.drawAttribute(1, 3, 4, 100, 200, canvas, 8, tempRect,
-                tempPaint); 
-        
-        tempPaint.setARGB(255, 0xDB, 0xA1, 0x09);
+        EasyMock.expect(Color.argb(255, 0x20, 0x20, 0xFF)).andReturn(27);
+        attributePainter.drawAttribute(1, 3, 4, 100, 200, canvas, 8, 27);
+
         EasyMock.expect(geocache.getTerrain()).andReturn(6);
-        attributePainter.drawAttribute(0, 3, 4, 100, 200, canvas, 6, tempRect,
-                tempPaint);        
+        EasyMock.expect(Color.argb(255, 0xDB, 0xA1, 0x09)).andReturn(99);
+        attributePainter.drawAttribute(0, 3, 4, 100, 200, canvas, 6, 99);        
         PowerMock.expectNew(BitmapDrawable.class, copy).andReturn(bitmapDrawable);
         PowerMock.replayAll();
-        new GraphicsGenerator(null, tempPaint, tempRect, attributePainter)
+        new GraphicsGenerator(null, attributePainter)
                 .createOverlay(geocache, 3, 4, R.drawable.cache_earth, null,
                         resources);
         PowerMock.verifyAll();
@@ -191,8 +189,8 @@ public class GraphicsGeneratorTest {
                         2)).andReturn(rating);
         PowerMock.replayAll();
         
-        Drawable ratings[] = new GraphicsGenerator(ratingsGenerator, null,
-                null, new AttributePainter()).getRatings(drawables, 2);
+        Drawable ratings[] = new GraphicsGenerator(ratingsGenerator,
+                new AttributePainter(null, null)).getRatings(drawables, 2);
         assertEquals(rating, ratings[1]);
         PowerMock.verifyAll();
     }

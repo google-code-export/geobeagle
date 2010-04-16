@@ -138,8 +138,8 @@ public class GeoBeagle extends Activity {
         mGeocacheFactory = new GeocacheFactory();
         final TextView gcid = (TextView)findViewById(R.id.gcid);
         final GraphicsGenerator graphicsGenerator = new GraphicsGenerator(
-                new GraphicsGenerator.RatingsGenerator(), new Paint(), new Rect(),
-                new AttributePainter());
+                new GraphicsGenerator.RatingsGenerator(), new AttributePainter(new Paint(),
+                        new Rect()));
         final Resources resources = this.getResources();
         
         final Drawable[] pawDrawables = {
