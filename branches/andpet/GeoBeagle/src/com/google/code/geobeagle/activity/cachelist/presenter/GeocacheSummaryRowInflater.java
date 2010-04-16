@@ -87,7 +87,7 @@ public class GeocacheSummaryRowInflater implements HasDistanceFormatter {
 
             final CharSequence formattedDistance = distanceFormatter
                     .formatDistance((float)distance);
-            float bearing = (float)distanceAndBearing.getBearing();
+            float bearing = distanceAndBearing.getBearing();
             final String formattedBearing = relativeBearingFormatter.formatBearing(bearing,
                     azimuth);
             return formattedDistance + " " + formattedBearing;
