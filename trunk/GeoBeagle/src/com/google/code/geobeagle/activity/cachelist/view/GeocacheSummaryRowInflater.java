@@ -15,10 +15,8 @@
 package com.google.code.geobeagle.activity.cachelist.view;
 
 import com.google.code.geobeagle.CacheType;
-import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVector;
-import com.google.code.geobeagle.activity.cachelist.model.GeocacheVectors;
 import com.google.code.geobeagle.activity.cachelist.presenter.AbsoluteBearingFormatter;
 import com.google.code.geobeagle.activity.cachelist.presenter.BearingFormatter;
 import com.google.code.geobeagle.activity.cachelist.presenter.HasDistanceFormatter;
@@ -61,14 +59,11 @@ public class GeocacheSummaryRowInflater implements HasDistanceFormatter {
 
     private BearingFormatter mBearingFormatter;
     private DistanceFormatter mDistanceFormatter;
-    private final GeocacheVectors mGeocacheVectors;
     private final LayoutInflater mLayoutInflater;
 
     public GeocacheSummaryRowInflater(DistanceFormatter distanceFormatter,
-            GeocacheVectors geocacheVectors, LayoutInflater layoutInflater,
-            BearingFormatter relativeBearingFormatter) {
+            LayoutInflater layoutInflater, BearingFormatter relativeBearingFormatter) {
         mLayoutInflater = layoutInflater;
-        mGeocacheVectors = geocacheVectors;
         mDistanceFormatter = distanceFormatter;
         mBearingFormatter = relativeBearingFormatter;
     }
