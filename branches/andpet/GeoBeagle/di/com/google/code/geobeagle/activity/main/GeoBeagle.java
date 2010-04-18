@@ -22,7 +22,6 @@ import com.google.code.geobeagle.GeocacheFactory;
 import com.google.code.geobeagle.GraphicsGenerator;
 import com.google.code.geobeagle.LocationControlDi;
 import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.GraphicsGenerator.AttributePainter;
 import com.google.code.geobeagle.R.id;
 import com.google.code.geobeagle.actions.MenuActionSettings;
 import com.google.code.geobeagle.actions.CacheActionEdit;
@@ -73,8 +72,6 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
-import android.graphics.Paint;
-import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -138,8 +135,7 @@ public class GeoBeagle extends Activity {
         mGeocacheFactory = new GeocacheFactory();
         final TextView gcid = (TextView)findViewById(R.id.gcid);
         final GraphicsGenerator graphicsGenerator = new GraphicsGenerator(
-                new GraphicsGenerator.RatingsGenerator(), new AttributePainter(new Paint(),
-                        new Rect()));
+                new GraphicsGenerator.RatingsGenerator(), null);
         final Resources resources = this.getResources();
         
         final Drawable[] pawDrawables = {

@@ -40,10 +40,8 @@ class CacheItemFactory {
     }
 
     CacheItem createCacheItem(Geocache geocache) {
-        final CacheItem cacheItem = new CacheItem(geocache.getGeoPoint(),
-                geocache);
-        Drawable marker = geocache.getIconMap(mResources, mGraphicsGenerator,
-                mDbFrontend);
+        final CacheItem cacheItem = new CacheItem(geocache.getGeoPoint(), geocache);
+        Drawable marker = geocache.getIconMap(mResources, mGraphicsGenerator, mDbFrontend);
         if (geocache == mSelected) {
             marker = mGraphicsGenerator.superimpose(marker, mResources
                     .getDrawable(R.drawable.glow_40px));

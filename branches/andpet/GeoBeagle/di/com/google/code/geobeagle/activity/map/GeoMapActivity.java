@@ -26,7 +26,6 @@ import com.google.code.geobeagle.GraphicsGenerator;
 import com.google.code.geobeagle.IToaster;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.Toaster;
-import com.google.code.geobeagle.GraphicsGenerator.AttributePainter;
 import com.google.code.geobeagle.Toaster.OneTimeToaster;
 import com.google.code.geobeagle.actions.CacheFilterUpdater;
 import com.google.code.geobeagle.actions.MenuActionCacheList;
@@ -45,8 +44,6 @@ import com.google.code.geobeagle.database.CachesProviderLazyArea.CoordinateManag
 
 import android.content.Intent;
 import android.content.res.Resources;
-import android.graphics.Paint;
-import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.Menu;
@@ -60,7 +57,7 @@ public class GeoMapActivity extends MapActivity {
 
     public static Toaster.ToasterFactory peggedCacheProviderToasterFactory = new OneTimeToaster.OneTimeToasterFactory();
 
-    private static class NullOverlay extends Overlay {
+    static class NullOverlay extends Overlay {
     }
 
     private static final int DEFAULT_ZOOM_LEVEL = 14;
@@ -95,8 +92,7 @@ public class GeoMapActivity extends MapActivity {
         final Resources resources = getResources();
         final Drawable defaultMarker = resources.getDrawable(R.drawable.pin_default);
         final GraphicsGenerator graphicsGenerator = new GraphicsGenerator(
-                new GraphicsGenerator.RatingsGenerator(), new AttributePainter(new Paint(),
-                        new Rect()));
+                new GraphicsGenerator.RatingsGenerator(), null);
         final CacheItemFactory cacheItemFactory = new CacheItemFactory(resources, graphicsGenerator, mDbFrontend);
 
         final FilterTypeCollection filterTypeCollection = new FilterTypeCollection(this);
@@ -107,7 +103,7 @@ public class GeoMapActivity extends MapActivity {
         final MapController mapController = mMapView.getController();
         final double latitude = intent.getFloatExtra("latitude", 0);
         final double longitude = intent.getFloatExtra("longitude", 0);
-        final Overlay nullOverlay = new GeoMapActivity.NullOverlay();
+        final Overlay nullOverlay = new NullOverlay();
         final GeoPoint nullGeoPoint = new GeoPoint(0, 0);
         String geocacheId = intent.getStringExtra("geocacheId");
         if (geocacheId != null) {

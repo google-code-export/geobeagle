@@ -12,11 +12,11 @@ import android.graphics.drawable.Drawable;
 
 public class GraphicsGenerator {
     private final RatingsGenerator mRatingsGenerator;
-    private final AttributePainter mAttributePainter;
+    private final IconRenderer mIconRenderer;
 
-    public GraphicsGenerator(RatingsGenerator ratingsGenerator, AttributePainter attributePainter) {
+    public GraphicsGenerator(RatingsGenerator ratingsGenerator, IconRenderer iconRenderer) {
         mRatingsGenerator = ratingsGenerator;
-        mAttributePainter = attributePainter;
+        mIconRenderer = iconRenderer;
     }
 
     public static class RatingsGenerator {
@@ -55,6 +55,88 @@ public class GraphicsGenerator {
         return ratings;
     }
 
+    static interface BitmapCopier {
+        Bitmap copy(Bitmap source);
+        int getBottom();
+    }
+
+    static class ListViewBitmapCopier implements BitmapCopier {
+        public Bitmap copy(Bitmap source) {
+            int imageHeight = source.getHeight();
+            int imageWidth = source.getWidth();
+
+            Bitmap copy = Bitmap.createBitmap(imageWidth, imageHeight + 5,
+                    Bitmap.Config.ARGB_8888);
+            int[] pixels = new int[imageWidth * imageHeight];
+            source.getPixels(pixels, 0, imageWidth, 0, 0, imageWidth, imageHeight);
+            copy.setPixels(pixels, 0, imageWidth, 0, 0, imageWidth, imageHeight);
+            return copy;
+        }
+        
+        public int getBottom() {
+            return 0;
+        }
+    }
+
+    public static class MapViewBitmapCopier implements BitmapCopier {
+        public Bitmap copy(Bitmap source) {
+            return source.copy(Bitmap.Config.ARGB_8888, true);
+        }
+
+        public int getBottom() {
+            return 3;
+        }
+    }
+
+    public static class IconRenderer {
+        private final AttributePainter mAttributePainter;
+
+        public IconRenderer(AttributePainter attributePainter) {
+            mAttributePainter = attributePainter;
+        }
+
+        Drawable createOverlay(Geocache geocache, int backdropId, Drawable overlayIcon,
+                Resources resources, BitmapCopier bitmapCopier) {
+            Bitmap bitmap = BitmapFactory.decodeResource(resources, backdropId);
+
+            Bitmap copy = bitmapCopier.copy(bitmap);
+            int imageHeight = copy.getHeight();
+            int imageWidth = copy.getWidth();
+            int bottom = bitmapCopier.getBottom();
+            Canvas canvas = new Canvas(copy);
+            mAttributePainter.drawAttribute(1, bottom, imageHeight, imageWidth, canvas, geocache
+                    .getDifficulty(), Color.argb(255, 0x20, 0x20, 0xFF));
+            mAttributePainter.drawAttribute(0, bottom, imageHeight, imageWidth, canvas, geocache
+                    .getTerrain(), Color.argb(255, 0xDB, 0xA1, 0x09));
+
+            drawOverlay(overlayIcon, imageWidth, canvas);
+
+            return new BitmapDrawable(copy);
+        }
+
+        private void drawOverlay(Drawable overlayIcon, int imageWidth, Canvas canvas) {
+            if (overlayIcon != null) {
+                overlayIcon.setBounds(imageWidth-1-overlayIcon.getIntrinsicWidth(),
+                        0, imageWidth-1, overlayIcon.getIntrinsicHeight()-1);
+                overlayIcon.draw(canvas);
+            }
+        }
+    }
+    
+    public Drawable createIconListView(Geocache geocache, Drawable overlayIcon, Resources resources) {
+        return mIconRenderer.createOverlay(geocache, geocache.getCacheType().icon(), overlayIcon,
+                resources, new ListViewBitmapCopier());
+    }
+    
+    public Drawable createIconMapView(Geocache geocache, Drawable overlayIcon, Resources resources) {
+        Drawable iconMap = mIconRenderer.createOverlay(geocache, geocache.getCacheType().iconMap(), overlayIcon, resources,
+                new MapViewBitmapCopier());
+        int width = iconMap.getIntrinsicWidth();
+        int height = iconMap.getIntrinsicHeight();
+        iconMap.setBounds(-width / 2, -height, width / 2, 0);
+        return iconMap;
+    }
+
     public static class AttributePainter {
         private final Paint mTempPaint;
         private final Rect mTempRect;
@@ -78,58 +160,6 @@ public class GraphicsGenerator {
         }
     }
     
-    Drawable createOverlay(Geocache geocache, int bottom, int backdropId, Drawable overlayIcon,
-            Resources resources) {
-        Bitmap bitmap = BitmapFactory.decodeResource(resources, backdropId);
-        int imageHeight = bitmap.getHeight();
-        int imageWidth = bitmap.getWidth();
-
-        Bitmap copy;
-        if (bottom >= 0) {
-            copy = bitmap.copy(Bitmap.Config.ARGB_8888, true);
-        } else {
-            copy = Bitmap.createBitmap(imageWidth, imageHeight - bottom, Bitmap.Config.ARGB_8888);
-            int[] pixels = new int[imageWidth * imageHeight];
-            bitmap.getPixels(pixels, 0, imageWidth, 0, 0, imageWidth, imageHeight);
-            copy.setPixels(pixels, 0, imageWidth, 0, 0, imageWidth, imageHeight);
-            imageHeight = copy.getHeight();
-            bottom = 0;
-        }
-
-        Canvas canvas = new Canvas(copy);
-        mAttributePainter.drawAttribute(1, bottom, imageHeight, imageWidth, canvas,
-                geocache.getDifficulty(), Color.argb(255, 0x20, 0x20, 0xFF));
-        mAttributePainter.drawAttribute(0, bottom, imageHeight, imageWidth, canvas,
-                geocache.getTerrain(), Color.argb(255, 0xDB, 0xA1, 0x09));
-        
-        drawOverlay(overlayIcon, imageWidth, canvas);
-            
-        return new BitmapDrawable(copy);
-    }
-
-    private void drawOverlay(Drawable overlayIcon, int imageWidth, Canvas canvas) {
-        if (overlayIcon != null) {
-            overlayIcon.setBounds(imageWidth-1-overlayIcon.getIntrinsicWidth(),
-                    0, imageWidth-1, overlayIcon.getIntrinsicHeight()-1);
-            overlayIcon.draw(canvas);
-        }
-    }
-    
-    public Drawable createIconListView(Geocache geocache, Drawable overlayIcon, 
-            Resources resources) {
-        return createOverlay(geocache, -5, geocache.getCacheType().icon(), overlayIcon, resources);
-    }
-    
-    public Drawable createIconMapView(Geocache geocache, Drawable overlayIcon, 
-            Resources resources) {
-        Drawable iconMap = createOverlay(geocache, 3, geocache.getCacheType().iconMap(),
-                overlayIcon, resources);
-        int width = iconMap.getIntrinsicWidth();
-        int height = iconMap.getIntrinsicHeight();
-        iconMap.setBounds(-width/2, -height, width/2, 0);
-        return iconMap;
-    }
-
     /** Returns a new Drawable that is 'top' over 'bottom'. 
      * Top is assumed to be smaller and is centered over bottom. */
     public Drawable superimpose(Drawable top, Drawable bottom) {

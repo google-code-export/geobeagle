@@ -23,6 +23,7 @@ import com.google.code.geobeagle.IPausable;
 import com.google.code.geobeagle.LocationControlDi;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.GraphicsGenerator.AttributePainter;
+import com.google.code.geobeagle.GraphicsGenerator.IconRenderer;
 import com.google.code.geobeagle.actions.CacheAction;
 import com.google.code.geobeagle.actions.CacheActionAssignTags;
 import com.google.code.geobeagle.actions.CacheActionConfirm;
@@ -84,10 +85,9 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.TextView;
-import android.widget.LinearLayout.LayoutParams;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -129,8 +129,7 @@ public class CacheListDelegateDI {
 
         final DbFrontend dbFrontend = new DbFrontend(listActivity, geocacheFactory);
         final GraphicsGenerator graphicsGenerator = new GraphicsGenerator(
-                new GraphicsGenerator.RatingsGenerator(), new AttributePainter(new Paint(),
-                        new Rect()));
+                new GraphicsGenerator.RatingsGenerator(), new IconRenderer(new AttributePainter(new Paint(), new Rect())));
         final CacheNameAttributes cacheNameAttributes = new CacheNameAttributes();
         final GeocacheSummaryRowInflater geocacheSummaryRowInflater = new GeocacheSummaryRowInflater(
                 distanceFormatterManager.getFormatter(), layoutInflater,
@@ -140,8 +139,8 @@ public class CacheListDelegateDI {
                 listActivity);
         final LinearLayout gpsStatusWidget = new LinearLayout(listActivity);
 
-        gpsStatusWidget.addView(inflatedGpsStatusWidget, LayoutParams.FILL_PARENT,
-                LayoutParams.WRAP_CONTENT);
+        gpsStatusWidget.addView(inflatedGpsStatusWidget, ViewGroup.LayoutParams.FILL_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT);
         final GpsWidgetAndUpdater gpsWidgetAndUpdater = new GpsWidgetAndUpdater(listActivity,
                 gpsStatusWidget, geoFixProvider,
                 distanceFormatterManager.getFormatter());
