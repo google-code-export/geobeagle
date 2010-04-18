@@ -72,7 +72,7 @@ public class GeocacheFactory {
 
             public SourceFactory() {
                 for (Source source : values())
-                    mSources[source.mIx] = source;
+                    mSources[source.toInt()] = source;
             }
 
             public Source fromInt(int i) {
