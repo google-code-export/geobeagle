@@ -20,6 +20,7 @@ import com.google.code.geobeagle.activity.main.fieldnotes.DialogHelperSms.Dialog
 import com.google.code.geobeagle.activity.main.fieldnotes.FieldnoteLogger.FieldnoteLoggerFactory;
 import com.google.code.geobeagle.activity.main.fieldnotes.FieldnoteLogger.OnClickOk;
 import com.google.code.geobeagle.activity.main.fieldnotes.FieldnoteLogger.OnClickOkFactory;
+import com.google.code.geobeagle.activity.main.fieldnotes.FileLogger.ToasterErrorWritingLog;
 import com.google.code.geobeagle.xmlimport.GpxImporterDI.Toaster;
 import com.google.inject.Provides;
 import com.google.inject.assistedinject.FactoryProvider;
@@ -45,6 +46,7 @@ public class FieldnotesModule extends AbstractAndroidModule {
     }
 
     @Provides
+    @ToasterErrorWritingLog
     Toaster toasterProvider(GeoBeagle geoBeagle) {
         return new Toaster(geoBeagle, R.string.error_writing_cache_log, Toast.LENGTH_LONG);
     }

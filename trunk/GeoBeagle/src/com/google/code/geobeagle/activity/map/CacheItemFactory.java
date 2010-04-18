@@ -15,18 +15,24 @@
 package com.google.code.geobeagle.activity.map;
 
 import com.google.code.geobeagle.Geocache;
+import com.google.code.geobeagle.GraphicsGenerator.IconFactory;
+import com.google.code.geobeagle.GraphicsGenerator.MapViewBitmapCopier;
+import com.google.inject.Inject;
 
 class CacheItemFactory {
-    private final CacheDrawables mCacheDrawables;
+    private final IconFactory mIconFactory;
+    private final MapViewBitmapCopier mMapViewBitmapCopier;
 
-    CacheItemFactory(CacheDrawables cacheDrawables) {
-        mCacheDrawables = cacheDrawables;
+    @Inject
+    CacheItemFactory(IconFactory iconFactory, MapViewBitmapCopier mapViewBitmapCopier) {
+        mIconFactory = iconFactory;
+        mMapViewBitmapCopier = mapViewBitmapCopier;
     }
 
     CacheItem createCacheItem(Geocache geocache) {
-        final CacheItem cacheItem = new CacheItem(geocache.getGeoPoint(), (String)geocache
-                .getId(), geocache);
-        cacheItem.setMarker(mCacheDrawables.get(geocache.getCacheType()));
+        final CacheItem cacheItem = new CacheItem(geocache.getGeoPoint(), (String)geocache.getId(),
+                geocache);
+        cacheItem.setMarker(mIconFactory.createMapViewIcon(geocache, mMapViewBitmapCopier));
         return cacheItem;
     }
 }

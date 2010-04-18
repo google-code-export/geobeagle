@@ -14,9 +14,9 @@
 
 package com.google.code.geobeagle.activity.map;
 
-import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapView;
 import com.google.android.maps.Overlay;
+import com.google.inject.Injector;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -30,14 +30,15 @@ public class DensityOverlay extends Overlay {
     // Android classes.
 
     public static DensityOverlayDelegate createDelegate(List<DensityMatrix.DensityPatch> patches,
-             GeoPoint nullGeoPoint, QueryManager queryManager) {
+             Injector injector) {
         final Rect patchRect = new Rect();
         final Paint paint = new Paint();
         paint.setARGB(128, 255, 0, 0);
         final Point screenLow = new Point();
         final Point screenHigh = new Point();
+        final QueryManager densityMapQueryManager = injector.getInstance(QueryManager.class);
         final DensityPatchManager densityPatchManager = new DensityPatchManager(patches,
-                queryManager);
+                densityMapQueryManager);
         return new DensityOverlayDelegate(patchRect, paint, screenLow, screenHigh, 
                 densityPatchManager);
     }

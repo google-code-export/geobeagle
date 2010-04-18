@@ -142,7 +142,6 @@ public class QueryManagerTest {
         DbFrontend geocachesLoader = PowerMock.createMock(DbFrontend.class);
         WhereFactoryFixedArea where = PowerMock.createMock(WhereFactoryFixedArea.class);
         LoaderImpl loaderImpl = PowerMock.createMock(LoaderImpl.class);
-        ArrayList<Geocache> nullList = new ArrayList<Geocache>();
         int[] newBounds = {
                 0, 0, 0, 0
         };
@@ -152,8 +151,8 @@ public class QueryManagerTest {
         EasyMock.expect(loaderImpl.load(0, 1, 2, 3, where, newBounds)).andReturn(fullList);
 
         PowerMock.replayAll();
-        final ArrayList<Geocache> list = new QueryManager.PeggedLoader(geocachesLoader, nullList,
-                null, loaderImpl).load(0, 1, 2, 3, where, newBounds);
+        final ArrayList<Geocache> list = new QueryManager.PeggedLoader(geocachesLoader, null,
+                loaderImpl).load(0, 1, 2, 3, where, newBounds);
         assertEquals(fullList, list);
         PowerMock.verifyAll();
     }
@@ -186,8 +185,8 @@ public class QueryManagerTest {
         EasyMock.expect(geocachesLoader.count(0, 0, where)).andReturn(2000);
 
         PowerMock.replayAll();
-        final ArrayList<Geocache> list = new QueryManager.PeggedLoader(geocachesLoader, nullList,
-                toaster, loaderImpl).load(0, 1, 2, 3, where, newBounds);
+        final ArrayList<Geocache> list = new QueryManager.PeggedLoader(geocachesLoader, toaster,
+                loaderImpl).load(0, 1, 2, 3, where, newBounds);
         assertEquals(nullList, list);
         assertEquals(newBounds[0], 0);
         assertEquals(newBounds[1], 0);

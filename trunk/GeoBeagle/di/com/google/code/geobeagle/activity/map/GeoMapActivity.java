@@ -15,44 +15,52 @@
 package com.google.code.geobeagle.activity.map;
 
 import com.google.android.maps.GeoPoint;
-import com.google.android.maps.MapActivity;
 import com.google.android.maps.MapController;
 import com.google.android.maps.MyLocationOverlay;
 import com.google.android.maps.Overlay;
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.actions.MenuActionCacheList;
 import com.google.code.geobeagle.actions.MenuActions;
 import com.google.code.geobeagle.activity.main.GeoUtils;
 import com.google.code.geobeagle.activity.map.DensityMatrix.DensityPatch;
+import com.google.code.geobeagle.activity.map.GeoMapActivityModule.GeoMapMenuActionsFactory;
 import com.google.code.geobeagle.activity.map.QueryManager.CachedNeedsLoading;
 import com.google.code.geobeagle.activity.map.QueryManager.LoaderImpl;
-import com.google.code.geobeagle.activity.map.QueryManager.PeggedLoader;
 import com.google.code.geobeagle.database.DbFrontend;
-import com.google.code.geobeagle.xmlimport.GpxImporterDI.Toaster;
+import com.google.inject.Inject;
+import com.google.inject.Injector;
+
+import roboguice.activity.GuiceMapActivity;
+import roboguice.inject.ContextScoped;
+import roboguice.inject.InjectView;
 
 import android.content.Intent;
-import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class GeoMapActivity extends MapActivity {
+public class GeoMapActivity extends GuiceMapActivity {
 
-    private static class NullOverlay extends Overlay {
+    static class NullOverlay extends Overlay {
     }
 
     private static final int DEFAULT_ZOOM_LEVEL = 14;
 
     private static boolean fZoomed = false;
+    
+    @Inject
+    @ContextScoped
     private DbFrontend mDbFrontend;
+
     private GeoMapActivityDelegate mGeoMapActivityDelegate;
+    
+    @InjectView(R.id.mapview)
     private GeoMapView mMapView;
+    
     private MyLocationOverlay mMyLocationOverlay;
 
     @Override
@@ -65,54 +73,34 @@ public class GeoMapActivity extends MapActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.map);
-
-        // Set member variables first, in case anyone after this needs them.
+        final Injector injector = getInjector();
+        
         mMapView = (GeoMapView)findViewById(R.id.mapview);
-        mDbFrontend = new DbFrontend(this);
-        // mMyLocationOverlay = new MyLocationOverlay(this, mMapView);
+        
         mMyLocationOverlay = new FixedMyLocationOverlay(this, mMapView);
-
         mMapView.setBuiltInZoomControls(true);
         mMapView.setSatellite(false);
-
-        final Resources resources = getResources();
-        final Drawable defaultMarker = resources.getDrawable(R.drawable.map_pin2_others);
-        final CacheDrawables cacheDrawables = new CacheDrawables(resources);
-        final CacheItemFactory cacheItemFactory = new CacheItemFactory(cacheDrawables);
+        final Drawable defaultMarker = injector.getInstance(Drawable.class);
+        
+        final CacheItemFactory cacheItemFactory = injector.getInstance(CacheItemFactory.class);
 
         final List<Overlay> mapOverlays = mMapView.getOverlays();
-        final MenuActions menuActions = new MenuActions(getResources());
-        menuActions.add(new GeoMapActivityDelegate.MenuActionToggleSatellite(mMapView));
-        menuActions.add(new MenuActionCacheList(this));
-        final MapController mapController = mMapView.getController();
-        menuActions.add(new GeoMapActivityDelegate.MenuActionCenterLocation(mapController,
-                mMyLocationOverlay));
+        final MenuActions menuActions = injector.getInstance(GeoMapMenuActionsFactory.class).create(mMapView);
 
         final Intent intent = getIntent();
         final double latitude = intent.getFloatExtra("latitude", 0);
         final double longitude = intent.getFloatExtra("longitude", 0);
-        final Overlay nullOverlay = new GeoMapActivity.NullOverlay();
+        final NullOverlay nullOverlay = new GeoMapActivity.NullOverlay();
         final GeoPoint nullGeoPoint = new GeoPoint(0, 0);
 
         mapOverlays.add(nullOverlay);
         mapOverlays.add(mMyLocationOverlay);
 
-        final ArrayList<Geocache> nullList = new ArrayList<Geocache>();
         final List<DensityPatch> densityPatches = new ArrayList<DensityPatch>();
-        final Toaster toaster = new Toaster(this, R.string.too_many_caches, Toast.LENGTH_SHORT);
-        final LoaderImpl loaderImpl = new QueryManager.LoaderImpl(mDbFrontend);
-        final PeggedLoader peggedLoader = new QueryManager.PeggedLoader(mDbFrontend, nullList,
-                toaster, loaderImpl);
-        final int[] densityMapInitialLatLonMinMax = {
-                0, 0, 0, 0
-        };
+        final LoaderImpl loaderImpl = injector.getInstance(LoaderImpl.class);
 
-        final CachedNeedsLoading densityMapCachedNeedsLoading = new CachedNeedsLoading(
-                nullGeoPoint, nullGeoPoint);
-        final QueryManager densityMapQueryManager = new QueryManager(peggedLoader,
-                densityMapCachedNeedsLoading, densityMapInitialLatLonMinMax);
         final DensityOverlayDelegate densityOverlayDelegate = DensityOverlay.createDelegate(
-                densityPatches, nullGeoPoint, densityMapQueryManager);
+                densityPatches, injector);
         final DensityOverlay densityOverlay = new DensityOverlay(densityOverlayDelegate);
         final ArrayList<Geocache> geocacheList = new ArrayList<Geocache>();
         final CachePinsOverlay cachePinsOverlay = new CachePinsOverlay(cacheItemFactory, this,
@@ -131,7 +119,7 @@ public class GeoMapActivity extends MapActivity {
 
         final GeoPoint center = new GeoPoint((int)(latitude * GeoUtils.MILLION),
                 (int)(longitude * GeoUtils.MILLION));
-
+        final MapController mapController = mMapView.getController();
         mapController.setCenter(center);
         final OverlayManager overlayManager = new OverlayManager(mMapView, mapOverlays,
                 densityOverlay, cachePinsOverlayFactory, false);

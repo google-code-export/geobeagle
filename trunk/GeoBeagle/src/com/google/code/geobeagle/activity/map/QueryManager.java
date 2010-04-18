@@ -14,14 +14,23 @@
 
 package com.google.code.geobeagle.activity.map;
 
+import static java.lang.annotation.ElementType.FIELD;
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.ElementType.PARAMETER;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
+
 import com.google.android.maps.GeoPoint;
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.database.DbFrontend;
 import com.google.code.geobeagle.database.WhereFactoryFixedArea;
 import com.google.code.geobeagle.xmlimport.GpxImporterDI.Toaster;
+import com.google.inject.BindingAnnotation;
+import com.google.inject.Inject;
 
 import android.util.Log;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
 import java.util.ArrayList;
 
 class QueryManager {
@@ -31,10 +40,15 @@ class QueryManager {
      * refresh us every second, and we'll query the database over and over again
      * to learn that we have too many caches for the same set of points.
      */
+
+    @BindingAnnotation @Target({ FIELD, PARAMETER, METHOD }) @Retention(RUNTIME)
+    public static @interface ToasterTooManyCaches {}
+
     static class CachedNeedsLoading {
         private GeoPoint mOldBottomRight;
         private GeoPoint mOldTopLeft;
 
+        @Inject
         public CachedNeedsLoading(GeoPoint topLeft, GeoPoint bottomRight) {
             mOldTopLeft = topLeft;
             mOldBottomRight = bottomRight;
@@ -60,6 +74,7 @@ class QueryManager {
     static class LoaderImpl implements Loader {
         private final DbFrontend mDbFrontend;
 
+        @Inject
         LoaderImpl(DbFrontend dbFrontend) {
             mDbFrontend = dbFrontend;
         }
@@ -83,9 +98,10 @@ class QueryManager {
         private final Toaster mToaster;
         private boolean mTooManyCaches;
 
-        PeggedLoader(DbFrontend dbFrontend, ArrayList<Geocache> nullList, Toaster toaster,
+        @Inject
+        PeggedLoader(DbFrontend dbFrontend, @ToasterTooManyCaches Toaster toaster,
                 LoaderImpl loaderImpl) {
-            mNullList = nullList;
+            mNullList = new ArrayList<Geocache>();
             mDbFrontend = dbFrontend;
             mToaster = toaster;
             mTooManyCaches = false;
@@ -133,8 +149,8 @@ class QueryManager {
                 - DensityPatchManager.RESOLUTION_LATITUDE_E6;
         final int lonMax = newBottomRight.getLongitudeE6()
                 + DensityPatchManager.RESOLUTION_LONGITUDE_E6;
-        final WhereFactoryFixedArea where = new WhereFactoryFixedArea((double)latMin / 1E6,
-                (double)lonMin / 1E6, (double)latMax / 1E6, (double)lonMax / 1E6);
+        final WhereFactoryFixedArea where = new WhereFactoryFixedArea(latMin / 1E6,
+                lonMin / 1E6, latMax / 1E6, lonMax / 1E6);
 
         mList = mLoader.load(latMin, lonMin, latMax, lonMax, where, mLatLonMinMax);
         return mList;

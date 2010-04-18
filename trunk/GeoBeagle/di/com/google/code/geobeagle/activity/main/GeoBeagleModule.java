@@ -19,11 +19,11 @@ import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.ElementType.PARAMETER;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-import com.google.code.geobeagle.GraphicsGenerator;
 import com.google.code.geobeagle.LocationControlBuffered;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.Refresher;
 import com.google.code.geobeagle.CompassListener.Azimuth;
+import com.google.code.geobeagle.GraphicsGenerator.RatingsArray;
 import com.google.code.geobeagle.actions.MenuAction;
 import com.google.code.geobeagle.actions.MenuActionCacheList;
 import com.google.code.geobeagle.actions.MenuActionEditGeocache;
@@ -77,6 +77,7 @@ import android.graphics.drawable.Drawable;
 import android.hardware.SensorManager;
 import android.location.LocationManager;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -89,6 +90,9 @@ public class GeoBeagleModule extends AbstractAndroidModule {
 
     @BindingAnnotation @Target({ FIELD, PARAMETER, METHOD }) @Retention(RUNTIME)
     public static @interface DefaultSharedPreferences {}
+
+    @BindingAnnotation @Target({ FIELD, PARAMETER, METHOD }) @Retention(RUNTIME)
+    public static @interface GeoBeagleActivity {}
 
     static final class DefaultSharedPreferencesProvider implements Provider<SharedPreferences> {
         private final Context mContext;
@@ -173,9 +177,9 @@ public class GeoBeagleModule extends AbstractAndroidModule {
         bind(Rect.class).toInstance(new Rect());
     }
 
-    private UnlabelledAttributeViewer getImagesOnDifficulty(GraphicsGenerator graphicsGenerator,
-            final Drawable[] pawDrawables, ImageView imageView) {
-        return new UnlabelledAttributeViewer(imageView, graphicsGenerator.getRatings(pawDrawables,
+    private UnlabelledAttributeViewer getImagesOnDifficulty(final Drawable[] pawDrawables,
+            ImageView imageView, RatingsArray ratingsArray) {
+        return new UnlabelledAttributeViewer(imageView, ratingsArray.getRatings(pawDrawables,
                 10));
     }
 
@@ -273,6 +277,7 @@ public class GeoBeagleModule extends AbstractAndroidModule {
     }
 
     @Provides
+    @GeoBeagleActivity
     MenuActions providesMenuActions(GeoBeagle geoBeagle, Resources resources,
             @Named("IntentStarterViewGoogleMap") IntentStarterViewUri viewGoogleMapIntentStarter) {
         final MenuAction[] menuActionArray = {
@@ -295,13 +300,13 @@ public class GeoBeagleModule extends AbstractAndroidModule {
     @Provides
     @PawImages
     UnlabelledAttributeViewer providesPawImagesOnDifficulty(Resources resources,
-            GraphicsGenerator graphicsGenerator, @Named("ImageViewTerrain") ImageView imageView) {
+            @Named("ImageViewTerrain") ImageView imageView, RatingsArray ratingsArray) {
         final Drawable[] pawDrawables = {
                 resources.getDrawable(R.drawable.paw_unselected_dark),
                 resources.getDrawable(R.drawable.paw_half_light),
                 resources.getDrawable(R.drawable.paw_selected_light)
         };
-        return getImagesOnDifficulty(graphicsGenerator, pawDrawables, imageView);
+        return getImagesOnDifficulty(pawDrawables, imageView, ratingsArray);
     }
 
     @Provides
@@ -323,13 +328,13 @@ public class GeoBeagleModule extends AbstractAndroidModule {
     @Provides
     @RibbonImages
     UnlabelledAttributeViewer providesRibbonImagesOnDifficulty(Resources resources,
-            GraphicsGenerator graphicsGenerator, @Named("ImageViewDifficulty") ImageView imageView) {
+            @Named("ImageViewDifficulty") ImageView imageView, RatingsArray ratingsArray) {
         final Drawable[] ribbonDrawables = {
                 resources.getDrawable(R.drawable.ribbon_unselected_dark),
                 resources.getDrawable(R.drawable.ribbon_half_bright),
                 resources.getDrawable(R.drawable.ribbon_selected_bright)
         };
-        return getImagesOnDifficulty(graphicsGenerator, ribbonDrawables, imageView);
+        return getImagesOnDifficulty(ribbonDrawables, imageView, ratingsArray);
     }
 
     @Provides

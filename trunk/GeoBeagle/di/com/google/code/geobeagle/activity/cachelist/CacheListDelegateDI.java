@@ -17,10 +17,11 @@ package com.google.code.geobeagle.activity.cachelist;
 import com.google.code.geobeagle.CacheTypeFactory;
 import com.google.code.geobeagle.ErrorDisplayer;
 import com.google.code.geobeagle.GeocacheFactory;
-import com.google.code.geobeagle.GraphicsGenerator;
 import com.google.code.geobeagle.LocationControlBuffered;
 import com.google.code.geobeagle.GraphicsGenerator.AttributePainter;
-import com.google.code.geobeagle.GraphicsGenerator.RatingsGenerator;
+import com.google.code.geobeagle.GraphicsGenerator.IconFactory;
+import com.google.code.geobeagle.GraphicsGenerator.IconRenderer;
+import com.google.code.geobeagle.GraphicsGenerator.ListViewBitmapCopier;
 import com.google.code.geobeagle.LocationControlBuffered.GpsDisabledLocation;
 import com.google.code.geobeagle.actions.MenuActionMap;
 import com.google.code.geobeagle.actions.MenuActionSearchOnline;
@@ -124,6 +125,7 @@ public class CacheListDelegateDI {
             public void onClick(DialogInterface dialog, int which) {
             }
         };
+        final Injector injector = listActivity.getInjector();
         final ErrorDisplayer errorDisplayer = new ErrorDisplayer(listActivity, mOnClickListener);
         final LocationManager locationManager = (LocationManager)listActivity
                 .getSystemService(Context.LOCATION_SERVICE);
@@ -131,7 +133,6 @@ public class CacheListDelegateDI {
         final CombinedLocationManager combinedLocationManager = new CombinedLocationManager(
                 locationManager, locationListeners);
         final GeocacheFactory geocacheFactory = new GeocacheFactory();
-        final Injector injector = listActivity.getInjector();
         LocationControlBuffered locationControlBuffered = injector.getInstance(LocationControlBuffered.class);
         final GeocacheFromMyLocationFactory geocacheFromMyLocationFactory = new GeocacheFromMyLocationFactory(
                 geocacheFactory, locationControlBuffered);
@@ -144,11 +145,10 @@ public class CacheListDelegateDI {
         final XmlPullParserWrapper xmlPullParserWrapper = new XmlPullParserWrapper();
 
         final Resources resources = listActivity.getResources();
-        final GraphicsGenerator graphicsGenerator = new GraphicsGenerator(new RatingsGenerator(),
-                new AttributePainter(new Paint(), new Rect()), resources);
         final GeocacheSummaryRowInflater geocacheSummaryRowInflater = new GeocacheSummaryRowInflater(
                 distanceFormatterManager.getFormatter(), layoutInflater, relativeBearingFormatter,
-                graphicsGenerator);
+                new IconFactory(new IconRenderer(new AttributePainter(new Paint(), new Rect()),
+                        resources), new ListViewBitmapCopier()));
         final UpdateFlag updateFlag = new UpdateFlag();
         final GeocacheListAdapter geocacheListAdapter = new GeocacheListAdapter(geocacheVectors,
                 geocacheSummaryRowInflater);

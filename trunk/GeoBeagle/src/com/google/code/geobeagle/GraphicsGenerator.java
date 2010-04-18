@@ -27,10 +27,6 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 
 public class GraphicsGenerator {
-    private final RatingsGenerator mRatingsGenerator;
-    private final AttributePainter mAttributePainter;
-    private final Resources mResources;
-
     public static class AttributePainter {
         private final Paint mTempPaint;
         private final Rect mTempRect;
@@ -40,26 +36,19 @@ public class GraphicsGenerator {
             mTempPaint = tempPaint;
             mTempRect = tempRect;
         }
-        
-        void drawAttribute(int position, int thickness, int imageHeight, int imageWidth,
-                Canvas canvas, double attribute, int color) {
+
+        void drawAttribute(int position, int bottom, int imageHeight, int imageWidth, Canvas canvas,
+                double attribute, int color) {
             final int diffWidth = (int)(imageWidth * (attribute / 10.0));
             final int MARGIN = 1;
-            final int base = imageHeight - MARGIN;
-            final int attributeBottom = base - position * (thickness + 1);
-            final int attributeTop = attributeBottom - thickness;
+            final int THICKNESS = 3;
+            final int base = imageHeight - bottom - MARGIN;
+            final int attributeBottom = base - position * (THICKNESS + 1);
+            final int attributeTop = attributeBottom - THICKNESS;
             mTempPaint.setColor(color);
             mTempRect.set(0, attributeTop, diffWidth, attributeBottom);
             canvas.drawRect(mTempRect, mTempPaint);
         }
-    }
-    
-    @Inject
-    public GraphicsGenerator(RatingsGenerator ratingsGenerator, AttributePainter attributePainter,
-            Resources resources) {
-        mRatingsGenerator = ratingsGenerator;
-        mAttributePainter = attributePainter;
-        mResources = resources;
     }
 
     public static class RatingsGenerator {
@@ -83,42 +72,114 @@ public class GraphicsGenerator {
             return new BitmapDrawable(bitmap);
         }
 
-        private void draw(int width, int height, Canvas c, int i, Drawable drawable) {
+        void draw(int width, int height, Canvas c, int i, Drawable drawable) {
             drawable.setBounds(width * i, 0, width * (i + 1) - 1, height - 1);
             drawable.draw(c);
         }
+        
     }
+    
+    public static class RatingsArray {
+        private final RatingsGenerator mRatingsGenerator;
 
-    public Drawable[] getRatings(Drawable drawables[], int maxRatings) {
-        Drawable[] ratings = new Drawable[maxRatings];
-        for (int i = 1; i <= maxRatings; i++) {
-            ratings[i - 1] = mRatingsGenerator.createRating(drawables[0], drawables[1],
-                    drawables[2], i);
+        @Inject
+        RatingsArray(RatingsGenerator ratingsGenerator) {
+            mRatingsGenerator = ratingsGenerator;
         }
-        return ratings;
+
+        public Drawable[] getRatings(Drawable[] drawables, int maxRatings) {
+            Drawable[] ratings = new Drawable[maxRatings];
+            for (int i = 1; i <= maxRatings; i++) {
+                ratings[i - 1] = mRatingsGenerator.createRating(drawables[0], drawables[1],
+                        drawables[2], i);
+            }
+            return ratings;
+        }
     }
 
-    public Drawable createIcon(Geocache geocache) {
-        return createOverlay(geocache, 3, -5, geocache.getCacheType().icon());
+    public interface BitmapCopier {
+        Bitmap copy(Bitmap source);
+        int getBottom();
     }
 
-    private Drawable createOverlay(Geocache geocache, int thickness, int bottom, int backdropId) {
-        Bitmap bitmap = BitmapFactory.decodeResource(mResources, backdropId);
-        int imageHeight = bitmap.getHeight();
-        int imageWidth = bitmap.getWidth();
-        Bitmap copy = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight() - bottom,
-                Bitmap.Config.ARGB_8888);
-        int[] pixels = new int[imageWidth * imageHeight];
-        bitmap.getPixels(pixels, 0, imageWidth, 0, 0, imageWidth, imageHeight);
-        copy.setPixels(pixels, 0, imageWidth, 0, 0, imageWidth, imageHeight);
-        imageHeight = copy.getHeight();
+    public static class ListViewBitmapCopier implements BitmapCopier {
+        public Bitmap copy(Bitmap source) {
+            int imageHeight = source.getHeight();
+            int imageWidth = source.getWidth();
+
+            Bitmap copy = Bitmap.createBitmap(imageWidth, imageHeight + 5, Bitmap.Config.ARGB_8888);
+            int[] pixels = new int[imageWidth * imageHeight];
+            source.getPixels(pixels, 0, imageWidth, 0, 0, imageWidth, imageHeight);
+            copy.setPixels(pixels, 0, imageWidth, 0, 0, imageWidth, imageHeight);
+            return copy;
+        }
         
-        Canvas canvas = new Canvas(copy);
-        mAttributePainter.drawAttribute(1, thickness, imageHeight, imageWidth, canvas, geocache
-                .getDifficulty(), Color.argb(255, 0x20, 0x20, 0xFF));
-        mAttributePainter.drawAttribute(0, thickness, imageHeight, imageWidth, canvas, geocache
-                .getTerrain(), Color.argb(255, 0xDB, 0xA1, 0x09));
+        public int getBottom() {
+            return 0;
+        }
+    }
+    
+    public static class MapViewBitmapCopier implements BitmapCopier {
+        public Bitmap copy(Bitmap source) {
+            return source.copy(Bitmap.Config.ARGB_8888, true);
+        }
+
+        public int getBottom() {
+            return 3;
+        }
+    }
+
+    public static class IconRenderer {
+        private final AttributePainter mAttributePainter;
+        private final Resources mResources;
         
-        return new BitmapDrawable(copy);
+        @Inject
+        public IconRenderer(AttributePainter attributePainter, Resources resources) {
+            mAttributePainter = attributePainter;
+            mResources = resources;
+        }
+
+        Drawable renderIcon(Geocache geocache, int backdropId,
+                BitmapCopier listViewBitmapCopier) {
+            Bitmap bitmap = BitmapFactory.decodeResource(mResources, backdropId);
+
+            Bitmap copy = listViewBitmapCopier.copy(bitmap);
+            int imageHeight = copy.getHeight();
+            int imageWidth = copy.getWidth();
+
+            Canvas canvas = new Canvas(copy);
+            mAttributePainter.drawAttribute(1, 0, imageHeight, imageWidth, canvas, geocache
+                    .getDifficulty(), Color.rgb(0x20, 0x20, 0xFF));
+            mAttributePainter.drawAttribute(0, 0, imageHeight, imageWidth, canvas, geocache
+                    .getTerrain(), Color.rgb(0xDB, 0xA1, 0x09));
+
+            return new BitmapDrawable(copy);
+        }
+    }
+
+    public static class IconFactory {
+        private final IconRenderer mIconRenderer;
+        private final ListViewBitmapCopier mListViewBitmapCopier;
+
+        @Inject
+        public IconFactory(IconRenderer iconRenderer, ListViewBitmapCopier listViewBitmapCopier) {
+            mIconRenderer = iconRenderer;
+            mListViewBitmapCopier = listViewBitmapCopier;
+        }
+
+        public Drawable createListViewIcon(Geocache geocache) {
+            return mIconRenderer.renderIcon(geocache, geocache.getCacheType().icon(),
+                    mListViewBitmapCopier);
+        }
+
+        public Drawable createMapViewIcon(Geocache geocache, MapViewBitmapCopier mapViewBitmapCopier) {
+            Drawable iconMap = mIconRenderer.renderIcon(geocache, geocache.getCacheType().iconMap(),
+                    mapViewBitmapCopier);
+            int width = iconMap.getIntrinsicWidth();
+            int height = iconMap.getIntrinsicHeight();
+            iconMap.setBounds(-width / 2, -height, width / 2, 0);
+            return iconMap;
+        }
+        
     }
 }

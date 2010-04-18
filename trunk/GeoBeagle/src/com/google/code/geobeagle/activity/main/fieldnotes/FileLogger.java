@@ -14,13 +14,21 @@
 
 package com.google.code.geobeagle.activity.main.fieldnotes;
 
+import static java.lang.annotation.ElementType.FIELD;
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.ElementType.PARAMETER;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
+
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.xmlimport.GpxImporterDI.Toaster;
+import com.google.inject.BindingAnnotation;
 import com.google.inject.Inject;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
 import java.util.Date;
 
 /**
@@ -35,10 +43,13 @@ public class FileLogger implements ICacheLogger {
     private final Toaster mErrorToaster;
     private final FieldnoteStringsFVsDnf mFieldnoteStringsFVsDnf;
     private final DateFormatter mSimpleDateFormat;
+    
+    @BindingAnnotation @Target({ FIELD, PARAMETER, METHOD }) @Retention(RUNTIME)
+    public static @interface ToasterErrorWritingLog {}
 
     @Inject
-    public FileLogger(FieldnoteStringsFVsDnf fieldnoteStringsFVsDnf, DateFormatter simpleDateFormat,
-            Toaster errorToaster) {
+    public FileLogger(FieldnoteStringsFVsDnf fieldnoteStringsFVsDnf,
+            DateFormatter simpleDateFormat, @ToasterErrorWritingLog Toaster errorToaster) {
         mFieldnoteStringsFVsDnf = fieldnoteStringsFVsDnf;
         mSimpleDateFormat = simpleDateFormat;
         mErrorToaster = errorToaster;
