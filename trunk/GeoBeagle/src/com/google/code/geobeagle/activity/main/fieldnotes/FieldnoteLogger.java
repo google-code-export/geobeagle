@@ -15,6 +15,7 @@
 package com.google.code.geobeagle.activity.main.fieldnotes;
 
 import com.google.code.geobeagle.R;
+import com.google.code.geobeagle.Geocache.GeocacheId;
 import com.google.code.geobeagle.activity.main.GeoBeagleModule.DefaultSharedPreferences;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
@@ -45,7 +46,7 @@ public class FieldnoteLogger {
         private final CharSequence mGeocacheId;
 
         @Inject
-        public OnClickOk(CharSequence geocacheId, @Assisted EditText editText,
+        public OnClickOk(@GeocacheId CharSequence geocacheId, @Assisted EditText editText,
                 CacheLogger cacheLogger, @Assisted boolean dnf) {
             mGeocacheId = geocacheId;
             mEditText = editText;

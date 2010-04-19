@@ -14,10 +14,16 @@
 
 package com.google.code.geobeagle;
 
+import static java.lang.annotation.ElementType.FIELD;
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.ElementType.PARAMETER;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
+
 import com.google.android.maps.GeoPoint;
 import com.google.code.geobeagle.GeocacheFactory.Provider;
 import com.google.code.geobeagle.GeocacheFactory.Source;
 import com.google.code.geobeagle.activity.main.GeoUtils;
+import com.google.inject.BindingAnnotation;
 
 import android.content.SharedPreferences.Editor;
 import android.location.Location;
@@ -25,10 +31,16 @@ import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
+
 /**
  * Geocache or letterbox description, id, and coordinates.
  */
 public class Geocache implements Parcelable {
+    @BindingAnnotation @Target({ FIELD, PARAMETER, METHOD }) @Retention(RUNTIME)
+    public static @interface GeocacheId {}
+
     static interface AttributeFormatter {
         CharSequence formatAttributes(int difficulty, int terrain);
     }

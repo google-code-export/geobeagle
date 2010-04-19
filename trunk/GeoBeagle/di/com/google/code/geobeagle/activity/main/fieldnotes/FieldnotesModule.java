@@ -15,6 +15,7 @@
 package com.google.code.geobeagle.activity.main.fieldnotes;
 
 import com.google.code.geobeagle.R;
+import com.google.code.geobeagle.Geocache.GeocacheId;
 import com.google.code.geobeagle.activity.main.GeoBeagle;
 import com.google.code.geobeagle.activity.main.fieldnotes.DialogHelperSms.DialogHelperSmsFactory;
 import com.google.code.geobeagle.activity.main.fieldnotes.FieldnoteLogger.FieldnoteLoggerFactory;
@@ -52,6 +53,7 @@ public class FieldnotesModule extends AbstractAndroidModule {
     }
 
     @Provides
+    @GeocacheId
     CharSequence providesGeocacheId(GeoBeagle geoBeagle) {
         return geoBeagle.getGeocache().getId();
     }
