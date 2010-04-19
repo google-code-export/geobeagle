@@ -54,8 +54,8 @@ public class GeocacheSummaryRowInflater implements HasDistanceFormatter {
 
         public static class CacheNameAttributes {
 
-            void setTextColor(CharSequence geocacheId, boolean fArchived,
-                    boolean fUnavailable, TextView cacheName) {
+            void setTextColor(boolean fArchived, boolean fUnavailable,
+                    TextView cacheName) {
                 if (fArchived)
                     cacheName.setTextColor(Color.DKGRAY);
                 else if (fUnavailable)
@@ -64,8 +64,8 @@ public class GeocacheSummaryRowInflater implements HasDistanceFormatter {
                     cacheName.setTextColor(Color.WHITE);
             }
 
-            void setStrikethrough(CharSequence geocacheId, boolean fArchived,
-                    boolean fUnavailable, TextView cacheName) {
+            void setStrikethrough(boolean fArchived, boolean fUnavailable,
+                    TextView cacheName) {
                 if (fArchived || fUnavailable)
                     cacheName.setPaintFlags(cacheName.getPaintFlags()
                             | Paint.STRIKE_THRU_TEXT_FLAG);
@@ -109,10 +109,10 @@ public class GeocacheSummaryRowInflater implements HasDistanceFormatter {
                     Tags.ARCHIVED);
             boolean fUnavailable = dbFrontend.geocacheHasTag(geocacheId,
                     Tags.UNAVAILABLE);
-            mCacheNameAttributes.setTextColor(geocacheId, fArchived,
-                    fUnavailable, mCacheName);
-            mCacheNameAttributes.setStrikethrough(geocacheId, fArchived,
-                    fUnavailable, mCacheName);
+            mCacheNameAttributes.setTextColor(fArchived, fUnavailable,
+                    mCacheName);
+            mCacheNameAttributes.setStrikethrough(fArchived, fUnavailable,
+                    mCacheName);
             mDistance.setText(getFormattedDistance(distanceAndBearing, azimuth, distanceFormatter,
                     relativeBearingFormatter));
         }

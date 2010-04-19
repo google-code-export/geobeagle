@@ -65,7 +65,7 @@ public class GeocacheSummaryRowInflaterTest {
         textView.setTextColor(Color.DKGRAY);
 
         PowerMock.replayAll();
-        new CacheNameAttributes().setTextColor("GC123", true, false, textView);
+        new CacheNameAttributes().setTextColor(true, false, textView);
         PowerMock.verifyAll();
     }
 
@@ -76,7 +76,7 @@ public class GeocacheSummaryRowInflaterTest {
         textView.setTextColor(Color.WHITE);
 
         PowerMock.replayAll();
-        new CacheNameAttributes().setTextColor("GC123", false, false, textView);
+        new CacheNameAttributes().setTextColor(false, false, textView);
         PowerMock.verifyAll();
     }
 
@@ -87,7 +87,7 @@ public class GeocacheSummaryRowInflaterTest {
         textView.setTextColor(Color.LTGRAY);
 
         PowerMock.replayAll();
-        new CacheNameAttributes().setTextColor("GC123", false, true, textView);
+        new CacheNameAttributes().setTextColor(false, true, textView);
         PowerMock.verifyAll();
     }
 
@@ -99,8 +99,8 @@ public class GeocacheSummaryRowInflaterTest {
         textView.setPaintFlags(1 & ~Paint.STRIKE_THRU_TEXT_FLAG);
 
         PowerMock.replayAll();
-        new CacheNameAttributes().setStrikethrough("GC123", false,
-                false, textView);
+        new CacheNameAttributes().setStrikethrough(false, false,
+                textView);
         PowerMock.verifyAll();
     }
 
@@ -113,7 +113,7 @@ public class GeocacheSummaryRowInflaterTest {
 
         PowerMock.replayAll();
         new CacheNameAttributes()
-                .setStrikethrough("GC123", true, false, textView);
+                .setStrikethrough(true, false, textView);
         PowerMock.verifyAll();
     }
 
@@ -160,8 +160,8 @@ public class GeocacheSummaryRowInflaterTest {
         EasyMock.expect(dbFrontend.geocacheHasTag("GC123", Tags.UNAVAILABLE))
                 .andReturn(false).anyTimes();
 
-        cacheNameAttributes.setStrikethrough("GC123", false, false, txtCacheName);
-        cacheNameAttributes.setTextColor("GC123", false, false, txtCacheName);
+        cacheNameAttributes.setStrikethrough(false, false, txtCacheName);
+        cacheNameAttributes.setTextColor(false, false, txtCacheName);
 
         txtCacheName.setText("my cache");
         txtDistance.setText("10m >");
