@@ -16,35 +16,14 @@ package com.google.code.geobeagle.activity.map;
 
 import com.google.android.maps.MapView;
 import com.google.android.maps.Overlay;
-import com.google.inject.Injector;
+import com.google.inject.Inject;
 
 import android.graphics.Canvas;
-import android.graphics.Paint;
-import android.graphics.Point;
-import android.graphics.Rect;
-
-import java.util.List;
 
 public class DensityOverlay extends Overlay {
-    // Create delegate because it's not possible to test classes that extend
-    // Android classes.
-
-    public static DensityOverlayDelegate createDelegate(List<DensityMatrix.DensityPatch> patches,
-             Injector injector) {
-        final Rect patchRect = new Rect();
-        final Paint paint = new Paint();
-        paint.setARGB(128, 255, 0, 0);
-        final Point screenLow = new Point();
-        final Point screenHigh = new Point();
-        final QueryManager densityMapQueryManager = injector.getInstance(QueryManager.class);
-        final DensityPatchManager densityPatchManager = new DensityPatchManager(patches,
-                densityMapQueryManager);
-        return new DensityOverlayDelegate(patchRect, paint, screenLow, screenHigh, 
-                densityPatchManager);
-    }
-
     private DensityOverlayDelegate mDelegate;
 
+    @Inject
     public DensityOverlay(DensityOverlayDelegate densityOverlayDelegate) {
         mDelegate = densityOverlayDelegate;
     }

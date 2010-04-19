@@ -14,15 +14,25 @@
 
 package com.google.code.geobeagle.activity.map;
 
+import static java.lang.annotation.ElementType.FIELD;
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.ElementType.PARAMETER;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
+
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.Projection;
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.activity.cachelist.CacheListDelegateDI;
+import com.google.code.geobeagle.activity.map.GeoMapActivityModule.DefaultMapPinMarker;
+import com.google.inject.BindingAnnotation;
+import com.google.inject.Inject;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
 import java.util.ArrayList;
 
 public class CachePinsOverlayFactory {
@@ -31,11 +41,16 @@ public class CachePinsOverlayFactory {
     private final Context mContext;
     private final Drawable mDefaultMarker;
     private final GeoMapView mGeoMapView;
-    private QueryManager mQueryManager;
+    private final QueryManager mQueryManager;
 
-    public CachePinsOverlayFactory(GeoMapView geoMapView, Context context, Drawable defaultMarker,
+    @BindingAnnotation @Target({ FIELD, PARAMETER, METHOD }) @Retention(RUNTIME)
+    public static @interface CachePinsQueryManager {}
+
+    @Inject
+    public CachePinsOverlayFactory(GeoMapView geoMapView, Context context,
+            @DefaultMapPinMarker Drawable defaultMarker,
             CacheItemFactory cacheItemFactory, CachePinsOverlay cachePinsOverlay,
-            QueryManager queryManager) {
+            @CachePinsQueryManager QueryManager queryManager) {
         mGeoMapView = geoMapView;
         mContext = context;
         mDefaultMarker = defaultMarker;

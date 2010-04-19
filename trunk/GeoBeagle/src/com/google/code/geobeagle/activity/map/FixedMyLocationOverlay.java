@@ -2,6 +2,12 @@
 
 package com.google.code.geobeagle.activity.map;
 
+import com.google.android.maps.GeoPoint;
+import com.google.android.maps.MapView;
+import com.google.android.maps.MyLocationOverlay;
+import com.google.android.maps.Projection;
+import com.google.code.geobeagle.R;
+
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -9,12 +15,6 @@ import android.graphics.Point;
 import android.graphics.Paint.Style;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
-
-import com.google.android.maps.GeoPoint;
-import com.google.android.maps.MapView;
-import com.google.android.maps.MyLocationOverlay;
-import com.google.android.maps.Projection;
-import com.google.code.geobeagle.R;
 
 public class FixedMyLocationOverlay extends MyLocationOverlay {
     private boolean bugged = false;
@@ -26,7 +26,7 @@ public class FixedMyLocationOverlay extends MyLocationOverlay {
     private int width;
     private int height;
 
-    public FixedMyLocationOverlay(Context context, MapView mapView) {
+    public FixedMyLocationOverlay(Context context, GeoMapView mapView) {
         super(context, mapView);
     }
 
