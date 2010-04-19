@@ -159,17 +159,16 @@ public class GraphicsGenerator {
 
     public static class IconFactory {
         private final IconRenderer mIconRenderer;
-        private final ListViewBitmapCopier mListViewBitmapCopier;
 
         @Inject
-        public IconFactory(IconRenderer iconRenderer, ListViewBitmapCopier listViewBitmapCopier) {
+        public IconFactory(IconRenderer iconRenderer) {
             mIconRenderer = iconRenderer;
-            mListViewBitmapCopier = listViewBitmapCopier;
         }
 
-        public Drawable createListViewIcon(Geocache geocache) {
+        public Drawable createListViewIcon(Geocache geocache,
+                ListViewBitmapCopier listViewBitmapCopier) {
             return mIconRenderer.renderIcon(geocache, geocache.getCacheType().icon(),
-                    mListViewBitmapCopier);
+                    listViewBitmapCopier);
         }
 
         public Drawable createMapViewIcon(Geocache geocache, MapViewBitmapCopier mapViewBitmapCopier) {

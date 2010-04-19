@@ -130,8 +130,8 @@ public class GraphicsGeneratorTest {
                         listViewBitmapCopier)).andReturn(drawable);
 
         PowerMock.replayAll();
-        assertEquals(drawable, new IconFactory(iconRenderer,
-                listViewBitmapCopier).createListViewIcon(geocache));
+        assertEquals(drawable, new IconFactory(iconRenderer).createListViewIcon(geocache,
+                listViewBitmapCopier));
         PowerMock.verifyAll();
     }
 
@@ -154,11 +154,11 @@ public class GraphicsGeneratorTest {
         drawable.setBounds(-55, -220, 55, 0);
         
         PowerMock.replayAll();
-        assertEquals(drawable, new IconFactory(iconRenderer, null)
-                .createMapViewIcon(geocache, mapViewBitmapCopier));
+        assertEquals(drawable, new IconFactory(iconRenderer).createMapViewIcon(geocache,
+                mapViewBitmapCopier));
         PowerMock.verifyAll();
     }
-    
+
     @Test
     public void testCreateRating3() throws Exception {
         Drawable unselected = PowerMock.createMock(Drawable.class);

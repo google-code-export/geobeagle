@@ -148,7 +148,7 @@ public class CacheListDelegateDI {
         final GeocacheSummaryRowInflater geocacheSummaryRowInflater = new GeocacheSummaryRowInflater(
                 distanceFormatterManager.getFormatter(), layoutInflater, relativeBearingFormatter,
                 new IconFactory(new IconRenderer(new AttributePainter(new Paint(), new Rect()),
-                        resources), new ListViewBitmapCopier()));
+                        resources)), new ListViewBitmapCopier());
         final UpdateFlag updateFlag = new UpdateFlag();
         final GeocacheListAdapter geocacheListAdapter = new GeocacheListAdapter(geocacheVectors,
                 geocacheSummaryRowInflater);
