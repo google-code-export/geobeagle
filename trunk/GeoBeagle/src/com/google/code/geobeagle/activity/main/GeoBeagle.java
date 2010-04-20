@@ -115,7 +115,7 @@ public class GeoBeagle extends GuiceActivity {
 
         injector.getInstance(OnCacheButtonClickListenerBuilder.class).set(id.radarview,
                 injector.getInstance(Key.get(IntentStarterGeo.class, IntentStarterRadar.class)),
-                "Please install the Radar application to use Radar.");
+                "Please install the GPS Status application for enhanced tracking.");
 
         findViewById(id.menu_log_find).setOnClickListener(
                 new LogFindClickListener(this, id.menu_log_find));
