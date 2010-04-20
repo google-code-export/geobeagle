@@ -18,23 +18,26 @@ import com.google.code.geobeagle.ErrorDisplayer;
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.actions.MenuActionBase;
+import com.google.code.geobeagle.activity.EditCacheActivity;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheFromMyLocationFactory;
-import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
 import com.google.code.geobeagle.database.LocationSaver;
+
+import android.app.Activity;
+import android.content.Intent;
 
 public class MenuActionMyLocation extends MenuActionBase {
     private final ErrorDisplayer mErrorDisplayer;
     private final GeocacheFromMyLocationFactory mGeocacheFromMyLocationFactory;
-    private final CacheListRefresh mMenuActionRefresh;
     private final LocationSaver mLocationSaver;
+    private final Activity mActivity;
 
-    public MenuActionMyLocation(CacheListRefresh cacheListRefresh, ErrorDisplayer errorDisplayer,
+    public MenuActionMyLocation(Activity activity, ErrorDisplayer errorDisplayer,
             GeocacheFromMyLocationFactory geocacheFromMyLocationFactory, LocationSaver locationSaver) {
         super(R.string.menu_add_my_location);
         mGeocacheFromMyLocationFactory = geocacheFromMyLocationFactory;
         mErrorDisplayer = errorDisplayer;
-        mMenuActionRefresh = cacheListRefresh;
         mLocationSaver = locationSaver;
+        mActivity = activity;
     }
 
     @Override
@@ -45,6 +48,8 @@ public class MenuActionMyLocation extends MenuActionBase {
             return;
         }
         mLocationSaver.saveLocation(myLocation);
-        mMenuActionRefresh.forceRefresh();
+        final Intent intent = new Intent(mActivity, EditCacheActivity.class);
+        intent.putExtra("geocache", myLocation);
+        mActivity.startActivityForResult(intent, 0);
     }
 }

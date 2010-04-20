@@ -17,34 +17,45 @@ package com.google.code.geobeagle.cachelist;
 import com.google.code.geobeagle.ErrorDisplayer;
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.R;
+import com.google.code.geobeagle.activity.EditCacheActivity;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionMyLocation;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheFromMyLocationFactory;
-import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
 import com.google.code.geobeagle.database.LocationSaver;
 
-import org.easymock.classextension.EasyMock;
+import org.easymock.EasyMock;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.api.easymock.PowerMock;
+import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import android.app.Activity;
+import android.content.Intent;
+
 @RunWith(PowerMockRunner.class)
+@PrepareForTest( {
+    Intent.class, MenuActionMyLocation.class
+})
 public class MenuActionMyLocationTest {
 
     @Test
-    public void testAct() {
+    public void testAct() throws Exception {
         GeocacheFromMyLocationFactory geocacheFromMyLocationFactory = PowerMock
                 .createMock(GeocacheFromMyLocationFactory.class);
-        CacheListRefresh cacheListRefresh = PowerMock.createMock(CacheListRefresh.class);
         Geocache geocache = PowerMock.createMock(Geocache.class);
         LocationSaver locationSaver = PowerMock.createMock(LocationSaver.class);
+        Activity activity = PowerMock.createMock(Activity.class);
+        Intent intent = PowerMock.createMock(Intent.class);
+        
         EasyMock.expect(geocacheFromMyLocationFactory.create()).andReturn(geocache);
-        cacheListRefresh.forceRefresh();
         locationSaver.saveLocation(geocache);
-
+        PowerMock.expectNew(Intent.class, activity, EditCacheActivity.class).andReturn(intent);
+        EasyMock.expect(intent.putExtra("geocache", geocache)).andReturn(intent);
+        activity.startActivityForResult(intent, 0);
+        
         PowerMock.replayAll();
         final MenuActionMyLocation menuActionMyLocation = new MenuActionMyLocation(
-                cacheListRefresh, null, geocacheFromMyLocationFactory, locationSaver);
+                activity, null, geocacheFromMyLocationFactory, locationSaver);
         menuActionMyLocation.act();
         PowerMock.verifyAll();
     }

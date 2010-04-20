@@ -249,8 +249,8 @@ public class CacheListDelegateDI {
         final MenuActions menuActions = new MenuActions(resources);
         menuActions.add(menuActionSyncGpx);
         menuActions.add(new MenuActionToggleFilter(filterNearestCaches, cacheListRefresh));
-        menuActions.add(new MenuActionMyLocation(cacheListRefresh, errorDisplayer,
-                geocacheFromMyLocationFactory, new LocationSaver(dbFrontend)));
+        menuActions.add(new MenuActionMyLocation(listActivity, errorDisplayer, geocacheFromMyLocationFactory,
+                new LocationSaver(dbFrontend)));
         menuActions.add(new MenuActionSearchOnline(listActivity));
         menuActions.add(new MenuActionMap(listActivity, locationControlBuffered));
         // menuActions.add(new MenuActionChooseFilter(listActivity));
