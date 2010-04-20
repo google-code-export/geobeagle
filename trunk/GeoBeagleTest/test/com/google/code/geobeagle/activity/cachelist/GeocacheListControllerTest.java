@@ -164,7 +164,7 @@ public class GeocacheListControllerTest {
         MenuItem menuItem = PowerMock.createMock(MenuItem.class);
         FilterNearestCaches filterNearestCaches = PowerMock.createMock(FilterNearestCaches.class);
 
-        EasyMock.expect(menu.findItem(R.string.menu_toggle_filter)).andReturn(menuItem);
+        EasyMock.expect(menu.findItem(R.string.menu_show_all_caches)).andReturn(menuItem);
         EasyMock.expect(filterNearestCaches.getMenuString()).andReturn(
                 R.string.menu_show_nearest_caches);
         EasyMock.expect(menuItem.setTitle(R.string.menu_show_nearest_caches)).andReturn(menuItem);
