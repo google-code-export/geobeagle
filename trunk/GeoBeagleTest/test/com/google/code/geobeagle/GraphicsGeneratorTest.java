@@ -17,6 +17,7 @@ package com.google.code.geobeagle;
 import static org.junit.Assert.assertEquals;
 
 import com.google.code.geobeagle.GraphicsGenerator.AttributePainter;
+import com.google.code.geobeagle.GraphicsGenerator.BitmapCopier;
 import com.google.code.geobeagle.GraphicsGenerator.IconFactory;
 import com.google.code.geobeagle.GraphicsGenerator.IconRenderer;
 import com.google.code.geobeagle.GraphicsGenerator.ListViewBitmapCopier;
@@ -116,49 +117,51 @@ public class GraphicsGeneratorTest {
     }
     
     @Test
-    public void testCreateIconListView() {
+    public void testCreateIcon() {
         IconRenderer iconRenderer = PowerMock.createMock(IconRenderer.class);
         Geocache geocache = PowerMock.createMock(Geocache.class);
         Drawable drawable = PowerMock.createMock(Drawable.class);
-        ListViewBitmapCopier listViewBitmapCopier = PowerMock
-                .createMock(ListViewBitmapCopier.class);
+        BitmapCopier bitmapCopier = PowerMock.createMock(ListViewBitmapCopier.class);
 
-        EasyMock.expect(geocache.getCacheType())
-                .andReturn(CacheType.EARTHCACHE);
-        EasyMock.expect(
-                iconRenderer.renderIcon(geocache, R.drawable.cache_earth,
-                        listViewBitmapCopier)).andReturn(drawable);
+        EasyMock.expect(geocache.getDifficulty()).andReturn(3);
+        EasyMock.expect(geocache.getTerrain()).andReturn(5);
+        EasyMock.expect(iconRenderer.renderIcon(3, 5, R.drawable.cache_earth, bitmapCopier))
+                .andReturn(drawable);
 
         PowerMock.replayAll();
-        assertEquals(drawable, new IconFactory(iconRenderer).createListViewIcon(geocache,
-                listViewBitmapCopier));
+        assertEquals(drawable, new IconFactory(iconRenderer).createIcon(geocache, R.drawable.cache_earth,
+                bitmapCopier));
         PowerMock.verifyAll();
     }
 
     @Test
-    public void testCreateIconMapView() {
-        IconRenderer iconRenderer = PowerMock.createMock(IconRenderer.class);
-        Geocache geocache = PowerMock.createMock(Geocache.class);
-        Drawable drawable = PowerMock.createMock(Drawable.class);
-        MapViewBitmapCopier mapViewBitmapCopier = PowerMock
-                .createMock(MapViewBitmapCopier.class);
+    public void testListViewBitmapCopierGetDrawable() throws Exception {
+        BitmapDrawable drawable = PowerMock.createMock(BitmapDrawable.class);
+        Bitmap bitmap = PowerMock.createMock(Bitmap.class);
+        
+        PowerMock.expectNew(BitmapDrawable.class, bitmap).andReturn(drawable);
+        
+        PowerMock.replayAll();
+        new ListViewBitmapCopier().getDrawable(bitmap);
+        PowerMock.verifyAll();
+    }
+    
 
-        EasyMock.expect(geocache.getCacheType())
-                .andReturn(CacheType.EARTHCACHE);
-        EasyMock.expect(
-                iconRenderer.renderIcon(geocache, R.drawable.pin_earth,
-                        mapViewBitmapCopier)).andReturn(drawable);
-
+    @Test
+    public void testMapViewBitmapCopierGetDrawable() throws Exception {
+        BitmapDrawable drawable = PowerMock.createMock(BitmapDrawable.class);
+        Bitmap bitmap = PowerMock.createMock(Bitmap.class);
+        
+        PowerMock.expectNew(BitmapDrawable.class, bitmap).andReturn(drawable);
         EasyMock.expect(drawable.getIntrinsicWidth()).andReturn(110);
         EasyMock.expect(drawable.getIntrinsicHeight()).andReturn(220);
         drawable.setBounds(-55, -220, 55, 0);
         
         PowerMock.replayAll();
-        assertEquals(drawable, new IconFactory(iconRenderer).createMapViewIcon(geocache,
-                mapViewBitmapCopier));
+        new MapViewBitmapCopier().getDrawable(bitmap);
         PowerMock.verifyAll();
     }
-
+    
     @Test
     public void testCreateRating3() throws Exception {
         Drawable unselected = PowerMock.createMock(Drawable.class);

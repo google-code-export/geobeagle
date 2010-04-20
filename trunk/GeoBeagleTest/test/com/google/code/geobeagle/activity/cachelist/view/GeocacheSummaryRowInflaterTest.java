@@ -16,6 +16,7 @@ package com.google.code.geobeagle.activity.cachelist.view;
 
 import static org.junit.Assert.assertEquals;
 
+import com.google.code.geobeagle.CacheType;
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.GraphicsGenerator.IconFactory;
@@ -72,6 +73,7 @@ public class GeocacheSummaryRowInflaterTest {
         ListViewBitmapCopier listViewBitmapCopier = PowerMock.createMock(ListViewBitmapCopier.class);
 
         EasyMock.expect(geocacheVector.getGeocache()).andReturn(geocache);
+        EasyMock.expect(geocache.getCacheType()).andReturn(CacheType.EARTHCACHE);
         EasyMock.expect(geocacheVector.getName()).andReturn("my cache");
         EasyMock.expect(geocacheVector.getId()).andReturn("GC123");
         EasyMock.expect(geocacheVector.getFormattedAttributes()).andReturn("3.5 / 2.5");
@@ -83,9 +85,10 @@ public class GeocacheSummaryRowInflaterTest {
         txtCacheName.setText("my cache");
         txtDistance.setText("10m");
         txtAttributes.setText("3.5 / 2.5");
-        EasyMock.expect(iconFactory.createListViewIcon(geocache, listViewBitmapCopier)).andReturn(drawable);
+        EasyMock.expect(
+                iconFactory.createIcon(geocache, R.drawable.cache_earth, listViewBitmapCopier))
+                .andReturn(drawable);
         imageView.setImageDrawable(drawable);
-        
 
         PowerMock.replayAll();
         new GeocacheSummaryRowInflater.RowViews(txtAttributes, txtCacheName, txtDistance,

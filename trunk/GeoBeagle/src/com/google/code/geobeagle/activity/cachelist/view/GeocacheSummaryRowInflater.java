@@ -51,7 +51,8 @@ public class GeocacheSummaryRowInflater implements HasDistanceFormatter {
                 BearingFormatter relativeBearingFormatter,
                 ListViewBitmapCopier listViewBitmapCopier, IconFactory iconFactory) {
             Geocache geocache = geocacheVector.getGeocache();
-            mIcon.setImageDrawable(iconFactory.createListViewIcon(geocache, listViewBitmapCopier));
+            mIcon.setImageDrawable(iconFactory.createIcon(geocache, geocache.getCacheType().icon(),
+                    listViewBitmapCopier));
             mId.setText(geocacheVector.getId());
             mAttributes.setText(geocacheVector.getFormattedAttributes());
             mCacheName.setText(geocacheVector.getName());

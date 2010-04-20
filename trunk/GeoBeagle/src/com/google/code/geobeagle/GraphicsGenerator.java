@@ -100,6 +100,7 @@ public class GraphicsGenerator {
     public interface BitmapCopier {
         Bitmap copy(Bitmap source);
         int getBottom();
+        Drawable getDrawable(Bitmap icon);
     }
 
     public static class ListViewBitmapCopier implements BitmapCopier {
@@ -117,6 +118,11 @@ public class GraphicsGenerator {
         public int getBottom() {
             return 0;
         }
+        
+        public Drawable getDrawable(Bitmap icon) {
+            return new BitmapDrawable(icon);
+        }
+        
     }
     
     public static class MapViewBitmapCopier implements BitmapCopier {
@@ -126,6 +132,14 @@ public class GraphicsGenerator {
 
         public int getBottom() {
             return 3;
+        }
+        
+        public Drawable getDrawable(Bitmap icon) {
+            Drawable iconMap = new BitmapDrawable(icon);
+            int width = iconMap.getIntrinsicWidth();
+            int height = iconMap.getIntrinsicHeight();
+            iconMap.setBounds(-width / 2, -height, width / 2, 0);
+            return iconMap;
         }
     }
 
@@ -139,21 +153,20 @@ public class GraphicsGenerator {
             mResources = resources;
         }
 
-        Drawable renderIcon(Geocache geocache, int backdropId,
-                BitmapCopier listViewBitmapCopier) {
+        Drawable renderIcon(int difficulty, int terrain, int backdropId, BitmapCopier bitmapCopier) {
             Bitmap bitmap = BitmapFactory.decodeResource(mResources, backdropId);
 
-            Bitmap copy = listViewBitmapCopier.copy(bitmap);
+            Bitmap copy = bitmapCopier.copy(bitmap);
             int imageHeight = copy.getHeight();
             int imageWidth = copy.getWidth();
 
             Canvas canvas = new Canvas(copy);
-            mAttributePainter.drawAttribute(1, 0, imageHeight, imageWidth, canvas, geocache
-                    .getDifficulty(), Color.rgb(0x20, 0x20, 0xFF));
-            mAttributePainter.drawAttribute(0, 0, imageHeight, imageWidth, canvas, geocache
-                    .getTerrain(), Color.rgb(0xDB, 0xA1, 0x09));
-
-            return new BitmapDrawable(copy);
+            mAttributePainter.drawAttribute(1, 0, imageHeight, imageWidth, canvas, difficulty,
+                    Color.rgb(0x20, 0x20, 0xFF));
+            mAttributePainter.drawAttribute(0, 0, imageHeight, imageWidth, canvas, terrain, Color
+                    .rgb(0xDB, 0xA1, 0x09));
+            
+            return bitmapCopier.getDrawable(copy);
         }
     }
 
@@ -165,20 +178,10 @@ public class GraphicsGenerator {
             mIconRenderer = iconRenderer;
         }
 
-        public Drawable createListViewIcon(Geocache geocache,
-                ListViewBitmapCopier listViewBitmapCopier) {
-            return mIconRenderer.renderIcon(geocache, geocache.getCacheType().icon(),
-                    listViewBitmapCopier);
+        public Drawable createIcon(Geocache geocache, int icon, BitmapCopier bitmapCopier) {
+            return mIconRenderer.renderIcon(geocache.getDifficulty(), geocache.getTerrain(), icon,
+                    bitmapCopier);
         }
 
-        public Drawable createMapViewIcon(Geocache geocache, MapViewBitmapCopier mapViewBitmapCopier) {
-            Drawable iconMap = mIconRenderer.renderIcon(geocache, geocache.getCacheType().iconMap(),
-                    mapViewBitmapCopier);
-            int width = iconMap.getIntrinsicWidth();
-            int height = iconMap.getIntrinsicHeight();
-            iconMap.setBounds(-width / 2, -height, width / 2, 0);
-            return iconMap;
-        }
-        
     }
 }

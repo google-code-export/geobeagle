@@ -20,6 +20,7 @@ import com.google.android.maps.GeoPoint;
 import com.google.android.maps.OverlayItem;
 import com.google.code.geobeagle.CacheType;
 import com.google.code.geobeagle.Geocache;
+import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.GraphicsGenerator.IconFactory;
 import com.google.code.geobeagle.GraphicsGenerator.MapViewBitmapCopier;
 
@@ -49,14 +50,16 @@ public class CacheItemTest {
 
         EasyMock.expect(geocache.getGeoPoint()).andReturn(geoPoint);
         EasyMock.expect(geocache.getId()).andReturn("GC123");
-        EasyMock.expect(iconFactory.createMapViewIcon(geocache, mapViewBitmapCopier)).andReturn(icon);
-       
+        EasyMock.expect(geocache.getCacheType()).andReturn(CacheType.EARTHCACHE);
+        EasyMock
+                .expect(iconFactory.createIcon(geocache, R.drawable.pin_earth, mapViewBitmapCopier))
+                .andReturn(icon);
+
         PowerMock.suppressConstructor(CacheItem.class);
         PowerMock.suppressMethod(CacheItem.class, "setMarker");
 
         PowerMock.replayAll();
-        new CacheItemFactory(iconFactory, mapViewBitmapCopier)
-                .createCacheItem(geocache);
+        new CacheItemFactory(iconFactory, mapViewBitmapCopier).createCacheItem(geocache);
         PowerMock.verifyAll();
     }
 

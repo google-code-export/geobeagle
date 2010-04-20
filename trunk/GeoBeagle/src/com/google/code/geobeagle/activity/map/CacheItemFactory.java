@@ -32,7 +32,8 @@ class CacheItemFactory {
     CacheItem createCacheItem(Geocache geocache) {
         final CacheItem cacheItem = new CacheItem(geocache.getGeoPoint(), (String)geocache.getId(),
                 geocache);
-        cacheItem.setMarker(mIconFactory.createMapViewIcon(geocache, mMapViewBitmapCopier));
+        cacheItem.setMarker(mIconFactory.createIcon(geocache, geocache
+                .getCacheType().iconMap(), mMapViewBitmapCopier));
         return cacheItem;
     }
 }
