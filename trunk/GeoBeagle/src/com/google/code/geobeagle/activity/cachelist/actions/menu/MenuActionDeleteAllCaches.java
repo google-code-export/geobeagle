@@ -25,7 +25,7 @@ import android.app.AlertDialog.Builder;
 import android.content.DialogInterface;
 
 public class MenuActionDeleteAllCaches extends MenuActionBase {
-    private static final class OnClickCancelListener implements DialogInterface.OnClickListener {
+    static final class OnClickCancelListener implements DialogInterface.OnClickListener {
         public void onClick(DialogInterface dialog, int id) {
             dialog.cancel();
         }
