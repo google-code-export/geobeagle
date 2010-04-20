@@ -54,6 +54,8 @@ public class Database {
     public static final String SQL_RESET_DELETE_ME_CACHES = "UPDATE CACHES SET DeleteMe = 1 WHERE Source != '"
             + S0_INTENT + "'";
     public static final String SQL_RESET_DELETE_ME_GPX = "UPDATE GPX SET DeleteMe = 1";
+    public static final String SQL_DELETE_ALL_CACHES = "DELETE FROM CACHES";
+    public static final String SQL_DELETE_ALL_GPX = "DELETE FROM GPX";
 
     public static final String TBL_CACHES = "CACHES";
     public static final String TBL_GPX = "GPX";

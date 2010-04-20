@@ -90,7 +90,7 @@ public class GeocacheListController {
     }
 
     public boolean onMenuOpened(int featureId, Menu menu) {
-        menu.findItem(R.string.menu_toggle_filter).setTitle(mFilterNearestCaches.getMenuString());
+        menu.findItem(R.string.menu_show_all_caches).setTitle(mFilterNearestCaches.getMenuString());
         return true;
     }
 

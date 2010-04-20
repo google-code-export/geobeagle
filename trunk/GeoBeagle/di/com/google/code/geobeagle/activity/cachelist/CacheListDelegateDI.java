@@ -34,6 +34,7 @@ import com.google.code.geobeagle.activity.cachelist.actions.context.ContextActio
 import com.google.code.geobeagle.activity.cachelist.actions.context.ContextActionView;
 import com.google.code.geobeagle.activity.cachelist.actions.context.ContextActionDelete.ContextActionDeleteDialogHelper;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.Abortable;
+import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionDeleteAllCaches;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionMyLocation;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionSyncGpx;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionToggleFilter;
@@ -83,6 +84,7 @@ import com.google.inject.Injector;
 
 import roboguice.activity.GuiceListActivity;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -248,6 +250,8 @@ public class CacheListDelegateDI {
                 cacheListRefresh, gpxImporterFactory, dbFrontend);
         final MenuActions menuActions = new MenuActions(resources);
         menuActions.add(menuActionSyncGpx);
+        menuActions.add(new MenuActionDeleteAllCaches(cacheListRefresh, listActivity, dbFrontend,
+                new AlertDialog.Builder(listActivity)));
         menuActions.add(new MenuActionToggleFilter(filterNearestCaches, cacheListRefresh));
         menuActions.add(new MenuActionMyLocation(listActivity, errorDisplayer, geocacheFromMyLocationFactory,
                 new LocationSaver(dbFrontend)));

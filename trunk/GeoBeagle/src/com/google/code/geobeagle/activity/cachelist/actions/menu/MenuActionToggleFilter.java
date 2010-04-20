@@ -25,7 +25,7 @@ public class MenuActionToggleFilter extends MenuActionBase {
 
     public MenuActionToggleFilter(FilterNearestCaches filterNearestCaches,
             CacheListRefresh cacheListRefresh) {
-        super(R.string.menu_toggle_filter);
+        super(R.string.menu_show_all_caches);
         mFilterNearestCaches = filterNearestCaches;
         mMenuActionRefresh = cacheListRefresh;
     }

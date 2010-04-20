@@ -122,6 +122,12 @@ public class DbFrontend {
         return cache;
     }
 
+    public void deleteAll() {
+        openDatabase();
+        mDatabase.execSQL(Database.SQL_DELETE_ALL_CACHES);
+        mDatabase.execSQL(Database.SQL_DELETE_ALL_GPX);
+    }
+
     /*
      * public void onPause() { closeDatabase(); }
      */
