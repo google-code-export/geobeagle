@@ -28,8 +28,8 @@ import com.google.code.geobeagle.activity.main.fieldnotes.FieldnoteLogger.OnClic
 import com.google.code.geobeagle.activity.main.fieldnotes.FieldnoteLogger.OnClickOkFactory;
 import com.google.code.geobeagle.activity.main.intents.IntentStarterGeo;
 import com.google.code.geobeagle.activity.main.intents.IntentStarterGeo.IntentStarterRadar;
+import com.google.code.geobeagle.activity.main.view.CacheButtonOnClickListenerRadar;
 import com.google.code.geobeagle.activity.main.view.CacheDetailsOnClickListener;
-import com.google.code.geobeagle.activity.main.view.OnCacheButtonClickListenerBuilder;
 import com.google.code.geobeagle.activity.main.view.CacheButtonOnClickListener.CachePageButtonOnClickListener;
 import com.google.code.geobeagle.activity.main.view.CacheButtonOnClickListener.MapsButtonOnClickListener;
 import com.google.inject.Inject;
@@ -113,9 +113,9 @@ public class GeoBeagle extends GuiceActivity {
         findViewById(id.cache_page).setOnClickListener(
                 injector.getInstance(CachePageButtonOnClickListener.class));
 
-        injector.getInstance(OnCacheButtonClickListenerBuilder.class).set(id.radarview,
-                injector.getInstance(Key.get(IntentStarterGeo.class, IntentStarterRadar.class)),
-                "Please install the GPS Status application for enhanced tracking.");
+        findViewById(id.radarview).setOnClickListener(
+                new CacheButtonOnClickListenerRadar(this, injector.getInstance(Key.get(
+                        IntentStarterGeo.class, IntentStarterRadar.class))));
 
         findViewById(id.menu_log_find).setOnClickListener(
                 new LogFindClickListener(this, id.menu_log_find));
