@@ -13,36 +13,15 @@
  */
 
 package com.google.code.geobeagle.activity.main.intents;
-import static java.lang.annotation.ElementType.FIELD;
-import static java.lang.annotation.ElementType.METHOD;
-import static java.lang.annotation.ElementType.PARAMETER;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.activity.main.GeoBeagle;
-import com.google.inject.BindingAnnotation;
 
 import android.content.Intent;
-
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
 
 public class IntentStarterGeo implements IntentStarter {
     private final GeoBeagle mGeoBeagle;
     private final Intent mIntent;
 
-    @BindingAnnotation @Target({ FIELD, PARAMETER, METHOD }) @Retention(RUNTIME)
-    public static @interface IntentStarterMap {}
-
-    @BindingAnnotation @Target({ FIELD, PARAMETER, METHOD }) @Retention(RUNTIME)
-    public static @interface IntentStarterRadar {}
-    
-    @BindingAnnotation @Target({ FIELD, PARAMETER, METHOD }) @Retention(RUNTIME)
-    public static @interface ShowRadarIntent {}
-
-    @BindingAnnotation @Target({ FIELD, PARAMETER, METHOD }) @Retention(RUNTIME)
-    public static @interface ShowMapIntent {}
-    
     public IntentStarterGeo(GeoBeagle geoBeagle, Intent intent) {
         mGeoBeagle = geoBeagle;
         mIntent = intent;

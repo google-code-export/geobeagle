@@ -15,23 +15,27 @@
 package com.google.code.geobeagle.activity.main.view;
 
 import com.google.code.geobeagle.ErrorDisplayer;
+import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.main.intents.IntentStarter;
-import com.google.inject.Inject;
 
-import android.app.Activity;
+import android.content.ActivityNotFoundException;
+import android.view.View;
+import android.view.View.OnClickListener;
 
-public class OnCacheButtonClickListenerBuilder {
-    private final Activity mActivity;
+public class OnClickListenerIntentStarter implements OnClickListener {
+    private final IntentStarter mIntentStarter;
     private final ErrorDisplayer mErrorDisplayer;
 
-    @Inject
-    public OnCacheButtonClickListenerBuilder(Activity activity, ErrorDisplayer errorDisplayer) {
+    public OnClickListenerIntentStarter(IntentStarter intentStarter, ErrorDisplayer errorDisplayer) {
+        mIntentStarter = intentStarter;
         mErrorDisplayer = errorDisplayer;
-        mActivity = activity;
     }
 
-    public void set(int id, IntentStarter intentStarter, String errorString) {
-        mActivity.findViewById(id).setOnClickListener(new CacheButtonOnClickListener(
-                intentStarter, errorString, mErrorDisplayer));
+    public void onClick(View view) {
+        try {
+            mIntentStarter.startIntent();
+        } catch (final ActivityNotFoundException e) {
+            mErrorDisplayer.displayError(R.string.error2, e.getMessage());
+        }
     }
 }

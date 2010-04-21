@@ -15,10 +15,13 @@
 package com.google.code.geobeagle.activity.main.view;
 
 import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.activity.main.intents.IntentStarter;
+import com.google.code.geobeagle.activity.main.GeoBeagleModule.DialogOnClickListenerNOP;
+import com.google.code.geobeagle.activity.main.GeoBeagleModule.IntentStarterRadar;
+import com.google.code.geobeagle.activity.main.intents.IntentStarterGeo;
+import com.google.inject.Inject;
 
 import android.app.Activity;
-import android.app.AlertDialog.Builder;
+import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -26,9 +29,11 @@ import android.net.Uri;
 import android.view.View;
 import android.view.View.OnClickListener;
 
-public class CacheButtonOnClickListenerRadar implements OnClickListener {
-    private final IntentStarter mIntentStarter;
-    private final Activity mActivity;
+public class OnClickListenerRadar implements OnClickListener {
+    private final IntentStarterGeo mIntentStarterGeo;
+    private final android.content.DialogInterface.OnClickListener mInstallRadarOnClickListenerNegative;
+    private final InstallRadarOnClickListenerPositive mDialogInstallRadarOnClickListenerPositive;
+    private final AlertDialog.Builder mDialogBuilder;
 
     static class InstallRadarOnClickListenerNegative implements
             android.content.DialogInterface.OnClickListener {
@@ -43,6 +48,7 @@ public class CacheButtonOnClickListenerRadar implements OnClickListener {
             android.content.DialogInterface.OnClickListener {
         private final Activity mActivity;
 
+        @Inject
         public InstallRadarOnClickListenerPositive(Activity activity) {
             mActivity = activity;
         }
@@ -55,23 +61,29 @@ public class CacheButtonOnClickListenerRadar implements OnClickListener {
 
     }
 
-    public CacheButtonOnClickListenerRadar(Activity activity, IntentStarter intentStarter) {
-        mIntentStarter = intentStarter;
-        mActivity = activity;
+    @Inject
+    public OnClickListenerRadar(
+            AlertDialog.Builder dialogBuilder,
+            @DialogOnClickListenerNOP android.content.DialogInterface.OnClickListener dialogOnClickListenerNegative,
+            InstallRadarOnClickListenerPositive dialogInstallRadarOnClickListenerPositive,
+            @IntentStarterRadar IntentStarterGeo intentStarter) {
+        mIntentStarterGeo = intentStarter;
+        mInstallRadarOnClickListenerNegative = dialogOnClickListenerNegative;
+        mDialogInstallRadarOnClickListenerPositive = dialogInstallRadarOnClickListenerPositive;
+        mDialogBuilder = dialogBuilder;
     }
 
     @Override
     public void onClick(View arg0) {
         try {
-            mIntentStarter.startIntent();
+            mIntentStarterGeo.startIntent();
         } catch (final ActivityNotFoundException e) {
-            final Builder alertDialogBuilder = new Builder(mActivity);
-            alertDialogBuilder.setMessage(R.string.ask_install_radar_app);
-            alertDialogBuilder.setPositiveButton(R.string.install_radar,
-                    new InstallRadarOnClickListenerPositive(mActivity));
-            alertDialogBuilder.setNegativeButton(R.string.cancel,
-                    new InstallRadarOnClickListenerNegative());
-            alertDialogBuilder.create().show();
+            mDialogBuilder.setMessage(R.string.ask_install_radar_app);
+            mDialogBuilder.setPositiveButton(R.string.install_radar,
+                    mDialogInstallRadarOnClickListenerPositive);
+            mDialogBuilder.setNegativeButton(R.string.cancel,
+                    mInstallRadarOnClickListenerNegative);
+            mDialogBuilder.create().show();
         }
     }
 

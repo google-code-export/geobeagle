@@ -17,20 +17,22 @@ package com.google.code.geobeagle.activity.main.view;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.main.GeoBeagle;
 import com.google.code.geobeagle.cachedetails.CacheDetailsLoader;
+import com.google.inject.Inject;
 
 import android.app.AlertDialog.Builder;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.webkit.WebView;
 
-public class CacheDetailsOnClickListener implements View.OnClickListener {
+public class OnClickListenerCacheDetails implements View.OnClickListener {
 
     private final Builder mAlertDialogBuilder;
     private final CacheDetailsLoader mCacheDetailsLoader;
     private final LayoutInflater mEnv;
     private final GeoBeagle mGeoBeagle;
 
-    public CacheDetailsOnClickListener(GeoBeagle geoBeagle, Builder alertDialogBuilder,
+    @Inject
+    public OnClickListenerCacheDetails(GeoBeagle geoBeagle, Builder alertDialogBuilder,
             LayoutInflater env, CacheDetailsLoader cacheDetailsLoader) {
         mAlertDialogBuilder = alertDialogBuilder;
         mEnv = env;

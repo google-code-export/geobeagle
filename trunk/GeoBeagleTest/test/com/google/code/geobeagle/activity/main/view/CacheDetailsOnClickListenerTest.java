@@ -34,7 +34,7 @@ import android.view.View;
 import android.webkit.WebView;
 
 @PrepareForTest( {
-        View.class, CacheDetailsOnClickListener.class
+        View.class, OnClickListenerCacheDetails.class
 })
 @RunWith(PowerMockRunner.class)
 public class CacheDetailsOnClickListenerTest {
@@ -62,7 +62,7 @@ public class CacheDetailsOnClickListenerTest {
         alertDialog.show();
 
         PowerMock.replayAll();
-        new CacheDetailsOnClickListener(geobeagle, builder, env, cacheDetailsLoader).onClick(null);
+        new OnClickListenerCacheDetails(geobeagle, builder, env, cacheDetailsLoader).onClick(null);
         PowerMock.verifyAll();
     }
 }

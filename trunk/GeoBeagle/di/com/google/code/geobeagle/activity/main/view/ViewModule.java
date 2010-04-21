@@ -19,29 +19,25 @@ import com.google.code.geobeagle.activity.main.view.WebPageAndDetailsButtonEnabl
 import com.google.code.geobeagle.activity.main.view.WebPageAndDetailsButtonEnabler.CheckButtons;
 import com.google.code.geobeagle.activity.main.view.WebPageAndDetailsButtonEnabler.CheckDetailsButton;
 import com.google.code.geobeagle.activity.main.view.WebPageAndDetailsButtonEnabler.CheckWebPageButton;
-import com.google.code.geobeagle.cachedetails.CacheDetailsLoader;
-import com.google.code.geobeagle.cachedetails.CacheDetailsLoader.DetailsOpener;
+import com.google.inject.Provides;
 
-import android.app.AlertDialog.Builder;
-import android.view.LayoutInflater;
+import roboguice.config.AbstractAndroidModule;
+
 import android.view.View;
 
-public class Misc {
-    public static CacheDetailsOnClickListener createCacheDetailsOnClickListener(
-            GeoBeagle geoBeagle, Builder alertDialogBuilder, LayoutInflater layoutInflater) {
-        final DetailsOpener detailsOpener = new DetailsOpener(geoBeagle);
-        final CacheDetailsLoader cacheDetailsLoader = new CacheDetailsLoader(detailsOpener);
-        return new CacheDetailsOnClickListener(geoBeagle, alertDialogBuilder, layoutInflater,
-                cacheDetailsLoader);
-    }
-
-    public static WebPageAndDetailsButtonEnabler create(GeoBeagle geoBeagle, View webPageButton,
-            View detailsButton) {
+public class ViewModule extends AbstractAndroidModule {
+    @Provides
+    public WebPageAndDetailsButtonEnabler providesWebPageAndDetailsButtonEnabler(
+            GeoBeagle geoBeagle, View webPageButton, View detailsButton) {
         final CheckWebPageButton checkWebPageButton = new CheckWebPageButton(webPageButton);
         final CheckDetailsButton checkDetailsButton = new CheckDetailsButton(detailsButton);
         final CheckButtons checkButtons = new CheckButtons(new CheckButton[] {
                 checkWebPageButton, checkDetailsButton
         });
         return new WebPageAndDetailsButtonEnabler(geoBeagle, checkButtons);
+    }
+
+    @Override
+    protected void configure() {
     }
 }

@@ -15,6 +15,7 @@
 package com.google.code.geobeagle.cachedetails;
 
 import com.google.code.geobeagle.R;
+import com.google.inject.Inject;
 
 import android.app.Activity;
 
@@ -61,6 +62,7 @@ public class CacheDetailsLoader {
 
         private final Activity mActivity;
 
+        @Inject
         public DetailsOpener(Activity activity) {
             mActivity = activity;
         }
@@ -124,6 +126,7 @@ public class CacheDetailsLoader {
     public static final String DETAILS_DIR = "/sdcard/GeoBeagle/";
     private final DetailsOpener mDetailsOpener;
 
+    @Inject
     public CacheDetailsLoader(DetailsOpener detailsOpener) {
         mDetailsOpener = detailsOpener;
     }

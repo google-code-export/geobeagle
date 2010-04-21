@@ -19,6 +19,8 @@ import com.google.code.geobeagle.LocationControlBuffered;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.R.id;
 import com.google.code.geobeagle.activity.main.GeoBeagleDelegate.LogFindClickListener;
+import com.google.code.geobeagle.activity.main.GeoBeagleModule.ButtonListenerCachePage;
+import com.google.code.geobeagle.activity.main.GeoBeagleModule.ButtonListenerMapPage;
 import com.google.code.geobeagle.activity.main.fieldnotes.DialogHelperSms;
 import com.google.code.geobeagle.activity.main.fieldnotes.FieldnoteLogger;
 import com.google.code.geobeagle.activity.main.fieldnotes.DialogHelperSms.DialogHelperSmsFactory;
@@ -26,12 +28,9 @@ import com.google.code.geobeagle.activity.main.fieldnotes.FieldnoteLogger.Fieldn
 import com.google.code.geobeagle.activity.main.fieldnotes.FieldnoteLogger.OnClickCancel;
 import com.google.code.geobeagle.activity.main.fieldnotes.FieldnoteLogger.OnClickOk;
 import com.google.code.geobeagle.activity.main.fieldnotes.FieldnoteLogger.OnClickOkFactory;
-import com.google.code.geobeagle.activity.main.intents.IntentStarterGeo;
-import com.google.code.geobeagle.activity.main.intents.IntentStarterGeo.IntentStarterRadar;
-import com.google.code.geobeagle.activity.main.view.CacheButtonOnClickListenerRadar;
-import com.google.code.geobeagle.activity.main.view.CacheDetailsOnClickListener;
-import com.google.code.geobeagle.activity.main.view.CacheButtonOnClickListener.CachePageButtonOnClickListener;
-import com.google.code.geobeagle.activity.main.view.CacheButtonOnClickListener.MapsButtonOnClickListener;
+import com.google.code.geobeagle.activity.main.view.OnClickListenerRadar;
+import com.google.code.geobeagle.activity.main.view.OnClickListenerCacheDetails;
+import com.google.code.geobeagle.activity.main.view.OnClickListenerIntentStarter;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Key;
@@ -106,16 +105,17 @@ public class GeoBeagle extends GuiceActivity {
         }
 
         findViewById(id.maps).setOnClickListener(
-                injector.getInstance(MapsButtonOnClickListener.class));
+                injector.getInstance(Key.get(OnClickListenerIntentStarter.class,
+                        ButtonListenerMapPage.class)));
 
         findViewById(R.id.cache_details).setOnClickListener(
-                injector.getInstance(CacheDetailsOnClickListener.class));
+                injector.getInstance(OnClickListenerCacheDetails.class));
         findViewById(id.cache_page).setOnClickListener(
-                injector.getInstance(CachePageButtonOnClickListener.class));
+                injector.getInstance(Key.get(OnClickListenerIntentStarter.class,
+                        ButtonListenerCachePage.class)));
 
         findViewById(id.radarview).setOnClickListener(
-                new CacheButtonOnClickListenerRadar(this, injector.getInstance(Key.get(
-                        IntentStarterGeo.class, IntentStarterRadar.class))));
+                injector.getInstance(OnClickListenerRadar.class));
 
         findViewById(id.menu_log_find).setOnClickListener(
                 new LogFindClickListener(this, id.menu_log_find));

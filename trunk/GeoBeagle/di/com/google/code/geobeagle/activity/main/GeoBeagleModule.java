@@ -19,6 +19,7 @@ import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.ElementType.PARAMETER;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
+import com.google.code.geobeagle.ErrorDisplayer;
 import com.google.code.geobeagle.LocationControlBuffered;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.Refresher;
@@ -35,15 +36,9 @@ import com.google.code.geobeagle.activity.main.intents.GeocacheToGoogleMap;
 import com.google.code.geobeagle.activity.main.intents.IntentFactory;
 import com.google.code.geobeagle.activity.main.intents.IntentStarterGeo;
 import com.google.code.geobeagle.activity.main.intents.IntentStarterViewUri;
-import com.google.code.geobeagle.activity.main.intents.IntentStarterGeo.IntentStarterMap;
-import com.google.code.geobeagle.activity.main.intents.IntentStarterGeo.IntentStarterRadar;
-import com.google.code.geobeagle.activity.main.intents.IntentStarterGeo.ShowMapIntent;
-import com.google.code.geobeagle.activity.main.intents.IntentStarterGeo.ShowRadarIntent;
 import com.google.code.geobeagle.activity.main.menuactions.MenuActionGoogleMaps;
-import com.google.code.geobeagle.activity.main.view.CacheDetailsOnClickListener;
 import com.google.code.geobeagle.activity.main.view.GeocacheViewer;
-import com.google.code.geobeagle.activity.main.view.Misc;
-import com.google.code.geobeagle.activity.main.view.WebPageAndDetailsButtonEnabler;
+import com.google.code.geobeagle.activity.main.view.OnClickListenerIntentStarter;
 import com.google.code.geobeagle.activity.main.view.GeocacheViewer.AttributeViewer;
 import com.google.code.geobeagle.activity.main.view.GeocacheViewer.LabelledAttributeViewer;
 import com.google.code.geobeagle.activity.main.view.GeocacheViewer.PawImages;
@@ -54,11 +49,8 @@ import com.google.code.geobeagle.activity.map.GeoMapActivity;
 import com.google.code.geobeagle.activity.searchonline.NullRefresher;
 import com.google.code.geobeagle.location.LocationLifecycleManager;
 import com.google.inject.BindingAnnotation;
-import com.google.inject.Inject;
-import com.google.inject.Provider;
 import com.google.inject.Provides;
 import com.google.inject.name.Named;
-import com.google.inject.name.Names;
 
 import roboguice.config.AbstractAndroidModule;
 import roboguice.inject.SystemServiceProvider;
@@ -69,7 +61,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.DialogInterface.OnClickListener;
 import android.content.res.Resources;
 import android.graphics.Paint;
 import android.graphics.Rect;
@@ -77,7 +68,6 @@ import android.graphics.drawable.Drawable;
 import android.hardware.SensorManager;
 import android.location.LocationManager;
 import android.preference.PreferenceManager;
-import android.view.LayoutInflater;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -87,99 +77,67 @@ import java.util.Arrays;
 
 public class GeoBeagleModule extends AbstractAndroidModule {
 
-    @BindingAnnotation @Target({ FIELD, PARAMETER, METHOD }) @Retention(RUNTIME)
-    public static @interface DefaultSharedPreferences {}
+    @BindingAnnotation @Target( { FIELD, PARAMETER, METHOD }) @Retention(RUNTIME)
+    public static @interface ButtonListenerCachePage { }
+
+    @BindingAnnotation @Target( { FIELD, PARAMETER, METHOD }) @Retention(RUNTIME)
+    public static @interface ButtonListenerMapPage { }
+
+    @BindingAnnotation @Target( { FIELD, PARAMETER, METHOD }) @Retention(RUNTIME)
+    public static @interface DefaultSharedPreferences { }
+
+    @BindingAnnotation @Target( { FIELD, PARAMETER, METHOD }) @Retention(RUNTIME)
+    public static @interface DialogOnClickListenerNOP { }
+
+    @BindingAnnotation @Target( { FIELD, PARAMETER, METHOD }) @Retention(RUNTIME)
+    public static @interface GeoBeagleActivity { }
 
     @BindingAnnotation @Target({ FIELD, PARAMETER, METHOD }) @Retention(RUNTIME)
-    public static @interface GeoBeagleActivity {}
+    public static @interface IntentStarterRadar {}
 
-    static final class DefaultSharedPreferencesProvider implements Provider<SharedPreferences> {
-        private final Context mContext;
+    @BindingAnnotation @Target({ FIELD, PARAMETER, METHOD }) @Retention(RUNTIME)
+    public static @interface IntentStarterViewCachePage {}
 
-        @Inject
-        DefaultSharedPreferencesProvider(Context context) {
-            mContext = context;
-        }
+    @BindingAnnotation @Target( { FIELD, PARAMETER, METHOD }) @Retention(RUNTIME)
+    public static @interface IntentStarterViewGoogleMap { }
 
-        @Override
-        public SharedPreferences get() {
-            return PreferenceManager.getDefaultSharedPreferences(mContext);
-        }
+    @BindingAnnotation @Target({ FIELD, PARAMETER, METHOD }) @Retention(RUNTIME)
+    public static @interface ShowMapIntent {}
+
+    @BindingAnnotation @Target({ FIELD, PARAMETER, METHOD }) @Retention(RUNTIME)
+    public static @interface ShowRadarIntent {}
+
+    @Provides
+    @DefaultSharedPreferences
+    public SharedPreferences providesDefaultSharedPreferences(Context context) {
+        return PreferenceManager.getDefaultSharedPreferences(context);
     }
 
-    static class GeoMapIntentProvider implements Provider<Intent> {
-        private final Activity activity;
-
-        @Inject
-        public GeoMapIntentProvider(Activity activity) {
-            this.activity = activity;
-        }
-
-        @Override
-        public Intent get() {
-            return new Intent(activity, GeoMapActivity.class);
-        }
+    @Provides
+    @ShowMapIntent
+    public Intent providesIntentGeoMap(Activity activity) {
+        return new Intent(activity, GeoMapActivity.class);
     }
     
-    static final class IntentStarterMapProvider implements Provider<IntentStarterGeo> {
-        private final GeoBeagle geoBeagle;
-        private final Intent intent;
-
-        @Inject
-        IntentStarterMapProvider(GeoBeagle geoBeagle, @ShowMapIntent Intent intent) {
-            this.geoBeagle = geoBeagle;
-            this.intent = intent;
-        }
-
-        @Override
-        public IntentStarterGeo get() {
-            return new IntentStarterGeo(geoBeagle, intent);
-        }
+    @Provides
+    @ShowRadarIntent
+    public Intent providesRadarIntent() {
+        return new Intent("com.google.android.radar.SHOW_RADAR");
     }
-
-    static final class IntentStarterRadarProvider implements Provider<IntentStarterGeo> {
-        private final GeoBeagle geoBeagle;
-        private final Intent intent;
-
-        @Inject
-        IntentStarterRadarProvider(GeoBeagle geoBeagle, @ShowRadarIntent Intent intent) {
-            this.geoBeagle = geoBeagle;
-            this.intent = intent;
-        }
-
-        @Override
-        public IntentStarterGeo get() {
-            return new IntentStarterGeo(geoBeagle, intent);
-        }
-    }
-
     
     @Override
     protected void configure() {
         bind(Refresher.class).to(NullRefresher.class);
         bind(SensorManager.class).toProvider(
                 new SystemServiceProvider<SensorManager>(Context.SENSOR_SERVICE));
-        bind(Intent.class).annotatedWith(ShowRadarIntent.class).toInstance(
-                new Intent("com.google.android.radar.SHOW_RADAR"));
-        bind(Intent.class).annotatedWith(ShowMapIntent.class)
-                .toProvider(GeoMapIntentProvider.class);
-        bind(String.class).annotatedWith(Names.named("OpenMapError")).toInstance("Map error");
-        bind(String.class).annotatedWith(Names.named("OpenUriError")).toInstance("");
         bindConstant().annotatedWith(Azimuth.class).to(-1440f);
-        bind(IntentStarterGeo.class).annotatedWith(IntentStarterMap.class).toProvider(
-                IntentStarterMapProvider.class);
-        bind(IntentStarterGeo.class).annotatedWith(IntentStarterRadar.class).toProvider(
-                IntentStarterRadarProvider.class);
-        bind(SharedPreferences.class).annotatedWith(DefaultSharedPreferences.class).toProvider(
-                DefaultSharedPreferencesProvider.class);
         bind(Paint.class).toInstance(new Paint());
         bind(Rect.class).toInstance(new Rect());
     }
 
     private UnlabelledAttributeViewer getImagesOnDifficulty(final Drawable[] pawDrawables,
             ImageView imageView, RatingsArray ratingsArray) {
-        return new UnlabelledAttributeViewer(imageView, ratingsArray.getRatings(pawDrawables,
-                10));
+        return new UnlabelledAttributeViewer(imageView, ratingsArray.getRatings(pawDrawables, 10));
     }
 
     @Provides
@@ -190,8 +148,7 @@ public class GeoBeagleModule extends AbstractAndroidModule {
     @Provides
     AppLifecycleManager providesAppLifecycleManager(
             @DefaultSharedPreferences SharedPreferences sharedPreferences, RadarView radarView,
-            LocationControlBuffered locationControlBuffered,
-            LocationManager locationManager) {
+            LocationControlBuffered locationControlBuffered, LocationManager locationManager) {
         return new AppLifecycleManager(sharedPreferences, new LifecycleManager[] {
                 new LocationLifecycleManager(locationControlBuffered, locationManager),
                 new LocationLifecycleManager(radarView, locationManager)
@@ -199,10 +156,13 @@ public class GeoBeagleModule extends AbstractAndroidModule {
     }
 
     @Provides
-    CacheDetailsOnClickListener providesCacheDetailsOnClickListener(Activity activity,
-            AlertDialog.Builder cacheDetailsBuilder, LayoutInflater layoutInflater) {
-        return Misc.createCacheDetailsOnClickListener((GeoBeagle)activity, cacheDetailsBuilder,
-                layoutInflater);
+    @DialogOnClickListenerNOP
+    android.content.DialogInterface.OnClickListener providesDialogOnClickListenerDoNothing(
+            @SuppressWarnings("unused") Activity activity) {
+        return new android.content.DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+            }
+        };
     }
 
     @Provides
@@ -256,44 +216,50 @@ public class GeoBeagleModule extends AbstractAndroidModule {
         return (ImageView)geoBeagle.findViewById(R.id.gc_terrain);
     }
 
+
     @Provides
-    IntentStarterGeo providesIntentStarterRadar(GeoBeagle geoBeagle, @ShowRadarIntent Intent intent) {
+    @IntentStarterRadar
+    IntentStarterGeo providesIntentStarterRadar(GeoBeagle geoBeagle, Intent intent) {
         return new IntentStarterGeo(geoBeagle, intent);
     }
 
     @Provides
-    @Named("IntentStarterViewCachePage")
+    @IntentStarterViewCachePage
     IntentStarterViewUri providesIntentStarterViewCachePage(GeoBeagle geoBeagle,
             IntentFactory intentFactory, GeocacheToCachePage geocacheToCachePage) {
         return new IntentStarterViewUri(geoBeagle, intentFactory, geocacheToCachePage);
     }
 
     @Provides
-    @Named("IntentStarterViewGoogleMap")
-    IntentStarterViewUri providesIntentStarterViewGoogleMap(GeoBeagle geoBeagle,
-            IntentFactory intentFactory, GeocacheToGoogleMap geocacheToGoogleMap) {
-        return new IntentStarterViewUri(geoBeagle, intentFactory, geocacheToGoogleMap);
-    }
-
-    @Provides
     @GeoBeagleActivity
     MenuActions providesMenuActions(GeoBeagle geoBeagle, Resources resources,
-            @Named("IntentStarterViewGoogleMap") IntentStarterViewUri viewGoogleMapIntentStarter) {
+            IntentFactory intentFactory, GeocacheToGoogleMap geocacheToGoogleMap) {
         final MenuAction[] menuActionArray = {
-                new MenuActionCacheList(geoBeagle), new MenuActionEditGeocache(geoBeagle),
+                new MenuActionCacheList(geoBeagle),
+                new MenuActionEditGeocache(geoBeagle),
                 // new MenuActionLogDnf(this), new MenuActionLogFind(this),
-                new MenuActionSearchOnline(geoBeagle), new MenuActionSettings(geoBeagle),
-                new MenuActionGoogleMaps(viewGoogleMapIntentStarter)
+                new MenuActionSearchOnline(geoBeagle),
+                new MenuActionSettings(geoBeagle),
+                new MenuActionGoogleMaps(new IntentStarterViewUri(geoBeagle, intentFactory,
+                        geocacheToGoogleMap))
         };
         return new MenuActions(resources, menuActionArray);
     }
 
     @Provides
-    OnClickListener providesOnClickListener(@SuppressWarnings("unused") Activity activity) {
-        return new OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-            }
-        };
+    @ButtonListenerCachePage
+    OnClickListenerIntentStarter providesOnClickListenerIntentStarterCachePage(
+            @IntentStarterViewCachePage IntentStarterViewUri intentStarter,
+            ErrorDisplayer errorDisplayer) {
+        return new OnClickListenerIntentStarter(intentStarter, errorDisplayer);
+    }
+
+    @Provides
+    @ButtonListenerMapPage
+    OnClickListenerIntentStarter providesOnClickListenerIntentStarterMapPage(GeoBeagle geoBeagle,
+            @ShowMapIntent Intent intent, ErrorDisplayer errorDisplayer) {
+        return new OnClickListenerIntentStarter(new IntentStarterGeo(geoBeagle, intent),
+                errorDisplayer);
     }
 
     @Provides
@@ -336,9 +302,4 @@ public class GeoBeagleModule extends AbstractAndroidModule {
         return getImagesOnDifficulty(ribbonDrawables, imageView, ratingsArray);
     }
 
-    @Provides
-    WebPageAndDetailsButtonEnabler providesWebPageAndDetailsButtonEnabler(Activity geoBeagle) {
-        return Misc.create((GeoBeagle)geoBeagle, geoBeagle.findViewById(R.id.cache_page), geoBeagle
-                .findViewById(R.id.cache_details));
-    }
 }
