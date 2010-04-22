@@ -78,41 +78,41 @@ class EventHandlerGpx implements EventHandler {
     }
 
     public boolean text(String fullPath, String text) throws IOException {
-        text = text.trim();
+        String trimmedText = text.trim();
         //Log.d("GeoBeagle", "fullPath " + fullPath + ", text " + text);
         if (fullPath.equals(XPATH_WPTNAME)) {
-            mCachePersisterFacade.wptName(text);
+            mCachePersisterFacade.wptName(trimmedText);
         } else if (fullPath.equals(XPATH_WPTDESC)) {
-            mCachePersisterFacade.wptDesc(text);
+            mCachePersisterFacade.wptDesc(trimmedText);
         } else if (fullPath.equals(XPATH_GPXTIME)) {
-            return mCachePersisterFacade.gpxTime(text);
+            return mCachePersisterFacade.gpxTime(trimmedText);
         } else if (fullPath.equals(XPATH_GROUNDSPEAKNAME) || fullPath.equals(XPATH_GEOCACHENAME)) {
-            mCachePersisterFacade.groundspeakName(text);
+            mCachePersisterFacade.groundspeakName(trimmedText);
         } else if (fullPath.equals(XPATH_LOGDATE) || fullPath.equals(XPATH_GEOCACHELOGDATE)) {
-            mCachePersisterFacade.logDate(text);
+            mCachePersisterFacade.logDate(trimmedText);
         } else if (fullPath.equals(XPATH_SYM)) {
-            mCachePersisterFacade.symbol(text);
+            mCachePersisterFacade.symbol(trimmedText);
         } else if (fullPath.equals(XPATH_HINT) || fullPath.equals(XPATH_GEOCACHEHINT)) {
-            if (!text.equals("")) {
-                mCachePersisterFacade.hint(text);
+            if (!trimmedText.equals("")) {
+                mCachePersisterFacade.hint(trimmedText);
             }
         } else if (fullPath.equals(XPATH_CACHE_TYPE) || fullPath.equals(XPATH_GEOCACHE_TYPE)
                 || fullPath.equals(XPATH_WAYPOINT_TYPE)) {
             //Log.d("GeoBeagle", "Setting cache type " + text);
-            mCachePersisterFacade.cacheType(text);
+            mCachePersisterFacade.cacheType(trimmedText);
         } else if (fullPath.equals(XPATH_CACHE_DIFFICULTY)
                 || fullPath.equals(XPATH_GEOCACHE_DIFFICULTY)) {
-            mCachePersisterFacade.difficulty(text);
+            mCachePersisterFacade.difficulty(trimmedText);
         } else if (fullPath.equals(XPATH_CACHE_TERRAIN) || fullPath.equals(XPATH_GEOCACHE_TERRAIN)) {
-            mCachePersisterFacade.terrain(text);
+            mCachePersisterFacade.terrain(trimmedText);
         } else if (fullPath.equals(XPATH_CACHE_CONTAINER)
                 || fullPath.equals(XPATH_GEOCACHE_CONTAINER)) {
-            mCachePersisterFacade.container(text);
+            mCachePersisterFacade.container(trimmedText);
         }
         
         for (String writeLineMatch : XPATH_PLAINLINES) {
             if (fullPath.equals(writeLineMatch)) {
-                mCachePersisterFacade.line(text);
+                mCachePersisterFacade.line(trimmedText);
                 return true;
             }
         }
