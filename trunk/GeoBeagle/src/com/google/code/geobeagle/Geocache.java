@@ -74,7 +74,6 @@ public class Geocache implements Parcelable {
     private final int mContainer;
     private final int mDifficulty;
     private float[] mDistanceAndBearing = new float[2];
-    private GeoPoint mGeoPoint;
     private final CharSequence mId;
     private final double mLatitude;
     private final double mLongitude;
@@ -144,12 +143,9 @@ public class Geocache implements Parcelable {
     }
 
     public GeoPoint getGeoPoint() {
-        if (mGeoPoint == null) {
-            int latE6 = (int)(mLatitude * GeoUtils.MILLION);
-            int lonE6 = (int)(mLongitude * GeoUtils.MILLION);
-            mGeoPoint = new GeoPoint(latE6, lonE6);
-        }
-        return mGeoPoint;
+        int latE6 = (int)(mLatitude * GeoUtils.MILLION);
+        int lonE6 = (int)(mLongitude * GeoUtils.MILLION);
+        return new GeoPoint(latE6, lonE6);
     }
 
     public CharSequence getId() {
