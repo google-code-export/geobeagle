@@ -18,31 +18,39 @@ import com.google.code.geobeagle.CacheType;
 import com.google.code.geobeagle.CacheTypeFactory;
 import com.google.code.geobeagle.GeocacheFactory.Source;
 import com.google.code.geobeagle.database.CacheWriter;
+import com.google.code.geobeagle.database.Tag;
+import com.google.code.geobeagle.database.TagWriter;
+import com.google.code.geobeagle.database.TagWriterImpl;
+import com.google.code.geobeagle.database.TagWriterNull;
 
 /**
  * @author sng
  */
 public class CacheTagSqlWriter {
     private final CacheTypeFactory mCacheTypeFactory;
-    
     private CacheType mCacheType;
     private final CacheWriter mCacheWriter;
     private int mContainer;
     private int mDifficulty;
-    private boolean mFound;
     private String mGpxName;
     private CharSequence mId;
     private double mLatitude;
     private double mLongitude;
     private CharSequence mName;
     private String mSqlDate;
-
     private int mTerrain;
+    private TagWriter mTagWriter;
+    private TagWriterImpl mTagWriterImpl;
+    private TagWriterNull mTagWriterNull;
 
-    public CacheTagSqlWriter(CacheWriter cacheWriter, 
-            CacheTypeFactory cacheTypeFactory) {
+
+    public CacheTagSqlWriter(CacheWriter cacheWriter, CacheTypeFactory cacheTypeFactory,
+            TagWriterImpl tagWriterImpl, TagWriterNull tagWriterNull) {
         mCacheWriter = cacheWriter;
         mCacheTypeFactory = cacheTypeFactory;
+        mTagWriter = tagWriterNull;
+        mTagWriterImpl = tagWriterImpl;
+        mTagWriterNull = tagWriterNull;
     }
 
     public void cacheName(String name) {
@@ -56,10 +64,10 @@ public class CacheTagSqlWriter {
     public void clear() { // TODO: ensure source is not reset
         mId = mName = null;
         mLatitude = mLongitude = 0;
-        mFound = false;
         mCacheType = CacheType.NULL;
         mDifficulty = 0;
         mTerrain = 0;
+        mTagWriter = mTagWriterNull;
     }
 
     public void container(String container) {
@@ -117,7 +125,8 @@ public class CacheTagSqlWriter {
     }
 
     public void symbol(String symbol) {
-        mFound = symbol.equals("Geocache Found");
+        if (symbol.equals("Geocache Found"))
+            mTagWriter = mTagWriterImpl;
     }
 
     public void terrain(String terrain) {
@@ -125,8 +134,8 @@ public class CacheTagSqlWriter {
     }
 
     public void write(Source source) {
-        if (!mFound)
-            mCacheWriter.insertAndUpdateCache(mId, mName, mLatitude, mLongitude, source, mGpxName,
-                    mCacheType, mDifficulty, mTerrain, mContainer);
+        mCacheWriter.insertAndUpdateCache(mId, mName, mLatitude, mLongitude, source, mGpxName,
+                mCacheType, mDifficulty, mTerrain, mContainer);
+        mTagWriter.add(mId, Tag.FOUND);
     }
 }

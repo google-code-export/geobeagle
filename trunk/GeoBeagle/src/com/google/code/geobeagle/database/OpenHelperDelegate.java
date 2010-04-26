@@ -18,19 +18,14 @@ public class OpenHelperDelegate {
     public void onCreate(ISQLiteDatabase db) {
         db.execSQL(Database.SQL_CREATE_CACHE_TABLE_V11);
         db.execSQL(Database.SQL_CREATE_GPX_TABLE_V10);
+        db.execSQL(Database.SQL_CREATE_TAGS_TABLE_V12);
         db.execSQL(Database.SQL_CREATE_IDX_LATITUDE);
         db.execSQL(Database.SQL_CREATE_IDX_LONGITUDE);
         db.execSQL(Database.SQL_CREATE_IDX_SOURCE);
+        db.execSQL(Database.SQL_CREATE_IDX_TAGS);
     }
 
     public void onUpgrade(ISQLiteDatabase db, int oldVersion) {
-        if (oldVersion < 9) {
-            db.execSQL(Database.SQL_DROP_CACHE_TABLE);
-            db.execSQL(Database.SQL_CREATE_CACHE_TABLE_V08);
-            db.execSQL(Database.SQL_CREATE_IDX_LATITUDE);
-            db.execSQL(Database.SQL_CREATE_IDX_LONGITUDE);
-            db.execSQL(Database.SQL_CREATE_IDX_SOURCE);
-        }
         if (oldVersion < 10) {
             db.execSQL("ALTER TABLE CACHES ADD COLUMN " + Database.S0_COLUMN_DELETE_ME);
             db.execSQL(Database.SQL_CREATE_GPX_TABLE_V10);
@@ -43,6 +38,10 @@ public class OpenHelperDelegate {
             // This date has to precede 2000-01-01 (due to a bug in
             // CacheTagSqlWriter.java in v10).
             db.execSQL("UPDATE GPX SET ExportTime = \"1990-01-01\"");
+        }
+        if (oldVersion < 12) {
+            db.execSQL(Database.SQL_CREATE_TAGS_TABLE_V12);
+            db.execSQL(Database.SQL_CREATE_IDX_TAGS);
         }
     }
 }

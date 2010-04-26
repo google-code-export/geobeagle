@@ -24,6 +24,11 @@ import com.google.android.maps.MyLocationOverlay;
 import com.google.android.maps.Overlay;
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.R;
+import com.google.code.geobeagle.GraphicsGenerator.DifficultyAndTerrainPainter;
+import com.google.code.geobeagle.GraphicsGenerator.IconOverlayFactory;
+import com.google.code.geobeagle.GraphicsGenerator.IconRenderer;
+import com.google.code.geobeagle.GraphicsGenerator.MapViewBitmapCopier;
+import com.google.code.geobeagle.GraphicsGenerator.NullAttributesPainter;
 import com.google.code.geobeagle.actions.MenuActionCacheList;
 import com.google.code.geobeagle.actions.MenuActions;
 import com.google.code.geobeagle.activity.map.CachePinsOverlayFactory.CachePinsQueryManager;
@@ -64,6 +69,12 @@ public class GeoMapActivityModule extends AbstractAndroidModule {
     @BindingAnnotation @Target( { FIELD, PARAMETER, METHOD }) @Retention(RUNTIME)
     public static @interface GeoMapActivityMenuActions {}
 
+    @BindingAnnotation @Target( { FIELD, PARAMETER, METHOD }) @Retention(RUNTIME)
+    public static @interface NullAttributesPainterAnnotation {}
+
+    @BindingAnnotation @Target( { FIELD, PARAMETER, METHOD }) @Retention(RUNTIME)
+    public static @interface DifficultyAndTerrainPainterAnnotation {}
+
     static class NullOverlay extends Overlay {
     }
 
@@ -73,12 +84,34 @@ public class GeoMapActivityModule extends AbstractAndroidModule {
     }
     
     @Provides
+    @DifficultyAndTerrainPainterAnnotation
+    CacheItemFactory providesCacheItemDifficultyAndTerrainFactory(
+            @DifficultyAndTerrainPainterAnnotation IconRenderer iconRenderer,
+            MapViewBitmapCopier mapViewBitmapCopier, IconOverlayFactory iconOverlayFactory) {
+        return new CacheItemFactory(iconRenderer, mapViewBitmapCopier, iconOverlayFactory);
+    }
+
+    @Provides
+    @NullAttributesPainterAnnotation
+    IconRenderer providesIconRenderer(Resources resources,
+            NullAttributesPainter nullAttributesPainter) {
+        return new IconRenderer(resources, nullAttributesPainter);
+    }
+
+    @Provides
+    @DifficultyAndTerrainPainterAnnotation
+    IconRenderer providesDifficultyAndTerrainIconRenderer(Resources resources,
+            DifficultyAndTerrainPainter difficultyAndTerrainPainter) {
+        return new IconRenderer(resources, difficultyAndTerrainPainter);
+    }
+
+    @Provides
     CachePinsOverlay providesCachePinsOverlay(CacheItemFactory cacheItemFactory, Context context,
             @DefaultMapPinMarker Drawable defaultMarker) {
         return new CachePinsOverlay(cacheItemFactory, context, defaultMarker,
                 new ArrayList<Geocache>());
     }
-    
+
     @Provides
     @DefaultMapPinMarker
     Drawable providesDefaultMarker(Resources resources) {

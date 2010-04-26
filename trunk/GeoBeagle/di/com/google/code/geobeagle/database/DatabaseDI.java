@@ -128,6 +128,27 @@ public class DatabaseDI {
             return mSQLiteDatabase.isOpen();
         }
 
+        @Override
+        public void insert(String table, String[] columns, Object[] bindArgs) {
+            // Assumes len(bindArgs) > 0.
+            StringBuilder columnsAsString = new StringBuilder();
+            for (String column : columns) {
+                columnsAsString.append(", ");
+                columnsAsString.append(column);
+            }
+            mSQLiteDatabase.execSQL("REPLACE INTO " + table + " (" + columnsAsString.substring(2)
+                    + ") VALUES (?, ?)", bindArgs);
+        }
+
+        @Override
+        public boolean hasValue(String table, String selection) {
+            final String s = "SELECT Id FROM " + table + " WHERE " + selection;
+            Cursor c = mSQLiteDatabase.rawQuery(s, null);
+            boolean hasValues = c.moveToFirst();
+            c.close();
+            return hasValues;
+        }
+
     }
 
     static public class SearchFactory {

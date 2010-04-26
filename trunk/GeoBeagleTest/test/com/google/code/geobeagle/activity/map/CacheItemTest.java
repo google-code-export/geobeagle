@@ -21,7 +21,9 @@ import com.google.android.maps.OverlayItem;
 import com.google.code.geobeagle.CacheType;
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.GraphicsGenerator.IconFactory;
+import com.google.code.geobeagle.GraphicsGenerator.IconOverlay;
+import com.google.code.geobeagle.GraphicsGenerator.IconOverlayFactory;
+import com.google.code.geobeagle.GraphicsGenerator.IconRenderer;
 import com.google.code.geobeagle.GraphicsGenerator.MapViewBitmapCopier;
 
 import org.easymock.EasyMock;
@@ -43,23 +45,29 @@ public class CacheItemTest {
     public void testCreateCacheItem() {
         Geocache geocache = PowerMock.createMock(Geocache.class);
         GeoPoint geoPoint = PowerMock.createMock(GeoPoint.class);
-        IconFactory iconFactory = PowerMock.createMock(IconFactory.class);
         MapViewBitmapCopier mapViewBitmapCopier = PowerMock
                 .createMock(MapViewBitmapCopier.class);
         Drawable icon = PowerMock.createMock(Drawable.class);
-
+        IconOverlayFactory iconOverlayFactory = PowerMock.createMock(IconOverlayFactory.class);
+        IconOverlay iconOverlay = PowerMock.createMock(IconOverlay.class);
+        IconRenderer iconRenderer = PowerMock.createMock(IconRenderer.class);
+        
         EasyMock.expect(geocache.getGeoPoint()).andReturn(geoPoint);
         EasyMock.expect(geocache.getId()).andReturn("GC123");
         EasyMock.expect(geocache.getCacheType()).andReturn(CacheType.EARTHCACHE);
-        EasyMock
-                .expect(iconFactory.createIcon(geocache, R.drawable.pin_earth, mapViewBitmapCopier))
-                .andReturn(icon);
+        EasyMock.expect(geocache.getDifficulty()).andReturn(3);
+        EasyMock.expect(geocache.getTerrain()).andReturn(7);
+        EasyMock.expect(
+                iconRenderer.renderIcon(3, 7, R.drawable.pin_earth, iconOverlay,
+                        mapViewBitmapCopier)).andReturn(icon);
+        EasyMock.expect(iconOverlayFactory.create(geocache, false)).andReturn(iconOverlay);
 
         PowerMock.suppressConstructor(CacheItem.class);
         PowerMock.suppressMethod(CacheItem.class, "setMarker");
 
         PowerMock.replayAll();
-        new CacheItemFactory(iconFactory, mapViewBitmapCopier).createCacheItem(geocache);
+        new CacheItemFactory(iconRenderer, mapViewBitmapCopier, iconOverlayFactory)
+                .createCacheItem(geocache);
         PowerMock.verifyAll();
     }
 

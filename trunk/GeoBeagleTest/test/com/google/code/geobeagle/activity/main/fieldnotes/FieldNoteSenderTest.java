@@ -59,36 +59,6 @@ import java.util.Date;
 })
 public class FieldNoteSenderTest {
     @Test
-    public void testCacheLoggerFile() {
-        SharedPreferences sharedPreferences = PowerMock.createMock(SharedPreferences.class);
-        FileLogger fileLogger = PowerMock.createMock(FileLogger.class);
-        SmsLogger smsLogger = PowerMock.createMock(SmsLogger.class);
-
-        EasyMock.expect(sharedPreferences.getBoolean("field-note-text-file", false))
-                .andReturn(true);
-        fileLogger.log("GC123", "easy find", false);
-
-        PowerMock.replayAll();
-        new CacheLogger(sharedPreferences, fileLogger, smsLogger).log("GC123", "easy find", false);
-        PowerMock.verifyAll();
-    }
-
-    @Test
-    public void testCacheLoggerSms() {
-        SharedPreferences sharedPreferences = PowerMock.createMock(SharedPreferences.class);
-        FileLogger fileLogger = PowerMock.createMock(FileLogger.class);
-        SmsLogger smsLogger = PowerMock.createMock(SmsLogger.class);
-
-        EasyMock.expect(sharedPreferences.getBoolean("field-note-text-file", false)).andReturn(
-                false);
-        smsLogger.log("GC123", "easy find", false);
-
-        PowerMock.replayAll();
-        new CacheLogger(sharedPreferences, fileLogger, smsLogger).log("GC123", "easy find", false);
-        PowerMock.verifyAll();
-    }
-
-    @Test
     public void testDialogHelperCommonConfigureEditor() throws Exception {
         EditText editText = PowerMock.createMock(EditText.class);
         FieldnoteStringsFVsDnf fieldnoteStringsFVsDnf = PowerMock

@@ -10,7 +10,11 @@ import com.google.code.geobeagle.CacheType;
 import com.google.code.geobeagle.CacheTypeFactory;
 import com.google.code.geobeagle.GeocacheFactory.Source;
 import com.google.code.geobeagle.database.CacheWriter;
+import com.google.code.geobeagle.database.Tag;
+import com.google.code.geobeagle.database.TagWriterImpl;
+import com.google.code.geobeagle.database.TagWriterNull;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.api.easymock.PowerMock;
@@ -18,17 +22,31 @@ import org.powermock.modules.junit4.PowerMockRunner;
 
 @RunWith(PowerMockRunner.class)
 public class CacheTagWriterTest {
-    private final CacheWriter mCacheWriter = PowerMock.createMock(CacheWriter.class);
+    private CacheWriter mCacheWriter;
+    private TagWriterNull mTagWriterNull;
+    private TagWriterImpl mTagWriterImpl;
+    private CacheTypeFactory mCacheTypeFactory;
+    private CacheTagSqlWriter mCacheTagSqlWriter;
+
+    @Before
+    public void setUp() {
+        mCacheWriter = PowerMock.createMock(CacheWriter.class);
+        mTagWriterNull = PowerMock.createMock(TagWriterNull.class);
+        mTagWriterImpl = PowerMock.createMock(TagWriterImpl.class);
+        mCacheTypeFactory = PowerMock.createMock(CacheTypeFactory.class);
+        mCacheTagSqlWriter = new CacheTagSqlWriter(mCacheWriter, mCacheTypeFactory, mTagWriterImpl,
+                mTagWriterNull);
+    }
 
     @Test
     public void testClear() {
-        mCacheWriter.insertAndUpdateCache(null, null, 0, 0, Source.GPX, null, CacheType.NULL, 0, 0,
-                0);
+        mCacheWriter.insertAndUpdateCache(null, null, 0, 0, Source.GPX, null, CacheType.NULL, 0,
+                0, 0);
+        mTagWriterNull.add(null, Tag.FOUND);
 
         PowerMock.replayAll();
-        CacheTagSqlWriter cacheTagSqlWriter = new CacheTagSqlWriter(mCacheWriter, null);
-        cacheTagSqlWriter.clear();
-        cacheTagSqlWriter.write(Source.GPX);
+        mCacheTagSqlWriter.clear();
+        mCacheTagSqlWriter.write(Source.GPX);
         PowerMock.verifyAll();
     }
 
@@ -37,18 +55,27 @@ public class CacheTagWriterTest {
         mCacheWriter.clearEarlierLoads();
 
         PowerMock.replayAll();
-        new CacheTagSqlWriter(mCacheWriter, null).end();
+        mCacheTagSqlWriter.end();
         PowerMock.verifyAll();
     }
 
+    @Test
+    public void testSymbol() {
+        mCacheWriter.insertAndUpdateCache(null, null, 0, 0, Source.GPX, null, null, 0, 0, 0);
+        mTagWriterImpl.add(null, Tag.FOUND);
+        
+        PowerMock.replayAll();
+        mCacheTagSqlWriter.symbol("Geocache Found");
+        mCacheTagSqlWriter.write(Source.GPX);
+        PowerMock.verifyAll();
+    }
     @Test
     public void testGpxTimeDontLoad() {
         expect(mCacheWriter.isGpxAlreadyLoaded("foo.gpx", "2008-04-15 16:10:30")).andReturn(true);
 
         PowerMock.replayAll();
-        CacheTagSqlWriter cacheTagSqlWriter = new CacheTagSqlWriter(mCacheWriter, null);
-        cacheTagSqlWriter.gpxName("foo.gpx");
-        assertFalse(cacheTagSqlWriter.gpxTime("2008-04-15T16:10:30"));
+        mCacheTagSqlWriter.gpxName("foo.gpx");
+        assertFalse(mCacheTagSqlWriter.gpxTime("2008-04-15T16:10:30"));
         PowerMock.verifyAll();
     }
 
@@ -58,15 +85,14 @@ public class CacheTagWriterTest {
         mCacheWriter.clearCaches("foo.gpx");
 
         PowerMock.replayAll();
-        CacheTagSqlWriter cacheTagSqlWriter = new CacheTagSqlWriter(mCacheWriter, null);
-        cacheTagSqlWriter.gpxName("foo.gpx");
-        assertTrue(cacheTagSqlWriter.gpxTime("2008-04-15T16:10:30"));
+        mCacheTagSqlWriter.gpxName("foo.gpx");
+        assertTrue(mCacheTagSqlWriter.gpxTime("2008-04-15T16:10:30"));
         PowerMock.verifyAll();
     }
 
     @Test
     public void testIsoTimeToSql() {
-        assertEquals("2008-04-15 16:10:30", new CacheTagSqlWriter(null, null)
+        assertEquals("2008-04-15 16:10:30", mCacheTagSqlWriter
                 .isoTimeToSql("2008-04-15T16:10:30.7369220-08:00"));
     }
 
@@ -75,8 +101,7 @@ public class CacheTagWriterTest {
         mCacheWriter.startWriting();
 
         PowerMock.replayAll();
-        CacheTagSqlWriter cacheTagSqlWriter = new CacheTagSqlWriter(mCacheWriter, null);
-        cacheTagSqlWriter.startWriting();
+        mCacheTagSqlWriter.startWriting();
         PowerMock.verifyAll();
     }
 
@@ -85,8 +110,7 @@ public class CacheTagWriterTest {
         mCacheWriter.stopWriting();
 
         PowerMock.replayAll();
-        CacheTagSqlWriter cacheTagSqlWriter = new CacheTagSqlWriter(mCacheWriter, null);
-        cacheTagSqlWriter.stopWriting(false);
+        mCacheTagSqlWriter.stopWriting(false);
         PowerMock.verifyAll();
     }
 
@@ -97,10 +121,9 @@ public class CacheTagWriterTest {
         mCacheWriter.writeGpx("foo.gpx", "2008-04-15 16:10:30");
 
         PowerMock.replayAll();
-        CacheTagSqlWriter cacheTagSqlWriter = new CacheTagSqlWriter(mCacheWriter, null);
-        cacheTagSqlWriter.gpxName("foo.gpx");
-        cacheTagSqlWriter.gpxTime("2008-04-15T16:10:30.7369220-08:00");
-        cacheTagSqlWriter.stopWriting(true);
+        mCacheTagSqlWriter.gpxName("foo.gpx");
+        mCacheTagSqlWriter.gpxTime("2008-04-15T16:10:30.7369220-08:00");
+        mCacheTagSqlWriter.stopWriting(true);
         PowerMock.verifyAll();
     }
 
@@ -108,34 +131,23 @@ public class CacheTagWriterTest {
     public void testWrite() {
         mCacheWriter.insertAndUpdateCache("GC123", "my cache", 122, 37, Source.GPX, "foo.gpx",
                 CacheType.TRADITIONAL, 6, 5, 1);
-        CacheTypeFactory cacheTypeFactory = PowerMock.createMock(CacheTypeFactory.class);
-        expect(cacheTypeFactory.container("Micro")).andReturn(1);
-        expect(cacheTypeFactory.stars("2.5")).andReturn(5);
-        expect(cacheTypeFactory.stars("3")).andReturn(6);
-        expect(cacheTypeFactory.fromTag("Traditional Cache")).andReturn(CacheType.TRADITIONAL);
-        
+        expect(mCacheTypeFactory.container("Micro")).andReturn(1);
+        expect(mCacheTypeFactory.stars("2.5")).andReturn(5);
+        expect(mCacheTypeFactory.stars("3")).andReturn(6);
+        expect(mCacheTypeFactory.fromTag("Traditional Cache")).andReturn(CacheType.TRADITIONAL);
+        mTagWriterNull.add("GC123", Tag.FOUND);
+
         PowerMock.replayAll();
-        CacheTagSqlWriter cacheTagSqlWriter = new CacheTagSqlWriter(mCacheWriter, cacheTypeFactory);
-        cacheTagSqlWriter.id("GC123");
-        cacheTagSqlWriter.cacheName("my cache");
-        cacheTagSqlWriter.latitudeLongitude("122", "37");
-        cacheTagSqlWriter.container("Micro");
-        cacheTagSqlWriter.terrain("2.5");
-        cacheTagSqlWriter.difficulty("3");
+        mCacheTagSqlWriter.id("GC123");
+        mCacheTagSqlWriter.cacheName("my cache");
+        mCacheTagSqlWriter.latitudeLongitude("122", "37");
+        mCacheTagSqlWriter.container("Micro");
+        mCacheTagSqlWriter.terrain("2.5");
+        mCacheTagSqlWriter.difficulty("3");
         
-        cacheTagSqlWriter.gpxName("foo.gpx");
-        cacheTagSqlWriter.cacheType("Traditional Cache");
-        cacheTagSqlWriter.write(Source.GPX);
+        mCacheTagSqlWriter.gpxName("foo.gpx");
+        mCacheTagSqlWriter.cacheType("Traditional Cache");
+        mCacheTagSqlWriter.write(Source.GPX);
         PowerMock.verifyAll();
     }
-
-    @Test
-    public void testWriteFound() {
-        PowerMock.replayAll();
-        CacheTagSqlWriter cacheTagSqlWriter = new CacheTagSqlWriter(mCacheWriter, null);
-        cacheTagSqlWriter.symbol("Geocache Found");
-        cacheTagSqlWriter.write(Source.GPX);
-        PowerMock.verifyAll();
-    }
-
 }

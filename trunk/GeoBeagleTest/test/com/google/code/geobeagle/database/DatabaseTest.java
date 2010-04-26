@@ -16,74 +16,14 @@ package com.google.code.geobeagle.database;
 
 import static org.junit.Assert.*;
 
+import org.easymock.EasyMock;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.powermock.api.easymock.PowerMock;
+import org.powermock.modules.junit4.PowerMockRunner;
 
-import android.database.Cursor;
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Writer;
-
+@RunWith(PowerMockRunner.class)
 public class DatabaseTest {
-    static class DesktopSQLiteDatabase implements ISQLiteDatabase {
-        Writer mWriter;
-
-        DesktopSQLiteDatabase() {
-            File db = new File("GeoBeagle.db");
-            db.delete();
-        }
-
-        public void beginTransaction() {
-        }
-
-        public void close() {
-        }
-
-        public int countResults(String table, String sql, String... args) {
-            return 0;
-        }
-
-        public String dumpSchema() {
-            return exec(".schema");
-        }
-
-        public String dumpTable(String table) {
-            return exec("SELECT * FROM " + table);
-        }
-
-        public void endTransaction() {
-        }
-
-        public void execSQL(String s, Object... bindArg1) {
-            if (bindArg1.length > 0)
-                throw new UnsupportedOperationException("bindArgs not yet supported");
-            System.out.print(exec(s));
-        }
-
-        public Cursor query(String table, String[] columns, String selection, String groupBy,
-                String having, String orderBy, String limit, String... selectionArgs) {
-            return null;
-        }
-
-        @Override
-        public Cursor rawQuery(String string, String[] object) {
-            // TODO Auto-generated method stub
-            return null;
-        }
-
-        public void setTransactionSuccessful() {
-        }
-
-        @Override
-        public boolean isOpen() {
-            // TODO Auto-generated method stub
-            return false;
-        }
-    }
-
     final static String schema10 = Database.SQL_CREATE_CACHE_TABLE_V10
             + Database.SQL_CREATE_IDX_LATITUDE + Database.SQL_CREATE_IDX_LONGITUDE
             + Database.SQL_CREATE_IDX_SOURCE + Database.SQL_CREATE_GPX_TABLE_V10;
@@ -95,63 +35,12 @@ public class DatabaseTest {
             + Database.SQL_CREATE_IDX_LATITUDE + Database.SQL_CREATE_IDX_LONGITUDE
             + Database.SQL_CREATE_IDX_SOURCE;
 
-    /**
-     * <pre>
-     * 
-     * version 8
-     * same as version 7 but rebuilds everything because a released version mistakenly puts 
-     * *intent* into imported caches.
-     * 
-     * version 9
-     * fixes bug where INDEX wasn't being created on upgrade.
-     * 
-     * version 10
-     * adds GPX table
-     * 
-     * version 11
-     * adds new CACHES columns: CacheType, Difficulty, Terrain, and Container
-     * </pre>
-     * 
-     * @throws IOException
-     */
-    private static String convertStreamToString(InputStream is) throws IOException {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-        StringBuilder sb = new StringBuilder();
-
-        String line = null;
-        while ((line = reader.readLine()) != null) {
-            sb.append(line + "\n");
-        }
-        is.close();
-
-        return sb.toString();
-    }
-
     static String currentSchema() {
         String currentSchema = SQL(Database.SQL_CREATE_CACHE_TABLE_V11)
-                + SQL(Database.SQL_CREATE_GPX_TABLE_V10) + SQL(Database.SQL_CREATE_IDX_LATITUDE)
-                + SQL(Database.SQL_CREATE_IDX_LONGITUDE) + SQL(Database.SQL_CREATE_IDX_SOURCE);
+                + SQL(Database.SQL_CREATE_GPX_TABLE_V10) + SQL(Database.SQL_CREATE_TAGS_TABLE_V12)
+                + SQL(Database.SQL_CREATE_IDX_LATITUDE) + SQL(Database.SQL_CREATE_IDX_LONGITUDE)
+                + SQL(Database.SQL_CREATE_IDX_SOURCE) + SQL(Database.SQL_CREATE_IDX_TAGS);
         return currentSchema;
-    }
-
-    private static String exec(String s) {
-        String output = null;
-        try {
-            ProcessBuilder processBuilder = new ProcessBuilder("sqlite3", "GeoBeagle.db", s);
-            processBuilder.redirectErrorStream(true);
-            InputStream shellIn = null;
-            Process shell = processBuilder.start();
-            shellIn = shell.getInputStream();
-            int result = shell.waitFor();
-            output = convertStreamToString(shellIn);
-            if (result != 0)
-                throw (new RuntimeException(output));
-        } catch (InterruptedException e) {
-            throw (new RuntimeException(e + "\n" + output));
-        } catch (IOException e) {
-            throw (new RuntimeException(e + "\n" + output));
-        }
-        return output;
     }
 
     private static String SQL(String s) {
@@ -166,6 +55,26 @@ public class DatabaseTest {
         String schema = db.dumpSchema();
 
         assertEquals(currentSchema(), schema);
+    }
+
+    @Test
+    public void testTags() {
+        DbFrontend dbFrontend = PowerMock.createMock(DbFrontend.class);
+        
+        DesktopSQLiteDatabase db = new DesktopSQLiteDatabase();
+        EasyMock.expect(dbFrontend.getDatabase()).andReturn(db).anyTimes();
+        
+        PowerMock.replayAll();
+        db.execSQL(currentSchema());
+        final TagWriterImpl tagWriterImpl = new TagWriterImpl(dbFrontend);
+        assertFalse(tagWriterImpl.hasTag("GC123", Tag.FOUND));
+        assertFalse(tagWriterImpl.hasTag("GC123", Tag.DNF));
+        tagWriterImpl.add("GC123", Tag.FOUND);
+        assertTrue(tagWriterImpl.hasTag("GC123", Tag.FOUND));
+        assertFalse(tagWriterImpl.hasTag("GC123", Tag.DNF));
+        tagWriterImpl.add("GC123", Tag.DNF);
+        assertTrue(tagWriterImpl.hasTag("GC123", Tag.DNF));
+        assertFalse(tagWriterImpl.hasTag("GC123", Tag.FOUND));
     }
 
     @Test
@@ -186,37 +95,6 @@ public class DatabaseTest {
         assertEquals("GCABC||||intent|1|0|0|0|0\nGC123||||foo.gpx|1|0|0|0|0\n", caches);
         String gpx = db.dumpTable("GPX");
         assertEquals("seattle.gpx|1990-01-01|1\n", gpx);
-    }
-
-    @Test
-    public void testUpgradeFrom6() {
-        DesktopSQLiteDatabase db = new DesktopSQLiteDatabase();
-        db.execSQL(schema6);
-        db.execSQL("INSERT INTO CACHES (Id, Source) VALUES (\"GCABC\", \"intent\")");
-        OpenHelperDelegate openHelperDelegate = new OpenHelperDelegate();
-        openHelperDelegate.onUpgrade(db, 6);
-        String schema = db.dumpSchema();
-
-        assertEquals(currentSchema(), schema);
-
-        String data = db.dumpTable("CACHES");
-        assertEquals("", data);
-    }
-
-    @Test
-    public void testUpgradeFrom8() {
-        DesktopSQLiteDatabase db = new DesktopSQLiteDatabase();
-        db.execSQL(schema7);
-        db.execSQL("INSERT INTO CACHES (Id, Source) VALUES (\"GCABC\", \"intent\")");
-        OpenHelperDelegate openHelperDelegate = new OpenHelperDelegate();
-        openHelperDelegate.onUpgrade(db, 8);
-        String schema = db.dumpSchema();
-
-        // Need to blow away all data from v8.
-        String data = db.dumpTable("CACHES");
-        assertEquals("", data);
-
-        assertEquals(currentSchema(), schema);
     }
 
     @Test

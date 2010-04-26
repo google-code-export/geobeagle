@@ -14,17 +14,16 @@
 
 package com.google.code.geobeagle.database;
 
-import java.util.ArrayList;
+import com.google.code.geobeagle.Geocache;
+import com.google.code.geobeagle.database.DatabaseDI.GeoBeagleSqliteOpenHelper;
+import com.google.inject.Inject;
 
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
-import com.google.code.geobeagle.Geocache;
-import com.google.code.geobeagle.database.DatabaseDI;
-import com.google.code.geobeagle.database.DatabaseDI.GeoBeagleSqliteOpenHelper;
-import com.google.inject.Inject;
+import java.util.ArrayList;
 
 /**
  * Will develop to represent the front-end to access a database. It takes
@@ -126,6 +125,11 @@ public class DbFrontend {
         openDatabase();
         mDatabase.execSQL(Database.SQL_DELETE_ALL_CACHES);
         mDatabase.execSQL(Database.SQL_DELETE_ALL_GPX);
+    }
+
+    public ISQLiteDatabase getDatabase() {
+        openDatabase();
+        return mDatabase;
     }
 
     /*

@@ -18,6 +18,10 @@ import static org.easymock.EasyMock.expect;
 
 import com.google.code.geobeagle.CacheType;
 import com.google.code.geobeagle.Geocache;
+import com.google.code.geobeagle.GraphicsGenerator.IconOverlay;
+import com.google.code.geobeagle.GraphicsGenerator.IconOverlayFactory;
+import com.google.code.geobeagle.GraphicsGenerator.IconRenderer;
+import com.google.code.geobeagle.GraphicsGenerator.MapViewBitmapCopier;
 import com.google.code.geobeagle.activity.main.RadarView;
 import com.google.code.geobeagle.activity.main.view.GeocacheViewer.LabelledAttributeViewer;
 import com.google.code.geobeagle.activity.main.view.GeocacheViewer.ResourceImages;
@@ -43,6 +47,7 @@ import java.util.Arrays;
         LabelledAttributeViewer.class
 })
 public class GeocacheViewerTest {
+
     @Test
     public void testSetImageGone() {
         Drawable drawable0 = PowerMock.createMock(Drawable.class);
@@ -136,6 +141,7 @@ public class GeocacheViewerTest {
 
     @Test
     public void testSet() {
+        final int ICON_BIG = 50;
         TextView id = PowerMock.createMock(TextView.class);
         NameViewer name = PowerMock.createMock(NameViewer.class);
         Geocache geocache = PowerMock.createMock(Geocache.class);
@@ -147,28 +153,35 @@ public class GeocacheViewerTest {
                 .createMock(UnlabelledAttributeViewer.class);
         CacheType cacheType = PowerMock.createMock(CacheType.class);
         ImageView gcTypeImageView = PowerMock.createMock(ImageView.class);
-
+        IconOverlayFactory iconOverlayFactory = PowerMock.createMock(IconOverlayFactory.class);
+        IconOverlay iconOverlay = PowerMock.createMock(IconOverlay.class);
+        MapViewBitmapCopier mapViewBitmapCopier = PowerMock.createMock(MapViewBitmapCopier.class);
+        IconRenderer iconRenderer = PowerMock.createMock(IconRenderer.class);
+        Drawable drawable = PowerMock.createMock(Drawable.class);
+        
+        expect(iconRenderer.renderIcon(0, 0, ICON_BIG, iconOverlay, mapViewBitmapCopier)).andReturn(drawable);
+        gcTypeImageView.setImageDrawable(drawable);
         expect(geocache.getLatitude()).andReturn(37.0);
         expect(geocache.getLongitude()).andReturn(-122.0);
         radar.setTarget(37000000, -122000000);
         expect(geocache.getId()).andReturn("GC123");
+        expect(iconOverlayFactory.create(geocache, true)).andReturn(iconOverlay);
         expect(geocache.getName()).andReturn("a cache");
         expect(geocache.getCacheType()).andReturn(cacheType);
-        expect(cacheType.iconBig()).andReturn(50);
+        expect(cacheType.iconBig()).andReturn(ICON_BIG);
         expect(geocache.getContainer()).andReturn(6);
         expect(geocache.getDifficulty()).andReturn(8);
         expect(geocache.getTerrain()).andReturn(5);
         gcContainer.setImage(6);
         gcDifficulty.setImage(8);
         gcTerrain.setImage(5);
-        gcTypeImageView.setImageResource(50);
 
         id.setText("GC123");
         name.set("a cache");
 
         PowerMock.replayAll();
-        new GeocacheViewer(radar, id, name, gcTypeImageView, gcDifficulty,
-                gcTerrain, gcContainer).set(geocache);
+        new GeocacheViewer(radar, id, name, gcTypeImageView, gcDifficulty, gcTerrain, gcContainer,
+                iconOverlayFactory, mapViewBitmapCopier, iconRenderer).set(geocache);
         PowerMock.verifyAll();
     }
 }

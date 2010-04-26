@@ -19,6 +19,7 @@ import com.google.code.geobeagle.activity.main.fieldnotes.FieldnotesModule;
 import com.google.code.geobeagle.activity.main.view.ViewModule;
 import com.google.code.geobeagle.activity.map.GeoMapActivityModule;
 import com.google.code.geobeagle.activity.searchonline.SearchOnlineModule;
+import com.google.code.geobeagle.database.DatabaseModule;
 import com.google.inject.Module;
 
 import roboguice.application.GuiceApplication;
@@ -33,5 +34,6 @@ public class GeoBeagleApplication extends GuiceApplication {
         modules.add(new FieldnotesModule());
         modules.add(new GeoMapActivityModule());
         modules.add(new ViewModule());
+        modules.add(new DatabaseModule());
     }
 }

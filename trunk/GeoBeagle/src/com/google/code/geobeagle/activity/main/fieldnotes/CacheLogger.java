@@ -24,19 +24,22 @@ public class CacheLogger implements ICacheLogger {
     private final FileLogger mFileLogger;
     private final SharedPreferences mSharedPreferences;
     private final SmsLogger mSmsLogger;
+    private final DatabaseLogger mDatabaseLogger;
 
     @Inject
-    public CacheLogger(@DefaultSharedPreferences SharedPreferences sharedPreferences, FileLogger fileLogger,
-            SmsLogger smsLogger) {
+    public CacheLogger(@DefaultSharedPreferences SharedPreferences sharedPreferences,
+            FileLogger fileLogger, SmsLogger smsLogger, DatabaseLogger databaseLogger) {
         mSharedPreferences = sharedPreferences;
         mFileLogger = fileLogger;
         mSmsLogger = smsLogger;
+        mDatabaseLogger = databaseLogger;
     }
 
     @Override
     public void log(CharSequence geocacheId, CharSequence logText, boolean dnf) {
         final boolean fFieldNoteTextFile = mSharedPreferences.getBoolean(
                 "field-note-text-file", false);
+        mDatabaseLogger.log(geocacheId, dnf);
         if (fFieldNoteTextFile)
             mFileLogger.log(geocacheId, logText, dnf);
         else

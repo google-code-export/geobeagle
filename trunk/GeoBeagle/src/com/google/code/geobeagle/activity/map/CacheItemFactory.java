@@ -15,25 +15,35 @@
 package com.google.code.geobeagle.activity.map;
 
 import com.google.code.geobeagle.Geocache;
-import com.google.code.geobeagle.GraphicsGenerator.IconFactory;
+import com.google.code.geobeagle.GraphicsGenerator.IconOverlayFactory;
+import com.google.code.geobeagle.GraphicsGenerator.IconRenderer;
 import com.google.code.geobeagle.GraphicsGenerator.MapViewBitmapCopier;
+import com.google.code.geobeagle.activity.map.GeoMapActivityModule.DifficultyAndTerrainPainterAnnotation;
 import com.google.inject.Inject;
 
+import android.graphics.drawable.Drawable;
+
 class CacheItemFactory {
-    private final IconFactory mIconFactory;
+    private final IconRenderer mIconRenderer;
     private final MapViewBitmapCopier mMapViewBitmapCopier;
+    private final IconOverlayFactory mIconOverlayFactory;
 
     @Inject
-    CacheItemFactory(IconFactory iconFactory, MapViewBitmapCopier mapViewBitmapCopier) {
-        mIconFactory = iconFactory;
+    CacheItemFactory(@DifficultyAndTerrainPainterAnnotation IconRenderer iconRenderer,
+            MapViewBitmapCopier mapViewBitmapCopier, IconOverlayFactory iconOverlayFactory) {
+        mIconRenderer = iconRenderer;
         mMapViewBitmapCopier = mapViewBitmapCopier;
+        mIconOverlayFactory = iconOverlayFactory;
     }
 
     CacheItem createCacheItem(Geocache geocache) {
         final CacheItem cacheItem = new CacheItem(geocache.getGeoPoint(), (String)geocache.getId(),
                 geocache);
-        cacheItem.setMarker(mIconFactory.createIcon(geocache, geocache
-                .getCacheType().iconMap(), mMapViewBitmapCopier));
+
+        final Drawable icon = mIconRenderer.renderIcon(geocache.getDifficulty(), geocache
+                .getTerrain(), geocache.getCacheType().iconMap(), mIconOverlayFactory.create(
+                geocache, false), mMapViewBitmapCopier);
+        cacheItem.setMarker(icon);
         return cacheItem;
     }
 }

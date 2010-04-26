@@ -14,6 +14,8 @@
 
 package com.google.code.geobeagle;
 
+import com.google.code.geobeagle.database.Tag;
+import com.google.code.geobeagle.database.TagWriterImpl;
 import com.google.inject.Inject;
 
 import android.content.res.Resources;
@@ -30,15 +32,15 @@ public class GraphicsGenerator {
     public static class AttributePainter {
         private final Paint mTempPaint;
         private final Rect mTempRect;
-        
+
         @Inject
         public AttributePainter(Paint tempPaint, Rect tempRect) {
             mTempPaint = tempPaint;
             mTempRect = tempRect;
         }
 
-        void drawAttribute(int position, int bottom, int imageHeight, int imageWidth, Canvas canvas,
-                double attribute, int color) {
+        void paintAttribute(int position, int bottom, int imageHeight, int imageWidth,
+                Canvas canvas, double attribute, int color) {
             final int diffWidth = (int)(imageWidth * (attribute / 10.0));
             final int MARGIN = 1;
             final int THICKNESS = 3;
@@ -76,9 +78,9 @@ public class GraphicsGenerator {
             drawable.setBounds(width * i, 0, width * (i + 1) - 1, height - 1);
             drawable.draw(c);
         }
-        
+
     }
-    
+
     public static class RatingsArray {
         private final RatingsGenerator mRatingsGenerator;
 
@@ -99,7 +101,9 @@ public class GraphicsGenerator {
 
     public interface BitmapCopier {
         Bitmap copy(Bitmap source);
+
         int getBottom();
+
         Drawable getDrawable(Bitmap icon);
     }
 
@@ -114,17 +118,17 @@ public class GraphicsGenerator {
             copy.setPixels(pixels, 0, imageWidth, 0, 0, imageWidth, imageHeight);
             return copy;
         }
-        
+
         public int getBottom() {
             return 0;
         }
-        
+
         public Drawable getDrawable(Bitmap icon) {
             return new BitmapDrawable(icon);
         }
-        
+
     }
-    
+
     public static class MapViewBitmapCopier implements BitmapCopier {
         public Bitmap copy(Bitmap source) {
             return source.copy(Bitmap.Config.ARGB_8888, true);
@@ -133,7 +137,7 @@ public class GraphicsGenerator {
         public int getBottom() {
             return 3;
         }
-        
+
         public Drawable getDrawable(Bitmap icon) {
             Drawable iconMap = new BitmapDrawable(icon);
             int width = iconMap.getIntrinsicWidth();
@@ -143,45 +147,105 @@ public class GraphicsGenerator {
         }
     }
 
-    public static class IconRenderer {
-        private final AttributePainter mAttributePainter;
-        private final Resources mResources;
-        
-        @Inject
-        public IconRenderer(AttributePainter attributePainter, Resources resources) {
-            mAttributePainter = attributePainter;
-            mResources = resources;
+    public static interface IconOverlay {
+        void draw(Canvas canvas);
+    }
+
+    public static class IconOverlayImpl implements IconOverlay {
+        private final Drawable mOverlayIcon;
+
+        public IconOverlayImpl(Drawable overlayIcon) {
+            mOverlayIcon = overlayIcon;
         }
 
-        Drawable renderIcon(int difficulty, int terrain, int backdropId, BitmapCopier bitmapCopier) {
-            Bitmap bitmap = BitmapFactory.decodeResource(mResources, backdropId);
+        @Override
+        public void draw(Canvas canvas) {
+            if (mOverlayIcon != null) {
+                mOverlayIcon.setBounds(0, 0, mOverlayIcon.getIntrinsicHeight() - 1, mOverlayIcon
+                        .getIntrinsicHeight() - 1);
+                mOverlayIcon.draw(canvas);
+            }
+        }
+    }
 
-            Bitmap copy = bitmapCopier.copy(bitmap);
+    public static class NullIconOverlay implements IconOverlay {
+        @Override
+        public void draw(Canvas canvas) {
+        }
+
+    }
+
+    public static interface AttributesPainter {
+        void paintAttributes(int difficulty, int terrain, Bitmap copy, Canvas canvas) ;
+    }
+    
+    public static class NullAttributesPainter implements AttributesPainter {
+        @Override
+        public void paintAttributes(int difficulty, int terrain, Bitmap copy, Canvas canvas) {
+        }
+    }
+    
+    public static class DifficultyAndTerrainPainter implements AttributesPainter {
+        private final AttributePainter mAttributePainter;
+
+        @Inject
+        public DifficultyAndTerrainPainter(AttributePainter attributePainter) {
+            mAttributePainter = attributePainter;
+        }
+
+        @Override
+        public void paintAttributes(int difficulty, int terrain, Bitmap copy, Canvas canvas) {
             int imageHeight = copy.getHeight();
             int imageWidth = copy.getWidth();
-
-            Canvas canvas = new Canvas(copy);
-            mAttributePainter.drawAttribute(1, 0, imageHeight, imageWidth, canvas, difficulty,
+            mAttributePainter.paintAttribute(1, 0, imageHeight, imageWidth, canvas, difficulty,
                     Color.rgb(0x20, 0x20, 0xFF));
-            mAttributePainter.drawAttribute(0, 0, imageHeight, imageWidth, canvas, terrain, Color
+            mAttributePainter.paintAttribute(0, 0, imageHeight, imageWidth, canvas, terrain, Color
                     .rgb(0xDB, 0xA1, 0x09));
-            
+        }
+    }
+
+    public static class IconRenderer {
+        private final Resources mResources;
+        private final AttributesPainter mAttributesPainter;
+
+        @Inject
+        public IconRenderer(Resources resources, AttributesPainter attributesPainter) {
+            mResources = resources;
+            mAttributesPainter = attributesPainter;
+        }
+
+        public Drawable renderIcon(int difficulty, int terrain, int backdropId,
+                IconOverlay iconOverlay, BitmapCopier bitmapCopier) {
+            Bitmap bitmap = BitmapFactory.decodeResource(mResources, backdropId);
+            Bitmap copy = bitmapCopier.copy(bitmap);
+            Canvas canvas = new Canvas(copy);
+            mAttributesPainter.paintAttributes(difficulty, terrain, copy, canvas);
+            iconOverlay.draw(canvas);
+
             return bitmapCopier.getDrawable(copy);
         }
     }
 
-    public static class IconFactory {
-        private final IconRenderer mIconRenderer;
+    public static class IconOverlayFactory {
+        private final TagWriterImpl mTagWriter;
+        private final Resources mResources;
 
         @Inject
-        public IconFactory(IconRenderer iconRenderer) {
-            mIconRenderer = iconRenderer;
+        public IconOverlayFactory(TagWriterImpl tagWriterImpl, Resources resources) {
+            mTagWriter = tagWriterImpl;
+            mResources = resources;
         }
 
-        public Drawable createIcon(Geocache geocache, int icon, BitmapCopier bitmapCopier) {
-            return mIconRenderer.renderIcon(geocache.getDifficulty(), geocache.getTerrain(), icon,
-                    bitmapCopier);
+        public IconOverlay create(Geocache geocache, boolean fBig) {
+            if (mTagWriter.hasTag(geocache.getId(), Tag.FOUND))
+                return new IconOverlayImpl(
+                        mResources.getDrawable(fBig ? R.drawable.overlay_found_big
+                                : R.drawable.overlay_found));
+            else if (mTagWriter.hasTag(geocache.getId(), Tag.DNF))
+                return new IconOverlayImpl(mResources.getDrawable(fBig ? R.drawable.overlay_dnf_big
+                        : R.drawable.overlay_dnf));
+            return new NullIconOverlay();
         }
-
     }
+
 }

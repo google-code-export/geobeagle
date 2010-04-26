@@ -17,9 +17,6 @@ package com.google.code.geobeagle;
 import static org.junit.Assert.assertEquals;
 
 import com.google.code.geobeagle.GraphicsGenerator.AttributePainter;
-import com.google.code.geobeagle.GraphicsGenerator.BitmapCopier;
-import com.google.code.geobeagle.GraphicsGenerator.IconFactory;
-import com.google.code.geobeagle.GraphicsGenerator.IconRenderer;
 import com.google.code.geobeagle.GraphicsGenerator.ListViewBitmapCopier;
 import com.google.code.geobeagle.GraphicsGenerator.MapViewBitmapCopier;
 import com.google.code.geobeagle.GraphicsGenerator.RatingsArray;
@@ -68,8 +65,8 @@ public class GraphicsGeneratorTest {
         
         PowerMock.replayAll();
         AttributePainter attributePainter = new AttributePainter(tempPaint, tempRect);
-        attributePainter.drawAttribute(1, 4, 100, 200, canvas, 8, 27);
-        attributePainter.drawAttribute(0, 4, 100, 200, canvas, 6, 99);
+        attributePainter.paintAttribute(1, 4, 100, 200, canvas, 8, 27);
+        attributePainter.paintAttribute(0, 4, 100, 200, canvas, 6, 99);
         PowerMock.verifyAll();
     }
 
@@ -116,24 +113,6 @@ public class GraphicsGeneratorTest {
         assertEquals(3, new MapViewBitmapCopier().getBottom());
     }
     
-    @Test
-    public void testCreateIcon() {
-        IconRenderer iconRenderer = PowerMock.createMock(IconRenderer.class);
-        Geocache geocache = PowerMock.createMock(Geocache.class);
-        Drawable drawable = PowerMock.createMock(Drawable.class);
-        BitmapCopier bitmapCopier = PowerMock.createMock(ListViewBitmapCopier.class);
-
-        EasyMock.expect(geocache.getDifficulty()).andReturn(3);
-        EasyMock.expect(geocache.getTerrain()).andReturn(5);
-        EasyMock.expect(iconRenderer.renderIcon(3, 5, R.drawable.cache_earth, bitmapCopier))
-                .andReturn(drawable);
-
-        PowerMock.replayAll();
-        assertEquals(drawable, new IconFactory(iconRenderer).createIcon(geocache, R.drawable.cache_earth,
-                bitmapCopier));
-        PowerMock.verifyAll();
-    }
-
     @Test
     public void testListViewBitmapCopierGetDrawable() throws Exception {
         BitmapDrawable drawable = PowerMock.createMock(BitmapDrawable.class);

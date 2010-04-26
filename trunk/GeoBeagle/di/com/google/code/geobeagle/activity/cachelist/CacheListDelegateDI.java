@@ -19,7 +19,8 @@ import com.google.code.geobeagle.ErrorDisplayer;
 import com.google.code.geobeagle.GeocacheFactory;
 import com.google.code.geobeagle.LocationControlBuffered;
 import com.google.code.geobeagle.GraphicsGenerator.AttributePainter;
-import com.google.code.geobeagle.GraphicsGenerator.IconFactory;
+import com.google.code.geobeagle.GraphicsGenerator.DifficultyAndTerrainPainter;
+import com.google.code.geobeagle.GraphicsGenerator.IconOverlayFactory;
 import com.google.code.geobeagle.GraphicsGenerator.IconRenderer;
 import com.google.code.geobeagle.GraphicsGenerator.ListViewBitmapCopier;
 import com.google.code.geobeagle.LocationControlBuffered.GpsDisabledLocation;
@@ -65,6 +66,8 @@ import com.google.code.geobeagle.activity.main.GeoBeagle;
 import com.google.code.geobeagle.database.DbFrontend;
 import com.google.code.geobeagle.database.FilterNearestCaches;
 import com.google.code.geobeagle.database.LocationSaver;
+import com.google.code.geobeagle.database.TagWriterImpl;
+import com.google.code.geobeagle.database.TagWriterNull;
 import com.google.code.geobeagle.database.WhereFactoryAllCaches;
 import com.google.code.geobeagle.database.WhereFactoryNearestCaches;
 import com.google.code.geobeagle.database.DatabaseDI.SearchFactory;
@@ -131,11 +134,11 @@ public class CacheListDelegateDI {
         final ErrorDisplayer errorDisplayer = new ErrorDisplayer(listActivity, mOnClickListener);
         final LocationManager locationManager = (LocationManager)listActivity
                 .getSystemService(Context.LOCATION_SERVICE);
-        ArrayList<LocationListener> locationListeners = new ArrayList<LocationListener>(3);
+        final ArrayList<LocationListener> locationListeners = new ArrayList<LocationListener>(3);
         final CombinedLocationManager combinedLocationManager = new CombinedLocationManager(
                 locationManager, locationListeners);
         final GeocacheFactory geocacheFactory = new GeocacheFactory();
-        LocationControlBuffered locationControlBuffered = injector.getInstance(LocationControlBuffered.class);
+        final LocationControlBuffered locationControlBuffered = injector.getInstance(LocationControlBuffered.class);
         final GeocacheFromMyLocationFactory geocacheFromMyLocationFactory = new GeocacheFromMyLocationFactory(
                 geocacheFactory, locationControlBuffered);
         final BearingFormatter relativeBearingFormatter = new RelativeBearingFormatter();
@@ -147,10 +150,15 @@ public class CacheListDelegateDI {
         final XmlPullParserWrapper xmlPullParserWrapper = new XmlPullParserWrapper();
 
         final Resources resources = listActivity.getResources();
+        final DbFrontend dbFrontend = new DbFrontend(listActivity);
+        final AttributePainter attributePainter = new AttributePainter(new Paint(), new Rect());
+        final DifficultyAndTerrainPainter difficultyAndTerrainPainter = new DifficultyAndTerrainPainter(
+                attributePainter);
+        final IconRenderer iconRenderer = new IconRenderer(resources, difficultyAndTerrainPainter);
         final GeocacheSummaryRowInflater geocacheSummaryRowInflater = new GeocacheSummaryRowInflater(
                 distanceFormatterManager.getFormatter(), layoutInflater, relativeBearingFormatter,
-                new IconFactory(new IconRenderer(new AttributePainter(new Paint(), new Rect()),
-                        resources)), new ListViewBitmapCopier());
+                iconRenderer, new ListViewBitmapCopier(), injector
+                        .getInstance(IconOverlayFactory.class));
         final UpdateFlag updateFlag = new UpdateFlag();
         final GeocacheListAdapter geocacheListAdapter = new GeocacheListAdapter(geocacheVectors,
                 geocacheSummaryRowInflater);
@@ -206,7 +214,6 @@ public class CacheListDelegateDI {
         final ActionManagerFactory actionManagerFactory = new ActionManagerFactory(
                 actionAndTolerances, sqlCacheLoaderTolerance);
 
-        final DbFrontend dbFrontend = new DbFrontend(listActivity);
         final TitleUpdater titleUpdater = new TitleUpdater(listActivity, filterNearestCaches,
                 listTitleFormatter, timing);
         final SqlCacheLoader sqlCacheLoader = new SqlCacheLoader(dbFrontend, filterNearestCaches,
@@ -234,8 +241,10 @@ public class CacheListDelegateDI {
 
         final Aborter aborter = new Aborter();
         final MessageHandler messageHandler = MessageHandler.create(listActivity);
+        final TagWriterImpl tagWriterImpl = new TagWriterImpl(dbFrontend);
+        final TagWriterNull tagWriterNull = new TagWriterNull();
         final CachePersisterFacadeFactory cachePersisterFacadeFactory = new CachePersisterFacadeFactory(
-                messageHandler, cacheTypeFactory);
+                messageHandler, cacheTypeFactory, tagWriterImpl, tagWriterNull);
 
         final GpxImporterFactory gpxImporterFactory = new GpxImporterFactory(aborter,
                 cachePersisterFacadeFactory, errorDisplayer, geocacheListPresenter, listActivity,

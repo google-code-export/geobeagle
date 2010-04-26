@@ -35,4 +35,8 @@ public interface ISQLiteDatabase {
     void setTransactionSuccessful();
 
     boolean isOpen();
+
+    void insert(String table, String[] columns, Object[] bindArgs);
+    
+    boolean hasValue(String table, String selection);
 }
