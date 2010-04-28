@@ -15,33 +15,35 @@
 package com.google.code.geobeagle.activity.searchonline;
 
 import com.google.code.geobeagle.LocationControlBuffered;
-import com.google.code.geobeagle.LocationControlProvider;
+import com.google.code.geobeagle.LocationControlBuffered.GpsDisabledLocation;
+import com.google.code.geobeagle.LocationControlBuffered.GpsEnabledLocation;
+import com.google.code.geobeagle.LocationControlBuffered.IGpsLocation;
 import com.google.code.geobeagle.activity.ActivityDI;
 import com.google.code.geobeagle.activity.ActivitySaver;
 import com.google.code.geobeagle.activity.cachelist.presenter.DistanceFormatterManager;
 import com.google.code.geobeagle.activity.cachelist.presenter.DistanceFormatterManagerProvider;
+import com.google.code.geobeagle.activity.cachelist.presenter.DistanceSortStrategy;
+import com.google.code.geobeagle.activity.cachelist.presenter.NullSortStrategy;
 import com.google.code.geobeagle.activity.searchonline.SearchOnlineActivityDelegate.SearchOnlineActivityDelegateFactory;
 import com.google.code.geobeagle.formatting.DistanceFormatter;
 import com.google.code.geobeagle.gpsstatuswidget.GpsWidgetAndUpdater;
 import com.google.code.geobeagle.gpsstatuswidget.GpsWidgetAndUpdater.GpsWidgetAndUpdaterFactory;
 import com.google.code.geobeagle.location.CombinedLocationListener;
-import com.google.code.geobeagle.location.CombinedLocationManager;
+import com.google.code.geobeagle.location.LocationControl;
 import com.google.code.geobeagle.location.CombinedLocationListener.CombinedLocationListenerFactory;
 import com.google.inject.Provides;
 import com.google.inject.assistedinject.FactoryProvider;
 
 import roboguice.config.AbstractAndroidModule;
+import roboguice.inject.ContextScoped;
 
-import android.location.LocationListener;
+import android.location.Location;
 import android.location.LocationManager;
-
-import java.util.ArrayList;
 
 public class SearchOnlineModule extends AbstractAndroidModule {
 
     @Override
     protected void configure() {
-        bind(LocationControlBuffered.class).toProvider(LocationControlProvider.class);
         bind(DistanceFormatterManager.class).toProvider(DistanceFormatterManagerProvider.class);
         bind(ActivitySaver.class).toProvider(ActivityDI.class);
 
@@ -57,9 +59,20 @@ public class SearchOnlineModule extends AbstractAndroidModule {
     }
 
     @Provides
-    CombinedLocationManager provideCombinedLocationManager(LocationManager locationManager) {
-        final ArrayList<LocationListener> locationListeners = new ArrayList<LocationListener>(3);
-        return new CombinedLocationManager(locationManager, locationListeners);
+    @ContextScoped
+    LocationControlBuffered providesLocationControlBuffered(LocationManager locationManager,
+            LocationControl locationControl, NullSortStrategy nullSortStrategy,
+            DistanceSortStrategy distanceSortStrategy, GpsDisabledLocation gpsDisabledLocation) {
+
+        IGpsLocation lastGpsLocation;
+        final Location lastKnownLocation = locationManager.getLastKnownLocation("gps");
+        if (lastKnownLocation == null)
+            lastGpsLocation = gpsDisabledLocation;
+        else
+            lastGpsLocation = new GpsEnabledLocation((float)lastKnownLocation.getLatitude(),
+                    (float)lastKnownLocation.getLongitude());
+        return new LocationControlBuffered(locationControl, distanceSortStrategy, nullSortStrategy,
+                gpsDisabledLocation, lastGpsLocation, lastKnownLocation);
     }
 
     @Provides
