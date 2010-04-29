@@ -15,11 +15,13 @@
 package com.google.code.geobeagle.database;
 
 import com.google.code.geobeagle.R;
+import com.google.inject.Inject;
 
 public class FilterNearestCaches {
     private boolean mIsFiltered = true;
     private final WhereFactory mWhereFactories[];
 
+    @Inject
     public FilterNearestCaches(WhereFactoryAllCaches whereFactoryAllCaches,
             WhereFactoryNearestCaches whereFactoryNearestCaches) {
         mWhereFactories = new WhereFactory[] {
