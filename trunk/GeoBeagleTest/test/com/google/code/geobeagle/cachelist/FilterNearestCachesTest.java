@@ -18,8 +18,8 @@ import static org.junit.Assert.assertEquals;
 
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.database.FilterNearestCaches;
-import com.google.code.geobeagle.database.WhereFactory;
 import com.google.code.geobeagle.database.WhereFactoryAllCaches;
+import com.google.code.geobeagle.database.WhereFactoryNearestCaches;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -33,7 +33,8 @@ public class FilterNearestCachesTest {
     public void test() {
         WhereFactoryAllCaches whereFactoryAllCaches = PowerMock
                 .createMock(WhereFactoryAllCaches.class);
-        WhereFactory whereFactoryNearestCaches = PowerMock.createMock(WhereFactory.class);
+        WhereFactoryNearestCaches whereFactoryNearestCaches = PowerMock
+                .createMock(WhereFactoryNearestCaches.class);
 
         PowerMock.replayAll();
         FilterNearestCaches filterNearestCaches = new FilterNearestCaches(whereFactoryAllCaches,
