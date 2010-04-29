@@ -15,10 +15,10 @@
 package com.google.code.geobeagle.activity.map;
 
 import com.google.code.geobeagle.Geocache;
+import com.google.code.geobeagle.GeoBeaglePackageModule.DifficultyAndTerrainPainterAnnotation;
 import com.google.code.geobeagle.GraphicsGenerator.IconOverlayFactory;
 import com.google.code.geobeagle.GraphicsGenerator.IconRenderer;
 import com.google.code.geobeagle.GraphicsGenerator.MapViewBitmapCopier;
-import com.google.code.geobeagle.activity.map.GeoMapActivityModule.DifficultyAndTerrainPainterAnnotation;
 import com.google.inject.Inject;
 
 import android.graphics.drawable.Drawable;
