@@ -16,6 +16,8 @@ package com.google.code.geobeagle.gpsstatuswidget;
 
 import com.google.code.geobeagle.Time;
 import com.google.code.geobeagle.location.CombinedLocationManager;
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
 
 import android.location.Location;
 import android.widget.TextView;
@@ -23,6 +25,10 @@ import android.widget.TextView;
 import java.util.Formatter;
 
 class TextLagUpdater {
+    static interface TextLagUpdaterFactory {
+        TextLagUpdater create(TextView textLag);
+    }
+    
     static interface Lag {
         String getFormatted(long currentTime);
     }
@@ -63,6 +69,7 @@ class TextLagUpdater {
     static class LastKnownLocationUnavailable implements LastLocation {
         private final Lag mLagNull;
 
+        @Inject
         public LastKnownLocationUnavailable(LagNull lagNull) {
             mLagNull = lagNull;
         }
@@ -80,6 +87,7 @@ class TextLagUpdater {
         private final CombinedLocationManager mCombinedLocationManager;
         private final LastKnownLocationUnavailable mLastKnownLocationUnavailable;
 
+        @Inject
         public LastLocationUnknown(CombinedLocationManager combinedLocationManager,
                 LastKnownLocationUnavailable lastKnownLocationUnavailable) {
             mCombinedLocationManager = combinedLocationManager;
@@ -115,7 +123,8 @@ class TextLagUpdater {
     private final TextView mTextLag;
     private final Time mTime;
 
-    TextLagUpdater(LastLocationUnknown lastLocationUnknown, TextView textLag, Time time) {
+    @Inject
+    TextLagUpdater(LastLocationUnknown lastLocationUnknown, @Assisted TextView textLag, Time time) {
         mLastLocation = lastLocationUnknown;
         mTextLag = textLag;
         mTime = time;

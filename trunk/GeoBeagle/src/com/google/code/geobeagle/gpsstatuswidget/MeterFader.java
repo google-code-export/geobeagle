@@ -15,16 +15,23 @@
 package com.google.code.geobeagle.gpsstatuswidget;
 
 import com.google.code.geobeagle.Time;
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
 
 import android.view.View;
 
 class MeterFader {
+    static interface MeterFaderFactory {
+        MeterFader create(View parent, MeterBars meterBars);
+    }
+
     private long mLastUpdateTime;
     private final MeterBars mMeterView;
     private final View mParent;
     private final Time mTime;
 
-    MeterFader(View parent, MeterBars meterBars, Time time) {
+    @Inject
+    MeterFader(@Assisted View parent, @Assisted MeterBars meterBars, Time time) {
         mLastUpdateTime = -1;
         mMeterView = meterBars;
         mParent = parent;
