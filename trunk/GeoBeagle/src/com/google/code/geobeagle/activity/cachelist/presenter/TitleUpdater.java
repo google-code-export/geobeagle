@@ -27,6 +27,7 @@ public class TitleUpdater {
     private final ListTitleFormatter mListTitleFormatter;
     private final CacheListDelegateDI.Timing mTiming;
 
+    @Inject
     public TitleUpdater(Activity activity, FilterNearestCaches filterNearestCaches,
             ListTitleFormatter listTitleFormatter, CacheListDelegateDI.Timing timing) {
         mActivity = activity;

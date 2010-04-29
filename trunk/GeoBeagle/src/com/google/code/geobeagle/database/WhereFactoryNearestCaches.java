@@ -15,6 +15,7 @@
 package com.google.code.geobeagle.database;
 
 import com.google.code.geobeagle.database.DatabaseDI.SearchFactory;
+import com.google.inject.Inject;
 
 import android.database.Cursor;
 import android.util.Log;
@@ -132,6 +133,7 @@ public class WhereFactoryNearestCaches implements WhereFactory {
     private final SearchFactory mSearchFactory;
     private final WhereStringFactory mWhereStringFactory;
 
+    @Inject
     public WhereFactoryNearestCaches(SearchFactory searchFactory,
             WhereStringFactory whereStringFactory) {
         mSearchFactory = searchFactory;

@@ -16,6 +16,7 @@ package com.google.code.geobeagle.activity.cachelist.presenter;
 
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVectors;
 import com.google.code.geobeagle.activity.cachelist.view.GeocacheSummaryRowInflater;
+import com.google.inject.Inject;
 
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +26,7 @@ public class GeocacheListAdapter extends BaseAdapter {
     private final GeocacheSummaryRowInflater mGeocacheSummaryRowInflater;
     private final GeocacheVectors mGeocacheVectors;
 
+    @Inject
     public GeocacheListAdapter(GeocacheVectors geocacheVectors,
             GeocacheSummaryRowInflater geocacheSummaryRowInflater) {
         mGeocacheVectors = geocacheVectors;

@@ -14,9 +14,12 @@
 
 package com.google.code.geobeagle.activity.cachelist.presenter;
 
+import com.google.inject.Inject;
+
 public class DistanceUpdater implements RefreshAction {
     private final GeocacheListAdapter mGeocacheListAdapter;
 
+    @Inject
     public DistanceUpdater(GeocacheListAdapter geocacheListAdapter) {
         mGeocacheListAdapter = geocacheListAdapter;
     }

@@ -15,6 +15,7 @@
 package com.google.code.geobeagle.gpsstatuswidget;
 
 import com.google.code.geobeagle.R;
+import com.google.inject.Inject;
 
 import android.content.Context;
 
@@ -24,6 +25,7 @@ class MeterFormatter {
     private static String mDegreesSymbol;
     private static StringBuilder mStringBuilder;
 
+    @Inject
     MeterFormatter(Context context) {
         mMeterLeft = context.getString(R.string.meter_left);
         mMeterRight = context.getString(R.string.meter_right);

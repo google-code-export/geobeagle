@@ -16,12 +16,14 @@ package com.google.code.geobeagle.activity.cachelist.model;
 
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.LocationControlBuffered;
+import com.google.inject.Inject;
 
 import java.util.ArrayList;
 
 public class CacheListData {
     private final GeocacheVectors mGeocacheVectors;
 
+    @Inject
     public CacheListData(GeocacheVectors geocacheVectors) {
         mGeocacheVectors = geocacheVectors;
     }

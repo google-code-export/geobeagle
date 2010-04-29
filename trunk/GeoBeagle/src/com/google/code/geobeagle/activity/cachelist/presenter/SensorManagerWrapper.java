@@ -15,6 +15,7 @@
 package com.google.code.geobeagle.activity.cachelist.presenter;
 
 import com.google.code.geobeagle.CompassListener;
+import com.google.inject.Inject;
 
 import android.hardware.SensorManager;
 
@@ -23,6 +24,7 @@ public class SensorManagerWrapper {
     private CompassListener mCompassListener;
     private final SensorManager mSensorManager;
 
+    @Inject
     public SensorManagerWrapper(SensorManager sensorManager) {
         mSensorManager = sensorManager;
     }

@@ -18,6 +18,7 @@ import com.google.code.geobeagle.LocationControlBuffered;
 import com.google.code.geobeagle.Refresher;
 import com.google.code.geobeagle.LocationControlBuffered.IGpsLocation;
 import com.google.code.geobeagle.activity.cachelist.CacheListDelegateDI;
+import com.google.inject.Inject;
 
 import android.util.Log;
 
@@ -64,6 +65,7 @@ public class CacheListRefresh implements Refresher {
     private final CacheListDelegateDI.Timing mTiming;
     private final UpdateFlag mUpdateFlag;
 
+    @Inject
     public CacheListRefresh(ActionManager actionManager, CacheListDelegateDI.Timing timing,
             LocationControlBuffered locationControlBuffered, UpdateFlag updateFlag) {
         mLocationControlBuffered = locationControlBuffered;

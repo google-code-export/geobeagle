@@ -17,10 +17,12 @@ package com.google.code.geobeagle.activity.cachelist;
 import com.google.code.geobeagle.CompassListener;
 import com.google.code.geobeagle.LocationControlBuffered;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
+import com.google.inject.Inject;
 
 public class CompassListenerFactory {
     private final LocationControlBuffered mLocationControlBuffered;
 
+    @Inject
     public CompassListenerFactory(LocationControlBuffered locationControlBuffered) {
         mLocationControlBuffered = locationControlBuffered;
     }

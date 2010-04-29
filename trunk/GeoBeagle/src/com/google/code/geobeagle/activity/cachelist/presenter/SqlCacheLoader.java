@@ -20,6 +20,7 @@ import com.google.code.geobeagle.activity.cachelist.CacheListDelegateDI.Timing;
 import com.google.code.geobeagle.activity.cachelist.model.CacheListData;
 import com.google.code.geobeagle.database.DbFrontend;
 import com.google.code.geobeagle.database.FilterNearestCaches;
+import com.google.inject.Inject;
 
 import android.location.Location;
 
@@ -33,6 +34,7 @@ public class SqlCacheLoader implements RefreshAction {
     private final Timing mTiming;
     private final TitleUpdater mTitleUpdater;
 
+    @Inject
     public SqlCacheLoader(DbFrontend dbFrontend, FilterNearestCaches filterNearestCaches,
             CacheListData cacheListData, LocationControlBuffered locationControlBuffered,
             TitleUpdater titleUpdater, Timing timing) {

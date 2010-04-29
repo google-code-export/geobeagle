@@ -28,6 +28,7 @@ import com.google.code.geobeagle.xmlimport.gpx.GpxFileIterAndZipFileIterFactory;
 import com.google.code.geobeagle.xmlimport.gpx.GpxAndZipFiles.GpxAndZipFilenameFilter;
 import com.google.code.geobeagle.xmlimport.gpx.GpxAndZipFiles.GpxFilenameFilter;
 import com.google.code.geobeagle.xmlimport.gpx.zip.ZipFileOpener.ZipInputFileTester;
+import com.google.inject.Inject;
 
 import android.app.ListActivity;
 import android.app.ProgressDialog;
@@ -136,6 +137,7 @@ public class GpxImporterDI {
         private String mStatus;
         private String mWaypointId;
 
+        @Inject
         public MessageHandler(ProgressDialogWrapper progressDialogWrapper) {
             mProgressDialogWrapper = progressDialogWrapper;
         }
@@ -196,6 +198,7 @@ public class GpxImporterDI {
         private final Context mContext;
         private ProgressDialog mProgressDialog;
 
+        @Inject
         public ProgressDialogWrapper(Context context) {
             mContext = context;
         }

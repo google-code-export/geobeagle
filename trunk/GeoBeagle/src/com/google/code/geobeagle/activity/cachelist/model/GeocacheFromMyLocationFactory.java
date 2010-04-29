@@ -19,6 +19,7 @@ import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.GeocacheFactory;
 import com.google.code.geobeagle.LocationControlBuffered;
 import com.google.code.geobeagle.GeocacheFactory.Source;
+import com.google.inject.Inject;
 
 import android.location.Location;
 
@@ -26,6 +27,7 @@ public class GeocacheFromMyLocationFactory {
     private final GeocacheFactory mGeocacheFactory;
     private final LocationControlBuffered mLocationControl;
 
+    @Inject
     public GeocacheFromMyLocationFactory(GeocacheFactory geocacheFactory,
             LocationControlBuffered locationControl) {
         mGeocacheFactory = geocacheFactory;
