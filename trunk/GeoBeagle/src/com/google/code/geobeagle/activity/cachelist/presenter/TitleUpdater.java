@@ -16,29 +16,30 @@ package com.google.code.geobeagle.activity.cachelist.presenter;
 
 import com.google.code.geobeagle.activity.cachelist.CacheListDelegateDI;
 import com.google.code.geobeagle.database.FilterNearestCaches;
+import com.google.inject.Inject;
 
-import android.app.ListActivity;
+import android.app.Activity;
 import android.widget.TextView;
 
 public class TitleUpdater {
     private final FilterNearestCaches mFilterNearestCaches;
-    private final ListActivity mListActivity;
+    private final Activity mActivity;
     private final ListTitleFormatter mListTitleFormatter;
     private final CacheListDelegateDI.Timing mTiming;
 
-    public TitleUpdater(ListActivity listActivity, FilterNearestCaches filterNearestCaches, 
+    public TitleUpdater(Activity activity, FilterNearestCaches filterNearestCaches,
             ListTitleFormatter listTitleFormatter, CacheListDelegateDI.Timing timing) {
-        mListActivity = listActivity;
+        mActivity = activity;
         mFilterNearestCaches = filterNearestCaches;
         mListTitleFormatter = listTitleFormatter;
         mTiming = timing;
     }
 
     public void update(int sqlCount, int nearestCachesCount) {
-        mListActivity.setTitle(mListActivity.getString(mFilterNearestCaches.getTitleText(),
+        mActivity.setTitle(mActivity.getString(mFilterNearestCaches.getTitleText(),
                 nearestCachesCount, sqlCount));
         if (0 == nearestCachesCount) {
-            TextView textView = (TextView)mListActivity.findViewById(android.R.id.empty);
+            TextView textView = (TextView)mActivity.findViewById(android.R.id.empty);
             textView.setText(mListTitleFormatter.getBodyText(sqlCount));
         }
         mTiming.lap("update title time");
