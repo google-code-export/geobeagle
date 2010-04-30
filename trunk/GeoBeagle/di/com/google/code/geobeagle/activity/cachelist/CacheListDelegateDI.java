@@ -141,7 +141,7 @@ public class CacheListDelegateDI {
         final LocationControlBuffered locationControlBuffered = injector.getInstance(LocationControlBuffered.class);
         final GeocacheFromMyLocationFactory geocacheFromMyLocationFactory = new GeocacheFromMyLocationFactory(
                 geocacheFactory, locationControlBuffered);
-        final BearingFormatter relativeBearingFormatter = new RelativeBearingFormatter();
+        final BearingFormatter relativeBearingFormatter = injector.getInstance(BearingFormatter.class);
         final DistanceFormatterManager distanceFormatterManager = injector
                 .getInstance(DistanceFormatterManager.class);
         final ArrayList<GeocacheVector> geocacheVectorsList = new ArrayList<GeocacheVector>(10);
