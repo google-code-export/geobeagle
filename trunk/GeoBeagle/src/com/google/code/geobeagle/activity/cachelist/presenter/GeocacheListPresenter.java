@@ -22,20 +22,29 @@ import com.google.code.geobeagle.activity.cachelist.CompassListenerFactory;
 import com.google.code.geobeagle.activity.cachelist.CacheListView.ScrollListener;
 import com.google.code.geobeagle.activity.cachelist.GeocacheListController.CacheListOnCreateContextMenuListener;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVectors;
-import com.google.code.geobeagle.activity.cachelist.view.GeocacheSummaryRowInflater;
+import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidget;
 import com.google.code.geobeagle.gpsstatuswidget.UpdateGpsWidgetRunnable;
+import com.google.code.geobeagle.location.CombinedLocationListener;
 import com.google.code.geobeagle.location.CombinedLocationManager;
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
 
 import android.app.ListActivity;
 import android.hardware.SensorManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.view.View;
 import android.widget.ListView;
 
 public class GeocacheListPresenter {
+    
+    public interface GeocacheListPresenterFactory {
+        GeocacheListPresenter create(CombinedLocationListener combinedLocationListener,
+                DistanceFormatterManager distanceFormatterManager, GpsStatusWidget gpsStatusWidget,
+                UpdateGpsWidgetRunnable updateGpsWidgetRunnable);
+    }
+    
     public static class CacheListRefreshLocationListener implements LocationListener {
         private final CacheListRefresh mCacheListRefresh;
 
@@ -62,12 +71,9 @@ public class GeocacheListPresenter {
 
     private final LocationListener mCombinedLocationListener;
     private final CombinedLocationManager mCombinedLocationManager;
-    // private final SensorEventListener mCompassListener;
-    // private final SensorListener mCompassListener;
     private final CompassListenerFactory mCompassListenerFactory;
     private final DistanceFormatterManager mDistanceFormatterManager;
     private final GeocacheListAdapter mGeocacheListAdapter;
-    private final GeocacheSummaryRowInflater mGeocacheSummaryRowInflater;
     private final GeocacheVectors mGeocacheVectors;
     private final View mGpsStatusWidget;
     private final ListActivity mListActivity;
@@ -76,22 +82,21 @@ public class GeocacheListPresenter {
     private final UpdateGpsWidgetRunnable mUpdateGpsWidgetRunnable;
     private final CacheListView.ScrollListener mScrollListener;
 
-    public GeocacheListPresenter(LocationListener combinedLocationListener,
+    @Inject
+    public GeocacheListPresenter(@Assisted CombinedLocationListener combinedLocationListener,
             CombinedLocationManager combinedLocationManager,
             CompassListenerFactory compassListenerFactory,
-            DistanceFormatterManager distanceFormatterManager,
-            GeocacheListAdapter geocacheListAdapter,
-            GeocacheSummaryRowInflater geocacheSummaryRowInflater, GeocacheVectors geocacheVectors,
-            View gpsStatusWidget, ListActivity listActivity,
+            @Assisted DistanceFormatterManager distanceFormatterManager,
+            GeocacheListAdapter geocacheListAdapter, GeocacheVectors geocacheVectors,
+            @Assisted GpsStatusWidget gpsStatusWidget, ListActivity listActivity,
             LocationControlBuffered locationControlBuffered,
             SensorManagerWrapper sensorManagerWrapper,
-            UpdateGpsWidgetRunnable updateGpsWidgetRunnable, ScrollListener scrollListener) {
+            @Assisted UpdateGpsWidgetRunnable updateGpsWidgetRunnable, ScrollListener scrollListener) {
         mCombinedLocationListener = combinedLocationListener;
         mCombinedLocationManager = combinedLocationManager;
         mCompassListenerFactory = compassListenerFactory;
         mDistanceFormatterManager = distanceFormatterManager;
         mGeocacheListAdapter = geocacheListAdapter;
-        mGeocacheSummaryRowInflater = geocacheSummaryRowInflater;
         mGeocacheVectors = geocacheVectors;
         mGpsStatusWidget = gpsStatusWidget;
         mListActivity = listActivity;
@@ -135,8 +140,5 @@ public class GeocacheListPresenter {
 
         mSensorManagerWrapper.registerListener(mCompassListener, SensorManager.SENSOR_ORIENTATION,
                 SensorManager.SENSOR_DELAY_UI);
-        final boolean absoluteBearing = PreferenceManager
-                .getDefaultSharedPreferences(mListActivity).getBoolean("absolute-bearing", false);
-        mGeocacheSummaryRowInflater.setBearingFormatter(absoluteBearing);
     }
 }

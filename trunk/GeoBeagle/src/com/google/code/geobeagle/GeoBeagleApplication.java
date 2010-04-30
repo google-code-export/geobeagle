@@ -14,12 +14,17 @@
 
 package com.google.code.geobeagle;
 
+import com.google.code.geobeagle.activity.cachelist.CacheListModule;
+import com.google.code.geobeagle.activity.cachelist.model.ModelModule;
 import com.google.code.geobeagle.activity.main.GeoBeagleModule;
 import com.google.code.geobeagle.activity.main.fieldnotes.FieldnotesModule;
 import com.google.code.geobeagle.activity.main.view.ViewModule;
 import com.google.code.geobeagle.activity.map.GeoMapActivityModule;
 import com.google.code.geobeagle.activity.searchonline.SearchOnlineModule;
 import com.google.code.geobeagle.database.DatabaseModule;
+import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidgetModule;
+import com.google.code.geobeagle.location.LocationModule;
+import com.google.code.geobeagle.xmlimport.XmlimportModule;
 import com.google.inject.Module;
 
 import roboguice.application.GuiceApplication;
@@ -29,11 +34,17 @@ import java.util.List;
 public class GeoBeagleApplication extends GuiceApplication {
     @Override
     protected void addApplicationModules(List<Module> modules) {
-        modules.add(new GeoBeagleModule());
         modules.add(new SearchOnlineModule());
         modules.add(new FieldnotesModule());
         modules.add(new GeoMapActivityModule());
+        modules.add(new GeoBeagleModule());
+        modules.add(new GeoBeaglePackageModule());
         modules.add(new ViewModule());
         modules.add(new DatabaseModule());
+        modules.add(new CacheListModule());
+        modules.add(new LocationModule());
+        modules.add(new ModelModule());
+        modules.add(new GpsStatusWidgetModule());
+        modules.add(new XmlimportModule());
     }
 }

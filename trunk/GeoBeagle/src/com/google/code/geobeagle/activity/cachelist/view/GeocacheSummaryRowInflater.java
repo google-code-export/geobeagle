@@ -17,16 +17,16 @@ package com.google.code.geobeagle.activity.cachelist.view;
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.GraphicsGenerator;
 import com.google.code.geobeagle.R;
+import com.google.code.geobeagle.GeoBeaglePackageModule.DifficultyAndTerrainPainterAnnotation;
 import com.google.code.geobeagle.GraphicsGenerator.IconOverlay;
 import com.google.code.geobeagle.GraphicsGenerator.IconOverlayFactory;
 import com.google.code.geobeagle.GraphicsGenerator.IconRenderer;
 import com.google.code.geobeagle.GraphicsGenerator.ListViewBitmapCopier;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVector;
-import com.google.code.geobeagle.activity.cachelist.presenter.AbsoluteBearingFormatter;
 import com.google.code.geobeagle.activity.cachelist.presenter.BearingFormatter;
 import com.google.code.geobeagle.activity.cachelist.presenter.HasDistanceFormatter;
-import com.google.code.geobeagle.activity.cachelist.presenter.RelativeBearingFormatter;
 import com.google.code.geobeagle.formatting.DistanceFormatter;
+import com.google.inject.Inject;
 
 import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
@@ -77,20 +77,17 @@ public class GeocacheSummaryRowInflater implements HasDistanceFormatter {
     private final ListViewBitmapCopier mListViewBitmapCopier;
     private final IconOverlayFactory mIconOverlayFactory;
 
+    @Inject
     public GeocacheSummaryRowInflater(DistanceFormatter distanceFormatter,
             LayoutInflater layoutInflater, BearingFormatter relativeBearingFormatter,
-            IconRenderer iconRenderer, ListViewBitmapCopier listViewBitmapCopier,
-            IconOverlayFactory iconOverlayFactory) {
+            @DifficultyAndTerrainPainterAnnotation IconRenderer iconRenderer,
+            ListViewBitmapCopier listViewBitmapCopier, IconOverlayFactory iconOverlayFactory) {
         mLayoutInflater = layoutInflater;
         mDistanceFormatter = distanceFormatter;
         mBearingFormatter = relativeBearingFormatter;
         mIconRenderer = iconRenderer;
         mListViewBitmapCopier = listViewBitmapCopier;
         mIconOverlayFactory = iconOverlayFactory;
-    }
-
-    BearingFormatter getBearingFormatter() {
-        return mBearingFormatter;
     }
 
     public View inflate(View convertView) {
@@ -106,11 +103,6 @@ public class GeocacheSummaryRowInflater implements HasDistanceFormatter {
                         .findViewById(R.id.txt_gcid)), mIconOverlayFactory);
         view.setTag(rowViews);
         return view;
-    }
-
-    public void setBearingFormatter(boolean absoluteBearing) {
-        mBearingFormatter = absoluteBearing ? new AbsoluteBearingFormatter()
-                : new RelativeBearingFormatter();
     }
 
     public void setData(View view, GeocacheVector geocacheVector) {

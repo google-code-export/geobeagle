@@ -11,31 +11,25 @@
  ** See the License for the specific language governing permissions and
  ** limitations under the License.
  */
-package com.google.code.geobeagle.database;
+package com.google.code.geobeagle.activity.cachelist.model;
 
-import com.google.code.geobeagle.database.DatabaseDI.GeoBeagleSqliteOpenHelper;
 import com.google.inject.Provides;
+
+import java.util.ArrayList;
 
 import roboguice.config.AbstractAndroidModule;
 import roboguice.inject.ContextScoped;
 
-import android.content.Context;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
-
-public class DatabaseModule extends AbstractAndroidModule {
+public class ModelModule extends AbstractAndroidModule {
 
     @Override
     protected void configure() {
-        bind(FilterNearestCaches.class).in(ContextScoped.class);
-        bind(DbFrontend.class).in(ContextScoped.class);
     }
 
     @Provides
     @ContextScoped
-    ISQLiteDatabase sqliteDatabaseProvider(Context context) {
-        final SQLiteOpenHelper mSqliteOpenHelper = new GeoBeagleSqliteOpenHelper(context);
-        final SQLiteDatabase sqDb = mSqliteOpenHelper.getWritableDatabase();
-        return new DatabaseDI.SQLiteWrapper(sqDb);
+    GeocacheVectors providesGeocacheVectors() {
+        final ArrayList<GeocacheVector> geocacheVectorsList = new ArrayList<GeocacheVector>(10);
+        return new GeocacheVectors(geocacheVectorsList);
     }
 }

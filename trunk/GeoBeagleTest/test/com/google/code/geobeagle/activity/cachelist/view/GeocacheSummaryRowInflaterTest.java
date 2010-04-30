@@ -24,7 +24,6 @@ import com.google.code.geobeagle.GraphicsGenerator.IconOverlayFactory;
 import com.google.code.geobeagle.GraphicsGenerator.IconRenderer;
 import com.google.code.geobeagle.GraphicsGenerator.ListViewBitmapCopier;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVector;
-import com.google.code.geobeagle.activity.cachelist.presenter.AbsoluteBearingFormatter;
 import com.google.code.geobeagle.activity.cachelist.presenter.BearingFormatter;
 import com.google.code.geobeagle.activity.cachelist.presenter.RelativeBearingFormatter;
 import com.google.code.geobeagle.activity.cachelist.view.GeocacheSummaryRowInflater.RowViews;
@@ -152,33 +151,6 @@ public class GeocacheSummaryRowInflaterTest {
         assertEquals(view, new GeocacheSummaryRowInflater(distanceFormatter, layoutInflater,
                 relativeBearingFormatter, iconRenderer, listViewBitmapCopier, iconOverlayFactory)
                 .inflate(null));
-        PowerMock.verifyAll();
-    }
-
-    @Test
-    public void testSetBearingFormatterAbsolute() throws Exception {
-        AbsoluteBearingFormatter absoluteBearingFormatter = PowerMock
-                .createMock(AbsoluteBearingFormatter.class);
-        PowerMock.expectNew(AbsoluteBearingFormatter.class).andReturn(absoluteBearingFormatter);
-
-        PowerMock.replayAll();
-        final GeocacheSummaryRowInflater geocacheSummaryRowInflater = new GeocacheSummaryRowInflater(
-                null, null, null, null, null, null);
-        geocacheSummaryRowInflater.setBearingFormatter(true);
-        PowerMock.verifyAll();
-    }
-
-    @Test
-    public void testSetBearingFormatterRelative() throws Exception {
-        RelativeBearingFormatter relativeBearingFormatter = PowerMock
-                .createMock(RelativeBearingFormatter.class);
-        PowerMock.expectNew(RelativeBearingFormatter.class).andReturn(relativeBearingFormatter);
-
-        PowerMock.replayAll();
-        final GeocacheSummaryRowInflater geocacheSummaryRowInflater = new GeocacheSummaryRowInflater(
-                null, null, null, null, null, null);
-        geocacheSummaryRowInflater.setBearingFormatter(false);
-        assertEquals(relativeBearingFormatter, geocacheSummaryRowInflater.getBearingFormatter());
         PowerMock.verifyAll();
     }
 

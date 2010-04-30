@@ -234,8 +234,7 @@ public class CacheListDelegateDI {
         final SensorManagerWrapper sensorManagerWrapper = new SensorManagerWrapper(sensorManager);
         final GeocacheListPresenter geocacheListPresenter = new GeocacheListPresenter(
                 combinedLocationListener, combinedLocationManager, compassListenerFactory,
-                distanceFormatterManager, geocacheListAdapter, geocacheSummaryRowInflater,
-                geocacheVectors, gpsStatusWidget, listActivity, locationControlBuffered,
+                distanceFormatterManager, geocacheListAdapter, geocacheVectors, gpsStatusWidget, listActivity, locationControlBuffered,
                 sensorManagerWrapper, updateGpsWidgetRunnable, scrollListener);
         final CacheTypeFactory cacheTypeFactory = new CacheTypeFactory();
 

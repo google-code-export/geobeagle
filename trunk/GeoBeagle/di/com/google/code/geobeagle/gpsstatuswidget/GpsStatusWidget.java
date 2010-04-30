@@ -21,6 +21,7 @@ import com.google.code.geobeagle.gpsstatuswidget.TextLagUpdater.LagNull;
 import com.google.code.geobeagle.gpsstatuswidget.TextLagUpdater.LastKnownLocationUnavailable;
 import com.google.code.geobeagle.gpsstatuswidget.TextLagUpdater.LastLocationUnknown;
 import com.google.code.geobeagle.location.CombinedLocationManager;
+import com.google.inject.Inject;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -50,6 +51,7 @@ public class GpsStatusWidget extends LinearLayout {
     public static class InflatedGpsStatusWidget extends LinearLayout {
         private GpsStatusWidgetDelegate mGpsStatusWidgetDelegate;
 
+        @Inject
         public InflatedGpsStatusWidget(Context context) {
             super(context);
             LayoutInflater.from(context).inflate(R.layout.gps_widget, this, true);
