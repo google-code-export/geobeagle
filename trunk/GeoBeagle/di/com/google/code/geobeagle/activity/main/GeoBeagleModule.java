@@ -101,28 +101,10 @@ public class GeoBeagleModule extends AbstractAndroidModule {
     @BindingAnnotation @Target( { FIELD, PARAMETER, METHOD }) @Retention(RUNTIME)
     public static @interface IntentStarterViewGoogleMap { }
 
-    @BindingAnnotation @Target({ FIELD, PARAMETER, METHOD }) @Retention(RUNTIME)
-    public static @interface ShowMapIntent {}
-
-    @BindingAnnotation @Target({ FIELD, PARAMETER, METHOD }) @Retention(RUNTIME)
-    public static @interface ShowRadarIntent {}
-
     @Provides
     @DefaultSharedPreferences
     public SharedPreferences providesDefaultSharedPreferences(Context context) {
         return PreferenceManager.getDefaultSharedPreferences(context);
-    }
-
-    @Provides
-    @ShowMapIntent
-    public Intent providesIntentGeoMap(Activity activity) {
-        return new Intent(activity, GeoMapActivity.class);
-    }
-    
-    @Provides
-    @ShowRadarIntent
-    public Intent providesRadarIntent() {
-        return new Intent("com.google.android.radar.SHOW_RADAR");
     }
     
     @Override
@@ -219,8 +201,8 @@ public class GeoBeagleModule extends AbstractAndroidModule {
 
     @Provides
     @IntentStarterRadar
-    IntentStarterGeo providesIntentStarterRadar(GeoBeagle geoBeagle, Intent intent) {
-        return new IntentStarterGeo(geoBeagle, intent);
+    IntentStarterGeo providesIntentStarterRadar(GeoBeagle geoBeagle) {
+        return new IntentStarterGeo(geoBeagle, new Intent("com.google.android.radar.SHOW_RADAR"));
     }
 
     @Provides
@@ -257,7 +239,8 @@ public class GeoBeagleModule extends AbstractAndroidModule {
     @Provides
     @ButtonListenerMapPage
     OnClickListenerIntentStarter providesOnClickListenerIntentStarterMapPage(GeoBeagle geoBeagle,
-            @ShowMapIntent Intent intent, ErrorDisplayer errorDisplayer) {
+            ErrorDisplayer errorDisplayer, Context context) {
+        Intent intent = new Intent(context, GeoMapActivity.class);
         return new OnClickListenerIntentStarter(new IntentStarterGeo(geoBeagle, intent),
                 errorDisplayer);
     }
