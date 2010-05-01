@@ -105,13 +105,13 @@ public class DbFrontend {
         if (mIsDatabaseOpen)
             return;
         Log.d("GeoBeagle", "DbFrontend.openDatabase()");
-        mIsDatabaseOpen = true;
 
         mSqliteOpenHelper = new GeoBeagleSqliteOpenHelper(mContext);
         final SQLiteDatabase sqDb = mSqliteOpenHelper.getReadableDatabase();
         mDatabase = new DatabaseDI.SQLiteWrapper(sqDb);
 
         mCacheReader = DatabaseDI.createCacheReader(mDatabase);
+        mIsDatabaseOpen = true;
     }
     
     public Geocache getCache(CharSequence cacheId) {
