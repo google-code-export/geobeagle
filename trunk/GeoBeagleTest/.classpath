@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="test"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/trunk GeoBeagle"/>
+	<classpathentry kind="lib" path="/Users/sng/Library/powermock-1.2.5/powermock-module-junit4-legacy-1.2.5.jar"/>
+	<classpathentry kind="lib" path="/Users/sng/Library/powermock-1.2.5/powermock-module-junit3-1.2.5.jar"/>
+	<classpathentry kind="lib" path="/Users/sng/Library/powermock-1.2.5/powermock-module-junit4-1.2.5.jar"/>
+	<classpathentry kind="lib" path="/Users/sng/Library/powermock-1.2.5/powermock-module-junit4-common-1.2.5.jar"/>
+	<classpathentry kind="lib" path="/Users/sng/Library/powermock-1.2.5/powermock-api-mockito-1.2.5.jar"/>
+	<classpathentry kind="lib" path="/Users/sng/Library/powermock-1.2.5/powermock-api-easymock-1.2.5.jar"/>
+	<classpathentry kind="lib" path="/Users/sng/Library/powermock-1.2.5/powermock-core-1.2.5.jar"/>
+	<classpathentry kind="lib" path="/Users/sng/Library/powermock-1.2.5/powermock-reflect-1.2.5.jar"/>
+	<classpathentry kind="lib" path="/Users/sng/Library/powermock-1.2.5/mockito-all-1.7.jar"/>
+	<classpathentry kind="lib" path="/Users/sng/Library/powermock-1.2.5/javassist-3.9.0.GA.jar"/>
+	<classpathentry kind="lib" path="/Users/sng/Library/powermock-1.2.5/objenesis-1.1.jar"/>
+	<classpathentry kind="lib" path="/Users/sng/Library/powermock-1.2.5/easymock-2.4.jar"/>
+	<classpathentry kind="lib" path="/Users/sng/Library/powermock-1.2.5/easymockclassextension-2.4.jar"/>
+	<classpathentry kind="lib" path="/Users/sng/Library/powermock-1.2.5/junit-4.4.jar"/>
+	<classpathentry kind="lib" path="/Users/sng/Library/powermock-1.2.5/cglib-nodep-2.1_3.jar"/>
+	<classpathentry kind="lib" path="/Users/sng/Library/android-sdk-mac_x86-1.5_r3/platforms/android-1.5/android.jar"/>
+	<classpathentry kind="lib" path="/Users/sng/Library/android-sdk-mac_x86-1.5_r3/add-ons/google_apis-3/libs/maps.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
