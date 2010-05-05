@@ -191,6 +191,17 @@ public class GpxImporterDI {
         public void updateWaypointId(String wpt) {
             mWaypointId = wpt;
         }
+
+        public void updateStatus(String status) {
+            mStatus = status;
+            sendEmptyMessage(MessageHandler.MSG_PROGRESS);
+        }
+
+        public void deletingCacheFiles() {
+            mStatus = "Deleting old cache files....";
+            sendEmptyMessage(MessageHandler.MSG_PROGRESS);
+        }
+
     }
 
     // Wrapper so that containers can follow the "constructors do no work" rule.
@@ -253,7 +264,7 @@ public class GpxImporterDI {
                 cacheWriter, wakeLock);
 
         final GpxLoader gpxLoader = GpxLoaderDI.create(cachePersisterFacade, xmlPullParserWrapper,
-                aborter, errorDisplayer, wakeLock);
+                aborter, errorDisplayer, wakeLock, cacheWriter);
         final ToastFactory toastFactory = new ToastFactory();
         final ImportThreadWrapper importThreadWrapper = new ImportThreadWrapper(messageHandler,
                 xmlPullParserWrapper, aborter);
