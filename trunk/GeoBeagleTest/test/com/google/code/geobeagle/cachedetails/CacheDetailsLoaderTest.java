@@ -163,14 +163,15 @@ public class CacheDetailsLoaderTest {
         DetailsReader detailsReader = PowerMock.createMock(DetailsReader.class);
         Details details = PowerMock.createMock(Details.class);
 
-        PowerMock.expectNew(File.class, CacheDetailsLoader.DETAILS_DIR + "GC123.html").andReturn(
-                file);
+        PowerMock.expectNew(File.class, CacheDetailsLoader.DETAILS_DIR + "foo.gpx/GC123.html")
+                .andReturn(file);
         EasyMock.expect(detailsOpener.open(file)).andReturn(detailsReader);
         EasyMock.expect(detailsReader.read()).andReturn(details);
         EasyMock.expect(details.getString()).andReturn("cache details");
 
         PowerMock.replayAll();
-        assertEquals("cache details", new CacheDetailsLoader(detailsOpener).load("GC123"));
+        assertEquals("cache details", new CacheDetailsLoader(detailsOpener)
+                .load("foo.gpx", "GC123"));
         PowerMock.verifyAll();
     }
 }
