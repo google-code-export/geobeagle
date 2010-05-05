@@ -18,6 +18,7 @@ import static org.easymock.classextension.EasyMock.createMock;
 import static org.easymock.classextension.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.verify;
 
+import com.google.code.geobeagle.cachedetails.CacheDetailsLoader;
 import com.google.code.geobeagle.cachedetails.CacheDetailsWriter;
 import com.google.code.geobeagle.cachedetails.HtmlWriter;
 
@@ -30,7 +31,7 @@ public class CacheDetailsWriterTest {
     public void testOpen() throws IOException {
         HtmlWriter htmlWriter = createMock(HtmlWriter.class);
 
-        htmlWriter.open(CacheDetailsWriter.GEOBEAGLE_DIR + "/GC123.html");
+        htmlWriter.open(CacheDetailsLoader.DETAILS_DIR + "GC123.html");
 
         replay(htmlWriter);
         new CacheDetailsWriter(htmlWriter).open("GC123");

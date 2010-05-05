@@ -22,17 +22,17 @@ import java.io.FileReader;
 import java.io.Reader;
 
 class GpxReader implements IGpxReader {
-    private final String mFilename;
+    private final String mPath;
 
-    public GpxReader(String filename) {
-        mFilename = filename;
+    public GpxReader(String path) {
+        mPath = path;
     }
 
     public String getFilename() {
-        return mFilename;
+        return mPath;
     }
 
     public Reader open() throws FileNotFoundException {
-        return new BufferedReader(new FileReader(mFilename));
+        return new BufferedReader(new FileReader(mPath));
     }
 }
