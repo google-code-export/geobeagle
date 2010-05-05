@@ -27,8 +27,8 @@ import android.os.PowerManager.WakeLock;
 public class GpxLoaderDI {
     public static GpxLoader create(CachePersisterFacade cachePersisterFacade,
             XmlPullParserWrapper xmlPullParserFactory, Aborter aborter,
-            ErrorDisplayer errorDisplayer, WakeLock wakeLock, CacheWriter cacheWriter) {
-        final GpxToCache gpxToCache = new GpxToCache(xmlPullParserFactory, aborter, cacheWriter);
+            ErrorDisplayer errorDisplayer, WakeLock wakeLock) {
+        final GpxToCache gpxToCache = new GpxToCache(xmlPullParserFactory, aborter);
         return new GpxLoader(cachePersisterFacade, errorDisplayer, gpxToCache, wakeLock);
     }
 }

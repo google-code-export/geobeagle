@@ -264,7 +264,7 @@ public class GpxImporterDI {
                 cacheWriter, wakeLock);
 
         final GpxLoader gpxLoader = GpxLoaderDI.create(cachePersisterFacade, xmlPullParserWrapper,
-                aborter, errorDisplayer, wakeLock, cacheWriter);
+                aborter, errorDisplayer, wakeLock);
         final ToastFactory toastFactory = new ToastFactory();
         final ImportThreadWrapper importThreadWrapper = new ImportThreadWrapper(messageHandler,
                 xmlPullParserWrapper, aborter);
