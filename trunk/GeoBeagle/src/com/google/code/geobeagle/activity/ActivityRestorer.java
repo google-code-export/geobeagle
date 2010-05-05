@@ -60,7 +60,7 @@ public class ActivityRestorer {
         private final SharedPreferences mSharedPreferences;
 
         public ViewCacheRestorer(GeocacheFromPreferencesFactory geocacheFromPreferencesFactory,
-                SharedPreferences sharedPreferences, Activity activity) {
+                @DefaultSharedPreferences SharedPreferences sharedPreferences, Activity activity) {
             mGeocacheFromPreferencesFactory = geocacheFromPreferencesFactory;
             mSharedPreferences = sharedPreferences;
             mActivity = activity;
