@@ -20,12 +20,10 @@ public class EventHandlers {
     private final HashMap<String, EventHandler> mEventHandlers = new HashMap<String, EventHandler>();
 
     public void add(String extension, EventHandler eventHandler) {
-        mEventHandlers.put(extension.toLowerCase(), eventHandler);
+        mEventHandlers.put(extension, eventHandler);
     }
 
-    public EventHandler get(String filename) {
-        int len = filename.length();
-        String extension = filename.substring(Math.max(0, len - 4), len);
+    public EventHandler get(String extension) {
         return mEventHandlers.get(extension.toLowerCase());
     }
 }

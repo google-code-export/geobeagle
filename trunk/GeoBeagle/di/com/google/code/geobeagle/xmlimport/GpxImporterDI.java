@@ -253,7 +253,7 @@ public class GpxImporterDI {
                 cacheWriter, wakeLock);
 
         final GpxLoader gpxLoader = GpxLoaderDI.create(cachePersisterFacade, xmlPullParserWrapper,
-                aborter, errorDisplayer, wakeLock);
+                aborter, errorDisplayer, wakeLock, cacheWriter);
         final ToastFactory toastFactory = new ToastFactory();
         final ImportThreadWrapper importThreadWrapper = new ImportThreadWrapper(messageHandler,
                 xmlPullParserWrapper, aborter);
@@ -261,8 +261,8 @@ public class GpxImporterDI {
         final EventHandlerLoc eventHandlerLoc = new EventHandlerLoc(cachePersisterFacade);
 
         final EventHandlers eventHandlers = new EventHandlers();
-        eventHandlers.add(".gpx", eventHandlerGpx);
-        eventHandlers.add(".loc", eventHandlerLoc);
+        eventHandlers.add("gpx", eventHandlerGpx);
+        eventHandlers.add("loc", eventHandlerLoc);
 
         return new GpxImporter(geocacheListPresenter, gpxLoader, listActivity, importThreadWrapper,
                 messageHandler, toastFactory, eventHandlers, errorDisplayer);
