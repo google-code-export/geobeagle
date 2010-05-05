@@ -107,10 +107,10 @@
 			android:layout_width="fill_parent">
 			<Button android:id="@+id/menu_log_find" android:layout_height="wrap_content"
 				android:layout_width="wrap_content" android:layout_weight="1"
-				android:text="Log Find :-)" />
+				android:text="Log Find"  android:drawableLeft="@drawable/overlay_found_button" />
 			<Button android:id="@+id/menu_log_dnf" android:layout_height="wrap_content"
 				android:layout_width="wrap_content" android:layout_weight="1"
-				android:text="Log DNF :-(" />
+				android:text="Log DNF" android:drawableLeft="@drawable/overlay_dnf_button" />
 		</LinearLayout>
 	</LinearLayout>
 </ScrollView>
