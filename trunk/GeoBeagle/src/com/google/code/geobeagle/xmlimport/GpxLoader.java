@@ -23,6 +23,7 @@ import org.xmlpull.v1.XmlPullParserException;
 import android.database.sqlite.SQLiteException;
 import android.os.PowerManager.WakeLock;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.Reader;
@@ -82,7 +83,8 @@ public class GpxLoader {
 
     public void open(String path, Reader reader) throws XmlPullParserException {
         mGpxToCache.open(path, reader);
-        mCachePersisterFacade.open(path);
+        // Just use the filename, not the whole path.
+        mCachePersisterFacade.open(new File(path).getName());
     }
 
     public void start() {

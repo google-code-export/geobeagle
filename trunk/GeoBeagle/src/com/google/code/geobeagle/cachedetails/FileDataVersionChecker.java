@@ -15,10 +15,28 @@
 package com.google.code.geobeagle.cachedetails;
 
 import java.io.File;
+import java.io.IOException;
 
 public class FileDataVersionChecker {
+    static final String VERSION_DIR = CacheDetailsLoader.DETAILS_DIR + "data";
+    static final String VERSION_PATH = VERSION_DIR + "/VERSION";
+
+    public static class FileDataVersionWriter {
+        private final WriterWrapper writerWrapper;
+
+        FileDataVersionWriter(WriterWrapper writerWrapper) {
+            this.writerWrapper = writerWrapper;
+        }
+
+        public void writeVersion() throws IOException {
+            new File(VERSION_DIR).mkdir();
+            writerWrapper.open(VERSION_PATH);
+            writerWrapper.write("0");
+            writerWrapper.close();
+        }
+    }
 
     public boolean needsUpdating() {
-        return !new File(CacheDetailsLoader.DETAILS_DIR + "data/VERSION").exists();
+        return !new File(VERSION_PATH).exists();
     }
 }

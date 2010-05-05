@@ -27,6 +27,7 @@ public class CacheWriter {
     };
     private final DbToGeocacheAdapter mDbToGeocacheAdapter;
     private final ISQLiteDatabase mSqlite;
+    private String mGpxTime;
 
     CacheWriter(ISQLiteDatabase sqlite, DbToGeocacheAdapter dbToGeocacheAdapter) {
         mSqlite = sqlite;
@@ -68,6 +69,7 @@ public class CacheWriter {
      * @return
      */
     public boolean isGpxAlreadyLoaded(String gpxName, String gpxTime) {
+        mGpxTime = gpxTime;
         // TODO:countResults is slow; replace with a query, and moveToFirst.
         boolean gpxAlreadyLoaded = mSqlite.countResults(Database.TBL_GPX,
                 Database.SQL_MATCH_NAME_AND_EXPORTED_LATER, gpxName, gpxTime) > 0;
@@ -88,7 +90,7 @@ public class CacheWriter {
         mSqlite.endTransaction();
     }
 
-    public void writeGpx(String gpxName, String pocketQueryExportTime) {
-        mSqlite.execSQL(Database.SQL_REPLACE_GPX, gpxName, pocketQueryExportTime);
+    public void writeGpx(String gpxName) {
+        mSqlite.execSQL(Database.SQL_REPLACE_GPX, gpxName, mGpxTime);
     }
 }

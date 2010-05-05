@@ -10,10 +10,11 @@ import com.google.code.geobeagle.cachedetails.CacheDetailsLoader.DetailsError;
 import com.google.code.geobeagle.cachedetails.CacheDetailsLoader.DetailsImpl;
 import com.google.code.geobeagle.cachedetails.CacheDetailsLoader.DetailsOpener;
 import com.google.code.geobeagle.cachedetails.CacheDetailsLoader.DetailsReader;
-import com.google.code.geobeagle.cachedetails.CacheDetailsLoader.DetailsReaderFileNotFound;
+import com.google.code.geobeagle.cachedetails.CacheDetailsLoader.DetailsReaderError;
 import com.google.code.geobeagle.cachedetails.CacheDetailsLoader.DetailsReaderImpl;
 
 import org.easymock.EasyMock;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.api.easymock.PowerMock;
@@ -34,6 +35,12 @@ import java.io.IOException;
 @RunWith(PowerMockRunner.class)
 public class CacheDetailsLoaderTest {
 
+    private FileDataVersionChecker fileDataVersionChecker;
+
+    @Before
+    public void setUp() {
+        fileDataVersionChecker = PowerMock.createMock(FileDataVersionChecker.class);
+    }
     @Test
     public void testDetailsError() {
         Activity activity = PowerMock.createMock(Activity.class);
@@ -59,7 +66,11 @@ public class CacheDetailsLoaderTest {
         FileInputStream fileInputStream = PowerMock.createMock(FileInputStream.class);
         DetailsReaderImpl detailsReaderImpl = PowerMock.createMock(DetailsReaderImpl.class);
         Activity activity = PowerMock.createMock(Activity.class);
+        File detailsDir = PowerMock.createMock(File.class);
 
+        PowerMock.expectNew(File.class, CacheDetailsLoader.DETAILS_DIR).andReturn(detailsDir);
+        EasyMock.expect(detailsDir.isDirectory()).andReturn(true);
+        EasyMock.expect(fileDataVersionChecker.needsUpdating()).andReturn(false);
         EasyMock.expect(file.getAbsolutePath()).andReturn("/sdcard/foo.gpx");
         PowerMock.expectNew(FileInputStream.class, file).andReturn(fileInputStream);
         EasyMock.expect(file.length()).andReturn(27L);
@@ -68,25 +79,32 @@ public class CacheDetailsLoaderTest {
                 EasyMock.isA(byte[].class)).andReturn(detailsReaderImpl);
 
         PowerMock.replayAll();
-        assertEquals(detailsReaderImpl, new DetailsOpener(activity).open(file));
+        assertEquals(detailsReaderImpl, new DetailsOpener(activity, fileDataVersionChecker)
+                .open(file));
         PowerMock.verifyAll();
     }
 
     @Test
     public void testDetailsOpenerFileNotFound() throws Exception {
         File file = PowerMock.createMock(File.class);
-        DetailsReaderFileNotFound detailsReaderFileNotFound = PowerMock
-                .createMock(DetailsReaderFileNotFound.class);
+        DetailsReaderError detailsReaderError = PowerMock
+                .createMock(DetailsReaderError.class);
         Activity activity = PowerMock.createMock(Activity.class);
+        File detailsDir = PowerMock.createMock(File.class);
 
+        PowerMock.expectNew(File.class, CacheDetailsLoader.DETAILS_DIR).andReturn(detailsDir);
+        EasyMock.expect(detailsDir.isDirectory()).andReturn(true);
+        EasyMock.expect(fileDataVersionChecker.needsUpdating()).andReturn(false);
         EasyMock.expect(file.getAbsolutePath()).andReturn("/sdcard/foo.html");
         PowerMock.expectNew(FileInputStream.class, file).andThrow(
                 new FileNotFoundException("/sdcard/foo.html"));
-        PowerMock.expectNew(DetailsReaderFileNotFound.class, activity, "/sdcard/foo.html")
-                .andReturn(detailsReaderFileNotFound);
+        PowerMock.expectNew(DetailsReaderError.class, activity,
+                R.string.error_opening_details_file, "/sdcard/foo.html").andReturn(
+                detailsReaderError);
 
         PowerMock.replayAll();
-        assertEquals(detailsReaderFileNotFound, new DetailsOpener(activity).open(file));
+        assertEquals(detailsReaderError, new DetailsOpener(activity, fileDataVersionChecker)
+                .open(file));
         PowerMock.verifyAll();
     }
 
@@ -116,8 +134,8 @@ public class CacheDetailsLoaderTest {
                 "/sdcard/foo.html").andReturn(detailsError);
 
         PowerMock.replayAll();
-        assertEquals(detailsError, new DetailsReaderFileNotFound(activity, "/sdcard/foo.html")
-                .read());
+        assertEquals(detailsError, new DetailsReaderError(activity,
+                R.string.error_opening_details_file, "/sdcard/foo.html").read());
         PowerMock.verifyAll();
     }
 
