@@ -16,7 +16,7 @@ package com.google.code.geobeagle.xmlimport;
 
 import com.google.code.geobeagle.ErrorDisplayer;
 import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.cachedetails.CacheDetailsLoader;
+import com.google.code.geobeagle.cachedetails.FileDataVersionChecker.FileDataVersionWriter;
 import com.google.code.geobeagle.xmlimport.EventHelperDI.EventHelperFactory;
 import com.google.code.geobeagle.xmlimport.GpxImporterDI.MessageHandler;
 import com.google.code.geobeagle.xmlimport.gpx.GpxAndZipFiles;
@@ -76,12 +76,15 @@ public class ImportThreadDelegate {
     private final ErrorDisplayer mErrorDisplayer;
     private final GpxAndZipFiles mGpxAndZipFiles;
     private final ImportThreadHelper mImportThreadHelper;
+    private final FileDataVersionWriter mFileDataVersionWriter;
 
     public ImportThreadDelegate(GpxAndZipFiles gpxAndZipFiles,
-            ImportThreadHelper importThreadHelper, ErrorDisplayer errorDisplayer) {
+            ImportThreadHelper importThreadHelper, ErrorDisplayer errorDisplayer,
+            FileDataVersionWriter fileDataVersionWriter) {
         mGpxAndZipFiles = gpxAndZipFiles;
         mImportThreadHelper = importThreadHelper;
         mErrorDisplayer = errorDisplayer;
+        mFileDataVersionWriter = fileDataVersionWriter;
     }
 
     public void run() {
@@ -110,6 +113,7 @@ public class ImportThreadDelegate {
             if (!mImportThreadHelper.processFile(gpxFilesAndZipFilesIter.next()))
                 return;
         }
+        mFileDataVersionWriter.writeVersion();
         mImportThreadHelper.end();
     }
 }
