@@ -45,6 +45,7 @@ public class GeocacheListAdapter extends BaseAdapter {
         return position;
     }
 
+    @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         View view = mGeocacheSummaryRowInflater.inflate(convertView);
         mGeocacheSummaryRowInflater.setData(view, mGeocacheVectors.get(position));
