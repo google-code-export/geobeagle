@@ -246,7 +246,7 @@ public class CacheListDelegateDI {
 
         final GpxImporterFactory gpxImporterFactory = new GpxImporterFactory(aborter,
                 cachePersisterFacadeFactory, errorDisplayer, geocacheListPresenter, listActivity,
-                messageHandler, xmlPullParserWrapper);
+                messageHandler, xmlPullParserWrapper, injector);
 
         final Abortable nullAbortable = new Abortable() {
             public void abort() {
