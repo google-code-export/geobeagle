@@ -46,7 +46,7 @@ public class GpxImporterTest {
 
         PowerMock.replayAll();
         new GpxImporter(null, gpxLoader, null, importThreadWrapper, messageHandler, null, null,
-                null).abort();
+                null, null).abort();
         PowerMock.verifyAll();
     }
 
@@ -66,7 +66,7 @@ public class GpxImporterTest {
 
         PowerMock.replayAll();
         new GpxImporter(null, gpxLoader, listActivity, importThreadWrapper, messageHandler,
-                toastFactory, null, null).abort();
+                toastFactory, null, null, null).abort();
         PowerMock.verifyAll();
     }
 
@@ -80,12 +80,12 @@ public class GpxImporterTest {
                 .createMock(GeocacheListPresenter.class);
 
         geocacheListPresenter.onPause();
-        importThreadWrapper.open(cacheListRefresh, gpxLoader, eventHandlers, null);
+        importThreadWrapper.open(cacheListRefresh, gpxLoader, eventHandlers, null, null);
         importThreadWrapper.start();
 
         PowerMock.replayAll();
         new GpxImporter(geocacheListPresenter, gpxLoader, null, importThreadWrapper, null, null,
-                eventHandlers, null).importGpxs(cacheListRefresh);
+                eventHandlers, null, null).importGpxs(cacheListRefresh);
         PowerMock.verifyAll();
     }
 }
