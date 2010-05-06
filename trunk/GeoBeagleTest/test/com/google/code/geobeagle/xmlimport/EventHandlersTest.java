@@ -17,13 +17,12 @@ public class EventHandlersTest {
         EventHandler eventHandler2 = EasyMock.createMock(EventHandler.class);
 
         EventHandlers eventHandlers = new EventHandlers();
-        eventHandlers.add(".gpx", eventHandler1);
-        eventHandlers.add(".loc", eventHandler2);
+        eventHandlers.add("gpx", eventHandler1);
+        eventHandlers.add("loc", eventHandler2);
 
-        assertEquals(null, eventHandlers.get("f"));
-        assertEquals(null, eventHandlers.get("foo"));
-        assertEquals(null, eventHandlers.get("foo.gpxx"));
-        assertEquals(eventHandler1, eventHandlers.get("foo.gpx"));
-        assertEquals(eventHandler2, eventHandlers.get("bar.lOc"));
+        assertEquals(null, eventHandlers.get(""));
+        assertEquals(null, eventHandlers.get("gpxx"));
+        assertEquals(eventHandler1, eventHandlers.get("gpx"));
+        assertEquals(eventHandler2, eventHandlers.get("lOc"));
     }
 }

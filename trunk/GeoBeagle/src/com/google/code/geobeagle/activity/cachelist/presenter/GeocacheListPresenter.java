@@ -19,6 +19,7 @@ import com.google.code.geobeagle.LocationControlBuffered;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.cachelist.CacheListView;
 import com.google.code.geobeagle.activity.cachelist.CompassListenerFactory;
+import com.google.code.geobeagle.activity.cachelist.Pausable;
 import com.google.code.geobeagle.activity.cachelist.CacheListView.ScrollListener;
 import com.google.code.geobeagle.activity.cachelist.GeocacheListController.CacheListOnCreateContextMenuListener;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVectors;
@@ -37,7 +38,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ListView;
 
-public class GeocacheListPresenter {
+public class GeocacheListPresenter implements Pausable {
     
     public interface GeocacheListPresenterFactory {
         GeocacheListPresenter create(CombinedLocationListener combinedLocationListener,

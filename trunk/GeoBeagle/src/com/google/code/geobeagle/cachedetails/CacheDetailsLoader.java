@@ -61,19 +61,29 @@ public class CacheDetailsLoader {
     public static class DetailsOpener {
 
         private final Activity mActivity;
+        private final FileDataVersionChecker mFileDataVersionChecker;
 
         @Inject
-        public DetailsOpener(Activity activity) {
+        public DetailsOpener(Activity activity, FileDataVersionChecker fileDataVersionChecker) {
             mActivity = activity;
+            mFileDataVersionChecker = fileDataVersionChecker;
         }
 
         DetailsReader open(File file) {
+            File sdcardPath = new File(CacheDetailsLoader.DETAILS_DIR);
+            if (!sdcardPath.isDirectory())
+                return new DetailsReaderError(mActivity, R.string.error_cant_read_sd, "");
+            
+            if (mFileDataVersionChecker.needsUpdating())
+                return new DetailsReaderError(mActivity, R.string.error_details_file_version, "");
+
             FileInputStream fileInputStream;
             String absolutePath = file.getAbsolutePath();
             try {
                 fileInputStream = new FileInputStream(file);
             } catch (FileNotFoundException e) {
-                return new DetailsReaderFileNotFound(mActivity, e.getMessage());
+                return new DetailsReaderError(mActivity,
+                        R.string.error_opening_details_file, e.getMessage());
             }
             byte[] buffer = new byte[(int)file.length()];
             return new DetailsReaderImpl(mActivity, absolutePath, fileInputStream, buffer);
@@ -84,17 +94,19 @@ public class CacheDetailsLoader {
         Details read();
     }
 
-    static class DetailsReaderFileNotFound implements DetailsReader {
+    static class DetailsReaderError implements DetailsReader {
         private final Activity mActivity;
         private final String mPath;
+        private final int mError;
 
-        DetailsReaderFileNotFound(Activity activity, String path) {
+        DetailsReaderError(Activity activity, int error, String path) {
             mActivity = activity;
             mPath = path;
+            mError = error;
         }
 
         public Details read() {
-            return new DetailsError(mActivity, R.string.error_opening_details_file, mPath);
+            return new DetailsError(mActivity, mError, mPath);
         }
     }
 
@@ -131,9 +143,9 @@ public class CacheDetailsLoader {
         mDetailsOpener = detailsOpener;
     }
 
-    public String load(CharSequence cacheId) {
+    public String load(CharSequence sourceName, CharSequence cacheId) {
         final String sanitized = CacheDetailsWriter.replaceIllegalFileChars(cacheId.toString());
-        String path = DETAILS_DIR + sanitized + ".html";
+        String path = DETAILS_DIR + sourceName + "/" + sanitized + ".html";
         File file = new File(path);
         DetailsReader detailsReader = mDetailsOpener.open(file);
         Details details = detailsReader.read();

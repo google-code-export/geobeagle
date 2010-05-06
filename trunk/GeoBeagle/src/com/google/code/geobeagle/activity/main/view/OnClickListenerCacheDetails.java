@@ -14,6 +14,7 @@
 
 package com.google.code.geobeagle.activity.main.view;
 
+import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.main.GeoBeagle;
 import com.google.code.geobeagle.cachedetails.CacheDetailsLoader;
@@ -43,14 +44,14 @@ public class OnClickListenerCacheDetails implements View.OnClickListener {
     public void onClick(View v) {
         View detailsView = mEnv.inflate(R.layout.cache_details, null);
 
-        CharSequence id = mGeoBeagle.getGeocache().getId();
+        Geocache geocache = mGeoBeagle.getGeocache();
+        CharSequence id = geocache.getId();
         mAlertDialogBuilder.setTitle(id);
         mAlertDialogBuilder.setView(detailsView);
 
         WebView webView = (WebView)detailsView.findViewById(R.id.webview);
-        webView.loadDataWithBaseURL(null, mCacheDetailsLoader.load(id), "text/html", "utf-8",
-                "about:blank");
-
+        webView.loadDataWithBaseURL(null, mCacheDetailsLoader.load(geocache.getSourceName(), id),
+                "text/html", "utf-8", "about:blank");
         mAlertDialogBuilder.create().show();
     }
 }

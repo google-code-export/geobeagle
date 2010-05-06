@@ -15,7 +15,6 @@
 package com.google.code.geobeagle.activity.cachelist;
 
 import com.google.code.geobeagle.ErrorDisplayer;
-import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheListPresenter;
 import com.google.code.geobeagle.database.CacheWriter;
 import com.google.code.geobeagle.xmlimport.GpxImporter;
 import com.google.code.geobeagle.xmlimport.GpxImporterDI;
@@ -23,35 +22,38 @@ import com.google.code.geobeagle.xmlimport.CachePersisterFacadeDI.CachePersister
 import com.google.code.geobeagle.xmlimport.GpxImporterDI.MessageHandler;
 import com.google.code.geobeagle.xmlimport.GpxToCache.Aborter;
 import com.google.code.geobeagle.xmlimport.GpxToCacheDI.XmlPullParserWrapper;
+import com.google.inject.Injector;
 
-import android.app.ListActivity;
+import android.content.Context;
 
 public class GpxImporterFactory {
 
     private final Aborter mAborter;
     private final CachePersisterFacadeFactory mCachePersisterFacadeFactory;
     private final ErrorDisplayer mErrorDisplayer;
-    private final GeocacheListPresenter mGeocacheListPresenter;
-    private final ListActivity mListActivity;
+    private final Pausable mGeocacheListPresenter;
+    private final Context mContext;
     private final MessageHandler mMessageHandler;
     private final XmlPullParserWrapper mXmlPullParserWrapper;
+    private final Injector mInjector;
 
     public GpxImporterFactory(Aborter aborter,
             CachePersisterFacadeFactory cachePersisterFacadeFactory, ErrorDisplayer errorDisplayer,
-            GeocacheListPresenter geocacheListPresenter, ListActivity listActivity,
-            MessageHandler messageHandler, XmlPullParserWrapper xmlPullParserWrapper) {
+            Pausable pausable, Context context, MessageHandler messageHandler,
+            XmlPullParserWrapper xmlPullParserWrapper, Injector injector) {
         mAborter = aborter;
         mCachePersisterFacadeFactory = cachePersisterFacadeFactory;
         mErrorDisplayer = errorDisplayer;
-        mGeocacheListPresenter = geocacheListPresenter;
-        mListActivity = listActivity;
+        mGeocacheListPresenter = pausable;
+        mContext = context;
         mMessageHandler = messageHandler;
         mXmlPullParserWrapper = xmlPullParserWrapper;
+        mInjector = injector;
     }
 
     public GpxImporter create(CacheWriter cacheWriter) {
-        return GpxImporterDI.create(mListActivity, mXmlPullParserWrapper, mErrorDisplayer,
+        return GpxImporterDI.create(mContext, mXmlPullParserWrapper, mErrorDisplayer,
                 mGeocacheListPresenter, mAborter, mMessageHandler, mCachePersisterFacadeFactory,
-                cacheWriter);
+                cacheWriter, mInjector);
     }
 }

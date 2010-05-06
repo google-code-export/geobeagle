@@ -118,7 +118,7 @@ public class CacheTagWriterTest {
     public void testStopWritingSuccess() {
         mCacheWriter.stopWriting();
         expect(mCacheWriter.isGpxAlreadyLoaded("foo.gpx", "2008-04-15 16:10:30")).andReturn(true);
-        mCacheWriter.writeGpx("foo.gpx", "2008-04-15 16:10:30");
+        mCacheWriter.writeGpx("foo.gpx");
 
         PowerMock.replayAll();
         mCacheTagSqlWriter.gpxName("foo.gpx");
