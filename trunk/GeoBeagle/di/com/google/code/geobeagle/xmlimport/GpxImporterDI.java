@@ -17,8 +17,11 @@ package com.google.code.geobeagle.xmlimport;
 import com.google.code.geobeagle.ErrorDisplayer;
 import com.google.code.geobeagle.activity.cachelist.Pausable;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
-import com.google.code.geobeagle.cachedetails.FileDataVersionChecker.FileDataVersionWriter;
+import com.google.code.geobeagle.cachedetails.CacheDetailsLoader;
+import com.google.code.geobeagle.cachedetails.FileDataVersionChecker;
+import com.google.code.geobeagle.cachedetails.FileDataVersionWriter;
 import com.google.code.geobeagle.database.CacheWriter;
+import com.google.code.geobeagle.database.DbFrontend;
 import com.google.code.geobeagle.xmlimport.CachePersisterFacadeDI.CachePersisterFacadeFactory;
 import com.google.code.geobeagle.xmlimport.EventHelperDI.EventHelperFactory;
 import com.google.code.geobeagle.xmlimport.GpxToCache.Aborter;
@@ -58,20 +61,26 @@ public class GpxImporterDI {
                     gpxFileIterAndZipFileIterFactory);
             final EventHelperFactory eventHelperFactory = new EventHelperFactory(
                     xmlPullParserWrapper);
+            OldCacheFilesCleaner oldCacheFilesCleaner = new OldCacheFilesCleaner(
+                    CacheDetailsLoader.OLD_DETAILS_DIR, messageHandler);
             final ImportThreadHelper importThreadHelper = new ImportThreadHelper(gpxLoader,
-                    messageHandler, eventHelperFactory, eventHandlers, errorDisplayer);
+                    messageHandler, eventHelperFactory, eventHandlers, errorDisplayer,
+                    oldCacheFilesCleaner);
             final FileDataVersionWriter fileDataVersionWriter = injector
                     .getInstance(FileDataVersionWriter.class);
+            final FileDataVersionChecker fileDataVersionChecker = injector
+                    .getInstance(FileDataVersionChecker.class);
             return new ImportThread(gpxAndZipFiles, importThreadHelper, errorDisplayer,
-                    fileDataVersionWriter );
+                    fileDataVersionWriter, injector.getInstance(DbFrontend.class), fileDataVersionChecker);
         }
 
         private final ImportThreadDelegate mImportThreadDelegate;
 
         public ImportThread(GpxAndZipFiles gpxAndZipFiles, ImportThreadHelper importThreadHelper,
-                ErrorDisplayer errorDisplayer, FileDataVersionWriter fileDataVersionWriter) {
+                ErrorDisplayer errorDisplayer, FileDataVersionWriter fileDataVersionWriter,
+                DbFrontend dbFrontend, FileDataVersionChecker fileDataVersionChecker) {
             mImportThreadDelegate = new ImportThreadDelegate(gpxAndZipFiles, importThreadHelper,
-                    errorDisplayer, fileDataVersionWriter);
+                    errorDisplayer, fileDataVersionWriter, fileDataVersionChecker, dbFrontend);
         }
 
         @Override

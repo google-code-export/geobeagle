@@ -21,20 +21,23 @@ import android.util.Log;
 import java.io.File;
 
 public class OldCacheFilesCleaner {
-    public static void clean(String directory, MessageHandler messageHandler) {
+    private final String directory;
+    private final MessageHandler messageHandler;
+
+    public OldCacheFilesCleaner(String directory, MessageHandler messageHandler) {
+        this.directory = directory;
+        this.messageHandler = messageHandler;
+    }
+
+    public void clean() {
         messageHandler.deletingCacheFiles();
-        ExtensionFilter filter = new ExtensionFilter(".html");
-        File dir = new File(directory);
-
-        String[] list = dir.list(filter);
-        File file;
-        if (list.length == 0)
+        String[] list = new File(directory).list(new ExtensionFilter(".html"));
+        if (list == null)
             return;
-
         for (int i = 0; i < list.length; i++) {
-            file = new File(directory, list[i]);
             messageHandler.updateStatus(String.format("Deleting old cache files: [%d/%d] %s", i,
                     list.length, list[i]));
+            File file = new File(directory, list[i]);
             Log.d("GeoBeagle", file + "  deleted : " + file.delete());
         }
     }
