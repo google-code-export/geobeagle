@@ -19,6 +19,7 @@ import static org.junit.Assert.assertTrue;
 
 import com.google.code.geobeagle.ErrorDisplayer;
 import com.google.code.geobeagle.R;
+import com.google.code.geobeagle.cachedetails.FileDataVersionChecker.FileDataVersionWriter;
 import com.google.code.geobeagle.xmlimport.EventHelperDI.EventHelperFactory;
 import com.google.code.geobeagle.xmlimport.GpxImporterDI.MessageHandler;
 import com.google.code.geobeagle.xmlimport.ImportThreadDelegate.ImportThreadHelper;
@@ -28,6 +29,7 @@ import com.google.code.geobeagle.xmlimport.gpx.GpxAndZipFiles.GpxAndZipFilenameF
 import com.google.code.geobeagle.xmlimport.gpx.GpxAndZipFiles.GpxFilesAndZipFilesIter;
 
 import org.easymock.EasyMock;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.api.easymock.PowerMock;
@@ -45,6 +47,12 @@ import java.io.Reader;
         GpxAndZipFilenameFilter.class, File.class, GpxAndZipFiles.class, IGpxReader.class
 })
 public class ImportThreadDelegateTest {
+
+    private FileDataVersionWriter fileDataVersionWriter;
+    @Before
+    public void setUp() {
+        fileDataVersionWriter = PowerMock.createMock(FileDataVersionWriter.class);
+    }
 
     @Test
     public void testHelperCleanup() {
@@ -123,9 +131,10 @@ public class ImportThreadDelegateTest {
         expect(gpxFilesAndZipFilesIter.hasNext()).andReturn(false);
         importThreadHelper.end();
         importThreadHelper.cleanup();
+        fileDataVersionWriter.writeVersion();
 
         PowerMock.replayAll();
-        new ImportThreadDelegate(gpxAndZipFiles, importThreadHelper, null).run();
+        new ImportThreadDelegate(gpxAndZipFiles, importThreadHelper, null, fileDataVersionWriter).run();
         PowerMock.verifyAll();
     }
 
@@ -145,7 +154,7 @@ public class ImportThreadDelegateTest {
         importThreadHelper.cleanup();
 
         PowerMock.replayAll();
-        new ImportThreadDelegate(gpxAndZipFiles, importThreadHelper, null).run();
+        new ImportThreadDelegate(gpxAndZipFiles, importThreadHelper, null, fileDataVersionWriter).run();
         PowerMock.verifyAll();
     }
 
@@ -161,7 +170,7 @@ public class ImportThreadDelegateTest {
 
         PowerMock.replayAll();
         ImportThreadDelegate importThreadDelegate = new ImportThreadDelegate(gpxAndZipFiles,
-                importThreadHelper, errorDisplayer) {
+                importThreadHelper, errorDisplayer, fileDataVersionWriter) {
             @Override
             protected void tryRun() throws IOException {
                 throw e;
@@ -185,7 +194,7 @@ public class ImportThreadDelegateTest {
 
         PowerMock.replayAll();
         ImportThreadDelegate importThreadDelegate = new ImportThreadDelegate(gpxAndZipFiles,
-                importThreadHelper, errorDisplayer) {
+                importThreadHelper, errorDisplayer, fileDataVersionWriter) {
             @Override
             protected void tryRun() throws XmlPullParserException {
                 throw e;
@@ -208,7 +217,7 @@ public class ImportThreadDelegateTest {
 
         PowerMock.replayAll();
         ImportThreadDelegate importThreadDelegate = new ImportThreadDelegate(gpxAndZipFiles,
-                importThreadHelper, errorDisplayer) {
+                importThreadHelper, errorDisplayer, fileDataVersionWriter) {
             @Override
             protected void tryRun() throws IOException {
                 throw e;
@@ -230,7 +239,7 @@ public class ImportThreadDelegateTest {
 
         PowerMock.replayAll();
         ImportThreadDelegate importThreadDelegate = new ImportThreadDelegate(gpxAndZipFiles,
-                importThreadHelper, errorDisplayer);
+                importThreadHelper, errorDisplayer, fileDataVersionWriter);
         importThreadDelegate.run();
         PowerMock.verifyAll();
     }
@@ -245,11 +254,13 @@ public class ImportThreadDelegateTest {
         expect(gpxAndZipFiles.iterator()).andReturn(gpxFilesAndZipFilesIter);
         expect(gpxFilesAndZipFilesIter.hasNext()).andReturn(false);
         importThreadHelper.start();
+        fileDataVersionWriter.writeVersion();
         importThreadHelper.end();
         importThreadHelper.cleanup();
 
         PowerMock.replayAll();
-        new ImportThreadDelegate(gpxAndZipFiles, importThreadHelper, null).run();
+        new ImportThreadDelegate(gpxAndZipFiles, importThreadHelper, null, fileDataVersionWriter)
+                .run();
         PowerMock.verifyAll();
     }
 
@@ -263,11 +274,13 @@ public class ImportThreadDelegateTest {
         expect(gpxAndZipFiles.iterator()).andReturn(gpxFilesAndZipFilesIter);
         importThreadHelper.start();
         expect(gpxFilesAndZipFilesIter.hasNext()).andReturn(false);
+        fileDataVersionWriter.writeVersion();
         importThreadHelper.end();
         importThreadHelper.cleanup();
 
         PowerMock.replayAll();
-        new ImportThreadDelegate(gpxAndZipFiles, importThreadHelper, null).run();
+        new ImportThreadDelegate(gpxAndZipFiles, importThreadHelper, null, fileDataVersionWriter)
+                .run();
         PowerMock.verifyAll();
     }
 
@@ -281,7 +294,8 @@ public class ImportThreadDelegateTest {
 
         PowerMock.replayAll();
         try {
-            new ImportThreadDelegate(gpxAndZipFiles, importThreadHelper, null).run();
+            new ImportThreadDelegate(gpxAndZipFiles, importThreadHelper, null,
+                    fileDataVersionWriter).run();
         } catch (Exception e) {
 
         }
