@@ -20,7 +20,7 @@ import java.io.IOException;
 import java.io.Writer;
 
 public class WriterWrapper {
-    Writer mWriter;
+    private Writer mWriter;
 
     public void close() throws IOException {
         mWriter.close();
