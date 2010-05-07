@@ -19,6 +19,7 @@ import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.cachelist.Pausable;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.Abortable;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
+import com.google.code.geobeagle.database.DbFrontend;
 import com.google.code.geobeagle.xmlimport.GpxImporterDI.ImportThreadWrapper;
 import com.google.code.geobeagle.xmlimport.GpxImporterDI.MessageHandler;
 import com.google.code.geobeagle.xmlimport.GpxImporterDI.ToastFactory;

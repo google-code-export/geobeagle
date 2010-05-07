@@ -72,7 +72,7 @@ public class CacheDetailsLoader {
         DetailsReader open(File file) {
             File sdcardPath = new File(CacheDetailsLoader.DETAILS_DIR);
             if (!sdcardPath.isDirectory())
-                return new DetailsReaderError(mActivity, R.string.error_cant_read_sd, "");
+                return new DetailsReaderError(mActivity, R.string.error_cant_read_sdroot, "");
             
             if (mFileDataVersionChecker.needsUpdating())
                 return new DetailsReaderError(mActivity, R.string.error_details_file_version, "");
@@ -135,7 +135,9 @@ public class CacheDetailsLoader {
         }
     }
 
-    public static final String DETAILS_DIR = "/sdcard/GeoBeagle/";
+    public static final String SDCARD_DIR = "/sdcard/";
+    public static final String DETAILS_DIR = SDCARD_DIR + "GeoBeagle/data/";
+    public static final String OLD_DETAILS_DIR = SDCARD_DIR + "GeoBeagle";
     private final DetailsOpener mDetailsOpener;
 
     @Inject
