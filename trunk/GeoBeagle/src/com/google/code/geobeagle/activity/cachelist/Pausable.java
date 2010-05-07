@@ -12,18 +12,10 @@
  ** limitations under the License.
  */
 
-package com.google.code.geobeagle.xmlimport;
+package com.google.code.geobeagle.activity.cachelist;
 
-import java.util.HashMap;
+public interface Pausable {
 
-public class EventHandlers {
-    private final HashMap<String, EventHandler> mEventHandlers = new HashMap<String, EventHandler>();
+    void onPause();
 
-    public void add(String extension, EventHandler eventHandler) {
-        mEventHandlers.put(extension, eventHandler);
-    }
-
-    public EventHandler get(String extension) {
-        return mEventHandlers.get(extension.toLowerCase());
-    }
 }

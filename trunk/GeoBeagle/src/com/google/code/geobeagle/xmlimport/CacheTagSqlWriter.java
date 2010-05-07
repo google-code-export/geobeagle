@@ -37,7 +37,6 @@ public class CacheTagSqlWriter {
     private double mLatitude;
     private double mLongitude;
     private CharSequence mName;
-    private String mSqlDate;
     private int mTerrain;
     private TagWriter mTagWriter;
     private TagWriterImpl mTagWriterImpl;
@@ -92,8 +91,8 @@ public class CacheTagSqlWriter {
      *         loaded.
      */
     public boolean gpxTime(String gpxTime) {
-        mSqlDate = isoTimeToSql(gpxTime);
-        if (mCacheWriter.isGpxAlreadyLoaded(mGpxName, mSqlDate)) {
+        String sqlDate = isoTimeToSql(gpxTime);
+        if (mCacheWriter.isGpxAlreadyLoaded(mGpxName, sqlDate)) {
             return false;
         }
         mCacheWriter.clearCaches(mGpxName);
@@ -114,14 +113,13 @@ public class CacheTagSqlWriter {
     }
 
     public void startWriting() {
-        mSqlDate = "2000-01-01T12:00:00";
         mCacheWriter.startWriting();
     }
 
     public void stopWriting(boolean successfulGpxImport) {
         mCacheWriter.stopWriting();
         if (successfulGpxImport)
-            mCacheWriter.writeGpx(mGpxName, mSqlDate);
+            mCacheWriter.writeGpx(mGpxName);
     }
 
     public void symbol(String symbol) {

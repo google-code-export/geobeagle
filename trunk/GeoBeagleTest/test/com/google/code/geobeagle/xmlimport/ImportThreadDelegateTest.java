@@ -81,7 +81,7 @@ public class ImportThreadDelegateTest {
         EventHandlers eventHandlers = PowerMock.createMock(EventHandlers.class);
 
         EasyMock.expect(gpxFile.getFilename()).andReturn("foo.gpx");
-        EasyMock.expect(eventHandlers.get("foo.gpx")).andReturn(eventHandler);
+        EasyMock.expect(eventHandlers.get("gpx")).andReturn(eventHandler);
         EasyMock.expect(eventHelperFactory.create(eventHandler)).andReturn(eventHelper);
         EasyMock.expect(gpxFile.open()).andReturn(reader);
         gpxLoader.open("foo.gpx", reader);

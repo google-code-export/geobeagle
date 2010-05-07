@@ -115,13 +115,15 @@ public class CacheWriterTest {
 
         expect(
                 sqlite.countResults(Database.TBL_GPX, Database.SQL_MATCH_NAME_AND_EXPORTED_LATER,
-                        "foo.gpx", "04-30-2009")).andReturn(1);
+                        "foo.gpx", "04-30-2009 10:30")).andReturn(1);
         sqlite.execSQL(Database.SQL_CACHES_DONT_DELETE_ME, "foo.gpx");
         sqlite.execSQL(Database.SQL_GPX_DONT_DELETE_ME, "foo.gpx");
+        sqlite.execSQL(Database.SQL_REPLACE_GPX, "foo.gpx", "04-30-2009 10:30");
 
         replay(sqlite);
         CacheWriter cacheWriterSql = new CacheWriter(sqlite, null);
-        assertTrue(cacheWriterSql.isGpxAlreadyLoaded("foo.gpx", "04-30-2009"));
+        assertTrue(cacheWriterSql.isGpxAlreadyLoaded("foo.gpx", "04-30-2009 10:30"));
+        cacheWriterSql.writeGpx("foo.gpx");
         verify(sqlite);
     }
 
@@ -143,16 +145,6 @@ public class CacheWriterTest {
 
         replay(sqlite);
         new CacheWriter(sqlite, null).stopWriting();
-        verify(sqlite);
-    }
-
-    @Test
-    public void testWriteGpx() {
-        SQLiteWrapper sqlite = createMock(SQLiteWrapper.class);
-        sqlite.execSQL(Database.SQL_REPLACE_GPX, "foo.gpx", "2009-04-30 10:30");
-
-        replay(sqlite);
-        new CacheWriter(sqlite, null).writeGpx("foo.gpx", "2009-04-30 10:30");
         verify(sqlite);
     }
 }
