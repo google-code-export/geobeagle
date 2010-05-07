@@ -69,6 +69,7 @@ public class ImportThreadDelegate {
         }
 
         public void start() {
+            OldCacheFilesCleaner.clean(CacheDetailsLoader.DETAILS_DIR, mMessageHandler);
             mGpxLoader.start();
         }
     }
