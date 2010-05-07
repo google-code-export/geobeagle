@@ -166,12 +166,14 @@ public class CachePersisterFacadeTest {
 
     @Test
     public void testOpen() {
-        mMessageHandler.updateSource("GC123");
+        mMessageHandler.updateSource("foo.gpx");
         mCacheTagWriter.startWriting();
-        mCacheTagWriter.gpxName("GC123");
+        mCacheTagWriter.gpxName("foo.gpx");
+        mCacheDetailsWriter.gpxName("foo.gpx");
 
         PowerMock.replayAll();
-        new CachePersisterFacade(mCacheTagWriter, null, null, mMessageHandler, null).open("GC123");
+        new CachePersisterFacade(mCacheTagWriter, null, mCacheDetailsWriter, mMessageHandler, null)
+                .open("foo.gpx");
         PowerMock.verifyAll();
     }
 

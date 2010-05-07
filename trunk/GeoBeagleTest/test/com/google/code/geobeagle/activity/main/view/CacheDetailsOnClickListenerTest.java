@@ -52,11 +52,12 @@ public class CacheDetailsOnClickListenerTest {
 
         expect(env.inflate(R.layout.cache_details, null)).andReturn(detailsView);
         expect(geobeagle.getGeocache()).andReturn(geocache);
+        expect(geocache.getSourceName()).andReturn("foo.gpx");
         expect(geocache.getId()).andReturn("GC1234");
         expect(builder.setTitle("GC1234")).andReturn(builder);
         expect(detailsView.findViewById(R.id.webview)).andReturn(webView);
         expect(builder.setView(detailsView)).andReturn(builder);
-        expect(cacheDetailsLoader.load("GC1234")).andReturn("details");
+        expect(cacheDetailsLoader.load("foo.gpx", "GC1234")).andReturn("details");
         webView.loadDataWithBaseURL(null, "details", "text/html", "utf-8", "about:blank");
         expect(builder.create()).andReturn(alertDialog);
         alertDialog.show();
