@@ -23,8 +23,13 @@ import com.google.code.geobeagle.xmlimport.gpx.zip.ZipFileOpener.ZipInputFileTes
 import java.io.IOException;
 
 /**
- * @author sng Takes a filename and returns an IGpxReaderIter based on the
- *         extension: zip: ZipFileIter gpx/loc: GpxFileIter
+ * @author sng
+ * 
+ * Takes a filename and returns an IGpxReaderIter based on the
+ * extension: 
+ * 
+ * zip: ZipFileIter
+ * gpx/loc: GpxFileIter
  */
 public class GpxFileIterAndZipFileIterFactory {
     private final Aborter mAborter;
