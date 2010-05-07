@@ -128,6 +128,7 @@ public class DbFrontend {
     }
 
     public void forceUpdate() {
+        openDatabase();
         mDatabase.execSQL(Database.SQL_FORCE_UPDATE_ALL);
     }
     public ISQLiteDatabase getDatabase() {
