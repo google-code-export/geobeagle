@@ -196,6 +196,17 @@ public class GpxImporterDI {
         public void updateWaypointId(String wpt) {
             mWaypointId = wpt;
         }
+
+        public void updateStatus(String status) {
+            mStatus = status;
+            sendEmptyMessage(MessageHandler.MSG_PROGRESS);
+        }
+
+        public void deletingCacheFiles() {
+            mStatus = "Deleting old cache files....";
+            sendEmptyMessage(MessageHandler.MSG_PROGRESS);
+        }
+
     }
 
     // Wrapper so that containers can follow the "constructors do no work" rule.
