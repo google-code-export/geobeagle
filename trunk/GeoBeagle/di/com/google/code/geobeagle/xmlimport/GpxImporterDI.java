@@ -17,6 +17,7 @@ package com.google.code.geobeagle.xmlimport;
 import com.google.code.geobeagle.ErrorDisplayer;
 import com.google.code.geobeagle.activity.cachelist.Pausable;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
+import com.google.code.geobeagle.cachedetails.FileDataVersionChecker.FileDataVersionWriter;
 import com.google.code.geobeagle.database.CacheWriter;
 import com.google.code.geobeagle.xmlimport.CachePersisterFacadeDI.CachePersisterFacadeFactory;
 import com.google.code.geobeagle.xmlimport.EventHelperDI.EventHelperFactory;
@@ -29,6 +30,7 @@ import com.google.code.geobeagle.xmlimport.gpx.GpxAndZipFiles.GpxAndZipFilenameF
 import com.google.code.geobeagle.xmlimport.gpx.GpxAndZipFiles.GpxFilenameFilter;
 import com.google.code.geobeagle.xmlimport.gpx.zip.ZipFileOpener.ZipInputFileTester;
 import com.google.inject.Inject;
+import com.google.inject.Injector;
 
 import android.app.ListActivity;
 import android.app.ProgressDialog;
@@ -46,7 +48,7 @@ public class GpxImporterDI {
     public static class ImportThread extends Thread {
         static ImportThread create(MessageHandler messageHandler, GpxLoader gpxLoader,
                 EventHandlers eventHandlers, XmlPullParserWrapper xmlPullParserWrapper,
-                ErrorDisplayer errorDisplayer, Aborter aborter) {
+                ErrorDisplayer errorDisplayer, Aborter aborter, Injector injector) {
             final GpxFilenameFilter gpxFilenameFilter = new GpxFilenameFilter();
             final FilenameFilter filenameFilter = new GpxAndZipFilenameFilter(gpxFilenameFilter);
             final ZipInputFileTester zipInputFileTester = new ZipInputFileTester(gpxFilenameFilter);
@@ -58,15 +60,18 @@ public class GpxImporterDI {
                     xmlPullParserWrapper);
             final ImportThreadHelper importThreadHelper = new ImportThreadHelper(gpxLoader,
                     messageHandler, eventHelperFactory, eventHandlers, errorDisplayer);
-            return new ImportThread(gpxAndZipFiles, importThreadHelper, errorDisplayer);
+            final FileDataVersionWriter fileDataVersionWriter = injector
+                    .getInstance(FileDataVersionWriter.class);
+            return new ImportThread(gpxAndZipFiles, importThreadHelper, errorDisplayer,
+                    fileDataVersionWriter );
         }
 
         private final ImportThreadDelegate mImportThreadDelegate;
 
         public ImportThread(GpxAndZipFiles gpxAndZipFiles, ImportThreadHelper importThreadHelper,
-                ErrorDisplayer errorDisplayer) {
+                ErrorDisplayer errorDisplayer, FileDataVersionWriter fileDataVersionWriter) {
             mImportThreadDelegate = new ImportThreadDelegate(gpxAndZipFiles, importThreadHelper,
-                    errorDisplayer);
+                    errorDisplayer, fileDataVersionWriter);
         }
 
         @Override
@@ -105,10 +110,10 @@ public class GpxImporterDI {
         }
 
         public void open(CacheListRefresh cacheListRefresh, GpxLoader gpxLoader,
-                EventHandlers eventHandlers, ErrorDisplayer mErrorDisplayer) {
+                EventHandlers eventHandlers, ErrorDisplayer mErrorDisplayer, Injector injector) {
             mMessageHandler.start(cacheListRefresh);
             mImportThread = ImportThread.create(mMessageHandler, gpxLoader, eventHandlers,
-                    mXmlPullParserWrapper, mErrorDisplayer, mAborter);
+                    mXmlPullParserWrapper, mErrorDisplayer, mAborter, injector);
         }
 
         public void start() {
@@ -242,7 +247,7 @@ public class GpxImporterDI {
     public static GpxImporter create(Context context, XmlPullParserWrapper xmlPullParserWrapper,
             ErrorDisplayer errorDisplayer, Pausable geocacheListPresenter, Aborter aborter,
             MessageHandler messageHandler, CachePersisterFacadeFactory cachePersisterFacadeFactory,
-            CacheWriter cacheWriter) {
+            CacheWriter cacheWriter, Injector injector) {
         final PowerManager powerManager = (PowerManager)context
                 .getSystemService(Context.POWER_SERVICE);
         final WakeLock wakeLock = powerManager.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK,
@@ -264,7 +269,7 @@ public class GpxImporterDI {
         eventHandlers.add("loc", eventHandlerLoc);
 
         return new GpxImporter(geocacheListPresenter, gpxLoader, context, importThreadWrapper,
-                messageHandler, toastFactory, eventHandlers, errorDisplayer);
+                messageHandler, toastFactory, eventHandlers, errorDisplayer, injector);
     }
 
 }
