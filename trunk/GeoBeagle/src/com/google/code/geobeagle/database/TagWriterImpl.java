@@ -16,7 +16,6 @@ package com.google.code.geobeagle.database;
 
 import com.google.inject.Inject;
 
-import android.database.sqlite.SQLiteException;
 import android.util.Log;
 
 public class TagWriterImpl implements TagWriter {

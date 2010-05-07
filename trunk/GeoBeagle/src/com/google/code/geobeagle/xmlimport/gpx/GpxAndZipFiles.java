@@ -27,17 +27,18 @@ public class GpxAndZipFiles {
         }
 
         public boolean accept(File dir, String name) {
-            name = name.toLowerCase();
-            if (!name.startsWith(".") && name.endsWith(".zip"))
+            String lowerCaseName = name.toLowerCase();
+            if (!lowerCaseName.startsWith(".") && lowerCaseName.endsWith(".zip"))
                 return true;
-            return mGpxFilenameFilter.accept(name);
+            return mGpxFilenameFilter.accept(lowerCaseName);
         }
     }
 
     public static class GpxFilenameFilter {
         public boolean accept(String name) {
-            name = name.toLowerCase();
-            return !name.startsWith(".") && (name.endsWith(".gpx") || name.endsWith(".loc"));
+            String lowerCaseName = name.toLowerCase();
+            return !lowerCaseName.startsWith(".")
+                    && (lowerCaseName.endsWith(".gpx") || lowerCaseName.endsWith(".loc"));
         }
     }
 
@@ -55,7 +56,10 @@ public class GpxAndZipFiles {
         }
 
         public boolean hasNext() throws IOException {
-            // Iterate through actual zip and gpx files on the filesystem.
+            // Iterate through actual zip, loc, and gpx files on the filesystem.
+            // If a zip file, a sub iterator will walk through the zip file
+            // contents, otherwise the sub iterator will return just the loc/gpx
+            // file.
             if (mSubIter != null && mSubIter.hasNext())
                 return true;
 
