@@ -16,14 +16,14 @@ package com.google.code.geobeagle.xmlimport;
 
 import com.google.code.geobeagle.ErrorDisplayer;
 import com.google.code.geobeagle.R;
+import com.google.code.geobeagle.activity.cachelist.Pausable;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.Abortable;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
-import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheListPresenter;
 import com.google.code.geobeagle.xmlimport.GpxImporterDI.ImportThreadWrapper;
 import com.google.code.geobeagle.xmlimport.GpxImporterDI.MessageHandler;
 import com.google.code.geobeagle.xmlimport.GpxImporterDI.ToastFactory;
 
-import android.app.ListActivity;
+import android.content.Context;
 import android.widget.Toast;
 
 public class GpxImporter implements Abortable {
@@ -32,16 +32,15 @@ public class GpxImporter implements Abortable {
     private final EventHandlers mEventHandlers;
     private final GpxLoader mGpxLoader;
     private final ImportThreadWrapper mImportThreadWrapper;
-    private final ListActivity mListActivity;
+    private final Context mContext;
     private final MessageHandler mMessageHandler;
     private final ToastFactory mToastFactory;
-    private final GeocacheListPresenter mGeocacheListPresenter;
+    private final Pausable mGeocacheListPresenter;
 
-    GpxImporter(GeocacheListPresenter geocacheListPresenter, GpxLoader gpxLoader,
-            ListActivity listActivity, ImportThreadWrapper importThreadWrapper,
-            MessageHandler messageHandler, ToastFactory toastFactory, EventHandlers eventHandlers,
-            ErrorDisplayer errorDisplayer) {
-        mListActivity = listActivity;
+    GpxImporter(Pausable geocacheListPresenter, GpxLoader gpxLoader, Context context,
+            ImportThreadWrapper importThreadWrapper, MessageHandler messageHandler,
+            ToastFactory toastFactory, EventHandlers eventHandlers, ErrorDisplayer errorDisplayer) {
+        mContext = context;
         mGpxLoader = gpxLoader;
         mEventHandlers = eventHandlers;
         mImportThreadWrapper = importThreadWrapper;
@@ -56,7 +55,7 @@ public class GpxImporter implements Abortable {
         mGpxLoader.abort();
         if (mImportThreadWrapper.isAlive()) {
             mImportThreadWrapper.join();
-            mToastFactory.showToast(mListActivity, R.string.import_canceled, Toast.LENGTH_SHORT);
+            mToastFactory.showToast(mContext, R.string.import_canceled, Toast.LENGTH_SHORT);
         }
     }
 

@@ -15,8 +15,8 @@
 package com.google.code.geobeagle.xmlimport;
 
 import com.google.code.geobeagle.ErrorDisplayer;
+import com.google.code.geobeagle.activity.cachelist.Pausable;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
-import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheListPresenter;
 import com.google.code.geobeagle.database.CacheWriter;
 import com.google.code.geobeagle.xmlimport.CachePersisterFacadeDI.CachePersisterFacadeFactory;
 import com.google.code.geobeagle.xmlimport.EventHelperDI.EventHelperFactory;
@@ -239,12 +239,11 @@ public class GpxImporterDI {
         }
     }
 
-    public static GpxImporter create(ListActivity listActivity,
-            XmlPullParserWrapper xmlPullParserWrapper, ErrorDisplayer errorDisplayer,
-            GeocacheListPresenter geocacheListPresenter, Aborter aborter,
+    public static GpxImporter create(Context context, XmlPullParserWrapper xmlPullParserWrapper,
+            ErrorDisplayer errorDisplayer, Pausable geocacheListPresenter, Aborter aborter,
             MessageHandler messageHandler, CachePersisterFacadeFactory cachePersisterFacadeFactory,
             CacheWriter cacheWriter) {
-        final PowerManager powerManager = (PowerManager)listActivity
+        final PowerManager powerManager = (PowerManager)context
                 .getSystemService(Context.POWER_SERVICE);
         final WakeLock wakeLock = powerManager.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK,
                 "Importing");
@@ -253,7 +252,7 @@ public class GpxImporterDI {
                 cacheWriter, wakeLock);
 
         final GpxLoader gpxLoader = GpxLoaderDI.create(cachePersisterFacade, xmlPullParserWrapper,
-                aborter, errorDisplayer, wakeLock);
+                aborter, errorDisplayer, wakeLock, cacheWriter);
         final ToastFactory toastFactory = new ToastFactory();
         final ImportThreadWrapper importThreadWrapper = new ImportThreadWrapper(messageHandler,
                 xmlPullParserWrapper, aborter);
@@ -261,10 +260,10 @@ public class GpxImporterDI {
         final EventHandlerLoc eventHandlerLoc = new EventHandlerLoc(cachePersisterFacade);
 
         final EventHandlers eventHandlers = new EventHandlers();
-        eventHandlers.add(".gpx", eventHandlerGpx);
-        eventHandlers.add(".loc", eventHandlerLoc);
+        eventHandlers.add("gpx", eventHandlerGpx);
+        eventHandlers.add("loc", eventHandlerLoc);
 
-        return new GpxImporter(geocacheListPresenter, gpxLoader, listActivity, importThreadWrapper,
+        return new GpxImporter(geocacheListPresenter, gpxLoader, context, importThreadWrapper,
                 messageHandler, toastFactory, eventHandlers, errorDisplayer);
     }
 

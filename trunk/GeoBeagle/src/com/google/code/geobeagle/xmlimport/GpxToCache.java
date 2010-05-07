@@ -49,10 +49,14 @@ public class GpxToCache {
 
     private final Aborter mAborter;
     private final XmlPullParserWrapper mXmlPullParserWrapper;
+    private String mSource;
+    private final FileAlreadyLoadedChecker mTestLocAlreadyLoaded;
 
-    GpxToCache(XmlPullParserWrapper xmlPullParserWrapper, Aborter aborter) {
+    GpxToCache(XmlPullParserWrapper xmlPullParserWrapper, Aborter aborter,
+            FileAlreadyLoadedChecker fileAlreadyLoadedChecker) {
         mXmlPullParserWrapper = xmlPullParserWrapper;
         mAborter = aborter;
+        mTestLocAlreadyLoaded = fileAlreadyLoadedChecker;
     }
 
     public void abort() {
@@ -72,6 +76,10 @@ public class GpxToCache {
      */
     public boolean load(EventHelper eventHelper) throws XmlPullParserException, IOException,
             CancelException {
+        if (mTestLocAlreadyLoaded.isAlreadyLoaded(mSource)) {
+            return true;
+        }
+
         int eventType;
         for (eventType = mXmlPullParserWrapper.getEventType(); eventType != XmlPullParser.END_DOCUMENT; eventType = mXmlPullParserWrapper
                 .next()) {
@@ -89,6 +97,7 @@ public class GpxToCache {
     }
 
     public void open(String source, Reader reader) throws XmlPullParserException {
+        mSource = source;
         mXmlPullParserWrapper.open(source, reader);
     }
 }
