@@ -40,9 +40,7 @@ public class CacheDetailsWriter {
     public void open(String wpt) throws IOException {
         final String sanitized = replaceIllegalFileChars(wpt);
         new File(CacheDetailsLoader.DETAILS_DIR + mGpxName).mkdir();
-        // mHtmlWriter.open(CacheDetailsLoader.DETAILS_DIR + mGpxName + "/" +
-        // sanitized + ".html");
-        mHtmlWriter.open(CacheDetailsLoader.DETAILS_DIR + sanitized + ".html");
+        mHtmlWriter.open(CacheDetailsLoader.DETAILS_DIR + mGpxName + "/" + sanitized + ".html");
     }
 
     public static String replaceIllegalFileChars(String wpt) {
