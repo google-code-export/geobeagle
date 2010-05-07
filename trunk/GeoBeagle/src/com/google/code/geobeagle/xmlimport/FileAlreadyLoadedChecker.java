@@ -16,8 +16,6 @@ package com.google.code.geobeagle.xmlimport;
 
 import com.google.code.geobeagle.database.CacheWriter;
 
-import android.util.Log;
-
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -39,9 +37,7 @@ public class FileAlreadyLoadedChecker {
 
         String sqlDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(new File(
                 source).lastModified()));
-        Log.d("GeoBeagle", "testing loc " + sqlDate);
         if (mCacheWriter.isGpxAlreadyLoaded(new File(source).getName(), sqlDate)) {
-            Log.d("GeoBeagle", "already loaded!");
             return true;
         }
         return false;
