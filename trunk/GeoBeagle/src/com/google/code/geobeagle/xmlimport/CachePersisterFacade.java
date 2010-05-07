@@ -15,6 +15,7 @@
 package com.google.code.geobeagle.xmlimport;
 
 import com.google.code.geobeagle.GeocacheFactory.Source;
+import com.google.code.geobeagle.cachedetails.CacheDetailsLoader;
 import com.google.code.geobeagle.cachedetails.CacheDetailsWriter;
 import com.google.code.geobeagle.xmlimport.CachePersisterFacadeDI.FileFactory;
 import com.google.code.geobeagle.xmlimport.GpxImporterDI.MessageHandler;
@@ -94,7 +95,7 @@ public class CachePersisterFacade {
     }
 
     void start() {
-        File file = mFileFactory.createFile(CacheDetailsWriter.GEOBEAGLE_DIR);
+        File file = mFileFactory.createFile(CacheDetailsLoader.DETAILS_DIR);
         file.mkdirs();
     }
 

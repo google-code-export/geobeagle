@@ -17,7 +17,6 @@ package com.google.code.geobeagle.cachedetails;
 import java.io.IOException;
 
 public class CacheDetailsWriter {
-    public static final String GEOBEAGLE_DIR = "/sdcard/GeoBeagle";
     private final HtmlWriter mHtmlWriter;
     private String mLatitude;
     private String mLongitude;
@@ -38,7 +37,7 @@ public class CacheDetailsWriter {
 
     public void open(String wpt) throws IOException {
         final String sanitized = replaceIllegalFileChars(wpt);
-        mHtmlWriter.open(CacheDetailsWriter.GEOBEAGLE_DIR + "/" + sanitized + ".html");
+        mHtmlWriter.open(CacheDetailsLoader.DETAILS_DIR + sanitized + ".html");
     }
 
     public static String replaceIllegalFileChars(String wpt) {
