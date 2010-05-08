@@ -1,0 +1,37 @@
+#summary Release Notes for GeoBeagle versions
+
+= v0.6.13 5/18/09 =
+ * Improved error message during gpx load.
+ * Skip loading files within .ZIPs if they don't have the correct extension (fixes hang bug if there are random zip files hanging around).
+ * Add indicators for bearing of caches.
+ * Add bearing indicator for the phone.
+ * Shrank font on cache list page.
+
+= v0.6.10 5/16/09 =
+ * Support for logging caches using SMS Field Notes
+
+= v0.6.8 = 
+  * Georg Lukas' patches to support opencaching sites (thanks Georg!).
+  * adds a show all vs show nearest caches menu.  
+  * updating of cache distances on the fly (also, much faster sorting / filtering)
+  * automatically sort on the fly (the sort button has been removed)
+  * a bunch of fixes for force close issues related to the gps being disabled
+  * support zip file mime type so geocaching zip files can be downloaded from the browser
+
+= v0.60 =
+Puts the gps status widget into the cache list page too.
+
+= v0.50 =
+Added support for intermediate waypoint files, and loc files.  Like GPX files, LOC is a "sync", not an "import" operation--deleting the LOC file will remove the cache from Geobeagle.
+
+Added a "refresh" button to cache list page, which will update the distances and re-sort.  This is a stop-gap until we get a nicer UI in place here.
+
+= v0.48 =
+Move My Location down to menu, where it should be less confusing.  Fix non-US locale bug.
+
+= v0.47 = 
+Fixes bug where no caches were getting deleted if sync directory is empty.
+Changed cache list title bar to be clearer.
+
+= v0.45 =
+Supports uploading from gpx files.  Sync directory changed to /sdcard/download, to match browser download dir.
