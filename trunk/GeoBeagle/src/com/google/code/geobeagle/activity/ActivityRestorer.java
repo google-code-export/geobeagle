@@ -15,7 +15,7 @@
 package com.google.code.geobeagle.activity;
 
 import com.google.code.geobeagle.Geocache;
-import com.google.code.geobeagle.activity.ActivityDI.ActivityTypeFactory;
+import com.google.code.geobeagle.activity.ActivitySaverProvider.ActivityTypeFactory;
 import com.google.code.geobeagle.activity.cachelist.CacheListActivity;
 import com.google.code.geobeagle.activity.cachelist.GeocacheListController;
 import com.google.code.geobeagle.activity.main.GeoBeagle;

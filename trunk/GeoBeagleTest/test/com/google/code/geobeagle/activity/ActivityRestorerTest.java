@@ -15,7 +15,7 @@
 package com.google.code.geobeagle.activity;
 
 import com.google.code.geobeagle.Geocache;
-import com.google.code.geobeagle.activity.ActivityDI.ActivityTypeFactory;
+import com.google.code.geobeagle.activity.ActivitySaverProvider.ActivityTypeFactory;
 import com.google.code.geobeagle.activity.cachelist.CacheListActivity;
 import com.google.code.geobeagle.activity.cachelist.GeocacheListController;
 import com.google.code.geobeagle.activity.main.GeoBeagle;
@@ -40,7 +40,7 @@ public class ActivityRestorerTest {
     @Test
     public void createCacheListIntent() throws Exception {
         ActivityTypeFactory activityTypeFactory = PowerMock
-                .createMock(ActivityDI.ActivityTypeFactory.class);
+                .createMock(ActivitySaverProvider.ActivityTypeFactory.class);
         SharedPreferences sharedPreferences = PowerMock.createMock(SharedPreferences.class);
         Activity parent = PowerMock.createMock(Activity.class);
         Intent intent = PowerMock.createMock(Intent.class);
@@ -63,7 +63,7 @@ public class ActivityRestorerTest {
     @Test
     public void createNull() throws Exception {
         ActivityTypeFactory activityTypeFactory = PowerMock
-                .createMock(ActivityDI.ActivityTypeFactory.class);
+                .createMock(ActivitySaverProvider.ActivityTypeFactory.class);
         SharedPreferences sharedPreferences = PowerMock.createMock(SharedPreferences.class);
         Activity parent = PowerMock.createMock(Activity.class);
 
@@ -89,7 +89,7 @@ public class ActivityRestorerTest {
     @Test
     public void createSearchOnlineIntent() throws Exception {
         ActivityTypeFactory activityTypeFactory = PowerMock
-                .createMock(ActivityDI.ActivityTypeFactory.class);
+                .createMock(ActivitySaverProvider.ActivityTypeFactory.class);
         SharedPreferences sharedPreferences = PowerMock.createMock(SharedPreferences.class);
         Activity parent = PowerMock.createMock(Activity.class);
 
@@ -109,7 +109,7 @@ public class ActivityRestorerTest {
     @Test
     public void activityTypeNone() throws Exception {
         ActivityTypeFactory activityTypeFactory = PowerMock
-                .createMock(ActivityDI.ActivityTypeFactory.class);
+                .createMock(ActivitySaverProvider.ActivityTypeFactory.class);
         SharedPreferences sharedPreferences = PowerMock.createMock(SharedPreferences.class);
         Activity parent = PowerMock.createMock(Activity.class);
 
@@ -127,8 +127,8 @@ public class ActivityRestorerTest {
 
     @Test
     public void createViewCache() throws Exception {
-        ActivityDI.ActivityTypeFactory activityTypeFactory = PowerMock
-                .createMock(ActivityDI.ActivityTypeFactory.class);
+        ActivitySaverProvider.ActivityTypeFactory activityTypeFactory = PowerMock
+                .createMock(ActivitySaverProvider.ActivityTypeFactory.class);
         SharedPreferences sharedPreferences = PowerMock.createMock(SharedPreferences.class);
         Activity parent = PowerMock.createMock(Activity.class);
         GeocacheFromPreferencesFactory geocacheFromPreferencesFactory = PowerMock
