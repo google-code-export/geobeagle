@@ -14,10 +14,11 @@
 
 package com.google.code.geobeagle.activity;
 
+import com.google.code.geobeagle.activity.main.GeoBeagleModule.DefaultSharedPreferences;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
-import android.content.Context;
+import android.content.SharedPreferences;
 
 public class ActivityDI implements Provider<ActivitySaver> {
 
@@ -34,17 +35,16 @@ public class ActivityDI implements Provider<ActivitySaver> {
         }
     }
 
-    private Context mContext;
+    private final SharedPreferences sharedPreferences;
 
     @Inject
-    public ActivityDI(Context context) {
-        mContext = context;
+    ActivityDI(@DefaultSharedPreferences SharedPreferences sharedPreferences) {
+        this.sharedPreferences = sharedPreferences;
     }
 
     @Override
     public ActivitySaver get() {
-        return new ActivitySaver(mContext.getSharedPreferences("GeoBeagle", Context.MODE_PRIVATE)
-                .edit());
+        return new ActivitySaver(sharedPreferences.edit());
     }
 
 }
