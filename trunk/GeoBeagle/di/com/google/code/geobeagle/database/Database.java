@@ -63,4 +63,5 @@ public class Database {
 
     public static final String TBL_CACHES = "CACHES";
     public static final String TBL_GPX = "GPX";
+    public static final String SQL_FORCE_UPDATE_ALL = "UPDATE GPX SET ExportTime = '1970-01-01'";
 }
