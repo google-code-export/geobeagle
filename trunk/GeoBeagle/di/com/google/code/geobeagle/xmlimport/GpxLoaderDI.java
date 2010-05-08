@@ -16,6 +16,9 @@ package com.google.code.geobeagle.xmlimport;
 
 import com.google.code.geobeagle.ErrorDisplayer;
 import com.google.code.geobeagle.database.CacheWriter;
+import com.google.code.geobeagle.xmlimport.CachePersisterFacade;
+import com.google.code.geobeagle.xmlimport.GpxLoader;
+import com.google.code.geobeagle.xmlimport.GpxToCache;
 import com.google.code.geobeagle.xmlimport.GpxToCache.Aborter;
 import com.google.code.geobeagle.xmlimport.GpxToCacheDI.XmlPullParserWrapper;
 

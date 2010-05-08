@@ -16,7 +16,9 @@ package com.google.code.geobeagle.xmlimport;
 
 import com.google.code.geobeagle.ErrorDisplayer;
 import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.cachedetails.CacheDetailsLoader;
+import com.google.code.geobeagle.cachedetails.FileDataVersionChecker;
+import com.google.code.geobeagle.cachedetails.FileDataVersionWriter;
+import com.google.code.geobeagle.database.DbFrontend;
 import com.google.code.geobeagle.xmlimport.EventHelperDI.EventHelperFactory;
 import com.google.code.geobeagle.xmlimport.GpxImporterDI.MessageHandler;
 import com.google.code.geobeagle.xmlimport.gpx.GpxAndZipFiles;
@@ -29,6 +31,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 public class ImportThreadDelegate {
+
     public static class ImportThreadHelper {
         private final ErrorDisplayer mErrorDisplayer;
         private final EventHandlers mEventHandlers;
@@ -36,16 +39,18 @@ public class ImportThreadDelegate {
         private final GpxLoader mGpxLoader;
         private boolean mHasFiles;
         private final MessageHandler mMessageHandler;
+        private final OldCacheFilesCleaner mOldCacheFilesCleaner;
 
         public ImportThreadHelper(GpxLoader gpxLoader, MessageHandler messageHandler,
                 EventHelperFactory eventHelperFactory, EventHandlers eventHandlers,
-                ErrorDisplayer errorDisplayer) {
+                ErrorDisplayer errorDisplayer, OldCacheFilesCleaner oldCacheFilesCleaner) {
             mErrorDisplayer = errorDisplayer;
             mGpxLoader = gpxLoader;
             mMessageHandler = messageHandler;
             mEventHelperFactory = eventHelperFactory;
             mEventHandlers = eventHandlers;
             mHasFiles = false;
+            mOldCacheFilesCleaner = oldCacheFilesCleaner;
         }
 
         public void cleanup() {
@@ -69,6 +74,7 @@ public class ImportThreadDelegate {
         }
 
         public void start() {
+            mOldCacheFilesCleaner.clean();
             mGpxLoader.start();
         }
     }
@@ -76,12 +82,20 @@ public class ImportThreadDelegate {
     private final ErrorDisplayer mErrorDisplayer;
     private final GpxAndZipFiles mGpxAndZipFiles;
     private final ImportThreadHelper mImportThreadHelper;
+    private final FileDataVersionWriter mFileDataVersionWriter;
+    private final FileDataVersionChecker mFileDataVersionChecker;
+    private final DbFrontend mDbFrontend;
 
     public ImportThreadDelegate(GpxAndZipFiles gpxAndZipFiles,
-            ImportThreadHelper importThreadHelper, ErrorDisplayer errorDisplayer) {
+            ImportThreadHelper importThreadHelper, ErrorDisplayer errorDisplayer,
+            FileDataVersionWriter fileDataVersionWriter,
+            FileDataVersionChecker fileDataVersionChecker, DbFrontend dbFrontend) {
         mGpxAndZipFiles = gpxAndZipFiles;
         mImportThreadHelper = importThreadHelper;
         mErrorDisplayer = errorDisplayer;
+        mFileDataVersionWriter = fileDataVersionWriter;
+        mFileDataVersionChecker = fileDataVersionChecker;
+        mDbFrontend = dbFrontend;
     }
 
     public void run() {
@@ -99,6 +113,9 @@ public class ImportThreadDelegate {
     }
 
     protected void tryRun() throws IOException, XmlPullParserException {
+        if (mFileDataVersionChecker.needsUpdating()) {
+            mDbFrontend.forceUpdate();
+        }
         GpxFilesAndZipFilesIter gpxFilesAndZipFilesIter = mGpxAndZipFiles.iterator();
         if (gpxFilesAndZipFilesIter == null) {
             mErrorDisplayer.displayError(R.string.error_cant_read_sd);
@@ -110,6 +127,7 @@ public class ImportThreadDelegate {
             if (!mImportThreadHelper.processFile(gpxFilesAndZipFilesIter.next()))
                 return;
         }
+        mFileDataVersionWriter.writeVersion();
         mImportThreadHelper.end();
     }
 }

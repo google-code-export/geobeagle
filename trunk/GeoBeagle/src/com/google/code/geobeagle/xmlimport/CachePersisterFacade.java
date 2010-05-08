@@ -92,6 +92,7 @@ public class CachePersisterFacade {
         mMessageHandler.updateSource(path);
         mCacheTagWriter.startWriting();
         mCacheTagWriter.gpxName(path);
+        mCacheDetailsWriter.gpxName(path);
     }
 
     void start() {
