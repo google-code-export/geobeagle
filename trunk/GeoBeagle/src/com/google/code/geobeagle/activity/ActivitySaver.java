@@ -20,19 +20,19 @@ import android.content.SharedPreferences.Editor;
 
 public class ActivitySaver {
     private final Editor mEditor;
-    static final String LAST_ACTIVITY = "lastActivity";
+    static final String LAST_ACTIVITY = "lastActivity2";
 
     ActivitySaver(Editor editor) {
         mEditor = editor;
     }
 
     public void save(ActivityType activityType) {
-        mEditor.putInt("lastActivity", activityType.toInt());
+        mEditor.putString(LAST_ACTIVITY, activityType.name());
         mEditor.commit();
     }
 
     public void save(ActivityType activityType, Geocache geocache) {
-        mEditor.putInt("lastActivity", activityType.toInt());
+        mEditor.putString(LAST_ACTIVITY, activityType.name());
         geocache.writeToPrefs(mEditor);
         mEditor.commit();
     }
