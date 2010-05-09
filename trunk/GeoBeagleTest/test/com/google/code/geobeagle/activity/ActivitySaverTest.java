@@ -17,34 +17,45 @@ package com.google.code.geobeagle.activity;
 import com.google.code.geobeagle.Geocache;
 
 import org.easymock.EasyMock;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.api.easymock.PowerMock;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 
 @RunWith(PowerMockRunner.class)
 public class ActivitySaverTest {
+    private SharedPreferences sharedPreferences;
+
+    private Editor editor;
+
+    @Before
+    public void setUp() {
+        editor = PowerMock.createMock(Editor.class);
+        sharedPreferences = PowerMock.createMock(SharedPreferences.class);
+    }
+
     @Test
     public void save() {
-        Editor editor = PowerMock.createMock(Editor.class);
-
+        EasyMock.expect(sharedPreferences.edit()).andReturn(editor);
         EasyMock.expect(
                 editor.putString(ActivitySaver.LAST_ACTIVITY, ActivityType.CACHE_LIST.name()))
                 .andReturn(editor);
         EasyMock.expect(editor.commit()).andReturn(true);
 
         PowerMock.replayAll();
-        new ActivitySaver(editor).save(ActivityType.CACHE_LIST);
+        new ActivitySaver(sharedPreferences).save(ActivityType.CACHE_LIST);
         PowerMock.verifyAll();
     }
 
     @Test
     public void saveGeocache() {
-        Editor editor = PowerMock.createMock(Editor.class);
         Geocache geocache = PowerMock.createMock(Geocache.class);
 
+        EasyMock.expect(sharedPreferences.edit()).andReturn(editor);
         EasyMock.expect(
                 editor.putString(ActivitySaver.LAST_ACTIVITY, ActivityType.CACHE_LIST.name()))
                 .andReturn(editor);
@@ -52,7 +63,7 @@ public class ActivitySaverTest {
         EasyMock.expect(editor.commit()).andReturn(true);
 
         PowerMock.replayAll();
-        new ActivitySaver(editor).save(ActivityType.CACHE_LIST, geocache);
+        new ActivitySaver(sharedPreferences).save(ActivityType.CACHE_LIST, geocache);
         PowerMock.verifyAll();
     }
 }
