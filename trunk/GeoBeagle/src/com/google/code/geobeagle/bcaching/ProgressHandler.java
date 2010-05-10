@@ -12,26 +12,24 @@
  ** limitations under the License.
  */
 
-package com.google.code.geobeagle.actions;
+package com.google.code.geobeagle.bcaching;
 
-import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.activity.preferences.EditPreferences;
-import com.google.inject.Inject;
+import android.app.ProgressDialog;
+import android.os.Handler;
+import android.os.Message;
+import android.util.Log;
 
-import android.app.Activity;
-import android.content.Intent;
+public final class ProgressHandler extends Handler {
+    private final ProgressDialog progressDialog;
 
-public class MenuActionSettings extends MenuActionBase {
-    private final Activity mActivity;
-
-    @Inject
-    public MenuActionSettings(Activity activity) {
-        super(R.string.menu_settings);
-        mActivity = activity;
+    public ProgressHandler(ProgressDialog progressDialog) {
+        this.progressDialog = progressDialog;
     }
 
     @Override
-    public void act() {
-        mActivity.startActivity(new Intent(mActivity, EditPreferences.class));
+    public void handleMessage(Message msg) {
+        Log.d("GeoBeagle", "getting message: " + msg);
+        progressDialog.setTitle("Importing from BCaching site");
+        ProgressMessage.fromInt(msg.what).act(progressDialog, msg.arg1);
     }
 }
