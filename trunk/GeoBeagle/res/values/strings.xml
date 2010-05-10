@@ -89,6 +89,7 @@
 	<string name="menu_show_nearest_caches">Show Nearest</string>
 	<string name="menu_show_all_caches">Show All</string>
 	<string name="menu_delete_all_caches">Delete All</string>
+	<string name="menu_sync_bcaching">Sync BCaching</string>
 	<string name="sorting">Filtering / Sorting...</string>
 	<string name="search_for">Search for</string>
 	<string name="cache_list_title">GeoBeagle: Nearest caches (%2$d total)</string>
