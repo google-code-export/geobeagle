@@ -177,10 +177,10 @@ public class ImportBCachingWorker extends Thread {
     @Override
     public void run() {
         long now = System.currentTimeMillis();
-        try {
-            progressManager.update(handler, ProgressMessage.START, 0);
-            String lastUpdateTime = bcachingLastUpdated.getLastUpdateTime();
+        progressManager.update(handler, ProgressMessage.START, 0);
+        String lastUpdateTime = bcachingLastUpdated.getLastUpdateTime();
 
+        try {
             int totalCount = bcachingListFactory.getTotalCount(lastUpdateTime);
             if (totalCount <= 0)
                 return;
@@ -192,8 +192,9 @@ public class ImportBCachingWorker extends Thread {
                     .valueOf(now));
             while (bcachingList.getCachesRead() > 0) {
                 detailsReader.getCacheDetails(bcachingList.getCacheIds(), updatedCaches);
+                
                 updatedCaches += bcachingList.getCachesRead();
-                progressManager.update(handler, ProgressMessage.SET_PROGRESS, updatedCaches);
+                progressManager.update(handler, ProgressMessage.SET_PROGRESS, 1);
                 bcachingList = bcachingListFactory.getCacheList(updatedCaches, 50, String
                         .valueOf(now));
             }
