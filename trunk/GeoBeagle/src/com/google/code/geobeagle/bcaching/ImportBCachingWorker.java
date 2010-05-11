@@ -54,11 +54,13 @@ public class ImportBCachingWorker extends Thread {
             result.append(line);
             result.append('\n');
         }
-        return new JSONObject(result.toString());
+        String string = result.toString();
+        Log.d("GeoBeagle", "readResponse: " + string);
+        return new JSONObject(string);
     }
 
     private void getCacheDetails(BCachingCommunication bcachingCommunication, String csvIds,
-            int updatedCaches) throws MalformedURLException, Exception  {
+            int updatedCaches) throws MalformedURLException, Exception {
         Log.d("GeoBeagle", "Getting details: " + updatedCaches);
         Hashtable<String, String> params = new Hashtable<String, String>();
         params.put("a", "detail");
