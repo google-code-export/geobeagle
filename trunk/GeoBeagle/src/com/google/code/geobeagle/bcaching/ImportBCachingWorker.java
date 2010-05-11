@@ -60,19 +60,21 @@ public class ImportBCachingWorker extends Thread {
             params.put("logs", "1");
             params.put("fmt", "gpx");
             params.put("app", "GeoBeagle");
-        
+
             Log.d("GeoBeagle", "Downloading cache details");
             DataInputStream dis = new DataInputStream(bcachingCommunication.sendRequest(params));
             WriterWrapper writerWrapper = new WriterWrapper();
-            writerWrapper.open("/sdcard/download/bcaching" + String.valueOf(updatedCaches) + ".gpx");
+            writerWrapper
+                    .open("/sdcard/download/bcaching" + String.valueOf(updatedCaches) + ".gpx");
             String line;
             while ((line = dis.readLine()) != null) {
                 writerWrapper.write(line);
             }
             writerWrapper.close();
         }
-        
+
     }
+
     private final Handler handler;
     private final BCachingLastUpdated bcachingLastUpdated;
     private final BCachingListFactory bcachingListFactory;
@@ -159,11 +161,11 @@ public class ImportBCachingWorker extends Thread {
                     .getTotalCount();
         }
 
-        BCachingList getCacheList(int startAt, int count, String lastUpdate) throws IOException,
+        BCachingList getCacheList(int startAt, int count, long lastUpdate) throws IOException,
                 JSONException, HttpException {
             params.put("first", Integer.toString(startAt));
             params.put("maxcount", Integer.toString(count));
-            params.put("since", lastUpdate);
+            params.put("since", String.valueOf(lastUpdate));
             return new BCachingList(readResponse(bCachingCommunication.sendRequest(params)));
         }
     }
@@ -188,15 +190,13 @@ public class ImportBCachingWorker extends Thread {
             Log.d("GeoBeagle", "totalCount = " + totalCount);
 
             int updatedCaches = 0;
-            BCachingList bcachingList = bcachingListFactory.getCacheList(updatedCaches, 50, String
-                    .valueOf(now));
+            BCachingList bcachingList = bcachingListFactory.getCacheList(updatedCaches, 50, now);
             while (bcachingList.getCachesRead() > 0) {
                 detailsReader.getCacheDetails(bcachingList.getCacheIds(), updatedCaches);
-                
+
                 updatedCaches += bcachingList.getCachesRead();
                 progressManager.update(handler, ProgressMessage.SET_PROGRESS, 1);
-                bcachingList = bcachingListFactory.getCacheList(updatedCaches, 50, String
-                        .valueOf(now));
+                bcachingList = bcachingListFactory.getCacheList(updatedCaches, 50, now);
             }
         } catch (IOException e) {
             errorDisplayer.displayError(R.string.problem_importing_from_bcaching, e
