@@ -37,13 +37,13 @@ import java.util.Hashtable;
  * 
  * @author Mark Bastian
  */
-public class BcachingCommunication {
+public class BCachingCommunication {
     private final String mUsername;
     private final String mHashword;
     private final String mBaseUrl = "http://www.bcaching.com/api";
     private final int mTimeout = 20000; // millisec
 
-    public BcachingCommunication(String username, String password) {
+    public BCachingCommunication(String username, String password) {
         mUsername = username;
         String hashword = "";
         try {
@@ -123,7 +123,7 @@ public class BcachingCommunication {
         conn.addRequestProperty("Accept-encoding", "gzip");
         int responseCode = conn.getResponseCode();
         InputStream in = conn.getInputStream();
-        Log.d("GeoBeagle", "BcachingCommunication response length=" + conn.getContentLength());
+        Log.d("GeoBeagle", "BCachingCommunication response length=" + conn.getContentLength());
         if (conn.getContentEncoding().equalsIgnoreCase("gzip")) {
             in = new java.util.zip.GZIPInputStream(in);
         }

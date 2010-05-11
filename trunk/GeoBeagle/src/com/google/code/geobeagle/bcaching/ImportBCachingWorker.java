@@ -57,7 +57,7 @@ public class ImportBCachingWorker extends Thread {
         return new JSONObject(result.toString());
     }
 
-    private void getCacheDetails(BcachingCommunication bcachingCommunication, String csvIds,
+    private void getCacheDetails(BCachingCommunication bcachingCommunication, String csvIds,
             int updatedCaches) throws MalformedURLException, Exception  {
         Log.d("GeoBeagle", "Getting details: " + updatedCaches);
         Hashtable<String, String> params = new Hashtable<String, String>();
@@ -88,7 +88,7 @@ public class ImportBCachingWorker extends Thread {
         String now = Long.toString(System.currentTimeMillis());
         try {
             String lastUpdate = sharedPreferences.getString("bcaching_lastupdate", "");
-            BcachingCommunication bcachingCommunication = new BcachingCommunication("USERNAME",
+            BCachingCommunication bcachingCommunication = new BCachingCommunication("USERNAME",
                     "PASSWORD");
             Message.obtain(handler, ProgressMessage.START.ordinal()).sendToTarget();
 
