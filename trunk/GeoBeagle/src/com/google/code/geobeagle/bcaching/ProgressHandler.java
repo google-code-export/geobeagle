@@ -30,7 +30,7 @@ public final class ProgressHandler extends Handler {
     public void handleMessage(Message msg) {
         progressDialog.setTitle("Importing from BCaching site");
         ProgressMessage progressMessage = ProgressMessage.fromInt(msg.what);
-        Log.d("GeoBeagle", "getting message: " + progressMessage);
+        Log.d("GeoBeagle", "getting message: " + progressMessage + ", " + msg.arg1);
         progressMessage.act(progressDialog, msg.arg1);
     }
 }

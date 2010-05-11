@@ -65,7 +65,7 @@ public class BCachingCommunication {
     }
 
     private String encodeQueryString(String username, String hashword, String params)
-            throws NoSuchAlgorithmException, DigestException {
+            {
 
         if (username == null)
             throw new IllegalArgumentException("username is required.");
@@ -89,7 +89,7 @@ public class BCachingCommunication {
     }
 
     public InputStream sendRequest(Hashtable<String, String> params) throws IOException,
-            HttpException, NoSuchAlgorithmException, DigestException {
+            HttpException {
         if (params == null || params.size() == 0)
             throw new IllegalArgumentException("params are required.");
         if (!params.containsKey("a"))
@@ -111,8 +111,7 @@ public class BCachingCommunication {
         return sendRequest(request);
     }
 
-    public InputStream sendRequest(String query) throws IOException, HttpException,
-            NoSuchAlgorithmException, DigestException {
+    public InputStream sendRequest(String query) throws IOException, HttpException {
         if (query == null || query.length() == 0)
             throw new IllegalArgumentException("query is required");
 
@@ -140,17 +139,32 @@ public class BCachingCommunication {
         return in;
     }
 
-    private URL getURL(String username, String hashword, String params)
-            throws MalformedURLException, NoSuchAlgorithmException, DigestException {
-        return new URL(mBaseUrl + "/q.ashx?" + encodeQueryString(username, hashword, params));
+    private URL getURL(String username, String hashword, String params) {
+        try {
+            return new URL(mBaseUrl + "/q.ashx?" + encodeQueryString(username, hashword, params));
+        } catch (MalformedURLException e) {
+            // mBaseUrl is a constant, it should never be malformed.
+            throw new RuntimeException(e);
+        }
     }
 
-    public String encodeMd5Base64(String s) throws NoSuchAlgorithmException, DigestException {
+    public String encodeMd5Base64(String s) {
         byte[] buf = s.getBytes();
-        java.security.MessageDigest md = java.security.MessageDigest.getInstance("MD5");
-        md.update(buf, 0, buf.length);
-        buf = new byte[16];
-        md.digest(buf, 0, buf.length);
+        try {
+            java.security.MessageDigest md;
+            md = java.security.MessageDigest.getInstance("MD5");
+            md.update(buf, 0, buf.length);
+            buf = new byte[16];
+            md.digest(buf, 0, buf.length);
+        } catch (DigestException e) {
+            // Should never happen.
+            Log.d("GeoBeagle", "Digest exception encoding md5");
+            throw new RuntimeException(e);
+        } catch (NoSuchAlgorithmException e) {
+            // Should never happen.
+            Log.d("GeoBeagle", "NoSuchAlgorithmException exception encoding md5");
+            throw new RuntimeException(e);
+        }
         return base64Encode(buf);
     }
 

@@ -14,6 +14,8 @@
 
 package com.google.code.geobeagle.bcaching;
 
+import com.google.code.geobeagle.ErrorDisplayer;
+import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.cachedetails.WriterWrapper;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
@@ -32,10 +34,7 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.MalformedURLException;
 import java.nio.charset.Charset;
-import java.security.DigestException;
-import java.security.NoSuchAlgorithmException;
 import java.util.Hashtable;
 
 public class ImportBCachingWorker extends Thread {
@@ -43,18 +42,54 @@ public class ImportBCachingWorker extends Thread {
         ImportBCachingWorker create(Handler handler);
     }
 
+    static class DetailsReader {
+        private final BCachingCommunication bcachingCommunication;
+
+        DetailsReader(BCachingCommunication bcachingCommunication) {
+            this.bcachingCommunication = bcachingCommunication;
+        }
+
+        void getCacheDetails(String csvIds, int updatedCaches) throws IOException, HttpException {
+            Log.d("GeoBeagle", "Getting details: " + updatedCaches);
+            Hashtable<String, String> params = new Hashtable<String, String>();
+            params.put("a", "detail");
+            params.put("desc", "html");
+            params.put("ids", csvIds);
+            params.put("tbs", "0");
+            params.put("wpts", "1");
+            params.put("logs", "1");
+            params.put("fmt", "gpx");
+            params.put("app", "GeoBeagle");
+        
+            Log.d("GeoBeagle", "Downloading cache details");
+            DataInputStream dis = new DataInputStream(bcachingCommunication.sendRequest(params));
+            WriterWrapper writerWrapper = new WriterWrapper();
+            writerWrapper.open("/sdcard/download/bcaching" + String.valueOf(updatedCaches) + ".gpx");
+            String line;
+            while ((line = dis.readLine()) != null) {
+                writerWrapper.write(line);
+            }
+            writerWrapper.close();
+        }
+        
+    }
     private final Handler handler;
     private final BCachingLastUpdated bcachingLastUpdated;
-    private final BCachingListFactory bCachingListFactory;
-    private final BCachingCommunication bCachingCommunication;
+    private final BCachingListFactory bcachingListFactory;
+    private final ErrorDisplayer errorDisplayer;
+    private final ProgressManager progressManager;
+    private final DetailsReader detailsReader;
 
     @Inject
-    public ImportBCachingWorker(@Assisted Handler handler, BCachingLastUpdated bcachingLastUpdated,
-            BCachingListFactory bCachingListFactory, BCachingCommunication bCachingCommunication) {
+    public ImportBCachingWorker(@Assisted Handler handler, ProgressManager progressManager,
+            BCachingLastUpdated bcachingLastUpdated, BCachingListFactory bcachingListFactory,
+            ErrorDisplayer errorDisplayer, DetailsReader detailsReader) {
         this.handler = handler;
         this.bcachingLastUpdated = bcachingLastUpdated;
-        this.bCachingListFactory = bCachingListFactory;
-        this.bCachingCommunication = bCachingCommunication;
+        this.bcachingListFactory = bcachingListFactory;
+        this.errorDisplayer = errorDisplayer;
+        this.progressManager = progressManager;
+        this.detailsReader = detailsReader;
     }
 
     static JSONObject readResponse(InputStream in) throws IOException, JSONException {
@@ -72,30 +107,6 @@ public class ImportBCachingWorker extends Thread {
         return new JSONObject(string);
     }
 
-    private void getCacheDetails(BCachingCommunication bcachingCommunication, String csvIds,
-            int updatedCaches) throws MalformedURLException, Exception {
-        Log.d("GeoBeagle", "Getting details: " + updatedCaches);
-        Hashtable<String, String> params = new Hashtable<String, String>();
-        params.put("a", "detail");
-        params.put("desc", "html");
-        params.put("ids", csvIds);
-        params.put("tbs", "0");
-        params.put("wpts", "1");
-        params.put("logs", "1");
-        params.put("fmt", "gpx");
-        params.put("app", "GeoBeagle");
-
-        Log.d("GeoBeagle", "Downloading cache details");
-        DataInputStream dis = new DataInputStream(bcachingCommunication.sendRequest(params));
-        WriterWrapper writerWrapper = new WriterWrapper();
-        writerWrapper.open("/sdcard/download/bcaching" + String.valueOf(updatedCaches) + ".gpx");
-        String line;
-        while ((line = dis.readLine()) != null) {
-            writerWrapper.write(line);
-        }
-        writerWrapper.close();
-    }
-
     static class BCachingList {
         private final JSONObject cacheList;
 
@@ -103,7 +114,7 @@ public class ImportBCachingWorker extends Thread {
             this.cacheList = json;
         }
 
-        int getCount() throws JSONException {
+        int getCachesRead() throws JSONException {
             return cacheList.getJSONArray("data").length();
         }
 
@@ -132,7 +143,6 @@ public class ImportBCachingWorker extends Thread {
     static class BCachingListFactory {
         private final Hashtable<String, String> params;
         private final BCachingCommunication bCachingCommunication;
-        private BCachingList firstCacheList;
 
         @Inject
         BCachingListFactory(Hashtable<String, String> params,
@@ -141,61 +151,69 @@ public class ImportBCachingWorker extends Thread {
             this.bCachingCommunication = bCachingCommunication;
         }
 
-        int getTotalCount() throws MalformedURLException, IOException, JSONException,
-                NoSuchAlgorithmException, DigestException, HttpException {
+        int getTotalCount(String lastUpdate) throws IOException, JSONException, HttpException {
             params.remove("first");
-            firstCacheList = new BCachingList(readResponse(bCachingCommunication
-                    .sendRequest(params)));
-            return firstCacheList.getTotalCount();
+            params.put("maxcount", "0");
+            params.put("since", lastUpdate);
+            return new BCachingList(readResponse(bCachingCommunication.sendRequest(params)))
+                    .getTotalCount();
         }
 
-        void putLastUpdateTime(String lastUpdate) {
-            if (!lastUpdate.equals(""))
-                params.put("since", lastUpdate);
-        }
-
-        BCachingList getCacheList(int startAt) throws NoSuchAlgorithmException, DigestException,
-                IOException, JSONException, HttpException {
-            if (startAt == 0)
-                return firstCacheList;
-
+        BCachingList getCacheList(int startAt, int count, String lastUpdate) throws IOException,
+                JSONException, HttpException {
             params.put("first", Integer.toString(startAt));
+            params.put("maxcount", Integer.toString(count));
+            params.put("since", lastUpdate);
             return new BCachingList(readResponse(bCachingCommunication.sendRequest(params)));
         }
+    }
 
+    static class ProgressManager {
+        void update(Handler handler, ProgressMessage progressMessage, int arg) {
+            Message.obtain(handler, progressMessage.ordinal(), arg, 0).sendToTarget();
+        }
     }
 
     @Override
     public void run() {
         long now = System.currentTimeMillis();
         try {
-            Message.obtain(handler, ProgressMessage.START.ordinal()).sendToTarget();
-            bCachingListFactory.putLastUpdateTime(bcachingLastUpdated.getLastUpdateTime());
+            progressManager.update(handler, ProgressMessage.START, 0);
+            String lastUpdateTime = bcachingLastUpdated.getLastUpdateTime();
 
-            int totalCount = bCachingListFactory.getTotalCount();
-            Message.obtain(handler, ProgressMessage.SET_MAX.ordinal(), totalCount, 0)
-                    .sendToTarget();
+            int totalCount = bcachingListFactory.getTotalCount(lastUpdateTime);
+            if (totalCount <= 0)
+                return;
+            progressManager.update(handler, ProgressMessage.SET_MAX, totalCount);
             Log.d("GeoBeagle", "totalCount = " + totalCount);
 
             int updatedCaches = 0;
-            while (updatedCaches < totalCount) {
-                BCachingList bcachingList = bCachingListFactory.getCacheList(updatedCaches);
-
-                updatedCaches += bcachingList.getCount();
-                Log.d("GeoBeagle", "updated caches: " + updatedCaches);
-                Message.obtain(handler, ProgressMessage.SET_PROGRESS.ordinal(), updatedCaches, 0)
-                        .sendToTarget();
-                getCacheDetails(bCachingCommunication, bcachingList.getCacheIds(), updatedCaches);
-                if (updatedCaches < 50)
-                    break;
+            BCachingList bcachingList = bcachingListFactory.getCacheList(updatedCaches, 50, String
+                    .valueOf(now));
+            while (bcachingList.getCachesRead() > 0) {
+                detailsReader.getCacheDetails(bcachingList.getCacheIds(), updatedCaches);
+                updatedCaches += bcachingList.getCachesRead();
+                progressManager.update(handler, ProgressMessage.SET_PROGRESS, updatedCaches);
+                bcachingList = bcachingListFactory.getCacheList(updatedCaches, 50, String
+                        .valueOf(now));
             }
-        } catch (Exception ex) {
-            Log.d("GeoBeagle", "Exception: " + ex);
+        } catch (IOException e) {
+            errorDisplayer.displayError(R.string.problem_importing_from_bcaching, e
+                    .getLocalizedMessage());
+            Log.d("GeoBeagle", "Exception: " + e);
+        } catch (JSONException e) {
+            errorDisplayer.displayError(R.string.problem_importing_from_bcaching, e
+                    .getLocalizedMessage());
+            Log.d("GeoBeagle", "Exception: " + e);
+        } catch (HttpException e) {
+            errorDisplayer.displayError(R.string.problem_importing_from_bcaching, e
+                    .getLocalizedMessage());
+            Log.d("GeoBeagle", "Exception: " + e);
+        } finally {
+            progressManager.update(handler, ProgressMessage.DONE, 0);
+            Log.d("GeoBeagle", "Setting bcaching_lastupdate to " + now);
+            bcachingLastUpdated.putLastUpdateTime(now);
         }
-
-        Message.obtain(handler, ProgressMessage.DONE.ordinal(), 0).sendToTarget();
-        Log.d("GeoBeagle", "Setting bcaching_lastupdate to " + now);
-        bcachingLastUpdated.putLastUpdateTime(now);
     }
 
 }
