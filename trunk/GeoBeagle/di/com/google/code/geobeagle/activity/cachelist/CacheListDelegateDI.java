@@ -267,9 +267,7 @@ public class CacheListDelegateDI {
                 new LocationSaver(dbFrontend)));
         menuActions.add(new MenuActionSearchOnline(listActivity));
         menuActions.add(new MenuActionMap(listActivity, locationControlBuffered));
-        menuActions.add(new MenuActionSyncBCaching(listActivity, injector
-                .getInstance(SharedPreferences.class)));
-        // menuActions.add(new MenuActionChooseFilter(listActivity));
+        menuActions.add(injector.getInstance(MenuActionSyncBCaching.class));
         menuActions.add(injector.getInstance(MenuActionSettings.class));
 
         final Intent geoBeagleMainIntent = new Intent(listActivity, GeoBeagle.class);
