@@ -27,7 +27,7 @@ public class BCachingLastUpdated {
     }
 
     String getLastUpdateTime() {
-        return sharedPreferences.getString("bcaching_lastupdate", "");
+        return sharedPreferences.getString("bcaching_lastupdate", "0");
     }
 
     void putLastUpdateTime(long now) {
@@ -38,7 +38,7 @@ public class BCachingLastUpdated {
 
     public void clearLastUpdateTime() {
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString("bcaching_lastupdate", "");
+        editor.putString("bcaching_lastupdate", "0");
         editor.commit();
     }
 }

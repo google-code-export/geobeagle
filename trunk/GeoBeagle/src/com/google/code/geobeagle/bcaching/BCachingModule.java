@@ -46,7 +46,6 @@ public class BCachingModule extends AbstractAndroidModule {
     Hashtable<String, String> getCacheListParamsProvider() {
         Hashtable<String, String> params = new Hashtable<String, String>();
         params.put("a", "list");
-        params.put("maxcount", "50");
         params.put("found", "0");
         params.put("app", "GeoBeagle");
         return params;
