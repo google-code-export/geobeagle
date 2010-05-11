@@ -107,7 +107,7 @@ public class BCachingCommunication {
         }
 
         String request = sb.toString();
-        Log.d("GeoBeagle", request);
+        Log.d("GeoBeagle", "sending request: " + request);
         return sendRequest(request);
     }
 
@@ -117,6 +117,7 @@ public class BCachingCommunication {
             throw new IllegalArgumentException("query is required");
 
         final URL url = getURL(mUsername, mHashword, query);
+        Log.d("GeoBeagle", "sending url: " + url);
         HttpURLConnection conn = (HttpURLConnection)url.openConnection();
         conn.setReadTimeout(mTimeout);
         conn.setConnectTimeout(mTimeout);
