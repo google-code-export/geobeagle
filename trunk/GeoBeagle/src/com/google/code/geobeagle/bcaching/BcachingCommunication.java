@@ -14,8 +14,6 @@
 
 package com.google.code.geobeagle.bcaching;
 
-import org.apache.http.HttpException;
-
 import android.util.Log;
 
 import java.io.BufferedReader;
@@ -54,18 +52,17 @@ public class BCachingCommunication {
         mHashword = hashword;
     }
 
-    public void validateCredentials() throws Exception {
+    public void validateCredentials() throws BCachingException {
         // attempt to login at server
         // failure will throw an exception
         sendRequest("a=login&app=geohunter");
     }
 
-    public String encodeHashword(String username, String password) throws Exception {
+    public String encodeHashword(String username, String password) {
         return encodeMd5Base64(password + username);
     }
 
-    private String encodeQueryString(String username, String hashword, String params)
-            {
+    private String encodeQueryString(String username, String hashword, String params) {
 
         if (username == null)
             throw new IllegalArgumentException("username is required.");
@@ -88,8 +85,7 @@ public class BCachingCommunication {
         return sb.toString();
     }
 
-    public InputStream sendRequest(Hashtable<String, String> params) throws IOException,
-            HttpException {
+    public InputStream sendRequest(Hashtable<String, String> params) throws BCachingException {
         if (params == null || params.size() == 0)
             throw new IllegalArgumentException("params are required.");
         if (!params.containsKey("a"))
@@ -111,32 +107,45 @@ public class BCachingCommunication {
         return sendRequest(request);
     }
 
-    public InputStream sendRequest(String query) throws IOException, HttpException {
+    static class BCachingException extends Exception {
+        private static final long serialVersionUID = 5483107564028776147L;
+
+        public BCachingException(String string) {
+            super(string);
+        }
+    }
+    
+    public InputStream sendRequest(String query) throws BCachingException {
         if (query == null || query.length() == 0)
             throw new IllegalArgumentException("query is required");
 
         final URL url = getURL(mUsername, mHashword, query);
         Log.d("GeoBeagle", "sending url: " + url);
-        HttpURLConnection conn = (HttpURLConnection)url.openConnection();
-        conn.setReadTimeout(mTimeout);
-        conn.setConnectTimeout(mTimeout);
-        conn.addRequestProperty("Accept-encoding", "gzip");
-        int responseCode = conn.getResponseCode();
-        InputStream in = conn.getInputStream();
-        Log.d("GeoBeagle", "BCachingCommunication response length=" + conn.getContentLength());
-        if (conn.getContentEncoding().equalsIgnoreCase("gzip")) {
-            in = new java.util.zip.GZIPInputStream(in);
-        }
-        if (responseCode != HttpURLConnection.HTTP_OK) {
-            BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-            StringBuilder sb = new StringBuilder();
-            String line = null;
-            while ((line = reader.readLine()) != null) {
-                sb.append(line + "\n");
+        HttpURLConnection conn;
+        try {
+            conn = (HttpURLConnection)url.openConnection();
+            conn.setReadTimeout(mTimeout);
+            conn.setConnectTimeout(mTimeout);
+            conn.addRequestProperty("Accept-encoding", "gzip");
+            int responseCode = conn.getResponseCode();
+            InputStream in = conn.getInputStream();
+            Log.d("GeoBeagle", "BCachingCommunication response length=" + conn.getContentLength());
+            if (conn.getContentEncoding().equalsIgnoreCase("gzip")) {
+                in = new java.util.zip.GZIPInputStream(in);
             }
-            throw new HttpException(sb.toString());
+            if (responseCode != HttpURLConnection.HTTP_OK) {
+                BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+                StringBuilder sb = new StringBuilder();
+                String line = null;
+                while ((line = reader.readLine()) != null) {
+                    sb.append(line + "\n");
+                }
+                throw new BCachingException("HTTP problem: " + sb.toString());
+            }
+            return in;
+        } catch (IOException e) {
+            throw new BCachingException("IO error: " + e.getLocalizedMessage());
         }
-        return in;
     }
 
     private URL getURL(String username, String hashword, String params) {

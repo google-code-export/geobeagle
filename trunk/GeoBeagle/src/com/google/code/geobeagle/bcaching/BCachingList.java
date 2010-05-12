@@ -26,7 +26,7 @@ class BCachingList {
     private final JSONObject cacheList;
 
     BCachingList(JSONObject json) {
-        this.cacheList = json;
+        cacheList = json;
     }
 
     int getCachesRead() throws BCachingException {
@@ -46,21 +46,19 @@ class BCachingList {
     }
 
     String getCacheIds() throws BCachingException {
-        JSONArray summary;
         try {
-            summary = cacheList.getJSONArray("data");
+            JSONArray summary = cacheList.getJSONArray("data");
             Log.d("GeoBeagle", summary.toString());
 
             StringBuilder csvIds = new StringBuilder();
             int count = summary.length();
             for (int i = 0; i < count; i++) {
+                csvIds.append(',');
                 JSONObject cacheObject = summary.getJSONObject(i);
-                int id = cacheObject.getInt("id");
-                if (csvIds.length() > 0) {
-                    csvIds.append(',');
-                }
-                csvIds.append(String.valueOf(id));
+                csvIds.append(String.valueOf(cacheObject.getInt("id")));
             }
+            if (count > 0)
+                csvIds.deleteCharAt(0);
             return csvIds.toString();
         } catch (JSONException e) {
             throw new BCachingException("Error parsing server data: " + e.getLocalizedMessage());
