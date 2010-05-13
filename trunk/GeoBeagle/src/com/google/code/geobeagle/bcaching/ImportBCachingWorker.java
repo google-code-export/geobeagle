@@ -32,14 +32,14 @@ public class ImportBCachingWorker extends Thread {
 
     private final Handler handler;
     private final BCachingLastUpdated bcachingLastUpdated;
-    private final BCachingListFactory bcachingListFactory;
+    private final BCachingListImporter bcachingListFactory;
     private final ErrorDisplayer errorDisplayer;
     private final ProgressManager progressManager;
     private final DetailsReader detailsReader;
 
     @Inject
     public ImportBCachingWorker(@Assisted Handler handler, ProgressManager progressManager,
-            BCachingLastUpdated bcachingLastUpdated, BCachingListFactory bcachingListFactory,
+            BCachingLastUpdated bcachingLastUpdated, BCachingListImporter bcachingListFactory,
             ErrorDisplayer errorDisplayer, DetailsReader detailsReader) {
         this.handler = handler;
         this.bcachingLastUpdated = bcachingLastUpdated;
