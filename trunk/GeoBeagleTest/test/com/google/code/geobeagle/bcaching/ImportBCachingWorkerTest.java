@@ -41,7 +41,7 @@ public class ImportBCachingWorkerTest extends GeoBeagleTest {
     private ProgressManager progressManager;
     private BCachingList bcachingListFirst;
     private BCachingLastUpdated bcachingLastUpdated;
-    private BCachingListFactory bcachingListFactory;
+    private BCachingListImporter bcachingListFactory;
     private DetailsReader detailsReader;
     private ErrorDisplayer errorDisplayer;
 
@@ -53,7 +53,7 @@ public class ImportBCachingWorkerTest extends GeoBeagleTest {
         progressManager = PowerMock.createMock(ProgressManager.class);
         bcachingListFirst = PowerMock.createMock(BCachingList.class);
         bcachingLastUpdated = PowerMock.createMock(BCachingLastUpdated.class);
-        bcachingListFactory = PowerMock.createMock(BCachingListFactory.class);
+        bcachingListFactory = PowerMock.createMock(BCachingListImporter.class);
         detailsReader = PowerMock.createMock(DetailsReader.class);
         errorDisplayer = PowerMock.createMock(ErrorDisplayer.class);
     }
