@@ -15,45 +15,45 @@
 package com.google.code.geobeagle.bcaching;
 
 import com.google.code.geobeagle.bcaching.BCachingCommunication.BCachingException;
-import com.google.code.geobeagle.bcaching.json.BCachingJSONObject;
+import com.google.inject.Inject;
 
 import org.json.JSONException;
-import org.json.JSONObject;
-
-import android.util.Log;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.nio.charset.Charset;
 import java.util.Hashtable;
 
 class BCachingListImportHelper {
-    private final BCachingCommunication bcachingCommunication;
+    interface BCachingListFactory {
+        BCachingList create(String json) throws BCachingException;
+    }
 
-    public BCachingListImportHelper(BCachingCommunication bcachingCommunication) {
-        this.bcachingCommunication = bcachingCommunication;
+    interface BufferedReaderFactory {
+        BufferedReader create(Hashtable<String, String> params) throws BCachingException;
+    }
+
+    private final BCachingListFactory bcachingListFactory;
+    private final BufferedReaderFactory bufferedReaderFactory;
+
+    @Inject
+    public BCachingListImportHelper(BufferedReaderFactory readerFactory,
+            BCachingListFactory bcachingListFactory) {
+        this.bufferedReaderFactory = readerFactory;
+        this.bcachingListFactory = bcachingListFactory;
     }
 
     BCachingList importList(Hashtable<String, String> params) throws BCachingException {
-        BufferedReader rd = new BufferedReader(new InputStreamReader(bcachingCommunication
-                .sendRequest(params), Charset.forName("UTF-8")), 8192);
-
+        BufferedReader bufferedReader = bufferedReaderFactory.create(params);
         StringBuilder result = new StringBuilder();
-        String line;
         try {
-            while ((line = rd.readLine()) != null) {
+            String line;
+            while ((line = bufferedReader.readLine()) != null) {
                 result.append(line);
                 result.append('\n');
             }
-            String string = result.toString();
-            Log.d("GeoBeagle", "readResponse: " + string);
-            return new BCachingList(new BCachingJSONObject(new JSONObject(string)));
+            return bcachingListFactory.create(result.toString());
         } catch (IOException e) {
             throw new BCachingException("IO Error: " + e.getLocalizedMessage());
-        } catch (JSONException e) {
-            throw new BCachingException("Error parsing data from server: "
-                    + e.getLocalizedMessage());
         }
     }
 
