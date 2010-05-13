@@ -107,7 +107,7 @@ public class BCachingCommunication {
         return sendRequest(request);
     }
 
-    static class BCachingException extends Exception {
+    public static class BCachingException extends Exception {
         private static final long serialVersionUID = 5483107564028776147L;
 
         public BCachingException(String string) {

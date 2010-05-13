@@ -15,6 +15,7 @@
 package com.google.code.geobeagle.bcaching;
 
 import com.google.code.geobeagle.bcaching.BCachingCommunication.BCachingException;
+import com.google.code.geobeagle.bcaching.json.BCachingJSONObject;
 import com.google.inject.Inject;
 
 import org.json.JSONException;
@@ -44,8 +45,8 @@ class BCachingListFactory {
         params.remove("first");
         params.put("maxcount", "0");
         params.put("since", lastUpdate);
-        return new BCachingList(BCachingListFactory.readResponse(bCachingCommunication.sendRequest(params)))
-                .getTotalCount();
+        return new BCachingList(BCachingListFactory.readResponse(bCachingCommunication
+                .sendRequest(params))).getTotalCount();
     }
 
     BCachingList getCacheList(int startAt, long lastUpdate) throws BCachingException {
@@ -55,7 +56,7 @@ class BCachingListFactory {
         return new BCachingList(BCachingListFactory.readResponse(bCachingCommunication.sendRequest(params)));
     }
 
-    static JSONObject readResponse(InputStream in) throws BCachingException {
+    static BCachingJSONObject readResponse(InputStream in) throws BCachingException {
         BufferedReader rd = new BufferedReader(new InputStreamReader(in, Charset.forName("UTF-8")),
                 8192);
     
@@ -68,7 +69,7 @@ class BCachingListFactory {
             }
         String string = result.toString();
         Log.d("GeoBeagle", "readResponse: " + string);
-        return new JSONObject(string);
+            return new BCachingJSONObject(new JSONObject(string));
         } catch (IOException e) {
             throw new BCachingException("IO Error: " + e.getLocalizedMessage());
         } catch (JSONException e) {

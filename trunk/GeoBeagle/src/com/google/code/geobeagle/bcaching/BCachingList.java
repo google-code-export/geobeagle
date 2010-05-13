@@ -15,53 +15,40 @@
 package com.google.code.geobeagle.bcaching;
 
 import com.google.code.geobeagle.bcaching.BCachingCommunication.BCachingException;
+import com.google.code.geobeagle.bcaching.json.BCachingJSONArray;
+import com.google.code.geobeagle.bcaching.json.BCachingJSONObject;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import android.util.Log;
 
 class BCachingList {
-    private final JSONObject cacheList;
+    private final BCachingJSONObject cacheList;
 
-    BCachingList(JSONObject json) {
+    BCachingList(BCachingJSONObject json) {
         cacheList = json;
     }
 
     int getCachesRead() throws BCachingException {
-        try {
-            return cacheList.getJSONArray("data").length();
-        } catch (JSONException e) {
-            throw new BCachingException("Error parsing server data: " + e.getLocalizedMessage());
-        }
+        return cacheList.getJSONArray("data").length();
     }
 
     int getTotalCount() throws BCachingException {
-        try {
-            return cacheList.getInt("totalCount");
-        } catch (JSONException e) {
-            throw new BCachingException("Error parsing server data: " + e.getLocalizedMessage());
-        }
+        return cacheList.getInt("totalCount");
     }
 
     String getCacheIds() throws BCachingException {
-        try {
-            JSONArray summary = cacheList.getJSONArray("data");
-            Log.d("GeoBeagle", summary.toString());
+        BCachingJSONArray summary = cacheList.getJSONArray("data");
+        Log.d("GeoBeagle", summary.toString());
 
-            StringBuilder csvIds = new StringBuilder();
-            int count = summary.length();
-            for (int i = 0; i < count; i++) {
-                csvIds.append(',');
-                JSONObject cacheObject = summary.getJSONObject(i);
-                csvIds.append(String.valueOf(cacheObject.getInt("id")));
-            }
-            if (count > 0)
-                csvIds.deleteCharAt(0);
-            return csvIds.toString();
-        } catch (JSONException e) {
-            throw new BCachingException("Error parsing server data: " + e.getLocalizedMessage());
+        StringBuilder csvIds = new StringBuilder();
+        int count = summary.length();
+        for (int i = 0; i < count; i++) {
+            csvIds.append(',');
+            BCachingJSONObject cacheObject = summary.getJSONObject(i);
+            csvIds.append(String.valueOf(cacheObject.getInt("id")));
         }
+        if (count > 0)
+            csvIds.deleteCharAt(0);
+        return csvIds.toString();
     }
 }

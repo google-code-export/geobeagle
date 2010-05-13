@@ -14,33 +14,34 @@
 
 package com.google.code.geobeagle.bcaching;
 
+import static org.easymock.EasyMock.expect;
+import static org.junit.Assert.assertEquals;
+import static org.powermock.api.easymock.PowerMock.createMock;
+import static org.powermock.api.easymock.PowerMock.replayAll;
+import static org.powermock.api.easymock.PowerMock.verifyAll;
+
 import com.google.code.geobeagle.activity.cachelist.GeoBeagleTest;
 import com.google.code.geobeagle.bcaching.BCachingCommunication.BCachingException;
+import com.google.code.geobeagle.bcaching.json.BCachingJSONArray;
+import com.google.code.geobeagle.bcaching.json.BCachingJSONObject;
 
-import static org.easymock.EasyMock.expect;
-import static org.junit.Assert.*;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import static org.powermock.api.easymock.PowerMock.*;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 @RunWith(PowerMockRunner.class)
 public class BCachingListTest extends GeoBeagleTest {
-    private JSONObject cacheList;
+    private BCachingJSONObject cacheList;
 
     @Before
     public void setUp() {
-        cacheList = createMock(JSONObject.class);
+        cacheList = createMock(BCachingJSONObject.class);
     }
 
     @Test
-    public void testGetCachesRead() throws BCachingException, JSONException {
-        JSONArray cacheListJSON = createMock(JSONArray.class);
+    public void testGetCachesRead() throws BCachingException {
+        BCachingJSONArray cacheListJSON = createMock(BCachingJSONArray.class);
 
         expect(cacheList.getJSONArray("data")).andReturn(cacheListJSON);
         expect(cacheListJSON.length()).andReturn(12);
@@ -51,7 +52,7 @@ public class BCachingListTest extends GeoBeagleTest {
     }
 
     @Test
-    public void testGetTotalCount() throws JSONException, BCachingException {
+    public void testGetTotalCount() throws BCachingException {
         expect(cacheList.getInt("totalCount")).andReturn(40);
 
         replayAll();
@@ -60,8 +61,8 @@ public class BCachingListTest extends GeoBeagleTest {
     }
 
     @Test
-    public void testGetNoCacheIds() throws BCachingException, JSONException {
-        JSONArray summary = createMock(JSONArray.class);
+    public void testGetNoCacheIds() throws BCachingException {
+        BCachingJSONArray summary = createMock(BCachingJSONArray.class);
 
         expect(cacheList.getJSONArray("data")).andReturn(summary);
         expect(summary.length()).andReturn(0);
@@ -72,9 +73,9 @@ public class BCachingListTest extends GeoBeagleTest {
     }
 
     @Test
-    public void testGetOneCacheIds() throws BCachingException, JSONException {
-        JSONArray summary = createMock(JSONArray.class);
-        JSONObject cacheObject = createMock(JSONObject.class);
+    public void testGetOneCacheIds() throws BCachingException {
+        BCachingJSONArray summary = createMock(BCachingJSONArray.class);
+        BCachingJSONObject cacheObject = createMock(BCachingJSONObject.class);
 
         expect(cacheList.getJSONArray("data")).andReturn(summary);
         expect(summary.length()).andReturn(1);
@@ -87,10 +88,10 @@ public class BCachingListTest extends GeoBeagleTest {
     }
 
     @Test
-    public void testGetTwoCacheIds() throws BCachingException, JSONException {
-        JSONArray summary = createMock(JSONArray.class);
-        JSONObject cacheObject1 = createMock(JSONObject.class);
-        JSONObject cacheObject2 = createMock(JSONObject.class);
+    public void testGetTwoCacheIds() throws BCachingException {
+        BCachingJSONArray summary = createMock(BCachingJSONArray.class);
+        BCachingJSONObject cacheObject1 = createMock(BCachingJSONObject.class);
+        BCachingJSONObject cacheObject2 = createMock(BCachingJSONObject.class);
 
         expect(cacheList.getJSONArray("data")).andReturn(summary);
         expect(summary.length()).andReturn(2);
