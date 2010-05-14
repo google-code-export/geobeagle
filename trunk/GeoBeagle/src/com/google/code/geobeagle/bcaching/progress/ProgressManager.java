@@ -12,12 +12,13 @@
  ** limitations under the License.
  */
 
-package com.google.code.geobeagle.bcaching;
+package com.google.code.geobeagle.bcaching.progress;
 
-public class BCachingException extends Exception {
-    private static final long serialVersionUID = 5483107564028776147L;
+import android.os.Handler;
+import android.os.Message;
 
-    public BCachingException(String string) {
-        super(string);
+public class ProgressManager {
+    public void update(Handler handler, ProgressMessage progressMessage, int arg) {
+        Message.obtain(handler, progressMessage.ordinal(), arg, 0).sendToTarget();
     }
 }

@@ -12,30 +12,23 @@
  ** limitations under the License.
  */
 
-package com.google.code.geobeagle.bcaching;
-
-import com.google.code.geobeagle.bcaching.json.BCachingJSONArray;
-import com.google.code.geobeagle.bcaching.json.BCachingJSONObject;
+package com.google.code.geobeagle.bcaching.communication;
 
 
 import android.util.Log;
 
-class BCachingList {
+public class BCachingList {
+    interface BCachingListFactory {
+        BCachingList create(String json) throws BCachingException;
+    }
+
     private final BCachingJSONObject cacheList;
 
     BCachingList(BCachingJSONObject json) {
         cacheList = json;
     }
 
-    int getCachesRead() throws BCachingException {
-        return cacheList.getJSONArray("data").length();
-    }
-
-    int getTotalCount() throws BCachingException {
-        return cacheList.getInt("totalCount");
-    }
-
-    String getCacheIds() throws BCachingException {
+    public String getCacheIds() throws BCachingException {
         BCachingJSONArray summary = cacheList.getJSONArray("data");
         Log.d("GeoBeagle", summary.toString());
 
@@ -49,5 +42,13 @@ class BCachingList {
         if (count > 0)
             csvIds.deleteCharAt(0);
         return csvIds.toString();
+    }
+
+    public int getCachesRead() throws BCachingException {
+        return cacheList.getJSONArray("data").length();
+    }
+
+    int getTotalCount() throws BCachingException {
+        return cacheList.getInt("totalCount");
     }
 }

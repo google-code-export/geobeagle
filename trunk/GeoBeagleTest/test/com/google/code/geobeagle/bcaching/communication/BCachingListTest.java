@@ -12,7 +12,7 @@
  ** limitations under the License.
  */
 
-package com.google.code.geobeagle.bcaching;
+package com.google.code.geobeagle.bcaching.communication;
 
 import static org.easymock.EasyMock.expect;
 import static org.junit.Assert.assertEquals;
@@ -21,8 +21,10 @@ import static org.powermock.api.easymock.PowerMock.replayAll;
 import static org.powermock.api.easymock.PowerMock.verifyAll;
 
 import com.google.code.geobeagle.activity.cachelist.GeoBeagleTest;
-import com.google.code.geobeagle.bcaching.json.BCachingJSONArray;
-import com.google.code.geobeagle.bcaching.json.BCachingJSONObject;
+import com.google.code.geobeagle.bcaching.communication.BCachingException;
+import com.google.code.geobeagle.bcaching.communication.BCachingJSONArray;
+import com.google.code.geobeagle.bcaching.communication.BCachingJSONObject;
+import com.google.code.geobeagle.bcaching.communication.BCachingList;
 
 import org.junit.Before;
 import org.junit.Test;

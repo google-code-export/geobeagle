@@ -14,41 +14,45 @@
 
 package com.google.code.geobeagle.bcaching;
 
+import com.google.code.geobeagle.bcaching.BCachingAnnotations.DetailsReaderAnnotation;
+import com.google.code.geobeagle.bcaching.communication.BCachingException;
+import com.google.code.geobeagle.bcaching.communication.BCachingListImportHelper.BufferedReaderFactory;
 import com.google.code.geobeagle.cachedetails.WriterWrapper;
+import com.google.inject.Inject;
 
 import android.util.Log;
 
-import java.io.DataInputStream;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.Hashtable;
 
-class DetailsReader {
-    private final BCachingCommunication bcachingCommunication;
+public class DetailsReader {
+    private final Hashtable<String, String> params;
+    private final WriterWrapperFactory writerWrapperFactory;
+    private final BufferedReaderFactory bufferedReaderFactory;
 
-    DetailsReader(BCachingCommunication bcachingCommunication) {
-        this.bcachingCommunication = bcachingCommunication;
+    interface WriterWrapperFactory {
+        WriterWrapper create(String path) throws IOException;
     }
 
-    void getCacheDetails(String csvIds, int updatedCaches) throws BCachingException {
-        Log.d("GeoBeagle", "Getting details: " + updatedCaches);
-        Hashtable<String, String> params = new Hashtable<String, String>();
-        params.put("a", "detail");
-        params.put("desc", "html");
+    @Inject
+    DetailsReader(@DetailsReaderAnnotation Hashtable<String, String> params,
+            BufferedReaderFactory bufferedReaderFactory, WriterWrapperFactory writerWrapperFactory) {
+        this.params = params;
+        this.bufferedReaderFactory = bufferedReaderFactory;
+        this.writerWrapperFactory = writerWrapperFactory;
+    }
+
+    public void getCacheDetails(String csvIds, int updatedCaches) throws BCachingException {
         params.put("ids", csvIds);
-        params.put("tbs", "0");
-        params.put("wpts", "1");
-        params.put("logs", "1");
-        params.put("fmt", "gpx");
-        params.put("app", "GeoBeagle");
 
         Log.d("GeoBeagle", "Downloading cache details");
-        DataInputStream dis = new DataInputStream(bcachingCommunication.sendRequest(params));
-        WriterWrapper writerWrapper = new WriterWrapper();
+        BufferedReader bufferedReader = bufferedReaderFactory.create(params);
         try {
-            writerWrapper.open("/sdcard/download/bcaching" + String.valueOf(updatedCaches)
-                    + ".gpx");
+            WriterWrapper writerWrapper = writerWrapperFactory.create("/sdcard/download/bcaching"
+                    + String.valueOf(updatedCaches) + ".gpx");
             String line;
-            while ((line = dis.readLine()) != null) {
+            while ((line = bufferedReader.readLine()) != null) {
                 writerWrapper.write(line);
             }
             writerWrapper.close();
@@ -56,5 +60,4 @@ class DetailsReader {
             throw new BCachingException("IO Error: " + e.getLocalizedMessage());
         }
     }
-
 }

@@ -12,22 +12,21 @@
  ** limitations under the License.
  */
 
-package com.google.code.geobeagle.bcaching;
+package com.google.code.geobeagle.bcaching.communication;
 
+import com.google.code.geobeagle.bcaching.BCachingAnnotations.CacheListAnnotation;
 import com.google.inject.Inject;
-
-
 
 import java.util.Hashtable;
 
-class BCachingListImporter {
+public class BCachingListImporter {
     static final String MAX_COUNT = "50";
 
     private final BCachingListImportHelper bCachingListImportHelper;
     private final Hashtable<String, String> params;
 
     @Inject
-    BCachingListImporter(Hashtable<String, String> params,
+    BCachingListImporter(@CacheListAnnotation Hashtable<String, String> params,
             BCachingListImportHelper bCachingListImportHelper) {
         this.params = params;
         this.bCachingListImportHelper = bCachingListImportHelper;
@@ -40,12 +39,12 @@ class BCachingListImporter {
         return bCachingListImportHelper.importList(params);
     }
 
-    BCachingList getCacheList(int startAt, long lastUpdate) throws BCachingException {
+    public BCachingList getCacheList(int startAt, long lastUpdate) throws BCachingException {
         params.put("first", Integer.toString(startAt));
         return getCacheListHelper(MAX_COUNT, String.valueOf(lastUpdate));
     }
 
-    int getTotalCount(String lastUpdate) throws BCachingException {
+    public int getTotalCount(String lastUpdate) throws BCachingException {
         params.remove("first");
         return getCacheListHelper("0", lastUpdate).getTotalCount();
     }

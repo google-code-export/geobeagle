@@ -16,13 +16,16 @@ package com.google.code.geobeagle.bcaching;
 
 import com.google.code.geobeagle.ErrorDisplayer;
 import com.google.code.geobeagle.R;
+import com.google.code.geobeagle.bcaching.communication.BCachingException;
+import com.google.code.geobeagle.bcaching.communication.BCachingList;
+import com.google.code.geobeagle.bcaching.communication.BCachingListImporter;
+import com.google.code.geobeagle.bcaching.progress.ProgressManager;
+import com.google.code.geobeagle.bcaching.progress.ProgressMessage;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 
-
 import android.os.Handler;
 import android.util.Log;
-
 
 public class ImportBCachingWorker extends Thread {
     public static interface ImportBCachingWorkerFactory {
@@ -31,18 +34,18 @@ public class ImportBCachingWorker extends Thread {
 
     private final Handler handler;
     private final BCachingLastUpdated bcachingLastUpdated;
-    private final BCachingListImporter bcachingListFactory;
+    private final BCachingListImporter bcachingListImporter;
     private final ErrorDisplayer errorDisplayer;
     private final ProgressManager progressManager;
     private final DetailsReader detailsReader;
 
     @Inject
     public ImportBCachingWorker(@Assisted Handler handler, ProgressManager progressManager,
-            BCachingLastUpdated bcachingLastUpdated, BCachingListImporter bcachingListFactory,
+            BCachingLastUpdated bcachingLastUpdated, BCachingListImporter bcachingListImporter,
             ErrorDisplayer errorDisplayer, DetailsReader detailsReader) {
         this.handler = handler;
         this.bcachingLastUpdated = bcachingLastUpdated;
-        this.bcachingListFactory = bcachingListFactory;
+        this.bcachingListImporter = bcachingListImporter;
         this.errorDisplayer = errorDisplayer;
         this.progressManager = progressManager;
         this.detailsReader = detailsReader;
@@ -55,21 +58,21 @@ public class ImportBCachingWorker extends Thread {
         String lastUpdateTime = bcachingLastUpdated.getLastUpdateTime();
 
         try {
-            int totalCount = bcachingListFactory.getTotalCount(lastUpdateTime);
+            int totalCount = bcachingListImporter.getTotalCount(lastUpdateTime);
             if (totalCount <= 0)
                 return;
             progressManager.update(handler, ProgressMessage.SET_MAX, totalCount);
             Log.d("GeoBeagle", "totalCount = " + totalCount);
 
             int updatedCaches = 0;
-            BCachingList bcachingList = bcachingListFactory.getCacheList(updatedCaches, now);
+            BCachingList bcachingList = bcachingListImporter.getCacheList(updatedCaches, now);
             int cachesRead;
             while ((cachesRead = bcachingList.getCachesRead()) > 0) {
                 detailsReader.getCacheDetails(bcachingList.getCacheIds(), updatedCaches);
 
                 updatedCaches += cachesRead;
                 progressManager.update(handler, ProgressMessage.SET_PROGRESS, updatedCaches);
-                bcachingList = bcachingListFactory.getCacheList(updatedCaches, now);
+                bcachingList = bcachingListImporter.getCacheList(updatedCaches, now);
             }
         } catch (BCachingException e) {
             errorDisplayer.displayError(R.string.problem_importing_from_bcaching, e.getMessage());

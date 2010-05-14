@@ -12,14 +12,14 @@
  ** limitations under the License.
  */
 
-package com.google.code.geobeagle.bcaching;
+package com.google.code.geobeagle.bcaching.progress;
 
 import android.app.ProgressDialog;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 
-public final class ProgressHandler extends Handler {
+public class ProgressHandler extends Handler {
     private final ProgressDialog progressDialog;
 
     public ProgressHandler(ProgressDialog progressDialog) {

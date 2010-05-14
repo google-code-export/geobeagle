@@ -15,21 +15,23 @@
 package com.google.code.geobeagle.bcaching;
 
 import com.google.code.geobeagle.activity.main.GeoBeagleModule.DefaultSharedPreferences;
-import com.google.code.geobeagle.bcaching.BCachingListImportHelper.BCachingListFactory;
-import com.google.code.geobeagle.bcaching.BCachingListImportHelper.BufferedReaderFactory;
+import com.google.code.geobeagle.bcaching.BCachingAnnotations.CacheListAnnotation;
+import com.google.code.geobeagle.bcaching.BCachingAnnotations.DetailsReaderAnnotation;
+import com.google.code.geobeagle.bcaching.DetailsReader.WriterWrapperFactory;
 import com.google.code.geobeagle.bcaching.ImportBCachingWorker.ImportBCachingWorkerFactory;
-import com.google.code.geobeagle.bcaching.json.BCachingJSONObject;
+import com.google.code.geobeagle.bcaching.communication.BCachingCommunication;
+import com.google.code.geobeagle.bcaching.communication.BCachingException;
+import com.google.code.geobeagle.bcaching.communication.BCachingListImportHelper.BufferedReaderFactory;
+import com.google.code.geobeagle.cachedetails.WriterWrapper;
 import com.google.inject.Provides;
 import com.google.inject.assistedinject.FactoryProvider;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import roboguice.config.AbstractAndroidModule;
 
 import android.content.SharedPreferences;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
@@ -42,14 +44,14 @@ public class BCachingModule extends AbstractAndroidModule {
         bind(ImportBCachingWorkerFactory.class).toProvider(
                 FactoryProvider.newFactory(ImportBCachingWorkerFactory.class,
                         ImportBCachingWorker.class));
-        bind(BufferedReaderFactory.class).to(ReaderFactoryImpl.class);
-        bind(BCachingListFactory.class).to(BCachingListFactoryImpl.class);
+        bind(BufferedReaderFactory.class).to(BufferedReaderFactoryImpl.class);
+        bind(WriterWrapperFactory.class).to(WriterWrapperFactoryImpl.class);
     }
 
-    static class ReaderFactoryImpl implements BufferedReaderFactory {
+    static class BufferedReaderFactoryImpl implements BufferedReaderFactory {
         private final BCachingCommunication bcachingCommunication;
 
-        public ReaderFactoryImpl(BCachingCommunication bcachingCommunication) {
+        public BufferedReaderFactoryImpl(BCachingCommunication bcachingCommunication) {
             this.bcachingCommunication = bcachingCommunication;
         }
 
@@ -60,14 +62,12 @@ public class BCachingModule extends AbstractAndroidModule {
         }
     }
 
-    static class BCachingListFactoryImpl implements BCachingListFactory {
-        public BCachingList create(String s) throws BCachingException {
-            try {
-                return new BCachingList(new BCachingJSONObject(new JSONObject(s)));
-            } catch (JSONException e) {
-                throw new BCachingException("Error parsing data from bcaching server: "
-                        + e.getLocalizedMessage());
-            }
+    static class WriterWrapperFactoryImpl implements WriterWrapperFactory {
+
+        public WriterWrapper create(String path) throws IOException {
+            WriterWrapper writerWrapper = new WriterWrapper();
+            writerWrapper.open(path);
+            return writerWrapper;
         }
     }
 
@@ -80,6 +80,21 @@ public class BCachingModule extends AbstractAndroidModule {
     }
 
     @Provides
+    @DetailsReaderAnnotation
+    Hashtable<String, String> getCacheDetailsParamsProvider() {
+        Hashtable<String, String> params = new Hashtable<String, String>();
+        params.put("a", "detail");
+        params.put("desc", "html");
+        params.put("tbs", "0");
+        params.put("wpts", "1");
+        params.put("logs", "1");
+        params.put("fmt", "gpx");
+        params.put("app", "GeoBeagle");
+        return params;
+    }
+
+    @Provides
+    @CacheListAnnotation
     Hashtable<String, String> getCacheListParamsProvider() {
         Hashtable<String, String> params = new Hashtable<String, String>();
         params.put("a", "list");

@@ -12,7 +12,8 @@
  ** limitations under the License.
  */
 
-package com.google.code.geobeagle.bcaching;
+package com.google.code.geobeagle.bcaching.communication;
+
 
 import android.util.Log;
 

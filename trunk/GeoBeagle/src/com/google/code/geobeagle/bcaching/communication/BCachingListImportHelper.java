@@ -12,7 +12,7 @@
  ** limitations under the License.
  */
 
-package com.google.code.geobeagle.bcaching;
+package com.google.code.geobeagle.bcaching.communication;
 
 import com.google.inject.Inject;
 
@@ -20,21 +20,17 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.Hashtable;
 
-class BCachingListImportHelper {
-    interface BCachingListFactory {
-        BCachingList create(String json) throws BCachingException;
-    }
-
-    interface BufferedReaderFactory {
+public class BCachingListImportHelper {
+    public interface BufferedReaderFactory {
         BufferedReader create(Hashtable<String, String> params) throws BCachingException;
     }
 
-    private final BCachingListFactory bcachingListFactory;
+    private final BCachingList.BCachingListFactory bcachingListFactory;
     private final BufferedReaderFactory bufferedReaderFactory;
 
     @Inject
-    public BCachingListImportHelper(BufferedReaderFactory readerFactory,
-            BCachingListFactory bcachingListFactory) {
+    BCachingListImportHelper(BufferedReaderFactory readerFactory,
+            BCachingList.BCachingListFactory bcachingListFactory) {
         this.bufferedReaderFactory = readerFactory;
         this.bcachingListFactory = bcachingListFactory;
     }
