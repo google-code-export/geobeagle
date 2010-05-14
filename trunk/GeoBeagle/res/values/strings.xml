@@ -122,4 +122,5 @@
 	<string name="confirm_delete_all">Are you sure you want to delete all caches?</string>
 	<string name="delete_all_title">Delete all</string>
 	<string name="install_radar">Install GPS Status</string>
+	<string name="no_intent_handler">Error: no intent handler available for %1$s.</string>
 </resources>
