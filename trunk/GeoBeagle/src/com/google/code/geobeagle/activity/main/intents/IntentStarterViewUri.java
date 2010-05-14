@@ -14,26 +14,36 @@
 
 package com.google.code.geobeagle.activity.main.intents;
 
+import com.google.code.geobeagle.ErrorDisplayer;
+import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.main.GeoBeagle;
 import com.google.inject.Inject;
 
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
 
 public class IntentStarterViewUri implements IntentStarter {
     private final GeoBeagle mGeoBeagle;
     private final GeocacheToUri mGeocacheToUri;
     private final IntentFactory mIntentFactory;
+    private final ErrorDisplayer mErrorDisplayer;
 
     @Inject
     public IntentStarterViewUri(GeoBeagle geoBeagle, IntentFactory intentFactory,
-            GeocacheToUri geocacheToUri) {
+            GeocacheToUri geocacheToUri, ErrorDisplayer errorDisplayer) {
         mGeoBeagle = geoBeagle;
         mGeocacheToUri = geocacheToUri;
         mIntentFactory = intentFactory;
+        mErrorDisplayer = errorDisplayer;
     }
 
     public void startIntent() {
-        mGeoBeagle.startActivity(mIntentFactory.createIntent(Intent.ACTION_VIEW, mGeocacheToUri
-                .convert(mGeoBeagle.getGeocache())));
+        String uri = mGeocacheToUri.convert(mGeoBeagle.getGeocache());
+        try {
+            mGeoBeagle.startActivity(mIntentFactory.createIntent(Intent.ACTION_VIEW, uri));
+        }
+        catch (ActivityNotFoundException e) {
+            mErrorDisplayer.displayError(R.string.no_intent_handler, uri);
+        }
     }
 }
