@@ -106,6 +106,8 @@
 	  <item>http://www.atlasquest.com/showinfo.html?gBoxId=%1s</item>
 	  <item>http://www.geocaching.com/seek/cache_details.aspx?wp=GC%1$s</item>
 	  <item>http://www.opencaching.de/viewcache.php?wp=OC%1$s</item>
+	  <item>http://geocaching.com.au/cache/GA%1$s</item>
+	  <item>http://geocaching.com.au/cache/TP%1$s</item>
 	</array>
 	<string name="menu_choose_filter">Choose filter</string>
 	<string name="menu_cache_list">Cache List</string>
