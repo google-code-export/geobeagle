@@ -14,7 +14,6 @@
 
 package com.google.code.geobeagle.bcaching;
 
-import com.google.code.geobeagle.bcaching.BCachingCommunication.BCachingException;
 import com.google.code.geobeagle.bcaching.json.BCachingJSONArray;
 import com.google.code.geobeagle.bcaching.json.BCachingJSONObject;
 

@@ -16,7 +16,6 @@ package com.google.code.geobeagle.bcaching;
 
 import com.google.code.geobeagle.ErrorDisplayer;
 import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.bcaching.BCachingCommunication.BCachingException;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 
