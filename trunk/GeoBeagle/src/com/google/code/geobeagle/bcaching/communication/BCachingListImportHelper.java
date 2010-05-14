@@ -16,6 +16,8 @@ package com.google.code.geobeagle.bcaching.communication;
 
 import com.google.inject.Inject;
 
+import android.util.Log;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.Hashtable;
@@ -41,6 +43,7 @@ public class BCachingListImportHelper {
         try {
             String line;
             while ((line = bufferedReader.readLine()) != null) {
+                Log.d("GeoBeagle", "importList: " + line);
                 result.append(line);
                 result.append('\n');
             }

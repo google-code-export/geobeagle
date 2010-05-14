@@ -14,6 +14,7 @@
 
 package com.google.code.geobeagle.bcaching;
 
+import com.google.code.geobeagle.activity.main.GeoBeagleModule.DefaultSharedPreferences;
 import com.google.inject.Inject;
 
 import android.content.SharedPreferences;
@@ -23,7 +24,7 @@ public class BCachingLastUpdated {
     private final SharedPreferences sharedPreferences;
 
     @Inject
-    BCachingLastUpdated(SharedPreferences sharedPreferences) {
+    BCachingLastUpdated(@DefaultSharedPreferences SharedPreferences sharedPreferences) {
         this.sharedPreferences = sharedPreferences;
     }
 
@@ -31,9 +32,9 @@ public class BCachingLastUpdated {
         return sharedPreferences.getString(BCACHING_LASTUPDATE, "0");
     }
 
-    void putLastUpdateTime(long now) {
+    void putLastUpdateTime(long lastUpdateTime) {
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString(BCACHING_LASTUPDATE, Long.toString(now));
+        editor.putString(BCACHING_LASTUPDATE, Long.toString(lastUpdateTime));
         editor.commit();
     }
 

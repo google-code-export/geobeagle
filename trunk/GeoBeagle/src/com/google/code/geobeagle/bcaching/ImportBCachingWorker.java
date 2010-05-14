@@ -65,22 +65,22 @@ public class ImportBCachingWorker extends Thread {
             Log.d("GeoBeagle", "totalCount = " + totalCount);
 
             int updatedCaches = 0;
-            BCachingList bcachingList = bcachingListImporter.getCacheList(updatedCaches, now);
+            BCachingList bcachingList = bcachingListImporter.getCacheList(updatedCaches,
+                    lastUpdateTime);
             int cachesRead;
             while ((cachesRead = bcachingList.getCachesRead()) > 0) {
                 detailsReader.getCacheDetails(bcachingList.getCacheIds(), updatedCaches);
 
                 updatedCaches += cachesRead;
                 progressManager.update(handler, ProgressMessage.SET_PROGRESS, updatedCaches);
-                bcachingList = bcachingListImporter.getCacheList(updatedCaches, now);
+                bcachingList = bcachingListImporter.getCacheList(updatedCaches, lastUpdateTime);
             }
+            bcachingLastUpdated.putLastUpdateTime(now);
         } catch (BCachingException e) {
             errorDisplayer.displayError(R.string.problem_importing_from_bcaching, e.getMessage());
             e.printStackTrace();
         } finally {
             progressManager.update(handler, ProgressMessage.DONE, 0);
-            Log.d("GeoBeagle", "Setting bcaching_lastupdate to " + now);
-            bcachingLastUpdated.putLastUpdateTime(now);
         }
     }
 
