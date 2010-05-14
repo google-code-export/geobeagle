@@ -16,8 +16,8 @@ package com.google.code.geobeagle.activity.cachelist.actions.menu;
 
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.actions.MenuActionBase;
-import com.google.code.geobeagle.bcaching.ProgressHandler;
 import com.google.code.geobeagle.bcaching.ImportBCachingWorker.ImportBCachingWorkerFactory;
+import com.google.code.geobeagle.bcaching.progress.ProgressHandler;
 import com.google.inject.Inject;
 
 import android.app.Activity;

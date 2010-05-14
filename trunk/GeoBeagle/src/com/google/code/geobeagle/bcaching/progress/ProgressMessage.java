@@ -12,11 +12,11 @@
  ** limitations under the License.
  */
 
-package com.google.code.geobeagle.bcaching;
+package com.google.code.geobeagle.bcaching.progress;
 
 import android.app.ProgressDialog;
 
-enum ProgressMessage {
+public enum ProgressMessage {
 
     SET_MAX {
         @Override
@@ -45,7 +45,7 @@ enum ProgressMessage {
 
     abstract void act(ProgressDialog progressDialog, int arg1);
 
-    public static ProgressMessage fromInt(Integer i) {
+    static ProgressMessage fromInt(Integer i) {
         return ProgressMessage.class.getEnumConstants()[i];
     }
 }

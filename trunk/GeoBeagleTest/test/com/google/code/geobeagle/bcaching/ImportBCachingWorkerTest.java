@@ -19,6 +19,11 @@ import static org.easymock.EasyMock.expect;
 import com.google.code.geobeagle.ErrorDisplayer;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.cachelist.GeoBeagleTest;
+import com.google.code.geobeagle.bcaching.communication.BCachingException;
+import com.google.code.geobeagle.bcaching.communication.BCachingList;
+import com.google.code.geobeagle.bcaching.communication.BCachingListImporter;
+import com.google.code.geobeagle.bcaching.progress.ProgressManager;
+import com.google.code.geobeagle.bcaching.progress.ProgressMessage;
 
 import org.junit.Before;
 import org.junit.Test;
