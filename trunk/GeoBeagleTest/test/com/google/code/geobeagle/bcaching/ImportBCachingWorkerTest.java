@@ -19,7 +19,6 @@ import static org.easymock.EasyMock.expect;
 import com.google.code.geobeagle.ErrorDisplayer;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.cachelist.GeoBeagleTest;
-import com.google.code.geobeagle.bcaching.BCachingCommunication.BCachingException;
 
 import org.junit.Before;
 import org.junit.Test;

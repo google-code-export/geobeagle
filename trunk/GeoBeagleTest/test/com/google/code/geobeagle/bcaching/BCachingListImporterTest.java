@@ -21,7 +21,6 @@ import static org.powermock.api.easymock.PowerMock.createMock;
 import static org.powermock.api.easymock.PowerMock.replayAll;
 import static org.powermock.api.easymock.PowerMock.verifyAll;
 
-import com.google.code.geobeagle.bcaching.BCachingCommunication.BCachingException;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

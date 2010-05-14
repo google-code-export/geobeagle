@@ -21,7 +21,6 @@ import static org.powermock.api.easymock.PowerMock.replayAll;
 import static org.powermock.api.easymock.PowerMock.verifyAll;
 
 import com.google.code.geobeagle.activity.cachelist.GeoBeagleTest;
-import com.google.code.geobeagle.bcaching.BCachingCommunication.BCachingException;
 import com.google.code.geobeagle.bcaching.json.BCachingJSONArray;
 import com.google.code.geobeagle.bcaching.json.BCachingJSONObject;
 

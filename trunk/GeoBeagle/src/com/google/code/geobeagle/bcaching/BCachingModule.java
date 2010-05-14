@@ -15,7 +15,6 @@
 package com.google.code.geobeagle.bcaching;
 
 import com.google.code.geobeagle.activity.main.GeoBeagleModule.DefaultSharedPreferences;
-import com.google.code.geobeagle.bcaching.BCachingCommunication.BCachingException;
 import com.google.code.geobeagle.bcaching.BCachingListImportHelper.BCachingListFactory;
 import com.google.code.geobeagle.bcaching.BCachingListImportHelper.BufferedReaderFactory;
 import com.google.code.geobeagle.bcaching.ImportBCachingWorker.ImportBCachingWorkerFactory;

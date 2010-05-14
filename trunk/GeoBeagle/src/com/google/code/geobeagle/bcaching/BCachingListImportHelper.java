@@ -14,10 +14,7 @@
 
 package com.google.code.geobeagle.bcaching;
 
-import com.google.code.geobeagle.bcaching.BCachingCommunication.BCachingException;
 import com.google.inject.Inject;
-
-import org.json.JSONException;
 
 import java.io.BufferedReader;
 import java.io.IOException;

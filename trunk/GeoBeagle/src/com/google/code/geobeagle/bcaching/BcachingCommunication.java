@@ -107,14 +107,6 @@ public class BCachingCommunication {
         return sendRequest(request);
     }
 
-    public static class BCachingException extends Exception {
-        private static final long serialVersionUID = 5483107564028776147L;
-
-        public BCachingException(String string) {
-            super(string);
-        }
-    }
-    
     public InputStream sendRequest(String query) throws BCachingException {
         if (query == null || query.length() == 0)
             throw new IllegalArgumentException("query is required");
