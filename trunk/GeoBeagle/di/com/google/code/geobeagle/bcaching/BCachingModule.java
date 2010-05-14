@@ -23,6 +23,7 @@ import com.google.code.geobeagle.bcaching.communication.BCachingCommunication;
 import com.google.code.geobeagle.bcaching.communication.BCachingException;
 import com.google.code.geobeagle.bcaching.communication.BCachingListImportHelper.BufferedReaderFactory;
 import com.google.code.geobeagle.cachedetails.WriterWrapper;
+import com.google.inject.Inject;
 import com.google.inject.Provides;
 import com.google.inject.assistedinject.FactoryProvider;
 
@@ -51,6 +52,7 @@ public class BCachingModule extends AbstractAndroidModule {
     static class BufferedReaderFactoryImpl implements BufferedReaderFactory {
         private final BCachingCommunication bcachingCommunication;
 
+        @Inject
         public BufferedReaderFactoryImpl(BCachingCommunication bcachingCommunication) {
             this.bcachingCommunication = bcachingCommunication;
         }
