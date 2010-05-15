@@ -5,15 +5,12 @@ import com.google.code.geobeagle.ErrorDisplayer;
 import com.google.code.geobeagle.bcaching.BCachingAnnotations.DetailsReaderAnnotation;
 import com.google.code.geobeagle.bcaching.communication.BCachingException;
 import com.google.code.geobeagle.bcaching.communication.BCachingListImportHelper.BufferedReaderFactory;
-import com.google.code.geobeagle.cachedetails.CacheDetailsWriter;
 import com.google.code.geobeagle.xmlimport.CachePersisterFacade;
-import com.google.code.geobeagle.xmlimport.CacheTagSqlWriter;
 import com.google.code.geobeagle.xmlimport.EventHandlerGpx;
 import com.google.code.geobeagle.xmlimport.EventHelper;
 import com.google.code.geobeagle.xmlimport.FileAlreadyLoadedChecker;
 import com.google.code.geobeagle.xmlimport.GpxLoader;
 import com.google.code.geobeagle.xmlimport.GpxToCache;
-import com.google.code.geobeagle.xmlimport.CachePersisterFacadeDI.FileFactory;
 import com.google.code.geobeagle.xmlimport.EventHelper.XmlPathBuilder;
 import com.google.code.geobeagle.xmlimport.GpxToCache.Aborter;
 import com.google.code.geobeagle.xmlimport.GpxToCacheDI.XmlPullParserWrapper;
@@ -38,14 +35,13 @@ public class DetailsReaderImport {
             WakeLock wakeLock, XmlPullParserWrapper xmlPullParserWrapper,
             XmlPathBuilder xmlPathBuilder, Aborter aborter,
             FileAlreadyLoadedChecker fileAlreadyLoadedChecker,
-            CachePersisterFacade cachePersisterFacade) {
+            CachePersisterFacade cachePersisterFacade, EventHandlerGpx eventHandlerGpx) {
         this.params = params;
         this.bufferedReaderFactory = bufferedReaderFactory;
         GpxToCache gpxToCache = new GpxToCache(xmlPullParserWrapper, aborter,
                 fileAlreadyLoadedChecker);
         this.gpxLoader = new GpxLoader(cachePersisterFacade, errorDisplayer, gpxToCache, wakeLock);
 
-        EventHandlerGpx eventHandlerGpx = new EventHandlerGpx(cachePersisterFacade);
         eventHelper = new EventHelper(xmlPathBuilder, eventHandlerGpx, xmlPullParserWrapper);
     }
 
