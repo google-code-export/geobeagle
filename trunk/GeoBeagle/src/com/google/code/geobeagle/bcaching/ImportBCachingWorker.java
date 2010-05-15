@@ -35,10 +35,9 @@ public class ImportBCachingWorker extends Thread {
     private DetailsReaderImport detailsReaderImport;
 
     @Inject
-    public ImportBCachingWorker(ProgressHandler progressHandler,
-            ProgressManager progressManager, BCachingLastUpdated bcachingLastUpdated,
-            BCachingListImporter bcachingListImporter, ErrorDisplayer errorDisplayer,
-            DetailsReaderImport detailsReaderImport) {
+    public ImportBCachingWorker(ProgressHandler progressHandler, ProgressManager progressManager,
+            BCachingLastUpdated bcachingLastUpdated, BCachingListImporter bcachingListImporter,
+            ErrorDisplayer errorDisplayer, DetailsReaderImport detailsReaderImport) {
         this.progressHandler = progressHandler;
         this.bcachingLastUpdated = bcachingLastUpdated;
         this.bcachingListImporter = bcachingListImporter;
@@ -70,8 +69,7 @@ public class ImportBCachingWorker extends Thread {
                 // detailsReader.getCacheDetails(bcachingList.getCacheIds(),
                 // updatedCaches);
                 Log.d("GeoBeagle", "cachesRead: " + cachesRead);
-                detailsReaderImport.getCacheDetails(bcachingList.getCacheIds(), progressManager,
-                        progressHandler, updatedCaches);
+                detailsReaderImport.getCacheDetails(bcachingList.getCacheIds(), updatedCaches);
 
                 updatedCaches += cachesRead;
                 progressManager

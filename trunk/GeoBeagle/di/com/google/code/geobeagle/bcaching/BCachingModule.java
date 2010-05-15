@@ -18,11 +18,13 @@ import com.google.code.geobeagle.activity.main.GeoBeagleModule.DefaultSharedPref
 import com.google.code.geobeagle.bcaching.BCachingAnnotations.CacheListAnnotation;
 import com.google.code.geobeagle.bcaching.BCachingAnnotations.DetailsReaderAnnotation;
 import com.google.code.geobeagle.bcaching.DetailsReader.WriterWrapperFactory;
+import com.google.code.geobeagle.bcaching.DetailsReaderImport.MessageHandlerAdapter;
 import com.google.code.geobeagle.bcaching.communication.BCachingCommunication;
 import com.google.code.geobeagle.bcaching.communication.BCachingException;
 import com.google.code.geobeagle.bcaching.communication.BCachingListImportHelper.BufferedReaderFactory;
 import com.google.code.geobeagle.bcaching.progress.ProgressHandler;
 import com.google.code.geobeagle.cachedetails.WriterWrapper;
+import com.google.code.geobeagle.xmlimport.MessageHandlerInterface;
 import com.google.inject.Inject;
 import com.google.inject.Provides;
 
@@ -47,6 +49,7 @@ public class BCachingModule extends AbstractAndroidModule {
         bind(BufferedReaderFactory.class).to(BufferedReaderFactoryImpl.class);
         bind(WriterWrapperFactory.class).to(WriterWrapperFactoryImpl.class);
         bind(ProgressHandler.class).in(ContextScoped.class);
+        bind(MessageHandlerInterface.class).to(MessageHandlerAdapter.class);
     }
 
     @ContextScoped

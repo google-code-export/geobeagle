@@ -35,7 +35,6 @@ public class CachePersisterFacade {
     private final WakeLock mWakeLock;
 
     @Inject
-    public
     CachePersisterFacade(CacheTagSqlWriter cacheTagSqlWriter, FileFactory fileFactory,
             CacheDetailsWriter cacheDetailsWriter, MessageHandlerInterface messageHandler, WakeLock wakeLock) {
         mCacheDetailsWriter = cacheDetailsWriter;
@@ -133,11 +132,6 @@ public class CachePersisterFacade {
         mCacheTagWriter.id(wpt);
         mMessageHandler.updateWaypointId(wpt);
         mWakeLock.acquire(GpxLoader.WAKELOCK_DURATION);
-    }
-
-    public void setHandler(MessageHandlerInterface messageHandler) {
-        mMessageHandler = messageHandler;
-        mMessageHandler.updateName("SET HANDLER");
     }
 
 }
