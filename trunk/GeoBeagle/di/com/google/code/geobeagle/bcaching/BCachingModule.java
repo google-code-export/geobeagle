@@ -29,8 +29,13 @@ import com.google.inject.Provides;
 import com.google.inject.assistedinject.FactoryProvider;
 
 import roboguice.config.AbstractAndroidModule;
+import roboguice.inject.ContextScope;
+import roboguice.inject.ContextScoped;
 
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -51,6 +56,16 @@ public class BCachingModule extends AbstractAndroidModule {
         bind(DetailsReaderImportFactory.class).toProvider(
                 FactoryProvider.newFactory(DetailsReaderImportFactory.class,
                         DetailsReaderImport.class));
+    }
+
+    @ContextScoped
+    @Provides
+    ProgressDialog progressDialogProvider(Context context) {
+        ProgressDialog progressDialog = new ProgressDialog(context);
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+        progressDialog.setTitle("hello");
+        progressDialog.setCancelable(true);
+        return progressDialog;
     }
 
     static class BufferedReaderFactoryImpl implements BufferedReaderFactory {

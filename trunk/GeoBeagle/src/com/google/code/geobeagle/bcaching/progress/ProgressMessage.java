@@ -21,7 +21,8 @@ public enum ProgressMessage {
     SET_FILE {
         @Override
         void act(ProgressDialog progressDialog, int arg1, Object object) {
-            Log.d("GeoBeagle", "SETFILE " + (String)object);
+            Log.d("GeoBeagle", progressDialog + ": SETFILE " + (String)object);
+            progressDialog.setTitle("Bcaching.com: "  + (String)object);
             progressDialog.setMessage("Bcaching.com: "  + (String)object);
             progressDialog.incrementProgressBy(1);
         }

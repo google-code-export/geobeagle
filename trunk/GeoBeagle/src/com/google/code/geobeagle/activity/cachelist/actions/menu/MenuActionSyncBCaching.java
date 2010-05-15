@@ -16,35 +16,22 @@ package com.google.code.geobeagle.activity.cachelist.actions.menu;
 
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.actions.MenuActionBase;
-import com.google.code.geobeagle.bcaching.ImportBCachingWorker.ImportBCachingWorkerFactory;
-import com.google.code.geobeagle.bcaching.progress.ProgressHandler;
+import com.google.code.geobeagle.bcaching.ImportBCachingWorker.ImportBCaching;
 import com.google.inject.Inject;
-
-import android.app.Activity;
-import android.app.ProgressDialog;
-import android.os.Handler;
+import com.google.inject.Provider;
 
 public class MenuActionSyncBCaching extends MenuActionBase {
 
-    private Handler handler;
-    private final Activity activity;
-    private final ImportBCachingWorkerFactory importBCachingWorkerFactory;
+    private Provider<ImportBCaching> importBCachingProvider;
 
     @Inject
-    public MenuActionSyncBCaching(Activity activity,
-            ImportBCachingWorkerFactory importBCachingWorkerFactory) {
+    public MenuActionSyncBCaching(Provider<ImportBCaching> importBCachingProvider) {
         super(R.string.menu_sync_bcaching);
-        this.activity = activity;
-        this.importBCachingWorkerFactory = importBCachingWorkerFactory;
+        this.importBCachingProvider = importBCachingProvider;
     }
 
     @Override
     public void act() {
-        ProgressDialog myProgressDialog = new ProgressDialog(activity);
-        myProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-        handler = new ProgressHandler(myProgressDialog);
-        myProgressDialog.setCancelable(true);
-        myProgressDialog.setMessage("hello");
-        importBCachingWorkerFactory.create(handler).start();
+        importBCachingProvider.get().importBCaching();
     }
 }
