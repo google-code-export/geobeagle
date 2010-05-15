@@ -29,13 +29,11 @@ import com.google.inject.Provides;
 import com.google.inject.assistedinject.FactoryProvider;
 
 import roboguice.config.AbstractAndroidModule;
-import roboguice.inject.ContextScope;
 import roboguice.inject.ContextScoped;
 
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.util.Log;
 
 import java.io.BufferedReader;
 import java.io.IOException;
