@@ -15,12 +15,18 @@
 package com.google.code.geobeagle.xmlimport;
 
 import com.google.code.geobeagle.xmlimport.GpxToCacheDI.XmlPullParserWrapper;
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
 
 import org.xmlpull.v1.XmlPullParser;
 
 import java.io.IOException;
 
 public class EventHelper {
+    public interface EventHelperFactory {
+        EventHelper create(EventHandler eventHandler, XmlPullParserWrapper xmlPullParserWrapper);
+    }
+
     public static class XmlPathBuilder {
         private String mPath = "";
 
@@ -41,8 +47,10 @@ public class EventHelper {
     private final XmlPathBuilder mXmlPathBuilder;
     private final XmlPullParserWrapper mXmlPullParser;
 
-    EventHelper(XmlPathBuilder xmlPathBuilder, EventHandler eventHandler,
-            XmlPullParserWrapper xmlPullParser) {
+    @Inject
+    public
+    EventHelper(XmlPathBuilder xmlPathBuilder, @Assisted EventHandler eventHandler,
+            @Assisted XmlPullParserWrapper xmlPullParser) {
         mXmlPathBuilder = xmlPathBuilder;
         mXmlPullParser = xmlPullParser;
         mEventHandler = eventHandler;

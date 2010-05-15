@@ -28,9 +28,9 @@ public class ProgressHandler extends Handler {
 
     @Override
     public void handleMessage(Message msg) {
-        progressDialog.setTitle("Importing from BCaching site");
+//        progressDialog.setTitle("Importing from BCaching site");
         ProgressMessage progressMessage = ProgressMessage.fromInt(msg.what);
         Log.d("GeoBeagle", "getting message: " + progressMessage + ", " + msg.arg1);
-        progressMessage.act(progressDialog, msg.arg1);
+        progressMessage.act(progressDialog, msg.arg1, msg.obj);
     }
 }

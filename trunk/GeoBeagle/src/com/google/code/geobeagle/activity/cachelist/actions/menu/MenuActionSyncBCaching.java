@@ -43,6 +43,8 @@ public class MenuActionSyncBCaching extends MenuActionBase {
         ProgressDialog myProgressDialog = new ProgressDialog(activity);
         myProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
         handler = new ProgressHandler(myProgressDialog);
+        myProgressDialog.setCancelable(true);
+        myProgressDialog.setMessage("hello");
         importBCachingWorkerFactory.create(handler).start();
     }
 }

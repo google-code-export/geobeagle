@@ -14,7 +14,6 @@
 
 package com.google.code.geobeagle.bcaching.communication;
 
-
 import android.util.Log;
 
 import java.io.BufferedReader;
@@ -37,26 +36,26 @@ import java.util.Hashtable;
  * @author Mark Bastian
  */
 public class BCachingCommunication {
-    private final String mUsername;
-    private final String mHashword;
-    private final String mBaseUrl = "http://www.bcaching.com/api";
-    private final int mTimeout = 20000; // millisec
+    private final String username;
+    private final String hashword;
+    private final String baseUrl = "http://www.bcaching.com/api";
+    private final int timeout = 60000; // millisec
 
     public BCachingCommunication(String username, String password) {
-        mUsername = username;
+        this.username = username;
         String hashword = "";
         try {
             hashword = encodeHashword(username, password);
         } catch (Exception ex) {
             Log.e("GeoBeagle", ex.toString());
         }
-        mHashword = hashword;
+        this.hashword = hashword;
     }
 
     public void validateCredentials() throws BCachingException {
         // attempt to login at server
         // failure will throw an exception
-        sendRequest("a=login&app=geohunter");
+        sendRequest("a=login&app=GeoBeagle");
     }
 
     public String encodeHashword(String username, String password) {
@@ -64,7 +63,6 @@ public class BCachingCommunication {
     }
 
     private String encodeQueryString(String username, String hashword, String params) {
-
         if (username == null)
             throw new IllegalArgumentException("username is required.");
         if (hashword == null)
@@ -103,27 +101,29 @@ public class BCachingCommunication {
             sb.append(URLEncoder.encode(params.get(k)));
         }
 
-        String request = sb.toString();
-        Log.d("GeoBeagle", "sending request: " + request);
-        return sendRequest(request);
+        return sendRequest(sb.toString());
     }
 
-    public InputStream sendRequest(String query) throws BCachingException {
+    private InputStream sendRequest(String query) throws BCachingException {
         if (query == null || query.length() == 0)
             throw new IllegalArgumentException("query is required");
 
-        final URL url = getURL(mUsername, mHashword, query);
+        Log.d("GeoBeagle", "get url NOW: " + System.currentTimeMillis() / 1000L);
+        final URL url = getURL(username, hashword, query);
         Log.d("GeoBeagle", "sending url: " + url);
-        HttpURLConnection conn;
+        HttpURLConnection connection;
         try {
-            conn = (HttpURLConnection)url.openConnection();
-            conn.setReadTimeout(mTimeout);
-            conn.setConnectTimeout(mTimeout);
-            conn.addRequestProperty("Accept-encoding", "gzip");
-            int responseCode = conn.getResponseCode();
-            InputStream in = conn.getInputStream();
-            Log.d("GeoBeagle", "BCachingCommunication response length=" + conn.getContentLength());
-            if (conn.getContentEncoding().equalsIgnoreCase("gzip")) {
+            connection = (HttpURLConnection)url.openConnection();
+            Log.d("GeoBeagle", "open connection NOW: " + System.currentTimeMillis() / 1000L);
+            connection.setReadTimeout(timeout);
+            Log.d("GeoBeagle", "set tiemout NOW: " + System.currentTimeMillis() / 1000L);
+            connection.setConnectTimeout(timeout);
+            connection.addRequestProperty("Accept-encoding", "gzip");
+            int responseCode = connection.getResponseCode();
+            InputStream in = connection.getInputStream();
+            Log.d("GeoBeagle", "BCachingCommunication response length="
+                    + connection.getContentLength());
+            if (connection.getContentEncoding().equalsIgnoreCase("gzip")) {
                 in = new java.util.zip.GZIPInputStream(in);
             }
             if (responseCode != HttpURLConnection.HTTP_OK) {
@@ -137,15 +137,16 @@ public class BCachingCommunication {
             }
             return in;
         } catch (IOException e) {
+            Log.d("GeoBeagle", "!!!TIMED OUT NOW: " + System.currentTimeMillis() / 1000L);
             throw new BCachingException("IO error: " + e.getLocalizedMessage());
         }
     }
 
     private URL getURL(String username, String hashword, String params) {
         try {
-            return new URL(mBaseUrl + "/q.ashx?" + encodeQueryString(username, hashword, params));
+            return new URL(baseUrl + "/q.ashx?" + encodeQueryString(username, hashword, params));
         } catch (MalformedURLException e) {
-            // mBaseUrl is a constant, it should never be malformed.
+            // baseUrl is a constant, it should never be malformed.
             throw new RuntimeException(e);
         }
     }

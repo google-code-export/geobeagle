@@ -49,7 +49,7 @@ import java.io.FilenameFilter;
 public class GpxImporterDI {
     // Can't test this due to final methods in base.
     public static class ImportThread extends Thread {
-        static ImportThread create(MessageHandler messageHandler, GpxLoader gpxLoader,
+        static ImportThread create(MessageHandlerInterface messageHandler, GpxLoader gpxLoader,
                 EventHandlers eventHandlers, XmlPullParserWrapper xmlPullParserWrapper,
                 ErrorDisplayer errorDisplayer, Aborter aborter, Injector injector) {
             final GpxFilenameFilter gpxFilenameFilter = new GpxFilenameFilter();
@@ -93,10 +93,10 @@ public class GpxImporterDI {
     public static class ImportThreadWrapper {
         private final Aborter mAborter;
         private ImportThread mImportThread;
-        private final MessageHandler mMessageHandler;
+        private final MessageHandlerInterface mMessageHandler;
         private final XmlPullParserWrapper mXmlPullParserWrapper;
 
-        public ImportThreadWrapper(MessageHandler messageHandler,
+        public ImportThreadWrapper(MessageHandlerInterface messageHandler,
                 XmlPullParserWrapper xmlPullParserWrapper, Aborter aborter) {
             mMessageHandler = messageHandler;
             mXmlPullParserWrapper = xmlPullParserWrapper;
@@ -132,12 +132,12 @@ public class GpxImporterDI {
     }
 
     // Too hard to test this class due to final methods in base.
-    public static class MessageHandler extends Handler {
+    public static class MessageHandler extends Handler implements MessageHandlerInterface {
         public static final String GEOBEAGLE = "GeoBeagle";
         static final int MSG_DONE = 1;
         static final int MSG_PROGRESS = 0;
 
-        public static MessageHandler create(ListActivity listActivity) {
+        public static MessageHandlerInterface create(ListActivity listActivity) {
             final ProgressDialogWrapper progressDialogWrapper = new ProgressDialogWrapper(
                     listActivity);
             return new MessageHandler(progressDialogWrapper);
@@ -266,7 +266,7 @@ public class GpxImporterDI {
 
     public static GpxImporter create(Context context, XmlPullParserWrapper xmlPullParserWrapper,
             ErrorDisplayer errorDisplayer, Pausable geocacheListPresenter, Aborter aborter,
-            MessageHandler messageHandler, CachePersisterFacadeFactory cachePersisterFacadeFactory,
+            MessageHandlerInterface messageHandler, CachePersisterFacadeFactory cachePersisterFacadeFactory,
             CacheWriter cacheWriter, Injector injector) {
         final PowerManager powerManager = (PowerManager)context
                 .getSystemService(Context.POWER_SERVICE);

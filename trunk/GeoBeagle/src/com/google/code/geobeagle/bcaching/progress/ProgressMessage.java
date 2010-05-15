@@ -15,35 +15,44 @@
 package com.google.code.geobeagle.bcaching.progress;
 
 import android.app.ProgressDialog;
+import android.util.Log;
 
 public enum ProgressMessage {
+    SET_FILE {
+        @Override
+        void act(ProgressDialog progressDialog, int arg1, Object object) {
+            Log.d("GeoBeagle", "SETFILE " + (String)object);
+            progressDialog.setMessage("Bcaching.com: "  + (String)object);
+            progressDialog.incrementProgressBy(1);
+        }
+    },
 
     SET_MAX {
         @Override
-        void act(ProgressDialog progressDialog, int arg1) {
+        void act(ProgressDialog progressDialog, int arg1, Object object) {
             progressDialog.setMax(arg1);
         }
     },
     SET_PROGRESS {
         @Override
-        void act(ProgressDialog progressDialog, int arg1) {
+        void act(ProgressDialog progressDialog, int arg1, Object object) {
             progressDialog.setProgress(arg1);
         }
     },
     DONE {
         @Override
-        void act(ProgressDialog progressDialog, int arg1) {
+        void act(ProgressDialog progressDialog, int arg1, Object object) {
             progressDialog.dismiss();
         }
     },
     START {
         @Override
-        void act(ProgressDialog progressDialog, int arg1) {
+        void act(ProgressDialog progressDialog, int arg1, Object object) {
             progressDialog.show();
         }
     };
 
-    abstract void act(ProgressDialog progressDialog, int arg1);
+    abstract void act(ProgressDialog progressDialog, int arg1, Object object);
 
     static ProgressMessage fromInt(Integer i) {
         return ProgressMessage.class.getEnumConstants()[i];

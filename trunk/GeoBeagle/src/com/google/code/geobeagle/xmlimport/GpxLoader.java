@@ -17,6 +17,7 @@ package com.google.code.geobeagle.xmlimport;
 import com.google.code.geobeagle.ErrorDisplayer;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.xmlimport.GpxToCache.CancelException;
+import com.google.inject.Inject;
 
 import org.xmlpull.v1.XmlPullParserException;
 
@@ -35,6 +36,8 @@ public class GpxLoader {
     private final WakeLock mWakeLock;
     public static final int WAKELOCK_DURATION = 15000;
 
+    @Inject
+    public
     GpxLoader(CachePersisterFacade cachePersisterFacade, ErrorDisplayer errorDisplayer,
             GpxToCache gpxToCache, WakeLock wakeLock) {
         mGpxToCache = gpxToCache;

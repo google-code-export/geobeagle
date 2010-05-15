@@ -81,6 +81,7 @@ import com.google.code.geobeagle.gpsstatuswidget.UpdateGpsWidgetRunnable;
 import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidget.InflatedGpsStatusWidget;
 import com.google.code.geobeagle.location.CombinedLocationListener;
 import com.google.code.geobeagle.location.CombinedLocationManager;
+import com.google.code.geobeagle.xmlimport.MessageHandlerInterface;
 import com.google.code.geobeagle.xmlimport.CachePersisterFacadeDI.CachePersisterFacadeFactory;
 import com.google.code.geobeagle.xmlimport.GpxImporterDI.MessageHandler;
 import com.google.code.geobeagle.xmlimport.GpxToCache.Aborter;
@@ -241,7 +242,7 @@ public class CacheListDelegateDI {
         final CacheTypeFactory cacheTypeFactory = new CacheTypeFactory();
 
         final Aborter aborter = new Aborter();
-        final MessageHandler messageHandler = MessageHandler.create(listActivity);
+        final MessageHandlerInterface messageHandler = MessageHandler.create(listActivity);
         final TagWriterImpl tagWriterImpl = new TagWriterImpl(dbFrontend);
         final TagWriterNull tagWriterNull = new TagWriterNull();
         final CachePersisterFacadeFactory cachePersisterFacadeFactory = new CachePersisterFacadeFactory(
