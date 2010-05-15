@@ -27,19 +27,18 @@ import java.io.BufferedReader;
 import java.util.Hashtable;
 
 public class DetailsReaderImport {
-   private final Hashtable<String, String> params;
+    private final Hashtable<String, String> params;
     private final BufferedReaderFactory bufferedReaderFactory;
     private final GpxLoader gpxLoader;
     private EventHelper eventHelper;
 
     @Inject
     DetailsReaderImport(@DetailsReaderAnnotation Hashtable<String, String> params,
-            BufferedReaderFactory bufferedReaderFactory, FileFactory fileFactory,
-            CacheDetailsWriter cacheDetailsWriter, ErrorDisplayer errorDisplayer,
+            BufferedReaderFactory bufferedReaderFactory, ErrorDisplayer errorDisplayer,
             WakeLock wakeLock, XmlPullParserWrapper xmlPullParserWrapper,
-            XmlPathBuilder xmlPathBuilder, Aborter aborter, CacheTagSqlWriter cacheTagSqlWriter,
+            XmlPathBuilder xmlPathBuilder, Aborter aborter,
             FileAlreadyLoadedChecker fileAlreadyLoadedChecker,
-            MessageHandlerAdapter messageHandlerAdapter, CachePersisterFacade cachePersisterFacade) {
+            CachePersisterFacade cachePersisterFacade) {
         this.params = params;
         this.bufferedReaderFactory = bufferedReaderFactory;
         GpxToCache gpxToCache = new GpxToCache(xmlPullParserWrapper, aborter,
