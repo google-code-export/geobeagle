@@ -26,7 +26,6 @@ import com.google.inject.Inject;
 
 import org.xmlpull.v1.XmlPullParserException;
 
-import android.os.Handler;
 import android.os.Message;
 import android.os.PowerManager.WakeLock;
 
@@ -34,13 +33,15 @@ import java.io.BufferedReader;
 import java.util.Hashtable;
 
 public class DetailsReaderImport {
-    static class MessageHandlerAdapter implements MessageHandlerInterface {
+   static class MessageHandlerAdapter implements MessageHandlerInterface {
 
-        private ProgressManager progressManager;
+        private final ProgressManager progressManager;
         private final ProgressHandler handler;
 
-        public MessageHandlerAdapter(ProgressHandler handler) {
+        @Inject
+        public MessageHandlerAdapter(ProgressHandler handler, ProgressManager progressManager) {
             this.handler = handler;
+            this.progressManager = progressManager;
         }
 
         @Override
@@ -82,17 +83,12 @@ public class DetailsReaderImport {
         public void updateWaypointId(String wpt) {
         }
 
-        public void setProgressManager(ProgressManager progressManager) {
-            this.progressManager = progressManager;
-        }
-
     }
 
     private final Hashtable<String, String> params;
     private final BufferedReaderFactory bufferedReaderFactory;
     private final GpxLoader gpxLoader;
     private EventHelper eventHelper;
-    private CachePersisterFacade cachePersisterFacade;
 
     @Inject
     DetailsReaderImport(@DetailsReaderAnnotation Hashtable<String, String> params,
@@ -100,16 +96,10 @@ public class DetailsReaderImport {
             CacheDetailsWriter cacheDetailsWriter, ErrorDisplayer errorDisplayer,
             WakeLock wakeLock, XmlPullParserWrapper xmlPullParserWrapper,
             XmlPathBuilder xmlPathBuilder, Aborter aborter, CacheTagSqlWriter cacheTagSqlWriter,
-            FileAlreadyLoadedChecker fileAlreadyLoadedChecker, ProgressHandler progressHandler, ProgressManager progressManager) {
+            FileAlreadyLoadedChecker fileAlreadyLoadedChecker,
+            MessageHandlerAdapter messageHandlerAdapter, CachePersisterFacade cachePersisterFacade) {
         this.params = params;
         this.bufferedReaderFactory = bufferedReaderFactory;
-        MessageHandlerAdapter messageHandlerAdapter = new MessageHandlerAdapter(progressHandler);
-
-        messageHandlerAdapter.setProgressManager(progressManager);
-
-        cachePersisterFacade = new CachePersisterFacade(cacheTagSqlWriter, fileFactory,
-                cacheDetailsWriter, null, wakeLock);
-        cachePersisterFacade.setHandler(messageHandlerAdapter);
         GpxToCache gpxToCache = new GpxToCache(xmlPullParserWrapper, aborter,
                 fileAlreadyLoadedChecker);
         this.gpxLoader = new GpxLoader(cachePersisterFacade, errorDisplayer, gpxToCache, wakeLock);
@@ -118,8 +108,7 @@ public class DetailsReaderImport {
         eventHelper = new EventHelper(xmlPathBuilder, eventHandlerGpx, xmlPullParserWrapper);
     }
 
-    public void getCacheDetails(String csvIds, ProgressManager progressManager, ProgressHandler progressHandler,
-            int updatedCaches) throws BCachingException {
+    public void getCacheDetails(String csvIds, int updatedCaches) throws BCachingException {
         params.put("ids", csvIds);
 
         try {
