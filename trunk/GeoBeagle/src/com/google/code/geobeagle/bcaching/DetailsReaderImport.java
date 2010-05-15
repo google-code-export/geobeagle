@@ -14,6 +14,7 @@ import com.google.code.geobeagle.xmlimport.GpxToCache;
 import com.google.code.geobeagle.xmlimport.EventHelper.XmlPathBuilder;
 import com.google.code.geobeagle.xmlimport.GpxToCache.Aborter;
 import com.google.code.geobeagle.xmlimport.GpxToCacheDI.XmlPullParserWrapper;
+import com.google.code.geobeagle.xmlimport.XmlimportModule.GpxAnnotation;
 import com.google.inject.Inject;
 
 import org.xmlpull.v1.XmlPullParserException;
@@ -35,14 +36,14 @@ public class DetailsReaderImport {
             WakeLock wakeLock, XmlPullParserWrapper xmlPullParserWrapper,
             XmlPathBuilder xmlPathBuilder, Aborter aborter,
             FileAlreadyLoadedChecker fileAlreadyLoadedChecker,
-            CachePersisterFacade cachePersisterFacade, EventHandlerGpx eventHandlerGpx) {
+            CachePersisterFacade cachePersisterFacade, EventHandlerGpx eventHandlerGpx,
+            @GpxAnnotation EventHelper eventHelper) {
         this.params = params;
         this.bufferedReaderFactory = bufferedReaderFactory;
         GpxToCache gpxToCache = new GpxToCache(xmlPullParserWrapper, aborter,
                 fileAlreadyLoadedChecker);
         this.gpxLoader = new GpxLoader(cachePersisterFacade, errorDisplayer, gpxToCache, wakeLock);
-
-        eventHelper = new EventHelper(xmlPathBuilder, eventHandlerGpx, xmlPullParserWrapper);
+        this.eventHelper = eventHelper;
     }
 
     public void getCacheDetails(String csvIds, int updatedCaches) throws BCachingException {
