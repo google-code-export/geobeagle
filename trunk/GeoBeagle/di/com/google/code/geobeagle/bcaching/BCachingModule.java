@@ -18,7 +18,6 @@ import com.google.code.geobeagle.activity.main.GeoBeagleModule.DefaultSharedPref
 import com.google.code.geobeagle.bcaching.BCachingAnnotations.CacheListAnnotation;
 import com.google.code.geobeagle.bcaching.BCachingAnnotations.DetailsReaderAnnotation;
 import com.google.code.geobeagle.bcaching.DetailsReader.WriterWrapperFactory;
-import com.google.code.geobeagle.bcaching.DetailsReaderImport.MessageHandlerAdapter;
 import com.google.code.geobeagle.bcaching.communication.BCachingCommunication;
 import com.google.code.geobeagle.bcaching.communication.BCachingException;
 import com.google.code.geobeagle.bcaching.communication.BCachingListImportHelper.BufferedReaderFactory;
