@@ -45,7 +45,7 @@ public class BCachingListImporterTest {
         expect(bCachingListImportHelper.importList(params)).andReturn(bcachingList);
         replayAll();
         assertEquals(bcachingList, new BCachingListImporter(params, bCachingListImportHelper)
-                .getCacheList(12, 7777));
+                .getCacheList(12, "7777"));
         verifyAll();
 
         assertEquals("12", params.get("first"));
