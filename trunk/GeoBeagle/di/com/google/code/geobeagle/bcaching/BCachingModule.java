@@ -23,6 +23,7 @@ import com.google.code.geobeagle.bcaching.communication.BCachingException;
 import com.google.code.geobeagle.bcaching.communication.BCachingListImportHelper.BufferedReaderFactory;
 import com.google.code.geobeagle.bcaching.progress.ProgressHandler;
 import com.google.code.geobeagle.cachedetails.WriterWrapper;
+import com.google.code.geobeagle.xmlimport.CachePersisterFacade;
 import com.google.code.geobeagle.xmlimport.MessageHandlerInterface;
 import com.google.inject.Inject;
 import com.google.inject.Provides;
@@ -49,6 +50,7 @@ public class BCachingModule extends AbstractAndroidModule {
         bind(WriterWrapperFactory.class).to(WriterWrapperFactoryImpl.class);
         bind(ProgressHandler.class).in(ContextScoped.class);
         bind(MessageHandlerInterface.class).to(MessageHandlerAdapter.class);
+        bind(CachePersisterFacade.class).in(ContextScoped.class);
     }
 
     @ContextScoped
