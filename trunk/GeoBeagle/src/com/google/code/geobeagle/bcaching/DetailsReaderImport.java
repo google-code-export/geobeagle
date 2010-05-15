@@ -19,7 +19,6 @@ import com.google.code.geobeagle.xmlimport.GpxToCache;
 import com.google.code.geobeagle.xmlimport.MessageHandlerInterface;
 import com.google.code.geobeagle.xmlimport.CachePersisterFacadeDI.FileFactory;
 import com.google.code.geobeagle.xmlimport.EventHelper.XmlPathBuilder;
-import com.google.code.geobeagle.xmlimport.GpxImporterDI.ProgressDialogWrapper;
 import com.google.code.geobeagle.xmlimport.GpxToCache.Aborter;
 import com.google.code.geobeagle.xmlimport.GpxToCacheDI.XmlPullParserWrapper;
 import com.google.inject.Inject;
@@ -29,7 +28,6 @@ import org.xmlpull.v1.XmlPullParserException;
 import android.os.Handler;
 import android.os.Message;
 import android.os.PowerManager.WakeLock;
-import android.util.Log;
 
 import java.io.BufferedReader;
 import java.util.Hashtable;
@@ -68,7 +66,6 @@ public class DetailsReaderImport {
 
         @Override
         public void updateName(String name) {
-            Log.d("GeoBeagle", handler + ", " + progressManager + ": UPDATING NAME " + name);
             progressManager.update(handler, ProgressMessage.SET_FILE, name);
         }
 
@@ -98,7 +95,6 @@ public class DetailsReaderImport {
     private final BufferedReaderFactory bufferedReaderFactory;
     private final GpxLoader gpxLoader;
     private EventHelper eventHelper;
-    private ProgressDialogWrapper progressDialogWrapper;
     private CachePersisterFacade cachePersisterFacade;
 
     @Inject

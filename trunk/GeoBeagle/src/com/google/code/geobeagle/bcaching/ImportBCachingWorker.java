@@ -16,7 +16,6 @@ package com.google.code.geobeagle.bcaching;
 
 import com.google.code.geobeagle.ErrorDisplayer;
 import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.bcaching.DetailsReaderImport.DetailsReaderImportFactory;
 import com.google.code.geobeagle.bcaching.communication.BCachingException;
 import com.google.code.geobeagle.bcaching.communication.BCachingList;
 import com.google.code.geobeagle.bcaching.communication.BCachingListImporter;
@@ -26,8 +25,6 @@ import com.google.code.geobeagle.bcaching.progress.ProgressMessage;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 
-import android.app.Activity;
-import android.app.ProgressDialog;
 import android.os.Handler;
 import android.util.Log;
 
@@ -38,14 +35,12 @@ public class ImportBCachingWorker extends Thread {
 
     public static class ImportBCaching {
         private final ImportBCachingWorkerFactory importBCachingWorkerFactory;
-        private final ProgressDialog progressDialog;
         private final ProgressHandler progressHandler;
 
         @Inject
         ImportBCaching(ImportBCachingWorkerFactory importBCachingWorkerFactory,
-                ProgressDialog progressDialog, ProgressHandler progressHandler) {
+                ProgressHandler progressHandler) {
             this.importBCachingWorkerFactory = importBCachingWorkerFactory;
-            this.progressDialog = progressDialog;
             this.progressHandler = progressHandler;
         }
 

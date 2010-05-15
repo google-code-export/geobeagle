@@ -15,15 +15,11 @@
 package com.google.code.geobeagle.bcaching.progress;
 
 import android.app.ProgressDialog;
-import android.util.Log;
 
 public enum ProgressMessage {
     SET_FILE {
         @Override
         void act(ProgressDialog progressDialog, int arg1, Object object) {
-            Log.d("GeoBeagle", progressDialog + ": SETFILE " + (String)object);
-            progressDialog.setTitle("Bcaching.com: "  + (String)object);
-            progressDialog.setMessage("Bcaching.com: "  + (String)object);
             progressDialog.incrementProgressBy(1);
         }
     },

@@ -20,7 +20,6 @@ import com.google.code.geobeagle.cachedetails.CacheDetailsWriter;
 import com.google.code.geobeagle.xmlimport.CachePersisterFacadeDI.FileFactory;
 import com.google.inject.Inject;
 
-import android.os.Handler;
 import android.os.PowerManager.WakeLock;
 import android.util.Log;
 
