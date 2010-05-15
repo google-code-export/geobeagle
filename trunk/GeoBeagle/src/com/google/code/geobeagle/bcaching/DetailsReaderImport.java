@@ -6,6 +6,7 @@ import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
 import com.google.code.geobeagle.bcaching.BCachingAnnotations.DetailsReaderAnnotation;
 import com.google.code.geobeagle.bcaching.communication.BCachingException;
 import com.google.code.geobeagle.bcaching.communication.BCachingListImportHelper.BufferedReaderFactory;
+import com.google.code.geobeagle.bcaching.progress.ProgressHandler;
 import com.google.code.geobeagle.bcaching.progress.ProgressManager;
 import com.google.code.geobeagle.bcaching.progress.ProgressMessage;
 import com.google.code.geobeagle.cachedetails.CacheDetailsWriter;
@@ -36,9 +37,9 @@ public class DetailsReaderImport {
     static class MessageHandlerAdapter implements MessageHandlerInterface {
 
         private ProgressManager progressManager;
-        private final Handler handler;
+        private final ProgressHandler handler;
 
-        public MessageHandlerAdapter(Handler handler) {
+        public MessageHandlerAdapter(ProgressHandler handler) {
             this.handler = handler;
         }
 
@@ -116,7 +117,7 @@ public class DetailsReaderImport {
         eventHelper = new EventHelper(xmlPathBuilder, eventHandlerGpx, xmlPullParserWrapper);
     }
 
-    public void getCacheDetails(String csvIds, ProgressManager progressManager, Handler handler,
+    public void getCacheDetails(String csvIds, ProgressManager progressManager, ProgressHandler handler,
             int updatedCaches) throws BCachingException {
         MessageHandlerAdapter messageHandlerAdapter = new MessageHandlerAdapter(handler);
 

@@ -14,15 +14,14 @@
 
 package com.google.code.geobeagle.bcaching.progress;
 
-import android.os.Handler;
 import android.os.Message;
 
 public class ProgressManager {
-    public void update(Handler handler, ProgressMessage progressMessage, int arg) {
+    public void update(ProgressHandler handler, ProgressMessage progressMessage, int arg) {
         Message.obtain(handler, progressMessage.ordinal(), arg, 0).sendToTarget();
     }
 
-    public void update(Handler handler, ProgressMessage progressMessage, String arg) {
+    public void update(ProgressHandler handler, ProgressMessage progressMessage, String arg) {
         Message.obtain(handler, progressMessage.ordinal(), arg).sendToTarget();
     }
 }

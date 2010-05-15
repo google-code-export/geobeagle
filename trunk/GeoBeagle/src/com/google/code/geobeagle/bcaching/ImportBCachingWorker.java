@@ -30,7 +30,7 @@ import android.util.Log;
 
 public class ImportBCachingWorker extends Thread {
     public static interface ImportBCachingWorkerFactory {
-        ImportBCachingWorker create(Handler handler);
+        ImportBCachingWorker create(ProgressHandler handler);
     }
 
     public static class ImportBCaching {
@@ -49,7 +49,7 @@ public class ImportBCachingWorker extends Thread {
         }
     }
 
-    private final Handler handler;
+    private final ProgressHandler handler;
     private final BCachingLastUpdated bcachingLastUpdated;
     private final BCachingListImporter bcachingListImporter;
     private final ErrorDisplayer errorDisplayer;
@@ -57,7 +57,7 @@ public class ImportBCachingWorker extends Thread {
     private DetailsReaderImport detailsReaderImport;
 
     @Inject
-    public ImportBCachingWorker(@Assisted Handler handler, ProgressManager progressManager,
+    public ImportBCachingWorker(@Assisted ProgressHandler handler, ProgressManager progressManager,
             BCachingLastUpdated bcachingLastUpdated, BCachingListImporter bcachingListImporter,
             ErrorDisplayer errorDisplayer, DetailsReaderImport detailsReaderImport) {
         this.handler = handler;
