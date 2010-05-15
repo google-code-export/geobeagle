@@ -18,9 +18,8 @@ import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
+import android.util.Log;
+
 import java.io.IOException;
 import java.io.Reader;
 
@@ -54,21 +53,12 @@ public class GpxToCacheDI {
             return mXmlPullParser.next();
         }
 
-        public void open(String path, Reader reader) throws XmlPullParserException  {
-            final XmlPullParser newPullParser = XmlPullParserFactory.newInstance().newPullParser();
+        public void open(String path, Reader reader) throws XmlPullParserException {
+            Log.d("GeoBeagle", "XmlPullParserWrapper open: " + this + ", " + path + ", " + reader);
+            XmlPullParser newPullParser = XmlPullParserFactory.newInstance().newPullParser();
             newPullParser.setInput(reader);
             mSource = path;
             mXmlPullParser = newPullParser;
         }
-
     }
-
-    public static XmlPullParser createPullParser(String path) throws FileNotFoundException,
-            XmlPullParserException {
-        final XmlPullParser newPullParser = XmlPullParserFactory.newInstance().newPullParser();
-        final Reader reader = new BufferedReader(new FileReader(path));
-        newPullParser.setInput(reader);
-        return newPullParser;
-    }
-
 }

@@ -30,7 +30,6 @@ public class DetailsReader {
     private final Hashtable<String, String> params;
     private final WriterWrapperFactory writerWrapperFactory;
     private final BufferedReaderFactory bufferedReaderFactory;
-
     interface WriterWrapperFactory {
         WriterWrapper create(String path) throws IOException;
     }

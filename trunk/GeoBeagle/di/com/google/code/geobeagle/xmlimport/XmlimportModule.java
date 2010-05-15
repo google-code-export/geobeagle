@@ -14,16 +14,31 @@
 
 package com.google.code.geobeagle.xmlimport;
 
+import com.google.code.geobeagle.xmlimport.EventHelper.EventHelperFactory;
 import com.google.code.geobeagle.xmlimport.GpxImporterDI.MessageHandler;
+import com.google.code.geobeagle.xmlimport.GpxToCache.GpxToCacheFactory;
+import com.google.inject.Provides;
+import com.google.inject.assistedinject.FactoryProvider;
 
 import roboguice.config.AbstractAndroidModule;
 import roboguice.inject.ContextScoped;
+
+import android.os.PowerManager;
+import android.os.PowerManager.WakeLock;
 
 public class XmlimportModule extends AbstractAndroidModule {
 
     @Override
     protected void configure() {
         bind(MessageHandler.class).in(ContextScoped.class);
+        bind(EventHelperFactory.class).toProvider(
+                FactoryProvider.newFactory(EventHelperFactory.class, EventHelper.class));
+        bind(GpxToCacheFactory.class).toProvider(
+                FactoryProvider.newFactory(GpxToCacheFactory.class, GpxToCache.class));
     }
 
+    @Provides
+    WakeLock wakeLockProvider(PowerManager powerManager) {
+        return powerManager.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, "Importing");
+    }
 }

@@ -21,4 +21,8 @@ public class ProgressManager {
     public void update(Handler handler, ProgressMessage progressMessage, int arg) {
         Message.obtain(handler, progressMessage.ordinal(), arg, 0).sendToTarget();
     }
+
+    public void update(Handler handler, ProgressMessage progressMessage, String arg) {
+        Message.obtain(handler, progressMessage.ordinal(), arg).sendToTarget();
+    }
 }

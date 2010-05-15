@@ -18,8 +18,8 @@ import com.google.code.geobeagle.ErrorDisplayer;
 import com.google.code.geobeagle.database.CacheWriter;
 import com.google.code.geobeagle.xmlimport.GpxImporter;
 import com.google.code.geobeagle.xmlimport.GpxImporterDI;
+import com.google.code.geobeagle.xmlimport.MessageHandlerInterface;
 import com.google.code.geobeagle.xmlimport.CachePersisterFacadeDI.CachePersisterFacadeFactory;
-import com.google.code.geobeagle.xmlimport.GpxImporterDI.MessageHandler;
 import com.google.code.geobeagle.xmlimport.GpxToCache.Aborter;
 import com.google.code.geobeagle.xmlimport.GpxToCacheDI.XmlPullParserWrapper;
 import com.google.inject.Injector;
@@ -33,13 +33,13 @@ public class GpxImporterFactory {
     private final ErrorDisplayer mErrorDisplayer;
     private final Pausable mGeocacheListPresenter;
     private final Context mContext;
-    private final MessageHandler mMessageHandler;
+    private final MessageHandlerInterface mMessageHandler;
     private final XmlPullParserWrapper mXmlPullParserWrapper;
     private final Injector mInjector;
 
     public GpxImporterFactory(Aborter aborter,
             CachePersisterFacadeFactory cachePersisterFacadeFactory, ErrorDisplayer errorDisplayer,
-            Pausable pausable, Context context, MessageHandler messageHandler,
+            Pausable pausable, Context context, MessageHandlerInterface messageHandler,
             XmlPullParserWrapper xmlPullParserWrapper, Injector injector) {
         mAborter = aborter;
         mCachePersisterFacadeFactory = cachePersisterFacadeFactory;

@@ -18,6 +18,7 @@ import com.google.code.geobeagle.activity.main.GeoBeagleModule.DefaultSharedPref
 import com.google.code.geobeagle.bcaching.BCachingAnnotations.CacheListAnnotation;
 import com.google.code.geobeagle.bcaching.BCachingAnnotations.DetailsReaderAnnotation;
 import com.google.code.geobeagle.bcaching.DetailsReader.WriterWrapperFactory;
+import com.google.code.geobeagle.bcaching.DetailsReaderImport.DetailsReaderImportFactory;
 import com.google.code.geobeagle.bcaching.ImportBCachingWorker.ImportBCachingWorkerFactory;
 import com.google.code.geobeagle.bcaching.communication.BCachingCommunication;
 import com.google.code.geobeagle.bcaching.communication.BCachingException;
@@ -47,6 +48,9 @@ public class BCachingModule extends AbstractAndroidModule {
                         ImportBCachingWorker.class));
         bind(BufferedReaderFactory.class).to(BufferedReaderFactoryImpl.class);
         bind(WriterWrapperFactory.class).to(WriterWrapperFactoryImpl.class);
+        bind(DetailsReaderImportFactory.class).toProvider(
+                FactoryProvider.newFactory(DetailsReaderImportFactory.class,
+                        DetailsReaderImport.class));
     }
 
     static class BufferedReaderFactoryImpl implements BufferedReaderFactory {
@@ -65,7 +69,6 @@ public class BCachingModule extends AbstractAndroidModule {
     }
 
     static class WriterWrapperFactoryImpl implements WriterWrapperFactory {
-
         public WriterWrapper create(String path) throws IOException {
             WriterWrapper writerWrapper = new WriterWrapper();
             writerWrapper.open(path);
@@ -86,6 +89,7 @@ public class BCachingModule extends AbstractAndroidModule {
     Hashtable<String, String> getCacheDetailsParamsProvider() {
         Hashtable<String, String> params = new Hashtable<String, String>();
         params.put("a", "detail");
+        params.put("lastuploaddays", "7");
         params.put("desc", "html");
         params.put("tbs", "0");
         params.put("wpts", "1");
@@ -101,6 +105,7 @@ public class BCachingModule extends AbstractAndroidModule {
         Hashtable<String, String> params = new Hashtable<String, String>();
         params.put("a", "list");
         params.put("found", "0");
+        params.put("lastuploaddays", "7");
         params.put("app", "GeoBeagle");
         return params;
     }

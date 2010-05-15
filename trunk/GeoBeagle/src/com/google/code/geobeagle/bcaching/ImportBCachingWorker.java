@@ -16,6 +16,7 @@ package com.google.code.geobeagle.bcaching;
 
 import com.google.code.geobeagle.ErrorDisplayer;
 import com.google.code.geobeagle.R;
+import com.google.code.geobeagle.bcaching.DetailsReaderImport.DetailsReaderImportFactory;
 import com.google.code.geobeagle.bcaching.communication.BCachingException;
 import com.google.code.geobeagle.bcaching.communication.BCachingList;
 import com.google.code.geobeagle.bcaching.communication.BCachingListImporter;
@@ -37,18 +38,24 @@ public class ImportBCachingWorker extends Thread {
     private final BCachingListImporter bcachingListImporter;
     private final ErrorDisplayer errorDisplayer;
     private final ProgressManager progressManager;
+    @SuppressWarnings("unused")
     private final DetailsReader detailsReader;
+    private final DetailsReaderImportFactory detailsReaderImportFactory;
+    private DetailsReaderImport detailsReaderImport;
 
     @Inject
     public ImportBCachingWorker(@Assisted Handler handler, ProgressManager progressManager,
             BCachingLastUpdated bcachingLastUpdated, BCachingListImporter bcachingListImporter,
-            ErrorDisplayer errorDisplayer, DetailsReader detailsReader) {
+            ErrorDisplayer errorDisplayer, DetailsReader detailsReader,
+            DetailsReaderImportFactory detailsReaderImportFactory, DetailsReaderImport detailsReaderImport) {
         this.handler = handler;
         this.bcachingLastUpdated = bcachingLastUpdated;
         this.bcachingListImporter = bcachingListImporter;
         this.errorDisplayer = errorDisplayer;
         this.progressManager = progressManager;
         this.detailsReader = detailsReader;
+        this.detailsReaderImportFactory = detailsReaderImportFactory;
+        this.detailsReaderImport = detailsReaderImport;
     }
 
     @Override
@@ -56,6 +63,7 @@ public class ImportBCachingWorker extends Thread {
         long now = System.currentTimeMillis();
         progressManager.update(handler, ProgressMessage.START, 0);
         String lastUpdateTime = bcachingLastUpdated.getLastUpdateTime();
+//        DetailsReaderImport detailsReaderImport = detailsReaderImportFactory.create(handler);
 
         try {
             int totalCount = bcachingListImporter.getTotalCount(lastUpdateTime);
@@ -69,7 +77,11 @@ public class ImportBCachingWorker extends Thread {
                     lastUpdateTime);
             int cachesRead;
             while ((cachesRead = bcachingList.getCachesRead()) > 0) {
-                detailsReader.getCacheDetails(bcachingList.getCacheIds(), updatedCaches);
+                // detailsReader.getCacheDetails(bcachingList.getCacheIds(),
+                // updatedCaches);
+                Log.d("GeoBeagle", "cachesRead: " + cachesRead);
+                detailsReaderImport.getCacheDetails(bcachingList.getCacheIds(), progressManager,
+                        handler, updatedCaches);
 
                 updatedCaches += cachesRead;
                 progressManager.update(handler, ProgressMessage.SET_PROGRESS, updatedCaches);
@@ -78,7 +90,6 @@ public class ImportBCachingWorker extends Thread {
             bcachingLastUpdated.putLastUpdateTime(now);
         } catch (BCachingException e) {
             errorDisplayer.displayError(R.string.problem_importing_from_bcaching, e.getMessage());
-            e.printStackTrace();
         } finally {
             progressManager.update(handler, ProgressMessage.DONE, 0);
         }
