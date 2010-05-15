@@ -14,9 +14,16 @@
 
 package com.google.code.geobeagle.xmlimport;
 
-import com.google.code.geobeagle.xmlimport.EventHelper.EventHelperFactory;
+import static java.lang.annotation.ElementType.FIELD;
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.ElementType.PARAMETER;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
+
+import com.google.code.geobeagle.xmlimport.EventHelper.XmlPathBuilder;
 import com.google.code.geobeagle.xmlimport.GpxImporterDI.MessageHandler;
 import com.google.code.geobeagle.xmlimport.GpxToCache.GpxToCacheFactory;
+import com.google.code.geobeagle.xmlimport.GpxToCacheDI.XmlPullParserWrapper;
+import com.google.inject.BindingAnnotation;
 import com.google.inject.Provides;
 import com.google.inject.assistedinject.FactoryProvider;
 
@@ -26,15 +33,32 @@ import roboguice.inject.ContextScoped;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
+
 public class XmlimportModule extends AbstractAndroidModule {
+
+    @BindingAnnotation
+    @Target( {
+            FIELD, PARAMETER, METHOD
+    })
+    @Retention(RUNTIME)
+    public static @interface GpxAnnotation {
+    }
 
     @Override
     protected void configure() {
         bind(MessageHandler.class).in(ContextScoped.class);
-        bind(EventHelperFactory.class).toProvider(
-                FactoryProvider.newFactory(EventHelperFactory.class, EventHelper.class));
         bind(GpxToCacheFactory.class).toProvider(
                 FactoryProvider.newFactory(GpxToCacheFactory.class, GpxToCache.class));
+        bind(XmlPullParserWrapper.class).in(ContextScoped.class);
+    }
+
+    @Provides
+    @GpxAnnotation
+    EventHelper eventHelperGpxProvider(XmlPathBuilder xmlPathBuilder,
+            EventHandlerGpx eventHandlerGpx, XmlPullParserWrapper xmlPullParser) {
+        return new EventHelper(xmlPathBuilder, eventHandlerGpx, xmlPullParser);
     }
 
     @Provides
