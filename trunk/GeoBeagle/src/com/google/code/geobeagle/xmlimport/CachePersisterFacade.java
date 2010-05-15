@@ -138,6 +138,7 @@ public class CachePersisterFacade {
 
     public void setHandler(MessageHandlerInterface messageHandler) {
         mMessageHandler = messageHandler;
+        mMessageHandler.updateName("SET HANDLER");
     }
 
 }

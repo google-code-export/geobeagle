@@ -20,11 +20,14 @@ import com.google.code.geobeagle.bcaching.DetailsReaderImport.DetailsReaderImpor
 import com.google.code.geobeagle.bcaching.communication.BCachingException;
 import com.google.code.geobeagle.bcaching.communication.BCachingList;
 import com.google.code.geobeagle.bcaching.communication.BCachingListImporter;
+import com.google.code.geobeagle.bcaching.progress.ProgressHandler;
 import com.google.code.geobeagle.bcaching.progress.ProgressManager;
 import com.google.code.geobeagle.bcaching.progress.ProgressMessage;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 
+import android.app.Activity;
+import android.app.ProgressDialog;
 import android.os.Handler;
 import android.util.Log;
 
@@ -33,28 +36,40 @@ public class ImportBCachingWorker extends Thread {
         ImportBCachingWorker create(Handler handler);
     }
 
+    public static class ImportBCaching {
+        private final ImportBCachingWorkerFactory importBCachingWorkerFactory;
+        private final ProgressDialog progressDialog;
+        private final ProgressHandler progressHandler;
+
+        @Inject
+        ImportBCaching(ImportBCachingWorkerFactory importBCachingWorkerFactory,
+                ProgressDialog progressDialog, ProgressHandler progressHandler) {
+            this.importBCachingWorkerFactory = importBCachingWorkerFactory;
+            this.progressDialog = progressDialog;
+            this.progressHandler = progressHandler;
+        }
+
+        public void importBCaching() {
+            importBCachingWorkerFactory.create(progressHandler).start();
+        }
+    }
+
     private final Handler handler;
     private final BCachingLastUpdated bcachingLastUpdated;
     private final BCachingListImporter bcachingListImporter;
     private final ErrorDisplayer errorDisplayer;
     private final ProgressManager progressManager;
-    @SuppressWarnings("unused")
-    private final DetailsReader detailsReader;
-    private final DetailsReaderImportFactory detailsReaderImportFactory;
     private DetailsReaderImport detailsReaderImport;
 
     @Inject
     public ImportBCachingWorker(@Assisted Handler handler, ProgressManager progressManager,
             BCachingLastUpdated bcachingLastUpdated, BCachingListImporter bcachingListImporter,
-            ErrorDisplayer errorDisplayer, DetailsReader detailsReader,
-            DetailsReaderImportFactory detailsReaderImportFactory, DetailsReaderImport detailsReaderImport) {
+            ErrorDisplayer errorDisplayer, DetailsReaderImport detailsReaderImport) {
         this.handler = handler;
         this.bcachingLastUpdated = bcachingLastUpdated;
         this.bcachingListImporter = bcachingListImporter;
         this.errorDisplayer = errorDisplayer;
         this.progressManager = progressManager;
-        this.detailsReader = detailsReader;
-        this.detailsReaderImportFactory = detailsReaderImportFactory;
         this.detailsReaderImport = detailsReaderImport;
     }
 
@@ -63,7 +78,8 @@ public class ImportBCachingWorker extends Thread {
         long now = System.currentTimeMillis();
         progressManager.update(handler, ProgressMessage.START, 0);
         String lastUpdateTime = bcachingLastUpdated.getLastUpdateTime();
-//        DetailsReaderImport detailsReaderImport = detailsReaderImportFactory.create(handler);
+        // DetailsReaderImport detailsReaderImport =
+        // detailsReaderImportFactory.create(handler);
 
         try {
             int totalCount = bcachingListImporter.getTotalCount(lastUpdateTime);
