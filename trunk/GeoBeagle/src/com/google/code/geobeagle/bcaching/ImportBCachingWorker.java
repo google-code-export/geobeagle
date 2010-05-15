@@ -23,9 +23,7 @@ import com.google.code.geobeagle.bcaching.progress.ProgressHandler;
 import com.google.code.geobeagle.bcaching.progress.ProgressManager;
 import com.google.code.geobeagle.bcaching.progress.ProgressMessage;
 import com.google.inject.Inject;
-import com.google.inject.assistedinject.Assisted;
 
-import android.os.Handler;
 import android.util.Log;
 
 public class ImportBCachingWorker extends Thread {

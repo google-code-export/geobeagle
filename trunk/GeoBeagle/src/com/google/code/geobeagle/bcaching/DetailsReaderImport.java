@@ -100,11 +100,16 @@ public class DetailsReaderImport {
             CacheDetailsWriter cacheDetailsWriter, ErrorDisplayer errorDisplayer,
             WakeLock wakeLock, XmlPullParserWrapper xmlPullParserWrapper,
             XmlPathBuilder xmlPathBuilder, Aborter aborter, CacheTagSqlWriter cacheTagSqlWriter,
-            FileAlreadyLoadedChecker fileAlreadyLoadedChecker) {
+            FileAlreadyLoadedChecker fileAlreadyLoadedChecker, ProgressHandler progressHandler, ProgressManager progressManager) {
         this.params = params;
         this.bufferedReaderFactory = bufferedReaderFactory;
+        MessageHandlerAdapter messageHandlerAdapter = new MessageHandlerAdapter(progressHandler);
+
+        messageHandlerAdapter.setProgressManager(progressManager);
+
         cachePersisterFacade = new CachePersisterFacade(cacheTagSqlWriter, fileFactory,
                 cacheDetailsWriter, null, wakeLock);
+        cachePersisterFacade.setHandler(messageHandlerAdapter);
         GpxToCache gpxToCache = new GpxToCache(xmlPullParserWrapper, aborter,
                 fileAlreadyLoadedChecker);
         this.gpxLoader = new GpxLoader(cachePersisterFacade, errorDisplayer, gpxToCache, wakeLock);
@@ -113,14 +118,9 @@ public class DetailsReaderImport {
         eventHelper = new EventHelper(xmlPathBuilder, eventHandlerGpx, xmlPullParserWrapper);
     }
 
-    public void getCacheDetails(String csvIds, ProgressManager progressManager, ProgressHandler handler,
+    public void getCacheDetails(String csvIds, ProgressManager progressManager, ProgressHandler progressHandler,
             int updatedCaches) throws BCachingException {
-        MessageHandlerAdapter messageHandlerAdapter = new MessageHandlerAdapter(handler);
-
-        messageHandlerAdapter.setProgressManager(progressManager);
-        cachePersisterFacade.setHandler(messageHandlerAdapter);
         params.put("ids", csvIds);
-        messageHandlerAdapter.updateName("getCacheDetails");
 
         try {
             BufferedReader bufferedReader = bufferedReaderFactory.create(params);
