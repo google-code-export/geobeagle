@@ -88,10 +88,6 @@ public class DetailsReaderImport {
 
     }
 
-    static interface DetailsReaderImportFactory {
-        DetailsReaderImport create(Handler handler);
-    }
-
     private final Hashtable<String, String> params;
     private final BufferedReaderFactory bufferedReaderFactory;
     private final GpxLoader gpxLoader;

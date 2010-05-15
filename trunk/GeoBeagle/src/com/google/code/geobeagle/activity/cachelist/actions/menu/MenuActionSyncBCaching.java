@@ -16,22 +16,21 @@ package com.google.code.geobeagle.activity.cachelist.actions.menu;
 
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.actions.MenuActionBase;
-import com.google.code.geobeagle.bcaching.ImportBCachingWorker.ImportBCaching;
+import com.google.code.geobeagle.bcaching.ImportBCachingWorker;
 import com.google.inject.Inject;
-import com.google.inject.Provider;
 
 public class MenuActionSyncBCaching extends MenuActionBase {
 
-    private Provider<ImportBCaching> importBCachingProvider;
+    private ImportBCachingWorker importBCachingWorker;
 
     @Inject
-    public MenuActionSyncBCaching(Provider<ImportBCaching> importBCachingProvider) {
+    public MenuActionSyncBCaching(ImportBCachingWorker importBCachingWorker) {
         super(R.string.menu_sync_bcaching);
-        this.importBCachingProvider = importBCachingProvider;
+        this.importBCachingWorker = importBCachingWorker;
     }
 
     @Override
     public void act() {
-        importBCachingProvider.get().importBCaching();
+        importBCachingWorker.start();
     }
 }

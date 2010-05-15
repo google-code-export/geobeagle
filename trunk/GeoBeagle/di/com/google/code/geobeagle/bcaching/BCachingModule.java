@@ -18,15 +18,12 @@ import com.google.code.geobeagle.activity.main.GeoBeagleModule.DefaultSharedPref
 import com.google.code.geobeagle.bcaching.BCachingAnnotations.CacheListAnnotation;
 import com.google.code.geobeagle.bcaching.BCachingAnnotations.DetailsReaderAnnotation;
 import com.google.code.geobeagle.bcaching.DetailsReader.WriterWrapperFactory;
-import com.google.code.geobeagle.bcaching.DetailsReaderImport.DetailsReaderImportFactory;
-import com.google.code.geobeagle.bcaching.ImportBCachingWorker.ImportBCachingWorkerFactory;
 import com.google.code.geobeagle.bcaching.communication.BCachingCommunication;
 import com.google.code.geobeagle.bcaching.communication.BCachingException;
 import com.google.code.geobeagle.bcaching.communication.BCachingListImportHelper.BufferedReaderFactory;
 import com.google.code.geobeagle.cachedetails.WriterWrapper;
 import com.google.inject.Inject;
 import com.google.inject.Provides;
-import com.google.inject.assistedinject.FactoryProvider;
 
 import roboguice.config.AbstractAndroidModule;
 import roboguice.inject.ContextScoped;
@@ -46,14 +43,8 @@ public class BCachingModule extends AbstractAndroidModule {
 
     @Override
     protected void configure() {
-        bind(ImportBCachingWorkerFactory.class).toProvider(
-                FactoryProvider.newFactory(ImportBCachingWorkerFactory.class,
-                        ImportBCachingWorker.class));
         bind(BufferedReaderFactory.class).to(BufferedReaderFactoryImpl.class);
         bind(WriterWrapperFactory.class).to(WriterWrapperFactoryImpl.class);
-        bind(DetailsReaderImportFactory.class).toProvider(
-                FactoryProvider.newFactory(DetailsReaderImportFactory.class,
-                        DetailsReaderImport.class));
     }
 
     @ContextScoped

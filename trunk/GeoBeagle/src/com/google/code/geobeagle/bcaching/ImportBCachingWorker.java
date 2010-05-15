@@ -29,27 +29,7 @@ import android.os.Handler;
 import android.util.Log;
 
 public class ImportBCachingWorker extends Thread {
-    public static interface ImportBCachingWorkerFactory {
-        ImportBCachingWorker create(ProgressHandler handler);
-    }
-
-    public static class ImportBCaching {
-        private final ImportBCachingWorkerFactory importBCachingWorkerFactory;
-        private final ProgressHandler progressHandler;
-
-        @Inject
-        ImportBCaching(ImportBCachingWorkerFactory importBCachingWorkerFactory,
-                ProgressHandler progressHandler) {
-            this.importBCachingWorkerFactory = importBCachingWorkerFactory;
-            this.progressHandler = progressHandler;
-        }
-
-        public void importBCaching() {
-            importBCachingWorkerFactory.create(progressHandler).start();
-        }
-    }
-
-    private final ProgressHandler handler;
+    private final ProgressHandler progressHandler;
     private final BCachingLastUpdated bcachingLastUpdated;
     private final BCachingListImporter bcachingListImporter;
     private final ErrorDisplayer errorDisplayer;
@@ -57,10 +37,11 @@ public class ImportBCachingWorker extends Thread {
     private DetailsReaderImport detailsReaderImport;
 
     @Inject
-    public ImportBCachingWorker(@Assisted ProgressHandler handler, ProgressManager progressManager,
-            BCachingLastUpdated bcachingLastUpdated, BCachingListImporter bcachingListImporter,
-            ErrorDisplayer errorDisplayer, DetailsReaderImport detailsReaderImport) {
-        this.handler = handler;
+    public ImportBCachingWorker(ProgressHandler progressHandler,
+            ProgressManager progressManager, BCachingLastUpdated bcachingLastUpdated,
+            BCachingListImporter bcachingListImporter, ErrorDisplayer errorDisplayer,
+            DetailsReaderImport detailsReaderImport) {
+        this.progressHandler = progressHandler;
         this.bcachingLastUpdated = bcachingLastUpdated;
         this.bcachingListImporter = bcachingListImporter;
         this.errorDisplayer = errorDisplayer;
@@ -71,16 +52,16 @@ public class ImportBCachingWorker extends Thread {
     @Override
     public void run() {
         long now = System.currentTimeMillis();
-        progressManager.update(handler, ProgressMessage.START, 0);
+        progressManager.update(progressHandler, ProgressMessage.START, 0);
         String lastUpdateTime = bcachingLastUpdated.getLastUpdateTime();
         // DetailsReaderImport detailsReaderImport =
-        // detailsReaderImportFactory.create(handler);
+        // detailsReaderImportFactory.create(progressHandler);
 
         try {
             int totalCount = bcachingListImporter.getTotalCount(lastUpdateTime);
             if (totalCount <= 0)
                 return;
-            progressManager.update(handler, ProgressMessage.SET_MAX, totalCount);
+            progressManager.update(progressHandler, ProgressMessage.SET_MAX, totalCount);
             Log.d("GeoBeagle", "totalCount = " + totalCount);
 
             int updatedCaches = 0;
@@ -92,17 +73,18 @@ public class ImportBCachingWorker extends Thread {
                 // updatedCaches);
                 Log.d("GeoBeagle", "cachesRead: " + cachesRead);
                 detailsReaderImport.getCacheDetails(bcachingList.getCacheIds(), progressManager,
-                        handler, updatedCaches);
+                        progressHandler, updatedCaches);
 
                 updatedCaches += cachesRead;
-                progressManager.update(handler, ProgressMessage.SET_PROGRESS, updatedCaches);
+                progressManager
+                        .update(progressHandler, ProgressMessage.SET_PROGRESS, updatedCaches);
                 bcachingList = bcachingListImporter.getCacheList(updatedCaches, lastUpdateTime);
             }
             bcachingLastUpdated.putLastUpdateTime(now);
         } catch (BCachingException e) {
             errorDisplayer.displayError(R.string.problem_importing_from_bcaching, e.getMessage());
         } finally {
-            progressManager.update(handler, ProgressMessage.DONE, 0);
+            progressManager.update(progressHandler, ProgressMessage.DONE, 0);
         }
     }
 
