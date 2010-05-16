@@ -24,9 +24,10 @@ public class ProgressManagerTest {
     public void testUpdate() {
         PowerMock.mockStatic(Message.class);
         Message message = PowerMock.createMock(Message.class);
-        EasyMock.expect(Message.obtain(null, 2, 0, 0)).andReturn(message);
+        EasyMock.expect(Message.obtain(null, ProgressMessage.DONE.ordinal(), 0, 0)).andReturn(
+                message);
         message.sendToTarget();
-        
+
         PowerMock.replayAll();
         new ProgressManager().update(null, ProgressMessage.DONE, 0);
         PowerMock.verifyAll();
