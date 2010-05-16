@@ -6,15 +6,13 @@ import com.google.code.geobeagle.bcaching.BCachingAnnotations.DetailsReaderAnnot
 import com.google.code.geobeagle.bcaching.communication.BCachingException;
 import com.google.code.geobeagle.bcaching.communication.BCachingListImportHelper.BufferedReaderFactory;
 import com.google.code.geobeagle.xmlimport.CachePersisterFacade;
-import com.google.code.geobeagle.xmlimport.EventHandlerGpx;
 import com.google.code.geobeagle.xmlimport.EventHelper;
 import com.google.code.geobeagle.xmlimport.FileAlreadyLoadedChecker;
 import com.google.code.geobeagle.xmlimport.GpxLoader;
 import com.google.code.geobeagle.xmlimport.GpxToCache;
-import com.google.code.geobeagle.xmlimport.EventHelper.XmlPathBuilder;
 import com.google.code.geobeagle.xmlimport.GpxToCache.Aborter;
 import com.google.code.geobeagle.xmlimport.GpxToCacheDI.XmlPullParserWrapper;
-import com.google.code.geobeagle.xmlimport.XmlimportModule.GpxAnnotation;
+import com.google.code.geobeagle.xmlimport.XmlimportAnnotations.GpxAnnotation;
 import com.google.inject.Inject;
 
 import org.xmlpull.v1.XmlPullParserException;
@@ -33,15 +31,11 @@ public class DetailsReaderImport {
     @Inject
     DetailsReaderImport(@DetailsReaderAnnotation Hashtable<String, String> params,
             BufferedReaderFactory bufferedReaderFactory, ErrorDisplayer errorDisplayer,
-            WakeLock wakeLock, XmlPullParserWrapper xmlPullParserWrapper,
-            XmlPathBuilder xmlPathBuilder, Aborter aborter,
+            WakeLock wakeLock, XmlPullParserWrapper xmlPullParserWrapper, Aborter aborter,
             FileAlreadyLoadedChecker fileAlreadyLoadedChecker,
-            CachePersisterFacade cachePersisterFacade, EventHandlerGpx eventHandlerGpx,
-            @GpxAnnotation EventHelper eventHelper) {
+            CachePersisterFacade cachePersisterFacade, @GpxAnnotation EventHelper eventHelper, GpxToCache gpxToCache) {
         this.params = params;
         this.bufferedReaderFactory = bufferedReaderFactory;
-        GpxToCache gpxToCache = new GpxToCache(xmlPullParserWrapper, aborter,
-                fileAlreadyLoadedChecker);
         this.gpxLoader = new GpxLoader(cachePersisterFacade, errorDisplayer, gpxToCache, wakeLock);
         this.eventHelper = eventHelper;
     }
