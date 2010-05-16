@@ -30,7 +30,6 @@ public class ProgressHandler extends Handler {
 
     @Override
     public void handleMessage(Message msg) {
-//        progressDialog.setTitle("Importing from BCaching site");
         ProgressMessage progressMessage = ProgressMessage.fromInt(msg.what);
         progressMessage.act(progressDialog, msg.arg1, msg.obj);
     }

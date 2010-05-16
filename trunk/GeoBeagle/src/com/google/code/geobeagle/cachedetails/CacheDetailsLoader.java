@@ -74,16 +74,14 @@ public class CacheDetailsLoader {
             if (!sdcardPath.isDirectory())
                 return new DetailsReaderError(mActivity, R.string.error_cant_read_sdroot, "");
             
-            if (mFileDataVersionChecker.needsUpdating())
-                return new DetailsReaderError(mActivity, R.string.error_details_file_version, "");
-
             FileInputStream fileInputStream;
             String absolutePath = file.getAbsolutePath();
             try {
                 fileInputStream = new FileInputStream(file);
             } catch (FileNotFoundException e) {
-                return new DetailsReaderError(mActivity,
-                        R.string.error_opening_details_file, e.getMessage());
+                int error = mFileDataVersionChecker.needsUpdating() ? R.string.error_details_file_version
+                        : R.string.error_opening_details_file;
+                return new DetailsReaderError(mActivity, error, e.getMessage());
             }
             byte[] buffer = new byte[(int)file.length()];
             return new DetailsReaderImpl(mActivity, absolutePath, fileInputStream, buffer);
