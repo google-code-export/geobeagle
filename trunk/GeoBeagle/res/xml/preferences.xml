@@ -17,4 +17,8 @@
 		android:title="Absolute Bearing in List" android:summary="Letters (NS) instead of arrows (^v)" />
 	<CheckBoxPreference android:key="field-note-text-file"
 		android:title="Log Caches to File" android:summary="Log field notes to a file instead of using SMS" />
+	<EditTextPreference android:key="bcaching-username"
+		android:title="BCaching User Name" android:summary="User Name for BCaching.com" />
+	<EditTextPreference android:key="bcaching-password"
+		android:title="BCaching Password" android:summary="Password for BCaching.com" />
 </PreferenceScreen>
