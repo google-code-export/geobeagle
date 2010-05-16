@@ -14,18 +14,11 @@
 
 package com.google.code.geobeagle.xmlimport;
 
-import static java.lang.annotation.ElementType.FIELD;
-import static java.lang.annotation.ElementType.METHOD;
-import static java.lang.annotation.ElementType.PARAMETER;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-
 import com.google.code.geobeagle.xmlimport.EventHelper.XmlPathBuilder;
 import com.google.code.geobeagle.xmlimport.GpxImporterDI.MessageHandler;
-import com.google.code.geobeagle.xmlimport.GpxToCache.GpxToCacheFactory;
 import com.google.code.geobeagle.xmlimport.GpxToCacheDI.XmlPullParserWrapper;
-import com.google.inject.BindingAnnotation;
+import com.google.code.geobeagle.xmlimport.XmlimportAnnotations.GpxAnnotation;
 import com.google.inject.Provides;
-import com.google.inject.assistedinject.FactoryProvider;
 
 import roboguice.config.AbstractAndroidModule;
 import roboguice.inject.ContextScoped;
@@ -33,24 +26,11 @@ import roboguice.inject.ContextScoped;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
-
 public class XmlimportModule extends AbstractAndroidModule {
-
-    @BindingAnnotation
-    @Target( {
-            FIELD, PARAMETER, METHOD
-    })
-    @Retention(RUNTIME)
-    public static @interface GpxAnnotation {
-    }
 
     @Override
     protected void configure() {
         bind(MessageHandler.class).in(ContextScoped.class);
-        bind(GpxToCacheFactory.class).toProvider(
-                FactoryProvider.newFactory(GpxToCacheFactory.class, GpxToCache.class));
         bind(XmlPullParserWrapper.class).in(ContextScoped.class);
     }
 

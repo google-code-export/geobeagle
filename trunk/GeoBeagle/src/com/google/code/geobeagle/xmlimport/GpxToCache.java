@@ -53,10 +53,6 @@ public class GpxToCache {
     private String mSource;
     private final FileAlreadyLoadedChecker mTestLocAlreadyLoaded;
 
-    static interface GpxToCacheFactory {
-        GpxToCache create(XmlPullParserWrapper xmlPullParserWrapper);
-    }
-
     @Inject
     public
     GpxToCache(XmlPullParserWrapper xmlPullParserWrapper, Aborter aborter,
