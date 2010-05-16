@@ -21,7 +21,6 @@ import com.google.code.geobeagle.xmlimport.CachePersisterFacadeDI.FileFactory;
 import com.google.inject.Inject;
 
 import android.os.PowerManager.WakeLock;
-import android.util.Log;
 
 import java.io.File;
 import java.io.IOException;
@@ -65,7 +64,6 @@ public class CachePersisterFacade {
     }
 
     void endCache(Source source) throws IOException {
-        Log.d("GeoBeagle", "END CACHE " + source);
         mMessageHandler.updateName(mCacheName);
         mCacheDetailsWriter.close();
         mCacheTagWriter.write(source);
