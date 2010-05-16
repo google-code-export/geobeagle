@@ -19,7 +19,6 @@ import com.google.inject.Inject;
 import android.app.ProgressDialog;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 
 public class ProgressHandler extends Handler {
     private final ProgressDialog progressDialog;
@@ -33,9 +32,6 @@ public class ProgressHandler extends Handler {
     public void handleMessage(Message msg) {
 //        progressDialog.setTitle("Importing from BCaching site");
         ProgressMessage progressMessage = ProgressMessage.fromInt(msg.what);
-        Log.d("GeoBeagle", progressDialog + ": getting message: " + progressMessage + ", " + msg.arg1);
-        if (progressMessage == ProgressMessage.SET_FILE)
-            Log.d("GeoBeagle", progressDialog + ":  setfile: " + progressMessage + ", " + (String) msg.obj);
         progressMessage.act(progressDialog, msg.arg1, msg.obj);
     }
 }
