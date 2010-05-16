@@ -31,10 +31,13 @@ public class CacheDetailsWriterTest {
     public void testOpen() throws IOException {
         HtmlWriter htmlWriter = createMock(HtmlWriter.class);
 
-        htmlWriter.open(CacheDetailsLoader.DETAILS_DIR + "GC123.html");
+        
+        htmlWriter.open(CacheDetailsLoader.DETAILS_DIR + "foo.gpx/GC123.html");
 
         replay(htmlWriter);
-        new CacheDetailsWriter(htmlWriter).open("GC123");
+        CacheDetailsWriter cacheDetailsWriter = new CacheDetailsWriter(htmlWriter);
+        cacheDetailsWriter.gpxName("foo.gpx");
+        cacheDetailsWriter.open("GC123");
         verify(htmlWriter);
     }
 
