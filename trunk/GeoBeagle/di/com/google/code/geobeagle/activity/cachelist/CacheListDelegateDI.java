@@ -241,7 +241,7 @@ public class CacheListDelegateDI {
                 sensorManagerWrapper, updateGpsWidgetRunnable, scrollListener);
         final CacheTypeFactory cacheTypeFactory = new CacheTypeFactory();
 
-        final Aborter aborter = new Aborter();
+        final Aborter aborter = injector.getInstance(Aborter.class);
         final MessageHandlerInterface messageHandler = MessageHandler.create(listActivity);
         final TagWriterImpl tagWriterImpl = new TagWriterImpl(dbFrontend);
         final TagWriterNull tagWriterNull = new TagWriterNull();

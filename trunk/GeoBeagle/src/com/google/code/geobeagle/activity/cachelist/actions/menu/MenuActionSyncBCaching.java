@@ -18,19 +18,20 @@ import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.actions.MenuActionBase;
 import com.google.code.geobeagle.bcaching.ImportBCachingWorker;
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 
 public class MenuActionSyncBCaching extends MenuActionBase {
 
-    private ImportBCachingWorker importBCachingWorker;
+    private final Provider<ImportBCachingWorker> importBCachingWorkerProvider;
 
     @Inject
-    public MenuActionSyncBCaching(ImportBCachingWorker importBCachingWorker) {
+    public MenuActionSyncBCaching(Provider<ImportBCachingWorker> importBCachingWorkerProvider) {
         super(R.string.menu_sync_bcaching);
-        this.importBCachingWorker = importBCachingWorker;
+        this.importBCachingWorkerProvider = importBCachingWorkerProvider;
     }
 
     @Override
     public void act() {
-        importBCachingWorker.start();
+        importBCachingWorkerProvider.get().start();
     }
 }
