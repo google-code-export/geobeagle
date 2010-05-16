@@ -31,9 +31,8 @@ public class DetailsReaderImport {
     @Inject
     DetailsReaderImport(@DetailsReaderAnnotation Hashtable<String, String> params,
             BufferedReaderFactory bufferedReaderFactory, ErrorDisplayer errorDisplayer,
-            WakeLock wakeLock, XmlPullParserWrapper xmlPullParserWrapper, Aborter aborter,
-            FileAlreadyLoadedChecker fileAlreadyLoadedChecker,
-            CachePersisterFacade cachePersisterFacade, @GpxAnnotation EventHelper eventHelper, GpxToCache gpxToCache) {
+            WakeLock wakeLock, CachePersisterFacade cachePersisterFacade,
+            @GpxAnnotation EventHelper eventHelper, GpxToCache gpxToCache) {
         this.params = params;
         this.bufferedReaderFactory = bufferedReaderFactory;
         this.gpxLoader = new GpxLoader(cachePersisterFacade, errorDisplayer, gpxToCache, wakeLock);
