@@ -70,7 +70,7 @@ public class CacheDetailsLoader {
         }
 
         DetailsReader open(File file) {
-            File sdcardPath = new File(CacheDetailsLoader.DETAILS_DIR);
+            File sdcardPath = new File(CacheDetailsLoader.SDCARD_DIR);
             if (!sdcardPath.isDirectory())
                 return new DetailsReaderError(mActivity, R.string.error_cant_read_sdroot, "");
             
