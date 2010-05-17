@@ -11,17 +11,15 @@
  ** See the License for the specific language governing permissions and
  ** limitations under the License.
  */
+
 package com.google.code.geobeagle.database;
 
-import com.google.code.geobeagle.database.DatabaseDI.GeoBeagleSqliteOpenHelper;
 import com.google.inject.Provides;
+
+import android.util.Log;
 
 import roboguice.config.AbstractAndroidModule;
 import roboguice.inject.ContextScoped;
-
-import android.content.Context;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
 
 public class DatabaseModule extends AbstractAndroidModule {
 
@@ -33,9 +31,13 @@ public class DatabaseModule extends AbstractAndroidModule {
 
     @Provides
     @ContextScoped
-    ISQLiteDatabase sqliteDatabaseProvider(Context context) {
-        final SQLiteOpenHelper mSqliteOpenHelper = new GeoBeagleSqliteOpenHelper(context);
-        final SQLiteDatabase sqDb = mSqliteOpenHelper.getWritableDatabase();
-        return new DatabaseDI.SQLiteWrapper(sqDb);
+    ISQLiteDatabase sqliteDatabaseProvider(DbFrontend dbFrontend) {
+        return dbFrontend.getDatabase();
+    }
+
+    @Provides
+    public CacheWriter cacheWriterProvider(DbFrontend dbFrontend) {
+        Log.d("GeoBeagle", "CacheWriterProvider: " + dbFrontend);
+        return dbFrontend.getCacheWriter();
     }
 }
