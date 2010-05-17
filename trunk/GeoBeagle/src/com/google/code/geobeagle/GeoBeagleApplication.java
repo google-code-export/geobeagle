@@ -21,6 +21,8 @@ import com.google.code.geobeagle.activity.main.fieldnotes.FieldnotesModule;
 import com.google.code.geobeagle.activity.main.view.ViewModule;
 import com.google.code.geobeagle.activity.map.GeoMapActivityModule;
 import com.google.code.geobeagle.activity.searchonline.SearchOnlineModule;
+import com.google.code.geobeagle.bcaching.BCachingModule;
+import com.google.code.geobeagle.bcaching.communication.BCachingCommunicationModule;
 import com.google.code.geobeagle.database.DatabaseModule;
 import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidgetModule;
 import com.google.code.geobeagle.location.LocationModule;
@@ -46,5 +48,7 @@ public class GeoBeagleApplication extends GuiceApplication {
         modules.add(new ModelModule());
         modules.add(new GpsStatusWidgetModule());
         modules.add(new XmlimportModule());
+        modules.add(new BCachingModule());
+        modules.add(new BCachingCommunicationModule());
     }
 }

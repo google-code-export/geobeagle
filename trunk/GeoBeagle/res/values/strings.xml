@@ -11,6 +11,7 @@
 		License.
 	-->
 <resources>
+    <string name="problem_importing_from_bcaching">Problem importing from bcaching.com: %1$s.</string>
     <string name="install_radar_uri">market://search?q=pname:com.eclipsim.gpsstatus2</string>
     <string name="ask_install_radar_app">GeoBeagle requires an app that will accept the RADAR intent. Install GPS Status from the Android Marketplace?</string>
     <string name="log_cache_with_sms">Log cache with SMS</string>
@@ -89,6 +90,7 @@
 	<string name="menu_show_nearest_caches">Show Nearest</string>
 	<string name="menu_show_all_caches">Show All</string>
 	<string name="menu_delete_all_caches">Delete All</string>
+	<string name="menu_sync_bcaching">Sync BCaching</string>
 	<string name="sorting">Filtering / Sorting...</string>
 	<string name="search_for">Search for</string>
 	<string name="cache_list_title">GeoBeagle: Nearest caches (%2$d total)</string>
