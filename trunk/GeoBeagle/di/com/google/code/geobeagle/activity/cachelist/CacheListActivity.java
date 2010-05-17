@@ -107,8 +107,13 @@ public class CacheListActivity extends GuiceListActivity {
     protected void onPause() {
         Log.d("GeoBeagle", "CacheListActivity onPause");
 
-        super.onPause();
+        /*
+         * cacheListDelegate closes the database, it must be called before
+         * super.onPause because the guice activity onPause nukes the database
+         * object from the guice map.
+         */
         mCacheListDelegate.onPause();
+        super.onPause();
     }
 
     @Override
