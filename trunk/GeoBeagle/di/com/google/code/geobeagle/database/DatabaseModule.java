@@ -40,4 +40,9 @@ public class DatabaseModule extends AbstractAndroidModule {
         Log.d("GeoBeagle", "CacheWriterProvider: " + dbFrontend);
         return dbFrontend.getCacheWriter();
     }
+    
+    @Provides
+    public CacheWriter cacheWriterProvider(ISQLiteDatabase writableDatabase) {
+        return DatabaseDI.createCacheWriter(writableDatabase);
+    }
 }
