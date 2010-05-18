@@ -15,7 +15,6 @@
 package com.google.code.geobeagle.database;
 
 import com.google.code.geobeagle.Geocache;
-import com.google.code.geobeagle.database.CacheWriter.ClearCachesFromSource;
 import com.google.code.geobeagle.database.DatabaseDI.GeoBeagleSqliteOpenHelper;
 import com.google.inject.Inject;
 
