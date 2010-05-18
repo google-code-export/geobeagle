@@ -48,8 +48,8 @@ public class EditCacheActivity extends GuiceActivity {
 
     @Override
     protected void onPause() {
-        super.onPause();
         mDbFrontendProvider.get().closeDatabase();
+        super.onPause();
     }
 
     @Override
