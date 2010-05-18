@@ -27,21 +27,21 @@ class MessageHandlerAdapter implements MessageHandlerInterface {
 
     private final ProgressManager progressManager;
     private final ProgressHandler handler;
+    private String waypoint;
 
     @Inject
     public MessageHandlerAdapter(ProgressHandler handler, ProgressManager progressManager) {
         this.handler = handler;
         this.progressManager = progressManager;
+        waypoint = "";
     }
 
     @Override
     public void abortLoad() {
-
     }
 
     @Override
     public void deletingCacheFiles() {
-
     }
 
     @Override
@@ -58,7 +58,7 @@ class MessageHandlerAdapter implements MessageHandlerInterface {
 
     @Override
     public void updateName(String name) {
-        progressManager.update(handler, ProgressMessage.SET_FILE, name);
+        progressManager.update(handler, ProgressMessage.SET_FILE, waypoint + " - " + name);
     }
 
     @Override
@@ -71,6 +71,7 @@ class MessageHandlerAdapter implements MessageHandlerInterface {
 
     @Override
     public void updateWaypointId(String wpt) {
+        this.waypoint = wpt;
     }
 
 }
