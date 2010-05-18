@@ -34,8 +34,10 @@ public class CachePersisterFacade {
     private final WakeLock mWakeLock;
 
     @Inject
+    public
     CachePersisterFacade(CacheTagSqlWriter cacheTagSqlWriter, FileFactory fileFactory,
-            CacheDetailsWriter cacheDetailsWriter, MessageHandlerInterface messageHandler, WakeLock wakeLock) {
+            CacheDetailsWriter cacheDetailsWriter, MessageHandlerInterface messageHandler,
+            WakeLock wakeLock) {
         mCacheDetailsWriter = cacheDetailsWriter;
         mCacheTagWriter = cacheTagSqlWriter;
         mFileFactory = fileFactory;

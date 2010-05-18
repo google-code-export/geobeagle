@@ -37,12 +37,13 @@ public class ImportBCachingWorker extends Thread implements Abortable {
     private final ProgressManager progressManager;
     private final DetailsReaderImport detailsReaderImport;
     private final Toaster toaster;
+    private final DetailsReader detailsReader;
 
     @Inject
     public ImportBCachingWorker(ProgressHandler progressHandler, ProgressManager progressManager,
             BCachingLastUpdated bcachingLastUpdated, BCachingListImporter bcachingListImporter,
             ErrorDisplayer errorDisplayer, DetailsReaderImport detailsReaderImport,
-            @ToasterSyncAborted Toaster toaster) {
+            DetailsReader detailsReader, @ToasterSyncAborted Toaster toaster) {
         this.progressHandler = progressHandler;
         this.bcachingLastUpdated = bcachingLastUpdated;
         this.bcachingListImporter = bcachingListImporter;
@@ -50,6 +51,7 @@ public class ImportBCachingWorker extends Thread implements Abortable {
         this.progressManager = progressManager;
         this.detailsReaderImport = detailsReaderImport;
         this.toaster = toaster;
+        this.detailsReader = detailsReader;
     }
 
     @Override
@@ -57,8 +59,6 @@ public class ImportBCachingWorker extends Thread implements Abortable {
         long now = System.currentTimeMillis();
         progressManager.update(progressHandler, ProgressMessage.START, 0);
         String lastUpdateTime = bcachingLastUpdated.getLastUpdateTime();
-        // DetailsReaderImport detailsReaderImport =
-        // detailsReaderImportFactory.create(progressHandler);
 
         try {
             int totalCount = bcachingListImporter.getTotalCount(lastUpdateTime);

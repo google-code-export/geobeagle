@@ -30,7 +30,6 @@ public class DatabaseModule extends AbstractAndroidModule {
     }
 
     @Provides
-    @ContextScoped
     ISQLiteDatabase sqliteDatabaseProvider(DbFrontend dbFrontend) {
         return dbFrontend.getDatabase();
     }
