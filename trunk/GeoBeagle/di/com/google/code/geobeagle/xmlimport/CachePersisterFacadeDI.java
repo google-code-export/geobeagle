@@ -20,9 +20,10 @@ import com.google.code.geobeagle.cachedetails.FilePathStrategy;
 import com.google.code.geobeagle.cachedetails.HtmlWriter;
 import com.google.code.geobeagle.cachedetails.WriterWrapper;
 import com.google.code.geobeagle.database.CacheWriter;
+import com.google.code.geobeagle.database.ClearCachesFromSource;
 import com.google.code.geobeagle.database.TagWriterImpl;
 import com.google.code.geobeagle.database.TagWriterNull;
-import com.google.code.geobeagle.database.CacheWriter.ClearCachesFromSource;
+import com.google.code.geobeagle.database.CacheWriter.ClearCachesFromSourceImpl;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
@@ -47,7 +48,7 @@ public class CachePersisterFacadeDI {
         public CachePersisterFacadeFactory(MessageHandlerInterface messageHandler,
                 CacheTypeFactory cacheTypeFactory, TagWriterImpl tagWriterImpl,
                 TagWriterNull tagWriterNull, FilePathStrategy filePathStrategy,
-                ClearCachesFromSource clearCachesFromSource) {
+                ClearCachesFromSourceImpl clearCachesFromSourceImpl) {
             mMessageHandler = messageHandler;
             mFileFactory = new FileFactory();
             mWriterWrapper = new WriterWrapper();
@@ -56,7 +57,7 @@ public class CachePersisterFacadeDI {
             mCacheTypeFactory = cacheTypeFactory;
             mTagWriterImpl = tagWriterImpl;
             mTagWriterNull = tagWriterNull;
-            mClearCachesFromSource = clearCachesFromSource;
+            mClearCachesFromSource = clearCachesFromSourceImpl;
 
         }
 
