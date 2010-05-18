@@ -15,7 +15,9 @@
 package com.google.code.geobeagle.database;
 
 import com.google.inject.Inject;
+import com.google.inject.OutOfScopeException;
 import com.google.inject.Provider;
+import com.google.inject.ProvisionException;
 
 import android.util.Log;
 
@@ -42,7 +44,12 @@ public class TagWriterImpl implements TagWriter {
 
     public boolean hasTag(CharSequence geocacheId, Tag tag) {
         ISQLiteDatabase mDatabase = null;
-        mDatabase = databaseProvider.get();
+        try {
+            mDatabase = databaseProvider.get();
+        } catch (ProvisionException e) {
+            Log.e("GeoBeagle", "!! Provision exception");
+            return false;
+        }
         final boolean hasValue = mDatabase.hasValue("TAGS", "Cache='" + geocacheId + "' AND Id="
                 + tag.ordinal());
         return hasValue;
