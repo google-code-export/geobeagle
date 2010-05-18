@@ -65,6 +65,7 @@ import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh.U
 import com.google.code.geobeagle.activity.cachelist.view.GeocacheSummaryRowInflater;
 import com.google.code.geobeagle.activity.main.GeoBeagle;
 import com.google.code.geobeagle.bcaching.BCachingLastUpdated;
+import com.google.code.geobeagle.cachedetails.FilePathStrategy;
 import com.google.code.geobeagle.database.CacheWriter;
 import com.google.code.geobeagle.database.DbFrontend;
 import com.google.code.geobeagle.database.FilterNearestCaches;
@@ -249,8 +250,9 @@ public class CacheListDelegateDI {
 		final Provider<ISQLiteDatabase> database = injector.getProvider(ISQLiteDatabase.class);
         final TagWriterImpl tagWriterImpl = new TagWriterImpl(database);
         final TagWriterNull tagWriterNull = new TagWriterNull();
+        FilePathStrategy filePathStrategy = new FilePathStrategy();
         final CachePersisterFacadeFactory cachePersisterFacadeFactory = new CachePersisterFacadeFactory(
-                messageHandler, cacheTypeFactory, tagWriterImpl, tagWriterNull);
+                messageHandler, cacheTypeFactory, tagWriterImpl, tagWriterNull, filePathStrategy);
 
         final GpxImporterFactory gpxImporterFactory = new GpxImporterFactory(aborter,
                 cachePersisterFacadeFactory, errorDisplayer, geocacheListPresenter, listActivity,

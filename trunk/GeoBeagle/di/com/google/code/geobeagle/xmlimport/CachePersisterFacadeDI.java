@@ -16,6 +16,7 @@ package com.google.code.geobeagle.xmlimport;
 
 import com.google.code.geobeagle.CacheTypeFactory;
 import com.google.code.geobeagle.cachedetails.CacheDetailsWriter;
+import com.google.code.geobeagle.cachedetails.FilePathStrategy;
 import com.google.code.geobeagle.cachedetails.HtmlWriter;
 import com.google.code.geobeagle.cachedetails.WriterWrapper;
 import com.google.code.geobeagle.database.CacheWriter;
@@ -43,12 +44,12 @@ public class CachePersisterFacadeDI {
         @Inject
         public CachePersisterFacadeFactory(MessageHandlerInterface messageHandler,
                 CacheTypeFactory cacheTypeFactory, TagWriterImpl tagWriterImpl,
-                TagWriterNull tagWriterNull) {
+                TagWriterNull tagWriterNull, FilePathStrategy filePathStrategy) {
             mMessageHandler = messageHandler;
             mFileFactory = new FileFactory();
             mWriterWrapper = new WriterWrapper();
             mHtmlWriter = new HtmlWriter(mWriterWrapper);
-            mCacheDetailsWriter = new CacheDetailsWriter(mHtmlWriter);
+            mCacheDetailsWriter = new CacheDetailsWriter(mHtmlWriter, filePathStrategy);
             mCacheTypeFactory = cacheTypeFactory;
             mTagWriterImpl = tagWriterImpl;
             mTagWriterNull = tagWriterNull;

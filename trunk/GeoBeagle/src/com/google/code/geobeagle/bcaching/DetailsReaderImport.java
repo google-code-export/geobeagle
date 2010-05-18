@@ -29,12 +29,12 @@ public class DetailsReaderImport {
         this.eventHelper = eventHelper;
     }
 
-    public boolean getCacheDetails(String csvIds, int updatedCaches) throws BCachingException {
+    public boolean getCacheDetails(String csvIds) throws BCachingException {
         params.put("ids", csvIds);
 
         try {
             BufferedReader bufferedReader = bufferedReaderFactory.create(params);
-            gpxLoader.open("BCaching.com." + updatedCaches, bufferedReader);
+            gpxLoader.open("BCaching.com", bufferedReader);
         } catch (XmlPullParserException e) {
             throw new BCachingException("Error parsing data from baching.com: "
                     + e.getLocalizedMessage());

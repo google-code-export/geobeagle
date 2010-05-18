@@ -12,18 +12,11 @@
  ** limitations under the License.
  */
 
-package com.google.code.geobeagle.bcaching.progress;
+package com.google.code.geobeagle.activity.cachelist;
 
-import android.os.Message;
+import com.google.code.geobeagle.activity.cachelist.actions.menu.Abortable;
 
-public class ProgressManager {
-    public void update(ProgressHandler handler, ProgressMessage progressMessage, int arg) {
-        Message.obtain(handler, progressMessage.ordinal(), arg, 0).sendToTarget();
-    }
-
-    public void update(ProgressHandler handler, ProgressMessage progressMessage, int arg1,
-            String arg2) {
-        if (!handler.hasMessages(progressMessage.ordinal()))
-            Message.obtain(handler, progressMessage.ordinal(), arg1, 0, arg2).sendToTarget();
+public class NullAbortable implements Abortable {
+    public void abort() {
     }
 }
