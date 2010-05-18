@@ -28,6 +28,7 @@ class MessageHandlerAdapter implements MessageHandlerInterface {
     private final ProgressManager progressManager;
     private final ProgressHandler handler;
     private String waypoint;
+    private int count;
 
     @Inject
     public MessageHandlerAdapter(ProgressHandler handler, ProgressManager progressManager) {
@@ -54,11 +55,12 @@ class MessageHandlerAdapter implements MessageHandlerInterface {
 
     @Override
     public void start(CacheListRefresh cacheListRefresh) {
+        count = 0;
     }
 
     @Override
     public void updateName(String name) {
-        progressManager.update(handler, ProgressMessage.SET_FILE, waypoint + " - " + name);
+        progressManager.update(handler, ProgressMessage.SET_FILE, count++, waypoint + " - " + name);
     }
 
     @Override

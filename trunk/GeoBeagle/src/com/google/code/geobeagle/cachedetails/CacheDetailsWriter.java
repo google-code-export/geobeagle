@@ -21,13 +21,15 @@ import java.io.IOException;
 
 public class CacheDetailsWriter {
     private final HtmlWriter mHtmlWriter;
+    private final FilePathStrategy mFilePathStrategy;
     private String mLatitude;
     private String mLongitude;
     private String mGpxName;
 
     @Inject
-    public CacheDetailsWriter(HtmlWriter htmlWriter) {
+    public CacheDetailsWriter(HtmlWriter htmlWriter, FilePathStrategy filePathStrategy) {
         mHtmlWriter = htmlWriter;
+        mFilePathStrategy = filePathStrategy;
     }
 
     public void close() throws IOException {
@@ -41,9 +43,9 @@ public class CacheDetailsWriter {
     }
 
     public void open(String wpt) throws IOException {
-        final String sanitized = replaceIllegalFileChars(wpt);
-        new File(CacheDetailsLoader.DETAILS_DIR + mGpxName).mkdir();
-        mHtmlWriter.open(CacheDetailsLoader.DETAILS_DIR + mGpxName + "/" + sanitized + ".html");
+        String path = mFilePathStrategy.getPath(mGpxName, wpt);
+        new File(new File(path).getParent()).mkdirs();
+        mHtmlWriter.open(path);
     }
 
     public static String replaceIllegalFileChars(String wpt) {
