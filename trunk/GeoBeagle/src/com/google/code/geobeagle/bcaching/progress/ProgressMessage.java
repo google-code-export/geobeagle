@@ -15,7 +15,6 @@
 package com.google.code.geobeagle.bcaching.progress;
 
 import android.app.ProgressDialog;
-import android.util.Log;
 
 public enum ProgressMessage {
     SET_FILE {
