@@ -16,6 +16,7 @@ package com.google.code.geobeagle.cachelist;
 
 import static org.easymock.EasyMock.expect;
 
+import com.google.code.geobeagle.activity.cachelist.GeoBeagleTest;
 import com.google.code.geobeagle.activity.cachelist.GpxImporterFactory;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.Abortable;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionSyncGpx;
@@ -31,7 +32,7 @@ import org.powermock.api.easymock.PowerMock;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 @RunWith(PowerMockRunner.class)
-public class MenuActionSyncGpxTest {
+public class MenuActionSyncGpxTest extends GeoBeagleTest {
     @SuppressWarnings("unchecked")
     @Test
     public void testAct() {
