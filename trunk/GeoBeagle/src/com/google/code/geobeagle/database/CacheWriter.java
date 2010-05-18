@@ -17,6 +17,7 @@ package com.google.code.geobeagle.database;
 import com.google.code.geobeagle.CacheType;
 import com.google.code.geobeagle.GeocacheFactory.Source;
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 
 /**
  * @author sng
@@ -30,15 +31,25 @@ public class CacheWriter {
     private final ISQLiteDatabase mSqlite;
     private String mGpxTime;
 
+    public static class ClearCachesFromSource {
+        private final ISQLiteDatabase sqlite;
+
+        @Inject
+        public
+        ClearCachesFromSource(ISQLiteDatabase sqlite) {
+            this.sqlite = sqlite;
+        }
+        
+        public void clearCaches(String source) {
+            sqlite.execSQL(Database.SQL_CLEAR_CACHES, source);
+        }
+
+    }
+
     @Inject
-    public
     CacheWriter(ISQLiteDatabase sqlite, DbToGeocacheAdapter dbToGeocacheAdapter) {
         mSqlite = sqlite;
         mDbToGeocacheAdapter = dbToGeocacheAdapter;
-    }
-
-    public void clearCaches(String source) {
-        mSqlite.execSQL(Database.SQL_CLEAR_CACHES, source);
     }
 
     /**
