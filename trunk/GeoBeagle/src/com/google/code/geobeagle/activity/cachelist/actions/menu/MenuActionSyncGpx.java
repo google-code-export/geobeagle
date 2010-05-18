@@ -22,6 +22,8 @@ import com.google.code.geobeagle.database.CacheWriter;
 import com.google.code.geobeagle.xmlimport.GpxImporter;
 import com.google.inject.Provider;
 
+import android.util.Log;
+
 public class MenuActionSyncGpx extends MenuActionBase {
     private Abortable mAbortable;
     private final CacheListRefresh mCacheListRefresh;
@@ -38,6 +40,7 @@ public class MenuActionSyncGpx extends MenuActionBase {
     }
 
     public void abort() {
+        Log.d("GeoBeagle", "MenuActionSyncGpx aborting");
         mAbortable.abort();
     }
 

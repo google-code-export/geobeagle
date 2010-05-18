@@ -21,6 +21,7 @@ import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.actions.MenuActions;
 import com.google.code.geobeagle.activity.cachelist.GeocacheListController.CacheListOnCreateContextMenuListener;
 import com.google.code.geobeagle.activity.cachelist.actions.context.ContextAction;
+import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionSyncBCaching;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionSyncGpx;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVector;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVectors;
@@ -28,6 +29,7 @@ import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
 import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheListPresenter;
 import com.google.code.geobeagle.database.DatabaseDI;
 import com.google.code.geobeagle.database.FilterNearestCaches;
+import com.google.code.geobeagle.xmlimport.GpxToCache.Aborter;
 
 import org.easymock.EasyMock;
 import org.junit.Test;
@@ -37,6 +39,7 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import android.app.ListActivity;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -45,9 +48,9 @@ import android.widget.AdapterView.AdapterContextMenuInfo;
 @RunWith(PowerMockRunner.class)
 @PrepareForTest( {
         GeocacheListController.class, ListActivity.class, GeocacheListPresenter.class,
-        CacheListOnCreateContextMenuListener.class, DatabaseDI.class
+        CacheListOnCreateContextMenuListener.class, DatabaseDI.class, Log.class
 })
-public class GeocacheListControllerTest {
+public class GeocacheListControllerTest extends GeoBeagleTest {
 
     @Test
     public void testCacheListOnCreateContextMenuListener() {
@@ -87,7 +90,7 @@ public class GeocacheListControllerTest {
         PowerMock.replayAll();
         adapterContextMenuInfo.position = 76;
         GeocacheListController geocacheListController = new GeocacheListController(null,
-                contextActions, null, null, null);
+                contextActions, null, null, null, null, null);
         assertTrue(geocacheListController.onContextItemSelected(menuItem));
         PowerMock.verifyAll();
     }
@@ -126,7 +129,7 @@ public class GeocacheListControllerTest {
         EasyMock.expect(menuActions.onCreateOptionsMenu(menu)).andReturn(true);
 
         PowerMock.replayAll();
-        assertTrue(new GeocacheListController(null, null, null, null, menuActions)
+        assertTrue(new GeocacheListController(null, null, null, null, menuActions, null, null)
                 .onCreateOptionsMenu(menu));
         PowerMock.verifyAll();
     }
@@ -141,7 +144,7 @@ public class GeocacheListControllerTest {
         contextAction.act(45);
 
         PowerMock.replayAll();
-        new GeocacheListController(null, contextActions, null, null, null).onListItemClick(null,
+        new GeocacheListController(null, contextActions, null, null, null, null, null).onListItemClick(null,
                 null, 46, 0);
         PowerMock.verifyAll();
     }
@@ -153,7 +156,7 @@ public class GeocacheListControllerTest {
         cacheListRefresh.forceRefresh();
 
         PowerMock.replayAll();
-        new GeocacheListController(cacheListRefresh, null, null, null, null).onListItemClick(null,
+        new GeocacheListController(cacheListRefresh, null, null, null, null, null, null).onListItemClick(null,
                 null, 0, 0);
         PowerMock.verifyAll();
     }
@@ -170,7 +173,7 @@ public class GeocacheListControllerTest {
         EasyMock.expect(menuItem.setTitle(R.string.menu_show_nearest_caches)).andReturn(menuItem);
 
         PowerMock.replayAll();
-        new GeocacheListController(null, null, filterNearestCaches, null, null).onMenuOpened(0,
+        new GeocacheListController(null, null, filterNearestCaches, null, null, null, null).onMenuOpened(0,
                 menu);
         PowerMock.verifyAll();
     }
@@ -184,7 +187,7 @@ public class GeocacheListControllerTest {
         EasyMock.expect(menuActions.act(27)).andReturn(true);
 
         PowerMock.replayAll();
-        new GeocacheListController(null, null, null, null, menuActions)
+        new GeocacheListController(null, null, null, null, menuActions, null, null)
                 .onOptionsItemSelected(menuItem);
         PowerMock.verifyAll();
     }
@@ -192,11 +195,16 @@ public class GeocacheListControllerTest {
     @Test
     public void testOnPause() {
         MenuActionSyncGpx menuActionSync = PowerMock.createMock(MenuActionSyncGpx.class);
+        MenuActionSyncBCaching menuActionSyncBCaching = PowerMock
+                .createMock(MenuActionSyncBCaching.class);
+        Aborter aborter = PowerMock.createMock(Aborter.class);
 
+        aborter.abort();
         menuActionSync.abort();
+        menuActionSyncBCaching.abort();
 
         PowerMock.replayAll();
-        new GeocacheListController(null, null, null, menuActionSync, null).onPause();
+        new GeocacheListController(null, null, null, menuActionSync, null, aborter, menuActionSyncBCaching).onPause();
         PowerMock.verifyAll();
     }
 
@@ -207,7 +215,7 @@ public class GeocacheListControllerTest {
         cacheListRefresh.forceRefresh();
 
         PowerMock.replayAll();
-        new GeocacheListController(cacheListRefresh, null, null, null, null).onResume(
+        new GeocacheListController(cacheListRefresh, null, null, null, null, null, null).onResume(
                 cacheListRefresh, false);
         PowerMock.verifyAll();
     }
@@ -221,7 +229,7 @@ public class GeocacheListControllerTest {
         menuActionSyncGpx.act();
 
         PowerMock.replayAll();
-        new GeocacheListController(cacheListRefresh, null, null, menuActionSyncGpx, null).onResume(
+        new GeocacheListController(cacheListRefresh, null, null, menuActionSyncGpx, null, null, null).onResume(
                 cacheListRefresh, true);
         PowerMock.verifyAll();
     }

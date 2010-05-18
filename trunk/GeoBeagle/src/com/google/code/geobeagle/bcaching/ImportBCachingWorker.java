@@ -16,6 +16,7 @@ package com.google.code.geobeagle.bcaching;
 
 import com.google.code.geobeagle.ErrorDisplayer;
 import com.google.code.geobeagle.R;
+import com.google.code.geobeagle.activity.cachelist.actions.menu.Abortable;
 import com.google.code.geobeagle.bcaching.communication.BCachingException;
 import com.google.code.geobeagle.bcaching.communication.BCachingList;
 import com.google.code.geobeagle.bcaching.communication.BCachingListImporter;
@@ -26,13 +27,13 @@ import com.google.inject.Inject;
 
 import android.util.Log;
 
-public class ImportBCachingWorker extends Thread {
+public class ImportBCachingWorker extends Thread implements Abortable {
     private final ProgressHandler progressHandler;
     private final BCachingLastUpdated bcachingLastUpdated;
     private final BCachingListImporter bcachingListImporter;
     private final ErrorDisplayer errorDisplayer;
     private final ProgressManager progressManager;
-    private DetailsReaderImport detailsReaderImport;
+    private final DetailsReaderImport detailsReaderImport;
 
     @Inject
     public ImportBCachingWorker(ProgressHandler progressHandler, ProgressManager progressManager,
@@ -44,6 +45,7 @@ public class ImportBCachingWorker extends Thread {
         this.errorDisplayer = errorDisplayer;
         this.progressManager = progressManager;
         this.detailsReaderImport = detailsReaderImport;
+
     }
 
     @Override
@@ -69,7 +71,8 @@ public class ImportBCachingWorker extends Thread {
                 // detailsReader.getCacheDetails(bcachingList.getCacheIds(),
                 // updatedCaches);
                 Log.d("GeoBeagle", "cachesRead: " + cachesRead);
-                detailsReaderImport.getCacheDetails(bcachingList.getCacheIds(), updatedCaches);
+                if (!detailsReaderImport.getCacheDetails(bcachingList.getCacheIds(), updatedCaches))
+                    return;
 
                 updatedCaches += cachesRead;
                 progressManager
@@ -84,4 +87,16 @@ public class ImportBCachingWorker extends Thread {
         }
     }
 
+    @Override
+    public void abort() {
+        if (isAlive()) {
+            try {
+                Log.d("GeoBeagle", "abort: JOIN STARTED");
+                join();
+                Log.d("GeoBeagle", "abort: JOIN FINISHED");
+            } catch (InterruptedException e) {
+                Log.d("GeoBeagle", "Ignoring InterruptedException: " + e.getLocalizedMessage());
+            }
+        }
+    }
 }
