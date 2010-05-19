@@ -1,0 +1,38 @@
+body {
+	background-color: black;
+	color: LightGrey;
+	font-family: arial;
+	font-size: 18;
+}
+
+.c {
+	font-size: 28;
+	font-weight: bold;
+}
+
+.c1 {
+	font-size: 20;
+	font-weight: bold;
+}
+
+.intro {
+	font-size: 18;
+	color: white;
+	padding-bottom: 4px;
+}
+
+a {
+	color: LightBlue;
+}
+
+table {
+	border-top-width: 1px;
+	border-top-style: solid;
+	border-bottom-color: grey;
+}
+
+tbody {
+	border-top-width: 1px;
+	border-top-style: solid;
+	border-bottom-color: grey;
+}
