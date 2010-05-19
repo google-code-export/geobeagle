@@ -17,6 +17,7 @@ package com.google.code.geobeagle.database;
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.database.DatabaseDI.GeoBeagleSqliteOpenHelper;
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -37,11 +38,13 @@ public class DbFrontend {
     private ISQLiteDatabase mDatabase;
     private boolean mIsDatabaseOpen;
     private GeoBeagleSqliteOpenHelper mSqliteOpenHelper;
+    private final Provider<ISQLiteDatabase> mDatabaseProvider;
 
     @Inject
-    DbFrontend(Context context) {
+    DbFrontend(Context context, Provider<ISQLiteDatabase> databaseProvider) {
         mContext = context;
         mIsDatabaseOpen = false;
+        mDatabaseProvider = databaseProvider;
     }
 
     public synchronized void closeDatabase() {

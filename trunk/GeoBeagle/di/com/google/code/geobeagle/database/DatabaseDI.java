@@ -20,6 +20,7 @@ import com.google.code.geobeagle.database.WhereFactoryNearestCaches.Search;
 import com.google.code.geobeagle.database.WhereFactoryNearestCaches.SearchDown;
 import com.google.code.geobeagle.database.WhereFactoryNearestCaches.SearchUp;
 import com.google.code.geobeagle.database.WhereFactoryNearestCaches.WhereStringFactory;
+import com.google.inject.Provider;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -39,15 +40,15 @@ public class DatabaseDI {
         }
     }
 
-    public static class GeoBeagleSqliteOpenHelper extends SQLiteOpenHelper {
+    static class GeoBeagleSqliteOpenHelper extends SQLiteOpenHelper {
         private final OpenHelperDelegate mOpenHelperDelegate;
 
-        public GeoBeagleSqliteOpenHelper(Context context) {
+         GeoBeagleSqliteOpenHelper(Context context) {
             super(context, Database.DATABASE_NAME, null, Database.DATABASE_VERSION);
             mOpenHelperDelegate = new OpenHelperDelegate();
         }
 
-        public SQLiteWrapper getWritableSqliteWrapper() {
+        SQLiteWrapper getWritableSqliteWrapper() {
             return new SQLiteWrapper(this.getWritableDatabase());
         }
 
@@ -67,7 +68,7 @@ public class DatabaseDI {
     public static class SQLiteWrapper implements ISQLiteDatabase {
         private final SQLiteDatabase mSQLiteDatabase;
 
-        public SQLiteWrapper(SQLiteDatabase writableDatabase) {
+        SQLiteWrapper(SQLiteDatabase writableDatabase) {
             mSQLiteDatabase = writableDatabase;
         }
 
@@ -91,12 +92,12 @@ public class DatabaseDI {
         }
 
         public void execSQL(String sql) {
-            Log.d("GeoBeagle", "SQL: " + sql);
+            Log.d("GeoBeagle", this + " :SQL: " + sql);
             mSQLiteDatabase.execSQL(sql);
         }
 
         public void execSQL(String sql, Object... bindArgs) {
-            Log.d("GeoBeagle", "SQL: " + sql + ", " + Arrays.toString(bindArgs));
+            Log.d("GeoBeagle", this + " :SQL: " + sql + ", " + Arrays.toString(bindArgs));
             mSQLiteDatabase.execSQL(sql, bindArgs);
         }
 

@@ -15,6 +15,7 @@
 package com.google.code.geobeagle.database;
 
 import com.google.code.geobeagle.database.DatabaseDI.CacheReaderCursorFactory;
+import com.google.inject.Provider;
 
 import android.database.Cursor;
 
