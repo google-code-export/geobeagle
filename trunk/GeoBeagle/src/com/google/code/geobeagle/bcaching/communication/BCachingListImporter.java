@@ -39,13 +39,13 @@ public class BCachingListImporter {
         return bCachingListImportHelper.importList(params);
     }
 
-    public BCachingList getCacheList(int startAt, String lastUpdate) throws BCachingException {
+    public BCachingList getCacheList(int startAt, String lastUpdateTime) throws BCachingException {
         params.put("first", Integer.toString(startAt));
-        return getCacheListHelper(MAX_COUNT, lastUpdate);
+        return getCacheListHelper(MAX_COUNT, lastUpdateTime);
     }
 
-    public int getTotalCount(String lastUpdate) throws BCachingException {
+    public int getTotalCount(String lastUpdateTime) throws BCachingException {
         params.remove("first");
-        return getCacheListHelper("1", lastUpdate).getTotalCount();
+        return getCacheListHelper("1", lastUpdateTime).getTotalCount();
     }
 }
