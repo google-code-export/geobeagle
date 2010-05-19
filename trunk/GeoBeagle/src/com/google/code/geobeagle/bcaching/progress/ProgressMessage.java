@@ -20,7 +20,7 @@ public enum ProgressMessage {
     SET_FILE {
         @Override
         void act(ProgressHandler progressHandler, Message msg) {
-            progressHandler.setFile((String)msg.obj, msg.arg1);
+            progressHandler.setFile((String)msg.obj);
         }
     },
 
@@ -46,6 +46,11 @@ public enum ProgressMessage {
         @Override
         void act(ProgressHandler progressHandler, Message msg) {
             progressHandler.show();
+        }
+    }, REFRESH {
+        @Override
+        void act(ProgressHandler progressHandler, Message msg) {
+            progressHandler.refresh();
         }
     };
 
