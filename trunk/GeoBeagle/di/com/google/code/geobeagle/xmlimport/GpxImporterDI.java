@@ -35,6 +35,8 @@ import com.google.code.geobeagle.xmlimport.gpx.zip.ZipFileOpener.ZipInputFileTes
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 
+import roboguice.util.RoboThread;
+
 import android.app.ListActivity;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -48,7 +50,7 @@ import java.io.FilenameFilter;
 
 public class GpxImporterDI {
     // Can't test this due to final methods in base.
-    public static class ImportThread extends Thread {
+    public static class ImportThread extends RoboThread {
         static ImportThread create(MessageHandlerInterface messageHandler, GpxLoader gpxLoader,
                 EventHandlers eventHandlers, XmlPullParserWrapper xmlPullParserWrapper,
                 ErrorDisplayer errorDisplayer, Aborter aborter, Injector injector) {
