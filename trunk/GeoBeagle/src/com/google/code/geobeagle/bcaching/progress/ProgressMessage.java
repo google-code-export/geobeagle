@@ -14,43 +14,42 @@
 
 package com.google.code.geobeagle.bcaching.progress;
 
-import android.app.ProgressDialog;
+import android.os.Message;
 
 public enum ProgressMessage {
     SET_FILE {
         @Override
-        void act(ProgressDialog progressDialog, int arg1, Object object) {
-            progressDialog.setMessage("Loading: " + (String)object);
-            progressDialog.setProgress(arg1);
+        void act(ProgressHandler progressHandler, Message msg) {
+            progressHandler.setFile((String)msg.obj, msg.arg1);
         }
     },
 
     SET_MAX {
         @Override
-        void act(ProgressDialog progressDialog, int arg1, Object object) {
-            progressDialog.setMax(arg1);
+        void act(ProgressHandler progressHandler, Message msg) {
+            progressHandler.setMax(msg.arg1);
         }
     },
     SET_PROGRESS {
         @Override
-        void act(ProgressDialog progressDialog, int arg1, Object object) {
-            progressDialog.setProgress(arg1);
+        void act(ProgressHandler progressHandler, Message msg) {
+            progressHandler.setProgress(msg.arg1);
         }
     },
     DONE {
         @Override
-        void act(ProgressDialog progressDialog, int arg1, Object object) {
-            progressDialog.dismiss();
+        void act(ProgressHandler progressHandler, Message msg) {
+            progressHandler.done();
         }
     },
     START {
         @Override
-        void act(ProgressDialog progressDialog, int arg1, Object object) {
-            progressDialog.show();
+        void act(ProgressHandler progressHandler, Message msg) {
+            progressHandler.show();
         }
     };
 
-    abstract void act(ProgressDialog progressDialog, int arg1, Object object);
+    abstract void act(ProgressHandler progressHandler, Message msg);
 
     static ProgressMessage fromInt(Integer i) {
         return ProgressMessage.class.getEnumConstants()[i];
