@@ -108,26 +108,33 @@ public class BCachingCommunication {
         if (query == null || query.length() == 0)
             throw new IllegalArgumentException("query is required");
 
-        Log.d("GeoBeagle", "get url NOW: " + System.currentTimeMillis() / 1000L);
         final URL url = getURL(username, hashword, query);
         Log.d("GeoBeagle", "sending url: " + url);
         HttpURLConnection connection;
         try {
             connection = (HttpURLConnection)url.openConnection();
-            Log.d("GeoBeagle", "open connection NOW: " + System.currentTimeMillis() / 1000L);
             connection.setReadTimeout(timeout);
-            Log.d("GeoBeagle", "set tiemout NOW: " + System.currentTimeMillis() / 1000L);
             connection.setConnectTimeout(timeout);
             connection.addRequestProperty("Accept-encoding", "gzip");
             int responseCode = connection.getResponseCode();
-            InputStream in = connection.getInputStream();
-            Log.d("GeoBeagle", "BCachingCommunication response length="
-                    + connection.getContentLength());
+            InputStream inputStream = null;
+            try {
+                inputStream = connection.getInputStream();
+            } catch (IOException e) {
+                InputStream errorStream = connection.getErrorStream();
+                if (connection.getContentEncoding().equalsIgnoreCase("gzip")) {
+                    inputStream = new java.util.zip.GZIPInputStream(errorStream);
+                }
+                InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+                BufferedReader reader = new BufferedReader(inputStreamReader);
+                throw new BCachingException(connection.getResponseCode() + " error: "
+                        + reader.readLine());
+            }
             if (connection.getContentEncoding().equalsIgnoreCase("gzip")) {
-                in = new java.util.zip.GZIPInputStream(in);
+                inputStream = new java.util.zip.GZIPInputStream(inputStream);
             }
             if (responseCode != HttpURLConnection.HTTP_OK) {
-                BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+                BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
                 StringBuilder sb = new StringBuilder();
                 String line = null;
                 while ((line = reader.readLine()) != null) {
@@ -135,10 +142,15 @@ public class BCachingCommunication {
                 }
                 throw new BCachingException("HTTP problem: " + sb.toString());
             }
-            return in;
+            return inputStream;
         } catch (IOException e) {
-            Log.d("GeoBeagle", "!!!TIMED OUT NOW: " + System.currentTimeMillis() / 1000L);
-            throw new BCachingException("IO error: " + e.getLocalizedMessage());
+            Log.e("GeoBeagle", "    " + e.toString());
+             
+            StackTraceElement[] stackTrace = e.getStackTrace();
+            for (StackTraceElement ste : stackTrace) {
+                Log.e("GeoBeagle", "    " + ste.toString());
+            }
+            throw new BCachingException("IO error: " + e.toString() + ", " + e.getLocalizedMessage());
         }
     }
 
