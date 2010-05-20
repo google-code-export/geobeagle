@@ -67,7 +67,7 @@ public class ImportBCachingWorkerTest extends GeoBeagleTest {
         expect(System.currentTimeMillis()).andReturn(1234L);
 
         progressManager.update(progressHandler, ProgressMessage.START, 0);
-        expect(bcachingLastUpdated.getLastUpdateTime()).andReturn("1000");
+        expect(bcachingLastUpdated.getLastUpdateTime()).andReturn(1000L);
         expect(bcachingListFactory.getTotalCount("1000")).andReturn(0);
         progressManager.update(progressHandler, ProgressMessage.DONE, 0);
 
@@ -82,7 +82,7 @@ public class ImportBCachingWorkerTest extends GeoBeagleTest {
         expect(System.currentTimeMillis()).andReturn(1234L);
 
         progressManager.update(progressHandler, ProgressMessage.START, 0);
-        expect(bcachingLastUpdated.getLastUpdateTime()).andReturn("1000");
+        expect(bcachingLastUpdated.getLastUpdateTime()).andReturn(1000L);
         expect(bcachingListFactory.getTotalCount("1000")).andThrow(
                 new BCachingException("io exception"));
         progressManager.update(progressHandler, ProgressMessage.DONE, 0);
@@ -100,18 +100,18 @@ public class ImportBCachingWorkerTest extends GeoBeagleTest {
 
         expect(System.currentTimeMillis()).andReturn(8888L);
         progressManager.update(progressHandler, ProgressMessage.START, 0);
-        expect(bcachingLastUpdated.getLastUpdateTime()).andReturn("1000");
+        expect(bcachingLastUpdated.getLastUpdateTime()).andReturn(1000L);
         expect(bcachingListFactory.getTotalCount("1000")).andReturn(1);
         progressManager.update(progressHandler, ProgressMessage.SET_MAX, 1);
 
-        expect(bcachingListFactory.getCacheList(0, "1000")).andReturn(bcachingListFirst);
+        expect(bcachingListFactory.getCacheList("0", "1000")).andReturn(bcachingListFirst);
 
         expect(bcachingListFirst.getCachesRead()).andReturn(1);
         expect(detailsReaderImport.loadCacheDetails("GC1234")).andReturn(true);
         expect(bcachingListFirst.getCacheIds()).andReturn("GC1234");
         progressManager.update(progressHandler, ProgressMessage.SET_PROGRESS, 1);
 
-        expect(bcachingListFactory.getCacheList(1, "1000")).andReturn(bcachingListLast);
+        expect(bcachingListFactory.getCacheList("1", "1000")).andReturn(bcachingListLast);
         expect(bcachingListLast.getCachesRead()).andReturn(0);
 
         progressManager.update(progressHandler, ProgressMessage.DONE, 0);
@@ -130,25 +130,25 @@ public class ImportBCachingWorkerTest extends GeoBeagleTest {
 
         expect(System.currentTimeMillis()).andReturn(8888L);
         progressManager.update(progressHandler, ProgressMessage.START, 0);
-        expect(bcachingLastUpdated.getLastUpdateTime()).andReturn("1000");
+        expect(bcachingLastUpdated.getLastUpdateTime()).andReturn(1000L);
         expect(bcachingListFactory.getTotalCount("1000")).andReturn(60);
         progressManager.update(progressHandler, ProgressMessage.SET_MAX, 60);
 
-        expect(bcachingListFactory.getCacheList(0, "1000")).andReturn(bcachingListFirst);
+        expect(bcachingListFactory.getCacheList("0", "1000")).andReturn(bcachingListFirst);
 
         expect(bcachingListFirst.getCachesRead()).andReturn(50);
         expect(bcachingListFirst.getCacheIds()).andReturn("GC1234,etc");
         expect(detailsReaderImport.loadCacheDetails("GC1234,etc")).andReturn(true);
         progressManager.update(progressHandler, ProgressMessage.SET_PROGRESS, 50);
 
-        expect(bcachingListFactory.getCacheList(50, "1000")).andReturn(bcachingListSecond);
+        expect(bcachingListFactory.getCacheList("50", "1000")).andReturn(bcachingListSecond);
 
         expect(bcachingListSecond.getCachesRead()).andReturn(10);
         expect(bcachingListSecond.getCacheIds()).andReturn("GC456,etc");
         expect(detailsReaderImport.loadCacheDetails("GC456,etc")).andReturn(true);
         progressManager.update(progressHandler, ProgressMessage.SET_PROGRESS, 60);
 
-        expect(bcachingListFactory.getCacheList(60, "1000")).andReturn(bcachingListLast);
+        expect(bcachingListFactory.getCacheList("60", "1000")).andReturn(bcachingListLast);
         expect(bcachingListLast.getCachesRead()).andReturn(0);
 
         progressManager.update(progressHandler, ProgressMessage.DONE, 0);
