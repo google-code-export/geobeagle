@@ -16,12 +16,12 @@ package com.google.code.geobeagle.bcaching.progress;
 
 import com.google.code.geobeagle.Refresher;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
+import com.google.code.geobeagle.bcaching.BCachingModule;
 import com.google.inject.Inject;
 
 import android.app.ProgressDialog;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 
 public class ProgressHandler extends Handler {
     private final ProgressDialog progressDialog;
@@ -34,13 +34,13 @@ public class ProgressHandler extends Handler {
     }
 
     public void done() {
+        progressDialog.setMessage(BCachingModule.BCACHING_INITIAL_MESSAGE);
         progressDialog.dismiss();
     }
 
     @Override
     public void handleMessage(Message msg) {
         ProgressMessage progressMessage = ProgressMessage.fromInt(msg.what);
-        Log.d("GeoBeagle", "MMMMesage " + progressMessage);
         progressMessage.act(this, msg);
     }
 

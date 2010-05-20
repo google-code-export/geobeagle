@@ -56,7 +56,6 @@ public class CacheWriter {
         }
         
         public void clearCaches(String source) {
-            Log.d("GeoBeagle", "!!!!!!!! NOP");
         }
 
     }

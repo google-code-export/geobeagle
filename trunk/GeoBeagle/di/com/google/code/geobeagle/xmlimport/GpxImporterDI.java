@@ -17,6 +17,7 @@ package com.google.code.geobeagle.xmlimport;
 import com.google.code.geobeagle.ErrorDisplayer;
 import com.google.code.geobeagle.activity.cachelist.Pausable;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
+import com.google.code.geobeagle.bcaching.ImportBCachingWorker;
 import com.google.code.geobeagle.cachedetails.CacheDetailsLoader;
 import com.google.code.geobeagle.cachedetails.FileDataVersionChecker;
 import com.google.code.geobeagle.cachedetails.FileDataVersionWriter;
@@ -34,6 +35,7 @@ import com.google.code.geobeagle.xmlimport.gpx.GpxAndZipFiles.GpxFilenameFilter;
 import com.google.code.geobeagle.xmlimport.gpx.zip.ZipFileOpener.ZipInputFileTester;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
+import com.google.inject.Provider;
 
 import roboguice.util.RoboThread;
 
@@ -73,7 +75,8 @@ public class GpxImporterDI {
             final FileDataVersionChecker fileDataVersionChecker = injector
                     .getInstance(FileDataVersionChecker.class);
             return new ImportThread(gpxAndZipFiles, importThreadHelper, errorDisplayer,
-                    fileDataVersionWriter, injector.getInstance(DbFrontend.class), fileDataVersionChecker);
+                    fileDataVersionWriter, injector.getInstance(DbFrontend.class),
+                    fileDataVersionChecker);
         }
 
         private final ImportThreadDelegate mImportThreadDelegate;
@@ -139,10 +142,11 @@ public class GpxImporterDI {
         static final int MSG_DONE = 1;
         static final int MSG_PROGRESS = 0;
 
-        public static MessageHandlerInterface create(ListActivity listActivity) {
+        public static MessageHandlerInterface create(ListActivity listActivity,
+                Provider<ImportBCachingWorker> importBCachingWorkerProvider) {
             final ProgressDialogWrapper progressDialogWrapper = new ProgressDialogWrapper(
                     listActivity);
-            return new MessageHandler(progressDialogWrapper);
+            return new MessageHandler(progressDialogWrapper, importBCachingWorkerProvider);
         }
 
         private int mCacheCount;
@@ -152,10 +156,13 @@ public class GpxImporterDI {
         private String mSource;
         private String mStatus;
         private String mWaypointId;
+        private final Provider<ImportBCachingWorker> mImportBCachingWorkerProvider;
 
         @Inject
-        public MessageHandler(ProgressDialogWrapper progressDialogWrapper) {
+        public MessageHandler(ProgressDialogWrapper progressDialogWrapper,
+                Provider<ImportBCachingWorker> importBCachingWorkerProvider) {
             mProgressDialogWrapper = progressDialogWrapper;
+            mImportBCachingWorkerProvider = importBCachingWorkerProvider;
         }
 
         public void abortLoad() {
@@ -174,6 +181,7 @@ public class GpxImporterDI {
                     if (!mLoadAborted) {
                         mProgressDialogWrapper.dismiss();
                         mMenuActionRefresh.forceRefresh();
+                        mImportBCachingWorkerProvider.get().start();
                     }
                     break;
                 default:
@@ -190,7 +198,7 @@ public class GpxImporterDI {
             mLoadAborted = false;
             mMenuActionRefresh = cacheListRefresh;
             // TODO: move text into resource.
-            mProgressDialogWrapper.show("Syncing caches", "Please wait...");
+            mProgressDialogWrapper.show("Sync from sdcard", "Please wait...");
         }
 
         public void updateName(String name) {
