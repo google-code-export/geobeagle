@@ -127,8 +127,8 @@ public class BCachingCommunication {
                 }
                 InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
                 BufferedReader reader = new BufferedReader(inputStreamReader);
-                throw new BCachingException(connection.getResponseCode() + " error: "
-                        + reader.readLine());
+                String string = connection.getResponseCode() + " error: " + reader.readLine();
+                throw new BCachingException(string);
             }
             if (connection.getContentEncoding().equalsIgnoreCase("gzip")) {
                 inputStream = new java.util.zip.GZIPInputStream(inputStream);
@@ -144,13 +144,7 @@ public class BCachingCommunication {
             }
             return inputStream;
         } catch (IOException e) {
-            Log.e("GeoBeagle", "    " + e.toString());
-             
-            StackTraceElement[] stackTrace = e.getStackTrace();
-            for (StackTraceElement ste : stackTrace) {
-                Log.e("GeoBeagle", "    " + ste.toString());
-            }
-            throw new BCachingException("IO error: " + e.toString() + ", " + e.getLocalizedMessage());
+            throw new BCachingException("IO error: " + e.toString());
         }
     }
 
