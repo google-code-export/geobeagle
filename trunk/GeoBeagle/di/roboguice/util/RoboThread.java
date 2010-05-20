@@ -16,7 +16,7 @@ import com.google.inject.Provider;
  * names, etc. won't be honored. Yet.
  */
 public class RoboThread extends Thread {
-    @Inject static protected Provider<Context> contextProvider;
+    @Inject static public Provider<Context> contextProvider;
     @Inject static protected Provider<ContextScope> scopeProvider;
 
     public RoboThread() {

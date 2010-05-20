@@ -14,6 +14,7 @@
 
 package com.google.code.geobeagle.database;
 
+import com.google.inject.Provider;
 import com.google.inject.Provides;
 
 import roboguice.config.AbstractAndroidModule;
@@ -22,7 +23,6 @@ import roboguice.inject.ContextScoped;
 import android.util.Log;
 
 public class DatabaseModule extends AbstractAndroidModule {
-
     @Override
     protected void configure() {
         bind(FilterNearestCaches.class).in(ContextScoped.class);
@@ -35,8 +35,8 @@ public class DatabaseModule extends AbstractAndroidModule {
     }
 
     @Provides
-    public CacheWriter cacheWriterProvider(DbFrontend dbFrontend) {
-        Log.d("GeoBeagle", "CacheWriterProvider: " + dbFrontend);
-        return dbFrontend.getCacheWriter();
+    public CacheWriter cacheWriterProvider(Provider<ISQLiteDatabase> databaseProvider) {
+        Log.d("GeoBeagle", "CacheWriterProvider: " + databaseProvider);
+        return DatabaseDI.createCacheWriter(databaseProvider);
     }
 }
