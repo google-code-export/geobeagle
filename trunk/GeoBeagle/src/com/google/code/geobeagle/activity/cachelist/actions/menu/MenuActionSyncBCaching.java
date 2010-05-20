@@ -27,7 +27,6 @@ public class MenuActionSyncBCaching extends MenuActionBase {
 
     private final Provider<ImportBCachingWorker> importBCachingWorkerProvider;
     private Abortable abortable;
-    private ImportBCachingWorker importBCachingWorker;
 
     @Inject
     public MenuActionSyncBCaching(Provider<ImportBCachingWorker> importBCachingWorkerProvider,
@@ -40,13 +39,8 @@ public class MenuActionSyncBCaching extends MenuActionBase {
 
     @Override
     public void act() {
-        importBCachingWorker = importBCachingWorkerProvider.get();
+        ImportBCachingWorker importBCachingWorker = importBCachingWorkerProvider.get();
         importBCachingWorker.start();
-        try {
-            importBCachingWorker.join();
-        } catch (InterruptedException e) {
-            Log.d("GeoBeagle", "InterruptedException: " + e.getLocalizedMessage());
-        }
         abortable = importBCachingWorker;
     }
 
