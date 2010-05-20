@@ -101,11 +101,12 @@ public class CacheWriter {
     public boolean isGpxAlreadyLoaded(String gpxName, String gpxTime) {
         mGpxTime = gpxTime;
         // TODO:countResults is slow; replace with a query, and moveToFirst.
-        boolean gpxAlreadyLoaded = sqliteProvider.get().countResults(Database.TBL_GPX,
+        ISQLiteDatabase sqliteDatabase = sqliteProvider.get();
+        boolean gpxAlreadyLoaded = sqliteDatabase.countResults(Database.TBL_GPX,
                 Database.SQL_MATCH_NAME_AND_EXPORTED_LATER, gpxName, gpxTime) > 0;
         if (gpxAlreadyLoaded) {
-            sqliteProvider.get().execSQL(Database.SQL_CACHES_DONT_DELETE_ME, gpxName);
-            sqliteProvider.get().execSQL(Database.SQL_GPX_DONT_DELETE_ME, gpxName);
+            sqliteDatabase.execSQL(Database.SQL_CACHES_DONT_DELETE_ME, gpxName);
+            sqliteDatabase.execSQL(Database.SQL_GPX_DONT_DELETE_ME, gpxName);
         }
         return gpxAlreadyLoaded;
     }
@@ -115,9 +116,10 @@ public class CacheWriter {
     }
 
     public void stopWriting() {
-        // TODO: abort if no writes--otherwise sqliteProvider is unhappy.
-        sqliteProvider.get().setTransactionSuccessful();
-        sqliteProvider.get().endTransaction();
+        // TODO: abort if no writes--otherwise sqlite is unhappy.
+        ISQLiteDatabase sqliteDatabase = sqliteProvider.get();
+        sqliteDatabase.setTransactionSuccessful();
+        sqliteDatabase.endTransaction();
     }
 
     public void writeGpx(String gpxName) {

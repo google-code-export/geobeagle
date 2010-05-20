@@ -39,6 +39,8 @@ import com.google.inject.Provider;
 
 import roboguice.util.RoboThread;
 
+import roboguice.util.RoboThread;
+
 import android.app.ListActivity;
 import android.app.ProgressDialog;
 import android.content.Context;
