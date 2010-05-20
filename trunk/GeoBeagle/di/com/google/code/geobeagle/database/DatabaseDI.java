@@ -170,11 +170,11 @@ public class DatabaseDI {
         return new CacheReader(sqliteWrapper, cacheReaderCursorFactory);
     }
 
-    public static CacheWriter createCacheWriter(ISQLiteDatabase writableDatabase) {
+    public static CacheWriter createCacheWriter(Provider<ISQLiteDatabase> writableDatabaseProvider) {
         // final SQLiteWrapper sqliteWrapper = new
         // DatabaseDI.SQLiteWrapper(sqliteDatabaseWritable);
         final DbToGeocacheAdapter dbToGeocacheAdapter = new DbToGeocacheAdapter();
-        return new CacheWriter(writableDatabase, dbToGeocacheAdapter);
+        return new CacheWriter(writableDatabaseProvider, dbToGeocacheAdapter);
     }
 
 }
