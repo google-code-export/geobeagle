@@ -40,5 +40,8 @@ public class BCachingLastUpdated {
 
     public void clearLastUpdateTime() {
         putLastUpdateTime(0);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putInt(ImportBCachingWorker.BCACHING_LAST_READ, 0);
+        editor.commit();
     }
 }
