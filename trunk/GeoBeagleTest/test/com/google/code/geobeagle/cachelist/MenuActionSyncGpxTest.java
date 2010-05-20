@@ -48,8 +48,8 @@ public class MenuActionSyncGpxTest extends GeoBeagleTest {
         gpxImporter.importGpxs(cacheListRefresh);
 
         PowerMock.replayAll();
-        final MenuActionSyncGpx menuActionSyncGpx = new MenuActionSyncGpx(null, cacheListRefresh,
-                gpxImporterFactory, dbFrontendProvider);
+        final MenuActionSyncGpx menuActionSyncGpx = new MenuActionSyncGpx(null, null,
+                cacheListRefresh, gpxImporterFactory, dbFrontendProvider);
         menuActionSyncGpx.act();
         PowerMock.verifyAll();
     }
@@ -61,7 +61,7 @@ public class MenuActionSyncGpxTest extends GeoBeagleTest {
         abortable.abort();
 
         PowerMock.replayAll();
-        new MenuActionSyncGpx(abortable, null, null, null).abort();
+        new MenuActionSyncGpx(null, null, null, null, null).abort();
         PowerMock.verifyAll();
     }
 }

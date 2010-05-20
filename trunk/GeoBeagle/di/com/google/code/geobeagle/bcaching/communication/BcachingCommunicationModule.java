@@ -26,7 +26,6 @@ public class BCachingCommunicationModule extends AbstractAndroidModule {
     @Override
     protected void configure() {
         bind(BCachingListFactory.class).to(BCachingListFactoryImpl.class);
-
     }
 
     static class BCachingListFactoryImpl implements BCachingListFactory {

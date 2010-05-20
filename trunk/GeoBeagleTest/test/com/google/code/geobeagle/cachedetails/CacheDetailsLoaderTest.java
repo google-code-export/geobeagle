@@ -169,7 +169,7 @@ public class CacheDetailsLoaderTest {
         EasyMock.expect(details.getString()).andReturn("cache details");
 
         PowerMock.replayAll();
-        assertEquals("cache details", new CacheDetailsLoader(detailsOpener)
+        assertEquals("cache details", new CacheDetailsLoader(detailsOpener, null)
                 .load("foo.gpx", "GC123"));
         PowerMock.verifyAll();
     }

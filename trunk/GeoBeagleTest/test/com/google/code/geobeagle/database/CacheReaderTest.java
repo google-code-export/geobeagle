@@ -94,7 +94,7 @@ public class CacheReaderTest {
         PowerMock.verifyAll();
 
     }
-    
+
     @Test
     public void testCursorMoveToNext() {
         Cursor cursor = PowerMock.createMock(Cursor.class);
@@ -118,7 +118,7 @@ public class CacheReaderTest {
         cursor.close();
 
         PowerMock.replayAll();
-        assertEquals(812, new CacheReader(sqliteWrapper, null).getTotalCount());
+        assertEquals(812, new CacheReader(null, null).getTotalCount());
         PowerMock.verifyAll();
     }
 
@@ -139,8 +139,8 @@ public class CacheReaderTest {
         expect(cacheReaderCursorFactory.create(cursor)).andReturn(cacheReaderCursor);
 
         PowerMock.replayAll();
-        assertEquals(cacheReaderCursor, new CacheReader(sqliteWrapper, cacheReaderCursorFactory)
-                .open(122, 37, whereFactoryNearestCaches, null));
+        assertEquals(cacheReaderCursor, new CacheReader(null, cacheReaderCursorFactory).open(122,
+                37, whereFactoryNearestCaches, null));
         PowerMock.verifyAll();
     }
 
@@ -157,7 +157,7 @@ public class CacheReaderTest {
         cursor.close();
 
         PowerMock.replayAll();
-        new CacheReader(sqliteWrapper, null).open(0, 0, whereFactoryNearestCaches, null);
+        new CacheReader(null, null).open(0, 0, whereFactoryNearestCaches, null);
         PowerMock.verifyAll();
     }
 }
