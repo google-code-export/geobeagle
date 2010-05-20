@@ -36,7 +36,7 @@ public class DbFrontend {
     private static ISQLiteDatabase mDatabase;
     private static boolean mIsDatabaseOpen;
     private GeoBeagleSqliteOpenHelper mSqliteOpenHelper;
-
+    
     @Inject
     DbFrontend(Context context, CacheReader cacheReader) {
         if (context != mContext)
