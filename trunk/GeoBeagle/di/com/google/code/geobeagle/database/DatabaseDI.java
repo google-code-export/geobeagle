@@ -165,11 +165,6 @@ public class DatabaseDI {
 
     }
 
-    public static CacheReader createCacheReader(ISQLiteDatabase sqliteWrapper) {
-        final CacheReaderCursorFactory cacheReaderCursorFactory = new CacheReaderCursorFactory();
-        return new CacheReader(sqliteWrapper, cacheReaderCursorFactory);
-    }
-
     public static CacheWriter createCacheWriter(Provider<ISQLiteDatabase> writableDatabaseProvider) {
         // final SQLiteWrapper sqliteWrapper = new
         // DatabaseDI.SQLiteWrapper(sqliteDatabaseWritable);
