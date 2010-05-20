@@ -39,8 +39,8 @@ public class BCachingLastUpdatedTest {
 
     @Test
     public void testGetLastUpdateTime() {
-        expect(sharedPreferences.getString(BCachingLastUpdated.BCACHING_LASTUPDATE, "0"))
-                .andReturn("8888");
+        expect(sharedPreferences.getLong(BCachingLastUpdated.BCACHING_LAST_UPDATE, 0)).andReturn(
+                8888L);
 
         replayAll();
         new BCachingLastUpdated(sharedPreferences).getLastUpdateTime();
@@ -50,7 +50,7 @@ public class BCachingLastUpdatedTest {
     @Test
     public void testPutLastUpdateTime() {
         expect(sharedPreferences.edit()).andReturn(editor);
-        expect(editor.putString(BCachingLastUpdated.BCACHING_LASTUPDATE, "7777")).andReturn(editor);
+        expect(editor.putLong(BCachingLastUpdated.BCACHING_LAST_UPDATE, 7777)).andReturn(editor);
         expect(editor.commit()).andReturn(true);
 
         replayAll();
@@ -61,7 +61,8 @@ public class BCachingLastUpdatedTest {
     @Test
     public void testClearLastUpdateTime() {
         expect(sharedPreferences.edit()).andReturn(editor);
-        expect(editor.putString(BCachingLastUpdated.BCACHING_LASTUPDATE, "0")).andReturn(editor);
+        expect(editor.putLong(BCachingLastUpdated.BCACHING_LAST_UPDATE, 0)).andReturn(editor);
+        expect(editor.putInt(BCachingLastUpdated.BCACHING_LAST_READ, 0)).andReturn(editor);
         expect(editor.commit()).andReturn(true);
 
         replayAll();

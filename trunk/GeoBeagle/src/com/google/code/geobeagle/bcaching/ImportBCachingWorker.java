@@ -38,7 +38,6 @@ import android.content.SharedPreferences.Editor;
 import android.util.Log;
 
 public class ImportBCachingWorker extends RoboThread implements Abortable {
-    static final String BCACHING_LAST_READ = "bcaching-last-read";
     private final ProgressHandler progressHandler;
     private final BCachingLastUpdated bcachingLastUpdated;
     private final BCachingListImporter bcachingListImporter;
@@ -73,9 +72,9 @@ public class ImportBCachingWorker extends RoboThread implements Abortable {
         inProgress = true;
         long now = System.currentTimeMillis();
         progressManager.update(progressHandler, ProgressMessage.START, 0);
-        String lastUpdateTime = bcachingLastUpdated.getLastUpdateTime();
+        String lastUpdateTime = String.valueOf(bcachingLastUpdated.getLastUpdateTime());
         Editor sharedPreferencesEditor = sharedPreferences.edit();
-        int totalCachesRead = sharedPreferences.getInt(BCACHING_LAST_READ, 0);
+        int totalCachesRead = sharedPreferences.getInt(BCachingLastUpdated.BCACHING_LAST_READ, 0);
 
         try {
             int totalCount = bcachingListImporter.getTotalCount(lastUpdateTime);
@@ -84,8 +83,8 @@ public class ImportBCachingWorker extends RoboThread implements Abortable {
             progressManager.update(progressHandler, ProgressMessage.SET_MAX, totalCount);
             progressManager.update(progressHandler, ProgressMessage.SET_PROGRESS, totalCachesRead);
 
-            BCachingList bcachingList = bcachingListImporter.getCacheList(totalCachesRead,
-                    lastUpdateTime);
+            BCachingList bcachingList = bcachingListImporter.getCacheList(String
+                    .valueOf(totalCachesRead), lastUpdateTime.toString());
             int cachesRead;
             while ((cachesRead = bcachingList.getCachesRead()) > 0) {
                 Log.d("GeoBeagle", "cachesRead: " + cachesRead);
@@ -97,13 +96,14 @@ public class ImportBCachingWorker extends RoboThread implements Abortable {
                 sqliteProvider.get().execSQL(Database.SQL_CACHES_DONT_DELETE_ME, "BCaching.com");
                 sqliteProvider.get().execSQL(Database.SQL_GPX_DONT_DELETE_ME, "BCaching.com");
 
-                sharedPreferencesEditor.putInt(BCACHING_LAST_READ, totalCachesRead);
+                sharedPreferencesEditor.putInt(BCachingLastUpdated.BCACHING_LAST_READ, totalCachesRead);
                 sharedPreferencesEditor.commit();
                 progressManager.update(progressHandler, ProgressMessage.SET_PROGRESS,
                         totalCachesRead);
-                bcachingList = bcachingListImporter.getCacheList(totalCachesRead, lastUpdateTime);
+                bcachingList = bcachingListImporter.getCacheList(String.valueOf(totalCachesRead),
+                        lastUpdateTime);
             }
-            sharedPreferencesEditor.putInt(BCACHING_LAST_READ, 0);
+            sharedPreferencesEditor.putInt(BCachingLastUpdated.BCACHING_LAST_READ, 0);
             sharedPreferencesEditor.commit();
             bcachingLastUpdated.putLastUpdateTime(now);
         } catch (BCachingException e) {
@@ -111,7 +111,7 @@ public class ImportBCachingWorker extends RoboThread implements Abortable {
                     .getLocalizedMessage());
         } finally {
             progressManager.update(progressHandler, ProgressMessage.DONE, 0);
-            sharedPreferencesEditor.putInt(BCACHING_LAST_READ, 0);
+            sharedPreferencesEditor.putInt(BCachingLastUpdated.BCACHING_LAST_READ, 0);
             sharedPreferencesEditor.commit();
             inProgress = false;
             Log.d("GeoBeagle", "ImportBcachingWorker ending");
