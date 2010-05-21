@@ -36,6 +36,7 @@ public class ProgressHandler extends Handler {
     public void done() {
         progressDialog.setMessage(BCachingModule.BCACHING_INITIAL_MESSAGE);
         progressDialog.dismiss();
+        refresher.refresh();
     }
 
     @Override
