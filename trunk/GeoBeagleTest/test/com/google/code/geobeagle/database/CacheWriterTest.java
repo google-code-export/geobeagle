@@ -24,6 +24,7 @@ import static org.junit.Assert.assertTrue;
 
 import com.google.code.geobeagle.CacheType;
 import com.google.code.geobeagle.GeocacheFactory.Source;
+import com.google.code.geobeagle.database.CacheWriter.ClearCachesFromSourceImpl;
 import com.google.code.geobeagle.database.DatabaseDI.SQLiteWrapper;
 
 import org.junit.Test;
@@ -46,8 +47,7 @@ public class CacheWriterTest {
         db.execSQL(INSERT_INTO_GPX + "VALUES ('nuke.gpx', '2009-04-30', 1)");
         db.execSQL(INSERT_INTO_GPX + "VALUES ('keep.gpx', '2009-04-30', 0)");
 
-        CacheWriter cacheWriterSql = new CacheWriter(null, null);
-        cacheWriterSql.clearEarlierLoads();
+        new ClearCachesFromSourceImpl(null).clearEarlierLoads();
 
         assertEquals("GCTHISIMPORT|just loaded|||foo.gpx|1|0|0|0|0\n"
                 + "GCCLICKEDLINK|from a link|||intent|0|0|0|0|0\n", db.dumpTable("CACHES"));
