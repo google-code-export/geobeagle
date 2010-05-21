@@ -38,7 +38,6 @@ import com.google.code.geobeagle.activity.cachelist.actions.context.ContextActio
 import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionDeleteAllCaches;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionMyLocation;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionSyncGpx;
-import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionToggleFilter;
 import com.google.code.geobeagle.activity.cachelist.model.CacheListData;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheFromMyLocationFactory;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVector;
@@ -248,8 +247,9 @@ public class CacheListDelegateDI {
         final Aborter aborter = injector.getInstance(Aborter.class);
         final Provider<ImportBCachingWorker> importBCachingWorkerProvider = injector
                 .getProvider(ImportBCachingWorker.class);
-        final MessageHandlerInterface messageHandler = MessageHandler.create(listActivity, importBCachingWorkerProvider);
-		final Provider<ISQLiteDatabase> databaseProvider = injector.getProvider(ISQLiteDatabase.class);
+        final MessageHandlerInterface messageHandler = injector.getInstance(MessageHandler.class);
+        final Provider<ISQLiteDatabase> databaseProvider = injector
+                .getProvider(ISQLiteDatabase.class);
         final TagWriterImpl tagWriterImpl = new TagWriterImpl(databaseProvider);
         final TagWriterNull tagWriterNull = new TagWriterNull();
         final FilePathStrategy filePathStrategy = new FilePathStrategy();

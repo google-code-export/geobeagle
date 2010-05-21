@@ -18,6 +18,7 @@ import com.google.code.geobeagle.ErrorDisplayer;
 import com.google.code.geobeagle.activity.cachelist.Pausable;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
 import com.google.code.geobeagle.bcaching.ImportBCachingWorker;
+import com.google.code.geobeagle.bcaching.BCachingAnnotations.BCachingUserName;
 import com.google.code.geobeagle.cachedetails.CacheDetailsLoader;
 import com.google.code.geobeagle.cachedetails.FileDataVersionChecker;
 import com.google.code.geobeagle.cachedetails.FileDataVersionWriter;
@@ -144,13 +145,6 @@ public class GpxImporterDI {
         static final int MSG_DONE = 1;
         static final int MSG_PROGRESS = 0;
 
-        public static MessageHandlerInterface create(ListActivity listActivity,
-                Provider<ImportBCachingWorker> importBCachingWorkerProvider) {
-            final ProgressDialogWrapper progressDialogWrapper = new ProgressDialogWrapper(
-                    listActivity);
-            return new MessageHandler(progressDialogWrapper, importBCachingWorkerProvider);
-        }
-
         private int mCacheCount;
         private boolean mLoadAborted;
         private CacheListRefresh mMenuActionRefresh;
@@ -159,12 +153,15 @@ public class GpxImporterDI {
         private String mStatus;
         private String mWaypointId;
         private final Provider<ImportBCachingWorker> mImportBCachingWorkerProvider;
+        private final Provider<String> mBcachingUserNameProvider;
 
         @Inject
         public MessageHandler(ProgressDialogWrapper progressDialogWrapper,
-                Provider<ImportBCachingWorker> importBCachingWorkerProvider) {
+                Provider<ImportBCachingWorker> importBCachingWorkerProvider,
+                @BCachingUserName Provider<String> bcachingUserNameProvider) {
             mProgressDialogWrapper = progressDialogWrapper;
             mImportBCachingWorkerProvider = importBCachingWorkerProvider;
+            mBcachingUserNameProvider = bcachingUserNameProvider;
         }
 
         public void abortLoad() {
@@ -183,7 +180,8 @@ public class GpxImporterDI {
                     if (!mLoadAborted) {
                         mProgressDialogWrapper.dismiss();
                         mMenuActionRefresh.forceRefresh();
-                        mImportBCachingWorkerProvider.get().start();
+                        if (mBcachingUserNameProvider.get().length() > 0)
+                            mImportBCachingWorkerProvider.get().start();
                     }
                     break;
                 default:
