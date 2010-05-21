@@ -73,7 +73,7 @@ public class ImportBCachingWorkerTest extends GeoBeagleTest {
 
         PowerMock.replayAll();
         new ImportBCachingWorker(progressHandler, progressManager, bcachingLastUpdated,
-                bcachingListFactory, null, null, null, null, null).run();
+                bcachingListFactory, null, null, null, null).run();
         PowerMock.verifyAll();
     }
 
@@ -90,7 +90,7 @@ public class ImportBCachingWorkerTest extends GeoBeagleTest {
 
         PowerMock.replayAll();
         new ImportBCachingWorker(progressHandler, progressManager, bcachingLastUpdated,
-                bcachingListFactory, errorDisplayer, null, null, null, null).run();
+                bcachingListFactory, errorDisplayer, null, null, null).run();
         PowerMock.verifyAll();
     }
 
@@ -119,7 +119,7 @@ public class ImportBCachingWorkerTest extends GeoBeagleTest {
 
         PowerMock.replayAll();
         new ImportBCachingWorker(progressHandler, progressManager, bcachingLastUpdated,
-                bcachingListFactory, null, detailsReaderImport, null, null, null).run();
+                bcachingListFactory, null, detailsReaderImport, null, null).run();
         PowerMock.verifyAll();
     }
 
@@ -156,7 +156,7 @@ public class ImportBCachingWorkerTest extends GeoBeagleTest {
 
         PowerMock.replayAll();
         new ImportBCachingWorker(progressHandler, progressManager, bcachingLastUpdated,
-                bcachingListFactory, null, detailsReaderImport, null, null, null).run();
+                bcachingListFactory, null, detailsReaderImport, null, null).run();
         PowerMock.verifyAll();
     }
 }
