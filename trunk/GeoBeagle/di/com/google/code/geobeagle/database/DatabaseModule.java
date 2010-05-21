@@ -20,8 +20,6 @@ import com.google.inject.Provides;
 import roboguice.config.AbstractAndroidModule;
 import roboguice.inject.ContextScoped;
 
-import android.util.Log;
-
 public class DatabaseModule extends AbstractAndroidModule {
     @Override
     protected void configure() {
@@ -35,8 +33,9 @@ public class DatabaseModule extends AbstractAndroidModule {
     }
 
     @Provides
-    public CacheWriter cacheWriterProvider(Provider<ISQLiteDatabase> databaseProvider) {
-        Log.d("GeoBeagle", "CacheWriterProvider: " + databaseProvider);
-        return DatabaseDI.createCacheWriter(databaseProvider);
+    public CacheWriter cacheWriterProvider(Provider<ISQLiteDatabase> databaseProvider,
+            DbToGeocacheAdapter dbToGeocacheAdapter) {
+        return new CacheWriter(databaseProvider, dbToGeocacheAdapter);
     }
+
 }

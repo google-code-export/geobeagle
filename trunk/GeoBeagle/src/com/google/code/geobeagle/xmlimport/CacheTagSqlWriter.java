@@ -23,7 +23,6 @@ import com.google.code.geobeagle.database.Tag;
 import com.google.code.geobeagle.database.TagWriter;
 import com.google.code.geobeagle.database.TagWriterImpl;
 import com.google.code.geobeagle.database.TagWriterNull;
-import com.google.code.geobeagle.database.CacheWriter.ClearCachesFromSourceImpl;
 import com.google.inject.Inject;
 
 import android.util.Log;
@@ -51,13 +50,13 @@ public class CacheTagSqlWriter {
     @Inject
     public CacheTagSqlWriter(CacheWriter cacheWriter, CacheTypeFactory cacheTypeFactory,
             TagWriterImpl tagWriterImpl, TagWriterNull tagWriterNull,
-            ClearCachesFromSource clearCachesFromSourceImpl) {
+            ClearCachesFromSource clearCachesFromSource) {
         mCacheWriter = cacheWriter;
         mCacheTypeFactory = cacheTypeFactory;
         mTagWriter = tagWriterNull;
         mTagWriterImpl = tagWriterImpl;
         mTagWriterNull = tagWriterNull;
-        mClearCachesFromSource = clearCachesFromSourceImpl;
+        mClearCachesFromSource = clearCachesFromSource;
     }
 
     public void cacheName(String name) {
@@ -86,7 +85,7 @@ public class CacheTagSqlWriter {
     }
 
     public void end() {
-        mCacheWriter.clearEarlierLoads();
+        mClearCachesFromSource.clearEarlierLoads();
     }
 
     public void gpxName(String gpxName) {

@@ -36,10 +36,52 @@ import java.util.Hashtable;
  * @author Mark Bastian
  */
 public class BCachingCommunication {
-    private final String username;
-    private final String hashword;
+    private static char[] map1 = new char[64];
+    static {
+        int i = 0;
+        for (char c = 'A'; c <= 'Z'; c++) {
+            map1[i++] = c;
+        }
+        for (char c = 'a'; c <= 'z'; c++) {
+            map1[i++] = c;
+        }
+        for (char c = '0'; c <= '9'; c++) {
+            map1[i++] = c;
+        }
+        map1[i++] = '+';
+        map1[i++] = '/';
+    }
+
+    public static String base64Encode(byte[] in) {
+        int iLen = in.length;
+        int oDataLen = (iLen * 4 + 2) / 3;// output length without padding
+        int oLen = ((iLen + 2) / 3) * 4;// output length including padding
+        char[] out = new char[oLen];
+        int ip = 0;
+        int op = 0;
+        int i0, i1, i2, o0, o1, o2, o3;
+        while (ip < iLen) {
+            i0 = in[ip++] & 0xff;
+            i1 = ip < iLen ? in[ip++] & 0xff : 0;
+            i2 = ip < iLen ? in[ip++] & 0xff : 0;
+            o0 = i0 >>> 2;
+            o1 = ((i0 & 3) << 4) | (i1 >>> 4);
+            o2 = ((i1 & 0xf) << 2) | (i2 >>> 6);
+            o3 = i2 & 0x3F;
+            out[op++] = map1[o0];
+            out[op++] = map1[o1];
+            out[op] = op < oDataLen ? map1[o2] : '=';
+            op++;
+            out[op] = op < oDataLen ? map1[o3] : '=';
+            op++;
+        }
+        return new String(out);
+    }
+
     private final String baseUrl = "http://www.bcaching.com/api";
+    private final String hashword;
     private final int timeout = 60000; // millisec
+    private final String username;
 
     public BCachingCommunication(String username, String password) {
         this.username = username;
@@ -52,14 +94,54 @@ public class BCachingCommunication {
         this.hashword = hashword;
     }
 
+    public String encodeHashword(String username, String password) {
+        return encodeMd5Base64(password + username);
+    }
+
+    public String encodeMd5Base64(String s) {
+        byte[] buf = s.getBytes();
+        try {
+            java.security.MessageDigest md;
+            md = java.security.MessageDigest.getInstance("MD5");
+            md.update(buf, 0, buf.length);
+            buf = new byte[16];
+            md.digest(buf, 0, buf.length);
+        } catch (DigestException e) {
+            // Should never happen.
+            Log.d("GeoBeagle", "Digest exception encoding md5");
+            throw new RuntimeException(e);
+        } catch (NoSuchAlgorithmException e) {
+            // Should never happen.
+            Log.d("GeoBeagle", "NoSuchAlgorithmException exception encoding md5");
+            throw new RuntimeException(e);
+        }
+        return base64Encode(buf);
+    }
+
+    public InputStream sendRequest(Hashtable<String, String> params) throws BCachingException {
+        if (params == null || params.size() == 0)
+            throw new IllegalArgumentException("params are required.");
+        if (!params.containsKey("a"))
+            throw new IllegalArgumentException("params must include an action (key=a)");
+
+        StringBuffer sb = new StringBuffer();
+        Enumeration<String> keys = params.keys();
+        while (keys.hasMoreElements()) {
+            if (sb.length() > 0)
+                sb.append('&');
+            String k = keys.nextElement();
+            sb.append(k);
+            sb.append('=');
+            sb.append(URLEncoder.encode(params.get(k)));
+        }
+
+        return sendRequest(sb.toString());
+    }
+
     public void validateCredentials() throws BCachingException {
         // attempt to login at server
         // failure will throw an exception
         sendRequest("a=login&app=GeoBeagle");
-    }
-
-    public String encodeHashword(String username, String password) {
-        return encodeMd5Base64(password + username);
     }
 
     private String encodeQueryString(String username, String hashword, String params) {
@@ -84,24 +166,13 @@ public class BCachingCommunication {
         return sb.toString();
     }
 
-    public InputStream sendRequest(Hashtable<String, String> params) throws BCachingException {
-        if (params == null || params.size() == 0)
-            throw new IllegalArgumentException("params are required.");
-        if (!params.containsKey("a"))
-            throw new IllegalArgumentException("params must include an action (key=a)");
-
-        StringBuffer sb = new StringBuffer();
-        Enumeration<String> keys = params.keys();
-        while (keys.hasMoreElements()) {
-            if (sb.length() > 0)
-                sb.append('&');
-            String k = keys.nextElement();
-            sb.append(k);
-            sb.append('=');
-            sb.append(URLEncoder.encode(params.get(k)));
+    private URL getURL(String username, String hashword, String params) {
+        try {
+            return new URL(baseUrl + "/q.ashx?" + encodeQueryString(username, hashword, params));
+        } catch (MalformedURLException e) {
+            // baseUrl is a constant, it should never be malformed.
+            throw new RuntimeException(e);
         }
-
-        return sendRequest(sb.toString());
     }
 
     private InputStream sendRequest(String query) throws BCachingException {
@@ -146,76 +217,5 @@ public class BCachingCommunication {
         } catch (IOException e) {
             throw new BCachingException("IO error: " + e.toString());
         }
-    }
-
-    private URL getURL(String username, String hashword, String params) {
-        try {
-            return new URL(baseUrl + "/q.ashx?" + encodeQueryString(username, hashword, params));
-        } catch (MalformedURLException e) {
-            // baseUrl is a constant, it should never be malformed.
-            throw new RuntimeException(e);
-        }
-    }
-
-    public String encodeMd5Base64(String s) {
-        byte[] buf = s.getBytes();
-        try {
-            java.security.MessageDigest md;
-            md = java.security.MessageDigest.getInstance("MD5");
-            md.update(buf, 0, buf.length);
-            buf = new byte[16];
-            md.digest(buf, 0, buf.length);
-        } catch (DigestException e) {
-            // Should never happen.
-            Log.d("GeoBeagle", "Digest exception encoding md5");
-            throw new RuntimeException(e);
-        } catch (NoSuchAlgorithmException e) {
-            // Should never happen.
-            Log.d("GeoBeagle", "NoSuchAlgorithmException exception encoding md5");
-            throw new RuntimeException(e);
-        }
-        return base64Encode(buf);
-    }
-
-    private static char[] map1 = new char[64];
-    static {
-        int i = 0;
-        for (char c = 'A'; c <= 'Z'; c++) {
-            map1[i++] = c;
-        }
-        for (char c = 'a'; c <= 'z'; c++) {
-            map1[i++] = c;
-        }
-        for (char c = '0'; c <= '9'; c++) {
-            map1[i++] = c;
-        }
-        map1[i++] = '+';
-        map1[i++] = '/';
-    }
-
-    public static String base64Encode(byte[] in) {
-        int iLen = in.length;
-        int oDataLen = (iLen * 4 + 2) / 3;// output length without padding
-        int oLen = ((iLen + 2) / 3) * 4;// output length including padding
-        char[] out = new char[oLen];
-        int ip = 0;
-        int op = 0;
-        int i0, i1, i2, o0, o1, o2, o3;
-        while (ip < iLen) {
-            i0 = in[ip++] & 0xff;
-            i1 = ip < iLen ? in[ip++] & 0xff : 0;
-            i2 = ip < iLen ? in[ip++] & 0xff : 0;
-            o0 = i0 >>> 2;
-            o1 = ((i0 & 3) << 4) | (i1 >>> 4);
-            o2 = ((i1 & 0xf) << 2) | (i2 >>> 6);
-            o3 = i2 & 0x3F;
-            out[op++] = map1[o0];
-            out[op++] = map1[o1];
-            out[op] = op < oDataLen ? map1[o2] : '=';
-            op++;
-            out[op] = op < oDataLen ? map1[o3] : '=';
-            op++;
-        }
-        return new String(out);
     }
 }
