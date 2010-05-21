@@ -40,6 +40,7 @@ public class ImportBCachingWorker extends RoboThread implements Abortable {
     private final DetailsReaderImport detailsReaderImport;
     private final Toaster toaster;
     private boolean inProgress;
+
     @Inject
     public ImportBCachingWorker(ProgressHandler progressHandler, ProgressManager progressManager,
             BCachingLastUpdated bcachingLastUpdated, BCachingListImporter bcachingListImporter,

@@ -19,8 +19,6 @@ import com.google.code.geobeagle.GeocacheFactory.Source;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
-import android.util.Log;
-
 /**
  * @author sng
  */
