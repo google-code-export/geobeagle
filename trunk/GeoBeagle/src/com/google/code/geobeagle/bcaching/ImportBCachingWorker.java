@@ -24,11 +24,8 @@ import com.google.code.geobeagle.bcaching.communication.BCachingListImporter;
 import com.google.code.geobeagle.bcaching.progress.ProgressHandler;
 import com.google.code.geobeagle.bcaching.progress.ProgressManager;
 import com.google.code.geobeagle.bcaching.progress.ProgressMessage;
-import com.google.code.geobeagle.database.Database;
-import com.google.code.geobeagle.database.ISQLiteDatabase;
 import com.google.code.geobeagle.xmlimport.GpxImporterDI.Toaster;
 import com.google.inject.Inject;
-import com.google.inject.Provider;
 
 import roboguice.util.RoboThread;
 
@@ -43,14 +40,11 @@ public class ImportBCachingWorker extends RoboThread implements Abortable {
     private final DetailsReaderImport detailsReaderImport;
     private final Toaster toaster;
     private boolean inProgress;
-    private final Provider<ISQLiteDatabase> sqliteProvider;
-
     @Inject
     public ImportBCachingWorker(ProgressHandler progressHandler, ProgressManager progressManager,
             BCachingLastUpdated bcachingLastUpdated, BCachingListImporter bcachingListImporter,
             ErrorDisplayer errorDisplayer, DetailsReaderImport detailsReaderImport,
-            @ToasterSyncAborted Toaster toaster,
-            Provider<ISQLiteDatabase> sqliteProvider) {
+            @ToasterSyncAborted Toaster toaster) {
         this.progressHandler = progressHandler;
         this.bcachingLastUpdated = bcachingLastUpdated;
         this.bcachingListImporter = bcachingListImporter;
@@ -58,7 +52,6 @@ public class ImportBCachingWorker extends RoboThread implements Abortable {
         this.progressManager = progressManager;
         this.detailsReaderImport = detailsReaderImport;
         this.toaster = toaster;
-        this.sqliteProvider = sqliteProvider;
     }
 
     @Override
@@ -81,9 +74,10 @@ public class ImportBCachingWorker extends RoboThread implements Abortable {
             int cachesRead;
             while ((cachesRead = bcachingList.getCachesRead()) > 0) {
                 Log.d("GeoBeagle", "cachesRead: " + cachesRead);
-                if (!detailsReaderImport.loadCacheDetails(bcachingList.getCacheIds()))
+                if (!detailsReaderImport.loadCacheDetails(bcachingList.getCacheIds())) {
+                    Log.d("GeoBeagle", "run() ABORTING");
                     return;
-
+                }
                 totalCachesRead += cachesRead;
 
                 bcachingLastUpdated.putLastRead(totalCachesRead);
@@ -94,7 +88,10 @@ public class ImportBCachingWorker extends RoboThread implements Abortable {
             }
             bcachingLastUpdated.putLastUpdateTime(now);
             bcachingLastUpdated.putLastRead(0);
+            Log.d("GeoBeagle", "run() SENDING REFRESH message");
+            progressManager.update(progressHandler, ProgressMessage.REFRESH, 0);
         } catch (BCachingException e) {
+            progressManager.update(progressHandler, ProgressMessage.REFRESH, 0);
             errorDisplayer.displayError(R.string.problem_importing_from_bcaching, e
                     .getLocalizedMessage());
         } finally {
@@ -102,7 +99,6 @@ public class ImportBCachingWorker extends RoboThread implements Abortable {
             inProgress = false;
             Log.d("GeoBeagle", "ImportBcachingWorker ending");
         }
-        progressManager.update(progressHandler, ProgressMessage.REFRESH, 0);
     }
 
     @Override
