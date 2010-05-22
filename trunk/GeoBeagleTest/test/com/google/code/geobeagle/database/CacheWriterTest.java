@@ -24,6 +24,7 @@ import static org.junit.Assert.assertTrue;
 
 import com.google.code.geobeagle.CacheType;
 import com.google.code.geobeagle.GeocacheFactory.Source;
+import com.google.code.geobeagle.database.CacheWriter.ClearCachesFromSourceImpl;
 import com.google.code.geobeagle.database.DatabaseDI.SQLiteWrapper;
 
 import org.junit.Test;
@@ -34,21 +35,10 @@ public class CacheWriterTest {
     private static final String INSERT_INTO_GPX = "INSERT INTO GPX (Name, ExportTime, DeleteMe) ";
 
     @Test
-    public void testClearCaches() {
-        SQLiteWrapper sqlite = createMock(SQLiteWrapper.class);
-
-        sqlite.execSQL(Database.SQL_CLEAR_CACHES, "the source");
-
-        replay(sqlite);
-        CacheWriter cacheWriterSql = new CacheWriter(sqlite, null);
-        cacheWriterSql.clearCaches("the source");
-        verify(sqlite);
-    }
-
-    @Test
     public void testClearEarlierLoads() {
         DesktopSQLiteDatabase db = new DesktopSQLiteDatabase();
-        db.execSQL(DatabaseTest.currentSchema());  //andpe: Error "table CACHES already exists"
+        db.execSQL(DatabaseTest.currentSchema()); // andpe: Error
+                                                  // "table CACHES already exists"
 
         db.execSQL(INSERT_INTO_CACHES + "VALUES ('GCTHISIMPORT', 'just loaded', 'foo.gpx', 0)");
         db.execSQL(INSERT_INTO_CACHES + "VALUES ('GCCLICKEDLINK', 'from a link', '"
@@ -57,8 +47,7 @@ public class CacheWriterTest {
         db.execSQL(INSERT_INTO_GPX + "VALUES ('nuke.gpx', '2009-04-30', 1)");
         db.execSQL(INSERT_INTO_GPX + "VALUES ('keep.gpx', '2009-04-30', 0)");
 
-        CacheWriter cacheWriterSql = new CacheWriter(db, null);
-        cacheWriterSql.clearEarlierLoads();
+        new ClearCachesFromSourceImpl(null).clearEarlierLoads();
 
         assertEquals("GCTHISIMPORT|just loaded|||foo.gpx|1|0|0|0|0\n"
                 + "GCCLICKEDLINK|from a link|||intent|0|0|0|0|0\n", db.dumpTable("CACHES"));
@@ -72,7 +61,7 @@ public class CacheWriterTest {
         sqlite.execSQL(Database.SQL_DELETE_CACHE, "GC123");
 
         replay(sqlite);
-        CacheWriter cacheWriterSql = new CacheWriter(sqlite, null);
+        CacheWriter cacheWriterSql = new CacheWriter(null, null);
         cacheWriterSql.deleteCache("GC123");
         verify(sqlite);
     }
@@ -89,7 +78,7 @@ public class CacheWriterTest {
 
         replay(sqlite);
         replay(dbToGeocacheAdapter);
-        CacheWriter cacheWriterSql = new CacheWriter(sqlite, dbToGeocacheAdapter);
+        CacheWriter cacheWriterSql = new CacheWriter(null, dbToGeocacheAdapter);
         cacheWriterSql.insertAndUpdateCache("gc123", "a cache", 122, 37, Source.GPX, "source",
                 CacheType.NULL, 0, 0, 0);
         verify(sqlite);
@@ -104,7 +93,7 @@ public class CacheWriterTest {
                         "04-30-2009")).andReturn(0);
 
         replay(sqlite);
-        CacheWriter cacheWriterSql = new CacheWriter(sqlite, null);
+        CacheWriter cacheWriterSql = new CacheWriter(null, null);
         assertFalse(cacheWriterSql.isGpxAlreadyLoaded("foo.gpx", "04-30-2009"));
         verify(sqlite);
     }
@@ -121,7 +110,7 @@ public class CacheWriterTest {
         sqlite.execSQL(Database.SQL_REPLACE_GPX, "foo.gpx", "04-30-2009 10:30");
 
         replay(sqlite);
-        CacheWriter cacheWriterSql = new CacheWriter(sqlite, null);
+        CacheWriter cacheWriterSql = new CacheWriter(null, null);
         assertTrue(cacheWriterSql.isGpxAlreadyLoaded("foo.gpx", "04-30-2009 10:30"));
         cacheWriterSql.writeGpx("foo.gpx");
         verify(sqlite);
@@ -133,7 +122,7 @@ public class CacheWriterTest {
         sqlite.beginTransaction();
 
         replay(sqlite);
-        new CacheWriter(sqlite, null).startWriting();
+        new CacheWriter(null, null).startWriting();
         verify(sqlite);
     }
 
@@ -144,7 +133,7 @@ public class CacheWriterTest {
         sqlite.endTransaction();
 
         replay(sqlite);
-        new CacheWriter(sqlite, null).stopWriting();
+        new CacheWriter(null, null).stopWriting();
         verify(sqlite);
     }
 }

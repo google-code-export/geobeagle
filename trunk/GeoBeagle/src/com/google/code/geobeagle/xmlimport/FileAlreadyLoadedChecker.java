@@ -15,6 +15,7 @@
 package com.google.code.geobeagle.xmlimport;
 
 import com.google.code.geobeagle.database.CacheWriter;
+import com.google.inject.Inject;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -24,6 +25,8 @@ public class FileAlreadyLoadedChecker {
 
     private final CacheWriter mCacheWriter;
 
+    @Inject
+    public
     FileAlreadyLoadedChecker(CacheWriter cacheWriter) {
         mCacheWriter = cacheWriter;
     }

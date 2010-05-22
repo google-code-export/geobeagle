@@ -15,9 +15,12 @@
 package com.google.code.geobeagle.xmlimport;
 
 import com.google.code.geobeagle.xmlimport.GpxToCacheDI.XmlPullParserWrapper;
+import com.google.inject.Inject;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
+
+import android.util.Log;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -26,11 +29,12 @@ public class GpxToCache {
     public static class Aborter {
         private static boolean mAborted = false;
 
-        public Aborter() {
+        Aborter() {
             mAborted = false;
         }
 
         public void abort() {
+            Log.d("GeoBeagle", this + ": !!!!!!!!!!!!! aborting");
             mAborted = true;
         }
 
@@ -52,6 +56,7 @@ public class GpxToCache {
     private String mSource;
     private final FileAlreadyLoadedChecker mTestLocAlreadyLoaded;
 
+    @Inject
     GpxToCache(XmlPullParserWrapper xmlPullParserWrapper, Aborter aborter,
             FileAlreadyLoadedChecker fileAlreadyLoadedChecker) {
         mXmlPullParserWrapper = xmlPullParserWrapper;
@@ -60,6 +65,7 @@ public class GpxToCache {
     }
 
     public void abort() {
+        Log.d("GeoBeagle", "GpxToCache aborting");
         mAborter.abort();
     }
 
@@ -76,6 +82,8 @@ public class GpxToCache {
      */
     public boolean load(EventHelper eventHelper) throws XmlPullParserException, IOException,
             CancelException {
+        Log.d("GeoBeagle", this + ": GpxToCache: load");
+
         if (mTestLocAlreadyLoaded.isAlreadyLoaded(mSource)) {
             return true;
         }
@@ -83,9 +91,10 @@ public class GpxToCache {
         int eventType;
         for (eventType = mXmlPullParserWrapper.getEventType(); eventType != XmlPullParser.END_DOCUMENT; eventType = mXmlPullParserWrapper
                 .next()) {
-            if (mAborter.isAborted())
+            if (mAborter.isAborted()) {
+                Log.d("GeoBeagle", "isAborted: " + mAborter.isAborted());
                 throw new CancelException();
-
+            }
             // File already loaded.
             if (!eventHelper.handleEvent(eventType))
                 return true;

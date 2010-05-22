@@ -17,6 +17,7 @@ package com.google.code.geobeagle.xmlimport;
 import com.google.code.geobeagle.ErrorDisplayer;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.xmlimport.GpxToCache.CancelException;
+import com.google.inject.Inject;
 
 import org.xmlpull.v1.XmlPullParserException;
 
@@ -35,6 +36,8 @@ public class GpxLoader {
     private final WakeLock mWakeLock;
     public static final int WAKELOCK_DURATION = 15000;
 
+    @Inject
+    public
     GpxLoader(CachePersisterFacade cachePersisterFacade, ErrorDisplayer errorDisplayer,
             GpxToCache gpxToCache, WakeLock wakeLock) {
         mGpxToCache = gpxToCache;
@@ -63,10 +66,10 @@ public class GpxLoader {
             boolean alreadyLoaded = mGpxToCache.load(eventHelper);
             markLoadAsComplete = !alreadyLoaded;
             continueLoading = true;
-        } catch (final SQLiteException e) {
+/*        } catch (final SQLiteException e) {
             mErrorDisplayer.displayError(R.string.error_writing_cache, mGpxToCache.getSource()
                     + ": " + e.getMessage());
-        } catch (XmlPullParserException e) {
+*/        } catch (XmlPullParserException e) {
             mErrorDisplayer.displayError(R.string.error_parsing_file, mGpxToCache.getSource()
                     + ": " + e.getMessage());
         } catch (FileNotFoundException e) {

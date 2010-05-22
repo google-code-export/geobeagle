@@ -16,6 +16,8 @@ package com.google.code.geobeagle.database;
 
 import static org.junit.Assert.*;
 
+import com.google.inject.Provider;
+
 import org.easymock.EasyMock;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -57,16 +59,17 @@ public class DatabaseTest {
         assertEquals(currentSchema(), schema);
     }
 
+    @SuppressWarnings("unchecked")
     @Test
     public void testTags() {
-        DbFrontend dbFrontend = PowerMock.createMock(DbFrontend.class);
+        Provider<ISQLiteDatabase> databaseProvider = PowerMock.createMock(Provider.class);
         
         DesktopSQLiteDatabase db = new DesktopSQLiteDatabase();
-        EasyMock.expect(dbFrontend.getDatabase()).andReturn(db).anyTimes();
+        EasyMock.expect(databaseProvider.get()).andReturn(db).anyTimes();
         
         PowerMock.replayAll();
         db.execSQL(currentSchema());
-        final TagWriterImpl tagWriterImpl = new TagWriterImpl(dbFrontend);
+        final TagWriterImpl tagWriterImpl = new TagWriterImpl(databaseProvider);
         assertFalse(tagWriterImpl.hasTag("GC123", Tag.FOUND));
         assertFalse(tagWriterImpl.hasTag("GC123", Tag.DNF));
         tagWriterImpl.add("GC123", Tag.FOUND);
