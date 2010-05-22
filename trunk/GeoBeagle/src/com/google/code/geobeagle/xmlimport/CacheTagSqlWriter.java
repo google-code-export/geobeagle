@@ -18,11 +18,12 @@ import com.google.code.geobeagle.CacheType;
 import com.google.code.geobeagle.CacheTypeFactory;
 import com.google.code.geobeagle.GeocacheFactory.Source;
 import com.google.code.geobeagle.database.CacheWriter;
+import com.google.code.geobeagle.database.ClearCachesFromSource;
 import com.google.code.geobeagle.database.Tag;
 import com.google.code.geobeagle.database.TagWriter;
 import com.google.code.geobeagle.database.TagWriterImpl;
 import com.google.code.geobeagle.database.TagWriterNull;
-import com.google.code.geobeagle.database.CacheWriter.ClearCachesFromSource;
+import com.google.code.geobeagle.database.CacheWriter.ClearCachesFromSourceImpl;
 import com.google.inject.Inject;
 
 import android.util.Log;
@@ -50,13 +51,13 @@ public class CacheTagSqlWriter {
     @Inject
     public CacheTagSqlWriter(CacheWriter cacheWriter, CacheTypeFactory cacheTypeFactory,
             TagWriterImpl tagWriterImpl, TagWriterNull tagWriterNull,
-            ClearCachesFromSource clearCachesFromSource) {
+            ClearCachesFromSource clearCachesFromSourceImpl) {
         mCacheWriter = cacheWriter;
         mCacheTypeFactory = cacheTypeFactory;
         mTagWriter = tagWriterNull;
         mTagWriterImpl = tagWriterImpl;
         mTagWriterNull = tagWriterNull;
-        mClearCachesFromSource = clearCachesFromSource;
+        mClearCachesFromSource = clearCachesFromSourceImpl;
     }
 
     public void cacheName(String name) {

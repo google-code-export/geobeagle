@@ -75,7 +75,7 @@ import com.google.code.geobeagle.database.TagWriterImpl;
 import com.google.code.geobeagle.database.TagWriterNull;
 import com.google.code.geobeagle.database.WhereFactoryAllCaches;
 import com.google.code.geobeagle.database.WhereFactoryNearestCaches;
-import com.google.code.geobeagle.database.CacheWriter.ClearCachesFromSource;
+import com.google.code.geobeagle.database.CacheWriter.ClearCachesFromSourceImpl;
 import com.google.code.geobeagle.database.DatabaseDI.SearchFactory;
 import com.google.code.geobeagle.database.WhereFactoryNearestCaches.WhereStringFactory;
 import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidget;
@@ -253,10 +253,10 @@ public class CacheListDelegateDI {
         final TagWriterImpl tagWriterImpl = new TagWriterImpl(databaseProvider);
         final TagWriterNull tagWriterNull = new TagWriterNull();
         final FilePathStrategy filePathStrategy = new FilePathStrategy();
-        final ClearCachesFromSource clearCachesFromSource = injector.getInstance(ClearCachesFromSource.class);
+        final ClearCachesFromSourceImpl clearCachesFromSourceImpl = injector.getInstance(ClearCachesFromSourceImpl.class);
         final CachePersisterFacadeFactory cachePersisterFacadeFactory = new CachePersisterFacadeFactory(
                 messageHandler, cacheTypeFactory, tagWriterImpl, tagWriterNull, filePathStrategy,
-                clearCachesFromSource);
+                clearCachesFromSourceImpl);
 
         final GpxImporterFactory gpxImporterFactory = new GpxImporterFactory(aborter,
                 cachePersisterFacadeFactory, errorDisplayer, geocacheListPresenter, listActivity,
