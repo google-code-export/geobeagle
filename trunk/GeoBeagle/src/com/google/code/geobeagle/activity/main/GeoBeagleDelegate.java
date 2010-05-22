@@ -26,9 +26,11 @@ import com.google.code.geobeagle.activity.main.GeoBeagleModule.DefaultSharedPref
 import com.google.code.geobeagle.activity.main.GeoBeagleModule.GeoBeagleActivity;
 import com.google.code.geobeagle.activity.main.view.GeocacheViewer;
 import com.google.code.geobeagle.activity.main.view.WebPageAndDetailsButtonEnabler;
+import com.google.code.geobeagle.database.CacheWriter;
 import com.google.code.geobeagle.database.DbFrontend;
 import com.google.code.geobeagle.database.LocationSaver;
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -66,7 +68,7 @@ public class GeoBeagleDelegate {
     private final ActivitySaver mActivitySaver;
     private final AppLifecycleManager mAppLifecycleManager;
     private final CompassListener mCompassListener;
-    private final DbFrontend mDbFrontend;
+    private final Provider<DbFrontend> mDbFrontendProvider;
     private Geocache mGeocache;
     private final GeocacheFactory mGeocacheFactory;
     private final GeocacheFromParcelFactory mGeocacheFromParcelFactory;
@@ -78,15 +80,19 @@ public class GeoBeagleDelegate {
     private final SensorManager mSensorManager;
     private final SharedPreferences mSharedPreferences;
     private final WebPageAndDetailsButtonEnabler mWebPageButtonEnabler;
+    private final Provider<CacheWriter> mCacheWriterProvider;
 
     @Inject
     public GeoBeagleDelegate(ActivitySaver activitySaver, AppLifecycleManager appLifecycleManager,
             CompassListener compassListener, GeoBeagle parent, GeocacheFactory geocacheFactory,
             GeocacheViewer geocacheViewer, IncomingIntentHandler incomingIntentHandler,
-            @GeoBeagleActivity MenuActions menuActions, GeocacheFromParcelFactory geocacheFromParcelFactory,
-            DbFrontend dbFrontend, RadarView radarView, SensorManager sensorManager,
+            @GeoBeagleActivity MenuActions menuActions,
+            GeocacheFromParcelFactory geocacheFromParcelFactory,
+            Provider<DbFrontend> dbFrontendProvider, RadarView radarView,
+            SensorManager sensorManager,
             @DefaultSharedPreferences SharedPreferences sharedPreferences,
-            WebPageAndDetailsButtonEnabler webPageButtonEnabler) {
+            WebPageAndDetailsButtonEnabler webPageButtonEnabler,
+            Provider<CacheWriter> cacheWriterProvider) {
         mParent = parent;
         mActivitySaver = activitySaver;
         mAppLifecycleManager = appLifecycleManager;
@@ -99,8 +105,9 @@ public class GeoBeagleDelegate {
         mWebPageButtonEnabler = webPageButtonEnabler;
         mGeocacheFactory = geocacheFactory;
         mIncomingIntentHandler = incomingIntentHandler;
-        mDbFrontend = dbFrontend;
+        mDbFrontendProvider = dbFrontendProvider;
         mGeocacheFromParcelFactory = geocacheFromParcelFactory;
+        mCacheWriterProvider = cacheWriterProvider;
     }
 
     public Geocache getGeocache() {
@@ -137,7 +144,7 @@ public class GeoBeagleDelegate {
         mActivitySaver.save(ActivityType.VIEW_CACHE, mGeocache);
         mSensorManager.unregisterListener(mRadarView);
         mSensorManager.unregisterListener(mCompassListener);
-        mDbFrontend.closeDatabase();
+        mDbFrontendProvider.get().closeDatabase();
     }
 
     public void onRestoreInstanceState(Bundle savedInstanceState) {
@@ -157,7 +164,7 @@ public class GeoBeagleDelegate {
         mSensorManager.registerListener(mCompassListener, SensorManager.SENSOR_ORIENTATION,
                 SensorManager.SENSOR_DELAY_UI);
         mGeocache = mIncomingIntentHandler.maybeGetGeocacheFromIntent(mParent.getIntent(),
-                mGeocache, new LocationSaver(mDbFrontend));
+                mGeocache, new LocationSaver(mCacheWriterProvider));
 
         // Possible fix for issue 53.
         if (mGeocache == null) {

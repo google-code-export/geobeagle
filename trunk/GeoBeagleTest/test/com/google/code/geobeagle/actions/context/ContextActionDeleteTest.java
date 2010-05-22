@@ -26,6 +26,7 @@ import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheListAdapte
 import com.google.code.geobeagle.activity.cachelist.presenter.TitleUpdater;
 import com.google.code.geobeagle.database.CacheWriter;
 import com.google.code.geobeagle.database.DbFrontend;
+import com.google.inject.Provider;
 
 import org.easymock.EasyMock;
 import org.junit.Test;
@@ -47,6 +48,7 @@ import android.widget.TextView;
 })
 public class ContextActionDeleteTest {
 
+    @SuppressWarnings("unchecked")
     @Test
     public void testActionDelete() {
         CacheWriter cacheWriter = PowerMock.createMock(CacheWriter.class);
@@ -54,12 +56,12 @@ public class ContextActionDeleteTest {
         GeocacheVectors geocacheVectors = PowerMock.createMock(GeocacheVectors.class);
         GeocacheVector geocacheVector = PowerMock.createMock(GeocacheVector.class);
         TitleUpdater titleUpdater = PowerMock.createMock(TitleUpdater.class);
-        DbFrontend dbFrontend = PowerMock.createMock(DbFrontend.class);
+        Provider<CacheWriter> cacheWriterProvider = PowerMock.createMock(Provider.class);
         Activity activity = PowerMock.createMock(Activity.class);
         DialogInterface dialog = PowerMock.createMock(DialogInterface.class);
 
         activity.showDialog(0);
-        expect(dbFrontend.getCacheWriter()).andReturn(cacheWriter);
+        expect(cacheWriterProvider.get()).andReturn(cacheWriter);
         expect(geocacheVectors.get(17)).andReturn(geocacheVector);
         expect(geocacheVector.getId()).andReturn("GC123");
         cacheWriter.deleteCache("GC123");
@@ -71,7 +73,7 @@ public class ContextActionDeleteTest {
 
         PowerMock.replayAll();
         final ContextActionDelete contextActionDelete = new ContextActionDelete(
-                geocacheListAdapter, geocacheVectors, titleUpdater, dbFrontend, activity, 12);
+                geocacheListAdapter, geocacheVectors, titleUpdater, cacheWriterProvider, activity, 12);
         final OnClickOk onClickOk = new ContextActionDelete.OnClickOk(contextActionDelete);
         contextActionDelete.act(17);
         onClickOk.onClick(dialog, 0);

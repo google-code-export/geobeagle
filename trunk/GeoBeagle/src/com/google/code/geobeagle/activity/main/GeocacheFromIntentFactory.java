@@ -21,6 +21,7 @@ import com.google.code.geobeagle.GeocacheFactory.Source;
 import com.google.code.geobeagle.database.DbFrontend;
 import com.google.code.geobeagle.database.LocationSaver;
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 
 import android.content.Intent;
 import android.net.UrlQuerySanitizer;
@@ -30,12 +31,12 @@ import android.util.Log;
 public class GeocacheFromIntentFactory {
     static final String GEO_BEAGLE_SAVED_IN_DATABASE = "com.google.code.geobeagle.SavedInDatabase";
     private final GeocacheFactory mGeocacheFactory;
-    private final DbFrontend mDbFrontend;
+    private final Provider<DbFrontend> mDbFrontendProvider;
 
     @Inject
-    GeocacheFromIntentFactory(GeocacheFactory geocacheFactory, DbFrontend dbFrontend) {
+    GeocacheFromIntentFactory(GeocacheFactory geocacheFactory, Provider<DbFrontend> dbFrontendProvider) {
         mGeocacheFactory = geocacheFactory;
-        mDbFrontend = dbFrontend;
+        mDbFrontendProvider = dbFrontendProvider;
     }
 
     Geocache viewCacheFromMapsIntent(Intent intent, LocationSaver locationSaver,
@@ -52,11 +53,8 @@ public class GeocacheFromIntentFactory {
         CharSequence cacheId = latlon[2];
         Bundle extras = intent.getExtras();
         if (extras != null && extras.getBoolean(GEO_BEAGLE_SAVED_IN_DATABASE)) {
-            mDbFrontend.openDatabase();
             Log.d("GeoBeagle", "Loading from database: " + cacheId);
-            Geocache cache = mDbFrontend.getCache(cacheId);
-            mDbFrontend.closeDatabase();
-            return cache;
+            return mDbFrontendProvider.get().getCache(cacheId);
         }
         final Geocache geocache = mGeocacheFactory.create(cacheId, latlon[3],
                 Util.parseCoordinate(latlon[0]), Util

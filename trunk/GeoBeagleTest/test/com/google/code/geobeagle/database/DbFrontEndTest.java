@@ -12,12 +12,13 @@
  ** limitations under the License.
  */
 
-package com.google.code.geobeagle.activity.cachelist;
+package com.google.code.geobeagle.database;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import com.google.code.geobeagle.Geocache;
+import com.google.code.geobeagle.activity.cachelist.GeoBeagleTest;
 import com.google.code.geobeagle.database.CacheReader;
 import com.google.code.geobeagle.database.CacheReaderCursor;
 import com.google.code.geobeagle.database.CacheWriter;
