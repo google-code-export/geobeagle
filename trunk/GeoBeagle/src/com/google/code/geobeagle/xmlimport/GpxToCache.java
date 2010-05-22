@@ -15,7 +15,6 @@
 package com.google.code.geobeagle.xmlimport;
 
 import com.google.code.geobeagle.xmlimport.GpxToCacheDI.XmlPullParserWrapper;
-import com.google.inject.Inject;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
@@ -53,8 +52,6 @@ public class GpxToCache {
     private String mSource;
     private final FileAlreadyLoadedChecker mTestLocAlreadyLoaded;
 
-    @Inject
-    public
     GpxToCache(XmlPullParserWrapper xmlPullParserWrapper, Aborter aborter,
             FileAlreadyLoadedChecker fileAlreadyLoadedChecker) {
         mXmlPullParserWrapper = xmlPullParserWrapper;

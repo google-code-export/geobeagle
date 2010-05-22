@@ -15,7 +15,6 @@
 package com.google.code.geobeagle.xmlimport;
 
 import com.google.code.geobeagle.xmlimport.GpxToCacheDI.XmlPullParserWrapper;
-import com.google.inject.Inject;
 
 import org.xmlpull.v1.XmlPullParser;
 
@@ -42,8 +41,7 @@ public class EventHelper {
     private final XmlPathBuilder mXmlPathBuilder;
     private final XmlPullParserWrapper mXmlPullParser;
 
-    @Inject
-    public EventHelper(XmlPathBuilder xmlPathBuilder, EventHandler eventHandler,
+    EventHelper(XmlPathBuilder xmlPathBuilder, EventHandler eventHandler,
             XmlPullParserWrapper xmlPullParser) {
         mXmlPathBuilder = xmlPathBuilder;
         mXmlPullParser = xmlPullParser;

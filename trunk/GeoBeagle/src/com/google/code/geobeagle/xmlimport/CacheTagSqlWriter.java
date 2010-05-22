@@ -22,7 +22,6 @@ import com.google.code.geobeagle.database.Tag;
 import com.google.code.geobeagle.database.TagWriter;
 import com.google.code.geobeagle.database.TagWriterImpl;
 import com.google.code.geobeagle.database.TagWriterNull;
-import com.google.inject.Inject;
 
 /**
  * @author sng
@@ -43,7 +42,7 @@ public class CacheTagSqlWriter {
     private TagWriterImpl mTagWriterImpl;
     private TagWriterNull mTagWriterNull;
 
-    @Inject
+
     public CacheTagSqlWriter(CacheWriter cacheWriter, CacheTypeFactory cacheTypeFactory,
             TagWriterImpl tagWriterImpl, TagWriterNull tagWriterNull) {
         mCacheWriter = cacheWriter;

@@ -70,6 +70,7 @@ public class CacheDetailsLoaderTest {
 
         PowerMock.expectNew(File.class, CacheDetailsLoader.SDCARD_DIR).andReturn(detailsDir);
         EasyMock.expect(detailsDir.isDirectory()).andReturn(true);
+        EasyMock.expect(fileDataVersionChecker.needsUpdating()).andReturn(false);
         EasyMock.expect(file.getAbsolutePath()).andReturn("/sdcard/foo.gpx");
         PowerMock.expectNew(FileInputStream.class, file).andReturn(fileInputStream);
         EasyMock.expect(file.length()).andReturn(27L);

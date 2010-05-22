@@ -14,8 +14,6 @@
 
 package com.google.code.geobeagle.cachedetails;
 
-import com.google.inject.Inject;
-
 import java.io.File;
 import java.io.IOException;
 
@@ -25,7 +23,6 @@ public class CacheDetailsWriter {
     private String mLongitude;
     private String mGpxName;
 
-    @Inject
     public CacheDetailsWriter(HtmlWriter htmlWriter) {
         mHtmlWriter = htmlWriter;
     }

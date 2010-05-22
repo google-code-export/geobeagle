@@ -14,14 +14,11 @@
 
 package com.google.code.geobeagle.cachedetails;
 
-import com.google.inject.Inject;
-
 import java.io.IOException;
 
 public class HtmlWriter {
     private final WriterWrapper mWriter;
 
-    @Inject
     public HtmlWriter(WriterWrapper writerWrapper) {
         mWriter = writerWrapper;
     }

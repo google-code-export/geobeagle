@@ -16,7 +16,6 @@ package com.google.code.geobeagle.database;
 
 import com.google.code.geobeagle.CacheType;
 import com.google.code.geobeagle.GeocacheFactory.Source;
-import com.google.inject.Inject;
 
 /**
  * @author sng
@@ -30,8 +29,6 @@ public class CacheWriter {
     private final ISQLiteDatabase mSqlite;
     private String mGpxTime;
 
-    @Inject
-    public
     CacheWriter(ISQLiteDatabase sqlite, DbToGeocacheAdapter dbToGeocacheAdapter) {
         mSqlite = sqlite;
         mDbToGeocacheAdapter = dbToGeocacheAdapter;

@@ -16,11 +16,10 @@ package com.google.code.geobeagle.xmlimport;
 
 import com.google.code.geobeagle.GeocacheFactory.Source;
 import com.google.code.geobeagle.xmlimport.GpxToCacheDI.XmlPullParserWrapper;
-import com.google.inject.Inject;
 
 import java.io.IOException;
 
-public class EventHandlerGpx implements EventHandler {
+class EventHandlerGpx implements EventHandler {
     static final String XPATH_CACHE_CONTAINER = "/gpx/wpt/groundspeak:cache/groundspeak:container";
     static final String XPATH_CACHE_DIFFICULTY = "/gpx/wpt/groundspeak:cache/groundspeak:difficulty";
     static final String XPATH_CACHE_TERRAIN = "/gpx/wpt/groundspeak:cache/groundspeak:terrain";
@@ -61,7 +60,6 @@ public class EventHandlerGpx implements EventHandler {
     
     private final CachePersisterFacade mCachePersisterFacade;
 
-    @Inject
     public EventHandlerGpx(CachePersisterFacade cachePersisterFacade) {
         mCachePersisterFacade = cachePersisterFacade;
     }

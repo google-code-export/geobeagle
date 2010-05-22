@@ -38,9 +38,4 @@ public class DatabaseModule extends AbstractAndroidModule {
         final SQLiteDatabase sqDb = mSqliteOpenHelper.getWritableDatabase();
         return new DatabaseDI.SQLiteWrapper(sqDb);
     }
-    
-    @Provides
-    public CacheWriter cacheWriterProvider(ISQLiteDatabase writableDatabase) {
-        return DatabaseDI.createCacheWriter(writableDatabase);
-    }
 }
