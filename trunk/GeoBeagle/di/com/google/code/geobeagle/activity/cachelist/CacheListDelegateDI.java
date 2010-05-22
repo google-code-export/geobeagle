@@ -26,7 +26,6 @@ import com.google.code.geobeagle.GraphicsGenerator.ListViewBitmapCopier;
 import com.google.code.geobeagle.LocationControlBuffered.GpsDisabledLocation;
 import com.google.code.geobeagle.actions.MenuActionMap;
 import com.google.code.geobeagle.actions.MenuActionSearchOnline;
-import com.google.code.geobeagle.actions.MenuActionSettings;
 import com.google.code.geobeagle.actions.MenuActions;
 import com.google.code.geobeagle.activity.ActivitySaver;
 import com.google.code.geobeagle.activity.cachelist.CacheListDelegate.ImportIntentManager;
@@ -35,9 +34,11 @@ import com.google.code.geobeagle.activity.cachelist.actions.context.ContextActio
 import com.google.code.geobeagle.activity.cachelist.actions.context.ContextActionEdit;
 import com.google.code.geobeagle.activity.cachelist.actions.context.ContextActionView;
 import com.google.code.geobeagle.activity.cachelist.actions.context.ContextActionDelete.ContextActionDeleteDialogHelper;
+import com.google.code.geobeagle.activity.cachelist.actions.menu.Abortable;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionDeleteAllCaches;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionMyLocation;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionSyncGpx;
+import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionToggleFilter;
 import com.google.code.geobeagle.activity.cachelist.model.CacheListData;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheFromMyLocationFactory;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVector;
@@ -61,19 +62,13 @@ import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh.A
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh.UpdateFlag;
 import com.google.code.geobeagle.activity.cachelist.view.GeocacheSummaryRowInflater;
 import com.google.code.geobeagle.activity.main.GeoBeagle;
-import com.google.code.geobeagle.bcaching.BCachingLastUpdated;
-import com.google.code.geobeagle.bcaching.ImportBCachingWorker;
-import com.google.code.geobeagle.cachedetails.FilePathStrategy;
-import com.google.code.geobeagle.database.CacheWriter;
 import com.google.code.geobeagle.database.DbFrontend;
 import com.google.code.geobeagle.database.FilterNearestCaches;
-import com.google.code.geobeagle.database.ISQLiteDatabase;
 import com.google.code.geobeagle.database.LocationSaver;
 import com.google.code.geobeagle.database.TagWriterImpl;
 import com.google.code.geobeagle.database.TagWriterNull;
 import com.google.code.geobeagle.database.WhereFactoryAllCaches;
 import com.google.code.geobeagle.database.WhereFactoryNearestCaches;
-import com.google.code.geobeagle.database.CacheWriter.ClearCachesFromSourceImpl;
 import com.google.code.geobeagle.database.DatabaseDI.SearchFactory;
 import com.google.code.geobeagle.database.WhereFactoryNearestCaches.WhereStringFactory;
 import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidget;
@@ -83,13 +78,11 @@ import com.google.code.geobeagle.gpsstatuswidget.UpdateGpsWidgetRunnable;
 import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidget.InflatedGpsStatusWidget;
 import com.google.code.geobeagle.location.CombinedLocationListener;
 import com.google.code.geobeagle.location.CombinedLocationManager;
-import com.google.code.geobeagle.xmlimport.MessageHandlerInterface;
 import com.google.code.geobeagle.xmlimport.CachePersisterFacadeDI.CachePersisterFacadeFactory;
 import com.google.code.geobeagle.xmlimport.GpxImporterDI.MessageHandler;
 import com.google.code.geobeagle.xmlimport.GpxToCache.Aborter;
 import com.google.code.geobeagle.xmlimport.GpxToCacheDI.XmlPullParserWrapper;
 import com.google.inject.Injector;
-import com.google.inject.Provider;
 
 import roboguice.activity.GuiceListActivity;
 
@@ -156,6 +149,7 @@ public class CacheListDelegateDI {
         final XmlPullParserWrapper xmlPullParserWrapper = new XmlPullParserWrapper();
 
         final Resources resources = listActivity.getResources();
+        final DbFrontend dbFrontend = new DbFrontend(listActivity);
         final AttributePainter attributePainter = new AttributePainter(new Paint(), new Rect());
         final DifficultyAndTerrainPainter difficultyAndTerrainPainter = new DifficultyAndTerrainPainter(
                 attributePainter);
@@ -221,9 +215,8 @@ public class CacheListDelegateDI {
 
         final TitleUpdater titleUpdater = new TitleUpdater(listActivity, filterNearestCaches,
                 listTitleFormatter, timing);
-        final Provider<DbFrontend> dbFrontendProvider = injector.getProvider(DbFrontend.class);
-        final SqlCacheLoader sqlCacheLoader = new SqlCacheLoader(dbFrontendProvider,
-                filterNearestCaches, cacheListData, locationControlBuffered, titleUpdater, timing);
+        final SqlCacheLoader sqlCacheLoader = new SqlCacheLoader(dbFrontend, filterNearestCaches,
+                cacheListData, locationControlBuffered, titleUpdater, timing);
         final ActionManager actionManager = actionManagerFactory.create(sqlCacheLoader);
         final CacheListRefresh cacheListRefresh = new CacheListRefresh(actionManager, timing,
                 locationControlBuffered, updateFlag);
@@ -243,41 +236,35 @@ public class CacheListDelegateDI {
                 distanceFormatterManager, geocacheListAdapter, geocacheVectors, gpsStatusWidget, listActivity, locationControlBuffered,
                 sensorManagerWrapper, updateGpsWidgetRunnable, scrollListener);
         final CacheTypeFactory cacheTypeFactory = new CacheTypeFactory();
- 
-        final Aborter aborter = injector.getInstance(Aborter.class);
-        final Provider<ImportBCachingWorker> importBCachingWorkerProvider = injector
-                .getProvider(ImportBCachingWorker.class);
-        final MessageHandlerInterface messageHandler = injector.getInstance(MessageHandler.class);
-        final Provider<ISQLiteDatabase> databaseProvider = injector
-                .getProvider(ISQLiteDatabase.class);
-        final TagWriterImpl tagWriterImpl = new TagWriterImpl(databaseProvider);
+
+        final Aborter aborter = new Aborter();
+        final MessageHandler messageHandler = MessageHandler.create(listActivity);
+        final TagWriterImpl tagWriterImpl = new TagWriterImpl(dbFrontend);
         final TagWriterNull tagWriterNull = new TagWriterNull();
-        final FilePathStrategy filePathStrategy = new FilePathStrategy();
-        final ClearCachesFromSourceImpl clearCachesFromSourceImpl = injector.getInstance(ClearCachesFromSourceImpl.class);
         final CachePersisterFacadeFactory cachePersisterFacadeFactory = new CachePersisterFacadeFactory(
-                messageHandler, cacheTypeFactory, tagWriterImpl, tagWriterNull, filePathStrategy,
-                clearCachesFromSourceImpl);
+                messageHandler, cacheTypeFactory, tagWriterImpl, tagWriterNull);
 
         final GpxImporterFactory gpxImporterFactory = new GpxImporterFactory(aborter,
                 cachePersisterFacadeFactory, errorDisplayer, geocacheListPresenter, listActivity,
                 messageHandler, xmlPullParserWrapper, injector);
 
-        final NullAbortable nullAbortable = new NullAbortable();
+        final Abortable nullAbortable = new Abortable() {
+            public void abort() {
+            }
+        };
 
-        final Provider<CacheWriter> cacheWriterProvider = injector.getProvider(CacheWriter.class);
-        final MenuActionSyncGpx menuActionSyncGpx = new MenuActionSyncGpx(
-                importBCachingWorkerProvider, nullAbortable, cacheListRefresh, gpxImporterFactory,
-                cacheWriterProvider);
+        final MenuActionSyncGpx menuActionSyncGpx = new MenuActionSyncGpx(nullAbortable,
+                cacheListRefresh, gpxImporterFactory, dbFrontend);
         final MenuActions menuActions = new MenuActions(resources);
         menuActions.add(menuActionSyncGpx);
-        menuActions.add(new MenuActionDeleteAllCaches(cacheListRefresh, listActivity,
-                dbFrontendProvider, new AlertDialog.Builder(listActivity), injector
-                        .getInstance(BCachingLastUpdated.class)));
+        menuActions.add(new MenuActionDeleteAllCaches(cacheListRefresh, listActivity, dbFrontend,
+                new AlertDialog.Builder(listActivity)));
+        menuActions.add(new MenuActionToggleFilter(filterNearestCaches, cacheListRefresh));
         menuActions.add(new MenuActionMyLocation(listActivity, errorDisplayer, geocacheFromMyLocationFactory,
-                new LocationSaver(cacheWriterProvider)));
+                new LocationSaver(dbFrontend)));
         menuActions.add(new MenuActionSearchOnline(listActivity));
         menuActions.add(new MenuActionMap(listActivity, locationControlBuffered));
-        menuActions.add(injector.getInstance(MenuActionSettings.class));
+        // menuActions.add(new MenuActionChooseFilter(listActivity));
 
         final Intent geoBeagleMainIntent = new Intent(listActivity, GeoBeagle.class);
         final ContextActionView contextActionView = new ContextActionView(geocacheVectors,
@@ -285,8 +272,7 @@ public class CacheListDelegateDI {
         final ContextActionEdit contextActionEdit = new ContextActionEdit(geocacheVectors,
                 listActivity);
         final ContextActionDelete contextActionDelete = new ContextActionDelete(
-                geocacheListAdapter, geocacheVectors, titleUpdater, cacheWriterProvider,
-                listActivity, 0);
+                geocacheListAdapter, geocacheVectors, titleUpdater, dbFrontend, listActivity, 0);
 
         final ContextAction[] contextActions = new ContextAction[] {
                 contextActionDelete, contextActionView, contextActionEdit
@@ -298,11 +284,11 @@ public class CacheListDelegateDI {
 
         final GeocacheListController geocacheListController = new GeocacheListController(
                 cacheListRefresh, contextActions, filterNearestCaches, menuActionSyncGpx,
-                menuActions, aborter);
+                menuActions);
         final ActivitySaver activitySaver = injector.getInstance(ActivitySaver.class);
         final ImportIntentManager importIntentManager = new ImportIntentManager(listActivity);
         return new CacheListDelegate(importIntentManager, activitySaver, cacheListRefresh,
-                geocacheListController, geocacheListPresenter, dbFrontendProvider,
+                geocacheListController, geocacheListPresenter, dbFrontend,
                 contextActionDeleteDialogHelper);
     }
 }

@@ -65,7 +65,7 @@ public class ImportThreadDelegateTest {
 
     @Test
     public void testHelperCleanup() {
-        MessageHandlerInterface messageHandler = PowerMock.createMock(MessageHandler.class);
+        MessageHandler messageHandler = PowerMock.createMock(MessageHandler.class);
 
         messageHandler.loadComplete();
 

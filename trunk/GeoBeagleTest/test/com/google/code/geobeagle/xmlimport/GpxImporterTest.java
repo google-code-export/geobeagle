@@ -38,7 +38,7 @@ public class GpxImporterTest {
     public void testAbort() {
         GpxLoader gpxLoader = PowerMock.createMock(GpxLoader.class);
         ImportThreadWrapper importThreadWrapper = PowerMock.createMock(ImportThreadWrapper.class);
-        MessageHandlerInterface messageHandler = PowerMock.createMock(MessageHandler.class);
+        MessageHandler messageHandler = PowerMock.createMock(MessageHandler.class);
 
         gpxLoader.abort();
         expect(importThreadWrapper.isAlive()).andReturn(false);
@@ -54,7 +54,7 @@ public class GpxImporterTest {
     public void testAbortThreadAlive() {
         GpxLoader gpxLoader = PowerMock.createMock(GpxLoader.class);
         ImportThreadWrapper importThreadWrapper = PowerMock.createMock(ImportThreadWrapper.class);
-        MessageHandlerInterface messageHandler = PowerMock.createMock(MessageHandler.class);
+        MessageHandler messageHandler = PowerMock.createMock(MessageHandler.class);
         ToastFactory toastFactory = PowerMock.createMock(ToastFactory.class);
         ListActivity listActivity = PowerMock.createMock(ListActivity.class);
 

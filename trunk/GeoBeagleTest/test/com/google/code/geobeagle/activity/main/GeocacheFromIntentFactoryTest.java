@@ -23,7 +23,6 @@ import com.google.code.geobeagle.GeocacheFactory.Source;
 import com.google.code.geobeagle.activity.cachelist.GeoBeagleTest;
 import com.google.code.geobeagle.database.DbFrontend;
 import com.google.code.geobeagle.database.LocationSaver;
-import com.google.inject.Provider;
 
 import org.easymock.EasyMock;
 import org.junit.Test;
@@ -86,7 +85,6 @@ public class GeocacheFromIntentFactoryTest extends GeoBeagleTest {
         PowerMock.verifyAll();
     }
     
-    @SuppressWarnings("unchecked")
     @Test
     public void testGeocacheFromIntentFactoryBackButton() throws Exception {
         Intent intent = PowerMock.createMock(Intent.class);
@@ -97,7 +95,6 @@ public class GeocacheFromIntentFactoryTest extends GeoBeagleTest {
         Geocache geocache = PowerMock.createMock(Geocache.class);
         LocationSaver locationSaver = PowerMock.createMock(LocationSaver.class);
         Bundle extras = PowerMock.createMock(Bundle.class);
-        Provider<DbFrontend> dbFrontendProvider = PowerMock.createMock(Provider.class);
         DbFrontend dbFrontend = PowerMock.createMock(DbFrontend.class);
 
         PowerMock.mockStatic(Util.class);
@@ -116,11 +113,13 @@ public class GeocacheFromIntentFactoryTest extends GeoBeagleTest {
         EasyMock.expect(Util.splitLatLonDescription("http://sanitized")).andReturn(latlon);
         EasyMock.expect(intent.getExtras()).andReturn(extras);
         EasyMock.expect(extras.getBoolean(GeocacheFromIntentFactory.GEO_BEAGLE_SAVED_IN_DATABASE)).andReturn(true);
-        EasyMock.expect(dbFrontendProvider.get()).andReturn(dbFrontend);
+        
+        dbFrontend.openDatabase();
         EasyMock.expect(dbFrontend.getCache("first")).andReturn(geocache);
+        dbFrontend.closeDatabase();
         
         PowerMock.replayAll();
-        assertEquals(geocache, new GeocacheFromIntentFactory(geocacheFactory, dbFrontendProvider)
+        assertEquals(geocache, new GeocacheFromIntentFactory(geocacheFactory, dbFrontend)
                 .viewCacheFromMapsIntent(intent, locationSaver, null));
         PowerMock.verifyAll();
     }

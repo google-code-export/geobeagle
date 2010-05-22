@@ -20,7 +20,6 @@ import com.google.code.geobeagle.database.WhereFactoryNearestCaches.Search;
 import com.google.code.geobeagle.database.WhereFactoryNearestCaches.SearchDown;
 import com.google.code.geobeagle.database.WhereFactoryNearestCaches.SearchUp;
 import com.google.code.geobeagle.database.WhereFactoryNearestCaches.WhereStringFactory;
-import com.google.inject.Provider;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -40,15 +39,15 @@ public class DatabaseDI {
         }
     }
 
-    static class GeoBeagleSqliteOpenHelper extends SQLiteOpenHelper {
+    public static class GeoBeagleSqliteOpenHelper extends SQLiteOpenHelper {
         private final OpenHelperDelegate mOpenHelperDelegate;
 
-         GeoBeagleSqliteOpenHelper(Context context) {
+        public GeoBeagleSqliteOpenHelper(Context context) {
             super(context, Database.DATABASE_NAME, null, Database.DATABASE_VERSION);
             mOpenHelperDelegate = new OpenHelperDelegate();
         }
 
-        SQLiteWrapper getWritableSqliteWrapper() {
+        public SQLiteWrapper getWritableSqliteWrapper() {
             return new SQLiteWrapper(this.getWritableDatabase());
         }
 
@@ -68,7 +67,7 @@ public class DatabaseDI {
     public static class SQLiteWrapper implements ISQLiteDatabase {
         private final SQLiteDatabase mSQLiteDatabase;
 
-        SQLiteWrapper(SQLiteDatabase writableDatabase) {
+        public SQLiteWrapper(SQLiteDatabase writableDatabase) {
             mSQLiteDatabase = writableDatabase;
         }
 
@@ -92,12 +91,12 @@ public class DatabaseDI {
         }
 
         public void execSQL(String sql) {
-            Log.d("GeoBeagle", this + " :SQL: " + sql);
+            Log.d("GeoBeagle", "SQL: " + sql);
             mSQLiteDatabase.execSQL(sql);
         }
 
         public void execSQL(String sql, Object... bindArgs) {
-            Log.d("GeoBeagle", this + " :SQL: " + sql + ", " + Arrays.toString(bindArgs));
+            Log.d("GeoBeagle", "SQL: " + sql + ", " + Arrays.toString(bindArgs));
             mSQLiteDatabase.execSQL(sql, bindArgs);
         }
 
@@ -163,6 +162,18 @@ public class DatabaseDI {
             return new WhereFactoryNearestCaches.Search(boundingBox, searchDown, searchUp);
         }
 
+    }
+
+    public static CacheReader createCacheReader(ISQLiteDatabase sqliteWrapper) {
+        final CacheReaderCursorFactory cacheReaderCursorFactory = new CacheReaderCursorFactory();
+        return new CacheReader(sqliteWrapper, cacheReaderCursorFactory);
+    }
+
+    public static CacheWriter createCacheWriter(ISQLiteDatabase writableDatabase) {
+        // final SQLiteWrapper sqliteWrapper = new
+        // DatabaseDI.SQLiteWrapper(sqliteDatabaseWritable);
+        final DbToGeocacheAdapter dbToGeocacheAdapter = new DbToGeocacheAdapter();
+        return new CacheWriter(writableDatabase, dbToGeocacheAdapter);
     }
 
 }

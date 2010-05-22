@@ -21,26 +21,24 @@ import com.google.code.geobeagle.activity.cachelist.model.CacheListData;
 import com.google.code.geobeagle.database.DbFrontend;
 import com.google.code.geobeagle.database.FilterNearestCaches;
 import com.google.inject.Inject;
-import com.google.inject.Provider;
 
 import android.location.Location;
-import android.util.Log;
 
 import java.util.ArrayList;
 
 public class SqlCacheLoader implements RefreshAction {
     private final CacheListData mCacheListData;
     private final FilterNearestCaches mFilterNearestCaches;
-    private final Provider<DbFrontend> mDbFrontendProvider;
+    private final DbFrontend mDbFrontend;
     private final LocationControlBuffered mLocationControlBuffered;
     private final Timing mTiming;
     private final TitleUpdater mTitleUpdater;
 
     @Inject
-    public SqlCacheLoader(Provider<DbFrontend> dbFrontendProvider, FilterNearestCaches filterNearestCaches,
+    public SqlCacheLoader(DbFrontend dbFrontend, FilterNearestCaches filterNearestCaches,
             CacheListData cacheListData, LocationControlBuffered locationControlBuffered,
             TitleUpdater titleUpdater, Timing timing) {
-        mDbFrontendProvider = dbFrontendProvider;
+        mDbFrontend = dbFrontend;
         mFilterNearestCaches = filterNearestCaches;
         mCacheListData = cacheListData;
         mLocationControlBuffered = locationControlBuffered;
@@ -57,9 +55,7 @@ public class SqlCacheLoader implements RefreshAction {
             longitude = location.getLongitude();
         }
         // Log.d("GeoBeagle", "Location: " + location);
-        DbFrontend dbFrontend = mDbFrontendProvider.get();
-        Log.d("GeoBeagle", "SQLCACHELOADER------" + dbFrontend);
-        ArrayList<Geocache> geocaches = dbFrontend.loadCaches(latitude, longitude,
+        ArrayList<Geocache> geocaches = mDbFrontend.loadCaches(latitude, longitude,
                 mFilterNearestCaches.getWhereFactory());
         mTiming.lap("SQL time");
 
@@ -67,6 +63,6 @@ public class SqlCacheLoader implements RefreshAction {
         mTiming.lap("add to list time");
 
         final int nearestCachesCount = mCacheListData.size();
-        mTitleUpdater.update(dbFrontend.countAll(), nearestCachesCount);
+        mTitleUpdater.update(mDbFrontend.countAll(), nearestCachesCount);
     }
 }

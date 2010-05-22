@@ -22,7 +22,6 @@ import com.google.code.geobeagle.GeocacheFactory.Source;
 import com.google.code.geobeagle.database.CacheWriter;
 import com.google.code.geobeagle.database.DatabaseDI;
 import com.google.code.geobeagle.database.LocationSaver;
-import com.google.inject.Provider;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -36,13 +35,12 @@ import org.powermock.modules.junit4.PowerMockRunner;
 @RunWith(PowerMockRunner.class)
 public class LocationSaverTest {
 
-    @SuppressWarnings("unchecked")
     @Test
     public void testSave() {
         CacheWriter writer = PowerMock.createMock(CacheWriter.class);
         Geocache geocache = PowerMock.createMock(Geocache.class);
-        Provider<CacheWriter> cacheWriterProvider = PowerMock.createMock(Provider.class);
-        expect(cacheWriterProvider.get()).andReturn(writer);
+        DbFrontend dbFrontend = PowerMock.createMock(DbFrontend.class);
+        expect(dbFrontend.getCacheWriter()).andReturn(writer);
         PowerMock.mockStatic(DatabaseDI.class);
 
         writer.startWriting();
@@ -61,7 +59,7 @@ public class LocationSaverTest {
         writer.stopWriting();
 
         PowerMock.replayAll();
-        new LocationSaver(cacheWriterProvider).saveLocation(geocache);
+        new LocationSaver(dbFrontend).saveLocation(geocache);
         PowerMock.verifyAll();
     }
 }
