@@ -90,7 +90,7 @@ public class GeocacheListControllerTest extends GeoBeagleTest {
         PowerMock.replayAll();
         adapterContextMenuInfo.position = 76;
         GeocacheListController geocacheListController = new GeocacheListController(null,
-                contextActions, null, null, null, null, null);
+                contextActions, null, null, null, null);
         assertTrue(geocacheListController.onContextItemSelected(menuItem));
         PowerMock.verifyAll();
     }
@@ -129,7 +129,7 @@ public class GeocacheListControllerTest extends GeoBeagleTest {
         EasyMock.expect(menuActions.onCreateOptionsMenu(menu)).andReturn(true);
 
         PowerMock.replayAll();
-        assertTrue(new GeocacheListController(null, null, null, null, menuActions, null, null)
+        assertTrue(new GeocacheListController(null, null, null, null, menuActions, null)
                 .onCreateOptionsMenu(menu));
         PowerMock.verifyAll();
     }
@@ -144,8 +144,8 @@ public class GeocacheListControllerTest extends GeoBeagleTest {
         contextAction.act(45);
 
         PowerMock.replayAll();
-        new GeocacheListController(null, contextActions, null, null, null, null, null).onListItemClick(null,
-                null, 46, 0);
+        new GeocacheListController(null, contextActions, null, null, null, null).onListItemClick(
+                null, null, 46, 0);
         PowerMock.verifyAll();
     }
 
@@ -156,8 +156,8 @@ public class GeocacheListControllerTest extends GeoBeagleTest {
         cacheListRefresh.forceRefresh();
 
         PowerMock.replayAll();
-        new GeocacheListController(cacheListRefresh, null, null, null, null, null, null).onListItemClick(null,
-                null, 0, 0);
+        new GeocacheListController(cacheListRefresh, null, null, null, null, null).onListItemClick(
+                null, null, 0, 0);
         PowerMock.verifyAll();
     }
 
@@ -173,8 +173,8 @@ public class GeocacheListControllerTest extends GeoBeagleTest {
         EasyMock.expect(menuItem.setTitle(R.string.menu_show_nearest_caches)).andReturn(menuItem);
 
         PowerMock.replayAll();
-        new GeocacheListController(null, null, filterNearestCaches, null, null, null, null).onMenuOpened(0,
-                menu);
+        new GeocacheListController(null, null, filterNearestCaches, null, null, null).onMenuOpened(
+                0, menu);
         PowerMock.verifyAll();
     }
 
@@ -187,7 +187,7 @@ public class GeocacheListControllerTest extends GeoBeagleTest {
         EasyMock.expect(menuActions.act(27)).andReturn(true);
 
         PowerMock.replayAll();
-        new GeocacheListController(null, null, null, null, menuActions, null, null)
+        new GeocacheListController(null, null, null, null, menuActions, null)
                 .onOptionsItemSelected(menuItem);
         PowerMock.verifyAll();
     }
@@ -204,7 +204,7 @@ public class GeocacheListControllerTest extends GeoBeagleTest {
         menuActionSyncBCaching.abort();
 
         PowerMock.replayAll();
-        new GeocacheListController(null, null, null, menuActionSync, null, aborter, menuActionSyncBCaching).onPause();
+        new GeocacheListController(null, null, null, menuActionSync, null, aborter).onPause();
         PowerMock.verifyAll();
     }
 
@@ -215,7 +215,7 @@ public class GeocacheListControllerTest extends GeoBeagleTest {
         cacheListRefresh.forceRefresh();
 
         PowerMock.replayAll();
-        new GeocacheListController(cacheListRefresh, null, null, null, null, null, null).onResume(
+        new GeocacheListController(cacheListRefresh, null, null, null, null, null).onResume(
                 cacheListRefresh, false);
         PowerMock.verifyAll();
     }
@@ -229,8 +229,8 @@ public class GeocacheListControllerTest extends GeoBeagleTest {
         menuActionSyncGpx.act();
 
         PowerMock.replayAll();
-        new GeocacheListController(cacheListRefresh, null, null, menuActionSyncGpx, null, null, null).onResume(
-                cacheListRefresh, true);
+        new GeocacheListController(cacheListRefresh, null, null, menuActionSyncGpx, null, null)
+                .onResume(cacheListRefresh, true);
         PowerMock.verifyAll();
     }
 }
