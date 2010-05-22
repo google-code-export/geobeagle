@@ -18,7 +18,7 @@ import com.google.code.geobeagle.LocationControlBuffered;
 import com.google.code.geobeagle.LocationControlBuffered.GpsDisabledLocation;
 import com.google.code.geobeagle.LocationControlBuffered.GpsEnabledLocation;
 import com.google.code.geobeagle.LocationControlBuffered.IGpsLocation;
-import com.google.code.geobeagle.activity.ActivityDI;
+import com.google.code.geobeagle.activity.ActivitySaverProvider;
 import com.google.code.geobeagle.activity.ActivitySaver;
 import com.google.code.geobeagle.activity.cachelist.presenter.DistanceFormatterManager;
 import com.google.code.geobeagle.activity.cachelist.presenter.DistanceFormatterManagerProvider;
@@ -43,7 +43,7 @@ public class SearchOnlineModule extends AbstractAndroidModule {
     @Override
     protected void configure() {
         bind(DistanceFormatterManager.class).toProvider(DistanceFormatterManagerProvider.class);
-        bind(ActivitySaver.class).toProvider(ActivityDI.class);
+        bind(ActivitySaver.class).toProvider(ActivitySaverProvider.class);
 
 
         bind(CombinedLocationListenerFactory.class).toProvider(
