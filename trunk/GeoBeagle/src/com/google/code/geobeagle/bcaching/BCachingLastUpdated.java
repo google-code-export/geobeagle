@@ -20,7 +20,8 @@ import com.google.inject.Inject;
 import android.content.SharedPreferences;
 
 public class BCachingLastUpdated {
-    static final String BCACHING_LASTUPDATE = "bcaching_lastupdate";
+    static final String BCACHING_LAST_READ = "bcaching-last-read";
+    static final String BCACHING_LAST_UPDATE = "bcaching-last-update";
     private final SharedPreferences sharedPreferences;
 
     @Inject
@@ -28,20 +29,20 @@ public class BCachingLastUpdated {
         this.sharedPreferences = sharedPreferences;
     }
 
-    String getLastUpdateTime() {
-        return sharedPreferences.getString(BCACHING_LASTUPDATE, "0");
+    public void clearLastUpdateTime() {
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putLong(BCACHING_LAST_UPDATE, 0);
+        editor.putInt(BCachingLastUpdated.BCACHING_LAST_READ, 0);
+        editor.commit();
+    }
+
+    long getLastUpdateTime() {
+        return sharedPreferences.getLong(BCACHING_LAST_UPDATE, 0);
     }
 
     void putLastUpdateTime(long lastUpdateTime) {
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString(BCACHING_LASTUPDATE, Long.toString(lastUpdateTime));
-        editor.commit();
-    }
-
-    public void clearLastUpdateTime() {
-        putLastUpdateTime(0);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putInt(ImportBCachingWorker.BCACHING_LAST_READ, 0);
+        editor.putLong(BCACHING_LAST_UPDATE, lastUpdateTime);
         editor.commit();
     }
 }
