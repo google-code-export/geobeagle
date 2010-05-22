@@ -14,6 +14,8 @@
 
 package com.google.code.geobeagle.bcaching.progress;
 
+import com.google.code.geobeagle.Refresher;
+import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
 import com.google.inject.Inject;
 
 import android.app.ProgressDialog;
@@ -22,15 +24,39 @@ import android.os.Message;
 
 public class ProgressHandler extends Handler {
     private final ProgressDialog progressDialog;
+    private final Refresher refresher;
 
     @Inject
-    public ProgressHandler(ProgressDialog progressDialog) {
+    public ProgressHandler(ProgressDialog progressDialog, CacheListRefresh refresher) {
         this.progressDialog = progressDialog;
+        this.refresher = refresher;
+    }
+
+    public void done() {
+        progressDialog.dismiss();
+        refresher.refresh();
     }
 
     @Override
     public void handleMessage(Message msg) {
         ProgressMessage progressMessage = ProgressMessage.fromInt(msg.what);
-        progressMessage.act(progressDialog, msg.arg1, msg.obj);
+        progressMessage.act(this, msg);
+    }
+
+    public void setFile(String filename, int progress) {
+        progressDialog.setMessage("Loading: " + filename);
+        progressDialog.setProgress(progress);
+    }
+
+    public void setMax(int max) {
+        progressDialog.setMax(max);
+    }
+
+    public void setProgress(int progress) {
+        progressDialog.setProgress(progress);
+    }
+
+    public void show() {
+        progressDialog.show();
     }
 }
