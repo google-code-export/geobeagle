@@ -15,6 +15,7 @@
 package com.google.code.geobeagle.activity;
 
 import com.google.code.geobeagle.Geocache;
+import com.google.code.geobeagle.activity.ActivityDI.ActivityTypeFactory;
 import com.google.code.geobeagle.activity.cachelist.CacheListActivity;
 import com.google.code.geobeagle.activity.cachelist.GeocacheListController;
 import com.google.code.geobeagle.activity.main.GeoBeagle;
@@ -75,6 +76,7 @@ public class ActivityRestorer {
         }
     }
 
+    private final ActivityTypeFactory mActivityTypeFactory;
     private final Restorer[] mRestorers;
     private final SharedPreferences mSharedPreferences;
 
@@ -88,7 +90,9 @@ public class ActivityRestorer {
     @Inject
     public ActivityRestorer(Activity activity,
             GeocacheFromPreferencesFactory geocacheFromPreferencesFactory,
+            ActivityTypeFactory activityTypeFactory,
             @DefaultSharedPreferences SharedPreferences sharedPreferences) {
+        mActivityTypeFactory = activityTypeFactory;
         mSharedPreferences = sharedPreferences;
         final NullRestorer nullRestorer = new NullRestorer();
         mRestorers = new Restorer[] {
@@ -100,9 +104,9 @@ public class ActivityRestorer {
     public void restore(int flags) {
         if ((flags & Intent.FLAG_ACTIVITY_NEW_TASK) == 0)
             return;
-        final String lastActivity = mSharedPreferences.getString(ActivitySaver.LAST_ACTIVITY,
-                ActivityType.NONE.name());
-        final ActivityType activityType = ActivityType.valueOf(lastActivity);
+        final int iLastActivity = mSharedPreferences.getInt(ActivitySaver.LAST_ACTIVITY,
+                ActivityType.NONE.toInt());
+        final ActivityType activityType = mActivityTypeFactory.fromInt(iLastActivity);
         mRestorers[activityType.toInt()].restore();
     }
 }

@@ -68,7 +68,7 @@ public class CacheDetailsLoaderTest {
         Activity activity = PowerMock.createMock(Activity.class);
         File detailsDir = PowerMock.createMock(File.class);
 
-        PowerMock.expectNew(File.class, CacheDetailsLoader.DETAILS_DIR).andReturn(detailsDir);
+        PowerMock.expectNew(File.class, CacheDetailsLoader.SDCARD_DIR).andReturn(detailsDir);
         EasyMock.expect(detailsDir.isDirectory()).andReturn(true);
         EasyMock.expect(fileDataVersionChecker.needsUpdating()).andReturn(false);
         EasyMock.expect(file.getAbsolutePath()).andReturn("/sdcard/foo.gpx");
@@ -92,7 +92,7 @@ public class CacheDetailsLoaderTest {
         Activity activity = PowerMock.createMock(Activity.class);
         File detailsDir = PowerMock.createMock(File.class);
 
-        PowerMock.expectNew(File.class, CacheDetailsLoader.DETAILS_DIR).andReturn(detailsDir);
+        PowerMock.expectNew(File.class, CacheDetailsLoader.SDCARD_DIR).andReturn(detailsDir);
         EasyMock.expect(detailsDir.isDirectory()).andReturn(true);
         EasyMock.expect(fileDataVersionChecker.needsUpdating()).andReturn(false);
         EasyMock.expect(file.getAbsolutePath()).andReturn("/sdcard/foo.html");
