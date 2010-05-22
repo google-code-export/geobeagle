@@ -59,7 +59,6 @@ public class CacheDetailsLoader {
     }
 
     public static class DetailsOpener {
-
         private final Activity mActivity;
         private final FileDataVersionChecker mFileDataVersionChecker;
 
@@ -137,15 +136,16 @@ public class CacheDetailsLoader {
     public static final String DETAILS_DIR = SDCARD_DIR + "GeoBeagle/data/";
     public static final String OLD_DETAILS_DIR = SDCARD_DIR + "GeoBeagle";
     private final DetailsOpener mDetailsOpener;
+    private final FilePathStrategy mFilePathStrategy;
 
     @Inject
-    public CacheDetailsLoader(DetailsOpener detailsOpener) {
+    public CacheDetailsLoader(DetailsOpener detailsOpener, FilePathStrategy filePathStrategy) {
         mDetailsOpener = detailsOpener;
+        mFilePathStrategy = filePathStrategy;
     }
 
     public String load(CharSequence sourceName, CharSequence cacheId) {
-        final String sanitized = CacheDetailsWriter.replaceIllegalFileChars(cacheId.toString());
-        String path = DETAILS_DIR + sourceName + "/" + sanitized + ".html";
+        String path = mFilePathStrategy.getPath(sourceName, cacheId.toString());
         File file = new File(path);
         DetailsReader detailsReader = mDetailsOpener.open(file);
         Details details = detailsReader.read();
