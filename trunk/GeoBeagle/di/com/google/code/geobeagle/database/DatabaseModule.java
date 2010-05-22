@@ -16,10 +16,10 @@ package com.google.code.geobeagle.database;
 
 import com.google.inject.Provides;
 
-import android.util.Log;
-
 import roboguice.config.AbstractAndroidModule;
 import roboguice.inject.ContextScoped;
+
+import android.util.Log;
 
 public class DatabaseModule extends AbstractAndroidModule {
 
