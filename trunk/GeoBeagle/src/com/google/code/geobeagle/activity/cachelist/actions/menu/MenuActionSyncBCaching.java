@@ -38,38 +38,20 @@ public class MenuActionSyncBCaching extends MenuActionBase {
         Log.d("GeoBeagleDb", "Sync: " + dbFrontend);
     }
 
-    static class FooThread extends Thread {
-        @Override 
-        public void run() {
-            Log.d("GeoBeagle", "TEST THREAD about to sleep " + isAlive());
-            try {
-                Thread.sleep(30000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            Log.d("GeoBeagle", "TEST THREAD came back: " + isAlive());
-        }
-    }
     @Override
     public void act() {
         importBCachingWorker = importBCachingWorkerProvider.get();
-        Log.d("GeoBeagle", "1 act thread liveness: " + importBCachingWorker.isAlive() + " " + importBCachingWorker.getName());
         importBCachingWorker.start();
         try {
-            Log.d("GeoBeagle", "2 act thread liveness: " + importBCachingWorker.isAlive() + " " + importBCachingWorker.getName());
             importBCachingWorker.join();
-            Log.d("GeoBeagle", "3 act thread liveness: " + importBCachingWorker.isAlive() + " " + importBCachingWorker.getName());
         } catch (InterruptedException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            Log.d("GeoBeagle", "InterruptedException: " + e.getLocalizedMessage());
         }
-        Log.d("GeoBeagle", "4 act thread liveness: " + importBCachingWorker.isAlive() + " " + importBCachingWorker.getName());
         abortable = importBCachingWorker;
     }
 
     public void abort() {
         Log.d("GeoBeagle", "GpxImport aborting");
-        Log.d("GeoBeagle", "abort thread liveness: " + importBCachingWorker.isAlive() + " " + importBCachingWorker.getName());
         abortable.abort();
     }
 }
