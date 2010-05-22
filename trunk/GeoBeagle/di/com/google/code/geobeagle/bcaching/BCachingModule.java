@@ -24,7 +24,6 @@ import com.google.code.geobeagle.bcaching.communication.BCachingListImportHelper
 import com.google.code.geobeagle.bcaching.progress.ProgressHandler;
 import com.google.code.geobeagle.cachedetails.WriterWrapper;
 import com.google.code.geobeagle.database.ClearCachesFromSource;
-import com.google.code.geobeagle.database.CacheWriter.ClearCachesFromSourceImpl;
 import com.google.code.geobeagle.database.CacheWriter.ClearCachesFromSourceNull;
 import com.google.code.geobeagle.xmlimport.CachePersisterFacade;
 import com.google.code.geobeagle.xmlimport.MessageHandlerInterface;
@@ -34,6 +33,7 @@ import com.google.inject.Provides;
 
 import roboguice.config.AbstractAndroidModule;
 import roboguice.inject.ContextScoped;
+import roboguice.util.RoboThread;
 
 import android.app.ProgressDialog;
 import android.content.Context;

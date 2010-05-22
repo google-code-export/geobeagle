@@ -18,6 +18,8 @@ import com.google.code.geobeagle.ErrorDisplayer;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.cachelist.CacheListModule.ToasterSyncAborted;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.Abortable;
+import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
+import com.google.code.geobeagle.activity.main.GeoBeagleModule.DefaultSharedPreferences;
 import com.google.code.geobeagle.bcaching.communication.BCachingException;
 import com.google.code.geobeagle.bcaching.communication.BCachingList;
 import com.google.code.geobeagle.bcaching.communication.BCachingListImporter;
@@ -27,9 +29,13 @@ import com.google.code.geobeagle.bcaching.progress.ProgressMessage;
 import com.google.code.geobeagle.xmlimport.GpxImporterDI.Toaster;
 import com.google.inject.Inject;
 
+import roboguice.util.RoboThread;
+
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.util.Log;
 
-public class ImportBCachingWorker extends Thread implements Abortable {
+public class ImportBCachingWorker extends RoboThread implements Abortable {
     private final ProgressHandler progressHandler;
     private final BCachingLastUpdated bcachingLastUpdated;
     private final BCachingListImporter bcachingListImporter;
@@ -38,12 +44,14 @@ public class ImportBCachingWorker extends Thread implements Abortable {
     private final DetailsReaderImport detailsReaderImport;
     private final Toaster toaster;
     private final DetailsReader detailsReader;
+    private final SharedPreferences sharedPreferences;
 
     @Inject
     public ImportBCachingWorker(ProgressHandler progressHandler, ProgressManager progressManager,
             BCachingLastUpdated bcachingLastUpdated, BCachingListImporter bcachingListImporter,
             ErrorDisplayer errorDisplayer, DetailsReaderImport detailsReaderImport,
-            DetailsReader detailsReader, @ToasterSyncAborted Toaster toaster) {
+            DetailsReader detailsReader, @ToasterSyncAborted Toaster toaster,
+            @DefaultSharedPreferences SharedPreferences sharedPreferences) {
         this.progressHandler = progressHandler;
         this.bcachingLastUpdated = bcachingLastUpdated;
         this.bcachingListImporter = bcachingListImporter;
@@ -52,6 +60,7 @@ public class ImportBCachingWorker extends Thread implements Abortable {
         this.detailsReaderImport = detailsReaderImport;
         this.toaster = toaster;
         this.detailsReader = detailsReader;
+        this.sharedPreferences = sharedPreferences;
     }
 
     @Override
@@ -59,6 +68,8 @@ public class ImportBCachingWorker extends Thread implements Abortable {
         long now = System.currentTimeMillis();
         progressManager.update(progressHandler, ProgressMessage.START, 0);
         String lastUpdateTime = bcachingLastUpdated.getLastUpdateTime();
+        Editor sharedPreferencesEditor = sharedPreferences.edit();
+        Log.d("GeoBeagle", "run thread liveness: " + isAlive() + " " + getName());
 
         try {
             int totalCount = bcachingListImporter.getTotalCount(lastUpdateTime);
@@ -67,8 +78,8 @@ public class ImportBCachingWorker extends Thread implements Abortable {
             progressManager.update(progressHandler, ProgressMessage.SET_MAX, totalCount);
             Log.d("GeoBeagle", "totalCount = " + totalCount);
 
-            int updatedCaches = 0;
-            BCachingList bcachingList = bcachingListImporter.getCacheList(updatedCaches,
+            int totalCachesRead = sharedPreferences.getInt("baching-last-read", 0);
+            BCachingList bcachingList = bcachingListImporter.getCacheList(totalCachesRead,
                     lastUpdateTime);
             int cachesRead;
             while ((cachesRead = bcachingList.getCachesRead()) > 0) {
@@ -77,22 +88,28 @@ public class ImportBCachingWorker extends Thread implements Abortable {
                 Log.d("GeoBeagle", "cachesRead: " + cachesRead);
                 if (!detailsReaderImport.getCacheDetails(bcachingList.getCacheIds()))
                     return;
-
-                updatedCaches += cachesRead;
+                
+                totalCachesRead += cachesRead;
+                sharedPreferencesEditor.putInt("bcaching-last-read", totalCachesRead);
+                sharedPreferencesEditor.commit();
                 progressManager
-                        .update(progressHandler, ProgressMessage.SET_PROGRESS, updatedCaches);
-                bcachingList = bcachingListImporter.getCacheList(updatedCaches, lastUpdateTime);
+                        .update(progressHandler, ProgressMessage.SET_PROGRESS, totalCachesRead);
+                bcachingList = bcachingListImporter.getCacheList(totalCachesRead, lastUpdateTime);
             }
+            sharedPreferencesEditor.putInt("bcaching-last-read", 0);
             bcachingLastUpdated.putLastUpdateTime(now);
+            sharedPreferencesEditor.commit();
         } catch (BCachingException e) {
             errorDisplayer.displayError(R.string.problem_importing_from_bcaching, e.getMessage());
         } finally {
-            progressManager.update(progressHandler, ProgressMessage.DONE, 0);
+            Log.d("GeoBeagle", "ImportBcachingWorker ending");
         }
+        progressManager.update(progressHandler, ProgressMessage.DONE, 0);
     }
 
     @Override
     public void abort() {
+        Log.d("GeoBeagle", "ABORTING IMPORT");
         if (isAlive()) {
             try {
                 Log.d("GeoBeagle", "abort: JOIN STARTED");
@@ -103,5 +120,7 @@ public class ImportBCachingWorker extends Thread implements Abortable {
                 Log.d("GeoBeagle", "Ignoring InterruptedException: " + e.getLocalizedMessage());
             }
         }
+        Log.d("GeoBeagle", "done abort IMPORT");
+
     }
 }
