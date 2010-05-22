@@ -24,6 +24,7 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 
 import android.location.Location;
+import android.util.Log;
 
 import java.util.ArrayList;
 
@@ -57,6 +58,7 @@ public class SqlCacheLoader implements RefreshAction {
         }
         // Log.d("GeoBeagle", "Location: " + location);
         DbFrontend dbFrontend = mDbFrontendProvider.get();
+        Log.d("GeoBeagle", "SQLCACHELOADER------" + dbFrontend);
         ArrayList<Geocache> geocaches = dbFrontend.loadCaches(latitude, longitude,
                 mFilterNearestCaches.getWhereFactory());
         mTiming.lap("SQL time");

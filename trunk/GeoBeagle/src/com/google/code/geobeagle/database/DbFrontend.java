@@ -33,18 +33,16 @@ import java.util.ArrayList;
  */
 public class DbFrontend {
     private CacheReader mCacheReader;
-    private CacheWriter mCacheWriter;
-    private final Context mContext;
-    private ISQLiteDatabase mDatabase;
-    private boolean mIsDatabaseOpen;
+    private static Context mContext;
+    private static ISQLiteDatabase mDatabase;
+    private static boolean mIsDatabaseOpen;
     private GeoBeagleSqliteOpenHelper mSqliteOpenHelper;
-    private final Provider<ISQLiteDatabase> mDatabaseProvider;
 
     @Inject
     DbFrontend(Context context, Provider<ISQLiteDatabase> databaseProvider) {
+        if (context != mContext)
+            mIsDatabaseOpen = false;
         mContext = context;
-        mIsDatabaseOpen = false;
-        mDatabaseProvider = databaseProvider;
     }
 
     public synchronized void closeDatabase() {
@@ -56,7 +54,6 @@ public class DbFrontend {
         mSqliteOpenHelper.close();
         mIsDatabaseOpen = false;
 
-        mCacheWriter = null;
         mDatabase = null;
     }
 
@@ -67,7 +64,8 @@ public class DbFrontend {
         countCursor.moveToFirst();
         int count = countCursor.getInt(0);
         countCursor.close();
-        Log.d("GeoBeagle", "DbFrontEnd.count:" + count);
+        
+        Log.d("GeoBeagle", this + ": DbFrontEnd.count:" + count);
         return count;
     }
 
@@ -78,16 +76,8 @@ public class DbFrontend {
         countCursor.moveToFirst();
         int count = countCursor.getInt(0);
         countCursor.close();
-        Log.d("GeoBeagle", "DbFrontEnd.count all:" + count);
+        Log.d("GeoBeagle", this + ": DbFrontEnd.count all:" + count);
         return count;
-    }
-
-    public CacheWriter getCacheWriter() {
-        if (mCacheWriter != null)
-            return mCacheWriter;
-        openDatabase();
-        mCacheWriter = DatabaseDI.createCacheWriter(mDatabase);
-        return mCacheWriter;
     }
 
     public ArrayList<Geocache> loadCaches(double latitude, double longitude,
@@ -111,7 +101,7 @@ public class DbFrontend {
             return;
 
         mSqliteOpenHelper = new GeoBeagleSqliteOpenHelper(mContext);
-        final SQLiteDatabase sqDb = mSqliteOpenHelper.getReadableDatabase();
+        final SQLiteDatabase sqDb = mSqliteOpenHelper.getWritableDatabase();
         mDatabase = new DatabaseDI.SQLiteWrapper(sqDb);
 
         mCacheReader = DatabaseDI.createCacheReader(mDatabase);
