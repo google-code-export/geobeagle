@@ -1,0 +1,9 @@
+#summary How to use SVN to integrate branch changes to the trunk
+
+http://svnbook.red-bean.com/en/1.0/ch04s04.html
+
+  # cd trunk
+  # svn update  (Note HEAD_REV)
+  # svn log | head -10  (Note "Merge my changes xxx:LAST_END_REV")
+  # svn merge  -r LAST_END_REV+1:HEAD_REV https://geobeagle.googlecode.com/svn/branches/sng
+  # svn commit -m "Merged BRANCHNAME changes rLAST_END_REV+1:HEAD_REV into the trunk."
