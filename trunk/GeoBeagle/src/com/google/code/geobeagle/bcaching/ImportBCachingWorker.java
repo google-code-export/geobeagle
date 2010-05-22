@@ -16,6 +16,7 @@ package com.google.code.geobeagle.bcaching;
 
 import com.google.code.geobeagle.ErrorDisplayer;
 import com.google.code.geobeagle.R;
+import com.google.code.geobeagle.activity.cachelist.CacheListModule.ToasterSyncAborted;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.Abortable;
 import com.google.code.geobeagle.bcaching.communication.BCachingException;
 import com.google.code.geobeagle.bcaching.communication.BCachingList;
@@ -23,6 +24,7 @@ import com.google.code.geobeagle.bcaching.communication.BCachingListImporter;
 import com.google.code.geobeagle.bcaching.progress.ProgressHandler;
 import com.google.code.geobeagle.bcaching.progress.ProgressManager;
 import com.google.code.geobeagle.bcaching.progress.ProgressMessage;
+import com.google.code.geobeagle.xmlimport.GpxImporterDI.Toaster;
 import com.google.inject.Inject;
 
 import android.util.Log;
@@ -34,18 +36,20 @@ public class ImportBCachingWorker extends Thread implements Abortable {
     private final ErrorDisplayer errorDisplayer;
     private final ProgressManager progressManager;
     private final DetailsReaderImport detailsReaderImport;
+    private final Toaster toaster;
 
     @Inject
     public ImportBCachingWorker(ProgressHandler progressHandler, ProgressManager progressManager,
             BCachingLastUpdated bcachingLastUpdated, BCachingListImporter bcachingListImporter,
-            ErrorDisplayer errorDisplayer, DetailsReaderImport detailsReaderImport) {
+            ErrorDisplayer errorDisplayer, DetailsReaderImport detailsReaderImport,
+            @ToasterSyncAborted Toaster toaster) {
         this.progressHandler = progressHandler;
         this.bcachingLastUpdated = bcachingLastUpdated;
         this.bcachingListImporter = bcachingListImporter;
         this.errorDisplayer = errorDisplayer;
         this.progressManager = progressManager;
         this.detailsReaderImport = detailsReaderImport;
-
+        this.toaster = toaster;
     }
 
     @Override
@@ -93,6 +97,7 @@ public class ImportBCachingWorker extends Thread implements Abortable {
             try {
                 Log.d("GeoBeagle", "abort: JOIN STARTED");
                 join();
+                toaster.showToast();
                 Log.d("GeoBeagle", "abort: JOIN FINISHED");
             } catch (InterruptedException e) {
                 Log.d("GeoBeagle", "Ignoring InterruptedException: " + e.getLocalizedMessage());
