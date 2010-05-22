@@ -14,10 +14,8 @@
 
 package com.google.code.geobeagle.activity.cachelist;
 
-import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.actions.MenuActions;
 import com.google.code.geobeagle.activity.cachelist.actions.context.ContextAction;
-import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionSyncBCaching;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionSyncGpx;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVectors;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
@@ -63,18 +61,15 @@ public class GeocacheListController {
     private final FilterNearestCaches mFilterNearestCaches;
     private final MenuActions mMenuActions;
     private final MenuActionSyncGpx mMenuActionSyncGpx;
-    private final MenuActionSyncBCaching mMenuActionSyncBCaching;
     private final Aborter mAborter;
 
     public GeocacheListController(CacheListRefresh cacheListRefresh,
             ContextAction[] contextActions, FilterNearestCaches filterNearestCaches,
-            MenuActionSyncGpx menuActionSyncGpx, MenuActions menuActions, Aborter aborter,
-            MenuActionSyncBCaching menuActionSyncBCaching) {
+            MenuActionSyncGpx menuActionSyncGpx, MenuActions menuActions, Aborter aborter) {
         mCacheListRefresh = cacheListRefresh;
         mContextActions = contextActions;
         mFilterNearestCaches = filterNearestCaches;
         mMenuActionSyncGpx = menuActionSyncGpx;
-        mMenuActionSyncBCaching = menuActionSyncBCaching;
         mMenuActions = menuActions;
         mAborter = aborter;
     }
@@ -98,7 +93,6 @@ public class GeocacheListController {
     }
 
     public boolean onMenuOpened(int featureId, Menu menu) {
-        menu.findItem(R.string.menu_show_all_caches).setTitle(mFilterNearestCaches.getMenuString());
         return true;
     }
 
@@ -109,7 +103,6 @@ public class GeocacheListController {
     public void onPause() {
         Log.d("GeoBeagle", "onPause aborting");
         mAborter.abort();
-        mMenuActionSyncBCaching.abort();
         mMenuActionSyncGpx.abort();
     }
 
