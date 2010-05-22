@@ -60,7 +60,8 @@ public class BCachingModule extends AbstractAndroidModule {
     ProgressDialog progressDialogProvider(Context context) {
         ProgressDialog progressDialog = new ProgressDialog(context);
         progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-        progressDialog.setTitle("hello");
+        progressDialog.setTitle("Sync from BCaching.com");
+        progressDialog.setMessage("Getting cache count...");
         progressDialog.setCancelable(true);
         return progressDialog;
     }

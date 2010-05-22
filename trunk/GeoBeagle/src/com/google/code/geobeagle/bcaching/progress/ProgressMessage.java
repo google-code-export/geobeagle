@@ -20,7 +20,7 @@ public enum ProgressMessage {
     SET_FILE {
         @Override
         void act(ProgressDialog progressDialog, int arg1, Object object) {
-            progressDialog.setTitle("Bcaching.com: "  + (String)object);
+            progressDialog.setMessage("Loading: "  + (String)object);
             progressDialog.incrementProgressBy(1);
         }
     },
