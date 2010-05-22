@@ -225,8 +225,8 @@ public class CacheListDelegateDI {
         final TitleUpdater titleUpdater = new TitleUpdater(listActivity, filterNearestCaches,
                 listTitleFormatter, timing);
         final Provider<DbFrontend> dbFrontendProvider = injector.getProvider(DbFrontend.class);
-        final SqlCacheLoader sqlCacheLoader = new SqlCacheLoader(dbFrontendProvider , filterNearestCaches,
-                cacheListData, locationControlBuffered, titleUpdater, timing);
+        final SqlCacheLoader sqlCacheLoader = new SqlCacheLoader(dbFrontendProvider,
+                filterNearestCaches, cacheListData, locationControlBuffered, titleUpdater, timing);
         final ActionManager actionManager = actionManagerFactory.create(sqlCacheLoader);
         final CacheListRefresh cacheListRefresh = new CacheListRefresh(actionManager, timing,
                 locationControlBuffered, updateFlag);
