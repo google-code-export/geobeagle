@@ -75,7 +75,7 @@ public class ImportBCachingWorker extends Thread implements Abortable {
                 // detailsReader.getCacheDetails(bcachingList.getCacheIds(),
                 // updatedCaches);
                 Log.d("GeoBeagle", "cachesRead: " + cachesRead);
-                if (!detailsReaderImport.getCacheDetails(bcachingList.getCacheIds(), updatedCaches))
+                if (!detailsReaderImport.getCacheDetails(bcachingList.getCacheIds()))
                     return;
 
                 updatedCaches += cachesRead;
