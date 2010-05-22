@@ -30,8 +30,9 @@ public class ActivitySaverTest {
     public void save() {
         Editor editor = PowerMock.createMock(Editor.class);
 
-        EasyMock.expect(editor.putInt("lastActivity", ActivityType.CACHE_LIST.toInt())).andReturn(
-                editor);
+        EasyMock.expect(
+                editor.putString(ActivitySaver.LAST_ACTIVITY, ActivityType.CACHE_LIST.name()))
+                .andReturn(editor);
         EasyMock.expect(editor.commit()).andReturn(true);
 
         PowerMock.replayAll();
@@ -44,8 +45,9 @@ public class ActivitySaverTest {
         Editor editor = PowerMock.createMock(Editor.class);
         Geocache geocache = PowerMock.createMock(Geocache.class);
 
-        EasyMock.expect(editor.putInt("lastActivity", ActivityType.CACHE_LIST.toInt())).andReturn(
-                editor);
+        EasyMock.expect(
+                editor.putString(ActivitySaver.LAST_ACTIVITY, ActivityType.CACHE_LIST.name()))
+                .andReturn(editor);
         geocache.writeToPrefs(editor);
         EasyMock.expect(editor.commit()).andReturn(true);
 
