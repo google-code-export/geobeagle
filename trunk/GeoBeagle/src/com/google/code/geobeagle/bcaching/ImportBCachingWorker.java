@@ -95,8 +95,8 @@ public class ImportBCachingWorker extends RoboThread implements Abortable {
             sharedPreferencesEditor.commit();
             bcachingLastUpdated.putLastUpdateTime(now);
         } catch (BCachingException e) {
-            errorDisplayer.displayError(R.string.problem_importing_from_bcaching, e.getMessage()
-                    + ": " + e.getLocalizedMessage());
+            errorDisplayer.displayError(R.string.problem_importing_from_bcaching, e
+                    .getLocalizedMessage());
         } finally {
             progressManager.update(progressHandler, ProgressMessage.DONE, 0);
             sharedPreferencesEditor.putInt(BCACHING_LAST_READ, totalCachesRead);
