@@ -242,8 +242,8 @@ public class CacheListDelegateDI {
 
         final Aborter aborter = new Aborter();
         final MessageHandler messageHandler = MessageHandler.create(listActivity);
-        final TagWriterImpl tagWriterImpl = new TagWriterImpl(injector
-                .getProvider(ISQLiteDatabase.class));
+        final Provider<ISQLiteDatabase> database = injector.getProvider(ISQLiteDatabase.class);
+        final TagWriterImpl tagWriterImpl = new TagWriterImpl(database);
         final TagWriterNull tagWriterNull = new TagWriterNull();
         final CachePersisterFacadeFactory cachePersisterFacadeFactory = new CachePersisterFacadeFactory(
                 messageHandler, cacheTypeFactory, tagWriterImpl, tagWriterNull);
