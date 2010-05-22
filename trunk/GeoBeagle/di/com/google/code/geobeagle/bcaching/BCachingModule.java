@@ -110,14 +110,18 @@ public class BCachingModule extends AbstractAndroidModule {
     Hashtable<String, String> getCacheDetailsParamsProvider() {
         Hashtable<String, String> params = new Hashtable<String, String>();
         params.put("a", "detail");
-        params.put("lastuploaddays", "7");
+        commonParams(params);
         params.put("desc", "html");
         params.put("tbs", "0");
         params.put("wpts", "1");
         params.put("logs", "1");
         params.put("fmt", "gpx");
-        params.put("app", "GeoBeagle");
         return params;
+    }
+
+    private void commonParams(Hashtable<String, String> params) {
+        params.put("lastuploaddays", "7");
+        params.put("app", "GeoBeagle");
     }
 
     @Provides
@@ -126,8 +130,7 @@ public class BCachingModule extends AbstractAndroidModule {
         Hashtable<String, String> params = new Hashtable<String, String>();
         params.put("a", "list");
         params.put("found", "0");
-        params.put("lastuploaddays", "7");
-        params.put("app", "GeoBeagle");
+        commonParams(params);
         return params;
     }
 }
