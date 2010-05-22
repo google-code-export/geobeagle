@@ -61,13 +61,13 @@ public class ImportBCachingWorker extends RoboThread implements Abortable {
         long now = System.currentTimeMillis();
         progressManager.update(progressHandler, ProgressMessage.START, 0);
         String lastUpdateTime = String.valueOf(bcachingLastUpdated.getLastUpdateTime());
-        int totalCachesRead = bcachingLastUpdated.getLastRead();
 
         try {
             int totalCount = bcachingListImporter.getTotalCount(lastUpdateTime);
             if (totalCount <= 0)
                 return;
             progressManager.update(progressHandler, ProgressMessage.SET_MAX, totalCount);
+            int totalCachesRead = bcachingLastUpdated.getLastRead();
             progressManager.update(progressHandler, ProgressMessage.SET_PROGRESS, totalCachesRead);
 
             BCachingList bcachingList = bcachingListImporter.getCacheList(String
@@ -96,6 +96,11 @@ public class ImportBCachingWorker extends RoboThread implements Abortable {
             errorDisplayer.displayError(R.string.problem_importing_from_bcaching, e
                     .getLocalizedMessage());
         } finally {
+            /*
+             * Do NOT call refresh here--we might be here as the result of
+             * switching activities; a refresh will reference a stale database
+             * handle and crash.
+             */
             progressManager.update(progressHandler, ProgressMessage.DONE, 0);
             inProgress = false;
             Log.d("GeoBeagle", "ImportBcachingWorker ending");
