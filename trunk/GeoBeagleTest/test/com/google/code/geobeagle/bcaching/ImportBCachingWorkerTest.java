@@ -114,7 +114,6 @@ public class ImportBCachingWorkerTest extends GeoBeagleTest {
         expect(bcachingLastUpdated.getLastUpdateTime()).andReturn(1000L);
         expect(bcachingListFactory.getTotalCount("1000")).andThrow(
                 new BCachingException("io exception"));
-        progressManager.update(progressHandler, ProgressMessage.REFRESH, 0);
         progressManager.update(progressHandler, ProgressMessage.DONE, 0);
         errorDisplayer.displayError(R.string.problem_importing_from_bcaching, "io exception");
 
