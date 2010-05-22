@@ -30,7 +30,7 @@ public class DetailsReaderImport {
         this.eventHelper = eventHelper;
     }
 
-    public boolean getCacheDetails(String csvIds) throws BCachingException {
+    public boolean loadCacheDetails(String csvIds) throws BCachingException {
         params.put("ids", csvIds);
 
         try {

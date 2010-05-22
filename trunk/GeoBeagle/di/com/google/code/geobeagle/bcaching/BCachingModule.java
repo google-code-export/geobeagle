@@ -48,6 +48,8 @@ import java.util.Hashtable;
 
 public class BCachingModule extends AbstractAndroidModule {
 
+    public static final String BCACHING_INITIAL_MESSAGE = "Getting cache count...";
+
     @Override
     protected void configure() {
         bind(BufferedReaderFactory.class).to(BufferedReaderFactoryImpl.class);
@@ -57,7 +59,7 @@ public class BCachingModule extends AbstractAndroidModule {
         bind(CachePersisterFacade.class).in(ContextScoped.class);
         bind(Aborter.class).in(ContextScoped.class);
         bind(ClearCachesFromSource.class).to(ClearCachesFromSourceNull.class);
-
+        bind(ImportBCachingWorker.class).in(ContextScoped.class);
         requestStaticInjection(RoboThread.class);
     }
 
@@ -67,8 +69,8 @@ public class BCachingModule extends AbstractAndroidModule {
         ProgressDialog progressDialog = new ProgressDialog(context);
         progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
         progressDialog.setTitle("Sync from BCaching.com");
-        progressDialog.setMessage("Getting cache count...");
-//        progressDialog.setCancelable(true);
+        progressDialog.setMessage(BCACHING_INITIAL_MESSAGE);
+        progressDialog.setCancelable(false);
         return progressDialog;
     }
 
