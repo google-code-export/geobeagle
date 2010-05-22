@@ -21,6 +21,7 @@ import com.google.inject.Inject;
 import android.app.ProgressDialog;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 
 public class ProgressHandler extends Handler {
     private final ProgressDialog progressDialog;
@@ -34,18 +35,18 @@ public class ProgressHandler extends Handler {
 
     public void done() {
         progressDialog.dismiss();
-        refresher.refresh();
     }
 
     @Override
     public void handleMessage(Message msg) {
         ProgressMessage progressMessage = ProgressMessage.fromInt(msg.what);
+        Log.d("GeoBeagle", "MMMMesage " + progressMessage);
         progressMessage.act(this, msg);
     }
 
-    public void setFile(String filename, int progress) {
+    public void setFile(String filename) {
         progressDialog.setMessage("Loading: " + filename);
-        progressDialog.setProgress(progress);
+        progressDialog.incrementProgressBy(1);
     }
 
     public void setMax(int max) {
@@ -58,5 +59,9 @@ public class ProgressHandler extends Handler {
 
     public void show() {
         progressDialog.show();
+    }
+
+    public void refresh() {
+        refresher.refresh();
     }
 }
