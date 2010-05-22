@@ -55,7 +55,7 @@ public class CacheTagWriterTest {
 
     @Test
     public void testEnd() {
-        cacheWriter.clearEarlierLoads();
+        clearCachesFromSource.clearEarlierLoads();
 
         PowerMock.replayAll();
         cacheTagSqlWriter.end();
