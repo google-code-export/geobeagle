@@ -17,6 +17,8 @@ package com.google.code.geobeagle.xmlimport;
 import com.google.code.geobeagle.ErrorDisplayer;
 import com.google.code.geobeagle.activity.cachelist.Pausable;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
+import com.google.code.geobeagle.bcaching.ImportBCachingWorker;
+import com.google.code.geobeagle.bcaching.BCachingAnnotations.BCachingUserName;
 import com.google.code.geobeagle.cachedetails.CacheDetailsLoader;
 import com.google.code.geobeagle.cachedetails.FileDataVersionChecker;
 import com.google.code.geobeagle.cachedetails.FileDataVersionWriter;
@@ -34,6 +36,11 @@ import com.google.code.geobeagle.xmlimport.gpx.GpxAndZipFiles.GpxFilenameFilter;
 import com.google.code.geobeagle.xmlimport.gpx.zip.ZipFileOpener.ZipInputFileTester;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
+import com.google.inject.Provider;
+
+import roboguice.util.RoboThread;
+
+import roboguice.util.RoboThread;
 
 import android.app.ListActivity;
 import android.app.ProgressDialog;
@@ -48,8 +55,8 @@ import java.io.FilenameFilter;
 
 public class GpxImporterDI {
     // Can't test this due to final methods in base.
-    public static class ImportThread extends Thread {
-        static ImportThread create(MessageHandler messageHandler, GpxLoader gpxLoader,
+    public static class ImportThread extends RoboThread {
+        static ImportThread create(MessageHandlerInterface messageHandler, GpxLoader gpxLoader,
                 EventHandlers eventHandlers, XmlPullParserWrapper xmlPullParserWrapper,
                 ErrorDisplayer errorDisplayer, Aborter aborter, Injector injector) {
             final GpxFilenameFilter gpxFilenameFilter = new GpxFilenameFilter();
@@ -71,7 +78,8 @@ public class GpxImporterDI {
             final FileDataVersionChecker fileDataVersionChecker = injector
                     .getInstance(FileDataVersionChecker.class);
             return new ImportThread(gpxAndZipFiles, importThreadHelper, errorDisplayer,
-                    fileDataVersionWriter, injector.getInstance(DbFrontend.class), fileDataVersionChecker);
+                    fileDataVersionWriter, injector.getInstance(DbFrontend.class),
+                    fileDataVersionChecker);
         }
 
         private final ImportThreadDelegate mImportThreadDelegate;
@@ -93,10 +101,10 @@ public class GpxImporterDI {
     public static class ImportThreadWrapper {
         private final Aborter mAborter;
         private ImportThread mImportThread;
-        private final MessageHandler mMessageHandler;
+        private final MessageHandlerInterface mMessageHandler;
         private final XmlPullParserWrapper mXmlPullParserWrapper;
 
-        public ImportThreadWrapper(MessageHandler messageHandler,
+        public ImportThreadWrapper(MessageHandlerInterface messageHandler,
                 XmlPullParserWrapper xmlPullParserWrapper, Aborter aborter) {
             mMessageHandler = messageHandler;
             mXmlPullParserWrapper = xmlPullParserWrapper;
@@ -132,16 +140,10 @@ public class GpxImporterDI {
     }
 
     // Too hard to test this class due to final methods in base.
-    public static class MessageHandler extends Handler {
+    public static class MessageHandler extends Handler implements MessageHandlerInterface {
         public static final String GEOBEAGLE = "GeoBeagle";
         static final int MSG_DONE = 1;
         static final int MSG_PROGRESS = 0;
-
-        public static MessageHandler create(ListActivity listActivity) {
-            final ProgressDialogWrapper progressDialogWrapper = new ProgressDialogWrapper(
-                    listActivity);
-            return new MessageHandler(progressDialogWrapper);
-        }
 
         private int mCacheCount;
         private boolean mLoadAborted;
@@ -150,10 +152,16 @@ public class GpxImporterDI {
         private String mSource;
         private String mStatus;
         private String mWaypointId;
+        private final Provider<ImportBCachingWorker> mImportBCachingWorkerProvider;
+        private final Provider<String> mBcachingUserNameProvider;
 
         @Inject
-        public MessageHandler(ProgressDialogWrapper progressDialogWrapper) {
+        public MessageHandler(ProgressDialogWrapper progressDialogWrapper,
+                Provider<ImportBCachingWorker> importBCachingWorkerProvider,
+                @BCachingUserName Provider<String> bcachingUserNameProvider) {
             mProgressDialogWrapper = progressDialogWrapper;
+            mImportBCachingWorkerProvider = importBCachingWorkerProvider;
+            mBcachingUserNameProvider = bcachingUserNameProvider;
         }
 
         public void abortLoad() {
@@ -172,6 +180,8 @@ public class GpxImporterDI {
                     if (!mLoadAborted) {
                         mProgressDialogWrapper.dismiss();
                         mMenuActionRefresh.forceRefresh();
+                        if (mBcachingUserNameProvider.get().length() > 0)
+                            mImportBCachingWorkerProvider.get().start();
                     }
                     break;
                 default:
@@ -188,7 +198,7 @@ public class GpxImporterDI {
             mLoadAborted = false;
             mMenuActionRefresh = cacheListRefresh;
             // TODO: move text into resource.
-            mProgressDialogWrapper.show("Syncing caches", "Please wait...");
+            mProgressDialogWrapper.show("Sync from sdcard", "Please wait...");
         }
 
         public void updateName(String name) {
@@ -239,6 +249,7 @@ public class GpxImporterDI {
 
         public void show(String title, String msg) {
             mProgressDialog = ProgressDialog.show(mContext, title, msg);
+//            mProgressDialog.setCancelable(true);
         }
     }
 
@@ -266,7 +277,7 @@ public class GpxImporterDI {
 
     public static GpxImporter create(Context context, XmlPullParserWrapper xmlPullParserWrapper,
             ErrorDisplayer errorDisplayer, Pausable geocacheListPresenter, Aborter aborter,
-            MessageHandler messageHandler, CachePersisterFacadeFactory cachePersisterFacadeFactory,
+            MessageHandlerInterface messageHandler, CachePersisterFacadeFactory cachePersisterFacadeFactory,
             CacheWriter cacheWriter, Injector injector) {
         final PowerManager powerManager = (PowerManager)context
                 .getSystemService(Context.POWER_SERVICE);

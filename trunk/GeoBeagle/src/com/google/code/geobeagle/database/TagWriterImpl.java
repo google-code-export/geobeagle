@@ -15,21 +15,23 @@
 package com.google.code.geobeagle.database;
 
 import com.google.inject.Inject;
+import com.google.inject.Provider;
+import com.google.inject.ProvisionException;
 
 import android.util.Log;
 
 public class TagWriterImpl implements TagWriter {
 
-    private final DbFrontend mDbFrontend;
+    private final Provider<ISQLiteDatabase> databaseProvider;
 
     @Inject
-    public TagWriterImpl(DbFrontend dbFrontend) {
-        mDbFrontend = dbFrontend;
+    public TagWriterImpl(Provider<ISQLiteDatabase> databaseProvider) {
+        this.databaseProvider = databaseProvider;
     }
 
     @Override
     public void add(CharSequence geocacheId, Tag tag) {
-        final ISQLiteDatabase mDatabase = mDbFrontend.getDatabase();
+        final ISQLiteDatabase mDatabase = databaseProvider.get();
 
         mDatabase.execSQL("DELETE FROM TAGS WHERE Cache='" + geocacheId + "'");
         mDatabase.insert("TAGS", new String[] {
@@ -41,11 +43,10 @@ public class TagWriterImpl implements TagWriter {
 
     public boolean hasTag(CharSequence geocacheId, Tag tag) {
         ISQLiteDatabase mDatabase = null;
-
         try {
-            mDatabase = mDbFrontend.getDatabase();
-        } catch (Exception e) {
-            Log.w("GeoBeagle", "hasTag: database is locked " + e.getMessage());
+            mDatabase = databaseProvider.get();
+        } catch (ProvisionException e) {
+            Log.e("GeoBeagle", "!! Provision exception");
             return false;
         }
         final boolean hasValue = mDatabase.hasValue("TAGS", "Cache='" + geocacheId + "' AND Id="

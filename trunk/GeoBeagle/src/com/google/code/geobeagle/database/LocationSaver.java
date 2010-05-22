@@ -15,18 +15,18 @@
 package com.google.code.geobeagle.database;
 
 import com.google.code.geobeagle.Geocache;
+import com.google.inject.Provider;
 
-//TODO: Merge into Geocache class
 public class LocationSaver {
-    private final DbFrontend mDbFrontend;
+    private final Provider<CacheWriter> cacheWriterProvider;
 
-    public LocationSaver(DbFrontend dbFrontend) {
-        mDbFrontend = dbFrontend;
+    public LocationSaver(Provider<CacheWriter> cacheWriterProvider) {
+        this.cacheWriterProvider = cacheWriterProvider;
     }
 
     public void saveLocation(Geocache geocache) {
         final CharSequence id = geocache.getId();
-        CacheWriter cacheWriter = mDbFrontend.getCacheWriter();
+        CacheWriter cacheWriter = cacheWriterProvider.get();
         cacheWriter.startWriting();
         cacheWriter.insertAndUpdateCache(id, geocache.getName(), geocache.getLatitude(), geocache
                 .getLongitude(), geocache.getSourceType(), geocache.getSourceName(), geocache
