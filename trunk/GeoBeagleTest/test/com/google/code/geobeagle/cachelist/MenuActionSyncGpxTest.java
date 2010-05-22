@@ -21,8 +21,8 @@ import com.google.code.geobeagle.activity.cachelist.actions.menu.Abortable;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionSyncGpx;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
 import com.google.code.geobeagle.database.CacheWriter;
-import com.google.code.geobeagle.database.DbFrontend;
 import com.google.code.geobeagle.xmlimport.GpxImporter;
+import com.google.inject.Provider;
 
 import org.easymock.EasyMock;
 import org.junit.Test;
@@ -32,6 +32,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 
 @RunWith(PowerMockRunner.class)
 public class MenuActionSyncGpxTest {
+    @SuppressWarnings("unchecked")
     @Test
     public void testAct() {
         GpxImporter gpxImporter = PowerMock.createMock(GpxImporter.class);
@@ -39,15 +40,15 @@ public class MenuActionSyncGpxTest {
         GpxImporterFactory gpxImporterFactory = PowerMock.createMock(GpxImporterFactory.class);
         CacheWriter cacheWriter = PowerMock.createMock(CacheWriter.class);
 
-        DbFrontend dbFrontend = PowerMock.createMock(DbFrontend.class);
-        expect(dbFrontend.getCacheWriter()).andReturn(cacheWriter);
+        Provider<CacheWriter> dbFrontendProvider = PowerMock.createMock(Provider.class);
+        expect(dbFrontendProvider.get()).andReturn(cacheWriter);
 
         EasyMock.expect(gpxImporterFactory.create(cacheWriter)).andReturn(gpxImporter);
         gpxImporter.importGpxs(cacheListRefresh);
 
         PowerMock.replayAll();
         final MenuActionSyncGpx menuActionSyncGpx = new MenuActionSyncGpx(null, cacheListRefresh,
-                gpxImporterFactory, dbFrontend);
+                gpxImporterFactory, dbFrontendProvider);
         menuActionSyncGpx.act();
         PowerMock.verifyAll();
     }

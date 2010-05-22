@@ -18,22 +18,23 @@ import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.actions.MenuActionBase;
 import com.google.code.geobeagle.activity.cachelist.GpxImporterFactory;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
-import com.google.code.geobeagle.database.DbFrontend;
+import com.google.code.geobeagle.database.CacheWriter;
 import com.google.code.geobeagle.xmlimport.GpxImporter;
+import com.google.inject.Provider;
 
 public class MenuActionSyncGpx extends MenuActionBase {
     private Abortable mAbortable;
     private final CacheListRefresh mCacheListRefresh;
     private final GpxImporterFactory mGpxImporterFactory;
-    private final DbFrontend mDbFrontend;
+    private final Provider<CacheWriter> mCacheWriterProvider;
 
     public MenuActionSyncGpx(Abortable abortable, CacheListRefresh cacheListRefresh,
-            GpxImporterFactory gpxImporterFactory, DbFrontend dbFrontend) {
+            GpxImporterFactory gpxImporterFactory, Provider<CacheWriter> cacheWriterProvider) {
         super(R.string.menu_sync);
         mAbortable = abortable;
         mCacheListRefresh = cacheListRefresh;
         mGpxImporterFactory = gpxImporterFactory;
-        mDbFrontend = dbFrontend;
+        mCacheWriterProvider = cacheWriterProvider;
     }
 
     public void abort() {
@@ -41,7 +42,7 @@ public class MenuActionSyncGpx extends MenuActionBase {
     }
 
     public void act() {
-        final GpxImporter gpxImporter = mGpxImporterFactory.create(mDbFrontend.getCacheWriter());
+        final GpxImporter gpxImporter = mGpxImporterFactory.create(mCacheWriterProvider.get());
         mAbortable = gpxImporter;
         gpxImporter.importGpxs(mCacheListRefresh);
     }

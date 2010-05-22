@@ -20,6 +20,7 @@ import com.google.code.geobeagle.activity.cachelist.actions.context.ContextActio
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
 import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheListPresenter;
 import com.google.code.geobeagle.database.DbFrontend;
+import com.google.inject.Provider;
 
 import android.app.Activity;
 import android.app.Dialog;
@@ -65,21 +66,21 @@ public class CacheListDelegate {
     private final ActivitySaver mActivitySaver;
     private final CacheListRefresh mCacheListRefresh;
     private final GeocacheListController mController;
-    private final DbFrontend mDbFrontend;
+    private final Provider<DbFrontend> mDbFrontendProvider;
     private final ImportIntentManager mImportIntentManager;
     private final GeocacheListPresenter mPresenter;
     private final ContextActionDeleteDialogHelper mContextActionDeleteDialogHelper;
 
     public CacheListDelegate(ImportIntentManager importIntentManager, ActivitySaver activitySaver,
             CacheListRefresh cacheListRefresh, GeocacheListController geocacheListController,
-            GeocacheListPresenter geocacheListPresenter, DbFrontend dbFrontend,
+            GeocacheListPresenter geocacheListPresenter, Provider<DbFrontend> dbFrontendProvider,
             ContextActionDeleteDialogHelper contextActionDeleteDialogHelper) {
         mActivitySaver = activitySaver;
         mCacheListRefresh = cacheListRefresh;
         mController = geocacheListController;
         mPresenter = geocacheListPresenter;
         mImportIntentManager = importIntentManager;
-        mDbFrontend = dbFrontend;
+        mDbFrontendProvider = dbFrontendProvider;
         mContextActionDeleteDialogHelper = contextActionDeleteDialogHelper;
     }
 
@@ -111,7 +112,7 @@ public class CacheListDelegate {
         mPresenter.onPause();
         mController.onPause();
         mActivitySaver.save(ActivityType.CACHE_LIST);
-        mDbFrontend.closeDatabase();
+        mDbFrontendProvider.get().closeDatabase();
     }
 
     public void onResume() {

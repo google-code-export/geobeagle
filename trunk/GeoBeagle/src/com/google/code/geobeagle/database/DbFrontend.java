@@ -39,18 +39,20 @@ public class DbFrontend {
     private GeoBeagleSqliteOpenHelper mSqliteOpenHelper;
 
     @Inject
-    public DbFrontend(Context context) {
+    DbFrontend(Context context) {
         mContext = context;
         mIsDatabaseOpen = false;
     }
 
-    public void closeDatabase() {
+    public synchronized void closeDatabase() {
+        Log.d("GeoBeagleDb", "DbFrontend.closeDatabase()");
+
         if (!mIsDatabaseOpen)
             return;
-        Log.d("GeoBeagle", "DbFrontend.closeDatabase()");
-        mIsDatabaseOpen = false;
 
         mSqliteOpenHelper.close();
+        mIsDatabaseOpen = false;
+
         mCacheWriter = null;
         mDatabase = null;
     }
@@ -101,10 +103,9 @@ public class DbFrontend {
         return geocaches;
     }
 
-    public void openDatabase() {
+    public synchronized void openDatabase() {
         if (mIsDatabaseOpen)
             return;
-        Log.d("GeoBeagle", "DbFrontend.openDatabase()");
 
         mSqliteOpenHelper = new GeoBeagleSqliteOpenHelper(mContext);
         final SQLiteDatabase sqDb = mSqliteOpenHelper.getReadableDatabase();

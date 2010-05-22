@@ -24,6 +24,7 @@ import com.google.code.geobeagle.activity.cachelist.presenter.TitleUpdater;
 import com.google.code.geobeagle.database.DbFrontend;
 import com.google.code.geobeagle.database.FilterNearestCaches;
 import com.google.code.geobeagle.database.WhereFactory;
+import com.google.inject.Provider;
 
 import org.easymock.EasyMock;
 import org.junit.Before;
@@ -54,11 +55,13 @@ public class SqlCacheLoaderTest {
         EasyMock.expectLastCall().anyTimes();
     }
 
+    @SuppressWarnings("unchecked")
     @Test
     public void testRefresh() {
         LocationControlBuffered locationControlBuffered = PowerMock
                 .createMock(LocationControlBuffered.class);
         Location location = PowerMock.createMock(Location.class);
+        Provider<DbFrontend> dbFrontendProvider = PowerMock.createMock(Provider.class);
         DbFrontend dbFrontend = PowerMock.createMock(DbFrontend.class);
         WhereFactory whereFactory = PowerMock.createMock(WhereFactory.class);
         CacheListData cacheListData = PowerMock.createMock(CacheListData.class);
@@ -70,6 +73,7 @@ public class SqlCacheLoaderTest {
         EasyMock.expect(location.getLongitude()).andReturn(-122.0);
         EasyMock.expect(filterNearestCaches.getWhereFactory()).andReturn(whereFactory);
         EasyMock.expect(locationControlBuffered.getLocation()).andReturn(location);
+        EasyMock.expect(dbFrontendProvider.get()).andReturn(dbFrontend);
         EasyMock.expect(dbFrontend.loadCaches(37.0, -122.0, whereFactory)).andReturn(geocaches);
         EasyMock.expect(cacheListData.size()).andReturn(100);
         EasyMock.expect(dbFrontend.countAll()).andReturn(2300);
@@ -77,7 +81,7 @@ public class SqlCacheLoaderTest {
         titleUpdater.update(2300, 100);
 
         PowerMock.replayAll();
-        new SqlCacheLoader(dbFrontend, filterNearestCaches, cacheListData, locationControlBuffered,
+        new SqlCacheLoader(dbFrontendProvider, filterNearestCaches, cacheListData, locationControlBuffered,
                 titleUpdater, mTiming).refresh();
         PowerMock.verifyAll();
     }
