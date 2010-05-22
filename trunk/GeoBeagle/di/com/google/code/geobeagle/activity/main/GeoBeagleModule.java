@@ -208,17 +208,14 @@ public class GeoBeagleModule extends AbstractAndroidModule {
     @Provides
     @IntentStarterViewCachePage
     IntentStarterViewUri providesIntentStarterViewCachePage(GeoBeagle geoBeagle,
-            IntentFactory intentFactory, GeocacheToCachePage geocacheToCachePage,
-            ErrorDisplayer errorDisplayer) {
-        return new IntentStarterViewUri(geoBeagle, intentFactory, geocacheToCachePage,
-                errorDisplayer);
+            IntentFactory intentFactory, GeocacheToCachePage geocacheToCachePage) {
+        return new IntentStarterViewUri(geoBeagle, intentFactory, geocacheToCachePage);
     }
 
     @Provides
     @GeoBeagleActivity
     MenuActions providesMenuActions(GeoBeagle geoBeagle, Resources resources,
-            IntentFactory intentFactory, GeocacheToGoogleMap geocacheToGoogleMap,
-            ErrorDisplayer errorDisplayer) {
+            IntentFactory intentFactory, GeocacheToGoogleMap geocacheToGoogleMap) {
         final MenuAction[] menuActionArray = {
                 new MenuActionCacheList(geoBeagle),
                 new MenuActionEditGeocache(geoBeagle),
@@ -226,7 +223,7 @@ public class GeoBeagleModule extends AbstractAndroidModule {
                 new MenuActionSearchOnline(geoBeagle),
                 new MenuActionSettings(geoBeagle),
                 new MenuActionGoogleMaps(new IntentStarterViewUri(geoBeagle, intentFactory,
-                        geocacheToGoogleMap, errorDisplayer))
+                        geocacheToGoogleMap))
         };
         return new MenuActions(resources, menuActionArray);
     }

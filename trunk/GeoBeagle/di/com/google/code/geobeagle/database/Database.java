@@ -56,12 +56,11 @@ public class Database {
             + "Terrain, Container) VALUES (?, ?, ?, ?, ?, 0, ?, ?, ?, ?)";
     public static final String SQL_REPLACE_GPX = "REPLACE INTO GPX (Name, ExportTime, DeleteMe) VALUES (?, ?, 0)";
     public static final String SQL_RESET_DELETE_ME_CACHES = "UPDATE CACHES SET DeleteMe = 1 WHERE Source != '"
-            + S0_INTENT + "'" + "AND SOURCE != 'BCaching.com'";
+            + S0_INTENT + "'";
     public static final String SQL_RESET_DELETE_ME_GPX = "UPDATE GPX SET DeleteMe = 1";
     public static final String SQL_DELETE_ALL_CACHES = "DELETE FROM CACHES";
     public static final String SQL_DELETE_ALL_GPX = "DELETE FROM GPX";
 
     public static final String TBL_CACHES = "CACHES";
     public static final String TBL_GPX = "GPX";
-    public static final String SQL_FORCE_UPDATE_ALL = "UPDATE GPX SET ExportTime = '1970-01-01'";
 }

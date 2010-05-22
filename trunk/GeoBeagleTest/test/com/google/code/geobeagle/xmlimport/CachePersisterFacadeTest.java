@@ -41,7 +41,7 @@ public class CachePersisterFacadeTest {
     private final CacheDetailsWriter mCacheDetailsWriter = PowerMock
             .createMock(CacheDetailsWriter.class);
     private final CacheTagSqlWriter mCacheTagWriter = PowerMock.createMock(CacheTagSqlWriter.class);
-    private final MessageHandlerInterface mMessageHandler = PowerMock.createMock(MessageHandler.class);
+    private final MessageHandler mMessageHandler = PowerMock.createMock(MessageHandler.class);
 
     @Test
     public void testAttributes() {
@@ -166,14 +166,12 @@ public class CachePersisterFacadeTest {
 
     @Test
     public void testOpen() {
-        mMessageHandler.updateSource("foo.gpx");
+        mMessageHandler.updateSource("GC123");
         mCacheTagWriter.startWriting();
-        mCacheTagWriter.gpxName("foo.gpx");
-        mCacheDetailsWriter.gpxName("foo.gpx");
+        mCacheTagWriter.gpxName("GC123");
 
         PowerMock.replayAll();
-        new CachePersisterFacade(mCacheTagWriter, null, mCacheDetailsWriter, mMessageHandler, null)
-                .open("foo.gpx");
+        new CachePersisterFacade(mCacheTagWriter, null, null, mMessageHandler, null).open("GC123");
         PowerMock.verifyAll();
     }
 

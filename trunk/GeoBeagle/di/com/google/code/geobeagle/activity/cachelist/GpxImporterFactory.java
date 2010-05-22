@@ -18,11 +18,10 @@ import com.google.code.geobeagle.ErrorDisplayer;
 import com.google.code.geobeagle.database.CacheWriter;
 import com.google.code.geobeagle.xmlimport.GpxImporter;
 import com.google.code.geobeagle.xmlimport.GpxImporterDI;
-import com.google.code.geobeagle.xmlimport.MessageHandlerInterface;
 import com.google.code.geobeagle.xmlimport.CachePersisterFacadeDI.CachePersisterFacadeFactory;
+import com.google.code.geobeagle.xmlimport.GpxImporterDI.MessageHandler;
 import com.google.code.geobeagle.xmlimport.GpxToCache.Aborter;
 import com.google.code.geobeagle.xmlimport.GpxToCacheDI.XmlPullParserWrapper;
-import com.google.inject.Injector;
 
 import android.content.Context;
 
@@ -33,14 +32,13 @@ public class GpxImporterFactory {
     private final ErrorDisplayer mErrorDisplayer;
     private final Pausable mGeocacheListPresenter;
     private final Context mContext;
-    private final MessageHandlerInterface mMessageHandler;
+    private final MessageHandler mMessageHandler;
     private final XmlPullParserWrapper mXmlPullParserWrapper;
-    private final Injector mInjector;
 
     public GpxImporterFactory(Aborter aborter,
             CachePersisterFacadeFactory cachePersisterFacadeFactory, ErrorDisplayer errorDisplayer,
-            Pausable pausable, Context context, MessageHandlerInterface messageHandler,
-            XmlPullParserWrapper xmlPullParserWrapper, Injector injector) {
+            Pausable pausable, Context context, MessageHandler messageHandler,
+            XmlPullParserWrapper xmlPullParserWrapper) {
         mAborter = aborter;
         mCachePersisterFacadeFactory = cachePersisterFacadeFactory;
         mErrorDisplayer = errorDisplayer;
@@ -48,12 +46,11 @@ public class GpxImporterFactory {
         mContext = context;
         mMessageHandler = messageHandler;
         mXmlPullParserWrapper = xmlPullParserWrapper;
-        mInjector = injector;
     }
 
     public GpxImporter create(CacheWriter cacheWriter) {
         return GpxImporterDI.create(mContext, mXmlPullParserWrapper, mErrorDisplayer,
                 mGeocacheListPresenter, mAborter, mMessageHandler, mCachePersisterFacadeFactory,
-                cacheWriter, mInjector);
+                cacheWriter);
     }
 }

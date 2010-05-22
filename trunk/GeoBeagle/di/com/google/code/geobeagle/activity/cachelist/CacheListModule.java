@@ -14,15 +14,7 @@
 
 package com.google.code.geobeagle.activity.cachelist;
 
-import static java.lang.annotation.ElementType.FIELD;
-import static java.lang.annotation.ElementType.METHOD;
-import static java.lang.annotation.ElementType.PARAMETER;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-
-import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.LocationControlBuffered.GpsDisabledLocation;
-import com.google.code.geobeagle.activity.cachelist.actions.menu.Abortable;
-import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionSyncBCaching;
 import com.google.code.geobeagle.activity.cachelist.presenter.AbsoluteBearingFormatter;
 import com.google.code.geobeagle.activity.cachelist.presenter.ActionAndTolerance;
 import com.google.code.geobeagle.activity.cachelist.presenter.AdapterCachesSorter;
@@ -38,8 +30,6 @@ import com.google.code.geobeagle.activity.cachelist.presenter.ToleranceStrategy;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh.ActionManager;
 import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheListPresenter.GeocacheListPresenterFactory;
 import com.google.code.geobeagle.activity.main.GeoBeagleModule.DefaultSharedPreferences;
-import com.google.code.geobeagle.xmlimport.GpxImporterDI.Toaster;
-import com.google.inject.BindingAnnotation;
 import com.google.inject.Provides;
 import com.google.inject.assistedinject.FactoryProvider;
 
@@ -48,16 +38,9 @@ import roboguice.inject.ContextScoped;
 
 import android.app.Activity;
 import android.app.ListActivity;
-import android.content.Context;
 import android.content.SharedPreferences;
-import android.widget.Toast;
-
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
 
 public class CacheListModule extends AbstractAndroidModule {
-    @BindingAnnotation @Target({ FIELD, PARAMETER, METHOD }) @Retention(RUNTIME)
-    public static @interface ToasterSyncAborted {}
 
     @Override
     protected void configure() {
@@ -65,7 +48,6 @@ public class CacheListModule extends AbstractAndroidModule {
         bind(GeocacheListPresenterFactory.class).toProvider(
                 FactoryProvider.newFactory(GeocacheListPresenterFactory.class,
                         GeocacheListPresenter.class));
-        bind(MenuActionSyncBCaching.class).in(ContextScoped.class);
     }
 
     @Provides
@@ -102,19 +84,9 @@ public class CacheListModule extends AbstractAndroidModule {
         };
 
         return new ActionManager(actionAndTolerances);
+
     }
 
-    @Provides
-    @ToasterSyncAborted
-    Toaster toasterProvider(Context context) {
-        return new Toaster(context, R.string.import_canceled, Toast.LENGTH_LONG);
-    }
-    
-    @Provides
-    Abortable providesAbortable() {
-        return new NullAbortable();
-    }
-    
     @Provides
     ActionManagerFactory providesActionManagerFactory(GpsDisabledLocation gpsDisabledLocation,
             AdapterCachesSorter adapterCachesSorter, DistanceUpdater distanceUpdater) {

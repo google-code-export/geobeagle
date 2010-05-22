@@ -178,9 +178,9 @@ public class GeoBeagle extends GuiceActivity {
 
     @Override
     public void onPause() {
+        super.onPause();
         Log.d("GeoBeagle", "GeoBeagle onPause");
         mGeoBeagleDelegate.onPause();
-        super.onPause();
     }
 
     /*

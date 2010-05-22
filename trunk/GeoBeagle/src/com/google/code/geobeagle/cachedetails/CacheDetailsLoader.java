@@ -59,28 +59,21 @@ public class CacheDetailsLoader {
     }
 
     public static class DetailsOpener {
+
         private final Activity mActivity;
-        private final FileDataVersionChecker mFileDataVersionChecker;
 
         @Inject
-        public DetailsOpener(Activity activity, FileDataVersionChecker fileDataVersionChecker) {
+        public DetailsOpener(Activity activity) {
             mActivity = activity;
-            mFileDataVersionChecker = fileDataVersionChecker;
         }
 
         DetailsReader open(File file) {
-            File sdcardPath = new File(CacheDetailsLoader.SDCARD_DIR);
-            if (!sdcardPath.isDirectory())
-                return new DetailsReaderError(mActivity, R.string.error_cant_read_sdroot, "");
-            
             FileInputStream fileInputStream;
             String absolutePath = file.getAbsolutePath();
             try {
                 fileInputStream = new FileInputStream(file);
             } catch (FileNotFoundException e) {
-                int error = mFileDataVersionChecker.needsUpdating() ? R.string.error_details_file_version
-                        : R.string.error_opening_details_file;
-                return new DetailsReaderError(mActivity, error, e.getMessage());
+                return new DetailsReaderFileNotFound(mActivity, e.getMessage());
             }
             byte[] buffer = new byte[(int)file.length()];
             return new DetailsReaderImpl(mActivity, absolutePath, fileInputStream, buffer);
@@ -91,19 +84,17 @@ public class CacheDetailsLoader {
         Details read();
     }
 
-    static class DetailsReaderError implements DetailsReader {
+    static class DetailsReaderFileNotFound implements DetailsReader {
         private final Activity mActivity;
         private final String mPath;
-        private final int mError;
 
-        DetailsReaderError(Activity activity, int error, String path) {
+        DetailsReaderFileNotFound(Activity activity, String path) {
             mActivity = activity;
             mPath = path;
-            mError = error;
         }
 
         public Details read() {
-            return new DetailsError(mActivity, mError, mPath);
+            return new DetailsError(mActivity, R.string.error_opening_details_file, mPath);
         }
     }
 
@@ -132,20 +123,17 @@ public class CacheDetailsLoader {
         }
     }
 
-    public static final String SDCARD_DIR = "/sdcard/";
-    public static final String DETAILS_DIR = SDCARD_DIR + "GeoBeagle/data/";
-    public static final String OLD_DETAILS_DIR = SDCARD_DIR + "GeoBeagle";
+    public static final String DETAILS_DIR = "/sdcard/GeoBeagle/";
     private final DetailsOpener mDetailsOpener;
-    private final FilePathStrategy mFilePathStrategy;
 
     @Inject
-    public CacheDetailsLoader(DetailsOpener detailsOpener, FilePathStrategy filePathStrategy) {
+    public CacheDetailsLoader(DetailsOpener detailsOpener) {
         mDetailsOpener = detailsOpener;
-        mFilePathStrategy = filePathStrategy;
     }
 
-    public String load(CharSequence sourceName, CharSequence cacheId) {
-        String path = mFilePathStrategy.getPath(sourceName, cacheId.toString());
+    public String load(CharSequence cacheId) {
+        final String sanitized = CacheDetailsWriter.replaceIllegalFileChars(cacheId.toString());
+        String path = DETAILS_DIR + sanitized + ".html";
         File file = new File(path);
         DetailsReader detailsReader = mDetailsOpener.open(file);
         Details details = detailsReader.read();

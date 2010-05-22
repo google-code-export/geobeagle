@@ -44,8 +44,8 @@ public class GeocacheToGoogleMap implements GeocacheToUri {
         idAndName = idAndName.replace(")", "]");
         idAndName = URLEncoder.encode(idAndName);
         final String format = String.format(Locale.US, mContext
-                .getString(R.string.map_intent),
-                geocache.getLatitude(), geocache.getLongitude(), idAndName);
+                .getString(R.string.map_intent), geocache.getLatitude(), geocache.getLongitude(),
+                idAndName);
         return format;
     }
 }

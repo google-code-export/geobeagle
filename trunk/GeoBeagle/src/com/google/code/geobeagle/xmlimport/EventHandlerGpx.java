@@ -16,11 +16,10 @@ package com.google.code.geobeagle.xmlimport;
 
 import com.google.code.geobeagle.GeocacheFactory.Source;
 import com.google.code.geobeagle.xmlimport.GpxToCacheDI.XmlPullParserWrapper;
-import com.google.inject.Inject;
 
 import java.io.IOException;
 
-public class EventHandlerGpx implements EventHandler {
+class EventHandlerGpx implements EventHandler {
     static final String XPATH_CACHE_CONTAINER = "/gpx/wpt/groundspeak:cache/groundspeak:container";
     static final String XPATH_CACHE_DIFFICULTY = "/gpx/wpt/groundspeak:cache/groundspeak:difficulty";
     static final String XPATH_CACHE_TERRAIN = "/gpx/wpt/groundspeak:cache/groundspeak:terrain";
@@ -34,7 +33,6 @@ public class EventHandlerGpx implements EventHandler {
     static final String XPATH_GEOCACHENAME = "/gpx/wpt/geocache/name";
     static final String XPATH_GPXNAME = "/gpx/name";
     static final String XPATH_GPXTIME = "/gpx/time";
-    static final String XPATH_TERRACACHINGGPXTIME = "/gpx/metadata/time";
     static final String XPATH_GROUNDSPEAKNAME = "/gpx/wpt/groundspeak:cache/groundspeak:name";
     static final String XPATH_HINT = "/gpx/wpt/groundspeak:cache/groundspeak:encoded_hints";
     static final String XPATH_LOGDATE = "/gpx/wpt/groundspeak:cache/groundspeak:logs/groundspeak:log/groundspeak:date";
@@ -61,7 +59,6 @@ public class EventHandlerGpx implements EventHandler {
     
     private final CachePersisterFacade mCachePersisterFacade;
 
-    @Inject
     public EventHandlerGpx(CachePersisterFacade cachePersisterFacade) {
         mCachePersisterFacade = cachePersisterFacade;
     }
@@ -87,7 +84,7 @@ public class EventHandlerGpx implements EventHandler {
             mCachePersisterFacade.wptName(trimmedText);
         } else if (fullPath.equals(XPATH_WPTDESC)) {
             mCachePersisterFacade.wptDesc(trimmedText);
-        } else if (fullPath.equals(XPATH_GPXTIME) || fullPath.equals(XPATH_TERRACACHINGGPXTIME)) {
+        } else if (fullPath.equals(XPATH_GPXTIME)) {
             return mCachePersisterFacade.gpxTime(trimmedText);
         } else if (fullPath.equals(XPATH_GROUNDSPEAKNAME) || fullPath.equals(XPATH_GEOCACHENAME)) {
             mCachePersisterFacade.groundspeakName(trimmedText);

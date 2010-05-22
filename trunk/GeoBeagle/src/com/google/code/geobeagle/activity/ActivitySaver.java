@@ -15,31 +15,25 @@
 package com.google.code.geobeagle.activity;
 
 import com.google.code.geobeagle.Geocache;
-import com.google.code.geobeagle.activity.main.GeoBeagleModule.DefaultSharedPreferences;
-import com.google.inject.Inject;
 
-import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 
 public class ActivitySaver {
-    private final SharedPreferences sharedPreferences;
-    static final String LAST_ACTIVITY = "lastActivity2";
+    private final Editor mEditor;
+    static final String LAST_ACTIVITY = "lastActivity";
 
-    @Inject
-    ActivitySaver(@DefaultSharedPreferences SharedPreferences sharedPreferences) {
-        this.sharedPreferences = sharedPreferences;
+    ActivitySaver(Editor editor) {
+        mEditor = editor;
     }
 
     public void save(ActivityType activityType) {
-        Editor editor = sharedPreferences.edit();
-        editor.putString(LAST_ACTIVITY, activityType.name());
-        editor.commit();
+        mEditor.putInt("lastActivity", activityType.toInt());
+        mEditor.commit();
     }
 
     public void save(ActivityType activityType, Geocache geocache) {
-        Editor editor = sharedPreferences.edit();
-        editor.putString(LAST_ACTIVITY, activityType.name());
-        geocache.writeToPrefs(editor);
-        editor.commit();
+        mEditor.putInt("lastActivity", activityType.toInt());
+        geocache.writeToPrefs(mEditor);
+        mEditor.commit();
     }
 }

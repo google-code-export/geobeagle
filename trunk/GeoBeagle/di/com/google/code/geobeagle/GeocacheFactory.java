@@ -39,8 +39,7 @@ public class GeocacheFactory {
     }
 
     public static enum Provider {
-        ATLAS_QUEST(0, "LB"), GROUNDSPEAK(1, "GC"), MY_LOCATION(-1, "ML"), OPENCACHING(2, "OC"), GEOCACHING_AU(
-                3, "GA"), GEOCACHING_WP(4, "TP");
+        ATLAS_QUEST(0, "LB"), GROUNDSPEAK(1, "GC"), MY_LOCATION(-1, "ML"), OPENCACHING(2, "OC");
 
         private final int mIx;
         private final String mPrefix;

@@ -17,49 +17,32 @@ package com.google.code.geobeagle.activity.cachelist.actions.menu;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.actions.MenuActionBase;
 import com.google.code.geobeagle.activity.cachelist.GpxImporterFactory;
-import com.google.code.geobeagle.activity.cachelist.NullAbortable;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
-import com.google.code.geobeagle.bcaching.ImportBCachingWorker;
-import com.google.code.geobeagle.database.CacheWriter;
+import com.google.code.geobeagle.database.DbFrontend;
 import com.google.code.geobeagle.xmlimport.GpxImporter;
-import com.google.inject.Provider;
-
-import android.util.Log;
 
 public class MenuActionSyncGpx extends MenuActionBase {
-    private Abortable mSdcardImportAbortable;
+    private Abortable mAbortable;
     private final CacheListRefresh mCacheListRefresh;
     private final GpxImporterFactory mGpxImporterFactory;
-    private final Provider<CacheWriter> mCacheWriterProvider;
-    private final Provider<ImportBCachingWorker> mImportBCachingWorkerProvider;
-    private Abortable mBCachingWorkerAborter;
-    private Abortable mNullAbortable;
+    private final DbFrontend mDbFrontend;
 
-    public MenuActionSyncGpx(Provider<ImportBCachingWorker> importBCachingWorkerProvider,
-            NullAbortable nullAbortable, CacheListRefresh cacheListRefresh,
-            GpxImporterFactory gpxImporterFactory, Provider<CacheWriter> cacheWriterProvider) {
+    public MenuActionSyncGpx(Abortable abortable, CacheListRefresh cacheListRefresh,
+            GpxImporterFactory gpxImporterFactory, DbFrontend dbFrontend) {
         super(R.string.menu_sync);
-        mNullAbortable = nullAbortable;
-        mSdcardImportAbortable = nullAbortable;
-        mBCachingWorkerAborter = nullAbortable;
+        mAbortable = abortable;
         mCacheListRefresh = cacheListRefresh;
         mGpxImporterFactory = gpxImporterFactory;
-        mCacheWriterProvider = cacheWriterProvider;
-        mImportBCachingWorkerProvider = importBCachingWorkerProvider;
+        mDbFrontend = dbFrontend;
     }
 
     public void abort() {
-        Log.d("GeoBeagle", "MenuActionSyncGpx aborting");
-        mSdcardImportAbortable.abort();
-        mBCachingWorkerAborter.abort();
-        mSdcardImportAbortable = mNullAbortable;
-        mBCachingWorkerAborter = mNullAbortable;
+        mAbortable.abort();
     }
 
     public void act() {
-        final GpxImporter gpxImporter = mGpxImporterFactory.create(mCacheWriterProvider.get());
-        mSdcardImportAbortable = gpxImporter;
-        mBCachingWorkerAborter = mImportBCachingWorkerProvider.get();
+        final GpxImporter gpxImporter = mGpxImporterFactory.create(mDbFrontend.getCacheWriter());
+        mAbortable = gpxImporter;
         gpxImporter.importGpxs(mCacheListRefresh);
     }
 }

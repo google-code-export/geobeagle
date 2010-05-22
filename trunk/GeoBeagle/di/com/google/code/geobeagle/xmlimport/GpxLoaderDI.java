@@ -16,9 +16,6 @@ package com.google.code.geobeagle.xmlimport;
 
 import com.google.code.geobeagle.ErrorDisplayer;
 import com.google.code.geobeagle.database.CacheWriter;
-import com.google.code.geobeagle.xmlimport.CachePersisterFacade;
-import com.google.code.geobeagle.xmlimport.GpxLoader;
-import com.google.code.geobeagle.xmlimport.GpxToCache;
 import com.google.code.geobeagle.xmlimport.GpxToCache.Aborter;
 import com.google.code.geobeagle.xmlimport.GpxToCacheDI.XmlPullParserWrapper;
 
@@ -26,11 +23,11 @@ import android.os.PowerManager.WakeLock;
 
 public class GpxLoaderDI {
     public static GpxLoader create(CachePersisterFacade cachePersisterFacade,
-            XmlPullParserWrapper xmlPullParserWrapper, Aborter aborter,
+            XmlPullParserWrapper xmlPullParserFactory, Aborter aborter,
             ErrorDisplayer errorDisplayer, WakeLock wakeLock, CacheWriter cacheWriter) {
         FileAlreadyLoadedChecker fileAlreadyLoadedChecker = new FileAlreadyLoadedChecker(
                 cacheWriter);
-        final GpxToCache gpxToCache = new GpxToCache(xmlPullParserWrapper, aborter,
+        final GpxToCache gpxToCache = new GpxToCache(xmlPullParserFactory, aborter,
                 fileAlreadyLoadedChecker);
         return new GpxLoader(cachePersisterFacade, errorDisplayer, gpxToCache, wakeLock);
     }

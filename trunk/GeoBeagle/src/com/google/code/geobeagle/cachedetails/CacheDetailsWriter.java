@@ -14,22 +14,15 @@
 
 package com.google.code.geobeagle.cachedetails;
 
-import com.google.inject.Inject;
-
-import java.io.File;
 import java.io.IOException;
 
 public class CacheDetailsWriter {
     private final HtmlWriter mHtmlWriter;
-    private final FilePathStrategy mFilePathStrategy;
     private String mLatitude;
     private String mLongitude;
-    private String mGpxName;
 
-    @Inject
-    public CacheDetailsWriter(HtmlWriter htmlWriter, FilePathStrategy filePathStrategy) {
+    public CacheDetailsWriter(HtmlWriter htmlWriter) {
         mHtmlWriter = htmlWriter;
-        mFilePathStrategy = filePathStrategy;
     }
 
     public void close() throws IOException {
@@ -43,9 +36,8 @@ public class CacheDetailsWriter {
     }
 
     public void open(String wpt) throws IOException {
-        String path = mFilePathStrategy.getPath(mGpxName, wpt);
-        new File(new File(path).getParent()).mkdirs();
-        mHtmlWriter.open(path);
+        final String sanitized = replaceIllegalFileChars(wpt);
+        mHtmlWriter.open(CacheDetailsLoader.DETAILS_DIR + sanitized + ".html");
     }
 
     public static String replaceIllegalFileChars(String wpt) {
@@ -70,9 +62,5 @@ public class CacheDetailsWriter {
         mHtmlWriter.write(wpt);
         mHtmlWriter.write(mLatitude + ", " + mLongitude);
         mLatitude = mLongitude = null;
-    }
-
-    public void gpxName(String gpxName) {
-        mGpxName = gpxName;
     }
 }
