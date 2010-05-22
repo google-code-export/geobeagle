@@ -15,6 +15,7 @@
 package com.google.code.geobeagle.database;
 
 import com.google.code.geobeagle.database.DatabaseDI.CacheReaderCursorFactory;
+import com.google.inject.Inject;
 import com.google.inject.Provider;
 
 import android.database.Cursor;
@@ -27,15 +28,17 @@ public class CacheReader {
 
     public static final String SQL_QUERY_LIMIT = "1000";
     private final CacheReaderCursorFactory mCacheReaderCursorFactory;
-    private final ISQLiteDatabase mSqliteWrapper;
+    private final Provider<ISQLiteDatabase> mSqliteWrapperProvider;
 
-    CacheReader(ISQLiteDatabase sqliteWrapper, CacheReaderCursorFactory cacheReaderCursorFactory) {
-        mSqliteWrapper = sqliteWrapper;
+    @Inject
+    CacheReader(Provider<ISQLiteDatabase> sqliteWrapperProvider,
+            CacheReaderCursorFactory cacheReaderCursorFactory) {
+        mSqliteWrapperProvider = sqliteWrapperProvider;
         mCacheReaderCursorFactory = cacheReaderCursorFactory;
     }
 
     public int getTotalCount() {
-        Cursor cursor = mSqliteWrapper
+        Cursor cursor = mSqliteWrapperProvider.get()
                 .rawQuery("SELECT COUNT(*) FROM " + Database.TBL_CACHES, null);
         cursor.moveToFirst();
         int count = cursor.getInt(0);
@@ -45,8 +48,9 @@ public class CacheReader {
 
     public CacheReaderCursor open(double latitude, double longitude, WhereFactory whereFactory,
             String limit) {
-        String where = whereFactory.getWhere(mSqliteWrapper, latitude, longitude);
-        Cursor cursor = mSqliteWrapper.query(Database.TBL_CACHES, CacheReader.READER_COLUMNS,
+        ISQLiteDatabase sqliteWrapper = mSqliteWrapperProvider.get();
+        String where = whereFactory.getWhere(sqliteWrapper, latitude, longitude);
+        Cursor cursor = sqliteWrapper.query(Database.TBL_CACHES, CacheReader.READER_COLUMNS,
                 where, null, null, null, limit);
         if (!cursor.moveToFirst()) {
             cursor.close();
@@ -56,7 +60,7 @@ public class CacheReader {
     }
 
     public CacheReaderCursor open(CharSequence cacheId) {
-        Cursor cursor = mSqliteWrapper.query(Database.TBL_CACHES, CacheReader.READER_COLUMNS,
+        Cursor cursor = mSqliteWrapperProvider.get().query(Database.TBL_CACHES, CacheReader.READER_COLUMNS,
                 "Id='" + cacheId + "'", null, null, null, null);
         if (!cursor.moveToFirst()) {
             cursor.close();
