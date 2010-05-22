@@ -15,4 +15,7 @@ public class XmlimportAnnotations {
     }
     @BindingAnnotation @Target( { FIELD, PARAMETER, METHOD })
     @Retention(RUNTIME) public static @interface GpxAnnotation { }
+
+    @BindingAnnotation @Target( { FIELD, PARAMETER, METHOD })
+    @Retention(RUNTIME) public static @interface SDCard { }
 }

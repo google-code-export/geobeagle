@@ -41,11 +41,22 @@ public class CacheWriter {
         ClearCachesFromSourceImpl(Provider<ISQLiteDatabase> sqliteProvider) {
             this.sqliteProvider = sqliteProvider;
         }
-        
+
+        @Override
         public void clearCaches(String source) {
             sqliteProvider.get().execSQL(Database.SQL_CLEAR_CACHES, source);
         }
 
+        /**
+         * Deletes any cache/gpx entries marked delete_me, then marks all remaining
+         * gpx-based caches, and gpx entries with delete_me = 1.
+         */
+        @Override
+        public void clearEarlierLoads() {
+            for (String sql : CacheWriter.SQLS_CLEAR_EARLIER_LOADS) {
+                sqliteProvider.get().execSQL(sql);
+            }
+        }
     }
 
     public static class ClearCachesFromSourceNull implements ClearCachesFromSource {
@@ -55,7 +66,12 @@ public class CacheWriter {
         ClearCachesFromSourceNull() {
         }
         
+        @Override
         public void clearCaches(String source) {
+        }
+
+        @Override
+        public void clearEarlierLoads() {
         }
 
     }
@@ -67,15 +83,6 @@ public class CacheWriter {
         mDbToGeocacheAdapter = dbToGeocacheAdapter;
     }
 
-    /**
-     * Deletes any cache/gpx entries marked delete_me, then marks all remaining
-     * gpx-based caches, and gpx entries with delete_me = 1.
-     */
-    public void clearEarlierLoads() {
-        for (String sql : CacheWriter.SQLS_CLEAR_EARLIER_LOADS) {
-            sqliteProvider.get().execSQL(sql);
-        }
-    }
 
     public void deleteCache(CharSequence id) {
         sqliteProvider.get().execSQL(Database.SQL_DELETE_CACHE, id);

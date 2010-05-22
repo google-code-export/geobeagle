@@ -45,4 +45,14 @@ public class BCachingLastUpdated {
         editor.putLong(BCACHING_LAST_UPDATE, lastUpdateTime);
         editor.commit();
     }
+
+    int getLastRead() {
+        return sharedPreferences.getInt(BCACHING_LAST_READ, 0);
+    }
+    
+    void putLastRead(int lastRead) {
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putInt(BCachingLastUpdated.BCACHING_LAST_READ, lastRead);
+        editor.commit();
+    }
 }
