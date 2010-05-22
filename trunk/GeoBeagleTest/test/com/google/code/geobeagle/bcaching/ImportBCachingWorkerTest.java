@@ -41,13 +41,13 @@ import android.util.Log;
         Message.class, Log.class, ImportBCachingWorker.class
 })
 public class ImportBCachingWorkerTest extends GeoBeagleTest {
-    private ProgressHandler progressHandler;
-    private ProgressManager progressManager;
-    private BCachingList bcachingListFirst;
     private BCachingLastUpdated bcachingLastUpdated;
     private BCachingListImporter bcachingListFactory;
-    private ErrorDisplayer errorDisplayer;
+    private BCachingList bcachingListFirst;
     private DetailsReaderImport detailsReaderImport;
+    private ErrorDisplayer errorDisplayer;
+    private ProgressHandler progressHandler;
+    private ProgressManager progressManager;
 
     @Before
     public void setUp() {
@@ -78,23 +78,6 @@ public class ImportBCachingWorkerTest extends GeoBeagleTest {
     }
 
     @Test
-    public void testWorkerRaise() throws BCachingException {
-        expect(System.currentTimeMillis()).andReturn(1234L);
-
-        progressManager.update(progressHandler, ProgressMessage.START, 0);
-        expect(bcachingLastUpdated.getLastUpdateTime()).andReturn(1000L);
-        expect(bcachingListFactory.getTotalCount("1000")).andThrow(
-                new BCachingException("io exception"));
-        progressManager.update(progressHandler, ProgressMessage.DONE, 0);
-        errorDisplayer.displayError(R.string.problem_importing_from_bcaching, "io exception");
-
-        replayAll();
-        new ImportBCachingWorker(progressHandler, progressManager, bcachingLastUpdated,
-                bcachingListFactory, errorDisplayer, null, null).run();
-        verifyAll();
-    }
-
-    @Test
     public void testWorkerOneCache() throws BCachingException {
         BCachingList bcachingListLast = createMock(BCachingList.class);
 
@@ -120,6 +103,23 @@ public class ImportBCachingWorkerTest extends GeoBeagleTest {
         replayAll();
         new ImportBCachingWorker(progressHandler, progressManager, bcachingLastUpdated,
                 bcachingListFactory, null, detailsReaderImport, null).run();
+        verifyAll();
+    }
+
+    @Test
+    public void testWorkerRaise() throws BCachingException {
+        expect(System.currentTimeMillis()).andReturn(1234L);
+
+        progressManager.update(progressHandler, ProgressMessage.START, 0);
+        expect(bcachingLastUpdated.getLastUpdateTime()).andReturn(1000L);
+        expect(bcachingListFactory.getTotalCount("1000")).andThrow(
+                new BCachingException("io exception"));
+        progressManager.update(progressHandler, ProgressMessage.DONE, 0);
+        errorDisplayer.displayError(R.string.problem_importing_from_bcaching, "io exception");
+
+        replayAll();
+        new ImportBCachingWorker(progressHandler, progressManager, bcachingLastUpdated,
+                bcachingListFactory, errorDisplayer, null, null).run();
         verifyAll();
     }
 
