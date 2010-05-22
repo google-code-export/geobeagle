@@ -20,5 +20,6 @@
 	<classpathentry kind="lib" path="/Users/sng/Library/powermock-1.2.5/cglib-nodep-2.1_3.jar"/>
 	<classpathentry kind="lib" path="/Users/sng/Library/android-sdk-mac_x86-1.5_r3/platforms/android-1.5/android.jar"/>
 	<classpathentry kind="lib" path="/Users/sng/Library/android-sdk-mac_x86-1.5_r3/add-ons/google_apis-3/libs/maps.jar"/>
+	<classpathentry kind="lib" path="/Users/sng/Library/roboguice/guice-2-1.0-no_aop.jar" sourcepath="/Users/sng/Library/guice-2.0-src.zip"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

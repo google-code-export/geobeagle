@@ -127,6 +127,10 @@ public class DbFrontend {
         mDatabase.execSQL(Database.SQL_DELETE_ALL_GPX);
     }
 
+    public void forceUpdate() {
+        openDatabase();
+        mDatabase.execSQL(Database.SQL_FORCE_UPDATE_ALL);
+    }
     public ISQLiteDatabase getDatabase() {
         openDatabase();
         return mDatabase;
