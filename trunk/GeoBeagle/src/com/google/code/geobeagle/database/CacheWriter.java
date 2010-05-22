@@ -30,8 +30,8 @@ public class CacheWriter {
             Database.SQL_RESET_DELETE_ME_CACHES, Database.SQL_RESET_DELETE_ME_GPX
     };
     private final DbToGeocacheAdapter mDbToGeocacheAdapter;
+    private final ISQLiteDatabase mSqlite;
     private String mGpxTime;
-    private Provider<ISQLiteDatabase> mSqliteProvider;
 
     public static class ClearCachesFromSourceImpl implements ClearCachesFromSource {
         private final ISQLiteDatabase sqlite;
@@ -62,8 +62,8 @@ public class CacheWriter {
     }
 
     @Inject
-    CacheWriter(Provider<ISQLiteDatabase> sqliteProvider, DbToGeocacheAdapter dbToGeocacheAdapter) {
-        mSqliteProvider = sqliteProvider;
+    CacheWriter(ISQLiteDatabase sqlite, DbToGeocacheAdapter dbToGeocacheAdapter) {
+        mSqlite = sqlite;
         mDbToGeocacheAdapter = dbToGeocacheAdapter;
     }
 
@@ -73,18 +73,18 @@ public class CacheWriter {
      */
     public void clearEarlierLoads() {
         for (String sql : CacheWriter.SQLS_CLEAR_EARLIER_LOADS) {
-            mSqliteProvider.get().execSQL(sql);
+            mSqlite.execSQL(sql);
         }
     }
 
     public void deleteCache(CharSequence id) {
-        mSqliteProvider.get().execSQL(Database.SQL_DELETE_CACHE, id);
+        mSqlite.execSQL(Database.SQL_DELETE_CACHE, id);
     }
 
     public void insertAndUpdateCache(CharSequence id, CharSequence name, double latitude,
             double longitude, Source sourceType, String sourceName, CacheType cacheType,
             int difficulty, int terrain, int container) {
-        mSqliteProvider.get().execSQL(Database.SQL_REPLACE_CACHE, id, name, new Double(latitude), new Double(
+        mSqlite.execSQL(Database.SQL_REPLACE_CACHE, id, name, new Double(latitude), new Double(
                 longitude), mDbToGeocacheAdapter.sourceTypeToSourceName(sourceType, sourceName),
                 cacheType.toInt(), difficulty, terrain, container);
     }
@@ -100,28 +100,26 @@ public class CacheWriter {
     public boolean isGpxAlreadyLoaded(String gpxName, String gpxTime) {
         mGpxTime = gpxTime;
         // TODO:countResults is slow; replace with a query, and moveToFirst.
-        ISQLiteDatabase sqliteDatabase = mSqliteProvider.get();
-        boolean gpxAlreadyLoaded = sqliteDatabase.countResults(Database.TBL_GPX,
+        boolean gpxAlreadyLoaded = mSqlite.countResults(Database.TBL_GPX,
                 Database.SQL_MATCH_NAME_AND_EXPORTED_LATER, gpxName, gpxTime) > 0;
         if (gpxAlreadyLoaded) {
-            sqliteDatabase.execSQL(Database.SQL_CACHES_DONT_DELETE_ME, gpxName);
-            sqliteDatabase.execSQL(Database.SQL_GPX_DONT_DELETE_ME, gpxName);
+            mSqlite.execSQL(Database.SQL_CACHES_DONT_DELETE_ME, gpxName);
+            mSqlite.execSQL(Database.SQL_GPX_DONT_DELETE_ME, gpxName);
         }
         return gpxAlreadyLoaded;
     }
 
     public void startWriting() {
-        mSqliteProvider.get().beginTransaction();
+        mSqlite.beginTransaction();
     }
 
     public void stopWriting() {
         // TODO: abort if no writes--otherwise sqlite is unhappy.
-        ISQLiteDatabase liteDatabase = mSqliteProvider.get();
-        liteDatabase.setTransactionSuccessful();
-        liteDatabase.endTransaction();
+        mSqlite.setTransactionSuccessful();
+        mSqlite.endTransaction();
     }
 
     public void writeGpx(String gpxName) {
-        mSqliteProvider.get().execSQL(Database.SQL_REPLACE_GPX, gpxName, mGpxTime);
+        mSqlite.execSQL(Database.SQL_REPLACE_GPX, gpxName, mGpxTime);
     }
 }

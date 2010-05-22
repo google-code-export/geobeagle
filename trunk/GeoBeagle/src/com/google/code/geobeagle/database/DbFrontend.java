@@ -86,7 +86,7 @@ public class DbFrontend {
         if (mCacheWriter != null)
             return mCacheWriter;
         openDatabase();
-        mCacheWriter = DatabaseDI.createCacheWriter(mDatabaseProvider);
+        mCacheWriter = DatabaseDI.createCacheWriter(mDatabase);
         return mCacheWriter;
     }
 
@@ -111,10 +111,10 @@ public class DbFrontend {
             return;
 
         mSqliteOpenHelper = new GeoBeagleSqliteOpenHelper(mContext);
-        final SQLiteDatabase sqDb = mSqliteOpenHelper.getWritableDatabase();
+        final SQLiteDatabase sqDb = mSqliteOpenHelper.getReadableDatabase();
         mDatabase = new DatabaseDI.SQLiteWrapper(sqDb);
 
-        mCacheReader = DatabaseDI.createCacheReader(mDatabaseProvider);
+        mCacheReader = DatabaseDI.createCacheReader(mDatabase);
         mIsDatabaseOpen = true;
     }
     

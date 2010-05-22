@@ -27,15 +27,15 @@ public class CacheReader {
 
     public static final String SQL_QUERY_LIMIT = "1000";
     private final CacheReaderCursorFactory mCacheReaderCursorFactory;
-    private final Provider<ISQLiteDatabase> mSqliteWrapper;
+    private final ISQLiteDatabase mSqliteWrapper;
 
-    CacheReader(Provider<ISQLiteDatabase> sqliteDatabaseProvider, CacheReaderCursorFactory cacheReaderCursorFactory) {
-        mSqliteWrapper = sqliteDatabaseProvider;
+    CacheReader(ISQLiteDatabase sqliteWrapper, CacheReaderCursorFactory cacheReaderCursorFactory) {
+        mSqliteWrapper = sqliteWrapper;
         mCacheReaderCursorFactory = cacheReaderCursorFactory;
     }
 
     public int getTotalCount() {
-        Cursor cursor = mSqliteWrapper.get()
+        Cursor cursor = mSqliteWrapper
                 .rawQuery("SELECT COUNT(*) FROM " + Database.TBL_CACHES, null);
         cursor.moveToFirst();
         int count = cursor.getInt(0);
@@ -45,8 +45,8 @@ public class CacheReader {
 
     public CacheReaderCursor open(double latitude, double longitude, WhereFactory whereFactory,
             String limit) {
-        String where = whereFactory.getWhere(mSqliteWrapper.get(), latitude, longitude);
-        Cursor cursor = mSqliteWrapper.get().query(Database.TBL_CACHES, CacheReader.READER_COLUMNS,
+        String where = whereFactory.getWhere(mSqliteWrapper, latitude, longitude);
+        Cursor cursor = mSqliteWrapper.query(Database.TBL_CACHES, CacheReader.READER_COLUMNS,
                 where, null, null, null, limit);
         if (!cursor.moveToFirst()) {
             cursor.close();
@@ -56,7 +56,7 @@ public class CacheReader {
     }
 
     public CacheReaderCursor open(CharSequence cacheId) {
-        Cursor cursor = mSqliteWrapper.get().query(Database.TBL_CACHES, CacheReader.READER_COLUMNS,
+        Cursor cursor = mSqliteWrapper.query(Database.TBL_CACHES, CacheReader.READER_COLUMNS,
                 "Id='" + cacheId + "'", null, null, null, null);
         if (!cursor.moveToFirst()) {
             cursor.close();
