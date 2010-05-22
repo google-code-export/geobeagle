@@ -59,6 +59,7 @@ public class CacheDetailsLoader {
     }
 
     public static class DetailsOpener {
+
         private final Activity mActivity;
         private final FileDataVersionChecker mFileDataVersionChecker;
 
@@ -73,14 +74,16 @@ public class CacheDetailsLoader {
             if (!sdcardPath.isDirectory())
                 return new DetailsReaderError(mActivity, R.string.error_cant_read_sdroot, "");
             
+            if (mFileDataVersionChecker.needsUpdating())
+                return new DetailsReaderError(mActivity, R.string.error_details_file_version, "");
+
             FileInputStream fileInputStream;
             String absolutePath = file.getAbsolutePath();
             try {
                 fileInputStream = new FileInputStream(file);
             } catch (FileNotFoundException e) {
-                int error = mFileDataVersionChecker.needsUpdating() ? R.string.error_details_file_version
-                        : R.string.error_opening_details_file;
-                return new DetailsReaderError(mActivity, error, e.getMessage());
+                return new DetailsReaderError(mActivity,
+                        R.string.error_opening_details_file, e.getMessage());
             }
             byte[] buffer = new byte[(int)file.length()];
             return new DetailsReaderImpl(mActivity, absolutePath, fileInputStream, buffer);
@@ -136,16 +139,15 @@ public class CacheDetailsLoader {
     public static final String DETAILS_DIR = SDCARD_DIR + "GeoBeagle/data/";
     public static final String OLD_DETAILS_DIR = SDCARD_DIR + "GeoBeagle";
     private final DetailsOpener mDetailsOpener;
-    private final FilePathStrategy mFilePathStrategy;
 
     @Inject
-    public CacheDetailsLoader(DetailsOpener detailsOpener, FilePathStrategy filePathStrategy) {
+    public CacheDetailsLoader(DetailsOpener detailsOpener) {
         mDetailsOpener = detailsOpener;
-        mFilePathStrategy = filePathStrategy;
     }
 
     public String load(CharSequence sourceName, CharSequence cacheId) {
-        String path = mFilePathStrategy.getPath(sourceName, cacheId.toString());
+        final String sanitized = CacheDetailsWriter.replaceIllegalFileChars(cacheId.toString());
+        String path = DETAILS_DIR + sourceName + "/" + sanitized + ".html";
         File file = new File(path);
         DetailsReader detailsReader = mDetailsOpener.open(file);
         Details details = detailsReader.read();

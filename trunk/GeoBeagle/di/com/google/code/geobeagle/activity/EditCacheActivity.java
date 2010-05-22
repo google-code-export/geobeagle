@@ -17,19 +17,15 @@ package com.google.code.geobeagle.activity;
 import com.google.code.geobeagle.GeocacheFactory;
 import com.google.code.geobeagle.activity.main.view.EditCacheActivityDelegate;
 import com.google.code.geobeagle.activity.main.view.EditCacheActivityDelegate.CancelButtonOnClickListener;
-import com.google.code.geobeagle.database.CacheWriter;
 import com.google.code.geobeagle.database.DbFrontend;
 import com.google.code.geobeagle.database.LocationSaver;
-import com.google.inject.Provider;
 
-import roboguice.activity.GuiceActivity;
-
+import android.app.Activity;
 import android.os.Bundle;
 
-public class EditCacheActivity extends GuiceActivity {
+public class EditCacheActivity extends Activity {
     private EditCacheActivityDelegate mEditCacheActivityDelegate;
-    private Provider<DbFrontend> mDbFrontendProvider;
-    private Provider<CacheWriter> mCacheWriterProvider;
+    private DbFrontend mDbFrontend;
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,9 +33,8 @@ public class EditCacheActivity extends GuiceActivity {
         final CancelButtonOnClickListener cancelButtonOnClickListener = new CancelButtonOnClickListener(
                 this);
         final GeocacheFactory geocacheFactory = new GeocacheFactory();
-        mDbFrontendProvider = getInjector().getProvider(DbFrontend.class);
-        mCacheWriterProvider = getInjector().getProvider(CacheWriter.class);
-        final LocationSaver locationSaver = new LocationSaver(mCacheWriterProvider);
+        mDbFrontend = new DbFrontend(this);
+        LocationSaver locationSaver = new LocationSaver(mDbFrontend);
         mEditCacheActivityDelegate = new EditCacheActivityDelegate(this,
                 cancelButtonOnClickListener, geocacheFactory, locationSaver);
         
@@ -48,8 +43,8 @@ public class EditCacheActivity extends GuiceActivity {
 
     @Override
     protected void onPause() {
-        mDbFrontendProvider.get().closeDatabase();
         super.onPause();
+        mDbFrontend.closeDatabase();
     }
 
     @Override

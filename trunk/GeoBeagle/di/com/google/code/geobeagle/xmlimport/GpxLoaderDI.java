@@ -26,11 +26,11 @@ import android.os.PowerManager.WakeLock;
 
 public class GpxLoaderDI {
     public static GpxLoader create(CachePersisterFacade cachePersisterFacade,
-            XmlPullParserWrapper xmlPullParserWrapper, Aborter aborter,
+            XmlPullParserWrapper xmlPullParserFactory, Aborter aborter,
             ErrorDisplayer errorDisplayer, WakeLock wakeLock, CacheWriter cacheWriter) {
         FileAlreadyLoadedChecker fileAlreadyLoadedChecker = new FileAlreadyLoadedChecker(
                 cacheWriter);
-        final GpxToCache gpxToCache = new GpxToCache(xmlPullParserWrapper, aborter,
+        final GpxToCache gpxToCache = new GpxToCache(xmlPullParserFactory, aborter,
                 fileAlreadyLoadedChecker);
         return new GpxLoader(cachePersisterFacade, errorDisplayer, gpxToCache, wakeLock);
     }

@@ -23,7 +23,6 @@ import com.google.code.geobeagle.activity.cachelist.CacheListDelegate.ImportInte
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
 import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheListPresenter;
 import com.google.code.geobeagle.database.DbFrontend;
-import com.google.inject.Provider;
 
 import org.easymock.classextension.EasyMock;
 import org.junit.Test;
@@ -222,18 +221,16 @@ public class CacheListDelegateTest {
         GeocacheListController geocacheListController = PowerMock
                 .createMock(GeocacheListController.class);
         ActivitySaver activitySaver = PowerMock.createMock(ActivitySaver.class);
-        Provider<DbFrontend> dbFrontendProvider = PowerMock.createMock(Provider.class);
         DbFrontend dbFrontend = PowerMock.createMock(DbFrontend.class);
-        
+
         geocacheListPresenter.onPause();
         geocacheListController.onPause();
         activitySaver.save(ActivityType.CACHE_LIST);
-        EasyMock.expect(dbFrontendProvider.get()).andReturn(dbFrontend);
         dbFrontend.closeDatabase();
 
         PowerMock.replayAll();
         new CacheListDelegate(null, activitySaver, null, geocacheListController,
-                geocacheListPresenter, dbFrontendProvider, null).onPause();
+                geocacheListPresenter, dbFrontend, null).onPause();
         PowerMock.verifyAll();
     }
 

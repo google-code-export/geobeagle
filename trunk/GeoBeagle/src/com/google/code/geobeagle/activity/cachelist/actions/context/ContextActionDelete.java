@@ -18,8 +18,7 @@ import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVector;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVectors;
 import com.google.code.geobeagle.activity.cachelist.presenter.TitleUpdater;
-import com.google.code.geobeagle.database.CacheWriter;
-import com.google.inject.Provider;
+import com.google.code.geobeagle.database.DbFrontend;
 
 import android.app.Activity;
 import android.app.Dialog;
@@ -67,18 +66,18 @@ public class ContextActionDelete implements ContextAction {
     }
 
     private final Activity mActivity;
-    private Provider<CacheWriter> mCacheWriterProvider;
+    private final DbFrontend mDbFrontend;
     private final BaseAdapter mGeocacheListAdapter;
     private final GeocacheVectors mGeocacheVectors;
     private int mPosition;
     private final TitleUpdater mTitleUpdater;
 
     public ContextActionDelete(BaseAdapter geocacheListAdapter, GeocacheVectors geocacheVectors,
-            TitleUpdater titleUpdater, Provider<CacheWriter> cacheWriterProvider, Activity activity, int position) {
+            TitleUpdater titleUpdater, DbFrontend dbFrontend, Activity activity, int position) {
         mGeocacheListAdapter = geocacheListAdapter;
         mGeocacheVectors = geocacheVectors;
         mTitleUpdater = titleUpdater;
-        mCacheWriterProvider = cacheWriterProvider;
+        mDbFrontend = dbFrontend;
         mActivity = activity;
         mPosition = position;
     }
@@ -89,7 +88,7 @@ public class ContextActionDelete implements ContextAction {
     }
 
     void delete() {
-        mCacheWriterProvider.get().deleteCache(mGeocacheVectors.get(mPosition).getId());
+        mDbFrontend.getCacheWriter().deleteCache(mGeocacheVectors.get(mPosition).getId());
         mGeocacheVectors.remove(mPosition);
         mGeocacheListAdapter.notifyDataSetChanged();
         // TODO: How to get correct values?
