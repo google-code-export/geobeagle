@@ -29,7 +29,7 @@ import com.google.code.geobeagle.bcaching.progress.ProgressMessage;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import static org.powermock.api.easymock.PowerMock.*;
+import org.powermock.api.easymock.PowerMock;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
@@ -51,15 +51,15 @@ public class ImportBCachingWorkerTest extends GeoBeagleTest {
 
     @Before
     public void setUp() {
-        mockStatic(Message.class);
-        mockStatic(System.class);
-        progressHandler = createMock(ProgressHandler.class);
-        progressManager = createMock(ProgressManager.class);
-        bcachingListFirst = createMock(BCachingList.class);
-        bcachingLastUpdated = createMock(BCachingLastUpdated.class);
-        bcachingListFactory = createMock(BCachingListImporter.class);
-        errorDisplayer = createMock(ErrorDisplayer.class);
-        detailsReaderImport = createMock(DetailsReaderImport.class);
+        PowerMock.mockStatic(Message.class);
+        PowerMock.mockStatic(System.class);
+        progressHandler = PowerMock.createMock(ProgressHandler.class);
+        progressManager = PowerMock.createMock(ProgressManager.class);
+        bcachingListFirst = PowerMock.createMock(BCachingList.class);
+        bcachingLastUpdated = PowerMock.createMock(BCachingLastUpdated.class);
+        bcachingListFactory = PowerMock.createMock(BCachingListImporter.class);
+        errorDisplayer = PowerMock.createMock(ErrorDisplayer.class);
+        detailsReaderImport = PowerMock.createMock(DetailsReaderImport.class);
     }
 
     @Test
@@ -71,10 +71,10 @@ public class ImportBCachingWorkerTest extends GeoBeagleTest {
         expect(bcachingListFactory.getTotalCount("1000")).andReturn(0);
         progressManager.update(progressHandler, ProgressMessage.DONE, 0);
 
-        replayAll();
+        PowerMock.replayAll();
         new ImportBCachingWorker(progressHandler, progressManager, bcachingLastUpdated,
                 bcachingListFactory, null, null, null).run();
-        verifyAll();
+        PowerMock.verifyAll();
     }
 
     @Test
@@ -88,15 +88,15 @@ public class ImportBCachingWorkerTest extends GeoBeagleTest {
         progressManager.update(progressHandler, ProgressMessage.DONE, 0);
         errorDisplayer.displayError(R.string.problem_importing_from_bcaching, "io exception");
 
-        replayAll();
+        PowerMock.replayAll();
         new ImportBCachingWorker(progressHandler, progressManager, bcachingLastUpdated,
                 bcachingListFactory, errorDisplayer, null, null).run();
-        verifyAll();
+        PowerMock.verifyAll();
     }
 
     @Test
     public void testWorkerOneCache() throws BCachingException {
-        BCachingList bcachingListLast = createMock(BCachingList.class);
+        BCachingList bcachingListLast = PowerMock.createMock(BCachingList.class);
 
         expect(System.currentTimeMillis()).andReturn(8888L);
         progressManager.update(progressHandler, ProgressMessage.START, 0);
@@ -117,16 +117,16 @@ public class ImportBCachingWorkerTest extends GeoBeagleTest {
         progressManager.update(progressHandler, ProgressMessage.DONE, 0);
         bcachingLastUpdated.putLastUpdateTime(8888L);
 
-        replayAll();
+        PowerMock.replayAll();
         new ImportBCachingWorker(progressHandler, progressManager, bcachingLastUpdated,
                 bcachingListFactory, null, detailsReaderImport, null).run();
-        verifyAll();
+        PowerMock.verifyAll();
     }
 
     @Test
     public void testWorkerSixtyCaches() throws BCachingException {
-        BCachingList bcachingListSecond = createMock(BCachingList.class);
-        BCachingList bcachingListLast = createMock(BCachingList.class);
+        BCachingList bcachingListSecond = PowerMock.createMock(BCachingList.class);
+        BCachingList bcachingListLast = PowerMock.createMock(BCachingList.class);
 
         expect(System.currentTimeMillis()).andReturn(8888L);
         progressManager.update(progressHandler, ProgressMessage.START, 0);
@@ -154,9 +154,9 @@ public class ImportBCachingWorkerTest extends GeoBeagleTest {
         progressManager.update(progressHandler, ProgressMessage.DONE, 0);
         bcachingLastUpdated.putLastUpdateTime(8888L);
 
-        replayAll();
+        PowerMock.replayAll();
         new ImportBCachingWorker(progressHandler, progressManager, bcachingLastUpdated,
                 bcachingListFactory, null, detailsReaderImport, null).run();
-        verifyAll();
+        PowerMock.verifyAll();
     }
 }
