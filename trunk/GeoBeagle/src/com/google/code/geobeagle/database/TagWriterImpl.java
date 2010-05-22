@@ -15,7 +15,6 @@
 package com.google.code.geobeagle.database;
 
 import com.google.inject.Inject;
-import com.google.inject.OutOfScopeException;
 import com.google.inject.Provider;
 import com.google.inject.ProvisionException;
 
