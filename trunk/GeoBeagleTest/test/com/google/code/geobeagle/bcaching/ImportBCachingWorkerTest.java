@@ -73,7 +73,7 @@ public class ImportBCachingWorkerTest extends GeoBeagleTest {
 
         PowerMock.replayAll();
         new ImportBCachingWorker(progressHandler, progressManager, bcachingLastUpdated,
-                bcachingListFactory, null, null).run();
+                bcachingListFactory, null, null, null, null, null).run();
         PowerMock.verifyAll();
     }
 
@@ -90,7 +90,7 @@ public class ImportBCachingWorkerTest extends GeoBeagleTest {
 
         PowerMock.replayAll();
         new ImportBCachingWorker(progressHandler, progressManager, bcachingLastUpdated,
-                bcachingListFactory, errorDisplayer, null).run();
+                bcachingListFactory, errorDisplayer, null, null, null, null).run();
         PowerMock.verifyAll();
     }
 
@@ -107,7 +107,7 @@ public class ImportBCachingWorkerTest extends GeoBeagleTest {
         expect(bcachingListFactory.getCacheList(0, "1000")).andReturn(bcachingListFirst);
 
         expect(bcachingListFirst.getCachesRead()).andReturn(1);
-        expect(detailsReaderImport.getCacheDetails("GC1234", 0)).andReturn(true);
+        expect(detailsReaderImport.loadCacheDetails("GC1234")).andReturn(true);
         expect(bcachingListFirst.getCacheIds()).andReturn("GC1234");
         progressManager.update(progressHandler, ProgressMessage.SET_PROGRESS, 1);
 
@@ -119,7 +119,7 @@ public class ImportBCachingWorkerTest extends GeoBeagleTest {
 
         PowerMock.replayAll();
         new ImportBCachingWorker(progressHandler, progressManager, bcachingLastUpdated,
-                bcachingListFactory, null, detailsReaderImport).run();
+                bcachingListFactory, null, detailsReaderImport, null, null, null).run();
         PowerMock.verifyAll();
     }
 
@@ -138,14 +138,14 @@ public class ImportBCachingWorkerTest extends GeoBeagleTest {
 
         expect(bcachingListFirst.getCachesRead()).andReturn(50);
         expect(bcachingListFirst.getCacheIds()).andReturn("GC1234,etc");
-        expect(detailsReaderImport.getCacheDetails("GC1234,etc", 0)).andReturn(true);
+        expect(detailsReaderImport.loadCacheDetails("GC1234,etc")).andReturn(true);
         progressManager.update(progressHandler, ProgressMessage.SET_PROGRESS, 50);
 
         expect(bcachingListFactory.getCacheList(50, "1000")).andReturn(bcachingListSecond);
 
         expect(bcachingListSecond.getCachesRead()).andReturn(10);
         expect(bcachingListSecond.getCacheIds()).andReturn("GC456,etc");
-        expect(detailsReaderImport.getCacheDetails("GC456,etc", 50)).andReturn(true);
+        expect(detailsReaderImport.loadCacheDetails("GC456,etc")).andReturn(true);
         progressManager.update(progressHandler, ProgressMessage.SET_PROGRESS, 60);
 
         expect(bcachingListFactory.getCacheList(60, "1000")).andReturn(bcachingListLast);
@@ -156,7 +156,7 @@ public class ImportBCachingWorkerTest extends GeoBeagleTest {
 
         PowerMock.replayAll();
         new ImportBCachingWorker(progressHandler, progressManager, bcachingLastUpdated,
-                bcachingListFactory, null, detailsReaderImport).run();
+                bcachingListFactory, null, detailsReaderImport, null, null, null).run();
         PowerMock.verifyAll();
     }
 }

@@ -34,7 +34,7 @@ public class CacheDetailsWriterTest {
         htmlWriter.open(CacheDetailsLoader.DETAILS_DIR + "oakland.gpx/GC123.html");
 
         replay(htmlWriter);
-        CacheDetailsWriter cacheDetailsWriter = new CacheDetailsWriter(htmlWriter);
+        CacheDetailsWriter cacheDetailsWriter = new CacheDetailsWriter(htmlWriter, null);
         cacheDetailsWriter.gpxName("oakland.gpx");
         cacheDetailsWriter.open("GC123");
         verify(htmlWriter);
@@ -48,7 +48,7 @@ public class CacheDetailsWriterTest {
         htmlWriter.close();
 
         replay(htmlWriter);
-        new CacheDetailsWriter(htmlWriter).close();
+        new CacheDetailsWriter(htmlWriter, null).close();
         verify(htmlWriter);
     }
 
@@ -58,7 +58,7 @@ public class CacheDetailsWriterTest {
         htmlWriter.write("<br />Hint: <font color=gray>a hint</font>");
 
         replay(htmlWriter);
-        new CacheDetailsWriter(htmlWriter).writeHint("a hint");
+        new CacheDetailsWriter(htmlWriter, null).writeHint("a hint");
         verify(htmlWriter);
     }
 
@@ -68,7 +68,7 @@ public class CacheDetailsWriterTest {
         htmlWriter.write("some text");
 
         replay(htmlWriter);
-        new CacheDetailsWriter(htmlWriter).writeLine("some text");
+        new CacheDetailsWriter(htmlWriter, null).writeLine("some text");
         verify(htmlWriter);
     }
 
@@ -79,7 +79,7 @@ public class CacheDetailsWriterTest {
         htmlWriter.write("04/30/1963");
 
         replay(htmlWriter);
-        new CacheDetailsWriter(htmlWriter).writeLogDate("04/30/1963");
+        new CacheDetailsWriter(htmlWriter, null).writeLogDate("04/30/1963");
         verify(htmlWriter);
     }
 
@@ -91,7 +91,7 @@ public class CacheDetailsWriterTest {
         htmlWriter.write("37.0, 122.0");
 
         replay(htmlWriter);
-        CacheDetailsWriter cacheDetailsWriter = new CacheDetailsWriter(htmlWriter);
+        CacheDetailsWriter cacheDetailsWriter = new CacheDetailsWriter(htmlWriter, null);
         cacheDetailsWriter.latitudeLongitude("37.0", "122.0");
         cacheDetailsWriter.writeWptName("GC1234");
         verify(htmlWriter);
