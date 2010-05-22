@@ -75,6 +75,7 @@ import com.google.code.geobeagle.database.TagWriterImpl;
 import com.google.code.geobeagle.database.TagWriterNull;
 import com.google.code.geobeagle.database.WhereFactoryAllCaches;
 import com.google.code.geobeagle.database.WhereFactoryNearestCaches;
+import com.google.code.geobeagle.database.CacheWriter.ClearCachesFromSource;
 import com.google.code.geobeagle.database.DatabaseDI.SearchFactory;
 import com.google.code.geobeagle.database.WhereFactoryNearestCaches.WhereStringFactory;
 import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidget;
@@ -84,6 +85,7 @@ import com.google.code.geobeagle.gpsstatuswidget.UpdateGpsWidgetRunnable;
 import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidget.InflatedGpsStatusWidget;
 import com.google.code.geobeagle.location.CombinedLocationListener;
 import com.google.code.geobeagle.location.CombinedLocationManager;
+import com.google.code.geobeagle.xmlimport.CacheTagSqlWriter;
 import com.google.code.geobeagle.xmlimport.MessageHandlerInterface;
 import com.google.code.geobeagle.xmlimport.CachePersisterFacadeDI.CachePersisterFacadeFactory;
 import com.google.code.geobeagle.xmlimport.GpxImporterDI.MessageHandler;
@@ -244,15 +246,17 @@ public class CacheListDelegateDI {
                 distanceFormatterManager, geocacheListAdapter, geocacheVectors, gpsStatusWidget, listActivity, locationControlBuffered,
                 sensorManagerWrapper, updateGpsWidgetRunnable, scrollListener);
         final CacheTypeFactory cacheTypeFactory = new CacheTypeFactory();
-
+ 
         final Aborter aborter = injector.getInstance(Aborter.class);
         final MessageHandlerInterface messageHandler = MessageHandler.create(listActivity);
-		final Provider<ISQLiteDatabase> database = injector.getProvider(ISQLiteDatabase.class);
-        final TagWriterImpl tagWriterImpl = new TagWriterImpl(database);
+		final Provider<ISQLiteDatabase> databaseProvider = injector.getProvider(ISQLiteDatabase.class);
+        final TagWriterImpl tagWriterImpl = new TagWriterImpl(databaseProvider);
         final TagWriterNull tagWriterNull = new TagWriterNull();
-        FilePathStrategy filePathStrategy = new FilePathStrategy();
+        final FilePathStrategy filePathStrategy = new FilePathStrategy();
+        final ClearCachesFromSource clearCachesFromSource = injector.getInstance(ClearCachesFromSource.class);
         final CachePersisterFacadeFactory cachePersisterFacadeFactory = new CachePersisterFacadeFactory(
-                messageHandler, cacheTypeFactory, tagWriterImpl, tagWriterNull, filePathStrategy);
+                messageHandler, cacheTypeFactory, tagWriterImpl, tagWriterNull, filePathStrategy,
+                clearCachesFromSource);
 
         final GpxImporterFactory gpxImporterFactory = new GpxImporterFactory(aborter,
                 cachePersisterFacadeFactory, errorDisplayer, geocacheListPresenter, listActivity,

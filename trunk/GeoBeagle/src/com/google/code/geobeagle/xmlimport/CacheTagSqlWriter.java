@@ -22,7 +22,10 @@ import com.google.code.geobeagle.database.Tag;
 import com.google.code.geobeagle.database.TagWriter;
 import com.google.code.geobeagle.database.TagWriterImpl;
 import com.google.code.geobeagle.database.TagWriterNull;
+import com.google.code.geobeagle.database.CacheWriter.ClearCachesFromSource;
 import com.google.inject.Inject;
+
+import android.util.Log;
 
 /**
  * @author sng
@@ -42,15 +45,18 @@ public class CacheTagSqlWriter {
     private TagWriter mTagWriter;
     private TagWriterImpl mTagWriterImpl;
     private TagWriterNull mTagWriterNull;
+    private final ClearCachesFromSource mClearCachesFromSource;
 
     @Inject
     public CacheTagSqlWriter(CacheWriter cacheWriter, CacheTypeFactory cacheTypeFactory,
-            TagWriterImpl tagWriterImpl, TagWriterNull tagWriterNull) {
+            TagWriterImpl tagWriterImpl, TagWriterNull tagWriterNull,
+            ClearCachesFromSource clearCachesFromSource) {
         mCacheWriter = cacheWriter;
         mCacheTypeFactory = cacheTypeFactory;
         mTagWriter = tagWriterNull;
         mTagWriterImpl = tagWriterImpl;
         mTagWriterNull = tagWriterNull;
+        mClearCachesFromSource = clearCachesFromSource;
     }
 
     public void cacheName(String name) {
@@ -84,6 +90,7 @@ public class CacheTagSqlWriter {
 
     public void gpxName(String gpxName) {
         mGpxName = gpxName;
+        Log.d("GeoBeagle", this + ": CacheTagSqlWriter:gpxName: " + mGpxName);
     }
 
     /**
@@ -93,10 +100,11 @@ public class CacheTagSqlWriter {
      */
     public boolean gpxTime(String gpxTime) {
         String sqlDate = isoTimeToSql(gpxTime);
+        Log.d("GeoBeagle", this + ": CacheTagSqlWriter:gpxTime: " + mGpxName);
         if (mCacheWriter.isGpxAlreadyLoaded(mGpxName, sqlDate)) {
             return false;
         }
-        mCacheWriter.clearCaches(mGpxName);
+        mClearCachesFromSource.clearCaches(mGpxName);
         return true;
     }
 

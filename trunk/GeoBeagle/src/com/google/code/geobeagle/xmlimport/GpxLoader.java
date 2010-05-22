@@ -37,6 +37,7 @@ public class GpxLoader {
     public static final int WAKELOCK_DURATION = 15000;
 
     @Inject
+    public
     GpxLoader(CachePersisterFacade cachePersisterFacade, ErrorDisplayer errorDisplayer,
             GpxToCache gpxToCache, WakeLock wakeLock) {
         mGpxToCache = gpxToCache;

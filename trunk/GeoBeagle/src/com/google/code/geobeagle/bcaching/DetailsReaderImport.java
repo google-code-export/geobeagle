@@ -22,7 +22,8 @@ public class DetailsReaderImport {
 
     @Inject
     DetailsReaderImport(@DetailsReaderAnnotation Hashtable<String, String> params,
-            BufferedReaderFactory bufferedReaderFactory, @GpxAnnotation EventHelper eventHelper, GpxLoader gpxLoader) {
+            BufferedReaderFactory bufferedReaderFactory, @GpxAnnotation EventHelper eventHelper,
+            GpxLoader gpxLoader) {
         this.params = params;
         this.bufferedReaderFactory = bufferedReaderFactory;
         this.gpxLoader = gpxLoader;
