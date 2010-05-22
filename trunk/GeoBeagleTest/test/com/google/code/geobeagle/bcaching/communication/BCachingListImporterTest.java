@@ -26,7 +26,6 @@ import com.google.code.geobeagle.bcaching.communication.BCachingList;
 import com.google.code.geobeagle.bcaching.communication.BCachingListImportHelper;
 import com.google.code.geobeagle.bcaching.communication.BCachingListImporter;
 
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -45,7 +44,7 @@ public class BCachingListImporterTest {
         expect(bCachingListImportHelper.importList(params)).andReturn(bcachingList);
         replayAll();
         assertEquals(bcachingList, new BCachingListImporter(params, bCachingListImportHelper)
-                .getCacheList(12, "7777"));
+                .getCacheList("12", "7777"));
         verifyAll();
 
         assertEquals("12", params.get("first"));
@@ -62,13 +61,13 @@ public class BCachingListImporterTest {
         params.put("first", "112");
         expect(bCachingListImportHelper.importList(params)).andReturn(bcachingList);
         expect(bcachingList.getTotalCount()).andReturn(42);
-        
+
         replayAll();
         assertEquals(42, new BCachingListImporter(params, bCachingListImportHelper)
                 .getTotalCount("7777"));
         verifyAll();
 
-        assertFalse( params.containsKey("first"));
+        assertFalse(params.containsKey("first"));
         assertEquals("7777", params.get("since"));
     }
 }
