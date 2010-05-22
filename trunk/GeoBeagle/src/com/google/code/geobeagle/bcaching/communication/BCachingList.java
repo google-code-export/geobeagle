@@ -24,8 +24,8 @@ public class BCachingList {
 
     private final BCachingJSONObject cacheList;
 
-    BCachingList(BCachingJSONObject json) {
-        cacheList = json;
+    BCachingList(BCachingJSONObject cacheList) {
+        this.cacheList = cacheList;
     }
 
     public String getCacheIds() throws BCachingException {
