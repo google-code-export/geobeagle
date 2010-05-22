@@ -107,7 +107,7 @@ public class ImportBCachingWorkerTest extends GeoBeagleTest {
         expect(bcachingListFactory.getCacheList(0, "1000")).andReturn(bcachingListFirst);
 
         expect(bcachingListFirst.getCachesRead()).andReturn(1);
-        detailsReaderImport.getCacheDetails("GC1234", 0);
+        expect(detailsReaderImport.getCacheDetails("GC1234", 0)).andReturn(true);
         expect(bcachingListFirst.getCacheIds()).andReturn("GC1234");
         progressManager.update(progressHandler, ProgressMessage.SET_PROGRESS, 1);
 
@@ -138,14 +138,14 @@ public class ImportBCachingWorkerTest extends GeoBeagleTest {
 
         expect(bcachingListFirst.getCachesRead()).andReturn(50);
         expect(bcachingListFirst.getCacheIds()).andReturn("GC1234,etc");
-        detailsReaderImport.getCacheDetails("GC1234,etc", 0);
+        expect(detailsReaderImport.getCacheDetails("GC1234,etc", 0)).andReturn(true);
         progressManager.update(progressHandler, ProgressMessage.SET_PROGRESS, 50);
 
         expect(bcachingListFactory.getCacheList(50, "1000")).andReturn(bcachingListSecond);
 
         expect(bcachingListSecond.getCachesRead()).andReturn(10);
         expect(bcachingListSecond.getCacheIds()).andReturn("GC456,etc");
-        detailsReaderImport.getCacheDetails("GC456,etc", 50);
+        expect(detailsReaderImport.getCacheDetails("GC456,etc", 50)).andReturn(true);
         progressManager.update(progressHandler, ProgressMessage.SET_PROGRESS, 60);
 
         expect(bcachingListFactory.getCacheList(60, "1000")).andReturn(bcachingListLast);

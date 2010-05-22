@@ -256,10 +256,7 @@ public class CacheListDelegateDI {
                 cachePersisterFacadeFactory, errorDisplayer, geocacheListPresenter, listActivity,
                 messageHandler, xmlPullParserWrapper, injector);
 
-        final Abortable nullAbortable = new Abortable() {
-            public void abort() {
-            }
-        };
+        final Abortable nullAbortable = new NullAbortable();
 
         final Provider<CacheWriter> cacheWriterProvider = injector.getProvider(CacheWriter.class);
         final MenuActionSyncGpx menuActionSyncGpx = new MenuActionSyncGpx(nullAbortable,
@@ -274,7 +271,8 @@ public class CacheListDelegateDI {
                 new LocationSaver(cacheWriterProvider)));
         menuActions.add(new MenuActionSearchOnline(listActivity));
         menuActions.add(new MenuActionMap(listActivity, locationControlBuffered));
-        menuActions.add(injector.getInstance(MenuActionSyncBCaching.class));
+        final MenuActionSyncBCaching menuActionSyncBCaching = injector.getInstance(MenuActionSyncBCaching.class);
+        menuActions.add(menuActionSyncBCaching);
         menuActions.add(injector.getInstance(MenuActionSettings.class));
 
         final Intent geoBeagleMainIntent = new Intent(listActivity, GeoBeagle.class);
@@ -296,7 +294,7 @@ public class CacheListDelegateDI {
 
         final GeocacheListController geocacheListController = new GeocacheListController(
                 cacheListRefresh, contextActions, filterNearestCaches, menuActionSyncGpx,
-                menuActions);
+                menuActions, aborter, menuActionSyncBCaching);
         final ActivitySaver activitySaver = injector.getInstance(ActivitySaver.class);
         final ImportIntentManager importIntentManager = new ImportIntentManager(listActivity);
         return new CacheListDelegate(importIntentManager, activitySaver, cacheListRefresh,

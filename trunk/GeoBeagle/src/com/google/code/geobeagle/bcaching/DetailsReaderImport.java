@@ -29,7 +29,7 @@ public class DetailsReaderImport {
         this.eventHelper = eventHelper;
     }
 
-    public void getCacheDetails(String csvIds, int updatedCaches) throws BCachingException {
+    public boolean getCacheDetails(String csvIds, int updatedCaches) throws BCachingException {
         params.put("ids", csvIds);
 
         try {
@@ -39,6 +39,6 @@ public class DetailsReaderImport {
             throw new BCachingException("Error parsing data from baching.com: "
                     + e.getLocalizedMessage());
         }
-        gpxLoader.load(eventHelper);
+        return gpxLoader.load(eventHelper);
     }
 }

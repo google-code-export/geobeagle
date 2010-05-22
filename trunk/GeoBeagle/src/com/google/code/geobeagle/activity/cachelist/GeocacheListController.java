@@ -17,11 +17,14 @@ package com.google.code.geobeagle.activity.cachelist;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.actions.MenuActions;
 import com.google.code.geobeagle.activity.cachelist.actions.context.ContextAction;
+import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionSyncBCaching;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionSyncGpx;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVectors;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
 import com.google.code.geobeagle.database.FilterNearestCaches;
+import com.google.code.geobeagle.xmlimport.GpxToCache.Aborter;
 
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -60,15 +63,20 @@ public class GeocacheListController {
     private final FilterNearestCaches mFilterNearestCaches;
     private final MenuActions mMenuActions;
     private final MenuActionSyncGpx mMenuActionSyncGpx;
+    private final MenuActionSyncBCaching mMenuActionSyncBCaching;
+    private final Aborter mAborter;
 
     public GeocacheListController(CacheListRefresh cacheListRefresh,
             ContextAction[] contextActions, FilterNearestCaches filterNearestCaches,
-            MenuActionSyncGpx menuActionSyncGpx, MenuActions menuActions) {
+            MenuActionSyncGpx menuActionSyncGpx, MenuActions menuActions, Aborter aborter,
+            MenuActionSyncBCaching menuActionSyncBCaching) {
         mCacheListRefresh = cacheListRefresh;
         mContextActions = contextActions;
         mFilterNearestCaches = filterNearestCaches;
         mMenuActionSyncGpx = menuActionSyncGpx;
+        mMenuActionSyncBCaching = menuActionSyncBCaching;
         mMenuActions = menuActions;
+        mAborter = aborter;
     }
 
     public boolean onContextItemSelected(MenuItem menuItem) {
@@ -99,6 +107,9 @@ public class GeocacheListController {
     }
 
     public void onPause() {
+        Log.d("GeoBeagle", "onPause aborting");
+        mAborter.abort();
+        mMenuActionSyncBCaching.abort();
         mMenuActionSyncGpx.abort();
     }
 

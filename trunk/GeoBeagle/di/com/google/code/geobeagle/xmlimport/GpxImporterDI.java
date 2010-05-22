@@ -239,6 +239,7 @@ public class GpxImporterDI {
 
         public void show(String title, String msg) {
             mProgressDialog = ProgressDialog.show(mContext, title, msg);
+            mProgressDialog.setCancelable(true);
         }
     }
 
