@@ -34,7 +34,7 @@ public class GpxToCache {
         }
 
         public void abort() {
-            Log.d("GeoBeagle", this + ": !!!!!!!!!!!!! aborting");
+            Log.d("GeoBeagle", this + ": aborting");
             mAborted = true;
         }
 
