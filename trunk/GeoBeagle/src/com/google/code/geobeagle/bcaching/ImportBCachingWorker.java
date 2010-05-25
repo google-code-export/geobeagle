@@ -75,7 +75,6 @@ public class ImportBCachingWorker extends RoboThread implements Abortable {
         try {
             if (!cursor.open())
                 return;
-            System.out.println("aaas");
             while (cursor.readCaches()) {
                 if (!detailsReaderImport.loadCacheDetails(cursor.getCacheIds())) {
                     return;
