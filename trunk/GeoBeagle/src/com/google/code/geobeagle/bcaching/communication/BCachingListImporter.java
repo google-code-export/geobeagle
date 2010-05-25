@@ -14,10 +14,13 @@
 
 package com.google.code.geobeagle.bcaching.communication;
 
+import com.google.inject.Inject;
+
 public class BCachingListImporter {
     private final BCachingListImporterStateless bcachingListImporter;
     private BCachingList bcachingList;
 
+    @Inject
     public BCachingListImporter(BCachingListImporterStateless bcachingListImporter) {
         this.bcachingListImporter = bcachingListImporter;
     }
