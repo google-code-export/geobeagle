@@ -19,8 +19,6 @@ import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.cachelist.CacheListModule.ToasterSyncAborted;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.Abortable;
 import com.google.code.geobeagle.bcaching.communication.BCachingException;
-import com.google.code.geobeagle.bcaching.communication.BCachingList;
-import com.google.code.geobeagle.bcaching.communication.BCachingListImporter;
 import com.google.code.geobeagle.bcaching.progress.ProgressHandler;
 import com.google.code.geobeagle.bcaching.progress.ProgressManager;
 import com.google.code.geobeagle.bcaching.progress.ProgressMessage;
@@ -33,8 +31,6 @@ import android.util.Log;
 
 public class ImportBCachingWorker extends RoboThread implements Abortable {
     private final ProgressHandler progressHandler;
-    private final BCachingLastUpdated bcachingLastUpdated;
-    private final BCachingListImporter bcachingListImporter;
     private final ErrorDisplayer errorDisplayer;
     private final ProgressManager progressManager;
     private final DetailsReaderImport detailsReaderImport;
@@ -42,55 +38,11 @@ public class ImportBCachingWorker extends RoboThread implements Abortable {
     private boolean inProgress;
     private final CacheListCursor cursor;
 
-    static class CacheListCursor {
-        private final BCachingLastUpdated bcachingLastUpdated;
-        private int position;
-        private ProgressManager progressManager;
-        private ProgressHandler progressHandler;
-
-        @Inject
-        CacheListCursor(BCachingLastUpdated bcachingLastUpdated, ProgressManager progressManager,
-                ProgressHandler progressHandler) {
-            this.bcachingLastUpdated = bcachingLastUpdated;
-            this.progressManager = progressManager;
-            this.progressHandler = progressHandler;
-        }
-
-        public boolean open(int totalCount) {
-            if (totalCount <= 0)
-                return false;
-            progressManager.update(progressHandler, ProgressMessage.SET_MAX, totalCount);
-
-            position = bcachingLastUpdated.getLastRead();
-            progressManager.update(progressHandler, ProgressMessage.SET_PROGRESS, position);
-            return true;
-        }
-
-        public int increment(int cachesRead) {
-            position += cachesRead;
-            bcachingLastUpdated.putLastRead(position);
-            progressManager.update(progressHandler, ProgressMessage.SET_PROGRESS, position);
-            return position;
-        }
-
-        public void close() {
-            bcachingLastUpdated.putLastRead(0);
-        }
-
-        public String getPosition() {
-            return String.valueOf(position);
-        }
-
-    }
-
     @Inject
     public ImportBCachingWorker(ProgressHandler progressHandler, ProgressManager progressManager,
-            BCachingLastUpdated bcachingLastUpdated, BCachingListImporter bcachingListImporter,
             ErrorDisplayer errorDisplayer, DetailsReaderImport detailsReaderImport,
             @ToasterSyncAborted Toaster toaster, CacheListCursor cacheListCursor) {
         this.progressHandler = progressHandler;
-        this.bcachingLastUpdated = bcachingLastUpdated;
-        this.bcachingListImporter = bcachingListImporter;
         this.errorDisplayer = errorDisplayer;
         this.progressManager = progressManager;
         this.detailsReaderImport = detailsReaderImport;
@@ -101,28 +53,18 @@ public class ImportBCachingWorker extends RoboThread implements Abortable {
     @Override
     public void run() {
         inProgress = true;
-        final long endingTime = System.currentTimeMillis();
         progressManager.update(progressHandler, ProgressMessage.START, 0);
-        String lastUpdateTime = String.valueOf(bcachingLastUpdated.getLastUpdateTime());
-
         try {
-            if (!cursor.open(bcachingListImporter.getTotalCount(lastUpdateTime)))
+            if (!cursor.open())
                 return;
 
-            BCachingList bcachingList = bcachingListImporter.getCacheList(cursor.getPosition(),
-                    lastUpdateTime.toString());
-            int cachesRead;
-            while ((cachesRead = bcachingList.getCachesRead()) > 0) {
-                if (!detailsReaderImport.loadCacheDetails(bcachingList.getCacheIds())) {
+            while (cursor.readCaches()) {
+                if (!detailsReaderImport.loadCacheDetails(cursor.getCacheIds())) {
                     return;
                 }
 
-                cursor.increment(cachesRead);
-
-                bcachingList = bcachingListImporter.getCacheList(cursor.getPosition(),
-                        lastUpdateTime);
+                cursor.increment();
             }
-            bcachingLastUpdated.putLastUpdateTime(endingTime);
             cursor.close();
             progressManager.update(progressHandler, ProgressMessage.REFRESH, 0);
         } catch (BCachingException e) {
