@@ -93,4 +93,8 @@ public class GpxLoader {
     public void start() {
         mCachePersisterFacade.start();
     }
+
+    public String getLastModified() {
+        return mCachePersisterFacade.getLastModified();
+    }
 }
