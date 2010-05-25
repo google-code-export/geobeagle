@@ -19,6 +19,7 @@ import static org.easymock.EasyMock.expect;
 import com.google.code.geobeagle.ErrorDisplayer;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.cachelist.GeoBeagleTest;
+import com.google.code.geobeagle.bcaching.ImportBCachingWorker.CacheListCursor;
 import com.google.code.geobeagle.bcaching.communication.BCachingException;
 import com.google.code.geobeagle.bcaching.communication.BCachingList;
 import com.google.code.geobeagle.bcaching.communication.BCachingListImporter;
@@ -48,6 +49,7 @@ public class ImportBCachingWorkerTest extends GeoBeagleTest {
     private ErrorDisplayer errorDisplayer;
     private ProgressHandler progressHandler;
     private ProgressManager progressManager;
+    private CacheListCursor cacheListCursor;
 
     @Before
     public void setUp() {
@@ -60,6 +62,7 @@ public class ImportBCachingWorkerTest extends GeoBeagleTest {
         bcachingListFactory = createMock(BCachingListImporter.class);
         errorDisplayer = createMock(ErrorDisplayer.class);
         detailsReaderImport = createMock(DetailsReaderImport.class);
+        cacheListCursor = new CacheListCursor(bcachingLastUpdated, progressManager, progressHandler);
     }
 
     @Test
@@ -73,7 +76,7 @@ public class ImportBCachingWorkerTest extends GeoBeagleTest {
 
         replayAll();
         new ImportBCachingWorker(progressHandler, progressManager, bcachingLastUpdated,
-                bcachingListFactory, null, null, null).run();
+                bcachingListFactory, null, null, null, cacheListCursor).run();
         verifyAll();
     }
 
@@ -84,25 +87,31 @@ public class ImportBCachingWorkerTest extends GeoBeagleTest {
         expect(System.currentTimeMillis()).andReturn(8888L);
         progressManager.update(progressHandler, ProgressMessage.START, 0);
         expect(bcachingLastUpdated.getLastUpdateTime()).andReturn(1000L);
+
         expect(bcachingListFactory.getTotalCount("1000")).andReturn(1);
         progressManager.update(progressHandler, ProgressMessage.SET_MAX, 1);
+        expect(bcachingLastUpdated.getLastRead()).andReturn(0);
+        progressManager.update(progressHandler, ProgressMessage.SET_PROGRESS, 0);
 
         expect(bcachingListFactory.getCacheList("0", "1000")).andReturn(bcachingListFirst);
-
         expect(bcachingListFirst.getCachesRead()).andReturn(1);
-        expect(detailsReaderImport.loadCacheDetails("GC1234")).andReturn(true);
+
         expect(bcachingListFirst.getCacheIds()).andReturn("GC1234");
+        expect(detailsReaderImport.loadCacheDetails("GC1234")).andReturn(true);
+        bcachingLastUpdated.putLastRead(1);
         progressManager.update(progressHandler, ProgressMessage.SET_PROGRESS, 1);
 
         expect(bcachingListFactory.getCacheList("1", "1000")).andReturn(bcachingListLast);
         expect(bcachingListLast.getCachesRead()).andReturn(0);
 
-        progressManager.update(progressHandler, ProgressMessage.DONE, 0);
         bcachingLastUpdated.putLastUpdateTime(8888L);
+        bcachingLastUpdated.putLastRead(0);
+        progressManager.update(progressHandler, ProgressMessage.REFRESH, 0);
+        progressManager.update(progressHandler, ProgressMessage.DONE, 0);
 
         replayAll();
         new ImportBCachingWorker(progressHandler, progressManager, bcachingLastUpdated,
-                bcachingListFactory, null, detailsReaderImport, null).run();
+                bcachingListFactory, null, detailsReaderImport, null, cacheListCursor).run();
         verifyAll();
     }
 
@@ -120,7 +129,7 @@ public class ImportBCachingWorkerTest extends GeoBeagleTest {
 
         replayAll();
         new ImportBCachingWorker(progressHandler, progressManager, bcachingLastUpdated,
-                bcachingListFactory, errorDisplayer, null, null).run();
+                bcachingListFactory, errorDisplayer, null, null, cacheListCursor).run();
         verifyAll();
     }
 
@@ -157,7 +166,7 @@ public class ImportBCachingWorkerTest extends GeoBeagleTest {
 
         replayAll();
         new ImportBCachingWorker(progressHandler, progressManager, bcachingLastUpdated,
-                bcachingListFactory, null, detailsReaderImport, null).run();
+                bcachingListFactory, null, detailsReaderImport, null, cacheListCursor).run();
         verifyAll();
     }
 }
