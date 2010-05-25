@@ -19,7 +19,6 @@ import com.google.code.geobeagle.activity.cachelist.actions.context.ContextActio
 import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionSyncGpx;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVectors;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
-import com.google.code.geobeagle.database.FilterNearestCaches;
 import com.google.code.geobeagle.xmlimport.GpxToCache.Aborter;
 
 import android.util.Log;
@@ -58,17 +57,15 @@ public class GeocacheListController {
     public static final String SELECT_CACHE = "SELECT_CACHE";
     private final CacheListRefresh mCacheListRefresh;
     private final ContextAction mContextActions[];
-    private final FilterNearestCaches mFilterNearestCaches;
     private final MenuActions mMenuActions;
     private final MenuActionSyncGpx mMenuActionSyncGpx;
     private final Aborter mAborter;
 
     public GeocacheListController(CacheListRefresh cacheListRefresh,
-            ContextAction[] contextActions, FilterNearestCaches filterNearestCaches,
-            MenuActionSyncGpx menuActionSyncGpx, MenuActions menuActions, Aborter aborter) {
+            ContextAction[] contextActions, MenuActionSyncGpx menuActionSyncGpx,
+            MenuActions menuActions, Aborter aborter) {
         mCacheListRefresh = cacheListRefresh;
         mContextActions = contextActions;
-        mFilterNearestCaches = filterNearestCaches;
         mMenuActionSyncGpx = menuActionSyncGpx;
         mMenuActions = menuActions;
         mAborter = aborter;
@@ -90,10 +87,6 @@ public class GeocacheListController {
             mContextActions[MENU_VIEW].act(position - 1);
         else
             mCacheListRefresh.forceRefresh();
-    }
-
-    public boolean onMenuOpened(int featureId, Menu menu) {
-        return true;
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {

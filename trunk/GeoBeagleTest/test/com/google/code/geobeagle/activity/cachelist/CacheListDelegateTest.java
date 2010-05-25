@@ -188,20 +188,6 @@ public class CacheListDelegateTest {
     }
 
     @Test
-    public void testOnMenuOpened() {
-        GeocacheListController geocacheListController = PowerMock
-                .createStrictMock(GeocacheListController.class);
-        Menu menu = PowerMock.createMock(Menu.class);
-
-        EasyMock.expect(geocacheListController.onMenuOpened(27, menu)).andReturn(true);
-
-        PowerMock.replayAll();
-        new CacheListDelegate(null, null, null, geocacheListController, null, null, null).onMenuOpened(
-                27, menu);
-        PowerMock.verifyAll();
-    }
-
-    @Test
     public void testOnOptionsItemSelected() {
         GeocacheListController geocacheListController = PowerMock
                 .createStrictMock(GeocacheListController.class);
