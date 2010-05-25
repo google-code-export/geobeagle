@@ -21,7 +21,7 @@ import org.json.JSONObject;
 
 import roboguice.config.AbstractAndroidModule;
 
-public class BCachingCommunicationModule extends AbstractAndroidModule {
+public class BCachingCommModule extends AbstractAndroidModule {
 
     @Override
     protected void configure() {
