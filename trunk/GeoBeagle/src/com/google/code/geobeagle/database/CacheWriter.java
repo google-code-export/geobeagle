@@ -51,8 +51,9 @@ public class CacheWriter {
          */
         @Override
         public void clearEarlierLoads() {
+            ISQLiteDatabase sqliteDatabase = sqliteProvider.get();
             for (String sql : CacheWriter.SQLS_CLEAR_EARLIER_LOADS) {
-                sqliteProvider.get().execSQL(sql);
+                sqliteDatabase.execSQL(sql);
             }
         }
     }

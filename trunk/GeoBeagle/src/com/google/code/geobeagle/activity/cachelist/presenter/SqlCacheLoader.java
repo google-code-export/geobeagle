@@ -58,7 +58,6 @@ public class SqlCacheLoader implements RefreshAction {
         }
         // Log.d("GeoBeagle", "Location: " + location);
         DbFrontend dbFrontend = mDbFrontendProvider.get();
-        Log.d("GeoBeagle", "SQLCACHELOADER------" + dbFrontend);
         ArrayList<Geocache> geocaches = dbFrontend.loadCaches(latitude, longitude,
                 mFilterNearestCaches.getWhereFactory());
         mTiming.lap("SQL time");
