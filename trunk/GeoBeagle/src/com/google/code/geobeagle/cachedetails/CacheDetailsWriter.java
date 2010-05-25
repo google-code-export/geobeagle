@@ -44,6 +44,7 @@ public class CacheDetailsWriter {
 
     public void open(String wpt) throws IOException {
         String path = mFilePathStrategy.getPath(mGpxName, wpt);
+        
         new File(new File(path).getParent()).mkdirs();
         mHtmlWriter.open(path);
     }

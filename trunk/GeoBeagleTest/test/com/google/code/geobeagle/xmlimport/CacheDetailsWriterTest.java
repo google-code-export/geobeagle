@@ -14,30 +14,48 @@
 
 package com.google.code.geobeagle.xmlimport;
 
-import static org.easymock.classextension.EasyMock.createMock;
-import static org.easymock.classextension.EasyMock.replay;
-import static org.easymock.classextension.EasyMock.verify;
+import static org.easymock.EasyMock.expect;
 
 import com.google.code.geobeagle.cachedetails.CacheDetailsLoader;
 import com.google.code.geobeagle.cachedetails.CacheDetailsWriter;
+import com.google.code.geobeagle.cachedetails.FilePathStrategy;
 import com.google.code.geobeagle.cachedetails.HtmlWriter;
 
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import static org.powermock.api.easymock.PowerMock.*;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 
+import java.io.File;
 import java.io.IOException;
 
+@PrepareForTest( {
+        CacheDetailsWriter.class
+})
+@RunWith(PowerMockRunner.class)
 public class CacheDetailsWriterTest {
     @Test
-    public void testOpen() throws IOException {
+    public void testOpen() throws Exception {
         HtmlWriter htmlWriter = createMock(HtmlWriter.class);
+        FilePathStrategy filePathStrategy = createMock(FilePathStrategy.class);
+        File filePath = createMock(File.class);
+        String path = CacheDetailsLoader.DETAILS_DIR + "oakland.gpx/GC123.html";
+        String parent = CacheDetailsLoader.DETAILS_DIR + "oakland.gpx";
+        File fileParent = createMock(File.class);
 
-        htmlWriter.open(CacheDetailsLoader.DETAILS_DIR + "oakland.gpx/GC123.html");
+        expect(filePathStrategy.getPath("oakland.gpx", "GC123")).andReturn(path);
+        expectNew(File.class, path).andReturn(filePath);
+        htmlWriter.open(path);
+        expect(filePath.getParent()).andReturn(parent);
+        expectNew(File.class, parent).andReturn(fileParent);
+        expect(fileParent.mkdirs()).andReturn(true);
 
-        replay(htmlWriter);
-        CacheDetailsWriter cacheDetailsWriter = new CacheDetailsWriter(htmlWriter, null);
+        replayAll();
+        CacheDetailsWriter cacheDetailsWriter = new CacheDetailsWriter(htmlWriter, filePathStrategy);
         cacheDetailsWriter.gpxName("oakland.gpx");
         cacheDetailsWriter.open("GC123");
-        verify(htmlWriter);
+        verifyAll();
     }
 
     @Test
