@@ -24,7 +24,7 @@ import static org.powermock.api.easymock.PowerMock.verifyAll;
 import com.google.code.geobeagle.bcaching.communication.BCachingException;
 import com.google.code.geobeagle.bcaching.communication.BCachingList;
 import com.google.code.geobeagle.bcaching.communication.BCachingListImportHelper;
-import com.google.code.geobeagle.bcaching.communication.BCachingListImporter;
+import com.google.code.geobeagle.bcaching.communication.BCachingListImporterStateless;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -44,14 +44,14 @@ public class BCachingListImporterTest {
         expect(bCachingListImportHelper.importList(params)).andReturn(bcachingList);
         replayAll();
 
-        BCachingListImporter cachingListImporter = new BCachingListImporter(params,
+        BCachingListImporterStateless cachingListImporter = new BCachingListImporterStateless(params,
                 bCachingListImportHelper);
         cachingListImporter.setStartTime("7777");
         assertEquals(bcachingList, cachingListImporter.getCacheList("12"));
         verifyAll();
 
         assertEquals("12", params.get("first"));
-        assertEquals(BCachingListImporter.MAX_COUNT, params.get("maxcount"));
+        assertEquals(BCachingListImporterStateless.MAX_COUNT, params.get("maxcount"));
         assertEquals("7777", params.get("since"));
     }
 
@@ -67,7 +67,7 @@ public class BCachingListImporterTest {
 
         replayAll();
 
-        BCachingListImporter cachingListImporter = new BCachingListImporter(params,
+        BCachingListImporterStateless cachingListImporter = new BCachingListImporterStateless(params,
                 bCachingListImportHelper);
         cachingListImporter.setStartTime("7777");
         assertEquals(42, cachingListImporter.getTotalCount());
