@@ -53,7 +53,7 @@ public class DbFrontEndTest extends GeoBeagleTest {
 
         PowerMock.suppressConstructor(GeoBeagleSqliteOpenHelper.class);
         PowerMock.expectNew(GeoBeagleSqliteOpenHelper.class, context).andReturn(mOpenHelper);
-        EasyMock.expect(mOpenHelper.getReadableDatabase()).andReturn(db);
+        EasyMock.expect(mOpenHelper.getWritableDatabase()).andReturn(db);
         PowerMock.expectNew(DatabaseDI.SQLiteWrapper.class, db).andReturn(mDatabase);
         PowerMock.mockStatic(DatabaseDI.class);
         return context;
