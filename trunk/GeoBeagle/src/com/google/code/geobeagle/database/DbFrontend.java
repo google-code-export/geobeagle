@@ -31,11 +31,11 @@ import java.util.ArrayList;
  * without involving the clients of this class.
  */
 public class DbFrontend {
-    private CacheReader mCacheReader;
+    private static CacheReader mCacheReader;
     private static Context mContext;
     private static ISQLiteDatabase mDatabase;
     private static boolean mIsDatabaseOpen;
-    private GeoBeagleSqliteOpenHelper mSqliteOpenHelper;
+    private static GeoBeagleSqliteOpenHelper mSqliteOpenHelper;
     
     @Inject
     DbFrontend(Context context, CacheReader cacheReader) {
