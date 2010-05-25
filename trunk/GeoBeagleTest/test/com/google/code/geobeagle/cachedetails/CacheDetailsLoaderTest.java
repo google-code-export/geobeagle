@@ -1,3 +1,16 @@
+/*
+ ** Licensed under the Apache License, Version 2.0 (the "License");
+ ** you may not use this file except in compliance with the License.
+ ** You may obtain a copy of the License at
+ **
+ **     http://www.apache.org/licenses/LICENSE-2.0
+ **
+ ** Unless required by applicable law or agreed to in writing, software
+ ** distributed under the License is distributed on an "AS IS" BASIS,
+ ** WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ ** See the License for the specific language governing permissions and
+ ** limitations under the License.
+ */
 
 package com.google.code.geobeagle.cachedetails;
 
@@ -13,11 +26,13 @@ import com.google.code.geobeagle.cachedetails.CacheDetailsLoader.DetailsReader;
 import com.google.code.geobeagle.cachedetails.CacheDetailsLoader.DetailsReaderError;
 import com.google.code.geobeagle.cachedetails.CacheDetailsLoader.DetailsReaderImpl;
 
-import org.easymock.EasyMock;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.eq;
+import static org.easymock.EasyMock.isA;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.powermock.api.easymock.PowerMock;
+import static org.powermock.api.easymock.PowerMock.*;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
@@ -39,17 +54,18 @@ public class CacheDetailsLoaderTest {
 
     @Before
     public void setUp() {
-        fileDataVersionChecker = PowerMock.createMock(FileDataVersionChecker.class);
+        fileDataVersionChecker = createMock(FileDataVersionChecker.class);
     }
+
     @Test
     public void testDetailsError() {
-        Activity activity = PowerMock.createMock(Activity.class);
+        Activity activity = createMock(Activity.class);
 
-        EasyMock.expect(activity.getString(57, "foo.gpx")).andReturn("error msg");
+        expect(activity.getString(57, "foo.gpx")).andReturn("error msg");
 
-        PowerMock.replayAll();
+        replayAll();
         assertEquals("error msg", new DetailsError(activity, 57, "foo.gpx").getString());
-        PowerMock.verifyAll();
+        verifyAll();
     }
 
     @Test
@@ -62,118 +78,115 @@ public class CacheDetailsLoaderTest {
 
     @Test
     public void testDetailsOpener() throws Exception {
-        File file = PowerMock.createMock(File.class);
-        FileInputStream fileInputStream = PowerMock.createMock(FileInputStream.class);
-        DetailsReaderImpl detailsReaderImpl = PowerMock.createMock(DetailsReaderImpl.class);
-        Activity activity = PowerMock.createMock(Activity.class);
-        File detailsDir = PowerMock.createMock(File.class);
+        File file = createMock(File.class);
+        FileInputStream fileInputStream = createMock(FileInputStream.class);
+        DetailsReaderImpl detailsReaderImpl = createMock(DetailsReaderImpl.class);
+        Activity activity = createMock(Activity.class);
+        File detailsDir = createMock(File.class);
 
-        PowerMock.expectNew(File.class, CacheDetailsLoader.SDCARD_DIR).andReturn(detailsDir);
-        EasyMock.expect(detailsDir.isDirectory()).andReturn(true);
-        EasyMock.expect(file.getAbsolutePath()).andReturn("/sdcard/foo.gpx");
-        PowerMock.expectNew(FileInputStream.class, file).andReturn(fileInputStream);
-        EasyMock.expect(file.length()).andReturn(27L);
-        PowerMock.expectNew(DetailsReaderImpl.class, EasyMock.eq(activity),
-                EasyMock.eq("/sdcard/foo.gpx"), EasyMock.eq(fileInputStream),
-                EasyMock.isA(byte[].class)).andReturn(detailsReaderImpl);
+        expectNew(File.class, CacheDetailsLoader.SDCARD_DIR).andReturn(detailsDir);
+        expect(detailsDir.isDirectory()).andReturn(true);
+        expect(file.getAbsolutePath()).andReturn("/sdcard/foo.gpx");
+        expectNew(FileInputStream.class, file).andReturn(fileInputStream);
+        expect(file.length()).andReturn(27L);
+        expectNew(DetailsReaderImpl.class, eq(activity), eq("/sdcard/foo.gpx"),
+                eq(fileInputStream), isA(byte[].class)).andReturn(detailsReaderImpl);
 
-        PowerMock.replayAll();
+        replayAll();
         assertEquals(detailsReaderImpl, new DetailsOpener(activity, fileDataVersionChecker)
                 .open(file));
-        PowerMock.verifyAll();
+        verifyAll();
     }
 
     @Test
     public void testDetailsOpenerFileNotFound() throws Exception {
-        File file = PowerMock.createMock(File.class);
-        DetailsReaderError detailsReaderError = PowerMock
-                .createMock(DetailsReaderError.class);
-        Activity activity = PowerMock.createMock(Activity.class);
-        File detailsDir = PowerMock.createMock(File.class);
+        File file = createMock(File.class);
+        DetailsReaderError detailsReaderError = createMock(DetailsReaderError.class);
+        Activity activity = createMock(Activity.class);
+        File detailsDir = createMock(File.class);
 
-        PowerMock.expectNew(File.class, CacheDetailsLoader.SDCARD_DIR).andReturn(detailsDir);
-        EasyMock.expect(detailsDir.isDirectory()).andReturn(true);
-        EasyMock.expect(fileDataVersionChecker.needsUpdating()).andReturn(false);
-        EasyMock.expect(file.getAbsolutePath()).andReturn("/sdcard/foo.html");
-        PowerMock.expectNew(FileInputStream.class, file).andThrow(
+        expectNew(File.class, CacheDetailsLoader.SDCARD_DIR).andReturn(detailsDir);
+        expect(detailsDir.isDirectory()).andReturn(true);
+        expect(fileDataVersionChecker.needsUpdating()).andReturn(false);
+        expect(file.getAbsolutePath()).andReturn("/sdcard/foo.html");
+        expectNew(FileInputStream.class, file).andThrow(
                 new FileNotFoundException("/sdcard/foo.html"));
-        PowerMock.expectNew(DetailsReaderError.class, activity,
-                R.string.error_opening_details_file, "/sdcard/foo.html").andReturn(
-                detailsReaderError);
+        expectNew(DetailsReaderError.class, activity, R.string.error_opening_details_file,
+                "/sdcard/foo.html").andReturn(detailsReaderError);
 
-        PowerMock.replayAll();
+        replayAll();
         assertEquals(detailsReaderError, new DetailsOpener(activity, fileDataVersionChecker)
                 .open(file));
-        PowerMock.verifyAll();
+        verifyAll();
     }
 
     @Test
     public void testDetailsReader() throws Exception {
-        FileInputStream fileInputStream = PowerMock.createMock(FileInputStream.class);
-        Activity activity = PowerMock.createMock(Activity.class);
-        DetailsImpl details = PowerMock.createMock(DetailsImpl.class);
+        FileInputStream fileInputStream = createMock(FileInputStream.class);
+        Activity activity = createMock(Activity.class);
+        DetailsImpl details = createMock(DetailsImpl.class);
 
         byte[] buffer = new byte[10];
-        EasyMock.expect(fileInputStream.read(buffer)).andReturn(10);
+        expect(fileInputStream.read(buffer)).andReturn(10);
         fileInputStream.close();
-        PowerMock.expectNew(DetailsImpl.class, buffer).andReturn(details);
+        expectNew(DetailsImpl.class, buffer).andReturn(details);
 
-        PowerMock.replayAll();
+        replayAll();
         assertEquals(details, new DetailsReaderImpl(activity, "/sdcard/foo.gpx", fileInputStream,
                 buffer).read());
-        PowerMock.verifyAll();
+        verifyAll();
     }
 
     @Test
     public void testDetailsReaderFileNotFound() throws Exception {
-        Activity activity = PowerMock.createMock(Activity.class);
-        DetailsError detailsError = PowerMock.createMock(DetailsError.class);
+        Activity activity = createMock(Activity.class);
+        DetailsError detailsError = createMock(DetailsError.class);
 
-        PowerMock.expectNew(DetailsError.class, activity, R.string.error_opening_details_file,
+        expectNew(DetailsError.class, activity, R.string.error_opening_details_file,
                 "/sdcard/foo.html").andReturn(detailsError);
 
-        PowerMock.replayAll();
+        replayAll();
         assertEquals(detailsError, new DetailsReaderError(activity,
                 R.string.error_opening_details_file, "/sdcard/foo.html").read());
-        PowerMock.verifyAll();
+        verifyAll();
     }
 
     @Test
     public void testDetailsReaderIOError() throws Exception {
-        FileInputStream fileInputStream = PowerMock.createMock(FileInputStream.class);
-        Activity activity = PowerMock.createMock(Activity.class);
-        DetailsError details = PowerMock.createMock(DetailsError.class);
+        FileInputStream fileInputStream = createMock(FileInputStream.class);
+        Activity activity = createMock(Activity.class);
+        DetailsError details = createMock(DetailsError.class);
 
         byte[] buffer = new byte[10];
-        EasyMock.expect(fileInputStream.read(buffer)).andThrow(new IOException("/sdcard/foo.gpx"));
-        PowerMock.expectNew(DetailsError.class, activity, R.string.error_reading_details_file,
+        expect(fileInputStream.read(buffer)).andThrow(new IOException("/sdcard/foo.gpx"));
+        expectNew(DetailsError.class, activity, R.string.error_reading_details_file,
                 "/sdcard/foo.gpx").andReturn(details);
 
-        PowerMock.replayAll();
+        replayAll();
         assertEquals(details, new DetailsReaderImpl(activity, "/sdcard/foo.gpx", fileInputStream,
                 buffer).read());
-        PowerMock.verifyAll();
+        verifyAll();
     }
 
     @Test
     public void testLoad() throws Exception {
-        DetailsOpener detailsOpener = PowerMock.createMock(DetailsOpener.class);
-        File file = PowerMock.createMock(File.class);
-        DetailsReader detailsReader = PowerMock.createMock(DetailsReader.class);
-        Details details = PowerMock.createMock(Details.class);
-        FilePathStrategy filePathStrategy = PowerMock.createMock(FilePathStrategy.class);
+        DetailsOpener detailsOpener = createMock(DetailsOpener.class);
+        File file = createMock(File.class);
+        DetailsReader detailsReader = createMock(DetailsReader.class);
+        Details details = createMock(Details.class);
+        FilePathStrategy filePathStrategy = createMock(FilePathStrategy.class);
 
-        EasyMock.expect(filePathStrategy.getPath("foo.gpx", "GC123")).andReturn(
+        expect(filePathStrategy.getPath("foo.gpx", "GC123")).andReturn(
                 CacheDetailsLoader.DETAILS_DIR + "foo.gpx/GC123.html");
-        PowerMock.expectNew(File.class, CacheDetailsLoader.DETAILS_DIR + "foo.gpx/GC123.html")
+        expectNew(File.class, CacheDetailsLoader.DETAILS_DIR + "foo.gpx/GC123.html")
                 .andReturn(file);
-        EasyMock.expect(detailsOpener.open(file)).andReturn(detailsReader);
-        EasyMock.expect(detailsReader.read()).andReturn(details);
-        EasyMock.expect(details.getString()).andReturn("cache details");
+        expect(detailsOpener.open(file)).andReturn(detailsReader);
+        expect(detailsReader.read()).andReturn(details);
+        expect(details.getString()).andReturn("cache details");
 
-        PowerMock.replayAll();
-        assertEquals("cache details", new CacheDetailsLoader(detailsOpener, filePathStrategy)
-                .load("foo.gpx", "GC123"));
-        PowerMock.verifyAll();
+        replayAll();
+        assertEquals("cache details", new CacheDetailsLoader(detailsOpener, filePathStrategy).load(
+                "foo.gpx", "GC123"));
+        verifyAll();
     }
 }
