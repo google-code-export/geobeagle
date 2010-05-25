@@ -56,9 +56,14 @@ public class ImportBCachingWorker extends RoboThread implements Abortable {
             this.progressHandler = progressHandler;
         }
 
-        public void open() {
+        public boolean open(int totalCount) {
+            if (totalCount <= 0)
+                return false;
+            progressManager.update(progressHandler, ProgressMessage.SET_MAX, totalCount);
+
             position = bcachingLastUpdated.getLastRead();
             progressManager.update(progressHandler, ProgressMessage.SET_PROGRESS, position);
+            return true;
         }
 
         public int increment(int cachesRead) {
@@ -96,17 +101,13 @@ public class ImportBCachingWorker extends RoboThread implements Abortable {
     @Override
     public void run() {
         inProgress = true;
-        final long now = System.currentTimeMillis();
+        final long endingTime = System.currentTimeMillis();
         progressManager.update(progressHandler, ProgressMessage.START, 0);
         String lastUpdateTime = String.valueOf(bcachingLastUpdated.getLastUpdateTime());
 
         try {
-            final int totalCount = bcachingListImporter.getTotalCount(lastUpdateTime);
-            if (totalCount <= 0)
+            if (!cursor.open(bcachingListImporter.getTotalCount(lastUpdateTime)))
                 return;
-            progressManager.update(progressHandler, ProgressMessage.SET_MAX, totalCount);
-
-            cursor.open();
 
             BCachingList bcachingList = bcachingListImporter.getCacheList(cursor.getPosition(),
                     lastUpdateTime.toString());
@@ -121,7 +122,7 @@ public class ImportBCachingWorker extends RoboThread implements Abortable {
                 bcachingList = bcachingListImporter.getCacheList(cursor.getPosition(),
                         lastUpdateTime);
             }
-            bcachingLastUpdated.putLastUpdateTime(now);
+            bcachingLastUpdated.putLastUpdateTime(endingTime);
             cursor.close();
             progressManager.update(progressHandler, ProgressMessage.REFRESH, 0);
         } catch (BCachingException e) {

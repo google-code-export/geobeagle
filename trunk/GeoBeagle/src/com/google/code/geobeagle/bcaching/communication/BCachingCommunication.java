@@ -138,12 +138,6 @@ public class BCachingCommunication {
         return sendRequest(sb.toString());
     }
 
-    public void validateCredentials() throws BCachingException {
-        // attempt to login at server
-        // failure will throw an exception
-        sendRequest("a=login&app=GeoBeagle");
-    }
-
     private String encodeQueryString(String username, String hashword, String params) {
         if (username == null)
             throw new IllegalArgumentException("username is required.");
