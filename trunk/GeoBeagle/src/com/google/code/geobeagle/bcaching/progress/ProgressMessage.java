@@ -49,7 +49,8 @@ public enum ProgressMessage {
             progressHandler.setMax(msg.arg1);
             progressHandler.show();
         }
-    }, REFRESH {
+    },
+    REFRESH {
         @Override
         void act(ProgressHandler progressHandler, Message msg) {
             progressHandler.refresh();
