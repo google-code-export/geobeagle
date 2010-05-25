@@ -16,6 +16,7 @@ package com.google.code.geobeagle.activity.cachelist.presenter;
 
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.LocationControlBuffered;
+import com.google.code.geobeagle.activity.cachelist.ActivityVisible;
 import com.google.code.geobeagle.activity.cachelist.CacheListDelegateDI.Timing;
 import com.google.code.geobeagle.activity.cachelist.model.CacheListData;
 import com.google.code.geobeagle.database.DbFrontend;
@@ -24,7 +25,6 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 
 import android.location.Location;
-import android.util.Log;
 
 import java.util.ArrayList;
 
@@ -35,20 +35,25 @@ public class SqlCacheLoader implements RefreshAction {
     private final LocationControlBuffered mLocationControlBuffered;
     private final Timing mTiming;
     private final TitleUpdater mTitleUpdater;
+    private final ActivityVisible mActivityVisible;
 
     @Inject
-    public SqlCacheLoader(Provider<DbFrontend> dbFrontendProvider, FilterNearestCaches filterNearestCaches,
-            CacheListData cacheListData, LocationControlBuffered locationControlBuffered,
-            TitleUpdater titleUpdater, Timing timing) {
+    public SqlCacheLoader(Provider<DbFrontend> dbFrontendProvider,
+            FilterNearestCaches filterNearestCaches, CacheListData cacheListData,
+            LocationControlBuffered locationControlBuffered, TitleUpdater titleUpdater,
+            Timing timing, ActivityVisible activityVisible) {
         mDbFrontendProvider = dbFrontendProvider;
         mFilterNearestCaches = filterNearestCaches;
         mCacheListData = cacheListData;
         mLocationControlBuffered = locationControlBuffered;
         mTiming = timing;
         mTitleUpdater = titleUpdater;
+        mActivityVisible = activityVisible;
     }
 
     public void refresh() {
+        if (!mActivityVisible.getVisible())
+            return;
         final Location location = mLocationControlBuffered.getLocation();
         double latitude = 0;
         double longitude = 0;

@@ -41,6 +41,7 @@ import com.google.code.geobeagle.activity.main.GeoBeagleModule.DefaultSharedPref
 import com.google.code.geobeagle.xmlimport.GpxImporterDI.Toaster;
 import com.google.inject.BindingAnnotation;
 import com.google.inject.Provides;
+import com.google.inject.Singleton;
 import com.google.inject.assistedinject.FactoryProvider;
 
 import roboguice.config.AbstractAndroidModule;
@@ -66,6 +67,7 @@ public class CacheListModule extends AbstractAndroidModule {
                 FactoryProvider.newFactory(GeocacheListPresenterFactory.class,
                         GeocacheListPresenter.class));
         bind(MenuActionSyncBCaching.class).in(ContextScoped.class);
+        bind(ActivityVisible.class).in(Singleton.class);
     }
 
     @Provides
