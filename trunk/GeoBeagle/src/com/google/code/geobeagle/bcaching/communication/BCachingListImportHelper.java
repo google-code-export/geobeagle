@@ -38,7 +38,7 @@ public class BCachingListImportHelper {
         this.bcachingListFactory = bcachingListFactory;
     }
 
-    BCachingList importList(Hashtable<String, String> params) throws BCachingException {
+    public BCachingList importList(Hashtable<String, String> params) throws BCachingException {
         BufferedReader bufferedReader = bufferedReaderFactory.create(params);
         StringBuilder result = new StringBuilder();
         try {

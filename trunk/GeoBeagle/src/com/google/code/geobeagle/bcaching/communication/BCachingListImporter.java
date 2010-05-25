@@ -14,65 +14,28 @@
 
 package com.google.code.geobeagle.bcaching.communication;
 
-import com.google.code.geobeagle.bcaching.BCachingAnnotations.CacheListAnnotation;
-import com.google.inject.Inject;
-
-import java.util.Hashtable;
-
 public class BCachingListImporter {
-    static final String MAX_COUNT = "50";
+    private final BCachingListImporterStateless bcachingListImporter;
+    private BCachingList bcachingList;
 
-    private final BCachingListImportHelper bCachingListImportHelper;
-    private final Hashtable<String, String> params;
-    private String startTime;
-
-    public static class BCachingListImporter2 {
-        BCachingListImporter bcachingListImporter;
-        private BCachingList bcachingList;
-
-        BCachingListImporter2(BCachingListImporter bcachingListImporter) {
-            this.bcachingListImporter = bcachingListImporter;
-        }
-
-        public BCachingList getCacheList(String startPosition) throws BCachingException {
-            bcachingList = bcachingListImporter.getCacheList(startPosition);
-            return bcachingList;
-        }
-        
-        public int getTotalCount() throws BCachingException {
-            return bcachingListImporter.getTotalCount();
-        }
-        
-        public void setStartTime(String startTime) {
-            bcachingListImporter.setStartTime(startTime);
-        }
+    public BCachingListImporter(BCachingListImporterStateless bcachingListImporter) {
+        this.bcachingListImporter = bcachingListImporter;
     }
 
-    @Inject
-    BCachingListImporter(@CacheListAnnotation Hashtable<String, String> params,
-            BCachingListImportHelper bCachingListImportHelper) {
-        this.params = params;
-        this.bCachingListImportHelper = bCachingListImportHelper;
-    }
-
-    private BCachingList getCacheList(String maxCount, String startingPosition)
-            throws BCachingException {
-        params.put("maxcount", maxCount);
-        params.put("since", startingPosition);
-        return bCachingListImportHelper.importList(params);
-    }
-
-    public BCachingList getCacheList(String startPosition) throws BCachingException {
-        params.put("first", startPosition);
-        return getCacheList(MAX_COUNT, startTime);
+    public void readCacheList(String startPosition) throws BCachingException {
+        bcachingList = bcachingListImporter.getCacheList(startPosition);
     }
 
     public int getTotalCount() throws BCachingException {
-        params.remove("first");
-        return getCacheList("1", startTime).getTotalCount();
+        return bcachingListImporter.getTotalCount();
     }
 
     public void setStartTime(String startTime) {
-        this.startTime = startTime;
+        bcachingListImporter.setStartTime(startTime);
     }
+
+    public BCachingList getBCachingList() {
+        return bcachingList;
+    }
+    
 }
