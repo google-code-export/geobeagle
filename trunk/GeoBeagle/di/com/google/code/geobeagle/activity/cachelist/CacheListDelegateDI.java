@@ -297,8 +297,8 @@ public class CacheListDelegateDI {
                 contextActionDelete, contextActionDeleteOnClickOkListener);
 
         final GeocacheListController geocacheListController = new GeocacheListController(
-                cacheListRefresh, contextActions, filterNearestCaches, menuActionSyncGpx,
-                menuActions, aborter);
+                cacheListRefresh, contextActions, menuActionSyncGpx, menuActions,
+                aborter);
         final ActivitySaver activitySaver = injector.getInstance(ActivitySaver.class);
         final ImportIntentManager importIntentManager = new ImportIntentManager(listActivity);
         return new CacheListDelegate(importIntentManager, activitySaver, cacheListRefresh,

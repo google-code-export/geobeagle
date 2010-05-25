@@ -100,10 +100,6 @@ public class CacheListDelegate {
         mController.onListItemClick(l, v, position, id);
     }
 
-    public boolean onMenuOpened(int featureId, Menu menu) {
-        return mController.onMenuOpened(featureId, menu);
-    }
-
     public boolean onOptionsItemSelected(MenuItem item) {
         return mController.onOptionsItemSelected(item);
     }

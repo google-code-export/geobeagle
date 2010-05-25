@@ -88,16 +88,6 @@ public class CacheListActivity extends GuiceListActivity {
         mCacheListDelegate.onListItemClick(l, v, position, id);
     }
 
-    /*
-     * (non-Javadoc)
-     * @see android.app.Activity#onMenuOpened(int, android.view.Menu)
-     */
-    @Override
-    public boolean onMenuOpened(int featureId, Menu menu) {
-        super.onMenuOpened(featureId, menu);
-        return mCacheListDelegate.onMenuOpened(featureId, menu);
-    }
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         return mCacheListDelegate.onOptionsItemSelected(item) || super.onOptionsItemSelected(item);
@@ -106,14 +96,12 @@ public class CacheListActivity extends GuiceListActivity {
     @Override
     protected void onPause() {
         Log.d("GeoBeagle", "CacheListActivity onPause");
-
         /*
          * cacheListDelegate closes the database, it must be called before
          * super.onPause because the guice activity onPause nukes the database
          * object from the guice map.
          */
         mCacheListDelegate.onPause();
-        Log.d("GeoBeagle", "!!!!!!!!!!!! CacheListActivity now calling super.onPause()");
         super.onPause();
     }
 
