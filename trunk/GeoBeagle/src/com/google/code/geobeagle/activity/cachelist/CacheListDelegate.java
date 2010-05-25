@@ -70,11 +70,13 @@ public class CacheListDelegate {
     private final ImportIntentManager mImportIntentManager;
     private final GeocacheListPresenter mPresenter;
     private final ContextActionDeleteDialogHelper mContextActionDeleteDialogHelper;
+    private final ActivityVisible mActivityVisible;
 
     public CacheListDelegate(ImportIntentManager importIntentManager, ActivitySaver activitySaver,
             CacheListRefresh cacheListRefresh, GeocacheListController geocacheListController,
             GeocacheListPresenter geocacheListPresenter, Provider<DbFrontend> dbFrontendProvider,
-            ContextActionDeleteDialogHelper contextActionDeleteDialogHelper) {
+            ContextActionDeleteDialogHelper contextActionDeleteDialogHelper,
+            ActivityVisible activityVisible) {
         mActivitySaver = activitySaver;
         mCacheListRefresh = cacheListRefresh;
         mController = geocacheListController;
@@ -82,6 +84,7 @@ public class CacheListDelegate {
         mImportIntentManager = importIntentManager;
         mDbFrontendProvider = dbFrontendProvider;
         mContextActionDeleteDialogHelper = contextActionDeleteDialogHelper;
+        mActivityVisible = activityVisible;
     }
 
     public boolean onContextItemSelected(MenuItem menuItem) {
@@ -105,6 +108,7 @@ public class CacheListDelegate {
     }
 
     public void onPause() {
+        mActivityVisible.setVisible(false);
         mPresenter.onPause();
         mController.onPause();
         mActivitySaver.save(ActivityType.CACHE_LIST);
@@ -112,7 +116,7 @@ public class CacheListDelegate {
     }
 
     public void onResume() {
-        // TODO: No need to re-initialize these
+        mActivityVisible.setVisible(true);
         mPresenter.onResume(mCacheListRefresh);
         mController.onResume(mCacheListRefresh, mImportIntentManager.isImport());
     }

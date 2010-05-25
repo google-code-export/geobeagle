@@ -222,8 +222,10 @@ public class CacheListDelegateDI {
         final TitleUpdater titleUpdater = new TitleUpdater(listActivity, filterNearestCaches,
                 listTitleFormatter, timing);
         final Provider<DbFrontend> dbFrontendProvider = injector.getProvider(DbFrontend.class);
+        final ActivityVisible activityVisible = injector.getInstance(ActivityVisible.class);
         final SqlCacheLoader sqlCacheLoader = new SqlCacheLoader(dbFrontendProvider,
-                filterNearestCaches, cacheListData, locationControlBuffered, titleUpdater, timing);
+                filterNearestCaches, cacheListData, locationControlBuffered, titleUpdater, timing,
+                activityVisible);
         final ActionManager actionManager = actionManagerFactory.create(sqlCacheLoader);
         final CacheListRefresh cacheListRefresh = new CacheListRefresh(actionManager, timing,
                 locationControlBuffered, updateFlag);
@@ -303,6 +305,6 @@ public class CacheListDelegateDI {
         final ImportIntentManager importIntentManager = new ImportIntentManager(listActivity);
         return new CacheListDelegate(importIntentManager, activitySaver, cacheListRefresh,
                 geocacheListController, geocacheListPresenter, dbFrontendProvider,
-                contextActionDeleteDialogHelper);
+                contextActionDeleteDialogHelper, activityVisible);
     }
 }
