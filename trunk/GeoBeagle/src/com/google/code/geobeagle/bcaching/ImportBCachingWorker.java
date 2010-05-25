@@ -67,6 +67,7 @@ public class ImportBCachingWorker extends RoboThread implements Abortable {
             if (totalCount <= 0)
                 return;
             progressManager.update(progressHandler, ProgressMessage.SET_MAX, totalCount);
+            
             int totalCachesRead = bcachingLastUpdated.getLastRead();
             progressManager.update(progressHandler, ProgressMessage.SET_PROGRESS, totalCachesRead);
 
@@ -74,9 +75,7 @@ public class ImportBCachingWorker extends RoboThread implements Abortable {
                     .valueOf(totalCachesRead), lastUpdateTime.toString());
             int cachesRead;
             while ((cachesRead = bcachingList.getCachesRead()) > 0) {
-                Log.d("GeoBeagle", "cachesRead: " + cachesRead);
                 if (!detailsReaderImport.loadCacheDetails(bcachingList.getCacheIds())) {
-                    Log.d("GeoBeagle", "run() ABORTING");
                     return;
                 }
                 totalCachesRead += cachesRead;
@@ -84,12 +83,12 @@ public class ImportBCachingWorker extends RoboThread implements Abortable {
                 bcachingLastUpdated.putLastRead(totalCachesRead);
                 progressManager.update(progressHandler, ProgressMessage.SET_PROGRESS,
                         totalCachesRead);
+                
                 bcachingList = bcachingListImporter.getCacheList(String.valueOf(totalCachesRead),
                         lastUpdateTime);
             }
             bcachingLastUpdated.putLastUpdateTime(now);
             bcachingLastUpdated.putLastRead(0);
-            Log.d("GeoBeagle", "run() SENDING REFRESH message");
             progressManager.update(progressHandler, ProgressMessage.REFRESH, 0);
         } catch (BCachingException e) {
             progressManager.update(progressHandler, ProgressMessage.REFRESH, 0);
