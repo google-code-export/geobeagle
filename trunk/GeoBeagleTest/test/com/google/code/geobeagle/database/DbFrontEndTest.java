@@ -52,11 +52,9 @@ public class DbFrontEndTest extends GeoBeagleTest {
         mCacheReader = PowerMock.createMock(CacheReader.class);
 
         PowerMock.suppressConstructor(GeoBeagleSqliteOpenHelper.class);
-        PowerMock.expectNew(GeoBeagleSqliteOpenHelper.class, context)
-                .andReturn(mOpenHelper);
+        PowerMock.expectNew(GeoBeagleSqliteOpenHelper.class, context).andReturn(mOpenHelper);
         EasyMock.expect(mOpenHelper.getReadableDatabase()).andReturn(db);
-        PowerMock.expectNew(DatabaseDI.SQLiteWrapper.class, db).andReturn(
-                mDatabase);
+        PowerMock.expectNew(DatabaseDI.SQLiteWrapper.class, db).andReturn(mDatabase);
         PowerMock.mockStatic(DatabaseDI.class);
         return context;
     }
@@ -83,14 +81,12 @@ public class DbFrontEndTest extends GeoBeagleTest {
     public void testCount() throws Exception {
         Cursor countCursor = PowerMock.createMock(Cursor.class);
         Context context = expectOpenDatabase();
-        WhereFactoryFixedArea whereFactory = PowerMock
-                .createMock(WhereFactoryFixedArea.class);
+        WhereFactoryFixedArea whereFactory = PowerMock.createMock(WhereFactoryFixedArea.class);
 
-        EasyMock.expect(whereFactory.getWhere(mDatabase, 122, 37)).andReturn(
-                "foo=bar");
+        EasyMock.expect(whereFactory.getWhere(mDatabase, 122, 37)).andReturn("foo=bar");
         EasyMock.expect(
-                mDatabase.rawQuery("SELECT COUNT(*) FROM "
-                        + Database.TBL_CACHES + " WHERE foo=bar", null))
+                mDatabase.rawQuery(
+                        "SELECT COUNT(*) FROM " + Database.TBL_CACHES + " WHERE foo=bar", null))
                 .andReturn(countCursor);
         EasyMock.expect(countCursor.moveToFirst()).andReturn(true);
         EasyMock.expect(countCursor.getInt(0)).andReturn(9000);
@@ -108,9 +104,8 @@ public class DbFrontEndTest extends GeoBeagleTest {
         Cursor countCursor = PowerMock.createMock(Cursor.class);
 
         Context context = expectOpenDatabase();
-        EasyMock.expect(
-                mDatabase.rawQuery("SELECT COUNT(*) FROM "
-                        + Database.TBL_CACHES, null)).andReturn(countCursor);
+        EasyMock.expect(mDatabase.rawQuery("SELECT COUNT(*) FROM " + Database.TBL_CACHES, null))
+                .andReturn(countCursor);
         EasyMock.expect(countCursor.moveToFirst()).andReturn(true);
         EasyMock.expect(countCursor.getInt(0)).andReturn(9000);
         countCursor.close();
@@ -129,14 +124,12 @@ public class DbFrontEndTest extends GeoBeagleTest {
 
     @Test
     public void testLoadCaches() throws Exception {
-        CacheReaderCursor cursor = PowerMock
-                .createMock(CacheReaderCursor.class);
+        CacheReaderCursor cursor = PowerMock.createMock(CacheReaderCursor.class);
         Context context = expectOpenDatabase();
         WhereFactory whereFactory = PowerMock.createMock(WhereFactory.class);
         Geocache cache = PowerMock.createMock(Geocache.class);
 
-        EasyMock.expect(mCacheReader.open(122, 37, whereFactory, null))
-                .andReturn(cursor);
+        EasyMock.expect(mCacheReader.open(122, 37, whereFactory, null)).andReturn(cursor);
         EasyMock.expect(cursor.getCache()).andReturn(cache);
         EasyMock.expect(cursor.moveToNext()).andReturn(false);
         cursor.close();
