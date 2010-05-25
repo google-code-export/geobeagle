@@ -21,7 +21,6 @@ import com.google.code.geobeagle.xmlimport.CachePersisterFacadeDI.FileFactory;
 import com.google.inject.Inject;
 
 import android.os.PowerManager.WakeLock;
-import android.text.format.Time;
 import android.util.Log;
 
 import java.io.File;
@@ -37,7 +36,7 @@ public class CachePersisterFacade {
     private String mLastModified;
 
     @Inject
-    public CachePersisterFacade(CacheTagSqlWriter cacheTagSqlWriter, FileFactory fileFactory,
+    CachePersisterFacade(CacheTagSqlWriter cacheTagSqlWriter, FileFactory fileFactory,
             CacheDetailsWriter cacheDetailsWriter, MessageHandlerInterface messageHandler,
             WakeLock wakeLock) {
         mCacheDetailsWriter = cacheDetailsWriter;
