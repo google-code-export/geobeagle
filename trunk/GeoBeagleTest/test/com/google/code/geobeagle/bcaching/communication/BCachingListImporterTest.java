@@ -43,8 +43,11 @@ public class BCachingListImporterTest {
         Hashtable<String, String> params = new Hashtable<String, String>();
         expect(bCachingListImportHelper.importList(params)).andReturn(bcachingList);
         replayAll();
-        assertEquals(bcachingList, new BCachingListImporter(params, bCachingListImportHelper)
-                .getCacheList("12", "7777"));
+
+        BCachingListImporter cachingListImporter = new BCachingListImporter(params,
+                bCachingListImportHelper);
+        cachingListImporter.setStartTime("7777");
+        assertEquals(bcachingList, cachingListImporter.getCacheList("12"));
         verifyAll();
 
         assertEquals("12", params.get("first"));
@@ -63,8 +66,11 @@ public class BCachingListImporterTest {
         expect(bcachingList.getTotalCount()).andReturn(42);
 
         replayAll();
-        assertEquals(42, new BCachingListImporter(params, bCachingListImportHelper)
-                .getTotalCount("7777"));
+
+        BCachingListImporter cachingListImporter = new BCachingListImporter(params,
+                bCachingListImportHelper);
+        cachingListImporter.setStartTime("7777");
+        assertEquals(42, cachingListImporter.getTotalCount());
         verifyAll();
 
         assertFalse(params.containsKey("first"));
