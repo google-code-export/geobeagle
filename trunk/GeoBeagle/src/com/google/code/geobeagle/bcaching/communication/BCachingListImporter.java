@@ -24,6 +24,29 @@ public class BCachingListImporter {
 
     private final BCachingListImportHelper bCachingListImportHelper;
     private final Hashtable<String, String> params;
+    private String startTime;
+
+    public static class BCachingListImporter2 {
+        BCachingListImporter bcachingListImporter;
+        private BCachingList bcachingList;
+
+        BCachingListImporter2(BCachingListImporter bcachingListImporter) {
+            this.bcachingListImporter = bcachingListImporter;
+        }
+
+        public BCachingList getCacheList(String startPosition) throws BCachingException {
+            bcachingList = bcachingListImporter.getCacheList(startPosition);
+            return bcachingList;
+        }
+        
+        public int getTotalCount() throws BCachingException {
+            return bcachingListImporter.getTotalCount();
+        }
+        
+        public void setStartTime(String startTime) {
+            bcachingListImporter.setStartTime(startTime);
+        }
+    }
 
     @Inject
     BCachingListImporter(@CacheListAnnotation Hashtable<String, String> params,
@@ -32,21 +55,24 @@ public class BCachingListImporter {
         this.bCachingListImportHelper = bCachingListImportHelper;
     }
 
-    private BCachingList getCacheListHelper(String maxCount, String lastUpdate)
+    private BCachingList getCacheList(String maxCount, String startingPosition)
             throws BCachingException {
         params.put("maxcount", maxCount);
-        params.put("since", lastUpdate);
+        params.put("since", startingPosition);
         return bCachingListImportHelper.importList(params);
     }
 
-    public BCachingList getCacheList(String startAt, String lastUpdateTime)
-            throws BCachingException {
-        params.put("first", startAt);
-        return getCacheListHelper(MAX_COUNT, lastUpdateTime);
+    public BCachingList getCacheList(String startPosition) throws BCachingException {
+        params.put("first", startPosition);
+        return getCacheList(MAX_COUNT, startTime);
     }
 
-    public int getTotalCount(String lastUpdateTime) throws BCachingException {
+    public int getTotalCount() throws BCachingException {
         params.remove("first");
-        return getCacheListHelper("1", lastUpdateTime).getTotalCount();
+        return getCacheList("1", startTime).getTotalCount();
+    }
+
+    public void setStartTime(String startTime) {
+        this.startTime = startTime;
     }
 }

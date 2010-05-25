@@ -30,13 +30,13 @@ import roboguice.util.RoboThread;
 import android.util.Log;
 
 public class ImportBCachingWorker extends RoboThread implements Abortable {
-    private final ProgressHandler progressHandler;
-    private final ErrorDisplayer errorDisplayer;
-    private final ProgressManager progressManager;
-    private final DetailsReaderImport detailsReaderImport;
-    private final Toaster toaster;
-    private boolean inProgress;
     private final CacheListCursor cursor;
+    private final DetailsReaderImport detailsReaderImport;
+    private final ErrorDisplayer errorDisplayer;
+    private boolean inProgress;
+    private final ProgressHandler progressHandler;
+    private final ProgressManager progressManager;
+    private final Toaster toaster;
 
     @Inject
     public ImportBCachingWorker(ProgressHandler progressHandler, ProgressManager progressManager,
@@ -48,6 +48,24 @@ public class ImportBCachingWorker extends RoboThread implements Abortable {
         this.detailsReaderImport = detailsReaderImport;
         this.toaster = toaster;
         this.cursor = cacheListCursor;
+    }
+
+    @Override
+    public void abort() {
+        if (!inProgress)
+            return;
+        Log.d("GeoBeagle", "ABORTING IMPORT");
+        try {
+            Log.d("GeoBeagle", "abort: JOIN STARTED");
+            inProgress = false;
+            join();
+            toaster.showToast();
+            Log.d("GeoBeagle", "abort: JOIN FINISHED");
+        } catch (InterruptedException e) {
+            Log.d("GeoBeagle", "Ignoring InterruptedException: " + e.getLocalizedMessage());
+        }
+        Log.d("GeoBeagle", "done abort IMPORT");
+
     }
 
     @Override
@@ -81,23 +99,5 @@ public class ImportBCachingWorker extends RoboThread implements Abortable {
             inProgress = false;
             Log.d("GeoBeagle", "ImportBcachingWorker ending");
         }
-    }
-
-    @Override
-    public void abort() {
-        if (!inProgress)
-            return;
-        Log.d("GeoBeagle", "ABORTING IMPORT");
-        try {
-            Log.d("GeoBeagle", "abort: JOIN STARTED");
-            inProgress = false;
-            join();
-            toaster.showToast();
-            Log.d("GeoBeagle", "abort: JOIN FINISHED");
-        } catch (InterruptedException e) {
-            Log.d("GeoBeagle", "Ignoring InterruptedException: " + e.getLocalizedMessage());
-        }
-        Log.d("GeoBeagle", "done abort IMPORT");
-
     }
 }
