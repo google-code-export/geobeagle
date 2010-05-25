@@ -42,4 +42,8 @@ public class DetailsReaderImport {
         }
         return gpxLoader.load(eventHelper);
     }
+    
+    public String getLastModified() {
+        return gpxLoader.getLastModified();
+    }
 }

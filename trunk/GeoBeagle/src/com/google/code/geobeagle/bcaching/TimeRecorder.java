@@ -16,20 +16,22 @@ package com.google.code.geobeagle.bcaching;
 
 import com.google.inject.Inject;
 
+import android.text.format.Time;
+import android.util.Log;
+
 class TimeRecorder {
     private final BCachingLastUpdated bcachingLastUpdated;
-    private long endingTime;
 
     @Inject
-    TimeRecorder(BCachingLastUpdated bcCachingLastUpdated) {
-        bcachingLastUpdated = bcCachingLastUpdated;
+    TimeRecorder(BCachingLastUpdated bcachingLastUpdated) {
+        this.bcachingLastUpdated = bcachingLastUpdated;
     }
 
-    public void getTime() {
-        endingTime = System.currentTimeMillis();
-    }
-
-    public void saveTime() {
-        bcachingLastUpdated.putLastUpdateTime(endingTime);
+    public void saveTime(String lastModified) {
+        Time time = new Time();
+        time.parse3339(lastModified + ".000Z");
+        Log.d("GeoBeagle", "LAST MODIFIED TIME: " + time.format3339(false) + ", " + lastModified
+                + ", " + time.toMillis(false));
+        bcachingLastUpdated.putLastUpdateTime(time.toMillis(false) + 1000);
     }
 }

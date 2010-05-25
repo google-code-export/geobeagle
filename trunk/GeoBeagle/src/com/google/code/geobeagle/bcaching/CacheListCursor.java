@@ -23,7 +23,6 @@ import com.google.code.geobeagle.bcaching.progress.ProgressMessage;
 import com.google.inject.Inject;
 
 class CacheListCursor {
-
     private final BCachingLastUpdated bcachingLastUpdated;
     private final BCachingListImporter bcachingListImporter;
     private final LastReadPosition lastReadPosition;
@@ -43,8 +42,8 @@ class CacheListCursor {
         this.lastReadPosition = lastReadPosition;
     }
 
-    void close() {
-        timeRecorder.saveTime();
+    void close(String lastModified) {
+        timeRecorder.saveTime(lastModified);
         lastReadPosition.put(0);
     }
 
@@ -60,8 +59,9 @@ class CacheListCursor {
     }
 
     boolean open() throws BCachingException {
-        timeRecorder.getTime();
         bcachingListImporter.setStartTime(String.valueOf(bcachingLastUpdated.getLastUpdateTime()));
+//        bcachingListImporter.setStartTime("1274686304000");
+//        bcachingListImporter.setStartTime("1274686304000");
         int totalCount = bcachingListImporter.getTotalCount();
 
         if (totalCount <= 0)
@@ -75,6 +75,7 @@ class CacheListCursor {
 
     boolean readCaches() throws BCachingException {
         bcachingListImporter.readCacheList(String.valueOf(lastReadPosition.get()));
+        
         return bcachingListImporter.getBCachingList().getCachesRead() > 0;
     }
 

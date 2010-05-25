@@ -52,11 +52,11 @@ public class EventHandlerGpx implements EventHandler {
             "/gpx/wpt/geocache/logs/log/type", "/gpx/wpt/geocache/logs/log/text"
 
     };
+    static final String XPATH_LAST_MODIFIED = "/gpx/wpt/bcaching:cache/bcaching:lastModified";
     static final String XPATH_SYM = "/gpx/wpt/sym";
     static final String XPATH_WPT = "/gpx/wpt";
     static final String XPATH_WPTDESC = "/gpx/wpt/desc";
     static final String XPATH_WPTNAME = "/gpx/wpt/name";
-
     static final String XPATH_WAYPOINT_TYPE = "/gpx/wpt/type";
     
     private final CachePersisterFacade mCachePersisterFacade;
@@ -82,7 +82,7 @@ public class EventHandlerGpx implements EventHandler {
 
     public boolean text(String fullPath, String text) throws IOException {
         String trimmedText = text.trim();
-        //Log.d("GeoBeagle", "fullPath " + fullPath + ", text " + text);
+//        Log.d("GeoBeagle", "fullPath " + fullPath + ", text " + text);
         if (fullPath.equals(XPATH_WPTNAME)) {
             mCachePersisterFacade.wptName(trimmedText);
         } else if (fullPath.equals(XPATH_WPTDESC)) {
@@ -111,6 +111,8 @@ public class EventHandlerGpx implements EventHandler {
         } else if (fullPath.equals(XPATH_CACHE_CONTAINER)
                 || fullPath.equals(XPATH_GEOCACHE_CONTAINER)) {
             mCachePersisterFacade.container(trimmedText);
+        } else if (fullPath.equals(XPATH_LAST_MODIFIED)) {
+            mCachePersisterFacade.lastModified(trimmedText);
         }
         
         for (String writeLineMatch : XPATH_PLAINLINES) {

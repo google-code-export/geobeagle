@@ -21,6 +21,8 @@ import com.google.code.geobeagle.xmlimport.CachePersisterFacadeDI.FileFactory;
 import com.google.inject.Inject;
 
 import android.os.PowerManager.WakeLock;
+import android.text.format.Time;
+import android.util.Log;
 
 import java.io.File;
 import java.io.IOException;
@@ -32,10 +34,10 @@ public class CachePersisterFacade {
     private final FileFactory mFileFactory;
     private MessageHandlerInterface mMessageHandler;
     private final WakeLock mWakeLock;
+    private String mLastModified;
 
     @Inject
-    public
-    CachePersisterFacade(CacheTagSqlWriter cacheTagSqlWriter, FileFactory fileFactory,
+    public CachePersisterFacade(CacheTagSqlWriter cacheTagSqlWriter, FileFactory fileFactory,
             CacheDetailsWriter cacheDetailsWriter, MessageHandlerInterface messageHandler,
             WakeLock wakeLock) {
         mCacheDetailsWriter = cacheDetailsWriter;
@@ -132,6 +134,15 @@ public class CachePersisterFacade {
         mCacheTagWriter.id(wpt);
         mMessageHandler.updateWaypointId(wpt);
         mWakeLock.acquire(GpxLoader.WAKELOCK_DURATION);
+    }
+
+    public void lastModified(String trimmedText) {
+        mLastModified = trimmedText;
+        Log.d("GeoBeagle", "LAST MODIFIED: " + trimmedText);
+    }
+
+    public String getLastModified() {
+        return mLastModified;
     }
 
 }
