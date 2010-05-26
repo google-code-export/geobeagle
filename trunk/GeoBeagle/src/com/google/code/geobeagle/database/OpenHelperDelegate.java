@@ -44,6 +44,7 @@ public class OpenHelperDelegate {
             db.execSQL(Database.SQL_CREATE_IDX_TAGS);
         }
         if (oldVersion < 13) {
+            db.execSQL(Database.SQL_FORCE_UPDATE_ALL);
             db.execSQL("ALTER TABLE CACHES ADD COLUMN " + Database.S0_COLUMN_AVAILABLE);
             db.execSQL("ALTER TABLE CACHES ADD COLUMN " + Database.S0_COLUMN_ARCHIVED);
         }
