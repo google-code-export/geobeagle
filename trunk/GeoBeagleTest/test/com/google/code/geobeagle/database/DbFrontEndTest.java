@@ -21,6 +21,7 @@ import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.activity.cachelist.GeoBeagleTest;
 import com.google.code.geobeagle.database.DatabaseDI.GeoBeagleSqliteOpenHelper;
 import com.google.code.geobeagle.database.DatabaseDI.SQLiteWrapper;
+import com.google.inject.Provider;
 
 import org.easymock.EasyMock;
 import org.junit.Test;
@@ -44,19 +45,22 @@ public class DbFrontEndTest extends GeoBeagleTest {
     private SQLiteWrapper mDatabase;
     private GeoBeagleSqliteOpenHelper mOpenHelper;
 
-    private Context expectOpenDatabase() throws Exception {
-        Context context = PowerMock.createMock(Context.class);
+    @SuppressWarnings("unchecked")
+    private Provider<Context> expectOpenDatabase() throws Exception {
+        Provider<Context> contextProvider = PowerMock.createMock(Provider.class);
         SQLiteDatabase db = PowerMock.createMock(SQLiteDatabase.class);
         mDatabase = PowerMock.createMock(SQLiteWrapper.class);
         mOpenHelper = PowerMock.createMock(GeoBeagleSqliteOpenHelper.class);
         mCacheReader = PowerMock.createMock(CacheReader.class);
-
+        Context context = PowerMock.createMock(Context.class);
+        
+        EasyMock.expect(contextProvider.get()).andReturn(context).anyTimes();
         PowerMock.suppressConstructor(GeoBeagleSqliteOpenHelper.class);
         PowerMock.expectNew(GeoBeagleSqliteOpenHelper.class, context).andReturn(mOpenHelper);
         EasyMock.expect(mOpenHelper.getWritableDatabase()).andReturn(db);
         PowerMock.expectNew(DatabaseDI.SQLiteWrapper.class, db).andReturn(mDatabase);
         PowerMock.mockStatic(DatabaseDI.class);
-        return context;
+        return contextProvider;
     }
 
     @Test
@@ -67,7 +71,7 @@ public class DbFrontEndTest extends GeoBeagleTest {
 
     @Test
     public void testCloseOpenedDatabase() throws Exception {
-        Context context = expectOpenDatabase();
+        Provider<Context> context = expectOpenDatabase();
         mOpenHelper.close();
 
         PowerMock.replayAll();
@@ -80,7 +84,7 @@ public class DbFrontEndTest extends GeoBeagleTest {
     @Test
     public void testCount() throws Exception {
         Cursor countCursor = PowerMock.createMock(Cursor.class);
-        Context context = expectOpenDatabase();
+        Provider<Context> contextProvider = expectOpenDatabase();
         WhereFactoryFixedArea whereFactory = PowerMock.createMock(WhereFactoryFixedArea.class);
 
         EasyMock.expect(whereFactory.getWhere(mDatabase, 122, 37)).andReturn("foo=bar");
@@ -93,7 +97,7 @@ public class DbFrontEndTest extends GeoBeagleTest {
         countCursor.close();
 
         PowerMock.replayAll();
-        final DbFrontend dbFrontend = new DbFrontend(context, mCacheReader);
+        final DbFrontend dbFrontend = new DbFrontend(contextProvider, mCacheReader);
         dbFrontend.openDatabase();
         assertEquals(9000, dbFrontend.count(122, 37, whereFactory));
         PowerMock.verifyAll();
@@ -103,7 +107,7 @@ public class DbFrontEndTest extends GeoBeagleTest {
     public void testCountAll() throws Exception {
         Cursor countCursor = PowerMock.createMock(Cursor.class);
 
-        Context context = expectOpenDatabase();
+        Provider<Context> contextProvider = expectOpenDatabase();
         EasyMock.expect(mDatabase.rawQuery("SELECT COUNT(*) FROM " + Database.TBL_CACHES, null))
                 .andReturn(countCursor);
         EasyMock.expect(countCursor.moveToFirst()).andReturn(true);
@@ -111,7 +115,7 @@ public class DbFrontEndTest extends GeoBeagleTest {
         countCursor.close();
 
         PowerMock.replayAll();
-        final DbFrontend dbFrontend = new DbFrontend(context, mCacheReader);
+        final DbFrontend dbFrontend = new DbFrontend(contextProvider, mCacheReader);
         dbFrontend.openDatabase();
         assertEquals(9000, dbFrontend.countAll());
         PowerMock.verifyAll();
@@ -125,7 +129,7 @@ public class DbFrontEndTest extends GeoBeagleTest {
     @Test
     public void testLoadCaches() throws Exception {
         CacheReaderCursor cursor = PowerMock.createMock(CacheReaderCursor.class);
-        Context context = expectOpenDatabase();
+        Provider<Context> contextProvider = expectOpenDatabase();
         WhereFactory whereFactory = PowerMock.createMock(WhereFactory.class);
         Geocache cache = PowerMock.createMock(Geocache.class);
 
@@ -135,7 +139,7 @@ public class DbFrontEndTest extends GeoBeagleTest {
         cursor.close();
 
         PowerMock.replayAll();
-        final DbFrontend dbFrontend = new DbFrontend(context, mCacheReader);
+        final DbFrontend dbFrontend = new DbFrontend(contextProvider, mCacheReader);
         dbFrontend.openDatabase();
         dbFrontend.loadCaches(122, 37, whereFactory);
         PowerMock.verifyAll();
@@ -143,20 +147,20 @@ public class DbFrontEndTest extends GeoBeagleTest {
 
     @Test
     public void testOpenDatabase() throws Exception {
-        Context context = expectOpenDatabase();
+        Provider<Context> contextProvider = expectOpenDatabase();
 
         PowerMock.replayAll();
-        final DbFrontend dbFrontend = new DbFrontend(context, mCacheReader);
+        final DbFrontend dbFrontend = new DbFrontend(contextProvider, mCacheReader);
         dbFrontend.openDatabase();
         PowerMock.verifyAll();
     }
 
     @Test
     public void testOpenOpenedDatabase() throws Exception {
-        Context context = expectOpenDatabase();
+        Provider<Context> contextProvider = expectOpenDatabase();
 
         PowerMock.replayAll();
-        final DbFrontend dbFrontend = new DbFrontend(context, mCacheReader);
+        final DbFrontend dbFrontend = new DbFrontend(contextProvider, mCacheReader);
         dbFrontend.openDatabase();
         dbFrontend.openDatabase();
         PowerMock.verifyAll();
