@@ -22,6 +22,8 @@ import com.google.code.geobeagle.GraphicsGenerator.IconOverlay;
 import com.google.code.geobeagle.GraphicsGenerator.IconOverlayFactory;
 import com.google.code.geobeagle.GraphicsGenerator.IconRenderer;
 import com.google.code.geobeagle.GraphicsGenerator.MapViewBitmapCopier;
+import com.google.code.geobeagle.activity.cachelist.GeoBeagleTest;
+import com.google.code.geobeagle.activity.cachelist.view.NameFormatter;
 import com.google.code.geobeagle.activity.main.RadarView;
 import com.google.code.geobeagle.activity.main.view.GeocacheViewer.LabelledAttributeViewer;
 import com.google.code.geobeagle.activity.main.view.GeocacheViewer.ResourceImages;
@@ -34,6 +36,8 @@ import org.powermock.api.easymock.PowerMock;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import android.util.Log;
+
 import android.graphics.drawable.Drawable;
 import android.view.View;
 import android.widget.ImageView;
@@ -44,9 +48,9 @@ import java.util.Arrays;
 @RunWith(PowerMockRunner.class)
 @PrepareForTest( {
         CacheType.class, TextView.class, UnlabelledAttributeViewer.class,
-        LabelledAttributeViewer.class
+        LabelledAttributeViewer.class, Log.class
 })
-public class GeocacheViewerTest {
+public class GeocacheViewerTest extends GeoBeagleTest {
 
     @Test
     public void testSetImageGone() {
@@ -107,20 +111,21 @@ public class GeocacheViewerTest {
 
         textView.setVisibility(View.GONE);
         PowerMock.replayAll();
-        NameViewer nameViewer = new NameViewer(textView);
-        nameViewer.set("");
+        NameViewer nameViewer = new NameViewer(textView, null);
+        nameViewer.set("", false, false);
         PowerMock.verifyAll();
     }
 
     @Test
     public void testSetName() {
         TextView textView = PowerMock.createMock(TextView.class);
+        NameFormatter nameFormatter = PowerMock.createMock(NameFormatter.class);
 
         textView.setVisibility(View.VISIBLE);
         textView.setText("xyz");
+        nameFormatter.format(textView, true, false);
         PowerMock.replayAll();
-        NameViewer nameViewer = new NameViewer(textView);
-        nameViewer.set("xyz");
+        new NameViewer(textView, nameFormatter).set("xyz", true, false);
         PowerMock.verifyAll();
     }
 
@@ -172,12 +177,14 @@ public class GeocacheViewerTest {
         expect(geocache.getContainer()).andReturn(6);
         expect(geocache.getDifficulty()).andReturn(8);
         expect(geocache.getTerrain()).andReturn(5);
+        expect(geocache.getAvailable()).andReturn(true);
+        expect(geocache.getArchived()).andReturn(false);
         gcContainer.setImage(6);
         gcDifficulty.setImage(8);
         gcTerrain.setImage(5);
 
         id.setText("GC123");
-        name.set("a cache");
+        name.set("a cache", true, false);
 
         PowerMock.replayAll();
         new GeocacheViewer(radar, id, name, gcTypeImageView, gcDifficulty, gcTerrain, gcContainer,

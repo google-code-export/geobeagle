@@ -23,7 +23,7 @@ import android.database.Cursor;
 public class CacheReader {
     public static final String[] READER_COLUMNS = new String[] {
             "Latitude", "Longitude", "Id", "Description", "Source", "CacheType", "Difficulty",
-            "Terrain", "Container"
+            "Terrain", "Container", "Available", "Archived"
     };
 
     public static final String SQL_QUERY_LIMIT = "1000";

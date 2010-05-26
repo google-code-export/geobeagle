@@ -56,8 +56,10 @@ public class LocationSaverTest {
         expect(geocache.getDifficulty()).andReturn(3);
         expect(geocache.getTerrain()).andReturn(1);
         expect(geocache.getContainer()).andReturn(2);
+        expect(geocache.getAvailable()).andReturn(true);
+        expect(geocache.getArchived()).andReturn(false);
         writer.insertAndUpdateCache("LB12345", "", 122, 37, Source.GPX, "manhattan",
-                CacheType.TRADITIONAL, 3, 1, 2);
+                CacheType.TRADITIONAL, 3, 1, 2, true, false);
         writer.stopWriting();
 
         PowerMock.replayAll();

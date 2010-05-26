@@ -46,6 +46,8 @@ public class CacheTagSqlWriter {
     private TagWriterImpl mTagWriterImpl;
     private TagWriterNull mTagWriterNull;
     private final ClearCachesFromSource mClearCachesFromSource;
+    private boolean mArchived;
+    private boolean mAvailable;
 
     @Inject
     public CacheTagSqlWriter(CacheWriter cacheWriter, CacheTypeFactory cacheTypeFactory,
@@ -73,6 +75,8 @@ public class CacheTagSqlWriter {
         mCacheType = CacheType.NULL;
         mDifficulty = 0;
         mTerrain = 0;
+        mArchived = false;
+        mAvailable = true;
         mTagWriter = mTagWriterNull;
     }
 
@@ -142,7 +146,15 @@ public class CacheTagSqlWriter {
 
     public void write(Source source) {
         mCacheWriter.insertAndUpdateCache(mId, mName, mLatitude, mLongitude, source, mGpxName,
-                mCacheType, mDifficulty, mTerrain, mContainer);
+                mCacheType, mDifficulty, mTerrain, mContainer, mAvailable, mArchived);
         mTagWriter.add(mId, Tag.FOUND);
+    }
+
+    public void archived(boolean fArchived) {
+        mArchived = fArchived;
+    }
+
+    public void available(boolean fAvailable) {
+        mAvailable = fAvailable;
     }
 }

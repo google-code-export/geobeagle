@@ -147,7 +147,7 @@ public class GeoBeagleDelegateTest extends GeoBeagleTest {
         EasyMock.expect(intent.getParcelableExtra("geocache")).andReturn(null);
         EasyMock.expect(
                 geocacheFactory.create("", "", 0, 0, Source.MY_LOCATION, "", CacheType.NULL, 0, 0,
-                        0)).andReturn(geocache);
+                        0, true, false)).andReturn(geocache);
 
         PowerMock.replayAll();
         assertEquals(geocache, new IncomingIntentHandler(geocacheFactory, null)

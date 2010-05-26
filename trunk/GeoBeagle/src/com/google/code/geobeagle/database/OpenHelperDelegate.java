@@ -16,7 +16,7 @@ package com.google.code.geobeagle.database;
 
 public class OpenHelperDelegate {
     public void onCreate(ISQLiteDatabase db) {
-        db.execSQL(Database.SQL_CREATE_CACHE_TABLE_V11);
+        db.execSQL(Database.SQL_CREATE_CACHE_TABLE_V13);
         db.execSQL(Database.SQL_CREATE_GPX_TABLE_V10);
         db.execSQL(Database.SQL_CREATE_TAGS_TABLE_V12);
         db.execSQL(Database.SQL_CREATE_IDX_LATITUDE);
@@ -42,6 +42,10 @@ public class OpenHelperDelegate {
         if (oldVersion < 12) {
             db.execSQL(Database.SQL_CREATE_TAGS_TABLE_V12);
             db.execSQL(Database.SQL_CREATE_IDX_TAGS);
+        }
+        if (oldVersion < 13) {
+            db.execSQL("ALTER TABLE CACHES ADD COLUMN " + Database.S0_COLUMN_AVAILABLE);
+            db.execSQL("ALTER TABLE CACHES ADD COLUMN " + Database.S0_COLUMN_ARCHIVED);
         }
     }
 }

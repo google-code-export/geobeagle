@@ -53,7 +53,7 @@ public class GeocacheFromMyLocationFactoryTest {
         EasyMock.expect(location.getLongitude()).andReturn(-122.0);
         EasyMock.expect(
                 geocacheFactory.create("ML161640", "[16:16] My Location", 37.0, -122.0,
-                        Source.MY_LOCATION, null, CacheType.MY_LOCATION, 0, 0, 0)).andReturn(
+                        Source.MY_LOCATION, null, CacheType.MY_LOCATION, 0, 0, 0, true, false)).andReturn(
                 geocache);
 
         PowerMock.replayAll();

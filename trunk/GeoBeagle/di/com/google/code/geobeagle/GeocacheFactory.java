@@ -126,7 +126,7 @@ public class GeocacheFactory {
 
     public Geocache create(CharSequence id, CharSequence name, double latitude, double longitude,
             Source sourceType, String sourceName, CacheType cacheType, int difficulty, int terrain,
-            int container) {
+            int container, boolean available, boolean archived) {
         if (id.length() < 2) {
             // ID is missing for waypoints imported from the browser; create a
             // new id from the time.
@@ -137,7 +137,7 @@ public class GeocacheFactory {
         final AttributeFormatter attributeFormatter = mAttributeFormatterFactory
                 .getAttributeFormatter(sourceType);
         return new Geocache(id, name, latitude, longitude, sourceType, sourceName, cacheType,
-                difficulty, terrain, container, attributeFormatter);
+                difficulty, terrain, container, attributeFormatter, available, archived);
     }
 
     public Source sourceFromInt(int sourceIx) {

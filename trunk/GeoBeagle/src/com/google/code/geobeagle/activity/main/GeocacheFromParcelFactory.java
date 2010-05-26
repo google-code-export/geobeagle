@@ -41,6 +41,7 @@ public class GeocacheFromParcelFactory {
                 .getInt(Geocache.SOURCE_TYPE)), bundle.getString(Geocache.SOURCE_NAME),
                 mGeocacheFactory.cacheTypeFromInt(bundle.getInt(Geocache.CACHE_TYPE)), bundle
                         .getInt(Geocache.DIFFICULTY), bundle.getInt(Geocache.TERRAIN), bundle
-                        .getInt(Geocache.CONTAINER));
+                        .getInt(Geocache.CONTAINER), bundle.getBoolean(Geocache.AVAILABLE), bundle
+                        .getBoolean(Geocache.ARCHIVED));
     }
 }

@@ -42,6 +42,7 @@ public class GeocacheFromPreferencesFactory {
                 preferences.getFloat(Geocache.LONGITUDE, 0), source, preferences.getString(
                         Geocache.SOURCE_NAME, ""), cacheType, preferences.getInt(
                         Geocache.DIFFICULTY, 0), preferences.getInt(Geocache.TERRAIN, 0),
-                preferences.getInt(Geocache.CONTAINER, 0));
+                preferences.getInt(Geocache.CONTAINER, 0), preferences.getBoolean(Geocache.AVAILABLE, true),
+                preferences.getBoolean(Geocache.ARCHIVED, false));
     }
 }

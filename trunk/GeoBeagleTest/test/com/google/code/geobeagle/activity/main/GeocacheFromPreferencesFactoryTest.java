@@ -51,9 +51,11 @@ public class GeocacheFromPreferencesFactoryTest {
         EasyMock.expect(preferences.getInt(Geocache.DIFFICULTY, 0)).andReturn(2);
         EasyMock.expect(preferences.getInt(Geocache.CONTAINER, 0)).andReturn(3);
         EasyMock.expect(preferences.getInt(Geocache.TERRAIN, 0)).andReturn(4);
+        EasyMock.expect(preferences.getBoolean("available", true)).andReturn(true);
+        EasyMock.expect(preferences.getBoolean("archived", false)).andReturn(false);
         EasyMock.expect(
                 geocacheFactory.create("GC123", "a cache", 37f, -122f, Source.MY_LOCATION, null,
-                        CacheType.TRADITIONAL, 2, 4, 3)).andReturn(geocache);
+                        CacheType.TRADITIONAL, 2, 4, 3, true, false)).andReturn(geocache);
 
         PowerMock.replayAll();
         GeocacheFromPreferencesFactory geocacheFromPreferencesFactory = new GeocacheFromPreferencesFactory(

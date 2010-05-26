@@ -59,7 +59,7 @@ public class GeocacheFromIntentFactory {
         final Geocache geocache = mGeocacheFactory.create(cacheId, latlon[3],
                 Util.parseCoordinate(latlon[0]), Util
                         .parseCoordinate(latlon[1]), Source.WEB_URL, null,
-                CacheType.NULL, 0, 0, 0);
+                CacheType.NULL, 0, 0, 0, true, false);
         locationSaver.saveLocation(geocache);
         intent.putExtra("com.google.code.geobeagle.SavedInDatabase", true);
 

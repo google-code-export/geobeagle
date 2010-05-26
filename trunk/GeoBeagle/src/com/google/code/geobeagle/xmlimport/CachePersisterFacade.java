@@ -144,4 +144,12 @@ public class CachePersisterFacade {
         return mLastModified;
     }
 
+    public void archived(String attributeValue) {
+        mCacheTagWriter.archived(attributeValue.equalsIgnoreCase("True"));
+    }
+
+    public void available(String attributeValue) {
+        mCacheTagWriter.available(attributeValue.equalsIgnoreCase("True"));
+    }
+
 }

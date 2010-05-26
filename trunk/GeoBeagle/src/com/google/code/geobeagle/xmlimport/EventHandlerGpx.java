@@ -21,6 +21,7 @@ import com.google.inject.Inject;
 import java.io.IOException;
 
 public class EventHandlerGpx implements EventHandler {
+    static final String XPATH_CACHE = "/gpx/wpt/groundspeak:cache";
     static final String XPATH_CACHE_CONTAINER = "/gpx/wpt/groundspeak:cache/groundspeak:container";
     static final String XPATH_CACHE_DIFFICULTY = "/gpx/wpt/groundspeak:cache/groundspeak:difficulty";
     static final String XPATH_CACHE_TERRAIN = "/gpx/wpt/groundspeak:cache/groundspeak:terrain";
@@ -77,6 +78,9 @@ public class EventHandlerGpx implements EventHandler {
             mCachePersisterFacade.startCache();
             mCachePersisterFacade.wpt(xmlPullParser.getAttributeValue(null, "lat"), xmlPullParser
                     .getAttributeValue(null, "lon"));
+        } else if (fullPath.equals(XPATH_CACHE)) {
+            mCachePersisterFacade.available(xmlPullParser.getAttributeValue(null, "available"));
+            mCachePersisterFacade.archived(xmlPullParser.getAttributeValue(null, "archived"));
         }
     }
 
