@@ -108,7 +108,7 @@ public class DatabaseTest {
         String caches = db.dumpTable("CACHES");
         assertEquals("GCABC||||intent|1|0|0|0|0|1|0\nGC123||||foo.gpx|1|0|0|0|0|1|0\n", caches);
         String gpx = db.dumpTable("GPX");
-        assertEquals("seattle.gpx|2009-06-01|1\n", gpx);
+        assertEquals("seattle.gpx|1970-01-01|1\n", gpx);
     }
     
 
@@ -129,7 +129,7 @@ public class DatabaseTest {
         String caches = db.dumpTable("CACHES");
         assertEquals("GCABC||||intent|1|0|0|0|0|1|0\nGC123||||foo.gpx|1|0|0|0|0|1|0\n", caches);
         String gpx = db.dumpTable("GPX");
-        assertEquals("seattle.gpx|2009-06-01|1\n", gpx);
+        assertEquals("seattle.gpx|1970-01-01|1\n", gpx);
     }
     
     @Test
@@ -149,7 +149,7 @@ public class DatabaseTest {
         String caches = db.dumpTable("CACHES");
         assertEquals("GCABC||||intent|1|0|0|0|0|1|0\nGC123||||foo.gpx|1|0|0|0|0|1|0\n", caches);
         String gpx = db.dumpTable("GPX");
-        assertEquals("seattle.gpx|1990-01-01|1\n", gpx);
+        assertEquals("seattle.gpx|1970-01-01|1\n", gpx);
     }
 
     @Test
