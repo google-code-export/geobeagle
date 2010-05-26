@@ -78,7 +78,7 @@
 	<string name="file_not_found">File not found exception: '%1$s'.</string>
 	<string name="error_reading_file">Error reading file '%1$s'.</string>
 	<string name="error_writing_cache">Error writing cache: '%1$s'.</string>
-	<string name="error_no_gpx_files">Nothing to sync: no cache files found in /sdcard/download folder.\n\nYou can bulk import hundreds of caches at a time by copying gpx or loc files onto your sd card. See http://code.google.com/p/geobeagle for instructions.</string>
+	<string name="error_no_gpx_files">Nothing to sync: no cache files found in /sdcard/download folder.\n\nGeoBeagle can bulk import thousands of caches at a time.  Copy gpx/loc/zip files into your /sdcard/download folder, or set up a BCaching.com account.\n\nSee http://code.google.com/p/geobeagle for details.</string>
 	<string name="error_cant_read_sd">Error reading folder /sdcard/download, please make sure your sdcard is readable.</string>
 	<string name="error_cant_read_sdroot">Error reading folder /sdcard, please make sure your sdcard is readable.</string>
 	<string name="error_opening_details_file">"Error opening cache details file '%1$s'.  Please try unmounting your sdcard or re-importing the cache file.</string>
@@ -96,7 +96,7 @@
 	<string name="cache_list_title">GeoBeagle: Nearest caches (%2$d total)</string>
 	<string name="cache_list_title_all">%1$d caches out of %2$d</string>
 	<string name="no_nearby_caches">No caches near your current location; click Menu / Show all caches.</string>
-	<string name="no_caches">No Caches--click Menu / Search Online to find a cache on the internet, or click Menu / Sync Gpx Files to sync "Pocket Queries" downloaded from Geocaching.com.</string>
+	<string name="no_caches">No Caches--click Menu / Search Online to find a cache on the internet, or click Menu / Sync Caches to sync "Pocket Queries" downloaded from Geocaching.com.</string>
     <array name="nearest_objects">
 	  <item>http://www.atlasquest.com/results.html?gTypeId=2;gSort=5;gStatus=1209;gCoord=%1$.5f,%2$.5f</item>
 	  <item>http://www.geocaching.com/seek/nearest.aspx?lat=%1$.5f&amp;lng=%2$.5f&amp;f=1</item>
