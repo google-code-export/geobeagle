@@ -17,6 +17,7 @@ package com.google.code.geobeagle.database;
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.database.DatabaseDI.GeoBeagleSqliteOpenHelper;
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -34,27 +35,24 @@ public class DbFrontend {
     private static CacheReader mCacheReader;
     private static Context mContext;
     private static ISQLiteDatabase mDatabase;
-    private static boolean mIsDatabaseOpen;
     private static GeoBeagleSqliteOpenHelper mSqliteOpenHelper;
+    private static Provider<Context> mContextProvider;
     
     @Inject
-    DbFrontend(Context context, CacheReader cacheReader) {
-        if (context != mContext)
-            mIsDatabaseOpen = false;
-        mContext = context;
+    DbFrontend(Provider<Context> contextProvider, CacheReader cacheReader) {
+        mContextProvider = contextProvider;
         mCacheReader = cacheReader;
+        mContext = null;
     }
 
     public synchronized void closeDatabase() {
         Log.d("GeoBeagleDb", "DbFrontend.closeDatabase()");
-
-        if (!mIsDatabaseOpen)
+        if (mContext == null)
             return;
-
         mSqliteOpenHelper.close();
-        mIsDatabaseOpen = false;
-
+        mContext = null;
         mDatabase = null;
+        mSqliteOpenHelper = null;
     }
 
     public int count(int latitude, int longitude, WhereFactoryFixedArea whereFactory) {
@@ -97,13 +95,13 @@ public class DbFrontend {
     }
 
     public synchronized void openDatabase() {
-        if (mIsDatabaseOpen)
+        Context currentContext = mContextProvider.get();
+        if (mContext == currentContext)
             return;
-
+        
+        mContext = currentContext;
         mSqliteOpenHelper = new GeoBeagleSqliteOpenHelper(mContext);
-        final SQLiteDatabase sqDb = mSqliteOpenHelper.getWritableDatabase();
-        mDatabase = new DatabaseDI.SQLiteWrapper(sqDb);
-        mIsDatabaseOpen = true;
+        mDatabase = new DatabaseDI.SQLiteWrapper(mSqliteOpenHelper.getWritableDatabase());
     }
     
     public Geocache getCache(CharSequence cacheId) {
