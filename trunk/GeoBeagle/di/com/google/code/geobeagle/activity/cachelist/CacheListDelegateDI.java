@@ -60,6 +60,7 @@ import com.google.code.geobeagle.activity.cachelist.presenter.ToleranceStrategy;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh.ActionManager;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh.UpdateFlag;
 import com.google.code.geobeagle.activity.cachelist.view.GeocacheSummaryRowInflater;
+import com.google.code.geobeagle.activity.cachelist.view.NameFormatter;
 import com.google.code.geobeagle.activity.main.GeoBeagle;
 import com.google.code.geobeagle.bcaching.BCachingLastUpdated;
 import com.google.code.geobeagle.bcaching.ImportBCachingWorker;
@@ -160,10 +161,11 @@ public class CacheListDelegateDI {
         final DifficultyAndTerrainPainter difficultyAndTerrainPainter = new DifficultyAndTerrainPainter(
                 attributePainter);
         final IconRenderer iconRenderer = new IconRenderer(resources, difficultyAndTerrainPainter);
+        final NameFormatter nameFormatter = injector.getInstance(NameFormatter.class);
         final GeocacheSummaryRowInflater geocacheSummaryRowInflater = new GeocacheSummaryRowInflater(
                 distanceFormatterManager.getFormatter(), layoutInflater, relativeBearingFormatter,
                 iconRenderer, new ListViewBitmapCopier(), injector
-                        .getInstance(IconOverlayFactory.class));
+                        .getInstance(IconOverlayFactory.class), nameFormatter);
         final UpdateFlag updateFlag = new UpdateFlag();
         final GeocacheListAdapter geocacheListAdapter = new GeocacheListAdapter(geocacheVectors,
                 geocacheSummaryRowInflater);

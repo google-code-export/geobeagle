@@ -47,7 +47,7 @@ public class IncomingIntentHandler {
                     Geocache geocache = intent.<Geocache> getParcelableExtra("geocache");
                     if (geocache == null)
                         geocache = mGeocacheFactory.create("", "", 0, 0, Source.MY_LOCATION, "",
-                                CacheType.NULL, 0, 0, 0);
+                                CacheType.NULL, 0, 0, 0, true, false);
                     return geocache;
                 }
             }

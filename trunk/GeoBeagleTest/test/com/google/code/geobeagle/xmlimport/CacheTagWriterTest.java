@@ -57,7 +57,7 @@ public class CacheTagWriterTest extends GeoBeagleTest {
     @Test
     public void testClear() {
         cacheWriter.insertAndUpdateCache(null, null, 0, 0, Source.GPX, null, CacheType.NULL, 0, 0,
-                0);
+                0, true, false);
         tagWriterNull.add(null, Tag.FOUND);
 
         PowerMock.replayAll();
@@ -77,7 +77,8 @@ public class CacheTagWriterTest extends GeoBeagleTest {
 
     @Test
     public void testSymbol() {
-        cacheWriter.insertAndUpdateCache(null, null, 0, 0, Source.GPX, null, null, 0, 0, 0);
+        cacheWriter.insertAndUpdateCache(null, null, 0, 0, Source.GPX, null, null, 0, 0, 0, false,
+                false);
         tagWriterImpl.add(null, Tag.FOUND);
 
         PowerMock.replayAll();
@@ -147,7 +148,7 @@ public class CacheTagWriterTest extends GeoBeagleTest {
     @Test
     public void testWrite() {
         cacheWriter.insertAndUpdateCache("GC123", "my cache", 122, 37, Source.GPX, "foo.gpx",
-                CacheType.TRADITIONAL, 6, 5, 1);
+                CacheType.TRADITIONAL, 6, 5, 1, false, false);
         expect(cacheTypeFactory.container("Micro")).andReturn(1);
         expect(cacheTypeFactory.stars("2.5")).andReturn(5);
         expect(cacheTypeFactory.stars("3")).andReturn(6);

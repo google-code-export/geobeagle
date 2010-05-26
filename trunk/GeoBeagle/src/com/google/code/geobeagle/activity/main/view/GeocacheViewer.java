@@ -26,13 +26,17 @@ import com.google.code.geobeagle.GraphicsGenerator.IconOverlay;
 import com.google.code.geobeagle.GraphicsGenerator.IconOverlayFactory;
 import com.google.code.geobeagle.GraphicsGenerator.IconRenderer;
 import com.google.code.geobeagle.GraphicsGenerator.MapViewBitmapCopier;
+import com.google.code.geobeagle.activity.cachelist.view.NameFormatter;
 import com.google.code.geobeagle.activity.main.GeoUtils;
 import com.google.code.geobeagle.activity.main.RadarView;
 import com.google.inject.BindingAnnotation;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -105,19 +109,22 @@ public class GeocacheViewer {
  
     public static class NameViewer {
         private final TextView mName;
+        private final NameFormatter mNameFormatter;
 
         @Inject
-        public NameViewer(@Named("GeocacheName") TextView name) {
+        public NameViewer(@Named("GeocacheName") TextView name, NameFormatter nameFormatter) {
             mName = name;
+            mNameFormatter = nameFormatter;
         }
 
-        void set(CharSequence name) {
+        void set(CharSequence name, boolean available, boolean archived) {
             if (name.length() == 0) {
                 mName.setVisibility(View.GONE);
                 return;
             }
             mName.setText(name);
             mName.setVisibility(View.VISIBLE);
+            mNameFormatter.format(mName, available, archived);
         }
     }
 
@@ -170,6 +177,6 @@ public class GeocacheViewer {
         mDifficulty.setImage(geocache.getDifficulty());
         mTerrain.setImage(geocache.getTerrain());
 
-        mName.set(geocache.getName());
+        mName.set(geocache.getName(), geocache.getAvailable(), geocache.getArchived());
     }
 }

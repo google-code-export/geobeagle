@@ -69,6 +69,8 @@ public class Geocache implements Parcelable {
     public static final String SOURCE_NAME = "sourceName";
     public static final String SOURCE_TYPE = "sourceType";
     public static final String TERRAIN = "terrain";
+    public static final String AVAILABLE = "available";
+    public static final String ARCHIVED = "archived";
     private final AttributeFormatter mAttributeFormatter;
     private final CacheType mCacheType;
     private final int mContainer;
@@ -81,10 +83,13 @@ public class Geocache implements Parcelable {
     private final String mSourceName;
     private final Source mSourceType;
     private final int mTerrain;
+    private final boolean mAvailable;
+    private final boolean mArchived;
 
     Geocache(CharSequence id, CharSequence name, double latitude, double longitude,
             Source sourceType, String sourceName, CacheType cacheType, int difficulty, int terrain,
-            int container, AttributeFormatter attributeFormatter) {
+            int container, AttributeFormatter attributeFormatter, boolean available,
+            boolean archived) {
         mId = id;
         mName = name;
         mLatitude = latitude;
@@ -96,6 +101,8 @@ public class Geocache implements Parcelable {
         mTerrain = terrain;
         mContainer = container;
         mAttributeFormatter = attributeFormatter;
+        mArchived = archived;
+        mAvailable = available;
     }
 
     public float[] calculateDistanceAndBearing(Location here) {
@@ -202,6 +209,8 @@ public class Geocache implements Parcelable {
         bundle.putInt(DIFFICULTY, mDifficulty);
         bundle.putInt(TERRAIN, mTerrain);
         bundle.putInt(CONTAINER, mContainer);
+        bundle.putBoolean(AVAILABLE, mAvailable);
+        bundle.putBoolean(ARCHIVED, mArchived);
     }
 
     public void writeToParcel(Parcel out, int flags) {
@@ -222,5 +231,15 @@ public class Geocache implements Parcelable {
         editor.putInt(DIFFICULTY, mDifficulty);
         editor.putInt(TERRAIN, mTerrain);
         editor.putInt(CONTAINER, mContainer);
+        editor.putBoolean(AVAILABLE, mAvailable);
+        editor.putBoolean(ARCHIVED, mArchived);
+    }
+
+    public boolean getAvailable() {
+        return mAvailable;
+    }
+
+    public boolean getArchived() {
+        return mArchived;
     }
 }

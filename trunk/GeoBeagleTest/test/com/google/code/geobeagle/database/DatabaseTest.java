@@ -26,6 +26,25 @@ import org.powermock.modules.junit4.PowerMockRunner;
 
 @RunWith(PowerMockRunner.class)
 public class DatabaseTest {
+
+    static String currentSchema() {
+        String currentSchema = SQL(Database.SQL_CREATE_CACHE_TABLE_V13)
+                + SQL(Database.SQL_CREATE_GPX_TABLE_V10) + SQL(Database.SQL_CREATE_TAGS_TABLE_V12)
+                + SQL(Database.SQL_CREATE_IDX_LATITUDE) + SQL(Database.SQL_CREATE_IDX_LONGITUDE)
+                + SQL(Database.SQL_CREATE_IDX_SOURCE) + SQL(Database.SQL_CREATE_IDX_TAGS);
+        return currentSchema;
+    }
+
+    final static String schema12 = Database.SQL_CREATE_CACHE_TABLE_V11
+            + Database.SQL_CREATE_GPX_TABLE_V10 + Database.SQL_CREATE_TAGS_TABLE_V12
+            + Database.SQL_CREATE_IDX_LATITUDE + Database.SQL_CREATE_IDX_LONGITUDE
+            + Database.SQL_CREATE_IDX_SOURCE + SQL(Database.SQL_CREATE_IDX_TAGS);
+
+
+    final static String schema11 = Database.SQL_CREATE_CACHE_TABLE_V11
+            + Database.SQL_CREATE_GPX_TABLE_V10 + Database.SQL_CREATE_IDX_LATITUDE
+            + Database.SQL_CREATE_IDX_LONGITUDE + Database.SQL_CREATE_IDX_SOURCE;
+
     final static String schema10 = Database.SQL_CREATE_CACHE_TABLE_V10
             + Database.SQL_CREATE_IDX_LATITUDE + Database.SQL_CREATE_IDX_LONGITUDE
             + Database.SQL_CREATE_IDX_SOURCE + Database.SQL_CREATE_GPX_TABLE_V10;
@@ -36,14 +55,6 @@ public class DatabaseTest {
     final static String schema7 = Database.SQL_CREATE_CACHE_TABLE_V08
             + Database.SQL_CREATE_IDX_LATITUDE + Database.SQL_CREATE_IDX_LONGITUDE
             + Database.SQL_CREATE_IDX_SOURCE;
-
-    static String currentSchema() {
-        String currentSchema = SQL(Database.SQL_CREATE_CACHE_TABLE_V11)
-                + SQL(Database.SQL_CREATE_GPX_TABLE_V10) + SQL(Database.SQL_CREATE_TAGS_TABLE_V12)
-                + SQL(Database.SQL_CREATE_IDX_LATITUDE) + SQL(Database.SQL_CREATE_IDX_LONGITUDE)
-                + SQL(Database.SQL_CREATE_IDX_SOURCE) + SQL(Database.SQL_CREATE_IDX_TAGS);
-        return currentSchema;
-    }
 
     private static String SQL(String s) {
         return s + "\n";
@@ -81,6 +92,47 @@ public class DatabaseTest {
     }
 
     @Test
+    public void testUpgradeFrom12() {
+        DesktopSQLiteDatabase db = new DesktopSQLiteDatabase();
+        db.execSQL(schema12);
+        db.execSQL("INSERT INTO CACHES (Id, Source) VALUES (\"GCABC\", \"intent\")");
+        db.execSQL("INSERT INTO CACHES (Id, Source) VALUES (\"GC123\", \"foo.gpx\")");
+        db
+                .execSQL("INSERT INTO GPX (Name, ExportTime, DeleteMe) VALUES (\"seattle.gpx\", \"6-1-2009\", 1)");
+
+        OpenHelperDelegate openHelperDelegate = new OpenHelperDelegate();
+        openHelperDelegate.onUpgrade(db, 12);
+        String schema = db.dumpSchema();
+
+        assertEquals(currentSchema(), schema);
+        String caches = db.dumpTable("CACHES");
+        assertEquals("GCABC||||intent|1|0|0|0|0|1|0\nGC123||||foo.gpx|1|0|0|0|0|1|0\n", caches);
+        String gpx = db.dumpTable("GPX");
+        assertEquals("seattle.gpx|6-1-2009|1\n", gpx);
+    }
+    
+
+    @Test
+    public void testUpgradeFrom11() {
+        DesktopSQLiteDatabase db = new DesktopSQLiteDatabase();
+        db.execSQL(schema11);
+        db.execSQL("INSERT INTO CACHES (Id, Source) VALUES (\"GCABC\", \"intent\")");
+        db.execSQL("INSERT INTO CACHES (Id, Source) VALUES (\"GC123\", \"foo.gpx\")");
+        db
+                .execSQL("INSERT INTO GPX (Name, ExportTime, DeleteMe) VALUES (\"seattle.gpx\", \"6-1-2009\", 1)");
+
+        OpenHelperDelegate openHelperDelegate = new OpenHelperDelegate();
+        openHelperDelegate.onUpgrade(db, 11);
+        String schema = db.dumpSchema();
+
+        assertEquals(currentSchema(), schema);
+        String caches = db.dumpTable("CACHES");
+        assertEquals("GCABC||||intent|1|0|0|0|0|1|0\nGC123||||foo.gpx|1|0|0|0|0|1|0\n", caches);
+        String gpx = db.dumpTable("GPX");
+        assertEquals("seattle.gpx|6-1-2009|1\n", gpx);
+    }
+    
+    @Test
     public void testUpgradeFrom10() {
         DesktopSQLiteDatabase db = new DesktopSQLiteDatabase();
         db.execSQL(schema10);
@@ -95,7 +147,7 @@ public class DatabaseTest {
 
         assertEquals(currentSchema(), schema);
         String caches = db.dumpTable("CACHES");
-        assertEquals("GCABC||||intent|1|0|0|0|0\nGC123||||foo.gpx|1|0|0|0|0\n", caches);
+        assertEquals("GCABC||||intent|1|0|0|0|0|1|0\nGC123||||foo.gpx|1|0|0|0|0|1|0\n", caches);
         String gpx = db.dumpTable("GPX");
         assertEquals("seattle.gpx|1990-01-01|1\n", gpx);
     }
@@ -113,7 +165,7 @@ public class DatabaseTest {
 
         assertEquals(currentSchema(), schema);
         String data = db.dumpTable("CACHES");
-        assertEquals("GCABC||||intent|1|0|0|0|0\nGC123||||foo.gpx|1|0|0|0|0\n", data);
+        assertEquals("GCABC||||intent|1|0|0|0|0|1|0\nGC123||||foo.gpx|1|0|0|0|0|1|0\n", data);
     }
 
 }

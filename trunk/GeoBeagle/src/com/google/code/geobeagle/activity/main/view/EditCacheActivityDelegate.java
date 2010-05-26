@@ -66,7 +66,8 @@ public class EditCacheActivityDelegate {
                     .getText()), mOriginalGeocache.getSourceType(), mOriginalGeocache
                     .getSourceName(), mOriginalGeocache.getCacheType(), mOriginalGeocache
                     .getDifficulty(), mOriginalGeocache.getTerrain(), mOriginalGeocache
-                    .getContainer());
+                    .getContainer(), mOriginalGeocache.getAvailable(), mOriginalGeocache
+                    .getArchived());
         }
 
         void set(Geocache geocache) {

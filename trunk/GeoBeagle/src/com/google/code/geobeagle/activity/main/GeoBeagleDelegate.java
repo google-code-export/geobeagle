@@ -169,7 +169,7 @@ public class GeoBeagleDelegate {
         // Possible fix for issue 53.
         if (mGeocache == null) {
             mGeocache = mGeocacheFactory.create("", "", 0, 0, Source.MY_LOCATION, "",
-                    CacheType.NULL, 0, 0, 0);
+                    CacheType.NULL, 0, 0, 0, true, false);
         }
         mGeocacheViewer.set(mGeocache);
         mWebPageButtonEnabler.check();

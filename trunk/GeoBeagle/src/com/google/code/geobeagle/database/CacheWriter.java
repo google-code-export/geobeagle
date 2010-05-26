@@ -89,11 +89,11 @@ public class CacheWriter {
 
     public void insertAndUpdateCache(CharSequence id, CharSequence name, double latitude,
             double longitude, Source sourceType, String sourceName, CacheType cacheType,
-            int difficulty, int terrain, int container) {
+            int difficulty, int terrain, int container, boolean available, boolean archived) {
         sqliteProvider.get().execSQL(Database.SQL_REPLACE_CACHE, id, name, new Double(latitude),
                 new Double(longitude),
                 mDbToGeocacheAdapter.sourceTypeToSourceName(sourceType, sourceName),
-                cacheType.toInt(), difficulty, terrain, container);
+                cacheType.toInt(), difficulty, terrain, container, available, archived);
     }
 
     /**

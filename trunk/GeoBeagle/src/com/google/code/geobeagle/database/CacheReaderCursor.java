@@ -44,10 +44,12 @@ public class CacheReaderCursor {
         int difficulty = Integer.parseInt(mCursor.getString(6));
         int terrain = Integer.parseInt(mCursor.getString(7));
         int container = Integer.parseInt(mCursor.getString(8));
+        boolean available = mCursor.getInt(9) != 0;
+        boolean archived = mCursor.getInt(10) != 0;
         return mGeocacheFactory.create(mCursor.getString(2), mCursor.getString(3), mCursor
                 .getDouble(0), mCursor.getDouble(1), mDbToGeocacheAdapter
                 .sourceNameToSourceType(sourceName), sourceName, cacheType, difficulty, terrain,
-                container);
+                container, available, archived);
     }
 
     public int count() {

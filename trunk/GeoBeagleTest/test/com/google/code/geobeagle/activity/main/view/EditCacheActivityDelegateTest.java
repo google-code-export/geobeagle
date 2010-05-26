@@ -147,10 +147,12 @@ public class EditCacheActivityDelegateTest {
         EasyMock.expect(geocache.getDifficulty()).andReturn(3);
         EasyMock.expect(geocache.getTerrain()).andReturn(2);
         EasyMock.expect(geocache.getContainer()).andReturn(4);
+        EasyMock.expect(geocache.getAvailable()).andReturn(true);
+        EasyMock.expect(geocache.getArchived()).andReturn(false);
 
         EasyMock.expect(
                 geocacheFactory.create(editableId, editableName, 37, -122.5, Source.GPX, "source",
-                        CacheType.TRADITIONAL, 3, 2, 4)).andReturn(geocache);
+                        CacheType.TRADITIONAL, 3, 2, 4, true, false)).andReturn(geocache);
 
         PowerMock.replayAll();
         EditCache editCache = new EditCache(geocacheFactory, id, name, latitude, longitude);

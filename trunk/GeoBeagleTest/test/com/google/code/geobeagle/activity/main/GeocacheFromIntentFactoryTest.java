@@ -75,7 +75,7 @@ public class GeocacheFromIntentFactoryTest extends GeoBeagleTest {
         EasyMock.expect(Util.parseCoordinate("37")).andReturn(37.0);
         EasyMock.expect(
                 geocacheFactory.create("first", "second", 122.0, 37.0, Source.WEB_URL, null,
-                        CacheType.NULL, 0, 0, 0)).andReturn(geocache);
+                        CacheType.NULL, 0, 0, 0, true, false)).andReturn(geocache);
         locationSaver.saveLocation(geocache);
         EasyMock.expect(intent.putExtra(GeocacheFromIntentFactory.GEO_BEAGLE_SAVED_IN_DATABASE,
                 true)).andReturn(intent);

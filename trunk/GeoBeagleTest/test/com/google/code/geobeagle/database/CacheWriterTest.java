@@ -57,8 +57,8 @@ public class CacheWriterTest {
         new ClearCachesFromSourceImpl(sqliteProvider).clearEarlierLoads();
         verifyAll();
         
-        assertEquals("GCTHISIMPORT|just loaded|||foo.gpx|1|0|0|0|0\n"
-                + "GCCLICKEDLINK|from a link|||intent|0|0|0|0|0\n", db.dumpTable("CACHES"));
+        assertEquals("GCTHISIMPORT|just loaded|||foo.gpx|1|0|0|0|0|1|0\n"
+                + "GCCLICKEDLINK|from a link|||intent|0|0|0|0|0|1|0\n", db.dumpTable("CACHES"));
         assertEquals("keep.gpx|2009-04-30|1\n", db.dumpTable("GPX"));
     }
 
@@ -86,14 +86,14 @@ public class CacheWriterTest {
         expect(sqliteProvider.get()).andReturn(sqlite);
 
         sqlite.execSQL(Database.SQL_REPLACE_CACHE, "gc123", "a cache", 122.0, 37.0, "source", 0, 0,
-                0, 0);
+                0, 0, false, false);
         expect(dbToGeocacheAdapter.sourceTypeToSourceName(Source.GPX, "source"))
                 .andReturn("source");
 
         replayAll();
         CacheWriter cacheWriterSql = new CacheWriter(sqliteProvider, dbToGeocacheAdapter);
         cacheWriterSql.insertAndUpdateCache("gc123", "a cache", 122, 37, Source.GPX, "source",
-                CacheType.NULL, 0, 0, 0);
+                CacheType.NULL, 0, 0, 0, false, false);
         verifyAll();
     }
 
