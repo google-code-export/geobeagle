@@ -14,6 +14,8 @@
 
 package com.google.code.geobeagle.database;
 
+import android.util.Log;
+
 public class OpenHelperDelegate {
     public void onCreate(ISQLiteDatabase db) {
         db.execSQL(Database.SQL_CREATE_CACHE_TABLE_V13);
@@ -26,6 +28,7 @@ public class OpenHelperDelegate {
     }
 
     public void onUpgrade(ISQLiteDatabase db, int oldVersion) {
+        Log.d("GeoBeagle", "UPGRADING: " + oldVersion + "  --> " + Database.DATABASE_VERSION);
         if (oldVersion < 10) {
             db.execSQL("ALTER TABLE CACHES ADD COLUMN " + Database.S0_COLUMN_DELETE_ME);
             db.execSQL(Database.SQL_CREATE_GPX_TABLE_V10);
