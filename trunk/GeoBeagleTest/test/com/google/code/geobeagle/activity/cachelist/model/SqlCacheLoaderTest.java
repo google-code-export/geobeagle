@@ -16,6 +16,7 @@ package com.google.code.geobeagle.activity.cachelist.model;
 
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.LocationControlBuffered;
+import com.google.code.geobeagle.activity.cachelist.ActivityVisible;
 import com.google.code.geobeagle.activity.cachelist.CacheListDelegateDI.Timing;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVector.LocationComparator;
 import com.google.code.geobeagle.activity.cachelist.presenter.DistanceSortStrategy;
@@ -67,8 +68,10 @@ public class SqlCacheLoaderTest {
         CacheListData cacheListData = PowerMock.createMock(CacheListData.class);
         TitleUpdater titleUpdater = PowerMock.createMock(TitleUpdater.class);
         FilterNearestCaches filterNearestCaches = PowerMock.createMock(FilterNearestCaches.class);
+        ActivityVisible activityVisible = PowerMock.createMock(ActivityVisible.class);
         ArrayList<Geocache> geocaches = new ArrayList<Geocache>();
 
+        EasyMock.expect(activityVisible.getVisible()).andReturn(true);
         EasyMock.expect(location.getLatitude()).andReturn(37.0);
         EasyMock.expect(location.getLongitude()).andReturn(-122.0);
         EasyMock.expect(filterNearestCaches.getWhereFactory()).andReturn(whereFactory);
@@ -81,8 +84,8 @@ public class SqlCacheLoaderTest {
         titleUpdater.update(2300, 100);
 
         PowerMock.replayAll();
-        new SqlCacheLoader(dbFrontendProvider, filterNearestCaches, cacheListData, locationControlBuffered,
-                titleUpdater, mTiming).refresh();
+        new SqlCacheLoader(dbFrontendProvider, filterNearestCaches, cacheListData,
+                locationControlBuffered, titleUpdater, mTiming, activityVisible).refresh();
         PowerMock.verifyAll();
     }
 }
