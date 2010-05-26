@@ -97,8 +97,8 @@ public class DatabaseTest {
         db.execSQL(schema12);
         db.execSQL("INSERT INTO CACHES (Id, Source) VALUES (\"GCABC\", \"intent\")");
         db.execSQL("INSERT INTO CACHES (Id, Source) VALUES (\"GC123\", \"foo.gpx\")");
-        db
-                .execSQL("INSERT INTO GPX (Name, ExportTime, DeleteMe) VALUES (\"seattle.gpx\", \"6-1-2009\", 1)");
+        db.execSQL("INSERT INTO GPX (Name, ExportTime, DeleteMe) "
+                + "VALUES (\"seattle.gpx\", \"2009-06-01\", 1)");
 
         OpenHelperDelegate openHelperDelegate = new OpenHelperDelegate();
         openHelperDelegate.onUpgrade(db, 12);
@@ -108,7 +108,7 @@ public class DatabaseTest {
         String caches = db.dumpTable("CACHES");
         assertEquals("GCABC||||intent|1|0|0|0|0|1|0\nGC123||||foo.gpx|1|0|0|0|0|1|0\n", caches);
         String gpx = db.dumpTable("GPX");
-        assertEquals("seattle.gpx|6-1-2009|1\n", gpx);
+        assertEquals("seattle.gpx|2009-06-01|1\n", gpx);
     }
     
 
@@ -118,8 +118,8 @@ public class DatabaseTest {
         db.execSQL(schema11);
         db.execSQL("INSERT INTO CACHES (Id, Source) VALUES (\"GCABC\", \"intent\")");
         db.execSQL("INSERT INTO CACHES (Id, Source) VALUES (\"GC123\", \"foo.gpx\")");
-        db
-                .execSQL("INSERT INTO GPX (Name, ExportTime, DeleteMe) VALUES (\"seattle.gpx\", \"6-1-2009\", 1)");
+        db.execSQL("INSERT INTO GPX (Name, ExportTime, DeleteMe) "
+                + "VALUES (\"seattle.gpx\", \"2009-06-01\", 1)");
 
         OpenHelperDelegate openHelperDelegate = new OpenHelperDelegate();
         openHelperDelegate.onUpgrade(db, 11);
@@ -129,7 +129,7 @@ public class DatabaseTest {
         String caches = db.dumpTable("CACHES");
         assertEquals("GCABC||||intent|1|0|0|0|0|1|0\nGC123||||foo.gpx|1|0|0|0|0|1|0\n", caches);
         String gpx = db.dumpTable("GPX");
-        assertEquals("seattle.gpx|6-1-2009|1\n", gpx);
+        assertEquals("seattle.gpx|2009-06-01|1\n", gpx);
     }
     
     @Test
@@ -138,8 +138,8 @@ public class DatabaseTest {
         db.execSQL(schema10);
         db.execSQL("INSERT INTO CACHES (Id, Source) VALUES (\"GCABC\", \"intent\")");
         db.execSQL("INSERT INTO CACHES (Id, Source) VALUES (\"GC123\", \"foo.gpx\")");
-        db
-                .execSQL("INSERT INTO GPX (Name, ExportTime, DeleteMe) VALUES (\"seattle.gpx\", \"6-1-2009\", 1)");
+        db.execSQL("INSERT INTO GPX (Name, ExportTime, DeleteMe) "
+                + "VALUES (\"seattle.gpx\", \"2009-06-01\", 1)");
 
         OpenHelperDelegate openHelperDelegate = new OpenHelperDelegate();
         openHelperDelegate.onUpgrade(db, 10);
