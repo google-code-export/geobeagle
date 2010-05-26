@@ -20,7 +20,6 @@ import com.google.code.geobeagle.database.WhereFactoryNearestCaches.Search;
 import com.google.code.geobeagle.database.WhereFactoryNearestCaches.SearchDown;
 import com.google.code.geobeagle.database.WhereFactoryNearestCaches.SearchUp;
 import com.google.code.geobeagle.database.WhereFactoryNearestCaches.WhereStringFactory;
-import com.google.inject.Provider;
 
 import android.content.Context;
 import android.database.Cursor;
