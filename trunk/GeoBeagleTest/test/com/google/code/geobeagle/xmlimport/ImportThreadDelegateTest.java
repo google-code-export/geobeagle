@@ -29,6 +29,7 @@ import com.google.code.geobeagle.xmlimport.gpx.GpxAndZipFiles;
 import com.google.code.geobeagle.xmlimport.gpx.IGpxReader;
 import com.google.code.geobeagle.xmlimport.gpx.GpxAndZipFiles.GpxAndZipFilenameFilter;
 import com.google.code.geobeagle.xmlimport.gpx.GpxAndZipFiles.GpxFilesAndZipFilesIter;
+import com.google.inject.Provider;
 
 import org.easymock.EasyMock;
 import org.junit.Before;
@@ -54,7 +55,7 @@ public class ImportThreadDelegateTest {
     private OldCacheFilesCleaner oldCacheFilesCleaner;
     private FileDataVersionChecker fileDataVersionChecker;
     private DbFrontend dbFrontend;
-    
+
     @Before
     public void setUp() {
         fileDataVersionWriter = PowerMock.createMock(FileDataVersionWriter.class);
@@ -70,25 +71,32 @@ public class ImportThreadDelegateTest {
         messageHandler.loadComplete();
 
         PowerMock.replayAll();
-        new ImportThreadHelper(null, messageHandler, null, null, null, oldCacheFilesCleaner).cleanup();
+        new ImportThreadHelper(null, messageHandler, null, null, null, null).cleanup();
         PowerMock.verifyAll();
     }
 
     @Test
     public void testHelperEndNoFiles() {
         GpxLoader gpxLoader = PowerMock.createMock(GpxLoader.class);
-        ErrorDisplayer errorDisplayer = PowerMock.createMock(ErrorDisplayer.class);
-
-        errorDisplayer.displayError(R.string.error_no_gpx_files);
+        Provider<String> userNameProvider = new Provider<String>() {
+            @Override
+            public String get() {
+                return "";
+            }};
         gpxLoader.end();
 
         PowerMock.replayAll();
-        new ImportThreadHelper(gpxLoader, null, null, null, errorDisplayer, oldCacheFilesCleaner).end();
+        try {
+            new ImportThreadHelper(gpxLoader, null, null, null, oldCacheFilesCleaner, userNameProvider).end();
+            assertTrue("Expected ImportException, but didn't get one.", false);
+        } catch (ImportException e) {
+        }
         PowerMock.verifyAll();
     }
 
     @Test
-    public void testHelperProcessFileAndEnd() throws XmlPullParserException, IOException {
+    public void testHelperProcessFileAndEnd() throws XmlPullParserException, IOException,
+            ImportException {
         GpxLoader gpxLoader = PowerMock.createMock(GpxLoader.class);
         IGpxReader gpxFile = PowerMock.createMock(IGpxReader.class);
         Reader reader = PowerMock.createMock(Reader.class);
@@ -107,7 +115,7 @@ public class ImportThreadDelegateTest {
 
         PowerMock.replayAll();
         ImportThreadHelper importThreadHelper = new ImportThreadHelper(gpxLoader, null,
-                eventHelperFactory, eventHandlers, null, oldCacheFilesCleaner);
+                eventHelperFactory, eventHandlers, null, null);
         assertTrue(importThreadHelper.processFile(gpxFile));
         importThreadHelper.end();
         PowerMock.verifyAll();
@@ -121,12 +129,13 @@ public class ImportThreadDelegateTest {
         gpxLoader.start();
 
         PowerMock.replayAll();
-        new ImportThreadHelper(gpxLoader, null, null, null, null, oldCacheFilesCleaner).start();
+        new ImportThreadHelper(gpxLoader, null, null, null, oldCacheFilesCleaner, null).start();
         PowerMock.verifyAll();
     }
 
     @Test
-    public void testRun() throws FileNotFoundException, XmlPullParserException, IOException {
+    public void testRun() throws FileNotFoundException, XmlPullParserException, IOException,
+            ImportException {
         GpxAndZipFiles gpxAndZipFiles = PowerMock.createMock(GpxAndZipFiles.class);
         GpxFilesAndZipFilesIter gpxFilesAndZipFilesIter = PowerMock
                 .createMock(GpxFilesAndZipFilesIter.class);
@@ -144,6 +153,7 @@ public class ImportThreadDelegateTest {
         importThreadHelper.end();
         importThreadHelper.cleanup();
         fileDataVersionWriter.writeVersion();
+        importThreadHelper.startBCachingImport();
 
         PowerMock.replayAll();
         new ImportThreadDelegate(gpxAndZipFiles, importThreadHelper, null, fileDataVersionWriter,
@@ -168,7 +178,8 @@ public class ImportThreadDelegateTest {
         importThreadHelper.cleanup();
 
         PowerMock.replayAll();
-        new ImportThreadDelegate(gpxAndZipFiles, importThreadHelper, null, fileDataVersionWriter, fileDataVersionChecker, dbFrontend).run();
+        new ImportThreadDelegate(gpxAndZipFiles, importThreadHelper, null, fileDataVersionWriter,
+                fileDataVersionChecker, dbFrontend).run();
         PowerMock.verifyAll();
     }
 
@@ -261,7 +272,7 @@ public class ImportThreadDelegateTest {
     }
 
     @Test
-    public void testRunNoFiles() throws IOException {
+    public void testRunNoFiles() throws IOException, ImportException {
         GpxAndZipFiles gpxAndZipFiles = PowerMock.createMock(GpxAndZipFiles.class);
         GpxFilesAndZipFilesIter gpxFilesAndZipFilesIter = PowerMock
                 .createMock(GpxFilesAndZipFilesIter.class);
@@ -274,6 +285,7 @@ public class ImportThreadDelegateTest {
         fileDataVersionWriter.writeVersion();
         importThreadHelper.end();
         importThreadHelper.cleanup();
+        importThreadHelper.startBCachingImport();
 
         PowerMock.replayAll();
         new ImportThreadDelegate(gpxAndZipFiles, importThreadHelper, null, fileDataVersionWriter,
@@ -282,7 +294,7 @@ public class ImportThreadDelegateTest {
     }
 
     @Test
-    public void testRunNoFilesToImport() throws FileNotFoundException, IOException {
+    public void testRunNoFilesToImport() throws FileNotFoundException, IOException, ImportException {
         GpxAndZipFiles gpxAndZipFiles = PowerMock.createMock(GpxAndZipFiles.class);
         GpxFilesAndZipFilesIter gpxFilesAndZipFilesIter = PowerMock
                 .createMock(GpxFilesAndZipFilesIter.class);
@@ -295,6 +307,7 @@ public class ImportThreadDelegateTest {
         fileDataVersionWriter.writeVersion();
         importThreadHelper.end();
         importThreadHelper.cleanup();
+        importThreadHelper.startBCachingImport();
 
         PowerMock.replayAll();
         new ImportThreadDelegate(gpxAndZipFiles, importThreadHelper, null, fileDataVersionWriter,

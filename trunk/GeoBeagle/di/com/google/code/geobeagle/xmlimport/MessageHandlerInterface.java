@@ -25,4 +25,5 @@ public interface MessageHandlerInterface {
 
     public abstract void deletingCacheFiles();
 
+    public abstract void startBCachingImport();
 }

@@ -36,13 +36,11 @@ import com.google.code.geobeagle.xmlimport.gpx.GpxAndZipFiles.GpxFilenameFilter;
 import com.google.code.geobeagle.xmlimport.gpx.zip.ZipFileOpener.ZipInputFileTester;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
+import com.google.inject.Key;
 import com.google.inject.Provider;
 
 import roboguice.util.RoboThread;
 
-import roboguice.util.RoboThread;
-
-import android.app.ListActivity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Handler;
@@ -71,8 +69,8 @@ public class GpxImporterDI {
             OldCacheFilesCleaner oldCacheFilesCleaner = new OldCacheFilesCleaner(
                     CacheDetailsLoader.OLD_DETAILS_DIR, messageHandler);
             final ImportThreadHelper importThreadHelper = new ImportThreadHelper(gpxLoader,
-                    messageHandler, eventHelperFactory, eventHandlers, errorDisplayer,
-                    oldCacheFilesCleaner);
+                    messageHandler, eventHelperFactory, eventHandlers, oldCacheFilesCleaner,
+                    injector.getProvider(Key.get(String.class, BCachingUserName.class)));
             final FileDataVersionWriter fileDataVersionWriter = injector
                     .getInstance(FileDataVersionWriter.class);
             final FileDataVersionChecker fileDataVersionChecker = injector
@@ -144,6 +142,7 @@ public class GpxImporterDI {
         public static final String GEOBEAGLE = "GeoBeagle";
         static final int MSG_DONE = 1;
         static final int MSG_PROGRESS = 0;
+        private static final int MSG_BCACHING_IMPORT = 2;
 
         private int mCacheCount;
         private boolean mLoadAborted;
@@ -180,9 +179,11 @@ public class GpxImporterDI {
                     if (!mLoadAborted) {
                         mProgressDialogWrapper.dismiss();
                         mMenuActionRefresh.forceRefresh();
-                        if (mBcachingUserNameProvider.get().length() > 0)
-                            mImportBCachingWorkerProvider.get().start();
                     }
+                    break;
+                case MessageHandler.MSG_BCACHING_IMPORT:
+                    if (mBcachingUserNameProvider.get().length() > 0)
+                        mImportBCachingWorkerProvider.get().start();
                     break;
                 default:
                     break;
@@ -224,6 +225,11 @@ public class GpxImporterDI {
         public void deletingCacheFiles() {
             mStatus = "Deleting old cache files....";
             sendEmptyMessage(MessageHandler.MSG_PROGRESS);
+        }
+
+        @Override
+        public void startBCachingImport() {
+            sendEmptyMessage(MessageHandler.MSG_BCACHING_IMPORT);
         }
 
     }

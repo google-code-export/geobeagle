@@ -76,4 +76,8 @@ class MessageHandlerAdapter implements MessageHandlerInterface {
         this.waypoint = wpt;
     }
 
+    @Override
+    public void startBCachingImport() {
+    }
+
 }
