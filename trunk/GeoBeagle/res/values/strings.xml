@@ -73,11 +73,11 @@
 	<string name="map_intent">google.navigation:q=%1$.5f,%2$.5f</string>
 	<string name="get_coords_toast">&quot;To get the coords from the cache page, click: 'online maps...' / 'Google Maps'.&quot;</string>
 	<string name="error_cant_get_location">"Location cannot be determined.  Please ensure that your GPS is enabled and try again."</string>
-	<string name="error_opening_file">Unable to open file '%1$s'.</string>
-	<string name="error_parsing_file">Error parsing file '%1$s'.</string>
-	<string name="file_not_found">File not found exception: '%1$s'.</string>
-	<string name="error_reading_file">Error reading file '%1$s'.</string>
-	<string name="error_writing_cache">Error writing cache: '%1$s'.</string>
+	<string name="error_opening_file">Unable to open file \'%1$s\'.</string>
+	<string name="error_parsing_file">Error parsing file \'%1$s\'.</string>
+	<string name="file_not_found">File not found exception: \'%1$s\'.</string>
+	<string name="error_reading_file">Error reading file \'%1$s\'.</string>
+	<string name="error_writing_cache">Error writing cache: \'%1$s\'.</string>
 	<string name="error_no_gpx_files">Nothing to sync: no cache files found in /sdcard/download folder.\n\nGeoBeagle can bulk import thousands of caches at a time.  Copy gpx/loc/zip files into your /sdcard/download folder, or set up a BCaching.com account.\n\nSee http://code.google.com/p/geobeagle for details.</string>
 	<string name="error_cant_read_sd">Error reading folder /sdcard/download, please make sure your sdcard is readable.</string>
 	<string name="error_cant_read_sdroot">Error reading folder /sdcard, please make sure your sdcard is readable.</string>
