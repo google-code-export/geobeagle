@@ -14,7 +14,6 @@
 
 package com.google.code.geobeagle.bcaching.communication;
 
-
 import android.util.Log;
 
 public class BCachingList {
@@ -42,6 +41,10 @@ public class BCachingList {
         if (count > 0)
             csvIds.deleteCharAt(0);
         return csvIds.toString();
+    }
+
+    public String getServerTime() throws BCachingException {
+        return cacheList.getDate("serverTime");
     }
 
     public int getCachesRead() throws BCachingException {

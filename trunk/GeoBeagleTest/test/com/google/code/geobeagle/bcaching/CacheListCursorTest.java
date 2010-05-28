@@ -15,6 +15,7 @@
 package com.google.code.geobeagle.bcaching;
 
 import static org.easymock.EasyMock.expect;
+import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.powermock.api.easymock.PowerMock.createMock;
@@ -81,6 +82,31 @@ public class CacheListCursorTest extends GeoBeagleTest {
     }
 
     @Test
+    public void testOpenNoCaches() throws BCachingException {
+        expect(bcachingLastUpdated.getLastUpdateTime()).andReturn(900L);
+        bcachingListImporter.setStartTime("900");
+        expect(bcachingListImporter.getTotalCount()).andReturn(0);
+
+        replayAll();
+        assertFalse(new CacheListCursor(bcachingLastUpdated, progressManager, progressHandler,
+                bcachingListImporter, timeRecorder, lastReadPosition).open());
+        verifyAll();
+    }
+
+    @Test
+    public void testClose() throws BCachingException {
+        expect(bcachingListImporter.getBCachingList()).andReturn(bcachingList);
+        expect(bcachingList.getServerTime()).andReturn("1234567");
+        timeRecorder.saveTime("1234567");
+        lastReadPosition.put(0);
+
+        replayAll();
+        new CacheListCursor(bcachingLastUpdated, progressManager, progressHandler,
+                bcachingListImporter, timeRecorder, lastReadPosition).close();
+        verifyAll();
+    }
+
+    @Test
     public void testReadCaches() throws BCachingException {
         expect(lastReadPosition.get()).andReturn(7);
         bcachingListImporter.readCacheList("7");
@@ -107,12 +133,12 @@ public class CacheListCursorTest extends GeoBeagleTest {
         cacheListCursor.increment();
         verifyAll();
     }
-    
+
     @Test
     public void testGetCacheIds() throws BCachingException {
         expect(bcachingListImporter.getBCachingList()).andReturn(bcachingList);
         expect(bcachingList.getCacheIds()).andReturn("1,2,3");
-        
+
         replayAll();
         CacheListCursor cacheListCursor = new CacheListCursor(bcachingLastUpdated, progressManager,
                 progressHandler, bcachingListImporter, timeRecorder, lastReadPosition);

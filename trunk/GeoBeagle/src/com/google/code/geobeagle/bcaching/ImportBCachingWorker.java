@@ -82,7 +82,7 @@ public class ImportBCachingWorker extends RoboThread implements Abortable {
 
                 cursor.increment();
             }
-            cursor.close(detailsReaderImport.getLastModified());
+            cursor.close();
             progressManager.update(progressHandler, ProgressMessage.REFRESH, 0);
         } catch (BCachingException e) {
             progressManager.update(progressHandler, ProgressMessage.REFRESH, 0);

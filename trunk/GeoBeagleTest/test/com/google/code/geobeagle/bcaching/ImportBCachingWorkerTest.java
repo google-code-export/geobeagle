@@ -80,9 +80,8 @@ public class ImportBCachingWorkerTest extends GeoBeagleTest {
         expect(cursor.getCacheIds()).andReturn("1,2,3");
         expect(detailsReaderImport.loadCacheDetails("1,2,3")).andReturn(true);
         cursor.increment();
-        expect(detailsReaderImport.getLastModified()).andReturn("LAST-MODIFIED-TIME");
         expect(cursor.readCaches()).andReturn(false);
-        cursor.close("LAST-MODIFIED-TIME");
+        cursor.close();
 
         progressManager.update(progressHandler, ProgressMessage.REFRESH, 0);
         progressManager.update(progressHandler, ProgressMessage.DONE, 0);
@@ -124,8 +123,7 @@ public class ImportBCachingWorkerTest extends GeoBeagleTest {
         cursor.increment();
         
         expect(cursor.readCaches()).andReturn(false);
-        expect(detailsReaderImport.getLastModified()).andReturn("LAST-MODIFIED-TIME");
-        cursor.close("LAST-MODIFIED-TIME");
+        cursor.close();
         progressManager.update(progressHandler, ProgressMessage.REFRESH, 0);
         progressManager.update(progressHandler, ProgressMessage.DONE, 0);
 

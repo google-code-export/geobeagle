@@ -42,8 +42,8 @@ class CacheListCursor {
         this.lastReadPosition = lastReadPosition;
     }
 
-    void close(String lastModified) {
-        timeRecorder.saveTime(lastModified);
+    void close() throws BCachingException {
+        timeRecorder.saveTime(bcachingListImporter.getBCachingList().getServerTime());
         lastReadPosition.put(0);
     }
 
