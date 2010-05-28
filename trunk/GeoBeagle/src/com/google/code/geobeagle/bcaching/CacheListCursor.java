@@ -43,17 +43,17 @@ class CacheListCursor {
     }
 
     void close() throws BCachingException {
-        timeRecorder.saveTime(bcachingListImporter.getBCachingList().getServerTime());
+        timeRecorder.saveTime(bcachingListImporter.getServerTime());
         lastReadPosition.put(0);
     }
 
     String getCacheIds() throws BCachingException {
-        return bcachingListImporter.getBCachingList().getCacheIds();
+        return bcachingListImporter.getCacheIds();
     }
 
     void increment() throws BCachingException {
         int position = lastReadPosition.get()
-                + bcachingListImporter.getBCachingList().getCachesRead();
+                + bcachingListImporter.getCachesRead();
         lastReadPosition.put(position);
         progressManager.update(progressHandler, ProgressMessage.SET_PROGRESS, position);
     }
@@ -76,7 +76,7 @@ class CacheListCursor {
     boolean readCaches() throws BCachingException {
         bcachingListImporter.readCacheList(String.valueOf(lastReadPosition.get()));
         
-        return bcachingListImporter.getBCachingList().getCachesRead() > 0;
+        return bcachingListImporter.getCachesRead() > 0;
     }
 
 }

@@ -38,8 +38,17 @@ public class BCachingListImporter {
         this.startTime = startTime;
     }
 
-    public BCachingList getBCachingList() {
-        return bcachingList;
+    public String getServerTime() throws BCachingException {
+        return bcachingList.getServerTime();
     }
+
+    public String getCacheIds() throws BCachingException {
+        return bcachingList.getCacheIds();
+    }
+
+    public int getCachesRead() throws BCachingException {
+        return bcachingList.getCachesRead();
+    }
+    
 
 }

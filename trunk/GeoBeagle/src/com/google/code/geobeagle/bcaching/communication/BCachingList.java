@@ -27,7 +27,7 @@ public class BCachingList {
         this.cacheList = cacheList;
     }
 
-    public String getCacheIds() throws BCachingException {
+    String getCacheIds() throws BCachingException {
         BCachingJSONArray summary = cacheList.getJSONArray("data");
         Log.d("GeoBeagle", summary.toString());
 
@@ -43,11 +43,11 @@ public class BCachingList {
         return csvIds.toString();
     }
 
-    public String getServerTime() throws BCachingException {
+    String getServerTime() throws BCachingException {
         return cacheList.getDate("serverTime");
     }
 
-    public int getCachesRead() throws BCachingException {
+    int getCachesRead() throws BCachingException {
         return cacheList.getJSONArray("data").length();
     }
 
