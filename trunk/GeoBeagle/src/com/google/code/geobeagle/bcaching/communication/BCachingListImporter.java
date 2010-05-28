@@ -38,7 +38,7 @@ public class BCachingListImporter {
         this.startTime = startTime;
     }
 
-    public String getServerTime() throws BCachingException {
+    public long getServerTime() throws BCachingException {
         return bcachingList.getServerTime();
     }
 
