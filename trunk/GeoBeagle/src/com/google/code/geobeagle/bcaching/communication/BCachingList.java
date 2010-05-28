@@ -43,7 +43,7 @@ public class BCachingList {
         return csvIds.toString();
     }
 
-    String getServerTime() throws BCachingException {
+    long getServerTime() throws BCachingException {
         return cacheList.getDate("serverTime");
     }
 
