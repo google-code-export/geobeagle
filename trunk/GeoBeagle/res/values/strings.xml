@@ -11,7 +11,7 @@
 		License.
 	-->
 <resources>
-    <string name="problem_importing_from_bcaching">Problem importing from bcaching.com: %1$s.</string>
+    <string name="problem_importing_from_bcaching">Problem importing from bcaching.com:\n\n%1$s.</string>
     <string name="install_radar_uri">market://search?q=pname:com.eclipsim.gpsstatus2</string>
     <string name="ask_install_radar_app">GeoBeagle requires an app that will accept the RADAR intent. Install GPS Status from the Android Marketplace?</string>
     <string name="log_cache_with_sms">Log cache with SMS</string>
