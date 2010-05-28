@@ -16,6 +16,7 @@ package com.google.code.geobeagle.database;
 
 import static org.junit.Assert.*;
 
+import com.google.code.geobeagle.activity.cachelist.GeoBeagleTest;
 import com.google.inject.Provider;
 
 import org.easymock.EasyMock;
@@ -25,7 +26,7 @@ import org.powermock.api.easymock.PowerMock;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 @RunWith(PowerMockRunner.class)
-public class DatabaseTest {
+public class DatabaseTest extends GeoBeagleTest {
 
     static String currentSchema() {
         String currentSchema = SQL(Database.SQL_CREATE_CACHE_TABLE_V13)

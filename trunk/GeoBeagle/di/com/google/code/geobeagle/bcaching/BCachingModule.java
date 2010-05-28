@@ -18,12 +18,10 @@ import com.google.code.geobeagle.activity.main.GeoBeagleModule.DefaultSharedPref
 import com.google.code.geobeagle.bcaching.BCachingAnnotations.BCachingUserName;
 import com.google.code.geobeagle.bcaching.BCachingAnnotations.CacheListAnnotation;
 import com.google.code.geobeagle.bcaching.BCachingAnnotations.DetailsReaderAnnotation;
-import com.google.code.geobeagle.bcaching.DetailsReader.WriterWrapperFactory;
 import com.google.code.geobeagle.bcaching.communication.BCachingCommunication;
 import com.google.code.geobeagle.bcaching.communication.BCachingException;
 import com.google.code.geobeagle.bcaching.communication.BCachingListImportHelper.BufferedReaderFactory;
 import com.google.code.geobeagle.bcaching.progress.ProgressHandler;
-import com.google.code.geobeagle.cachedetails.WriterWrapper;
 import com.google.code.geobeagle.database.ClearCachesFromSource;
 import com.google.code.geobeagle.database.CacheWriter.ClearCachesFromSourceNull;
 import com.google.code.geobeagle.xmlimport.CachePersisterFacade;
@@ -41,7 +39,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
@@ -54,7 +51,6 @@ public class BCachingModule extends AbstractAndroidModule {
     @Override
     protected void configure() {
         bind(BufferedReaderFactory.class).to(BufferedReaderFactoryImpl.class);
-        bind(WriterWrapperFactory.class).to(WriterWrapperFactoryImpl.class);
         bind(ProgressHandler.class).in(ContextScoped.class);
         bind(MessageHandlerInterface.class).to(MessageHandlerAdapter.class);
         bind(CachePersisterFacade.class).in(ContextScoped.class);
@@ -87,14 +83,6 @@ public class BCachingModule extends AbstractAndroidModule {
             InputStream inputStream = bcachingCommunication.sendRequest(params);
             return new BufferedReader(new InputStreamReader(inputStream, Charset.forName("UTF-8")),
                     8192);
-        }
-    }
-
-    static class WriterWrapperFactoryImpl implements WriterWrapperFactory {
-        public WriterWrapper create(String path) throws IOException {
-            WriterWrapper writerWrapper = new WriterWrapper();
-            writerWrapper.open(path);
-            return writerWrapper;
         }
     }
 
