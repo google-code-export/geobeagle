@@ -24,7 +24,6 @@ public class BCachingListImporterStateless {
 
     private final BCachingListImportHelper bCachingListImportHelper;
     private final Hashtable<String, String> params;
-    private String startTime;
 
     @Inject
     public BCachingListImporterStateless(@CacheListAnnotation Hashtable<String, String> params,
@@ -33,24 +32,20 @@ public class BCachingListImporterStateless {
         this.bCachingListImportHelper = bCachingListImportHelper;
     }
 
-    private BCachingList getCacheList(String maxCount, String startingPosition)
-            throws BCachingException {
+    private BCachingList importList(String maxCount, String startTime) throws BCachingException {
         params.put("maxcount", maxCount);
-        params.put("since", startingPosition);
+        params.put("since", startTime);
         return bCachingListImportHelper.importList(params);
     }
 
-    public BCachingList getCacheList(String startPosition) throws BCachingException {
+    public BCachingList getCacheList(String startPosition, String startTime)
+            throws BCachingException {
         params.put("first", startPosition);
-        return getCacheList(MAX_COUNT, startTime);
+        return importList(MAX_COUNT, startTime);
     }
 
-    public int getTotalCount() throws BCachingException {
+    public int getTotalCount(String startTime) throws BCachingException {
         params.remove("first");
-        return getCacheList("1", startTime).getTotalCount();
-    }
-
-    public void setStartTime(String startTime) {
-        this.startTime = startTime;
+        return importList("1", startTime).getTotalCount();
     }
 }

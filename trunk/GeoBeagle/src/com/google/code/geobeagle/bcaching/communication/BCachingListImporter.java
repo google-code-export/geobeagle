@@ -17,28 +17,29 @@ package com.google.code.geobeagle.bcaching.communication;
 import com.google.inject.Inject;
 
 public class BCachingListImporter {
-    private final BCachingListImporterStateless bcachingListImporter;
+    private final BCachingListImporterStateless bcachingListImporterStateless;
     private BCachingList bcachingList;
+    private String startTime;
 
     @Inject
-    public BCachingListImporter(BCachingListImporterStateless bcachingListImporter) {
-        this.bcachingListImporter = bcachingListImporter;
+    public BCachingListImporter(BCachingListImporterStateless bcachingListImporterStateless) {
+        this.bcachingListImporterStateless = bcachingListImporterStateless;
     }
 
     public void readCacheList(String startPosition) throws BCachingException {
-        bcachingList = bcachingListImporter.getCacheList(startPosition);
+        bcachingList = bcachingListImporterStateless.getCacheList(startPosition, startTime);
     }
 
     public int getTotalCount() throws BCachingException {
-        return bcachingListImporter.getTotalCount();
+        return bcachingListImporterStateless.getTotalCount(startTime);
     }
 
     public void setStartTime(String startTime) {
-        bcachingListImporter.setStartTime(startTime);
+        this.startTime = startTime;
     }
 
     public BCachingList getBCachingList() {
         return bcachingList;
     }
-    
+
 }

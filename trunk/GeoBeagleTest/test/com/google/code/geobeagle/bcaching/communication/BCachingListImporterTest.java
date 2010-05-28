@@ -44,10 +44,9 @@ public class BCachingListImporterTest {
         expect(bCachingListImportHelper.importList(params)).andReturn(bcachingList);
         replayAll();
 
-        BCachingListImporterStateless cachingListImporter = new BCachingListImporterStateless(params,
-                bCachingListImportHelper);
-        cachingListImporter.setStartTime("7777");
-        assertEquals(bcachingList, cachingListImporter.getCacheList("12"));
+        BCachingListImporterStateless cachingListImporterStateless = new BCachingListImporterStateless(
+                params, bCachingListImportHelper);
+        assertEquals(bcachingList, cachingListImporterStateless.getCacheList("12", "7777"));
         verifyAll();
 
         assertEquals("12", params.get("first"));
@@ -67,10 +66,9 @@ public class BCachingListImporterTest {
 
         replayAll();
 
-        BCachingListImporterStateless cachingListImporter = new BCachingListImporterStateless(params,
-                bCachingListImportHelper);
-        cachingListImporter.setStartTime("7777");
-        assertEquals(42, cachingListImporter.getTotalCount());
+        BCachingListImporterStateless cachingListImporter = new BCachingListImporterStateless(
+                params, bCachingListImportHelper);
+        assertEquals(42, cachingListImporter.getTotalCount("7777"));
         verifyAll();
 
         assertFalse(params.containsKey("first"));
