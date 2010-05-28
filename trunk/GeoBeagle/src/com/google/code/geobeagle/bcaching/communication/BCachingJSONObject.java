@@ -14,7 +14,6 @@
 
 package com.google.code.geobeagle.bcaching.communication;
 
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -40,4 +39,13 @@ public class BCachingJSONObject {
             throw new BCachingException(e.getLocalizedMessage());
         }
     }
+
+    public String getDate(String key) throws BCachingException {
+        try {
+            return jsonObject.get(key).toString().replace("new Date(", "").replace(")", "");
+        } catch (JSONException e) {
+            throw new BCachingException(e.getLocalizedMessage());
+        }
+    }
+
 }
