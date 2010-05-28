@@ -15,8 +15,8 @@
 package com.google.code.geobeagle.bcaching;
 
 import static org.easymock.EasyMock.expect;
-import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.powermock.api.easymock.PowerMock.createMock;
 import static org.powermock.api.easymock.PowerMock.mockStatic;
