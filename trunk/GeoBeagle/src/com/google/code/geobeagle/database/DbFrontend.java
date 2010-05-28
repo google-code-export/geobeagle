@@ -21,7 +21,6 @@ import com.google.inject.Provider;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -32,11 +31,11 @@ import java.util.ArrayList;
  * without involving the clients of this class.
  */
 public class DbFrontend {
-    private static CacheReader mCacheReader;
-    private static Context mContext;
-    private static ISQLiteDatabase mDatabase;
-    private static GeoBeagleSqliteOpenHelper mSqliteOpenHelper;
-    private static Provider<Context> mContextProvider;
+    private final CacheReader mCacheReader;
+    private Context mContext;
+    private ISQLiteDatabase mDatabase;
+    private GeoBeagleSqliteOpenHelper mSqliteOpenHelper;
+    private final Provider<Context> mContextProvider;
     
     @Inject
     DbFrontend(Provider<Context> contextProvider, CacheReader cacheReader) {
@@ -46,7 +45,7 @@ public class DbFrontend {
     }
 
     public synchronized void closeDatabase() {
-        Log.d("GeoBeagleDb", "DbFrontend.closeDatabase()");
+        Log.d("GeoBeagleDb", this + ": DbFrontend.closeDatabase() " + mContext);
         if (mContext == null)
             return;
         mSqliteOpenHelper.close();
@@ -98,7 +97,8 @@ public class DbFrontend {
         Context currentContext = mContextProvider.get();
         if (mContext == currentContext)
             return;
-        
+
+        Log.d("GeoBeagleDb", this + ": DbFrontend.openDatabase() " + mContext + ", " + currentContext);
         mContext = currentContext;
         mSqliteOpenHelper = new GeoBeagleSqliteOpenHelper(mContext);
         mDatabase = new DatabaseDI.SQLiteWrapper(mSqliteOpenHelper.getWritableDatabase());
