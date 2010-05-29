@@ -137,7 +137,6 @@ public class CachePersisterFacade {
 
     public void lastModified(String trimmedText) {
         mLastModified = trimmedText;
-        Log.d("GeoBeagle", "LAST MODIFIED: " + trimmedText);
     }
 
     public String getLastModified() {
