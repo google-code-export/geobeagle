@@ -20,14 +20,17 @@ public class BCachingListImporter {
     private final BCachingListImporterStateless bcachingListImporterStateless;
     private BCachingList bcachingList;
     private String startTime;
+    private long serverTime;
 
     @Inject
     public BCachingListImporter(BCachingListImporterStateless bcachingListImporterStateless) {
         this.bcachingListImporterStateless = bcachingListImporterStateless;
     }
 
-    public void readCacheList(String startPosition) throws BCachingException {
-        bcachingList = bcachingListImporterStateless.getCacheList(startPosition, startTime);
+    public void readCacheList(int startPosition) throws BCachingException {
+        bcachingList = bcachingListImporterStateless.getCacheList(String.valueOf(startPosition),
+                startTime);
+        serverTime = bcachingList.getServerTime();
     }
 
     public int getTotalCount() throws BCachingException {
@@ -38,8 +41,11 @@ public class BCachingListImporter {
         this.startTime = startTime;
     }
 
-    public long getServerTime() throws BCachingException {
-        return bcachingList.getServerTime();
+    /**
+     * Must be called after readCacheList().
+     */
+    public long getServerTime() {
+        return serverTime;
     }
 
     public String getCacheIds() throws BCachingException {
@@ -49,6 +55,5 @@ public class BCachingListImporter {
     public int getCachesRead() throws BCachingException {
         return bcachingList.getCachesRead();
     }
-    
 
 }

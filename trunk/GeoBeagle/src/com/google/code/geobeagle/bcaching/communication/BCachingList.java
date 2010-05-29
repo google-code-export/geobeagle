@@ -44,7 +44,7 @@ public class BCachingList {
     }
 
     long getServerTime() throws BCachingException {
-        return cacheList.getDate("serverTime");
+        return cacheList.getLong("serverTime");
     }
 
     int getCachesRead() throws BCachingException {

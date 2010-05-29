@@ -46,6 +46,7 @@ public class BCachingListImporterStateless {
 
     public int getTotalCount(String startTime) throws BCachingException {
         params.remove("first");
-        return importList("1", startTime).getTotalCount();
+        BCachingList importList = importList("1", startTime);
+        return importList.getTotalCount();
     }
 }

@@ -39,7 +39,7 @@ import android.util.Log;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest( {
-        Message.class, Log.class, ImportBCachingWorker.class, TimeRecorder.class
+        Message.class, Log.class, ImportBCachingWorker.class
 })
 public class ImportBCachingWorkerTest extends GeoBeagleTest {
     private DetailsReaderImport detailsReaderImport;

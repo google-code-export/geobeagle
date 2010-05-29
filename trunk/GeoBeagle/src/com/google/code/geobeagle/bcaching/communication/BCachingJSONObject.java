@@ -40,10 +40,9 @@ public class BCachingJSONObject {
         }
     }
 
-    public long getDate(String key) throws BCachingException {
+    public long getLong(String key) throws BCachingException {
         try {
-            return Long.parseLong(jsonObject.get(key).toString().replace("new Date(", "").replace(
-                    ")", ""));
+            return jsonObject.getLong(key);
         } catch (JSONException e) {
             throw new BCachingException(e.getLocalizedMessage());
         }

@@ -62,8 +62,8 @@ import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh.U
 import com.google.code.geobeagle.activity.cachelist.view.GeocacheSummaryRowInflater;
 import com.google.code.geobeagle.activity.cachelist.view.NameFormatter;
 import com.google.code.geobeagle.activity.main.GeoBeagle;
-import com.google.code.geobeagle.bcaching.BCachingLastUpdated;
 import com.google.code.geobeagle.bcaching.ImportBCachingWorker;
+import com.google.code.geobeagle.bcaching.preferences.BCachingStartTime;
 import com.google.code.geobeagle.cachedetails.FilePathStrategy;
 import com.google.code.geobeagle.database.CacheWriter;
 import com.google.code.geobeagle.database.DbFrontend;
@@ -276,7 +276,7 @@ public class CacheListDelegateDI {
         menuActions.add(menuActionSyncGpx);
         menuActions.add(new MenuActionDeleteAllCaches(cacheListRefresh, listActivity,
                 dbFrontendProvider, new AlertDialog.Builder(listActivity), injector
-                        .getInstance(BCachingLastUpdated.class)));
+                        .getInstance(BCachingStartTime.class)));
         menuActions.add(new MenuActionMyLocation(listActivity, errorDisplayer, geocacheFromMyLocationFactory,
                 new LocationSaver(cacheWriterProvider)));
         menuActions.add(new MenuActionSearchOnline(listActivity));

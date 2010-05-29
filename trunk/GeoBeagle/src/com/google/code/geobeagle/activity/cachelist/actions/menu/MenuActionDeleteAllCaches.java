@@ -17,7 +17,7 @@ package com.google.code.geobeagle.activity.cachelist.actions.menu;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.actions.MenuActionBase;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
-import com.google.code.geobeagle.bcaching.BCachingLastUpdated;
+import com.google.code.geobeagle.bcaching.preferences.BCachingStartTime;
 import com.google.code.geobeagle.database.DbFrontend;
 import com.google.inject.Provider;
 
@@ -36,10 +36,10 @@ public class MenuActionDeleteAllCaches extends MenuActionBase {
     private static class OnClickOkayListener implements DialogInterface.OnClickListener {
         private final CacheListRefresh cacheListRefresh;
         private Provider<DbFrontend> dbFrontendProvider;
-        private final BCachingLastUpdated bcachingLastUpdated;
+        private final BCachingStartTime bcachingLastUpdated;
 
         OnClickOkayListener(Provider<DbFrontend> dbFrontendProvider, CacheListRefresh cacheListRefresh,
-                BCachingLastUpdated bcachingLastUpdated) {
+                BCachingStartTime bcachingLastUpdated) {
             this.dbFrontendProvider = dbFrontendProvider;
             this.cacheListRefresh = cacheListRefresh;
             this.bcachingLastUpdated = bcachingLastUpdated;
@@ -48,7 +48,7 @@ public class MenuActionDeleteAllCaches extends MenuActionBase {
         public void onClick(DialogInterface dialog, int id) {
             dialog.dismiss();
             dbFrontendProvider.get().deleteAll();
-            bcachingLastUpdated.clearLastUpdateTime();
+            bcachingLastUpdated.clearStartTime();
             cacheListRefresh.forceRefresh();
         }
     }
@@ -57,11 +57,11 @@ public class MenuActionDeleteAllCaches extends MenuActionBase {
     private final Builder mBuilder;
     private final CacheListRefresh mCacheListRefresh;
     private final Provider<DbFrontend> mDbFrontendProvider;
-    private final BCachingLastUpdated mBcachingLastUpdated;
+    private final BCachingStartTime mBcachingLastUpdated;
 
     public MenuActionDeleteAllCaches(CacheListRefresh cacheListRefresh, Activity activity,
             Provider<DbFrontend> dbFrontendProvider, AlertDialog.Builder builder,
-            BCachingLastUpdated bcachingLastUpdated) {
+            BCachingStartTime bcachingLastUpdated) {
         super(R.string.menu_delete_all_caches);
         mDbFrontendProvider = dbFrontendProvider;
         mBuilder = builder;
@@ -76,7 +76,7 @@ public class MenuActionDeleteAllCaches extends MenuActionBase {
     }
 
     private AlertDialog buildAlertDialog(Provider<DbFrontend> dbFrontendProvider, CacheListRefresh cacheListRefresh,
-            BCachingLastUpdated bcachingLastUpdated) {
+            BCachingStartTime bcachingLastUpdated) {
         mBuilder.setTitle(R.string.delete_all_title);
         final OnClickOkayListener onClickOkayListener = new OnClickOkayListener(dbFrontendProvider,
                 cacheListRefresh, bcachingLastUpdated);

@@ -24,9 +24,10 @@ import static org.powermock.api.easymock.PowerMock.replayAll;
 import static org.powermock.api.easymock.PowerMock.verifyAll;
 
 import com.google.code.geobeagle.activity.cachelist.GeoBeagleTest;
-import com.google.code.geobeagle.bcaching.BCachingLastUpdated.LastReadPosition;
 import com.google.code.geobeagle.bcaching.communication.BCachingException;
 import com.google.code.geobeagle.bcaching.communication.BCachingListImporter;
+import com.google.code.geobeagle.bcaching.preferences.BCachingStartTime;
+import com.google.code.geobeagle.bcaching.preferences.LastReadPosition;
 import com.google.code.geobeagle.bcaching.progress.ProgressHandler;
 import com.google.code.geobeagle.bcaching.progress.ProgressManager;
 import com.google.code.geobeagle.bcaching.progress.ProgressMessage;
@@ -48,69 +49,66 @@ public class CacheListCursorTest extends GeoBeagleTest {
     private ProgressHandler progressHandler;
     private ProgressManager progressManager;
     private BCachingListImporter bcachingListImporter;
-    private BCachingLastUpdated bcachingLastUpdated;
-    private TimeRecorder timeRecorder;
+    private BCachingStartTime bcachingStartTime;
     private LastReadPosition lastReadPosition;
 
     @Before
     public void setUp() {
         mockStatic(System.class);
-        bcachingLastUpdated = createMock(BCachingLastUpdated.class);
+        bcachingStartTime = createMock(BCachingStartTime.class);
         bcachingListImporter = createMock(BCachingListImporter.class);
         progressManager = createMock(ProgressManager.class);
         progressHandler = createMock(ProgressHandler.class);
-        timeRecorder = createMock(TimeRecorder.class);
         lastReadPosition = createMock(LastReadPosition.class);
     }
 
     @Test
     public void testOpen() throws BCachingException {
-        expect(bcachingLastUpdated.getLastUpdateTime()).andReturn(900L);
+        expect(bcachingStartTime.getLastUpdateTime()).andReturn(900L);
         bcachingListImporter.setStartTime("900");
         expect(bcachingListImporter.getTotalCount()).andReturn(128);
         progressManager.update(progressHandler, ProgressMessage.SET_MAX, 128);
-        expect(lastReadPosition.getSaved()).andReturn(25);
+        lastReadPosition.load();
+        expect(lastReadPosition.get()).andReturn(25);
         progressManager.update(progressHandler, ProgressMessage.SET_PROGRESS, 25);
 
         replayAll();
-        assertTrue(new CacheListCursor(bcachingLastUpdated, progressManager, progressHandler,
-                bcachingListImporter, timeRecorder, lastReadPosition).open());
+        assertTrue(new CacheListCursor(bcachingStartTime, progressManager, progressHandler,
+                bcachingListImporter, lastReadPosition).open());
         verifyAll();
     }
 
     @Test
     public void testOpenNoCaches() throws BCachingException {
-        expect(bcachingLastUpdated.getLastUpdateTime()).andReturn(900L);
+        expect(bcachingStartTime.getLastUpdateTime()).andReturn(900L);
         bcachingListImporter.setStartTime("900");
         expect(bcachingListImporter.getTotalCount()).andReturn(0);
 
         replayAll();
-        assertFalse(new CacheListCursor(bcachingLastUpdated, progressManager, progressHandler,
-                bcachingListImporter, timeRecorder, lastReadPosition).open());
+        assertFalse(new CacheListCursor(bcachingStartTime, progressManager, progressHandler,
+                bcachingListImporter, lastReadPosition).open());
         verifyAll();
     }
 
     @Test
-    public void testClose() throws BCachingException {
-        expect(bcachingListImporter.getServerTime()).andReturn("1234567");
-        timeRecorder.saveTime("1234567");
+    public void testClose() {
+        bcachingStartTime.resetStartTime();
         lastReadPosition.put(0);
 
         replayAll();
-        new CacheListCursor(bcachingLastUpdated, progressManager, progressHandler,
-                bcachingListImporter, timeRecorder, lastReadPosition).close();
+        new CacheListCursor(bcachingStartTime, null, null, null, lastReadPosition).close();
         verifyAll();
     }
 
     @Test
     public void testReadCaches() throws BCachingException {
         expect(lastReadPosition.get()).andReturn(7);
-        bcachingListImporter.readCacheList("7");
+        bcachingListImporter.readCacheList(7);
         expect(bcachingListImporter.getCachesRead()).andReturn(5);
 
         replayAll();
-        assertTrue(new CacheListCursor(null, null, null, bcachingListImporter, timeRecorder,
-                lastReadPosition).readCaches());
+        assertTrue(new CacheListCursor(null, null, null, bcachingListImporter, lastReadPosition)
+                .readCaches());
         verifyAll();
     }
 
@@ -122,8 +120,8 @@ public class CacheListCursorTest extends GeoBeagleTest {
         progressManager.update(progressHandler, ProgressMessage.SET_PROGRESS, 17);
 
         replayAll();
-        CacheListCursor cacheListCursor = new CacheListCursor(bcachingLastUpdated, progressManager,
-                progressHandler, bcachingListImporter, timeRecorder, lastReadPosition);
+        CacheListCursor cacheListCursor = new CacheListCursor(null, progressManager,
+                progressHandler, bcachingListImporter, lastReadPosition);
         cacheListCursor.increment();
         verifyAll();
     }
@@ -133,8 +131,8 @@ public class CacheListCursorTest extends GeoBeagleTest {
         expect(bcachingListImporter.getCacheIds()).andReturn("1,2,3");
 
         replayAll();
-        CacheListCursor cacheListCursor = new CacheListCursor(bcachingLastUpdated, progressManager,
-                progressHandler, bcachingListImporter, timeRecorder, lastReadPosition);
+        CacheListCursor cacheListCursor = new CacheListCursor(null, null, null,
+                bcachingListImporter, null);
         assertEquals("1,2,3", cacheListCursor.getCacheIds());
         verifyAll();
     }
