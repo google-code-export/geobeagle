@@ -117,6 +117,7 @@ public class BCachingModule extends AbstractAndroidModule {
     private void commonParams(Hashtable<String, String> params) {
         params.put("lastuploaddays", "7");
         params.put("app", "GeoBeagle");
+        params.put("timeAsLong", "1");
     }
 
     @Provides
