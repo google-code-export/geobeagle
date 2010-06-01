@@ -147,6 +147,25 @@ public class EventHandlerGpxTest {
         verify(cachePersisterFacade);
     }
 
+
+    @Test
+    public void testAvailable() {
+        XmlPullParserWrapper xmlPullParser = createMock(XmlPullParserWrapper.class);
+        CachePersisterFacade cachePersisterFacade = createMock(CachePersisterFacade.class);
+
+        expect(xmlPullParser.getAttributeValue(null, "available")).andReturn("true");
+        expect(xmlPullParser.getAttributeValue(null, "archived")).andReturn("false");
+        cachePersisterFacade.available("true");
+        cachePersisterFacade.archived("false");
+        
+        replay(cachePersisterFacade);
+        replay(xmlPullParser);
+        new EventHandlerGpx(cachePersisterFacade).startTag("/gpx/wpt/groundspeak:cache",
+                xmlPullParser);
+        verify(xmlPullParser);
+        verify(cachePersisterFacade);
+    }
+    
     @Test
     public void testStartTagNotCache() {
         new EventHandlerGpx(null).startTag("/gpx/wptNot", null);

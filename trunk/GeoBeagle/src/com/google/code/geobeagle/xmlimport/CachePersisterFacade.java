@@ -21,7 +21,6 @@ import com.google.code.geobeagle.xmlimport.CachePersisterFacadeDI.FileFactory;
 import com.google.inject.Inject;
 
 import android.os.PowerManager.WakeLock;
-import android.util.Log;
 
 import java.io.File;
 import java.io.IOException;
@@ -144,11 +143,13 @@ public class CachePersisterFacade {
     }
 
     public void archived(String attributeValue) {
-        mCacheTagWriter.archived(attributeValue.equalsIgnoreCase("True"));
+        if (attributeValue != null)
+            mCacheTagWriter.archived(attributeValue.equalsIgnoreCase("True"));
     }
 
     public void available(String attributeValue) {
-        mCacheTagWriter.available(attributeValue.equalsIgnoreCase("True"));
+        if (attributeValue != null)
+            mCacheTagWriter.available(attributeValue.equalsIgnoreCase("True"));
     }
 
 }
