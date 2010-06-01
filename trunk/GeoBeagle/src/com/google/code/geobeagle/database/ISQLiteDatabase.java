@@ -27,8 +27,8 @@ public interface ISQLiteDatabase {
 
     void execSQL(String s, Object... bindArg1);
 
-    Cursor query(String table, String[] columns, String selection, String groupBy,
-            String having, String orderBy, String limit, String... selectionArgs);
+    Cursor query(String table, String[] columns, String selection, String groupBy, String having,
+            String orderBy, String limit, String... selectionArgs);
 
     Cursor rawQuery(String string, String[] object);
 
@@ -37,6 +37,8 @@ public interface ISQLiteDatabase {
     boolean isOpen();
 
     void insert(String table, String[] columns, Object[] bindArgs);
-    
-    boolean hasValue(String table, String selection);
+
+    boolean hasValue(String table, String[] selection, String[] selectionArgs);
+
+    void delete(String table, String where, String bindArg);
 }

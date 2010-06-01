@@ -77,6 +77,11 @@ class DesktopSQLiteDatabase implements ISQLiteDatabase {
     }
 
     @Override
+    public void delete(String table, String where, String bindArg) {
+        exec("DELETE FROM " + table + " WHERE " + where + "='" + bindArg + "'");
+    }
+
+    @Override
     public void insert(String table, String[] columns, Object[] bindArgs) {
         // Assumes len(bindArgs) > 0.
         StringBuilder columnsAsString = new StringBuilder();
@@ -96,9 +101,22 @@ class DesktopSQLiteDatabase implements ISQLiteDatabase {
     }
 
     @Override
-    public boolean hasValue(String table, String selection) {
-        final String s = "SELECT COUNT(*) FROM " + table + " WHERE " + selection;
-        return Integer.parseInt(exec(s).trim()) != 0;
+    public boolean hasValue(String table, String[] columns, String[] selectionArgs) {
+        StringBuilder stringBuilder = new StringBuilder();
+        
+        stringBuilder.append(" WHERE " + columns[0] + "=");
+        stringBuilder.append("'" + selectionArgs[0] + "'");
+        for (int ix = 1; ix < columns.length; ix++) {
+            stringBuilder.append(" AND ");
+            stringBuilder.append(columns[ix]);
+            stringBuilder.append("=");
+            stringBuilder.append("'" + selectionArgs[ix] + "'");
+        }
+
+        String s = "SELECT COUNT(*) FROM " + table + stringBuilder.toString();
+        System.err.print(s + "\n");
+        String result = exec(s);
+        return Integer.parseInt(result.trim()) != 0;
     }
 
     /**
@@ -155,5 +173,4 @@ class DesktopSQLiteDatabase implements ISQLiteDatabase {
         }
         return output;
     }
-
 }
