@@ -14,6 +14,8 @@
 
 package com.google.code.geobeagle.cachedetails;
 
+import android.util.Log;
+
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -31,6 +33,10 @@ public class WriterWrapper {
     }
 
     public void write(String str) throws IOException {
+        if (mWriter == null) {
+            Log.e("GeoBeagle", "Attempting to write string but no waypoint received yet: " + str);
+            return;
+        }
         try {
             mWriter.write(str);
         } catch (IOException e) {
