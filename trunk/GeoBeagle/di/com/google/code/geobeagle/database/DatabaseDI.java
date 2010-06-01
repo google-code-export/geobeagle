@@ -141,14 +141,27 @@ public class DatabaseDI {
         }
 
         @Override
-        public boolean hasValue(String table, String selection) {
-            final String s = "SELECT Id FROM " + table + " WHERE " + selection;
-            Cursor c = mSQLiteDatabase.rawQuery(s, null);
+        public boolean hasValue(String table, String[] columns, String[] selectionArgs) {
+            StringBuilder where = new StringBuilder();
+            where.append(columns[0] + "=?");
+            for (int ix = 1; ix < columns.length; ix++) {
+                where.append(" AND " + columns[ix] + "=?");
+            }
+
+            Cursor c = mSQLiteDatabase.query(table, new String[] {
+                columns[0]
+            }, where.toString(), selectionArgs, null, null, null);
             boolean hasValues = c.moveToFirst();
             c.close();
             return hasValues;
         }
 
+        @Override
+        public void delete(String table, String whereClause, String whereArg) {
+            mSQLiteDatabase.delete(table, whereClause + "=?", new String[] {
+                whereArg
+            });
+        }
     }
 
     static public class SearchFactory {

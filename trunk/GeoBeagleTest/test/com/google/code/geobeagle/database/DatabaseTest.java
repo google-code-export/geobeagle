@@ -85,6 +85,7 @@ public class DatabaseTest extends GeoBeagleTest {
         assertFalse(tagWriterImpl.hasTag("GC123", Tag.FOUND));
         assertFalse(tagWriterImpl.hasTag("GC123", Tag.DNF));
         tagWriterImpl.add("GC123", Tag.FOUND);
+        tagWriterImpl.add("GCabc", Tag.FOUND);
         assertTrue(tagWriterImpl.hasTag("GC123", Tag.FOUND));
         assertFalse(tagWriterImpl.hasTag("GC123", Tag.DNF));
         tagWriterImpl.add("GC123", Tag.DNF);
