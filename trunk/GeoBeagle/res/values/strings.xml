@@ -98,10 +98,9 @@
 	<string name="search_for">Search for</string>
 	<string name="cache_list_title">GeoBeagle: Nearest caches (%2$d total)</string>
 	<string name="cache_list_title_all">%1$d caches out of %2$d</string>
-	<string name="no_nearby_caches">No caches near your current location; click Menu / Show all caches.</string>
-	<string name="no_caches">No Caches--click Menu / Search Online to find a cache on the internet, or click Menu / Sync Caches to sync "Pocket Queries" downloaded from Geocaching.com.</string>
-    <array name="nearest_objects">
-	  <item>http://www.atlasquest.com/results.html?gTypeId=2;gSort=5;gStatus=1209;gCoord=%1$.5f,%2$.5f</item>
+	<array name="nearest_objects">
+		<item>
+			http://www.atlasquest.com/results.html?gTypeId=2;gSort=5;gStatus=1209;gCoord=%1$.5f,%2$.5f</item>
 	  <item>http://www.geocaching.com/seek/nearest.aspx?lat=%1$.5f&amp;lng=%2$.5f&amp;f=1</item>
 	  <item>http://opencaching.cz/search.php?searchto=searchbydistance&amp;showresult=1&amp;output=HTML&amp;latNS=%1$s&amp;lat_h=%2$d&amp;lat_min=%3$.3f&amp;lonEW=%4$s&amp;lon_h=%5$d&amp;lon_min=%6$.3f&amp;distance=75&amp;unit=km</item>
 	  <item>http://opencaching.de/search.php?searchto=searchbydistance&amp;showresult=1&amp;output=HTML&amp;latNS=%1$s&amp;lat_h=%2$d&amp;lat_min=%3$.3f&amp;lonEW=%4$s&amp;lon_h=%5$d&amp;lon_min=%6$.3f&amp;distance=75&amp;unit=km</item>

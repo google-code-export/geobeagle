@@ -19,30 +19,25 @@ import com.google.code.geobeagle.database.FilterNearestCaches;
 import com.google.inject.Inject;
 
 import android.app.Activity;
-import android.widget.TextView;
+import android.graphics.Color;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
 
 public class TitleUpdater {
     private final FilterNearestCaches mFilterNearestCaches;
     private final Activity mActivity;
-    private final ListTitleFormatter mListTitleFormatter;
     private final CacheListDelegateDI.Timing mTiming;
-
     @Inject
     public TitleUpdater(Activity activity, FilterNearestCaches filterNearestCaches,
-            ListTitleFormatter listTitleFormatter, CacheListDelegateDI.Timing timing) {
+            CacheListDelegateDI.Timing timing) {
         mActivity = activity;
         mFilterNearestCaches = filterNearestCaches;
-        mListTitleFormatter = listTitleFormatter;
         mTiming = timing;
     }
 
     public void update(int sqlCount, int nearestCachesCount) {
         mActivity.setTitle(mActivity.getString(mFilterNearestCaches.getTitleText(),
                 nearestCachesCount, sqlCount));
-        if (0 == nearestCachesCount) {
-            TextView textView = (TextView)mActivity.findViewById(android.R.id.empty);
-            textView.setText(mListTitleFormatter.getBodyText(sqlCount));
-        }
         mTiming.lap("update title time");
     }
 }
