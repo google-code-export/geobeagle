@@ -14,15 +14,18 @@
 
 package com.google.code.geobeagle.xmlimport;
 
+import com.google.code.geobeagle.activity.main.GeoBeagleModule.DefaultSharedPreferences;
 import com.google.code.geobeagle.xmlimport.EventHelper.XmlPathBuilder;
 import com.google.code.geobeagle.xmlimport.GpxImporterDI.MessageHandler;
 import com.google.code.geobeagle.xmlimport.GpxToCacheDI.XmlPullParserWrapper;
 import com.google.code.geobeagle.xmlimport.XmlimportAnnotations.GpxAnnotation;
+import com.google.code.geobeagle.xmlimport.XmlimportAnnotations.ImportFolder;
 import com.google.inject.Provides;
 
 import roboguice.config.AbstractAndroidModule;
 import roboguice.inject.ContextScoped;
 
+import android.content.SharedPreferences;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 
@@ -44,5 +47,14 @@ public class XmlimportModule extends AbstractAndroidModule {
     @Provides
     WakeLock wakeLockProvider(PowerManager powerManager) {
         return powerManager.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, "Importing");
+    }
+
+    @Provides
+    @ImportFolder
+    String importFolderProvider(@DefaultSharedPreferences SharedPreferences sharedPreferences) {
+        String string = sharedPreferences.getString("import-folder", "/sdcard/download");
+        if ((!string.endsWith("/")))
+            return string + "/";
+        return string;
     }
 }

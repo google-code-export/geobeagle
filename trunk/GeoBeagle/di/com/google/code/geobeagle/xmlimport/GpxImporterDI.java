@@ -29,6 +29,7 @@ import com.google.code.geobeagle.xmlimport.EventHelperDI.EventHelperFactory;
 import com.google.code.geobeagle.xmlimport.GpxToCache.Aborter;
 import com.google.code.geobeagle.xmlimport.GpxToCacheDI.XmlPullParserWrapper;
 import com.google.code.geobeagle.xmlimport.ImportThreadDelegate.ImportThreadHelper;
+import com.google.code.geobeagle.xmlimport.XmlimportAnnotations.ImportFolder;
 import com.google.code.geobeagle.xmlimport.gpx.GpxAndZipFiles;
 import com.google.code.geobeagle.xmlimport.gpx.GpxFileIterAndZipFileIterFactory;
 import com.google.code.geobeagle.xmlimport.gpx.GpxAndZipFiles.GpxAndZipFilenameFilter;
@@ -60,17 +61,20 @@ public class GpxImporterDI {
             final GpxFilenameFilter gpxFilenameFilter = new GpxFilenameFilter();
             final FilenameFilter filenameFilter = new GpxAndZipFilenameFilter(gpxFilenameFilter);
             final ZipInputFileTester zipInputFileTester = new ZipInputFileTester(gpxFilenameFilter);
+            Provider<String> importFolderProvider = injector.getProvider(Key.get(String.class,
+                    ImportFolder.class));
             final GpxFileIterAndZipFileIterFactory gpxFileIterAndZipFileIterFactory = new GpxFileIterAndZipFileIterFactory(
-                    zipInputFileTester, aborter);
+                    zipInputFileTester, aborter, importFolderProvider);
             final GpxAndZipFiles gpxAndZipFiles = new GpxAndZipFiles(filenameFilter,
-                    gpxFileIterAndZipFileIterFactory);
+                    gpxFileIterAndZipFileIterFactory, importFolderProvider);
             final EventHelperFactory eventHelperFactory = new EventHelperFactory(
                     xmlPullParserWrapper);
             OldCacheFilesCleaner oldCacheFilesCleaner = new OldCacheFilesCleaner(
                     CacheDetailsLoader.OLD_DETAILS_DIR, messageHandler);
             final ImportThreadHelper importThreadHelper = new ImportThreadHelper(gpxLoader,
                     messageHandler, eventHelperFactory, eventHandlers, oldCacheFilesCleaner,
-                    injector.getProvider(Key.get(String.class, BCachingUserName.class)));
+                    injector.getProvider(Key.get(String.class, BCachingUserName.class)),
+                    importFolderProvider);
             final FileDataVersionWriter fileDataVersionWriter = injector
                     .getInstance(FileDataVersionWriter.class);
             final FileDataVersionChecker fileDataVersionChecker = injector
