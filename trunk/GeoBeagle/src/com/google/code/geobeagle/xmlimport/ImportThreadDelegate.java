@@ -21,7 +21,7 @@ import com.google.code.geobeagle.cachedetails.FileDataVersionChecker;
 import com.google.code.geobeagle.cachedetails.FileDataVersionWriter;
 import com.google.code.geobeagle.database.DbFrontend;
 import com.google.code.geobeagle.xmlimport.EventHelperDI.EventHelperFactory;
-import com.google.code.geobeagle.xmlimport.XmlimportAnnotations.ImportFolder;
+import com.google.code.geobeagle.xmlimport.XmlimportAnnotations.ImportDirectory;
 import com.google.code.geobeagle.xmlimport.gpx.GpxAndZipFiles;
 import com.google.code.geobeagle.xmlimport.gpx.IGpxReader;
 import com.google.code.geobeagle.xmlimport.gpx.GpxAndZipFiles.GpxFilesAndZipFilesIter;
@@ -48,7 +48,7 @@ public class ImportThreadDelegate {
                 EventHelperFactory eventHelperFactory, EventHandlers eventHandlers,
                 OldCacheFilesCleaner oldCacheFilesCleaner,
                 @BCachingUserName Provider<String> bcachingUserNameProvider,
-                @ImportFolder Provider<String> importFolderProvider) {
+                @ImportDirectory Provider<String> importFolderProvider) {
             mGpxLoader = gpxLoader;
             mMessageHandler = messageHandler;
             mEventHelperFactory = eventHelperFactory;

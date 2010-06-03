@@ -15,14 +15,13 @@
 package com.google.code.geobeagle.xmlimport;
 
 import com.google.code.geobeagle.GeocacheFactory.Source;
-import com.google.code.geobeagle.cachedetails.CacheDetailsLoader;
 import com.google.code.geobeagle.cachedetails.CacheDetailsWriter;
 import com.google.code.geobeagle.xmlimport.CachePersisterFacadeDI.FileFactory;
+import com.google.code.geobeagle.xmlimport.XmlimportAnnotations.DetailsDirectory;
 import com.google.inject.Inject;
 
 import android.os.PowerManager.WakeLock;
 
-import java.io.File;
 import java.io.IOException;
 
 public class CachePersisterFacade {
@@ -33,16 +32,18 @@ public class CachePersisterFacade {
     private MessageHandlerInterface mMessageHandler;
     private final WakeLock mWakeLock;
     private String mLastModified;
+    private String mDetailsDirectory;
 
     @Inject
     CachePersisterFacade(CacheTagSqlWriter cacheTagSqlWriter, FileFactory fileFactory,
             CacheDetailsWriter cacheDetailsWriter, MessageHandlerInterface messageHandler,
-            WakeLock wakeLock) {
+            WakeLock wakeLock, @DetailsDirectory String detailsDirectory) {
         mCacheDetailsWriter = cacheDetailsWriter;
         mCacheTagWriter = cacheTagSqlWriter;
         mFileFactory = fileFactory;
         mMessageHandler = messageHandler;
         mWakeLock = wakeLock;
+        mDetailsDirectory = detailsDirectory;
     }
 
     void cacheType(String text) {
@@ -99,8 +100,7 @@ public class CachePersisterFacade {
     }
 
     void start() {
-        File file = mFileFactory.createFile(CacheDetailsLoader.DETAILS_DIR);
-        file.mkdirs();
+        mFileFactory.createFile(mDetailsDirectory).mkdirs();
     }
 
     void startCache() {

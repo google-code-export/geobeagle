@@ -23,6 +23,7 @@ import com.google.code.geobeagle.actions.MenuActions;
 import com.google.code.geobeagle.activity.ActivitySaver;
 import com.google.code.geobeagle.activity.ActivityType;
 import com.google.code.geobeagle.activity.main.GeoBeagleModule.DefaultSharedPreferences;
+import com.google.code.geobeagle.activity.main.GeoBeagleModule.ExternalStorageDirectory;
 import com.google.code.geobeagle.activity.main.GeoBeagleModule.GeoBeagleActivity;
 import com.google.code.geobeagle.activity.main.view.GeocacheViewer;
 import com.google.code.geobeagle.activity.main.view.WebPageAndDetailsButtonEnabler;
@@ -81,6 +82,7 @@ public class GeoBeagleDelegate {
     private final SharedPreferences mSharedPreferences;
     private final WebPageAndDetailsButtonEnabler mWebPageButtonEnabler;
     private final Provider<CacheWriter> mCacheWriterProvider;
+    private final String mExternalStorageDirectory;
 
     @Inject
     public GeoBeagleDelegate(ActivitySaver activitySaver, AppLifecycleManager appLifecycleManager,
@@ -92,7 +94,8 @@ public class GeoBeagleDelegate {
             SensorManager sensorManager,
             @DefaultSharedPreferences SharedPreferences sharedPreferences,
             WebPageAndDetailsButtonEnabler webPageButtonEnabler,
-            Provider<CacheWriter> cacheWriterProvider) {
+            Provider<CacheWriter> cacheWriterProvider,
+            @ExternalStorageDirectory String externalStorageDirectory) {
         mParent = parent;
         mActivitySaver = activitySaver;
         mAppLifecycleManager = appLifecycleManager;
@@ -108,6 +111,7 @@ public class GeoBeagleDelegate {
         mDbFrontendProvider = dbFrontendProvider;
         mGeocacheFromParcelFactory = geocacheFromParcelFactory;
         mCacheWriterProvider = cacheWriterProvider;
+        mExternalStorageDirectory = externalStorageDirectory;
     }
 
     public Geocache getGeocache() {
@@ -115,8 +119,8 @@ public class GeoBeagleDelegate {
     }
 
     private void onCameraStart() {
-        String filename = "/sdcard/GeoBeagle/" + mGeocache.getId()
-                + DateFormat.format(" yyyy-MM-dd kk.mm.ss.jpg", System.currentTimeMillis());
+        String filename = mExternalStorageDirectory + "/GeoBeagle_" + mGeocache.getId()
+                + DateFormat.format("_yyyy-MM-dd_kk.mm.ss.jpg", System.currentTimeMillis());
         Log.d("GeoBeagle", "capturing image to " + filename);
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(new File(filename)));

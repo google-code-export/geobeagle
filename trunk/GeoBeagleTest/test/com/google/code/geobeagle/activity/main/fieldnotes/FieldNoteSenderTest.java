@@ -91,7 +91,7 @@ public class FieldNoteSenderTest {
     @Test
     public void testDialogHelperFileConfigureEditor() {
         PowerMock.replayAll();
-        new DialogHelperFile(null).configureEditor(null);
+        new DialogHelperFile(null, null).configureEditor(null);
         PowerMock.verifyAll();
     }
 
@@ -103,11 +103,11 @@ public class FieldNoteSenderTest {
 
         EasyMock.expect(context.getString(R.string.field_note_file_caveat)).andReturn(
                 ("file logging: %1$s"));
-        fieldNoteCaveat.setText("file logging: " + FieldnoteLogger.FIELDNOTES_FILE);
+        fieldNoteCaveat.setText("file logging: " +  "fieldnotes.txt");
         dialog.setTitle(R.string.log_cache_to_file);
 
         PowerMock.replayAll();
-        new DialogHelperFile(context).configureDialogText(dialog, fieldNoteCaveat);
+        new DialogHelperFile(context, "fieldnotes.txt").configureDialogText(dialog, fieldNoteCaveat);
         PowerMock.verifyAll();
     }
 
@@ -225,7 +225,7 @@ public class FieldNoteSenderTest {
         OutputStreamWriter outputStreamWriter = PowerMock.createMock(OutputStreamWriter.class);
         FileOutputStream fileOutputStream = PowerMock.createMock(FileOutputStream.class);
 
-        PowerMock.expectNew(FileOutputStream.class, FieldnoteLogger.FIELDNOTES_FILE, true)
+        PowerMock.expectNew(FileOutputStream.class, "fieldnotes.log", true)
                 .andReturn(fileOutputStream);
         PowerMock.expectNew(OutputStreamWriter.class, fileOutputStream, "UTF-16").andReturn(
                 outputStreamWriter);
@@ -240,7 +240,7 @@ public class FieldNoteSenderTest {
         outputStreamWriter.close();
 
         PowerMock.replayAll();
-        new FileLogger(fieldnoteStringsFVsDnf, dateFormat, null).log("GC123", "easy find", false);
+        new FileLogger(fieldnoteStringsFVsDnf, dateFormat, null, "fieldnotes.log").log("GC123", "easy find", false);
         PowerMock.verifyAll();
     }
 
@@ -251,12 +251,12 @@ public class FieldNoteSenderTest {
         Toaster toaster = PowerMock.createMock(Toaster.class);
         IOException exception = new IOException();
 
-        PowerMock.expectNew(FileOutputStream.class, FieldnoteLogger.FIELDNOTES_FILE, true)
-                .andThrow(exception);
+        PowerMock.expectNew(FileOutputStream.class, "fieldnotes.log", true).andThrow(exception);
         toaster.showToast();
 
         PowerMock.replayAll();
-        new FileLogger(fieldnoteStringsFVsDnf, null, toaster).log("GC123", "easy find", false);
+        new FileLogger(fieldnoteStringsFVsDnf, null, toaster, "fieldnotes.log").log("GC123",
+                "easy find", false);
         PowerMock.verifyAll();
     }
 

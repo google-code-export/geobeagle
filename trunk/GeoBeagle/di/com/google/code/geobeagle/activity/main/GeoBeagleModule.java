@@ -67,6 +67,7 @@ import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.hardware.SensorManager;
 import android.location.LocationManager;
+import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -100,6 +101,13 @@ public class GeoBeagleModule extends AbstractAndroidModule {
 
     @BindingAnnotation @Target( { FIELD, PARAMETER, METHOD }) @Retention(RUNTIME)
     public static @interface IntentStarterViewGoogleMap { }
+
+    @BindingAnnotation @Target( { FIELD, PARAMETER, METHOD }) @Retention(RUNTIME)
+    public static @interface FieldNotesFilename { }
+
+
+    @BindingAnnotation @Target( { FIELD, PARAMETER, METHOD }) @Retention(RUNTIME)
+    public static @interface ExternalStorageDirectory { }
 
     @Provides
     @DefaultSharedPreferences
@@ -286,6 +294,20 @@ public class GeoBeagleModule extends AbstractAndroidModule {
                 resources.getDrawable(R.drawable.ribbon_selected_bright)
         };
         return getImagesOnDifficulty(ribbonDrawables, imageView, ratingsArray);
+    }
+    
+    private static final String FIELDNOTES_FILE = "GeoBeagleFieldNotes.txt";
+
+    @Provides
+    @FieldNotesFilename
+    String providesFieldNotesFilename(@ExternalStorageDirectory String externalStorageDirectory) {
+        return externalStorageDirectory + "/" + FIELDNOTES_FILE;
+    }
+    
+    @Provides
+    @ExternalStorageDirectory
+    String providesPicturesDirectory() {
+        return Environment.getExternalStorageDirectory().getAbsolutePath();
     }
 
 }

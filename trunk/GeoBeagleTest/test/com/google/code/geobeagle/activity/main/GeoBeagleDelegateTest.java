@@ -114,7 +114,7 @@ public class GeoBeagleDelegateTest extends GeoBeagleTest {
         final GeoBeagleDelegate geoBeagleDelegate = new GeoBeagleDelegate(null,
                 appLifecycleManager, compassListener, geobeagle, null, geocacheViewer,
                 incomingIntentHandler, null, null, dbFrontEndProvider, radarView, sensorManager,
-                sharedPreferences, webPageButtonEnabler, cacheWriterProvider);
+                sharedPreferences, webPageButtonEnabler, cacheWriterProvider, null);
         geoBeagleDelegate.setGeocache(geocache);
         geoBeagleDelegate.onResume();
         PowerMock.verifyAll();
@@ -206,20 +206,21 @@ public class GeoBeagleDelegateTest extends GeoBeagleTest {
         EasyMock.expect(Log.d((String)EasyMock.anyObject(), (String)EasyMock.anyObject()))
                 .andReturn(0);
         EasyMock.expect(System.currentTimeMillis()).andReturn(1000L);
-        EasyMock.expect(DateFormat.format(" yyyy-MM-dd kk.mm.ss.jpg", 1000L)).andReturn(
-                " 2008-09-12 12.32.12.jpg");
+        EasyMock.expect(DateFormat.format("_yyyy-MM-dd_kk.mm.ss.jpg", 1000L)).andReturn(
+                "_2008-09-12_12.32.12.jpg");
         EasyMock.expect(geocache.getId()).andReturn("GCABC");
         PowerMock.expectNew(Intent.class, MediaStore.ACTION_IMAGE_CAPTURE).andReturn(intent);
         EasyMock.expect(intent.putExtra(MediaStore.EXTRA_OUTPUT, uri)).andReturn(intent);
         EasyMock.expect(keyEvent.getRepeatCount()).andReturn(0);
-        PowerMock.expectNew(File.class, "/sdcard/GeoBeagle/GCABC 2008-09-12 12.32.12.jpg")
+        PowerMock.expectNew(File.class, "/sdcard/GeoBeagle_GCABC_2008-09-12_12.32.12.jpg")
                 .andReturn(file);
         EasyMock.expect(Uri.fromFile(file)).andReturn(uri);
         geoBeagle.startActivityForResult(intent, GeoBeagleDelegate.ACTIVITY_REQUEST_TAKE_PICTURE);
 
         PowerMock.replayAll();
         final GeoBeagleDelegate geoBeagleDelegate = new GeoBeagleDelegate(null, null, null,
-                geoBeagle, null, null, null, null, null, null, null, null, null, null, null);
+                geoBeagle, null, null, null, null, null, null, null, null, null, null, null,
+                "/sdcard");
         geoBeagleDelegate.setGeocache(geocache);
         assertTrue(geoBeagleDelegate.onKeyDown(KeyEvent.KEYCODE_CAMERA, keyEvent));
         PowerMock.verifyAll();
@@ -231,7 +232,7 @@ public class GeoBeagleDelegateTest extends GeoBeagleTest {
 
         PowerMock.replayAll();
         final GeoBeagleDelegate geoBeagleDelegate = new GeoBeagleDelegate(null, null, null, null,
-                null, null, null, null, null, null, null, null, null, null, null);
+                null, null, null, null, null, null, null, null, null, null, null, null);
         assertFalse(geoBeagleDelegate.onKeyDown(KeyEvent.KEYCODE_A, keyEvent));
         PowerMock.verifyAll();
     }
@@ -246,7 +247,7 @@ public class GeoBeagleDelegateTest extends GeoBeagleTest {
         PowerMock.replayAll();
 
         assertTrue(new GeoBeagleDelegate(null, null, null, null, null, null, null, menuActions,
-                null, null, null, null, null, null, null).onOptionsItemSelected(item));
+                null, null, null, null, null, null, null, null).onOptionsItemSelected(item));
         PowerMock.verifyAll();
     }
 
@@ -272,7 +273,7 @@ public class GeoBeagleDelegateTest extends GeoBeagleTest {
         PowerMock.replayAll();
         final GeoBeagleDelegate geoBeagleDelegate = new GeoBeagleDelegate(activitySaver,
                 appLifecycleManager, compassListener, null, null, null, null, null, null,
-                dbFrontEndProvider, radarView, sensorManager, null, null, null);
+                dbFrontEndProvider, radarView, sensorManager, null, null, null, null);
         geoBeagleDelegate.setGeocache(geocache);
         geoBeagleDelegate.onPause();
         PowerMock.verifyAll();
@@ -289,7 +290,7 @@ public class GeoBeagleDelegateTest extends GeoBeagleTest {
 
         PowerMock.replayAll();
         new GeoBeagleDelegate(null, null, null, null, null, null, null, null,
-                geocacheFromParcelFactory, null, null, null, null, null, null)
+                geocacheFromParcelFactory, null, null, null, null, null, null, null)
                 .onRestoreInstanceState(bundle);
         PowerMock.verifyAll();
     }
@@ -302,7 +303,7 @@ public class GeoBeagleDelegateTest extends GeoBeagleTest {
         geocache.saveToBundle(bundle);
         PowerMock.replayAll();
         final GeoBeagleDelegate geoBeagleDelegate = new GeoBeagleDelegate(null, null, null, null,
-                null, null, null, null, null, null, null, null, null, null, null);
+                null, null, null, null, null, null, null, null, null, null, null, null);
         geoBeagleDelegate.setGeocache(geocache);
         geoBeagleDelegate.onSaveInstanceState(bundle);
         PowerMock.verifyAll();
@@ -313,7 +314,7 @@ public class GeoBeagleDelegateTest extends GeoBeagleTest {
         Geocache geocache = PowerMock.createMock(Geocache.class);
 
         final GeoBeagleDelegate geoBeagleDelegate = new GeoBeagleDelegate(null, null, null, null,
-                null, null, null, null, null, null, null, null, null, null, null);
+                null, null, null, null, null, null, null, null, null, null, null, null);
         geoBeagleDelegate.setGeocache(geocache);
         assertEquals(geocache, geoBeagleDelegate.getGeocache());
     }

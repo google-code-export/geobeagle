@@ -64,7 +64,6 @@ public class FieldnoteLogger {
         public FieldnoteLogger create(DialogHelperSms dialogHelperSms);
     }
 
-    static final String FIELDNOTES_FILE = "/sdcard/GeoBeagleFieldNotes.txt";
     private final DialogHelperCommon mDialogHelperCommon;
     private final DialogHelperFile mDialogHelperFile;
     private final DialogHelperSms mDialogHelperSms;

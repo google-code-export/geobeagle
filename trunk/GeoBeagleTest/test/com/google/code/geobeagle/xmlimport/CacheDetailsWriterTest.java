@@ -15,15 +15,19 @@
 package com.google.code.geobeagle.xmlimport;
 
 import static org.easymock.EasyMock.expect;
+import static org.powermock.api.easymock.PowerMock.createMock;
+import static org.powermock.api.easymock.PowerMock.expectNew;
+import static org.powermock.api.easymock.PowerMock.replay;
+import static org.powermock.api.easymock.PowerMock.replayAll;
+import static org.powermock.api.easymock.PowerMock.verify;
+import static org.powermock.api.easymock.PowerMock.verifyAll;
 
-import com.google.code.geobeagle.cachedetails.CacheDetailsLoader;
 import com.google.code.geobeagle.cachedetails.CacheDetailsWriter;
 import com.google.code.geobeagle.cachedetails.FilePathStrategy;
 import com.google.code.geobeagle.cachedetails.HtmlWriter;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import static org.powermock.api.easymock.PowerMock.*;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
@@ -40,8 +44,8 @@ public class CacheDetailsWriterTest {
         HtmlWriter htmlWriter = createMock(HtmlWriter.class);
         FilePathStrategy filePathStrategy = createMock(FilePathStrategy.class);
         File filePath = createMock(File.class);
-        String path = CacheDetailsLoader.DETAILS_DIR + "oakland.gpx/GC123.html";
-        String parent = CacheDetailsLoader.DETAILS_DIR + "oakland.gpx";
+        String path = "/sdcard/details/oakland.gpx/GC123.html";
+        String parent = "/sdcard/details/oakland.gpx";
         File fileParent = createMock(File.class);
 
         expect(filePathStrategy.getPath("oakland.gpx", "GC123")).andReturn(path);

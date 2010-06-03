@@ -14,13 +14,20 @@
 
 package com.google.code.geobeagle.cachedetails;
 
+import com.google.code.geobeagle.xmlimport.XmlimportAnnotations.VersionPath;
+import com.google.inject.Inject;
+
 import java.io.File;
 
 public class FileDataVersionChecker {
-    static final String VERSION_DIR = CacheDetailsLoader.DETAILS_DIR;
-    static final String VERSION_PATH = VERSION_DIR + "/VERSION";
+    private String versionPath;
 
+    @Inject
+    FileDataVersionChecker(@VersionPath String versionPath) {
+        this.versionPath = versionPath;
+    }
+    
     public boolean needsUpdating() {
-        return !new File(VERSION_PATH).exists();
+        return !new File(versionPath).exists();
     }
 }
