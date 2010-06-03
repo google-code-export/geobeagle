@@ -50,7 +50,6 @@ import com.google.code.geobeagle.activity.cachelist.presenter.DistanceFormatterM
 import com.google.code.geobeagle.activity.cachelist.presenter.DistanceUpdater;
 import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheListAdapter;
 import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheListPresenter;
-import com.google.code.geobeagle.activity.cachelist.presenter.ListTitleFormatter;
 import com.google.code.geobeagle.activity.cachelist.presenter.LocationAndAzimuthTolerance;
 import com.google.code.geobeagle.activity.cachelist.presenter.LocationTolerance;
 import com.google.code.geobeagle.activity.cachelist.presenter.SensorManagerWrapper;
@@ -199,7 +198,6 @@ public class CacheListDelegateDI {
 
         final FilterNearestCaches filterNearestCaches = new FilterNearestCaches(
                 whereFactoryAllCaches, whereFactoryNearestCaches);
-        final ListTitleFormatter listTitleFormatter = new ListTitleFormatter();
         final CacheListDelegateDI.Timing timing = new CacheListDelegateDI.Timing();
 
         final AdapterCachesSorter adapterCachesSorter = new AdapterCachesSorter(cacheListData,
@@ -222,7 +220,7 @@ public class CacheListDelegateDI {
                 actionAndTolerances, sqlCacheLoaderTolerance);
 
         final TitleUpdater titleUpdater = new TitleUpdater(listActivity, filterNearestCaches,
-                listTitleFormatter, timing);
+                timing);
         final Provider<DbFrontend> dbFrontendProvider = injector.getProvider(DbFrontend.class);
         final ActivityVisible activityVisible = injector.getInstance(ActivityVisible.class);
         final SqlCacheLoader sqlCacheLoader = new SqlCacheLoader(dbFrontendProvider,

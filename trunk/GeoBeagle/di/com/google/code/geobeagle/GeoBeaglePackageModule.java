@@ -25,7 +25,12 @@ import com.google.code.geobeagle.GraphicsGenerator.NullAttributesPainter;
 import com.google.inject.BindingAnnotation;
 import com.google.inject.Provides;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.res.Resources;
+import android.graphics.Color;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
@@ -59,4 +64,15 @@ public class GeoBeaglePackageModule extends AbstractAndroidModule {
         return new IconRenderer(resources, difficultyAndTerrainPainter);
     }
 
+    @Provides
+    public WebView providesCacheListWebView(Activity activity) {
+        WebView webView = (WebView)activity.findViewById(android.R.id.empty);
+        webView.loadUrl("file:///android_asset/no_caches.html");
+        WebSettings webSettings = webView.getSettings();
+        webSettings.setSavePassword(false);
+        webSettings.setSaveFormData(false);
+        webSettings.setSupportZoom(false);
+        webView.setBackgroundColor(Color.BLACK);
+        return webView;
+    }
 }
