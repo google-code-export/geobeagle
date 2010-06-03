@@ -24,12 +24,15 @@ import com.google.code.geobeagle.xmlimport.GpxToCacheDI.XmlPullParserWrapper;
 
 import android.os.PowerManager.WakeLock;
 
+import java.text.SimpleDateFormat;
+
 public class GpxLoaderDI {
     public static GpxLoader create(CachePersisterFacade cachePersisterFacade,
             XmlPullParserWrapper xmlPullParserWrapper, Aborter aborter,
             ErrorDisplayer errorDisplayer, WakeLock wakeLock, CacheWriter cacheWriter) {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSSZ");
         FileAlreadyLoadedChecker fileAlreadyLoadedChecker = new FileAlreadyLoadedChecker(
-                cacheWriter);
+                cacheWriter, simpleDateFormat);
         final GpxToCache gpxToCache = new GpxToCache(xmlPullParserWrapper, aborter,
                 fileAlreadyLoadedChecker);
         return new GpxLoader(cachePersisterFacade, errorDisplayer, gpxToCache, wakeLock);

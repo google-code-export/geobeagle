@@ -32,8 +32,9 @@ import com.google.code.geobeagle.actions.MenuActionSearchOnline;
 import com.google.code.geobeagle.actions.MenuActionSettings;
 import com.google.code.geobeagle.actions.MenuActions;
 import com.google.code.geobeagle.activity.main.intents.GeocacheToCachePage;
-import com.google.code.geobeagle.activity.main.intents.GeocacheToGoogleMap;
+import com.google.code.geobeagle.activity.main.intents.GeocacheToGoogleGeo;
 import com.google.code.geobeagle.activity.main.intents.IntentFactory;
+import com.google.code.geobeagle.activity.main.intents.IntentStarter;
 import com.google.code.geobeagle.activity.main.intents.IntentStarterGeo;
 import com.google.code.geobeagle.activity.main.intents.IntentStarterViewUri;
 import com.google.code.geobeagle.activity.main.menuactions.MenuActionGoogleMaps;
@@ -49,6 +50,7 @@ import com.google.code.geobeagle.activity.map.GeoMapActivity;
 import com.google.code.geobeagle.activity.searchonline.NullRefresher;
 import com.google.code.geobeagle.location.LocationLifecycleManager;
 import com.google.inject.BindingAnnotation;
+import com.google.inject.Provider;
 import com.google.inject.Provides;
 import com.google.inject.name.Named;
 
@@ -61,6 +63,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.DialogInterface.OnClickListener;
 import android.content.res.Resources;
 import android.graphics.Paint;
 import android.graphics.Rect;
@@ -78,43 +81,100 @@ import java.util.Arrays;
 
 public class GeoBeagleModule extends AbstractAndroidModule {
 
-    @BindingAnnotation @Target( { FIELD, PARAMETER, METHOD }) @Retention(RUNTIME)
-    public static @interface ButtonListenerCachePage { }
+    @BindingAnnotation
+    @Target( {
+            FIELD, PARAMETER, METHOD
+    })
+    @Retention(RUNTIME)
+    public static @interface ButtonListenerCachePage {
+    }
 
-    @BindingAnnotation @Target( { FIELD, PARAMETER, METHOD }) @Retention(RUNTIME)
-    public static @interface ButtonListenerMapPage { }
+    @BindingAnnotation
+    @Target( {
+            FIELD, PARAMETER, METHOD
+    })
+    @Retention(RUNTIME)
+    public static @interface ButtonListenerMapPage {
+    }
 
-    @BindingAnnotation @Target( { FIELD, PARAMETER, METHOD }) @Retention(RUNTIME)
-    public static @interface DefaultSharedPreferences { }
+    @BindingAnnotation
+    @Target( {
+            FIELD, PARAMETER, METHOD
+    })
+    @Retention(RUNTIME)
+    public static @interface DefaultSharedPreferences {
+    }
 
-    @BindingAnnotation @Target( { FIELD, PARAMETER, METHOD }) @Retention(RUNTIME)
-    public static @interface DialogOnClickListenerNOP { }
+    @BindingAnnotation
+    @Target( {
+            FIELD, PARAMETER, METHOD
+    })
+    @Retention(RUNTIME)
+    public static @interface DialogOnClickListenerNOP {
+    }
 
-    @BindingAnnotation @Target( { FIELD, PARAMETER, METHOD }) @Retention(RUNTIME)
-    public static @interface GeoBeagleActivity { }
+    @BindingAnnotation
+    @Target( {
+            FIELD, PARAMETER, METHOD
+    })
+    @Retention(RUNTIME)
+    public static @interface GeoBeagleActivity {
+    }
 
-    @BindingAnnotation @Target({ FIELD, PARAMETER, METHOD }) @Retention(RUNTIME)
-    public static @interface IntentStarterRadar {}
+    @BindingAnnotation
+    @Target( {
+            FIELD, PARAMETER, METHOD
+    })
+    @Retention(RUNTIME)
+    public static @interface IntentStarterRadar {
+    }
 
-    @BindingAnnotation @Target({ FIELD, PARAMETER, METHOD }) @Retention(RUNTIME)
-    public static @interface IntentStarterViewCachePage {}
+    @BindingAnnotation
+    @Target( {
+            FIELD, PARAMETER, METHOD
+    })
+    @Retention(RUNTIME)
+    public static @interface IntentStarterViewCachePage {
+    }
 
-    @BindingAnnotation @Target( { FIELD, PARAMETER, METHOD }) @Retention(RUNTIME)
-    public static @interface IntentStarterViewGoogleMap { }
+    @BindingAnnotation
+    @Target( {
+            FIELD, PARAMETER, METHOD
+    })
+    @Retention(RUNTIME)
+    public static @interface IntentStarterViewGoogleMap {
+    }
 
-    @BindingAnnotation @Target( { FIELD, PARAMETER, METHOD }) @Retention(RUNTIME)
-    public static @interface FieldNotesFilename { }
 
+    @BindingAnnotation
+    @Target( {
+            FIELD, PARAMETER, METHOD
+    })
+    @Retention(RUNTIME)
+    public static @interface ChooseNavDialog {
+    }
+    @BindingAnnotation
+    @Target( {
+            FIELD, PARAMETER, METHOD
+    })
+    @Retention(RUNTIME)
+    public static @interface FieldNotesFilename {
+    }
 
-    @BindingAnnotation @Target( { FIELD, PARAMETER, METHOD }) @Retention(RUNTIME)
-    public static @interface ExternalStorageDirectory { }
+    @BindingAnnotation
+    @Target( {
+            FIELD, PARAMETER, METHOD
+    })
+    @Retention(RUNTIME)
+    public static @interface ExternalStorageDirectory {
+    }
 
     @Provides
     @DefaultSharedPreferences
     public SharedPreferences providesDefaultSharedPreferences(Context context) {
         return PreferenceManager.getDefaultSharedPreferences(context);
     }
-    
+
     @Override
     protected void configure() {
         bind(Refresher.class).to(NullRefresher.class);
@@ -206,7 +266,6 @@ public class GeoBeagleModule extends AbstractAndroidModule {
         return (ImageView)geoBeagle.findViewById(R.id.gc_terrain);
     }
 
-
     @Provides
     @IntentStarterRadar
     IntentStarterGeo providesIntentStarterRadar(GeoBeagle geoBeagle) {
@@ -225,16 +284,13 @@ public class GeoBeagleModule extends AbstractAndroidModule {
     @Provides
     @GeoBeagleActivity
     MenuActions providesMenuActions(GeoBeagle geoBeagle, Resources resources,
-            IntentFactory intentFactory, GeocacheToGoogleMap geocacheToGoogleMap,
-            ErrorDisplayer errorDisplayer) {
+            MenuActionGoogleMaps menuActionGoogleMaps) {
+
         final MenuAction[] menuActionArray = {
-                new MenuActionCacheList(geoBeagle),
-                new MenuActionEditGeocache(geoBeagle),
+                new MenuActionCacheList(geoBeagle), new MenuActionEditGeocache(geoBeagle),
                 // new MenuActionLogDnf(this), new MenuActionLogFind(this),
-                new MenuActionSearchOnline(geoBeagle),
-                new MenuActionSettings(geoBeagle),
-                new MenuActionGoogleMaps(new IntentStarterViewUri(geoBeagle, intentFactory,
-                        geocacheToGoogleMap, errorDisplayer))
+                new MenuActionSearchOnline(geoBeagle), new MenuActionSettings(geoBeagle),
+                menuActionGoogleMaps
         };
         return new MenuActions(resources, menuActionArray);
     }
@@ -310,4 +366,27 @@ public class GeoBeagleModule extends AbstractAndroidModule {
         return Environment.getExternalStorageDirectory().getAbsolutePath();
     }
 
+    @ChooseNavDialog
+    @Provides
+    public AlertDialog chooseNavDialogProvider(Provider<Resources> resourcesProvider,
+            Provider<Context> contextProvider, GeoBeagle geoBeagle, ErrorDisplayer errorDisplayer,
+            IntentFactory intentFactory) {
+        final GeocacheToGoogleGeo geocacheToGoogleMaps = new GeocacheToGoogleGeo(resourcesProvider,
+                R.string.google_maps_intent);
+        final GeocacheToGoogleGeo geocacheToNavigate = new GeocacheToGoogleGeo(resourcesProvider,
+                R.string.navigate_intent);
+
+        final IntentStarterGeo intentStarterRadar = new IntentStarterGeo(geoBeagle, new Intent(
+                "com.google.android.radar.SHOW_RADAR"));
+        final IntentStarterViewUri intentStarterGoogleMaps = new IntentStarterViewUri(geoBeagle,
+                intentFactory, geocacheToGoogleMaps, errorDisplayer);
+        final IntentStarterViewUri intentStarterNavigate = new IntentStarterViewUri(geoBeagle,
+                intentFactory, geocacheToNavigate, errorDisplayer);
+        final IntentStarter[] intentStarters = {
+                intentStarterRadar, intentStarterGoogleMaps, intentStarterNavigate
+        };
+        OnClickListener onClickListener = new MenuActionGoogleMaps.OnClickListener(intentStarters);
+        return new AlertDialog.Builder(contextProvider.get()).setItems(R.array.select_nav_choices,
+                onClickListener).setTitle(R.string.select_nav_choices_title).create();
+    }
 }

@@ -110,7 +110,7 @@ public class CacheDetailsWriterTest {
         HtmlWriter htmlWriter = createMock(HtmlWriter.class);
         htmlWriter.writeHeader();
         htmlWriter.write("GC1234");
-        htmlWriter.write("37.0, 122.0");
+        htmlWriter.write("37 00.000, 122 00.000");
 
         replay(htmlWriter);
         CacheDetailsWriter cacheDetailsWriter = new CacheDetailsWriter(htmlWriter, null);

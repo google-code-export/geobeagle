@@ -24,13 +24,13 @@
 			android:layout_width="wrap_content" android:layout_height="wrap_content" />
 		<EditText android:id="@+id/edit_latitude"
 			android:layout_width="fill_parent" android:layout_height="fill_parent"
-			android:textSize="28sp" android:inputType="phone"/>
+			android:textSize="28sp" android:inputType="numberSigned"/>
 
 		<TextView android:layout_width="wrap_content" android:text="Longitude:"
 			android:layout_height="wrap_content" />
 		<EditText android:id="@+id/edit_longitude"
 			android:layout_width="fill_parent" android:layout_height="wrap_content"
-			android:textSize="28sp" android:inputType="phone"/>
+			android:textSize="28sp" android:inputType="numberSigned"/>
 
 		<LinearLayout android:layout_marginTop="20sp"
 			android:gravity="center" android:orientation="horizontal"
