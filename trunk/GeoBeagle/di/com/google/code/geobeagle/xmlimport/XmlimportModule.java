@@ -15,17 +15,22 @@
 package com.google.code.geobeagle.xmlimport;
 
 import com.google.code.geobeagle.activity.main.GeoBeagleModule.DefaultSharedPreferences;
+import com.google.code.geobeagle.activity.main.GeoBeagleModule.ExternalStorageDirectory;
 import com.google.code.geobeagle.xmlimport.EventHelper.XmlPathBuilder;
 import com.google.code.geobeagle.xmlimport.GpxImporterDI.MessageHandler;
 import com.google.code.geobeagle.xmlimport.GpxToCacheDI.XmlPullParserWrapper;
+import com.google.code.geobeagle.xmlimport.XmlimportAnnotations.DetailsDirectory;
 import com.google.code.geobeagle.xmlimport.XmlimportAnnotations.GpxAnnotation;
-import com.google.code.geobeagle.xmlimport.XmlimportAnnotations.ImportFolder;
+import com.google.code.geobeagle.xmlimport.XmlimportAnnotations.ImportDirectory;
+import com.google.code.geobeagle.xmlimport.XmlimportAnnotations.OldDetailsDirectory;
+import com.google.code.geobeagle.xmlimport.XmlimportAnnotations.VersionPath;
 import com.google.inject.Provides;
 
 import roboguice.config.AbstractAndroidModule;
 import roboguice.inject.ContextScoped;
 
 import android.content.SharedPreferences;
+import android.os.Environment;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 
@@ -50,11 +55,33 @@ public class XmlimportModule extends AbstractAndroidModule {
     }
 
     @Provides
-    @ImportFolder
+    @ImportDirectory
     String importFolderProvider(@DefaultSharedPreferences SharedPreferences sharedPreferences) {
-        String string = sharedPreferences.getString("import-folder", "/sdcard/download");
+        String string = sharedPreferences.getString("import-folder", Environment
+                .getExternalStorageDirectory()
+                + "/Download");
         if ((!string.endsWith("/")))
             return string + "/";
         return string;
+    }
+    
+    private static final String DETAILS_DIR = "GeoBeagle/data/";
+
+    @Provides
+    @DetailsDirectory
+    String detailsDirectoryProvider(@ExternalStorageDirectory String externalStorageDirectory) {
+        return externalStorageDirectory + "/" + DETAILS_DIR;
+    }
+    
+    @Provides
+    @VersionPath
+    String versionDirectoryProvider(@DetailsDirectory String detailsDirectory) {
+        return detailsDirectory + "/VERSION";
+    }
+
+    @Provides
+    @OldDetailsDirectory
+    String oldDetailsDirectoryProvider(@ExternalStorageDirectory String externalStorageDirectory) {
+        return externalStorageDirectory + "/" + "GeoBeagle";
     }
 }

@@ -18,6 +18,7 @@ import com.google.code.geobeagle.R;
 import com.google.inject.Inject;
 
 import android.app.Activity;
+import android.os.Environment;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -69,10 +70,10 @@ public class CacheDetailsLoader {
         }
 
         DetailsReader open(File file) {
-            File sdcardPath = new File(CacheDetailsLoader.SDCARD_DIR);
-            if (!sdcardPath.isDirectory())
-                return new DetailsReaderError(mActivity, R.string.error_cant_read_sdroot, "");
-            
+            String state = Environment.getExternalStorageState();
+            if (!Environment.MEDIA_MOUNTED.equals(state)) {
+                return new DetailsReaderError(mActivity, R.string.error_cant_read_sdroot, state);
+            }
             FileInputStream fileInputStream;
             String absolutePath = file.getAbsolutePath();
             try {
@@ -132,9 +133,6 @@ public class CacheDetailsLoader {
         }
     }
 
-    public static final String SDCARD_DIR = "/sdcard/";
-    public static final String DETAILS_DIR = SDCARD_DIR + "GeoBeagle/data/";
-    public static final String OLD_DETAILS_DIR = SDCARD_DIR + "GeoBeagle";
     private final DetailsOpener mDetailsOpener;
     private final FilePathStrategy mFilePathStrategy;
 

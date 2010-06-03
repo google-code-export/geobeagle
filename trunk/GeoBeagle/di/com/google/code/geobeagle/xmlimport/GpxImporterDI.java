@@ -19,7 +19,6 @@ import com.google.code.geobeagle.activity.cachelist.Pausable;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
 import com.google.code.geobeagle.bcaching.ImportBCachingWorker;
 import com.google.code.geobeagle.bcaching.BCachingAnnotations.BCachingUserName;
-import com.google.code.geobeagle.cachedetails.CacheDetailsLoader;
 import com.google.code.geobeagle.cachedetails.FileDataVersionChecker;
 import com.google.code.geobeagle.cachedetails.FileDataVersionWriter;
 import com.google.code.geobeagle.database.CacheWriter;
@@ -29,7 +28,9 @@ import com.google.code.geobeagle.xmlimport.EventHelperDI.EventHelperFactory;
 import com.google.code.geobeagle.xmlimport.GpxToCache.Aborter;
 import com.google.code.geobeagle.xmlimport.GpxToCacheDI.XmlPullParserWrapper;
 import com.google.code.geobeagle.xmlimport.ImportThreadDelegate.ImportThreadHelper;
-import com.google.code.geobeagle.xmlimport.XmlimportAnnotations.ImportFolder;
+import com.google.code.geobeagle.xmlimport.XmlimportAnnotations.DetailsDirectory;
+import com.google.code.geobeagle.xmlimport.XmlimportAnnotations.ImportDirectory;
+import com.google.code.geobeagle.xmlimport.XmlimportAnnotations.OldDetailsDirectory;
 import com.google.code.geobeagle.xmlimport.gpx.GpxAndZipFiles;
 import com.google.code.geobeagle.xmlimport.gpx.GpxFileIterAndZipFileIterFactory;
 import com.google.code.geobeagle.xmlimport.gpx.GpxAndZipFiles.GpxAndZipFilenameFilter;
@@ -62,15 +63,15 @@ public class GpxImporterDI {
             final FilenameFilter filenameFilter = new GpxAndZipFilenameFilter(gpxFilenameFilter);
             final ZipInputFileTester zipInputFileTester = new ZipInputFileTester(gpxFilenameFilter);
             Provider<String> importFolderProvider = injector.getProvider(Key.get(String.class,
-                    ImportFolder.class));
+                    ImportDirectory.class));
             final GpxFileIterAndZipFileIterFactory gpxFileIterAndZipFileIterFactory = new GpxFileIterAndZipFileIterFactory(
                     zipInputFileTester, aborter, importFolderProvider);
             final GpxAndZipFiles gpxAndZipFiles = new GpxAndZipFiles(filenameFilter,
                     gpxFileIterAndZipFileIterFactory, importFolderProvider);
             final EventHelperFactory eventHelperFactory = new EventHelperFactory(
                     xmlPullParserWrapper);
-            OldCacheFilesCleaner oldCacheFilesCleaner = new OldCacheFilesCleaner(
-                    CacheDetailsLoader.OLD_DETAILS_DIR, messageHandler);
+            OldCacheFilesCleaner oldCacheFilesCleaner = new OldCacheFilesCleaner(injector
+                    .getInstance(Key.get(String.class, OldDetailsDirectory.class)), messageHandler);
             final ImportThreadHelper importThreadHelper = new ImportThreadHelper(gpxLoader,
                     messageHandler, eventHelperFactory, eventHandlers, oldCacheFilesCleaner,
                     injector.getProvider(Key.get(String.class, BCachingUserName.class)),
@@ -295,7 +296,8 @@ public class GpxImporterDI {
                 "Importing");
 
         final CachePersisterFacade cachePersisterFacade = cachePersisterFacadeFactory.create(
-                cacheWriter, wakeLock);
+                cacheWriter, wakeLock, injector.getInstance(Key.get(String.class,
+                        DetailsDirectory.class)));
 
         final GpxLoader gpxLoader = GpxLoaderDI.create(cachePersisterFacade, xmlPullParserWrapper,
                 aborter, errorDisplayer, wakeLock, cacheWriter);

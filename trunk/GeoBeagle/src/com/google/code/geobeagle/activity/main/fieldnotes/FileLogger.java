@@ -20,6 +20,7 @@ import static java.lang.annotation.ElementType.PARAMETER;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 import com.google.code.geobeagle.R;
+import com.google.code.geobeagle.activity.main.GeoBeagleModule.FieldNotesFilename;
 import com.google.code.geobeagle.xmlimport.GpxImporterDI.Toaster;
 import com.google.inject.BindingAnnotation;
 import com.google.inject.Inject;
@@ -43,22 +44,25 @@ public class FileLogger implements ICacheLogger {
     private final Toaster mErrorToaster;
     private final FieldnoteStringsFVsDnf mFieldnoteStringsFVsDnf;
     private final DateFormatter mSimpleDateFormat;
+    private final String mFieldNotesFile;
     
     @BindingAnnotation @Target({ FIELD, PARAMETER, METHOD }) @Retention(RUNTIME)
     public static @interface ToasterErrorWritingLog {}
 
     @Inject
     public FileLogger(FieldnoteStringsFVsDnf fieldnoteStringsFVsDnf,
-            DateFormatter simpleDateFormat, @ToasterErrorWritingLog Toaster errorToaster) {
+            DateFormatter simpleDateFormat, @ToasterErrorWritingLog Toaster errorToaster,
+            @FieldNotesFilename String fieldNotesFile) {
         mFieldnoteStringsFVsDnf = fieldnoteStringsFVsDnf;
         mSimpleDateFormat = simpleDateFormat;
         mErrorToaster = errorToaster;
+        mFieldNotesFile = fieldNotesFile;
     }
 
     public void log(CharSequence geocacheId, CharSequence logText, boolean dnf) {
         try {
             OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(
-                    FieldnoteLogger.FIELDNOTES_FILE, true), "UTF-16");
+                    mFieldNotesFile, true), "UTF-16");
             final Date date = new Date();
             final String formattedDate = mSimpleDateFormat.format(date);
             final String logLine = String.format("%1$s,%2$s,%3$s,\"%4$s\"\n", geocacheId,

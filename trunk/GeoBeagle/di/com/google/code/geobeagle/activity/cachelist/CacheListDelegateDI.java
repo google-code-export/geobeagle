@@ -256,7 +256,7 @@ public class CacheListDelegateDI {
                 .getProvider(ISQLiteDatabase.class);
         final TagWriterImpl tagWriterImpl = new TagWriterImpl(databaseProvider);
         final TagWriterNull tagWriterNull = new TagWriterNull();
-        final FilePathStrategy filePathStrategy = new FilePathStrategy();
+        final FilePathStrategy filePathStrategy = injector.getInstance(FilePathStrategy.class);
         final ClearCachesFromSourceImpl clearCachesFromSourceImpl = injector.getInstance(ClearCachesFromSourceImpl.class);
         final CachePersisterFacadeFactory cachePersisterFacadeFactory = new CachePersisterFacadeFactory(
                 messageHandler, cacheTypeFactory, tagWriterImpl, tagWriterNull, filePathStrategy,

@@ -16,10 +16,8 @@ package com.google.code.geobeagle.xmlimport.gpx;
 
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.xmlimport.ImportException;
-import com.google.code.geobeagle.xmlimport.XmlimportAnnotations.ImportFolder;
+import com.google.code.geobeagle.xmlimport.XmlimportAnnotations.ImportDirectory;
 import com.google.inject.Provider;
-
-import android.util.Log;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -89,7 +87,7 @@ public class GpxAndZipFiles {
 
     public GpxAndZipFiles(FilenameFilter filenameFilter,
             GpxFileIterAndZipFileIterFactory gpxFileIterAndZipFileIterFactory,
-            @ImportFolder Provider<String> gpxDirProvider) {
+            @ImportDirectory Provider<String> gpxDirProvider) {
         mFilenameFilter = filenameFilter;
         mGpxFileIterAndZipFileIterFactory = gpxFileIterAndZipFileIterFactory;
         mGpxDirProvider = gpxDirProvider;

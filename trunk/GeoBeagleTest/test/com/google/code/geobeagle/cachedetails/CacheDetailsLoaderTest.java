@@ -33,10 +33,13 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import static org.powermock.api.easymock.PowerMock.*;
+
+import org.powermock.api.easymock.PowerMock;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import android.app.Activity;
+import android.os.Environment;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -44,8 +47,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 @PrepareForTest( {
-        Activity.class, DetailsOpener.class, DetailsReaderImpl.class, File.class,
-        CacheDetailsLoader.class
+        Activity.class, DetailsOpener.class, DetailsReaderImpl.class, Environment.class,
+        File.class, CacheDetailsLoader.class
 })
 @RunWith(PowerMockRunner.class)
 public class CacheDetailsLoaderTest {
@@ -82,10 +85,9 @@ public class CacheDetailsLoaderTest {
         FileInputStream fileInputStream = createMock(FileInputStream.class);
         DetailsReaderImpl detailsReaderImpl = createMock(DetailsReaderImpl.class);
         Activity activity = createMock(Activity.class);
-        File detailsDir = createMock(File.class);
 
-        expectNew(File.class, CacheDetailsLoader.SDCARD_DIR).andReturn(detailsDir);
-        expect(detailsDir.isDirectory()).andReturn(true);
+        PowerMock.mockStatic(Environment.class);
+        expect(Environment.getExternalStorageState()).andReturn(Environment.MEDIA_MOUNTED);
         expect(file.getAbsolutePath()).andReturn("/sdcard/foo.gpx");
         expectNew(FileInputStream.class, file).andReturn(fileInputStream);
         expect(file.length()).andReturn(27L);
@@ -103,10 +105,9 @@ public class CacheDetailsLoaderTest {
         File file = createMock(File.class);
         DetailsReaderError detailsReaderError = createMock(DetailsReaderError.class);
         Activity activity = createMock(Activity.class);
-        File detailsDir = createMock(File.class);
 
-        expectNew(File.class, CacheDetailsLoader.SDCARD_DIR).andReturn(detailsDir);
-        expect(detailsDir.isDirectory()).andReturn(true);
+        PowerMock.mockStatic(Environment.class);
+        expect(Environment.getExternalStorageState()).andReturn(Environment.MEDIA_MOUNTED);
         expect(fileDataVersionChecker.needsUpdating()).andReturn(false);
         expect(file.getAbsolutePath()).andReturn("/sdcard/foo.html");
         expectNew(FileInputStream.class, file).andThrow(
@@ -177,8 +178,8 @@ public class CacheDetailsLoaderTest {
         FilePathStrategy filePathStrategy = createMock(FilePathStrategy.class);
 
         expect(filePathStrategy.getPath("foo.gpx", "GC123")).andReturn(
-                CacheDetailsLoader.DETAILS_DIR + "foo.gpx/GC123.html");
-        expectNew(File.class, CacheDetailsLoader.DETAILS_DIR + "foo.gpx/GC123.html")
+                "/sdcard/details/foo.gpx/GC123.html");
+        expectNew(File.class,  "/sdcard/details/foo.gpx/GC123.html")
                 .andReturn(file);
         expect(detailsOpener.open(file)).andReturn(detailsReader);
         expect(detailsReader.read()).andReturn(details);
