@@ -16,18 +16,37 @@ package com.google.code.geobeagle.activity.main.menuactions;
 
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.actions.MenuActionBase;
-import com.google.code.geobeagle.activity.main.intents.IntentStarterViewUri;
+import com.google.code.geobeagle.activity.main.GeoBeagleModule.ChooseNavDialog;
+import com.google.code.geobeagle.activity.main.intents.IntentStarter;
+import com.google.inject.Inject;
+import com.google.inject.Provider;
+
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 
 public class MenuActionGoogleMaps extends MenuActionBase {
-    private final IntentStarterViewUri mIntentStarterViewUri;
+    public static class OnClickListener implements DialogInterface.OnClickListener {
+        private final IntentStarter[] mIntentStarters;
 
-    public MenuActionGoogleMaps(IntentStarterViewUri intentStarterViewUri) {
+        public OnClickListener(IntentStarter[] intentStarters) {
+            mIntentStarters = intentStarters;
+        }
+
+        public void onClick(DialogInterface dialog, int which) {
+            mIntentStarters[which].startIntent();
+        }
+    }
+
+    private final Provider<AlertDialog> chooseNavDialogProvider;
+
+    @Inject
+    public MenuActionGoogleMaps(@ChooseNavDialog Provider<AlertDialog> chooseNavDialogProvider) {
         super(R.string.menu_google_maps);
-        mIntentStarterViewUri = intentStarterViewUri;
+        this.chooseNavDialogProvider = chooseNavDialogProvider;
     }
 
     @Override
     public void act() {
-        mIntentStarterViewUri.startIntent();
+        chooseNavDialogProvider.get().show();
     }
 }

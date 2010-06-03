@@ -70,7 +70,8 @@
 	<string name="available">AVAILABLE</string>
 	<string name="temporarily_unavailable">TEMPORARILY UNAVAILABLE</string>
 	<string name="getting_location_from_gps">getting location from gps...</string>
-	<string name="map_intent">google.navigation:q=%1$.5f,%2$.5f</string>
+	<string name="navigate_intent">google.navigation:q=%1$.5f,%2$.5f</string>
+	<string name="google_maps_intent">geo:0,0?q=loc:%1$.5f,%2$.5f (%3$s)</string>
 	<string name="get_coords_toast">&quot;To get the coords from the cache page, click: 'online maps...' / 'Google Maps'.&quot;</string>
 	<string name="error_cant_get_location">"Location cannot be determined.  Please ensure that your GPS is enabled and try again."</string>
 	<string name="error_opening_file">Unable to open file \'%1$s\'.</string>
@@ -129,4 +130,10 @@
 	<string name="delete_all_title">Delete all</string>
 	<string name="install_radar">Install GPS Status</string>
 	<string name="no_intent_handler">Error: no intent handler available for %1$s.</string>
+	<array name="select_nav_choices">
+		<item>Radar</item>
+		<item>Google Maps</item>
+		<item>Turn-by-turn Navigation</item>
+	</array>
+	<string name="select_nav_choices_title">Please select</string>
 </resources>

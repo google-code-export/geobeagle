@@ -14,6 +14,7 @@
 
 package com.google.code.geobeagle.cachedetails;
 
+import com.google.code.geobeagle.activity.main.Util;
 import com.google.inject.Inject;
 
 import java.io.File;
@@ -38,8 +39,8 @@ public class CacheDetailsWriter {
     }
 
     public void latitudeLongitude(String latitude, String longitude) {
-        mLatitude = latitude;
-        mLongitude = longitude;
+        mLatitude = (String)Util.formatDegreesAsDecimalDegreesString(Double.valueOf(latitude));
+        mLongitude = (String)Util.formatDegreesAsDecimalDegreesString(Double.valueOf(longitude));
     }
 
     public void open(String wpt) throws IOException {
