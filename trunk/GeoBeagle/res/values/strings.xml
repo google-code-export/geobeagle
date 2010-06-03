@@ -78,15 +78,17 @@
 	<string name="file_not_found">File not found exception: \'%1$s\'.</string>
 	<string name="error_reading_file">Error reading file \'%1$s\'.</string>
 	<string name="error_writing_cache">Error writing cache: \'%1$s\'.</string>
-	<string name="error_no_gpx_files">Nothing to sync: no cache files found in /sdcard/download folder.\n\nGeoBeagle can bulk import thousands of caches at a time.  Copy gpx/loc/zip files into your /sdcard/download folder, or set up a BCaching.com account.\n\nSee http://code.google.com/p/geobeagle for details.</string>
-	<string name="error_cant_read_sd">Error reading folder /sdcard/download, please make sure your sdcard is readable.</string>
+	<string name="error_no_gpx_files">Nothing to sync: no cache files found in \"%1$s\" folder.\n\n
+	GeoBeagle can bulk import thousands of caches at a time.
+	Copy gpx/loc/zip files to your \"%1$s\" folder, or set up a BCaching.com account.\n\n
+	See http://code.google.com/p/geobeagle for details.</string>
+	<string name="error_cant_read_sd">Error reading folder \"%1$s\", please make sure your sdcard is readable.</string>
 	<string name="error_cant_read_sdroot">Error reading folder /sdcard, please make sure your sdcard is readable.</string>
 	<string name="error_opening_details_file">"Error opening cache details file '%1$s'.  Please try unmounting your sdcard or re-importing the cache file.</string>
 	<string name="error_reading_details_file">"Error reading cache details file '%1$s'.  Please try unmounting your sdcard or re-importing the cache file.</string>
 	<string name="error_details_file_version">Sorry, the cache details format is out of date.  Please re-import by selecting Cache List / Sync Caches.</string>
 	<string name="my_current_location">My Current Location</string>
 	<string name="import_canceled">Sync aborted!</string>
-	<string name="menu_import_gpx">Sync GPX and ZIP files from /sdcard/download</string>
 	<string name="menu_show_nearest_caches">Show Nearest</string>
 	<string name="menu_show_all_caches">Show All</string>
 	<string name="menu_delete_all_caches">Delete All</string>

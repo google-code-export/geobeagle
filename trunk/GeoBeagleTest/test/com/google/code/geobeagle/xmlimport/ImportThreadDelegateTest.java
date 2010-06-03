@@ -71,23 +71,28 @@ public class ImportThreadDelegateTest {
         messageHandler.loadComplete();
 
         PowerMock.replayAll();
-        new ImportThreadHelper(null, messageHandler, null, null, null, null).cleanup();
+        new ImportThreadHelper(null, messageHandler, null, null, null, null, null).cleanup();
         PowerMock.verifyAll();
     }
 
+    @SuppressWarnings("unchecked")
     @Test
     public void testHelperEndNoFiles() {
         GpxLoader gpxLoader = PowerMock.createMock(GpxLoader.class);
+        Provider<String> gpxNameProvider = PowerMock.createMock(Provider.class);
         Provider<String> userNameProvider = new Provider<String>() {
             @Override
             public String get() {
                 return "";
-            }};
+            }
+        };
+        EasyMock.expect(gpxNameProvider.get()).andReturn("/sdcard/download");
         gpxLoader.end();
 
         PowerMock.replayAll();
         try {
-            new ImportThreadHelper(gpxLoader, null, null, null, oldCacheFilesCleaner, userNameProvider).end();
+            new ImportThreadHelper(gpxLoader, null, null, null, oldCacheFilesCleaner,
+                    userNameProvider, gpxNameProvider).end();
             assertTrue("Expected ImportException, but didn't get one.", false);
         } catch (ImportException e) {
         }
@@ -115,7 +120,7 @@ public class ImportThreadDelegateTest {
 
         PowerMock.replayAll();
         ImportThreadHelper importThreadHelper = new ImportThreadHelper(gpxLoader, null,
-                eventHelperFactory, eventHandlers, null, null);
+                eventHelperFactory, eventHandlers, null, null, null);
         assertTrue(importThreadHelper.processFile(gpxFile));
         importThreadHelper.end();
         PowerMock.verifyAll();
@@ -129,7 +134,8 @@ public class ImportThreadDelegateTest {
         gpxLoader.start();
 
         PowerMock.replayAll();
-        new ImportThreadHelper(gpxLoader, null, null, null, oldCacheFilesCleaner, null).start();
+        new ImportThreadHelper(gpxLoader, null, null, null, oldCacheFilesCleaner, null, null)
+                .start();
         PowerMock.verifyAll();
     }
 
@@ -162,7 +168,8 @@ public class ImportThreadDelegateTest {
     }
 
     @Test
-    public void testRunAborted() throws FileNotFoundException, XmlPullParserException, IOException {
+    public void testRunAborted() throws FileNotFoundException, XmlPullParserException, IOException,
+            ImportException {
         GpxAndZipFiles gpxAndZipFiles = PowerMock.createMock(GpxAndZipFiles.class);
         GpxFilesAndZipFilesIter gpxFilesAndZipFilesIter = PowerMock
                 .createMock(GpxFilesAndZipFilesIter.class);
@@ -253,14 +260,15 @@ public class ImportThreadDelegateTest {
     }
 
     @Test
-    public void testRunIteratorFail() {
+    public void testRunIteratorFail() throws ImportException {
         GpxAndZipFiles gpxAndZipFiles = PowerMock.createMock(GpxAndZipFiles.class);
         ImportThreadHelper importThreadHelper = PowerMock.createMock(ImportThreadHelper.class);
         ErrorDisplayer errorDisplayer = PowerMock.createMock(ErrorDisplayer.class);
 
         expect(fileDataVersionChecker.needsUpdating()).andReturn(false);
-        expect(gpxAndZipFiles.iterator()).andReturn(null);
-        errorDisplayer.displayError(R.string.error_cant_read_sd);
+        expect(gpxAndZipFiles.iterator()).andThrow(
+                new ImportException(R.string.error_cant_read_sd, "/sdcard-path"));
+        errorDisplayer.displayError(R.string.error_cant_read_sd, "/sdcard-path");
         importThreadHelper.cleanup();
 
         PowerMock.replayAll();
@@ -316,7 +324,7 @@ public class ImportThreadDelegateTest {
     }
 
     @Test
-    public void testRunThrowRightAway() {
+    public void testRunThrowRightAway() throws ImportException {
         GpxAndZipFiles gpxAndZipFiles = PowerMock.createMock(GpxAndZipFiles.class);
         ImportThreadHelper importThreadHelper = PowerMock.createMock(ImportThreadHelper.class);
 

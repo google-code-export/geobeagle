@@ -14,6 +14,13 @@
 
 package com.google.code.geobeagle.xmlimport.gpx;
 
+import com.google.code.geobeagle.R;
+import com.google.code.geobeagle.xmlimport.ImportException;
+import com.google.code.geobeagle.xmlimport.XmlimportAnnotations.ImportFolder;
+import com.google.inject.Provider;
+
+import android.util.Log;
+
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
@@ -76,20 +83,23 @@ public class GpxAndZipFiles {
         }
     }
 
-    public static final String GPX_DIR = "/sdcard/download/";
     private final FilenameFilter mFilenameFilter;
     private final GpxFileIterAndZipFileIterFactory mGpxFileIterAndZipFileIterFactory;
+    private final Provider<String> mGpxDirProvider;
 
     public GpxAndZipFiles(FilenameFilter filenameFilter,
-            GpxFileIterAndZipFileIterFactory gpxFileIterAndZipFileIterFactory) {
+            GpxFileIterAndZipFileIterFactory gpxFileIterAndZipFileIterFactory,
+            @ImportFolder Provider<String> gpxDirProvider) {
         mFilenameFilter = filenameFilter;
         mGpxFileIterAndZipFileIterFactory = gpxFileIterAndZipFileIterFactory;
+        mGpxDirProvider = gpxDirProvider;
     }
 
-    public GpxFilesAndZipFilesIter iterator() {
-        String[] fileList = new File(GPX_DIR).list(mFilenameFilter);
+    public GpxFilesAndZipFilesIter iterator() throws ImportException {
+        String gpxDir = mGpxDirProvider.get();
+        String[] fileList = new File(gpxDir).list(mFilenameFilter);
         if (fileList == null)
-            return null;
+            throw new ImportException(R.string.error_cant_read_sd, gpxDir);
         mGpxFileIterAndZipFileIterFactory.resetAborter();
         return new GpxFilesAndZipFilesIter(fileList, mGpxFileIterAndZipFileIterFactory);
     }

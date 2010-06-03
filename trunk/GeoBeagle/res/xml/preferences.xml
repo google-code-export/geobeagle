@@ -13,13 +13,19 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 	<CheckBoxPreference android:key="imperial"
 		android:title="Use Imperial System" android:summary="Miles and feet instead of meters" />
+	<CheckBoxPreference android:key="field-note-text-file"
+		android:title="Log Caches to File" android:summary="Log field notes to a file instead of SMS" />
 	<CheckBoxPreference android:key="absolute-bearing"
 		android:title="Absolute Bearing in List" android:summary="Letters (NS) instead of arrows (^v)" />
-	<CheckBoxPreference android:key="field-note-text-file"
-		android:title="Log Caches to File" android:summary="Log field notes to a file instead of using SMS" />
-	<EditTextPreference android:key="bcaching-username"
-		android:title="BCaching User Name" android:summary="User Name for BCaching.com" />
-	<EditTextPreference android:key="bcaching-password"
-		android:password="true" android:title="BCaching Password"
-		android:summary="Password for BCaching.com" />
+	<PreferenceCategory android:orderingFromXml="true"
+		android:title="Sync settings">
+		<EditTextPreference android:key="import-folder"
+			android:defaultValue="/sdcard/download" android:title="Import Folder"
+			android:summary="Folder for gpx/loc/zip files" />
+		<EditTextPreference android:key="bcaching-username"
+			android:title="BCaching User Name" android:summary="User Name for BCaching.com" />
+		<EditTextPreference android:key="bcaching-password"
+			android:password="true" android:title="BCaching Password"
+			android:summary="Password for BCaching.com" />
+	</PreferenceCategory>
 </PreferenceScreen>

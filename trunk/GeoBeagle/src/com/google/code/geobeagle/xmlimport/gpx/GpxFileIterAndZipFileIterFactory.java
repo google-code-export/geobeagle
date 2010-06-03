@@ -19,6 +19,7 @@ import com.google.code.geobeagle.xmlimport.GpxToCache.Aborter;
 import com.google.code.geobeagle.xmlimport.gpx.gpx.GpxFileOpener;
 import com.google.code.geobeagle.xmlimport.gpx.zip.ZipFileOpener;
 import com.google.code.geobeagle.xmlimport.gpx.zip.ZipFileOpener.ZipInputFileTester;
+import com.google.inject.Provider;
 
 import java.io.IOException;
 
@@ -34,18 +35,22 @@ import java.io.IOException;
 public class GpxFileIterAndZipFileIterFactory {
     private final Aborter mAborter;
     private final ZipInputFileTester mZipInputFileTester;
+    private final Provider<String> mImportFolderProvider;
 
-    public GpxFileIterAndZipFileIterFactory(ZipInputFileTester zipInputFileTester, Aborter aborter) {
+    public GpxFileIterAndZipFileIterFactory(ZipInputFileTester zipInputFileTester, Aborter aborter,
+            Provider<String> importFolderProvider) {
         mAborter = aborter;
         mZipInputFileTester = zipInputFileTester;
+        mImportFolderProvider = importFolderProvider;
     }
 
     public IGpxReaderIter fromFile(String filename) throws IOException {
+        String importFolder = mImportFolderProvider.get();
         if (filename.endsWith(".zip")) {
-            return new ZipFileOpener(GpxAndZipFiles.GPX_DIR + filename,
-                    new ZipInputStreamFactory(), mZipInputFileTester, mAborter).iterator();
+            return new ZipFileOpener(importFolder + filename, new ZipInputStreamFactory(),
+                    mZipInputFileTester, mAborter).iterator();
         }
-        return new GpxFileOpener(GpxAndZipFiles.GPX_DIR + filename, mAborter).iterator();
+        return new GpxFileOpener(importFolder + filename, mAborter).iterator();
     }
 
     public void resetAborter() {

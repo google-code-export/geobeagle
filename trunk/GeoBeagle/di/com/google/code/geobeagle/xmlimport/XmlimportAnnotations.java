@@ -18,4 +18,7 @@ public class XmlimportAnnotations {
 
     @BindingAnnotation @Target( { FIELD, PARAMETER, METHOD })
     @Retention(RUNTIME) public static @interface SDCard { }
+
+    @BindingAnnotation @Target( { FIELD, PARAMETER, METHOD })
+    @Retention(RUNTIME) public static @interface ImportFolder { }
 }

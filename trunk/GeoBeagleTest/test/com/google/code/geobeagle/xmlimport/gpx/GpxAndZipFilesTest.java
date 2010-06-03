@@ -19,10 +19,13 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import com.google.code.geobeagle.xmlimport.ImportException;
 import com.google.code.geobeagle.xmlimport.gpx.GpxAndZipFiles.GpxAndZipFilenameFilter;
 import com.google.code.geobeagle.xmlimport.gpx.GpxAndZipFiles.GpxFilenameFilter;
 import com.google.code.geobeagle.xmlimport.gpx.GpxAndZipFiles.GpxFilesAndZipFilesIter;
+import com.google.inject.Provider;
 
+import org.easymock.EasyMock;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.api.easymock.PowerMock;
@@ -38,6 +41,7 @@ import java.io.FilenameFilter;
 })
 public class GpxAndZipFilesTest {
 
+    @SuppressWarnings("unchecked")
     @Test
     public void GpxFilesIterator() throws Exception {
         FilenameFilter filenameFilter = PowerMock.createMock(FilenameFilter.class);
@@ -46,8 +50,10 @@ public class GpxAndZipFilesTest {
         GpxFilesAndZipFilesIter gpxFilesAndZipFilesIter = PowerMock
                 .createMock(GpxFilesAndZipFilesIter.class);
         File file = PowerMock.createMock(File.class);
+        Provider<String> gpxDirProvider = PowerMock.createMock(Provider.class);
 
-        PowerMock.expectNew(File.class, GpxAndZipFiles.GPX_DIR).andReturn(file);
+        EasyMock.expect(gpxDirProvider.get()).andReturn("/sdcard/downloads");
+        PowerMock.expectNew(File.class, "/sdcard/downloads").andReturn(file);
         String[] fileList = new String[] {
                 "foo.gpx", "bar.gpx"
         };
@@ -57,23 +63,31 @@ public class GpxAndZipFilesTest {
                 gpxFileIterAndZipFileIterFactory).andReturn(gpxFilesAndZipFilesIter);
 
         PowerMock.replayAll();
-        new GpxAndZipFiles(filenameFilter, gpxFileIterAndZipFileIterFactory).iterator();
+        new GpxAndZipFiles(filenameFilter, gpxFileIterAndZipFileIterFactory, gpxDirProvider)
+                .iterator();
         PowerMock.verifyAll();
     }
 
+    @SuppressWarnings("unchecked")
     @Test
     public void GpxFilesIteratorError() throws Exception {
         FilenameFilter filenameFilter = PowerMock.createMock(FilenameFilter.class);
         GpxFileIterAndZipFileIterFactory gpxFileIterAndZipFileIterFactory = PowerMock
                 .createMock(GpxFileIterAndZipFileIterFactory.class);
         File file = PowerMock.createMock(File.class);
+        Provider<String> gpxDirProvider = PowerMock.createMock(Provider.class);
 
-        PowerMock.expectNew(File.class, GpxAndZipFiles.GPX_DIR).andReturn(file);
+        EasyMock.expect(gpxDirProvider.get()).andReturn("/sdcard/downloads");
+        PowerMock.expectNew(File.class, "/sdcard/downloads").andReturn(file);
         expect(file.list(filenameFilter)).andReturn(null);
 
         PowerMock.replayAll();
-        assertEquals(null, new GpxAndZipFiles(filenameFilter, gpxFileIterAndZipFileIterFactory)
-                .iterator());
+        try {
+            new GpxAndZipFiles(filenameFilter, gpxFileIterAndZipFileIterFactory, gpxDirProvider)
+                    .iterator();
+            assertTrue("Should have thrown exception but didn't.", false);
+        } catch (ImportException e) {
+        }
         PowerMock.verifyAll();
     }
 

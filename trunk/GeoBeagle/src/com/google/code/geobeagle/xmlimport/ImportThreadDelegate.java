@@ -21,6 +21,7 @@ import com.google.code.geobeagle.cachedetails.FileDataVersionChecker;
 import com.google.code.geobeagle.cachedetails.FileDataVersionWriter;
 import com.google.code.geobeagle.database.DbFrontend;
 import com.google.code.geobeagle.xmlimport.EventHelperDI.EventHelperFactory;
+import com.google.code.geobeagle.xmlimport.XmlimportAnnotations.ImportFolder;
 import com.google.code.geobeagle.xmlimport.gpx.GpxAndZipFiles;
 import com.google.code.geobeagle.xmlimport.gpx.IGpxReader;
 import com.google.code.geobeagle.xmlimport.gpx.GpxAndZipFiles.GpxFilesAndZipFilesIter;
@@ -41,11 +42,13 @@ public class ImportThreadDelegate {
         private final MessageHandlerInterface mMessageHandler;
         private final OldCacheFilesCleaner mOldCacheFilesCleaner;
         private final Provider<String> mBCachingUserNameProvider;
+        private final Provider<String> mImportFolderProvider;
 
         public ImportThreadHelper(GpxLoader gpxLoader, MessageHandlerInterface messageHandler,
                 EventHelperFactory eventHelperFactory, EventHandlers eventHandlers,
                 OldCacheFilesCleaner oldCacheFilesCleaner,
-                @BCachingUserName Provider<String> bcachingUserNameProvider) {
+                @BCachingUserName Provider<String> bcachingUserNameProvider,
+                @ImportFolder Provider<String> importFolderProvider) {
             mGpxLoader = gpxLoader;
             mMessageHandler = messageHandler;
             mEventHelperFactory = eventHelperFactory;
@@ -53,6 +56,7 @@ public class ImportThreadDelegate {
             mHasFiles = false;
             mOldCacheFilesCleaner = oldCacheFilesCleaner;
             mBCachingUserNameProvider = bcachingUserNameProvider;
+            mImportFolderProvider = importFolderProvider;
         }
 
         public void cleanup() {
@@ -62,7 +66,7 @@ public class ImportThreadDelegate {
         public void end() throws ImportException {
             mGpxLoader.end();
             if (!mHasFiles && mBCachingUserNameProvider.get().length() == 0)
-                throw new ImportException(R.string.error_no_gpx_files);
+                throw new ImportException(R.string.error_no_gpx_files, mImportFolderProvider.get());
         }
 
         public boolean processFile(IGpxReader gpxReader) throws XmlPullParserException, IOException {
@@ -117,7 +121,7 @@ public class ImportThreadDelegate {
             mErrorDisplayer.displayError(R.string.error_parsing_file, e.getMessage());
             return;
         } catch (ImportException e) {
-            mErrorDisplayer.displayError(e.getError());
+            mErrorDisplayer.displayError(e.getError(), e.getPath());
             return;
         } catch (CancelException e) {
             return;
@@ -133,9 +137,6 @@ public class ImportThreadDelegate {
             mDbFrontend.forceUpdate();
         }
         GpxFilesAndZipFilesIter gpxFilesAndZipFilesIter = mGpxAndZipFiles.iterator();
-        if (gpxFilesAndZipFilesIter == null) {
-            throw new ImportException(R.string.error_cant_read_sd);
-        }
 
         mImportThreadHelper.start();
         while (gpxFilesAndZipFilesIter.hasNext()) {
