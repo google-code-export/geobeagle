@@ -95,15 +95,12 @@ import roboguice.activity.GuiceListActivity;
 
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.DialogInterface.OnClickListener;
 import android.content.res.Resources;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.hardware.SensorManager;
-import android.location.LocationListener;
-import android.location.LocationManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
@@ -134,13 +131,11 @@ public class CacheListDelegateDI {
             LayoutInflater layoutInflater) {
         final Injector injector = listActivity.getInjector();
         final ErrorDisplayer errorDisplayer = injector.getInstance(ErrorDisplayer.class);
-        final LocationManager locationManager = (LocationManager)listActivity
-                .getSystemService(Context.LOCATION_SERVICE);
-        final ArrayList<LocationListener> locationListeners = new ArrayList<LocationListener>(3);
-        final CombinedLocationManager combinedLocationManager = new CombinedLocationManager(
-                locationManager, locationListeners);
+        final CombinedLocationManager combinedLocationManager = injector
+                .getInstance(CombinedLocationManager.class);
         final GeocacheFactory geocacheFactory = new GeocacheFactory();
-        final LocationControlBuffered locationControlBuffered = injector.getInstance(LocationControlBuffered.class);
+        final LocationControlBuffered locationControlBuffered = injector
+                .getInstance(LocationControlBuffered.class);
         final GeocacheFromMyLocationFactory geocacheFromMyLocationFactory = new GeocacheFromMyLocationFactory(
                 geocacheFactory, locationControlBuffered);
         final BearingFormatter relativeBearingFormatter = injector.getInstance(BearingFormatter.class);
