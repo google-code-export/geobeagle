@@ -64,6 +64,7 @@ public class ImportBCachingWorkerTest extends GeoBeagleTest {
         progressManager.update(progressHandler, ProgressMessage.START, 0);
         expect(cursor.open()).andReturn(false);
         progressManager.update(progressHandler, ProgressMessage.DONE, 0);
+        progressManager.update(progressHandler, ProgressMessage.REFRESH, 0);
 
         replayAll();
         new ImportBCachingWorker(progressHandler, progressManager, null, null, null,

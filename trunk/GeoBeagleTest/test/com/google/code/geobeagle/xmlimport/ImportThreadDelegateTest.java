@@ -19,6 +19,7 @@ import static org.junit.Assert.assertTrue;
 
 import com.google.code.geobeagle.ErrorDisplayer;
 import com.google.code.geobeagle.R;
+import com.google.code.geobeagle.activity.cachelist.GeoBeagleTest;
 import com.google.code.geobeagle.cachedetails.FileDataVersionChecker;
 import com.google.code.geobeagle.cachedetails.FileDataVersionWriter;
 import com.google.code.geobeagle.database.DbFrontend;
@@ -40,6 +41,8 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.xmlpull.v1.XmlPullParserException;
 
+import android.util.Log;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -47,9 +50,10 @@ import java.io.Reader;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest( {
-        GpxAndZipFilenameFilter.class, File.class, GpxAndZipFiles.class, IGpxReader.class
+        GpxAndZipFilenameFilter.class, File.class, GpxAndZipFiles.class, IGpxReader.class,
+        Log.class
 })
-public class ImportThreadDelegateTest {
+public class ImportThreadDelegateTest extends GeoBeagleTest {
 
     private FileDataVersionWriter fileDataVersionWriter;
     private OldCacheFilesCleaner oldCacheFilesCleaner;
