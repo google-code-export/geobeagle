@@ -51,7 +51,7 @@ public class TagWriterImpl implements TagWriter {
         final boolean hasValue = mDatabase.hasValue("TAGS", new String[] {
                 "Cache", "Id"
         }, new String[] {
-                (String)geocacheId, String.valueOf(tag.ordinal())
+                geocacheId.toString(), String.valueOf(tag.ordinal())
         });
         return hasValue;
     }
