@@ -46,7 +46,7 @@ public enum ProgressMessage {
         @Override
         void act(ProgressHandler progressHandler, Message msg) {
             progressHandler.setProgress(0);
-            progressHandler.setMax(msg.arg1);
+            progressHandler.setMax(100);
             progressHandler.show();
         }
     },
