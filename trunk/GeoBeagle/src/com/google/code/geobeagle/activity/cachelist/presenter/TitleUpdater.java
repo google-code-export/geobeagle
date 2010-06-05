@@ -19,14 +19,12 @@ import com.google.code.geobeagle.database.FilterNearestCaches;
 import com.google.inject.Inject;
 
 import android.app.Activity;
-import android.graphics.Color;
-import android.webkit.WebSettings;
-import android.webkit.WebView;
 
 public class TitleUpdater {
     private final FilterNearestCaches mFilterNearestCaches;
     private final Activity mActivity;
     private final CacheListDelegateDI.Timing mTiming;
+
     @Inject
     public TitleUpdater(Activity activity, FilterNearestCaches filterNearestCaches,
             CacheListDelegateDI.Timing timing) {
