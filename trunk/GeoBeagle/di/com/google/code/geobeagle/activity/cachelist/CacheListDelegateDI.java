@@ -132,12 +132,8 @@ public class CacheListDelegateDI {
 
     public static CacheListDelegate create(GuiceListActivity listActivity,
             LayoutInflater layoutInflater) {
-        final OnClickListener mOnClickListener = new OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-            }
-        };
         final Injector injector = listActivity.getInjector();
-        final ErrorDisplayer errorDisplayer = new ErrorDisplayer(listActivity, mOnClickListener);
+        final ErrorDisplayer errorDisplayer = injector.getInstance(ErrorDisplayer.class);
         final LocationManager locationManager = (LocationManager)listActivity
                 .getSystemService(Context.LOCATION_SERVICE);
         final ArrayList<LocationListener> locationListeners = new ArrayList<LocationListener>(3);
