@@ -18,6 +18,7 @@ import com.google.code.geobeagle.CompassListener;
 import com.google.code.geobeagle.LocationControlBuffered;
 import com.google.code.geobeagle.activity.ActivitySaver;
 import com.google.code.geobeagle.activity.ActivityType;
+import com.google.code.geobeagle.activity.cachelist.ActivityVisible;
 import com.google.code.geobeagle.activity.cachelist.GeoBeagleTest;
 import com.google.code.geobeagle.activity.cachelist.presenter.DistanceFormatterManager;
 import com.google.code.geobeagle.location.CombinedLocationListener;
@@ -48,7 +49,9 @@ public class SearchOnlineActivityDelegateTest extends GeoBeagleTest {
                 .createMock(CombinedLocationManager.class);
         DistanceFormatterManager distanceFormatterManager = PowerMock
                 .createMock(DistanceFormatterManager.class);
+        ActivityVisible activityVisible = PowerMock.createMock(ActivityVisible.class);
 
+        activityVisible.setVisible(true);
         EasyMock.expect(
                 sensorManager.registerListener(compassListener, SensorManager.SENSOR_ORIENTATION,
                         SensorManager.SENSOR_DELAY_UI)).andReturn(true);
@@ -59,7 +62,7 @@ public class SearchOnlineActivityDelegateTest extends GeoBeagleTest {
         PowerMock.replayAll();
         new SearchOnlineActivityDelegate(null, sensorManager, compassListener,
                 combinedLocationManager, combinedLocationListener, locationControlBuffered,
-                distanceFormatterManager, null).onResume();
+                distanceFormatterManager, null, activityVisible).onResume();
         PowerMock.verifyAll();
     }
 
@@ -79,7 +82,7 @@ public class SearchOnlineActivityDelegateTest extends GeoBeagleTest {
         webView.addJavascriptInterface(jsInterface, "gb");
 
         PowerMock.replayAll();
-        new SearchOnlineActivityDelegate(webView, null, null, null, null, null, null, null)
+        new SearchOnlineActivityDelegate(webView, null, null, null, null, null, null, null, null)
                 .configureWebView(jsInterface);
         PowerMock.verifyAll();
 
@@ -96,15 +99,17 @@ public class SearchOnlineActivityDelegateTest extends GeoBeagleTest {
         CombinedLocationManager combinedLocationManager = PowerMock
                 .createMock(CombinedLocationManager.class);
         ActivitySaver activitySaver = PowerMock.createMock(ActivitySaver.class);
+        ActivityVisible activityVisible = PowerMock.createMock(ActivityVisible.class);
 
         combinedLocationManager.removeUpdates();
         sensorManager.unregisterListener(compassListener);
         activitySaver.save(ActivityType.SEARCH_ONLINE);
+        activityVisible.setVisible(false);
 
         PowerMock.replayAll();
         new SearchOnlineActivityDelegate(null, sensorManager, compassListener,
                 combinedLocationManager, combinedLocationListener, locationControlBuffered, null,
-                activitySaver).onPause();
+                activitySaver, activityVisible).onPause();
         PowerMock.verifyAll();
     }
 }

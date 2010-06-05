@@ -19,6 +19,7 @@ import static org.easymock.EasyMock.expect;
 import com.google.code.geobeagle.LocationControlBuffered;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.Time;
+import com.google.code.geobeagle.activity.cachelist.ActivityVisible;
 import com.google.code.geobeagle.formatting.DistanceFormatter;
 import com.google.code.geobeagle.location.CombinedLocationManager;
 
@@ -288,7 +289,9 @@ public class GpsStatusWidgetTest {
                 .createMock(LocationControlBuffered.class);
         Meter meter = PowerMock.createMock(Meter.class);
         Handler handler = PowerMock.createMock(Handler.class);
-
+        ActivityVisible activityVisible = PowerMock.createMock(ActivityVisible.class);
+        
+        expect(activityVisible.getVisible()).andReturn(true);
         textLagUpdater.updateTextLag();
         expect(locationControlBuffered.getAzimuth()).andReturn(42f);
         meter.setAzimuth(42f);
@@ -298,7 +301,8 @@ public class GpsStatusWidgetTest {
                                 .eq(500L))).andReturn(true);
 
         PowerMock.replayAll();
-        new UpdateGpsWidgetRunnable(handler, locationControlBuffered, meter, textLagUpdater).run();
+        new UpdateGpsWidgetRunnable(handler, locationControlBuffered, meter, textLagUpdater,
+                activityVisible).run();
         PowerMock.verifyAll();
     }
 }

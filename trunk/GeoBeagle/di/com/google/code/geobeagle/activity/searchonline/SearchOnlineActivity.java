@@ -108,7 +108,6 @@ public class SearchOnlineActivity extends GuiceActivity {
         
         GpsStatusWidgetDelegate gpsStatusWidgetDelegate = mGpsWidgetAndUpdater
                 .getGpsStatusWidgetDelegate();
-        mGpsWidgetAndUpdater.getUpdateGpsWidgetRunnable().run();
         mGpsStatusWidget.setDelegate(gpsStatusWidgetDelegate);
         mGpsStatusWidget.setBackgroundColor(Color.BLACK);
 
@@ -142,7 +141,6 @@ public class SearchOnlineActivity extends GuiceActivity {
     protected void onPause() {
         super.onPause();
         Log.d("GeoBeagle", "SearchOnlineActivity onPause");
-
         mSearchOnlineActivityDelegate.onPause();
     }
 
@@ -150,7 +148,7 @@ public class SearchOnlineActivity extends GuiceActivity {
     protected void onResume() {
         super.onResume();
         Log.d("GeoBeagle", "SearchOnlineActivity onResume");
-
         mSearchOnlineActivityDelegate.onResume();
+        mGpsWidgetAndUpdater.getUpdateGpsWidgetRunnable().run();
     }
 }
