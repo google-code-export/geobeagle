@@ -166,8 +166,9 @@ public class CacheListDelegateDI {
                 iconRenderer, new ListViewBitmapCopier(), injector
                         .getInstance(IconOverlayFactory.class), nameFormatter);
         final UpdateFlag updateFlag = new UpdateFlag();
+        final ActivityVisible activityVisible = injector.getInstance(ActivityVisible.class);
         final GeocacheListAdapter geocacheListAdapter = new GeocacheListAdapter(geocacheVectors,
-                geocacheSummaryRowInflater);
+                geocacheSummaryRowInflater, activityVisible);
 
         final InflatedGpsStatusWidget inflatedGpsStatusWidget = new InflatedGpsStatusWidget(
                 listActivity);
@@ -175,7 +176,6 @@ public class CacheListDelegateDI {
 
         gpsStatusWidget.addView(inflatedGpsStatusWidget, ViewGroup.LayoutParams.FILL_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT);
-        final ActivityVisible activityVisible = injector.getInstance(ActivityVisible.class);
         final GpsWidgetAndUpdater gpsWidgetAndUpdater = new GpsWidgetAndUpdater(listActivity,
                 gpsStatusWidget, locationControlBuffered, combinedLocationManager,
                 distanceFormatterManager.getFormatter(), activityVisible);

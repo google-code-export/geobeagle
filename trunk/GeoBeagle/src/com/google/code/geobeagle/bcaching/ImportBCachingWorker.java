@@ -29,6 +29,12 @@ import roboguice.util.RoboThread;
 
 import android.util.Log;
 
+/**
+ * Thread class that does the work of importing caches from the bcaching.com
+ * site.
+ * 
+ * @author sng
+ */
 public class ImportBCachingWorker extends RoboThread implements Abortable {
     private final CacheListCursor cursor;
     private final DetailsReaderImport detailsReaderImport;
@@ -50,15 +56,19 @@ public class ImportBCachingWorker extends RoboThread implements Abortable {
         this.cursor = cacheListCursor;
     }
 
+    /*
+     * Abort the import thread. This call will block
+     */
     @Override
-    public void abort() {
+    public synchronized void abort() {
         if (!inProgress)
             return;
-        Log.d("GeoBeagle", "ABORTING IMPORT");
         try {
             Log.d("GeoBeagle", "abort: JOIN STARTED");
-            inProgress = false;
-            join();
+            while (inProgress) {
+                Log.d("GeoBeagle", "sleeping...");
+                Thread.sleep(100);
+            }
             toaster.showToast();
             Log.d("GeoBeagle", "abort: JOIN FINISHED");
         } catch (InterruptedException e) {
@@ -66,6 +76,10 @@ public class ImportBCachingWorker extends RoboThread implements Abortable {
         }
         Log.d("GeoBeagle", "done abort IMPORT");
 
+    }
+
+    public synchronized boolean inProgress() {
+        return inProgress;
     }
 
     @Override
@@ -83,17 +97,11 @@ public class ImportBCachingWorker extends RoboThread implements Abortable {
                 cursor.increment();
             }
             cursor.close();
-            progressManager.update(progressHandler, ProgressMessage.REFRESH, 0);
         } catch (BCachingException e) {
-            progressManager.update(progressHandler, ProgressMessage.REFRESH, 0);
             errorDisplayer.displayError(R.string.problem_importing_from_bcaching, e
                     .getLocalizedMessage());
         } finally {
-            /*
-             * Do NOT call refresh here--we might be here as the result of
-             * switching activities; a refresh will reference a stale database
-             * handle and crash.
-             */
+            progressManager.update(progressHandler, ProgressMessage.REFRESH, 0);
             progressManager.update(progressHandler, ProgressMessage.DONE, 0);
             inProgress = false;
             Log.d("GeoBeagle", "ImportBcachingWorker ending");

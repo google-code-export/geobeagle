@@ -49,6 +49,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
+import android.util.Log;
 import android.widget.Toast;
 
 import java.io.FilenameFilter;
@@ -98,6 +99,10 @@ public class GpxImporterDI {
         public void run() {
             mImportThreadDelegate.run();
         }
+        
+        public boolean isAliveHack() {
+            return mImportThreadDelegate.isAlive();
+        }
     }
 
     // Wrapper so that containers can follow the "constructors do no work" rule.
@@ -116,14 +121,17 @@ public class GpxImporterDI {
 
         public boolean isAlive() {
             if (mImportThread != null)
-                return mImportThread.isAlive();
+                return mImportThread.isAliveHack();
             return false;
         }
 
         public void join() {
             if (mImportThread != null)
                 try {
-                    mImportThread.join();
+                    while (!isAlive()) {
+                        Log.d("GeoBeagle", "Sleeping while gpx import completes");
+                        Thread.sleep(100);
+                    }
                 } catch (InterruptedException e) {
                     // Ignore; we are aborting anyway.
                 }
@@ -187,8 +195,24 @@ public class GpxImporterDI {
                     }
                     break;
                 case MessageHandler.MSG_BCACHING_IMPORT:
-                    if (mBcachingUserNameProvider.get().length() > 0)
-                        mImportBCachingWorkerProvider.get().start();
+                    if (mLoadAborted) {
+                        return;
+                    }
+
+                    if (mBcachingUserNameProvider.get().length() > 0) {
+                        ImportBCachingWorker importBCachingWorker = mImportBCachingWorkerProvider
+                                .get();
+                        importBCachingWorker.start();
+                        while (!importBCachingWorker.inProgress())
+                            try {
+                                Thread.sleep(100);
+                            } catch (InterruptedException e) {
+                                Log.d("GeoBeagle",
+                                        "InterruptedException while waiting for bcaching thread to die: "
+                                                + e);
+                                e.printStackTrace();
+                            }
+                    }
                     break;
                 default:
                     break;

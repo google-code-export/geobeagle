@@ -82,15 +82,9 @@ public class CacheListRefresh implements Refresher {
     }
 
     public void refresh() {
-        // TODO: Is this check still necessary?
-        /*
-         * if (!mSqliteWrapper.isOpen()) { Log.d("GeoBeagle",
-         * "Refresh: database is closed, punting."); return; }
-         */
-
         if (!mUpdateFlag.updatesEnabled())
             return;
-//        Log.d("GeoBeagle", "CacheListRefresh.refresh");
+        
         mTiming.start();
         final long now = mTiming.getTime();
         final IGpsLocation here = mLocationControlBuffered.getGpsLocation();
