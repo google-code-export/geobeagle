@@ -24,12 +24,12 @@ import com.google.android.maps.MyLocationOverlay;
 import com.google.android.maps.Overlay;
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.GeoBeaglePackageModule.DifficultyAndTerrainPainterAnnotation;
 import com.google.code.geobeagle.GraphicsGenerator.IconOverlayFactory;
 import com.google.code.geobeagle.GraphicsGenerator.IconRenderer;
 import com.google.code.geobeagle.GraphicsGenerator.MapViewBitmapCopier;
 import com.google.code.geobeagle.actions.MenuActionCacheList;
 import com.google.code.geobeagle.actions.MenuActions;
+import com.google.code.geobeagle.activity.cachelist.presenter.GeoBeaglePackageAnnotations.DifficultyAndTerrainPainterAnnotation;
 import com.google.code.geobeagle.activity.map.CachePinsOverlayFactory.CachePinsQueryManager;
 import com.google.code.geobeagle.activity.map.DensityMatrix.DensityPatch;
 import com.google.code.geobeagle.activity.map.DensityOverlayDelegate.DensityOverlayPaint;
@@ -75,7 +75,7 @@ public class GeoMapActivityModule extends AbstractAndroidModule {
     protected void configure() {
         bind(GeoPoint.class).toInstance(new GeoPoint(0, 0));
     }
-    
+
     @Provides
     @DifficultyAndTerrainPainterAnnotation
     CacheItemFactory providesCacheItemDifficultyAndTerrainFactory(

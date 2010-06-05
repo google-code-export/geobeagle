@@ -14,38 +14,23 @@
 
 package com.google.code.geobeagle;
 
-import static java.lang.annotation.ElementType.FIELD;
-import static java.lang.annotation.ElementType.METHOD;
-import static java.lang.annotation.ElementType.PARAMETER;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-
 import com.google.code.geobeagle.GraphicsGenerator.DifficultyAndTerrainPainter;
 import com.google.code.geobeagle.GraphicsGenerator.IconRenderer;
 import com.google.code.geobeagle.GraphicsGenerator.NullAttributesPainter;
-import com.google.inject.BindingAnnotation;
+import com.google.code.geobeagle.activity.cachelist.presenter.GeoBeaglePackageAnnotations.DifficultyAndTerrainPainterAnnotation;
+import com.google.code.geobeagle.activity.cachelist.presenter.GeoBeaglePackageAnnotations.NullAttributesPainterAnnotation;
 import com.google.inject.Provides;
 
+import roboguice.config.AbstractAndroidModule;
+
 import android.app.Activity;
-import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
-
-import roboguice.config.AbstractAndroidModule;
-
 // TODO rename to GeoBeagleModule
 public class GeoBeaglePackageModule extends AbstractAndroidModule {
-
-    @BindingAnnotation @Target( { FIELD, PARAMETER, METHOD }) @Retention(RUNTIME)
-    public static @interface NullAttributesPainterAnnotation {}
-
-    @BindingAnnotation @Target( { FIELD, PARAMETER, METHOD }) @Retention(RUNTIME)
-    public static @interface DifficultyAndTerrainPainterAnnotation {}
-
     @Override
     protected void configure() {
     }
