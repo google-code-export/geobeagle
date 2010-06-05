@@ -103,6 +103,7 @@ public class CacheListActivity extends GuiceListActivity {
          */
         mCacheListDelegate.onPause();
         super.onPause();
+        Log.d("GeoBeagle", "CacheListActivity onPauseComplete");
     }
 
     @Override
