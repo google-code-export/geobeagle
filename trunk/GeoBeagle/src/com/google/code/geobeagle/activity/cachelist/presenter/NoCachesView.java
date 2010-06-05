@@ -24,7 +24,7 @@ public class NoCachesView extends WebView {
 
     private void setup() {
         loadUrl("file:///android_asset/no_caches.html");
-        WebSettings webSettings = this.getSettings();
+        WebSettings webSettings = getSettings();
         webSettings.setSavePassword(false);
         webSettings.setSaveFormData(false);
         webSettings.setSupportZoom(false);
