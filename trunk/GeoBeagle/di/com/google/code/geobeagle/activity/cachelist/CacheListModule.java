@@ -105,7 +105,7 @@ public class CacheListModule extends AbstractAndroidModule {
 
         return new ActionManager(actionAndTolerances);
     }
-
+    
     @Provides
     @ToasterSyncAborted
     Toaster toasterProvider(Context context) {
