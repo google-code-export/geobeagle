@@ -17,7 +17,6 @@ package com.google.code.geobeagle.activity.cachelist.view;
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.GraphicsGenerator;
 import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.GeoBeaglePackageModule.DifficultyAndTerrainPainterAnnotation;
 import com.google.code.geobeagle.GraphicsGenerator.IconOverlay;
 import com.google.code.geobeagle.GraphicsGenerator.IconOverlayFactory;
 import com.google.code.geobeagle.GraphicsGenerator.IconRenderer;
@@ -25,6 +24,7 @@ import com.google.code.geobeagle.GraphicsGenerator.ListViewBitmapCopier;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVector;
 import com.google.code.geobeagle.activity.cachelist.presenter.BearingFormatter;
 import com.google.code.geobeagle.activity.cachelist.presenter.HasDistanceFormatter;
+import com.google.code.geobeagle.activity.cachelist.presenter.GeoBeaglePackageAnnotations.DifficultyAndTerrainPainterAnnotation;
 import com.google.code.geobeagle.formatting.DistanceFormatter;
 import com.google.inject.Inject;
 
