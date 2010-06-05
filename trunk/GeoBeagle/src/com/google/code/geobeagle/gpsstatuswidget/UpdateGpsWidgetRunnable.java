@@ -15,6 +15,7 @@
 package com.google.code.geobeagle.gpsstatuswidget;
 
 import com.google.code.geobeagle.LocationControlBuffered;
+import com.google.code.geobeagle.activity.cachelist.ActivityVisible;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 
@@ -28,20 +29,25 @@ public class UpdateGpsWidgetRunnable implements Runnable {
     private final LocationControlBuffered mLocationControlBuffered;
     private final Meter mMeterWrapper;
     private final TextLagUpdater mTextLagUpdater;
+    private final ActivityVisible mActivityVisible;
 
     @Inject
     UpdateGpsWidgetRunnable(Handler handler, LocationControlBuffered locationControlBuffered,
-            @Assisted Meter meter, @Assisted TextLagUpdater textLagUpdater) {
+            @Assisted Meter meter, @Assisted TextLagUpdater textLagUpdater,
+            ActivityVisible activityVisible) {
         mMeterWrapper = meter;
         mLocationControlBuffered = locationControlBuffered;
         mTextLagUpdater = textLagUpdater;
         mHandler = handler;
+        mActivityVisible = activityVisible;
     }
 
     public void run() {
         // Update the lag time and the orientation.
         mTextLagUpdater.updateTextLag();
+        
         mMeterWrapper.setAzimuth(mLocationControlBuffered.getAzimuth());
-        mHandler.postDelayed(this, 500);
+        if (mActivityVisible.getVisible())
+            mHandler.postDelayed(this, 500);
     }
 }

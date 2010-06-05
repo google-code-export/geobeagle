@@ -175,9 +175,10 @@ public class CacheListDelegateDI {
 
         gpsStatusWidget.addView(inflatedGpsStatusWidget, ViewGroup.LayoutParams.FILL_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT);
+        final ActivityVisible activityVisible = injector.getInstance(ActivityVisible.class);
         final GpsWidgetAndUpdater gpsWidgetAndUpdater = new GpsWidgetAndUpdater(listActivity,
                 gpsStatusWidget, locationControlBuffered, combinedLocationManager,
-                distanceFormatterManager.getFormatter());
+                distanceFormatterManager.getFormatter(), activityVisible);
         final GpsStatusWidgetDelegate gpsStatusWidgetDelegate = gpsWidgetAndUpdater
                 .getGpsStatusWidgetDelegate();
 
@@ -188,7 +189,7 @@ public class CacheListDelegateDI {
 
         final UpdateGpsWidgetRunnable updateGpsWidgetRunnable = gpsWidgetAndUpdater
                 .getUpdateGpsWidgetRunnable();
-        updateGpsWidgetRunnable.run();
+
 
         final WhereFactoryAllCaches whereFactoryAllCaches = new WhereFactoryAllCaches();
         final SearchFactory searchFactory = new SearchFactory();
@@ -222,7 +223,6 @@ public class CacheListDelegateDI {
         final TitleUpdater titleUpdater = new TitleUpdater(listActivity, filterNearestCaches,
                 timing);
         final Provider<DbFrontend> dbFrontendProvider = injector.getProvider(DbFrontend.class);
-        final ActivityVisible activityVisible = injector.getInstance(ActivityVisible.class);
         final SqlCacheLoader sqlCacheLoader = new SqlCacheLoader(dbFrontendProvider,
                 filterNearestCaches, cacheListData, locationControlBuffered, titleUpdater, timing,
                 activityVisible);

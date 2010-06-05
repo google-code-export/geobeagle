@@ -17,7 +17,7 @@ package com.google.code.geobeagle.activity.cachelist;
 public class ActivityVisible {
     private boolean isVisible;
 
-    void setVisible(boolean isVisible) {
+    public void setVisible(boolean isVisible) {
         this.isVisible = isVisible;
     }
 
