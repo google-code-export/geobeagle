@@ -48,7 +48,7 @@ public class ContextActionDelete implements ContextAction {
             return builder.setPositiveButton(R.string.delete_cache, mOnClickOk).create();
         }
 
-        public void onPrepareDialog(int id, Dialog dialog) {
+        public void onPrepareDialog(Dialog dialog) {
             dialog.setTitle(mContextActionDelete.getConfirmDeleteTitle());
             final TextView textView = (TextView)dialog.findViewById(R.id.delete_cache);
             textView.setText(mContextActionDelete.getConfirmDeleteBodyText());
