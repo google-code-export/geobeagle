@@ -23,7 +23,6 @@ import com.google.code.geobeagle.activity.cachelist.presenter.DistanceFormatterM
 import com.google.code.geobeagle.activity.cachelist.presenter.DistanceSortStrategy;
 import com.google.code.geobeagle.activity.cachelist.presenter.NullSortStrategy;
 import com.google.code.geobeagle.activity.searchonline.SearchOnlineActivityDelegate.SearchOnlineActivityDelegateFactory;
-import com.google.code.geobeagle.formatting.DistanceFormatter;
 import com.google.code.geobeagle.location.CombinedLocationListener;
 import com.google.code.geobeagle.location.LocationControl;
 import com.google.code.geobeagle.location.CombinedLocationListener.CombinedLocationListenerFactory;
@@ -65,10 +64,4 @@ public class SearchOnlineModule extends AbstractAndroidModule {
         return new LocationControlBuffered(locationControl, distanceSortStrategy, nullSortStrategy,
                 gpsDisabledLocation, lastGpsLocation, lastKnownLocation);
     }
-
-    @Provides
-    DistanceFormatter providesDistanceFormatter(DistanceFormatterManager distanceFormatterManager) {
-        return distanceFormatterManager.getFormatter();
-    }
-
 }

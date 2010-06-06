@@ -38,8 +38,13 @@ import com.google.code.geobeagle.activity.cachelist.presenter.ToleranceStrategy;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh.ActionManager;
 import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheListPresenter.GeocacheListPresenterFactory;
 import com.google.code.geobeagle.activity.main.GeoBeagleModule.DefaultSharedPreferences;
+import com.google.code.geobeagle.formatting.DistanceFormatter;
+import com.google.code.geobeagle.formatting.DistanceFormatterImperial;
+import com.google.code.geobeagle.formatting.DistanceFormatterMetric;
 import com.google.code.geobeagle.xmlimport.GpxImporterDI.Toaster;
 import com.google.inject.BindingAnnotation;
+import com.google.inject.Inject;
+import com.google.inject.Provider;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.google.inject.assistedinject.FactoryProvider;
@@ -68,13 +73,36 @@ public class CacheListModule extends AbstractAndroidModule {
                         GeocacheListPresenter.class));
         bind(MenuActionSyncBCaching.class).in(ContextScoped.class);
         bind(ActivityVisible.class).in(Singleton.class);
+        bind(DistanceFormatter.class).toProvider(DistanceFormatterProvider.class).in(
+                ContextScoped.class);
+    }
+
+    static class DistanceFormatterProvider implements Provider<DistanceFormatter> {
+        private final SharedPreferences preferenceManager;
+        private final DistanceFormatterMetric distanceFormatterMetric;
+        private final DistanceFormatterImperial distanceFormatterImperial;
+
+        @Inject
+        DistanceFormatterProvider(@DefaultSharedPreferences SharedPreferences preferenceManager,
+                DistanceFormatterMetric distanceFormatterMetric,
+                DistanceFormatterImperial distanceFormatterImperial) {
+            this.preferenceManager = preferenceManager;
+            this.distanceFormatterMetric = distanceFormatterMetric;
+            this.distanceFormatterImperial = distanceFormatterImperial;
+        }
+
+        @Override
+        public DistanceFormatter get() {
+            return preferenceManager.getBoolean("imperial", false) ? distanceFormatterImperial
+                    : distanceFormatterMetric;
+        }
     }
 
     @Provides
     ListActivity providesListActivity(Activity activity) {
         return (ListActivity)activity;
     }
-    
+
     @Provides
     BearingFormatter providesBearingFormatter(
             @DefaultSharedPreferences SharedPreferences preferenceManager) {
@@ -105,13 +133,13 @@ public class CacheListModule extends AbstractAndroidModule {
 
         return new ActionManager(actionAndTolerances);
     }
-    
+
     @Provides
     @ToasterSyncAborted
     Toaster toasterProvider(Context context) {
         return new Toaster(context, R.string.import_canceled, Toast.LENGTH_LONG);
     }
-    
+
     @Provides
     Abortable providesAbortable() {
         return new NullAbortable();
