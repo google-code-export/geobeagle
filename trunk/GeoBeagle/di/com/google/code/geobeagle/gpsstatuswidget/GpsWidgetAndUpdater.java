@@ -26,9 +26,8 @@ public class GpsWidgetAndUpdater {
     public GpsWidgetAndUpdater(Context context, @Assisted View gpsWidgetView,
             LocationControlBuffered mLocationControlBuffered,
             CombinedLocationManager combinedLocationManager,
-            Provider<DistanceFormatter> distanceFormatterProvider, ActivityVisible activityVisible) {
-        final Time time = new Time();
-        final Handler handler = new Handler();
+            Provider<DistanceFormatter> distanceFormatterProvider, ActivityVisible activityVisible,
+            Time time, Handler handler) {
         final MeterBars meterBars = GpsStatusWidget.create(context, gpsWidgetView);
         final Meter meter = GpsStatusWidget.createMeterWrapper(gpsWidgetView, meterBars);
         final TextLagUpdater textLagUpdater = GpsStatusWidget.createTextLagUpdater(gpsWidgetView,
