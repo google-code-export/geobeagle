@@ -40,8 +40,8 @@ public class GeocacheSummaryRowInflater {
     private final NameFormatter mNameFormatter;
 
     @Inject
-    public GeocacheSummaryRowInflater(Provider<DistanceFormatter> distanceFormatterProvider,
-            LayoutInflater layoutInflater, Provider<BearingFormatter> bearingFormatterProvider,
+    public GeocacheSummaryRowInflater(LayoutInflater layoutInflater,
+            Provider<DistanceFormatter> distanceFormatterProvider, Provider<BearingFormatter> bearingFormatterProvider,
             @DifficultyAndTerrainPainterAnnotation IconRenderer iconRenderer,
             ListViewBitmapCopier listViewBitmapCopier, IconOverlayFactory iconOverlayFactory,
             NameFormatter nameFormatter) {

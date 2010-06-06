@@ -151,7 +151,7 @@ public class GeocacheSummaryRowInflaterTest {
         view.setTag(rowViews);
 
         PowerMock.replayAll();
-        assertEquals(view, new GeocacheSummaryRowInflater(distanceFormatterProvider, layoutInflater,
+        assertEquals(view, new GeocacheSummaryRowInflater(layoutInflater, distanceFormatterProvider,
                 bearingFormatterProvider, iconRenderer, listViewBitmapCopier, iconOverlayFactory,
                 nameFormatter).inflate(null));
         PowerMock.verifyAll();
@@ -180,7 +180,7 @@ public class GeocacheSummaryRowInflaterTest {
 
         PowerMock.replayAll();
         final GeocacheSummaryRowInflater geocacheSummaryRowInflater = new GeocacheSummaryRowInflater(
-                distanceFormatterProvider, null, bearingFormatterProvider, iconRenderer,
+                null, distanceFormatterProvider, bearingFormatterProvider, iconRenderer,
                 listViewBitmapCopier, null, null);
         geocacheSummaryRowInflater.setData(view, geocacheVector);
         PowerMock.verifyAll();

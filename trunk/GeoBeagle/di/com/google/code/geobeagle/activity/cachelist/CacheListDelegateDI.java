@@ -149,7 +149,7 @@ public class CacheListDelegateDI {
         final Provider<BearingFormatter> bearingFormatterProvider = injector
                 .getProvider(BearingFormatter.class);
         final GeocacheSummaryRowInflater geocacheSummaryRowInflater = new GeocacheSummaryRowInflater(
-                distanceFormatterProvider, layoutInflater, bearingFormatterProvider , iconRenderer,
+                layoutInflater, distanceFormatterProvider, bearingFormatterProvider , iconRenderer,
                 new ListViewBitmapCopier(), injector.getInstance(IconOverlayFactory.class),
                 nameFormatter);
         final UpdateFlag updateFlag = new UpdateFlag();
