@@ -15,10 +15,10 @@
 package com.google.code.geobeagle.gpsstatuswidget;
 
 import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.activity.cachelist.presenter.HasDistanceFormatter;
 import com.google.code.geobeagle.formatting.DistanceFormatter;
 import com.google.code.geobeagle.location.CombinedLocationManager;
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 import com.google.inject.assistedinject.Assisted;
 
 import android.content.Context;
@@ -28,7 +28,7 @@ import android.location.LocationProvider;
 import android.os.Bundle;
 import android.widget.TextView;
 
-public class GpsStatusWidgetDelegate implements HasDistanceFormatter, LocationListener {
+public class GpsStatusWidgetDelegate implements LocationListener {
     static interface GpsStatusWidgetDelegateFactory {
         GpsStatusWidgetDelegate create(Meter meter, MeterFader meterFader,
                 @Assisted("Provider") TextView provider, @Assisted("Status") TextView status,
@@ -36,7 +36,7 @@ public class GpsStatusWidgetDelegate implements HasDistanceFormatter, LocationLi
     }
     
     private final CombinedLocationManager mCombinedLocationManager;
-    private DistanceFormatter mDistanceFormatter;
+    private final Provider<DistanceFormatter> mDistanceFormatterProvider;
     private final MeterFader mMeterFader;
     private final Meter mMeterWrapper;
     private final TextView mProvider;
@@ -46,12 +46,12 @@ public class GpsStatusWidgetDelegate implements HasDistanceFormatter, LocationLi
 
     @Inject
     public GpsStatusWidgetDelegate(CombinedLocationManager combinedLocationManager,
-            DistanceFormatter distanceFormatter, @Assisted Meter meter,
+            Provider<DistanceFormatter> distanceFormatterProvider, @Assisted Meter meter,
             @Assisted MeterFader meterFader, @Assisted("Provider") TextView provider,
             Context context, @Assisted("Status") TextView status,
             @Assisted TextLagUpdater textLagUpdater) {
         mCombinedLocationManager = combinedLocationManager;
-        mDistanceFormatter = distanceFormatter;
+        mDistanceFormatterProvider = distanceFormatterProvider;
         mMeterFader = meterFader;
         mMeterWrapper = meter;
         mProvider = provider;
@@ -71,7 +71,7 @@ public class GpsStatusWidgetDelegate implements HasDistanceFormatter, LocationLi
             return;
         }
         mProvider.setText(location.getProvider());
-        mMeterWrapper.setAccuracy(location.getAccuracy(), mDistanceFormatter);
+        mMeterWrapper.setAccuracy(location.getAccuracy(), mDistanceFormatterProvider.get());
         mMeterFader.reset();
         mTextLagUpdater.reset(location.getTime());
     }
@@ -102,9 +102,5 @@ public class GpsStatusWidgetDelegate implements HasDistanceFormatter, LocationLi
 
     public void paint() {
         mMeterFader.paint();
-    }
-
-    public void setDistanceFormatter(DistanceFormatter distanceFormatter) {
-        mDistanceFormatter = distanceFormatter;
     }
 }
