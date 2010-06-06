@@ -145,10 +145,13 @@ public class CacheListDelegateDI {
                 .getProvider(DistanceFormatter.class);
         final Provider<BearingFormatter> bearingFormatterProvider = injector
                 .getProvider(BearingFormatter.class);
+        final ListViewBitmapCopier listViewBitmapCopier = injector
+                .getInstance(ListViewBitmapCopier.class);
+        final IconOverlayFactory iconOverlayFactory = injector
+                .getInstance(IconOverlayFactory.class);
         final GeocacheSummaryRowInflater geocacheSummaryRowInflater = new GeocacheSummaryRowInflater(
-                layoutInflater, distanceFormatterProvider, bearingFormatterProvider , iconRenderer,
-                new ListViewBitmapCopier(), injector.getInstance(IconOverlayFactory.class),
-                nameFormatter);
+                layoutInflater, distanceFormatterProvider, bearingFormatterProvider, iconRenderer,
+                listViewBitmapCopier, iconOverlayFactory, nameFormatter);
         final UpdateFlag updateFlag = new UpdateFlag();
         final ActivityVisible activityVisible = injector.getInstance(ActivityVisible.class);
         final GeocacheListAdapter geocacheListAdapter = new GeocacheListAdapter(geocacheVectors,
