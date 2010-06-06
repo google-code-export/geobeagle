@@ -44,7 +44,6 @@ import com.google.code.geobeagle.bcaching.preferences.BCachingStartTime;
 import com.google.code.geobeagle.cachedetails.FilePathStrategy;
 import com.google.code.geobeagle.database.CacheWriter;
 import com.google.code.geobeagle.database.DbFrontend;
-import com.google.code.geobeagle.database.ISQLiteDatabase;
 import com.google.code.geobeagle.database.LocationSaver;
 import com.google.code.geobeagle.database.TagWriterImpl;
 import com.google.code.geobeagle.database.TagWriterNull;
@@ -142,18 +141,17 @@ public class CacheListDelegateDI {
                 .getInstance(GeocacheListPresenterFactory.class);
         final GeocacheListPresenter geocacheListPresenter = geocacheListPresenterFactory.create(
                 combinedLocationListener, gpsStatusWidget, updateGpsWidgetRunnable);
-        final CacheTypeFactory cacheTypeFactory = new CacheTypeFactory();
+        final CacheTypeFactory cacheTypeFactory = injector.getInstance(CacheTypeFactory.class);
  
         final Aborter aborter = injector.getInstance(Aborter.class);
         final Provider<ImportBCachingWorker> importBCachingWorkerProvider = injector
                 .getProvider(ImportBCachingWorker.class);
         final MessageHandlerInterface messageHandler = injector.getInstance(MessageHandler.class);
-        final Provider<ISQLiteDatabase> databaseProvider = injector
-                .getProvider(ISQLiteDatabase.class);
-        final TagWriterImpl tagWriterImpl = new TagWriterImpl(databaseProvider);
-        final TagWriterNull tagWriterNull = new TagWriterNull();
+        final TagWriterImpl tagWriterImpl = injector.getInstance(TagWriterImpl.class);
+        final TagWriterNull tagWriterNull = injector.getInstance(TagWriterNull.class);
         final FilePathStrategy filePathStrategy = injector.getInstance(FilePathStrategy.class);
-        final ClearCachesFromSourceImpl clearCachesFromSourceImpl = injector.getInstance(ClearCachesFromSourceImpl.class);
+        final ClearCachesFromSourceImpl clearCachesFromSourceImpl = injector
+                .getInstance(ClearCachesFromSourceImpl.class);
         final CachePersisterFacadeFactory cachePersisterFacadeFactory = new CachePersisterFacadeFactory(
                 messageHandler, cacheTypeFactory, tagWriterImpl, tagWriterNull, filePathStrategy,
                 clearCachesFromSourceImpl);
