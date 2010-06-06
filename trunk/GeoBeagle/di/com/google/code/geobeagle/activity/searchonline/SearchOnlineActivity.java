@@ -17,7 +17,6 @@ package com.google.code.geobeagle.activity.searchonline;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.ActivityRestorer;
 import com.google.code.geobeagle.activity.cachelist.CacheListActivity;
-import com.google.code.geobeagle.activity.cachelist.presenter.DistanceFormatterManager;
 import com.google.code.geobeagle.activity.searchonline.SearchOnlineActivityDelegate.SearchOnlineActivityDelegateFactory;
 import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidgetDelegate;
 import com.google.code.geobeagle.gpsstatuswidget.GpsWidgetAndUpdater;
@@ -46,9 +45,6 @@ public class SearchOnlineActivity extends GuiceActivity {
 
     private CombinedLocationListener mCombinedLocationListener;
 
-    @Inject
-    private DistanceFormatterManager mDistanceFormatterManager;
-
     @InjectView(R.id.gps_widget_view)
     private InflatedGpsStatusWidget mGpsStatusWidget;
 
@@ -68,10 +64,6 @@ public class SearchOnlineActivity extends GuiceActivity {
 
     public CombinedLocationListener getCombinedLocationListener() {
         return mCombinedLocationListener;
-    }
-
-    DistanceFormatterManager getDistanceFormatterManager() {
-        return mDistanceFormatterManager;
     }
 
     InflatedGpsStatusWidget getGpsStatusWidget() {

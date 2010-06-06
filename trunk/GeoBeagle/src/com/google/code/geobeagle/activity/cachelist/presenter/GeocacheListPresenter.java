@@ -42,8 +42,7 @@ public class GeocacheListPresenter implements Pausable {
     
     public interface GeocacheListPresenterFactory {
         GeocacheListPresenter create(CombinedLocationListener combinedLocationListener,
-                DistanceFormatterManager distanceFormatterManager, GpsStatusWidget gpsStatusWidget,
-                UpdateGpsWidgetRunnable updateGpsWidgetRunnable);
+                GpsStatusWidget gpsStatusWidget, UpdateGpsWidgetRunnable updateGpsWidgetRunnable);
     }
     
     public static class CacheListRefreshLocationListener implements LocationListener {
@@ -73,7 +72,6 @@ public class GeocacheListPresenter implements Pausable {
     private final LocationListener mCombinedLocationListener;
     private final CombinedLocationManager mCombinedLocationManager;
     private final CompassListenerFactory mCompassListenerFactory;
-    private final DistanceFormatterManager mDistanceFormatterManager;
     private final GeocacheListAdapter mGeocacheListAdapter;
     private final GeocacheVectors mGeocacheVectors;
     private final View mGpsStatusWidget;
@@ -87,7 +85,6 @@ public class GeocacheListPresenter implements Pausable {
     public GeocacheListPresenter(@Assisted CombinedLocationListener combinedLocationListener,
             CombinedLocationManager combinedLocationManager,
             CompassListenerFactory compassListenerFactory,
-            @Assisted DistanceFormatterManager distanceFormatterManager,
             GeocacheListAdapter geocacheListAdapter, GeocacheVectors geocacheVectors,
             @Assisted GpsStatusWidget gpsStatusWidget, ListActivity listActivity,
             LocationControlBuffered locationControlBuffered,
@@ -96,7 +93,6 @@ public class GeocacheListPresenter implements Pausable {
         mCombinedLocationListener = combinedLocationListener;
         mCombinedLocationManager = combinedLocationManager;
         mCompassListenerFactory = compassListenerFactory;
-        mDistanceFormatterManager = distanceFormatterManager;
         mGeocacheListAdapter = geocacheListAdapter;
         mGeocacheVectors = geocacheVectors;
         mGpsStatusWidget = gpsStatusWidget;
@@ -134,7 +130,6 @@ public class GeocacheListPresenter implements Pausable {
         mCombinedLocationManager.requestLocationUpdates(UPDATE_DELAY, 0, mCombinedLocationListener);
         mCombinedLocationManager.requestLocationUpdates(UPDATE_DELAY, 0,
                 cacheListRefreshLocationListener);
-        mDistanceFormatterManager.setFormatter();
         // mSensorManager.registerListener(mCompassListener, mCompassSensor,
         // SensorManager.SENSOR_DELAY_UI);
         mUpdateGpsWidgetRunnable.run();
