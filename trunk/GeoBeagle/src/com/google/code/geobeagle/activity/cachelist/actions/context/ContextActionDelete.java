@@ -37,10 +37,11 @@ public class ContextActionDelete implements ContextAction {
 
     public static class ContextActionDeleteDialogHelper {
         private final ContextActionDelete mContextActionDelete;
-        private final OnClickListener mOnClickOk;
+        private final ContextActionDelete.OnClickOk mOnClickOk;
 
+        @Inject
         public ContextActionDeleteDialogHelper(ContextActionDelete contextActionDelete,
-                OnClickListener onClickOk) {
+                ContextActionDelete.OnClickOk onClickOk) {
             mContextActionDelete = contextActionDelete;
             mOnClickOk = onClickOk;
         }
@@ -59,6 +60,7 @@ public class ContextActionDelete implements ContextAction {
     public static class OnClickOk implements OnClickListener {
         private final ContextActionDelete mContextActionDelete;
 
+        @Inject
         public OnClickOk(ContextActionDelete contextActionDelete) {
             mContextActionDelete = contextActionDelete;
         }
