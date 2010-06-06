@@ -15,12 +15,13 @@
 package com.google.code.geobeagle;
 
 
-import com.google.inject.BindingAnnotation;
-import com.google.inject.Inject;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-import static java.lang.annotation.ElementType.PARAMETER;
 import static java.lang.annotation.ElementType.FIELD;
 import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.ElementType.PARAMETER;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
+
+import com.google.inject.BindingAnnotation;
+import com.google.inject.Inject;
 
 import android.hardware.SensorListener;
 
@@ -62,8 +63,7 @@ public class CompassListener implements SensorListener {
     public void onSensorChanged(int sensor, float[] values) {
         final float currentAzimuth = values[0];
         if (Math.abs(currentAzimuth - mLastAzimuth) > 5) {
-            // Log.d("GeoBeagle", "azimuth now " + sensor +", " +
-            // currentAzimuth);
+//            Log.d("GeoBeagle", "azimuth now " + sensor + ", " + currentAzimuth);
             mLocationControlBuffered.setAzimuth(((int)currentAzimuth / 5) * 5);
             mRefresher.refresh();
             mLastAzimuth = currentAzimuth;
