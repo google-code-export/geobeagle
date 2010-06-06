@@ -36,7 +36,6 @@ import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheListAdapte
 import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheListPresenter;
 import com.google.code.geobeagle.activity.cachelist.presenter.TitleUpdater;
 import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheListPresenter.GeocacheListPresenterFactory;
-import com.google.code.geobeagle.activity.main.GeoBeagle;
 import com.google.code.geobeagle.database.CacheWriter;
 import com.google.code.geobeagle.database.DbFrontend;
 import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidget;
@@ -58,7 +57,6 @@ import com.google.inject.Provider;
 
 import roboguice.activity.GuiceListActivity;
 
-import android.content.Intent;
 import android.content.DialogInterface.OnClickListener;
 import android.util.Log;
 
@@ -150,9 +148,7 @@ public class CacheListDelegateDI {
         menuActions.add(injector.getInstance(MenuActionMap.class));
         menuActions.add(injector.getInstance(MenuActionSettings.class));
 
-        final Intent geoBeagleMainIntent = new Intent(listActivity, GeoBeagle.class);
-        final ContextActionView contextActionView = new ContextActionView(geocacheVectors,
-                listActivity, geoBeagleMainIntent);
+        final ContextActionView contextActionView = injector.getInstance(ContextActionView.class);
         final ContextActionEdit contextActionEdit = new ContextActionEdit(geocacheVectors,
                 listActivity);
         final ContextActionDelete contextActionDelete = new ContextActionDelete(
