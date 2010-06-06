@@ -16,7 +16,6 @@ package com.google.code.geobeagle.activity.cachelist;
 
 import com.google.code.geobeagle.CacheTypeFactory;
 import com.google.code.geobeagle.ErrorDisplayer;
-import com.google.code.geobeagle.GeocacheFactory;
 import com.google.code.geobeagle.LocationControlBuffered;
 import com.google.code.geobeagle.GraphicsGenerator.AttributePainter;
 import com.google.code.geobeagle.GraphicsGenerator.DifficultyAndTerrainPainter;
@@ -133,11 +132,10 @@ public class CacheListDelegateDI {
         final ErrorDisplayer errorDisplayer = injector.getInstance(ErrorDisplayer.class);
         final CombinedLocationManager combinedLocationManager = injector
                 .getInstance(CombinedLocationManager.class);
-        final GeocacheFactory geocacheFactory = injector.getInstance(GeocacheFactory.class);
         final LocationControlBuffered locationControlBuffered = injector
                 .getInstance(LocationControlBuffered.class);
-        final GeocacheFromMyLocationFactory geocacheFromMyLocationFactory = new GeocacheFromMyLocationFactory(
-                geocacheFactory, locationControlBuffered);
+        final GeocacheFromMyLocationFactory geocacheFromMyLocationFactory = injector
+                .getInstance(GeocacheFromMyLocationFactory.class);
         final BearingFormatter relativeBearingFormatter = injector
                 .getInstance(BearingFormatter.class);
         final DistanceFormatterManager distanceFormatterManager = injector
