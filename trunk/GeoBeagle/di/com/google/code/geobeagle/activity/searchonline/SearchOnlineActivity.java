@@ -114,8 +114,6 @@ public class SearchOnlineActivity extends GuiceActivity {
         mCombinedLocationListener = injector.getInstance(CombinedLocationListenerFactory.class)
                 .create(gpsStatusWidgetDelegate);
         
-        mDistanceFormatterManager.addHasDistanceFormatter(gpsStatusWidgetDelegate);
-
         mSearchOnlineActivityDelegate = injector.getInstance(
                 SearchOnlineActivityDelegateFactory.class).create(
                 mHelpContentsView, mCombinedLocationListener);
