@@ -65,13 +65,13 @@ import com.google.code.geobeagle.database.WhereFactoryNearestCaches;
 import com.google.code.geobeagle.database.CacheWriter.ClearCachesFromSourceImpl;
 import com.google.code.geobeagle.database.DatabaseDI.SearchFactory;
 import com.google.code.geobeagle.database.WhereFactoryNearestCaches.WhereStringFactory;
-import com.google.code.geobeagle.formatting.DistanceFormatter;
 import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidget;
 import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidgetDelegate;
 import com.google.code.geobeagle.gpsstatuswidget.GpsWidgetAndUpdater;
 import com.google.code.geobeagle.gpsstatuswidget.UpdateGpsWidgetRunnable;
 import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidget.InflatedGpsStatusWidget;
 import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidgetModule.GpsStatusWidgetFactory;
+import com.google.code.geobeagle.gpsstatuswidget.GpsWidgetAndUpdater.GpsWidgetAndUpdaterFactory;
 import com.google.code.geobeagle.location.CombinedLocationListener;
 import com.google.code.geobeagle.location.CombinedLocationManager;
 import com.google.code.geobeagle.xmlimport.MessageHandlerInterface;
@@ -128,8 +128,6 @@ public class CacheListDelegateDI {
                 .getInstance(XmlPullParserWrapper.class);
 
         final Resources resources = injector.getInstance(Resources.class);
-        final Provider<DistanceFormatter> distanceFormatterProvider = injector
-                .getProvider(DistanceFormatter.class);
         final UpdateFlag updateFlag = injector.getInstance(UpdateFlag.class);
         final ActivityVisible activityVisible = injector.getInstance(ActivityVisible.class);
         final GeocacheListAdapter geocacheListAdapter = injector
@@ -141,9 +139,10 @@ public class CacheListDelegateDI {
                 .getInstance(GpsStatusWidgetFactory.class);
         final GpsStatusWidget gpsStatusWidget = gpsStatusWidgetFactory
                 .create(inflatedGpsStatusWidget);
-        final GpsWidgetAndUpdater gpsWidgetAndUpdater = new GpsWidgetAndUpdater(listActivity,
-                gpsStatusWidget, locationControlBuffered, combinedLocationManager,
-                distanceFormatterProvider, activityVisible);
+        GpsWidgetAndUpdaterFactory gpsWidgetAndUpdaterFactory = injector
+                .getInstance(GpsWidgetAndUpdaterFactory.class);
+        GpsWidgetAndUpdater gpsWidgetAndUpdater = gpsWidgetAndUpdaterFactory
+                .create(gpsStatusWidget);
         final GpsStatusWidgetDelegate gpsStatusWidgetDelegate = gpsWidgetAndUpdater
                 .getGpsStatusWidgetDelegate();
 
