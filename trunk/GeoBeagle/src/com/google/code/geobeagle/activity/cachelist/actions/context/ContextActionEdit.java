@@ -17,6 +17,7 @@ package com.google.code.geobeagle.activity.cachelist.actions.context;
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.activity.EditCacheActivity;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVectors;
+import com.google.inject.Inject;
 
 import android.content.Context;
 import android.content.Intent;
@@ -25,6 +26,7 @@ public class ContextActionEdit implements ContextAction {
     private final Context mContext;
     private final GeocacheVectors mGeocacheVectors;
 
+    @Inject
     public ContextActionEdit(GeocacheVectors geocacheVectors, Context context) {
         mGeocacheVectors = geocacheVectors;
         mContext = context;
