@@ -74,6 +74,7 @@ import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidgetModule.GpsStatus
 import com.google.code.geobeagle.gpsstatuswidget.GpsWidgetAndUpdater.GpsWidgetAndUpdaterFactory;
 import com.google.code.geobeagle.location.CombinedLocationListener;
 import com.google.code.geobeagle.location.CombinedLocationManager;
+import com.google.code.geobeagle.location.CombinedLocationListener.CombinedLocationListenerFactory;
 import com.google.code.geobeagle.xmlimport.MessageHandlerInterface;
 import com.google.code.geobeagle.xmlimport.CachePersisterFacadeDI.CachePersisterFacadeFactory;
 import com.google.code.geobeagle.xmlimport.GpxImporterDI.MessageHandler;
@@ -148,8 +149,10 @@ public class CacheListDelegateDI {
 
         inflatedGpsStatusWidget.setDelegate(gpsStatusWidgetDelegate);
 
-        final CombinedLocationListener combinedLocationListener = new CombinedLocationListener(
-                locationControlBuffered, gpsStatusWidgetDelegate);
+        final CombinedLocationListenerFactory combinedLocationListenerFactory = injector
+                .getInstance(CombinedLocationListenerFactory.class);
+        final CombinedLocationListener combinedLocationListener = combinedLocationListenerFactory
+                .create(gpsStatusWidgetDelegate);
 
         final UpdateGpsWidgetRunnable updateGpsWidgetRunnable = gpsWidgetAndUpdater
                 .getUpdateGpsWidgetRunnable();
