@@ -15,10 +15,7 @@
 package com.google.code.geobeagle.xmlimport;
 
 import com.google.code.geobeagle.ErrorDisplayer;
-import com.google.code.geobeagle.database.CacheWriter;
-import com.google.code.geobeagle.xmlimport.CachePersisterFacade;
-import com.google.code.geobeagle.xmlimport.GpxLoader;
-import com.google.code.geobeagle.xmlimport.GpxToCache;
+import com.google.code.geobeagle.database.GpxWriter;
 import com.google.code.geobeagle.xmlimport.GpxToCache.Aborter;
 import com.google.code.geobeagle.xmlimport.GpxToCacheDI.XmlPullParserWrapper;
 
@@ -29,10 +26,10 @@ import java.text.SimpleDateFormat;
 public class GpxLoaderDI {
     public static GpxLoader create(CachePersisterFacade cachePersisterFacade,
             XmlPullParserWrapper xmlPullParserWrapper, Aborter aborter,
-            ErrorDisplayer errorDisplayer, WakeLock wakeLock, CacheWriter cacheWriter) {
+            ErrorDisplayer errorDisplayer, WakeLock wakeLock, GpxWriter gpxWriter) {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSSZ");
-        FileAlreadyLoadedChecker fileAlreadyLoadedChecker = new FileAlreadyLoadedChecker(
-                cacheWriter, simpleDateFormat);
+        FileAlreadyLoadedChecker fileAlreadyLoadedChecker = new FileAlreadyLoadedChecker(gpxWriter,
+                simpleDateFormat);
         final GpxToCache gpxToCache = new GpxToCache(xmlPullParserWrapper, aborter,
                 fileAlreadyLoadedChecker);
         return new GpxLoader(cachePersisterFacade, errorDisplayer, gpxToCache, wakeLock);

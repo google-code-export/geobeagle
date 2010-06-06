@@ -24,6 +24,7 @@ import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionSyncG
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
 import com.google.code.geobeagle.bcaching.ImportBCachingWorker;
 import com.google.code.geobeagle.database.CacheWriter;
+import com.google.code.geobeagle.database.GpxWriter;
 import com.google.code.geobeagle.xmlimport.GpxImporter;
 import com.google.inject.Provider;
 
@@ -42,18 +43,21 @@ public class MenuActionSyncGpxTest extends GeoBeagleTest {
         GpxImporterFactory gpxImporterFactory = createMock(GpxImporterFactory.class);
         CacheWriter cacheWriter = createMock(CacheWriter.class);
         Provider<ImportBCachingWorker> importBCachingWorkerProvider = createMock(Provider.class);
-        ImportBCachingWorker importBCachingWorker = createMock(ImportBCachingWorker.class);
-
+        Provider<GpxWriter> gpxWriterProvider = createMock(Provider.class);
         Provider<CacheWriter> dbFrontendProvider = createMock(Provider.class);
+        ImportBCachingWorker importBCachingWorker = createMock(ImportBCachingWorker.class);
+        GpxWriter gpxWriter = createMock(GpxWriter.class);
+
+        expect(gpxWriterProvider.get()).andReturn(gpxWriter);
         expect(dbFrontendProvider.get()).andReturn(cacheWriter);
         expect(importBCachingWorkerProvider.get()).andReturn(importBCachingWorker);
-        expect(gpxImporterFactory.create(cacheWriter)).andReturn(gpxImporter);
+        expect(gpxImporterFactory.create(cacheWriter, gpxWriter)).andReturn(gpxImporter);
         gpxImporter.importGpxs(cacheListRefresh);
 
         replayAll();
         final MenuActionSyncGpx menuActionSyncGpx = new MenuActionSyncGpx(
                 importBCachingWorkerProvider, null, cacheListRefresh, gpxImporterFactory,
-                dbFrontendProvider);
+                dbFrontendProvider, gpxWriterProvider);
         menuActionSyncGpx.act();
         verifyAll();
     }
@@ -65,7 +69,7 @@ public class MenuActionSyncGpxTest extends GeoBeagleTest {
         expectLastCall().times(2);
 
         replayAll();
-        new MenuActionSyncGpx(null, abortable, null, null, null).abort();
+        new MenuActionSyncGpx(null, abortable, null, null, null, null).abort();
         verifyAll();
     }
 }

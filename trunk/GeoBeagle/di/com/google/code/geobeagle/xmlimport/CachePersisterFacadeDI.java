@@ -22,6 +22,7 @@ import com.google.code.geobeagle.cachedetails.WriterWrapper;
 import com.google.code.geobeagle.database.CacheWriter;
 import com.google.code.geobeagle.database.ClearCachesFromSource;
 import com.google.code.geobeagle.database.ClearCachesFromSourceImpl;
+import com.google.code.geobeagle.database.GpxWriter;
 import com.google.code.geobeagle.database.TagWriterImpl;
 import com.google.code.geobeagle.database.TagWriterNull;
 import com.google.inject.Inject;
@@ -64,10 +65,11 @@ public class CachePersisterFacadeDI {
             mClearCachesFromSource = clearCachesFromSourceImpl;
         }
 
-        public CachePersisterFacade create(CacheWriter cacheWriter, WakeLock wakeLock,
-                String detailsDirectory) {
+        public CachePersisterFacade create(CacheWriter cacheWriter, GpxWriter gpxWriter,
+                WakeLock wakeLock, String detailsDirectory) {
             final CacheTagSqlWriter cacheTagSqlWriter = new CacheTagSqlWriter(cacheWriter,
-                    mCacheTypeFactory, mTagWriterImpl, mTagWriterNull, mClearCachesFromSource);
+                    gpxWriter, mCacheTypeFactory, mTagWriterImpl, mTagWriterNull,
+                    mClearCachesFromSource);
             return new CachePersisterFacade(cacheTagSqlWriter, mFileFactory, mCacheDetailsWriter,
                     mMessageHandler, wakeLock, detailsDirectory);
         }
