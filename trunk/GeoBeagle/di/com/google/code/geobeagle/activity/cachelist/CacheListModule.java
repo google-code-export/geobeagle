@@ -23,6 +23,7 @@ import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.LocationControlBuffered.GpsDisabledLocation;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.Abortable;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionSyncBCaching;
+import com.google.code.geobeagle.activity.cachelist.model.CacheListData;
 import com.google.code.geobeagle.activity.cachelist.presenter.AbsoluteBearingFormatter;
 import com.google.code.geobeagle.activity.cachelist.presenter.ActionAndTolerance;
 import com.google.code.geobeagle.activity.cachelist.presenter.AdapterCachesSorter;
@@ -77,6 +78,8 @@ public class CacheListModule extends AbstractAndroidModule {
                 ContextScoped.class);
         bind(BearingFormatter.class).toProvider(BearingFormatterProvider.class).in(
                 ContextScoped.class);
+        bind(CacheListData.class).in(ContextScoped.class);
+        bind(CacheListDelegateDI.Timing.class).in(Singleton.class);
     }
 
     static class DistanceFormatterProvider implements Provider<DistanceFormatter> {
