@@ -73,6 +73,7 @@ import com.google.code.geobeagle.database.WhereFactoryNearestCaches;
 import com.google.code.geobeagle.database.CacheWriter.ClearCachesFromSourceImpl;
 import com.google.code.geobeagle.database.DatabaseDI.SearchFactory;
 import com.google.code.geobeagle.database.WhereFactoryNearestCaches.WhereStringFactory;
+import com.google.code.geobeagle.formatting.DistanceFormatter;
 import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidget;
 import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidgetDelegate;
 import com.google.code.geobeagle.gpsstatuswidget.GpsWidgetAndUpdater;
@@ -145,10 +146,12 @@ public class CacheListDelegateDI {
         final IconRenderer iconRenderer = injector.getInstance(Key.get(IconRenderer.class,
                 DifficultyAndTerrainPainterAnnotation.class));
         final NameFormatter nameFormatter = injector.getInstance(NameFormatter.class);
+        Provider<DistanceFormatter> distanceFormatterProvider = injector
+                .getProvider(DistanceFormatter.class);
         final GeocacheSummaryRowInflater geocacheSummaryRowInflater = new GeocacheSummaryRowInflater(
-                distanceFormatterManager.getFormatter(), layoutInflater, relativeBearingFormatter,
-                iconRenderer, new ListViewBitmapCopier(), injector
-                        .getInstance(IconOverlayFactory.class), nameFormatter);
+                distanceFormatterProvider, layoutInflater, relativeBearingFormatter, iconRenderer,
+                new ListViewBitmapCopier(), injector.getInstance(IconOverlayFactory.class),
+                nameFormatter);
         final UpdateFlag updateFlag = new UpdateFlag();
         final ActivityVisible activityVisible = injector.getInstance(ActivityVisible.class);
         final GeocacheListAdapter geocacheListAdapter = new GeocacheListAdapter(geocacheVectors,
@@ -217,7 +220,6 @@ public class CacheListDelegateDI {
         final CompassListenerFactory compassListenerFactory = new CompassListenerFactory(
                 locationControlBuffered);
 
-        distanceFormatterManager.addHasDistanceFormatter(geocacheSummaryRowInflater);
         distanceFormatterManager.addHasDistanceFormatter(gpsStatusWidgetDelegate);
         final CacheListView.ScrollListener scrollListener = new CacheListView.ScrollListener(
                 updateFlag);
