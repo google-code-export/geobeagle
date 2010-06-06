@@ -17,7 +17,6 @@ package com.google.code.geobeagle.activity.cachelist;
 import com.google.code.geobeagle.CacheTypeFactory;
 import com.google.code.geobeagle.ErrorDisplayer;
 import com.google.code.geobeagle.LocationControlBuffered;
-import com.google.code.geobeagle.LocationControlBuffered.GpsDisabledLocation;
 import com.google.code.geobeagle.actions.MenuActionMap;
 import com.google.code.geobeagle.actions.MenuActionSearchOnline;
 import com.google.code.geobeagle.actions.MenuActionSettings;
@@ -32,21 +31,13 @@ import com.google.code.geobeagle.activity.cachelist.actions.context.ContextActio
 import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionDeleteAllCaches;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionMyLocation;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionSyncGpx;
-import com.google.code.geobeagle.activity.cachelist.model.CacheListData;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheFromMyLocationFactory;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVectors;
-import com.google.code.geobeagle.activity.cachelist.presenter.ActionAndTolerance;
-import com.google.code.geobeagle.activity.cachelist.presenter.AdapterCachesSorter;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
-import com.google.code.geobeagle.activity.cachelist.presenter.DistanceUpdater;
 import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheListAdapter;
 import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheListPresenter;
-import com.google.code.geobeagle.activity.cachelist.presenter.LocationAndAzimuthTolerance;
-import com.google.code.geobeagle.activity.cachelist.presenter.LocationTolerance;
 import com.google.code.geobeagle.activity.cachelist.presenter.SensorManagerWrapper;
-import com.google.code.geobeagle.activity.cachelist.presenter.SqlCacheLoader;
 import com.google.code.geobeagle.activity.cachelist.presenter.TitleUpdater;
-import com.google.code.geobeagle.activity.cachelist.presenter.ToleranceStrategy;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh.ActionManager;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh.UpdateFlag;
 import com.google.code.geobeagle.activity.main.GeoBeagle;
@@ -120,7 +111,6 @@ public class CacheListDelegateDI {
         final GeocacheFromMyLocationFactory geocacheFromMyLocationFactory = injector
                 .getInstance(GeocacheFromMyLocationFactory.class);
         final GeocacheVectors geocacheVectors = injector.getInstance(GeocacheVectors.class);
-        final CacheListData cacheListData = injector.getInstance(CacheListData.class);
         final XmlPullParserWrapper xmlPullParserWrapper = injector
                 .getInstance(XmlPullParserWrapper.class);
 
@@ -158,31 +148,10 @@ public class CacheListDelegateDI {
         final CacheListDelegateDI.Timing timing = injector
                 .getInstance(CacheListDelegateDI.Timing.class);
 
-        final AdapterCachesSorter adapterCachesSorter = injector
-                .getInstance(AdapterCachesSorter.class);
-        final GpsDisabledLocation gpsDisabledLocation = injector
-                .getInstance(GpsDisabledLocation.class);
-        final DistanceUpdater distanceUpdater = injector.getInstance(DistanceUpdater.class);
-        final ToleranceStrategy sqlCacheLoaderTolerance = new LocationTolerance(500,
-                gpsDisabledLocation, 1000);
-        final ToleranceStrategy adapterCachesSorterTolerance = new LocationTolerance(6,
-                gpsDisabledLocation, 1000);
-        final LocationTolerance distanceUpdaterLocationTolerance = new LocationTolerance(1,
-                gpsDisabledLocation, 1000);
-        final ToleranceStrategy distanceUpdaterTolerance = new LocationAndAzimuthTolerance(
-                distanceUpdaterLocationTolerance, 720);
-        final ActionAndTolerance[] actionAndTolerances = new ActionAndTolerance[] {
-                null, new ActionAndTolerance(adapterCachesSorter, adapterCachesSorterTolerance),
-                new ActionAndTolerance(distanceUpdater, distanceUpdaterTolerance)
-        };
         final TitleUpdater titleUpdater = new TitleUpdater(listActivity, filterNearestCaches,
                 timing);
         final Provider<DbFrontend> dbFrontendProvider = injector.getProvider(DbFrontend.class);
-        final SqlCacheLoader sqlCacheLoader = new SqlCacheLoader(dbFrontendProvider,
-                filterNearestCaches, cacheListData, locationControlBuffered, titleUpdater, timing,
-                activityVisible);
-        actionAndTolerances[0] = new ActionAndTolerance(sqlCacheLoader, sqlCacheLoaderTolerance);
-        final ActionManager actionManager = new ActionManager(actionAndTolerances);
+        final ActionManager actionManager = injector.getInstance(ActionManager.class);
         final CacheListRefresh cacheListRefresh = new CacheListRefresh(actionManager, timing,
                 locationControlBuffered, updateFlag);
 
