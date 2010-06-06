@@ -139,7 +139,7 @@ public class CacheListDelegateDI {
         final DistanceFormatterManager distanceFormatterManager = injector
                 .getInstance(DistanceFormatterManager.class);
         final GeocacheVectors geocacheVectors = injector.getInstance(GeocacheVectors.class);
-        final CacheListData cacheListData = new CacheListData(geocacheVectors);
+        final CacheListData cacheListData = injector.getInstance(CacheListData.class);
         final XmlPullParserWrapper xmlPullParserWrapper = new XmlPullParserWrapper();
 
         final Resources resources = listActivity.getResources();
