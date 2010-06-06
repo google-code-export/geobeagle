@@ -20,6 +20,8 @@ import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionSyncG
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVectors;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
 import com.google.code.geobeagle.xmlimport.GpxToCache.Aborter;
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
 
 import android.util.Log;
 import android.view.ContextMenu;
@@ -61,9 +63,16 @@ public class GeocacheListController {
     private final MenuActionSyncGpx mMenuActionSyncGpx;
     private final Aborter mAborter;
 
+    public interface GeocacheListControllerFactory {
+        GeocacheListController create(ContextAction[] contextActions,
+                MenuActionSyncGpx menuActionSyncGpx, @Assisted MenuActions menuActions);
+    }
+
+    @Inject
     public GeocacheListController(CacheListRefresh cacheListRefresh,
-            ContextAction[] contextActions, MenuActionSyncGpx menuActionSyncGpx,
-            MenuActions menuActions, Aborter aborter) {
+            @Assisted ContextAction[] contextActions,
+            @Assisted MenuActionSyncGpx menuActionSyncGpx, @Assisted MenuActions menuActions,
+            Aborter aborter) {
         mCacheListRefresh = cacheListRefresh;
         mContextActions = contextActions;
         mMenuActionSyncGpx = menuActionSyncGpx;
