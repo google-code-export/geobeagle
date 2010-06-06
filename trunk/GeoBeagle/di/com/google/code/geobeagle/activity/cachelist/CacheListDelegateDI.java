@@ -31,6 +31,7 @@ import com.google.code.geobeagle.activity.cachelist.actions.context.ContextActio
 import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionDeleteAllCaches;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionMyLocation;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionSyncGpx;
+import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionSyncGpx.MenuActionSyncGpxFactory;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheFromMyLocationFactory;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVectors;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
@@ -39,7 +40,6 @@ import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheListPresen
 import com.google.code.geobeagle.activity.cachelist.presenter.TitleUpdater;
 import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheListPresenter.GeocacheListPresenterFactory;
 import com.google.code.geobeagle.activity.main.GeoBeagle;
-import com.google.code.geobeagle.bcaching.ImportBCachingWorker;
 import com.google.code.geobeagle.bcaching.preferences.BCachingStartTime;
 import com.google.code.geobeagle.database.CacheWriter;
 import com.google.code.geobeagle.database.DbFrontend;
@@ -135,8 +135,6 @@ public class CacheListDelegateDI {
         final GeocacheListPresenter geocacheListPresenter = geocacheListPresenterFactory.create(
                 combinedLocationListener, gpsStatusWidget, updateGpsWidgetRunnable);
         final Aborter aborter = injector.getInstance(Aborter.class);
-        final Provider<ImportBCachingWorker> importBCachingWorkerProvider = injector
-                .getProvider(ImportBCachingWorker.class);
         final MessageHandlerInterface messageHandler = injector.getInstance(MessageHandler.class);
         final CachePersisterFacadeFactoryFactory cachePersisterFacadeFactoryFactory = injector
                 .getInstance(CachePersisterFacadeFactoryFactory.class);
@@ -148,12 +146,11 @@ public class CacheListDelegateDI {
         final GpxImporterFactory gpxImporterFactory = gpxImporterFactoryFactory.create(
                 cachePersisterFacadeFactory, geocacheListPresenter, messageHandler);
 
-        final NullAbortable nullAbortable = injector.getInstance(NullAbortable.class);
-
         final Provider<CacheWriter> cacheWriterProvider = injector.getProvider(CacheWriter.class);
-        final MenuActionSyncGpx menuActionSyncGpx = new MenuActionSyncGpx(
-                importBCachingWorkerProvider, nullAbortable, cacheListRefresh, gpxImporterFactory,
-                cacheWriterProvider);
+        final MenuActionSyncGpxFactory menuActionSyncGpxFactory = injector
+                .getInstance(MenuActionSyncGpxFactory.class);
+        final MenuActionSyncGpx menuActionSyncGpx = menuActionSyncGpxFactory.create(
+                cacheListRefresh, gpxImporterFactory);
         final MenuActions menuActions = new MenuActions(resources);
         menuActions.add(menuActionSyncGpx);
         menuActions.add(new MenuActionDeleteAllCaches(cacheListRefresh, listActivity,
