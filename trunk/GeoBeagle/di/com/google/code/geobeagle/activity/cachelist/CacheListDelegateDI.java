@@ -139,9 +139,9 @@ public class CacheListDelegateDI {
                 .getInstance(GpsStatusWidgetFactory.class);
         final GpsStatusWidget gpsStatusWidget = gpsStatusWidgetFactory
                 .create(inflatedGpsStatusWidget);
-        GpsWidgetAndUpdaterFactory gpsWidgetAndUpdaterFactory = injector
+        final GpsWidgetAndUpdaterFactory gpsWidgetAndUpdaterFactory = injector
                 .getInstance(GpsWidgetAndUpdaterFactory.class);
-        GpsWidgetAndUpdater gpsWidgetAndUpdater = gpsWidgetAndUpdaterFactory
+        final GpsWidgetAndUpdater gpsWidgetAndUpdater = gpsWidgetAndUpdaterFactory
                 .create(gpsStatusWidget);
         final GpsStatusWidgetDelegate gpsStatusWidgetDelegate = gpsWidgetAndUpdater
                 .getGpsStatusWidgetDelegate();
