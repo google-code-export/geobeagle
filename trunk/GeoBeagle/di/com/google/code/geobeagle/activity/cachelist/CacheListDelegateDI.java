@@ -38,7 +38,6 @@ import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheListAdapte
 import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheListPresenter;
 import com.google.code.geobeagle.activity.cachelist.presenter.SensorManagerWrapper;
 import com.google.code.geobeagle.activity.cachelist.presenter.TitleUpdater;
-import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh.ActionManager;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh.UpdateFlag;
 import com.google.code.geobeagle.activity.main.GeoBeagle;
 import com.google.code.geobeagle.bcaching.ImportBCachingWorker;
@@ -72,7 +71,6 @@ import com.google.inject.Provider;
 import roboguice.activity.GuiceListActivity;
 
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.content.DialogInterface.OnClickListener;
 import android.content.res.Resources;
@@ -142,17 +140,11 @@ public class CacheListDelegateDI {
         final UpdateGpsWidgetRunnable updateGpsWidgetRunnable = gpsWidgetAndUpdater
                 .getUpdateGpsWidgetRunnable();
 
-        final CacheListDelegateDI.Timing timing = injector
-                .getInstance(CacheListDelegateDI.Timing.class);
-
         final TitleUpdater titleUpdater = injector.getInstance(TitleUpdater.class);
         final Provider<DbFrontend> dbFrontendProvider = injector.getProvider(DbFrontend.class);
-        final ActionManager actionManager = injector.getInstance(ActionManager.class);
-        final CacheListRefresh cacheListRefresh = new CacheListRefresh(actionManager, timing,
-                locationControlBuffered, updateFlag);
+        final CacheListRefresh cacheListRefresh = injector.getInstance(CacheListRefresh.class);
 
-        final SensorManager sensorManager = (SensorManager)listActivity
-                .getSystemService(Context.SENSOR_SERVICE);
+        final SensorManager sensorManager = injector.getInstance(SensorManager.class);
         final CompassListenerFactory compassListenerFactory = new CompassListenerFactory(
                 locationControlBuffered);
 
