@@ -28,6 +28,7 @@ import com.google.code.geobeagle.activity.cachelist.presenter.AbsoluteBearingFor
 import com.google.code.geobeagle.activity.cachelist.presenter.ActionAndTolerance;
 import com.google.code.geobeagle.activity.cachelist.presenter.AdapterCachesSorter;
 import com.google.code.geobeagle.activity.cachelist.presenter.BearingFormatter;
+import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
 import com.google.code.geobeagle.activity.cachelist.presenter.DistanceUpdater;
 import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheListAdapter;
 import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheListPresenter;
@@ -82,6 +83,7 @@ public class CacheListModule extends AbstractAndroidModule {
         bind(CacheListData.class).in(ContextScoped.class);
         bind(CacheListDelegateDI.Timing.class).in(Singleton.class);
         bind(UpdateFlag.class).in(Singleton.class);
+        bind(CacheListRefresh.class).in(ContextScoped.class);
     }
 
     static class DistanceFormatterProvider implements Provider<DistanceFormatter> {
