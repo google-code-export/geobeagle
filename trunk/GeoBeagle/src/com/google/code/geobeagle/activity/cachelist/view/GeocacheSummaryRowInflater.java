@@ -31,7 +31,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 public class GeocacheSummaryRowInflater {
-    private BearingFormatter mBearingFormatter;
+    private final Provider<BearingFormatter> mBearingFormatterProvider;
     private final Provider<DistanceFormatter> mDistanceFormatterProvider;
     private final IconOverlayFactory mIconOverlayFactory;
     private final IconRenderer mIconRenderer;
@@ -41,13 +41,13 @@ public class GeocacheSummaryRowInflater {
 
     @Inject
     public GeocacheSummaryRowInflater(Provider<DistanceFormatter> distanceFormatterProvider,
-            LayoutInflater layoutInflater, BearingFormatter relativeBearingFormatter,
+            LayoutInflater layoutInflater, Provider<BearingFormatter> bearingFormatterProvider,
             @DifficultyAndTerrainPainterAnnotation IconRenderer iconRenderer,
             ListViewBitmapCopier listViewBitmapCopier, IconOverlayFactory iconOverlayFactory,
             NameFormatter nameFormatter) {
         mLayoutInflater = layoutInflater;
         mDistanceFormatterProvider = distanceFormatterProvider;
-        mBearingFormatter = relativeBearingFormatter;
+        mBearingFormatterProvider = bearingFormatterProvider;
         mIconRenderer = iconRenderer;
         mListViewBitmapCopier = listViewBitmapCopier;
         mIconOverlayFactory = iconOverlayFactory;
@@ -71,7 +71,7 @@ public class GeocacheSummaryRowInflater {
     }
 
     public void setData(View view, GeocacheVector geocacheVector) {
-        ((RowViews)view.getTag()).set(geocacheVector, mBearingFormatter, mDistanceFormatterProvider
-                .get(), mListViewBitmapCopier, mIconRenderer);
+        ((RowViews)view.getTag()).set(geocacheVector, mBearingFormatterProvider.get(),
+                mDistanceFormatterProvider.get(), mListViewBitmapCopier, mIconRenderer);
     }
 }

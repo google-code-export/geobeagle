@@ -133,8 +133,6 @@ public class CacheListDelegateDI {
                 .getInstance(LocationControlBuffered.class);
         final GeocacheFromMyLocationFactory geocacheFromMyLocationFactory = injector
                 .getInstance(GeocacheFromMyLocationFactory.class);
-        final BearingFormatter relativeBearingFormatter = injector
-                .getInstance(BearingFormatter.class);
         final DistanceFormatterManager distanceFormatterManager = injector
                 .getInstance(DistanceFormatterManager.class);
         final GeocacheVectors geocacheVectors = injector.getInstance(GeocacheVectors.class);
@@ -146,10 +144,12 @@ public class CacheListDelegateDI {
         final IconRenderer iconRenderer = injector.getInstance(Key.get(IconRenderer.class,
                 DifficultyAndTerrainPainterAnnotation.class));
         final NameFormatter nameFormatter = injector.getInstance(NameFormatter.class);
-        Provider<DistanceFormatter> distanceFormatterProvider = injector
+        final Provider<DistanceFormatter> distanceFormatterProvider = injector
                 .getProvider(DistanceFormatter.class);
+        final Provider<BearingFormatter> bearingFormatterProvider = injector
+                .getProvider(BearingFormatter.class);
         final GeocacheSummaryRowInflater geocacheSummaryRowInflater = new GeocacheSummaryRowInflater(
-                distanceFormatterProvider, layoutInflater, relativeBearingFormatter, iconRenderer,
+                distanceFormatterProvider, layoutInflater, bearingFormatterProvider , iconRenderer,
                 new ListViewBitmapCopier(), injector.getInstance(IconOverlayFactory.class),
                 nameFormatter);
         final UpdateFlag updateFlag = new UpdateFlag();

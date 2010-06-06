@@ -75,6 +75,8 @@ public class CacheListModule extends AbstractAndroidModule {
         bind(ActivityVisible.class).in(Singleton.class);
         bind(DistanceFormatter.class).toProvider(DistanceFormatterProvider.class).in(
                 ContextScoped.class);
+        bind(BearingFormatter.class).toProvider(BearingFormatterProvider.class).in(
+                ContextScoped.class);
     }
 
     static class DistanceFormatterProvider implements Provider<DistanceFormatter> {
@@ -97,19 +99,31 @@ public class CacheListModule extends AbstractAndroidModule {
                     : distanceFormatterMetric;
         }
     }
+    
+    static class BearingFormatterProvider implements Provider<BearingFormatter> {
+        private AbsoluteBearingFormatter absoluteBearingFormatter;
+        private RelativeBearingFormatter relativeBearingFormatter;
+        private final SharedPreferences preferenceManager;
+
+        @Inject
+        BearingFormatterProvider(@DefaultSharedPreferences SharedPreferences preferenceManager,
+                AbsoluteBearingFormatter absoluteBearingFormatter,
+                RelativeBearingFormatter relativeBearingFormatter) {
+            this.preferenceManager = preferenceManager;
+            this.absoluteBearingFormatter = absoluteBearingFormatter;
+            this.relativeBearingFormatter = relativeBearingFormatter;
+        }
+
+        @Override
+        public BearingFormatter get() {
+            return preferenceManager.getBoolean("absolute-bearing", false) ? absoluteBearingFormatter
+                    : relativeBearingFormatter;
+        }
+    }
 
     @Provides
     ListActivity providesListActivity(Activity activity) {
         return (ListActivity)activity;
-    }
-
-    @Provides
-    BearingFormatter providesBearingFormatter(
-            @DefaultSharedPreferences SharedPreferences preferenceManager) {
-        final boolean absoluteBearing = preferenceManager.getBoolean("absolute-bearing", false);
-        if (absoluteBearing)
-            return new AbsoluteBearingFormatter();
-        return new RelativeBearingFormatter();
     }
 
     @Provides
