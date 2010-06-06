@@ -21,7 +21,6 @@ import static org.junit.Assert.assertTrue;
 
 import com.google.code.geobeagle.CacheType;
 import com.google.code.geobeagle.GeocacheFactory.Source;
-import com.google.code.geobeagle.database.CacheWriter.ClearCachesFromSourceImpl;
 import com.google.code.geobeagle.database.DatabaseDI.SQLiteWrapper;
 import com.google.inject.Provider;
 
