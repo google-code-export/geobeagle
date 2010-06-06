@@ -21,9 +21,9 @@ import com.google.code.geobeagle.cachedetails.HtmlWriter;
 import com.google.code.geobeagle.cachedetails.WriterWrapper;
 import com.google.code.geobeagle.database.CacheWriter;
 import com.google.code.geobeagle.database.ClearCachesFromSource;
+import com.google.code.geobeagle.database.ClearCachesFromSourceImpl;
 import com.google.code.geobeagle.database.TagWriterImpl;
 import com.google.code.geobeagle.database.TagWriterNull;
-import com.google.code.geobeagle.database.CacheWriter.ClearCachesFromSourceImpl;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 

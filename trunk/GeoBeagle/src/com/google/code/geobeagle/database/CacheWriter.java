@@ -31,50 +31,6 @@ public class CacheWriter {
     private String mGpxTime;
     private final Provider<ISQLiteDatabase> sqliteProvider;
 
-    public static class ClearCachesFromSourceImpl implements ClearCachesFromSource {
-        private final Provider<ISQLiteDatabase> sqliteProvider;
-
-        @Inject
-        public
-        ClearCachesFromSourceImpl(Provider<ISQLiteDatabase> sqliteProvider) {
-            this.sqliteProvider = sqliteProvider;
-        }
-
-        @Override
-        public void clearCaches(String source) {
-            sqliteProvider.get().execSQL(Database.SQL_CLEAR_CACHES, source);
-        }
-
-        /**
-         * Deletes any cache/gpx entries marked delete_me, then marks all remaining
-         * gpx-based caches, and gpx entries with delete_me = 1.
-         */
-        @Override
-        public void clearEarlierLoads() {
-            ISQLiteDatabase sqliteDatabase = sqliteProvider.get();
-            for (String sql : CacheWriter.SQLS_CLEAR_EARLIER_LOADS) {
-                sqliteDatabase.execSQL(sql);
-            }
-        }
-    }
-
-    public static class ClearCachesFromSourceNull implements ClearCachesFromSource {
-
-        @Inject
-        public
-        ClearCachesFromSourceNull() {
-        }
-        
-        @Override
-        public void clearCaches(String source) {
-        }
-
-        @Override
-        public void clearEarlierLoads() {
-        }
-
-    }
-
     @Inject
     CacheWriter(Provider<ISQLiteDatabase> writableDatabaseProvider,
             DbToGeocacheAdapter dbToGeocacheAdapter) {
