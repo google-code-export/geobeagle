@@ -140,7 +140,8 @@ public class CacheListDelegateDI {
                 .getInstance(DistanceFormatterManager.class);
         final GeocacheVectors geocacheVectors = injector.getInstance(GeocacheVectors.class);
         final CacheListData cacheListData = injector.getInstance(CacheListData.class);
-        final XmlPullParserWrapper xmlPullParserWrapper = new XmlPullParserWrapper();
+        final XmlPullParserWrapper xmlPullParserWrapper = injector
+                .getInstance(XmlPullParserWrapper.class);
 
         final Resources resources = listActivity.getResources();
         final AttributePainter attributePainter = new AttributePainter(new Paint(), new Rect());
