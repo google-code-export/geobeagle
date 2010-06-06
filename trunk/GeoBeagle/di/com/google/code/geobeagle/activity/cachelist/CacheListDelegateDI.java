@@ -155,7 +155,8 @@ public class CacheListDelegateDI {
 
         final FilterNearestCaches filterNearestCaches = injector
                 .getInstance(FilterNearestCaches.class);
-        final CacheListDelegateDI.Timing timing = new CacheListDelegateDI.Timing();
+        final CacheListDelegateDI.Timing timing = injector
+                .getInstance(CacheListDelegateDI.Timing.class);
 
         final AdapterCachesSorter adapterCachesSorter = new AdapterCachesSorter(cacheListData,
                 timing, locationControlBuffered);
