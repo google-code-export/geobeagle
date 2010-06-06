@@ -28,9 +28,9 @@ import com.google.code.geobeagle.activity.cachelist.actions.context.ContextActio
 import com.google.code.geobeagle.activity.cachelist.actions.context.ContextActionEdit;
 import com.google.code.geobeagle.activity.cachelist.actions.context.ContextActionView;
 import com.google.code.geobeagle.activity.cachelist.actions.context.ContextActionDelete.ContextActionDeleteDialogHelper;
-import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionDeleteAllCaches;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionMyLocation;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionSyncGpx;
+import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionDeleteAllCaches.MenuActionDeleteAllCachesFactory;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionSyncGpx.MenuActionSyncGpxFactory;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheFromMyLocationFactory;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVectors;
@@ -40,7 +40,6 @@ import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheListPresen
 import com.google.code.geobeagle.activity.cachelist.presenter.TitleUpdater;
 import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheListPresenter.GeocacheListPresenterFactory;
 import com.google.code.geobeagle.activity.main.GeoBeagle;
-import com.google.code.geobeagle.bcaching.preferences.BCachingStartTime;
 import com.google.code.geobeagle.database.CacheWriter;
 import com.google.code.geobeagle.database.DbFrontend;
 import com.google.code.geobeagle.database.LocationSaver;
@@ -63,10 +62,8 @@ import com.google.inject.Provider;
 
 import roboguice.activity.GuiceListActivity;
 
-import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.DialogInterface.OnClickListener;
-import android.content.res.Resources;
 import android.util.Log;
 
 import java.util.Calendar;
@@ -153,10 +150,10 @@ public class CacheListDelegateDI {
         final MenuActions menuActions = injector.getInstance(MenuActions.class);
         
         menuActions.add(menuActionSyncGpx);
-        final AlertDialog.Builder alertDialogBuilder = injector.getInstance(AlertDialog.Builder.class);
-        final BCachingStartTime bcachingStartTime = injector.getInstance(BCachingStartTime.class);
-        menuActions.add(new MenuActionDeleteAllCaches(cacheListRefresh, listActivity,
-                dbFrontendProvider, alertDialogBuilder, bcachingStartTime));
+        final MenuActionDeleteAllCachesFactory menuActionDeleteAllCachesFactory = injector
+                .getInstance(MenuActionDeleteAllCachesFactory.class);
+        
+        menuActions.add(menuActionDeleteAllCachesFactory.create(cacheListRefresh));
         final LocationSaver locationSaver = new LocationSaver(cacheWriterProvider);
         menuActions.add(new MenuActionMyLocation(listActivity, errorDisplayer,
                 geocacheFromMyLocationFactory, locationSaver));
