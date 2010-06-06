@@ -135,8 +135,8 @@ public class CacheListDelegateDI {
         final GeocacheListAdapter geocacheListAdapter = injector
                 .getInstance(GeocacheListAdapter.class);
 
-        final InflatedGpsStatusWidget inflatedGpsStatusWidget = new InflatedGpsStatusWidget(
-                listActivity);
+        final InflatedGpsStatusWidget inflatedGpsStatusWidget = injector
+                .getInstance(InflatedGpsStatusWidget.class);
         final GpsStatusWidgetFactory gpsStatusWidgetFactory = injector
                 .getInstance(GpsStatusWidgetFactory.class);
         final GpsStatusWidget gpsStatusWidget = gpsStatusWidgetFactory
