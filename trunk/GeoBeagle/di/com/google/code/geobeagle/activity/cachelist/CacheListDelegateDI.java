@@ -143,7 +143,7 @@ public class CacheListDelegateDI {
         final XmlPullParserWrapper xmlPullParserWrapper = injector
                 .getInstance(XmlPullParserWrapper.class);
 
-        final Resources resources = listActivity.getResources();
+        final Resources resources = injector.getInstance(Resources.class);
         final AttributePainter attributePainter = new AttributePainter(new Paint(), new Rect());
         final DifficultyAndTerrainPainter difficultyAndTerrainPainter = new DifficultyAndTerrainPainter(
                 attributePainter);
