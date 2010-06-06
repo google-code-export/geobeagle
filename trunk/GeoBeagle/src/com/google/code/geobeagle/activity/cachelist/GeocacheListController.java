@@ -108,7 +108,7 @@ public class GeocacheListController {
         mMenuActionSyncGpx.abort();
     }
 
-    public void onResume(CacheListRefresh cacheListRefresh, boolean fImport) {
+    public void onResume(boolean fImport) {
         mCacheListRefresh.forceRefresh();
         if (fImport)
             mMenuActionSyncGpx.act();
