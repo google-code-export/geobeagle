@@ -3,6 +3,7 @@ package com.google.code.geobeagle.actions;
 import com.google.code.geobeagle.LocationControlBuffered;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.map.GeoMapActivity;
+import com.google.inject.Inject;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -13,8 +14,8 @@ public class MenuActionMap implements MenuAction {
     private final LocationControlBuffered mLocationControl;
     private final Activity mActivity;
     
-    public MenuActionMap(Activity activity, 
-            LocationControlBuffered locationControl)  {
+    @Inject
+    public MenuActionMap(Activity activity, LocationControlBuffered locationControl) {
         mActivity = activity;
         mLocationControl = locationControl;
     }
