@@ -151,7 +151,7 @@ public class CacheListDelegateDI {
                 .getInstance(MenuActionSyncGpxFactory.class);
         final MenuActionSyncGpx menuActionSyncGpx = menuActionSyncGpxFactory.create(
                 cacheListRefresh, gpxImporterFactory);
-        final MenuActions menuActions = new MenuActions(resources);
+        final MenuActions menuActions = injector.getInstance(MenuActions.class);
         menuActions.add(menuActionSyncGpx);
         menuActions.add(new MenuActionDeleteAllCaches(cacheListRefresh, listActivity,
                 dbFrontendProvider, new AlertDialog.Builder(listActivity), injector
