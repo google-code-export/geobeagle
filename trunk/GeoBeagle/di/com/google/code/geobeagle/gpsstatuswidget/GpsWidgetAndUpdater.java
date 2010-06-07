@@ -7,7 +7,6 @@ import com.google.code.geobeagle.activity.cachelist.ActivityVisible;
 import com.google.code.geobeagle.formatting.DistanceFormatter;
 import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidgetModule.GpsStatusWidgetView;
 import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidgetModule.Lag;
-import com.google.code.geobeagle.gpsstatuswidget.TextLagUpdater.LastKnownLocationUnavailable;
 import com.google.code.geobeagle.gpsstatuswidget.TextLagUpdater.LastLocationUnknown;
 import com.google.code.geobeagle.location.CombinedLocationManager;
 import com.google.inject.Inject;
@@ -28,9 +27,7 @@ public class GpsWidgetAndUpdater {
             CombinedLocationManager combinedLocationManager,
             Provider<DistanceFormatter> distanceFormatterProvider, ActivityVisible activityVisible,
             Time time, Handler handler, MeterBars meterBars, Meter meter, @Lag TextView lag,
-            LastKnownLocationUnavailable lastKnownLocationUnavailable) {
-        final LastLocationUnknown lastLocationUnknown = new LastLocationUnknown(
-                combinedLocationManager, lastKnownLocationUnavailable);
+            LastLocationUnknown lastLocationUnknown) {
         final TextLagUpdater textLagUpdater = new TextLagUpdater(lastLocationUnknown, lag, time);
         mUpdateGpsRunnable = new UpdateGpsWidgetRunnable(handler, mLocationControlBuffered, meter,
                 textLagUpdater, activityVisible);
