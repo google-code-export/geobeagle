@@ -37,7 +37,6 @@ import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidgetDelegate;
 import com.google.code.geobeagle.gpsstatuswidget.GpsWidgetAndUpdater;
 import com.google.code.geobeagle.gpsstatuswidget.UpdateGpsWidgetRunnable;
 import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidget.InflatedGpsStatusWidget;
-import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidgetModule.GpsStatusWidgetFactory;
 import com.google.code.geobeagle.gpsstatuswidget.GpsWidgetAndUpdater.GpsWidgetAndUpdaterFactory;
 import com.google.code.geobeagle.location.CombinedLocationListener;
 import com.google.code.geobeagle.location.CombinedLocationListener.CombinedLocationListenerFactory;
@@ -50,6 +49,7 @@ import com.google.inject.Injector;
 import roboguice.activity.GuiceListActivity;
 
 import android.util.Log;
+import android.view.ViewGroup;
 
 import java.util.Calendar;
 
@@ -76,10 +76,10 @@ public class CacheListDelegateDI {
         final Injector injector = listActivity.getInjector();
         final InflatedGpsStatusWidget inflatedGpsStatusWidget = injector
                 .getInstance(InflatedGpsStatusWidget.class);
-        final GpsStatusWidgetFactory gpsStatusWidgetFactory = injector
-                .getInstance(GpsStatusWidgetFactory.class);
-        final GpsStatusWidget gpsStatusWidget = gpsStatusWidgetFactory
-                .create(inflatedGpsStatusWidget);
+        GpsStatusWidget gpsStatusWidget1 = new GpsStatusWidget(listActivity);
+        gpsStatusWidget1.addView(inflatedGpsStatusWidget, ViewGroup.LayoutParams.FILL_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT);
+        final GpsStatusWidget gpsStatusWidget = gpsStatusWidget1;
         final GpsWidgetAndUpdaterFactory gpsWidgetAndUpdaterFactory = injector
                 .getInstance(GpsWidgetAndUpdaterFactory.class);
         final GpsWidgetAndUpdater gpsWidgetAndUpdater = gpsWidgetAndUpdaterFactory
