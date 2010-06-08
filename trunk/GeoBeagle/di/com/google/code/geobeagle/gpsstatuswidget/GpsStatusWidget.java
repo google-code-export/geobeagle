@@ -74,6 +74,7 @@ public class GpsStatusWidget extends LinearLayout {
         }
     }
 
+    @Inject
     public GpsStatusWidget(Context context) {
         super(context);
     }

@@ -76,7 +76,7 @@ public class CacheListDelegateDI {
         final Injector injector = listActivity.getInjector();
         final InflatedGpsStatusWidget inflatedGpsStatusWidget = injector
                 .getInstance(InflatedGpsStatusWidget.class);
-        final GpsStatusWidget gpsStatusWidget = new GpsStatusWidget(listActivity);
+        final GpsStatusWidget gpsStatusWidget = injector.getInstance(GpsStatusWidget.class);
         gpsStatusWidget.addView(inflatedGpsStatusWidget, ViewGroup.LayoutParams.FILL_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT);
         final GpsWidgetAndUpdaterFactory gpsWidgetAndUpdaterFactory = injector
