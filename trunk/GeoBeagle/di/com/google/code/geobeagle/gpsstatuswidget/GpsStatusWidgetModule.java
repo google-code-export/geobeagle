@@ -22,7 +22,6 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidget.InflatedGpsStatusWidget;
 import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidgetDelegate.GpsStatusWidgetDelegateFactory;
-import com.google.code.geobeagle.gpsstatuswidget.MeterBars.MeterBarsFactory;
 import com.google.code.geobeagle.gpsstatuswidget.MeterFader.MeterFaderFactory;
 import com.google.code.geobeagle.gpsstatuswidget.TextLagUpdater.TextLagUpdaterFactory;
 import com.google.code.geobeagle.gpsstatuswidget.UpdateGpsWidgetRunnable.UpdateGpsWidgetRunnableFactory;
@@ -88,8 +87,6 @@ public class GpsStatusWidgetModule extends AbstractAndroidModule {
 
     @Override
     protected void configure() {
-        bind(MeterBarsFactory.class).toProvider(
-                FactoryProvider.newFactory(MeterBarsFactory.class, MeterBars.class));
         bind(TextLagUpdaterFactory.class).toProvider(
                 FactoryProvider.newFactory(TextLagUpdaterFactory.class, TextLagUpdater.class));
         bind(UpdateGpsWidgetRunnableFactory.class).toProvider(
