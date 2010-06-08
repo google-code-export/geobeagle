@@ -17,22 +17,18 @@ package com.google.code.geobeagle.gpsstatuswidget;
  * Displays the accuracy (graphically) and azimuth of the gps.
  */
 
+import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidgetModule.LocationViewer;
 import com.google.inject.Inject;
-import com.google.inject.assistedinject.Assisted;
 
 import android.graphics.Color;
 import android.widget.TextView;
 
 class MeterBars {
-    static interface MeterBarsFactory {
-        MeterBars create(TextView textView);
-    }
-    
     private final TextView mBarsAndAzimuth;
     private final MeterFormatter mMeterFormatter;
 
     @Inject
-    MeterBars(@Assisted TextView textView, MeterFormatter meterFormatter) {
+    MeterBars(@LocationViewer TextView textView, MeterFormatter meterFormatter) {
         mBarsAndAzimuth = textView;
         mMeterFormatter = meterFormatter;
     }
