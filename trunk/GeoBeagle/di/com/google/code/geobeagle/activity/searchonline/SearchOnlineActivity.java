@@ -45,7 +45,6 @@ public class SearchOnlineActivity extends GuiceActivity {
 
     private CombinedLocationListener mCombinedLocationListener;
 
-    @InjectView(R.id.gps_widget_view)
     private InflatedGpsStatusWidget mInflatedGpsStatusWidget;
 
     private GpsWidgetAndUpdater mGpsWidgetAndUpdater;
@@ -94,7 +93,7 @@ public class SearchOnlineActivity extends GuiceActivity {
         Log.d("GeoBeagle", "SearchOnlineActivity onCreate");
         
         Injector injector = this.getInjector();
-
+        mInflatedGpsStatusWidget = (InflatedGpsStatusWidget)this.findViewById(R.id.gps_widget_view);
         mGpsWidgetAndUpdater = injector.getInstance(GpsWidgetAndUpdaterFactory.class).create(
                 mInflatedGpsStatusWidget);
         
