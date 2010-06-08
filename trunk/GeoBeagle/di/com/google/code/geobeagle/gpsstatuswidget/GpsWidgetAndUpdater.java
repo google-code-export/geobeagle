@@ -33,7 +33,8 @@ public class GpsWidgetAndUpdater {
         final MeterFormatter meterFormatter = new MeterFormatter(context);
                 final TextView locationViewer = (TextView)gpsWidgetView.findViewById(R.id.location_viewer);
         final MeterBars meterBars = new MeterBars(locationViewer, meterFormatter);
-        final Meter meter = GpsStatusWidget.createMeterWrapper(gpsWidgetView, meterBars);
+        final TextView accuracyView = (TextView)gpsWidgetView.findViewById(R.id.accuracy);
+        final Meter meter = new Meter(meterBars, accuracyView);
         final TextLagUpdater textLagUpdater = GpsStatusWidget.createTextLagUpdater(gpsWidgetView,
                 combinedLocationManager, time);
         mUpdateGpsRunnable = new UpdateGpsWidgetRunnable(handler, mLocationControlBuffered, meter,
