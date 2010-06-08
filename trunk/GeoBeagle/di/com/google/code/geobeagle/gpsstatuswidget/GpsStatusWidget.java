@@ -17,9 +17,6 @@ package com.google.code.geobeagle.gpsstatuswidget;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.Time;
 import com.google.code.geobeagle.formatting.DistanceFormatter;
-import com.google.code.geobeagle.gpsstatuswidget.TextLagUpdater.LagNull;
-import com.google.code.geobeagle.gpsstatuswidget.TextLagUpdater.LastKnownLocationUnavailable;
-import com.google.code.geobeagle.gpsstatuswidget.TextLagUpdater.LastLocationUnknown;
 import com.google.code.geobeagle.location.CombinedLocationManager;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
@@ -76,16 +73,5 @@ public class GpsStatusWidget extends LinearLayout {
     @Inject
     public GpsStatusWidget(Context context) {
         super(context);
-    }
-
-    public static TextLagUpdater createTextLagUpdater(View gpsStatusWidget,
-            CombinedLocationManager combinedLocationManager, Time time) {
-        final TextView lag = (TextView)gpsStatusWidget.findViewById(R.id.lag);
-        final LagNull lagNull = new LagNull();
-        final LastKnownLocationUnavailable lastKnownLocationUnavailable = new LastKnownLocationUnavailable(
-                lagNull);
-        final LastLocationUnknown lastLocationUnknown = new LastLocationUnknown(
-                combinedLocationManager, lastKnownLocationUnavailable);
-        return new TextLagUpdater(lastLocationUnknown, lag, time);
     }
 }
