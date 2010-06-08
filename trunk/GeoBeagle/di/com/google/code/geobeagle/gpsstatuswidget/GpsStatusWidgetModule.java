@@ -19,6 +19,7 @@ import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.ElementType.PARAMETER;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
+import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidget.InflatedGpsStatusWidget;
 import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidgetDelegate.GpsStatusWidgetDelegateFactory;
 import com.google.code.geobeagle.gpsstatuswidget.GpsWidgetAndUpdater.GpsWidgetAndUpdaterFactory;
@@ -33,6 +34,7 @@ import com.google.inject.assistedinject.FactoryProvider;
 import roboguice.config.AbstractAndroidModule;
 import roboguice.inject.ContextScoped;
 
+import android.app.Activity;
 import android.content.Context;
 
 import java.lang.annotation.Retention;
@@ -42,6 +44,9 @@ public class GpsStatusWidgetModule extends AbstractAndroidModule {
     @BindingAnnotation @Target({ FIELD, PARAMETER, METHOD }) @Retention(RUNTIME)
     public static @interface CacheList {}
 
+    @BindingAnnotation @Target({ FIELD, PARAMETER, METHOD }) @Retention(RUNTIME)
+    public static @interface SearchOnline {}
+    
     @Override
     protected void configure() {
         bind(MeterBarsFactory.class).toProvider(
@@ -67,4 +72,12 @@ public class GpsStatusWidgetModule extends AbstractAndroidModule {
     InflatedGpsStatusWidget providesInflatedGpsStatusWidget(Context context) {
         return new InflatedGpsStatusWidget(context);
     }
+    
+    @Provides
+    @ContextScoped
+    @SearchOnline
+    InflatedGpsStatusWidget providesInflatedGpsStatusWidget(Activity activity) {
+        return (InflatedGpsStatusWidget)activity.findViewById(R.id.gps_widget_view);
+    }
+    
 }
