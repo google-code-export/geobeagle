@@ -50,9 +50,6 @@ public class GpsStatusWidgetModule extends AbstractAndroidModule {
     public static @interface LocationViewer {}
     
     @BindingAnnotation @Target({ FIELD, PARAMETER, METHOD }) @Retention(RUNTIME)
-    public static @interface AccuracyView {}
-
-    @BindingAnnotation @Target({ FIELD, PARAMETER, METHOD }) @Retention(RUNTIME)
     public static @interface SearchOnline {}
 
     @BindingAnnotation @Target({ FIELD, PARAMETER, METHOD }) @Retention(RUNTIME)
@@ -66,15 +63,9 @@ public class GpsStatusWidgetModule extends AbstractAndroidModule {
         }
 
         @Provides
-        @AccuracyView
-        TextView providesAccuracyView(@GpsStatusWidgetView View gpsStatusWidget) {
-            return (TextView)gpsStatusWidget.findViewById(R.id.accuracy);
-        }
-        
-        @Provides
         @ContextScoped
-        Meter providesMeter(MeterBars meterBars, @AccuracyView TextView accuracyView) {
-            return new Meter(meterBars, accuracyView);
+        Meter providesMeter(MeterBars meterBars, @GpsStatusWidgetView View gpsStatusWidget) {
+            return new Meter(meterBars, ((TextView)gpsStatusWidget.findViewById(R.id.accuracy)));
         }
     }
 
