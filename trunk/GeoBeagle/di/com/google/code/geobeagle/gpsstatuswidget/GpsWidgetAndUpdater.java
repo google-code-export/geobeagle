@@ -28,9 +28,8 @@ public class GpsWidgetAndUpdater {
             LocationControlBuffered mLocationControlBuffered,
             CombinedLocationManager combinedLocationManager,
             Provider<DistanceFormatter> distanceFormatterProvider, ActivityVisible activityVisible,
-            Time time, Handler handler, MeterBars meterBars, Meter meter) {
+            Time time, Handler handler, MeterBars meterBars, Meter meter, LagNull lagNull) {
         final TextView lag = (TextView)gpsWidgetView.findViewById(R.id.lag);
-        final LagNull lagNull = new LagNull();
         final LastKnownLocationUnavailable lastKnownLocationUnavailable = new LastKnownLocationUnavailable(
                 lagNull);
         final LastLocationUnknown lastLocationUnknown = new LastLocationUnknown(
