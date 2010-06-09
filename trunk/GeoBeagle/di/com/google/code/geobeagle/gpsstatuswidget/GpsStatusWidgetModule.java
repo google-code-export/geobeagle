@@ -19,10 +19,12 @@ import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.ElementType.PARAMETER;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
+import com.google.code.geobeagle.LocationControlBuffered;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.Time;
 import com.google.code.geobeagle.formatting.DistanceFormatter;
 import com.google.code.geobeagle.gpsstatuswidget.TextLagUpdater.LastLocationUnknown;
+import com.google.code.geobeagle.location.CombinedLocationListener;
 import com.google.code.geobeagle.location.CombinedLocationManager;
 import com.google.inject.BindingAnnotation;
 import com.google.inject.Key;
@@ -95,6 +97,13 @@ public class GpsStatusWidgetModule extends AbstractAndroidModule {
                     context, (TextView)gpsStatusWidget.findViewById(R.id.status), textLagUpdater);
         }
 
+        @Provides
+        CombinedLocationListener providesCombinedLocationListener(
+                LocationControlBuffered locationControlBuffered,
+                GpsStatusWidgetDelegate locationListener) {
+            return new CombinedLocationListener(locationControlBuffered, locationListener);
+        }
+
         public void configure(Class<? extends Annotation> annotation) {
             bind(GpsStatusWidgetDelegate.class).annotatedWith(annotation).to(
                     GpsStatusWidgetDelegate.class);
@@ -102,6 +111,9 @@ public class GpsStatusWidgetModule extends AbstractAndroidModule {
             bind(UpdateGpsWidgetRunnable.class).annotatedWith(annotation).to(
                     UpdateGpsWidgetRunnable.class);
             expose(UpdateGpsWidgetRunnable.class).annotatedWith(annotation);
+            bind(CombinedLocationListener.class).annotatedWith(annotation).to(
+                    CombinedLocationListener.class);
+            expose(CombinedLocationListener.class).annotatedWith(annotation);
         }
     }
 
