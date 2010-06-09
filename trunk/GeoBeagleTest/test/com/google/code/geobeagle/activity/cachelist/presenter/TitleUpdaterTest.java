@@ -15,7 +15,7 @@
 package com.google.code.geobeagle.activity.cachelist.presenter;
 
 import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.activity.cachelist.CacheListDelegateDI;
+import com.google.code.geobeagle.Timing;
 import com.google.code.geobeagle.database.FilterNearestCaches;
 
 import org.easymock.EasyMock;
@@ -39,7 +39,7 @@ public class TitleUpdaterTest {
     public void testTitleUpdater() {
         ListActivity listActivity = PowerMock.createMock(ListActivity.class);
         FilterNearestCaches filterNearestCaches = PowerMock.createMock(FilterNearestCaches.class);
-        CacheListDelegateDI.Timing timing = PowerMock.createMock(CacheListDelegateDI.Timing.class);
+        Timing timing = PowerMock.createMock(Timing.class);
 
         timing.lap(EasyMock.isA(String.class));
         EasyMock.expectLastCall().anyTimes();
@@ -59,7 +59,7 @@ public class TitleUpdaterTest {
     public void testTitleUpdaterEmpty() {
         ListActivity listActivity = PowerMock.createMock(ListActivity.class);
         FilterNearestCaches filterNearestCaches = PowerMock.createMock(FilterNearestCaches.class);
-        CacheListDelegateDI.Timing timing = PowerMock.createMock(CacheListDelegateDI.Timing.class);
+        Timing timing = PowerMock.createMock(Timing.class);
 
         timing.lap(EasyMock.isA(String.class));
         EasyMock.expectLastCall().anyTimes();
