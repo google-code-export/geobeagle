@@ -22,7 +22,6 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.Time;
 import com.google.code.geobeagle.formatting.DistanceFormatter;
-import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidget.InflatedGpsStatusWidget;
 import com.google.code.geobeagle.gpsstatuswidget.TextLagUpdater.LastLocationUnknown;
 import com.google.code.geobeagle.location.CombinedLocationManager;
 import com.google.inject.BindingAnnotation;
