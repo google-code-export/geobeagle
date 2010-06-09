@@ -49,7 +49,6 @@ import com.google.inject.Key;
 import roboguice.activity.GuiceListActivity;
 
 import android.util.Log;
-import android.view.ViewGroup;
 
 import java.util.Calendar;
 
@@ -77,8 +76,7 @@ public class CacheListDelegateDI {
         final InflatedGpsStatusWidget inflatedGpsStatusWidget = injector.getInstance(Key.get(
                 InflatedGpsStatusWidget.class, CacheList.class));
         final GpsStatusWidget gpsStatusWidget = injector.getInstance(GpsStatusWidget.class);
-        gpsStatusWidget.addView(inflatedGpsStatusWidget, ViewGroup.LayoutParams.FILL_PARENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT);
+
         final GpsStatusWidgetDelegate gpsStatusWidgetDelegate = injector.getInstance(Key.get(
                 GpsStatusWidgetDelegate.class, CacheList.class));
 
