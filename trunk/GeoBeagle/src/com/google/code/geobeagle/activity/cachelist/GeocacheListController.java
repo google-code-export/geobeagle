@@ -30,7 +30,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.View.OnCreateContextMenuListener;
-import android.widget.ListView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 
 public class GeocacheListController {
@@ -91,7 +90,7 @@ public class GeocacheListController {
         return mMenuActions.onCreateOptionsMenu(menu);
     }
 
-    public void onListItemClick(ListView l, View v, int position, long id) {
+    public void onListItemClick(int position) {
         if (position > 0)
             mContextActions[MENU_VIEW].act(position - 1);
         else

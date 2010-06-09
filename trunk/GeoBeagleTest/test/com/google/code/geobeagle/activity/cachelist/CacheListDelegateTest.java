@@ -49,14 +49,14 @@ public class CacheListDelegateTest {
                 .createStrictMock(GeocacheListController.class);
 
         EasyMock.expect(geocacheListController.onContextItemSelected(menuItem)).andReturn(true);
-        geocacheListController.onListItemClick(listView, view, 28, 42);
+        geocacheListController.onListItemClick(28);
         EasyMock.expect(geocacheListController.onOptionsItemSelected(menuItem)).andReturn(true);
 
         PowerMock.replayAll();
         CacheListDelegate cacheListDelegate = new CacheListDelegate(null, null, null,
                 geocacheListController, null, null, null, null);
         cacheListDelegate.onContextItemSelected(menuItem);
-        cacheListDelegate.onListItemClick(listView, view, 28, 42);
+        cacheListDelegate.onListItemClick(28);
         cacheListDelegate.onOptionsItemSelected(menuItem);
         PowerMock.verifyAll();
     }
@@ -179,11 +179,11 @@ public class CacheListDelegateTest {
         ListView listView = PowerMock.createMock(ListView.class);
         View view = PowerMock.createMock(View.class);
 
-        geocacheListController.onListItemClick(listView, view, 28, 42);
+        geocacheListController.onListItemClick(28);
 
         PowerMock.replayAll();
         new CacheListDelegate(null, null, null, geocacheListController, null, null, null, null)
-                .onListItemClick(listView, view, 28, 42);
+                .onListItemClick(28);
         PowerMock.verifyAll();
     }
 

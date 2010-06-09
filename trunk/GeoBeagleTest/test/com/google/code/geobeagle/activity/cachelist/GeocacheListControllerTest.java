@@ -19,7 +19,6 @@ import static org.junit.Assert.assertTrue;
 
 import com.google.code.geobeagle.actions.MenuActions;
 import com.google.code.geobeagle.activity.cachelist.GeocacheListController.CacheListOnCreateContextMenuListener;
-import com.google.code.geobeagle.activity.cachelist.actions.context.ContextAction;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionSyncGpx;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVector;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVectors;
@@ -142,7 +141,7 @@ public class GeocacheListControllerTest extends GeoBeagleTest {
 
         PowerMock.replayAll();
         new GeocacheListController(null, contextActions, null, null, null).onListItemClick(
-                null, null, 46, 0);
+                46);
         PowerMock.verifyAll();
     }
 
@@ -154,7 +153,7 @@ public class GeocacheListControllerTest extends GeoBeagleTest {
 
         PowerMock.replayAll();
         new GeocacheListController(cacheListRefresh, null, null, null, null).onListItemClick(
-                null, null, 0, 0);
+                0);
         PowerMock.verifyAll();
     }
 
