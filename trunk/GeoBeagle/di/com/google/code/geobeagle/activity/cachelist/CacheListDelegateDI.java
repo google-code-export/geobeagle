@@ -24,9 +24,9 @@ import com.google.code.geobeagle.activity.cachelist.actions.context.ContextActio
 import com.google.code.geobeagle.activity.cachelist.actions.context.ContextActionDelete;
 import com.google.code.geobeagle.activity.cachelist.actions.context.ContextActionEdit;
 import com.google.code.geobeagle.activity.cachelist.actions.context.ContextActionView;
+import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionDeleteAllCaches;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionMyLocation;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionSyncGpx;
-import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionDeleteAllCaches.MenuActionDeleteAllCachesFactory;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionSyncGpx.MenuActionSyncGpxFactory;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
 import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheListPresenter;
@@ -62,10 +62,7 @@ public class CacheListDelegateDI {
         final MenuActions menuActions = injector.getInstance(MenuActions.class);
 
         menuActions.add(menuActionSyncGpx);
-        final MenuActionDeleteAllCachesFactory menuActionDeleteAllCachesFactory = injector
-                .getInstance(MenuActionDeleteAllCachesFactory.class);
-
-        menuActions.add(menuActionDeleteAllCachesFactory.create(cacheListRefresh));
+        menuActions.add(injector.getInstance(MenuActionDeleteAllCaches.class));
         menuActions.add(injector.getInstance(MenuActionMyLocation.class));
         menuActions.add(injector.getInstance(MenuActionSearchOnline.class));
         menuActions.add(injector.getInstance(MenuActionMap.class));
