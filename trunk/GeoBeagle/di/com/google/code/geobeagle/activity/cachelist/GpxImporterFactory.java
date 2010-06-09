@@ -15,46 +15,41 @@
 package com.google.code.geobeagle.activity.cachelist;
 
 import com.google.code.geobeagle.ErrorDisplayer;
+import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheListPresenter;
 import com.google.code.geobeagle.database.CacheWriter;
 import com.google.code.geobeagle.database.GpxWriter;
 import com.google.code.geobeagle.xmlimport.GpxImporter;
 import com.google.code.geobeagle.xmlimport.GpxImporterDI;
-import com.google.code.geobeagle.xmlimport.MessageHandlerInterface;
 import com.google.code.geobeagle.xmlimport.CachePersisterFacadeDI.CachePersisterFacadeFactory;
+import com.google.code.geobeagle.xmlimport.GpxImporterDI.MessageHandler;
 import com.google.code.geobeagle.xmlimport.GpxToCache.Aborter;
 import com.google.code.geobeagle.xmlimport.GpxToCacheDI.XmlPullParserWrapper;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
-import com.google.inject.assistedinject.Assisted;
 
 import android.content.Context;
 
 public class GpxImporterFactory {
 
-    public static interface GpxImporterFactoryFactory {
-        GpxImporterFactory create(Pausable geocacheListPresenter,
-                MessageHandlerInterface messageHandler);
-    }
-
     private final Aborter mAborter;
     private final CachePersisterFacadeFactory mCachePersisterFacadeFactory;
     private final ErrorDisplayer mErrorDisplayer;
-    private final Pausable mGeocacheListPresenter;
+    private final GeocacheListPresenter mGeocacheListPresenter;
     private final Context mContext;
-    private final MessageHandlerInterface mMessageHandler;
+    private final MessageHandler mMessageHandler;
     private final XmlPullParserWrapper mXmlPullParserWrapper;
     private final Injector mInjector;
 
     @Inject
     public GpxImporterFactory(Aborter aborter,
             CachePersisterFacadeFactory cachePersisterFacadeFactory, ErrorDisplayer errorDisplayer,
-            @Assisted Pausable pausable, Context context,
-            @Assisted MessageHandlerInterface messageHandler,
+            GeocacheListPresenter geocacheListPresenter, Context context,
+            MessageHandler messageHandler,
             XmlPullParserWrapper xmlPullParserWrapper, Injector injector) {
         mAborter = aborter;
         mCachePersisterFacadeFactory = cachePersisterFacadeFactory;
         mErrorDisplayer = errorDisplayer;
-        mGeocacheListPresenter = pausable;
+        mGeocacheListPresenter = geocacheListPresenter;
         mContext = context;
         mMessageHandler = messageHandler;
         mXmlPullParserWrapper = xmlPullParserWrapper;
