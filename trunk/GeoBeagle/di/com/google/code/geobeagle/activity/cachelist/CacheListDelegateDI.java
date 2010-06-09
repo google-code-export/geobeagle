@@ -31,11 +31,8 @@ import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionDelet
 import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionSyncGpx.MenuActionSyncGpxFactory;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
 import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheListPresenter;
-import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheListPresenter.GeocacheListPresenterFactory;
-import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidget;
 import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidgetDelegate;
 import com.google.code.geobeagle.gpsstatuswidget.InflatedGpsStatusWidget;
-import com.google.code.geobeagle.gpsstatuswidget.UpdateGpsWidgetRunnable;
 import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidgetModule.CacheList;
 import com.google.code.geobeagle.xmlimport.GpxImporterDI.MessageHandler;
 import com.google.inject.Injector;
@@ -48,22 +45,15 @@ public class CacheListDelegateDI {
         final Injector injector = listActivity.getInjector();
         final InflatedGpsStatusWidget inflatedGpsStatusWidget = injector.getInstance(Key.get(
                 InflatedGpsStatusWidget.class, CacheList.class));
-        final GpsStatusWidget gpsStatusWidget = injector.getInstance(GpsStatusWidget.class);
-
         final GpsStatusWidgetDelegate gpsStatusWidgetDelegate = injector.getInstance(Key.get(
                 GpsStatusWidgetDelegate.class, CacheList.class));
 
         inflatedGpsStatusWidget.setDelegate(gpsStatusWidgetDelegate);
 
-        final UpdateGpsWidgetRunnable updateGpsWidgetRunnable = injector.getInstance(Key.get(
-                UpdateGpsWidgetRunnable.class, CacheList.class));
-
         final CacheListRefresh cacheListRefresh = injector.getInstance(CacheListRefresh.class);
 
-        final GeocacheListPresenterFactory geocacheListPresenterFactory = injector
-                .getInstance(GeocacheListPresenterFactory.class);
-        final GeocacheListPresenter geocacheListPresenter = geocacheListPresenterFactory.create(
-                gpsStatusWidget, updateGpsWidgetRunnable);
+        final GeocacheListPresenter geocacheListPresenter = injector
+                .getInstance(GeocacheListPresenter.class);
         final MessageHandler messageHandler = injector.getInstance(MessageHandler.class);
         final GpxImporterFactoryFactory gpxImporterFactoryFactory = injector
                 .getInstance(GpxImporterFactoryFactory.class);

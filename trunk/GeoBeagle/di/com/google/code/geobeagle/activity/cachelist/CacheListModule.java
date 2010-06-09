@@ -40,7 +40,6 @@ import com.google.code.geobeagle.activity.cachelist.presenter.BearingFormatter;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
 import com.google.code.geobeagle.activity.cachelist.presenter.DistanceUpdater;
 import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheListAdapter;
-import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheListPresenter;
 import com.google.code.geobeagle.activity.cachelist.presenter.LocationAndAzimuthTolerance;
 import com.google.code.geobeagle.activity.cachelist.presenter.LocationTolerance;
 import com.google.code.geobeagle.activity.cachelist.presenter.RelativeBearingFormatter;
@@ -48,7 +47,6 @@ import com.google.code.geobeagle.activity.cachelist.presenter.SqlCacheLoader;
 import com.google.code.geobeagle.activity.cachelist.presenter.ToleranceStrategy;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh.ActionManager;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh.UpdateFlag;
-import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheListPresenter.GeocacheListPresenterFactory;
 import com.google.code.geobeagle.activity.main.GeoBeagleModule.DefaultSharedPreferences;
 import com.google.code.geobeagle.formatting.DistanceFormatter;
 import com.google.code.geobeagle.formatting.DistanceFormatterImperial;
@@ -80,9 +78,6 @@ public class CacheListModule extends AbstractAndroidModule {
     @Override
     protected void configure() {
         bind(GeocacheListAdapter.class).in(ContextScoped.class);
-        bind(GeocacheListPresenterFactory.class).toProvider(
-                FactoryProvider.newFactory(GeocacheListPresenterFactory.class,
-                        GeocacheListPresenter.class));
         bind(MenuActionSyncBCaching.class).in(ContextScoped.class);
         bind(ActivityVisible.class).in(Singleton.class);
         bind(DistanceFormatter.class).toProvider(DistanceFormatterProvider.class).in(
