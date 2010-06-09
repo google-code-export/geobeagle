@@ -36,6 +36,7 @@ import roboguice.inject.ContextScoped;
 import android.app.Activity;
 import android.content.Context;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.TextView;
 
 import java.lang.annotation.Annotation;
@@ -131,8 +132,12 @@ public class GpsStatusWidgetModule extends AbstractAndroidModule {
     @Provides
     @ContextScoped
     @CacheList
-    InflatedGpsStatusWidget providesInflatedGpsStatusWidget(Context context) {
-        return new InflatedGpsStatusWidget(context);
+    InflatedGpsStatusWidget providesInflatedGpsStatusWidget(Context context,
+            GpsStatusWidget gpsStatusWidget) {
+        InflatedGpsStatusWidget inflatedGpsStatusWidget = new InflatedGpsStatusWidget(context);
+        gpsStatusWidget.addView(inflatedGpsStatusWidget, ViewGroup.LayoutParams.FILL_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT);
+        return inflatedGpsStatusWidget;
     }
 
     @Provides
