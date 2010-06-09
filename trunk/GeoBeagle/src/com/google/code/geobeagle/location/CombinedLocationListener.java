@@ -29,10 +29,6 @@ public class CombinedLocationListener implements LocationListener {
     private final LocationControlBuffered mLocationControlBuffered;
     private final LocationListener mLocationListener;
 
-    public interface CombinedLocationListenerFactory {
-        public CombinedLocationListener create(LocationListener locationListener);
-    }
-
     @Inject
     public CombinedLocationListener(LocationControlBuffered locationControlBuffered,
             @Assisted LocationListener locationListener) {

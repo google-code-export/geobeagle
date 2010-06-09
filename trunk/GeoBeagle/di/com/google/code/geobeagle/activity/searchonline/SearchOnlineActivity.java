@@ -23,7 +23,6 @@ import com.google.code.geobeagle.gpsstatuswidget.InflatedGpsStatusWidget;
 import com.google.code.geobeagle.gpsstatuswidget.UpdateGpsWidgetRunnable;
 import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidgetModule.SearchOnline;
 import com.google.code.geobeagle.location.CombinedLocationListener;
-import com.google.code.geobeagle.location.CombinedLocationListener.CombinedLocationListenerFactory;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Key;
@@ -100,8 +99,8 @@ public class SearchOnlineActivity extends GuiceActivity {
         mInflatedGpsStatusWidget.setDelegate(gpsStatusWidgetDelegate);
         mInflatedGpsStatusWidget.setBackgroundColor(Color.BLACK);
 
-        mCombinedLocationListener = injector.getInstance(CombinedLocationListenerFactory.class)
-                .create(gpsStatusWidgetDelegate);
+        mCombinedLocationListener = injector.getInstance(Key.get(CombinedLocationListener.class,
+                SearchOnline.class));
         
         mSearchOnlineActivityDelegate = injector.getInstance(
                 SearchOnlineActivityDelegateFactory.class).create(
