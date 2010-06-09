@@ -27,8 +27,6 @@ import com.google.code.geobeagle.activity.cachelist.GeocacheListController.Geoca
 import com.google.code.geobeagle.activity.cachelist.actions.context.ContextActionDelete;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.Abortable;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionSyncBCaching;
-import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionSyncGpx;
-import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionSyncGpx.MenuActionSyncGpxFactory;
 import com.google.code.geobeagle.activity.cachelist.model.CacheListData;
 import com.google.code.geobeagle.activity.cachelist.presenter.AbsoluteBearingFormatter;
 import com.google.code.geobeagle.activity.cachelist.presenter.ActionAndTolerance;
@@ -85,10 +83,6 @@ public class CacheListModule extends AbstractAndroidModule {
         bind(Timing.class).in(Singleton.class);
         bind(UpdateFlag.class).in(Singleton.class);
         bind(CacheListRefresh.class).in(ContextScoped.class);
-        bind(MenuActionSyncGpxFactory.class)
-                .toProvider(
-                        FactoryProvider.newFactory(MenuActionSyncGpxFactory.class,
-                                MenuActionSyncGpx.class));
         bind(ContextActionDelete.class).in(ContextScoped.class);
         bind(GeocacheListControllerFactory.class).toProvider(
                 FactoryProvider.newFactory(GeocacheListControllerFactory.class,
