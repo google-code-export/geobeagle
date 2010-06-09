@@ -14,9 +14,6 @@
 
 package com.google.code.geobeagle.activity.cachelist;
 
-import com.google.code.geobeagle.actions.MenuActionMap;
-import com.google.code.geobeagle.actions.MenuActionSearchOnline;
-import com.google.code.geobeagle.actions.MenuActionSettings;
 import com.google.code.geobeagle.actions.MenuActions;
 import com.google.code.geobeagle.activity.cachelist.CacheListDelegate.CacheListDelegateFactory;
 import com.google.code.geobeagle.activity.cachelist.GeocacheListController.GeocacheListControllerFactory;
@@ -24,8 +21,6 @@ import com.google.code.geobeagle.activity.cachelist.actions.context.ContextActio
 import com.google.code.geobeagle.activity.cachelist.actions.context.ContextActionDelete;
 import com.google.code.geobeagle.activity.cachelist.actions.context.ContextActionEdit;
 import com.google.code.geobeagle.activity.cachelist.actions.context.ContextActionView;
-import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionDeleteAllCaches;
-import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionMyLocation;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionSyncGpx;
 import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidgetDelegate;
 import com.google.code.geobeagle.gpsstatuswidget.InflatedGpsStatusWidget;
@@ -47,13 +42,6 @@ public class CacheListDelegateDI {
 
         final MenuActionSyncGpx menuActionSyncGpx = injector.getInstance(MenuActionSyncGpx.class);
         final MenuActions menuActions = injector.getInstance(MenuActions.class);
-
-        menuActions.add(menuActionSyncGpx);
-        menuActions.add(injector.getInstance(MenuActionDeleteAllCaches.class));
-        menuActions.add(injector.getInstance(MenuActionMyLocation.class));
-        menuActions.add(injector.getInstance(MenuActionSearchOnline.class));
-        menuActions.add(injector.getInstance(MenuActionMap.class));
-        menuActions.add(injector.getInstance(MenuActionSettings.class));
 
         final ContextActionView contextActionView = injector.getInstance(ContextActionView.class);
         final ContextActionEdit contextActionEdit = injector.getInstance(ContextActionEdit.class);
