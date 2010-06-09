@@ -34,7 +34,6 @@ import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheListPresen
 import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheListPresenter.GeocacheListPresenterFactory;
 import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidget;
 import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidgetDelegate;
-import com.google.code.geobeagle.gpsstatuswidget.GpsWidgetAndUpdater;
 import com.google.code.geobeagle.gpsstatuswidget.UpdateGpsWidgetRunnable;
 import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidget.InflatedGpsStatusWidget;
 import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidgetModule.CacheList;
@@ -80,10 +79,8 @@ public class CacheListDelegateDI {
         final GpsStatusWidget gpsStatusWidget = injector.getInstance(GpsStatusWidget.class);
         gpsStatusWidget.addView(inflatedGpsStatusWidget, ViewGroup.LayoutParams.FILL_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT);
-        final GpsWidgetAndUpdater gpsWidgetAndUpdater = injector.getInstance(Key.get(
-                GpsWidgetAndUpdater.class, CacheList.class));
-        final GpsStatusWidgetDelegate gpsStatusWidgetDelegate = gpsWidgetAndUpdater
-                .getGpsStatusWidgetDelegate();
+        final GpsStatusWidgetDelegate gpsStatusWidgetDelegate = injector.getInstance(Key.get(
+                GpsStatusWidgetDelegate.class, CacheList.class));
 
         inflatedGpsStatusWidget.setDelegate(gpsStatusWidgetDelegate);
 
@@ -92,8 +89,8 @@ public class CacheListDelegateDI {
         final CombinedLocationListener combinedLocationListener = combinedLocationListenerFactory
                 .create(gpsStatusWidgetDelegate);
 
-        final UpdateGpsWidgetRunnable updateGpsWidgetRunnable = gpsWidgetAndUpdater
-                .getUpdateGpsWidgetRunnable();
+        final UpdateGpsWidgetRunnable updateGpsWidgetRunnable = injector.getInstance(Key.get(
+                UpdateGpsWidgetRunnable.class, CacheList.class));
 
         final CacheListRefresh cacheListRefresh = injector.getInstance(CacheListRefresh.class);
 
