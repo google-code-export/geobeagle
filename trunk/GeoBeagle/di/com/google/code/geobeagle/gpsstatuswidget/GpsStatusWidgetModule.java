@@ -23,7 +23,6 @@ import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.Time;
 import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidget.InflatedGpsStatusWidget;
 import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidgetDelegate.GpsStatusWidgetDelegateFactory;
-import com.google.code.geobeagle.gpsstatuswidget.MeterFader.MeterFaderFactory;
 import com.google.code.geobeagle.gpsstatuswidget.TextLagUpdater.LastLocationUnknown;
 import com.google.inject.BindingAnnotation;
 import com.google.inject.Key;
@@ -93,6 +92,13 @@ public class GpsStatusWidgetModule extends AbstractAndroidModule {
             return new TextLagUpdater(lastKnownLocation, (TextView)gpsStatusWidget
                     .findViewById(R.id.lag), time);
         }
+        
+        @Provides
+        @ContextScoped
+        MeterFader providesMeterFader(@GpsStatusWidgetView View gpsStatusWidget,
+                MeterBars meterBars, Time time) {
+            return new MeterFader(gpsStatusWidget, meterBars, time);
+        }
     }
 
     static class GpsStatusWidgetCacheListModule extends GpsStatusWidgetPrivateModule {
@@ -118,8 +124,6 @@ public class GpsStatusWidgetModule extends AbstractAndroidModule {
 
     @Override
     protected void configure() {
-        bind(MeterFaderFactory.class).toProvider(
-                FactoryProvider.newFactory(MeterFaderFactory.class, MeterFader.class));
         bind(GpsStatusWidgetDelegateFactory.class).toProvider(
                 FactoryProvider.newFactory(GpsStatusWidgetDelegateFactory.class,
                         GpsStatusWidgetDelegate.class));
