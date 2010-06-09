@@ -27,7 +27,6 @@ import com.google.code.geobeagle.database.TagWriterImpl;
 import com.google.code.geobeagle.database.TagWriterNull;
 import com.google.code.geobeagle.xmlimport.GpxImporterDI.MessageHandler;
 import com.google.inject.Inject;
-import com.google.inject.assistedinject.Assisted;
 
 import android.os.PowerManager.WakeLock;
 
@@ -51,7 +50,7 @@ public class CachePersisterFacadeDI {
         private final ClearCachesFromSource mClearCachesFromSource;
 
         @Inject
-        public CachePersisterFacadeFactory(@Assisted MessageHandler messageHandler,
+        public CachePersisterFacadeFactory(MessageHandler messageHandler,
                 CacheTypeFactory cacheTypeFactory, TagWriterImpl tagWriterImpl,
                 TagWriterNull tagWriterNull, FilePathStrategy filePathStrategy,
                 ClearCachesFromSourceImpl clearCachesFromSourceImpl) {

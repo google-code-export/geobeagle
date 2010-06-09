@@ -40,7 +40,6 @@ import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidgetModule.CacheList
 import com.google.code.geobeagle.location.CombinedLocationListener;
 import com.google.code.geobeagle.location.CombinedLocationListener.CombinedLocationListenerFactory;
 import com.google.code.geobeagle.xmlimport.CachePersisterFacadeDI.CachePersisterFacadeFactory;
-import com.google.code.geobeagle.xmlimport.CachePersisterFacadeDI.CachePersisterFacadeFactory.CachePersisterFacadeFactoryFactory;
 import com.google.code.geobeagle.xmlimport.GpxImporterDI.MessageHandler;
 import com.google.inject.Injector;
 import com.google.inject.Key;
@@ -96,10 +95,8 @@ public class CacheListDelegateDI {
         final GeocacheListPresenter geocacheListPresenter = geocacheListPresenterFactory.create(
                 combinedLocationListener, gpsStatusWidget, updateGpsWidgetRunnable);
         final MessageHandler messageHandler = injector.getInstance(MessageHandler.class);
-        final CachePersisterFacadeFactoryFactory cachePersisterFacadeFactoryFactory = injector
-                .getInstance(CachePersisterFacadeFactoryFactory.class);
-        final CachePersisterFacadeFactory cachePersisterFacadeFactory = cachePersisterFacadeFactoryFactory
-                .create(messageHandler);
+        final CachePersisterFacadeFactory cachePersisterFacadeFactory = injector
+                .getInstance(CachePersisterFacadeFactory.class);
 
         final GpxImporterFactoryFactory gpxImporterFactoryFactory = injector
                 .getInstance(GpxImporterFactoryFactory.class);
