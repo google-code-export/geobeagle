@@ -47,19 +47,37 @@ public class GpsStatusWidgetModule extends AbstractAndroidModule {
     public static @interface CacheList {}
 
     @BindingAnnotation @Target({ FIELD, PARAMETER, METHOD }) @Retention(RUNTIME)
+    public static @interface LocationProvider {}
+
+    @BindingAnnotation @Target({ FIELD, PARAMETER, METHOD }) @Retention(RUNTIME)
     public static @interface LocationViewer {}
     
     @BindingAnnotation @Target({ FIELD, PARAMETER, METHOD }) @Retention(RUNTIME)
     public static @interface SearchOnline {}
 
     @BindingAnnotation @Target({ FIELD, PARAMETER, METHOD }) @Retention(RUNTIME)
+    public static @interface Status {}
+
+    @BindingAnnotation @Target({ FIELD, PARAMETER, METHOD }) @Retention(RUNTIME)
     public static @interface GpsStatusWidgetView {}
 
     static abstract class GpsStatusWidgetPrivateModule extends PrivateModule {
         @Provides
+        @LocationProvider
+        TextView providesLocationProviderViewer(@GpsStatusWidgetView View gpsStatusWidget) {
+            return (TextView)gpsStatusWidget.findViewById(R.id.provider);
+        }
+
+        @Provides
         @LocationViewer
         TextView providesLocationViewer(@GpsStatusWidgetView View gpsStatusWidget) {
             return (TextView)gpsStatusWidget.findViewById(R.id.location_viewer);
+        }
+        
+        @Provides
+        @Status
+        TextView providesStatusView(@GpsStatusWidgetView View gpsStatusWidget) {
+            return (TextView)gpsStatusWidget.findViewById(R.id.status);
         }
 
         @Provides
@@ -67,7 +85,7 @@ public class GpsStatusWidgetModule extends AbstractAndroidModule {
         Meter providesMeter(MeterBars meterBars, @GpsStatusWidgetView View gpsStatusWidget) {
             return new Meter(meterBars, ((TextView)gpsStatusWidget.findViewById(R.id.accuracy)));
         }
-        
+
         @Provides
         @ContextScoped
         TextLagUpdater providesTextLagUpdater(LastLocationUnknown lastKnownLocation, Time time,
@@ -98,8 +116,6 @@ public class GpsStatusWidgetModule extends AbstractAndroidModule {
         }
     }
 
-    @BindingAnnotation @Target({ FIELD, PARAMETER, METHOD }) @Retention(RUNTIME)
-    public static @interface Lag {}
     @Override
     protected void configure() {
         bind(MeterFaderFactory.class).toProvider(

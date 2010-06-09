@@ -118,10 +118,7 @@ class TextLagUpdater {
     private final TextView mTextLag;
     private final Time mTime;
 
-    @Inject
-    TextLagUpdater(LastLocationUnknown lastLocationUnknown,
-            @com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidgetModule.Lag TextView textLag,
-            Time time) {
+    TextLagUpdater(LastLocationUnknown lastLocationUnknown, TextView textLag, Time time) {
         mLastLocation = lastLocationUnknown;
         mTextLag = textLag;
         mTime = time;
