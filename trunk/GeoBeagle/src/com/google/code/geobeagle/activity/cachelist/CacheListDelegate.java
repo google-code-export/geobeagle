@@ -74,14 +74,14 @@ public class CacheListDelegate {
     private final ActivityVisible mActivityVisible;
 
     public static interface CacheListDelegateFactory {
-        CacheListDelegate create(GeocacheListController geocacheListController,
-                GeocacheListPresenter geocacheListPresenter);
+        CacheListDelegate create(GeocacheListController geocacheListController);
     }
 
     @Inject
     public CacheListDelegate(ImportIntentManager importIntentManager, ActivitySaver activitySaver,
-            CacheListRefresh cacheListRefresh, @Assisted GeocacheListController geocacheListController,
-            @Assisted GeocacheListPresenter geocacheListPresenter, Provider<DbFrontend> dbFrontendProvider,
+            CacheListRefresh cacheListRefresh,
+            @Assisted GeocacheListController geocacheListController,
+            GeocacheListPresenter geocacheListPresenter, Provider<DbFrontend> dbFrontendProvider,
             ContextActionDeleteDialogHelper contextActionDeleteDialogHelper,
             ActivityVisible activityVisible) {
         mActivitySaver = activitySaver;
