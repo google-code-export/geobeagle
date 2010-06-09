@@ -32,9 +32,7 @@ import com.google.inject.assistedinject.Assisted;
 
 import android.app.ListActivity;
 import android.hardware.SensorManager;
-import android.location.Location;
 import android.location.LocationListener;
-import android.os.Bundle;
 import android.view.View;
 import android.widget.ListView;
 
@@ -45,28 +43,6 @@ public class GeocacheListPresenter implements Pausable {
                 GpsStatusWidget gpsStatusWidget, UpdateGpsWidgetRunnable updateGpsWidgetRunnable);
     }
     
-    public static class CacheListRefreshLocationListener implements LocationListener {
-        private final CacheListRefresh mCacheListRefresh;
-
-        public CacheListRefreshLocationListener(CacheListRefresh cacheListRefresh) {
-            mCacheListRefresh = cacheListRefresh;
-        }
-
-        public void onLocationChanged(Location location) {
-            // Log.d("GeoBeagle", "location changed");
-            mCacheListRefresh.refresh();
-        }
-
-        public void onProviderDisabled(String provider) {
-        }
-
-        public void onProviderEnabled(String provider) {
-        }
-
-        public void onStatusChanged(String provider, int status, Bundle extras) {
-        }
-    }
-
     static final int UPDATE_DELAY = 1000;
 
     private final LocationListener mCombinedLocationListener;
