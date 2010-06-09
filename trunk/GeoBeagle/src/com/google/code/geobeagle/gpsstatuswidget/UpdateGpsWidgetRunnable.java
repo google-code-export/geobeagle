@@ -17,14 +17,10 @@ package com.google.code.geobeagle.gpsstatuswidget;
 import com.google.code.geobeagle.LocationControlBuffered;
 import com.google.code.geobeagle.activity.cachelist.ActivityVisible;
 import com.google.inject.Inject;
-import com.google.inject.assistedinject.Assisted;
 
 import android.os.Handler;
 
 public class UpdateGpsWidgetRunnable implements Runnable {
-    static interface UpdateGpsWidgetRunnableFactory {
-        UpdateGpsWidgetRunnable create(Meter meter, TextLagUpdater textLagUpdater);
-    }
     private final Handler mHandler;
     private final LocationControlBuffered mLocationControlBuffered;
     private final Meter mMeterWrapper;
@@ -33,8 +29,7 @@ public class UpdateGpsWidgetRunnable implements Runnable {
 
     @Inject
     UpdateGpsWidgetRunnable(Handler handler, LocationControlBuffered locationControlBuffered,
-            @Assisted Meter meter, @Assisted TextLagUpdater textLagUpdater,
-            ActivityVisible activityVisible) {
+            Meter meter, TextLagUpdater textLagUpdater, ActivityVisible activityVisible) {
         mMeterWrapper = meter;
         mLocationControlBuffered = locationControlBuffered;
         mTextLagUpdater = textLagUpdater;
