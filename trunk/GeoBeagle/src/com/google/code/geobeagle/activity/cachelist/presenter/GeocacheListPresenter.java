@@ -29,7 +29,6 @@ import com.google.code.geobeagle.location.CombinedLocationListener;
 import com.google.code.geobeagle.location.CombinedLocationManager;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
-import com.google.inject.assistedinject.Assisted;
 
 import android.app.ListActivity;
 import android.hardware.SensorManager;
@@ -38,11 +37,6 @@ import android.view.View;
 import android.widget.ListView;
 
 public class GeocacheListPresenter implements Pausable {
-    
-    public interface GeocacheListPresenterFactory {
-        GeocacheListPresenter create(GpsStatusWidget gpsStatusWidget,
-                UpdateGpsWidgetRunnable updateGpsWidgetRunnable);
-    }
     
     static final int UPDATE_DELAY = 1000;
 
@@ -64,10 +58,10 @@ public class GeocacheListPresenter implements Pausable {
             CombinedLocationManager combinedLocationManager,
             Provider<CompassListener> compassListenerProvider,
             GeocacheListAdapter geocacheListAdapter, GeocacheVectors geocacheVectors,
-            @Assisted GpsStatusWidget gpsStatusWidget, ListActivity listActivity,
+            GpsStatusWidget gpsStatusWidget, ListActivity listActivity,
             LocationControlBuffered locationControlBuffered,
             SensorManagerWrapper sensorManagerWrapper,
-            @Assisted UpdateGpsWidgetRunnable updateGpsWidgetRunnable, ScrollListener scrollListener) {
+            @CacheList UpdateGpsWidgetRunnable updateGpsWidgetRunnable, ScrollListener scrollListener) {
         mCombinedLocationListener = combinedLocationListener;
         mCombinedLocationManager = combinedLocationManager;
         mCompassListenerProvider = compassListenerProvider;
