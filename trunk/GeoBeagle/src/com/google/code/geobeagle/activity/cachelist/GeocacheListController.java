@@ -63,14 +63,13 @@ public class GeocacheListController {
     private final Aborter mAborter;
 
     public interface GeocacheListControllerFactory {
-        GeocacheListController create(ContextAction[] contextActions,
-                MenuActionSyncGpx menuActionSyncGpx);
+        GeocacheListController create(ContextAction[] contextActions);
     }
 
     @Inject
     public GeocacheListController(CacheListRefresh cacheListRefresh,
-            @Assisted ContextAction[] contextActions,
-            @Assisted MenuActionSyncGpx menuActionSyncGpx, MenuActions menuActions, Aborter aborter) {
+            @Assisted ContextAction[] contextActions, MenuActionSyncGpx menuActionSyncGpx,
+            MenuActions menuActions, Aborter aborter) {
         mCacheListRefresh = cacheListRefresh;
         mContextActions = contextActions;
         mMenuActionSyncGpx = menuActionSyncGpx;
