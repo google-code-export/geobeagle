@@ -14,43 +14,15 @@
 
 package com.google.code.geobeagle.gpsstatuswidget;
 
-import com.google.code.geobeagle.R;
 import com.google.inject.Inject;
 
 import android.content.Context;
-import android.graphics.Canvas;
-import android.util.AttributeSet;
-import android.view.LayoutInflater;
 import android.widget.LinearLayout;
 
 /**
  * @author sng Displays the GPS status (mAccuracy, availability, etc).
  */
 public class GpsStatusWidget extends LinearLayout {
-
-    public static class InflatedGpsStatusWidget extends LinearLayout {
-        private GpsStatusWidgetDelegate mGpsStatusWidgetDelegate;
-
-        public InflatedGpsStatusWidget(Context context) {
-            super(context);
-            LayoutInflater.from(context).inflate(R.layout.gps_widget, this, true);
-        }
-
-        public InflatedGpsStatusWidget(Context context, AttributeSet attrs) {
-            super(context, attrs);
-            LayoutInflater.from(context).inflate(R.layout.gps_widget, this, true);
-        }
-
-        @Override
-        protected void dispatchDraw(Canvas canvas) {
-            super.dispatchDraw(canvas);
-            mGpsStatusWidgetDelegate.paint();
-        }
-
-        public void setDelegate(GpsStatusWidgetDelegate gpsStatusWidgetDelegate) {
-            mGpsStatusWidgetDelegate = gpsStatusWidgetDelegate;
-        }
-    }
 
     @Inject
     public GpsStatusWidget(Context context) {
