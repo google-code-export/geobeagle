@@ -15,7 +15,7 @@
 package com.google.code.geobeagle.activity.cachelist.presenter;
 
 import com.google.code.geobeagle.LocationControlBuffered;
-import com.google.code.geobeagle.activity.cachelist.CacheListDelegateDI;
+import com.google.code.geobeagle.Timing;
 import com.google.code.geobeagle.activity.cachelist.model.CacheListData;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVector;
 
@@ -35,7 +35,7 @@ public class AdapterCachesSorterTest {
     @Test
     public void testAdapterCachesSorter() {
         CacheListData cacheListData = PowerMock.createMock(CacheListData.class);
-        CacheListDelegateDI.Timing timing = PowerMock.createMock(CacheListDelegateDI.Timing.class);
+        Timing timing = PowerMock.createMock(Timing.class);
         LocationControlBuffered locationControlBuffered = PowerMock
                 .createMock(LocationControlBuffered.class);
         SortStrategy sortStrategy = PowerMock.createMock(SortStrategy.class);

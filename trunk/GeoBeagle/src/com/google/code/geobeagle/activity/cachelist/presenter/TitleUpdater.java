@@ -14,7 +14,7 @@
 
 package com.google.code.geobeagle.activity.cachelist.presenter;
 
-import com.google.code.geobeagle.activity.cachelist.CacheListDelegateDI;
+import com.google.code.geobeagle.Timing;
 import com.google.code.geobeagle.database.FilterNearestCaches;
 import com.google.inject.Inject;
 
@@ -23,11 +23,11 @@ import android.app.Activity;
 public class TitleUpdater {
     private final FilterNearestCaches mFilterNearestCaches;
     private final Activity mActivity;
-    private final CacheListDelegateDI.Timing mTiming;
+    private final Timing mTiming;
 
     @Inject
     public TitleUpdater(Activity activity, FilterNearestCaches filterNearestCaches,
-            CacheListDelegateDI.Timing timing) {
+            Timing timing) {
         mActivity = activity;
         mFilterNearestCaches = filterNearestCaches;
         mTiming = timing;

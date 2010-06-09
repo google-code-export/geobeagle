@@ -22,7 +22,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.Projection;
 import com.google.code.geobeagle.Geocache;
-import com.google.code.geobeagle.activity.cachelist.CacheListDelegateDI;
+import com.google.code.geobeagle.Timing;
 import com.google.code.geobeagle.activity.map.GeoMapActivityModule.DefaultMapPinMarker;
 import com.google.inject.BindingAnnotation;
 import com.google.inject.Inject;
@@ -61,7 +61,7 @@ public class CachePinsOverlayFactory {
 
     public CachePinsOverlay getCachePinsOverlay() {
         Log.d("GeoBeagle", "refresh Caches");
-        final CacheListDelegateDI.Timing timing = new CacheListDelegateDI.Timing();
+        final Timing timing = new Timing();
 
         Projection projection = mGeoMapView.getProjection();
         GeoPoint newTopLeft = projection.fromPixels(0, 0);

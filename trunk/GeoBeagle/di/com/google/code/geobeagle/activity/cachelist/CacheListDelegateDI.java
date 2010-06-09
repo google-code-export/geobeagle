@@ -45,29 +45,7 @@ import com.google.inject.Key;
 
 import roboguice.activity.GuiceListActivity;
 
-import android.util.Log;
-
-import java.util.Calendar;
-
 public class CacheListDelegateDI {
-    public static class Timing {
-        private long mStartTime;
-
-        public void lap(CharSequence msg) {
-            long finishTime = Calendar.getInstance().getTimeInMillis();
-            Log.d("GeoBeagle", "****** " + msg + ": " + (finishTime - mStartTime));
-            mStartTime = finishTime;
-        }
-
-        public void start() {
-            mStartTime = Calendar.getInstance().getTimeInMillis();
-        }
-
-        public long getTime() {
-            return Calendar.getInstance().getTimeInMillis();
-        }
-    }
-
     public static CacheListDelegate create(GuiceListActivity listActivity) {
         final Injector injector = listActivity.getInjector();
         final InflatedGpsStatusWidget inflatedGpsStatusWidget = injector.getInstance(Key.get(
