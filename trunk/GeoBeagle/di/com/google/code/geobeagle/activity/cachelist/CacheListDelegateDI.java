@@ -95,13 +95,10 @@ public class CacheListDelegateDI {
         final GeocacheListPresenter geocacheListPresenter = geocacheListPresenterFactory.create(
                 combinedLocationListener, gpsStatusWidget, updateGpsWidgetRunnable);
         final MessageHandler messageHandler = injector.getInstance(MessageHandler.class);
-        final CachePersisterFacadeFactory cachePersisterFacadeFactory = injector
-                .getInstance(CachePersisterFacadeFactory.class);
-
         final GpxImporterFactoryFactory gpxImporterFactoryFactory = injector
                 .getInstance(GpxImporterFactoryFactory.class);
         final GpxImporterFactory gpxImporterFactory = gpxImporterFactoryFactory.create(
-                cachePersisterFacadeFactory, geocacheListPresenter, messageHandler);
+                geocacheListPresenter, messageHandler);
 
         final MenuActionSyncGpxFactory menuActionSyncGpxFactory = injector
                 .getInstance(MenuActionSyncGpxFactory.class);
