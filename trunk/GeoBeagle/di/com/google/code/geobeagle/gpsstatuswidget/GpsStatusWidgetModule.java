@@ -57,6 +57,12 @@ public class GpsStatusWidgetModule extends AbstractAndroidModule {
 
     static abstract class GpsStatusWidgetPrivateModule extends PrivateModule {
         @Provides
+        @Lag
+        TextView providesLagView(@GpsStatusWidgetView View gpsStatusWidget) {
+            return (TextView)gpsStatusWidget.findViewById(R.id.lag);
+        }
+
+        @Provides
         @LocationViewer
         TextView providesLocationViewer(@GpsStatusWidgetView View gpsStatusWidget) {
             return (TextView)gpsStatusWidget.findViewById(R.id.location_viewer);
@@ -90,6 +96,8 @@ public class GpsStatusWidgetModule extends AbstractAndroidModule {
         }
     }
 
+    @BindingAnnotation @Target({ FIELD, PARAMETER, METHOD }) @Retention(RUNTIME)
+    public static @interface Lag {}
     @Override
     protected void configure() {
         bind(TextLagUpdaterFactory.class).toProvider(
@@ -120,4 +128,5 @@ public class GpsStatusWidgetModule extends AbstractAndroidModule {
     InflatedGpsStatusWidget providesInflatedGpsStatusWidget(Activity activity) {
         return (InflatedGpsStatusWidget)activity.findViewById(R.id.gps_widget_view);
     }
+    
 }
