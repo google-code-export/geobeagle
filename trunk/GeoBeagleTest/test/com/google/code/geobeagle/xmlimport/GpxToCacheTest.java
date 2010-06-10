@@ -21,7 +21,6 @@ import static org.junit.Assert.assertTrue;
 
 import com.google.code.geobeagle.xmlimport.GpxToCache.Aborter;
 import com.google.code.geobeagle.xmlimport.GpxToCache.CancelException;
-import com.google.code.geobeagle.xmlimport.GpxToCacheDI.XmlPullParserWrapper;
 
 import org.easymock.EasyMock;
 import org.junit.Before;
