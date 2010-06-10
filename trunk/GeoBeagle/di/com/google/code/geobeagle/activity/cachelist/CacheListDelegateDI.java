@@ -14,12 +14,9 @@
 
 package com.google.code.geobeagle.activity.cachelist;
 
+import com.google.code.geobeagle.actions.ContextActions;
 import com.google.code.geobeagle.activity.cachelist.CacheListDelegate.CacheListDelegateFactory;
 import com.google.code.geobeagle.activity.cachelist.GeocacheListController.GeocacheListControllerFactory;
-import com.google.code.geobeagle.activity.cachelist.actions.context.ContextAction;
-import com.google.code.geobeagle.activity.cachelist.actions.context.ContextActionDelete;
-import com.google.code.geobeagle.activity.cachelist.actions.context.ContextActionEdit;
-import com.google.code.geobeagle.activity.cachelist.actions.context.ContextActionView;
 import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidgetDelegate;
 import com.google.code.geobeagle.gpsstatuswidget.InflatedGpsStatusWidget;
 import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidgetModule.CacheList;
@@ -38,18 +35,11 @@ public class CacheListDelegateDI {
 
         inflatedGpsStatusWidget.setDelegate(gpsStatusWidgetDelegate);
 
-        final ContextActionView contextActionView = injector.getInstance(ContextActionView.class);
-        final ContextActionEdit contextActionEdit = injector.getInstance(ContextActionEdit.class);
-        final ContextActionDelete contextActionDelete = injector
-                .getInstance(ContextActionDelete.class);
-
-        final ContextAction[] contextActions = new ContextAction[] {
-                contextActionDelete, contextActionView, contextActionEdit
-        };
+        final ContextActions contextActions = injector.getInstance(ContextActions.class);
         final GeocacheListControllerFactory geocacheListControllerFactory = injector
                 .getInstance(GeocacheListControllerFactory.class);
-        final GeocacheListController geocacheListController = geocacheListControllerFactory.create(
-                contextActions);
+        final GeocacheListController geocacheListController = geocacheListControllerFactory
+                .create(contextActions);
         final CacheListDelegateFactory cacheListDelegateFactory = injector
                 .getInstance(CacheListDelegateFactory.class);
         return cacheListDelegateFactory.create(geocacheListController);

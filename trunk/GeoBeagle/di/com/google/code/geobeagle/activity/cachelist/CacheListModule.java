@@ -22,13 +22,17 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.Timing;
 import com.google.code.geobeagle.LocationControlBuffered.GpsDisabledLocation;
+import com.google.code.geobeagle.actions.ContextActions;
 import com.google.code.geobeagle.actions.MenuActionMap;
 import com.google.code.geobeagle.actions.MenuActionSearchOnline;
 import com.google.code.geobeagle.actions.MenuActionSettings;
 import com.google.code.geobeagle.actions.MenuActions;
 import com.google.code.geobeagle.activity.cachelist.CacheListDelegate.CacheListDelegateFactory;
 import com.google.code.geobeagle.activity.cachelist.GeocacheListController.GeocacheListControllerFactory;
+import com.google.code.geobeagle.activity.cachelist.actions.context.ContextAction;
 import com.google.code.geobeagle.activity.cachelist.actions.context.ContextActionDelete;
+import com.google.code.geobeagle.activity.cachelist.actions.context.ContextActionEdit;
+import com.google.code.geobeagle.activity.cachelist.actions.context.ContextActionView;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.Abortable;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionDeleteAllCaches;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionMyLocation;
@@ -183,7 +187,7 @@ public class CacheListModule extends AbstractAndroidModule {
     }
     
     @Provides
-    MenuActions providesMenuAction(MenuActionSyncGpx menuActionSyncGpx,
+    MenuActions providesMenuActions(MenuActionSyncGpx menuActionSyncGpx,
             MenuActionDeleteAllCaches menuActionDeleteAllCaches,
             MenuActionMyLocation menuActionMyLocation,
             MenuActionSearchOnline menuActionSearchOnline, MenuActionMap menuActionMap,
@@ -197,5 +201,12 @@ public class CacheListModule extends AbstractAndroidModule {
         menuActions.add(menuActionSettings);
         return menuActions;
     }
-    
+
+    @Provides
+    ContextActions provideContextActions(ContextActionDelete contextActionDelete,
+            ContextActionEdit contextActionEdit, ContextActionView contextActionView) {
+        return new ContextActions(new ContextAction[] {
+                contextActionDelete, contextActionView, contextActionEdit
+        });
+    }
 }
