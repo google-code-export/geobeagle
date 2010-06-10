@@ -61,10 +61,6 @@ public class GeocacheListController {
     private final MenuActionSyncGpx mMenuActionSyncGpx;
     private final Aborter mAborter;
 
-    public interface GeocacheListControllerFactory {
-        GeocacheListController create(ContextActions contextActions2);
-    }
-
     @Inject
     public GeocacheListController(CacheListRefresh cacheListRefresh,
             ContextActions contextActions, MenuActionSyncGpx menuActionSyncGpx,
