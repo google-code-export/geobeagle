@@ -14,7 +14,6 @@
 
 package com.google.code.geobeagle.activity.cachelist;
 
-import com.google.code.geobeagle.activity.cachelist.CacheListDelegate.CacheListDelegateFactory;
 import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidgetDelegate;
 import com.google.code.geobeagle.gpsstatuswidget.InflatedGpsStatusWidget;
 import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidgetModule.CacheList;
@@ -33,10 +32,6 @@ public class CacheListDelegateDI {
 
         inflatedGpsStatusWidget.setDelegate(gpsStatusWidgetDelegate);
 
-        final GeocacheListController geocacheListController = injector
-                .getInstance(GeocacheListController.class);
-        final CacheListDelegateFactory cacheListDelegateFactory = injector
-                .getInstance(CacheListDelegateFactory.class);
-        return cacheListDelegateFactory.create(geocacheListController);
+        return injector.getInstance(CacheListDelegate.class);
     }
 }
