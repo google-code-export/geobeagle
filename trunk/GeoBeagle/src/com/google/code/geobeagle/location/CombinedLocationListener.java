@@ -15,8 +15,8 @@
 package com.google.code.geobeagle.location;
 
 import com.google.code.geobeagle.LocationControlBuffered;
+import com.google.code.geobeagle.activity.cachelist.ActivityVisible;
 import com.google.inject.Inject;
-import com.google.inject.assistedinject.Assisted;
 
 import android.location.Location;
 import android.location.LocationListener;
@@ -28,15 +28,19 @@ import android.os.Bundle;
 public class CombinedLocationListener implements LocationListener {
     private final LocationControlBuffered mLocationControlBuffered;
     private final LocationListener mLocationListener;
+    private final ActivityVisible mActivityVisible;
 
     @Inject
     public CombinedLocationListener(LocationControlBuffered locationControlBuffered,
-            @Assisted LocationListener locationListener) {
+            LocationListener locationListener, ActivityVisible activityVisible) {
         mLocationListener = locationListener;
         mLocationControlBuffered = locationControlBuffered;
+        mActivityVisible = activityVisible;
     }
 
     public void onLocationChanged(Location location) {
+        if (!mActivityVisible.getVisible())
+            return;
         // Ask the location control to pick the most accurate location (might
         // not be this one).
         // Log.d("GeoBeagle", "onLocationChanged:" + location);
@@ -47,14 +51,20 @@ public class CombinedLocationListener implements LocationListener {
     }
 
     public void onProviderDisabled(String provider) {
+        if (!mActivityVisible.getVisible())
+            return;
         mLocationListener.onProviderDisabled(provider);
     }
 
     public void onProviderEnabled(String provider) {
+        if (!mActivityVisible.getVisible())
+            return;
         mLocationListener.onProviderEnabled(provider);
     }
 
     public void onStatusChanged(String provider, int status, Bundle extras) {
+        if (!mActivityVisible.getVisible())
+            return;
         mLocationListener.onStatusChanged(provider, status, extras);
     }
 }
