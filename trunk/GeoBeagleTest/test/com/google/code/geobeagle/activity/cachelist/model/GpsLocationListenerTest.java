@@ -16,18 +16,18 @@ package com.google.code.geobeagle.activity.cachelist.model;
 
 import static org.easymock.EasyMock.expect;
 import static org.easymock.classextension.EasyMock.createMock;
-import static org.easymock.classextension.EasyMock.replay;
-import static org.easymock.classextension.EasyMock.verify;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.powermock.api.easymock.PowerMock.replayAll;
+import static org.powermock.api.easymock.PowerMock.verifyAll;
 
 import com.google.code.geobeagle.LocationControlBuffered;
+import com.google.code.geobeagle.activity.cachelist.ActivityVisible;
 import com.google.code.geobeagle.activity.cachelist.GeoBeagleTest;
 import com.google.code.geobeagle.location.CombinedLocationListener;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.powermock.api.easymock.PowerMock;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
@@ -39,17 +39,19 @@ import android.util.Log;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest( {
-    Bundle.class, Log.class
+        Bundle.class, Log.class
 })
 public class GpsLocationListenerTest extends GeoBeagleTest {
 
     private LocationListener locationListener;
     private LocationControlBuffered mLocationControlBuffered;
+    private ActivityVisible activityVisible;
 
     @Before
     public void setUp() {
         locationListener = createMock(LocationListener.class);
         mLocationControlBuffered = createMock(LocationControlBuffered.class);
+        activityVisible = createMock(ActivityVisible.class);
     }
 
     @Test
@@ -57,31 +59,34 @@ public class GpsLocationListenerTest extends GeoBeagleTest {
         Location location = createMock(Location.class);
         expect(mLocationControlBuffered.getLocation()).andReturn(location);
         locationListener.onLocationChanged(location);
+        expect(activityVisible.getVisible()).andReturn(true);
 
-        replay(location);
-        replay(mLocationControlBuffered);
-        new CombinedLocationListener(mLocationControlBuffered, locationListener)
+        replayAll();
+        new CombinedLocationListener(mLocationControlBuffered, locationListener, activityVisible)
                 .onLocationChanged(location);
-        verify(location);
-        verify(mLocationControlBuffered);
+        verifyAll();
     }
 
     @Test
     public void testOnProviderDisabled() {
         locationListener.onProviderDisabled("gps");
+        expect(activityVisible.getVisible()).andReturn(true);
 
-        replay(locationListener);
-        new CombinedLocationListener(null, locationListener).onProviderDisabled("gps");
-        verify(locationListener);
+        replayAll();
+        new CombinedLocationListener(null, locationListener, activityVisible)
+                .onProviderDisabled("gps");
+        verifyAll();
     }
 
     @Test
     public void testOnProviderEnabled() {
         locationListener.onProviderEnabled("gps");
+        expect(activityVisible.getVisible()).andReturn(true);
 
-        replay(locationListener);
-        new CombinedLocationListener(null, locationListener).onProviderEnabled("gps");
-        verify(locationListener);
+        replayAll();
+        new CombinedLocationListener(null, locationListener, activityVisible)
+                .onProviderEnabled("gps");
+        verifyAll();
     }
 
     @Test
@@ -94,12 +99,13 @@ public class GpsLocationListenerTest extends GeoBeagleTest {
 
     @Test
     public void testOnStatusChange() {
-        Bundle bundle = PowerMock.createMock(Bundle.class);
+        Bundle bundle = createMock(Bundle.class);
         locationListener.onStatusChanged("gps", LocationProvider.OUT_OF_SERVICE, bundle);
+        expect(activityVisible.getVisible()).andReturn(true);
 
-        replay(locationListener);
-        new CombinedLocationListener(null, locationListener).onStatusChanged("gps",
-                LocationProvider.OUT_OF_SERVICE, bundle);
-        verify(locationListener);
+        replayAll();
+        new CombinedLocationListener(null, locationListener, activityVisible).onStatusChanged(
+                "gps", LocationProvider.OUT_OF_SERVICE, bundle);
+        verifyAll();
     }
 }
