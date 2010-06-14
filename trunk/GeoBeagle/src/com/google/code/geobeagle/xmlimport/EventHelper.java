@@ -51,14 +51,18 @@ public class EventHelper {
 
     public boolean handleEvent(int eventType) throws IOException {
         switch (eventType) {
-            case XmlPullParser.START_TAG:
-                mXmlPathBuilder.startTag(mXmlPullParser.getName());
-                mEventHandler.startTag(mXmlPathBuilder.getPath(), mXmlPullParser);
+            case XmlPullParser.START_TAG: {
+                final String name = mXmlPullParser.getName();
+                mXmlPathBuilder.startTag(name);
+                mEventHandler.startTag(name, mXmlPathBuilder.getPath(), mXmlPullParser);
                 break;
-            case XmlPullParser.END_TAG:
-                mEventHandler.endTag(mXmlPathBuilder.getPath());
-                mXmlPathBuilder.endTag(mXmlPullParser.getName());
+            }
+            case XmlPullParser.END_TAG: {
+                final String name = mXmlPullParser.getName();
+                mEventHandler.endTag(name, mXmlPathBuilder.getPath());
+                mXmlPathBuilder.endTag(name);
                 break;
+            }
             case XmlPullParser.TEXT:
                 return mEventHandler.text(mXmlPathBuilder.getPath(), mXmlPullParser.getText());
         }

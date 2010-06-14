@@ -53,7 +53,7 @@ public class EventHandlerGpxTest {
         cachePersisterFacade.endCache(Source.GPX);
 
         replayAll();
-        new EventHandlerGpx(cachePersisterFacade).endTag("/gpx/wpt");
+        new EventHandlerGpx(cachePersisterFacade).endTag("wpt", "/gpx/wpt");
         verifyAll();
     }
 
@@ -127,10 +127,9 @@ public class EventHandlerGpxTest {
         cachePersisterFacade.wpt("37", "122");
 
         replayAll();
-        new EventHandlerGpx(cachePersisterFacade).startTag("/gpx/wpt", xmlPullParser);
+        new EventHandlerGpx(cachePersisterFacade).startTag("wpt", "/gpx/wpt", xmlPullParser);
         verifyAll();
     }
-
 
     @Test
     public void testAvailable() {
@@ -140,14 +139,14 @@ public class EventHandlerGpxTest {
         cachePersisterFacade.archived("false");
         
         replayAll();
-        new EventHandlerGpx(cachePersisterFacade).startTag("/gpx/wpt/groundspeak:cache",
-                xmlPullParser);
+        new EventHandlerGpx(cachePersisterFacade).startTag("groundspeak:cache",
+                "/gpx/wpt/groundspeak:cache", xmlPullParser);
         verifyAll();
     }
-    
+
     @Test
     public void testStartTagNotCache() {
-        new EventHandlerGpx(null).startTag("/gpx/wptNot", null);
+        new EventHandlerGpx(null).startTag("wptNot", "/gpx/wptNot", null);
     }
 
     @Test
