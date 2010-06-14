@@ -15,7 +15,6 @@
 package com.google.code.geobeagle.cachedetails;
 
 import com.google.code.geobeagle.activity.main.Util;
-import com.google.inject.Inject;
 
 import java.io.File;
 import java.io.IOException;
@@ -27,7 +26,6 @@ public class CacheDetailsWriter {
     private String mLongitude;
     private String mGpxName;
 
-    @Inject
     public CacheDetailsWriter(HtmlWriter htmlWriter, FilePathStrategy filePathStrategy) {
         mHtmlWriter = htmlWriter;
         mFilePathStrategy = filePathStrategy;
@@ -44,7 +42,7 @@ public class CacheDetailsWriter {
     }
 
     public void open(String wpt) throws IOException {
-        String path = mFilePathStrategy.getPath(mGpxName, wpt);
+        String path = mFilePathStrategy.getPath(mGpxName, wpt, "html");
         
         new File(new File(path).getParent()).mkdirs();
         mHtmlWriter.open(path);

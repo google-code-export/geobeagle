@@ -48,7 +48,7 @@ public class CacheDetailsWriterTest {
         String parent = "/sdcard/details/oakland.gpx";
         File fileParent = createMock(File.class);
 
-        expect(filePathStrategy.getPath("oakland.gpx", "GC123")).andReturn(path);
+        expect(filePathStrategy.getPath("oakland.gpx", "GC123", "html")).andReturn(path);
         expectNew(File.class, path).andReturn(filePath);
         htmlWriter.open(path);
         expect(filePath.getParent()).andReturn(parent);
