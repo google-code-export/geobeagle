@@ -32,13 +32,13 @@ class EventHandlerLoc implements EventHandler {
         mCachePersisterFacade = cachePersisterFacade;
     }
 
-    public void endTag(String previousFullPath) throws IOException {
+    public void endTag(String name, String previousFullPath) throws IOException {
         if (previousFullPath.equals(XPATH_WPT)) {
             mCachePersisterFacade.endCache(Source.LOC);
         }
     }
 
-    public void startTag(String mFullPath, XmlPullParserWrapper mXmlPullParser) throws IOException {
+    public void startTag(String name, String mFullPath, XmlPullParserWrapper mXmlPullParser) throws IOException {
         if (mFullPath.equals(XPATH_COORD)) {
             mCachePersisterFacade.wpt(mXmlPullParser.getAttributeValue(null, "lat"), mXmlPullParser
                     .getAttributeValue(null, "lon"));
