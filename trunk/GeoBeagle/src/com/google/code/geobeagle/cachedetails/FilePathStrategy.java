@@ -23,6 +23,7 @@ public class FilePathStrategy {
 
     private String detailsDirectory;
     @Inject
+    public
     FilePathStrategy(@DetailsDirectory String detailsDirectory) {
         this.detailsDirectory = detailsDirectory;
     }
@@ -31,10 +32,10 @@ public class FilePathStrategy {
         return wpt.replaceAll("[<\\\\/:\\*\\?\">| \\t]", "_");
     }
 
-    public String getPath(CharSequence gpxName, String wpt) {
+    public String getPath(CharSequence gpxName, String wpt, String extension) {
         String string = detailsDirectory + gpxName + "/"
                 + String.valueOf(Math.abs(wpt.hashCode()) % 16) + "/"
-                + replaceIllegalFileChars(wpt) + ".html";
+                + replaceIllegalFileChars(wpt) + "." + extension;
         Log.d("GeoBeagle", "DETAILS DIR: " + string);
         return string;
     }
