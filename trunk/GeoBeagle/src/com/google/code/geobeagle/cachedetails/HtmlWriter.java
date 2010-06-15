@@ -19,10 +19,10 @@ import com.google.inject.Inject;
 import java.io.IOException;
 
 public class HtmlWriter {
-    private final WriterWrapper mWriter;
+    private final com.google.code.geobeagle.cachedetails.Writer mWriter;
 
     @Inject
-    public HtmlWriter(WriterWrapper writerWrapper) {
+    public HtmlWriter(com.google.code.geobeagle.cachedetails.Writer writerWrapper) {
         mWriter = writerWrapper;
     }
 
