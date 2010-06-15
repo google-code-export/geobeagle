@@ -66,12 +66,14 @@ public class EventHandlerGpx implements EventHandler {
         mCachePersisterFacade = cachePersisterFacade;
     }
 
+    @Override
     public void endTag(String name, String previousFullPath) throws IOException {
         if (previousFullPath.equals(XPATH_WPT)) {
             mCachePersisterFacade.endCache(Source.GPX);
         }
     }
 
+    @Override
     public void startTag(String name, String fullPath, XmlPullParserWrapper xmlPullParser) {
         if (fullPath.equals(XPATH_WPT)) {
             mCachePersisterFacade.startCache();
@@ -83,6 +85,7 @@ public class EventHandlerGpx implements EventHandler {
         }
     }
 
+    @Override
     public boolean text(String fullPath, String text) throws IOException {
         String trimmedText = text.trim();
 //        Log.d("GeoBeagle", "fullPath " + fullPath + ", text " + text);
