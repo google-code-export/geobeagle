@@ -68,4 +68,9 @@ public class EventHelper {
         }
         return true;
     }
+
+    public void open(String filename) {
+        mEventHandler.open(filename);
+    }
+
 }

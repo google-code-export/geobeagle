@@ -207,7 +207,7 @@ public class GpxLoaderTest {
         GpxToCache gpxToCache = PowerMock.createMock(GpxToCache.class);
         Reader reader = PowerMock.createMock(Reader.class);
 
-        gpxToCache.open("/sdcard/foo.gpx", reader);
+        gpxToCache.open("/sdcard/foo.gpx", "foo.gpx", reader);
         cachePersisterFacade.open("foo.gpx");
 
         PowerMock.replayAll();

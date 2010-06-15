@@ -32,6 +32,13 @@ public class EventHandlerComposite implements EventHandler {
     }
 
     @Override
+    public void open(String filename) {
+        for (EventHandler eventHandler : eventHandlers) {
+            eventHandler.open(filename);
+        }
+    }
+
+    @Override
     public void startTag(String name, String fullPath, XmlPullParserWrapper xmlPullParser)
             throws IOException {
         for (EventHandler eventHandler : eventHandlers) {
@@ -47,5 +54,4 @@ public class EventHandlerComposite implements EventHandler {
         }
         return ret;
     }
-
 }

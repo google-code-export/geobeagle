@@ -57,4 +57,8 @@ class EventHandlerLoc implements EventHandler {
 
         return true;
     }
+
+    @Override
+    public void open(String source) {
+    }
 }
