@@ -24,7 +24,7 @@ import android.os.PowerManager.WakeLock;
 
 import java.io.IOException;
 
-public class CachePersisterFacade {
+public class CachePersisterFacade implements ICachePersisterFacade {
     private final CacheDetailsWriter mCacheDetailsWriter;
     private String mCacheName = "";
     private final CacheTagSqlWriter mCacheTagWriter;
@@ -46,87 +46,106 @@ public class CachePersisterFacade {
         mDetailsDirectory = detailsDirectory;
     }
 
-    void cacheType(String text) {
+    @Override
+    public void cacheType(String text) {
         mCacheTagWriter.cacheType(text);
     }
 
-    void close(boolean success) {
+    @Override
+    public void close(boolean success) {
         mCacheTagWriter.stopWriting(success);
     }
 
-    void container(String text) {
+    @Override
+    public void container(String text) {
         mCacheTagWriter.container(text);
     }
 
-    void difficulty(String text) {
+    @Override
+    public void difficulty(String text) {
         mCacheTagWriter.difficulty(text);
     }
 
-    void end() {
+    @Override
+    public void end() {
         mCacheTagWriter.end();
     }
 
-    void endCache(Source source) throws IOException {
+    @Override
+    public void endCache(Source source) throws IOException {
         mMessageHandler.updateName(mCacheName);
         mCacheDetailsWriter.close();
         mCacheTagWriter.write(source);
     }
 
-    boolean gpxTime(String gpxTime) {
+    @Override
+    public boolean gpxTime(String gpxTime) {
         return mCacheTagWriter.gpxTime(gpxTime);
     }
 
-    void groundspeakName(String text) {
+    @Override
+    public void groundspeakName(String text) {
         mCacheTagWriter.cacheName(text);
     }
 
-    void hint(String text) throws IOException {
+    @Override
+    public void hint(String text) throws IOException {
         mCacheDetailsWriter.writeHint(text);
     }
 
-    void line(String text) throws IOException {
+    @Override
+    public void line(String text) throws IOException {
         mCacheDetailsWriter.writeLine(text);
     }
 
-    void logDate(String text) throws IOException {
+    @Override
+    public void logDate(String text) throws IOException {
         mCacheDetailsWriter.writeLogDate(text);
     }
 
-    void open(String path) {
+    @Override
+    public void open(String path) {
         mMessageHandler.updateSource(path);
         mCacheTagWriter.startWriting();
         mCacheTagWriter.gpxName(path);
         mCacheDetailsWriter.gpxName(path);
     }
 
-    void start() {
+    @Override
+    public void start() {
         mFileFactory.createFile(mDetailsDirectory).mkdirs();
     }
 
-    void startCache() {
+    @Override
+    public void startCache() {
         mCacheName = "";
         mCacheTagWriter.clear();
     }
 
-    void symbol(String text) {
+    @Override
+    public void symbol(String text) {
         mCacheTagWriter.symbol(text);
     }
 
-    void terrain(String text) {
+    @Override
+    public void terrain(String text) {
         mCacheTagWriter.terrain(text);
     }
 
-    void wpt(String latitude, String longitude) {
+    @Override
+    public void wpt(String latitude, String longitude) {
         mCacheTagWriter.latitudeLongitude(latitude, longitude);
         mCacheDetailsWriter.latitudeLongitude(latitude, longitude);
     }
 
-    void wptDesc(String cacheName) {
+    @Override
+    public void wptDesc(String cacheName) {
         mCacheName = cacheName;
         mCacheTagWriter.cacheName(cacheName);
     }
 
-    void wptName(String wpt) throws IOException {
+    @Override
+    public void wptName(String wpt) throws IOException {
         mCacheDetailsWriter.open(wpt);
         mCacheDetailsWriter.writeWptName(wpt);
         mCacheTagWriter.id(wpt);
@@ -134,22 +153,25 @@ public class CachePersisterFacade {
         mWakeLock.acquire(GpxLoader.WAKELOCK_DURATION);
     }
 
+    @Override
     public void lastModified(String trimmedText) {
         mLastModified = trimmedText;
     }
 
+    @Override
     public String getLastModified() {
         return mLastModified;
     }
 
+    @Override
     public void archived(String attributeValue) {
         if (attributeValue != null)
             mCacheTagWriter.archived(attributeValue.equalsIgnoreCase("True"));
     }
 
+    @Override
     public void available(String attributeValue) {
         if (attributeValue != null)
             mCacheTagWriter.available(attributeValue.equalsIgnoreCase("True"));
     }
-
 }
