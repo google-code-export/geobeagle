@@ -29,6 +29,18 @@ public class XmlPullParserWrapper {
         return mXmlPullParser.getAttributeValue(namespace, name);
     }
 
+    public int getAttributeCount() {
+        return mXmlPullParser.getAttributeCount();
+    }
+
+    public String getAttributeName(int index) {
+        return mXmlPullParser.getAttributeName(index);
+    }
+
+    public String getAttributeValue(int index) {
+        return mXmlPullParser.getAttributeValue(index);
+    }
+
     public int getEventType() throws XmlPullParserException {
         return mXmlPullParser.getEventType();
     }
