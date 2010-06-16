@@ -17,8 +17,6 @@ package com.google.code.geobeagle.xmlimport;
 import com.google.code.geobeagle.cachedetails.FilePathStrategy;
 import com.google.inject.Inject;
 
-import android.util.Log;
-
 import java.io.IOException;
 import java.util.HashMap;
 
@@ -58,8 +56,6 @@ class XmlWriter implements EventHandler {
         if (!fullPath.startsWith("/gpx/wpt"))
             return;
 
-        Log.d("GeoBeagle", "start tag: " + fullPath);
-
         HashMap<String, String> attributes = new HashMap<String, String>();
 
         int attributeCount = xmlPullParser.getAttributeCount();
@@ -82,7 +78,6 @@ class XmlWriter implements EventHandler {
         if (text.trim().length() == 0)
             return true;
 
-        Log.d("GeoBeagle", "xmlwriter: " + fullPath);
         if (fullPath.equals(EventHandlerGpx.XPATH_WPTNAME)) {
             tagWriter.open(filePathStrategy.getPath(filename, text, "gpx"));
             tagWriter.startTag(new Tag("gpx", new HashMap<String, String>()));
