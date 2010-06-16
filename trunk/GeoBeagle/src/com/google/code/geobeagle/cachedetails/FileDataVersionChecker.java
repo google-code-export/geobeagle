@@ -17,7 +17,13 @@ package com.google.code.geobeagle.cachedetails;
 import com.google.code.geobeagle.xmlimport.XmlimportAnnotations.VersionPath;
 import com.google.inject.Inject;
 
+import android.util.Log;
+
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 
 public class FileDataVersionChecker {
     private String versionPath;
@@ -26,8 +32,19 @@ public class FileDataVersionChecker {
     FileDataVersionChecker(@VersionPath String versionPath) {
         this.versionPath = versionPath;
     }
-    
+
     public boolean needsUpdating() {
-        return !new File(versionPath).exists();
+        File file = new File(versionPath);
+        if (!file.exists())
+            return true;
+        try {
+            String line = new BufferedReader(new FileReader(file)).readLine();
+            Log.d("GeoBeagle", "VERSION " + line);
+            return Integer.valueOf(line) != 0;
+        } catch (FileNotFoundException e) {
+            return true;
+        } catch (IOException e) {
+            return true;
+        }
     }
 }

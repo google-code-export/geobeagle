@@ -2,6 +2,7 @@ package com.google.code.geobeagle.xmlimport;
 
 import com.google.code.geobeagle.GeocacheFactory.Source;
 import com.google.code.geobeagle.cachedetails.CacheDetailsWriter;
+import com.google.code.geobeagle.xmlimport.XmlimportAnnotations.LoadDetails;
 import com.google.inject.Inject;
 
 import java.io.IOException;
@@ -11,10 +12,10 @@ public class CacheTagsToDetails implements ICachePersisterFacade {
     private final CacheDetailsWriter mCacheDetailsWriter;
 
     @Inject
-    public CacheTagsToDetails(CacheDetailsWriter cacheDetailsWriter) {
+    public CacheTagsToDetails(@LoadDetails CacheDetailsWriter cacheDetailsWriter) {
         mCacheDetailsWriter = cacheDetailsWriter;
     }
-
+    
     @Override
     public void archived(String attributeValue) {
     }

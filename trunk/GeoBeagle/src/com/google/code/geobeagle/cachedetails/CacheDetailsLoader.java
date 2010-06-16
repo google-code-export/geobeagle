@@ -15,15 +15,23 @@
 package com.google.code.geobeagle.cachedetails;
 
 import com.google.code.geobeagle.R;
+import com.google.code.geobeagle.xmlimport.EventHelper;
+import com.google.code.geobeagle.xmlimport.XmlPullParserWrapper;
+import com.google.code.geobeagle.xmlimport.XmlimportAnnotations.LoadDetails;
 import com.google.inject.Inject;
+
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
 
 import android.app.Activity;
 import android.os.Environment;
 
+import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
+import java.io.Reader;
 
 public class CacheDetailsLoader {
 
@@ -48,25 +56,33 @@ public class CacheDetailsLoader {
     }
 
     static class DetailsImpl implements Details {
-        private final byte[] mBuffer;
+        private final String mString;
 
-        DetailsImpl(byte[] buffer) {
-            mBuffer = buffer;
+        DetailsImpl(String string) {
+            mString = string;
         }
 
         public String getString() {
-            return new String(mBuffer);
+            return new String(mString);
         }
     }
 
     public static class DetailsOpener {
         private final Activity mActivity;
         private final FileDataVersionChecker mFileDataVersionChecker;
+        private final EventHelper mEventHelper;
+        private final XmlPullParserWrapper mXmlPullParser;
+        private final StringWriterWrapper mStringWriterWrapper;
 
         @Inject
-        public DetailsOpener(Activity activity, FileDataVersionChecker fileDataVersionChecker) {
+        public DetailsOpener(Activity activity, FileDataVersionChecker fileDataVersionChecker,
+                @LoadDetails EventHelper eventHelper, XmlPullParserWrapper xmlPullParser,
+                StringWriterWrapper stringWriterWrapper) {
             mActivity = activity;
             mFileDataVersionChecker = fileDataVersionChecker;
+            mEventHelper = eventHelper;
+            mXmlPullParser = xmlPullParser;
+            mStringWriterWrapper = stringWriterWrapper;
         }
 
         DetailsReader open(File file) {
@@ -74,17 +90,17 @@ public class CacheDetailsLoader {
             if (!Environment.MEDIA_MOUNTED.equals(state)) {
                 return new DetailsReaderError(mActivity, R.string.error_cant_read_sdroot, state);
             }
-            FileInputStream fileInputStream;
+            final Reader fileReader;
             String absolutePath = file.getAbsolutePath();
             try {
-                fileInputStream = new FileInputStream(file);
+                fileReader = new BufferedReader(new FileReader(absolutePath));
             } catch (FileNotFoundException e) {
                 int error = mFileDataVersionChecker.needsUpdating() ? R.string.error_details_file_version
                         : R.string.error_opening_details_file;
                 return new DetailsReaderError(mActivity, error, e.getMessage());
             }
-            byte[] buffer = new byte[(int)file.length()];
-            return new DetailsReaderImpl(mActivity, absolutePath, fileInputStream, buffer);
+            return new DetailsReaderImpl(mActivity, fileReader, absolutePath, mEventHelper,
+                    mXmlPullParser, mStringWriterWrapper);
         }
     }
 
@@ -110,23 +126,38 @@ public class CacheDetailsLoader {
 
     static class DetailsReaderImpl implements DetailsReader {
         private final Activity mActivity;
-        private final byte[] mBuffer;
-        private final FileInputStream mFileInputStream;
         private final String mPath;
+        private final EventHelper mEventHelper;
+        private final XmlPullParserWrapper mXmlPullParserWrapper;
+        private final Reader mReader;
+        private final StringWriterWrapper mStringWriterWrapper;
 
-        DetailsReaderImpl(Activity activity, String path, FileInputStream fileInputStream,
-                byte[] buffer) {
+        DetailsReaderImpl(Activity activity, Reader fileReader, String path,
+                EventHelper eventHelper, XmlPullParserWrapper xmlPullParserWrapper,
+                StringWriterWrapper stringWriterWrapper) {
             mActivity = activity;
-            mFileInputStream = fileInputStream;
             mPath = path;
-            mBuffer = buffer;
+            mEventHelper = eventHelper;
+            mXmlPullParserWrapper = xmlPullParserWrapper;
+            mReader = fileReader;
+            mStringWriterWrapper = stringWriterWrapper;
         }
 
         public Details read() {
             try {
-                mFileInputStream.read(mBuffer);
-                mFileInputStream.close();
-                return new DetailsImpl(mBuffer);
+                mXmlPullParserWrapper.open(mPath, mReader);
+                int eventType;
+                for (eventType = mXmlPullParserWrapper.getEventType(); eventType != XmlPullParser.END_DOCUMENT; eventType = mXmlPullParserWrapper
+                        .next()) {
+                    mEventHelper.handleEvent(eventType);
+                }
+
+                // Pick up END_DOCUMENT event as well.
+                mEventHelper.handleEvent(eventType);
+
+                return new DetailsImpl(mStringWriterWrapper.toString());
+            } catch (XmlPullParserException e) {
+                return new DetailsError(mActivity, R.string.error_reading_details_file, mPath);
             } catch (IOException e) {
                 return new DetailsError(mActivity, R.string.error_reading_details_file, mPath);
             }
@@ -143,7 +174,7 @@ public class CacheDetailsLoader {
     }
 
     public String load(CharSequence sourceName, CharSequence cacheId) {
-        String path = mFilePathStrategy.getPath(sourceName, cacheId.toString(), "html");
+        String path = mFilePathStrategy.getPath(sourceName, cacheId.toString(), "gpx");
         File file = new File(path);
         DetailsReader detailsReader = mDetailsOpener.open(file);
         Details details = detailsReader.read();
