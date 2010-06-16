@@ -30,4 +30,10 @@ public class XmlimportAnnotations {
 
     @BindingAnnotation @Target( { FIELD, PARAMETER, METHOD })
     @Retention(RUNTIME) public static @interface OldDetailsDirectory { }
+
+    @BindingAnnotation @Target( { FIELD, PARAMETER, METHOD })
+    @Retention(RUNTIME) public static @interface LoadDetails { }
+
+    @BindingAnnotation @Target( { FIELD, PARAMETER, METHOD })
+    @Retention(RUNTIME) public static @interface WriteDetails { }
 }
