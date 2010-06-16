@@ -22,6 +22,7 @@ import com.google.code.geobeagle.GeocacheFactory.Source;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import static org.powermock.api.easymock.PowerMock.*;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import java.io.IOException;
