@@ -17,8 +17,6 @@ package com.google.code.geobeagle.cachedetails;
 import com.google.code.geobeagle.xmlimport.XmlimportAnnotations.DetailsDirectory;
 import com.google.inject.Inject;
 
-import android.util.Log;
-
 public class FilePathStrategy {
 
     private String detailsDirectory;
@@ -36,7 +34,6 @@ public class FilePathStrategy {
         String string = detailsDirectory + gpxName + "/"
                 + String.valueOf(Math.abs(wpt.hashCode()) % 16) + "/"
                 + replaceIllegalFileChars(wpt) + "." + extension;
-        Log.d("GeoBeagle", "DETAILS DIR: " + string);
         return string;
     }
 }
