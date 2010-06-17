@@ -16,6 +16,8 @@ package com.google.code.geobeagle.cachedetails;
 
 import com.google.inject.Inject;
 
+import android.util.Log;
+
 import java.io.IOException;
 
 public class HtmlWriter {
@@ -35,6 +37,7 @@ public class HtmlWriter {
     }
 
     public void write(String text) throws IOException {
+        Log.d("GeoBeagle", "write: " + text);
         mWriter.write(text + "<br/>\n");
     }
 
@@ -45,7 +48,10 @@ public class HtmlWriter {
 
     public void writeHeader() throws IOException {
         mWriter.write("<html>\n");
-        mWriter.write("  <body>\n");
+        mWriter.write("<head>\n");
+        mWriter.write("<script type=\"text/javascript\" src=\"file:///android_asset/rot13.js\">"
+                + "</script></head>\n");
+        mWriter.write("  <body onLoad=encryptAll()>\n");
     }
 
     public void writeSeparator() throws IOException {

@@ -78,7 +78,7 @@ public class EventHandlerLocTest {
 
         PowerMock.replayAll();
         assertTrue(new EventHandlerLoc(cachePersisterFacade).text(EventHandlerLoc.XPATH_WPTNAME,
-                "  a nice little cache   "));
+                "  a nice little cache   ", null));
         PowerMock.verifyAll();
     }
 }

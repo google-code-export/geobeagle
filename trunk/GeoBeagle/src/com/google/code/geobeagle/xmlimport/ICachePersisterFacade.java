@@ -65,4 +65,6 @@ public interface ICachePersisterFacade {
     public void wptDesc(String cacheName);
 
     public void wptName(String wpt) throws IOException;
+
+    public void logText(String trimmedText, boolean logEncrypted) throws IOException;
 }

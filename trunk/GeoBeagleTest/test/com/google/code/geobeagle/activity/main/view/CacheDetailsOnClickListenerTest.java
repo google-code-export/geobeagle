@@ -31,6 +31,7 @@ import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 
 @PrepareForTest( {
@@ -49,6 +50,7 @@ public class CacheDetailsOnClickListenerTest {
         View detailsView = PowerMock.createMock(View.class);
         WebView webView = PowerMock.createMock(WebView.class);
         Geocache geocache = PowerMock.createMock(Geocache.class);
+        WebSettings webSettings = PowerMock.createMock(WebSettings.class);
 
         expect(env.inflate(R.layout.cache_details, null)).andReturn(detailsView);
         expect(geobeagle.getGeocache()).andReturn(geocache);
@@ -56,6 +58,8 @@ public class CacheDetailsOnClickListenerTest {
         expect(geocache.getId()).andReturn("GC1234");
         expect(builder.setTitle("GC1234")).andReturn(builder);
         expect(detailsView.findViewById(R.id.webview)).andReturn(webView);
+        expect(webView.getSettings()).andReturn(webSettings);
+        webSettings.setJavaScriptEnabled(true);
         expect(builder.setView(detailsView)).andReturn(builder);
         expect(cacheDetailsLoader.load("foo.gpx", "GC1234")).andReturn("details");
         webView.loadDataWithBaseURL(null, "details", "text/html", "utf-8", "about:blank");
