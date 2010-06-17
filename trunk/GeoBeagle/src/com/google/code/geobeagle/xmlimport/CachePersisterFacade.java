@@ -163,4 +163,9 @@ public class CachePersisterFacade implements ICachePersisterFacade {
         if (attributeValue != null)
             mCacheTagWriter.available(attributeValue.equalsIgnoreCase("True"));
     }
+
+    @Override
+    public void logText(String trimmedText, boolean attributeValue) throws IOException {
+    }
+
 }

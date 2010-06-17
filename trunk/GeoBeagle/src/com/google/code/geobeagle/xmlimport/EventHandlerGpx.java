@@ -38,6 +38,7 @@ public class EventHandlerGpx implements EventHandler {
     static final String XPATH_GROUNDSPEAKNAME = "/gpx/wpt/groundspeak:cache/groundspeak:name";
     static final String XPATH_HINT = "/gpx/wpt/groundspeak:cache/groundspeak:encoded_hints";
     static final String XPATH_LOGDATE = "/gpx/wpt/groundspeak:cache/groundspeak:logs/groundspeak:log/groundspeak:date";
+    static final String XPATH_LOGTEXT = "/gpx/wpt/groundspeak:cache/groundspeak:logs/groundspeak:log/groundspeak:text";
     static final String[] XPATH_PLAINLINES = {
             "/gpx/wpt/cmt", "/gpx/wpt/desc", "/gpx/wpt/groundspeak:cache/groundspeak:type",
             "/gpx/wpt/groundspeak:cache/groundspeak:container",
@@ -45,7 +46,6 @@ public class EventHandlerGpx implements EventHandler {
             "/gpx/wpt/groundspeak:cache/groundspeak:long_description",
             "/gpx/wpt/groundspeak:cache/groundspeak:logs/groundspeak:log/groundspeak:type",
             "/gpx/wpt/groundspeak:cache/groundspeak:logs/groundspeak:log/groundspeak:finder",
-            "/gpx/wpt/groundspeak:cache/groundspeak:logs/groundspeak:log/groundspeak:text",
             /* here are the geocaching.com.au entries */
             "/gpx/wpt/geocache/owner", "/gpx/wpt/geocache/type", "/gpx/wpt/geocache/summary",
             "/gpx/wpt/geocache/description", "/gpx/wpt/geocache/logs/log/geocacher",
@@ -60,6 +60,7 @@ public class EventHandlerGpx implements EventHandler {
     static final String XPATH_WAYPOINT_TYPE = "/gpx/wpt/type";
     
     private final ICachePersisterFacade mCachePersisterFacade;
+    private boolean mLogEncrypted;
 
     @Inject
     public EventHandlerGpx(ICachePersisterFacade cachePersisterFacade) {
@@ -82,11 +83,14 @@ public class EventHandlerGpx implements EventHandler {
         } else if (fullPath.equals(XPATH_CACHE)) {
             mCachePersisterFacade.available(xmlPullParser.getAttributeValue(null, "available"));
             mCachePersisterFacade.archived(xmlPullParser.getAttributeValue(null, "archived"));
+        } else if (fullPath.equals(XPATH_LOGTEXT)) {
+            mLogEncrypted = "true".equalsIgnoreCase(xmlPullParser
+                    .getAttributeValue(null, "encoded"));
         }
     }
 
     @Override
-    public boolean text(String fullPath, String text) throws IOException {
+    public boolean text(String fullPath, String text, XmlPullParserWrapper xmlPullParser) throws IOException {
         String trimmedText = text.trim();
 //        Log.d("GeoBeagle", "fullPath " + fullPath + ", text " + text);
         if (fullPath.equals(XPATH_WPTNAME)) {
@@ -119,6 +123,8 @@ public class EventHandlerGpx implements EventHandler {
             mCachePersisterFacade.container(trimmedText);
         } else if (fullPath.equals(XPATH_LAST_MODIFIED)) {
             mCachePersisterFacade.lastModified(trimmedText);
+        } else if (fullPath.equals(XPATH_LOGTEXT)) {
+            mCachePersisterFacade.logText(trimmedText, mLogEncrypted);
         }
         
         for (String writeLineMatch : XPATH_PLAINLINES) {

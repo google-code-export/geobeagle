@@ -19,7 +19,6 @@ import com.google.code.geobeagle.GeocacheFactory.Source;
 import java.io.IOException;
 
 class EventHandlerLoc implements EventHandler {
-
     static final String XPATH_COORD = "/loc/waypoint/coord";
     static final String XPATH_GROUNDSPEAKNAME = "/loc/waypoint/name";
     static final String XPATH_LOC = "/loc";
@@ -40,7 +39,8 @@ class EventHandlerLoc implements EventHandler {
     }
 
     @Override
-    public void startTag(String name, String mFullPath, XmlPullParserWrapper mXmlPullParser) throws IOException {
+    public void startTag(String name, String mFullPath, XmlPullParserWrapper mXmlPullParser)
+            throws IOException {
         if (mFullPath.equals(XPATH_COORD)) {
             mCachePersisterFacade.wpt(mXmlPullParser.getAttributeValue(null, "lat"), mXmlPullParser
                     .getAttributeValue(null, "lon"));
@@ -51,10 +51,10 @@ class EventHandlerLoc implements EventHandler {
     }
 
     @Override
-    public boolean text(String mFullPath, String text) throws IOException {
+    public boolean text(String mFullPath, String text, XmlPullParserWrapper xmlPullParser)
+            throws IOException {
         if (mFullPath.equals(XPATH_WPTNAME))
             mCachePersisterFacade.groundspeakName(text.trim());
-
         return true;
     }
 

@@ -71,7 +71,9 @@ class XmlWriter implements EventHandler {
         }
     }
 
-    public boolean text(String fullPath, String text) throws IOException {
+    @Override
+    public boolean text(String fullPath, String text, XmlPullParserWrapper xmlPullParser)
+            throws IOException {
         if (!fullPath.startsWith("/gpx/wpt"))
             return true;
 

@@ -23,7 +23,8 @@ interface EventHandler {
     void startTag(String name, String mFullPath, XmlPullParserWrapper mXmlPullParser)
             throws IOException;
 
-    boolean text(String mFullPath, String text) throws IOException;
+    boolean text(String fullPath, String text, XmlPullParserWrapper xmlPullParser)
+            throws IOException;
 
     void open(String filename);
 }

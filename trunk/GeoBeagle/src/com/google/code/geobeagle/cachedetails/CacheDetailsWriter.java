@@ -22,6 +22,7 @@ public class CacheDetailsWriter {
     private final HtmlWriter mHtmlWriter;
     private String mLatitude;
     private String mLongitude;
+    private int mLogNumber;
 
     public CacheDetailsWriter(HtmlWriter htmlWriter) {
         mHtmlWriter = htmlWriter;
@@ -46,7 +47,10 @@ public class CacheDetailsWriter {
     }
 
     public void writeHint(String text) throws IOException {
-        mHtmlWriter.write("<br />Hint: <font color=gray>" + text + "</font>");
+        mHtmlWriter
+                .write("<a class=hint id=hint_link onclick=\"dht('hint_link');return false;\" href=#>"
+                        + "Encrypt</a>");
+        mHtmlWriter.write("<div id=hint_link_text>" + text + "</div>");
     }
 
     public void writeLine(String text) throws IOException {
@@ -63,5 +67,16 @@ public class CacheDetailsWriter {
         mHtmlWriter.write(wpt);
         mHtmlWriter.write(mLatitude + ", " + mLongitude);
         mLatitude = mLongitude = null;
+    }
+
+    public void writeLogText(String text, boolean encoded) throws IOException {
+        String f;
+        if (encoded)
+            f = "<a class=hint id=log_%1$s_link onclick=\"dht('log_%1$s_link');return false;\" "
+                    + "href=#>Encrypt</a><div id=log_%1$s_link_text>%2$s</div>";
+        else
+            f = "%1$s";
+
+        mHtmlWriter.write(String.format(f, mLogNumber++, text));
     }
 }

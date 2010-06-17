@@ -65,6 +65,7 @@ public class CacheTagsToDetails implements ICachePersisterFacade {
 
     @Override
     public void hint(String text) throws IOException {
+        mCacheDetailsWriter.writeHint(text);
     }
 
     @Override
@@ -114,6 +115,11 @@ public class CacheTagsToDetails implements ICachePersisterFacade {
     @Override
     public void wptName(String wpt) throws IOException {
         mCacheDetailsWriter.writeWptName(wpt);
+    }
+
+    @Override
+    public void logText(String trimmedText, boolean encoded) throws IOException {
+        mCacheDetailsWriter.writeLogText(trimmedText, encoded);
     }
 
 }
