@@ -9,7 +9,7 @@ function dht(id) {
 	hint_link = document.getElementById(id);
 	hint_text = document.getElementById(id + '_text');
 	try {
-		hint_text.innerHTML = convertROTStringWithBrackets(hint_text.innerHTML);
+		hint_text.innerHTML = unprotect(convertROTStringWithBrackets(protect(hint_text.innerHTML)));
 		hint_link.innerHTML = (hint_link.innerHTML == 'Decrypt') ? 'Encrypt' : 'Decrypt';
 	} catch (e) {
 		alert(e);
@@ -17,6 +17,14 @@ function dht(id) {
 	}
 	return false;
 }
+
+function unprotect(text) {
+	return text.replace("[<", "<").replace(">]", ">");
+}
+function protect(text) {
+	return text.replace("<", "[<").replace(">", ">]");
+}
+
 function convertROT13Char(b) {
 	return (b >= "A" && b <= "Z" || b >= "a" && b <= "z" ? rot13array[b] : b)
 }

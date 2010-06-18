@@ -23,9 +23,11 @@ public class CacheDetailsWriter {
     private String mLatitude;
     private String mLongitude;
     private int mLogNumber;
-
-    public CacheDetailsWriter(HtmlWriter htmlWriter) {
+    private final Emotifier mEmotifier;
+        
+    public CacheDetailsWriter(HtmlWriter htmlWriter, Emotifier emotifier) {
         mHtmlWriter = htmlWriter;
+        mEmotifier = emotifier;
     }
 
     public void close() throws IOException {
@@ -72,11 +74,11 @@ public class CacheDetailsWriter {
     public void writeLogText(String text, boolean encoded) throws IOException {
         String f;
         if (encoded)
-            f = "<a class=hint id=log_%1$s_link onclick=\"dht('log_%1$s_link');return false;\" "
-                    + "href=#>Encrypt</a><div id=log_%1$s_link_text>%2$s</div>";
+            f = "<a class=hint id=log_%1$s onclick=\"dht('log_%1$s');return false;\" "
+                    + "href=#>Encrypt</a><div id=log_%1$s_text>%2$s</div>";
         else
-            f = "%1$s";
+            f = "%2$s";
 
-        mHtmlWriter.write(String.format(f, mLogNumber++, text));
+        mHtmlWriter.write(String.format(f, mLogNumber++, mEmotifier.emotify(text)));
     }
 }
