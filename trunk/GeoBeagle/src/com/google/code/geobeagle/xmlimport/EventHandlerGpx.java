@@ -39,8 +39,9 @@ public class EventHandlerGpx implements EventHandler {
     static final String XPATH_HINT = "/gpx/wpt/groundspeak:cache/groundspeak:encoded_hints";
     static final String XPATH_LOGDATE = "/gpx/wpt/groundspeak:cache/groundspeak:logs/groundspeak:log/groundspeak:date";
     static final String XPATH_LOGTEXT = "/gpx/wpt/groundspeak:cache/groundspeak:logs/groundspeak:log/groundspeak:text";
+    static final String XPATH_TYPE = "/gpx/wpt/groundspeak:cache/groundspeak:type";
     static final String[] XPATH_PLAINLINES = {
-            "/gpx/wpt/cmt", "/gpx/wpt/desc", "/gpx/wpt/groundspeak:cache/groundspeak:type",
+            "/gpx/wpt/cmt", "/gpx/wpt/desc",
             "/gpx/wpt/groundspeak:cache/groundspeak:container",
             "/gpx/wpt/groundspeak:cache/groundspeak:short_description",
             "/gpx/wpt/groundspeak:cache/groundspeak:long_description",
@@ -125,7 +126,10 @@ public class EventHandlerGpx implements EventHandler {
             mCachePersisterFacade.lastModified(trimmedText);
         } else if (fullPath.equals(XPATH_LOGTEXT)) {
             mCachePersisterFacade.logText(trimmedText, mLogEncrypted);
+        } else if (fullPath.equals(XPATH_TYPE)) {
+            mCachePersisterFacade.logType(trimmedText);
         }
+        
         
         for (String writeLineMatch : XPATH_PLAINLINES) {
             if (fullPath.equals(writeLineMatch)) {

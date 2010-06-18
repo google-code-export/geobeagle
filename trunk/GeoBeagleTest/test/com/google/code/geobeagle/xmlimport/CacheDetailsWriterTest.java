@@ -109,8 +109,8 @@ public class CacheDetailsWriterTest {
     @Test
     public void testWriteLogTextSmiley() throws IOException {
         HtmlWriter htmlWriter = createMock(HtmlWriter.class);
-        htmlWriter.write("sad " + Emotifier.ICON_PREFIX + "(" + Emotifier.ICON_SUFFIX + " face");
-        htmlWriter.write("clown " + Emotifier.ICON_PREFIX + "o)" + Emotifier.ICON_SUFFIX + " face");
+        htmlWriter.write("sad " + Emotifier.EMOTICON_PREFIX + "(" + Emotifier.ICON_SUFFIX + " face");
+        htmlWriter.write("clown " + Emotifier.EMOTICON_PREFIX + "o)" + Emotifier.ICON_SUFFIX + " face");
         htmlWriter.write("not a smiley []");
 
         replay(htmlWriter);

@@ -67,4 +67,6 @@ public interface ICachePersisterFacade {
     public void wptName(String wpt) throws IOException;
 
     public void logText(String trimmedText, boolean logEncrypted) throws IOException;
+
+    public void logType(String trimmedText) throws IOException;
 }

@@ -122,4 +122,9 @@ public class CacheTagsToDetails implements ICachePersisterFacade {
         mCacheDetailsWriter.writeLogText(trimmedText, encoded);
     }
 
+    @Override
+    public void logType(String trimmedText) throws IOException {
+        mCacheDetailsWriter.logType(trimmedText);
+    }
+
 }
