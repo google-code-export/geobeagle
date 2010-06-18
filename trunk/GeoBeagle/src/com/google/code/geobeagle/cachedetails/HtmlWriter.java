@@ -16,8 +16,6 @@ package com.google.code.geobeagle.cachedetails;
 
 import com.google.inject.Inject;
 
-import android.util.Log;
-
 import java.io.IOException;
 
 public class HtmlWriter {
@@ -37,7 +35,6 @@ public class HtmlWriter {
     }
 
     public void write(String text) throws IOException {
-        Log.d("GeoBeagle", "write: " + text);
         mWriter.write(text + "<br/>\n");
     }
 

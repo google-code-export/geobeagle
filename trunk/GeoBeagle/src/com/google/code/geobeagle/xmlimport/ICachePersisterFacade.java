@@ -40,7 +40,7 @@ public interface ICachePersisterFacade {
 
     public boolean gpxTime(String gpxTime);
 
-    public void groundspeakName(String text);
+    public void groundspeakName(String text) throws IOException;
 
     public void hint(String text) throws IOException;
 
@@ -58,7 +58,7 @@ public interface ICachePersisterFacade {
 
     public void symbol(String text);
 
-    public void terrain(String text);
+    public void terrain(String text) throws IOException;
 
     public void wpt(String latitude, String longitude);
 
@@ -69,4 +69,6 @@ public interface ICachePersisterFacade {
     public void logText(String trimmedText, boolean logEncrypted) throws IOException;
 
     public void logType(String trimmedText) throws IOException;
+
+    public void placedBy(String trimmedText, String gpxTime) throws IOException;
 }
