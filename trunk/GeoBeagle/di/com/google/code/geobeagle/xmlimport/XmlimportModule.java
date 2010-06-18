@@ -17,6 +17,7 @@ package com.google.code.geobeagle.xmlimport;
 import com.google.code.geobeagle.activity.main.GeoBeagleModule.DefaultSharedPreferences;
 import com.google.code.geobeagle.activity.main.GeoBeagleModule.ExternalStorageDirectory;
 import com.google.code.geobeagle.cachedetails.CacheDetailsWriter;
+import com.google.code.geobeagle.cachedetails.Emotifier;
 import com.google.code.geobeagle.cachedetails.HtmlWriter;
 import com.google.code.geobeagle.cachedetails.StringWriterWrapper;
 import com.google.code.geobeagle.cachedetails.Writer;
@@ -43,6 +44,7 @@ import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 
 import java.util.Arrays;
+import java.util.regex.Pattern;
 
 public class XmlimportModule extends AbstractAndroidModule {
 
@@ -123,8 +125,9 @@ public class XmlimportModule extends AbstractAndroidModule {
 
     @Provides
     @LoadDetails
-    CacheDetailsWriter cacheDetailsWriterLoadDetailsProvider(@LoadDetails HtmlWriter htmlWriter) {
-        return new CacheDetailsWriter(htmlWriter);
+    CacheDetailsWriter cacheDetailsWriterLoadDetailsProvider(@LoadDetails HtmlWriter htmlWriter,
+            Emotifier emotifier) {
+        return new CacheDetailsWriter(htmlWriter, emotifier);
     }
 
     @Provides
@@ -133,6 +136,32 @@ public class XmlimportModule extends AbstractAndroidModule {
         return new EventHandlerGpx(cachePersisterFacade);
     }
 
+    static Pattern createEmotifierPattern(String[] emoticons) {
+        StringBuffer keysBuffer = new StringBuffer();
+        String escapeChars = "()|?";
+        for (String emoticon : emoticons) {
+            String key = new String(emoticon);
+            for (int i = 0; i < escapeChars.length(); i++) {
+                char c = escapeChars.charAt(i);
+                key = key.replaceAll("\\" + String.valueOf(c), "\\\\" + c);
+            }
+            keysBuffer.append("|" + key);
+        }
+        keysBuffer.deleteCharAt(0);
+        final String keys = "\\[(" + keysBuffer.toString() + ")\\]";
+        return Pattern.compile(keys);
+    }
+
+    @Provides
+    Pattern providesEmotifierPattern() {
+        String emoticons[] = {
+                ":(", ":o)", ":)", ":D", "8D", ":I", ":P", "}:)", ":)", ":D", "8D", ":I", ":P",
+                "}:)", ";)", "B)", "8", ":)", "8)", ":O", ":(!", "xx(", "|)", ":X", "V", "?",
+                "^"
+        };
+        return createEmotifierPattern(emoticons);
+    }
+    
     @Provides
     @LoadDetails
     @ContextScoped

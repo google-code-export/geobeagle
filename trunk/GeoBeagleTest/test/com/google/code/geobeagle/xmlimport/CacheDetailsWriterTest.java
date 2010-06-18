@@ -23,6 +23,7 @@ import static org.powermock.api.easymock.PowerMock.verify;
 import static org.powermock.api.easymock.PowerMock.verifyAll;
 
 import com.google.code.geobeagle.cachedetails.CacheDetailsWriter;
+import com.google.code.geobeagle.cachedetails.Emotifier;
 import com.google.code.geobeagle.cachedetails.FilePathStrategy;
 import com.google.code.geobeagle.cachedetails.HtmlWriter;
 
@@ -33,6 +34,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.regex.Pattern;
 
 @PrepareForTest( {
     CacheDetailsWriter.class
@@ -56,7 +58,7 @@ public class CacheDetailsWriterTest {
         expect(fileParent.mkdirs()).andReturn(true);
 
         replayAll();
-        CacheDetailsWriter cacheDetailsWriter = new CacheDetailsWriter(htmlWriter);
+        CacheDetailsWriter cacheDetailsWriter = new CacheDetailsWriter(htmlWriter, null);
         cacheDetailsWriter.open("GC123");
         verifyAll();
     }
@@ -69,7 +71,7 @@ public class CacheDetailsWriterTest {
         htmlWriter.close();
 
         replay(htmlWriter);
-        new CacheDetailsWriter(htmlWriter).close();
+        new CacheDetailsWriter(htmlWriter, null).close();
         verify(htmlWriter);
     }
 
@@ -79,7 +81,7 @@ public class CacheDetailsWriterTest {
         htmlWriter.write("<br />Hint: <font color=gray>a hint</font>");
 
         replay(htmlWriter);
-        new CacheDetailsWriter(htmlWriter).writeHint("a hint");
+        new CacheDetailsWriter(htmlWriter, null).writeHint("a hint");
         verify(htmlWriter);
     }
 
@@ -89,7 +91,7 @@ public class CacheDetailsWriterTest {
         htmlWriter.write("some text");
 
         replay(htmlWriter);
-        new CacheDetailsWriter(htmlWriter).writeLine("some text");
+        new CacheDetailsWriter(htmlWriter, null).writeLine("some text");
         verify(htmlWriter);
     }
 
@@ -100,7 +102,26 @@ public class CacheDetailsWriterTest {
         htmlWriter.write("04/30/1963");
 
         replay(htmlWriter);
-        new CacheDetailsWriter(htmlWriter).writeLogDate("04/30/1963");
+        new CacheDetailsWriter(htmlWriter, null).writeLogDate("04/30/1963");
+        verify(htmlWriter);
+    }
+
+    @Test
+    public void testWriteLogTextSmiley() throws IOException {
+        HtmlWriter htmlWriter = createMock(HtmlWriter.class);
+        htmlWriter.write("sad " + Emotifier.ICON_PREFIX + "(" + Emotifier.ICON_SUFFIX + " face");
+        htmlWriter.write("clown " + Emotifier.ICON_PREFIX + "o)" + Emotifier.ICON_SUFFIX + " face");
+        htmlWriter.write("not a smiley []");
+
+        replay(htmlWriter);
+        Pattern pattern = XmlimportModule.createEmotifierPattern(new String[] {
+                ":(", ":o)", "|)", "?"
+        });
+        CacheDetailsWriter cacheDetailsWriter = new CacheDetailsWriter(htmlWriter, new Emotifier(
+                pattern));
+        cacheDetailsWriter.writeLogText("sad [:(] face", false);
+        cacheDetailsWriter.writeLogText("clown [:o)] face", false);
+        cacheDetailsWriter.writeLogText("not a smiley []", false);
         verify(htmlWriter);
     }
 
@@ -112,7 +133,7 @@ public class CacheDetailsWriterTest {
         htmlWriter.write("37 00.000, 122 00.000");
 
         replay(htmlWriter);
-        CacheDetailsWriter cacheDetailsWriter = new CacheDetailsWriter(htmlWriter);
+        CacheDetailsWriter cacheDetailsWriter = new CacheDetailsWriter(htmlWriter, null);
         cacheDetailsWriter.latitudeLongitude("37.0", "122.0");
         cacheDetailsWriter.writeWptName("GC1234");
         verify(htmlWriter);
