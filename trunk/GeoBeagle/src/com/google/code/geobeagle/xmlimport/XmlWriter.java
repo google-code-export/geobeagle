@@ -17,6 +17,8 @@ package com.google.code.geobeagle.xmlimport;
 import com.google.code.geobeagle.cachedetails.FilePathStrategy;
 import com.google.inject.Inject;
 
+import android.util.Log;
+
 import java.io.IOException;
 import java.util.HashMap;
 
@@ -25,6 +27,7 @@ class XmlWriter implements EventHandler {
     private String filename;
     private final TagWriter tagWriter;
     private Tag tagWpt;
+    private String time;
 
     @Inject
     public XmlWriter(FilePathStrategy filePathStrategy, TagWriter tagWriter) {
@@ -53,6 +56,8 @@ class XmlWriter implements EventHandler {
     @Override
     public void startTag(String name, String fullPath, XmlPullParserWrapper xmlPullParser)
             throws IOException {
+        Log.d("GeoBeagle", "start tag fullpath: " + fullPath);
+
         if (!fullPath.startsWith("/gpx/wpt"))
             return;
 
@@ -64,9 +69,10 @@ class XmlWriter implements EventHandler {
         }
         Tag tag = new Tag(name, attributes);
 
+        Log.d("GeoBeagle", "fullpath: " + fullPath + ", " + tag);
         if (fullPath.equals("/gpx/wpt")) {
             tagWpt = tag;
-        } else if (tagWriter.isOpen()) {
+        }  else if (tagWriter.isOpen()) {
             tagWriter.startTag(tag);
         }
     }
@@ -80,11 +86,19 @@ class XmlWriter implements EventHandler {
         if (text.trim().length() == 0)
             return true;
 
-        if (fullPath.equals(EventHandlerGpx.XPATH_WPTNAME)) {
+        if (fullPath.equals("/gpx/time")) {
+            time = text;
+        } else if (fullPath.equals(EventHandlerGpx.XPATH_WPTNAME)) {
             tagWriter.open(filePathStrategy.getPath(filename, text, "gpx"));
-            tagWriter.startTag(new Tag("gpx", new HashMap<String, String>()));
+            HashMap<String, String> emptyHashMap = new HashMap<String, String>();
+            tagWriter.startTag(new Tag("gpx", emptyHashMap));
             tagWriter.startTag(tagWpt);
-            tagWriter.startTag(new Tag("name", new HashMap<String, String>()));
+            if (time != null) {
+                tagWriter.startTag(new Tag("time", emptyHashMap));
+                tagWriter.text(time);
+                tagWriter.endTag("time");
+            }
+            tagWriter.startTag(new Tag("name", emptyHashMap));
         }
 
         if (tagWriter.isOpen())

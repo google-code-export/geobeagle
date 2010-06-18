@@ -16,7 +16,14 @@ package com.google.code.geobeagle.cachedetails;
 
 import com.google.code.geobeagle.activity.main.Util;
 
+import android.content.Context;
+import android.text.format.DateUtils;
+import android.util.Log;
+
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class CacheDetailsWriter {
     private final HtmlWriter mHtmlWriter;
@@ -24,6 +31,7 @@ public class CacheDetailsWriter {
     private String mLongitude;
     private int mLogNumber;
     private final Emotifier mEmotifier;
+    private Context mContext;
 
     public CacheDetailsWriter(HtmlWriter htmlWriter, Emotifier emotifier) {
         mHtmlWriter = htmlWriter;
@@ -59,13 +67,43 @@ public class CacheDetailsWriter {
         mHtmlWriter.write(text);
     }
 
+    public static Date parse(String input) throws java.text.ParseException {
+        // NOTE: SimpleDateFormat uses GMT[-+]hh:mm for the TZ which breaks
+        // things a bit. Before we go on we have to repair this.
+        String s = new String(input);
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssz");
+
+        // this is zero time so we need to add that TZ indicator for
+        if (input.endsWith("Z")) {
+            s = input.substring(0, input.length() - 1) + "GMT-00:00";
+        } else {
+            int inset = 6;
+
+            String s0 = input.substring(0, input.length() - inset);
+            String s1 = input.substring(input.length() - inset, input.length());
+
+            s = s0 + "GMT" + s1;
+        }
+        return df.parse(s);
+    }
+
     public void writeLogDate(String text) throws IOException {
         mHtmlWriter.writeSeparator();
-        mHtmlWriter.write(text);
+        try {
+            mHtmlWriter.write(getRelativeTime(text));
+        } catch (ParseException e) {
+            mHtmlWriter.write("error parsing date: " + e.getLocalizedMessage());
+        }
+    }
+
+    private String getRelativeTime(String text) throws ParseException {
+        Date date = parse(text);
+        final CharSequence relativeDateTimeString = DateUtils.getRelativeDateTimeString(mContext,
+                date.getTime(), DateUtils.HOUR_IN_MILLIS, DateUtils.WEEK_IN_MILLIS, 0);
+        return relativeDateTimeString.toString();
     }
 
     public void writeWptName(String wpt) throws IOException {
-        mHtmlWriter.writeHeader();
         mHtmlWriter.write(wpt);
         mHtmlWriter.write(mLatitude + ", " + mLongitude);
         mLatitude = mLongitude = null;
@@ -85,5 +123,26 @@ public class CacheDetailsWriter {
     public void logType(String trimmedText) throws IOException {
         mHtmlWriter.write(Emotifier.ICON_PREFIX + "log_" + trimmedText.replace(' ', '_')
                 + Emotifier.ICON_SUFFIX);
+    }
+
+    public void writeName(String name) throws IOException {
+        mHtmlWriter.writeHeader();
+        mHtmlWriter.write("<h3>" + name + "</h3>\n");
+    }
+
+    public void placedBy(String text, String time) throws IOException {
+        Log.d("GeoBeagle", "PLACED BY: " + time);
+        String on = "";
+        try {
+            on = "<font color=grey>at:</font> " + getRelativeTime(time);
+        } catch (ParseException e) {
+            on = "PARSE ERROR";
+        }
+        mHtmlWriter.write("<font color=grey>Placed by:</font> " + text
+                + "<font color=grey>on:</font> " + on + "<br/>");
+    }
+
+    public void writeField(String fieldName, String field) throws IOException {
+        mHtmlWriter.write("<font color=grey>" + fieldName + "</font>: " + field + "<br/>");
     }
 }

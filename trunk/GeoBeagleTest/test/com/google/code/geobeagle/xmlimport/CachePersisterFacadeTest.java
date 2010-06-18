@@ -149,7 +149,7 @@ public class CachePersisterFacadeTest {
 
     @Test
     public void testLogDate() throws IOException {
-        mCacheDetailsWriter.writeLogDate("04/30/99");
+        mCacheDetailsWriter.writeLogDate("2010-06-17T19:00:00Z");
 
         PowerMock.replayAll();
         new CachePersisterFacade(null, null, null, null, null)

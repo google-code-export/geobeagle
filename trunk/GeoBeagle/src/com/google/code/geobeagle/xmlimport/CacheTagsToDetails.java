@@ -60,7 +60,8 @@ public class CacheTagsToDetails implements ICachePersisterFacade {
     }
 
     @Override
-    public void groundspeakName(String text) {
+    public void groundspeakName(String text) throws IOException {
+        mCacheDetailsWriter.writeName(text);
     }
 
     @Override
@@ -100,7 +101,8 @@ public class CacheTagsToDetails implements ICachePersisterFacade {
     }
 
     @Override
-    public void terrain(String text) {
+    public void terrain(String text) throws IOException {
+        mCacheDetailsWriter.writeField("Terrain", text);
     }
 
     @Override
@@ -125,6 +127,11 @@ public class CacheTagsToDetails implements ICachePersisterFacade {
     @Override
     public void logType(String trimmedText) throws IOException {
         mCacheDetailsWriter.logType(trimmedText);
+    }
+
+    @Override
+    public void placedBy(String trimmedText, String time) throws IOException {
+        mCacheDetailsWriter.placedBy(trimmedText, time);
     }
 
 }

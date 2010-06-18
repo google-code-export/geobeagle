@@ -22,6 +22,7 @@ import static org.powermock.api.easymock.PowerMock.replayAll;
 import static org.powermock.api.easymock.PowerMock.verify;
 import static org.powermock.api.easymock.PowerMock.verifyAll;
 
+import com.google.code.geobeagle.activity.cachelist.GeoBeagleTest;
 import com.google.code.geobeagle.cachedetails.CacheDetailsWriter;
 import com.google.code.geobeagle.cachedetails.Emotifier;
 import com.google.code.geobeagle.cachedetails.FilePathStrategy;
@@ -32,15 +33,17 @@ import org.junit.runner.RunWith;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import android.util.Log;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.regex.Pattern;
 
 @PrepareForTest( {
-    CacheDetailsWriter.class
+    CacheDetailsWriter.class, Log.class
 })
 @RunWith(PowerMockRunner.class)
-public class CacheDetailsWriterTest {
+public class CacheDetailsWriterTest extends GeoBeagleTest {
     @Test
     public void testOpen() throws Exception {
         HtmlWriter htmlWriter = createMock(HtmlWriter.class);
@@ -99,10 +102,10 @@ public class CacheDetailsWriterTest {
     public void testWriteLogDate() throws IOException {
         HtmlWriter htmlWriter = createMock(HtmlWriter.class);
         htmlWriter.writeSeparator();
-        htmlWriter.write("04/30/1963");
+        htmlWriter.write("Two hours ago");
 
         replay(htmlWriter);
-        new CacheDetailsWriter(htmlWriter, null).writeLogDate("04/30/1963");
+        new CacheDetailsWriter(htmlWriter, null).writeLogDate("2010-06-17T19:00:00Z");
         verify(htmlWriter);
     }
 

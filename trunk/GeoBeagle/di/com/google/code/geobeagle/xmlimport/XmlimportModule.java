@@ -42,6 +42,7 @@ import android.content.SharedPreferences;
 import android.os.Environment;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
+import android.util.Log;
 
 import java.util.Arrays;
 import java.util.regex.Pattern;
@@ -137,9 +138,12 @@ public class XmlimportModule extends AbstractAndroidModule {
     }
 
     static Pattern createEmotifierPattern(String[] emoticons) {
+        Log.d("GeoBeagle", "PROVIDING 1");
         StringBuffer keysBuffer = new StringBuffer();
-        String escapeChars = "()|?";
+        String escapeChars = "()|?}";
+        Log.d("GeoBeagle", "PROVIDING 2");
         for (String emoticon : emoticons) {
+            Log.d("GeoBeagle", "PROVIDING 3:" + emoticon);
             String key = new String(emoticon);
             for (int i = 0; i < escapeChars.length(); i++) {
                 char c = escapeChars.charAt(i);
@@ -148,12 +152,20 @@ public class XmlimportModule extends AbstractAndroidModule {
             keysBuffer.append("|" + key);
         }
         keysBuffer.deleteCharAt(0);
+        Log.d("GeoBeagle", "PROVIDING 4");
         final String keys = "\\[(" + keysBuffer.toString() + ")\\]";
+        Log.d("GeoBeagle", "PROVIDING 5" + keys);
+        try {
         return Pattern.compile(keys);
+        } catch (Exception e) {
+            Log.d("GeoBeagle", e.getLocalizedMessage());
+        }
+        return null;
     }
 
     @Provides
-    Pattern providesEmotifierPattern() {
+    public Pattern providesEmotifierPattern() {
+        Log.d("GeoBeagle", "PROVIDING EMOFIEOFJE");
         String emoticons[] = {
                 ":(", ":o)", ":)", ":D", "8D", ":I", ":P", "}:)", ":)", ":D", "8D", ":I", ":P",
                 "}:)", ";)", "B)", "8", ":)", "8)", ":O", ":(!", "xx(", "|)", ":X", "V", "?",

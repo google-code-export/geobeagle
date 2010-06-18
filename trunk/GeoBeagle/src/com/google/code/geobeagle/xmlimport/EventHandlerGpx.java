@@ -17,6 +17,8 @@ package com.google.code.geobeagle.xmlimport;
 import com.google.code.geobeagle.GeocacheFactory.Source;
 import com.google.inject.Inject;
 
+import android.util.Log;
+
 import java.io.IOException;
 
 public class EventHandlerGpx implements EventHandler {
@@ -34,12 +36,15 @@ public class EventHandlerGpx implements EventHandler {
     static final String XPATH_GEOCACHENAME = "/gpx/wpt/geocache/name";
     static final String XPATH_GPXNAME = "/gpx/name";
     static final String XPATH_GPXTIME = "/gpx/time";
+    static final String XPATH_WPTTIME = "/gpx/wpt/time";
     static final String XPATH_TERRACACHINGGPXTIME = "/gpx/metadata/time";
     static final String XPATH_GROUNDSPEAKNAME = "/gpx/wpt/groundspeak:cache/groundspeak:name";
+    static final String XPATH_PLACEDBY = "/gpx/wpt/groundspeak:cache/groundspeak:placed_by";
     static final String XPATH_HINT = "/gpx/wpt/groundspeak:cache/groundspeak:encoded_hints";
     static final String XPATH_LOGDATE = "/gpx/wpt/groundspeak:cache/groundspeak:logs/groundspeak:log/groundspeak:date";
     static final String XPATH_LOGTEXT = "/gpx/wpt/groundspeak:cache/groundspeak:logs/groundspeak:log/groundspeak:text";
     static final String XPATH_TYPE = "/gpx/wpt/groundspeak:cache/groundspeak:type";
+    
     static final String[] XPATH_PLAINLINES = {
             "/gpx/wpt/cmt", "/gpx/wpt/desc",
             "/gpx/wpt/groundspeak:cache/groundspeak:container",
@@ -62,6 +67,7 @@ public class EventHandlerGpx implements EventHandler {
     
     private final ICachePersisterFacade mCachePersisterFacade;
     private boolean mLogEncrypted;
+    private String mGpxTime;
 
     @Inject
     public EventHandlerGpx(ICachePersisterFacade cachePersisterFacade) {
@@ -93,7 +99,7 @@ public class EventHandlerGpx implements EventHandler {
     @Override
     public boolean text(String fullPath, String text, XmlPullParserWrapper xmlPullParser) throws IOException {
         String trimmedText = text.trim();
-//        Log.d("GeoBeagle", "fullPath " + fullPath + ", text " + text);
+        Log.d("GeoBeagle", "fullPath " + fullPath + ", text " + text);
         if (fullPath.equals(XPATH_WPTNAME)) {
             mCachePersisterFacade.wptName(trimmedText);
         } else if (fullPath.equals(XPATH_WPTDESC)) {
@@ -128,7 +134,14 @@ public class EventHandlerGpx implements EventHandler {
             mCachePersisterFacade.logText(trimmedText, mLogEncrypted);
         } else if (fullPath.equals(XPATH_TYPE)) {
             mCachePersisterFacade.logType(trimmedText);
-        }
+        } else if (fullPath.equals(XPATH_WPTTIME)) {
+            Log.d("GeoBeagle", "PB: " + trimmedText + ", " + mGpxTime);
+            mGpxTime = trimmedText;
+        } else if (fullPath.equals(XPATH_PLACEDBY)) {
+            Log.d("GeoBeagle", "PB: " + trimmedText + ", " + mGpxTime);
+            mCachePersisterFacade.placedBy(trimmedText, mGpxTime);
+        } 
+            
         
         
         for (String writeLineMatch : XPATH_PLAINLINES) {
