@@ -24,7 +24,7 @@ public class CacheDetailsWriter {
     private String mLongitude;
     private int mLogNumber;
     private final Emotifier mEmotifier;
-        
+
     public CacheDetailsWriter(HtmlWriter htmlWriter, Emotifier emotifier) {
         mHtmlWriter = htmlWriter;
         mEmotifier = emotifier;
@@ -80,5 +80,10 @@ public class CacheDetailsWriter {
             f = "%2$s";
 
         mHtmlWriter.write(String.format(f, mLogNumber++, mEmotifier.emotify(text)));
+    }
+
+    public void logType(String trimmedText) throws IOException {
+        mHtmlWriter.write(Emotifier.ICON_PREFIX + "log_" + trimmedText.replace(' ', '_')
+                + Emotifier.ICON_SUFFIX);
     }
 }

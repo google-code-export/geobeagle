@@ -168,4 +168,8 @@ public class CachePersisterFacade implements ICachePersisterFacade {
     public void logText(String trimmedText, boolean attributeValue) throws IOException {
     }
 
+    @Override
+    public void logType(String trimmedText) throws IOException {
+    }
+
 }

@@ -20,8 +20,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Emotifier {
+    public static final String ICON_PREFIX = "<img src='file:///android_asset/";
     public static final String ICON_SUFFIX = ".gif' border=0 align=middle>";
-    public static final String ICON_PREFIX = "<img src='file:///android_asset/icon_smile_";
+    public static final String EMOTICON_PREFIX = ICON_PREFIX + "icon_smile_";
     private final Pattern pattern;
 
     @Inject
@@ -35,7 +36,7 @@ public class Emotifier {
         while (matcher.find()) {
             String group = matcher.group(1);
             String replacement = group.replace(":", "");
-            matcher.appendReplacement(sb, ICON_PREFIX + replacement + ICON_SUFFIX);
+            matcher.appendReplacement(sb, EMOTICON_PREFIX + replacement + ICON_SUFFIX);
         }
         matcher.appendTail(sb);
         return sb.toString();
