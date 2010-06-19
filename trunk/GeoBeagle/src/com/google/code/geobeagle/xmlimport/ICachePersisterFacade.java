@@ -50,7 +50,7 @@ public interface ICachePersisterFacade {
 
     public void logDate(String text) throws IOException;
 
-    public void open(String path);
+    public void open(String path) throws IOException;
 
     public void start();
 
