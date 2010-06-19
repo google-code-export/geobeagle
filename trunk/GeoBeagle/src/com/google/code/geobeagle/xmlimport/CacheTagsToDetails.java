@@ -82,7 +82,7 @@ public class CacheTagsToDetails implements ICachePersisterFacade {
     }
 
     @Override
-    public void open(String path) {
+    public void open(String path) throws IOException {
     }
 
     @Override
