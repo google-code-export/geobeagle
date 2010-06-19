@@ -34,8 +34,11 @@ public class HtmlWriter {
         mWriter.open(path);
     }
 
-    public void write(String text) throws IOException {
+    public void writeln(String text) throws IOException {
         mWriter.write(text + "<br/>\n");
+    }
+    public void write(String text) throws IOException {
+        mWriter.write(text + "\n");
     }
 
     public void writeFooter() throws IOException {

@@ -31,11 +31,13 @@ public class CacheDetailsWriter {
     private String mLongitude;
     private int mLogNumber;
     private final Emotifier mEmotifier;
-    private Context mContext;
+    private final Context mContext;
+    private String mTime;
 
-    public CacheDetailsWriter(HtmlWriter htmlWriter, Emotifier emotifier) {
+    public CacheDetailsWriter(HtmlWriter htmlWriter, Emotifier emotifier, Context context) {
         mHtmlWriter = htmlWriter;
         mEmotifier = emotifier;
+        mContext = context;
     }
 
     public void close() throws IOException {
@@ -64,14 +66,14 @@ public class CacheDetailsWriter {
     }
 
     public void writeLine(String text) throws IOException {
-        mHtmlWriter.write(text);
+        mHtmlWriter.writeln(text);
     }
 
     public static Date parse(String input) throws java.text.ParseException {
         // NOTE: SimpleDateFormat uses GMT[-+]hh:mm for the TZ which breaks
         // things a bit. Before we go on we have to repair this.
         String s = new String(input);
-        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssz");
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 
         // this is zero time so we need to add that TZ indicator for
         if (input.endsWith("Z")) {
@@ -84,15 +86,19 @@ public class CacheDetailsWriter {
 
             s = s0 + "GMT" + s1;
         }
-        return df.parse(s);
+        Log.d("GeoBeagle", "PARSING: " + s);
+        final Date parsed = df.parse(input);
+        Log.d("GeoBeagle", "PARSED: " + parsed);
+        return parsed;
     }
 
     public void writeLogDate(String text) throws IOException {
         mHtmlWriter.writeSeparator();
         try {
-            mHtmlWriter.write(getRelativeTime(text));
+            Log.d("GeoBeagle", "writeLogDate: " + text);
+            mHtmlWriter.writeln(getRelativeTime(text));
         } catch (ParseException e) {
-            mHtmlWriter.write("error parsing date: " + e.getLocalizedMessage());
+            mHtmlWriter.writeln("error parsing date: " + e.getLocalizedMessage());
         }
     }
 
@@ -100,12 +106,13 @@ public class CacheDetailsWriter {
         Date date = parse(text);
         final CharSequence relativeDateTimeString = DateUtils.getRelativeDateTimeString(mContext,
                 date.getTime(), DateUtils.HOUR_IN_MILLIS, DateUtils.WEEK_IN_MILLIS, 0);
-        return relativeDateTimeString.toString();
+        String s = relativeDateTimeString.toString();
+        Log.d("GeoBeagle", "grt: " + s);
+        return s;
     }
 
     public void writeWptName(String wpt) throws IOException {
-        mHtmlWriter.write(wpt);
-        mHtmlWriter.write(mLatitude + ", " + mLongitude);
+        writeField("Location", mLatitude + ", " + mLongitude);
         mLatitude = mLongitude = null;
     }
 
@@ -117,11 +124,11 @@ public class CacheDetailsWriter {
         else
             f = "%2$s";
 
-        mHtmlWriter.write(String.format(f, mLogNumber++, mEmotifier.emotify(text)));
+        mHtmlWriter.writeln(String.format(f, mLogNumber++, mEmotifier.emotify(text)));
     }
 
     public void logType(String trimmedText) throws IOException {
-        mHtmlWriter.write(Emotifier.ICON_PREFIX + "log_" + trimmedText.replace(' ', '_')
+        mHtmlWriter.writeln(Emotifier.ICON_PREFIX + "log_" + trimmedText.replace(' ', '_')
                 + Emotifier.ICON_SUFFIX);
     }
 
@@ -130,19 +137,28 @@ public class CacheDetailsWriter {
         mHtmlWriter.write("<h3>" + name + "</h3>\n");
     }
 
-    public void placedBy(String text, String time) throws IOException {
-        Log.d("GeoBeagle", "PLACED BY: " + time);
+    public void placedBy(String text) throws IOException {
+        Log.d("GeoBeagle", "PLACED BY: " + mTime);
         String on = "";
         try {
-            on = "<font color=grey>at:</font> " + getRelativeTime(time);
+            on = getRelativeTime(mTime);
         } catch (ParseException e) {
             on = "PARSE ERROR";
         }
-        mHtmlWriter.write("<font color=grey>Placed by:</font> " + text
-                + "<font color=grey>on:</font> " + on + "<br/>");
+        writeField("Placed by", text);
+        writeField("Placed on", on);
     }
 
     public void writeField(String fieldName, String field) throws IOException {
-        mHtmlWriter.write("<font color=grey>" + fieldName + "</font>: " + field + "<br/>");
+        mHtmlWriter.writeln("<font color=grey>" + fieldName + "</font>: " + field);
+    }
+
+    public void wptTime(String time) {
+        mTime = time;
+    }
+
+    public void writeSection(String trimmedText) throws IOException {
+        mHtmlWriter.writeSeparator();
+        mHtmlWriter.write(trimmedText);
     }
 }

@@ -25,7 +25,8 @@ public class CacheTagsToDetails implements ICachePersisterFacade {
     }
 
     @Override
-    public void cacheType(String text) {
+    public void cacheType(String text) throws IOException {
+        mCacheDetailsWriter.writeField("Type", text);
     }
 
     @Override
@@ -33,11 +34,13 @@ public class CacheTagsToDetails implements ICachePersisterFacade {
     }
 
     @Override
-    public void container(String text) {
+    public void container(String text) throws IOException {
+        mCacheDetailsWriter.writeField("Container", text);
     }
 
     @Override
-    public void difficulty(String text) {
+    public void difficulty(String text) throws IOException {
+        mCacheDetailsWriter.writeField("Difficulty", text);
     }
 
     @Override
@@ -130,8 +133,19 @@ public class CacheTagsToDetails implements ICachePersisterFacade {
     }
 
     @Override
-    public void placedBy(String trimmedText, String time) throws IOException {
-        mCacheDetailsWriter.placedBy(trimmedText, time);
+    public void placedBy(String trimmedText) throws IOException {
+        mCacheDetailsWriter.placedBy(trimmedText);
+    }
+
+    @Override
+    public void wptTime(String trimmedText) throws IOException {
+        mCacheDetailsWriter.wptTime(trimmedText);
+    }
+
+    @Override
+    public void writeSection(String trimmedText) throws IOException {
+        mCacheDetailsWriter.writeSection(trimmedText);
+        
     }
 
 }
