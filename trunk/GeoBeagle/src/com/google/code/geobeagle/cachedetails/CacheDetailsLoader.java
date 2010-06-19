@@ -155,7 +155,7 @@ public class CacheDetailsLoader {
                 // Pick up END_DOCUMENT event as well.
                 mEventHelper.handleEvent(eventType);
 
-                return new DetailsImpl(mStringWriterWrapper.toString());
+                return new DetailsImpl(mStringWriterWrapper.getString());
             } catch (XmlPullParserException e) {
                 return new DetailsError(mActivity, R.string.error_reading_details_file, mPath);
             } catch (IOException e) {
