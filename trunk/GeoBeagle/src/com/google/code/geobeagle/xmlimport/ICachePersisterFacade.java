@@ -74,5 +74,7 @@ public interface ICachePersisterFacade {
 
     public void wptTime(String trimmedText) throws IOException;
 
-    public void writeSection(String trimmedText) throws IOException;
+    public void shortDescription(String trimmedText) throws IOException;
+
+    public void longDescription(String trimmedText) throws IOException;
 }

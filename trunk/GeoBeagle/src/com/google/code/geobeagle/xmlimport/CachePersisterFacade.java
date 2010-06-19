@@ -181,7 +181,11 @@ public class CachePersisterFacade implements ICachePersisterFacade {
     }
 
     @Override
-    public void writeSection(String trimmedText) throws IOException {
+    public void shortDescription(String trimmedText) throws IOException {
+    }
+
+    @Override
+    public void longDescription(String trimmedText) throws IOException {
     }
 
 }
