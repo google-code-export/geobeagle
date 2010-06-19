@@ -51,7 +51,6 @@ public class CacheDetailsWriter {
     }
 
     public void open(String path) throws IOException {
-        mHtmlWriter.open(path);
     }
 
     public static String replaceIllegalFileChars(String wpt) {
@@ -112,6 +111,7 @@ public class CacheDetailsWriter {
     }
 
     public void writeWptName(String wpt) throws IOException {
+        mHtmlWriter.open(wpt);
         writeField("Location", mLatitude + ", " + mLongitude);
         mLatitude = mLongitude = null;
     }
@@ -129,12 +129,12 @@ public class CacheDetailsWriter {
 
     public void logType(String trimmedText) throws IOException {
         mHtmlWriter.writeln(Emotifier.ICON_PREFIX + "log_" + trimmedText.replace(' ', '_')
-                + Emotifier.ICON_SUFFIX);
+                + Emotifier.ICON_SUFFIX + " " + trimmedText);
     }
 
     public void writeName(String name) throws IOException {
         mHtmlWriter.writeHeader();
-        mHtmlWriter.write("<h3>" + name + "</h3>\n");
+        mHtmlWriter.write("<center><h3>" + name + "</h3></center>\n");
     }
 
     public void placedBy(String text) throws IOException {
@@ -157,8 +157,14 @@ public class CacheDetailsWriter {
         mTime = time;
     }
 
-    public void writeSection(String trimmedText) throws IOException {
+
+    public void writeShortDescription(String trimmedText) throws IOException {
         mHtmlWriter.writeSeparator();
         mHtmlWriter.write(trimmedText);
+    }
+
+    public void writeLongDescription(String trimmedText) throws IOException {
+        mHtmlWriter.write(trimmedText);
+        mHtmlWriter.writeSeparator();
     }
 }

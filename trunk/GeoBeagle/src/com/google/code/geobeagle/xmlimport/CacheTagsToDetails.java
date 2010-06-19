@@ -143,9 +143,13 @@ public class CacheTagsToDetails implements ICachePersisterFacade {
     }
 
     @Override
-    public void writeSection(String trimmedText) throws IOException {
-        mCacheDetailsWriter.writeSection(trimmedText);
-        
+    public void shortDescription(String trimmedText) throws IOException {
+        mCacheDetailsWriter.writeShortDescription(trimmedText);
+    }
+
+    @Override
+    public void longDescription(String trimmedText) throws IOException {
+        mCacheDetailsWriter.writeLongDescription(trimmedText);
     }
 
 }

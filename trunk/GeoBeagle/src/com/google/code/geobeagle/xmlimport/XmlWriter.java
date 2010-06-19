@@ -17,8 +17,6 @@ package com.google.code.geobeagle.xmlimport;
 import com.google.code.geobeagle.cachedetails.FilePathStrategy;
 import com.google.inject.Inject;
 
-import android.util.Log;
-
 import java.io.IOException;
 import java.util.HashMap;
 
@@ -56,8 +54,6 @@ class XmlWriter implements EventHandler {
     @Override
     public void startTag(String name, String fullPath, XmlPullParserWrapper xmlPullParser)
             throws IOException {
-        Log.d("GeoBeagle", "start tag fullpath: " + fullPath);
-
         if (!fullPath.startsWith("/gpx/wpt"))
             return;
 
@@ -69,7 +65,6 @@ class XmlWriter implements EventHandler {
         }
         Tag tag = new Tag(name, attributes);
 
-        Log.d("GeoBeagle", "fullpath: " + fullPath + ", " + tag);
         if (fullPath.equals("/gpx/wpt")) {
             tagWpt = tag;
         }  else if (tagWriter.isOpen()) {

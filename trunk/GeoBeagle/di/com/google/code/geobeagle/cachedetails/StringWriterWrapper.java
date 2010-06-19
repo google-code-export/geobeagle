@@ -46,7 +46,7 @@ public class StringWriterWrapper implements com.google.code.geobeagle.cachedetai
 
     @Override
     public void write(String str) throws IOException {
-        Log.d("GeoBeagle", ":: " + str);
+//        Log.d("GeoBeagle", ":: " + str);
         stringWriter.write(str);
     }
 }
