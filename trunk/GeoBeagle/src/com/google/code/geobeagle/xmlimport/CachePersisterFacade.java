@@ -15,10 +15,8 @@
 package com.google.code.geobeagle.xmlimport;
 
 import com.google.code.geobeagle.GeocacheFactory.Source;
-import com.google.code.geobeagle.cachedetails.CacheDetailsWriter;
 import com.google.code.geobeagle.xmlimport.CachePersisterFacadeDI.FileFactory;
 import com.google.code.geobeagle.xmlimport.XmlimportAnnotations.DetailsDirectory;
-import com.google.code.geobeagle.xmlimport.XmlimportAnnotations.LoadDetails;
 import com.google.inject.Inject;
 
 import android.os.PowerManager.WakeLock;
@@ -26,7 +24,6 @@ import android.os.PowerManager.WakeLock;
 import java.io.IOException;
 
 public class CachePersisterFacade implements ICachePersisterFacade {
-    private final CacheDetailsWriter mCacheDetailsWriter;
     private String mCacheName = "";
     private final CacheTagSqlWriter mCacheTagWriter;
     private final FileFactory mFileFactory;
@@ -37,9 +34,8 @@ public class CachePersisterFacade implements ICachePersisterFacade {
 
     @Inject
     CachePersisterFacade(CacheTagSqlWriter cacheTagSqlWriter, FileFactory fileFactory,
-            @LoadDetails CacheDetailsWriter cacheDetailsWriter, MessageHandlerInterface messageHandler,
+            MessageHandlerInterface messageHandler,
             WakeLock wakeLock, @DetailsDirectory String detailsDirectory) {
-        mCacheDetailsWriter = cacheDetailsWriter;
         mCacheTagWriter = cacheTagSqlWriter;
         mFileFactory = fileFactory;
         mMessageHandler = messageHandler;
@@ -75,7 +71,6 @@ public class CachePersisterFacade implements ICachePersisterFacade {
     @Override
     public void endCache(Source source) throws IOException {
         mMessageHandler.updateName(mCacheName);
-        mCacheDetailsWriter.close();
         mCacheTagWriter.write(source);
     }
 
@@ -91,17 +86,14 @@ public class CachePersisterFacade implements ICachePersisterFacade {
 
     @Override
     public void hint(String text) throws IOException {
-        mCacheDetailsWriter.writeHint(text);
     }
 
     @Override
     public void line(String text) throws IOException {
-        mCacheDetailsWriter.writeLine(text);
     }
 
     @Override
     public void logDate(String text) throws IOException {
-        mCacheDetailsWriter.writeLogDate(text);
     }
 
     @Override
@@ -109,7 +101,6 @@ public class CachePersisterFacade implements ICachePersisterFacade {
         mMessageHandler.updateSource(path);
         mCacheTagWriter.startWriting();
         mCacheTagWriter.gpxName(path);
-        mCacheDetailsWriter.gpxName(path);
     }
 
     @Override
@@ -136,7 +127,6 @@ public class CachePersisterFacade implements ICachePersisterFacade {
     @Override
     public void wpt(String latitude, String longitude) {
         mCacheTagWriter.latitudeLongitude(latitude, longitude);
-        mCacheDetailsWriter.latitudeLongitude(latitude, longitude);
     }
 
     @Override
@@ -147,8 +137,6 @@ public class CachePersisterFacade implements ICachePersisterFacade {
 
     @Override
     public void wptName(String wpt) throws IOException {
-        mCacheDetailsWriter.open(wpt);
-        mCacheDetailsWriter.writeWptName(wpt);
         mCacheTagWriter.id(wpt);
         mMessageHandler.updateWaypointId(wpt);
         mWakeLock.acquire(GpxLoader.WAKELOCK_DURATION);
