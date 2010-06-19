@@ -110,12 +110,6 @@ public class XmlimportModule extends AbstractAndroidModule {
 
     @Provides
     @WriteDetails
-    CacheDetailsWriter cacheDetailsWriterWriteDetailsProvider(@WriteDetails HtmlWriter htmlWriter) {
-        return new CacheDetailsWriter(htmlWriter);
-    }
-
-    @Provides
-    @WriteDetails
     EventHandlerGpx eventHandlerGpxWriteDetailsProvider(CachePersisterFacade cachePersisterFacade) {
         return new EventHandlerGpx(cachePersisterFacade);
     }
