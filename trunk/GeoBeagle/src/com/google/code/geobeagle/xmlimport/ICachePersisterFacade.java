@@ -24,13 +24,13 @@ public interface ICachePersisterFacade {
 
     public void available(String attributeValue);
 
-    public void cacheType(String text);
+    public void cacheType(String text) throws IOException;
 
     public void close(boolean success);
 
-    public void container(String text);
+    public void container(String text) throws IOException;
 
-    public void difficulty(String text);
+    public void difficulty(String text) throws IOException;
 
     public void end();
 
@@ -70,5 +70,9 @@ public interface ICachePersisterFacade {
 
     public void logType(String trimmedText) throws IOException;
 
-    public void placedBy(String trimmedText, String gpxTime) throws IOException;
+    public void placedBy(String trimmedText) throws IOException;
+
+    public void wptTime(String trimmedText) throws IOException;
+
+    public void writeSection(String trimmedText) throws IOException;
 }

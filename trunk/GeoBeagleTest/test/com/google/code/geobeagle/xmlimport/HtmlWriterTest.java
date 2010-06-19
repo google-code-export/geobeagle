@@ -58,7 +58,7 @@ public class HtmlWriterTest {
 
         replay(writer);
         HtmlWriter htmlWriter = new HtmlWriter(writer);
-        htmlWriter.write("some text");
+        htmlWriter.writeln("some text");
         verify(writer);
     }
 

@@ -173,7 +173,15 @@ public class CachePersisterFacade implements ICachePersisterFacade {
     }
 
     @Override
-    public void placedBy(String trimmedText, String time) {
+    public void placedBy(String trimmedText) throws IOException {
+    }
+
+    @Override
+    public void wptTime(String trimmedText) throws IOException {
+    }
+
+    @Override
+    public void writeSection(String trimmedText) throws IOException {
     }
 
 }

@@ -81,7 +81,7 @@ public class CacheDetailsWriterTest extends GeoBeagleTest {
     @Test
     public void testWriteHint() throws IOException {
         HtmlWriter htmlWriter = createMock(HtmlWriter.class);
-        htmlWriter.write("<br />Hint: <font color=gray>a hint</font>");
+        htmlWriter.writeln("<br />Hint: <font color=gray>a hint</font>");
 
         replay(htmlWriter);
         new CacheDetailsWriter(htmlWriter, null).writeHint("a hint");
@@ -91,7 +91,7 @@ public class CacheDetailsWriterTest extends GeoBeagleTest {
     @Test
     public void testWriteLine() throws IOException {
         HtmlWriter htmlWriter = createMock(HtmlWriter.class);
-        htmlWriter.write("some text");
+        htmlWriter.writeln("some text");
 
         replay(htmlWriter);
         new CacheDetailsWriter(htmlWriter, null).writeLine("some text");
@@ -102,7 +102,7 @@ public class CacheDetailsWriterTest extends GeoBeagleTest {
     public void testWriteLogDate() throws IOException {
         HtmlWriter htmlWriter = createMock(HtmlWriter.class);
         htmlWriter.writeSeparator();
-        htmlWriter.write("Two hours ago");
+        htmlWriter.writeln("Two hours ago");
 
         replay(htmlWriter);
         new CacheDetailsWriter(htmlWriter, null).writeLogDate("2010-06-17T19:00:00Z");
@@ -112,9 +112,9 @@ public class CacheDetailsWriterTest extends GeoBeagleTest {
     @Test
     public void testWriteLogTextSmiley() throws IOException {
         HtmlWriter htmlWriter = createMock(HtmlWriter.class);
-        htmlWriter.write("sad " + Emotifier.EMOTICON_PREFIX + "(" + Emotifier.ICON_SUFFIX + " face");
-        htmlWriter.write("clown " + Emotifier.EMOTICON_PREFIX + "o)" + Emotifier.ICON_SUFFIX + " face");
-        htmlWriter.write("not a smiley []");
+        htmlWriter.writeln("sad " + Emotifier.EMOTICON_PREFIX + "(" + Emotifier.ICON_SUFFIX + " face");
+        htmlWriter.writeln("clown " + Emotifier.EMOTICON_PREFIX + "o)" + Emotifier.ICON_SUFFIX + " face");
+        htmlWriter.writeln("not a smiley []");
 
         replay(htmlWriter);
         Pattern pattern = XmlimportModule.createEmotifierPattern(new String[] {
@@ -132,8 +132,8 @@ public class CacheDetailsWriterTest extends GeoBeagleTest {
     public void testWriteWptName() throws IOException {
         HtmlWriter htmlWriter = createMock(HtmlWriter.class);
         htmlWriter.writeHeader();
-        htmlWriter.write("GC1234");
-        htmlWriter.write("37 00.000, 122 00.000");
+        htmlWriter.writeln("GC1234");
+        htmlWriter.writeln("37 00.000, 122 00.000");
 
         replay(htmlWriter);
         CacheDetailsWriter cacheDetailsWriter = new CacheDetailsWriter(htmlWriter, null);

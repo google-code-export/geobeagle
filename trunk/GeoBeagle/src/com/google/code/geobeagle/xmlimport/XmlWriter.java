@@ -86,7 +86,7 @@ class XmlWriter implements EventHandler {
         if (text.trim().length() == 0)
             return true;
 
-        if (fullPath.equals("/gpx/time")) {
+        if (fullPath.equals("/gpx/wpt/time")) {
             time = text;
         } else if (fullPath.equals(EventHandlerGpx.XPATH_WPTNAME)) {
             tagWriter.open(filePathStrategy.getPath(filename, text, "gpx"));

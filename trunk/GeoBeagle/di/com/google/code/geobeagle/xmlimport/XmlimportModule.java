@@ -38,6 +38,7 @@ import com.google.inject.Singleton;
 import roboguice.config.AbstractAndroidModule;
 import roboguice.inject.ContextScoped;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Environment;
 import android.os.PowerManager;
@@ -127,8 +128,8 @@ public class XmlimportModule extends AbstractAndroidModule {
     @Provides
     @LoadDetails
     CacheDetailsWriter cacheDetailsWriterLoadDetailsProvider(@LoadDetails HtmlWriter htmlWriter,
-            Emotifier emotifier) {
-        return new CacheDetailsWriter(htmlWriter, emotifier);
+            Emotifier emotifier, Context context) {
+        return new CacheDetailsWriter(htmlWriter, emotifier, context);
     }
 
     @Provides
@@ -138,12 +139,9 @@ public class XmlimportModule extends AbstractAndroidModule {
     }
 
     static Pattern createEmotifierPattern(String[] emoticons) {
-        Log.d("GeoBeagle", "PROVIDING 1");
         StringBuffer keysBuffer = new StringBuffer();
         String escapeChars = "()|?}";
-        Log.d("GeoBeagle", "PROVIDING 2");
         for (String emoticon : emoticons) {
-            Log.d("GeoBeagle", "PROVIDING 3:" + emoticon);
             String key = new String(emoticon);
             for (int i = 0; i < escapeChars.length(); i++) {
                 char c = escapeChars.charAt(i);
@@ -152,9 +150,7 @@ public class XmlimportModule extends AbstractAndroidModule {
             keysBuffer.append("|" + key);
         }
         keysBuffer.deleteCharAt(0);
-        Log.d("GeoBeagle", "PROVIDING 4");
         final String keys = "\\[(" + keysBuffer.toString() + ")\\]";
-        Log.d("GeoBeagle", "PROVIDING 5" + keys);
         try {
         return Pattern.compile(keys);
         } catch (Exception e) {
