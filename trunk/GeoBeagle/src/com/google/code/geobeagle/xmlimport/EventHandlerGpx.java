@@ -152,6 +152,6 @@ public class EventHandlerGpx implements EventHandler {
     }
     
     @Override
-    public void open(String filename) {
+    public void open(String filename) throws IOException {
     }
 }
