@@ -32,7 +32,7 @@ public class EventHandlerComposite implements EventHandler {
     }
 
     @Override
-    public void open(String filename) {
+    public void open(String filename) throws IOException {
         for (EventHandler eventHandler : eventHandlers) {
             eventHandler.open(filename);
         }

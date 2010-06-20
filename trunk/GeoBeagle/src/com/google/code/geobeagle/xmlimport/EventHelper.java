@@ -70,7 +70,7 @@ public class EventHelper {
         return true;
     }
 
-    public void open(String filename) {
+    public void open(String filename) throws IOException {
         mEventHandler.open(filename);
     }
 
