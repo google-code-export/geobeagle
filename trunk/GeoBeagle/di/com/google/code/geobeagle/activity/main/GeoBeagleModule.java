@@ -222,12 +222,6 @@ public class GeoBeagleModule extends AbstractAndroidModule {
     }
 
     @Provides
-    @Named("GeocacheId")
-    TextView providesGcId(Activity activity) {
-        return (TextView)activity.findViewById(R.id.gcid);
-    }
-
-    @Provides
     @Named("GeocacheName")
     TextView providesGCName(Activity activity) {
         return (TextView)activity.findViewById(R.id.gcname);
