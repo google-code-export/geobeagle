@@ -40,7 +40,7 @@ public class FileDataVersionChecker {
         try {
             String line = new BufferedReader(new FileReader(file)).readLine();
             Log.d("GeoBeagle", "VERSION " + line);
-            return Integer.valueOf(line) != 0;
+            return Integer.valueOf(line) != 1;
         } catch (FileNotFoundException e) {
             return true;
         } catch (IOException e) {

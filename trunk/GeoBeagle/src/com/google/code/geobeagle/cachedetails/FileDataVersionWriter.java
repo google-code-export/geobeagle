@@ -37,7 +37,7 @@ public class FileDataVersionWriter {
     public void writeVersion() throws IOException {
         new File(versionDirectory).mkdir();
         writerWrapper.open(versionPath);
-        writerWrapper.write("0");
+        writerWrapper.write("1");
         writerWrapper.close();
     }
 }
