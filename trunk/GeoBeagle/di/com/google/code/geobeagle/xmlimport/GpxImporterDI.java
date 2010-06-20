@@ -19,6 +19,7 @@ import com.google.code.geobeagle.activity.cachelist.Pausable;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
 import com.google.code.geobeagle.bcaching.ImportBCachingWorker;
 import com.google.code.geobeagle.bcaching.BCachingAnnotations.BCachingUserName;
+import com.google.code.geobeagle.bcaching.preferences.BCachingStartTime;
 import com.google.code.geobeagle.cachedetails.FileDataVersionChecker;
 import com.google.code.geobeagle.cachedetails.FileDataVersionWriter;
 import com.google.code.geobeagle.database.CacheWriter;
@@ -82,18 +83,21 @@ public class GpxImporterDI {
                     .getInstance(FileDataVersionWriter.class);
             final FileDataVersionChecker fileDataVersionChecker = injector
                     .getInstance(FileDataVersionChecker.class);
+            BCachingStartTime bcachingStartTime = injector.getInstance(BCachingStartTime.class);
             return new ImportThread(gpxAndZipFiles, importThreadHelper, errorDisplayer,
                     fileDataVersionWriter, injector.getInstance(DbFrontend.class),
-                    fileDataVersionChecker);
+                    fileDataVersionChecker, bcachingStartTime);
         }
 
         private final ImportThreadDelegate mImportThreadDelegate;
 
         public ImportThread(GpxAndZipFiles gpxAndZipFiles, ImportThreadHelper importThreadHelper,
                 ErrorDisplayer errorDisplayer, FileDataVersionWriter fileDataVersionWriter,
-                DbFrontend dbFrontend, FileDataVersionChecker fileDataVersionChecker) {
+                DbFrontend dbFrontend, FileDataVersionChecker fileDataVersionChecker,
+                BCachingStartTime bcachingStartTime) {
             mImportThreadDelegate = new ImportThreadDelegate(gpxAndZipFiles, importThreadHelper,
-                    errorDisplayer, fileDataVersionWriter, fileDataVersionChecker, dbFrontend);
+                    errorDisplayer, fileDataVersionWriter, fileDataVersionChecker, dbFrontend,
+                    bcachingStartTime);
         }
 
         @Override
