@@ -17,6 +17,7 @@ package com.google.code.geobeagle.xmlimport;
 import com.google.code.geobeagle.ErrorDisplayer;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.bcaching.BCachingAnnotations.BCachingUserName;
+import com.google.code.geobeagle.bcaching.preferences.BCachingStartTime;
 import com.google.code.geobeagle.cachedetails.FileDataVersionChecker;
 import com.google.code.geobeagle.cachedetails.FileDataVersionWriter;
 import com.google.code.geobeagle.database.DbFrontend;
@@ -97,17 +98,20 @@ public class ImportThreadDelegate {
     private final FileDataVersionWriter mFileDataVersionWriter;
     private final FileDataVersionChecker mFileDataVersionChecker;
     private final DbFrontend mDbFrontend;
+    private final BCachingStartTime mBCachingStartTime;
     private boolean mIsAlive;
 
     public ImportThreadDelegate(GpxAndZipFiles gpxAndZipFiles,
             ImportThreadHelper importThreadHelper, ErrorDisplayer errorDisplayer,
             FileDataVersionWriter fileDataVersionWriter,
-            FileDataVersionChecker fileDataVersionChecker, DbFrontend dbFrontend) {
+            FileDataVersionChecker fileDataVersionChecker, DbFrontend dbFrontend,
+            BCachingStartTime bcachingStartTime) {
         mGpxAndZipFiles = gpxAndZipFiles;
         mImportThreadHelper = importThreadHelper;
         mErrorDisplayer = errorDisplayer;
         mFileDataVersionWriter = fileDataVersionWriter;
         mFileDataVersionChecker = fileDataVersionChecker;
+        mBCachingStartTime = bcachingStartTime;
         mDbFrontend = dbFrontend;
     }
 
@@ -145,6 +149,7 @@ public class ImportThreadDelegate {
             CancelException {
         if (mFileDataVersionChecker.needsUpdating()) {
             mDbFrontend.forceUpdate();
+            mBCachingStartTime.clearStartTime();
         }
         GpxFilesAndZipFilesIter gpxFilesAndZipFilesIter = mGpxAndZipFiles.iterator();
 
