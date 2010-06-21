@@ -17,6 +17,7 @@ package com.google.code.geobeagle.activity.cachelist;
 import static org.easymock.EasyMock.expect;
 import static org.junit.Assert.assertTrue;
 
+import com.google.code.geobeagle.actions.ContextActions;
 import com.google.code.geobeagle.actions.MenuActions;
 import com.google.code.geobeagle.activity.cachelist.GeocacheListController.CacheListOnCreateContextMenuListener;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionSyncGpx;
@@ -74,14 +75,11 @@ public class GeocacheListControllerTest extends GeoBeagleTest {
         MenuItem menuItem = PowerMock.createMock(MenuItem.class);
         AdapterContextMenuInfo adapterContextMenuInfo = PowerMock
                 .createMock(AdapterContextMenuInfo.class);
-        ContextAction contextAction = PowerMock.createMock(ContextAction.class);
+        ContextActions contextActions = PowerMock.createMock(ContextActions.class);
 
-        ContextAction contextActions[] = {
-                null, null, contextAction
-        };
         expect(menuItem.getMenuInfo()).andReturn(adapterContextMenuInfo);
         expect(menuItem.getItemId()).andReturn(2);
-        contextAction.act(75);
+        contextActions.act(2, 75);
 
         PowerMock.replayAll();
         adapterContextMenuInfo.position = 76;
@@ -132,12 +130,9 @@ public class GeocacheListControllerTest extends GeoBeagleTest {
 
     @Test
     public void testOnListItemClick() {
-        final ContextAction contextAction = PowerMock.createMock(ContextAction.class);
-        ContextAction contextActions[] = {
-                null, contextAction
-        };
+        ContextActions contextActions = PowerMock.createMock(ContextActions.class);
 
-        contextAction.act(45);
+        contextActions.act(1, 45);
 
         PowerMock.replayAll();
         new GeocacheListController(null, contextActions, null, null, null).onListItemClick(

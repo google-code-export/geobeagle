@@ -14,14 +14,13 @@
 
 package com.google.code.geobeagle.activity.cachelist;
 
+import com.google.code.geobeagle.actions.ContextActions;
 import com.google.code.geobeagle.actions.MenuActions;
-import com.google.code.geobeagle.activity.cachelist.actions.context.ContextAction;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionSyncGpx;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVectors;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
 import com.google.code.geobeagle.xmlimport.GpxToCache.Aborter;
 import com.google.inject.Inject;
-import com.google.inject.assistedinject.Assisted;
 
 import android.util.Log;
 import android.view.ContextMenu;
@@ -57,18 +56,18 @@ public class GeocacheListController {
     static final int MENU_EDIT = 2;
     public static final String SELECT_CACHE = "SELECT_CACHE";
     private final CacheListRefresh mCacheListRefresh;
-    private final ContextAction mContextActions[];
+    private final ContextActions mContextActions;
     private final MenuActions mMenuActions;
     private final MenuActionSyncGpx mMenuActionSyncGpx;
     private final Aborter mAborter;
 
     public interface GeocacheListControllerFactory {
-        GeocacheListController create(ContextAction[] contextActions);
+        GeocacheListController create(ContextActions contextActions2);
     }
 
     @Inject
     public GeocacheListController(CacheListRefresh cacheListRefresh,
-            @Assisted ContextAction[] contextActions, MenuActionSyncGpx menuActionSyncGpx,
+            ContextActions contextActions, MenuActionSyncGpx menuActionSyncGpx,
             MenuActions menuActions, Aborter aborter) {
         mCacheListRefresh = cacheListRefresh;
         mContextActions = contextActions;
@@ -80,7 +79,7 @@ public class GeocacheListController {
     public boolean onContextItemSelected(MenuItem menuItem) {
         AdapterContextMenuInfo adapterContextMenuInfo = (AdapterContextMenuInfo)menuItem
                 .getMenuInfo();
-        mContextActions[menuItem.getItemId()].act(adapterContextMenuInfo.position - 1);
+        mContextActions.act(menuItem.getItemId(), adapterContextMenuInfo.position - 1);
         return true;
     }
 
@@ -90,7 +89,7 @@ public class GeocacheListController {
 
     public void onListItemClick(int position) {
         if (position > 0)
-            mContextActions[MENU_VIEW].act(position - 1);
+            mContextActions.act(MENU_VIEW, position - 1);
         else
             mCacheListRefresh.forceRefresh();
     }
