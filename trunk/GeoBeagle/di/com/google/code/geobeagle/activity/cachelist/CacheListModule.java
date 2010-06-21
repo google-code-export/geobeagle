@@ -20,6 +20,7 @@ import static java.lang.annotation.ElementType.PARAMETER;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 import com.google.code.geobeagle.R;
+import com.google.code.geobeagle.Timing;
 import com.google.code.geobeagle.LocationControlBuffered.GpsDisabledLocation;
 import com.google.code.geobeagle.activity.cachelist.CacheListDelegate.CacheListDelegateFactory;
 import com.google.code.geobeagle.activity.cachelist.GeocacheListController.GeocacheListControllerFactory;
@@ -89,7 +90,7 @@ public class CacheListModule extends AbstractAndroidModule {
         bind(BearingFormatter.class).toProvider(BearingFormatterProvider.class).in(
                 ContextScoped.class);
         bind(CacheListData.class).in(ContextScoped.class);
-        bind(CacheListDelegateDI.Timing.class).in(Singleton.class);
+        bind(Timing.class).in(Singleton.class);
         bind(UpdateFlag.class).in(Singleton.class);
         bind(CacheListRefresh.class).in(ContextScoped.class);
         bind(GpxImporterFactoryFactory.class).toProvider(
