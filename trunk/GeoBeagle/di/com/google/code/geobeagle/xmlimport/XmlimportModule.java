@@ -17,7 +17,6 @@ package com.google.code.geobeagle.xmlimport;
 import com.google.code.geobeagle.activity.main.GeoBeagleModule.DefaultSharedPreferences;
 import com.google.code.geobeagle.activity.main.GeoBeagleModule.ExternalStorageDirectory;
 import com.google.code.geobeagle.cachedetails.CacheDetailsWriter;
-import com.google.code.geobeagle.cachedetails.FilePathStrategy;
 import com.google.code.geobeagle.cachedetails.HtmlWriter;
 import com.google.code.geobeagle.cachedetails.StringWriterWrapper;
 import com.google.code.geobeagle.cachedetails.Writer;
@@ -111,9 +110,8 @@ public class XmlimportModule extends AbstractAndroidModule {
 
     @Provides
     @WriteDetails
-    CacheDetailsWriter cacheDetailsWriterWriteDetailsProvider(@WriteDetails HtmlWriter htmlWriter,
-            FilePathStrategy filePathStrategy) {
-        return new CacheDetailsWriter(htmlWriter, filePathStrategy);
+    CacheDetailsWriter cacheDetailsWriterWriteDetailsProvider(@WriteDetails HtmlWriter htmlWriter) {
+        return new CacheDetailsWriter(htmlWriter);
     }
 
     @Provides
@@ -130,9 +128,8 @@ public class XmlimportModule extends AbstractAndroidModule {
 
     @Provides
     @LoadDetails
-    CacheDetailsWriter cacheDetailsWriterLoadDetailsProvider(@LoadDetails HtmlWriter htmlWriter,
-            FilePathStrategy filePathStrategy) {
-        return new CacheDetailsWriter(htmlWriter, filePathStrategy);
+    CacheDetailsWriter cacheDetailsWriterLoadDetailsProvider(@LoadDetails HtmlWriter htmlWriter) {
+        return new CacheDetailsWriter(htmlWriter);
     }
 
     @Provides

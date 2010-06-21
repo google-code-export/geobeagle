@@ -83,7 +83,6 @@ public class CacheTagsToDetails implements ICachePersisterFacade {
 
     @Override
     public void open(String path) {
-        mCacheDetailsWriter.gpxName(path);
     }
 
     @Override
