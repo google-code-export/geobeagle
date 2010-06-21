@@ -33,10 +33,10 @@ import android.widget.TextView;
 public class GeocacheSummaryRowInflater implements HasDistanceFormatter {
     private BearingFormatter mBearingFormatter;
     private DistanceFormatter mDistanceFormatter;
-    private final LayoutInflater mLayoutInflater;
-    private final IconRenderer mIconRenderer;
-    private final ListViewBitmapCopier mListViewBitmapCopier;
     private final IconOverlayFactory mIconOverlayFactory;
+    private final IconRenderer mIconRenderer;
+    private final LayoutInflater mLayoutInflater;
+    private final ListViewBitmapCopier mListViewBitmapCopier;
     private final NameFormatter mNameFormatter;
 
     @Inject
