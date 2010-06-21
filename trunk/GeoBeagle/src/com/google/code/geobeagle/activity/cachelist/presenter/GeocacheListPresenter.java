@@ -18,7 +18,6 @@ import com.google.code.geobeagle.CompassListener;
 import com.google.code.geobeagle.LocationControlBuffered;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.cachelist.CacheListView;
-import com.google.code.geobeagle.activity.cachelist.CompassListenerFactory;
 import com.google.code.geobeagle.activity.cachelist.Pausable;
 import com.google.code.geobeagle.activity.cachelist.CacheListView.ScrollListener;
 import com.google.code.geobeagle.activity.cachelist.GeocacheListController.CacheListOnCreateContextMenuListener;
@@ -28,6 +27,7 @@ import com.google.code.geobeagle.gpsstatuswidget.UpdateGpsWidgetRunnable;
 import com.google.code.geobeagle.location.CombinedLocationListener;
 import com.google.code.geobeagle.location.CombinedLocationManager;
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 import com.google.inject.assistedinject.Assisted;
 
 import android.app.ListActivity;
@@ -71,7 +71,7 @@ public class GeocacheListPresenter implements Pausable {
 
     private final LocationListener mCombinedLocationListener;
     private final CombinedLocationManager mCombinedLocationManager;
-    private final CompassListenerFactory mCompassListenerFactory;
+    private final Provider<CompassListener> mCompassListenerProvider;
     private final GeocacheListAdapter mGeocacheListAdapter;
     private final GeocacheVectors mGeocacheVectors;
     private final View mGpsStatusWidget;
@@ -81,10 +81,11 @@ public class GeocacheListPresenter implements Pausable {
     private final UpdateGpsWidgetRunnable mUpdateGpsWidgetRunnable;
     private final CacheListView.ScrollListener mScrollListener;
 
+
     @Inject
     public GeocacheListPresenter(@Assisted CombinedLocationListener combinedLocationListener,
             CombinedLocationManager combinedLocationManager,
-            CompassListenerFactory compassListenerFactory,
+            Provider<CompassListener> compassListenerProvider,
             GeocacheListAdapter geocacheListAdapter, GeocacheVectors geocacheVectors,
             @Assisted GpsStatusWidget gpsStatusWidget, ListActivity listActivity,
             LocationControlBuffered locationControlBuffered,
@@ -92,7 +93,7 @@ public class GeocacheListPresenter implements Pausable {
             @Assisted UpdateGpsWidgetRunnable updateGpsWidgetRunnable, ScrollListener scrollListener) {
         mCombinedLocationListener = combinedLocationListener;
         mCombinedLocationManager = combinedLocationManager;
-        mCompassListenerFactory = compassListenerFactory;
+        mCompassListenerProvider = compassListenerProvider;
         mGeocacheListAdapter = geocacheListAdapter;
         mGeocacheVectors = geocacheVectors;
         mGpsStatusWidget = gpsStatusWidget;
@@ -125,7 +126,7 @@ public class GeocacheListPresenter implements Pausable {
     public void onResume(CacheListRefresh cacheListRefresh) {
         final CacheListRefreshLocationListener cacheListRefreshLocationListener = new CacheListRefreshLocationListener(
                 cacheListRefresh);
-        final CompassListener mCompassListener = mCompassListenerFactory.create(cacheListRefresh);
+        final CompassListener mCompassListener = mCompassListenerProvider.get();
         mCombinedLocationManager.requestLocationUpdates(UPDATE_DELAY, 0, mLocationControlBuffered);
         mCombinedLocationManager.requestLocationUpdates(UPDATE_DELAY, 0, mCombinedLocationListener);
         mCombinedLocationManager.requestLocationUpdates(UPDATE_DELAY, 0,

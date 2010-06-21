@@ -15,6 +15,7 @@
 package com.google.code.geobeagle.activity.cachelist;
 
 import com.google.code.geobeagle.CacheTypeFactory;
+import com.google.code.geobeagle.CompassListener;
 import com.google.code.geobeagle.ErrorDisplayer;
 import com.google.code.geobeagle.LocationControlBuffered;
 import com.google.code.geobeagle.actions.MenuActionMap;
@@ -145,14 +146,14 @@ public class CacheListDelegateDI {
         final CacheListRefresh cacheListRefresh = injector.getInstance(CacheListRefresh.class);
 
         final SensorManager sensorManager = injector.getInstance(SensorManager.class);
-        final CompassListenerFactory compassListenerFactory = new CompassListenerFactory(
-                locationControlBuffered);
+        final Provider<CompassListener> compassListenerProvider = injector
+                .getProvider(CompassListener.class);
 
         final CacheListView.ScrollListener scrollListener = new CacheListView.ScrollListener(
                 updateFlag);
         final SensorManagerWrapper sensorManagerWrapper = new SensorManagerWrapper(sensorManager);
         final GeocacheListPresenter geocacheListPresenter = new GeocacheListPresenter(
-                combinedLocationListener, combinedLocationManager, compassListenerFactory,
+                combinedLocationListener, combinedLocationManager, compassListenerProvider,
                 geocacheListAdapter, geocacheVectors, gpsStatusWidget, listActivity,
                 locationControlBuffered, sensorManagerWrapper, updateGpsWidgetRunnable,
                 scrollListener);
