@@ -38,6 +38,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 
 import android.util.Log;
 
+import android.app.Activity;
 import android.graphics.drawable.Drawable;
 import android.view.View;
 import android.widget.ImageView;
@@ -147,7 +148,6 @@ public class GeocacheViewerTest extends GeoBeagleTest {
     @Test
     public void testSet() {
         final int ICON_BIG = 50;
-        TextView id = PowerMock.createMock(TextView.class);
         NameViewer name = PowerMock.createMock(NameViewer.class);
         Geocache geocache = PowerMock.createMock(Geocache.class);
         RadarView radar = PowerMock.createMock(RadarView.class);
@@ -163,7 +163,9 @@ public class GeocacheViewerTest extends GeoBeagleTest {
         MapViewBitmapCopier mapViewBitmapCopier = PowerMock.createMock(MapViewBitmapCopier.class);
         IconRenderer iconRenderer = PowerMock.createMock(IconRenderer.class);
         Drawable drawable = PowerMock.createMock(Drawable.class);
+        Activity activity = PowerMock.createMock(Activity.class);
         
+        activity.setTitle("GeoBeagle: GC123");
         expect(iconRenderer.renderIcon(0, 0, ICON_BIG, iconOverlay, mapViewBitmapCopier)).andReturn(drawable);
         gcTypeImageView.setImageDrawable(drawable);
         expect(geocache.getLatitude()).andReturn(37.0);
@@ -183,11 +185,10 @@ public class GeocacheViewerTest extends GeoBeagleTest {
         gcDifficulty.setImage(8);
         gcTerrain.setImage(5);
 
-        id.setText("GC123");
         name.set("a cache", true, false);
 
         PowerMock.replayAll();
-        new GeocacheViewer(radar, id, name, gcTypeImageView, gcDifficulty, gcTerrain, gcContainer,
+        new GeocacheViewer(radar, activity, name, gcTypeImageView, gcDifficulty, gcTerrain, gcContainer,
                 iconOverlayFactory, mapViewBitmapCopier, iconRenderer).set(geocache);
         PowerMock.verifyAll();
     }

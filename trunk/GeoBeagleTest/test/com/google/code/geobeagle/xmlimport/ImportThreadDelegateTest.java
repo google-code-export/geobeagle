@@ -20,6 +20,7 @@ import static org.junit.Assert.assertTrue;
 import com.google.code.geobeagle.ErrorDisplayer;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.cachelist.GeoBeagleTest;
+import com.google.code.geobeagle.bcaching.preferences.BCachingStartTime;
 import com.google.code.geobeagle.cachedetails.FileDataVersionChecker;
 import com.google.code.geobeagle.cachedetails.FileDataVersionWriter;
 import com.google.code.geobeagle.database.DbFrontend;
@@ -151,7 +152,9 @@ public class ImportThreadDelegateTest extends GeoBeagleTest {
                 .createMock(GpxFilesAndZipFilesIter.class);
         ImportThreadHelper importThreadHelper = PowerMock.createMock(ImportThreadHelper.class);
         IGpxReader iGpxFile = PowerMock.createMock(IGpxReader.class);
+        BCachingStartTime bcachingStartTime = PowerMock.createMock(BCachingStartTime.class);
 
+        bcachingStartTime.clearStartTime();
         expect(fileDataVersionChecker.needsUpdating()).andReturn(true);
         dbFrontend.forceUpdate();
         expect(gpxAndZipFiles.iterator()).andReturn(gpxFilesAndZipFilesIter);
@@ -167,7 +170,7 @@ public class ImportThreadDelegateTest extends GeoBeagleTest {
 
         PowerMock.replayAll();
         new ImportThreadDelegate(gpxAndZipFiles, importThreadHelper, null, fileDataVersionWriter,
-                fileDataVersionChecker, dbFrontend).run();
+                fileDataVersionChecker, dbFrontend, bcachingStartTime).run();
         PowerMock.verifyAll();
     }
 
@@ -190,7 +193,7 @@ public class ImportThreadDelegateTest extends GeoBeagleTest {
 
         PowerMock.replayAll();
         new ImportThreadDelegate(gpxAndZipFiles, importThreadHelper, null, fileDataVersionWriter,
-                fileDataVersionChecker, dbFrontend).run();
+                fileDataVersionChecker, dbFrontend, null).run();
         PowerMock.verifyAll();
     }
 
@@ -206,7 +209,7 @@ public class ImportThreadDelegateTest extends GeoBeagleTest {
 
         PowerMock.replayAll();
         ImportThreadDelegate importThreadDelegate = new ImportThreadDelegate(gpxAndZipFiles,
-                importThreadHelper, errorDisplayer, fileDataVersionWriter, null, null) {
+                importThreadHelper, errorDisplayer, fileDataVersionWriter, null, null, null) {
             @Override
             protected void tryRun() throws IOException {
                 throw e;
@@ -230,7 +233,7 @@ public class ImportThreadDelegateTest extends GeoBeagleTest {
 
         PowerMock.replayAll();
         ImportThreadDelegate importThreadDelegate = new ImportThreadDelegate(gpxAndZipFiles,
-                importThreadHelper, errorDisplayer, fileDataVersionWriter, null, null) {
+                importThreadHelper, errorDisplayer, fileDataVersionWriter, null, null, null) {
             @Override
             protected void tryRun() throws XmlPullParserException {
                 throw e;
@@ -253,7 +256,7 @@ public class ImportThreadDelegateTest extends GeoBeagleTest {
 
         PowerMock.replayAll();
         ImportThreadDelegate importThreadDelegate = new ImportThreadDelegate(gpxAndZipFiles,
-                importThreadHelper, errorDisplayer, fileDataVersionWriter, null, null) {
+                importThreadHelper, errorDisplayer, fileDataVersionWriter, null, null, null) {
             @Override
             protected void tryRun() throws IOException {
                 throw e;
@@ -278,7 +281,7 @@ public class ImportThreadDelegateTest extends GeoBeagleTest {
         PowerMock.replayAll();
         ImportThreadDelegate importThreadDelegate = new ImportThreadDelegate(gpxAndZipFiles,
                 importThreadHelper, errorDisplayer, fileDataVersionWriter, fileDataVersionChecker,
-                dbFrontend);
+                dbFrontend, null);
         importThreadDelegate.run();
         PowerMock.verifyAll();
     }
@@ -301,7 +304,7 @@ public class ImportThreadDelegateTest extends GeoBeagleTest {
 
         PowerMock.replayAll();
         new ImportThreadDelegate(gpxAndZipFiles, importThreadHelper, null, fileDataVersionWriter,
-                fileDataVersionChecker, dbFrontend).run();
+                fileDataVersionChecker, dbFrontend, null).run();
         PowerMock.verifyAll();
     }
 
@@ -323,7 +326,7 @@ public class ImportThreadDelegateTest extends GeoBeagleTest {
 
         PowerMock.replayAll();
         new ImportThreadDelegate(gpxAndZipFiles, importThreadHelper, null, fileDataVersionWriter,
-                fileDataVersionChecker, dbFrontend).run();
+                fileDataVersionChecker, dbFrontend, null).run();
         PowerMock.verifyAll();
     }
 
@@ -339,7 +342,7 @@ public class ImportThreadDelegateTest extends GeoBeagleTest {
         PowerMock.replayAll();
         try {
             new ImportThreadDelegate(gpxAndZipFiles, importThreadHelper, null,
-                    fileDataVersionWriter, fileDataVersionChecker, dbFrontend).run();
+                    fileDataVersionWriter, fileDataVersionChecker, dbFrontend, null).run();
         } catch (Exception e) {
 
         }

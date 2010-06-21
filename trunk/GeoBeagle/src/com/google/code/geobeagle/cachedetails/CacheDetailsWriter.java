@@ -137,7 +137,7 @@ public class CacheDetailsWriter {
     }
 
     public void writeField(String fieldName, String field) throws IOException {
-        mHtmlWriter.writeln("<font color=grey>" + fieldName + "</font>: " + field);
+        mHtmlWriter.writeln("<font color=grey>" + fieldName + ":</font> " + field);
     }
 
     public void wptTime(String time) {
