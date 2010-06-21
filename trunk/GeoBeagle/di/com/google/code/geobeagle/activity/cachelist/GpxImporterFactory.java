@@ -32,8 +32,8 @@ import android.content.Context;
 public class GpxImporterFactory {
 
     public static interface GpxImporterFactoryFactory {
-        GpxImporterFactory create(CachePersisterFacadeFactory cachePersisterFacadeFactory,
-                Pausable geocacheListPresenter, MessageHandlerInterface messageHandler);
+        GpxImporterFactory create(Pausable geocacheListPresenter,
+                MessageHandlerInterface messageHandler);
     }
 
     private final Aborter mAborter;
@@ -47,8 +47,8 @@ public class GpxImporterFactory {
 
     @Inject
     public GpxImporterFactory(Aborter aborter,
-            @Assisted CachePersisterFacadeFactory cachePersisterFacadeFactory,
-            ErrorDisplayer errorDisplayer, @Assisted Pausable pausable, Context context,
+            CachePersisterFacadeFactory cachePersisterFacadeFactory, ErrorDisplayer errorDisplayer,
+            @Assisted Pausable pausable, Context context,
             @Assisted MessageHandlerInterface messageHandler,
             XmlPullParserWrapper xmlPullParserWrapper, Injector injector) {
         mAborter = aborter;
