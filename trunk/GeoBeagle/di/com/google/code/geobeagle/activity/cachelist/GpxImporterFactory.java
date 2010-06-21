@@ -22,11 +22,18 @@ import com.google.code.geobeagle.xmlimport.MessageHandlerInterface;
 import com.google.code.geobeagle.xmlimport.CachePersisterFacadeDI.CachePersisterFacadeFactory;
 import com.google.code.geobeagle.xmlimport.GpxToCache.Aborter;
 import com.google.code.geobeagle.xmlimport.GpxToCacheDI.XmlPullParserWrapper;
+import com.google.inject.Inject;
 import com.google.inject.Injector;
+import com.google.inject.assistedinject.Assisted;
 
 import android.content.Context;
 
 public class GpxImporterFactory {
+
+    public static interface GpxImporterFactoryFactory {
+        GpxImporterFactory create(CachePersisterFacadeFactory cachePersisterFacadeFactory,
+                Pausable geocacheListPresenter, MessageHandlerInterface messageHandler);
+    }
 
     private final Aborter mAborter;
     private final CachePersisterFacadeFactory mCachePersisterFacadeFactory;
@@ -37,9 +44,11 @@ public class GpxImporterFactory {
     private final XmlPullParserWrapper mXmlPullParserWrapper;
     private final Injector mInjector;
 
+    @Inject
     public GpxImporterFactory(Aborter aborter,
-            CachePersisterFacadeFactory cachePersisterFacadeFactory, ErrorDisplayer errorDisplayer,
-            Pausable pausable, Context context, MessageHandlerInterface messageHandler,
+            @Assisted CachePersisterFacadeFactory cachePersisterFacadeFactory,
+            ErrorDisplayer errorDisplayer, @Assisted Pausable pausable, Context context,
+            @Assisted MessageHandlerInterface messageHandler,
             XmlPullParserWrapper xmlPullParserWrapper, Injector injector) {
         mAborter = aborter;
         mCachePersisterFacadeFactory = cachePersisterFacadeFactory;
