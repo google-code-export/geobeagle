@@ -47,39 +47,21 @@ public class GpsStatusWidgetModule extends AbstractAndroidModule {
     public static @interface CacheList {}
 
     @BindingAnnotation @Target({ FIELD, PARAMETER, METHOD }) @Retention(RUNTIME)
-    public static @interface LocationProvider {}
-
-    @BindingAnnotation @Target({ FIELD, PARAMETER, METHOD }) @Retention(RUNTIME)
     public static @interface LocationViewer {}
     
     @BindingAnnotation @Target({ FIELD, PARAMETER, METHOD }) @Retention(RUNTIME)
     public static @interface SearchOnline {}
 
     @BindingAnnotation @Target({ FIELD, PARAMETER, METHOD }) @Retention(RUNTIME)
-    public static @interface Status {}
-
-    @BindingAnnotation @Target({ FIELD, PARAMETER, METHOD }) @Retention(RUNTIME)
     public static @interface GpsStatusWidgetView {}
 
     static abstract class GpsStatusWidgetPrivateModule extends PrivateModule {
-        @Provides
-        @LocationProvider
-        TextView providesLocationProviderViewer(@GpsStatusWidgetView View gpsStatusWidget) {
-            return (TextView)gpsStatusWidget.findViewById(R.id.provider);
-        }
-
         @Provides
         @LocationViewer
         TextView providesLocationViewer(@GpsStatusWidgetView View gpsStatusWidget) {
             return (TextView)gpsStatusWidget.findViewById(R.id.location_viewer);
         }
         
-        @Provides
-        @Status
-        TextView providesStatusView(@GpsStatusWidgetView View gpsStatusWidget) {
-            return (TextView)gpsStatusWidget.findViewById(R.id.status);
-        }
-
         @Provides
         @ContextScoped
         Meter providesMeter(MeterBars meterBars, @GpsStatusWidgetView View gpsStatusWidget) {
@@ -105,10 +87,12 @@ public class GpsStatusWidgetModule extends AbstractAndroidModule {
         GpsStatusWidgetDelegate providesGpsStatusWidgetDelegate(
                 CombinedLocationManager combinedLocationManager,
                 Provider<DistanceFormatter> distanceFormatterProvider, Meter meter,
-                MeterFader meterFader, @LocationProvider TextView provider, Context context,
-                @Status TextView status, TextLagUpdater textLagUpdater) {
+                MeterFader meterFader, Context context, TextLagUpdater textLagUpdater,
+                @GpsStatusWidgetView View gpsStatusWidget) {
+
             return new GpsStatusWidgetDelegate(combinedLocationManager, distanceFormatterProvider,
-                    meter, meterFader, provider, context, status, textLagUpdater);
+                    meter, meterFader, (TextView)gpsStatusWidget.findViewById(R.id.provider),
+                    context, (TextView)gpsStatusWidget.findViewById(R.id.status), textLagUpdater);
         }
     }
 
