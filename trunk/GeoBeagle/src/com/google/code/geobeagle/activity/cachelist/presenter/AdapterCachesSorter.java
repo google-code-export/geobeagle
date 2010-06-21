@@ -15,17 +15,17 @@
 package com.google.code.geobeagle.activity.cachelist.presenter;
 
 import com.google.code.geobeagle.LocationControlBuffered;
-import com.google.code.geobeagle.activity.cachelist.CacheListDelegateDI;
+import com.google.code.geobeagle.Timing;
 import com.google.code.geobeagle.activity.cachelist.model.CacheListData;
 import com.google.inject.Inject;
 
 public class AdapterCachesSorter implements RefreshAction {
     private final CacheListData mCacheListData;
     private final LocationControlBuffered mLocationControlBuffered;
-    private final CacheListDelegateDI.Timing mTiming;
+    private final Timing mTiming;
 
     @Inject
-    public AdapterCachesSorter(CacheListData cacheListData, CacheListDelegateDI.Timing timing,
+    public AdapterCachesSorter(CacheListData cacheListData, Timing timing,
             LocationControlBuffered locationControlBuffered) {
         mCacheListData = cacheListData;
         mTiming = timing;

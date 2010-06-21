@@ -19,9 +19,8 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import com.google.code.geobeagle.LocationControlBuffered;
+import com.google.code.geobeagle.Timing;
 import com.google.code.geobeagle.LocationControlBuffered.IGpsLocation;
-import com.google.code.geobeagle.activity.cachelist.CacheListDelegateDI;
-import com.google.code.geobeagle.activity.cachelist.CacheListDelegateDI.Timing;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh.ActionManager;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh.UpdateFlag;
 
@@ -42,7 +41,7 @@ import java.util.Calendar;
 
 @PrepareForTest( {
         Handler.class, ListActivity.class, Log.class, CacheListRefresh.class, TextView.class,
-        CacheListDelegateDI.Timing.class, Calendar.class
+        Timing.class, Calendar.class
 })
 @RunWith(PowerMockRunner.class)
 public class CacheListRefreshTest {
@@ -54,7 +53,7 @@ public class CacheListRefreshTest {
         PowerMock.mockStatic(Log.class);
         EasyMock.expect(Log.d((String)EasyMock.anyObject(), (String)EasyMock.anyObject()))
                 .andReturn(0).anyTimes();
-        mTiming = PowerMock.createMock(CacheListDelegateDI.Timing.class);
+        mTiming = PowerMock.createMock(Timing.class);
         mTiming.start();
         EasyMock.expectLastCall().anyTimes();
         EasyMock.expect(mTiming.getTime()).andReturn(10000L).anyTimes();
@@ -106,7 +105,7 @@ public class CacheListRefreshTest {
     public void testCacheListRefresh_ForceRefresh() {
         LocationControlBuffered locationControlBuffered = PowerMock
                 .createMock(LocationControlBuffered.class);
-        CacheListDelegateDI.Timing timing = PowerMock.createMock(CacheListDelegateDI.Timing.class);
+        Timing timing = PowerMock.createMock(Timing.class);
         ActionManager actionManager = PowerMock.createMock(ActionManager.class);
         IGpsLocation here = PowerMock.createMock(IGpsLocation.class);
 

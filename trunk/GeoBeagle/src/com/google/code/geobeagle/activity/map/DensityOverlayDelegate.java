@@ -22,7 +22,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapView;
 import com.google.android.maps.Projection;
-import com.google.code.geobeagle.activity.cachelist.CacheListDelegateDI;
+import com.google.code.geobeagle.Timing;
 import com.google.code.geobeagle.activity.map.DensityMatrix.DensityPatch;
 import com.google.inject.BindingAnnotation;
 import com.google.inject.Inject;
@@ -43,7 +43,7 @@ public class DensityOverlayDelegate {
     private final Rect mPatchRect;
     private final Point mScreenBottomRight;
     private final Point mScreenTopLeft;
-    private final CacheListDelegateDI.Timing mTiming;
+    private final Timing mTiming;
     private final DensityPatchManager mDensityPatchManager;
 
     @BindingAnnotation @Target( { FIELD, PARAMETER, METHOD }) @Retention(RUNTIME)
@@ -52,7 +52,7 @@ public class DensityOverlayDelegate {
     @Inject
     public DensityOverlayDelegate(Rect patchRect, @DensityOverlayPaint Paint paint,
             Point screenLow, Point screenHigh, DensityPatchManager densityPatchManager) {
-        mTiming = new CacheListDelegateDI.Timing();
+        mTiming = new Timing();
         mPatchRect = patchRect;
         mPaint = paint;
         mScreenTopLeft = screenLow;

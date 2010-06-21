@@ -16,8 +16,8 @@ package com.google.code.geobeagle.activity.cachelist.presenter;
 
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.LocationControlBuffered;
+import com.google.code.geobeagle.Timing;
 import com.google.code.geobeagle.activity.cachelist.ActivityVisible;
-import com.google.code.geobeagle.activity.cachelist.CacheListDelegateDI.Timing;
 import com.google.code.geobeagle.activity.cachelist.model.CacheListData;
 import com.google.code.geobeagle.database.DbFrontend;
 import com.google.code.geobeagle.database.FilterNearestCaches;
