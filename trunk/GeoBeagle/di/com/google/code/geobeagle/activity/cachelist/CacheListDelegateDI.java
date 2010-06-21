@@ -22,6 +22,7 @@ import com.google.code.geobeagle.actions.MenuActionSettings;
 import com.google.code.geobeagle.actions.MenuActions;
 import com.google.code.geobeagle.activity.ActivitySaver;
 import com.google.code.geobeagle.activity.cachelist.CacheListDelegate.ImportIntentManager;
+import com.google.code.geobeagle.activity.cachelist.GpxImporterFactory.GpxImporterFactoryFactory;
 import com.google.code.geobeagle.activity.cachelist.actions.context.ContextAction;
 import com.google.code.geobeagle.activity.cachelist.actions.context.ContextActionDelete;
 import com.google.code.geobeagle.activity.cachelist.actions.context.ContextActionEdit;
@@ -57,7 +58,6 @@ import com.google.code.geobeagle.xmlimport.CachePersisterFacadeDI.CachePersister
 import com.google.code.geobeagle.xmlimport.CachePersisterFacadeDI.CachePersisterFacadeFactory.CachePersisterFacadeFactoryFactory;
 import com.google.code.geobeagle.xmlimport.GpxImporterDI.MessageHandler;
 import com.google.code.geobeagle.xmlimport.GpxToCache.Aborter;
-import com.google.code.geobeagle.xmlimport.GpxToCacheDI.XmlPullParserWrapper;
 import com.google.inject.Injector;
 import com.google.inject.Provider;
 
@@ -98,9 +98,6 @@ public class CacheListDelegateDI {
         final GeocacheFromMyLocationFactory geocacheFromMyLocationFactory = injector
                 .getInstance(GeocacheFromMyLocationFactory.class);
         final GeocacheVectors geocacheVectors = injector.getInstance(GeocacheVectors.class);
-        final XmlPullParserWrapper xmlPullParserWrapper = injector
-                .getInstance(XmlPullParserWrapper.class);
-
         final Resources resources = injector.getInstance(Resources.class);
         final ActivityVisible activityVisible = injector.getInstance(ActivityVisible.class);
         final GeocacheListAdapter geocacheListAdapter = injector
@@ -146,9 +143,10 @@ public class CacheListDelegateDI {
         final CachePersisterFacadeFactory cachePersisterFacadeFactory = cachePersisterFacadeFactoryFactory
                 .create(messageHandler);
 
-        final GpxImporterFactory gpxImporterFactory = new GpxImporterFactory(aborter,
-                cachePersisterFacadeFactory, errorDisplayer, geocacheListPresenter, listActivity,
-                messageHandler, xmlPullParserWrapper, injector);
+        final GpxImporterFactoryFactory gpxImporterFactoryFactory = injector
+                .getInstance(GpxImporterFactoryFactory.class);
+        final GpxImporterFactory gpxImporterFactory = gpxImporterFactoryFactory.create(
+                cachePersisterFacadeFactory, geocacheListPresenter, messageHandler);
 
         final NullAbortable nullAbortable = new NullAbortable();
 
