@@ -17,8 +17,10 @@ package com.google.code.geobeagle.activity.cachelist.actions.context;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVector;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVectors;
+import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheListAdapter;
 import com.google.code.geobeagle.activity.cachelist.presenter.TitleUpdater;
 import com.google.code.geobeagle.database.CacheWriter;
+import com.google.inject.Inject;
 import com.google.inject.Provider;
 
 import android.app.Activity;
@@ -73,14 +75,16 @@ public class ContextActionDelete implements ContextAction {
     private int mPosition;
     private final TitleUpdater mTitleUpdater;
 
-    public ContextActionDelete(BaseAdapter geocacheListAdapter, GeocacheVectors geocacheVectors,
-            TitleUpdater titleUpdater, Provider<CacheWriter> cacheWriterProvider, Activity activity, int position) {
+    @Inject
+    public ContextActionDelete(GeocacheListAdapter geocacheListAdapter,
+            GeocacheVectors geocacheVectors, TitleUpdater titleUpdater,
+            Provider<CacheWriter> cacheWriterProvider, Activity activity) {
         mGeocacheListAdapter = geocacheListAdapter;
         mGeocacheVectors = geocacheVectors;
         mTitleUpdater = titleUpdater;
         mCacheWriterProvider = cacheWriterProvider;
         mActivity = activity;
-        mPosition = position;
+        mPosition = 0;
     }
 
     public void act(int position) {
