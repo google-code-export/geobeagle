@@ -193,7 +193,7 @@ public class GeocacheListControllerTest extends GeoBeagleTest {
 
         PowerMock.replayAll();
         new GeocacheListController(cacheListRefresh, null, null, null, null).onResume(
-                cacheListRefresh, false);
+                false);
         PowerMock.verifyAll();
     }
 
@@ -207,7 +207,7 @@ public class GeocacheListControllerTest extends GeoBeagleTest {
 
         PowerMock.replayAll();
         new GeocacheListController(cacheListRefresh, null, menuActionSyncGpx, null, null)
-                .onResume(cacheListRefresh, true);
+                .onResume(true);
         PowerMock.verifyAll();
     }
 }

@@ -127,7 +127,7 @@ public class CacheListDelegate {
     public void onResume() {
         mActivityVisible.setVisible(true);
         mPresenter.onResume(mCacheListRefresh);
-        mController.onResume(mCacheListRefresh, mImportIntentManager.isImport());
+        mController.onResume(mImportIntentManager.isImport());
     }
 
     public Dialog onCreateDialog(Builder builder) {
