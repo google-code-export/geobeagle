@@ -27,6 +27,7 @@ import com.google.code.geobeagle.activity.cachelist.model.GeocacheVector;
 import com.google.code.geobeagle.activity.cachelist.presenter.BearingFormatter;
 import com.google.code.geobeagle.activity.cachelist.presenter.RelativeBearingFormatter;
 import com.google.code.geobeagle.formatting.DistanceFormatter;
+import com.google.inject.Provider;
 
 import org.easymock.EasyMock;
 import org.junit.Before;
@@ -101,25 +102,25 @@ public class GeocacheSummaryRowInflaterTest {
         imageView.setImageDrawable(drawable);
 
         PowerMock.replayAll();
-        new RowViews(txtAttributes, txtCacheName, txtDistance,
-                imageView, txtId, iconOverlayFactory, nameFormatter).set(geocacheVector, distanceFormatter,
-                relativeBearingFormatter, listViewBitmapCopier, iconRenderer);
+        new RowViews(txtAttributes, txtCacheName, txtDistance, imageView, txtId,
+                iconOverlayFactory, nameFormatter).set(geocacheVector, relativeBearingFormatter,
+                distanceFormatter, listViewBitmapCopier, iconRenderer);
         PowerMock.verifyAll();
     }
 
     @Test
     public void testInflateExisting() throws Exception {
         View convertView = PowerMock.createMock(View.class);
-        DistanceFormatter distanceFormatter = PowerMock.createMock(DistanceFormatter.class);
         BearingFormatter relativeBearingFormatter = PowerMock
                 .createMock(RelativeBearingFormatter.class);
 
         PowerMock.replayAll();
-        assertEquals(convertView, new GeocacheSummaryRowInflater(distanceFormatter, null,
+        assertEquals(convertView, new GeocacheSummaryRowInflater(null, null,
                 relativeBearingFormatter, null, null, null, null).inflate(convertView));
         PowerMock.verifyAll();
     }
 
+    @SuppressWarnings("unchecked")
     @Test
     public void testInflateNew() throws Exception {
         View view = PowerMock.createMock(View.class);
@@ -129,7 +130,6 @@ public class GeocacheSummaryRowInflaterTest {
         TextView txtAttributes = PowerMock.createMock(TextView.class);
         TextView txtCacheId = PowerMock.createMock(TextView.class);
         TextView txtDistance = PowerMock.createMock(TextView.class);
-        DistanceFormatter distanceFormatter = PowerMock.createMock(DistanceFormatter.class);
         BearingFormatter relativeBearingFormatter = PowerMock
                 .createMock(RelativeBearingFormatter.class);
         PowerMock.mockStatic(Log.class);
@@ -138,6 +138,7 @@ public class GeocacheSummaryRowInflaterTest {
         ListViewBitmapCopier listViewBitmapCopier = PowerMock.createMock(ListViewBitmapCopier.class);
         IconOverlayFactory iconOverlayFactory = PowerMock.createMock(IconOverlayFactory.class);
         NameFormatter nameFormatter = PowerMock.createMock(NameFormatter.class);
+        Provider<DistanceFormatter> distanceFormatterProvider = PowerMock.createMock(Provider.class);
 
         EasyMock.expect(Log.d((String)EasyMock.anyObject(), (String)EasyMock.anyObject()))
                 .andReturn(0).anyTimes();
@@ -147,38 +148,40 @@ public class GeocacheSummaryRowInflaterTest {
         EasyMock.expect(view.findViewById(R.id.gc_row_icon)).andReturn(imageView);
         EasyMock.expect(view.findViewById(R.id.txt_gcattributes)).andReturn(txtAttributes);
         EasyMock.expect(view.findViewById(R.id.txt_gcid)).andReturn(txtCacheId);
-        PowerMock.expectNew(RowViews.class, txtAttributes, txtCacheName,
-                txtDistance, imageView, txtCacheId, iconOverlayFactory, nameFormatter).andReturn(rowViews);
+        PowerMock.expectNew(RowViews.class, txtAttributes, txtCacheName, txtDistance, imageView,
+                txtCacheId, iconOverlayFactory, nameFormatter).andReturn(rowViews);
         view.setTag(rowViews);
 
         PowerMock.replayAll();
-        assertEquals(view, new GeocacheSummaryRowInflater(distanceFormatter, layoutInflater,
-                relativeBearingFormatter, iconRenderer, listViewBitmapCopier, iconOverlayFactory, nameFormatter)
-                .inflate(null));
+        assertEquals(view, new GeocacheSummaryRowInflater(distanceFormatterProvider, layoutInflater,
+                relativeBearingFormatter, iconRenderer, listViewBitmapCopier, iconOverlayFactory,
+                nameFormatter).inflate(null));
         PowerMock.verifyAll();
     }
 
+    @SuppressWarnings("unchecked")
     @Test
     public void testSetData() {
         GeocacheVector geocacheVector = PowerMock.createMock(GeocacheVector.class);
         View view = PowerMock.createMock(View.class);
         RowViews rowViews = PowerMock.createMock(RowViews.class);
-        DistanceFormatter distanceFormatter = PowerMock.createMock(DistanceFormatter.class);
-        DistanceFormatter distanceFormatter2 = PowerMock.createMock(DistanceFormatter.class);
         BearingFormatter relativeBearingFormatter = PowerMock
                 .createMock(RelativeBearingFormatter.class);
-        ListViewBitmapCopier listViewBitmapCopier= PowerMock.createMock(ListViewBitmapCopier.class);
+        ListViewBitmapCopier listViewBitmapCopier = PowerMock
+                .createMock(ListViewBitmapCopier.class);
         IconRenderer iconRenderer = PowerMock.createMock(IconRenderer.class);
+        Provider distanceFormatterProvider = PowerMock.createMock(Provider.class);
+        DistanceFormatter distanceFormatter = PowerMock.createMock(DistanceFormatter.class);
 
         EasyMock.expect(view.getTag()).andReturn(rowViews);
-        rowViews.set(geocacheVector, distanceFormatter2, relativeBearingFormatter,
-                listViewBitmapCopier, iconRenderer);
+        EasyMock.expect(distanceFormatterProvider.get()).andReturn(distanceFormatter);
+        rowViews.set(geocacheVector, relativeBearingFormatter, distanceFormatter, listViewBitmapCopier,
+                iconRenderer);
 
         PowerMock.replayAll();
         final GeocacheSummaryRowInflater geocacheSummaryRowInflater = new GeocacheSummaryRowInflater(
-                distanceFormatter, null, relativeBearingFormatter, iconRenderer,
+                distanceFormatterProvider, null, relativeBearingFormatter, iconRenderer,
                 listViewBitmapCopier, null, null);
-        geocacheSummaryRowInflater.setDistanceFormatter(distanceFormatter2);
         geocacheSummaryRowInflater.setData(view, geocacheVector);
         PowerMock.verifyAll();
     }
