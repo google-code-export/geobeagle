@@ -33,8 +33,8 @@ class RowViews {
     private final TextView mCacheName;
     private final TextView mDistance;
     private final ImageView mIcon;
-    private final TextView mId;
     private final GraphicsGenerator.IconOverlayFactory mIconOverlayFactory;
+    private final TextView mId;
     private final NameFormatter mNameFormatter;
 
     RowViews(TextView attributes, TextView cacheName, TextView distance, ImageView icon,
@@ -54,9 +54,10 @@ class RowViews {
         Geocache geocache = geocacheVector.getGeocache();
         IconOverlay iconOverlay = mIconOverlayFactory.create(geocache, false);
         mNameFormatter.format(mCacheName, geocache.getAvailable(), geocache.getArchived());
-        
-        final Drawable icon = iconRenderer.renderIcon(geocache.getDifficulty(), geocache.getTerrain(), geocache.getCacheType().icon(),
-                iconOverlay, listViewBitmapCopier);
+
+        final Drawable icon = iconRenderer.renderIcon(geocache.getDifficulty(), geocache
+                .getTerrain(), geocache.getCacheType().icon(), iconOverlay, listViewBitmapCopier);
+
         mIcon.setImageDrawable(icon);
         mId.setText(geocacheVector.getId());
         mAttributes.setText(geocacheVector.getFormattedAttributes());
