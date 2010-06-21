@@ -23,8 +23,10 @@ import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.LocationControlBuffered.GpsDisabledLocation;
 import com.google.code.geobeagle.activity.cachelist.GpxImporterFactory.GpxImporterFactoryFactory;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.Abortable;
+import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionDeleteAllCaches;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionSyncBCaching;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionSyncGpx;
+import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionDeleteAllCaches.MenuActionDeleteAllCachesFactory;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionSyncGpx.MenuActionSyncGpxFactory;
 import com.google.code.geobeagle.activity.cachelist.model.CacheListData;
 import com.google.code.geobeagle.activity.cachelist.presenter.AbsoluteBearingFormatter;
@@ -99,6 +101,9 @@ public class CacheListModule extends AbstractAndroidModule {
                 .toProvider(
                         FactoryProvider.newFactory(MenuActionSyncGpxFactory.class,
                                 MenuActionSyncGpx.class));
+        bind(MenuActionDeleteAllCachesFactory.class).toProvider(
+                FactoryProvider.newFactory(MenuActionDeleteAllCachesFactory.class,
+                        MenuActionDeleteAllCaches.class));
     }
 
     static class DistanceFormatterProvider implements Provider<DistanceFormatter> {
