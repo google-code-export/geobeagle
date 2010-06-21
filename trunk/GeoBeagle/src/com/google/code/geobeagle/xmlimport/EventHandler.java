@@ -24,4 +24,6 @@ interface EventHandler {
             throws IOException;
 
     boolean text(String mFullPath, String text) throws IOException;
+
+    void open(String filename);
 }
