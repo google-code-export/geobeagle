@@ -15,36 +15,18 @@
 package com.google.code.geobeagle.gpsstatuswidget;
 
 import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.Time;
-import com.google.code.geobeagle.formatting.DistanceFormatter;
-import com.google.code.geobeagle.location.CombinedLocationManager;
 import com.google.inject.Inject;
-import com.google.inject.Provider;
 
 import android.content.Context;
 import android.graphics.Canvas;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
 /**
  * @author sng Displays the GPS status (mAccuracy, availability, etc).
  */
 public class GpsStatusWidget extends LinearLayout {
-
-    static GpsStatusWidgetDelegate createGpsStatusWidgetDelegate(View gpsStatusWidget, Time time,
-            CombinedLocationManager combinedLocationManager, Meter meter,
-            Provider<DistanceFormatter> distanceFormatterProvider, MeterBars meterBars,
-            TextLagUpdater textLagUpdater, Context parent) {
-        final TextView status = (TextView)gpsStatusWidget.findViewById(R.id.status);
-        final TextView provider = (TextView)gpsStatusWidget.findViewById(R.id.provider);
-        final MeterFader meterFader = new MeterFader(gpsStatusWidget, meterBars, time);
-
-        return new GpsStatusWidgetDelegate(combinedLocationManager, distanceFormatterProvider,
-                meter, meterFader, provider, parent, status, textLagUpdater);
-    }
 
     public static class InflatedGpsStatusWidget extends LinearLayout {
         private GpsStatusWidgetDelegate mGpsStatusWidgetDelegate;
