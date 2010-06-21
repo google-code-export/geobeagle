@@ -85,9 +85,10 @@ public class GpxLoader {
     }
 
     public void open(String path, Reader reader) throws XmlPullParserException {
-        mGpxToCache.open(path, reader);
+        final String filename = new File(path).getName();
+        mGpxToCache.open(path, filename, reader);
         // Just use the filename, not the whole path.
-        mCachePersisterFacade.open(new File(path).getName());
+        mCachePersisterFacade.open(filename);
     }
 
     public void start() {

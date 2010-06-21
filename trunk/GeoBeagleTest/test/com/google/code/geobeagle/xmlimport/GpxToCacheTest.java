@@ -73,7 +73,8 @@ public class GpxToCacheTest {
 
         expect(xmlPullParser.getEventType()).andReturn(XmlPullParser.START_DOCUMENT);
         expect(fileAlreadyLoadedChecker.isAlreadyLoaded(null)).andReturn(false);
-
+        eventHelper.open(null);
+        
         PowerMock.replayAll();
         GpxToCache gpxToCache = new GpxToCache(xmlPullParser, new Aborter(),
                 fileAlreadyLoadedChecker);
@@ -94,7 +95,8 @@ public class GpxToCacheTest {
         expect(xmlPullParser.getEventType()).andReturn(XmlPullParser.END_DOCUMENT);
         expect(eventHelper.handleEvent(XmlPullParser.END_DOCUMENT)).andReturn(true);
         expect(fileAlreadyLoadedChecker.isAlreadyLoaded(null)).andReturn(false);
-
+        eventHelper.open(null);
+        
         PowerMock.replayAll();
         GpxToCache gpxToCache = new GpxToCache(xmlPullParser, new Aborter(),
                 fileAlreadyLoadedChecker);
@@ -107,6 +109,7 @@ public class GpxToCacheTest {
         XmlPullParserWrapper xmlPullParser = PowerMock.createMock(XmlPullParserWrapper.class);
         EventHelper eventHelper = PowerMock.createMock(EventHelper.class);
 
+        eventHelper.open(null);
         expect(xmlPullParser.getEventType()).andReturn(XmlPullParser.START_DOCUMENT);
         expect(eventHelper.handleEvent(XmlPullParser.START_DOCUMENT)).andReturn(true);
         expect(xmlPullParser.next()).andReturn(XmlPullParser.END_DOCUMENT);
@@ -135,6 +138,7 @@ public class GpxToCacheTest {
         XmlPullParserWrapper xmlPullParser = PowerMock.createMock(XmlPullParserWrapper.class);
         EventHelper eventHelper = PowerMock.createMock(EventHelper.class);
 
+        eventHelper.open(null);
         expect(xmlPullParser.getEventType()).andReturn(XmlPullParser.START_DOCUMENT);
         expect(eventHelper.handleEvent(XmlPullParser.START_DOCUMENT)).andReturn(false);
         expect(fileAlreadyLoadedChecker.isAlreadyLoaded(null)).andReturn(false);
@@ -151,6 +155,7 @@ public class GpxToCacheTest {
         XmlPullParserWrapper xmlPullParser = PowerMock.createMock(XmlPullParserWrapper.class);
         EventHelper eventHelper = PowerMock.createMock(EventHelper.class);
 
+        eventHelper.open(null);
         expect(fileAlreadyLoadedChecker.isAlreadyLoaded(null)).andReturn(false);
         expect(xmlPullParser.getEventType()).andReturn(XmlPullParser.START_DOCUMENT);
         expect(eventHelper.handleEvent(XmlPullParser.START_DOCUMENT)).andReturn(true);
@@ -180,7 +185,7 @@ public class GpxToCacheTest {
         PowerMock.replayAll();
         GpxToCache gpxToCache = new GpxToCache(xmlPullParserWrapper, new Aborter(),
                 fileAlreadyLoadedChecker);
-        gpxToCache.open("/my/path", reader);
+        gpxToCache.open("/my/path", null, reader);
         PowerMock.verifyAll();
     }
 }
