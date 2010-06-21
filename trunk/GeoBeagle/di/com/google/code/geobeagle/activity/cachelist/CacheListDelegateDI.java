@@ -60,11 +60,7 @@ import com.google.code.geobeagle.database.ISQLiteDatabase;
 import com.google.code.geobeagle.database.LocationSaver;
 import com.google.code.geobeagle.database.TagWriterImpl;
 import com.google.code.geobeagle.database.TagWriterNull;
-import com.google.code.geobeagle.database.WhereFactoryAllCaches;
-import com.google.code.geobeagle.database.WhereFactoryNearestCaches;
 import com.google.code.geobeagle.database.CacheWriter.ClearCachesFromSourceImpl;
-import com.google.code.geobeagle.database.DatabaseDI.SearchFactory;
-import com.google.code.geobeagle.database.WhereFactoryNearestCaches.WhereStringFactory;
 import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidget;
 import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidgetDelegate;
 import com.google.code.geobeagle.gpsstatuswidget.GpsWidgetAndUpdater;
@@ -157,13 +153,8 @@ public class CacheListDelegateDI {
         final UpdateGpsWidgetRunnable updateGpsWidgetRunnable = gpsWidgetAndUpdater
                 .getUpdateGpsWidgetRunnable();
 
-        final WhereFactoryAllCaches whereFactoryAllCaches = injector
-                .getInstance(WhereFactoryAllCaches.class);
-        final WhereFactoryNearestCaches whereFactoryNearestCaches = injector
-                .getInstance(WhereFactoryNearestCaches.class);
-
-        final FilterNearestCaches filterNearestCaches = new FilterNearestCaches(
-                whereFactoryAllCaches, whereFactoryNearestCaches);
+        final FilterNearestCaches filterNearestCaches = injector
+                .getInstance(FilterNearestCaches.class);
         final CacheListDelegateDI.Timing timing = new CacheListDelegateDI.Timing();
 
         final AdapterCachesSorter adapterCachesSorter = new AdapterCachesSorter(cacheListData,
