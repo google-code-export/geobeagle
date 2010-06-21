@@ -21,6 +21,10 @@ import java.io.IOException;
 public class HtmlWriter {
     private final com.google.code.geobeagle.cachedetails.Writer mWriter;
 
+    static final String HEADER = "<html>\n<head>\n"
+            + "<script type=\"text/javascript\" src=\"file:///android_asset/rot13.js\">"
+            + "</script></head>\n  <body onLoad=encryptAll()>\n";
+
     @Inject
     public HtmlWriter(com.google.code.geobeagle.cachedetails.Writer writerWrapper) {
         mWriter = writerWrapper;
@@ -37,6 +41,7 @@ public class HtmlWriter {
     public void writeln(String text) throws IOException {
         mWriter.write(text + "<br/>\n");
     }
+
     public void write(String text) throws IOException {
         mWriter.write(text + "\n");
     }
@@ -47,13 +52,9 @@ public class HtmlWriter {
     }
 
     public void writeHeader() throws IOException {
-        mWriter.write("<html>\n");
-        mWriter.write("<head>\n");
-        mWriter.write("<script type=\"text/javascript\" src=\"file:///android_asset/rot13.js\">"
-                + "</script></head>\n");
-        mWriter.write("  <body onLoad=encryptAll()>\n");
+        mWriter.write(HEADER);
     }
-
+    
     public void writeSeparator() throws IOException {
         mWriter.write("<hr/>\n");
     }

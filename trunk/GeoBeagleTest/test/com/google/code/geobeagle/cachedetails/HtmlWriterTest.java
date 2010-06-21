@@ -12,7 +12,7 @@
  ** limitations under the License.
  */
 
-package com.google.code.geobeagle.xmlimport;
+package com.google.code.geobeagle.cachedetails;
 
 import static org.easymock.classextension.EasyMock.createMock;
 import static org.easymock.classextension.EasyMock.replay;
@@ -77,8 +77,7 @@ public class HtmlWriterTest {
     @Test
     public void testWriteHeader() throws IOException {
         final WriterWrapper writer = createMock(WriterWrapper.class);
-        writer.write("<html>\n");
-        writer.write("  <body>\n");
+        writer.write(HtmlWriter.HEADER);
 
         replay(writer);
         HtmlWriter htmlWriter = new HtmlWriter(writer);

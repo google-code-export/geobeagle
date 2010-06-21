@@ -14,18 +14,13 @@
 
 package com.google.code.geobeagle.xmlimport;
 
-import static org.easymock.EasyMock.expect;
 import static org.powermock.api.easymock.PowerMock.createMock;
-import static org.powermock.api.easymock.PowerMock.expectNew;
 import static org.powermock.api.easymock.PowerMock.replay;
-import static org.powermock.api.easymock.PowerMock.replayAll;
 import static org.powermock.api.easymock.PowerMock.verify;
-import static org.powermock.api.easymock.PowerMock.verifyAll;
 
 import com.google.code.geobeagle.activity.cachelist.GeoBeagleTest;
 import com.google.code.geobeagle.cachedetails.CacheDetailsWriter;
 import com.google.code.geobeagle.cachedetails.Emotifier;
-import com.google.code.geobeagle.cachedetails.FilePathStrategy;
 import com.google.code.geobeagle.cachedetails.HtmlWriter;
 
 import org.junit.Test;
@@ -35,7 +30,6 @@ import org.powermock.modules.junit4.PowerMockRunner;
 
 import android.util.Log;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.regex.Pattern;
 
@@ -44,27 +38,6 @@ import java.util.regex.Pattern;
 })
 @RunWith(PowerMockRunner.class)
 public class CacheDetailsWriterTest extends GeoBeagleTest {
-    @Test
-    public void testOpen() throws Exception {
-        HtmlWriter htmlWriter = createMock(HtmlWriter.class);
-        FilePathStrategy filePathStrategy = createMock(FilePathStrategy.class);
-        File filePath = createMock(File.class);
-        String path = "/sdcard/details/oakland.gpx/GC123.html";
-        String parent = "/sdcard/details/oakland.gpx";
-        File fileParent = createMock(File.class);
-
-        expect(filePathStrategy.getPath("oakland.gpx", "GC123", "html")).andReturn(path);
-        expectNew(File.class, path).andReturn(filePath);
-        htmlWriter.open(path);
-        expect(filePath.getParent()).andReturn(parent);
-        expectNew(File.class, parent).andReturn(fileParent);
-        expect(fileParent.mkdirs()).andReturn(true);
-
-        replayAll();
-        CacheDetailsWriter cacheDetailsWriter = new CacheDetailsWriter(htmlWriter, null);
-        cacheDetailsWriter.open("GC123");
-        verifyAll();
-    }
 
     @Test
     public void testWriteEndTag() throws IOException {
@@ -74,17 +47,7 @@ public class CacheDetailsWriterTest extends GeoBeagleTest {
         htmlWriter.close();
 
         replay(htmlWriter);
-        new CacheDetailsWriter(htmlWriter, null).close();
-        verify(htmlWriter);
-    }
-
-    @Test
-    public void testWriteHint() throws IOException {
-        HtmlWriter htmlWriter = createMock(HtmlWriter.class);
-        htmlWriter.writeln("<br />Hint: <font color=gray>a hint</font>");
-
-        replay(htmlWriter);
-        new CacheDetailsWriter(htmlWriter, null).writeHint("a hint");
+        new CacheDetailsWriter(htmlWriter, null, null).close();
         verify(htmlWriter);
     }
 
@@ -94,18 +57,7 @@ public class CacheDetailsWriterTest extends GeoBeagleTest {
         htmlWriter.writeln("some text");
 
         replay(htmlWriter);
-        new CacheDetailsWriter(htmlWriter, null).writeLine("some text");
-        verify(htmlWriter);
-    }
-
-    @Test
-    public void testWriteLogDate() throws IOException {
-        HtmlWriter htmlWriter = createMock(HtmlWriter.class);
-        htmlWriter.writeSeparator();
-        htmlWriter.writeln("Two hours ago");
-
-        replay(htmlWriter);
-        new CacheDetailsWriter(htmlWriter, null).writeLogDate("2010-06-17T19:00:00Z");
+        new CacheDetailsWriter(htmlWriter, null, null).writeLine("some text");
         verify(htmlWriter);
     }
 
@@ -121,7 +73,7 @@ public class CacheDetailsWriterTest extends GeoBeagleTest {
                 ":(", ":o)", "|)", "?"
         });
         CacheDetailsWriter cacheDetailsWriter = new CacheDetailsWriter(htmlWriter, new Emotifier(
-                pattern));
+                pattern), null);
         cacheDetailsWriter.writeLogText("sad [:(] face", false);
         cacheDetailsWriter.writeLogText("clown [:o)] face", false);
         cacheDetailsWriter.writeLogText("not a smiley []", false);
@@ -131,14 +83,14 @@ public class CacheDetailsWriterTest extends GeoBeagleTest {
     @Test
     public void testWriteWptName() throws IOException {
         HtmlWriter htmlWriter = createMock(HtmlWriter.class);
-        htmlWriter.writeHeader();
-        htmlWriter.writeln("GC1234");
-        htmlWriter.writeln("37 00.000, 122 00.000");
+        
+        htmlWriter.open(null);
+        htmlWriter.writeln("<font color=grey>Location:</font> 37 00.000, 122 00.000");
 
         replay(htmlWriter);
-        CacheDetailsWriter cacheDetailsWriter = new CacheDetailsWriter(htmlWriter, null);
+        CacheDetailsWriter cacheDetailsWriter = new CacheDetailsWriter(htmlWriter, null, null);
         cacheDetailsWriter.latitudeLongitude("37.0", "122.0");
-        cacheDetailsWriter.writeWptName("GC1234");
+        cacheDetailsWriter.writeWptName();
         verify(htmlWriter);
     }
 }
