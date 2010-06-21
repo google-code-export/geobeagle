@@ -33,6 +33,7 @@ import com.google.inject.BindingAnnotation;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
+import android.app.Activity;
 import android.graphics.drawable.Drawable;
 import android.view.View;
 import android.widget.ImageView;
@@ -132,23 +133,23 @@ public class GeocacheViewer {
     private final ImageView mCacheTypeImageView;
     private final AttributeViewer mContainer;
     private final AttributeViewer mDifficulty;
-    private final TextView mId;
     private final NameViewer mName;
     private final RadarView mRadarView;
     private final AttributeViewer mTerrain;
     private final IconOverlayFactory mIconOverlayFactory;
     private final MapViewBitmapCopier mMapViewBitmapCopier;
     private final IconRenderer mIconRenderer;
+    private final Activity mActivity;
 
     @Inject
-    public GeocacheViewer(RadarView radarView, @Named("GeocacheId") TextView gcId,
+    public GeocacheViewer(RadarView radarView, Activity activity,
             NameViewer gcName, @Named("GeocacheIcon") ImageView cacheTypeImageView,
             @Named("GeocacheDifficulty") AttributeViewer gcDifficulty,
             @Named("GeocacheTerrain") AttributeViewer gcTerrain, ResourceImages gcContainer,
             IconOverlayFactory iconOverlayFactory, MapViewBitmapCopier mapViewBitmapCopier,
             @DifficultyAndTerrainPainterAnnotation IconRenderer iconRenderer) {
         mRadarView = radarView;
-        mId = gcId;
+        mActivity = activity;
         mName = gcName;
         mCacheTypeImageView = cacheTypeImageView;
         mDifficulty = gcDifficulty;
@@ -164,7 +165,7 @@ public class GeocacheViewer {
         final double longitude = geocache.getLongitude();
         mRadarView.setTarget((int)(latitude * GeoUtils.MILLION),
                 (int)(longitude * GeoUtils.MILLION));
-        mId.setText(geocache.getId());
+        mActivity.setTitle("GeoBeagle: " + geocache.getId());
 
         IconOverlay iconOverlay = mIconOverlayFactory.create(geocache, true);
         int iconBig = geocache.getCacheType().iconBig();
