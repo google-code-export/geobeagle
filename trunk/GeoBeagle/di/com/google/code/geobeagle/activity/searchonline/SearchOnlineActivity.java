@@ -46,7 +46,7 @@ public class SearchOnlineActivity extends GuiceActivity {
     private CombinedLocationListener mCombinedLocationListener;
 
     @InjectView(R.id.gps_widget_view)
-    private InflatedGpsStatusWidget mGpsStatusWidget;
+    private InflatedGpsStatusWidget mInflatedGpsStatusWidget;
 
     private GpsWidgetAndUpdater mGpsWidgetAndUpdater;
 
@@ -67,7 +67,7 @@ public class SearchOnlineActivity extends GuiceActivity {
     }
 
     InflatedGpsStatusWidget getGpsStatusWidget() {
-        return mGpsStatusWidget;
+        return mInflatedGpsStatusWidget;
     }
 
     GpsWidgetAndUpdater getGpsWidgetAndUpdater() {
@@ -96,12 +96,12 @@ public class SearchOnlineActivity extends GuiceActivity {
         Injector injector = this.getInjector();
 
         mGpsWidgetAndUpdater = injector.getInstance(GpsWidgetAndUpdaterFactory.class).create(
-                mGpsStatusWidget);
+                mInflatedGpsStatusWidget);
         
         GpsStatusWidgetDelegate gpsStatusWidgetDelegate = mGpsWidgetAndUpdater
                 .getGpsStatusWidgetDelegate();
-        mGpsStatusWidget.setDelegate(gpsStatusWidgetDelegate);
-        mGpsStatusWidget.setBackgroundColor(Color.BLACK);
+        mInflatedGpsStatusWidget.setDelegate(gpsStatusWidgetDelegate);
+        mInflatedGpsStatusWidget.setBackgroundColor(Color.BLACK);
 
         mCombinedLocationListener = injector.getInstance(CombinedLocationListenerFactory.class)
                 .create(gpsStatusWidgetDelegate);
