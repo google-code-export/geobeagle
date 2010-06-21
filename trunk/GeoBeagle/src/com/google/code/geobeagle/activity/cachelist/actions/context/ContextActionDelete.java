@@ -20,6 +20,7 @@ import com.google.code.geobeagle.activity.cachelist.model.GeocacheVectors;
 import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheListAdapter;
 import com.google.code.geobeagle.activity.cachelist.presenter.TitleUpdater;
 import com.google.code.geobeagle.database.CacheWriter;
+import com.google.code.geobeagle.database.DbFrontend;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
@@ -74,16 +75,18 @@ public class ContextActionDelete implements ContextAction {
     private final GeocacheVectors mGeocacheVectors;
     private int mPosition;
     private final TitleUpdater mTitleUpdater;
+    private final DbFrontend mDbFrontend;
 
     @Inject
     public ContextActionDelete(GeocacheListAdapter geocacheListAdapter,
             GeocacheVectors geocacheVectors, TitleUpdater titleUpdater,
-            Provider<CacheWriter> cacheWriterProvider, Activity activity) {
+            Provider<CacheWriter> cacheWriterProvider, Activity activity, DbFrontend dbFrontend) {
         mGeocacheListAdapter = geocacheListAdapter;
         mGeocacheVectors = geocacheVectors;
         mTitleUpdater = titleUpdater;
         mCacheWriterProvider = cacheWriterProvider;
         mActivity = activity;
+        mDbFrontend = dbFrontend;
         mPosition = 0;
     }
 
@@ -97,7 +100,7 @@ public class ContextActionDelete implements ContextAction {
         mGeocacheVectors.remove(mPosition);
         mGeocacheListAdapter.notifyDataSetChanged();
         // TODO: How to get correct values?
-        mTitleUpdater.update(mGeocacheVectors.size(), mGeocacheVectors.size());
+        mTitleUpdater.update(mDbFrontend.countAll(), mGeocacheVectors.size());
     }
 
     public CharSequence getConfirmDeleteBodyText() {
