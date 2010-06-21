@@ -16,6 +16,9 @@ package com.google.code.geobeagle.xmlimport;
 
 import com.google.code.geobeagle.activity.main.GeoBeagleModule.DefaultSharedPreferences;
 import com.google.code.geobeagle.activity.main.GeoBeagleModule.ExternalStorageDirectory;
+import com.google.code.geobeagle.cachedetails.CacheDetailsWriter;
+import com.google.code.geobeagle.cachedetails.FilePathStrategy;
+import com.google.code.geobeagle.cachedetails.HtmlWriter;
 import com.google.code.geobeagle.database.GpxWriter;
 import com.google.code.geobeagle.xmlimport.EventHelper.XmlPathBuilder;
 import com.google.code.geobeagle.xmlimport.GpxImporterDI.MessageHandler;
@@ -84,5 +87,11 @@ public class XmlimportModule extends AbstractAndroidModule {
     @OldDetailsDirectory
     String oldDetailsDirectoryProvider(@ExternalStorageDirectory String externalStorageDirectory) {
         return externalStorageDirectory + "/" + "GeoBeagle";
+    }
+
+    @Provides
+    CacheDetailsWriter cacheDetailsWriterLoadDetailsProvider(HtmlWriter htmlWriter,
+            FilePathStrategy filePathStrategy) {
+        return new CacheDetailsWriter(htmlWriter, filePathStrategy);
     }
 }
