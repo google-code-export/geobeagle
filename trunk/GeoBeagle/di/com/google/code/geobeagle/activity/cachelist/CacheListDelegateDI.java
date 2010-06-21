@@ -149,8 +149,7 @@ public class CacheListDelegateDI {
         menuActions.add(injector.getInstance(MenuActionSettings.class));
 
         final ContextActionView contextActionView = injector.getInstance(ContextActionView.class);
-        final ContextActionEdit contextActionEdit = new ContextActionEdit(geocacheVectors,
-                listActivity);
+        final ContextActionEdit contextActionEdit = injector.getInstance(ContextActionEdit.class);
         final ContextActionDelete contextActionDelete = new ContextActionDelete(
                 geocacheListAdapter, geocacheVectors, titleUpdater, cacheWriterProvider,
                 listActivity, 0);
