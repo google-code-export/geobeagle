@@ -14,6 +14,11 @@
 
 package com.google.code.geobeagle.gpsstatuswidget;
 
+import static java.lang.annotation.ElementType.FIELD;
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.ElementType.PARAMETER;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
+
 import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidget.InflatedGpsStatusWidget;
 import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidgetDelegate.GpsStatusWidgetDelegateFactory;
 import com.google.code.geobeagle.gpsstatuswidget.GpsWidgetAndUpdater.GpsWidgetAndUpdaterFactory;
@@ -21,6 +26,7 @@ import com.google.code.geobeagle.gpsstatuswidget.MeterBars.MeterBarsFactory;
 import com.google.code.geobeagle.gpsstatuswidget.MeterFader.MeterFaderFactory;
 import com.google.code.geobeagle.gpsstatuswidget.TextLagUpdater.TextLagUpdaterFactory;
 import com.google.code.geobeagle.gpsstatuswidget.UpdateGpsWidgetRunnable.UpdateGpsWidgetRunnableFactory;
+import com.google.inject.BindingAnnotation;
 import com.google.inject.Provides;
 import com.google.inject.assistedinject.FactoryProvider;
 
@@ -29,7 +35,13 @@ import roboguice.inject.ContextScoped;
 
 import android.content.Context;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
+
 public class GpsStatusWidgetModule extends AbstractAndroidModule {
+    @BindingAnnotation @Target({ FIELD, PARAMETER, METHOD }) @Retention(RUNTIME)
+    public static @interface CacheList {}
+
     @Override
     protected void configure() {
         bind(MeterBarsFactory.class).toProvider(
@@ -51,6 +63,7 @@ public class GpsStatusWidgetModule extends AbstractAndroidModule {
 
     @Provides
     @ContextScoped
+    @CacheList
     InflatedGpsStatusWidget providesInflatedGpsStatusWidget(Context context) {
         return new InflatedGpsStatusWidget(context);
     }
