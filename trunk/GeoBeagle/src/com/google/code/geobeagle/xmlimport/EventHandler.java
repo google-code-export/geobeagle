@@ -14,14 +14,14 @@
 
 package com.google.code.geobeagle.xmlimport;
 
-
 import java.io.IOException;
 
 interface EventHandler {
 
-    void endTag(String previousFullPath) throws IOException;
+    void endTag(String name, String previousFullPath) throws IOException;
 
-    void startTag(String mFullPath, XmlPullParserWrapper mXmlPullParser) throws IOException;
+    void startTag(String name, String mFullPath, XmlPullParserWrapper mXmlPullParser)
+            throws IOException;
 
     boolean text(String mFullPath, String text) throws IOException;
 }
