@@ -148,7 +148,7 @@ public class CacheListDelegateDI {
         final GpxImporterFactory gpxImporterFactory = gpxImporterFactoryFactory.create(
                 cachePersisterFacadeFactory, geocacheListPresenter, messageHandler);
 
-        final NullAbortable nullAbortable = new NullAbortable();
+        final NullAbortable nullAbortable = injector.getInstance(NullAbortable.class);
 
         final Provider<CacheWriter> cacheWriterProvider = injector.getProvider(CacheWriter.class);
         final MenuActionSyncGpx menuActionSyncGpx = new MenuActionSyncGpx(
