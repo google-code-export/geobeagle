@@ -53,6 +53,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import java.io.FilenameFilter;
+import java.util.ArrayList;
 
 public class GpxImporterDI {
     // Can't test this due to final methods in base.
@@ -330,9 +331,12 @@ public class GpxImporterDI {
                 xmlPullParserWrapper, aborter);
         final EventHandlerGpx eventHandlerGpx = new EventHandlerGpx(cachePersisterFacade);
         final EventHandlerLoc eventHandlerLoc = new EventHandlerLoc(cachePersisterFacade);
-
+        
+        final ArrayList<EventHandler> gpxHandlers = new ArrayList<EventHandler>();
+        gpxHandlers.add(eventHandlerGpx);
+        final EventHandlerComposite eventHandlerComposite = new EventHandlerComposite(gpxHandlers);
         final EventHandlers eventHandlers = new EventHandlers();
-        eventHandlers.add("gpx", eventHandlerGpx);
+        eventHandlers.add("gpx", eventHandlerComposite);
         eventHandlers.add("loc", eventHandlerLoc);
 
         return new GpxImporter(geocacheListPresenter, gpxLoader, context, importThreadWrapper,
