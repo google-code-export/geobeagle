@@ -25,6 +25,7 @@ import com.google.code.geobeagle.database.ClearCachesFromSourceImpl;
 import com.google.code.geobeagle.database.GpxWriter;
 import com.google.code.geobeagle.database.TagWriterImpl;
 import com.google.code.geobeagle.database.TagWriterNull;
+import com.google.code.geobeagle.xmlimport.GpxImporterDI.MessageHandler;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 
@@ -36,7 +37,7 @@ public class CachePersisterFacadeDI {
 
     public static class CachePersisterFacadeFactory {
         public static interface CachePersisterFacadeFactoryFactory {
-            CachePersisterFacadeFactory create(MessageHandlerInterface messageHandlerInterface);
+            CachePersisterFacadeFactory create(MessageHandler messageHandlerInterface);
         }
 
         private final CacheDetailsWriter mCacheDetailsWriter;
@@ -50,7 +51,7 @@ public class CachePersisterFacadeDI {
         private final ClearCachesFromSource mClearCachesFromSource;
 
         @Inject
-        public CachePersisterFacadeFactory(@Assisted MessageHandlerInterface messageHandler,
+        public CachePersisterFacadeFactory(@Assisted MessageHandler messageHandler,
                 CacheTypeFactory cacheTypeFactory, TagWriterImpl tagWriterImpl,
                 TagWriterNull tagWriterNull, FilePathStrategy filePathStrategy,
                 ClearCachesFromSourceImpl clearCachesFromSourceImpl) {
