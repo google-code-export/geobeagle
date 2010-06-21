@@ -71,6 +71,7 @@ import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidgetDelegate;
 import com.google.code.geobeagle.gpsstatuswidget.GpsWidgetAndUpdater;
 import com.google.code.geobeagle.gpsstatuswidget.UpdateGpsWidgetRunnable;
 import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidget.InflatedGpsStatusWidget;
+import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidgetModule.GpsStatusWidgetFactory;
 import com.google.code.geobeagle.location.CombinedLocationListener;
 import com.google.code.geobeagle.location.CombinedLocationManager;
 import com.google.code.geobeagle.xmlimport.MessageHandlerInterface;
@@ -90,7 +91,6 @@ import android.content.DialogInterface.OnClickListener;
 import android.content.res.Resources;
 import android.hardware.SensorManager;
 import android.util.Log;
-import android.view.ViewGroup;
 
 import java.util.Calendar;
 
@@ -137,10 +137,10 @@ public class CacheListDelegateDI {
 
         final InflatedGpsStatusWidget inflatedGpsStatusWidget = new InflatedGpsStatusWidget(
                 listActivity);
-        final GpsStatusWidget gpsStatusWidget = new GpsStatusWidget(listActivity);
-
-        gpsStatusWidget.addView(inflatedGpsStatusWidget, ViewGroup.LayoutParams.FILL_PARENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT);
+        final GpsStatusWidgetFactory gpsStatusWidgetFactory = injector
+                .getInstance(GpsStatusWidgetFactory.class);
+        final GpsStatusWidget gpsStatusWidget = gpsStatusWidgetFactory
+                .create(inflatedGpsStatusWidget);
         final GpsWidgetAndUpdater gpsWidgetAndUpdater = new GpsWidgetAndUpdater(listActivity,
                 gpsStatusWidget, locationControlBuffered, combinedLocationManager,
                 distanceFormatterProvider, activityVisible);
