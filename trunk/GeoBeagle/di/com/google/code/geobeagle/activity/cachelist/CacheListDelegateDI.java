@@ -119,11 +119,11 @@ public class CacheListDelegateDI {
         final MenuActionSyncGpx menuActionSyncGpx = menuActionSyncGpxFactory.create(
                 cacheListRefresh, gpxImporterFactory);
         final MenuActions menuActions = injector.getInstance(MenuActions.class);
-        
+
         menuActions.add(menuActionSyncGpx);
         final MenuActionDeleteAllCachesFactory menuActionDeleteAllCachesFactory = injector
                 .getInstance(MenuActionDeleteAllCachesFactory.class);
-        
+
         menuActions.add(menuActionDeleteAllCachesFactory.create(cacheListRefresh));
         menuActions.add(injector.getInstance(MenuActionMyLocation.class));
         menuActions.add(injector.getInstance(MenuActionSearchOnline.class));
@@ -132,7 +132,8 @@ public class CacheListDelegateDI {
 
         final ContextActionView contextActionView = injector.getInstance(ContextActionView.class);
         final ContextActionEdit contextActionEdit = injector.getInstance(ContextActionEdit.class);
-        final ContextActionDelete contextActionDelete = injector.getInstance(ContextActionDelete.class);
+        final ContextActionDelete contextActionDelete = injector
+                .getInstance(ContextActionDelete.class);
 
         final ContextAction[] contextActions = new ContextAction[] {
                 contextActionDelete, contextActionView, contextActionEdit
