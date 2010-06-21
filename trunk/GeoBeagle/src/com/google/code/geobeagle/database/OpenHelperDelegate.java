@@ -51,5 +51,9 @@ public class OpenHelperDelegate {
             db.execSQL("ALTER TABLE CACHES ADD COLUMN " + Database.S0_COLUMN_AVAILABLE);
             db.execSQL("ALTER TABLE CACHES ADD COLUMN " + Database.S0_COLUMN_ARCHIVED);
         }
+        if (oldVersion < 14) {
+            // to get new gpx details.
+            db.execSQL(Database.SQL_FORCE_UPDATE_ALL);
+        }
     }
 }
