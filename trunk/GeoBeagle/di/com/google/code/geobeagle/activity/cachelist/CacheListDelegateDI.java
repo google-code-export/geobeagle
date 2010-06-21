@@ -158,9 +158,11 @@ public class CacheListDelegateDI {
                 .getUpdateGpsWidgetRunnable();
 
 
-        final WhereFactoryAllCaches whereFactoryAllCaches = new WhereFactoryAllCaches();
-        final SearchFactory searchFactory = new SearchFactory();
-        final WhereStringFactory whereStringFactory = new WhereStringFactory();
+        final WhereFactoryAllCaches whereFactoryAllCaches = injector
+                .getInstance(WhereFactoryAllCaches.class);
+        final SearchFactory searchFactory = injector.getInstance(SearchFactory.class);
+        final WhereStringFactory whereStringFactory = injector
+                .getInstance(WhereStringFactory.class);
         final WhereFactoryNearestCaches whereFactoryNearestCaches = new WhereFactoryNearestCaches(
                 searchFactory, whereStringFactory);
 
