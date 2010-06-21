@@ -19,7 +19,6 @@ import com.google.code.geobeagle.activity.main.GeoBeagleModule.ExternalStorageDi
 import com.google.code.geobeagle.database.GpxWriter;
 import com.google.code.geobeagle.xmlimport.EventHelper.XmlPathBuilder;
 import com.google.code.geobeagle.xmlimport.GpxImporterDI.MessageHandler;
-import com.google.code.geobeagle.xmlimport.GpxToCacheDI.XmlPullParserWrapper;
 import com.google.code.geobeagle.xmlimport.XmlimportAnnotations.DetailsDirectory;
 import com.google.code.geobeagle.xmlimport.XmlimportAnnotations.GpxAnnotation;
 import com.google.code.geobeagle.xmlimport.XmlimportAnnotations.ImportDirectory;

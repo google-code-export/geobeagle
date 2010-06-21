@@ -17,7 +17,6 @@ package com.google.code.geobeagle.xmlimport;
 import com.google.code.geobeagle.xmlimport.EventHandler;
 import com.google.code.geobeagle.xmlimport.EventHelper;
 import com.google.code.geobeagle.xmlimport.EventHelper.XmlPathBuilder;
-import com.google.code.geobeagle.xmlimport.GpxToCacheDI.XmlPullParserWrapper;
 
 public class EventHelperDI {
 
