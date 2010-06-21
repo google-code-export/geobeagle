@@ -30,8 +30,6 @@ import android.app.AlertDialog.Builder;
 import android.content.Intent;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.ListView;
 
 public class CacheListDelegate {
     static class ImportIntentManager {
@@ -108,8 +106,8 @@ public class CacheListDelegate {
         return mController.onCreateOptionsMenu(menu);
     }
 
-    public void onListItemClick(ListView l, View v, int position, long id) {
-        mController.onListItemClick(l, v, position, id);
+    public void onListItemClick(int position) {
+        mController.onListItemClick(position);
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -134,7 +132,7 @@ public class CacheListDelegate {
         return mContextActionDeleteDialogHelper.onCreateDialog(builder);
     }
 
-    public void onPrepareDialog(int id, Dialog dialog) {
+    public void onPrepareDialog(Dialog dialog) {
         mContextActionDeleteDialogHelper.onPrepareDialog(dialog);
     }
 }
