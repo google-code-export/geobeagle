@@ -15,10 +15,6 @@
 package com.google.code.geobeagle.xmlimport;
 
 import com.google.code.geobeagle.CacheTypeFactory;
-import com.google.code.geobeagle.cachedetails.CacheDetailsWriter;
-import com.google.code.geobeagle.cachedetails.FilePathStrategy;
-import com.google.code.geobeagle.cachedetails.HtmlWriter;
-import com.google.code.geobeagle.cachedetails.WriterWrapper;
 import com.google.code.geobeagle.database.CacheWriter;
 import com.google.code.geobeagle.database.ClearCachesFromSource;
 import com.google.code.geobeagle.database.ClearCachesFromSourceImpl;
@@ -39,12 +35,9 @@ public class CachePersisterFacadeDI {
             CachePersisterFacadeFactory create(MessageHandler messageHandlerInterface);
         }
 
-        private final CacheDetailsWriter mCacheDetailsWriter;
         private final CacheTypeFactory mCacheTypeFactory;
         private final FileFactory mFileFactory;
-        private final HtmlWriter mHtmlWriter;
         private final MessageHandlerInterface mMessageHandler;
-        private final WriterWrapper mWriterWrapper;
         private final TagWriterImpl mTagWriterImpl;
         private final TagWriterNull mTagWriterNull;
         private final ClearCachesFromSource mClearCachesFromSource;
@@ -52,13 +45,9 @@ public class CachePersisterFacadeDI {
         @Inject
         public CachePersisterFacadeFactory(MessageHandler messageHandler,
                 CacheTypeFactory cacheTypeFactory, TagWriterImpl tagWriterImpl,
-                TagWriterNull tagWriterNull, FilePathStrategy filePathStrategy,
-                ClearCachesFromSourceImpl clearCachesFromSourceImpl) {
+                TagWriterNull tagWriterNull, ClearCachesFromSourceImpl clearCachesFromSourceImpl) {
             mMessageHandler = messageHandler;
             mFileFactory = new FileFactory();
-            mWriterWrapper = new WriterWrapper();
-            mHtmlWriter = new HtmlWriter(mWriterWrapper);
-            mCacheDetailsWriter = new CacheDetailsWriter(mHtmlWriter, filePathStrategy);
             mCacheTypeFactory = cacheTypeFactory;
             mTagWriterImpl = tagWriterImpl;
             mTagWriterNull = tagWriterNull;
@@ -70,8 +59,8 @@ public class CachePersisterFacadeDI {
             final CacheTagSqlWriter cacheTagSqlWriter = new CacheTagSqlWriter(cacheWriter,
                     gpxWriter, mCacheTypeFactory, mTagWriterImpl, mTagWriterNull,
                     mClearCachesFromSource);
-            return new CachePersisterFacade(cacheTagSqlWriter, mFileFactory, mCacheDetailsWriter,
-                    mMessageHandler, wakeLock, detailsDirectory);
+            return new CachePersisterFacade(cacheTagSqlWriter, mFileFactory, mMessageHandler,
+                    wakeLock, detailsDirectory);
         }
     }
 
