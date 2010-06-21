@@ -4,7 +4,6 @@ package com.google.code.geobeagle.xmlimport;
 import static org.junit.Assert.assertTrue;
 
 import com.google.code.geobeagle.GeocacheFactory.Source;
-import com.google.code.geobeagle.xmlimport.GpxToCacheDI.XmlPullParserWrapper;
 
 import org.easymock.EasyMock;
 import org.junit.Test;
