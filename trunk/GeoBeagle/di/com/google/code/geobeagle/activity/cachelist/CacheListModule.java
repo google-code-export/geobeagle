@@ -27,8 +27,6 @@ import com.google.code.geobeagle.actions.MenuActionMap;
 import com.google.code.geobeagle.actions.MenuActionSearchOnline;
 import com.google.code.geobeagle.actions.MenuActionSettings;
 import com.google.code.geobeagle.actions.MenuActions;
-import com.google.code.geobeagle.activity.cachelist.CacheListDelegate.CacheListDelegateFactory;
-import com.google.code.geobeagle.activity.cachelist.GeocacheListController.GeocacheListControllerFactory;
 import com.google.code.geobeagle.activity.cachelist.actions.context.ContextAction;
 import com.google.code.geobeagle.activity.cachelist.actions.context.ContextActionDelete;
 import com.google.code.geobeagle.activity.cachelist.actions.context.ContextActionEdit;
@@ -63,7 +61,6 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
-import com.google.inject.assistedinject.FactoryProvider;
 
 import roboguice.config.AbstractAndroidModule;
 import roboguice.inject.ContextScoped;
@@ -97,13 +94,6 @@ public class CacheListModule extends AbstractAndroidModule {
         bind(UpdateFlag.class).in(Singleton.class);
         bind(CacheListRefresh.class).in(ContextScoped.class);
         bind(ContextActionDelete.class).in(ContextScoped.class);
-        bind(GeocacheListControllerFactory.class).toProvider(
-                FactoryProvider.newFactory(GeocacheListControllerFactory.class,
-                        GeocacheListController.class));
-        bind(CacheListDelegateFactory.class)
-                .toProvider(
-                        FactoryProvider.newFactory(CacheListDelegateFactory.class,
-                                CacheListDelegate.class));
     }
 
     static class DistanceFormatterProvider implements Provider<DistanceFormatter> {

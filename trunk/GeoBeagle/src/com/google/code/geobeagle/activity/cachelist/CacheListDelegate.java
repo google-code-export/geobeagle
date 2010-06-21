@@ -22,7 +22,6 @@ import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheListPresen
 import com.google.code.geobeagle.database.DbFrontend;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
-import com.google.inject.assistedinject.Assisted;
 
 import android.app.Activity;
 import android.app.Dialog;
@@ -73,14 +72,9 @@ public class CacheListDelegate {
     private final ContextActionDeleteDialogHelper mContextActionDeleteDialogHelper;
     private final ActivityVisible mActivityVisible;
 
-    public static interface CacheListDelegateFactory {
-        CacheListDelegate create(GeocacheListController geocacheListController);
-    }
-
     @Inject
     public CacheListDelegate(ImportIntentManager importIntentManager, ActivitySaver activitySaver,
-            CacheListRefresh cacheListRefresh,
-            @Assisted GeocacheListController geocacheListController,
+            CacheListRefresh cacheListRefresh, GeocacheListController geocacheListController,
             GeocacheListPresenter geocacheListPresenter, Provider<DbFrontend> dbFrontendProvider,
             ContextActionDeleteDialogHelper contextActionDeleteDialogHelper,
             ActivityVisible activityVisible) {
