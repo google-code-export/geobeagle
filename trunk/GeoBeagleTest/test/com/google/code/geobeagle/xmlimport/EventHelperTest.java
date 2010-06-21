@@ -37,7 +37,7 @@ public class EventHelperTest {
         XmlPullParserWrapper xmlPullParser = PowerMock.createMock(XmlPullParserWrapper.class);
 
         expect(xmlPathBuilder.getPath()).andReturn("/path");
-        eventHandlerGpx.endTag("/path");
+        eventHandlerGpx.endTag("name", "/path");
         expect(xmlPullParser.getName()).andReturn("name");
         xmlPathBuilder.endTag("name");
 
@@ -56,7 +56,7 @@ public class EventHelperTest {
         expect(xmlPullParser.getName()).andReturn("some tag");
         xmlPathBuilder.startTag("some tag");
         expect(xmlPathBuilder.getPath()).andReturn("/foo");
-        eventHandlerGpx.startTag("/foo", xmlPullParser);
+        eventHandlerGpx.startTag("some tag", "/foo", xmlPullParser);
 
         PowerMock.replayAll();
         EventHelper eventHelper = new EventHelper(xmlPathBuilder, eventHandlerGpx, xmlPullParser);

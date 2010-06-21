@@ -66,13 +66,13 @@ public class EventHandlerGpx implements EventHandler {
         mCachePersisterFacade = cachePersisterFacade;
     }
 
-    public void endTag(String previousFullPath) throws IOException {
+    public void endTag(String name, String previousFullPath) throws IOException {
         if (previousFullPath.equals(XPATH_WPT)) {
             mCachePersisterFacade.endCache(Source.GPX);
         }
     }
 
-    public void startTag(String fullPath, XmlPullParserWrapper xmlPullParser) {
+    public void startTag(String name, String fullPath, XmlPullParserWrapper xmlPullParser) {
         if (fullPath.equals(XPATH_WPT)) {
             mCachePersisterFacade.startCache();
             mCachePersisterFacade.wpt(xmlPullParser.getAttributeValue(null, "lat"), xmlPullParser
