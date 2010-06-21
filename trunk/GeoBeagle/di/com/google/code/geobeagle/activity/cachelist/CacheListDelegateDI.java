@@ -27,8 +27,6 @@ import com.google.code.geobeagle.activity.cachelist.actions.context.ContextActio
 import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionDeleteAllCaches;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionMyLocation;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionSyncGpx;
-import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionSyncGpx.MenuActionSyncGpxFactory;
-import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
 import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheListPresenter;
 import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidgetDelegate;
 import com.google.code.geobeagle.gpsstatuswidget.InflatedGpsStatusWidget;
@@ -48,17 +46,9 @@ public class CacheListDelegateDI {
 
         inflatedGpsStatusWidget.setDelegate(gpsStatusWidgetDelegate);
 
-        final CacheListRefresh cacheListRefresh = injector.getInstance(CacheListRefresh.class);
-
         final GeocacheListPresenter geocacheListPresenter = injector
                 .getInstance(GeocacheListPresenter.class);
-        final GpxImporterFactory gpxImporterFactory = injector
-                .getInstance(GpxImporterFactory.class);
-
-        final MenuActionSyncGpxFactory menuActionSyncGpxFactory = injector
-                .getInstance(MenuActionSyncGpxFactory.class);
-        final MenuActionSyncGpx menuActionSyncGpx = menuActionSyncGpxFactory.create(
-                cacheListRefresh, gpxImporterFactory);
+        final MenuActionSyncGpx menuActionSyncGpx = injector.getInstance(MenuActionSyncGpx.class);
         final MenuActions menuActions = injector.getInstance(MenuActions.class);
 
         menuActions.add(menuActionSyncGpx);
