@@ -78,11 +78,6 @@ public class GpsStatusWidget extends LinearLayout {
         super(context);
     }
 
-    public static Meter createMeterWrapper(View gpsStatusWidget, MeterBars meterBars) {
-        final TextView accuracyView = (TextView)gpsStatusWidget.findViewById(R.id.accuracy);
-        return new Meter(meterBars, accuracyView);
-    }
-
     public static TextLagUpdater createTextLagUpdater(View gpsStatusWidget,
             CombinedLocationManager combinedLocationManager, Time time) {
         final TextView lag = (TextView)gpsStatusWidget.findViewById(R.id.lag);
