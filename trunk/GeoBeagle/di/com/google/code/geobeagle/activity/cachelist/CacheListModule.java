@@ -26,10 +26,8 @@ import com.google.code.geobeagle.activity.cachelist.CacheListDelegate.CacheListD
 import com.google.code.geobeagle.activity.cachelist.GeocacheListController.GeocacheListControllerFactory;
 import com.google.code.geobeagle.activity.cachelist.actions.context.ContextActionDelete;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.Abortable;
-import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionDeleteAllCaches;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionSyncBCaching;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionSyncGpx;
-import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionDeleteAllCaches.MenuActionDeleteAllCachesFactory;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionSyncGpx.MenuActionSyncGpxFactory;
 import com.google.code.geobeagle.activity.cachelist.model.CacheListData;
 import com.google.code.geobeagle.activity.cachelist.presenter.AbsoluteBearingFormatter;
@@ -91,9 +89,6 @@ public class CacheListModule extends AbstractAndroidModule {
                 .toProvider(
                         FactoryProvider.newFactory(MenuActionSyncGpxFactory.class,
                                 MenuActionSyncGpx.class));
-        bind(MenuActionDeleteAllCachesFactory.class).toProvider(
-                FactoryProvider.newFactory(MenuActionDeleteAllCachesFactory.class,
-                        MenuActionDeleteAllCaches.class));
         bind(ContextActionDelete.class).in(ContextScoped.class);
         bind(GeocacheListControllerFactory.class).toProvider(
                 FactoryProvider.newFactory(GeocacheListControllerFactory.class,
