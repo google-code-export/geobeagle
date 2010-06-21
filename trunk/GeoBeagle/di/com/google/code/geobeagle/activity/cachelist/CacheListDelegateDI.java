@@ -39,7 +39,6 @@ import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionMyLoc
 import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionSyncGpx;
 import com.google.code.geobeagle.activity.cachelist.model.CacheListData;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheFromMyLocationFactory;
-import com.google.code.geobeagle.activity.cachelist.model.GeocacheVector;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVectors;
 import com.google.code.geobeagle.activity.cachelist.presenter.ActionAndTolerance;
 import com.google.code.geobeagle.activity.cachelist.presenter.AdapterCachesSorter;
@@ -104,7 +103,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 
 public class CacheListDelegateDI {
@@ -140,8 +138,7 @@ public class CacheListDelegateDI {
                 .getInstance(BearingFormatter.class);
         final DistanceFormatterManager distanceFormatterManager = injector
                 .getInstance(DistanceFormatterManager.class);
-        final ArrayList<GeocacheVector> geocacheVectorsList = new ArrayList<GeocacheVector>(10);
-        final GeocacheVectors geocacheVectors = new GeocacheVectors(geocacheVectorsList);
+        final GeocacheVectors geocacheVectors = injector.getInstance(GeocacheVectors.class);
         final CacheListData cacheListData = new CacheListData(geocacheVectors);
         final XmlPullParserWrapper xmlPullParserWrapper = new XmlPullParserWrapper();
 
