@@ -20,6 +20,7 @@ import com.google.code.geobeagle.activity.cachelist.actions.context.ContextActio
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
 import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheListPresenter;
 import com.google.code.geobeagle.database.DbFrontend;
+import com.google.inject.Inject;
 import com.google.inject.Provider;
 
 import android.app.Activity;
@@ -36,6 +37,7 @@ public class CacheListDelegate {
         static final String INTENT_EXTRA_IMPORT_TRIGGERED = "com.google.code.geabeagle.import_triggered";
         private final Activity mActivity;
 
+        @Inject
         ImportIntentManager(Activity activity) {
             mActivity = activity;
         }
