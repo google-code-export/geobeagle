@@ -22,6 +22,7 @@ import com.google.code.geobeagle.gpsstatuswidget.TextLagUpdater.LastKnownLocatio
 import com.google.code.geobeagle.gpsstatuswidget.TextLagUpdater.LastLocationUnknown;
 import com.google.code.geobeagle.location.CombinedLocationManager;
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -38,14 +39,14 @@ public class GpsStatusWidget extends LinearLayout {
 
     static GpsStatusWidgetDelegate createGpsStatusWidgetDelegate(View gpsStatusWidget, Time time,
             CombinedLocationManager combinedLocationManager, Meter meter,
-            DistanceFormatter distanceFormatter, MeterBars meterBars,
+            Provider<DistanceFormatter> distanceFormatterProvider, MeterBars meterBars,
             TextLagUpdater textLagUpdater, Context parent) {
         final TextView status = (TextView)gpsStatusWidget.findViewById(R.id.status);
         final TextView provider = (TextView)gpsStatusWidget.findViewById(R.id.provider);
         final MeterFader meterFader = new MeterFader(gpsStatusWidget, meterBars, time);
 
-        return new GpsStatusWidgetDelegate(combinedLocationManager, distanceFormatter, meter,
-                meterFader, provider, parent, status, textLagUpdater);
+        return new GpsStatusWidgetDelegate(combinedLocationManager, distanceFormatterProvider,
+                meter, meterFader, provider, parent, status, textLagUpdater);
     }
 
     public static class InflatedGpsStatusWidget extends LinearLayout {
