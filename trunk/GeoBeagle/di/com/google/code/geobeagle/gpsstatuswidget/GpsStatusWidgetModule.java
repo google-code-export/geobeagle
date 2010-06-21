@@ -22,12 +22,13 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidget.InflatedGpsStatusWidget;
 import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidgetDelegate.GpsStatusWidgetDelegateFactory;
-import com.google.code.geobeagle.gpsstatuswidget.GpsWidgetAndUpdater.GpsWidgetAndUpdaterFactory;
 import com.google.code.geobeagle.gpsstatuswidget.MeterBars.MeterBarsFactory;
 import com.google.code.geobeagle.gpsstatuswidget.MeterFader.MeterFaderFactory;
 import com.google.code.geobeagle.gpsstatuswidget.TextLagUpdater.TextLagUpdaterFactory;
 import com.google.code.geobeagle.gpsstatuswidget.UpdateGpsWidgetRunnable.UpdateGpsWidgetRunnableFactory;
 import com.google.inject.BindingAnnotation;
+import com.google.inject.Key;
+import com.google.inject.PrivateModule;
 import com.google.inject.Provides;
 import com.google.inject.assistedinject.FactoryProvider;
 
@@ -36,6 +37,7 @@ import roboguice.inject.ContextScoped;
 
 import android.app.Activity;
 import android.content.Context;
+import android.view.View;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
@@ -46,6 +48,32 @@ public class GpsStatusWidgetModule extends AbstractAndroidModule {
 
     @BindingAnnotation @Target({ FIELD, PARAMETER, METHOD }) @Retention(RUNTIME)
     public static @interface SearchOnline {}
+    
+
+    @BindingAnnotation @Target({ FIELD, PARAMETER, METHOD }) @Retention(RUNTIME)
+    public static @interface GpsStatusWidgetView {}
+
+    static class GpsWidgetCacheListModule extends PrivateModule {
+
+        @Override
+        protected void configure() {
+            bind(GpsWidgetAndUpdater.class).annotatedWith(CacheList.class).to(
+                    GpsWidgetAndUpdater.class);
+            expose(GpsWidgetAndUpdater.class).annotatedWith(CacheList.class);
+            bind(View.class).annotatedWith(GpsStatusWidgetView.class).to(GpsStatusWidget.class);
+        }
+    }
+
+    static class GpsWidgetSearchOnlineModule extends PrivateModule {
+        @Override
+        protected void configure() {
+            bind(GpsWidgetAndUpdater.class).annotatedWith(SearchOnline.class).to(
+                    GpsWidgetAndUpdater.class);
+            expose(GpsWidgetAndUpdater.class).annotatedWith(SearchOnline.class);
+            bind(View.class).annotatedWith(GpsStatusWidgetView.class).to(
+                    Key.get(InflatedGpsStatusWidget.class, SearchOnline.class));
+        }
+    }
     
     @Override
     protected void configure() {
@@ -61,9 +89,9 @@ public class GpsStatusWidgetModule extends AbstractAndroidModule {
         bind(GpsStatusWidgetDelegateFactory.class).toProvider(
                 FactoryProvider.newFactory(GpsStatusWidgetDelegateFactory.class,
                         GpsStatusWidgetDelegate.class));
-        bind(GpsWidgetAndUpdaterFactory.class).toProvider(
-                FactoryProvider.newFactory(GpsWidgetAndUpdaterFactory.class,
-                        GpsWidgetAndUpdater.class));
+        bind(GpsStatusWidget.class).in(ContextScoped.class);
+        install(new GpsWidgetSearchOnlineModule());
+        install(new GpsWidgetCacheListModule());
     }
 
     @Provides
