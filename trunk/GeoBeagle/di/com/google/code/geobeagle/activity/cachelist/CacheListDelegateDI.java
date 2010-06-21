@@ -17,9 +17,6 @@ package com.google.code.geobeagle.activity.cachelist;
 import com.google.code.geobeagle.CacheTypeFactory;
 import com.google.code.geobeagle.ErrorDisplayer;
 import com.google.code.geobeagle.LocationControlBuffered;
-import com.google.code.geobeagle.GraphicsGenerator.IconOverlayFactory;
-import com.google.code.geobeagle.GraphicsGenerator.IconRenderer;
-import com.google.code.geobeagle.GraphicsGenerator.ListViewBitmapCopier;
 import com.google.code.geobeagle.LocationControlBuffered.GpsDisabledLocation;
 import com.google.code.geobeagle.actions.MenuActionMap;
 import com.google.code.geobeagle.actions.MenuActionSearchOnline;
@@ -40,7 +37,6 @@ import com.google.code.geobeagle.activity.cachelist.model.GeocacheFromMyLocation
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVectors;
 import com.google.code.geobeagle.activity.cachelist.presenter.ActionAndTolerance;
 import com.google.code.geobeagle.activity.cachelist.presenter.AdapterCachesSorter;
-import com.google.code.geobeagle.activity.cachelist.presenter.BearingFormatter;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
 import com.google.code.geobeagle.activity.cachelist.presenter.DistanceUpdater;
 import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheListAdapter;
@@ -53,9 +49,7 @@ import com.google.code.geobeagle.activity.cachelist.presenter.TitleUpdater;
 import com.google.code.geobeagle.activity.cachelist.presenter.ToleranceStrategy;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh.ActionManager;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh.UpdateFlag;
-import com.google.code.geobeagle.activity.cachelist.presenter.GeoBeaglePackageAnnotations.DifficultyAndTerrainPainterAnnotation;
 import com.google.code.geobeagle.activity.cachelist.view.GeocacheSummaryRowInflater;
-import com.google.code.geobeagle.activity.cachelist.view.NameFormatter;
 import com.google.code.geobeagle.activity.main.GeoBeagle;
 import com.google.code.geobeagle.bcaching.ImportBCachingWorker;
 import com.google.code.geobeagle.bcaching.preferences.BCachingStartTime;
@@ -86,7 +80,6 @@ import com.google.code.geobeagle.xmlimport.GpxImporterDI.MessageHandler;
 import com.google.code.geobeagle.xmlimport.GpxToCache.Aborter;
 import com.google.code.geobeagle.xmlimport.GpxToCacheDI.XmlPullParserWrapper;
 import com.google.inject.Injector;
-import com.google.inject.Key;
 import com.google.inject.Provider;
 
 import roboguice.activity.GuiceListActivity;
@@ -98,7 +91,6 @@ import android.content.DialogInterface.OnClickListener;
 import android.content.res.Resources;
 import android.hardware.SensorManager;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
 import java.util.Calendar;
@@ -122,8 +114,7 @@ public class CacheListDelegateDI {
         }
     }
 
-    public static CacheListDelegate create(GuiceListActivity listActivity,
-            LayoutInflater layoutInflater) {
+    public static CacheListDelegate create(GuiceListActivity listActivity) {
         final Injector injector = listActivity.getInjector();
         final ErrorDisplayer errorDisplayer = injector.getInstance(ErrorDisplayer.class);
         final CombinedLocationManager combinedLocationManager = injector
@@ -138,20 +129,10 @@ public class CacheListDelegateDI {
                 .getInstance(XmlPullParserWrapper.class);
 
         final Resources resources = injector.getInstance(Resources.class);
-        final IconRenderer iconRenderer = injector.getInstance(Key.get(IconRenderer.class,
-                DifficultyAndTerrainPainterAnnotation.class));
-        final NameFormatter nameFormatter = injector.getInstance(NameFormatter.class);
         final Provider<DistanceFormatter> distanceFormatterProvider = injector
                 .getProvider(DistanceFormatter.class);
-        final Provider<BearingFormatter> bearingFormatterProvider = injector
-                .getProvider(BearingFormatter.class);
-        final ListViewBitmapCopier listViewBitmapCopier = injector
-                .getInstance(ListViewBitmapCopier.class);
-        final IconOverlayFactory iconOverlayFactory = injector
-                .getInstance(IconOverlayFactory.class);
-        final GeocacheSummaryRowInflater geocacheSummaryRowInflater = new GeocacheSummaryRowInflater(
-                layoutInflater, distanceFormatterProvider, bearingFormatterProvider, iconRenderer,
-                listViewBitmapCopier, iconOverlayFactory, nameFormatter);
+        final GeocacheSummaryRowInflater geocacheSummaryRowInflater = injector
+                .getInstance(GeocacheSummaryRowInflater.class);
         final UpdateFlag updateFlag = new UpdateFlag();
         final ActivityVisible activityVisible = injector.getInstance(ActivityVisible.class);
         final GeocacheListAdapter geocacheListAdapter = new GeocacheListAdapter(geocacheVectors,

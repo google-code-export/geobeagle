@@ -58,7 +58,7 @@ public class CacheListActivity extends GuiceListActivity {
         super.onCreate(savedInstanceState);
         Log.d("GeoBeagle", "CacheListActivity onCreate");
 
-        mCacheListDelegate = CacheListDelegateDI.create(this, getLayoutInflater());
+        mCacheListDelegate = CacheListDelegateDI.create(this);
 
         mCacheListDelegate.onCreate();
     }
