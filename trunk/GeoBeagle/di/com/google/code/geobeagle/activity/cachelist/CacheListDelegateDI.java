@@ -27,7 +27,6 @@ import com.google.code.geobeagle.activity.cachelist.actions.context.ContextActio
 import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionDeleteAllCaches;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionMyLocation;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionSyncGpx;
-import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheListPresenter;
 import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidgetDelegate;
 import com.google.code.geobeagle.gpsstatuswidget.InflatedGpsStatusWidget;
 import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidgetModule.CacheList;
@@ -46,8 +45,6 @@ public class CacheListDelegateDI {
 
         inflatedGpsStatusWidget.setDelegate(gpsStatusWidgetDelegate);
 
-        final GeocacheListPresenter geocacheListPresenter = injector
-                .getInstance(GeocacheListPresenter.class);
         final MenuActionSyncGpx menuActionSyncGpx = injector.getInstance(MenuActionSyncGpx.class);
         final MenuActions menuActions = injector.getInstance(MenuActions.class);
 
@@ -72,6 +69,6 @@ public class CacheListDelegateDI {
                 contextActions, menuActionSyncGpx, menuActions);
         final CacheListDelegateFactory cacheListDelegateFactory = injector
                 .getInstance(CacheListDelegateFactory.class);
-        return cacheListDelegateFactory.create(geocacheListController, geocacheListPresenter);
+        return cacheListDelegateFactory.create(geocacheListController);
     }
 }
