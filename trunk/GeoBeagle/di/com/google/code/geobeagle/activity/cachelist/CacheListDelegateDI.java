@@ -17,7 +17,6 @@ package com.google.code.geobeagle.activity.cachelist;
 import com.google.code.geobeagle.CacheTypeFactory;
 import com.google.code.geobeagle.ErrorDisplayer;
 import com.google.code.geobeagle.LocationControlBuffered;
-import com.google.code.geobeagle.GraphicsGenerator.DifficultyAndTerrainPainter;
 import com.google.code.geobeagle.GraphicsGenerator.IconOverlayFactory;
 import com.google.code.geobeagle.GraphicsGenerator.IconRenderer;
 import com.google.code.geobeagle.GraphicsGenerator.ListViewBitmapCopier;
@@ -55,6 +54,7 @@ import com.google.code.geobeagle.activity.cachelist.presenter.TitleUpdater;
 import com.google.code.geobeagle.activity.cachelist.presenter.ToleranceStrategy;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh.ActionManager;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh.UpdateFlag;
+import com.google.code.geobeagle.activity.cachelist.presenter.GeoBeaglePackageAnnotations.DifficultyAndTerrainPainterAnnotation;
 import com.google.code.geobeagle.activity.cachelist.view.GeocacheSummaryRowInflater;
 import com.google.code.geobeagle.activity.cachelist.view.NameFormatter;
 import com.google.code.geobeagle.activity.main.GeoBeagle;
@@ -86,6 +86,7 @@ import com.google.code.geobeagle.xmlimport.GpxImporterDI.MessageHandler;
 import com.google.code.geobeagle.xmlimport.GpxToCache.Aborter;
 import com.google.code.geobeagle.xmlimport.GpxToCacheDI.XmlPullParserWrapper;
 import com.google.inject.Injector;
+import com.google.inject.Key;
 import com.google.inject.Provider;
 
 import roboguice.activity.GuiceListActivity;
@@ -141,9 +142,8 @@ public class CacheListDelegateDI {
                 .getInstance(XmlPullParserWrapper.class);
 
         final Resources resources = injector.getInstance(Resources.class);
-        final DifficultyAndTerrainPainter difficultyAndTerrainPainter = injector
-                .getInstance(DifficultyAndTerrainPainter.class);
-        final IconRenderer iconRenderer = new IconRenderer(resources, difficultyAndTerrainPainter);
+        final IconRenderer iconRenderer = injector.getInstance(Key.get(IconRenderer.class,
+                DifficultyAndTerrainPainterAnnotation.class));
         final NameFormatter nameFormatter = injector.getInstance(NameFormatter.class);
         final GeocacheSummaryRowInflater geocacheSummaryRowInflater = new GeocacheSummaryRowInflater(
                 distanceFormatterManager.getFormatter(), layoutInflater, relativeBearingFormatter,
