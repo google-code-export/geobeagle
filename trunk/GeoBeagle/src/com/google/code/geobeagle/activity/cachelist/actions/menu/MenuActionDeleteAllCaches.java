@@ -21,7 +21,6 @@ import com.google.code.geobeagle.bcaching.preferences.BCachingStartTime;
 import com.google.code.geobeagle.database.DbFrontend;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
-import com.google.inject.assistedinject.Assisted;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -61,14 +60,10 @@ public class MenuActionDeleteAllCaches extends MenuActionBase {
     private final Provider<DbFrontend> mDbFrontendProvider;
     private final BCachingStartTime mBcachingLastUpdated;
 
-    public static interface MenuActionDeleteAllCachesFactory {
-        MenuActionDeleteAllCaches create(CacheListRefresh cacheListRefresh);
-    }
-
     @Inject
-    public MenuActionDeleteAllCaches(@Assisted CacheListRefresh cacheListRefresh,
-            Activity activity, Provider<DbFrontend> dbFrontendProvider,
-            AlertDialog.Builder builder, BCachingStartTime bcachingLastUpdated) {
+    public MenuActionDeleteAllCaches(CacheListRefresh cacheListRefresh, Activity activity,
+            Provider<DbFrontend> dbFrontendProvider, AlertDialog.Builder builder,
+            BCachingStartTime bcachingLastUpdated) {
         super(R.string.menu_delete_all_caches);
         mDbFrontendProvider = dbFrontendProvider;
         mBuilder = builder;
