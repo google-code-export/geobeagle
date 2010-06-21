@@ -14,10 +14,7 @@
 
 package com.google.code.geobeagle.activity.cachelist.view;
 
-import com.google.code.geobeagle.Geocache;
-import com.google.code.geobeagle.GraphicsGenerator;
 import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.GraphicsGenerator.IconOverlay;
 import com.google.code.geobeagle.GraphicsGenerator.IconOverlayFactory;
 import com.google.code.geobeagle.GraphicsGenerator.IconRenderer;
 import com.google.code.geobeagle.GraphicsGenerator.ListViewBitmapCopier;
@@ -28,52 +25,12 @@ import com.google.code.geobeagle.activity.cachelist.presenter.GeoBeaglePackageAn
 import com.google.code.geobeagle.formatting.DistanceFormatter;
 import com.google.inject.Inject;
 
-import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 public class GeocacheSummaryRowInflater implements HasDistanceFormatter {
-    static class RowViews {
-        private final TextView mAttributes;
-        private final TextView mCacheName;
-        private final TextView mDistance;
-        private final ImageView mIcon;
-        private final TextView mId;
-        private final GraphicsGenerator.IconOverlayFactory mIconOverlayFactory;
-        private final NameFormatter mNameFormatter;
-
-        RowViews(TextView attributes, TextView cacheName, TextView distance, ImageView icon,
-                TextView id, IconOverlayFactory iconOverlayFactory, NameFormatter nameFormatter) {
-            mAttributes = attributes;
-            mCacheName = cacheName;
-            mDistance = distance;
-            mIcon = icon;
-            mId = id;
-            mIconOverlayFactory = iconOverlayFactory;
-            mNameFormatter = nameFormatter;
-        }
-
-        void set(GeocacheVector geocacheVector, DistanceFormatter distanceFormatter,
-                BearingFormatter relativeBearingFormatter,
-                ListViewBitmapCopier listViewBitmapCopier, IconRenderer iconRenderer) {
-            Geocache geocache = geocacheVector.getGeocache();
-            IconOverlay iconOverlay = mIconOverlayFactory.create(geocache, false);
-            mNameFormatter.format(mCacheName, geocache.getAvailable(), geocache.getArchived());
-            
-            final Drawable icon = iconRenderer.renderIcon(geocache.getDifficulty(), geocache.getTerrain(), geocache.getCacheType().icon(),
-                    iconOverlay, listViewBitmapCopier);
-            mIcon.setImageDrawable(icon);
-            mId.setText(geocacheVector.getId());
-            mAttributes.setText(geocacheVector.getFormattedAttributes());
-            mCacheName.setText(geocacheVector.getName());
-            
-            mDistance.setText(geocacheVector.getFormattedDistance(distanceFormatter,
-                    relativeBearingFormatter));
-        }
-    }
-
     private BearingFormatter mBearingFormatter;
     private DistanceFormatter mDistanceFormatter;
     private final LayoutInflater mLayoutInflater;
