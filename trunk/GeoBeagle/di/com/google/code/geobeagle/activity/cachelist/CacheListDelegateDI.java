@@ -14,7 +14,6 @@
 
 package com.google.code.geobeagle.activity.cachelist;
 
-import com.google.code.geobeagle.CacheTypeFactory;
 import com.google.code.geobeagle.ErrorDisplayer;
 import com.google.code.geobeagle.LocationControlBuffered;
 import com.google.code.geobeagle.actions.MenuActionMap;
@@ -41,13 +40,9 @@ import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheListPresen
 import com.google.code.geobeagle.activity.main.GeoBeagle;
 import com.google.code.geobeagle.bcaching.ImportBCachingWorker;
 import com.google.code.geobeagle.bcaching.preferences.BCachingStartTime;
-import com.google.code.geobeagle.cachedetails.FilePathStrategy;
 import com.google.code.geobeagle.database.CacheWriter;
 import com.google.code.geobeagle.database.DbFrontend;
 import com.google.code.geobeagle.database.LocationSaver;
-import com.google.code.geobeagle.database.TagWriterImpl;
-import com.google.code.geobeagle.database.TagWriterNull;
-import com.google.code.geobeagle.database.CacheWriter.ClearCachesFromSourceImpl;
 import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidget;
 import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidgetDelegate;
 import com.google.code.geobeagle.gpsstatuswidget.GpsWidgetAndUpdater;
@@ -59,6 +54,7 @@ import com.google.code.geobeagle.location.CombinedLocationListener;
 import com.google.code.geobeagle.location.CombinedLocationListener.CombinedLocationListenerFactory;
 import com.google.code.geobeagle.xmlimport.MessageHandlerInterface;
 import com.google.code.geobeagle.xmlimport.CachePersisterFacadeDI.CachePersisterFacadeFactory;
+import com.google.code.geobeagle.xmlimport.CachePersisterFacadeDI.CachePersisterFacadeFactory.CachePersisterFacadeFactoryFactory;
 import com.google.code.geobeagle.xmlimport.GpxImporterDI.MessageHandler;
 import com.google.code.geobeagle.xmlimport.GpxToCache.Aborter;
 import com.google.code.geobeagle.xmlimport.GpxToCacheDI.XmlPullParserWrapper;
@@ -141,20 +137,14 @@ public class CacheListDelegateDI {
                 .getInstance(GeocacheListPresenterFactory.class);
         final GeocacheListPresenter geocacheListPresenter = geocacheListPresenterFactory.create(
                 combinedLocationListener, gpsStatusWidget, updateGpsWidgetRunnable);
-        final CacheTypeFactory cacheTypeFactory = injector.getInstance(CacheTypeFactory.class);
- 
         final Aborter aborter = injector.getInstance(Aborter.class);
         final Provider<ImportBCachingWorker> importBCachingWorkerProvider = injector
                 .getProvider(ImportBCachingWorker.class);
         final MessageHandlerInterface messageHandler = injector.getInstance(MessageHandler.class);
-        final TagWriterImpl tagWriterImpl = injector.getInstance(TagWriterImpl.class);
-        final TagWriterNull tagWriterNull = injector.getInstance(TagWriterNull.class);
-        final FilePathStrategy filePathStrategy = injector.getInstance(FilePathStrategy.class);
-        final ClearCachesFromSourceImpl clearCachesFromSourceImpl = injector
-                .getInstance(ClearCachesFromSourceImpl.class);
-        final CachePersisterFacadeFactory cachePersisterFacadeFactory = new CachePersisterFacadeFactory(
-                messageHandler, cacheTypeFactory, tagWriterImpl, tagWriterNull, filePathStrategy,
-                clearCachesFromSourceImpl);
+        final CachePersisterFacadeFactoryFactory cachePersisterFacadeFactoryFactory = injector
+                .getInstance(CachePersisterFacadeFactoryFactory.class);
+        final CachePersisterFacadeFactory cachePersisterFacadeFactory = cachePersisterFacadeFactoryFactory
+                .create(messageHandler);
 
         final GpxImporterFactory gpxImporterFactory = new GpxImporterFactory(aborter,
                 cachePersisterFacadeFactory, errorDisplayer, geocacheListPresenter, listActivity,
