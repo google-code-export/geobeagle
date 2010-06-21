@@ -177,7 +177,7 @@ public class CacheDetailsLoaderTest {
         Details details = createMock(Details.class);
         FilePathStrategy filePathStrategy = createMock(FilePathStrategy.class);
 
-        expect(filePathStrategy.getPath("foo.gpx", "GC123")).andReturn(
+        expect(filePathStrategy.getPath("foo.gpx", "GC123", "html")).andReturn(
                 "/sdcard/details/foo.gpx/GC123.html");
         expectNew(File.class,  "/sdcard/details/foo.gpx/GC123.html")
                 .andReturn(file);

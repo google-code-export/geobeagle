@@ -143,7 +143,7 @@ public class CacheDetailsLoader {
     }
 
     public String load(CharSequence sourceName, CharSequence cacheId) {
-        String path = mFilePathStrategy.getPath(sourceName, cacheId.toString());
+        String path = mFilePathStrategy.getPath(sourceName, cacheId.toString(), "html");
         File file = new File(path);
         DetailsReader detailsReader = mDetailsOpener.open(file);
         Details details = detailsReader.read();
