@@ -66,23 +66,16 @@ public class CacheDetailsWriter {
     }
 
     public static Date parse(String input) throws java.text.ParseException {
-        // NOTE: SimpleDateFormat uses GMT[-+]hh:mm for the TZ which breaks
-        // things a bit. Before we go on we have to repair this.
-        String s = new String(input);
-        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-
-        // this is zero time so we need to add that TZ indicator for
-        if (input.endsWith("Z")) {
-            s = input.substring(0, input.length() - 1) + "GMT-00:00";
-        } else {
-            int inset = 6;
-
-            String s0 = input.substring(0, input.length() - inset);
-            String s1 = input.substring(input.length() - inset, input.length());
-
-            s = s0 + "GMT" + s1;
+        final String formatString = "yyyy-MM-dd'T'HH:mm:ss Z";
+        SimpleDateFormat df = new SimpleDateFormat(formatString);
+        
+        String s;
+        try {
+            s = input.substring(0, 19) + " +0000";
+        } catch (Exception e) {
+            throw new ParseException(null, 0);
         }
-        return df.parse(input);
+        return df.parse(s);
     }
 
     public void writeLogDate(String text) throws IOException {
@@ -97,7 +90,7 @@ public class CacheDetailsWriter {
     private String getRelativeTime(String text) throws ParseException {
         Date date = parse(text);
         final CharSequence relativeDateTimeString = DateUtils.getRelativeDateTimeString(mContext,
-                date.getTime(), DateUtils.HOUR_IN_MILLIS, DateUtils.WEEK_IN_MILLIS, 0);
+                date.getTime(), DateUtils.DAY_IN_MILLIS, DateUtils.WEEK_IN_MILLIS, 0);
         String s = relativeDateTimeString.toString();
         return s;
     }
