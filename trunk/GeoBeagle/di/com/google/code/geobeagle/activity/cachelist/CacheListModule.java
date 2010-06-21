@@ -116,23 +116,4 @@ public class CacheListModule extends AbstractAndroidModule {
     Abortable providesAbortable() {
         return new NullAbortable();
     }
-    
-    @Provides
-    ActionManagerFactory providesActionManagerFactory(GpsDisabledLocation gpsDisabledLocation,
-            AdapterCachesSorter adapterCachesSorter, DistanceUpdater distanceUpdater) {
-        final ToleranceStrategy adapterCachesSorterTolerance = new LocationTolerance(6,
-                gpsDisabledLocation, 1000);
-        final LocationTolerance distanceUpdaterLocationTolerance = new LocationTolerance(1,
-                gpsDisabledLocation, 1000);
-        final ToleranceStrategy distanceUpdaterTolerance = new LocationAndAzimuthTolerance(
-                distanceUpdaterLocationTolerance, 720);
-
-        final ActionAndTolerance[] actionAndTolerances = new ActionAndTolerance[] {
-                null, new ActionAndTolerance(adapterCachesSorter, adapterCachesSorterTolerance),
-                new ActionAndTolerance(distanceUpdater, distanceUpdaterTolerance)
-        };
-        return new ActionManagerFactory(actionAndTolerances, distanceUpdaterTolerance);
-
-    }
-
 }
