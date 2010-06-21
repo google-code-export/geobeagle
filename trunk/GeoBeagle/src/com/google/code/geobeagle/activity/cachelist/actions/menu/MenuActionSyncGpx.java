@@ -25,16 +25,10 @@ import com.google.code.geobeagle.database.GpxWriter;
 import com.google.code.geobeagle.xmlimport.GpxImporter;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
-import com.google.inject.assistedinject.Assisted;
 
 import android.util.Log;
 
 public class MenuActionSyncGpx extends MenuActionBase {
-    public static interface MenuActionSyncGpxFactory {
-        public MenuActionSyncGpx create(CacheListRefresh cacheListRefresh,
-                GpxImporterFactory gpxImporterFactory);
-    }
-
     private Abortable mSdcardImportAbortable;
     private final CacheListRefresh mCacheListRefresh;
     private final GpxImporterFactory mGpxImporterFactory;
@@ -46,9 +40,9 @@ public class MenuActionSyncGpx extends MenuActionBase {
 
     @Inject
     public MenuActionSyncGpx(Provider<ImportBCachingWorker> importBCachingWorkerProvider,
-            NullAbortable nullAbortable, @Assisted CacheListRefresh cacheListRefresh,
-            @Assisted GpxImporterFactory gpxImporterFactory,
-            Provider<CacheWriter> cacheWriterProvider, Provider<GpxWriter> gpxWriterProvider) {
+            NullAbortable nullAbortable, CacheListRefresh cacheListRefresh,
+            GpxImporterFactory gpxImporterFactory, Provider<CacheWriter> cacheWriterProvider,
+            Provider<GpxWriter> gpxWriterProvider) {
         super(R.string.menu_sync);
         mNullAbortable = nullAbortable;
         mSdcardImportAbortable = nullAbortable;
