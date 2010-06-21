@@ -14,8 +14,6 @@
 
 package com.google.code.geobeagle.actions;
 
-import com.google.inject.Inject;
-
 import android.content.res.Resources;
 import android.util.Log;
 import android.view.Menu;
@@ -26,7 +24,6 @@ public class MenuActions {
     private ArrayList<MenuAction> mMenuActions = new ArrayList<MenuAction>();
     private final Resources mResources;
 
-    @Inject
     public MenuActions(Resources resources) {
         mResources = resources;
     }

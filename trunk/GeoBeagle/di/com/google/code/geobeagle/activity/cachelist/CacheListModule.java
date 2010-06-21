@@ -22,11 +22,18 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.Timing;
 import com.google.code.geobeagle.LocationControlBuffered.GpsDisabledLocation;
+import com.google.code.geobeagle.actions.MenuActionMap;
+import com.google.code.geobeagle.actions.MenuActionSearchOnline;
+import com.google.code.geobeagle.actions.MenuActionSettings;
+import com.google.code.geobeagle.actions.MenuActions;
 import com.google.code.geobeagle.activity.cachelist.CacheListDelegate.CacheListDelegateFactory;
 import com.google.code.geobeagle.activity.cachelist.GeocacheListController.GeocacheListControllerFactory;
 import com.google.code.geobeagle.activity.cachelist.actions.context.ContextActionDelete;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.Abortable;
+import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionDeleteAllCaches;
+import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionMyLocation;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionSyncBCaching;
+import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionSyncGpx;
 import com.google.code.geobeagle.activity.cachelist.model.CacheListData;
 import com.google.code.geobeagle.activity.cachelist.presenter.AbsoluteBearingFormatter;
 import com.google.code.geobeagle.activity.cachelist.presenter.ActionAndTolerance;
@@ -61,6 +68,7 @@ import android.app.Activity;
 import android.app.ListActivity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.widget.Toast;
 
 import java.lang.annotation.Retention;
@@ -74,6 +82,7 @@ public class CacheListModule extends AbstractAndroidModule {
     protected void configure() {
         bind(GeocacheListAdapter.class).in(ContextScoped.class);
         bind(MenuActionSyncBCaching.class).in(ContextScoped.class);
+        bind(MenuActionSyncGpx.class).in(ContextScoped.class);
         bind(ActivityVisible.class).in(Singleton.class);
         bind(DistanceFormatter.class).toProvider(DistanceFormatterProvider.class).in(
                 ContextScoped.class);
@@ -171,6 +180,22 @@ public class CacheListModule extends AbstractAndroidModule {
     @Provides
     Abortable providesAbortable() {
         return new NullAbortable();
+    }
+    
+    @Provides
+    MenuActions providesMenuAction(MenuActionSyncGpx menuActionSyncGpx,
+            MenuActionDeleteAllCaches menuActionDeleteAllCaches,
+            MenuActionMyLocation menuActionMyLocation,
+            MenuActionSearchOnline menuActionSearchOnline, MenuActionMap menuActionMap,
+            MenuActionSettings menuActionSettings, Resources resources) {
+        final MenuActions menuActions = new MenuActions(resources);
+        menuActions.add(menuActionSyncGpx);
+        menuActions.add(menuActionDeleteAllCaches);
+        menuActions.add(menuActionMyLocation);
+        menuActions.add(menuActionSearchOnline);
+        menuActions.add(menuActionMap);
+        menuActions.add(menuActionSettings);
+        return menuActions;
     }
     
 }
