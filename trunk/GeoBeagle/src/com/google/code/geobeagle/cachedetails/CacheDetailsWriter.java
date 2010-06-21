@@ -82,16 +82,12 @@ public class CacheDetailsWriter {
 
             s = s0 + "GMT" + s1;
         }
-        Log.d("GeoBeagle", "PARSING: " + s);
-        final Date parsed = df.parse(input);
-        Log.d("GeoBeagle", "PARSED: " + parsed);
-        return parsed;
+        return df.parse(input);
     }
 
     public void writeLogDate(String text) throws IOException {
         mHtmlWriter.writeSeparator();
         try {
-            Log.d("GeoBeagle", "writeLogDate: " + text);
             mHtmlWriter.writeln(getRelativeTime(text));
         } catch (ParseException e) {
             mHtmlWriter.writeln("error parsing date: " + e.getLocalizedMessage());
@@ -103,7 +99,6 @@ public class CacheDetailsWriter {
         final CharSequence relativeDateTimeString = DateUtils.getRelativeDateTimeString(mContext,
                 date.getTime(), DateUtils.HOUR_IN_MILLIS, DateUtils.WEEK_IN_MILLIS, 0);
         String s = relativeDateTimeString.toString();
-        Log.d("GeoBeagle", "grt: " + s);
         return s;
     }
 
@@ -125,8 +120,10 @@ public class CacheDetailsWriter {
     }
 
     public void logType(String trimmedText) throws IOException {
-        mHtmlWriter.writeln(Emotifier.ICON_PREFIX + "log_" + trimmedText.replace(' ', '_')
-                + Emotifier.ICON_SUFFIX + " " + trimmedText);
+        final String text = Emotifier.ICON_PREFIX + "log_"
+                + trimmedText.replace(' ', '_').replace('\'', '_') + Emotifier.ICON_SUFFIX + " "
+                + trimmedText;
+        mHtmlWriter.writeln(text);
     }
 
     public void writeName(String name) throws IOException {
