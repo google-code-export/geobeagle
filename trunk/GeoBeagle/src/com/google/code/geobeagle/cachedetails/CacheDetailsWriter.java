@@ -50,9 +50,6 @@ public class CacheDetailsWriter {
         mLongitude = (String)Util.formatDegreesAsDecimalDegreesString(Double.valueOf(longitude));
     }
 
-    public void open(String path) throws IOException {
-    }
-
     public static String replaceIllegalFileChars(String wpt) {
         return wpt.replaceAll("[<\\\\/:\\*\\?\">| \\t]", "_");
     }
@@ -110,8 +107,8 @@ public class CacheDetailsWriter {
         return s;
     }
 
-    public void writeWptName(String wpt) throws IOException {
-        mHtmlWriter.open(wpt);
+    public void writeWptName() throws IOException {
+        mHtmlWriter.open(null);
         writeField("Location", mLatitude + ", " + mLongitude);
         mLatitude = mLongitude = null;
     }
@@ -157,10 +154,10 @@ public class CacheDetailsWriter {
         mTime = time;
     }
 
-
     public void writeShortDescription(String trimmedText) throws IOException {
         mHtmlWriter.writeSeparator();
-        mHtmlWriter.write(trimmedText);
+        mHtmlWriter.writeln(trimmedText);
+        mHtmlWriter.writeln("");
     }
 
     public void writeLongDescription(String trimmedText) throws IOException {

@@ -26,5 +26,5 @@ interface EventHandler {
     boolean text(String fullPath, String text, XmlPullParserWrapper xmlPullParser)
             throws IOException;
 
-    void open(String filename);
+    void open(String filename) throws IOException;
 }
