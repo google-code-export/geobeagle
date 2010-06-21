@@ -21,11 +21,13 @@ import com.google.code.geobeagle.activity.searchonline.SearchOnlineActivityDeleg
 import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidgetDelegate;
 import com.google.code.geobeagle.gpsstatuswidget.GpsWidgetAndUpdater;
 import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidget.InflatedGpsStatusWidget;
+import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidgetModule.SearchOnline;
 import com.google.code.geobeagle.gpsstatuswidget.GpsWidgetAndUpdater.GpsWidgetAndUpdaterFactory;
 import com.google.code.geobeagle.location.CombinedLocationListener;
 import com.google.code.geobeagle.location.CombinedLocationListener.CombinedLocationListenerFactory;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
+import com.google.inject.Key;
 
 import roboguice.activity.GuiceActivity;
 import roboguice.inject.InjectView;
@@ -93,7 +95,8 @@ public class SearchOnlineActivity extends GuiceActivity {
         Log.d("GeoBeagle", "SearchOnlineActivity onCreate");
         
         Injector injector = this.getInjector();
-        mInflatedGpsStatusWidget = (InflatedGpsStatusWidget)this.findViewById(R.id.gps_widget_view);
+        mInflatedGpsStatusWidget = injector.getInstance(Key.get(InflatedGpsStatusWidget.class,
+                SearchOnline.class));
         mGpsWidgetAndUpdater = injector.getInstance(GpsWidgetAndUpdaterFactory.class).create(
                 mInflatedGpsStatusWidget);
         
