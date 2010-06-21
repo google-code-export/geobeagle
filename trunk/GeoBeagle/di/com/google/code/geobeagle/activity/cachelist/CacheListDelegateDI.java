@@ -149,8 +149,8 @@ public class CacheListDelegateDI {
         final Provider<CompassListener> compassListenerProvider = injector
                 .getProvider(CompassListener.class);
 
-        final CacheListView.ScrollListener scrollListener = new CacheListView.ScrollListener(
-                updateFlag);
+        final CacheListView.ScrollListener scrollListener = injector
+                .getInstance(CacheListView.ScrollListener.class);
         final SensorManagerWrapper sensorManagerWrapper = new SensorManagerWrapper(sensorManager);
         final GeocacheListPresenter geocacheListPresenter = new GeocacheListPresenter(
                 combinedLocationListener, combinedLocationManager, compassListenerProvider,
