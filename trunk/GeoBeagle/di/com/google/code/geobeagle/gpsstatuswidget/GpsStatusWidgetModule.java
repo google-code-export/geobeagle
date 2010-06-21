@@ -70,6 +70,12 @@ public class GpsStatusWidgetModule extends AbstractAndroidModule {
         TextView providesAccuracyView(@GpsStatusWidgetView View gpsStatusWidget) {
             return (TextView)gpsStatusWidget.findViewById(R.id.accuracy);
         }
+        
+        @Provides
+        @ContextScoped
+        Meter providesMeter(MeterBars meterBars, @AccuracyView TextView accuracyView) {
+            return new Meter(meterBars, accuracyView);
+        }
     }
 
     static class GpsStatusWidgetCacheListModule extends GpsStatusWidgetPrivateModule {
