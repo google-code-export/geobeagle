@@ -21,14 +21,10 @@ import com.google.code.geobeagle.gpsstatuswidget.MeterBars.MeterBarsFactory;
 import com.google.code.geobeagle.gpsstatuswidget.MeterFader.MeterFaderFactory;
 import com.google.code.geobeagle.gpsstatuswidget.TextLagUpdater.TextLagUpdaterFactory;
 import com.google.code.geobeagle.gpsstatuswidget.UpdateGpsWidgetRunnable.UpdateGpsWidgetRunnableFactory;
-import com.google.inject.Inject;
 import com.google.inject.assistedinject.FactoryProvider;
 
 import roboguice.config.AbstractAndroidModule;
 import roboguice.inject.ContextScoped;
-
-import android.content.Context;
-import android.view.ViewGroup;
 
 public class GpsStatusWidgetModule extends AbstractAndroidModule {
 
@@ -51,21 +47,4 @@ public class GpsStatusWidgetModule extends AbstractAndroidModule {
                 FactoryProvider.newFactory(GpsWidgetAndUpdaterFactory.class,
                         GpsWidgetAndUpdater.class));
     }
-
-    public static class GpsStatusWidgetFactory {
-        private final Context context;
-
-        @Inject
-        GpsStatusWidgetFactory(Context context) {
-            this.context = context;
-        }
-
-        public GpsStatusWidget create(InflatedGpsStatusWidget inflatedGpsStatusWidget) {
-            GpsStatusWidget gpsStatusWidget = new GpsStatusWidget(context);
-            gpsStatusWidget.addView(inflatedGpsStatusWidget, ViewGroup.LayoutParams.FILL_PARENT,
-                    ViewGroup.LayoutParams.WRAP_CONTENT);
-            return gpsStatusWidget;
-        }
-    }
-
 }
