@@ -25,7 +25,8 @@ public class CacheTagsToDetails implements ICachePersisterFacade {
     }
 
     @Override
-    public void cacheType(String text) {
+    public void cacheType(String text) throws IOException {
+        mCacheDetailsWriter.writeField("Type", text);
     }
 
     @Override
@@ -33,11 +34,13 @@ public class CacheTagsToDetails implements ICachePersisterFacade {
     }
 
     @Override
-    public void container(String text) {
+    public void container(String text) throws IOException {
+        mCacheDetailsWriter.writeField("Container", text);
     }
 
     @Override
-    public void difficulty(String text) {
+    public void difficulty(String text) throws IOException {
+        mCacheDetailsWriter.writeField("Difficulty", text);
     }
 
     @Override
@@ -60,11 +63,13 @@ public class CacheTagsToDetails implements ICachePersisterFacade {
     }
 
     @Override
-    public void groundspeakName(String text) {
+    public void groundspeakName(String text) throws IOException {
+        mCacheDetailsWriter.writeName(text);
     }
 
     @Override
     public void hint(String text) throws IOException {
+        mCacheDetailsWriter.writeHint(text);
     }
 
     @Override
@@ -99,7 +104,8 @@ public class CacheTagsToDetails implements ICachePersisterFacade {
     }
 
     @Override
-    public void terrain(String text) {
+    public void terrain(String text) throws IOException {
+        mCacheDetailsWriter.writeField("Terrain", text);
     }
 
     @Override
@@ -114,6 +120,36 @@ public class CacheTagsToDetails implements ICachePersisterFacade {
     @Override
     public void wptName(String wpt) throws IOException {
         mCacheDetailsWriter.writeWptName(wpt);
+    }
+
+    @Override
+    public void logText(String trimmedText, boolean encoded) throws IOException {
+        mCacheDetailsWriter.writeLogText(trimmedText, encoded);
+    }
+
+    @Override
+    public void logType(String trimmedText) throws IOException {
+        mCacheDetailsWriter.logType(trimmedText);
+    }
+
+    @Override
+    public void placedBy(String trimmedText) throws IOException {
+        mCacheDetailsWriter.placedBy(trimmedText);
+    }
+
+    @Override
+    public void wptTime(String trimmedText) throws IOException {
+        mCacheDetailsWriter.wptTime(trimmedText);
+    }
+
+    @Override
+    public void shortDescription(String trimmedText) throws IOException {
+        mCacheDetailsWriter.writeShortDescription(trimmedText);
+    }
+
+    @Override
+    public void longDescription(String trimmedText) throws IOException {
+        mCacheDetailsWriter.writeLongDescription(trimmedText);
     }
 
 }

@@ -17,6 +17,8 @@ package com.google.code.geobeagle.xmlimport;
 import com.google.code.geobeagle.GeocacheFactory.Source;
 import com.google.inject.Inject;
 
+import android.util.Log;
+
 import java.io.IOException;
 
 public class EventHandlerGpx implements EventHandler {
@@ -24,7 +26,6 @@ public class EventHandlerGpx implements EventHandler {
     static final String XPATH_CACHE_CONTAINER = "/gpx/wpt/groundspeak:cache/groundspeak:container";
     static final String XPATH_CACHE_DIFFICULTY = "/gpx/wpt/groundspeak:cache/groundspeak:difficulty";
     static final String XPATH_CACHE_TERRAIN = "/gpx/wpt/groundspeak:cache/groundspeak:terrain";
-    static final String XPATH_CACHE_TYPE = "/gpx/wpt/groundspeak:cache/groundspeak:type";
     static final String XPATH_GEOCACHE_CONTAINER = "/gpx/wpt/geocache/container";
     static final String XPATH_GEOCACHE_DIFFICULTY = "/gpx/wpt/geocache/difficulty";
     static final String XPATH_GEOCACHE_TERRAIN = "/gpx/wpt/geocache/terrain";
@@ -34,18 +35,20 @@ public class EventHandlerGpx implements EventHandler {
     static final String XPATH_GEOCACHENAME = "/gpx/wpt/geocache/name";
     static final String XPATH_GPXNAME = "/gpx/name";
     static final String XPATH_GPXTIME = "/gpx/time";
+    static final String XPATH_WPTTIME = "/gpx/wpt/time";
     static final String XPATH_TERRACACHINGGPXTIME = "/gpx/metadata/time";
     static final String XPATH_GROUNDSPEAKNAME = "/gpx/wpt/groundspeak:cache/groundspeak:name";
+    static final String XPATH_PLACEDBY = "/gpx/wpt/groundspeak:cache/groundspeak:placed_by";
     static final String XPATH_HINT = "/gpx/wpt/groundspeak:cache/groundspeak:encoded_hints";
     static final String XPATH_LOGDATE = "/gpx/wpt/groundspeak:cache/groundspeak:logs/groundspeak:log/groundspeak:date";
+    static final String XPATH_LOGTEXT = "/gpx/wpt/groundspeak:cache/groundspeak:logs/groundspeak:log/groundspeak:text";
+    static final String XPATH_LOGTYPE = "/gpx/wpt/groundspeak:cache/groundspeak:logs/groundspeak:log/groundspeak:type";
+    static final String XPATH_SHORTDESC = "/gpx/wpt/groundspeak:cache/groundspeak:short_description";
+    static final String XPATH_LONGDESC = "/gpx/wpt/groundspeak:cache/groundspeak:long_description";
+    
     static final String[] XPATH_PLAINLINES = {
-            "/gpx/wpt/cmt", "/gpx/wpt/desc", "/gpx/wpt/groundspeak:cache/groundspeak:type",
-            "/gpx/wpt/groundspeak:cache/groundspeak:container",
-            "/gpx/wpt/groundspeak:cache/groundspeak:short_description",
-            "/gpx/wpt/groundspeak:cache/groundspeak:long_description",
-            "/gpx/wpt/groundspeak:cache/groundspeak:logs/groundspeak:log/groundspeak:type",
+            "/gpx/wpt/cmt",
             "/gpx/wpt/groundspeak:cache/groundspeak:logs/groundspeak:log/groundspeak:finder",
-            "/gpx/wpt/groundspeak:cache/groundspeak:logs/groundspeak:log/groundspeak:text",
             /* here are the geocaching.com.au entries */
             "/gpx/wpt/geocache/owner", "/gpx/wpt/geocache/type", "/gpx/wpt/geocache/summary",
             "/gpx/wpt/geocache/description", "/gpx/wpt/geocache/logs/log/geocacher",
@@ -60,6 +63,8 @@ public class EventHandlerGpx implements EventHandler {
     static final String XPATH_WAYPOINT_TYPE = "/gpx/wpt/type";
     
     private final ICachePersisterFacade mCachePersisterFacade;
+    private boolean mLogEncrypted;
+    private String mGpxTime;
 
     @Inject
     public EventHandlerGpx(ICachePersisterFacade cachePersisterFacade) {
@@ -82,11 +87,14 @@ public class EventHandlerGpx implements EventHandler {
         } else if (fullPath.equals(XPATH_CACHE)) {
             mCachePersisterFacade.available(xmlPullParser.getAttributeValue(null, "available"));
             mCachePersisterFacade.archived(xmlPullParser.getAttributeValue(null, "archived"));
+        } else if (fullPath.equals(XPATH_LOGTEXT)) {
+            mLogEncrypted = "true".equalsIgnoreCase(xmlPullParser
+                    .getAttributeValue(null, "encoded"));
         }
     }
 
     @Override
-    public boolean text(String fullPath, String text) throws IOException {
+    public boolean text(String fullPath, String text, XmlPullParserWrapper xmlPullParser) throws IOException {
         String trimmedText = text.trim();
 //        Log.d("GeoBeagle", "fullPath " + fullPath + ", text " + text);
         if (fullPath.equals(XPATH_WPTNAME)) {
@@ -105,9 +113,7 @@ public class EventHandlerGpx implements EventHandler {
             if (!trimmedText.equals("")) {
                 mCachePersisterFacade.hint(trimmedText);
             }
-        } else if (fullPath.equals(XPATH_CACHE_TYPE) || fullPath.equals(XPATH_GEOCACHE_TYPE)
-                || fullPath.equals(XPATH_WAYPOINT_TYPE)) {
-            //Log.d("GeoBeagle", "Setting cache type " + text);
+        } else if (fullPath.equals(XPATH_GEOCACHE_TYPE) || fullPath.equals(XPATH_WAYPOINT_TYPE)) {
             mCachePersisterFacade.cacheType(trimmedText);
         } else if (fullPath.equals(XPATH_CACHE_DIFFICULTY)
                 || fullPath.equals(XPATH_GEOCACHE_DIFFICULTY)) {
@@ -119,6 +125,21 @@ public class EventHandlerGpx implements EventHandler {
             mCachePersisterFacade.container(trimmedText);
         } else if (fullPath.equals(XPATH_LAST_MODIFIED)) {
             mCachePersisterFacade.lastModified(trimmedText);
+        } else if (fullPath.equals(XPATH_LOGTEXT)) {
+            mCachePersisterFacade.logText(trimmedText, mLogEncrypted);
+        } else if (fullPath.equals(XPATH_LOGTYPE)) {
+            mCachePersisterFacade.logType(trimmedText);
+        } else if (fullPath.equals(XPATH_WPTTIME)) {
+            Log.d("GeoBeagle", "WPTTIME: " + trimmedText + ", " + mGpxTime);
+            mGpxTime = trimmedText;
+            mCachePersisterFacade.wptTime(trimmedText);
+        } else if (fullPath.equals(XPATH_PLACEDBY)) {
+            Log.d("GeoBeagle", "PB: " + trimmedText + ", " + mGpxTime);
+            mCachePersisterFacade.placedBy(trimmedText);
+        } else if (fullPath.equals(XPATH_SHORTDESC)) {
+            mCachePersisterFacade.shortDescription(trimmedText);
+        } else if (fullPath.equals(XPATH_LONGDESC)) {
+            mCachePersisterFacade.longDescription(trimmedText);
         }
         
         for (String writeLineMatch : XPATH_PLAINLINES) {

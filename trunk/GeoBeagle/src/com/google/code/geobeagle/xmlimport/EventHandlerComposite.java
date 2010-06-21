@@ -47,10 +47,11 @@ public class EventHandlerComposite implements EventHandler {
     }
 
     @Override
-    public boolean text(String fullPath, String text) throws IOException {
+    public boolean text(String fullPath, String text, XmlPullParserWrapper xmlPullParser)
+            throws IOException {
         boolean ret = true;
         for (EventHandler eventHandler : eventHandlers) {
-            ret &= eventHandler.text(fullPath, text);
+            ret &= eventHandler.text(fullPath, text, xmlPullParser);
         }
         return ret;
     }

@@ -22,7 +22,9 @@ import static org.powermock.api.easymock.PowerMock.replayAll;
 import static org.powermock.api.easymock.PowerMock.verify;
 import static org.powermock.api.easymock.PowerMock.verifyAll;
 
+import com.google.code.geobeagle.activity.cachelist.GeoBeagleTest;
 import com.google.code.geobeagle.cachedetails.CacheDetailsWriter;
+import com.google.code.geobeagle.cachedetails.Emotifier;
 import com.google.code.geobeagle.cachedetails.FilePathStrategy;
 import com.google.code.geobeagle.cachedetails.HtmlWriter;
 
@@ -31,14 +33,17 @@ import org.junit.runner.RunWith;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import android.util.Log;
+
 import java.io.File;
 import java.io.IOException;
+import java.util.regex.Pattern;
 
 @PrepareForTest( {
-        CacheDetailsWriter.class
+    CacheDetailsWriter.class, Log.class
 })
 @RunWith(PowerMockRunner.class)
-public class CacheDetailsWriterTest {
+public class CacheDetailsWriterTest extends GeoBeagleTest {
     @Test
     public void testOpen() throws Exception {
         HtmlWriter htmlWriter = createMock(HtmlWriter.class);
@@ -56,8 +61,7 @@ public class CacheDetailsWriterTest {
         expect(fileParent.mkdirs()).andReturn(true);
 
         replayAll();
-        CacheDetailsWriter cacheDetailsWriter = new CacheDetailsWriter(htmlWriter, filePathStrategy);
-        cacheDetailsWriter.gpxName("oakland.gpx");
+        CacheDetailsWriter cacheDetailsWriter = new CacheDetailsWriter(htmlWriter, null);
         cacheDetailsWriter.open("GC123");
         verifyAll();
     }
@@ -77,7 +81,7 @@ public class CacheDetailsWriterTest {
     @Test
     public void testWriteHint() throws IOException {
         HtmlWriter htmlWriter = createMock(HtmlWriter.class);
-        htmlWriter.write("<br />Hint: <font color=gray>a hint</font>");
+        htmlWriter.writeln("<br />Hint: <font color=gray>a hint</font>");
 
         replay(htmlWriter);
         new CacheDetailsWriter(htmlWriter, null).writeHint("a hint");
@@ -87,7 +91,7 @@ public class CacheDetailsWriterTest {
     @Test
     public void testWriteLine() throws IOException {
         HtmlWriter htmlWriter = createMock(HtmlWriter.class);
-        htmlWriter.write("some text");
+        htmlWriter.writeln("some text");
 
         replay(htmlWriter);
         new CacheDetailsWriter(htmlWriter, null).writeLine("some text");
@@ -98,10 +102,29 @@ public class CacheDetailsWriterTest {
     public void testWriteLogDate() throws IOException {
         HtmlWriter htmlWriter = createMock(HtmlWriter.class);
         htmlWriter.writeSeparator();
-        htmlWriter.write("04/30/1963");
+        htmlWriter.writeln("Two hours ago");
 
         replay(htmlWriter);
-        new CacheDetailsWriter(htmlWriter, null).writeLogDate("04/30/1963");
+        new CacheDetailsWriter(htmlWriter, null).writeLogDate("2010-06-17T19:00:00Z");
+        verify(htmlWriter);
+    }
+
+    @Test
+    public void testWriteLogTextSmiley() throws IOException {
+        HtmlWriter htmlWriter = createMock(HtmlWriter.class);
+        htmlWriter.writeln("sad " + Emotifier.EMOTICON_PREFIX + "(" + Emotifier.ICON_SUFFIX + " face");
+        htmlWriter.writeln("clown " + Emotifier.EMOTICON_PREFIX + "o)" + Emotifier.ICON_SUFFIX + " face");
+        htmlWriter.writeln("not a smiley []");
+
+        replay(htmlWriter);
+        Pattern pattern = XmlimportModule.createEmotifierPattern(new String[] {
+                ":(", ":o)", "|)", "?"
+        });
+        CacheDetailsWriter cacheDetailsWriter = new CacheDetailsWriter(htmlWriter, new Emotifier(
+                pattern));
+        cacheDetailsWriter.writeLogText("sad [:(] face", false);
+        cacheDetailsWriter.writeLogText("clown [:o)] face", false);
+        cacheDetailsWriter.writeLogText("not a smiley []", false);
         verify(htmlWriter);
     }
 
@@ -109,8 +132,8 @@ public class CacheDetailsWriterTest {
     public void testWriteWptName() throws IOException {
         HtmlWriter htmlWriter = createMock(HtmlWriter.class);
         htmlWriter.writeHeader();
-        htmlWriter.write("GC1234");
-        htmlWriter.write("37 00.000, 122 00.000");
+        htmlWriter.writeln("GC1234");
+        htmlWriter.writeln("37 00.000, 122 00.000");
 
         replay(htmlWriter);
         CacheDetailsWriter cacheDetailsWriter = new CacheDetailsWriter(htmlWriter, null);

@@ -15,14 +15,15 @@
 package com.google.code.geobeagle.xmlimport;
 
 import static org.easymock.EasyMock.expect;
-import static org.powermock.api.easymock.PowerMock.*;
+import static org.powermock.api.easymock.PowerMock.createMock;
+import static org.powermock.api.easymock.PowerMock.replayAll;
+import static org.powermock.api.easymock.PowerMock.verifyAll;
 
 import com.google.code.geobeagle.GeocacheFactory.Source;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import static org.powermock.api.easymock.PowerMock.*;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import java.io.IOException;
@@ -38,14 +39,15 @@ public class EventHandlerGpxTest {
         cachePersisterFacade = createMock(CachePersisterFacade.class);
         xmlPullParser = createMock(XmlPullParserWrapper.class);
     }
-    
+
     @Test
     public void testDesc() throws IOException {
         cachePersisterFacade.wptDesc("a cache");
         cachePersisterFacade.line("a cache");
 
         replayAll();
-        new EventHandlerGpx(cachePersisterFacade).text(EventHandlerGpx.XPATH_WPTDESC, "a cache");
+        new EventHandlerGpx(cachePersisterFacade).text(EventHandlerGpx.XPATH_WPTDESC, "a cache",
+                xmlPullParser);
         verifyAll();
     }
 
@@ -63,7 +65,8 @@ public class EventHandlerGpxTest {
         expect(cachePersisterFacade.gpxTime("today")).andReturn(true);
 
         replayAll();
-        new EventHandlerGpx(cachePersisterFacade).text(EventHandlerGpx.XPATH_GPXTIME, "today");
+        new EventHandlerGpx(cachePersisterFacade).text(EventHandlerGpx.XPATH_GPXTIME, "today",
+                xmlPullParser);
         verifyAll();
     }
 
@@ -73,7 +76,7 @@ public class EventHandlerGpxTest {
 
         replayAll();
         new EventHandlerGpx(cachePersisterFacade).text(EventHandlerGpx.XPATH_GROUNDSPEAKNAME,
-                "my wpt");
+                "my wpt", xmlPullParser);
         verifyAll();
     }
 
@@ -83,14 +86,15 @@ public class EventHandlerGpxTest {
 
         replayAll();
         new EventHandlerGpx(cachePersisterFacade).text(EventHandlerGpx.XPATH_HINT,
-                " look under the rock");
+                " look under the rock", xmlPullParser);
         verifyAll();
     }
 
     @Test
     public void testHintEmpty() throws IOException {
         replayAll();
-        new EventHandlerGpx(cachePersisterFacade).text(EventHandlerGpx.XPATH_HINT, "   ");
+        new EventHandlerGpx(cachePersisterFacade).text(EventHandlerGpx.XPATH_HINT, "   ",
+                xmlPullParser);
         verifyAll();
     }
 
@@ -99,14 +103,15 @@ public class EventHandlerGpxTest {
         cachePersisterFacade.logDate("date");
 
         replayAll();
-        new EventHandlerGpx(cachePersisterFacade).text(EventHandlerGpx.XPATH_LOGDATE, "date");
+        new EventHandlerGpx(cachePersisterFacade).text(EventHandlerGpx.XPATH_LOGDATE, "date",
+                xmlPullParser);
         verifyAll();
     }
 
     @Test
     public void testMatchNothing() throws IOException {
         replayAll();
-        new EventHandlerGpx(cachePersisterFacade).text("/gpx/foo", "hello");
+        new EventHandlerGpx(cachePersisterFacade).text("/gpx/foo", "hello", xmlPullParser);
         verifyAll();
     }
 
@@ -116,7 +121,7 @@ public class EventHandlerGpxTest {
 
         replayAll();
         EventHandlerGpx eventHandlerGpx = new EventHandlerGpx(cachePersisterFacade);
-        eventHandlerGpx.text(EventHandlerGpx.XPATH_PLAINLINES[0], " hello  \t");
+        eventHandlerGpx.text(EventHandlerGpx.XPATH_PLAINLINES[0], " hello  \t", xmlPullParser);
         verifyAll();
     }
 
@@ -138,7 +143,7 @@ public class EventHandlerGpxTest {
         expect(xmlPullParser.getAttributeValue(null, "archived")).andReturn("false");
         cachePersisterFacade.available("true");
         cachePersisterFacade.archived("false");
-        
+
         replayAll();
         new EventHandlerGpx(cachePersisterFacade).startTag("groundspeak:cache",
                 "/gpx/wpt/groundspeak:cache", xmlPullParser);
@@ -155,7 +160,8 @@ public class EventHandlerGpxTest {
         cachePersisterFacade.symbol("Geocache Found");
 
         replayAll();
-        new EventHandlerGpx(cachePersisterFacade).text(EventHandlerGpx.XPATH_SYM, "Geocache Found");
+        new EventHandlerGpx(cachePersisterFacade).text(EventHandlerGpx.XPATH_SYM, "Geocache Found",
+                xmlPullParser);
         verifyAll();
     }
 
@@ -170,10 +176,10 @@ public class EventHandlerGpxTest {
 
         replayAll();
         final EventHandlerGpx eventHandlerGpx = new EventHandlerGpx(cachePersisterFacade);
-        eventHandlerGpx.text(EventHandlerGpx.XPATH_CACHE_TYPE, "cache type");
-        eventHandlerGpx.text(EventHandlerGpx.XPATH_CACHE_DIFFICULTY, "difficulty");
-        eventHandlerGpx.text(EventHandlerGpx.XPATH_CACHE_TERRAIN, "terrain");
-        eventHandlerGpx.text(EventHandlerGpx.XPATH_CACHE_CONTAINER, "container");
+        eventHandlerGpx.text(EventHandlerGpx.XPATH_CACHE_TYPE, "cache type", xmlPullParser);
+        eventHandlerGpx.text(EventHandlerGpx.XPATH_CACHE_DIFFICULTY, "difficulty", xmlPullParser);
+        eventHandlerGpx.text(EventHandlerGpx.XPATH_CACHE_TERRAIN, "terrain", xmlPullParser);
+        eventHandlerGpx.text(EventHandlerGpx.XPATH_CACHE_CONTAINER, "container", xmlPullParser);
         verifyAll();
     }
 
@@ -182,7 +188,8 @@ public class EventHandlerGpxTest {
         cachePersisterFacade.wptName("my wpt");
 
         replayAll();
-        new EventHandlerGpx(cachePersisterFacade).text(EventHandlerGpx.XPATH_WPTNAME, "my wpt");
+        new EventHandlerGpx(cachePersisterFacade).text(EventHandlerGpx.XPATH_WPTNAME, "my wpt",
+                xmlPullParser);
         verifyAll();
     }
 }

@@ -24,13 +24,13 @@ public interface ICachePersisterFacade {
 
     public void available(String attributeValue);
 
-    public void cacheType(String text);
+    public void cacheType(String text) throws IOException;
 
     public void close(boolean success);
 
-    public void container(String text);
+    public void container(String text) throws IOException;
 
-    public void difficulty(String text);
+    public void difficulty(String text) throws IOException;
 
     public void end();
 
@@ -40,7 +40,7 @@ public interface ICachePersisterFacade {
 
     public boolean gpxTime(String gpxTime);
 
-    public void groundspeakName(String text);
+    public void groundspeakName(String text) throws IOException;
 
     public void hint(String text) throws IOException;
 
@@ -58,11 +58,23 @@ public interface ICachePersisterFacade {
 
     public void symbol(String text);
 
-    public void terrain(String text);
+    public void terrain(String text) throws IOException;
 
     public void wpt(String latitude, String longitude);
 
     public void wptDesc(String cacheName);
 
     public void wptName(String wpt) throws IOException;
+
+    public void logText(String trimmedText, boolean logEncrypted) throws IOException;
+
+    public void logType(String trimmedText) throws IOException;
+
+    public void placedBy(String trimmedText) throws IOException;
+
+    public void wptTime(String trimmedText) throws IOException;
+
+    public void shortDescription(String trimmedText) throws IOException;
+
+    public void longDescription(String trimmedText) throws IOException;
 }
