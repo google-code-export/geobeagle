@@ -17,13 +17,25 @@ package com.google.code.geobeagle.bcaching.progress;
 import android.os.Message;
 
 public enum ProgressMessage {
+    DONE {
+        @Override
+        void act(ProgressHandler progressHandler, Message msg) {
+            progressHandler.done();
+        }
+    },
+
+    REFRESH {
+        @Override
+        void act(ProgressHandler progressHandler, Message msg) {
+            progressHandler.refresh();
+        }
+    },
     SET_FILE {
         @Override
         void act(ProgressHandler progressHandler, Message msg) {
             progressHandler.setFile((String)msg.obj);
         }
     },
-
     SET_MAX {
         @Override
         void act(ProgressHandler progressHandler, Message msg) {
@@ -36,12 +48,6 @@ public enum ProgressMessage {
             progressHandler.setProgress(msg.arg1);
         }
     },
-    DONE {
-        @Override
-        void act(ProgressHandler progressHandler, Message msg) {
-            progressHandler.done();
-        }
-    },
     START {
         @Override
         void act(ProgressHandler progressHandler, Message msg) {
@@ -49,17 +55,11 @@ public enum ProgressMessage {
             progressHandler.setMax(100);
             progressHandler.show();
         }
-    },
-    REFRESH {
-        @Override
-        void act(ProgressHandler progressHandler, Message msg) {
-            progressHandler.refresh();
-        }
     };
-
-    abstract void act(ProgressHandler progressHandler, Message msg);
 
     static ProgressMessage fromInt(Integer i) {
         return ProgressMessage.class.getEnumConstants()[i];
     }
+
+    abstract void act(ProgressHandler progressHandler, Message msg);
 }
