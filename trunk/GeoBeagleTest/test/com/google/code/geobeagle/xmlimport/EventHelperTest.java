@@ -72,7 +72,7 @@ public class EventHelperTest {
 
         expect(xmlPathBuilder.getPath()).andReturn("/path");
         expect(xmlPullParser.getText()).andReturn("text");
-        expect(eventHandlerGpx.text("/path", "text")).andReturn(true);
+        expect(eventHandlerGpx.text("/path", "text", xmlPullParser)).andReturn(true);
 
         PowerMock.replayAll();
         EventHelper eventHelper = new EventHelper(xmlPathBuilder, eventHandlerGpx, xmlPullParser);

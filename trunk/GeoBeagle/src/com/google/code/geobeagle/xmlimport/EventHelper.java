@@ -64,7 +64,8 @@ public class EventHelper {
                 break;
             }
             case XmlPullParser.TEXT:
-                return mEventHandler.text(mXmlPathBuilder.getPath(), mXmlPullParser.getText());
+                return mEventHandler.text(mXmlPathBuilder.getPath(), mXmlPullParser.getText(),
+                        mXmlPullParser);
         }
         return true;
     }

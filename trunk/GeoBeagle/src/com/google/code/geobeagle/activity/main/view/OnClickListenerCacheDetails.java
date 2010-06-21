@@ -50,6 +50,8 @@ public class OnClickListenerCacheDetails implements View.OnClickListener {
         mAlertDialogBuilder.setView(detailsView);
 
         WebView webView = (WebView)detailsView.findViewById(R.id.webview);
+        webView.getSettings().setJavaScriptEnabled(true);
+
         String details = mCacheDetailsLoader.load(geocache.getSourceName(), id);
         webView.loadDataWithBaseURL(null, details, "text/html", "utf-8", "about:blank");
         mAlertDialogBuilder.create().show();

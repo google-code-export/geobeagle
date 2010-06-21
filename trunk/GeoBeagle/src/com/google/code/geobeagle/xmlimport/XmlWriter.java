@@ -25,6 +25,7 @@ class XmlWriter implements EventHandler {
     private String filename;
     private final TagWriter tagWriter;
     private Tag tagWpt;
+    private String time;
 
     @Inject
     public XmlWriter(FilePathStrategy filePathStrategy, TagWriter tagWriter) {
@@ -66,23 +67,33 @@ class XmlWriter implements EventHandler {
 
         if (fullPath.equals("/gpx/wpt")) {
             tagWpt = tag;
-        } else if (tagWriter.isOpen()) {
+        }  else if (tagWriter.isOpen()) {
             tagWriter.startTag(tag);
         }
     }
 
-    public boolean text(String fullPath, String text) throws IOException {
+    @Override
+    public boolean text(String fullPath, String text, XmlPullParserWrapper xmlPullParser)
+            throws IOException {
         if (!fullPath.startsWith("/gpx/wpt"))
             return true;
 
         if (text.trim().length() == 0)
             return true;
 
-        if (fullPath.equals(EventHandlerGpx.XPATH_WPTNAME)) {
+        if (fullPath.equals("/gpx/wpt/time")) {
+            time = text;
+        } else if (fullPath.equals(EventHandlerGpx.XPATH_WPTNAME)) {
             tagWriter.open(filePathStrategy.getPath(filename, text, "gpx"));
-            tagWriter.startTag(new Tag("gpx", new HashMap<String, String>()));
+            HashMap<String, String> emptyHashMap = new HashMap<String, String>();
+            tagWriter.startTag(new Tag("gpx", emptyHashMap));
             tagWriter.startTag(tagWpt);
-            tagWriter.startTag(new Tag("name", new HashMap<String, String>()));
+            if (time != null) {
+                tagWriter.startTag(new Tag("time", emptyHashMap));
+                tagWriter.text(time);
+                tagWriter.endTag("time");
+            }
+            tagWriter.startTag(new Tag("name", emptyHashMap));
         }
 
         if (tagWriter.isOpen())

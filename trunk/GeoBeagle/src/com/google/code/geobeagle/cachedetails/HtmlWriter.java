@@ -34,8 +34,11 @@ public class HtmlWriter {
         mWriter.open(path);
     }
 
-    public void write(String text) throws IOException {
+    public void writeln(String text) throws IOException {
         mWriter.write(text + "<br/>\n");
+    }
+    public void write(String text) throws IOException {
+        mWriter.write(text + "\n");
     }
 
     public void writeFooter() throws IOException {
@@ -45,7 +48,10 @@ public class HtmlWriter {
 
     public void writeHeader() throws IOException {
         mWriter.write("<html>\n");
-        mWriter.write("  <body>\n");
+        mWriter.write("<head>\n");
+        mWriter.write("<script type=\"text/javascript\" src=\"file:///android_asset/rot13.js\">"
+                + "</script></head>\n");
+        mWriter.write("  <body onLoad=encryptAll()>\n");
     }
 
     public void writeSeparator() throws IOException {
