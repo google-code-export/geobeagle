@@ -46,7 +46,6 @@ import com.google.code.geobeagle.bcaching.preferences.BCachingStartTime;
 import com.google.code.geobeagle.cachedetails.FilePathStrategy;
 import com.google.code.geobeagle.database.CacheWriter;
 import com.google.code.geobeagle.database.DbFrontend;
-import com.google.code.geobeagle.database.FilterNearestCaches;
 import com.google.code.geobeagle.database.ISQLiteDatabase;
 import com.google.code.geobeagle.database.LocationSaver;
 import com.google.code.geobeagle.database.TagWriterImpl;
@@ -143,13 +142,10 @@ public class CacheListDelegateDI {
         final UpdateGpsWidgetRunnable updateGpsWidgetRunnable = gpsWidgetAndUpdater
                 .getUpdateGpsWidgetRunnable();
 
-        final FilterNearestCaches filterNearestCaches = injector
-                .getInstance(FilterNearestCaches.class);
         final CacheListDelegateDI.Timing timing = injector
                 .getInstance(CacheListDelegateDI.Timing.class);
 
-        final TitleUpdater titleUpdater = new TitleUpdater(listActivity, filterNearestCaches,
-                timing);
+        final TitleUpdater titleUpdater = injector.getInstance(TitleUpdater.class);
         final Provider<DbFrontend> dbFrontendProvider = injector.getProvider(DbFrontend.class);
         final ActionManager actionManager = injector.getInstance(ActionManager.class);
         final CacheListRefresh cacheListRefresh = new CacheListRefresh(actionManager, timing,
