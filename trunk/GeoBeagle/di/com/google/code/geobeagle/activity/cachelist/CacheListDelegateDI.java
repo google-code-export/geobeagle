@@ -133,12 +133,13 @@ public class CacheListDelegateDI {
         final ErrorDisplayer errorDisplayer = injector.getInstance(ErrorDisplayer.class);
         final CombinedLocationManager combinedLocationManager = injector
                 .getInstance(CombinedLocationManager.class);
-        final GeocacheFactory geocacheFactory = new GeocacheFactory();
+        final GeocacheFactory geocacheFactory = injector.getInstance(GeocacheFactory.class);
         final LocationControlBuffered locationControlBuffered = injector
                 .getInstance(LocationControlBuffered.class);
         final GeocacheFromMyLocationFactory geocacheFromMyLocationFactory = new GeocacheFromMyLocationFactory(
                 geocacheFactory, locationControlBuffered);
-        final BearingFormatter relativeBearingFormatter = injector.getInstance(BearingFormatter.class);
+        final BearingFormatter relativeBearingFormatter = injector
+                .getInstance(BearingFormatter.class);
         final DistanceFormatterManager distanceFormatterManager = injector
                 .getInstance(DistanceFormatterManager.class);
         final ArrayList<GeocacheVector> geocacheVectorsList = new ArrayList<GeocacheVector>(10);
