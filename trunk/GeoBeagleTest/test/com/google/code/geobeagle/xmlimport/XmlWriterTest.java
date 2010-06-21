@@ -122,7 +122,7 @@ public class XmlWriterTest extends GeoBeagleTest {
         // System.out.println(stringWriter.toString());
         assertEquals("FILE: /sdcard/filename.txt/6/GC123.gpx\n"
                 + "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<gpx>\n"
-                + " <wpt>\n  <name>GC123</name></wpt></gpx>\nEOF\n", stringWriter.toString());
+                + " <wpt>\n  <time>3oclock</time>\n  <name>GC123</name></wpt></gpx>\nEOF\n", stringWriter.toString());
         verifyAll();
     }
 

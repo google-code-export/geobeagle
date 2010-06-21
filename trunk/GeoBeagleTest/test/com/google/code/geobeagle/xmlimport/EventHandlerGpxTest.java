@@ -41,17 +41,6 @@ public class EventHandlerGpxTest {
     }
 
     @Test
-    public void testDesc() throws IOException {
-        cachePersisterFacade.wptDesc("a cache");
-        cachePersisterFacade.line("a cache");
-
-        replayAll();
-        new EventHandlerGpx(cachePersisterFacade).text(EventHandlerGpx.XPATH_WPTDESC, "a cache",
-                xmlPullParser);
-        verifyAll();
-    }
-
-    @Test
     public void testEndTag() throws IOException {
         cachePersisterFacade.endCache(Source.GPX);
 
@@ -162,24 +151,6 @@ public class EventHandlerGpxTest {
         replayAll();
         new EventHandlerGpx(cachePersisterFacade).text(EventHandlerGpx.XPATH_SYM, "Geocache Found",
                 xmlPullParser);
-        verifyAll();
-    }
-
-    @Test
-    public void testTextCacheType() throws IOException {
-        cachePersisterFacade.cacheType("cache type");
-        cachePersisterFacade.line("cache type");
-        cachePersisterFacade.difficulty("difficulty");
-        cachePersisterFacade.terrain("terrain");
-        cachePersisterFacade.container("container");
-        cachePersisterFacade.line("container");
-
-        replayAll();
-        final EventHandlerGpx eventHandlerGpx = new EventHandlerGpx(cachePersisterFacade);
-        eventHandlerGpx.text(EventHandlerGpx.XPATH_CACHE_TYPE, "cache type", xmlPullParser);
-        eventHandlerGpx.text(EventHandlerGpx.XPATH_CACHE_DIFFICULTY, "difficulty", xmlPullParser);
-        eventHandlerGpx.text(EventHandlerGpx.XPATH_CACHE_TERRAIN, "terrain", xmlPullParser);
-        eventHandlerGpx.text(EventHandlerGpx.XPATH_CACHE_CONTAINER, "container", xmlPullParser);
         verifyAll();
     }
 
