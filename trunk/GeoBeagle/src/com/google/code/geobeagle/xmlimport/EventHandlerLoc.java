@@ -32,12 +32,14 @@ class EventHandlerLoc implements EventHandler {
         mCachePersisterFacade = cachePersisterFacade;
     }
 
+    @Override
     public void endTag(String name, String previousFullPath) throws IOException {
         if (previousFullPath.equals(XPATH_WPT)) {
             mCachePersisterFacade.endCache(Source.LOC);
         }
     }
 
+    @Override
     public void startTag(String name, String mFullPath, XmlPullParserWrapper mXmlPullParser) throws IOException {
         if (mFullPath.equals(XPATH_COORD)) {
             mCachePersisterFacade.wpt(mXmlPullParser.getAttributeValue(null, "lat"), mXmlPullParser
@@ -48,6 +50,7 @@ class EventHandlerLoc implements EventHandler {
         }
     }
 
+    @Override
     public boolean text(String mFullPath, String text) throws IOException {
         if (mFullPath.equals(XPATH_WPTNAME))
             mCachePersisterFacade.groundspeakName(text.trim());
