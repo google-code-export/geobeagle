@@ -42,7 +42,6 @@ import com.google.code.geobeagle.activity.cachelist.presenter.ActionAndTolerance
 import com.google.code.geobeagle.activity.cachelist.presenter.AdapterCachesSorter;
 import com.google.code.geobeagle.activity.cachelist.presenter.BearingFormatter;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
-import com.google.code.geobeagle.activity.cachelist.presenter.DistanceFormatterManager;
 import com.google.code.geobeagle.activity.cachelist.presenter.DistanceUpdater;
 import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheListAdapter;
 import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheListPresenter;
@@ -133,8 +132,6 @@ public class CacheListDelegateDI {
                 .getInstance(LocationControlBuffered.class);
         final GeocacheFromMyLocationFactory geocacheFromMyLocationFactory = injector
                 .getInstance(GeocacheFromMyLocationFactory.class);
-        final DistanceFormatterManager distanceFormatterManager = injector
-                .getInstance(DistanceFormatterManager.class);
         final GeocacheVectors geocacheVectors = injector.getInstance(GeocacheVectors.class);
         final CacheListData cacheListData = injector.getInstance(CacheListData.class);
         final XmlPullParserWrapper xmlPullParserWrapper = injector
@@ -225,8 +222,9 @@ public class CacheListDelegateDI {
         final SensorManagerWrapper sensorManagerWrapper = new SensorManagerWrapper(sensorManager);
         final GeocacheListPresenter geocacheListPresenter = new GeocacheListPresenter(
                 combinedLocationListener, combinedLocationManager, compassListenerFactory,
-                distanceFormatterManager, geocacheListAdapter, geocacheVectors, gpsStatusWidget, listActivity, locationControlBuffered,
-                sensorManagerWrapper, updateGpsWidgetRunnable, scrollListener);
+                geocacheListAdapter, geocacheVectors, gpsStatusWidget, listActivity,
+                locationControlBuffered, sensorManagerWrapper, updateGpsWidgetRunnable,
+                scrollListener);
         final CacheTypeFactory cacheTypeFactory = new CacheTypeFactory();
  
         final Aborter aborter = injector.getInstance(Aborter.class);

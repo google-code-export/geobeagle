@@ -129,9 +129,9 @@ public class CacheListPresenterTest {
         listView.setOnScrollListener(scrollListener);
 
         PowerMock.replayAll();
-        new GeocacheListPresenter(null, null, null, null, geocacheListAdapter, geocacheVectors,
-                gpsStatusWidget, listActivity, locationControlBuffered, null,
-                null, scrollListener).onCreate();
+        new GeocacheListPresenter(null, null, null, geocacheListAdapter, geocacheVectors,
+                gpsStatusWidget, listActivity, locationControlBuffered, null, null, scrollListener)
+                .onCreate();
         PowerMock.verifyAll();
     }
 
@@ -147,7 +147,7 @@ public class CacheListPresenterTest {
 
         PowerMock.replayAll();
         new GeocacheListPresenter(null, combinedLocationManager, null, null, null, null, null,
-                null, null, sensorManagerWrapper, null, null).onPause();
+                null, sensorManagerWrapper, null, null).onPause();
         PowerMock.verifyAll();
     }
 
@@ -175,8 +175,6 @@ public class CacheListPresenterTest {
         PowerMock.mockStatic(PreferenceManager.class);
         GeocacheListAdapter geocacheListAdapter = PowerMock.createMock(GeocacheListAdapter.class);
         GpsStatusWidget gpsStatusWidget = PowerMock.createMock(GpsStatusWidget.class);
-        DistanceFormatterManager distanceFormatterManager = PowerMock
-                .createMock(DistanceFormatterManager.class);
         PowerMock.mockStatic(PreferenceManager.class);
         UpdateGpsWidgetRunnable updateGpsRunnable = PowerMock
                 .createMock(UpdateGpsWidgetRunnable.class);
@@ -190,11 +188,10 @@ public class CacheListPresenterTest {
                 cacheListRefreshLocationListener);
         sensorManagerWrapper.registerListener(compassListener, SensorManager.SENSOR_ORIENTATION,
                 SensorManager.SENSOR_DELAY_UI);
-        distanceFormatterManager.setFormatter();
 
         PowerMock.replayAll();
         new GeocacheListPresenter(combinedLocationListener, combinedLocationManager,
-                compassListenerFactory, distanceFormatterManager, geocacheListAdapter, null,
+                compassListenerFactory, geocacheListAdapter, null,
                 gpsStatusWidget, listActivity, locationControlBuffered, sensorManagerWrapper,
                 updateGpsRunnable, null).onResume(cacheListRefresh);
 
