@@ -17,7 +17,6 @@ package com.google.code.geobeagle.activity.cachelist;
 import com.google.code.geobeagle.CacheTypeFactory;
 import com.google.code.geobeagle.ErrorDisplayer;
 import com.google.code.geobeagle.LocationControlBuffered;
-import com.google.code.geobeagle.GraphicsGenerator.AttributePainter;
 import com.google.code.geobeagle.GraphicsGenerator.DifficultyAndTerrainPainter;
 import com.google.code.geobeagle.GraphicsGenerator.IconOverlayFactory;
 import com.google.code.geobeagle.GraphicsGenerator.IconRenderer;
@@ -96,8 +95,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.DialogInterface.OnClickListener;
 import android.content.res.Resources;
-import android.graphics.Paint;
-import android.graphics.Rect;
 import android.hardware.SensorManager;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -144,9 +141,8 @@ public class CacheListDelegateDI {
                 .getInstance(XmlPullParserWrapper.class);
 
         final Resources resources = injector.getInstance(Resources.class);
-        final AttributePainter attributePainter = injector.getInstance(AttributePainter.class);
-        final DifficultyAndTerrainPainter difficultyAndTerrainPainter = new DifficultyAndTerrainPainter(
-                attributePainter);
+        final DifficultyAndTerrainPainter difficultyAndTerrainPainter = injector
+                .getInstance(DifficultyAndTerrainPainter.class);
         final IconRenderer iconRenderer = new IconRenderer(resources, difficultyAndTerrainPainter);
         final NameFormatter nameFormatter = injector.getInstance(NameFormatter.class);
         final GeocacheSummaryRowInflater geocacheSummaryRowInflater = new GeocacheSummaryRowInflater(
