@@ -37,8 +37,7 @@ public class StringWriterWrapper implements com.google.code.geobeagle.cachedetai
     public void open(String path) throws IOException {
     }
 
-    @Override
-    public String toString() {
+    public String getString() {
         return stringWriter.toString();
     }
 
