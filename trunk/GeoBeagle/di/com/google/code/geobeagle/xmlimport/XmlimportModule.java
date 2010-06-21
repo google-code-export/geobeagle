@@ -57,6 +57,7 @@ public class XmlimportModule extends AbstractAndroidModule {
 
     @Provides
     @GpxAnnotation
+    @ContextScoped
     EventHelper eventHelperGpxProvider(XmlPathBuilder xmlPathBuilder,
             @WriteDetails EventHandlerGpx eventHandlerGpx, XmlPullParserWrapper xmlPullParser,
             XmlWriter xmlWriter) {
@@ -134,6 +135,7 @@ public class XmlimportModule extends AbstractAndroidModule {
 
     @Provides
     @LoadDetails
+    @ContextScoped
     EventHelper eventHelperGpxLoadDetailsProvider(XmlPathBuilder xmlPathBuilder,
             @LoadDetails EventHandlerGpx eventHandlerGpx, XmlPullParserWrapper xmlPullParser) {
         return new EventHelper(xmlPathBuilder, eventHandlerGpx, xmlPullParser);

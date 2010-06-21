@@ -133,7 +133,7 @@ public class CacheDetailsLoader {
         private final StringWriterWrapper mStringWriterWrapper;
 
         DetailsReaderImpl(Activity activity, Reader fileReader, String path,
-                EventHelper eventHelper, XmlPullParserWrapper xmlPullParserWrapper,
+                @LoadDetails EventHelper eventHelper, XmlPullParserWrapper xmlPullParserWrapper,
                 StringWriterWrapper stringWriterWrapper) {
             mActivity = activity;
             mPath = path;
@@ -145,6 +145,7 @@ public class CacheDetailsLoader {
 
         public Details read() {
             try {
+                mEventHelper.open(mPath);
                 mXmlPullParserWrapper.open(mPath, mReader);
                 int eventType;
                 for (eventType = mXmlPullParserWrapper.getEventType(); eventType != XmlPullParser.END_DOCUMENT; eventType = mXmlPullParserWrapper
