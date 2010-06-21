@@ -165,7 +165,7 @@ public class CacheListDelegateDI {
                 ViewGroup.LayoutParams.WRAP_CONTENT);
         final GpsWidgetAndUpdater gpsWidgetAndUpdater = new GpsWidgetAndUpdater(listActivity,
                 gpsStatusWidget, locationControlBuffered, combinedLocationManager,
-                distanceFormatterManager.getFormatter(), activityVisible);
+                distanceFormatterProvider, activityVisible);
         final GpsStatusWidgetDelegate gpsStatusWidgetDelegate = gpsWidgetAndUpdater
                 .getGpsStatusWidgetDelegate();
 
@@ -220,7 +220,6 @@ public class CacheListDelegateDI {
         final CompassListenerFactory compassListenerFactory = new CompassListenerFactory(
                 locationControlBuffered);
 
-        distanceFormatterManager.addHasDistanceFormatter(gpsStatusWidgetDelegate);
         final CacheListView.ScrollListener scrollListener = new CacheListView.ScrollListener(
                 updateFlag);
         final SensorManagerWrapper sensorManagerWrapper = new SensorManagerWrapper(sensorManager);
