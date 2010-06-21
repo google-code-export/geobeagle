@@ -23,7 +23,6 @@ import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidget.InflatedGpsStatusWidget;
 import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidgetDelegate.GpsStatusWidgetDelegateFactory;
 import com.google.code.geobeagle.gpsstatuswidget.MeterFader.MeterFaderFactory;
-import com.google.code.geobeagle.gpsstatuswidget.TextLagUpdater.TextLagUpdaterFactory;
 import com.google.code.geobeagle.gpsstatuswidget.UpdateGpsWidgetRunnable.UpdateGpsWidgetRunnableFactory;
 import com.google.inject.BindingAnnotation;
 import com.google.inject.Key;
@@ -100,8 +99,6 @@ public class GpsStatusWidgetModule extends AbstractAndroidModule {
     public static @interface Lag {}
     @Override
     protected void configure() {
-        bind(TextLagUpdaterFactory.class).toProvider(
-                FactoryProvider.newFactory(TextLagUpdaterFactory.class, TextLagUpdater.class));
         bind(UpdateGpsWidgetRunnableFactory.class).toProvider(
                 FactoryProvider.newFactory(UpdateGpsWidgetRunnableFactory.class,
                         UpdateGpsWidgetRunnable.class));

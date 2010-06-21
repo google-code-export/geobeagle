@@ -17,7 +17,6 @@ package com.google.code.geobeagle.gpsstatuswidget;
 import com.google.code.geobeagle.Time;
 import com.google.code.geobeagle.location.CombinedLocationManager;
 import com.google.inject.Inject;
-import com.google.inject.assistedinject.Assisted;
 
 import android.location.Location;
 import android.widget.TextView;
@@ -25,10 +24,6 @@ import android.widget.TextView;
 import java.util.Formatter;
 
 class TextLagUpdater {
-    static interface TextLagUpdaterFactory {
-        TextLagUpdater create(TextView textLag);
-    }
-    
     static interface Lag {
         String getFormatted(long currentTime);
     }
@@ -124,7 +119,9 @@ class TextLagUpdater {
     private final Time mTime;
 
     @Inject
-    TextLagUpdater(LastLocationUnknown lastLocationUnknown, @Assisted TextView textLag, Time time) {
+    TextLagUpdater(LastLocationUnknown lastLocationUnknown,
+            @com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidgetModule.Lag TextView textLag,
+            Time time) {
         mLastLocation = lastLocationUnknown;
         mTextLag = textLag;
         mTime = time;
