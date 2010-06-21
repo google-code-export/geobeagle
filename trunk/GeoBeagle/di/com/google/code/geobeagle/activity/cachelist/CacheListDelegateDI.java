@@ -98,7 +98,6 @@ public class CacheListDelegateDI {
         final GeocacheFromMyLocationFactory geocacheFromMyLocationFactory = injector
                 .getInstance(GeocacheFromMyLocationFactory.class);
         final GeocacheVectors geocacheVectors = injector.getInstance(GeocacheVectors.class);
-        final Resources resources = injector.getInstance(Resources.class);
         final ActivityVisible activityVisible = injector.getInstance(ActivityVisible.class);
         final GeocacheListAdapter geocacheListAdapter = injector
                 .getInstance(GeocacheListAdapter.class);
@@ -152,15 +151,19 @@ public class CacheListDelegateDI {
         final MenuActionSyncGpx menuActionSyncGpx = menuActionSyncGpxFactory.create(
                 cacheListRefresh, gpxImporterFactory);
         final MenuActions menuActions = injector.getInstance(MenuActions.class);
+        
         menuActions.add(menuActionSyncGpx);
+        final AlertDialog.Builder alertDialogBuilder = injector.getInstance(AlertDialog.Builder.class);
+        final BCachingStartTime bcachingStartTime = injector.getInstance(BCachingStartTime.class);
         menuActions.add(new MenuActionDeleteAllCaches(cacheListRefresh, listActivity,
-                dbFrontendProvider, new AlertDialog.Builder(listActivity), injector
-                        .getInstance(BCachingStartTime.class)));
-        menuActions.add(new MenuActionMyLocation(listActivity, errorDisplayer, geocacheFromMyLocationFactory,
-                new LocationSaver(cacheWriterProvider)));
+                dbFrontendProvider, alertDialogBuilder, bcachingStartTime));
+        final LocationSaver locationSaver = new LocationSaver(cacheWriterProvider);
+        menuActions.add(new MenuActionMyLocation(listActivity, errorDisplayer,
+                geocacheFromMyLocationFactory, locationSaver));
         menuActions.add(new MenuActionSearchOnline(listActivity));
         menuActions.add(new MenuActionMap(listActivity, locationControlBuffered));
-        menuActions.add(injector.getInstance(MenuActionSettings.class));
+        final MenuActionSettings menuActionSettings = injector.getInstance(MenuActionSettings.class);
+        menuActions.add(menuActionSettings);
 
         final Intent geoBeagleMainIntent = new Intent(listActivity, GeoBeagle.class);
         final ContextActionView contextActionView = new ContextActionView(geocacheVectors,
