@@ -37,8 +37,6 @@ import java.io.IOException;
 @RunWith(PowerMockRunner.class)
 public class CachePersisterFacadeTest {
 
-    private final CacheDetailsWriter mCacheDetailsWriter = PowerMock
-            .createMock(CacheDetailsWriter.class);
     private final CacheTagSqlWriter mCacheTagWriter = PowerMock.createMock(CacheTagSqlWriter.class);
     private final MessageHandlerInterface mMessageHandler = PowerMock
             .createMock(MessageHandler.class);
@@ -83,7 +81,6 @@ public class CachePersisterFacadeTest {
 
     @Test
     public void testEndTag() throws IOException {
-        mCacheDetailsWriter.close();
         mCacheTagWriter.write(Source.GPX);
         mMessageHandler.updateName("");
 
@@ -95,7 +92,6 @@ public class CachePersisterFacadeTest {
 
     @Test
     public void testEndTagName() throws IOException {
-        mCacheDetailsWriter.close();
         mCacheTagWriter.write(Source.GPX);
         mCacheTagWriter.cacheName("my cache");
         mMessageHandler.updateName("my cache");
@@ -130,8 +126,6 @@ public class CachePersisterFacadeTest {
 
     @Test
     public void testHint() throws IOException {
-        mCacheDetailsWriter.writeHint("a hint");
-
         PowerMock.replayAll();
         new CachePersisterFacade(null, null, null, null, null).hint("a hint");
         PowerMock.verifyAll();
@@ -139,8 +133,6 @@ public class CachePersisterFacadeTest {
 
     @Test
     public void testLine() throws IOException {
-        mCacheDetailsWriter.writeLine("some data");
-
         PowerMock.replayAll();
         new CachePersisterFacade(null, null, null, null, null)
                 .line("some data");
@@ -149,8 +141,6 @@ public class CachePersisterFacadeTest {
 
     @Test
     public void testLogDate() throws IOException {
-        mCacheDetailsWriter.writeLogDate("2010-06-17T19:00:00Z");
-
         PowerMock.replayAll();
         new CachePersisterFacade(null, null, null, null, null)
                 .logDate("04/30/99");
@@ -183,7 +173,7 @@ public class CachePersisterFacadeTest {
         FileFactory fileFactory = PowerMock.createMock(FileFactory.class);
         File file = PowerMock.createMock(File.class);
 
-        expect(fileFactory.createFile("/sdcard/GeoBeagle/data")).andReturn(file);
+        expect(fileFactory.createFile(null)).andReturn(file);
         expect(file.mkdirs()).andReturn(true);
 
         PowerMock.replayAll();
@@ -211,7 +201,6 @@ public class CachePersisterFacadeTest {
     @Test
     public void testWpt() {
         mCacheTagWriter.latitudeLongitude("37", "122");
-        mCacheDetailsWriter.latitudeLongitude("37", "122");
 
         PowerMock.replayAll();
         new CachePersisterFacade(mCacheTagWriter, null, null, null, null)
@@ -233,8 +222,6 @@ public class CachePersisterFacadeTest {
     public void testWptName() throws IOException {
         WakeLock wakeLock = createMock(WakeLock.class);
 
-        mCacheDetailsWriter.open("GC123");
-        mCacheDetailsWriter.writeWptName("GC123");
         mCacheTagWriter.id("GC123");
         mMessageHandler.updateWaypointId("GC123");
         wakeLock.acquire(GpxLoader.WAKELOCK_DURATION);

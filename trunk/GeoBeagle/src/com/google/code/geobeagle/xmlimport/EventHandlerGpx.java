@@ -130,7 +130,6 @@ public class EventHandlerGpx implements EventHandler {
         } else if (fullPath.equals(XPATH_LOGTYPE)) {
             mCachePersisterFacade.logType(trimmedText);
         } else if (fullPath.equals(XPATH_WPTTIME)) {
-            Log.d("GeoBeagle", "WPTTIME: " + trimmedText + ", " + mGpxTime);
             mGpxTime = trimmedText;
             mCachePersisterFacade.wptTime(trimmedText);
         } else if (fullPath.equals(XPATH_PLACEDBY)) {

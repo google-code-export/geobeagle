@@ -137,6 +137,7 @@ public class CacheDetailsLoaderTest {
         Reader reader = createMock(Reader.class);
         EventHelper eventHelper = createMock(EventHelper.class);
 
+        eventHelper.open("/sdcard/foo.gpx");
         StringWriterWrapper stringWriterWrapper = new StringWriterWrapper();
         stringWriterWrapper.write("DETAILS");
         xmlPullParserWrapper.open("/sdcard/foo.gpx", reader);
@@ -171,7 +172,10 @@ public class CacheDetailsLoaderTest {
         XmlPullParserWrapper xmlPullParser = createMock(XmlPullParserWrapper.class);
         Reader reader = createMock(Reader.class);
         XmlPullParserException xmlPullParserException = createMock(XmlPullParserException.class);
+        StringWriterWrapper stringWriterWrapper = createMock(StringWriterWrapper.class);
+        EventHelper eventHelper = createMock(EventHelper.class);
 
+        eventHelper.open("/sdcard/foo.gpx");
         xmlPullParser.open("/sdcard/foo.gpx", reader);
         expectLastCall().andThrow(xmlPullParserException);
         expect(xmlPullParserException.fillInStackTrace()).andStubReturn(xmlPullParserException);
@@ -179,8 +183,8 @@ public class CacheDetailsLoaderTest {
                 "/sdcard/foo.gpx").andReturn(details);
 
         replayAll();
-        assertEquals(details, new DetailsReaderImpl(activity, reader, "/sdcard/foo.gpx", null,
-                xmlPullParser, null).read());
+        assertEquals(details, new DetailsReaderImpl(activity, reader, "/sdcard/foo.gpx", eventHelper,
+                xmlPullParser, stringWriterWrapper).read());
         verifyAll();
     }
 
