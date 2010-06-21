@@ -21,9 +21,7 @@ import com.google.code.geobeagle.LocationControlBuffered.IGpsLocation;
 import com.google.code.geobeagle.activity.cachelist.presenter.DistanceSortStrategy;
 import com.google.code.geobeagle.activity.cachelist.presenter.NullSortStrategy;
 import com.google.code.geobeagle.activity.searchonline.SearchOnlineActivityDelegate.SearchOnlineActivityDelegateFactory;
-import com.google.code.geobeagle.location.CombinedLocationListener;
 import com.google.code.geobeagle.location.LocationControl;
-import com.google.code.geobeagle.location.CombinedLocationListener.CombinedLocationListenerFactory;
 import com.google.inject.Provides;
 import com.google.inject.assistedinject.FactoryProvider;
 
@@ -37,9 +35,6 @@ public class SearchOnlineModule extends AbstractAndroidModule {
 
     @Override
     protected void configure() {
-        bind(CombinedLocationListenerFactory.class).toProvider(
-                FactoryProvider.newFactory(CombinedLocationListenerFactory.class,
-                        CombinedLocationListener.class));
         bind(SearchOnlineActivityDelegateFactory.class).toProvider(
                 FactoryProvider.newFactory(SearchOnlineActivityDelegateFactory.class,
                         SearchOnlineActivityDelegate.class));
