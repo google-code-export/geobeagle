@@ -114,7 +114,7 @@ public class WhereFactoryNearestCaches implements WhereFactory {
     static final float DISTANCE_MULTIPLIER = 1.414f;
     static final int GUESS_MAX = 180;
     static final float GUESS_MIN = 0.01f;
-    static final int MAX_NUMBER_OF_CACHES = 30;
+    static final int MAX_NUMBER_OF_CACHES = 100;
 
     public static class WhereStringFactory {
         String getWhereString(double latitude, double longitude, float degrees) {
