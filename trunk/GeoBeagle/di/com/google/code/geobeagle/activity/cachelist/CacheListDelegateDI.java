@@ -20,7 +20,6 @@ import com.google.code.geobeagle.actions.MenuActionSettings;
 import com.google.code.geobeagle.actions.MenuActions;
 import com.google.code.geobeagle.activity.cachelist.CacheListDelegate.CacheListDelegateFactory;
 import com.google.code.geobeagle.activity.cachelist.GeocacheListController.GeocacheListControllerFactory;
-import com.google.code.geobeagle.activity.cachelist.GpxImporterFactory.GpxImporterFactoryFactory;
 import com.google.code.geobeagle.activity.cachelist.actions.context.ContextAction;
 import com.google.code.geobeagle.activity.cachelist.actions.context.ContextActionDelete;
 import com.google.code.geobeagle.activity.cachelist.actions.context.ContextActionEdit;
@@ -34,7 +33,6 @@ import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheListPresen
 import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidgetDelegate;
 import com.google.code.geobeagle.gpsstatuswidget.InflatedGpsStatusWidget;
 import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidgetModule.CacheList;
-import com.google.code.geobeagle.xmlimport.GpxImporterDI.MessageHandler;
 import com.google.inject.Injector;
 import com.google.inject.Key;
 
@@ -54,11 +52,8 @@ public class CacheListDelegateDI {
 
         final GeocacheListPresenter geocacheListPresenter = injector
                 .getInstance(GeocacheListPresenter.class);
-        final MessageHandler messageHandler = injector.getInstance(MessageHandler.class);
-        final GpxImporterFactoryFactory gpxImporterFactoryFactory = injector
-                .getInstance(GpxImporterFactoryFactory.class);
-        final GpxImporterFactory gpxImporterFactory = gpxImporterFactoryFactory.create(
-                geocacheListPresenter, messageHandler);
+        final GpxImporterFactory gpxImporterFactory = injector
+                .getInstance(GpxImporterFactory.class);
 
         final MenuActionSyncGpxFactory menuActionSyncGpxFactory = injector
                 .getInstance(MenuActionSyncGpxFactory.class);
