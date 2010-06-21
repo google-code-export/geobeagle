@@ -22,6 +22,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import com.google.code.geobeagle.LocationControlBuffered;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.Time;
+import com.google.code.geobeagle.activity.cachelist.ActivityVisible;
 import com.google.code.geobeagle.formatting.DistanceFormatter;
 import com.google.code.geobeagle.gpsstatuswidget.TextLagUpdater.LastLocationUnknown;
 import com.google.code.geobeagle.location.CombinedLocationListener;
@@ -100,8 +101,9 @@ public class GpsStatusWidgetModule extends AbstractAndroidModule {
         @Provides
         CombinedLocationListener providesCombinedLocationListener(
                 LocationControlBuffered locationControlBuffered,
-                GpsStatusWidgetDelegate locationListener) {
-            return new CombinedLocationListener(locationControlBuffered, locationListener);
+                GpsStatusWidgetDelegate locationListener, ActivityVisible activityVisible) {
+            return new CombinedLocationListener(locationControlBuffered, locationListener,
+                    activityVisible);
         }
 
         public void configure(Class<? extends Annotation> annotation) {
