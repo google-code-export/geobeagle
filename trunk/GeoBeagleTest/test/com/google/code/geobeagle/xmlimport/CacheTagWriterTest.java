@@ -24,6 +24,7 @@ import com.google.code.geobeagle.GeocacheFactory.Source;
 import com.google.code.geobeagle.activity.cachelist.GeoBeagleTest;
 import com.google.code.geobeagle.database.CacheWriter;
 import com.google.code.geobeagle.database.ClearCachesFromSource;
+import com.google.code.geobeagle.database.GpxWriter;
 import com.google.code.geobeagle.database.Tag;
 import com.google.code.geobeagle.database.TagWriterImpl;
 import com.google.code.geobeagle.database.TagWriterNull;
@@ -37,6 +38,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 @RunWith(PowerMockRunner.class)
 public class CacheTagWriterTest extends GeoBeagleTest {
     private CacheWriter cacheWriter;
+    private GpxWriter gpxWriter;
     private TagWriterNull tagWriterNull;
     private TagWriterImpl tagWriterImpl;
     private CacheTypeFactory cacheTypeFactory;
@@ -46,12 +48,13 @@ public class CacheTagWriterTest extends GeoBeagleTest {
     @Before
     public void setUp() {
         cacheWriter = PowerMock.createMock(CacheWriter.class);
+        gpxWriter = PowerMock.createMock(GpxWriter.class);
         tagWriterNull = PowerMock.createMock(TagWriterNull.class);
         tagWriterImpl = PowerMock.createMock(TagWriterImpl.class);
         cacheTypeFactory = PowerMock.createMock(CacheTypeFactory.class);
         clearCachesFromSource = PowerMock.createMock(ClearCachesFromSource.class);
-        cacheTagSqlWriter = new CacheTagSqlWriter(cacheWriter, cacheTypeFactory, tagWriterImpl,
-                tagWriterNull, clearCachesFromSource);
+        cacheTagSqlWriter = new CacheTagSqlWriter(cacheWriter, gpxWriter, cacheTypeFactory,
+                tagWriterImpl, tagWriterNull, clearCachesFromSource);
     }
 
     @Test
@@ -89,7 +92,7 @@ public class CacheTagWriterTest extends GeoBeagleTest {
 
     @Test
     public void testGpxTimeDontLoad() {
-        expect(cacheWriter.isGpxAlreadyLoaded("foo.gpx", "2008-04-15 16:10:30")).andReturn(true);
+        expect(gpxWriter.isGpxAlreadyLoaded("foo.gpx", "2008-04-15 16:10:30")).andReturn(true);
 
         PowerMock.replayAll();
         cacheTagSqlWriter.gpxName("foo.gpx");
@@ -99,7 +102,7 @@ public class CacheTagWriterTest extends GeoBeagleTest {
 
     @Test
     public void testGpxTimeLoad() {
-        expect(cacheWriter.isGpxAlreadyLoaded("foo.gpx", "2008-04-15 16:10:30")).andReturn(false);
+        expect(gpxWriter.isGpxAlreadyLoaded("foo.gpx", "2008-04-15 16:10:30")).andReturn(false);
         clearCachesFromSource.clearCaches("foo.gpx");
 
         PowerMock.replayAll();
@@ -135,8 +138,8 @@ public class CacheTagWriterTest extends GeoBeagleTest {
     @Test
     public void testStopWritingSuccess() {
         cacheWriter.stopWriting();
-        expect(cacheWriter.isGpxAlreadyLoaded("foo.gpx", "2008-04-15 16:10:30")).andReturn(true);
-        cacheWriter.writeGpx("foo.gpx");
+        expect(gpxWriter.isGpxAlreadyLoaded("foo.gpx", "2008-04-15 16:10:30")).andReturn(true);
+        gpxWriter.writeGpx("foo.gpx");
 
         PowerMock.replayAll();
         cacheTagSqlWriter.gpxName("foo.gpx");

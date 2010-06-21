@@ -21,6 +21,7 @@ import com.google.code.geobeagle.activity.cachelist.NullAbortable;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
 import com.google.code.geobeagle.bcaching.ImportBCachingWorker;
 import com.google.code.geobeagle.database.CacheWriter;
+import com.google.code.geobeagle.database.GpxWriter;
 import com.google.code.geobeagle.xmlimport.GpxImporter;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
@@ -38,6 +39,7 @@ public class MenuActionSyncGpx extends MenuActionBase {
     private final CacheListRefresh mCacheListRefresh;
     private final GpxImporterFactory mGpxImporterFactory;
     private final Provider<CacheWriter> mCacheWriterProvider;
+    private final Provider<GpxWriter> mGpxWriterProvider;
     private final Provider<ImportBCachingWorker> mImportBCachingWorkerProvider;
     private Abortable mBCachingWorkerAborter;
     private Abortable mNullAbortable;
@@ -46,7 +48,7 @@ public class MenuActionSyncGpx extends MenuActionBase {
     public MenuActionSyncGpx(Provider<ImportBCachingWorker> importBCachingWorkerProvider,
             NullAbortable nullAbortable, @Assisted CacheListRefresh cacheListRefresh,
             @Assisted GpxImporterFactory gpxImporterFactory,
-            Provider<CacheWriter> cacheWriterProvider) {
+            Provider<CacheWriter> cacheWriterProvider, Provider<GpxWriter> gpxWriterProvider) {
         super(R.string.menu_sync);
         mNullAbortable = nullAbortable;
         mSdcardImportAbortable = nullAbortable;
@@ -54,6 +56,7 @@ public class MenuActionSyncGpx extends MenuActionBase {
         mCacheListRefresh = cacheListRefresh;
         mGpxImporterFactory = gpxImporterFactory;
         mCacheWriterProvider = cacheWriterProvider;
+        mGpxWriterProvider = gpxWriterProvider;
         mImportBCachingWorkerProvider = importBCachingWorkerProvider;
     }
 
@@ -66,7 +69,8 @@ public class MenuActionSyncGpx extends MenuActionBase {
     }
 
     public void act() {
-        final GpxImporter gpxImporter = mGpxImporterFactory.create(mCacheWriterProvider.get());
+        final GpxImporter gpxImporter = mGpxImporterFactory.create(mCacheWriterProvider.get(),
+                mGpxWriterProvider.get());
         mSdcardImportAbortable = gpxImporter;
         mBCachingWorkerAborter = mImportBCachingWorkerProvider.get();
         gpxImporter.importGpxs(mCacheListRefresh);

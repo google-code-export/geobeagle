@@ -14,7 +14,7 @@
 
 package com.google.code.geobeagle.xmlimport;
 
-import com.google.code.geobeagle.database.CacheWriter;
+import com.google.code.geobeagle.database.GpxWriter;
 import com.google.inject.Inject;
 
 import android.util.Log;
@@ -24,12 +24,12 @@ import java.text.SimpleDateFormat;
 
 public class FileAlreadyLoadedChecker {
 
-    private final CacheWriter mCacheWriter;
+    private final GpxWriter mGpxWriter;
     private final SimpleDateFormat mSimpleDateFormat;
 
     @Inject
-    public FileAlreadyLoadedChecker(CacheWriter cacheWriter, SimpleDateFormat dateFormat) {
-        mCacheWriter = cacheWriter;
+    public FileAlreadyLoadedChecker(GpxWriter gpxWriter, SimpleDateFormat dateFormat) {
+        mGpxWriter = gpxWriter;
         mSimpleDateFormat = dateFormat;
     }
 
@@ -45,7 +45,7 @@ public class FileAlreadyLoadedChecker {
         String sqlDate = mSimpleDateFormat.format(lastModified);
         Log.d("GeoBeagle", "GET NAME: " + sqlDate + ", " + source + ", " + lastModified);
 
-        if (mCacheWriter.isGpxAlreadyLoaded(file.getName(), sqlDate)) {
+        if (mGpxWriter.isGpxAlreadyLoaded(file.getName(), sqlDate)) {
             return true;
         }
         return false;

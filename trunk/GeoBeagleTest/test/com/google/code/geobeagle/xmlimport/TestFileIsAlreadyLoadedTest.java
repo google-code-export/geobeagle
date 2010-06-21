@@ -14,9 +14,10 @@
 
 package com.google.code.geobeagle.xmlimport;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
-import com.google.code.geobeagle.database.CacheWriter;
+import com.google.code.geobeagle.database.GpxWriter;
 
 import org.easymock.EasyMock;
 import org.junit.Before;
@@ -30,7 +31,6 @@ import android.util.Log;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
-import java.util.Locale;
 import java.util.TimeZone;
 
 @RunWith(PowerMockRunner.class)
@@ -40,49 +40,49 @@ import java.util.TimeZone;
 public class TestFileIsAlreadyLoadedTest {
 
     private SimpleDateFormat simpleDateFormat;
+    private GpxWriter gpxWriter;
 
     @Before
-    public void allowLogging() {
+    public void setUp() {
         PowerMock.mockStatic(Log.class);
         EasyMock.expect(Log.d((String)EasyMock.anyObject(), (String)EasyMock.anyObject()))
                 .andReturn(0).anyTimes();
         simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSSZ");
         simpleDateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
+        gpxWriter = PowerMock.createMock(GpxWriter.class);
     }
 
     @Test
     public void testNotLoc() {
-        CacheWriter cacheWriter = PowerMock.createMock(CacheWriter.class);
 
         PowerMock.replayAll();
-        assertFalse(new FileAlreadyLoadedChecker(cacheWriter, simpleDateFormat).isAlreadyLoaded("foo.gpx"));
+        assertFalse(new FileAlreadyLoadedChecker(gpxWriter, simpleDateFormat).isAlreadyLoaded("foo.gpx"));
         PowerMock.verifyAll();
     }
 
     @Test
     public void testLocTrue() throws Exception {
-       CacheWriter cacheWriter = PowerMock.createMock(CacheWriter.class);
         File file = PowerMock.createMock(File.class);
         PowerMock.expectNew(File.class, "/sdcard/download/foo.loc").andReturn(file);
         EasyMock.expect(file.getName()).andReturn("foo.loc");
         EasyMock.expect(file.lastModified()).andReturn(0L);
-        EasyMock.expect(cacheWriter.isGpxAlreadyLoaded("foo.loc", "1970-01-01 00:00:00.000+0000"))
+        EasyMock.expect(gpxWriter.isGpxAlreadyLoaded("foo.loc", "1970-01-01 00:00:00.000+0000"))
                 .andReturn(true);
 
         PowerMock.replayAll();
-        assertTrue(new FileAlreadyLoadedChecker(cacheWriter, simpleDateFormat)
+        assertTrue(new FileAlreadyLoadedChecker(gpxWriter, simpleDateFormat)
                 .isAlreadyLoaded("/sdcard/download/foo.loc"));
         PowerMock.verifyAll();
     }
 
     @Test
     public void testLocFalse() {
-        CacheWriter cacheWriter = PowerMock.createMock(CacheWriter.class);
-        EasyMock.expect(cacheWriter.isGpxAlreadyLoaded("foo.loc", "1970-01-01 00:00:00.000+0000"))
+        EasyMock.expect(gpxWriter.isGpxAlreadyLoaded("foo.loc", "1970-01-01 00:00:00.000+0000"))
                 .andReturn(false);
 
         PowerMock.replayAll();
-        assertFalse(new FileAlreadyLoadedChecker(cacheWriter, simpleDateFormat).isAlreadyLoaded("foo.loc"));
+        assertFalse(new FileAlreadyLoadedChecker(gpxWriter, simpleDateFormat)
+                .isAlreadyLoaded("foo.loc"));
         PowerMock.verifyAll();
     }
 }
