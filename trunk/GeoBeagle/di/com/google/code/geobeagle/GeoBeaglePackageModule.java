@@ -18,6 +18,7 @@ import com.google.code.geobeagle.GraphicsGenerator.DifficultyAndTerrainPainter;
 import com.google.code.geobeagle.GraphicsGenerator.IconRenderer;
 import com.google.code.geobeagle.GraphicsGenerator.NullAttributesPainter;
 import com.google.code.geobeagle.activity.cachelist.presenter.GeoBeaglePackageAnnotations.DifficultyAndTerrainPainterAnnotation;
+import com.google.code.geobeagle.activity.cachelist.presenter.GeoBeaglePackageAnnotations.GeoBeagle;
 import com.google.code.geobeagle.activity.cachelist.presenter.GeoBeaglePackageAnnotations.NullAttributesPainterAnnotation;
 import com.google.inject.Provides;
 
@@ -28,6 +29,9 @@ import android.content.res.Resources;
 import android.graphics.Color;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
+
+import android.content.Context;
+import android.content.Intent;
 
 // TODO rename to GeoBeagleModule
 public class GeoBeaglePackageModule extends AbstractAndroidModule {
@@ -47,6 +51,12 @@ public class GeoBeaglePackageModule extends AbstractAndroidModule {
     public IconRenderer providesDifficultyAndTerrainIconRenderer(Resources resources,
             DifficultyAndTerrainPainter difficultyAndTerrainPainter) {
         return new IconRenderer(resources, difficultyAndTerrainPainter);
+    }
+
+    @Provides
+    @GeoBeagle
+    public Intent geoBeagleIntent(Context context) {
+        return new Intent(context, com.google.code.geobeagle.activity.main.GeoBeagle.class);
     }
 
     @Provides

@@ -31,4 +31,7 @@ public class GeoBeaglePackageAnnotations {
 
     @BindingAnnotation @Target( { FIELD, PARAMETER, METHOD }) @Retention(RUNTIME)
     public static @interface DifficultyAndTerrainPainterAnnotation {}
+
+    @BindingAnnotation @Target( { FIELD, PARAMETER, METHOD }) @Retention(RUNTIME)
+    public static @interface GeoBeagle {}
 }
