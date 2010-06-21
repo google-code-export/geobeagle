@@ -160,8 +160,9 @@ public class CacheListDelegateDI {
 
         final AdapterCachesSorter adapterCachesSorter = injector
                 .getInstance(AdapterCachesSorter.class);
-        final GpsDisabledLocation gpsDisabledLocation = new GpsDisabledLocation();
-        final DistanceUpdater distanceUpdater = new DistanceUpdater(geocacheListAdapter);
+        final GpsDisabledLocation gpsDisabledLocation = injector
+                .getInstance(GpsDisabledLocation.class);
+        final DistanceUpdater distanceUpdater = injector.getInstance(DistanceUpdater.class);
         final ToleranceStrategy sqlCacheLoaderTolerance = new LocationTolerance(500,
                 gpsDisabledLocation, 1000);
         final ToleranceStrategy adapterCachesSorterTolerance = new LocationTolerance(6,
