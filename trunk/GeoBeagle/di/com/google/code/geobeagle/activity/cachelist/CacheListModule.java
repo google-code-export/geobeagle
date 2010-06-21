@@ -52,8 +52,6 @@ import com.google.code.geobeagle.activity.main.GeoBeagleModule.DefaultSharedPref
 import com.google.code.geobeagle.formatting.DistanceFormatter;
 import com.google.code.geobeagle.formatting.DistanceFormatterImperial;
 import com.google.code.geobeagle.formatting.DistanceFormatterMetric;
-import com.google.code.geobeagle.xmlimport.CachePersisterFacadeDI.CachePersisterFacadeFactory;
-import com.google.code.geobeagle.xmlimport.CachePersisterFacadeDI.CachePersisterFacadeFactory.CachePersisterFacadeFactoryFactory;
 import com.google.code.geobeagle.xmlimport.GpxImporterDI.Toaster;
 import com.google.inject.BindingAnnotation;
 import com.google.inject.Inject;
@@ -94,9 +92,6 @@ public class CacheListModule extends AbstractAndroidModule {
         bind(CacheListDelegateDI.Timing.class).in(Singleton.class);
         bind(UpdateFlag.class).in(Singleton.class);
         bind(CacheListRefresh.class).in(ContextScoped.class);
-        bind(CachePersisterFacadeFactoryFactory.class).toProvider(
-                FactoryProvider.newFactory(CachePersisterFacadeFactoryFactory.class,
-                        CachePersisterFacadeFactory.class));
         bind(GpxImporterFactoryFactory.class).toProvider(
                 FactoryProvider.newFactory(GpxImporterFactoryFactory.class,
                         GpxImporterFactory.class));
