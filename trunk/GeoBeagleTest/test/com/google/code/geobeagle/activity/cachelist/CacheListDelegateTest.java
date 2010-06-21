@@ -237,7 +237,7 @@ public class CacheListDelegateTest {
         activityVisible.setVisible(true);
         geocacheListPresenter.onResume(cacheListRefresh);
         EasyMock.expect(importIntentManager.isImport()).andReturn(true);
-        controller.onResume(cacheListRefresh, true);
+        controller.onResume(true);
 
         PowerMock.replayAll();
         new CacheListDelegate(importIntentManager, null, cacheListRefresh, controller,
