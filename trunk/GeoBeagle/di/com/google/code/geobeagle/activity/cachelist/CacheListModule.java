@@ -21,6 +21,8 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.LocationControlBuffered.GpsDisabledLocation;
+import com.google.code.geobeagle.activity.cachelist.CacheListDelegate.CacheListDelegateFactory;
+import com.google.code.geobeagle.activity.cachelist.GeocacheListController.GeocacheListControllerFactory;
 import com.google.code.geobeagle.activity.cachelist.GpxImporterFactory.GpxImporterFactoryFactory;
 import com.google.code.geobeagle.activity.cachelist.actions.context.ContextActionDelete;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.Abortable;
@@ -106,6 +108,13 @@ public class CacheListModule extends AbstractAndroidModule {
                 FactoryProvider.newFactory(MenuActionDeleteAllCachesFactory.class,
                         MenuActionDeleteAllCaches.class));
         bind(ContextActionDelete.class).in(ContextScoped.class);
+        bind(GeocacheListControllerFactory.class).toProvider(
+                FactoryProvider.newFactory(GeocacheListControllerFactory.class,
+                        GeocacheListController.class));
+        bind(CacheListDelegateFactory.class)
+                .toProvider(
+                        FactoryProvider.newFactory(CacheListDelegateFactory.class,
+                                CacheListDelegate.class));
     }
 
     static class DistanceFormatterProvider implements Provider<DistanceFormatter> {
