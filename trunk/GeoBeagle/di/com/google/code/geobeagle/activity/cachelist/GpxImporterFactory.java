@@ -16,6 +16,7 @@ package com.google.code.geobeagle.activity.cachelist;
 
 import com.google.code.geobeagle.ErrorDisplayer;
 import com.google.code.geobeagle.database.CacheWriter;
+import com.google.code.geobeagle.database.GpxWriter;
 import com.google.code.geobeagle.xmlimport.GpxImporter;
 import com.google.code.geobeagle.xmlimport.GpxImporterDI;
 import com.google.code.geobeagle.xmlimport.MessageHandlerInterface;
@@ -60,9 +61,9 @@ public class GpxImporterFactory {
         mInjector = injector;
     }
 
-    public GpxImporter create(CacheWriter cacheWriter) {
+    public GpxImporter create(CacheWriter cacheWriter, GpxWriter gpxWriter) {
         return GpxImporterDI.create(mContext, mXmlPullParserWrapper, mErrorDisplayer,
                 mGeocacheListPresenter, mAborter, mMessageHandler, mCachePersisterFacadeFactory,
-                cacheWriter, mInjector);
+                cacheWriter, gpxWriter, mInjector);
     }
 }

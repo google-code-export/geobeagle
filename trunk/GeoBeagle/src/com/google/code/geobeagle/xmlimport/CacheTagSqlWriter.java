@@ -19,6 +19,7 @@ import com.google.code.geobeagle.CacheTypeFactory;
 import com.google.code.geobeagle.GeocacheFactory.Source;
 import com.google.code.geobeagle.database.CacheWriter;
 import com.google.code.geobeagle.database.ClearCachesFromSource;
+import com.google.code.geobeagle.database.GpxWriter;
 import com.google.code.geobeagle.database.Tag;
 import com.google.code.geobeagle.database.TagWriter;
 import com.google.code.geobeagle.database.TagWriterImpl;
@@ -34,6 +35,7 @@ public class CacheTagSqlWriter {
     private final CacheTypeFactory mCacheTypeFactory;
     private CacheType mCacheType;
     private final CacheWriter mCacheWriter;
+    private final GpxWriter mGpxWriter;
     private int mContainer;
     private int mDifficulty;
     private String mGpxName;
@@ -50,10 +52,11 @@ public class CacheTagSqlWriter {
     private boolean mAvailable;
 
     @Inject
-    public CacheTagSqlWriter(CacheWriter cacheWriter, CacheTypeFactory cacheTypeFactory,
-            TagWriterImpl tagWriterImpl, TagWriterNull tagWriterNull,
-            ClearCachesFromSource clearCachesFromSource) {
+    public CacheTagSqlWriter(CacheWriter cacheWriter, GpxWriter gpxWriter,
+            CacheTypeFactory cacheTypeFactory, TagWriterImpl tagWriterImpl,
+            TagWriterNull tagWriterNull, ClearCachesFromSource clearCachesFromSource) {
         mCacheWriter = cacheWriter;
+        mGpxWriter = gpxWriter;
         mCacheTypeFactory = cacheTypeFactory;
         mTagWriter = tagWriterNull;
         mTagWriterImpl = tagWriterImpl;
@@ -105,7 +108,7 @@ public class CacheTagSqlWriter {
     public boolean gpxTime(String gpxTime) {
         String sqlDate = isoTimeToSql(gpxTime);
         Log.d("GeoBeagle", this + ": CacheTagSqlWriter:gpxTime: " + mGpxName);
-        if (mCacheWriter.isGpxAlreadyLoaded(mGpxName, sqlDate)) {
+        if (mGpxWriter.isGpxAlreadyLoaded(mGpxName, sqlDate)) {
             return false;
         }
         mClearCachesFromSource.clearCaches(mGpxName);
@@ -132,7 +135,7 @@ public class CacheTagSqlWriter {
     public void stopWriting(boolean successfulGpxImport) {
         mCacheWriter.stopWriting();
         if (successfulGpxImport)
-            mCacheWriter.writeGpx(mGpxName);
+            mGpxWriter.writeGpx(mGpxName);
     }
 
     public void symbol(String symbol) {

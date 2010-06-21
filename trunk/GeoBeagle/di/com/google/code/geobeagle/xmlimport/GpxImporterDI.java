@@ -23,6 +23,7 @@ import com.google.code.geobeagle.cachedetails.FileDataVersionChecker;
 import com.google.code.geobeagle.cachedetails.FileDataVersionWriter;
 import com.google.code.geobeagle.database.CacheWriter;
 import com.google.code.geobeagle.database.DbFrontend;
+import com.google.code.geobeagle.database.GpxWriter;
 import com.google.code.geobeagle.xmlimport.CachePersisterFacadeDI.CachePersisterFacadeFactory;
 import com.google.code.geobeagle.xmlimport.EventHelperDI.EventHelperFactory;
 import com.google.code.geobeagle.xmlimport.GpxToCache.Aborter;
@@ -313,18 +314,18 @@ public class GpxImporterDI {
     public static GpxImporter create(Context context, XmlPullParserWrapper xmlPullParserWrapper,
             ErrorDisplayer errorDisplayer, Pausable geocacheListPresenter, Aborter aborter,
             MessageHandlerInterface messageHandler, CachePersisterFacadeFactory cachePersisterFacadeFactory,
-            CacheWriter cacheWriter, Injector injector) {
+            CacheWriter cacheWriter, GpxWriter gpxWriter, Injector injector) {
         final PowerManager powerManager = (PowerManager)context
                 .getSystemService(Context.POWER_SERVICE);
         final WakeLock wakeLock = powerManager.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK,
                 "Importing");
 
         final CachePersisterFacade cachePersisterFacade = cachePersisterFacadeFactory.create(
-                cacheWriter, wakeLock, injector.getInstance(Key.get(String.class,
+                cacheWriter, gpxWriter, wakeLock, injector.getInstance(Key.get(String.class,
                         DetailsDirectory.class)));
 
         final GpxLoader gpxLoader = GpxLoaderDI.create(cachePersisterFacade, xmlPullParserWrapper,
-                aborter, errorDisplayer, wakeLock, cacheWriter);
+                aborter, errorDisplayer, wakeLock, gpxWriter);
         final ToastFactory toastFactory = new ToastFactory();
         final ImportThreadWrapper importThreadWrapper = new ImportThreadWrapper(messageHandler,
                 xmlPullParserWrapper, aborter);

@@ -28,7 +28,6 @@ public class CacheWriter {
             Database.SQL_RESET_DELETE_ME_CACHES, Database.SQL_RESET_DELETE_ME_GPX
     };
     private final DbToGeocacheAdapter mDbToGeocacheAdapter;
-    private String mGpxTime;
     private final Provider<ISQLiteDatabase> sqliteProvider;
 
     @Inject
@@ -52,27 +51,6 @@ public class CacheWriter {
                 cacheType.toInt(), difficulty, terrain, container, available, archived);
     }
 
-    /**
-     * Return True if the gpx is already loaded. Mark this gpx and its caches in
-     * the database to protect them from being nuked when the load is complete.
-     * 
-     * @param gpxName
-     * @param gpxTime
-     * @return
-     */
-    public boolean isGpxAlreadyLoaded(String gpxName, String gpxTime) {
-        mGpxTime = gpxTime;
-        // TODO:countResults is slow; replace with a query, and moveToFirst.
-        ISQLiteDatabase sqliteDatabase = sqliteProvider.get();
-        boolean gpxAlreadyLoaded = sqliteDatabase.countResults(Database.TBL_GPX,
-                Database.SQL_MATCH_NAME_AND_EXPORTED_LATER, gpxName, gpxTime) > 0;
-        if (gpxAlreadyLoaded) {
-            sqliteDatabase.execSQL(Database.SQL_CACHES_DONT_DELETE_ME, gpxName);
-            sqliteDatabase.execSQL(Database.SQL_GPX_DONT_DELETE_ME, gpxName);
-        }
-        return gpxAlreadyLoaded;
-    }
-
     public void startWriting() {
         sqliteProvider.get().beginTransaction();
     }
@@ -82,9 +60,5 @@ public class CacheWriter {
         ISQLiteDatabase sqliteDatabase = sqliteProvider.get();
         sqliteDatabase.setTransactionSuccessful();
         sqliteDatabase.endTransaction();
-    }
-
-    public void writeGpx(String gpxName) {
-        sqliteProvider.get().execSQL(Database.SQL_REPLACE_GPX, gpxName, mGpxTime);
     }
 }
