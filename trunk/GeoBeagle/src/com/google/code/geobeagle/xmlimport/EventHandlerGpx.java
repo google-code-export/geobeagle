@@ -59,10 +59,10 @@ public class EventHandlerGpx implements EventHandler {
     static final String XPATH_WPTNAME = "/gpx/wpt/name";
     static final String XPATH_WAYPOINT_TYPE = "/gpx/wpt/type";
     
-    private final CachePersisterFacade mCachePersisterFacade;
+    private final ICachePersisterFacade mCachePersisterFacade;
 
     @Inject
-    public EventHandlerGpx(CachePersisterFacade cachePersisterFacade) {
+    public EventHandlerGpx(ICachePersisterFacade cachePersisterFacade) {
         mCachePersisterFacade = cachePersisterFacade;
     }
 

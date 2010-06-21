@@ -19,6 +19,8 @@ import com.google.code.geobeagle.activity.main.GeoBeagleModule.ExternalStorageDi
 import com.google.code.geobeagle.cachedetails.CacheDetailsWriter;
 import com.google.code.geobeagle.cachedetails.FilePathStrategy;
 import com.google.code.geobeagle.cachedetails.HtmlWriter;
+import com.google.code.geobeagle.cachedetails.Writer;
+import com.google.code.geobeagle.cachedetails.WriterWrapper;
 import com.google.code.geobeagle.database.GpxWriter;
 import com.google.code.geobeagle.xmlimport.EventHelper.XmlPathBuilder;
 import com.google.code.geobeagle.xmlimport.GpxImporterDI.MessageHandler;
@@ -44,6 +46,8 @@ public class XmlimportModule extends AbstractAndroidModule {
         bind(MessageHandler.class).in(ContextScoped.class);
         bind(XmlPullParserWrapper.class).in(ContextScoped.class);
         bind(GpxWriter.class).in(ContextScoped.class);
+        bind(Writer.class).to(WriterWrapper.class);
+        bind(ICachePersisterFacade.class).to(CachePersisterFacade.class);
     }
 
     @Provides
