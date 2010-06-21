@@ -128,6 +128,6 @@ public class CacheListDelegate {
     }
 
     public void onPrepareDialog(int id, Dialog dialog) {
-        mContextActionDeleteDialogHelper.onPrepareDialog(id, dialog);
+        mContextActionDeleteDialogHelper.onPrepareDialog(dialog);
     }
 }
