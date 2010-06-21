@@ -53,7 +53,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import java.io.FilenameFilter;
-import java.util.ArrayList;
+import java.util.Arrays;
 
 public class GpxImporterDI {
     // Can't test this due to final methods in base.
@@ -331,10 +331,10 @@ public class GpxImporterDI {
                 xmlPullParserWrapper, aborter);
         final EventHandlerGpx eventHandlerGpx = new EventHandlerGpx(cachePersisterFacade);
         final EventHandlerLoc eventHandlerLoc = new EventHandlerLoc(cachePersisterFacade);
+        final XmlWriter xmlWriter = injector.getInstance(XmlWriter.class);
         
-        final ArrayList<EventHandler> gpxHandlers = new ArrayList<EventHandler>();
-        gpxHandlers.add(eventHandlerGpx);
-        final EventHandlerComposite eventHandlerComposite = new EventHandlerComposite(gpxHandlers);
+        final EventHandlerComposite eventHandlerComposite = new EventHandlerComposite(Arrays
+                .asList(xmlWriter, eventHandlerGpx));
         final EventHandlers eventHandlers = new EventHandlers();
         eventHandlers.add("gpx", eventHandlerComposite);
         eventHandlers.add("loc", eventHandlerLoc);
