@@ -39,6 +39,7 @@ import android.content.Context;
 import android.view.View;
 import android.widget.TextView;
 
+import java.lang.annotation.Annotation;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
@@ -89,19 +90,25 @@ public class GpsStatusWidgetModule extends AbstractAndroidModule {
                 Provider<DistanceFormatter> distanceFormatterProvider, Meter meter,
                 MeterFader meterFader, Context context, TextLagUpdater textLagUpdater,
                 @GpsStatusWidgetView View gpsStatusWidget) {
-
             return new GpsStatusWidgetDelegate(combinedLocationManager, distanceFormatterProvider,
                     meter, meterFader, (TextView)gpsStatusWidget.findViewById(R.id.provider),
                     context, (TextView)gpsStatusWidget.findViewById(R.id.status), textLagUpdater);
+        }
+
+        public void configure(Class<? extends Annotation> annotation) {
+            bind(GpsStatusWidgetDelegate.class).annotatedWith(annotation).to(
+                    GpsStatusWidgetDelegate.class);
+            expose(GpsStatusWidgetDelegate.class).annotatedWith(annotation);
+            bind(UpdateGpsWidgetRunnable.class).annotatedWith(annotation).to(
+                    UpdateGpsWidgetRunnable.class);
+            expose(UpdateGpsWidgetRunnable.class).annotatedWith(annotation);
         }
     }
 
     static class GpsStatusWidgetCacheListModule extends GpsStatusWidgetPrivateModule {
         @Override
         protected void configure() {
-            bind(GpsWidgetAndUpdater.class).annotatedWith(CacheList.class).to(
-                    GpsWidgetAndUpdater.class);
-            expose(GpsWidgetAndUpdater.class).annotatedWith(CacheList.class);
+            super.configure(CacheList.class);
             bind(View.class).annotatedWith(GpsStatusWidgetView.class).to(GpsStatusWidget.class);
         }
     }
@@ -109,9 +116,7 @@ public class GpsStatusWidgetModule extends AbstractAndroidModule {
     static class GpsStatusWidgetSearchOnlineModule extends GpsStatusWidgetPrivateModule {
         @Override
         protected void configure() {
-            bind(GpsWidgetAndUpdater.class).annotatedWith(SearchOnline.class).to(
-                    GpsWidgetAndUpdater.class);
-            expose(GpsWidgetAndUpdater.class).annotatedWith(SearchOnline.class);
+            super.configure(SearchOnline.class);
             bind(View.class).annotatedWith(GpsStatusWidgetView.class).to(
                     Key.get(InflatedGpsStatusWidget.class, SearchOnline.class));
         }
