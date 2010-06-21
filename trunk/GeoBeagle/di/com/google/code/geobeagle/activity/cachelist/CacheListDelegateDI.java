@@ -158,8 +158,8 @@ public class CacheListDelegateDI {
         final CacheListDelegateDI.Timing timing = injector
                 .getInstance(CacheListDelegateDI.Timing.class);
 
-        final AdapterCachesSorter adapterCachesSorter = new AdapterCachesSorter(cacheListData,
-                timing, locationControlBuffered);
+        final AdapterCachesSorter adapterCachesSorter = injector
+                .getInstance(AdapterCachesSorter.class);
         final GpsDisabledLocation gpsDisabledLocation = new GpsDisabledLocation();
         final DistanceUpdater distanceUpdater = new DistanceUpdater(geocacheListAdapter);
         final ToleranceStrategy sqlCacheLoaderTolerance = new LocationTolerance(500,
