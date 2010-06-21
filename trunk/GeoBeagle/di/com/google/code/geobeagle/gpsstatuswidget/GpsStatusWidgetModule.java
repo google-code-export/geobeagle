@@ -21,14 +21,15 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.Time;
+import com.google.code.geobeagle.formatting.DistanceFormatter;
 import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidget.InflatedGpsStatusWidget;
-import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidgetDelegate.GpsStatusWidgetDelegateFactory;
 import com.google.code.geobeagle.gpsstatuswidget.TextLagUpdater.LastLocationUnknown;
+import com.google.code.geobeagle.location.CombinedLocationManager;
 import com.google.inject.BindingAnnotation;
 import com.google.inject.Key;
 import com.google.inject.PrivateModule;
+import com.google.inject.Provider;
 import com.google.inject.Provides;
-import com.google.inject.assistedinject.FactoryProvider;
 
 import roboguice.config.AbstractAndroidModule;
 import roboguice.inject.ContextScoped;
@@ -99,6 +100,16 @@ public class GpsStatusWidgetModule extends AbstractAndroidModule {
                 MeterBars meterBars, Time time) {
             return new MeterFader(gpsStatusWidget, meterBars, time);
         }
+
+        @Provides
+        GpsStatusWidgetDelegate providesGpsStatusWidgetDelegate(
+                CombinedLocationManager combinedLocationManager,
+                Provider<DistanceFormatter> distanceFormatterProvider, Meter meter,
+                MeterFader meterFader, @LocationProvider TextView provider, Context context,
+                @Status TextView status, TextLagUpdater textLagUpdater) {
+            return new GpsStatusWidgetDelegate(combinedLocationManager, distanceFormatterProvider,
+                    meter, meterFader, provider, context, status, textLagUpdater);
+        }
     }
 
     static class GpsStatusWidgetCacheListModule extends GpsStatusWidgetPrivateModule {
@@ -124,9 +135,6 @@ public class GpsStatusWidgetModule extends AbstractAndroidModule {
 
     @Override
     protected void configure() {
-        bind(GpsStatusWidgetDelegateFactory.class).toProvider(
-                FactoryProvider.newFactory(GpsStatusWidgetDelegateFactory.class,
-                        GpsStatusWidgetDelegate.class));
         bind(GpsStatusWidget.class).in(ContextScoped.class);
         install(new GpsStatusWidgetSearchOnlineModule());
         install(new GpsStatusWidgetCacheListModule());
