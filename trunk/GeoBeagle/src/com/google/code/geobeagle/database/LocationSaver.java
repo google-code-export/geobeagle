@@ -15,11 +15,13 @@
 package com.google.code.geobeagle.database;
 
 import com.google.code.geobeagle.Geocache;
+import com.google.inject.Inject;
 import com.google.inject.Provider;
 
 public class LocationSaver {
     private final Provider<CacheWriter> cacheWriterProvider;
 
+    @Inject
     public LocationSaver(Provider<CacheWriter> cacheWriterProvider) {
         this.cacheWriterProvider = cacheWriterProvider;
     }
