@@ -7,6 +7,7 @@ import com.google.code.geobeagle.Time;
 import com.google.code.geobeagle.activity.cachelist.ActivityVisible;
 import com.google.code.geobeagle.formatting.DistanceFormatter;
 import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidgetModule.GpsStatusWidgetView;
+import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidgetModule.LocationViewer;
 import com.google.code.geobeagle.location.CombinedLocationManager;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
@@ -25,8 +26,8 @@ public class GpsWidgetAndUpdater {
             LocationControlBuffered mLocationControlBuffered,
             CombinedLocationManager combinedLocationManager,
             Provider<DistanceFormatter> distanceFormatterProvider, ActivityVisible activityVisible,
-            Time time, Handler handler, MeterFormatter meterFormatter) {
-        final TextView locationViewer = (TextView)gpsWidgetView.findViewById(R.id.location_viewer);
+            Time time, Handler handler, MeterFormatter meterFormatter,
+            @LocationViewer TextView locationViewer) {
         final MeterBars meterBars = new MeterBars(locationViewer, meterFormatter);
         final TextView accuracyView = (TextView)gpsWidgetView.findViewById(R.id.accuracy);
         final Meter meter = new Meter(meterBars, accuracyView);

@@ -38,6 +38,7 @@ import roboguice.inject.ContextScoped;
 import android.app.Activity;
 import android.content.Context;
 import android.view.View;
+import android.widget.TextView;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
@@ -47,14 +48,24 @@ public class GpsStatusWidgetModule extends AbstractAndroidModule {
     public static @interface CacheList {}
 
     @BindingAnnotation @Target({ FIELD, PARAMETER, METHOD }) @Retention(RUNTIME)
+    public static @interface LocationViewer {}
+
+    @BindingAnnotation @Target({ FIELD, PARAMETER, METHOD }) @Retention(RUNTIME)
     public static @interface SearchOnline {}
     
 
     @BindingAnnotation @Target({ FIELD, PARAMETER, METHOD }) @Retention(RUNTIME)
     public static @interface GpsStatusWidgetView {}
 
-    static class GpsWidgetCacheListModule extends PrivateModule {
+    static abstract class GpsStatusWidgetPrivateModule extends PrivateModule {
+        @Provides
+        @LocationViewer
+        TextView providesLocationViewer(@GpsStatusWidgetView View gpsStatusWidget) {
+            return (TextView)gpsStatusWidget.findViewById(R.id.location_viewer);
+        }
+    }
 
+    static class GpsStatusWidgetCacheListModule extends GpsStatusWidgetPrivateModule {
         @Override
         protected void configure() {
             bind(GpsWidgetAndUpdater.class).annotatedWith(CacheList.class).to(
@@ -64,7 +75,7 @@ public class GpsStatusWidgetModule extends AbstractAndroidModule {
         }
     }
 
-    static class GpsWidgetSearchOnlineModule extends PrivateModule {
+    static class GpsStatusWidgetSearchOnlineModule extends GpsStatusWidgetPrivateModule {
         @Override
         protected void configure() {
             bind(GpsWidgetAndUpdater.class).annotatedWith(SearchOnline.class).to(
@@ -74,7 +85,7 @@ public class GpsStatusWidgetModule extends AbstractAndroidModule {
                     Key.get(InflatedGpsStatusWidget.class, SearchOnline.class));
         }
     }
-    
+
     @Override
     protected void configure() {
         bind(MeterBarsFactory.class).toProvider(
@@ -90,8 +101,8 @@ public class GpsStatusWidgetModule extends AbstractAndroidModule {
                 FactoryProvider.newFactory(GpsStatusWidgetDelegateFactory.class,
                         GpsStatusWidgetDelegate.class));
         bind(GpsStatusWidget.class).in(ContextScoped.class);
-        install(new GpsWidgetSearchOnlineModule());
-        install(new GpsWidgetCacheListModule());
+        install(new GpsStatusWidgetSearchOnlineModule());
+        install(new GpsStatusWidgetCacheListModule());
     }
 
     @Provides
@@ -100,12 +111,12 @@ public class GpsStatusWidgetModule extends AbstractAndroidModule {
     InflatedGpsStatusWidget providesInflatedGpsStatusWidget(Context context) {
         return new InflatedGpsStatusWidget(context);
     }
-    
+
     @Provides
     @ContextScoped
     @SearchOnline
     InflatedGpsStatusWidget providesInflatedGpsStatusWidget(Activity activity) {
         return (InflatedGpsStatusWidget)activity.findViewById(R.id.gps_widget_view);
     }
-    
+
 }
