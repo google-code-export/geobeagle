@@ -14,10 +14,12 @@
 
 package com.google.code.geobeagle.activity.cachelist.presenter;
 
+import com.google.code.geobeagle.activity.cachelist.ActivityVisible;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVectors;
 import com.google.code.geobeagle.activity.cachelist.view.GeocacheSummaryRowInflater;
 import com.google.inject.Inject;
 
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -25,12 +27,14 @@ import android.widget.BaseAdapter;
 public class GeocacheListAdapter extends BaseAdapter {
     private final GeocacheSummaryRowInflater mGeocacheSummaryRowInflater;
     private final GeocacheVectors mGeocacheVectors;
+    private final ActivityVisible mActivityVisible;
 
     @Inject
     public GeocacheListAdapter(GeocacheVectors geocacheVectors,
-            GeocacheSummaryRowInflater geocacheSummaryRowInflater) {
+            GeocacheSummaryRowInflater geocacheSummaryRowInflater, ActivityVisible activityVisible) {
         mGeocacheVectors = geocacheVectors;
         mGeocacheSummaryRowInflater = geocacheSummaryRowInflater;
+        mActivityVisible = activityVisible;
     }
 
     public int getCount() {
@@ -48,6 +52,10 @@ public class GeocacheListAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         View view = mGeocacheSummaryRowInflater.inflate(convertView);
+        if (!mActivityVisible.getVisible()) {
+            Log.d("GeoBeagle", "Not visible, punting any real work on getView");
+            return view;
+        }
         mGeocacheSummaryRowInflater.setData(view, mGeocacheVectors.get(position));
         return view;
     }
