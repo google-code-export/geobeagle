@@ -29,6 +29,8 @@ import com.google.inject.Provider;
 
 import org.xmlpull.v1.XmlPullParserException;
 
+import android.util.Log;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
@@ -95,6 +97,7 @@ public class ImportThreadDelegate {
     private final FileDataVersionWriter mFileDataVersionWriter;
     private final FileDataVersionChecker mFileDataVersionChecker;
     private final DbFrontend mDbFrontend;
+    private boolean mIsAlive;
 
     public ImportThreadDelegate(GpxAndZipFiles gpxAndZipFiles,
             ImportThreadHelper importThreadHelper, ErrorDisplayer errorDisplayer,
@@ -108,7 +111,8 @@ public class ImportThreadDelegate {
         mDbFrontend = dbFrontend;
     }
 
-    public void run() {
+    public synchronized void run() {
+        mIsAlive = true;
         try {
             tryRun();
         } catch (final FileNotFoundException e) {
@@ -127,10 +131,16 @@ public class ImportThreadDelegate {
             return;
         } finally {
             mImportThreadHelper.cleanup();
+            mIsAlive = false;
         }
+        Log.d("GeoBeagle", "STARTING BCACHING IMPORT");
         mImportThreadHelper.startBCachingImport();
     }
 
+    public synchronized boolean isAlive() {
+        return mIsAlive;
+    }
+    
     protected void tryRun() throws IOException, XmlPullParserException, ImportException,
             CancelException {
         if (mFileDataVersionChecker.needsUpdating()) {

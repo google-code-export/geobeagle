@@ -21,6 +21,7 @@ import static org.easymock.classextension.EasyMock.verify;
 import static org.junit.Assert.*;
 
 import com.google.code.geobeagle.LocationControlBuffered;
+import com.google.code.geobeagle.activity.cachelist.GeoBeagleTest;
 import com.google.code.geobeagle.location.CombinedLocationListener;
 
 import org.junit.Before;
@@ -34,12 +35,13 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationProvider;
 import android.os.Bundle;
+import android.util.Log;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest( {
-    Bundle.class
+    Bundle.class, Log.class
 })
-public class GpsLocationListenerTest {
+public class GpsLocationListenerTest extends GeoBeagleTest {
 
     private LocationListener locationListener;
     private LocationControlBuffered mLocationControlBuffered;
