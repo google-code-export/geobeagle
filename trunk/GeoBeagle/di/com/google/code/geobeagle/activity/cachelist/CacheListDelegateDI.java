@@ -39,7 +39,6 @@ import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheListAdapte
 import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheListPresenter;
 import com.google.code.geobeagle.activity.cachelist.presenter.SensorManagerWrapper;
 import com.google.code.geobeagle.activity.cachelist.presenter.TitleUpdater;
-import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh.UpdateFlag;
 import com.google.code.geobeagle.activity.main.GeoBeagle;
 import com.google.code.geobeagle.bcaching.ImportBCachingWorker;
 import com.google.code.geobeagle.bcaching.preferences.BCachingStartTime;
@@ -75,7 +74,6 @@ import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.DialogInterface.OnClickListener;
 import android.content.res.Resources;
-import android.hardware.SensorManager;
 import android.util.Log;
 
 import java.util.Calendar;
@@ -113,7 +111,6 @@ public class CacheListDelegateDI {
                 .getInstance(XmlPullParserWrapper.class);
 
         final Resources resources = injector.getInstance(Resources.class);
-        final UpdateFlag updateFlag = injector.getInstance(UpdateFlag.class);
         final ActivityVisible activityVisible = injector.getInstance(ActivityVisible.class);
         final GeocacheListAdapter geocacheListAdapter = injector
                 .getInstance(GeocacheListAdapter.class);
@@ -145,13 +142,12 @@ public class CacheListDelegateDI {
         final Provider<DbFrontend> dbFrontendProvider = injector.getProvider(DbFrontend.class);
         final CacheListRefresh cacheListRefresh = injector.getInstance(CacheListRefresh.class);
 
-        final SensorManager sensorManager = injector.getInstance(SensorManager.class);
         final Provider<CompassListener> compassListenerProvider = injector
                 .getProvider(CompassListener.class);
 
         final CacheListView.ScrollListener scrollListener = injector
                 .getInstance(CacheListView.ScrollListener.class);
-        final SensorManagerWrapper sensorManagerWrapper = new SensorManagerWrapper(sensorManager);
+        final SensorManagerWrapper sensorManagerWrapper = injector.getInstance(SensorManagerWrapper.class);
         final GeocacheListPresenter geocacheListPresenter = new GeocacheListPresenter(
                 combinedLocationListener, combinedLocationManager, compassListenerProvider,
                 geocacheListAdapter, geocacheVectors, gpsStatusWidget, listActivity,
