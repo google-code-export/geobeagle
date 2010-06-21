@@ -53,7 +53,6 @@ import com.google.inject.Provider;
 
 import roboguice.activity.GuiceListActivity;
 
-import android.content.DialogInterface.OnClickListener;
 import android.util.Log;
 
 import java.util.Calendar;
@@ -145,10 +144,8 @@ public class CacheListDelegateDI {
         final ContextAction[] contextActions = new ContextAction[] {
                 contextActionDelete, contextActionView, contextActionEdit
         };
-        final OnClickListener contextActionDeleteOnClickOkListener = new ContextActionDelete.OnClickOk(
-                contextActionDelete);
-        final ContextActionDeleteDialogHelper contextActionDeleteDialogHelper = new ContextActionDeleteDialogHelper(
-                contextActionDelete, contextActionDeleteOnClickOkListener);
+        final ContextActionDeleteDialogHelper contextActionDeleteDialogHelper = injector
+                .getInstance(ContextActionDeleteDialogHelper.class);
 
         final GeocacheListController geocacheListController = new GeocacheListController(
                 cacheListRefresh, contextActions, menuActionSyncGpx, menuActions,

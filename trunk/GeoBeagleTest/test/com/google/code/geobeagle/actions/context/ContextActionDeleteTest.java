@@ -39,7 +39,6 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.content.DialogInterface;
-import android.content.DialogInterface.OnClickListener;
 import android.widget.TextView;
 
 @RunWith(PowerMockRunner.class)
@@ -122,7 +121,8 @@ public class ContextActionDeleteTest {
 
     @Test
     public void testOnCreateDialog() {
-        OnClickListener onClickOk = PowerMock.createMock(OnClickListener.class);
+        ContextActionDelete.OnClickOk onClickOk = PowerMock
+                .createMock(ContextActionDelete.OnClickOk.class);
         Builder builder = PowerMock.createMock(Builder.class);
         AlertDialog dialog = PowerMock.createMock(AlertDialog.class);
 
@@ -139,7 +139,8 @@ public class ContextActionDeleteTest {
 
     @Test
     public void testOnPrepareDialog() {
-        OnClickListener onClickOk = PowerMock.createMock(OnClickListener.class);
+        ContextActionDelete.OnClickOk onClickOk = PowerMock
+                .createMock(ContextActionDelete.OnClickOk.class);
         AlertDialog dialog = PowerMock.createMock(AlertDialog.class);
         ContextActionDelete contextActionDelete = PowerMock.createMock(ContextActionDelete.class);
         TextView textView = PowerMock.createMock(TextView.class);
