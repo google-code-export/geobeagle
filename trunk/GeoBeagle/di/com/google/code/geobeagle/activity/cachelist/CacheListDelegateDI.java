@@ -15,7 +15,6 @@
 package com.google.code.geobeagle.activity.cachelist;
 
 import com.google.code.geobeagle.CacheTypeFactory;
-import com.google.code.geobeagle.CompassListener;
 import com.google.code.geobeagle.ErrorDisplayer;
 import com.google.code.geobeagle.LocationControlBuffered;
 import com.google.code.geobeagle.actions.MenuActionMap;
@@ -37,8 +36,8 @@ import com.google.code.geobeagle.activity.cachelist.model.GeocacheVectors;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
 import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheListAdapter;
 import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheListPresenter;
-import com.google.code.geobeagle.activity.cachelist.presenter.SensorManagerWrapper;
 import com.google.code.geobeagle.activity.cachelist.presenter.TitleUpdater;
+import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheListPresenter.GeocacheListPresenterFactory;
 import com.google.code.geobeagle.activity.main.GeoBeagle;
 import com.google.code.geobeagle.bcaching.ImportBCachingWorker;
 import com.google.code.geobeagle.bcaching.preferences.BCachingStartTime;
@@ -58,7 +57,6 @@ import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidget.InflatedGpsStat
 import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidgetModule.GpsStatusWidgetFactory;
 import com.google.code.geobeagle.gpsstatuswidget.GpsWidgetAndUpdater.GpsWidgetAndUpdaterFactory;
 import com.google.code.geobeagle.location.CombinedLocationListener;
-import com.google.code.geobeagle.location.CombinedLocationManager;
 import com.google.code.geobeagle.location.CombinedLocationListener.CombinedLocationListenerFactory;
 import com.google.code.geobeagle.xmlimport.MessageHandlerInterface;
 import com.google.code.geobeagle.xmlimport.CachePersisterFacadeDI.CachePersisterFacadeFactory;
@@ -100,8 +98,6 @@ public class CacheListDelegateDI {
     public static CacheListDelegate create(GuiceListActivity listActivity) {
         final Injector injector = listActivity.getInjector();
         final ErrorDisplayer errorDisplayer = injector.getInstance(ErrorDisplayer.class);
-        final CombinedLocationManager combinedLocationManager = injector
-                .getInstance(CombinedLocationManager.class);
         final LocationControlBuffered locationControlBuffered = injector
                 .getInstance(LocationControlBuffered.class);
         final GeocacheFromMyLocationFactory geocacheFromMyLocationFactory = injector
@@ -142,17 +138,10 @@ public class CacheListDelegateDI {
         final Provider<DbFrontend> dbFrontendProvider = injector.getProvider(DbFrontend.class);
         final CacheListRefresh cacheListRefresh = injector.getInstance(CacheListRefresh.class);
 
-        final Provider<CompassListener> compassListenerProvider = injector
-                .getProvider(CompassListener.class);
-
-        final CacheListView.ScrollListener scrollListener = injector
-                .getInstance(CacheListView.ScrollListener.class);
-        final SensorManagerWrapper sensorManagerWrapper = injector.getInstance(SensorManagerWrapper.class);
-        final GeocacheListPresenter geocacheListPresenter = new GeocacheListPresenter(
-                combinedLocationListener, combinedLocationManager, compassListenerProvider,
-                geocacheListAdapter, geocacheVectors, gpsStatusWidget, listActivity,
-                locationControlBuffered, sensorManagerWrapper, updateGpsWidgetRunnable,
-                scrollListener);
+        final GeocacheListPresenterFactory geocacheListPresenterFactory = injector
+                .getInstance(GeocacheListPresenterFactory.class);
+        final GeocacheListPresenter geocacheListPresenter = geocacheListPresenterFactory.create(
+                combinedLocationListener, gpsStatusWidget, updateGpsWidgetRunnable);
         final CacheTypeFactory cacheTypeFactory = new CacheTypeFactory();
  
         final Aborter aborter = injector.getInstance(Aborter.class);
