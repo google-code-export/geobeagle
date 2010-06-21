@@ -20,10 +20,11 @@ import static java.lang.annotation.ElementType.PARAMETER;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 import com.google.code.geobeagle.R;
+import com.google.code.geobeagle.Time;
 import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidget.InflatedGpsStatusWidget;
 import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidgetDelegate.GpsStatusWidgetDelegateFactory;
 import com.google.code.geobeagle.gpsstatuswidget.MeterFader.MeterFaderFactory;
-import com.google.code.geobeagle.gpsstatuswidget.UpdateGpsWidgetRunnable.UpdateGpsWidgetRunnableFactory;
+import com.google.code.geobeagle.gpsstatuswidget.TextLagUpdater.LastLocationUnknown;
 import com.google.inject.BindingAnnotation;
 import com.google.inject.Key;
 import com.google.inject.PrivateModule;
@@ -56,12 +57,6 @@ public class GpsStatusWidgetModule extends AbstractAndroidModule {
 
     static abstract class GpsStatusWidgetPrivateModule extends PrivateModule {
         @Provides
-        @Lag
-        TextView providesLagView(@GpsStatusWidgetView View gpsStatusWidget) {
-            return (TextView)gpsStatusWidget.findViewById(R.id.lag);
-        }
-
-        @Provides
         @LocationViewer
         TextView providesLocationViewer(@GpsStatusWidgetView View gpsStatusWidget) {
             return (TextView)gpsStatusWidget.findViewById(R.id.location_viewer);
@@ -71,6 +66,14 @@ public class GpsStatusWidgetModule extends AbstractAndroidModule {
         @ContextScoped
         Meter providesMeter(MeterBars meterBars, @GpsStatusWidgetView View gpsStatusWidget) {
             return new Meter(meterBars, ((TextView)gpsStatusWidget.findViewById(R.id.accuracy)));
+        }
+        
+        @Provides
+        @ContextScoped
+        TextLagUpdater providesTextLagUpdater(LastLocationUnknown lastKnownLocation, Time time,
+                @GpsStatusWidgetView View gpsStatusWidget) {
+            return new TextLagUpdater(lastKnownLocation, (TextView)gpsStatusWidget
+                    .findViewById(R.id.lag), time);
         }
     }
 
@@ -99,9 +102,6 @@ public class GpsStatusWidgetModule extends AbstractAndroidModule {
     public static @interface Lag {}
     @Override
     protected void configure() {
-        bind(UpdateGpsWidgetRunnableFactory.class).toProvider(
-                FactoryProvider.newFactory(UpdateGpsWidgetRunnableFactory.class,
-                        UpdateGpsWidgetRunnable.class));
         bind(MeterFaderFactory.class).toProvider(
                 FactoryProvider.newFactory(MeterFaderFactory.class, MeterFader.class));
         bind(GpsStatusWidgetDelegateFactory.class).toProvider(
