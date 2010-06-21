@@ -49,7 +49,6 @@ import com.google.code.geobeagle.activity.cachelist.presenter.TitleUpdater;
 import com.google.code.geobeagle.activity.cachelist.presenter.ToleranceStrategy;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh.ActionManager;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh.UpdateFlag;
-import com.google.code.geobeagle.activity.cachelist.view.GeocacheSummaryRowInflater;
 import com.google.code.geobeagle.activity.main.GeoBeagle;
 import com.google.code.geobeagle.bcaching.ImportBCachingWorker;
 import com.google.code.geobeagle.bcaching.preferences.BCachingStartTime;
@@ -131,12 +130,10 @@ public class CacheListDelegateDI {
         final Resources resources = injector.getInstance(Resources.class);
         final Provider<DistanceFormatter> distanceFormatterProvider = injector
                 .getProvider(DistanceFormatter.class);
-        final GeocacheSummaryRowInflater geocacheSummaryRowInflater = injector
-                .getInstance(GeocacheSummaryRowInflater.class);
-        final UpdateFlag updateFlag = new UpdateFlag();
+        final UpdateFlag updateFlag = injector.getInstance(UpdateFlag.class);
         final ActivityVisible activityVisible = injector.getInstance(ActivityVisible.class);
-        final GeocacheListAdapter geocacheListAdapter = new GeocacheListAdapter(geocacheVectors,
-                geocacheSummaryRowInflater, activityVisible);
+        final GeocacheListAdapter geocacheListAdapter = injector
+                .getInstance(GeocacheListAdapter.class);
 
         final InflatedGpsStatusWidget inflatedGpsStatusWidget = new InflatedGpsStatusWidget(
                 listActivity);
