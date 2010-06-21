@@ -48,9 +48,9 @@ class RowViews {
         mNameFormatter = nameFormatter;
     }
 
-    void set(GeocacheVector geocacheVector, DistanceFormatter distanceFormatter,
-            BearingFormatter relativeBearingFormatter,
-            ListViewBitmapCopier listViewBitmapCopier, IconRenderer iconRenderer) {
+    void set(GeocacheVector geocacheVector, BearingFormatter relativeBearingFormatter,
+            DistanceFormatter distanceFormatter, ListViewBitmapCopier listViewBitmapCopier,
+            IconRenderer iconRenderer) {
         Geocache geocache = geocacheVector.getGeocache();
         IconOverlay iconOverlay = mIconOverlayFactory.create(geocache, false);
         mNameFormatter.format(mCacheName, geocache.getAvailable(), geocache.getArchived());
@@ -62,7 +62,7 @@ class RowViews {
         mId.setText(geocacheVector.getId());
         mAttributes.setText(geocacheVector.getFormattedAttributes());
         mCacheName.setText(geocacheVector.getName());
-        
+
         mDistance.setText(geocacheVector.getFormattedDistance(distanceFormatter,
                 relativeBearingFormatter));
     }
