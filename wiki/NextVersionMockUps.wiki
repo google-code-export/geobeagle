@@ -1,0 +1,3 @@
+#summary mock ups of the next version
+
+http://geobeagle.googlecode.com/files/GeoBeagleDetailPages.png
