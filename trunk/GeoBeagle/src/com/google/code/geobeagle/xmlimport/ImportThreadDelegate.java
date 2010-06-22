@@ -16,6 +16,7 @@ package com.google.code.geobeagle.xmlimport;
 
 import com.google.code.geobeagle.ErrorDisplayer;
 import com.google.code.geobeagle.R;
+import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh.UpdateFlag;
 import com.google.code.geobeagle.bcaching.BCachingAnnotations.BCachingUserName;
 import com.google.code.geobeagle.bcaching.preferences.BCachingStartTime;
 import com.google.code.geobeagle.cachedetails.FileDataVersionChecker;
@@ -100,12 +101,13 @@ public class ImportThreadDelegate {
     private final DbFrontend mDbFrontend;
     private final BCachingStartTime mBCachingStartTime;
     private boolean mIsAlive;
+    private final UpdateFlag mUpdateFlag;
 
     public ImportThreadDelegate(GpxAndZipFiles gpxAndZipFiles,
             ImportThreadHelper importThreadHelper, ErrorDisplayer errorDisplayer,
             FileDataVersionWriter fileDataVersionWriter,
             FileDataVersionChecker fileDataVersionChecker, DbFrontend dbFrontend,
-            BCachingStartTime bcachingStartTime) {
+            BCachingStartTime bcachingStartTime, UpdateFlag updateFlag) {
         mGpxAndZipFiles = gpxAndZipFiles;
         mImportThreadHelper = importThreadHelper;
         mErrorDisplayer = errorDisplayer;
@@ -113,11 +115,13 @@ public class ImportThreadDelegate {
         mFileDataVersionChecker = fileDataVersionChecker;
         mBCachingStartTime = bcachingStartTime;
         mDbFrontend = dbFrontend;
+        mUpdateFlag = updateFlag;
     }
 
     public synchronized void run() {
         mIsAlive = true;
         try {
+            mUpdateFlag.setUpdatesEnabled(false);
             tryRun();
         } catch (final FileNotFoundException e) {
             mErrorDisplayer.displayError(R.string.error_opening_file, e.getMessage());
@@ -135,6 +139,7 @@ public class ImportThreadDelegate {
             return;
         } finally {
             mImportThreadHelper.cleanup();
+            mUpdateFlag.setUpdatesEnabled(true);
             mIsAlive = false;
         }
         Log.d("GeoBeagle", "STARTING BCACHING IMPORT");
