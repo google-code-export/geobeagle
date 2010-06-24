@@ -81,18 +81,12 @@ public class GpsStatusWidgetModule extends AbstractAndroidModule {
         }
         
         @Provides
-        @ContextScoped
-        MeterFader providesMeterFader(@GpsStatusWidgetView View gpsStatusWidget,
-                MeterBars meterBars, Time time) {
-            return new MeterFader(gpsStatusWidget, meterBars, time);
-        }
-
-        @Provides
         GpsStatusWidgetDelegate providesGpsStatusWidgetDelegate(
                 CombinedLocationManager combinedLocationManager,
                 Provider<DistanceFormatter> distanceFormatterProvider, Meter meter,
-                MeterFader meterFader, Context context, TextLagUpdater textLagUpdater,
-                @GpsStatusWidgetView View gpsStatusWidget) {
+                Context context, TextLagUpdater textLagUpdater,
+                @GpsStatusWidgetView View gpsStatusWidget, MeterBars meterBars, Time time) {
+            MeterFader meterFader = new MeterFader(gpsStatusWidget, meterBars, time);
             return new GpsStatusWidgetDelegate(combinedLocationManager, distanceFormatterProvider,
                     meter, meterFader, (TextView)gpsStatusWidget.findViewById(R.id.provider),
                     context, (TextView)gpsStatusWidget.findViewById(R.id.status), textLagUpdater);
