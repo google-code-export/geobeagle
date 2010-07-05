@@ -31,6 +31,8 @@ import com.google.inject.Module;
 
 import roboguice.application.GuiceApplication;
 
+import android.os.Debug;
+
 import java.util.List;
 
 public class GeoBeagleApplication extends GuiceApplication {
@@ -50,5 +52,6 @@ public class GeoBeagleApplication extends GuiceApplication {
         modules.add(new XmlimportModule());
         modules.add(new BCachingModule());
         modules.add(new BCachingCommModule());
+        Debug.startMethodTracing("dmtrace", 32 * 1024 * 1024);
     }
 }
