@@ -23,7 +23,7 @@ public class Timing {
 
     public void lap(CharSequence msg) {
         long finishTime = Calendar.getInstance().getTimeInMillis();
-        Log.d("GeoBeagle", "****** " + msg + ": " + (finishTime - mStartTime));
+        Log.d("GeoBeagle", "****** " + msg + ": " + finishTime + ": " + (finishTime - mStartTime));
         mStartTime = finishTime;
     }
 

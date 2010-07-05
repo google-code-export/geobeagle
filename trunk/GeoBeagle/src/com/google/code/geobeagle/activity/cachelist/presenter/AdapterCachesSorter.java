@@ -19,6 +19,8 @@ import com.google.code.geobeagle.Timing;
 import com.google.code.geobeagle.activity.cachelist.model.CacheListData;
 import com.google.inject.Inject;
 
+import android.os.Debug;
+
 public class AdapterCachesSorter implements RefreshAction {
     private final CacheListData mCacheListData;
     private final LocationControlBuffered mLocationControlBuffered;
@@ -35,5 +37,6 @@ public class AdapterCachesSorter implements RefreshAction {
     public void refresh() {
         mLocationControlBuffered.getSortStrategy().sort(mCacheListData.get());
         mTiming.lap("sort time");
+        Debug.stopMethodTracing();
     }
 }
