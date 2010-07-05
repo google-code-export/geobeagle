@@ -213,8 +213,7 @@ public class GeoBeagleModule extends AbstractAndroidModule {
 
     @Provides
     @DialogOnClickListenerNOP
-    android.content.DialogInterface.OnClickListener providesDialogOnClickListenerDoNothing(
-            @SuppressWarnings("unused") Activity activity) {
+    android.content.DialogInterface.OnClickListener providesDialogOnClickListenerDoNothing() {
         return new android.content.DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
             }
