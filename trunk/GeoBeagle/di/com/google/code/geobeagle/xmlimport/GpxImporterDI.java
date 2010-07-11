@@ -17,6 +17,7 @@ package com.google.code.geobeagle.xmlimport;
 import com.google.code.geobeagle.ErrorDisplayer;
 import com.google.code.geobeagle.activity.cachelist.Pausable;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
+import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh.UpdateFlag;
 import com.google.code.geobeagle.bcaching.ImportBCachingWorker;
 import com.google.code.geobeagle.bcaching.BCachingAnnotations.BCachingUserName;
 import com.google.code.geobeagle.bcaching.preferences.BCachingStartTime;
@@ -84,9 +85,10 @@ public class GpxImporterDI {
             final FileDataVersionChecker fileDataVersionChecker = injector
                     .getInstance(FileDataVersionChecker.class);
             BCachingStartTime bcachingStartTime = injector.getInstance(BCachingStartTime.class);
+            UpdateFlag updateFlag = injector.getInstance(UpdateFlag.class);
             return new ImportThread(gpxAndZipFiles, importThreadHelper, errorDisplayer,
                     fileDataVersionWriter, injector.getInstance(DbFrontend.class),
-                    fileDataVersionChecker, bcachingStartTime);
+                    fileDataVersionChecker, bcachingStartTime, updateFlag);
         }
 
         private final ImportThreadDelegate mImportThreadDelegate;
@@ -94,10 +96,10 @@ public class GpxImporterDI {
         public ImportThread(GpxAndZipFiles gpxAndZipFiles, ImportThreadHelper importThreadHelper,
                 ErrorDisplayer errorDisplayer, FileDataVersionWriter fileDataVersionWriter,
                 DbFrontend dbFrontend, FileDataVersionChecker fileDataVersionChecker,
-                BCachingStartTime bcachingStartTime) {
+                BCachingStartTime bcachingStartTime, UpdateFlag updateFlag) {
             mImportThreadDelegate = new ImportThreadDelegate(gpxAndZipFiles, importThreadHelper,
                     errorDisplayer, fileDataVersionWriter, fileDataVersionChecker, dbFrontend,
-                    bcachingStartTime);
+                    bcachingStartTime, updateFlag);
         }
 
         @Override
@@ -188,7 +190,7 @@ public class GpxImporterDI {
 
         @Override
         public void handleMessage(Message msg) {
-            // Log.d(GEOBEAGLE, "received msg: " + msg.what);
+//            Log.d(GEOBEAGLE, "received msg: " + msg.what);
             switch (msg.what) {
                 case MessageHandler.MSG_PROGRESS:
                     mProgressDialogWrapper.setMessage(mStatus);
@@ -238,13 +240,15 @@ public class GpxImporterDI {
 
         public void updateName(String name) {
             mStatus = mCacheCount++ + ": " + mSource + " - " + mWaypointId + " - " + name;
-            sendEmptyMessage(MessageHandler.MSG_PROGRESS);
+            if (!hasMessages(MessageHandler.MSG_PROGRESS))
+                sendEmptyMessage(MessageHandler.MSG_PROGRESS);
         }
 
         public void updateSource(String text) {
             mSource = text;
             mStatus = "Opening: " + mSource + "...";
-            sendEmptyMessage(MessageHandler.MSG_PROGRESS);
+            if (!hasMessages(MessageHandler.MSG_PROGRESS))
+                sendEmptyMessage(MessageHandler.MSG_PROGRESS);
         }
 
         public void updateWaypointId(String wpt) {
@@ -253,12 +257,14 @@ public class GpxImporterDI {
 
         public void updateStatus(String status) {
             mStatus = status;
-            sendEmptyMessage(MessageHandler.MSG_PROGRESS);
+            if (!hasMessages(MessageHandler.MSG_PROGRESS))
+                sendEmptyMessage(MessageHandler.MSG_PROGRESS);
         }
 
         public void deletingCacheFiles() {
             mStatus = "Deleting old cache files....";
-            sendEmptyMessage(MessageHandler.MSG_PROGRESS);
+            if (!hasMessages(MessageHandler.MSG_PROGRESS))
+                sendEmptyMessage(MessageHandler.MSG_PROGRESS);
         }
 
         @Override

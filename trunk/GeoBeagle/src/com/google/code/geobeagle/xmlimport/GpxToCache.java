@@ -91,6 +91,7 @@ public class GpxToCache {
         int eventType;
         for (eventType = mXmlPullParserWrapper.getEventType(); eventType != XmlPullParser.END_DOCUMENT; eventType = mXmlPullParserWrapper
                 .next()) {
+//            Log.d("GeoBeagle", "event: " + eventType);
             if (mAborter.isAborted()) {
                 Log.d("GeoBeagle", "isAborted: " + mAborter.isAborted());
                 throw new CancelException();
