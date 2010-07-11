@@ -15,12 +15,12 @@
 package com.google.code.geobeagle.activity.cachelist;
 
 import com.google.code.geobeagle.actions.ContextActions;
-import com.google.code.geobeagle.actions.MenuActions;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionSyncGpx;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVectors;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
 import com.google.code.geobeagle.xmlimport.GpxToCache.Aborter;
 import com.google.inject.Inject;
+import com.google.inject.Injector;
 
 import android.util.Log;
 import android.view.ContextMenu;
@@ -57,19 +57,19 @@ public class GeocacheListController {
     public static final String SELECT_CACHE = "SELECT_CACHE";
     private final CacheListRefresh mCacheListRefresh;
     private final ContextActions mContextActions;
-    private final MenuActions mMenuActions;
     private final MenuActionSyncGpx mMenuActionSyncGpx;
     private final Aborter mAborter;
+    private final Injector mInjector;
 
     @Inject
     public GeocacheListController(CacheListRefresh cacheListRefresh,
             ContextActions contextActions, MenuActionSyncGpx menuActionSyncGpx,
-            MenuActions menuActions, Aborter aborter) {
+            Injector injector, Aborter aborter) {
         mCacheListRefresh = cacheListRefresh;
         mContextActions = contextActions;
         mMenuActionSyncGpx = menuActionSyncGpx;
-        mMenuActions = menuActions;
         mAborter = aborter;
+        mInjector = injector;
     }
 
     public boolean onContextItemSelected(MenuItem menuItem) {
@@ -80,7 +80,7 @@ public class GeocacheListController {
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
-        return mMenuActions.onCreateOptionsMenu(menu);
+        return mInjector.getInstance(CacheListMenuActions.class).onCreateOptionsMenu(menu);
     }
 
     public void onListItemClick(int position) {
@@ -91,7 +91,7 @@ public class GeocacheListController {
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {
-        return mMenuActions.act(item.getItemId());
+        return mInjector.getInstance(CacheListMenuActions.class).act(item.getItemId());
     }
 
     public void onPause() {
