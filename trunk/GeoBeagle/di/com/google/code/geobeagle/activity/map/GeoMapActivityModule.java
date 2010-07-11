@@ -19,7 +19,6 @@ import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.ElementType.PARAMETER;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MyLocationOverlay;
 import com.google.android.maps.Overlay;
 import com.google.code.geobeagle.Geocache;
@@ -31,7 +30,6 @@ import com.google.code.geobeagle.actions.MenuActionCacheList;
 import com.google.code.geobeagle.actions.MenuActions;
 import com.google.code.geobeagle.activity.cachelist.presenter.GeoBeaglePackageAnnotations.DifficultyAndTerrainPainterAnnotation;
 import com.google.code.geobeagle.activity.map.CachePinsOverlayFactory.CachePinsQueryManager;
-import com.google.code.geobeagle.activity.map.DensityOverlayDelegate.DensityOverlayPaint;
 import com.google.code.geobeagle.activity.map.GeoMapActivityDelegate.MenuActionCenterLocation;
 import com.google.code.geobeagle.activity.map.GeoMapActivityDelegate.MenuActionToggleSatellite;
 import com.google.code.geobeagle.activity.map.QueryManager.CachedNeedsLoading;
@@ -45,7 +43,6 @@ import roboguice.config.AbstractAndroidModule;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
-import android.graphics.Paint;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
@@ -80,15 +77,6 @@ public class GeoMapActivityModule extends AbstractAndroidModule {
         return new CachePinsOverlay(resources, cacheItemFactory, context, new ArrayList<Geocache>());
     }
     
-    @Provides
-    @DensityOverlayPaint
-    Paint providesDensityOverlayPaint()
-    {
-        Paint paint = new Paint();
-        paint.setARGB(128, 255, 0, 0);
-        return paint;
-    }
-
     @Provides
     @GeoMapActivityMenuActions
     MenuActions providesGeoMapMenuActions(Activity activity, Resources resources) {
