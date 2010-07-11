@@ -23,11 +23,10 @@ import com.google.code.geobeagle.cachedetails.FileDataVersionChecker;
 import com.google.code.geobeagle.cachedetails.FileDataVersionWriter;
 import com.google.code.geobeagle.database.DbFrontend;
 import com.google.code.geobeagle.xmlimport.EventHelperDI.EventHelperFactory;
-import com.google.code.geobeagle.xmlimport.XmlimportAnnotations.ImportDirectory;
+import com.google.code.geobeagle.xmlimport.XmlimportModule.GeoBeagleEnvironment;
 import com.google.code.geobeagle.xmlimport.gpx.GpxAndZipFiles;
 import com.google.code.geobeagle.xmlimport.gpx.IGpxReader;
 import com.google.code.geobeagle.xmlimport.gpx.GpxAndZipFiles.GpxFilesAndZipFilesIter;
-import com.google.inject.Provider;
 
 import org.xmlpull.v1.XmlPullParserException;
 
@@ -46,14 +45,14 @@ public class ImportThreadDelegate {
         private boolean mHasFiles;
         private final MessageHandlerInterface mMessageHandler;
         private final OldCacheFilesCleaner mOldCacheFilesCleaner;
-        private final Provider<String> mImportFolderProvider;
+        private final GeoBeagleEnvironment mGeoBeagleEnvironment;
         private final SharedPreferences mSharedPreferences;
 
         public ImportThreadHelper(GpxLoader gpxLoader, MessageHandlerInterface messageHandler,
                 EventHelperFactory eventHelperFactory, EventHandlers eventHandlers,
                 OldCacheFilesCleaner oldCacheFilesCleaner,
                 SharedPreferences sharedPreferences,
-                @ImportDirectory Provider<String> importFolderProvider) {
+                GeoBeagleEnvironment geoBeagleEnvironment) {
             mGpxLoader = gpxLoader;
             mMessageHandler = messageHandler;
             mEventHelperFactory = eventHelperFactory;
@@ -61,7 +60,7 @@ public class ImportThreadDelegate {
             mHasFiles = false;
             mOldCacheFilesCleaner = oldCacheFilesCleaner;
             mSharedPreferences = sharedPreferences;
-            mImportFolderProvider = importFolderProvider;
+            mGeoBeagleEnvironment = geoBeagleEnvironment;
         }
 
         public void cleanup() {
@@ -72,7 +71,8 @@ public class ImportThreadDelegate {
             mGpxLoader.end();
             if (!mHasFiles
                     && mSharedPreferences.getString(BCachingModule.BCACHING_USERNAME, "").length() == 0)
-                throw new ImportException(R.string.error_no_gpx_files, mImportFolderProvider.get());
+                throw new ImportException(R.string.error_no_gpx_files, mGeoBeagleEnvironment
+                        .getImportFolder());
         }
 
         public boolean processFile(IGpxReader gpxReader) throws XmlPullParserException, IOException {

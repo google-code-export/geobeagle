@@ -26,9 +26,9 @@ import com.google.code.geobeagle.database.GpxWriter;
 import com.google.code.geobeagle.xmlimport.EventHelper.XmlPathBuilder;
 import com.google.code.geobeagle.xmlimport.GpxImporterDI.MessageHandler;
 import com.google.code.geobeagle.xmlimport.XmlimportAnnotations.GpxAnnotation;
-import com.google.code.geobeagle.xmlimport.XmlimportAnnotations.ImportDirectory;
 import com.google.code.geobeagle.xmlimport.XmlimportAnnotations.LoadDetails;
 import com.google.code.geobeagle.xmlimport.XmlimportAnnotations.WriteDetails;
+import com.google.inject.Inject;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 
@@ -71,6 +71,13 @@ public class XmlimportModule extends AbstractAndroidModule {
     }
     
     public static class GeoBeagleEnvironment {
+        private final SharedPreferences sharedPreferences;
+
+        @Inject
+        GeoBeagleEnvironment(@DefaultSharedPreferences SharedPreferences sharedPreferences) {
+            this.sharedPreferences = sharedPreferences;
+        }
+        
         public String getExternalStorageDir() {
             return Environment.getExternalStorageDirectory().getAbsolutePath();
         }
@@ -86,21 +93,18 @@ public class XmlimportModule extends AbstractAndroidModule {
         public String getOldDetailsDirectory() {
             return getExternalStorageDir()  + "/" + "GeoBeagle";
         }
-    }
 
-    @Provides
-    @ImportDirectory
-    String importFolderProvider(@DefaultSharedPreferences SharedPreferences sharedPreferences) {
-        String string = sharedPreferences.getString("import-folder", Environment
-                .getExternalStorageDirectory()
-                + "/Download");
-        if ((!string.endsWith("/")))
-            return string + "/";
-        return string;
+        public String getImportFolder() {
+            String string = sharedPreferences.getString("import-folder", Environment
+                    .getExternalStorageDirectory()
+                    + "/Download");
+            if ((!string.endsWith("/")))
+                return string + "/";
+            return string;
+        }
     }
 
     private static final String DETAILS_DIR = "GeoBeagle/data/";
-
 
     @Provides
     @WriteDetails
