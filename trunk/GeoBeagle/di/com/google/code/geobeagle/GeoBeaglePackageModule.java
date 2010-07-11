@@ -19,7 +19,6 @@ import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.ElementType.PARAMETER;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-import com.google.code.geobeagle.CompassListener.Azimuth;
 import com.google.code.geobeagle.LocationControlBuffered.GpsDisabledLocation;
 import com.google.code.geobeagle.LocationControlBuffered.GpsEnabledLocation;
 import com.google.code.geobeagle.LocationControlBuffered.IGpsLocation;
@@ -75,7 +74,6 @@ public class GeoBeaglePackageModule extends AbstractAndroidModule {
         bind(Refresher.class).to(NullRefresher.class);
         bind(SensorManager.class).toProvider(
                 new SystemServiceProvider<SensorManager>(Context.SENSOR_SERVICE));
-        bindConstant().annotatedWith(Azimuth.class).to(-1440f);
     }
 
     @Provides
