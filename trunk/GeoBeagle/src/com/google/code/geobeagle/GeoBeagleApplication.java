@@ -39,19 +39,19 @@ public class GeoBeagleApplication extends GuiceApplication {
     protected void addApplicationModules(List<Module> modules) {
         timing.start();
 //        Debug.startMethodTracing("dmtrace", 32 * 1024 * 1024);
-        modules.add(new SearchOnlineModule());
-        modules.add(new FieldnotesModule());
-        modules.add(new GeoMapActivityModule());
-        modules.add(new GeoBeagleModule());
+        modules.add(new SearchOnlineModule()); // +0.3 seconds (8.35)
+        modules.add(new FieldnotesModule());   // +2.1 seconds (13.1)
+        modules.add(new GeoMapActivityModule()); // +1.3 seconds (9.7)
+        modules.add(new GeoBeagleModule());      // +1 second (11.0)
         modules.add(new GeoBeaglePackageModule());
-        modules.add(new ViewModule());
+        modules.add(new ViewModule());        // ?? (12.7)
         modules.add(new DatabaseModule());
         modules.add(new CacheListModule());
         modules.add(new LocationModule());
         modules.add(new ModelModule());
         modules.add(new GpsStatusWidgetModule());
-        modules.add(new XmlimportModule());
+        modules.add(new XmlimportModule());     // +3.6 seconds (7.95)
         modules.add(new BCachingModule());
-        modules.add(new BCachingCommModule());
+        modules.add(new BCachingCommModule());  // 5.27
     }
 }
