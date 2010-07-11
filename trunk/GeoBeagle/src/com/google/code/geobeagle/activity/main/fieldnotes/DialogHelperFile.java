@@ -15,7 +15,7 @@
 package com.google.code.geobeagle.activity.main.fieldnotes;
 
 import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.activity.main.GeoBeagleModule.FieldNotesFilename;
+import com.google.code.geobeagle.activity.main.fieldnotes.FieldnotesModule.FieldNotesFilename;
 import com.google.inject.Inject;
 
 import android.app.Dialog;

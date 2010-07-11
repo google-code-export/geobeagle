@@ -23,7 +23,6 @@ import com.google.code.geobeagle.ErrorDisplayer;
 import com.google.code.geobeagle.LocationControlBuffered;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.GeoBeaglePackageModule.DefaultSharedPreferences;
-import com.google.code.geobeagle.GeoBeaglePackageModule.ExternalStorageDirectory;
 import com.google.code.geobeagle.GraphicsGenerator.IconOverlayFactory;
 import com.google.code.geobeagle.GraphicsGenerator.IconRenderer;
 import com.google.code.geobeagle.GraphicsGenerator.MapViewBitmapCopier;
@@ -136,13 +135,6 @@ public class GeoBeagleModule extends AbstractAndroidModule {
     })
     @Retention(RUNTIME)
     public static @interface ChooseNavDialog {
-    }
-    @BindingAnnotation
-    @Target( {
-            FIELD, PARAMETER, METHOD
-    })
-    @Retention(RUNTIME)
-    public static @interface FieldNotesFilename {
     }
 
     @Override
@@ -300,14 +292,6 @@ public class GeoBeagleModule extends AbstractAndroidModule {
                 resources.getDrawable(R.drawable.ribbon_selected_bright)
         };
         return getImagesOnDifficulty(ribbonDrawables, imageView, ratingsArray);
-    }
-    
-    private static final String FIELDNOTES_FILE = "GeoBeagleFieldNotes.txt";
-
-    @Provides
-    @FieldNotesFilename
-    String providesFieldNotesFilename(@ExternalStorageDirectory String externalStorageDirectory) {
-        return externalStorageDirectory + "/" + FIELDNOTES_FILE;
     }
 
     @Provides
