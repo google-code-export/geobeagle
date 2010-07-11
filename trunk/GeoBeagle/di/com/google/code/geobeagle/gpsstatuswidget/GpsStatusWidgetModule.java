@@ -31,12 +31,6 @@ import android.widget.TextView;
 public class GpsStatusWidgetModule extends AbstractAndroidModule {
     @Provides
     @ContextScoped
-    Meter providesMeter(InflatedGpsStatusWidget gpsStatusWidget, MeterBars meterBars) {
-        return new Meter(meterBars, ((TextView)gpsStatusWidget.findViewById(R.id.accuracy)));
-    }
-
-    @Provides
-    @ContextScoped
     TextLagUpdater providesTextLagUpdater(LastLocationUnknown lastKnownLocation, Time time,
             InflatedGpsStatusWidget gpsStatusWidget) {
         return new TextLagUpdater(lastKnownLocation,

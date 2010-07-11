@@ -14,18 +14,24 @@
 
 package com.google.code.geobeagle.gpsstatuswidget;
 
+import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.formatting.DistanceFormatter;
+import com.google.inject.Inject;
+
+import roboguice.inject.ContextScoped;
 
 import android.widget.TextView;
 
+@ContextScoped
 class Meter {
     private float mAccuracy;
     private final TextView mAccuracyView;
     private float mAzimuth;
     private final MeterBars mMeterView;
 
-    Meter(MeterBars meterBars, TextView accuracyView) {
-        mAccuracyView = accuracyView;
+    @Inject
+    Meter(MeterBars meterBars, InflatedGpsStatusWidget inflatedGpsStatusWidget) {
+        mAccuracyView = ((TextView)inflatedGpsStatusWidget.findViewById(R.id.accuracy));
         mMeterView = meterBars;
     }
 
