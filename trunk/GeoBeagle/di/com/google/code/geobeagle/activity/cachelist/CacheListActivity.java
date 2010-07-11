@@ -14,8 +14,8 @@
 
 package com.google.code.geobeagle.activity.cachelist;
 
-import com.google.code.geobeagle.GeoBeagleApplication;
 import com.google.code.geobeagle.R;
+import com.google.code.geobeagle.activity.cachelist.actions.context.ContextActionDelete.ContextActionDeleteDialogHelper;
 import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidgetDelegate;
 import com.google.code.geobeagle.gpsstatuswidget.InflatedGpsStatusWidget;
 import com.google.inject.Injector;
@@ -66,7 +66,6 @@ public class CacheListActivity extends GuiceListActivity {
                 .getInstance(InflatedGpsStatusWidget.class);
         final GpsStatusWidgetDelegate gpsStatusWidgetDelegate = injector
                 .getInstance(GpsStatusWidgetDelegate.class);
-        
         inflatedGpsStatusWidget.setDelegate(gpsStatusWidgetDelegate);
 
         mCacheListDelegate = injector.getInstance(CacheListDelegate.class);
@@ -84,7 +83,8 @@ public class CacheListActivity extends GuiceListActivity {
         builder.setNegativeButton(R.string.confirm_delete_negative, new OnClickCancel());
         builder.setView(confirmDeleteCacheView);
 
-        return mCacheListDelegate.onCreateDialog(builder);
+        return getInjector().getInstance(ContextActionDeleteDialogHelper.class).onCreateDialog(
+                builder);
     }
 
     @Override
@@ -119,7 +119,7 @@ public class CacheListActivity extends GuiceListActivity {
 
     @Override
     protected void onPrepareDialog(int id, Dialog dialog) {
-        mCacheListDelegate.onPrepareDialog(dialog);
+        getInjector().getInstance(ContextActionDeleteDialogHelper.class).onPrepareDialog(dialog);
     }
 
     @Override
