@@ -14,15 +14,19 @@
 
 package com.google.code.geobeagle.gpsstatuswidget;
 
+import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.Time;
 import com.google.code.geobeagle.location.CombinedLocationManager;
 import com.google.inject.Inject;
+
+import roboguice.inject.ContextScoped;
 
 import android.location.Location;
 import android.widget.TextView;
 
 import java.util.Formatter;
 
+@ContextScoped
 class TextLagUpdater {
     static interface Lag {
         String getFormatted(long currentTime);
@@ -118,9 +122,11 @@ class TextLagUpdater {
     private final TextView mTextLag;
     private final Time mTime;
 
-    TextLagUpdater(LastLocationUnknown lastLocationUnknown, TextView textLag, Time time) {
+    @Inject
+    TextLagUpdater(LastLocationUnknown lastLocationUnknown,
+            InflatedGpsStatusWidget inflatedGpsStatusWidget, Time time) {
         mLastLocation = lastLocationUnknown;
-        mTextLag = textLag;
+        mTextLag = (TextView)inflatedGpsStatusWidget.findViewById(R.id.lag);
         mTime = time;
     }
 
