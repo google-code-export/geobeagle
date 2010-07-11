@@ -15,14 +15,15 @@ package com.google.code.geobeagle.activity.searchonline;
 
 import com.google.code.geobeagle.CompassListener;
 import com.google.code.geobeagle.LocationControlBuffered;
+import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.ActivitySaver;
 import com.google.code.geobeagle.activity.ActivityType;
 import com.google.code.geobeagle.activity.cachelist.ActivityVisible;
 import com.google.code.geobeagle.location.CombinedLocationListener;
 import com.google.code.geobeagle.location.CombinedLocationManager;
 import com.google.inject.Inject;
-import com.google.inject.assistedinject.Assisted;
 
+import android.app.Activity;
 import android.graphics.Color;
 import android.hardware.SensorManager;
 import android.webkit.WebSettings;
@@ -39,15 +40,10 @@ public class SearchOnlineActivityDelegate {
     private final WebView mWebView;
     private final ActivityVisible mActivityVisible;
 
-    interface SearchOnlineActivityDelegateFactory {
-        SearchOnlineActivityDelegate create(WebView webView,
-                CombinedLocationListener combinedLocationListener);
-    }
-
     @Inject
-    public SearchOnlineActivityDelegate(@Assisted WebView webView, SensorManager sensorManager,
+    public SearchOnlineActivityDelegate(Activity activity, SensorManager sensorManager,
             CompassListener compassListener, CombinedLocationManager combinedLocationManager,
-            @Assisted CombinedLocationListener combinedLocationListener,
+            CombinedLocationListener combinedLocationListener,
             LocationControlBuffered locationControlBuffered, ActivitySaver activitySaver,
             ActivityVisible activityVisible) {
         mSensorManager = sensorManager;
@@ -55,7 +51,7 @@ public class SearchOnlineActivityDelegate {
         mCombinedLocationListener = combinedLocationListener;
         mCombinedLocationManager = combinedLocationManager;
         mLocationControlBuffered = locationControlBuffered;
-        mWebView = webView;
+        mWebView = (WebView)activity.findViewById(R.id.help_contents);
         mActivitySaver = activitySaver;
         mActivityVisible = activityVisible;
     }
