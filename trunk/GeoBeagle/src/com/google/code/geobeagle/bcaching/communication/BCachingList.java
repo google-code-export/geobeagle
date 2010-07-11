@@ -17,10 +17,6 @@ package com.google.code.geobeagle.bcaching.communication;
 import android.util.Log;
 
 public class BCachingList {
-    interface BCachingListFactory {
-        BCachingList create(String json) throws BCachingException;
-    }
-
     private final BCachingJSONObject cacheList;
 
     BCachingList(BCachingJSONObject cacheList) {

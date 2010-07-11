@@ -14,8 +14,6 @@
 
 package com.google.code.geobeagle.bcaching.communication;
 
-import com.google.code.geobeagle.bcaching.communication.BCachingList.BCachingListFactory;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -25,10 +23,9 @@ public class BCachingCommModule extends AbstractAndroidModule {
 
     @Override
     protected void configure() {
-        bind(BCachingListFactory.class).to(BCachingListFactoryImpl.class);
     }
 
-    static class BCachingListFactoryImpl implements BCachingListFactory {
+    static class BCachingListFactoryImpl {
         public BCachingList create(String s) throws BCachingException {
             try {
                 return new BCachingList(new BCachingJSONObject(new JSONObject(s)));
