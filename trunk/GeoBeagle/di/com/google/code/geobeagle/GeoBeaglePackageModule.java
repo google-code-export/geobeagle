@@ -74,14 +74,6 @@ public class GeoBeaglePackageModule extends AbstractAndroidModule {
             FIELD, PARAMETER, METHOD
     })
     @Retention(RUNTIME)
-    public static @interface ExternalStorageDirectory {
-    }
-
-    @BindingAnnotation
-    @Target( {
-            FIELD, PARAMETER, METHOD
-    })
-    @Retention(RUNTIME)
     public static @interface DefaultSharedPreferences {
     }
 
