@@ -14,9 +14,12 @@
 
 package com.google.code.geobeagle.cachedetails;
 
+import com.google.inject.Singleton;
+
 import java.io.IOException;
 import java.io.StringWriter;
 
+@Singleton
 public class StringWriterWrapper implements com.google.code.geobeagle.cachedetails.Writer {
 
     private final StringWriter stringWriter;

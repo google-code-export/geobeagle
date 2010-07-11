@@ -39,6 +39,7 @@ import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Provider;
 
+import roboguice.inject.ContextScoped;
 import roboguice.util.RoboThread;
 
 import android.app.ProgressDialog;
@@ -157,6 +158,7 @@ public class GpxImporterDI {
     }
 
     // Too hard to test this class due to final methods in base.
+    @ContextScoped
     public static class MessageHandler extends Handler implements MessageHandlerInterface {
         public static final String GEOBEAGLE = "GeoBeagle";
         static final int MSG_DONE = 1;

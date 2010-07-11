@@ -17,6 +17,8 @@ package com.google.code.geobeagle.database;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
+import roboguice.inject.ContextScoped;
+@ContextScoped
 public class GpxWriter {
     private String mGpxTime;
     private final Provider<ISQLiteDatabase> sqliteProvider;
