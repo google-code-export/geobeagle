@@ -51,7 +51,6 @@ import android.graphics.Paint;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 import java.util.ArrayList;
-import java.util.List;
 
 public class GeoMapActivityModule extends AbstractAndroidModule {
 
@@ -119,19 +118,6 @@ public class GeoMapActivityModule extends AbstractAndroidModule {
     @Provides 
     MyLocationOverlay providesMyLocationOverlay(Activity activity) {
         return ((GeoMapActivity) activity).getMyLocationOverlay();
-    }
-
-    @Provides
-    OverlayManager providesOverlayManager(Activity activity, DensityOverlay densityOverlay,
-            CachePinsOverlayFactory cachePinsOverlayFactory, MyLocationOverlay myLocationOverlay) {
-        final GeoMapView geoMapView = (GeoMapView)activity.findViewById(R.id.mapview);
-        final List<Overlay> mapOverlays = geoMapView.getOverlays();
-        final NullOverlay nullOverlay = new NullOverlay();
-        mapOverlays.add(nullOverlay);
-        mapOverlays.add(myLocationOverlay);
-
-        return new OverlayManager(geoMapView, mapOverlays, densityOverlay, cachePinsOverlayFactory,
-                false);
     }
 
     @Provides
