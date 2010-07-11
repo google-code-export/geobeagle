@@ -16,7 +16,6 @@ package com.google.code.geobeagle.bcaching;
 
 import com.google.code.geobeagle.bcaching.communication.BCachingException;
 import com.google.code.geobeagle.bcaching.communication.BCachingListImporterStateless;
-import com.google.code.geobeagle.bcaching.communication.BCachingListImportHelper.BufferedReaderFactory;
 import com.google.code.geobeagle.xmlimport.EventHandler;
 import com.google.code.geobeagle.xmlimport.EventHandlerComposite;
 import com.google.code.geobeagle.xmlimport.EventHandlerGpx;
@@ -44,13 +43,13 @@ public class DetailsReaderImport {
         params.put("fmt", "gpx");
     }
 
-    private final BufferedReaderFactory bufferedReaderFactory;
+    private final BufferedReaderFactoryImpl bufferedReaderFactory;
     private final GpxLoader gpxLoader;
     private final EventHelper eventHelper;
     private final EventHandler eventHandler;
 
     @Inject
-    DetailsReaderImport(BufferedReaderFactory bufferedReaderFactory, EventHelper eventHelper,
+    DetailsReaderImport(BufferedReaderFactoryImpl bufferedReaderFactory, EventHelper eventHelper,
             GpxLoader gpxLoader, XmlWriter xmlWriter, EventHandlerGpx eventHandlerGpx) {
         this.bufferedReaderFactory = bufferedReaderFactory;
         this.gpxLoader = gpxLoader;
