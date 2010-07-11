@@ -104,20 +104,16 @@ public class GeoMapActivityModule extends AbstractAndroidModule {
 
     @Provides
     @GeoMapActivityMenuActions
-    MenuActions providesGeoMapMenuActions(Activity activity, Resources resources,
-            MyLocationOverlay fixedMyLocationOverlay) {
+    MenuActions providesGeoMapMenuActions(Activity activity, Resources resources) {
         final MenuActions menuActions = new MenuActions(resources);
         final GeoMapView geoMapView = (GeoMapView)activity.findViewById(R.id.mapview);
-        menuActions.add(new MenuActionToggleSatellite(geoMapView ));
+        menuActions.add(new MenuActionToggleSatellite(geoMapView));
         menuActions.add(new MenuActionCacheList(activity));
+        final MyLocationOverlay fixedMyLocationOverlay = ((GeoMapActivity)activity)
+                .getMyLocationOverlay();
         menuActions.add(new MenuActionCenterLocation(geoMapView.getController(),
                 fixedMyLocationOverlay));
         return menuActions;
-    }
-
-    @Provides 
-    MyLocationOverlay providesMyLocationOverlay(Activity activity) {
-        return ((GeoMapActivity) activity).getMyLocationOverlay();
     }
 
     @Provides
