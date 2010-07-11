@@ -24,12 +24,11 @@ import com.google.android.maps.Projection;
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.Timing;
-import com.google.code.geobeagle.activity.map.GeoMapActivityModule.DefaultMapPinMarker;
 import com.google.inject.BindingAnnotation;
 import com.google.inject.Inject;
 
 import android.app.Activity;
-import android.graphics.drawable.Drawable;
+import android.content.res.Resources;
 import android.util.Log;
 
 import java.lang.annotation.Retention;
@@ -40,20 +39,18 @@ public class CachePinsOverlayFactory {
     private final CacheItemFactory mCacheItemFactory;
     private CachePinsOverlay mCachePinsOverlay;
     private final Activity mActivity;
-    private final Drawable mDefaultMarker;
-    private final GeoMapView mGeoMapView;
     private final QueryManager mQueryManager;
+    private final Resources mResources;
 
     @BindingAnnotation @Target({ FIELD, PARAMETER, METHOD }) @Retention(RUNTIME)
     public static @interface CachePinsQueryManager {}
 
     @Inject
-    public CachePinsOverlayFactory(Activity activity, @DefaultMapPinMarker Drawable defaultMarker,
-            CacheItemFactory cacheItemFactory, CachePinsOverlay cachePinsOverlay,
-            @CachePinsQueryManager QueryManager queryManager) {
-        mGeoMapView =  (GeoMapView)activity.findViewById(R.id.mapview);
+    public CachePinsOverlayFactory(Activity activity, CacheItemFactory cacheItemFactory,
+            CachePinsOverlay cachePinsOverlay, @CachePinsQueryManager QueryManager queryManager,
+            Resources resources) {
+        mResources = resources;
         mActivity = activity;
-        mDefaultMarker = defaultMarker;
         mCacheItemFactory = cacheItemFactory;
         mCachePinsOverlay = cachePinsOverlay;
         mQueryManager = queryManager;
@@ -63,7 +60,9 @@ public class CachePinsOverlayFactory {
         Log.d("GeoBeagle", "refresh Caches");
         final Timing timing = new Timing();
 
-        Projection projection = mGeoMapView.getProjection();
+        GeoMapView mGeoMapView = (GeoMapView)mActivity.findViewById(R.id.mapview);
+
+        Projection projection = mGeoMapView .getProjection();
         GeoPoint newTopLeft = projection.fromPixels(0, 0);
         GeoPoint newBottomRight = projection.fromPixels(mGeoMapView.getRight(), mGeoMapView
                 .getBottom());
@@ -76,7 +75,7 @@ public class CachePinsOverlayFactory {
         ArrayList<Geocache> cacheList = mQueryManager.load(newTopLeft, newBottomRight);
 
         timing.lap("Loaded caches");
-        mCachePinsOverlay = new CachePinsOverlay(mCacheItemFactory, mActivity, mDefaultMarker,
+        mCachePinsOverlay = new CachePinsOverlay(mResources, mCacheItemFactory, mActivity,
                 cacheList);
         return mCachePinsOverlay;
     }

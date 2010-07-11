@@ -17,11 +17,13 @@ package com.google.code.geobeagle.activity.map;
 import com.google.android.maps.ItemizedOverlay;
 import com.google.android.maps.MapView;
 import com.google.code.geobeagle.Geocache;
+import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.cachelist.GeocacheListController;
 import com.google.code.geobeagle.activity.main.GeoBeagle;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 
@@ -33,12 +35,11 @@ public class CachePinsOverlay extends ItemizedOverlay<CacheItem> {
     private final Context mContext;
     private final ArrayList<Geocache> mCacheList;
 
-    public CachePinsOverlay(CacheItemFactory cacheItemFactory, Context context,
-            Drawable defaultMarker, ArrayList<Geocache> list) {
-        super(boundCenterBottom(defaultMarker));
+    public CachePinsOverlay(Resources resources, CacheItemFactory cacheItemFactory, Context context, ArrayList<Geocache> cacheList) {
+        super(boundCenterBottom(resources.getDrawable(R.drawable.map_pin2_others)));
         mContext = context;
         mCacheItemFactory = cacheItemFactory;
-        mCacheList = list;
+        mCacheList = cacheList;
         populate();
     }
 
