@@ -15,24 +15,12 @@
 package com.google.code.geobeagle;
 
 
-import static java.lang.annotation.ElementType.FIELD;
-import static java.lang.annotation.ElementType.METHOD;
-import static java.lang.annotation.ElementType.PARAMETER;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-
-import com.google.inject.BindingAnnotation;
 import com.google.inject.Inject;
 
 import android.hardware.SensorListener;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
-
 @SuppressWarnings("deprecation")
 public class CompassListener implements SensorListener {
-
-    @BindingAnnotation @Target({ FIELD, PARAMETER, METHOD }) @Retention(RUNTIME)
-    public @interface Azimuth {}
 
     private final Refresher mRefresher;
     private final LocationControlBuffered mLocationControlBuffered;
@@ -44,10 +32,10 @@ public class CompassListener implements SensorListener {
 
     @Inject
     public CompassListener(Refresher refresher,
-            LocationControlBuffered locationControlBuffered, @Azimuth float lastAzimuth) {
+            LocationControlBuffered locationControlBuffered) {
         mRefresher = refresher;
         mLocationControlBuffered = locationControlBuffered;
-        mLastAzimuth = lastAzimuth;
+        mLastAzimuth = -1440f;
     }
 
     // public void onAccuracyChanged(Sensor sensor, int accuracy) {
