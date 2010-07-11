@@ -27,60 +27,37 @@ import roboguice.inject.ContextScoped;
 
 import android.app.Activity;
 import android.content.Context;
-import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 public class GpsStatusWidgetModule extends AbstractAndroidModule {
-    static class GpsStatusWidgetViewHolder {
-        private final View view;
-
-        public GpsStatusWidgetViewHolder(View view) {
-            this.view = view;
-        }
-        
-        View get() {
-            return view;
-        }
-    }
-    
     @Provides
     @ContextScoped
-    Meter providesMeter(GpsStatusWidgetViewHolder gpsStatusWidget, MeterFormatter meterFormatter) {
-        TextView locationViewer = (TextView)gpsStatusWidget.get().findViewById(R.id.location_viewer);
+    Meter providesMeter(InflatedGpsStatusWidget gpsStatusWidget, MeterFormatter meterFormatter) {
+        TextView locationViewer = (TextView)gpsStatusWidget.findViewById(R.id.location_viewer);
         MeterBars meterBars = new MeterBars(locationViewer, meterFormatter);
-        return new Meter(meterBars, ((TextView)gpsStatusWidget.get().findViewById(R.id.accuracy)));
+        return new Meter(meterBars, ((TextView)gpsStatusWidget.findViewById(R.id.accuracy)));
     }
 
     @Provides
     @ContextScoped
     TextLagUpdater providesTextLagUpdater(LastLocationUnknown lastKnownLocation, Time time,
-            GpsStatusWidgetViewHolder gpsStatusWidget) {
+            InflatedGpsStatusWidget gpsStatusWidget) {
         return new TextLagUpdater(lastKnownLocation,
-                (TextView)gpsStatusWidget.get().findViewById(R.id.lag), time);
+                (TextView)gpsStatusWidget.findViewById(R.id.lag), time);
     }
 
     @Provides
     GpsStatusWidgetDelegate providesGpsStatusWidgetDelegate(
             CombinedLocationManager combinedLocationManager,
             Provider<DistanceFormatter> distanceFormatterProvider, Meter meter, Context context,
-            TextLagUpdater textLagUpdater, GpsStatusWidgetViewHolder gpsStatusWidget, Time time) {
-        TextView locationViewer = (TextView)gpsStatusWidget.get().findViewById(R.id.location_viewer);
-        MeterFader meterFader = new MeterFader(gpsStatusWidget.get(), locationViewer, time);
+            TextLagUpdater textLagUpdater, InflatedGpsStatusWidget gpsStatusWidget, Time time) {
+        TextView locationViewer = (TextView)gpsStatusWidget.findViewById(R.id.location_viewer);
+        MeterFader meterFader = new MeterFader(gpsStatusWidget, locationViewer, time);
         return new GpsStatusWidgetDelegate(combinedLocationManager, distanceFormatterProvider,
-                meter, meterFader, (TextView)gpsStatusWidget.get().findViewById(R.id.provider), context,
-                (TextView)gpsStatusWidget.get().findViewById(R.id.status), textLagUpdater);
-    }
-
-    @Provides
-    public GpsStatusWidgetViewHolder providesGpsStatusWidgetView(Activity activity,
-            Provider<InflatedGpsStatusWidget> inflatedGpsStatusWidgetProvider) {
-        View inflatedGpsStatusWidget = activity.findViewById(R.id.gps_widget_view);
-        if (inflatedGpsStatusWidget == null) {
-            return new GpsStatusWidgetViewHolder(inflatedGpsStatusWidgetProvider.get());
-        }
-        return new GpsStatusWidgetViewHolder(inflatedGpsStatusWidget);
+                meter, meterFader, (TextView)gpsStatusWidget.findViewById(R.id.provider), context,
+                (TextView)gpsStatusWidget.findViewById(R.id.status), textLagUpdater);
     }
 
     @Override
@@ -90,13 +67,14 @@ public class GpsStatusWidgetModule extends AbstractAndroidModule {
     @Provides
     @ContextScoped
     InflatedGpsStatusWidget providesInflatedGpsStatusWidget(Activity activity, Context context) {
-        InflatedGpsStatusWidget inflatedGpsStatusWidget = (InflatedGpsStatusWidget)activity.findViewById(R.id.gps_widget_view);
+        InflatedGpsStatusWidget inflatedGpsStatusWidget = (InflatedGpsStatusWidget)activity
+                .findViewById(R.id.gps_widget_view);
         if (inflatedGpsStatusWidget != null)
             return inflatedGpsStatusWidget;
 
         inflatedGpsStatusWidget = new InflatedGpsStatusWidget(context);
         final LinearLayout gpsStatusWidget = new LinearLayout(context);
-        gpsStatusWidget .addView(inflatedGpsStatusWidget, ViewGroup.LayoutParams.FILL_PARENT,
+        gpsStatusWidget.addView(inflatedGpsStatusWidget, ViewGroup.LayoutParams.FILL_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT);
         inflatedGpsStatusWidget.setTag(gpsStatusWidget);
         return inflatedGpsStatusWidget;
