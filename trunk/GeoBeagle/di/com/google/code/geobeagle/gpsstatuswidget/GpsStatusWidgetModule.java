@@ -14,13 +14,10 @@
 
 package com.google.code.geobeagle.gpsstatuswidget;
 
-import com.google.code.geobeagle.LocationControlBuffered;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.Time;
-import com.google.code.geobeagle.activity.cachelist.ActivityVisible;
 import com.google.code.geobeagle.formatting.DistanceFormatter;
 import com.google.code.geobeagle.gpsstatuswidget.TextLagUpdater.LastLocationUnknown;
-import com.google.code.geobeagle.location.CombinedLocationListener;
 import com.google.code.geobeagle.location.CombinedLocationManager;
 import com.google.inject.Provider;
 import com.google.inject.Provides;
@@ -92,20 +89,16 @@ public class GpsStatusWidgetModule extends AbstractAndroidModule {
 
     @Provides
     @ContextScoped
-    LinearLayout providesGpsStatusWidget(Context context) {
-        return new LinearLayout(context);
-    }
-
-    @Provides
-    @ContextScoped
-    InflatedGpsStatusWidget providesInflatedGpsStatusWidget(Activity activity, Context context, LinearLayout gpsStatusWidget) {
-        
+    InflatedGpsStatusWidget providesInflatedGpsStatusWidget(Activity activity, Context context) {
         InflatedGpsStatusWidget inflatedGpsStatusWidget = (InflatedGpsStatusWidget)activity.findViewById(R.id.gps_widget_view);
         if (inflatedGpsStatusWidget != null)
             return inflatedGpsStatusWidget;
+
         inflatedGpsStatusWidget = new InflatedGpsStatusWidget(context);
-        gpsStatusWidget.addView(inflatedGpsStatusWidget, ViewGroup.LayoutParams.FILL_PARENT,
+        final LinearLayout gpsStatusWidget = new LinearLayout(context);
+        gpsStatusWidget .addView(inflatedGpsStatusWidget, ViewGroup.LayoutParams.FILL_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT);
+        inflatedGpsStatusWidget.setTag(gpsStatusWidget);
         return inflatedGpsStatusWidget;
     }
 }
