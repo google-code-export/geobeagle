@@ -14,23 +14,24 @@
 
 package com.google.code.geobeagle.activity.main.fieldnotes;
 
-import com.google.code.geobeagle.Geocache;
+import com.google.code.geobeagle.activity.main.GeoBeagle;
 import com.google.code.geobeagle.activity.main.fieldnotes.FieldnoteLogger.OnClickOk;
 import com.google.inject.Inject;
 
+import android.app.Activity;
 import android.widget.EditText;
 
 public class OnClickOkFactory {
     private final CacheLogger cacheLogger;
-    private final Geocache geocache;
+    private final GeoBeagle geoBeagle;
 
     @Inject
-    public OnClickOkFactory(Geocache geocache, CacheLogger cacheLogger) {
-        this.geocache = geocache;
+    public OnClickOkFactory(Activity activity, CacheLogger cacheLogger) {
+        this.geoBeagle = (GeoBeagle)activity;
         this.cacheLogger = cacheLogger;
     }
-    
+
     public OnClickOk create(EditText editText, boolean dnf) {
-        return new OnClickOk(geocache.getId(), editText, cacheLogger, dnf);
+        return new OnClickOk(geoBeagle.getGeocache().getId(), editText, cacheLogger, dnf);
     }
 }

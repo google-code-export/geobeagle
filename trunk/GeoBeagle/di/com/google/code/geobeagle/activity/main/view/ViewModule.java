@@ -14,7 +14,6 @@
 
 package com.google.code.geobeagle.activity.main.view;
 
-import com.google.code.geobeagle.activity.main.GeoBeagle;
 import com.google.code.geobeagle.activity.main.view.WebPageAndDetailsButtonEnabler.CheckButton;
 import com.google.code.geobeagle.activity.main.view.WebPageAndDetailsButtonEnabler.CheckButtons;
 import com.google.code.geobeagle.activity.main.view.WebPageAndDetailsButtonEnabler.CheckDetailsButton;
@@ -23,12 +22,13 @@ import com.google.inject.Provides;
 
 import roboguice.config.AbstractAndroidModule;
 
+import android.app.Activity;
 import android.view.View;
 
 public class ViewModule extends AbstractAndroidModule {
     @Provides
     public WebPageAndDetailsButtonEnabler providesWebPageAndDetailsButtonEnabler(
-            GeoBeagle geoBeagle, View webPageButton, View detailsButton) {
+            Activity geoBeagle, View webPageButton, View detailsButton) {
         final CheckWebPageButton checkWebPageButton = new CheckWebPageButton(webPageButton);
         final CheckDetailsButton checkDetailsButton = new CheckDetailsButton(detailsButton);
         final CheckButtons checkButtons = new CheckButtons(new CheckButton[] {

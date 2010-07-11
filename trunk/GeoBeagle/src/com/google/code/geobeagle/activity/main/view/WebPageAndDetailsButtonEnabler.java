@@ -20,6 +20,7 @@ import com.google.code.geobeagle.GeocacheFactory.Provider;
 import com.google.code.geobeagle.GeocacheFactory.Source;
 import com.google.code.geobeagle.activity.main.GeoBeagle;
 
+import android.app.Activity;
 import android.view.View;
 
 public class WebPageAndDetailsButtonEnabler {
@@ -71,8 +72,8 @@ public class WebPageAndDetailsButtonEnabler {
     private final CheckButtons mCheckButtons;
     private final GeoBeagle mGeoBeagle;
 
-    public WebPageAndDetailsButtonEnabler(GeoBeagle geoBeagle, CheckButtons checkButtons) {
-        mGeoBeagle = geoBeagle;
+    public WebPageAndDetailsButtonEnabler(Activity geoBeagle, CheckButtons checkButtons) {
+        mGeoBeagle = (GeoBeagle)geoBeagle;
         mCheckButtons = checkButtons;
     }
 

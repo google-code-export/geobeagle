@@ -51,11 +51,6 @@ public class GeoBeagleModule extends AbstractAndroidModule {
     }
 
     @Provides
-    GeoBeagle providesGeoBeagle(Activity activity) {
-        return (GeoBeagle)activity;
-    }
-
-    @Provides
     RadarView providesRadarView(Activity activity) {
         RadarView radarView = (RadarView)activity.findViewById(R.id.radarview);
         radarView.setUseImperial(false);

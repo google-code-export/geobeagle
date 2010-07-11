@@ -20,6 +20,7 @@ import com.google.code.geobeagle.activity.main.GeoBeagle;
 import com.google.code.geobeagle.cachedetails.CacheDetailsLoader;
 import com.google.inject.Inject;
 
+import android.app.Activity;
 import android.app.AlertDialog.Builder;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,12 +34,12 @@ public class OnClickListenerCacheDetails implements View.OnClickListener {
     private final GeoBeagle mGeoBeagle;
 
     @Inject
-    public OnClickListenerCacheDetails(GeoBeagle geoBeagle, Builder alertDialogBuilder,
+    public OnClickListenerCacheDetails(Activity geoBeagle, Builder alertDialogBuilder,
             LayoutInflater env, CacheDetailsLoader cacheDetailsLoader) {
         mAlertDialogBuilder = alertDialogBuilder;
         mEnv = env;
         mCacheDetailsLoader = cacheDetailsLoader;
-        mGeoBeagle = geoBeagle;
+        mGeoBeagle = (GeoBeagle)geoBeagle;
     }
 
     public void onClick(View v) {

@@ -21,11 +21,14 @@ import com.google.code.geobeagle.actions.MenuActionSearchOnline;
 import com.google.code.geobeagle.actions.MenuActionSettings;
 import com.google.code.geobeagle.actions.MenuActions;
 import com.google.code.geobeagle.activity.main.menuactions.MenuActionGoogleMaps;
+import com.google.inject.Inject;
 
+import android.app.Activity;
 import android.content.res.Resources;
 
 class GeoBeagleActivityMenuActions extends MenuActions {
-    public GeoBeagleActivityMenuActions(Resources resources, GeoBeagle geoBeagle,
+    @Inject
+    public GeoBeagleActivityMenuActions(Resources resources, Activity geoBeagle,
             MenuActionGoogleMaps menuActionGoogleMaps) {
         super(resources);
         final MenuAction[] menuActionArray = {

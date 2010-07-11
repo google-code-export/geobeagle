@@ -11,6 +11,7 @@ import com.google.code.geobeagle.activity.main.menuactions.MenuActionGoogleMaps;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -24,10 +25,10 @@ public class ChooseNavDialogProvider implements Provider<ChooseNavDialog> {
     private final Provider<Context> contextProvider;
 
     @Inject
-    public ChooseNavDialogProvider(ErrorDisplayer errorDisplayer, GeoBeagle geoBeagle,
+    public ChooseNavDialogProvider(ErrorDisplayer errorDisplayer, Activity geoBeagle,
             Provider<Resources> resourcesProvider, Provider<Context> contextProvider) {
         this.errorDisplayer = errorDisplayer;
-        this.geoBeagle = geoBeagle;
+        this.geoBeagle = (GeoBeagle)geoBeagle;
         this.resourcesProvider = resourcesProvider;
         this.contextProvider = contextProvider;
     }

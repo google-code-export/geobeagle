@@ -19,6 +19,7 @@ import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.main.GeoBeagle;
 import com.google.inject.Inject;
 
+import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.net.Uri;
@@ -29,9 +30,9 @@ public class IntentStarterViewUri implements IntentStarter {
     private final ErrorDisplayer mErrorDisplayer;
 
     @Inject
-    public IntentStarterViewUri(GeoBeagle geoBeagle, GeocacheToUri geocacheToUri,
+    public IntentStarterViewUri(Activity geoBeagle, GeocacheToUri geocacheToUri,
             ErrorDisplayer errorDisplayer) {
-        mGeoBeagle = geoBeagle;
+        mGeoBeagle = (GeoBeagle)geoBeagle;
         mGeocacheToUri = geocacheToUri;
         mErrorDisplayer = errorDisplayer;
     }
