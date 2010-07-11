@@ -20,7 +20,6 @@ import static java.lang.annotation.ElementType.PARAMETER;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 import com.google.code.geobeagle.ErrorDisplayer;
-import com.google.code.geobeagle.GeoBeaglePackageModule;
 import com.google.code.geobeagle.LocationControlBuffered;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.Refresher;
@@ -67,7 +66,6 @@ import roboguice.inject.SystemServiceProvider;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.DialogInterface.OnClickListener;
@@ -78,7 +76,6 @@ import android.graphics.drawable.Drawable;
 import android.hardware.SensorManager;
 import android.location.LocationManager;
 import android.os.Environment;
-import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -103,14 +100,6 @@ public class GeoBeagleModule extends AbstractAndroidModule {
     })
     @Retention(RUNTIME)
     public static @interface ButtonListenerMapPage {
-    }
-
-    @BindingAnnotation
-    @Target( {
-            FIELD, PARAMETER, METHOD
-    })
-    @Retention(RUNTIME)
-    public static @interface DialogOnClickListenerNOP {
     }
 
     @BindingAnnotation
@@ -197,15 +186,6 @@ public class GeoBeagleModule extends AbstractAndroidModule {
                 new LocationLifecycleManager(locationControlBuffered, locationManager),
                 new LocationLifecycleManager(radarView, locationManager)
         });
-    }
-
-    @Provides
-    @DialogOnClickListenerNOP
-    android.content.DialogInterface.OnClickListener providesDialogOnClickListenerDoNothing() {
-        return new android.content.DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-            }
-        };
     }
 
     @Provides

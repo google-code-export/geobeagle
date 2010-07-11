@@ -14,7 +14,7 @@
 
 package com.google.code.geobeagle;
 
-import com.google.code.geobeagle.activity.main.GeoBeagleModule.DialogOnClickListenerNOP;
+import com.google.code.geobeagle.GeoBeaglePackageModule.DialogOnClickListenerNOP;
 import com.google.inject.Inject;
 
 import android.app.Activity;
