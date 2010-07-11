@@ -15,6 +15,7 @@
 package com.google.code.geobeagle.bcaching;
 
 import com.google.code.geobeagle.bcaching.communication.BCachingException;
+import com.google.code.geobeagle.bcaching.communication.BCachingListImporterStateless;
 import com.google.code.geobeagle.bcaching.communication.BCachingListImportHelper.BufferedReaderFactory;
 import com.google.code.geobeagle.xmlimport.EventHandler;
 import com.google.code.geobeagle.xmlimport.EventHandlerComposite;
@@ -35,7 +36,7 @@ public class DetailsReaderImport {
     static {
         params = new Hashtable<String, String>();
         params.put("a", "detail");
-        BCachingModule.commonParams(params);
+        BCachingListImporterStateless.commonParams(params);
         params.put("desc", "html");
         params.put("tbs", "0");
         params.put("wpts", "1");

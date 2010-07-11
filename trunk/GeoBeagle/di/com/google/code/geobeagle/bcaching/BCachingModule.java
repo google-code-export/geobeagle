@@ -30,7 +30,6 @@ import roboguice.util.RoboThread;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 
-import java.util.Hashtable;
 
 public class BCachingModule extends AbstractAndroidModule {
 
@@ -54,11 +53,5 @@ public class BCachingModule extends AbstractAndroidModule {
         bind(ImportBCachingWorker.class).in(ContextScoped.class);
         bind(BCachingProgressDialog.class).in(ContextScoped.class);
         requestStaticInjection(RoboThread.class);
-    }
-
-    public static void commonParams(Hashtable<String, String> params) {
-        params.put("lastuploaddays", "7");
-        params.put("app", "GeoBeagle");
-        params.put("timeAsLong", "1");
     }
 }
