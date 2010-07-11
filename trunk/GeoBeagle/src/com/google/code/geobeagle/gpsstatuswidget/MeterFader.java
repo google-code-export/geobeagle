@@ -14,7 +14,9 @@
 
 package com.google.code.geobeagle.gpsstatuswidget;
 
+import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.Time;
+import com.google.inject.Inject;
 
 import android.graphics.Color;
 import android.view.View;
@@ -26,9 +28,10 @@ class MeterFader {
     private final Time mTime;
     private final TextView mBarsAndAzimuth;
 
-    MeterFader(View parent, TextView barsAndAzimuth, Time time) {
+    @Inject
+    MeterFader(InflatedGpsStatusWidget parent, Time time) {
         mLastUpdateTime = -1;
-        mBarsAndAzimuth = barsAndAzimuth;
+        mBarsAndAzimuth = (TextView)parent.findViewById(R.id.location_viewer);
         mParent = parent;
         mTime = time;
     }

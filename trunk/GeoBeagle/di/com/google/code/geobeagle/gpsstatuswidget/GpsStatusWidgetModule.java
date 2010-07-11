@@ -16,10 +16,7 @@ package com.google.code.geobeagle.gpsstatuswidget;
 
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.Time;
-import com.google.code.geobeagle.formatting.DistanceFormatter;
 import com.google.code.geobeagle.gpsstatuswidget.TextLagUpdater.LastLocationUnknown;
-import com.google.code.geobeagle.location.CombinedLocationManager;
-import com.google.inject.Provider;
 import com.google.inject.Provides;
 
 import roboguice.config.AbstractAndroidModule;
@@ -46,18 +43,6 @@ public class GpsStatusWidgetModule extends AbstractAndroidModule {
             InflatedGpsStatusWidget gpsStatusWidget) {
         return new TextLagUpdater(lastKnownLocation,
                 (TextView)gpsStatusWidget.findViewById(R.id.lag), time);
-    }
-
-    @Provides
-    GpsStatusWidgetDelegate providesGpsStatusWidgetDelegate(
-            CombinedLocationManager combinedLocationManager,
-            Provider<DistanceFormatter> distanceFormatterProvider, Meter meter, Context context,
-            TextLagUpdater textLagUpdater, InflatedGpsStatusWidget gpsStatusWidget, Time time) {
-        TextView locationViewer = (TextView)gpsStatusWidget.findViewById(R.id.location_viewer);
-        MeterFader meterFader = new MeterFader(gpsStatusWidget, locationViewer, time);
-        return new GpsStatusWidgetDelegate(combinedLocationManager, distanceFormatterProvider,
-                meter, meterFader, (TextView)gpsStatusWidget.findViewById(R.id.provider), context,
-                (TextView)gpsStatusWidget.findViewById(R.id.status), textLagUpdater);
     }
 
     @Override

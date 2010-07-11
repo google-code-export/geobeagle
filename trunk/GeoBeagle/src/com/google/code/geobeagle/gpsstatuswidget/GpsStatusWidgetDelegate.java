@@ -17,6 +17,7 @@ package com.google.code.geobeagle.gpsstatuswidget;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.formatting.DistanceFormatter;
 import com.google.code.geobeagle.location.CombinedLocationManager;
+import com.google.inject.Inject;
 import com.google.inject.Provider;
 
 import android.content.Context;
@@ -36,17 +37,18 @@ public class GpsStatusWidgetDelegate implements LocationListener {
     private final TextView mStatus;
     private final TextLagUpdater mTextLagUpdater;
 
+    @Inject
     public GpsStatusWidgetDelegate(CombinedLocationManager combinedLocationManager,
             Provider<DistanceFormatter> distanceFormatterProvider, Meter meter,
-            MeterFader meterFader, TextView provider, Context context, TextView status,
-            TextLagUpdater textLagUpdater) {
+            MeterFader meterFader, Context context, TextLagUpdater textLagUpdater,
+            InflatedGpsStatusWidget inflatedGpsStatusWidget) {
         mCombinedLocationManager = combinedLocationManager;
         mDistanceFormatterProvider = distanceFormatterProvider;
         mMeterFader = meterFader;
         mMeterWrapper = meter;
-        mProvider = provider;
+        mProvider = (TextView)inflatedGpsStatusWidget.findViewById(R.id.provider);
         mContext = context;
-        mStatus = status;
+        mStatus = (TextView)inflatedGpsStatusWidget.findViewById(R.id.status);
         mTextLagUpdater = textLagUpdater;
     }
 
