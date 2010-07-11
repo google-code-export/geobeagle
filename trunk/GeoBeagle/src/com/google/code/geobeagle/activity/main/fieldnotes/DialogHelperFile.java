@@ -25,12 +25,10 @@ import android.widget.TextView;
 
 public class DialogHelperFile implements DialogHelper {
     private final Context mContext;
-    private final String mFieldNotesFilename;
 
     @Inject
-    public DialogHelperFile(Context context, @FieldNotesFilename String fieldNotesFilename) {
+    public DialogHelperFile(Context context) {
         mContext = context;
-        mFieldNotesFilename = fieldNotesFilename;
     }
 
     @Override
@@ -40,7 +38,7 @@ public class DialogHelperFile implements DialogHelper {
     @Override
     public void configureDialogText(Dialog dialog, TextView fieldnoteCaveat) {
         fieldnoteCaveat.setText(String.format(mContext.getString(R.string.field_note_file_caveat),
-                mFieldNotesFilename));
+                FieldnotesModule.getFieldNotesFilename()));
         dialog.setTitle(R.string.log_cache_to_file);
     }
 

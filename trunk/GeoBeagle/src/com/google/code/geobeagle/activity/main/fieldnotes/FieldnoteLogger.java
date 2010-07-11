@@ -16,7 +16,6 @@ package com.google.code.geobeagle.activity.main.fieldnotes;
 
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.GeoBeaglePackageModule.DefaultSharedPreferences;
-import com.google.code.geobeagle.Geocache.GeocacheId;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 
@@ -35,19 +34,14 @@ public class FieldnoteLogger {
         }
     }
 
-    public interface OnClickOkFactory {
-        public OnClickOk create(EditText editText, boolean dnf);
-    }
-
     public static class OnClickOk implements OnClickListener {
         private final CacheLogger mCacheLogger;
         private final boolean mDnf;
         private final EditText mEditText;
         private final CharSequence mGeocacheId;
 
-        @Inject
-        public OnClickOk(@GeocacheId CharSequence geocacheId, @Assisted EditText editText,
-                CacheLogger cacheLogger, @Assisted boolean dnf) {
+        public OnClickOk(CharSequence geocacheId, EditText editText, CacheLogger cacheLogger,
+                boolean dnf) {
             mGeocacheId = geocacheId;
             mEditText = editText;
             mCacheLogger = cacheLogger;
@@ -60,9 +54,6 @@ public class FieldnoteLogger {
         }
     }
 
-    public static interface FieldnoteLoggerFactory {
-        public FieldnoteLogger create(DialogHelperSms dialogHelperSms);
-    }
 
     private final DialogHelperCommon mDialogHelperCommon;
     private final DialogHelperFile mDialogHelperFile;

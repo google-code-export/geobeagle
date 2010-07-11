@@ -73,9 +73,15 @@ public class GeoMapActivityModule extends AbstractAndroidModule {
 
     @Override
     protected void configure() {
-        bind(GeoPoint.class).toInstance(new GeoPoint(0, 0));
+//        bind(GeoPoint.class).toInstance(new GeoPoint(0, 0));
     }
 
+    @Provides
+    GeoPoint geoPointProvider()
+    {
+        return new GeoPoint(0, 0);
+    }
+    
     @Provides
     @DifficultyAndTerrainPainterAnnotation
     CacheItemFactory providesCacheItemDifficultyAndTerrainFactory(

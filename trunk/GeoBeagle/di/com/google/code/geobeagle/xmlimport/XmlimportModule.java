@@ -71,10 +71,14 @@ public class XmlimportModule extends AbstractAndroidModule {
         return new EventHelper(xmlPathBuilder, eventHandlerComposite, xmlPullParser);
     }
     
+    public static String providesPicturesDirectoryStatic() {
+        return Environment.getExternalStorageDirectory().getAbsolutePath();
+    }
+    
     @Provides
     @ExternalStorageDirectory
     String providesPicturesDirectory() {
-        return Environment.getExternalStorageDirectory().getAbsolutePath();
+        return providesPicturesDirectoryStatic();
     }
 
     @Provides

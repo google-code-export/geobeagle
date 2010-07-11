@@ -40,7 +40,7 @@ public class GeoBeagleApplication extends GuiceApplication {
         timing.start();
 //        Debug.startMethodTracing("dmtrace", 32 * 1024 * 1024);
         modules.add(new SearchOnlineModule()); // +0.3 seconds (8.35)
-        modules.add(new FieldnotesModule());   // +2.1 seconds (13.1)
+        modules.add(new FieldnotesModule());   // +2.1 seconds (13.1 -- 11.5, 10.5, 10.7, 10.7)
         modules.add(new GeoMapActivityModule()); // +1.3 seconds (9.7)
         modules.add(new GeoBeagleModule());      // +1 second (11.0)
         modules.add(new GeoBeaglePackageModule());

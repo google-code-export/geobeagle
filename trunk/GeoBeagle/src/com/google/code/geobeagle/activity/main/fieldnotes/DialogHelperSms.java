@@ -15,8 +15,6 @@
 package com.google.code.geobeagle.activity.main.fieldnotes;
 
 import com.google.code.geobeagle.R;
-import com.google.inject.Inject;
-import com.google.inject.assistedinject.Assisted;
 
 import android.app.Dialog;
 import android.text.InputFilter;
@@ -29,13 +27,8 @@ public class DialogHelperSms implements DialogHelper {
     private final int mGeocacheIdLength;
     private final boolean mFDnf;
 
-    public interface DialogHelperSmsFactory {
-        public DialogHelperSms create(int geocacheIdLength, boolean fDnf);
-    }
-
-    @Inject
-    public DialogHelperSms(FieldnoteStringsFVsDnf fieldnoteStringsFVsDnf,
-            @Assisted int geocacheIdLength, @Assisted boolean fDnf) {
+    public DialogHelperSms(FieldnoteStringsFVsDnf fieldnoteStringsFVsDnf, int geocacheIdLength,
+            boolean fDnf) {
         mFieldnoteStringsFVsDnf = fieldnoteStringsFVsDnf;
         mGeocacheIdLength = geocacheIdLength;
         mFDnf = fDnf;
