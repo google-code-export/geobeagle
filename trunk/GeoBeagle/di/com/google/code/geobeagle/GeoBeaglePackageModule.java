@@ -24,7 +24,6 @@ import com.google.code.geobeagle.LocationControlBuffered.GpsEnabledLocation;
 import com.google.code.geobeagle.LocationControlBuffered.IGpsLocation;
 import com.google.code.geobeagle.activity.cachelist.presenter.DistanceSortStrategy;
 import com.google.code.geobeagle.activity.cachelist.presenter.NullSortStrategy;
-import com.google.code.geobeagle.activity.cachelist.presenter.GeoBeaglePackageAnnotations.GeoBeagle;
 import com.google.code.geobeagle.activity.searchonline.NullRefresher;
 import com.google.code.geobeagle.location.LocationControl;
 import com.google.inject.BindingAnnotation;
@@ -37,7 +36,6 @@ import roboguice.inject.SystemServiceProvider;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.hardware.SensorManager;
 import android.location.Location;
@@ -91,11 +89,5 @@ public class GeoBeaglePackageModule extends AbstractAndroidModule {
                     (float)lastKnownLocation.getLongitude());
         return new LocationControlBuffered(locationControl, distanceSortStrategy, nullSortStrategy,
                 gpsDisabledLocation, lastGpsLocation, lastKnownLocation);
-    }
-
-    @Provides
-    @GeoBeagle
-    public Intent geoBeagleIntent(Context context) {
-        return new Intent(context, com.google.code.geobeagle.activity.main.GeoBeagle.class);
     }
 }

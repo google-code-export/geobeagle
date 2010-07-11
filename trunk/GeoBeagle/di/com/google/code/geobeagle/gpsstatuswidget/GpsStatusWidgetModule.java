@@ -28,7 +28,6 @@ import com.google.code.geobeagle.gpsstatuswidget.TextLagUpdater.LastLocationUnkn
 import com.google.code.geobeagle.location.CombinedLocationListener;
 import com.google.code.geobeagle.location.CombinedLocationManager;
 import com.google.inject.BindingAnnotation;
-import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.Provides;
 
@@ -98,33 +97,6 @@ public class GpsStatusWidgetModule extends AbstractAndroidModule {
 
     @Override
     protected void configure() {
-        bind(GpsStatusWidget.class).in(ContextScoped.class);
-    }
-
-    static class GpsStatusWidgetViewProvider {
-        private final Activity activity;
-        private LinearLayout gpsStatusWidget;
-        private final Provider<InflatedGpsStatusWidget> inflatedGpsStatusWidgetProvider;
-
-        @Inject
-        GpsStatusWidgetViewProvider(Activity activity, Provider<InflatedGpsStatusWidget> inflatedGpsStatusWidgetProvider) {
-            this.activity = activity;
-            this.inflatedGpsStatusWidgetProvider = inflatedGpsStatusWidgetProvider;
-        }
-        
-        View get() {
-            if (gpsStatusWidget != null)
-                return gpsStatusWidget;
-
-            gpsStatusWidget = (LinearLayout)activity.findViewById(R.id.gps_widget_view);
-            if (gpsStatusWidget == null) {
-                
-                InflatedGpsStatusWidget inflatedGpsStatusWidget = inflatedGpsStatusWidgetProvider.get();
-                gpsStatusWidget.addView(inflatedGpsStatusWidget,
-                        ViewGroup.LayoutParams.FILL_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-            }
-            return gpsStatusWidget;
-        }
     }
 
     @Provides
@@ -132,6 +104,7 @@ public class GpsStatusWidgetModule extends AbstractAndroidModule {
     LinearLayout providesGpsStatusWidget(Context context) {
         return new LinearLayout(context);
     }
+
     @Provides
     @ContextScoped
     InflatedGpsStatusWidget providesInflatedGpsStatusWidget(Activity activity, Context context, LinearLayout gpsStatusWidget) {
