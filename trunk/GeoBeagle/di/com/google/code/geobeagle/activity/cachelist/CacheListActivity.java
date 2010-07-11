@@ -17,9 +17,7 @@ package com.google.code.geobeagle.activity.cachelist;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidgetDelegate;
 import com.google.code.geobeagle.gpsstatuswidget.InflatedGpsStatusWidget;
-import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidgetModule.CacheList;
 import com.google.inject.Injector;
-import com.google.inject.Key;
 
 import roboguice.activity.GuiceListActivity;
 
@@ -63,10 +61,10 @@ public class CacheListActivity extends GuiceListActivity {
         super.onCreate(savedInstanceState);
         Log.d("GeoBeagle", "CacheListActivity onCreate");
         final Injector injector = this.getInjector();
-        final InflatedGpsStatusWidget inflatedGpsStatusWidget = injector.getInstance(Key.get(
-                InflatedGpsStatusWidget.class, CacheList.class));
-        final GpsStatusWidgetDelegate gpsStatusWidgetDelegate = injector.getInstance(Key.get(
-                GpsStatusWidgetDelegate.class, CacheList.class));
+        final InflatedGpsStatusWidget inflatedGpsStatusWidget = injector
+                .getInstance(InflatedGpsStatusWidget.class);
+        final GpsStatusWidgetDelegate gpsStatusWidgetDelegate = injector
+                .getInstance(GpsStatusWidgetDelegate.class);
         
         inflatedGpsStatusWidget.setDelegate(gpsStatusWidgetDelegate);
 
