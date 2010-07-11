@@ -16,7 +16,6 @@ package com.google.code.geobeagle.activity.cachelist;
 
 import com.google.code.geobeagle.Timing;
 import com.google.code.geobeagle.GeoBeaglePackageModule.DefaultSharedPreferences;
-import com.google.code.geobeagle.LocationControlBuffered.GpsDisabledLocation;
 import com.google.code.geobeagle.actions.ContextActions;
 import com.google.code.geobeagle.actions.MenuActionMap;
 import com.google.code.geobeagle.actions.MenuActionSearchOnline;
@@ -33,17 +32,10 @@ import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionSyncB
 import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionSyncGpx;
 import com.google.code.geobeagle.activity.cachelist.model.CacheListData;
 import com.google.code.geobeagle.activity.cachelist.presenter.AbsoluteBearingFormatter;
-import com.google.code.geobeagle.activity.cachelist.presenter.ActionAndTolerance;
-import com.google.code.geobeagle.activity.cachelist.presenter.AdapterCachesSorter;
 import com.google.code.geobeagle.activity.cachelist.presenter.BearingFormatter;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
-import com.google.code.geobeagle.activity.cachelist.presenter.DistanceUpdater;
 import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheListAdapter;
-import com.google.code.geobeagle.activity.cachelist.presenter.LocationAndAzimuthTolerance;
-import com.google.code.geobeagle.activity.cachelist.presenter.LocationTolerance;
 import com.google.code.geobeagle.activity.cachelist.presenter.RelativeBearingFormatter;
-import com.google.code.geobeagle.activity.cachelist.presenter.SqlCacheLoader;
-import com.google.code.geobeagle.activity.cachelist.presenter.ToleranceStrategy;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh.ActionManager;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh.UpdateFlag;
 import com.google.code.geobeagle.formatting.DistanceFormatter;
@@ -65,6 +57,7 @@ import android.content.res.Resources;
 public class CacheListModule extends AbstractAndroidModule {
     @Override
     protected void configure() {
+        bind(ActionManager.class).toProvider(ActionManagerProvider.class);
         bind(GeocacheListAdapter.class).in(ContextScoped.class);
         bind(MenuActionSyncBCaching.class).in(ContextScoped.class);
         bind(MenuActionSyncGpx.class).in(ContextScoped.class);
@@ -124,28 +117,6 @@ public class CacheListModule extends AbstractAndroidModule {
     }
 
     @Provides
-    ActionManager providesActionManager(GpsDisabledLocation gpsDisabledLocation,
-            AdapterCachesSorter adapterCachesSorter, DistanceUpdater distanceUpdater,
-            SqlCacheLoader sqlCacheLoader) {
-        final ToleranceStrategy sqlCacheLoaderTolerance = new LocationTolerance(500,
-                gpsDisabledLocation, 1000);
-        final ToleranceStrategy adapterCachesSorterTolerance = new LocationTolerance(6,
-                gpsDisabledLocation, 1000);
-        final LocationTolerance distanceUpdaterLocationTolerance = new LocationTolerance(1,
-                gpsDisabledLocation, 1000);
-        final ToleranceStrategy distanceUpdaterTolerance = new LocationAndAzimuthTolerance(
-                distanceUpdaterLocationTolerance, 720);
-
-        final ActionAndTolerance[] actionAndTolerances = new ActionAndTolerance[] {
-                new ActionAndTolerance(sqlCacheLoader, sqlCacheLoaderTolerance),
-                new ActionAndTolerance(adapterCachesSorter, adapterCachesSorterTolerance),
-                new ActionAndTolerance(distanceUpdater, distanceUpdaterTolerance)
-        };
-
-        return new ActionManager(actionAndTolerances);
-    }
-
-    @Provides
     Abortable providesAbortable() {
         return new NullAbortable();
     }
@@ -173,4 +144,6 @@ public class CacheListModule extends AbstractAndroidModule {
                 contextActionDelete, contextActionView, contextActionEdit
         });
     }
+
+
 }
