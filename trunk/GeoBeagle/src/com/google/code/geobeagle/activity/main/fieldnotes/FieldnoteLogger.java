@@ -15,7 +15,6 @@
 package com.google.code.geobeagle.activity.main.fieldnotes;
 
 import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.GeoBeaglePackageModule.DefaultSharedPreferences;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 
@@ -63,7 +62,7 @@ public class FieldnoteLogger {
     @Inject
     public FieldnoteLogger(DialogHelperCommon dialogHelperCommon,
             DialogHelperFile dialogHelperFile, @Assisted DialogHelperSms dialogHelperSms,
-            @DefaultSharedPreferences SharedPreferences sharedPreferences) {
+            SharedPreferences sharedPreferences) {
         mDialogHelperSms = dialogHelperSms;
         mDialogHelperFile = dialogHelperFile;
         mDialogHelperCommon = dialogHelperCommon;

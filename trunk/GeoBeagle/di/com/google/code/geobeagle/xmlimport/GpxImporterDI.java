@@ -15,7 +15,6 @@
 package com.google.code.geobeagle.xmlimport;
 
 import com.google.code.geobeagle.ErrorDisplayer;
-import com.google.code.geobeagle.GeoBeaglePackageModule.DefaultSharedPreferences;
 import com.google.code.geobeagle.activity.cachelist.Pausable;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh.UpdateFlag;
@@ -38,7 +37,6 @@ import com.google.code.geobeagle.xmlimport.gpx.GpxAndZipFiles.GpxFilenameFilter;
 import com.google.code.geobeagle.xmlimport.gpx.zip.ZipFileOpener.ZipInputFileTester;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
-import com.google.inject.Key;
 import com.google.inject.Provider;
 
 import roboguice.util.RoboThread;
@@ -75,8 +73,8 @@ public class GpxImporterDI {
                     xmlPullParserWrapper);
             final OldCacheFilesCleaner oldCacheFilesCleaner = new OldCacheFilesCleaner(injector
                     .getInstance(GeoBeagleEnvironment.class), messageHandler);
-            final SharedPreferences sharedPreferences = injector.getInstance(Key.get(
-                    SharedPreferences.class, DefaultSharedPreferences.class));
+            final SharedPreferences sharedPreferences = injector
+                    .getInstance(SharedPreferences.class);
             
             final ImportThreadHelper importThreadHelper = new ImportThreadHelper(gpxLoader,
                     messageHandler, eventHelperFactory, eventHandlers, oldCacheFilesCleaner,
@@ -178,7 +176,7 @@ public class GpxImporterDI {
         @Inject
         public MessageHandler(ProgressDialogWrapper progressDialogWrapper,
                 Provider<ImportBCachingWorker> importBCachingWorkerProvider,
-                @DefaultSharedPreferences SharedPreferences sharedPreferences) {
+                SharedPreferences sharedPreferences) {
             mProgressDialogWrapper = progressDialogWrapper;
             mImportBCachingWorkerProvider = importBCachingWorkerProvider;
             mSharedPreferences = sharedPreferences;

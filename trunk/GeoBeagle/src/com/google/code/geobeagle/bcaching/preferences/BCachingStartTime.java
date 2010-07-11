@@ -14,7 +14,6 @@
 
 package com.google.code.geobeagle.bcaching.preferences;
 
-import com.google.code.geobeagle.GeoBeaglePackageModule.DefaultSharedPreferences;
 import com.google.inject.Inject;
 
 import android.content.SharedPreferences;
@@ -28,7 +27,7 @@ public class BCachingStartTime {
     private final PreferencesWriter preferencesWriter;
 
     @Inject
-    BCachingStartTime(@DefaultSharedPreferences SharedPreferences sharedPreferences,
+    BCachingStartTime(SharedPreferences sharedPreferences,
             PreferencesWriter preferencesWriter, LastReadPosition lastReadPosition) {
         this.sharedPreferences = sharedPreferences;
         this.preferencesWriter = preferencesWriter;

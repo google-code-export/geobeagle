@@ -18,7 +18,6 @@ import com.google.code.geobeagle.CacheType;
 import com.google.code.geobeagle.CompassListener;
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.GeocacheFactory;
-import com.google.code.geobeagle.GeoBeaglePackageModule.DefaultSharedPreferences;
 import com.google.code.geobeagle.GeocacheFactory.Source;
 import com.google.code.geobeagle.actions.MenuActions;
 import com.google.code.geobeagle.activity.ActivitySaver;
@@ -91,7 +90,7 @@ public class GeoBeagleDelegate {
             GeocacheFromParcelFactory geocacheFromParcelFactory,
             Provider<DbFrontend> dbFrontendProvider, RadarView radarView,
             SensorManager sensorManager,
-            @DefaultSharedPreferences SharedPreferences sharedPreferences,
+            SharedPreferences sharedPreferences,
             WebPageAndDetailsButtonEnabler webPageButtonEnabler,
             Provider<CacheWriter> cacheWriterProvider, GeoBeagleEnvironment geoBeagleEnvironment) {
         mParent = parent;

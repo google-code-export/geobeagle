@@ -14,13 +14,7 @@
 
 package com.google.code.geobeagle;
 
-import static java.lang.annotation.ElementType.FIELD;
-import static java.lang.annotation.ElementType.METHOD;
-import static java.lang.annotation.ElementType.PARAMETER;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-
 import com.google.code.geobeagle.activity.searchonline.NullRefresher;
-import com.google.inject.BindingAnnotation;
 import com.google.inject.Provides;
 
 import roboguice.config.AbstractAndroidModule;
@@ -34,22 +28,9 @@ import android.content.SharedPreferences;
 import android.hardware.SensorManager;
 import android.preference.PreferenceManager;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
-
 // TODO rename to GeoBeagleModule
 public class GeoBeaglePackageModule extends AbstractAndroidModule {
-
-    @BindingAnnotation
-    @Target( {
-            FIELD, PARAMETER, METHOD
-    })
-    @Retention(RUNTIME)
-    public static @interface DefaultSharedPreferences {
-    }
-
     @Provides
-    @DefaultSharedPreferences
     public SharedPreferences providesDefaultSharedPreferences(Context context) {
         return PreferenceManager.getDefaultSharedPreferences(context);
     }

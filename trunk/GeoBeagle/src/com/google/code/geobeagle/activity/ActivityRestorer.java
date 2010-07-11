@@ -15,7 +15,6 @@
 package com.google.code.geobeagle.activity;
 
 import com.google.code.geobeagle.Geocache;
-import com.google.code.geobeagle.GeoBeaglePackageModule.DefaultSharedPreferences;
 import com.google.code.geobeagle.activity.cachelist.CacheListActivity;
 import com.google.code.geobeagle.activity.cachelist.GeocacheListController;
 import com.google.code.geobeagle.activity.main.GeoBeagle;
@@ -59,7 +58,7 @@ public class ActivityRestorer {
         private final SharedPreferences mSharedPreferences;
 
         public ViewCacheRestorer(GeocacheFromPreferencesFactory geocacheFromPreferencesFactory,
-                @DefaultSharedPreferences SharedPreferences sharedPreferences, Activity activity) {
+                SharedPreferences sharedPreferences, Activity activity) {
             mGeocacheFromPreferencesFactory = geocacheFromPreferencesFactory;
             mSharedPreferences = sharedPreferences;
             mActivity = activity;
@@ -88,7 +87,7 @@ public class ActivityRestorer {
     @Inject
     public ActivityRestorer(Activity activity,
             GeocacheFromPreferencesFactory geocacheFromPreferencesFactory,
-            @DefaultSharedPreferences SharedPreferences sharedPreferences) {
+            SharedPreferences sharedPreferences) {
         mSharedPreferences = sharedPreferences;
         final NullRestorer nullRestorer = new NullRestorer();
         mRestorers = new Restorer[] {

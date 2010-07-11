@@ -20,7 +20,6 @@ import static java.lang.annotation.ElementType.PARAMETER;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 import com.google.code.geobeagle.Geocache;
-import com.google.code.geobeagle.GeoBeaglePackageModule.DefaultSharedPreferences;
 import com.google.code.geobeagle.activity.main.fieldnotes.FieldnoteLogger.OnClickOk;
 import com.google.code.geobeagle.xmlimport.GpxImporterDI.Toaster;
 import com.google.inject.BindingAnnotation;
@@ -31,7 +30,6 @@ import roboguice.config.AbstractAndroidModule;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
@@ -84,7 +82,7 @@ public class FieldnotesModule extends AbstractAndroidModule {
         @Inject
         public FieldnoteLoggerFactory(DialogHelperCommon dialogHelperCommon,
                 DialogHelperFile dialogHelperFile,
-                @DefaultSharedPreferences SharedPreferences sharedPreferences) {
+                SharedPreferences sharedPreferences) {
             this.dialogHelperCommon = dialogHelperCommon;
             this.dialogHelperFile = dialogHelperFile;
             this.sharedPreferences = sharedPreferences;

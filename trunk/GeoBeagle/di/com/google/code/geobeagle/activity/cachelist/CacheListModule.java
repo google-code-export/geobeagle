@@ -15,7 +15,6 @@
 package com.google.code.geobeagle.activity.cachelist;
 
 import com.google.code.geobeagle.Timing;
-import com.google.code.geobeagle.GeoBeaglePackageModule.DefaultSharedPreferences;
 import com.google.code.geobeagle.actions.ContextActions;
 import com.google.code.geobeagle.actions.MenuActionMap;
 import com.google.code.geobeagle.actions.MenuActionSearchOnline;
@@ -79,7 +78,7 @@ public class CacheListModule extends AbstractAndroidModule {
         private final DistanceFormatterImperial distanceFormatterImperial;
 
         @Inject
-        DistanceFormatterProvider(@DefaultSharedPreferences SharedPreferences preferenceManager) {
+        DistanceFormatterProvider(SharedPreferences preferenceManager) {
             this.preferenceManager = preferenceManager;
             this.distanceFormatterMetric = new DistanceFormatterMetric();
             this.distanceFormatterImperial = new DistanceFormatterImperial();
@@ -98,7 +97,7 @@ public class CacheListModule extends AbstractAndroidModule {
         private final SharedPreferences preferenceManager;
 
         @Inject
-        BearingFormatterProvider(@DefaultSharedPreferences SharedPreferences preferenceManager) {
+        BearingFormatterProvider(SharedPreferences preferenceManager) {
             this.preferenceManager = preferenceManager;
             this.absoluteBearingFormatter = new AbsoluteBearingFormatter();
             this.relativeBearingFormatter = new RelativeBearingFormatter();
