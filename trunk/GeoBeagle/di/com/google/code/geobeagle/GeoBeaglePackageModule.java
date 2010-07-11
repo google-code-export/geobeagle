@@ -38,7 +38,6 @@ import roboguice.inject.SystemServiceProvider;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.hardware.SensorManager;
@@ -57,14 +56,6 @@ public class GeoBeaglePackageModule extends AbstractAndroidModule {
             FIELD, PARAMETER, METHOD
     })
     @Retention(RUNTIME)
-    public static @interface DialogOnClickListenerNOP {
-    }
-
-    @BindingAnnotation
-    @Target( {
-            FIELD, PARAMETER, METHOD
-    })
-    @Retention(RUNTIME)
     public static @interface DefaultSharedPreferences {
     }
 
@@ -77,15 +68,6 @@ public class GeoBeaglePackageModule extends AbstractAndroidModule {
     @Provides
     AlertDialog.Builder providesAlertDialogBuilder(Activity activity) {
         return new AlertDialog.Builder(activity);
-    }
-
-    @Provides
-    @DialogOnClickListenerNOP
-    android.content.DialogInterface.OnClickListener providesDialogOnClickListenerDoNothing() {
-        return new android.content.DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-            }
-        };
     }
 
     @Override
