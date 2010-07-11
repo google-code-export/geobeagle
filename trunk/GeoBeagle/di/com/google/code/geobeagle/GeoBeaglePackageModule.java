@@ -42,20 +42,18 @@ import roboguice.inject.SystemServiceProvider;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.hardware.SensorManager;
 import android.location.Location;
 import android.location.LocationManager;
-import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
-
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.SharedPreferences;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
@@ -70,14 +68,6 @@ public class GeoBeaglePackageModule extends AbstractAndroidModule {
     @Retention(RUNTIME)
     public static @interface DialogOnClickListenerNOP {
     }
-    
-    @BindingAnnotation
-    @Target( {
-            FIELD, PARAMETER, METHOD
-    })
-    @Retention(RUNTIME)
-    public static @interface DefaultSharedPreferences {
-    }
 
     @BindingAnnotation
     @Target( {
@@ -87,16 +77,18 @@ public class GeoBeaglePackageModule extends AbstractAndroidModule {
     public static @interface ExternalStorageDirectory {
     }
 
+    @BindingAnnotation
+    @Target( {
+            FIELD, PARAMETER, METHOD
+    })
+    @Retention(RUNTIME)
+    public static @interface DefaultSharedPreferences {
+    }
+
     @Provides
     @DefaultSharedPreferences
     public SharedPreferences providesDefaultSharedPreferences(Context context) {
         return PreferenceManager.getDefaultSharedPreferences(context);
-    }
-
-    @Provides
-    @ExternalStorageDirectory
-    String providesPicturesDirectory() {
-        return Environment.getExternalStorageDirectory().getAbsolutePath();
     }
 
     @Provides
