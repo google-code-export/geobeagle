@@ -38,12 +38,12 @@ public class CachePinsOverlayFactory {
 
     @Inject
     public CachePinsOverlayFactory(Activity activity, CacheItemFactory cacheItemFactory,
-            CachePinsOverlay cachePinsOverlay, QueryManager queryManager,
-            Resources resources, LoaderImpl loaderImpl) {
+            QueryManager queryManager, Resources resources, LoaderImpl loaderImpl) {
         mResources = resources;
         mActivity = activity;
         mCacheItemFactory = cacheItemFactory;
-        mCachePinsOverlay = cachePinsOverlay;
+        mCachePinsOverlay = new CachePinsOverlay(resources, cacheItemFactory, activity,
+                new ArrayList<Geocache>());
         mQueryManager = queryManager;
         mLoaderImpl = loaderImpl;
     }
