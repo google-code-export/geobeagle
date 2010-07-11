@@ -33,13 +33,8 @@ import android.view.MenuItem;
 
 public class SearchOnlineActivity extends GuiceActivity {
 
-    private InflatedGpsStatusWidget mInflatedGpsStatusWidget;
     private SearchOnlineActivityDelegate mSearchOnlineActivityDelegate;
     private UpdateGpsWidgetRunnable mUpdateGpsWidgetRunnable;
-
-    InflatedGpsStatusWidget getGpsStatusWidget() {
-        return mInflatedGpsStatusWidget;
-    }
 
     SearchOnlineActivityDelegate getMSearchOnlineActivityDelegate() {
         return mSearchOnlineActivityDelegate;
@@ -53,7 +48,7 @@ public class SearchOnlineActivity extends GuiceActivity {
         Log.d("GeoBeagle", "SearchOnlineActivity onCreate");
         
         Injector injector = this.getInjector();
-        mInflatedGpsStatusWidget = injector.getInstance(InflatedGpsStatusWidget.class);
+        final InflatedGpsStatusWidget mInflatedGpsStatusWidget = injector.getInstance(InflatedGpsStatusWidget.class);
         GpsStatusWidgetDelegate gpsStatusWidgetDelegate = injector
                 .getInstance(GpsStatusWidgetDelegate.class);
         mUpdateGpsWidgetRunnable = injector.getInstance(UpdateGpsWidgetRunnable.class);
