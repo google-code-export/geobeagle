@@ -54,7 +54,6 @@ import com.google.code.geobeagle.location.LocationLifecycleManager;
 import com.google.inject.BindingAnnotation;
 import com.google.inject.Provider;
 import com.google.inject.Provides;
-import com.google.inject.name.Named;
 
 import roboguice.config.AbstractAndroidModule;
 
@@ -231,37 +230,38 @@ public class GeoBeagleModule extends AbstractAndroidModule {
             Resources resources, RatingsArray ratingsArray) {
         final TextView textViewName = (TextView)activity.findViewById(R.id.gcname);
         final ImageView cacheTypeImageView = (ImageView)activity.findViewById(R.id.gcicon);
-        final ImageView imageViewDifficulty = (ImageView)activity.findViewById(R.id.gc_difficulty);
         final NameViewer gcName = new NameViewer(textViewName, nameFormatter);
 
-        final Drawable[] ribbonDrawables = {
-                resources.getDrawable(R.drawable.ribbon_unselected_dark),
-                resources.getDrawable(R.drawable.ribbon_half_bright),
-                resources.getDrawable(R.drawable.ribbon_selected_bright)
-        };
-        final AttributeViewer ribbonImages = getImagesOnDifficulty(ribbonDrawables, imageViewDifficulty,
-                ratingsArray);
-
-        final AttributeViewer gcDifficulty = new LabelledAttributeViewer((TextView)activity
-                .findViewById(R.id.gc_text_difficulty), ribbonImages);
-
+        final AttributeViewer gcDifficulty = getLabelledAttributeViewer(activity, resources,
+                ratingsArray, new int[] {
+                        R.drawable.ribbon_unselected_dark, R.drawable.ribbon_half_bright,
+                        R.drawable.ribbon_selected_bright
+                }, R.id.gc_difficulty, R.id.gc_text_difficulty);
         
-        
-        final ImageView imageViewTerrain = (ImageView)activity.findViewById(R.id.gc_terrain);
-
-        final Drawable[] pawDrawables = {
-                resources.getDrawable(R.drawable.paw_unselected_dark),
-                resources.getDrawable(R.drawable.paw_half_light),
-                resources.getDrawable(R.drawable.paw_selected_light)
-        };
-        final AttributeViewer pawImages = getImagesOnDifficulty(pawDrawables, imageViewTerrain,
-                ratingsArray);
-        final AttributeViewer gcTerrain = new LabelledAttributeViewer((TextView)activity
-                .findViewById(R.id.gc_text_terrain), pawImages);
+        final AttributeViewer gcTerrain = getLabelledAttributeViewer(activity, resources,
+                ratingsArray, new int[] {
+                        R.drawable.paw_unselected_dark, R.drawable.paw_half_light,
+                        R.drawable.paw_selected_light
+                }, R.id.gc_terrain, R.id.gc_text_terrain);
 
         return new GeocacheViewer(radarView, activity, gcName, cacheTypeImageView, gcDifficulty,
                 gcTerrain, gcContainer, iconOverlayFactory, mapViewBitmapCopier, iconRenderer,
                 difficultyAndTerrainPainter);
+    }
+
+    private AttributeViewer getLabelledAttributeViewer(Activity activity, Resources resources,
+            RatingsArray ratingsArray, int[] resourceIds, int difficultyId, int labelId) {
+        final ImageView imageViewTerrain = (ImageView)activity.findViewById(difficultyId);
+
+        final Drawable[] pawDrawables = {
+                resources.getDrawable(resourceIds[0]), resources.getDrawable(resourceIds[1]),
+                resources.getDrawable(resourceIds[2]),
+        };
+        final AttributeViewer pawImages = getImagesOnDifficulty(pawDrawables, imageViewTerrain,
+                ratingsArray);
+        final AttributeViewer gcTerrain = new LabelledAttributeViewer((TextView)activity
+                .findViewById(labelId), pawImages);
+        return gcTerrain;
     }
     
     @ChooseNavDialog
