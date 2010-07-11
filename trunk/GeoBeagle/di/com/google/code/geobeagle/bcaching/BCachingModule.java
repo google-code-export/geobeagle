@@ -30,8 +30,6 @@ import roboguice.config.AbstractAndroidModule;
 import roboguice.inject.ContextScoped;
 import roboguice.util.RoboThread;
 
-import android.app.ProgressDialog;
-import android.content.Context;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 
@@ -65,17 +63,6 @@ public class BCachingModule extends AbstractAndroidModule {
         requestStaticInjection(RoboThread.class);
     }
 
-    public static class BCachingProgressDialog extends ProgressDialog {
-        @Inject
-        public BCachingProgressDialog(Context context) {
-            super(context);
-            setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-            setTitle("Sync from BCaching.com");
-            setMessage(BCACHING_INITIAL_MESSAGE);
-            setCancelable(false);
-        }
-    }
-    
     static class BufferedReaderFactoryImpl implements BufferedReaderFactory {
         private final BCachingCommunication bcachingCommunication;
 

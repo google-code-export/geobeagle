@@ -17,7 +17,7 @@ package com.google.code.geobeagle.bcaching.progress;
 import com.google.code.geobeagle.activity.cachelist.ActivityVisible;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
 import com.google.code.geobeagle.bcaching.BCachingModule;
-import com.google.code.geobeagle.bcaching.BCachingModule.BCachingProgressDialog;
+import com.google.code.geobeagle.bcaching.BCachingProgressDialog;
 import com.google.inject.Inject;
 
 import android.app.ProgressDialog;
