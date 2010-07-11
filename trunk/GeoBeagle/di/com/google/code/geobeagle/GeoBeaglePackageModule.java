@@ -38,6 +38,7 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 
@@ -46,6 +47,15 @@ import java.lang.annotation.Target;
 
 // TODO rename to GeoBeagleModule
 public class GeoBeaglePackageModule extends AbstractAndroidModule {
+
+    @BindingAnnotation
+    @Target( {
+            FIELD, PARAMETER, METHOD
+    })
+    @Retention(RUNTIME)
+    public static @interface DialogOnClickListenerNOP {
+    }
+    
     @BindingAnnotation
     @Target( {
             FIELD, PARAMETER, METHOD
@@ -53,11 +63,20 @@ public class GeoBeaglePackageModule extends AbstractAndroidModule {
     @Retention(RUNTIME)
     public static @interface DefaultSharedPreferences {
     }
-    
+
     @Provides
     @DefaultSharedPreferences
     public SharedPreferences providesDefaultSharedPreferences(Context context) {
         return PreferenceManager.getDefaultSharedPreferences(context);
+    }
+
+    @Provides
+    @DialogOnClickListenerNOP
+    android.content.DialogInterface.OnClickListener providesDialogOnClickListenerDoNothing() {
+        return new android.content.DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+            }
+        };
     }
 
     @Override
