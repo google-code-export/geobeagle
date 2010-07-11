@@ -61,10 +61,6 @@ public class SearchOnlineActivity extends GuiceActivity {
         return mActivityRestorer;
     }
 
-    public CombinedLocationListener getCombinedLocationListener() {
-        return mCombinedLocationListener;
-    }
-
     InflatedGpsStatusWidget getGpsStatusWidget() {
         return mInflatedGpsStatusWidget;
     }
