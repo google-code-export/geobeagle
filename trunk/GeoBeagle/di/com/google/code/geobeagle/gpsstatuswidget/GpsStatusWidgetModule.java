@@ -129,8 +129,13 @@ public class GpsStatusWidgetModule extends AbstractAndroidModule {
 
     @Provides
     @ContextScoped
-    InflatedGpsStatusWidget providesInflatedGpsStatusWidget(Activity activity, Context context,
-            GpsStatusWidget gpsStatusWidget) {
+    LinearLayout providesGpsStatusWidget(Context context) {
+        return new LinearLayout(context);
+    }
+    @Provides
+    @ContextScoped
+    InflatedGpsStatusWidget providesInflatedGpsStatusWidget(Activity activity, Context context, LinearLayout gpsStatusWidget) {
+        
         InflatedGpsStatusWidget inflatedGpsStatusWidget = (InflatedGpsStatusWidget)activity.findViewById(R.id.gps_widget_view);
         if (inflatedGpsStatusWidget != null)
             return inflatedGpsStatusWidget;
