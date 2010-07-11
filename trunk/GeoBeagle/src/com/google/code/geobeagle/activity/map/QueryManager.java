@@ -40,9 +40,9 @@ class QueryManager {
         private GeoPoint mOldTopLeft;
 
         @Inject
-        public CachedNeedsLoading(GeoPoint topLeft, GeoPoint bottomRight) {
-            mOldTopLeft = topLeft;
-            mOldBottomRight = bottomRight;
+        public CachedNeedsLoading() {
+            mOldTopLeft = new GeoPoint(0, 0);
+            mOldBottomRight = new GeoPoint(0, 0);
         }
 
         boolean needsLoading(GeoPoint newTopLeft, GeoPoint newBottomRight) {
