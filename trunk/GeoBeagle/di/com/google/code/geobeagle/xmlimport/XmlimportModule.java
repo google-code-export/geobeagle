@@ -27,12 +27,10 @@ import com.google.code.geobeagle.cachedetails.WriterWrapper;
 import com.google.code.geobeagle.database.GpxWriter;
 import com.google.code.geobeagle.xmlimport.EventHelper.XmlPathBuilder;
 import com.google.code.geobeagle.xmlimport.GpxImporterDI.MessageHandler;
-import com.google.code.geobeagle.xmlimport.XmlimportAnnotations.DetailsDirectory;
 import com.google.code.geobeagle.xmlimport.XmlimportAnnotations.GpxAnnotation;
 import com.google.code.geobeagle.xmlimport.XmlimportAnnotations.ImportDirectory;
 import com.google.code.geobeagle.xmlimport.XmlimportAnnotations.LoadDetails;
 import com.google.code.geobeagle.xmlimport.XmlimportAnnotations.OldDetailsDirectory;
-import com.google.code.geobeagle.xmlimport.XmlimportAnnotations.VersionPath;
 import com.google.code.geobeagle.xmlimport.XmlimportAnnotations.WriteDetails;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
@@ -75,6 +73,20 @@ public class XmlimportModule extends AbstractAndroidModule {
         return Environment.getExternalStorageDirectory().getAbsolutePath();
     }
     
+    public static class GeoBeagleEnvironment {
+        private String getExternalStorageDir() {
+            return Environment.getExternalStorageDirectory().getAbsolutePath();
+        }
+
+        public String getDetailsDirectory() {
+            return getExternalStorageDir() + "/" + DETAILS_DIR;
+        }
+        
+        public String getVersionPath() {
+            return getDetailsDirectory() + "/VERSION";
+        }
+    }
+
     @Provides
     @ExternalStorageDirectory
     String providesPicturesDirectory() {
@@ -94,17 +106,6 @@ public class XmlimportModule extends AbstractAndroidModule {
 
     private static final String DETAILS_DIR = "GeoBeagle/data/";
 
-    @Provides
-    @DetailsDirectory
-    String detailsDirectoryProvider(@ExternalStorageDirectory String externalStorageDirectory) {
-        return externalStorageDirectory + "/" + DETAILS_DIR;
-    }
-
-    @Provides
-    @VersionPath
-    String versionDirectoryProvider(@DetailsDirectory String detailsDirectory) {
-        return detailsDirectory + "/VERSION";
-    }
 
     @Provides
     @OldDetailsDirectory
