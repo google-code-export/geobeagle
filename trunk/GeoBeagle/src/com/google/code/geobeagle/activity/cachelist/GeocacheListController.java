@@ -56,17 +56,14 @@ public class GeocacheListController {
     static final int MENU_EDIT = 2;
     public static final String SELECT_CACHE = "SELECT_CACHE";
     private final CacheListRefresh mCacheListRefresh;
-    private final ContextActions mContextActions;
     private final MenuActionSyncGpx mMenuActionSyncGpx;
     private final Aborter mAborter;
     private final Injector mInjector;
 
     @Inject
     public GeocacheListController(CacheListRefresh cacheListRefresh,
-            ContextActions contextActions, MenuActionSyncGpx menuActionSyncGpx,
-            Injector injector, Aborter aborter) {
+            MenuActionSyncGpx menuActionSyncGpx, Injector injector, Aborter aborter) {
         mCacheListRefresh = cacheListRefresh;
-        mContextActions = contextActions;
         mMenuActionSyncGpx = menuActionSyncGpx;
         mAborter = aborter;
         mInjector = injector;
@@ -75,7 +72,8 @@ public class GeocacheListController {
     public boolean onContextItemSelected(MenuItem menuItem) {
         AdapterContextMenuInfo adapterContextMenuInfo = (AdapterContextMenuInfo)menuItem
                 .getMenuInfo();
-        mContextActions.act(menuItem.getItemId(), adapterContextMenuInfo.position - 1);
+        mInjector.getInstance(ContextActions.class).act(menuItem.getItemId(),
+                adapterContextMenuInfo.position - 1);
         return true;
     }
 
@@ -85,7 +83,7 @@ public class GeocacheListController {
 
     public void onListItemClick(int position) {
         if (position > 0)
-            mContextActions.act(MENU_VIEW, position - 1);
+            mInjector.getInstance(ContextActions.class).act(MENU_VIEW, position - 1);
         else
             mCacheListRefresh.forceRefresh();
     }
