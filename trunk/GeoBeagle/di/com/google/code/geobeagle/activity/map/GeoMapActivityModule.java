@@ -31,7 +31,6 @@ import com.google.code.geobeagle.actions.MenuActionCacheList;
 import com.google.code.geobeagle.actions.MenuActions;
 import com.google.code.geobeagle.activity.cachelist.presenter.GeoBeaglePackageAnnotations.DifficultyAndTerrainPainterAnnotation;
 import com.google.code.geobeagle.activity.map.CachePinsOverlayFactory.CachePinsQueryManager;
-import com.google.code.geobeagle.activity.map.DensityMatrix.DensityPatch;
 import com.google.code.geobeagle.activity.map.DensityOverlayDelegate.DensityOverlayPaint;
 import com.google.code.geobeagle.activity.map.GeoMapActivityDelegate.MenuActionCenterLocation;
 import com.google.code.geobeagle.activity.map.GeoMapActivityDelegate.MenuActionToggleSatellite;
@@ -94,12 +93,6 @@ public class GeoMapActivityModule extends AbstractAndroidModule {
         Paint paint = new Paint();
         paint.setARGB(128, 255, 0, 0);
         return paint;
-    }
-
-    @Provides
-    DensityPatchManager providesDensityPatchManager(
-            @DensityMapQueryManager QueryManager queryManager) {
-        return new DensityPatchManager(new ArrayList<DensityPatch>(), queryManager);
     }
 
     @Provides
