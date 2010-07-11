@@ -15,7 +15,6 @@
 package com.google.code.geobeagle.activity;
 
 import com.google.code.geobeagle.Geocache;
-import com.google.code.geobeagle.GeoBeaglePackageModule.DefaultSharedPreferences;
 import com.google.inject.Inject;
 
 import android.content.SharedPreferences;
@@ -26,7 +25,7 @@ public class ActivitySaver {
     static final String LAST_ACTIVITY = "lastActivity2";
 
     @Inject
-    ActivitySaver(@DefaultSharedPreferences SharedPreferences sharedPreferences) {
+    ActivitySaver(SharedPreferences sharedPreferences) {
         this.sharedPreferences = sharedPreferences;
     }
 

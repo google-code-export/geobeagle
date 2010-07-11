@@ -14,7 +14,6 @@
 
 package com.google.code.geobeagle.xmlimport;
 
-import com.google.code.geobeagle.GeoBeaglePackageModule.DefaultSharedPreferences;
 import com.google.inject.Inject;
 
 import android.content.SharedPreferences;
@@ -26,7 +25,7 @@ public class GeoBeagleEnvironment {
     private static final String FIELDNOTES_FILE = "GeoBeagleFieldNotes.txt";
 
     @Inject
-    GeoBeagleEnvironment(@DefaultSharedPreferences SharedPreferences sharedPreferences) {
+    GeoBeagleEnvironment(SharedPreferences sharedPreferences) {
         this.sharedPreferences = sharedPreferences;
     }
     

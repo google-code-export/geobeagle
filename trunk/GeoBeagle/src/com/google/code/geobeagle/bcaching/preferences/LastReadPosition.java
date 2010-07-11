@@ -14,7 +14,6 @@
 
 package com.google.code.geobeagle.bcaching.preferences;
 
-import com.google.code.geobeagle.GeoBeaglePackageModule.DefaultSharedPreferences;
 import com.google.inject.Inject;
 
 import android.content.SharedPreferences;
@@ -26,7 +25,7 @@ public class LastReadPosition {
     private final SharedPreferences sharedPreferences;
 
     @Inject
-    LastReadPosition(@DefaultSharedPreferences SharedPreferences sharedPreferences,
+    LastReadPosition(SharedPreferences sharedPreferences,
             PreferencesWriter preferencesWriter) {
         this.preferencesWriter = preferencesWriter;
         this.sharedPreferences = sharedPreferences;
