@@ -14,12 +14,6 @@
 
 package com.google.code.geobeagle.activity.main;
 
-import static java.lang.annotation.ElementType.FIELD;
-import static java.lang.annotation.ElementType.METHOD;
-import static java.lang.annotation.ElementType.PARAMETER;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-
-import com.google.code.geobeagle.ErrorDisplayer;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.GraphicsGenerator.DifficultyAndTerrainPainter;
 import com.google.code.geobeagle.GraphicsGenerator.IconOverlayFactory;
@@ -27,28 +21,17 @@ import com.google.code.geobeagle.GraphicsGenerator.IconRenderer;
 import com.google.code.geobeagle.GraphicsGenerator.MapViewBitmapCopier;
 import com.google.code.geobeagle.GraphicsGenerator.RatingsArray;
 import com.google.code.geobeagle.activity.cachelist.view.NameFormatter;
-import com.google.code.geobeagle.activity.main.intents.GeocacheToGoogleGeo;
-import com.google.code.geobeagle.activity.main.intents.IntentStarter;
-import com.google.code.geobeagle.activity.main.intents.IntentStarterGeo;
-import com.google.code.geobeagle.activity.main.intents.IntentStarterViewUri;
-import com.google.code.geobeagle.activity.main.menuactions.MenuActionGoogleMaps;
 import com.google.code.geobeagle.activity.main.view.GeocacheViewer;
 import com.google.code.geobeagle.activity.main.view.GeocacheViewer.AttributeViewer;
 import com.google.code.geobeagle.activity.main.view.GeocacheViewer.LabelledAttributeViewer;
 import com.google.code.geobeagle.activity.main.view.GeocacheViewer.NameViewer;
 import com.google.code.geobeagle.activity.main.view.GeocacheViewer.ResourceImages;
 import com.google.code.geobeagle.activity.main.view.GeocacheViewer.UnlabelledAttributeViewer;
-import com.google.inject.BindingAnnotation;
-import com.google.inject.Provider;
 import com.google.inject.Provides;
 
 import roboguice.config.AbstractAndroidModule;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.Context;
-import android.content.Intent;
-import android.content.DialogInterface.OnClickListener;
 import android.content.res.Resources;
 import android.graphics.Paint;
 import android.graphics.Rect;
@@ -56,21 +39,12 @@ import android.graphics.drawable.Drawable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
 import java.util.Arrays;
 
 public class GeoBeagleModule extends AbstractAndroidModule {
-    @BindingAnnotation
-    @Target( {
-            FIELD, PARAMETER, METHOD
-    })
-    @Retention(RUNTIME)
-    public static @interface ChooseNavDialog {
-    }
-    
     @Override
     protected void configure() {
+        bind(ChooseNavDialog.class).toProvider(ChooseNavDialogProvider.class);
         bind(Paint.class).toInstance(new Paint());
         bind(Rect.class).toInstance(new Rect());
     }
@@ -136,28 +110,5 @@ public class GeoBeagleModule extends AbstractAndroidModule {
         final AttributeViewer gcTerrain = new LabelledAttributeViewer((TextView)activity
                 .findViewById(labelId), pawImages);
         return gcTerrain;
-    }
-    
-    @ChooseNavDialog
-    @Provides
-    public AlertDialog chooseNavDialogProvider(Provider<Resources> resourcesProvider,
-            Provider<Context> contextProvider, GeoBeagle geoBeagle, ErrorDisplayer errorDisplayer) {
-        final GeocacheToGoogleGeo geocacheToGoogleMaps = new GeocacheToGoogleGeo(resourcesProvider,
-                R.string.google_maps_intent);
-        final GeocacheToGoogleGeo geocacheToNavigate = new GeocacheToGoogleGeo(resourcesProvider,
-                R.string.navigate_intent);
-
-        final IntentStarterGeo intentStarterRadar = new IntentStarterGeo(geoBeagle, new Intent(
-                "com.google.android.radar.SHOW_RADAR"));
-        final IntentStarterViewUri intentStarterGoogleMaps = new IntentStarterViewUri(geoBeagle,
-                geocacheToGoogleMaps, errorDisplayer);
-        final IntentStarterViewUri intentStarterNavigate = new IntentStarterViewUri(geoBeagle,
-                geocacheToNavigate, errorDisplayer);
-        final IntentStarter[] intentStarters = {
-                intentStarterRadar, intentStarterGoogleMaps, intentStarterNavigate
-        };
-        OnClickListener onClickListener = new MenuActionGoogleMaps.OnClickListener(intentStarters);
-        return new AlertDialog.Builder(contextProvider.get()).setItems(R.array.select_nav_choices,
-                onClickListener).setTitle(R.string.select_nav_choices_title).create();
     }
 }

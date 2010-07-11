@@ -16,12 +16,10 @@ package com.google.code.geobeagle.activity.main.menuactions;
 
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.actions.MenuActionBase;
-import com.google.code.geobeagle.activity.main.GeoBeagleModule.ChooseNavDialog;
+import com.google.code.geobeagle.activity.main.ChooseNavDialog;
 import com.google.code.geobeagle.activity.main.intents.IntentStarter;
 import com.google.inject.Inject;
-import com.google.inject.Provider;
 
-import android.app.AlertDialog;
 import android.content.DialogInterface;
 
 public class MenuActionGoogleMaps extends MenuActionBase {
@@ -37,16 +35,16 @@ public class MenuActionGoogleMaps extends MenuActionBase {
         }
     }
 
-    private final Provider<AlertDialog> chooseNavDialogProvider;
+    private final ChooseNavDialog chooseNavDialog;
 
     @Inject
-    public MenuActionGoogleMaps(@ChooseNavDialog Provider<AlertDialog> chooseNavDialogProvider) {
+    public MenuActionGoogleMaps(ChooseNavDialog chooseNavDialog) {
         super(R.string.menu_google_maps);
-        this.chooseNavDialogProvider = chooseNavDialogProvider;
+        this.chooseNavDialog = chooseNavDialog;
     }
 
     @Override
     public void act() {
-        chooseNavDialogProvider.get().show();
+        chooseNavDialog.show();
     }
 }
