@@ -102,12 +102,10 @@ public class CacheListModule extends AbstractAndroidModule {
         private final DistanceFormatterImperial distanceFormatterImperial;
 
         @Inject
-        DistanceFormatterProvider(@DefaultSharedPreferences SharedPreferences preferenceManager,
-                DistanceFormatterMetric distanceFormatterMetric,
-                DistanceFormatterImperial distanceFormatterImperial) {
+        DistanceFormatterProvider(@DefaultSharedPreferences SharedPreferences preferenceManager) {
             this.preferenceManager = preferenceManager;
-            this.distanceFormatterMetric = distanceFormatterMetric;
-            this.distanceFormatterImperial = distanceFormatterImperial;
+            this.distanceFormatterMetric = new DistanceFormatterMetric();
+            this.distanceFormatterImperial = new DistanceFormatterImperial();
         }
 
         @Override
@@ -123,12 +121,10 @@ public class CacheListModule extends AbstractAndroidModule {
         private final SharedPreferences preferenceManager;
 
         @Inject
-        BearingFormatterProvider(@DefaultSharedPreferences SharedPreferences preferenceManager,
-                AbsoluteBearingFormatter absoluteBearingFormatter,
-                RelativeBearingFormatter relativeBearingFormatter) {
+        BearingFormatterProvider(@DefaultSharedPreferences SharedPreferences preferenceManager) {
             this.preferenceManager = preferenceManager;
-            this.absoluteBearingFormatter = absoluteBearingFormatter;
-            this.relativeBearingFormatter = relativeBearingFormatter;
+            this.absoluteBearingFormatter = new AbsoluteBearingFormatter();
+            this.relativeBearingFormatter = new RelativeBearingFormatter();
         }
 
         @Override
