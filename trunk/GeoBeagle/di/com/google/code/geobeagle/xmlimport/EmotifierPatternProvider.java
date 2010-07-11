@@ -15,11 +15,13 @@
 package com.google.code.geobeagle.xmlimport;
 
 import com.google.inject.Provider;
+import com.google.inject.Singleton;
 
 import android.util.Log;
 
 import java.util.regex.Pattern;
 
+@Singleton
 public class EmotifierPatternProvider implements Provider<Pattern> {
     static Pattern createEmotifierPattern(String[] emoticons) {
         StringBuffer keysBuffer = new StringBuffer();

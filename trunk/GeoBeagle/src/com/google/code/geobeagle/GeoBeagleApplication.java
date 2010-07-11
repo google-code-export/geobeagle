@@ -22,7 +22,6 @@ import com.google.code.geobeagle.bcaching.BCachingModule;
 import com.google.code.geobeagle.database.DatabaseModule;
 import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidgetModule;
 import com.google.code.geobeagle.location.LocationModule;
-import com.google.code.geobeagle.xmlimport.XmlimportModule;
 import com.google.inject.Module;
 
 import roboguice.application.GuiceApplication;
@@ -43,7 +42,6 @@ public class GeoBeagleApplication extends GuiceApplication {
         modules.add(new LocationModule());
         modules.add(new ModelModule());
         modules.add(new GpsStatusWidgetModule());
-        modules.add(new XmlimportModule());     // +3.6 seconds (7.95)
         modules.add(new BCachingModule());
     }
 }
