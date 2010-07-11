@@ -18,10 +18,14 @@ import com.google.code.geobeagle.GeocacheFactory.Source;
 import com.google.code.geobeagle.xmlimport.CachePersisterFacadeDI.FileFactory;
 import com.google.inject.Inject;
 
+import roboguice.inject.ContextScoped;
+
 import android.os.PowerManager.WakeLock;
+import android.util.Log;
 
 import java.io.IOException;
 
+@ContextScoped
 public class CachePersisterFacade implements ICachePersisterFacade {
     private String mCacheName = "";
     private final CacheTagSqlWriter mCacheTagWriter;

@@ -24,6 +24,8 @@ import com.google.code.geobeagle.database.DbFrontend;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
+import roboguice.inject.ContextScoped;
+
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.AlertDialog.Builder;
@@ -32,6 +34,7 @@ import android.content.DialogInterface.OnClickListener;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
+@ContextScoped
 public class ContextActionDelete implements ContextAction {
     public static final int CACHE_LIST_DIALOG_CONFIRM_DELETE = 0;
 

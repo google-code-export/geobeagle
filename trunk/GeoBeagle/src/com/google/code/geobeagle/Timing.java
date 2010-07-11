@@ -14,8 +14,11 @@
 
 package com.google.code.geobeagle;
 
+import com.google.inject.Singleton;
+
 import android.util.Log;
 
+@Singleton
 public class Timing {
     private long mStartTime;
 

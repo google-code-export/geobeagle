@@ -14,7 +14,6 @@
 
 package com.google.code.geobeagle.activity.cachelist;
 
-import com.google.code.geobeagle.Timing;
 import com.google.code.geobeagle.actions.ContextActions;
 import com.google.code.geobeagle.actions.MenuActionMap;
 import com.google.code.geobeagle.actions.MenuActionSearchOnline;
@@ -27,26 +26,19 @@ import com.google.code.geobeagle.activity.cachelist.actions.context.ContextActio
 import com.google.code.geobeagle.activity.cachelist.actions.menu.Abortable;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionDeleteAllCaches;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionMyLocation;
-import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionSyncBCaching;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionSyncGpx;
-import com.google.code.geobeagle.activity.cachelist.model.CacheListData;
 import com.google.code.geobeagle.activity.cachelist.presenter.AbsoluteBearingFormatter;
 import com.google.code.geobeagle.activity.cachelist.presenter.BearingFormatter;
-import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
-import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheListAdapter;
 import com.google.code.geobeagle.activity.cachelist.presenter.RelativeBearingFormatter;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh.ActionManager;
-import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh.UpdateFlag;
 import com.google.code.geobeagle.formatting.DistanceFormatter;
 import com.google.code.geobeagle.formatting.DistanceFormatterImperial;
 import com.google.code.geobeagle.formatting.DistanceFormatterMetric;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.Provides;
-import com.google.inject.Singleton;
 
 import roboguice.config.AbstractAndroidModule;
-import roboguice.inject.ContextScoped;
 
 import android.app.Activity;
 import android.app.ListActivity;
@@ -57,19 +49,8 @@ public class CacheListModule extends AbstractAndroidModule {
     @Override
     protected void configure() {
         bind(ActionManager.class).toProvider(ActionManagerProvider.class);
-        bind(GeocacheListAdapter.class).in(ContextScoped.class);
-        bind(MenuActionSyncBCaching.class).in(ContextScoped.class);
-        bind(MenuActionSyncGpx.class).in(ContextScoped.class);
-        bind(ActivityVisible.class).in(Singleton.class);
-        bind(DistanceFormatter.class).toProvider(DistanceFormatterProvider.class).in(
-                ContextScoped.class);
-        bind(BearingFormatter.class).toProvider(BearingFormatterProvider.class).in(
-                ContextScoped.class);
-        bind(CacheListData.class).in(ContextScoped.class);
-        bind(Timing.class).in(Singleton.class);
-        bind(UpdateFlag.class).in(Singleton.class);
-        bind(CacheListRefresh.class).in(ContextScoped.class);
-        bind(ContextActionDelete.class).in(ContextScoped.class);
+        bind(DistanceFormatter.class).toProvider(DistanceFormatterProvider.class);
+        bind(BearingFormatter.class).toProvider(BearingFormatterProvider.class);
     }
 
     static class DistanceFormatterProvider implements Provider<DistanceFormatter> {

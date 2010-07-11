@@ -19,12 +19,15 @@ import com.google.inject.Inject;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
+import roboguice.inject.ContextScoped;
+
 import android.util.Log;
 
 import java.io.IOException;
 import java.io.Reader;
 
 public class GpxToCache {
+    @ContextScoped
     public static class Aborter {
         private static boolean mAborted = false;
 

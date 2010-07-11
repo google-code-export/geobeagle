@@ -23,7 +23,8 @@ public class OldCacheFilesCleaner {
     private final String directory;
     private final MessageHandlerInterface messageHandler;
 
-    public OldCacheFilesCleaner(GeoBeagleEnvironment geoBeagleEnvironment, MessageHandlerInterface messageHandler) {
+    public OldCacheFilesCleaner(GeoBeagleEnvironment geoBeagleEnvironment,
+            MessageHandlerInterface messageHandler) {
         this.directory = geoBeagleEnvironment.getOldDetailsDirectory();
         this.messageHandler = messageHandler;
     }

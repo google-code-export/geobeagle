@@ -16,9 +16,12 @@ package com.google.code.geobeagle.bcaching;
 
 import com.google.inject.Inject;
 
+import roboguice.inject.ContextScoped;
+
 import android.app.ProgressDialog;
 import android.content.Context;
 
+@ContextScoped
 public class BCachingProgressDialog extends ProgressDialog {
     @Inject
     public BCachingProgressDialog(Context context) {

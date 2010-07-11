@@ -20,11 +20,14 @@ import com.google.code.geobeagle.bcaching.BCachingModule;
 import com.google.code.geobeagle.bcaching.BCachingProgressDialog;
 import com.google.inject.Inject;
 
+import roboguice.inject.ContextScoped;
+
 import android.app.ProgressDialog;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 
+@ContextScoped
 public class ProgressHandler extends Handler {
     private final ProgressDialog progressDialog;
     private final CacheListRefresh cacheListRefresher;

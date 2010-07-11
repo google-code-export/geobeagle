@@ -19,9 +19,13 @@ import com.google.code.geobeagle.Refresher;
 import com.google.code.geobeagle.Timing;
 import com.google.code.geobeagle.LocationControlBuffered.IGpsLocation;
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
+
+import roboguice.inject.ContextScoped;
 
 import android.util.Log;
 
+@ContextScoped
 public class CacheListRefresh implements Refresher {
     public static class ActionManager {
         private final ActionAndTolerance mActionAndTolerances[];
@@ -46,7 +50,7 @@ public class CacheListRefresh implements Refresher {
             }
         }
     }
-
+    @Singleton
     public static class UpdateFlag {
         private boolean mUpdateFlag = true;
 
