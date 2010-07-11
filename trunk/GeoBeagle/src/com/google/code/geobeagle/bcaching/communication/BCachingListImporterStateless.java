@@ -14,7 +14,7 @@
 
 package com.google.code.geobeagle.bcaching.communication;
 
-import com.google.code.geobeagle.bcaching.BCachingAnnotations.CacheListAnnotation;
+import com.google.code.geobeagle.bcaching.BCachingModule;
 import com.google.inject.Inject;
 
 import java.util.Hashtable;
@@ -23,12 +23,16 @@ public class BCachingListImporterStateless {
     static final String MAX_COUNT = "50";
 
     private final BCachingListImportHelper bCachingListImportHelper;
-    private final Hashtable<String, String> params;
+    private static Hashtable<String, String> params;
+    static {
+        params = new Hashtable<String, String>();
+        params.put("a", "list");
+        params.put("found", "0");
+        BCachingModule.commonParams(params);
+    }
 
     @Inject
-    public BCachingListImporterStateless(@CacheListAnnotation Hashtable<String, String> params,
-            BCachingListImportHelper bCachingListImportHelper) {
-        this.params = params;
+    public BCachingListImporterStateless(BCachingListImportHelper bCachingListImportHelper) {
         this.bCachingListImportHelper = bCachingListImportHelper;
     }
 

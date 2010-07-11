@@ -14,7 +14,6 @@
 
 package com.google.code.geobeagle.bcaching;
 
-import com.google.code.geobeagle.bcaching.BCachingAnnotations.DetailsReaderAnnotation;
 import com.google.code.geobeagle.bcaching.communication.BCachingException;
 import com.google.code.geobeagle.bcaching.communication.BCachingListImportHelper.BufferedReaderFactory;
 import com.google.code.geobeagle.xmlimport.EventHandler;
@@ -32,17 +31,26 @@ import java.util.Arrays;
 import java.util.Hashtable;
 
 public class DetailsReaderImport {
-    private final Hashtable<String, String> params;
+    private static Hashtable<String, String> params;
+    static {
+        params = new Hashtable<String, String>();
+        params.put("a", "detail");
+        BCachingModule.commonParams(params);
+        params.put("desc", "html");
+        params.put("tbs", "0");
+        params.put("wpts", "1");
+        params.put("logs", "1");
+        params.put("fmt", "gpx");
+    }
+
     private final BufferedReaderFactory bufferedReaderFactory;
     private final GpxLoader gpxLoader;
     private final EventHelper eventHelper;
     private final EventHandler eventHandler;
 
     @Inject
-    DetailsReaderImport(@DetailsReaderAnnotation Hashtable<String, String> params,
-            BufferedReaderFactory bufferedReaderFactory, EventHelper eventHelper,
+    DetailsReaderImport(BufferedReaderFactory bufferedReaderFactory, EventHelper eventHelper,
             GpxLoader gpxLoader, XmlWriter xmlWriter, EventHandlerGpx eventHandlerGpx) {
-        this.params = params;
         this.bufferedReaderFactory = bufferedReaderFactory;
         this.gpxLoader = gpxLoader;
         this.eventHelper = eventHelper;
