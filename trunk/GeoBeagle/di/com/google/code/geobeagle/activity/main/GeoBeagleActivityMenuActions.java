@@ -17,7 +17,6 @@ package com.google.code.geobeagle.activity.main;
 import com.google.code.geobeagle.actions.MenuAction;
 import com.google.code.geobeagle.actions.MenuActionCacheList;
 import com.google.code.geobeagle.actions.MenuActionEditGeocache;
-import com.google.code.geobeagle.actions.MenuActionSearchOnline;
 import com.google.code.geobeagle.actions.MenuActionSettings;
 import com.google.code.geobeagle.actions.MenuActions;
 import com.google.code.geobeagle.activity.main.menuactions.MenuActionGoogleMaps;
@@ -33,9 +32,7 @@ class GeoBeagleActivityMenuActions extends MenuActions {
         super(resources);
         final MenuAction[] menuActionArray = {
                 new MenuActionCacheList(geoBeagle), new MenuActionEditGeocache(geoBeagle),
-                // new MenuActionLogDnf(this), new MenuActionLogFind(this),
-                new MenuActionSearchOnline(geoBeagle), new MenuActionSettings(geoBeagle),
-                menuActionGoogleMaps
+                new MenuActionSettings(geoBeagle), menuActionGoogleMaps
         };
         for (int ix = 0; ix < menuActionArray.length; ix++) {
             add(menuActionArray[ix]);
