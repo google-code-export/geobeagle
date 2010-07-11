@@ -41,13 +41,10 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.hardware.SensorManager;
 import android.location.Location;
 import android.location.LocationManager;
 import android.preference.PreferenceManager;
-import android.webkit.WebSettings;
-import android.webkit.WebView;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
@@ -120,17 +117,5 @@ public class GeoBeaglePackageModule extends AbstractAndroidModule {
     @GeoBeagle
     public Intent geoBeagleIntent(Context context) {
         return new Intent(context, com.google.code.geobeagle.activity.main.GeoBeagle.class);
-    }
-
-    @Provides
-    public WebView providesCacheListWebView(Activity activity) {
-        WebView webView = (WebView)activity.findViewById(android.R.id.empty);
-        webView.loadUrl("file:///android_asset/no_caches.html");
-        WebSettings webSettings = webView.getSettings();
-        webSettings.setSavePassword(false);
-        webSettings.setSaveFormData(false);
-        webSettings.setSupportZoom(false);
-        webView.setBackgroundColor(Color.BLACK);
-        return webView;
     }
 }
