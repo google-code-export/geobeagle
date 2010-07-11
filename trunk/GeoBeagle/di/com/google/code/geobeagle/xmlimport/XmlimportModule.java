@@ -38,10 +38,8 @@ import roboguice.inject.ContextScoped;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Environment;
-import android.util.Log;
 
 import java.util.Arrays;
-import java.util.regex.Pattern;
 
 public class XmlimportModule extends AbstractAndroidModule {
 
@@ -52,6 +50,7 @@ public class XmlimportModule extends AbstractAndroidModule {
         bind(XmlPullParserWrapper.class).in(ContextScoped.class);
         bind(GpxWriter.class).in(ContextScoped.class);
         bind(Writer.class).to(WriterWrapper.class);
+        bind(EmotifierPatternProvider.class).in(Singleton.class);
     }
 
     @Provides
@@ -137,36 +136,4 @@ public class XmlimportModule extends AbstractAndroidModule {
         return new EventHandlerGpx(cachePersisterFacade);
     }
 
-    static Pattern createEmotifierPattern(String[] emoticons) {
-        StringBuffer keysBuffer = new StringBuffer();
-        String escapeChars = "()|?}";
-        for (String emoticon : emoticons) {
-            String key = new String(emoticon);
-            for (int i = 0; i < escapeChars.length(); i++) {
-                char c = escapeChars.charAt(i);
-                key = key.replaceAll("\\" + String.valueOf(c), "\\\\" + c);
-            }
-            keysBuffer.append("|" + key);
-        }
-        keysBuffer.deleteCharAt(0);
-        final String keys = "\\[(" + keysBuffer.toString() + ")\\]";
-        try {
-        return Pattern.compile(keys);
-        } catch (Exception e) {
-            Log.d("GeoBeagle", e.getLocalizedMessage());
-        }
-        return null;
-    }
-
-    @Provides
-    public Pattern providesEmotifierPattern() {
-        Log.d("GeoBeagle", "PROVIDING EMOFIEOFJE");
-        String emoticons[] = {
-                ":(", ":o)", ":)", ":D", "8D", ":I", ":P", "}:)", ":)", ":D", "8D", ":I", ":P",
-                "}:)", ";)", "B)", "8", ":)", "8)", ":O", ":(!", "xx(", "|)", ":X", "V", "?",
-                "^"
-        };
-        return createEmotifierPattern(emoticons);
-    }
-    
 }
