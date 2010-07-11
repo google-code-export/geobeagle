@@ -19,19 +19,13 @@ import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.ElementType.PARAMETER;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-import com.google.android.maps.MyLocationOverlay;
 import com.google.android.maps.Overlay;
 import com.google.code.geobeagle.Geocache;
-import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.GraphicsGenerator.IconOverlayFactory;
 import com.google.code.geobeagle.GraphicsGenerator.IconRenderer;
 import com.google.code.geobeagle.GraphicsGenerator.MapViewBitmapCopier;
-import com.google.code.geobeagle.actions.MenuActionCacheList;
-import com.google.code.geobeagle.actions.MenuActions;
 import com.google.code.geobeagle.activity.cachelist.presenter.GeoBeaglePackageAnnotations.DifficultyAndTerrainPainterAnnotation;
 import com.google.code.geobeagle.activity.map.CachePinsOverlayFactory.CachePinsQueryManager;
-import com.google.code.geobeagle.activity.map.GeoMapActivityDelegate.MenuActionCenterLocation;
-import com.google.code.geobeagle.activity.map.GeoMapActivityDelegate.MenuActionToggleSatellite;
 import com.google.code.geobeagle.activity.map.QueryManager.CachedNeedsLoading;
 import com.google.code.geobeagle.activity.map.QueryManager.LoaderImpl;
 import com.google.code.geobeagle.activity.map.QueryManager.PeggedLoader;
@@ -40,7 +34,6 @@ import com.google.inject.Provides;
 
 import roboguice.config.AbstractAndroidModule;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
 
@@ -52,9 +45,6 @@ public class GeoMapActivityModule extends AbstractAndroidModule {
 
     @BindingAnnotation @Target({ FIELD, PARAMETER, METHOD }) @Retention(RUNTIME)
     public static @interface DensityMapQueryManager {}
-    
-    @BindingAnnotation @Target( { FIELD, PARAMETER, METHOD }) @Retention(RUNTIME)
-    public static @interface GeoMapActivityMenuActions {}
 
     static class NullOverlay extends Overlay {
     }
@@ -75,20 +65,6 @@ public class GeoMapActivityModule extends AbstractAndroidModule {
     CachePinsOverlay providesCachePinsOverlay(CacheItemFactory cacheItemFactory, Context context,
             Resources resources) {
         return new CachePinsOverlay(resources, cacheItemFactory, context, new ArrayList<Geocache>());
-    }
-    
-    @Provides
-    @GeoMapActivityMenuActions
-    MenuActions providesGeoMapMenuActions(Activity activity, Resources resources) {
-        final MenuActions menuActions = new MenuActions(resources);
-        final GeoMapView geoMapView = (GeoMapView)activity.findViewById(R.id.mapview);
-        menuActions.add(new MenuActionToggleSatellite(geoMapView));
-        menuActions.add(new MenuActionCacheList(activity));
-        final MyLocationOverlay fixedMyLocationOverlay = ((GeoMapActivity)activity)
-                .getMyLocationOverlay();
-        menuActions.add(new MenuActionCenterLocation(geoMapView.getController(),
-                fixedMyLocationOverlay));
-        return menuActions;
     }
 
     @Provides

@@ -33,11 +33,12 @@ import com.google.android.maps.MapView;
 import com.google.android.maps.MyLocationOverlay;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.actions.MenuActionBase;
+import com.google.code.geobeagle.actions.MenuActionCacheList;
 import com.google.code.geobeagle.actions.MenuActions;
-import com.google.code.geobeagle.activity.map.GeoMapActivityModule.GeoMapActivityMenuActions;
 import com.google.inject.Inject;
 
 import android.app.Activity;
+import android.content.res.Resources;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -80,7 +81,15 @@ public class GeoMapActivityDelegate {
     private final MenuActions mMenuActions;
 
     @Inject
-    public GeoMapActivityDelegate(Activity activity, @GeoMapActivityMenuActions MenuActions menuActions) {
+    public GeoMapActivityDelegate(Resources resources, Activity activity) {
+        final MenuActions menuActions = new MenuActions(resources);
+        final GeoMapView geoMapView = (GeoMapView)activity.findViewById(R.id.mapview);
+        menuActions.add(new MenuActionToggleSatellite(geoMapView));
+        menuActions.add(new MenuActionCacheList(activity));
+        final MyLocationOverlay fixedMyLocationOverlay = ((GeoMapActivity)activity)
+                .getMyLocationOverlay();
+        menuActions.add(new MenuActionCenterLocation(geoMapView.getController(),
+                fixedMyLocationOverlay));
         mMapView = (GeoMapView)activity.findViewById(R.id.mapview);
         mMenuActions = menuActions;
     }
