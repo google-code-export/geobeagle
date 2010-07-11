@@ -38,6 +38,7 @@ import roboguice.inject.ContextScoped;
 
 import android.app.Activity;
 import android.content.Context;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -69,6 +70,7 @@ public class GpsStatusWidgetModule extends AbstractAndroidModule {
         @Provides
         @ContextScoped
         Meter providesMeter(MeterBars meterBars, @GpsStatusWidgetView View gpsStatusWidget) {
+            Log.d("GeoBeagle", "PROVIDING METER: " + gpsStatusWidget);
             return new Meter(meterBars, ((TextView)gpsStatusWidget.findViewById(R.id.accuracy)));
         }
 
