@@ -15,7 +15,6 @@
 package com.google.code.geobeagle.xmlimport;
 
 
-import com.google.code.geobeagle.GeoBeaglePackageModule.DefaultSharedPreferences;
 import com.google.code.geobeagle.cachedetails.CacheDetailsWriter;
 import com.google.code.geobeagle.cachedetails.Emotifier;
 import com.google.code.geobeagle.cachedetails.HtmlWriter;
@@ -28,7 +27,6 @@ import com.google.code.geobeagle.xmlimport.GpxImporterDI.MessageHandler;
 import com.google.code.geobeagle.xmlimport.XmlimportAnnotations.GpxAnnotation;
 import com.google.code.geobeagle.xmlimport.XmlimportAnnotations.LoadDetails;
 import com.google.code.geobeagle.xmlimport.XmlimportAnnotations.WriteDetails;
-import com.google.inject.Inject;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 
@@ -36,7 +34,6 @@ import roboguice.config.AbstractAndroidModule;
 import roboguice.inject.ContextScoped;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Environment;
 
 import java.util.Arrays;
@@ -69,42 +66,6 @@ public class XmlimportModule extends AbstractAndroidModule {
         return Environment.getExternalStorageDirectory().getAbsolutePath();
     }
     
-    public static class GeoBeagleEnvironment {
-        private final SharedPreferences sharedPreferences;
-
-        @Inject
-        GeoBeagleEnvironment(@DefaultSharedPreferences SharedPreferences sharedPreferences) {
-            this.sharedPreferences = sharedPreferences;
-        }
-        
-        public String getExternalStorageDir() {
-            return Environment.getExternalStorageDirectory().getAbsolutePath();
-        }
-
-        public String getDetailsDirectory() {
-            return getExternalStorageDir() + "/" + DETAILS_DIR;
-        }
-        
-        public String getVersionPath() {
-            return getDetailsDirectory() + "/VERSION";
-        }
-        
-        public String getOldDetailsDirectory() {
-            return getExternalStorageDir()  + "/" + "GeoBeagle";
-        }
-
-        public String getImportFolder() {
-            String string = sharedPreferences.getString("import-folder", Environment
-                    .getExternalStorageDirectory()
-                    + "/Download");
-            if ((!string.endsWith("/")))
-                return string + "/";
-            return string;
-        }
-    }
-
-    private static final String DETAILS_DIR = "GeoBeagle/data/";
-
     @Provides
     @WriteDetails
     HtmlWriter htmlWriterWriteDetailsProvider(WriterWrapper writerWrapper) {

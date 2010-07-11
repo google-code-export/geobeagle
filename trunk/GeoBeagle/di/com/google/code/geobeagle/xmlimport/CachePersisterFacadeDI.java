@@ -22,7 +22,6 @@ import com.google.code.geobeagle.database.GpxWriter;
 import com.google.code.geobeagle.database.TagWriterImpl;
 import com.google.code.geobeagle.database.TagWriterNull;
 import com.google.code.geobeagle.xmlimport.GpxImporterDI.MessageHandler;
-import com.google.code.geobeagle.xmlimport.XmlimportModule.GeoBeagleEnvironment;
 import com.google.inject.Inject;
 
 import android.os.PowerManager.WakeLock;

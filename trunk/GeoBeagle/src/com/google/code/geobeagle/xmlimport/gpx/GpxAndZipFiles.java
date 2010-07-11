@@ -15,8 +15,8 @@
 package com.google.code.geobeagle.xmlimport.gpx;
 
 import com.google.code.geobeagle.R;
+import com.google.code.geobeagle.xmlimport.GeoBeagleEnvironment;
 import com.google.code.geobeagle.xmlimport.ImportException;
-import com.google.code.geobeagle.xmlimport.XmlimportModule.GeoBeagleEnvironment;
 
 import java.io.File;
 import java.io.FilenameFilter;
