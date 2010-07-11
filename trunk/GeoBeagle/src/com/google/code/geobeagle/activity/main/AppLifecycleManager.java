@@ -14,14 +14,27 @@
 
 package com.google.code.geobeagle.activity.main;
 
+import com.google.code.geobeagle.LocationControlBuffered;
+import com.google.code.geobeagle.GeoBeaglePackageModule.DefaultSharedPreferences;
+import com.google.code.geobeagle.location.LocationLifecycleManager;
+import com.google.inject.Inject;
+
 import android.content.SharedPreferences;
+import android.location.LocationManager;
 
 public class AppLifecycleManager {
     private final LifecycleManager[] mLifecycleManagers;
     private final SharedPreferences mPreferences;
 
-    public AppLifecycleManager(SharedPreferences preferences, LifecycleManager[] lifecycleManagers) {
-        mLifecycleManagers = lifecycleManagers;
+    @Inject
+    public AppLifecycleManager(@DefaultSharedPreferences SharedPreferences preferences,
+            LocationControlBuffered locationControlBuffered, LocationManager locationManager,
+            RadarView radarView) {
+        mLifecycleManagers = new LifecycleManager[] {
+                new LocationLifecycleManager(locationControlBuffered, locationManager),
+                new LocationLifecycleManager(radarView, locationManager)
+        };
+
         mPreferences = preferences;
     }
 
