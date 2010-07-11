@@ -47,16 +47,9 @@ public class BCachingModule extends AbstractAndroidModule {
     public static final String BCACHING_PASSWORD = "bcaching-password";
     public static final String BCACHING_INITIAL_MESSAGE = "Getting cache count...";
 
-    static class ImportSubmodule extends AbstractAndroidModule {
-
-        @Override
-        protected void configure() {
-        }
-
-        @Provides
-        WakeLock wakeLockProvider(PowerManager powerManager) {
-            return powerManager.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, "Importing");
-        }
+    @Provides
+    WakeLock wakeLockProvider(PowerManager powerManager) {
+        return powerManager.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, "Importing");
     }
     
     @Override
@@ -68,7 +61,6 @@ public class BCachingModule extends AbstractAndroidModule {
         bind(Aborter.class).in(ContextScoped.class);
         bind(ClearCachesFromSource.class).to(ClearCachesFromSourceNull.class);
         bind(ImportBCachingWorker.class).in(ContextScoped.class);
-        install(new ImportSubmodule());
         requestStaticInjection(RoboThread.class);
     }
 
