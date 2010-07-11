@@ -14,8 +14,6 @@
 
 package com.google.code.geobeagle.bcaching;
 
-import com.google.code.geobeagle.bcaching.BCachingAnnotations.CacheListAnnotation;
-import com.google.code.geobeagle.bcaching.BCachingAnnotations.DetailsReaderAnnotation;
 import com.google.code.geobeagle.bcaching.communication.BCachingCommunication;
 import com.google.code.geobeagle.bcaching.communication.BCachingException;
 import com.google.code.geobeagle.bcaching.communication.BCachingListImportHelper.BufferedReaderFactory;
@@ -100,33 +98,9 @@ public class BCachingModule extends AbstractAndroidModule {
         }
     }
 
-    @Provides
-    @DetailsReaderAnnotation
-    Hashtable<String, String> getCacheDetailsParamsProvider() {
-        Hashtable<String, String> params = new Hashtable<String, String>();
-        params.put("a", "detail");
-        commonParams(params);
-        params.put("desc", "html");
-        params.put("tbs", "0");
-        params.put("wpts", "1");
-        params.put("logs", "1");
-        params.put("fmt", "gpx");
-        return params;
-    }
-
-    private void commonParams(Hashtable<String, String> params) {
+    public static void commonParams(Hashtable<String, String> params) {
         params.put("lastuploaddays", "7");
         params.put("app", "GeoBeagle");
         params.put("timeAsLong", "1");
-    }
-
-    @Provides
-    @CacheListAnnotation
-    Hashtable<String, String> getCacheListParamsProvider() {
-        Hashtable<String, String> params = new Hashtable<String, String>();
-        params.put("a", "list");
-        params.put("found", "0");
-        commonParams(params);
-        return params;
     }
 }
