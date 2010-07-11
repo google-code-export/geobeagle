@@ -108,11 +108,12 @@ public class FieldnotesModule extends AbstractAndroidModule {
     public static class ToasterFactory {
         private final Context context;
 
+        @Inject
         ToasterFactory(Context context) {
             this.context = context;
         }
 
-        Toaster create(int resource) {
+        public Toaster create(int resource) {
             return new Toaster(context, resource, Toast.LENGTH_LONG);
         }
     }

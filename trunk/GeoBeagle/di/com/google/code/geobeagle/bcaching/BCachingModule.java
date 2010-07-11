@@ -14,8 +14,6 @@
 
 package com.google.code.geobeagle.bcaching;
 
-import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.activity.cachelist.CacheListModule.ToasterSyncAborted;
 import com.google.code.geobeagle.bcaching.BCachingAnnotations.CacheListAnnotation;
 import com.google.code.geobeagle.bcaching.BCachingAnnotations.DetailsReaderAnnotation;
 import com.google.code.geobeagle.bcaching.communication.BCachingCommunication;
@@ -30,7 +28,6 @@ import com.google.code.geobeagle.xmlimport.EventHelper;
 import com.google.code.geobeagle.xmlimport.MessageHandlerInterface;
 import com.google.code.geobeagle.xmlimport.XmlPullParserWrapper;
 import com.google.code.geobeagle.xmlimport.EventHelper.XmlPathBuilder;
-import com.google.code.geobeagle.xmlimport.GpxImporterDI.Toaster;
 import com.google.code.geobeagle.xmlimport.GpxToCache.Aborter;
 import com.google.code.geobeagle.xmlimport.XmlimportAnnotations.LoadDetails;
 import com.google.inject.Inject;
@@ -44,7 +41,6 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
-import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -76,12 +72,7 @@ public class BCachingModule extends AbstractAndroidModule {
         WakeLock wakeLockProvider(PowerManager powerManager) {
             return powerManager.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, "Importing");
         }
-        @Provides
-        @ToasterSyncAborted
-        Toaster toasterProvider(Context context) {
-            return new Toaster(context, R.string.import_canceled, Toast.LENGTH_LONG);
-        }
-
+ 
     }
     
     @Override
