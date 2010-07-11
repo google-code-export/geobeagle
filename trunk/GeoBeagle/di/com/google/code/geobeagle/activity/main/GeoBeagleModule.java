@@ -24,6 +24,9 @@ import com.google.code.geobeagle.LocationControlBuffered;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.Refresher;
 import com.google.code.geobeagle.CompassListener.Azimuth;
+import com.google.code.geobeagle.GraphicsGenerator.IconOverlayFactory;
+import com.google.code.geobeagle.GraphicsGenerator.IconRenderer;
+import com.google.code.geobeagle.GraphicsGenerator.MapViewBitmapCopier;
 import com.google.code.geobeagle.GraphicsGenerator.RatingsArray;
 import com.google.code.geobeagle.actions.MenuAction;
 import com.google.code.geobeagle.actions.MenuActionCacheList;
@@ -31,6 +34,7 @@ import com.google.code.geobeagle.actions.MenuActionEditGeocache;
 import com.google.code.geobeagle.actions.MenuActionSearchOnline;
 import com.google.code.geobeagle.actions.MenuActionSettings;
 import com.google.code.geobeagle.actions.MenuActions;
+import com.google.code.geobeagle.activity.cachelist.presenter.GeoBeaglePackageAnnotations.DifficultyAndTerrainPainterAnnotation;
 import com.google.code.geobeagle.activity.main.intents.GeocacheToCachePage;
 import com.google.code.geobeagle.activity.main.intents.GeocacheToGoogleGeo;
 import com.google.code.geobeagle.activity.main.intents.IntentFactory;
@@ -42,6 +46,7 @@ import com.google.code.geobeagle.activity.main.view.GeocacheViewer;
 import com.google.code.geobeagle.activity.main.view.OnClickListenerIntentStarter;
 import com.google.code.geobeagle.activity.main.view.GeocacheViewer.AttributeViewer;
 import com.google.code.geobeagle.activity.main.view.GeocacheViewer.LabelledAttributeViewer;
+import com.google.code.geobeagle.activity.main.view.GeocacheViewer.NameViewer;
 import com.google.code.geobeagle.activity.main.view.GeocacheViewer.PawImages;
 import com.google.code.geobeagle.activity.main.view.GeocacheViewer.ResourceImages;
 import com.google.code.geobeagle.activity.main.view.GeocacheViewer.RibbonImages;
@@ -72,6 +77,7 @@ import android.hardware.SensorManager;
 import android.location.LocationManager;
 import android.os.Environment;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -360,6 +366,18 @@ public class GeoBeagleModule extends AbstractAndroidModule {
         return Environment.getExternalStorageDirectory().getAbsolutePath();
     }
 
+    @Provides
+    public GeocacheViewer providesGeocacheViewer(RadarView radarView, Activity activity,
+            NameViewer gcName, @Named("GeocacheIcon") ImageView cacheTypeImageView,
+            @Named("GeocacheDifficulty") AttributeViewer gcDifficulty,
+            @Named("GeocacheTerrain") AttributeViewer gcTerrain, ResourceImages gcContainer,
+            IconOverlayFactory iconOverlayFactory, MapViewBitmapCopier mapViewBitmapCopier,
+            @DifficultyAndTerrainPainterAnnotation IconRenderer iconRenderer) {
+        Log.d("GeoBeagle", "GOING THROUG PROVIDER");
+        return new GeocacheViewer(radarView, activity, gcName, cacheTypeImageView, gcDifficulty,
+                gcTerrain, gcContainer, iconOverlayFactory, mapViewBitmapCopier, iconRenderer);
+    }
+    
     @ChooseNavDialog
     @Provides
     public AlertDialog chooseNavDialogProvider(Provider<Resources> resourcesProvider,
