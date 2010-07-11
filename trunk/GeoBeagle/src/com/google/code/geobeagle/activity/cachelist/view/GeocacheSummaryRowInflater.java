@@ -15,12 +15,12 @@
 package com.google.code.geobeagle.activity.cachelist.view;
 
 import com.google.code.geobeagle.R;
+import com.google.code.geobeagle.GraphicsGenerator.DifficultyAndTerrainPainter;
 import com.google.code.geobeagle.GraphicsGenerator.IconOverlayFactory;
 import com.google.code.geobeagle.GraphicsGenerator.IconRenderer;
 import com.google.code.geobeagle.GraphicsGenerator.ListViewBitmapCopier;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVector;
 import com.google.code.geobeagle.activity.cachelist.presenter.BearingFormatter;
-import com.google.code.geobeagle.activity.cachelist.presenter.GeoBeaglePackageAnnotations.DifficultyAndTerrainPainterAnnotation;
 import com.google.code.geobeagle.formatting.DistanceFormatter;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
@@ -38,13 +38,14 @@ public class GeocacheSummaryRowInflater {
     private final LayoutInflater mLayoutInflater;
     private final ListViewBitmapCopier mListViewBitmapCopier;
     private final NameFormatter mNameFormatter;
+    private final DifficultyAndTerrainPainter mDifficultyAndTerrainPainter;
 
     @Inject
     public GeocacheSummaryRowInflater(LayoutInflater layoutInflater,
-            Provider<DistanceFormatter> distanceFormatterProvider, Provider<BearingFormatter> bearingFormatterProvider,
-            @DifficultyAndTerrainPainterAnnotation IconRenderer iconRenderer,
+            Provider<DistanceFormatter> distanceFormatterProvider,
+            Provider<BearingFormatter> bearingFormatterProvider, IconRenderer iconRenderer,
             ListViewBitmapCopier listViewBitmapCopier, IconOverlayFactory iconOverlayFactory,
-            NameFormatter nameFormatter) {
+            NameFormatter nameFormatter, DifficultyAndTerrainPainter difficultyAndTerrainPainter) {
         mLayoutInflater = layoutInflater;
         mDistanceFormatterProvider = distanceFormatterProvider;
         mBearingFormatterProvider = bearingFormatterProvider;
@@ -52,6 +53,7 @@ public class GeocacheSummaryRowInflater {
         mListViewBitmapCopier = listViewBitmapCopier;
         mIconOverlayFactory = iconOverlayFactory;
         mNameFormatter = nameFormatter;
+        mDifficultyAndTerrainPainter = difficultyAndTerrainPainter;
     }
 
     public View inflate(View convertView) {
@@ -72,6 +74,7 @@ public class GeocacheSummaryRowInflater {
 
     public void setData(View view, GeocacheVector geocacheVector) {
         ((RowViews)view.getTag()).set(geocacheVector, mBearingFormatterProvider.get(),
-                mDistanceFormatterProvider.get(), mListViewBitmapCopier, mIconRenderer);
+                mDistanceFormatterProvider.get(), mListViewBitmapCopier, mIconRenderer,
+                mDifficultyAndTerrainPainter);
     }
 }

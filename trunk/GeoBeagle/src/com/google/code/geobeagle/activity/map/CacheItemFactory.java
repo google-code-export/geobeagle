@@ -15,25 +15,29 @@
 package com.google.code.geobeagle.activity.map;
 
 import com.google.code.geobeagle.Geocache;
+import com.google.code.geobeagle.GraphicsGenerator.DifficultyAndTerrainPainter;
 import com.google.code.geobeagle.GraphicsGenerator.IconOverlayFactory;
 import com.google.code.geobeagle.GraphicsGenerator.IconRenderer;
 import com.google.code.geobeagle.GraphicsGenerator.MapViewBitmapCopier;
-import com.google.code.geobeagle.activity.cachelist.presenter.GeoBeaglePackageAnnotations.DifficultyAndTerrainPainterAnnotation;
 import com.google.inject.Inject;
 
+import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 
 class CacheItemFactory {
     private final IconRenderer mIconRenderer;
     private final MapViewBitmapCopier mMapViewBitmapCopier;
     private final IconOverlayFactory mIconOverlayFactory;
+    private final DifficultyAndTerrainPainter mDifficultyAndTerrainPainter;
 
     @Inject
-    CacheItemFactory(@DifficultyAndTerrainPainterAnnotation IconRenderer iconRenderer,
-            MapViewBitmapCopier mapViewBitmapCopier, IconOverlayFactory iconOverlayFactory) {
-        mIconRenderer = iconRenderer;
+    CacheItemFactory(MapViewBitmapCopier mapViewBitmapCopier,
+            IconOverlayFactory iconOverlayFactory, Resources resources,
+            DifficultyAndTerrainPainter difficultyAndTerrainPainter) {
+        mIconRenderer = new IconRenderer(resources);
         mMapViewBitmapCopier = mapViewBitmapCopier;
         mIconOverlayFactory = iconOverlayFactory;
+        mDifficultyAndTerrainPainter = difficultyAndTerrainPainter;
     }
 
     CacheItem createCacheItem(Geocache geocache) {
@@ -42,7 +46,7 @@ class CacheItemFactory {
 
         final Drawable icon = mIconRenderer.renderIcon(geocache.getDifficulty(), geocache
                 .getTerrain(), geocache.getCacheType().iconMap(), mIconOverlayFactory.create(
-                geocache, false), mMapViewBitmapCopier);
+                geocache, false), mMapViewBitmapCopier, mDifficultyAndTerrainPainter);
         cacheItem.setMarker(icon);
         return cacheItem;
     }

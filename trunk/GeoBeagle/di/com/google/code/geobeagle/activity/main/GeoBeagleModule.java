@@ -23,6 +23,7 @@ import com.google.code.geobeagle.ErrorDisplayer;
 import com.google.code.geobeagle.LocationControlBuffered;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.GeoBeaglePackageModule.DefaultSharedPreferences;
+import com.google.code.geobeagle.GraphicsGenerator.DifficultyAndTerrainPainter;
 import com.google.code.geobeagle.GraphicsGenerator.IconOverlayFactory;
 import com.google.code.geobeagle.GraphicsGenerator.IconRenderer;
 import com.google.code.geobeagle.GraphicsGenerator.MapViewBitmapCopier;
@@ -33,7 +34,6 @@ import com.google.code.geobeagle.actions.MenuActionEditGeocache;
 import com.google.code.geobeagle.actions.MenuActionSearchOnline;
 import com.google.code.geobeagle.actions.MenuActionSettings;
 import com.google.code.geobeagle.actions.MenuActions;
-import com.google.code.geobeagle.activity.cachelist.presenter.GeoBeaglePackageAnnotations.DifficultyAndTerrainPainterAnnotation;
 import com.google.code.geobeagle.activity.main.intents.GeocacheToCachePage;
 import com.google.code.geobeagle.activity.main.intents.GeocacheToGoogleGeo;
 import com.google.code.geobeagle.activity.main.intents.IntentFactory;
@@ -289,11 +289,12 @@ public class GeoBeagleModule extends AbstractAndroidModule {
             @Named("GeocacheDifficulty") AttributeViewer gcDifficulty,
             @Named("GeocacheTerrain") AttributeViewer gcTerrain, ResourceImages gcContainer,
             IconOverlayFactory iconOverlayFactory, MapViewBitmapCopier mapViewBitmapCopier,
-            @DifficultyAndTerrainPainterAnnotation IconRenderer iconRenderer) {
+            IconRenderer iconRenderer, DifficultyAndTerrainPainter difficultyAndTerrainPainter) {
         Log.d("GeoBeagle", "GOING THROUG PROVIDER");
         final ImageView cacheTypeImageView = (ImageView)activity.findViewById(R.id.gcicon);
         return new GeocacheViewer(radarView, activity, gcName, cacheTypeImageView, gcDifficulty,
-                gcTerrain, gcContainer, iconOverlayFactory, mapViewBitmapCopier, iconRenderer);
+                gcTerrain, gcContainer, iconOverlayFactory, mapViewBitmapCopier, iconRenderer,
+                difficultyAndTerrainPainter);
     }
     
     @ChooseNavDialog

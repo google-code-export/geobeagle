@@ -121,15 +121,16 @@ class QueryManager {
     private final CachedNeedsLoading mCachedNeedsLoading;
     private int[] mLatLonMinMax; // i.e. latmin, lonmin, latmax, lonmax
     private ArrayList<Geocache> mList;
-    private final Loader mLoader;
 
-    QueryManager(Loader loader, CachedNeedsLoading cachedNeedsLoading, int[] latLonMinMax) {
-        mLatLonMinMax = latLonMinMax;
-        mLoader = loader;
+    @Inject
+    QueryManager(CachedNeedsLoading cachedNeedsLoading) {
+        mLatLonMinMax = new int[] {
+                0, 0, 0, 0
+        };
         mCachedNeedsLoading = cachedNeedsLoading;
     }
 
-    ArrayList<Geocache> load(GeoPoint newTopLeft, GeoPoint newBottomRight) {
+    ArrayList<Geocache> load(GeoPoint newTopLeft, GeoPoint newBottomRight, Loader loader) {
         // Expand the area by the resolution so we get complete patches for the
         // density map. This isn't needed for the pins overlay, but it doesn't
         // hurt either.
@@ -144,7 +145,7 @@ class QueryManager {
         final WhereFactoryFixedArea where = new WhereFactoryFixedArea(latMin / 1E6,
                 lonMin / 1E6, latMax / 1E6, lonMax / 1E6);
 
-        mList = mLoader.load(latMin, lonMin, latMax, lonMax, where, mLatLonMinMax);
+        mList = loader.load(latMin, lonMin, latMax, lonMax, where, mLatLonMinMax);
         return mList;
     }
 

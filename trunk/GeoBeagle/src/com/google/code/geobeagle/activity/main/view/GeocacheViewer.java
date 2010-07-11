@@ -21,11 +21,11 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.R;
+import com.google.code.geobeagle.GraphicsGenerator.DifficultyAndTerrainPainter;
 import com.google.code.geobeagle.GraphicsGenerator.IconOverlay;
 import com.google.code.geobeagle.GraphicsGenerator.IconOverlayFactory;
 import com.google.code.geobeagle.GraphicsGenerator.IconRenderer;
 import com.google.code.geobeagle.GraphicsGenerator.MapViewBitmapCopier;
-import com.google.code.geobeagle.activity.cachelist.presenter.GeoBeaglePackageAnnotations.DifficultyAndTerrainPainterAnnotation;
 import com.google.code.geobeagle.activity.cachelist.view.NameFormatter;
 import com.google.code.geobeagle.activity.main.GeoUtils;
 import com.google.code.geobeagle.activity.main.RadarView;
@@ -140,14 +140,15 @@ public class GeocacheViewer {
     private final MapViewBitmapCopier mMapViewBitmapCopier;
     private final IconRenderer mIconRenderer;
     private final Activity mActivity;
+    private final DifficultyAndTerrainPainter mDifficultyAndTerrainPainter;
 
     @Inject
-    public GeocacheViewer(RadarView radarView, Activity activity,
-            NameViewer gcName, @Named("GeocacheIcon") ImageView cacheTypeImageView,
+    public GeocacheViewer(RadarView radarView, Activity activity, NameViewer gcName,
+            @Named("GeocacheIcon") ImageView cacheTypeImageView,
             @Named("GeocacheDifficulty") AttributeViewer gcDifficulty,
             @Named("GeocacheTerrain") AttributeViewer gcTerrain, ResourceImages gcContainer,
             IconOverlayFactory iconOverlayFactory, MapViewBitmapCopier mapViewBitmapCopier,
-            @DifficultyAndTerrainPainterAnnotation IconRenderer iconRenderer) {
+            IconRenderer iconRenderer, DifficultyAndTerrainPainter difficultyAndTerrainPainter) {
         mRadarView = radarView;
         mActivity = activity;
         mName = gcName;
@@ -158,6 +159,7 @@ public class GeocacheViewer {
         mIconOverlayFactory = iconOverlayFactory;
         mMapViewBitmapCopier = mapViewBitmapCopier;
         mIconRenderer = iconRenderer;
+        mDifficultyAndTerrainPainter = difficultyAndTerrainPainter;
     }
 
     public void set(Geocache geocache) {
@@ -169,7 +171,8 @@ public class GeocacheViewer {
 
         IconOverlay iconOverlay = mIconOverlayFactory.create(geocache, true);
         int iconBig = geocache.getCacheType().iconBig();
-        Drawable icon = mIconRenderer.renderIcon(0, 0, iconBig, iconOverlay, mMapViewBitmapCopier);
+        Drawable icon = mIconRenderer.renderIcon(0, 0, iconBig, iconOverlay, mMapViewBitmapCopier,
+                mDifficultyAndTerrainPainter);
         mCacheTypeImageView.setImageDrawable(icon);
         mContainer.setImage(geocache.getContainer());
         mDifficulty.setImage(geocache.getDifficulty());
