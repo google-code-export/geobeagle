@@ -14,7 +14,7 @@
 
 package com.google.code.geobeagle.cachedetails;
 
-import com.google.code.geobeagle.xmlimport.XmlimportModule.GeoBeagleEnvironment;
+import com.google.code.geobeagle.xmlimport.GeoBeagleEnvironment;
 import com.google.inject.Inject;
 
 import java.io.File;

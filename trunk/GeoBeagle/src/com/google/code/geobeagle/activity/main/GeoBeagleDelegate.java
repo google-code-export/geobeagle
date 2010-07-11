@@ -29,7 +29,7 @@ import com.google.code.geobeagle.activity.main.view.WebPageAndDetailsButtonEnabl
 import com.google.code.geobeagle.database.CacheWriter;
 import com.google.code.geobeagle.database.DbFrontend;
 import com.google.code.geobeagle.database.LocationSaver;
-import com.google.code.geobeagle.xmlimport.XmlimportModule.GeoBeagleEnvironment;
+import com.google.code.geobeagle.xmlimport.GeoBeagleEnvironment;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 

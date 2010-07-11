@@ -15,8 +15,6 @@
 package com.google.code.geobeagle.xmlimport;
 
 
-import com.google.code.geobeagle.xmlimport.XmlimportModule.GeoBeagleEnvironment;
-
 import android.util.Log;
 
 import java.io.File;
