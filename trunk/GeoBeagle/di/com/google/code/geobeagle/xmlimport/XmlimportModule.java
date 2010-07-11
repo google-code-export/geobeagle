@@ -14,6 +14,7 @@
 
 package com.google.code.geobeagle.xmlimport;
 
+
 import com.google.code.geobeagle.GeoBeaglePackageModule;
 import com.google.code.geobeagle.GeoBeaglePackageModule.DefaultSharedPreferences;
 import com.google.code.geobeagle.GeoBeaglePackageModule.ExternalStorageDirectory;
@@ -70,6 +71,12 @@ public class XmlimportModule extends AbstractAndroidModule {
                 xmlWriter, eventHandlerGpx));
 
         return new EventHelper(xmlPathBuilder, eventHandlerComposite, xmlPullParser);
+    }
+    
+    @Provides
+    @ExternalStorageDirectory
+    String providesPicturesDirectory() {
+        return Environment.getExternalStorageDirectory().getAbsolutePath();
     }
 
     @Provides
