@@ -32,7 +32,6 @@ import com.google.code.geobeagle.xmlimport.EventHelperDI.EventHelperFactory;
 import com.google.code.geobeagle.xmlimport.GpxToCache.Aborter;
 import com.google.code.geobeagle.xmlimport.ImportThreadDelegate.ImportThreadHelper;
 import com.google.code.geobeagle.xmlimport.XmlimportAnnotations.ImportDirectory;
-import com.google.code.geobeagle.xmlimport.XmlimportAnnotations.OldDetailsDirectory;
 import com.google.code.geobeagle.xmlimport.XmlimportModule.GeoBeagleEnvironment;
 import com.google.code.geobeagle.xmlimport.gpx.GpxAndZipFiles;
 import com.google.code.geobeagle.xmlimport.gpx.GpxFileIterAndZipFileIterFactory;
@@ -77,7 +76,7 @@ public class GpxImporterDI {
             final EventHelperFactory eventHelperFactory = new EventHelperFactory(
                     xmlPullParserWrapper);
             OldCacheFilesCleaner oldCacheFilesCleaner = new OldCacheFilesCleaner(injector
-                    .getInstance(Key.get(String.class, OldDetailsDirectory.class)), messageHandler);
+                    .getInstance(GeoBeagleEnvironment.class), messageHandler);
             final SharedPreferences sharedPreferences = injector.getInstance(Key.get(
                     SharedPreferences.class, DefaultSharedPreferences.class));
             

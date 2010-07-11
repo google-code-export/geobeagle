@@ -15,6 +15,8 @@
 package com.google.code.geobeagle.xmlimport;
 
 
+import com.google.code.geobeagle.xmlimport.XmlimportModule.GeoBeagleEnvironment;
+
 import android.util.Log;
 
 import java.io.File;
@@ -23,8 +25,8 @@ public class OldCacheFilesCleaner {
     private final String directory;
     private final MessageHandlerInterface messageHandler;
 
-    public OldCacheFilesCleaner(String directory, MessageHandlerInterface messageHandler) {
-        this.directory = directory;
+    public OldCacheFilesCleaner(GeoBeagleEnvironment geoBeagleEnvironment, MessageHandlerInterface messageHandler) {
+        this.directory = geoBeagleEnvironment.getOldDetailsDirectory();
         this.messageHandler = messageHandler;
     }
 
