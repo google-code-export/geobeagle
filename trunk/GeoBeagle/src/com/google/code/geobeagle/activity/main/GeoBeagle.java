@@ -14,12 +14,12 @@
 
 package com.google.code.geobeagle.activity.main;
 
+import com.google.code.geobeagle.ErrorDisplayer;
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.LocationControlBuffered;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.R.id;
 import com.google.code.geobeagle.activity.main.GeoBeagleDelegate.LogFindClickListener;
-import com.google.code.geobeagle.activity.main.GeoBeagleModule.ButtonListenerCachePage;
 import com.google.code.geobeagle.activity.main.GeoBeagleModule.ButtonListenerMapPage;
 import com.google.code.geobeagle.activity.main.fieldnotes.DialogHelperSms;
 import com.google.code.geobeagle.activity.main.fieldnotes.FieldnoteLogger;
@@ -110,9 +110,11 @@ public class GeoBeagle extends GuiceActivity {
 
         findViewById(R.id.cache_details).setOnClickListener(
                 injector.getInstance(OnClickListenerCacheDetails.class));
-        findViewById(id.cache_page).setOnClickListener(
-                injector.getInstance(Key.get(OnClickListenerIntentStarter.class,
-                        ButtonListenerCachePage.class)));
+        final IntentStarterViewCachePage intentStarterViewCachePage = injector
+                .getInstance(IntentStarterViewCachePage.class);
+        final ErrorDisplayer errorDisplayer = injector.getInstance(ErrorDisplayer.class);
+        final OnClickListenerIntentStarter onClickListenerIntentStarter = new OnClickListenerIntentStarter(intentStarterViewCachePage , errorDisplayer);
+        findViewById(id.cache_page).setOnClickListener(onClickListenerIntentStarter);
 
         findViewById(id.radarview).setOnClickListener(
                 injector.getInstance(OnClickListenerRadar.class));
