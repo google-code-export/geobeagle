@@ -20,7 +20,7 @@ import static java.lang.annotation.ElementType.PARAMETER;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.activity.main.GeoBeagleModule.FieldNotesFilename;
+import com.google.code.geobeagle.activity.main.fieldnotes.FieldnotesModule.FieldNotesFilename;
 import com.google.code.geobeagle.xmlimport.GpxImporterDI.Toaster;
 import com.google.inject.BindingAnnotation;
 import com.google.inject.Inject;
