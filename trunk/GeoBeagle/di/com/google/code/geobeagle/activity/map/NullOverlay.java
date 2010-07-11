@@ -16,15 +16,5 @@ package com.google.code.geobeagle.activity.map;
 
 import com.google.android.maps.Overlay;
 
-import roboguice.config.AbstractAndroidModule;
-
-public class GeoMapActivityModule extends AbstractAndroidModule {
-
-    static class NullOverlay extends Overlay {
-    }
-
-    @Override
-    protected void configure() {
-    }
-
+class NullOverlay extends Overlay {
 }
