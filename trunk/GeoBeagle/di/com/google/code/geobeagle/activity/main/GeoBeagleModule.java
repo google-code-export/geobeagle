@@ -34,6 +34,7 @@ import com.google.code.geobeagle.actions.MenuActionEditGeocache;
 import com.google.code.geobeagle.actions.MenuActionSearchOnline;
 import com.google.code.geobeagle.actions.MenuActionSettings;
 import com.google.code.geobeagle.actions.MenuActions;
+import com.google.code.geobeagle.activity.cachelist.view.NameFormatter;
 import com.google.code.geobeagle.activity.main.intents.GeocacheToCachePage;
 import com.google.code.geobeagle.activity.main.intents.GeocacheToGoogleGeo;
 import com.google.code.geobeagle.activity.main.intents.IntentFactory;
@@ -70,7 +71,6 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.location.LocationManager;
-import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -159,12 +159,6 @@ public class GeoBeagleModule extends AbstractAndroidModule {
     }
 
     @Provides
-    @Named("GeocacheName")
-    TextView providesGCName(Activity activity) {
-        return (TextView)activity.findViewById(R.id.gcname);
-    }
-
-    @Provides
     GeoBeagle providesGeoBeagle(Activity activity) {
         return (GeoBeagle)activity;
     }
@@ -191,11 +185,6 @@ public class GeoBeagleModule extends AbstractAndroidModule {
         return (ImageView)geoBeagle.findViewById(R.id.gc_difficulty);
     }
 
-    @Provides
-    @Named("ImageViewTerrain")
-    ImageView providesImageViewTerrain(GeoBeagle geoBeagle) {
-        return (ImageView)geoBeagle.findViewById(R.id.gc_terrain);
-    }
 
     @Provides
     @IntentStarterRadar
@@ -246,7 +235,9 @@ public class GeoBeagleModule extends AbstractAndroidModule {
     @Provides
     @PawImages
     UnlabelledAttributeViewer providesPawImagesOnDifficulty(Resources resources,
-            @Named("ImageViewTerrain") ImageView imageView, RatingsArray ratingsArray) {
+            RatingsArray ratingsArray, Activity activity) {
+        ImageView imageView = (ImageView)activity.findViewById(R.id.gc_terrain);
+
         final Drawable[] pawDrawables = {
                 resources.getDrawable(R.drawable.paw_unselected_dark),
                 resources.getDrawable(R.drawable.paw_half_light),
@@ -285,12 +276,13 @@ public class GeoBeagleModule extends AbstractAndroidModule {
 
     @Provides
     public GeocacheViewer providesGeocacheViewer(RadarView radarView, Activity activity,
-            NameViewer gcName,
             @Named("GeocacheDifficulty") AttributeViewer gcDifficulty,
             @Named("GeocacheTerrain") AttributeViewer gcTerrain, ResourceImages gcContainer,
             IconOverlayFactory iconOverlayFactory, MapViewBitmapCopier mapViewBitmapCopier,
-            IconRenderer iconRenderer, DifficultyAndTerrainPainter difficultyAndTerrainPainter) {
-        Log.d("GeoBeagle", "GOING THROUG PROVIDER");
+            IconRenderer iconRenderer, DifficultyAndTerrainPainter difficultyAndTerrainPainter,
+            NameFormatter nameFormatter) {
+        final TextView textViewName = (TextView)activity.findViewById(R.id.gcname);
+        final NameViewer gcName = new NameViewer(textViewName, nameFormatter);
         final ImageView cacheTypeImageView = (ImageView)activity.findViewById(R.id.gcicon);
         return new GeocacheViewer(radarView, activity, gcName, cacheTypeImageView, gcDifficulty,
                 gcTerrain, gcContainer, iconOverlayFactory, mapViewBitmapCopier, iconRenderer,
