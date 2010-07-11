@@ -17,7 +17,6 @@ package com.google.code.geobeagle.bcaching;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.GeoBeaglePackageModule.DefaultSharedPreferences;
 import com.google.code.geobeagle.activity.cachelist.CacheListModule.ToasterSyncAborted;
-import com.google.code.geobeagle.bcaching.BCachingAnnotations.BCachingUserName;
 import com.google.code.geobeagle.bcaching.BCachingAnnotations.CacheListAnnotation;
 import com.google.code.geobeagle.bcaching.BCachingAnnotations.DetailsReaderAnnotation;
 import com.google.code.geobeagle.bcaching.communication.BCachingCommunication;
@@ -57,6 +56,8 @@ import java.util.Hashtable;
 
 public class BCachingModule extends AbstractAndroidModule {
 
+    public static final String BCACHING_USERNAME = "bcaching-username";
+    private static final String BCACHING_PASSWORD = "bcaching-password";
     public static final String BCACHING_INITIAL_MESSAGE = "Getting cache count...";
 
     static class ImportSubmodule extends AbstractAndroidModule {
@@ -126,18 +127,12 @@ public class BCachingModule extends AbstractAndroidModule {
 
     @Provides
     BCachingCommunication bcachingCommunicationProvider(
-            @DefaultSharedPreferences SharedPreferences sharedPreferences,
-            @BCachingUserName String bcachingUsername) {
-        String bcachingPassword = sharedPreferences.getString("bcaching-password", "");
-        return new BCachingCommunication(bcachingUsername, bcachingPassword);
+            @DefaultSharedPreferences SharedPreferences sharedPreferences) {
+        String bcachingPassword = sharedPreferences.getString(BCACHING_PASSWORD, "");
+        String bcachingUsername = sharedPreferences.getString(BCACHING_USERNAME, "");
+        return new BCachingCommunication(bcachingUsername , bcachingPassword);
     }
 
-    @Provides
-    @BCachingUserName
-    String providesUserName(@DefaultSharedPreferences SharedPreferences sharedPreferences) {
-        return sharedPreferences.getString("bcaching-username", "");
-    }
-    
     @Provides
     @DetailsReaderAnnotation
     Hashtable<String, String> getCacheDetailsParamsProvider() {

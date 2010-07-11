@@ -20,6 +20,4 @@ public class BCachingAnnotations {
     @BindingAnnotation @Target( { FIELD, PARAMETER, METHOD }) @Retention(RUNTIME)
     public static @interface CacheListAnnotation { }
 
-    @BindingAnnotation @Target( { FIELD, PARAMETER, METHOD }) @Retention(RUNTIME)
-    public static @interface BCachingUserName { }
 }
