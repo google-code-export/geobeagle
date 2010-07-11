@@ -59,7 +59,9 @@ public class GpsStatusWidgetModule extends AbstractAndroidModule {
 
     @Provides
     @ContextScoped
-    Meter providesMeter(MeterBars meterBars, @GpsStatusWidgetView View gpsStatusWidget) {
+    Meter providesMeter(@GpsStatusWidgetView View gpsStatusWidget,
+            @LocationViewer TextView textView, MeterFormatter meterFormatter) {
+        final MeterBars meterBars = new MeterBars(textView, meterFormatter);
         return new Meter(meterBars, ((TextView)gpsStatusWidget.findViewById(R.id.accuracy)));
     }
 
