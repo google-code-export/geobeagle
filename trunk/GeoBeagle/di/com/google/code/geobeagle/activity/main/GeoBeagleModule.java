@@ -35,7 +35,6 @@ import com.google.code.geobeagle.actions.MenuActionSearchOnline;
 import com.google.code.geobeagle.actions.MenuActionSettings;
 import com.google.code.geobeagle.actions.MenuActions;
 import com.google.code.geobeagle.activity.cachelist.view.NameFormatter;
-import com.google.code.geobeagle.activity.main.intents.GeocacheToCachePage;
 import com.google.code.geobeagle.activity.main.intents.GeocacheToGoogleGeo;
 import com.google.code.geobeagle.activity.main.intents.IntentFactory;
 import com.google.code.geobeagle.activity.main.intents.IntentStarter;
@@ -106,14 +105,6 @@ public class GeoBeagleModule extends AbstractAndroidModule {
             FIELD, PARAMETER, METHOD
     })
     @Retention(RUNTIME)
-    public static @interface IntentStarterViewCachePage {
-    }
-
-    @BindingAnnotation
-    @Target( {
-            FIELD, PARAMETER, METHOD
-    })
-    @Retention(RUNTIME)
     public static @interface IntentStarterViewGoogleMap {
     }
 
@@ -139,8 +130,9 @@ public class GeoBeagleModule extends AbstractAndroidModule {
 
     @Provides
     AppLifecycleManager providesAppLifecycleManager(
-            @DefaultSharedPreferences SharedPreferences sharedPreferences, RadarView radarView,
-            LocationControlBuffered locationControlBuffered, LocationManager locationManager) {
+            @DefaultSharedPreferences SharedPreferences sharedPreferences,
+            RadarView radarView, LocationControlBuffered locationControlBuffered,
+            LocationManager locationManager) {
         return new AppLifecycleManager(sharedPreferences, new LifecycleManager[] {
                 new LocationLifecycleManager(locationControlBuffered, locationManager),
                 new LocationLifecycleManager(radarView, locationManager)
@@ -150,15 +142,6 @@ public class GeoBeagleModule extends AbstractAndroidModule {
     @Provides
     GeoBeagle providesGeoBeagle(Activity activity) {
         return (GeoBeagle)activity;
-    }
-
-    @Provides
-    @IntentStarterViewCachePage
-    IntentStarterViewUri providesIntentStarterViewCachePage(GeoBeagle geoBeagle,
-            IntentFactory intentFactory, GeocacheToCachePage geocacheToCachePage,
-            ErrorDisplayer errorDisplayer) {
-        return new IntentStarterViewUri(geoBeagle, intentFactory, geocacheToCachePage,
-                errorDisplayer);
     }
 
     @Provides
@@ -178,8 +161,7 @@ public class GeoBeagleModule extends AbstractAndroidModule {
     @Provides
     @ButtonListenerCachePage
     OnClickListenerIntentStarter providesOnClickListenerIntentStarterCachePage(
-            @IntentStarterViewCachePage IntentStarterViewUri intentStarter,
-            ErrorDisplayer errorDisplayer) {
+            IntentStarterViewCachePage intentStarter, ErrorDisplayer errorDisplayer) {
         return new OnClickListenerIntentStarter(intentStarter, errorDisplayer);
     }
 
