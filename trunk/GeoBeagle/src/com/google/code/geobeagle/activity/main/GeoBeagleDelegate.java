@@ -19,7 +19,6 @@ import com.google.code.geobeagle.CompassListener;
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.GeocacheFactory;
 import com.google.code.geobeagle.GeoBeaglePackageModule.DefaultSharedPreferences;
-import com.google.code.geobeagle.GeoBeaglePackageModule.ExternalStorageDirectory;
 import com.google.code.geobeagle.GeocacheFactory.Source;
 import com.google.code.geobeagle.actions.MenuActions;
 import com.google.code.geobeagle.activity.ActivitySaver;
@@ -30,6 +29,7 @@ import com.google.code.geobeagle.activity.main.view.WebPageAndDetailsButtonEnabl
 import com.google.code.geobeagle.database.CacheWriter;
 import com.google.code.geobeagle.database.DbFrontend;
 import com.google.code.geobeagle.database.LocationSaver;
+import com.google.code.geobeagle.xmlimport.XmlimportModule.GeoBeagleEnvironment;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
@@ -82,7 +82,7 @@ public class GeoBeagleDelegate {
     private final SharedPreferences mSharedPreferences;
     private final WebPageAndDetailsButtonEnabler mWebPageButtonEnabler;
     private final Provider<CacheWriter> mCacheWriterProvider;
-    private final String mExternalStorageDirectory;
+    private final GeoBeagleEnvironment mGeoBeagleEnvironment;
 
     @Inject
     public GeoBeagleDelegate(ActivitySaver activitySaver, AppLifecycleManager appLifecycleManager,
@@ -95,7 +95,7 @@ public class GeoBeagleDelegate {
             @DefaultSharedPreferences SharedPreferences sharedPreferences,
             WebPageAndDetailsButtonEnabler webPageButtonEnabler,
             Provider<CacheWriter> cacheWriterProvider,
-            @ExternalStorageDirectory String externalStorageDirectory) {
+            GeoBeagleEnvironment geoBeagleEnvironment) {
         mParent = parent;
         mActivitySaver = activitySaver;
         mAppLifecycleManager = appLifecycleManager;
@@ -111,7 +111,7 @@ public class GeoBeagleDelegate {
         mDbFrontendProvider = dbFrontendProvider;
         mGeocacheFromParcelFactory = geocacheFromParcelFactory;
         mCacheWriterProvider = cacheWriterProvider;
-        mExternalStorageDirectory = externalStorageDirectory;
+        mGeoBeagleEnvironment = geoBeagleEnvironment;
     }
 
     public Geocache getGeocache() {
@@ -119,7 +119,8 @@ public class GeoBeagleDelegate {
     }
 
     private void onCameraStart() {
-        String filename = mExternalStorageDirectory + "/GeoBeagle_" + mGeocache.getId()
+        String filename = mGeoBeagleEnvironment.getExternalStorageDir() + "/GeoBeagle_"
+                + mGeocache.getId()
                 + DateFormat.format("_yyyy-MM-dd_kk.mm.ss.jpg", System.currentTimeMillis());
         Log.d("GeoBeagle", "capturing image to " + filename);
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);

@@ -137,14 +137,6 @@ public class GeoBeagleModule extends AbstractAndroidModule {
     public static @interface ChooseNavDialog {
     }
     
-    @BindingAnnotation
-    @Target( {
-            FIELD, PARAMETER, METHOD
-    })
-    @Retention(RUNTIME)
-    public static @interface ExternalStorageDirectory {
-    }
-
     @Override
     protected void configure() {
         bind(Paint.class).toInstance(new Paint());

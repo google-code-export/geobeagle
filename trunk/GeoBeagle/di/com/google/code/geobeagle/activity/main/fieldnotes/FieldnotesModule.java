@@ -21,10 +21,10 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.GeoBeaglePackageModule.DefaultSharedPreferences;
-import com.google.code.geobeagle.GeoBeaglePackageModule.ExternalStorageDirectory;
 import com.google.code.geobeagle.activity.main.fieldnotes.FieldnoteLogger.OnClickOk;
 import com.google.code.geobeagle.xmlimport.XmlimportModule;
 import com.google.code.geobeagle.xmlimport.GpxImporterDI.Toaster;
+import com.google.code.geobeagle.xmlimport.XmlimportModule.GeoBeagleEnvironment;
 import com.google.inject.BindingAnnotation;
 import com.google.inject.Inject;
 import com.google.inject.Provides;
@@ -122,8 +122,8 @@ public class FieldnotesModule extends AbstractAndroidModule {
 
     @Provides
     @FieldNotesFilename
-    String providesFieldNotesFilename(@ExternalStorageDirectory String externalStorageDirectory) {
-        return externalStorageDirectory + "/" + FIELDNOTES_FILE;
+    String providesFieldNotesFilename(GeoBeagleEnvironment environment) {
+        return environment.getExternalStorageDir() + "/" + FIELDNOTES_FILE;
     }
     
     static String getFieldNotesFilename() {

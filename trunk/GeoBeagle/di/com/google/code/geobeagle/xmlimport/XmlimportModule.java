@@ -15,9 +15,7 @@
 package com.google.code.geobeagle.xmlimport;
 
 
-import com.google.code.geobeagle.GeoBeaglePackageModule;
 import com.google.code.geobeagle.GeoBeaglePackageModule.DefaultSharedPreferences;
-import com.google.code.geobeagle.GeoBeaglePackageModule.ExternalStorageDirectory;
 import com.google.code.geobeagle.cachedetails.CacheDetailsWriter;
 import com.google.code.geobeagle.cachedetails.Emotifier;
 import com.google.code.geobeagle.cachedetails.HtmlWriter;
@@ -30,7 +28,6 @@ import com.google.code.geobeagle.xmlimport.GpxImporterDI.MessageHandler;
 import com.google.code.geobeagle.xmlimport.XmlimportAnnotations.GpxAnnotation;
 import com.google.code.geobeagle.xmlimport.XmlimportAnnotations.ImportDirectory;
 import com.google.code.geobeagle.xmlimport.XmlimportAnnotations.LoadDetails;
-import com.google.code.geobeagle.xmlimport.XmlimportAnnotations.OldDetailsDirectory;
 import com.google.code.geobeagle.xmlimport.XmlimportAnnotations.WriteDetails;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
@@ -74,7 +71,7 @@ public class XmlimportModule extends AbstractAndroidModule {
     }
     
     public static class GeoBeagleEnvironment {
-        private String getExternalStorageDir() {
+        public String getExternalStorageDir() {
             return Environment.getExternalStorageDirectory().getAbsolutePath();
         }
 
@@ -85,12 +82,10 @@ public class XmlimportModule extends AbstractAndroidModule {
         public String getVersionPath() {
             return getDetailsDirectory() + "/VERSION";
         }
-    }
-
-    @Provides
-    @ExternalStorageDirectory
-    String providesPicturesDirectory() {
-        return providesPicturesDirectoryStatic();
+        
+        public String getOldDetailsDirectory() {
+            return getExternalStorageDir()  + "/" + "GeoBeagle";
+        }
     }
 
     @Provides
@@ -106,12 +101,6 @@ public class XmlimportModule extends AbstractAndroidModule {
 
     private static final String DETAILS_DIR = "GeoBeagle/data/";
 
-
-    @Provides
-    @OldDetailsDirectory
-    String oldDetailsDirectoryProvider(@GeoBeaglePackageModule.ExternalStorageDirectory String externalStorageDirectory) {
-        return externalStorageDirectory + "/" + "GeoBeagle";
-    }
 
     @Provides
     @WriteDetails
