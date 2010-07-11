@@ -15,8 +15,6 @@
 package com.google.code.geobeagle.gpsstatuswidget;
 
 import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.Time;
-import com.google.code.geobeagle.gpsstatuswidget.TextLagUpdater.LastLocationUnknown;
 import com.google.inject.Provides;
 
 import roboguice.config.AbstractAndroidModule;
@@ -26,17 +24,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
 public class GpsStatusWidgetModule extends AbstractAndroidModule {
-    @Provides
-    @ContextScoped
-    TextLagUpdater providesTextLagUpdater(LastLocationUnknown lastKnownLocation, Time time,
-            InflatedGpsStatusWidget gpsStatusWidget) {
-        return new TextLagUpdater(lastKnownLocation,
-                (TextView)gpsStatusWidget.findViewById(R.id.lag), time);
-    }
-
     @Override
     protected void configure() {
     }
