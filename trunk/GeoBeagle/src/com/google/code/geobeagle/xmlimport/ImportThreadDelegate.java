@@ -17,7 +17,7 @@ package com.google.code.geobeagle.xmlimport;
 import com.google.code.geobeagle.ErrorDisplayer;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh.UpdateFlag;
-import com.google.code.geobeagle.bcaching.BCachingAnnotations.BCachingUserName;
+import com.google.code.geobeagle.bcaching.BCachingModule;
 import com.google.code.geobeagle.bcaching.preferences.BCachingStartTime;
 import com.google.code.geobeagle.cachedetails.FileDataVersionChecker;
 import com.google.code.geobeagle.cachedetails.FileDataVersionWriter;
@@ -31,6 +31,7 @@ import com.google.inject.Provider;
 
 import org.xmlpull.v1.XmlPullParserException;
 
+import android.content.SharedPreferences;
 import android.util.Log;
 
 import java.io.FileNotFoundException;
@@ -45,13 +46,13 @@ public class ImportThreadDelegate {
         private boolean mHasFiles;
         private final MessageHandlerInterface mMessageHandler;
         private final OldCacheFilesCleaner mOldCacheFilesCleaner;
-        private final Provider<String> mBCachingUserNameProvider;
         private final Provider<String> mImportFolderProvider;
+        private final SharedPreferences mSharedPreferences;
 
         public ImportThreadHelper(GpxLoader gpxLoader, MessageHandlerInterface messageHandler,
                 EventHelperFactory eventHelperFactory, EventHandlers eventHandlers,
                 OldCacheFilesCleaner oldCacheFilesCleaner,
-                @BCachingUserName Provider<String> bcachingUserNameProvider,
+                SharedPreferences sharedPreferences,
                 @ImportDirectory Provider<String> importFolderProvider) {
             mGpxLoader = gpxLoader;
             mMessageHandler = messageHandler;
@@ -59,7 +60,7 @@ public class ImportThreadDelegate {
             mEventHandlers = eventHandlers;
             mHasFiles = false;
             mOldCacheFilesCleaner = oldCacheFilesCleaner;
-            mBCachingUserNameProvider = bcachingUserNameProvider;
+            mSharedPreferences = sharedPreferences;
             mImportFolderProvider = importFolderProvider;
         }
 
@@ -69,7 +70,8 @@ public class ImportThreadDelegate {
 
         public void end() throws ImportException {
             mGpxLoader.end();
-            if (!mHasFiles && mBCachingUserNameProvider.get().length() == 0)
+            if (!mHasFiles
+                    && mSharedPreferences.getString(BCachingModule.BCACHING_USERNAME, "").length() == 0)
                 throw new ImportException(R.string.error_no_gpx_files, mImportFolderProvider.get());
         }
 

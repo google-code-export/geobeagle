@@ -15,11 +15,12 @@
 package com.google.code.geobeagle.xmlimport;
 
 import com.google.code.geobeagle.ErrorDisplayer;
+import com.google.code.geobeagle.GeoBeaglePackageModule.DefaultSharedPreferences;
 import com.google.code.geobeagle.activity.cachelist.Pausable;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh.UpdateFlag;
+import com.google.code.geobeagle.bcaching.BCachingModule;
 import com.google.code.geobeagle.bcaching.ImportBCachingWorker;
-import com.google.code.geobeagle.bcaching.BCachingAnnotations.BCachingUserName;
 import com.google.code.geobeagle.bcaching.preferences.BCachingStartTime;
 import com.google.code.geobeagle.cachedetails.FileDataVersionChecker;
 import com.google.code.geobeagle.cachedetails.FileDataVersionWriter;
@@ -47,6 +48,7 @@ import roboguice.util.RoboThread;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.Message;
 import android.os.PowerManager;
@@ -76,10 +78,12 @@ public class GpxImporterDI {
                     xmlPullParserWrapper);
             OldCacheFilesCleaner oldCacheFilesCleaner = new OldCacheFilesCleaner(injector
                     .getInstance(Key.get(String.class, OldDetailsDirectory.class)), messageHandler);
+            final SharedPreferences sharedPreferences = injector.getInstance(Key.get(
+                    SharedPreferences.class, DefaultSharedPreferences.class));
+            
             final ImportThreadHelper importThreadHelper = new ImportThreadHelper(gpxLoader,
                     messageHandler, eventHelperFactory, eventHandlers, oldCacheFilesCleaner,
-                    injector.getProvider(Key.get(String.class, BCachingUserName.class)),
-                    importFolderProvider);
+                    sharedPreferences, importFolderProvider);
             final FileDataVersionWriter fileDataVersionWriter = injector
                     .getInstance(FileDataVersionWriter.class);
             final FileDataVersionChecker fileDataVersionChecker = injector
@@ -172,15 +176,15 @@ public class GpxImporterDI {
         private String mStatus;
         private String mWaypointId;
         private final Provider<ImportBCachingWorker> mImportBCachingWorkerProvider;
-        private final Provider<String> mBcachingUserNameProvider;
+        private final SharedPreferences mSharedPreferences;
 
         @Inject
         public MessageHandler(ProgressDialogWrapper progressDialogWrapper,
                 Provider<ImportBCachingWorker> importBCachingWorkerProvider,
-                @BCachingUserName Provider<String> bcachingUserNameProvider) {
+                @DefaultSharedPreferences SharedPreferences sharedPreferences) {
             mProgressDialogWrapper = progressDialogWrapper;
             mImportBCachingWorkerProvider = importBCachingWorkerProvider;
-            mBcachingUserNameProvider = bcachingUserNameProvider;
+            mSharedPreferences = sharedPreferences;
         }
 
         public void abortLoad() {
@@ -206,7 +210,7 @@ public class GpxImporterDI {
                         return;
                     }
 
-                    if (mBcachingUserNameProvider.get().length() > 0) {
+                    if (mSharedPreferences.getString(BCachingModule.BCACHING_USERNAME, "").length() > 0) {
                         ImportBCachingWorker importBCachingWorker = mImportBCachingWorkerProvider
                                 .get();
                         importBCachingWorker.start();
