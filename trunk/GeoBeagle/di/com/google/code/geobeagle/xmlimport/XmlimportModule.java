@@ -19,8 +19,6 @@ import com.google.code.geobeagle.cachedetails.CacheDetailsWriter;
 import com.google.code.geobeagle.cachedetails.Emotifier;
 import com.google.code.geobeagle.cachedetails.HtmlWriter;
 import com.google.code.geobeagle.cachedetails.StringWriterWrapper;
-import com.google.code.geobeagle.cachedetails.Writer;
-import com.google.code.geobeagle.cachedetails.WriterWrapper;
 import com.google.code.geobeagle.database.GpxWriter;
 import com.google.code.geobeagle.xmlimport.EventHelper.XmlPathBuilder;
 import com.google.code.geobeagle.xmlimport.GpxImporterDI.MessageHandler;
@@ -67,7 +65,6 @@ public class XmlimportModule extends AbstractAndroidModule {
     }
 
     @Provides
-    @LoadDetails
     CacheDetailsWriter cacheDetailsWriterLoadDetailsProvider(Emotifier emotifier, Context context,
             StringWriterWrapper stringWriterWrapper) {
         final HtmlWriter htmlWriter = new HtmlWriter(stringWriterWrapper);
