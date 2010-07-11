@@ -23,7 +23,7 @@ import com.google.code.geobeagle.GeocacheFactory.Source;
 import com.google.code.geobeagle.actions.MenuActions;
 import com.google.code.geobeagle.activity.ActivitySaver;
 import com.google.code.geobeagle.activity.ActivityType;
-import com.google.code.geobeagle.activity.main.GeoBeagleModule.GeoBeagleActivity;
+import com.google.code.geobeagle.activity.main.GeoBeagleModule.GeoBeagleActivityMenuActions;
 import com.google.code.geobeagle.activity.main.view.GeocacheViewer;
 import com.google.code.geobeagle.activity.main.view.WebPageAndDetailsButtonEnabler;
 import com.google.code.geobeagle.database.CacheWriter;
@@ -88,7 +88,7 @@ public class GeoBeagleDelegate {
     public GeoBeagleDelegate(ActivitySaver activitySaver, AppLifecycleManager appLifecycleManager,
             CompassListener compassListener, GeoBeagle parent, GeocacheFactory geocacheFactory,
             GeocacheViewer geocacheViewer, IncomingIntentHandler incomingIntentHandler,
-            @GeoBeagleActivity MenuActions menuActions,
+            GeoBeagleActivityMenuActions menuActions,
             GeocacheFromParcelFactory geocacheFromParcelFactory,
             Provider<DbFrontend> dbFrontendProvider, RadarView radarView,
             SensorManager sensorManager,
