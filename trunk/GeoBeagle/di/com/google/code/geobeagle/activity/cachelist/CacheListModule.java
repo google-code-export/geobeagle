@@ -14,11 +14,6 @@
 
 package com.google.code.geobeagle.activity.cachelist;
 
-import com.google.code.geobeagle.actions.ContextActions;
-import com.google.code.geobeagle.activity.cachelist.actions.context.ContextAction;
-import com.google.code.geobeagle.activity.cachelist.actions.context.ContextActionDelete;
-import com.google.code.geobeagle.activity.cachelist.actions.context.ContextActionEdit;
-import com.google.code.geobeagle.activity.cachelist.actions.context.ContextActionView;
 import com.google.code.geobeagle.activity.cachelist.presenter.AbsoluteBearingFormatter;
 import com.google.code.geobeagle.activity.cachelist.presenter.BearingFormatter;
 import com.google.code.geobeagle.activity.cachelist.presenter.RelativeBearingFormatter;
@@ -28,7 +23,6 @@ import com.google.code.geobeagle.formatting.DistanceFormatterImperial;
 import com.google.code.geobeagle.formatting.DistanceFormatterMetric;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
-import com.google.inject.Provides;
 
 import roboguice.config.AbstractAndroidModule;
 
@@ -79,14 +73,5 @@ public class CacheListModule extends AbstractAndroidModule {
                     : relativeBearingFormatter;
         }
     }
-
-    @Provides
-    ContextActions provideContextActions(ContextActionDelete contextActionDelete,
-            ContextActionEdit contextActionEdit, ContextActionView contextActionView) {
-        return new ContextActions(new ContextAction[] {
-                contextActionDelete, contextActionView, contextActionEdit
-        });
-    }
-
 
 }

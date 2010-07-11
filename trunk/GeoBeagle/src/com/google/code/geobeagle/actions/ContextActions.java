@@ -15,16 +15,22 @@
 package com.google.code.geobeagle.actions;
 
 import com.google.code.geobeagle.activity.cachelist.actions.context.ContextAction;
+import com.google.code.geobeagle.activity.cachelist.actions.context.ContextActionDelete;
+import com.google.code.geobeagle.activity.cachelist.actions.context.ContextActionEdit;
+import com.google.code.geobeagle.activity.cachelist.actions.context.ContextActionView;
+import com.google.inject.Inject;
 
 import java.util.ArrayList;
 
 public class ContextActions {
     private final ArrayList<ContextAction> contextActions = new ArrayList<ContextAction>();
 
-    public ContextActions(ContextAction[] contextActions) {
-        for (int ix = 0; ix < contextActions.length; ix++) {
-            this.contextActions.add(contextActions[ix]);
-        }
+    @Inject
+    public ContextActions(ContextActionDelete contextActionDelete,
+            ContextActionEdit contextActionEdit, ContextActionView contextActionView) {
+        contextActions.add(contextActionDelete);
+        contextActions.add(contextActionView);
+        contextActions.add(contextActionEdit);
     }
 
     public void act(int menuIndex, int position) {
