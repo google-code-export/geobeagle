@@ -14,17 +14,11 @@
 
 package com.google.code.geobeagle.activity.map;
 
-import static java.lang.annotation.ElementType.FIELD;
-import static java.lang.annotation.ElementType.METHOD;
-import static java.lang.annotation.ElementType.PARAMETER;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapView;
 import com.google.android.maps.Projection;
 import com.google.code.geobeagle.Timing;
 import com.google.code.geobeagle.activity.map.DensityMatrix.DensityPatch;
-import com.google.inject.BindingAnnotation;
 import com.google.inject.Inject;
 
 import android.graphics.Canvas;
@@ -32,8 +26,6 @@ import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
 import java.util.List;
 
 public class DensityOverlayDelegate {
@@ -46,14 +38,13 @@ public class DensityOverlayDelegate {
     private final Timing mTiming;
     private final DensityPatchManager mDensityPatchManager;
 
-    @BindingAnnotation @Target( { FIELD, PARAMETER, METHOD }) @Retention(RUNTIME)
-    public @interface DensityOverlayPaint {}
-
     @Inject
-    public DensityOverlayDelegate(Rect patchRect, @DensityOverlayPaint Paint paint,
-            Point screenLow, Point screenHigh, DensityPatchManager densityPatchManager) {
+    public DensityOverlayDelegate(Rect patchRect, Point screenLow, Point screenHigh,
+            DensityPatchManager densityPatchManager) {
         mTiming = new Timing();
         mPatchRect = patchRect;
+        Paint paint = new Paint();
+        paint.setARGB(128, 255, 0, 0);
         mPaint = paint;
         mScreenTopLeft = screenLow;
         mScreenBottomRight = screenHigh;
