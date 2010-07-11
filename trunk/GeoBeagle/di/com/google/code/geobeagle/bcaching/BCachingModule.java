@@ -14,7 +14,6 @@
 
 package com.google.code.geobeagle.bcaching;
 
-import com.google.code.geobeagle.bcaching.communication.BCachingListImportHelper.BufferedReaderFactory;
 import com.google.code.geobeagle.bcaching.progress.ProgressHandler;
 import com.google.code.geobeagle.database.ClearCachesFromSource;
 import com.google.code.geobeagle.database.ClearCachesFromSourceNull;
@@ -44,7 +43,6 @@ public class BCachingModule extends AbstractAndroidModule {
     
     @Override
     protected void configure() {
-        bind(BufferedReaderFactory.class).to(BufferedReaderFactoryImpl.class);
         bind(ProgressHandler.class).in(ContextScoped.class);
         bind(MessageHandlerInterface.class).to(MessageHandlerAdapter.class);
         bind(CachePersisterFacade.class).in(ContextScoped.class);
