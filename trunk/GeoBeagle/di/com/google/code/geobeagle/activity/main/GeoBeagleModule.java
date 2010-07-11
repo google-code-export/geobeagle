@@ -162,22 +162,6 @@ public class GeoBeagleModule extends AbstractAndroidModule {
     }
 
     @Provides
-    @Named("GeocacheTerrain")
-    AttributeViewer providesGeocacheTerrain(Activity activity, Resources resources,
-            RatingsArray ratingsArray) {
-        ImageView imageView = (ImageView)activity.findViewById(R.id.gc_terrain);
-
-        final Drawable[] pawDrawables = {
-                resources.getDrawable(R.drawable.paw_unselected_dark),
-                resources.getDrawable(R.drawable.paw_half_light),
-                resources.getDrawable(R.drawable.paw_selected_light)
-        };
-        AttributeViewer pawImages = getImagesOnDifficulty(pawDrawables, imageView, ratingsArray);
-        return new LabelledAttributeViewer((TextView)activity.findViewById(R.id.gc_text_terrain),
-                pawImages);
-    }
-
-    @Provides
     @IntentStarterRadar
     IntentStarterGeo providesIntentStarterRadar(GeoBeagle geoBeagle) {
         return new IntentStarterGeo(geoBeagle, new Intent("com.google.android.radar.SHOW_RADAR"));
@@ -241,25 +225,39 @@ public class GeoBeagleModule extends AbstractAndroidModule {
 
     @Provides
     public GeocacheViewer providesGeocacheViewer(RadarView radarView, Activity activity,
-            @Named("GeocacheTerrain") AttributeViewer gcTerrain, ResourceImages gcContainer,
-            IconOverlayFactory iconOverlayFactory, MapViewBitmapCopier mapViewBitmapCopier,
-            IconRenderer iconRenderer, DifficultyAndTerrainPainter difficultyAndTerrainPainter,
-            NameFormatter nameFormatter, Resources resources, RatingsArray ratingsArray) {
+            ResourceImages gcContainer, IconOverlayFactory iconOverlayFactory,
+            MapViewBitmapCopier mapViewBitmapCopier, IconRenderer iconRenderer,
+            DifficultyAndTerrainPainter difficultyAndTerrainPainter, NameFormatter nameFormatter,
+            Resources resources, RatingsArray ratingsArray) {
         final TextView textViewName = (TextView)activity.findViewById(R.id.gcname);
+        final ImageView cacheTypeImageView = (ImageView)activity.findViewById(R.id.gcicon);
+        final ImageView imageViewDifficulty = (ImageView)activity.findViewById(R.id.gc_difficulty);
         final NameViewer gcName = new NameViewer(textViewName, nameFormatter);
 
-        final ImageView cacheTypeImageView = (ImageView)activity.findViewById(R.id.gcicon);
         final Drawable[] ribbonDrawables = {
                 resources.getDrawable(R.drawable.ribbon_unselected_dark),
                 resources.getDrawable(R.drawable.ribbon_half_bright),
                 resources.getDrawable(R.drawable.ribbon_selected_bright)
         };
-        final ImageView imageView = (ImageView)activity.findViewById(R.id.gc_difficulty);
-        final AttributeViewer ribbonImages = getImagesOnDifficulty(ribbonDrawables, imageView,
+        final AttributeViewer ribbonImages = getImagesOnDifficulty(ribbonDrawables, imageViewDifficulty,
                 ratingsArray);
 
         final AttributeViewer gcDifficulty = new LabelledAttributeViewer((TextView)activity
                 .findViewById(R.id.gc_text_difficulty), ribbonImages);
+
+        
+        
+        final ImageView imageViewTerrain = (ImageView)activity.findViewById(R.id.gc_terrain);
+
+        final Drawable[] pawDrawables = {
+                resources.getDrawable(R.drawable.paw_unselected_dark),
+                resources.getDrawable(R.drawable.paw_half_light),
+                resources.getDrawable(R.drawable.paw_selected_light)
+        };
+        final AttributeViewer pawImages = getImagesOnDifficulty(pawDrawables, imageViewTerrain,
+                ratingsArray);
+        final AttributeViewer gcTerrain = new LabelledAttributeViewer((TextView)activity
+                .findViewById(R.id.gc_text_terrain), pawImages);
 
         return new GeocacheViewer(radarView, activity, gcName, cacheTypeImageView, gcDifficulty,
                 gcTerrain, gcContainer, iconOverlayFactory, mapViewBitmapCopier, iconRenderer,
