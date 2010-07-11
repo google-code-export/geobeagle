@@ -17,16 +17,13 @@ package com.google.code.geobeagle.activity.searchonline;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.ActivityRestorer;
 import com.google.code.geobeagle.activity.cachelist.CacheListActivity;
-import com.google.code.geobeagle.activity.searchonline.SearchOnlineActivityDelegate.SearchOnlineActivityDelegateFactory;
 import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidgetDelegate;
 import com.google.code.geobeagle.gpsstatuswidget.InflatedGpsStatusWidget;
 import com.google.code.geobeagle.gpsstatuswidget.UpdateGpsWidgetRunnable;
-import com.google.code.geobeagle.location.CombinedLocationListener;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 
 import roboguice.activity.GuiceActivity;
-import roboguice.inject.InjectView;
 
 import android.content.Intent;
 import android.graphics.Color;
@@ -34,19 +31,13 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.webkit.WebView;
 
 public class SearchOnlineActivity extends GuiceActivity {
 
     @Inject
     private ActivityRestorer mActivityRestorer;
 
-    private CombinedLocationListener mCombinedLocationListener;
-
     private InflatedGpsStatusWidget mInflatedGpsStatusWidget;
-
-    @InjectView(R.id.help_contents)
-    private WebView mHelpContentsView;
 
     @Inject
     private JsInterface mJsInterface;
@@ -61,10 +52,6 @@ public class SearchOnlineActivity extends GuiceActivity {
 
     InflatedGpsStatusWidget getGpsStatusWidget() {
         return mInflatedGpsStatusWidget;
-    }
-
-    WebView getHelpContentsView() {
-        return mHelpContentsView;
     }
 
     JsInterface getJsInterface() {
@@ -84,18 +71,13 @@ public class SearchOnlineActivity extends GuiceActivity {
         
         Injector injector = this.getInjector();
         mInflatedGpsStatusWidget = injector.getInstance(InflatedGpsStatusWidget.class);
-        
         GpsStatusWidgetDelegate gpsStatusWidgetDelegate = injector
                 .getInstance(GpsStatusWidgetDelegate.class);
         mUpdateGpsWidgetRunnable = injector.getInstance(UpdateGpsWidgetRunnable.class);
         mInflatedGpsStatusWidget.setDelegate(gpsStatusWidgetDelegate);
         mInflatedGpsStatusWidget.setBackgroundColor(Color.BLACK);
 
-        mCombinedLocationListener = injector.getInstance(CombinedLocationListener.class);
-        
-        mSearchOnlineActivityDelegate = injector.getInstance(
-                SearchOnlineActivityDelegateFactory.class).create(
-                mHelpContentsView, mCombinedLocationListener);
+        mSearchOnlineActivityDelegate = injector.getInstance(SearchOnlineActivityDelegate.class);
 
         mSearchOnlineActivityDelegate.configureWebView(mJsInterface);
         mActivityRestorer.restore(getIntent().getFlags());
