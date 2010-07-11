@@ -110,8 +110,8 @@ public class FieldnotesModule extends AbstractAndroidModule {
             this.context = context;
         }
 
-        public Toaster create(int resource) {
-            return new Toaster(context, resource, Toast.LENGTH_LONG);
+        public Toaster create(int resource, int duration) {
+            return new Toaster(context, resource, duration);
         }
     }
 }

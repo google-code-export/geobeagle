@@ -38,8 +38,6 @@ import com.google.code.geobeagle.activity.map.GeoMapActivityDelegate.MenuActionT
 import com.google.code.geobeagle.activity.map.QueryManager.CachedNeedsLoading;
 import com.google.code.geobeagle.activity.map.QueryManager.LoaderImpl;
 import com.google.code.geobeagle.activity.map.QueryManager.PeggedLoader;
-import com.google.code.geobeagle.activity.map.QueryManager.ToasterTooManyCaches;
-import com.google.code.geobeagle.xmlimport.GpxImporterDI.Toaster;
 import com.google.inject.BindingAnnotation;
 import com.google.inject.Provides;
 
@@ -50,7 +48,6 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
-import android.widget.Toast;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
@@ -73,7 +70,6 @@ public class GeoMapActivityModule extends AbstractAndroidModule {
 
     @Override
     protected void configure() {
-//        bind(GeoPoint.class).toInstance(new GeoPoint(0, 0));
     }
 
     @Provides
@@ -168,11 +164,4 @@ public class GeoMapActivityModule extends AbstractAndroidModule {
                 0, 0, 0, 0
         });
     }
-
-    @Provides
-    @ToasterTooManyCaches
-    Toaster providesToaster(Activity activity) {
-        return new Toaster(activity, R.string.too_many_caches, Toast.LENGTH_SHORT);
-    }
-
 }

@@ -19,6 +19,8 @@ import com.google.code.geobeagle.activity.main.fieldnotes.FieldnotesModule.Toast
 import com.google.code.geobeagle.xmlimport.GeoBeagleEnvironment;
 import com.google.inject.Inject;
 
+import android.widget.Toast;
+
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -60,7 +62,7 @@ public class FileLogger implements ICacheLogger {
             writer.write(logLine);
             writer.close();
         } catch (IOException e) {
-            mToasterFactory.create(R.string.error_writing_cache_log).showToast();
+            mToasterFactory.create(R.string.error_writing_cache_log, Toast.LENGTH_LONG).showToast();
         }
     }
 }

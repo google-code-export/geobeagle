@@ -14,23 +14,17 @@
 
 package com.google.code.geobeagle.activity.map;
 
-import static java.lang.annotation.ElementType.FIELD;
-import static java.lang.annotation.ElementType.METHOD;
-import static java.lang.annotation.ElementType.PARAMETER;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-
 import com.google.android.maps.GeoPoint;
 import com.google.code.geobeagle.Geocache;
+import com.google.code.geobeagle.R;
+import com.google.code.geobeagle.activity.main.fieldnotes.FieldnotesModule.ToasterFactory;
 import com.google.code.geobeagle.database.DbFrontend;
 import com.google.code.geobeagle.database.WhereFactoryFixedArea;
-import com.google.code.geobeagle.xmlimport.GpxImporterDI.Toaster;
-import com.google.inject.BindingAnnotation;
 import com.google.inject.Inject;
 
 import android.util.Log;
+import android.widget.Toast;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
 import java.util.ArrayList;
 
 class QueryManager {
@@ -40,9 +34,6 @@ class QueryManager {
      * refresh us every second, and we'll query the database over and over again
      * to learn that we have too many caches for the same set of points.
      */
-
-    @BindingAnnotation @Target({ FIELD, PARAMETER, METHOD }) @Retention(RUNTIME)
-    public static @interface ToasterTooManyCaches {}
 
     static class CachedNeedsLoading {
         private GeoPoint mOldBottomRight;
@@ -95,15 +86,15 @@ class QueryManager {
         private final DbFrontend mDbFrontend;
         private final LoaderImpl mLoader;
         private final ArrayList<Geocache> mNullList;
-        private final Toaster mToaster;
         private boolean mTooManyCaches;
+        private final ToasterFactory mToasterFactory;
 
         @Inject
-        PeggedLoader(DbFrontend dbFrontend, @ToasterTooManyCaches Toaster toaster,
+        PeggedLoader(DbFrontend dbFrontend, ToasterFactory toasterFactory,
                 LoaderImpl loaderImpl) {
             mNullList = new ArrayList<Geocache>();
             mDbFrontend = dbFrontend;
-            mToaster = toaster;
+            mToasterFactory = toasterFactory;
             mTooManyCaches = false;
             mLoader = loaderImpl;
         }
@@ -116,7 +107,8 @@ class QueryManager {
                 latMin = latMax = lonMin = lonMax = 0;
                 if (!mTooManyCaches) {
                     Log.d("GeoBeagle", "QueryManager.load: too many caches");
-                    mToaster.showToast();
+                    mToasterFactory.create(R.string.too_many_caches, Toast.LENGTH_SHORT)
+                            .showToast();
                     mTooManyCaches = true;
                 }
                 return mNullList;

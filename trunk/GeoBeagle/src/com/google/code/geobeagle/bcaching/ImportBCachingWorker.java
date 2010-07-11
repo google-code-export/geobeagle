@@ -28,6 +28,7 @@ import com.google.inject.Inject;
 import roboguice.util.RoboThread;
 
 import android.util.Log;
+import android.widget.Toast;
 
 /**
  * Thread class that does the work of importing caches from the bcaching.com
@@ -72,7 +73,7 @@ public class ImportBCachingWorker extends RoboThread implements Abortable {
                 Log.d("GeoBeagle", "sleeping...");
                 Thread.sleep(100);
             }
-            toasterFactory.create(R.string.import_canceled).showToast();
+            toasterFactory.create(R.string.import_canceled, Toast.LENGTH_LONG).showToast();
             Log.d("GeoBeagle", "abort: JOIN FINISHED");
         } catch (InterruptedException e) {
             Log.d("GeoBeagle", "Ignoring InterruptedException: " + e.getLocalizedMessage());
