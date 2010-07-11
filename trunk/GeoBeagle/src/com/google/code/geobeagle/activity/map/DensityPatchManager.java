@@ -19,7 +19,7 @@ import com.google.android.maps.MapView;
 import com.google.android.maps.Projection;
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.activity.map.DensityMatrix.DensityPatch;
-import com.google.code.geobeagle.activity.map.GeoMapActivityModule.DensityMapQueryManager;
+import com.google.code.geobeagle.activity.map.QueryManager.PeggedLoader;
 import com.google.inject.Inject;
 
 import java.util.ArrayList;
@@ -28,13 +28,15 @@ import java.util.List;
 class DensityPatchManager {
     private List<DensityMatrix.DensityPatch> mDensityPatches;
     private final QueryManager mQueryManager;
+    private final PeggedLoader mPeggedLoader;
     public static final double RESOLUTION_LATITUDE = 0.01;
     public static final double RESOLUTION_LONGITUDE = 0.02;
     public static final int RESOLUTION_LATITUDE_E6 = (int)(RESOLUTION_LATITUDE * 1E6);
     public static final int RESOLUTION_LONGITUDE_E6 = (int)(RESOLUTION_LONGITUDE * 1E6);
 
     @Inject
-    DensityPatchManager(@DensityMapQueryManager QueryManager queryManager) {
+    DensityPatchManager(QueryManager queryManager, PeggedLoader peggedLoader) {
+        mPeggedLoader = peggedLoader;
         mDensityPatches = new ArrayList<DensityPatch>();
         mQueryManager = queryManager;
     }
@@ -48,7 +50,7 @@ class DensityPatchManager {
             return mDensityPatches;
         }
 
-        ArrayList<Geocache> list = mQueryManager.load(newTopLeft, newBottomRight);
+        ArrayList<Geocache> list = mQueryManager.load(newTopLeft, newBottomRight, mPeggedLoader);
         DensityMatrix densityMatrix = new DensityMatrix(DensityPatchManager.RESOLUTION_LATITUDE,
                 DensityPatchManager.RESOLUTION_LONGITUDE);
         densityMatrix.addCaches(list);

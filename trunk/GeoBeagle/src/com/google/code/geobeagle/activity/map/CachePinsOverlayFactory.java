@@ -14,25 +14,18 @@
 
 package com.google.code.geobeagle.activity.map;
 
-import static java.lang.annotation.ElementType.FIELD;
-import static java.lang.annotation.ElementType.METHOD;
-import static java.lang.annotation.ElementType.PARAMETER;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.Projection;
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.Timing;
-import com.google.inject.BindingAnnotation;
+import com.google.code.geobeagle.activity.map.QueryManager.LoaderImpl;
 import com.google.inject.Inject;
 
 import android.app.Activity;
 import android.content.res.Resources;
 import android.util.Log;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
 import java.util.ArrayList;
 
 public class CachePinsOverlayFactory {
@@ -41,19 +34,18 @@ public class CachePinsOverlayFactory {
     private final Activity mActivity;
     private final QueryManager mQueryManager;
     private final Resources mResources;
-
-    @BindingAnnotation @Target({ FIELD, PARAMETER, METHOD }) @Retention(RUNTIME)
-    public static @interface CachePinsQueryManager {}
+    private final LoaderImpl mLoaderImpl;
 
     @Inject
     public CachePinsOverlayFactory(Activity activity, CacheItemFactory cacheItemFactory,
-            CachePinsOverlay cachePinsOverlay, @CachePinsQueryManager QueryManager queryManager,
-            Resources resources) {
+            CachePinsOverlay cachePinsOverlay, QueryManager queryManager,
+            Resources resources, LoaderImpl loaderImpl) {
         mResources = resources;
         mActivity = activity;
         mCacheItemFactory = cacheItemFactory;
         mCachePinsOverlay = cachePinsOverlay;
         mQueryManager = queryManager;
+        mLoaderImpl = loaderImpl;
     }
 
     public CachePinsOverlay getCachePinsOverlay() {
@@ -72,7 +64,7 @@ public class CachePinsOverlayFactory {
         if (!mQueryManager.needsLoading(newTopLeft, newBottomRight))
             return mCachePinsOverlay;
 
-        ArrayList<Geocache> cacheList = mQueryManager.load(newTopLeft, newBottomRight);
+        ArrayList<Geocache> cacheList = mQueryManager.load(newTopLeft, newBottomRight, mLoaderImpl);
 
         timing.lap("Loaded caches");
         mCachePinsOverlay = new CachePinsOverlay(mResources, mCacheItemFactory, mActivity,

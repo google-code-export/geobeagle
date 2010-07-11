@@ -16,6 +16,7 @@ package com.google.code.geobeagle.activity.cachelist.view;
 
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.GraphicsGenerator;
+import com.google.code.geobeagle.GraphicsGenerator.AttributesPainter;
 import com.google.code.geobeagle.GraphicsGenerator.IconOverlay;
 import com.google.code.geobeagle.GraphicsGenerator.IconOverlayFactory;
 import com.google.code.geobeagle.GraphicsGenerator.IconRenderer;
@@ -50,13 +51,13 @@ class RowViews {
 
     void set(GeocacheVector geocacheVector, BearingFormatter relativeBearingFormatter,
             DistanceFormatter distanceFormatter, ListViewBitmapCopier listViewBitmapCopier,
-            IconRenderer iconRenderer) {
+            IconRenderer iconRenderer, AttributesPainter attributesPainter) {
         Geocache geocache = geocacheVector.getGeocache();
         IconOverlay iconOverlay = mIconOverlayFactory.create(geocache, false);
         mNameFormatter.format(mCacheName, geocache.getAvailable(), geocache.getArchived());
 
         final Drawable icon = iconRenderer.renderIcon(geocache.getDifficulty(), geocache
-                .getTerrain(), geocache.getCacheType().icon(), iconOverlay, listViewBitmapCopier);
+                .getTerrain(), geocache.getCacheType().icon(), iconOverlay, listViewBitmapCopier, attributesPainter);
 
         mIcon.setImageDrawable(icon);
         mId.setText(geocacheVector.getId());
