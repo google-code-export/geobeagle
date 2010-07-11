@@ -14,7 +14,6 @@
 
 package com.google.code.geobeagle.database;
 
-import com.google.inject.Provider;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 
@@ -32,11 +31,4 @@ public class DatabaseModule extends AbstractAndroidModule {
     ISQLiteDatabase sqliteDatabaseProvider(DbFrontend dbFrontend) {
         return dbFrontend.getDatabase();
     }
-
-    @Provides
-    public CacheWriter cacheWriterProvider(Provider<ISQLiteDatabase> databaseProvider,
-            DbToGeocacheAdapter dbToGeocacheAdapter) {
-        return new CacheWriter(databaseProvider, dbToGeocacheAdapter);
-    }
-
 }
