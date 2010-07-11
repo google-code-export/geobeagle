@@ -65,9 +65,6 @@ public class GeocacheViewer {
     }
 
     @BindingAnnotation @Target({ FIELD, PARAMETER, METHOD }) @Retention(RUNTIME)
-    public @interface RibbonImages {}
-
-    @BindingAnnotation @Target({ FIELD, PARAMETER, METHOD }) @Retention(RUNTIME)
     public @interface PawImages {}
 
     public static class UnlabelledAttributeViewer implements AttributeViewer {
