@@ -22,14 +22,37 @@ import com.google.code.geobeagle.bcaching.BCachingModule;
 import com.google.code.geobeagle.database.DatabaseModule;
 import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidgetModule;
 import com.google.code.geobeagle.location.LocationModule;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 import com.google.inject.Module;
+import com.google.inject.Stage;
 
 import roboguice.application.GuiceApplication;
+import roboguice.config.AbstractAndroidModule;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class GeoBeagleApplication extends GuiceApplication {
+    
     public static Timing timing = new Timing();
+
+    @Override
+    protected Injector createInjector() {
+        ArrayList<Module> modules = new ArrayList<Module>();
+        Module roboguiceModule = new FasterRoboGuiceModule(contextScope, throwingContextProvider,
+                contextProvider, resourceListener, viewListener, extrasListener, this);
+        modules.add(roboguiceModule);
+        addApplicationModules(modules);
+        for (Module m : modules) {
+            if (m instanceof AbstractAndroidModule) {
+                ((AbstractAndroidModule)m).setStaticTypeListeners(staticTypeListeners);
+            }
+        }
+        return Guice.createInjector(Stage.DEVELOPMENT, modules);
+    }
+
+    
     @Override
     protected void addApplicationModules(List<Module> modules) {
         timing.start();
