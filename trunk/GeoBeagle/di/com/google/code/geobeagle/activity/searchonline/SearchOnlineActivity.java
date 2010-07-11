@@ -34,9 +34,6 @@ import android.view.MenuItem;
 
 public class SearchOnlineActivity extends GuiceActivity {
 
-    @Inject
-    private ActivityRestorer mActivityRestorer;
-
     private InflatedGpsStatusWidget mInflatedGpsStatusWidget;
 
     @Inject
@@ -45,10 +42,6 @@ public class SearchOnlineActivity extends GuiceActivity {
     private SearchOnlineActivityDelegate mSearchOnlineActivityDelegate;
 
     private UpdateGpsWidgetRunnable mUpdateGpsWidgetRunnable;
-
-    public ActivityRestorer getActivityRestorer() {
-        return mActivityRestorer;
-    }
 
     InflatedGpsStatusWidget getGpsStatusWidget() {
         return mInflatedGpsStatusWidget;
@@ -80,7 +73,7 @@ public class SearchOnlineActivity extends GuiceActivity {
         mSearchOnlineActivityDelegate = injector.getInstance(SearchOnlineActivityDelegate.class);
 
         mSearchOnlineActivityDelegate.configureWebView(mJsInterface);
-        mActivityRestorer.restore(getIntent().getFlags());
+        injector.getInstance(ActivityRestorer.class).restore(getIntent().getFlags());
     }
 
     @Override
