@@ -15,17 +15,10 @@
 package com.google.code.geobeagle.activity.cachelist;
 
 import com.google.code.geobeagle.actions.ContextActions;
-import com.google.code.geobeagle.actions.MenuActionMap;
-import com.google.code.geobeagle.actions.MenuActionSearchOnline;
-import com.google.code.geobeagle.actions.MenuActionSettings;
-import com.google.code.geobeagle.actions.MenuActions;
 import com.google.code.geobeagle.activity.cachelist.actions.context.ContextAction;
 import com.google.code.geobeagle.activity.cachelist.actions.context.ContextActionDelete;
 import com.google.code.geobeagle.activity.cachelist.actions.context.ContextActionEdit;
 import com.google.code.geobeagle.activity.cachelist.actions.context.ContextActionView;
-import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionDeleteAllCaches;
-import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionMyLocation;
-import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionSyncGpx;
 import com.google.code.geobeagle.activity.cachelist.presenter.AbsoluteBearingFormatter;
 import com.google.code.geobeagle.activity.cachelist.presenter.BearingFormatter;
 import com.google.code.geobeagle.activity.cachelist.presenter.RelativeBearingFormatter;
@@ -42,7 +35,6 @@ import roboguice.config.AbstractAndroidModule;
 import android.app.Activity;
 import android.app.ListActivity;
 import android.content.SharedPreferences;
-import android.content.res.Resources;
 
 public class CacheListModule extends AbstractAndroidModule {
     @Override
@@ -93,22 +85,6 @@ public class CacheListModule extends AbstractAndroidModule {
     @Provides
     ListActivity providesListActivity(Activity activity) {
         return (ListActivity)activity;
-    }
-
-    @Provides
-    MenuActions providesMenuActions(MenuActionSyncGpx menuActionSyncGpx,
-            MenuActionDeleteAllCaches menuActionDeleteAllCaches,
-            MenuActionMyLocation menuActionMyLocation,
-            MenuActionSearchOnline menuActionSearchOnline, MenuActionMap menuActionMap,
-            MenuActionSettings menuActionSettings, Resources resources) {
-        final MenuActions menuActions = new MenuActions(resources);
-        menuActions.add(menuActionSyncGpx);
-        menuActions.add(menuActionDeleteAllCaches);
-        menuActions.add(menuActionMyLocation);
-        menuActions.add(menuActionSearchOnline);
-        menuActions.add(menuActionMap);
-        menuActions.add(menuActionSettings);
-        return menuActions;
     }
 
     @Provides
