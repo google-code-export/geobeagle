@@ -29,14 +29,18 @@ package com.google.code.geobeagle.activity.cachelist.model;
 
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.LocationControlBuffered;
+import com.google.inject.Singleton;
+
+import android.util.Log;
 
 import java.util.ArrayList;
 
+@Singleton
 public class GeocacheVectors {
     private final ArrayList<GeocacheVector> mGeocacheVectorsList;
 
-    public GeocacheVectors(ArrayList<GeocacheVector> geocacheVectorsList) {
-        mGeocacheVectorsList = geocacheVectorsList;
+    public GeocacheVectors() {
+        mGeocacheVectorsList = new ArrayList<GeocacheVector>(10);
     }
 
     public void add(GeocacheVector destinationVector) {
