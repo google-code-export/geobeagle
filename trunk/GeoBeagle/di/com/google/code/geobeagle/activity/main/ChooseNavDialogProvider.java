@@ -7,7 +7,7 @@ import com.google.code.geobeagle.activity.main.intents.GeocacheToGoogleGeo;
 import com.google.code.geobeagle.activity.main.intents.IntentStarter;
 import com.google.code.geobeagle.activity.main.intents.IntentStarterGeo;
 import com.google.code.geobeagle.activity.main.intents.IntentStarterViewUri;
-import com.google.code.geobeagle.activity.main.menuactions.MenuActionGoogleMaps;
+import com.google.code.geobeagle.activity.main.menuactions.MenuActionNavigate;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
@@ -50,7 +50,7 @@ public class ChooseNavDialogProvider implements Provider<ChooseNavDialog> {
         final IntentStarter[] intentStarters = {
                 intentStarterRadar, intentStarterGoogleMaps, intentStarterNavigate
         };
-        final OnClickListener onClickListener = new MenuActionGoogleMaps.OnClickListener(
+        final OnClickListener onClickListener = new MenuActionNavigate.OnClickListener(
                 intentStarters);
         return new ChooseNavDialog(new AlertDialog.Builder(contextProvider.get()).setItems(
                 R.array.select_nav_choices, onClickListener).setTitle(

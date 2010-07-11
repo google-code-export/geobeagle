@@ -14,17 +14,21 @@
 
 package com.google.code.geobeagle.activity.main;
 
-import com.google.code.geobeagle.ErrorDisplayer;
-import com.google.code.geobeagle.activity.main.intents.GeocacheToCachePage;
-import com.google.code.geobeagle.activity.main.intents.IntentStarterViewUri;
 import com.google.inject.Inject;
 
-import android.app.Activity;
+import android.view.View;
+import android.view.View.OnClickListener;
 
-public class IntentStarterViewCachePage extends IntentStarterViewUri {
+class OnClickListenerNavigate implements OnClickListener {
+    private final ChooseNavDialog chooseNavDialog;
+
     @Inject
-    public IntentStarterViewCachePage(Activity geoBeagle, GeocacheToCachePage geocacheToCachePage,
-            ErrorDisplayer errorDisplayer) {
-        super(geoBeagle, geocacheToCachePage, errorDisplayer);
+    OnClickListenerNavigate(ChooseNavDialog chooseNavDialog) {
+        this.chooseNavDialog = chooseNavDialog;
+    }
+
+    @Override
+    public void onClick(View v) {
+        chooseNavDialog.show();
     }
 }

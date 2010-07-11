@@ -19,7 +19,7 @@ import com.google.code.geobeagle.actions.MenuActionCacheList;
 import com.google.code.geobeagle.actions.MenuActionEditGeocache;
 import com.google.code.geobeagle.actions.MenuActionSettings;
 import com.google.code.geobeagle.actions.MenuActions;
-import com.google.code.geobeagle.activity.main.menuactions.MenuActionGoogleMaps;
+import com.google.code.geobeagle.activity.main.menuactions.MenuActionWebPage;
 import com.google.inject.Inject;
 
 import android.app.Activity;
@@ -28,11 +28,11 @@ import android.content.res.Resources;
 class GeoBeagleActivityMenuActions extends MenuActions {
     @Inject
     public GeoBeagleActivityMenuActions(Resources resources, Activity geoBeagle,
-            MenuActionGoogleMaps menuActionGoogleMaps) {
+            MenuActionWebPage menuActionWebPage) {
         super(resources);
         final MenuAction[] menuActionArray = {
                 new MenuActionCacheList(geoBeagle), new MenuActionEditGeocache(geoBeagle),
-                new MenuActionSettings(geoBeagle), menuActionGoogleMaps
+                new MenuActionSettings(geoBeagle), menuActionWebPage
         };
         for (int ix = 0; ix < menuActionArray.length; ix++) {
             add(menuActionArray[ix]);

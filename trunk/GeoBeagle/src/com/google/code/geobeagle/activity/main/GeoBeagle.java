@@ -48,6 +48,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.EditText;
 
 import java.text.DateFormat;
@@ -58,7 +59,6 @@ import java.util.Date;
  */
 public class GeoBeagle extends GuiceActivity {
     private GeoBeagleDelegate mGeoBeagleDelegate;
-    
     private static final DateFormat mLocalDateFormat = DateFormat
             .getTimeInstance(DateFormat.MEDIUM);
     
@@ -111,10 +111,9 @@ public class GeoBeagle extends GuiceActivity {
 
         findViewById(R.id.cache_details).setOnClickListener(
                 injector.getInstance(OnClickListenerCacheDetails.class));
-        final IntentStarterViewCachePage intentStarterViewCachePage = injector
-                .getInstance(IntentStarterViewCachePage.class);
-        final OnClickListenerIntentStarter onClickListenerIntentStarter = new OnClickListenerIntentStarter(intentStarterViewCachePage , errorDisplayer);
-        findViewById(id.cache_page).setOnClickListener(onClickListenerIntentStarter);
+        final OnClickListener onClickListenerNavigate = injector
+                .getInstance(OnClickListenerNavigate.class);
+        findViewById(id.navigate).setOnClickListener(onClickListenerNavigate);
 
         findViewById(id.radarview).setOnClickListener(
                 injector.getInstance(OnClickListenerRadar.class));
