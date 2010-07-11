@@ -16,7 +16,6 @@ package com.google.code.geobeagle.activity.cachelist;
 
 import com.google.code.geobeagle.activity.ActivitySaver;
 import com.google.code.geobeagle.activity.ActivityType;
-import com.google.code.geobeagle.activity.cachelist.actions.context.ContextActionDelete.ContextActionDeleteDialogHelper;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
 import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheListPresenter;
 import com.google.code.geobeagle.database.DbFrontend;
@@ -24,8 +23,6 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 
 import android.app.Activity;
-import android.app.Dialog;
-import android.app.AlertDialog.Builder;
 import android.content.Intent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -69,14 +66,12 @@ public class CacheListDelegate {
     private final Provider<DbFrontend> mDbFrontendProvider;
     private final ImportIntentManager mImportIntentManager;
     private final GeocacheListPresenter mPresenter;
-    private final ContextActionDeleteDialogHelper mContextActionDeleteDialogHelper;
     private final ActivityVisible mActivityVisible;
 
     @Inject
     public CacheListDelegate(ImportIntentManager importIntentManager, ActivitySaver activitySaver,
             CacheListRefresh cacheListRefresh, GeocacheListController geocacheListController,
             GeocacheListPresenter geocacheListPresenter, Provider<DbFrontend> dbFrontendProvider,
-            ContextActionDeleteDialogHelper contextActionDeleteDialogHelper,
             ActivityVisible activityVisible) {
         mActivitySaver = activitySaver;
         mCacheListRefresh = cacheListRefresh;
@@ -84,7 +79,6 @@ public class CacheListDelegate {
         mPresenter = geocacheListPresenter;
         mImportIntentManager = importIntentManager;
         mDbFrontendProvider = dbFrontendProvider;
-        mContextActionDeleteDialogHelper = contextActionDeleteDialogHelper;
         mActivityVisible = activityVisible;
     }
 
@@ -120,13 +114,5 @@ public class CacheListDelegate {
         mActivityVisible.setVisible(true);
         mPresenter.onResume(mCacheListRefresh);
         mController.onResume(mImportIntentManager.isImport());
-    }
-
-    public Dialog onCreateDialog(Builder builder) {
-        return mContextActionDeleteDialogHelper.onCreateDialog(builder);
-    }
-
-    public void onPrepareDialog(Dialog dialog) {
-        mContextActionDeleteDialogHelper.onPrepareDialog(dialog);
     }
 }
