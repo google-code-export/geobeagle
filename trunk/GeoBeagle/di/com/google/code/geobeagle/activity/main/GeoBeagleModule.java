@@ -72,15 +72,6 @@ public class GeoBeagleModule extends AbstractAndroidModule {
             FIELD, PARAMETER, METHOD
     })
     @Retention(RUNTIME)
-    public static @interface IntentStarterViewGoogleMap {
-    }
-
-
-    @BindingAnnotation
-    @Target( {
-            FIELD, PARAMETER, METHOD
-    })
-    @Retention(RUNTIME)
     public static @interface ChooseNavDialog {
     }
     
