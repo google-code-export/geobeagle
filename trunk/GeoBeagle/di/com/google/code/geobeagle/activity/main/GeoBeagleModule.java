@@ -163,6 +163,21 @@ public class GeoBeagleModule extends AbstractAndroidModule {
         return (GeoBeagle)activity;
     }
 
+
+    @Provides
+    @RibbonImages
+    UnlabelledAttributeViewer providesRibbonImagesOnDifficulty(Resources resources,
+            RatingsArray ratingsArray, Activity activity) {
+        final Drawable[] ribbonDrawables = {
+                resources.getDrawable(R.drawable.ribbon_unselected_dark),
+                resources.getDrawable(R.drawable.ribbon_half_bright),
+                resources.getDrawable(R.drawable.ribbon_selected_bright)
+        };
+        final ImageView imageView = (ImageView)activity.findViewById(R.id.gc_difficulty);
+
+        return getImagesOnDifficulty(ribbonDrawables, imageView, ratingsArray);
+    }
+    
     @Provides
     @Named("GeocacheDifficulty")
     AttributeViewer providesGeocacheDifficulty(Activity activity,
@@ -178,13 +193,6 @@ public class GeoBeagleModule extends AbstractAndroidModule {
         return new LabelledAttributeViewer((TextView)activity.findViewById(R.id.gc_text_terrain),
                 pawImages);
     }
-
-    @Provides
-    @Named("ImageViewDifficulty")
-    ImageView providesImageViewDifficulty(GeoBeagle geoBeagle) {
-        return (ImageView)geoBeagle.findViewById(R.id.gc_difficulty);
-    }
-
 
     @Provides
     @IntentStarterRadar
@@ -262,17 +270,6 @@ public class GeoBeagleModule extends AbstractAndroidModule {
                 .asList(GeocacheViewer.CONTAINER_IMAGES));
     }
 
-    @Provides
-    @RibbonImages
-    UnlabelledAttributeViewer providesRibbonImagesOnDifficulty(Resources resources,
-            @Named("ImageViewDifficulty") ImageView imageView, RatingsArray ratingsArray) {
-        final Drawable[] ribbonDrawables = {
-                resources.getDrawable(R.drawable.ribbon_unselected_dark),
-                resources.getDrawable(R.drawable.ribbon_half_bright),
-                resources.getDrawable(R.drawable.ribbon_selected_bright)
-        };
-        return getImagesOnDifficulty(ribbonDrawables, imageView, ratingsArray);
-    }
 
     @Provides
     public GeocacheViewer providesGeocacheViewer(RadarView radarView, Activity activity,
