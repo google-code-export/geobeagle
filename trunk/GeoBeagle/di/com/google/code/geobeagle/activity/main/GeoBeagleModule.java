@@ -26,12 +26,6 @@ import com.google.code.geobeagle.GraphicsGenerator.IconOverlayFactory;
 import com.google.code.geobeagle.GraphicsGenerator.IconRenderer;
 import com.google.code.geobeagle.GraphicsGenerator.MapViewBitmapCopier;
 import com.google.code.geobeagle.GraphicsGenerator.RatingsArray;
-import com.google.code.geobeagle.actions.MenuAction;
-import com.google.code.geobeagle.actions.MenuActionCacheList;
-import com.google.code.geobeagle.actions.MenuActionEditGeocache;
-import com.google.code.geobeagle.actions.MenuActionSearchOnline;
-import com.google.code.geobeagle.actions.MenuActionSettings;
-import com.google.code.geobeagle.actions.MenuActions;
 import com.google.code.geobeagle.activity.cachelist.view.NameFormatter;
 import com.google.code.geobeagle.activity.main.intents.GeocacheToGoogleGeo;
 import com.google.code.geobeagle.activity.main.intents.IntentStarter;
@@ -91,23 +85,6 @@ public class GeoBeagleModule extends AbstractAndroidModule {
         return (GeoBeagle)activity;
     }
 
-    static class GeoBeagleActivityMenuActions extends MenuActions {
-        public GeoBeagleActivityMenuActions(Resources resources, GeoBeagle geoBeagle,
-                MenuActionGoogleMaps menuActionGoogleMaps) {
-            super(resources);
-            final MenuAction[] menuActionArray = {
-                    new MenuActionCacheList(geoBeagle), new MenuActionEditGeocache(geoBeagle),
-                    // new MenuActionLogDnf(this), new MenuActionLogFind(this),
-                    new MenuActionSearchOnline(geoBeagle), new MenuActionSettings(geoBeagle),
-                    menuActionGoogleMaps
-            };
-            for (int ix = 0; ix < menuActionArray.length; ix++) {
-                add(menuActionArray[ix]);
-            }
-        }
-
-    }
-    
     @Provides
     RadarView providesRadarView(Activity activity) {
         RadarView radarView = (RadarView)activity.findViewById(R.id.radarview);
