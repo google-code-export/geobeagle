@@ -15,7 +15,6 @@
 package com.google.code.geobeagle.activity.main.fieldnotes;
 
 import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.activity.main.fieldnotes.FieldnotesModule.ToasterFactory;
 import com.google.code.geobeagle.xmlimport.GeoBeagleEnvironment;
 import com.google.inject.Inject;
 

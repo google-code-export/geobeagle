@@ -17,7 +17,6 @@ package com.google.code.geobeagle;
 import com.google.code.geobeagle.activity.cachelist.CacheListModule;
 import com.google.code.geobeagle.activity.cachelist.model.ModelModule;
 import com.google.code.geobeagle.activity.main.GeoBeagleModule;
-import com.google.code.geobeagle.activity.main.fieldnotes.FieldnotesModule;
 import com.google.code.geobeagle.activity.main.view.ViewModule;
 import com.google.code.geobeagle.bcaching.BCachingModule;
 import com.google.code.geobeagle.bcaching.communication.BCachingCommModule;
@@ -37,7 +36,6 @@ public class GeoBeagleApplication extends GuiceApplication {
     protected void addApplicationModules(List<Module> modules) {
         timing.start();
 //        Debug.startMethodTracing("dmtrace", 32 * 1024 * 1024);
-        modules.add(new FieldnotesModule());   // +2.1 seconds (13.1 -- 11.5, 10.5, 10.7, 10.7)
         modules.add(new GeoBeagleModule());      // +1 second (11.0)
         modules.add(new GeoBeaglePackageModule());
         modules.add(new ViewModule());        // ?? (12.7)
