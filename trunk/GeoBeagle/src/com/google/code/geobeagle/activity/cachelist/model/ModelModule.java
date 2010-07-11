@@ -13,23 +13,11 @@
  */
 package com.google.code.geobeagle.activity.cachelist.model;
 
-import com.google.inject.Provides;
-
-import java.util.ArrayList;
-
 import roboguice.config.AbstractAndroidModule;
-import roboguice.inject.ContextScoped;
 
 public class ModelModule extends AbstractAndroidModule {
 
     @Override
     protected void configure() {
-    }
-
-    @Provides
-    @ContextScoped
-    GeocacheVectors providesGeocacheVectors() {
-        final ArrayList<GeocacheVector> geocacheVectorsList = new ArrayList<GeocacheVector>(10);
-        return new GeocacheVectors(geocacheVectorsList);
     }
 }
