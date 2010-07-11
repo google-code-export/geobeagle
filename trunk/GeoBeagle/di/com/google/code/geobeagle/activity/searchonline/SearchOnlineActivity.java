@@ -21,11 +21,9 @@ import com.google.code.geobeagle.activity.searchonline.SearchOnlineActivityDeleg
 import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidgetDelegate;
 import com.google.code.geobeagle.gpsstatuswidget.InflatedGpsStatusWidget;
 import com.google.code.geobeagle.gpsstatuswidget.UpdateGpsWidgetRunnable;
-import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidgetModule.SearchOnline;
 import com.google.code.geobeagle.location.CombinedLocationListener;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
-import com.google.inject.Key;
 
 import roboguice.activity.GuiceActivity;
 import roboguice.inject.InjectView;
@@ -85,18 +83,15 @@ public class SearchOnlineActivity extends GuiceActivity {
         Log.d("GeoBeagle", "SearchOnlineActivity onCreate");
         
         Injector injector = this.getInjector();
-        mInflatedGpsStatusWidget = injector.getInstance(Key.get(InflatedGpsStatusWidget.class,
-                SearchOnline.class));
+        mInflatedGpsStatusWidget = injector.getInstance(InflatedGpsStatusWidget.class);
         
-        GpsStatusWidgetDelegate gpsStatusWidgetDelegate = injector.getInstance(Key.get(
-                GpsStatusWidgetDelegate.class, SearchOnline.class));
-        mUpdateGpsWidgetRunnable = injector.getInstance(Key.get(UpdateGpsWidgetRunnable.class,
-                SearchOnline.class));
+        GpsStatusWidgetDelegate gpsStatusWidgetDelegate = injector
+                .getInstance(GpsStatusWidgetDelegate.class);
+        mUpdateGpsWidgetRunnable = injector.getInstance(UpdateGpsWidgetRunnable.class);
         mInflatedGpsStatusWidget.setDelegate(gpsStatusWidgetDelegate);
         mInflatedGpsStatusWidget.setBackgroundColor(Color.BLACK);
 
-        mCombinedLocationListener = injector.getInstance(Key.get(CombinedLocationListener.class,
-                SearchOnline.class));
+        mCombinedLocationListener = injector.getInstance(CombinedLocationListener.class);
         
         mSearchOnlineActivityDelegate = injector.getInstance(
                 SearchOnlineActivityDelegateFactory.class).create(
