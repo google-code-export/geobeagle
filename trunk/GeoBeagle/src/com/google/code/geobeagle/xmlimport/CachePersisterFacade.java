@@ -16,7 +16,7 @@ package com.google.code.geobeagle.xmlimport;
 
 import com.google.code.geobeagle.GeocacheFactory.Source;
 import com.google.code.geobeagle.xmlimport.CachePersisterFacadeDI.FileFactory;
-import com.google.code.geobeagle.xmlimport.XmlimportAnnotations.DetailsDirectory;
+import com.google.code.geobeagle.xmlimport.XmlimportModule.GeoBeagleEnvironment;
 import com.google.inject.Inject;
 
 import android.os.PowerManager.WakeLock;
@@ -30,17 +30,17 @@ public class CachePersisterFacade implements ICachePersisterFacade {
     private MessageHandlerInterface mMessageHandler;
     private final WakeLock mWakeLock;
     private String mLastModified;
-    private String mDetailsDirectory;
+    private final GeoBeagleEnvironment mGeoBeagleEnvironment;
 
     @Inject
     CachePersisterFacade(CacheTagSqlWriter cacheTagSqlWriter, FileFactory fileFactory,
             MessageHandlerInterface messageHandler,
-            WakeLock wakeLock, @DetailsDirectory String detailsDirectory) {
+            WakeLock wakeLock, GeoBeagleEnvironment geoBeagleEnvironment) {
         mCacheTagWriter = cacheTagSqlWriter;
         mFileFactory = fileFactory;
         mMessageHandler = messageHandler;
         mWakeLock = wakeLock;
-        mDetailsDirectory = detailsDirectory;
+        mGeoBeagleEnvironment = geoBeagleEnvironment;
     }
 
     @Override
@@ -105,7 +105,7 @@ public class CachePersisterFacade implements ICachePersisterFacade {
 
     @Override
     public void start() {
-        mFileFactory.createFile(mDetailsDirectory).mkdirs();
+        mFileFactory.createFile(mGeoBeagleEnvironment.getDetailsDirectory()).mkdirs();
     }
 
     @Override

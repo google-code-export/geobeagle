@@ -23,12 +23,6 @@ public class XmlimportAnnotations {
     @Retention(RUNTIME) public static @interface ImportDirectory { }
 
     @BindingAnnotation @Target( { FIELD, PARAMETER, METHOD })
-    @Retention(RUNTIME) public static @interface DetailsDirectory { }
-
-    @BindingAnnotation @Target( { FIELD, PARAMETER, METHOD })
-    @Retention(RUNTIME) public static @interface VersionPath { }
-
-    @BindingAnnotation @Target( { FIELD, PARAMETER, METHOD })
     @Retention(RUNTIME) public static @interface OldDetailsDirectory { }
 
     @BindingAnnotation @Target( { FIELD, PARAMETER, METHOD })

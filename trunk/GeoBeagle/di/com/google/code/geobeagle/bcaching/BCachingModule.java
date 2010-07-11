@@ -72,7 +72,6 @@ public class BCachingModule extends AbstractAndroidModule {
         WakeLock wakeLockProvider(PowerManager powerManager) {
             return powerManager.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, "Importing");
         }
- 
     }
     
     @Override

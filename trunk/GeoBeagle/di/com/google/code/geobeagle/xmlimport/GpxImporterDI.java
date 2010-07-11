@@ -31,9 +31,9 @@ import com.google.code.geobeagle.xmlimport.CachePersisterFacadeDI.CachePersister
 import com.google.code.geobeagle.xmlimport.EventHelperDI.EventHelperFactory;
 import com.google.code.geobeagle.xmlimport.GpxToCache.Aborter;
 import com.google.code.geobeagle.xmlimport.ImportThreadDelegate.ImportThreadHelper;
-import com.google.code.geobeagle.xmlimport.XmlimportAnnotations.DetailsDirectory;
 import com.google.code.geobeagle.xmlimport.XmlimportAnnotations.ImportDirectory;
 import com.google.code.geobeagle.xmlimport.XmlimportAnnotations.OldDetailsDirectory;
+import com.google.code.geobeagle.xmlimport.XmlimportModule.GeoBeagleEnvironment;
 import com.google.code.geobeagle.xmlimport.gpx.GpxAndZipFiles;
 import com.google.code.geobeagle.xmlimport.gpx.GpxFileIterAndZipFileIterFactory;
 import com.google.code.geobeagle.xmlimport.gpx.GpxAndZipFiles.GpxAndZipFilenameFilter;
@@ -334,9 +334,10 @@ public class GpxImporterDI {
         final WakeLock wakeLock = powerManager.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK,
                 "Importing");
 
+        final GeoBeagleEnvironment geoBeagleEnvironment = injector
+                .getInstance(GeoBeagleEnvironment.class);
         final CachePersisterFacade cachePersisterFacade = cachePersisterFacadeFactory.create(
-                cacheWriter, gpxWriter, wakeLock, injector.getInstance(Key.get(String.class,
-                        DetailsDirectory.class)));
+                cacheWriter, gpxWriter, wakeLock, geoBeagleEnvironment);
 
         final GpxLoader gpxLoader = GpxLoaderDI.create(cachePersisterFacade, xmlPullParserWrapper,
                 aborter, errorDisplayer, wakeLock, gpxWriter);

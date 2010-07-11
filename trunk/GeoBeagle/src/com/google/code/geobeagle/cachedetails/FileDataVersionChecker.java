@@ -14,7 +14,7 @@
 
 package com.google.code.geobeagle.cachedetails;
 
-import com.google.code.geobeagle.xmlimport.XmlimportAnnotations.VersionPath;
+import com.google.code.geobeagle.xmlimport.XmlimportModule.GeoBeagleEnvironment;
 import com.google.inject.Inject;
 
 import android.util.Log;
@@ -26,15 +26,15 @@ import java.io.FileReader;
 import java.io.IOException;
 
 public class FileDataVersionChecker {
-    private String versionPath;
+    private GeoBeagleEnvironment geoBeagleEnvironment;
 
     @Inject
-    FileDataVersionChecker(@VersionPath String versionPath) {
-        this.versionPath = versionPath;
+    FileDataVersionChecker(GeoBeagleEnvironment geoBeagleEnvironment) {
+        this.geoBeagleEnvironment = geoBeagleEnvironment;
     }
 
     public boolean needsUpdating() {
-        File file = new File(versionPath);
+        File file = new File(geoBeagleEnvironment.getVersionPath());
         if (!file.exists())
             return true;
         try {

@@ -14,8 +14,7 @@
 
 package com.google.code.geobeagle.cachedetails;
 
-import com.google.code.geobeagle.xmlimport.XmlimportAnnotations.DetailsDirectory;
-import com.google.code.geobeagle.xmlimport.XmlimportAnnotations.VersionPath;
+import com.google.code.geobeagle.xmlimport.XmlimportModule.GeoBeagleEnvironment;
 import com.google.inject.Inject;
 
 import java.io.File;
@@ -23,20 +22,17 @@ import java.io.IOException;
 
 public class FileDataVersionWriter {
     private final WriterWrapper writerWrapper;
-    private final String versionDirectory;
-    private final String versionPath;
+    private final GeoBeagleEnvironment geoBeagleEnvironment;
 
     @Inject
-    FileDataVersionWriter(WriterWrapper writerWrapper, @DetailsDirectory String detailsDirectory,
-            @VersionPath String versionPath) {
+    FileDataVersionWriter(WriterWrapper writerWrapper, GeoBeagleEnvironment geoBeagleEnvironment) {
         this.writerWrapper = writerWrapper;
-        this.versionDirectory = detailsDirectory;
-        this.versionPath = versionPath;
+        this.geoBeagleEnvironment = geoBeagleEnvironment;
     }
 
     public void writeVersion() throws IOException {
-        new File(versionDirectory).mkdir();
-        writerWrapper.open(versionPath);
+        new File(geoBeagleEnvironment.getDetailsDirectory()).mkdir();
+        writerWrapper.open(geoBeagleEnvironment.getVersionPath());
         writerWrapper.write("1");
         writerWrapper.close();
     }

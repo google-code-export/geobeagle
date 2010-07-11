@@ -14,16 +14,17 @@
 
 package com.google.code.geobeagle.cachedetails;
 
-import com.google.code.geobeagle.xmlimport.XmlimportAnnotations.DetailsDirectory;
+import com.google.code.geobeagle.xmlimport.XmlimportModule.GeoBeagleEnvironment;
 import com.google.inject.Inject;
 
 public class FilePathStrategy {
 
-    private String detailsDirectory;
+    private GeoBeagleEnvironment geoBeagleEnvironment;
+
     @Inject
     public
-    FilePathStrategy(@DetailsDirectory String detailsDirectory) {
-        this.detailsDirectory = detailsDirectory;
+    FilePathStrategy(GeoBeagleEnvironment geoBeagleEnvironment) {
+        this.geoBeagleEnvironment = geoBeagleEnvironment;
     }
 
     private static String replaceIllegalFileChars(String wpt) {
@@ -31,7 +32,7 @@ public class FilePathStrategy {
     }
 
     public String getPath(CharSequence gpxName, String wpt, String extension) {
-        String string = detailsDirectory + gpxName + "/"
+        String string = geoBeagleEnvironment.getDetailsDirectory() + gpxName + "/"
                 + String.valueOf(Math.abs(wpt.hashCode()) % 16) + "/"
                 + replaceIllegalFileChars(wpt) + "." + extension;
         return string;
