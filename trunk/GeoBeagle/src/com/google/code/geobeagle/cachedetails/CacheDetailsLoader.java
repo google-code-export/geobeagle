@@ -15,9 +15,11 @@
 package com.google.code.geobeagle.cachedetails;
 
 import com.google.code.geobeagle.R;
+import com.google.code.geobeagle.xmlimport.CacheTagsToDetails;
+import com.google.code.geobeagle.xmlimport.EventHandlerGpx;
 import com.google.code.geobeagle.xmlimport.EventHelper;
+import com.google.code.geobeagle.xmlimport.ICachePersisterFacade;
 import com.google.code.geobeagle.xmlimport.XmlPullParserWrapper;
-import com.google.code.geobeagle.xmlimport.XmlimportAnnotations.LoadDetails;
 import com.google.inject.Inject;
 
 import org.xmlpull.v1.XmlPullParser;
@@ -73,14 +75,16 @@ public class CacheDetailsLoader {
         private final EventHelper mEventHelper;
         private final XmlPullParserWrapper mXmlPullParser;
         private final StringWriterWrapper mStringWriterWrapper;
+        private final EventHandlerGpx mEventHandlerGpx;
 
         @Inject
         public DetailsOpener(Activity activity, FileDataVersionChecker fileDataVersionChecker,
-                @LoadDetails EventHelper eventHelper, XmlPullParserWrapper xmlPullParser,
-                StringWriterWrapper stringWriterWrapper) {
+                EventHelper eventHelper, EventHandlerGpx eventHandlerGpx,
+                XmlPullParserWrapper xmlPullParser, StringWriterWrapper stringWriterWrapper) {
             mActivity = activity;
             mFileDataVersionChecker = fileDataVersionChecker;
             mEventHelper = eventHelper;
+            mEventHandlerGpx = eventHandlerGpx;
             mXmlPullParser = xmlPullParser;
             mStringWriterWrapper = stringWriterWrapper;
         }
@@ -100,12 +104,12 @@ public class CacheDetailsLoader {
                 return new DetailsReaderError(mActivity, error, e.getMessage());
             }
             return new DetailsReaderImpl(mActivity, fileReader, absolutePath, mEventHelper,
-                    mXmlPullParser, mStringWriterWrapper);
+                    mEventHandlerGpx, mXmlPullParser, mStringWriterWrapper);
         }
     }
 
     interface DetailsReader {
-        Details read();
+        Details read(ICachePersisterFacade cpf);
     }
 
     static class DetailsReaderError implements DetailsReader {
@@ -119,7 +123,8 @@ public class CacheDetailsLoader {
             mError = error;
         }
 
-        public Details read() {
+        @Override
+        public Details read(ICachePersisterFacade cpf) {
             return new DetailsError(mActivity, mError, mPath);
         }
     }
@@ -131,30 +136,33 @@ public class CacheDetailsLoader {
         private final XmlPullParserWrapper mXmlPullParserWrapper;
         private final Reader mReader;
         private final StringWriterWrapper mStringWriterWrapper;
+        private final EventHandlerGpx mEventHandlerGpx;
 
         DetailsReaderImpl(Activity activity, Reader fileReader, String path,
-                @LoadDetails EventHelper eventHelper, XmlPullParserWrapper xmlPullParserWrapper,
-                StringWriterWrapper stringWriterWrapper) {
+                EventHelper eventHelper, EventHandlerGpx eventHandlerGpx,
+                XmlPullParserWrapper xmlPullParserWrapper, StringWriterWrapper stringWriterWrapper) {
             mActivity = activity;
             mPath = path;
             mEventHelper = eventHelper;
+            mEventHandlerGpx = eventHandlerGpx;
             mXmlPullParserWrapper = xmlPullParserWrapper;
             mReader = fileReader;
             mStringWriterWrapper = stringWriterWrapper;
         }
 
-        public Details read() {
+        @Override
+        public Details read(ICachePersisterFacade cachePersisterFacade) {
             try {
-                mEventHelper.open(mPath);
+                mEventHelper.open(mPath, mEventHandlerGpx);
                 mXmlPullParserWrapper.open(mPath, mReader);
                 int eventType;
                 for (eventType = mXmlPullParserWrapper.getEventType(); eventType != XmlPullParser.END_DOCUMENT; eventType = mXmlPullParserWrapper
                         .next()) {
-                    mEventHelper.handleEvent(eventType);
+                    mEventHelper.handleEvent(eventType, mEventHandlerGpx, cachePersisterFacade);
                 }
 
                 // Pick up END_DOCUMENT event as well.
-                mEventHelper.handleEvent(eventType);
+                mEventHelper.handleEvent(eventType, mEventHandlerGpx, cachePersisterFacade);
 
                 return new DetailsImpl(mStringWriterWrapper.getString());
             } catch (XmlPullParserException e) {
@@ -167,18 +175,21 @@ public class CacheDetailsLoader {
 
     private final DetailsOpener mDetailsOpener;
     private final FilePathStrategy mFilePathStrategy;
+    private final CacheTagsToDetails mCacheTagsToDetails;
 
     @Inject
-    public CacheDetailsLoader(DetailsOpener detailsOpener, FilePathStrategy filePathStrategy) {
+    public CacheDetailsLoader(DetailsOpener detailsOpener, FilePathStrategy filePathStrategy,
+            CacheTagsToDetails cacheTagsToDetails) {
         mDetailsOpener = detailsOpener;
         mFilePathStrategy = filePathStrategy;
+        mCacheTagsToDetails = cacheTagsToDetails;
     }
 
     public String load(CharSequence sourceName, CharSequence cacheId) {
         String path = mFilePathStrategy.getPath(sourceName, cacheId.toString(), "gpx");
         File file = new File(path);
         DetailsReader detailsReader = mDetailsOpener.open(file);
-        Details details = detailsReader.read();
+        Details details = detailsReader.read(mCacheTagsToDetails);
         return details.getString();
     }
 }

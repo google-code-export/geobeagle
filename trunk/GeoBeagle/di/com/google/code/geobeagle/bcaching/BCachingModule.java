@@ -23,13 +23,8 @@ import com.google.code.geobeagle.bcaching.progress.ProgressHandler;
 import com.google.code.geobeagle.database.ClearCachesFromSource;
 import com.google.code.geobeagle.database.ClearCachesFromSourceNull;
 import com.google.code.geobeagle.xmlimport.CachePersisterFacade;
-import com.google.code.geobeagle.xmlimport.EventHandlerGpx;
-import com.google.code.geobeagle.xmlimport.EventHelper;
 import com.google.code.geobeagle.xmlimport.MessageHandlerInterface;
-import com.google.code.geobeagle.xmlimport.XmlPullParserWrapper;
-import com.google.code.geobeagle.xmlimport.EventHelper.XmlPathBuilder;
 import com.google.code.geobeagle.xmlimport.GpxToCache.Aborter;
-import com.google.code.geobeagle.xmlimport.XmlimportAnnotations.LoadDetails;
 import com.google.inject.Inject;
 import com.google.inject.Provides;
 
@@ -60,14 +55,6 @@ public class BCachingModule extends AbstractAndroidModule {
         protected void configure() {
         }
 
-        @Provides
-        @LoadDetails
-        @ContextScoped
-        EventHelper eventHelperGpxLoadDetailsProvider(XmlPathBuilder xmlPathBuilder,
-                @LoadDetails EventHandlerGpx eventHandlerGpx, XmlPullParserWrapper xmlPullParser) {
-            return new EventHelper(xmlPathBuilder, eventHandlerGpx, xmlPullParser);
-        }
-        
         @Provides
         WakeLock wakeLockProvider(PowerManager powerManager) {
             return powerManager.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, "Importing");

@@ -20,11 +20,7 @@ import com.google.code.geobeagle.cachedetails.Emotifier;
 import com.google.code.geobeagle.cachedetails.HtmlWriter;
 import com.google.code.geobeagle.cachedetails.StringWriterWrapper;
 import com.google.code.geobeagle.database.GpxWriter;
-import com.google.code.geobeagle.xmlimport.EventHelper.XmlPathBuilder;
 import com.google.code.geobeagle.xmlimport.GpxImporterDI.MessageHandler;
-import com.google.code.geobeagle.xmlimport.XmlimportAnnotations.GpxAnnotation;
-import com.google.code.geobeagle.xmlimport.XmlimportAnnotations.LoadDetails;
-import com.google.code.geobeagle.xmlimport.XmlimportAnnotations.WriteDetails;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 
@@ -32,8 +28,6 @@ import roboguice.config.AbstractAndroidModule;
 import roboguice.inject.ContextScoped;
 
 import android.content.Context;
-
-import java.util.Arrays;
 
 public class XmlimportModule extends AbstractAndroidModule {
 
@@ -47,34 +41,10 @@ public class XmlimportModule extends AbstractAndroidModule {
     }
 
     @Provides
-    @GpxAnnotation
-    @ContextScoped
-    EventHelper eventHelperGpxProvider(XmlPathBuilder xmlPathBuilder,
-            @WriteDetails EventHandlerGpx eventHandlerGpx, XmlPullParserWrapper xmlPullParser,
-            XmlWriter xmlWriter) {
-        EventHandlerComposite eventHandlerComposite = new EventHandlerComposite(Arrays.asList(
-                xmlWriter, eventHandlerGpx));
-
-        return new EventHelper(xmlPathBuilder, eventHandlerComposite, xmlPullParser);
-    }
-
-    @Provides
-    @WriteDetails
-    EventHandlerGpx eventHandlerGpxWriteDetailsProvider(CachePersisterFacade cachePersisterFacade) {
-        return new EventHandlerGpx(cachePersisterFacade);
-    }
-
-    @Provides
     CacheDetailsWriter cacheDetailsWriterLoadDetailsProvider(Emotifier emotifier, Context context,
             StringWriterWrapper stringWriterWrapper) {
         final HtmlWriter htmlWriter = new HtmlWriter(stringWriterWrapper);
         return new CacheDetailsWriter(htmlWriter, emotifier, context);
-    }
-
-    @Provides
-    @LoadDetails
-    EventHandlerGpx eventHandlerGpxLoadDetailsProvider(CacheTagsToDetails cachePersisterFacade) {
-        return new EventHandlerGpx(cachePersisterFacade);
     }
 
 }

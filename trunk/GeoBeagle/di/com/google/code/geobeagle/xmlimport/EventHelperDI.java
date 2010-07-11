@@ -14,8 +14,6 @@
 
 package com.google.code.geobeagle.xmlimport;
 
-import com.google.code.geobeagle.xmlimport.EventHandler;
-import com.google.code.geobeagle.xmlimport.EventHelper;
 import com.google.code.geobeagle.xmlimport.EventHelper.XmlPathBuilder;
 
 public class EventHelperDI {
@@ -27,9 +25,9 @@ public class EventHelperDI {
             mXmlPullParser = xmlPullParser;
         }
     
-        public EventHelper create(EventHandler eventHandler) {
+        public EventHelper create() {
             final XmlPathBuilder xmlPathBuilder = new XmlPathBuilder();
-            return new EventHelper(xmlPathBuilder, eventHandler, mXmlPullParser);
+            return new EventHelper(xmlPathBuilder, mXmlPullParser);
         }
     }
 }

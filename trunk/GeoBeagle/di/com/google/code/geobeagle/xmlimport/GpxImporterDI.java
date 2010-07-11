@@ -341,8 +341,8 @@ public class GpxImporterDI {
         final ToastFactory toastFactory = new ToastFactory();
         final ImportThreadWrapper importThreadWrapper = new ImportThreadWrapper(messageHandler,
                 xmlPullParserWrapper, aborter);
-        final EventHandlerGpx eventHandlerGpx = new EventHandlerGpx(cachePersisterFacade);
-        final EventHandlerLoc eventHandlerLoc = new EventHandlerLoc(cachePersisterFacade);
+        final EventHandlerGpx eventHandlerGpx = new EventHandlerGpx();
+        final EventHandlerLoc eventHandlerLoc = new EventHandlerLoc();
         final XmlWriter xmlWriter = injector.getInstance(XmlWriter.class);
         
         final EventHandlerComposite eventHandlerComposite = new EventHandlerComposite(Arrays

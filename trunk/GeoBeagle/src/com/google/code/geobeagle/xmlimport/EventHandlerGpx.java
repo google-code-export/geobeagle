@@ -15,7 +15,6 @@
 package com.google.code.geobeagle.xmlimport;
 
 import com.google.code.geobeagle.GeocacheFactory.Source;
-import com.google.inject.Inject;
 
 import android.util.Log;
 
@@ -62,31 +61,27 @@ public class EventHandlerGpx implements EventHandler {
     static final String XPATH_WPTNAME = "/gpx/wpt/name";
     static final String XPATH_WAYPOINT_TYPE = "/gpx/wpt/type";
     
-    private final ICachePersisterFacade mCachePersisterFacade;
     private boolean mLogEncrypted;
     private String mGpxTime;
 
-    @Inject
-    public EventHandlerGpx(ICachePersisterFacade cachePersisterFacade) {
-        mCachePersisterFacade = cachePersisterFacade;
-    }
-
     @Override
-    public void endTag(String name, String previousFullPath) throws IOException {
+    public void endTag(String name, String previousFullPath,
+            ICachePersisterFacade cachePersisterFacade) throws IOException {
         if (previousFullPath.equals(XPATH_WPT)) {
-            mCachePersisterFacade.endCache(Source.GPX);
+            cachePersisterFacade.endCache(Source.GPX);
         }
     }
 
     @Override
-    public void startTag(String name, String fullPath, XmlPullParserWrapper xmlPullParser) {
+    public void startTag(String name, String fullPath, XmlPullParserWrapper xmlPullParser,
+            ICachePersisterFacade cachePersisterFacade) {
         if (fullPath.equals(XPATH_WPT)) {
-            mCachePersisterFacade.startCache();
-            mCachePersisterFacade.wpt(xmlPullParser.getAttributeValue(null, "lat"), xmlPullParser
+            cachePersisterFacade.startCache();
+            cachePersisterFacade.wpt(xmlPullParser.getAttributeValue(null, "lat"), xmlPullParser
                     .getAttributeValue(null, "lon"));
         } else if (fullPath.equals(XPATH_CACHE)) {
-            mCachePersisterFacade.available(xmlPullParser.getAttributeValue(null, "available"));
-            mCachePersisterFacade.archived(xmlPullParser.getAttributeValue(null, "archived"));
+            cachePersisterFacade.available(xmlPullParser.getAttributeValue(null, "available"));
+            cachePersisterFacade.archived(xmlPullParser.getAttributeValue(null, "archived"));
         } else if (fullPath.equals(XPATH_LOGTEXT)) {
             mLogEncrypted = "true".equalsIgnoreCase(xmlPullParser
                     .getAttributeValue(null, "encoded"));
@@ -94,56 +89,57 @@ public class EventHandlerGpx implements EventHandler {
     }
 
     @Override
-    public boolean text(String fullPath, String text, XmlPullParserWrapper xmlPullParser) throws IOException {
+    public boolean text(String fullPath, String text, XmlPullParserWrapper xmlPullParser,
+            ICachePersisterFacade cachePersisterFacade) throws IOException {
         String trimmedText = text.trim();
-//        Log.d("GeoBeagle", "fullPath " + fullPath + ", text " + text);
+        // Log.d("GeoBeagle", "fullPath " + fullPath + ", text " + text);
         if (fullPath.equals(XPATH_WPTNAME)) {
-            mCachePersisterFacade.wptName(trimmedText);
+            cachePersisterFacade.wptName(trimmedText);
         } else if (fullPath.equals(XPATH_WPTDESC)) {
-            mCachePersisterFacade.wptDesc(trimmedText);
+            cachePersisterFacade.wptDesc(trimmedText);
         } else if (fullPath.equals(XPATH_GPXTIME) || fullPath.equals(XPATH_TERRACACHINGGPXTIME)) {
-            return mCachePersisterFacade.gpxTime(trimmedText);
+            return cachePersisterFacade.gpxTime(trimmedText);
         } else if (fullPath.equals(XPATH_GROUNDSPEAKNAME) || fullPath.equals(XPATH_GEOCACHENAME)) {
-            mCachePersisterFacade.groundspeakName(trimmedText);
+            cachePersisterFacade.groundspeakName(trimmedText);
         } else if (fullPath.equals(XPATH_LOGDATE) || fullPath.equals(XPATH_GEOCACHELOGDATE)) {
-            mCachePersisterFacade.logDate(trimmedText);
+            cachePersisterFacade.logDate(trimmedText);
         } else if (fullPath.equals(XPATH_SYM)) {
-            mCachePersisterFacade.symbol(trimmedText);
+            cachePersisterFacade.symbol(trimmedText);
         } else if (fullPath.equals(XPATH_HINT) || fullPath.equals(XPATH_GEOCACHEHINT)) {
             if (!trimmedText.equals("")) {
-                mCachePersisterFacade.hint(trimmedText);
+                cachePersisterFacade.hint(trimmedText);
             }
         } else if (fullPath.equals(XPATH_GEOCACHE_TYPE) || fullPath.equals(XPATH_WAYPOINT_TYPE)) {
-            mCachePersisterFacade.cacheType(trimmedText);
+            cachePersisterFacade.cacheType(trimmedText);
         } else if (fullPath.equals(XPATH_CACHE_DIFFICULTY)
                 || fullPath.equals(XPATH_GEOCACHE_DIFFICULTY)) {
-            mCachePersisterFacade.difficulty(trimmedText);
+            cachePersisterFacade.difficulty(trimmedText);
         } else if (fullPath.equals(XPATH_CACHE_TERRAIN) || fullPath.equals(XPATH_GEOCACHE_TERRAIN)) {
-            mCachePersisterFacade.terrain(trimmedText);
+            cachePersisterFacade.terrain(trimmedText);
         } else if (fullPath.equals(XPATH_CACHE_CONTAINER)
                 || fullPath.equals(XPATH_GEOCACHE_CONTAINER)) {
-            mCachePersisterFacade.container(trimmedText);
+            cachePersisterFacade.container(trimmedText);
         } else if (fullPath.equals(XPATH_LAST_MODIFIED)) {
-            mCachePersisterFacade.lastModified(trimmedText);
+            cachePersisterFacade.lastModified(trimmedText);
         } else if (fullPath.equals(XPATH_LOGTEXT)) {
-            mCachePersisterFacade.logText(trimmedText, mLogEncrypted);
+            cachePersisterFacade.logText(trimmedText, mLogEncrypted);
         } else if (fullPath.equals(XPATH_LOGTYPE)) {
-            mCachePersisterFacade.logType(trimmedText);
+            cachePersisterFacade.logType(trimmedText);
         } else if (fullPath.equals(XPATH_WPTTIME)) {
             mGpxTime = trimmedText;
-            mCachePersisterFacade.wptTime(trimmedText);
+            cachePersisterFacade.wptTime(trimmedText);
         } else if (fullPath.equals(XPATH_PLACEDBY)) {
             Log.d("GeoBeagle", "PB: " + trimmedText + ", " + mGpxTime);
-            mCachePersisterFacade.placedBy(trimmedText);
+            cachePersisterFacade.placedBy(trimmedText);
         } else if (fullPath.equals(XPATH_SHORTDESC)) {
-            mCachePersisterFacade.shortDescription(trimmedText);
+            cachePersisterFacade.shortDescription(trimmedText);
         } else if (fullPath.equals(XPATH_LONGDESC)) {
-            mCachePersisterFacade.longDescription(trimmedText);
+            cachePersisterFacade.longDescription(trimmedText);
         }
         
         for (String writeLineMatch : XPATH_PLAINLINES) {
             if (fullPath.equals(writeLineMatch)) {
-                mCachePersisterFacade.line(trimmedText);
+                cachePersisterFacade.line(trimmedText);
                 return true;
             }
         }

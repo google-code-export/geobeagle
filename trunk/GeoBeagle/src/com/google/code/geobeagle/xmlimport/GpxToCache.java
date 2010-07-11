@@ -74,20 +74,16 @@ public class GpxToCache {
     }
 
     /**
-     * @param eventHelper
      * @return false if this file has already been loaded.
-     * @throws XmlPullParserException
-     * @throws IOException
-     * @throws CancelException
      */
-    public boolean load(EventHelper eventHelper) throws XmlPullParserException, IOException,
+    public boolean load(EventHelper eventHelper, EventHandler eventHandlerGpx, ICachePersisterFacade cachePersisterFacade) throws XmlPullParserException, IOException,
             CancelException {
         Log.d("GeoBeagle", this + ": GpxToCache: load");
 
         if (mTestLocAlreadyLoaded.isAlreadyLoaded(mSource)) {
             return true;
         }
-        eventHelper.open(mFilename);
+        eventHelper.open(mFilename, eventHandlerGpx);
         int eventType;
         for (eventType = mXmlPullParserWrapper.getEventType(); eventType != XmlPullParser.END_DOCUMENT; eventType = mXmlPullParserWrapper
                 .next()) {
@@ -97,12 +93,12 @@ public class GpxToCache {
                 throw new CancelException();
             }
             // File already loaded.
-            if (!eventHelper.handleEvent(eventType))
+            if (!eventHelper.handleEvent(eventType, eventHandlerGpx, cachePersisterFacade))
                 return true;
         }
 
         // Pick up END_DOCUMENT event as well.
-        eventHelper.handleEvent(eventType);
+        eventHelper.handleEvent(eventType, eventHandlerGpx, cachePersisterFacade);
         return false;
     }
 

@@ -58,12 +58,13 @@ public class GpxLoader {
      * @return true if we should continue loading more files, false if we should
      *         terminate.
      */
-    public boolean load(EventHelper eventHelper) {
+    public boolean load(EventHelper eventHelper, EventHandler eventHandler) {
         boolean markLoadAsComplete = false;
         boolean continueLoading = false;
         try {
             mWakeLock.acquire(WAKELOCK_DURATION);
-            boolean alreadyLoaded = mGpxToCache.load(eventHelper);
+            boolean alreadyLoaded = mGpxToCache.load(eventHelper, eventHandler,
+                    mCachePersisterFacade);
             markLoadAsComplete = !alreadyLoaded;
             continueLoading = true;
         } catch (final SQLiteException e) {
