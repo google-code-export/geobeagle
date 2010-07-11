@@ -14,22 +14,10 @@
 
 package com.google.code.geobeagle.activity.searchonline;
 
-import com.google.code.geobeagle.LocationControlBuffered;
-import com.google.code.geobeagle.LocationControlBuffered.GpsDisabledLocation;
-import com.google.code.geobeagle.LocationControlBuffered.GpsEnabledLocation;
-import com.google.code.geobeagle.LocationControlBuffered.IGpsLocation;
-import com.google.code.geobeagle.activity.cachelist.presenter.DistanceSortStrategy;
-import com.google.code.geobeagle.activity.cachelist.presenter.NullSortStrategy;
 import com.google.code.geobeagle.activity.searchonline.SearchOnlineActivityDelegate.SearchOnlineActivityDelegateFactory;
-import com.google.code.geobeagle.location.LocationControl;
-import com.google.inject.Provides;
 import com.google.inject.assistedinject.FactoryProvider;
 
 import roboguice.config.AbstractAndroidModule;
-import roboguice.inject.ContextScoped;
-
-import android.location.Location;
-import android.location.LocationManager;
 
 public class SearchOnlineModule extends AbstractAndroidModule {
 
@@ -38,22 +26,5 @@ public class SearchOnlineModule extends AbstractAndroidModule {
         bind(SearchOnlineActivityDelegateFactory.class).toProvider(
                 FactoryProvider.newFactory(SearchOnlineActivityDelegateFactory.class,
                         SearchOnlineActivityDelegate.class));
-    }
-
-    @Provides
-    @ContextScoped
-    LocationControlBuffered providesLocationControlBuffered(LocationManager locationManager,
-            LocationControl locationControl, NullSortStrategy nullSortStrategy,
-            DistanceSortStrategy distanceSortStrategy, GpsDisabledLocation gpsDisabledLocation) {
-
-        IGpsLocation lastGpsLocation;
-        final Location lastKnownLocation = locationManager.getLastKnownLocation("gps");
-        if (lastKnownLocation == null)
-            lastGpsLocation = gpsDisabledLocation;
-        else
-            lastGpsLocation = new GpsEnabledLocation((float)lastKnownLocation.getLatitude(),
-                    (float)lastKnownLocation.getLongitude());
-        return new LocationControlBuffered(locationControl, distanceSortStrategy, nullSortStrategy,
-                gpsDisabledLocation, lastGpsLocation, lastKnownLocation);
     }
 }
