@@ -34,8 +34,10 @@ import roboguice.application.GuiceApplication;
 import java.util.List;
 
 public class GeoBeagleApplication extends GuiceApplication {
+    public static Timing timing = new Timing();
     @Override
     protected void addApplicationModules(List<Module> modules) {
+        timing.start();
         modules.add(new SearchOnlineModule());
         modules.add(new FieldnotesModule());
         modules.add(new GeoMapActivityModule());

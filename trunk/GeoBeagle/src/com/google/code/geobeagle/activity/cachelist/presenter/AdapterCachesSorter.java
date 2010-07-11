@@ -14,6 +14,7 @@
 
 package com.google.code.geobeagle.activity.cachelist.presenter;
 
+import com.google.code.geobeagle.GeoBeagleApplication;
 import com.google.code.geobeagle.LocationControlBuffered;
 import com.google.code.geobeagle.Timing;
 import com.google.code.geobeagle.activity.cachelist.model.CacheListData;
@@ -35,6 +36,7 @@ public class AdapterCachesSorter implements RefreshAction {
     public void refresh() {
         mLocationControlBuffered.getSortStrategy().sort(mCacheListData.get());
         mTiming.lap("sort time");
+        GeoBeagleApplication.timing.lap("START TIMTE TO FIRST REFRESH");
 //        Debug.stopMethodTracing();
     }
 }
