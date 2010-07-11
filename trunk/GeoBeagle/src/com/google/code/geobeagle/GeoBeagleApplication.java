@@ -38,6 +38,7 @@ public class GeoBeagleApplication extends GuiceApplication {
     @Override
     protected void addApplicationModules(List<Module> modules) {
         timing.start();
+//        Debug.startMethodTracing("dmtrace", 32 * 1024 * 1024);
         modules.add(new SearchOnlineModule());
         modules.add(new FieldnotesModule());
         modules.add(new GeoMapActivityModule());
@@ -52,6 +53,5 @@ public class GeoBeagleApplication extends GuiceApplication {
         modules.add(new XmlimportModule());
         modules.add(new BCachingModule());
         modules.add(new BCachingCommModule());
-//        Debug.startMethodTracing("dmtrace", 32 * 1024 * 1024);
     }
 }

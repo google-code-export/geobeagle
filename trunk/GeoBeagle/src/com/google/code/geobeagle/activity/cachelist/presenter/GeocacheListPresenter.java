@@ -22,7 +22,6 @@ import com.google.code.geobeagle.activity.cachelist.Pausable;
 import com.google.code.geobeagle.activity.cachelist.CacheListView.ScrollListener;
 import com.google.code.geobeagle.activity.cachelist.GeocacheListController.CacheListOnCreateContextMenuListener;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVectors;
-import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidget;
 import com.google.code.geobeagle.gpsstatuswidget.UpdateGpsWidgetRunnable;
 import com.google.code.geobeagle.location.CombinedLocationListener;
 import com.google.code.geobeagle.location.CombinedLocationManager;
@@ -33,6 +32,7 @@ import android.app.ListActivity;
 import android.hardware.SensorManager;
 import android.location.LocationListener;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 
 public class GeocacheListPresenter implements Pausable {
@@ -57,7 +57,7 @@ public class GeocacheListPresenter implements Pausable {
             CombinedLocationManager combinedLocationManager,
             Provider<CompassListener> compassListenerProvider,
             GeocacheListAdapter geocacheListAdapter, GeocacheVectors geocacheVectors,
-            GpsStatusWidget gpsStatusWidget, ListActivity listActivity,
+            LinearLayout gpsStatusWidget, ListActivity listActivity,
             LocationControlBuffered locationControlBuffered,
             SensorManagerWrapper sensorManagerWrapper,
             UpdateGpsWidgetRunnable updateGpsWidgetRunnable, ScrollListener scrollListener) {
