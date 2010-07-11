@@ -19,9 +19,7 @@ import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.cachelist.Pausable;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.Abortable;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
-import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheListPresenter;
 import com.google.code.geobeagle.xmlimport.GpxImporterDI.ImportThreadWrapper;
-import com.google.code.geobeagle.xmlimport.GpxImporterDI.MessageHandler;
 import com.google.code.geobeagle.xmlimport.GpxImporterDI.ToastFactory;
 import com.google.inject.Injector;
 
@@ -30,11 +28,6 @@ import android.widget.Toast;
 
 public class GpxImporter implements Abortable {
 
-    public static interface GpxImporterFactory2 {
-        GpxImporter create(GeocacheListPresenter geocacheListPresenter,
-                MessageHandler messageHandler);
-    }
-    
     private final ErrorDisplayer mErrorDisplayer;
     private final EventHandlers mEventHandlers;
     private final GpxLoader mGpxLoader;
