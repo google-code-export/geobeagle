@@ -15,15 +15,8 @@
 package com.google.code.geobeagle.activity.map;
 
 import com.google.android.maps.Overlay;
-import com.google.code.geobeagle.Geocache;
-import com.google.inject.Provides;
 
 import roboguice.config.AbstractAndroidModule;
-
-import android.content.Context;
-import android.content.res.Resources;
-
-import java.util.ArrayList;
 
 public class GeoMapActivityModule extends AbstractAndroidModule {
 
@@ -34,9 +27,4 @@ public class GeoMapActivityModule extends AbstractAndroidModule {
     protected void configure() {
     }
 
-    @Provides
-    CachePinsOverlay providesCachePinsOverlay(CacheItemFactory cacheItemFactory, Context context,
-            Resources resources) {
-        return new CachePinsOverlay(resources, cacheItemFactory, context, new ArrayList<Geocache>());
-    }
 }
