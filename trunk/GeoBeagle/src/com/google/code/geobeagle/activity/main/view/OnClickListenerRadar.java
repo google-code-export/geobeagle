@@ -14,7 +14,6 @@
 
 package com.google.code.geobeagle.activity.main.view;
 
-import com.google.code.geobeagle.GeoBeaglePackageModule;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.GeoBeaglePackageModule.DialogOnClickListenerNOP;
 import com.google.code.geobeagle.activity.main.GeoBeagleModule.IntentStarterRadar;
