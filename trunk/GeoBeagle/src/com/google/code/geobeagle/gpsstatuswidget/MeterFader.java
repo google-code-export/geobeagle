@@ -16,17 +16,19 @@ package com.google.code.geobeagle.gpsstatuswidget;
 
 import com.google.code.geobeagle.Time;
 
+import android.graphics.Color;
 import android.view.View;
+import android.widget.TextView;
 
 class MeterFader {
     private long mLastUpdateTime;
-    private final MeterBars mMeterView;
     private final View mParent;
     private final Time mTime;
+    private final TextView mBarsAndAzimuth;
 
-    MeterFader(View parent, MeterBars meterBars, Time time) {
+    MeterFader(View parent, TextView barsAndAzimuth, Time time) {
         mLastUpdateTime = -1;
-        mMeterView = meterBars;
+        mBarsAndAzimuth = barsAndAzimuth;
         mParent = parent;
         mTime = time;
     }
@@ -36,12 +38,20 @@ class MeterFader {
         if (mLastUpdateTime == -1)
             mLastUpdateTime = currentTime;
         long lastUpdateLag = currentTime - mLastUpdateTime;
-        mMeterView.setLag(lastUpdateLag);
+        setLag(lastUpdateLag);
         if (lastUpdateLag < 1000)
             mParent.postInvalidateDelayed(100);
         // Log.d("GeoBeagle", "painting " + lastUpdateLag);
     }
+    
+    void setLag(long lag) {
+        mBarsAndAzimuth.setTextColor(Color.argb(lagToAlpha(lag), 147, 190, 38));
+    }
 
+    int lagToAlpha(long milliseconds) {
+        return Math.max(128, 255 - (int)(milliseconds >> 3));
+    }
+    
     void reset() {
         mLastUpdateTime = -1;
         mParent.postInvalidate();
