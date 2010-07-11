@@ -33,6 +33,7 @@ import roboguice.config.AbstractAndroidModule;
 import android.app.Activity;
 import android.content.res.Resources;
 import android.graphics.Color;
+import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -64,10 +65,24 @@ public class GeoBeaglePackageModule extends AbstractAndroidModule {
     public static @interface DefaultSharedPreferences {
     }
 
+    @BindingAnnotation
+    @Target( {
+            FIELD, PARAMETER, METHOD
+    })
+    @Retention(RUNTIME)
+    public static @interface ExternalStorageDirectory {
+    }
+
     @Provides
     @DefaultSharedPreferences
     public SharedPreferences providesDefaultSharedPreferences(Context context) {
         return PreferenceManager.getDefaultSharedPreferences(context);
+    }
+
+    @Provides
+    @ExternalStorageDirectory
+    String providesPicturesDirectory() {
+        return Environment.getExternalStorageDirectory().getAbsolutePath();
     }
 
     @Provides

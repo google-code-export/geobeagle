@@ -25,6 +25,7 @@ import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.Refresher;
 import com.google.code.geobeagle.CompassListener.Azimuth;
 import com.google.code.geobeagle.GeoBeaglePackageModule.DefaultSharedPreferences;
+import com.google.code.geobeagle.GeoBeaglePackageModule.ExternalStorageDirectory;
 import com.google.code.geobeagle.GraphicsGenerator.IconOverlayFactory;
 import com.google.code.geobeagle.GraphicsGenerator.IconRenderer;
 import com.google.code.geobeagle.GraphicsGenerator.MapViewBitmapCopier;
@@ -75,7 +76,6 @@ import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.hardware.SensorManager;
 import android.location.LocationManager;
-import android.os.Environment;
 import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -148,14 +148,6 @@ public class GeoBeagleModule extends AbstractAndroidModule {
     })
     @Retention(RUNTIME)
     public static @interface FieldNotesFilename {
-    }
-
-    @BindingAnnotation
-    @Target( {
-            FIELD, PARAMETER, METHOD
-    })
-    @Retention(RUNTIME)
-    public static @interface ExternalStorageDirectory {
     }
 
     @Override
@@ -325,12 +317,6 @@ public class GeoBeagleModule extends AbstractAndroidModule {
     @FieldNotesFilename
     String providesFieldNotesFilename(@ExternalStorageDirectory String externalStorageDirectory) {
         return externalStorageDirectory + "/" + FIELDNOTES_FILE;
-    }
-    
-    @Provides
-    @ExternalStorageDirectory
-    String providesPicturesDirectory() {
-        return Environment.getExternalStorageDirectory().getAbsolutePath();
     }
 
     @Provides
