@@ -14,6 +14,9 @@
 
 package com.google.code.geobeagle.activity.cachelist;
 
+import com.google.inject.Singleton;
+
+@Singleton
 public class ActivityVisible {
     private boolean isVisible;
 

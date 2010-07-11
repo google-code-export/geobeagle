@@ -14,16 +14,12 @@
 
 package com.google.code.geobeagle.bcaching;
 
-import com.google.code.geobeagle.bcaching.progress.ProgressHandler;
 import com.google.code.geobeagle.database.ClearCachesFromSource;
 import com.google.code.geobeagle.database.ClearCachesFromSourceNull;
-import com.google.code.geobeagle.xmlimport.CachePersisterFacade;
 import com.google.code.geobeagle.xmlimport.MessageHandlerInterface;
-import com.google.code.geobeagle.xmlimport.GpxToCache.Aborter;
 import com.google.inject.Provides;
 
 import roboguice.config.AbstractAndroidModule;
-import roboguice.inject.ContextScoped;
 import roboguice.util.RoboThread;
 
 import android.os.PowerManager;
@@ -40,16 +36,13 @@ public class BCachingModule extends AbstractAndroidModule {
     WakeLock wakeLockProvider(PowerManager powerManager) {
         return powerManager.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, "Importing");
     }
-    
+
     @Override
     protected void configure() {
-        bind(ProgressHandler.class).in(ContextScoped.class);
         bind(MessageHandlerInterface.class).to(MessageHandlerAdapter.class);
-        bind(CachePersisterFacade.class).in(ContextScoped.class);
-        bind(Aborter.class).in(ContextScoped.class);
         bind(ClearCachesFromSource.class).to(ClearCachesFromSourceNull.class);
-        bind(ImportBCachingWorker.class).in(ContextScoped.class);
-        bind(BCachingProgressDialog.class).in(ContextScoped.class);
+        
         requestStaticInjection(RoboThread.class);
+        
     }
 }

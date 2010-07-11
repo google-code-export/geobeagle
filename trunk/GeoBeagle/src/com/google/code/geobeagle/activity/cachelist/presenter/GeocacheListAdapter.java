@@ -19,11 +19,13 @@ import com.google.code.geobeagle.activity.cachelist.model.GeocacheVectors;
 import com.google.code.geobeagle.activity.cachelist.view.GeocacheSummaryRowInflater;
 import com.google.inject.Inject;
 
+import roboguice.inject.ContextScoped;
+
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-
+@ContextScoped
 public class GeocacheListAdapter extends BaseAdapter {
     private final GeocacheSummaryRowInflater mGeocacheSummaryRowInflater;
     private final GeocacheVectors mGeocacheVectors;

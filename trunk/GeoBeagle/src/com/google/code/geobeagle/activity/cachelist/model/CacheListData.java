@@ -18,8 +18,10 @@ import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.LocationControlBuffered;
 import com.google.inject.Inject;
 
-import java.util.ArrayList;
+import roboguice.inject.ContextScoped;
 
+import java.util.ArrayList;
+@ContextScoped
 public class CacheListData {
     private final GeocacheVectors mGeocacheVectors;
 

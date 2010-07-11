@@ -21,8 +21,11 @@ import com.google.code.geobeagle.database.DbFrontend;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
+import roboguice.inject.ContextScoped;
+
 import android.util.Log;
 
+@ContextScoped
 public class MenuActionSyncBCaching extends MenuActionBase {
 
     private final Provider<ImportBCachingWorker> importBCachingWorkerProvider;

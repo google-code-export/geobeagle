@@ -18,6 +18,7 @@ import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.database.DatabaseDI.GeoBeagleSqliteOpenHelper;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
+import com.google.inject.Singleton;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -30,6 +31,7 @@ import java.util.ArrayList;
  * responsibility to mSqliteOpenHelper and close the actual database connection
  * without involving the clients of this class.
  */
+@Singleton
 public class DbFrontend {
     private final CacheReader mCacheReader;
     private Context mContext;

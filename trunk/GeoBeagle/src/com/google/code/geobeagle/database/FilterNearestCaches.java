@@ -17,6 +17,8 @@ package com.google.code.geobeagle.database;
 import com.google.code.geobeagle.R;
 import com.google.inject.Inject;
 
+import roboguice.inject.ContextScoped;
+@ContextScoped
 public class FilterNearestCaches {
     private boolean mIsFiltered = true;
     private final WhereFactory mWhereFactories[];

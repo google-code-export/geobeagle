@@ -26,8 +26,11 @@ import com.google.code.geobeagle.xmlimport.GpxImporter;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
+import roboguice.inject.ContextScoped;
+
 import android.util.Log;
 
+@ContextScoped
 public class MenuActionSyncGpx extends MenuActionBase {
     private Abortable mSdcardImportAbortable;
     private final CacheListRefresh mCacheListRefresh;
