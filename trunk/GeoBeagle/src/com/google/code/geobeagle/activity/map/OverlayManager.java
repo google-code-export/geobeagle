@@ -16,7 +16,6 @@ package com.google.code.geobeagle.activity.map;
 
 import com.google.android.maps.Overlay;
 import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.activity.map.GeoMapActivityModule.NullOverlay;
 import com.google.inject.Inject;
 
 import android.app.Activity;
