@@ -45,7 +45,6 @@ public class XmlimportModule extends AbstractAndroidModule {
         bind(MessageHandler.class).in(ContextScoped.class);
         bind(XmlPullParserWrapper.class).in(ContextScoped.class);
         bind(GpxWriter.class).in(ContextScoped.class);
-        bind(Writer.class).to(WriterWrapper.class);
         bind(EmotifierPatternProvider.class).in(Singleton.class);
     }
 
