@@ -15,6 +15,7 @@
 package com.google.code.geobeagle.cachedetails;
 
 import com.google.code.geobeagle.activity.main.Util;
+import com.google.inject.Inject;
 
 import android.content.Context;
 import android.text.format.DateUtils;
@@ -34,6 +35,7 @@ public class CacheDetailsWriter {
     private final Context mContext;
     private String mTime;
 
+    @Inject
     public CacheDetailsWriter(HtmlWriter htmlWriter, Emotifier emotifier, Context context) {
         mHtmlWriter = htmlWriter;
         mEmotifier = emotifier;
