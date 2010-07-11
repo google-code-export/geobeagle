@@ -14,7 +14,7 @@
 
 package com.google.code.geobeagle.xmlimport;
 
-import com.google.code.geobeagle.cachedetails.Writer;
+import com.google.code.geobeagle.cachedetails.WriterWrapper;
 import com.google.inject.Inject;
 
 import java.io.File;
@@ -23,10 +23,10 @@ import java.io.IOException;
 class TagWriter {
     private static final String SPACES = "                        ";
     private int mLevel;
-    private Writer writer;
+    private WriterWrapper writer;
 
     @Inject
-    public TagWriter(Writer writer) {
+    public TagWriter(WriterWrapper writer) {
         this.writer = writer;
     }
 
