@@ -14,24 +14,24 @@
 
 package com.google.code.geobeagle.cachedetails;
 
+import com.google.code.geobeagle.xmlimport.EmotifierPatternProvider;
 import com.google.inject.Inject;
 
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class Emotifier {
     public static final String ICON_PREFIX = "<img src='file:///android_asset/";
     public static final String ICON_SUFFIX = ".gif' border=0 align=middle>";
     public static final String EMOTICON_PREFIX = ICON_PREFIX + "icon_smile_";
-    private final Pattern pattern;
+    private final EmotifierPatternProvider patternProvider;
 
     @Inject
-    public Emotifier(Pattern pattern) {
-        this.pattern = pattern;
+    public Emotifier(EmotifierPatternProvider patternProvider) {
+        this.patternProvider = patternProvider;
     }
 
     String emotify(String text) {
-        Matcher matcher = pattern.matcher(text);
+        Matcher matcher = patternProvider.get().matcher(text);
         StringBuffer sb = new StringBuffer();
         while (matcher.find()) {
             String group = matcher.group(1);
