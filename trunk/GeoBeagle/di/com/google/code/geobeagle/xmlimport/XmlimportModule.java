@@ -14,8 +14,9 @@
 
 package com.google.code.geobeagle.xmlimport;
 
+import com.google.code.geobeagle.GeoBeaglePackageModule;
 import com.google.code.geobeagle.GeoBeaglePackageModule.DefaultSharedPreferences;
-import com.google.code.geobeagle.activity.main.GeoBeagleModule.ExternalStorageDirectory;
+import com.google.code.geobeagle.GeoBeaglePackageModule.ExternalStorageDirectory;
 import com.google.code.geobeagle.cachedetails.CacheDetailsWriter;
 import com.google.code.geobeagle.cachedetails.Emotifier;
 import com.google.code.geobeagle.cachedetails.HtmlWriter;
@@ -103,7 +104,7 @@ public class XmlimportModule extends AbstractAndroidModule {
 
     @Provides
     @OldDetailsDirectory
-    String oldDetailsDirectoryProvider(@ExternalStorageDirectory String externalStorageDirectory) {
+    String oldDetailsDirectoryProvider(@GeoBeaglePackageModule.ExternalStorageDirectory String externalStorageDirectory) {
         return externalStorageDirectory + "/" + "GeoBeagle";
     }
 
