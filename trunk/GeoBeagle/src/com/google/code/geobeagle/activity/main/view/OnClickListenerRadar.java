@@ -16,7 +16,7 @@ package com.google.code.geobeagle.activity.main.view;
 
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.GeoBeaglePackageModule.DialogOnClickListenerNOP;
-import com.google.code.geobeagle.activity.main.GeoBeagleModule.IntentStarterRadar;
+import com.google.code.geobeagle.activity.main.IntentStarterRadar;
 import com.google.code.geobeagle.activity.main.intents.IntentStarterGeo;
 import com.google.inject.Inject;
 
@@ -66,7 +66,7 @@ public class OnClickListenerRadar implements OnClickListener {
             AlertDialog.Builder dialogBuilder,
             @DialogOnClickListenerNOP android.content.DialogInterface.OnClickListener dialogOnClickListenerNegative,
             InstallRadarOnClickListenerPositive dialogInstallRadarOnClickListenerPositive,
-            @IntentStarterRadar IntentStarterGeo intentStarter) {
+            IntentStarterRadar intentStarter) {
         mIntentStarterGeo = intentStarter;
         mInstallRadarOnClickListenerNegative = dialogOnClickListenerNegative;
         mDialogInstallRadarOnClickListenerPositive = dialogInstallRadarOnClickListenerPositive;

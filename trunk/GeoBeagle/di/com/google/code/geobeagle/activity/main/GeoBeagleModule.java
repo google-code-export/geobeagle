@@ -106,14 +106,6 @@ public class GeoBeagleModule extends AbstractAndroidModule {
             FIELD, PARAMETER, METHOD
     })
     @Retention(RUNTIME)
-    public static @interface IntentStarterRadar {
-    }
-
-    @BindingAnnotation
-    @Target( {
-            FIELD, PARAMETER, METHOD
-    })
-    @Retention(RUNTIME)
     public static @interface IntentStarterViewCachePage {
     }
 
@@ -158,12 +150,6 @@ public class GeoBeagleModule extends AbstractAndroidModule {
     @Provides
     GeoBeagle providesGeoBeagle(Activity activity) {
         return (GeoBeagle)activity;
-    }
-
-    @Provides
-    @IntentStarterRadar
-    IntentStarterGeo providesIntentStarterRadar(GeoBeagle geoBeagle) {
-        return new IntentStarterGeo(geoBeagle, new Intent("com.google.android.radar.SHOW_RADAR"));
     }
 
     @Provides
