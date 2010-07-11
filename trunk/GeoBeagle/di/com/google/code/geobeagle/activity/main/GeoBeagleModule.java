@@ -159,12 +159,6 @@ public class GeoBeagleModule extends AbstractAndroidModule {
     }
 
     @Provides
-    @Named("GeocacheIcon")
-    ImageView providesGCIcon(Activity activity) {
-        return (ImageView)activity.findViewById(R.id.gcicon);
-    }
-
-    @Provides
     @Named("GeocacheName")
     TextView providesGCName(Activity activity) {
         return (TextView)activity.findViewById(R.id.gcname);
@@ -291,12 +285,13 @@ public class GeoBeagleModule extends AbstractAndroidModule {
 
     @Provides
     public GeocacheViewer providesGeocacheViewer(RadarView radarView, Activity activity,
-            NameViewer gcName, @Named("GeocacheIcon") ImageView cacheTypeImageView,
+            NameViewer gcName,
             @Named("GeocacheDifficulty") AttributeViewer gcDifficulty,
             @Named("GeocacheTerrain") AttributeViewer gcTerrain, ResourceImages gcContainer,
             IconOverlayFactory iconOverlayFactory, MapViewBitmapCopier mapViewBitmapCopier,
             @DifficultyAndTerrainPainterAnnotation IconRenderer iconRenderer) {
         Log.d("GeoBeagle", "GOING THROUG PROVIDER");
+        final ImageView cacheTypeImageView = (ImageView)activity.findViewById(R.id.gcicon);
         return new GeocacheViewer(radarView, activity, gcName, cacheTypeImageView, gcDifficulty,
                 gcTerrain, gcContainer, iconOverlayFactory, mapViewBitmapCopier, iconRenderer);
     }
