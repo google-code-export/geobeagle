@@ -14,11 +14,6 @@
 
 package com.google.code.geobeagle.activity.main.view;
 
-import static java.lang.annotation.ElementType.FIELD;
-import static java.lang.annotation.ElementType.METHOD;
-import static java.lang.annotation.ElementType.PARAMETER;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.GraphicsGenerator.DifficultyAndTerrainPainter;
@@ -29,7 +24,6 @@ import com.google.code.geobeagle.GraphicsGenerator.MapViewBitmapCopier;
 import com.google.code.geobeagle.activity.cachelist.view.NameFormatter;
 import com.google.code.geobeagle.activity.main.GeoUtils;
 import com.google.code.geobeagle.activity.main.RadarView;
-import com.google.inject.BindingAnnotation;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
@@ -39,8 +33,6 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
 import java.util.List;
 
 public class GeocacheViewer {
@@ -63,9 +55,6 @@ public class GeocacheViewer {
             mLabel.setVisibility(attributeValue == 0 ? View.GONE : View.VISIBLE);
         }
     }
-
-    @BindingAnnotation @Target({ FIELD, PARAMETER, METHOD }) @Retention(RUNTIME)
-    public @interface PawImages {}
 
     public static class UnlabelledAttributeViewer implements AttributeViewer {
         private final Drawable[] mDrawables;
