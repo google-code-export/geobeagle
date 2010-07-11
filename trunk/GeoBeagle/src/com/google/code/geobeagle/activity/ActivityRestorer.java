@@ -15,11 +15,11 @@
 package com.google.code.geobeagle.activity;
 
 import com.google.code.geobeagle.Geocache;
+import com.google.code.geobeagle.GeoBeaglePackageModule.DefaultSharedPreferences;
 import com.google.code.geobeagle.activity.cachelist.CacheListActivity;
 import com.google.code.geobeagle.activity.cachelist.GeocacheListController;
 import com.google.code.geobeagle.activity.main.GeoBeagle;
 import com.google.code.geobeagle.activity.main.GeocacheFromPreferencesFactory;
-import com.google.code.geobeagle.activity.main.GeoBeagleModule.DefaultSharedPreferences;
 import com.google.inject.Inject;
 
 import android.app.Activity;

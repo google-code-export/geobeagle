@@ -14,7 +14,7 @@
 
 package com.google.code.geobeagle.xmlimport;
 
-import com.google.code.geobeagle.activity.main.GeoBeagleModule.DefaultSharedPreferences;
+import com.google.code.geobeagle.GeoBeaglePackageModule.DefaultSharedPreferences;
 import com.google.code.geobeagle.activity.main.GeoBeagleModule.ExternalStorageDirectory;
 import com.google.code.geobeagle.cachedetails.CacheDetailsWriter;
 import com.google.code.geobeagle.cachedetails.Emotifier;
