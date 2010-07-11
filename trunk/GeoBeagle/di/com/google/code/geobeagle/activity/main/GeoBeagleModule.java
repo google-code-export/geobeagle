@@ -47,7 +47,6 @@ import com.google.code.geobeagle.activity.main.view.OnClickListenerIntentStarter
 import com.google.code.geobeagle.activity.main.view.GeocacheViewer.AttributeViewer;
 import com.google.code.geobeagle.activity.main.view.GeocacheViewer.LabelledAttributeViewer;
 import com.google.code.geobeagle.activity.main.view.GeocacheViewer.NameViewer;
-import com.google.code.geobeagle.activity.main.view.GeocacheViewer.PawImages;
 import com.google.code.geobeagle.activity.main.view.GeocacheViewer.ResourceImages;
 import com.google.code.geobeagle.activity.main.view.GeocacheViewer.UnlabelledAttributeViewer;
 import com.google.code.geobeagle.activity.map.GeoMapActivity;
@@ -182,8 +181,16 @@ public class GeoBeagleModule extends AbstractAndroidModule {
 
     @Provides
     @Named("GeocacheTerrain")
-    AttributeViewer providesGeocacheTerrain(Activity activity,
-            @PawImages UnlabelledAttributeViewer pawImages) {
+    AttributeViewer providesGeocacheTerrain(Activity activity, Resources resources,
+            RatingsArray ratingsArray) {
+        ImageView imageView = (ImageView)activity.findViewById(R.id.gc_terrain);
+
+        final Drawable[] pawDrawables = {
+                resources.getDrawable(R.drawable.paw_unselected_dark),
+                resources.getDrawable(R.drawable.paw_half_light),
+                resources.getDrawable(R.drawable.paw_selected_light)
+        };
+        AttributeViewer pawImages = getImagesOnDifficulty(pawDrawables, imageView, ratingsArray);
         return new LabelledAttributeViewer((TextView)activity.findViewById(R.id.gc_text_terrain),
                 pawImages);
     }
@@ -232,20 +239,6 @@ public class GeoBeagleModule extends AbstractAndroidModule {
         Intent intent = new Intent(context, GeoMapActivity.class);
         return new OnClickListenerIntentStarter(new IntentStarterGeo(geoBeagle, intent),
                 errorDisplayer);
-    }
-
-    @Provides
-    @PawImages
-    UnlabelledAttributeViewer providesPawImagesOnDifficulty(Resources resources,
-            RatingsArray ratingsArray, Activity activity) {
-        ImageView imageView = (ImageView)activity.findViewById(R.id.gc_terrain);
-
-        final Drawable[] pawDrawables = {
-                resources.getDrawable(R.drawable.paw_unselected_dark),
-                resources.getDrawable(R.drawable.paw_half_light),
-                resources.getDrawable(R.drawable.paw_selected_light)
-        };
-        return getImagesOnDifficulty(pawDrawables, imageView, ratingsArray);
     }
 
     @Provides
