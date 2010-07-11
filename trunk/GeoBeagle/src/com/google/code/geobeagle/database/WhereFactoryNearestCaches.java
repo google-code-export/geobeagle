@@ -132,18 +132,22 @@ public class WhereFactoryNearestCaches implements WhereFactory {
     private float mLastGuess = 0.1f;
     private final SearchFactory mSearchFactory;
     private final WhereStringFactory mWhereStringFactory;
+    private final DbFrontend mDbFrontend;
 
     @Inject
     public WhereFactoryNearestCaches(SearchFactory searchFactory,
-            WhereStringFactory whereStringFactory) {
+            WhereStringFactory whereStringFactory, DbFrontend dbFrontend) {
         mSearchFactory = searchFactory;
         mWhereStringFactory = whereStringFactory;
+        mDbFrontend = dbFrontend;
     }
 
     @Override
     public String getWhere(ISQLiteDatabase sqliteWrapper, double latitude, double longitude) {
+        int totalCaches = mDbFrontend.countAll();
+        int maxNumberOfCaches = Math.min(totalCaches, MAX_NUMBER_OF_CACHES);
         mLastGuess = mSearchFactory.createSearch(latitude, longitude, GUESS_MIN, GUESS_MAX,
-                sqliteWrapper).search(mLastGuess, MAX_NUMBER_OF_CACHES);
+                sqliteWrapper).search(mLastGuess, maxNumberOfCaches);
         return mWhereStringFactory.getWhereString(latitude, longitude, mLastGuess);
     }
 
