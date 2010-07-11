@@ -47,7 +47,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Paint;
-import android.graphics.drawable.Drawable;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
@@ -55,9 +54,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GeoMapActivityModule extends AbstractAndroidModule {
-
-    @BindingAnnotation @Target( { FIELD, PARAMETER, METHOD }) @Retention(RUNTIME)
-    public static @interface DefaultMapPinMarker {}
 
     @BindingAnnotation @Target({ FIELD, PARAMETER, METHOD }) @Retention(RUNTIME)
     public static @interface DensityMapQueryManager {}
@@ -88,17 +84,10 @@ public class GeoMapActivityModule extends AbstractAndroidModule {
 
     @Provides
     CachePinsOverlay providesCachePinsOverlay(CacheItemFactory cacheItemFactory, Context context,
-            @DefaultMapPinMarker Drawable defaultMarker) {
-        return new CachePinsOverlay(cacheItemFactory, context, defaultMarker,
-                new ArrayList<Geocache>());
+            Resources resources) {
+        return new CachePinsOverlay(resources, cacheItemFactory, context, new ArrayList<Geocache>());
     }
-
-    @Provides
-    @DefaultMapPinMarker
-    Drawable providesDefaultMarker(Resources resources) {
-        return resources.getDrawable(R.drawable.map_pin2_others);
-    }
-
+    
     @Provides
     @DensityOverlayPaint
     Paint providesDensityOverlayPaint()
