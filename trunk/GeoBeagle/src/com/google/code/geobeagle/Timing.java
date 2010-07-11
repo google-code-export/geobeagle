@@ -16,22 +16,20 @@ package com.google.code.geobeagle;
 
 import android.util.Log;
 
-import java.util.Calendar;
-
 public class Timing {
     private long mStartTime;
 
     public void lap(CharSequence msg) {
-        long finishTime = Calendar.getInstance().getTimeInMillis();
+        long finishTime = System.currentTimeMillis();
         Log.d("GeoBeagle", "****** " + msg + ": " + finishTime + ": " + (finishTime - mStartTime));
         mStartTime = finishTime;
     }
 
     public void start() {
-        mStartTime = Calendar.getInstance().getTimeInMillis();
+        mStartTime = System.currentTimeMillis();
     }
 
     public long getTime() {
-        return Calendar.getInstance().getTimeInMillis();
+        return System.currentTimeMillis();
     }
 }
