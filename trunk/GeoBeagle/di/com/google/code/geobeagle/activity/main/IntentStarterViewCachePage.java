@@ -16,14 +16,13 @@ package com.google.code.geobeagle.activity.main;
 
 import com.google.code.geobeagle.ErrorDisplayer;
 import com.google.code.geobeagle.activity.main.intents.GeocacheToCachePage;
-import com.google.code.geobeagle.activity.main.intents.IntentFactory;
 import com.google.code.geobeagle.activity.main.intents.IntentStarterViewUri;
 import com.google.inject.Inject;
 
 class IntentStarterViewCachePage extends IntentStarterViewUri {
     @Inject
-    public IntentStarterViewCachePage(GeoBeagle geoBeagle, IntentFactory intentFactory,
-            GeocacheToCachePage geocacheToCachePage, ErrorDisplayer errorDisplayer) {
-        super(geoBeagle, intentFactory, geocacheToCachePage, errorDisplayer);
+    public IntentStarterViewCachePage(GeoBeagle geoBeagle, GeocacheToCachePage geocacheToCachePage,
+            ErrorDisplayer errorDisplayer) {
+        super(geoBeagle, geocacheToCachePage, errorDisplayer);
     }
 }
