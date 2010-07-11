@@ -25,36 +25,31 @@ class EventHandlerLoc implements EventHandler {
     static final String XPATH_WPT = "/loc/waypoint";
     static final String XPATH_WPTNAME = "/loc/waypoint/name";
 
-    private final CachePersisterFacade mCachePersisterFacade;
-
-    EventHandlerLoc(CachePersisterFacade cachePersisterFacade) {
-        mCachePersisterFacade = cachePersisterFacade;
-    }
-
     @Override
-    public void endTag(String name, String previousFullPath) throws IOException {
+    public void endTag(String name, String previousFullPath,
+            ICachePersisterFacade cachePersisterFacade) throws IOException {
         if (previousFullPath.equals(XPATH_WPT)) {
-            mCachePersisterFacade.endCache(Source.LOC);
+            cachePersisterFacade.endCache(Source.LOC);
         }
     }
 
     @Override
-    public void startTag(String name, String mFullPath, XmlPullParserWrapper mXmlPullParser)
-            throws IOException {
+    public void startTag(String name, String mFullPath, XmlPullParserWrapper mXmlPullParser,
+            ICachePersisterFacade cachePersisterFacade) throws IOException {
         if (mFullPath.equals(XPATH_COORD)) {
-            mCachePersisterFacade.wpt(mXmlPullParser.getAttributeValue(null, "lat"), mXmlPullParser
+            cachePersisterFacade.wpt(mXmlPullParser.getAttributeValue(null, "lat"), mXmlPullParser
                     .getAttributeValue(null, "lon"));
         } else if (mFullPath.equals(XPATH_WPTNAME)) {
-            mCachePersisterFacade.startCache();
-            mCachePersisterFacade.wptName(mXmlPullParser.getAttributeValue(null, "id"));
+            cachePersisterFacade.startCache();
+            cachePersisterFacade.wptName(mXmlPullParser.getAttributeValue(null, "id"));
         }
     }
 
     @Override
-    public boolean text(String mFullPath, String text, XmlPullParserWrapper xmlPullParser)
-            throws IOException {
+    public boolean text(String mFullPath, String text, XmlPullParserWrapper xmlPullParser,
+            ICachePersisterFacade cachePersisterFacade) throws IOException {
         if (mFullPath.equals(XPATH_WPTNAME))
-            mCachePersisterFacade.groundspeakName(text.trim());
+            cachePersisterFacade.groundspeakName(text.trim());
         return true;
     }
 

@@ -16,15 +16,16 @@ package com.google.code.geobeagle.xmlimport;
 
 import java.io.IOException;
 
-interface EventHandler {
+public interface EventHandler {
 
-    void endTag(String name, String previousFullPath) throws IOException;
-
-    void startTag(String name, String mFullPath, XmlPullParserWrapper mXmlPullParser)
+    void endTag(String name, String previousFullPath, ICachePersisterFacade cachePersisterFacade)
             throws IOException;
 
-    boolean text(String fullPath, String text, XmlPullParserWrapper xmlPullParser)
-            throws IOException;
+    void startTag(String name, String mFullPath, XmlPullParserWrapper mXmlPullParser,
+            ICachePersisterFacade cachePersisterFacade) throws IOException;
+
+    boolean text(String fullPath, String text, XmlPullParserWrapper xmlPullParser,
+            ICachePersisterFacade cachePersisterFacade) throws IOException;
 
     void open(String filename) throws IOException;
 }

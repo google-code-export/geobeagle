@@ -20,7 +20,7 @@ import com.google.inject.Inject;
 import java.io.IOException;
 import java.util.HashMap;
 
-class XmlWriter implements EventHandler {
+public class XmlWriter implements EventHandler {
     private final FilePathStrategy filePathStrategy;
     private String filename;
     private final TagWriter tagWriter;
@@ -33,7 +33,9 @@ class XmlWriter implements EventHandler {
         this.tagWriter = tagWriter;
     }
 
-    public void endTag(String name, String previousFullPath) throws IOException {
+    @Override
+    public void endTag(String name, String previousFullPath,
+            ICachePersisterFacade cachePersisterFacade) throws IOException {
         if (!previousFullPath.startsWith("/gpx/wpt"))
             return;
 
@@ -52,8 +54,8 @@ class XmlWriter implements EventHandler {
     }
 
     @Override
-    public void startTag(String name, String fullPath, XmlPullParserWrapper xmlPullParser)
-            throws IOException {
+    public void startTag(String name, String fullPath, XmlPullParserWrapper xmlPullParser,
+            ICachePersisterFacade cachePersisterFacade) throws IOException {
         if (!fullPath.startsWith("/gpx/wpt"))
             return;
 
@@ -67,14 +69,14 @@ class XmlWriter implements EventHandler {
 
         if (fullPath.equals("/gpx/wpt")) {
             tagWpt = tag;
-        }  else if (tagWriter.isOpen()) {
+        } else if (tagWriter.isOpen()) {
             tagWriter.startTag(tag);
         }
     }
 
     @Override
-    public boolean text(String fullPath, String text, XmlPullParserWrapper xmlPullParser)
-            throws IOException {
+    public boolean text(String fullPath, String text, XmlPullParserWrapper xmlPullParser,
+            ICachePersisterFacade cachePersisterFacade) throws IOException {
         if (!fullPath.startsWith("/gpx/wpt"))
             return true;
 

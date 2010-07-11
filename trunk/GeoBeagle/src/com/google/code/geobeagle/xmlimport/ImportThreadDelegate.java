@@ -81,7 +81,7 @@ public class ImportThreadDelegate {
             mGpxLoader.open(filename, gpxReader.open());
             int len = filename.length();
             String extension = filename.substring(Math.max(0, len - 3), len).toLowerCase();
-            return mGpxLoader.load(mEventHelperFactory.create(mEventHandlers.get(extension)));
+            return mGpxLoader.load(mEventHelperFactory.create(), mEventHandlers.get(extension));
         }
 
         public void start() {

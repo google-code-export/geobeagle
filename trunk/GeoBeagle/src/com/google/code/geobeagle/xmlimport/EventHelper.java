@@ -37,41 +37,40 @@ public class EventHelper {
         }
     }
 
-    private final EventHandler mEventHandler;
     private final XmlPathBuilder mXmlPathBuilder;
     private final XmlPullParserWrapper mXmlPullParser;
 
     @Inject
-    public EventHelper(XmlPathBuilder xmlPathBuilder, EventHandler eventHandler,
-            XmlPullParserWrapper xmlPullParser) {
+    public EventHelper(XmlPathBuilder xmlPathBuilder, XmlPullParserWrapper xmlPullParser) {
         mXmlPathBuilder = xmlPathBuilder;
         mXmlPullParser = xmlPullParser;
-        mEventHandler = eventHandler;
     }
 
-    public boolean handleEvent(int eventType) throws IOException {
+    public boolean handleEvent(int eventType, EventHandler eventHandler,
+            ICachePersisterFacade cachePersisterFacade) throws IOException {
         switch (eventType) {
             case XmlPullParser.START_TAG: {
                 final String name = mXmlPullParser.getName();
                 mXmlPathBuilder.startTag(name);
-                mEventHandler.startTag(name, mXmlPathBuilder.getPath(), mXmlPullParser);
+                eventHandler.startTag(name, mXmlPathBuilder.getPath(), mXmlPullParser,
+                        cachePersisterFacade);
                 break;
             }
             case XmlPullParser.END_TAG: {
                 final String name = mXmlPullParser.getName();
-                mEventHandler.endTag(name, mXmlPathBuilder.getPath());
+                eventHandler.endTag(name, mXmlPathBuilder.getPath(), cachePersisterFacade);
                 mXmlPathBuilder.endTag(name);
                 break;
             }
             case XmlPullParser.TEXT:
-                return mEventHandler.text(mXmlPathBuilder.getPath(), mXmlPullParser.getText(),
-                        mXmlPullParser);
+                return eventHandler.text(mXmlPathBuilder.getPath(), mXmlPullParser.getText(),
+                        mXmlPullParser, cachePersisterFacade);
         }
         return true;
     }
 
-    public void open(String filename) throws IOException {
-        mEventHandler.open(filename);
+    public void open(String filename, EventHandler eventHandler) throws IOException {
+        eventHandler.open(filename);
     }
 
 }
