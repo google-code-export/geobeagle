@@ -60,12 +60,6 @@ public class XmlimportModule extends AbstractAndroidModule {
 
         return new EventHelper(xmlPathBuilder, eventHandlerComposite, xmlPullParser);
     }
-    
-    @Provides
-    @WriteDetails
-    HtmlWriter htmlWriterWriteDetailsProvider(WriterWrapper writerWrapper) {
-        return new HtmlWriter(writerWrapper);
-    }
 
     @Provides
     @WriteDetails
@@ -75,14 +69,9 @@ public class XmlimportModule extends AbstractAndroidModule {
 
     @Provides
     @LoadDetails
-    HtmlWriter htmlWriterLoadDetailsProvider(StringWriterWrapper stringWriterWrapper) {
-        return new HtmlWriter(stringWriterWrapper);
-    }
-
-    @Provides
-    @LoadDetails
-    CacheDetailsWriter cacheDetailsWriterLoadDetailsProvider(@LoadDetails HtmlWriter htmlWriter,
-            Emotifier emotifier, Context context) {
+    CacheDetailsWriter cacheDetailsWriterLoadDetailsProvider(Emotifier emotifier, Context context,
+            StringWriterWrapper stringWriterWrapper) {
+        final HtmlWriter htmlWriter = new HtmlWriter(stringWriterWrapper);
         return new CacheDetailsWriter(htmlWriter, emotifier, context);
     }
 
