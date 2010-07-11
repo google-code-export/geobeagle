@@ -222,6 +222,7 @@ public class RadarView extends View implements SensorListener, LocationListener 
 
         mBlip = ((BitmapDrawable)getResources().getDrawable(R.drawable.blip)).getBitmap();
         mCompassPath = new Path();
+
     }
 
     /**

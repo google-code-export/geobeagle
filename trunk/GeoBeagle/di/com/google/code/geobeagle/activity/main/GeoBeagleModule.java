@@ -20,9 +20,7 @@ import static java.lang.annotation.ElementType.PARAMETER;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 import com.google.code.geobeagle.ErrorDisplayer;
-import com.google.code.geobeagle.LocationControlBuffered;
 import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.GeoBeaglePackageModule.DefaultSharedPreferences;
 import com.google.code.geobeagle.GraphicsGenerator.DifficultyAndTerrainPainter;
 import com.google.code.geobeagle.GraphicsGenerator.IconOverlayFactory;
 import com.google.code.geobeagle.GraphicsGenerator.IconRenderer;
@@ -49,7 +47,6 @@ import com.google.code.geobeagle.activity.main.view.GeocacheViewer.NameViewer;
 import com.google.code.geobeagle.activity.main.view.GeocacheViewer.ResourceImages;
 import com.google.code.geobeagle.activity.main.view.GeocacheViewer.UnlabelledAttributeViewer;
 import com.google.code.geobeagle.activity.map.GeoMapActivity;
-import com.google.code.geobeagle.location.LocationLifecycleManager;
 import com.google.inject.BindingAnnotation;
 import com.google.inject.Provider;
 import com.google.inject.Provides;
@@ -60,13 +57,11 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.DialogInterface.OnClickListener;
 import android.content.res.Resources;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
-import android.location.LocationManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -126,17 +121,6 @@ public class GeoBeagleModule extends AbstractAndroidModule {
     private UnlabelledAttributeViewer getImagesOnDifficulty(final Drawable[] pawDrawables,
             ImageView imageView, RatingsArray ratingsArray) {
         return new UnlabelledAttributeViewer(imageView, ratingsArray.getRatings(pawDrawables, 10));
-    }
-
-    @Provides
-    AppLifecycleManager providesAppLifecycleManager(
-            @DefaultSharedPreferences SharedPreferences sharedPreferences,
-            RadarView radarView, LocationControlBuffered locationControlBuffered,
-            LocationManager locationManager) {
-        return new AppLifecycleManager(sharedPreferences, new LifecycleManager[] {
-                new LocationLifecycleManager(locationControlBuffered, locationManager),
-                new LocationLifecycleManager(radarView, locationManager)
-        });
     }
 
     @Provides
