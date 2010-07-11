@@ -28,6 +28,7 @@ import com.google.code.geobeagle.location.CombinedLocationManager;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
+import android.app.Activity;
 import android.app.ListActivity;
 import android.hardware.SensorManager;
 import android.location.LocationListener;
@@ -57,7 +58,7 @@ public class GeocacheListPresenter implements Pausable {
             CombinedLocationManager combinedLocationManager,
             Provider<CompassListener> compassListenerProvider,
             GeocacheListAdapter geocacheListAdapter, GeocacheVectors geocacheVectors,
-            LinearLayout gpsStatusWidget, ListActivity listActivity,
+            LinearLayout gpsStatusWidget, Activity listActivity,
             LocationControlBuffered locationControlBuffered,
             SensorManagerWrapper sensorManagerWrapper,
             UpdateGpsWidgetRunnable updateGpsWidgetRunnable, ScrollListener scrollListener) {
@@ -67,7 +68,7 @@ public class GeocacheListPresenter implements Pausable {
         mGeocacheListAdapter = geocacheListAdapter;
         mGeocacheVectors = geocacheVectors;
         mGpsStatusWidget = gpsStatusWidget;
-        mListActivity = listActivity;
+        mListActivity = (ListActivity)listActivity;
         mLocationControlBuffered = locationControlBuffered;
         mUpdateGpsWidgetRunnable = updateGpsWidgetRunnable;
         mSensorManagerWrapper = sensorManagerWrapper;
