@@ -22,7 +22,8 @@ import android.os.Environment;
 
 public class GeoBeagleEnvironment {
     private final SharedPreferences sharedPreferences;
-    static final String DETAILS_DIR = "GeoBeagle/data/";
+    private static final String DETAILS_DIR = "GeoBeagle/data/";
+    private static final String FIELDNOTES_FILE = "GeoBeagleFieldNotes.txt";
 
     @Inject
     GeoBeagleEnvironment(@DefaultSharedPreferences SharedPreferences sharedPreferences) {
@@ -52,5 +53,9 @@ public class GeoBeagleEnvironment {
         if ((!string.endsWith("/")))
             return string + "/";
         return string;
+    }
+
+    public String getFieldNotesFilename() {
+        return getExternalStorageDir() + "/" + FIELDNOTES_FILE;
     }
 }

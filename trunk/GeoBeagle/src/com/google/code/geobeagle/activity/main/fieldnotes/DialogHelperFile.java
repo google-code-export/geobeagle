@@ -15,7 +15,7 @@
 package com.google.code.geobeagle.activity.main.fieldnotes;
 
 import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.activity.main.fieldnotes.FieldnotesModule.FieldNotesFilename;
+import com.google.code.geobeagle.xmlimport.GeoBeagleEnvironment;
 import com.google.inject.Inject;
 
 import android.app.Dialog;
@@ -25,6 +25,7 @@ import android.widget.TextView;
 
 public class DialogHelperFile implements DialogHelper {
     private final Context mContext;
+    private GeoBeagleEnvironment mGeoBeagleEnvironment;
 
     @Inject
     public DialogHelperFile(Context context) {
@@ -38,7 +39,7 @@ public class DialogHelperFile implements DialogHelper {
     @Override
     public void configureDialogText(Dialog dialog, TextView fieldnoteCaveat) {
         fieldnoteCaveat.setText(String.format(mContext.getString(R.string.field_note_file_caveat),
-                FieldnotesModule.getFieldNotesFilename()));
+                mGeoBeagleEnvironment.getFieldNotesFilename()));
         dialog.setTitle(R.string.log_cache_to_file);
     }
 

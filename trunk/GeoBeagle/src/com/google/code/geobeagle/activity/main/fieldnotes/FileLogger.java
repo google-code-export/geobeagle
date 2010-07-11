@@ -16,6 +16,7 @@ package com.google.code.geobeagle.activity.main.fieldnotes;
 
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.main.fieldnotes.FieldnotesModule.ToasterFactory;
+import com.google.code.geobeagle.xmlimport.GeoBeagleEnvironment;
 import com.google.inject.Inject;
 
 import java.io.FileOutputStream;
@@ -35,20 +36,22 @@ public class FileLogger implements ICacheLogger {
     private final ToasterFactory mToasterFactory;
     private final FieldnoteStringsFVsDnf mFieldnoteStringsFVsDnf;
     private final DateFormatter mSimpleDateFormat;
+    private final GeoBeagleEnvironment mGeoBeagleEnvironment;
     
     @Inject
     public FileLogger(FieldnoteStringsFVsDnf fieldnoteStringsFVsDnf,
-            DateFormatter simpleDateFormat, ToasterFactory toasterFactory
-            ) {
+            DateFormatter simpleDateFormat, ToasterFactory toasterFactory,
+            GeoBeagleEnvironment geoBeagleEnvironment) {
         mFieldnoteStringsFVsDnf = fieldnoteStringsFVsDnf;
         mSimpleDateFormat = simpleDateFormat;
         mToasterFactory = toasterFactory;
+        mGeoBeagleEnvironment = geoBeagleEnvironment;
     }
 
     public void log(CharSequence geocacheId, CharSequence logText, boolean dnf) {
         try {
             OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(
-                    FieldnotesModule.getFieldNotesFilename(), true), "UTF-16");
+                    mGeoBeagleEnvironment.getFieldNotesFilename(), true), "UTF-16");
             final Date date = new Date();
             final String formattedDate = mSimpleDateFormat.format(date);
             final String logLine = String.format("%1$s,%2$s,%3$s,\"%4$s\"\n", geocacheId,
