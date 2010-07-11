@@ -19,20 +19,24 @@ import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.ElementType.PARAMETER;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
+import com.google.code.geobeagle.CompassListener.Azimuth;
 import com.google.code.geobeagle.GraphicsGenerator.DifficultyAndTerrainPainter;
 import com.google.code.geobeagle.GraphicsGenerator.IconRenderer;
 import com.google.code.geobeagle.GraphicsGenerator.NullAttributesPainter;
 import com.google.code.geobeagle.activity.cachelist.presenter.GeoBeaglePackageAnnotations.DifficultyAndTerrainPainterAnnotation;
 import com.google.code.geobeagle.activity.cachelist.presenter.GeoBeaglePackageAnnotations.GeoBeagle;
 import com.google.code.geobeagle.activity.cachelist.presenter.GeoBeaglePackageAnnotations.NullAttributesPainterAnnotation;
+import com.google.code.geobeagle.activity.searchonline.NullRefresher;
 import com.google.inject.BindingAnnotation;
 import com.google.inject.Provides;
 
 import roboguice.config.AbstractAndroidModule;
+import roboguice.inject.SystemServiceProvider;
 
 import android.app.Activity;
 import android.content.res.Resources;
 import android.graphics.Color;
+import android.hardware.SensorManager;
 import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.webkit.WebSettings;
@@ -96,6 +100,10 @@ public class GeoBeaglePackageModule extends AbstractAndroidModule {
 
     @Override
     protected void configure() {
+        bind(Refresher.class).to(NullRefresher.class);
+        bind(SensorManager.class).toProvider(
+                new SystemServiceProvider<SensorManager>(Context.SENSOR_SERVICE));
+        bindConstant().annotatedWith(Azimuth.class).to(-1440f);
     }
 
     @Provides

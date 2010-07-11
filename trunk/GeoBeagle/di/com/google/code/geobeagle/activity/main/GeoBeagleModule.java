@@ -22,8 +22,6 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import com.google.code.geobeagle.ErrorDisplayer;
 import com.google.code.geobeagle.LocationControlBuffered;
 import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.Refresher;
-import com.google.code.geobeagle.CompassListener.Azimuth;
 import com.google.code.geobeagle.GeoBeaglePackageModule.DefaultSharedPreferences;
 import com.google.code.geobeagle.GeoBeaglePackageModule.ExternalStorageDirectory;
 import com.google.code.geobeagle.GraphicsGenerator.IconOverlayFactory;
@@ -54,7 +52,6 @@ import com.google.code.geobeagle.activity.main.view.GeocacheViewer.ResourceImage
 import com.google.code.geobeagle.activity.main.view.GeocacheViewer.RibbonImages;
 import com.google.code.geobeagle.activity.main.view.GeocacheViewer.UnlabelledAttributeViewer;
 import com.google.code.geobeagle.activity.map.GeoMapActivity;
-import com.google.code.geobeagle.activity.searchonline.NullRefresher;
 import com.google.code.geobeagle.location.LocationLifecycleManager;
 import com.google.inject.BindingAnnotation;
 import com.google.inject.Provider;
@@ -62,7 +59,6 @@ import com.google.inject.Provides;
 import com.google.inject.name.Named;
 
 import roboguice.config.AbstractAndroidModule;
-import roboguice.inject.SystemServiceProvider;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -74,7 +70,6 @@ import android.content.res.Resources;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
-import android.hardware.SensorManager;
 import android.location.LocationManager;
 import android.util.Log;
 import android.widget.ImageView;
@@ -152,10 +147,6 @@ public class GeoBeagleModule extends AbstractAndroidModule {
 
     @Override
     protected void configure() {
-        bind(Refresher.class).to(NullRefresher.class);
-        bind(SensorManager.class).toProvider(
-                new SystemServiceProvider<SensorManager>(Context.SENSOR_SERVICE));
-        bindConstant().annotatedWith(Azimuth.class).to(-1440f);
         bind(Paint.class).toInstance(new Paint());
         bind(Rect.class).toInstance(new Rect());
     }
