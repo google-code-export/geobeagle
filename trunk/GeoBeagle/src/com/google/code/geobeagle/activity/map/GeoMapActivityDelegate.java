@@ -37,6 +37,7 @@ import com.google.code.geobeagle.actions.MenuActions;
 import com.google.code.geobeagle.activity.map.GeoMapActivityModule.GeoMapActivityMenuActions;
 import com.google.inject.Inject;
 
+import android.app.Activity;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -79,8 +80,8 @@ public class GeoMapActivityDelegate {
     private final MenuActions mMenuActions;
 
     @Inject
-    public GeoMapActivityDelegate(GeoMapView mapView, @GeoMapActivityMenuActions MenuActions menuActions) {
-        mMapView = mapView;
+    public GeoMapActivityDelegate(Activity activity, @GeoMapActivityMenuActions MenuActions menuActions) {
+        mMapView = (GeoMapView)activity.findViewById(R.id.mapview);
         mMenuActions = menuActions;
     }
 

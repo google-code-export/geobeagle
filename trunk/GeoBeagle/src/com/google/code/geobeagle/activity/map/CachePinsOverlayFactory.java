@@ -22,12 +22,13 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.Projection;
 import com.google.code.geobeagle.Geocache;
+import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.Timing;
 import com.google.code.geobeagle.activity.map.GeoMapActivityModule.DefaultMapPinMarker;
 import com.google.inject.BindingAnnotation;
 import com.google.inject.Inject;
 
-import android.content.Context;
+import android.app.Activity;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
 
@@ -38,7 +39,7 @@ import java.util.ArrayList;
 public class CachePinsOverlayFactory {
     private final CacheItemFactory mCacheItemFactory;
     private CachePinsOverlay mCachePinsOverlay;
-    private final Context mContext;
+    private final Activity mActivity;
     private final Drawable mDefaultMarker;
     private final GeoMapView mGeoMapView;
     private final QueryManager mQueryManager;
@@ -47,12 +48,11 @@ public class CachePinsOverlayFactory {
     public static @interface CachePinsQueryManager {}
 
     @Inject
-    public CachePinsOverlayFactory(GeoMapView geoMapView, Context context,
-            @DefaultMapPinMarker Drawable defaultMarker,
+    public CachePinsOverlayFactory(Activity activity, @DefaultMapPinMarker Drawable defaultMarker,
             CacheItemFactory cacheItemFactory, CachePinsOverlay cachePinsOverlay,
             @CachePinsQueryManager QueryManager queryManager) {
-        mGeoMapView = geoMapView;
-        mContext = context;
+        mGeoMapView =  (GeoMapView)activity.findViewById(R.id.mapview);
+        mActivity = activity;
         mDefaultMarker = defaultMarker;
         mCacheItemFactory = cacheItemFactory;
         mCachePinsOverlay = cachePinsOverlay;
@@ -76,7 +76,7 @@ public class CachePinsOverlayFactory {
         ArrayList<Geocache> cacheList = mQueryManager.load(newTopLeft, newBottomRight);
 
         timing.lap("Loaded caches");
-        mCachePinsOverlay = new CachePinsOverlay(mCacheItemFactory, mContext, mDefaultMarker,
+        mCachePinsOverlay = new CachePinsOverlay(mCacheItemFactory, mActivity, mDefaultMarker,
                 cacheList);
         return mCachePinsOverlay;
     }

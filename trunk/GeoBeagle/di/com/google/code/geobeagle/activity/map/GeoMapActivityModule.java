@@ -116,30 +116,26 @@ public class GeoMapActivityModule extends AbstractAndroidModule {
 
     @Provides
     @GeoMapActivityMenuActions
-    MenuActions providesGeoMapMenuActions(GeoMapView geoMapView, Activity activity,
-            Resources resources, MyLocationOverlay fixedMyLocationOverlay) {
+    MenuActions providesGeoMapMenuActions(Activity activity, Resources resources,
+            MyLocationOverlay fixedMyLocationOverlay) {
         final MenuActions menuActions = new MenuActions(resources);
-        menuActions.add(new MenuActionToggleSatellite(geoMapView));
+        final GeoMapView geoMapView = (GeoMapView)activity.findViewById(R.id.mapview);
+        menuActions.add(new MenuActionToggleSatellite(geoMapView ));
         menuActions.add(new MenuActionCacheList(activity));
         menuActions.add(new MenuActionCenterLocation(geoMapView.getController(),
                 fixedMyLocationOverlay));
         return menuActions;
     }
 
-    @Provides
-    GeoMapView providesGeoMapView(Activity activity) {
-        return (GeoMapView)activity.findViewById(R.id.mapview);
-    }
-    
     @Provides 
     MyLocationOverlay providesMyLocationOverlay(Activity activity) {
         return ((GeoMapActivity) activity).getMyLocationOverlay();
     }
 
     @Provides
-    OverlayManager providesOverlayManager(GeoMapView geoMapView, DensityOverlay densityOverlay,
-            CachePinsOverlayFactory cachePinsOverlayFactory,
-            MyLocationOverlay myLocationOverlay) {
+    OverlayManager providesOverlayManager(Activity activity, DensityOverlay densityOverlay,
+            CachePinsOverlayFactory cachePinsOverlayFactory, MyLocationOverlay myLocationOverlay) {
+        final GeoMapView geoMapView = (GeoMapView)activity.findViewById(R.id.mapview);
         final List<Overlay> mapOverlays = geoMapView.getOverlays();
         final NullOverlay nullOverlay = new NullOverlay();
         mapOverlays.add(nullOverlay);
