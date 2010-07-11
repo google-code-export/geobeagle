@@ -67,15 +67,6 @@ import java.lang.annotation.Target;
 import java.util.Arrays;
 
 public class GeoBeagleModule extends AbstractAndroidModule {
-
-    @BindingAnnotation
-    @Target( {
-            FIELD, PARAMETER, METHOD
-    })
-    @Retention(RUNTIME)
-    public static @interface GeoBeagleActivity {
-    }
-
     @BindingAnnotation
     @Target( {
             FIELD, PARAMETER, METHOD
@@ -108,21 +99,24 @@ public class GeoBeagleModule extends AbstractAndroidModule {
     GeoBeagle providesGeoBeagle(Activity activity) {
         return (GeoBeagle)activity;
     }
-    
-    @Provides
-    @GeoBeagleActivity
-    MenuActions providesMenuActions(GeoBeagle geoBeagle, Resources resources,
-            MenuActionGoogleMaps menuActionGoogleMaps) {
 
-        final MenuAction[] menuActionArray = {
-                new MenuActionCacheList(geoBeagle), new MenuActionEditGeocache(geoBeagle),
-                // new MenuActionLogDnf(this), new MenuActionLogFind(this),
-                new MenuActionSearchOnline(geoBeagle), new MenuActionSettings(geoBeagle),
-                menuActionGoogleMaps
-        };
-        return new MenuActions(resources, menuActionArray);
+    static class GeoBeagleActivityMenuActions extends MenuActions {
+        public GeoBeagleActivityMenuActions(Resources resources, GeoBeagle geoBeagle,
+                MenuActionGoogleMaps menuActionGoogleMaps) {
+            super(resources);
+            final MenuAction[] menuActionArray = {
+                    new MenuActionCacheList(geoBeagle), new MenuActionEditGeocache(geoBeagle),
+                    // new MenuActionLogDnf(this), new MenuActionLogFind(this),
+                    new MenuActionSearchOnline(geoBeagle), new MenuActionSettings(geoBeagle),
+                    menuActionGoogleMaps
+            };
+            for (int ix = 0; ix < menuActionArray.length; ix++) {
+                add(menuActionArray[ix]);
+            }
+        }
+
     }
-
+    
     @Provides
     RadarView providesRadarView(Activity activity) {
         RadarView radarView = (RadarView)activity.findViewById(R.id.radarview);
