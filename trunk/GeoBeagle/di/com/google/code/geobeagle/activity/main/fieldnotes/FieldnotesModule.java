@@ -22,12 +22,9 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.GeoBeaglePackageModule.DefaultSharedPreferences;
 import com.google.code.geobeagle.activity.main.fieldnotes.FieldnoteLogger.OnClickOk;
-import com.google.code.geobeagle.xmlimport.GeoBeagleEnvironment;
-import com.google.code.geobeagle.xmlimport.XmlimportModule;
 import com.google.code.geobeagle.xmlimport.GpxImporterDI.Toaster;
 import com.google.inject.BindingAnnotation;
 import com.google.inject.Inject;
-import com.google.inject.Provides;
 
 import roboguice.config.AbstractAndroidModule;
 
@@ -117,17 +114,4 @@ public class FieldnotesModule extends AbstractAndroidModule {
             return new Toaster(context, resource, Toast.LENGTH_LONG);
         }
     }
-
-    private static final String FIELDNOTES_FILE = "GeoBeagleFieldNotes.txt";
-
-    @Provides
-    @FieldNotesFilename
-    String providesFieldNotesFilename(GeoBeagleEnvironment environment) {
-        return environment.getExternalStorageDir() + "/" + FIELDNOTES_FILE;
-    }
-    
-    static String getFieldNotesFilename() {
-        return XmlimportModule.providesPicturesDirectoryStatic() + "/" + FIELDNOTES_FILE;
-    }
-    
 }

@@ -34,7 +34,6 @@ import roboguice.config.AbstractAndroidModule;
 import roboguice.inject.ContextScoped;
 
 import android.content.Context;
-import android.os.Environment;
 
 import java.util.Arrays;
 
@@ -60,10 +59,6 @@ public class XmlimportModule extends AbstractAndroidModule {
                 xmlWriter, eventHandlerGpx));
 
         return new EventHelper(xmlPathBuilder, eventHandlerComposite, xmlPullParser);
-    }
-    
-    public static String providesPicturesDirectoryStatic() {
-        return Environment.getExternalStorageDirectory().getAbsolutePath();
     }
     
     @Provides
