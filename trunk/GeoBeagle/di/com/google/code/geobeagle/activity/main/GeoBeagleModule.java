@@ -217,17 +217,10 @@ public class GeoBeagleModule extends AbstractAndroidModule {
     }
 
     @Provides
-    ResourceImages providesResourceImages(Activity activity) {
-        return new ResourceImages((ImageView)activity.findViewById(R.id.gccontainer), Arrays
-                .asList(GeocacheViewer.CONTAINER_IMAGES));
-    }
-
-    @Provides
     public GeocacheViewer providesGeocacheViewer(RadarView radarView, Activity activity,
-            ResourceImages gcContainer, IconOverlayFactory iconOverlayFactory,
-            MapViewBitmapCopier mapViewBitmapCopier, IconRenderer iconRenderer,
-            DifficultyAndTerrainPainter difficultyAndTerrainPainter, NameFormatter nameFormatter,
-            Resources resources, RatingsArray ratingsArray) {
+            IconOverlayFactory iconOverlayFactory, MapViewBitmapCopier mapViewBitmapCopier,
+            IconRenderer iconRenderer, DifficultyAndTerrainPainter difficultyAndTerrainPainter,
+            NameFormatter nameFormatter, Resources resources, RatingsArray ratingsArray) {
         final TextView textViewName = (TextView)activity.findViewById(R.id.gcname);
         final ImageView cacheTypeImageView = (ImageView)activity.findViewById(R.id.gcicon);
         final NameViewer gcName = new NameViewer(textViewName, nameFormatter);
@@ -243,6 +236,8 @@ public class GeoBeagleModule extends AbstractAndroidModule {
                         R.drawable.paw_unselected_dark, R.drawable.paw_half_light,
                         R.drawable.paw_selected_light
                 }, R.id.gc_terrain, R.id.gc_text_terrain);
+        final ResourceImages gcContainer = new ResourceImages((ImageView)activity
+                .findViewById(R.id.gccontainer), Arrays.asList(GeocacheViewer.CONTAINER_IMAGES));
 
         return new GeocacheViewer(radarView, activity, gcName, cacheTypeImageView, gcDifficulty,
                 gcTerrain, gcContainer, iconOverlayFactory, mapViewBitmapCopier, iconRenderer,
