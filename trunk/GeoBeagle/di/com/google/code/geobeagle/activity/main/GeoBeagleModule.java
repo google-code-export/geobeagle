@@ -49,7 +49,6 @@ import com.google.code.geobeagle.activity.main.view.GeocacheViewer.LabelledAttri
 import com.google.code.geobeagle.activity.main.view.GeocacheViewer.NameViewer;
 import com.google.code.geobeagle.activity.main.view.GeocacheViewer.PawImages;
 import com.google.code.geobeagle.activity.main.view.GeocacheViewer.ResourceImages;
-import com.google.code.geobeagle.activity.main.view.GeocacheViewer.RibbonImages;
 import com.google.code.geobeagle.activity.main.view.GeocacheViewer.UnlabelledAttributeViewer;
 import com.google.code.geobeagle.activity.map.GeoMapActivity;
 import com.google.code.geobeagle.location.LocationLifecycleManager;
@@ -163,25 +162,20 @@ public class GeoBeagleModule extends AbstractAndroidModule {
         return (GeoBeagle)activity;
     }
 
-
     @Provides
-    @RibbonImages
-    UnlabelledAttributeViewer providesRibbonImagesOnDifficulty(Resources resources,
-            RatingsArray ratingsArray, Activity activity) {
+    @Named("GeocacheDifficulty")
+    AttributeViewer providesGeocacheDifficulty(Activity activity, Resources resources,
+            RatingsArray ratingsArray) {
         final Drawable[] ribbonDrawables = {
                 resources.getDrawable(R.drawable.ribbon_unselected_dark),
                 resources.getDrawable(R.drawable.ribbon_half_bright),
                 resources.getDrawable(R.drawable.ribbon_selected_bright)
         };
         final ImageView imageView = (ImageView)activity.findViewById(R.id.gc_difficulty);
+        AttributeViewer ribbonImages =
 
-        return getImagesOnDifficulty(ribbonDrawables, imageView, ratingsArray);
-    }
-    
-    @Provides
-    @Named("GeocacheDifficulty")
-    AttributeViewer providesGeocacheDifficulty(Activity activity,
-            @RibbonImages UnlabelledAttributeViewer ribbonImages) {
+        getImagesOnDifficulty(ribbonDrawables, imageView, ratingsArray);
+
         return new LabelledAttributeViewer(
                 (TextView)activity.findViewById(R.id.gc_text_difficulty), ribbonImages);
     }
