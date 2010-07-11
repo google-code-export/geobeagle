@@ -15,6 +15,9 @@
 package com.google.code.geobeagle;
 
 import com.google.inject.Provider;
+import com.google.inject.TypeLiteral;
+import com.google.inject.matcher.AbstractMatcher;
+import com.google.inject.matcher.Matcher;
 import com.google.inject.matcher.Matchers;
 
 import roboguice.config.RoboGuiceModule;
@@ -50,7 +53,7 @@ import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 
 public class FasterRoboGuiceModule extends RoboGuiceModule {
-    
+
     public FasterRoboGuiceModule(ContextScope contextScope,
             Provider<Context> throwingContextProvider, Provider<Context> contextProvider,
             ResourceListener resourceListener, ViewListener viewListener,
@@ -106,9 +109,13 @@ public class FasterRoboGuiceModule extends RoboGuiceModule {
         bind(Context.class).toProvider(throwingContextProvider).in(ContextScoped.class);
         bind(Activity.class).toProvider(ActivityProvider.class);
         
+
         // Android Resources, Views and extras require special handling
-        bindListener(Matchers.any(), resourceListener);
-        bindListener(Matchers.any(), extrasListener);
-        bindListener(Matchers.any(), viewListener);
+        bindListener(new ClassToTypeLiteralMatcherAdapter(Matchers.subclassesOf(Activity.class)),
+                resourceListener);
+        bindListener(new ClassToTypeLiteralMatcherAdapter(Matchers.subclassesOf(Activity.class)),
+                viewListener);
+        bindListener(new ClassToTypeLiteralMatcherAdapter(Matchers.subclassesOf(Activity.class)),
+                extrasListener);
     }
 }
