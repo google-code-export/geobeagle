@@ -67,12 +67,6 @@ public class GeoMapActivityModule extends AbstractAndroidModule {
     }
 
     @Provides
-    GeoPoint geoPointProvider()
-    {
-        return new GeoPoint(0, 0);
-    }
-    
-    @Provides
     @DifficultyAndTerrainPainterAnnotation
     CacheItemFactory providesCacheItemDifficultyAndTerrainFactory(
             @DifficultyAndTerrainPainterAnnotation IconRenderer iconRenderer,
