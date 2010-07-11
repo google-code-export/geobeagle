@@ -56,15 +56,13 @@ public class GeocacheListController {
     static final int MENU_EDIT = 2;
     public static final String SELECT_CACHE = "SELECT_CACHE";
     private final CacheListRefresh mCacheListRefresh;
-    private final MenuActionSyncGpx mMenuActionSyncGpx;
     private final Aborter mAborter;
     private final Injector mInjector;
 
     @Inject
     public GeocacheListController(CacheListRefresh cacheListRefresh,
-            MenuActionSyncGpx menuActionSyncGpx, Injector injector, Aborter aborter) {
+            Injector injector, Aborter aborter) {
         mCacheListRefresh = cacheListRefresh;
-        mMenuActionSyncGpx = menuActionSyncGpx;
         mAborter = aborter;
         mInjector = injector;
     }
@@ -95,12 +93,12 @@ public class GeocacheListController {
     public void onPause() {
         Log.d("GeoBeagle", "onPause aborting");
         mAborter.abort();
-        mMenuActionSyncGpx.abort();
+        mInjector.getInstance(MenuActionSyncGpx.class).abort();
     }
 
     public void onResume(boolean fImport) {
         mCacheListRefresh.forceRefresh();
         if (fImport)
-            mMenuActionSyncGpx.act();
+            mInjector.getInstance(MenuActionSyncGpx.class).act();
     }
 }
