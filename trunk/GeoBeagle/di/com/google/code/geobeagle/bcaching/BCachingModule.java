@@ -15,7 +15,6 @@
 package com.google.code.geobeagle.bcaching;
 
 import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.GeoBeaglePackageModule.DefaultSharedPreferences;
 import com.google.code.geobeagle.activity.cachelist.CacheListModule.ToasterSyncAborted;
 import com.google.code.geobeagle.bcaching.BCachingAnnotations.CacheListAnnotation;
 import com.google.code.geobeagle.bcaching.BCachingAnnotations.DetailsReaderAnnotation;
@@ -43,7 +42,6 @@ import roboguice.util.RoboThread;
 
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 import android.widget.Toast;
@@ -57,7 +55,7 @@ import java.util.Hashtable;
 public class BCachingModule extends AbstractAndroidModule {
 
     public static final String BCACHING_USERNAME = "bcaching-username";
-    private static final String BCACHING_PASSWORD = "bcaching-password";
+    public static final String BCACHING_PASSWORD = "bcaching-password";
     public static final String BCACHING_INITIAL_MESSAGE = "Getting cache count...";
 
     static class ImportSubmodule extends AbstractAndroidModule {
@@ -123,14 +121,6 @@ public class BCachingModule extends AbstractAndroidModule {
             return new BufferedReader(new InputStreamReader(inputStream, Charset.forName("UTF-8")),
                     8192);
         }
-    }
-
-    @Provides
-    BCachingCommunication bcachingCommunicationProvider(
-            @DefaultSharedPreferences SharedPreferences sharedPreferences) {
-        String bcachingPassword = sharedPreferences.getString(BCACHING_PASSWORD, "");
-        String bcachingUsername = sharedPreferences.getString(BCACHING_USERNAME, "");
-        return new BCachingCommunication(bcachingUsername , bcachingPassword);
     }
 
     @Provides

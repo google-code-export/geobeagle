@@ -14,6 +14,11 @@
 
 package com.google.code.geobeagle.bcaching.communication;
 
+import com.google.code.geobeagle.GeoBeaglePackageModule.DefaultSharedPreferences;
+import com.google.code.geobeagle.bcaching.BCachingModule;
+import com.google.inject.Inject;
+
+import android.content.SharedPreferences;
 import android.util.Log;
 
 import java.io.BufferedReader;
@@ -83,11 +88,22 @@ public class BCachingCommunication {
     private final int timeout = 60000; // millisec
     private final String username;
 
-    public BCachingCommunication(String username, String password) {
-        this.username = username;
+    public static class BCachingCredentials {
+        public final String password;
+        public final String username;
+
+        @Inject
+        public BCachingCredentials(@DefaultSharedPreferences SharedPreferences sharedPreferences) {
+            password = sharedPreferences.getString(BCachingModule.BCACHING_PASSWORD, "");
+            username = sharedPreferences.getString(BCachingModule.BCACHING_USERNAME, "");
+        }
+    }
+    
+    public BCachingCommunication(BCachingCredentials bcachingCredentials) {
+        username = bcachingCredentials.username;
         String hashword = "";
         try {
-            hashword = encodeHashword(username, password);
+            hashword = encodeHashword(username, bcachingCredentials.password);
         } catch (Exception ex) {
             Log.e("GeoBeagle", ex.toString());
         }
