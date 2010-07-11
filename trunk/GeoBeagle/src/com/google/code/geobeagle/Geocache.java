@@ -38,9 +38,6 @@ import java.lang.annotation.Target;
  * Geocache or letterbox description, id, and coordinates.
  */
 public class Geocache implements Parcelable {
-    @BindingAnnotation @Target({ FIELD, PARAMETER, METHOD }) @Retention(RUNTIME)
-    public static @interface GeocacheId {}
-
     static interface AttributeFormatter {
         CharSequence formatAttributes(int difficulty, int terrain);
     }

@@ -19,7 +19,6 @@ import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.ElementType.PARAMETER;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.Timing;
 import com.google.code.geobeagle.GeoBeaglePackageModule.DefaultSharedPreferences;
 import com.google.code.geobeagle.LocationControlBuffered.GpsDisabledLocation;
@@ -55,7 +54,6 @@ import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh.U
 import com.google.code.geobeagle.formatting.DistanceFormatter;
 import com.google.code.geobeagle.formatting.DistanceFormatterImperial;
 import com.google.code.geobeagle.formatting.DistanceFormatterMetric;
-import com.google.code.geobeagle.xmlimport.GpxImporterDI.Toaster;
 import com.google.inject.BindingAnnotation;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
@@ -67,10 +65,8 @@ import roboguice.inject.ContextScoped;
 
 import android.app.Activity;
 import android.app.ListActivity;
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
-import android.widget.Toast;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;

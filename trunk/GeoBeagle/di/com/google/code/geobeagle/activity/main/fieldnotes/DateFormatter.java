@@ -14,18 +14,12 @@
 
 package com.google.code.geobeagle.activity.main.fieldnotes;
 
-import com.google.inject.Inject;
-
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class DateFormatter {
-    private static DateFormat mDateFormat;
-
-    @Inject
-    public DateFormatter(DateFormat dateFormat) {
-        mDateFormat = dateFormat;
-    }
+    private static DateFormat mDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'");
 
     String format(Date date) {
         return mDateFormat.format(date);

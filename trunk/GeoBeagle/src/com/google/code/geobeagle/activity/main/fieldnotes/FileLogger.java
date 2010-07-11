@@ -14,22 +14,13 @@
 
 package com.google.code.geobeagle.activity.main.fieldnotes;
 
-import static java.lang.annotation.ElementType.FIELD;
-import static java.lang.annotation.ElementType.METHOD;
-import static java.lang.annotation.ElementType.PARAMETER;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-
 import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.activity.main.fieldnotes.FieldnotesModule.FieldNotesFilename;
-import com.google.code.geobeagle.xmlimport.GpxImporterDI.Toaster;
-import com.google.inject.BindingAnnotation;
+import com.google.code.geobeagle.activity.main.fieldnotes.FieldnotesModule.ToasterFactory;
 import com.google.inject.Inject;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
 import java.util.Date;
 
 /**
@@ -41,28 +32,23 @@ import java.util.Date;
  */
 
 public class FileLogger implements ICacheLogger {
-    private final Toaster mErrorToaster;
+    private final ToasterFactory mToasterFactory;
     private final FieldnoteStringsFVsDnf mFieldnoteStringsFVsDnf;
     private final DateFormatter mSimpleDateFormat;
-    private final String mFieldNotesFile;
     
-    @BindingAnnotation @Target({ FIELD, PARAMETER, METHOD }) @Retention(RUNTIME)
-    public static @interface ToasterErrorWritingLog {}
-
     @Inject
     public FileLogger(FieldnoteStringsFVsDnf fieldnoteStringsFVsDnf,
-            DateFormatter simpleDateFormat, @ToasterErrorWritingLog Toaster errorToaster,
-            @FieldNotesFilename String fieldNotesFile) {
+            DateFormatter simpleDateFormat, ToasterFactory toasterFactory
+            ) {
         mFieldnoteStringsFVsDnf = fieldnoteStringsFVsDnf;
         mSimpleDateFormat = simpleDateFormat;
-        mErrorToaster = errorToaster;
-        mFieldNotesFile = fieldNotesFile;
+        mToasterFactory = toasterFactory;
     }
 
     public void log(CharSequence geocacheId, CharSequence logText, boolean dnf) {
         try {
             OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(
-                    mFieldNotesFile, true), "UTF-16");
+                    FieldnotesModule.getFieldNotesFilename(), true), "UTF-16");
             final Date date = new Date();
             final String formattedDate = mSimpleDateFormat.format(date);
             final String logLine = String.format("%1$s,%2$s,%3$s,\"%4$s\"\n", geocacheId,
@@ -71,7 +57,7 @@ public class FileLogger implements ICacheLogger {
             writer.write(logLine);
             writer.close();
         } catch (IOException e) {
-            mErrorToaster.showToast();
+            mToasterFactory.create(R.string.error_writing_cache_log).showToast();
         }
     }
 }
