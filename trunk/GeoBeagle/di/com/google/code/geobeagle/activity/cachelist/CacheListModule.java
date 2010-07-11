@@ -14,11 +14,6 @@
 
 package com.google.code.geobeagle.activity.cachelist;
 
-import static java.lang.annotation.ElementType.FIELD;
-import static java.lang.annotation.ElementType.METHOD;
-import static java.lang.annotation.ElementType.PARAMETER;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-
 import com.google.code.geobeagle.Timing;
 import com.google.code.geobeagle.GeoBeaglePackageModule.DefaultSharedPreferences;
 import com.google.code.geobeagle.LocationControlBuffered.GpsDisabledLocation;
@@ -54,7 +49,6 @@ import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh.U
 import com.google.code.geobeagle.formatting.DistanceFormatter;
 import com.google.code.geobeagle.formatting.DistanceFormatterImperial;
 import com.google.code.geobeagle.formatting.DistanceFormatterMetric;
-import com.google.inject.BindingAnnotation;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.Provides;
@@ -68,13 +62,7 @@ import android.app.ListActivity;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
-
 public class CacheListModule extends AbstractAndroidModule {
-    @BindingAnnotation @Target({ FIELD, PARAMETER, METHOD }) @Retention(RUNTIME)
-    public static @interface ToasterSyncAborted {}
-
     @Override
     protected void configure() {
         bind(GeocacheListAdapter.class).in(ContextScoped.class);

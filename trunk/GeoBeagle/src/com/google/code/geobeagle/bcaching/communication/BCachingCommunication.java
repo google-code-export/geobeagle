@@ -99,6 +99,7 @@ public class BCachingCommunication {
         }
     }
     
+    @Inject
     public BCachingCommunication(BCachingCredentials bcachingCredentials) {
         username = bcachingCredentials.username;
         String hashword = "";
