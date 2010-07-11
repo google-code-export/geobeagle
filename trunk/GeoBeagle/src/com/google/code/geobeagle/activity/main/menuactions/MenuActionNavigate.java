@@ -22,7 +22,7 @@ import com.google.inject.Inject;
 
 import android.content.DialogInterface;
 
-public class MenuActionGoogleMaps extends MenuActionBase {
+public class MenuActionNavigate extends MenuActionBase {
     public static class OnClickListener implements DialogInterface.OnClickListener {
         private final IntentStarter[] mIntentStarters;
 
@@ -38,7 +38,7 @@ public class MenuActionGoogleMaps extends MenuActionBase {
     private final ChooseNavDialog chooseNavDialog;
 
     @Inject
-    public MenuActionGoogleMaps(ChooseNavDialog chooseNavDialog) {
+    public MenuActionNavigate(ChooseNavDialog chooseNavDialog) {
         super(R.string.menu_google_maps);
         this.chooseNavDialog = chooseNavDialog;
     }
