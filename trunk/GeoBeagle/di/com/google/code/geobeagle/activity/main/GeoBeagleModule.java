@@ -33,8 +33,6 @@ import roboguice.config.AbstractAndroidModule;
 
 import android.app.Activity;
 import android.content.res.Resources;
-import android.graphics.Paint;
-import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -45,8 +43,6 @@ public class GeoBeagleModule extends AbstractAndroidModule {
     @Override
     protected void configure() {
         bind(ChooseNavDialog.class).toProvider(ChooseNavDialogProvider.class);
-        bind(Paint.class).toInstance(new Paint());
-        bind(Rect.class).toInstance(new Rect());
     }
 
     private UnlabelledAttributeViewer getImagesOnDifficulty(final Drawable[] pawDrawables,
