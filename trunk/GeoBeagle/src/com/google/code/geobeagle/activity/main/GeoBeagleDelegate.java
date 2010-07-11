@@ -93,8 +93,7 @@ public class GeoBeagleDelegate {
             SensorManager sensorManager,
             @DefaultSharedPreferences SharedPreferences sharedPreferences,
             WebPageAndDetailsButtonEnabler webPageButtonEnabler,
-            Provider<CacheWriter> cacheWriterProvider,
-            GeoBeagleEnvironment geoBeagleEnvironment) {
+            Provider<CacheWriter> cacheWriterProvider, GeoBeagleEnvironment geoBeagleEnvironment) {
         mParent = parent;
         mActivitySaver = activitySaver;
         mAppLifecycleManager = appLifecycleManager;

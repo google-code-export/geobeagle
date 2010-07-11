@@ -61,20 +61,21 @@ public class BCachingModule extends AbstractAndroidModule {
         bind(Aborter.class).in(ContextScoped.class);
         bind(ClearCachesFromSource.class).to(ClearCachesFromSourceNull.class);
         bind(ImportBCachingWorker.class).in(ContextScoped.class);
+        bind(BCachingProgressDialog.class).in(ContextScoped.class);
         requestStaticInjection(RoboThread.class);
     }
 
-    @ContextScoped
-    @Provides
-    ProgressDialog progressDialogProvider(Context context) {
-        ProgressDialog progressDialog = new ProgressDialog(context);
-        progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-        progressDialog.setTitle("Sync from BCaching.com");
-        progressDialog.setMessage(BCACHING_INITIAL_MESSAGE);
-        progressDialog.setCancelable(false);
-        return progressDialog;
+    public static class BCachingProgressDialog extends ProgressDialog {
+        @Inject
+        public BCachingProgressDialog(Context context) {
+            super(context);
+            setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+            setTitle("Sync from BCaching.com");
+            setMessage(BCACHING_INITIAL_MESSAGE);
+            setCancelable(false);
+        }
     }
-
+    
     static class BufferedReaderFactoryImpl implements BufferedReaderFactory {
         private final BCachingCommunication bcachingCommunication;
 

@@ -17,6 +17,7 @@ package com.google.code.geobeagle.bcaching.progress;
 import com.google.code.geobeagle.activity.cachelist.ActivityVisible;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
 import com.google.code.geobeagle.bcaching.BCachingModule;
+import com.google.code.geobeagle.bcaching.BCachingModule.BCachingProgressDialog;
 import com.google.inject.Inject;
 
 import android.app.ProgressDialog;
@@ -30,8 +31,8 @@ public class ProgressHandler extends Handler {
     private final ActivityVisible activityVisible;
 
     @Inject
-    public ProgressHandler(ProgressDialog progressDialog, CacheListRefresh cacheListRefresh,
-            ActivityVisible activityVisible) {
+    public ProgressHandler(BCachingProgressDialog progressDialog,
+            CacheListRefresh cacheListRefresh, ActivityVisible activityVisible) {
         this.progressDialog = progressDialog;
         this.cacheListRefresher = cacheListRefresh;
         this.activityVisible = activityVisible;
