@@ -19,14 +19,14 @@ import com.google.inject.Inject;
 import java.io.IOException;
 
 public class HtmlWriter {
-    private final com.google.code.geobeagle.cachedetails.Writer mWriter;
+    private final StringWriterWrapper mWriter;
 
     static final String HEADER = "<html>\n<head>\n"
             + "<script type=\"text/javascript\" src=\"file:///android_asset/rot13.js\">"
             + "</script></head>\n  <body onLoad=encryptAll()>\n";
 
     @Inject
-    public HtmlWriter(com.google.code.geobeagle.cachedetails.Writer writerWrapper) {
+    public HtmlWriter(StringWriterWrapper writerWrapper) {
         mWriter = writerWrapper;
     }
 

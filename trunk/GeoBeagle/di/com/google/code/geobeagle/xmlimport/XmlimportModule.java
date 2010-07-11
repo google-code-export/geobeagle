@@ -15,19 +15,13 @@
 package com.google.code.geobeagle.xmlimport;
 
 
-import com.google.code.geobeagle.cachedetails.CacheDetailsWriter;
-import com.google.code.geobeagle.cachedetails.Emotifier;
-import com.google.code.geobeagle.cachedetails.HtmlWriter;
 import com.google.code.geobeagle.cachedetails.StringWriterWrapper;
 import com.google.code.geobeagle.database.GpxWriter;
 import com.google.code.geobeagle.xmlimport.GpxImporterDI.MessageHandler;
-import com.google.inject.Provides;
 import com.google.inject.Singleton;
 
 import roboguice.config.AbstractAndroidModule;
 import roboguice.inject.ContextScoped;
-
-import android.content.Context;
 
 public class XmlimportModule extends AbstractAndroidModule {
 
@@ -39,12 +33,4 @@ public class XmlimportModule extends AbstractAndroidModule {
         bind(GpxWriter.class).in(ContextScoped.class);
         bind(EmotifierPatternProvider.class).in(Singleton.class);
     }
-
-    @Provides
-    CacheDetailsWriter cacheDetailsWriterLoadDetailsProvider(Emotifier emotifier, Context context,
-            StringWriterWrapper stringWriterWrapper) {
-        final HtmlWriter htmlWriter = new HtmlWriter(stringWriterWrapper);
-        return new CacheDetailsWriter(htmlWriter, emotifier, context);
-    }
-
 }
