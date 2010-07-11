@@ -17,22 +17,13 @@ package com.google.code.geobeagle.bcaching.communication;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import roboguice.config.AbstractAndroidModule;
-
-public class BCachingCommModule extends AbstractAndroidModule {
-
-    @Override
-    protected void configure() {
-    }
-
-    static class BCachingListFactoryImpl {
-        public BCachingList create(String s) throws BCachingException {
-            try {
-                return new BCachingList(new BCachingJSONObject(new JSONObject(s)));
-            } catch (JSONException e) {
-                throw new BCachingException("Error parsing data from bcaching server: "
-                        + e.getLocalizedMessage());
-            }
+class BCachingListFactory {
+    public BCachingList create(String s) throws BCachingException {
+        try {
+            return new BCachingList(new BCachingJSONObject(new JSONObject(s)));
+        } catch (JSONException e) {
+            throw new BCachingException("Error parsing data from bcaching server: "
+                    + e.getLocalizedMessage());
         }
     }
 }
