@@ -20,7 +20,6 @@ import com.google.code.geobeagle.activity.cachelist.CacheListActivity;
 import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidgetDelegate;
 import com.google.code.geobeagle.gpsstatuswidget.InflatedGpsStatusWidget;
 import com.google.code.geobeagle.gpsstatuswidget.UpdateGpsWidgetRunnable;
-import com.google.inject.Inject;
 import com.google.inject.Injector;
 
 import roboguice.activity.GuiceActivity;
@@ -35,20 +34,11 @@ import android.view.MenuItem;
 public class SearchOnlineActivity extends GuiceActivity {
 
     private InflatedGpsStatusWidget mInflatedGpsStatusWidget;
-
-    @Inject
-    private JsInterface mJsInterface;
-
     private SearchOnlineActivityDelegate mSearchOnlineActivityDelegate;
-
     private UpdateGpsWidgetRunnable mUpdateGpsWidgetRunnable;
 
     InflatedGpsStatusWidget getGpsStatusWidget() {
         return mInflatedGpsStatusWidget;
-    }
-
-    JsInterface getJsInterface() {
-        return mJsInterface;
     }
 
     SearchOnlineActivityDelegate getMSearchOnlineActivityDelegate() {
@@ -71,8 +61,7 @@ public class SearchOnlineActivity extends GuiceActivity {
         mInflatedGpsStatusWidget.setBackgroundColor(Color.BLACK);
 
         mSearchOnlineActivityDelegate = injector.getInstance(SearchOnlineActivityDelegate.class);
-
-        mSearchOnlineActivityDelegate.configureWebView(mJsInterface);
+        mSearchOnlineActivityDelegate.configureWebView();
         injector.getInstance(ActivityRestorer.class).restore(getIntent().getFlags());
     }
 

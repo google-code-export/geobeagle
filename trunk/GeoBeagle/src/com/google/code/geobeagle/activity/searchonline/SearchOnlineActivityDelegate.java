@@ -39,13 +39,14 @@ public class SearchOnlineActivityDelegate {
     private final SensorManager mSensorManager;
     private final WebView mWebView;
     private final ActivityVisible mActivityVisible;
+    private final JsInterface mJsInterface;
 
     @Inject
     public SearchOnlineActivityDelegate(Activity activity, SensorManager sensorManager,
             CompassListener compassListener, CombinedLocationManager combinedLocationManager,
             CombinedLocationListener combinedLocationListener,
             LocationControlBuffered locationControlBuffered, ActivitySaver activitySaver,
-            ActivityVisible activityVisible) {
+            ActivityVisible activityVisible, JsInterface jsInterface) {
         mSensorManager = sensorManager;
         mCompassListener = compassListener;
         mCombinedLocationListener = combinedLocationListener;
@@ -54,9 +55,10 @@ public class SearchOnlineActivityDelegate {
         mWebView = (WebView)activity.findViewById(R.id.help_contents);
         mActivitySaver = activitySaver;
         mActivityVisible = activityVisible;
+        mJsInterface = jsInterface;
     }
 
-    public void configureWebView(JsInterface jsInterface) {
+    public void configureWebView() {
         mWebView.loadUrl("file:///android_asset/search.html");
         WebSettings webSettings = mWebView.getSettings();
         webSettings.setSavePassword(false);
@@ -64,7 +66,7 @@ public class SearchOnlineActivityDelegate {
         webSettings.setJavaScriptEnabled(true);
         webSettings.setSupportZoom(false);
         mWebView.setBackgroundColor(Color.BLACK);
-        mWebView.addJavascriptInterface(jsInterface, "gb");
+        mWebView.addJavascriptInterface(mJsInterface, "gb");
     }
 
     public void onPause() {
