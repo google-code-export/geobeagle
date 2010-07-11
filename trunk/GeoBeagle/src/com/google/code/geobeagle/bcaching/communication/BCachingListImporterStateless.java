@@ -14,7 +14,6 @@
 
 package com.google.code.geobeagle.bcaching.communication;
 
-import com.google.code.geobeagle.bcaching.BCachingModule;
 import com.google.inject.Inject;
 
 import java.util.Hashtable;
@@ -28,7 +27,7 @@ public class BCachingListImporterStateless {
         params = new Hashtable<String, String>();
         params.put("a", "list");
         params.put("found", "0");
-        BCachingModule.commonParams(params);
+        commonParams(params);
     }
 
     @Inject
@@ -52,5 +51,11 @@ public class BCachingListImporterStateless {
         params.remove("first");
         BCachingList importList = importList("1", startTime);
         return importList.getTotalCount();
+    }
+
+    public static void commonParams(Hashtable<String, String> params) {
+        params.put("lastuploaddays", "7");
+        params.put("app", "GeoBeagle");
+        params.put("timeAsLong", "1");
     }
 }
