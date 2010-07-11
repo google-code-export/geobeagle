@@ -20,7 +20,6 @@ import com.google.code.geobeagle.LocationControlBuffered;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.R.id;
 import com.google.code.geobeagle.activity.main.GeoBeagleDelegate.LogFindClickListener;
-import com.google.code.geobeagle.activity.main.GeoBeagleModule.ButtonListenerMapPage;
 import com.google.code.geobeagle.activity.main.fieldnotes.DialogHelperSms;
 import com.google.code.geobeagle.activity.main.fieldnotes.FieldnoteLogger;
 import com.google.code.geobeagle.activity.main.fieldnotes.FieldnoteLogger.OnClickCancel;
@@ -28,12 +27,13 @@ import com.google.code.geobeagle.activity.main.fieldnotes.FieldnoteLogger.OnClic
 import com.google.code.geobeagle.activity.main.fieldnotes.FieldnotesModule.DialogHelperSmsFactory;
 import com.google.code.geobeagle.activity.main.fieldnotes.FieldnotesModule.FieldnoteLoggerFactory;
 import com.google.code.geobeagle.activity.main.fieldnotes.FieldnotesModule.OnClickOkFactory;
+import com.google.code.geobeagle.activity.main.intents.IntentStarterGeo;
 import com.google.code.geobeagle.activity.main.view.OnClickListenerCacheDetails;
 import com.google.code.geobeagle.activity.main.view.OnClickListenerIntentStarter;
 import com.google.code.geobeagle.activity.main.view.OnClickListenerRadar;
+import com.google.code.geobeagle.activity.map.GeoMapActivity;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
-import com.google.inject.Key;
 
 import roboguice.activity.GuiceActivity;
 
@@ -103,16 +103,16 @@ public class GeoBeagle extends GuiceActivity {
         if (getLastNonConfigurationInstance() != null) {
             setIntent((Intent)getLastNonConfigurationInstance());
         }
-
-        findViewById(id.maps).setOnClickListener(
-                injector.getInstance(Key.get(OnClickListenerIntentStarter.class,
-                        ButtonListenerMapPage.class)));
+        final ErrorDisplayer errorDisplayer = injector.getInstance(ErrorDisplayer.class);
+        final Intent geoMapActivityIntent = new Intent(this, GeoMapActivity.class);
+        final OnClickListenerIntentStarter onClickListenerMapPage = new OnClickListenerIntentStarter(
+                new IntentStarterGeo(this, geoMapActivityIntent), errorDisplayer);
+        findViewById(id.maps).setOnClickListener(onClickListenerMapPage);
 
         findViewById(R.id.cache_details).setOnClickListener(
                 injector.getInstance(OnClickListenerCacheDetails.class));
         final IntentStarterViewCachePage intentStarterViewCachePage = injector
                 .getInstance(IntentStarterViewCachePage.class);
-        final ErrorDisplayer errorDisplayer = injector.getInstance(ErrorDisplayer.class);
         final OnClickListenerIntentStarter onClickListenerIntentStarter = new OnClickListenerIntentStarter(intentStarterViewCachePage , errorDisplayer);
         findViewById(id.cache_page).setOnClickListener(onClickListenerIntentStarter);
 

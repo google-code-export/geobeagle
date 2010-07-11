@@ -76,14 +76,6 @@ public class GeoBeagleModule extends AbstractAndroidModule {
             FIELD, PARAMETER, METHOD
     })
     @Retention(RUNTIME)
-    public static @interface ButtonListenerMapPage {
-    }
-
-    @BindingAnnotation
-    @Target( {
-            FIELD, PARAMETER, METHOD
-    })
-    @Retention(RUNTIME)
     public static @interface GeoBeagleActivity {
     }
 
@@ -132,15 +124,6 @@ public class GeoBeagleModule extends AbstractAndroidModule {
                 menuActionGoogleMaps
         };
         return new MenuActions(resources, menuActionArray);
-    }
-
-    @Provides
-    @ButtonListenerMapPage
-    OnClickListenerIntentStarter providesOnClickListenerIntentStarterMapPage(GeoBeagle geoBeagle,
-            ErrorDisplayer errorDisplayer, Context context) {
-        Intent intent = new Intent(context, GeoMapActivity.class);
-        return new OnClickListenerIntentStarter(new IntentStarterGeo(geoBeagle, intent),
-                errorDisplayer);
     }
 
     @Provides
