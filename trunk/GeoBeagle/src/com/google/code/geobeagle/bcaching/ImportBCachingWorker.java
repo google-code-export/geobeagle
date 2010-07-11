@@ -18,6 +18,7 @@ import com.google.code.geobeagle.ErrorDisplayer;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.cachelist.CacheListModule.ToasterSyncAborted;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.Abortable;
+import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh.UpdateFlag;
 import com.google.code.geobeagle.bcaching.communication.BCachingException;
 import com.google.code.geobeagle.bcaching.progress.ProgressHandler;
 import com.google.code.geobeagle.bcaching.progress.ProgressManager;
@@ -43,17 +44,20 @@ public class ImportBCachingWorker extends RoboThread implements Abortable {
     private final ProgressHandler progressHandler;
     private final ProgressManager progressManager;
     private final Toaster toaster;
+    private final UpdateFlag updateFlag;
 
     @Inject
     public ImportBCachingWorker(ProgressHandler progressHandler, ProgressManager progressManager,
             ErrorDisplayer errorDisplayer, DetailsReaderImport detailsReaderImport,
-            @ToasterSyncAborted Toaster toaster, CacheListCursor cacheListCursor) {
+            @ToasterSyncAborted Toaster toaster, CacheListCursor cacheListCursor,
+            UpdateFlag updateFlag) {
         this.progressHandler = progressHandler;
         this.errorDisplayer = errorDisplayer;
         this.progressManager = progressManager;
         this.detailsReaderImport = detailsReaderImport;
         this.toaster = toaster;
         this.cursor = cacheListCursor;
+        this.updateFlag = updateFlag;
     }
 
     /*
@@ -85,6 +89,7 @@ public class ImportBCachingWorker extends RoboThread implements Abortable {
     @Override
     public void run() {
         inProgress = true;
+        updateFlag.setUpdatesEnabled(false);
         progressManager.update(progressHandler, ProgressMessage.START, 0);
         try {
             if (!cursor.open())
@@ -101,6 +106,7 @@ public class ImportBCachingWorker extends RoboThread implements Abortable {
             errorDisplayer.displayError(R.string.problem_importing_from_bcaching, e
                     .getLocalizedMessage());
         } finally {
+            updateFlag.setUpdatesEnabled(true);
             progressManager.update(progressHandler, ProgressMessage.REFRESH, 0);
             progressManager.update(progressHandler, ProgressMessage.DONE, 0);
             inProgress = false;
