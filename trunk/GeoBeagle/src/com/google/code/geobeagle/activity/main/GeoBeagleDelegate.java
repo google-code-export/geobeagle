@@ -31,6 +31,7 @@ import com.google.code.geobeagle.xmlimport.GeoBeagleEnvironment;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.hardware.SensorManager;
@@ -84,7 +85,7 @@ public class GeoBeagleDelegate {
 
     @Inject
     public GeoBeagleDelegate(ActivitySaver activitySaver, AppLifecycleManager appLifecycleManager,
-            CompassListener compassListener, GeoBeagle parent, GeocacheFactory geocacheFactory,
+            CompassListener compassListener, Activity parent, GeocacheFactory geocacheFactory,
             GeocacheViewer geocacheViewer, IncomingIntentHandler incomingIntentHandler,
             GeoBeagleActivityMenuActions menuActions,
             GeocacheFromParcelFactory geocacheFromParcelFactory,
@@ -93,7 +94,7 @@ public class GeoBeagleDelegate {
             SharedPreferences sharedPreferences,
             WebPageAndDetailsButtonEnabler webPageButtonEnabler,
             Provider<CacheWriter> cacheWriterProvider, GeoBeagleEnvironment geoBeagleEnvironment) {
-        mParent = parent;
+        mParent = (GeoBeagle)parent;
         mActivitySaver = activitySaver;
         mAppLifecycleManager = appLifecycleManager;
         mMenuActions = menuActions;

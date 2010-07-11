@@ -18,14 +18,15 @@ import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.EditCacheActivity;
 import com.google.code.geobeagle.activity.main.GeoBeagle;
 
+import android.app.Activity;
 import android.content.Intent;
 
 public class MenuActionEditGeocache extends MenuActionBase {
     private final GeoBeagle mParent;
 
-    public MenuActionEditGeocache(GeoBeagle parent) {
+    public MenuActionEditGeocache(Activity parent) {
         super(R.string.menu_edit_geocache);
-        mParent = parent;
+        mParent = (GeoBeagle)parent;
     }
 
     @Override

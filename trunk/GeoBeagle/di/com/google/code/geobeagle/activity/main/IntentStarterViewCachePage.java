@@ -19,9 +19,11 @@ import com.google.code.geobeagle.activity.main.intents.GeocacheToCachePage;
 import com.google.code.geobeagle.activity.main.intents.IntentStarterViewUri;
 import com.google.inject.Inject;
 
+import android.app.Activity;
+
 class IntentStarterViewCachePage extends IntentStarterViewUri {
     @Inject
-    public IntentStarterViewCachePage(GeoBeagle geoBeagle, GeocacheToCachePage geocacheToCachePage,
+    public IntentStarterViewCachePage(Activity geoBeagle, GeocacheToCachePage geocacheToCachePage,
             ErrorDisplayer errorDisplayer) {
         super(geoBeagle, geocacheToCachePage, errorDisplayer);
     }

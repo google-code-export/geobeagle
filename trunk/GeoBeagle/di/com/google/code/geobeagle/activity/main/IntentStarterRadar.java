@@ -17,11 +17,12 @@ package com.google.code.geobeagle.activity.main;
 import com.google.code.geobeagle.activity.main.intents.IntentStarterGeo;
 import com.google.inject.Inject;
 
+import android.app.Activity;
 import android.content.Intent;
 
 public class IntentStarterRadar extends IntentStarterGeo {
     @Inject
-    IntentStarterRadar(GeoBeagle geoBeagle) {
+    IntentStarterRadar(Activity geoBeagle) {
         super(geoBeagle, new Intent("com.google.android.radar.SHOW_RADAR"));
     }
 }
