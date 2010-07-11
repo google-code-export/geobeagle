@@ -14,8 +14,6 @@
 
 package com.google.code.geobeagle.bcaching;
 
-import com.google.code.geobeagle.bcaching.communication.BCachingCommunication;
-import com.google.code.geobeagle.bcaching.communication.BCachingException;
 import com.google.code.geobeagle.bcaching.communication.BCachingListImportHelper.BufferedReaderFactory;
 import com.google.code.geobeagle.bcaching.progress.ProgressHandler;
 import com.google.code.geobeagle.database.ClearCachesFromSource;
@@ -23,7 +21,6 @@ import com.google.code.geobeagle.database.ClearCachesFromSourceNull;
 import com.google.code.geobeagle.xmlimport.CachePersisterFacade;
 import com.google.code.geobeagle.xmlimport.MessageHandlerInterface;
 import com.google.code.geobeagle.xmlimport.GpxToCache.Aborter;
-import com.google.inject.Inject;
 import com.google.inject.Provides;
 
 import roboguice.config.AbstractAndroidModule;
@@ -33,10 +30,6 @@ import roboguice.util.RoboThread;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.charset.Charset;
 import java.util.Hashtable;
 
 public class BCachingModule extends AbstractAndroidModule {
@@ -61,21 +54,6 @@ public class BCachingModule extends AbstractAndroidModule {
         bind(ImportBCachingWorker.class).in(ContextScoped.class);
         bind(BCachingProgressDialog.class).in(ContextScoped.class);
         requestStaticInjection(RoboThread.class);
-    }
-
-    static class BufferedReaderFactoryImpl implements BufferedReaderFactory {
-        private final BCachingCommunication bcachingCommunication;
-
-        @Inject
-        public BufferedReaderFactoryImpl(BCachingCommunication bcachingCommunication) {
-            this.bcachingCommunication = bcachingCommunication;
-        }
-
-        public BufferedReader create(Hashtable<String, String> params) throws BCachingException {
-            InputStream inputStream = bcachingCommunication.sendRequest(params);
-            return new BufferedReader(new InputStreamReader(inputStream, Charset.forName("UTF-8")),
-                    8192);
-        }
     }
 
     public static void commonParams(Hashtable<String, String> params) {
