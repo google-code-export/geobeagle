@@ -162,12 +162,6 @@ public class CacheListModule extends AbstractAndroidModule {
     }
 
     @Provides
-    @ToasterSyncAborted
-    Toaster toasterProvider(Context context) {
-        return new Toaster(context, R.string.import_canceled, Toast.LENGTH_LONG);
-    }
-
-    @Provides
     Abortable providesAbortable() {
         return new NullAbortable();
     }

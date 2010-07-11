@@ -14,7 +14,9 @@
 
 package com.google.code.geobeagle.bcaching;
 
+import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.GeoBeaglePackageModule.DefaultSharedPreferences;
+import com.google.code.geobeagle.activity.cachelist.CacheListModule.ToasterSyncAborted;
 import com.google.code.geobeagle.bcaching.BCachingAnnotations.BCachingUserName;
 import com.google.code.geobeagle.bcaching.BCachingAnnotations.CacheListAnnotation;
 import com.google.code.geobeagle.bcaching.BCachingAnnotations.DetailsReaderAnnotation;
@@ -25,8 +27,14 @@ import com.google.code.geobeagle.bcaching.progress.ProgressHandler;
 import com.google.code.geobeagle.database.ClearCachesFromSource;
 import com.google.code.geobeagle.database.ClearCachesFromSourceNull;
 import com.google.code.geobeagle.xmlimport.CachePersisterFacade;
+import com.google.code.geobeagle.xmlimport.EventHandlerGpx;
+import com.google.code.geobeagle.xmlimport.EventHelper;
 import com.google.code.geobeagle.xmlimport.MessageHandlerInterface;
+import com.google.code.geobeagle.xmlimport.XmlPullParserWrapper;
+import com.google.code.geobeagle.xmlimport.EventHelper.XmlPathBuilder;
+import com.google.code.geobeagle.xmlimport.GpxImporterDI.Toaster;
 import com.google.code.geobeagle.xmlimport.GpxToCache.Aborter;
+import com.google.code.geobeagle.xmlimport.XmlimportAnnotations.LoadDetails;
 import com.google.inject.Inject;
 import com.google.inject.Provides;
 
@@ -37,6 +45,9 @@ import roboguice.util.RoboThread;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.PowerManager;
+import android.os.PowerManager.WakeLock;
+import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -48,6 +59,32 @@ public class BCachingModule extends AbstractAndroidModule {
 
     public static final String BCACHING_INITIAL_MESSAGE = "Getting cache count...";
 
+    static class ImportSubmodule extends AbstractAndroidModule {
+
+        @Override
+        protected void configure() {
+        }
+
+        @Provides
+        @LoadDetails
+        @ContextScoped
+        EventHelper eventHelperGpxLoadDetailsProvider(XmlPathBuilder xmlPathBuilder,
+                @LoadDetails EventHandlerGpx eventHandlerGpx, XmlPullParserWrapper xmlPullParser) {
+            return new EventHelper(xmlPathBuilder, eventHandlerGpx, xmlPullParser);
+        }
+        
+        @Provides
+        WakeLock wakeLockProvider(PowerManager powerManager) {
+            return powerManager.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, "Importing");
+        }
+        @Provides
+        @ToasterSyncAborted
+        Toaster toasterProvider(Context context) {
+            return new Toaster(context, R.string.import_canceled, Toast.LENGTH_LONG);
+        }
+
+    }
+    
     @Override
     protected void configure() {
         bind(BufferedReaderFactory.class).to(BufferedReaderFactoryImpl.class);
@@ -57,6 +94,7 @@ public class BCachingModule extends AbstractAndroidModule {
         bind(Aborter.class).in(ContextScoped.class);
         bind(ClearCachesFromSource.class).to(ClearCachesFromSourceNull.class);
         bind(ImportBCachingWorker.class).in(ContextScoped.class);
+        install(new ImportSubmodule());
         requestStaticInjection(RoboThread.class);
     }
 

@@ -43,8 +43,6 @@ import roboguice.inject.ContextScoped;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Environment;
-import android.os.PowerManager;
-import android.os.PowerManager.WakeLock;
 import android.util.Log;
 
 import java.util.Arrays;
@@ -77,11 +75,6 @@ public class XmlimportModule extends AbstractAndroidModule {
     @ExternalStorageDirectory
     String providesPicturesDirectory() {
         return Environment.getExternalStorageDirectory().getAbsolutePath();
-    }
-
-    @Provides
-    WakeLock wakeLockProvider(PowerManager powerManager) {
-        return powerManager.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, "Importing");
     }
 
     @Provides
@@ -178,11 +171,4 @@ public class XmlimportModule extends AbstractAndroidModule {
         return createEmotifierPattern(emoticons);
     }
     
-    @Provides
-    @LoadDetails
-    @ContextScoped
-    EventHelper eventHelperGpxLoadDetailsProvider(XmlPathBuilder xmlPathBuilder,
-            @LoadDetails EventHandlerGpx eventHandlerGpx, XmlPullParserWrapper xmlPullParser) {
-        return new EventHelper(xmlPathBuilder, eventHandlerGpx, xmlPullParser);
-    }
 }
