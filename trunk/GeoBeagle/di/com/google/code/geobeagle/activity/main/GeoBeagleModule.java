@@ -20,10 +20,12 @@ import static java.lang.annotation.ElementType.PARAMETER;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 import com.google.code.geobeagle.ErrorDisplayer;
+import com.google.code.geobeagle.GeoBeaglePackageModule;
 import com.google.code.geobeagle.LocationControlBuffered;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.Refresher;
 import com.google.code.geobeagle.CompassListener.Azimuth;
+import com.google.code.geobeagle.GeoBeaglePackageModule.DefaultSharedPreferences;
 import com.google.code.geobeagle.GraphicsGenerator.IconOverlayFactory;
 import com.google.code.geobeagle.GraphicsGenerator.IconRenderer;
 import com.google.code.geobeagle.GraphicsGenerator.MapViewBitmapCopier;
@@ -108,14 +110,6 @@ public class GeoBeagleModule extends AbstractAndroidModule {
             FIELD, PARAMETER, METHOD
     })
     @Retention(RUNTIME)
-    public static @interface DefaultSharedPreferences {
-    }
-
-    @BindingAnnotation
-    @Target( {
-            FIELD, PARAMETER, METHOD
-    })
-    @Retention(RUNTIME)
     public static @interface DialogOnClickListenerNOP {
     }
 
@@ -173,12 +167,6 @@ public class GeoBeagleModule extends AbstractAndroidModule {
     })
     @Retention(RUNTIME)
     public static @interface ExternalStorageDirectory {
-    }
-
-    @Provides
-    @DefaultSharedPreferences
-    public SharedPreferences providesDefaultSharedPreferences(Context context) {
-        return PreferenceManager.getDefaultSharedPreferences(context);
     }
 
     @Override
