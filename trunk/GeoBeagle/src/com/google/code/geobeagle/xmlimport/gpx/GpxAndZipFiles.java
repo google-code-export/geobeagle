@@ -16,8 +16,7 @@ package com.google.code.geobeagle.xmlimport.gpx;
 
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.xmlimport.ImportException;
-import com.google.code.geobeagle.xmlimport.XmlimportAnnotations.ImportDirectory;
-import com.google.inject.Provider;
+import com.google.code.geobeagle.xmlimport.XmlimportModule.GeoBeagleEnvironment;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -83,18 +82,18 @@ public class GpxAndZipFiles {
 
     private final FilenameFilter mFilenameFilter;
     private final GpxFileIterAndZipFileIterFactory mGpxFileIterAndZipFileIterFactory;
-    private final Provider<String> mGpxDirProvider;
+    private GeoBeagleEnvironment mGeoBeagleEnvironment;
 
     public GpxAndZipFiles(FilenameFilter filenameFilter,
             GpxFileIterAndZipFileIterFactory gpxFileIterAndZipFileIterFactory,
-            @ImportDirectory Provider<String> gpxDirProvider) {
+            GeoBeagleEnvironment geoBeagleEnvironment) {
         mFilenameFilter = filenameFilter;
         mGpxFileIterAndZipFileIterFactory = gpxFileIterAndZipFileIterFactory;
-        mGpxDirProvider = gpxDirProvider;
+        mGeoBeagleEnvironment = geoBeagleEnvironment;
     }
 
     public GpxFilesAndZipFilesIter iterator() throws ImportException {
-        String gpxDir = mGpxDirProvider.get();
+        String gpxDir = mGeoBeagleEnvironment.getImportFolder();
         String[] fileList = new File(gpxDir).list(mFilenameFilter);
         if (fileList == null)
             throw new ImportException(R.string.error_cant_read_sd, gpxDir);
