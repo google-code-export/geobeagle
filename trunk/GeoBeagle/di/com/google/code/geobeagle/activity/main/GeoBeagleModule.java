@@ -76,14 +76,6 @@ public class GeoBeagleModule extends AbstractAndroidModule {
             FIELD, PARAMETER, METHOD
     })
     @Retention(RUNTIME)
-    public static @interface ButtonListenerCachePage {
-    }
-
-    @BindingAnnotation
-    @Target( {
-            FIELD, PARAMETER, METHOD
-    })
-    @Retention(RUNTIME)
     public static @interface ButtonListenerMapPage {
     }
 
@@ -140,13 +132,6 @@ public class GeoBeagleModule extends AbstractAndroidModule {
                 menuActionGoogleMaps
         };
         return new MenuActions(resources, menuActionArray);
-    }
-
-    @Provides
-    @ButtonListenerCachePage
-    OnClickListenerIntentStarter providesOnClickListenerIntentStarterCachePage(
-            IntentStarterViewCachePage intentStarter, ErrorDisplayer errorDisplayer) {
-        return new OnClickListenerIntentStarter(intentStarter, errorDisplayer);
     }
 
     @Provides
