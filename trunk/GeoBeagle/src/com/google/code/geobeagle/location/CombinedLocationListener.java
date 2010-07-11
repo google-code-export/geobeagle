@@ -16,6 +16,7 @@ package com.google.code.geobeagle.location;
 
 import com.google.code.geobeagle.LocationControlBuffered;
 import com.google.code.geobeagle.activity.cachelist.ActivityVisible;
+import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidgetDelegate;
 import com.google.inject.Inject;
 
 import android.location.Location;
@@ -32,7 +33,7 @@ public class CombinedLocationListener implements LocationListener {
 
     @Inject
     public CombinedLocationListener(LocationControlBuffered locationControlBuffered,
-            LocationListener locationListener, ActivityVisible activityVisible) {
+            GpsStatusWidgetDelegate locationListener, ActivityVisible activityVisible) {
         mLocationListener = locationListener;
         mLocationControlBuffered = locationControlBuffered;
         mActivityVisible = activityVisible;

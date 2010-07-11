@@ -77,13 +77,6 @@ public class GpsStatusWidgetModule extends AbstractAndroidModule {
     }
 
     @Provides
-    CombinedLocationListener providesCombinedLocationListener(
-            LocationControlBuffered locationControlBuffered,
-            GpsStatusWidgetDelegate locationListener, ActivityVisible activityVisible) {
-        return new CombinedLocationListener(locationControlBuffered, locationListener,
-                activityVisible);
-    }
-    @Provides
     public GpsStatusWidgetViewHolder providesGpsStatusWidgetView(Activity activity,
             Provider<InflatedGpsStatusWidget> inflatedGpsStatusWidgetProvider) {
         View inflatedGpsStatusWidget = activity.findViewById(R.id.gps_widget_view);
