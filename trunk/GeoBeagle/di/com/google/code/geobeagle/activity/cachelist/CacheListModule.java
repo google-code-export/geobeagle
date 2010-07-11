@@ -32,8 +32,6 @@ import com.google.inject.Provides;
 
 import roboguice.config.AbstractAndroidModule;
 
-import android.app.Activity;
-import android.app.ListActivity;
 import android.content.SharedPreferences;
 
 public class CacheListModule extends AbstractAndroidModule {
@@ -80,11 +78,6 @@ public class CacheListModule extends AbstractAndroidModule {
             return preferenceManager.getBoolean("absolute-bearing", false) ? absoluteBearingFormatter
                     : relativeBearingFormatter;
         }
-    }
-
-    @Provides
-    ListActivity providesListActivity(Activity activity) {
-        return (ListActivity)activity;
     }
 
     @Provides
