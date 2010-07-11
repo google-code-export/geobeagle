@@ -34,6 +34,7 @@ import roboguice.config.AbstractAndroidModule;
 import roboguice.inject.SystemServiceProvider;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.hardware.SensorManager;
@@ -87,6 +88,11 @@ public class GeoBeaglePackageModule extends AbstractAndroidModule {
     @ExternalStorageDirectory
     String providesPicturesDirectory() {
         return Environment.getExternalStorageDirectory().getAbsolutePath();
+    }
+
+    @Provides
+    AlertDialog.Builder providesAlertDialogBuilder(Activity activity) {
+        return new AlertDialog.Builder(activity);
     }
 
     @Provides

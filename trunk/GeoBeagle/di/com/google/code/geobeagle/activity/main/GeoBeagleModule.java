@@ -149,11 +149,6 @@ public class GeoBeagleModule extends AbstractAndroidModule {
     }
 
     @Provides
-    AlertDialog.Builder providesAlertDialogBuilder(Activity activity) {
-        return new AlertDialog.Builder(activity);
-    }
-
-    @Provides
     AppLifecycleManager providesAppLifecycleManager(
             @DefaultSharedPreferences SharedPreferences sharedPreferences, RadarView radarView,
             LocationControlBuffered locationControlBuffered, LocationManager locationManager) {
