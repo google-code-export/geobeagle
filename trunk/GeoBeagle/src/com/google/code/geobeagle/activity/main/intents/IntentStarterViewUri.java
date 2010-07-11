@@ -21,28 +21,26 @@ import com.google.inject.Inject;
 
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.net.Uri;
 
 public class IntentStarterViewUri implements IntentStarter {
     private final GeoBeagle mGeoBeagle;
     private final GeocacheToUri mGeocacheToUri;
-    private final IntentFactory mIntentFactory;
     private final ErrorDisplayer mErrorDisplayer;
 
     @Inject
-    public IntentStarterViewUri(GeoBeagle geoBeagle, IntentFactory intentFactory,
-            GeocacheToUri geocacheToUri, ErrorDisplayer errorDisplayer) {
+    public IntentStarterViewUri(GeoBeagle geoBeagle, GeocacheToUri geocacheToUri,
+            ErrorDisplayer errorDisplayer) {
         mGeoBeagle = geoBeagle;
         mGeocacheToUri = geocacheToUri;
-        mIntentFactory = intentFactory;
         mErrorDisplayer = errorDisplayer;
     }
 
     public void startIntent() {
         String uri = mGeocacheToUri.convert(mGeoBeagle.getGeocache());
         try {
-            mGeoBeagle.startActivity(mIntentFactory.createIntent(Intent.ACTION_VIEW, uri));
-        }
-        catch (ActivityNotFoundException e) {
+            mGeoBeagle.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(uri)));
+        } catch (ActivityNotFoundException e) {
             mErrorDisplayer.displayError(R.string.no_intent_handler, uri);
         }
     }

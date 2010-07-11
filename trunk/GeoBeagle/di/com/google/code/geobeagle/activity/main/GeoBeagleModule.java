@@ -34,7 +34,6 @@ import com.google.code.geobeagle.actions.MenuActionSettings;
 import com.google.code.geobeagle.actions.MenuActions;
 import com.google.code.geobeagle.activity.cachelist.view.NameFormatter;
 import com.google.code.geobeagle.activity.main.intents.GeocacheToGoogleGeo;
-import com.google.code.geobeagle.activity.main.intents.IntentFactory;
 import com.google.code.geobeagle.activity.main.intents.IntentStarter;
 import com.google.code.geobeagle.activity.main.intents.IntentStarterGeo;
 import com.google.code.geobeagle.activity.main.intents.IntentStarterViewUri;
@@ -109,7 +108,7 @@ public class GeoBeagleModule extends AbstractAndroidModule {
     GeoBeagle providesGeoBeagle(Activity activity) {
         return (GeoBeagle)activity;
     }
-
+    
     @Provides
     @GeoBeagleActivity
     MenuActions providesMenuActions(GeoBeagle geoBeagle, Resources resources,
@@ -180,8 +179,7 @@ public class GeoBeagleModule extends AbstractAndroidModule {
     @ChooseNavDialog
     @Provides
     public AlertDialog chooseNavDialogProvider(Provider<Resources> resourcesProvider,
-            Provider<Context> contextProvider, GeoBeagle geoBeagle, ErrorDisplayer errorDisplayer,
-            IntentFactory intentFactory) {
+            Provider<Context> contextProvider, GeoBeagle geoBeagle, ErrorDisplayer errorDisplayer) {
         final GeocacheToGoogleGeo geocacheToGoogleMaps = new GeocacheToGoogleGeo(resourcesProvider,
                 R.string.google_maps_intent);
         final GeocacheToGoogleGeo geocacheToNavigate = new GeocacheToGoogleGeo(resourcesProvider,
@@ -190,9 +188,9 @@ public class GeoBeagleModule extends AbstractAndroidModule {
         final IntentStarterGeo intentStarterRadar = new IntentStarterGeo(geoBeagle, new Intent(
                 "com.google.android.radar.SHOW_RADAR"));
         final IntentStarterViewUri intentStarterGoogleMaps = new IntentStarterViewUri(geoBeagle,
-                intentFactory, geocacheToGoogleMaps, errorDisplayer);
+                geocacheToGoogleMaps, errorDisplayer);
         final IntentStarterViewUri intentStarterNavigate = new IntentStarterViewUri(geoBeagle,
-                intentFactory, geocacheToNavigate, errorDisplayer);
+                geocacheToNavigate, errorDisplayer);
         final IntentStarter[] intentStarters = {
                 intentStarterRadar, intentStarterGoogleMaps, intentStarterNavigate
         };
