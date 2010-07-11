@@ -19,13 +19,7 @@ import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.ElementType.PARAMETER;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-import com.google.code.geobeagle.LocationControlBuffered.GpsDisabledLocation;
-import com.google.code.geobeagle.LocationControlBuffered.GpsEnabledLocation;
-import com.google.code.geobeagle.LocationControlBuffered.IGpsLocation;
-import com.google.code.geobeagle.activity.cachelist.presenter.DistanceSortStrategy;
-import com.google.code.geobeagle.activity.cachelist.presenter.NullSortStrategy;
 import com.google.code.geobeagle.activity.searchonline.NullRefresher;
-import com.google.code.geobeagle.location.LocationControl;
 import com.google.inject.BindingAnnotation;
 import com.google.inject.Provides;
 
@@ -38,8 +32,6 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.hardware.SensorManager;
-import android.location.Location;
-import android.location.LocationManager;
 import android.preference.PreferenceManager;
 
 import java.lang.annotation.Retention;
@@ -70,24 +62,9 @@ public class GeoBeaglePackageModule extends AbstractAndroidModule {
     @Override
     protected void configure() {
         bind(Refresher.class).to(NullRefresher.class);
+        bind(LocationControlBuffered.class).toProvider(LocationControlBufferedProvider.class).in(
+                ContextScoped.class);
         bind(SensorManager.class).toProvider(
                 new SystemServiceProvider<SensorManager>(Context.SENSOR_SERVICE));
-    }
-
-    @Provides
-    @ContextScoped
-    LocationControlBuffered providesLocationControlBuffered(LocationManager locationManager,
-            LocationControl locationControl, NullSortStrategy nullSortStrategy,
-            DistanceSortStrategy distanceSortStrategy, GpsDisabledLocation gpsDisabledLocation) {
-
-        IGpsLocation lastGpsLocation;
-        final Location lastKnownLocation = locationManager.getLastKnownLocation("gps");
-        if (lastKnownLocation == null)
-            lastGpsLocation = gpsDisabledLocation;
-        else
-            lastGpsLocation = new GpsEnabledLocation((float)lastKnownLocation.getLatitude(),
-                    (float)lastKnownLocation.getLongitude());
-        return new LocationControlBuffered(locationControl, distanceSortStrategy, nullSortStrategy,
-                gpsDisabledLocation, lastGpsLocation, lastKnownLocation);
     }
 }
