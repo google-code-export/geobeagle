@@ -23,7 +23,6 @@ import com.google.code.geobeagle.activity.cachelist.actions.context.ContextActio
 import com.google.code.geobeagle.activity.cachelist.actions.context.ContextActionDelete;
 import com.google.code.geobeagle.activity.cachelist.actions.context.ContextActionEdit;
 import com.google.code.geobeagle.activity.cachelist.actions.context.ContextActionView;
-import com.google.code.geobeagle.activity.cachelist.actions.menu.Abortable;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionDeleteAllCaches;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionMyLocation;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionSyncGpx;
@@ -96,11 +95,6 @@ public class CacheListModule extends AbstractAndroidModule {
         return (ListActivity)activity;
     }
 
-    @Provides
-    Abortable providesAbortable() {
-        return new NullAbortable();
-    }
-    
     @Provides
     MenuActions providesMenuActions(MenuActionSyncGpx menuActionSyncGpx,
             MenuActionDeleteAllCaches menuActionDeleteAllCaches,
