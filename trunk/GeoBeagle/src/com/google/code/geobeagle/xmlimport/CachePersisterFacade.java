@@ -14,14 +14,23 @@
 
 package com.google.code.geobeagle.xmlimport;
 
+import com.google.code.geobeagle.CacheTypeFactory;
 import com.google.code.geobeagle.GeocacheFactory.Source;
+import com.google.code.geobeagle.database.CacheWriter;
+import com.google.code.geobeagle.database.ClearCachesFromSource;
+import com.google.code.geobeagle.database.DbToGeocacheAdapter;
+import com.google.code.geobeagle.database.GpxWriter;
+import com.google.code.geobeagle.database.ISQLiteDatabase;
+import com.google.code.geobeagle.database.TagWriterImpl;
+import com.google.code.geobeagle.database.TagWriterNull;
 import com.google.code.geobeagle.xmlimport.CachePersisterFacadeDI.FileFactory;
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 
 import roboguice.inject.ContextScoped;
 
+import android.content.SharedPreferences;
 import android.os.PowerManager.WakeLock;
-import android.util.Log;
 
 import java.io.IOException;
 
@@ -36,9 +45,31 @@ public class CachePersisterFacade implements ICachePersisterFacade {
     private final GeoBeagleEnvironment mGeoBeagleEnvironment;
 
     @Inject
-    CachePersisterFacade(CacheTagSqlWriter cacheTagSqlWriter, FileFactory fileFactory,
+    CachePersisterFacade(MessageHandlerInterface messageHandler,
+            WakeLock wakeLock,
+            TagWriterImpl tagWriterImpl,
+            ClearCachesFromSource clearCachesFromSource,
+            SharedPreferences sharedPreferences,
+            Provider<ISQLiteDatabase> writableDatabaseProvider) {
+        DbToGeocacheAdapter dbToGeocacheAdapter = new DbToGeocacheAdapter();
+        CacheWriter cacheWriter = new CacheWriter(writableDatabaseProvider, dbToGeocacheAdapter);
+        GpxWriter gpxWriter = new GpxWriter(writableDatabaseProvider);
+        CacheTypeFactory cacheTypeFactory = new CacheTypeFactory();
+        TagWriterNull tagWriterNull = new TagWriterNull();
+        CacheTagSqlWriter cacheTagSqlWriter = new CacheTagSqlWriter(cacheWriter, gpxWriter,
+                cacheTypeFactory, tagWriterImpl, tagWriterNull, clearCachesFromSource);
+        mCacheTagWriter = cacheTagSqlWriter;
+        mFileFactory = new FileFactory();
+        mMessageHandler = messageHandler;
+        mWakeLock = wakeLock;
+        mGeoBeagleEnvironment = new GeoBeagleEnvironment(sharedPreferences);
+    }
+
+    CachePersisterFacade(CacheTagSqlWriter cacheTagSqlWriter,
+            FileFactory fileFactory,
             MessageHandlerInterface messageHandler,
-            WakeLock wakeLock, GeoBeagleEnvironment geoBeagleEnvironment) {
+            WakeLock wakeLock,
+            GeoBeagleEnvironment geoBeagleEnvironment) {
         mCacheTagWriter = cacheTagSqlWriter;
         mFileFactory = fileFactory;
         mMessageHandler = messageHandler;

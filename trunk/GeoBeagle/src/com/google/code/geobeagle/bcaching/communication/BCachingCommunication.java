@@ -87,23 +87,14 @@ public class BCachingCommunication {
     private final int timeout = 60000; // millisec
     private final String username;
 
-    public static class BCachingCredentials {
-        public final String password;
-        public final String username;
-
-        @Inject
-        public BCachingCredentials(SharedPreferences sharedPreferences) {
-            password = sharedPreferences.getString(BCachingModule.BCACHING_PASSWORD, "");
-            username = sharedPreferences.getString(BCachingModule.BCACHING_USERNAME, "");
-        }
-    }
-    
     @Inject
-    public BCachingCommunication(BCachingCredentials bcachingCredentials) {
-        username = bcachingCredentials.username;
+    public BCachingCommunication(SharedPreferences sharedPreferences) {
+        String password = sharedPreferences.getString(BCachingModule.BCACHING_PASSWORD, "");
+        username = sharedPreferences.getString(BCachingModule.BCACHING_USERNAME, "");
+
         String hashword = "";
         try {
-            hashword = encodeHashword(username, bcachingCredentials.password);
+            hashword = encodeHashword(username, password);
         } catch (Exception ex) {
             Log.e("GeoBeagle", ex.toString());
         }

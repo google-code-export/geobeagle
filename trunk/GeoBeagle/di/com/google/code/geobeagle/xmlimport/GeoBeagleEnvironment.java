@@ -25,7 +25,7 @@ public class GeoBeagleEnvironment {
     private static final String FIELDNOTES_FILE = "GeoBeagleFieldNotes.txt";
 
     @Inject
-    GeoBeagleEnvironment(SharedPreferences sharedPreferences) {
+    public GeoBeagleEnvironment(SharedPreferences sharedPreferences) {
         this.sharedPreferences = sharedPreferences;
     }
     

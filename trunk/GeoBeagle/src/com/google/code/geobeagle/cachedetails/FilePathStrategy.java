@@ -17,14 +17,15 @@ package com.google.code.geobeagle.cachedetails;
 import com.google.code.geobeagle.xmlimport.GeoBeagleEnvironment;
 import com.google.inject.Inject;
 
+import android.content.SharedPreferences;
+
 public class FilePathStrategy {
 
     private GeoBeagleEnvironment geoBeagleEnvironment;
 
     @Inject
-    public
-    FilePathStrategy(GeoBeagleEnvironment geoBeagleEnvironment) {
-        this.geoBeagleEnvironment = geoBeagleEnvironment;
+    public FilePathStrategy(SharedPreferences sharedPreferences) {
+        this.geoBeagleEnvironment = new GeoBeagleEnvironment(sharedPreferences);
     }
 
     private static String replaceIllegalFileChars(String wpt) {
