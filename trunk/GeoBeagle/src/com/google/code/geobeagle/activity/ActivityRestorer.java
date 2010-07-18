@@ -24,6 +24,7 @@ import com.google.inject.Inject;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 public class ActivityRestorer {
     
@@ -102,6 +103,7 @@ public class ActivityRestorer {
         final String lastActivity = mSharedPreferences.getString(ActivitySaver.LAST_ACTIVITY,
                 ActivityType.NONE.name());
         final ActivityType activityType = ActivityType.valueOf(lastActivity);
+        Log.d("GeoBeagle", "RESTORING: " + activityType);
         mRestorers[activityType.toInt()].restore();
     }
 }

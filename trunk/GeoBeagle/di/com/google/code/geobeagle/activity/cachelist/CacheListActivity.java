@@ -15,6 +15,7 @@
 package com.google.code.geobeagle.activity.cachelist;
 
 import com.google.code.geobeagle.R;
+import com.google.code.geobeagle.activity.ActivityRestorer;
 import com.google.code.geobeagle.activity.cachelist.actions.context.ContextActionDelete.ContextActionDeleteDialogHelper;
 import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidgetDelegate;
 import com.google.code.geobeagle.gpsstatuswidget.InflatedGpsStatusWidget;
@@ -62,6 +63,7 @@ public class CacheListActivity extends GuiceListActivity {
         super.onCreate(savedInstanceState);
         Log.d("GeoBeagle", "CacheListActivity onCreate");
         final Injector injector = this.getInjector();
+
         final InflatedGpsStatusWidget inflatedGpsStatusWidget = injector
                 .getInstance(InflatedGpsStatusWidget.class);
         final GpsStatusWidgetDelegate gpsStatusWidgetDelegate = injector
@@ -71,6 +73,8 @@ public class CacheListActivity extends GuiceListActivity {
         mCacheListDelegate = injector.getInstance(CacheListDelegate.class);
 
         mCacheListDelegate.onCreate();
+        injector.getInstance(ActivityRestorer.class).restore(getIntent().getFlags());
+        Log.d("GeoBeagle", "Done creating CacheListActivity");
     }
 
     @Override
