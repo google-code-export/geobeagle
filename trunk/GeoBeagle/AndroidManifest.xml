@@ -11,11 +11,11 @@
 		License.
 	-->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-	package="com.google.code.geobeagle" android:versionName="1.1.22"
-	android:versionCode="153">
+	package="com.google.code.geobeagle" android:versionName="1.1.23"
+	android:versionCode="154">
 	<uses-sdk android:minSdkVersion="3" />
 	<application android:icon="@drawable/icon" android:label="@string/app_name"
-		android:name=".GeoBeagleApplication" android:debuggable="false">
+		android:name=".GeoBeagleApplication" android:debuggable="true">
 		<uses-library android:name="com.google.android.maps" />
 
 		<activity android:name=".activity.main.GeoBeagle"

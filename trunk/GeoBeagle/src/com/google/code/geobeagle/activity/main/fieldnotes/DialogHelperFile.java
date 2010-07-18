@@ -25,11 +25,12 @@ import android.widget.TextView;
 
 public class DialogHelperFile implements DialogHelper {
     private final Context mContext;
-    private GeoBeagleEnvironment mGeoBeagleEnvironment;
+    private final GeoBeagleEnvironment mGeoBeagleEnvironment;
 
     @Inject
-    public DialogHelperFile(Context context) {
+    public DialogHelperFile(Context context, GeoBeagleEnvironment geoBeagleEnvironment) {
         mContext = context;
+        mGeoBeagleEnvironment = geoBeagleEnvironment;
     }
 
     @Override
