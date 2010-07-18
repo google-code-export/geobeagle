@@ -15,7 +15,6 @@
 package com.google.code.geobeagle.activity.searchonline;
 
 import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.activity.ActivityRestorer;
 import com.google.code.geobeagle.activity.cachelist.CacheListActivity;
 import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidgetDelegate;
 import com.google.code.geobeagle.gpsstatuswidget.InflatedGpsStatusWidget;
@@ -57,7 +56,6 @@ public class SearchOnlineActivity extends GuiceActivity {
 
         mSearchOnlineActivityDelegate = injector.getInstance(SearchOnlineActivityDelegate.class);
         mSearchOnlineActivityDelegate.configureWebView();
-        injector.getInstance(ActivityRestorer.class).restore(getIntent().getFlags());
     }
 
     @Override
