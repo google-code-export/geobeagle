@@ -45,6 +45,9 @@ public class FileDataVersionChecker {
             return true;
         } catch (IOException e) {
             return true;
+        } catch (NumberFormatException e) {
+            Log.e("GeoBeagle", "FileDateVersionChecker: " + e.getLocalizedMessage());
+            return true;
         }
     }
 }
