@@ -69,7 +69,7 @@ public enum GpxPath {
             boolean text(String text, ICachePersisterFacade cachePersisterFacade)
                     throws IOException {
                 cachePersisterFacade.cacheType(text);
-                return false;
+                return true;
             }
         },
         CONTAINER {

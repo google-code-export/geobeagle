@@ -29,8 +29,6 @@ public class EventHandlerGpx implements EventHandler {
     static final String XPATH_WPTDESC = "/gpx/wpt/desc";
     static final String XPATH_WPTNAME = "/gpx/wpt/name";
     
-    private boolean mLogEncrypted;
-
     @Override
     public void endTag(String name, String previousFullPath,
             ICachePersisterFacade cachePersisterFacade) throws IOException {
@@ -50,8 +48,8 @@ public class EventHandlerGpx implements EventHandler {
             cachePersisterFacade.available(xmlPullParser.getAttributeValue(null, "available"));
             cachePersisterFacade.archived(xmlPullParser.getAttributeValue(null, "archived"));
         } else if (fullPath.equals(XPATH_LOGTEXT)) {
-            mLogEncrypted = "true".equalsIgnoreCase(xmlPullParser
-                    .getAttributeValue(null, "encoded"));
+            cachePersisterFacade.setEncrypted("true".equalsIgnoreCase(xmlPullParser
+                    .getAttributeValue(null, "encoded")));
         }
     }
 
@@ -61,13 +59,11 @@ public class EventHandlerGpx implements EventHandler {
         String trimmedText = text.trim();
         GpxPath gpxPath = GpxPath.fromString(fullPath);
         if (gpxPath != null) {
-            boolean result = gpxPath.text(trimmedText, cachePersisterFacade);
-            if (gpxPath == GpxPath.XPATH_GPXTIME)
-                 return result;
+            return gpxPath.text(trimmedText, cachePersisterFacade);
         }
 
         if (fullPath.equals(XPATH_LOGTEXT)) {
-            cachePersisterFacade.logText(trimmedText, mLogEncrypted);
+            cachePersisterFacade.logText(trimmedText);
         }
         
         return true;

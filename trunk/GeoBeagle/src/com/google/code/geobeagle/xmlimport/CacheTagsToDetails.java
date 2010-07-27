@@ -8,11 +8,12 @@ import java.io.IOException;
 
 public class CacheTagsToDetails implements ICachePersisterFacade {
 
-    private final CacheDetailsWriter mCacheDetailsWriter;
+    private final CacheDetailsWriter cacheDetailsWriter;
+    private boolean encrypted;
 
     @Inject
     public CacheTagsToDetails(CacheDetailsWriter cacheDetailsWriter) {
-        mCacheDetailsWriter = cacheDetailsWriter;
+        this.cacheDetailsWriter = cacheDetailsWriter;
     }
     
     @Override
@@ -25,7 +26,7 @@ public class CacheTagsToDetails implements ICachePersisterFacade {
 
     @Override
     public void cacheType(String text) throws IOException {
-        mCacheDetailsWriter.writeField("Type", text);
+        cacheDetailsWriter.writeField("Type", text);
     }
 
     @Override
@@ -34,12 +35,12 @@ public class CacheTagsToDetails implements ICachePersisterFacade {
 
     @Override
     public void container(String text) throws IOException {
-        mCacheDetailsWriter.writeField("Container", text);
+        cacheDetailsWriter.writeField("Container", text);
     }
 
     @Override
     public void difficulty(String text) throws IOException {
-        mCacheDetailsWriter.writeField("Difficulty", text);
+        cacheDetailsWriter.writeField("Difficulty", text);
     }
 
     @Override
@@ -48,7 +49,7 @@ public class CacheTagsToDetails implements ICachePersisterFacade {
 
     @Override
     public void endCache(Source source) throws IOException {
-        mCacheDetailsWriter.close();
+        cacheDetailsWriter.close();
     }
 
     @Override
@@ -63,12 +64,12 @@ public class CacheTagsToDetails implements ICachePersisterFacade {
 
     @Override
     public void groundspeakName(String text) throws IOException {
-        mCacheDetailsWriter.writeName(text);
+        cacheDetailsWriter.writeName(text);
     }
 
     @Override
     public void hint(String text) throws IOException {
-        mCacheDetailsWriter.writeHint(text);
+        cacheDetailsWriter.writeHint(text);
     }
 
     @Override
@@ -77,12 +78,12 @@ public class CacheTagsToDetails implements ICachePersisterFacade {
 
     @Override
     public void line(String text) throws IOException {
-        mCacheDetailsWriter.writeLine(text);
+        cacheDetailsWriter.writeLine(text);
     }
 
     @Override
     public void logDate(String text) throws IOException {
-        mCacheDetailsWriter.writeLogDate(text);
+        cacheDetailsWriter.writeLogDate(text);
     }
 
     @Override
@@ -103,12 +104,12 @@ public class CacheTagsToDetails implements ICachePersisterFacade {
 
     @Override
     public void terrain(String text) throws IOException {
-        mCacheDetailsWriter.writeField("Terrain", text);
+        cacheDetailsWriter.writeField("Terrain", text);
     }
 
     @Override
     public void wpt(String latitude, String longitude) {
-        mCacheDetailsWriter.latitudeLongitude(latitude, longitude);
+        cacheDetailsWriter.latitudeLongitude(latitude, longitude);
     }
 
     @Override
@@ -117,37 +118,42 @@ public class CacheTagsToDetails implements ICachePersisterFacade {
 
     @Override
     public void wptName(String wpt) throws IOException {
-        mCacheDetailsWriter.writeWptName();
+        cacheDetailsWriter.writeWptName();
     }
 
     @Override
-    public void logText(String trimmedText, boolean encoded) throws IOException {
-        mCacheDetailsWriter.writeLogText(trimmedText, encoded);
+    public void logText(String trimmedText) throws IOException {
+        cacheDetailsWriter.writeLogText(trimmedText, encrypted);
     }
 
     @Override
     public void logType(String trimmedText) throws IOException {
-        mCacheDetailsWriter.logType(trimmedText);
+        cacheDetailsWriter.logType(trimmedText);
     }
 
     @Override
     public void placedBy(String trimmedText) throws IOException {
-        mCacheDetailsWriter.placedBy(trimmedText);
+        cacheDetailsWriter.placedBy(trimmedText);
     }
 
     @Override
     public void wptTime(String trimmedText) throws IOException {
-        mCacheDetailsWriter.wptTime(trimmedText);
+        cacheDetailsWriter.wptTime(trimmedText);
     }
 
     @Override
     public void shortDescription(String trimmedText) throws IOException {
-        mCacheDetailsWriter.writeShortDescription(trimmedText);
+        cacheDetailsWriter.writeShortDescription(trimmedText);
     }
 
     @Override
     public void longDescription(String trimmedText) throws IOException {
-        mCacheDetailsWriter.writeLongDescription(trimmedText);
+        cacheDetailsWriter.writeLongDescription(trimmedText);
+    }
+
+    @Override
+    public void setEncrypted(boolean mLogEncrypted) {
+        encrypted = true;
     }
 
 }

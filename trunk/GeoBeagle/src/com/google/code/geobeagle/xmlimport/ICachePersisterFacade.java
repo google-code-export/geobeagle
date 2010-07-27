@@ -50,7 +50,7 @@ public interface ICachePersisterFacade {
 
     public void logDate(String text) throws IOException;
 
-    public void logText(String trimmedText, boolean logEncrypted) throws IOException;
+    public void logText(String trimmedText) throws IOException;
 
     public void logType(String trimmedText) throws IOException;
 
@@ -77,4 +77,6 @@ public interface ICachePersisterFacade {
     public void wptName(String wpt) throws IOException;
 
     public void wptTime(String trimmedText) throws IOException;
+
+    public void setEncrypted(boolean mLogEncrypted);
 }

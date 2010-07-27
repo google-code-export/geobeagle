@@ -45,26 +45,6 @@ public class CachePersisterFacade implements ICachePersisterFacade {
     private final GeoBeagleEnvironment mGeoBeagleEnvironment;
 
     @Inject
-    CachePersisterFacade(MessageHandlerInterface messageHandler,
-            WakeLock wakeLock,
-            TagWriterImpl tagWriterImpl,
-            ClearCachesFromSource clearCachesFromSource,
-            SharedPreferences sharedPreferences,
-            Provider<ISQLiteDatabase> writableDatabaseProvider) {
-        DbToGeocacheAdapter dbToGeocacheAdapter = new DbToGeocacheAdapter();
-        CacheWriter cacheWriter = new CacheWriter(writableDatabaseProvider, dbToGeocacheAdapter);
-        GpxWriter gpxWriter = new GpxWriter(writableDatabaseProvider);
-        CacheTypeFactory cacheTypeFactory = new CacheTypeFactory();
-        TagWriterNull tagWriterNull = new TagWriterNull();
-        CacheTagSqlWriter cacheTagSqlWriter = new CacheTagSqlWriter(cacheWriter, gpxWriter,
-                cacheTypeFactory, tagWriterImpl, tagWriterNull, clearCachesFromSource);
-        mCacheTagWriter = cacheTagSqlWriter;
-        mFileFactory = new FileFactory();
-        mMessageHandler = messageHandler;
-        mWakeLock = wakeLock;
-        mGeoBeagleEnvironment = new GeoBeagleEnvironment(sharedPreferences);
-    }
-
     CachePersisterFacade(CacheTagSqlWriter cacheTagSqlWriter,
             FileFactory fileFactory,
             MessageHandlerInterface messageHandler,
@@ -199,7 +179,7 @@ public class CachePersisterFacade implements ICachePersisterFacade {
     }
 
     @Override
-    public void logText(String trimmedText, boolean attributeValue) throws IOException {
+    public void logText(String trimmedText) throws IOException {
     }
 
     @Override
@@ -220,6 +200,10 @@ public class CachePersisterFacade implements ICachePersisterFacade {
 
     @Override
     public void longDescription(String trimmedText) throws IOException {
+    }
+
+    @Override
+    public void setEncrypted(boolean mLogEncrypted) {
     }
 
 }
