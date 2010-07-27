@@ -76,12 +76,12 @@ public class DatabaseDI {
         }
 
         public int countResults(String table, String selection, String... selectionArgs) {
-            Log.d("GeoBeagle", "SQL count results: " + selection + ", "
-                    + Arrays.toString(selectionArgs));
 
             Cursor cursor = mSQLiteDatabase.query(table, null, selection, selectionArgs, null,
                     null, null, null);
             int count = cursor.getCount();
+            Log.d("GeoBeagle", "SQL count results: " + selection + ", "
+                    + Arrays.toString(selectionArgs) + ": " + count);
             cursor.close();
             return count;
         }
