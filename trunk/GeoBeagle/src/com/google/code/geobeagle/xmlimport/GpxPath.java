@@ -19,6 +19,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 public enum GpxPath {
+    XPATH_AU_DESCRIPTION("/gpx/wpt/geocache/description", PathType.LINE),
+    XPATH_AU_GEOCACHER("/gpx/wpt/geocache/logs/log/geocacher", PathType.LINE),
+    XPATH_AU_LOGTEXT("/gpx/wpt/geocache/logs/log/text", PathType.LINE),
+    XPATH_AU_LOGTYPE("/gpx/wpt/geocache/logs/log/type", PathType.LINE),
+    XPATH_AU_OWNER("/gpx/wpt/geocache/owner", PathType.LINE),
+    XPATH_AU_SUMMARY("/gpx/wpt/geocache/summary", PathType.LINE),
     XPATH_CACHE_CONTAINER("/gpx/wpt/groundspeak:cache/groundspeak:container", PathType.CONTAINER),
     XPATH_CACHE_DIFFICULTY("/gpx/wpt/groundspeak:cache/groundspeak:difficulty", PathType.DIFFICULTY),
     XPATH_CACHE_TERRAIN("/gpx/wpt/groundspeak:cache/groundspeak:terrain", PathType.TERRAIN),
@@ -34,6 +40,9 @@ public enum GpxPath {
     XPATH_GEOCACHELOGDATE("/gpx/wpt/geocache/logs/log/time", PathType.LOG_DATE),
     XPATH_GEOCACHENAME("/gpx/wpt/geocache/name", PathType.NAME),
     XPATH_GPXTIME("/gpx/time", PathType.GPX_TIME),
+    XPATH_GROUNDSPEAKFINDER(
+            "/gpx/wpt/groundspeak:cache/groundspeak:logs/groundspeak:log/groundspeak:finder",
+            PathType.LINE),
     XPATH_GROUNDSPEAKNAME("/gpx/wpt/groundspeak:cache/groundspeak:name", PathType.NAME),
     XPATH_HINT("/gpx/wpt/groundspeak:cache/groundspeak:encoded_hints", PathType.HINT),
     XPATH_LAST_MODIFIED("/gpx/wpt/bcaching:cache/bcaching:lastModified", PathType.LAST_MODIFIED),
@@ -49,8 +58,10 @@ public enum GpxPath {
     XPATH_SYM("/gpx/wpt/sym", PathType.SYMBOL),
     XPATH_TERRACACHINGGPXTIME("/gpx/metadata/time", PathType.GPX_TIME),
     XPATH_WAYPOINT_TYPE("/gpx/wpt/type", PathType.CACHE_TYPE),
+    XPATH_WPT_COMMENT("/gpx/wpt/cmt", PathType.LINE),
     XPATH_WPTDESC("/gpx/wpt/desc", PathType.DESC),
-    XPATH_WPTNAME("/gpx/wpt/name", PathType.WPT_NAME);
+    XPATH_WPTNAME("/gpx/wpt/name", PathType.WPT_NAME),
+    XPATH_WPTTIME("/gpx/wpt/time", PathType.WPT_TIME);
 
     private enum PathType {
         CACHE_TYPE {
@@ -105,6 +116,14 @@ public enum GpxPath {
             @Override
             boolean text(String text, ICachePersisterFacade cachePersisterFacade)
                     throws IOException {
+                return true;
+            }
+        },
+        LINE {
+            @Override
+            boolean text(String text, ICachePersisterFacade cachePersisterFacade)
+                    throws IOException {
+                cachePersisterFacade.line(text);
                 return true;
             }
         },
@@ -177,6 +196,14 @@ public enum GpxPath {
             public boolean text(String text, ICachePersisterFacade cachePersisterFacade)
                     throws IOException {
                 cachePersisterFacade.wptName(text);
+                return true;
+            }
+        },
+        WPT_TIME {
+            @Override
+            boolean text(String text, ICachePersisterFacade cachePersisterFacade)
+                    throws IOException {
+                cachePersisterFacade.wptTime(text);
                 return true;
             }
         };
