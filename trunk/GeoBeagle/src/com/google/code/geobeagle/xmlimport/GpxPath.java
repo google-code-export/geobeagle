@@ -325,6 +325,9 @@ public enum GpxPath {
     }
 
     public boolean text(String text, ICachePersisterFacade cachePersisterFacade) throws IOException {
-        return pathType.text(text, cachePersisterFacade);
+        String trimmedText = text.trim();
+        if (trimmedText.length() <= 0)
+            return true;
+        return pathType.text(trimmedText, cachePersisterFacade);
     }
 }

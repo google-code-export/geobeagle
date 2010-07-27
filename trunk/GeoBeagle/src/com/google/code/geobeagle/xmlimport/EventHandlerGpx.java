@@ -38,10 +38,7 @@ public class EventHandlerGpx implements EventHandler {
             String text,
             XmlPullParserWrapper xmlPullParser,
             ICachePersisterFacade cachePersisterFacade) throws IOException {
-        String trimmedText = text.trim();
-        if (trimmedText.length() <= 0)
-            return true;
-        return GpxPath.fromString(fullPath).text(trimmedText, cachePersisterFacade);
+        return GpxPath.fromString(fullPath).text(text, cachePersisterFacade);
     }
 
     @Override
