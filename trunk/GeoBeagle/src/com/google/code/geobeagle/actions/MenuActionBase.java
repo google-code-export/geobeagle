@@ -14,15 +14,23 @@
 
 package com.google.code.geobeagle.actions;
 
-public abstract class MenuActionBase implements MenuAction {
-    private final int mId;
 
-    public MenuActionBase(int id) {
-        mId = id;
+public class MenuActionBase implements MenuAction {
+    private final int id;
+    private final Action action;
+
+    public MenuActionBase(int id, Action action) {
+        this.id = id;
+        this.action = action;
+    }
+
+    @Override
+    public Action getAction() {
+        return action;
     }
 
     @Override
     public int getId() {
-        return mId;
+        return id;
     }
 }

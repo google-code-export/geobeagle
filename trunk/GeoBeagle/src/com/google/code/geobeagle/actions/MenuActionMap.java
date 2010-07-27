@@ -1,7 +1,6 @@
 package com.google.code.geobeagle.actions;
 
 import com.google.code.geobeagle.LocationControlBuffered;
-import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.map.GeoMapActivity;
 import com.google.inject.Inject;
 
@@ -10,7 +9,7 @@ import android.content.Intent;
 import android.location.Location;
 
 /** Show the map, centered around the current location */
-public class MenuActionMap implements MenuAction {
+public class MenuActionMap implements Action {
     private final LocationControlBuffered mLocationControl;
     private final Activity mActivity;
     
@@ -31,10 +30,4 @@ public class MenuActionMap implements MenuAction {
         }
         mActivity.startActivity(intent);
     }
-
-    @Override
-    public int getId() {
-        return R.string.menu_map;
-    }
-
 }

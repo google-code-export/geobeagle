@@ -14,8 +14,7 @@
 
 package com.google.code.geobeagle.activity.cachelist.actions.menu;
 
-import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.actions.MenuActionBase;
+import com.google.code.geobeagle.actions.Action;
 import com.google.code.geobeagle.activity.cachelist.GpxImporterFactory;
 import com.google.code.geobeagle.activity.cachelist.NullAbortable;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
@@ -24,6 +23,7 @@ import com.google.code.geobeagle.database.CacheWriter;
 import com.google.code.geobeagle.database.GpxWriter;
 import com.google.code.geobeagle.xmlimport.GpxImporter;
 import com.google.inject.Inject;
+import com.google.inject.Injector;
 import com.google.inject.Provider;
 
 import roboguice.inject.ContextScoped;
@@ -31,7 +31,7 @@ import roboguice.inject.ContextScoped;
 import android.util.Log;
 
 @ContextScoped
-public class MenuActionSyncGpx extends MenuActionBase {
+public class MenuActionSyncGpx implements Action {
     private Abortable mSdcardImportAbortable;
     private final CacheListRefresh mCacheListRefresh;
     private final GpxImporterFactory mGpxImporterFactory;
@@ -41,12 +41,12 @@ public class MenuActionSyncGpx extends MenuActionBase {
     private Abortable mBCachingWorkerAborter;
     private Abortable mNullAbortable;
 
-    @Inject
     public MenuActionSyncGpx(Provider<ImportBCachingWorker> importBCachingWorkerProvider,
-            NullAbortable nullAbortable, CacheListRefresh cacheListRefresh,
-            GpxImporterFactory gpxImporterFactory, Provider<CacheWriter> cacheWriterProvider,
+            NullAbortable nullAbortable,
+            CacheListRefresh cacheListRefresh,
+            GpxImporterFactory gpxImporterFactory,
+            Provider<CacheWriter> cacheWriterProvider,
             Provider<GpxWriter> gpxWriterProvider) {
-        super(R.string.menu_sync);
         mNullAbortable = nullAbortable;
         mSdcardImportAbortable = nullAbortable;
         mBCachingWorkerAborter = nullAbortable;
@@ -57,6 +57,18 @@ public class MenuActionSyncGpx extends MenuActionBase {
         mImportBCachingWorkerProvider = importBCachingWorkerProvider;
     }
 
+    @Inject
+    public MenuActionSyncGpx(Injector injector) {
+        mNullAbortable = injector.getInstance(NullAbortable.class);
+        mSdcardImportAbortable = mNullAbortable;
+        mBCachingWorkerAborter = mNullAbortable;
+        mCacheListRefresh = injector.getInstance(CacheListRefresh.class);
+        mGpxImporterFactory = injector.getInstance(GpxImporterFactory.class);
+        mCacheWriterProvider = injector.getProvider(CacheWriter.class);
+        mGpxWriterProvider = injector.getProvider(GpxWriter.class);
+        mImportBCachingWorkerProvider = injector.getProvider(ImportBCachingWorker.class);
+    }
+    
     public void abort() {
         Log.d("GeoBeagle", "MenuActionSyncGpx aborting");
         mSdcardImportAbortable.abort();
@@ -65,6 +77,7 @@ public class MenuActionSyncGpx extends MenuActionBase {
         mBCachingWorkerAborter = mNullAbortable;
     }
 
+    @Override
     public void act() {
         final GpxImporter gpxImporter = mGpxImporterFactory.create(mCacheWriterProvider.get(),
                 mGpxWriterProvider.get());
