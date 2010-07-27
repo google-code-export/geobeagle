@@ -14,61 +14,36 @@
 
 package com.google.code.geobeagle.xmlimport;
 
-import com.google.code.geobeagle.GeocacheFactory.Source;
-
 import java.io.IOException;
 
 public class EventHandlerGpx implements EventHandler {
-   
-    static final String XPATH_CACHE = "/gpx/wpt/groundspeak:cache";
-    static final String XPATH_GEOCACHELOGDATE = "/gpx/wpt/geocache/logs/log/time";
-    static final String XPATH_GPXNAME = "/gpx/name";
-    static final String XPATH_LOGTEXT = "/gpx/wpt/groundspeak:cache/groundspeak:logs/groundspeak:log/groundspeak:text";
-    static final String XPATH_SYM = "/gpx/wpt/sym";
-    static final String XPATH_WPT = "/gpx/wpt";
-    static final String XPATH_WPTDESC = "/gpx/wpt/desc";
-    static final String XPATH_WPTNAME = "/gpx/wpt/name";
-    
+
     @Override
-    public void endTag(String name, String previousFullPath,
+    public void endTag(String name,
+            String previousFullPath,
             ICachePersisterFacade cachePersisterFacade) throws IOException {
-        if (previousFullPath.equals(XPATH_WPT)) {
-            cachePersisterFacade.endCache(Source.GPX);
-        }
+        GpxPath.fromString(previousFullPath).endTag(cachePersisterFacade);
     }
 
     @Override
-    public void startTag(String name, String fullPath, XmlPullParserWrapper xmlPullParser,
+    public void startTag(String name,
+            String fullPath,
+            XmlPullParserWrapper xmlPullParser,
             ICachePersisterFacade cachePersisterFacade) {
-        if (fullPath.equals(XPATH_WPT)) {
-            cachePersisterFacade.startCache();
-            cachePersisterFacade.wpt(xmlPullParser.getAttributeValue(null, "lat"), xmlPullParser
-                    .getAttributeValue(null, "lon"));
-        } else if (fullPath.equals(XPATH_CACHE)) {
-            cachePersisterFacade.available(xmlPullParser.getAttributeValue(null, "available"));
-            cachePersisterFacade.archived(xmlPullParser.getAttributeValue(null, "archived"));
-        } else if (fullPath.equals(XPATH_LOGTEXT)) {
-            cachePersisterFacade.setEncrypted("true".equalsIgnoreCase(xmlPullParser
-                    .getAttributeValue(null, "encoded")));
-        }
+        GpxPath.fromString(fullPath).startTag(xmlPullParser, cachePersisterFacade);
     }
 
     @Override
-    public boolean text(String fullPath, String text, XmlPullParserWrapper xmlPullParser,
+    public boolean text(String fullPath,
+            String text,
+            XmlPullParserWrapper xmlPullParser,
             ICachePersisterFacade cachePersisterFacade) throws IOException {
         String trimmedText = text.trim();
-        GpxPath gpxPath = GpxPath.fromString(fullPath);
-        if (gpxPath != null) {
-            return gpxPath.text(trimmedText, cachePersisterFacade);
-        }
-
-        if (fullPath.equals(XPATH_LOGTEXT)) {
-            cachePersisterFacade.logText(trimmedText);
-        }
-        
-        return true;
+        if (trimmedText.length() <= 0)
+            return true;
+        return GpxPath.fromString(fullPath).text(trimmedText, cachePersisterFacade);
     }
-    
+
     @Override
     public void open(String filename) throws IOException {
     }

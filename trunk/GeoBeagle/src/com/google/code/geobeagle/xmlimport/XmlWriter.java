@@ -42,7 +42,7 @@ public class XmlWriter implements EventHandler {
         if (tagWriter.isOpen())
             tagWriter.endTag(name);
 
-        if (previousFullPath.equals(EventHandlerGpx.XPATH_WPT)) {
+        if (previousFullPath.equals(GpxPath.XPATH_WPT.getPath())) {
             tagWriter.endTag("gpx");
             tagWriter.close();
         }
@@ -85,7 +85,7 @@ public class XmlWriter implements EventHandler {
 
         if (fullPath.equals("/gpx/wpt/time")) {
             time = text;
-        } else if (fullPath.equals(EventHandlerGpx.XPATH_WPTNAME)) {
+        } else if (fullPath.equals(GpxPath.XPATH_WPTNAME.getPath())) {
             tagWriter.open(filePathStrategy.getPath(filename, text, "gpx"));
             HashMap<String, String> emptyHashMap = new HashMap<String, String>();
             tagWriter.startTag(new Tag("gpx", emptyHashMap));
