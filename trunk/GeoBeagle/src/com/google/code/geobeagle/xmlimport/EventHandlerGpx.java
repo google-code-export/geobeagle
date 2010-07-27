@@ -72,8 +72,9 @@ public class EventHandlerGpx implements EventHandler {
         String trimmedText = text.trim();
         GpxPath gpxPath = GpxPath.fromString(fullPath);
         if (gpxPath != null) {
-             gpxPath.text(trimmedText, cachePersisterFacade);
-             return true;
+             boolean result= gpxPath.text(trimmedText, cachePersisterFacade);
+             if (gpxPath == GpxPath.XPATH_GPXTIME)
+                 return result;
         }
         if (fullPath.equals(XPATH_LOGTEXT)) {
             cachePersisterFacade.logText(trimmedText, mLogEncrypted);

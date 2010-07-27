@@ -207,7 +207,7 @@ public enum GpxPath {
         return path;
     }
 
-    public void text(String text, ICachePersisterFacade cachePersisterFacade) throws IOException {
-        pathType.text(text, cachePersisterFacade);
+    public boolean text(String text, ICachePersisterFacade cachePersisterFacade) throws IOException {
+        return pathType.text(text, cachePersisterFacade);
     }
 }
