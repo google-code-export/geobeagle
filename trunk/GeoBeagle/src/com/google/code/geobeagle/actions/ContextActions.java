@@ -19,18 +19,26 @@ import com.google.code.geobeagle.activity.cachelist.actions.context.ContextActio
 import com.google.code.geobeagle.activity.cachelist.actions.context.ContextActionEdit;
 import com.google.code.geobeagle.activity.cachelist.actions.context.ContextActionView;
 import com.google.inject.Inject;
+import com.google.inject.Injector;
 
 import java.util.ArrayList;
 
 public class ContextActions {
     private final ArrayList<ContextAction> contextActions = new ArrayList<ContextAction>();
 
-    @Inject
     public ContextActions(ContextActionDelete contextActionDelete,
-            ContextActionEdit contextActionEdit, ContextActionView contextActionView) {
+            ContextActionEdit contextActionEdit,
+            ContextActionView contextActionView) {
         contextActions.add(contextActionDelete);
         contextActions.add(contextActionView);
         contextActions.add(contextActionEdit);
+    }
+
+    @Inject
+    public ContextActions(Injector injector) {
+        contextActions.add(injector.getInstance(ContextActionDelete.class));
+        contextActions.add(injector.getInstance(ContextActionView.class));
+        contextActions.add(injector.getInstance(ContextActionEdit.class));
     }
 
     public void act(int menuIndex, int position) {

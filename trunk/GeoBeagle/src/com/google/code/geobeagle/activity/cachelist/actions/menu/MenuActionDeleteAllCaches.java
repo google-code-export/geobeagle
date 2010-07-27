@@ -15,7 +15,7 @@
 package com.google.code.geobeagle.activity.cachelist.actions.menu;
 
 import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.actions.MenuActionBase;
+import com.google.code.geobeagle.actions.Action;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
 import com.google.code.geobeagle.bcaching.preferences.BCachingStartTime;
 import com.google.code.geobeagle.database.DbFrontend;
@@ -27,13 +27,14 @@ import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.content.DialogInterface;
 
-public class MenuActionDeleteAllCaches extends MenuActionBase {
+public class MenuActionDeleteAllCaches implements Action {
     static final class OnClickCancelListener implements DialogInterface.OnClickListener {
+        @Override
         public void onClick(DialogInterface dialog, int id) {
             dialog.cancel();
         }
     }
-
+    
     private static class OnClickOkayListener implements DialogInterface.OnClickListener {
         private final CacheListRefresh cacheListRefresh;
         private Provider<DbFrontend> dbFrontendProvider;
@@ -46,6 +47,7 @@ public class MenuActionDeleteAllCaches extends MenuActionBase {
             this.bcachingLastUpdated = bcachingLastUpdated;
         }
 
+        @Override
         public void onClick(DialogInterface dialog, int id) {
             dialog.dismiss();
             dbFrontendProvider.get().deleteAll();
@@ -64,7 +66,6 @@ public class MenuActionDeleteAllCaches extends MenuActionBase {
     public MenuActionDeleteAllCaches(CacheListRefresh cacheListRefresh, Activity activity,
             Provider<DbFrontend> dbFrontendProvider, AlertDialog.Builder builder,
             BCachingStartTime bcachingLastUpdated) {
-        super(R.string.menu_delete_all_caches);
         mDbFrontendProvider = dbFrontendProvider;
         mBuilder = builder;
         mActivity = activity;

@@ -15,9 +15,8 @@
 package com.google.code.geobeagle.actions;
 
 public interface MenuAction {
-
-    public void act();
-    
     /** Must be the id of a resource string - used to set label */
     public int getId();
+    
+    public Action getAction();
 }

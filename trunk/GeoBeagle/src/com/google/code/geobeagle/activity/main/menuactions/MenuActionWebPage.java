@@ -13,17 +13,15 @@
  */
 package com.google.code.geobeagle.activity.main.menuactions;
 
-import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.actions.MenuActionBase;
+import com.google.code.geobeagle.actions.Action;
 import com.google.code.geobeagle.activity.main.IntentStarterViewCachePage;
 import com.google.inject.Inject;
 
-public class MenuActionWebPage extends MenuActionBase {
+public class MenuActionWebPage implements Action {
     private final IntentStarterViewCachePage intentStarterViewCachePage;
 
     @Inject
     public MenuActionWebPage(IntentStarterViewCachePage intentStarterViewCachePage) {
-        super(R.string.web_page);
         this.intentStarterViewCachePage = intentStarterViewCachePage;
     }
 

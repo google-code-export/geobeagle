@@ -17,7 +17,7 @@ package com.google.code.geobeagle.activity.cachelist.actions.menu;
 import com.google.code.geobeagle.ErrorDisplayer;
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.actions.MenuActionBase;
+import com.google.code.geobeagle.actions.Action;
 import com.google.code.geobeagle.activity.EditCacheActivity;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheFromMyLocationFactory;
 import com.google.code.geobeagle.database.LocationSaver;
@@ -26,7 +26,7 @@ import com.google.inject.Inject;
 import android.app.Activity;
 import android.content.Intent;
 
-public class MenuActionMyLocation extends MenuActionBase {
+public class MenuActionMyLocation implements Action {
     private final ErrorDisplayer mErrorDisplayer;
     private final GeocacheFromMyLocationFactory mGeocacheFromMyLocationFactory;
     private final LocationSaver mLocationSaver;
@@ -35,7 +35,6 @@ public class MenuActionMyLocation extends MenuActionBase {
     @Inject
     public MenuActionMyLocation(Activity activity, ErrorDisplayer errorDisplayer,
             GeocacheFromMyLocationFactory geocacheFromMyLocationFactory, LocationSaver locationSaver) {
-        super(R.string.menu_add_my_location);
         mGeocacheFromMyLocationFactory = geocacheFromMyLocationFactory;
         mErrorDisplayer = errorDisplayer;
         mLocationSaver = locationSaver;
