@@ -20,6 +20,7 @@ import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
 import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheListPresenter;
 import com.google.code.geobeagle.database.DbFrontend;
 import com.google.inject.Inject;
+import com.google.inject.Injector;
 import com.google.inject.Provider;
 
 import android.app.Activity;
@@ -68,7 +69,6 @@ public class CacheListDelegate {
     private final GeocacheListPresenter mPresenter;
     private final ActivityVisible mActivityVisible;
 
-    @Inject
     public CacheListDelegate(ImportIntentManager importIntentManager, ActivitySaver activitySaver,
             CacheListRefresh cacheListRefresh, GeocacheListController geocacheListController,
             GeocacheListPresenter geocacheListPresenter, Provider<DbFrontend> dbFrontendProvider,
@@ -80,6 +80,17 @@ public class CacheListDelegate {
         mImportIntentManager = importIntentManager;
         mDbFrontendProvider = dbFrontendProvider;
         mActivityVisible = activityVisible;
+    }
+    
+    @Inject
+    public CacheListDelegate(Injector injector) {
+        mActivitySaver = injector.getInstance(ActivitySaver.class);
+        mCacheListRefresh = injector.getInstance(CacheListRefresh.class);
+        mController = injector.getInstance(GeocacheListController.class);
+        mPresenter = injector.getInstance(GeocacheListPresenter.class);
+        mImportIntentManager = injector.getInstance(ImportIntentManager.class);
+        mDbFrontendProvider = injector.getProvider(DbFrontend.class);
+        mActivityVisible = injector.getInstance(ActivityVisible.class);
     }
 
     public boolean onContextItemSelected(MenuItem menuItem) {

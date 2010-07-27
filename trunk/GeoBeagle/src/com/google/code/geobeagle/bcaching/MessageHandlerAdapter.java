@@ -20,6 +20,7 @@ import com.google.code.geobeagle.bcaching.progress.ProgressManager;
 import com.google.code.geobeagle.bcaching.progress.ProgressMessage;
 import com.google.code.geobeagle.xmlimport.MessageHandlerInterface;
 import com.google.inject.Inject;
+import com.google.inject.Injector;
 
 import android.os.Message;
 
@@ -30,10 +31,16 @@ class MessageHandlerAdapter implements MessageHandlerInterface {
     private String waypoint;
     private int count;
 
-    @Inject
     public MessageHandlerAdapter(ProgressHandler handler, ProgressManager progressManager) {
         this.handler = handler;
         this.progressManager = progressManager;
+        waypoint = "";
+    }
+
+    @Inject
+    public MessageHandlerAdapter(Injector injector) {
+        this.handler = injector.getInstance(ProgressHandler.class);
+        this.progressManager = injector.getInstance(ProgressManager.class);
         waypoint = "";
     }
 
