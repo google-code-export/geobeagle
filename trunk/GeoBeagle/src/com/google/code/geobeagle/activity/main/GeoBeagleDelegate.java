@@ -19,11 +19,13 @@ import com.google.code.geobeagle.CompassListener;
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.GeocacheFactory;
 import com.google.code.geobeagle.GeocacheFactory.Source;
+import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.actions.MenuActions;
 import com.google.code.geobeagle.activity.ActivitySaver;
 import com.google.code.geobeagle.activity.ActivityType;
+import com.google.code.geobeagle.activity.main.view.CheckDetailsButton;
+import com.google.code.geobeagle.activity.main.view.WebPageMenuEnabler;
 import com.google.code.geobeagle.activity.main.view.GeocacheViewer;
-import com.google.code.geobeagle.activity.main.view.WebPageAndDetailsButtonEnabler;
 import com.google.code.geobeagle.database.CacheWriter;
 import com.google.code.geobeagle.database.DbFrontend;
 import com.google.code.geobeagle.database.LocationSaver;
@@ -59,6 +61,7 @@ public class GeoBeagleDelegate {
             mIdDialog = idDialog;
         }
 
+        @Override
         public void onClick(View v) {
             mGeoBeagle.showDialog(mIdDialog);
         }
@@ -79,21 +82,29 @@ public class GeoBeagleDelegate {
     private final RadarView mRadarView;
     private final SensorManager mSensorManager;
     private final SharedPreferences mSharedPreferences;
-    private final WebPageAndDetailsButtonEnabler mWebPageButtonEnabler;
+    private final CheckDetailsButton mCheckDetailsButton;
     private final Provider<CacheWriter> mCacheWriterProvider;
     private final GeoBeagleEnvironment mGeoBeagleEnvironment;
+    private final WebPageMenuEnabler mWebPageMenuEnabler;
 
     @Inject
-    public GeoBeagleDelegate(ActivitySaver activitySaver, AppLifecycleManager appLifecycleManager,
-            CompassListener compassListener, Activity parent, GeocacheFactory geocacheFactory,
-            GeocacheViewer geocacheViewer, IncomingIntentHandler incomingIntentHandler,
+    public GeoBeagleDelegate(ActivitySaver activitySaver,
+            AppLifecycleManager appLifecycleManager,
+            CompassListener compassListener,
+            Activity parent,
+            GeocacheFactory geocacheFactory,
+            GeocacheViewer geocacheViewer,
+            IncomingIntentHandler incomingIntentHandler,
             GeoBeagleActivityMenuActions menuActions,
             GeocacheFromParcelFactory geocacheFromParcelFactory,
-            Provider<DbFrontend> dbFrontendProvider, RadarView radarView,
+            Provider<DbFrontend> dbFrontendProvider,
+            RadarView radarView,
             SensorManager sensorManager,
             SharedPreferences sharedPreferences,
-            WebPageAndDetailsButtonEnabler webPageButtonEnabler,
-            Provider<CacheWriter> cacheWriterProvider, GeoBeagleEnvironment geoBeagleEnvironment) {
+            CheckDetailsButton checkDetailsButton,
+            WebPageMenuEnabler webPageMenuEnabler,
+            Provider<CacheWriter> cacheWriterProvider,
+            GeoBeagleEnvironment geoBeagleEnvironment) {
         mParent = (GeoBeagle)parent;
         mActivitySaver = activitySaver;
         mAppLifecycleManager = appLifecycleManager;
@@ -103,13 +114,14 @@ public class GeoBeagleDelegate {
         mCompassListener = compassListener;
         mSensorManager = sensorManager;
         mGeocacheViewer = geocacheViewer;
-        mWebPageButtonEnabler = webPageButtonEnabler;
         mGeocacheFactory = geocacheFactory;
         mIncomingIntentHandler = incomingIntentHandler;
         mDbFrontendProvider = dbFrontendProvider;
         mGeocacheFromParcelFactory = geocacheFromParcelFactory;
         mCacheWriterProvider = cacheWriterProvider;
         mGeoBeagleEnvironment = geoBeagleEnvironment;
+        mCheckDetailsButton = checkDetailsButton;
+        mWebPageMenuEnabler = webPageMenuEnabler;
     }
 
     public Geocache getGeocache() {
@@ -175,7 +187,7 @@ public class GeoBeagleDelegate {
                     CacheType.NULL, 0, 0, 0, true, false);
         }
         mGeocacheViewer.set(mGeocache);
-        mWebPageButtonEnabler.check();
+        mCheckDetailsButton.check(mGeocache);
     }
 
     public void onSaveInstanceState(Bundle outState) {
@@ -187,5 +199,11 @@ public class GeoBeagleDelegate {
 
     public void setGeocache(Geocache geocache) {
         mGeocache = geocache;
+    }
+
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        MenuItem item = menu.findItem(R.string.web_page);
+        item.setVisible(mWebPageMenuEnabler.shouldEnable(getGeocache()));
+        return true;
     }
 }
