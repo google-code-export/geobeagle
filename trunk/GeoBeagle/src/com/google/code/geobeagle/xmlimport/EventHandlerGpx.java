@@ -23,18 +23,7 @@ public class EventHandlerGpx implements EventHandler {
     static final String XPATH_CACHE = "/gpx/wpt/groundspeak:cache";
     static final String XPATH_GEOCACHELOGDATE = "/gpx/wpt/geocache/logs/log/time";
     static final String XPATH_GPXNAME = "/gpx/name";
-    static final String XPATH_WPTTIME = "/gpx/wpt/time";
     static final String XPATH_LOGTEXT = "/gpx/wpt/groundspeak:cache/groundspeak:logs/groundspeak:log/groundspeak:text";
-    
-    static final String[] XPATH_PLAINLINES = {
-            "/gpx/wpt/cmt",
-            "/gpx/wpt/groundspeak:cache/groundspeak:logs/groundspeak:log/groundspeak:finder",
-            /* here are the geocaching.com.au entries */
-            "/gpx/wpt/geocache/owner", "/gpx/wpt/geocache/type", "/gpx/wpt/geocache/summary",
-            "/gpx/wpt/geocache/description", "/gpx/wpt/geocache/logs/log/geocacher",
-            "/gpx/wpt/geocache/logs/log/type", "/gpx/wpt/geocache/logs/log/text"
-
-    };
     static final String XPATH_SYM = "/gpx/wpt/sym";
     static final String XPATH_WPT = "/gpx/wpt";
     static final String XPATH_WPTDESC = "/gpx/wpt/desc";
@@ -72,22 +61,15 @@ public class EventHandlerGpx implements EventHandler {
         String trimmedText = text.trim();
         GpxPath gpxPath = GpxPath.fromString(fullPath);
         if (gpxPath != null) {
-             boolean result= gpxPath.text(trimmedText, cachePersisterFacade);
-             if (gpxPath == GpxPath.XPATH_GPXTIME)
+            boolean result = gpxPath.text(trimmedText, cachePersisterFacade);
+            if (gpxPath == GpxPath.XPATH_GPXTIME)
                  return result;
         }
+
         if (fullPath.equals(XPATH_LOGTEXT)) {
             cachePersisterFacade.logText(trimmedText, mLogEncrypted);
-        } else if (fullPath.equals(XPATH_WPTTIME)) {
-            cachePersisterFacade.wptTime(trimmedText);
         }
         
-        for (String writeLineMatch : XPATH_PLAINLINES) {
-            if (fullPath.equals(writeLineMatch)) {
-                cachePersisterFacade.line(trimmedText);
-                return true;
-            }
-        }
         return true;
     }
     
