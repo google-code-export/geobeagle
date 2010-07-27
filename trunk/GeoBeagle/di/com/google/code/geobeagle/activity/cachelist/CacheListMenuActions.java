@@ -14,6 +14,8 @@
 
 package com.google.code.geobeagle.activity.cachelist;
 
+import com.google.code.geobeagle.R;
+import com.google.code.geobeagle.actions.MenuActionBase;
 import com.google.code.geobeagle.actions.MenuActionMap;
 import com.google.code.geobeagle.actions.MenuActionSearchOnline;
 import com.google.code.geobeagle.actions.MenuActionSettings;
@@ -22,22 +24,23 @@ import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionDelet
 import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionMyLocation;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionSyncGpx;
 import com.google.inject.Inject;
+import com.google.inject.Injector;
 
 import android.content.res.Resources;
 
 public class CacheListMenuActions extends MenuActions {
     @Inject
-    public CacheListMenuActions(MenuActionSyncGpx menuActionSyncGpx,
-            MenuActionDeleteAllCaches menuActionDeleteAllCaches,
-            MenuActionMyLocation menuActionMyLocation,
-            MenuActionSearchOnline menuActionSearchOnline, MenuActionMap menuActionMap,
-            MenuActionSettings menuActionSettings, Resources resources) {
+    public CacheListMenuActions(Injector injector, Resources resources) {
         super(resources);
-        add(menuActionSyncGpx);
-        add(menuActionDeleteAllCaches);
-        add(menuActionMyLocation);
-        add(menuActionSearchOnline);
-        add(menuActionMap);
-        add(menuActionSettings);
+        add(new MenuActionBase(R.string.menu_sync, injector.getInstance(MenuActionSyncGpx.class)));
+        add(new MenuActionBase(R.string.menu_delete_all_caches,
+                injector.getInstance(MenuActionDeleteAllCaches.class)));
+        add(new MenuActionBase(R.string.menu_add_my_location,
+                injector.getInstance(MenuActionMyLocation.class)));
+        add(new MenuActionBase(R.string.menu_search_online,
+                injector.getInstance(MenuActionSearchOnline.class)));
+        add(new MenuActionBase(R.string.menu_map, injector.getInstance(MenuActionMap.class)));
+        add(new MenuActionBase(R.string.menu_settings,
+                injector.getInstance(MenuActionSettings.class)));
     }
 }

@@ -15,15 +15,17 @@
 package com.google.code.geobeagle.activity.cachelist.presenter;
 
 import com.google.inject.Inject;
+import com.google.inject.Injector;
 
 public class DistanceUpdater implements RefreshAction {
     private final GeocacheListAdapter mGeocacheListAdapter;
 
     @Inject
-    public DistanceUpdater(GeocacheListAdapter geocacheListAdapter) {
-        mGeocacheListAdapter = geocacheListAdapter;
+    public DistanceUpdater(Injector injector) {
+        mGeocacheListAdapter = injector.getInstance(GeocacheListAdapter.class);
     }
 
+    @Override
     public void refresh() {
         // Log.d("GeoBeagle", "notifyDataSetChanged");
         mGeocacheListAdapter.notifyDataSetChanged();

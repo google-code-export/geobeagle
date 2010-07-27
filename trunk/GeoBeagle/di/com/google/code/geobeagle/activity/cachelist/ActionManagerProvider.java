@@ -24,6 +24,7 @@ import com.google.code.geobeagle.activity.cachelist.presenter.SqlCacheLoader;
 import com.google.code.geobeagle.activity.cachelist.presenter.ToleranceStrategy;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh.ActionManager;
 import com.google.inject.Inject;
+import com.google.inject.Injector;
 import com.google.inject.Provider;
 
 class ActionManagerProvider implements Provider<ActionManager> {
@@ -32,7 +33,6 @@ class ActionManagerProvider implements Provider<ActionManager> {
     private final DistanceUpdater distanceUpdater;
     private final SqlCacheLoader sqlCacheLoader;
 
-    @Inject
     public ActionManagerProvider(GpsDisabledLocation gpsDisabledLocation,
             AdapterCachesSorter adapterCachesSorter, DistanceUpdater distanceUpdater,
             SqlCacheLoader sqlCacheLoader) {
@@ -40,6 +40,14 @@ class ActionManagerProvider implements Provider<ActionManager> {
         this.adapterCachesSorter = adapterCachesSorter;
         this.distanceUpdater = distanceUpdater;
         this.sqlCacheLoader = sqlCacheLoader;
+    }
+
+    @Inject
+    public ActionManagerProvider(Injector injector) {
+        this.gpsDisabledLocation = injector.getInstance(GpsDisabledLocation.class);
+        this.adapterCachesSorter = injector.getInstance(AdapterCachesSorter.class);
+        this.distanceUpdater = injector.getInstance(DistanceUpdater.class);
+        this.sqlCacheLoader = injector.getInstance(SqlCacheLoader.class);
     }
 
     @Override

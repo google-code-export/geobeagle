@@ -24,6 +24,7 @@ import com.google.code.geobeagle.bcaching.progress.ProgressHandler;
 import com.google.code.geobeagle.bcaching.progress.ProgressManager;
 import com.google.code.geobeagle.bcaching.progress.ProgressMessage;
 import com.google.inject.Inject;
+import com.google.inject.Injector;
 
 import roboguice.inject.ContextScoped;
 import roboguice.util.RoboThread;
@@ -48,7 +49,6 @@ public class ImportBCachingWorker extends RoboThread implements Abortable {
     private final ToasterFactory toasterFactory;
     private final UpdateFlag updateFlag;
 
-    @Inject
     public ImportBCachingWorker(ProgressHandler progressHandler, ProgressManager progressManager,
             ErrorDisplayer errorDisplayer, DetailsReaderImport detailsReaderImport,
             ToasterFactory toasterFactory, CacheListCursor cacheListCursor,
@@ -62,6 +62,17 @@ public class ImportBCachingWorker extends RoboThread implements Abortable {
         this.updateFlag = updateFlag;
     }
 
+    @Inject
+    public ImportBCachingWorker(Injector injector) {
+        this.progressHandler = injector.getInstance(ProgressHandler.class);
+        this.errorDisplayer = injector.getInstance(ErrorDisplayer.class);
+        this.progressManager = injector.getInstance(ProgressManager.class);
+        this.detailsReaderImport = injector.getInstance(DetailsReaderImport.class);
+        this.toasterFactory = injector.getInstance(ToasterFactory.class);
+        this.cursor = injector.getInstance(CacheListCursor.class);
+        this.updateFlag = injector.getInstance(UpdateFlag.class);
+    }
+    
     /*
      * Abort the import thread. This call will block
      */

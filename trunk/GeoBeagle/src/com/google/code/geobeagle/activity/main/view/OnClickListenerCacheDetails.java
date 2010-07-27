@@ -19,6 +19,8 @@ import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.main.GeoBeagle;
 import com.google.code.geobeagle.cachedetails.CacheDetailsLoader;
 import com.google.inject.Inject;
+import com.google.inject.Injector;
+import com.google.inject.Provider;
 
 import android.app.Activity;
 import android.app.AlertDialog.Builder;
@@ -29,19 +31,27 @@ import android.webkit.WebView;
 public class OnClickListenerCacheDetails implements View.OnClickListener {
 
     private final Builder mAlertDialogBuilder;
-    private final CacheDetailsLoader mCacheDetailsLoader;
+    private final Provider<CacheDetailsLoader> mCacheDetailsLoaderProvider;
     private final LayoutInflater mEnv;
     private final GeoBeagle mGeoBeagle;
 
-    @Inject
     public OnClickListenerCacheDetails(Activity geoBeagle, Builder alertDialogBuilder,
-            LayoutInflater env, CacheDetailsLoader cacheDetailsLoader) {
+            LayoutInflater env, Provider<CacheDetailsLoader> cacheDetailsLoader) {
         mAlertDialogBuilder = alertDialogBuilder;
         mEnv = env;
-        mCacheDetailsLoader = cacheDetailsLoader;
+        mCacheDetailsLoaderProvider = cacheDetailsLoader;
         mGeoBeagle = (GeoBeagle)geoBeagle;
     }
 
+    @Inject
+    public OnClickListenerCacheDetails(Injector injector) {
+        mAlertDialogBuilder = injector.getInstance(Builder.class);
+        mEnv = injector.getInstance(LayoutInflater.class);
+        mCacheDetailsLoaderProvider = injector.getProvider(CacheDetailsLoader.class);
+        mGeoBeagle = (GeoBeagle)injector.getInstance(Activity.class);
+    }
+
+    @Override
     public void onClick(View v) {
         View detailsView = mEnv.inflate(R.layout.cache_details, null);
 
@@ -53,7 +63,7 @@ public class OnClickListenerCacheDetails implements View.OnClickListener {
         WebView webView = (WebView)detailsView.findViewById(R.id.webview);
         webView.getSettings().setJavaScriptEnabled(true);
 
-        String details = mCacheDetailsLoader.load(geocache.getSourceName(), id);
+        String details = mCacheDetailsLoaderProvider.get().load(geocache.getSourceName(), id);
         webView.loadDataWithBaseURL(null, details, "text/html", "utf-8", "about:blank");
         mAlertDialogBuilder.create().show();
     }

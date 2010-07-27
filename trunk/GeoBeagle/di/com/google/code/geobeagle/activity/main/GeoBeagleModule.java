@@ -27,6 +27,7 @@ import com.google.code.geobeagle.activity.main.view.GeocacheViewer.LabelledAttri
 import com.google.code.geobeagle.activity.main.view.GeocacheViewer.NameViewer;
 import com.google.code.geobeagle.activity.main.view.GeocacheViewer.ResourceImages;
 import com.google.code.geobeagle.activity.main.view.GeocacheViewer.UnlabelledAttributeViewer;
+import com.google.inject.Injector;
 import com.google.inject.Provides;
 
 import roboguice.config.AbstractAndroidModule;
@@ -61,10 +62,18 @@ public class GeoBeagleModule extends AbstractAndroidModule {
     }
 
     @Provides
-    public GeocacheViewer providesGeocacheViewer(RadarView radarView, Activity activity,
-            IconOverlayFactory iconOverlayFactory, MapViewBitmapCopier mapViewBitmapCopier,
-            IconRenderer iconRenderer, DifficultyAndTerrainPainter difficultyAndTerrainPainter,
-            NameFormatter nameFormatter, Resources resources, RatingsArray ratingsArray) {
+    public GeocacheViewer providesGeocacheViewer(Injector injector) {
+        RadarView radarView = injector.getInstance(RadarView.class);
+        Activity activity = injector.getInstance(Activity.class);
+        IconOverlayFactory iconOverlayFactory = injector.getInstance(IconOverlayFactory.class);
+        NameFormatter nameFormatter = injector.getInstance(NameFormatter.class);
+        Resources resources = injector.getInstance(Resources.class);
+        RatingsArray ratingsArray = injector.getInstance(RatingsArray.class);
+        MapViewBitmapCopier mapViewBitmapCopier = injector.getInstance(MapViewBitmapCopier.class);
+        DifficultyAndTerrainPainter difficultyAndTerrainPainter = injector
+                .getInstance(DifficultyAndTerrainPainter.class);
+        IconRenderer iconRenderer = injector.getInstance(IconRenderer.class);
+
         final TextView textViewName = (TextView)activity.findViewById(R.id.gcname);
         final ImageView cacheTypeImageView = (ImageView)activity.findViewById(R.id.gcicon);
         final NameViewer gcName = new NameViewer(textViewName, nameFormatter);
