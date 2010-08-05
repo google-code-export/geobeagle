@@ -28,6 +28,7 @@ public class IntentStarterGeo implements IntentStarter {
         mIntent = intent;
     }
 
+    @Override
     public void startIntent() {
         final Geocache geocache = mGeoBeagle.getGeocache();
         mIntent.putExtra("latitude", (float)geocache.getLatitude());

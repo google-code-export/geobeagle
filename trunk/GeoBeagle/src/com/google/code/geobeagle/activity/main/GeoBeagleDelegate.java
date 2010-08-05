@@ -20,7 +20,6 @@ import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.GeocacheFactory;
 import com.google.code.geobeagle.GeocacheFactory.Source;
 import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.actions.MenuActions;
 import com.google.code.geobeagle.activity.ActivitySaver;
 import com.google.code.geobeagle.activity.ActivityType;
 import com.google.code.geobeagle.activity.main.view.CheckDetailsButton;
@@ -31,6 +30,7 @@ import com.google.code.geobeagle.database.DbFrontend;
 import com.google.code.geobeagle.database.LocationSaver;
 import com.google.code.geobeagle.xmlimport.GeoBeagleEnvironment;
 import com.google.inject.Inject;
+import com.google.inject.Injector;
 import com.google.inject.Provider;
 
 import android.app.Activity;
@@ -77,7 +77,7 @@ public class GeoBeagleDelegate {
     private final GeocacheFromParcelFactory mGeocacheFromParcelFactory;
     private final GeocacheViewer mGeocacheViewer;
     private final IncomingIntentHandler mIncomingIntentHandler;
-    private final MenuActions mMenuActions;
+    private final GeoBeagleActivityMenuActions mMenuActions;
     private final GeoBeagle mParent;
     private final RadarView mRadarView;
     private final SensorManager mSensorManager;
@@ -87,7 +87,6 @@ public class GeoBeagleDelegate {
     private final GeoBeagleEnvironment mGeoBeagleEnvironment;
     private final WebPageMenuEnabler mWebPageMenuEnabler;
 
-    @Inject
     public GeoBeagleDelegate(ActivitySaver activitySaver,
             AppLifecycleManager appLifecycleManager,
             CompassListener compassListener,
@@ -122,6 +121,27 @@ public class GeoBeagleDelegate {
         mGeoBeagleEnvironment = geoBeagleEnvironment;
         mCheckDetailsButton = checkDetailsButton;
         mWebPageMenuEnabler = webPageMenuEnabler;
+    }
+
+    @Inject
+    public GeoBeagleDelegate(Injector injector) {
+        mParent = (GeoBeagle)injector.getInstance(Activity.class);
+        mActivitySaver = injector.getInstance(ActivitySaver.class);
+        mAppLifecycleManager = injector.getInstance(AppLifecycleManager.class);
+        mMenuActions = injector.getInstance(GeoBeagleActivityMenuActions.class);
+        mSharedPreferences = injector.getInstance(SharedPreferences.class);
+        mRadarView = injector.getInstance(RadarView.class);
+        mCompassListener = injector.getInstance(CompassListener.class);
+        mSensorManager = injector.getInstance(SensorManager.class);
+        mGeocacheViewer = injector.getInstance(GeocacheViewer.class);
+        mGeocacheFactory = injector.getInstance(GeocacheFactory.class);
+        mIncomingIntentHandler = injector.getInstance(IncomingIntentHandler.class);
+        mDbFrontendProvider = injector.getProvider(DbFrontend.class);
+        mGeocacheFromParcelFactory = injector.getInstance(GeocacheFromParcelFactory.class);
+        mCacheWriterProvider = injector.getProvider(CacheWriter.class);
+        mGeoBeagleEnvironment = injector.getInstance(GeoBeagleEnvironment.class);
+        mCheckDetailsButton = injector.getInstance(CheckDetailsButton.class);
+        mWebPageMenuEnabler = injector.getInstance(WebPageMenuEnabler.class);
     }
 
     public Geocache getGeocache() {

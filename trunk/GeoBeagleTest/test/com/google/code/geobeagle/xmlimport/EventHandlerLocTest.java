@@ -17,67 +17,67 @@ import java.io.IOException;
 public class EventHandlerLocTest {
     @Test
     public void endTagTest() throws IOException {
-        CachePersisterFacade cachePersisterFacade = PowerMock
-                .createMock(CachePersisterFacade.class);
+        ImportCacheActions importCacheActions = PowerMock
+                .createMock(ImportCacheActions.class);
 
         PowerMock.replayAll();
-        new EventHandlerLoc(cachePersisterFacade).endTag(null, "/random");
+        new EventHandlerLoc(importCacheActions).endTag(null, "/random");
         PowerMock.verifyAll();
     }
 
     @Test
     public void endTagTestWaypoint() throws IOException {
-        CachePersisterFacade cachePersisterFacade = PowerMock
-                .createMock(CachePersisterFacade.class);
+        ImportCacheActions importCacheActions = PowerMock
+                .createMock(ImportCacheActions.class);
 
-        cachePersisterFacade.endCache(Source.LOC);
+        importCacheActions.endCache(Source.LOC);
 
         PowerMock.replayAll();
-        new EventHandlerLoc(cachePersisterFacade).endTag(null, EventHandlerLoc.XPATH_WPT);
+        new EventHandlerLoc(importCacheActions).endTag(null, EventHandlerLoc.XPATH_WPT);
         PowerMock.verifyAll();
     }
 
     @Test
     public void startTagCoordTest() throws IOException {
-        CachePersisterFacade cachePersisterFacade = PowerMock
-                .createMock(CachePersisterFacade.class);
+        ImportCacheActions importCacheActions = PowerMock
+                .createMock(ImportCacheActions.class);
         XmlPullParserWrapper xmlPullParser = PowerMock.createMock(XmlPullParserWrapper.class);
 
         EasyMock.expect(xmlPullParser.getAttributeValue(null, "lat")).andReturn("37.123");
         EasyMock.expect(xmlPullParser.getAttributeValue(null, "lon")).andReturn("-122.45");
-        cachePersisterFacade.wpt("37.123", "-122.45");
+        importCacheActions.wpt("37.123", "-122.45");
 
         PowerMock.replayAll();
-        new EventHandlerLoc(cachePersisterFacade).startTag(null, EventHandlerLoc.XPATH_COORD,
+        new EventHandlerLoc(importCacheActions).startTag(null, EventHandlerLoc.XPATH_COORD,
                 xmlPullParser);
         PowerMock.verifyAll();
     }
 
     @Test
     public void startTagWptNameTest() throws IOException {
-        CachePersisterFacade cachePersisterFacade = PowerMock
-                .createMock(CachePersisterFacade.class);
+        ImportCacheActions importCacheActions = PowerMock
+                .createMock(ImportCacheActions.class);
         XmlPullParserWrapper xmlPullParser = PowerMock.createMock(XmlPullParserWrapper.class);
 
-        cachePersisterFacade.startCache();
+        importCacheActions.startCache();
         EasyMock.expect(xmlPullParser.getAttributeValue(null, "id")).andReturn("GCABC");
-        cachePersisterFacade.wptName("GCABC");
+        importCacheActions.wptName("GCABC");
 
         PowerMock.replayAll();
-        new EventHandlerLoc(cachePersisterFacade).startTag(null, EventHandlerLoc.XPATH_WPTNAME,
+        new EventHandlerLoc(importCacheActions).startTag(null, EventHandlerLoc.XPATH_WPTNAME,
                 xmlPullParser);
         PowerMock.verifyAll();
     }
 
     @Test
     public void textWptNameTest() throws IOException {
-        CachePersisterFacade cachePersisterFacade = PowerMock
-                .createMock(CachePersisterFacade.class);
+        ImportCacheActions importCacheActions = PowerMock
+                .createMock(ImportCacheActions.class);
 
-        cachePersisterFacade.groundspeakName("a nice little cache");
+        importCacheActions.groundspeakName("a nice little cache");
 
         PowerMock.replayAll();
-        assertTrue(new EventHandlerLoc(cachePersisterFacade).text(EventHandlerLoc.XPATH_WPTNAME,
+        assertTrue(new EventHandlerLoc(importCacheActions).text(EventHandlerLoc.XPATH_WPTNAME,
                 "  a nice little cache   ", null));
         PowerMock.verifyAll();
     }

@@ -54,12 +54,12 @@ public class CachePersisterFacadeDI {
             mClearCachesFromSource = clearCachesFromSourceImpl;
         }
 
-        public CachePersisterFacade create(CacheWriter cacheWriter, GpxWriter gpxWriter,
+        public ImportCacheActions create(CacheWriter cacheWriter, GpxWriter gpxWriter,
                 WakeLock wakeLock, GeoBeagleEnvironment geoBeagleEnvironment) {
             final CacheTagSqlWriter cacheTagSqlWriter = new CacheTagSqlWriter(cacheWriter,
                     gpxWriter, mCacheTypeFactory, mTagWriterImpl, mTagWriterNull,
                     mClearCachesFromSource);
-            return new CachePersisterFacade(cacheTagSqlWriter, mFileFactory, mMessageHandler,
+            return new ImportCacheActions(cacheTagSqlWriter, mFileFactory, mMessageHandler,
                     wakeLock, geoBeagleEnvironment);
         }
     }

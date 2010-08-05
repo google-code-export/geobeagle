@@ -28,15 +28,15 @@ public class XmlWriter implements EventHandler {
     private String time;
 
     @Inject
-    public XmlWriter(FilePathStrategy filePathStrategy) {
+    public XmlWriter(FilePathStrategy filePathStrategy, TagWriter tagWriter) {
         this.filePathStrategy = filePathStrategy;
-        this.tagWriter = new TagWriter();
+        this.tagWriter = tagWriter;
     }
 
     @Override
     public void endTag(String name, String previousFullPath,
             ICachePersisterFacade cachePersisterFacade) throws IOException {
-        if (!previousFullPath.startsWith("/gpx/wpt"))
+        if (!previousFullPath.startsWith(GpxPath.GPX_WPT.getPath()))
             return;
 
         if (tagWriter.isOpen())
@@ -56,7 +56,7 @@ public class XmlWriter implements EventHandler {
     @Override
     public void startTag(String name, String fullPath, XmlPullParserWrapper xmlPullParser,
             ICachePersisterFacade cachePersisterFacade) throws IOException {
-        if (!fullPath.startsWith("/gpx/wpt"))
+        if (!fullPath.startsWith(GpxPath.GPX_WPT.getPath()))
             return;
 
         HashMap<String, String> attributes = new HashMap<String, String>();
@@ -67,7 +67,7 @@ public class XmlWriter implements EventHandler {
         }
         Tag tag = new Tag(name, attributes);
 
-        if (fullPath.equals("/gpx/wpt")) {
+        if (fullPath.equals(GpxPath.GPX_WPT.getPath())) {
             tagWpt = tag;
         } else if (tagWriter.isOpen()) {
             tagWriter.startTag(tag);
@@ -77,13 +77,13 @@ public class XmlWriter implements EventHandler {
     @Override
     public boolean text(String fullPath, String text, XmlPullParserWrapper xmlPullParser,
             ICachePersisterFacade cachePersisterFacade) throws IOException {
-        if (!fullPath.startsWith("/gpx/wpt"))
+        if (!fullPath.startsWith(GpxPath.GPX_WPT.getPath()))
             return true;
 
         if (text.trim().length() == 0)
             return true;
 
-        if (fullPath.equals("/gpx/wpt/time")) {
+        if (fullPath.equals(GpxPath.GPX_WPTTIME.getPath())) {
             time = text;
         } else if (fullPath.equals(GpxPath.GPX_WPTNAME.getPath())) {
             tagWriter.open(filePathStrategy.getPath(filename, text, "gpx"));

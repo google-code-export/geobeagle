@@ -14,25 +14,16 @@
 
 package com.google.code.geobeagle;
 
-import static java.lang.annotation.ElementType.FIELD;
-import static java.lang.annotation.ElementType.METHOD;
-import static java.lang.annotation.ElementType.PARAMETER;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-
 import com.google.android.maps.GeoPoint;
 import com.google.code.geobeagle.GeocacheFactory.Provider;
 import com.google.code.geobeagle.GeocacheFactory.Source;
 import com.google.code.geobeagle.activity.main.GeoUtils;
-import com.google.inject.BindingAnnotation;
 
 import android.content.SharedPreferences.Editor;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
-
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
 
 /**
  * Geocache or letterbox description, id, and coordinates.
@@ -43,12 +34,14 @@ public class Geocache implements Parcelable {
     }
 
     static class AttributeFormatterImpl implements AttributeFormatter {
+        @Override
         public CharSequence formatAttributes(int difficulty, int terrain) {
             return (difficulty / 2.0) + " / " + (terrain / 2.0);
         }
     }
 
     static class AttributeFormatterNull implements AttributeFormatter {
+        @Override
         public CharSequence formatAttributes(int difficulty, int terrain) {
             return "";
         }
@@ -114,6 +107,7 @@ public class Geocache implements Parcelable {
         return mDistanceAndBearing;
     }
 
+    @Override
     public int describeContents() {
         return 0;
     }
@@ -210,6 +204,7 @@ public class Geocache implements Parcelable {
         bundle.putBoolean(ARCHIVED, mArchived);
     }
 
+    @Override
     public void writeToParcel(Parcel out, int flags) {
         Bundle bundle = new Bundle();
         saveToBundle(bundle);

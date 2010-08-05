@@ -36,6 +36,7 @@ public class EditCacheActivityDelegate {
             mActivity = activity;
         }
 
+        @Override
         public void onClick(View v) {
             // TODO: replace magic number.
             mActivity.setResult(-1, null);
@@ -93,6 +94,7 @@ public class EditCacheActivityDelegate {
             mLocationSaver = locationSaver;
         }
 
+        @Override
         public void onClick(View v) {
             final Geocache geocache = mGeocacheView.get();
             mLocationSaver.saveLocation(geocache);

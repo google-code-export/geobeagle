@@ -34,6 +34,8 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 
 @RunWith(PowerMockRunner.class)
@@ -51,7 +53,12 @@ public class CacheItemTest {
         IconOverlayFactory iconOverlayFactory = PowerMock.createMock(IconOverlayFactory.class);
         IconOverlay iconOverlay = PowerMock.createMock(IconOverlay.class);
         IconRenderer iconRenderer = PowerMock.createMock(IconRenderer.class);
+        Resources resources = PowerMock.createMock(Resources.class);
+        Bitmap bitmap = PowerMock.createMock(Bitmap.class);
         
+        PowerMock.mockStatic(BitmapFactory.class);
+        int backdropId = 3;
+        EasyMock.expect(BitmapFactory.decodeResource(resources, backdropId)).andReturn(bitmap);
         EasyMock.expect(geocache.getGeoPoint()).andReturn(geoPoint);
         EasyMock.expect(geocache.getId()).andReturn("GC123");
         EasyMock.expect(geocache.getCacheType()).andReturn(CacheType.EARTHCACHE);
@@ -59,14 +66,14 @@ public class CacheItemTest {
         EasyMock.expect(geocache.getTerrain()).andReturn(7);
         EasyMock.expect(
                 iconRenderer.renderIcon(3, 7, R.drawable.pin_earth, iconOverlay,
-                        mapViewBitmapCopier)).andReturn(icon);
+                        mapViewBitmapCopier, null)).andReturn(icon);
         EasyMock.expect(iconOverlayFactory.create(geocache, false)).andReturn(iconOverlay);
 
         PowerMock.suppressConstructor(CacheItem.class);
         PowerMock.suppressMethod(CacheItem.class, "setMarker");
 
         PowerMock.replayAll();
-        new CacheItemFactory(iconRenderer, mapViewBitmapCopier, iconOverlayFactory)
+        new CacheItemFactory(mapViewBitmapCopier, iconOverlayFactory, null, null)
                 .createCacheItem(geocache);
         PowerMock.verifyAll();
     }

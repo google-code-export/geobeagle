@@ -16,6 +16,7 @@ package com.google.code.geobeagle.database;
 
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.database.DatabaseDI.GeoBeagleSqliteOpenHelper;
+import com.google.code.geobeagle.preferences.PreferencesUpgrader;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.Singleton;
@@ -38,11 +39,15 @@ public class DbFrontend {
     private ISQLiteDatabase mDatabase;
     private GeoBeagleSqliteOpenHelper mSqliteOpenHelper;
     private final Provider<Context> mContextProvider;
-    
+    private final PreferencesUpgrader mPreferencesUpgrader;
+
     @Inject
-    DbFrontend(Provider<Context> contextProvider, CacheReader cacheReader) {
+    DbFrontend(Provider<Context> contextProvider,
+            CacheReader cacheReader,
+            PreferencesUpgrader preferencesUpgrader) {
         mContextProvider = contextProvider;
         mCacheReader = cacheReader;
+        mPreferencesUpgrader = preferencesUpgrader;
         mContext = null;
     }
 
@@ -63,7 +68,7 @@ public class DbFrontend {
         countCursor.moveToFirst();
         int count = countCursor.getInt(0);
         countCursor.close();
-        
+
         Log.d("GeoBeagle", this + ": DbFrontEnd.count:" + count);
         return count;
     }
@@ -102,10 +107,10 @@ public class DbFrontend {
 
         Log.d("GeoBeagleDb", this + ": DbFrontend.openDatabase() " + mContext + ", " + currentContext);
         mContext = currentContext;
-        mSqliteOpenHelper = new GeoBeagleSqliteOpenHelper(mContext);
+        mSqliteOpenHelper = new GeoBeagleSqliteOpenHelper(mContext, mPreferencesUpgrader);
         mDatabase = new DatabaseDI.SQLiteWrapper(mSqliteOpenHelper.getWritableDatabase());
     }
-    
+
     public Geocache getCache(CharSequence cacheId) {
         CacheReaderCursor cacheReader = mCacheReader.open(cacheId);
         Geocache cache = cacheReader.getCache();

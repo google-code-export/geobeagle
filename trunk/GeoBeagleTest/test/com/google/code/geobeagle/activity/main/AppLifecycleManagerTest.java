@@ -65,7 +65,7 @@ public class AppLifecycleManagerTest {
         replay(gpsLifecycleManager);
         AppLifecycleManager appLifecycleManager = new AppLifecycleManager(sharedPreferences,
                 new LifecycleManager[] {
-                        gpsLifecycleManager,
+                    gpsLifecycleManager,
                 });
         appLifecycleManager.onResume();
         verify(sharedPreferences);

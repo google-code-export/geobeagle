@@ -15,8 +15,10 @@
 package com.google.code.geobeagle;
 
 import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 
-public class OnClickListenerNOP implements android.content.DialogInterface.OnClickListener {
+public class OnClickListenerNOP implements OnClickListener {
+    @Override
     public void onClick(DialogInterface dialog, int which) {
     }
 }

@@ -29,10 +29,12 @@ public class GeocacheFactory {
         private final GeocacheFromParcelFactory mGeocacheFromParcelFactory = new GeocacheFromParcelFactory(
                 new GeocacheFactory());
 
+        @Override
         public Geocache createFromParcel(Parcel in) {
             return mGeocacheFromParcelFactory.create(in);
         }
 
+        @Override
         public Geocache[] newArray(int size) {
             return new Geocache[size];
         }

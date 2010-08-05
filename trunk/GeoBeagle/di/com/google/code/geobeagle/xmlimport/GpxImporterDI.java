@@ -31,9 +31,9 @@ import com.google.code.geobeagle.xmlimport.EventHelperDI.EventHelperFactory;
 import com.google.code.geobeagle.xmlimport.GpxToCache.Aborter;
 import com.google.code.geobeagle.xmlimport.ImportThreadDelegate.ImportThreadHelper;
 import com.google.code.geobeagle.xmlimport.gpx.GpxAndZipFiles;
-import com.google.code.geobeagle.xmlimport.gpx.GpxFileIterAndZipFileIterFactory;
 import com.google.code.geobeagle.xmlimport.gpx.GpxAndZipFiles.GpxAndZipFilenameFilter;
 import com.google.code.geobeagle.xmlimport.gpx.GpxAndZipFiles.GpxFilenameFilter;
+import com.google.code.geobeagle.xmlimport.gpx.GpxFileIterAndZipFileIterFactory;
 import com.google.code.geobeagle.xmlimport.gpx.zip.ZipFileOpener.ZipInputFileTester;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
@@ -59,7 +59,7 @@ public class GpxImporterDI {
     // Can't test this due to final methods in base.
     public static class ImportThread extends RoboThread {
         static ImportThread create(MessageHandlerInterface messageHandler, GpxLoader gpxLoader,
-                EventHandlers eventHandlers, XmlPullParserWrapper xmlPullParserWrapper,
+                EventHandler eventHandler, XmlPullParserWrapper xmlPullParserWrapper,
                 ErrorDisplayer errorDisplayer, Aborter aborter, Injector injector) {
             final GpxFilenameFilter gpxFilenameFilter = new GpxFilenameFilter();
             final FilenameFilter filenameFilter = new GpxAndZipFilenameFilter(gpxFilenameFilter);
@@ -68,17 +68,17 @@ public class GpxImporterDI {
                     .getInstance(GeoBeagleEnvironment.class);
             final GpxFileIterAndZipFileIterFactory gpxFileIterAndZipFileIterFactory = new GpxFileIterAndZipFileIterFactory(
                     zipInputFileTester, aborter, geoBeagleEnvironment);
-            final GpxAndZipFiles gpxAndZipFiles = new GpxAndZipFiles(filenameFilter,
-                    gpxFileIterAndZipFileIterFactory, geoBeagleEnvironment);
-            final EventHelperFactory eventHelperFactory = new EventHelperFactory(
-                    xmlPullParserWrapper);
-            final OldCacheFilesCleaner oldCacheFilesCleaner = new OldCacheFilesCleaner(injector
-                    .getInstance(GeoBeagleEnvironment.class), messageHandler);
             final SharedPreferences sharedPreferences = injector
                     .getInstance(SharedPreferences.class);
-            
+            final GpxAndZipFiles gpxAndZipFiles = new GpxAndZipFiles(filenameFilter,
+                    gpxFileIterAndZipFileIterFactory, geoBeagleEnvironment, sharedPreferences);
+            final EventHelperFactory eventHelperFactory = new EventHelperFactory(
+                    xmlPullParserWrapper);
+            final OldCacheFilesCleaner oldCacheFilesCleaner = new OldCacheFilesCleaner(
+                    injector.getInstance(GeoBeagleEnvironment.class), messageHandler);
+
             final ImportThreadHelper importThreadHelper = new ImportThreadHelper(gpxLoader,
-                    messageHandler, eventHelperFactory, eventHandlers, oldCacheFilesCleaner,
+                    messageHandler, eventHelperFactory, eventHandler, oldCacheFilesCleaner,
                     sharedPreferences, geoBeagleEnvironment);
             final FileDataVersionWriter fileDataVersionWriter = injector
                     .getInstance(FileDataVersionWriter.class);
@@ -106,7 +106,7 @@ public class GpxImporterDI {
         public void run() {
             mImportThreadDelegate.run();
         }
-        
+
         public boolean isAliveHack() {
             return mImportThreadDelegate.isAlive();
         }
@@ -145,9 +145,9 @@ public class GpxImporterDI {
         }
 
         public void open(CacheListRefresh cacheListRefresh, GpxLoader gpxLoader,
-                EventHandlers eventHandlers, ErrorDisplayer mErrorDisplayer, Injector injector) {
+                EventHandler eventHandler, ErrorDisplayer mErrorDisplayer, Injector injector) {
             mMessageHandler.start(cacheListRefresh);
-            mImportThread = ImportThread.create(mMessageHandler, gpxLoader, eventHandlers,
+            mImportThread = ImportThread.create(mMessageHandler, gpxLoader, eventHandler,
                     mXmlPullParserWrapper, mErrorDisplayer, mAborter, injector);
         }
 
@@ -184,6 +184,7 @@ public class GpxImporterDI {
             mSharedPreferences = sharedPreferences;
         }
 
+        @Override
         public void abortLoad() {
             mLoadAborted = true;
             mProgressDialogWrapper.dismiss();
@@ -207,7 +208,7 @@ public class GpxImporterDI {
                         return;
                     }
 
-                    if (mSharedPreferences.getString(BCachingModule.BCACHING_USERNAME, "").length() > 0) {
+                    if (mSharedPreferences.getBoolean(BCachingModule.BCACHING_ENABLED, false)) {
                         ImportBCachingWorker importBCachingWorker = mImportBCachingWorkerProvider
                                 .get();
                         importBCachingWorker.start();
@@ -227,10 +228,12 @@ public class GpxImporterDI {
             }
         }
 
+        @Override
         public void loadComplete() {
             sendEmptyMessage(MessageHandler.MSG_DONE);
         }
 
+        @Override
         public void start(CacheListRefresh cacheListRefresh) {
             mCacheCount = 0;
             mLoadAborted = false;
@@ -239,12 +242,14 @@ public class GpxImporterDI {
             mProgressDialogWrapper.show("Sync from sdcard", "Please wait...");
         }
 
+        @Override
         public void updateName(String name) {
             mStatus = mCacheCount++ + ": " + mSource + " - " + mWaypointId + " - " + name;
             if (!hasMessages(MessageHandler.MSG_PROGRESS))
                 sendEmptyMessage(MessageHandler.MSG_PROGRESS);
         }
 
+        @Override
         public void updateSource(String text) {
             mSource = text;
             mStatus = "Opening: " + mSource + "...";
@@ -252,16 +257,19 @@ public class GpxImporterDI {
                 sendEmptyMessage(MessageHandler.MSG_PROGRESS);
         }
 
+        @Override
         public void updateWaypointId(String wpt) {
             mWaypointId = wpt;
         }
 
+        @Override
         public void updateStatus(String status) {
             mStatus = status;
             if (!hasMessages(MessageHandler.MSG_PROGRESS))
                 sendEmptyMessage(MessageHandler.MSG_PROGRESS);
         }
 
+        @Override
         public void deletingCacheFiles() {
             mStatus = "Deleting old cache files....";
             if (!hasMessages(MessageHandler.MSG_PROGRESS))
@@ -333,26 +341,22 @@ public class GpxImporterDI {
 
         final GeoBeagleEnvironment geoBeagleEnvironment = injector
                 .getInstance(GeoBeagleEnvironment.class);
-        final CachePersisterFacade cachePersisterFacade = cachePersisterFacadeFactory.create(
+        final ImportCacheActions importCacheActions = cachePersisterFacadeFactory.create(
                 cacheWriter, gpxWriter, wakeLock, geoBeagleEnvironment);
 
-        final GpxLoader gpxLoader = GpxLoaderDI.create(cachePersisterFacade, xmlPullParserWrapper,
+        final GpxLoader gpxLoader = GpxLoaderDI.create(importCacheActions, xmlPullParserWrapper,
                 aborter, errorDisplayer, wakeLock, gpxWriter);
         final ToastFactory toastFactory = new ToastFactory();
         final ImportThreadWrapper importThreadWrapper = new ImportThreadWrapper(messageHandler,
                 xmlPullParserWrapper, aborter);
         final EventHandlerGpx eventHandlerGpx = new EventHandlerGpx();
-        final EventHandlerLoc eventHandlerLoc = new EventHandlerLoc();
         final XmlWriter xmlWriter = injector.getInstance(XmlWriter.class);
-        
+
         final EventHandlerComposite eventHandlerComposite = new EventHandlerComposite(Arrays
                 .asList(xmlWriter, eventHandlerGpx));
-        final EventHandlers eventHandlers = new EventHandlers();
-        eventHandlers.add("gpx", eventHandlerComposite);
-        eventHandlers.add("loc", eventHandlerLoc);
 
         return new GpxImporter(geocacheListPresenter, gpxLoader, context, importThreadWrapper,
-                messageHandler, toastFactory, eventHandlers, errorDisplayer, injector);
+                messageHandler, toastFactory, eventHandlerComposite, errorDisplayer, injector);
     }
 
 }

@@ -20,15 +20,16 @@ import android.content.SharedPreferences;
 import android.os.Environment;
 
 public class GeoBeagleEnvironment {
+    public static final String IMPORT_FOLDER = "import-folder";
     private final SharedPreferences sharedPreferences;
     private static final String DETAILS_DIR = "GeoBeagle/data/";
     private static final String FIELDNOTES_FILE = "GeoBeagleFieldNotes.txt";
 
     @Inject
-    public GeoBeagleEnvironment(SharedPreferences sharedPreferences) {
+    GeoBeagleEnvironment(SharedPreferences sharedPreferences) {
         this.sharedPreferences = sharedPreferences;
     }
-    
+
     public String getExternalStorageDir() {
         return Environment.getExternalStorageDirectory().getAbsolutePath();
     }
@@ -36,17 +37,17 @@ public class GeoBeagleEnvironment {
     public String getDetailsDirectory() {
         return getExternalStorageDir() + "/" + GeoBeagleEnvironment.DETAILS_DIR;
     }
-    
+
     public String getVersionPath() {
         return getDetailsDirectory() + "/VERSION";
     }
-    
+
     public String getOldDetailsDirectory() {
         return getExternalStorageDir()  + "/" + "GeoBeagle";
     }
-    
+
     public String getImportFolder() {
-        String string = sharedPreferences.getString("import-folder", Environment
+        String string = sharedPreferences.getString(IMPORT_FOLDER, Environment
                 .getExternalStorageDirectory()
                 + "/Download");
         if ((!string.endsWith("/")))

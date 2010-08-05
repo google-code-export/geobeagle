@@ -31,6 +31,7 @@ public class ContextActionView implements ContextAction {
         mContext = context;
     }
 
+    @Override
     public void act(int position) {
         Intent intent = new Intent(mContext,
                 com.google.code.geobeagle.activity.main.GeoBeagle.class);

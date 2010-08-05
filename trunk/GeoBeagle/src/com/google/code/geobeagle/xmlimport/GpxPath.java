@@ -50,12 +50,20 @@ public enum GpxPath {
     GPX_LAST_MODIFIED("/gpx/wpt/bcaching:cache/bcaching:lastModified", PathType.LAST_MODIFIED),
     GPX_LOGDATE("/gpx/wpt/groundspeak:cache/groundspeak:logs/groundspeak:log/groundspeak:date",
             PathType.LOG_DATE),
+    GPX_LOGFINDER("/gpx/wpt/groundspeak:cache/groundspeak:logs/groundspeak:log/groundspeak:finder",
+            PathType.LOG_TEXT),
     GPX_LOGTEXT("/gpx/wpt/groundspeak:cache/groundspeak:logs/groundspeak:log/groundspeak:text",
             PathType.LOG_TEXT),
     GPX_LOGTYPE("/gpx/wpt/groundspeak:cache/groundspeak:logs/groundspeak:log/groundspeak:type",
             PathType.LOG_TYPE),
     GPX_LONGDESC("/gpx/wpt/groundspeak:cache/groundspeak:long_description",
             PathType.LONG_DESCRIPTION),
+    GPX_OCNAME("/gpx/wpt/extensions/cache/name", PathType.NAME),
+    GPX_OCOWNER("/gpx/wpt/extensions/cache/owner", PathType.PLACED_BY),
+    GPX_OCLOGDATE("/gpx/wpt/extensions/cache/logs/log/date", PathType.LOG_DATE),
+    GPX_OCLOGFINDER("/gpx/wpt/extensions/cache/logs/log/finder", PathType.LOG_TEXT),
+    GPX_OCLOGTEXT("/gpx/wpt/extensions/cache/logs/log/text", PathType.LOG_TEXT),
+    GPX_OCLOGTYPE("/gpx/wpt/extensions/cache/logs/log/type", PathType.LOG_TYPE),
     GPX_PLACEDBY("/gpx/wpt/groundspeak:cache/groundspeak:placed_by", PathType.PLACED_BY),
     GPX_SHORTDESC("/gpx/wpt/groundspeak:cache/groundspeak:short_description",
             PathType.SHORT_DESCRIPTION),
@@ -103,7 +111,7 @@ public enum GpxPath {
     }
 
     public void startTag(XmlPullParserWrapper xmlPullParser,
-            ICachePersisterFacade cachePersisterFacade) {
+            ICachePersisterFacade cachePersisterFacade) throws IOException {
         pathType.startTag(xmlPullParser, cachePersisterFacade);
     }
 

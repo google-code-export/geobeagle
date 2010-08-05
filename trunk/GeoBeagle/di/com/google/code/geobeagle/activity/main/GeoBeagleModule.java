@@ -89,8 +89,10 @@ public class GeoBeagleModule extends AbstractAndroidModule {
                         R.drawable.paw_unselected_dark, R.drawable.paw_half_light,
                         R.drawable.paw_selected_light
                 }, R.id.gc_terrain, R.id.gc_text_terrain);
-        final ResourceImages gcContainer = new ResourceImages((ImageView)activity
-                .findViewById(R.id.gccontainer), Arrays.asList(GeocacheViewer.CONTAINER_IMAGES));
+        final ResourceImages gcContainer = new ResourceImages(
+                (TextView)activity.findViewById(R.id.gc_text_container),
+                (ImageView)activity.findViewById(R.id.gccontainer),
+                Arrays.asList(GeocacheViewer.CONTAINER_IMAGES));
 
         return new GeocacheViewer(radarView, activity, gcName, cacheTypeImageView, gcDifficulty,
                 gcTerrain, gcContainer, iconOverlayFactory, mapViewBitmapCopier, iconRenderer,

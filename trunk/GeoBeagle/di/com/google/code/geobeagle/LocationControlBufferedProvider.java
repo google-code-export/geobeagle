@@ -35,8 +35,10 @@ public class LocationControlBufferedProvider implements Provider<LocationControl
 
     @Inject
     public LocationControlBufferedProvider(LocationManager locationManager,
-            LocationControl locationControl, NullSortStrategy nullSortStrategy,
-            DistanceSortStrategy distanceSortStrategy, GpsDisabledLocation gpsDisabledLocation) {
+            LocationControl locationControl,
+            NullSortStrategy nullSortStrategy,
+            DistanceSortStrategy distanceSortStrategy,
+            GpsDisabledLocation gpsDisabledLocation) {
         this.locationManager = locationManager;
         this.locationControl = locationControl;
         this.nullSortStrategy = nullSortStrategy;
@@ -46,7 +48,6 @@ public class LocationControlBufferedProvider implements Provider<LocationControl
 
     @Override
     public LocationControlBuffered get() {
-
         IGpsLocation lastGpsLocation;
         final Location lastKnownLocation = locationManager.getLastKnownLocation("gps");
         if (lastKnownLocation == null)
@@ -55,6 +56,7 @@ public class LocationControlBufferedProvider implements Provider<LocationControl
             lastGpsLocation = new GpsEnabledLocation((float)lastKnownLocation.getLatitude(),
                     (float)lastKnownLocation.getLongitude());
         return new LocationControlBuffered(locationControl, distanceSortStrategy, nullSortStrategy,
-                gpsDisabledLocation, lastGpsLocation, lastKnownLocation);        }
-    
+                gpsDisabledLocation, lastGpsLocation, lastKnownLocation);
+    }
+
 }

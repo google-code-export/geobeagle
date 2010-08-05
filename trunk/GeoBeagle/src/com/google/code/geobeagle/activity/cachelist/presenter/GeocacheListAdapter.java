@@ -39,14 +39,17 @@ public class GeocacheListAdapter extends BaseAdapter {
         mActivityVisible = activityVisible;
     }
 
+    @Override
     public int getCount() {
         return mGeocacheVectors.size();
     }
 
+    @Override
     public Object getItem(int position) {
         return position;
     }
 
+    @Override
     public long getItemId(int position) {
         return position;
     }

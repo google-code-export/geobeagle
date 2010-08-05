@@ -135,6 +135,11 @@ enum PathType {
     },
     LOG_TEXT {
         @Override
+        public void endTag(ICachePersisterFacade cachePersisterFacade) throws IOException {
+            cachePersisterFacade.setEncrypted(false);
+        }
+
+        @Override
         public void startTag(XmlPullParserWrapper xmlPullParser,
                 ICachePersisterFacade cachePersisterFacade) {
             cachePersisterFacade.setEncrypted("true".equalsIgnoreCase(xmlPullParser
@@ -251,8 +256,9 @@ enum PathType {
     public void endTag(ICachePersisterFacade cachePersisterFacade) throws IOException {
     }
 
-    public void startTag(@SuppressWarnings("unused") XmlPullParserWrapper xmlPullParser,
-            @SuppressWarnings("unused") ICachePersisterFacade cachePersisterFacade) {
+    @SuppressWarnings("unused")
+    public void startTag(XmlPullParserWrapper xmlPullParser,
+            ICachePersisterFacade cachePersisterFacade) throws IOException {
     }
 
     @SuppressWarnings("unused")
