@@ -17,9 +17,12 @@ package com.google.code.geobeagle;
 
 import com.google.inject.Inject;
 
+import roboguice.inject.ContextScoped;
+
 import android.hardware.SensorListener;
 
 @SuppressWarnings("deprecation")
+@ContextScoped
 public class CompassListener implements SensorListener {
 
     private final Refresher mRefresher;
@@ -53,7 +56,7 @@ public class CompassListener implements SensorListener {
     public void onSensorChanged(int sensor, float[] values) {
         final float currentAzimuth = values[0];
         if (Math.abs(currentAzimuth - mLastAzimuth) > 5) {
-//            Log.d("GeoBeagle", "azimuth now " + sensor + ", " + currentAzimuth);
+//          Log.d("GeoBeagle", "azimuth now " + sensor + ", " + currentAzimuth);
             mLocationControlBuffered.setAzimuth(((int)currentAzimuth / 5) * 5);
             mRefresher.refresh();
             mLastAzimuth = currentAzimuth;
