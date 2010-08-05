@@ -18,9 +18,9 @@ import com.google.code.geobeagle.CompassListener;
 import com.google.code.geobeagle.LocationControlBuffered;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.cachelist.CacheListView;
-import com.google.code.geobeagle.activity.cachelist.Pausable;
 import com.google.code.geobeagle.activity.cachelist.CacheListView.ScrollListener;
 import com.google.code.geobeagle.activity.cachelist.GeocacheListController.CacheListOnCreateContextMenuListener;
+import com.google.code.geobeagle.activity.cachelist.Pausable;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVectors;
 import com.google.code.geobeagle.gpsstatuswidget.InflatedGpsStatusWidget;
 import com.google.code.geobeagle.gpsstatuswidget.UpdateGpsWidgetRunnable;
@@ -37,7 +37,7 @@ import android.view.View;
 import android.widget.ListView;
 
 public class GeocacheListPresenter implements Pausable {
-    
+
     static final int UPDATE_DELAY = 1000;
 
     private final LocationListener mCombinedLocationListener;
@@ -88,6 +88,7 @@ public class GeocacheListPresenter implements Pausable {
         // mCompassSensor = sensorList.get(0);
     }
 
+    @Override
     public void onPause() {
         mCombinedLocationManager.removeUpdates();
         mSensorManagerWrapper.unregisterListener();
