@@ -17,21 +17,23 @@ package com.google.code.geobeagle.gpsstatuswidget;
 import com.google.code.geobeagle.LocationControlBuffered;
 import com.google.code.geobeagle.activity.cachelist.ActivityVisible;
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 
 import android.os.Handler;
 
 public class UpdateGpsWidgetRunnable implements Runnable {
     private final Handler mHandler;
-    private final LocationControlBuffered mLocationControlBuffered;
+    private final Provider<LocationControlBuffered> mLocationControlBufferedProvider;
     private final Meter mMeterWrapper;
     private final TextLagUpdater mTextLagUpdater;
     private final ActivityVisible mActivityVisible;
 
     @Inject
-    UpdateGpsWidgetRunnable(Handler handler, LocationControlBuffered locationControlBuffered,
+    UpdateGpsWidgetRunnable(Handler handler,
+            Provider<LocationControlBuffered> locationControlBufferedProvider,
             Meter meter, TextLagUpdater textLagUpdater, ActivityVisible activityVisible) {
+        mLocationControlBufferedProvider = locationControlBufferedProvider;
         mMeterWrapper = meter;
-        mLocationControlBuffered = locationControlBuffered;
         mTextLagUpdater = textLagUpdater;
         mHandler = handler;
         mActivityVisible = activityVisible;
@@ -39,11 +41,12 @@ public class UpdateGpsWidgetRunnable implements Runnable {
 
     @Override
     public void run() {
+        if (!mActivityVisible.getVisible())
+            return;
         // Update the lag time and the orientation.
         mTextLagUpdater.updateTextLag();
-        
-        mMeterWrapper.setAzimuth(mLocationControlBuffered.getAzimuth());
-        if (mActivityVisible.getVisible())
-            mHandler.postDelayed(this, 500);
+        LocationControlBuffered locationControlBuffered = mLocationControlBufferedProvider.get();
+        mMeterWrapper.setAzimuth(locationControlBuffered.getAzimuth());
+        mHandler.postDelayed(this, 500);
     }
 }
