@@ -26,14 +26,17 @@ import android.os.Bundle;
 
 public class LocationControlBuffered implements LocationListener {
     public static class GpsDisabledLocation implements IGpsLocation {
+        @Override
         public float distanceTo(IGpsLocation dest) {
             return Float.MAX_VALUE;
         }
 
+        @Override
         public float distanceToGpsDisabledLocation(GpsDisabledLocation gpsLocation) {
             return Float.MAX_VALUE;
         }
 
+        @Override
         public float distanceToGpsEnabledLocation(GpsEnabledLocation gpsEnabledLocation) {
             return Float.MAX_VALUE;
         }
@@ -48,14 +51,17 @@ public class LocationControlBuffered implements LocationListener {
             mLongitude = longitude;
         }
 
+        @Override
         public float distanceTo(IGpsLocation gpsLocation) {
             return gpsLocation.distanceToGpsEnabledLocation(this);
         }
 
+        @Override
         public float distanceToGpsDisabledLocation(GpsDisabledLocation gpsLocation) {
             return Float.MAX_VALUE;
         }
 
+        @Override
         public float distanceToGpsEnabledLocation(GpsEnabledLocation gpsEnabledLocation) {
             final float calculateDistanceFast = GeocacheVector.calculateDistanceFast(mLatitude,
                     mLongitude, gpsEnabledLocation.mLatitude, gpsEnabledLocation.mLongitude);
@@ -105,6 +111,7 @@ public class LocationControlBuffered implements LocationListener {
         return mDistanceSortStrategy;
     }
 
+    @Override
     public void onLocationChanged(Location location) {
         mLocation = mLocationControl.getLocation();
         if (location == null) {
@@ -115,12 +122,15 @@ public class LocationControlBuffered implements LocationListener {
         }
     }
 
+    @Override
     public void onProviderDisabled(String provider) {
     }
 
+    @Override
     public void onProviderEnabled(String provider) {
     }
 
+    @Override
     public void onStatusChanged(String provider, int status, Bundle extras) {
     }
 

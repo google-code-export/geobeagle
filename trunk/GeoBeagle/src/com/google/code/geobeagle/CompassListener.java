@@ -45,9 +45,11 @@ public class CompassListener implements SensorListener {
     // onSensorChanged(SensorManager.SENSOR_ORIENTATION, event.values);
     // }
 
+    @Override
     public void onAccuracyChanged(int sensor, int accuracy) {
     }
 
+    @Override
     public void onSensorChanged(int sensor, float[] values) {
         final float currentAzimuth = values[0];
         if (Math.abs(currentAzimuth - mLastAzimuth) > 5) {

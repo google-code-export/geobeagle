@@ -52,6 +52,7 @@ public class GpsStatusWidgetDelegate implements LocationListener {
         mTextLagUpdater = textLagUpdater;
     }
 
+    @Override
     public void onLocationChanged(Location location) {
         // Log.d("GeoBeagle", "GpsStatusWidget onLocationChanged " + location);
         if (location == null)
@@ -68,14 +69,17 @@ public class GpsStatusWidgetDelegate implements LocationListener {
         mTextLagUpdater.reset(location.getTime());
     }
 
+    @Override
     public void onProviderDisabled(String provider) {
         mStatus.setText(provider + " DISABLED");
     }
 
+    @Override
     public void onProviderEnabled(String provider) {
         mStatus.setText(provider + " ENABLED");
     }
 
+    @Override
     public void onStatusChanged(String provider, int status, Bundle extras) {
         switch (status) {
             case LocationProvider.OUT_OF_SERVICE:
