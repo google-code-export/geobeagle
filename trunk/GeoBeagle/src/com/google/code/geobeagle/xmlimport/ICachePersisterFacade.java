@@ -60,6 +60,8 @@ public interface ICachePersisterFacade {
 
     public void placedBy(String trimmedText) throws IOException;
 
+    public void setEncrypted(boolean mLogEncrypted);
+
     public void shortDescription(String trimmedText) throws IOException;
 
     public void start();
@@ -77,6 +79,4 @@ public interface ICachePersisterFacade {
     public void wptName(String wpt) throws IOException;
 
     public void wptTime(String trimmedText) throws IOException;
-
-    public void setEncrypted(boolean mLogEncrypted);
 }

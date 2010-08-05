@@ -31,7 +31,7 @@ public class CacheWriter {
     private final Provider<ISQLiteDatabase> sqliteProvider;
 
     @Inject
-    public CacheWriter(Provider<ISQLiteDatabase> writableDatabaseProvider,
+    CacheWriter(Provider<ISQLiteDatabase> writableDatabaseProvider,
             DbToGeocacheAdapter dbToGeocacheAdapter) {
         this.sqliteProvider = writableDatabaseProvider;
         mDbToGeocacheAdapter = dbToGeocacheAdapter;

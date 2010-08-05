@@ -38,7 +38,7 @@ import java.io.IOException;
 public class ImportThreadDelegate {
 
     public static class ImportThreadHelper {
-        private final EventHandlers mEventHandlers;
+        private final EventHandler mEventHandler;
         private final EventHelperFactory mEventHelperFactory;
         private final GpxLoader mGpxLoader;
         private boolean mHasFiles;
@@ -48,14 +48,14 @@ public class ImportThreadDelegate {
         private final SharedPreferences mSharedPreferences;
 
         public ImportThreadHelper(GpxLoader gpxLoader, MessageHandlerInterface messageHandler,
-                EventHelperFactory eventHelperFactory, EventHandlers eventHandlers,
+                EventHelperFactory eventHelperFactory, EventHandler eventHandler,
                 OldCacheFilesCleaner oldCacheFilesCleaner,
                 SharedPreferences sharedPreferences,
                 GeoBeagleEnvironment geoBeagleEnvironment) {
             mGpxLoader = gpxLoader;
             mMessageHandler = messageHandler;
             mEventHelperFactory = eventHelperFactory;
-            mEventHandlers = eventHandlers;
+            mEventHandler = eventHandler;
             mHasFiles = false;
             mOldCacheFilesCleaner = oldCacheFilesCleaner;
             mSharedPreferences = sharedPreferences;
@@ -79,9 +79,7 @@ public class ImportThreadDelegate {
 
             mHasFiles = true;
             mGpxLoader.open(filename, gpxReader.open());
-            int len = filename.length();
-            String extension = filename.substring(Math.max(0, len - 3), len).toLowerCase();
-            return mGpxLoader.load(mEventHelperFactory.create(), mEventHandlers.get(extension));
+            return mGpxLoader.load(mEventHelperFactory.create(), mEventHandler);
         }
 
         public void start() {

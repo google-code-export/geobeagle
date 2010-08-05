@@ -31,6 +31,7 @@ public class OnClickListenerIntentStarter implements OnClickListener {
         mErrorDisplayer = errorDisplayer;
     }
 
+    @Override
     public void onClick(View view) {
         try {
             mIntentStarter.startIntent();

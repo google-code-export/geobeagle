@@ -24,11 +24,11 @@ import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.util.Hashtable;
 
-public class BufferedReaderFactoryImpl {
+public class BufferedReaderFactory {
     private final BCachingCommunication bcachingCommunication;
 
     @Inject
-    public BufferedReaderFactoryImpl(BCachingCommunication bcachingCommunication) {
+    BufferedReaderFactory(BCachingCommunication bcachingCommunication) {
         this.bcachingCommunication = bcachingCommunication;
     }
 

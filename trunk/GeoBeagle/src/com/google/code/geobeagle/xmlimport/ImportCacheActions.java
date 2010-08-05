@@ -14,28 +14,18 @@
 
 package com.google.code.geobeagle.xmlimport;
 
-import com.google.code.geobeagle.CacheTypeFactory;
 import com.google.code.geobeagle.GeocacheFactory.Source;
-import com.google.code.geobeagle.database.CacheWriter;
-import com.google.code.geobeagle.database.ClearCachesFromSource;
-import com.google.code.geobeagle.database.DbToGeocacheAdapter;
-import com.google.code.geobeagle.database.GpxWriter;
-import com.google.code.geobeagle.database.ISQLiteDatabase;
-import com.google.code.geobeagle.database.TagWriterImpl;
-import com.google.code.geobeagle.database.TagWriterNull;
 import com.google.code.geobeagle.xmlimport.CachePersisterFacadeDI.FileFactory;
 import com.google.inject.Inject;
-import com.google.inject.Provider;
 
 import roboguice.inject.ContextScoped;
 
-import android.content.SharedPreferences;
 import android.os.PowerManager.WakeLock;
 
 import java.io.IOException;
 
 @ContextScoped
-public class CachePersisterFacade implements ICachePersisterFacade {
+public class ImportCacheActions implements ICachePersisterFacade {
     private String mCacheName = "";
     private final CacheTagSqlWriter mCacheTagWriter;
     private final FileFactory mFileFactory;
@@ -45,7 +35,7 @@ public class CachePersisterFacade implements ICachePersisterFacade {
     private final GeoBeagleEnvironment mGeoBeagleEnvironment;
 
     @Inject
-    CachePersisterFacade(CacheTagSqlWriter cacheTagSqlWriter,
+    ImportCacheActions(CacheTagSqlWriter cacheTagSqlWriter,
             FileFactory fileFactory,
             MessageHandlerInterface messageHandler,
             WakeLock wakeLock,

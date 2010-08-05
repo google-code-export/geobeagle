@@ -30,18 +30,19 @@ import java.io.IOException;
 import java.io.Reader;
 
 public class GpxLoader {
-    private final CachePersisterFacade mCachePersisterFacade;
+    private final ImportCacheActions mCachePersisterFacade;
     private final ErrorDisplayer mErrorDisplayer;
     private final GpxToCache mGpxToCache;
     private final WakeLock mWakeLock;
     public static final int WAKELOCK_DURATION = 15000;
 
     @Inject
-    public
-    GpxLoader(CachePersisterFacade cachePersisterFacade, ErrorDisplayer errorDisplayer,
-            GpxToCache gpxToCache, WakeLock wakeLock) {
+    public GpxLoader(ImportCacheActions importCacheActions,
+            ErrorDisplayer errorDisplayer,
+            GpxToCache gpxToCache,
+            WakeLock wakeLock) {
         mGpxToCache = gpxToCache;
-        mCachePersisterFacade = cachePersisterFacade;
+        mCachePersisterFacade = importCacheActions;
         mErrorDisplayer = errorDisplayer;
         mWakeLock = wakeLock;
     }

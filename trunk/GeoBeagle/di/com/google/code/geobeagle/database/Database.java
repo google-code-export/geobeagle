@@ -16,7 +16,7 @@ package com.google.code.geobeagle.database;
 
 public class Database {
     public static final String DATABASE_NAME = "GeoBeagle.db";
-    public static final int DATABASE_VERSION = 14;
+    public static final int DATABASE_VERSION = 15;
     public static final String S0_COLUMN_CACHE_TYPE = "CacheType INTEGER NOT NULL Default 0";
     public static final String S0_COLUMN_CONTAINER = "Container INTEGER NOT NULL Default 0";
     public static final String S0_COLUMN_DELETE_ME = "DeleteMe BOOLEAN NOT NULL Default 1";

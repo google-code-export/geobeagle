@@ -24,7 +24,7 @@ public class GpxWriter {
     private final Provider<ISQLiteDatabase> sqliteProvider;
 
     @Inject
-    public GpxWriter(Provider<ISQLiteDatabase> sqliteProvider) {
+    GpxWriter(Provider<ISQLiteDatabase> sqliteProvider) {
         this.sqliteProvider = sqliteProvider;
     }
 

@@ -41,6 +41,8 @@ public class CacheTypeFactory {
             return 3;
         } else if (container.equals("Large")) {
             return 4;
+        } else if (container.equals("Other")) {
+            return 5;
         }
         return 0;
     }

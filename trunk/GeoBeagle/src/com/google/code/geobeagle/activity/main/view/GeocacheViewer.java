@@ -79,8 +79,10 @@ public class GeocacheViewer {
     public static class ResourceImages implements AttributeViewer {
         private final List<Integer> mResources;
         private final ImageView mImageView;
+        private final TextView mLabel;
 
-        public ResourceImages(ImageView imageView, List<Integer> resources) {
+        public ResourceImages(TextView label, ImageView imageView, List<Integer> resources) {
+            mLabel = label;
             mImageView = imageView;
             mResources = resources;
         }
@@ -89,6 +91,12 @@ public class GeocacheViewer {
         public void setImage(int attributeValue) {
             mImageView.setImageResource(mResources.get(attributeValue));
         }
+        
+        public void setVisibility(int visibility) {
+            mImageView.setVisibility(visibility);
+            mLabel.setVisibility(visibility);
+        }
+        
     }
  
     public static class NameViewer {
@@ -113,11 +121,12 @@ public class GeocacheViewer {
     }
 
     public static final Integer CONTAINER_IMAGES[] = {
-            R.drawable.size_1, R.drawable.size_2, R.drawable.size_3, R.drawable.size_4
+            R.drawable.size_0, R.drawable.size_1, R.drawable.size_2, R.drawable.size_3,
+            R.drawable.size_4, R.drawable.size_5
     };
 
     private final ImageView mCacheTypeImageView;
-    private final AttributeViewer mContainer;
+    private final ResourceImages mContainer;
     private final AttributeViewer mDifficulty;
     private final NameViewer mName;
     private final RadarView mRadarView;
@@ -128,11 +137,10 @@ public class GeocacheViewer {
     private final Activity mActivity;
     private final DifficultyAndTerrainPainter mDifficultyAndTerrainPainter;
 
-    @Inject
     public GeocacheViewer(RadarView radarView, Activity activity, NameViewer gcName,
-            @Named("GeocacheIcon") ImageView cacheTypeImageView,
-            @Named("GeocacheDifficulty") AttributeViewer gcDifficulty,
-            @Named("GeocacheTerrain") AttributeViewer gcTerrain, ResourceImages gcContainer,
+            ImageView cacheTypeImageView,
+            AttributeViewer gcDifficulty,
+            AttributeViewer gcTerrain, ResourceImages gcContainer,
             IconOverlayFactory iconOverlayFactory, MapViewBitmapCopier mapViewBitmapCopier,
             IconRenderer iconRenderer, DifficultyAndTerrainPainter difficultyAndTerrainPainter) {
         mRadarView = radarView;
@@ -160,6 +168,7 @@ public class GeocacheViewer {
         Drawable icon = mIconRenderer.renderIcon(0, 0, iconBig, iconOverlay, mMapViewBitmapCopier,
                 mDifficultyAndTerrainPainter);
         mCacheTypeImageView.setImageDrawable(icon);
+        mContainer.setVisibility(geocache.getContainer() == 0 ? View.GONE : View.VISIBLE);
         mContainer.setImage(geocache.getContainer());
         mDifficulty.setImage(geocache.getDifficulty());
         mTerrain.setImage(geocache.getTerrain());

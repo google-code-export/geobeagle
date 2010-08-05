@@ -1,3 +1,4 @@
+
 package com.google.code.geobeagle.xmlimport;
 
 import com.google.code.geobeagle.GeocacheFactory.Source;
@@ -15,7 +16,7 @@ public class CacheTagsToDetails implements ICachePersisterFacade {
     public CacheTagsToDetails(CacheDetailsWriter cacheDetailsWriter) {
         this.cacheDetailsWriter = cacheDetailsWriter;
     }
-    
+
     @Override
     public void archived(String attributeValue) {
     }
@@ -153,7 +154,6 @@ public class CacheTagsToDetails implements ICachePersisterFacade {
 
     @Override
     public void setEncrypted(boolean mLogEncrypted) {
-        encrypted = true;
+        encrypted = mLogEncrypted;
     }
-
 }

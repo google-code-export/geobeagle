@@ -43,13 +43,13 @@ public class DetailsReaderImport {
         params.put("fmt", "gpx");
     }
 
-    private final BufferedReaderFactoryImpl bufferedReaderFactory;
+    private final BufferedReaderFactory bufferedReaderFactory;
     private final GpxLoader gpxLoader;
     private final EventHelper eventHelper;
     private final EventHandler eventHandler;
 
     @Inject
-    DetailsReaderImport(BufferedReaderFactoryImpl bufferedReaderFactory, EventHelper eventHelper,
+    DetailsReaderImport(BufferedReaderFactory bufferedReaderFactory, EventHelper eventHelper,
             GpxLoader gpxLoader, XmlWriter xmlWriter, EventHandlerGpx eventHandlerGpx) {
         this.bufferedReaderFactory = bufferedReaderFactory;
         this.gpxLoader = gpxLoader;

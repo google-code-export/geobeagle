@@ -23,10 +23,10 @@ import com.google.code.geobeagle.activity.main.GeoBeagleDelegate.LogFindClickLis
 import com.google.code.geobeagle.activity.main.fieldnotes.DialogHelperSms;
 import com.google.code.geobeagle.activity.main.fieldnotes.DialogHelperSmsFactory;
 import com.google.code.geobeagle.activity.main.fieldnotes.FieldnoteLogger;
-import com.google.code.geobeagle.activity.main.fieldnotes.FieldnoteLoggerFactory;
-import com.google.code.geobeagle.activity.main.fieldnotes.OnClickOkFactory;
 import com.google.code.geobeagle.activity.main.fieldnotes.FieldnoteLogger.OnClickCancel;
 import com.google.code.geobeagle.activity.main.fieldnotes.FieldnoteLogger.OnClickOk;
+import com.google.code.geobeagle.activity.main.fieldnotes.FieldnoteLoggerFactory;
+import com.google.code.geobeagle.activity.main.fieldnotes.OnClickOkFactory;
 import com.google.code.geobeagle.activity.main.intents.IntentStarterGeo;
 import com.google.code.geobeagle.activity.main.view.OnClickListenerCacheDetails;
 import com.google.code.geobeagle.activity.main.view.OnClickListenerIntentStarter;
@@ -164,7 +164,13 @@ public class GeoBeagle extends GuiceActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         return mGeoBeagleDelegate.onCreateOptionsMenu(menu);
     }
-
+    
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+        return mGeoBeagleDelegate.onPrepareOptionsMenu(menu);
+    }
+    
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (mGeoBeagleDelegate.onKeyDown(keyCode, event))

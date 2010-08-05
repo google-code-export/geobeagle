@@ -29,7 +29,7 @@ public class EventHandlerGpx implements EventHandler {
     public void startTag(String name,
             String fullPath,
             XmlPullParserWrapper xmlPullParser,
-            ICachePersisterFacade cachePersisterFacade) {
+            ICachePersisterFacade cachePersisterFacade) throws IOException {
         GpxPath.fromString(fullPath).startTag(xmlPullParser, cachePersisterFacade);
     }
 

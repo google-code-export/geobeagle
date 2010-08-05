@@ -26,8 +26,8 @@ class TagWriter {
     private WriterWrapper writer;
 
     @Inject
-    public TagWriter() {
-        this.writer = new WriterWrapper();
+    public TagWriter(WriterWrapper writer) {
+        this.writer = writer;
     }
 
     public void close() throws IOException {

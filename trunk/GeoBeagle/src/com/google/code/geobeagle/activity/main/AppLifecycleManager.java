@@ -22,32 +22,38 @@ import android.content.SharedPreferences;
 import android.location.LocationManager;
 
 public class AppLifecycleManager {
-    private final LifecycleManager[] mLifecycleManagers;
-    private final SharedPreferences mPreferences;
+    private final LifecycleManager[] lifecycleManagers;
+    private final SharedPreferences sharedPreferences;
 
     @Inject
-    public AppLifecycleManager(SharedPreferences preferences,
-            LocationControlBuffered locationControlBuffered, LocationManager locationManager,
+    AppLifecycleManager(SharedPreferences preferences,
+            LocationControlBuffered locationControlBuffered,
+            LocationManager locationManager,
             RadarView radarView) {
-        mLifecycleManagers = new LifecycleManager[] {
+        this.lifecycleManagers = new LifecycleManager[] {
                 new LocationLifecycleManager(locationControlBuffered, locationManager),
                 new LocationLifecycleManager(radarView, locationManager)
         };
 
-        mPreferences = preferences;
+        sharedPreferences = preferences;
+    }
+
+    AppLifecycleManager(SharedPreferences sharedPreferences, LifecycleManager[] lifecycleManagers) {
+        this.sharedPreferences = sharedPreferences;
+        this.lifecycleManagers = lifecycleManagers;
     }
 
     public void onPause() {
-        final SharedPreferences.Editor editor = mPreferences.edit();
-        for (LifecycleManager lifecycleManager : mLifecycleManagers) {
+        final SharedPreferences.Editor editor = sharedPreferences.edit();
+        for (LifecycleManager lifecycleManager : lifecycleManagers) {
             lifecycleManager.onPause(editor);
         }
         editor.commit();
     }
 
     public void onResume() {
-        for (LifecycleManager lifecycleManager : mLifecycleManagers) {
-            lifecycleManager.onResume(mPreferences);
+        for (LifecycleManager lifecycleManager : lifecycleManagers) {
+            lifecycleManager.onResume(sharedPreferences);
         }
     }
 }

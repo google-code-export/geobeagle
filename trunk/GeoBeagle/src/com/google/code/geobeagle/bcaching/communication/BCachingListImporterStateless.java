@@ -14,8 +14,9 @@
 
 package com.google.code.geobeagle.bcaching.communication;
 
-import com.google.code.geobeagle.bcaching.BufferedReaderFactoryImpl;
 import com.google.inject.Inject;
+
+import android.content.SharedPreferences;
 
 import java.util.Hashtable;
 
@@ -23,19 +24,24 @@ public class BCachingListImporterStateless {
     static final String MAX_COUNT = "50";
 
     private final BCachingListImportHelper bCachingListImportHelper;
-    private static Hashtable<String, String> params;
-    static {
+    private final Hashtable<String, String> params;
+
+    @Inject
+    BCachingListImporterStateless(BCachingListImportHelper bCachingListImportHelper,
+            SharedPreferences sharedPreferences) {
+        this.bCachingListImportHelper = bCachingListImportHelper;
         params = new Hashtable<String, String>();
         params.put("a", "list");
-        params.put("found", "0");
+        boolean syncFinds = sharedPreferences.getBoolean("bcaching-sync-finds", false);
+        params.put("found", syncFinds ? "2" : "0"); // 0-no, 1-yes, 2-both
         commonParams(params);
     }
 
-    @Inject
-    public BCachingListImporterStateless(BufferedReaderFactoryImpl readerFactory) {
-        BCachingListFactory bcachingListFactory = new BCachingListFactory();
-        this.bCachingListImportHelper = new BCachingListImportHelper(readerFactory,
-                bcachingListFactory );
+    // For testing.
+    BCachingListImporterStateless(Hashtable<String, String> params,
+            BCachingListImportHelper bCachingListImportHelper) {
+        this.bCachingListImportHelper = bCachingListImportHelper;
+        this.params = params;
     }
 
     private BCachingList importList(String maxCount, String startTime) throws BCachingException {

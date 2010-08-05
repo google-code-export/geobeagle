@@ -29,7 +29,7 @@ import android.widget.Toast;
 public class GpxImporter implements Abortable {
 
     private final ErrorDisplayer mErrorDisplayer;
-    private final EventHandlers mEventHandlers;
+    private final EventHandler mEventHandler;
     private final GpxLoader mGpxLoader;
     private final ImportThreadWrapper mImportThreadWrapper;
     private final Context mContext;
@@ -40,11 +40,11 @@ public class GpxImporter implements Abortable {
 
     GpxImporter(Pausable geocacheListPresenter, GpxLoader gpxLoader, Context context,
             ImportThreadWrapper importThreadWrapper, MessageHandlerInterface messageHandler,
-            ToastFactory toastFactory, EventHandlers eventHandlers, ErrorDisplayer errorDisplayer,
+            ToastFactory toastFactory, EventHandler eventHandler, ErrorDisplayer errorDisplayer,
             Injector injector) {
         mContext = context;
         mGpxLoader = gpxLoader;
-        mEventHandlers = eventHandlers;
+        mEventHandler = eventHandler;
         mImportThreadWrapper = importThreadWrapper;
         mMessageHandler = messageHandler;
         mErrorDisplayer = errorDisplayer;
@@ -53,6 +53,7 @@ public class GpxImporter implements Abortable {
         mInjector = injector;
     }
 
+    @Override
     public void abort() {
         mMessageHandler.abortLoad();
         mGpxLoader.abort();
@@ -65,7 +66,7 @@ public class GpxImporter implements Abortable {
     public void importGpxs(CacheListRefresh cacheListRefresh) {
         mGeocacheListPresenter.onPause();
 
-        mImportThreadWrapper.open(cacheListRefresh, mGpxLoader, mEventHandlers, mErrorDisplayer,
+        mImportThreadWrapper.open(cacheListRefresh, mGpxLoader, mEventHandler, mErrorDisplayer,
                 mInjector);
         mImportThreadWrapper.start();
     }

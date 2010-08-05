@@ -14,9 +14,8 @@
 
 package com.google.code.geobeagle.xmlimport;
 
-import static org.powermock.api.easymock.PowerMock.createMock;
-import static org.powermock.api.easymock.PowerMock.replay;
-import static org.powermock.api.easymock.PowerMock.verify;
+import static org.easymock.EasyMock.expect;
+import static org.powermock.api.easymock.PowerMock.*;
 
 import com.google.code.geobeagle.activity.cachelist.GeoBeagleTest;
 import com.google.code.geobeagle.cachedetails.CacheDetailsWriter;
@@ -28,13 +27,14 @@ import org.junit.runner.RunWith;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import android.content.Context;
 import android.util.Log;
 
 import java.io.IOException;
 import java.util.regex.Pattern;
 
-@PrepareForTest( {
-    CacheDetailsWriter.class, Log.class
+@PrepareForTest({
+        CacheDetailsWriter.class, Log.class
 })
 @RunWith(PowerMockRunner.class)
 public class CacheDetailsWriterTest extends GeoBeagleTest {
@@ -46,9 +46,9 @@ public class CacheDetailsWriterTest extends GeoBeagleTest {
         htmlWriter.writeFooter();
         htmlWriter.close();
 
-        replay(htmlWriter);
+        replayAll();
         new CacheDetailsWriter(htmlWriter, null, null).close();
-        verify(htmlWriter);
+        verifyAll();
     }
 
     @Test
@@ -56,41 +56,47 @@ public class CacheDetailsWriterTest extends GeoBeagleTest {
         HtmlWriter htmlWriter = createMock(HtmlWriter.class);
         htmlWriter.writeln("some text");
 
-        replay(htmlWriter);
+        replayAll();
         new CacheDetailsWriter(htmlWriter, null, null).writeLine("some text");
-        verify(htmlWriter);
+        verifyAll();
     }
 
     @Test
     public void testWriteLogTextSmiley() throws IOException {
         HtmlWriter htmlWriter = createMock(HtmlWriter.class);
-        htmlWriter.writeln("sad " + Emotifier.EMOTICON_PREFIX + "(" + Emotifier.ICON_SUFFIX + " face");
-        htmlWriter.writeln("clown " + Emotifier.EMOTICON_PREFIX + "o)" + Emotifier.ICON_SUFFIX + " face");
-        htmlWriter.writeln("not a smiley []");
+        EmotifierPatternProvider patternProvider = createMock(EmotifierPatternProvider.class);
+        Context context = createMock(Context.class);
 
-        replay(htmlWriter);
-        Pattern pattern = XmlimportModule.createEmotifierPattern(new String[] {
+        Pattern pattern = EmotifierPatternProvider.createEmotifierPattern(new String[] {
                 ":(", ":o)", "|)", "?"
         });
+        expect(patternProvider.get()).andReturn(pattern).anyTimes();
+        htmlWriter.writeln("sad " + Emotifier.EMOTICON_PREFIX + "(" + Emotifier.ICON_SUFFIX
+                + " face");
+        htmlWriter.writeln("clown " + Emotifier.EMOTICON_PREFIX + "o)" + Emotifier.ICON_SUFFIX
+                + " face");
+        htmlWriter.writeln("not a smiley []");
+
+        replayAll();
         CacheDetailsWriter cacheDetailsWriter = new CacheDetailsWriter(htmlWriter, new Emotifier(
-                pattern), null);
+                patternProvider), context);
         cacheDetailsWriter.writeLogText("sad [:(] face", false);
         cacheDetailsWriter.writeLogText("clown [:o)] face", false);
         cacheDetailsWriter.writeLogText("not a smiley []", false);
-        verify(htmlWriter);
+        verifyAll();
     }
 
     @Test
     public void testWriteWptName() throws IOException {
         HtmlWriter htmlWriter = createMock(HtmlWriter.class);
-        
+
         htmlWriter.open(null);
         htmlWriter.writeln("<font color=grey>Location:</font> 37 00.000, 122 00.000");
 
-        replay(htmlWriter);
+        replayAll();
         CacheDetailsWriter cacheDetailsWriter = new CacheDetailsWriter(htmlWriter, null, null);
         cacheDetailsWriter.latitudeLongitude("37.0", "122.0");
         cacheDetailsWriter.writeWptName();
-        verify(htmlWriter);
+        verifyAll();
     }
 }

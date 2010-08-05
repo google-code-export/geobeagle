@@ -12,18 +12,25 @@
  ** limitations under the License.
  */
 
-package com.google.code.geobeagle.xmlimport;
+package com.google.code.geobeagle.cachedetails.reader;
 
-import java.util.HashMap;
+import com.google.code.geobeagle.xmlimport.ICachePersisterFacade;
 
-public class EventHandlers {
-    private final HashMap<String, EventHandler> mEventHandlers = new HashMap<String, EventHandler>();
+import android.app.Activity;
 
-    public void add(String extension, EventHandler eventHandler) {
-        mEventHandlers.put(extension, eventHandler);
+public class DetailsReaderError implements DetailsReader {
+    private final Activity mActivity;
+    private final int mError;
+    private final String mPath;
+
+    public DetailsReaderError(Activity activity, int error, String path) {
+        mActivity = activity;
+        mPath = path;
+        mError = error;
     }
 
-    public EventHandler get(String extension) {
-        return mEventHandlers.get(extension.toLowerCase());
+    @Override
+    public String read(ICachePersisterFacade cpf) {
+        return mActivity.getString(mError, mPath);
     }
 }

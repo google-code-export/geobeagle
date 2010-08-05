@@ -15,8 +15,11 @@
 package com.google.code.geobeagle.xmlimport.gpx;
 
 import com.google.code.geobeagle.R;
+import com.google.code.geobeagle.preferences.PreferencesUpgrader;
 import com.google.code.geobeagle.xmlimport.GeoBeagleEnvironment;
 import com.google.code.geobeagle.xmlimport.ImportException;
+
+import android.content.SharedPreferences;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -30,6 +33,7 @@ public class GpxAndZipFiles {
             mGpxFilenameFilter = gpxFilenameFilter;
         }
 
+        @Override
         public boolean accept(File dir, String name) {
             String lowerCaseName = name.toLowerCase();
             if (!lowerCaseName.startsWith(".") && lowerCaseName.endsWith(".zip"))
@@ -82,21 +86,29 @@ public class GpxAndZipFiles {
 
     private final FilenameFilter mFilenameFilter;
     private final GpxFileIterAndZipFileIterFactory mGpxFileIterAndZipFileIterFactory;
-    private GeoBeagleEnvironment mGeoBeagleEnvironment;
+    private final GeoBeagleEnvironment mGeoBeagleEnvironment;
+    private final SharedPreferences mSharedPreferences;
 
     public GpxAndZipFiles(FilenameFilter filenameFilter,
             GpxFileIterAndZipFileIterFactory gpxFileIterAndZipFileIterFactory,
-            GeoBeagleEnvironment geoBeagleEnvironment) {
+            GeoBeagleEnvironment geoBeagleEnvironment,
+            SharedPreferences sharedPreferences) {
         mFilenameFilter = filenameFilter;
         mGpxFileIterAndZipFileIterFactory = gpxFileIterAndZipFileIterFactory;
         mGeoBeagleEnvironment = geoBeagleEnvironment;
+        mSharedPreferences = sharedPreferences;
     }
 
     public GpxFilesAndZipFilesIter iterator() throws ImportException {
-        String gpxDir = mGeoBeagleEnvironment.getImportFolder();
-        String[] fileList = new File(gpxDir).list(mFilenameFilter);
-        if (fileList == null)
-            throw new ImportException(R.string.error_cant_read_sd, gpxDir);
+        String[] fileList;
+        if (!mSharedPreferences.getBoolean(PreferencesUpgrader.SDCARD_ENABLED, true)) {
+            fileList = new String[0];
+        } else {
+            String gpxDir = mGeoBeagleEnvironment.getImportFolder();
+            fileList = new File(gpxDir).list(mFilenameFilter);
+            if (fileList == null)
+                throw new ImportException(R.string.error_cant_read_sd, gpxDir);
+        }
         mGpxFileIterAndZipFileIterFactory.resetAborter();
         return new GpxFilesAndZipFilesIter(fileList, mGpxFileIterAndZipFileIterFactory);
     }

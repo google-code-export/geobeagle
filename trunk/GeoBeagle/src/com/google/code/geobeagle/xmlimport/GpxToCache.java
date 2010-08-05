@@ -14,10 +14,7 @@
 
 package com.google.code.geobeagle.xmlimport;
 
-import com.google.code.geobeagle.database.GpxWriter;
-import com.google.code.geobeagle.database.ISQLiteDatabase;
 import com.google.inject.Inject;
-import com.google.inject.Provider;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
@@ -28,7 +25,6 @@ import android.util.Log;
 
 import java.io.IOException;
 import java.io.Reader;
-import java.text.SimpleDateFormat;
 
 public class GpxToCache {
     @ContextScoped
@@ -64,18 +60,7 @@ public class GpxToCache {
     private String mFilename;
 
     @Inject
-    GpxToCache(XmlPullParserWrapper xmlPullParserWrapper,
-            Aborter aborter,
-            Provider<ISQLiteDatabase> sqliteProvider) {
-        mXmlPullParserWrapper = xmlPullParserWrapper;
-        mAborter = aborter;
-        GpxWriter gpxWriter = new GpxWriter(sqliteProvider);
-        SimpleDateFormat dateFormat = new SimpleDateFormat();
-        mTestLocAlreadyLoaded = new FileAlreadyLoadedChecker(gpxWriter, dateFormat );
-    }
-
-    GpxToCache(XmlPullParserWrapper xmlPullParserWrapper,
-            Aborter aborter,
+    GpxToCache(XmlPullParserWrapper xmlPullParserWrapper, Aborter aborter,
             FileAlreadyLoadedChecker fileAlreadyLoadedChecker) {
         mXmlPullParserWrapper = xmlPullParserWrapper;
         mAborter = aborter;

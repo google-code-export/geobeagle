@@ -23,7 +23,7 @@ import android.os.PowerManager.WakeLock;
 import java.text.SimpleDateFormat;
 
 public class GpxLoaderDI {
-    public static GpxLoader create(CachePersisterFacade cachePersisterFacade,
+    public static GpxLoader create(ImportCacheActions importCacheActions,
             XmlPullParserWrapper xmlPullParserWrapper, Aborter aborter,
             ErrorDisplayer errorDisplayer, WakeLock wakeLock, GpxWriter gpxWriter) {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSSZ");
@@ -31,6 +31,6 @@ public class GpxLoaderDI {
                 simpleDateFormat);
         final GpxToCache gpxToCache = new GpxToCache(xmlPullParserWrapper, aborter,
                 fileAlreadyLoadedChecker);
-        return new GpxLoader(cachePersisterFacade, errorDisplayer, gpxToCache, wakeLock);
+        return new GpxLoader(importCacheActions, errorDisplayer, gpxToCache, wakeLock);
     }
 }
