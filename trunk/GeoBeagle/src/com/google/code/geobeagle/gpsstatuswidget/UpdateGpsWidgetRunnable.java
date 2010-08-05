@@ -37,6 +37,7 @@ public class UpdateGpsWidgetRunnable implements Runnable {
         mActivityVisible = activityVisible;
     }
 
+    @Override
     public void run() {
         // Update the lag time and the orientation.
         mTextLagUpdater.updateTextLag();
