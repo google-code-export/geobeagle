@@ -18,33 +18,32 @@ import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.formatting.DistanceFormatter;
 import com.google.inject.Inject;
 
-import roboguice.inject.ContextScoped;
-
 import android.widget.TextView;
 
-@ContextScoped
 class Meter {
-    private float mAccuracy;
     private final TextView mAccuracyView;
-    private float mAzimuth;
     private final MeterBars mMeterView;
+    private final MeterState mMeterState;
 
     @Inject
-    Meter(MeterBars meterBars, InflatedGpsStatusWidget inflatedGpsStatusWidget) {
+    Meter(MeterBars meterBars,
+            InflatedGpsStatusWidget inflatedGpsStatusWidget,
+            MeterState meterState) {
         mAccuracyView = ((TextView)inflatedGpsStatusWidget.findViewById(R.id.accuracy));
+        mMeterState = meterState;
         mMeterView = meterBars;
     }
 
     void setAccuracy(float accuracy, DistanceFormatter distanceFormatter) {
-        mAccuracy = accuracy;
+        mMeterState.setAccuracy(accuracy);
         distanceFormatter.formatDistance(accuracy);
         mAccuracyView.setText(distanceFormatter.formatDistance(accuracy));
-        mMeterView.set(accuracy, mAzimuth);
+        mMeterView.set(accuracy, mMeterState.getAzimuth());
     }
 
     void setAzimuth(float azimuth) {
-        mAzimuth = azimuth;
-        mMeterView.set(mAccuracy, azimuth);
+        mMeterState.setAzimuth(azimuth);
+        mMeterView.set(mMeterState.getAccuracy(), azimuth);
     }
 
     void setDisabled() {
