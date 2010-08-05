@@ -17,6 +17,7 @@ package com.google.code.geobeagle.activity.main;
 import com.google.code.geobeagle.Refresher;
 
 class NullRefresher implements Refresher {
+    @Override
     public void refresh() {
     }
 }
