@@ -78,10 +78,10 @@ public class LocationControlBuffered implements LocationListener {
     }
 
     private final DistanceSortStrategy mDistanceSortStrategy;
-    private GpsDisabledLocation mGpsDisabledLocation;
+    private final GpsDisabledLocation mGpsDisabledLocation;
     private IGpsLocation mGpsLocation;
     private Location mLocation;
-    private LocationControl mLocationControl;
+    private final LocationControl mLocationControl;
     private final NullSortStrategy mNullSortStrategy;
     private float mAzimuth;
 
