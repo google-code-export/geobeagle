@@ -18,29 +18,12 @@ import com.google.code.geobeagle.activity.main.Util;
 import com.google.inject.Inject;
 
 import android.content.Context;
-import android.text.format.DateUtils;
 import android.util.Log;
 
 import java.io.IOException;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.TimeZone;
 
 public class CacheDetailsWriter {
-    public static Date parse(String input) throws java.text.ParseException {
-        final String formatString = "yyyy-MM-dd'T'HH:mm:ss Z";
-        SimpleDateFormat df = new SimpleDateFormat(formatString);
-
-        String s;
-        try {
-            s = input.substring(0, 19) + " +0000";
-        } catch (Exception e) {
-            throw new ParseException(null, 0);
-        }
-        return df.parse(s);
-    }
     public static String replaceIllegalFileChars(String wpt) {
         return wpt.replaceAll("[<\\\\/:\\*\\?\">| \\t]", "_");
     }
@@ -54,12 +37,17 @@ public class CacheDetailsWriter {
     private String finder;
     private String logType;
     private String relativeTime;
+    private final RelativeDateFormatter relativeDateFormatter;
 
     @Inject
-    public CacheDetailsWriter(HtmlWriter htmlWriter, Emotifier emotifier, Context context) {
+    public CacheDetailsWriter(HtmlWriter htmlWriter,
+            Emotifier emotifier,
+            Context context,
+            RelativeDateFormatter relativeDateFormatter) {
         this.htmlWriter = htmlWriter;
         this.emotifier = emotifier;
         this.context = context;
+        this.relativeDateFormatter = relativeDateFormatter;
     }
 
     public void close() throws IOException {
@@ -84,7 +72,7 @@ public class CacheDetailsWriter {
         Log.d("GeoBeagle", "PLACED BY: " + time);
         String on = "";
         try {
-            on = getRelativeTime(time);
+            on = relativeDateFormatter.getRelativeTime(context, time);
         } catch (ParseException e) {
             on = "PARSE ERROR";
         }
@@ -114,7 +102,7 @@ public class CacheDetailsWriter {
     public void writeLogDate(String text) throws IOException {
         htmlWriter.writeSeparator();
         try {
-            relativeTime = getRelativeTime(text);
+            relativeTime = relativeDateFormatter.getRelativeTime(context, text);
         } catch (ParseException e) {
             htmlWriter.writeln("error parsing date: " + e.getLocalizedMessage());
         }
@@ -156,33 +144,5 @@ public class CacheDetailsWriter {
 
     public void writeLogFinder(String finder) {
         this.finder = finder;
-    }
-
-    private String getRelativeTime(String utcTime) throws ParseException {
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeZone(TimeZone.getTimeZone("GMT"));
-        calendar.setTime(parse(utcTime));
-        long time = calendar.getTimeInMillis();
-
-        String timeClause;
-        // 0700 and 1900 are noon and midnight PDT. These are probably cases
-        // where the cache/log doesn't have a real time, and Groundspeak just
-        // rounded off. In this case, suppress showing the time.
-        if ((calendar.get(Calendar.HOUR_OF_DAY) % 12) == 7 && calendar.get(Calendar.MINUTE) == 0) {
-            timeClause = "";
-        } else {
-            timeClause = ", "
-                    + DateUtils.formatDateRange(context, time, time, DateUtils.FORMAT_SHOW_TIME);
-        }
-
-        long now = System.currentTimeMillis();
-        long duration = Math.abs(now - time);
-        if (duration < DateUtils.WEEK_IN_MILLIS) {
-            CharSequence relativeClause = DateUtils.getRelativeTimeSpanString(time, now,
-                    DateUtils.HOUR_IN_MILLIS, 0);
-            return (String)relativeClause + timeClause;
-        }
-        CharSequence dateClause = DateUtils.getRelativeTimeSpanString(context, time, false);
-        return dateClause + timeClause;
     }
 }
