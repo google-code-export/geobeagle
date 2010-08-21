@@ -24,7 +24,9 @@ import android.util.Log;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.TimeZone;
 
 public class CacheDetailsWriter {
     private final HtmlWriter mHtmlWriter;
@@ -70,7 +72,7 @@ public class CacheDetailsWriter {
     public static Date parse(String input) throws java.text.ParseException {
         final String formatString = "yyyy-MM-dd'T'HH:mm:ss Z";
         SimpleDateFormat df = new SimpleDateFormat(formatString);
-        
+
         String s;
         try {
             s = input.substring(0, 19) + " +0000";
@@ -89,12 +91,32 @@ public class CacheDetailsWriter {
         }
     }
 
-    private String getRelativeTime(String text) throws ParseException {
-        Date date = parse(text);
-        final CharSequence relativeDateTimeString = DateUtils.getRelativeDateTimeString(mContext,
-                date.getTime(), DateUtils.DAY_IN_MILLIS, DateUtils.WEEK_IN_MILLIS, 0);
-        String s = relativeDateTimeString.toString();
-        return s;
+    private String getRelativeTime(String utcTime) throws ParseException {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeZone(TimeZone.getTimeZone("GMT"));
+        calendar.setTime(parse(utcTime));
+        long time = calendar.getTimeInMillis();
+
+        String timeClause;
+        // 0700 and 1900 are noon and midnight PDT. These are probably cases
+        // where the cache/log doesn't have a real time, and Groundspeak just
+        // rounded off. In this case, suppress showing the time.
+        if ((calendar.get(Calendar.HOUR_OF_DAY) % 12) == 7 && calendar.get(Calendar.MINUTE) == 0) {
+            timeClause = "";
+        } else {
+            timeClause = ", "
+                    + DateUtils.formatDateRange(mContext, time, time, DateUtils.FORMAT_SHOW_TIME);
+        }
+
+        long now = System.currentTimeMillis();
+        long duration = Math.abs(now - time);
+        if (duration < DateUtils.WEEK_IN_MILLIS) {
+            CharSequence relativeClause = DateUtils.getRelativeTimeSpanString(time, now,
+                    DateUtils.HOUR_IN_MILLIS, 0);
+            return (String)relativeClause + timeClause;
+        }
+        CharSequence dateClause = DateUtils.getRelativeTimeSpanString(mContext, time, false);
+        return dateClause + timeClause;
     }
 
     public void writeWptName() throws IOException {
