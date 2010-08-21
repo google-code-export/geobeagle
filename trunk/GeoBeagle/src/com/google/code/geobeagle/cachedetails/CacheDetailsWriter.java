@@ -62,6 +62,8 @@ public class CacheDetailsWriter {
     public void close() throws IOException {
         htmlWriter.writeFooter();
         htmlWriter.close();
+        latitude = longitude = time = "";
+        logNumber = 0;
     }
 
     public void latitudeLongitude(String latitude, String longitude) {
