@@ -37,13 +37,14 @@ import android.widget.ListView;
 
 public class CacheListActivity extends GuiceListActivity {
     static class OnClickCancel implements OnClickListener {
+        @Override
         public void onClick(DialogInterface dialog, int whichButton) {
             dialog.dismiss();
         }
     }
 
     private CacheListDelegate mCacheListDelegate;
-    
+
     // This is the ctor that Android will use.
     public CacheListActivity() {
     }

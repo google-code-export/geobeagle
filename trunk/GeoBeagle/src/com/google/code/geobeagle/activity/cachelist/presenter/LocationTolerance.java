@@ -30,6 +30,7 @@ public class LocationTolerance implements ToleranceStrategy {
         mLastRefreshTime = 0;
     }
 
+    @Override
     public boolean exceedsTolerance(IGpsLocation here, float azimuth, long now) {
         if (now < mLastRefreshTime + mMinTimeBetweenRefresh)
             return false;
@@ -40,6 +41,7 @@ public class LocationTolerance implements ToleranceStrategy {
         return fExceedsTolerance;
     }
 
+    @Override
     public void updateLastRefreshed(IGpsLocation here, float azimuth, long now) {
         // Log.d("GeoBeagle", "updateLastRefreshed here: " + here);
         mLastRefreshLocation = here;

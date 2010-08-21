@@ -17,6 +17,7 @@ package com.google.code.geobeagle.activity.cachelist;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.Abortable;
 
 public class NullAbortable implements Abortable {
+    @Override
     public void abort() {
     }
 }
