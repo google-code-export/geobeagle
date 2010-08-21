@@ -27,7 +27,7 @@ import android.content.SharedPreferences;
 import android.util.Log;
 
 public class ActivityRestorer {
-    
+
     static class CacheListRestorer implements Restorer {
         private final Activity mActivity;
 
@@ -71,7 +71,6 @@ public class ActivityRestorer {
             final Intent intent = new Intent(mActivity, GeoBeagle.class);
             intent.putExtra("geocache", geocache).setAction(GeocacheListController.SELECT_CACHE);
             mActivity.startActivity(intent);
-            mActivity.finish();
         }
     }
 
