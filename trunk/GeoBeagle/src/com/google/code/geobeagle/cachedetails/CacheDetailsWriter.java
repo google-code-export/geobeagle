@@ -29,29 +29,30 @@ import java.util.Date;
 import java.util.TimeZone;
 
 public class CacheDetailsWriter {
-    private final HtmlWriter mHtmlWriter;
-    private String mLatitude;
-    private String mLongitude;
-    private int mLogNumber;
-    private final Emotifier mEmotifier;
-    private final Context mContext;
-    private String mTime;
+    private final HtmlWriter htmlWriter;
+    private String latitude;
+    private String longitude;
+    private int logNumber;
+    private final Emotifier emotifier;
+    private final Context context;
+    private String time;
 
     @Inject
     public CacheDetailsWriter(HtmlWriter htmlWriter, Emotifier emotifier, Context context) {
-        mHtmlWriter = htmlWriter;
-        mEmotifier = emotifier;
-        mContext = context;
+        this.htmlWriter = htmlWriter;
+        this.emotifier = emotifier;
+        this.context = context;
     }
 
     public void close() throws IOException {
-        mHtmlWriter.writeFooter();
-        mHtmlWriter.close();
+        htmlWriter.writeFooter();
+        htmlWriter.close();
     }
 
     public void latitudeLongitude(String latitude, String longitude) {
-        mLatitude = (String)Util.formatDegreesAsDecimalDegreesString(Double.valueOf(latitude));
-        mLongitude = (String)Util.formatDegreesAsDecimalDegreesString(Double.valueOf(longitude));
+        this.latitude = (String)Util.formatDegreesAsDecimalDegreesString(Double.valueOf(latitude));
+        this.longitude = (String)Util.formatDegreesAsDecimalDegreesString(Double
+                .valueOf(longitude));
     }
 
     public static String replaceIllegalFileChars(String wpt) {
@@ -59,14 +60,14 @@ public class CacheDetailsWriter {
     }
 
     public void writeHint(String text) throws IOException {
-        mHtmlWriter
+        htmlWriter
                 .write("<a class=hint id=hint_link onclick=\"dht('hint_link');return false;\" href=#>"
                         + "Encrypt</a>");
-        mHtmlWriter.write("<div id=hint_link_text>" + text + "</div>");
+        htmlWriter.write("<div id=hint_link_text>" + text + "</div>");
     }
 
     public void writeLine(String text) throws IOException {
-        mHtmlWriter.writeln(text);
+        htmlWriter.writeln(text);
     }
 
     public static Date parse(String input) throws java.text.ParseException {
@@ -83,11 +84,11 @@ public class CacheDetailsWriter {
     }
 
     public void writeLogDate(String text) throws IOException {
-        mHtmlWriter.writeSeparator();
+        htmlWriter.writeSeparator();
         try {
-            mHtmlWriter.writeln(getRelativeTime(text));
+            htmlWriter.writeln(getRelativeTime(text));
         } catch (ParseException e) {
-            mHtmlWriter.writeln("error parsing date: " + e.getLocalizedMessage());
+            htmlWriter.writeln("error parsing date: " + e.getLocalizedMessage());
         }
     }
 
@@ -105,7 +106,7 @@ public class CacheDetailsWriter {
             timeClause = "";
         } else {
             timeClause = ", "
-                    + DateUtils.formatDateRange(mContext, time, time, DateUtils.FORMAT_SHOW_TIME);
+                    + DateUtils.formatDateRange(context, time, time, DateUtils.FORMAT_SHOW_TIME);
         }
 
         long now = System.currentTimeMillis();
@@ -115,15 +116,15 @@ public class CacheDetailsWriter {
                     DateUtils.HOUR_IN_MILLIS, 0);
             return (String)relativeClause + timeClause;
         }
-        CharSequence dateClause = DateUtils.getRelativeTimeSpanString(mContext, time, false);
+        CharSequence dateClause = DateUtils.getRelativeTimeSpanString(context, time, false);
         return dateClause + timeClause;
     }
 
     public void writeWptName() throws IOException {
-        mHtmlWriter.open(null);
-        mHtmlWriter.writeHeader();
-        writeField("Location", mLatitude + ", " + mLongitude);
-        mLatitude = mLongitude = null;
+        htmlWriter.open(null);
+        htmlWriter.writeHeader();
+        writeField("Location", latitude + ", " + longitude);
+        latitude = longitude = null;
     }
 
     public void writeLogText(String text, boolean encoded) throws IOException {
@@ -134,25 +135,25 @@ public class CacheDetailsWriter {
         else
             f = "%2$s";
 
-        mHtmlWriter.writeln(String.format(f, mLogNumber++, mEmotifier.emotify(text)));
+        htmlWriter.writeln(String.format(f, logNumber++, emotifier.emotify(text)));
     }
 
     public void logType(String trimmedText) throws IOException {
         final String text = Emotifier.ICON_PREFIX + "log_"
                 + trimmedText.replace(' ', '_').replace('\'', '_') + Emotifier.ICON_SUFFIX + " "
                 + trimmedText;
-        mHtmlWriter.writeln(text);
+        htmlWriter.writeln(text);
     }
 
     public void writeName(String name) throws IOException {
-        mHtmlWriter.write("<center><h3>" + name + "</h3></center>\n");
+        htmlWriter.write("<center><h3>" + name + "</h3></center>\n");
     }
 
     public void placedBy(String text) throws IOException {
-        Log.d("GeoBeagle", "PLACED BY: " + mTime);
+        Log.d("GeoBeagle", "PLACED BY: " + time);
         String on = "";
         try {
-            on = getRelativeTime(mTime);
+            on = getRelativeTime(time);
         } catch (ParseException e) {
             on = "PARSE ERROR";
         }
@@ -161,21 +162,21 @@ public class CacheDetailsWriter {
     }
 
     public void writeField(String fieldName, String field) throws IOException {
-        mHtmlWriter.writeln("<font color=grey>" + fieldName + ":</font> " + field);
+        htmlWriter.writeln("<font color=grey>" + fieldName + ":</font> " + field);
     }
 
     public void wptTime(String time) {
-        mTime = time;
+        this.time = time;
     }
 
     public void writeShortDescription(String trimmedText) throws IOException {
-        mHtmlWriter.writeSeparator();
-        mHtmlWriter.writeln(trimmedText);
-        mHtmlWriter.writeln("");
+        htmlWriter.writeSeparator();
+        htmlWriter.writeln(trimmedText);
+        htmlWriter.writeln("");
     }
 
     public void writeLongDescription(String trimmedText) throws IOException {
-        mHtmlWriter.write(trimmedText);
-        mHtmlWriter.writeSeparator();
+        htmlWriter.write(trimmedText);
+        htmlWriter.writeSeparator();
     }
 }
