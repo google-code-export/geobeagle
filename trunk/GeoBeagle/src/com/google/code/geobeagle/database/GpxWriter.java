@@ -26,6 +26,7 @@ public class GpxWriter {
     @Inject
     GpxWriter(Provider<ISQLiteDatabase> sqliteProvider) {
         this.sqliteProvider = sqliteProvider;
+        this.mGpxTime = "2000-01-01 01:00:00.000";
     }
 
     /**
@@ -51,6 +52,7 @@ public class GpxWriter {
 
     public void writeGpx(String gpxName) {
         sqliteProvider.get().execSQL(Database.SQL_REPLACE_GPX, gpxName, mGpxTime);
+        mGpxTime = "2000-01-01 01:00:00.000";
     }
 
 }
