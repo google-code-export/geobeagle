@@ -29,12 +29,27 @@ import java.util.Date;
 import java.util.TimeZone;
 
 public class CacheDetailsWriter {
+    public static Date parse(String input) throws java.text.ParseException {
+        final String formatString = "yyyy-MM-dd'T'HH:mm:ss Z";
+        SimpleDateFormat df = new SimpleDateFormat(formatString);
+
+        String s;
+        try {
+            s = input.substring(0, 19) + " +0000";
+        } catch (Exception e) {
+            throw new ParseException(null, 0);
+        }
+        return df.parse(s);
+    }
+    public static String replaceIllegalFileChars(String wpt) {
+        return wpt.replaceAll("[<\\\\/:\\*\\?\">| \\t]", "_");
+    }
+    private final Context context;
+    private final Emotifier emotifier;
     private final HtmlWriter htmlWriter;
     private String latitude;
-    private String longitude;
     private int logNumber;
-    private final Emotifier emotifier;
-    private final Context context;
+    private String longitude;
     private String time;
 
     @Inject
@@ -55,8 +70,31 @@ public class CacheDetailsWriter {
                 .valueOf(longitude));
     }
 
-    public static String replaceIllegalFileChars(String wpt) {
-        return wpt.replaceAll("[<\\\\/:\\*\\?\">| \\t]", "_");
+    public void logType(String trimmedText) throws IOException {
+        final String text = Emotifier.ICON_PREFIX + "log_"
+                + trimmedText.replace(' ', '_').replace('\'', '_') + Emotifier.ICON_SUFFIX + " "
+                + trimmedText;
+        htmlWriter.writeln(text);
+    }
+
+    public void placedBy(String text) throws IOException {
+        Log.d("GeoBeagle", "PLACED BY: " + time);
+        String on = "";
+        try {
+            on = getRelativeTime(time);
+        } catch (ParseException e) {
+            on = "PARSE ERROR";
+        }
+        writeField("Placed by", text);
+        writeField("Placed on", on);
+    }
+
+    public void wptTime(String time) {
+        this.time = time;
+    }
+
+    public void writeField(String fieldName, String field) throws IOException {
+        htmlWriter.writeln("<font color=grey>" + fieldName + ":</font> " + field);
     }
 
     public void writeHint(String text) throws IOException {
@@ -70,19 +108,6 @@ public class CacheDetailsWriter {
         htmlWriter.writeln(text);
     }
 
-    public static Date parse(String input) throws java.text.ParseException {
-        final String formatString = "yyyy-MM-dd'T'HH:mm:ss Z";
-        SimpleDateFormat df = new SimpleDateFormat(formatString);
-
-        String s;
-        try {
-            s = input.substring(0, 19) + " +0000";
-        } catch (Exception e) {
-            throw new ParseException(null, 0);
-        }
-        return df.parse(s);
-    }
-
     public void writeLogDate(String text) throws IOException {
         htmlWriter.writeSeparator();
         try {
@@ -90,6 +115,39 @@ public class CacheDetailsWriter {
         } catch (ParseException e) {
             htmlWriter.writeln("error parsing date: " + e.getLocalizedMessage());
         }
+    }
+
+    public void writeLogText(String text, boolean encoded) throws IOException {
+        String f;
+        if (encoded)
+            f = "<a class=hint id=log_%1$s onclick=\"dht('log_%1$s');return false;\" "
+                    + "href=#>Encrypt</a><div id=log_%1$s_text>%2$s</div>";
+        else
+            f = "%2$s";
+
+        htmlWriter.writeln(String.format(f, logNumber++, emotifier.emotify(text)));
+    }
+
+    public void writeLongDescription(String trimmedText) throws IOException {
+        htmlWriter.write(trimmedText);
+        htmlWriter.writeSeparator();
+    }
+
+    public void writeName(String name) throws IOException {
+        htmlWriter.write("<center><h3>" + name + "</h3></center>\n");
+    }
+
+    public void writeShortDescription(String trimmedText) throws IOException {
+        htmlWriter.writeSeparator();
+        htmlWriter.writeln(trimmedText);
+        htmlWriter.writeln("");
+    }
+
+    public void writeWptName() throws IOException {
+        htmlWriter.open(null);
+        htmlWriter.writeHeader();
+        writeField("Location", latitude + ", " + longitude);
+        latitude = longitude = null;
     }
 
     private String getRelativeTime(String utcTime) throws ParseException {
@@ -118,65 +176,5 @@ public class CacheDetailsWriter {
         }
         CharSequence dateClause = DateUtils.getRelativeTimeSpanString(context, time, false);
         return dateClause + timeClause;
-    }
-
-    public void writeWptName() throws IOException {
-        htmlWriter.open(null);
-        htmlWriter.writeHeader();
-        writeField("Location", latitude + ", " + longitude);
-        latitude = longitude = null;
-    }
-
-    public void writeLogText(String text, boolean encoded) throws IOException {
-        String f;
-        if (encoded)
-            f = "<a class=hint id=log_%1$s onclick=\"dht('log_%1$s');return false;\" "
-                    + "href=#>Encrypt</a><div id=log_%1$s_text>%2$s</div>";
-        else
-            f = "%2$s";
-
-        htmlWriter.writeln(String.format(f, logNumber++, emotifier.emotify(text)));
-    }
-
-    public void logType(String trimmedText) throws IOException {
-        final String text = Emotifier.ICON_PREFIX + "log_"
-                + trimmedText.replace(' ', '_').replace('\'', '_') + Emotifier.ICON_SUFFIX + " "
-                + trimmedText;
-        htmlWriter.writeln(text);
-    }
-
-    public void writeName(String name) throws IOException {
-        htmlWriter.write("<center><h3>" + name + "</h3></center>\n");
-    }
-
-    public void placedBy(String text) throws IOException {
-        Log.d("GeoBeagle", "PLACED BY: " + time);
-        String on = "";
-        try {
-            on = getRelativeTime(time);
-        } catch (ParseException e) {
-            on = "PARSE ERROR";
-        }
-        writeField("Placed by", text);
-        writeField("Placed on", on);
-    }
-
-    public void writeField(String fieldName, String field) throws IOException {
-        htmlWriter.writeln("<font color=grey>" + fieldName + ":</font> " + field);
-    }
-
-    public void wptTime(String time) {
-        this.time = time;
-    }
-
-    public void writeShortDescription(String trimmedText) throws IOException {
-        htmlWriter.writeSeparator();
-        htmlWriter.writeln(trimmedText);
-        htmlWriter.writeln("");
-    }
-
-    public void writeLongDescription(String trimmedText) throws IOException {
-        htmlWriter.write(trimmedText);
-        htmlWriter.writeSeparator();
     }
 }
