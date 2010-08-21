@@ -321,6 +321,7 @@ public class RadarView extends View implements SensorListener, LocationListener 
         gridPaint.setStyle(Paint.Style.STROKE);
     }
 
+    @Override
     public void onAccuracyChanged(int sensor, int accuracy) {
     }
 
@@ -329,6 +330,7 @@ public class RadarView extends View implements SensorListener, LocationListener 
      * 
      * @see android.hardware.SensorListener#onSensorChanged(int, float[])
      */
+    @Override
     public void onSensorChanged(int sensor, float[] values) {
         mOrientation = values[0];
         double bearingToTarget = mBearing - mOrientation;
@@ -341,6 +343,7 @@ public class RadarView extends View implements SensorListener, LocationListener 
      * 
      * @see android.location.LocationListener#onLocationChanged(android.location.Location)
      */
+    @Override
     public void onLocationChanged(Location location) {
         // Log.d("GeoBeagle", "radarview::onLocationChanged");
         if (!mHaveLocation) {
@@ -379,9 +382,11 @@ public class RadarView extends View implements SensorListener, LocationListener 
         }
     }
 
+    @Override
     public void onProviderDisabled(String provider) {
     }
 
+    @Override
     public void onProviderEnabled(String provider) {
     }
 
@@ -391,6 +396,7 @@ public class RadarView extends View implements SensorListener, LocationListener 
      * @see android.location.LocationListener#onStatusChanged(java.lang.String,
      *      int, android.os.Bundle)
      */
+    @Override
     public void onStatusChanged(String provider, int status, Bundle extras) {
         //Log.d("GeoBeagle", "onStatusChanged " + provider + ", " + status);
         if (LocationManager.GPS_PROVIDER.equals(provider)) {

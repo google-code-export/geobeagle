@@ -20,6 +20,7 @@ public class RelativeBearingFormatter implements BearingFormatter {
             "^", ">", "v", "<",
     };
 
+    @Override
     public String formatBearing(float absBearing, float myHeading) {
         return ARROWS[((((int)(absBearing - myHeading) + 45 + 720) % 360) / 90)];
     }

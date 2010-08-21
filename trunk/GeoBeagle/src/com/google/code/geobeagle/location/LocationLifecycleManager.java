@@ -34,18 +34,12 @@ public class LocationLifecycleManager implements LifecycleManager {
         mLocationManager = locationManager;
     }
 
-    /*
-     * (non-Javadoc)
-     * @see com.google.code.geobeagle.LifecycleManager#onPause()
-     */
+    @Override
     public void onPause(Editor editor) {
         mLocationManager.removeUpdates(mLocationListener);
     }
 
-    /*
-     * (non-Javadoc)
-     * @see com.google.code.geobeagle.LifecycleManager#onResume()
-     */
+    @Override
     public void onResume(SharedPreferences preferences) {
         mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0,
                 mLocationListener);
