@@ -251,6 +251,14 @@ enum PathType {
             cachePersisterFacade.wptTime(text);
             return true;
         }
+    },
+    LOG_FINDER {
+        @Override
+        public boolean text(String text, ICachePersisterFacade cachePersisterFacade)
+                throws IOException {
+            cachePersisterFacade.logFinder(text);
+            return true;
+        }
     };
 
     @SuppressWarnings("unused")
