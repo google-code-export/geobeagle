@@ -90,7 +90,7 @@ public class CacheListRefresh implements Refresher {
     public void refresh() {
         if (!mUpdateFlag.updatesEnabled())
             return;
-        
+
         mTiming.start();
         try {
             final long now = mTiming.getTime();

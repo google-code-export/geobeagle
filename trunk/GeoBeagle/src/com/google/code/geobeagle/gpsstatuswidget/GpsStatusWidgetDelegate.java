@@ -39,8 +39,11 @@ public class GpsStatusWidgetDelegate implements LocationListener {
 
     @Inject
     public GpsStatusWidgetDelegate(CombinedLocationManager combinedLocationManager,
-            Provider<DistanceFormatter> distanceFormatterProvider, Meter meter,
-            MeterFader meterFader, Context context, TextLagUpdater textLagUpdater,
+            Provider<DistanceFormatter> distanceFormatterProvider,
+            Meter meter,
+            MeterFader meterFader,
+            Context context,
+            TextLagUpdater textLagUpdater,
             InflatedGpsStatusWidget inflatedGpsStatusWidget) {
         mCombinedLocationManager = combinedLocationManager;
         mDistanceFormatterProvider = distanceFormatterProvider;

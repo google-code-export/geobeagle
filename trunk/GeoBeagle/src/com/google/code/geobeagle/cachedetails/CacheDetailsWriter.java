@@ -27,6 +27,7 @@ public class CacheDetailsWriter {
     public static String replaceIllegalFileChars(String wpt) {
         return wpt.replaceAll("[<\\\\/:\\*\\?\">| \\t]", "_");
     }
+
     private final Context context;
     private final Emotifier emotifier;
     private final HtmlWriter htmlWriter;
@@ -59,8 +60,8 @@ public class CacheDetailsWriter {
 
     public void latitudeLongitude(String latitude, String longitude) {
         this.latitude = (String)Util.formatDegreesAsDecimalDegreesString(Double.valueOf(latitude));
-        this.longitude = (String)Util.formatDegreesAsDecimalDegreesString(Double
-                .valueOf(longitude));
+        this.longitude = (String)Util
+                .formatDegreesAsDecimalDegreesString(Double.valueOf(longitude));
     }
 
     public void logType(String trimmedText) {
@@ -145,4 +146,5 @@ public class CacheDetailsWriter {
     public void writeLogFinder(String finder) {
         this.finder = finder;
     }
+
 }

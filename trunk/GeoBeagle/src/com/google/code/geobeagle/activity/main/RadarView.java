@@ -227,7 +227,7 @@ public class RadarView extends View implements SensorListener, LocationListener 
 
     /**
      * Sets the target to track on the radar
-     * 
+     *
      * @param latE6 Latitude of the target, multiplied by 1,000,000
      * @param lonE6 Longitude of the target, multiplied by 1,000,000
      */
@@ -238,7 +238,7 @@ public class RadarView extends View implements SensorListener, LocationListener 
 
     /**
      * Sets the view that we will use to report distance
-     * 
+     *
      * @param t The text view used to report distance
      */
     public void setDistanceView(TextView d, TextView b, TextView a) {
@@ -327,7 +327,7 @@ public class RadarView extends View implements SensorListener, LocationListener 
 
     /**
      * Called when we get a new value from the compass
-     * 
+     *
      * @see android.hardware.SensorListener#onSensorChanged(int, float[])
      */
     @Override
@@ -340,7 +340,7 @@ public class RadarView extends View implements SensorListener, LocationListener 
 
     /**
      * Called when a location provider has a new location to report
-     * 
+     *
      * @see android.location.LocationListener#onLocationChanged(android.location.Location)
      */
     @Override
@@ -392,7 +392,7 @@ public class RadarView extends View implements SensorListener, LocationListener 
 
     /**
      * Called when a location provider has changed its availability.
-     * 
+     *
      * @see android.location.LocationListener#onStatusChanged(java.lang.String,
      *      int, android.os.Bundle)
      */
@@ -448,7 +448,7 @@ public class RadarView extends View implements SensorListener, LocationListener 
 
     /**
      * Update state to reflect whether we are using metric or standard units.
-     * 
+     *
      * @param useMetric True if the display should use metric units
      */
     public void setUseImperial(boolean useImperial) {
@@ -472,7 +472,7 @@ public class RadarView extends View implements SensorListener, LocationListener 
     /**
      * Update our state to reflect a new distance to the target. This may
      * require choosing a new scale for the radar rings.
-     * 
+     *
      * @param distanceKm The new distance to the target
      * @param bearing
      */
