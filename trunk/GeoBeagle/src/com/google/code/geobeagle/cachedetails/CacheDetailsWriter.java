@@ -99,6 +99,7 @@ public class CacheDetailsWriter {
 
     public void writeWptName() throws IOException {
         mHtmlWriter.open(null);
+        mHtmlWriter.writeHeader();
         writeField("Location", mLatitude + ", " + mLongitude);
         mLatitude = mLongitude = null;
     }
@@ -122,7 +123,6 @@ public class CacheDetailsWriter {
     }
 
     public void writeName(String name) throws IOException {
-        mHtmlWriter.writeHeader();
         mHtmlWriter.write("<center><h3>" + name + "</h3></center>\n");
     }
 
