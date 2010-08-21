@@ -14,7 +14,6 @@
 
 package com.google.code.geobeagle;
 
-import com.google.code.geobeagle.activity.cachelist.model.GeocacheVector;
 import com.google.code.geobeagle.activity.cachelist.presenter.DistanceSortStrategy;
 import com.google.code.geobeagle.activity.cachelist.presenter.NullSortStrategy;
 import com.google.code.geobeagle.activity.cachelist.presenter.SortStrategy;
@@ -29,46 +28,6 @@ import android.os.Bundle;
 
 @Singleton
 public class LocationControlBuffered implements LocationListener {
-    public static class GpsDisabledLocation implements IGpsLocation {
-        @Override
-        public float distanceTo(IGpsLocation dest) {
-            return Float.MAX_VALUE;
-        }
-
-        @Override
-        public float distanceToGpsEnabledLocation(GpsEnabledLocation gpsEnabledLocation) {
-            return Float.MAX_VALUE;
-        }
-    }
-
-    public static class GpsEnabledLocation implements IGpsLocation {
-        private final float mLatitude;
-        private final float mLongitude;
-
-        public GpsEnabledLocation(float latitude, float longitude) {
-            mLatitude = latitude;
-            mLongitude = longitude;
-        }
-
-        @Override
-        public float distanceTo(IGpsLocation gpsLocation) {
-            return gpsLocation.distanceToGpsEnabledLocation(this);
-        }
-
-        @Override
-        public float distanceToGpsEnabledLocation(GpsEnabledLocation gpsEnabledLocation) {
-            final float calculateDistanceFast = GeocacheVector.calculateDistanceFast(mLatitude,
-                    mLongitude, gpsEnabledLocation.mLatitude, gpsEnabledLocation.mLongitude);
-            return calculateDistanceFast;
-        }
-    }
-
-    public static interface IGpsLocation {
-        public float distanceTo(IGpsLocation dest);
-
-        float distanceToGpsEnabledLocation(GpsEnabledLocation gpsEnabledLocation);
-    }
-
     private final DistanceSortStrategy mDistanceSortStrategy;
     private final GpsDisabledLocation mGpsDisabledLocation;
     private IGpsLocation mGpsLocation;

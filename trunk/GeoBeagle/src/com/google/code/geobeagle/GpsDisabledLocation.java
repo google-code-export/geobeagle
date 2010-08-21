@@ -12,12 +12,16 @@
  ** limitations under the License.
  */
 
-package com.google.code.geobeagle.activity.cachelist.presenter;
+package com.google.code.geobeagle;
 
-import com.google.code.geobeagle.IGpsLocation;
+public class GpsDisabledLocation implements IGpsLocation {
+    @Override
+    public float distanceTo(IGpsLocation dest) {
+        return Float.MAX_VALUE;
+    }
 
-public interface ToleranceStrategy {
-    public boolean exceedsTolerance(IGpsLocation here, float azimuth, long now);
-
-    public void updateLastRefreshed(IGpsLocation here, float azimuth, long now);
+    @Override
+    public float distanceToGpsEnabledLocation(GpsEnabledLocation gpsEnabledLocation) {
+        return Float.MAX_VALUE;
+    }
 }

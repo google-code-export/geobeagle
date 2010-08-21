@@ -3,9 +3,9 @@ package com.google.code.geobeagle.activity.cachelist.model;
 
 import static org.junit.Assert.assertEquals;
 
+import com.google.code.geobeagle.GpsDisabledLocation;
+import com.google.code.geobeagle.GpsEnabledLocation;
 import com.google.code.geobeagle.LocationControlBuffered;
-import com.google.code.geobeagle.LocationControlBuffered.GpsDisabledLocation;
-import com.google.code.geobeagle.LocationControlBuffered.GpsEnabledLocation;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVector;
 import com.google.code.geobeagle.activity.cachelist.presenter.DistanceSortStrategy;
 import com.google.code.geobeagle.activity.cachelist.presenter.NullSortStrategy;
