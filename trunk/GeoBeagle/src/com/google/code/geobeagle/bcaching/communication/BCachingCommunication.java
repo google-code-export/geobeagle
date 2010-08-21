@@ -36,7 +36,7 @@ import java.util.Hashtable;
 /**
  * Communicates with the bacching.com server to fetch geocaches as a GPX
  * InputStream.
- * 
+ *
  * @author Mark Bastian
  */
 public class BCachingCommunication {
@@ -97,7 +97,7 @@ public class BCachingCommunication {
             username = sharedPreferences.getString(BCachingModule.BCACHING_USERNAME, "");
         }
     }
-    
+
     @Inject
     public BCachingCommunication(BCachingCredentials bcachingCredentials) {
         username = bcachingCredentials.username;

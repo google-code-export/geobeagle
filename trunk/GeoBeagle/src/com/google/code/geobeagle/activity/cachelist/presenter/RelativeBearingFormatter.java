@@ -14,6 +14,7 @@
 
 package com.google.code.geobeagle.activity.cachelist.presenter;
 
+
 public class RelativeBearingFormatter implements BearingFormatter {
 
     private static final String[] ARROWS = {

@@ -33,7 +33,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GeoBeagleApplication extends GuiceApplication {
-    
+
     public static Timing timing = new Timing();
 
     @Override
@@ -51,7 +51,7 @@ public class GeoBeagleApplication extends GuiceApplication {
         return Guice.createInjector(Stage.DEVELOPMENT, modules);
     }
 
-    
+
     @Override
     protected void addApplicationModules(List<Module> modules) {
         timing.start();

@@ -14,7 +14,6 @@
 
 package com.google.code.geobeagle;
 
-
 import com.google.inject.Inject;
 
 import roboguice.inject.ContextScoped;
@@ -34,8 +33,7 @@ public class CompassListener implements SensorListener {
     }
 
     @Inject
-    public CompassListener(Refresher refresher,
-            LocationControlBuffered locationControlBuffered) {
+    public CompassListener(Refresher refresher, LocationControlBuffered locationControlBuffered) {
         mRefresher = refresher;
         mLocationControlBuffered = locationControlBuffered;
         mLastAzimuth = -1440f;
@@ -56,7 +54,8 @@ public class CompassListener implements SensorListener {
     public void onSensorChanged(int sensor, float[] values) {
         final float currentAzimuth = values[0];
         if (Math.abs(currentAzimuth - mLastAzimuth) > 5) {
-//          Log.d("GeoBeagle", "azimuth now " + sensor + ", " + currentAzimuth);
+            // Log.d("GeoBeagle", "azimuth now " + sensor + ", " +
+            // currentAzimuth);
             mLocationControlBuffered.setAzimuth(((int)currentAzimuth / 5) * 5);
             mRefresher.refresh();
             mLastAzimuth = currentAzimuth;

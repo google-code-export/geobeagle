@@ -54,7 +54,7 @@ public class HtmlWriter {
     public void writeHeader() throws IOException {
         mWriter.write(HEADER);
     }
-    
+
     public void writeSeparator() throws IOException {
         mWriter.write("<hr/>\n");
     }
