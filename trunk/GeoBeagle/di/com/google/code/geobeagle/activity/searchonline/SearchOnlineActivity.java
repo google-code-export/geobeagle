@@ -45,9 +45,10 @@ public class SearchOnlineActivity extends GuiceActivity {
         setContentView(R.layout.search);
 
         Log.d("GeoBeagle", "SearchOnlineActivity onCreate");
-        
+
         Injector injector = this.getInjector();
-        final InflatedGpsStatusWidget mInflatedGpsStatusWidget = injector.getInstance(InflatedGpsStatusWidget.class);
+        final InflatedGpsStatusWidget mInflatedGpsStatusWidget = injector
+                .getInstance(InflatedGpsStatusWidget.class);
         GpsStatusWidgetDelegate gpsStatusWidgetDelegate = injector
                 .getInstance(GpsStatusWidgetDelegate.class);
         mUpdateGpsWidgetRunnable = injector.getInstance(UpdateGpsWidgetRunnable.class);
@@ -73,9 +74,11 @@ public class SearchOnlineActivity extends GuiceActivity {
 
     @Override
     protected void onPause() {
-        super.onPause();
         Log.d("GeoBeagle", "SearchOnlineActivity onPause");
         mSearchOnlineActivityDelegate.onPause();
+        // Must call super so that context scope is cleared only after listeners
+        // are removed.
+        super.onPause();
     }
 
     @Override
