@@ -51,16 +51,21 @@ public class GeocacheListPresenter implements Pausable {
     private final SensorManagerWrapper mSensorManagerWrapper;
     private final UpdateGpsWidgetRunnable mUpdateGpsWidgetRunnable;
     private final CacheListView.ScrollListener mScrollListener;
+    private final GpsStatusListener mGpsStatusListener;
 
     @Inject
     public GeocacheListPresenter(CombinedLocationListener combinedLocationListener,
             CombinedLocationManager combinedLocationManager,
             Provider<CacheListCompassListener> cacheListCompassListenerProvider,
-            GeocacheListAdapter geocacheListAdapter, GeocacheVectors geocacheVectors,
-            InflatedGpsStatusWidget inflatedGpsStatusWidget, Activity listActivity,
+            GeocacheListAdapter geocacheListAdapter,
+            GeocacheVectors geocacheVectors,
+            InflatedGpsStatusWidget inflatedGpsStatusWidget,
+            Activity listActivity,
             LocationControlBuffered locationControlBuffered,
             SensorManagerWrapper sensorManagerWrapper,
-            UpdateGpsWidgetRunnable updateGpsWidgetRunnable, ScrollListener scrollListener) {
+            UpdateGpsWidgetRunnable updateGpsWidgetRunnable,
+            ScrollListener scrollListener,
+            GpsStatusListener gpsStatusListener) {
         mCombinedLocationListener = combinedLocationListener;
         mCombinedLocationManager = combinedLocationManager;
         mCacheListCompassListenerProvider = cacheListCompassListenerProvider;
@@ -72,6 +77,7 @@ public class GeocacheListPresenter implements Pausable {
         mUpdateGpsWidgetRunnable = updateGpsWidgetRunnable;
         mSensorManagerWrapper = sensorManagerWrapper;
         mScrollListener = scrollListener;
+        mGpsStatusListener = gpsStatusListener;
     }
 
     public void onCreate() {
@@ -102,6 +108,9 @@ public class GeocacheListPresenter implements Pausable {
         mCombinedLocationManager.requestLocationUpdates(UPDATE_DELAY, 0, mCombinedLocationListener);
         mCombinedLocationManager.requestLocationUpdates(UPDATE_DELAY, 0,
                 cacheListRefreshLocationListener);
+
+        mCombinedLocationManager.addGpsStatusListener(mGpsStatusListener);
+
         // mSensorManager.registerListener(mCompassListener, mCompassSensor,
         // SensorManager.SENSOR_DELAY_UI);
         mUpdateGpsWidgetRunnable.run();
