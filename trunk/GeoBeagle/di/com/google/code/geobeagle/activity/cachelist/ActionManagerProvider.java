@@ -17,12 +17,12 @@ package com.google.code.geobeagle.activity.cachelist;
 import com.google.code.geobeagle.LocationControlBuffered.GpsDisabledLocation;
 import com.google.code.geobeagle.activity.cachelist.presenter.ActionAndTolerance;
 import com.google.code.geobeagle.activity.cachelist.presenter.AdapterCachesSorter;
+import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh.ActionManager;
 import com.google.code.geobeagle.activity.cachelist.presenter.DistanceUpdater;
 import com.google.code.geobeagle.activity.cachelist.presenter.LocationAndAzimuthTolerance;
 import com.google.code.geobeagle.activity.cachelist.presenter.LocationTolerance;
 import com.google.code.geobeagle.activity.cachelist.presenter.SqlCacheLoader;
 import com.google.code.geobeagle.activity.cachelist.presenter.ToleranceStrategy;
-import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh.ActionManager;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Provider;
@@ -54,9 +54,9 @@ class ActionManagerProvider implements Provider<ActionManager> {
     public ActionManager get() {
 
         final ToleranceStrategy sqlCacheLoaderTolerance = new LocationTolerance(500,
-                gpsDisabledLocation, 1000);
+                gpsDisabledLocation, 10000);
         final ToleranceStrategy adapterCachesSorterTolerance = new LocationTolerance(6,
-                gpsDisabledLocation, 1000);
+                gpsDisabledLocation, 5000);
         final LocationTolerance distanceUpdaterLocationTolerance = new LocationTolerance(1,
                 gpsDisabledLocation, 1000);
         final ToleranceStrategy distanceUpdaterTolerance = new LocationAndAzimuthTolerance(
