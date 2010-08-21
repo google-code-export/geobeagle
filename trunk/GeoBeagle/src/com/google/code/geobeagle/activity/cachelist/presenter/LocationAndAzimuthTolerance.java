@@ -18,7 +18,7 @@ import com.google.code.geobeagle.LocationControlBuffered.IGpsLocation;
 
 public class LocationAndAzimuthTolerance implements ToleranceStrategy {
     private float mLastAzimuth;
-    LocationTolerance mLocationTolerance;
+    private final LocationTolerance mLocationTolerance;
 
     public LocationAndAzimuthTolerance(LocationTolerance locationTolerance, float lastAzimuth) {
         mLocationTolerance = locationTolerance;
