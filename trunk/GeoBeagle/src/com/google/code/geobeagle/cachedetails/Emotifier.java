@@ -21,7 +21,7 @@ import java.util.regex.Matcher;
 
 public class Emotifier {
     public static final String ICON_PREFIX = "<img src='file:///android_asset/";
-    public static final String ICON_SUFFIX = ".gif' border=0 align=middle>";
+    public static final String ICON_SUFFIX = ".gif' border=0 align=bottom>";
     public static final String EMOTICON_PREFIX = ICON_PREFIX + "icon_smile_";
     private final EmotifierPatternProvider patternProvider;
 
