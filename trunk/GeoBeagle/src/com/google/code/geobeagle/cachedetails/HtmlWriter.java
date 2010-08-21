@@ -23,7 +23,7 @@ public class HtmlWriter {
 
     static final String HEADER = "<html>\n<head>\n"
             + "<script type=\"text/javascript\" src=\"file:///android_asset/rot13.js\">"
-            + "</script></head>\n  <body onLoad=encryptAll()>\n";
+            + "</script>\n</head>\n  <body onLoad=encryptAll()>";
 
     @Inject
     public HtmlWriter(StringWriterWrapper writerWrapper) {
