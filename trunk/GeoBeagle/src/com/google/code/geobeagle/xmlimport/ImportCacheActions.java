@@ -29,7 +29,7 @@ public class ImportCacheActions implements ICachePersisterFacade {
     private String mCacheName = "";
     private final CacheTagSqlWriter mCacheTagWriter;
     private final FileFactory mFileFactory;
-    private MessageHandlerInterface mMessageHandler;
+    private final MessageHandlerInterface mMessageHandler;
     private final WakeLock mWakeLock;
     private String mLastModified;
     private final GeoBeagleEnvironment mGeoBeagleEnvironment;
