@@ -14,7 +14,7 @@
 
 package com.google.code.geobeagle.activity.cachelist.presenter;
 
-import com.google.code.geobeagle.LocationControlBuffered.IGpsLocation;
+import com.google.code.geobeagle.IGpsLocation;
 
 public class ActionAndTolerance {
     private final RefreshAction mRefreshAction;
