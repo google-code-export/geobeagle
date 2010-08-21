@@ -156,4 +156,8 @@ public class CacheTagsToDetails implements ICachePersisterFacade {
     public void setEncrypted(boolean mLogEncrypted) {
         encrypted = mLogEncrypted;
     }
+
+    @Override
+    public void logFinder(String text) {
+    }
 }

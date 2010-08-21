@@ -196,4 +196,8 @@ public class ImportCacheActions implements ICachePersisterFacade {
     public void setEncrypted(boolean mLogEncrypted) {
     }
 
+    @Override
+    public void logFinder(String text) {
+    }
+
 }
