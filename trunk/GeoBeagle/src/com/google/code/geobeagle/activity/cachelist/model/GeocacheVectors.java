@@ -31,8 +31,6 @@ import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.LocationControlBuffered;
 import com.google.inject.Singleton;
 
-import android.util.Log;
-
 import java.util.ArrayList;
 
 @Singleton
