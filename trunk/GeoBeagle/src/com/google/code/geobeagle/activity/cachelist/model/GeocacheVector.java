@@ -26,6 +26,7 @@ import java.util.Comparator;
 
 public class GeocacheVector {
     public static class LocationComparator implements Comparator<GeocacheVector> {
+        @Override
         public int compare(GeocacheVector geocacheVector1, GeocacheVector geocacheVector2) {
             final float d1 = geocacheVector1.getDistance();
             final float d2 = geocacheVector2.getDistance();

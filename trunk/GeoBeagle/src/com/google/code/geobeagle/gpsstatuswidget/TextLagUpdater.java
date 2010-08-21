@@ -60,6 +60,7 @@ class TextLagUpdater {
             mLagImpl = new LagImpl(time);
         }
 
+        @Override
         public Lag getLag() {
             return mLagImpl;
         }
@@ -73,6 +74,7 @@ class TextLagUpdater {
             mLagNull = lagNull;
         }
 
+        @Override
         public Lag getLag() {
             return mLagNull;
         }

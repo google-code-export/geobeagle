@@ -33,6 +33,7 @@ public class AdapterCachesSorter implements RefreshAction {
         mLocationControlBuffered = locationControlBuffered;
     }
 
+    @Override
     public void refresh() {
         mLocationControlBuffered.getSortStrategy().sort(mCacheListData.get());
         mTiming.lap("sort time");

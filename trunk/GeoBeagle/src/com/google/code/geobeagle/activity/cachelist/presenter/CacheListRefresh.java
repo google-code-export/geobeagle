@@ -86,6 +86,7 @@ public class CacheListRefresh implements Refresher {
                 mLocationControlBuffered.getAzimuth(), 0, now);
     }
 
+    @Override
     public void refresh() {
         if (!mUpdateFlag.updatesEnabled())
             return;
