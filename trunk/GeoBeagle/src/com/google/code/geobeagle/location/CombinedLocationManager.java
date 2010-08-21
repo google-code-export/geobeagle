@@ -14,6 +14,7 @@
 
 package com.google.code.geobeagle.location;
 
+import android.location.GpsStatus;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -23,6 +24,7 @@ import java.util.ArrayList;
 public class CombinedLocationManager {
 
     private final ArrayList<LocationListener> mLocationListeners;
+    private GpsStatus.Listener mGpsStatusListener;
     private final LocationManager mLocationManager;
 
     public CombinedLocationManager(LocationManager locationManager,
@@ -41,6 +43,10 @@ public class CombinedLocationManager {
             mLocationManager.removeUpdates(locationListener);
         }
         mLocationListeners.clear();
+        if (mGpsStatusListener != null) {
+            mLocationManager.removeGpsStatusListener(mGpsStatusListener);
+            mGpsStatusListener = null;
+        }
     }
 
     public void requestLocationUpdates(int minTime, int minDistance,
@@ -50,6 +56,11 @@ public class CombinedLocationManager {
         mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, minTime, minDistance,
                 locationListener);
         mLocationListeners.add(locationListener);
+    }
+
+    public void addGpsStatusListener(GpsStatus.Listener gpsStatusListener) {
+        mLocationManager.addGpsStatusListener(gpsStatusListener);
+        mGpsStatusListener = gpsStatusListener;
     }
 
     public Location getLastKnownLocation() {

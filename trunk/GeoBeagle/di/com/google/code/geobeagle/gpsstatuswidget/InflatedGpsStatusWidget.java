@@ -44,4 +44,8 @@ public class InflatedGpsStatusWidget extends LinearLayout {
     public void setDelegate(GpsStatusWidgetDelegate gpsStatusWidgetDelegate) {
         mGpsStatusWidgetDelegate = gpsStatusWidgetDelegate;
     }
+
+    public GpsStatusWidgetDelegate getDelegate() {
+        return mGpsStatusWidgetDelegate;
+    }
 }

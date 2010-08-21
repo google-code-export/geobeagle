@@ -63,7 +63,7 @@ public class GpsStatusWidgetDelegate implements LocationListener {
             mTextLagUpdater.setDisabled();
             return;
         }
-        mProvider.setText(location.getProvider());
+
         mMeterWrapper.setAccuracy(location.getAccuracy(), mDistanceFormatterProvider.get());
         mMeterFader.reset();
         mTextLagUpdater.reset(location.getTime());
@@ -77,6 +77,10 @@ public class GpsStatusWidgetDelegate implements LocationListener {
     @Override
     public void onProviderEnabled(String provider) {
         mStatus.setText(provider + " ENABLED");
+    }
+
+    public void setProvider(String provider) {
+        mProvider.setText(provider);
     }
 
     @Override
