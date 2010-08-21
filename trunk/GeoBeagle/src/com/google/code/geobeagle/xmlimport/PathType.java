@@ -30,6 +30,7 @@ enum PathType {
         @Override
         public boolean text(String text, ICachePersisterFacade cachePersisterFacade)
                 throws IOException {
+            cachePersisterFacade.symbol(text);
             return true;
         }
     },
