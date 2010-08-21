@@ -31,7 +31,7 @@ public class GpxWriter {
     /**
      * Return True if the gpx is already loaded. Mark this gpx and its caches in
      * the database to protect them from being nuked when the load is complete.
-     * 
+     *
      * @param gpxName
      * @param gpxTime
      * @return
@@ -52,5 +52,5 @@ public class GpxWriter {
     public void writeGpx(String gpxName) {
         sqliteProvider.get().execSQL(Database.SQL_REPLACE_GPX, gpxName, mGpxTime);
     }
-    
+
 }
