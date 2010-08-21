@@ -15,10 +15,11 @@
 package com.google.code.geobeagle.activity.cachelist.presenter;
 
 import com.google.code.geobeagle.LocationControlBuffered;
+import com.google.code.geobeagle.LocationControlBuffered.IGpsLocation;
 import com.google.code.geobeagle.Refresher;
 import com.google.code.geobeagle.Timing;
-import com.google.code.geobeagle.LocationControlBuffered.IGpsLocation;
 import com.google.inject.Inject;
+import com.google.inject.ProvisionException;
 import com.google.inject.Singleton;
 
 import roboguice.inject.ContextScoped;
@@ -90,11 +91,15 @@ public class CacheListRefresh implements Refresher {
             return;
         
         mTiming.start();
-        final long now = mTiming.getTime();
-        final IGpsLocation here = mLocationControlBuffered.getGpsLocation();
-        final float azimuth = mLocationControlBuffered.getAzimuth();
-        final int minActionExceedingTolerance = mActionManager.getMinActionExceedingTolerance(here,
-                azimuth, now);
-        mActionManager.performActions(here, azimuth, minActionExceedingTolerance, now);
+        try {
+            final long now = mTiming.getTime();
+            final IGpsLocation here = mLocationControlBuffered.getGpsLocation();
+            final float azimuth = mLocationControlBuffered.getAzimuth();
+            final int minActionExceedingTolerance = mActionManager.getMinActionExceedingTolerance(
+                    here, azimuth, now);
+            mActionManager.performActions(here, azimuth, minActionExceedingTolerance, now);
+        } catch (ProvisionException e) {
+            Log.d("GeoBeagle", "Ignoring provision exception during refresh: " + e);
+        }
     }
 }

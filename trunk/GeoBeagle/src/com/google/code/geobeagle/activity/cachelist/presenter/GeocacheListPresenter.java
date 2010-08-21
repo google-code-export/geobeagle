@@ -14,7 +14,7 @@
 
 package com.google.code.geobeagle.activity.cachelist.presenter;
 
-import com.google.code.geobeagle.CompassListener;
+import com.google.code.geobeagle.CacheListCompassListener;
 import com.google.code.geobeagle.LocationControlBuffered;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.cachelist.CacheListView;
@@ -42,7 +42,7 @@ public class GeocacheListPresenter implements Pausable {
 
     private final LocationListener mCombinedLocationListener;
     private final CombinedLocationManager mCombinedLocationManager;
-    private final Provider<CompassListener> mCompassListenerProvider;
+    private final Provider<CacheListCompassListener> mCacheListCompassListenerProvider;
     private final GeocacheListAdapter mGeocacheListAdapter;
     private final GeocacheVectors mGeocacheVectors;
     private final InflatedGpsStatusWidget mInflatedGpsStatusWidget;
@@ -55,7 +55,7 @@ public class GeocacheListPresenter implements Pausable {
     @Inject
     public GeocacheListPresenter(CombinedLocationListener combinedLocationListener,
             CombinedLocationManager combinedLocationManager,
-            Provider<CompassListener> compassListenerProvider,
+            Provider<CacheListCompassListener> cacheListCompassListenerProvider,
             GeocacheListAdapter geocacheListAdapter, GeocacheVectors geocacheVectors,
             InflatedGpsStatusWidget inflatedGpsStatusWidget, Activity listActivity,
             LocationControlBuffered locationControlBuffered,
@@ -63,7 +63,7 @@ public class GeocacheListPresenter implements Pausable {
             UpdateGpsWidgetRunnable updateGpsWidgetRunnable, ScrollListener scrollListener) {
         mCombinedLocationListener = combinedLocationListener;
         mCombinedLocationManager = combinedLocationManager;
-        mCompassListenerProvider = compassListenerProvider;
+        mCacheListCompassListenerProvider = cacheListCompassListenerProvider;
         mGeocacheListAdapter = geocacheListAdapter;
         mGeocacheVectors = geocacheVectors;
         mInflatedGpsStatusWidget = inflatedGpsStatusWidget;
@@ -97,7 +97,7 @@ public class GeocacheListPresenter implements Pausable {
     public void onResume(CacheListRefresh cacheListRefresh) {
         final CacheListRefreshLocationListener cacheListRefreshLocationListener = new CacheListRefreshLocationListener(
                 cacheListRefresh);
-        final CompassListener mCompassListener = mCompassListenerProvider.get();
+        final CacheListCompassListener mCompassListener = mCacheListCompassListenerProvider.get();
         mCombinedLocationManager.requestLocationUpdates(UPDATE_DELAY, 0, mLocationControlBuffered);
         mCombinedLocationManager.requestLocationUpdates(UPDATE_DELAY, 0, mCombinedLocationListener);
         mCombinedLocationManager.requestLocationUpdates(UPDATE_DELAY, 0,

@@ -18,7 +18,6 @@ import com.google.code.geobeagle.activity.searchonline.NullRefresher;
 import com.google.inject.Provides;
 
 import roboguice.config.AbstractAndroidModule;
-import roboguice.inject.ContextScoped;
 import roboguice.inject.SystemServiceProvider;
 
 import android.app.Activity;
@@ -43,8 +42,6 @@ public class GeoBeaglePackageModule extends AbstractAndroidModule {
     @Override
     protected void configure() {
         bind(Refresher.class).to(NullRefresher.class);
-        bind(LocationControlBuffered.class).toProvider(LocationControlBufferedProvider.class).in(
-                ContextScoped.class);
         bind(SensorManager.class).toProvider(
                 new SystemServiceProvider<SensorManager>(Context.SENSOR_SERVICE));
     }
