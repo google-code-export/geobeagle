@@ -22,6 +22,7 @@ import com.google.code.geobeagle.activity.cachelist.ActivityVisible;
 import com.google.code.geobeagle.location.CombinedLocationListener;
 import com.google.code.geobeagle.location.CombinedLocationManager;
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 
 import android.app.Activity;
 import android.graphics.Color;
@@ -34,7 +35,7 @@ public class SearchOnlineActivityDelegate {
     private final ActivitySaver mActivitySaver;
     private final CombinedLocationListener mCombinedLocationListener;
     private final CombinedLocationManager mCombinedLocationManager;
-    private final CompassListener mCompassListener;
+    private final Provider<CompassListener> mCompassListenerProvider;
     private final LocationControlBuffered mLocationControlBuffered;
     private final SensorManager mSensorManager;
     private final WebView mWebView;
@@ -43,12 +44,13 @@ public class SearchOnlineActivityDelegate {
 
     @Inject
     public SearchOnlineActivityDelegate(Activity activity, SensorManager sensorManager,
-            CompassListener compassListener, CombinedLocationManager combinedLocationManager,
+            Provider<CompassListener> compassListenerProvider,
+            CombinedLocationManager combinedLocationManager,
             CombinedLocationListener combinedLocationListener,
             LocationControlBuffered locationControlBuffered, ActivitySaver activitySaver,
             ActivityVisible activityVisible, JsInterface jsInterface) {
         mSensorManager = sensorManager;
-        mCompassListener = compassListener;
+        mCompassListenerProvider = compassListenerProvider;
         mCombinedLocationListener = combinedLocationListener;
         mCombinedLocationManager = combinedLocationManager;
         mLocationControlBuffered = locationControlBuffered;
@@ -71,7 +73,7 @@ public class SearchOnlineActivityDelegate {
 
     public void onPause() {
         mCombinedLocationManager.removeUpdates();
-        mSensorManager.unregisterListener(mCompassListener);
+        mSensorManager.unregisterListener(mCompassListenerProvider.get());
         mActivityVisible.setVisible(false);
         mActivitySaver.save(ActivityType.SEARCH_ONLINE);
     }
@@ -79,7 +81,8 @@ public class SearchOnlineActivityDelegate {
     public void onResume() {
         mCombinedLocationManager.requestLocationUpdates(1000, 0, mLocationControlBuffered);
         mCombinedLocationManager.requestLocationUpdates(1000, 0, mCombinedLocationListener);
-        mSensorManager.registerListener(mCompassListener, SensorManager.SENSOR_ORIENTATION,
+        mSensorManager.registerListener(mCompassListenerProvider.get(),
+                SensorManager.SENSOR_ORIENTATION,
                 SensorManager.SENSOR_DELAY_UI);
         mActivityVisible.setVisible(true);
     }
