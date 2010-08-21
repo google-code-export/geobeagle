@@ -203,11 +203,12 @@ public class BCachingCommunication {
                 inputStream = connection.getInputStream();
             } catch (IOException e) {
                 InputStream errorStream = connection.getErrorStream();
-                if (connection.getContentEncoding().equalsIgnoreCase("gzip")) {
+                if (connection.getContentEncoding() != null
+                        && connection.getContentEncoding().equalsIgnoreCase("gzip")) {
                     inputStream = new java.util.zip.GZIPInputStream(errorStream);
                 }
-                InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
-                BufferedReader reader = new BufferedReader(inputStreamReader);
+                InputStreamReader errorStreamReader = new InputStreamReader(errorStream);
+                BufferedReader reader = new BufferedReader(errorStreamReader);
                 String string = connection.getResponseCode() + " error: " + reader.readLine();
                 throw new BCachingException(string);
             }
