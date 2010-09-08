@@ -29,12 +29,15 @@ class DesktopSQLiteDatabase implements ISQLiteDatabase {
         db.delete();
     }
 
+    @Override
     public void beginTransaction() {
     }
 
+    @Override
     public void close() {
     }
 
+    @Override
     public int countResults(String table, String sql, String... args) {
         return 0;
     }
@@ -47,15 +50,18 @@ class DesktopSQLiteDatabase implements ISQLiteDatabase {
         return DesktopSQLiteDatabase.exec("SELECT * FROM " + table);
     }
 
+    @Override
     public void endTransaction() {
     }
 
+    @Override
     public void execSQL(String s, Object... bindArg1) {
         if (bindArg1.length > 0)
             throw new UnsupportedOperationException("bindArgs not yet supported");
         System.out.print(DesktopSQLiteDatabase.exec(s));
     }
 
+    @Override
     public Cursor query(String table, String[] columns, String selection, String groupBy,
             String having, String orderBy, String limit, String... selectionArgs) {
         return null;
@@ -67,6 +73,7 @@ class DesktopSQLiteDatabase implements ISQLiteDatabase {
         return null;
     }
 
+    @Override
     public void setTransactionSuccessful() {
     }
 

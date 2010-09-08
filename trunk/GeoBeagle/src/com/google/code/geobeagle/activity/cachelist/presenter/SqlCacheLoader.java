@@ -51,6 +51,7 @@ public class SqlCacheLoader implements RefreshAction {
         mActivityVisible = activityVisible;
     }
 
+    @Override
     public void refresh() {
         if (!mActivityVisible.getVisible())
             return;
