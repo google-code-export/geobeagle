@@ -20,20 +20,28 @@ import com.google.inject.Provider;
 
 public class LocationSaver {
     private final Provider<CacheWriter> cacheWriterProvider;
+    private final TagWriter tagWriter;
+    private final Filter filter;
 
     @Inject
-    public LocationSaver(Provider<CacheWriter> cacheWriterProvider) {
+    public LocationSaver(Provider<CacheWriter> cacheWriterProvider,
+            TagWriter tagWriter,
+            Filter filter) {
         this.cacheWriterProvider = cacheWriterProvider;
+        this.tagWriter = tagWriter;
+        this.filter = filter;
     }
 
     public void saveLocation(Geocache geocache) {
-        final CharSequence id = geocache.getId();
+        CharSequence id = geocache.getId();
         CacheWriter cacheWriter = cacheWriterProvider.get();
         cacheWriter.startWriting();
-        cacheWriter.insertAndUpdateCache(id, geocache.getName(), geocache.getLatitude(), geocache
-                .getLongitude(), geocache.getSourceType(), geocache.getSourceName(), geocache
-                .getCacheType(), geocache.getDifficulty(), geocache.getTerrain(), geocache
-                .getContainer(), geocache.getAvailable(), geocache.getArchived());
+        boolean found = tagWriter.hasTag(id, Tag.FOUND);
+        boolean visible = filter.isVisible(found);
+        cacheWriter.insertAndUpdateCache(id, geocache.getName(), geocache.getLatitude(),
+                geocache.getLongitude(), geocache.getSourceType(), geocache.getSourceName(),
+                geocache.getCacheType(), geocache.getDifficulty(), geocache.getTerrain(),
+                geocache.getContainer(), geocache.getAvailable(), geocache.getArchived(), visible);
         cacheWriter.stopWriting();
     }
 }

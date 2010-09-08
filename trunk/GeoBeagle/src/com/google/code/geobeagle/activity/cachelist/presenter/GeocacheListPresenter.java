@@ -22,6 +22,10 @@ import com.google.code.geobeagle.activity.cachelist.CacheListView.ScrollListener
 import com.google.code.geobeagle.activity.cachelist.GeocacheListController.CacheListOnCreateContextMenuListener;
 import com.google.code.geobeagle.activity.cachelist.Pausable;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVectors;
+import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh.UpdateFlag;
+import com.google.code.geobeagle.database.ClearFilterProgressDialog;
+import com.google.code.geobeagle.database.FilterCleanliness;
+import com.google.code.geobeagle.database.UpdateFilterWorker;
 import com.google.code.geobeagle.gpsstatuswidget.InflatedGpsStatusWidget;
 import com.google.code.geobeagle.gpsstatuswidget.UpdateGpsWidgetRunnable;
 import com.google.code.geobeagle.location.CombinedLocationListener;
@@ -31,6 +35,8 @@ import com.google.inject.Provider;
 
 import android.app.Activity;
 import android.app.ListActivity;
+import android.app.ProgressDialog;
+import android.content.SharedPreferences;
 import android.hardware.SensorManager;
 import android.location.LocationListener;
 import android.util.Log;
@@ -53,6 +59,11 @@ public class GeocacheListPresenter implements Pausable {
     private final UpdateGpsWidgetRunnable mUpdateGpsWidgetRunnable;
     private final CacheListView.ScrollListener mScrollListener;
     private final GpsStatusListener mGpsStatusListener;
+    private final SharedPreferences mSharedPreferences;
+    private final UpdateFilterWorker mUpdateFilterWorker;
+    private final UpdateFlag mUpdateFlag;
+    private final Provider<ClearFilterProgressDialog> mProgressDialogProvider;
+    private final FilterCleanliness mFilterCleanliness;
 
     @Inject
     public GeocacheListPresenter(CombinedLocationListener combinedLocationListener,
@@ -66,7 +77,12 @@ public class GeocacheListPresenter implements Pausable {
             SensorManagerWrapper sensorManagerWrapper,
             UpdateGpsWidgetRunnable updateGpsWidgetRunnable,
             ScrollListener scrollListener,
-            GpsStatusListener gpsStatusListener) {
+            GpsStatusListener gpsStatusListener,
+            SharedPreferences sharedPreferences,
+            UpdateFilterWorker updateFilterWorker,
+            UpdateFlag updateFlag,
+            Provider<ClearFilterProgressDialog> progressDialogProvider,
+            FilterCleanliness filterCleanliness) {
         mCombinedLocationListener = combinedLocationListener;
         mCombinedLocationManager = combinedLocationManager;
         mCacheListCompassListenerProvider = cacheListCompassListenerProvider;
@@ -79,6 +95,11 @@ public class GeocacheListPresenter implements Pausable {
         mSensorManagerWrapper = sensorManagerWrapper;
         mScrollListener = scrollListener;
         mGpsStatusListener = gpsStatusListener;
+        mSharedPreferences = sharedPreferences;
+        mUpdateFilterWorker = updateFilterWorker;
+        mUpdateFlag = updateFlag;
+        mProgressDialogProvider = progressDialogProvider;
+        mFilterCleanliness = filterCleanliness;
     }
 
     public void onCreate() {
@@ -102,6 +123,14 @@ public class GeocacheListPresenter implements Pausable {
     }
 
     public void onResume(CacheListRefresh cacheListRefresh) {
+        if (mFilterCleanliness.isDirty()) {
+            ProgressDialog progressDialog = mProgressDialogProvider.get();
+            progressDialog.incrementProgressBy(1);
+            progressDialog.show();
+            mUpdateFlag.setUpdatesEnabled(false);
+            mUpdateFilterWorker.start();
+        }
+
         final CacheListRefreshLocationListener cacheListRefreshLocationListener = new CacheListRefreshLocationListener(
                 cacheListRefresh);
         final CacheListCompassListener mCompassListener = mCacheListCompassListenerProvider.get();

@@ -22,6 +22,7 @@ import com.google.code.geobeagle.database.WhereFactoryNearestCaches.SearchUp;
 import com.google.code.geobeagle.database.WhereFactoryNearestCaches.WhereStringFactory;
 import com.google.code.geobeagle.preferences.PreferencesUpgrader;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -121,6 +122,21 @@ public class DatabaseDI {
         }
 
         @Override
+        public Cursor query(String table,
+                String[] columns,
+                String selection,
+                String selectionArgs[],
+                String groupBy,
+                String having,
+                String orderBy,
+                String limit) {
+            final Cursor query = mSQLiteDatabase.query(table, columns, selection, selectionArgs,
+                    groupBy, orderBy, having, limit);
+            Log.d("GeoBeagle", "limit: " + limit + ", query: " + selection);
+            return query;
+        }
+
+        @Override
         public Cursor rawQuery(String sql, String[] selectionArgs) {
             return mSQLiteDatabase.rawQuery(sql, selectionArgs);
         }
@@ -174,6 +190,16 @@ public class DatabaseDI {
             mSQLiteDatabase.delete(table, whereClause + "=?", new String[] {
                 whereArg
             });
+        }
+
+        @Override
+        public void update(String table,
+                ContentValues values,
+                String whereClause,
+                String[] whereArgs) {
+            Log.d("GeoBeagle", "updating: " + table + ", " + values + ", " + whereClause + ", "
+                    + whereArgs);
+            mSQLiteDatabase.update(table, values, whereClause, whereArgs);
         }
     }
 

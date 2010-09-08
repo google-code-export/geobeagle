@@ -148,7 +148,7 @@ public class CacheTagSqlWriter {
 
     public void write(Source source) {
         mCacheWriter.insertAndUpdateCache(mId, mName, mLatitude, mLongitude, source, mGpxName,
-                mCacheType, mDifficulty, mTerrain, mContainer, mAvailable, mArchived);
+                mCacheType, mDifficulty, mTerrain, mContainer, mAvailable, mArchived, mFound);
         if (mFound)
             mTagWriter.add(mId, Tag.FOUND);
     }

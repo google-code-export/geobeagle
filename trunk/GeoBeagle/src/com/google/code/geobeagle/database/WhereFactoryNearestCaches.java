@@ -124,8 +124,8 @@ public class WhereFactoryNearestCaches implements WhereFactory {
             double cos_lat = Math.cos(lat_radians);
             double lonLow = Math.max(-180, longitude - degrees / cos_lat);
             double lonHigh = Math.min(180, longitude + degrees / cos_lat);
-            return "Latitude > " + latLow + " AND Latitude < " + latHigh + " AND Longitude > "
-                    + lonLow + " AND Longitude < " + lonHigh;
+            return "Visible = 1 AND Latitude > " + latLow + " AND Latitude < " + latHigh
+                    + " AND Longitude > " + lonLow + " AND Longitude < " + lonHigh;
         }
     }
 

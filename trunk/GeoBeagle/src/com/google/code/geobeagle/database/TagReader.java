@@ -1,6 +1,6 @@
 /*
- ** Licensed under the Apache License, Version 2.0 (the "License");
- ** you may not use this file except in compliance with the License.
+ ** Licensed under the Apache License, Versimport com.google.inject.Inject;
+may not use this file except in compliance with the License.
  ** You may obtain a copy of the License at
  **
  **     http://www.apache.org/licenses/LICENSE-2.0
@@ -16,31 +16,19 @@ package com.google.code.geobeagle.database;
 
 import com.google.inject.Inject;
 
-import android.util.Log;
-
-public class TagWriter {
-    private final Filter filter;
+public class TagReader {
     private final TagStore tagStore;
 
     @Inject
-    public TagWriter(
-            Filter filter,
-            TagStore tagStore) {
-        this.filter = filter;
+    TagReader(TagStore tagStore) {
         this.tagStore = tagStore;
     }
 
-    public void add(CharSequence geocacheId, Tag tag) {
-        Log.d("GeoBeagle", "TagWriter: " + geocacheId + ", " + tag);
-        tagStore.addTag(geocacheId, tag);
-
-        if (!filter.isVisible(tag == Tag.FOUND)) {
-            tagStore.hideCache(geocacheId);
-        }
+    FoundCaches getFoundCaches() {
+        return new FoundCaches(tagStore.getFoundCaches());
     }
 
-    public boolean hasTag(CharSequence geocacheId, Tag tag) {
+    boolean hasTag(CharSequence geocacheId, Tag tag) {
         return tagStore.hasTag(geocacheId, tag);
     }
-
 }

@@ -16,31 +16,22 @@ package com.google.code.geobeagle.database;
 
 import com.google.inject.Inject;
 
-import android.util.Log;
-
-public class TagWriter {
-    private final Filter filter;
-    private final TagStore tagStore;
+class CacheVisibilityStore {
+    private final DbFrontend dbFrontEnd;
 
     @Inject
-    public TagWriter(
-            Filter filter,
-            TagStore tagStore) {
-        this.filter = filter;
-        this.tagStore = tagStore;
+    public CacheVisibilityStore(DbFrontend dbFrontend) {
+        this.dbFrontEnd = dbFrontend;
     }
 
-    public void add(CharSequence geocacheId, Tag tag) {
-        Log.d("GeoBeagle", "TagWriter: " + geocacheId + ", " + tag);
-        tagStore.addTag(geocacheId, tag);
-
-        if (!filter.isVisible(tag == Tag.FOUND)) {
-            tagStore.hideCache(geocacheId);
-        }
+    void setInvisible(String cache) {
+        ISQLiteDatabase database = dbFrontEnd.getDatabase();
+        database.execSQL("UPDATE CACHES SET Visible = 0 WHERE ID = ?", cache);
     }
 
-    public boolean hasTag(CharSequence geocacheId, Tag tag) {
-        return tagStore.hasTag(geocacheId, tag);
+    void setAllVisible() {
+        ISQLiteDatabase database = dbFrontEnd.getDatabase();
+        database.execSQL("UPDATE CACHES SET Visible = 1");
     }
 
 }

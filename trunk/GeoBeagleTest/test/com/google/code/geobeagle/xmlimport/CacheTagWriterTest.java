@@ -11,6 +11,7 @@
  ** See the License for the specific language governing permissions and
  ** limitations under the License.
  */
+
 package com.google.code.geobeagle.xmlimport;
 
 import static org.easymock.EasyMock.expect;
@@ -26,8 +27,7 @@ import com.google.code.geobeagle.database.CacheWriter;
 import com.google.code.geobeagle.database.ClearCachesFromSource;
 import com.google.code.geobeagle.database.GpxWriter;
 import com.google.code.geobeagle.database.Tag;
-import com.google.code.geobeagle.database.TagWriterImpl;
-import com.google.code.geobeagle.database.TagWriterNull;
+import com.google.code.geobeagle.database.TagWriter;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -39,8 +39,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 public class CacheTagWriterTest extends GeoBeagleTest {
     private CacheWriter cacheWriter;
     private GpxWriter gpxWriter;
-    private TagWriterNull tagWriterNull;
-    private TagWriterImpl tagWriterImpl;
+    private TagWriter tagWriter;
     private CacheTypeFactory cacheTypeFactory;
     private CacheTagSqlWriter cacheTagSqlWriter;
     private ClearCachesFromSource clearCachesFromSource;
@@ -49,19 +48,17 @@ public class CacheTagWriterTest extends GeoBeagleTest {
     public void setUp() {
         cacheWriter = PowerMock.createMock(CacheWriter.class);
         gpxWriter = PowerMock.createMock(GpxWriter.class);
-        tagWriterNull = PowerMock.createMock(TagWriterNull.class);
-        tagWriterImpl = PowerMock.createMock(TagWriterImpl.class);
+        tagWriter = PowerMock.createMock(TagWriter.class);
         cacheTypeFactory = PowerMock.createMock(CacheTypeFactory.class);
         clearCachesFromSource = PowerMock.createMock(ClearCachesFromSource.class);
         cacheTagSqlWriter = new CacheTagSqlWriter(cacheWriter, gpxWriter, cacheTypeFactory,
-                tagWriterImpl, tagWriterNull, clearCachesFromSource);
+                tagWriter, clearCachesFromSource);
     }
 
     @Test
     public void testClear() {
         cacheWriter.insertAndUpdateCache(null, null, 0, 0, Source.GPX, null, CacheType.NULL, 0, 0,
-                0, true, false);
-        tagWriterNull.add(null, Tag.FOUND);
+                0, true, false, false);
 
         PowerMock.replayAll();
         cacheTagSqlWriter.clear();
@@ -81,8 +78,8 @@ public class CacheTagWriterTest extends GeoBeagleTest {
     @Test
     public void testSymbol() {
         cacheWriter.insertAndUpdateCache(null, null, 0, 0, Source.GPX, null, null, 0, 0, 0, false,
-                false);
-        tagWriterImpl.add(null, Tag.FOUND);
+                false, true);
+        tagWriter.add(null, Tag.FOUND);
 
         PowerMock.replayAll();
         cacheTagSqlWriter.symbol("Geocache Found");
@@ -113,8 +110,8 @@ public class CacheTagWriterTest extends GeoBeagleTest {
 
     @Test
     public void testIsoTimeToSql() {
-        assertEquals("2008-04-15 16:10:30", cacheTagSqlWriter
-                .isoTimeToSql("2008-04-15T16:10:30.7369220-08:00"));
+        assertEquals("2008-04-15 16:10:30",
+                cacheTagSqlWriter.isoTimeToSql("2008-04-15T16:10:30.7369220-08:00"));
     }
 
     @Test
@@ -151,12 +148,12 @@ public class CacheTagWriterTest extends GeoBeagleTest {
     @Test
     public void testWrite() {
         cacheWriter.insertAndUpdateCache("GC123", "my cache", 122, 37, Source.GPX, "foo.gpx",
-                CacheType.TRADITIONAL, 6, 5, 1, false, false);
+                CacheType.TRADITIONAL, 6, 5, 1, false, false, true);
         expect(cacheTypeFactory.container("Micro")).andReturn(1);
         expect(cacheTypeFactory.stars("2.5")).andReturn(5);
         expect(cacheTypeFactory.stars("3")).andReturn(6);
         expect(cacheTypeFactory.fromTag("Traditional Cache")).andReturn(CacheType.TRADITIONAL);
-        tagWriterNull.add("GC123", Tag.FOUND);
+        tagWriter.add("GC123", Tag.FOUND);
 
         PowerMock.replayAll();
         cacheTagSqlWriter.id("GC123");
@@ -165,6 +162,7 @@ public class CacheTagWriterTest extends GeoBeagleTest {
         cacheTagSqlWriter.container("Micro");
         cacheTagSqlWriter.terrain("2.5");
         cacheTagSqlWriter.difficulty("3");
+        cacheTagSqlWriter.symbol("Geocache Found");
 
         cacheTagSqlWriter.gpxName("foo.gpx");
         cacheTagSqlWriter.cacheType("Traditional Cache");

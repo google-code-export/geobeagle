@@ -26,12 +26,18 @@ import org.powermock.modules.junit4.PowerMockRunner;
 public class DatabaseTest extends GeoBeagleTest {
 
     static String currentSchema() {
-        String currentSchema = SQL(Database.SQL_CREATE_CACHE_TABLE_V13)
+        String currentSchema = SQL(Database.SQL_CREATE_CACHE_TABLE_V16)
                 + SQL(Database.SQL_CREATE_GPX_TABLE_V10) + SQL(Database.SQL_CREATE_TAGS_TABLE_V12)
                 + SQL(Database.SQL_CREATE_IDX_LATITUDE) + SQL(Database.SQL_CREATE_IDX_LONGITUDE)
-                + SQL(Database.SQL_CREATE_IDX_SOURCE) + SQL(Database.SQL_CREATE_IDX_TAGS);
+                + SQL(Database.SQL_CREATE_IDX_SOURCE) + SQL(Database.SQL_CREATE_IDX_TAGS)
+                + SQL(Database.SQL_CREATE_IDX_VISIBLE);
         return currentSchema;
     }
+
+    String schema13 = SQL(Database.SQL_CREATE_CACHE_TABLE_V13)
+            + SQL(Database.SQL_CREATE_GPX_TABLE_V10) + SQL(Database.SQL_CREATE_TAGS_TABLE_V12)
+            + SQL(Database.SQL_CREATE_IDX_LATITUDE) + SQL(Database.SQL_CREATE_IDX_LONGITUDE)
+            + SQL(Database.SQL_CREATE_IDX_SOURCE) + SQL(Database.SQL_CREATE_IDX_TAGS);
 
     final static String schema12 = Database.SQL_CREATE_CACHE_TABLE_V11
             + Database.SQL_CREATE_GPX_TABLE_V10 + Database.SQL_CREATE_TAGS_TABLE_V12
@@ -68,6 +74,25 @@ public class DatabaseTest extends GeoBeagleTest {
         assertEquals(currentSchema(), schema);
     }
 
+    @Test
+    public void testUpgradeFrom13() {
+        DesktopSQLiteDatabase db = new DesktopSQLiteDatabase();
+        db.execSQL(schema13);
+        db.execSQL("INSERT INTO CACHES (Id, Source) VALUES (\"GCABC\", \"intent\")");
+        db.execSQL("INSERT INTO CACHES (Id, Source) VALUES (\"GC123\", \"foo.gpx\")");
+        db.execSQL("INSERT INTO GPX (Name, ExportTime, DeleteMe) "
+                + "VALUES (\"seattle.gpx\", \"2009-06-01\", 1)");
+
+        OpenHelperDelegate openHelperDelegate = new OpenHelperDelegate();
+        openHelperDelegate.onUpgrade(db, 13);
+        String schema = db.dumpSchema();
+
+        assertEquals(currentSchema(), schema);
+        String caches = db.dumpTable("CACHES");
+        assertEquals("GCABC||||intent|1|0|0|0|0|1|0|1\nGC123||||foo.gpx|1|0|0|0|0|1|0|1\n", caches);
+        String gpx = db.dumpTable("GPX");
+        assertEquals("seattle.gpx|1970-01-01|1\n", gpx);
+    }
 
     @Test
     public void testUpgradeFrom12() {
