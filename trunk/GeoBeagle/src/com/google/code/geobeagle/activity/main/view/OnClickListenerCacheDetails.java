@@ -42,11 +42,9 @@ public class OnClickListenerCacheDetails implements View.OnClickListener {
     public void onClick(View v) {
         Intent intent = new Intent(geoBeagle, DetailsActivity.class);
         Geocache geocache = geoBeagle.getGeocache();
-        intent.putExtra(DetailsActivity.INTENT_EXTRA_GEOCACHE_SOURCE, geocache
-                .getSourceName());
-        intent.putExtra(DetailsActivity.INTENT_EXTRA_GEOCACHE_ID, geocache.getId());
-        intent.putExtra(DetailsActivity.INTENT_EXTRA_GEOCACHE_NAME, geocache
-                .getName());
+        intent.putExtra(DetailsActivity.INTENT_EXTRA_GEOCACHE_SOURCE, geocache.getSourceName());
+        intent.putExtra(DetailsActivity.INTENT_EXTRA_GEOCACHE_ID, geocache.getId().toString());
+        intent.putExtra(DetailsActivity.INTENT_EXTRA_GEOCACHE_NAME, geocache.getName().toString());
 
         geoBeagle.startActivity(intent);
     }
