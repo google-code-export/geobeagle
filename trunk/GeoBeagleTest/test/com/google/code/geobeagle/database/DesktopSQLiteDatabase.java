@@ -103,7 +103,7 @@ class DesktopSQLiteDatabase implements ISQLiteDatabase {
     @Override
     public boolean hasValue(String table, String[] columns, String[] selectionArgs) {
         StringBuilder stringBuilder = new StringBuilder();
-        
+
         stringBuilder.append(" WHERE " + columns[0] + "=");
         stringBuilder.append("'" + selectionArgs[0] + "'");
         for (int ix = 1; ix < columns.length; ix++) {
@@ -121,24 +121,24 @@ class DesktopSQLiteDatabase implements ISQLiteDatabase {
 
     /**
      * <pre>
-     * 
+     *
      * version 8
-     * same as version 7 but rebuilds everything because a released version mistakenly puts 
+     * same as version 7 but rebuilds everything because a released version mistakenly puts
      * *intent* into imported caches.
-     * 
+     *
      * version 9
      * fixes bug where INDEX wasn't being created on upgrade.
-     * 
+     *
      * version 10
      * adds GPX table
-     * 
+     *
      * version 11
      * adds new CACHES columns: CacheType, Difficulty, Terrain, and Container
-     * 
+     *
      * version 12: 4/21/2010
      * adds new TAGS table:
      * </pre>
-     * 
+     *
      * @throws IOException
      */
     static String convertStreamToString(InputStream is) throws IOException {

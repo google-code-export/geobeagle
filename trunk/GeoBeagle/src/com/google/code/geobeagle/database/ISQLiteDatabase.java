@@ -27,8 +27,14 @@ public interface ISQLiteDatabase {
 
     void execSQL(String s, Object... bindArg1);
 
-    Cursor query(String table, String[] columns, String selection, String groupBy, String having,
-            String orderBy, String limit, String... selectionArgs);
+    Cursor query(String table,
+            String[] columns,
+            String selection,
+            String groupBy,
+            String having,
+            String orderBy,
+            String limit,
+            String... selectionArgs);
 
     Cursor rawQuery(String string, String[] object);
 

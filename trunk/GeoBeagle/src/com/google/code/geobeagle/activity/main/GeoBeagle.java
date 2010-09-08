@@ -61,10 +61,10 @@ public class GeoBeagle extends GuiceActivity {
     private GeoBeagleDelegate mGeoBeagleDelegate;
     private static final DateFormat mLocalDateFormat = DateFormat
             .getTimeInstance(DateFormat.MEDIUM);
-    
+
     @Inject
     LocationControlBuffered mLocationControlBuffered;
-    
+
     public Geocache getGeocache() {
         return mGeoBeagleDelegate.getGeocache();
     }
@@ -90,7 +90,7 @@ public class GeoBeagle extends GuiceActivity {
         final RadarView radarView = injector.getInstance(RadarView.class);
 
         mLocationControlBuffered.onLocationChanged(null);
-        
+
         final LocationManager mLocationManager = injector.getInstance(LocationManager.class);
 
         // Register for location updates
@@ -128,7 +128,7 @@ public class GeoBeagle extends GuiceActivity {
     protected Dialog onCreateDialog(int id) {
         super.onCreateDialog(id);
         final Injector injector = getInjector();
-        
+
         final AlertDialog.Builder builder = injector.getInstance(AlertDialog.Builder.class);
         final View fieldnoteDialogView = LayoutInflater.from(this)
                 .inflate(R.layout.fieldnote, null);
@@ -156,7 +156,7 @@ public class GeoBeagle extends GuiceActivity {
                 .create(mGeoBeagleDelegate.getGeocache().getId().length(), fDnf);
         final FieldnoteLogger fieldnoteLogger = injector.getInstance(FieldnoteLoggerFactory.class)
                 .create(dialogHelperSms);
-        
+
         fieldnoteLogger.onPrepareDialog(dialog, mLocalDateFormat.format(new Date()), fDnf);
     }
 
@@ -164,13 +164,13 @@ public class GeoBeagle extends GuiceActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         return mGeoBeagleDelegate.onCreateOptionsMenu(menu);
     }
-    
+
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
         return mGeoBeagleDelegate.onPrepareOptionsMenu(menu);
     }
-    
+
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (mGeoBeagleDelegate.onKeyDown(keyCode, event))
