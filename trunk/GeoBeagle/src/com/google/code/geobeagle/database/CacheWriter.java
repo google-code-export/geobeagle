@@ -27,14 +27,14 @@ public class CacheWriter {
             Database.SQL_DELETE_OLD_CACHES, Database.SQL_DELETE_OLD_GPX,
             Database.SQL_RESET_DELETE_ME_CACHES, Database.SQL_RESET_DELETE_ME_GPX
     };
-    private final DbToGeocacheAdapter mDbToGeocacheAdapter;
+    private final DbToGeocacheAdapter dbToGeocacheAdapter;
     private final Provider<ISQLiteDatabase> sqliteProvider;
 
     @Inject
     CacheWriter(Provider<ISQLiteDatabase> writableDatabaseProvider,
             DbToGeocacheAdapter dbToGeocacheAdapter) {
         this.sqliteProvider = writableDatabaseProvider;
-        mDbToGeocacheAdapter = dbToGeocacheAdapter;
+        this.dbToGeocacheAdapter = dbToGeocacheAdapter;
     }
 
 
@@ -47,7 +47,7 @@ public class CacheWriter {
             int difficulty, int terrain, int container, boolean available, boolean archived) {
         sqliteProvider.get().execSQL(Database.SQL_REPLACE_CACHE, id, name, new Double(latitude),
                 new Double(longitude),
-                mDbToGeocacheAdapter.sourceTypeToSourceName(sourceType, sourceName),
+                dbToGeocacheAdapter.sourceTypeToSourceName(sourceType, sourceName),
                 cacheType.toInt(), difficulty, terrain, container, available, archived);
     }
 
