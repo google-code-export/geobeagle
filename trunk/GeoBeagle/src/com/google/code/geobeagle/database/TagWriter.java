@@ -14,6 +14,46 @@
 
 package com.google.code.geobeagle.database;
 
-public interface TagWriter {
-    void add(CharSequence geocacheId, Tag tag);
+import com.google.inject.Inject;
+import com.google.inject.Provider;
+import com.google.inject.ProvisionException;
+
+import android.util.Log;
+
+public class TagWriter {
+
+    private final Provider<ISQLiteDatabase> databaseProvider;
+
+    @Inject
+    public TagWriter(Provider<ISQLiteDatabase> databaseProvider) {
+        this.databaseProvider = databaseProvider;
+    }
+
+    public void add(CharSequence geocacheId, Tag tag) {
+        Log.d("GeoBeagle", "TagWriter: " + geocacheId + ", " + tag);
+        ISQLiteDatabase database = databaseProvider.get();
+        database.delete("TAGS", "Cache", (String)geocacheId);
+        database.insert("TAGS", new String[] {
+                "Cache", "Id"
+        }, new Object[] {
+                geocacheId, tag.ordinal()
+        });
+    }
+
+    public boolean hasTag(CharSequence geocacheId, Tag tag) {
+        ISQLiteDatabase mDatabase = null;
+        try {
+            mDatabase = databaseProvider.get();
+        } catch (ProvisionException e) {
+            Log.e("GeoBeagle", "Provision exception");
+            return false;
+        }
+        boolean hasValue = mDatabase.hasValue("TAGS", new String[] {
+                "Cache", "Id"
+        }, new String[] {
+                geocacheId.toString(), String.valueOf(tag.ordinal())
+        });
+        return hasValue;
+    }
+
 }
