@@ -35,7 +35,7 @@ import android.widget.Toast;
 /**
  * Thread class that does the work of importing caches from the bcaching.com
  * site.
- * 
+ *
  * @author sng
  */
 @ContextScoped
@@ -72,7 +72,7 @@ public class ImportBCachingWorker extends RoboThread implements Abortable {
         this.cursor = injector.getInstance(CacheListCursor.class);
         this.updateFlag = injector.getInstance(UpdateFlag.class);
     }
-    
+
     /*
      * Abort the import thread. This call will block
      */
@@ -101,6 +101,7 @@ public class ImportBCachingWorker extends RoboThread implements Abortable {
 
     @Override
     public void run() {
+        Log.d("GeoBeagle", "Starting import");
         inProgress = true;
         updateFlag.setUpdatesEnabled(false);
         progressManager.update(progressHandler, ProgressMessage.START, 0);

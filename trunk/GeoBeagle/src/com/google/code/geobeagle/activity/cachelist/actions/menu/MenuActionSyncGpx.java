@@ -68,7 +68,7 @@ public class MenuActionSyncGpx implements Action {
         mGpxWriterProvider = injector.getProvider(GpxWriter.class);
         mImportBCachingWorkerProvider = injector.getProvider(ImportBCachingWorker.class);
     }
-    
+
     public void abort() {
         Log.d("GeoBeagle", "MenuActionSyncGpx aborting");
         mSdcardImportAbortable.abort();
@@ -79,6 +79,7 @@ public class MenuActionSyncGpx implements Action {
 
     @Override
     public void act() {
+        Log.d("GeoBeagle", "MenuActionSync importing");
         final GpxImporter gpxImporter = mGpxImporterFactory.create(mCacheWriterProvider.get(),
                 mGpxWriterProvider.get());
         mSdcardImportAbortable = gpxImporter;
