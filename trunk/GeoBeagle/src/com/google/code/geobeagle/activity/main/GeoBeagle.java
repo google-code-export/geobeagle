@@ -36,6 +36,7 @@ import com.google.inject.Injector;
 
 import roboguice.activity.GuiceActivity;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Intent;
@@ -73,7 +74,7 @@ public class GeoBeagle extends GuiceActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == GeoBeagleDelegate.ACTIVITY_REQUEST_TAKE_PICTURE) {
             Log.d("GeoBeagle", "camera intent has returned.");
-        } else if (resultCode == 0)
+        } else if (resultCode == Activity.RESULT_OK)
             setIntent(data);
     }
 
