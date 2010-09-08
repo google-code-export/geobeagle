@@ -14,6 +14,7 @@
 
 package com.google.code.geobeagle.activity.cachelist;
 
+import com.google.code.geobeagle.OnClickCancelListener;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.ActivityRestorer;
 import com.google.code.geobeagle.activity.cachelist.actions.context.ContextActionDelete.ContextActionDeleteDialogHelper;
@@ -25,8 +26,6 @@ import roboguice.activity.GuiceListActivity;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.DialogInterface;
-import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -36,13 +35,6 @@ import android.view.View;
 import android.widget.ListView;
 
 public class CacheListActivity extends GuiceListActivity {
-    static class OnClickCancel implements OnClickListener {
-        @Override
-        public void onClick(DialogInterface dialog, int whichButton) {
-            dialog.dismiss();
-        }
-    }
-
     private CacheListDelegate mCacheListDelegate;
 
     @Override
@@ -76,7 +68,7 @@ public class CacheListActivity extends GuiceListActivity {
         final View confirmDeleteCacheView = LayoutInflater.from(this).inflate(
                 R.layout.confirm_delete_cache, null);
 
-        builder.setNegativeButton(R.string.confirm_delete_negative, new OnClickCancel());
+        builder.setNegativeButton(R.string.confirm_delete_negative, new OnClickCancelListener());
         builder.setView(confirmDeleteCacheView);
 
         return getInjector().getInstance(ContextActionDeleteDialogHelper.class).onCreateDialog(

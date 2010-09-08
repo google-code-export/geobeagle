@@ -17,13 +17,13 @@ package com.google.code.geobeagle.activity.main;
 import com.google.code.geobeagle.ErrorDisplayer;
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.LocationControlBuffered;
+import com.google.code.geobeagle.OnClickCancelListener;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.R.id;
 import com.google.code.geobeagle.activity.main.GeoBeagleDelegate.LogFindClickListener;
 import com.google.code.geobeagle.activity.main.fieldnotes.DialogHelperSms;
 import com.google.code.geobeagle.activity.main.fieldnotes.DialogHelperSmsFactory;
 import com.google.code.geobeagle.activity.main.fieldnotes.FieldnoteLogger;
-import com.google.code.geobeagle.activity.main.fieldnotes.FieldnoteLogger.OnClickCancel;
 import com.google.code.geobeagle.activity.main.fieldnotes.FieldnoteLogger.OnClickOk;
 import com.google.code.geobeagle.activity.main.fieldnotes.FieldnoteLoggerFactory;
 import com.google.code.geobeagle.activity.main.fieldnotes.OnClickOkFactory;
@@ -139,7 +139,8 @@ public class GeoBeagle extends GuiceActivity {
                 (EditText)fieldnoteDialogView.findViewById(R.id.fieldnote), fDnf);
         builder.setTitle(R.string.field_note_title);
         builder.setView(fieldnoteDialogView);
-        builder.setNegativeButton(R.string.cancel, injector.getInstance(OnClickCancel.class));
+        builder.setNegativeButton(R.string.cancel,
+                injector.getInstance(OnClickCancelListener.class));
         builder.setPositiveButton(R.string.log_cache, onClickOk);
         AlertDialog alertDialog = builder.create();
         return alertDialog;
