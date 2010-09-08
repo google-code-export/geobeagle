@@ -22,8 +22,8 @@ public class DatabaseLogger {
     private final TagWriter mTagWriter;
 
     @Inject
-    DatabaseLogger(TagWriter tagWriterImpl) {
-        mTagWriter = tagWriterImpl;
+    DatabaseLogger(TagWriter tagWriter) {
+        mTagWriter = tagWriter;
     }
 
     public void log(CharSequence geocacheId, boolean dnf) {
