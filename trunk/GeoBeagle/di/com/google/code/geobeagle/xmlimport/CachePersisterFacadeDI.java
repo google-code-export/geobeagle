@@ -19,8 +19,7 @@ import com.google.code.geobeagle.database.CacheWriter;
 import com.google.code.geobeagle.database.ClearCachesFromSource;
 import com.google.code.geobeagle.database.ClearCachesFromSourceImpl;
 import com.google.code.geobeagle.database.GpxWriter;
-import com.google.code.geobeagle.database.TagWriterImpl;
-import com.google.code.geobeagle.database.TagWriterNull;
+import com.google.code.geobeagle.database.TagWriter;
 import com.google.code.geobeagle.xmlimport.GpxImporterDI.MessageHandler;
 import com.google.inject.Inject;
 
@@ -38,26 +37,25 @@ public class CachePersisterFacadeDI {
         private final CacheTypeFactory mCacheTypeFactory;
         private final FileFactory mFileFactory;
         private final MessageHandlerInterface mMessageHandler;
-        private final TagWriterImpl mTagWriterImpl;
-        private final TagWriterNull mTagWriterNull;
+        private final TagWriter mTagWriter;
         private final ClearCachesFromSource mClearCachesFromSource;
 
         @Inject
         public CachePersisterFacadeFactory(MessageHandler messageHandler,
-                CacheTypeFactory cacheTypeFactory, TagWriterImpl tagWriterImpl,
-                TagWriterNull tagWriterNull, ClearCachesFromSourceImpl clearCachesFromSourceImpl) {
+                CacheTypeFactory cacheTypeFactory,
+                TagWriter tagWriter,
+                ClearCachesFromSourceImpl clearCachesFromSourceImpl) {
             mMessageHandler = messageHandler;
             mFileFactory = new FileFactory();
             mCacheTypeFactory = cacheTypeFactory;
-            mTagWriterImpl = tagWriterImpl;
-            mTagWriterNull = tagWriterNull;
+            mTagWriter = tagWriter;
             mClearCachesFromSource = clearCachesFromSourceImpl;
         }
 
         public ImportCacheActions create(CacheWriter cacheWriter, GpxWriter gpxWriter,
                 WakeLock wakeLock, GeoBeagleEnvironment geoBeagleEnvironment) {
             final CacheTagSqlWriter cacheTagSqlWriter = new CacheTagSqlWriter(cacheWriter,
-                    gpxWriter, mCacheTypeFactory, mTagWriterImpl, mTagWriterNull,
+                    gpxWriter, mCacheTypeFactory, mTagWriter,
                     mClearCachesFromSource);
             return new ImportCacheActions(cacheTagSqlWriter, mFileFactory, mMessageHandler,
                     wakeLock, geoBeagleEnvironment);

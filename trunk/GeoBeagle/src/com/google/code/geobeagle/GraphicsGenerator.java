@@ -15,7 +15,7 @@
 package com.google.code.geobeagle;
 
 import com.google.code.geobeagle.database.Tag;
-import com.google.code.geobeagle.database.TagWriterImpl;
+import com.google.code.geobeagle.database.TagWriter;
 import com.google.inject.Inject;
 
 import android.content.res.Resources;
@@ -183,7 +183,7 @@ public class GraphicsGenerator {
     public static interface AttributesPainter {
         void paintAttributes(int difficulty, int terrain, Bitmap copy, Canvas canvas) ;
     }
-    
+
     public static class DifficultyAndTerrainPainter implements AttributesPainter {
         private final AttributePainter mAttributePainter;
 
@@ -225,12 +225,12 @@ public class GraphicsGenerator {
     }
 
     public static class IconOverlayFactory {
-        private final TagWriterImpl mTagWriter;
+        private final TagWriter mTagWriter;
         private final Resources mResources;
 
         @Inject
-        public IconOverlayFactory(TagWriterImpl tagWriterImpl, Resources resources) {
-            mTagWriter = tagWriterImpl;
+        public IconOverlayFactory(TagWriter tagWriter, Resources resources) {
+            mTagWriter = tagWriter;
             mResources = resources;
         }
 
