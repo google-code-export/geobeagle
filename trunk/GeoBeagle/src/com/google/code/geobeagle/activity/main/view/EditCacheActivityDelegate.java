@@ -109,10 +109,10 @@ public class EditCacheActivityDelegate {
     }
 
     private final CancelButtonOnClickListener cancelButtonOnClickListener;
-    private final GeocacheFactory geocacheFactory;
-    private final Activity parent;
-    private final LocationSaver locationSaver;
     private final Provider<DbFrontend> dbFrontendProvider;
+    private final GeocacheFactory geocacheFactory;
+    private final LocationSaver locationSaver;
+    private final Activity parent;
 
     public EditCacheActivityDelegate(Activity parent,
             CancelButtonOnClickListener cancelButtonOnClickListener,
@@ -130,6 +130,10 @@ public class EditCacheActivityDelegate {
         parent.setContentView(R.layout.cache_edit);
     }
 
+    public void onPause() {
+        dbFrontendProvider.get().closeDatabase();
+    }
+
     public void onResume() {
         final Intent intent = parent.getIntent();
         final Geocache geocache = intent.<Geocache> getParcelableExtra("geocache");
@@ -145,9 +149,5 @@ public class EditCacheActivityDelegate {
         ((Button)parent.findViewById(R.id.edit_set)).setOnClickListener(setButtonOnClickListener);
         ((Button)parent.findViewById(R.id.edit_cancel))
                 .setOnClickListener(cancelButtonOnClickListener);
-    }
-
-    public void onPause() {
-        dbFrontendProvider.get().closeDatabase();
     }
 }

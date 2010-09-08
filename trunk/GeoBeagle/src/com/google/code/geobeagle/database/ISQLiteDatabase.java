@@ -23,9 +23,17 @@ public interface ISQLiteDatabase {
 
     int countResults(String table, String sql, String... args);
 
+    void delete(String table, String where, String bindArg);
+
     void endTransaction();
 
     void execSQL(String s, Object... bindArg1);
+
+    boolean hasValue(String table, String[] selection, String[] selectionArgs);
+
+    void insert(String table, String[] columns, Object[] bindArgs);
+
+    boolean isOpen();
 
     Cursor query(String table,
             String[] columns,
@@ -39,12 +47,4 @@ public interface ISQLiteDatabase {
     Cursor rawQuery(String string, String[] object);
 
     void setTransactionSuccessful();
-
-    boolean isOpen();
-
-    void insert(String table, String[] columns, Object[] bindArgs);
-
-    boolean hasValue(String table, String[] selection, String[] selectionArgs);
-
-    void delete(String table, String where, String bindArg);
 }
