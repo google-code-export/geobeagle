@@ -33,6 +33,7 @@ import android.app.Activity;
 import android.app.ListActivity;
 import android.hardware.SensorManager;
 import android.location.LocationListener;
+import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
 
@@ -116,5 +117,6 @@ public class GeocacheListPresenter implements Pausable {
         mUpdateGpsWidgetRunnable.run();
         mSensorManagerWrapper.registerListener(mCompassListener, SensorManager.SENSOR_ORIENTATION,
                 SensorManager.SENSOR_DELAY_UI);
+        Log.d("GeoBeagle", "GeocacheListPresenter onResume done");
     }
 }
