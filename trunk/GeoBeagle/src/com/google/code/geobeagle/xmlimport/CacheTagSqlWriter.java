@@ -140,6 +140,8 @@ public class CacheTagSqlWriter {
     }
 
     public void symbol(String symbol) {
+        Log.d("GeoBeagle", "CacheTagSqlWriter: SYMBOL: " + symbol);
+
         if (symbol.equals("Geocache Found"))
             mTagWriter = mTagWriterImpl;
     }
