@@ -36,10 +36,10 @@ public class EditCacheActivity extends GuiceActivity {
         super.onCreate(savedInstanceState);
         final CancelButtonOnClickListener cancelButtonOnClickListener = new CancelButtonOnClickListener(
                 this);
-        final GeocacheFactory geocacheFactory = new GeocacheFactory();
+        GeocacheFactory geocacheFactory = new GeocacheFactory();
         mDbFrontendProvider = getInjector().getProvider(DbFrontend.class);
         mCacheWriterProvider = getInjector().getProvider(CacheWriter.class);
-        final LocationSaver locationSaver = new LocationSaver(mCacheWriterProvider);
+        LocationSaver locationSaver = new LocationSaver(mCacheWriterProvider);
         mEditCacheActivityDelegate = new EditCacheActivityDelegate(this,
                 cancelButtonOnClickListener, geocacheFactory, locationSaver);
         
