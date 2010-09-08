@@ -14,7 +14,6 @@
 
 package com.google.code.geobeagle.activity.searchonline;
 
-import com.google.code.geobeagle.LocationControlBuffered;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.xmlimport.GpxImporterDI;
 import com.google.code.geobeagle.xmlimport.GpxImporterDI.ToastFactory;
@@ -24,16 +23,17 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.widget.Toast;
 
 import java.util.Locale;
 
 class JsInterface {
-    private final LocationControlBuffered mLocationControlBuffered;
     private final JsInterfaceHelper mHelper;
-    private ToastFactory mToastFactory;
-    private Context mContext;
+    private final ToastFactory mToastFactory;
+    private final Context mContext;
+    private final LocationManager mLocationManager;
 
     static class JsInterfaceHelper {
         private final Activity mActivity;
@@ -61,35 +61,39 @@ class JsInterface {
     }
 
     @Inject
-    public JsInterface(LocationControlBuffered locationControlBuffered,
+    public JsInterface(
             JsInterfaceHelper jsInterfaceHelper,
-            GpxImporterDI.ToastFactory toastFactory, Context context) {
+            GpxImporterDI.ToastFactory toastFactory,
+            Context context,
+            LocationManager locationManager) {
         mHelper = jsInterfaceHelper;
-        mLocationControlBuffered = locationControlBuffered;
         mToastFactory = toastFactory;
         mContext = context;
+        mLocationManager = locationManager;
     }
 
     public int atlasQuestOrGroundspeak(int ix) {
-        final Location location = mLocationControlBuffered.getLocation();
-        if (location == null) {
-            mToastFactory.showToast(mContext, R.string.current_location_null,
-                    Toast.LENGTH_LONG);
+        Location location = getLocation();
+        if (location == null)
             return 0;
-        }
         final String uriTemplate = mHelper.getTemplate(ix);
-        mHelper.launch(String.format(Locale.US, uriTemplate, location.getLatitude(), location
-                .getLongitude()));
+        mHelper.launch(String.format(Locale.US, uriTemplate, location.getLatitude(),
+                location.getLongitude()));
         return 0;
     }
 
-    public int openCaching(int ix) {
-        final Location location = mLocationControlBuffered.getLocation();
+    private Location getLocation() {
+        Location location = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
         if (location == null) {
-            mToastFactory.showToast(mContext, R.string.current_location_null,
-                    Toast.LENGTH_LONG);
-            return 0;
+            mToastFactory.showToast(mContext, R.string.current_location_null, Toast.LENGTH_LONG);
         }
+        return location;
+    }
+
+    public int openCaching(int ix) {
+        Location location = getLocation();
+        if (location == null)
+            return 0;
         final String uriTemplate = mHelper.getTemplate(ix);
         final double latitude = location.getLatitude();
         final double longitude = location.getLongitude();
