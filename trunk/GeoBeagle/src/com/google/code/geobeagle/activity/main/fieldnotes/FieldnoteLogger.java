@@ -20,19 +20,12 @@ import com.google.inject.assistedinject.Assisted;
 
 import android.app.Dialog;
 import android.content.DialogInterface;
-import android.content.SharedPreferences;
 import android.content.DialogInterface.OnClickListener;
+import android.content.SharedPreferences;
 import android.widget.EditText;
 import android.widget.TextView;
 
 public class FieldnoteLogger {
-    // TODO: share one onClickCancel across app.
-    public static class OnClickCancel implements OnClickListener {
-        public void onClick(DialogInterface dialog, int whichButton) {
-            dialog.dismiss();
-        }
-    }
-
     public static class OnClickOk implements OnClickListener {
         private final CacheLogger mCacheLogger;
         private final boolean mDnf;

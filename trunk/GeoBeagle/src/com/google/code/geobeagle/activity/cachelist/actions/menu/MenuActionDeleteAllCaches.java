@@ -14,6 +14,7 @@
 
 package com.google.code.geobeagle.activity.cachelist.actions.menu;
 
+import com.google.code.geobeagle.OnClickCancelListener;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.actions.Action;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
@@ -28,13 +29,6 @@ import android.app.AlertDialog.Builder;
 import android.content.DialogInterface;
 
 public class MenuActionDeleteAllCaches implements Action {
-    static final class OnClickCancelListener implements DialogInterface.OnClickListener {
-        @Override
-        public void onClick(DialogInterface dialog, int id) {
-            dialog.cancel();
-        }
-    }
-    
     private static class OnClickOkayListener implements DialogInterface.OnClickListener {
         private final CacheListRefresh cacheListRefresh;
         private final Provider<DbFrontend> dbFrontendProvider;
