@@ -22,34 +22,20 @@ import roboguice.activity.GuiceActivity;
 import android.os.Bundle;
 
 public class EditCacheActivity extends GuiceActivity {
-<<<<<<< HEAD
     private EditCacheActivityDelegate editCacheActivityDelegate;
-    private Provider<DbFrontend> dbFrontendProvider;
-=======
-    private EditCacheActivityDelegate mEditCacheActivityDelegate;
->>>>>>> 02d6ef2... Refactor: move pause into delegate
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Injector injector = getInjector();
-<<<<<<< HEAD
-        dbFrontendProvider = injector.getProvider(DbFrontend.class);
         editCacheActivityDelegate = injector.getInstance(EditCacheActivityDelegate.class);
-=======
-        mEditCacheActivityDelegate = injector.getInstance(EditCacheActivityDelegate.class);
->>>>>>> 02d6ef2... Refactor: move pause into delegate
 
         editCacheActivityDelegate.onCreate();
     }
 
     @Override
     protected void onPause() {
-<<<<<<< HEAD
-        dbFrontendProvider.get().closeDatabase();
-=======
-        mEditCacheActivityDelegate.onPause();
->>>>>>> 02d6ef2... Refactor: move pause into delegate
+        editCacheActivityDelegate.onPause();
         super.onPause();
     }
 
