@@ -28,9 +28,6 @@ import com.google.code.geobeagle.GeocacheFactory;
 import com.google.code.geobeagle.GeocacheFactory.Source;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.cachelist.GeocacheListController;
-import com.google.code.geobeagle.activity.main.view.EditCacheActivityDelegate.CancelButtonOnClickListener;
-import com.google.code.geobeagle.activity.main.view.EditCacheActivityDelegate.EditCache;
-import com.google.code.geobeagle.activity.main.view.EditCacheActivityDelegate.SetButtonOnClickListener;
 import com.google.code.geobeagle.database.LocationSaver;
 
 import org.junit.Test;

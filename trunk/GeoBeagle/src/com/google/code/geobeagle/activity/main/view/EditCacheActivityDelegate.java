@@ -17,103 +17,24 @@ package com.google.code.geobeagle.activity.main.view;
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.GeocacheFactory;
 import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.activity.cachelist.GeocacheListController;
-import com.google.code.geobeagle.activity.main.Util;
 import com.google.code.geobeagle.database.DbFrontend;
 import com.google.code.geobeagle.database.LocationSaver;
+import com.google.inject.Inject;
 import com.google.inject.Provider;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 
 public class EditCacheActivityDelegate {
-    public static class CancelButtonOnClickListener implements OnClickListener {
-        private final Activity activity;
-
-        public CancelButtonOnClickListener(Activity activity) {
-            this.activity = activity;
-        }
-
-        @Override
-        public void onClick(View v) {
-            // TODO: replace magic number.
-            activity.setResult(-1, null);
-            activity.finish();
-        }
-    }
-
-    public static class EditCache {
-        private final GeocacheFactory geocacheFactory;
-        private final EditText id;
-        private final EditText latitude;
-        private final EditText longitude;
-        private final EditText name;
-        private Geocache originalGeocache;
-
-        public EditCache(GeocacheFactory geocacheFactory, EditText id, EditText name,
-                EditText latitude, EditText longitude) {
-            this.geocacheFactory = geocacheFactory;
-            this.id = id;
-            this.name = name;
-            this.latitude = latitude;
-            this.longitude = longitude;
-        }
-
-        Geocache get() {
-            return geocacheFactory.create(id.getText(), name.getText(), Util
-                    .parseCoordinate(latitude.getText()), Util.parseCoordinate(longitude
-                    .getText()), originalGeocache.getSourceType(), originalGeocache
-                    .getSourceName(), originalGeocache.getCacheType(), originalGeocache
-                    .getDifficulty(), originalGeocache.getTerrain(), originalGeocache
-                    .getContainer(), originalGeocache.getAvailable(), originalGeocache
-                    .getArchived());
-        }
-
-        void set(Geocache geocache) {
-            originalGeocache = geocache;
-            id.setText(geocache.getId());
-            name.setText(geocache.getName());
-            latitude.setText(Util.formatDegreesAsDecimalDegreesString(geocache.getLatitude()));
-            longitude.setText(Util.formatDegreesAsDecimalDegreesString(geocache.getLongitude()));
-
-            latitude.requestFocus();
-        }
-    }
-
-    public static class SetButtonOnClickListener implements OnClickListener {
-        private final Activity activity;
-        private final EditCache geocacheView;
-        private final LocationSaver locationSaver;
-
-        public SetButtonOnClickListener(Activity activity, EditCache editCache,
-                LocationSaver locationSaver) {
-            this.activity = activity;
-            this.geocacheView = editCache;
-            this.locationSaver = locationSaver;
-        }
-
-        @Override
-        public void onClick(View v) {
-            final Geocache geocache = geocacheView.get();
-            locationSaver.saveLocation(geocache);
-            final Intent i = new Intent();
-            i.setAction(GeocacheListController.SELECT_CACHE);
-            i.putExtra("geocache", geocache);
-            activity.setResult(0, i);
-            activity.finish();
-        }
-    }
-
     private final CancelButtonOnClickListener cancelButtonOnClickListener;
     private final Provider<DbFrontend> dbFrontendProvider;
     private final GeocacheFactory geocacheFactory;
     private final LocationSaver locationSaver;
     private final Activity parent;
 
+    @Inject
     public EditCacheActivityDelegate(Activity parent,
             CancelButtonOnClickListener cancelButtonOnClickListener,
             GeocacheFactory geocacheFactory,
