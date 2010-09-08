@@ -31,6 +31,7 @@ public class TagWriterImpl implements TagWriter {
 
     @Override
     public void add(CharSequence geocacheId, Tag tag) {
+        Log.d("GeoBeagle", "TagWriterImpl: " + geocacheId + ", " + tag);
         final ISQLiteDatabase mDatabase = databaseProvider.get();
         mDatabase.delete("TAGS", "Cache", (String)geocacheId);
         mDatabase.insert("TAGS", new String[] {
