@@ -24,28 +24,28 @@ import roboguice.activity.GuiceActivity;
 import android.os.Bundle;
 
 public class EditCacheActivity extends GuiceActivity {
-    private EditCacheActivityDelegate mEditCacheActivityDelegate;
-    private Provider<DbFrontend> mDbFrontendProvider;
-    
+    private EditCacheActivityDelegate editCacheActivityDelegate;
+    private Provider<DbFrontend> dbFrontendProvider;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Injector injector = getInjector();
-        mDbFrontendProvider = injector.getProvider(DbFrontend.class);
-        mEditCacheActivityDelegate = injector.getInstance(EditCacheActivityDelegate.class);
+        dbFrontendProvider = injector.getProvider(DbFrontend.class);
+        editCacheActivityDelegate = injector.getInstance(EditCacheActivityDelegate.class);
 
-        mEditCacheActivityDelegate.onCreate();
+        editCacheActivityDelegate.onCreate();
     }
 
     @Override
     protected void onPause() {
-        mDbFrontendProvider.get().closeDatabase();
+        dbFrontendProvider.get().closeDatabase();
         super.onPause();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        mEditCacheActivityDelegate.onResume();
+        editCacheActivityDelegate.onResume();
     }
 }

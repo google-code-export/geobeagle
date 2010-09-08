@@ -29,33 +29,33 @@ import android.location.Location;
 import java.util.ArrayList;
 
 public class SqlCacheLoader implements RefreshAction {
-    private final CacheListData mCacheListData;
-    private final FilterNearestCaches mFilterNearestCaches;
-    private final Provider<DbFrontend> mDbFrontendProvider;
-    private final LocationControlBuffered mLocationControlBuffered;
-    private final Timing mTiming;
-    private final TitleUpdater mTitleUpdater;
-    private final ActivityVisible mActivityVisible;
+    private final CacheListData cacheListData;
+    private final FilterNearestCaches filterNearestCaches;
+    private final Provider<DbFrontend> dbFrontendProvider;
+    private final LocationControlBuffered locationControlBuffered;
+    private final Timing timing;
+    private final TitleUpdater titleUpdater;
+    private final ActivityVisible activityVisible;
 
     @Inject
     public SqlCacheLoader(Provider<DbFrontend> dbFrontendProvider,
             FilterNearestCaches filterNearestCaches, CacheListData cacheListData,
             LocationControlBuffered locationControlBuffered, TitleUpdater titleUpdater,
             Timing timing, ActivityVisible activityVisible) {
-        mDbFrontendProvider = dbFrontendProvider;
-        mFilterNearestCaches = filterNearestCaches;
-        mCacheListData = cacheListData;
-        mLocationControlBuffered = locationControlBuffered;
-        mTiming = timing;
-        mTitleUpdater = titleUpdater;
-        mActivityVisible = activityVisible;
+        this.dbFrontendProvider = dbFrontendProvider;
+        this.filterNearestCaches = filterNearestCaches;
+        this.cacheListData = cacheListData;
+        this.locationControlBuffered = locationControlBuffered;
+        this.timing = timing;
+        this.titleUpdater = titleUpdater;
+        this.activityVisible = activityVisible;
     }
 
     @Override
     public void refresh() {
-        if (!mActivityVisible.getVisible())
+        if (!activityVisible.getVisible())
             return;
-        Location location = mLocationControlBuffered.getLocation();
+        Location location = locationControlBuffered.getLocation();
         double latitude = 0;
         double longitude = 0;
         if (location != null) {
@@ -63,15 +63,15 @@ public class SqlCacheLoader implements RefreshAction {
             longitude = location.getLongitude();
         }
         // Log.d("GeoBeagle", "Location: " + location);
-        DbFrontend dbFrontend = mDbFrontendProvider.get();
+        DbFrontend dbFrontend = dbFrontendProvider.get();
         ArrayList<Geocache> geocaches = dbFrontend.loadCaches(latitude, longitude,
-                mFilterNearestCaches.getWhereFactory());
-        mTiming.lap("SQL time");
+                filterNearestCaches.getWhereFactory());
+        timing.lap("SQL time");
 
-        mCacheListData.add(geocaches, mLocationControlBuffered);
-        mTiming.lap("add to list time");
+        cacheListData.add(geocaches, locationControlBuffered);
+        timing.lap("add to list time");
 
-        int nearestCachesCount = mCacheListData.size();
-        mTitleUpdater.update(dbFrontend.countAll(), nearestCachesCount);
+        int nearestCachesCount = cacheListData.size();
+        titleUpdater.update(dbFrontend.countAll(), nearestCachesCount);
     }
 }

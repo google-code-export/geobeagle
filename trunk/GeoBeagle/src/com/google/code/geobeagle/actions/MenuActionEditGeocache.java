@@ -22,17 +22,17 @@ import android.app.Activity;
 import android.content.Intent;
 
 public class MenuActionEditGeocache implements Action {
-    private final GeoBeagle mParent;
+    private final GeoBeagle parent;
 
     @Inject
     public MenuActionEditGeocache(Activity parent) {
-        mParent = (GeoBeagle)parent;
+        this.parent = (GeoBeagle)parent;
     }
 
     @Override
     public void act() {
-        Intent intent = new Intent(mParent, EditCacheActivity.class);
-        intent.putExtra("geocache", mParent.getGeocache());
-        mParent.startActivityForResult(intent, 0);
+        Intent intent = new Intent(parent, EditCacheActivity.class);
+        intent.putExtra("geocache", parent.getGeocache());
+        parent.startActivityForResult(intent, 0);
     }
 }
