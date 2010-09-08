@@ -14,15 +14,12 @@
 
 package com.google.code.geobeagle.database;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import com.google.code.geobeagle.activity.cachelist.GeoBeagleTest;
-import com.google.inject.Provider;
 
-import org.easymock.EasyMock;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.powermock.api.easymock.PowerMock;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 @RunWith(PowerMockRunner.class)
@@ -71,27 +68,6 @@ public class DatabaseTest extends GeoBeagleTest {
         assertEquals(currentSchema(), schema);
     }
 
-    @SuppressWarnings("unchecked")
-    @Test
-    public void testTags() {
-        Provider<ISQLiteDatabase> databaseProvider = PowerMock.createMock(Provider.class);
-        
-        DesktopSQLiteDatabase db = new DesktopSQLiteDatabase();
-        EasyMock.expect(databaseProvider.get()).andReturn(db).anyTimes();
-        
-        PowerMock.replayAll();
-        db.execSQL(currentSchema());
-        final TagWriterImpl tagWriterImpl = new TagWriterImpl(databaseProvider);
-        assertFalse(tagWriterImpl.hasTag("GC123", Tag.FOUND));
-        assertFalse(tagWriterImpl.hasTag("GC123", Tag.DNF));
-        tagWriterImpl.add("GC123", Tag.FOUND);
-        tagWriterImpl.add("GCabc", Tag.FOUND);
-        assertTrue(tagWriterImpl.hasTag("GC123", Tag.FOUND));
-        assertFalse(tagWriterImpl.hasTag("GC123", Tag.DNF));
-        tagWriterImpl.add("GC123", Tag.DNF);
-        assertTrue(tagWriterImpl.hasTag("GC123", Tag.DNF));
-        assertFalse(tagWriterImpl.hasTag("GC123", Tag.FOUND));
-    }
 
     @Test
     public void testUpgradeFrom12() {
