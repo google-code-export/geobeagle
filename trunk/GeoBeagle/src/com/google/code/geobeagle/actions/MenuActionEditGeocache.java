@@ -31,7 +31,7 @@ public class MenuActionEditGeocache implements Action {
 
     @Override
     public void act() {
-        final Intent intent = new Intent(mParent, EditCacheActivity.class);
+        Intent intent = new Intent(mParent, EditCacheActivity.class);
         intent.putExtra("geocache", mParent.getGeocache());
         mParent.startActivityForResult(intent, 0);
     }
