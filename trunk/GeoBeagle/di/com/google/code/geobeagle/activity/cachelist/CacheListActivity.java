@@ -45,15 +45,6 @@ public class CacheListActivity extends GuiceListActivity {
 
     private CacheListDelegate mCacheListDelegate;
 
-    // This is the ctor that Android will use.
-    public CacheListActivity() {
-    }
-
-    // This is the ctor for testing.
-    public CacheListActivity(CacheListDelegate cacheListDelegate) {
-        mCacheListDelegate = cacheListDelegate;
-    }
-
     @Override
     public boolean onContextItemSelected(MenuItem item) {
         return mCacheListDelegate.onContextItemSelected(item) || super.onContextItemSelected(item);
