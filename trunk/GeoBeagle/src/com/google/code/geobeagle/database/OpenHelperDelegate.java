@@ -18,7 +18,7 @@ import android.util.Log;
 
 public class OpenHelperDelegate {
     public void onCreate(ISQLiteDatabase db) {
-        db.execSQL(Database.SQL_CREATE_CACHE_TABLE_V13);
+        db.execSQL(Database.SQL_CREATE_CACHE_TABLE_V16);
         db.execSQL(Database.SQL_CREATE_GPX_TABLE_V10);
         db.execSQL(Database.SQL_CREATE_TAGS_TABLE_V12);
         db.execSQL(Database.SQL_CREATE_IDX_LATITUDE);
@@ -54,6 +54,10 @@ public class OpenHelperDelegate {
         if (oldVersion < 14) {
             // to get new gpx details.
             db.execSQL(Database.SQL_FORCE_UPDATE_ALL);
+        }
+        if (oldVersion < 16) {
+            db.execSQL("ALTER TABLE CACHES ADD COLUMN Visible BOOLEAN NOT NULL Default 1");
+            db.execSQL(Database.SQL_CREATE_IDX_VISIBLE);
         }
     }
 }

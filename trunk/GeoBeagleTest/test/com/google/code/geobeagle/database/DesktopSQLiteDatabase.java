@@ -14,6 +14,7 @@
 
 package com.google.code.geobeagle.database;
 
+import android.content.ContentValues;
 import android.database.Cursor;
 
 import java.io.BufferedReader;
@@ -179,5 +180,27 @@ class DesktopSQLiteDatabase implements ISQLiteDatabase {
             throw (new RuntimeException(e + "\n" + output));
         }
         return output;
+    }
+
+    @Override
+    public Cursor query(String table,
+            String[] columns,
+            String selection,
+            String[] selectionArgs,
+            String groupBy,
+            String having,
+            String orderBy,
+            String limit) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public void update(String string,
+            ContentValues contentValues,
+            String whereClause,
+            String[] strings) {
+        // TODO Auto-generated method stub
+
     }
 }

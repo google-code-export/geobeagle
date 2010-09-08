@@ -15,35 +15,35 @@
 package com.google.code.geobeagle.database;
 
 import static org.easymock.EasyMock.expect;
+import static org.powermock.api.easymock.PowerMock.createMock;
+import static org.powermock.api.easymock.PowerMock.mockStatic;
+import static org.powermock.api.easymock.PowerMock.replayAll;
+import static org.powermock.api.easymock.PowerMock.verifyAll;
 
 import com.google.code.geobeagle.CacheType;
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.GeocacheFactory.Source;
-import com.google.code.geobeagle.database.CacheWriter;
-import com.google.code.geobeagle.database.DatabaseDI;
-import com.google.code.geobeagle.database.LocationSaver;
 import com.google.inject.Provider;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.powermock.api.easymock.PowerMock;
-import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-@PrepareForTest( {
-    DatabaseDI.class
-})
 @RunWith(PowerMockRunner.class)
 public class LocationSaverTest {
 
     @SuppressWarnings("unchecked")
     @Test
     public void testSave() {
-        CacheWriter writer = PowerMock.createMock(CacheWriter.class);
-        Geocache geocache = PowerMock.createMock(Geocache.class);
-        Provider<CacheWriter> cacheWriterProvider = PowerMock.createMock(Provider.class);
+        CacheWriter writer = createMock(CacheWriter.class);
+        Geocache geocache = createMock(Geocache.class);
+        Provider<CacheWriter> cacheWriterProvider = createMock(Provider.class);
+        TagWriter tagWriter = createMock(TagWriter.class);
+        Filter filter = createMock(Filter.class);
+        expect(tagWriter.hasTag("LB12345", Tag.FOUND)).andReturn(true);
+        expect(filter.isVisible(true)).andReturn(true);
         expect(cacheWriterProvider.get()).andReturn(writer);
-        PowerMock.mockStatic(DatabaseDI.class);
+        mockStatic(DatabaseDI.class);
 
         writer.startWriting();
         expect(geocache.getId()).andReturn("LB12345");
@@ -59,11 +59,11 @@ public class LocationSaverTest {
         expect(geocache.getAvailable()).andReturn(true);
         expect(geocache.getArchived()).andReturn(false);
         writer.insertAndUpdateCache("LB12345", "", 122, 37, Source.GPX, "manhattan",
-                CacheType.TRADITIONAL, 3, 1, 2, true, false);
+                CacheType.TRADITIONAL, 3, 1, 2, true, false, true);
         writer.stopWriting();
 
-        PowerMock.replayAll();
-        new LocationSaver(cacheWriterProvider).saveLocation(geocache);
-        PowerMock.verifyAll();
+        replayAll();
+        new LocationSaver(cacheWriterProvider, tagWriter, filter).saveLocation(geocache);
+        verifyAll();
     }
 }

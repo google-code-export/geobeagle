@@ -185,7 +185,7 @@ public class GeoBeagleDelegateTest extends GeoBeagleTest {
         geoBeagle.showDialog(17);
 
         PowerMock.replayAll();
-        new GeoBeagleDelegate.LogFindClickListener(geoBeagle, 17).onClick(view);
+        new LogFindClickListener(geoBeagle, 17).onClick(view);
         PowerMock.verifyAll();
     }
 

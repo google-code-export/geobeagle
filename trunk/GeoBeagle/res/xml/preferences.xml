@@ -13,6 +13,9 @@
 		android:title="Log Caches to File" android:summary="Log field notes to a file instead of SMS" />
 	<CheckBoxPreference android:key="absolute-bearing"
 		android:title="Absolute Bearing in List" android:summary="Letters (NS) instead of arrows (^v)" />
+	<CheckBoxPreference android:key="show-found-caches"
+		android:title="Show Found Caches" android:summary="Show found caches in cache list"
+		android:defaultValue="true" />
 	<PreferenceCategory android:orderingFromXml="true"
 		android:title="Sync settings">
 		<CheckBoxPreference android:key="sdcard-enabled"

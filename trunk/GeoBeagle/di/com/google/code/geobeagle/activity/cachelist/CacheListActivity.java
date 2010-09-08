@@ -32,6 +32,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.widget.ListView;
 
 public class CacheListActivity extends GuiceListActivity {
@@ -46,6 +47,8 @@ public class CacheListActivity extends GuiceListActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d("GeoBeagle", "CacheListActivity onCreate");
+        requestWindowFeature(Window.FEATURE_PROGRESS);
+
         final Injector injector = this.getInjector();
 
         final InflatedGpsStatusWidget inflatedGpsStatusWidget = injector

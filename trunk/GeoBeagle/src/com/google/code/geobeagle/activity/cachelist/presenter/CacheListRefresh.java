@@ -81,6 +81,8 @@ public class CacheListRefresh implements Refresher {
 
     public void forceRefresh() {
         mTiming.start();
+        if (!mUpdateFlag.updatesEnabled())
+            return;
         final long now = mTiming.getTime();
         mActionManager.performActions(mLocationControlBuffered.getGpsLocation(),
                 mLocationControlBuffered.getAzimuth(), 0, now);

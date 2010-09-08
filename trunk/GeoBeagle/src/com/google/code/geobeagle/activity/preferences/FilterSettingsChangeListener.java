@@ -11,28 +11,25 @@
  ** See the License for the specific language governing permissions and
  ** limitations under the License.
  */
-
 package com.google.code.geobeagle.activity.preferences;
 
-import com.google.code.geobeagle.R;
+import com.google.code.geobeagle.database.FilterCleanliness;
+import com.google.inject.Inject;
 
-import roboguice.activity.GuicePreferenceActivity;
-
-import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
 
-public class EditPreferences extends GuicePreferenceActivity {
-    public static final String SHOW_FOUND_CACHES = "show-found-caches";
+class FilterSettingsChangeListener implements OnPreferenceChangeListener {
+    private final FilterCleanliness filterCleanliness;
+
+    @Inject
+    FilterSettingsChangeListener(FilterCleanliness filterCleanliness) {
+        this.filterCleanliness = filterCleanliness;
+    }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        addPreferencesFromResource(R.xml.preferences);
-        Preference preference = findPreference(SHOW_FOUND_CACHES);
-        OnPreferenceChangeListener onPreferenceChangeListener = getInjector().getInstance(
-                FilterSettingsChangeListener.class);
-        preference.setOnPreferenceChangeListener(onPreferenceChangeListener);
+    public boolean onPreferenceChange(Preference preference, Object newValue) {
+        filterCleanliness.markDirty(true);
+        return true;
     }
 }

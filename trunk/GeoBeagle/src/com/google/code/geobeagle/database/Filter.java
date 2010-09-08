@@ -14,33 +14,22 @@
 
 package com.google.code.geobeagle.database;
 
+import com.google.code.geobeagle.activity.preferences.EditPreferences;
 import com.google.inject.Inject;
 
-import android.util.Log;
+import android.content.SharedPreferences;
 
-public class TagWriter {
-    private final Filter filter;
-    private final TagStore tagStore;
+class Filter {
+    private final SharedPreferences sharedPreferences;
 
     @Inject
-    public TagWriter(
-            Filter filter,
-            TagStore tagStore) {
-        this.filter = filter;
-        this.tagStore = tagStore;
+    public Filter(SharedPreferences sharedPreferences) {
+        this.sharedPreferences = sharedPreferences;
     }
 
-    public void add(CharSequence geocacheId, Tag tag) {
-        Log.d("GeoBeagle", "TagWriter: " + geocacheId + ", " + tag);
-        tagStore.addTag(geocacheId, tag);
-
-        if (!filter.isVisible(tag == Tag.FOUND)) {
-            tagStore.hideCache(geocacheId);
-        }
+    public boolean isVisible(boolean found) {
+        boolean showFoundCaches = sharedPreferences.getBoolean(
+                EditPreferences.SHOW_FOUND_CACHES, false);
+        return showFoundCaches || !(found);
     }
-
-    public boolean hasTag(CharSequence geocacheId, Tag tag) {
-        return tagStore.hasTag(geocacheId, tag);
-    }
-
 }

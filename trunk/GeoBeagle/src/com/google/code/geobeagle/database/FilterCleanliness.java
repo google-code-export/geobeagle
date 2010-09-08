@@ -16,31 +16,25 @@ package com.google.code.geobeagle.database;
 
 import com.google.inject.Inject;
 
-import android.util.Log;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 
-public class TagWriter {
-    private final Filter filter;
-    private final TagStore tagStore;
+public class FilterCleanliness {
+    private static final String PREF_FILTER_DIRTY = "filter-dirty";
+    private final SharedPreferences sharedPreferences;
 
     @Inject
-    public TagWriter(
-            Filter filter,
-            TagStore tagStore) {
-        this.filter = filter;
-        this.tagStore = tagStore;
+    FilterCleanliness(SharedPreferences sharedPreferences) {
+        this.sharedPreferences = sharedPreferences;
     }
 
-    public void add(CharSequence geocacheId, Tag tag) {
-        Log.d("GeoBeagle", "TagWriter: " + geocacheId + ", " + tag);
-        tagStore.addTag(geocacheId, tag);
-
-        if (!filter.isVisible(tag == Tag.FOUND)) {
-            tagStore.hideCache(geocacheId);
-        }
+    public void markDirty(boolean dirty) {
+        Editor editor = sharedPreferences.edit();
+        editor.putBoolean(PREF_FILTER_DIRTY, dirty);
+        editor.commit();
     }
 
-    public boolean hasTag(CharSequence geocacheId, Tag tag) {
-        return tagStore.hasTag(geocacheId, tag);
+    public boolean isDirty() {
+        return sharedPreferences.getBoolean(PREF_FILTER_DIRTY, false);
     }
-
 }

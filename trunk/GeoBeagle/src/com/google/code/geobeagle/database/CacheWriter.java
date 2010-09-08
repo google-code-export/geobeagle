@@ -29,12 +29,15 @@ public class CacheWriter {
     };
     private final DbToGeocacheAdapter dbToGeocacheAdapter;
     private final Provider<ISQLiteDatabase> sqliteProvider;
+    private final Filter filter;
 
     @Inject
     CacheWriter(Provider<ISQLiteDatabase> writableDatabaseProvider,
-            DbToGeocacheAdapter dbToGeocacheAdapter) {
-        this.sqliteProvider = writableDatabaseProvider;
+            DbToGeocacheAdapter dbToGeocacheAdapter,
+            Filter filter) {
+        sqliteProvider = writableDatabaseProvider;
         this.dbToGeocacheAdapter = dbToGeocacheAdapter;
+        this.filter = filter;
     }
 
 
@@ -44,11 +47,17 @@ public class CacheWriter {
 
     public void insertAndUpdateCache(CharSequence id, CharSequence name, double latitude,
             double longitude, Source sourceType, String sourceName, CacheType cacheType,
-            int difficulty, int terrain, int container, boolean available, boolean archived) {
+            int difficulty,
+            int terrain,
+            int container,
+            boolean available,
+            boolean archived,
+            boolean mFound) {
+        boolean visible = filter.isVisible(mFound);
         sqliteProvider.get().execSQL(Database.SQL_REPLACE_CACHE, id, name, new Double(latitude),
                 new Double(longitude),
                 dbToGeocacheAdapter.sourceTypeToSourceName(sourceType, sourceName),
-                cacheType.toInt(), difficulty, terrain, container, available, archived);
+                cacheType.toInt(), difficulty, terrain, container, available, archived, visible);
     }
 
     public void startWriting() {

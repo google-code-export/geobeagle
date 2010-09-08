@@ -14,6 +14,7 @@
 
 package com.google.code.geobeagle.database;
 
+import android.content.ContentValues;
 import android.database.Cursor;
 
 public interface ISQLiteDatabase {
@@ -44,7 +45,18 @@ public interface ISQLiteDatabase {
             String limit,
             String... selectionArgs);
 
+    Cursor query(String table,
+            String[] columns,
+            String selection,
+            String[] selectionArgs,
+            String groupBy,
+            String having,
+            String orderBy,
+            String limit);
+
     Cursor rawQuery(String string, String[] object);
 
     void setTransactionSuccessful();
+
+    void update(String string, ContentValues contentValues, String whereClause, String[] strings);
 }
