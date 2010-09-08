@@ -34,8 +34,8 @@ public class Emotifier {
         Matcher matcher = patternProvider.get().matcher(text);
         StringBuffer sb = new StringBuffer();
         while (matcher.find()) {
-            String group = matcher.group(1);
-            String replacement = group.replace(":", "");
+            String match = matcher.group(1);
+            String replacement = match.replace(":", "");
             matcher.appendReplacement(sb, EMOTICON_PREFIX + replacement + ICON_SUFFIX);
         }
         matcher.appendTail(sb);
