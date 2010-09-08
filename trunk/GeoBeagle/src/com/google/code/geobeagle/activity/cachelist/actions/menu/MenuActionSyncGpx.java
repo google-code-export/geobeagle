@@ -39,7 +39,7 @@ public class MenuActionSyncGpx implements Action {
     private final Provider<GpxWriter> mGpxWriterProvider;
     private final Provider<ImportBCachingWorker> mImportBCachingWorkerProvider;
     private Abortable mBCachingWorkerAborter;
-    private Abortable mNullAbortable;
+    private final Abortable mNullAbortable;
 
     public MenuActionSyncGpx(Provider<ImportBCachingWorker> importBCachingWorkerProvider,
             NullAbortable nullAbortable,
