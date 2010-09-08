@@ -69,9 +69,9 @@ public class ProgressHandler extends Handler {
     public void refresh() {
         Log.d("GeoBeagle", "REFRESHING");
         if (activityVisible.getVisible()) {
-            cacheListRefresher.refresh();
+            cacheListRefresher.forceRefresh();
         }
-        else 
+        else
             Log.d("GeoBeagle", "NOT VISIBLE, punting");
     }
 }
