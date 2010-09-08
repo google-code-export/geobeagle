@@ -45,8 +45,8 @@ public class CacheTagSqlWriter {
     private CharSequence mName;
     private int mTerrain;
     private TagWriter mTagWriter;
-    private TagWriterImpl mTagWriterImpl;
-    private TagWriterNull mTagWriterNull;
+    private final TagWriterImpl mTagWriterImpl;
+    private final TagWriterNull mTagWriterNull;
     private final ClearCachesFromSource mClearCachesFromSource;
     private boolean mArchived;
     private boolean mAvailable;
