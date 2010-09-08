@@ -66,6 +66,6 @@ public class CacheReader {
             cursor.close();
             return null;
         }
-        return mCacheReaderCursorFactory.create(cursor);   
+        return mCacheReaderCursorFactory.create(cursor);
     }
 }
