@@ -91,9 +91,9 @@ public class CacheDetailsWriter {
 
     public void writeHint(String text) throws IOException {
         htmlWriter
-                .write("<a class=hint id=hint_link onclick=\"dht('hint_link');return false;\" href=#>"
+                .write("<a class='hint hint_loading' id=hint_link onclick=\"dht('hint_link');return false;\" href=#>"
                         + "Encrypt</a>");
-        htmlWriter.write("<div id=hint_link_text>" + text + "</div>");
+        htmlWriter.write("<div class=hint_loading id=hint_link_text>" + text + "</div>");
     }
 
     public void writeLine(String text) throws IOException {
@@ -114,7 +114,7 @@ public class CacheDetailsWriter {
         htmlWriter.writeln("<b>" + logType + " " + relativeTime + " by " + finder + "</b>");
         if (encoded)
             f = "<a class=hint id=log_%1$s onclick=\"dht('log_%1$s');return false;\" "
-                    + "href=#>Encrypt</a><div id=log_%1$s_text>%2$s</div>";
+                    + "href=#>Encrypt</a><div class=hint_text id=log_%1$s_text>%2$s</div>";
         else
             f = "%2$s";
 

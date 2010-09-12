@@ -22,8 +22,10 @@ public class HtmlWriter {
     private final StringWriterWrapper mWriter;
 
     static final String HEADER = "<html>\n<head>\n"
-            + "<script type=\"text/javascript\" src=\"file:///android_asset/rot13.js\">"
-            + "</script>\n</head>\n  <body onLoad=encryptAll()>";
+            + "<script type=\"text/javascript\" src=\"file:///android_asset/rot13.js\"></script>\n"
+            + "<style type='text/css'> div.hint_loading { display: none } a.hint_loading { color: gray } "
+            + "  a.hint_loading:after { content: 'ing hint, please wait...' }</style>\n"
+            + "</head>\n<body onLoad=encryptAll()>";
 
     @Inject
     public HtmlWriter(StringWriterWrapper writerWrapper) {
