@@ -17,25 +17,26 @@ package com.google.code.geobeagle.activity.cachelist.actions.context;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVector;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVectors;
-import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheListAdapter;
-import com.google.code.geobeagle.activity.cachelist.presenter.TitleUpdater;
+import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
 import com.google.code.geobeagle.database.CacheWriter;
-import com.google.code.geobeagle.database.DbFrontend;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
 import roboguice.inject.ContextScoped;
 
 import android.app.Activity;
-import android.app.Dialog;
 import android.app.AlertDialog.Builder;
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
-import android.widget.BaseAdapter;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.widget.TextView;
 
 @ContextScoped
 public class ContextActionDelete implements ContextAction {
+    static final String CACHE_TO_DELETE_NAME = "cache-to-delete-name";
+    static final String CACHE_TO_DELETE_ID = "cache-to-delete-id";
     public static final int CACHE_LIST_DIALOG_CONFIRM_DELETE = 0;
 
     public static class ContextActionDeleteDialogHelper {
@@ -54,7 +55,8 @@ public class ContextActionDelete implements ContextAction {
         }
 
         public void onPrepareDialog(Dialog dialog) {
-            dialog.setTitle(mContextActionDelete.getConfirmDeleteTitle());
+            CharSequence confirmDeleteTitle = mContextActionDelete.getConfirmDeleteTitle();
+            dialog.setTitle(confirmDeleteTitle);
             final TextView textView = (TextView)dialog.findViewById(R.id.delete_cache);
             textView.setText(mContextActionDelete.getConfirmDeleteBodyText());
         }
@@ -76,48 +78,48 @@ public class ContextActionDelete implements ContextAction {
     }
 
     private final Activity mActivity;
-    private Provider<CacheWriter> mCacheWriterProvider;
-    private final BaseAdapter mGeocacheListAdapter;
+    private final Provider<CacheWriter> mCacheWriterProvider;
     private final GeocacheVectors mGeocacheVectors;
-    private int mPosition;
-    private final TitleUpdater mTitleUpdater;
-    private final DbFrontend mDbFrontend;
+    private final SharedPreferences mSharedPreferences;
+    private final CacheListRefresh mCacheListRefresh;
 
     @Inject
-    public ContextActionDelete(GeocacheListAdapter geocacheListAdapter,
-            GeocacheVectors geocacheVectors, TitleUpdater titleUpdater,
-            Provider<CacheWriter> cacheWriterProvider, Activity activity, DbFrontend dbFrontend) {
-        mGeocacheListAdapter = geocacheListAdapter;
+    public ContextActionDelete(GeocacheVectors geocacheVectors,
+            Provider<CacheWriter> cacheWriterProvider,
+            Activity activity,
+            SharedPreferences sharedPreferences,
+            CacheListRefresh cacheListRefresh) {
         mGeocacheVectors = geocacheVectors;
-        mTitleUpdater = titleUpdater;
         mCacheWriterProvider = cacheWriterProvider;
         mActivity = activity;
-        mDbFrontend = dbFrontend;
-        mPosition = 0;
+        mSharedPreferences = sharedPreferences;
+        mCacheListRefresh = cacheListRefresh;
     }
 
     @Override
     public void act(int position) {
-        mPosition = position;
+        Editor editor = mSharedPreferences.edit();
+        GeocacheVector geocacheVector = mGeocacheVectors.get(position);
+        editor.putString(CACHE_TO_DELETE_ID, geocacheVector.getId().toString());
+        editor.putString(CACHE_TO_DELETE_NAME, geocacheVector.getName().toString());
+        editor.commit();
         mActivity.showDialog(CACHE_LIST_DIALOG_CONFIRM_DELETE);
     }
 
     void delete() {
-        mCacheWriterProvider.get().deleteCache(mGeocacheVectors.get(mPosition).getId());
-        mGeocacheVectors.remove(mPosition);
-        mGeocacheListAdapter.notifyDataSetChanged();
-        // TODO: How to get correct values?
-        mTitleUpdater.update(mDbFrontend.countAll(), mGeocacheVectors.size());
+        mCacheWriterProvider.get().deleteCache(
+                mSharedPreferences.getString(CACHE_TO_DELETE_ID, null));
+        mCacheListRefresh.forceRefresh();
     }
 
     public CharSequence getConfirmDeleteBodyText() {
-        final GeocacheVector geocacheVector = mGeocacheVectors.get(mPosition);
-        return String.format(mActivity.getString(R.string.confirm_delete_body_text), geocacheVector
-                .getId(), geocacheVector.getName());
+        return String.format(mActivity.getString(R.string.confirm_delete_body_text),
+                mSharedPreferences.getString(CACHE_TO_DELETE_ID, null),
+                mSharedPreferences.getString(CACHE_TO_DELETE_NAME, null));
     }
 
     public CharSequence getConfirmDeleteTitle() {
-        return String.format(mActivity.getString(R.string.confirm_delete_title), mGeocacheVectors
-                .get(mPosition).getId());
+        return String.format(mActivity.getString(R.string.confirm_delete_title),
+                mSharedPreferences.getString(CACHE_TO_DELETE_ID, null));
     }
 }
