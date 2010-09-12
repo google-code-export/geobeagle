@@ -47,15 +47,15 @@ public class Util {
 
     public static double parseCoordinate(CharSequence string) {
         int sign = 1;
-        final Matcher negsignMatcher = PAT_NEGSIGN.matcher(string);
+        Matcher negsignMatcher = PAT_NEGSIGN.matcher(string);
         if (negsignMatcher.find()) {
             sign = -1;
         }
 
-        final Matcher signMatcher = PAT_SIGN.matcher(string);
-        string = signMatcher.replaceAll("");
+        Matcher signMatcher = PAT_SIGN.matcher(string);
+        String noSigns = signMatcher.replaceAll("");
 
-        final Matcher dmsMatcher = PAT_COORD_COMPONENT.matcher(string);
+        Matcher dmsMatcher = PAT_COORD_COMPONENT.matcher(noSigns);
         double degrees = 0.0;
         for (double scale = 1.0; scale <= 3600.0 && dmsMatcher.find(); scale *= 60.0) {
             String coordinate = dmsMatcher.group(1);
