@@ -54,6 +54,7 @@ public class CacheWriter {
             boolean archived,
             boolean mFound) {
         boolean visible = filter.isVisible(mFound);
+
         sqliteProvider.get().execSQL(Database.SQL_REPLACE_CACHE, id, name, new Double(latitude),
                 new Double(longitude),
                 dbToGeocacheAdapter.sourceTypeToSourceName(sourceType, sourceName),
