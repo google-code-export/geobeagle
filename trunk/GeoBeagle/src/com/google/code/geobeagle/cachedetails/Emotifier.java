@@ -17,6 +17,7 @@ package com.google.code.geobeagle.cachedetails;
 import com.google.code.geobeagle.xmlimport.EmotifierPatternProvider;
 import com.google.inject.Inject;
 
+import java.net.URLEncoder;
 import java.util.regex.Matcher;
 
 public class Emotifier {
@@ -35,8 +36,8 @@ public class Emotifier {
         StringBuffer sb = new StringBuffer();
         while (matcher.find()) {
             String match = matcher.group(1);
-            String replacement = match.replace(":", "");
-            matcher.appendReplacement(sb, EMOTICON_PREFIX + replacement + ICON_SUFFIX);
+            String encoded = URLEncoder.encode(match).replace("%", "");
+            matcher.appendReplacement(sb, EMOTICON_PREFIX + encoded + ICON_SUFFIX);
         }
         matcher.appendTail(sb);
         return sb.toString();
