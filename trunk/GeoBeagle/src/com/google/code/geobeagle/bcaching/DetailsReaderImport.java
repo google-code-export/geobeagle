@@ -39,7 +39,7 @@ public class DetailsReaderImport {
         params.put("desc", "html");
         params.put("tbs", "0");
         params.put("wpts", "1");
-        params.put("logs", "1");
+        params.put("logs", "1000");
         params.put("fmt", "gpx");
     }
 
