@@ -20,8 +20,6 @@ import static org.easymock.classextension.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.verify;
 import static org.junit.Assert.assertEquals;
 
-import com.google.code.geobeagle.activity.main.Util;
-
 import org.junit.Test;
 
 import android.net.UrlQuerySanitizer;
