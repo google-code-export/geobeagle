@@ -68,6 +68,7 @@ public class ContextActionDelete implements ContextAction {
             mContextActionDelete = contextActionDelete;
         }
 
+        @Override
         public void onClick(DialogInterface dialog, int whichButton) {
             mContextActionDelete.delete();
             dialog.dismiss();
@@ -95,6 +96,7 @@ public class ContextActionDelete implements ContextAction {
         mPosition = 0;
     }
 
+    @Override
     public void act(int position) {
         mPosition = position;
         mActivity.showDialog(CACHE_LIST_DIALOG_CONFIRM_DELETE);
