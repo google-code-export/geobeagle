@@ -12,7 +12,7 @@
  ** limitations under the License.
  */
 
-package com.google.code.geobeagle.activity.details;
+package com.google.code.geobeagle.cachedetails;
 
 import com.google.code.geobeagle.R;
 import com.google.inject.Inject;
