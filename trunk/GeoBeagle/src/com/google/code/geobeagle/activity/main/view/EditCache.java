@@ -38,13 +38,13 @@ public class EditCache {
     }
 
     Geocache get() {
-        return geocacheFactory.create(id.getText(), name.getText(), Util
-                .parseCoordinate(latitude.getText()), Util.parseCoordinate(longitude
-                .getText()), mOriginalGeocache.getSourceType(), mOriginalGeocache
-                .getSourceName(), mOriginalGeocache.getCacheType(), mOriginalGeocache
-                .getDifficulty(), mOriginalGeocache.getTerrain(), mOriginalGeocache
-                .getContainer(), mOriginalGeocache.getAvailable(), mOriginalGeocache
-                .getArchived());
+        return geocacheFactory.create(id.getText(), name.getText(),
+                Util.parseCoordinate(latitude.getText()),
+                Util.parseCoordinate(longitude.getText()), mOriginalGeocache.getSourceType(),
+                mOriginalGeocache.getSourceName(), mOriginalGeocache.getCacheType(),
+                mOriginalGeocache.getDifficulty(), mOriginalGeocache.getTerrain(),
+                mOriginalGeocache.getContainer(), mOriginalGeocache.getAvailable(),
+                mOriginalGeocache.getArchived());
     }
 
     void set(Geocache geocache) {
