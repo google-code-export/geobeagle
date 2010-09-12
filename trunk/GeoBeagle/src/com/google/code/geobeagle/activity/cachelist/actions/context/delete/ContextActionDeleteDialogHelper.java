@@ -23,24 +23,24 @@ import android.app.Dialog;
 import android.widget.TextView;
 
 public class ContextActionDeleteDialogHelper {
-    private final ContextActionDelete mContextActionDelete;
-    private final OnClickOk mOnClickOk;
+    private final ContextActionDelete contextActionDelete;
+    private final OnClickOk onClickOk;
 
     @Inject
     public ContextActionDeleteDialogHelper(ContextActionDelete contextActionDelete,
             OnClickOk onClickOk) {
-        mContextActionDelete = contextActionDelete;
-        mOnClickOk = onClickOk;
+        this.contextActionDelete = contextActionDelete;
+        this.onClickOk = onClickOk;
     }
 
     public Dialog onCreateDialog(Builder builder) {
-        return builder.setPositiveButton(R.string.delete_cache, mOnClickOk).create();
+        return builder.setPositiveButton(R.string.delete_cache, onClickOk).create();
     }
 
     public void onPrepareDialog(Dialog dialog) {
-        CharSequence confirmDeleteTitle = mContextActionDelete.getConfirmDeleteTitle();
+        CharSequence confirmDeleteTitle = contextActionDelete.getConfirmDeleteTitle();
         dialog.setTitle(confirmDeleteTitle);
         TextView textView = (TextView)dialog.findViewById(R.id.delete_cache);
-        textView.setText(mContextActionDelete.getConfirmDeleteBodyText());
+        textView.setText(contextActionDelete.getConfirmDeleteBodyText());
     }
 }

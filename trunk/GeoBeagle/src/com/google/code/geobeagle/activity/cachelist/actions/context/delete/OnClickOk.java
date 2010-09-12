@@ -21,16 +21,16 @@ import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 
 public class OnClickOk implements OnClickListener {
-    private final ContextActionDelete mContextActionDelete;
+    private final ContextActionDelete contextActionDelete;
 
     @Inject
     public OnClickOk(ContextActionDelete contextActionDelete) {
-        mContextActionDelete = contextActionDelete;
+        this.contextActionDelete = contextActionDelete;
     }
 
     @Override
     public void onClick(DialogInterface dialog, int whichButton) {
-        mContextActionDelete.delete();
+        contextActionDelete.delete();
         dialog.dismiss();
     }
 }

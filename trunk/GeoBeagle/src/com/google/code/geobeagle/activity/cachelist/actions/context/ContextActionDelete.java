@@ -31,11 +31,11 @@ import android.app.Activity;
 public class ContextActionDelete implements ContextAction {
     public static final int CACHE_LIST_DIALOG_CONFIRM_DELETE = 0;
 
-    private final Activity mActivity;
-    private final Provider<CacheWriter> mCacheWriterProvider;
-    private final GeocacheVectors mGeocacheVectors;
-    private final CacheListRefresh mCacheListRefresh;
-    private final ContextActionDeleteStore mContextActionDeleteStore;
+    private final Activity activity;
+    private final Provider<CacheWriter> cacheWriterProvider;
+    private final GeocacheVectors geocacheVectors;
+    private final CacheListRefresh cacheListRefresh;
+    private final ContextActionDeleteStore contextActionDeleteStore;
 
     @Inject
     public ContextActionDelete(GeocacheVectors geocacheVectors,
@@ -43,35 +43,35 @@ public class ContextActionDelete implements ContextAction {
             Activity activity,
             ContextActionDeleteStore contextActionDeleteStore,
             CacheListRefresh cacheListRefresh) {
-        mGeocacheVectors = geocacheVectors;
-        mCacheWriterProvider = cacheWriterProvider;
-        mActivity = activity;
-        mContextActionDeleteStore = contextActionDeleteStore;
-        mCacheListRefresh = cacheListRefresh;
+        this.geocacheVectors = geocacheVectors;
+        this.cacheWriterProvider = cacheWriterProvider;
+        this.activity = activity;
+        this.contextActionDeleteStore = contextActionDeleteStore;
+        this.cacheListRefresh = cacheListRefresh;
     }
 
     @Override
     public void act(int position) {
-        GeocacheVector geocacheVector = mGeocacheVectors.get(position);
+        GeocacheVector geocacheVector = geocacheVectors.get(position);
         String cacheName = geocacheVector.getName().toString();
         String cacheId = geocacheVector.getId().toString();
-        mContextActionDeleteStore.saveCacheToDelete(cacheId, cacheName);
-        mActivity.showDialog(CACHE_LIST_DIALOG_CONFIRM_DELETE);
+        contextActionDeleteStore.saveCacheToDelete(cacheId, cacheName);
+        activity.showDialog(CACHE_LIST_DIALOG_CONFIRM_DELETE);
     }
 
     public void delete() {
-        String cacheId = mContextActionDeleteStore.getCacheId();
-        mCacheWriterProvider.get().deleteCache(cacheId);
-        mCacheListRefresh.forceRefresh();
+        String cacheId = contextActionDeleteStore.getCacheId();
+        cacheWriterProvider.get().deleteCache(cacheId);
+        cacheListRefresh.forceRefresh();
     }
 
     public CharSequence getConfirmDeleteBodyText() {
-        return String.format(mActivity.getString(R.string.confirm_delete_body_text),
-                mContextActionDeleteStore.getCacheId(), mContextActionDeleteStore.getCacheName());
+        return String.format(activity.getString(R.string.confirm_delete_body_text),
+                contextActionDeleteStore.getCacheId(), contextActionDeleteStore.getCacheName());
     }
 
     public CharSequence getConfirmDeleteTitle() {
-        return String.format(mActivity.getString(R.string.confirm_delete_title),
-                mContextActionDeleteStore.getCacheId());
+        return String.format(activity.getString(R.string.confirm_delete_title),
+                contextActionDeleteStore.getCacheId());
     }
 }
