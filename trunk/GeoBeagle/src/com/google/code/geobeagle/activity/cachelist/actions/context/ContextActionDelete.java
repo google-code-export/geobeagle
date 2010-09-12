@@ -57,7 +57,7 @@ public class ContextActionDelete implements ContextAction {
         public void onPrepareDialog(Dialog dialog) {
             CharSequence confirmDeleteTitle = mContextActionDelete.getConfirmDeleteTitle();
             dialog.setTitle(confirmDeleteTitle);
-            final TextView textView = (TextView)dialog.findViewById(R.id.delete_cache);
+            TextView textView = (TextView)dialog.findViewById(R.id.delete_cache);
             textView.setText(mContextActionDelete.getConfirmDeleteBodyText());
         }
     }
@@ -112,13 +112,13 @@ public class ContextActionDelete implements ContextAction {
         mCacheListRefresh.forceRefresh();
     }
 
-    public CharSequence getConfirmDeleteBodyText() {
+    CharSequence getConfirmDeleteBodyText() {
         return String.format(mActivity.getString(R.string.confirm_delete_body_text),
                 mSharedPreferences.getString(CACHE_TO_DELETE_ID, null),
                 mSharedPreferences.getString(CACHE_TO_DELETE_NAME, null));
     }
 
-    public CharSequence getConfirmDeleteTitle() {
+    CharSequence getConfirmDeleteTitle() {
         return String.format(mActivity.getString(R.string.confirm_delete_title),
                 mSharedPreferences.getString(CACHE_TO_DELETE_ID, null));
     }
