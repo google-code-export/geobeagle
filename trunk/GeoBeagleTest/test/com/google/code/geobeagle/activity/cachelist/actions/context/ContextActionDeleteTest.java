@@ -18,17 +18,15 @@ import static org.easymock.EasyMock.expect;
 import static org.junit.Assert.assertEquals;
 
 import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.activity.cachelist.actions.context.ContextActionDelete;
 import com.google.code.geobeagle.activity.cachelist.actions.context.ContextActionDelete.OnClickOk;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVector;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVectors;
-import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheListAdapter;
-import com.google.code.geobeagle.activity.cachelist.presenter.TitleUpdater;
+import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
 import com.google.code.geobeagle.database.CacheWriter;
-import com.google.code.geobeagle.database.DbFrontend;
 import com.google.inject.Provider;
 
 import org.easymock.EasyMock;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.api.easymock.PowerMock;
@@ -39,6 +37,8 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.widget.TextView;
 
 @RunWith(PowerMockRunner.class)
@@ -47,35 +47,44 @@ import android.widget.TextView;
 })
 public class ContextActionDeleteTest {
 
+    private SharedPreferences sharedPreferences;
+
+    @Before
+    public void setUp() {
+        sharedPreferences = PowerMock.createMock(SharedPreferences.class);
+    }
+
     @SuppressWarnings("unchecked")
     @Test
     public void testActionDelete() {
         CacheWriter cacheWriter = PowerMock.createMock(CacheWriter.class);
-        GeocacheListAdapter geocacheListAdapter = PowerMock.createMock(GeocacheListAdapter.class);
         GeocacheVectors geocacheVectors = PowerMock.createMock(GeocacheVectors.class);
         GeocacheVector geocacheVector = PowerMock.createMock(GeocacheVector.class);
-        TitleUpdater titleUpdater = PowerMock.createMock(TitleUpdater.class);
         Provider<CacheWriter> cacheWriterProvider = PowerMock.createMock(Provider.class);
         Activity activity = PowerMock.createMock(Activity.class);
         DialogInterface dialog = PowerMock.createMock(DialogInterface.class);
-        DbFrontend dbFrontEnd = PowerMock.createMock(DbFrontend.class);
+        Editor editor = PowerMock.createMock(Editor.class);
+        CacheListRefresh cacheListRefresh = PowerMock.createMock(CacheListRefresh.class);
 
-        expect(dbFrontEnd.countAll()).andReturn(16);
+        expect(sharedPreferences.edit()).andReturn(editor);
+        expect(editor.putString(ContextActionDelete.CACHE_TO_DELETE_ID, "GC123")).andReturn(editor);
+        expect(editor.putString(ContextActionDelete.CACHE_TO_DELETE_NAME, "My cache")).andReturn(
+                editor);
+        expect(editor.commit()).andReturn(true);
         activity.showDialog(0);
         expect(cacheWriterProvider.get()).andReturn(cacheWriter);
         expect(geocacheVectors.get(17)).andReturn(geocacheVector);
         expect(geocacheVector.getId()).andReturn("GC123");
+        expect(geocacheVector.getName()).andReturn("My cache");
+        expect(sharedPreferences.getString(ContextActionDelete.CACHE_TO_DELETE_ID, null))
+                .andReturn("GC123");
         cacheWriter.deleteCache("GC123");
-        geocacheVectors.remove(17);
-        expect(geocacheVectors.size()).andReturn(16).anyTimes();
-        geocacheListAdapter.notifyDataSetChanged();
-        titleUpdater.update(16, 16);
         dialog.dismiss();
+        cacheListRefresh.forceRefresh();
 
         PowerMock.replayAll();
-        final ContextActionDelete contextActionDelete = new ContextActionDelete(
-                geocacheListAdapter, geocacheVectors, titleUpdater, cacheWriterProvider, activity,
-                dbFrontEnd);
+        final ContextActionDelete contextActionDelete = new ContextActionDelete(geocacheVectors,
+                cacheWriterProvider, activity, sharedPreferences, cacheListRefresh);
         final OnClickOk onClickOk = new ContextActionDelete.OnClickOk(contextActionDelete);
         contextActionDelete.act(17);
         onClickOk.onClick(dialog, 0);
@@ -85,18 +94,18 @@ public class ContextActionDeleteTest {
     @Test
     public void testGetConfirmBodyText() {
         GeocacheVectors geocacheVectors = PowerMock.createMock(GeocacheVectors.class);
-        GeocacheVector geocacheVector = PowerMock.createMock(GeocacheVector.class);
         Activity activity = PowerMock.createMock(Activity.class);
 
-        EasyMock.expect(geocacheVectors.get(0)).andReturn(geocacheVector);
+        expect(sharedPreferences.getString(ContextActionDelete.CACHE_TO_DELETE_ID, null))
+                .andReturn("GC123");
+        expect(sharedPreferences.getString(ContextActionDelete.CACHE_TO_DELETE_NAME, null))
+                .andReturn("my cache");
         EasyMock.expect(activity.getString(R.string.confirm_delete_body_text)).andReturn(
                 "Delete %1$s: \"%2$s\"?");
-        EasyMock.expect(geocacheVector.getId()).andReturn("GC123");
-        EasyMock.expect(geocacheVector.getName()).andReturn("my cache");
 
         PowerMock.replayAll();
-        ContextActionDelete contextActionDelete = new ContextActionDelete(null, geocacheVectors,
-                null, null, activity, null);
+        ContextActionDelete contextActionDelete = new ContextActionDelete(geocacheVectors, null,
+                activity, sharedPreferences, null);
         assertEquals("Delete GC123: \"my cache\"?", contextActionDelete.getConfirmDeleteBodyText());
         PowerMock.verifyAll();
     }
@@ -104,17 +113,16 @@ public class ContextActionDeleteTest {
     @Test
     public void testGetConfirmDeleteTitle() {
         GeocacheVectors geocacheVectors = PowerMock.createMock(GeocacheVectors.class);
-        GeocacheVector geocacheVector = PowerMock.createMock(GeocacheVector.class);
         Activity activity = PowerMock.createMock(Activity.class);
 
-        EasyMock.expect(geocacheVectors.get(0)).andReturn(geocacheVector);
+        expect(sharedPreferences.getString(ContextActionDelete.CACHE_TO_DELETE_ID, null))
+                .andReturn("GC123");
         EasyMock.expect(activity.getString(R.string.confirm_delete_title)).andReturn(
                 "Confirm delete %1$s");
-        EasyMock.expect(geocacheVector.getId()).andReturn("GC123");
 
         PowerMock.replayAll();
-        ContextActionDelete contextActionDelete = new ContextActionDelete(null, geocacheVectors,
-                null, null, activity, null);
+        ContextActionDelete contextActionDelete = new ContextActionDelete(geocacheVectors, null,
+                activity, sharedPreferences, null);
         assertEquals("Confirm delete GC123", contextActionDelete.getConfirmDeleteTitle());
         PowerMock.verifyAll();
     }
