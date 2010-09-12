@@ -22,6 +22,7 @@ import static org.powermock.api.easymock.PowerMock.verifyAll;
 
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.cachelist.actions.context.ContextActionDelete.ContextActionDeleteDialogHelper;
+import com.google.code.geobeagle.activity.cachelist.actions.context.ContextActionDelete.ContextActionDeleteStore;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVector;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVectors;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
@@ -56,6 +57,7 @@ public class ContextActionDeleteTest {
     private ContextActionDelete contextActionDelete;
     private Provider<CacheWriter> cacheWriterProvider;
     private CacheListRefresh cacheListRefresh;
+    private ContextActionDeleteStore contextActionDeleteStore;
 
     @Before
     @SuppressWarnings("unchecked")
@@ -68,6 +70,7 @@ public class ContextActionDeleteTest {
         contextActionDelete = createMock(ContextActionDelete.class);
         cacheWriterProvider = createMock(Provider.class);
         cacheListRefresh = createMock(CacheListRefresh.class);
+        contextActionDeleteStore = new ContextActionDeleteStore(sharedPreferences);
     }
 
     @Test
@@ -86,8 +89,9 @@ public class ContextActionDeleteTest {
         expect(geocacheVector.getName()).andReturn("My cache");
 
         replayAll();
-        new ContextActionDelete(geocacheVectors,
-                cacheWriterProvider, activity, sharedPreferences, cacheListRefresh).act(17);
+        new ContextActionDelete(geocacheVectors, cacheWriterProvider, activity,
+                contextActionDeleteStore, cacheListRefresh)
+                .act(17);
         verifyAll();
     }
 
@@ -104,7 +108,7 @@ public class ContextActionDeleteTest {
 
         replayAll();
         ContextActionDelete contextActionDelete = new ContextActionDelete(geocacheVectors,
-                cacheWriterProvider, activity, sharedPreferences, cacheListRefresh);
+                cacheWriterProvider, activity, contextActionDeleteStore, cacheListRefresh);
         contextActionDelete.delete();
         verifyAll();
     }
@@ -132,7 +136,7 @@ public class ContextActionDeleteTest {
 
         replayAll();
         ContextActionDelete contextActionDelete = new ContextActionDelete(geocacheVectors, null,
-                activity, sharedPreferences, null);
+                activity, contextActionDeleteStore, cacheListRefresh);
         assertEquals("Delete GC123: \"my cache\"?", contextActionDelete.getConfirmDeleteBodyText());
         verifyAll();
     }
@@ -146,7 +150,7 @@ public class ContextActionDeleteTest {
 
         replayAll();
         ContextActionDelete contextActionDelete = new ContextActionDelete(geocacheVectors, null,
-                activity, sharedPreferences, null);
+                activity, contextActionDeleteStore, cacheListRefresh);
         assertEquals("Confirm delete GC123", contextActionDelete.getConfirmDeleteTitle());
         verifyAll();
     }

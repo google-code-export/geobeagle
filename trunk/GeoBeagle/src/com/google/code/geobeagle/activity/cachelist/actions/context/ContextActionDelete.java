@@ -39,6 +39,34 @@ public class ContextActionDelete implements ContextAction {
     static final String CACHE_TO_DELETE_ID = "cache-to-delete-id";
     public static final int CACHE_LIST_DIALOG_CONFIRM_DELETE = 0;
 
+    static class ContextActionDeleteStore {
+        private final SharedPreferences sharedPreferences;
+
+        @Inject
+        public ContextActionDeleteStore(SharedPreferences sharedPreferences) {
+            this.sharedPreferences = sharedPreferences;
+        }
+
+        void saveCacheToDelete(String cacheName, String cacheId) {
+            Editor editor = sharedPreferences.edit();
+            editor.putString(ContextActionDelete.CACHE_TO_DELETE_ID, cacheId);
+            editor.putString(ContextActionDelete.CACHE_TO_DELETE_NAME, cacheName);
+            editor.commit();
+        }
+
+        String getCacheId() {
+            String cacheId = sharedPreferences.getString(
+                    ContextActionDelete.CACHE_TO_DELETE_ID, null);
+            return cacheId;
+        }
+
+        String getCacheName() {
+            String cacheName = sharedPreferences.getString(
+                    ContextActionDelete.CACHE_TO_DELETE_NAME, null);
+            return cacheName;
+        }
+
+    }
     public static class ContextActionDeleteDialogHelper {
         private final ContextActionDelete mContextActionDelete;
         private final ContextActionDelete.OnClickOk mOnClickOk;
@@ -80,46 +108,44 @@ public class ContextActionDelete implements ContextAction {
     private final Activity mActivity;
     private final Provider<CacheWriter> mCacheWriterProvider;
     private final GeocacheVectors mGeocacheVectors;
-    private final SharedPreferences mSharedPreferences;
     private final CacheListRefresh mCacheListRefresh;
+    private final ContextActionDeleteStore mContextActionDeleteStore;
 
     @Inject
     public ContextActionDelete(GeocacheVectors geocacheVectors,
             Provider<CacheWriter> cacheWriterProvider,
             Activity activity,
-            SharedPreferences sharedPreferences,
+            ContextActionDeleteStore contextActionDeleteStore,
             CacheListRefresh cacheListRefresh) {
         mGeocacheVectors = geocacheVectors;
         mCacheWriterProvider = cacheWriterProvider;
         mActivity = activity;
-        mSharedPreferences = sharedPreferences;
+        mContextActionDeleteStore = contextActionDeleteStore;
         mCacheListRefresh = cacheListRefresh;
     }
 
     @Override
     public void act(int position) {
-        Editor editor = mSharedPreferences.edit();
         GeocacheVector geocacheVector = mGeocacheVectors.get(position);
-        editor.putString(CACHE_TO_DELETE_ID, geocacheVector.getId().toString());
-        editor.putString(CACHE_TO_DELETE_NAME, geocacheVector.getName().toString());
-        editor.commit();
+        String cacheName = geocacheVector.getName().toString();
+        String cacheId = geocacheVector.getId().toString();
+        mContextActionDeleteStore.saveCacheToDelete(cacheName, cacheId);
         mActivity.showDialog(CACHE_LIST_DIALOG_CONFIRM_DELETE);
     }
 
     void delete() {
-        mCacheWriterProvider.get().deleteCache(
-                mSharedPreferences.getString(CACHE_TO_DELETE_ID, null));
+        String cacheId = mContextActionDeleteStore.getCacheId();
+        mCacheWriterProvider.get().deleteCache(cacheId);
         mCacheListRefresh.forceRefresh();
     }
 
     CharSequence getConfirmDeleteBodyText() {
         return String.format(mActivity.getString(R.string.confirm_delete_body_text),
-                mSharedPreferences.getString(CACHE_TO_DELETE_ID, null),
-                mSharedPreferences.getString(CACHE_TO_DELETE_NAME, null));
+                mContextActionDeleteStore.getCacheId(), mContextActionDeleteStore.getCacheName());
     }
 
     CharSequence getConfirmDeleteTitle() {
         return String.format(mActivity.getString(R.string.confirm_delete_title),
-                mSharedPreferences.getString(CACHE_TO_DELETE_ID, null));
+                mContextActionDeleteStore.getCacheId());
     }
 }
