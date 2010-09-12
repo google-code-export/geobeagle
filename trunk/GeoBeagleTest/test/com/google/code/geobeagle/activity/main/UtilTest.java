@@ -96,8 +96,10 @@ public class UtilTest {
     @Test
     public void testParseCoordinate() {
         assertEquals(122.5, Util.parseCoordinate("122.5"), 0);
+        assertEquals(122.5, Util.parseCoordinate("122,5"), 0);
         assertEquals(-122.5, Util.parseCoordinate("W122.5"), 0);
         assertEquals(122.51, Util.parseCoordinate("122 30.6"), 0);
+        assertEquals(122.51, Util.parseCoordinate("122 30,6"), 0);
         assertEquals(122.51, Util.parseCoordinate("122 30 36"), 0);
 
         assertEquals(40.4425, Util.parseCoordinate("40:26:33"), 0.00001);
@@ -107,6 +109,7 @@ public class UtilTest {
         assertEquals(40.4425, Util.parseCoordinate("E40:26:33"), 0.00001);
         assertEquals(37.25275, Util.parseCoordinate("N+37¡+15.165 "), 0.00001);
 
+        assertEquals(40.446195, Util.parseCoordinate("40¡ 26,7717"), 0);
         assertEquals(40.446195, Util.parseCoordinate("40¡ 26.7717"), 0);
         assertEquals(40.446195, Util.parseCoordinate("40:26:46.302N"),
                 0.0000001);
@@ -114,6 +117,7 @@ public class UtilTest {
         assertEquals(40.4461, Util.parseCoordinate("40d 26' 46\" N"), 0.0001);
         assertEquals(40.446195, Util.parseCoordinate("40.446195N"), 0.0000001);
         assertEquals(40.446195, Util.parseCoordinate("40.446195"), 0.0000001);
+        assertEquals(40.446195, Util.parseCoordinate("40,446195"), 0.0000001);
         assertEquals(40.446195, Util.parseCoordinate("40¡ 26.7717"), 0.0000001);
     }
 

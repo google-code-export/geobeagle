@@ -30,7 +30,7 @@ public class Util {
     private static final Pattern PAT_ATLASQUEST = Pattern.compile(".*\\((.*)#(.*)\\)");
     private static final Pattern PAT_ATSIGN_FORMAT = Pattern.compile("([^@]*)@(.*)");
 
-    private static final Pattern PAT_COORD_COMPONENT = Pattern.compile("([\\d.]+)[^\\d]*");
+    private static final Pattern PAT_COORD_COMPONENT = Pattern.compile("([\\d.,]+)[^\\d]*");
     private static final Pattern PAT_LATLON = Pattern
             .compile("([NS]?[^NSEW,]*[NS]?),?\\s*([EW]?.*)");
     private static final Pattern PAT_LATLONDEC = Pattern.compile("([\\d.]+)\\s+([\\d.]+)");
@@ -58,7 +58,9 @@ public class Util {
         final Matcher dmsMatcher = PAT_COORD_COMPONENT.matcher(string);
         double degrees = 0.0;
         for (double scale = 1.0; scale <= 3600.0 && dmsMatcher.find(); scale *= 60.0) {
-            degrees += Double.parseDouble(dmsMatcher.group(1)) / scale;
+            String coordinate = dmsMatcher.group(1);
+            String nocommas = coordinate.replace(',', '.');
+            degrees += Double.parseDouble(nocommas) / scale;
         }
         return sign * degrees;
     }
