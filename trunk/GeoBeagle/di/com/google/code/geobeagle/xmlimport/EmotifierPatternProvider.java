@@ -25,7 +25,7 @@ import java.util.regex.Pattern;
 public class EmotifierPatternProvider implements Provider<Pattern> {
     static Pattern createEmotifierPattern(String[] emoticons) {
         StringBuffer keysBuffer = new StringBuffer();
-        String escapeChars = "()|?}";
+        String escapeChars = "()|?}^";
         for (String emoticon : emoticons) {
             String key = new String(emoticon);
             for (int i = 0; i < escapeChars.length(); i++) {
