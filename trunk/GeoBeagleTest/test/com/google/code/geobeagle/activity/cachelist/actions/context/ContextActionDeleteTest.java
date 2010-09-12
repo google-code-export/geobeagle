@@ -22,7 +22,6 @@ import static org.powermock.api.easymock.PowerMock.verifyAll;
 
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.cachelist.actions.context.ContextActionDelete.ContextActionDeleteDialogHelper;
-import com.google.code.geobeagle.activity.cachelist.actions.context.ContextActionDelete.OnClickOk;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVector;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVectors;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
@@ -54,48 +53,71 @@ public class ContextActionDeleteTest {
     private GeocacheVectors geocacheVectors;
     private ContextActionDelete.OnClickOk onClickOk;
     private SharedPreferences sharedPreferences;
+    private ContextActionDelete contextActionDelete;
+    private Provider<CacheWriter> cacheWriterProvider;
+    private CacheListRefresh cacheListRefresh;
 
     @Before
+    @SuppressWarnings("unchecked")
     public void setUp() {
         sharedPreferences = createMock(SharedPreferences.class);
         geocacheVectors = createMock(GeocacheVectors.class);
         activity = createMock(Activity.class);
         onClickOk = createMock(ContextActionDelete.OnClickOk.class);
         dialog = createMock(AlertDialog.class);
+        contextActionDelete = createMock(ContextActionDelete.class);
+        cacheWriterProvider = createMock(Provider.class);
+        cacheListRefresh = createMock(CacheListRefresh.class);
     }
 
-    @SuppressWarnings("unchecked")
     @Test
-    public void testActionDelete() {
-        CacheWriter cacheWriter = createMock(CacheWriter.class);
+    public void testAct() {
         GeocacheVector geocacheVector = createMock(GeocacheVector.class);
-        Provider<CacheWriter> cacheWriterProvider = createMock(Provider.class);
-        DialogInterface dialog = createMock(DialogInterface.class);
         Editor editor = createMock(Editor.class);
-        CacheListRefresh cacheListRefresh = createMock(CacheListRefresh.class);
 
         expect(sharedPreferences.edit()).andReturn(editor);
         expect(editor.putString(ContextActionDelete.CACHE_TO_DELETE_ID, "GC123")).andReturn(editor);
         expect(editor.putString(ContextActionDelete.CACHE_TO_DELETE_NAME, "My cache")).andReturn(
                 editor);
         expect(editor.commit()).andReturn(true);
-        activity.showDialog(0);
-        expect(cacheWriterProvider.get()).andReturn(cacheWriter);
+        activity.showDialog(ContextActionDelete.CACHE_LIST_DIALOG_CONFIRM_DELETE);
         expect(geocacheVectors.get(17)).andReturn(geocacheVector);
         expect(geocacheVector.getId()).andReturn("GC123");
         expect(geocacheVector.getName()).andReturn("My cache");
+
+        replayAll();
+        new ContextActionDelete(geocacheVectors,
+                cacheWriterProvider, activity, sharedPreferences, cacheListRefresh).act(17);
+        verifyAll();
+    }
+
+    @Test
+    public void testDelete() {
+        CacheWriter cacheWriter = createMock(CacheWriter.class);
+        CacheListRefresh cacheListRefresh = createMock(CacheListRefresh.class);
+
+        expect(cacheWriterProvider.get()).andReturn(cacheWriter);
         expect(sharedPreferences.getString(ContextActionDelete.CACHE_TO_DELETE_ID, null))
                 .andReturn("GC123");
         cacheWriter.deleteCache("GC123");
-        dialog.dismiss();
         cacheListRefresh.forceRefresh();
 
         replayAll();
         ContextActionDelete contextActionDelete = new ContextActionDelete(geocacheVectors,
                 cacheWriterProvider, activity, sharedPreferences, cacheListRefresh);
-        OnClickOk onClickOk = new ContextActionDelete.OnClickOk(contextActionDelete);
-        contextActionDelete.act(17);
-        onClickOk.onClick(dialog, 0);
+        contextActionDelete.delete();
+        verifyAll();
+    }
+
+    @Test
+    public void testOnClickOk() {
+        DialogInterface dialog = createMock(DialogInterface.class);
+
+        contextActionDelete.delete();
+        dialog.dismiss();
+
+        replayAll();
+        new ContextActionDelete.OnClickOk(contextActionDelete).onClick(dialog, 0);
         verifyAll();
     }
 
