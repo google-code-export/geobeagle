@@ -21,6 +21,7 @@ import static org.powermock.api.easymock.PowerMock.replayAll;
 import static org.powermock.api.easymock.PowerMock.verifyAll;
 
 import com.google.code.geobeagle.R;
+import com.google.code.geobeagle.activity.cachelist.actions.context.ContextActionDelete.ContextActionDeleteDialogHelper;
 import com.google.code.geobeagle.activity.cachelist.actions.context.ContextActionDelete.OnClickOk;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVector;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVectors;
@@ -90,9 +91,9 @@ public class ContextActionDeleteTest {
         cacheListRefresh.forceRefresh();
 
         replayAll();
-        final ContextActionDelete contextActionDelete = new ContextActionDelete(geocacheVectors,
+        ContextActionDelete contextActionDelete = new ContextActionDelete(geocacheVectors,
                 cacheWriterProvider, activity, sharedPreferences, cacheListRefresh);
-        final OnClickOk onClickOk = new ContextActionDelete.OnClickOk(contextActionDelete);
+        OnClickOk onClickOk = new ContextActionDelete.OnClickOk(contextActionDelete);
         contextActionDelete.act(17);
         onClickOk.onClick(dialog, 0);
         verifyAll();
@@ -138,7 +139,7 @@ public class ContextActionDeleteTest {
         expect(builder.create()).andReturn(dialog);
 
         replayAll();
-        ContextActionDelete.ContextActionDeleteDialogHelper contextActionDeleteDialogHelper = new ContextActionDelete.ContextActionDeleteDialogHelper(
+        ContextActionDeleteDialogHelper contextActionDeleteDialogHelper = new ContextActionDeleteDialogHelper(
                 null, onClickOk);
         contextActionDeleteDialogHelper.onCreateDialog(builder);
         verifyAll();
@@ -159,7 +160,7 @@ public class ContextActionDeleteTest {
         textView.setText("Delete GC123: \"my cache\"?");
 
         replayAll();
-        ContextActionDelete.ContextActionDeleteDialogHelper contextActionDeleteDialogHelper = new ContextActionDelete.ContextActionDeleteDialogHelper(
+        ContextActionDeleteDialogHelper contextActionDeleteDialogHelper = new ContextActionDeleteDialogHelper(
                 contextActionDelete, onClickOk);
         contextActionDeleteDialogHelper.onPrepareDialog(dialog);
         verifyAll();
