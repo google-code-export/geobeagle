@@ -3,6 +3,13 @@ function encryptAll() {
 	for (var i = 0; i < elts.length; i++) {
 		dht(elts[i].id);
 	}
+
+    elts = document.getElementsByClassName('hint_loading');
+    while (elts.length > 0) {
+        elt = elts[0];
+        var classname = elt.className;
+        elt.className = classname.replace('hint_loading','');
+	}
 }
 
 function dht(id) {
