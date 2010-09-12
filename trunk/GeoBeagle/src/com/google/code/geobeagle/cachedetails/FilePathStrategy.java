@@ -19,7 +19,7 @@ import com.google.inject.Inject;
 
 public class FilePathStrategy {
 
-    private GeoBeagleEnvironment geoBeagleEnvironment;
+    private final GeoBeagleEnvironment geoBeagleEnvironment;
 
     @Inject
     public
