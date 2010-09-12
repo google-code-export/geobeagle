@@ -12,7 +12,7 @@
  ** limitations under the License.
  */
 
-package com.google.code.geobeagle.actions.context;
+package com.google.code.geobeagle.activity.cachelist.actions.context;
 
 import static org.easymock.EasyMock.expect;
 import static org.junit.Assert.assertEquals;
