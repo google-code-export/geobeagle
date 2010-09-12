@@ -30,6 +30,6 @@ class Filter {
     public boolean isVisible(boolean found) {
         boolean showFoundCaches = sharedPreferences.getBoolean(
                 EditPreferences.SHOW_FOUND_CACHES, false);
-        return showFoundCaches || !(found);
+        return showFoundCaches || !found;
     }
 }
