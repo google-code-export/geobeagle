@@ -12,9 +12,8 @@
  ** limitations under the License.
  */
 
-package com.google.code.geobeagle.activity.details;
+package com.google.code.geobeagle.cachedetails;
 
-import com.google.code.geobeagle.cachedetails.CacheDetailsLoader;
 import com.google.inject.Inject;
 
 import android.content.Intent;
