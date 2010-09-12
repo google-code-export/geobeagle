@@ -21,7 +21,6 @@ import com.google.inject.Inject;
 import roboguice.inject.ContextScoped;
 
 import android.os.PowerManager.WakeLock;
-import android.util.Log;
 
 import java.io.IOException;
 
@@ -121,7 +120,6 @@ public class ImportCacheActions implements ICachePersisterFacade {
 
     @Override
     public void symbol(String text) {
-        Log.d("GeoBeagle", "ImportCacheActions: SYMBOL: " + text);
         mCacheTagWriter.symbol(text);
     }
 
