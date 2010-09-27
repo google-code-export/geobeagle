@@ -22,13 +22,13 @@ enum PathType {
     CACHE {
         @Override
         public void startTag(XmlPullParserWrapper xmlPullParser,
-                ICachePersisterFacade cachePersisterFacade) {
+                CachePersisterFacade cachePersisterFacade) {
             cachePersisterFacade.available(xmlPullParser.getAttributeValue(null, "available"));
             cachePersisterFacade.archived(xmlPullParser.getAttributeValue(null, "archived"));
         }
 
         @Override
-        public boolean text(String text, ICachePersisterFacade cachePersisterFacade)
+        public boolean text(String text, CachePersisterFacade cachePersisterFacade)
                 throws IOException {
             cachePersisterFacade.symbol(text);
             return true;
@@ -36,7 +36,7 @@ enum PathType {
     },
     CACHE_TYPE {
         @Override
-        public boolean text(String text, ICachePersisterFacade cachePersisterFacade)
+        public boolean text(String text, CachePersisterFacade cachePersisterFacade)
                 throws IOException {
             cachePersisterFacade.cacheType(text);
             return true;
@@ -44,7 +44,7 @@ enum PathType {
     },
     CONTAINER {
         @Override
-        public boolean text(String text, ICachePersisterFacade cachePersisterFacade)
+        public boolean text(String text, CachePersisterFacade cachePersisterFacade)
                 throws IOException {
             cachePersisterFacade.container(text);
             return true;
@@ -52,7 +52,7 @@ enum PathType {
     },
     DESC {
         @Override
-        public boolean text(String text, ICachePersisterFacade cachePersisterFacade)
+        public boolean text(String text, CachePersisterFacade cachePersisterFacade)
                 throws IOException {
             cachePersisterFacade.wptDesc(text);
             return true;
@@ -60,7 +60,7 @@ enum PathType {
     },
     DIFFICULTY {
         @Override
-        public boolean text(String text, ICachePersisterFacade cachePersisterFacade)
+        public boolean text(String text, CachePersisterFacade cachePersisterFacade)
                 throws IOException {
             cachePersisterFacade.difficulty(text);
             return true;
@@ -68,14 +68,14 @@ enum PathType {
     },
     GPX_TIME {
         @Override
-        public boolean text(String text, ICachePersisterFacade cachePersisterFacade)
+        public boolean text(String text, CachePersisterFacade cachePersisterFacade)
                 throws IOException {
             return cachePersisterFacade.gpxTime(text);
         }
     },
     HINT {
         @Override
-        public boolean text(String text, ICachePersisterFacade cachePersisterFacade)
+        public boolean text(String text, CachePersisterFacade cachePersisterFacade)
                 throws IOException {
             if (!text.equals(""))
                 cachePersisterFacade.hint(text);
@@ -84,14 +84,14 @@ enum PathType {
     },
     LAST_MODIFIED {
         @Override
-        public boolean text(String text, ICachePersisterFacade cachePersisterFacade)
+        public boolean text(String text, CachePersisterFacade cachePersisterFacade)
                 throws IOException {
             return true;
         }
     },
     LINE {
         @Override
-        public boolean text(String text, ICachePersisterFacade cachePersisterFacade)
+        public boolean text(String text, CachePersisterFacade cachePersisterFacade)
                 throws IOException {
             cachePersisterFacade.line(text);
             return true;
@@ -100,27 +100,27 @@ enum PathType {
     LOC_COORD {
         @Override
         public void startTag(XmlPullParserWrapper xmlPullParser,
-                ICachePersisterFacade cachePersisterFacade) {
+                CachePersisterFacade cachePersisterFacade) {
             cachePersisterFacade.wpt(xmlPullParser.getAttributeValue(null, "lat"),
                     xmlPullParser.getAttributeValue(null, "lon"));
         }
     },
     LOC_WPT {
         @Override
-        public void endTag(ICachePersisterFacade cachePersisterFacade) throws IOException {
+        public void endTag(CachePersisterFacade cachePersisterFacade) throws IOException {
             cachePersisterFacade.endCache(Source.LOC);
         }
     },
     LOC_WPTNAME {
         @Override
         public void startTag(XmlPullParserWrapper xmlPullParser,
-                ICachePersisterFacade cachePersisterFacade) throws IOException {
+                CachePersisterFacade cachePersisterFacade) throws IOException {
             cachePersisterFacade.startCache();
             cachePersisterFacade.wptName(xmlPullParser.getAttributeValue(null, "id"));
         }
 
         @Override
-        public boolean text(String text, ICachePersisterFacade cachePersisterFacade)
+        public boolean text(String text, CachePersisterFacade cachePersisterFacade)
                 throws IOException {
             cachePersisterFacade.groundspeakName(text.trim());
             return true;
@@ -128,7 +128,7 @@ enum PathType {
     },
     LOG_DATE {
         @Override
-        public boolean text(String text, ICachePersisterFacade cachePersisterFacade)
+        public boolean text(String text, CachePersisterFacade cachePersisterFacade)
                 throws IOException {
             cachePersisterFacade.logDate(text);
             return true;
@@ -136,19 +136,19 @@ enum PathType {
     },
     LOG_TEXT {
         @Override
-        public void endTag(ICachePersisterFacade cachePersisterFacade) throws IOException {
+        public void endTag(CachePersisterFacade cachePersisterFacade) throws IOException {
             cachePersisterFacade.setEncrypted(false);
         }
 
         @Override
         public void startTag(XmlPullParserWrapper xmlPullParser,
-                ICachePersisterFacade cachePersisterFacade) {
+                CachePersisterFacade cachePersisterFacade) {
             cachePersisterFacade.setEncrypted("true".equalsIgnoreCase(xmlPullParser
                     .getAttributeValue(null, "encoded")));
         }
 
         @Override
-        public boolean text(String text, ICachePersisterFacade cachePersisterFacade)
+        public boolean text(String text, CachePersisterFacade cachePersisterFacade)
                 throws IOException {
             cachePersisterFacade.logText(text);
             return true;
@@ -156,7 +156,7 @@ enum PathType {
     },
     LOG_TYPE {
         @Override
-        public boolean text(String text, ICachePersisterFacade cachePersisterFacade)
+        public boolean text(String text, CachePersisterFacade cachePersisterFacade)
                 throws IOException {
             cachePersisterFacade.logType(text);
             return true;
@@ -164,7 +164,7 @@ enum PathType {
     },
     LONG_DESCRIPTION {
         @Override
-        public boolean text(String text, ICachePersisterFacade cachePersisterFacade)
+        public boolean text(String text, CachePersisterFacade cachePersisterFacade)
                 throws IOException {
             cachePersisterFacade.longDescription(text);
             return true;
@@ -172,7 +172,7 @@ enum PathType {
     },
     NAME {
         @Override
-        public boolean text(String text, ICachePersisterFacade cachePersisterFacade)
+        public boolean text(String text, CachePersisterFacade cachePersisterFacade)
                 throws IOException {
             cachePersisterFacade.groundspeakName(text);
             return true;
@@ -181,18 +181,18 @@ enum PathType {
     NOP {
         @Override
         public void startTag(XmlPullParserWrapper xmlPullParser,
-                ICachePersisterFacade cachePersisterFacade) {
+                CachePersisterFacade cachePersisterFacade) {
         }
 
         @Override
-        public boolean text(String text, ICachePersisterFacade cachePersisterFacade)
+        public boolean text(String text, CachePersisterFacade cachePersisterFacade)
                 throws IOException {
             return true;
         }
     },
     PLACED_BY {
         @Override
-        public boolean text(String text, ICachePersisterFacade cachePersisterFacade)
+        public boolean text(String text, CachePersisterFacade cachePersisterFacade)
                 throws IOException {
             cachePersisterFacade.placedBy(text);
             return true;
@@ -200,7 +200,7 @@ enum PathType {
     },
     SHORT_DESCRIPTION {
         @Override
-        public boolean text(String text, ICachePersisterFacade cachePersisterFacade)
+        public boolean text(String text, CachePersisterFacade cachePersisterFacade)
                 throws IOException {
             cachePersisterFacade.shortDescription(text);
             return true;
@@ -208,7 +208,7 @@ enum PathType {
     },
     SYMBOL {
         @Override
-        public boolean text(String text, ICachePersisterFacade cachePersisterFacade)
+        public boolean text(String text, CachePersisterFacade cachePersisterFacade)
                 throws IOException {
             cachePersisterFacade.symbol(text);
             return true;
@@ -216,7 +216,7 @@ enum PathType {
     },
     TERRAIN {
         @Override
-        public boolean text(String text, ICachePersisterFacade cachePersisterFacade)
+        public boolean text(String text, CachePersisterFacade cachePersisterFacade)
                 throws IOException {
             cachePersisterFacade.terrain(text);
             return true;
@@ -224,13 +224,13 @@ enum PathType {
     },
     WPT {
         @Override
-        public void endTag(ICachePersisterFacade cachePersisterFacade) throws IOException {
+        public void endTag(CachePersisterFacade cachePersisterFacade) throws IOException {
             cachePersisterFacade.endCache(Source.GPX);
         }
 
         @Override
         public void startTag(XmlPullParserWrapper xmlPullParser,
-                ICachePersisterFacade cachePersisterFacade) {
+                CachePersisterFacade cachePersisterFacade) {
             cachePersisterFacade.startCache();
             cachePersisterFacade.wpt(xmlPullParser.getAttributeValue(null, "lat"),
                     xmlPullParser.getAttributeValue(null, "lon"));
@@ -238,7 +238,7 @@ enum PathType {
     },
     WPT_NAME {
         @Override
-        public boolean text(String text, ICachePersisterFacade cachePersisterFacade)
+        public boolean text(String text, CachePersisterFacade cachePersisterFacade)
                 throws IOException {
             cachePersisterFacade.wptName(text);
             return true;
@@ -246,7 +246,7 @@ enum PathType {
     },
     WPT_TIME {
         @Override
-        public boolean text(String text, ICachePersisterFacade cachePersisterFacade)
+        public boolean text(String text, CachePersisterFacade cachePersisterFacade)
                 throws IOException {
             cachePersisterFacade.wptTime(text);
             return true;
@@ -254,7 +254,7 @@ enum PathType {
     },
     LOG_FINDER {
         @Override
-        public boolean text(String text, ICachePersisterFacade cachePersisterFacade)
+        public boolean text(String text, CachePersisterFacade cachePersisterFacade)
                 throws IOException {
             cachePersisterFacade.logFinder(text);
             return true;
@@ -262,16 +262,16 @@ enum PathType {
     };
 
     @SuppressWarnings("unused")
-    public void endTag(ICachePersisterFacade cachePersisterFacade) throws IOException {
+    public void endTag(CachePersisterFacade cachePersisterFacade) throws IOException {
     }
 
     @SuppressWarnings("unused")
     public void startTag(XmlPullParserWrapper xmlPullParser,
-            ICachePersisterFacade cachePersisterFacade) throws IOException {
+            CachePersisterFacade cachePersisterFacade) throws IOException {
     }
 
     @SuppressWarnings("unused")
-    public boolean text(String text, ICachePersisterFacade cachePersisterFacade) throws IOException {
+    public boolean text(String text, CachePersisterFacade cachePersisterFacade) throws IOException {
         return true;
     }
 }

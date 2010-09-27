@@ -7,7 +7,7 @@ import com.google.inject.Inject;
 
 import java.io.IOException;
 
-public class CacheTagsToDetails implements ICachePersisterFacade {
+public class CacheTagsToDetails extends CachePersisterFacade {
 
     private final CacheDetailsWriter cacheDetailsWriter;
     private boolean encrypted;
@@ -18,20 +18,8 @@ public class CacheTagsToDetails implements ICachePersisterFacade {
     }
 
     @Override
-    public void archived(String attributeValue) {
-    }
-
-    @Override
-    public void available(String attributeValue) {
-    }
-
-    @Override
     public void cacheType(String text) throws IOException {
         cacheDetailsWriter.writeField("Type", text);
-    }
-
-    @Override
-    public void close(boolean success) {
     }
 
     @Override
@@ -45,22 +33,8 @@ public class CacheTagsToDetails implements ICachePersisterFacade {
     }
 
     @Override
-    public void end() {
-    }
-
-    @Override
     public void endCache(Source source) throws IOException {
         cacheDetailsWriter.close();
-    }
-
-    @Override
-    public String getLastModified() {
-        return null;
-    }
-
-    @Override
-    public boolean gpxTime(String gpxTime) {
-        return true;
     }
 
     @Override
@@ -74,10 +48,6 @@ public class CacheTagsToDetails implements ICachePersisterFacade {
     }
 
     @Override
-    public void lastModified(String trimmedText) {
-    }
-
-    @Override
     public void line(String text) throws IOException {
         cacheDetailsWriter.writeLine(text);
     }
@@ -88,22 +58,6 @@ public class CacheTagsToDetails implements ICachePersisterFacade {
     }
 
     @Override
-    public void open(String path) throws IOException {
-    }
-
-    @Override
-    public void start() {
-    }
-
-    @Override
-    public void startCache() {
-    }
-
-    @Override
-    public void symbol(String text) {
-    }
-
-    @Override
     public void terrain(String text) throws IOException {
         cacheDetailsWriter.writeField("Terrain", text);
     }
@@ -111,10 +65,6 @@ public class CacheTagsToDetails implements ICachePersisterFacade {
     @Override
     public void wpt(String latitude, String longitude) {
         cacheDetailsWriter.latitudeLongitude(latitude, longitude);
-    }
-
-    @Override
-    public void wptDesc(String cacheName) {
     }
 
     @Override

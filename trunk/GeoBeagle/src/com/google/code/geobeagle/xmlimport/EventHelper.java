@@ -47,7 +47,7 @@ public class EventHelper {
     }
 
     public boolean handleEvent(int eventType, EventHandler eventHandler,
-            ICachePersisterFacade cachePersisterFacade) throws IOException {
+            CachePersisterFacade cachePersisterFacade) throws IOException {
         switch (eventType) {
             case XmlPullParser.START_TAG: {
                 final String name = mXmlPullParser.getName();

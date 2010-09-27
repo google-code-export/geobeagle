@@ -79,7 +79,7 @@ public class GpxToCache {
     /**
      * @return false if this file has already been loaded.
      */
-    public boolean load(EventHelper eventHelper, EventHandler eventHandlerGpx, ICachePersisterFacade cachePersisterFacade) throws XmlPullParserException, IOException,
+    public boolean load(EventHelper eventHelper, EventHandler eventHandlerGpx, CachePersisterFacade cachePersisterFacade) throws XmlPullParserException, IOException,
             CancelException {
         Log.d("GeoBeagle", this + ": GpxToCache: load");
 

@@ -21,7 +21,7 @@ public class EventHandlerGpx implements EventHandler {
     @Override
     public void endTag(String name,
             String previousFullPath,
-            ICachePersisterFacade cachePersisterFacade) throws IOException {
+            CachePersisterFacade cachePersisterFacade) throws IOException {
         GpxPath.fromString(previousFullPath).endTag(cachePersisterFacade);
     }
 
@@ -29,7 +29,7 @@ public class EventHandlerGpx implements EventHandler {
     public void startTag(String name,
             String fullPath,
             XmlPullParserWrapper xmlPullParser,
-            ICachePersisterFacade cachePersisterFacade) throws IOException {
+            CachePersisterFacade cachePersisterFacade) throws IOException {
         GpxPath.fromString(fullPath).startTag(xmlPullParser, cachePersisterFacade);
     }
 
@@ -37,7 +37,7 @@ public class EventHandlerGpx implements EventHandler {
     public boolean text(String fullPath,
             String text,
             XmlPullParserWrapper xmlPullParser,
-            ICachePersisterFacade cachePersisterFacade) throws IOException {
+            CachePersisterFacade cachePersisterFacade) throws IOException {
         return GpxPath.fromString(fullPath).text(text, cachePersisterFacade);
     }
 
