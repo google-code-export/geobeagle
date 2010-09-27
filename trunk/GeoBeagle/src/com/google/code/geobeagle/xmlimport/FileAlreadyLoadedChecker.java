@@ -27,10 +27,16 @@ public class FileAlreadyLoadedChecker {
     private final GpxWriter mGpxWriter;
     private final SimpleDateFormat mSimpleDateFormat;
 
-    @Inject
+    // For testing.
     public FileAlreadyLoadedChecker(GpxWriter gpxWriter, SimpleDateFormat dateFormat) {
         mGpxWriter = gpxWriter;
         mSimpleDateFormat = dateFormat;
+    }
+
+    @Inject
+    public FileAlreadyLoadedChecker(GpxWriter gpxWriter) {
+        mGpxWriter = gpxWriter;
+        mSimpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSSZ");
     }
 
     boolean isAlreadyLoaded(String source) {
