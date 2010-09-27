@@ -20,26 +20,28 @@ import com.google.code.geobeagle.xmlimport.GpxToCache.Aborter;
 import com.google.code.geobeagle.xmlimport.gpx.gpx.GpxFileOpener;
 import com.google.code.geobeagle.xmlimport.gpx.zip.ZipFileOpener;
 import com.google.code.geobeagle.xmlimport.gpx.zip.ZipFileOpener.ZipInputFileTester;
+import com.google.inject.Provider;
 
 import java.io.IOException;
 
 /**
  * @author sng
- * 
+ *
  * Takes a filename and returns an IGpxReaderIter based on the
- * extension: 
- * 
+ * extension:
+ *
  * zip: ZipFileIter
  * gpx/loc: GpxFileIter
  */
 public class GpxFileIterAndZipFileIterFactory {
-    private final Aborter mAborter;
+    private final Provider<Aborter> mAborterProvider;
     private final ZipInputFileTester mZipInputFileTester;
-    private GeoBeagleEnvironment mGeoBeagleEnvironment;
+    private final GeoBeagleEnvironment mGeoBeagleEnvironment;
 
-    public GpxFileIterAndZipFileIterFactory(ZipInputFileTester zipInputFileTester, Aborter aborter,
+    public GpxFileIterAndZipFileIterFactory(ZipInputFileTester zipInputFileTester,
+            Provider<Aborter> aborterProvider,
             GeoBeagleEnvironment geoBeagleEnvironment) {
-        mAborter = aborter;
+        mAborterProvider = aborterProvider;
         mZipInputFileTester = zipInputFileTester;
         mGeoBeagleEnvironment = geoBeagleEnvironment;
     }
@@ -48,12 +50,12 @@ public class GpxFileIterAndZipFileIterFactory {
         String importFolder = mGeoBeagleEnvironment.getImportFolder();
         if (filename.endsWith(".zip")) {
             return new ZipFileOpener(importFolder + filename, new ZipInputStreamFactory(),
-                    mZipInputFileTester, mAborter).iterator();
+                    mZipInputFileTester, mAborterProvider).iterator();
         }
-        return new GpxFileOpener(importFolder + filename, mAborter).iterator();
+        return new GpxFileOpener(importFolder + filename, mAborterProvider).iterator();
     }
 
     public void resetAborter() {
-        mAborter.reset();
+        mAborterProvider.get().reset();
     }
 }

@@ -25,6 +25,7 @@ import com.google.code.geobeagle.xmlimport.gpx.gpx.GpxFileOpener;
 import com.google.code.geobeagle.xmlimport.gpx.gpx.GpxFileOpener.GpxFileIter;
 import com.google.code.geobeagle.xmlimport.gpx.zip.ZipFileOpener.ZipFileIter;
 import com.google.code.geobeagle.xmlimport.gpx.zip.ZipFileOpener.ZipInputFileTester;
+import com.google.inject.Provider;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -33,6 +34,7 @@ import org.powermock.api.easymock.PowerMock;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+@SuppressWarnings("unchecked")
 @RunWith(PowerMockRunner.class)
 @PrepareForTest( {
     GpxFileIterAndZipFileIterFactory.class
@@ -42,12 +44,14 @@ public class GpxFileIterAndZipFileIterFactoryTest {
     private GeoBeagleEnvironment geoBeagleEnvironment;
     private Aborter aborter;
     private GpxFileIter gpxFileIterator;
+    private Provider<Aborter> aborterProvider;
 
     @Before
     public void setUp() {
         geoBeagleEnvironment = PowerMock.createMock(GeoBeagleEnvironment.class);
         aborter = PowerMock.createMock(Aborter.class);
         gpxFileIterator = PowerMock.createStrictMock(GpxFileIter.class);
+        aborterProvider = PowerMock.createMock(Provider.class);
     }
 
     @Test
@@ -56,12 +60,12 @@ public class GpxFileIterAndZipFileIterFactoryTest {
 
         expect(geoBeagleEnvironment.getImportFolder()).andReturn("/sdcard/download/");
 
-        PowerMock.expectNew(GpxFileOpener.class, "/sdcard/download/foo.gpx", aborter).andReturn(
-                gpxFileOpener);
+        PowerMock.expectNew(GpxFileOpener.class, "/sdcard/download/foo.gpx", aborterProvider)
+                .andReturn(gpxFileOpener);
         expect(gpxFileOpener.iterator()).andReturn(gpxFileIterator);
 
         PowerMock.replayAll();
-        assertEquals(gpxFileIterator, new GpxFileIterAndZipFileIterFactory(null, aborter,
+        assertEquals(gpxFileIterator, new GpxFileIterAndZipFileIterFactory(null, aborterProvider,
                 geoBeagleEnvironment).fromFile("foo.gpx"));
         PowerMock.verifyAll();
     }
@@ -73,28 +77,26 @@ public class GpxFileIterAndZipFileIterFactoryTest {
         ZipInputStreamFactory zipInputStreamFactory = PowerMock
                 .createMock(ZipInputStreamFactory.class);
         ZipInputFileTester zipInputFileTester = PowerMock.createMock(ZipInputFileTester.class);
-        Aborter aborter = PowerMock.createMock(Aborter.class);
 
         expect(geoBeagleEnvironment.getImportFolder()).andReturn("/sdcard/download/");
         PowerMock.expectNew(ZipInputStreamFactory.class).andReturn(zipInputStreamFactory);
-        PowerMock.expectNew(ZipFileOpener.class, "/sdcard/download/foo.zip",
-                zipInputStreamFactory, zipInputFileTester, aborter).andReturn(zipFileOpener);
+        PowerMock.expectNew(ZipFileOpener.class, "/sdcard/download/foo.zip", zipInputStreamFactory,
+                zipInputFileTester, aborterProvider).andReturn(zipFileOpener);
         expect(zipFileOpener.iterator()).andReturn(zipFileIterator);
 
         PowerMock.replayAll();
         assertEquals(zipFileIterator, new GpxFileIterAndZipFileIterFactory(zipInputFileTester,
-                aborter, geoBeagleEnvironment).fromFile("foo.zip"));
+                aborterProvider, geoBeagleEnvironment).fromFile("foo.zip"));
         PowerMock.verifyAll();
     }
 
     @Test
     public void testFactoryResetAborter() throws Exception {
-        Aborter aborter = PowerMock.createMock(Aborter.class);
-
+        expect(aborterProvider.get()).andReturn(aborter);
         aborter.reset();
 
         PowerMock.replayAll();
-        new GpxFileIterAndZipFileIterFactory(null, aborter, null).resetAborter();
+        new GpxFileIterAndZipFileIterFactory(null, aborterProvider, null).resetAborter();
         PowerMock.verifyAll();
     }
 }
