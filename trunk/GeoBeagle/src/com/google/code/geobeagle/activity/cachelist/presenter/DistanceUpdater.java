@@ -25,6 +25,10 @@ public class DistanceUpdater implements RefreshAction {
         mGeocacheListAdapter = injector.getInstance(GeocacheListAdapter.class);
     }
 
+    public DistanceUpdater(GeocacheListAdapter geocacheListAdapter) {
+        mGeocacheListAdapter = geocacheListAdapter;
+    }
+
     @Override
     public void refresh() {
         // Log.d("GeoBeagle", "notifyDataSetChanged");
