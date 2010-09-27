@@ -15,7 +15,8 @@
 package com.google.code.geobeagle.activity.main.intents;
 
 import com.google.code.geobeagle.Geocache;
+import com.google.code.geobeagle.cacheloader.CacheLoaderException;
 
 interface GeocacheToUri {
-    public String convert(Geocache geocache);
+    public String convert(Geocache geocache) throws CacheLoaderException;
 }

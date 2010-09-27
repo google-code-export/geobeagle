@@ -11,26 +11,24 @@
  ** See the License for the specific language governing permissions and
  ** limitations under the License.
  */
+package com.google.code.geobeagle.cacheloader;
 
-package com.google.code.geobeagle.cachedetails.reader;
+@SuppressWarnings("serial")
+public class CacheLoaderException extends Exception {
 
-import com.google.code.geobeagle.xmlimport.ICachePersisterFacade;
+    private final int error;
+    private final Object[] args;
 
-import android.app.Activity;
-
-public class DetailsReaderError implements DetailsReader {
-    private final Activity mActivity;
-    private final int mError;
-    private final String mPath;
-
-    public DetailsReaderError(Activity activity, int error, String path) {
-        mActivity = activity;
-        mPath = path;
-        mError = error;
+    public CacheLoaderException(int resId, Object... args) {
+        this.error = resId;
+        this.args = args;
     }
 
-    @Override
-    public String read(ICachePersisterFacade cpf) {
-        return mActivity.getString(mError, mPath);
+    public int getError() {
+        return error;
+    }
+
+    public Object[] getArgs() {
+        return args;
     }
 }

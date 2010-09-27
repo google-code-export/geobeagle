@@ -18,8 +18,6 @@ import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.cachedetails.FileDataVersionChecker;
 import com.google.code.geobeagle.cachedetails.StringWriterWrapper;
 import com.google.code.geobeagle.cachedetails.reader.DetailsReader;
-import com.google.code.geobeagle.cachedetails.reader.DetailsReaderError;
-import com.google.code.geobeagle.cachedetails.reader.DetailsReaderImpl;
 import com.google.code.geobeagle.xmlimport.EventHandlerGpx;
 import com.google.code.geobeagle.xmlimport.EventHelper;
 import com.google.code.geobeagle.xmlimport.XmlPullParserWrapper;
@@ -34,7 +32,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.Reader;
 
-public class DetailsOpener {
+class DetailsOpener {
     private final Activity activity;
     private final EventHandlerGpx eventHandlerGpx;
     private final EventHelper eventHelper;
@@ -57,10 +55,10 @@ public class DetailsOpener {
         this.stringWriterWrapper = stringWriterWrapper;
     }
 
-    DetailsReader open(File file) {
+    public DetailsReader open(File file) throws CacheLoaderException {
         String state = Environment.getExternalStorageState();
         if (!Environment.MEDIA_MOUNTED.equals(state)) {
-            return new DetailsReaderError(activity, R.string.error_cant_read_sdroot, state);
+            throw new CacheLoaderException(R.string.error_cant_read_sdroot, state);
         }
         final Reader fileReader;
         String absolutePath = file.getAbsolutePath();
@@ -69,9 +67,9 @@ public class DetailsOpener {
         } catch (FileNotFoundException e) {
             int error = fileDataVersionChecker.needsUpdating() ? R.string.error_details_file_version
                     : R.string.error_opening_details_file;
-            return new DetailsReaderError(activity, error, e.getMessage());
+            throw new CacheLoaderException(error, e.getMessage());
         }
-        return new DetailsReaderImpl(activity, fileReader, absolutePath, eventHelper,
+        return new DetailsReader(activity, fileReader, absolutePath, eventHelper,
                 eventHandlerGpx, xmlPullParser, stringWriterWrapper);
     }
 }
