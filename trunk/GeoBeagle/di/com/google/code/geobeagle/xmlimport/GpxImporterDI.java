@@ -15,9 +15,9 @@
 package com.google.code.geobeagle.xmlimport;
 
 import com.google.code.geobeagle.ErrorDisplayer;
-import com.google.code.geobeagle.activity.cachelist.Pausable;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh.UpdateFlag;
+import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheListPresenter;
 import com.google.code.geobeagle.bcaching.BCachingModule;
 import com.google.code.geobeagle.bcaching.ImportBCachingWorker;
 import com.google.code.geobeagle.bcaching.preferences.BCachingStartTime;
@@ -331,7 +331,6 @@ public class GpxImporterDI {
     }
 
     public static GpxImporter create(
-            Pausable geocacheListPresenter,
             Aborter aborter,
             MessageHandlerInterface messageHandler, CachePersisterFacadeFactory cachePersisterFacadeFactory,
             CacheWriter cacheWriter,
@@ -361,8 +360,9 @@ public class GpxImporterDI {
 
         final EventHandlerComposite eventHandlerComposite = new EventHandlerComposite(Arrays
                 .asList(xmlWriter, eventHandlerGpx));
-
-        return new GpxImporter(geocacheListPresenter, gpxLoader,
+        final GeocacheListPresenter geocacheListPresenter = injector
+                .getInstance(GeocacheListPresenter.class);
+        return new GpxImporter(geocacheListPresenter , gpxLoader,
                 injector.getProvider(Context.class),
                 importThreadWrapper,
                 messageHandler, toastFactory, eventHandlerComposite, errorDisplayer,
