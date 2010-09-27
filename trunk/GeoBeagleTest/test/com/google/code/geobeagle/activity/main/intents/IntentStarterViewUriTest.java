@@ -26,6 +26,7 @@ import com.google.code.geobeagle.ErrorDisplayer;
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.main.GeoBeagle;
+import com.google.code.geobeagle.cacheloader.CacheLoaderException;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -93,6 +94,23 @@ public class IntentStarterViewUriTest {
         replayAll();
         new IntentStarterViewUri(geoBeagle, geocacheToUri, errorDisplayer)
                 .startIntent();
+        verifyAll();
+    }
+
+    @Test
+    public void ioExceptionShouldDisplayError() throws Exception {
+        CacheLoaderException cacheLoaderException = PowerMock
+                .createMock(CacheLoaderException.class);
+
+        expect(geoBeagle.getGeocache()).andReturn(geocache);
+        expect(geocacheToUri.convert(geocache)).andThrow(cacheLoaderException);
+        expect(cacheLoaderException.getError()).andReturn(R.string.error_loading_url);
+        expect(cacheLoaderException.getArgs()).andReturn(new Object[0]);
+        expect(cacheLoaderException.fillInStackTrace()).andReturn(cacheLoaderException);
+        errorDisplayer.displayError(R.string.error_loading_url);
+
+        replayAll();
+        new IntentStarterViewUri(geoBeagle, geocacheToUri, errorDisplayer).startIntent();
         verifyAll();
     }
 }

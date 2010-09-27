@@ -200,4 +200,8 @@ public class ImportCacheActions extends CachePersisterFacade {
     public void logFinder(String text) {
     }
 
+    @Override
+    public void url(String text) {
+    }
+
 }

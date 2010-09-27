@@ -15,26 +15,36 @@
 package com.google.code.geobeagle.activity.main.intents;
 
 import com.google.code.geobeagle.Geocache;
+import com.google.code.geobeagle.GeocacheFactory.Source;
 import com.google.code.geobeagle.R;
+import com.google.code.geobeagle.cacheloader.CacheLoaderException;
+import com.google.code.geobeagle.cacheloader.CacheUrlLoader;
 import com.google.inject.Inject;
 
 import android.content.res.Resources;
+
 
 /*
  * Convert a Geocache to the cache page url.
  */
 public class GeocacheToCachePage implements GeocacheToUri {
-    private final Resources mResources;
+    private final CacheUrlLoader cacheUrlLoader;
+    private final Resources resources;
 
     @Inject
-    public GeocacheToCachePage(Resources resources) {
-        mResources = resources;
+    public GeocacheToCachePage(CacheUrlLoader cacheUrlLoader, Resources resources) {
+        this.cacheUrlLoader = cacheUrlLoader;
+        this.resources = resources;
     }
 
-    // TODO: move strings into Provider enum.
-    public String convert(Geocache geocache) {
-        return String.format(mResources.getStringArray(R.array.cache_page_url)[geocache
+    @Override
+    public String convert(Geocache geocache) throws CacheLoaderException {
+        if (geocache.getSourceType() == Source.GPX) {
+            return cacheUrlLoader.load(geocache.getSourceName(), geocache.getId());
+        }
+        return String.format(resources.getStringArray(R.array.cache_page_url)[geocache
                 .getContentProvider().toInt()], geocache.getShortId());
+
     }
 
 }

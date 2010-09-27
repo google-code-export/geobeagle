@@ -70,6 +70,7 @@ public enum GpxPath {
             PathType.SHORT_DESCRIPTION),
     GPX_SYM("/gpx/wpt/sym", PathType.SYMBOL),
     GPX_TERRACACHINGGPXTIME("/gpx/metadata/time", PathType.GPX_TIME),
+    GPX_URL("/gpx/wpt/url", PathType.GPX_URL),
     GPX_WAYPOINT_TYPE("/gpx/wpt/type", PathType.CACHE_TYPE),
     GPX_WPT("/gpx/wpt", PathType.WPT),
     GPX_WPT_COMMENT("/gpx/wpt/cmt", PathType.LINE),
