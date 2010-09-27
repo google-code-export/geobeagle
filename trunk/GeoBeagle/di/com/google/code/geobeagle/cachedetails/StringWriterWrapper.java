@@ -51,4 +51,8 @@ public class StringWriterWrapper implements com.google.code.geobeagle.cachedetai
         // Log.d("GeoBeagle", ":: " + str);
         stringWriter.write(str);
     }
+
+    @Override
+    public void mkdirs(String path) {
+    }
 }

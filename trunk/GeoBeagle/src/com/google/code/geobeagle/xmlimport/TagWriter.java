@@ -14,19 +14,24 @@
 
 package com.google.code.geobeagle.xmlimport;
 
+import com.google.code.geobeagle.cachedetails.Writer;
 import com.google.code.geobeagle.cachedetails.WriterWrapper;
 import com.google.inject.Inject;
 
-import java.io.File;
 import java.io.IOException;
 
 class TagWriter {
     private static final String SPACES = "                        ";
     private int mLevel;
-    private WriterWrapper writer;
+    private final Writer writer;
 
     @Inject
     public TagWriter(WriterWrapper writer) {
+        this.writer = writer;
+    }
+
+    // For testing.
+    public TagWriter(Writer writer) {
         this.writer = writer;
     }
 
@@ -46,7 +51,7 @@ class TagWriter {
 
     public void open(String path) throws IOException {
         mLevel = 0;
-        new File(new File(path).getParent()).mkdirs();
+        writer.mkdirs(path);
         writer.open(path);
         writer.write("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
     }
