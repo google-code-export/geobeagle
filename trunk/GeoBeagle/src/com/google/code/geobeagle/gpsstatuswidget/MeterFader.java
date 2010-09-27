@@ -46,7 +46,7 @@ class MeterFader {
             mParent.postInvalidateDelayed(100);
         // Log.d("GeoBeagle", "painting " + lastUpdateLag);
     }
-    
+
     void setLag(long lag) {
         mBarsAndAzimuth.setTextColor(Color.argb(lagToAlpha(lag), 147, 190, 38));
     }
@@ -54,7 +54,7 @@ class MeterFader {
     int lagToAlpha(long milliseconds) {
         return Math.max(128, 255 - (int)(milliseconds >> 3));
     }
-    
+
     void reset() {
         mLastUpdateTime = -1;
         mParent.postInvalidate();
