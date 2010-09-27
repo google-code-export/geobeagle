@@ -21,12 +21,11 @@ import com.google.code.geobeagle.xmlimport.GpxImporter;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Provider;
-
-import roboguice.inject.ContextScoped;
+import com.google.inject.Singleton;
 
 import android.util.Log;
 
-@ContextScoped
+@Singleton
 public class MenuActionSyncGpx implements Action {
     private final GpxImporterFactory mGpxImporterFactory;
     private final Provider<ImportBCachingWorker> mImportBCachingWorkerProvider;
