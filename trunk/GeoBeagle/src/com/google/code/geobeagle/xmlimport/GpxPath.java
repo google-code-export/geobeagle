@@ -19,7 +19,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public enum GpxPath {
-    NO_MATCH(null, PathType.NOP),
     GPX_AU_DESCRIPTION("/gpx/wpt/geocache/description", PathType.LINE),
     GPX_AU_GEOCACHER("/gpx/wpt/geocache/logs/log/geocacher", PathType.LINE),
     GPX_AU_LOGTEXT("/gpx/wpt/geocache/logs/log/text", PathType.LINE),
@@ -58,14 +57,14 @@ public enum GpxPath {
             PathType.LOG_TYPE),
     GPX_LONGDESC("/gpx/wpt/groundspeak:cache/groundspeak:long_description",
             PathType.LONG_DESCRIPTION),
-    GPX_OCNAME("/gpx/wpt/extensions/cache/name", PathType.NAME),
-    GPX_OCOWNER("/gpx/wpt/extensions/cache/owner", PathType.PLACED_BY),
-    GPX_OCLOGDATE_OLD("/gpx/wpt/extensions/cache/logs/log/time", PathType.LOG_DATE),
-    GPX_OCLOGFINDER_OLD("/gpx/wpt/extensions/cache/logs/log/geocacher", PathType.LOG_FINDER),
     GPX_OCLOGDATE("/gpx/wpt/extensions/cache/logs/log/date", PathType.LOG_DATE),
+    GPX_OCLOGDATE_OLD("/gpx/wpt/extensions/cache/logs/log/time", PathType.LOG_DATE),
     GPX_OCLOGFINDER("/gpx/wpt/extensions/cache/logs/log/finder", PathType.LOG_FINDER),
+    GPX_OCLOGFINDER_OLD("/gpx/wpt/extensions/cache/logs/log/geocacher", PathType.LOG_FINDER),
     GPX_OCLOGTEXT("/gpx/wpt/extensions/cache/logs/log/text", PathType.LOG_TEXT),
     GPX_OCLOGTYPE("/gpx/wpt/extensions/cache/logs/log/type", PathType.LOG_TYPE),
+    GPX_OCNAME("/gpx/wpt/extensions/cache/name", PathType.NAME),
+    GPX_OCOWNER("/gpx/wpt/extensions/cache/owner", PathType.PLACED_BY),
     GPX_PLACEDBY("/gpx/wpt/groundspeak:cache/groundspeak:placed_by", PathType.PLACED_BY),
     GPX_SHORTDESC("/gpx/wpt/groundspeak:cache/groundspeak:short_description",
             PathType.SHORT_DESCRIPTION),
@@ -79,7 +78,8 @@ public enum GpxPath {
     GPX_WPTTIME("/gpx/wpt/time", PathType.WPT_TIME),
     LOC_COORD("/loc/waypoint/coord", PathType.LOC_COORD),
     LOC_WPT("/loc/waypoint", PathType.LOC_WPT),
-    LOC_WPTNAME("/loc/waypoint/name", PathType.LOC_WPTNAME);
+    LOC_WPTNAME("/loc/waypoint/name", PathType.LOC_WPTNAME),
+    NO_MATCH(null, PathType.NOP);
 
     private static final Map<String, GpxPath> stringToEnum = new HashMap<String, GpxPath>();
 
