@@ -23,10 +23,8 @@ import com.google.code.geobeagle.actions.MenuActionSettings;
 import com.google.code.geobeagle.activity.EditCacheActivity;
 import com.google.code.geobeagle.activity.cachelist.CacheListActivity;
 import com.google.code.geobeagle.activity.main.GeoBeagle;
-import com.google.code.geobeagle.activity.main.intents.IntentStarterViewUri;
 import com.google.code.geobeagle.activity.preferences.EditPreferences;
 import com.google.code.geobeagle.activity.searchonline.SearchOnlineActivity;
-import com.google.inject.Provider;
 
 import org.easymock.EasyMock;
 import org.junit.Test;
@@ -36,7 +34,6 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Intent;
 
 @RunWith(PowerMockRunner.class)
@@ -100,22 +97,6 @@ public class MenuActionsTest {
         PowerMock.replayAll();
         new MenuActionEditGeocache(geobeagle).act();
         PowerMock.verifyAll();
-    }
-
-    @SuppressWarnings("unchecked")
-    @Test
-    public void testMenuActionGoogleMaps() {
-        Provider<AlertDialog> chooseNavDialogProvider = PowerMock.createMock(Provider.class);
-        AlertDialog alertDialog = PowerMock.createMock(AlertDialog.class);
-        EasyMock.expect(chooseNavDialogProvider.get()).andReturn(alertDialog);
-        alertDialog.show();
-        PowerMock.replayAll();
-
-        MenuActionGoogleMaps menuActionGoogleMaps = new MenuActionGoogleMaps(
-                chooseNavDialogProvider);
-        menuActionGoogleMaps.act();
-        PowerMock.verifyAll();
-
     }
 
     @Test

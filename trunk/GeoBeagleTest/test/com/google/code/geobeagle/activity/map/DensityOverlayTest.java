@@ -18,8 +18,10 @@ import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapView;
 import com.google.android.maps.Overlay;
 import com.google.android.maps.Projection;
+import com.google.code.geobeagle.Timing;
 
 import org.easymock.EasyMock;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.api.easymock.PowerMock;
@@ -39,11 +41,25 @@ import java.util.List;
         DensityMatrix.class, GeoPoint.class, MapView.class, Overlay.class, Rect.class
 })
 public class DensityOverlayTest {
+    private Paint paint;
+    private Timing timing;
+
+    @Before
+    public void setUp() {
+        paint = PowerMock.createMock(Paint.class);
+        timing = PowerMock.createMock(Timing.class);
+        timing.start();
+        EasyMock.expectLastCall().anyTimes();
+        paint.setARGB(128, 255, 0, 0);
+    }
+
     @Test
     public void testDensityOverlayShadow() {
+        PowerMock.replayAll();
         DensityOverlayDelegate densityOverlayDelegate = new DensityOverlayDelegate(null, null,
-                null, null, null);
+                null, null, paint, null);
         densityOverlayDelegate.draw(null, null, true);
+        PowerMock.verifyAll();
     }
 
     @Test
@@ -53,7 +69,6 @@ public class DensityOverlayTest {
         Point screenTopLeft = PowerMock.createMock(Point.class);
         Point screenBottomRight = PowerMock.createMock(Point.class);
         Rect screenRect = PowerMock.createMock(Rect.class);
-        Paint paint = PowerMock.createMock(Paint.class);
         Projection projection = PowerMock.createMock(Projection.class);
         DensityPatchManager densityPatchManager = PowerMock.createMock(DensityPatchManager.class);
         DensityMatrix.DensityPatch densityPatch = PowerMock
@@ -95,7 +110,7 @@ public class DensityOverlayTest {
 
         PowerMock.replayAll();
         DensityOverlayDelegate densityOverlayDelegate = new DensityOverlayDelegate(screenRect,
-                paint, screenTopLeft, screenBottomRight, densityPatchManager);
+                screenTopLeft, screenBottomRight, densityPatchManager, paint, timing);
         densityOverlayDelegate.draw(canvas, mapView, false);
         PowerMock.verifyAll();
     }

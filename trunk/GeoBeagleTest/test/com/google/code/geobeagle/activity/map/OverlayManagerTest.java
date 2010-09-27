@@ -14,9 +14,14 @@
 
 package com.google.code.geobeagle.activity.map;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
+import com.google.android.maps.MyLocationOverlay;
 import com.google.android.maps.Overlay;
+import com.google.code.geobeagle.R;
+import com.google.code.geobeagle.activity.cachelist.GeoBeagleTest;
 
 import org.easymock.EasyMock;
 import org.junit.Before;
@@ -33,25 +38,34 @@ import java.util.List;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest( {
-    Log.class,
+        Log.class, GeoMapView.class
 })
-public class OverlayManagerTest {
+public class OverlayManagerTest extends GeoBeagleTest {
+    private GeoMapActivity geoMapActivity;
+    private GeoMapView geoMapView;
+    private MyLocationOverlay myLocationOverlay;
+    private List<Overlay> mapOverlays;
+    private List<Overlay> overlays;
+
     @Before
-    public void mockLogging() {
-        PowerMock.mockStatic(Log.class);
-        EasyMock.expect(Log.d((String)EasyMock.anyObject(), (String)EasyMock.anyObject()))
-                .andReturn(0).anyTimes();
+    public void setUp() {
+        geoMapActivity = PowerMock.createMock(GeoMapActivity.class);
+        geoMapView = PowerMock.createMock(GeoMapView.class);
+        myLocationOverlay = PowerMock.createMock(MyLocationOverlay.class);
+        mapOverlays = new ArrayList<Overlay>();
+        overlays = new ArrayList<Overlay>();
     }
 
     @Test
     public void zoomOutDensityMapToDensityMap() {
-        GeoMapView geoMapView = PowerMock.createMock(GeoMapView.class);
-
+        EasyMock.expect(geoMapView.getOverlays()).andReturn(mapOverlays).anyTimes();
+        EasyMock.expect(geoMapActivity.findViewById(R.id.mapview)).andReturn(geoMapView).anyTimes();
         EasyMock.expect(geoMapView.getZoomLevel()).andReturn(
                 OverlayManager.DENSITY_MAP_ZOOM_THRESHOLD - 1);
+        EasyMock.expect(geoMapActivity.getMyLocationOverlay()).andReturn(myLocationOverlay);
 
         PowerMock.replayAll();
-        final OverlayManager overlayManager = new OverlayManager(geoMapView, null, null, null, true);
+        final OverlayManager overlayManager = new OverlayManager(geoMapActivity, null, null, null);
         overlayManager.selectOverlay();
         assertTrue(overlayManager.usesDensityMap());
         PowerMock.verifyAll();
@@ -59,17 +73,18 @@ public class OverlayManagerTest {
 
     @Test
     public void zoomOutCachePinsToDensityMap() {
-        List<Overlay> overlays = new ArrayList<Overlay>();
-        overlays.add(null);
-        GeoMapView geoMapView = PowerMock.createMock(GeoMapView.class);
         DensityOverlay densityOverlay = PowerMock.createMock(DensityOverlay.class);
+        overlays.add(densityOverlay);
 
+        EasyMock.expect(geoMapView.getOverlays()).andReturn(mapOverlays).anyTimes();
         EasyMock.expect(geoMapView.getZoomLevel()).andReturn(
                 OverlayManager.DENSITY_MAP_ZOOM_THRESHOLD - 1);
+        EasyMock.expect(geoMapActivity.findViewById(R.id.mapview)).andReturn(geoMapView).anyTimes();
+        EasyMock.expect(geoMapActivity.getMyLocationOverlay()).andReturn(myLocationOverlay);
 
         PowerMock.replayAll();
-        final OverlayManager overlayManager = new OverlayManager(geoMapView, overlays,
-                densityOverlay, null, false);
+        final OverlayManager overlayManager = new OverlayManager(geoMapActivity, densityOverlay,
+                null, null);
         overlayManager.selectOverlay();
         assertTrue(overlayManager.usesDensityMap());
         assertEquals(densityOverlay, overlays.get(0));
@@ -78,20 +93,21 @@ public class OverlayManagerTest {
 
     @Test
     public void zoomInDensityMapToCachePins() {
-        List<Overlay> overlays = new ArrayList<Overlay>();
-        overlays.add(null);
-        GeoMapView geoMapView = PowerMock.createMock(GeoMapView.class);
         CachePinsOverlayFactory cachePinsOverlayFactory = PowerMock
                 .createMock(CachePinsOverlayFactory.class);
         CachePinsOverlay cachePinsOverlay = PowerMock.createMock(CachePinsOverlay.class);
 
+        overlays.add(cachePinsOverlay);
+        EasyMock.expect(geoMapView.getOverlays()).andReturn(mapOverlays).anyTimes();
+        EasyMock.expect(geoMapActivity.findViewById(R.id.mapview)).andReturn(geoMapView).anyTimes();
         EasyMock.expect(geoMapView.getZoomLevel()).andReturn(
                 OverlayManager.DENSITY_MAP_ZOOM_THRESHOLD);
         EasyMock.expect(cachePinsOverlayFactory.getCachePinsOverlay()).andReturn(cachePinsOverlay);
+        EasyMock.expect(geoMapActivity.getMyLocationOverlay()).andReturn(myLocationOverlay);
 
         PowerMock.replayAll();
-        final OverlayManager overlayManager = new OverlayManager(geoMapView, overlays, null,
-                cachePinsOverlayFactory, true);
+        final OverlayManager overlayManager = new OverlayManager(geoMapActivity, null,
+                cachePinsOverlayFactory, null);
         overlayManager.selectOverlay();
         assertFalse(overlayManager.usesDensityMap());
         assertEquals(cachePinsOverlay, overlays.get(0));

@@ -39,9 +39,7 @@ public class LocationSaverTest {
         Geocache geocache = createMock(Geocache.class);
         Provider<CacheWriter> cacheWriterProvider = createMock(Provider.class);
         TagWriter tagWriter = createMock(TagWriter.class);
-        Filter filter = createMock(Filter.class);
         expect(tagWriter.hasTag("LB12345", Tag.FOUND)).andReturn(true);
-        expect(filter.isVisible(true)).andReturn(true);
         expect(cacheWriterProvider.get()).andReturn(writer);
         mockStatic(DatabaseDI.class);
 
@@ -63,7 +61,7 @@ public class LocationSaverTest {
         writer.stopWriting();
 
         replayAll();
-        new LocationSaver(cacheWriterProvider, tagWriter, filter).saveLocation(geocache);
+        new LocationSaver(cacheWriterProvider, tagWriter).saveLocation(geocache);
         verifyAll();
     }
 }

@@ -20,6 +20,8 @@ import static org.junit.Assert.assertTrue;
 
 import com.google.android.maps.GeoPoint;
 import com.google.code.geobeagle.Geocache;
+import com.google.code.geobeagle.R;
+import com.google.code.geobeagle.activity.main.fieldnotes.ToasterFactory;
 import com.google.code.geobeagle.activity.map.QueryManager.CachedNeedsLoading;
 import com.google.code.geobeagle.activity.map.QueryManager.LoaderImpl;
 import com.google.code.geobeagle.database.DbFrontend;
@@ -35,6 +37,7 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import android.util.Log;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -74,8 +77,8 @@ public class QueryManagerTest {
                         whereFactoryFixedArea, latLonMinMax)).andReturn(list);
         PowerMock.replayAll();
 
-        QueryManager queryManager = new QueryManager(peggedLoader, null, latLonMinMax);
-        assertEquals(list, queryManager.load(topLeft, bottomRight));
+        QueryManager queryManager = new QueryManager(null, latLonMinMax);
+        assertEquals(list, queryManager.load(topLeft, bottomRight, peggedLoader));
         PowerMock.verifyAll();
     }
 
@@ -97,7 +100,7 @@ public class QueryManagerTest {
         int[] latLonMinMax = {
                 34000000, -122000000, 37000000, -119000000
         };
-        QueryManager queryManager = new QueryManager(null, cachedNeedsLoading, latLonMinMax);
+        QueryManager queryManager = new QueryManager(cachedNeedsLoading, latLonMinMax);
         assertEquals(false, queryManager.needsLoading(newTopLeft, newBottomRight));
         PowerMock.verifyAll();
     }
@@ -116,7 +119,7 @@ public class QueryManagerTest {
         int[] latLonMinMax = {
                 0, 0, 0, 0
         };
-        QueryManager queryManager = new QueryManager(null, cachedNeedsLoading, latLonMinMax);
+        QueryManager queryManager = new QueryManager(cachedNeedsLoading);
         assertEquals(true, queryManager.needsLoading(newTopLeft, newBottomRight));
         PowerMock.verifyAll();
     }
@@ -131,7 +134,7 @@ public class QueryManagerTest {
         };
 
         EasyMock.expect(dbFrontend.loadCaches(0, 0, where)).andReturn(fullList);
-        
+
         PowerMock.replayAll();
         new LoaderImpl(dbFrontend).load(0, 1, 2, 3, where, newBounds);
         PowerMock.verifyAll();
@@ -172,20 +175,23 @@ public class QueryManagerTest {
 
     @Test
     public void testPeggedLoaderTooMany() {
-        DbFrontend geocachesLoader = PowerMock.createMock(DbFrontend.class);
+        DbFrontend dbFrontend = PowerMock.createMock(DbFrontend.class);
         WhereFactoryFixedArea where = PowerMock.createMock(WhereFactoryFixedArea.class);
         Toaster toaster = PowerMock.createMock(Toaster.class);
+        ToasterFactory toasterFactory = PowerMock.createMock(ToasterFactory.class);
         LoaderImpl loaderImpl = PowerMock.createMock(LoaderImpl.class);
 
         ArrayList<Geocache> nullList = new ArrayList<Geocache>();
         int[] newBounds = {
                 0, 0, 0, 0
         };
+        EasyMock.expect(toasterFactory.create(R.string.too_many_caches, Toast.LENGTH_SHORT))
+                .andReturn(toaster);
         toaster.showToast();
-        EasyMock.expect(geocachesLoader.count(0, 0, where)).andReturn(2000);
+        EasyMock.expect(dbFrontend.count(0, 0, where)).andReturn(2000);
 
         PowerMock.replayAll();
-        final ArrayList<Geocache> list = new QueryManager.PeggedLoader(geocachesLoader, toaster,
+        final ArrayList<Geocache> list = new QueryManager.PeggedLoader(dbFrontend, toasterFactory,
                 loaderImpl).load(0, 1, 2, 3, where, newBounds);
         assertEquals(nullList, list);
         assertEquals(newBounds[0], 0);

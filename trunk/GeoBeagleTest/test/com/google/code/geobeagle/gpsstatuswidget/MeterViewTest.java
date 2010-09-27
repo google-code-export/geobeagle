@@ -18,8 +18,6 @@ import static org.easymock.EasyMock.expect;
 import static org.junit.Assert.assertEquals;
 
 import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.gpsstatuswidget.MeterFormatter;
-import com.google.code.geobeagle.gpsstatuswidget.MeterBars;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -95,13 +93,16 @@ public class MeterViewTest {
         TextView textView = PowerMock.createMock(TextView.class);
         MeterFormatter meterFormatter = PowerMock.createMock(MeterFormatter.class);
         PowerMock.mockStatic(Color.class);
+        InflatedGpsStatusWidget inflatedGpsStatusWidget = PowerMock
+                .createMock(InflatedGpsStatusWidget.class);
 
+        expect(inflatedGpsStatusWidget.findViewById(R.id.location_viewer)).andReturn(textView);
         expect(meterFormatter.accuracyToBarCount(342)).andReturn(7);
         expect(meterFormatter.barsToMeterText(7, "90")).andReturn("<-90°->");
         textView.setText("<-90°->");
 
         PowerMock.replayAll();
-        new MeterBars(textView, meterFormatter).set(342, 90);
+        new MeterBars(inflatedGpsStatusWidget, meterFormatter).set(342, 90);
         PowerMock.verifyAll();
     }
 
@@ -109,14 +110,17 @@ public class MeterViewTest {
     public void testMeterView_setLag() {
         TextView textView = PowerMock.createMock(TextView.class);
         MeterFormatter meterFormatter = PowerMock.createMock(MeterFormatter.class);
+        InflatedGpsStatusWidget inflatedGpsStatusWidget = PowerMock
+                .createMock(InflatedGpsStatusWidget.class);
         PowerMock.mockStatic(Color.class);
 
+        expect(inflatedGpsStatusWidget.findViewById(R.id.location_viewer)).andReturn(textView);
         expect(meterFormatter.lagToAlpha(17)).andReturn(94);
         expect(Color.argb(94, 147, 190, 38)).andReturn(333);
         textView.setTextColor(333);
 
         PowerMock.replayAll();
-        new MeterBars(textView, meterFormatter).setLag(17);
+        new MeterBars(inflatedGpsStatusWidget, meterFormatter).setLag(17);
         PowerMock.verifyAll();
     }
 

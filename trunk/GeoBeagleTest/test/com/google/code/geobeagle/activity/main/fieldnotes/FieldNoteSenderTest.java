@@ -17,11 +17,12 @@ package com.google.code.geobeagle.activity.main.fieldnotes;
 import static org.junit.Assert.assertEquals;
 
 import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.activity.main.fieldnotes.FieldnoteLogger.OnClickCancel;
 import com.google.code.geobeagle.activity.main.fieldnotes.FieldnoteLogger.OnClickOk;
+import com.google.code.geobeagle.xmlimport.GeoBeagleEnvironment;
 import com.google.code.geobeagle.xmlimport.GpxImporterDI.Toaster;
 
 import org.easymock.EasyMock;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.api.easymock.PowerMock;
@@ -41,6 +42,7 @@ import android.text.util.Linkify;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -58,6 +60,13 @@ import java.util.Date;
         DialogHelperSms.class, SmsLogger.class
 })
 public class FieldNoteSenderTest {
+    private GeoBeagleEnvironment geoBeagleEnvironment;
+
+    @Before
+    public void setUp() {
+        geoBeagleEnvironment = PowerMock.createMock(GeoBeagleEnvironment.class);
+    }
+
     @Test
     public void testDialogHelperCommonConfigureEditor() throws Exception {
         EditText editText = PowerMock.createMock(EditText.class);
@@ -101,13 +110,15 @@ public class FieldNoteSenderTest {
         TextView fieldNoteCaveat = PowerMock.createMock(TextView.class);
         Context context = PowerMock.createMock(Context.class);
 
+        EasyMock.expect(geoBeagleEnvironment.getFieldNotesFilename()).andReturn("fieldnotes.txt");
         EasyMock.expect(context.getString(R.string.field_note_file_caveat)).andReturn(
                 ("file logging: %1$s"));
         fieldNoteCaveat.setText("file logging: " +  "fieldnotes.txt");
         dialog.setTitle(R.string.log_cache_to_file);
 
         PowerMock.replayAll();
-        new DialogHelperFile(context, "fieldnotes.txt").configureDialogText(dialog, fieldNoteCaveat);
+        new DialogHelperFile(context, geoBeagleEnvironment).configureDialogText(dialog,
+                fieldNoteCaveat);
         PowerMock.verifyAll();
     }
 
@@ -225,6 +236,7 @@ public class FieldNoteSenderTest {
         OutputStreamWriter outputStreamWriter = PowerMock.createMock(OutputStreamWriter.class);
         FileOutputStream fileOutputStream = PowerMock.createMock(FileOutputStream.class);
 
+        EasyMock.expect(geoBeagleEnvironment.getFieldNotesFilename()).andReturn("fieldnotes.log");
         PowerMock.expectNew(FileOutputStream.class, "fieldnotes.log", true)
                 .andReturn(fileOutputStream);
         PowerMock.expectNew(OutputStreamWriter.class, fileOutputStream, "UTF-16").andReturn(
@@ -240,7 +252,9 @@ public class FieldNoteSenderTest {
         outputStreamWriter.close();
 
         PowerMock.replayAll();
-        new FileLogger(fieldnoteStringsFVsDnf, dateFormat, null, "fieldnotes.log").log("GC123", "easy find", false);
+        new FileLogger(fieldnoteStringsFVsDnf, dateFormat, null, geoBeagleEnvironment).log("GC123",
+                "easy find",
+                false);
         PowerMock.verifyAll();
     }
 
@@ -249,24 +263,20 @@ public class FieldNoteSenderTest {
         FieldnoteStringsFVsDnf fieldnoteStringsFVsDnf = PowerMock
                 .createMock(FieldnoteStringsFVsDnf.class);
         Toaster toaster = PowerMock.createMock(Toaster.class);
+        ToasterFactory toasterFactory = PowerMock.createMock(ToasterFactory.class);
         IOException exception = new IOException();
 
+
+        EasyMock.expect(geoBeagleEnvironment.getFieldNotesFilename()).andReturn("fieldnotes.log");
         PowerMock.expectNew(FileOutputStream.class, "fieldnotes.log", true).andThrow(exception);
+        EasyMock.expect(toasterFactory.create(R.string.error_writing_cache_log, Toast.LENGTH_LONG))
+                .andReturn(toaster);
         toaster.showToast();
 
         PowerMock.replayAll();
-        new FileLogger(fieldnoteStringsFVsDnf, null, toaster, "fieldnotes.log").log("GC123",
+        new FileLogger(fieldnoteStringsFVsDnf, null, toasterFactory, geoBeagleEnvironment).log(
+                "GC123",
                 "easy find", false);
-        PowerMock.verifyAll();
-    }
-
-    @Test
-    public void testOnClickCancel() {
-        Dialog dialog = PowerMock.createMock(Dialog.class);
-        dialog.dismiss();
-
-        PowerMock.replayAll();
-        new OnClickCancel().onClick(dialog, 0);
         PowerMock.verifyAll();
     }
 

@@ -50,11 +50,10 @@ public class OnClickListenerCacheDetailsTest {
         expect(geocache.getName()).andReturn("my cache");
         expect(intent.putExtra(DetailsActivity.INTENT_EXTRA_GEOCACHE_SOURCE, "bcaching.com"))
                 .andReturn(intent);
-        expect(intent.putExtra(DetailsActivity.INTENT_EXTRA_GEOCACHE_ID, (CharSequence)"GC123"))
+        expect(intent.putExtra(DetailsActivity.INTENT_EXTRA_GEOCACHE_ID, "GC123"))
                 .andReturn(intent);
-        expect(
-                intent.putExtra(DetailsActivity.INTENT_EXTRA_GEOCACHE_NAME,
-                        (CharSequence)"my cache")).andReturn(intent);
+        expect(intent.putExtra(DetailsActivity.INTENT_EXTRA_GEOCACHE_NAME, "my cache")).andReturn(
+                intent);
         geobeagle.startActivity(intent);
 
         replayAll();

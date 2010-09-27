@@ -16,6 +16,7 @@ package com.google.code.geobeagle.gpsstatuswidget;
 
 import static org.junit.Assert.assertEquals;
 
+import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.Time;
 import com.google.code.geobeagle.gpsstatuswidget.TextLagUpdater.Lag;
 import com.google.code.geobeagle.gpsstatuswidget.TextLagUpdater.LagImpl;
@@ -26,6 +27,7 @@ import com.google.code.geobeagle.gpsstatuswidget.TextLagUpdater.LastLocationUnkn
 import com.google.code.geobeagle.location.CombinedLocationManager;
 
 import org.easymock.EasyMock;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.api.easymock.PowerMock;
@@ -40,6 +42,21 @@ import android.widget.TextView;
         TextView.class, TextLagUpdater.class
 })
 public class TextLagUpdaterTest {
+    private InflatedGpsStatusWidget inflatedGpsStatusWidget;
+    private TextView textLag;
+    private CombinedLocationManager combinedLocationManager;
+    private Lag lag;
+    private LastKnownLocation lastKnownLocation;
+
+    @Before
+    public void setUp() {
+        inflatedGpsStatusWidget = PowerMock.createMock(InflatedGpsStatusWidget.class);
+        textLag = PowerMock.createMock(TextView.class);
+        combinedLocationManager = PowerMock.createMock(CombinedLocationManager.class);
+        lag = PowerMock.createMock(Lag.class);
+        lastKnownLocation = PowerMock.createMock(LastKnownLocation.class);
+    }
+
     @Test
     public void testLagImpl() {
         assertEquals("1s", new LagImpl(5000).getFormatted(6000));
@@ -72,10 +89,6 @@ public class TextLagUpdaterTest {
 
     @Test
     public void testLastLocationUnknown() throws Exception {
-        CombinedLocationManager combinedLocationManager = PowerMock
-                .createMock(CombinedLocationManager.class);
-        Lag lag = PowerMock.createMock(Lag.class);
-        LastKnownLocation lastKnownLocation = PowerMock.createMock(LastKnownLocation.class);
         Location location = PowerMock.createMock(Location.class);
 
         EasyMock.expect(combinedLocationManager.getLastKnownLocation()).andReturn(location);
@@ -90,8 +103,6 @@ public class TextLagUpdaterTest {
 
     @Test
     public void testLastLocationUnknown_Null() throws Exception {
-        CombinedLocationManager combinedLocationManager = PowerMock
-                .createMock(CombinedLocationManager.class);
         LagNull lagNull = PowerMock.createMock(LagNull.class);
         LastKnownLocationUnavailable lastKnownLocationUnavailable = PowerMock
                 .createMock(LastKnownLocationUnavailable.class);
@@ -107,19 +118,18 @@ public class TextLagUpdaterTest {
 
     @Test
     public void testReset() throws Exception {
-        Lag lag = PowerMock.createMock(Lag.class);
-        LastKnownLocation lastLocation = PowerMock.createMock(LastKnownLocation.class);
-        TextView textLag = PowerMock.createMock(TextView.class);
         Time time = PowerMock.createMock(Time.class);
 
-        PowerMock.expectNew(LastKnownLocation.class, 2000L).andReturn(lastLocation);
-        EasyMock.expect(lastLocation.getLag()).andReturn(lag);
+        EasyMock.expect(inflatedGpsStatusWidget.findViewById(R.id.lag)).andReturn(textLag);
+        PowerMock.expectNew(LastKnownLocation.class, 2000L).andReturn(lastKnownLocation);
+        EasyMock.expect(lastKnownLocation.getLag()).andReturn(lag);
         EasyMock.expect(time.getCurrentTime()).andReturn(5000L);
         EasyMock.expect(lag.getFormatted(5000L)).andReturn("4s");
         textLag.setText("4s");
 
         PowerMock.replayAll();
-        final TextLagUpdater textLagUpdater = new TextLagUpdater(null, textLag, time);
+        TextLagUpdater textLagUpdater = new TextLagUpdater(null, inflatedGpsStatusWidget,
+                time);
         textLagUpdater.reset(2000);
         textLagUpdater.updateTextLag();
         PowerMock.verifyAll();
@@ -127,12 +137,11 @@ public class TextLagUpdaterTest {
 
     @Test
     public void testSetDisabled() throws Exception {
-        TextView textLag = PowerMock.createMock(TextView.class);
-
+        EasyMock.expect(inflatedGpsStatusWidget.findViewById(R.id.lag)).andReturn(textLag);
         textLag.setText("");
 
         PowerMock.replayAll();
-        new TextLagUpdater(null, textLag, null).setDisabled();
+        new TextLagUpdater(null, inflatedGpsStatusWidget, null).setDisabled();
         PowerMock.verifyAll();
     }
 
@@ -148,16 +157,17 @@ public class TextLagUpdaterTest {
     public void testUpdateTextLag() {
         Lag lag = PowerMock.createMock(Lag.class);
         LastLocationUnknown lastLocationUnknown = PowerMock.createMock(LastLocationUnknown.class);
-        TextView textLag = PowerMock.createMock(TextView.class);
         Time time = PowerMock.createMock(Time.class);
 
+        EasyMock.expect(inflatedGpsStatusWidget.findViewById(R.id.lag)).andReturn(textLag);
         EasyMock.expect(lastLocationUnknown.getLag()).andReturn(lag);
         EasyMock.expect(time.getCurrentTime()).andReturn(5000L);
         EasyMock.expect(lag.getFormatted(5000L)).andReturn("5s");
         textLag.setText("5s");
 
         PowerMock.replayAll();
-        final TextLagUpdater textLagUpdater = new TextLagUpdater(lastLocationUnknown, textLag, time);
+        final TextLagUpdater textLagUpdater = new TextLagUpdater(lastLocationUnknown,
+                inflatedGpsStatusWidget, time);
         textLagUpdater.updateTextLag();
         PowerMock.verifyAll();
     }

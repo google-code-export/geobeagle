@@ -26,9 +26,9 @@ import com.google.code.geobeagle.activity.cachelist.GeoBeagleTest;
 import com.google.code.geobeagle.activity.cachelist.view.NameFormatter;
 import com.google.code.geobeagle.activity.main.RadarView;
 import com.google.code.geobeagle.activity.main.view.GeocacheViewer.LabelledAttributeViewer;
+import com.google.code.geobeagle.activity.main.view.GeocacheViewer.NameViewer;
 import com.google.code.geobeagle.activity.main.view.GeocacheViewer.ResourceImages;
 import com.google.code.geobeagle.activity.main.view.GeocacheViewer.UnlabelledAttributeViewer;
-import com.google.code.geobeagle.activity.main.view.GeocacheViewer.NameViewer;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -36,10 +36,9 @@ import org.powermock.api.easymock.PowerMock;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import android.util.Log;
-
 import android.app.Activity;
 import android.graphics.drawable.Drawable;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -95,10 +94,10 @@ public class GeocacheViewerTest extends GeoBeagleTest {
         Drawable[] drawable = {
                 null, null, drawable0
         };
-        
+
         imageView.setVisibility(View.VISIBLE);
         imageView.setImageDrawable(drawable0);
-        
+
         PowerMock.replayAll();
         UnlabelledAttributeViewer unlabelledAttributeViewer = new UnlabelledAttributeViewer(
                 imageView, drawable);
@@ -140,7 +139,7 @@ public class GeocacheViewerTest extends GeoBeagleTest {
         imageView.setImageResource(27);
 
         PowerMock.replayAll();
-        new GeocacheViewer.ResourceImages(imageView, Arrays.asList(resources))
+        new GeocacheViewer.ResourceImages(null, imageView, Arrays.asList(resources))
                 .setImage(1);
         PowerMock.verifyAll();
     }
@@ -164,9 +163,10 @@ public class GeocacheViewerTest extends GeoBeagleTest {
         IconRenderer iconRenderer = PowerMock.createMock(IconRenderer.class);
         Drawable drawable = PowerMock.createMock(Drawable.class);
         Activity activity = PowerMock.createMock(Activity.class);
-        
+
         activity.setTitle("GeoBeagle: GC123");
-        expect(iconRenderer.renderIcon(0, 0, ICON_BIG, iconOverlay, mapViewBitmapCopier)).andReturn(drawable);
+        expect(iconRenderer.renderIcon(0, 0, ICON_BIG, iconOverlay, mapViewBitmapCopier, null))
+                .andReturn(drawable);
         gcTypeImageView.setImageDrawable(drawable);
         expect(geocache.getLatitude()).andReturn(37.0);
         expect(geocache.getLongitude()).andReturn(-122.0);
@@ -181,6 +181,7 @@ public class GeocacheViewerTest extends GeoBeagleTest {
         expect(geocache.getTerrain()).andReturn(5);
         expect(geocache.getAvailable()).andReturn(true);
         expect(geocache.getArchived()).andReturn(false);
+        gcContainer.setVisibility(View.VISIBLE);
         gcContainer.setImage(6);
         gcDifficulty.setImage(8);
         gcTerrain.setImage(5);
@@ -188,8 +189,9 @@ public class GeocacheViewerTest extends GeoBeagleTest {
         name.set("a cache", true, false);
 
         PowerMock.replayAll();
-        new GeocacheViewer(radar, activity, name, gcTypeImageView, gcDifficulty, gcTerrain, gcContainer,
-                iconOverlayFactory, mapViewBitmapCopier, iconRenderer).set(geocache);
+        new GeocacheViewer(radar, activity, name, gcTypeImageView, gcDifficulty, gcTerrain,
+                gcContainer, iconOverlayFactory, mapViewBitmapCopier, iconRenderer, null)
+                .set(geocache);
         PowerMock.verifyAll();
     }
 }

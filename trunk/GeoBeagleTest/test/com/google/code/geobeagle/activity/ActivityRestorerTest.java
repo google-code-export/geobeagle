@@ -16,6 +16,7 @@ package com.google.code.geobeagle.activity;
 
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.activity.cachelist.CacheListActivity;
+import com.google.code.geobeagle.activity.cachelist.GeoBeagleTest;
 import com.google.code.geobeagle.activity.cachelist.GeocacheListController;
 import com.google.code.geobeagle.activity.main.GeoBeagle;
 import com.google.code.geobeagle.activity.main.GeocacheFromPreferencesFactory;
@@ -30,13 +31,14 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest( {
-        Intent.class, ActivityRestorer.class
+        Intent.class, ActivityRestorer.class, Log.class
 })
 
-public class ActivityRestorerTest {
+public class ActivityRestorerTest extends GeoBeagleTest {
     @Test
     public void createCacheListIntent() throws Exception {
         SharedPreferences sharedPreferences = PowerMock.createMock(SharedPreferences.class);
@@ -130,7 +132,6 @@ public class ActivityRestorerTest {
         EasyMock.expect(intent.putExtra("geocache", geocache)).andReturn(intent);
         EasyMock.expect(intent.setAction(GeocacheListController.SELECT_CACHE)).andReturn(intent);
         parent.startActivity(intent);
-        parent.finish();
 
         PowerMock.replayAll();
         new ActivityRestorer(parent, geocacheFromPreferencesFactory, sharedPreferences)

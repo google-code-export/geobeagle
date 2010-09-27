@@ -23,6 +23,7 @@ import static org.powermock.api.easymock.PowerMock.verifyAll;
 import com.google.code.geobeagle.ErrorDisplayer;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.cachelist.GeoBeagleTest;
+import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh.UpdateFlag;
 import com.google.code.geobeagle.bcaching.communication.BCachingException;
 import com.google.code.geobeagle.bcaching.progress.ProgressHandler;
 import com.google.code.geobeagle.bcaching.progress.ProgressManager;
@@ -47,6 +48,7 @@ public class ImportBCachingWorkerTest extends GeoBeagleTest {
     private ProgressHandler progressHandler;
     private ProgressManager progressManager;
     private CacheListCursor cursor;
+    private UpdateFlag updateFlag;
 
     @Before
     public void setUp() {
@@ -56,24 +58,29 @@ public class ImportBCachingWorkerTest extends GeoBeagleTest {
         progressManager = createMock(ProgressManager.class);
         errorDisplayer = createMock(ErrorDisplayer.class);
         detailsReaderImport = createMock(DetailsReaderImport.class);
+        updateFlag = createMock(UpdateFlag.class);
         cursor = createMock(CacheListCursor.class);
     }
 
     @Test
     public void testWorkerNoCaches() throws BCachingException {
+        updateFlag.setUpdatesEnabled(false);
         progressManager.update(progressHandler, ProgressMessage.START, 0);
         expect(cursor.open()).andReturn(false);
         progressManager.update(progressHandler, ProgressMessage.DONE, 0);
         progressManager.update(progressHandler, ProgressMessage.REFRESH, 0);
+        updateFlag.setUpdatesEnabled(true);
 
         replayAll();
-        new ImportBCachingWorker(progressHandler, progressManager, null, null, null,
-                cursor).run();
+        ImportBCachingWorker importBCachingWorker = new ImportBCachingWorker(progressHandler,
+                progressManager, null, null, null, cursor, updateFlag);
+        importBCachingWorker.run();
         verifyAll();
     }
 
     @Test
     public void testWorkerOneChunk() throws BCachingException {
+        updateFlag.setUpdatesEnabled(false);
         progressManager.update(progressHandler, ProgressMessage.START, 0);
         expect(cursor.open()).andReturn(true);
 
@@ -83,33 +90,38 @@ public class ImportBCachingWorkerTest extends GeoBeagleTest {
         cursor.increment();
         expect(cursor.readCaches()).andReturn(false);
         cursor.close();
+        updateFlag.setUpdatesEnabled(true);
 
         progressManager.update(progressHandler, ProgressMessage.REFRESH, 0);
         progressManager.update(progressHandler, ProgressMessage.DONE, 0);
 
         replayAll();
         new ImportBCachingWorker(progressHandler, progressManager, null, detailsReaderImport, null,
-                cursor).run();
+                cursor, updateFlag).run();
         verifyAll();
     }
 
     @Test
     public void testWorkerRaise() throws BCachingException {
+        updateFlag.setUpdatesEnabled(false);
         progressManager.update(progressHandler, ProgressMessage.START, 0);
         expect(cursor.open())
                 .andThrow(new BCachingException("io exception"));
         progressManager.update(progressHandler, ProgressMessage.REFRESH, 0);
         progressManager.update(progressHandler, ProgressMessage.DONE, 0);
         errorDisplayer.displayError(R.string.problem_importing_from_bcaching, "io exception");
+        updateFlag.setUpdatesEnabled(true);
 
         replayAll();
-        new ImportBCachingWorker(progressHandler, progressManager, errorDisplayer, null, null,
-                cursor).run();
+        ImportBCachingWorker importBCachingWorker = new ImportBCachingWorker(progressHandler,
+                progressManager, errorDisplayer, null, null, cursor, updateFlag);
+        importBCachingWorker.run();
         verifyAll();
     }
 
     @Test
     public void testWorkerTwoChunks() throws BCachingException {
+        updateFlag.setUpdatesEnabled(false);
         progressManager.update(progressHandler, ProgressMessage.START, 0);
         expect(cursor.open()).andReturn(true);
 
@@ -122,15 +134,16 @@ public class ImportBCachingWorkerTest extends GeoBeagleTest {
         expect(cursor.getCacheIds()).andReturn("4,5,6");
         expect(detailsReaderImport.loadCacheDetails("4,5,6")).andReturn(true);
         cursor.increment();
-        
+
         expect(cursor.readCaches()).andReturn(false);
         cursor.close();
         progressManager.update(progressHandler, ProgressMessage.REFRESH, 0);
         progressManager.update(progressHandler, ProgressMessage.DONE, 0);
+        updateFlag.setUpdatesEnabled(true);
 
         replayAll();
         new ImportBCachingWorker(progressHandler, progressManager, null, detailsReaderImport, null,
-                cursor).run();
+                cursor, updateFlag).run();
         verifyAll();
     }
 }
