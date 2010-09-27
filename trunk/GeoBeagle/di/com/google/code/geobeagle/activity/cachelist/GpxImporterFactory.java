@@ -27,15 +27,12 @@ import com.google.code.geobeagle.xmlimport.XmlPullParserWrapper;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 
-import android.content.Context;
-
 public class GpxImporterFactory {
 
     private final Aborter mAborter;
     private final CachePersisterFacadeFactory mCachePersisterFacadeFactory;
     private final ErrorDisplayer mErrorDisplayer;
     private final GeocacheListPresenter mGeocacheListPresenter;
-    private final Context mContext;
     private final MessageHandler mMessageHandler;
     private final XmlPullParserWrapper mXmlPullParserWrapper;
     private final Injector mInjector;
@@ -45,7 +42,7 @@ public class GpxImporterFactory {
     @Inject
     public GpxImporterFactory(Aborter aborter,
             CachePersisterFacadeFactory cachePersisterFacadeFactory, ErrorDisplayer errorDisplayer,
-            GeocacheListPresenter geocacheListPresenter, Context context,
+            GeocacheListPresenter geocacheListPresenter,
             MessageHandler messageHandler,
             XmlPullParserWrapper xmlPullParserWrapper,
             CacheWriter cacheWriter,
@@ -55,7 +52,6 @@ public class GpxImporterFactory {
         mCachePersisterFacadeFactory = cachePersisterFacadeFactory;
         mErrorDisplayer = errorDisplayer;
         mGeocacheListPresenter = geocacheListPresenter;
-        mContext = context;
         mMessageHandler = messageHandler;
         mXmlPullParserWrapper = xmlPullParserWrapper;
         mCacheWriter = cacheWriter;
@@ -64,7 +60,7 @@ public class GpxImporterFactory {
     }
 
     public GpxImporter create() {
-        return GpxImporterDI.create(mContext, mXmlPullParserWrapper, mErrorDisplayer,
+        return GpxImporterDI.create(mXmlPullParserWrapper, mErrorDisplayer,
                 mGeocacheListPresenter, mAborter, mMessageHandler, mCachePersisterFacadeFactory,
                 mCacheWriter, mGpxWriter, mInjector);
     }
