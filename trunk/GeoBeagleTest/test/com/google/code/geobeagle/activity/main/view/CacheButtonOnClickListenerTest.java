@@ -17,7 +17,6 @@ package com.google.code.geobeagle.activity.main.view;
 import com.google.code.geobeagle.ErrorDisplayer;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.main.intents.IntentStarter;
-import com.google.code.geobeagle.activity.main.view.OnClickListenerIntentStarter;
 
 import org.easymock.EasyMock;
 import org.junit.Test;
