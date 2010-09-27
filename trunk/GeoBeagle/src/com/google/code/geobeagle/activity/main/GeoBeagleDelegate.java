@@ -27,6 +27,7 @@ import com.google.code.geobeagle.activity.main.view.GeocacheViewer;
 import com.google.code.geobeagle.activity.main.view.WebPageMenuEnabler;
 import com.google.code.geobeagle.database.DbFrontend;
 import com.google.code.geobeagle.database.LocationSaver;
+import com.google.code.geobeagle.shakewaker.ShakeWaker;
 import com.google.code.geobeagle.xmlimport.GeoBeagleEnvironment;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
@@ -53,16 +54,19 @@ public class GeoBeagleDelegate {
         private final RadarView radarView;
         private final SharedPreferences sharedPreferences;
         private final CompassListener compassListener;
+        private final ShakeWaker shakeWaker;
 
         @Inject
         GeoBeagleSensors(SensorManager sensorManager,
                 RadarView radarView,
                 SharedPreferences sharedPreferences,
-                CompassListener compassListener) {
+                CompassListener compassListener,
+                ShakeWaker shakeWaker) {
             this.sensorManager = sensorManager;
             this.radarView = radarView;
             this.sharedPreferences = sharedPreferences;
             this.compassListener = compassListener;
+            this.shakeWaker = shakeWaker;
         }
 
         public void registerSensors() {
@@ -72,11 +76,14 @@ public class GeoBeagleDelegate {
                     SensorManager.SENSOR_DELAY_UI);
             sensorManager.registerListener(compassListener, SensorManager.SENSOR_ORIENTATION,
                     SensorManager.SENSOR_DELAY_UI);
+            shakeWaker.register();
+
         }
 
         public void unregisterSensors() {
             sensorManager.unregisterListener(radarView);
             sensorManager.unregisterListener(compassListener);
+            shakeWaker.unregister();
         }
     }
 
