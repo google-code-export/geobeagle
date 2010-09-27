@@ -21,12 +21,14 @@ import com.google.code.geobeagle.xmlimport.gpx.IGpxReaderIter;
 public class GpxFileOpener {
     public class GpxFileIter implements IGpxReaderIter {
 
+        @Override
         public boolean hasNext() {
             if (mAborter.isAborted())
                 return false;
             return mFilename != null;
         }
 
+        @Override
         public IGpxReader next() {
             final IGpxReader gpxReader = new GpxReader(mFilename);
             mFilename = null;
