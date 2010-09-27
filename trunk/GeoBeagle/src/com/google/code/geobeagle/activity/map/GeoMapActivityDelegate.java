@@ -95,6 +95,12 @@ public class GeoMapActivityDelegate {
         mMenuActions = menuActions;
     }
 
+    // For testing.
+    public GeoMapActivityDelegate(GeoMapView geoMapView, MenuActions menuActions) {
+        this.mMapView = geoMapView;
+        this.mMenuActions = menuActions;
+    }
+
     public boolean onCreateOptionsMenu(Menu menu) {
         return mMenuActions.onCreateOptionsMenu(menu);
     }
