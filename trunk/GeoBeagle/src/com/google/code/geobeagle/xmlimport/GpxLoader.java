@@ -18,11 +18,11 @@ import com.google.code.geobeagle.ErrorDisplayer;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.xmlimport.GpxToCache.CancelException;
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 
 import org.xmlpull.v1.XmlPullParserException;
 
 import android.database.sqlite.SQLiteException;
-import android.os.PowerManager.WakeLock;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -33,18 +33,18 @@ public class GpxLoader {
     private final ImportCacheActions mCachePersisterFacade;
     private final ErrorDisplayer mErrorDisplayer;
     private final GpxToCache mGpxToCache;
-    private final WakeLock mWakeLock;
+    private final Provider<ImportWakeLock> mImportWakeLockProvider;
     public static final int WAKELOCK_DURATION = 15000;
 
     @Inject
     public GpxLoader(ImportCacheActions importCacheActions,
             ErrorDisplayer errorDisplayer,
             GpxToCache gpxToCache,
-            WakeLock wakeLock) {
+            Provider<ImportWakeLock> importWakeLockProvider) {
         mGpxToCache = gpxToCache;
         mCachePersisterFacade = importCacheActions;
         mErrorDisplayer = errorDisplayer;
-        mWakeLock = wakeLock;
+        mImportWakeLockProvider = importWakeLockProvider;
     }
 
     public void abort() {
@@ -63,7 +63,7 @@ public class GpxLoader {
         boolean markLoadAsComplete = false;
         boolean continueLoading = false;
         try {
-            mWakeLock.acquire(WAKELOCK_DURATION);
+            mImportWakeLockProvider.get().acquire(WAKELOCK_DURATION);
             boolean alreadyLoaded = mGpxToCache.load(eventHelper, eventHandler,
                     mCachePersisterFacade);
             markLoadAsComplete = !alreadyLoaded;

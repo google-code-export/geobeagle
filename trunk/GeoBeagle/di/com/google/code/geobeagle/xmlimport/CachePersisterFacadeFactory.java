@@ -24,8 +24,6 @@ import com.google.code.geobeagle.xmlimport.GpxImporterDI.MessageHandler;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
-import android.os.PowerManager.WakeLock;
-
 public class CachePersisterFacadeFactory {
     private final CacheTypeFactory mCacheTypeFactory;
     private final TagWriter mTagWriter;
@@ -45,11 +43,12 @@ public class CachePersisterFacadeFactory {
 
     public ImportCacheActions create(CacheWriter cacheWriter,
             GpxWriter gpxWriter,
-            WakeLock wakeLock,
+            ImportWakeLock importWakeLock,
             GeoBeagleEnvironment geoBeagleEnvironment) {
         final CacheTagSqlWriter cacheTagSqlWriter = new CacheTagSqlWriter(cacheWriter, gpxWriter,
                 mCacheTypeFactory, mTagWriter, mClearCachesFromSource);
-        return new ImportCacheActions(cacheTagSqlWriter, mMessageHandlerProvider.get(), wakeLock,
+        return new ImportCacheActions(cacheTagSqlWriter, mMessageHandlerProvider.get(),
+                importWakeLock,
                 geoBeagleEnvironment);
     }
 }
