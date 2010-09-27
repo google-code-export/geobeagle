@@ -20,13 +20,11 @@ import com.google.code.geobeagle.xmlimport.CachePersisterFacadeDI.CachePersister
 import com.google.code.geobeagle.xmlimport.GpxImporter;
 import com.google.code.geobeagle.xmlimport.GpxImporterDI;
 import com.google.code.geobeagle.xmlimport.GpxImporterDI.MessageHandler;
-import com.google.code.geobeagle.xmlimport.GpxToCache.Aborter;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 
 public class GpxImporterFactory {
 
-    private final Aborter mAborter;
     private final CachePersisterFacadeFactory mCachePersisterFacadeFactory;
     private final MessageHandler mMessageHandler;
     private final Injector mInjector;
@@ -34,13 +32,12 @@ public class GpxImporterFactory {
     private final GpxWriter mGpxWriter;
 
     @Inject
-    public GpxImporterFactory(Aborter aborter,
+    public GpxImporterFactory(
             CachePersisterFacadeFactory cachePersisterFacadeFactory,
             MessageHandler messageHandler,
             CacheWriter cacheWriter,
             GpxWriter gpxWriter,
             Injector injector) {
-        mAborter = aborter;
         mCachePersisterFacadeFactory = cachePersisterFacadeFactory;
         mMessageHandler = messageHandler;
         mCacheWriter = cacheWriter;
@@ -49,7 +46,7 @@ public class GpxImporterFactory {
     }
 
     public GpxImporter create() {
-        return GpxImporterDI.create(mAborter, mMessageHandler, mCachePersisterFacadeFactory,
+        return GpxImporterDI.create(mMessageHandler, mCachePersisterFacadeFactory,
                 mCacheWriter, mGpxWriter, mInjector);
     }
 }
