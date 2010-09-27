@@ -330,8 +330,7 @@ public class GpxImporterDI {
         }
     }
 
-    public static GpxImporter create(
-            MessageHandlerInterface messageHandler, CachePersisterFacadeFactory cachePersisterFacadeFactory,
+    public static GpxImporter create(CachePersisterFacadeFactory cachePersisterFacadeFactory,
             CacheWriter cacheWriter,
             GpxWriter gpxWriter,
             Injector injector) {
@@ -353,6 +352,7 @@ public class GpxImporterDI {
         final GpxLoader gpxLoader = GpxLoaderDI.create(importCacheActions, xmlPullParserWrapper,
                 aborter, errorDisplayer, wakeLock, gpxWriter);
         final ToastFactory toastFactory = new ToastFactory();
+        final MessageHandler messageHandler = injector.getInstance(MessageHandler.class);
         final ImportThreadWrapper importThreadWrapper = new ImportThreadWrapper(messageHandler,
                 xmlPullParserWrapper, aborter);
         final EventHandlerGpx eventHandlerGpx = new EventHandlerGpx();
