@@ -44,8 +44,8 @@ public class GpxFileOpener {
         }
     }
 
-    private Aborter mAborter;
-    private String mFilename;
+    private final Aborter mAborter;
+    private final String mFilename;
 
     public GpxFileOpener(String filename, Aborter aborter) {
         mFilename = filename;
