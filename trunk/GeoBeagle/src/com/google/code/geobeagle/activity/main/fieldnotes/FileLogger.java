@@ -27,7 +27,7 @@ import java.util.Date;
 
 /**
  * Writes lines formatted like:
- * 
+ *
  * <pre>
  * GC1FX1A,2008-09-27T21:04Z, Found it,&quot;log text&quot;
  * </pre>
@@ -38,7 +38,7 @@ public class FileLogger implements ICacheLogger {
     private final FieldnoteStringsFVsDnf mFieldnoteStringsFVsDnf;
     private final DateFormatter mSimpleDateFormat;
     private final GeoBeagleEnvironment mGeoBeagleEnvironment;
-    
+
     @Inject
     public FileLogger(FieldnoteStringsFVsDnf fieldnoteStringsFVsDnf,
             DateFormatter simpleDateFormat, ToasterFactory toasterFactory,
