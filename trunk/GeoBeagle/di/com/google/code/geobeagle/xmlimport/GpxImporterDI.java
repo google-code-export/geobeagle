@@ -331,7 +331,6 @@ public class GpxImporterDI {
     }
 
     public static GpxImporter create(
-            Aborter aborter,
             MessageHandlerInterface messageHandler, CachePersisterFacadeFactory cachePersisterFacadeFactory,
             CacheWriter cacheWriter,
             GpxWriter gpxWriter,
@@ -350,6 +349,7 @@ public class GpxImporterDI {
 
         XmlPullParserWrapper xmlPullParserWrapper = injector
                 .getInstance(XmlPullParserWrapper.class);
+        final Aborter aborter = injector.getInstance(Aborter.class);
         final GpxLoader gpxLoader = GpxLoaderDI.create(importCacheActions, xmlPullParserWrapper,
                 aborter, errorDisplayer, wakeLock, gpxWriter);
         final ToastFactory toastFactory = new ToastFactory();
