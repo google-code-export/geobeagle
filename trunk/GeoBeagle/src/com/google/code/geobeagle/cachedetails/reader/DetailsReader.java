@@ -14,8 +14,64 @@
 
 package com.google.code.geobeagle.cachedetails.reader;
 
+import com.google.code.geobeagle.R;
+import com.google.code.geobeagle.cachedetails.StringWriterWrapper;
+import com.google.code.geobeagle.xmlimport.EventHandlerGpx;
+import com.google.code.geobeagle.xmlimport.EventHelper;
 import com.google.code.geobeagle.xmlimport.ICachePersisterFacade;
+import com.google.code.geobeagle.xmlimport.XmlPullParserWrapper;
 
-public interface DetailsReader {
-    String read(ICachePersisterFacade cpf);
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
+
+import android.app.Activity;
+
+import java.io.IOException;
+import java.io.Reader;
+
+public class DetailsReader {
+    private final Activity mActivity;
+    private final EventHandlerGpx mEventHandlerGpx;
+    private final EventHelper mEventHelper;
+    private final String mPath;
+    private final Reader mReader;
+    private final StringWriterWrapper mStringWriterWrapper;
+    private final XmlPullParserWrapper mXmlPullParserWrapper;
+
+    public DetailsReader(Activity activity,
+            Reader fileReader,
+            String path,
+            EventHelper eventHelper,
+            EventHandlerGpx eventHandlerGpx,
+            XmlPullParserWrapper xmlPullParserWrapper,
+            StringWriterWrapper stringWriterWrapper) {
+        mActivity = activity;
+        mPath = path;
+        mEventHelper = eventHelper;
+        mEventHandlerGpx = eventHandlerGpx;
+        mXmlPullParserWrapper = xmlPullParserWrapper;
+        mReader = fileReader;
+        mStringWriterWrapper = stringWriterWrapper;
+    }
+
+    public String read(ICachePersisterFacade cachePersisterFacade) {
+        try {
+            mEventHelper.open(mPath, mEventHandlerGpx);
+            mXmlPullParserWrapper.open(mPath, mReader);
+            int eventType;
+            for (eventType = mXmlPullParserWrapper.getEventType(); eventType != XmlPullParser.END_DOCUMENT; eventType = mXmlPullParserWrapper
+                    .next()) {
+                mEventHelper.handleEvent(eventType, mEventHandlerGpx, cachePersisterFacade);
+            }
+
+            // Pick up END_DOCUMENT event as well.
+            mEventHelper.handleEvent(eventType, mEventHandlerGpx, cachePersisterFacade);
+
+            return mStringWriterWrapper.getString();
+        } catch (XmlPullParserException e) {
+            return mActivity.getString(R.string.error_reading_details_file, mPath);
+        } catch (IOException e) {
+            return mActivity.getString(R.string.error_reading_details_file, mPath);
+        }
+    }
 }

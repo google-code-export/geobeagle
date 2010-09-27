@@ -19,9 +19,8 @@ import static org.powermock.api.easymock.PowerMock.createMock;
 import static org.powermock.api.easymock.PowerMock.replayAll;
 import static org.powermock.api.easymock.PowerMock.verifyAll;
 
-import com.google.code.geobeagle.cachedetails.DetailsActivity;
-import com.google.code.geobeagle.cachedetails.DetailsWebView;
 import com.google.code.geobeagle.cacheloader.CacheDetailsLoader;
+import com.google.code.geobeagle.cacheloader.CacheLoaderException;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -35,7 +34,7 @@ import android.webkit.WebView;
 public class DetailsWebViewTest {
 
     @Test
-    public void testDetailsWebView() {
+    public void testDetailsWebView() throws CacheLoaderException {
         CacheDetailsLoader cacheDetailsLoader = createMock(CacheDetailsLoader.class);
         WebView webView = createMock(WebView.class);
         Intent intent = createMock(Intent.class);
@@ -52,7 +51,7 @@ public class DetailsWebViewTest {
         webView.loadDataWithBaseURL(null, "<html>details</html>", "text/html", "utf-8", null);
 
         replayAll();
-        DetailsWebView detailsWebView = new DetailsWebView(cacheDetailsLoader);
+        DetailsWebView detailsWebView = new DetailsWebView(cacheDetailsLoader, null);
         detailsWebView.loadDetails(webView, intent);
         verifyAll();
     }

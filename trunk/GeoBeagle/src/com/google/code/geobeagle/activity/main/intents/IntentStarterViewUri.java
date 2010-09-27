@@ -17,6 +17,7 @@ package com.google.code.geobeagle.activity.main.intents;
 import com.google.code.geobeagle.ErrorDisplayer;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.main.GeoBeagle;
+import com.google.code.geobeagle.cacheloader.CacheLoaderException;
 import com.google.inject.Inject;
 
 import android.app.Activity;
@@ -39,11 +40,15 @@ public class IntentStarterViewUri implements IntentStarter {
 
     @Override
     public void startIntent() {
-        String uri = mGeocacheToUri.convert(mGeoBeagle.getGeocache());
         try {
-            mGeoBeagle.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(uri)));
-        } catch (ActivityNotFoundException e) {
-            mErrorDisplayer.displayError(R.string.no_intent_handler, uri);
+            String uri = mGeocacheToUri.convert(mGeoBeagle.getGeocache());
+            try {
+                mGeoBeagle.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(uri)));
+            } catch (ActivityNotFoundException e) {
+                mErrorDisplayer.displayError(R.string.no_intent_handler, uri);
+            }
+        } catch (CacheLoaderException e) {
+            mErrorDisplayer.displayError(e.getError(), e.getArgs());
         }
     }
 }

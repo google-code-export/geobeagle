@@ -15,24 +15,33 @@
 package com.google.code.geobeagle.cachedetails;
 
 import com.google.code.geobeagle.cacheloader.CacheDetailsLoader;
+import com.google.code.geobeagle.cacheloader.CacheLoaderException;
 import com.google.inject.Inject;
 
 import android.content.Intent;
+import android.content.res.Resources;
 import android.webkit.WebView;
 
 class DetailsWebView {
     private final CacheDetailsLoader cacheDetailsLoader;
+    private final Resources resources;
 
     @Inject
-    DetailsWebView(CacheDetailsLoader cacheDetailsLoader) {
+    DetailsWebView(CacheDetailsLoader cacheDetailsLoader, Resources resources) {
         this.cacheDetailsLoader = cacheDetailsLoader;
+        this.resources = resources;
     }
 
     String loadDetails(WebView webView, Intent intent) {
         webView.getSettings().setJavaScriptEnabled(true);
         String sourceName = intent.getStringExtra(DetailsActivity.INTENT_EXTRA_GEOCACHE_SOURCE);
         String id = intent.getStringExtra(DetailsActivity.INTENT_EXTRA_GEOCACHE_ID);
-        String details = cacheDetailsLoader.load(sourceName, id);
+        String details;
+        try {
+            details = cacheDetailsLoader.load(sourceName, id);
+        } catch (CacheLoaderException e) {
+            details = resources.getString(e.getError(), e.getArgs());
+        }
         webView.loadDataWithBaseURL(null, details, "text/html", "utf-8", null);
         return id + ": " + intent.getStringExtra(DetailsActivity.INTENT_EXTRA_GEOCACHE_NAME);
     }
