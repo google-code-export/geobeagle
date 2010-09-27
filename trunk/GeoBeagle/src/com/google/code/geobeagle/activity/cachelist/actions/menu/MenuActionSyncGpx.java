@@ -15,9 +15,9 @@
 package com.google.code.geobeagle.activity.cachelist.actions.menu;
 
 import com.google.code.geobeagle.actions.Action;
-import com.google.code.geobeagle.activity.cachelist.GpxImporterFactory;
 import com.google.code.geobeagle.bcaching.ImportBCachingWorker;
 import com.google.code.geobeagle.xmlimport.GpxImporter;
+import com.google.code.geobeagle.xmlimport.GpxImporterFactory;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Provider;
