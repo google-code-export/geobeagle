@@ -39,13 +39,18 @@ public class GpxImporterFactory {
     private final MessageHandler mMessageHandler;
     private final XmlPullParserWrapper mXmlPullParserWrapper;
     private final Injector mInjector;
+    private final CacheWriter mCacheWriter;
+    private final GpxWriter mGpxWriter;
 
     @Inject
     public GpxImporterFactory(Aborter aborter,
             CachePersisterFacadeFactory cachePersisterFacadeFactory, ErrorDisplayer errorDisplayer,
             GeocacheListPresenter geocacheListPresenter, Context context,
             MessageHandler messageHandler,
-            XmlPullParserWrapper xmlPullParserWrapper, Injector injector) {
+            XmlPullParserWrapper xmlPullParserWrapper,
+            CacheWriter cacheWriter,
+            GpxWriter gpxWriter,
+            Injector injector) {
         mAborter = aborter;
         mCachePersisterFacadeFactory = cachePersisterFacadeFactory;
         mErrorDisplayer = errorDisplayer;
@@ -53,12 +58,14 @@ public class GpxImporterFactory {
         mContext = context;
         mMessageHandler = messageHandler;
         mXmlPullParserWrapper = xmlPullParserWrapper;
+        mCacheWriter = cacheWriter;
+        mGpxWriter = gpxWriter;
         mInjector = injector;
     }
 
-    public GpxImporter create(CacheWriter cacheWriter, GpxWriter gpxWriter) {
+    public GpxImporter create() {
         return GpxImporterDI.create(mContext, mXmlPullParserWrapper, mErrorDisplayer,
                 mGeocacheListPresenter, mAborter, mMessageHandler, mCachePersisterFacadeFactory,
-                cacheWriter, gpxWriter, mInjector);
+                mCacheWriter, mGpxWriter, mInjector);
     }
 }
