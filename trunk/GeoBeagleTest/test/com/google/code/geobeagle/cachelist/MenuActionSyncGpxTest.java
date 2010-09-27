@@ -20,10 +20,10 @@ import static org.powermock.api.easymock.PowerMock.replayAll;
 import static org.powermock.api.easymock.PowerMock.verifyAll;
 
 import com.google.code.geobeagle.activity.cachelist.GeoBeagleTest;
-import com.google.code.geobeagle.activity.cachelist.GpxImporterFactory;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionSyncGpx;
 import com.google.code.geobeagle.bcaching.ImportBCachingWorker;
 import com.google.code.geobeagle.xmlimport.GpxImporter;
+import com.google.code.geobeagle.xmlimport.GpxImporterFactory;
 import com.google.inject.Provider;
 
 import org.junit.Before;

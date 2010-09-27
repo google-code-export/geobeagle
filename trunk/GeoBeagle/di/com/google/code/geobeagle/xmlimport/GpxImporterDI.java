@@ -17,16 +17,12 @@ package com.google.code.geobeagle.xmlimport;
 import com.google.code.geobeagle.ErrorDisplayer;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh.UpdateFlag;
-import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheListPresenter;
 import com.google.code.geobeagle.bcaching.BCachingModule;
 import com.google.code.geobeagle.bcaching.ImportBCachingWorker;
 import com.google.code.geobeagle.bcaching.preferences.BCachingStartTime;
 import com.google.code.geobeagle.cachedetails.FileDataVersionChecker;
 import com.google.code.geobeagle.cachedetails.FileDataVersionWriter;
-import com.google.code.geobeagle.database.CacheWriter;
 import com.google.code.geobeagle.database.DbFrontend;
-import com.google.code.geobeagle.database.GpxWriter;
-import com.google.code.geobeagle.xmlimport.CachePersisterFacadeDI.CachePersisterFacadeFactory;
 import com.google.code.geobeagle.xmlimport.EventHelperDI.EventHelperFactory;
 import com.google.code.geobeagle.xmlimport.GpxToCache.Aborter;
 import com.google.code.geobeagle.xmlimport.ImportThreadDelegate.ImportThreadHelper;
@@ -47,13 +43,10 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.Message;
-import android.os.PowerManager;
-import android.os.PowerManager.WakeLock;
 import android.util.Log;
 import android.widget.Toast;
 
 import java.io.FilenameFilter;
-import java.util.Arrays;
 
 public class GpxImporterDI {
     // Can't test this due to final methods in base.
@@ -328,46 +321,6 @@ public class GpxImporterDI {
         public void showToast() {
             Toast.makeText(mContext, mResId, mDuration).show();
         }
-    }
-
-    public static GpxImporter create(Injector injector) {
-        final ErrorDisplayer errorDisplayer = injector.getInstance(ErrorDisplayer.class);
-        final Context context = injector.getInstance(Context.class);
-        final PowerManager powerManager = (PowerManager)context
-                .getSystemService(Context.POWER_SERVICE);
-        final WakeLock wakeLock = powerManager.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK,
-                "Importing");
-
-        final GeoBeagleEnvironment geoBeagleEnvironment = injector
-                .getInstance(GeoBeagleEnvironment.class);
-        final CachePersisterFacadeFactory cachePersisterFacadeFactory = injector
-                .getInstance(CachePersisterFacadeFactory.class);
-        final CacheWriter cacheWriter = injector.getInstance(CacheWriter.class);
-        final GpxWriter gpxWriter = injector.getInstance(GpxWriter.class);
-        final ImportCacheActions importCacheActions = cachePersisterFacadeFactory.create(
-                cacheWriter, gpxWriter, wakeLock, geoBeagleEnvironment);
-
-        final XmlPullParserWrapper xmlPullParserWrapper = injector
-                .getInstance(XmlPullParserWrapper.class);
-        final Aborter aborter = injector.getInstance(Aborter.class);
-        final GpxLoader gpxLoader = GpxLoaderDI.create(importCacheActions, xmlPullParserWrapper,
-                aborter, errorDisplayer, wakeLock, gpxWriter);
-        final ToastFactory toastFactory = new ToastFactory();
-        final MessageHandler messageHandler = injector.getInstance(MessageHandler.class);
-        final ImportThreadWrapper importThreadWrapper = new ImportThreadWrapper(messageHandler,
-                xmlPullParserWrapper, aborter);
-        final EventHandlerGpx eventHandlerGpx = new EventHandlerGpx();
-        final XmlWriter xmlWriter = injector.getInstance(XmlWriter.class);
-
-        final EventHandlerComposite eventHandlerComposite = new EventHandlerComposite(Arrays
-                .asList(xmlWriter, eventHandlerGpx));
-        final GeocacheListPresenter geocacheListPresenter = injector
-                .getInstance(GeocacheListPresenter.class);
-        return new GpxImporter(geocacheListPresenter , gpxLoader,
-                injector.getProvider(Context.class),
-                importThreadWrapper,
-                messageHandler, toastFactory, eventHandlerComposite, errorDisplayer,
-                injector.getProvider(CacheListRefresh.class), injector);
     }
 
 }
