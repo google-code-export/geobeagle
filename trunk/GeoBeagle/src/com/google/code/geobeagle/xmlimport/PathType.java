@@ -259,6 +259,14 @@ enum PathType {
             cachePersisterFacade.logFinder(text);
             return true;
         }
+    },
+    GPX_URL {
+        @Override
+        public boolean text(String text, CachePersisterFacade cachePersisterFacade)
+                throws IOException {
+            cachePersisterFacade.url(text);
+            return true;
+        }
     };
 
     @SuppressWarnings("unused")

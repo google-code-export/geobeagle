@@ -111,4 +111,8 @@ public class CacheTagsToDetails extends CachePersisterFacade {
     public void logFinder(String text) {
         cacheDetailsWriter.writeLogFinder(text);
     }
+
+    @Override
+    public void url(String text) {
+    }
 }

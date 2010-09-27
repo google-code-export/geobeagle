@@ -175,10 +175,10 @@ public class CacheDetailsLoaderTest {
         expectNew(File.class, "/sdcard/details/foo.gpx/GC123.html").andReturn(file);
         expect(detailsOpener.open(file)).andReturn(detailsReader);
         expect(detailsReader.read(cacheTagsToDetails)).andReturn("cache details");
-
+        stringWriterWrapper.open(null);
         replayAll();
         assertEquals("cache details", new CacheDetailsLoader(detailsOpener, filePathStrategy,
-                cacheTagsToDetails).load("foo.gpx", "GC123"));
+                cacheTagsToDetails, stringWriterWrapper).load("foo.gpx", "GC123"));
         verifyAll();
     }
 }
