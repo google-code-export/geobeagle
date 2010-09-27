@@ -21,6 +21,7 @@ import com.google.code.geobeagle.activity.cachelist.actions.menu.Abortable;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
 import com.google.code.geobeagle.xmlimport.GpxImporterDI.ImportThreadWrapper;
 import com.google.code.geobeagle.xmlimport.GpxImporterDI.ToastFactory;
+import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Provider;
 
@@ -40,6 +41,7 @@ public class GpxImporter implements Abortable {
     private final Provider<CacheListRefresh> mCacheListRefreshProvider;
     private final Injector mInjector;
 
+    @Inject
     GpxImporter(Pausable geocacheListPresenter,
             GpxLoader gpxLoader,
             Provider<Context> contextProvider,
