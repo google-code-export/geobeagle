@@ -33,18 +33,13 @@ import org.powermock.api.easymock.PowerMock;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import android.app.ListActivity;
-import android.os.Handler;
 import android.util.Log;
-import android.widget.TextView;
 
-import java.util.Calendar;
-
-@PrepareForTest( {
-        Handler.class, ListActivity.class, Log.class, CacheListRefresh.class, TextView.class,
-        Timing.class, Calendar.class
+@PrepareForTest({
+    Log.class
 })
 @RunWith(PowerMockRunner.class)
+
 public class CacheListRefreshTest extends GeoBeagleTest {
 
     private Timing mTiming;
