@@ -23,7 +23,6 @@ import com.google.code.geobeagle.activity.cachelist.GeoBeagleTest;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionSyncGpx;
 import com.google.code.geobeagle.bcaching.ImportBCachingWorker;
 import com.google.code.geobeagle.xmlimport.GpxImporter;
-import com.google.code.geobeagle.xmlimport.GpxImporterFactory;
 import com.google.inject.Provider;
 
 import org.junit.Before;
@@ -34,7 +33,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 @RunWith(PowerMockRunner.class)
 public class MenuActionSyncGpxTest extends GeoBeagleTest {
     private Provider<ImportBCachingWorker> importBCachingWorkerProvider;
-    private GpxImporterFactory gpxImporterFactory;
+    private Provider<GpxImporter> gpxImporterProvider;
     private GpxImporter gpxImporter;
     private ImportBCachingWorker importBCachingWorker;
     private MenuActionSyncGpx menuActionSyncGpx;
@@ -43,16 +42,16 @@ public class MenuActionSyncGpxTest extends GeoBeagleTest {
     @SuppressWarnings("unchecked")
     public void setUp() {
         importBCachingWorkerProvider = createMock(Provider.class);
-        gpxImporterFactory = createMock(GpxImporterFactory.class);
+        gpxImporterProvider = createMock(Provider.class);
         gpxImporter = createMock(GpxImporter.class);
         importBCachingWorker = createMock(ImportBCachingWorker.class);
-        menuActionSyncGpx = new MenuActionSyncGpx(importBCachingWorkerProvider, gpxImporterFactory);
+        menuActionSyncGpx = new MenuActionSyncGpx(importBCachingWorkerProvider, gpxImporterProvider);
     }
 
     @Test
     public void testAct() {
         expect(importBCachingWorkerProvider.get()).andReturn(importBCachingWorker);
-        expect(gpxImporterFactory.create()).andReturn(gpxImporter);
+        expect(gpxImporterProvider.get()).andReturn(gpxImporter);
         gpxImporter.importGpxs();
 
         replayAll();
@@ -62,11 +61,8 @@ public class MenuActionSyncGpxTest extends GeoBeagleTest {
 
     @Test
     public void testAbort() {
-        expect(importBCachingWorkerProvider.get()).andReturn(importBCachingWorker);
-        expect(gpxImporterFactory.create()).andReturn(gpxImporter);
+        expect(gpxImporterProvider.get()).andReturn(gpxImporter);
         gpxImporter.importGpxs();
-
-        expect(gpxImporterFactory.create()).andReturn(gpxImporter).anyTimes();
         expect(importBCachingWorkerProvider.get()).andReturn(importBCachingWorker).anyTimes();
         gpxImporter.abort();
         importBCachingWorker.abort();
