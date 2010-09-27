@@ -22,6 +22,7 @@ import static org.powermock.api.easymock.PowerMock.replayAll;
 import static org.powermock.api.easymock.PowerMock.suppressConstructor;
 import static org.powermock.api.easymock.PowerMock.verifyAll;
 
+import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.cachelist.GeoBeagleTest;
 import com.google.inject.Provider;
 
@@ -33,10 +34,12 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import android.content.ContentValues;
+import android.content.Context;
 import android.util.Log;
+import android.widget.Toast;
 
 @PrepareForTest({
-        Log.class, TagStore.class, ContentValues.class
+        Log.class, TagStore.class, ContentValues.class, Toast.class
 })
 @RunWith(PowerMockRunner.class)
 public class TagWriterImplTest extends GeoBeagleTest {
@@ -66,8 +69,7 @@ public class TagWriterImplTest extends GeoBeagleTest {
         expect(filter.isVisible(false)).andReturn(true).anyTimes();
         replayAll();
 
-        TagWriter tagWriter = new TagWriter(filter, new TagStore(
-                databaseProvider));
+        TagWriter tagWriter = new TagWriter(filter, new TagStore(databaseProvider), null);
         tagWriter.add("GC123", Tag.DNF);
         assertTrue(tagWriter.hasTag("GC123", Tag.DNF));
         assertFalse(tagWriter.hasTag("GC123", Tag.FOUND));
@@ -75,13 +77,19 @@ public class TagWriterImplTest extends GeoBeagleTest {
     }
 
     @Test
-    public void testAddNotVisible() throws Exception {
+    public void testAddMakeInvisible() throws Exception {
+        Context context = PowerMock.createMock(Context.class);
+        Toast toast = PowerMock.createMock(Toast.class);
+
         expect(databaseProvider.get()).andReturn(db).anyTimes();
         expect(filter.isVisible(true)).andReturn(false).anyTimes();
+        PowerMock.mockStatic(Toast.class);
+        expect(Toast.makeText(context, R.string.removing_found_cache_from_cache_list,
+                        Toast.LENGTH_LONG)).andReturn(toast);
+        toast.show();
         replayAll();
 
-        TagWriter tagWriter = new TagWriter(filter, new TagStore(
-                databaseProvider));
+        TagWriter tagWriter = new TagWriter(filter, new TagStore(databaseProvider), context);
         tagWriter.add("GC123", Tag.FOUND);
         verifyAll();
     }
@@ -93,8 +101,7 @@ public class TagWriterImplTest extends GeoBeagleTest {
         expect(filter.isVisible(false)).andReturn(true).anyTimes();
         replayAll();
 
-        TagWriter tagWriter = new TagWriter(filter, new TagStore(
-                databaseProvider));
+        TagWriter tagWriter = new TagWriter(filter, new TagStore(databaseProvider), null);
         tagWriter.add("GC123", Tag.FOUND);
         tagWriter.add("GCabc", Tag.FOUND);
         assertTrue(tagWriter.hasTag("GC123", Tag.FOUND));
@@ -109,8 +116,7 @@ public class TagWriterImplTest extends GeoBeagleTest {
         expect(filter.isVisible(false)).andReturn(true).anyTimes();
 
         replayAll();
-        TagWriter tagWriter = new TagWriter(filter, new TagStore(
-                databaseProvider));
+        TagWriter tagWriter = new TagWriter(filter, new TagStore(databaseProvider), null);
         assertFalse(tagWriter.hasTag("GC123", Tag.FOUND));
         assertFalse(tagWriter.hasTag("GC123", Tag.DNF));
         verifyAll();
