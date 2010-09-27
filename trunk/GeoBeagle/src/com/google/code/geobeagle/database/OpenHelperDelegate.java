@@ -25,6 +25,7 @@ public class OpenHelperDelegate {
         db.execSQL(Database.SQL_CREATE_IDX_LONGITUDE);
         db.execSQL(Database.SQL_CREATE_IDX_SOURCE);
         db.execSQL(Database.SQL_CREATE_IDX_TAGS);
+        db.execSQL(Database.SQL_CREATE_IDX_VISIBLE);
     }
 
     public void onUpgrade(ISQLiteDatabase db, int oldVersion) {
@@ -57,6 +58,10 @@ public class OpenHelperDelegate {
         }
         if (oldVersion < 16) {
             db.execSQL("ALTER TABLE CACHES ADD COLUMN Visible BOOLEAN NOT NULL Default 1");
+            db.execSQL(Database.SQL_CREATE_IDX_VISIBLE);
+        }
+
+        if (oldVersion < 17) {
             db.execSQL(Database.SQL_CREATE_IDX_VISIBLE);
         }
     }
