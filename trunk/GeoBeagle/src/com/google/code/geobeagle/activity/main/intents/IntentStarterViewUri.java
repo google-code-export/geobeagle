@@ -37,6 +37,7 @@ public class IntentStarterViewUri implements IntentStarter {
         mErrorDisplayer = errorDisplayer;
     }
 
+    @Override
     public void startIntent() {
         String uri = mGeocacheToUri.convert(mGeoBeagle.getGeocache());
         try {

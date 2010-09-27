@@ -49,6 +49,7 @@ public class FileLogger implements ICacheLogger {
         mGeoBeagleEnvironment = geoBeagleEnvironment;
     }
 
+    @Override
     public void log(CharSequence geocacheId, CharSequence logText, boolean dnf) {
         try {
             OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(

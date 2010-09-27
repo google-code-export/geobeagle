@@ -28,6 +28,7 @@ public class ErrorDisplayer {
             mAlertDialogBuilder = alertDialogBuilder;
         }
 
+        @Override
         public void run() {
             mAlertDialogBuilder.create().show();
         }
