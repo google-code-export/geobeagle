@@ -15,7 +15,6 @@
 package com.google.code.geobeagle.activity.main.menuactions;
 
 import com.google.code.geobeagle.Geocache;
-import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.actions.MenuActionCacheList;
 import com.google.code.geobeagle.actions.MenuActionEditGeocache;
 import com.google.code.geobeagle.actions.MenuActionSearchOnline;
@@ -37,10 +36,9 @@ import android.app.Activity;
 import android.content.Intent;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest( {
+@PrepareForTest({
         MenuActionCacheList.class, MenuActionEditGeocache.class, MenuActionSettings.class,
-        MenuActionSearchOnline.class, MenuActionLogDnf.class, MenuActionLogFind.class,
-        Activity.class
+        MenuActionSearchOnline.class, Activity.class
 })
 public class MenuActionsTest {
 
@@ -96,30 +94,6 @@ public class MenuActionsTest {
 
         PowerMock.replayAll();
         new MenuActionEditGeocache(geobeagle).act();
-        PowerMock.verifyAll();
-    }
-
-    @Test
-    public void testMenuLogDnf() throws Exception {
-        Activity activity = PowerMock.createMock(Activity.class);
-
-        activity.showDialog(R.id.menu_log_dnf);
-
-        PowerMock.replayAll();
-        final MenuActionLogDnf menuActionLogDnf = new MenuActionLogDnf(activity);
-        menuActionLogDnf.act();
-        PowerMock.verifyAll();
-    }
-
-    @Test
-    public void testMenuLogFind() throws Exception {
-        Activity activity = PowerMock.createMock(Activity.class);
-
-        activity.showDialog(R.id.menu_log_find);
-
-        PowerMock.replayAll();
-        final MenuActionLogFind menuActionLogFind = new MenuActionLogFind(activity);
-        menuActionLogFind.act();
         PowerMock.verifyAll();
     }
 }
