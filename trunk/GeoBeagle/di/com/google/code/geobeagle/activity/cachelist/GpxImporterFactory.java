@@ -14,7 +14,6 @@
 
 package com.google.code.geobeagle.activity.cachelist;
 
-import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheListPresenter;
 import com.google.code.geobeagle.database.CacheWriter;
 import com.google.code.geobeagle.database.GpxWriter;
 import com.google.code.geobeagle.xmlimport.CachePersisterFacadeDI.CachePersisterFacadeFactory;
@@ -29,7 +28,6 @@ public class GpxImporterFactory {
 
     private final Aborter mAborter;
     private final CachePersisterFacadeFactory mCachePersisterFacadeFactory;
-    private final GeocacheListPresenter mGeocacheListPresenter;
     private final MessageHandler mMessageHandler;
     private final Injector mInjector;
     private final CacheWriter mCacheWriter;
@@ -38,14 +36,12 @@ public class GpxImporterFactory {
     @Inject
     public GpxImporterFactory(Aborter aborter,
             CachePersisterFacadeFactory cachePersisterFacadeFactory,
-            GeocacheListPresenter geocacheListPresenter,
             MessageHandler messageHandler,
             CacheWriter cacheWriter,
             GpxWriter gpxWriter,
             Injector injector) {
         mAborter = aborter;
         mCachePersisterFacadeFactory = cachePersisterFacadeFactory;
-        mGeocacheListPresenter = geocacheListPresenter;
         mMessageHandler = messageHandler;
         mCacheWriter = cacheWriter;
         mGpxWriter = gpxWriter;
@@ -53,8 +49,7 @@ public class GpxImporterFactory {
     }
 
     public GpxImporter create() {
-        return GpxImporterDI.create(
-                mGeocacheListPresenter, mAborter, mMessageHandler, mCachePersisterFacadeFactory,
+        return GpxImporterDI.create(mAborter, mMessageHandler, mCachePersisterFacadeFactory,
                 mCacheWriter, mGpxWriter, mInjector);
     }
 }
