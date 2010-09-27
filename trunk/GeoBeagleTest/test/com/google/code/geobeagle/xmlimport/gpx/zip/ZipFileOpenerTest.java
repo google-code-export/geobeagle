@@ -24,7 +24,9 @@ import com.google.code.geobeagle.xmlimport.GpxToCache.Aborter;
 import com.google.code.geobeagle.xmlimport.gpx.GpxAndZipFiles.GpxFilenameFilter;
 import com.google.code.geobeagle.xmlimport.gpx.zip.ZipFileOpener.ZipFileIter;
 import com.google.code.geobeagle.xmlimport.gpx.zip.ZipFileOpener.ZipInputFileTester;
+import com.google.inject.Provider;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.api.easymock.PowerMock;
@@ -40,27 +42,36 @@ import java.util.zip.ZipEntry;
         ZipFileIter.class, ZipFileOpener.class
 })
 public class ZipFileOpenerTest {
+    private Aborter aborter;
+    private Provider<Aborter> aborterProvider;
+
+    @Before
+    @SuppressWarnings("unchecked")
+    public void setUp() {
+        aborter = PowerMock.createMock(Aborter.class);
+        aborterProvider = PowerMock.createMock(Provider.class);
+    }
+
     @Test
     public void testZipFileIter_HasNextAborted() throws Exception {
-        Aborter aborter = PowerMock.createMock(Aborter.class);
-
+        expect(aborterProvider.get()).andReturn(aborter);
         expect(aborter.isAborted()).andReturn(true);
 
         PowerMock.replayAll();
-        assertFalse(new ZipFileIter(null, aborter, null).hasNext());
+        assertFalse(new ZipFileIter(null, aborterProvider, null).hasNext());
         PowerMock.verifyAll();
     }
 
     @Test
     public void testZipFileIter_HasNextNone() throws Exception {
         GpxZipInputStream zipInputStream = PowerMock.createMock(GpxZipInputStream.class);
-        Aborter aborter = PowerMock.createMock(Aborter.class);
+        expect(aborterProvider.get()).andReturn(aborter);
 
         expect(aborter.isAborted()).andReturn(false);
         expect(zipInputStream.getNextEntry()).andReturn(null);
 
         PowerMock.replayAll();
-        assertFalse(new ZipFileIter(zipInputStream, aborter, null).hasNext());
+        assertFalse(new ZipFileIter(zipInputStream, aborterProvider, null).hasNext());
         PowerMock.verifyAll();
     }
 
@@ -68,15 +79,16 @@ public class ZipFileOpenerTest {
     public void testZipFileIter_HasNextTrue() throws Exception {
         GpxZipInputStream zipInputStream = PowerMock.createMock(GpxZipInputStream.class);
         ZipEntry zipEntry = PowerMock.createMock(ZipEntry.class);
-        Aborter aborter = PowerMock.createMock(Aborter.class);
         ZipInputFileTester zipInputFileTester = PowerMock.createMock(ZipInputFileTester.class);
 
+        expect(aborterProvider.get()).andReturn(aborter);
         expect(aborter.isAborted()).andReturn(false);
         expect(zipInputStream.getNextEntry()).andReturn(zipEntry);
         expect(zipInputFileTester.isValid(zipEntry)).andReturn(true);
 
         PowerMock.replayAll();
-        assertTrue(new ZipFileIter(zipInputStream, aborter, zipInputFileTester, null).hasNext());
+        assertTrue(new ZipFileIter(zipInputStream, aborterProvider, zipInputFileTester, null)
+                .hasNext());
         PowerMock.verifyAll();
     }
 
@@ -87,7 +99,6 @@ public class ZipFileOpenerTest {
         ZipEntry zipEntry = PowerMock.createMock(ZipEntry.class);
         InputStreamReader inputStreamReader = PowerMock.createMock(InputStreamReader.class);
         InputStream inputStream = PowerMock.createMock(InputStream.class);
-        Aborter aborter = PowerMock.createMock(Aborter.class);
         ZipInputFileTester zipInputFileTester = PowerMock.createMock(ZipInputFileTester.class);
 
         expect(zipEntry.getName()).andReturn("foo.gpx");
@@ -96,7 +107,8 @@ public class ZipFileOpenerTest {
         PowerMock.expectNew(GpxReader.class, "foo.gpx", inputStreamReader).andReturn(gpxReader);
 
         PowerMock.replayAll();
-        ZipFileIter iter = new ZipFileIter(zipInputStream, aborter, zipInputFileTester, zipEntry);
+        ZipFileIter iter = new ZipFileIter(zipInputStream, aborterProvider, zipInputFileTester,
+                zipEntry);
         assertEquals(gpxReader, iter.next());
         PowerMock.verifyAll();
     }

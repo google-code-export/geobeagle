@@ -48,17 +48,21 @@ import android.widget.Toast;
 public class GpxImporterDI {
     // Can't test this due to final methods in base.
     public static class ImportThread extends RoboThread {
-        static ImportThread create(MessageHandlerInterface messageHandler, GpxLoader gpxLoader,
-                EventHandler eventHandler, XmlPullParserWrapper xmlPullParserWrapper,
-                ErrorDisplayer errorDisplayer, Aborter aborter, Injector injector) {
+        static ImportThread create(MessageHandlerInterface messageHandler,
+                GpxLoader gpxLoader,
+                EventHandler eventHandler,
+                XmlPullParserWrapper xmlPullParserWrapper,
+                ErrorDisplayer errorDisplayer,
+                Injector injector) {
             final GpxAndZipFilenameFilter filenameFilter = injector
                     .getInstance(GpxAndZipFilenameFilter.class);
             final ZipInputFileTester zipInputFileTester = injector
                     .getInstance(ZipInputFileTester.class);
             final GeoBeagleEnvironment geoBeagleEnvironment = injector
                     .getInstance(GeoBeagleEnvironment.class);
+            Provider<Aborter> aborterProvider = injector.getProvider(Aborter.class);
             final GpxFileIterAndZipFileIterFactory gpxFileIterAndZipFileIterFactory = new GpxFileIterAndZipFileIterFactory(
-                    zipInputFileTester, aborter, geoBeagleEnvironment);
+                    zipInputFileTester, aborterProvider, geoBeagleEnvironment);
             final SharedPreferences sharedPreferences = injector
                     .getInstance(SharedPreferences.class);
             final GpxAndZipFiles gpxAndZipFiles = new GpxAndZipFiles(filenameFilter,
@@ -105,17 +109,15 @@ public class GpxImporterDI {
 
     // Wrapper so that containers can follow the "constructors do no work" rule.
     public static class ImportThreadWrapper {
-        private final Aborter mAborter;
         private ImportThread mImportThread;
         private final MessageHandler mMessageHandler;
         private final XmlPullParserWrapper mXmlPullParserWrapper;
 
         @Inject
         public ImportThreadWrapper(MessageHandler messageHandler,
-                XmlPullParserWrapper xmlPullParserWrapper, Aborter aborter) {
+                XmlPullParserWrapper xmlPullParserWrapper) {
             mMessageHandler = messageHandler;
             mXmlPullParserWrapper = xmlPullParserWrapper;
-            mAborter = aborter;
         }
 
         public boolean isAlive() {
@@ -140,7 +142,7 @@ public class GpxImporterDI {
                 EventHandler eventHandler, ErrorDisplayer mErrorDisplayer, Injector injector) {
             mMessageHandler.start(cacheListRefresh);
             mImportThread = ImportThread.create(mMessageHandler, gpxLoader, eventHandler,
-                    mXmlPullParserWrapper, mErrorDisplayer, mAborter, injector);
+                    mXmlPullParserWrapper, mErrorDisplayer, injector);
         }
 
         public void start() {

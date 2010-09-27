@@ -20,6 +20,7 @@ import com.google.code.geobeagle.xmlimport.gpx.GpxAndZipFiles.GpxFilenameFilter;
 import com.google.code.geobeagle.xmlimport.gpx.IGpxReader;
 import com.google.code.geobeagle.xmlimport.gpx.IGpxReaderIter;
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -28,24 +29,26 @@ import java.util.zip.ZipEntry;
 public class ZipFileOpener {
 
     public static class ZipFileIter implements IGpxReaderIter {
-        private final Aborter mAborter;
+        private final Provider<Aborter> mAborterProvider;
         private ZipEntry mNextZipEntry;
         private final ZipInputFileTester mZipInputFileTester;
         private final GpxZipInputStream mZipInputStream;
 
-        ZipFileIter(GpxZipInputStream zipInputStream, Aborter aborter,
+        ZipFileIter(GpxZipInputStream zipInputStream,
+                Provider<Aborter> aborterProvider,
                 ZipInputFileTester zipInputFileTester, ZipEntry nextZipEntry) {
             mZipInputStream = zipInputStream;
             mNextZipEntry = nextZipEntry;
-            mAborter = aborter;
+            mAborterProvider = aborterProvider;
             mZipInputFileTester = zipInputFileTester;
         }
 
-        ZipFileIter(GpxZipInputStream zipInputStream, Aborter aborter,
+        ZipFileIter(GpxZipInputStream zipInputStream,
+                Provider<Aborter> aborterProvider,
                 ZipInputFileTester zipInputFileTester) {
             mZipInputStream = zipInputStream;
             mNextZipEntry = null;
-            mAborter = aborter;
+            mAborterProvider = aborterProvider;
             mZipInputFileTester = zipInputFileTester;
         }
 
@@ -54,7 +57,7 @@ public class ZipFileOpener {
             // Iterate through zip file entries.
             if (mNextZipEntry == null) {
                 do {
-                    if (mAborter.isAborted())
+                    if (mAborterProvider.get().isAborted())
                         break;
                     mNextZipEntry = mZipInputStream.getNextEntry();
                 } while (mNextZipEntry != null && !mZipInputFileTester.isValid(mNextZipEntry));
@@ -83,21 +86,23 @@ public class ZipFileOpener {
         }
     }
 
-    private final Aborter mAborter;
+    private final Provider<Aborter> mAborterProvider;
     private final String mFilename;
     private final ZipInputFileTester mZipInputFileTester;
     private final ZipInputStreamFactory mZipInputStreamFactory;
 
-    public ZipFileOpener(String filename, ZipInputStreamFactory zipInputStreamFactory,
-            ZipInputFileTester zipInputFileTester, Aborter aborter) {
+    public ZipFileOpener(String filename,
+            ZipInputStreamFactory zipInputStreamFactory,
+            ZipInputFileTester zipInputFileTester,
+            Provider<Aborter> aborterProvider) {
         mFilename = filename;
         mZipInputStreamFactory = zipInputStreamFactory;
-        mAborter = aborter;
+        mAborterProvider = aborterProvider;
         mZipInputFileTester = zipInputFileTester;
     }
 
     public ZipFileIter iterator() throws IOException {
-        return new ZipFileIter(mZipInputStreamFactory.create(mFilename), mAborter,
+        return new ZipFileIter(mZipInputStreamFactory.create(mFilename), mAborterProvider,
                 mZipInputFileTester);
     }
 }
