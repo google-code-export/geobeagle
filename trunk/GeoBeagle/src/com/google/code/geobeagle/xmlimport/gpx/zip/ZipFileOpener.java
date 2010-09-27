@@ -16,9 +16,10 @@ package com.google.code.geobeagle.xmlimport.gpx.zip;
 
 import com.google.code.geobeagle.gpx.zip.ZipInputStreamFactory;
 import com.google.code.geobeagle.xmlimport.GpxToCache.Aborter;
+import com.google.code.geobeagle.xmlimport.gpx.GpxAndZipFiles.GpxFilenameFilter;
 import com.google.code.geobeagle.xmlimport.gpx.IGpxReader;
 import com.google.code.geobeagle.xmlimport.gpx.IGpxReaderIter;
-import com.google.code.geobeagle.xmlimport.gpx.GpxAndZipFiles.GpxFilenameFilter;
+import com.google.inject.Inject;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -48,6 +49,7 @@ public class ZipFileOpener {
             mZipInputFileTester = zipInputFileTester;
         }
 
+        @Override
         public boolean hasNext() throws IOException {
             // Iterate through zip file entries.
             if (mNextZipEntry == null) {
@@ -60,6 +62,7 @@ public class ZipFileOpener {
             return mNextZipEntry != null;
         }
 
+        @Override
         public IGpxReader next() throws IOException {
             final String name = mNextZipEntry.getName();
             mNextZipEntry = null;
@@ -70,6 +73,7 @@ public class ZipFileOpener {
     public static class ZipInputFileTester {
         private final GpxFilenameFilter mGpxFilenameFilter;
 
+        @Inject
         public ZipInputFileTester(GpxFilenameFilter gpxFilenameFilter) {
             mGpxFilenameFilter = gpxFilenameFilter;
         }
