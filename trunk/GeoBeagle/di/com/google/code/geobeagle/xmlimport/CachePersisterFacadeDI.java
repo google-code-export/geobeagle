@@ -30,10 +30,6 @@ import java.io.File;
 public class CachePersisterFacadeDI {
 
     public static class CachePersisterFacadeFactory {
-        public static interface CachePersisterFacadeFactoryFactory {
-            CachePersisterFacadeFactory create(MessageHandler messageHandlerInterface);
-        }
-
         private final CacheTypeFactory mCacheTypeFactory;
         private final FileFactory mFileFactory;
         private final MessageHandlerInterface mMessageHandler;
