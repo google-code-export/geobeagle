@@ -15,20 +15,19 @@
 package com.google.code.geobeagle.xmlimport;
 
 import com.google.code.geobeagle.GeocacheFactory.Source;
-import com.google.code.geobeagle.xmlimport.CachePersisterFacadeDI.FileFactory;
 import com.google.inject.Inject;
 
 import roboguice.inject.ContextScoped;
 
 import android.os.PowerManager.WakeLock;
 
+import java.io.File;
 import java.io.IOException;
 
 @ContextScoped
 public class ImportCacheActions extends CachePersisterFacade {
     private String mCacheName = "";
     private final CacheTagSqlWriter mCacheTagWriter;
-    private final FileFactory mFileFactory;
     private final MessageHandlerInterface mMessageHandler;
     private final WakeLock mWakeLock;
     private String mLastModified;
@@ -36,12 +35,10 @@ public class ImportCacheActions extends CachePersisterFacade {
 
     @Inject
     ImportCacheActions(CacheTagSqlWriter cacheTagSqlWriter,
-            FileFactory fileFactory,
             MessageHandlerInterface messageHandler,
             WakeLock wakeLock,
             GeoBeagleEnvironment geoBeagleEnvironment) {
         mCacheTagWriter = cacheTagSqlWriter;
-        mFileFactory = fileFactory;
         mMessageHandler = messageHandler;
         mWakeLock = wakeLock;
         mGeoBeagleEnvironment = geoBeagleEnvironment;
@@ -109,7 +106,7 @@ public class ImportCacheActions extends CachePersisterFacade {
 
     @Override
     public void start() {
-        mFileFactory.createFile(mGeoBeagleEnvironment.getDetailsDirectory()).mkdirs();
+        new File(mGeoBeagleEnvironment.getDetailsDirectory()).mkdirs();
     }
 
     @Override
