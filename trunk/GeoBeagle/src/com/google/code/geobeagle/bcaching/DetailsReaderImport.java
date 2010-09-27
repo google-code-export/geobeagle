@@ -16,18 +16,14 @@ package com.google.code.geobeagle.bcaching;
 
 import com.google.code.geobeagle.bcaching.communication.BCachingException;
 import com.google.code.geobeagle.bcaching.communication.BCachingListImporterStateless;
-import com.google.code.geobeagle.xmlimport.EventHandler;
 import com.google.code.geobeagle.xmlimport.EventHandlerComposite;
-import com.google.code.geobeagle.xmlimport.EventHandlerGpx;
 import com.google.code.geobeagle.xmlimport.EventHelper;
 import com.google.code.geobeagle.xmlimport.GpxLoader;
-import com.google.code.geobeagle.xmlimport.XmlWriter;
 import com.google.inject.Inject;
 
 import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.BufferedReader;
-import java.util.Arrays;
 import java.util.Hashtable;
 
 public class DetailsReaderImport {
@@ -46,15 +42,17 @@ public class DetailsReaderImport {
     private final BufferedReaderFactory bufferedReaderFactory;
     private final GpxLoader gpxLoader;
     private final EventHelper eventHelper;
-    private final EventHandler eventHandler;
+    private final EventHandlerComposite eventHandlerComposite;
 
     @Inject
-    DetailsReaderImport(BufferedReaderFactory bufferedReaderFactory, EventHelper eventHelper,
-            GpxLoader gpxLoader, XmlWriter xmlWriter, EventHandlerGpx eventHandlerGpx) {
+    DetailsReaderImport(BufferedReaderFactory bufferedReaderFactory,
+            EventHelper eventHelper,
+            GpxLoader gpxLoader,
+            EventHandlerComposite eventHandler) {
         this.bufferedReaderFactory = bufferedReaderFactory;
         this.gpxLoader = gpxLoader;
         this.eventHelper = eventHelper;
-        this.eventHandler = new EventHandlerComposite(Arrays.asList(xmlWriter, eventHandlerGpx));
+        this.eventHandlerComposite = eventHandler;
     }
 
     public boolean loadCacheDetails(String csvIds) throws BCachingException {
@@ -67,7 +65,7 @@ public class DetailsReaderImport {
             throw new BCachingException("Error parsing data from baching.com: "
                     + e.getLocalizedMessage());
         }
-        return gpxLoader.load(eventHelper, eventHandler);
+        return gpxLoader.load(eventHelper, eventHandlerComposite);
     }
 
     public String getLastModified() {

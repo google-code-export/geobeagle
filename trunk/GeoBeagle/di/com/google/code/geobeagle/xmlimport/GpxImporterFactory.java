@@ -30,8 +30,6 @@ import android.content.Context;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 
-import java.util.Arrays;
-
 public class GpxImporterFactory {
 
     private final Injector mInjector;
@@ -67,11 +65,9 @@ public class GpxImporterFactory {
         final MessageHandler messageHandler = mInjector.getInstance(MessageHandler.class);
         final ImportThreadWrapper importThreadWrapper = new ImportThreadWrapper(messageHandler,
                 xmlPullParserWrapper, aborter);
-        final EventHandlerGpx eventHandlerGpx = new EventHandlerGpx();
-        final XmlWriter xmlWriter = mInjector.getInstance(XmlWriter.class);
 
-        final EventHandlerComposite eventHandlerComposite = new EventHandlerComposite(
-                Arrays.asList(xmlWriter, eventHandlerGpx));
+        final EventHandlerComposite eventHandlerComposite = mInjector
+                .getInstance(EventHandlerComposite.class);
         final GeocacheListPresenter geocacheListPresenter = mInjector
                 .getInstance(GeocacheListPresenter.class);
         return new GpxImporter(geocacheListPresenter, gpxLoader,

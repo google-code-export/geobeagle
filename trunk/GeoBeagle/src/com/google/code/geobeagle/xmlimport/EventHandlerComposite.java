@@ -14,14 +14,18 @@
 
 package com.google.code.geobeagle.xmlimport;
 
+import com.google.inject.Inject;
+
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 
 public class EventHandlerComposite implements EventHandler {
     private final List<EventHandler> eventHandlers;
 
-    public EventHandlerComposite(List<EventHandler> eventHandlers) {
-        this.eventHandlers = eventHandlers;
+    @Inject
+    public EventHandlerComposite(XmlWriter xmlWriter, EventHandlerGpx eventHandlerGpx) {
+        this.eventHandlers = Arrays.asList(xmlWriter, eventHandlerGpx);
     }
 
     @Override
