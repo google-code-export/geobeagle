@@ -63,8 +63,8 @@ public class GpxImporterFactory {
                 aborter, errorDisplayer, wakeLock, gpxWriter);
         final ToastFactory toastFactory = new ToastFactory();
         final MessageHandler messageHandler = mInjector.getInstance(MessageHandler.class);
-        final ImportThreadWrapper importThreadWrapper = new ImportThreadWrapper(messageHandler,
-                xmlPullParserWrapper, aborter);
+        final ImportThreadWrapper importThreadWrapper = mInjector
+                .getInstance(ImportThreadWrapper.class);
 
         final EventHandlerComposite eventHandlerComposite = mInjector
                 .getInstance(EventHandlerComposite.class);

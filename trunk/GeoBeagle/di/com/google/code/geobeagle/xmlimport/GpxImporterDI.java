@@ -112,6 +112,7 @@ public class GpxImporterDI {
         private final MessageHandler mMessageHandler;
         private final XmlPullParserWrapper mXmlPullParserWrapper;
 
+        @Inject
         public ImportThreadWrapper(MessageHandler messageHandler,
                 XmlPullParserWrapper xmlPullParserWrapper, Aborter aborter) {
             mMessageHandler = messageHandler;
