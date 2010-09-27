@@ -109,10 +109,10 @@ public class GpxImporterDI {
     public static class ImportThreadWrapper {
         private final Aborter mAborter;
         private ImportThread mImportThread;
-        private final MessageHandlerInterface mMessageHandler;
+        private final MessageHandler mMessageHandler;
         private final XmlPullParserWrapper mXmlPullParserWrapper;
 
-        public ImportThreadWrapper(MessageHandlerInterface messageHandler,
+        public ImportThreadWrapper(MessageHandler messageHandler,
                 XmlPullParserWrapper xmlPullParserWrapper, Aborter aborter) {
             mMessageHandler = messageHandler;
             mXmlPullParserWrapper = xmlPullParserWrapper;
