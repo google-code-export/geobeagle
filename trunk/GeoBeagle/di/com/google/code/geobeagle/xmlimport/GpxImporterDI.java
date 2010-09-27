@@ -356,7 +356,8 @@ public class GpxImporterDI {
                 .asList(xmlWriter, eventHandlerGpx));
 
         return new GpxImporter(geocacheListPresenter, gpxLoader, context, importThreadWrapper,
-                messageHandler, toastFactory, eventHandlerComposite, errorDisplayer, injector);
+                messageHandler, toastFactory, eventHandlerComposite, errorDisplayer,
+                injector.getProvider(CacheListRefresh.class), injector);
     }
 
 }
