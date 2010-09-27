@@ -19,7 +19,9 @@ import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.cachelist.Pausable;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.Abortable;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
+import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheListPresenter;
 import com.google.code.geobeagle.xmlimport.GpxImporterDI.ImportThreadWrapper;
+import com.google.code.geobeagle.xmlimport.GpxImporterDI.MessageHandler;
 import com.google.code.geobeagle.xmlimport.GpxImporterDI.ToastFactory;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
@@ -31,27 +33,30 @@ import android.widget.Toast;
 public class GpxImporter implements Abortable {
 
     private final ErrorDisplayer mErrorDisplayer;
-    private final EventHandler mEventHandler;
+    private final EventHandler mEventHandlerComposite;
     private final GpxLoader mGpxLoader;
     private final ImportThreadWrapper mImportThreadWrapper;
     private final Provider<Context> mContextProvider;
-    private final MessageHandlerInterface mMessageHandler;
+    private final MessageHandler mMessageHandler;
     private final ToastFactory mToastFactory;
     private final Pausable mGeocacheListPresenter;
     private final Provider<CacheListRefresh> mCacheListRefreshProvider;
     private final Injector mInjector;
 
     @Inject
-    GpxImporter(Pausable geocacheListPresenter,
+    GpxImporter(GeocacheListPresenter geocacheListPresenter,
             GpxLoader gpxLoader,
             Provider<Context> contextProvider,
-            ImportThreadWrapper importThreadWrapper, MessageHandlerInterface messageHandler,
-            ToastFactory toastFactory, EventHandler eventHandler, ErrorDisplayer errorDisplayer,
+            ImportThreadWrapper importThreadWrapper,
+            MessageHandler messageHandler,
+            ToastFactory toastFactory,
+            EventHandlerComposite eventHandlerComposite,
+            ErrorDisplayer errorDisplayer,
             Provider<CacheListRefresh> cacheListRefreshProvider,
             Injector injector) {
         mContextProvider = contextProvider;
         mGpxLoader = gpxLoader;
-        mEventHandler = eventHandler;
+        mEventHandlerComposite = eventHandlerComposite;
         mImportThreadWrapper = importThreadWrapper;
         mMessageHandler = messageHandler;
         mErrorDisplayer = errorDisplayer;
@@ -75,7 +80,7 @@ public class GpxImporter implements Abortable {
     public void importGpxs() {
         mGeocacheListPresenter.onPause();
 
-        mImportThreadWrapper.open(mCacheListRefreshProvider.get(), mGpxLoader, mEventHandler,
+        mImportThreadWrapper.open(mCacheListRefreshProvider.get(), mGpxLoader, mEventHandlerComposite,
                 mErrorDisplayer,
                 mInjector);
         mImportThreadWrapper.start();

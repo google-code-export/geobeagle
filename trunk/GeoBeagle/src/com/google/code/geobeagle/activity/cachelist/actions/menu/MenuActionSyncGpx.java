@@ -17,7 +17,6 @@ package com.google.code.geobeagle.activity.cachelist.actions.menu;
 import com.google.code.geobeagle.actions.Action;
 import com.google.code.geobeagle.bcaching.ImportBCachingWorker;
 import com.google.code.geobeagle.xmlimport.GpxImporter;
-import com.google.code.geobeagle.xmlimport.GpxImporterFactory;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Provider;
@@ -27,22 +26,23 @@ import android.util.Log;
 
 @Singleton
 public class MenuActionSyncGpx implements Action {
-    private final GpxImporterFactory mGpxImporterFactory;
     private final Provider<ImportBCachingWorker> mImportBCachingWorkerProvider;
     private Abortable mBCachingWorkerAborter;
     private boolean mSyncInProgress;
     private GpxImporter mGpxImporter;
+    private final Provider<GpxImporter> mGpxImporterProvider;
 
+    // For testing.
     public MenuActionSyncGpx(Provider<ImportBCachingWorker> importBCachingWorkerProvider,
-            GpxImporterFactory gpxImporterFactory) {
-        mGpxImporterFactory = gpxImporterFactory;
+            Provider<GpxImporter> gpxImporterProvider) {
         mImportBCachingWorkerProvider = importBCachingWorkerProvider;
+        mGpxImporterProvider = gpxImporterProvider;
         mSyncInProgress = false;
     }
 
     @Inject
     public MenuActionSyncGpx(Injector injector) {
-        mGpxImporterFactory = injector.getInstance(GpxImporterFactory.class);
+        mGpxImporterProvider = injector.getProvider(GpxImporter.class);
         mImportBCachingWorkerProvider = injector.getProvider(ImportBCachingWorker.class);
         mSyncInProgress = false;
     }
@@ -59,7 +59,7 @@ public class MenuActionSyncGpx implements Action {
     @Override
     public void act() {
         Log.d("GeoBeagle", "MenuActionSync importing");
-        mGpxImporter = mGpxImporterFactory.create();
+        mGpxImporter = mGpxImporterProvider.get();
         mBCachingWorkerAborter = mImportBCachingWorkerProvider.get();
         mGpxImporter.importGpxs();
         mSyncInProgress = true;
