@@ -19,19 +19,27 @@ import com.google.code.geobeagle.xmlimport.gpx.IGpxReader;
 import com.google.code.geobeagle.xmlimport.gpx.IGpxReaderIter;
 
 public class GpxFileOpener {
-    public class GpxFileIter implements IGpxReaderIter {
+    public static class GpxFileIter implements IGpxReaderIter {
+
+        private final Aborter aborter;
+        private String filename;
+
+        public GpxFileIter(Aborter aborter, String filename) {
+            this.aborter = aborter;
+            this.filename = filename;
+        }
 
         @Override
         public boolean hasNext() {
-            if (mAborter.isAborted())
+            if (aborter.isAborted())
                 return false;
-            return mFilename != null;
+            return filename != null;
         }
 
         @Override
         public IGpxReader next() {
-            final IGpxReader gpxReader = new GpxReader(mFilename);
-            mFilename = null;
+            final IGpxReader gpxReader = new GpxReader(filename);
+            filename = null;
             return gpxReader;
         }
     }
@@ -45,6 +53,6 @@ public class GpxFileOpener {
     }
 
     public GpxFileIter iterator() {
-        return new GpxFileIter();
+        return new GpxFileIter(mAborter, mFilename);
     }
 }
