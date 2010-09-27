@@ -37,18 +37,7 @@ public class GpxImporterFactory {
 
     public GpxImporter create() {
         final ErrorDisplayer errorDisplayer = mInjector.getInstance(ErrorDisplayer.class);
-        final ImportWakeLock importWakeLock = mInjector.getInstance(ImportWakeLock.class);
-
-        final GeoBeagleEnvironment geoBeagleEnvironment = mInjector
-                .getInstance(GeoBeagleEnvironment.class);
-        final Provider<MessageHandler> messageHandlerProvider = mInjector
-                .getProvider(MessageHandler.class);
-        final CacheTagSqlWriter cacheTagSqlWriter = mInjector.getInstance(CacheTagSqlWriter.class);
-        final ImportCacheActions importCacheActions = new ImportCacheActions(cacheTagSqlWriter,
-                messageHandlerProvider.get(), importWakeLock, geoBeagleEnvironment);
-
-        final GpxToCache gpxToCache = mInjector.getInstance(GpxToCache.class);
-        final GpxLoader gpxLoader = new GpxLoader(importCacheActions, errorDisplayer, gpxToCache, importWakeLock);
+        final GpxLoader gpxLoader = mInjector.getInstance(GpxLoader.class);
         final ToastFactory toastFactory = new ToastFactory();
         final MessageHandler messageHandler = mInjector.getInstance(MessageHandler.class);
         final ImportThreadWrapper importThreadWrapper = mInjector
@@ -58,9 +47,11 @@ public class GpxImporterFactory {
                 .getInstance(EventHandlerComposite.class);
         final GeocacheListPresenter geocacheListPresenter = mInjector
                 .getInstance(GeocacheListPresenter.class);
-        return new GpxImporter(geocacheListPresenter, gpxLoader,
-                mInjector.getProvider(Context.class), importThreadWrapper, messageHandler,
-                toastFactory, eventHandlerComposite, errorDisplayer,
-                mInjector.getProvider(CacheListRefresh.class), mInjector);
+        final Provider<Context> contextProvider = mInjector.getProvider(Context.class);
+        final Provider<CacheListRefresh> cacheListRefreshProvider = mInjector
+                .getProvider(CacheListRefresh.class);
+        return new GpxImporter(geocacheListPresenter, gpxLoader, contextProvider,
+                importThreadWrapper, messageHandler, toastFactory, eventHandlerComposite,
+                errorDisplayer, cacheListRefreshProvider, mInjector);
     }
 }
