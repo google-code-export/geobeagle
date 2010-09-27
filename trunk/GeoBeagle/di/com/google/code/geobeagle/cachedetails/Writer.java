@@ -24,4 +24,6 @@ public interface Writer {
     public void write(String str) throws IOException;
 
     public boolean isOpen();
+
+    void mkdirs(String path);
 }

@@ -17,6 +17,7 @@ package com.google.code.geobeagle.cachedetails;
 import android.util.Log;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
@@ -33,6 +34,11 @@ public class WriterWrapper implements com.google.code.geobeagle.cachedetails.Wri
     @Override
     public void open(String path) throws IOException {
         mWriter = new BufferedWriter(new FileWriter(path), 4000);
+    }
+
+    @Override
+    public void mkdirs(String path) {
+        new File(new File(path).getParent()).mkdirs();
     }
 
     @Override
