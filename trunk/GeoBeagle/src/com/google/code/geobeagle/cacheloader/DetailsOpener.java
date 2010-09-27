@@ -12,9 +12,11 @@
  ** limitations under the License.
  */
 
-package com.google.code.geobeagle.cachedetails;
+package com.google.code.geobeagle.cacheloader;
 
 import com.google.code.geobeagle.R;
+import com.google.code.geobeagle.cachedetails.FileDataVersionChecker;
+import com.google.code.geobeagle.cachedetails.StringWriterWrapper;
 import com.google.code.geobeagle.cachedetails.reader.DetailsReader;
 import com.google.code.geobeagle.cachedetails.reader.DetailsReaderError;
 import com.google.code.geobeagle.cachedetails.reader.DetailsReaderImpl;
