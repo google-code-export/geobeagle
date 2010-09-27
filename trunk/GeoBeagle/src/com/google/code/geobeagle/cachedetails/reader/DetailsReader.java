@@ -18,7 +18,7 @@ import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.cachedetails.StringWriterWrapper;
 import com.google.code.geobeagle.xmlimport.EventHandlerGpx;
 import com.google.code.geobeagle.xmlimport.EventHelper;
-import com.google.code.geobeagle.xmlimport.ICachePersisterFacade;
+import com.google.code.geobeagle.xmlimport.CachePersisterFacade;
 import com.google.code.geobeagle.xmlimport.XmlPullParserWrapper;
 
 import org.xmlpull.v1.XmlPullParser;
@@ -54,7 +54,7 @@ public class DetailsReader {
         mStringWriterWrapper = stringWriterWrapper;
     }
 
-    public String read(ICachePersisterFacade cachePersisterFacade) {
+    public String read(CachePersisterFacade cachePersisterFacade) {
         try {
             mEventHelper.open(mPath, mEventHandlerGpx);
             mXmlPullParserWrapper.open(mPath, mReader);

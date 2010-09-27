@@ -18,14 +18,14 @@ import java.io.IOException;
 
 public interface EventHandler {
 
-    void endTag(String name, String previousFullPath, ICachePersisterFacade cachePersisterFacade)
+    void endTag(String name, String previousFullPath, CachePersisterFacade cachePersisterFacade)
             throws IOException;
 
     void startTag(String name, String mFullPath, XmlPullParserWrapper mXmlPullParser,
-            ICachePersisterFacade cachePersisterFacade) throws IOException;
+            CachePersisterFacade cachePersisterFacade) throws IOException;
 
     boolean text(String fullPath, String text, XmlPullParserWrapper xmlPullParser,
-            ICachePersisterFacade cachePersisterFacade) throws IOException;
+            CachePersisterFacade cachePersisterFacade) throws IOException;
 
     void open(String filename) throws IOException;
 }
