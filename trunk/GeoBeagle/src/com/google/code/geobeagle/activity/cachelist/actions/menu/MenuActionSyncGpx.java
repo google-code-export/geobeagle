@@ -26,24 +26,24 @@ import android.util.Log;
 
 @Singleton
 public class MenuActionSyncGpx implements Action {
-    private final Provider<ImportBCachingWorker> mImportBCachingWorkerProvider;
     private Abortable mBCachingWorkerAborter;
-    private boolean mSyncInProgress;
     private GpxImporter mGpxImporter;
     private final Provider<GpxImporter> mGpxImporterProvider;
+    private final Provider<ImportBCachingWorker> mImportBCachingWorkerProvider;
+    private boolean mSyncInProgress;
+
+    @Inject
+    public MenuActionSyncGpx(Injector injector) {
+        mGpxImporterProvider = injector.getProvider(GpxImporter.class);
+        mImportBCachingWorkerProvider = injector.getProvider(ImportBCachingWorker.class);
+        mSyncInProgress = false;
+    }
 
     // For testing.
     public MenuActionSyncGpx(Provider<ImportBCachingWorker> importBCachingWorkerProvider,
             Provider<GpxImporter> gpxImporterProvider) {
         mImportBCachingWorkerProvider = importBCachingWorkerProvider;
         mGpxImporterProvider = gpxImporterProvider;
-        mSyncInProgress = false;
-    }
-
-    @Inject
-    public MenuActionSyncGpx(Injector injector) {
-        mGpxImporterProvider = injector.getProvider(GpxImporter.class);
-        mImportBCachingWorkerProvider = injector.getProvider(ImportBCachingWorker.class);
         mSyncInProgress = false;
     }
 
