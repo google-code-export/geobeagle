@@ -16,7 +16,6 @@ package com.google.code.geobeagle.activity.cachelist.actions.menu;
 
 import com.google.code.geobeagle.actions.Action;
 import com.google.code.geobeagle.activity.cachelist.GpxImporterFactory;
-import com.google.code.geobeagle.activity.cachelist.NullAbortable;
 import com.google.code.geobeagle.bcaching.ImportBCachingWorker;
 import com.google.code.geobeagle.xmlimport.GpxImporter;
 import com.google.inject.Inject;
@@ -29,45 +28,41 @@ import android.util.Log;
 
 @ContextScoped
 public class MenuActionSyncGpx implements Action {
-    private Abortable mSdcardImportAbortable;
     private final GpxImporterFactory mGpxImporterFactory;
     private final Provider<ImportBCachingWorker> mImportBCachingWorkerProvider;
     private Abortable mBCachingWorkerAborter;
-    private final Abortable mNullAbortable;
+    private boolean mSyncInProgress;
+    private GpxImporter mGpxImporter;
 
     public MenuActionSyncGpx(Provider<ImportBCachingWorker> importBCachingWorkerProvider,
-            NullAbortable nullAbortable,
             GpxImporterFactory gpxImporterFactory) {
-        mNullAbortable = nullAbortable;
-        mSdcardImportAbortable = nullAbortable;
-        mBCachingWorkerAborter = nullAbortable;
         mGpxImporterFactory = gpxImporterFactory;
         mImportBCachingWorkerProvider = importBCachingWorkerProvider;
+        mSyncInProgress = false;
     }
 
     @Inject
     public MenuActionSyncGpx(Injector injector) {
-        mNullAbortable = injector.getInstance(NullAbortable.class);
-        mSdcardImportAbortable = mNullAbortable;
-        mBCachingWorkerAborter = mNullAbortable;
         mGpxImporterFactory = injector.getInstance(GpxImporterFactory.class);
         mImportBCachingWorkerProvider = injector.getProvider(ImportBCachingWorker.class);
+        mSyncInProgress = false;
     }
 
     public void abort() {
-        Log.d("GeoBeagle", "MenuActionSyncGpx aborting");
-        mSdcardImportAbortable.abort();
+        Log.d("GeoBeagle", "MenuActionSyncGpx aborting: " + mSyncInProgress);
+        if (!mSyncInProgress)
+            return;
+        mGpxImporter.abort();
         mBCachingWorkerAborter.abort();
-        mSdcardImportAbortable = mNullAbortable;
-        mBCachingWorkerAborter = mNullAbortable;
+        mSyncInProgress = false;
     }
 
     @Override
     public void act() {
         Log.d("GeoBeagle", "MenuActionSync importing");
-        final GpxImporter gpxImporter = mGpxImporterFactory.create(mCacheWriterProvider.get(),
-                mGpxWriterProvider.get());
-        mSdcardImportAbortable = gpxImporter;
+        mGpxImporter = mGpxImporterFactory.create();
         mBCachingWorkerAborter = mImportBCachingWorkerProvider.get();
+        mGpxImporter.importGpxs();
+        mSyncInProgress = true;
     }
 }
