@@ -39,6 +39,7 @@ public class CombinedLocationListener implements LocationListener {
         mActivityVisible = activityVisible;
     }
 
+    @Override
     public void onLocationChanged(Location location) {
         if (!mActivityVisible.getVisible())
             return;
@@ -51,18 +52,21 @@ public class CombinedLocationListener implements LocationListener {
         mLocationListener.onLocationChanged(chosenLocation);
     }
 
+    @Override
     public void onProviderDisabled(String provider) {
         if (!mActivityVisible.getVisible())
             return;
         mLocationListener.onProviderDisabled(provider);
     }
 
+    @Override
     public void onProviderEnabled(String provider) {
         if (!mActivityVisible.getVisible())
             return;
         mLocationListener.onProviderEnabled(provider);
     }
 
+    @Override
     public void onStatusChanged(String provider, int status, Bundle extras) {
         if (!mActivityVisible.getVisible())
             return;
