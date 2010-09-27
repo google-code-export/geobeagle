@@ -71,14 +71,13 @@ public class GpxImporterFactory {
         final EventHandlerGpx eventHandlerGpx = new EventHandlerGpx();
         final XmlWriter xmlWriter = mInjector.getInstance(XmlWriter.class);
 
-        final EventHandlerComposite eventHandlerComposite = new EventHandlerComposite(Arrays
-                .asList(xmlWriter, eventHandlerGpx));
+        final EventHandlerComposite eventHandlerComposite = new EventHandlerComposite(
+                Arrays.asList(xmlWriter, eventHandlerGpx));
         final GeocacheListPresenter geocacheListPresenter = mInjector
                 .getInstance(GeocacheListPresenter.class);
-        return new GpxImporter(geocacheListPresenter , gpxLoader,
-                mInjector.getProvider(Context.class),
-                importThreadWrapper,
-                messageHandler, toastFactory, eventHandlerComposite, errorDisplayer,
+        return new GpxImporter(geocacheListPresenter, gpxLoader,
+                mInjector.getProvider(Context.class), importThreadWrapper, messageHandler,
+                toastFactory, eventHandlerComposite, errorDisplayer,
                 mInjector.getProvider(CacheListRefresh.class), mInjector);
     }
 }
