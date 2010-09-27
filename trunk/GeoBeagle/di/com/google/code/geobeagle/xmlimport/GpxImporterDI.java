@@ -330,8 +330,7 @@ public class GpxImporterDI {
         }
     }
 
-    public static GpxImporter create(GpxWriter gpxWriter,
-            Injector injector) {
+    public static GpxImporter create(Injector injector) {
         final ErrorDisplayer errorDisplayer = injector.getInstance(ErrorDisplayer.class);
         final Context context = injector.getInstance(Context.class);
         final PowerManager powerManager = (PowerManager)context
@@ -344,6 +343,7 @@ public class GpxImporterDI {
         final CachePersisterFacadeFactory cachePersisterFacadeFactory = injector
                 .getInstance(CachePersisterFacadeFactory.class);
         final CacheWriter cacheWriter = injector.getInstance(CacheWriter.class);
+        final GpxWriter gpxWriter = injector.getInstance(GpxWriter.class);
         final ImportCacheActions importCacheActions = cachePersisterFacadeFactory.create(
                 cacheWriter, gpxWriter, wakeLock, geoBeagleEnvironment);
 
