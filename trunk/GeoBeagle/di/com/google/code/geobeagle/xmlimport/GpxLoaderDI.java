@@ -18,19 +18,19 @@ import com.google.code.geobeagle.ErrorDisplayer;
 import com.google.code.geobeagle.database.GpxWriter;
 import com.google.code.geobeagle.xmlimport.GpxToCache.Aborter;
 
-import android.os.PowerManager.WakeLock;
-
 import java.text.SimpleDateFormat;
 
 public class GpxLoaderDI {
     public static GpxLoader create(ImportCacheActions importCacheActions,
             XmlPullParserWrapper xmlPullParserWrapper, Aborter aborter,
-            ErrorDisplayer errorDisplayer, WakeLock wakeLock, GpxWriter gpxWriter) {
+            ErrorDisplayer errorDisplayer,
+            ImportWakeLock importWakeLock,
+            GpxWriter gpxWriter) {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSSZ");
         FileAlreadyLoadedChecker fileAlreadyLoadedChecker = new FileAlreadyLoadedChecker(gpxWriter,
                 simpleDateFormat);
         final GpxToCache gpxToCache = new GpxToCache(xmlPullParserWrapper, aborter,
                 fileAlreadyLoadedChecker);
-        return new GpxLoader(importCacheActions, errorDisplayer, gpxToCache, wakeLock);
+        return new GpxLoader(importCacheActions, errorDisplayer, gpxToCache, importWakeLock);
     }
 }

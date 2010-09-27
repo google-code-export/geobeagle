@@ -19,8 +19,6 @@ import com.google.inject.Inject;
 
 import roboguice.inject.ContextScoped;
 
-import android.os.PowerManager.WakeLock;
-
 import java.io.File;
 import java.io.IOException;
 
@@ -29,18 +27,18 @@ public class ImportCacheActions extends CachePersisterFacade {
     private String mCacheName = "";
     private final CacheTagSqlWriter mCacheTagWriter;
     private final MessageHandlerInterface mMessageHandler;
-    private final WakeLock mWakeLock;
+    private final ImportWakeLock mWakeLock;
     private String mLastModified;
     private final GeoBeagleEnvironment mGeoBeagleEnvironment;
 
     @Inject
     ImportCacheActions(CacheTagSqlWriter cacheTagSqlWriter,
             MessageHandlerInterface messageHandler,
-            WakeLock wakeLock,
+            ImportWakeLock importWakeLock,
             GeoBeagleEnvironment geoBeagleEnvironment) {
         mCacheTagWriter = cacheTagSqlWriter;
         mMessageHandler = messageHandler;
-        mWakeLock = wakeLock;
+        mWakeLock = importWakeLock;
         mGeoBeagleEnvironment = geoBeagleEnvironment;
     }
 

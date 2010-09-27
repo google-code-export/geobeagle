@@ -30,8 +30,6 @@ import org.powermock.api.easymock.PowerMock;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import android.os.PowerManager.WakeLock;
-
 import java.io.File;
 import java.io.IOException;
 
@@ -230,7 +228,7 @@ public class CachePersisterFacadeTest {
 
     @Test
     public void testWptName() throws IOException {
-        WakeLock wakeLock = createMock(WakeLock.class);
+        ImportWakeLock wakeLock = createMock(ImportWakeLock.class);
 
         mCacheTagWriter.id("GC123");
         mMessageHandler.updateWaypointId("GC123");
