@@ -17,38 +17,24 @@ package com.google.code.geobeagle.xmlimport;
 import com.google.code.geobeagle.CacheTypeFactory;
 import com.google.code.geobeagle.database.CacheWriter;
 import com.google.code.geobeagle.database.ClearCachesFromSource;
-import com.google.code.geobeagle.database.ClearCachesFromSourceImpl;
 import com.google.code.geobeagle.database.GpxWriter;
 import com.google.code.geobeagle.database.TagWriter;
 import com.google.code.geobeagle.xmlimport.GpxImporterDI.MessageHandler;
-import com.google.inject.Inject;
 import com.google.inject.Provider;
 
 public class CachePersisterFacadeFactory {
-    private final CacheTypeFactory mCacheTypeFactory;
-    private final TagWriter mTagWriter;
-    private final ClearCachesFromSource mClearCachesFromSource;
-    private final Provider<MessageHandler> mMessageHandlerProvider;
-
-    @Inject
-    public CachePersisterFacadeFactory(Provider<MessageHandler> messageHandlerProvider,
-            CacheTypeFactory cacheTypeFactory,
-            TagWriter tagWriter,
-            ClearCachesFromSourceImpl clearCachesFromSourceImpl) {
-        mMessageHandlerProvider = messageHandlerProvider;
-        mCacheTypeFactory = cacheTypeFactory;
-        mTagWriter = tagWriter;
-        mClearCachesFromSource = clearCachesFromSourceImpl;
-    }
 
     public ImportCacheActions create(CacheWriter cacheWriter,
             GpxWriter gpxWriter,
             ImportWakeLock importWakeLock,
-            GeoBeagleEnvironment geoBeagleEnvironment) {
+            GeoBeagleEnvironment geoBeagleEnvironment,
+            Provider<MessageHandler> messageHandlerProvider,
+            TagWriter tagWriter,
+            ClearCachesFromSource clearCachesFromSource,
+            CacheTypeFactory cacheTypeFactory) {
         final CacheTagSqlWriter cacheTagSqlWriter = new CacheTagSqlWriter(cacheWriter, gpxWriter,
-                mCacheTypeFactory, mTagWriter, mClearCachesFromSource);
-        return new ImportCacheActions(cacheTagSqlWriter, mMessageHandlerProvider.get(),
-                importWakeLock,
-                geoBeagleEnvironment);
+                cacheTypeFactory, tagWriter, clearCachesFromSource);
+        return new ImportCacheActions(cacheTagSqlWriter, messageHandlerProvider.get(),
+                importWakeLock, geoBeagleEnvironment);
     }
 }
