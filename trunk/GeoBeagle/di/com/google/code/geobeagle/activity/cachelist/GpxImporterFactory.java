@@ -22,7 +22,6 @@ import com.google.code.geobeagle.xmlimport.GpxImporter;
 import com.google.code.geobeagle.xmlimport.GpxImporterDI;
 import com.google.code.geobeagle.xmlimport.GpxImporterDI.MessageHandler;
 import com.google.code.geobeagle.xmlimport.GpxToCache.Aborter;
-import com.google.code.geobeagle.xmlimport.XmlPullParserWrapper;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 
@@ -32,7 +31,6 @@ public class GpxImporterFactory {
     private final CachePersisterFacadeFactory mCachePersisterFacadeFactory;
     private final GeocacheListPresenter mGeocacheListPresenter;
     private final MessageHandler mMessageHandler;
-    private final XmlPullParserWrapper mXmlPullParserWrapper;
     private final Injector mInjector;
     private final CacheWriter mCacheWriter;
     private final GpxWriter mGpxWriter;
@@ -42,7 +40,6 @@ public class GpxImporterFactory {
             CachePersisterFacadeFactory cachePersisterFacadeFactory,
             GeocacheListPresenter geocacheListPresenter,
             MessageHandler messageHandler,
-            XmlPullParserWrapper xmlPullParserWrapper,
             CacheWriter cacheWriter,
             GpxWriter gpxWriter,
             Injector injector) {
@@ -50,14 +47,13 @@ public class GpxImporterFactory {
         mCachePersisterFacadeFactory = cachePersisterFacadeFactory;
         mGeocacheListPresenter = geocacheListPresenter;
         mMessageHandler = messageHandler;
-        mXmlPullParserWrapper = xmlPullParserWrapper;
         mCacheWriter = cacheWriter;
         mGpxWriter = gpxWriter;
         mInjector = injector;
     }
 
     public GpxImporter create() {
-        return GpxImporterDI.create(mXmlPullParserWrapper,
+        return GpxImporterDI.create(
                 mGeocacheListPresenter, mAborter, mMessageHandler, mCachePersisterFacadeFactory,
                 mCacheWriter, mGpxWriter, mInjector);
     }

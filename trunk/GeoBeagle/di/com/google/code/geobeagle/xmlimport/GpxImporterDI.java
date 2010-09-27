@@ -330,7 +330,7 @@ public class GpxImporterDI {
         }
     }
 
-    public static GpxImporter create(XmlPullParserWrapper xmlPullParserWrapper,
+    public static GpxImporter create(
             Pausable geocacheListPresenter,
             Aborter aborter,
             MessageHandlerInterface messageHandler, CachePersisterFacadeFactory cachePersisterFacadeFactory,
@@ -349,6 +349,8 @@ public class GpxImporterDI {
         final ImportCacheActions importCacheActions = cachePersisterFacadeFactory.create(
                 cacheWriter, gpxWriter, wakeLock, geoBeagleEnvironment);
 
+        XmlPullParserWrapper xmlPullParserWrapper = injector
+                .getInstance(XmlPullParserWrapper.class);
         final GpxLoader gpxLoader = GpxLoaderDI.create(importCacheActions, xmlPullParserWrapper,
                 aborter, errorDisplayer, wakeLock, gpxWriter);
         final ToastFactory toastFactory = new ToastFactory();
