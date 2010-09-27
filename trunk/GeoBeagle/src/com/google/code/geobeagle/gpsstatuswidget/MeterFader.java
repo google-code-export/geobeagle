@@ -37,7 +37,7 @@ class MeterFader {
     }
 
     void paint() {
-        final long currentTime = mTime.getCurrentTime();
+        long currentTime = mTime.getCurrentTime();
         if (mLastUpdateTime == -1)
             mLastUpdateTime = currentTime;
         long lastUpdateLag = currentTime - mLastUpdateTime;
