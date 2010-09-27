@@ -121,7 +121,7 @@ class QueryManager {
     }
 
     private final CachedNeedsLoading mCachedNeedsLoading;
-    private int[] mLatLonMinMax; // i.e. latmin, lonmin, latmax, lonmax
+    private final int[] mLatLonMinMax; // i.e. latmin, lonmin, latmax, lonmax
     private ArrayList<Geocache> mList;
 
     @Inject
