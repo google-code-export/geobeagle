@@ -25,10 +25,10 @@ import com.google.inject.Provider;
 
 import android.util.Log;
 import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.view.View.OnCreateContextMenuListener;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 
@@ -64,14 +64,24 @@ public class GeocacheListController {
     private final Provider<ContextActions> mContextActionsProvider;
 
     @Inject
-    public GeocacheListController(CacheListRefresh cacheListRefresh,
-            Injector injector,
-            Aborter aborter) {
-        mCacheListRefresh = cacheListRefresh;
-        mAborter = aborter;
+    public GeocacheListController(Injector injector) {
+        mCacheListRefresh = injector.getInstance(CacheListRefresh.class);
+        mAborter = injector.getInstance(Aborter.class);
         mMenuActionSyncGpxProvider = injector.getProvider(MenuActionSyncGpx.class);
         mCacheListMenuActionsProvider = injector.getProvider(CacheListMenuActions.class);
         mContextActionsProvider = injector.getProvider(ContextActions.class);
+    }
+
+    public GeocacheListController(CacheListRefresh cacheListRefresh,
+            Aborter aborter,
+            Provider<MenuActionSyncGpx> menuActionSyncProvider,
+            Provider<CacheListMenuActions> cacheListMenuActionsProvider,
+            Provider<ContextActions> contextActionsProvider) {
+        mCacheListRefresh = cacheListRefresh;
+        mAborter = aborter;
+        mMenuActionSyncGpxProvider = menuActionSyncProvider;
+        mCacheListMenuActionsProvider = cacheListMenuActionsProvider;
+        mContextActionsProvider = contextActionsProvider;
     }
 
     public boolean onContextItemSelected(MenuItem menuItem) {
