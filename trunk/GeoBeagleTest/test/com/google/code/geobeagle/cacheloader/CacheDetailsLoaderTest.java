@@ -12,7 +12,7 @@
  ** limitations under the License.
  */
 
-package com.google.code.geobeagle.cachedetails;
+package com.google.code.geobeagle.cacheloader;
 
 import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
@@ -24,9 +24,14 @@ import static org.powermock.api.easymock.PowerMock.replayAll;
 import static org.powermock.api.easymock.PowerMock.verifyAll;
 
 import com.google.code.geobeagle.R;
+import com.google.code.geobeagle.cachedetails.FileDataVersionChecker;
+import com.google.code.geobeagle.cachedetails.FilePathStrategy;
+import com.google.code.geobeagle.cachedetails.StringWriterWrapper;
 import com.google.code.geobeagle.cachedetails.reader.DetailsReader;
 import com.google.code.geobeagle.cachedetails.reader.DetailsReaderError;
 import com.google.code.geobeagle.cachedetails.reader.DetailsReaderImpl;
+import com.google.code.geobeagle.cacheloader.CacheDetailsLoader;
+import com.google.code.geobeagle.cacheloader.DetailsOpener;
 import com.google.code.geobeagle.xmlimport.CacheTagsToDetails;
 import com.google.code.geobeagle.xmlimport.EventHandlerGpx;
 import com.google.code.geobeagle.xmlimport.EventHelper;

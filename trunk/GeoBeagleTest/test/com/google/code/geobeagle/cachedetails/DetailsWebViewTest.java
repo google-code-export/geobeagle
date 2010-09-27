@@ -19,9 +19,9 @@ import static org.powermock.api.easymock.PowerMock.createMock;
 import static org.powermock.api.easymock.PowerMock.replayAll;
 import static org.powermock.api.easymock.PowerMock.verifyAll;
 
-import com.google.code.geobeagle.cachedetails.CacheDetailsLoader;
 import com.google.code.geobeagle.cachedetails.DetailsActivity;
 import com.google.code.geobeagle.cachedetails.DetailsWebView;
+import com.google.code.geobeagle.cacheloader.CacheDetailsLoader;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
