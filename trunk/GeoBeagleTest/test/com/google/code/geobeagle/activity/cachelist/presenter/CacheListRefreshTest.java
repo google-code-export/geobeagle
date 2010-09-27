@@ -21,6 +21,7 @@ import static org.junit.Assert.assertTrue;
 import com.google.code.geobeagle.IGpsLocation;
 import com.google.code.geobeagle.LocationControlBuffered;
 import com.google.code.geobeagle.Timing;
+import com.google.code.geobeagle.activity.cachelist.GeoBeagleTest;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh.ActionManager;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh.UpdateFlag;
 
@@ -44,19 +45,18 @@ import java.util.Calendar;
         Timing.class, Calendar.class
 })
 @RunWith(PowerMockRunner.class)
-public class CacheListRefreshTest {
+public class CacheListRefreshTest extends GeoBeagleTest {
 
     private Timing mTiming;
+    private UpdateFlag updateFlag;
 
     @Before
-    public void allowLogging() {
-        PowerMock.mockStatic(Log.class);
-        EasyMock.expect(Log.d((String)EasyMock.anyObject(), (String)EasyMock.anyObject()))
-                .andReturn(0).anyTimes();
+    public void setUp() {
         mTiming = PowerMock.createMock(Timing.class);
         mTiming.start();
         EasyMock.expectLastCall().anyTimes();
         EasyMock.expect(mTiming.getTime()).andReturn(10000L).anyTimes();
+        updateFlag = PowerMock.createMock(UpdateFlag.class);
     }
 
     @Test
@@ -103,6 +103,7 @@ public class CacheListRefreshTest {
 
     @Test
     public void testCacheListRefresh_ForceRefresh() {
+        EasyMock.expect(updateFlag.updatesEnabled()).andReturn(true);
         LocationControlBuffered locationControlBuffered = PowerMock
                 .createMock(LocationControlBuffered.class);
         Timing timing = PowerMock.createMock(Timing.class);
@@ -116,7 +117,8 @@ public class CacheListRefreshTest {
         actionManager.performActions(here, 90, 0, 100000);
 
         PowerMock.replayAll();
-        new CacheListRefresh(actionManager, timing, locationControlBuffered, null).forceRefresh();
+        new CacheListRefresh(actionManager, timing, locationControlBuffered, updateFlag)
+                .forceRefresh();
         PowerMock.verifyAll();
     }
 

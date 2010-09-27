@@ -13,7 +13,6 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
-import android.content.DialogInterface.OnClickListener;
 
 @PrepareForTest( {
         Activity.class, DisplayErrorRunnable.class, ErrorDisplayer.class
@@ -30,7 +29,7 @@ public class ErrorDisplayerTest {
         EasyMock.expect(activity.getText(17)).andReturn("hello, %1$s");
         EasyMock.expect(alertDialogBuilder.setMessage("hello, world"))
                 .andReturn(alertDialogBuilder);
-        OnClickListener onClickListener = PowerMock.createMock(OnClickListener.class);
+        OnClickListenerNOP onClickListener = PowerMock.createMock(OnClickListenerNOP.class);
         DisplayErrorRunnable displayErrorRunnable = PowerMock
                 .createMock(DisplayErrorRunnable.class);
         EasyMock.expect(alertDialogBuilder.setNeutralButton("Ok", onClickListener)).andReturn(

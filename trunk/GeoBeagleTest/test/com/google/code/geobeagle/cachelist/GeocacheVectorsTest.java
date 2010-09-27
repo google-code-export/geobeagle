@@ -50,7 +50,7 @@ public class GeocacheVectorsTest {
         locations.add(geocache);
 
         PowerMock.replayAll();
-        GeocacheVectors geocacheVectors = new GeocacheVectors(geocacheVectorsList);
+        GeocacheVectors geocacheVectors = new GeocacheVectors();
         geocacheVectors.addLocations(locations, here);
         assertEquals(geocacheVector, geocacheVectors.get(0));
         PowerMock.verifyAll();
@@ -63,7 +63,7 @@ public class GeocacheVectorsTest {
 
         ArrayList<GeocacheVector> geocacheVectorsList = new ArrayList<GeocacheVector>(0);
 
-        GeocacheVectors geocacheVectors = new GeocacheVectors(geocacheVectorsList);
+        GeocacheVectors geocacheVectors = new GeocacheVectors();
         geocacheVectors.add(destinationVector1);
         geocacheVectors.add(destinationVector2);
         geocacheVectors.remove(0);
@@ -74,7 +74,7 @@ public class GeocacheVectorsTest {
     public void testGetGeocacheVectorsList() {
         ArrayList<GeocacheVector> geocacheVectorsList = new ArrayList<GeocacheVector>(0);
 
-        GeocacheVectors geocacheVectors = new GeocacheVectors(geocacheVectorsList);
+        GeocacheVectors geocacheVectors = new GeocacheVectors();
         assertEquals(geocacheVectorsList, geocacheVectors.getGeocacheVectorsList());
     }
 
@@ -85,7 +85,7 @@ public class GeocacheVectorsTest {
         ArrayList<GeocacheVector> geocacheVectorsList = new ArrayList<GeocacheVector>(0);
 
         replay(destinationVector);
-        GeocacheVectors geocacheVectors = new GeocacheVectors(geocacheVectorsList);
+        GeocacheVectors geocacheVectors = new GeocacheVectors();
         geocacheVectors.add(destinationVector);
         geocacheVectors.reset(12); // can't test ensureCapacity.
         assertEquals(0, geocacheVectors.size());

@@ -1,13 +1,13 @@
 
 package com.google.code.geobeagle.activity.searchonline;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
-import com.google.code.geobeagle.LocationControlBuffered;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.searchonline.JsInterface.JsInterfaceHelper;
 
 import org.easymock.EasyMock;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.api.easymock.PowerMock;
@@ -18,13 +18,26 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.location.Location;
+import android.location.LocationManager;
 import android.net.Uri;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest( {
         JsInterfaceHelper.class, Uri.class
 })
+
 public class JsInterfaceTest {
+    private LocationManager locationManager;
+    private Location location;
+    private JsInterfaceHelper helper;
+
+    @Before
+    public void setUp() {
+        locationManager = PowerMock.createMock(LocationManager.class);
+        location = PowerMock.createMock(Location.class);
+        helper = PowerMock.createMock(JsInterfaceHelper.class);
+    }
+
     @Test
     public void testLaunch() throws Exception {
         Activity activity = PowerMock.createMock(Activity.class);
@@ -66,41 +79,34 @@ public class JsInterfaceTest {
 
     @Test
     public void testAtlasQuestOrGroundspeak() {
-        Location location = PowerMock.createMock(Location.class);
-        LocationControlBuffered locationControlBuffered = PowerMock
-                .createMock(LocationControlBuffered.class);
-        JsInterfaceHelper helper = PowerMock.createMock(JsInterfaceHelper.class);
+        EasyMock.expect(locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER))
+                .andReturn(location);
         EasyMock.expect(location.getLatitude()).andReturn(122.3);
         EasyMock.expect(location.getLongitude()).andReturn(37.8);
 
-        EasyMock.expect(locationControlBuffered.getLocation()).andReturn(location);
         EasyMock.expect(helper.getTemplate(3)).andReturn("%1$f, %2$f");
         helper.launch("122.300000, 37.800000");
 
         PowerMock.replayAll();
-        assertEquals(0, new JsInterface(locationControlBuffered, helper, null,
-                null).atlasQuestOrGroundspeak(3));
+        assertEquals(0,
+                new JsInterface(helper, null, null, locationManager).atlasQuestOrGroundspeak(3));
         PowerMock.verifyAll();
     }
 
     @Test
     public void testOpencaching() {
-        Location location = PowerMock.createMock(Location.class);
-        LocationControlBuffered locationControlBuffered = PowerMock
-                .createMock(LocationControlBuffered.class);
-        JsInterfaceHelper helper = PowerMock.createMock(JsInterfaceHelper.class);
         EasyMock.expect(location.getLatitude()).andReturn(37.7773);
         EasyMock.expect(location.getLongitude()).andReturn(-122.1134);
 
+        EasyMock.expect(locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER))
+                .andReturn(location);
         EasyMock.expect(helper.getNS(37.7773)).andReturn("N");
         EasyMock.expect(helper.getEW(-122.1134)).andReturn("W");
-        EasyMock.expect(locationControlBuffered.getLocation()).andReturn(location);
         EasyMock.expect(helper.getTemplate(3)).andReturn("%1$s, %2$d, %3$.3f, %4$s, %5$d, %6$.3f");
         helper.launch("N, 37, 46.638, W, 122, 6.804");
 
         PowerMock.replayAll();
-        assertEquals(0, new JsInterface(locationControlBuffered, helper, null,
-                null).openCaching(3));
+        assertEquals(0, new JsInterface(helper, null, null, locationManager).openCaching(3));
         PowerMock.verifyAll();
     }
 }

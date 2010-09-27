@@ -14,12 +14,13 @@
 
 package com.google.code.geobeagle.activity;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import com.google.code.geobeagle.R;
+import com.google.code.geobeagle.actions.Action;
 import com.google.code.geobeagle.actions.MenuAction;
 import com.google.code.geobeagle.actions.MenuActions;
-import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionSyncGpx;
 
 import org.easymock.EasyMock;
 import org.junit.Before;
@@ -48,16 +49,17 @@ public class MenuActionsTest {
 
     @Test
     public void testAct() {
-        MenuActionSyncGpx menuActionSyncGpx = PowerMock.createMock(MenuActionSyncGpx.class);
+        MenuAction menuAction = PowerMock.createMock(MenuAction.class);
         Resources resources = PowerMock.createMock(Resources.class);
+        Action action = PowerMock.createMock(Action.class);
 
-        EasyMock.expect(menuActionSyncGpx.getId()).andReturn(R.string.menu_sync).times(2);
-        menuActionSyncGpx.act();
-
+        EasyMock.expect(menuAction.getId()).andReturn(R.string.menu_sync).times(2);
+        EasyMock.expect(menuAction.getAction()).andReturn(action);
+        action.act();
         PowerMock.replayAll();
-        final MenuActions menuActions = new MenuActions(resources);
-        menuActions.add(menuActionSyncGpx);
 
+        MenuActions menuActions = new MenuActions(resources);
+        menuActions.add(menuAction);
         assertTrue(menuActions.act(R.string.menu_sync));
         assertFalse(menuActions.act(R.string.menu_cache_list));
         PowerMock.verifyAll();
@@ -66,16 +68,17 @@ public class MenuActionsTest {
     @Test
     public void testArrayCtor() {
         MenuAction menuAction = PowerMock.createMock(MenuAction.class);
-        MenuAction[] menuActionsArray = {
-            menuAction
-        };
+        Action action = PowerMock.createMock(Action.class);
         Resources resources = PowerMock.createMock(Resources.class);
 
         EasyMock.expect(menuAction.getId()).andReturn(1);
-        menuAction.act();
-
+        EasyMock.expect(menuAction.getAction()).andReturn(action);
+        action.act();
         PowerMock.replayAll();
-        MenuActions menuActions = new MenuActions(resources, menuActionsArray);
+
+        MenuActions menuActions = new MenuActions(resources, new MenuAction[] {
+            menuAction
+        });
         assertTrue(menuActions.act(1));
         PowerMock.verifyAll();
     }

@@ -37,9 +37,10 @@ public class XmlWriterTest extends GeoBeagleTest {
     private TagWriter tagWriter;
     private StringWriter stringWriter;
     private XmlPullParserWrapper xmlPullParser;
+    private FilePathStrategy filePathStrategy;
 
     static class StringWriter implements Writer {
-        private java.io.StringWriter stringWriter;
+        private final java.io.StringWriter stringWriter;
         private boolean isOpen;
 
         StringWriter() {
@@ -73,27 +74,36 @@ public class XmlWriterTest extends GeoBeagleTest {
         public boolean isOpen() {
             return isOpen;
         }
+
+        @Override
+        public void mkdirs(String path) {
+            // TODO Auto-generated method stub
+
+        }
     }
 
     @Before
     public void setUp() {
         stringWriter = new StringWriter();
         tagWriter = new TagWriter(stringWriter);
-        xmlWriter = new XmlWriter(new FilePathStrategy("/sdcard/"), tagWriter);
+        filePathStrategy = createMock(FilePathStrategy.class);
+        xmlWriter = new XmlWriter(filePathStrategy, tagWriter);
         xmlPullParser = createMock(XmlPullParserWrapper.class);
     }
 
     @Test
     public void testSimpleTag() throws IOException {
         expect(xmlPullParser.getAttributeCount()).andStubReturn(0);
+        expect(filePathStrategy.getPath("filename.txt", "GC123", "gpx")).andReturn(
+                "/sdcard/filename.txt/6/GC123.gpx");
 
         replayAll();
-        XmlWriter xmlWriter = new XmlWriter(new FilePathStrategy("/sdcard/"), tagWriter);
+        XmlWriter xmlWriter = new XmlWriter(filePathStrategy, tagWriter);
         xmlWriter.open("filename.txt");
-        xmlWriter.startTag("wpt", "/gpx/wpt", xmlPullParser);
-        xmlWriter.startTag("name", "/gpx/wpt/name", xmlPullParser);
-        xmlWriter.text("/gpx/wpt/name", "GC123", xmlPullParser);
-        xmlWriter.endTag("name", "/gpx/wpt/name");
+        xmlWriter.startTag("wpt", "/gpx/wpt", xmlPullParser, null);
+        xmlWriter.startTag("name", "/gpx/wpt/name", xmlPullParser, null);
+        xmlWriter.text("/gpx/wpt/name", "GC123", xmlPullParser, null);
+        xmlWriter.endTag("name", "/gpx/wpt/name", null);
         // System.out.println(stringWriter.toString());
         assertEquals("FILE: /sdcard/filename.txt/6/GC123.gpx\n"
                 + "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
@@ -104,30 +114,35 @@ public class XmlWriterTest extends GeoBeagleTest {
     @Test
     public void testTagStack() throws IOException {
         expect(xmlPullParser.getAttributeCount()).andReturn(0).anyTimes();
+        expect(filePathStrategy.getPath("filename.txt", "GC123", "gpx")).andReturn(
+                "/sdcard/filename.txt/6/GC123.gpx");
 
         replayAll();
-        XmlWriter xmlWriter = new XmlWriter(new FilePathStrategy("/sdcard/"), tagWriter);
+        XmlWriter xmlWriter = new XmlWriter(filePathStrategy, tagWriter);
         xmlWriter.open("filename.txt");
 
-        xmlWriter.startTag("wpt", "/gpx/wpt", xmlPullParser);
-        xmlWriter.startTag("time", "/gpx/wpt/time", xmlPullParser);
-        xmlWriter.text("/gpx/wpt/time", "3oclock", xmlPullParser);
-        xmlWriter.endTag("time", "/gpx/wpt/time");
-        xmlWriter.startTag("name", "/gpx/wpt/name", xmlPullParser);
-        xmlWriter.text("/gpx/wpt/name", "GC123", xmlPullParser);
-        xmlWriter.endTag("name", "/gpx/wpt/name");
-        xmlWriter.endTag("wpt", "/gpx/wpt");
-        xmlWriter.endTag("gpx", "/gpx");
+        xmlWriter.startTag("wpt", "/gpx/wpt", xmlPullParser, null);
+        xmlWriter.startTag("time", "/gpx/wpt/time", xmlPullParser, null);
+        xmlWriter.text("/gpx/wpt/time", "3oclock", xmlPullParser, null);
+        xmlWriter.endTag("time", "/gpx/wpt/time", null);
+        xmlWriter.startTag("name", "/gpx/wpt/name", xmlPullParser, null);
+        xmlWriter.text("/gpx/wpt/name", "GC123", xmlPullParser, null);
+        xmlWriter.endTag("name", "/gpx/wpt/name", null);
+        xmlWriter.endTag("wpt", "/gpx/wpt", null);
+        xmlWriter.endTag("gpx", "/gpx", null);
 
         // System.out.println(stringWriter.toString());
         assertEquals("FILE: /sdcard/filename.txt/6/GC123.gpx\n"
                 + "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<gpx>\n"
-                + " <wpt>\n  <time>3oclock</time>\n  <name>GC123</name></wpt></gpx>\nEOF\n", stringWriter.toString());
+                + " <wpt>\n  <time>3oclock</time>\n  <name>GC123</name></wpt></gpx>\nEOF\n",
+                stringWriter.toString());
         verifyAll();
     }
 
     @Test
     public void testAttributes() throws IOException {
+        expect(filePathStrategy.getPath("filename.txt", "GC123", "gpx")).andReturn(
+                "/sdcard/filename.txt/6/GC123.gpx");
         expect(xmlPullParser.getAttributeCount()).andReturn(2);
         expect(xmlPullParser.getAttributeName(0)).andReturn("lat");
         expect(xmlPullParser.getAttributeValue(0)).andReturn("456");
@@ -136,12 +151,12 @@ public class XmlWriterTest extends GeoBeagleTest {
         expect(xmlPullParser.getAttributeCount()).andReturn(0);
 
         replayAll();
-        XmlWriter xmlWriter = new XmlWriter(new FilePathStrategy("/sdcard/"), tagWriter);
+        XmlWriter xmlWriter = new XmlWriter(filePathStrategy, tagWriter);
         xmlWriter.open("filename.txt");
-        xmlWriter.startTag("wpt", "/gpx/wpt", xmlPullParser);
-        xmlWriter.startTag("name", "/gpx/wpt/name", xmlPullParser);
-        xmlWriter.text("/gpx/wpt/name", "GC123", xmlPullParser);
-        xmlWriter.endTag("name", "/gpx/wpt/name");
+        xmlWriter.startTag("wpt", "/gpx/wpt", xmlPullParser, null);
+        xmlWriter.startTag("name", "/gpx/wpt/name", xmlPullParser, null);
+        xmlWriter.text("/gpx/wpt/name", "GC123", xmlPullParser, null);
+        xmlWriter.endTag("name", "/gpx/wpt/name", null);
 //        System.out.println(stringWriter.toString());
         assertEquals("FILE: /sdcard/filename.txt/6/GC123.gpx\n"
                 + "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
@@ -153,15 +168,17 @@ public class XmlWriterTest extends GeoBeagleTest {
     @Test
     public void testEscaping() throws IOException {
         expect(xmlPullParser.getAttributeCount()).andReturn(0).anyTimes();
+        expect(filePathStrategy.getPath("filename.txt", "GC123", "gpx")).andReturn(
+                "/sdcard/filename.txt/6/GC123.gpx");
 
         replayAll();
         xmlWriter.open("filename.txt");
-        xmlWriter.startTag("wpt", "/gpx/wpt", xmlPullParser);
-        xmlWriter.startTag("name", "/gpx/wpt/name", xmlPullParser);
-        xmlWriter.text("/gpx/wpt/name", "GC123", xmlPullParser);
-        xmlWriter.endTag("name", "/gpx/wpt/name");
-        xmlWriter.startTag("desc", "/gpx/wpt/desc", xmlPullParser);
-        xmlWriter.text("/gpx/wpt/desc", "<>&", xmlPullParser);
+        xmlWriter.startTag("wpt", "/gpx/wpt", xmlPullParser, null);
+        xmlWriter.startTag("name", "/gpx/wpt/name", xmlPullParser, null);
+        xmlWriter.text("/gpx/wpt/name", "GC123", xmlPullParser, null);
+        xmlWriter.endTag("name", "/gpx/wpt/name", null);
+        xmlWriter.startTag("desc", "/gpx/wpt/desc", xmlPullParser, null);
+        xmlWriter.text("/gpx/wpt/desc", "<>&", xmlPullParser, null);
 
         // System.out.println(stringWriter.toString());
         assertEquals("FILE: /sdcard/filename.txt/6/GC123.gpx\n"
@@ -174,16 +191,18 @@ public class XmlWriterTest extends GeoBeagleTest {
     @Test
     public void testClose() throws IOException {
         expect(xmlPullParser.getAttributeCount()).andReturn(0).anyTimes();
+        expect(filePathStrategy.getPath("filename.txt", "GC123", "gpx")).andReturn(
+                "/sdcard/filename.txt/6/GC123.gpx");
 
         replayAll();
         xmlWriter.open("filename.txt");
-        xmlWriter.startTag("wpt", "/gpx/wpt", xmlPullParser);
-        xmlWriter.startTag("name", "/gpx/wpt/name", xmlPullParser);
-        xmlWriter.text("/gpx/wpt/name", "GC123", xmlPullParser);
-        xmlWriter.endTag("name", "/gpx/wpt/name");
+        xmlWriter.startTag("wpt", "/gpx/wpt", xmlPullParser, null);
+        xmlWriter.startTag("name", "/gpx/wpt/name", xmlPullParser, null);
+        xmlWriter.text("/gpx/wpt/name", "GC123", xmlPullParser, null);
+        xmlWriter.endTag("name", "/gpx/wpt/name", null);
 
-        xmlWriter.startTag("wpt", "/gpx/wpt", xmlPullParser);
-        xmlWriter.endTag("wpt", "/gpx/wpt");
+        xmlWriter.startTag("wpt", "/gpx/wpt", xmlPullParser, null);
+        xmlWriter.endTag("wpt", "/gpx/wpt", null);
 
         // System.out.println(stringWriter.toString());
         assertEquals("FILE: /sdcard/filename.txt/6/GC123.gpx\n"

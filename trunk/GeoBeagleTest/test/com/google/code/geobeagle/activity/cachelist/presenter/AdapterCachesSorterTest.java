@@ -16,6 +16,7 @@ package com.google.code.geobeagle.activity.cachelist.presenter;
 
 import com.google.code.geobeagle.LocationControlBuffered;
 import com.google.code.geobeagle.Timing;
+import com.google.code.geobeagle.activity.cachelist.GeoBeagleTest;
 import com.google.code.geobeagle.activity.cachelist.model.CacheListData;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVector;
 
@@ -26,11 +27,15 @@ import org.powermock.api.easymock.PowerMock;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 
-@PrepareForTest( {})
+@PrepareForTest({
+    Log.class
+})
 @RunWith(PowerMockRunner.class)
-public class AdapterCachesSorterTest {
+public class AdapterCachesSorterTest extends GeoBeagleTest {
 
     @Test
     public void testAdapterCachesSorter() {

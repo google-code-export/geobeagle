@@ -28,11 +28,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 public class MenuActionsBaseTest {
     static class MenuActionTest extends MenuActionBase {
         MenuActionTest() {
-            super(12);
-        }
-
-        @Override
-        public void act() {
+            super(12, null);
         }
     }
 

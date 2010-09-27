@@ -41,12 +41,12 @@ public class WhereFactoryNearestCachesTest {
     public void testGetWhereString() {
         PowerMock.replayAll();
         assertEquals(
-                "Latitude > 89.0 AND Latitude < 91.0 AND Longitude > -180.0 AND Longitude < 180.0",
+                "Visible = 1 AND Latitude > 89.0 AND Latitude < 91.0 AND Longitude > -180.0 AND Longitude < 180.0",
                 new WhereStringFactory().getWhereString(90.0, 180.0, 1f));
         PowerMock.verifyAll();
     }
 
-    
+
     //andpe: testReadOne and testReadTwo removed since I didn't see how they tested WhereFactoryNearestCaches
 
     @Test
@@ -135,16 +135,19 @@ public class WhereFactoryNearestCachesTest {
         ISQLiteDatabase sqliteWrapper = PowerMock.createMock(ISQLiteDatabase.class);
         Search search = PowerMock.createMock(Search.class);
         WhereStringFactory whereStringFactory = PowerMock.createMock(WhereStringFactory.class);
+        DbFrontend dbFrontend = PowerMock.createMock(DbFrontend.class);
 
         EasyMock.expect(
                 searchFactory.createSearch(122, 37, WhereFactoryNearestCaches.GUESS_MIN,
                         WhereFactoryNearestCaches.GUESS_MAX, sqliteWrapper)).andReturn(search);
-        EasyMock.expect(search.search(0.1f, WhereFactoryNearestCaches.MAX_NUMBER_OF_CACHES))
+        EasyMock.expect(dbFrontend.countAll()).andReturn(1000);
+        EasyMock.expect(search.search(0.1f, 100))
                 .andReturn(0.87f);
         EasyMock.expect(whereStringFactory.getWhereString(122, 37, 0.87f)).andReturn("WHERE foo");
 
         PowerMock.replayAll();
-        assertEquals("WHERE foo", new WhereFactoryNearestCaches(searchFactory, whereStringFactory)
+        assertEquals("WHERE foo", new WhereFactoryNearestCaches(searchFactory, whereStringFactory,
+                dbFrontend)
                 .getWhere(sqliteWrapper, 122, 37));
         PowerMock.verifyAll();
     }

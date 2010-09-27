@@ -24,52 +24,59 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.api.easymock.PowerMock;
+import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.net.Uri;
 
 @RunWith(PowerMockRunner.class)
+@PrepareForTest({
+        Uri.class, IntentStarterViewUri.class
+})
 public class IntentStarterViewUriTest {
     private GeoBeagle geoBeagle;
-    private IntentFactory intentFactory;
     private GeocacheToUri geocacheToUri;
     private Intent intent;
     private Geocache geocache;
     private ErrorDisplayer errorDisplayer;
+    private Uri uri;
 
     @Before
     public void setUp() {
         geoBeagle = PowerMock.createMock(GeoBeagle.class);
-        intentFactory = PowerMock.createMock(IntentFactory.class);
         geocacheToUri = PowerMock.createMock(GeocacheToUri.class);
         intent = PowerMock.createMock(Intent.class);
         geocache = PowerMock.createMock(Geocache.class);
         errorDisplayer = PowerMock.createMock(ErrorDisplayer.class);
+        uri = PowerMock.createMock(Uri.class);
+
+        PowerMock.mockStatic(Uri.class);
     }
-    
+
     @Test
-    public void testStartIntent() {
+    public void testStartIntent() throws Exception {
         EasyMock.expect(geoBeagle.getGeocache()).andReturn(geocache);
         EasyMock.expect(geocacheToUri.convert(geocache)).andReturn("destination uri");
-        EasyMock.expect(intentFactory.createIntent(Intent.ACTION_VIEW, "destination uri"))
-                .andReturn(intent);
+        EasyMock.expect(Uri.parse("destination uri")).andReturn(uri);
+        PowerMock.expectNew(Intent.class, Intent.ACTION_VIEW, uri).andReturn(intent);
         geoBeagle.startActivity(intent);
-
         PowerMock.replayAll();
-        new IntentStarterViewUri(geoBeagle, intentFactory, geocacheToUri, null).startIntent();
+
+        new IntentStarterViewUri(geoBeagle, geocacheToUri, null).startIntent();
         PowerMock.verifyAll();
     }
 
     @Test
-    public void testStartIntentNoHandler() {
+    public void testStartIntentNoHandler() throws Exception {
         ActivityNotFoundException activityNotFoundException = PowerMock
                 .createMock(ActivityNotFoundException.class);
 
         EasyMock.expect(geoBeagle.getGeocache()).andReturn(geocache);
         EasyMock.expect(geocacheToUri.convert(geocache)).andReturn("destination uri");
-        EasyMock.expect(intentFactory.createIntent(Intent.ACTION_VIEW, "destination uri"))
-                .andReturn(intent);
+        EasyMock.expect(Uri.parse("destination uri")).andReturn(uri);
+        PowerMock.expectNew(Intent.class, Intent.ACTION_VIEW, uri).andReturn(intent);
         geoBeagle.startActivity(intent);
         EasyMock.expectLastCall().andThrow(activityNotFoundException);
         EasyMock.expect(activityNotFoundException.fillInStackTrace()).andReturn(
@@ -77,7 +84,7 @@ public class IntentStarterViewUriTest {
         errorDisplayer.displayError(R.string.no_intent_handler, "destination uri");
 
         PowerMock.replayAll();
-        new IntentStarterViewUri(geoBeagle, intentFactory, geocacheToUri, errorDisplayer)
+        new IntentStarterViewUri(geoBeagle, geocacheToUri, errorDisplayer)
                 .startIntent();
         PowerMock.verifyAll();
     }

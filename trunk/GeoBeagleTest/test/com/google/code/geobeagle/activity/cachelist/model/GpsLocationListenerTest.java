@@ -62,7 +62,7 @@ public class GpsLocationListenerTest extends GeoBeagleTest {
         expect(activityVisible.getVisible()).andReturn(true);
 
         replayAll();
-        new CombinedLocationListener(mLocationControlBuffered, locationListener, activityVisible)
+        new CombinedLocationListener(mLocationControlBuffered, null, activityVisible)
                 .onLocationChanged(location);
         verifyAll();
     }
@@ -73,7 +73,7 @@ public class GpsLocationListenerTest extends GeoBeagleTest {
         expect(activityVisible.getVisible()).andReturn(true);
 
         replayAll();
-        new CombinedLocationListener(null, locationListener, activityVisible)
+        new CombinedLocationListener(mLocationControlBuffered, null, activityVisible)
                 .onProviderDisabled("gps");
         verifyAll();
     }
@@ -84,7 +84,7 @@ public class GpsLocationListenerTest extends GeoBeagleTest {
         expect(activityVisible.getVisible()).andReturn(true);
 
         replayAll();
-        new CombinedLocationListener(null, locationListener, activityVisible)
+        new CombinedLocationListener(mLocationControlBuffered, null, activityVisible)
                 .onProviderEnabled("gps");
         verifyAll();
     }
@@ -92,7 +92,7 @@ public class GpsLocationListenerTest extends GeoBeagleTest {
     @Test
     public void testAzimuth() {
         final LocationControlBuffered locationControlBuffered = new LocationControlBuffered(null,
-                null, null, null, null, null);
+                null, null, null);
         locationControlBuffered.setAzimuth(23.8f);
         assertEquals(23.8f, locationControlBuffered.getAzimuth(), .1f);
     }
@@ -104,7 +104,8 @@ public class GpsLocationListenerTest extends GeoBeagleTest {
         expect(activityVisible.getVisible()).andReturn(true);
 
         replayAll();
-        new CombinedLocationListener(null, locationListener, activityVisible).onStatusChanged(
+        new CombinedLocationListener(mLocationControlBuffered, null, activityVisible)
+                .onStatusChanged(
                 "gps", LocationProvider.OUT_OF_SERVICE, bundle);
         verifyAll();
     }

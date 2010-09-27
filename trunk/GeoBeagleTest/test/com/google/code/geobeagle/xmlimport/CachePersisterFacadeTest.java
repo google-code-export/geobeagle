@@ -24,6 +24,7 @@ import com.google.code.geobeagle.cachedetails.CacheDetailsWriter;
 import com.google.code.geobeagle.xmlimport.CachePersisterFacadeDI.FileFactory;
 import com.google.code.geobeagle.xmlimport.GpxImporterDI.MessageHandler;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.api.easymock.PowerMock;
@@ -37,9 +38,16 @@ import java.io.IOException;
 @RunWith(PowerMockRunner.class)
 public class CachePersisterFacadeTest {
 
-    private final CacheTagSqlWriter mCacheTagWriter = PowerMock.createMock(CacheTagSqlWriter.class);
-    private final MessageHandlerInterface mMessageHandler = PowerMock
-            .createMock(MessageHandler.class);
+    private CacheTagSqlWriter mCacheTagWriter;
+    private MessageHandlerInterface mMessageHandler;
+    private GeoBeagleEnvironment geoBeagleEnvironment;
+
+    @Before
+    public void setUp() {
+        mCacheTagWriter = PowerMock.createMock(CacheTagSqlWriter.class);
+        mMessageHandler = PowerMock.createMock(MessageHandler.class);
+        geoBeagleEnvironment = PowerMock.createMock(GeoBeagleEnvironment.class);
+    }
 
     @Test
     public void testAttributes() {
@@ -173,11 +181,13 @@ public class CachePersisterFacadeTest {
         FileFactory fileFactory = PowerMock.createMock(FileFactory.class);
         File file = PowerMock.createMock(File.class);
 
-        expect(fileFactory.createFile(null)).andReturn(file);
+        expect(geoBeagleEnvironment.getDetailsDirectory()).andReturn("/details/dir");
+        expect(fileFactory.createFile("/details/dir")).andReturn(file);
         expect(file.mkdirs()).andReturn(true);
 
         PowerMock.replayAll();
-        new ImportCacheActions(mCacheTagWriter, fileFactory, null, null, null).start();
+        new ImportCacheActions(mCacheTagWriter, fileFactory, null, null, geoBeagleEnvironment)
+                .start();
         PowerMock.verifyAll();
     }
 

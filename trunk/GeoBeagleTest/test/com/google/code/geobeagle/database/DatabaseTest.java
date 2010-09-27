@@ -30,9 +30,14 @@ public class DatabaseTest extends GeoBeagleTest {
                 + SQL(Database.SQL_CREATE_GPX_TABLE_V10) + SQL(Database.SQL_CREATE_TAGS_TABLE_V12)
                 + SQL(Database.SQL_CREATE_IDX_LATITUDE) + SQL(Database.SQL_CREATE_IDX_LONGITUDE)
                 + SQL(Database.SQL_CREATE_IDX_SOURCE) + SQL(Database.SQL_CREATE_IDX_TAGS)
-                + SQL(Database.SQL_CREATE_IDX_VISIBLE);
+                + SQL("CREATE INDEX IDX_VISIBLE on CACHES (Visible);");
         return currentSchema;
     }
+
+    String schema16 = SQL(Database.SQL_CREATE_CACHE_TABLE_V16)
+            + SQL(Database.SQL_CREATE_GPX_TABLE_V10) + SQL(Database.SQL_CREATE_TAGS_TABLE_V12)
+            + SQL(Database.SQL_CREATE_IDX_LATITUDE) + SQL(Database.SQL_CREATE_IDX_LONGITUDE)
+            + SQL(Database.SQL_CREATE_IDX_SOURCE) + SQL(Database.SQL_CREATE_IDX_TAGS);
 
     String schema13 = SQL(Database.SQL_CREATE_CACHE_TABLE_V13)
             + SQL(Database.SQL_CREATE_GPX_TABLE_V10) + SQL(Database.SQL_CREATE_TAGS_TABLE_V12)
@@ -75,6 +80,17 @@ public class DatabaseTest extends GeoBeagleTest {
     }
 
     @Test
+    public void testUpgradeFrom16() {
+        DesktopSQLiteDatabase db = new DesktopSQLiteDatabase();
+        db.execSQL(schema16);
+
+        OpenHelperDelegate openHelperDelegate = new OpenHelperDelegate();
+        openHelperDelegate.onUpgrade(db, 16);
+        String schema = db.dumpSchema();
+
+        assertEquals(currentSchema(), schema);
+    }
+    @Test
     public void testUpgradeFrom13() {
         DesktopSQLiteDatabase db = new DesktopSQLiteDatabase();
         db.execSQL(schema13);
@@ -109,7 +125,7 @@ public class DatabaseTest extends GeoBeagleTest {
 
         assertEquals(currentSchema(), schema);
         String caches = db.dumpTable("CACHES");
-        assertEquals("GCABC||||intent|1|0|0|0|0|1|0\nGC123||||foo.gpx|1|0|0|0|0|1|0\n", caches);
+        assertEquals("GCABC||||intent|1|0|0|0|0|1|0|1\nGC123||||foo.gpx|1|0|0|0|0|1|0|1\n", caches);
         String gpx = db.dumpTable("GPX");
         assertEquals("seattle.gpx|1970-01-01|1\n", gpx);
     }
@@ -130,7 +146,7 @@ public class DatabaseTest extends GeoBeagleTest {
 
         assertEquals(currentSchema(), schema);
         String caches = db.dumpTable("CACHES");
-        assertEquals("GCABC||||intent|1|0|0|0|0|1|0\nGC123||||foo.gpx|1|0|0|0|0|1|0\n", caches);
+        assertEquals("GCABC||||intent|1|0|0|0|0|1|0|1\nGC123||||foo.gpx|1|0|0|0|0|1|0|1\n", caches);
         String gpx = db.dumpTable("GPX");
         assertEquals("seattle.gpx|1970-01-01|1\n", gpx);
     }
@@ -150,7 +166,7 @@ public class DatabaseTest extends GeoBeagleTest {
 
         assertEquals(currentSchema(), schema);
         String caches = db.dumpTable("CACHES");
-        assertEquals("GCABC||||intent|1|0|0|0|0|1|0\nGC123||||foo.gpx|1|0|0|0|0|1|0\n", caches);
+        assertEquals("GCABC||||intent|1|0|0|0|0|1|0|1\nGC123||||foo.gpx|1|0|0|0|0|1|0|1\n", caches);
         String gpx = db.dumpTable("GPX");
         assertEquals("seattle.gpx|1970-01-01|1\n", gpx);
     }
@@ -168,7 +184,7 @@ public class DatabaseTest extends GeoBeagleTest {
 
         assertEquals(currentSchema(), schema);
         String data = db.dumpTable("CACHES");
-        assertEquals("GCABC||||intent|1|0|0|0|0|1|0\nGC123||||foo.gpx|1|0|0|0|0|1|0\n", data);
+        assertEquals("GCABC||||intent|1|0|0|0|0|1|0|1\nGC123||||foo.gpx|1|0|0|0|0|1|0|1\n", data);
     }
 
 }

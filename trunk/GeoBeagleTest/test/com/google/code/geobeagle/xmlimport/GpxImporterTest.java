@@ -10,11 +10,12 @@ import com.google.code.geobeagle.xmlimport.GpxImporterDI.ImportThreadWrapper;
 import com.google.code.geobeagle.xmlimport.GpxImporterDI.MessageHandler;
 import com.google.code.geobeagle.xmlimport.GpxImporterDI.ToastFactory;
 import com.google.code.geobeagle.xmlimport.gpx.GpxAndZipFiles;
-import com.google.code.geobeagle.xmlimport.gpx.IGpxReader;
 import com.google.code.geobeagle.xmlimport.gpx.GpxAndZipFiles.GpxAndZipFilenameFilter;
+import com.google.code.geobeagle.xmlimport.gpx.IGpxReader;
 import com.google.code.geobeagle.xmlimport.gpx.gpx.GpxFileOpener;
 import com.google.code.geobeagle.xmlimport.gpx.zip.ZipFileOpener;
 import com.google.code.geobeagle.xmlimport.gpx.zip.ZipFileOpener.ZipFileIter;
+import com.google.inject.Provider;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -46,7 +47,7 @@ public class GpxImporterTest {
 
         PowerMock.replayAll();
         new GpxImporter(null, gpxLoader, null, importThreadWrapper, messageHandler, null, null,
-                null, null).abort();
+                null, null, null).abort();
         PowerMock.verifyAll();
     }
 
@@ -66,26 +67,28 @@ public class GpxImporterTest {
 
         PowerMock.replayAll();
         new GpxImporter(null, gpxLoader, listActivity, importThreadWrapper, messageHandler,
-                toastFactory, null, null, null).abort();
+                toastFactory, null, null, null, null).abort();
         PowerMock.verifyAll();
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void testImportGpxs() {
         CacheListRefresh cacheListRefresh = PowerMock.createMock(CacheListRefresh.class);
+        Provider<CacheListRefresh> cacheListRefreshProvider = PowerMock.createMock(Provider.class);
         GpxLoader gpxLoader = PowerMock.createMock(GpxLoader.class);
         ImportThreadWrapper importThreadWrapper = PowerMock.createMock(ImportThreadWrapper.class);
-        EventHandlers eventHandlers = PowerMock.createMock(EventHandlers.class);
         GeocacheListPresenter geocacheListPresenter = PowerMock
                 .createMock(GeocacheListPresenter.class);
 
+        expect(cacheListRefreshProvider.get()).andReturn(cacheListRefresh);
         geocacheListPresenter.onPause();
-        importThreadWrapper.open(cacheListRefresh, gpxLoader, eventHandlers, null, null);
+        importThreadWrapper.open(cacheListRefresh, gpxLoader, null, null, null);
         importThreadWrapper.start();
 
         PowerMock.replayAll();
         new GpxImporter(geocacheListPresenter, gpxLoader, null, importThreadWrapper, null, null,
-                eventHandlers, null, null).importGpxs(cacheListRefresh);
+                null, null, cacheListRefreshProvider, null).importGpxs();
         PowerMock.verifyAll();
     }
 }

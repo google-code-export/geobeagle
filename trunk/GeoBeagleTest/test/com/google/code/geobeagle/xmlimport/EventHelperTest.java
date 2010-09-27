@@ -37,13 +37,13 @@ public class EventHelperTest {
         XmlPullParserWrapper xmlPullParser = PowerMock.createMock(XmlPullParserWrapper.class);
 
         expect(xmlPathBuilder.getPath()).andReturn("/path");
-        eventHandlerGpx.endTag("name", "/path");
+        eventHandlerGpx.endTag("name", "/path", null);
         expect(xmlPullParser.getName()).andReturn("name");
         xmlPathBuilder.endTag("name");
 
         PowerMock.replayAll();
-        EventHelper eventHelper = new EventHelper(xmlPathBuilder, eventHandlerGpx, xmlPullParser);
-        eventHelper.handleEvent(XmlPullParser.END_TAG);
+        EventHelper eventHelper = new EventHelper(xmlPathBuilder, xmlPullParser);
+        eventHelper.handleEvent(XmlPullParser.END_TAG, eventHandlerGpx, null);
         PowerMock.verifyAll();
     }
 
@@ -56,11 +56,11 @@ public class EventHelperTest {
         expect(xmlPullParser.getName()).andReturn("some tag");
         xmlPathBuilder.startTag("some tag");
         expect(xmlPathBuilder.getPath()).andReturn("/foo");
-        eventHandlerGpx.startTag("some tag", "/foo", xmlPullParser);
+        eventHandlerGpx.startTag("some tag", "/foo", xmlPullParser, null);
 
         PowerMock.replayAll();
-        EventHelper eventHelper = new EventHelper(xmlPathBuilder, eventHandlerGpx, xmlPullParser);
-        eventHelper.handleEvent(XmlPullParser.START_TAG);
+        EventHelper eventHelper = new EventHelper(xmlPathBuilder, xmlPullParser);
+        eventHelper.handleEvent(XmlPullParser.START_TAG, eventHandlerGpx, null);
         PowerMock.verifyAll();
     }
 
@@ -72,11 +72,11 @@ public class EventHelperTest {
 
         expect(xmlPathBuilder.getPath()).andReturn("/path");
         expect(xmlPullParser.getText()).andReturn("text");
-        expect(eventHandlerGpx.text("/path", "text", xmlPullParser)).andReturn(true);
+        expect(eventHandlerGpx.text("/path", "text", xmlPullParser, null)).andReturn(true);
 
         PowerMock.replayAll();
-        EventHelper eventHelper = new EventHelper(xmlPathBuilder, eventHandlerGpx, xmlPullParser);
-        eventHelper.handleEvent(XmlPullParser.TEXT);
+        EventHelper eventHelper = new EventHelper(xmlPathBuilder, xmlPullParser);
+        eventHelper.handleEvent(XmlPullParser.TEXT, eventHandlerGpx, null);
         PowerMock.verifyAll();
     }
 

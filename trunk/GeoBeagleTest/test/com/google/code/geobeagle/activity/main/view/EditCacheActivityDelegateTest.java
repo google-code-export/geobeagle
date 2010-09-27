@@ -52,7 +52,7 @@ public class EditCacheActivityDelegateTest {
     public void testCancelButtonOnClickListener() {
         Activity activity = PowerMock.createMock(Activity.class);
 
-        activity.setResult(-1, null);
+        activity.setResult(Activity.RESULT_CANCELED, null);
         activity.finish();
 
         replay(activity);
@@ -177,7 +177,7 @@ public class EditCacheActivityDelegateTest {
         expectNew(Intent.class).andReturn(intent);
         expect(editCache.get()).andReturn(geocache);
         expect(intent.putExtra("geocache", geocache)).andReturn(intent);
-        activity.setResult(0, intent);
+        activity.setResult(Activity.RESULT_OK, intent);
         activity.finish();
 
         replayAll();
