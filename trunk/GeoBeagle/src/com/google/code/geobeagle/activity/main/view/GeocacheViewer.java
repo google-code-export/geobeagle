@@ -168,8 +168,9 @@ public class GeocacheViewer {
         Drawable icon = mIconRenderer.renderIcon(0, 0, iconBig, iconOverlay, mMapViewBitmapCopier,
                 mDifficultyAndTerrainPainter);
         mCacheTypeImageView.setImageDrawable(icon);
-        mContainer.setVisibility(geocache.getContainer() == 0 ? View.GONE : View.VISIBLE);
-        mContainer.setImage(geocache.getContainer());
+        int container = geocache.getContainer();
+        mContainer.setVisibility(container == 0 ? View.GONE : View.VISIBLE);
+        mContainer.setImage(container);
         mDifficulty.setImage(geocache.getDifficulty());
         mTerrain.setImage(geocache.getTerrain());
 
