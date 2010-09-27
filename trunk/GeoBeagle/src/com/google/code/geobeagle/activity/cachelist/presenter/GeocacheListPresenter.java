@@ -36,7 +36,6 @@ import com.google.inject.Provider;
 import android.app.Activity;
 import android.app.ListActivity;
 import android.app.ProgressDialog;
-import android.content.SharedPreferences;
 import android.hardware.SensorManager;
 import android.location.LocationListener;
 import android.util.Log;
@@ -59,7 +58,6 @@ public class GeocacheListPresenter implements Pausable {
     private final UpdateGpsWidgetRunnable mUpdateGpsWidgetRunnable;
     private final CacheListView.ScrollListener mScrollListener;
     private final GpsStatusListener mGpsStatusListener;
-    private final SharedPreferences mSharedPreferences;
     private final UpdateFilterWorker mUpdateFilterWorker;
     private final UpdateFlag mUpdateFlag;
     private final Provider<ClearFilterProgressDialog> mProgressDialogProvider;
@@ -78,7 +76,6 @@ public class GeocacheListPresenter implements Pausable {
             UpdateGpsWidgetRunnable updateGpsWidgetRunnable,
             ScrollListener scrollListener,
             GpsStatusListener gpsStatusListener,
-            SharedPreferences sharedPreferences,
             UpdateFilterWorker updateFilterWorker,
             UpdateFlag updateFlag,
             Provider<ClearFilterProgressDialog> progressDialogProvider,
@@ -95,7 +92,6 @@ public class GeocacheListPresenter implements Pausable {
         mSensorManagerWrapper = sensorManagerWrapper;
         mScrollListener = scrollListener;
         mGpsStatusListener = gpsStatusListener;
-        mSharedPreferences = sharedPreferences;
         mUpdateFilterWorker = updateFilterWorker;
         mUpdateFlag = updateFlag;
         mProgressDialogProvider = progressDialogProvider;
