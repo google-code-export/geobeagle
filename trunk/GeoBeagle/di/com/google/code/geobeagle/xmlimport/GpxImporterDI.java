@@ -285,12 +285,12 @@ public class GpxImporterDI {
 
     // Wrapper so that containers can follow the "constructors do no work" rule.
     public static class ProgressDialogWrapper {
-        private final Context mContext;
+        private final Provider<Context> mContextProvider;
         private ProgressDialog mProgressDialog;
 
         @Inject
-        public ProgressDialogWrapper(Context context) {
-            mContext = context;
+        public ProgressDialogWrapper(Provider<Context> context) {
+            mContextProvider = context;
         }
 
         public void dismiss() {
@@ -303,7 +303,7 @@ public class GpxImporterDI {
         }
 
         public void show(String title, String msg) {
-            mProgressDialog = ProgressDialog.show(mContext, title, msg);
+            mProgressDialog = ProgressDialog.show(mContextProvider.get(), title, msg);
 //            mProgressDialog.setCancelable(true);
         }
     }
@@ -330,10 +330,13 @@ public class GpxImporterDI {
         }
     }
 
-    public static GpxImporter create(Context context, XmlPullParserWrapper xmlPullParserWrapper,
+    public static GpxImporter create(XmlPullParserWrapper xmlPullParserWrapper,
             ErrorDisplayer errorDisplayer, Pausable geocacheListPresenter, Aborter aborter,
             MessageHandlerInterface messageHandler, CachePersisterFacadeFactory cachePersisterFacadeFactory,
-            CacheWriter cacheWriter, GpxWriter gpxWriter, Injector injector) {
+            CacheWriter cacheWriter,
+            GpxWriter gpxWriter,
+            Injector injector) {
+        Context context = injector.getInstance(Context.class);
         final PowerManager powerManager = (PowerManager)context
                 .getSystemService(Context.POWER_SERVICE);
         final WakeLock wakeLock = powerManager.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK,
@@ -355,7 +358,9 @@ public class GpxImporterDI {
         final EventHandlerComposite eventHandlerComposite = new EventHandlerComposite(Arrays
                 .asList(xmlWriter, eventHandlerGpx));
 
-        return new GpxImporter(geocacheListPresenter, gpxLoader, context, importThreadWrapper,
+        return new GpxImporter(geocacheListPresenter, gpxLoader,
+                injector.getProvider(Context.class),
+                importThreadWrapper,
                 messageHandler, toastFactory, eventHandlerComposite, errorDisplayer,
                 injector.getProvider(CacheListRefresh.class), injector);
     }

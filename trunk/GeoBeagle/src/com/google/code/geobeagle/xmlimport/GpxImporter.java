@@ -33,19 +33,21 @@ public class GpxImporter implements Abortable {
     private final EventHandler mEventHandler;
     private final GpxLoader mGpxLoader;
     private final ImportThreadWrapper mImportThreadWrapper;
-    private final Context mContext;
+    private final Provider<Context> mContextProvider;
     private final MessageHandlerInterface mMessageHandler;
     private final ToastFactory mToastFactory;
     private final Pausable mGeocacheListPresenter;
     private final Provider<CacheListRefresh> mCacheListRefreshProvider;
     private final Injector mInjector;
 
-    GpxImporter(Pausable geocacheListPresenter, GpxLoader gpxLoader, Context context,
+    GpxImporter(Pausable geocacheListPresenter,
+            GpxLoader gpxLoader,
+            Provider<Context> contextProvider,
             ImportThreadWrapper importThreadWrapper, MessageHandlerInterface messageHandler,
             ToastFactory toastFactory, EventHandler eventHandler, ErrorDisplayer errorDisplayer,
             Provider<CacheListRefresh> cacheListRefreshProvider,
             Injector injector) {
-        mContext = context;
+        mContextProvider = contextProvider;
         mGpxLoader = gpxLoader;
         mEventHandler = eventHandler;
         mImportThreadWrapper = importThreadWrapper;
@@ -63,7 +65,8 @@ public class GpxImporter implements Abortable {
         mGpxLoader.abort();
         if (mImportThreadWrapper.isAlive()) {
             mImportThreadWrapper.join();
-            mToastFactory.showToast(mContext, R.string.import_canceled, Toast.LENGTH_SHORT);
+            mToastFactory.showToast(mContextProvider.get(), R.string.import_canceled,
+                    Toast.LENGTH_SHORT);
         }
     }
 
