@@ -18,6 +18,7 @@ import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.preferences.PreferencesUpgrader;
 import com.google.code.geobeagle.xmlimport.GeoBeagleEnvironment;
 import com.google.code.geobeagle.xmlimport.ImportException;
+import com.google.inject.Inject;
 
 import android.content.SharedPreferences;
 
@@ -29,6 +30,7 @@ public class GpxAndZipFiles {
     public static class GpxAndZipFilenameFilter implements FilenameFilter {
         private final GpxFilenameFilter mGpxFilenameFilter;
 
+        @Inject
         public GpxAndZipFilenameFilter(GpxFilenameFilter gpxFilenameFilter) {
             mGpxFilenameFilter = gpxFilenameFilter;
         }

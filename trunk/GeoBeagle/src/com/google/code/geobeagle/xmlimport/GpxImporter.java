@@ -80,9 +80,8 @@ public class GpxImporter implements Abortable {
     public void importGpxs() {
         mGeocacheListPresenter.onPause();
 
-        mImportThreadWrapper.open(mCacheListRefreshProvider.get(), mGpxLoader, mEventHandlerComposite,
-                mErrorDisplayer,
-                mInjector);
+        mImportThreadWrapper.open(mCacheListRefreshProvider.get(), mGpxLoader,
+                mEventHandlerComposite, mErrorDisplayer, mInjector);
         mImportThreadWrapper.start();
     }
 }

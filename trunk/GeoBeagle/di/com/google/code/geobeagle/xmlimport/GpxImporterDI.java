@@ -28,7 +28,6 @@ import com.google.code.geobeagle.xmlimport.GpxToCache.Aborter;
 import com.google.code.geobeagle.xmlimport.ImportThreadDelegate.ImportThreadHelper;
 import com.google.code.geobeagle.xmlimport.gpx.GpxAndZipFiles;
 import com.google.code.geobeagle.xmlimport.gpx.GpxAndZipFiles.GpxAndZipFilenameFilter;
-import com.google.code.geobeagle.xmlimport.gpx.GpxAndZipFiles.GpxFilenameFilter;
 import com.google.code.geobeagle.xmlimport.gpx.GpxFileIterAndZipFileIterFactory;
 import com.google.code.geobeagle.xmlimport.gpx.zip.ZipFileOpener.ZipInputFileTester;
 import com.google.inject.Inject;
@@ -46,17 +45,16 @@ import android.os.Message;
 import android.util.Log;
 import android.widget.Toast;
 
-import java.io.FilenameFilter;
-
 public class GpxImporterDI {
     // Can't test this due to final methods in base.
     public static class ImportThread extends RoboThread {
         static ImportThread create(MessageHandlerInterface messageHandler, GpxLoader gpxLoader,
                 EventHandler eventHandler, XmlPullParserWrapper xmlPullParserWrapper,
                 ErrorDisplayer errorDisplayer, Aborter aborter, Injector injector) {
-            final GpxFilenameFilter gpxFilenameFilter = new GpxFilenameFilter();
-            final FilenameFilter filenameFilter = new GpxAndZipFilenameFilter(gpxFilenameFilter);
-            final ZipInputFileTester zipInputFileTester = new ZipInputFileTester(gpxFilenameFilter);
+            final GpxAndZipFilenameFilter filenameFilter = injector
+                    .getInstance(GpxAndZipFilenameFilter.class);
+            final ZipInputFileTester zipInputFileTester = injector
+                    .getInstance(ZipInputFileTester.class);
             final GeoBeagleEnvironment geoBeagleEnvironment = injector
                     .getInstance(GeoBeagleEnvironment.class);
             final GpxFileIterAndZipFileIterFactory gpxFileIterAndZipFileIterFactory = new GpxFileIterAndZipFileIterFactory(
