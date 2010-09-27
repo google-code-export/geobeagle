@@ -331,12 +331,14 @@ public class GpxImporterDI {
     }
 
     public static GpxImporter create(XmlPullParserWrapper xmlPullParserWrapper,
-            ErrorDisplayer errorDisplayer, Pausable geocacheListPresenter, Aborter aborter,
+            Pausable geocacheListPresenter,
+            Aborter aborter,
             MessageHandlerInterface messageHandler, CachePersisterFacadeFactory cachePersisterFacadeFactory,
             CacheWriter cacheWriter,
             GpxWriter gpxWriter,
             Injector injector) {
-        Context context = injector.getInstance(Context.class);
+        final ErrorDisplayer errorDisplayer = injector.getInstance(ErrorDisplayer.class);
+        final Context context = injector.getInstance(Context.class);
         final PowerManager powerManager = (PowerManager)context
                 .getSystemService(Context.POWER_SERVICE);
         final WakeLock wakeLock = powerManager.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK,
