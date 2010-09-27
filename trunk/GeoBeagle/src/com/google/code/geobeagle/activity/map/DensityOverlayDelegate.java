@@ -40,12 +40,13 @@ public class DensityOverlayDelegate {
 
     @Inject
     public DensityOverlayDelegate(Rect patchRect, Point screenLow, Point screenHigh,
-            DensityPatchManager densityPatchManager) {
-        mTiming = new Timing();
+            DensityPatchManager densityPatchManager,
+            Paint paint,
+            Timing timing) {
+        mTiming = timing;
         mPatchRect = patchRect;
-        Paint paint = new Paint();
-        paint.setARGB(128, 255, 0, 0);
         mPaint = paint;
+        paint.setARGB(128, 255, 0, 0);
         mScreenTopLeft = screenLow;
         mScreenBottomRight = screenHigh;
         mDensityPatchManager = densityPatchManager;

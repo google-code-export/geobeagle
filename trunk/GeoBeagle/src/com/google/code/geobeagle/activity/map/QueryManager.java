@@ -45,6 +45,11 @@ class QueryManager {
             mOldBottomRight = new GeoPoint(0, 0);
         }
 
+        public CachedNeedsLoading(GeoPoint topLeft, GeoPoint bottomRight) {
+            mOldTopLeft = topLeft;
+            mOldBottomRight = bottomRight;
+        }
+
         boolean needsLoading(GeoPoint newTopLeft, GeoPoint newBottomRight) {
             if (mOldTopLeft.equals(newTopLeft) && mOldBottomRight.equals(newBottomRight)) {
                 Log.d("GeoBeagle", "CachedNeedsLoading.needsLoading: false");
@@ -130,6 +135,12 @@ class QueryManager {
                 0, 0, 0, 0
         };
         mCachedNeedsLoading = cachedNeedsLoading;
+    }
+
+    // For testing
+    QueryManager(CachedNeedsLoading cachedNeedsLoading, int[] latLonMinMax) {
+        mCachedNeedsLoading = cachedNeedsLoading;
+        mLatLonMinMax = latLonMinMax;
     }
 
     ArrayList<Geocache> load(GeoPoint newTopLeft, GeoPoint newBottomRight, Loader loader) {

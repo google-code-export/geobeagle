@@ -32,7 +32,8 @@ public class OverlayManager {
 
     @Inject
     public OverlayManager(Activity activity, DensityOverlay densityOverlay,
-            CachePinsOverlayFactory cachePinsOverlayFactory) {
+            CachePinsOverlayFactory cachePinsOverlayFactory,
+            NullOverlay nullOverlay) {
         mActivity = (GeoMapActivity)activity;
         mDensityOverlay = densityOverlay;
         mCachePinsOverlayFactory = cachePinsOverlayFactory;
@@ -41,7 +42,6 @@ public class OverlayManager {
         Overlay myLocationOverlay = mActivity.getMyLocationOverlay();
 
         final List<Overlay> mapOverlays = geoMapView.getOverlays();
-        final NullOverlay nullOverlay = new NullOverlay();
         mapOverlays.add(nullOverlay);
         mapOverlays.add(myLocationOverlay);
     }
