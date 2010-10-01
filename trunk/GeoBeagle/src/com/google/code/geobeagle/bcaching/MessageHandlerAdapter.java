@@ -24,7 +24,7 @@ import com.google.inject.Injector;
 
 import android.os.Message;
 
-class MessageHandlerAdapter implements MessageHandlerInterface {
+public class MessageHandlerAdapter implements MessageHandlerInterface {
 
     private final ProgressManager progressManager;
     private final ProgressHandler handler;
