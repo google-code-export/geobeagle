@@ -16,7 +16,6 @@ package com.google.code.geobeagle.bcaching;
 
 import com.google.code.geobeagle.database.ClearCachesFromSource;
 import com.google.code.geobeagle.database.ClearCachesFromSourceNull;
-import com.google.code.geobeagle.xmlimport.MessageHandlerInterface;
 import com.google.inject.Provides;
 
 import roboguice.config.AbstractAndroidModule;
@@ -40,7 +39,6 @@ public class BCachingModule extends AbstractAndroidModule {
 
     @Override
     protected void configure() {
-        bind(MessageHandlerInterface.class).to(MessageHandlerAdapter.class);
         bind(ClearCachesFromSource.class).to(ClearCachesFromSourceNull.class);
         
         requestStaticInjection(RoboThread.class);
