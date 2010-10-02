@@ -45,7 +45,7 @@ public class GpxImporter implements Abortable {
 
     @Inject
     GpxImporter(GeocacheListPresenter geocacheListPresenter,
-            GpxLoader gpxLoader,
+            GpxLoaderFromFile gpxLoaderFromFile,
             Provider<Context> contextProvider,
             ImportThreadWrapper importThreadWrapper,
             MessageHandler messageHandler,
@@ -55,7 +55,7 @@ public class GpxImporter implements Abortable {
             Provider<CacheListRefresh> cacheListRefreshProvider,
             Injector injector) {
         mContextProvider = contextProvider;
-        mGpxLoader = gpxLoader;
+        mGpxLoader = gpxLoaderFromFile;
         mEventHandlerComposite = eventHandlerComposite;
         mImportThreadWrapper = importThreadWrapper;
         mMessageHandler = messageHandler;

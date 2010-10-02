@@ -48,7 +48,7 @@ import android.widget.Toast;
 public class GpxImporterDI {
     // Can't test this due to final methods in base.
     public static class ImportThread extends RoboThread {
-        static ImportThread create(MessageHandlerInterface messageHandler,
+        static ImportThread create(MessageHandlerInterface messageHandlerInterface,
                 GpxLoader gpxLoader,
                 EventHandler eventHandler,
                 XmlPullParserWrapper xmlPullParserWrapper,
@@ -70,10 +70,10 @@ public class GpxImporterDI {
             final EventHelperFactory eventHelperFactory = new EventHelperFactory(
                     xmlPullParserWrapper);
             final OldCacheFilesCleaner oldCacheFilesCleaner = new OldCacheFilesCleaner(
-                    injector.getInstance(GeoBeagleEnvironment.class), messageHandler);
+                    injector.getInstance(GeoBeagleEnvironment.class), messageHandlerInterface);
 
             final ImportThreadHelper importThreadHelper = new ImportThreadHelper(gpxLoader,
-                    messageHandler, eventHelperFactory, eventHandler, oldCacheFilesCleaner,
+                    messageHandlerInterface, eventHelperFactory, eventHandler, oldCacheFilesCleaner,
                     sharedPreferences, geoBeagleEnvironment);
             final FileDataVersionWriter fileDataVersionWriter = injector
                     .getInstance(FileDataVersionWriter.class);
