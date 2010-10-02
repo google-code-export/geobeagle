@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="utf-8"?>
+	<!--
+		Copyright 2009 Google Inc. Licensed under the Apache License, Version
+		2.0 (the "License"); you may not use this file except in compliance
+		with the License. You may obtain a copy of the License at
+		http://www.apache.org/licenses/LICENSE-2.0 Unless required by
+		applicable law or agreed to in writing, software distributed under the
+		License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+		CONDITIONS OF ANY KIND, either express or implied. See the License for
+		the specific language governing permissions and limitations under the
+		License.
+	-->
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:orientation="vertical" android:layout_width="fill_parent"
+	android:layout_height="wrap_content"
+	android:minWidth="280px">
+
+  <TextView android:id="@+id/TextFilterTitle" 
+    android:layout_width="fill_parent" android:layout_height="wrap_content"
+     android:gravity="center_horizontal" android:textSize="20sp" 
+     android:text="Editing filter XX">
+  </TextView>
+
+<ScrollView
+		android:id="@+id/scrollview"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:layout_weight="1">
+
+	<LinearLayout
+		android:id="@+id/widget30"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:orientation="vertical"
+        android:padding="10px">
+
+  <LinearLayout
+		android:id="@+id/widget31"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:orientation="horizontal">
+    <TextView android:id="@+id/TextView03" android:layout_width="wrap_content" 
+      android:layout_height="wrap_content" android:text="Name of filter">
+    </TextView>
+    <EditText android:id="@+id/NameOfFilter" android:text="&lt;Name of filter&gt;" 
+      android:layout_height="wrap_content" android:layout_width="fill_parent" 
+      android:singleLine="true">
+    </EditText>
+  </LinearLayout>
+
+  <TextView android:text="Cache types" android:id="@+id/TextView01" 
+    android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+  
+  <LinearLayout
+		android:id="@+id/widget32"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:orientation="horizontal"
+        android:gravity="fill_horizontal">
+    <ToggleButton android:id="@+id/ToggleButtonTrad" 
+      android:textOff="Traditional" android:textOn="Traditional"
+      android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+    <ToggleButton android:id="@+id/ToggleButtonMulti" 
+      android:textOff="Multi" android:textOn="Multi"
+       android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+    <ToggleButton android:id="@+id/ToggleButtonMystery" 
+      android:textOff="Mystery" android:textOn="Mystery"
+      android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+  </LinearLayout>
+  <LinearLayout
+		android:id="@+id/widget33"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:orientation="horizontal">
+    <ToggleButton android:id="@+id/ToggleButtonMyLocation" 
+      android:textOff="My location" android:textOn="My location"
+      android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+    <ToggleButton android:id="@+id/ToggleButtonOthers" 
+      android:textOff="Others" android:textOn="Others"
+      android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+    <ToggleButton android:id="@+id/ToggleButtonWaypoints" 
+      android:textOff="Waypoints" android:textOn="Waypoints"
+      android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+  </LinearLayout>
+
+  <TextView android:text="Cache sizes" android:id="@+id/TextView04" 
+    android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+
+  <LinearLayout
+		android:id="@+id/widget33"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:orientation="horizontal"
+        android:gravity="fill_horizontal">
+    <ToggleButton android:id="@+id/ToggleButtonMicro" 
+      android:textOff="Micro" android:textOn="Micro"
+      android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+    <ToggleButton android:id="@+id/ToggleButtonSmall" 
+      android:textOff="Small" android:textOn="Small"
+      android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+    <ToggleButton android:id="@+id/ToggleButtonUnknownSize" 
+      android:textOff="Unknown" android:textOn="Unknown"
+      android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+  </LinearLayout>
+
+  <LinearLayout
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:orientation="horizontal">
+    <TextView android:text="Require "
+      android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+    <TextView android:text="Hide"
+      android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+  </LinearLayout>
+  
+  <LinearLayout
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:orientation="horizontal">
+    <CheckBox android:id="@+id/CheckBoxRequireFavorites" android:text="" 
+       android:layout_width="wrap_content" android:layout_height="wrap_content">
+    </CheckBox>
+    <CheckBox android:id="@+id/CheckBoxForbidFavorites" android:text="Favorites" 
+       android:layout_width="fill_parent" android:layout_height="wrap_content">
+    </CheckBox>
+  </LinearLayout>
+
+  <LinearLayout
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:orientation="horizontal">
+    <CheckBox android:id="@+id/CheckBoxRequireFound" android:text="" 
+       android:layout_width="wrap_content" android:layout_height="wrap_content">
+    </CheckBox>
+    <CheckBox android:id="@+id/CheckBoxForbidFound" android:text="Found" 
+       android:layout_width="fill_parent" android:layout_height="wrap_content">
+    </CheckBox>
+  </LinearLayout>
+
+  <LinearLayout
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:orientation="horizontal">
+    <CheckBox android:id="@+id/CheckBoxRequireDNF" android:text="" 
+       android:layout_width="wrap_content" android:layout_height="wrap_content">
+    </CheckBox>
+    <CheckBox android:id="@+id/CheckBoxForbidDNF" android:text="Did Not Find" 
+       android:layout_width="fill_parent" android:layout_height="wrap_content">
+    </CheckBox>
+  </LinearLayout>
+  
+  <LinearLayout
+		android:id="@+id/widget31"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:orientation="horizontal">
+    <TextView android:id="@+id/TextView02" android:layout_width="wrap_content" 
+      android:layout_height="wrap_content" android:text="Required text">
+    </TextView>
+    <EditText android:id="@+id/FilterString" android:text="&lt;Filter string&gt;" 
+      android:layout_height="wrap_content" android:layout_width="fill_parent" 
+      android:singleLine="true">
+    </EditText>
+  </LinearLayout>
+
+
+
+
+</LinearLayout>
+
+</ScrollView>
+
+  <Button android:text="Apply filter" android:id="@+id/ButtonApplyFilter" 
+    android:layout_width="fill_parent" android:layout_height="wrap_content"
+    android:gravity="center_horizontal"></Button>
+
+
+</LinearLayout>

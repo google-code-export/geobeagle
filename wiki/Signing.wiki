@@ -1,0 +1,1 @@
+ jarsigner -verbose -keystore my-release-key.keystore GeoBeagle.apk alias_name

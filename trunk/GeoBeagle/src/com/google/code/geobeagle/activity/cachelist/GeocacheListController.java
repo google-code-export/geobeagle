@@ -1,0 +1,121 @@
+/*
+ ** Licensed under the Apache License, Version 2.0 (the "License");
+ ** you may not use this file except in compliance with the License.
+ ** You may obtain a copy of the License at
+ **
+ **     http://www.apache.org/licenses/LICENSE-2.0
+ **
+ ** Unless required by applicable law or agreed to in writing, software
+ ** distributed under the License is distributed on an "AS IS" BASIS,
+ ** WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ ** See the License for the specific language governing permissions and
+ ** limitations under the License.
+ */
+
+package com.google.code.geobeagle.activity.cachelist;
+
+import com.google.code.geobeagle.actions.ContextActions;
+import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionSyncGpx;
+import com.google.code.geobeagle.activity.cachelist.model.GeocacheVectors;
+import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
+import com.google.code.geobeagle.xmlimport.GpxToCache.Aborter;
+import com.google.inject.Inject;
+import com.google.inject.Injector;
+import com.google.inject.Provider;
+
+import android.util.Log;
+import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.View.OnCreateContextMenuListener;
+import android.widget.AdapterView.AdapterContextMenuInfo;
+
+public class GeocacheListController {
+
+    public static class CacheListOnCreateContextMenuListener implements OnCreateContextMenuListener {
+        private final GeocacheVectors mGeocacheVectors;
+
+        public CacheListOnCreateContextMenuListener(GeocacheVectors geocacheVectors) {
+            mGeocacheVectors = geocacheVectors;
+        }
+
+        @Override
+        public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
+            AdapterContextMenuInfo acmi = (AdapterContextMenuInfo)menuInfo;
+            if (acmi.position > 0) {
+                menu.setHeaderTitle(mGeocacheVectors.get(acmi.position - 1).getId());
+                menu.add(0, MENU_VIEW, 0, "View");
+                menu.add(0, MENU_EDIT, 1, "Edit");
+                menu.add(0, MENU_DELETE, 2, "Delete");
+            }
+        }
+    }
+
+    static final int MENU_DELETE = 0;
+    static final int MENU_VIEW = 1;
+    static final int MENU_EDIT = 2;
+    public static final String SELECT_CACHE = "SELECT_CACHE";
+    private final CacheListRefresh mCacheListRefresh;
+    private final Aborter mAborter;
+    private final Provider<MenuActionSyncGpx> mMenuActionSyncGpxProvider;
+    private final Provider<CacheListMenuActions> mCacheListMenuActionsProvider;
+    private final Provider<ContextActions> mContextActionsProvider;
+
+    @Inject
+    public GeocacheListController(Injector injector) {
+        mCacheListRefresh = injector.getInstance(CacheListRefresh.class);
+        mAborter = injector.getInstance(Aborter.class);
+        mMenuActionSyncGpxProvider = injector.getProvider(MenuActionSyncGpx.class);
+        mCacheListMenuActionsProvider = injector.getProvider(CacheListMenuActions.class);
+        mContextActionsProvider = injector.getProvider(ContextActions.class);
+    }
+
+    public GeocacheListController(CacheListRefresh cacheListRefresh,
+            Aborter aborter,
+            Provider<MenuActionSyncGpx> menuActionSyncProvider,
+            Provider<CacheListMenuActions> cacheListMenuActionsProvider,
+            Provider<ContextActions> contextActionsProvider) {
+        mCacheListRefresh = cacheListRefresh;
+        mAborter = aborter;
+        mMenuActionSyncGpxProvider = menuActionSyncProvider;
+        mCacheListMenuActionsProvider = cacheListMenuActionsProvider;
+        mContextActionsProvider = contextActionsProvider;
+    }
+
+    public boolean onContextItemSelected(MenuItem menuItem) {
+        AdapterContextMenuInfo adapterContextMenuInfo = (AdapterContextMenuInfo)menuItem
+                .getMenuInfo();
+        mContextActionsProvider.get()
+                .act(menuItem.getItemId(), adapterContextMenuInfo.position - 1);
+        return true;
+    }
+
+    public boolean onCreateOptionsMenu(Menu menu) {
+        return mCacheListMenuActionsProvider.get().onCreateOptionsMenu(menu);
+    }
+
+    public void onListItemClick(int position) {
+        if (position > 0)
+            mContextActionsProvider.get().act(MENU_VIEW, position - 1);
+        else
+            mCacheListRefresh.forceRefresh();
+    }
+
+    public boolean onOptionsItemSelected(MenuItem item) {
+        return mCacheListMenuActionsProvider.get().act(item.getItemId());
+    }
+
+    public void onPause() {
+        Log.d("GeoBeagle", "onPause aborting");
+        mAborter.abort();
+        mMenuActionSyncGpxProvider.get().abort();
+    }
+
+    public void onResume(boolean fImport) {
+        mCacheListRefresh.forceRefresh();
+        if (fImport)
+            mMenuActionSyncGpxProvider.get().act();
+    }
+}
