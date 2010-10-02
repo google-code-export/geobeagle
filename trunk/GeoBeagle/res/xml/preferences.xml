@@ -11,14 +11,22 @@
 		android:title="Use Imperial System" android:summary="Miles and feet instead of meters" />
 	<CheckBoxPreference android:key="field-note-text-file"
 		android:title="Log Caches to File" android:summary="Log field notes to a file instead of SMS" />
-	<CheckBoxPreference android:key="shake-wake"
-		android:title="Keep Screen On" android:summary="Postpone sleeping if the phone is being moved."
-		android:defaultValue="false" />
-	<CheckBoxPreference android:key="absolute-bearing"
-		android:title="Absolute Bearing in List" android:summary="Letters (NS) instead of arrows (^v)" />
-	<CheckBoxPreference android:key="show-found-caches"
-		android:title="Show Found Caches" android:summary="Show found caches in cache list"
-		android:defaultValue="true" />
+
+	<ListPreference android:key="shake-wake-duration"
+		android:title="Screen timeout" android:entries="@array/shake_wake_duration_choices"
+		android:summary="Extend screen timeout if the accelerometer detects motion--keeps phone awake while geocaching."
+		android:entryValues="@array/shake_wake_duration_values"
+		android:defaultValue="0" android:dialogTitle="Screen timeout extension" />
+
+	<PreferenceCategory android:orderingFromXml="true"
+		android:title="Cache list settings">
+		<CheckBoxPreference android:key="absolute-bearing"
+			android:title="Absolute Bearing in List" android:summary="Letters (NS) instead of arrows (^v)" />
+		<CheckBoxPreference android:key="show-found-caches"
+			android:title="Show Found Caches" android:summary="Show found caches in cache list"
+			android:defaultValue="true" />
+	</PreferenceCategory>
+
 	<PreferenceCategory android:orderingFromXml="true"
 		android:title="Sync settings">
 		<CheckBoxPreference android:key="sdcard-enabled"

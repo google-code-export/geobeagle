@@ -19,32 +19,54 @@ import com.google.inject.Inject;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
-import android.os.PowerManager;
-import android.os.PowerManager.WakeLock;
+import android.os.Handler;
 import android.util.Log;
 
 class ShakeListener implements SensorEventListener {
-    private final PowerManager pm;
     private final ForceThresholdStrategy forceThresholdStrategy;
+    private final Handler handler;
+    private int shakeWakeDuration;
+    private final WakeLockReleaser wakeLockReleaser;
+    private final WakeLockView wakeLockView;
 
     @Inject
-    ShakeListener(PowerManager pm, ForceThresholdStrategy forceThresholdStrategy) {
-        this.pm = pm;
+    ShakeListener(ForceThresholdStrategy forceThresholdStrategy,
+            Handler handler,
+            WakeLockReleaser wakeLockReleaser,
+            WakeLockView wakeLockView) {
         this.forceThresholdStrategy = forceThresholdStrategy;
+        this.handler = handler;
+        this.wakeLockReleaser = wakeLockReleaser;
+        this.wakeLockView = wakeLockView;
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
     }
 
     @Override
     public void onSensorChanged(SensorEvent event) {
         if (forceThresholdStrategy.exceedsThreshold(event.values)) {
-            WakeLock wakeLock = pm.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK
-                    | PowerManager.ON_AFTER_RELEASE, "accel");
-            wakeLock.acquire(5000);
+            renewWakeLock();
             Log.d("GeoBeagle", "shaked; wakelocking: " + event.values[0] + ", " + event.values[1]
                     + ", " + event.values[2]);
         }
     }
 
-    @Override
-    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+    private void renewWakeLock() {
+        Log.d("GeoBeagle", "Acquiring wakelock");
+        wakeLockView.keepScreenOn(true);
+        handler.removeCallbacks(wakeLockReleaser);
+        handler.postDelayed(wakeLockReleaser, shakeWakeDuration * 1000);
+    }
+
+    void acquireWakeLock(int shakeWakeDuration) {
+        this.shakeWakeDuration = shakeWakeDuration;
+        renewWakeLock();
+    }
+
+    void removeAllWakeLocks() {
+        wakeLockView.keepScreenOn(false);
+        handler.removeCallbacks(wakeLockReleaser);
     }
 }

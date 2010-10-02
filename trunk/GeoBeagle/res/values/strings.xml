@@ -137,5 +137,17 @@
 		<item>Google Maps</item>
 		<item>Turn-by-turn Navigation</item>
 	</array>
+	<string-array name="shake_wake_duration_choices">
+		<item>Don\'t extend timeout</item>
+		<item>5 seconds</item>
+		<item>5 minutes</item>
+		<item>1 hour</item>
+	</string-array>
+	<string-array name="shake_wake_duration_values">
+		<item>0</item>
+		<item>5</item>
+		<item>300</item>
+		<item>3600</item>
+	</string-array>
 	<string name="select_nav_choices_title">Please select</string>
 </resources>
