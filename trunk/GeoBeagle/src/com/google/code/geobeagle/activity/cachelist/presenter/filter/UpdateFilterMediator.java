@@ -19,39 +19,50 @@ import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh.U
 import com.google.code.geobeagle.database.filter.ApplyFilterProgressDialog;
 import com.google.code.geobeagle.database.filter.ClearFilterProgressDialog;
 import com.google.code.geobeagle.database.filter.FilterCleanliness;
+import com.google.code.geobeagle.database.filter.HideArchivedCachesProgressDialog;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
-class UpdateFilterMediator {
+import android.app.ProgressDialog;
+
+public class UpdateFilterMediator {
     private final Provider<ApplyFilterProgressDialog> applyFilterProgressDialogProvider;
     private final CacheListRefresh cacheListRefresh;
     private final Provider<ClearFilterProgressDialog> clearFilterProgressDialogProvider;
     private final UpdateFlag updateFlag;
     private final FilterCleanliness filterCleanliness;
+    private final Provider<HideArchivedCachesProgressDialog> hidingArchivedCachesProgressDialogProvider;
 
     @Inject
     public UpdateFilterMediator(CacheListRefresh cacheListRefresh,
             UpdateFlag updateFlag,
             Provider<ApplyFilterProgressDialog> applyFilterProgressDialogProvider,
             Provider<ClearFilterProgressDialog> clearFilterProgressDialogProvider,
+            Provider<HideArchivedCachesProgressDialog> hidingArchivedCachesProgressDialogProvider,
             FilterCleanliness filterCleanliness) {
         this.cacheListRefresh = cacheListRefresh;
         this.updateFlag = updateFlag;
         this.applyFilterProgressDialogProvider = applyFilterProgressDialogProvider;
         this.clearFilterProgressDialogProvider = clearFilterProgressDialogProvider;
+        this.hidingArchivedCachesProgressDialogProvider = hidingArchivedCachesProgressDialogProvider;
         this.filterCleanliness = filterCleanliness;
     }
 
+    public void startFiltering() {
+        updateFlag.setUpdatesEnabled(false);
+    }
+
+    public void showClearFilterProgress() {
+        ProgressDialog progressDialog = clearFilterProgressDialogProvider.get();
+        progressDialog.incrementProgressBy(1);
+        progressDialog.show();
+    }
+
     void dismissApplyFilterProgress() {
-        updateFlag.setUpdatesEnabled(true);
-        cacheListRefresh.forceRefresh();
         applyFilterProgressDialogProvider.get().dismiss();
     }
 
     void dismissClearFilterProgress() {
-        filterCleanliness.markDirty(false);
-        updateFlag.setUpdatesEnabled(true);
-        cacheListRefresh.forceRefresh();
         clearFilterProgressDialogProvider.get().dismiss();
     }
 
@@ -59,12 +70,17 @@ class UpdateFilterMediator {
         applyFilterProgressDialogProvider.get().incrementProgressBy(1);
     }
 
-    void showApplyFilterProgress(int arg1) {
-        clearFilterProgressDialogProvider.get().dismiss();
+    void showApplyFilterProgress(int max) {
         ApplyFilterProgressDialog applyFilterProgressDialog = applyFilterProgressDialogProvider
                 .get();
-        applyFilterProgressDialog.setMax(arg1);
+        applyFilterProgressDialog.setMax(max);
         applyFilterProgressDialog.show();
+    }
+
+    public void endFiltering() {
+        filterCleanliness.markDirty(false);
+        updateFlag.setUpdatesEnabled(true);
+        cacheListRefresh.forceRefresh();
     }
 
 }
