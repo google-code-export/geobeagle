@@ -25,6 +25,9 @@
 		<CheckBoxPreference android:key="show-found-caches"
 			android:title="Show Found Caches" android:summary="Show found caches in cache list"
 			android:defaultValue="true" />
+		<CheckBoxPreference android:key="show-unavailable-caches"
+			android:title="Show Unavailable Caches" android:summary="Show unavailable caches in cache list"
+			android:defaultValue="false" />
 	</PreferenceCategory>
 
 	<PreferenceCategory android:orderingFromXml="true"

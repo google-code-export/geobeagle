@@ -141,10 +141,8 @@ public class CacheListPresenterTest extends GeoBeagleTest {
 
         PowerMock.replayAll();
         new GeocacheListPresenter(null, null, null, geocacheListAdapter, geocacheVectors,
-                inflatedGpsStatusWidget,
-                listActivity, locationControlBuffered, null, null, scrollListener, null, null,
- null, null, null, null)
-                .onCreate();
+                inflatedGpsStatusWidget, listActivity, locationControlBuffered, null, null,
+                scrollListener, null, null, null, null, null).onCreate();
         PowerMock.verifyAll();
     }
 
@@ -161,7 +159,7 @@ public class CacheListPresenterTest extends GeoBeagleTest {
         shakeWaker.unregister();
         PowerMock.replayAll();
         new GeocacheListPresenter(null, combinedLocationManager, null, null, null, null, null,
-                null, sensorManagerWrapper, null, null, null, null, null, null, null, shakeWaker)
+                null, sensorManagerWrapper, null, null, null, null, null, shakeWaker, null)
                 .onPause();
         PowerMock.verifyAll();
     }
@@ -216,7 +214,7 @@ public class CacheListPresenterTest extends GeoBeagleTest {
         new GeocacheListPresenter(combinedLocationListener, combinedLocationManager,
                 cacheListCompassListenerProvider, geocacheListAdapter, null, null, listActivity,
                 locationControlBuffered, sensorManagerWrapper, updateGpsRunnable, null,
-                gpsStatusListener, null, null, null, filterCleanliness, shakeWaker)
+                gpsStatusListener, null, filterCleanliness, shakeWaker, null)
                 .onResume(cacheListRefresh);
 
         PowerMock.verifyAll();
