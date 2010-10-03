@@ -15,7 +15,6 @@
 package com.google.code.geobeagle.database.filter;
 
 import com.google.code.geobeagle.database.DbFrontend;
-import com.google.code.geobeagle.database.ISQLiteDatabase;
 import com.google.inject.Inject;
 
 class CacheVisibilityStore {
@@ -27,13 +26,11 @@ class CacheVisibilityStore {
     }
 
     void setInvisible(String cache) {
-        ISQLiteDatabase database = dbFrontEnd.getDatabase();
-        database.execSQL("UPDATE CACHES SET Visible = 0 WHERE ID = ?", cache);
+        dbFrontEnd.getDatabase().execSQL("UPDATE CACHES SET Visible = 0 WHERE ID = ?", cache);
     }
 
     void setAllVisible() {
-        ISQLiteDatabase database = dbFrontEnd.getDatabase();
-        database.execSQL("UPDATE CACHES SET Visible = 1");
+        dbFrontEnd.getDatabase().execSQL("UPDATE CACHES SET Visible = 1");
     }
 
 }
