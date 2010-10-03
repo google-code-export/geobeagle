@@ -55,4 +55,8 @@ public class UpdateFilterHandler extends Handler {
     private void sendMessage(UpdateFilterMessages updateFilterMessage, int arg1) {
         sendMessage(obtainMessage(updateFilterMessage.ordinal(), arg1, 0));
     }
+
+    public void endFiltering() {
+        sendMessage(UpdateFilterMessages.END_FILTERING);
+    }
 }

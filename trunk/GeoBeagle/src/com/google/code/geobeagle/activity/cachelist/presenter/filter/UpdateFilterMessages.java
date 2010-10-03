@@ -40,6 +40,11 @@ public enum UpdateFilterMessages {
         void handleMessage(UpdateFilterMediator updateFilterMediator, int arg1) {
             updateFilterMediator.showApplyFilterProgress(arg1);
         }
+    END_FILTERING {
+        @Override
+        void handleMessage(UpdateFilterMediator updateFilterMediator, int arg1) {
+            updateFilterMediator.endFiltering();
+        }
     };
     public static UpdateFilterMessages fromOrd(int i) {
         return UpdateFilterMessages.values()[i];
