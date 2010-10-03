@@ -28,13 +28,11 @@ public class UpdateFilterHandler extends Handler {
     }
 
     public void dismissApplyFilterProgress() {
-        sendMessage(obtainMessage(UpdateFilterMessages.DISMISS_APPLY_FILTER_PROGRESS.ordinal(), 0,
-                0));
+        sendMessage(UpdateFilterMessages.DISMISS_APPLY_FILTER_PROGRESS);
     }
 
     public void dismissClearFilterProgress() {
-        sendMessage(obtainMessage(UpdateFilterMessages.DISMISS_CLEAR_FILTER_PROGRESS.ordinal(), 0,
-                0));
+        sendMessage(UpdateFilterMessages.DISMISS_CLEAR_FILTER_PROGRESS);
     }
 
     @Override
@@ -43,12 +41,18 @@ public class UpdateFilterHandler extends Handler {
     }
 
     public void incrementApplyFilterProgress() {
-        sendMessage(obtainMessage(UpdateFilterMessages.INCREMENT_APPLY_FILTER_PROGRESS.ordinal(),
-                0, 0));
+        sendMessage(UpdateFilterMessages.INCREMENT_APPLY_FILTER_PROGRESS);
     }
 
     public void showApplyFilterProgress(int count) {
-        sendMessage(obtainMessage(UpdateFilterMessages.SHOW_APPLY_FILTER_PROGRESS.ordinal(), count,
-                0));
+        sendMessage(UpdateFilterMessages.SHOW_APPLY_FILTER_PROGRESS, count);
+    }
+
+    private void sendMessage(UpdateFilterMessages updateFilterMessage) {
+        sendMessage(updateFilterMessage, 0);
+    }
+
+    private void sendMessage(UpdateFilterMessages updateFilterMessage, int arg1) {
+        sendMessage(obtainMessage(updateFilterMessage.ordinal(), arg1, 0));
     }
 }
