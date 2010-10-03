@@ -17,9 +17,9 @@ package com.google.code.geobeagle.cachelist;
 import static org.junit.Assert.assertEquals;
 
 import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.database.FilterNearestCaches;
 import com.google.code.geobeagle.database.WhereFactoryAllCaches;
 import com.google.code.geobeagle.database.WhereFactoryNearestCaches;
+import com.google.code.geobeagle.database.filter.FilterNearestCaches;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

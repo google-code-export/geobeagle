@@ -25,6 +25,7 @@ import static org.powermock.api.easymock.PowerMock.verifyAll;
 import com.google.code.geobeagle.CacheType;
 import com.google.code.geobeagle.GeocacheFactory.Source;
 import com.google.code.geobeagle.database.DatabaseDI.SQLiteWrapper;
+import com.google.code.geobeagle.database.filter.Filter;
 import com.google.inject.Provider;
 
 import org.junit.Test;

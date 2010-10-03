@@ -12,7 +12,8 @@
  ** limitations under the License.
  */
 
-package com.google.code.geobeagle.activity.cachelist.presenter;
+package com.google.code.geobeagle.activity.cachelist.presenter.filter;
+
 
 public enum UpdateFilterMessages {
 

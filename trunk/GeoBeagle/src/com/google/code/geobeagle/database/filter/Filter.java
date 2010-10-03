@@ -12,14 +12,14 @@
  ** limitations under the License.
  */
 
-package com.google.code.geobeagle.database;
+package com.google.code.geobeagle.database.filter;
 
 import com.google.code.geobeagle.activity.preferences.EditPreferences;
 import com.google.inject.Inject;
 
 import android.content.SharedPreferences;
 
-class Filter {
+public class Filter {
     private final SharedPreferences sharedPreferences;
 
     @Inject

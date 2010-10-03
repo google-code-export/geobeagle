@@ -20,7 +20,7 @@ import com.google.code.geobeagle.Timing;
 import com.google.code.geobeagle.activity.cachelist.ActivityVisible;
 import com.google.code.geobeagle.activity.cachelist.model.CacheListData;
 import com.google.code.geobeagle.database.DbFrontend;
-import com.google.code.geobeagle.database.FilterNearestCaches;
+import com.google.code.geobeagle.database.filter.FilterNearestCaches;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 

@@ -16,6 +16,7 @@ package com.google.code.geobeagle.database;
 
 import com.google.code.geobeagle.CacheType;
 import com.google.code.geobeagle.GeocacheFactory.Source;
+import com.google.code.geobeagle.database.filter.Filter;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
