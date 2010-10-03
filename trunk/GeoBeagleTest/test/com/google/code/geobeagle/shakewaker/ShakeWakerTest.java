@@ -11,13 +11,17 @@
  ** See the License for the specific language governing permissions and
  ** limitations under the License.
  */
+
 package com.google.code.geobeagle.shakewaker;
 
-import org.easymock.EasyMock;
+import static org.easymock.EasyMock.expect;
+import static org.powermock.api.easymock.PowerMock.createMock;
+import static org.powermock.api.easymock.PowerMock.replayAll;
+import static org.powermock.api.easymock.PowerMock.verifyAll;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.powermock.api.easymock.PowerMock;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import android.content.SharedPreferences;
@@ -28,70 +32,66 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RunWith(PowerMockRunner.class)
-
 public class ShakeWakerTest {
     private SharedPreferences sharedPreferences;
     private SensorManager sensorManager;
     private ShakeListener shakeListener;
+    private Sensor accelerometer;
+    private List<Sensor> sensorList;
 
     @Before
     public void setUp() {
-        sensorManager = PowerMock.createMock(SensorManager.class);
-        shakeListener = PowerMock.createMock(ShakeListener.class);
-        sharedPreferences = PowerMock.createMock(SharedPreferences.class);
+        accelerometer = createMock(Sensor.class);
+        sensorManager = createMock(SensorManager.class);
+        shakeListener = createMock(ShakeListener.class);
+        sharedPreferences = createMock(SharedPreferences.class);
+        sensorList = new ArrayList<Sensor>();
     }
 
     @Test
     public void testShakeWakerRegister() {
-        Sensor accelerometer = PowerMock.createMock(Sensor.class);
-        List<Sensor> sensorList = new ArrayList<Sensor>();
-
         sensorList.add(accelerometer);
-        EasyMock.expect(sharedPreferences.getBoolean(ShakeWaker.SHAKE_WAKE, false)).andReturn(true);
-        EasyMock.expect(sensorManager.getSensorList(Sensor.TYPE_ACCELEROMETER)).andReturn(
-                sensorList);
-        EasyMock.expect(
+        expect(sharedPreferences.getString(ShakeWaker.SHAKE_WAKE, "0")).andReturn("5");
+        expect(sensorManager.getSensorList(Sensor.TYPE_ACCELEROMETER)).andReturn(sensorList);
+        expect(
                 sensorManager.registerListener(shakeListener, accelerometer,
                         SensorManager.SENSOR_DELAY_UI)).andReturn(true);
-        PowerMock.replayAll();
+        shakeListener.acquireWakeLock(5);
+        replayAll();
 
         new ShakeWaker(sharedPreferences, sensorManager, shakeListener).register();
-        PowerMock.verifyAll();
+        verifyAll();
     }
 
     @Test
     public void testShakeWakerRegisterNoPreferenceSet() {
-        Sensor accelerometer = PowerMock.createMock(Sensor.class);
-        List<Sensor> sensorList = new ArrayList<Sensor>();
-
         sensorList.add(accelerometer);
-        EasyMock.expect(sharedPreferences.getBoolean(ShakeWaker.SHAKE_WAKE, false))
-                .andReturn(false);
-        PowerMock.replayAll();
+        expect(sharedPreferences.getString(ShakeWaker.SHAKE_WAKE, "0")).andReturn("0");
+        shakeListener.removeAllWakeLocks();
+        replayAll();
 
         new ShakeWaker(sharedPreferences, sensorManager, shakeListener).register();
-        PowerMock.verifyAll();
+        verifyAll();
     }
 
     @Test
     public void testShakeWakerUnregister() {
         sensorManager.unregisterListener(shakeListener);
-        PowerMock.replayAll();
+        shakeListener.removeAllWakeLocks();
+        replayAll();
 
         new ShakeWaker(null, sensorManager, shakeListener).unregister();
-        PowerMock.verifyAll();
+        verifyAll();
     }
 
     @Test
     public void testShakeWakerRegisterNoAccelerometer() {
-        List<Sensor> sensorList = new ArrayList<Sensor>();
-
-        EasyMock.expect(sharedPreferences.getBoolean(ShakeWaker.SHAKE_WAKE, false)).andReturn(true);
-        EasyMock.expect(sensorManager.getSensorList(Sensor.TYPE_ACCELEROMETER)).andReturn(
-                sensorList);
-        PowerMock.replayAll();
+        expect(sharedPreferences.getString(ShakeWaker.SHAKE_WAKE, "0")).andReturn("5");
+        shakeListener.acquireWakeLock(5);
+        expect(sensorManager.getSensorList(Sensor.TYPE_ACCELEROMETER)).andReturn(sensorList);
+        replayAll();
 
         new ShakeWaker(sharedPreferences, sensorManager, shakeListener).register();
-        PowerMock.verifyAll();
+        verifyAll();
     }
 }
