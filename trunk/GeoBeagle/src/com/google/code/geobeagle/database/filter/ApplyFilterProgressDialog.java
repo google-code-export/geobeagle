@@ -12,7 +12,7 @@
  ** limitations under the License.
  */
 
-package com.google.code.geobeagle.database;
+package com.google.code.geobeagle.database.filter;
 
 import com.google.inject.Inject;
 
