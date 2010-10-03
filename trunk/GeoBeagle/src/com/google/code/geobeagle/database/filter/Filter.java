@@ -32,4 +32,11 @@ public class Filter {
                 false);
         return showFoundCaches || !found;
     }
+
+    public boolean showBasedOnAvailableState(boolean available) {
+        boolean showUnavailableCaches = sharedPreferences.getBoolean(
+                EditPreferences.SHOW_UNAVAILABLE_CACHES, false);
+        return showUnavailableCaches || available;
+    }
+
 }

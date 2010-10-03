@@ -86,7 +86,8 @@ public class CacheWriterTest {
         Provider<ISQLiteDatabase> sqliteProvider = createMock(Provider.class);
         Filter filter = createMock(Filter.class);
 
-        expect(filter.isVisible(true)).andReturn(true);
+        expect(filter.showBasedOnFoundState(true)).andReturn(true);
+        expect(filter.showBasedOnAvailableState(false)).andReturn(true);
         expect(sqliteProvider.get()).andReturn(sqlite);
 
         sqlite.execSQL(Database.SQL_REPLACE_CACHE, "gc123", "a cache", 122.0, 37.0, "source", 0, 0,

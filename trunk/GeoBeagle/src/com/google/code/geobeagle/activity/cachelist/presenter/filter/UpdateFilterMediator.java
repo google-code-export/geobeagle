@@ -77,6 +77,14 @@ public class UpdateFilterMediator {
         applyFilterProgressDialog.show();
     }
 
+    public void showHidingArchivedCachesProgress() {
+        hidingArchivedCachesProgressDialogProvider.get().show();
+    }
+
+    public void dismissHidingArchivedCachesProgress() {
+        hidingArchivedCachesProgressDialogProvider.get().dismiss();
+    }
+
     public void endFiltering() {
         filterCleanliness.markDirty(false);
         updateFlag.setUpdatesEnabled(true);
