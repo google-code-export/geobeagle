@@ -30,9 +30,9 @@ public class EditPreferences extends GuicePreferenceActivity {
         super.onCreate(savedInstanceState);
 
         addPreferencesFromResource(R.xml.preferences);
-        Preference preference = findPreference(SHOW_FOUND_CACHES);
+        Preference showFoundCachesPreference = findPreference(SHOW_FOUND_CACHES);
         OnPreferenceChangeListener onPreferenceChangeListener = getInjector().getInstance(
                 FilterSettingsChangeListener.class);
-        preference.setOnPreferenceChangeListener(onPreferenceChangeListener);
+        showFoundCachesPreference.setOnPreferenceChangeListener(onPreferenceChangeListener);
     }
 }
