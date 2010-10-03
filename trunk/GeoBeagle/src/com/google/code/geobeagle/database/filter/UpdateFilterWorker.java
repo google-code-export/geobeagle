@@ -50,6 +50,11 @@ public class UpdateFilterWorker extends RoboThread {
             return;
         }
 
+        hideFoundCaches();
+        updateFilterHandler.dismissApplyFilterProgress();
+    }
+
+    private void hideFoundCaches() {
         FoundCaches foundCaches = null;
         try {
             foundCaches = tagReader.getFoundCaches();
@@ -63,6 +68,5 @@ public class UpdateFilterWorker extends RoboThread {
             if (foundCaches != null)
                 foundCaches.close();
         }
-        updateFilterHandler.dismissApplyFilterProgress();
     }
 }
