@@ -24,7 +24,7 @@ import java.util.List;
 
 public class ShakeWaker {
 
-    static final String SHAKE_WAKE = "shake-wake";
+    static final String SHAKE_WAKE = "shake-wake-duration";
     private final SharedPreferences sharedPreferences;
     private final SensorManager sensorManager;
     private final ShakeListener shakeListener;
@@ -39,9 +39,13 @@ public class ShakeWaker {
     }
 
     public void register() {
-        boolean shakeWake = sharedPreferences.getBoolean(SHAKE_WAKE, false);
-        if (!shakeWake)
+        String sShakeWakeDuration = sharedPreferences.getString(SHAKE_WAKE, "0");
+        int nShakeWakeDuration = Integer.parseInt(sShakeWakeDuration);
+        if (nShakeWakeDuration == 0) {
+            shakeListener.removeAllWakeLocks();
             return;
+        }
+        shakeListener.acquireWakeLock(nShakeWakeDuration);
         List<Sensor> sensorList = sensorManager.getSensorList(Sensor.TYPE_ACCELEROMETER);
         if (sensorList.size() <= 0)
             return;
@@ -51,6 +55,6 @@ public class ShakeWaker {
 
     public void unregister() {
         sensorManager.unregisterListener(shakeListener);
+        shakeListener.removeAllWakeLocks();
     }
 }
-
