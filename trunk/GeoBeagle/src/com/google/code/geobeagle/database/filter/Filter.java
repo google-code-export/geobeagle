@@ -27,9 +27,9 @@ public class Filter {
         this.sharedPreferences = sharedPreferences;
     }
 
-    public boolean isVisible(boolean found) {
-        boolean showFoundCaches = sharedPreferences.getBoolean(
-                EditPreferences.SHOW_FOUND_CACHES, false);
+    public boolean showBasedOnFoundState(boolean found) {
+        boolean showFoundCaches = sharedPreferences.getBoolean(EditPreferences.SHOW_FOUND_CACHES,
+                false);
         return showFoundCaches || !found;
     }
 }
