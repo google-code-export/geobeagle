@@ -60,7 +60,6 @@ class UpdateFilterMediator {
     }
 
     void showApplyFilterProgress(int arg1) {
-        filterCleanliness.markDirty(false);
         clearFilterProgressDialogProvider.get().dismiss();
         ApplyFilterProgressDialog applyFilterProgressDialog = applyFilterProgressDialogProvider
                 .get();
