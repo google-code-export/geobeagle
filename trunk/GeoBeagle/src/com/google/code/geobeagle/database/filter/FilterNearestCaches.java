@@ -12,9 +12,12 @@
  ** limitations under the License.
  */
 
-package com.google.code.geobeagle.database;
+package com.google.code.geobeagle.database.filter;
 
 import com.google.code.geobeagle.R;
+import com.google.code.geobeagle.database.WhereFactory;
+import com.google.code.geobeagle.database.WhereFactoryAllCaches;
+import com.google.code.geobeagle.database.WhereFactoryNearestCaches;
 import com.google.inject.Inject;
 
 import roboguice.inject.ContextScoped;

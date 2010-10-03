@@ -16,7 +16,7 @@ package com.google.code.geobeagle.cachelist;
 
 import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionToggleFilter;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
-import com.google.code.geobeagle.database.FilterNearestCaches;
+import com.google.code.geobeagle.database.filter.FilterNearestCaches;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

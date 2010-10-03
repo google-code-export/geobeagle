@@ -23,9 +23,9 @@ import com.google.code.geobeagle.activity.cachelist.GeocacheListController.Cache
 import com.google.code.geobeagle.activity.cachelist.Pausable;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVectors;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh.UpdateFlag;
-import com.google.code.geobeagle.database.ClearFilterProgressDialog;
-import com.google.code.geobeagle.database.FilterCleanliness;
-import com.google.code.geobeagle.database.UpdateFilterWorker;
+import com.google.code.geobeagle.database.filter.ClearFilterProgressDialog;
+import com.google.code.geobeagle.database.filter.FilterCleanliness;
+import com.google.code.geobeagle.database.filter.UpdateFilterWorker;
 import com.google.code.geobeagle.gpsstatuswidget.InflatedGpsStatusWidget;
 import com.google.code.geobeagle.gpsstatuswidget.UpdateGpsWidgetRunnable;
 import com.google.code.geobeagle.location.CombinedLocationListener;

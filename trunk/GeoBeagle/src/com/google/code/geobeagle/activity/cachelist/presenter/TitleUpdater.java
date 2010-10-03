@@ -15,7 +15,7 @@
 package com.google.code.geobeagle.activity.cachelist.presenter;
 
 import com.google.code.geobeagle.Timing;
-import com.google.code.geobeagle.database.FilterNearestCaches;
+import com.google.code.geobeagle.database.filter.FilterNearestCaches;
 import com.google.inject.Inject;
 
 import android.app.Activity;
