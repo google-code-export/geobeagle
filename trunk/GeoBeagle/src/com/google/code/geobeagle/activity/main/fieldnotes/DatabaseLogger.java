@@ -28,9 +28,9 @@ public class DatabaseLogger {
 
     public void log(CharSequence geocacheId, boolean dnf) {
         if (dnf)
-            mTagWriter.add(geocacheId, Tag.DNF);
+            mTagWriter.add(geocacheId, Tag.DNF, true);
         else
-            mTagWriter.add(geocacheId, Tag.FOUND);
+            mTagWriter.add(geocacheId, Tag.FOUND, true);
     }
 
 }
