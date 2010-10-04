@@ -46,8 +46,13 @@ public class CacheWriter {
         sqliteProvider.get().execSQL(Database.SQL_DELETE_CACHE, id);
     }
 
-    public void insertAndUpdateCache(CharSequence id, CharSequence name, double latitude,
-            double longitude, Source sourceType, String sourceName, CacheType cacheType,
+    public void insertAndUpdateCache(CharSequence id,
+            CharSequence name,
+            double latitude,
+            double longitude,
+            Source sourceType,
+            String sourceName,
+            CacheType cacheType,
             int difficulty,
             int terrain,
             int container,
