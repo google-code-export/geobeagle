@@ -71,7 +71,7 @@ public class TagWriterImplTest extends GeoBeagleTest {
         replayAll();
 
         TagWriter tagWriter = new TagWriter(filter, new TagStore(databaseProvider), null);
-        tagWriter.add("GC123", Tag.DNF);
+        tagWriter.add("GC123", Tag.DNF, false);
         assertTrue(tagWriter.hasTag("GC123", Tag.DNF));
         assertFalse(tagWriter.hasTag("GC123", Tag.FOUND));
         verifyAll();
@@ -91,7 +91,7 @@ public class TagWriterImplTest extends GeoBeagleTest {
         replayAll();
 
         TagWriter tagWriter = new TagWriter(filter, new TagStore(databaseProvider), context);
-        tagWriter.add("GC123", Tag.FOUND);
+        tagWriter.add("GC123", Tag.FOUND, true);
         verifyAll();
     }
 
@@ -103,8 +103,8 @@ public class TagWriterImplTest extends GeoBeagleTest {
         replayAll();
 
         TagWriter tagWriter = new TagWriter(filter, new TagStore(databaseProvider), null);
-        tagWriter.add("GC123", Tag.FOUND);
-        tagWriter.add("GCabc", Tag.FOUND);
+        tagWriter.add("GC123", Tag.FOUND, false);
+        tagWriter.add("GCabc", Tag.FOUND, false);
         assertTrue(tagWriter.hasTag("GC123", Tag.FOUND));
         assertFalse(tagWriter.hasTag("GC123", Tag.DNF));
         verifyAll();
