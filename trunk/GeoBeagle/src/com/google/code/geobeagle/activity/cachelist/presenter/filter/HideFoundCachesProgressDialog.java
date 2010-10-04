@@ -12,7 +12,7 @@
  ** limitations under the License.
  */
 
-package com.google.code.geobeagle.database.filter;
+package com.google.code.geobeagle.activity.cachelist.presenter.filter;
 
 import com.google.inject.Inject;
 
@@ -22,16 +22,18 @@ import android.app.ProgressDialog;
 import android.content.Context;
 
 @ContextScoped
-public class ApplyFilterProgressDialog extends ProgressDialog {
 
-    private static final String HIDING_FOUND_CACHES = "Hiding found caches";
+public class HideFoundCachesProgressDialog extends ProgressDialog {
+
+    private static final String MESSAGE = "Filtering found caches";
 
     @Inject
-    public ApplyFilterProgressDialog(Context context) {
+    public HideFoundCachesProgressDialog(Context context) {
         super(context);
-        setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-        setMessage(HIDING_FOUND_CACHES + "...");
-        setTitle(HIDING_FOUND_CACHES);
+        setMessage(MESSAGE + "...");
+        setIndeterminate(true);
+        setTitle(MESSAGE);
         setCancelable(false);
     }
+
 }
