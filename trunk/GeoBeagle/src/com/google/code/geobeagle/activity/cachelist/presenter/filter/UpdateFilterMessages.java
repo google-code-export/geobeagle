@@ -16,70 +16,16 @@ package com.google.code.geobeagle.activity.cachelist.presenter.filter;
 
 public enum UpdateFilterMessages {
 
-    DISMISS_APPLY_FILTER_PROGRESS {
-        @Override
-        void handleMessage(UpdateFilterMediator updateFilterMediator, int arg1) {
-            updateFilterMediator.dismissApplyFilterProgress();
-        }
-    },
-    DISMISS_CLEAR_FILTER_PROGRESS {
-        @Override
-        void handleMessage(UpdateFilterMediator updateFilterMediator, int arg1) {
-            updateFilterMediator.dismissClearFilterProgress();
-        }
-    },
-    INCREMENT_APPLY_FILTER_PROGRESS {
-        @Override
-        void handleMessage(UpdateFilterMediator updateFilterMediator, int arg1) {
-            updateFilterMediator.incrementApplyFilterProgress();
-        }
-    },
-    SHOW_APPLY_FILTER_PROGRESS {
-        @Override
-        void handleMessage(UpdateFilterMediator updateFilterMediator, int arg1) {
-            updateFilterMediator.showApplyFilterProgress(arg1);
-        }
-    },
-    SHOW_HIDING_ARCHIVED_CACHES_PROGRESS {
-        @Override
-        void handleMessage(UpdateFilterMediator updateFilterMediator, int arg1) {
-            updateFilterMediator.showHidingArchivedCachesProgress();
-        }
-    },
-    DISMISS_HIDING_ARCHIVED_CACHES_PROGRESS {
-        @Override
-        void handleMessage(UpdateFilterMediator updateFilterMediator, int arg1) {
-            updateFilterMediator.dismissHidingArchivedCachesProgress();
-        }
-    },
     END_FILTERING {
         @Override
-        void handleMessage(UpdateFilterMediator updateFilterMediator, int arg1) {
+        void handleMessage(UpdateFilterMediator updateFilterMediator, Object obj) {
             updateFilterMediator.endFiltering();
         }
     },
-    SHOW_HIDING_WAYPOINTS_PROGRESS {
+    SET_PROGRESS_MESSAGE {
         @Override
-        void handleMessage(UpdateFilterMediator updateFilterMediator, int arg1) {
-            updateFilterMediator.showHidingWaypointsProgress();
-        }
-    },
-    DISMISS_HIDING_WAYPOINTS_PROGRESS {
-        @Override
-        void handleMessage(UpdateFilterMediator updateFilterMediator, int arg1) {
-            updateFilterMediator.dismissHidingWaypointsProgress();
-        }
-    },
-    SHOW_HIDING_FOUND_CACHES_PROGRESS {
-        @Override
-        void handleMessage(UpdateFilterMediator updateFilterMediator, int arg1) {
-            updateFilterMediator.showHidingFoundCachesProgress();
-        }
-    },
-    DISMISS_HIDING_FOUND_CACHES_PROGRESS {
-        @Override
-        void handleMessage(UpdateFilterMediator updateFilterMediator, int arg1) {
-            updateFilterMediator.dismissHidingFoundCachesProgress();
+        void handleMessage(UpdateFilterMediator updateFilterMediator, Object obj) {
+            updateFilterMediator.setProgressMessage((String)obj);
         }
     };
 
@@ -87,5 +33,5 @@ public enum UpdateFilterMessages {
         return UpdateFilterMessages.values()[i];
     }
 
-    abstract void handleMessage(UpdateFilterMediator updateFilterMediator, int arg1);
+    abstract void handleMessage(UpdateFilterMediator updateFilterMediator, Object obj);
 }
