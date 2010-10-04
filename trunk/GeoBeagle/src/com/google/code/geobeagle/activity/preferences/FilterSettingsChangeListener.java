@@ -11,25 +11,26 @@
  ** See the License for the specific language governing permissions and
  ** limitations under the License.
  */
-package com.google.code.geobeagle.activity.preferences;
 
-import com.google.code.geobeagle.database.filter.FilterCleanliness;
-import com.google.inject.Inject;
+package com.google.code.geobeagle.activity.preferences;
 
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
 
 class FilterSettingsChangeListener implements OnPreferenceChangeListener {
-    private final FilterCleanliness filterCleanliness;
-
-    @Inject
-    FilterSettingsChangeListener(FilterCleanliness filterCleanliness) {
-        this.filterCleanliness = filterCleanliness;
-    }
+    private boolean hasChanged = false;
 
     @Override
     public boolean onPreferenceChange(Preference preference, Object newValue) {
-        filterCleanliness.markDirty(true);
+        hasChanged = true;
         return true;
+    }
+
+    public void resetHasChanged() {
+        hasChanged = false;
+    }
+
+    public boolean hasChanged() {
+        return hasChanged;
     }
 }
