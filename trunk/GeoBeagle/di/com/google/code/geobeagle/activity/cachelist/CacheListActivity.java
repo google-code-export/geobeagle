@@ -17,6 +17,7 @@ package com.google.code.geobeagle.activity.cachelist;
 import com.google.code.geobeagle.OnClickCancelListener;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.ActivityRestorer;
+import com.google.code.geobeagle.activity.ActivityType;
 import com.google.code.geobeagle.activity.cachelist.actions.context.delete.ContextActionDeleteDialogHelper;
 import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidgetDelegate;
 import com.google.code.geobeagle.gpsstatuswidget.InflatedGpsStatusWidget;
@@ -26,6 +27,7 @@ import roboguice.activity.GuiceListActivity;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -60,7 +62,10 @@ public class CacheListActivity extends GuiceListActivity {
         mCacheListDelegate = injector.getInstance(CacheListDelegate.class);
 
         mCacheListDelegate.onCreate();
-        injector.getInstance(ActivityRestorer.class).restore(getIntent().getFlags());
+        Intent intent = getIntent();
+
+        injector.getInstance(ActivityRestorer.class).restore(getIntent().getFlags(),
+                ActivityType.CACHE_LIST);
         Log.d("GeoBeagle", "Done creating CacheListActivity");
     }
 
