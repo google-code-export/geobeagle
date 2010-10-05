@@ -14,7 +14,10 @@
 
 package com.google.code.geobeagle.activity.cachelist.presenter;
 
+import com.google.code.geobeagle.activity.cachelist.SearchTarget;
+
 import android.content.Context;
+import android.graphics.Canvas;
 import android.graphics.Color;
 import android.util.AttributeSet;
 import android.webkit.WebSettings;
@@ -22,17 +25,15 @@ import android.webkit.WebView;
 
 public class NoCachesView extends WebView {
 
-    private void setup() {
-        loadUrl("file:///android_asset/no_caches.html");
-        WebSettings webSettings = getSettings();
-        webSettings.setSavePassword(false);
-        webSettings.setSaveFormData(false);
-        webSettings.setSupportZoom(false);
-        setBackgroundColor(Color.BLACK);
-    }
+    private SearchTarget searchTarget;
 
     public NoCachesView(Context context) {
         super(context);
+        setup();
+    }
+
+    public NoCachesView(Context context, AttributeSet attrs) {
+        super(context, attrs);
         setup();
     }
 
@@ -41,8 +42,26 @@ public class NoCachesView extends WebView {
         setup();
     }
 
-    public NoCachesView(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        setup();
+    @Override
+    public void onDraw(Canvas canvas) {
+        if (searchTarget == null || searchTarget.getTarget() == null) {
+            loadUrl("file:///android_asset/no_caches.html");
+        } else {
+            loadUrl("file:///android_asset/no_caches_found.html");
+        }
+        super.onDraw(canvas);
     }
+
+    public void setSearchTarget(SearchTarget searchTarget) {
+        this.searchTarget = searchTarget;
+    }
+
+    private void setup() {
+        WebSettings webSettings = getSettings();
+        webSettings.setSavePassword(false);
+        webSettings.setSaveFormData(false);
+        webSettings.setSupportZoom(false);
+        setBackgroundColor(Color.BLACK);
+    }
+
 }

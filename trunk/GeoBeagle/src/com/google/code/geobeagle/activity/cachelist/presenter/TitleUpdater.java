@@ -15,6 +15,7 @@
 package com.google.code.geobeagle.activity.cachelist.presenter;
 
 import com.google.code.geobeagle.Timing;
+import com.google.code.geobeagle.activity.cachelist.SearchTarget;
 import com.google.code.geobeagle.database.filter.FilterNearestCaches;
 import com.google.inject.Inject;
 
@@ -24,17 +25,22 @@ public class TitleUpdater {
     private final FilterNearestCaches mFilterNearestCaches;
     private final Activity mActivity;
     private final Timing mTiming;
+    private final SearchTarget mSearchTarget;
 
     @Inject
-    public TitleUpdater(Activity activity, FilterNearestCaches filterNearestCaches,
-            Timing timing) {
+    public TitleUpdater(Activity activity,
+            FilterNearestCaches filterNearestCaches,
+            Timing timing,
+            SearchTarget searchTarget) {
         mActivity = activity;
         mFilterNearestCaches = filterNearestCaches;
         mTiming = timing;
+        mSearchTarget = searchTarget;
     }
 
     public void update(int sqlCount, int nearestCachesCount) {
-        mActivity.setTitle(mActivity.getString(mFilterNearestCaches.getTitleText(),
+        mActivity.setTitle(mSearchTarget.getTitle()
+                + mActivity.getString(mFilterNearestCaches.getTitleText(),
                 nearestCachesCount, sqlCount));
         mTiming.lap("update title time");
     }
