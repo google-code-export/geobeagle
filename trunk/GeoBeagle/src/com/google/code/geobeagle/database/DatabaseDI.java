@@ -204,7 +204,10 @@ public class DatabaseDI {
     }
 
     static public class SearchFactory {
-        public Search createSearch(double latitude, double longitude, float min, float max,
+        public Search createSearch(double latitude,
+                double longitude,
+                float min,
+                float max,
                 ISQLiteDatabase sqliteWrapper) {
             WhereStringFactory whereStringFactory = new WhereStringFactory();
             BoundingBox boundingBox = new BoundingBox(latitude, longitude, sqliteWrapper,
