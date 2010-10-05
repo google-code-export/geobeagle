@@ -27,6 +27,7 @@ import roboguice.activity.GuiceListActivity;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.SearchManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -64,8 +65,10 @@ public class CacheListActivity extends GuiceListActivity {
         mCacheListDelegate.onCreate();
         Intent intent = getIntent();
 
-        injector.getInstance(ActivityRestorer.class).restore(getIntent().getFlags(),
-                ActivityType.CACHE_LIST);
+        if (!Intent.ACTION_SEARCH.equals(intent.getAction())) {
+            injector.getInstance(ActivityRestorer.class).restore(getIntent().getFlags(),
+                    ActivityType.CACHE_LIST);
+        }
         Log.d("GeoBeagle", "Done creating CacheListActivity");
     }
 
@@ -121,6 +124,16 @@ public class CacheListActivity extends GuiceListActivity {
     @Override
     protected void onResume() {
         super.onResume();
+
+        Intent intent = getIntent();
+        Injector injector = this.getInjector();
+
+        SearchTarget searchTarget = injector.getInstance(SearchTarget.class);
+        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
+            searchTarget.setTarget(intent.getStringExtra(SearchManager.QUERY));
+        } else {
+            searchTarget.setTarget(null);
+        }
         Log.d("GeoBeagle", "CacheListActivity onResume");
         mCacheListDelegate.onResume();
     }

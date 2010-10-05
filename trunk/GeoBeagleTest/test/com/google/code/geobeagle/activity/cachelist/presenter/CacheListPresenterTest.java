@@ -19,15 +19,9 @@ import static org.easymock.EasyMock.expect;
 import com.google.code.geobeagle.CacheListCompassListener;
 import com.google.code.geobeagle.CompassListener;
 import com.google.code.geobeagle.LocationControlBuffered;
-import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.Refresher;
-import com.google.code.geobeagle.activity.cachelist.CacheListView;
 import com.google.code.geobeagle.activity.cachelist.GeoBeagleTest;
-import com.google.code.geobeagle.activity.cachelist.GeocacheListController.CacheListOnCreateContextMenuListener;
-import com.google.code.geobeagle.activity.cachelist.model.GeocacheVectors;
 import com.google.code.geobeagle.database.filter.FilterCleanliness;
-import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidget;
-import com.google.code.geobeagle.gpsstatuswidget.InflatedGpsStatusWidget;
 import com.google.code.geobeagle.gpsstatuswidget.UpdateGpsWidgetRunnable;
 import com.google.code.geobeagle.location.CombinedLocationListener;
 import com.google.code.geobeagle.location.CombinedLocationManager;
@@ -45,7 +39,6 @@ import android.app.ListActivity;
 import android.hardware.SensorManager;
 import android.preference.PreferenceManager;
 import android.util.Log;
-import android.widget.ListView;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest( {
@@ -114,39 +107,6 @@ public class CacheListPresenterTest extends GeoBeagleTest {
     }
 
     @Test
-    public void testOnCreate() throws Exception {
-        ListActivity listActivity = PowerMock.createMock(ListActivity.class);
-        LocationControlBuffered locationControlBuffered = PowerMock
-                .createMock(LocationControlBuffered.class);
-        CacheListOnCreateContextMenuListener listener = PowerMock
-                .createMock(CacheListOnCreateContextMenuListener.class);
-        ListView listView = PowerMock.createMock(ListView.class);
-        GeocacheVectors geocacheVectors = PowerMock.createMock(GeocacheVectors.class);
-        GpsStatusWidget gpsStatusWidget = PowerMock.createMock(GpsStatusWidget.class);
-        GeocacheListAdapter geocacheListAdapter = PowerMock.createMock(GeocacheListAdapter.class);
-        CacheListView.ScrollListener scrollListener = PowerMock
-                .createMock(CacheListView.ScrollListener.class);
-        InflatedGpsStatusWidget inflatedGpsStatusWidget = PowerMock
-                .createMock(InflatedGpsStatusWidget.class);
-
-        listActivity.setContentView(R.layout.cache_list);
-        PowerMock.expectNew(CacheListOnCreateContextMenuListener.class, geocacheVectors).andReturn(
-                listener);
-        expect(listActivity.getListView()).andReturn(listView);
-        expect(inflatedGpsStatusWidget.getTag()).andReturn(gpsStatusWidget);
-        listView.addHeaderView(gpsStatusWidget);
-        listView.setOnCreateContextMenuListener(listener);
-        listActivity.setListAdapter(geocacheListAdapter);
-        listView.setOnScrollListener(scrollListener);
-
-        PowerMock.replayAll();
-        new GeocacheListPresenter(null, null, null, geocacheListAdapter, geocacheVectors,
-                inflatedGpsStatusWidget, listActivity, locationControlBuffered, null, null,
-                scrollListener, null, null, null, null, null).onCreate();
-        PowerMock.verifyAll();
-    }
-
-    @Test
     public void testOnPause() {
         CombinedLocationManager combinedLocationManager = PowerMock
                 .createMock(CombinedLocationManager.class);
@@ -159,7 +119,7 @@ public class CacheListPresenterTest extends GeoBeagleTest {
         shakeWaker.unregister();
         PowerMock.replayAll();
         new GeocacheListPresenter(null, combinedLocationManager, null, null, null, null, null,
-                null, sensorManagerWrapper, null, null, null, null, null, shakeWaker, null)
+                null, sensorManagerWrapper, null, null, null, null, null, shakeWaker, null, null)
                 .onPause();
         PowerMock.verifyAll();
     }
@@ -214,7 +174,7 @@ public class CacheListPresenterTest extends GeoBeagleTest {
         new GeocacheListPresenter(combinedLocationListener, combinedLocationManager,
                 cacheListCompassListenerProvider, geocacheListAdapter, null, null, listActivity,
                 locationControlBuffered, sensorManagerWrapper, updateGpsRunnable, null,
-                gpsStatusListener, null, filterCleanliness, shakeWaker, null)
+                gpsStatusListener, null, filterCleanliness, shakeWaker, null, null)
                 .onResume(cacheListRefresh);
 
         PowerMock.verifyAll();
