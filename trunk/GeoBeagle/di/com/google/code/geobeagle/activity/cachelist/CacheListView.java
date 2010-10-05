@@ -14,35 +14,13 @@
 
 package com.google.code.geobeagle.activity.cachelist;
 
-import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh.UpdateFlag;
-import com.google.inject.Inject;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.widget.AbsListView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 
 public class CacheListView extends ListView {
-
-    public static class ScrollListener implements OnScrollListener {
-        private final UpdateFlag mUpdateFlag;
-
-        @Inject
-        public ScrollListener(UpdateFlag updateFlag) {
-            mUpdateFlag = updateFlag;
-        }
-
-        @Override
-        public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount,
-                int totalItemCount) {
-        }
-
-        @Override
-        public void onScrollStateChanged(AbsListView view, int scrollState) {
-            mUpdateFlag.setUpdatesEnabled(scrollState == SCROLL_STATE_IDLE);
-        }
-    }
 
     // If these constructors aren't here, Android throws
     // java.lang.NoSuchMethodException: CacheListView(Context,AttributeSet)
