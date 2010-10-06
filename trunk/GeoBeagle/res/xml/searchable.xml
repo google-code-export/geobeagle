@@ -2,5 +2,7 @@
 <searchable xmlns:android="http://schemas.android.com/apk/res/android"
 	android:label="@string/geobeagle" android:hint="@string/search_hint"
 	android:voiceSearchMode="showVoiceSearchButton|launchRecognizer"
-	android:includeInGlobalSearch="true">
+	android:includeInGlobalSearch="true"
+	android:searchSuggestAuthority="com.google.code.geobeagle.SuggestionProvider"
+	android:searchSuggestSelection=" ?">
 </searchable>
