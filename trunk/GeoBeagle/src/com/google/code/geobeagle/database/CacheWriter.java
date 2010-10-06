@@ -24,6 +24,7 @@ import com.google.inject.Provider;
  * @author sng
  */
 public class CacheWriter {
+    static final String ANALYZE = "ANALYZE";
     public static final String SQLS_CLEAR_EARLIER_LOADS[] = {
             Database.SQL_DELETE_OLD_CACHES, Database.SQL_DELETE_OLD_GPX,
             Database.SQL_RESET_DELETE_ME_CACHES, Database.SQL_RESET_DELETE_ME_GPX
@@ -78,6 +79,6 @@ public class CacheWriter {
         ISQLiteDatabase sqliteDatabase = sqliteProvider.get();
         sqliteDatabase.setTransactionSuccessful();
         sqliteDatabase.endTransaction();
-        sqliteDatabase.execSQL("ANALYZE");
+        sqliteDatabase.execSQL(ANALYZE);
     }
 }

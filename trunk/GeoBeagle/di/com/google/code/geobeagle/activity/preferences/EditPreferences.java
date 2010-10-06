@@ -15,17 +15,19 @@
 package com.google.code.geobeagle.activity.preferences;
 
 import com.google.code.geobeagle.R;
+import com.google.code.geobeagle.database.filter.FilterCleanliness;
 
 import roboguice.activity.GuicePreferenceActivity;
 
 import android.os.Bundle;
 import android.preference.Preference;
-import android.preference.Preference.OnPreferenceChangeListener;
 
 public class EditPreferences extends GuicePreferenceActivity {
     public static final String SHOW_FOUND_CACHES = "show-found-caches";
     public static final String SHOW_UNAVAILABLE_CACHES = "show-unavailable-caches";
     public static final String SHOW_WAYPOINTS = "show-waypoints";
+    private FilterCleanliness filterCleanliness;
+    private FilterSettingsChangeListener onPreferenceChangeListener;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -35,10 +37,29 @@ public class EditPreferences extends GuicePreferenceActivity {
         Preference showFoundCachesPreference = findPreference(SHOW_FOUND_CACHES);
         Preference showUnavailableCachesPreference = findPreference(SHOW_UNAVAILABLE_CACHES);
         Preference showWaypointsPreference = findPreference(SHOW_WAYPOINTS);
-        OnPreferenceChangeListener onPreferenceChangeListener = getInjector().getInstance(
+        onPreferenceChangeListener = getInjector().getInstance(
                 FilterSettingsChangeListener.class);
         showWaypointsPreference.setOnPreferenceChangeListener(onPreferenceChangeListener);
         showFoundCachesPreference.setOnPreferenceChangeListener(onPreferenceChangeListener);
         showUnavailableCachesPreference.setOnPreferenceChangeListener(onPreferenceChangeListener);
+
+        filterCleanliness = getInjector().getInstance(FilterCleanliness.class);
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        // Defensively set dirty bit in case we crash before onPause. This is
+        // better than setting the dirty bit every time the preferences change
+        // because it doesn't slow down clicking/unclicking the checkbox.
+        filterCleanliness.markDirty(true);
+        onPreferenceChangeListener.resetHasChanged();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        filterCleanliness.markDirty(onPreferenceChangeListener.hasChanged());
+    }
+
 }

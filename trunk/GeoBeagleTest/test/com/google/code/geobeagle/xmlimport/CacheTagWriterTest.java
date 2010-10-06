@@ -79,7 +79,7 @@ public class CacheTagWriterTest extends GeoBeagleTest {
     public void testSymbol() {
         cacheWriter.insertAndUpdateCache(null, null, 0, 0, Source.GPX, null, null, 0, 0, 0, false,
                 false, true);
-        tagWriter.add(null, Tag.FOUND);
+        tagWriter.add(null, Tag.FOUND, false);
 
         PowerMock.replayAll();
         cacheTagSqlWriter.symbol("Geocache Found");
@@ -153,7 +153,7 @@ public class CacheTagWriterTest extends GeoBeagleTest {
         expect(cacheTypeFactory.stars("2.5")).andReturn(5);
         expect(cacheTypeFactory.stars("3")).andReturn(6);
         expect(cacheTypeFactory.fromTag("Traditional Cache")).andReturn(CacheType.TRADITIONAL);
-        tagWriter.add("GC123", Tag.FOUND);
+        tagWriter.add("GC123", Tag.FOUND, false);
 
         PowerMock.replayAll();
         cacheTagSqlWriter.id("GC123");
