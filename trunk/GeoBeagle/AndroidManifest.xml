@@ -62,7 +62,8 @@
 			android:label="GeoBeagle map" android:configChanges="orientation|keyboardHidden" />
 
 		<activity android:name=".cachedetails.DetailsActivity" />
-
+		<provider android:name=".SuggestionProvider"
+			android:authorities="com.google.code.geobeagle.SuggestionProvider" />
 	</application>
 
 	<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
