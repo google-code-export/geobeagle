@@ -28,11 +28,18 @@ public class DatabaseTest extends GeoBeagleTest {
     static String currentSchema() {
         String currentSchema = SQL(Database.SQL_CREATE_CACHE_TABLE_V16)
                 + SQL(Database.SQL_CREATE_GPX_TABLE_V10) + SQL(Database.SQL_CREATE_TAGS_TABLE_V12)
+                + SQL("CREATE INDEX IDX_DESCRIPTION on CACHES (Description);")
                 + SQL(Database.SQL_CREATE_IDX_LATITUDE) + SQL(Database.SQL_CREATE_IDX_LONGITUDE)
                 + SQL(Database.SQL_CREATE_IDX_SOURCE) + SQL(Database.SQL_CREATE_IDX_TAGS)
                 + SQL("CREATE INDEX IDX_VISIBLE on CACHES (Visible);");
         return currentSchema;
     }
+
+    String schema17 = SQL(Database.SQL_CREATE_CACHE_TABLE_V16)
+                + SQL(Database.SQL_CREATE_GPX_TABLE_V10) + SQL(Database.SQL_CREATE_TAGS_TABLE_V12)
+                + SQL(Database.SQL_CREATE_IDX_LATITUDE) + SQL(Database.SQL_CREATE_IDX_LONGITUDE)
+                + SQL(Database.SQL_CREATE_IDX_SOURCE) + SQL(Database.SQL_CREATE_IDX_TAGS)
+                + SQL("CREATE INDEX IDX_VISIBLE on CACHES (Visible);");
 
     String schema16 = SQL(Database.SQL_CREATE_CACHE_TABLE_V16)
             + SQL(Database.SQL_CREATE_GPX_TABLE_V10) + SQL(Database.SQL_CREATE_TAGS_TABLE_V12)
@@ -48,7 +55,6 @@ public class DatabaseTest extends GeoBeagleTest {
             + Database.SQL_CREATE_GPX_TABLE_V10 + Database.SQL_CREATE_TAGS_TABLE_V12
             + Database.SQL_CREATE_IDX_LATITUDE + Database.SQL_CREATE_IDX_LONGITUDE
             + Database.SQL_CREATE_IDX_SOURCE + SQL(Database.SQL_CREATE_IDX_TAGS);
-
 
     final static String schema11 = Database.SQL_CREATE_CACHE_TABLE_V11
             + Database.SQL_CREATE_GPX_TABLE_V10 + Database.SQL_CREATE_IDX_LATITUDE
@@ -80,6 +86,18 @@ public class DatabaseTest extends GeoBeagleTest {
     }
 
     @Test
+    public void testUpgradeFrom17() {
+        DesktopSQLiteDatabase db = new DesktopSQLiteDatabase();
+        db.execSQL(schema17);
+
+        OpenHelperDelegate openHelperDelegate = new OpenHelperDelegate();
+        openHelperDelegate.onUpgrade(db, 17);
+        String schema = db.dumpSchema();
+
+        assertEquals(currentSchema(), schema);
+    }
+
+    @Test
     public void testUpgradeFrom16() {
         DesktopSQLiteDatabase db = new DesktopSQLiteDatabase();
         db.execSQL(schema16);
@@ -90,6 +108,7 @@ public class DatabaseTest extends GeoBeagleTest {
 
         assertEquals(currentSchema(), schema);
     }
+
     @Test
     public void testUpgradeFrom13() {
         DesktopSQLiteDatabase db = new DesktopSQLiteDatabase();
@@ -129,7 +148,6 @@ public class DatabaseTest extends GeoBeagleTest {
         String gpx = db.dumpTable("GPX");
         assertEquals("seattle.gpx|1970-01-01|1\n", gpx);
     }
-
 
     @Test
     public void testUpgradeFrom11() {

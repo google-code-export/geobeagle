@@ -16,7 +16,7 @@ package com.google.code.geobeagle.database;
 
 public class Database {
     public static final String DATABASE_NAME = "GeoBeagle.db";
-    public static final int DATABASE_VERSION = 17;
+    public static final int DATABASE_VERSION = 18;
     public static final String S0_COLUMN_CACHE_TYPE = "CacheType INTEGER NOT NULL Default 0";
     public static final String S0_COLUMN_CONTAINER = "Container INTEGER NOT NULL Default 0";
     public static final String S0_COLUMN_DELETE_ME = "DeleteMe BOOLEAN NOT NULL Default 1";
@@ -58,6 +58,7 @@ public class Database {
     public static final String SQL_CREATE_IDX_LONGITUDE = "CREATE INDEX IDX_LONGITUDE on CACHES (Longitude);";
     public static final String SQL_CREATE_IDX_SOURCE = "CREATE INDEX IDX_SOURCE on CACHES (Source);";
     public static final String SQL_CREATE_IDX_TAGS = "CREATE INDEX IDX_TAGS on TAGS (Cache);";
+    public static final String SQL_CREATE_IDX_DESCRIPTION = "CREATE INDEX IF NOT EXISTS IDX_DESCRIPTION on CACHES (Description);";
     public static final String SQL_CREATE_IDX_VISIBLE = "CREATE INDEX IF NOT EXISTS IDX_VISIBLE on CACHES (Visible);";
     public static final String SQL_DELETE_CACHE = "DELETE FROM CACHES WHERE Id=?";
     public static final String SQL_DELETE_OLD_CACHES = "DELETE FROM CACHES WHERE DeleteMe = 1";
