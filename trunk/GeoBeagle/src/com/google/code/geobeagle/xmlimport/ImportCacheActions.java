@@ -85,18 +85,6 @@ public class ImportCacheActions extends CachePersisterFacade {
     }
 
     @Override
-    public void hint(String text) throws IOException {
-    }
-
-    @Override
-    public void line(String text) throws IOException {
-    }
-
-    @Override
-    public void logDate(String text) throws IOException {
-    }
-
-    @Override
     public void open(String path) {
         mMessageHandler.updateSource(path);
         mCacheTagWriter.startWriting();
@@ -162,42 +150,6 @@ public class ImportCacheActions extends CachePersisterFacade {
     public void available(String attributeValue) {
         if (attributeValue != null)
             mCacheTagWriter.available(attributeValue.equalsIgnoreCase("True"));
-    }
-
-    @Override
-    public void logText(String trimmedText) throws IOException {
-    }
-
-    @Override
-    public void logType(String trimmedText) throws IOException {
-    }
-
-    @Override
-    public void placedBy(String trimmedText) throws IOException {
-    }
-
-    @Override
-    public void wptTime(String trimmedText) throws IOException {
-    }
-
-    @Override
-    public void shortDescription(String trimmedText) throws IOException {
-    }
-
-    @Override
-    public void longDescription(String trimmedText) throws IOException {
-    }
-
-    @Override
-    public void setEncrypted(boolean mLogEncrypted) {
-    }
-
-    @Override
-    public void logFinder(String text) {
-    }
-
-    @Override
-    public void url(String text) {
     }
 
 }
