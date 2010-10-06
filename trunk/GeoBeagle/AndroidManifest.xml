@@ -54,9 +54,9 @@
 			android:label="@string/app_name" />
 
 		<activity android:name=".activity.map.GeoMapActivity"
-			android:label="GeoBeagle map" android:configChanges="orientation|keyboardHidden"/>
+			android:label="GeoBeagle map" android:configChanges="orientation|keyboardHidden" />
 
-		<activity android:name=".cachedetails.DetailsActivity"/>
+		<activity android:name=".cachedetails.DetailsActivity" />
 
 	</application>
 
