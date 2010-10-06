@@ -14,6 +14,7 @@
 
 package com.google.code.geobeagle.database.filter;
 
+import com.google.code.geobeagle.CacheType;
 import com.google.code.geobeagle.activity.preferences.EditPreferences;
 import com.google.inject.Inject;
 
@@ -39,4 +40,8 @@ public class Filter {
         return showUnavailableCaches || available;
     }
 
+    public boolean showBasedOnCacheType(CacheType cacheType) {
+        boolean showWaypoints = sharedPreferences.getBoolean(EditPreferences.SHOW_WAYPOINTS, false);
+        return showWaypoints || cacheType.toInt() < CacheType.WAYPOINT.toInt();
+    }
 }

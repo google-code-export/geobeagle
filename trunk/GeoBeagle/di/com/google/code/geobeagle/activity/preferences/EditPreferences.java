@@ -25,6 +25,7 @@ import android.preference.Preference.OnPreferenceChangeListener;
 public class EditPreferences extends GuicePreferenceActivity {
     public static final String SHOW_FOUND_CACHES = "show-found-caches";
     public static final String SHOW_UNAVAILABLE_CACHES = "show-unavailable-caches";
+    public static final String SHOW_WAYPOINTS = "show-waypoints";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -33,8 +34,10 @@ public class EditPreferences extends GuicePreferenceActivity {
         addPreferencesFromResource(R.xml.preferences);
         Preference showFoundCachesPreference = findPreference(SHOW_FOUND_CACHES);
         Preference showUnavailableCachesPreference = findPreference(SHOW_UNAVAILABLE_CACHES);
+        Preference showWaypointsPreference = findPreference(SHOW_WAYPOINTS);
         OnPreferenceChangeListener onPreferenceChangeListener = getInjector().getInstance(
                 FilterSettingsChangeListener.class);
+        showWaypointsPreference.setOnPreferenceChangeListener(onPreferenceChangeListener);
         showFoundCachesPreference.setOnPreferenceChangeListener(onPreferenceChangeListener);
         showUnavailableCachesPreference.setOnPreferenceChangeListener(onPreferenceChangeListener);
     }

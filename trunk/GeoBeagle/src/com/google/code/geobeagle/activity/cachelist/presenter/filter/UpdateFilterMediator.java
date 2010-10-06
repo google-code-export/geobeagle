@@ -32,6 +32,7 @@ public class UpdateFilterMediator {
     private final UpdateFlag updateFlag;
     private final FilterCleanliness filterCleanliness;
     private final Provider<HideArchivedCachesProgressDialog> hidingArchivedCachesProgressDialogProvider;
+    private final Provider<HideWaypointsProgressDialog> hidingWaypointsProgressDialogProvider;
 
     @Inject
     public UpdateFilterMediator(CacheListRefresh cacheListRefresh,
@@ -39,11 +40,13 @@ public class UpdateFilterMediator {
             Provider<ApplyFilterProgressDialog> applyFilterProgressDialogProvider,
             Provider<ClearFilterProgressDialog> clearFilterProgressDialogProvider,
             Provider<HideArchivedCachesProgressDialog> hidingArchivedCachesProgressDialogProvider,
+            Provider<HideWaypointsProgressDialog> hidingWaypointsProgressDialogProvider,
             FilterCleanliness filterCleanliness) {
         this.cacheListRefresh = cacheListRefresh;
         this.updateFlag = updateFlag;
         this.applyFilterProgressDialogProvider = applyFilterProgressDialogProvider;
         this.clearFilterProgressDialogProvider = clearFilterProgressDialogProvider;
+        this.hidingWaypointsProgressDialogProvider = hidingWaypointsProgressDialogProvider;
         this.hidingArchivedCachesProgressDialogProvider = hidingArchivedCachesProgressDialogProvider;
         this.filterCleanliness = filterCleanliness;
     }
@@ -79,6 +82,14 @@ public class UpdateFilterMediator {
 
     public void showHidingArchivedCachesProgress() {
         hidingArchivedCachesProgressDialogProvider.get().show();
+    }
+
+    public void showHidingWaypointsProgress() {
+        hidingWaypointsProgressDialogProvider.get().show();
+    }
+
+    public void dismissHidingWaypointsProgress() {
+        hidingWaypointsProgressDialogProvider.get().dismiss();
     }
 
     public void dismissHidingArchivedCachesProgress() {
