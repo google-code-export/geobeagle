@@ -78,5 +78,6 @@ public class CacheWriter {
         ISQLiteDatabase sqliteDatabase = sqliteProvider.get();
         sqliteDatabase.setTransactionSuccessful();
         sqliteDatabase.endTransaction();
+        sqliteDatabase.execSQL("ANALYZE");
     }
 }
