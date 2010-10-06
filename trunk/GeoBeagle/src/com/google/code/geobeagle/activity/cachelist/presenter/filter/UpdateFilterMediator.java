@@ -16,7 +16,7 @@ package com.google.code.geobeagle.activity.cachelist.presenter.filter;
 
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh.UpdateFlag;
-import com.google.code.geobeagle.database.ApplyFilterProgressDialog;
+import com.google.code.geobeagle.database.filter.ApplyFilterProgressDialog;
 import com.google.code.geobeagle.database.filter.ClearFilterProgressDialog;
 import com.google.code.geobeagle.database.filter.FilterCleanliness;
 import com.google.inject.Inject;
