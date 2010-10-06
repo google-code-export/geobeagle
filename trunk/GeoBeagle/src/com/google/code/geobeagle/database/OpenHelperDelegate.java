@@ -26,6 +26,7 @@ public class OpenHelperDelegate {
         db.execSQL(Database.SQL_CREATE_IDX_SOURCE);
         db.execSQL(Database.SQL_CREATE_IDX_TAGS);
         db.execSQL(Database.SQL_CREATE_IDX_VISIBLE);
+        db.execSQL(Database.SQL_CREATE_IDX_DESCRIPTION);
     }
 
     public void onUpgrade(ISQLiteDatabase db, int oldVersion) {
@@ -63,6 +64,10 @@ public class OpenHelperDelegate {
 
         if (oldVersion < 17) {
             db.execSQL(Database.SQL_CREATE_IDX_VISIBLE);
+        }
+
+        if (oldVersion < 18) {
+            db.execSQL(Database.SQL_CREATE_IDX_DESCRIPTION);
         }
     }
 }
