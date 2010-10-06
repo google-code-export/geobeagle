@@ -28,6 +28,6 @@ public class SearchWhereFactory {
         String target = searchTarget.getTarget();
         if (target == null)
             return "";
-        return " AND Id LIKE '%" + searchTarget + "%' OR Description LIKE '%" + searchTarget + "%'";
+        return " AND Id LIKE '%" + target + "%' OR Description LIKE '%" + target + "%'";
     }
 }
