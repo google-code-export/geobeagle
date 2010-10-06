@@ -13,7 +13,7 @@
  */
 package com.google.code.geobeagle.activity.preferences;
 
-import com.google.code.geobeagle.database.FilterCleanliness;
+import com.google.code.geobeagle.database.filter.FilterCleanliness;
 import com.google.inject.Inject;
 
 import android.preference.Preference;

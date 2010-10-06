@@ -12,8 +12,10 @@
  ** limitations under the License.
  */
 
-package com.google.code.geobeagle.database;
+package com.google.code.geobeagle.database.filter;
 
+import com.google.code.geobeagle.database.DbFrontend;
+import com.google.code.geobeagle.database.ISQLiteDatabase;
 import com.google.inject.Inject;
 
 class CacheVisibilityStore {

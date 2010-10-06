@@ -12,10 +12,12 @@
  ** limitations under the License.
  */
 
-package com.google.code.geobeagle.database;
+package com.google.code.geobeagle.database.filter;
 
-import com.google.code.geobeagle.activity.cachelist.presenter.UpdateFilterHandler;
+import com.google.code.geobeagle.activity.cachelist.presenter.filter.UpdateFilterHandler;
 import com.google.code.geobeagle.activity.preferences.EditPreferences;
+import com.google.code.geobeagle.database.FoundCaches;
+import com.google.code.geobeagle.database.TagReader;
 import com.google.inject.Inject;
 
 import roboguice.util.RoboThread;

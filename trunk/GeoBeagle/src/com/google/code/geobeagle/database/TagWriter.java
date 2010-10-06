@@ -15,6 +15,7 @@
 package com.google.code.geobeagle.database;
 
 import com.google.code.geobeagle.R;
+import com.google.code.geobeagle.database.filter.Filter;
 import com.google.inject.Inject;
 
 import android.content.Context;

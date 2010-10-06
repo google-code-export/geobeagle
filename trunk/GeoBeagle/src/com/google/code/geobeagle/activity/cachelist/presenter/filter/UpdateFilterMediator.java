@@ -12,12 +12,13 @@
  ** limitations under the License.
  */
 
-package com.google.code.geobeagle.activity.cachelist.presenter;
+package com.google.code.geobeagle.activity.cachelist.presenter.filter;
 
+import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh.UpdateFlag;
 import com.google.code.geobeagle.database.ApplyFilterProgressDialog;
-import com.google.code.geobeagle.database.ClearFilterProgressDialog;
-import com.google.code.geobeagle.database.FilterCleanliness;
+import com.google.code.geobeagle.database.filter.ClearFilterProgressDialog;
+import com.google.code.geobeagle.database.filter.FilterCleanliness;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 

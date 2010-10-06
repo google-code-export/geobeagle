@@ -23,8 +23,8 @@ import com.google.code.geobeagle.activity.cachelist.presenter.DistanceSortStrate
 import com.google.code.geobeagle.activity.cachelist.presenter.SqlCacheLoader;
 import com.google.code.geobeagle.activity.cachelist.presenter.TitleUpdater;
 import com.google.code.geobeagle.database.DbFrontend;
-import com.google.code.geobeagle.database.FilterNearestCaches;
 import com.google.code.geobeagle.database.WhereFactory;
+import com.google.code.geobeagle.database.filter.FilterNearestCaches;
 import com.google.inject.Provider;
 
 import org.easymock.EasyMock;
