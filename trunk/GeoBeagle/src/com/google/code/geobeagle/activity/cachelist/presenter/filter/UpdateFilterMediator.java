@@ -33,6 +33,7 @@ public class UpdateFilterMediator {
     private final FilterCleanliness filterCleanliness;
     private final Provider<HideArchivedCachesProgressDialog> hidingArchivedCachesProgressDialogProvider;
     private final Provider<HideWaypointsProgressDialog> hidingWaypointsProgressDialogProvider;
+    private final Provider<HideFoundCachesProgressDialog> hidingFoundCachesProgressDialogProvider;
 
     @Inject
     public UpdateFilterMediator(CacheListRefresh cacheListRefresh,
@@ -40,14 +41,16 @@ public class UpdateFilterMediator {
             Provider<ApplyFilterProgressDialog> applyFilterProgressDialogProvider,
             Provider<ClearFilterProgressDialog> clearFilterProgressDialogProvider,
             Provider<HideArchivedCachesProgressDialog> hidingArchivedCachesProgressDialogProvider,
-            Provider<HideWaypointsProgressDialog> hidingWaypointsProgressDialogProvider,
-            FilterCleanliness filterCleanliness) {
+            Provider<HideFoundCachesProgressDialog> hidingFoundCachesProgressDialogProvider,
+            FilterCleanliness filterCleanliness,
+            Provider<HideWaypointsProgressDialog> hidingWaypointsProgressDialogProvider) {
         this.cacheListRefresh = cacheListRefresh;
         this.updateFlag = updateFlag;
         this.applyFilterProgressDialogProvider = applyFilterProgressDialogProvider;
         this.clearFilterProgressDialogProvider = clearFilterProgressDialogProvider;
         this.hidingWaypointsProgressDialogProvider = hidingWaypointsProgressDialogProvider;
         this.hidingArchivedCachesProgressDialogProvider = hidingArchivedCachesProgressDialogProvider;
+        this.hidingFoundCachesProgressDialogProvider = hidingFoundCachesProgressDialogProvider;
         this.filterCleanliness = filterCleanliness;
     }
 
@@ -100,6 +103,14 @@ public class UpdateFilterMediator {
         filterCleanliness.markDirty(false);
         updateFlag.setUpdatesEnabled(true);
         cacheListRefresh.forceRefresh();
+    }
+
+    public void showHidingFoundCachesProgress() {
+        hidingFoundCachesProgressDialogProvider.get().show();
+    }
+
+    public void dismissHidingFoundCachesProgress() {
+        hidingFoundCachesProgressDialogProvider.get().dismiss();
     }
 
 }

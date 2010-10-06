@@ -75,4 +75,12 @@ public class UpdateFilterHandler extends Handler {
     public void dismissHidingWaypointsProgress() {
         sendMessage(UpdateFilterMessages.DISMISS_HIDING_WAYPOINTS_PROGRESS);
     }
+
+    public void showHidingFoundCachesProgress() {
+        sendMessage(UpdateFilterMessages.SHOW_HIDING_FOUND_CACHES_PROGRESS);
+    }
+
+    public void dismissHidingFoundCachesProgress() {
+        sendMessage(UpdateFilterMessages.DISMISS_HIDING_FOUND_CACHES_PROGRESS);
+    }
 }

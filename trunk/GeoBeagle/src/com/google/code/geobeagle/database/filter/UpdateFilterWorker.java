@@ -16,8 +16,6 @@ package com.google.code.geobeagle.database.filter;
 
 import com.google.code.geobeagle.activity.cachelist.presenter.filter.UpdateFilterHandler;
 import com.google.code.geobeagle.activity.preferences.EditPreferences;
-import com.google.code.geobeagle.database.FoundCaches;
-import com.google.code.geobeagle.database.TagReader;
 import com.google.inject.Inject;
 
 import roboguice.util.RoboThread;
@@ -26,17 +24,14 @@ import android.content.SharedPreferences;
 
 public class UpdateFilterWorker extends RoboThread {
     private final UpdateFilterHandler updateFilterHandler;
-    private final TagReader tagReader;
     private final SharedPreferences sharedPreferences;
     private final CacheVisibilityStore cacheVisibilityStore;
 
     @Inject
     public UpdateFilterWorker(SharedPreferences sharedPreferences,
             UpdateFilterHandler updateFilterHandler,
-            TagReader tagReader,
             CacheVisibilityStore cacheVisibilityStore) {
         this.updateFilterHandler = updateFilterHandler;
-        this.tagReader = tagReader;
         this.sharedPreferences = sharedPreferences;
         this.cacheVisibilityStore = cacheVisibilityStore;
     }
@@ -59,28 +54,11 @@ public class UpdateFilterWorker extends RoboThread {
         }
 
         if (!sharedPreferences.getBoolean(EditPreferences.SHOW_FOUND_CACHES, false)) {
-            hideFoundCaches();
+            updateFilterHandler.showHidingFoundCachesProgress();
+            cacheVisibilityStore.hideFoundCaches();
+            updateFilterHandler.dismissHidingFoundCachesProgress();
         }
 
         updateFilterHandler.endFiltering();
-    }
-
-    private void hideFoundCaches() {
-        FoundCaches foundCaches = null;
-        try {
-            foundCaches = tagReader.getFoundCaches();
-            updateFilterHandler.showApplyFilterProgress(foundCaches.getCount());
-
-            for (String cache : foundCaches.getCaches()) {
-                updateFilterHandler.incrementApplyFilterProgress();
-                cacheVisibilityStore.setInvisible(cache);
-            }
-        } finally {
-            if (foundCaches == null) {
-                return;
-            }
-            foundCaches.close();
-            updateFilterHandler.dismissApplyFilterProgress();
-        }
     }
 }

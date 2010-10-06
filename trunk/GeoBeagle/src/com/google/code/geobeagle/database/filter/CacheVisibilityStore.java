@@ -40,4 +40,10 @@ class CacheVisibilityStore {
     public void hideWaypoints() {
         dbFrontEnd.getDatabase().execSQL("UPDATE CACHES SET Visible = 0 WHERE CacheType >= 20");
     }
+
+    public void hideFoundCaches() {
+        dbFrontEnd.getDatabase().execSQL(
+                "UPDATE CACHES SET Visible = 0 WHERE Id IN "
+                        + "(SELECT Cache FROM TAGS WHERE Id = 0)");
+    }
 }

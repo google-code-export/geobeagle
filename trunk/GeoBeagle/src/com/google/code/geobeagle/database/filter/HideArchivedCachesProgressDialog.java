@@ -23,12 +23,14 @@ import android.content.Context;
 
 @ContextScoped
 public class HideArchivedCachesProgressDialog extends ProgressDialog {
+    private static final String MESSAGE = "Hiding archived caches";
+
     @Inject
     public HideArchivedCachesProgressDialog(Context context) {
         super(context);
-        setMessage("Hiding archived caches...");
+        setMessage(MESSAGE + "...");
         setIndeterminate(true);
-        setTitle("Hiding archived caches");
+        setTitle(MESSAGE);
         setCancelable(false);
     }
 }
