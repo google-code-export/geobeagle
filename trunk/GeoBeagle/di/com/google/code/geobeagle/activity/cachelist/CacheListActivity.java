@@ -16,6 +16,7 @@ package com.google.code.geobeagle.activity.cachelist;
 
 import com.google.code.geobeagle.OnClickCancelListener;
 import com.google.code.geobeagle.R;
+import com.google.code.geobeagle.SuggestionProvider;
 import com.google.code.geobeagle.activity.ActivityRestorer;
 import com.google.code.geobeagle.activity.ActivityType;
 import com.google.code.geobeagle.activity.cachelist.actions.context.delete.ContextActionDeleteDialogHelper;
@@ -30,6 +31,7 @@ import android.app.Dialog;
 import android.app.SearchManager;
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.SearchRecentSuggestions;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -130,7 +132,13 @@ public class CacheListActivity extends GuiceListActivity {
 
         SearchTarget searchTarget = injector.getInstance(SearchTarget.class);
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
-            searchTarget.setTarget(intent.getStringExtra(SearchManager.QUERY));
+
+            String query = intent.getStringExtra(SearchManager.QUERY);
+            searchTarget.setTarget(query);
+            SearchRecentSuggestions suggestions = new SearchRecentSuggestions(this,
+                    SuggestionProvider.AUTHORITY, SuggestionProvider.MODE);
+            suggestions.saveRecentQuery(query, null);
+
         } else {
             searchTarget.setTarget(null);
         }
