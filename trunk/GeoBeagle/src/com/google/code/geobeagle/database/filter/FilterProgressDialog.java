@@ -22,16 +22,13 @@ import android.app.ProgressDialog;
 import android.content.Context;
 
 @ContextScoped
-public class ApplyFilterProgressDialog extends ProgressDialog {
-
-    private static final String HIDING_FOUND_CACHES = "Hiding found caches";
+public class FilterProgressDialog extends ProgressDialog {
 
     @Inject
-    public ApplyFilterProgressDialog(Context context) {
+    public FilterProgressDialog(Context context) {
         super(context);
-        setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-        setMessage(HIDING_FOUND_CACHES + "...");
-        setTitle(HIDING_FOUND_CACHES);
+        setIndeterminate(true);
+        setTitle("Filtering caches");
         setCancelable(false);
     }
 }
