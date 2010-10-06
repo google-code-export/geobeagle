@@ -96,13 +96,15 @@ public class ActivityRestorer {
         };
     }
 
-    public void restore(int flags) {
+    public void restore(int flags, ActivityType currentActivityType) {
         if ((flags & Intent.FLAG_ACTIVITY_NEW_TASK) == 0)
             return;
         final String lastActivity = mSharedPreferences.getString(ActivitySaver.LAST_ACTIVITY,
                 ActivityType.NONE.name());
         final ActivityType activityType = ActivityType.valueOf(lastActivity);
-        Log.d("GeoBeagle", "RESTORING: " + activityType);
-        mRestorers[activityType.toInt()].restore();
+        if (currentActivityType != activityType) {
+            Log.d("GeoBeagle", "RESTORING: " + activityType);
+            mRestorers[activityType.toInt()].restore();
+        }
     }
 }
