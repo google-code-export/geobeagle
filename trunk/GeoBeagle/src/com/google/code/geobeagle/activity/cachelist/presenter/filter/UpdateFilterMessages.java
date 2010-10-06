@@ -14,7 +14,6 @@
 
 package com.google.code.geobeagle.activity.cachelist.presenter.filter;
 
-
 public enum UpdateFilterMessages {
 
     DISMISS_APPLY_FILTER_PROGRESS {
@@ -40,12 +39,26 @@ public enum UpdateFilterMessages {
         void handleMessage(UpdateFilterMediator updateFilterMediator, int arg1) {
             updateFilterMediator.showApplyFilterProgress(arg1);
         }
+    },
+    SHOW_HIDING_ARCHIVED_CACHES_PROGRESS {
+        @Override
+        void handleMessage(UpdateFilterMediator updateFilterMediator, int arg1) {
+            updateFilterMediator.showHidingArchivedCachesProgress();
+        }
+    },
+    DISMISS_HIDING_ARCHIVED_CACHES_PROGRESS {
+        @Override
+        void handleMessage(UpdateFilterMediator updateFilterMediator, int arg1) {
+            updateFilterMediator.dismissHidingArchivedCachesProgress();
+        }
+    },
     END_FILTERING {
         @Override
         void handleMessage(UpdateFilterMediator updateFilterMediator, int arg1) {
             updateFilterMediator.endFiltering();
         }
     };
+
     public static UpdateFilterMessages fromOrd(int i) {
         return UpdateFilterMessages.values()[i];
     }

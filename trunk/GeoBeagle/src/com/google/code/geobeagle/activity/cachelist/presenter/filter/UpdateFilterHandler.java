@@ -48,12 +48,20 @@ public class UpdateFilterHandler extends Handler {
         sendMessage(UpdateFilterMessages.SHOW_APPLY_FILTER_PROGRESS, count);
     }
 
+    public void showHidingArchivedCachesProgress() {
+        sendMessage(UpdateFilterMessages.SHOW_HIDING_ARCHIVED_CACHES_PROGRESS);
+    }
+
     private void sendMessage(UpdateFilterMessages updateFilterMessage) {
         sendMessage(updateFilterMessage, 0);
     }
 
     private void sendMessage(UpdateFilterMessages updateFilterMessage, int arg1) {
         sendMessage(obtainMessage(updateFilterMessage.ordinal(), arg1, 0));
+    }
+
+    public void dismissHidingArchivedCachesProgress() {
+        sendMessage(UpdateFilterMessages.DISMISS_HIDING_ARCHIVED_CACHES_PROGRESS);
     }
 
     public void endFiltering() {

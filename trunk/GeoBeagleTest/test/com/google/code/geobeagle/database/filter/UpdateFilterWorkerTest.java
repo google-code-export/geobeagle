@@ -45,11 +45,14 @@ public class UpdateFilterWorkerTest extends GeoBeagleTest {
     }
 
     @Test
-    public void showFoundCachesShouldDismissDialogBox() {
+    public void showAllCachesShouldDismissDialogBox() {
         cacheVisibilityStore.setAllVisible();
+        updateFilterHandler.dismissClearFilterProgress();
+        expect(sharedPreferences.getBoolean(EditPreferences.SHOW_UNAVAILABLE_CACHES, false))
+                .andReturn(true);
         expect(sharedPreferences.getBoolean(EditPreferences.SHOW_FOUND_CACHES, false)).andReturn(
                 true);
-        updateFilterHandler.dismissClearFilterProgress();
+        updateFilterHandler.endFiltering();
         replayAll();
 
         new UpdateFilterWorker(sharedPreferences, updateFilterHandler, null, cacheVisibilityStore)
