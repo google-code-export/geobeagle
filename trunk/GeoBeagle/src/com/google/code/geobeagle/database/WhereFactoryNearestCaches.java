@@ -14,6 +14,7 @@
 
 package com.google.code.geobeagle.database;
 
+import com.google.code.geobeagle.activity.cachelist.SearchWhereFactory;
 import com.google.code.geobeagle.database.DatabaseDI.SearchFactory;
 import com.google.inject.Inject;
 
@@ -133,13 +134,17 @@ public class WhereFactoryNearestCaches implements WhereFactory {
     private final SearchFactory mSearchFactory;
     private final WhereStringFactory mWhereStringFactory;
     private final DbFrontend mDbFrontend;
+    private final SearchWhereFactory mSearchWhereFactory;
 
     @Inject
     public WhereFactoryNearestCaches(SearchFactory searchFactory,
-            WhereStringFactory whereStringFactory, DbFrontend dbFrontend) {
+            WhereStringFactory whereStringFactory,
+            SearchWhereFactory searchWhereFactory,
+            DbFrontend dbFrontend) {
         mSearchFactory = searchFactory;
         mWhereStringFactory = whereStringFactory;
         mDbFrontend = dbFrontend;
+        mSearchWhereFactory = searchWhereFactory;
     }
 
     @Override
@@ -148,7 +153,8 @@ public class WhereFactoryNearestCaches implements WhereFactory {
         int maxNumberOfCaches = Math.min(totalCaches, MAX_NUMBER_OF_CACHES);
         mLastGuess = mSearchFactory.createSearch(latitude, longitude, GUESS_MIN, GUESS_MAX,
                 sqliteWrapper).search(mLastGuess, maxNumberOfCaches);
-        return mWhereStringFactory.getWhereString(latitude, longitude, mLastGuess);
+        return mWhereStringFactory.getWhereString(latitude, longitude, mLastGuess)
+                + mSearchWhereFactory.getWhereString();
     }
 
 }

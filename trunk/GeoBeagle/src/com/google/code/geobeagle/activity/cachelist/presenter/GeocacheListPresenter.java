@@ -20,6 +20,7 @@ import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.cachelist.CacheListViewScrollListener;
 import com.google.code.geobeagle.activity.cachelist.GeocacheListController.CacheListOnCreateContextMenuListener;
 import com.google.code.geobeagle.activity.cachelist.Pausable;
+import com.google.code.geobeagle.activity.cachelist.SearchTarget;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVectors;
 import com.google.code.geobeagle.activity.cachelist.presenter.filter.UpdateFilterMediator;
 import com.google.code.geobeagle.database.filter.FilterCleanliness;
@@ -60,6 +61,7 @@ public class GeocacheListPresenter implements Pausable {
     private final FilterCleanliness mFilterCleanliness;
     private final ShakeWaker mShakeWaker;
     private final UpdateFilterMediator mUpdateFilterMediator;
+    private final SearchTarget mSearchTarget;
 
     @Inject
     public GeocacheListPresenter(CombinedLocationListener combinedLocationListener,
@@ -77,7 +79,8 @@ public class GeocacheListPresenter implements Pausable {
             UpdateFilterWorker updateFilterWorker,
             FilterCleanliness filterCleanliness,
             ShakeWaker shakeWaker,
-            UpdateFilterMediator updateFilterMediator) {
+            UpdateFilterMediator updateFilterMediator,
+            SearchTarget searchTarget) {
         mCombinedLocationListener = combinedLocationListener;
         mCombinedLocationManager = combinedLocationManager;
         mCacheListCompassListenerProvider = cacheListCompassListenerProvider;
@@ -94,11 +97,14 @@ public class GeocacheListPresenter implements Pausable {
         mUpdateFilterWorker = updateFilterWorker;
         mFilterCleanliness = filterCleanliness;
         mUpdateFilterMediator = updateFilterMediator;
+        mSearchTarget = searchTarget;
     }
 
     public void onCreate() {
         mListActivity.setContentView(R.layout.cache_list);
         final ListView listView = mListActivity.getListView();
+        NoCachesView noCachesView = (NoCachesView)listView.getEmptyView();
+        noCachesView.setSearchTarget(mSearchTarget);
         listView.addHeaderView((View)mInflatedGpsStatusWidget.getTag());
         mListActivity.setListAdapter(mGeocacheListAdapter);
         listView.setOnCreateContextMenuListener(new CacheListOnCreateContextMenuListener(
