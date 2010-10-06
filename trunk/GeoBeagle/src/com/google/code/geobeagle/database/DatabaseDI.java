@@ -22,6 +22,8 @@ import com.google.code.geobeagle.database.WhereFactoryNearestCaches.SearchDown;
 import com.google.code.geobeagle.database.WhereFactoryNearestCaches.SearchUp;
 import com.google.code.geobeagle.database.WhereFactoryNearestCaches.WhereStringFactory;
 import com.google.code.geobeagle.preferences.PreferencesUpgrader;
+import com.google.inject.Inject;
+import com.google.inject.Provider;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -205,14 +207,22 @@ public class DatabaseDI {
     }
 
     static public class SearchFactory {
-        public Search createSearch(double latitude,
-                double longitude,
-                float min,
-                float max,
-                ISQLiteDatabase sqliteWrapper) {
-            WhereStringFactory whereStringFactory = new WhereStringFactory();
-            BoundingBox boundingBox = new BoundingBox(latitude, longitude, sqliteWrapper,
-                    whereStringFactory);
+        private final SearchWhereFactory searchWhereFactory;
+        private final WhereStringFactory whereStringFactory;
+        private final Provider<ISQLiteDatabase> sqliteWrapperProvider;
+
+        @Inject
+        SearchFactory(SearchWhereFactory searchWhereFactory,
+                WhereStringFactory whereStringFactory,
+                Provider<ISQLiteDatabase> sqliteWrapperProvider) {
+            this.searchWhereFactory = searchWhereFactory;
+            this.whereStringFactory = whereStringFactory;
+            this.sqliteWrapperProvider = sqliteWrapperProvider;
+        }
+
+        public Search createSearch(double latitude, double longitude, float min, float max) {
+            BoundingBox boundingBox = new BoundingBox(latitude, longitude,
+                    sqliteWrapperProvider.get(), whereStringFactory, searchWhereFactory);
             SearchDown searchDown = new SearchDown(boundingBox, min);
             SearchUp searchUp = new SearchUp(boundingBox, max);
             return new WhereFactoryNearestCaches.Search(boundingBox, searchDown, searchUp);
