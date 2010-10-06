@@ -24,7 +24,7 @@ public class TagReader {
         this.tagStore = tagStore;
     }
 
-    FoundCaches getFoundCaches() {
+    public FoundCaches getFoundCaches() {
         return new FoundCaches(tagStore.getFoundCaches());
     }
 

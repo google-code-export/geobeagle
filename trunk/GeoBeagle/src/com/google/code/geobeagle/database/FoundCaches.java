@@ -14,24 +14,25 @@
 
 package com.google.code.geobeagle.database;
 
+
 import android.database.Cursor;
 
-class FoundCaches {
+public class FoundCaches {
     private final Cursor cursor;
 
     public FoundCaches(Cursor cursor) {
         this.cursor = cursor;
     }
 
-    int getCount() {
+    public int getCount() {
         return cursor.getCount();
     }
 
-    Iterable<String> getCaches() {
+    public Iterable<String> getCaches() {
         return new IterableIterator<String>(new CursorIterator(cursor));
     }
 
-    void close() {
+    public void close() {
         cursor.close();
     }
 }

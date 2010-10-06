@@ -16,7 +16,7 @@ package com.google.code.geobeagle.activity.cachelist.presenter;
 
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.Timing;
-import com.google.code.geobeagle.database.FilterNearestCaches;
+import com.google.code.geobeagle.database.filter.FilterNearestCaches;
 
 import org.easymock.EasyMock;
 import org.junit.Test;

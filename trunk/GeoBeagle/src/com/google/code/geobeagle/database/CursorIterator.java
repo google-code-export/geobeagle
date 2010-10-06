@@ -18,7 +18,7 @@ import android.database.Cursor;
 
 import java.util.Iterator;
 
-class CursorIterator implements Iterator<String> {
+public class CursorIterator implements Iterator<String> {
     private final Cursor cursor;
 
     CursorIterator(Cursor cursor) {
