@@ -46,6 +46,11 @@ public class UpdateFilterWorker extends RoboThread {
         cacheVisibilityStore.setAllVisible();
         updateFilterHandler.dismissClearFilterProgress();
 
+        if (!sharedPreferences.getBoolean(EditPreferences.SHOW_UNAVAILABLE_CACHES, false)) {
+            updateFilterHandler.showHidingArchivedCachesProgress();
+            cacheVisibilityStore.hideUnavailableCaches();
+            updateFilterHandler.dismissHidingArchivedCachesProgress();
+        }
 
         if (!sharedPreferences.getBoolean(EditPreferences.SHOW_FOUND_CACHES, false)) {
             hideFoundCaches();

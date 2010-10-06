@@ -14,27 +14,21 @@
 
 package com.google.code.geobeagle.database.filter;
 
-import com.google.code.geobeagle.database.DbFrontend;
 import com.google.inject.Inject;
 
-class CacheVisibilityStore {
-    private final DbFrontend dbFrontEnd;
+import roboguice.inject.ContextScoped;
 
+import android.app.ProgressDialog;
+import android.content.Context;
+
+@ContextScoped
+public class HideArchivedCachesProgressDialog extends ProgressDialog {
     @Inject
-    public CacheVisibilityStore(DbFrontend dbFrontend) {
-        this.dbFrontEnd = dbFrontend;
+    public HideArchivedCachesProgressDialog(Context context) {
+        super(context);
+        setMessage("Hiding archived caches...");
+        setIndeterminate(true);
+        setTitle("Hiding archived caches");
+        setCancelable(false);
     }
-
-    void setInvisible(String cache) {
-        dbFrontEnd.getDatabase().execSQL("UPDATE CACHES SET Visible = 0 WHERE ID = ?", cache);
-    }
-
-    void setAllVisible() {
-        dbFrontEnd.getDatabase().execSQL("UPDATE CACHES SET Visible = 1");
-    }
-
-    public void hideUnavailableCaches() {
-        dbFrontEnd.getDatabase().execSQL("UPDATE CACHES SET Visible = 0 WHERE Available = 0");
-    }
-
 }

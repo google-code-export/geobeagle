@@ -66,8 +66,8 @@ public class TagWriterImplTest extends GeoBeagleTest {
     @Test
     public void testAddDnf() {
         expect(databaseProvider.get()).andReturn(db).anyTimes();
-        expect(filter.isVisible(true)).andReturn(true).anyTimes();
-        expect(filter.isVisible(false)).andReturn(true).anyTimes();
+        expect(filter.showBasedOnFoundState(true)).andReturn(true).anyTimes();
+        expect(filter.showBasedOnFoundState(false)).andReturn(true).anyTimes();
         replayAll();
 
         TagWriter tagWriter = new TagWriter(filter, new TagStore(databaseProvider), null);
@@ -83,7 +83,7 @@ public class TagWriterImplTest extends GeoBeagleTest {
         Toast toast = PowerMock.createMock(Toast.class);
 
         expect(databaseProvider.get()).andReturn(db).anyTimes();
-        expect(filter.isVisible(true)).andReturn(false).anyTimes();
+        expect(filter.showBasedOnFoundState(true)).andReturn(false).anyTimes();
         PowerMock.mockStatic(Toast.class);
         expect(Toast.makeText(context, R.string.removing_found_cache_from_cache_list,
                         Toast.LENGTH_LONG)).andReturn(toast);
@@ -98,8 +98,8 @@ public class TagWriterImplTest extends GeoBeagleTest {
     @Test
     public void testAddFound() {
         expect(databaseProvider.get()).andReturn(db).anyTimes();
-        expect(filter.isVisible(true)).andReturn(true).anyTimes();
-        expect(filter.isVisible(false)).andReturn(true).anyTimes();
+        expect(filter.showBasedOnFoundState(true)).andReturn(true).anyTimes();
+        expect(filter.showBasedOnFoundState(false)).andReturn(true).anyTimes();
         replayAll();
 
         TagWriter tagWriter = new TagWriter(filter, new TagStore(databaseProvider), null);
@@ -113,8 +113,8 @@ public class TagWriterImplTest extends GeoBeagleTest {
     @Test
     public void testNoTagsOnStartUp() {
         expect(databaseProvider.get()).andReturn(db).anyTimes();
-        expect(filter.isVisible(true)).andReturn(true).anyTimes();
-        expect(filter.isVisible(false)).andReturn(true).anyTimes();
+        expect(filter.showBasedOnFoundState(true)).andReturn(true).anyTimes();
+        expect(filter.showBasedOnFoundState(false)).andReturn(true).anyTimes();
 
         replayAll();
         TagWriter tagWriter = new TagWriter(filter, new TagStore(databaseProvider), null);
