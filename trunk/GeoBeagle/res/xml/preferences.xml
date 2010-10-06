@@ -13,7 +13,7 @@
 		android:title="Log Caches to File" android:summary="Log field notes to a file instead of SMS" />
 
 	<ListPreference android:key="shake-wake-duration"
-		android:title="Screen timeout" android:entries="@array/shake_wake_duration_choices"
+		android:title="Screen Timeout" android:entries="@array/shake_wake_duration_choices"
 		android:summary="Extend screen timeout if the accelerometer detects motion--keeps phone awake while geocaching."
 		android:entryValues="@array/shake_wake_duration_values"
 		android:defaultValue="0" android:dialogTitle="Screen timeout extension" />
