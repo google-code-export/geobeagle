@@ -30,17 +30,20 @@ public class WhereFactoryNearestCaches implements WhereFactory {
         private final WhereStringFactory mWhereStringFactory;
         private final double mLatitude;
         private final double mLongitude;
+        private final SearchWhereFactory mSearchWhereFactory;
 
         BoundingBox(double latitude, double longitude, ISQLiteDatabase sqliteWrapper,
-                WhereStringFactory whereStringFactory) {
+                WhereStringFactory whereStringFactory, SearchWhereFactory searchWhereFactory) {
             mLatitude = latitude;
             mLongitude = longitude;
             mSqliteWrapper = sqliteWrapper;
             mWhereStringFactory = whereStringFactory;
+            mSearchWhereFactory = searchWhereFactory;
         }
 
         int getCount(float degreesDelta, int maxCount) {
-            String where = mWhereStringFactory.getWhereString(mLatitude, mLongitude, degreesDelta);
+            String where = mWhereStringFactory.getWhereString(mLatitude, mLongitude, degreesDelta)
+                    + mSearchWhereFactory.getWhereString();
 
             Cursor cursor = mSqliteWrapper.query(Database.TBL_CACHES, ID_COLUMN, where, null, null,
                     null, "" + maxCount);
