@@ -17,8 +17,7 @@ package com.google.code.geobeagle.activity.cachelist.presenter;
 import com.google.code.geobeagle.CacheListCompassListener;
 import com.google.code.geobeagle.LocationControlBuffered;
 import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.activity.cachelist.CacheListView;
-import com.google.code.geobeagle.activity.cachelist.CacheListView.ScrollListener;
+import com.google.code.geobeagle.activity.cachelist.CacheListViewScrollListener;
 import com.google.code.geobeagle.activity.cachelist.GeocacheListController.CacheListOnCreateContextMenuListener;
 import com.google.code.geobeagle.activity.cachelist.Pausable;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVectors;
@@ -55,7 +54,7 @@ public class GeocacheListPresenter implements Pausable {
     private final LocationControlBuffered mLocationControlBuffered;
     private final SensorManagerWrapper mSensorManagerWrapper;
     private final UpdateGpsWidgetRunnable mUpdateGpsWidgetRunnable;
-    private final CacheListView.ScrollListener mScrollListener;
+    private final CacheListViewScrollListener mScrollListener;
     private final GpsStatusListener mGpsStatusListener;
     private final UpdateFilterWorker mUpdateFilterWorker;
     private final FilterCleanliness mFilterCleanliness;
@@ -73,7 +72,7 @@ public class GeocacheListPresenter implements Pausable {
             LocationControlBuffered locationControlBuffered,
             SensorManagerWrapper sensorManagerWrapper,
             UpdateGpsWidgetRunnable updateGpsWidgetRunnable,
-            ScrollListener scrollListener,
+            CacheListViewScrollListener cacheListViewScrollListener,
             GpsStatusListener gpsStatusListener,
             UpdateFilterWorker updateFilterWorker,
             FilterCleanliness filterCleanliness,
@@ -90,7 +89,7 @@ public class GeocacheListPresenter implements Pausable {
         mLocationControlBuffered = locationControlBuffered;
         mUpdateGpsWidgetRunnable = updateGpsWidgetRunnable;
         mSensorManagerWrapper = sensorManagerWrapper;
-        mScrollListener = scrollListener;
+        mScrollListener = cacheListViewScrollListener;
         mGpsStatusListener = gpsStatusListener;
         mUpdateFilterWorker = updateFilterWorker;
         mFilterCleanliness = filterCleanliness;
