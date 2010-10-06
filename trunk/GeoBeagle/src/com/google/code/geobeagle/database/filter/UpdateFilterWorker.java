@@ -46,6 +46,12 @@ public class UpdateFilterWorker extends RoboThread {
         cacheVisibilityStore.setAllVisible();
         updateFilterHandler.dismissClearFilterProgress();
 
+        if (!sharedPreferences.getBoolean(EditPreferences.SHOW_WAYPOINTS, false)) {
+            updateFilterHandler.showHidingWaypointsProgress();
+            cacheVisibilityStore.hideWaypoints();
+            updateFilterHandler.dismissHidingWaypointsProgress();
+        }
+
         if (!sharedPreferences.getBoolean(EditPreferences.SHOW_UNAVAILABLE_CACHES, false)) {
             updateFilterHandler.showHidingArchivedCachesProgress();
             cacheVisibilityStore.hideUnavailableCaches();

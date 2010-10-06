@@ -57,6 +57,18 @@ public enum UpdateFilterMessages {
         void handleMessage(UpdateFilterMediator updateFilterMediator, int arg1) {
             updateFilterMediator.endFiltering();
         }
+    },
+    SHOW_HIDING_WAYPOINTS_PROGRESS {
+        @Override
+        void handleMessage(UpdateFilterMediator updateFilterMediator, int arg1) {
+            updateFilterMediator.showHidingWaypointsProgress();
+        }
+    },
+    DISMISS_HIDING_WAYPOINTS_PROGRESS {
+        @Override
+        void handleMessage(UpdateFilterMediator updateFilterMediator, int arg1) {
+            updateFilterMediator.dismissHidingWaypointsProgress();
+        }
     };
 
     public static UpdateFilterMessages fromOrd(int i) {

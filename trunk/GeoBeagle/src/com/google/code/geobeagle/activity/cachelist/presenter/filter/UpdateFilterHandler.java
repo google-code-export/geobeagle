@@ -67,4 +67,12 @@ public class UpdateFilterHandler extends Handler {
     public void endFiltering() {
         sendMessage(UpdateFilterMessages.END_FILTERING);
     }
+
+    public void showHidingWaypointsProgress() {
+        sendMessage(UpdateFilterMessages.SHOW_HIDING_WAYPOINTS_PROGRESS);
+    }
+
+    public void dismissHidingWaypointsProgress() {
+        sendMessage(UpdateFilterMessages.DISMISS_HIDING_WAYPOINTS_PROGRESS);
+    }
 }
