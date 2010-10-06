@@ -141,7 +141,7 @@ public class WhereFactoryNearestCachesTest {
 
         EasyMock.expect(
                 searchFactory.createSearch(122, 37, WhereFactoryNearestCaches.GUESS_MIN,
-                        WhereFactoryNearestCaches.GUESS_MAX, sqliteWrapper))
+                        WhereFactoryNearestCaches.GUESS_MAX))
                 .andReturn(search);
         EasyMock.expect(dbFrontend.countAll()).andReturn(1000);
         EasyMock.expect(search.search(0.1f, 100))
@@ -177,22 +177,24 @@ public class WhereFactoryNearestCachesTest {
         ISQLiteDatabase sqliteWrapper = PowerMock.createMock(ISQLiteDatabase.class);
         WhereStringFactory whereStringFactory = PowerMock.createMock(WhereStringFactory.class);
         Cursor cursor = PowerMock.createMock(Cursor.class);
+        SearchWhereFactory searchWhereFactory = PowerMock.createMock(SearchWhereFactory.class);
 
         PowerMock.mockStatic(Log.class);
+        EasyMock.expect(searchWhereFactory.getWhereString()).andReturn(" AND Id='GCfoo'");
         EasyMock.expect(Log.d((String)EasyMock.anyObject(), (String)EasyMock.anyObject()))
                 .andReturn(0);
         EasyMock.expect(whereStringFactory.getWhereString(122, 37, 2.2f)).andReturn(
                 "WHERE blah");
         EasyMock.expect(
-                sqliteWrapper.query(Database.TBL_CACHES, BoundingBox.ID_COLUMN, "WHERE blah", null,
+                sqliteWrapper.query(Database.TBL_CACHES, BoundingBox.ID_COLUMN,
+                        "WHERE blah AND Id='GCfoo'", null,
                         null, null, "100")).andReturn(cursor);
         EasyMock.expect(cursor.getCount()).andReturn(27);
         cursor.close();
 
         PowerMock.replayAll();
-        assertEquals(27,
-                new BoundingBox(122, 37, sqliteWrapper, whereStringFactory).getCount(2.2f,
-                100));
+        assertEquals(27, new BoundingBox(122, 37, sqliteWrapper, whereStringFactory,
+                searchWhereFactory).getCount(2.2f, 100));
         PowerMock.verifyAll();
     }
 
