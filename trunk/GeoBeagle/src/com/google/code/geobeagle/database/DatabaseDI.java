@@ -15,6 +15,7 @@
 package com.google.code.geobeagle.database;
 
 import com.google.code.geobeagle.GeocacheFactory;
+import com.google.code.geobeagle.activity.cachelist.SearchWhereFactory;
 import com.google.code.geobeagle.database.WhereFactoryNearestCaches.BoundingBox;
 import com.google.code.geobeagle.database.WhereFactoryNearestCaches.Search;
 import com.google.code.geobeagle.database.WhereFactoryNearestCaches.SearchDown;
