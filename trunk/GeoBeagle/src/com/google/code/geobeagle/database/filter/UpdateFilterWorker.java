@@ -44,14 +44,14 @@ public class UpdateFilterWorker extends RoboThread {
     @Override
     public void run() {
         cacheVisibilityStore.setAllVisible();
+        updateFilterHandler.dismissClearFilterProgress();
 
-        if (sharedPreferences.getBoolean(EditPreferences.SHOW_FOUND_CACHES, false)) {
-            updateFilterHandler.dismissClearFilterProgress();
-            return;
+
+        if (!sharedPreferences.getBoolean(EditPreferences.SHOW_FOUND_CACHES, false)) {
+            hideFoundCaches();
         }
 
-        hideFoundCaches();
-        updateFilterHandler.dismissApplyFilterProgress();
+        updateFilterHandler.endFiltering();
     }
 
     private void hideFoundCaches() {
@@ -65,8 +65,11 @@ public class UpdateFilterWorker extends RoboThread {
                 cacheVisibilityStore.setInvisible(cache);
             }
         } finally {
-            if (foundCaches != null)
-                foundCaches.close();
+            if (foundCaches == null) {
+                return;
+            }
+            foundCaches.close();
+            updateFilterHandler.dismissApplyFilterProgress();
         }
     }
 }
