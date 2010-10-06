@@ -18,6 +18,12 @@
 		android:entryValues="@array/shake_wake_duration_values"
 		android:defaultValue="0" android:dialogTitle="Screen timeout extension" />
 
+	<com.google.code.geobeagle.ClearSuggestionHistoryPreference
+		android:key="clear-search-history" android:title="Clear search history"
+		android:summary="Clear cache search history" android:dialogMessage="Search history will be deleted."
+		android:dialogTitle="Clear">
+	</com.google.code.geobeagle.ClearSuggestionHistoryPreference>
+
 	<PreferenceCategory android:orderingFromXml="true"
 		android:title="Cache list settings">
 		<CheckBoxPreference android:key="absolute-bearing"
@@ -53,4 +59,5 @@
 			android:dependency="bcaching-enabled" android:layout="?android:attr/preferenceLayoutChild"
 			android:title="Sync Found Caches" android:summary="Include found caches in BCaching.com sync" />
 	</PreferenceCategory>
+
 </PreferenceScreen>
