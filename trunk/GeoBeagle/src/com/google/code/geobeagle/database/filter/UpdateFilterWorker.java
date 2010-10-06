@@ -39,24 +39,20 @@ public class UpdateFilterWorker extends RoboThread {
     @Override
     public void run() {
         cacheVisibilityStore.setAllVisible();
-        updateFilterHandler.dismissClearFilterProgress();
 
         if (!sharedPreferences.getBoolean(EditPreferences.SHOW_WAYPOINTS, false)) {
-            updateFilterHandler.showHidingWaypointsProgress();
+            updateFilterHandler.setProgressMessage("Filtering waypoints");
             cacheVisibilityStore.hideWaypoints();
-            updateFilterHandler.dismissHidingWaypointsProgress();
         }
 
         if (!sharedPreferences.getBoolean(EditPreferences.SHOW_UNAVAILABLE_CACHES, false)) {
-            updateFilterHandler.showHidingArchivedCachesProgress();
+            updateFilterHandler.setProgressMessage("Filtering unavailable caches");
             cacheVisibilityStore.hideUnavailableCaches();
-            updateFilterHandler.dismissHidingArchivedCachesProgress();
         }
 
         if (!sharedPreferences.getBoolean(EditPreferences.SHOW_FOUND_CACHES, false)) {
-            updateFilterHandler.showHidingFoundCachesProgress();
+            updateFilterHandler.setProgressMessage("Filtering found caches");
             cacheVisibilityStore.hideFoundCaches();
-            updateFilterHandler.dismissHidingFoundCachesProgress();
         }
 
         updateFilterHandler.endFiltering();
