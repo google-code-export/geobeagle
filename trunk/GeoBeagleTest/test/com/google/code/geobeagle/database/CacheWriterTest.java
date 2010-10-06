@@ -88,6 +88,7 @@ public class CacheWriterTest {
 
         expect(filter.showBasedOnFoundState(true)).andReturn(true);
         expect(filter.showBasedOnAvailableState(false)).andReturn(true);
+        expect(filter.showBasedOnCacheType(CacheType.NULL)).andReturn(true);
         expect(sqliteProvider.get()).andReturn(sqlite);
 
         sqlite.execSQL(Database.SQL_REPLACE_CACHE, "gc123", "a cache", 122.0, 37.0, "source", 0, 0,
@@ -156,10 +157,11 @@ public class CacheWriterTest {
     @Test
     public void testStopWriting() {
         Provider<ISQLiteDatabase> sqliteProvider = createMock(Provider.class);
-        SQLiteWrapper sqlite = createMock(SQLiteWrapper.class);
+        ISQLiteDatabase sqlite = createMock(ISQLiteDatabase.class);
         expect(sqliteProvider.get()).andReturn(sqlite);
         sqlite.setTransactionSuccessful();
         sqlite.endTransaction();
+        sqlite.execSQL(CacheWriter.ANALYZE);
 
         replayAll();
         new CacheWriter(sqliteProvider, null, null).stopWriting();
