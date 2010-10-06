@@ -22,8 +22,7 @@ import com.google.code.geobeagle.activity.cachelist.CacheListView.ScrollListener
 import com.google.code.geobeagle.activity.cachelist.GeocacheListController.CacheListOnCreateContextMenuListener;
 import com.google.code.geobeagle.activity.cachelist.Pausable;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVectors;
-import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh.UpdateFlag;
-import com.google.code.geobeagle.database.filter.ClearFilterProgressDialog;
+import com.google.code.geobeagle.activity.cachelist.presenter.filter.UpdateFilterMediator;
 import com.google.code.geobeagle.database.filter.FilterCleanliness;
 import com.google.code.geobeagle.database.filter.UpdateFilterWorker;
 import com.google.code.geobeagle.gpsstatuswidget.InflatedGpsStatusWidget;
@@ -36,7 +35,6 @@ import com.google.inject.Provider;
 
 import android.app.Activity;
 import android.app.ListActivity;
-import android.app.ProgressDialog;
 import android.hardware.SensorManager;
 import android.location.LocationListener;
 import android.util.Log;
@@ -60,10 +58,9 @@ public class GeocacheListPresenter implements Pausable {
     private final CacheListView.ScrollListener mScrollListener;
     private final GpsStatusListener mGpsStatusListener;
     private final UpdateFilterWorker mUpdateFilterWorker;
-    private final UpdateFlag mUpdateFlag;
-    private final Provider<ClearFilterProgressDialog> mProgressDialogProvider;
     private final FilterCleanliness mFilterCleanliness;
     private final ShakeWaker mShakeWaker;
+    private final UpdateFilterMediator mUpdateFilterMediator;
 
     @Inject
     public GeocacheListPresenter(CombinedLocationListener combinedLocationListener,
@@ -79,10 +76,9 @@ public class GeocacheListPresenter implements Pausable {
             ScrollListener scrollListener,
             GpsStatusListener gpsStatusListener,
             UpdateFilterWorker updateFilterWorker,
-            UpdateFlag updateFlag,
-            Provider<ClearFilterProgressDialog> progressDialogProvider,
             FilterCleanliness filterCleanliness,
-            ShakeWaker shakeWaker) {
+            ShakeWaker shakeWaker,
+            UpdateFilterMediator updateFilterMediator) {
         mCombinedLocationListener = combinedLocationListener;
         mCombinedLocationManager = combinedLocationManager;
         mCacheListCompassListenerProvider = cacheListCompassListenerProvider;
@@ -97,9 +93,8 @@ public class GeocacheListPresenter implements Pausable {
         mScrollListener = scrollListener;
         mGpsStatusListener = gpsStatusListener;
         mUpdateFilterWorker = updateFilterWorker;
-        mUpdateFlag = updateFlag;
-        mProgressDialogProvider = progressDialogProvider;
         mFilterCleanliness = filterCleanliness;
+        mUpdateFilterMediator = updateFilterMediator;
     }
 
     public void onCreate() {
@@ -125,10 +120,8 @@ public class GeocacheListPresenter implements Pausable {
 
     public void onResume(CacheListRefresh cacheListRefresh) {
         if (mFilterCleanliness.isDirty()) {
-            ProgressDialog progressDialog = mProgressDialogProvider.get();
-            progressDialog.incrementProgressBy(1);
-            progressDialog.show();
-            mUpdateFlag.setUpdatesEnabled(false);
+            mUpdateFilterMediator.showClearFilterProgress();
+            mUpdateFilterMediator.startFiltering();
             mUpdateFilterWorker.start();
         }
 
