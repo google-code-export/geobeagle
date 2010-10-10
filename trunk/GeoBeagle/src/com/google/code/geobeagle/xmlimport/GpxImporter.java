@@ -43,7 +43,6 @@ public class GpxImporter implements Abortable {
     private final Provider<CacheListRefresh> mCacheListRefreshProvider;
     private final Injector mInjector;
 
-    @Inject
     GpxImporter(GeocacheListPresenter geocacheListPresenter,
             GpxLoaderFromFile gpxLoaderFromFile,
             Provider<Context> contextProvider,
@@ -63,6 +62,20 @@ public class GpxImporter implements Abortable {
         mToastFactory = toastFactory;
         mGeocacheListPresenter = geocacheListPresenter;
         mCacheListRefreshProvider = cacheListRefreshProvider;
+        mInjector = injector;
+    }
+
+    @Inject
+    GpxImporter(Injector injector) {
+        mContextProvider = injector.getProvider(Context.class);
+        mGpxLoader = injector.getInstance(GpxLoaderFromFile.class);
+        mEventHandlerComposite = injector.getInstance(EventHandlerComposite.class);
+        mImportThreadWrapper = injector.getInstance(ImportThreadWrapper.class);
+        mMessageHandler = injector.getInstance(MessageHandler.class);
+        mErrorDisplayer = injector.getInstance(ErrorDisplayer.class);
+        mToastFactory = injector.getInstance(ToastFactory.class);
+        mGeocacheListPresenter = injector.getInstance(GeocacheListPresenter.class);
+        mCacheListRefreshProvider = injector.getProvider(CacheListRefresh.class);
         mInjector = injector;
     }
 
