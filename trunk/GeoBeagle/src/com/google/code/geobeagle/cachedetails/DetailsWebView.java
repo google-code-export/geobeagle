@@ -27,6 +27,11 @@ class DetailsWebView {
     private final CacheDetailsLoader cacheDetailsLoader;
     private final Resources resources;
 
+    DetailsWebView(CacheDetailsLoader cacheDetailsLoader, Resources resources) {
+        this.cacheDetailsLoader = cacheDetailsLoader;
+        this.resources = resources;
+    }
+
     @Inject
     DetailsWebView(Injector injector) {
         this.cacheDetailsLoader = injector.getInstance(CacheDetailsLoader.class);
