@@ -17,6 +17,7 @@ package com.google.code.geobeagle.database;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.database.filter.Filter;
 import com.google.inject.Inject;
+import com.google.inject.Injector;
 
 import android.content.Context;
 import android.util.Log;
@@ -27,11 +28,17 @@ public class TagWriter {
     private final TagStore tagStore;
     private final Context context;
 
-    @Inject
     public TagWriter(Filter filter, TagStore tagStore, Context context) {
         this.filter = filter;
         this.context = context;
         this.tagStore = tagStore;
+    }
+
+    @Inject
+    public TagWriter(Injector injector) {
+        this.filter = injector.getInstance(Filter.class);
+        this.tagStore = injector.getInstance(TagStore.class);
+        this.context = injector.getInstance(Context.class);
     }
 
     public void add(CharSequence geocacheId, Tag tag, boolean interactive) {
