@@ -17,6 +17,7 @@ package com.google.code.geobeagle.cachedetails;
 import com.google.code.geobeagle.cacheloader.CacheDetailsLoader;
 import com.google.code.geobeagle.cacheloader.CacheLoaderException;
 import com.google.inject.Inject;
+import com.google.inject.Injector;
 
 import android.content.Intent;
 import android.content.res.Resources;
@@ -27,9 +28,9 @@ class DetailsWebView {
     private final Resources resources;
 
     @Inject
-    DetailsWebView(CacheDetailsLoader cacheDetailsLoader, Resources resources) {
-        this.cacheDetailsLoader = cacheDetailsLoader;
-        this.resources = resources;
+    DetailsWebView(Injector injector) {
+        this.cacheDetailsLoader = injector.getInstance(CacheDetailsLoader.class);
+        this.resources = injector.getInstance(Resources.class);
     }
 
     String loadDetails(WebView webView, Intent intent) {
