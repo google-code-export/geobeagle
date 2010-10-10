@@ -22,21 +22,21 @@ import com.google.code.geobeagle.actions.MenuActionSettings;
 import com.google.code.geobeagle.actions.MenuActions;
 import com.google.code.geobeagle.activity.main.menuactions.MenuActionWebPage;
 import com.google.inject.Inject;
+import com.google.inject.Injector;
 
 import android.content.res.Resources;
 
 class GeoBeagleActivityMenuActions extends MenuActions {
     @Inject
-    public GeoBeagleActivityMenuActions(Resources resources,
-            MenuActionCacheList menuActionCacheList,
-            MenuActionEditGeocache menuActionEditGeocache,
-            MenuActionSettings menuActionSettings,
-            MenuActionWebPage menuActionWebPage) {
-        super(resources);
-        add(new MenuActionBase(R.string.menu_cache_list, menuActionCacheList));
-        add(new MenuActionBase(R.string.menu_edit_geocache, menuActionEditGeocache));
-        add(new MenuActionBase(R.string.menu_settings, menuActionSettings));
-        add(new MenuActionBase(R.string.web_page, menuActionWebPage));
+    public GeoBeagleActivityMenuActions(Injector injector) {
+        super(injector.getInstance(Resources.class));
+        add(new MenuActionBase(R.string.menu_cache_list,
+                injector.getInstance(MenuActionCacheList.class)));
+        add(new MenuActionBase(R.string.menu_edit_geocache,
+                injector.getInstance(MenuActionEditGeocache.class)));
+        add(new MenuActionBase(R.string.menu_settings,
+                injector.getInstance(MenuActionSettings.class)));
+        add(new MenuActionBase(R.string.web_page, injector.getInstance(MenuActionWebPage.class)));
     }
 
 }
