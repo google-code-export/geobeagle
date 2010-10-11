@@ -31,12 +31,28 @@ public class OverlayManager {
     private boolean mUsesDensityMap;
     private final GeoMapActivity mActivity;
 
+    public OverlayManager(Activity activity,
+            DensityOverlay densityOverlay,
+            CachePinsOverlayFactory cachePinsOverlayFactory,
+            NullOverlay nullOverlay) {
+        mActivity = (GeoMapActivity)activity;
+        mDensityOverlay = densityOverlay;
+        mCachePinsOverlayFactory = cachePinsOverlayFactory;
+        init(nullOverlay);
+    }
+
+
     @Inject
     public OverlayManager(Injector injector) {
         mActivity = (GeoMapActivity)injector.getInstance(Activity.class);
         mDensityOverlay = injector.getInstance(DensityOverlay.class);
         mCachePinsOverlayFactory = injector.getInstance(CachePinsOverlayFactory.class);
         NullOverlay nullOverlay = injector.getInstance(NullOverlay.class);
+        init(nullOverlay);
+    }
+
+
+    void init(NullOverlay nullOverlay) {
         mUsesDensityMap = false;
         GeoMapView geoMapView = (GeoMapView)mActivity.findViewById(R.id.mapview);
         Overlay myLocationOverlay = mActivity.getMyLocationOverlay();
