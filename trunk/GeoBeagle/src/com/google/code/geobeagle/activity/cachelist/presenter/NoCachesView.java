@@ -25,6 +25,8 @@ import android.webkit.WebView;
 
 public class NoCachesView extends WebView {
 
+    private static final String NO_CACHES_FOUND_HTML = "file:///android_asset/no_caches_found.html";
+    private static final String NO_CACHES = "file:///android_asset/no_caches.html";
     private SearchTarget searchTarget;
 
     public NoCachesView(Context context) {
@@ -44,10 +46,12 @@ public class NoCachesView extends WebView {
 
     @Override
     public void onDraw(Canvas canvas) {
+        // Log.d("GeoBeagle", "getUrl: " + getUrl());
         if (searchTarget == null || searchTarget.getTarget() == null) {
-            loadUrl("file:///android_asset/no_caches.html");
-        } else {
-            loadUrl("file:///android_asset/no_caches_found.html");
+            if (getUrl() == null || 0 != getUrl().compareTo(NO_CACHES))
+                loadUrl(NO_CACHES);
+        } else if (getUrl() == null || 0 != getUrl().compareTo(NO_CACHES_FOUND_HTML)) {
+            loadUrl(NO_CACHES_FOUND_HTML);
         }
         super.onDraw(canvas);
     }
