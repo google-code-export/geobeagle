@@ -14,8 +14,8 @@
 
 package com.google.code.geobeagle.xmlimport;
 
+import com.google.code.geobeagle.cachedetails.FileAndDatabaseWriter;
 import com.google.code.geobeagle.cachedetails.Writer;
-import com.google.code.geobeagle.cachedetails.WriterWrapper;
 import com.google.inject.Inject;
 
 import java.io.IOException;
@@ -26,7 +26,7 @@ class TagWriter {
     private final Writer writer;
 
     @Inject
-    public TagWriter(WriterWrapper writer) {
+    public TagWriter(FileAndDatabaseWriter writer) {
         this.writer = writer;
     }
 
