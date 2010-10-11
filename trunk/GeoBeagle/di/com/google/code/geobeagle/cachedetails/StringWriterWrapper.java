@@ -38,7 +38,7 @@ public class StringWriterWrapper implements com.google.code.geobeagle.cachedetai
     }
 
     @Override
-    public void open(String path) throws IOException {
+    public void open(String path, String cacheId) throws IOException {
         stringWriter.getBuffer().setLength(0);
     }
 
