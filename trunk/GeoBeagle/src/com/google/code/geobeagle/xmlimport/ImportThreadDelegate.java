@@ -24,8 +24,8 @@ import com.google.code.geobeagle.cachedetails.FileDataVersionWriter;
 import com.google.code.geobeagle.database.DbFrontend;
 import com.google.code.geobeagle.xmlimport.EventHelperDI.EventHelperFactory;
 import com.google.code.geobeagle.xmlimport.gpx.GpxAndZipFiles;
-import com.google.code.geobeagle.xmlimport.gpx.IGpxReader;
 import com.google.code.geobeagle.xmlimport.gpx.GpxAndZipFiles.GpxFilesAndZipFilesIter;
+import com.google.code.geobeagle.xmlimport.gpx.IGpxReader;
 
 import org.xmlpull.v1.XmlPullParserException;
 
@@ -137,8 +137,8 @@ public class ImportThreadDelegate {
         } catch (CancelException e) {
             return;
         } finally {
-            mImportThreadHelper.cleanup();
             mUpdateFlag.setUpdatesEnabled(true);
+            mImportThreadHelper.cleanup();
             mIsAlive = false;
         }
         Log.d("GeoBeagle", "STARTING BCACHING IMPORT");
