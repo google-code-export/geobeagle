@@ -14,27 +14,20 @@
 
 package com.google.code.geobeagle.cacheloader;
 
-import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.cachedetails.FilePathStrategy;
-import com.google.code.geobeagle.cachedetails.StringWriterWrapper;
 import com.google.code.geobeagle.cachedetails.reader.DetailsReader;
 import com.google.code.geobeagle.xmlimport.CachePersisterFacade;
 
 import java.io.File;
-import java.io.IOException;
 
 public class CacheLoader {
 
-    private final StringWriterWrapper stringWriterWrapper;
-
     public CacheLoader(FilePathStrategy filePathStrategy,
             DetailsOpener detailsOpener,
-            CachePersisterFacade cacheTagsReader,
-            StringWriterWrapper stringWriterWrapper) {
+            CachePersisterFacade cacheTagsReader) {
         this.filePathStrategy = filePathStrategy;
         this.detailsOpener = detailsOpener;
         this.cacheTagsReader = cacheTagsReader;
-        this.stringWriterWrapper = stringWriterWrapper;
     }
 
     private final FilePathStrategy filePathStrategy;
@@ -42,11 +35,6 @@ public class CacheLoader {
     private final CachePersisterFacade cacheTagsReader;
 
     public String load(CharSequence sourceName, CharSequence cacheId) throws CacheLoaderException {
-        try {
-            stringWriterWrapper.open(null);
-        } catch (IOException e) {
-            throw new CacheLoaderException(R.string.error_loading_url);
-        }
         String path = filePathStrategy.getPath(sourceName, cacheId.toString(), "gpx");
         File file = new File(path);
         DetailsReader detailsReader = detailsOpener.open(file);
