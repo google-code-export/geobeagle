@@ -20,7 +20,8 @@ import java.io.IOException;
 import java.io.StringWriter;
 
 @Singleton
-public class StringWriterWrapper implements com.google.code.geobeagle.cachedetails.Writer {
+public class StringWriterWrapper implements com.google.code.geobeagle.cachedetails.Writer,
+        NullWriterOpener {
 
     private final StringWriter stringWriter;
 
@@ -38,7 +39,7 @@ public class StringWriterWrapper implements com.google.code.geobeagle.cachedetai
     }
 
     @Override
-    public void open(String path, String cacheId) throws IOException {
+    public void open() throws IOException {
         stringWriter.getBuffer().setLength(0);
     }
 

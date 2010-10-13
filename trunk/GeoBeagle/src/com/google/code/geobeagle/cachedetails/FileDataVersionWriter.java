@@ -32,7 +32,7 @@ public class FileDataVersionWriter {
     public void writeVersion() throws IOException {
         String versionPath = geoBeagleEnvironment.getVersionPath();
         writerWrapper.mkdirs(versionPath);
-        writerWrapper.open(versionPath, null);
+        writerWrapper.open(versionPath);
         writerWrapper.write("1");
         writerWrapper.close();
     }

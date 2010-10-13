@@ -5,7 +5,7 @@ import com.google.inject.Inject;
 
 import java.io.IOException;
 
-public class FileAndDatabaseWriter implements Writer {
+public class FileAndDatabaseWriter implements Writer, CacheWriterOpener {
 
     private final WriterWrapper writerWrapper;
     private final DetailsDatabaseWriter detailsDatabaseWriter;
@@ -24,7 +24,7 @@ public class FileAndDatabaseWriter implements Writer {
 
     @Override
     public void open(String path, String cacheId) throws IOException {
-        writerWrapper.open(path, cacheId);
+        writerWrapper.open(path);
         detailsDatabaseWriter.open(path, cacheId);
     }
 
