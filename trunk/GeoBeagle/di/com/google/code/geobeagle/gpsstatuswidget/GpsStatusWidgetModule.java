@@ -18,7 +18,6 @@ import com.google.code.geobeagle.R;
 import com.google.inject.Provides;
 
 import roboguice.config.AbstractAndroidModule;
-import roboguice.inject.ContextScoped;
 
 import android.app.Activity;
 import android.content.Context;
@@ -26,23 +25,36 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 public class GpsStatusWidgetModule extends AbstractAndroidModule {
+    static InflatedGpsStatusWidget inflatedGpsStatusWidgetCacheList;
+
     @Override
     protected void configure() {
     }
 
     @Provides
-    @ContextScoped
-    InflatedGpsStatusWidget providesInflatedGpsStatusWidget(Activity activity, Context context) {
-        InflatedGpsStatusWidget inflatedGpsStatusWidget = (InflatedGpsStatusWidget)activity
-                .findViewById(R.id.gps_widget_view);
-        if (inflatedGpsStatusWidget != null)
-            return inflatedGpsStatusWidget;
+    InflatedGpsStatusWidget providesInflatedGpsStatusWidget(Activity activity) {
+        Context context = activity.getApplicationContext();
+        InflatedGpsStatusWidget searchOnlineWidget = getInflatedGpsStatusWidgetSearchOnline(activity);
+        if (searchOnlineWidget != null)
+            return searchOnlineWidget;
 
-        inflatedGpsStatusWidget = new InflatedGpsStatusWidget(context);
-        final LinearLayout gpsStatusWidget = new LinearLayout(context);
-        gpsStatusWidget.addView(inflatedGpsStatusWidget, ViewGroup.LayoutParams.FILL_PARENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT);
-        inflatedGpsStatusWidget.setTag(gpsStatusWidget);
-        return inflatedGpsStatusWidget;
+        return getInflatedGpsStatusWidgetCacheList(context);
+    }
+
+    InflatedGpsStatusWidget getInflatedGpsStatusWidgetCacheList(Context context) {
+        if (inflatedGpsStatusWidgetCacheList != null)
+            return inflatedGpsStatusWidgetCacheList;
+
+        inflatedGpsStatusWidgetCacheList = new InflatedGpsStatusWidget(context);
+        LinearLayout inflatedGpsStatusWidgetParent = new LinearLayout(context);
+
+        inflatedGpsStatusWidgetParent.addView(inflatedGpsStatusWidgetCacheList,
+                ViewGroup.LayoutParams.FILL_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        inflatedGpsStatusWidgetCacheList.setTag(inflatedGpsStatusWidgetParent);
+        return inflatedGpsStatusWidgetCacheList;
+    }
+
+    InflatedGpsStatusWidget getInflatedGpsStatusWidgetSearchOnline(Activity activity) {
+        return (InflatedGpsStatusWidget)activity.findViewById(R.id.gps_widget_view);
     }
 }
