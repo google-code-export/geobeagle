@@ -78,6 +78,7 @@ public enum GpxPath {
     GPX_WPTNAME("/gpx/wpt/name", PathType.WPT_NAME),
     GPX_WPTTIME("/gpx/wpt/time", PathType.WPT_TIME),
     LOC_COORD("/loc/waypoint/coord", PathType.LOC_COORD),
+    LOC_LONGDESC("/loc/waypoint/desc", PathType.LONG_DESCRIPTION),
     LOC_WPT("/loc/waypoint", PathType.LOC_WPT),
     LOC_WPTNAME("/loc/waypoint/name", PathType.LOC_WPTNAME),
     NO_MATCH(null, PathType.NOP);
