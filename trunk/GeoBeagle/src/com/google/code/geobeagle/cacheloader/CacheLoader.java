@@ -37,7 +37,7 @@ public class CacheLoader {
     public String load(CharSequence sourceName, CharSequence cacheId) throws CacheLoaderException {
         String path = filePathStrategy.getPath(sourceName, cacheId.toString(), "gpx");
         File file = new File(path);
-        DetailsReader detailsReader = detailsOpener.open(file);
+        DetailsReader detailsReader = detailsOpener.open(file, cacheId);
         return detailsReader.read(cacheTagsReader);
     }
 }

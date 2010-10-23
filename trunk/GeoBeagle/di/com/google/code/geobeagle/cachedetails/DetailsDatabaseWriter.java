@@ -2,6 +2,7 @@
 package com.google.code.geobeagle.cachedetails;
 
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 
 import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
@@ -9,6 +10,7 @@ import android.util.Log;
 
 import java.io.IOException;
 
+@Singleton
 public class DetailsDatabaseWriter implements Writer, CacheWriterOpener {
 
     private final StringBuffer stringBuffer;
@@ -24,12 +26,25 @@ public class DetailsDatabaseWriter implements Writer, CacheWriterOpener {
 
     @Override
     public void close() throws IOException {
+        Log.d("GeoBeagle", "CLOSING DDW");
         ContentValues contentValues = new ContentValues();
         contentValues.put("Details", stringBuffer.toString());
         contentValues.put("CacheId", cacheId);
-        Log.d("GeoBeagle", "INSERTING Details: " + cacheId);
+        Log.d("GeoBeagle",
+                "INSERTING Details: " + cacheId + "\n" + contentValues.getAsString("Details"));
         sdDatabase.insert("Details", "Details", contentValues);
         stringBuffer.setLength(0);
+        this.cacheId = null;
+    }
+
+    public void deleteAll() {
+        if (sdDatabase != null)
+            return;
+
+        sdDatabase = sdDatabaseOpener.open();
+        Log.d("GeoBeagle", "deleting details");
+        sdDatabase.delete("Details", null, null);
+        Log.d("GeoBeagle", "DONE deleting details");
     }
 
     @Override
@@ -43,7 +58,8 @@ public class DetailsDatabaseWriter implements Writer, CacheWriterOpener {
 
     @Override
     public void write(String str) throws IOException {
-        stringBuffer.append(str);
+        if (cacheId != null)
+            stringBuffer.append(str);
     }
 
     @Override
