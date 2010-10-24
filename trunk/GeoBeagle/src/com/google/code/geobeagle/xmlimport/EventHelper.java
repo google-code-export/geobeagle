@@ -51,7 +51,7 @@ public class EventHelper {
             case XmlPullParser.START_TAG: {
                 final String name = mXmlPullParser.getName();
                 mXmlPathBuilder.startTag(name);
-                eventHandler.startTag(name, mXmlPathBuilder.getPath(), mXmlPullParser);
+                eventHandler.startTag(name, mXmlPathBuilder.getPath());
                 break;
             }
             case XmlPullParser.END_TAG: {
@@ -61,8 +61,7 @@ public class EventHelper {
                 break;
             }
             case XmlPullParser.TEXT:
-                return eventHandler.text(mXmlPathBuilder.getPath(), mXmlPullParser.getText(),
-                        mXmlPullParser);
+                return eventHandler.text(mXmlPathBuilder.getPath(), mXmlPullParser.getText());
         }
         return true;
     }
