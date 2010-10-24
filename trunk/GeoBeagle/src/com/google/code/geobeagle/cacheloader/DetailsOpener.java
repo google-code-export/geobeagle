@@ -21,7 +21,6 @@ import com.google.code.geobeagle.cachedetails.StringWriterWrapper;
 import com.google.code.geobeagle.cachedetails.reader.DetailsReader;
 import com.google.code.geobeagle.xmlimport.EventHandlerGpx;
 import com.google.code.geobeagle.xmlimport.EventHelper;
-import com.google.code.geobeagle.xmlimport.XmlPullParserWrapper;
 import com.google.inject.Inject;
 
 import android.app.Activity;
@@ -40,7 +39,6 @@ class DetailsOpener {
     private final EventHelper eventHelper;
     private final FileDataVersionChecker fileDataVersionChecker;
     private final StringWriterWrapper stringWriterWrapper;
-    private final XmlPullParserWrapper xmlPullParser;
     private final DetailsDatabaseReader detailsDatabaseReader;
 
     @Inject
@@ -48,14 +46,12 @@ class DetailsOpener {
             FileDataVersionChecker fileDataVersionChecker,
             EventHelper eventHelper,
             EventHandlerGpx eventHandlerGpx,
-            XmlPullParserWrapper xmlPullParser,
             StringWriterWrapper stringWriterWrapper,
             DetailsDatabaseReader detailsDatabaseReader) {
         this.activity = activity;
         this.fileDataVersionChecker = fileDataVersionChecker;
         this.eventHelper = eventHelper;
         this.eventHandlerGpx = eventHandlerGpx;
-        this.xmlPullParser = xmlPullParser;
         this.stringWriterWrapper = stringWriterWrapper;
         this.detailsDatabaseReader = detailsDatabaseReader;
     }
@@ -77,6 +73,7 @@ class DetailsOpener {
             throw new CacheLoaderException(error, e.getMessage());
         }
         return new DetailsReader(activity, dbReader, absolutePath, eventHelper,
-                eventHandlerGpx, xmlPullParser, stringWriterWrapper);
+ eventHandlerGpx,
+                stringWriterWrapper);
     }
 }
