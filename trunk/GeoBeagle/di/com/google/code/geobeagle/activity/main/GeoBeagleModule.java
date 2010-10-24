@@ -14,12 +14,12 @@
 
 package com.google.code.geobeagle.activity.main;
 
-import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.GraphicsGenerator.DifficultyAndTerrainPainter;
 import com.google.code.geobeagle.GraphicsGenerator.IconOverlayFactory;
 import com.google.code.geobeagle.GraphicsGenerator.IconRenderer;
 import com.google.code.geobeagle.GraphicsGenerator.MapViewBitmapCopier;
 import com.google.code.geobeagle.GraphicsGenerator.RatingsArray;
+import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.cachelist.view.NameFormatter;
 import com.google.code.geobeagle.activity.main.view.GeocacheViewer;
 import com.google.code.geobeagle.activity.main.view.GeocacheViewer.AttributeViewer;
@@ -29,6 +29,10 @@ import com.google.code.geobeagle.activity.main.view.GeocacheViewer.ResourceImage
 import com.google.code.geobeagle.activity.main.view.GeocacheViewer.UnlabelledAttributeViewer;
 import com.google.inject.Injector;
 import com.google.inject.Provides;
+
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
+import org.xmlpull.v1.XmlPullParserFactory;
 
 import roboguice.config.AbstractAndroidModule;
 
@@ -62,6 +66,11 @@ public class GeoBeagleModule extends AbstractAndroidModule {
     }
 
     @Provides
+    XmlPullParser providesXmlPullParser() throws XmlPullParserException {
+        return XmlPullParserFactory.newInstance().newPullParser();
+    }
+
+    @Provides
     public GeocacheViewer providesGeocacheViewer(Injector injector) {
         RadarView radarView = injector.getInstance(RadarView.class);
         Activity activity = injector.getInstance(Activity.class);
@@ -83,7 +92,7 @@ public class GeoBeagleModule extends AbstractAndroidModule {
                         R.drawable.ribbon_unselected_dark, R.drawable.ribbon_half_bright,
                         R.drawable.ribbon_selected_bright
                 }, R.id.gc_difficulty, R.id.gc_text_difficulty);
-        
+
         final AttributeViewer gcTerrain = getLabelledAttributeViewer(activity, resources,
                 ratingsArray, new int[] {
                         R.drawable.paw_unselected_dark, R.drawable.paw_half_light,

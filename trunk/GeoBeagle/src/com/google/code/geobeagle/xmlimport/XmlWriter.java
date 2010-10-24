@@ -17,6 +17,8 @@ package com.google.code.geobeagle.xmlimport;
 import com.google.code.geobeagle.cachedetails.FilePathStrategy;
 import com.google.inject.Inject;
 
+import org.xmlpull.v1.XmlPullParser;
+
 import android.util.Log;
 
 import java.io.IOException;
@@ -57,7 +59,9 @@ public class XmlWriter implements EventHandler {
     }
 
     @Override
-    public void startTag(String name, String fullPath, XmlPullParserWrapper xmlPullParser,
+    public void startTag(String name,
+            String fullPath,
+            XmlPullParser xmlPullParser,
             CachePersisterFacade cachePersisterFacade) throws IOException {
         if (!fullPath.startsWith(GpxPath.GPX_WPT.getPath()))
             return;
@@ -78,7 +82,9 @@ public class XmlWriter implements EventHandler {
     }
 
     @Override
-    public boolean text(String fullPath, String text, XmlPullParserWrapper xmlPullParser,
+    public boolean text(String fullPath,
+            String text,
+            XmlPullParser xmlPullParser,
             CachePersisterFacade cachePersisterFacade) throws IOException {
         if (!fullPath.startsWith(GpxPath.GPX_WPT.getPath()))
             return true;

@@ -14,6 +14,8 @@
 
 package com.google.code.geobeagle.xmlimport;
 
+import org.xmlpull.v1.XmlPullParser;
+
 import java.io.IOException;
 
 public interface EventHandler {
@@ -21,10 +23,14 @@ public interface EventHandler {
     void endTag(String name, String previousFullPath, CachePersisterFacade cachePersisterFacade)
             throws IOException;
 
-    void startTag(String name, String mFullPath, XmlPullParserWrapper mXmlPullParser,
+    void startTag(String name,
+            String mFullPath,
+            XmlPullParser mXmlPullParser,
             CachePersisterFacade cachePersisterFacade) throws IOException;
 
-    boolean text(String fullPath, String text, XmlPullParserWrapper xmlPullParser,
+    boolean text(String fullPath,
+            String text,
+            XmlPullParser xmlPullParser,
             CachePersisterFacade cachePersisterFacade) throws IOException;
 
     void open(String filename) throws IOException;

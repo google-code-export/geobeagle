@@ -14,15 +14,21 @@
 
 package com.google.code.geobeagle.activity.cachelist.presenter;
 
+import com.google.code.geobeagle.activity.cachelist.GeoBeagleTest;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.api.easymock.PowerMock;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-@PrepareForTest({})
+import android.util.Log;
+
+@PrepareForTest({
+    Log.class
+})
 @RunWith(PowerMockRunner.class)
-public class DistanceUpdaterTest {
+public class DistanceUpdaterTest extends GeoBeagleTest {
 
     @Test
     public void testDistanceUpdater() {

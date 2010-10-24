@@ -25,6 +25,7 @@ import static org.powermock.api.easymock.PowerMock.replayAll;
 import static org.powermock.api.easymock.PowerMock.verifyAll;
 
 import com.google.code.geobeagle.R;
+import com.google.code.geobeagle.cachedetails.DetailsDatabaseReader;
 import com.google.code.geobeagle.cachedetails.FileDataVersionChecker;
 import com.google.code.geobeagle.cachedetails.FilePathStrategy;
 import com.google.code.geobeagle.cachedetails.StringWriterWrapper;
@@ -34,6 +35,7 @@ import com.google.code.geobeagle.xmlimport.EventHandlerGpx;
 import com.google.code.geobeagle.xmlimport.EventHelper;
 import com.google.code.geobeagle.xmlimport.XmlPullParserWrapper;
 
+import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -75,6 +77,7 @@ public class CacheDetailsLoaderTest {
     private XmlPullParserWrapper xmlPullParser;
     private XmlPullParserException xmlPullParserException;
     private XmlPullParserWrapper xmlPullParserWrapper;
+    private DetailsDatabaseReader detailsDatabaseReader;
 
     @Before
     public void setUp() {
@@ -94,6 +97,7 @@ public class CacheDetailsLoaderTest {
         xmlPullParserException = createMock(XmlPullParserException.class);
         detailsOpener = createMock(DetailsOpener.class);
         filePathStrategy = createMock(FilePathStrategy.class);
+        detailsDatabaseReader = createMock(DetailsDatabaseReader.class);
     }
 
     @Test
@@ -103,13 +107,15 @@ public class CacheDetailsLoaderTest {
         expect(file.getAbsolutePath()).andReturn("/sdcard/foo.gpx");
         expectNew(FileReader.class, "/sdcard/foo.gpx").andReturn(fileReader);
         expectNew(BufferedReader.class, fileReader).andReturn(bufferedReader);
-        expectNew(DetailsReader.class, eq(activity), eq(bufferedReader), eq("/sdcard/foo.gpx"),
+        expectNew(DetailsReader.class, eq(activity), EasyMock.anyObject(), eq("/sdcard/foo.gpx"),
                 eq(eventHelper), eq(eventHandler), eq(xmlPullParser), eq(stringWriterWrapper))
                 .andReturn(detailsReader);
+        expect(detailsDatabaseReader.read("GC123")).andReturn("the details");
 
         replayAll();
         assertEquals(detailsReader, new DetailsOpener(activity, fileDataVersionChecker,
-                eventHelper, eventHandler, xmlPullParser, stringWriterWrapper).open(file));
+                eventHelper, eventHandler, xmlPullParser, stringWriterWrapper,
+                detailsDatabaseReader).open(file, "GC123"));
         verifyAll();
     }
 
@@ -121,10 +127,11 @@ public class CacheDetailsLoaderTest {
         expect(file.getAbsolutePath()).andReturn("/sdcard/foo.gpx");
         expectNew(FileReader.class, "/sdcard/foo.gpx").andThrow(
                 new FileNotFoundException("/sdcard/foo.gpx"));
-
+        expect(detailsDatabaseReader.read("GC123")).andReturn("the details");
         replayAll();
         try {
-            new DetailsOpener(activity, fileDataVersionChecker, null, null, null, null).open(file);
+            new DetailsOpener(activity, fileDataVersionChecker, null, null, null, null,
+                    detailsDatabaseReader).open(file, "GC123");
             fail("expected exception");
         } catch (CacheLoaderException cle) {
             assertEquals(R.string.error_opening_details_file, cle.getError());
@@ -173,12 +180,13 @@ public class CacheDetailsLoaderTest {
         expect(filePathStrategy.getPath("foo.gpx", "GC123", "gpx")).andReturn(
                 "/sdcard/details/foo.gpx/GC123.html");
         expectNew(File.class, "/sdcard/details/foo.gpx/GC123.html").andReturn(file);
-        expect(detailsOpener.open(file)).andReturn(detailsReader);
+        expect(detailsOpener.open(file, "GC123")).andReturn(detailsReader);
         expect(detailsReader.read(cacheTagsToDetails)).andReturn("cache details");
-        stringWriterWrapper.open(null);
+        // stringWriterWrapper.open();
+
         replayAll();
         assertEquals("cache details", new CacheDetailsLoader(detailsOpener, filePathStrategy,
-                cacheTagsToDetails, stringWriterWrapper).load("foo.gpx", "GC123"));
+                cacheTagsToDetails).load("foo.gpx", "GC123"));
         verifyAll();
     }
 }
