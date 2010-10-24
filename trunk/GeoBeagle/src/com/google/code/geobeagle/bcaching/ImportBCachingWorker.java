@@ -41,7 +41,7 @@ import android.widget.Toast;
 @ContextScoped
 public class ImportBCachingWorker extends RoboThread implements Abortable {
     private final CacheListCursor cursor;
-    private final DetailsReaderImport detailsReaderImport;
+    private final CacheImporter cacheImporter;
     private final ErrorDisplayer errorDisplayer;
     private boolean inProgress;
     private final ProgressHandler progressHandler;
@@ -50,13 +50,13 @@ public class ImportBCachingWorker extends RoboThread implements Abortable {
     private final UpdateFlag updateFlag;
 
     public ImportBCachingWorker(ProgressHandler progressHandler, ProgressManager progressManager,
-            ErrorDisplayer errorDisplayer, DetailsReaderImport detailsReaderImport,
+            ErrorDisplayer errorDisplayer, CacheImporter cacheImporter,
             ToasterFactory toasterFactory, CacheListCursor cacheListCursor,
             UpdateFlag updateFlag) {
         this.progressHandler = progressHandler;
         this.errorDisplayer = errorDisplayer;
         this.progressManager = progressManager;
-        this.detailsReaderImport = detailsReaderImport;
+        this.cacheImporter = cacheImporter;
         this.toasterFactory = toasterFactory;
         this.cursor = cacheListCursor;
         this.updateFlag = updateFlag;
@@ -67,7 +67,7 @@ public class ImportBCachingWorker extends RoboThread implements Abortable {
         this.progressHandler = injector.getInstance(ProgressHandler.class);
         this.errorDisplayer = injector.getInstance(ErrorDisplayer.class);
         this.progressManager = injector.getInstance(ProgressManager.class);
-        this.detailsReaderImport = injector.getInstance(DetailsReaderImport.class);
+        this.cacheImporter = injector.getInstance(CacheImporter.class);
         this.toasterFactory = injector.getInstance(ToasterFactory.class);
         this.cursor = injector.getInstance(CacheListCursor.class);
         this.updateFlag = injector.getInstance(UpdateFlag.class);
@@ -109,7 +109,7 @@ public class ImportBCachingWorker extends RoboThread implements Abortable {
             if (!cursor.open())
                 return;
             while (cursor.readCaches()) {
-                if (!detailsReaderImport.loadCacheDetails(cursor.getCacheIds())) {
+                if (!cacheImporter.load(cursor.getCacheIds())) {
                     return;
                 }
 

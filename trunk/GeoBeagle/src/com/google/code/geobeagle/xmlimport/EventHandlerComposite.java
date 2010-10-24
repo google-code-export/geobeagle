@@ -32,9 +32,9 @@ public class EventHandlerComposite implements EventHandler {
 
     @Override
     public void endTag(String name, String previousFullPath,
-            CachePersisterFacade cachePersisterFacade) throws IOException {
+            CacheTagHandler cacheTagHandler) throws IOException {
         for (EventHandler eventHandler : eventHandlers) {
-            eventHandler.endTag(name, previousFullPath, cachePersisterFacade);
+            eventHandler.endTag(name, previousFullPath, cacheTagHandler);
         }
     }
 
@@ -49,9 +49,9 @@ public class EventHandlerComposite implements EventHandler {
     public void startTag(String name,
             String fullPath,
             XmlPullParser xmlPullParser,
-            CachePersisterFacade cachePersisterFacade) throws IOException {
+            CacheTagHandler cacheTagHandler) throws IOException {
         for (EventHandler eventHandler : eventHandlers) {
-            eventHandler.startTag(name, fullPath, xmlPullParser, cachePersisterFacade);
+            eventHandler.startTag(name, fullPath, xmlPullParser, cacheTagHandler);
         }
     }
 
@@ -59,10 +59,10 @@ public class EventHandlerComposite implements EventHandler {
     public boolean text(String fullPath,
             String text,
             XmlPullParser xmlPullParser,
-            CachePersisterFacade cachePersisterFacade) throws IOException {
+            CacheTagHandler cacheTagHandler) throws IOException {
         boolean ret = true;
         for (EventHandler eventHandler : eventHandlers) {
-            ret &= eventHandler.text(fullPath, text, xmlPullParser, cachePersisterFacade);
+            ret &= eventHandler.text(fullPath, text, xmlPullParser, cacheTagHandler);
         }
         return ret;
     }
