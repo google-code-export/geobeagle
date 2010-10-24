@@ -30,6 +30,7 @@ public class EventHandlerGpx implements EventHandler {
 
     }
     private final CacheTagHandler cacheTagHandler;
+    private XmlPullParser xmlPullParser;
 
     public EventHandlerGpx(CacheTagHandler cacheTagHandler) {
         this.cacheTagHandler = cacheTagHandler;
@@ -42,13 +43,13 @@ public class EventHandlerGpx implements EventHandler {
     }
 
     @Override
-    public void startTag(String name, String fullPath, XmlPullParser xmlPullParser)
+    public void startTag(String name, String fullPath)
             throws IOException {
         GpxPath.fromString(fullPath).startTag(xmlPullParser, cacheTagHandler);
     }
 
     @Override
-    public boolean text(String fullPath, String text, XmlPullParser xmlPullParser)
+    public boolean text(String fullPath, String text)
             throws IOException {
         return GpxPath.fromString(fullPath).text(text, cacheTagHandler);
     }
@@ -56,4 +57,10 @@ public class EventHandlerGpx implements EventHandler {
     @Override
     public void open(String filename) throws IOException {
     }
+
+    @Override
+    public void start(XmlPullParser xmlPullParser) {
+        this.xmlPullParser = xmlPullParser;
+    }
+
 }
