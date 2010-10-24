@@ -26,7 +26,7 @@ import org.xmlpull.v1.XmlPullParserException;
 import java.io.BufferedReader;
 import java.util.Hashtable;
 
-public class DetailsReaderImport {
+public class CacheImporter {
     private static Hashtable<String, String> params;
     static {
         params = new Hashtable<String, String>();
@@ -45,7 +45,7 @@ public class DetailsReaderImport {
     private final EventHandlerComposite eventHandlerComposite;
 
     @Inject
-    DetailsReaderImport(BufferedReaderFactory bufferedReaderFactory,
+    CacheImporter(BufferedReaderFactory bufferedReaderFactory,
             EventHelper eventHelper,
             GpxLoaderFromBCaching gpxLoader,
             EventHandlerComposite eventHandler) {
@@ -55,7 +55,7 @@ public class DetailsReaderImport {
         this.eventHandlerComposite = eventHandler;
     }
 
-    public boolean loadCacheDetails(String csvIds) throws BCachingException {
+    public boolean load(String csvIds) throws BCachingException {
         params.put("ids", csvIds);
 
         try {

@@ -16,7 +16,7 @@ package com.google.code.geobeagle.cacheloader;
 
 import com.google.code.geobeagle.cachedetails.FilePathStrategy;
 import com.google.code.geobeagle.cachedetails.reader.DetailsReader;
-import com.google.code.geobeagle.xmlimport.CachePersisterFacade;
+import com.google.code.geobeagle.xmlimport.CacheTagHandler;
 
 import java.io.File;
 
@@ -24,7 +24,7 @@ public class CacheLoader {
 
     public CacheLoader(FilePathStrategy filePathStrategy,
             DetailsOpener detailsOpener,
-            CachePersisterFacade cacheTagsReader) {
+            CacheTagHandler cacheTagsReader) {
         this.filePathStrategy = filePathStrategy;
         this.detailsOpener = detailsOpener;
         this.cacheTagsReader = cacheTagsReader;
@@ -32,7 +32,7 @@ public class CacheLoader {
 
     private final FilePathStrategy filePathStrategy;
     private final DetailsOpener detailsOpener;
-    private final CachePersisterFacade cacheTagsReader;
+    private final CacheTagHandler cacheTagsReader;
 
     public String load(CharSequence sourceName, CharSequence cacheId) throws CacheLoaderException {
         String path = filePathStrategy.getPath(sourceName, cacheId.toString(), "gpx");
