@@ -34,7 +34,6 @@ import org.xmlpull.v1.XmlPullParserException;
 import android.util.Log;
 
 import java.io.IOException;
-import java.io.Reader;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest( {
@@ -52,22 +51,8 @@ public class GpxToCacheTest {
     }
 
     @Test
-    public void testGetSource() {
-        XmlPullParserWrapper xmlPullParserWrapper = PowerMock
-                .createMock(XmlPullParserWrapper.class);
-
-        expect(xmlPullParserWrapper.getSource()).andReturn("/my/path");
-
-        PowerMock.replayAll();
-        GpxToCache gpxToCache = new GpxToCache(xmlPullParserWrapper, new Aborter(),
-                fileAlreadyLoadedChecker);
-        assertEquals("/my/path", gpxToCache.getSource());
-        PowerMock.verifyAll();
-    }
-
-    @Test
     public void testLoadAbort() throws XmlPullParserException, IOException {
-        XmlPullParserWrapper xmlPullParser = PowerMock.createMock(XmlPullParserWrapper.class);
+        XmlPullParser xmlPullParser = PowerMock.createMock(XmlPullParser.class);
         EventHelper eventHelper = PowerMock.createMock(EventHelper.class);
 
         expect(xmlPullParser.getEventType()).andReturn(XmlPullParser.START_DOCUMENT);
@@ -88,11 +73,12 @@ public class GpxToCacheTest {
 
     @Test
     public void testLoadNone() throws XmlPullParserException, IOException, CancelException {
-        XmlPullParserWrapper xmlPullParser = PowerMock.createMock(XmlPullParserWrapper.class);
+        XmlPullParser xmlPullParser = PowerMock.createMock(XmlPullParser.class);
         EventHelper eventHelper = PowerMock.createMock(EventHelper.class);
 
         expect(xmlPullParser.getEventType()).andReturn(XmlPullParser.END_DOCUMENT);
-        expect(eventHelper.handleEvent(XmlPullParser.END_DOCUMENT, null, null)).andReturn(true);
+        expect(eventHelper.handleEvent(XmlPullParser.END_DOCUMENT, null, null, xmlPullParser))
+                .andReturn(true);
         expect(fileAlreadyLoadedChecker.isAlreadyLoaded(null)).andReturn(false);
         eventHelper.open(null, null);
 
@@ -105,14 +91,16 @@ public class GpxToCacheTest {
 
     @Test
     public void testLoadOne() throws XmlPullParserException, IOException, CancelException {
-        XmlPullParserWrapper xmlPullParser = PowerMock.createMock(XmlPullParserWrapper.class);
+        XmlPullParser xmlPullParser = PowerMock.createMock(XmlPullParser.class);
         EventHelper eventHelper = PowerMock.createMock(EventHelper.class);
 
         eventHelper.open(null, null);
         expect(xmlPullParser.getEventType()).andReturn(XmlPullParser.START_DOCUMENT);
-        expect(eventHelper.handleEvent(XmlPullParser.START_DOCUMENT, null, null)).andReturn(true);
+        expect(eventHelper.handleEvent(XmlPullParser.START_DOCUMENT, null, null, xmlPullParser))
+                .andReturn(true);
         expect(xmlPullParser.next()).andReturn(XmlPullParser.END_DOCUMENT);
-        expect(eventHelper.handleEvent(XmlPullParser.END_DOCUMENT, null, null)).andReturn(true);
+        expect(eventHelper.handleEvent(XmlPullParser.END_DOCUMENT, null, null, xmlPullParser))
+                .andReturn(true);
         expect(fileAlreadyLoadedChecker.isAlreadyLoaded(null)).andReturn(false);
 
         PowerMock.replayAll();
@@ -134,12 +122,13 @@ public class GpxToCacheTest {
 
     @Test
     public void testLoadSkipThisFile() throws XmlPullParserException, IOException, CancelException {
-        XmlPullParserWrapper xmlPullParser = PowerMock.createMock(XmlPullParserWrapper.class);
+        XmlPullParser xmlPullParser = PowerMock.createMock(XmlPullParser.class);
         EventHelper eventHelper = PowerMock.createMock(EventHelper.class);
 
         eventHelper.open(null, null);
         expect(xmlPullParser.getEventType()).andReturn(XmlPullParser.START_DOCUMENT);
-        expect(eventHelper.handleEvent(XmlPullParser.START_DOCUMENT, null, null)).andReturn(false);
+        expect(eventHelper.handleEvent(XmlPullParser.START_DOCUMENT, null, null, xmlPullParser))
+                .andReturn(false);
         expect(fileAlreadyLoadedChecker.isAlreadyLoaded(null)).andReturn(false);
 
         PowerMock.replayAll();
@@ -151,41 +140,30 @@ public class GpxToCacheTest {
 
     @Test
     public void testLoadTwo() throws XmlPullParserException, IOException, CancelException {
-        XmlPullParserWrapper xmlPullParser = PowerMock.createMock(XmlPullParserWrapper.class);
+        XmlPullParser xmlPullParser = PowerMock.createMock(XmlPullParser.class);
         EventHelper eventHelper = PowerMock.createMock(EventHelper.class);
 
         eventHelper.open(null, null);
         expect(fileAlreadyLoadedChecker.isAlreadyLoaded(null)).andReturn(false);
         expect(xmlPullParser.getEventType()).andReturn(XmlPullParser.START_DOCUMENT);
-        expect(eventHelper.handleEvent(XmlPullParser.START_DOCUMENT, null, null)).andReturn(true);
+        expect(eventHelper.handleEvent(XmlPullParser.START_DOCUMENT, null, null, xmlPullParser))
+                .andReturn(true);
 
         expect(xmlPullParser.next()).andReturn(XmlPullParser.START_TAG);
-        expect(eventHelper.handleEvent(XmlPullParser.START_TAG, null, null)).andReturn(true);
+        expect(eventHelper.handleEvent(XmlPullParser.START_TAG, null, null, xmlPullParser))
+                .andReturn(true);
 
         expect(xmlPullParser.next()).andReturn(XmlPullParser.START_TAG);
-        expect(eventHelper.handleEvent(XmlPullParser.START_TAG, null, null)).andReturn(true);
+        expect(eventHelper.handleEvent(XmlPullParser.START_TAG, null, null, xmlPullParser))
+                .andReturn(true);
         expect(xmlPullParser.next()).andReturn(XmlPullParser.END_DOCUMENT);
-        expect(eventHelper.handleEvent(XmlPullParser.END_DOCUMENT, null, null)).andReturn(true);
+        expect(eventHelper.handleEvent(XmlPullParser.END_DOCUMENT, null, null, xmlPullParser))
+                .andReturn(true);
 
         PowerMock.replayAll();
         assertEquals(false,
                 new GpxToCache(xmlPullParser, new Aborter(), fileAlreadyLoadedChecker).load(
                         eventHelper, null, null));
-        PowerMock.verifyAll();
-    }
-
-    @Test
-    public void testOpen() throws Exception {
-        XmlPullParserWrapper xmlPullParserWrapper = PowerMock
-                .createMock(XmlPullParserWrapper.class);
-        Reader reader = PowerMock.createMock(Reader.class);
-
-        xmlPullParserWrapper.open("/my/path", reader);
-
-        PowerMock.replayAll();
-        GpxToCache gpxToCache = new GpxToCache(xmlPullParserWrapper, new Aborter(),
-                fileAlreadyLoadedChecker);
-        gpxToCache.open("/my/path", null, reader);
         PowerMock.verifyAll();
     }
 }
