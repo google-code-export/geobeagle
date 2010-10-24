@@ -26,7 +26,7 @@ import java.io.IOException;
 public class ImportCacheActions extends CacheTagHandler {
 
     private String mCacheName = "";
-    private final CacheTagSqlWriter mCacheTagWriter;
+    private final CacheTagSqlWriter mCacheTagSqlWriter;
     private final MessageHandlerInterface mMessageHandler;
     private final ImportWakeLock mWakeLock;
     private String mLastModified;
@@ -37,7 +37,7 @@ public class ImportCacheActions extends CacheTagHandler {
             MessageHandlerInterface messageHandler,
             ImportWakeLock importWakeLock,
             GeoBeagleEnvironment geoBeagleEnvironment) {
-        mCacheTagWriter = cacheTagSqlWriter;
+        mCacheTagSqlWriter = cacheTagSqlWriter;
         mMessageHandler = messageHandler;
         mWakeLock = importWakeLock;
         mGeoBeagleEnvironment = geoBeagleEnvironment;
@@ -45,50 +45,50 @@ public class ImportCacheActions extends CacheTagHandler {
 
     @Override
     public void cacheType(String text) {
-        mCacheTagWriter.cacheType(text);
+        mCacheTagSqlWriter.cacheType(text);
     }
 
     @Override
     public void close(boolean success) {
-        mCacheTagWriter.stopWriting(success);
+        mCacheTagSqlWriter.stopWriting(success);
     }
 
     @Override
     public void container(String text) {
-        mCacheTagWriter.container(text);
+        mCacheTagSqlWriter.container(text);
     }
 
     @Override
     public void difficulty(String text) {
-        mCacheTagWriter.difficulty(text);
+        mCacheTagSqlWriter.difficulty(text);
     }
 
     @Override
     public void end() {
-        mCacheTagWriter.end();
+        mCacheTagSqlWriter.end();
     }
 
     @Override
     public void endCache(Source source) throws IOException {
         mMessageHandler.updateName(mCacheName);
-        mCacheTagWriter.write(source);
+        mCacheTagSqlWriter.write(source);
     }
 
     @Override
     public boolean gpxTime(String gpxTime) {
-        return mCacheTagWriter.gpxTime(gpxTime);
+        return mCacheTagSqlWriter.gpxTime(gpxTime);
     }
 
     @Override
     public void groundspeakName(String text) {
-        mCacheTagWriter.cacheName(text);
+        mCacheTagSqlWriter.cacheName(text);
     }
 
     @Override
     public void open(String path) {
         mMessageHandler.updateSource(path);
-        mCacheTagWriter.startWriting();
-        mCacheTagWriter.gpxName(path);
+        mCacheTagSqlWriter.startWriting();
+        mCacheTagSqlWriter.gpxName(path);
     }
 
     @Override
@@ -99,33 +99,33 @@ public class ImportCacheActions extends CacheTagHandler {
     @Override
     public void startCache() {
         mCacheName = "";
-        mCacheTagWriter.clear();
+        mCacheTagSqlWriter.clear();
     }
 
     @Override
     public void symbol(String text) {
-        mCacheTagWriter.symbol(text);
+        mCacheTagSqlWriter.symbol(text);
     }
 
     @Override
     public void terrain(String text) {
-        mCacheTagWriter.terrain(text);
+        mCacheTagSqlWriter.terrain(text);
     }
 
     @Override
     public void wpt(String latitude, String longitude) {
-        mCacheTagWriter.latitudeLongitude(latitude, longitude);
+        mCacheTagSqlWriter.latitudeLongitude(latitude, longitude);
     }
 
     @Override
     public void wptDesc(String cacheName) {
         mCacheName = cacheName;
-        mCacheTagWriter.cacheName(cacheName);
+        mCacheTagSqlWriter.cacheName(cacheName);
     }
 
     @Override
     public void wptName(String wpt) throws IOException {
-        mCacheTagWriter.id(wpt);
+        mCacheTagSqlWriter.id(wpt);
         mMessageHandler.updateWaypointId(wpt);
         mWakeLock.acquire(GpxLoader.WAKELOCK_DURATION);
     }
@@ -143,13 +143,13 @@ public class ImportCacheActions extends CacheTagHandler {
     @Override
     public void archived(String attributeValue) {
         if (attributeValue != null)
-            mCacheTagWriter.archived(attributeValue.equalsIgnoreCase("True"));
+            mCacheTagSqlWriter.archived(attributeValue.equalsIgnoreCase("True"));
     }
 
     @Override
     public void available(String attributeValue) {
         if (attributeValue != null)
-            mCacheTagWriter.available(attributeValue.equalsIgnoreCase("True"));
+            mCacheTagSqlWriter.available(attributeValue.equalsIgnoreCase("True"));
     }
 
 }
