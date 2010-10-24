@@ -23,7 +23,6 @@ import com.google.code.geobeagle.bcaching.preferences.BCachingStartTime;
 import com.google.code.geobeagle.cachedetails.FileDataVersionChecker;
 import com.google.code.geobeagle.cachedetails.FileDataVersionWriter;
 import com.google.code.geobeagle.database.DbFrontend;
-import com.google.code.geobeagle.xmlimport.EventHelperDI.EventHelperFactory;
 import com.google.code.geobeagle.xmlimport.ImportThreadDelegate.ImportThreadHelper;
 import com.google.code.geobeagle.xmlimport.gpx.GpxAndZipFiles;
 import com.google.code.geobeagle.xmlimport.gpx.GpxAndZipFiles.GpxAndZipFilenameFilter;
@@ -65,12 +64,14 @@ public class GpxImporterDI {
                     .getInstance(SharedPreferences.class);
             final GpxAndZipFiles gpxAndZipFiles = new GpxAndZipFiles(filenameFilter,
                     gpxFileIterAndZipFileIterFactory, geoBeagleEnvironment, sharedPreferences);
-            final EventHelperFactory eventHelperFactory = new EventHelperFactory();
             final OldCacheFilesCleaner oldCacheFilesCleaner = new OldCacheFilesCleaner(
                     injector.getInstance(GeoBeagleEnvironment.class), messageHandlerInterface);
 
+            final Provider<EventHelper> eventHelperProvider = injector
+                    .getProvider(EventHelper.class);
             final ImportThreadHelper importThreadHelper = new ImportThreadHelper(gpxLoader,
-                    messageHandlerInterface, eventHelperFactory, eventHandler, oldCacheFilesCleaner,
+                    messageHandlerInterface, eventHelperProvider, eventHandler,
+                    oldCacheFilesCleaner,
                     sharedPreferences, geoBeagleEnvironment);
             final FileDataVersionWriter fileDataVersionWriter = injector
                     .getInstance(FileDataVersionWriter.class);
