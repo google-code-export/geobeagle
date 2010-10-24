@@ -31,7 +31,7 @@ public class DetailsDatabaseReader {
         cursor.moveToFirst();
         String details = cursor.getString(0);
         if (cursor.getCount() < 1)
-            return "";
+            return null;
         cursor.close();
         Log.d("GeoBeagle", "DETAILS: " + details);
         sdDatabase.close();
