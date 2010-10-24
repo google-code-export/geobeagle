@@ -39,7 +39,6 @@ import java.io.StringReader;
 
 class DetailsOpener {
     private final Activity activity;
-    private final EventHandlerGpx eventHandlerGpx;
     private final EventHelper eventHelper;
     private final FileDataVersionChecker fileDataVersionChecker;
     private final StringWriterWrapper stringWriterWrapper;
@@ -50,20 +49,19 @@ class DetailsOpener {
     DetailsOpener(Activity activity,
             FileDataVersionChecker fileDataVersionChecker,
             EventHelper eventHelper,
-            EventHandlerGpx eventHandlerGpx,
             StringWriterWrapper stringWriterWrapper,
             DetailsDatabaseReader detailsDatabaseReader,
             Provider<XmlPullParser> xmlPullParserProvider) {
         this.activity = activity;
         this.fileDataVersionChecker = fileDataVersionChecker;
         this.eventHelper = eventHelper;
-        this.eventHandlerGpx = eventHandlerGpx;
         this.stringWriterWrapper = stringWriterWrapper;
         this.detailsDatabaseReader = detailsDatabaseReader;
         this.xmlPullParserProvider = xmlPullParserProvider;
     }
 
-    public DetailsReader open(File file, CharSequence cacheId) throws CacheLoaderException {
+    public DetailsReader open(File file, CharSequence cacheId, CacheTagHandler cacheTagHandler)
+            throws CacheLoaderException {
         String state = Environment.getExternalStorageState();
         if (!Environment.MEDIA_MOUNTED.equals(state)) {
             throw new CacheLoaderException(R.string.error_cant_read_sdroot, state);
