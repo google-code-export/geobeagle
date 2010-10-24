@@ -44,26 +44,25 @@ public class EventHelper {
         mXmlPathBuilder = xmlPathBuilder;
     }
 
-    public boolean handleEvent(int eventType, EventHandler eventHandler,
-            CacheTagHandler cacheTagHandler,
+    public boolean handleEvent(int eventType,
+            EventHandler eventHandler,
             XmlPullParser mXmlPullParser) throws IOException {
         switch (eventType) {
             case XmlPullParser.START_TAG: {
                 final String name = mXmlPullParser.getName();
                 mXmlPathBuilder.startTag(name);
-                eventHandler.startTag(name, mXmlPathBuilder.getPath(), mXmlPullParser,
-                        cacheTagHandler);
+                eventHandler.startTag(name, mXmlPathBuilder.getPath(), mXmlPullParser);
                 break;
             }
             case XmlPullParser.END_TAG: {
                 final String name = mXmlPullParser.getName();
-                eventHandler.endTag(name, mXmlPathBuilder.getPath(), cacheTagHandler);
+                eventHandler.endTag(name, mXmlPathBuilder.getPath());
                 mXmlPathBuilder.endTag(name);
                 break;
             }
             case XmlPullParser.TEXT:
                 return eventHandler.text(mXmlPathBuilder.getPath(), mXmlPullParser.getText(),
-                        mXmlPullParser, cacheTagHandler);
+                        mXmlPullParser);
         }
         return true;
     }

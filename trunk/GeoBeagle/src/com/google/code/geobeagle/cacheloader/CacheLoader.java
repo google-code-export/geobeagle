@@ -24,20 +24,20 @@ public class CacheLoader {
 
     public CacheLoader(FilePathStrategy filePathStrategy,
             DetailsOpener detailsOpener,
-            CacheTagHandler cacheTagsReader) {
+            CacheTagHandler cacheTagHandler) {
         this.filePathStrategy = filePathStrategy;
         this.detailsOpener = detailsOpener;
-        this.cacheTagsReader = cacheTagsReader;
+        this.cacheTagHandler = cacheTagHandler;
     }
 
     private final FilePathStrategy filePathStrategy;
     private final DetailsOpener detailsOpener;
-    private final CacheTagHandler cacheTagsReader;
+    private final CacheTagHandler cacheTagHandler;
 
     public String load(CharSequence sourceName, CharSequence cacheId) throws CacheLoaderException {
         String path = filePathStrategy.getPath(sourceName, cacheId.toString(), "gpx");
         File file = new File(path);
-        DetailsReader detailsReader = detailsOpener.open(file, cacheId);
-        return detailsReader.read(cacheTagsReader);
+        DetailsReader detailsReader = detailsOpener.open(file, cacheId, cacheTagHandler);
+        return detailsReader.read();
     }
 }

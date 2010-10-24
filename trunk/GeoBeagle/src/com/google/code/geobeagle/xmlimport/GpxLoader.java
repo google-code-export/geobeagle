@@ -64,8 +64,7 @@ public class GpxLoader {
         boolean continueLoading = false;
         try {
             mImportWakeLockProvider.get().acquire(WAKELOCK_DURATION);
-            boolean alreadyLoaded = mGpxToCache.load(eventHelper, eventHandler,
-                    mImportCacheActions);
+            boolean alreadyLoaded = mGpxToCache.load(eventHelper, eventHandler);
             markLoadAsComplete = !alreadyLoaded;
             continueLoading = true;
         } catch (final SQLiteException e) {
