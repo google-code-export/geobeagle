@@ -19,6 +19,7 @@ import com.google.code.geobeagle.cachedetails.DetailsDatabaseReader;
 import com.google.code.geobeagle.cachedetails.FileDataVersionChecker;
 import com.google.code.geobeagle.cachedetails.StringWriterWrapper;
 import com.google.code.geobeagle.cachedetails.reader.DetailsReader;
+import com.google.code.geobeagle.xmlimport.CacheTagHandler;
 import com.google.code.geobeagle.xmlimport.EventHandlerGpx;
 import com.google.code.geobeagle.xmlimport.EventHelper;
 import com.google.inject.Inject;
@@ -67,18 +68,21 @@ class DetailsOpener {
         if (!Environment.MEDIA_MOUNTED.equals(state)) {
             throw new CacheLoaderException(R.string.error_cant_read_sdroot, state);
         }
-        final Reader fileReader;
-        final Reader dbReader;
+        Reader reader;
+        EventHandlerGpx eventHandlerGpx = new EventHandlerGpx(cacheTagHandler);
         String absolutePath = file.getAbsolutePath();
-        dbReader = new StringReader(detailsDatabaseReader.read(cacheId));
+        String detailsFromDatabase = detailsDatabaseReader.read(cacheId);
         try {
-            fileReader = new BufferedReader(new FileReader(absolutePath));
+            if (detailsFromDatabase == null)
+                reader = new BufferedReader(new FileReader(absolutePath));
+            else
+                reader = new StringReader(detailsFromDatabase);
         } catch (FileNotFoundException e) {
             int error = fileDataVersionChecker.needsUpdating() ? R.string.error_details_file_version
                     : R.string.error_opening_details_file;
             throw new CacheLoaderException(error, e.getMessage());
         }
-        return new DetailsReader(activity, dbReader, absolutePath, eventHelper, eventHandlerGpx,
+        return new DetailsReader(activity, reader, absolutePath, eventHelper, eventHandlerGpx,
                 stringWriterWrapper, xmlPullParserProvider);
     }
 }
