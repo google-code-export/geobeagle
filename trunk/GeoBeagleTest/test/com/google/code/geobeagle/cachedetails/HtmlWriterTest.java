@@ -43,11 +43,11 @@ public class HtmlWriterTest {
 
     @Test
     public void testOpen() throws IOException {
-        writer.open("/path/to/file");
+        writer.open();
 
         replay(writer);
         HtmlWriter htmlWriter = new HtmlWriter(writer);
-        htmlWriter.open("/path/to/file");
+        htmlWriter.open();
         verify(writer);
     }
 

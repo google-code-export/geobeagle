@@ -38,10 +38,10 @@ public class EventHelper {
     }
 
     private final XmlPathBuilder mXmlPathBuilder;
-    private final XmlPullParserWrapper mXmlPullParser;
+    private final XmlPullParser mXmlPullParser;
 
     @Inject
-    public EventHelper(XmlPathBuilder xmlPathBuilder, XmlPullParserWrapper xmlPullParser) {
+    public EventHelper(XmlPathBuilder xmlPathBuilder, XmlPullParser xmlPullParser) {
         mXmlPathBuilder = xmlPathBuilder;
         mXmlPullParser = xmlPullParser;
     }
