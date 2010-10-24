@@ -15,10 +15,10 @@
 package com.google.code.geobeagle.xmlimport;
 
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
-import org.xmlpull.v1.XmlPullParserFactory;
 
 import android.util.Log;
 
@@ -31,16 +31,17 @@ public class GpxToCache {
     }
 
     private final Aborter mAborter;
-    private XmlPullParser mXmlPullParser;
+    private final Provider<XmlPullParser> mXmlPullParserProvider;
     private String mSource;
     private final FileAlreadyLoadedChecker mTestLocAlreadyLoaded;
     private String mFilename;
+    private XmlPullParser mXmlPullParser;
 
     @Inject
-    GpxToCache(XmlPullParser xmlPullParser,
+    GpxToCache(Provider<XmlPullParser> xmlPullParserProvider,
             Aborter aborter,
             FileAlreadyLoadedChecker fileAlreadyLoadedChecker) {
-        mXmlPullParser = xmlPullParser;
+        mXmlPullParserProvider = xmlPullParserProvider;
         mAborter = aborter;
         mTestLocAlreadyLoaded = fileAlreadyLoadedChecker;
     }
@@ -82,16 +83,14 @@ public class GpxToCache {
         }
 
         // Pick up END_DOCUMENT event as well.
-        eventHelper.handleEvent(eventType, eventHandler, cachePersisterFacade,
-                mXmlPullParser);
+        eventHelper.handleEvent(eventType, eventHandler, cachePersisterFacade, mXmlPullParser);
         return false;
     }
 
     public void open(String source, String filename, Reader reader) throws XmlPullParserException {
         mSource = source;
         mFilename = filename;
-        XmlPullParser newPullParser = XmlPullParserFactory.newInstance().newPullParser();
-        newPullParser.setInput(reader);
-        mXmlPullParser = newPullParser;
+        mXmlPullParser = mXmlPullParserProvider.get();
+        mXmlPullParser.setInput(reader);
     }
 }
