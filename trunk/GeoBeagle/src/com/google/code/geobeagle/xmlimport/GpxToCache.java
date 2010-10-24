@@ -18,7 +18,7 @@ import com.google.inject.Inject;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
-
+import org.xmlpull.v1.XmlPullParserFactory;
 
 import android.util.Log;
 
@@ -31,13 +31,14 @@ public class GpxToCache {
     }
 
     private final Aborter mAborter;
-    private final XmlPullParserWrapper mXmlPullParserWrapper;
+    private XmlPullParser mXmlPullParserWrapper;
     private String mSource;
     private final FileAlreadyLoadedChecker mTestLocAlreadyLoaded;
     private String mFilename;
 
     @Inject
-    GpxToCache(XmlPullParserWrapper xmlPullParserWrapper, Aborter aborter,
+    GpxToCache(XmlPullParser xmlPullParserWrapper,
+            Aborter aborter,
             FileAlreadyLoadedChecker fileAlreadyLoadedChecker) {
         mXmlPullParserWrapper = xmlPullParserWrapper;
         mAborter = aborter;
@@ -50,13 +51,15 @@ public class GpxToCache {
     }
 
     public String getSource() {
-        return mXmlPullParserWrapper.getSource();
+        return mSource;
     }
 
     /**
      * @return false if this file has already been loaded.
      */
-    public boolean load(EventHelper eventHelper, EventHandler eventHandlerGpx, CachePersisterFacade cachePersisterFacade) throws XmlPullParserException, IOException,
+    public boolean load(EventHelper eventHelper,
+            EventHandler eventHandlerGpx,
+            CachePersisterFacade cachePersisterFacade) throws XmlPullParserException, IOException,
             CancelException {
         Log.d("GeoBeagle", this + ": GpxToCache: load");
 
@@ -73,18 +76,22 @@ public class GpxToCache {
                 throw new CancelException();
             }
             // File already loaded.
-            if (!eventHelper.handleEvent(eventType, eventHandlerGpx, cachePersisterFacade))
+            if (!eventHelper.handleEvent(eventType, eventHandlerGpx, cachePersisterFacade,
+                    mXmlPullParserWrapper))
                 return true;
         }
 
         // Pick up END_DOCUMENT event as well.
-        eventHelper.handleEvent(eventType, eventHandlerGpx, cachePersisterFacade);
+        eventHelper.handleEvent(eventType, eventHandlerGpx, cachePersisterFacade,
+                mXmlPullParserWrapper);
         return false;
     }
 
     public void open(String source, String filename, Reader reader) throws XmlPullParserException {
         mSource = source;
         mFilename = filename;
-        mXmlPullParserWrapper.open(source, reader);
+        XmlPullParser newPullParser = XmlPullParserFactory.newInstance().newPullParser();
+        newPullParser.setInput(reader);
+        mXmlPullParserWrapper = newPullParser;
     }
 }
