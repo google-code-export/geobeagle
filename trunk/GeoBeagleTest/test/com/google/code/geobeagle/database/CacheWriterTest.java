@@ -73,7 +73,7 @@ public class CacheWriterTest {
         sqlite.execSQL(Database.SQL_DELETE_CACHE, "GC123");
 
         replayAll();
-        CacheWriter cacheWriterSql = new CacheWriter(sqliteProvider, null, null);
+        CacheSqlWriter cacheWriterSql = new CacheSqlWriter(sqliteProvider, null, null);
         cacheWriterSql.deleteCache("GC123");
         verifyAll();
     }
@@ -97,7 +97,7 @@ public class CacheWriterTest {
                 .andReturn("source");
 
         replayAll();
-        CacheWriter cacheWriterSql = new CacheWriter(sqliteProvider, dbToGeocacheAdapter, filter);
+        CacheSqlWriter cacheWriterSql = new CacheSqlWriter(sqliteProvider, dbToGeocacheAdapter, filter);
         cacheWriterSql.insertAndUpdateCache("gc123", "a cache", 122, 37, Source.GPX, "source",
                 CacheType.NULL, 0, 0, 0, false, false, true);
         verifyAll();
@@ -149,7 +149,7 @@ public class CacheWriterTest {
         sqlite.beginTransaction();
 
         replayAll();
-        new CacheWriter(sqliteProvider, null, null).startWriting();
+        new CacheSqlWriter(sqliteProvider, null, null).startWriting();
         verifyAll();
     }
 
@@ -161,10 +161,10 @@ public class CacheWriterTest {
         expect(sqliteProvider.get()).andReturn(sqlite);
         sqlite.setTransactionSuccessful();
         sqlite.endTransaction();
-        sqlite.execSQL(CacheWriter.ANALYZE);
+        sqlite.execSQL(CacheSqlWriter.ANALYZE);
 
         replayAll();
-        new CacheWriter(sqliteProvider, null, null).stopWriting();
+        new CacheSqlWriter(sqliteProvider, null, null).stopWriting();
         verifyAll();
     }
 }

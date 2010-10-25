@@ -27,7 +27,7 @@ import com.google.code.geobeagle.activity.cachelist.actions.context.delete.OnCli
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVector;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVectors;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
-import com.google.code.geobeagle.database.CacheWriter;
+import com.google.code.geobeagle.database.CacheSqlWriter;
 import com.google.inject.Provider;
 
 import org.junit.Before;
@@ -53,7 +53,7 @@ public class ContextActionDeleteTest {
     private GeocacheVectors geocacheVectors;
     private OnClickOk onClickOk;
     private ContextActionDelete contextActionDelete;
-    private Provider<CacheWriter> cacheWriterProvider;
+    private Provider<CacheSqlWriter> cacheWriterProvider;
     private CacheListRefresh cacheListRefresh;
 
     @Before
@@ -88,13 +88,13 @@ public class ContextActionDeleteTest {
 
     @Test
     public void testDelete() {
-        CacheWriter cacheWriter = createMock(CacheWriter.class);
+        CacheSqlWriter cacheSqlWriter = createMock(CacheSqlWriter.class);
         CacheListRefresh cacheListRefresh = createMock(CacheListRefresh.class);
         ContextActionDeleteStore contextActionDeleteStore = createMock(ContextActionDeleteStore.class);
 
-        expect(cacheWriterProvider.get()).andReturn(cacheWriter);
+        expect(cacheWriterProvider.get()).andReturn(cacheSqlWriter);
         expect(contextActionDeleteStore.getCacheId()).andReturn("GC123");
-        cacheWriter.deleteCache("GC123");
+        cacheSqlWriter.deleteCache("GC123");
         cacheListRefresh.forceRefresh();
 
         replayAll();
