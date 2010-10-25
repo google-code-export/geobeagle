@@ -45,10 +45,6 @@ public class GpxLoader {
         mImportWakeLockProvider = importWakeLockProvider;
     }
 
-    public void abort() {
-        mGpxToCache.abort();
-    }
-
     public void end() {
         mImportCacheActions.end();
     }
