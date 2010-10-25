@@ -36,14 +36,17 @@ public class GpxToCache {
     private final FileAlreadyLoadedChecker mTestLocAlreadyLoaded;
     private String mFilename;
     private XmlPullParser mXmlPullParser;
+    private final Provider<EventHelper> mEventHelperProvider;
 
     @Inject
     GpxToCache(Provider<XmlPullParser> xmlPullParserProvider,
             Aborter aborter,
-            FileAlreadyLoadedChecker fileAlreadyLoadedChecker) {
+            FileAlreadyLoadedChecker fileAlreadyLoadedChecker,
+            Provider<EventHelper> eventHelperProvider) {
         mXmlPullParserProvider = xmlPullParserProvider;
         mAborter = aborter;
         mTestLocAlreadyLoaded = fileAlreadyLoadedChecker;
+        mEventHelperProvider = eventHelperProvider;
     }
 
     public void abort() {
@@ -58,10 +61,11 @@ public class GpxToCache {
     /**
      * @return false if this file has already been loaded.
      */
-    public boolean load(EventHelper eventHelper, EventHandler eventHandler)
+    public boolean load(EventHandler eventHandler)
             throws XmlPullParserException, IOException, CancelException {
         Log.d("GeoBeagle", this + ": GpxToCache: load");
 
+        EventHelper eventHelper = mEventHelperProvider.get();
         if (mTestLocAlreadyLoaded.isAlreadyLoaded(mSource)) {
             return true;
         }
