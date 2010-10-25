@@ -14,7 +14,6 @@
 
 package com.google.code.geobeagle.xmlimport;
 
-import com.google.code.geobeagle.xmlimport.EventHandlerGpx.EventHandlerGpxDetails;
 import com.google.inject.Inject;
 
 import org.xmlpull.v1.XmlPullParser;

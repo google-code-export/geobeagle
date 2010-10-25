@@ -14,7 +14,6 @@
 
 package com.google.code.geobeagle.xmlimport;
 
-import com.google.inject.Inject;
 
 import org.xmlpull.v1.XmlPullParser;
 
@@ -22,13 +21,6 @@ import java.io.IOException;
 
 public class EventHandlerGpx implements EventHandler {
 
-    static class EventHandlerGpxDetails extends EventHandlerGpx {
-        @Inject
-        public EventHandlerGpxDetails(CacheTagsToDetails cacheTagsToDetails) {
-            super(cacheTagsToDetails);
-        }
-
-    }
     private final CacheTagHandler cacheTagHandler;
     private XmlPullParser xmlPullParser;
 
