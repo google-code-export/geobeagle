@@ -23,7 +23,7 @@ import java.io.File;
 import java.io.IOException;
 
 @ContextScoped
-public class ImportCacheActions extends CacheTagHandler {
+public class CacheTagsToSql extends CacheTagHandler {
 
     private String mCacheName = "";
     private final CacheTagSqlWriter mCacheTagSqlWriter;
@@ -33,7 +33,7 @@ public class ImportCacheActions extends CacheTagHandler {
     private final GeoBeagleEnvironment mGeoBeagleEnvironment;
 
     @Inject
-    ImportCacheActions(CacheTagSqlWriter cacheTagSqlWriter,
+    CacheTagsToSql(CacheTagSqlWriter cacheTagSqlWriter,
             MessageHandlerInterface messageHandler,
             ImportWakeLock importWakeLock,
             GeoBeagleEnvironment geoBeagleEnvironment) {
