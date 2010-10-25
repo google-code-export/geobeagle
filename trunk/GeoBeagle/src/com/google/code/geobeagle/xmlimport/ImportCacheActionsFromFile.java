@@ -17,7 +17,7 @@ package com.google.code.geobeagle.xmlimport;
 import com.google.code.geobeagle.xmlimport.GpxImporterDI.MessageHandler;
 import com.google.inject.Inject;
 
-class ImportCacheActionsFromFile extends ImportCacheActions {
+class ImportCacheActionsFromFile extends CacheTagsToSql {
     @Inject
     ImportCacheActionsFromFile(CacheTagSqlWriter cacheTagSqlWriter,
             MessageHandler messageHandler,
