@@ -38,7 +38,7 @@ public class ClearCachesFromSourceImpl implements ClearCachesFromSource {
     @Override
     public void clearEarlierLoads() {
         ISQLiteDatabase sqliteDatabase = sqliteProvider.get();
-        for (String sql : CacheWriter.SQLS_CLEAR_EARLIER_LOADS) {
+        for (String sql : CacheSqlWriter.SQLS_CLEAR_EARLIER_LOADS) {
             sqliteDatabase.execSQL(sql);
         }
     }
