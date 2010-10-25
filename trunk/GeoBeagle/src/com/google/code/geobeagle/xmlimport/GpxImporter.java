@@ -33,7 +33,6 @@ import android.widget.Toast;
 public class GpxImporter implements Abortable {
 
     private final ErrorDisplayer mErrorDisplayer;
-    private final EventHandler mEventHandlerComposite;
     private final GpxLoader mGpxLoader;
     private final ImportThreadWrapper mImportThreadWrapper;
     private final Provider<Context> mContextProvider;
@@ -49,13 +48,11 @@ public class GpxImporter implements Abortable {
             ImportThreadWrapper importThreadWrapper,
             MessageHandler messageHandler,
             ToastFactory toastFactory,
-            EventHandlerComposite eventHandlerComposite,
             ErrorDisplayer errorDisplayer,
             Provider<CacheListRefresh> cacheListRefreshProvider,
             Injector injector) {
         mContextProvider = contextProvider;
         mGpxLoader = gpxLoaderFromFile;
-        mEventHandlerComposite = eventHandlerComposite;
         mImportThreadWrapper = importThreadWrapper;
         mMessageHandler = messageHandler;
         mErrorDisplayer = errorDisplayer;
@@ -69,7 +66,6 @@ public class GpxImporter implements Abortable {
     GpxImporter(Injector injector) {
         mContextProvider = injector.getProvider(Context.class);
         mGpxLoader = injector.getInstance(GpxLoaderFromFile.class);
-        mEventHandlerComposite = injector.getInstance(EventHandlerComposite.class);
         mImportThreadWrapper = injector.getInstance(ImportThreadWrapper.class);
         mMessageHandler = injector.getInstance(MessageHandler.class);
         mErrorDisplayer = injector.getInstance(ErrorDisplayer.class);
@@ -93,8 +89,8 @@ public class GpxImporter implements Abortable {
     public void importGpxs() {
         mGeocacheListPresenter.onPause();
 
-        mImportThreadWrapper.open(mCacheListRefreshProvider.get(), mGpxLoader,
-                mEventHandlerComposite, mErrorDisplayer, mInjector);
+        mImportThreadWrapper.open(mCacheListRefreshProvider.get(), mGpxLoader, mErrorDisplayer,
+                mInjector);
         mImportThreadWrapper.start();
     }
 }

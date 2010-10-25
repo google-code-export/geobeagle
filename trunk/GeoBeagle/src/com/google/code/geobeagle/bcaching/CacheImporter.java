@@ -16,7 +16,6 @@ package com.google.code.geobeagle.bcaching;
 
 import com.google.code.geobeagle.bcaching.communication.BCachingException;
 import com.google.code.geobeagle.bcaching.communication.BCachingListImporterStateless;
-import com.google.code.geobeagle.xmlimport.EventHandlerComposite;
 import com.google.code.geobeagle.xmlimport.GpxLoaderFromBCaching;
 import com.google.inject.Inject;
 
@@ -40,15 +39,11 @@ public class CacheImporter {
 
     private final BufferedReaderFactory bufferedReaderFactory;
     private final GpxLoaderFromBCaching gpxLoader;
-    private final EventHandlerComposite eventHandlerComposite;
 
     @Inject
-    CacheImporter(BufferedReaderFactory bufferedReaderFactory,
-            GpxLoaderFromBCaching gpxLoader,
-            EventHandlerComposite eventHandler) {
+    CacheImporter(BufferedReaderFactory bufferedReaderFactory, GpxLoaderFromBCaching gpxLoader) {
         this.bufferedReaderFactory = bufferedReaderFactory;
         this.gpxLoader = gpxLoader;
-        this.eventHandlerComposite = eventHandler;
     }
 
     public boolean load(String csvIds) throws BCachingException {
@@ -61,7 +56,7 @@ public class CacheImporter {
             throw new BCachingException("Error parsing data from baching.com: "
                     + e.getLocalizedMessage());
         }
-        return gpxLoader.load(eventHandlerComposite);
+        return gpxLoader.load();
     }
 
     public String getLastModified() {
