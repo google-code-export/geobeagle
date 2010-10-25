@@ -23,10 +23,9 @@ public class GpxLoaderFromFile extends GpxLoader {
     public GpxLoaderFromFile(ImportCacheActionsFromFile importCacheActions,
             ErrorDisplayer errorDisplayer,
             GpxToCache gpxToCache,
-            Provider<EventHelper> eventHelperProvider,
             Provider<ImportWakeLock> importWakeLockProvider,
             EventHandlerComposite eventHandlerComposite) {
-        super(importCacheActions, errorDisplayer, gpxToCache, eventHelperProvider,
-                eventHandlerComposite, importWakeLockProvider);
+        super(importCacheActions, errorDisplayer, gpxToCache, eventHandlerComposite,
+                importWakeLockProvider);
     }
 }
