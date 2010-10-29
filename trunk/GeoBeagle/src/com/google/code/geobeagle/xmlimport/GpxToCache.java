@@ -36,7 +36,7 @@ public class GpxToCache {
     private final FileAlreadyLoadedChecker mTestLocAlreadyLoaded;
     private String mFilename;
     private XmlPullParser mXmlPullParser;
-    private final Provider<EventHelper> mEventHelperProvider;
+    private final EventHelper mEventHelper;
     private final EventHandlerComposite mEventHandlerComposite;
 
     @Inject
@@ -44,12 +44,12 @@ public class GpxToCache {
             Aborter aborter,
             FileAlreadyLoadedChecker fileAlreadyLoadedChecker,
             EventHandlerComposite eventHandlerComposite,
-            Provider<EventHelper> eventHelperProvider) {
+            EventHelper eventHelper) {
         mXmlPullParserProvider = xmlPullParserProvider;
         mAborter = aborter;
         mTestLocAlreadyLoaded = fileAlreadyLoadedChecker;
         mEventHandlerComposite = eventHandlerComposite;
-        mEventHelperProvider = eventHelperProvider;
+        mEventHelper = eventHelper;
     }
 
     public void abort() {
@@ -68,13 +68,12 @@ public class GpxToCache {
             throws XmlPullParserException, IOException, CancelException {
         Log.d("GeoBeagle", this + ": GpxToCache: load");
 
-        EventHelper eventHelper = mEventHelperProvider.get();
-        eventHelper.setEventHandler(mEventHandlerComposite);
+        mEventHelper.setEventHandler(mEventHandlerComposite);
         if (mTestLocAlreadyLoaded.isAlreadyLoaded(mSource)) {
             return true;
         }
         mEventHandlerComposite.start(mXmlPullParser);
-        eventHelper.open(mFilename);
+        mEventHelper.open(mFilename);
         int eventType;
         for (eventType = mXmlPullParser.getEventType(); eventType != XmlPullParser.END_DOCUMENT; eventType = mXmlPullParser
                 .next()) {
@@ -84,12 +83,12 @@ public class GpxToCache {
                 throw new CancelException();
             }
             // File already loaded.
-            if (!eventHelper.handleEvent(eventType, mXmlPullParser))
+            if (!mEventHelper.handleEvent(eventType, mXmlPullParser))
                 return true;
         }
 
         // Pick up END_DOCUMENT event as well.
-        eventHelper.handleEvent(eventType, mXmlPullParser);
+        mEventHelper.handleEvent(eventType, mXmlPullParser);
         return false;
     }
 
