@@ -68,6 +68,7 @@ class DetailsOpener {
         }
         Reader reader;
         EventHandlerGpx eventHandlerGpx = new EventHandlerGpx(cacheTagHandler);
+        eventHelper.setEventHandler(eventHandlerGpx);
         String absolutePath = file.getAbsolutePath();
         String detailsFromDatabase = detailsDatabaseReader.read(cacheId);
         try {
@@ -80,7 +81,7 @@ class DetailsOpener {
                     : R.string.error_opening_details_file;
             throw new CacheLoaderException(error, e.getMessage());
         }
-        return new DetailsReader(activity, reader, absolutePath, eventHelper, eventHandlerGpx,
-                stringWriterWrapper, xmlPullParserProvider);
+        return new DetailsReader(activity, reader, absolutePath, eventHelper, stringWriterWrapper,
+                xmlPullParserProvider);
     }
 }
