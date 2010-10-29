@@ -35,6 +35,10 @@ public class EventHelper {
         public void startTag(String mCurrentTag) {
             mPath += "/" + mCurrentTag;
         }
+
+        public void reset() {
+            mPath = "";
+        }
     }
 
     private final XmlPathBuilder xmlPathBuilder;
@@ -68,6 +72,7 @@ public class EventHelper {
 
     public void open(String filename) throws IOException {
         eventHandler.open(filename);
+        xmlPathBuilder.reset();
     }
 
     public void setEventHandler(EventHandler eventHandler) {
