@@ -37,12 +37,12 @@ public class EventHelper {
         }
     }
 
-    private final XmlPathBuilder mXmlPathBuilder;
+    private final XmlPathBuilder xmlPathBuilder;
     private EventHandler eventHandler;
 
     @Inject
     public EventHelper(XmlPathBuilder xmlPathBuilder) {
-        mXmlPathBuilder = xmlPathBuilder;
+        this.xmlPathBuilder = xmlPathBuilder;
     }
 
     public boolean handleEvent(int eventType,
@@ -50,18 +50,18 @@ public class EventHelper {
         switch (eventType) {
             case XmlPullParser.START_TAG: {
                 final String name = mXmlPullParser.getName();
-                mXmlPathBuilder.startTag(name);
-                eventHandler.startTag(name, mXmlPathBuilder.getPath());
+                xmlPathBuilder.startTag(name);
+                eventHandler.startTag(name, xmlPathBuilder.getPath());
                 break;
             }
             case XmlPullParser.END_TAG: {
                 final String name = mXmlPullParser.getName();
-                eventHandler.endTag(name, mXmlPathBuilder.getPath());
-                mXmlPathBuilder.endTag(name);
+                eventHandler.endTag(name, xmlPathBuilder.getPath());
+                xmlPathBuilder.endTag(name);
                 break;
             }
             case XmlPullParser.TEXT:
-                return eventHandler.text(mXmlPathBuilder.getPath(), mXmlPullParser.getText());
+                return eventHandler.text(xmlPathBuilder.getPath(), mXmlPullParser.getText());
         }
         return true;
     }
