@@ -39,7 +39,7 @@ public class CacheLoader {
     private final DetailsDatabaseReader detailsDatabaseReader;
     private final DetailsReader detailsReader;
 
-    public CacheLoader(FilePathStrategy filePathStrategy,
+    CacheLoader(FilePathStrategy filePathStrategy,
             EventHandlerGpx eventHandlerGpx,
             FileDataVersionChecker fileDataVersionChecker,
             EventHelper eventHelper,
