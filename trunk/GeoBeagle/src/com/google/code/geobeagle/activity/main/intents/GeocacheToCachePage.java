@@ -17,12 +17,15 @@ package com.google.code.geobeagle.activity.main.intents;
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.GeocacheFactory.Source;
 import com.google.code.geobeagle.R;
+import com.google.code.geobeagle.cachedetails.FilePathStrategy;
+import com.google.code.geobeagle.cacheloader.CacheLoader;
 import com.google.code.geobeagle.cacheloader.CacheLoaderException;
-import com.google.code.geobeagle.cacheloader.CacheUrlLoader;
+import com.google.code.geobeagle.cacheloader.DetailsOpener;
+import com.google.code.geobeagle.xmlimport.CacheTagHandler;
+import com.google.code.geobeagle.xmlimport.EventHandlerGpx;
 import com.google.inject.Inject;
 
 import android.content.res.Resources;
-
 
 /*
  * Convert a Geocache to the cache page url.
@@ -31,9 +34,19 @@ public class GeocacheToCachePage implements GeocacheToUri {
     private final CacheLoader cacheLoader;
     private final Resources resources;
 
+    // for testing
+    public GeocacheToCachePage(CacheLoader cacheLoader, Resources resources) {
+        this.cacheLoader = cacheLoader;
+        this.resources = resources;
+    }
+
     @Inject
-    public GeocacheToCachePage(CacheUrlLoader cacheUrlLoader, Resources resources) {
-        this.cacheLoader = cacheUrlLoader;
+    public GeocacheToCachePage(Resources resources,
+            FilePathStrategy filePathStrategy,
+            DetailsOpener detailsOpener,
+            CacheTagHandler cacheTagsToUrl) {
+        EventHandlerGpx eventHandlerGpx = new EventHandlerGpx(cacheTagsToUrl);
+        this.cacheLoader = new CacheLoader(filePathStrategy, detailsOpener, eventHandlerGpx);
         this.resources = resources;
     }
 

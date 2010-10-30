@@ -14,8 +14,12 @@
 
 package com.google.code.geobeagle.cachedetails;
 
-import com.google.code.geobeagle.cacheloader.CacheDetailsLoader;
+import com.google.code.geobeagle.cacheloader.CacheLoader;
 import com.google.code.geobeagle.cacheloader.CacheLoaderException;
+import com.google.code.geobeagle.cacheloader.DetailsOpener;
+import com.google.code.geobeagle.xmlimport.CacheTagHandler;
+import com.google.code.geobeagle.xmlimport.CacheTagsToDetails;
+import com.google.code.geobeagle.xmlimport.EventHandlerGpx;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 
@@ -27,14 +31,18 @@ class DetailsWebView {
     private final CacheLoader cacheLoader;
     private final Resources resources;
 
-    DetailsWebView(CacheDetailsLoader cacheDetailsLoader, Resources resources) {
+    DetailsWebView(CacheLoader cacheDetailsLoader, Resources resources) {
         this.cacheLoader = cacheDetailsLoader;
         this.resources = resources;
     }
 
     @Inject
     DetailsWebView(Injector injector) {
-        this.cacheDetailsLoader = injector.getInstance(CacheDetailsLoader.class);
+        FilePathStrategy filePathStrategy = injector.getInstance(FilePathStrategy.class);
+        DetailsOpener detailsOpener = injector.getInstance(DetailsOpener.class);
+        CacheTagHandler cacheTagsToDetails = injector.getInstance(CacheTagsToDetails.class);
+        EventHandlerGpx eventHandlerGpx = new EventHandlerGpx(cacheTagsToDetails);
+        this.cacheLoader = new CacheLoader(filePathStrategy, detailsOpener, eventHandlerGpx);
         this.resources = injector.getInstance(Resources.class);
     }
 

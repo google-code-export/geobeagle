@@ -19,7 +19,6 @@ import com.google.code.geobeagle.cachedetails.DetailsDatabaseReader;
 import com.google.code.geobeagle.cachedetails.FileDataVersionChecker;
 import com.google.code.geobeagle.cachedetails.StringWriterWrapper;
 import com.google.code.geobeagle.cachedetails.reader.DetailsReader;
-import com.google.code.geobeagle.xmlimport.CacheTagHandler;
 import com.google.code.geobeagle.xmlimport.EventHandlerGpx;
 import com.google.code.geobeagle.xmlimport.EventHelper;
 import com.google.inject.Inject;
@@ -37,7 +36,7 @@ import java.io.FileReader;
 import java.io.Reader;
 import java.io.StringReader;
 
-class DetailsOpener {
+public class DetailsOpener {
     private final Activity activity;
     private final EventHelper eventHelper;
     private final FileDataVersionChecker fileDataVersionChecker;
@@ -60,13 +59,13 @@ class DetailsOpener {
         this.xmlPullParserProvider = xmlPullParserProvider;
     }
 
-    public DetailsReader open(File file, CharSequence cacheId, CacheTagHandler cacheTagHandler)
-            throws CacheLoaderException {
+    public DetailsReader open(File file,
+            CharSequence cacheId,
+            EventHandlerGpx eventHandlerGpx) throws CacheLoaderException {
         String state = Environment.getExternalStorageState();
         if (!Environment.MEDIA_MOUNTED.equals(state)) {
             throw new CacheLoaderException(R.string.error_cant_read_sdroot, state);
         }
-        EventHandlerGpx eventHandlerGpx = new EventHandlerGpx(cacheTagHandler);
         eventHelper.setEventHandler(eventHandlerGpx);
         String absolutePath = file.getAbsolutePath();
         String detailsFromDatabase = detailsDatabaseReader.read(cacheId);
