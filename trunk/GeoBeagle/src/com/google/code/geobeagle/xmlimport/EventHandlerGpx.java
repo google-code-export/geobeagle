@@ -47,10 +47,6 @@ public class EventHandlerGpx implements EventHandler {
     }
 
     @Override
-    public void open(String filename) throws IOException {
-    }
-
-    @Override
     public void start(XmlPullParser xmlPullParser) {
         this.xmlPullParser = xmlPullParser;
     }
