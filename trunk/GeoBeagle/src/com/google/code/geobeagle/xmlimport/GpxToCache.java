@@ -45,16 +45,19 @@ public class GpxToCache {
     private String mFilename;
     private XmlPullParser mXmlPullParser;
     private final EventHelper mEventHelper;
+    private final XmlWriter mXmlWriter;
 
     @Inject
     GpxToCache(Provider<XmlPullParser> xmlPullParserProvider,
             Aborter aborter,
             FileAlreadyLoadedChecker fileAlreadyLoadedChecker,
-            EventHelperComposite eventHelper) {
+            EventHelperComposite eventHelper,
+            XmlWriter xmlWriter) {
         mXmlPullParserProvider = xmlPullParserProvider;
         mAborter = aborter;
         mTestLocAlreadyLoaded = fileAlreadyLoadedChecker;
         mEventHelper = eventHelper;
+        mXmlWriter = xmlWriter;
     }
 
     public void abort() {
