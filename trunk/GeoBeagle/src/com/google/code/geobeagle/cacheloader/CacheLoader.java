@@ -21,6 +21,10 @@ import java.io.File;
 
 public class CacheLoader {
 
+    private final DetailsOpener detailsOpener;
+    private final EventHandlerGpx eventHandlerGpx;
+    private final FilePathStrategy filePathStrategy;
+
     public CacheLoader(FilePathStrategy filePathStrategy,
             DetailsOpener detailsOpener,
             CacheTagHandler cacheTagHandler) {
@@ -28,10 +32,6 @@ public class CacheLoader {
         this.detailsOpener = detailsOpener;
         this.cacheTagHandler = cacheTagHandler;
     }
-
-    private final FilePathStrategy filePathStrategy;
-    private final DetailsOpener detailsOpener;
-    private final CacheTagHandler cacheTagHandler;
 
     public String load(CharSequence sourceName, CharSequence cacheId) throws CacheLoaderException {
         String path = filePathStrategy.getPath(sourceName, cacheId.toString(), "gpx");
