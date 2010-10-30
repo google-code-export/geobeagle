@@ -30,9 +30,6 @@ import java.io.Reader;
 
 class DetailsReader {
     private final Activity mActivity;
-    private EventHelper mEventHelper;
-    private String mPath;
-    private Reader mReader;
     private final StringWriterWrapper mStringWriterWrapper;
     private final Provider<XmlPullParser> mXmlPullParserProvider;
 
@@ -45,31 +42,25 @@ class DetailsReader {
         mXmlPullParserProvider = xmlPullParserProvider;
     }
 
-    void open(String path, EventHelper eventHelper, Reader reader) {
-        mPath = path;
-        mEventHelper = eventHelper;
-        mReader = reader;
-    }
-
-    String read() {
+    String read(String path, EventHelper eventHelper, Reader reader) {
         try {
             XmlPullParser xmlPullParser = mXmlPullParserProvider.get();
-            mEventHelper.open(mPath, xmlPullParser);
-            xmlPullParser.setInput(mReader);
+            eventHelper.open(path, xmlPullParser);
+            xmlPullParser.setInput(reader);
             int eventType;
             for (eventType = xmlPullParser.getEventType(); eventType != XmlPullParser.END_DOCUMENT; eventType = xmlPullParser
                     .next()) {
-                mEventHelper.handleEvent(eventType);
+                eventHelper.handleEvent(eventType);
             }
 
             // Pick up END_DOCUMENT event as well.
-            mEventHelper.handleEvent(eventType);
+            eventHelper.handleEvent(eventType);
 
             return mStringWriterWrapper.getString();
         } catch (XmlPullParserException e) {
-            return mActivity.getString(R.string.error_reading_details_file, mPath);
+            return mActivity.getString(R.string.error_reading_details_file, path);
         } catch (IOException e) {
-            return mActivity.getString(R.string.error_reading_details_file, mPath);
+            return mActivity.getString(R.string.error_reading_details_file, path);
         }
     }
 }
