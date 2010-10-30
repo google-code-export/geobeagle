@@ -17,15 +17,11 @@ package com.google.code.geobeagle.activity.main.intents;
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.GeocacheFactory.Source;
 import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.cachedetails.DetailsDatabaseReader;
-import com.google.code.geobeagle.cachedetails.FileDataVersionChecker;
-import com.google.code.geobeagle.cachedetails.FilePathStrategy;
 import com.google.code.geobeagle.cacheloader.CacheLoader;
 import com.google.code.geobeagle.cacheloader.CacheLoaderException;
-import com.google.code.geobeagle.cacheloader.DetailsReader;
+import com.google.code.geobeagle.cacheloader.CacheLoaderFactory;
 import com.google.code.geobeagle.xmlimport.CacheTagHandler;
 import com.google.code.geobeagle.xmlimport.EventHandlerGpx;
-import com.google.code.geobeagle.xmlimport.EventHelper;
 import com.google.inject.Inject;
 
 import android.content.res.Resources;
@@ -45,15 +41,10 @@ public class GeocacheToCachePage implements GeocacheToUri {
 
     @Inject
     public GeocacheToCachePage(Resources resources,
-            FilePathStrategy filePathStrategy,
             CacheTagHandler cacheTagsToUrl,
-            FileDataVersionChecker fileDataVersionChecker,
-            EventHelper eventHelper,
-            DetailsDatabaseReader detailsDatabaseReader,
-            DetailsReader detailsReader) {
+            CacheLoaderFactory cacheLoaderFactory) {
         EventHandlerGpx eventHandlerGpx = new EventHandlerGpx(cacheTagsToUrl);
-        this.cacheLoader = new CacheLoader(filePathStrategy, eventHandlerGpx,
-                fileDataVersionChecker, eventHelper, detailsDatabaseReader, detailsReader);
+        cacheLoader = cacheLoaderFactory.create(eventHandlerGpx);
         this.resources = resources;
     }
 
