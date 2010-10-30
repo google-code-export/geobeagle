@@ -14,8 +14,6 @@
 
 package com.google.code.geobeagle.xmlimport;
 
-import com.google.inject.Inject;
-
 import org.xmlpull.v1.XmlPullParser;
 
 import java.io.IOException;
@@ -42,15 +40,10 @@ public class EventHelper {
     }
 
     private final XmlPathBuilder xmlPathBuilder;
-    private EventHandler eventHandler;
+    private final EventHandler eventHandler;
     private XmlPullParser xmlPullParser;
 
-    @Inject
-    public EventHelper(XmlPathBuilder xmlPathBuilder) {
-        this.xmlPathBuilder = xmlPathBuilder;
-    }
-
-    public EventHelper(XmlPathBuilder xmlPathBuilder, EventHandler eventHandler) {
+    EventHelper(XmlPathBuilder xmlPathBuilder, EventHandler eventHandler) {
         this.xmlPathBuilder = xmlPathBuilder;
         this.eventHandler = eventHandler;
     }
