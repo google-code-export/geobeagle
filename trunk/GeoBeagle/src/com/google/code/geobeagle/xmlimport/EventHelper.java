@@ -53,13 +53,13 @@ public class EventHelper {
             XmlPullParser mXmlPullParser) throws IOException {
         switch (eventType) {
             case XmlPullParser.START_TAG: {
-                final String name = mXmlPullParser.getName();
+                String name = mXmlPullParser.getName();
                 xmlPathBuilder.startTag(name);
                 eventHandler.startTag(name, xmlPathBuilder.getPath());
                 break;
             }
             case XmlPullParser.END_TAG: {
-                final String name = mXmlPullParser.getName();
+                String name = mXmlPullParser.getName();
                 eventHandler.endTag(name, xmlPathBuilder.getPath());
                 xmlPathBuilder.endTag(name);
                 break;
