@@ -33,7 +33,6 @@ public class DetailsReader {
     private final String mPath;
     private final Reader mReader;
     private final StringWriterWrapper mStringWriterWrapper;
-    private XmlPullParser mXmlPullParserWrapper;
     private final Provider<XmlPullParser> mXmlPullParserProvider;
 
     public DetailsReader(Activity activity,
@@ -52,18 +51,17 @@ public class DetailsReader {
 
     public String read() {
         try {
-            mEventHelper.open(mPath);
-            XmlPullParser newPullParser = mXmlPullParserProvider.get();
-            newPullParser.setInput(mReader);
-            mXmlPullParserWrapper = newPullParser;
+            XmlPullParser xmlPullParser = mXmlPullParserProvider.get();
+            mEventHelper.open(mPath, xmlPullParser);
+            xmlPullParser.setInput(mReader);
             int eventType;
-            for (eventType = mXmlPullParserWrapper.getEventType(); eventType != XmlPullParser.END_DOCUMENT; eventType = mXmlPullParserWrapper
+            for (eventType = xmlPullParser.getEventType(); eventType != XmlPullParser.END_DOCUMENT; eventType = xmlPullParser
                     .next()) {
-                mEventHelper.handleEvent(eventType, mXmlPullParserWrapper);
+                mEventHelper.handleEvent(eventType);
             }
 
             // Pick up END_DOCUMENT event as well.
-            mEventHelper.handleEvent(eventType, newPullParser);
+            mEventHelper.handleEvent(eventType);
 
             return mStringWriterWrapper.getString();
         } catch (XmlPullParserException e) {
