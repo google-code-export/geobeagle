@@ -16,68 +16,53 @@ package com.google.code.geobeagle.cacheloader;
 
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.cachedetails.DetailsDatabaseReader;
-import com.google.code.geobeagle.cachedetails.FileDataVersionChecker;
-import com.google.code.geobeagle.cachedetails.FilePathStrategy;
-import com.google.code.geobeagle.xmlimport.EventHandlerGpx;
 import com.google.code.geobeagle.xmlimport.EventHelper;
 
-import android.os.Environment;
+import org.xmlpull.v1.XmlPullParserException;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
+import android.content.res.Resources;
+
+import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
 
 public class CacheLoader {
-
-    private final EventHandlerGpx eventHandlerGpx;
-    private final FilePathStrategy filePathStrategy;
-    private final FileDataVersionChecker fileDataVersionChecker;
     private final EventHelper eventHelper;
     private final DetailsDatabaseReader detailsDatabaseReader;
     private final DetailsReader detailsReader;
+    private final CacheReaderFromFile cacheReaderFromFile;
+    private final Resources resources;
 
-    CacheLoader(FilePathStrategy filePathStrategy,
-            EventHandlerGpx eventHandlerGpx,
-            FileDataVersionChecker fileDataVersionChecker,
+    CacheLoader(
             EventHelper eventHelper,
             DetailsDatabaseReader detailsDatabaseReader,
-            DetailsReader detailsReader) {
-        this.filePathStrategy = filePathStrategy;
-        this.eventHandlerGpx = eventHandlerGpx;
-        this.fileDataVersionChecker = fileDataVersionChecker;
+            DetailsReader detailsReader,
+            CacheReaderFromFile cacheReaderFromFile,
+            Resources resources) {
         this.eventHelper = eventHelper;
         this.detailsDatabaseReader = detailsDatabaseReader;
         this.detailsReader = detailsReader;
+        this.cacheReaderFromFile = cacheReaderFromFile;
+        this.resources = resources;
     }
 
     public String load(CharSequence sourceName, CharSequence cacheId) throws CacheLoaderException {
-        String path = filePathStrategy.getPath(sourceName, cacheId.toString(), "gpx");
-        File file = new File(path);
-        String state = Environment.getExternalStorageState();
-        if (!Environment.MEDIA_MOUNTED.equals(state)) {
-            throw new CacheLoaderException(R.string.error_cant_read_sdroot, state);
+        Reader reader = createReader(sourceName, cacheId);
+        try {
+            return detailsReader.read(eventHelper, reader);
+        } catch (XmlPullParserException e) {
+            return resources.getString(R.string.error_reading_details_file, cacheId);
+        } catch (IOException e) {
+            return resources.getString(R.string.error_reading_details_file, cacheId);
         }
-        eventHelper.setEventHandler(eventHandlerGpx);
-        String absolutePath = file.getAbsolutePath();
-        String detailsFromDatabase = detailsDatabaseReader.read(cacheId);
-        Reader reader = createReader(absolutePath, detailsFromDatabase);
-        return detailsReader.read(absolutePath, eventHelper, reader);
     }
 
-    private Reader createReader(String absolutePath, String detailsFromDatabase)
+    private Reader createReader(CharSequence sourceName, CharSequence cacheId)
             throws CacheLoaderException {
-        try {
-            if (detailsFromDatabase == null)
-                return new BufferedReader(new FileReader(absolutePath));
+        String detailsFromDatabase = detailsDatabaseReader.read(cacheId);
+        if (detailsFromDatabase == null)
+            return cacheReaderFromFile.readFromFile(sourceName, cacheId);
 
-            return new StringReader(detailsFromDatabase);
-        } catch (FileNotFoundException e) {
-            int error = fileDataVersionChecker.needsUpdating() ? R.string.error_details_file_version
-                    : R.string.error_opening_details_file;
-            throw new CacheLoaderException(error, e.getMessage());
-        }
+        return new StringReader(detailsFromDatabase);
     }
 }

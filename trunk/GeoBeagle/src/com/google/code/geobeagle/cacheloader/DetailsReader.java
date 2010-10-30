@@ -14,7 +14,6 @@
 
 package com.google.code.geobeagle.cacheloader;
 
-import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.cachedetails.StringWriterWrapper;
 import com.google.code.geobeagle.xmlimport.EventHelper;
 import com.google.inject.Inject;
@@ -23,44 +22,35 @@ import com.google.inject.Provider;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
-import android.app.Activity;
-
 import java.io.IOException;
 import java.io.Reader;
 
 class DetailsReader {
-    private final Activity mActivity;
     private final StringWriterWrapper mStringWriterWrapper;
     private final Provider<XmlPullParser> mXmlPullParserProvider;
 
     @Inject
-    DetailsReader(Activity activity,
+    DetailsReader(
             StringWriterWrapper stringWriterWrapper,
             Provider<XmlPullParser> xmlPullParserProvider) {
-        mActivity = activity;
         mStringWriterWrapper = stringWriterWrapper;
         mXmlPullParserProvider = xmlPullParserProvider;
     }
 
-    String read(String path, EventHelper eventHelper, Reader reader) {
-        try {
-            XmlPullParser xmlPullParser = mXmlPullParserProvider.get();
-            eventHelper.open(path, xmlPullParser);
-            xmlPullParser.setInput(reader);
-            int eventType;
-            for (eventType = xmlPullParser.getEventType(); eventType != XmlPullParser.END_DOCUMENT; eventType = xmlPullParser
-                    .next()) {
-                eventHelper.handleEvent(eventType);
-            }
-
-            // Pick up END_DOCUMENT event as well.
+    String read(EventHelper eventHelper, Reader reader) throws XmlPullParserException,
+            IOException {
+        XmlPullParser xmlPullParser = mXmlPullParserProvider.get();
+        xmlPullParser.setInput(reader);
+        eventHelper.open(xmlPullParser);
+        int eventType;
+        for (eventType = xmlPullParser.getEventType(); eventType != XmlPullParser.END_DOCUMENT; eventType = xmlPullParser
+                .next()) {
             eventHelper.handleEvent(eventType);
-
-            return mStringWriterWrapper.getString();
-        } catch (XmlPullParserException e) {
-            return mActivity.getString(R.string.error_reading_details_file, path);
-        } catch (IOException e) {
-            return mActivity.getString(R.string.error_reading_details_file, path);
         }
+
+        // Pick up END_DOCUMENT event as well.
+        eventHelper.handleEvent(eventType);
+
+        return mStringWriterWrapper.getString();
     }
 }

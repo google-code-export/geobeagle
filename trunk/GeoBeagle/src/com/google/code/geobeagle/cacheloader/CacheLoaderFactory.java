@@ -15,35 +15,34 @@
 package com.google.code.geobeagle.cacheloader;
 
 import com.google.code.geobeagle.cachedetails.DetailsDatabaseReader;
-import com.google.code.geobeagle.cachedetails.FileDataVersionChecker;
-import com.google.code.geobeagle.cachedetails.FilePathStrategy;
 import com.google.code.geobeagle.xmlimport.EventHandlerGpx;
-import com.google.code.geobeagle.xmlimport.EventHelper;
+import com.google.code.geobeagle.xmlimport.EventHelperFactory;
 import com.google.inject.Inject;
 
+import android.content.res.Resources;
+
 public class CacheLoaderFactory {
-    private final FilePathStrategy filePathStrategy;
-    private final FileDataVersionChecker fileDataVersionChecker;
-    private final EventHelper eventHelper;
     private final DetailsDatabaseReader detailsDatabaseReader;
     private final DetailsReader detailsReader;
+    private final EventHelperFactory eventHelperFactory;
+    private final CacheReaderFromFile cacheReaderFromFile;
+    private final Resources resources;
 
     @Inject
-    public CacheLoaderFactory(FilePathStrategy filePathStrategy,
-            FileDataVersionChecker fileDataVersionChecker,
-            EventHelper eventHelper,
-            DetailsDatabaseReader detailsDatabaseReader,
-            DetailsReader detailsReader) {
-        this.filePathStrategy = filePathStrategy;
-        this.fileDataVersionChecker = fileDataVersionChecker;
-        this.eventHelper = eventHelper;
+    public CacheLoaderFactory(DetailsDatabaseReader detailsDatabaseReader,
+            DetailsReader detailsReader,
+            EventHelperFactory eventHelperFactory,
+            CacheReaderFromFile cacheReaderFromFile,
+            Resources resources) {
         this.detailsDatabaseReader = detailsDatabaseReader;
         this.detailsReader = detailsReader;
-
+        this.eventHelperFactory = eventHelperFactory;
+        this.cacheReaderFromFile = cacheReaderFromFile;
+        this.resources = resources;
     }
 
     public CacheLoader create(EventHandlerGpx eventHandlerGpx) {
-        return new CacheLoader(filePathStrategy, eventHandlerGpx, fileDataVersionChecker,
-                eventHelper, detailsDatabaseReader, detailsReader);
+        return new CacheLoader(eventHelperFactory.create(eventHandlerGpx), detailsDatabaseReader,
+                detailsReader, cacheReaderFromFile, resources);
     }
 }
