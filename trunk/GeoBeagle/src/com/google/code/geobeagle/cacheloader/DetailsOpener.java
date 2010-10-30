@@ -66,22 +66,26 @@ class DetailsOpener {
         if (!Environment.MEDIA_MOUNTED.equals(state)) {
             throw new CacheLoaderException(R.string.error_cant_read_sdroot, state);
         }
-        Reader reader;
         EventHandlerGpx eventHandlerGpx = new EventHandlerGpx(cacheTagHandler);
         eventHelper.setEventHandler(eventHandlerGpx);
         String absolutePath = file.getAbsolutePath();
         String detailsFromDatabase = detailsDatabaseReader.read(cacheId);
+        Reader reader = createReader(absolutePath, detailsFromDatabase);
+        return new DetailsReader(activity, reader, absolutePath, eventHelper, stringWriterWrapper,
+                xmlPullParserProvider);
+    }
+
+    private Reader createReader(String absolutePath, String detailsFromDatabase)
+            throws CacheLoaderException {
         try {
             if (detailsFromDatabase == null)
-                reader = new BufferedReader(new FileReader(absolutePath));
-            else
-                reader = new StringReader(detailsFromDatabase);
+                return new BufferedReader(new FileReader(absolutePath));
+
+            return new StringReader(detailsFromDatabase);
         } catch (FileNotFoundException e) {
             int error = fileDataVersionChecker.needsUpdating() ? R.string.error_details_file_version
                     : R.string.error_opening_details_file;
             throw new CacheLoaderException(error, e.getMessage());
         }
-        return new DetailsReader(activity, reader, absolutePath, eventHelper, stringWriterWrapper,
-                xmlPullParserProvider);
     }
 }
