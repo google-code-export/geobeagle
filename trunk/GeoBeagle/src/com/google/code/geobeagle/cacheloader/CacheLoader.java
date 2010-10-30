@@ -56,11 +56,6 @@ public class CacheLoader {
     public String load(CharSequence sourceName, CharSequence cacheId) throws CacheLoaderException {
         String path = filePathStrategy.getPath(sourceName, cacheId.toString(), "gpx");
         File file = new File(path);
-        return open(file, cacheId, eventHandlerGpx).read();
-    }
-
-    private DetailsReader open(File file, CharSequence cacheId, EventHandlerGpx eventHandlerGpx)
-            throws CacheLoaderException {
         String state = Environment.getExternalStorageState();
         if (!Environment.MEDIA_MOUNTED.equals(state)) {
             throw new CacheLoaderException(R.string.error_cant_read_sdroot, state);
@@ -69,8 +64,7 @@ public class CacheLoader {
         String absolutePath = file.getAbsolutePath();
         String detailsFromDatabase = detailsDatabaseReader.read(cacheId);
         Reader reader = createReader(absolutePath, detailsFromDatabase);
-        detailsReader.open(absolutePath, eventHelper, reader);
-        return detailsReader;
+        return detailsReader.read(absolutePath, eventHelper, reader);
     }
 
     private Reader createReader(String absolutePath, String detailsFromDatabase)
