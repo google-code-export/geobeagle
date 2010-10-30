@@ -43,7 +43,7 @@ public class EventHelper {
     private final EventHandler eventHandler;
     private XmlPullParser xmlPullParser;
 
-    EventHelper(XmlPathBuilder xmlPathBuilder, EventHandler eventHandler) {
+    public EventHelper(XmlPathBuilder xmlPathBuilder, EventHandler eventHandler) {
         this.xmlPathBuilder = xmlPathBuilder;
         this.eventHandler = eventHandler;
     }
