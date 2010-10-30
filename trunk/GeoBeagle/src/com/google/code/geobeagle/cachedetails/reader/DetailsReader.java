@@ -17,6 +17,7 @@ package com.google.code.geobeagle.cachedetails.reader;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.cachedetails.StringWriterWrapper;
 import com.google.code.geobeagle.xmlimport.EventHelper;
+import com.google.inject.Inject;
 import com.google.inject.Provider;
 
 import org.xmlpull.v1.XmlPullParser;
@@ -29,24 +30,25 @@ import java.io.Reader;
 
 public class DetailsReader {
     private final Activity mActivity;
-    private final EventHelper mEventHelper;
-    private final String mPath;
-    private final Reader mReader;
+    private EventHelper mEventHelper;
+    private String mPath;
+    private Reader mReader;
     private final StringWriterWrapper mStringWriterWrapper;
     private final Provider<XmlPullParser> mXmlPullParserProvider;
 
+    @Inject
     public DetailsReader(Activity activity,
-            Reader fileReader,
-            String path,
-            EventHelper eventHelper,
             StringWriterWrapper stringWriterWrapper,
             Provider<XmlPullParser> xmlPullParserProvider) {
         mActivity = activity;
-        mPath = path;
-        mEventHelper = eventHelper;
-        mReader = fileReader;
         mStringWriterWrapper = stringWriterWrapper;
         mXmlPullParserProvider = xmlPullParserProvider;
+    }
+
+    public void open(String path, EventHelper eventHelper, Reader reader) {
+        mPath = path;
+        mEventHelper = eventHelper;
+        mReader = reader;
     }
 
     public String read() {

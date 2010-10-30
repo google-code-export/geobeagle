@@ -14,12 +14,12 @@
 
 package com.google.code.geobeagle.cachedetails;
 
+import com.google.code.geobeagle.cachedetails.reader.DetailsReader;
 import com.google.code.geobeagle.cacheloader.CacheLoader;
 import com.google.code.geobeagle.cacheloader.CacheLoaderException;
-import com.google.code.geobeagle.cacheloader.DetailsOpener;
-import com.google.code.geobeagle.xmlimport.CacheTagHandler;
 import com.google.code.geobeagle.xmlimport.CacheTagsToDetails;
 import com.google.code.geobeagle.xmlimport.EventHandlerGpx;
+import com.google.code.geobeagle.xmlimport.EventHelper;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 
@@ -39,10 +39,16 @@ class DetailsWebView {
     @Inject
     DetailsWebView(Injector injector) {
         FilePathStrategy filePathStrategy = injector.getInstance(FilePathStrategy.class);
-        DetailsOpener detailsOpener = injector.getInstance(DetailsOpener.class);
-        CacheTagHandler cacheTagsToDetails = injector.getInstance(CacheTagsToDetails.class);
+        CacheTagsToDetails cacheTagsToDetails = injector.getInstance(CacheTagsToDetails.class);
         EventHandlerGpx eventHandlerGpx = new EventHandlerGpx(cacheTagsToDetails);
-        this.cacheLoader = new CacheLoader(filePathStrategy, detailsOpener, eventHandlerGpx);
+        FileDataVersionChecker fileDataVersionChecker = injector
+                .getInstance(FileDataVersionChecker.class);
+        EventHelper eventHelper = injector.getInstance(EventHelper.class);
+        DetailsDatabaseReader detailsDatabaseReader = injector
+                .getInstance(DetailsDatabaseReader.class);
+        DetailsReader detailsReader = injector.getInstance(DetailsReader.class);
+        this.cacheLoader = new CacheLoader(filePathStrategy, eventHandlerGpx,
+                fileDataVersionChecker, eventHelper, detailsDatabaseReader, detailsReader);
         this.resources = injector.getInstance(Resources.class);
     }
 
