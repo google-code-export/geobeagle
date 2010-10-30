@@ -30,6 +30,14 @@ public class GpxToCache {
     public static class CancelException extends Exception {
     }
 
+    static class EventHelperComposite extends EventHelper {
+        @Inject
+        public EventHelperComposite(XmlPathBuilder xmlPathBuilder,
+                EventHandlerComposite eventHandlerComposite) {
+            super(xmlPathBuilder, eventHandlerComposite);
+        }
+
+    }
     private final Aborter mAborter;
     private final Provider<XmlPullParser> mXmlPullParserProvider;
     private String mSource;
@@ -37,18 +45,15 @@ public class GpxToCache {
     private String mFilename;
     private XmlPullParser mXmlPullParser;
     private final EventHelper mEventHelper;
-    private final EventHandlerComposite mEventHandlerComposite;
 
     @Inject
     GpxToCache(Provider<XmlPullParser> xmlPullParserProvider,
             Aborter aborter,
             FileAlreadyLoadedChecker fileAlreadyLoadedChecker,
-            EventHandlerComposite eventHandlerComposite,
-            EventHelper eventHelper) {
+            EventHelperComposite eventHelper) {
         mXmlPullParserProvider = xmlPullParserProvider;
         mAborter = aborter;
         mTestLocAlreadyLoaded = fileAlreadyLoadedChecker;
-        mEventHandlerComposite = eventHandlerComposite;
         mEventHelper = eventHelper;
     }
 
@@ -68,12 +73,10 @@ public class GpxToCache {
             throws XmlPullParserException, IOException, CancelException {
         Log.d("GeoBeagle", this + ": GpxToCache: load");
 
-        mEventHelper.setEventHandler(mEventHandlerComposite);
         if (mTestLocAlreadyLoaded.isAlreadyLoaded(mSource)) {
             return true;
         }
-        mEventHandlerComposite.start(mXmlPullParser);
-        mEventHelper.open(mFilename);
+        mEventHelper.open(mFilename, mXmlPullParser);
         int eventType;
         for (eventType = mXmlPullParser.getEventType(); eventType != XmlPullParser.END_DOCUMENT; eventType = mXmlPullParser
                 .next()) {
@@ -83,12 +86,12 @@ public class GpxToCache {
                 throw new CancelException();
             }
             // File already loaded.
-            if (!mEventHelper.handleEvent(eventType, mXmlPullParser))
+            if (!mEventHelper.handleEvent(eventType))
                 return true;
         }
 
         // Pick up END_DOCUMENT event as well.
-        mEventHelper.handleEvent(eventType, mXmlPullParser);
+        mEventHelper.handleEvent(eventType);
         return false;
     }
 

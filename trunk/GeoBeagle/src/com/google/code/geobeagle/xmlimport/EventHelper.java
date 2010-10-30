@@ -43,36 +43,43 @@ public class EventHelper {
 
     private final XmlPathBuilder xmlPathBuilder;
     private EventHandler eventHandler;
+    private XmlPullParser xmlPullParser;
 
     @Inject
     public EventHelper(XmlPathBuilder xmlPathBuilder) {
         this.xmlPathBuilder = xmlPathBuilder;
     }
 
-    public boolean handleEvent(int eventType,
-            XmlPullParser mXmlPullParser) throws IOException {
+    public EventHelper(XmlPathBuilder xmlPathBuilder, EventHandler eventHandler) {
+        this.xmlPathBuilder = xmlPathBuilder;
+        this.eventHandler = eventHandler;
+    }
+
+    public boolean handleEvent(int eventType) throws IOException {
         switch (eventType) {
             case XmlPullParser.START_TAG: {
-                String name = mXmlPullParser.getName();
+                String name = xmlPullParser.getName();
                 xmlPathBuilder.startTag(name);
                 eventHandler.startTag(name, xmlPathBuilder.getPath());
                 break;
             }
             case XmlPullParser.END_TAG: {
-                String name = mXmlPullParser.getName();
+                String name = xmlPullParser.getName();
                 eventHandler.endTag(name, xmlPathBuilder.getPath());
                 xmlPathBuilder.endTag(name);
                 break;
             }
             case XmlPullParser.TEXT:
-                return eventHandler.text(xmlPathBuilder.getPath(), mXmlPullParser.getText());
+                return eventHandler.text(xmlPathBuilder.getPath(), xmlPullParser.getText());
         }
         return true;
     }
 
-    public void open(String filename) throws IOException {
+    public void open(String filename, XmlPullParser xmlPullParser) throws IOException {
+        this.xmlPullParser = xmlPullParser;
         eventHandler.open(filename);
         xmlPathBuilder.reset();
+        eventHandler.start(xmlPullParser);
     }
 
     public void setEventHandler(EventHandler eventHandler) {
