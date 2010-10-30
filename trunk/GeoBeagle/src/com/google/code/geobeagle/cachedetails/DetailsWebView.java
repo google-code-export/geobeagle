@@ -24,11 +24,11 @@ import android.content.res.Resources;
 import android.webkit.WebView;
 
 class DetailsWebView {
-    private final CacheDetailsLoader cacheDetailsLoader;
+    private final CacheLoader cacheLoader;
     private final Resources resources;
 
     DetailsWebView(CacheDetailsLoader cacheDetailsLoader, Resources resources) {
-        this.cacheDetailsLoader = cacheDetailsLoader;
+        this.cacheLoader = cacheDetailsLoader;
         this.resources = resources;
     }
 
@@ -44,7 +44,7 @@ class DetailsWebView {
         String id = intent.getStringExtra(DetailsActivity.INTENT_EXTRA_GEOCACHE_ID);
         String details;
         try {
-            details = cacheDetailsLoader.load(sourceName, id);
+            details = cacheLoader.load(sourceName, id);
         } catch (CacheLoaderException e) {
             details = resources.getString(e.getError(), e.getArgs());
         }
