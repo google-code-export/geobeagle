@@ -60,7 +60,7 @@ public class CacheLoader {
         return open(file, cacheId, eventHandlerGpx).read();
     }
 
-    public DetailsReader open(File file, CharSequence cacheId, EventHandlerGpx eventHandlerGpx)
+    private DetailsReader open(File file, CharSequence cacheId, EventHandlerGpx eventHandlerGpx)
             throws CacheLoaderException {
         String state = Environment.getExternalStorageState();
         if (!Environment.MEDIA_MOUNTED.equals(state)) {
