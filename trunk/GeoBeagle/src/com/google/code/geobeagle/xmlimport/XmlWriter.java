@@ -14,8 +14,8 @@
 
 package com.google.code.geobeagle.xmlimport;
 
-import com.google.code.geobeagle.cachedetails.FilePathStrategy;
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 
 import org.xmlpull.v1.XmlPullParser;
 
@@ -53,7 +53,6 @@ public class XmlWriter implements EventHandler {
         }
     }
 
-    @Override
     public void open(String filename) {
         this.filename = filename;
     }

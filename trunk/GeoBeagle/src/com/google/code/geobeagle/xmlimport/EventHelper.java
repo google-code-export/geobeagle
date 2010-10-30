@@ -75,15 +75,9 @@ public class EventHelper {
         return true;
     }
 
-    public void open(String filename, XmlPullParser xmlPullParser) throws IOException {
+    public void open(XmlPullParser xmlPullParser) {
         this.xmlPullParser = xmlPullParser;
-        eventHandler.open(filename);
         xmlPathBuilder.reset();
         eventHandler.start(xmlPullParser);
     }
-
-    public void setEventHandler(EventHandler eventHandler) {
-        this.eventHandler = eventHandler;
-    }
-
 }
