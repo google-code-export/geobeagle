@@ -16,7 +16,8 @@ package com.google.code.geobeagle.bcaching;
 
 import com.google.code.geobeagle.bcaching.communication.BCachingException;
 import com.google.code.geobeagle.bcaching.communication.BCachingListImporterStateless;
-import com.google.code.geobeagle.xmlimport.GpxLoaderFromBCaching;
+import com.google.code.geobeagle.xmlimport.GpxLoader;
+import com.google.code.geobeagle.xmlimport.GpxLoaderFactory;
 import com.google.inject.Inject;
 
 import org.xmlpull.v1.XmlPullParserException;
@@ -38,12 +39,12 @@ public class CacheImporter {
     }
 
     private final BufferedReaderFactory bufferedReaderFactory;
-    private final GpxLoaderFromBCaching gpxLoader;
+    private final GpxLoader gpxLoader;
 
     @Inject
-    CacheImporter(BufferedReaderFactory bufferedReaderFactory, GpxLoaderFromBCaching gpxLoader) {
+    CacheImporter(BufferedReaderFactory bufferedReaderFactory, GpxLoaderFactory gpxLoaderFactory) {
         this.bufferedReaderFactory = bufferedReaderFactory;
-        this.gpxLoader = gpxLoader;
+        gpxLoader = gpxLoaderFactory.createBCachingLoader();
     }
 
     public boolean load(String csvIds) throws BCachingException {
