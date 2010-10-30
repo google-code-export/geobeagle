@@ -28,7 +28,7 @@ import android.app.Activity;
 import java.io.IOException;
 import java.io.Reader;
 
-public class DetailsReader {
+class DetailsReader {
     private final Activity mActivity;
     private EventHelper mEventHelper;
     private String mPath;
@@ -37,7 +37,7 @@ public class DetailsReader {
     private final Provider<XmlPullParser> mXmlPullParserProvider;
 
     @Inject
-    public DetailsReader(Activity activity,
+    DetailsReader(Activity activity,
             StringWriterWrapper stringWriterWrapper,
             Provider<XmlPullParser> xmlPullParserProvider) {
         mActivity = activity;
@@ -45,13 +45,13 @@ public class DetailsReader {
         mXmlPullParserProvider = xmlPullParserProvider;
     }
 
-    public void open(String path, EventHelper eventHelper, Reader reader) {
+    void open(String path, EventHelper eventHelper, Reader reader) {
         mPath = path;
         mEventHelper = eventHelper;
         mReader = reader;
     }
 
-    public String read() {
+    String read() {
         try {
             XmlPullParser xmlPullParser = mXmlPullParserProvider.get();
             mEventHelper.open(mPath, xmlPullParser);
