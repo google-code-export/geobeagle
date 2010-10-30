@@ -14,9 +14,9 @@
 
 package com.google.code.geobeagle.cachedetails;
 
-import com.google.code.geobeagle.cachedetails.reader.DetailsReader;
 import com.google.code.geobeagle.cacheloader.CacheLoader;
 import com.google.code.geobeagle.cacheloader.CacheLoaderException;
+import com.google.code.geobeagle.cacheloader.DetailsReader;
 import com.google.code.geobeagle.xmlimport.CacheTagsToDetails;
 import com.google.code.geobeagle.xmlimport.EventHandlerGpx;
 import com.google.code.geobeagle.xmlimport.EventHelper;

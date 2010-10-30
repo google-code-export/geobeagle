@@ -18,7 +18,6 @@ import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.cachedetails.DetailsDatabaseReader;
 import com.google.code.geobeagle.cachedetails.FileDataVersionChecker;
 import com.google.code.geobeagle.cachedetails.FilePathStrategy;
-import com.google.code.geobeagle.cachedetails.reader.DetailsReader;
 import com.google.code.geobeagle.xmlimport.EventHandlerGpx;
 import com.google.code.geobeagle.xmlimport.EventHelper;
 
