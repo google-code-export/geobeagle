@@ -24,8 +24,8 @@ import android.util.Log;
 import java.io.IOException;
 import java.util.HashMap;
 
+@Singleton
 public class XmlWriter implements EventHandler {
-    private final FilePathStrategy filePathStrategy;
     private String filename;
     private final TagWriter tagWriter;
     private Tag tagWpt;
@@ -33,8 +33,7 @@ public class XmlWriter implements EventHandler {
     private XmlPullParser xmlPullParser;
 
     @Inject
-    public XmlWriter(FilePathStrategy filePathStrategy, TagWriter tagWriter) {
-        this.filePathStrategy = filePathStrategy;
+    public XmlWriter(TagWriter tagWriter) {
         this.tagWriter = tagWriter;
     }
 
