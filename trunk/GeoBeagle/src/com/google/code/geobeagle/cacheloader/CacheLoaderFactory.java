@@ -16,7 +16,8 @@ package com.google.code.geobeagle.cacheloader;
 
 import com.google.code.geobeagle.cachedetails.DetailsDatabaseReader;
 import com.google.code.geobeagle.xmlimport.EventHandlerGpx;
-import com.google.code.geobeagle.xmlimport.EventHelperFactory;
+import com.google.code.geobeagle.xmlimport.EventHelper;
+import com.google.code.geobeagle.xmlimport.EventHelper.XmlPathBuilder;
 import com.google.inject.Inject;
 
 import android.content.res.Resources;
@@ -24,25 +25,25 @@ import android.content.res.Resources;
 public class CacheLoaderFactory {
     private final DetailsDatabaseReader detailsDatabaseReader;
     private final DetailsReader detailsReader;
-    private final EventHelperFactory eventHelperFactory;
     private final CacheReaderFromFile cacheReaderFromFile;
     private final Resources resources;
+    private final XmlPathBuilder xmlPathBuilder;
 
     @Inject
     public CacheLoaderFactory(DetailsDatabaseReader detailsDatabaseReader,
             DetailsReader detailsReader,
-            EventHelperFactory eventHelperFactory,
             CacheReaderFromFile cacheReaderFromFile,
-            Resources resources) {
+            Resources resources,
+            XmlPathBuilder xmlPathBuilder) {
         this.detailsDatabaseReader = detailsDatabaseReader;
         this.detailsReader = detailsReader;
-        this.eventHelperFactory = eventHelperFactory;
         this.cacheReaderFromFile = cacheReaderFromFile;
         this.resources = resources;
+        this.xmlPathBuilder = xmlPathBuilder;
     }
 
     public CacheLoader create(EventHandlerGpx eventHandlerGpx) {
-        return new CacheLoader(eventHelperFactory.create(eventHandlerGpx), detailsDatabaseReader,
-                detailsReader, cacheReaderFromFile, resources);
+        return new CacheLoader(new EventHelper(xmlPathBuilder, eventHandlerGpx),
+                detailsDatabaseReader, detailsReader, cacheReaderFromFile, resources);
     }
 }
