@@ -41,7 +41,6 @@ public class GpxLoaderFactory {
         this.importCacheActionsFromBCaching = importCacheActionsFromBCaching;
         this.gpxToCacheFactory = gpxToCacheFactory;
         this.eventHandlerSqlAndFileWriter = eventHandlerSqlAndFileWriter;
-
     }
 
     public GpxLoader createFileLoader() {
