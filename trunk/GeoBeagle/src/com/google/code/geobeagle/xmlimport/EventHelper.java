@@ -14,11 +14,26 @@
 
 package com.google.code.geobeagle.xmlimport;
 
+import com.google.inject.Inject;
+
 import org.xmlpull.v1.XmlPullParser;
 
 import java.io.IOException;
 
 public class EventHelper {
+    public class EventHelperFactory {
+        private final XmlPathBuilder xmlPathBuilder;
+
+        @Inject
+        public EventHelperFactory(XmlPathBuilder xmlPathBuilder) {
+            this.xmlPathBuilder = xmlPathBuilder;
+        }
+
+        public EventHelper create(EventHandler eventHandler) {
+            return new EventHelper(xmlPathBuilder, eventHandler);
+        }
+    }
+
     public static class XmlPathBuilder {
         private String mPath = "";
 
