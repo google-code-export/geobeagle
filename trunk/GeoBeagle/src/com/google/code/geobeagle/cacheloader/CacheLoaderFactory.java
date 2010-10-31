@@ -18,7 +18,7 @@ import com.google.code.geobeagle.cachedetails.DetailsDatabaseReader;
 import com.google.code.geobeagle.xmlimport.CacheXmlTagHandler;
 import com.google.code.geobeagle.xmlimport.EventHandlerGpx;
 import com.google.code.geobeagle.xmlimport.EventHelper;
-import com.google.code.geobeagle.xmlimport.EventHelper.XmlPathBuilder;
+import com.google.code.geobeagle.xmlimport.EventHelper.EventHelperFactory;
 import com.google.inject.Inject;
 
 import android.content.res.Resources;
@@ -28,25 +28,25 @@ public class CacheLoaderFactory {
     private final DetailsXmlToStringFactory detailsXmlToStringFactory;
     private final CacheReaderFromFile cacheReaderFromFile;
     private final Resources resources;
-    private final XmlPathBuilder xmlPathBuilder;
+    private final EventHelperFactory eventHelperFactory;
 
     @Inject
     public CacheLoaderFactory(DetailsDatabaseReader detailsDatabaseReader,
             DetailsXmlToStringFactory detailsXmlToStringFactory,
             CacheReaderFromFile cacheReaderFromFile,
             Resources resources,
-            XmlPathBuilder xmlPathBuilder) {
+            EventHelperFactory eventHelperFactory) {
         this.detailsDatabaseReader = detailsDatabaseReader;
         this.detailsXmlToStringFactory = detailsXmlToStringFactory;
         this.cacheReaderFromFile = cacheReaderFromFile;
         this.resources = resources;
-        this.xmlPathBuilder = xmlPathBuilder;
+        this.eventHelperFactory = eventHelperFactory;
     }
 
     public CacheLoader create(CacheXmlTagHandler cacheXmlTagHandler) {
-        EventHelper eventHelper = new EventHelper(xmlPathBuilder, new EventHandlerGpx(
-                cacheXmlTagHandler));
-        return new CacheLoader(cacheReaderFromFile,
-                detailsDatabaseReader, detailsXmlToStringFactory.create(eventHelper), resources);
+        EventHelper eventHelper = eventHelperFactory
+                .create(new EventHandlerGpx(cacheXmlTagHandler));
+        return new CacheLoader(cacheReaderFromFile, detailsDatabaseReader,
+                detailsXmlToStringFactory.create(eventHelper), resources);
     }
 }
