@@ -15,35 +15,45 @@
 package com.google.code.geobeagle.xmlimport;
 
 import com.google.code.geobeagle.ErrorDisplayer;
+import com.google.code.geobeagle.xmlimport.GpxToCache.GpxToCacheFactory;
+import com.google.inject.Inject;
 import com.google.inject.Provider;
 
 public class GpxLoaderFactory {
 
     private final ImportCacheActionsFromFile importCacheActionsFromFile;
     private final ErrorDisplayer errorDisplayer;
-    private final GpxToCache gpxToCache;
     private final Provider<ImportWakeLock> importWakeLockProvider;
     private final ImportCacheActionsFromBCaching importCacheActionsFromBCaching;
+    private final GpxToCacheFactory gpxToCacheFactory;
+    private final EventHandlerSqlAndFileWriter eventHandlerSqlAndFileWriter;
 
-    GpxLoaderFactory(GpxToCache gpxToCache,
-            Provider<ImportWakeLock> importWakeLockProvider,
+    @Inject
+    GpxLoaderFactory(Provider<ImportWakeLock> importWakeLockProvider,
             ErrorDisplayer errorDisplayer,
             ImportCacheActionsFromFile importCacheActionsFromFile,
-            ImportCacheActionsFromBCaching importCacheActionsFromBCaching) {
+            ImportCacheActionsFromBCaching importCacheActionsFromBCaching,
+            GpxToCacheFactory gpxToCacheFactory,
+            EventHandlerSqlAndFileWriter eventHandlerSqlAndFileWriter) {
         this.importWakeLockProvider = importWakeLockProvider;
         this.errorDisplayer = errorDisplayer;
-        this.gpxToCache = gpxToCache;
         this.importCacheActionsFromFile = importCacheActionsFromFile;
         this.importCacheActionsFromBCaching = importCacheActionsFromBCaching;
+        this.gpxToCacheFactory = gpxToCacheFactory;
+        this.eventHandlerSqlAndFileWriter = eventHandlerSqlAndFileWriter;
+
     }
 
     public GpxLoader createFileLoader() {
-        return new GpxLoader(importCacheActionsFromFile, errorDisplayer, gpxToCache,
-                importWakeLockProvider);
+        return create(importCacheActionsFromFile, eventHandlerSqlAndFileWriter);
     }
 
     public GpxLoader createBCachingLoader() {
-        return new GpxLoader(importCacheActionsFromBCaching, errorDisplayer, gpxToCache,
-                importWakeLockProvider);
+        return create(importCacheActionsFromBCaching, eventHandlerSqlAndFileWriter);
+    }
+
+    private GpxLoader create(CacheTagsToSql importCacheActions, EventHandler eventHandler) {
+        GpxToCache gpxToCache = gpxToCacheFactory.create(eventHandler);
+        return new GpxLoader(importCacheActions, errorDisplayer, gpxToCache, importWakeLockProvider);
     }
 }

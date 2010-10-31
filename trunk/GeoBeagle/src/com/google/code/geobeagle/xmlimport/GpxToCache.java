@@ -14,6 +14,7 @@
 
 package com.google.code.geobeagle.xmlimport;
 
+import com.google.code.geobeagle.xmlimport.EventHelper.EventHelperFactory;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
@@ -30,14 +31,31 @@ public class GpxToCache {
     public static class CancelException extends Exception {
     }
 
-    static class EventHelperSqlAndFileWriter extends EventHelper {
-        @Inject
-        public EventHelperSqlAndFileWriter(XmlPathBuilder xmlPathBuilder,
-                EventHandlerSqlAndFileWriter eventHandlerSqlAndFileWriter) {
-            super(xmlPathBuilder, eventHandlerSqlAndFileWriter);
+    public static class GpxToCacheFactory {
+        private final Provider<XmlPullParser> xmlPullParserProvider;
+        private final Aborter aborter;
+        private final FileAlreadyLoadedChecker fileAlreadyLoadedChecker;
+        private final XmlWriter xmlWriter;
+        private final EventHelperFactory eventHelperFactory;
+
+        public GpxToCacheFactory(Provider<XmlPullParser> xmlPullParserProvider,
+                Aborter aborter,
+                FileAlreadyLoadedChecker fileAlreadyLoadedChecker,
+                XmlWriter xmlWriter,
+                EventHelperFactory eventHelperFactory) {
+            this.xmlPullParserProvider = xmlPullParserProvider;
+            this.aborter = aborter;
+            this.fileAlreadyLoadedChecker = fileAlreadyLoadedChecker;
+            this.xmlWriter = xmlWriter;
+            this.eventHelperFactory = eventHelperFactory;
         }
 
+        public GpxToCache create(EventHandler eventHandler) {
+            return new GpxToCache(xmlPullParserProvider, aborter, fileAlreadyLoadedChecker,
+                    eventHelperFactory.create(eventHandler), xmlWriter);
+        }
     }
+
     private final Aborter mAborter;
     private final Provider<XmlPullParser> mXmlPullParserProvider;
     private String mSource;
@@ -51,7 +69,7 @@ public class GpxToCache {
     GpxToCache(Provider<XmlPullParser> xmlPullParserProvider,
             Aborter aborter,
             FileAlreadyLoadedChecker fileAlreadyLoadedChecker,
-            EventHelperSqlAndFileWriter eventHelper,
+            EventHelper eventHelper,
             XmlWriter xmlWriter) {
         mXmlPullParserProvider = xmlPullParserProvider;
         mAborter = aborter;

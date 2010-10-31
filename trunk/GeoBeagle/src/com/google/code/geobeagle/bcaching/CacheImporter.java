@@ -42,7 +42,8 @@ public class CacheImporter {
     private final GpxLoader gpxLoader;
 
     @Inject
-    CacheImporter(BufferedReaderFactory bufferedReaderFactory, GpxLoaderFactory gpxLoaderFactory) {
+    CacheImporter(BufferedReaderFactory bufferedReaderFactory,
+            GpxLoaderFactory gpxLoaderFactory) {
         this.bufferedReaderFactory = bufferedReaderFactory;
         gpxLoader = gpxLoaderFactory.createBCachingLoader();
     }
