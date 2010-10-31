@@ -25,12 +25,12 @@ import org.xmlpull.v1.XmlPullParserException;
 import java.io.IOException;
 import java.io.Reader;
 
-class DetailsReader {
+class DetailsXmlToString {
     private final StringWriterWrapper mStringWriterWrapper;
     private final Provider<XmlPullParser> mXmlPullParserProvider;
 
     @Inject
-    DetailsReader(
+    DetailsXmlToString(
             StringWriterWrapper stringWriterWrapper,
             Provider<XmlPullParser> xmlPullParserProvider) {
         mStringWriterWrapper = stringWriterWrapper;
