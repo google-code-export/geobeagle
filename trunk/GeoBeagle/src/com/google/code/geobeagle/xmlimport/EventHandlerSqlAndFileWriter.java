@@ -26,7 +26,8 @@ public class EventHandlerSqlAndFileWriter implements EventHandler {
     private final List<EventHandler> eventHandlers;
 
     @Inject
-    public EventHandlerSqlAndFileWriter(XmlWriter xmlWriter, CacheXmlTagsToDetails cacheXmlTagsToDetails) {
+    public EventHandlerSqlAndFileWriter(XmlWriter xmlWriter,
+            CacheXmlTagsToDetails cacheXmlTagsToDetails) {
         this.eventHandlers = Arrays.asList(xmlWriter, new EventHandlerGpx(cacheXmlTagsToDetails));
     }
 
@@ -38,16 +39,14 @@ public class EventHandlerSqlAndFileWriter implements EventHandler {
     }
 
     @Override
-    public void startTag(String name, String fullPath)
-            throws IOException {
+    public void startTag(String name, String fullPath) throws IOException {
         for (EventHandler eventHandler : eventHandlers) {
             eventHandler.startTag(name, fullPath);
         }
     }
 
     @Override
-    public boolean text(String fullPath, String text)
-            throws IOException {
+    public boolean text(String fullPath, String text) throws IOException {
         boolean ret = true;
         for (EventHandler eventHandler : eventHandlers) {
             ret &= eventHandler.text(fullPath, text);
