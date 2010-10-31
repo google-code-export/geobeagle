@@ -31,6 +31,9 @@ public class XmlWriter implements EventHandler {
     private Tag tagWpt;
     private String time;
     private XmlPullParser xmlPullParser;
+    private static String GPX_WPT = "/gpx/wpt";
+    private static String GPX_WPTTIME = "/gpx/wpt/time";
+    private static String GPX_WPTNAME = "/gpx/wpt/name";
 
     @Inject
     public XmlWriter(TagWriter tagWriter) {
@@ -39,13 +42,13 @@ public class XmlWriter implements EventHandler {
 
     @Override
     public void endTag(String name, String previousFullPath) throws IOException {
-        if (!previousFullPath.startsWith(GpxPath.GPX_WPT.getPath()))
+        if (!previousFullPath.startsWith(GPX_WPT))
             return;
 
         if (tagWriter.isOpen())
             tagWriter.endTag(name);
 
-        if (previousFullPath.equals(GpxPath.GPX_WPT.getPath())) {
+        if (previousFullPath.equals(GPX_WPT)) {
             Log.d("GeoBeagle", "ENDING TAG");
             tagWriter.endTag("gpx");
             tagWriter.close();
@@ -59,7 +62,7 @@ public class XmlWriter implements EventHandler {
     @Override
     public void startTag(String name, String fullPath)
             throws IOException {
-        if (!fullPath.startsWith(GpxPath.GPX_WPT.getPath()))
+        if (!fullPath.startsWith(GPX_WPT))
             return;
 
         HashMap<String, String> attributes = new HashMap<String, String>();
@@ -70,7 +73,7 @@ public class XmlWriter implements EventHandler {
         }
         Tag tag = new Tag(name, attributes);
 
-        if (fullPath.equals(GpxPath.GPX_WPT.getPath())) {
+        if (fullPath.equals(GPX_WPT)) {
             tagWpt = tag;
         } else if (tagWriter.isOpen()) {
             tagWriter.startTag(tag);
@@ -80,15 +83,15 @@ public class XmlWriter implements EventHandler {
     @Override
     public boolean text(String fullPath, String text)
             throws IOException {
-        if (!fullPath.startsWith(GpxPath.GPX_WPT.getPath()))
+        if (!fullPath.startsWith(GPX_WPT))
             return true;
 
         if (text.trim().length() == 0)
             return true;
 
-        if (fullPath.equals(GpxPath.GPX_WPTTIME.getPath())) {
+        if (fullPath.equals(GPX_WPTTIME)) {
             time = text;
-        } else if (fullPath.equals(GpxPath.GPX_WPTNAME.getPath())) {
+        } else if (fullPath.equals(GPX_WPTNAME)) {
             Log.d("GeoBeagle", "TEXT: " + text);
             tagWriter.open(filename, text, "gpx");
             HashMap<String, String> emptyHashMap = new HashMap<String, String>();
