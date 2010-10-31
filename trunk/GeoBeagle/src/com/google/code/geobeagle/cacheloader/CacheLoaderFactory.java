@@ -25,27 +25,28 @@ import android.content.res.Resources;
 
 public class CacheLoaderFactory {
     private final DetailsDatabaseReader detailsDatabaseReader;
-    private final DetailsXmlToString detailsXmlToString;
+    private final DetailsXmlToStringFactory detailsXmlToStringFactory;
     private final CacheReaderFromFile cacheReaderFromFile;
     private final Resources resources;
     private final XmlPathBuilder xmlPathBuilder;
 
     @Inject
     public CacheLoaderFactory(DetailsDatabaseReader detailsDatabaseReader,
-            DetailsXmlToString detailsXmlToString,
+            DetailsXmlToStringFactory detailsXmlToStringFactory,
             CacheReaderFromFile cacheReaderFromFile,
             Resources resources,
             XmlPathBuilder xmlPathBuilder) {
         this.detailsDatabaseReader = detailsDatabaseReader;
-        this.detailsXmlToString = detailsXmlToString;
+        this.detailsXmlToStringFactory = detailsXmlToStringFactory;
         this.cacheReaderFromFile = cacheReaderFromFile;
         this.resources = resources;
         this.xmlPathBuilder = xmlPathBuilder;
     }
 
     public CacheLoader create(CacheTagHandler cacheTagHandler) {
-        return new CacheLoader(
-                new EventHelper(xmlPathBuilder, new EventHandlerGpx(cacheTagHandler)),
-                detailsDatabaseReader, detailsXmlToString, cacheReaderFromFile, resources);
+        EventHelper eventHelper = new EventHelper(xmlPathBuilder, new EventHandlerGpx(
+                cacheTagHandler));
+        return new CacheLoader(cacheReaderFromFile,
+                detailsDatabaseReader, detailsXmlToStringFactory.create(eventHelper), resources);
     }
 }
