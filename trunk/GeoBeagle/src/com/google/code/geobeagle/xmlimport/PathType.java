@@ -24,264 +24,264 @@ enum PathType {
     CACHE {
         @Override
         public void startTag(XmlPullParser xmlPullParser,
-                CacheTagHandler cacheTagHandler) {
-            cacheTagHandler.available(xmlPullParser.getAttributeValue(null, "available"));
-            cacheTagHandler.archived(xmlPullParser.getAttributeValue(null, "archived"));
+                CacheXmlTagHandler cacheXmlTagHandler) {
+            cacheXmlTagHandler.available(xmlPullParser.getAttributeValue(null, "available"));
+            cacheXmlTagHandler.archived(xmlPullParser.getAttributeValue(null, "archived"));
         }
 
         @Override
-        public boolean text(String text, CacheTagHandler cacheTagHandler)
+        public boolean text(String text, CacheXmlTagHandler cacheXmlTagHandler)
                 throws IOException {
-            cacheTagHandler.symbol(text);
+            cacheXmlTagHandler.symbol(text);
             return true;
         }
     },
     CACHE_TYPE {
         @Override
-        public boolean text(String text, CacheTagHandler cacheTagHandler)
+        public boolean text(String text, CacheXmlTagHandler cacheXmlTagHandler)
                 throws IOException {
-            cacheTagHandler.cacheType(text);
+            cacheXmlTagHandler.cacheType(text);
             return true;
         }
     },
     CONTAINER {
         @Override
-        public boolean text(String text, CacheTagHandler cacheTagHandler)
+        public boolean text(String text, CacheXmlTagHandler cacheXmlTagHandler)
                 throws IOException {
-            cacheTagHandler.container(text);
+            cacheXmlTagHandler.container(text);
             return true;
         }
     },
     DESC {
         @Override
-        public boolean text(String text, CacheTagHandler cacheTagHandler)
+        public boolean text(String text, CacheXmlTagHandler cacheXmlTagHandler)
                 throws IOException {
-            cacheTagHandler.wptDesc(text);
+            cacheXmlTagHandler.wptDesc(text);
             return true;
         }
     },
     DIFFICULTY {
         @Override
-        public boolean text(String text, CacheTagHandler cacheTagHandler)
+        public boolean text(String text, CacheXmlTagHandler cacheXmlTagHandler)
                 throws IOException {
-            cacheTagHandler.difficulty(text);
+            cacheXmlTagHandler.difficulty(text);
             return true;
         }
     },
     GPX_TIME {
         @Override
-        public boolean text(String text, CacheTagHandler cacheTagHandler)
+        public boolean text(String text, CacheXmlTagHandler cacheXmlTagHandler)
                 throws IOException {
-            return cacheTagHandler.gpxTime(text);
+            return cacheXmlTagHandler.gpxTime(text);
         }
     },
     HINT {
         @Override
-        public boolean text(String text, CacheTagHandler cacheTagHandler)
+        public boolean text(String text, CacheXmlTagHandler cacheXmlTagHandler)
                 throws IOException {
             if (!text.equals(""))
-                cacheTagHandler.hint(text);
+                cacheXmlTagHandler.hint(text);
             return true;
         }
     },
     LAST_MODIFIED {
         @Override
-        public boolean text(String text, CacheTagHandler cacheTagHandler)
+        public boolean text(String text, CacheXmlTagHandler cacheXmlTagHandler)
                 throws IOException {
             return true;
         }
     },
     LINE {
         @Override
-        public boolean text(String text, CacheTagHandler cacheTagHandler)
+        public boolean text(String text, CacheXmlTagHandler cacheXmlTagHandler)
                 throws IOException {
-            cacheTagHandler.line(text);
+            cacheXmlTagHandler.line(text);
             return true;
         }
     },
     LOC_COORD {
         @Override
         public void startTag(XmlPullParser xmlPullParser,
-                CacheTagHandler cacheTagHandler) {
-            cacheTagHandler.wpt(xmlPullParser.getAttributeValue(null, "lat"),
+                CacheXmlTagHandler cacheXmlTagHandler) {
+            cacheXmlTagHandler.wpt(xmlPullParser.getAttributeValue(null, "lat"),
                     xmlPullParser.getAttributeValue(null, "lon"));
         }
     },
     LOC_WPT {
         @Override
-        public void endTag(CacheTagHandler cacheTagHandler) throws IOException {
-            cacheTagHandler.endCache(Source.LOC);
+        public void endTag(CacheXmlTagHandler cacheXmlTagHandler) throws IOException {
+            cacheXmlTagHandler.endCache(Source.LOC);
         }
     },
     LOC_WPTNAME {
         @Override
         public void startTag(XmlPullParser xmlPullParser,
-                CacheTagHandler cacheTagHandler) throws IOException {
-            cacheTagHandler.startCache();
-            cacheTagHandler.wptName(xmlPullParser.getAttributeValue(null, "id"));
+                CacheXmlTagHandler cacheXmlTagHandler) throws IOException {
+            cacheXmlTagHandler.startCache();
+            cacheXmlTagHandler.wptName(xmlPullParser.getAttributeValue(null, "id"));
         }
 
         @Override
-        public boolean text(String text, CacheTagHandler cacheTagHandler)
+        public boolean text(String text, CacheXmlTagHandler cacheXmlTagHandler)
                 throws IOException {
-            cacheTagHandler.groundspeakName(text.trim());
+            cacheXmlTagHandler.groundspeakName(text.trim());
             return true;
         }
     },
     LOG_DATE {
         @Override
-        public boolean text(String text, CacheTagHandler cacheTagHandler)
+        public boolean text(String text, CacheXmlTagHandler cacheXmlTagHandler)
                 throws IOException {
-            cacheTagHandler.logDate(text);
+            cacheXmlTagHandler.logDate(text);
             return true;
         }
     },
     LOG_TEXT {
         @Override
-        public void endTag(CacheTagHandler cacheTagHandler) throws IOException {
-            cacheTagHandler.setEncrypted(false);
+        public void endTag(CacheXmlTagHandler cacheXmlTagHandler) throws IOException {
+            cacheXmlTagHandler.setEncrypted(false);
         }
 
         @Override
         public void startTag(XmlPullParser xmlPullParser,
-                CacheTagHandler cacheTagHandler) {
-            cacheTagHandler.setEncrypted("true".equalsIgnoreCase(xmlPullParser
+                CacheXmlTagHandler cacheXmlTagHandler) {
+            cacheXmlTagHandler.setEncrypted("true".equalsIgnoreCase(xmlPullParser
                     .getAttributeValue(null, "encoded")));
         }
 
         @Override
-        public boolean text(String text, CacheTagHandler cacheTagHandler)
+        public boolean text(String text, CacheXmlTagHandler cacheXmlTagHandler)
                 throws IOException {
-            cacheTagHandler.logText(text);
+            cacheXmlTagHandler.logText(text);
             return true;
         }
     },
     LOG_TYPE {
         @Override
-        public boolean text(String text, CacheTagHandler cacheTagHandler)
+        public boolean text(String text, CacheXmlTagHandler cacheXmlTagHandler)
                 throws IOException {
-            cacheTagHandler.logType(text);
+            cacheXmlTagHandler.logType(text);
             return true;
         }
     },
     LONG_DESCRIPTION {
         @Override
-        public boolean text(String text, CacheTagHandler cacheTagHandler)
+        public boolean text(String text, CacheXmlTagHandler cacheXmlTagHandler)
                 throws IOException {
-            cacheTagHandler.longDescription(text);
+            cacheXmlTagHandler.longDescription(text);
             return true;
         }
     },
     NAME {
         @Override
-        public boolean text(String text, CacheTagHandler cacheTagHandler)
+        public boolean text(String text, CacheXmlTagHandler cacheXmlTagHandler)
                 throws IOException {
-            cacheTagHandler.groundspeakName(text);
+            cacheXmlTagHandler.groundspeakName(text);
             return true;
         }
     },
     NOP {
         @Override
         public void startTag(XmlPullParser xmlPullParser,
-                CacheTagHandler cacheTagHandler) {
+                CacheXmlTagHandler cacheXmlTagHandler) {
         }
 
         @Override
-        public boolean text(String text, CacheTagHandler cacheTagHandler)
+        public boolean text(String text, CacheXmlTagHandler cacheXmlTagHandler)
                 throws IOException {
             return true;
         }
     },
     PLACED_BY {
         @Override
-        public boolean text(String text, CacheTagHandler cacheTagHandler)
+        public boolean text(String text, CacheXmlTagHandler cacheXmlTagHandler)
                 throws IOException {
-            cacheTagHandler.placedBy(text);
+            cacheXmlTagHandler.placedBy(text);
             return true;
         }
     },
     SHORT_DESCRIPTION {
         @Override
-        public boolean text(String text, CacheTagHandler cacheTagHandler)
+        public boolean text(String text, CacheXmlTagHandler cacheXmlTagHandler)
                 throws IOException {
-            cacheTagHandler.shortDescription(text);
+            cacheXmlTagHandler.shortDescription(text);
             return true;
         }
     },
     SYMBOL {
         @Override
-        public boolean text(String text, CacheTagHandler cacheTagHandler)
+        public boolean text(String text, CacheXmlTagHandler cacheXmlTagHandler)
                 throws IOException {
-            cacheTagHandler.symbol(text);
+            cacheXmlTagHandler.symbol(text);
             return true;
         }
     },
     TERRAIN {
         @Override
-        public boolean text(String text, CacheTagHandler cacheTagHandler)
+        public boolean text(String text, CacheXmlTagHandler cacheXmlTagHandler)
                 throws IOException {
-            cacheTagHandler.terrain(text);
+            cacheXmlTagHandler.terrain(text);
             return true;
         }
     },
     WPT {
         @Override
-        public void endTag(CacheTagHandler cacheTagHandler) throws IOException {
-            cacheTagHandler.endCache(Source.GPX);
+        public void endTag(CacheXmlTagHandler cacheXmlTagHandler) throws IOException {
+            cacheXmlTagHandler.endCache(Source.GPX);
         }
 
         @Override
         public void startTag(XmlPullParser xmlPullParser,
-                CacheTagHandler cacheTagHandler) {
-            cacheTagHandler.startCache();
-            cacheTagHandler.wpt(xmlPullParser.getAttributeValue(null, "lat"),
+                CacheXmlTagHandler cacheXmlTagHandler) {
+            cacheXmlTagHandler.startCache();
+            cacheXmlTagHandler.wpt(xmlPullParser.getAttributeValue(null, "lat"),
                     xmlPullParser.getAttributeValue(null, "lon"));
         }
     },
     WPT_NAME {
         @Override
-        public boolean text(String text, CacheTagHandler cacheTagHandler)
+        public boolean text(String text, CacheXmlTagHandler cacheXmlTagHandler)
                 throws IOException {
-            cacheTagHandler.wptName(text);
+            cacheXmlTagHandler.wptName(text);
             return true;
         }
     },
     WPT_TIME {
         @Override
-        public boolean text(String text, CacheTagHandler cacheTagHandler)
+        public boolean text(String text, CacheXmlTagHandler cacheXmlTagHandler)
                 throws IOException {
-            cacheTagHandler.wptTime(text);
+            cacheXmlTagHandler.wptTime(text);
             return true;
         }
     },
     LOG_FINDER {
         @Override
-        public boolean text(String text, CacheTagHandler cacheTagHandler)
+        public boolean text(String text, CacheXmlTagHandler cacheXmlTagHandler)
                 throws IOException {
-            cacheTagHandler.logFinder(text);
+            cacheXmlTagHandler.logFinder(text);
             return true;
         }
     },
     GPX_URL {
         @Override
-        public boolean text(String text, CacheTagHandler cacheTagHandler)
+        public boolean text(String text, CacheXmlTagHandler cacheXmlTagHandler)
                 throws IOException {
-            cacheTagHandler.url(text);
+            cacheXmlTagHandler.url(text);
             return true;
         }
     };
 
     @SuppressWarnings("unused")
-    public void endTag(CacheTagHandler cacheTagHandler) throws IOException {
+    public void endTag(CacheXmlTagHandler cacheXmlTagHandler) throws IOException {
     }
 
     @SuppressWarnings("unused")
     public void startTag(XmlPullParser xmlPullParser,
-            CacheTagHandler cacheTagHandler) throws IOException {
+            CacheXmlTagHandler cacheXmlTagHandler) throws IOException {
     }
 
     @SuppressWarnings("unused")
-    public boolean text(String text, CacheTagHandler cacheTagHandler) throws IOException {
+    public boolean text(String text, CacheXmlTagHandler cacheXmlTagHandler) throws IOException {
         return true;
     }
 }

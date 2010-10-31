@@ -26,8 +26,8 @@ public class EventHandlerSqlAndFileWriter implements EventHandler {
     private final List<EventHandler> eventHandlers;
 
     @Inject
-    public EventHandlerSqlAndFileWriter(XmlWriter xmlWriter, CacheTagsToDetails cacheTagsToDetails) {
-        this.eventHandlers = Arrays.asList(xmlWriter, new EventHandlerGpx(cacheTagsToDetails));
+    public EventHandlerSqlAndFileWriter(XmlWriter xmlWriter, CacheXmlTagsToDetails cacheXmlTagsToDetails) {
+        this.eventHandlers = Arrays.asList(xmlWriter, new EventHandlerGpx(cacheXmlTagsToDetails));
     }
 
     @Override

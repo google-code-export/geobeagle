@@ -53,8 +53,8 @@ public class GpxLoaderTest {
 
     private <T> void loadRaiseAndDisplayCustomMessage(Class<T> exceptionClass, int errorResource)
             throws XmlPullParserException, IOException, CancelException {
-        CacheTagsToSql cacheTagsToSql = PowerMock
-                .createMock(CacheTagsToSql.class);
+        CacheXmlTagsToSql cacheXmlTagsToSql = PowerMock
+                .createMock(CacheXmlTagsToSql.class);
         GpxToCache gpxToCache = PowerMock.createMock(GpxToCache.class);
         Throwable e = (Throwable)PowerMock.createMock(exceptionClass);
         ErrorDisplayer errorDisplayer = PowerMock.createMock(ErrorDisplayer.class);
@@ -62,23 +62,23 @@ public class GpxLoaderTest {
 
         expect(wakeLockProvider.get()).andReturn(importWakeLock);
         importWakeLock.acquire(15000);
-        expect(gpxToCache.load(eventHelper, null, cacheTagsToSql)).andStubReturn(false);
+        expect(gpxToCache.load(eventHelper, null, cacheXmlTagsToSql)).andStubReturn(false);
         expectLastCall().andThrow(e);
         expect(gpxToCache.getSource()).andReturn("foo.gpx");
         expect(e.fillInStackTrace()).andReturn(e);
         expect(e.getMessage()).andReturn("line 'blah'");
         errorDisplayer.displayError(errorResource, "foo.gpx: line 'blah'");
-        cacheTagsToSql.close(false);
+        cacheXmlTagsToSql.close(false);
 
         PowerMock.replayAll();
-        assertFalse(new GpxLoader(cacheTagsToSql, errorDisplayer, gpxToCache, wakeLockProvider)
+        assertFalse(new GpxLoader(cacheXmlTagsToSql, errorDisplayer, gpxToCache, wakeLockProvider)
                 .load(eventHelper, null));
         PowerMock.verifyAll();
     }
 
     private <T> void loadRaiseAndDisplayExceptionMessage(int errorMessage, Class<T> exceptionClass)
             throws XmlPullParserException, IOException, CancelException {
-        CacheTagsToSql cacheTagsToSql = createMock(CacheTagsToSql.class);
+        CacheXmlTagsToSql cacheXmlTagsToSql = createMock(CacheXmlTagsToSql.class);
         GpxToCache gpxToCache = PowerMock.createMock(GpxToCache.class);
         Throwable e = (Throwable)PowerMock.createMock(exceptionClass);
         ErrorDisplayer errorDisplayer = PowerMock.createMock(ErrorDisplayer.class);
@@ -86,16 +86,16 @@ public class GpxLoaderTest {
 
         expect(wakeLockProvider.get()).andReturn(importWakeLock);
         importWakeLock.acquire(15000);
-        gpxToCache.load(eventHelper, null, cacheTagsToSql);
+        gpxToCache.load(eventHelper, null, cacheXmlTagsToSql);
         expectLastCall().andThrow(e);
         expect(e.getMessage()).andReturn("a problem of some sort");
         expect(e.fillInStackTrace()).andReturn(e);
         expect(gpxToCache.getSource()).andReturn("/sdcard/foo.gpx");
         errorDisplayer.displayError(errorMessage, "/sdcard/foo.gpx: a problem of some sort");
-        cacheTagsToSql.close(false);
+        cacheXmlTagsToSql.close(false);
 
         PowerMock.replayAll();
-        assertFalse(new GpxLoader(cacheTagsToSql, errorDisplayer, gpxToCache, wakeLockProvider)
+        assertFalse(new GpxLoader(cacheXmlTagsToSql, errorDisplayer, gpxToCache, wakeLockProvider)
                 .load(
                 eventHelper, null));
         PowerMock.verifyAll();
@@ -103,8 +103,8 @@ public class GpxLoaderTest {
 
     private <T> void loadRaiseAndDisplayNothing(Class<T> exceptionClass)
             throws XmlPullParserException, IOException, CancelException {
-        CacheTagsToSql cacheTagsToSql = PowerMock
-                .createMock(CacheTagsToSql.class);
+        CacheXmlTagsToSql cacheXmlTagsToSql = PowerMock
+                .createMock(CacheXmlTagsToSql.class);
         GpxToCache gpxToCache = PowerMock.createMock(GpxToCache.class);
         Throwable e = (Throwable)PowerMock.createMock(exceptionClass);
         ErrorDisplayer errorDisplayer = PowerMock.createMock(ErrorDisplayer.class);
@@ -112,13 +112,13 @@ public class GpxLoaderTest {
 
         expect(wakeLockProvider.get()).andReturn(importWakeLock);
         importWakeLock.acquire(15000);
-        expect(gpxToCache.load(eventHelper, null, cacheTagsToSql)).andStubReturn(false);
+        expect(gpxToCache.load(eventHelper, null, cacheXmlTagsToSql)).andStubReturn(false);
         expectLastCall().andThrow(e);
         expect(e.fillInStackTrace()).andReturn(e);
-        cacheTagsToSql.close(false);
+        cacheXmlTagsToSql.close(false);
 
         PowerMock.replayAll();
-        assertFalse(new GpxLoader(cacheTagsToSql, errorDisplayer, gpxToCache, wakeLockProvider)
+        assertFalse(new GpxLoader(cacheXmlTagsToSql, errorDisplayer, gpxToCache, wakeLockProvider)
                 .load(eventHelper, null));
         PowerMock.verifyAll();
     }
@@ -136,30 +136,30 @@ public class GpxLoaderTest {
 
     @Test
     public void testEnd() {
-        CacheTagsToSql cacheTagsToSql = PowerMock
-                .createMock(CacheTagsToSql.class);
+        CacheXmlTagsToSql cacheXmlTagsToSql = PowerMock
+                .createMock(CacheXmlTagsToSql.class);
 
-        cacheTagsToSql.end();
+        cacheXmlTagsToSql.end();
 
         PowerMock.replayAll();
-        new GpxLoader(cacheTagsToSql, null, null, null).end();
+        new GpxLoader(cacheXmlTagsToSql, null, null, null).end();
         PowerMock.verifyAll();
     }
 
     @Test
     public void testLoad() throws XmlPullParserException, IOException, CancelException {
-        CacheTagsToSql cacheTagsToSql = PowerMock
-                .createMock(CacheTagsToSql.class);
+        CacheXmlTagsToSql cacheXmlTagsToSql = PowerMock
+                .createMock(CacheXmlTagsToSql.class);
         GpxToCache gpxToCache = PowerMock.createMock(GpxToCache.class);
         EventHelper eventHelper = PowerMock.createMock(EventHelper.class);
 
         expect(wakeLockProvider.get()).andReturn(importWakeLock);
         importWakeLock.acquire(15000);
-        expect(gpxToCache.load(eventHelper, null, cacheTagsToSql)).andReturn(false);
-        cacheTagsToSql.close(true);
+        expect(gpxToCache.load(eventHelper, null, cacheXmlTagsToSql)).andReturn(false);
+        cacheXmlTagsToSql.close(true);
 
         PowerMock.replayAll();
-        assertTrue(new GpxLoader(cacheTagsToSql, null, gpxToCache, wakeLockProvider).load(
+        assertTrue(new GpxLoader(cacheXmlTagsToSql, null, gpxToCache, wakeLockProvider).load(
                 eventHelper,
                 null));
         PowerMock.verifyAll();
@@ -167,18 +167,18 @@ public class GpxLoaderTest {
 
     @Test
     public void testLoadAlreadyLoaded() throws XmlPullParserException, IOException, CancelException {
-        CacheTagsToSql cacheTagsToSql = PowerMock
-                .createMock(CacheTagsToSql.class);
+        CacheXmlTagsToSql cacheXmlTagsToSql = PowerMock
+                .createMock(CacheXmlTagsToSql.class);
         GpxToCache gpxToCache = PowerMock.createMock(GpxToCache.class);
         EventHelper eventHelper = PowerMock.createMock(EventHelper.class);
 
         expect(wakeLockProvider.get()).andReturn(importWakeLock);
         importWakeLock.acquire(15000);
-        expect(gpxToCache.load(eventHelper, null, cacheTagsToSql)).andReturn(true);
-        cacheTagsToSql.close(false);
+        expect(gpxToCache.load(eventHelper, null, cacheXmlTagsToSql)).andReturn(true);
+        cacheXmlTagsToSql.close(false);
 
         PowerMock.replayAll();
-        assertTrue(new GpxLoader(cacheTagsToSql, null, gpxToCache, wakeLockProvider).load(
+        assertTrue(new GpxLoader(cacheXmlTagsToSql, null, gpxToCache, wakeLockProvider).load(
                 eventHelper,
                 null));
         PowerMock.verifyAll();
@@ -216,28 +216,28 @@ public class GpxLoaderTest {
 
     @Test
     public void testOpen() throws XmlPullParserException {
-        CacheTagsToSql cacheTagsToSql = PowerMock
-                .createMock(CacheTagsToSql.class);
+        CacheXmlTagsToSql cacheXmlTagsToSql = PowerMock
+                .createMock(CacheXmlTagsToSql.class);
         GpxToCache gpxToCache = PowerMock.createMock(GpxToCache.class);
         Reader reader = PowerMock.createMock(Reader.class);
 
         gpxToCache.open("/sdcard/foo.gpx", "foo.gpx", reader);
-        cacheTagsToSql.open("foo.gpx");
+        cacheXmlTagsToSql.open("foo.gpx");
 
         PowerMock.replayAll();
-        new GpxLoader(cacheTagsToSql, null, gpxToCache, null).open("/sdcard/foo.gpx", reader);
+        new GpxLoader(cacheXmlTagsToSql, null, gpxToCache, null).open("/sdcard/foo.gpx", reader);
         PowerMock.verifyAll();
     }
 
     @Test
     public void testStart() {
-        CacheTagsToSql cacheTagsToSql = PowerMock
-                .createMock(CacheTagsToSql.class);
+        CacheXmlTagsToSql cacheXmlTagsToSql = PowerMock
+                .createMock(CacheXmlTagsToSql.class);
 
-        cacheTagsToSql.start();
+        cacheXmlTagsToSql.start();
 
         PowerMock.replayAll();
-        new GpxLoader(cacheTagsToSql, null, null, null).start();
+        new GpxLoader(cacheXmlTagsToSql, null, null, null).start();
         PowerMock.verifyAll();
     }
 }

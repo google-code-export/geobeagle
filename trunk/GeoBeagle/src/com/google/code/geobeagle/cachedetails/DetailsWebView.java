@@ -17,7 +17,7 @@ package com.google.code.geobeagle.cachedetails;
 import com.google.code.geobeagle.cacheloader.CacheLoader;
 import com.google.code.geobeagle.cacheloader.CacheLoaderException;
 import com.google.code.geobeagle.cacheloader.CacheLoaderFactory;
-import com.google.code.geobeagle.xmlimport.CacheTagsToDetails;
+import com.google.code.geobeagle.xmlimport.CacheXmlTagsToDetails;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 
@@ -37,8 +37,8 @@ class DetailsWebView {
     @Inject
     DetailsWebView(Injector injector) {
         CacheLoaderFactory cacheLoaderFactory = injector.getInstance(CacheLoaderFactory.class);
-        CacheTagsToDetails cacheTagsToDetails = injector.getInstance(CacheTagsToDetails.class);
-        cacheLoader = cacheLoaderFactory.create(cacheTagsToDetails);
+        CacheXmlTagsToDetails cacheXmlTagsToDetails = injector.getInstance(CacheXmlTagsToDetails.class);
+        cacheLoader = cacheLoaderFactory.create(cacheXmlTagsToDetails);
         this.resources = injector.getInstance(Resources.class);
     }
 

@@ -7,13 +7,13 @@ import com.google.inject.Inject;
 
 import java.io.IOException;
 
-public class CacheTagsToDetails extends CacheTagHandler {
+public class CacheXmlTagsToDetails extends CacheXmlTagHandler {
 
     private final CacheDetailsWriter cacheDetailsWriter;
     private boolean encrypted;
 
     @Inject
-    public CacheTagsToDetails(CacheDetailsWriter cacheDetailsWriter) {
+    public CacheXmlTagsToDetails(CacheDetailsWriter cacheDetailsWriter) {
         this.cacheDetailsWriter = cacheDetailsWriter;
     }
 

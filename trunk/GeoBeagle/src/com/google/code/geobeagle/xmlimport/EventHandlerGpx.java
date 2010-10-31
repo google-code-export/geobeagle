@@ -21,29 +21,29 @@ import java.io.IOException;
 
 public class EventHandlerGpx implements EventHandler {
 
-    private final CacheTagHandler cacheTagHandler;
+    private final CacheXmlTagHandler cacheXmlTagHandler;
     private XmlPullParser xmlPullParser;
 
-    public EventHandlerGpx(CacheTagHandler cacheTagHandler) {
-        this.cacheTagHandler = cacheTagHandler;
+    public EventHandlerGpx(CacheXmlTagHandler cacheXmlTagHandler) {
+        this.cacheXmlTagHandler = cacheXmlTagHandler;
     }
 
     @Override
     public void endTag(String name, String previousFullPath)
             throws IOException {
-        GpxPath.fromString(previousFullPath).endTag(cacheTagHandler);
+        GpxPath.fromString(previousFullPath).endTag(cacheXmlTagHandler);
     }
 
     @Override
     public void startTag(String name, String fullPath)
             throws IOException {
-        GpxPath.fromString(fullPath).startTag(xmlPullParser, cacheTagHandler);
+        GpxPath.fromString(fullPath).startTag(xmlPullParser, cacheXmlTagHandler);
     }
 
     @Override
     public boolean text(String fullPath, String text)
             throws IOException {
-        return GpxPath.fromString(fullPath).text(text, cacheTagHandler);
+        return GpxPath.fromString(fullPath).text(text, cacheXmlTagHandler);
     }
 
     @Override
