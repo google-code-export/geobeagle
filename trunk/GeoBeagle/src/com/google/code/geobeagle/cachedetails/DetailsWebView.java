@@ -18,7 +18,6 @@ import com.google.code.geobeagle.cacheloader.CacheLoader;
 import com.google.code.geobeagle.cacheloader.CacheLoaderException;
 import com.google.code.geobeagle.cacheloader.CacheLoaderFactory;
 import com.google.code.geobeagle.xmlimport.CacheTagsToDetails;
-import com.google.code.geobeagle.xmlimport.EventHandlerGpx;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 
@@ -39,8 +38,7 @@ class DetailsWebView {
     DetailsWebView(Injector injector) {
         CacheLoaderFactory cacheLoaderFactory = injector.getInstance(CacheLoaderFactory.class);
         CacheTagsToDetails cacheTagsToDetails = injector.getInstance(CacheTagsToDetails.class);
-        EventHandlerGpx eventHandlerGpx = new EventHandlerGpx(cacheTagsToDetails);
-        cacheLoader = cacheLoaderFactory.create(eventHandlerGpx);
+        cacheLoader = cacheLoaderFactory.create(cacheTagsToDetails);
         this.resources = injector.getInstance(Resources.class);
     }
 
