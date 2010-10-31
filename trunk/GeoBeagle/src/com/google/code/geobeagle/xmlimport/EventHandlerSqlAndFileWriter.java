@@ -22,11 +22,11 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
-public class EventHandlerComposite implements EventHandler {
+public class EventHandlerSqlAndFileWriter implements EventHandler {
     private final List<EventHandler> eventHandlers;
 
     @Inject
-    public EventHandlerComposite(XmlWriter xmlWriter, CacheTagsToDetails cacheTagsToDetails) {
+    public EventHandlerSqlAndFileWriter(XmlWriter xmlWriter, CacheTagsToDetails cacheTagsToDetails) {
         this.eventHandlers = Arrays.asList(xmlWriter, new EventHandlerGpx(cacheTagsToDetails));
     }
 

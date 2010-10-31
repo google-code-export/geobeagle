@@ -16,7 +16,6 @@ package com.google.code.geobeagle.cacheloader;
 
 import com.google.code.geobeagle.cachedetails.StringWriterWrapper;
 import com.google.code.geobeagle.xmlimport.EventHelper;
-import com.google.inject.Inject;
 import com.google.inject.Provider;
 
 import org.xmlpull.v1.XmlPullParser;
@@ -28,28 +27,29 @@ import java.io.Reader;
 class DetailsXmlToString {
     private final StringWriterWrapper mStringWriterWrapper;
     private final Provider<XmlPullParser> mXmlPullParserProvider;
+    private final EventHelper mEventHelper;
 
-    @Inject
-    DetailsXmlToString(
+    DetailsXmlToString(EventHelper eventHelper,
             StringWriterWrapper stringWriterWrapper,
             Provider<XmlPullParser> xmlPullParserProvider) {
         mStringWriterWrapper = stringWriterWrapper;
         mXmlPullParserProvider = xmlPullParserProvider;
+        mEventHelper = eventHelper;
     }
 
-    String read(EventHelper eventHelper, Reader reader) throws XmlPullParserException,
+    String read(Reader reader) throws XmlPullParserException,
             IOException {
         XmlPullParser xmlPullParser = mXmlPullParserProvider.get();
         xmlPullParser.setInput(reader);
-        eventHelper.open(xmlPullParser);
+        mEventHelper.open(xmlPullParser);
         int eventType;
         for (eventType = xmlPullParser.getEventType(); eventType != XmlPullParser.END_DOCUMENT; eventType = xmlPullParser
                 .next()) {
-            eventHelper.handleEvent(eventType);
+            mEventHelper.handleEvent(eventType);
         }
 
         // Pick up END_DOCUMENT event as well.
-        eventHelper.handleEvent(eventType);
+        mEventHelper.handleEvent(eventType);
 
         return mStringWriterWrapper.getString();
     }

@@ -33,8 +33,8 @@ public class GpxToCache {
     static class EventHelperComposite extends EventHelper {
         @Inject
         public EventHelperComposite(XmlPathBuilder xmlPathBuilder,
-                EventHandlerComposite eventHandlerComposite) {
-            super(xmlPathBuilder, eventHandlerComposite);
+                EventHandlerSqlAndFileWriter eventHandlerSqlAndFileWriter) {
+            super(xmlPathBuilder, eventHandlerSqlAndFileWriter);
         }
 
     }
