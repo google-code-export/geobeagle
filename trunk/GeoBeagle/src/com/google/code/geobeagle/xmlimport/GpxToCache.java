@@ -30,9 +30,9 @@ public class GpxToCache {
     public static class CancelException extends Exception {
     }
 
-    static class EventHelperComposite extends EventHelper {
+    static class EventHelperSqlAndFileWriter extends EventHelper {
         @Inject
-        public EventHelperComposite(XmlPathBuilder xmlPathBuilder,
+        public EventHelperSqlAndFileWriter(XmlPathBuilder xmlPathBuilder,
                 EventHandlerSqlAndFileWriter eventHandlerSqlAndFileWriter) {
             super(xmlPathBuilder, eventHandlerSqlAndFileWriter);
         }
@@ -51,7 +51,7 @@ public class GpxToCache {
     GpxToCache(Provider<XmlPullParser> xmlPullParserProvider,
             Aborter aborter,
             FileAlreadyLoadedChecker fileAlreadyLoadedChecker,
-            EventHelperComposite eventHelper,
+            EventHelperSqlAndFileWriter eventHelper,
             XmlWriter xmlWriter) {
         mXmlPullParserProvider = xmlPullParserProvider;
         mAborter = aborter;
