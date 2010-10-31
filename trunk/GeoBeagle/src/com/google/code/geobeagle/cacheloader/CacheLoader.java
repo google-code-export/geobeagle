@@ -29,19 +29,19 @@ import java.io.StringReader;
 public class CacheLoader {
     private final EventHelper eventHelper;
     private final DetailsDatabaseReader detailsDatabaseReader;
-    private final DetailsReader detailsReader;
+    private final DetailsXmlToString detailsXmlToString;
     private final CacheReaderFromFile cacheReaderFromFile;
     private final Resources resources;
 
     CacheLoader(
             EventHelper eventHelper,
             DetailsDatabaseReader detailsDatabaseReader,
-            DetailsReader detailsReader,
+            DetailsXmlToString detailsXmlToString,
             CacheReaderFromFile cacheReaderFromFile,
             Resources resources) {
         this.eventHelper = eventHelper;
         this.detailsDatabaseReader = detailsDatabaseReader;
-        this.detailsReader = detailsReader;
+        this.detailsXmlToString = detailsXmlToString;
         this.cacheReaderFromFile = cacheReaderFromFile;
         this.resources = resources;
     }
@@ -49,7 +49,7 @@ public class CacheLoader {
     public String load(CharSequence sourceName, CharSequence cacheId) throws CacheLoaderException {
         Reader reader = createReader(sourceName, cacheId);
         try {
-            return detailsReader.read(eventHelper, reader);
+            return detailsXmlToString.read(eventHelper, reader);
         } catch (XmlPullParserException e) {
             return resources.getString(R.string.error_reading_details_file, cacheId);
         } catch (IOException e) {

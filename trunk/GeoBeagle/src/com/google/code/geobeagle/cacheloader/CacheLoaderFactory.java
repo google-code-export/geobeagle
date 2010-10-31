@@ -25,19 +25,19 @@ import android.content.res.Resources;
 
 public class CacheLoaderFactory {
     private final DetailsDatabaseReader detailsDatabaseReader;
-    private final DetailsReader detailsReader;
+    private final DetailsXmlToString detailsXmlToString;
     private final CacheReaderFromFile cacheReaderFromFile;
     private final Resources resources;
     private final XmlPathBuilder xmlPathBuilder;
 
     @Inject
     public CacheLoaderFactory(DetailsDatabaseReader detailsDatabaseReader,
-            DetailsReader detailsReader,
+            DetailsXmlToString detailsXmlToString,
             CacheReaderFromFile cacheReaderFromFile,
             Resources resources,
             XmlPathBuilder xmlPathBuilder) {
         this.detailsDatabaseReader = detailsDatabaseReader;
-        this.detailsReader = detailsReader;
+        this.detailsXmlToString = detailsXmlToString;
         this.cacheReaderFromFile = cacheReaderFromFile;
         this.resources = resources;
         this.xmlPathBuilder = xmlPathBuilder;
@@ -46,6 +46,6 @@ public class CacheLoaderFactory {
     public CacheLoader create(CacheTagHandler cacheTagHandler) {
         return new CacheLoader(
                 new EventHelper(xmlPathBuilder, new EventHandlerGpx(cacheTagHandler)),
-                detailsDatabaseReader, detailsReader, cacheReaderFromFile, resources);
+                detailsDatabaseReader, detailsXmlToString, cacheReaderFromFile, resources);
     }
 }
