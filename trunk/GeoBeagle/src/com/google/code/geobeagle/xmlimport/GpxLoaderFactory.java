@@ -51,7 +51,7 @@ public class GpxLoaderFactory {
         return create(importCacheActionsFromBCaching, eventHandlerSqlAndFileWriter);
     }
 
-    private GpxLoader create(CacheTagsToSql importCacheActions, EventHandler eventHandler) {
+    private GpxLoader create(CacheXmlTagsToSql importCacheActions, EventHandler eventHandler) {
         GpxToCache gpxToCache = gpxToCacheFactory.create(eventHandler);
         return new GpxLoader(importCacheActions, errorDisplayer, gpxToCache, importWakeLockProvider);
     }

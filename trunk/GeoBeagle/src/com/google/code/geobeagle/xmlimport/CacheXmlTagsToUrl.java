@@ -18,11 +18,11 @@ import com.google.inject.Inject;
 
 import java.io.IOException;
 
-public class CacheTagsToUrl extends CacheTagHandler {
+public class CacheXmlTagsToUrl extends CacheXmlTagHandler {
     private final StringWriterWrapper stringWriterWrapper;
 
     @Inject
-    CacheTagsToUrl(StringWriterWrapper stringWriterWrapper) {
+    CacheXmlTagsToUrl(StringWriterWrapper stringWriterWrapper) {
         this.stringWriterWrapper = stringWriterWrapper;
     }
 

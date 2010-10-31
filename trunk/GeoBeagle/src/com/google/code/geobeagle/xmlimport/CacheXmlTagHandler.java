@@ -18,7 +18,7 @@ import com.google.code.geobeagle.GeocacheFactory.Source;
 
 import java.io.IOException;
 
-public class CacheTagHandler {
+public class CacheXmlTagHandler {
 
     @SuppressWarnings("unused")
     public void archived(String attributeValue) {
