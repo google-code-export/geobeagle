@@ -21,7 +21,6 @@ import com.google.code.geobeagle.cacheloader.CacheLoader;
 import com.google.code.geobeagle.cacheloader.CacheLoaderException;
 import com.google.code.geobeagle.cacheloader.CacheLoaderFactory;
 import com.google.code.geobeagle.xmlimport.CacheTagsToUrl;
-import com.google.code.geobeagle.xmlimport.EventHandlerGpx;
 import com.google.inject.Inject;
 
 import android.content.res.Resources;
@@ -43,8 +42,7 @@ public class GeocacheToCachePage implements GeocacheToUri {
     public GeocacheToCachePage(Resources resources,
             CacheTagsToUrl cacheTagsToUrl,
             CacheLoaderFactory cacheLoaderFactory) {
-        EventHandlerGpx eventHandlerGpx = new EventHandlerGpx(cacheTagsToUrl);
-        cacheLoader = cacheLoaderFactory.create(eventHandlerGpx);
+        cacheLoader = cacheLoaderFactory.create(cacheTagsToUrl);
         this.resources = resources;
     }
 
