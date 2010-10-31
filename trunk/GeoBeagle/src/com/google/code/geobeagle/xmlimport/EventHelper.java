@@ -21,7 +21,7 @@ import org.xmlpull.v1.XmlPullParser;
 import java.io.IOException;
 
 public class EventHelper {
-    public class EventHelperFactory {
+    public static class EventHelperFactory {
         private final XmlPathBuilder xmlPathBuilder;
 
         @Inject
