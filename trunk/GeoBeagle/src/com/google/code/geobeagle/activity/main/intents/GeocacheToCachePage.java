@@ -20,7 +20,7 @@ import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.cacheloader.CacheLoader;
 import com.google.code.geobeagle.cacheloader.CacheLoaderException;
 import com.google.code.geobeagle.cacheloader.CacheLoaderFactory;
-import com.google.code.geobeagle.xmlimport.CacheTagHandler;
+import com.google.code.geobeagle.xmlimport.CacheTagsToUrl;
 import com.google.code.geobeagle.xmlimport.EventHandlerGpx;
 import com.google.inject.Inject;
 
@@ -41,7 +41,7 @@ public class GeocacheToCachePage implements GeocacheToUri {
 
     @Inject
     public GeocacheToCachePage(Resources resources,
-            CacheTagHandler cacheTagsToUrl,
+            CacheTagsToUrl cacheTagsToUrl,
             CacheLoaderFactory cacheLoaderFactory) {
         EventHandlerGpx eventHandlerGpx = new EventHandlerGpx(cacheTagsToUrl);
         cacheLoader = cacheLoaderFactory.create(eventHandlerGpx);
