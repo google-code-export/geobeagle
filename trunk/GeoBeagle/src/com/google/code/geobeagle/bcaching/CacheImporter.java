@@ -20,8 +20,6 @@ import com.google.code.geobeagle.xmlimport.GpxLoader;
 import com.google.code.geobeagle.xmlimport.GpxLoaderFactory;
 import com.google.inject.Inject;
 
-import org.xmlpull.v1.XmlPullParserException;
-
 import java.io.BufferedReader;
 import java.util.Hashtable;
 
@@ -51,14 +49,8 @@ public class CacheImporter {
     public boolean load(String csvIds) throws BCachingException {
         params.put("ids", csvIds);
 
-        try {
-            BufferedReader bufferedReader = bufferedReaderFactory.create(params);
-            gpxLoader.open("BCaching.com", bufferedReader);
-        } catch (XmlPullParserException e) {
-            throw new BCachingException("Error parsing data from baching.com: "
-                    + e.getLocalizedMessage());
-        }
-        return gpxLoader.load();
+        BufferedReader bufferedReader = bufferedReaderFactory.create(params);
+        return gpxLoader.load("BCaching.com", bufferedReader);
     }
 
     public String getLastModified() {
