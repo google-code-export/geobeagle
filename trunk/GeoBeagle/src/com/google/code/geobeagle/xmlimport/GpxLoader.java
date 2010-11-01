@@ -66,7 +66,7 @@ public class GpxLoader {
             boolean alreadyLoaded = mGpxToCache.load();
             markLoadAsComplete = !alreadyLoaded;
             continueLoading = true;
-        } catch (final SQLiteException e) {
+        } catch (SQLiteException e) {
             mErrorDisplayer.displayError(R.string.error_writing_cache, mGpxToCache.getSource()
                     + ": " + e.getMessage());
         } catch (XmlPullParserException e) {
