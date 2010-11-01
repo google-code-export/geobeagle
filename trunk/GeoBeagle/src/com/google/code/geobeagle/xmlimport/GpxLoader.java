@@ -29,7 +29,7 @@ import java.io.IOException;
 import java.io.Reader;
 
 public class GpxLoader {
-    private final CacheXmlTagsToSql mImportCacheActions;
+    private final CacheXmlTagsToSql mCacheTagsToSql;
     private final ErrorDisplayer mErrorDisplayer;
     private final GpxToCache mGpxToCache;
     private final Provider<ImportWakeLock> mImportWakeLockProvider;
@@ -40,13 +40,13 @@ public class GpxLoader {
             GpxToCache gpxToCache,
             Provider<ImportWakeLock> importWakeLockProvider) {
         mGpxToCache = gpxToCache;
-        mImportCacheActions = cacheXmlTagsToSql;
+        mCacheTagsToSql = cacheXmlTagsToSql;
         mErrorDisplayer = errorDisplayer;
         mImportWakeLockProvider = importWakeLockProvider;
     }
 
     public void end() {
-        mImportCacheActions.end();
+        mCacheTagsToSql.end();
     }
 
     /**
@@ -75,7 +75,7 @@ public class GpxLoader {
                     + ": " + e.getMessage());
         } catch (CancelException e) {
         }
-        mImportCacheActions.close(markLoadAsComplete);
+        mCacheTagsToSql.close(markLoadAsComplete);
         return continueLoading;
     }
 
@@ -83,14 +83,14 @@ public class GpxLoader {
         final String filename = new File(path).getName();
         mGpxToCache.open(path, filename, reader);
         // Just use the filename, not the whole path.
-        mImportCacheActions.open(filename);
+        mCacheTagsToSql.open(filename);
     }
 
     public void start() {
-        mImportCacheActions.start();
+        mCacheTagsToSql.start();
     }
 
     public String getLastModified() {
-        return mImportCacheActions.getLastModified();
+        return mCacheTagsToSql.getLastModified();
     }
 }
