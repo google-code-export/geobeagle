@@ -18,8 +18,6 @@ import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.bcaching.BCachingModule;
 import com.google.code.geobeagle.xmlimport.gpx.IGpxReader;
 
-import org.xmlpull.v1.XmlPullParserException;
-
 import android.content.SharedPreferences;
 
 import java.io.IOException;
@@ -56,12 +54,11 @@ public class ImportThreadHelper {
                     .getImportFolder());
     }
 
-    public boolean processFile(IGpxReader gpxReader) throws XmlPullParserException, IOException {
+    public boolean processFile(IGpxReader gpxReader) throws IOException {
         String filename = gpxReader.getFilename();
 
         mHasFiles = true;
-        mGpxLoader.open(filename, gpxReader.open());
-        return mGpxLoader.load();
+        return mGpxLoader.load(filename, gpxReader.open());
     }
 
     public void start() {

@@ -53,10 +53,15 @@ public class GpxLoader {
      * @return true if we should continue loading more files, false if we should
      *         terminate.
      */
-    public boolean load() {
+    public boolean load(String path, Reader reader) {
         boolean markLoadAsComplete = false;
         boolean continueLoading = false;
         try {
+            final String filename = new File(path).getName();
+            mGpxToCache.open(path, filename, reader);
+            // Just use the filename, not the whole path.
+            mCacheTagsToSql.open(filename);
+
             mImportWakeLockProvider.get().acquire(WAKELOCK_DURATION);
             boolean alreadyLoaded = mGpxToCache.load();
             markLoadAsComplete = !alreadyLoaded;
@@ -77,13 +82,6 @@ public class GpxLoader {
         }
         mCacheTagsToSql.close(markLoadAsComplete);
         return continueLoading;
-    }
-
-    public void open(String path, Reader reader) throws XmlPullParserException {
-        final String filename = new File(path).getName();
-        mGpxToCache.open(path, filename, reader);
-        // Just use the filename, not the whole path.
-        mCacheTagsToSql.open(filename);
     }
 
     public void start() {
