@@ -40,14 +40,25 @@ import android.widget.Toast;
  */
 @ContextScoped
 public class ImportBCachingWorker extends RoboThread implements Abortable {
-    private final CacheListCursor cursor;
     private final CacheImporter cacheImporter;
+    private final CacheListCursor cursor;
     private final ErrorDisplayer errorDisplayer;
     private boolean inProgress;
     private final ProgressHandler progressHandler;
     private final ProgressManager progressManager;
     private final ToasterFactory toasterFactory;
     private final UpdateFlag updateFlag;
+
+    @Inject
+    public ImportBCachingWorker(Injector injector) {
+        this.progressHandler = injector.getInstance(ProgressHandler.class);
+        this.errorDisplayer = injector.getInstance(ErrorDisplayer.class);
+        this.progressManager = injector.getInstance(ProgressManager.class);
+        this.cacheImporter = injector.getInstance(CacheImporter.class);
+        this.toasterFactory = injector.getInstance(ToasterFactory.class);
+        this.cursor = injector.getInstance(CacheListCursor.class);
+        this.updateFlag = injector.getInstance(UpdateFlag.class);
+    }
 
     public ImportBCachingWorker(ProgressHandler progressHandler, ProgressManager progressManager,
             ErrorDisplayer errorDisplayer, CacheImporter cacheImporter,
@@ -60,17 +71,6 @@ public class ImportBCachingWorker extends RoboThread implements Abortable {
         this.toasterFactory = toasterFactory;
         this.cursor = cacheListCursor;
         this.updateFlag = updateFlag;
-    }
-
-    @Inject
-    public ImportBCachingWorker(Injector injector) {
-        this.progressHandler = injector.getInstance(ProgressHandler.class);
-        this.errorDisplayer = injector.getInstance(ErrorDisplayer.class);
-        this.progressManager = injector.getInstance(ProgressManager.class);
-        this.cacheImporter = injector.getInstance(CacheImporter.class);
-        this.toasterFactory = injector.getInstance(ToasterFactory.class);
-        this.cursor = injector.getInstance(CacheListCursor.class);
-        this.updateFlag = injector.getInstance(UpdateFlag.class);
     }
 
     /*
