@@ -44,15 +44,15 @@ public class GpxLoaderFactory {
     }
 
     public GpxLoader createFileLoader() {
-        return create(importCacheActionsFromFile, eventHandlerSqlAndFileWriter);
+        return create(importCacheActionsFromFile);
     }
 
     public GpxLoader createBCachingLoader() {
-        return create(importCacheActionsFromBCaching, eventHandlerSqlAndFileWriter);
+        return create(importCacheActionsFromBCaching);
     }
 
-    private GpxLoader create(CacheXmlTagsToSql importCacheActions, EventHandler eventHandler) {
-        GpxToCache gpxToCache = gpxToCacheFactory.create(eventHandler);
+    private GpxLoader create(CacheXmlTagsToSql importCacheActions) {
+        GpxToCache gpxToCache = gpxToCacheFactory.create(eventHandlerSqlAndFileWriter);
         return new GpxLoader(importCacheActions, errorDisplayer, gpxToCache, importWakeLockProvider);
     }
 }
