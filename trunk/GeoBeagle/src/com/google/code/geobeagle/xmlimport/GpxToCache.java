@@ -37,22 +37,25 @@ public class GpxToCache {
         private final FileAlreadyLoadedChecker fileAlreadyLoadedChecker;
         private final XmlWriter xmlWriter;
         private final EventHelperFactory eventHelperFactory;
+        private final EventHandlerSqlAndFileWriter eventHandlerSqlAndFileWriter;
 
         public GpxToCacheFactory(Provider<XmlPullParser> xmlPullParserProvider,
                 Aborter aborter,
                 FileAlreadyLoadedChecker fileAlreadyLoadedChecker,
                 XmlWriter xmlWriter,
-                EventHelperFactory eventHelperFactory) {
+                EventHelperFactory eventHelperFactory,
+                EventHandlerSqlAndFileWriter eventHandlerSqlAndFileWriter) {
             this.xmlPullParserProvider = xmlPullParserProvider;
             this.aborter = aborter;
             this.fileAlreadyLoadedChecker = fileAlreadyLoadedChecker;
             this.xmlWriter = xmlWriter;
             this.eventHelperFactory = eventHelperFactory;
+            this.eventHandlerSqlAndFileWriter = eventHandlerSqlAndFileWriter;
         }
 
-        public GpxToCache create(EventHandler eventHandler) {
+        public GpxToCache create() {
             return new GpxToCache(xmlPullParserProvider, aborter, fileAlreadyLoadedChecker,
-                    eventHelperFactory.create(eventHandler), xmlWriter);
+                    eventHelperFactory.create(eventHandlerSqlAndFileWriter), xmlWriter);
         }
     }
 
