@@ -24,8 +24,6 @@ import com.google.code.geobeagle.database.DbFrontend;
 import com.google.code.geobeagle.xmlimport.gpx.GpxAndZipFiles;
 import com.google.code.geobeagle.xmlimport.gpx.GpxAndZipFiles.GpxFilesAndZipFilesIter;
 
-import org.xmlpull.v1.XmlPullParserException;
-
 import android.util.Log;
 
 import java.io.FileNotFoundException;
@@ -69,9 +67,6 @@ public class ImportThreadDelegate {
         } catch (IOException e) {
             mErrorDisplayer.displayError(R.string.error_reading_file, e.getMessage());
             return;
-        } catch (XmlPullParserException e) {
-            mErrorDisplayer.displayError(R.string.error_parsing_file, e.getMessage());
-            return;
         } catch (ImportException e) {
             mErrorDisplayer.displayError(e.getError(), e.getPath());
             return;
@@ -90,8 +85,7 @@ public class ImportThreadDelegate {
         return mIsAlive;
     }
 
-    protected void tryRun() throws IOException, XmlPullParserException, ImportException,
-            CancelException {
+    protected void tryRun() throws IOException, ImportException, CancelException {
         if (mFileDataVersionChecker.needsUpdating()) {
             mDbFrontend.forceUpdate();
             mBCachingStartTime.clearStartTime();
