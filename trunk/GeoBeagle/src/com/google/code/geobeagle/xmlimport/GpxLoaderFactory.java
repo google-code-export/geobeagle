@@ -26,21 +26,18 @@ public class GpxLoaderFactory {
     private final Provider<ImportWakeLock> importWakeLockProvider;
     private final ImportCacheActionsFromBCaching importCacheActionsFromBCaching;
     private final GpxToCacheFactory gpxToCacheFactory;
-    private final EventHandlerSqlAndFileWriter eventHandlerSqlAndFileWriter;
 
     @Inject
     GpxLoaderFactory(Provider<ImportWakeLock> importWakeLockProvider,
             ErrorDisplayer errorDisplayer,
             ImportCacheActionsFromFile importCacheActionsFromFile,
             ImportCacheActionsFromBCaching importCacheActionsFromBCaching,
-            GpxToCacheFactory gpxToCacheFactory,
-            EventHandlerSqlAndFileWriter eventHandlerSqlAndFileWriter) {
+            GpxToCacheFactory gpxToCacheFactory) {
         this.importWakeLockProvider = importWakeLockProvider;
         this.errorDisplayer = errorDisplayer;
         this.importCacheActionsFromFile = importCacheActionsFromFile;
         this.importCacheActionsFromBCaching = importCacheActionsFromBCaching;
         this.gpxToCacheFactory = gpxToCacheFactory;
-        this.eventHandlerSqlAndFileWriter = eventHandlerSqlAndFileWriter;
     }
 
     public GpxLoader createFileLoader() {
@@ -52,7 +49,7 @@ public class GpxLoaderFactory {
     }
 
     private GpxLoader create(CacheXmlTagsToSql importCacheActions) {
-        GpxToCache gpxToCache = gpxToCacheFactory.create(eventHandlerSqlAndFileWriter);
+        GpxToCache gpxToCache = gpxToCacheFactory.create();
         return new GpxLoader(importCacheActions, errorDisplayer, gpxToCache, importWakeLockProvider);
     }
 }
