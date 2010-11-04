@@ -87,8 +87,4 @@ public class GpxLoader {
     public void start() {
         mCacheTagsToSql.start();
     }
-
-    public String getLastModified() {
-        return mCacheTagsToSql.getLastModified();
-    }
 }

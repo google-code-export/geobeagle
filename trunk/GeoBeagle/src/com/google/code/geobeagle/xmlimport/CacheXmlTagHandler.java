@@ -51,10 +51,6 @@ public class CacheXmlTagHandler {
     public void endCache(Source source) throws IOException {
     }
 
-    public String getLastModified() {
-        return null;
-    }
-
     @SuppressWarnings("unused")
     public boolean gpxTime(String gpxTime) {
         return true;

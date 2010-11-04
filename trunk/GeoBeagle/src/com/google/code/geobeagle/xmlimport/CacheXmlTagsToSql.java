@@ -29,7 +29,6 @@ public class CacheXmlTagsToSql extends CacheXmlTagHandler {
     private final CacheTagSqlWriter mCacheTagSqlWriter;
     private final MessageHandlerInterface mMessageHandler;
     private final ImportWakeLock mWakeLock;
-    private String mLastModified;
     private final GeoBeagleEnvironment mGeoBeagleEnvironment;
 
     @Inject
@@ -128,16 +127,6 @@ public class CacheXmlTagsToSql extends CacheXmlTagHandler {
         mCacheTagSqlWriter.id(wpt);
         mMessageHandler.updateWaypointId(wpt);
         mWakeLock.acquire(GpxLoader.WAKELOCK_DURATION);
-    }
-
-    @Override
-    public void lastModified(String trimmedText) {
-        mLastModified = trimmedText;
-    }
-
-    @Override
-    public String getLastModified() {
-        return mLastModified;
     }
 
     @Override
