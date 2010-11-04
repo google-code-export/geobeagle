@@ -53,7 +53,4 @@ public class CacheImporter {
         return gpxLoader.load("BCaching.com", bufferedReader);
     }
 
-    public String getLastModified() {
-        return gpxLoader.getLastModified();
-    }
 }
