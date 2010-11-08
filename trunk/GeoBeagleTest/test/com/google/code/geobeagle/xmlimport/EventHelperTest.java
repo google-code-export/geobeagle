@@ -17,7 +17,7 @@ package com.google.code.geobeagle.xmlimport;
 import static org.easymock.EasyMock.expect;
 import static org.junit.Assert.assertEquals;
 
-import com.google.code.geobeagle.xmlimport.EventHelper.XmlPathBuilder;
+import com.google.code.geobeagle.xmlimport.EventDispatcher.XmlPathBuilder;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -42,8 +42,8 @@ public class EventHelperTest {
         xmlPathBuilder.endTag("name");
 
         PowerMock.replayAll();
-        EventHelper eventHelper = new EventHelper(xmlPathBuilder);
-        eventHelper.handleEvent(XmlPullParser.END_TAG, eventHandlerGpx, null, xmlPullParser);
+        EventDispatcher eventDispatcher = new EventDispatcher(xmlPathBuilder);
+        eventDispatcher.handleEvent(XmlPullParser.END_TAG, eventHandlerGpx, null, xmlPullParser);
         PowerMock.verifyAll();
     }
 
@@ -59,8 +59,8 @@ public class EventHelperTest {
         eventHandlerGpx.startTag("some tag", "/foo", xmlPullParser, null);
 
         PowerMock.replayAll();
-        EventHelper eventHelper = new EventHelper(xmlPathBuilder);
-        eventHelper.handleEvent(XmlPullParser.START_TAG, eventHandlerGpx, null, xmlPullParser);
+        EventDispatcher eventDispatcher = new EventDispatcher(xmlPathBuilder);
+        eventDispatcher.handleEvent(XmlPullParser.START_TAG, eventHandlerGpx, null, xmlPullParser);
         PowerMock.verifyAll();
     }
 
@@ -75,8 +75,8 @@ public class EventHelperTest {
         expect(eventHandlerGpx.text("/path", "text", xmlPullParser, null)).andReturn(true);
 
         PowerMock.replayAll();
-        EventHelper eventHelper = new EventHelper(xmlPathBuilder);
-        eventHelper.handleEvent(XmlPullParser.TEXT, eventHandlerGpx, null, xmlPullParser);
+        EventDispatcher eventDispatcher = new EventDispatcher(xmlPathBuilder);
+        eventDispatcher.handleEvent(XmlPullParser.TEXT, eventHandlerGpx, null, xmlPullParser);
         PowerMock.verifyAll();
     }
 

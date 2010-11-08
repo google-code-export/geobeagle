@@ -14,7 +14,7 @@
 
 package com.google.code.geobeagle.xmlimport;
 
-import com.google.code.geobeagle.xmlimport.EventHelper.EventHelperFactory;
+import com.google.code.geobeagle.xmlimport.EventDispatcher.EventHelperFactory;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
@@ -65,19 +65,19 @@ public class GpxToCache {
     private final FileAlreadyLoadedChecker mTestLocAlreadyLoaded;
     private String mFilename;
     private XmlPullParser mXmlPullParser;
-    private final EventHelper mEventHelper;
+    private final EventDispatcher mEventDispatcher;
     private final XmlWriter mXmlWriter;
 
     @Inject
     GpxToCache(Provider<XmlPullParser> xmlPullParserProvider,
             Aborter aborter,
             FileAlreadyLoadedChecker fileAlreadyLoadedChecker,
-            EventHelper eventHelper,
+            EventDispatcher eventDispatcher,
             XmlWriter xmlWriter) {
         mXmlPullParserProvider = xmlPullParserProvider;
         mAborter = aborter;
         mTestLocAlreadyLoaded = fileAlreadyLoadedChecker;
-        mEventHelper = eventHelper;
+        mEventDispatcher = eventDispatcher;
         mXmlWriter = xmlWriter;
     }
 
@@ -102,7 +102,7 @@ public class GpxToCache {
         }
 
         mXmlWriter.open(mFilename);
-        mEventHelper.open(mXmlPullParser);
+        mEventDispatcher.open(mXmlPullParser);
         int eventType;
         for (eventType = mXmlPullParser.getEventType(); eventType != XmlPullParser.END_DOCUMENT; eventType = mXmlPullParser
                 .next()) {
@@ -112,12 +112,12 @@ public class GpxToCache {
                 throw new CancelException();
             }
             // File already loaded.
-            if (!mEventHelper.handleEvent(eventType))
+            if (!mEventDispatcher.handleEvent(eventType))
                 return true;
         }
 
         // Pick up END_DOCUMENT event as well.
-        mEventHelper.handleEvent(eventType);
+        mEventDispatcher.handleEvent(eventType);
         return false;
     }
 

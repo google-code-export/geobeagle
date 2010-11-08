@@ -17,8 +17,8 @@ package com.google.code.geobeagle.cacheloader;
 import com.google.code.geobeagle.cachedetails.DetailsDatabaseReader;
 import com.google.code.geobeagle.xmlimport.CacheXmlTagHandler;
 import com.google.code.geobeagle.xmlimport.EventHandlerGpx;
-import com.google.code.geobeagle.xmlimport.EventHelper;
-import com.google.code.geobeagle.xmlimport.EventHelper.EventHelperFactory;
+import com.google.code.geobeagle.xmlimport.EventDispatcher;
+import com.google.code.geobeagle.xmlimport.EventDispatcher.EventHelperFactory;
 import com.google.inject.Inject;
 
 import android.content.res.Resources;
@@ -44,9 +44,9 @@ public class CacheLoaderFactory {
     }
 
     public CacheLoader create(CacheXmlTagHandler cacheXmlTagHandler) {
-        EventHelper eventHelper = eventHelperFactory
+        EventDispatcher eventDispatcher = eventHelperFactory
                 .create(new EventHandlerGpx(cacheXmlTagHandler));
         return new CacheLoader(cacheReaderFromFile, detailsDatabaseReader,
-                detailsXmlToStringFactory.create(eventHelper), resources);
+                detailsXmlToStringFactory.create(eventDispatcher), resources);
     }
 }

@@ -15,7 +15,7 @@
 package com.google.code.geobeagle.cacheloader;
 
 import com.google.code.geobeagle.cachedetails.StringWriterWrapper;
-import com.google.code.geobeagle.xmlimport.EventHelper;
+import com.google.code.geobeagle.xmlimport.EventDispatcher;
 import com.google.inject.Provider;
 
 import org.xmlpull.v1.XmlPullParser;
@@ -27,14 +27,14 @@ import java.io.Reader;
 class DetailsXmlToString {
     private final StringWriterWrapper mStringWriterWrapper;
     private final Provider<XmlPullParser> mXmlPullParserProvider;
-    private final EventHelper mEventHelper;
+    private final EventDispatcher mEventHelper;
 
-    DetailsXmlToString(EventHelper eventHelper,
+    DetailsXmlToString(EventDispatcher eventDispatcher,
             StringWriterWrapper stringWriterWrapper,
             Provider<XmlPullParser> xmlPullParserProvider) {
         mStringWriterWrapper = stringWriterWrapper;
         mXmlPullParserProvider = xmlPullParserProvider;
-        mEventHelper = eventHelper;
+        mEventHelper = eventDispatcher;
     }
 
     String read(Reader reader) throws XmlPullParserException,

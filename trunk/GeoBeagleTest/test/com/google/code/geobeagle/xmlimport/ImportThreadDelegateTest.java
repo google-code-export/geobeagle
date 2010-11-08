@@ -26,7 +26,7 @@ import com.google.code.geobeagle.bcaching.preferences.BCachingStartTime;
 import com.google.code.geobeagle.cachedetails.FileDataVersionChecker;
 import com.google.code.geobeagle.cachedetails.FileDataVersionWriter;
 import com.google.code.geobeagle.database.DbFrontend;
-import com.google.code.geobeagle.xmlimport.EventHelperDI.EventHelperFactory;
+import com.google.code.geobeagle.xmlimport.EventHelperDI.EventDispatcher;
 import com.google.code.geobeagle.xmlimport.GpxImporterDI.MessageHandler;
 import com.google.code.geobeagle.xmlimport.gpx.GpxAndZipFiles;
 import com.google.code.geobeagle.xmlimport.gpx.GpxAndZipFiles.GpxAndZipFilenameFilter;
@@ -110,14 +110,14 @@ public class ImportThreadDelegateTest extends GeoBeagleTest {
         IGpxReader gpxFile = PowerMock.createMock(IGpxReader.class);
         Reader reader = PowerMock.createMock(Reader.class);
         EventHelperFactory eventHelperFactory = PowerMock.createMock(EventHelperFactory.class);
-        EventHelper eventHelper = PowerMock.createMock(EventHelper.class);
+        EventDispatcher eventDispatcher = PowerMock.createMock(EventDispatcher.class);
         EventHandler eventHandler = PowerMock.createMock(EventHandler.class);
 
         EasyMock.expect(gpxFile.getFilename()).andReturn("foo.gpx");
-        EasyMock.expect(eventHelperFactory.create()).andReturn(eventHelper);
+        EasyMock.expect(eventHelperFactory.create()).andReturn(eventDispatcher);
         EasyMock.expect(gpxFile.open()).andReturn(reader);
         gpxLoader.open("foo.gpx", reader);
-        EasyMock.expect(gpxLoader.load(eventHelper, eventHandler)).andReturn(true);
+        EasyMock.expect(gpxLoader.load(eventDispatcher, eventHandler)).andReturn(true);
         gpxLoader.end();
 
         PowerMock.replayAll();
