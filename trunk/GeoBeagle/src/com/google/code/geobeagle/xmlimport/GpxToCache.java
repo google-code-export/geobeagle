@@ -14,7 +14,7 @@
 
 package com.google.code.geobeagle.xmlimport;
 
-import com.google.code.geobeagle.xmlimport.EventDispatcher.EventHelperFactory;
+import com.google.code.geobeagle.xmlimport.EventDispatcher.EventDispatcherFactory;
 import com.google.code.geobeagle.xmlimport.EventHandlerSqlAndFileWriter.EventHandlerSqlAndFileWriterFactory;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
@@ -31,26 +31,25 @@ public class GpxToCache {
     @SuppressWarnings("serial")
     public static class CancelException extends Exception {
     }
-
     public static class GpxToCacheFactory {
         private final Provider<XmlPullParser> xmlPullParserProvider;
         private final Aborter aborter;
         private final FileAlreadyLoadedChecker fileAlreadyLoadedChecker;
         private final XmlWriter xmlWriter;
-        private final EventHelperFactory eventHelperFactory;
+        private final EventDispatcherFactory eventDispatcherFactory;
         private final EventHandlerSqlAndFileWriterFactory eventHandlerSqlAndFileWriterFactory;
 
         public GpxToCacheFactory(Provider<XmlPullParser> xmlPullParserProvider,
                 Aborter aborter,
                 FileAlreadyLoadedChecker fileAlreadyLoadedChecker,
                 XmlWriter xmlWriter,
-                EventHelperFactory eventHelperFactory,
+                EventDispatcherFactory eventHelperFactory,
                 EventHandlerSqlAndFileWriterFactory eventHandlerSqlAndFileWriterFactory) {
             this.xmlPullParserProvider = xmlPullParserProvider;
             this.aborter = aborter;
             this.fileAlreadyLoadedChecker = fileAlreadyLoadedChecker;
             this.xmlWriter = xmlWriter;
-            this.eventHelperFactory = eventHelperFactory;
+            this.eventDispatcherFactory = eventHelperFactory;
             this.eventHandlerSqlAndFileWriterFactory = eventHandlerSqlAndFileWriterFactory;
         }
 
@@ -58,7 +57,7 @@ public class GpxToCache {
             EventHandlerSqlAndFileWriter eventHandlerSqlAndFileWriter = eventHandlerSqlAndFileWriterFactory
                     .create(cacheXmlTagsToSql);
             return new GpxToCache(xmlPullParserProvider, aborter, fileAlreadyLoadedChecker,
-                    eventHelperFactory.create(eventHandlerSqlAndFileWriter), xmlWriter);
+                    eventDispatcherFactory.create(eventHandlerSqlAndFileWriter), xmlWriter);
         }
     }
 

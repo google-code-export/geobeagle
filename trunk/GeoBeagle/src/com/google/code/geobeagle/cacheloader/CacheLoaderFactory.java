@@ -16,9 +16,9 @@ package com.google.code.geobeagle.cacheloader;
 
 import com.google.code.geobeagle.cachedetails.DetailsDatabaseReader;
 import com.google.code.geobeagle.xmlimport.CacheXmlTagHandler;
-import com.google.code.geobeagle.xmlimport.EventHandlerGpx;
 import com.google.code.geobeagle.xmlimport.EventDispatcher;
-import com.google.code.geobeagle.xmlimport.EventDispatcher.EventHelperFactory;
+import com.google.code.geobeagle.xmlimport.EventDispatcher.EventDispatcherFactory;
+import com.google.code.geobeagle.xmlimport.EventHandlerGpx;
 import com.google.inject.Inject;
 
 import android.content.res.Resources;
@@ -28,23 +28,23 @@ public class CacheLoaderFactory {
     private final DetailsXmlToStringFactory detailsXmlToStringFactory;
     private final CacheReaderFromFile cacheReaderFromFile;
     private final Resources resources;
-    private final EventHelperFactory eventHelperFactory;
+    private final EventDispatcherFactory eventDispatcherFactory;
 
     @Inject
     public CacheLoaderFactory(DetailsDatabaseReader detailsDatabaseReader,
             DetailsXmlToStringFactory detailsXmlToStringFactory,
             CacheReaderFromFile cacheReaderFromFile,
             Resources resources,
-            EventHelperFactory eventHelperFactory) {
+            EventDispatcherFactory eventDispatcherFactory) {
         this.detailsDatabaseReader = detailsDatabaseReader;
         this.detailsXmlToStringFactory = detailsXmlToStringFactory;
         this.cacheReaderFromFile = cacheReaderFromFile;
         this.resources = resources;
-        this.eventHelperFactory = eventHelperFactory;
+        this.eventDispatcherFactory = eventDispatcherFactory;
     }
 
     public CacheLoader create(CacheXmlTagHandler cacheXmlTagHandler) {
-        EventDispatcher eventDispatcher = eventHelperFactory
+        EventDispatcher eventDispatcher = eventDispatcherFactory
                 .create(new EventHandlerGpx(cacheXmlTagHandler));
         return new CacheLoader(cacheReaderFromFile, detailsDatabaseReader,
                 detailsXmlToStringFactory.create(eventDispatcher), resources);
