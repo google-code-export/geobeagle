@@ -20,7 +20,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import com.google.code.geobeagle.GeocacheFactory.Source;
-import com.google.code.geobeagle.cachedetails.CacheDetailsWriter;
+import com.google.code.geobeagle.cachedetails.CacheDetailsHtmlWriter;
 import com.google.code.geobeagle.xmlimport.GpxImporterDI.MessageHandler;
 
 import org.junit.Before;
@@ -191,8 +191,9 @@ public class CachePersisterFacadeTest {
 
     @Test
     public void testStripIllegalFileChars() {
-        assertEquals("boring", CacheDetailsWriter.replaceIllegalFileChars("boring"));
-        assertEquals("n_a__s_______t_y__", CacheDetailsWriter
+        assertEquals("boring", CacheDetailsHtmlWriter.replaceIllegalFileChars("boring"));
+        assertEquals("n_a__s_______t_y__",
+                CacheDetailsHtmlWriter
                 .replaceIllegalFileChars("n<a\\/s:*?\"<>|t:y\t/"));
     }
 

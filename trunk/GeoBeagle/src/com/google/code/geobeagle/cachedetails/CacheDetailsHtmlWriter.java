@@ -23,7 +23,7 @@ import android.util.Log;
 import java.io.IOException;
 import java.text.ParseException;
 
-public class CacheDetailsWriter {
+public class CacheDetailsHtmlWriter {
     public static String replaceIllegalFileChars(String wpt) {
         return wpt.replaceAll("[<\\\\/:\\*\\?\">| \\t]", "_");
     }
@@ -41,7 +41,7 @@ public class CacheDetailsWriter {
     private final RelativeDateFormatter relativeDateFormatter;
 
     @Inject
-    public CacheDetailsWriter(HtmlWriter htmlWriter,
+    public CacheDetailsHtmlWriter(HtmlWriter htmlWriter,
             Emotifier emotifier,
             Context context,
             RelativeDateFormatter relativeDateFormatter) {

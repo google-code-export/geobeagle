@@ -20,7 +20,7 @@ import static org.powermock.api.easymock.PowerMock.replayAll;
 import static org.powermock.api.easymock.PowerMock.verifyAll;
 
 import com.google.code.geobeagle.activity.cachelist.GeoBeagleTest;
-import com.google.code.geobeagle.cachedetails.CacheDetailsWriter;
+import com.google.code.geobeagle.cachedetails.CacheDetailsHtmlWriter;
 import com.google.code.geobeagle.cachedetails.Emotifier;
 import com.google.code.geobeagle.cachedetails.HtmlWriter;
 
@@ -36,7 +36,7 @@ import java.io.IOException;
 import java.util.regex.Pattern;
 
 @PrepareForTest({
-        CacheDetailsWriter.class, Log.class
+        CacheDetailsHtmlWriter.class, Log.class
 })
 @RunWith(PowerMockRunner.class)
 public class CacheDetailsWriterTest extends GeoBeagleTest {
@@ -49,7 +49,7 @@ public class CacheDetailsWriterTest extends GeoBeagleTest {
         htmlWriter.close();
 
         replayAll();
-        new CacheDetailsWriter(htmlWriter, null, null, null).close();
+        new CacheDetailsHtmlWriter(htmlWriter, null, null, null).close();
         verifyAll();
     }
 
@@ -59,7 +59,7 @@ public class CacheDetailsWriterTest extends GeoBeagleTest {
         htmlWriter.writeln("some text");
 
         replayAll();
-        new CacheDetailsWriter(htmlWriter, null, null, null).writeLine("some text");
+        new CacheDetailsHtmlWriter(htmlWriter, null, null, null).writeLine("some text");
         verifyAll();
     }
 
@@ -84,11 +84,12 @@ public class CacheDetailsWriterTest extends GeoBeagleTest {
         htmlWriter.writeln("not a smiley []");
 
         replayAll();
-        CacheDetailsWriter cacheDetailsWriter = new CacheDetailsWriter(htmlWriter, new Emotifier(
+        CacheDetailsHtmlWriter cacheDetailsHtmlWriter = new CacheDetailsHtmlWriter(htmlWriter,
+                new Emotifier(
                 patternProvider), context, null);
-        cacheDetailsWriter.writeLogText("sad [:(] face", false);
-        cacheDetailsWriter.writeLogText("clown [:o)] face", false);
-        cacheDetailsWriter.writeLogText("not a smiley []", false);
+        cacheDetailsHtmlWriter.writeLogText("sad [:(] face", false);
+        cacheDetailsHtmlWriter.writeLogText("clown [:o)] face", false);
+        cacheDetailsHtmlWriter.writeLogText("not a smiley []", false);
         verifyAll();
     }
 
@@ -101,7 +102,9 @@ public class CacheDetailsWriterTest extends GeoBeagleTest {
         htmlWriter.writeln("<font color=grey>Location:</font> 37 00.000, 122 00.000");
 
         replayAll();
-        CacheDetailsWriter cacheDetailsWriter = new CacheDetailsWriter(htmlWriter, null, null, null);
+        CacheDetailsHtmlWriter cacheDetailsWriter = new CacheDetailsHtmlWriter(htmlWriter, null,
+                null,
+                null);
         cacheDetailsWriter.latitudeLongitude("37.0", "122.0");
         cacheDetailsWriter.writeWptName();
         verifyAll();
