@@ -25,6 +25,25 @@ import java.io.IOException;
 @ContextScoped
 public class CacheXmlTagsToSql extends CacheXmlTagHandler {
 
+    public class CacheXmlTagsToSqlFactory {
+        private final CacheTagSqlWriter mCacheTagSqlWriter;
+        private final ImportWakeLock mWakeLock;
+        private final GeoBeagleEnvironment mGeoBeagleEnvironment;
+
+        @Inject
+        CacheXmlTagsToSqlFactory(CacheTagSqlWriter cacheTagSqlWriter,
+                ImportWakeLock importWakeLock,
+                GeoBeagleEnvironment geoBeagleEnvironment) {
+            mCacheTagSqlWriter = cacheTagSqlWriter;
+            mWakeLock = importWakeLock;
+            mGeoBeagleEnvironment = geoBeagleEnvironment;
+        }
+        CacheXmlTagsToSql create(MessageHandlerInterface messageHandlerInterface) {
+            return new CacheXmlTagsToSql(mCacheTagSqlWriter, messageHandlerInterface, mWakeLock,
+                    mGeoBeagleEnvironment);
+        }
+    }
+
     private String mCacheName = "";
     private final CacheTagSqlWriter mCacheTagSqlWriter;
     private final MessageHandlerInterface mMessageHandler;
