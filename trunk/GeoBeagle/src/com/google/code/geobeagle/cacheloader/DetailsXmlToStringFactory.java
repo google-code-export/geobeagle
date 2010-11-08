@@ -1,7 +1,7 @@
 package com.google.code.geobeagle.cacheloader;
 
 import com.google.code.geobeagle.cachedetails.StringWriterWrapper;
-import com.google.code.geobeagle.xmlimport.EventHelper;
+import com.google.code.geobeagle.xmlimport.EventDispatcher;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
@@ -18,7 +18,7 @@ class DetailsXmlToStringFactory {
         this.xmlPullParserProvider = xmlPullParserProvider;
     }
 
-    DetailsXmlToString create(EventHelper eventHelper) {
-        return new DetailsXmlToString(eventHelper, stringWriterWrapper, xmlPullParserProvider);
+    DetailsXmlToString create(EventDispatcher eventDispatcher) {
+        return new DetailsXmlToString(eventDispatcher, stringWriterWrapper, xmlPullParserProvider);
     }
 }

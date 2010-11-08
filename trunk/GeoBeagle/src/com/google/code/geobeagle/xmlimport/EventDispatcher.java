@@ -20,7 +20,7 @@ import org.xmlpull.v1.XmlPullParser;
 
 import java.io.IOException;
 
-public class EventHelper {
+public class EventDispatcher {
     public static class EventHelperFactory {
         private final XmlPathBuilder xmlPathBuilder;
 
@@ -29,8 +29,8 @@ public class EventHelper {
             this.xmlPathBuilder = xmlPathBuilder;
         }
 
-        public EventHelper create(EventHandler eventHandler) {
-            return new EventHelper(xmlPathBuilder, eventHandler);
+        public EventDispatcher create(EventHandler eventHandler) {
+            return new EventDispatcher(xmlPathBuilder, eventHandler);
         }
     }
 
@@ -58,7 +58,7 @@ public class EventHelper {
     private final EventHandler eventHandler;
     private XmlPullParser xmlPullParser;
 
-    public EventHelper(XmlPathBuilder xmlPathBuilder, EventHandler eventHandler) {
+    public EventDispatcher(XmlPathBuilder xmlPathBuilder, EventHandler eventHandler) {
         this.xmlPathBuilder = xmlPathBuilder;
         this.eventHandler = eventHandler;
     }
