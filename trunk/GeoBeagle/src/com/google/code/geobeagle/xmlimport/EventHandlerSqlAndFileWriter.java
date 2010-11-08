@@ -23,12 +23,23 @@ import java.util.Arrays;
 import java.util.List;
 
 public class EventHandlerSqlAndFileWriter implements EventHandler {
+    static class EventHandlerSqlAndFileWriterFactory {
+        private final XmlWriter xmlWriter;
+
+        @Inject
+        public EventHandlerSqlAndFileWriterFactory(XmlWriter xmlWriter) {
+            this.xmlWriter = xmlWriter;
+        }
+
+        public EventHandlerSqlAndFileWriter create(CacheXmlTagsToSql cacheXmlTagsToSql) {
+            return new EventHandlerSqlAndFileWriter(xmlWriter, cacheXmlTagsToSql);
+        }
+    }
+
     private final List<EventHandler> eventHandlers;
 
-    @Inject
-    public EventHandlerSqlAndFileWriter(XmlWriter xmlWriter,
-            CacheXmlTagsToDetails cacheXmlTagsToDetails) {
-        this.eventHandlers = Arrays.asList(xmlWriter, new EventHandlerGpx(cacheXmlTagsToDetails));
+    public EventHandlerSqlAndFileWriter(XmlWriter xmlWriter, CacheXmlTagsToSql cacheXmlTagsToSql) {
+        this.eventHandlers = Arrays.asList(xmlWriter, new EventHandlerGpx(cacheXmlTagsToSql));
     }
 
     @Override

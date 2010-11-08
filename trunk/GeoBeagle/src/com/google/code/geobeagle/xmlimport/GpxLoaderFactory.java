@@ -57,7 +57,7 @@ public class GpxLoaderFactory {
 
     private GpxLoader create(MessageHandlerInterface messageHandler) {
         CacheXmlTagsToSql cacheXmlTagsToSql = cacheXmlTagsToSqlFactory.create(messageHandler);
-        GpxToCache gpxToCache = gpxToCacheFactory.create();
+        GpxToCache gpxToCache = gpxToCacheFactory.create(cacheXmlTagsToSql);
         return new GpxLoader(cacheXmlTagsToSql, errorDisplayer, gpxToCache, importWakeLockProvider);
     }
 }

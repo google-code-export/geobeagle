@@ -15,6 +15,7 @@
 package com.google.code.geobeagle.xmlimport;
 
 import com.google.code.geobeagle.xmlimport.EventDispatcher.EventHelperFactory;
+import com.google.code.geobeagle.xmlimport.EventHandlerSqlAndFileWriter.EventHandlerSqlAndFileWriterFactory;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
@@ -37,23 +38,25 @@ public class GpxToCache {
         private final FileAlreadyLoadedChecker fileAlreadyLoadedChecker;
         private final XmlWriter xmlWriter;
         private final EventHelperFactory eventHelperFactory;
-        private final EventHandlerSqlAndFileWriter eventHandlerSqlAndFileWriter;
+        private final EventHandlerSqlAndFileWriterFactory eventHandlerSqlAndFileWriterFactory;
 
         public GpxToCacheFactory(Provider<XmlPullParser> xmlPullParserProvider,
                 Aborter aborter,
                 FileAlreadyLoadedChecker fileAlreadyLoadedChecker,
                 XmlWriter xmlWriter,
                 EventHelperFactory eventHelperFactory,
-                EventHandlerSqlAndFileWriter eventHandlerSqlAndFileWriter) {
+                EventHandlerSqlAndFileWriterFactory eventHandlerSqlAndFileWriterFactory) {
             this.xmlPullParserProvider = xmlPullParserProvider;
             this.aborter = aborter;
             this.fileAlreadyLoadedChecker = fileAlreadyLoadedChecker;
             this.xmlWriter = xmlWriter;
             this.eventHelperFactory = eventHelperFactory;
-            this.eventHandlerSqlAndFileWriter = eventHandlerSqlAndFileWriter;
+            this.eventHandlerSqlAndFileWriterFactory = eventHandlerSqlAndFileWriterFactory;
         }
 
-        public GpxToCache create() {
+        public GpxToCache create(CacheXmlTagsToSql cacheXmlTagsToSql) {
+            EventHandlerSqlAndFileWriter eventHandlerSqlAndFileWriter = eventHandlerSqlAndFileWriterFactory
+                    .create(cacheXmlTagsToSql);
             return new GpxToCache(xmlPullParserProvider, aborter, fileAlreadyLoadedChecker,
                     eventHelperFactory.create(eventHandlerSqlAndFileWriter), xmlWriter);
         }
