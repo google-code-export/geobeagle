@@ -21,11 +21,11 @@ import org.xmlpull.v1.XmlPullParser;
 import java.io.IOException;
 
 public class EventDispatcher {
-    public static class EventHelperFactory {
+    public static class EventDispatcherFactory {
         private final XmlPathBuilder xmlPathBuilder;
 
         @Inject
-        public EventHelperFactory(XmlPathBuilder xmlPathBuilder) {
+        public EventDispatcherFactory(XmlPathBuilder xmlPathBuilder) {
             this.xmlPathBuilder = xmlPathBuilder;
         }
 
