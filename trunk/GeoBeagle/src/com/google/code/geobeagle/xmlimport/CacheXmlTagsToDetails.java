@@ -1,105 +1,117 @@
-
+/*
+ ** Licensed under the Apache License, Version 2.0 (the "License");
+ ** you may not use this file except in compliance with the License.
+ ** You may obtain a copy of the License at
+ **
+ **     http://www.apache.org/licenses/LICENSE-2.0
+ **
+ ** Unless required by applicable law or agreed to in writing, software
+ ** distributed under the License is distributed on an "AS IS" BASIS,
+ ** WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ ** See the License for the specific language governing permissions and
+ ** limitations under the License.
+ */
 package com.google.code.geobeagle.xmlimport;
 
 import com.google.code.geobeagle.GeocacheFactory.Source;
-import com.google.code.geobeagle.cachedetails.CacheDetailsWriter;
+import com.google.code.geobeagle.cachedetails.CacheDetailsHtmlWriter;
 import com.google.inject.Inject;
 
 import java.io.IOException;
 
 public class CacheXmlTagsToDetails extends CacheXmlTagHandler {
 
-    private final CacheDetailsWriter cacheDetailsWriter;
+    private final CacheDetailsHtmlWriter cacheDetailsHtmlWriter;
     private boolean encrypted;
 
     @Inject
-    public CacheXmlTagsToDetails(CacheDetailsWriter cacheDetailsWriter) {
-        this.cacheDetailsWriter = cacheDetailsWriter;
+    public CacheXmlTagsToDetails(CacheDetailsHtmlWriter cacheDetailsHtmlWriter) {
+        this.cacheDetailsHtmlWriter = cacheDetailsHtmlWriter;
     }
 
     @Override
     public void cacheType(String text) throws IOException {
-        cacheDetailsWriter.writeField("Type", text);
+        cacheDetailsHtmlWriter.writeField("Type", text);
     }
 
     @Override
     public void container(String text) throws IOException {
-        cacheDetailsWriter.writeField("Container", text);
+        cacheDetailsHtmlWriter.writeField("Container", text);
     }
 
     @Override
     public void difficulty(String text) throws IOException {
-        cacheDetailsWriter.writeField("Difficulty", text);
+        cacheDetailsHtmlWriter.writeField("Difficulty", text);
     }
 
     @Override
     public void endCache(Source source) throws IOException {
-        cacheDetailsWriter.close();
+        cacheDetailsHtmlWriter.close();
     }
 
     @Override
     public void groundspeakName(String text) throws IOException {
-        cacheDetailsWriter.writeName(text);
+        cacheDetailsHtmlWriter.writeName(text);
     }
 
     @Override
     public void hint(String text) throws IOException {
-        cacheDetailsWriter.writeHint(text);
+        cacheDetailsHtmlWriter.writeHint(text);
     }
 
     @Override
     public void line(String text) throws IOException {
-        cacheDetailsWriter.writeLine(text);
+        cacheDetailsHtmlWriter.writeLine(text);
     }
 
     @Override
     public void logDate(String text) throws IOException {
-        cacheDetailsWriter.writeLogDate(text);
+        cacheDetailsHtmlWriter.writeLogDate(text);
     }
 
     @Override
     public void terrain(String text) throws IOException {
-        cacheDetailsWriter.writeField("Terrain", text);
+        cacheDetailsHtmlWriter.writeField("Terrain", text);
     }
 
     @Override
     public void wpt(String latitude, String longitude) {
-        cacheDetailsWriter.latitudeLongitude(latitude, longitude);
+        cacheDetailsHtmlWriter.latitudeLongitude(latitude, longitude);
     }
 
     @Override
     public void wptName(String wpt) throws IOException {
-        cacheDetailsWriter.writeWptName();
+        cacheDetailsHtmlWriter.writeWptName();
     }
 
     @Override
     public void logText(String trimmedText) throws IOException {
-        cacheDetailsWriter.writeLogText(trimmedText, encrypted);
+        cacheDetailsHtmlWriter.writeLogText(trimmedText, encrypted);
     }
 
     @Override
     public void logType(String trimmedText) throws IOException {
-        cacheDetailsWriter.logType(trimmedText);
+        cacheDetailsHtmlWriter.logType(trimmedText);
     }
 
     @Override
     public void placedBy(String trimmedText) throws IOException {
-        cacheDetailsWriter.placedBy(trimmedText);
+        cacheDetailsHtmlWriter.placedBy(trimmedText);
     }
 
     @Override
     public void wptTime(String trimmedText) throws IOException {
-        cacheDetailsWriter.wptTime(trimmedText);
+        cacheDetailsHtmlWriter.wptTime(trimmedText);
     }
 
     @Override
     public void shortDescription(String trimmedText) throws IOException {
-        cacheDetailsWriter.writeShortDescription(trimmedText);
+        cacheDetailsHtmlWriter.writeShortDescription(trimmedText);
     }
 
     @Override
     public void longDescription(String trimmedText) throws IOException {
-        cacheDetailsWriter.writeLongDescription(trimmedText);
+        cacheDetailsHtmlWriter.writeLongDescription(trimmedText);
     }
 
     @Override
@@ -109,7 +121,7 @@ public class CacheXmlTagsToDetails extends CacheXmlTagHandler {
 
     @Override
     public void logFinder(String text) {
-        cacheDetailsWriter.writeLogFinder(text);
+        cacheDetailsHtmlWriter.writeLogFinder(text);
     }
 
     @Override
