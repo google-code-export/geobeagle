@@ -16,7 +16,6 @@ package com.google.code.geobeagle.xmlimport;
 
 import com.google.code.geobeagle.xmlimport.EventDispatcher.EventDispatcherFactory;
 import com.google.code.geobeagle.xmlimport.EventHandlerSqlAndFileWriter.EventHandlerSqlAndFileWriterFactory;
-import com.google.inject.Inject;
 import com.google.inject.Provider;
 
 import org.xmlpull.v1.XmlPullParser;
@@ -57,7 +56,8 @@ public class GpxToCache {
             EventHandlerSqlAndFileWriter eventHandlerSqlAndFileWriter = eventHandlerSqlAndFileWriterFactory
                     .create(cacheXmlTagsToSql);
             return new GpxToCache(xmlPullParserProvider, aborter, fileAlreadyLoadedChecker,
-                    eventDispatcherFactory.create(eventHandlerSqlAndFileWriter), xmlWriter);
+                    eventDispatcherFactory.create(eventHandlerSqlAndFileWriter), xmlWriter,
+                    cacheXmlTagsToSql);
         }
     }
 
@@ -69,17 +69,20 @@ public class GpxToCache {
     private XmlPullParser mXmlPullParser;
     private final EventDispatcher mEventDispatcher;
     private final XmlWriter mXmlWriter;
+    private final CacheXmlTagsToSql mCacheXmlTagsToSql;
 
     GpxToCache(Provider<XmlPullParser> xmlPullParserProvider,
             Aborter aborter,
             FileAlreadyLoadedChecker fileAlreadyLoadedChecker,
             EventDispatcher eventDispatcher,
-            XmlWriter xmlWriter) {
+            XmlWriter xmlWriter,
+            CacheXmlTagsToSql cacheXmlTagsToSql) {
         mXmlPullParserProvider = xmlPullParserProvider;
         mAborter = aborter;
         mTestLocAlreadyLoaded = fileAlreadyLoadedChecker;
         mEventDispatcher = eventDispatcher;
         mXmlWriter = xmlWriter;
+        mCacheXmlTagsToSql = cacheXmlTagsToSql;
     }
 
     public void abort() {
@@ -127,5 +130,20 @@ public class GpxToCache {
         mFilename = filename;
         mXmlPullParser = mXmlPullParserProvider.get();
         mXmlPullParser.setInput(reader);
+
+        // Just use the filename, not the whole path.
+        mCacheXmlTagsToSql.open(filename);
+    }
+
+    public void close(boolean markLoadAsComplete) {
+        mCacheXmlTagsToSql.close(markLoadAsComplete);
+    }
+
+    public void start() {
+        mCacheXmlTagsToSql.start();
+    }
+
+    public void end() {
+        mCacheXmlTagsToSql.end();
     }
 }
