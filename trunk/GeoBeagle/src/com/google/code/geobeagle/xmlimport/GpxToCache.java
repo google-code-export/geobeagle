@@ -70,7 +70,6 @@ public class GpxToCache {
     private final EventDispatcher mEventDispatcher;
     private final XmlWriter mXmlWriter;
 
-    @Inject
     GpxToCache(Provider<XmlPullParser> xmlPullParserProvider,
             Aborter aborter,
             FileAlreadyLoadedChecker fileAlreadyLoadedChecker,
