@@ -47,7 +47,7 @@ public class CacheLoaderFactory {
         EventHandlerGpx eventHandlerGpx = new EventHandlerGpx(cacheXmlTagHandler);
         EventDispatcher eventDispatcher = eventDispatcherFactory.create(eventHandlerGpx);
         DetailsXmlToString detailsXmlToString = detailsXmlToStringFactory.create(eventDispatcher);
-        return new CacheLoader(cacheReaderFromFile, detailsDatabaseReader,
-                detailsXmlToString, resources);
+        return new CacheLoader(cacheReaderFromFile, detailsDatabaseReader, detailsXmlToString,
+                resources);
     }
 }
