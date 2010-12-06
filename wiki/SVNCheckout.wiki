@@ -1,10 +1,7 @@
 #summary How to set up the project in Eclipse
 
 First, you need to check out the sources with one of the following.<br>
-Version 1.0:<br>
 `svn checkout https://geobeagle.googlecode.com/svn/trunk`<br>
-Version 1.5:<br>
-`svn checkout https://geobeagle.googlecode.com/svn/branches/andpet`
 
 =Setting up !GeoBeagle=
 
