@@ -9,7 +9,21 @@ First, you need to check out the sources with one of the following.<br>
   # Override the following settings: Use !GeoBeagle as the Application Name and the Project Name.  Choose Google APIs as the Build Target.
   # Right click on "!GeoBeagle" in your Package Explorer window, select "Properties / Java Build Path / Source", and make sure the following *three* folders are in your source: "!GeoBeagle/di", "!GeoBeagle/gen", "!GeoBeagle/src" (otherwise, you'll get "source not found errors").
   # Eclipse / Preferences / Set Android SDK Location
-  # Set java1.6 (otherwise, you'll get "The method restore() of type !ActivityRestorer.!CacheListRestorer must override a superclass method" error).
+  # Set java1.6 (GeoBeagle/ properties/ Java compiler / Enable project specific settings, set Compiler compliance level to 1.6.
+  # Add roboguice libraries:
+
+roboguice-1.0.jar can be downloaded here:
+
+http://download.java.net/maven/2/roboguice/roboguice/1.0/
+
+The other Guice files can be downloaded here:
+
+http://code.google.com/p/google-guice/downloads/list
+
+guice-2-1.0-no_aop.jar can be downloaded directly guice-assistedinject-2.0.jar is in guice-2.0.zip
+
+Add them to GeoBeagle / properties / Java Build Path / Libraries
+
   # To make Google Maps work in !GeoBeagle, you need to generate your own "android:apiKey" signature to enter into res/layout/map.xml. Follow the instructions on: http://code.google.com/intl/sv-SE/android/add-ons/google-apis/mapkey.html#getdebugfingerprint Ask on the mailing list if you face any problems.
 
 =Setting up the tests=
