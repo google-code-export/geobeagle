@@ -29,8 +29,8 @@ class DetailsWebView {
     private final CacheLoader cacheLoader;
     private final Resources resources;
 
-    DetailsWebView(CacheLoader cacheDetailsLoader, Resources resources) {
-        this.cacheLoader = cacheDetailsLoader;
+    DetailsWebView(CacheLoader cacheLoader, Resources resources) {
+        this.cacheLoader = cacheLoader;
         this.resources = resources;
     }
 

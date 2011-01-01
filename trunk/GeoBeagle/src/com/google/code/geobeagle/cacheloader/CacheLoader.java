@@ -56,7 +56,7 @@ public class CacheLoader {
             throws CacheLoaderException {
         String detailsFromDatabase = detailsDatabaseReader.read(cacheId);
         if (detailsFromDatabase == null)
-            return cacheReaderFromFile.readFromFile(sourceName, cacheId);
+            return cacheReaderFromFile.getReader(sourceName, cacheId);
 
         return new StringReader(detailsFromDatabase);
     }
