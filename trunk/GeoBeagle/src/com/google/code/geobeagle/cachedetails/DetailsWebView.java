@@ -39,7 +39,7 @@ class DetailsWebView {
         CacheLoaderFactory cacheLoaderFactory = injector.getInstance(CacheLoaderFactory.class);
         CacheXmlTagsToDetails cacheXmlTagsToDetails = injector.getInstance(CacheXmlTagsToDetails.class);
         cacheLoader = cacheLoaderFactory.create(cacheXmlTagsToDetails);
-        this.resources = injector.getInstance(Resources.class);
+        resources = injector.getInstance(Resources.class);
     }
 
     String loadDetails(WebView webView, Intent intent) {
