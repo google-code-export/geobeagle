@@ -22,7 +22,7 @@ class CacheReaderFromFile {
         this.filePathStrategy = filePathStrategy;
     }
 
-    Reader readFromFile(CharSequence sourceName, CharSequence cacheId)
+    Reader getReader(CharSequence sourceName, CharSequence cacheId)
             throws CacheLoaderException {
         String path = filePathStrategy.getPath(sourceName, cacheId.toString(), "gpx");
         File file = new File(path);
