@@ -37,9 +37,9 @@ public class GpxLoader {
     public GpxLoader(ErrorDisplayer errorDisplayer,
             GpxToCache gpxToCache,
             Provider<ImportWakeLock> importWakeLockProvider) {
-        mGpxToCache = gpxToCache;
-        mErrorDisplayer = errorDisplayer;
-        mImportWakeLockProvider = importWakeLockProvider;
+        this.mGpxToCache = gpxToCache;
+        this.mErrorDisplayer = errorDisplayer;
+        this.mImportWakeLockProvider = importWakeLockProvider;
     }
 
     public void end() {
@@ -55,7 +55,7 @@ public class GpxLoader {
         boolean markLoadAsComplete = false;
         boolean continueLoading = false;
         try {
-            final String filename = new File(path).getName();
+            String filename = new File(path).getName();
             mGpxToCache.open(path, filename, reader);
 
             mImportWakeLockProvider.get().acquire(WAKELOCK_DURATION);
