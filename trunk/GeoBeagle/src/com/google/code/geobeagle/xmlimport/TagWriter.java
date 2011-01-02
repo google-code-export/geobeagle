@@ -33,11 +33,6 @@ class TagWriter {
         this.filePathStrategy = filePathStrategy;
     }
 
-    public TagWriter(IFileAndDatabaseWriter writer, FilePathStrategy filePathStrategy) {
-        this.writer = writer;
-        this.filePathStrategy = filePathStrategy;
-    }
-
     public void close() throws IOException {
         writer.close();
     }
