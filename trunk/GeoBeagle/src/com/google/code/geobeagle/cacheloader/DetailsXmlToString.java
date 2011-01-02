@@ -27,29 +27,29 @@ import java.io.Reader;
 class DetailsXmlToString {
     private final StringWriterWrapper mStringWriterWrapper;
     private final Provider<XmlPullParser> mXmlPullParserProvider;
-    private final EventDispatcher mEventHelper;
+    private final EventDispatcher mEventDispatcher;
 
     DetailsXmlToString(EventDispatcher eventDispatcher,
             StringWriterWrapper stringWriterWrapper,
             Provider<XmlPullParser> xmlPullParserProvider) {
         mStringWriterWrapper = stringWriterWrapper;
         mXmlPullParserProvider = xmlPullParserProvider;
-        mEventHelper = eventDispatcher;
+        mEventDispatcher = eventDispatcher;
     }
 
     String read(Reader reader) throws XmlPullParserException,
             IOException {
         XmlPullParser xmlPullParser = mXmlPullParserProvider.get();
         xmlPullParser.setInput(reader);
-        mEventHelper.open(xmlPullParser);
+        mEventDispatcher.open(xmlPullParser);
         int eventType;
         for (eventType = xmlPullParser.getEventType(); eventType != XmlPullParser.END_DOCUMENT; eventType = xmlPullParser
                 .next()) {
-            mEventHelper.handleEvent(eventType);
+            mEventDispatcher.handleEvent(eventType);
         }
 
         // Pick up END_DOCUMENT event as well.
-        mEventHelper.handleEvent(eventType);
+        mEventDispatcher.handleEvent(eventType);
 
         return mStringWriterWrapper.getString();
     }
