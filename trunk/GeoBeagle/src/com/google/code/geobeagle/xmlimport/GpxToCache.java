@@ -16,7 +16,6 @@ package com.google.code.geobeagle.xmlimport;
 
 import com.google.code.geobeagle.xmlimport.EventDispatcher.EventDispatcherFactory;
 import com.google.code.geobeagle.xmlimport.EventHandlerSqlAndFileWriter.EventHandlerSqlAndFileWriterFactory;
-import com.google.inject.Provider;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
@@ -31,20 +30,17 @@ public class GpxToCache {
     public static class CancelException extends Exception {
     }
     public static class GpxToCacheFactory {
-        private final Provider<XmlPullParser> xmlPullParserProvider;
         private final Aborter aborter;
         private final FileAlreadyLoadedChecker fileAlreadyLoadedChecker;
         private final XmlWriter xmlWriter;
         private final EventDispatcherFactory eventDispatcherFactory;
         private final EventHandlerSqlAndFileWriterFactory eventHandlerSqlAndFileWriterFactory;
 
-        public GpxToCacheFactory(Provider<XmlPullParser> xmlPullParserProvider,
-                Aborter aborter,
+        public GpxToCacheFactory(Aborter aborter,
                 FileAlreadyLoadedChecker fileAlreadyLoadedChecker,
                 XmlWriter xmlWriter,
                 EventDispatcherFactory eventHelperFactory,
                 EventHandlerSqlAndFileWriterFactory eventHandlerSqlAndFileWriterFactory) {
-            this.xmlPullParserProvider = xmlPullParserProvider;
             this.aborter = aborter;
             this.fileAlreadyLoadedChecker = fileAlreadyLoadedChecker;
             this.xmlWriter = xmlWriter;
@@ -55,29 +51,25 @@ public class GpxToCache {
         public GpxToCache create(CacheXmlTagsToSql cacheXmlTagsToSql) {
             EventHandlerSqlAndFileWriter eventHandlerSqlAndFileWriter = eventHandlerSqlAndFileWriterFactory
                     .create(cacheXmlTagsToSql);
-            return new GpxToCache(xmlPullParserProvider, aborter, fileAlreadyLoadedChecker,
+            return new GpxToCache(aborter, fileAlreadyLoadedChecker,
                     eventDispatcherFactory.create(eventHandlerSqlAndFileWriter), xmlWriter,
                     cacheXmlTagsToSql);
         }
     }
 
     private final Aborter mAborter;
-    private final Provider<XmlPullParser> mXmlPullParserProvider;
     private String mSource;
     private final FileAlreadyLoadedChecker mTestLocAlreadyLoaded;
     private String mFilename;
-    private XmlPullParser mXmlPullParser;
     private final EventDispatcher mEventDispatcher;
     private final XmlWriter mXmlWriter;
     private final CacheXmlTagsToSql mCacheXmlTagsToSql;
 
-    GpxToCache(Provider<XmlPullParser> xmlPullParserProvider,
-            Aborter aborter,
+    GpxToCache(Aborter aborter,
             FileAlreadyLoadedChecker fileAlreadyLoadedChecker,
             EventDispatcher eventDispatcher,
             XmlWriter xmlWriter,
             CacheXmlTagsToSql cacheXmlTagsToSql) {
-        mXmlPullParserProvider = xmlPullParserProvider;
         mAborter = aborter;
         mTestLocAlreadyLoaded = fileAlreadyLoadedChecker;
         mEventDispatcher = eventDispatcher;
@@ -106,9 +98,9 @@ public class GpxToCache {
         }
 
         mXmlWriter.open(mFilename);
-        mEventDispatcher.open(mXmlPullParser);
+        mEventDispatcher.open();
         int eventType;
-        for (eventType = mXmlPullParser.getEventType(); eventType != XmlPullParser.END_DOCUMENT; eventType = mXmlPullParser
+        for (eventType = mEventDispatcher.getEventType(); eventType != XmlPullParser.END_DOCUMENT; eventType = mEventDispatcher
                 .next()) {
             // Log.d("GeoBeagle", "event: " + eventType);
             if (mAborter.isAborted()) {
@@ -128,8 +120,7 @@ public class GpxToCache {
     public void open(String source, String filename, Reader reader) throws XmlPullParserException {
         mSource = source;
         mFilename = filename;
-        mXmlPullParser = mXmlPullParserProvider.get();
-        mXmlPullParser.setInput(reader);
+        mEventDispatcher.setInput(reader);
 
         // Just use the filename, not the whole path.
         mCacheXmlTagsToSql.open(filename);

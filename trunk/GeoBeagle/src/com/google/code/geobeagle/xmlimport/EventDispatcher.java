@@ -15,22 +15,28 @@
 package com.google.code.geobeagle.xmlimport;
 
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 
 import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.IOException;
+import java.io.Reader;
 
 public class EventDispatcher {
     public static class EventDispatcherFactory {
         private final XmlPathBuilder xmlPathBuilder;
+        private final Provider<XmlPullParser> xmlPullParserProvider;
 
         @Inject
-        public EventDispatcherFactory(XmlPathBuilder xmlPathBuilder) {
+        public EventDispatcherFactory(XmlPathBuilder xmlPathBuilder,
+                Provider<XmlPullParser> xmlPullParserProvider) {
             this.xmlPathBuilder = xmlPathBuilder;
+            this.xmlPullParserProvider = xmlPullParserProvider;
         }
 
         public EventDispatcher create(EventHandler eventHandler) {
-            return new EventDispatcher(xmlPathBuilder, eventHandler);
+            return new EventDispatcher(xmlPathBuilder, eventHandler, xmlPullParserProvider);
         }
     }
 
@@ -45,22 +51,30 @@ public class EventDispatcher {
             return mPath;
         }
 
-        public void startTag(String mCurrentTag) {
-            mPath += "/" + mCurrentTag;
-        }
-
         public void reset() {
             mPath = "";
         }
+
+        public void startTag(String mCurrentTag) {
+            mPath += "/" + mCurrentTag;
+        }
     }
 
-    private final XmlPathBuilder xmlPathBuilder;
     private final EventHandler eventHandler;
+    private final XmlPathBuilder xmlPathBuilder;
     private XmlPullParser xmlPullParser;
+    private final Provider<XmlPullParser> xmlPullParserProvider;
 
-    public EventDispatcher(XmlPathBuilder xmlPathBuilder, EventHandler eventHandler) {
+    public EventDispatcher(XmlPathBuilder xmlPathBuilder,
+            EventHandler eventHandler,
+            Provider<XmlPullParser> xmlPullParserProvider) {
         this.xmlPathBuilder = xmlPathBuilder;
         this.eventHandler = eventHandler;
+        this.xmlPullParserProvider = xmlPullParserProvider;
+    }
+
+    public int getEventType() throws XmlPullParserException {
+        return xmlPullParser.getEventType();
     }
 
     public boolean handleEvent(int eventType) throws IOException {
@@ -83,9 +97,17 @@ public class EventDispatcher {
         return true;
     }
 
-    public void open(XmlPullParser xmlPullParser) {
-        this.xmlPullParser = xmlPullParser;
+    public int next() throws XmlPullParserException, IOException {
+        return xmlPullParser.next();
+    }
+
+    public void open() {
         xmlPathBuilder.reset();
         eventHandler.start(xmlPullParser);
+    }
+
+    public void setInput(Reader reader) throws XmlPullParserException {
+        this.xmlPullParser = xmlPullParserProvider.get();
+        xmlPullParser.setInput(reader);
     }
 }

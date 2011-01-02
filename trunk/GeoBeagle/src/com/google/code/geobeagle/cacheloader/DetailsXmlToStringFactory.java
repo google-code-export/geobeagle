@@ -16,22 +16,16 @@ package com.google.code.geobeagle.cacheloader;
 import com.google.code.geobeagle.cachedetails.StringWriterWrapper;
 import com.google.code.geobeagle.xmlimport.EventDispatcher;
 import com.google.inject.Inject;
-import com.google.inject.Provider;
-
-import org.xmlpull.v1.XmlPullParser;
 
 class DetailsXmlToStringFactory {
     private final StringWriterWrapper stringWriterWrapper;
-    private final Provider<XmlPullParser> xmlPullParserProvider;
 
     @Inject
-    DetailsXmlToStringFactory(StringWriterWrapper stringWriterWrapper,
-            Provider<XmlPullParser> xmlPullParserProvider) {
+    DetailsXmlToStringFactory(StringWriterWrapper stringWriterWrapper) {
         this.stringWriterWrapper = stringWriterWrapper;
-        this.xmlPullParserProvider = xmlPullParserProvider;
     }
 
     DetailsXmlToString create(EventDispatcher eventDispatcher) {
-        return new DetailsXmlToString(eventDispatcher, stringWriterWrapper, xmlPullParserProvider);
+        return new DetailsXmlToString(eventDispatcher, stringWriterWrapper);
     }
 }

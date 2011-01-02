@@ -16,7 +16,6 @@ package com.google.code.geobeagle.cacheloader;
 
 import com.google.code.geobeagle.cachedetails.StringWriterWrapper;
 import com.google.code.geobeagle.xmlimport.EventDispatcher;
-import com.google.inject.Provider;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
@@ -25,32 +24,26 @@ import java.io.IOException;
 import java.io.Reader;
 
 class DetailsXmlToString {
-    private final StringWriterWrapper mStringWriterWrapper;
-    private final Provider<XmlPullParser> mXmlPullParserProvider;
-    private final EventDispatcher mEventDispatcher;
+    private final StringWriterWrapper stringWriterWrapper;
+    private final EventDispatcher eventDispatcher;
 
-    DetailsXmlToString(EventDispatcher eventDispatcher,
-            StringWriterWrapper stringWriterWrapper,
-            Provider<XmlPullParser> xmlPullParserProvider) {
-        mStringWriterWrapper = stringWriterWrapper;
-        mXmlPullParserProvider = xmlPullParserProvider;
-        mEventDispatcher = eventDispatcher;
+    DetailsXmlToString(EventDispatcher eventDispatcher, StringWriterWrapper stringWriterWrapper) {
+        this.stringWriterWrapper = stringWriterWrapper;
+        this.eventDispatcher = eventDispatcher;
     }
 
-    String read(Reader reader) throws XmlPullParserException,
-            IOException {
-        XmlPullParser xmlPullParser = mXmlPullParserProvider.get();
-        xmlPullParser.setInput(reader);
-        mEventDispatcher.open(xmlPullParser);
+    String read(Reader reader) throws XmlPullParserException, IOException {
+        eventDispatcher.setInput(reader);
+        eventDispatcher.open();
         int eventType;
-        for (eventType = xmlPullParser.getEventType(); eventType != XmlPullParser.END_DOCUMENT; eventType = xmlPullParser
+        for (eventType = eventDispatcher.getEventType(); eventType != XmlPullParser.END_DOCUMENT; eventType = eventDispatcher
                 .next()) {
-            mEventDispatcher.handleEvent(eventType);
+            eventDispatcher.handleEvent(eventType);
         }
 
         // Pick up END_DOCUMENT event as well.
-        mEventDispatcher.handleEvent(eventType);
+        eventDispatcher.handleEvent(eventType);
 
-        return mStringWriterWrapper.getString();
+        return stringWriterWrapper.getString();
     }
 }
