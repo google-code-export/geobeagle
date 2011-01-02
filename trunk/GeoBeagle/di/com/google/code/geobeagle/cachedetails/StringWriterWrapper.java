@@ -19,6 +19,7 @@ import com.google.inject.Singleton;
 import java.io.IOException;
 import java.io.StringWriter;
 
+//TODO: remove singleton.
 @Singleton
 public class StringWriterWrapper implements com.google.code.geobeagle.cachedetails.Writer,
         NullWriterOpener {
