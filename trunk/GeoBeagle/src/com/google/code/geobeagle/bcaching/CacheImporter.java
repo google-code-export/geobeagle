@@ -18,6 +18,7 @@ import com.google.code.geobeagle.bcaching.communication.BCachingException;
 import com.google.code.geobeagle.bcaching.communication.BCachingListImporterStateless;
 import com.google.code.geobeagle.xmlimport.GpxLoader;
 import com.google.code.geobeagle.xmlimport.GpxLoaderFactory;
+import com.google.code.geobeagle.xmlimport.GpxToCache.CancelException;
 import com.google.inject.Inject;
 
 import java.io.BufferedReader;
@@ -46,11 +47,11 @@ public class CacheImporter {
         gpxLoader = gpxLoaderFactory.createBCachingLoader();
     }
 
-    public boolean load(String csvIds) throws BCachingException {
+    public void load(String csvIds) throws BCachingException, CancelException {
         params.put("ids", csvIds);
 
         BufferedReader bufferedReader = bufferedReaderFactory.create(params);
-        return gpxLoader.load("BCaching.com", bufferedReader);
+        gpxLoader.load("BCaching.com", bufferedReader);
     }
 
 }

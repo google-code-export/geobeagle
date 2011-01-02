@@ -23,6 +23,7 @@ import com.google.code.geobeagle.bcaching.communication.BCachingException;
 import com.google.code.geobeagle.bcaching.progress.ProgressHandler;
 import com.google.code.geobeagle.bcaching.progress.ProgressManager;
 import com.google.code.geobeagle.bcaching.progress.ProgressMessage;
+import com.google.code.geobeagle.xmlimport.GpxToCache.CancelException;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 
@@ -109,17 +110,16 @@ public class ImportBCachingWorker extends RoboThread implements Abortable {
             if (!cursor.open())
                 return;
             while (cursor.readCaches()) {
-                if (!cacheImporter.load(cursor.getCacheIds())) {
-                    return;
-                }
-
+                cacheImporter.load(cursor.getCacheIds());
                 cursor.increment();
             }
             cursor.close();
         } catch (BCachingException e) {
             errorDisplayer.displayError(R.string.problem_importing_from_bcaching, e
                     .getLocalizedMessage());
-        } finally {
+        } catch (CancelException e) {
+        }
+        finally {
             updateFlag.setUpdatesEnabled(true);
             progressManager.update(progressHandler, ProgressMessage.REFRESH, 0);
             progressManager.update(progressHandler, ProgressMessage.DONE, 0);
