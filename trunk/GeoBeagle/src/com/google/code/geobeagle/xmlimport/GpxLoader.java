@@ -29,21 +29,21 @@ import java.io.IOException;
 import java.io.Reader;
 
 public class GpxLoader {
-    private final ErrorDisplayer mErrorDisplayer;
-    private final GpxToCache mGpxToCache;
-    private final Provider<ImportWakeLock> mImportWakeLockProvider;
+    private final ErrorDisplayer errorDisplayer;
+    private final GpxToCache gpxToCache;
+    private final Provider<ImportWakeLock> importWakeLockProvider;
     public static final int WAKELOCK_DURATION = 15000;
 
     public GpxLoader(ErrorDisplayer errorDisplayer,
             GpxToCache gpxToCache,
             Provider<ImportWakeLock> importWakeLockProvider) {
-        this.mGpxToCache = gpxToCache;
-        this.mErrorDisplayer = errorDisplayer;
-        this.mImportWakeLockProvider = importWakeLockProvider;
+        this.gpxToCache = gpxToCache;
+        this.errorDisplayer = errorDisplayer;
+        this.importWakeLockProvider = importWakeLockProvider;
     }
 
     public void end() {
-        mGpxToCache.end();
+        gpxToCache.end();
     }
 
     /**
@@ -56,34 +56,34 @@ public class GpxLoader {
         boolean continueLoading = false;
         try {
             String filename = new File(path).getName();
-            mGpxToCache.open(path, filename, reader);
+            gpxToCache.open(path, filename, reader);
 
-            mImportWakeLockProvider.get().acquire(WAKELOCK_DURATION);
-            boolean alreadyLoaded = mGpxToCache.load();
+            importWakeLockProvider.get().acquire(WAKELOCK_DURATION);
+            boolean alreadyLoaded = gpxToCache.load();
             markLoadAsComplete = !alreadyLoaded;
             continueLoading = true;
         } catch (SQLiteException e) {
-            mErrorDisplayer.displayError(R.string.error_writing_cache, mGpxToCache.getSource()
+            errorDisplayer.displayError(R.string.error_writing_cache, gpxToCache.getSource()
                     + ": " + e.getMessage());
         } catch (XmlPullParserException e) {
-            mErrorDisplayer.displayError(R.string.error_parsing_file, mGpxToCache.getSource()
+            errorDisplayer.displayError(R.string.error_parsing_file, gpxToCache.getSource()
                     + ": " + e.getMessage());
         } catch (FileNotFoundException e) {
-            mErrorDisplayer.displayError(R.string.file_not_found, mGpxToCache.getSource() + ": "
+            errorDisplayer.displayError(R.string.file_not_found, gpxToCache.getSource() + ": "
                     + e.getMessage());
         } catch (IOException e) {
-            mErrorDisplayer.displayError(R.string.error_reading_file, mGpxToCache.getSource()
+            errorDisplayer.displayError(R.string.error_reading_file, gpxToCache.getSource()
                     + ": " + e.getMessage());
         } catch (CancelException e) {
         }
 
-        mGpxToCache.close(markLoadAsComplete);
+        gpxToCache.close(markLoadAsComplete);
 
         if (!continueLoading)
             throw new CancelException();
     }
 
     public void start() {
-        mGpxToCache.start();
+        gpxToCache.start();
     }
 }
