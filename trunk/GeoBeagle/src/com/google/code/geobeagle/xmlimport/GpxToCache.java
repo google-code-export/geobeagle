@@ -31,10 +31,10 @@ public class GpxToCache {
     }
     public static class GpxToCacheFactory {
         private final Aborter aborter;
-        private final FileAlreadyLoadedChecker fileAlreadyLoadedChecker;
-        private final XmlWriter xmlWriter;
         private final EventDispatcherFactory eventDispatcherFactory;
         private final EventHandlerSqlAndFileWriterFactory eventHandlerSqlAndFileWriterFactory;
+        private final FileAlreadyLoadedChecker fileAlreadyLoadedChecker;
+        private final XmlWriter xmlWriter;
 
         public GpxToCacheFactory(Aborter aborter,
                 FileAlreadyLoadedChecker fileAlreadyLoadedChecker,
@@ -57,33 +57,41 @@ public class GpxToCache {
         }
     }
 
-    private final Aborter mAborter;
-    private String mSource;
-    private final FileAlreadyLoadedChecker mTestLocAlreadyLoaded;
-    private String mFilename;
-    private final EventDispatcher mEventDispatcher;
-    private final XmlWriter mXmlWriter;
-    private final CacheXmlTagsToSql mCacheXmlTagsToSql;
+    private final Aborter aborter;
+    private final CacheXmlTagsToSql cacheXmlTagsToSql;
+    private final EventDispatcher eventDispatcher;
+    private final FileAlreadyLoadedChecker fileAlreadyLoadedChecker;
+    private String filename;
+    private String source;
+    private final XmlWriter xmlWriter;
 
     GpxToCache(Aborter aborter,
             FileAlreadyLoadedChecker fileAlreadyLoadedChecker,
             EventDispatcher eventDispatcher,
             XmlWriter xmlWriter,
             CacheXmlTagsToSql cacheXmlTagsToSql) {
-        mAborter = aborter;
-        mTestLocAlreadyLoaded = fileAlreadyLoadedChecker;
-        mEventDispatcher = eventDispatcher;
-        mXmlWriter = xmlWriter;
-        mCacheXmlTagsToSql = cacheXmlTagsToSql;
+        this.aborter = aborter;
+        this.fileAlreadyLoadedChecker = fileAlreadyLoadedChecker;
+        this.eventDispatcher = eventDispatcher;
+        this.xmlWriter = xmlWriter;
+        this.cacheXmlTagsToSql = cacheXmlTagsToSql;
     }
 
     public void abort() {
         Log.d("GeoBeagle", "GpxToCache aborting");
-        mAborter.abort();
+        aborter.abort();
+    }
+
+    public void close(boolean markLoadAsComplete) {
+        cacheXmlTagsToSql.close(markLoadAsComplete);
+    }
+
+    public void end() {
+        cacheXmlTagsToSql.end();
     }
 
     public String getSource() {
-        return mSource;
+        return source;
     }
 
     /**
@@ -93,48 +101,40 @@ public class GpxToCache {
             throws XmlPullParserException, IOException, CancelException {
         Log.d("GeoBeagle", this + ": GpxToCache: load");
 
-        if (mTestLocAlreadyLoaded.isAlreadyLoaded(mSource)) {
+        if (fileAlreadyLoadedChecker.isAlreadyLoaded(source)) {
             return true;
         }
 
-        mXmlWriter.open(mFilename);
-        mEventDispatcher.open();
+        xmlWriter.open(filename);
+        eventDispatcher.open();
         int eventType;
-        for (eventType = mEventDispatcher.getEventType(); eventType != XmlPullParser.END_DOCUMENT; eventType = mEventDispatcher
+        for (eventType = eventDispatcher.getEventType(); eventType != XmlPullParser.END_DOCUMENT; eventType = eventDispatcher
                 .next()) {
             // Log.d("GeoBeagle", "event: " + eventType);
-            if (mAborter.isAborted()) {
-                Log.d("GeoBeagle", "isAborted: " + mAborter.isAborted());
+            if (aborter.isAborted()) {
+                Log.d("GeoBeagle", "isAborted: " + aborter.isAborted());
                 throw new CancelException();
             }
             // File already loaded.
-            if (!mEventDispatcher.handleEvent(eventType))
+            if (!eventDispatcher.handleEvent(eventType))
                 return true;
         }
 
         // Pick up END_DOCUMENT event as well.
-        mEventDispatcher.handleEvent(eventType);
+        eventDispatcher.handleEvent(eventType);
         return false;
     }
 
     public void open(String source, String filename, Reader reader) throws XmlPullParserException {
-        mSource = source;
-        mFilename = filename;
-        mEventDispatcher.setInput(reader);
+        this.source = source;
+        this.filename = filename;
+        eventDispatcher.setInput(reader);
 
         // Just use the filename, not the whole path.
-        mCacheXmlTagsToSql.open(filename);
-    }
-
-    public void close(boolean markLoadAsComplete) {
-        mCacheXmlTagsToSql.close(markLoadAsComplete);
+        cacheXmlTagsToSql.open(filename);
     }
 
     public void start() {
-        mCacheXmlTagsToSql.start();
-    }
-
-    public void end() {
-        mCacheXmlTagsToSql.end();
+        cacheXmlTagsToSql.start();
     }
 }
