@@ -49,8 +49,9 @@ public class GpxLoader {
     /**
      * @return true if we should continue loading more files, false if we should
      *         terminate.
+     * @throws CancelException
      */
-    public boolean load(String path, Reader reader) {
+    public void load(String path, Reader reader) throws CancelException {
         boolean markLoadAsComplete = false;
         boolean continueLoading = false;
         try {
@@ -77,7 +78,9 @@ public class GpxLoader {
         }
 
         mGpxToCache.close(markLoadAsComplete);
-        return continueLoading;
+
+        if (!continueLoading)
+            throw new CancelException();
     }
 
     public void start() {

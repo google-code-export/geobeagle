@@ -21,6 +21,7 @@ import com.google.code.geobeagle.bcaching.preferences.BCachingStartTime;
 import com.google.code.geobeagle.cachedetails.FileDataVersionChecker;
 import com.google.code.geobeagle.cachedetails.FileDataVersionWriter;
 import com.google.code.geobeagle.database.DbFrontend;
+import com.google.code.geobeagle.xmlimport.GpxToCache.CancelException;
 import com.google.code.geobeagle.xmlimport.gpx.GpxAndZipFiles;
 import com.google.code.geobeagle.xmlimport.gpx.GpxAndZipFiles.GpxFilesAndZipFilesIter;
 
@@ -70,7 +71,7 @@ public class ImportThreadDelegate {
         } catch (ImportException e) {
             mErrorDisplayer.displayError(e.getError(), e.getPath());
             return;
-        } catch (CancelException e) {
+        } catch (com.google.code.geobeagle.xmlimport.GpxToCache.CancelException e) {
             return;
         } finally {
             mUpdateFlag.setUpdatesEnabled(true);
@@ -94,9 +95,7 @@ public class ImportThreadDelegate {
 
         mImportThreadHelper.start();
         while (gpxFilesAndZipFilesIter.hasNext()) {
-            if (!mImportThreadHelper.processFile(gpxFilesAndZipFilesIter.next())) {
-                throw new CancelException();
-            }
+            mImportThreadHelper.processFile(gpxFilesAndZipFilesIter.next());
         }
         mFileDataVersionWriter.writeVersion();
         mImportThreadHelper.end();
