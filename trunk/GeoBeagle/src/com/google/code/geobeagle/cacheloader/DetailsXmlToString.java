@@ -14,7 +14,6 @@
 
 package com.google.code.geobeagle.cacheloader;
 
-import com.google.code.geobeagle.cachedetails.StringWriterWrapper;
 import com.google.code.geobeagle.xmlimport.EventDispatcher;
 
 import org.xmlpull.v1.XmlPullParser;
@@ -24,11 +23,9 @@ import java.io.IOException;
 import java.io.Reader;
 
 class DetailsXmlToString {
-    private final StringWriterWrapper stringWriterWrapper;
     private final EventDispatcher eventDispatcher;
 
-    DetailsXmlToString(EventDispatcher eventDispatcher, StringWriterWrapper stringWriterWrapper) {
-        this.stringWriterWrapper = stringWriterWrapper;
+    DetailsXmlToString(EventDispatcher eventDispatcher) {
         this.eventDispatcher = eventDispatcher;
     }
 
@@ -44,6 +41,6 @@ class DetailsXmlToString {
         // Pick up END_DOCUMENT event as well.
         eventDispatcher.handleEvent(eventType);
 
-        return stringWriterWrapper.getString();
+        return eventDispatcher.getString();
     }
 }

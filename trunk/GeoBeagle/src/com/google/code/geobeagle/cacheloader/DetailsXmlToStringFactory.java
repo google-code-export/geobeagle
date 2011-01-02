@@ -13,19 +13,10 @@
  */
 package com.google.code.geobeagle.cacheloader;
 
-import com.google.code.geobeagle.cachedetails.StringWriterWrapper;
 import com.google.code.geobeagle.xmlimport.EventDispatcher;
-import com.google.inject.Inject;
 
 class DetailsXmlToStringFactory {
-    private final StringWriterWrapper stringWriterWrapper;
-
-    @Inject
-    DetailsXmlToStringFactory(StringWriterWrapper stringWriterWrapper) {
-        this.stringWriterWrapper = stringWriterWrapper;
-    }
-
     DetailsXmlToString create(EventDispatcher eventDispatcher) {
-        return new DetailsXmlToString(eventDispatcher, stringWriterWrapper);
+        return new DetailsXmlToString(eventDispatcher);
     }
 }
