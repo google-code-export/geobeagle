@@ -14,6 +14,7 @@
 
 package com.google.code.geobeagle.xmlimport;
 
+import com.google.code.geobeagle.cachedetails.StringWriterWrapper;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
@@ -27,16 +28,20 @@ public class EventDispatcher {
     public static class EventDispatcherFactory {
         private final XmlPathBuilder xmlPathBuilder;
         private final Provider<XmlPullParser> xmlPullParserProvider;
+        private final StringWriterWrapper stringWriterWrapper;
 
         @Inject
         public EventDispatcherFactory(XmlPathBuilder xmlPathBuilder,
-                Provider<XmlPullParser> xmlPullParserProvider) {
+                Provider<XmlPullParser> xmlPullParserProvider,
+                StringWriterWrapper stringWriterWrapper) {
             this.xmlPathBuilder = xmlPathBuilder;
             this.xmlPullParserProvider = xmlPullParserProvider;
+            this.stringWriterWrapper = stringWriterWrapper;
         }
 
         public EventDispatcher create(EventHandler eventHandler) {
-            return new EventDispatcher(xmlPathBuilder, eventHandler, xmlPullParserProvider);
+            return new EventDispatcher(xmlPathBuilder, eventHandler, xmlPullParserProvider,
+                    stringWriterWrapper);
         }
     }
 
@@ -64,13 +69,16 @@ public class EventDispatcher {
     private final XmlPathBuilder xmlPathBuilder;
     private XmlPullParser xmlPullParser;
     private final Provider<XmlPullParser> xmlPullParserProvider;
+    private final StringWriterWrapper stringWriterWrapper;
 
     public EventDispatcher(XmlPathBuilder xmlPathBuilder,
             EventHandler eventHandler,
-            Provider<XmlPullParser> xmlPullParserProvider) {
+            Provider<XmlPullParser> xmlPullParserProvider,
+            StringWriterWrapper stringWriterWrapper) {
         this.xmlPathBuilder = xmlPathBuilder;
         this.eventHandler = eventHandler;
         this.xmlPullParserProvider = xmlPullParserProvider;
+        this.stringWriterWrapper = stringWriterWrapper;
     }
 
     public int getEventType() throws XmlPullParserException {
@@ -109,5 +117,9 @@ public class EventDispatcher {
     public void setInput(Reader reader) throws XmlPullParserException {
         this.xmlPullParser = xmlPullParserProvider.get();
         xmlPullParser.setInput(reader);
+    }
+
+    public String getString() {
+        return stringWriterWrapper.getString();
     }
 }
