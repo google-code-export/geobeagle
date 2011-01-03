@@ -29,6 +29,7 @@ public class GpxToCache {
     @SuppressWarnings("serial")
     public static class CancelException extends Exception {
     }
+
     public static class GpxToCacheFactory {
         private final Aborter aborter;
         private final EventDispatcherFactory eventDispatcherFactory;
@@ -82,10 +83,6 @@ public class GpxToCache {
         aborter.abort();
     }
 
-    public void close(boolean markLoadAsComplete) {
-        cacheXmlTagsToSql.close(markLoadAsComplete);
-    }
-
     public void end() {
         cacheXmlTagsToSql.end();
     }
@@ -94,35 +91,37 @@ public class GpxToCache {
         return source;
     }
 
-    /**
-     * @return false if this file has already been loaded.
-     */
-    public boolean load()
-            throws XmlPullParserException, IOException, CancelException {
-        Log.d("GeoBeagle", this + ": GpxToCache: load");
-
-        if (fileAlreadyLoadedChecker.isAlreadyLoaded(source)) {
-            return true;
-        }
-
-        xmlWriter.open(filename);
-        eventDispatcher.open();
-        int eventType;
-        for (eventType = eventDispatcher.getEventType(); eventType != XmlPullParser.END_DOCUMENT; eventType = eventDispatcher
-                .next()) {
-            // Log.d("GeoBeagle", "event: " + eventType);
-            if (aborter.isAborted()) {
-                Log.d("GeoBeagle", "isAborted: " + aborter.isAborted());
-                throw new CancelException();
+    public void load() throws XmlPullParserException, IOException, CancelException {
+        boolean markAsComplete = false;
+        try {
+            Log.d("GeoBeagle", this + ": GpxToCache: load");
+            if (fileAlreadyLoadedChecker.isAlreadyLoaded(source)) {
+                return;
             }
-            // File already loaded.
-            if (!eventDispatcher.handleEvent(eventType))
-                return true;
+
+            xmlWriter.open(filename);
+            eventDispatcher.open();
+            int eventType;
+            for (eventType = eventDispatcher.getEventType(); eventType != XmlPullParser.END_DOCUMENT; eventType = eventDispatcher
+                    .next()) {
+                // Log.d("GeoBeagle", "event: " + eventType);
+                if (aborter.isAborted()) {
+                    Log.d("GeoBeagle", "isAborted: " + aborter.isAborted());
+                    throw new CancelException();
+                }
+                // File already loaded.
+                if (!eventDispatcher.handleEvent(eventType)) {
+                    return;
+                }
+            }
+
+            // Pick up END_DOCUMENT event as well.
+            eventDispatcher.handleEvent(eventType);
+            markAsComplete = true;
+        } finally {
+            cacheXmlTagsToSql.close(markAsComplete);
         }
 
-        // Pick up END_DOCUMENT event as well.
-        eventDispatcher.handleEvent(eventType);
-        return false;
     }
 
     public void open(String source, String filename, Reader reader) throws XmlPullParserException {
