@@ -62,8 +62,6 @@ public class GpxToCache {
     private final CacheXmlTagsToSql cacheXmlTagsToSql;
     private final EventDispatcher eventDispatcher;
     private final FileAlreadyLoadedChecker fileAlreadyLoadedChecker;
-    private String filename;
-    private String source;
     private final XmlWriter xmlWriter;
 
     GpxToCache(Aborter aborter,
@@ -78,16 +76,16 @@ public class GpxToCache {
         this.cacheXmlTagsToSql = cacheXmlTagsToSql;
     }
 
-    public void abort() {
-        Log.d("GeoBeagle", "GpxToCache aborting");
-        aborter.abort();
-    }
-
     public void end() {
         cacheXmlTagsToSql.end();
     }
 
-    public void load() throws XmlPullParserException, IOException, CancelException {
+    public void load(String source, String filename, Reader reader) throws XmlPullParserException,
+            IOException, CancelException {
+        eventDispatcher.setInput(reader);
+
+        // Just use the filename, not the whole path.
+        cacheXmlTagsToSql.open(filename);
         boolean markAsComplete = false;
         try {
             Log.d("GeoBeagle", this + ": GpxToCache: load");
@@ -117,15 +115,6 @@ public class GpxToCache {
         } finally {
             cacheXmlTagsToSql.close(markAsComplete);
         }
-    }
-
-    public void open(String source, String filename, Reader reader) throws XmlPullParserException {
-        this.source = source;
-        this.filename = filename;
-        eventDispatcher.setInput(reader);
-
-        // Just use the filename, not the whole path.
-        cacheXmlTagsToSql.open(filename);
     }
 
     public void start() {

@@ -49,10 +49,8 @@ public class GpxLoader {
     public void load(String path, Reader reader) throws CancelException {
         try {
             String filename = new File(path).getName();
-            gpxToCache.open(path, filename, reader);
-
+            gpxToCache.load(path, filename, reader);
             importWakeLockProvider.get().acquire(WAKELOCK_DURATION);
-            gpxToCache.load();
             return;
         } catch (SQLiteException e) {
             errorDisplayer.displayError(R.string.error_writing_cache, path + ": " + e.getMessage());
