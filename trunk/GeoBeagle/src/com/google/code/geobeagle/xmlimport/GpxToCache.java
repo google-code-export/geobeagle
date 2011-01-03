@@ -87,10 +87,6 @@ public class GpxToCache {
         cacheXmlTagsToSql.end();
     }
 
-    public String getSource() {
-        return source;
-    }
-
     public void load() throws XmlPullParserException, IOException, CancelException {
         boolean markAsComplete = false;
         try {
@@ -121,7 +117,6 @@ public class GpxToCache {
         } finally {
             cacheXmlTagsToSql.close(markAsComplete);
         }
-
     }
 
     public void open(String source, String filename, Reader reader) throws XmlPullParserException {
