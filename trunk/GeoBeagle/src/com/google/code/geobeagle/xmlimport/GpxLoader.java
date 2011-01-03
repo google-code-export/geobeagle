@@ -55,17 +55,13 @@ public class GpxLoader {
             gpxToCache.load();
             return;
         } catch (SQLiteException e) {
-            errorDisplayer.displayError(R.string.error_writing_cache, gpxToCache.getSource()
-                    + ": " + e.getMessage());
+            errorDisplayer.displayError(R.string.error_writing_cache, path + ": " + e.getMessage());
         } catch (XmlPullParserException e) {
-            errorDisplayer.displayError(R.string.error_parsing_file, gpxToCache.getSource()
-                    + ": " + e.getMessage());
+            errorDisplayer.displayError(R.string.error_parsing_file, path + ": " + e.getMessage());
         } catch (FileNotFoundException e) {
-            errorDisplayer.displayError(R.string.file_not_found, gpxToCache.getSource() + ": "
-                    + e.getMessage());
+            errorDisplayer.displayError(R.string.file_not_found, path + ": " + e.getMessage());
         } catch (IOException e) {
-            errorDisplayer.displayError(R.string.error_reading_file, gpxToCache.getSource()
-                    + ": " + e.getMessage());
+            errorDisplayer.displayError(R.string.error_reading_file, path + ": " + e.getMessage());
         } catch (CancelException e) {
         }
 
