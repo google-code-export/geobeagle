@@ -47,14 +47,13 @@ public class GpxLoader {
     }
 
     public void load(String path, Reader reader) throws CancelException {
-        boolean continueLoading = false;
         try {
             String filename = new File(path).getName();
             gpxToCache.open(path, filename, reader);
 
             importWakeLockProvider.get().acquire(WAKELOCK_DURATION);
             gpxToCache.load();
-            continueLoading = true;
+            return;
         } catch (SQLiteException e) {
             errorDisplayer.displayError(R.string.error_writing_cache, gpxToCache.getSource()
                     + ": " + e.getMessage());
@@ -70,8 +69,7 @@ public class GpxLoader {
         } catch (CancelException e) {
         }
 
-        if (!continueLoading)
-            throw new CancelException();
+        throw new CancelException();
     }
 
     public void start() {
