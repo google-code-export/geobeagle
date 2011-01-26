@@ -17,6 +17,7 @@ package com.google.code.geobeagle.cacheloader;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.cachedetails.FileDataVersionChecker;
 import com.google.code.geobeagle.cachedetails.FilePathStrategy;
+import com.google.inject.Inject;
 
 import android.os.Environment;
 
@@ -30,6 +31,7 @@ class CacheReaderFromFile {
     private final FileDataVersionChecker fileDataVersionChecker;
     private final FilePathStrategy filePathStrategy;
 
+    @Inject
     CacheReaderFromFile(FileDataVersionChecker fileDataVersionChecker,
             FilePathStrategy filePathStrategy) {
         this.fileDataVersionChecker = fileDataVersionChecker;

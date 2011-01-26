@@ -25,7 +25,7 @@ import java.io.IOException;
 @ContextScoped
 public class CacheXmlTagsToSql extends CacheXmlTagHandler {
 
-    public class CacheXmlTagsToSqlFactory {
+    static public class CacheXmlTagsToSqlFactory {
         private final CacheTagSqlWriter mCacheTagSqlWriter;
         private final ImportWakeLock mWakeLock;
         private final GeoBeagleEnvironment mGeoBeagleEnvironment;

@@ -19,6 +19,7 @@ import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.xmlimport.CacheXmlTagsToSql.CacheXmlTagsToSqlFactory;
 import com.google.code.geobeagle.xmlimport.EventDispatcher.EventDispatcherFactory;
 import com.google.code.geobeagle.xmlimport.EventHandlerSqlAndFileWriter.EventHandlerSqlAndFileWriterFactory;
+import com.google.inject.Inject;
 import com.google.inject.Provider;
 
 import org.xmlpull.v1.XmlPullParser;
@@ -47,6 +48,7 @@ public class GpxToCache {
         private final ErrorDisplayer errorDisplayer;
         private final CacheXmlTagsToSqlFactory cacheXmlTagsToSqlFactory;
 
+        @Inject
         public GpxToCacheFactory(Aborter aborter,
                 FileAlreadyLoadedChecker fileAlreadyLoadedChecker,
                 XmlWriter xmlWriter,
