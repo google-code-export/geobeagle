@@ -24,18 +24,19 @@ import android.content.SharedPreferences;
 import java.io.IOException;
 
 public class ImportThreadHelper {
-    private final GpxLoader mGpxLoader;
     private boolean mHasFiles;
     private final MessageHandlerInterface mMessageHandler;
     private final OldCacheFilesCleaner mOldCacheFilesCleaner;
     private final GeoBeagleEnvironment mGeoBeagleEnvironment;
     private final SharedPreferences mSharedPreferences;
+    private final GpxToCache mGpxToCache;
 
-    public ImportThreadHelper(GpxLoader gpxLoader, MessageHandlerInterface messageHandler,
+    public ImportThreadHelper(GpxToCache gpxToCache,
+            MessageHandlerInterface messageHandler,
             OldCacheFilesCleaner oldCacheFilesCleaner,
             SharedPreferences sharedPreferences,
             GeoBeagleEnvironment geoBeagleEnvironment) {
-        mGpxLoader = gpxLoader;
+        mGpxToCache = gpxToCache;
         mMessageHandler = messageHandler;
         mHasFiles = false;
         mOldCacheFilesCleaner = oldCacheFilesCleaner;
@@ -48,7 +49,7 @@ public class ImportThreadHelper {
     }
 
     public void end() throws ImportException {
-        mGpxLoader.end();
+        mGpxToCache.end();
         if (!mHasFiles
                 && mSharedPreferences.getString(BCachingModule.BCACHING_USERNAME, "").length() == 0)
             throw new ImportException(R.string.error_no_gpx_files, mGeoBeagleEnvironment
@@ -59,12 +60,12 @@ public class ImportThreadHelper {
         String filename = gpxReader.getFilename();
 
         mHasFiles = true;
-        mGpxLoader.load(filename, gpxReader.open());
+        mGpxToCache.load(filename, gpxReader.open());
     }
 
     public void start() {
         mOldCacheFilesCleaner.clean();
-        mGpxLoader.start();
+        mGpxToCache.start();
     }
 
     public void startBCachingImport() {
