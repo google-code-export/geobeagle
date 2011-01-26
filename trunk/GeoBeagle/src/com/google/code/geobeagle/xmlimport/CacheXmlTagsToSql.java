@@ -145,7 +145,7 @@ public class CacheXmlTagsToSql extends CacheXmlTagHandler {
     public void wptName(String wpt) throws IOException {
         mCacheTagSqlWriter.id(wpt);
         mMessageHandler.updateWaypointId(wpt);
-        mWakeLock.acquire(GpxLoader.WAKELOCK_DURATION);
+        mWakeLock.acquire(GpxToCache.WAKELOCK_DURATION);
     }
 
     @Override
