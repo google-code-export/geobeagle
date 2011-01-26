@@ -19,7 +19,7 @@ import static org.powermock.api.easymock.PowerMock.createMock;
 import static org.powermock.api.easymock.PowerMock.replayAll;
 import static org.powermock.api.easymock.PowerMock.verifyAll;
 
-import com.google.code.geobeagle.cacheloader.CacheDetailsLoader;
+import com.google.code.geobeagle.cacheloader.CacheLoader;
 import com.google.code.geobeagle.cacheloader.CacheLoaderException;
 
 import org.junit.Test;
@@ -27,6 +27,7 @@ import org.junit.runner.RunWith;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import android.content.Intent;
+import android.content.res.Resources;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 
@@ -35,12 +36,12 @@ public class DetailsWebViewTest {
 
     @Test
     public void testDetailsWebView() throws CacheLoaderException {
-        CacheDetailsLoader cacheDetailsLoader = createMock(CacheDetailsLoader.class);
         WebView webView = createMock(WebView.class);
         Intent intent = createMock(Intent.class);
         WebSettings settings = createMock(WebSettings.class);
+        CacheLoader cacheLoader = createMock(CacheLoader.class);
+        Resources resources = createMock(Resources.class);
 
-        expect(cacheDetailsLoader.load("bcaching.com", "GC123")).andReturn("<html>details</html>");
         expect(webView.getSettings()).andReturn(settings);
         settings.setJavaScriptEnabled(true);
         expect(intent.getStringExtra(DetailsActivity.INTENT_EXTRA_GEOCACHE_SOURCE)).andReturn(
@@ -48,10 +49,11 @@ public class DetailsWebViewTest {
         expect(intent.getStringExtra(DetailsActivity.INTENT_EXTRA_GEOCACHE_ID)).andReturn("GC123");
         expect(intent.getStringExtra(DetailsActivity.INTENT_EXTRA_GEOCACHE_NAME)).andReturn(
                 "An easy cache");
-        webView.loadDataWithBaseURL(null, "<html>details</html>", "text/html", "utf-8", null);
+        expect(cacheLoader.load("bcaching.com", "GC123")).andReturn("details");
+        webView.loadDataWithBaseURL(null, "details", "text/html", "utf-8", null);
 
         replayAll();
-        DetailsWebView detailsWebView = new DetailsWebView(cacheDetailsLoader, null);
+        DetailsWebView detailsWebView = new DetailsWebView(cacheLoader, resources);
         detailsWebView.loadDetails(webView, intent);
         verifyAll();
     }
