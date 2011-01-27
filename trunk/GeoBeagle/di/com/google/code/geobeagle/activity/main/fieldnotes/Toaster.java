@@ -14,20 +14,20 @@
 
 package com.google.code.geobeagle.activity.main.fieldnotes;
 
-import com.google.code.geobeagle.xmlimport.GpxImporterDI.Toaster;
 import com.google.inject.Inject;
 
 import android.content.Context;
+import android.widget.Toast;
 
-public class ToasterFactory {
+public class Toaster {
     private final Context context;
 
     @Inject
-    ToasterFactory(Context context) {
+    Toaster(Context context) {
         this.context = context;
     }
 
-    public Toaster create(int resource, int duration) {
-        return new Toaster(context, resource, duration);
+    public void toast(int resource, int duration) {
+        Toast.makeText(context, resource, duration).show();
     }
 }

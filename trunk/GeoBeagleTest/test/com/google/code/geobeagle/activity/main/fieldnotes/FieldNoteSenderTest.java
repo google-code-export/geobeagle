@@ -19,7 +19,6 @@ import static org.junit.Assert.assertEquals;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.main.fieldnotes.FieldnoteLogger.OnClickOk;
 import com.google.code.geobeagle.xmlimport.GeoBeagleEnvironment;
-import com.google.code.geobeagle.xmlimport.GpxImporterDI.Toaster;
 
 import org.easymock.EasyMock;
 import org.junit.Before;
@@ -263,18 +262,15 @@ public class FieldNoteSenderTest {
         FieldnoteStringsFVsDnf fieldnoteStringsFVsDnf = PowerMock
                 .createMock(FieldnoteStringsFVsDnf.class);
         Toaster toaster = PowerMock.createMock(Toaster.class);
-        ToasterFactory toasterFactory = PowerMock.createMock(ToasterFactory.class);
         IOException exception = new IOException();
 
 
         EasyMock.expect(geoBeagleEnvironment.getFieldNotesFilename()).andReturn("fieldnotes.log");
         PowerMock.expectNew(FileOutputStream.class, "fieldnotes.log", true).andThrow(exception);
-        EasyMock.expect(toasterFactory.create(R.string.error_writing_cache_log, Toast.LENGTH_LONG))
-                .andReturn(toaster);
-        toaster.showToast();
+        toaster.toast(R.string.error_writing_cache_log, Toast.LENGTH_LONG);
 
         PowerMock.replayAll();
-        new FileLogger(fieldnoteStringsFVsDnf, null, toasterFactory, geoBeagleEnvironment).log(
+        new FileLogger(fieldnoteStringsFVsDnf, null, toaster, geoBeagleEnvironment).log(
                 "GC123",
                 "easy find", false);
         PowerMock.verifyAll();

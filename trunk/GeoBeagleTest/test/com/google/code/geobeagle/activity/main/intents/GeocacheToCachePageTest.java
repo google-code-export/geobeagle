@@ -25,9 +25,10 @@ import com.google.code.geobeagle.GeocacheFactory;
 import com.google.code.geobeagle.GeocacheFactory.Source;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.cachelist.GeoBeagleTest;
+import com.google.code.geobeagle.cacheloader.CacheLoader;
 import com.google.code.geobeagle.cacheloader.CacheLoaderException;
-import com.google.code.geobeagle.cacheloader.CacheUrlLoader;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -41,12 +42,19 @@ import android.util.Log;
     Log.class
 })
 public class GeocacheToCachePageTest extends GeoBeagleTest {
+    private CacheLoader cacheUrlLoader;
+    private Geocache geocache;
+    private Resources resources;
+
+    @Before
+    public void setUp() {
+        cacheUrlLoader = createMock(CacheLoader.class);
+        geocache = createMock(Geocache.class);
+        resources = createMock(Resources.class);
+    }
+
     @Test
     public void convertGpxShouldUseCacheUrlLoader() throws CacheLoaderException {
-        CacheUrlLoader cacheUrlLoader = createMock(CacheUrlLoader.class);
-        Geocache geocache = createMock(Geocache.class);
-        Resources resources = createMock(Resources.class);
-
         expect(geocache.getSourceType()).andReturn(Source.GPX);
         expect(geocache.getId()).andReturn("GCFOO");
         expect(geocache.getSourceName()).andReturn("bcaching.com");
@@ -60,10 +68,6 @@ public class GeocacheToCachePageTest extends GeoBeagleTest {
 
     @Test
     public void convertNonGpxShouldUseStringRule() throws CacheLoaderException {
-        CacheUrlLoader cacheUrlLoader = createMock(CacheUrlLoader.class);
-        Geocache geocache = createMock(Geocache.class);
-        Resources resources = createMock(Resources.class);
-
         expect(geocache.getSourceType()).andReturn(Source.WEB_URL);
         expect(geocache.getContentProvider()).andReturn(GeocacheFactory.Provider.GROUNDSPEAK);
         expect(resources.getStringArray(R.array.cache_page_url)).andReturn(new String[] {

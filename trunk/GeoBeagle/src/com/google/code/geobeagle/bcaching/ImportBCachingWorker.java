@@ -18,7 +18,7 @@ import com.google.code.geobeagle.ErrorDisplayer;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.Abortable;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh.UpdateFlag;
-import com.google.code.geobeagle.activity.main.fieldnotes.ToasterFactory;
+import com.google.code.geobeagle.activity.main.fieldnotes.Toaster;
 import com.google.code.geobeagle.bcaching.communication.BCachingException;
 import com.google.code.geobeagle.bcaching.progress.ProgressHandler;
 import com.google.code.geobeagle.bcaching.progress.ProgressManager;
@@ -47,7 +47,7 @@ public class ImportBCachingWorker extends RoboThread implements Abortable {
     private boolean inProgress;
     private final ProgressHandler progressHandler;
     private final ProgressManager progressManager;
-    private final ToasterFactory toasterFactory;
+    private final Toaster toaster;
     private final UpdateFlag updateFlag;
 
     @Inject
@@ -56,20 +56,20 @@ public class ImportBCachingWorker extends RoboThread implements Abortable {
         this.errorDisplayer = injector.getInstance(ErrorDisplayer.class);
         this.progressManager = injector.getInstance(ProgressManager.class);
         this.cacheImporter = injector.getInstance(CacheImporter.class);
-        this.toasterFactory = injector.getInstance(ToasterFactory.class);
+        this.toaster = injector.getInstance(Toaster.class);
         this.cursor = injector.getInstance(CacheListCursor.class);
         this.updateFlag = injector.getInstance(UpdateFlag.class);
     }
 
     public ImportBCachingWorker(ProgressHandler progressHandler, ProgressManager progressManager,
             ErrorDisplayer errorDisplayer, CacheImporter cacheImporter,
-            ToasterFactory toasterFactory, CacheListCursor cacheListCursor,
+            Toaster toaster, CacheListCursor cacheListCursor,
             UpdateFlag updateFlag) {
         this.progressHandler = progressHandler;
         this.errorDisplayer = errorDisplayer;
         this.progressManager = progressManager;
         this.cacheImporter = cacheImporter;
-        this.toasterFactory = toasterFactory;
+        this.toaster = toaster;
         this.cursor = cacheListCursor;
         this.updateFlag = updateFlag;
     }
@@ -87,7 +87,7 @@ public class ImportBCachingWorker extends RoboThread implements Abortable {
                 Log.d("GeoBeagle", "sleeping...");
                 Thread.sleep(100);
             }
-            toasterFactory.create(R.string.import_canceled, Toast.LENGTH_LONG).showToast();
+            toaster.toast(R.string.import_canceled, Toast.LENGTH_LONG);
             Log.d("GeoBeagle", "abort: JOIN FINISHED");
         } catch (InterruptedException e) {
             Log.d("GeoBeagle", "Ignoring InterruptedException: " + e.getLocalizedMessage());

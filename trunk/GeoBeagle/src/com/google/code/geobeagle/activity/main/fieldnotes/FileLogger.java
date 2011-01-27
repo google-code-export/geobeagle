@@ -34,18 +34,18 @@ import java.util.Date;
  */
 
 public class FileLogger implements ICacheLogger {
-    private final ToasterFactory mToasterFactory;
+    private final Toaster mToaster;
     private final FieldnoteStringsFVsDnf mFieldnoteStringsFVsDnf;
     private final DateFormatter mSimpleDateFormat;
     private final GeoBeagleEnvironment mGeoBeagleEnvironment;
 
     @Inject
     public FileLogger(FieldnoteStringsFVsDnf fieldnoteStringsFVsDnf,
-            DateFormatter simpleDateFormat, ToasterFactory toasterFactory,
+            DateFormatter simpleDateFormat, Toaster toaster,
             GeoBeagleEnvironment geoBeagleEnvironment) {
         mFieldnoteStringsFVsDnf = fieldnoteStringsFVsDnf;
         mSimpleDateFormat = simpleDateFormat;
-        mToasterFactory = toasterFactory;
+        mToaster = toaster;
         mGeoBeagleEnvironment = geoBeagleEnvironment;
     }
 
@@ -62,7 +62,7 @@ public class FileLogger implements ICacheLogger {
             writer.write(logLine);
             writer.close();
         } catch (IOException e) {
-            mToasterFactory.create(R.string.error_writing_cache_log, Toast.LENGTH_LONG).showToast();
+            mToaster.toast(R.string.error_writing_cache_log, Toast.LENGTH_LONG);
         }
     }
 }
