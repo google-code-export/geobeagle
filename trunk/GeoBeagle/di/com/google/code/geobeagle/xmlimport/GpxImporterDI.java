@@ -41,7 +41,6 @@ import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
-import android.widget.Toast;
 
 public class GpxImporterDI {
     // Can't test this due to final methods in base.
@@ -254,27 +253,4 @@ public class GpxImporterDI {
 //            mProgressDialog.setCancelable(true);
         }
     }
-
-    public static class ToastFactory {
-        public void showToast(Context context, int resId, int duration) {
-            Toast.makeText(context, resId, duration).show();
-        }
-    }
-
-    public static class Toaster {
-        private final Context mContext;
-        private final int mResId;
-        private final int mDuration;
-
-        public Toaster(Context context, int resId, int duration) {
-            mContext = context;
-            mResId = resId;
-            mDuration = duration;
-        }
-
-        public void showToast() {
-            Toast.makeText(mContext, mResId, mDuration).show();
-        }
-    }
-
 }

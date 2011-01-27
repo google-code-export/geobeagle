@@ -18,8 +18,8 @@ import static org.easymock.EasyMock.expect;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
 import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheListPresenter;
+import com.google.code.geobeagle.activity.main.fieldnotes.Toaster;
 import com.google.code.geobeagle.xmlimport.GpxImporterDI.MessageHandler;
-import com.google.code.geobeagle.xmlimport.GpxImporterDI.ToastFactory;
 import com.google.code.geobeagle.xmlimport.gpx.GpxAndZipFiles;
 import com.google.code.geobeagle.xmlimport.gpx.GpxAndZipFiles.GpxAndZipFilenameFilter;
 import com.google.code.geobeagle.xmlimport.gpx.IGpxReader;
@@ -73,7 +73,7 @@ public class GpxImporterTest {
     public void testAbortThreadAlive() {
         ImportThreadWrapper importThreadWrapper = PowerMock.createMock(ImportThreadWrapper.class);
         MessageHandler messageHandler = PowerMock.createMock(MessageHandler.class);
-        ToastFactory toastFactory = PowerMock.createMock(ToastFactory.class);
+        Toaster toaster = PowerMock.createMock(Toaster.class);
         Provider<Context> contextProvider = PowerMock.createMock(Provider.class);
         Context context = PowerMock.createMock(Context.class);
 
@@ -82,11 +82,11 @@ public class GpxImporterTest {
         messageHandler.abortLoad();
         importThreadWrapper.join();
         expect(contextProvider.get()).andReturn(context);
-        toastFactory.showToast(context, R.string.import_canceled, Toast.LENGTH_SHORT);
+        toaster.toast(R.string.import_canceled, Toast.LENGTH_SHORT);
 
         PowerMock.replayAll();
         new GpxImporter(null, gpxLoaderFromFile, contextProvider, importThreadWrapper,
-                messageHandler, toastFactory, null, null, null, null).abort();
+                messageHandler, toaster, null, null, null, null).abort();
         PowerMock.verifyAll();
     }
 
