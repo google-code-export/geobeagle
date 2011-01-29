@@ -24,12 +24,8 @@ import com.google.code.geobeagle.database.DbFrontend;
 import com.google.code.geobeagle.xmlimport.GpxToCache.CancelException;
 import com.google.code.geobeagle.xmlimport.GpxToCache.GpxToCacheFactory;
 import com.google.code.geobeagle.xmlimport.gpx.GpxAndZipFiles;
-import com.google.code.geobeagle.xmlimport.gpx.GpxAndZipFiles.GpxAndZipFilenameFilter;
 import com.google.code.geobeagle.xmlimport.gpx.GpxAndZipFiles.GpxFilesAndZipFilesIter;
-import com.google.code.geobeagle.xmlimport.gpx.GpxFileIterAndZipFileIterFactory;
-import com.google.code.geobeagle.xmlimport.gpx.zip.ZipFileOpener.ZipInputFileTester;
 import com.google.inject.Injector;
-import com.google.inject.Provider;
 
 import roboguice.util.RoboThread;
 
@@ -54,18 +50,10 @@ public class ImportThread extends RoboThread {
     static ImportThread create(MessageHandlerInterface messageHandlerInterface,
             ErrorDisplayer errorDisplayer,
             Injector injector) {
-        final GpxAndZipFilenameFilter filenameFilter = injector
-                .getInstance(GpxAndZipFilenameFilter.class);
-        final ZipInputFileTester zipInputFileTester = injector
-                .getInstance(ZipInputFileTester.class);
         final GeoBeagleEnvironment geoBeagleEnvironment = injector
                 .getInstance(GeoBeagleEnvironment.class);
-        Provider<Aborter> aborterProvider = injector.getProvider(Aborter.class);
-        final GpxFileIterAndZipFileIterFactory gpxFileIterAndZipFileIterFactory = new GpxFileIterAndZipFileIterFactory(
-                zipInputFileTester, aborterProvider, geoBeagleEnvironment);
         final SharedPreferences sharedPreferences = injector.getInstance(SharedPreferences.class);
-        final GpxAndZipFiles gpxAndZipFiles = new GpxAndZipFiles(filenameFilter,
-                gpxFileIterAndZipFileIterFactory, geoBeagleEnvironment, sharedPreferences);
+        final GpxAndZipFiles gpxAndZipFiles = injector.getInstance(GpxAndZipFiles.class);
         final OldCacheFilesCleaner oldCacheFilesCleaner = new OldCacheFilesCleaner(
                 injector.getInstance(GeoBeagleEnvironment.class), messageHandlerInterface);
 
