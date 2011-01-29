@@ -30,10 +30,10 @@ public class DetailsDatabaseWriter implements Writer, CacheWriterOpener {
         ContentValues contentValues = new ContentValues();
         contentValues.put("Details", stringBuffer.toString());
         contentValues.put("CacheId", cacheId);
-        sdDatabase.insert("Details", "Details", contentValues);
         // Log.d("GeoBeagle",
         // "INSERTING Details: " + cacheId + "\n" +
         // contentValues.getAsString("Details"));
+        sdDatabase.replace("Details", "Details", contentValues);
         stringBuffer.setLength(0);
         this.cacheId = null;
     }
