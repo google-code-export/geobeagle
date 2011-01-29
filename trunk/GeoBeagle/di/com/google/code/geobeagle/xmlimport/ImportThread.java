@@ -16,6 +16,7 @@ package com.google.code.geobeagle.xmlimport;
 
 import com.google.code.geobeagle.ErrorDisplayer;
 import com.google.code.geobeagle.R;
+import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh.UpdateFlag;
 import com.google.code.geobeagle.bcaching.preferences.BCachingStartTime;
 import com.google.code.geobeagle.cachedetails.FileDataVersionChecker;
@@ -50,6 +51,9 @@ public class ImportThread extends RoboThread {
     static ImportThread create(MessageHandlerInterface messageHandlerInterface,
             ErrorDisplayer errorDisplayer,
             Injector injector) {
+        final CacheListRefresh cacheListRefresh = injector.getInstance(CacheListRefresh.class);
+        messageHandlerInterface.start(cacheListRefresh);
+
         final GeoBeagleEnvironment geoBeagleEnvironment = injector
                 .getInstance(GeoBeagleEnvironment.class);
         final SharedPreferences sharedPreferences = injector.getInstance(SharedPreferences.class);

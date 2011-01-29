@@ -18,12 +18,10 @@ import com.google.code.geobeagle.ErrorDisplayer;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.cachelist.Pausable;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.Abortable;
-import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
 import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheListPresenter;
 import com.google.code.geobeagle.activity.main.fieldnotes.Toaster;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
-import com.google.inject.Provider;
 
 import android.widget.Toast;
 
@@ -34,7 +32,6 @@ public class GpxImporter implements Abortable {
     private final MessageHandler mMessageHandler;
     private final Toaster mToaster;
     private final Pausable mGeocacheListPresenter;
-    private final Provider<CacheListRefresh> mCacheListRefreshProvider;
     private final Injector mInjector;
     private final Aborter mAborter;
 
@@ -43,7 +40,6 @@ public class GpxImporter implements Abortable {
             MessageHandler messageHandler,
             Toaster toaster,
             ErrorDisplayer errorDisplayer,
-            Provider<CacheListRefresh> cacheListRefreshProvider,
             Aborter aborter,
             Injector injector) {
         mImportThreadWrapper = importThreadWrapper;
@@ -51,7 +47,6 @@ public class GpxImporter implements Abortable {
         mErrorDisplayer = errorDisplayer;
         mToaster = toaster;
         mGeocacheListPresenter = geocacheListPresenter;
-        mCacheListRefreshProvider = cacheListRefreshProvider;
         mAborter = aborter;
         mInjector = injector;
     }
@@ -64,7 +59,6 @@ public class GpxImporter implements Abortable {
         mErrorDisplayer = injector.getInstance(ErrorDisplayer.class);
         mToaster = injector.getInstance(Toaster.class);
         mGeocacheListPresenter = injector.getInstance(GeocacheListPresenter.class);
-        mCacheListRefreshProvider = injector.getProvider(CacheListRefresh.class);
         mInjector = injector;
     }
 
@@ -81,8 +75,7 @@ public class GpxImporter implements Abortable {
     public void importGpxs() {
         mGeocacheListPresenter.onPause();
 
-        mImportThreadWrapper.open(mCacheListRefreshProvider.get(), mErrorDisplayer,
-                mInjector);
+        mImportThreadWrapper.open(mErrorDisplayer, mInjector);
         mImportThreadWrapper.start();
     }
 }
