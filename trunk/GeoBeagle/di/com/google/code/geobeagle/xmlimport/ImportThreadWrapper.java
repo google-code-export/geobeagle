@@ -14,6 +14,7 @@
 
 package com.google.code.geobeagle.xmlimport;
 
+import com.google.code.geobeagle.xmlimport.ImportThread.ImportThreadFactory;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 
@@ -21,13 +22,12 @@ import android.util.Log;
 
 public class ImportThreadWrapper {
     private ImportThread mImportThread;
-    private final MessageHandler mMessageHandler;
+    private final ImportThreadFactory importThreadFactory;
 
     @Inject
-    public ImportThreadWrapper(MessageHandler messageHandler) {
-        mMessageHandler = messageHandler;
+    ImportThreadWrapper(ImportThreadFactory importThreadFactory) {
+        this.importThreadFactory = importThreadFactory;
     }
-
     public boolean isAlive() {
         if (mImportThread != null)
             return mImportThread.isAliveHack();
@@ -47,7 +47,7 @@ public class ImportThreadWrapper {
     }
 
     public void open(Injector injector) {
-        mImportThread = ImportThread.create(mMessageHandler, injector);
+        mImportThread = importThreadFactory.create(injector);
     }
 
     public void start() {
