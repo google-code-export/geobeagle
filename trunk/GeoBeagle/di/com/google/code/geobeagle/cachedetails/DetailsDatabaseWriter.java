@@ -26,7 +26,7 @@ public class DetailsDatabaseWriter implements Writer, CacheWriterOpener {
 
     @Override
     public void close() throws IOException {
-        Log.d("GeoBeagle", "CLOSING DDW");
+        Log.d("GeoBeagle", "CLOSING DetailsDatabaseWriter");
         ContentValues contentValues = new ContentValues();
         contentValues.put("Details", stringBuffer.toString());
         contentValues.put("CacheId", cacheId);
