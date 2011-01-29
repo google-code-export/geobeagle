@@ -26,7 +26,7 @@ import com.google.code.geobeagle.xmlimport.GpxToCache.CancelException;
 import com.google.code.geobeagle.xmlimport.GpxToCache.GpxToCacheFactory;
 import com.google.code.geobeagle.xmlimport.gpx.GpxAndZipFiles;
 import com.google.code.geobeagle.xmlimport.gpx.GpxAndZipFiles.GpxFilesAndZipFilesIter;
-import com.google.inject.Injector;
+import com.google.inject.Inject;
 
 import roboguice.util.RoboThread;
 
@@ -49,40 +49,60 @@ public class ImportThread extends RoboThread {
     private final UpdateFlag mUpdateFlag;
 
     static class ImportThreadFactory {
-        public ImportThread create(Injector injector) {
 
-            final MessageHandler messageHandlerInterface = injector
-                    .getInstance(MessageHandler.class);
-            final ErrorDisplayer errorDisplayer = injector.getInstance(ErrorDisplayer.class);
-            final CacheListRefresh cacheListRefresh = injector.getInstance(CacheListRefresh.class);
+        private final MessageHandler messageHandlerInterface;
+        private final ErrorDisplayer errorDisplayer;
+        private final CacheListRefresh cacheListRefresh;
+        private final GeoBeagleEnvironment geoBeagleEnvironment;
+        private final SharedPreferences sharedPreferences;
+        private final GpxAndZipFiles gpxAndZipFiles;
+        private final GpxToCacheFactory gpxToCacheFactory;
+        private final FileDataVersionWriter fileDataVersionWriter;
+        private final FileDataVersionChecker fileDataVersionChecker;
+        private final BCachingStartTime bcachingStartTime;
+        private final UpdateFlag updateFlag;
+        private final DbFrontend dbFrontend;
+
+        @Inject
+        public ImportThreadFactory(MessageHandler messageHandler,
+                ErrorDisplayer errorDisplayer,
+                CacheListRefresh cacheListRefresh,
+                GeoBeagleEnvironment geoBeagleEnvironment,
+                SharedPreferences sharedPreferences,
+                GpxAndZipFiles gpxAndZipFiles,
+                GpxToCacheFactory gpxToCacheFactory,
+                FileDataVersionWriter fileDataVersionWriter,
+                FileDataVersionChecker fileDataVersionChecker,
+                BCachingStartTime bcachingStartTime,
+                UpdateFlag updateFlag,
+                DbFrontend dbFrontend) {
+            this.messageHandlerInterface = messageHandler;
+            this.errorDisplayer = errorDisplayer;
+            this.cacheListRefresh = cacheListRefresh;
+            this.geoBeagleEnvironment = geoBeagleEnvironment;
+            this.sharedPreferences = sharedPreferences;
+            this.gpxAndZipFiles = gpxAndZipFiles;
+            this.gpxToCacheFactory = gpxToCacheFactory;
+            this.fileDataVersionWriter = fileDataVersionWriter;
+            this.fileDataVersionChecker = fileDataVersionChecker;
+            this.bcachingStartTime = bcachingStartTime;
+            this.updateFlag = updateFlag;
+            this.dbFrontend = dbFrontend;
+        }
+
+        public ImportThread create() {
             messageHandlerInterface.start(cacheListRefresh);
 
-            final GeoBeagleEnvironment geoBeagleEnvironment = injector
-                    .getInstance(GeoBeagleEnvironment.class);
-            final SharedPreferences sharedPreferences = injector
-                    .getInstance(SharedPreferences.class);
-            final GpxAndZipFiles gpxAndZipFiles = injector.getInstance(GpxAndZipFiles.class);
             final OldCacheFilesCleaner oldCacheFilesCleaner = new OldCacheFilesCleaner(
-                    injector.getInstance(GeoBeagleEnvironment.class), messageHandlerInterface);
+                    geoBeagleEnvironment, messageHandlerInterface);
 
-            final MessageHandlerInterface messageHandler = injector
-                    .getInstance(MessageHandler.class);
-            final GpxToCache gpxToCache = injector.getInstance(GpxToCacheFactory.class).create(
-                    messageHandler);
+            final GpxToCache gpxToCache = gpxToCacheFactory.create(messageHandlerInterface);
             final ImportThreadHelper importThreadHelper = new ImportThreadHelper(gpxToCache,
                     messageHandlerInterface, oldCacheFilesCleaner, sharedPreferences,
                     geoBeagleEnvironment);
-            final FileDataVersionWriter fileDataVersionWriter = injector
-                    .getInstance(FileDataVersionWriter.class);
-            final FileDataVersionChecker fileDataVersionChecker = injector
-                    .getInstance(FileDataVersionChecker.class);
-            final BCachingStartTime bcachingStartTime = injector
-                    .getInstance(BCachingStartTime.class);
-            final UpdateFlag updateFlag = injector.getInstance(UpdateFlag.class);
             return new ImportThread(gpxAndZipFiles, importThreadHelper, errorDisplayer,
-                    fileDataVersionWriter, injector.getInstance(DbFrontend.class),
-                    fileDataVersionChecker, bcachingStartTime, updateFlag);
-
+                    fileDataVersionWriter, dbFrontend, fileDataVersionChecker, bcachingStartTime,
+                    updateFlag);
         }
     }
 

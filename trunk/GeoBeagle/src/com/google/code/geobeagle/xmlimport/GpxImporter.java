@@ -30,21 +30,18 @@ public class GpxImporter implements Abortable {
     private final MessageHandler mMessageHandler;
     private final Toaster mToaster;
     private final Pausable mGeocacheListPresenter;
-    private final Injector mInjector;
     private final Aborter mAborter;
 
     GpxImporter(GeocacheListPresenter geocacheListPresenter,
             ImportThreadWrapper importThreadWrapper,
             MessageHandler messageHandler,
             Toaster toaster,
-            Aborter aborter,
-            Injector injector) {
+            Aborter aborter) {
         mImportThreadWrapper = importThreadWrapper;
         mMessageHandler = messageHandler;
         mToaster = toaster;
         mGeocacheListPresenter = geocacheListPresenter;
         mAborter = aborter;
-        mInjector = injector;
     }
 
     @Inject
@@ -54,7 +51,6 @@ public class GpxImporter implements Abortable {
         mMessageHandler = injector.getInstance(MessageHandler.class);
         mToaster = injector.getInstance(Toaster.class);
         mGeocacheListPresenter = injector.getInstance(GeocacheListPresenter.class);
-        mInjector = injector;
     }
 
     @Override
@@ -70,7 +66,7 @@ public class GpxImporter implements Abortable {
     public void importGpxs() {
         mGeocacheListPresenter.onPause();
 
-        mImportThreadWrapper.open(mInjector);
+        mImportThreadWrapper.open();
         mImportThreadWrapper.start();
     }
 }
