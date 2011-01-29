@@ -15,7 +15,6 @@
 package com.google.code.geobeagle.xmlimport;
 
 import com.google.code.geobeagle.ErrorDisplayer;
-import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 
@@ -48,10 +47,7 @@ public class ImportThreadWrapper {
             }
     }
 
-    public void open(CacheListRefresh cacheListRefresh,
-            ErrorDisplayer mErrorDisplayer,
-            Injector injector) {
-        mMessageHandler.start(cacheListRefresh);
+    public void open(ErrorDisplayer mErrorDisplayer, Injector injector) {
         mImportThread = ImportThread.create(mMessageHandler, mErrorDisplayer, injector);
     }
 
