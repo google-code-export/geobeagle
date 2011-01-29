@@ -14,7 +14,6 @@
 
 package com.google.code.geobeagle.xmlimport;
 
-import com.google.code.geobeagle.ErrorDisplayer;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.cachelist.Pausable;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.Abortable;
@@ -38,7 +37,6 @@ public class GpxImporter implements Abortable {
             ImportThreadWrapper importThreadWrapper,
             MessageHandler messageHandler,
             Toaster toaster,
-            ErrorDisplayer errorDisplayer,
             Aborter aborter,
             Injector injector) {
         mImportThreadWrapper = importThreadWrapper;
