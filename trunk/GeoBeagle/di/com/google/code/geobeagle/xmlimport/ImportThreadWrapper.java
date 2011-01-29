@@ -14,7 +14,6 @@
 
 package com.google.code.geobeagle.xmlimport;
 
-import com.google.code.geobeagle.ErrorDisplayer;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 
@@ -47,8 +46,8 @@ public class ImportThreadWrapper {
             }
     }
 
-    public void open(ErrorDisplayer mErrorDisplayer, Injector injector) {
-        mImportThread = ImportThread.create(mMessageHandler, mErrorDisplayer, injector);
+    public void open(Injector injector) {
+        mImportThread = ImportThread.create(mMessageHandler, injector);
     }
 
     public void start() {

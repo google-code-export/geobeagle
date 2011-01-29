@@ -49,8 +49,8 @@ public class ImportThread extends RoboThread {
     private final UpdateFlag mUpdateFlag;
 
     static ImportThread create(MessageHandlerInterface messageHandlerInterface,
-            ErrorDisplayer errorDisplayer,
             Injector injector) {
+        final ErrorDisplayer errorDisplayer = injector.getInstance(ErrorDisplayer.class);
         final CacheListRefresh cacheListRefresh = injector.getInstance(CacheListRefresh.class);
         messageHandlerInterface.start(cacheListRefresh);
 
