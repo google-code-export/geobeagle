@@ -108,7 +108,6 @@ public class ImportThread extends RoboThread {
     private final MessageHandler mMessageHandler;
     private final OldCacheFilesCleaner mOldCacheFilesCleaner;
     private final SharedPreferences mSharedPreferences;
-
     private final UpdateFlag mUpdateFlag;
 
     public ImportThread(GpxAndZipFiles gpxAndZipFiles,
@@ -168,7 +167,7 @@ public class ImportThread extends RoboThread {
         mMessageHandler.startBCachingImport();
     }
 
-    void endImport() throws ImportException {
+    private void endImport() throws ImportException {
         mGpxToCache.end();
         if (!mHasFiles
                 && mSharedPreferences.getString(BCachingModule.BCACHING_USERNAME, "").length() == 0)
@@ -176,7 +175,7 @@ public class ImportThread extends RoboThread {
                     mGeoBeagleEnvironment.getImportFolder());
     }
 
-    void processFile(GpxFilesAndZipFilesIter gpxFilesAndZipFilesIter) throws IOException,
+    private void processFile(GpxFilesAndZipFilesIter gpxFilesAndZipFilesIter) throws IOException,
             CancelException {
         IGpxReader gpxReader = gpxFilesAndZipFilesIter.next();
         String filename = gpxReader.getFilename();
@@ -185,7 +184,7 @@ public class ImportThread extends RoboThread {
         mGpxToCache.load(filename, gpxReader.open());
     }
 
-    void startImport() {
+    private void startImport() {
         mOldCacheFilesCleaner.clean(mMessageHandler);
         mGpxToCache.start();
     }
