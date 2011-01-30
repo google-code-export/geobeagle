@@ -16,7 +16,7 @@ package com.google.code.geobeagle.activity.cachelist.actions.menu;
 
 import com.google.code.geobeagle.actions.Action;
 import com.google.code.geobeagle.bcaching.ImportBCachingWorker;
-import com.google.code.geobeagle.xmlimport.GpxImporter;
+import com.google.code.geobeagle.xmlimport.CacheSyncer;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Provider;
@@ -27,21 +27,21 @@ import android.util.Log;
 @Singleton
 public class MenuActionSyncGpx implements Action {
     private Abortable mBCachingWorkerAborter;
-    private GpxImporter mGpxImporter;
-    private final Provider<GpxImporter> mGpxImporterProvider;
+    private CacheSyncer mGpxImporter;
+    private final Provider<CacheSyncer> mGpxImporterProvider;
     private final Provider<ImportBCachingWorker> mImportBCachingWorkerProvider;
     private boolean mSyncInProgress;
 
     @Inject
     public MenuActionSyncGpx(Injector injector) {
-        mGpxImporterProvider = injector.getProvider(GpxImporter.class);
+        mGpxImporterProvider = injector.getProvider(CacheSyncer.class);
         mImportBCachingWorkerProvider = injector.getProvider(ImportBCachingWorker.class);
         mSyncInProgress = false;
     }
 
     // For testing.
     public MenuActionSyncGpx(Provider<ImportBCachingWorker> importBCachingWorkerProvider,
-            Provider<GpxImporter> gpxImporterProvider) {
+            Provider<CacheSyncer> gpxImporterProvider) {
         mImportBCachingWorkerProvider = importBCachingWorkerProvider;
         mGpxImporterProvider = gpxImporterProvider;
         mSyncInProgress = false;
