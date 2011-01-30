@@ -91,7 +91,8 @@ public class GpxAndZipFiles {
     private final GeoBeagleEnvironment mGeoBeagleEnvironment;
     private final SharedPreferences mSharedPreferences;
 
-    public GpxAndZipFiles(FilenameFilter filenameFilter,
+    @Inject
+    public GpxAndZipFiles(GpxAndZipFilenameFilter filenameFilter,
             GpxFileIterAndZipFileIterFactory gpxFileIterAndZipFileIterFactory,
             GeoBeagleEnvironment geoBeagleEnvironment,
             SharedPreferences sharedPreferences) {
