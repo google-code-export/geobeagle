@@ -156,7 +156,7 @@ public class ImportThread extends RoboThread {
         } catch (ImportException e) {
             mErrorDisplayer.displayError(e.getError(), e.getPath());
             return;
-        } catch (com.google.code.geobeagle.xmlimport.GpxToCache.CancelException e) {
+        } catch (CancelException e) {
             return;
         } finally {
             mUpdateFlag.setUpdatesEnabled(true);
@@ -167,7 +167,8 @@ public class ImportThread extends RoboThread {
         mMessageHandler.startBCachingImport();
     }
 
-    private void endImport() throws ImportException {
+    private void endImport() throws ImportException, IOException {
+        mFileDataVersionWriter.writeVersion();
         mGpxToCache.end();
         if (!mHasFiles
                 && mSharedPreferences.getString(BCachingModule.BCACHING_USERNAME, "").length() == 0)
@@ -184,23 +185,23 @@ public class ImportThread extends RoboThread {
         mGpxToCache.load(filename, gpxReader.open());
     }
 
-    private void startImport() {
+    private GpxFilesAndZipFilesIter startImport() throws ImportException {
         mOldCacheFilesCleaner.clean(mMessageHandler);
         mGpxToCache.start();
-    }
-
-    void tryRun() throws IOException, ImportException, CancelException {
         if (mFileDataVersionChecker.needsUpdating()) {
             mDbFrontend.forceUpdate();
             mBCachingStartTime.clearStartTime();
         }
         GpxFilesAndZipFilesIter gpxFilesAndZipFilesIter = mGpxAndZipFiles.iterator();
-        gpxFilesAndZipFilesIter.getCount();
-        startImport();
+        gpxFilesAndZipFilesIter.getCount(); // For collecting parameter.
+        return gpxFilesAndZipFilesIter;
+    }
+
+    void tryRun() throws IOException, ImportException, CancelException {
+        GpxFilesAndZipFilesIter gpxFilesAndZipFilesIter = startImport();
         while (gpxFilesAndZipFilesIter.hasNext()) {
             processFile(gpxFilesAndZipFilesIter);
         }
-        mFileDataVersionWriter.writeVersion();
         endImport();
     }
 }
