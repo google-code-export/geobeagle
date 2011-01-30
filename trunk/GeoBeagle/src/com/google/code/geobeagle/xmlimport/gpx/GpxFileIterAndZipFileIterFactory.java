@@ -20,6 +20,7 @@ import com.google.code.geobeagle.xmlimport.GeoBeagleEnvironment;
 import com.google.code.geobeagle.xmlimport.gpx.gpx.GpxFileOpener;
 import com.google.code.geobeagle.xmlimport.gpx.zip.ZipFileOpener;
 import com.google.code.geobeagle.xmlimport.gpx.zip.ZipFileOpener.ZipInputFileTester;
+import com.google.inject.Inject;
 import com.google.inject.Provider;
 
 import java.io.IOException;
@@ -38,6 +39,7 @@ public class GpxFileIterAndZipFileIterFactory {
     private final ZipInputFileTester mZipInputFileTester;
     private final GeoBeagleEnvironment mGeoBeagleEnvironment;
 
+    @Inject
     public GpxFileIterAndZipFileIterFactory(ZipInputFileTester zipInputFileTester,
             Provider<Aborter> aborterProvider,
             GeoBeagleEnvironment geoBeagleEnvironment) {
