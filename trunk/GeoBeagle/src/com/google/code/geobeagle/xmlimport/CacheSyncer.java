@@ -25,7 +25,7 @@ import com.google.inject.Injector;
 import android.util.Log;
 import android.widget.Toast;
 
-public class GpxImporter implements Abortable {
+public class CacheSyncer implements Abortable {
 
     private final MessageHandler mMessageHandler;
     private final Toaster mToaster;
@@ -34,7 +34,7 @@ public class GpxImporter implements Abortable {
     private final ImportThreadFactory mImportThreadFactory;
     private ImportThread mImportThread;
 
-    GpxImporter(GeocacheListPresenter geocacheListPresenter,
+    CacheSyncer(GeocacheListPresenter geocacheListPresenter,
             MessageHandler messageHandler,
             Toaster toaster,
             Aborter aborter,
@@ -47,7 +47,7 @@ public class GpxImporter implements Abortable {
     }
 
     @Inject
-    GpxImporter(Injector injector) {
+    CacheSyncer(Injector injector) {
         mAborter = injector.getInstance(Aborter.class);
         mMessageHandler = injector.getInstance(MessageHandler.class);
         mToaster = injector.getInstance(Toaster.class);
