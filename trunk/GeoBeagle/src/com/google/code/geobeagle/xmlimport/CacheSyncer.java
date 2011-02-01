@@ -27,53 +27,53 @@ import android.widget.Toast;
 
 public class CacheSyncer implements Abortable {
 
-    private final MessageHandler mMessageHandler;
-    private final Toaster mToaster;
-    private final Pausable mGeocacheListPresenter;
-    private final Aborter mAborter;
-    private final ImportThread mImportThread;
+    private final MessageHandler messageHandler;
+    private final Toaster toaster;
+    private final Pausable geocacheListPresenter;
+    private final Aborter aborter;
+    private final ImportThread importThread;
 
     CacheSyncer(GeocacheListPresenter geocacheListPresenter,
             MessageHandler messageHandler,
             Toaster toaster,
             Aborter aborter,
             ImportThread importThread) {
-        mMessageHandler = messageHandler;
-        mToaster = toaster;
-        mGeocacheListPresenter = geocacheListPresenter;
-        mAborter = aborter;
-        mImportThread = importThread;
+        this.messageHandler = messageHandler;
+        this.toaster = toaster;
+        this.geocacheListPresenter = geocacheListPresenter;
+        this.aborter = aborter;
+        this.importThread = importThread;
     }
 
     @Inject
     CacheSyncer(Injector injector) {
-        mAborter = injector.getInstance(Aborter.class);
-        mMessageHandler = injector.getInstance(MessageHandler.class);
-        mToaster = injector.getInstance(Toaster.class);
-        mGeocacheListPresenter = injector.getInstance(GeocacheListPresenter.class);
-        mImportThread = injector.getInstance(ImportThread.class);
+        aborter = injector.getInstance(Aborter.class);
+        messageHandler = injector.getInstance(MessageHandler.class);
+        toaster = injector.getInstance(Toaster.class);
+        geocacheListPresenter = injector.getInstance(GeocacheListPresenter.class);
+        importThread = injector.getInstance(ImportThread.class);
     }
 
     @Override
     public void abort() {
         Log.d("GeoBeagle", "CacheSyncer:abort() " + isAlive());
-        mMessageHandler.abortLoad();
-        mAborter.abort();
+        messageHandler.abortLoad();
+        aborter.abort();
         if (isAlive()) {
             join();
-            mToaster.toast(R.string.import_canceled, Toast.LENGTH_SHORT);
+            toaster.toast(R.string.import_canceled, Toast.LENGTH_SHORT);
         }
         Log.d("GeoBeagle", "CacheSyncer:abort() ending: " + isAlive());
     }
 
     boolean isAlive() {
-        if (mImportThread != null)
-            return mImportThread.isAliveHack();
+        if (importThread != null)
+            return importThread.isAliveHack();
         return false;
     }
 
     void join() {
-        if (mImportThread != null)
+        if (importThread != null)
             try {
                 while (isAlive()) {
                     Log.d("GeoBeagle", "Sleeping while gpx import completes");
@@ -85,8 +85,8 @@ public class CacheSyncer implements Abortable {
     }
 
     public void syncGpxs() {
-        mGeocacheListPresenter.onPause();
-        mImportThread.init();
-        mImportThread.start();
+        geocacheListPresenter.onPause();
+        importThread.init();
+        importThread.start();
     }
 }
