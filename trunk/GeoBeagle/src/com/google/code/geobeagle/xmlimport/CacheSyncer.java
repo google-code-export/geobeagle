@@ -65,21 +65,18 @@ public class CacheSyncer {
     }
 
     boolean isAlive() {
-        if (importThread != null)
-            return importThread.isAliveHack();
-        return false;
+        return importThread.isAliveHack();
     }
 
     void join() {
-        if (importThread != null)
-            try {
-                while (isAlive()) {
-                    Log.d("GeoBeagle", "Sleeping while gpx import completes");
-                    Thread.sleep(100);
-                }
-            } catch (InterruptedException e) {
-                // Ignore; we are aborting anyway.
+        try {
+            while (isAlive()) {
+                Log.d("GeoBeagle", "Sleeping while gpx import completes");
+                Thread.sleep(100);
             }
+        } catch (InterruptedException e) {
+            // Ignore; we are aborting anyway.
+        }
     }
 
     public void syncGpxs() {
