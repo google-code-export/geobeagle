@@ -5,10 +5,10 @@ import roboguice.inject.ContextScoped;
 import android.util.Log;
 
 @ContextScoped
-public class Aborter {
+public class AbortState {
     private static boolean mAborted = false;
 
-    Aborter() {
+    AbortState() {
         mAborted = false;
     }
 

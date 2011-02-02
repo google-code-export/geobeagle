@@ -14,7 +14,7 @@
 
 package com.google.code.geobeagle.xmlimport.gpx.gpx;
 
-import com.google.code.geobeagle.xmlimport.Aborter;
+import com.google.code.geobeagle.xmlimport.AbortState;
 import com.google.code.geobeagle.xmlimport.gpx.IGpxReader;
 import com.google.code.geobeagle.xmlimport.gpx.IGpxReaderIter;
 import com.google.inject.Provider;
@@ -22,10 +22,10 @@ import com.google.inject.Provider;
 public class GpxFileOpener {
     public static class GpxFileIter implements IGpxReaderIter {
 
-        private final Provider<Aborter> aborterProvider;
+        private final Provider<AbortState> aborterProvider;
         private String filename;
 
-        public GpxFileIter(Provider<Aborter> aborterProvider, String filename) {
+        public GpxFileIter(Provider<AbortState> aborterProvider, String filename) {
             this.aborterProvider = aborterProvider;
             this.filename = filename;
         }
@@ -45,10 +45,10 @@ public class GpxFileOpener {
         }
     }
 
-    private final Provider<Aborter> mAborterProvider;
+    private final Provider<AbortState> mAborterProvider;
     private final String mFilename;
 
-    public GpxFileOpener(String filename, Provider<Aborter> aborterProvider) {
+    public GpxFileOpener(String filename, Provider<AbortState> aborterProvider) {
         mFilename = filename;
         mAborterProvider = aborterProvider;
     }
