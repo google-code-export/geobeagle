@@ -29,24 +29,24 @@ public class CacheSyncer {
     private final MessageHandler messageHandler;
     private final Toaster toaster;
     private final Pausable geocacheListPresenter;
-    private final Aborter aborter;
+    private final AbortState abortState;
     private final ImportThread importThread;
 
     CacheSyncer(GeocacheListPresenter geocacheListPresenter,
             MessageHandler messageHandler,
             Toaster toaster,
-            Aborter aborter,
+            AbortState abortState,
             ImportThread importThread) {
         this.messageHandler = messageHandler;
         this.toaster = toaster;
         this.geocacheListPresenter = geocacheListPresenter;
-        this.aborter = aborter;
+        this.abortState = abortState;
         this.importThread = importThread;
     }
 
     @Inject
     CacheSyncer(Injector injector) {
-        aborter = injector.getInstance(Aborter.class);
+        abortState = injector.getInstance(AbortState.class);
         messageHandler = injector.getInstance(MessageHandler.class);
         toaster = injector.getInstance(Toaster.class);
         geocacheListPresenter = injector.getInstance(GeocacheListPresenter.class);
@@ -56,7 +56,7 @@ public class CacheSyncer {
     public void abort() {
         Log.d("GeoBeagle", "CacheSyncer:abort() " + isAlive());
         messageHandler.abortLoad();
-        aborter.abort();
+        abortState.abort();
         if (isAlive()) {
             join();
             toaster.toast(R.string.import_canceled, Toast.LENGTH_SHORT);

@@ -15,7 +15,7 @@
 package com.google.code.geobeagle.xmlimport.gpx;
 
 import com.google.code.geobeagle.gpx.zip.ZipInputStreamFactory;
-import com.google.code.geobeagle.xmlimport.Aborter;
+import com.google.code.geobeagle.xmlimport.AbortState;
 import com.google.code.geobeagle.xmlimport.GeoBeagleEnvironment;
 import com.google.code.geobeagle.xmlimport.gpx.gpx.GpxFileOpener;
 import com.google.code.geobeagle.xmlimport.gpx.zip.ZipFileOpener;
@@ -35,13 +35,13 @@ import java.io.IOException;
  * gpx/loc: GpxFileIter
  */
 public class GpxFileIterAndZipFileIterFactory {
-    private final Provider<Aborter> mAborterProvider;
+    private final Provider<AbortState> mAborterProvider;
     private final ZipInputFileTester mZipInputFileTester;
     private final GeoBeagleEnvironment mGeoBeagleEnvironment;
 
     @Inject
     public GpxFileIterAndZipFileIterFactory(ZipInputFileTester zipInputFileTester,
-            Provider<Aborter> aborterProvider,
+            Provider<AbortState> aborterProvider,
             GeoBeagleEnvironment geoBeagleEnvironment) {
         mAborterProvider = aborterProvider;
         mZipInputFileTester = zipInputFileTester;

@@ -18,7 +18,7 @@ import com.google.code.geobeagle.actions.ContextActions;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionSyncGpx;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVectors;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
-import com.google.code.geobeagle.xmlimport.Aborter;
+import com.google.code.geobeagle.xmlimport.AbortState;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Provider;
@@ -58,7 +58,7 @@ public class GeocacheListController {
     static final int MENU_EDIT = 2;
     public static final String SELECT_CACHE = "SELECT_CACHE";
     private final CacheListRefresh mCacheListRefresh;
-    private final Aborter mAborter;
+    private final AbortState mAborter;
     private final Provider<MenuActionSyncGpx> mMenuActionSyncGpxProvider;
     private final Provider<CacheListMenuActions> mCacheListMenuActionsProvider;
     private final Provider<ContextActions> mContextActionsProvider;
@@ -66,19 +66,19 @@ public class GeocacheListController {
     @Inject
     public GeocacheListController(Injector injector) {
         mCacheListRefresh = injector.getInstance(CacheListRefresh.class);
-        mAborter = injector.getInstance(Aborter.class);
+        mAborter = injector.getInstance(AbortState.class);
         mMenuActionSyncGpxProvider = injector.getProvider(MenuActionSyncGpx.class);
         mCacheListMenuActionsProvider = injector.getProvider(CacheListMenuActions.class);
         mContextActionsProvider = injector.getProvider(ContextActions.class);
     }
 
     public GeocacheListController(CacheListRefresh cacheListRefresh,
-            Aborter aborter,
+            AbortState abortState,
             Provider<MenuActionSyncGpx> menuActionSyncProvider,
             Provider<CacheListMenuActions> cacheListMenuActionsProvider,
             Provider<ContextActions> contextActionsProvider) {
         mCacheListRefresh = cacheListRefresh;
-        mAborter = aborter;
+        mAborter = abortState;
         mMenuActionSyncGpxProvider = menuActionSyncProvider;
         mCacheListMenuActionsProvider = cacheListMenuActionsProvider;
         mContextActionsProvider = contextActionsProvider;

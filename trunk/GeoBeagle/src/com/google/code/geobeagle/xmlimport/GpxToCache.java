@@ -39,7 +39,7 @@ public class GpxToCache {
     }
 
     public static class GpxToCacheFactory {
-        private final Aborter aborter;
+        private final AbortState abortState;
         private final EventDispatcherFactory eventDispatcherFactory;
         private final EventHandlerSqlAndFileWriterFactory eventHandlerSqlAndFileWriterFactory;
         private final FileAlreadyLoadedChecker fileAlreadyLoadedChecker;
@@ -49,7 +49,7 @@ public class GpxToCache {
         private final CacheXmlTagsToSqlFactory cacheXmlTagsToSqlFactory;
 
         @Inject
-        public GpxToCacheFactory(Aborter aborter,
+        public GpxToCacheFactory(AbortState abortState,
                 FileAlreadyLoadedChecker fileAlreadyLoadedChecker,
                 XmlWriter xmlWriter,
                 EventDispatcherFactory eventHelperFactory,
@@ -57,7 +57,7 @@ public class GpxToCache {
                 Provider<ImportWakeLock> importWakeLockProvider,
                 ErrorDisplayer errorDisplayer,
                 CacheXmlTagsToSqlFactory cacheXmlTagsToSqlFactory) {
-            this.aborter = aborter;
+            this.abortState = abortState;
             this.fileAlreadyLoadedChecker = fileAlreadyLoadedChecker;
             this.xmlWriter = xmlWriter;
             this.eventDispatcherFactory = eventHelperFactory;
@@ -72,13 +72,13 @@ public class GpxToCache {
 
             EventHandlerSqlAndFileWriter eventHandlerSqlAndFileWriter = eventHandlerSqlAndFileWriterFactory
                     .create(cacheXmlTagsToSql);
-            return new GpxToCache(aborter, fileAlreadyLoadedChecker,
+            return new GpxToCache(abortState, fileAlreadyLoadedChecker,
                     eventDispatcherFactory.create(eventHandlerSqlAndFileWriter), xmlWriter,
                     cacheXmlTagsToSql, importWakeLockProvider, errorDisplayer);
         }
     }
 
-    private final Aborter aborter;
+    private final AbortState abortState;
     private final CacheXmlTagsToSql cacheXmlTagsToSql;
     private final EventDispatcher eventDispatcher;
     private final FileAlreadyLoadedChecker fileAlreadyLoadedChecker;
@@ -87,14 +87,14 @@ public class GpxToCache {
     public static final int WAKELOCK_DURATION = 15000;
     private final ErrorDisplayer errorDisplayer;
 
-    GpxToCache(Aborter aborter,
+    GpxToCache(AbortState abortState,
             FileAlreadyLoadedChecker fileAlreadyLoadedChecker,
             EventDispatcher eventDispatcher,
             XmlWriter xmlWriter,
             CacheXmlTagsToSql cacheXmlTagsToSql,
             Provider<ImportWakeLock> importWakeLockProvider,
             ErrorDisplayer errorDisplayer) {
-        this.aborter = aborter;
+        this.abortState = abortState;
         this.fileAlreadyLoadedChecker = fileAlreadyLoadedChecker;
         this.eventDispatcher = eventDispatcher;
         this.xmlWriter = xmlWriter;
@@ -147,8 +147,8 @@ public class GpxToCache {
             for (eventType = eventDispatcher.getEventType(); eventType != XmlPullParser.END_DOCUMENT; eventType = eventDispatcher
                     .next()) {
                 // Log.d("GeoBeagle", "event: " + eventType);
-                if (aborter.isAborted()) {
-                    Log.d("GeoBeagle", "GpxToCache isAborted: " + aborter.isAborted());
+                if (abortState.isAborted()) {
+                    Log.d("GeoBeagle", "GpxToCache isAborted: " + abortState.isAborted());
                     throw new CancelException();
                 }
                 // File already loaded.
