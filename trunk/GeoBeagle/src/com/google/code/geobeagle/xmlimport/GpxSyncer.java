@@ -69,7 +69,11 @@ public class GpxSyncer {
 
     public void sync() throws IOException, ImportException, CancelException {
         try {
-            tryRun();
+            GpxFilesAndZipFilesIter gpxFilesAndZipFilesIter = startImport();
+            while (gpxFilesAndZipFilesIter.hasNext()) {
+                processFile(gpxFilesAndZipFilesIter);
+            }
+            endImport();
         } finally {
             Log.d("GeoBeagle", "<<< Syncing");
             messageHandler.loadComplete();
@@ -103,13 +107,5 @@ public class GpxSyncer {
         }
         GpxFilesAndZipFilesIter gpxFilesAndZipFilesIter = gpxAndZipFiles.iterator();
         return gpxFilesAndZipFilesIter;
-    }
-
-    private void tryRun() throws IOException, ImportException, CancelException {
-        GpxFilesAndZipFilesIter gpxFilesAndZipFilesIter = startImport();
-        while (gpxFilesAndZipFilesIter.hasNext()) {
-            processFile(gpxFilesAndZipFilesIter);
-        }
-        endImport();
     }
 }
