@@ -25,35 +25,35 @@ import android.util.Log;
 
 @Singleton
 public class MenuActionSyncGpx implements Action {
-    private CacheSyncer mCacheSyncer;
-    private final Provider<CacheSyncer> mGpxImporterProvider;
-    private boolean mSyncInProgress;
+    private CacheSyncer cacheSyncer;
+    private final Provider<CacheSyncer> cacheSyncerProvider;
+    private boolean syncInProgress;
 
     @Inject
     public MenuActionSyncGpx(Injector injector) {
-        mGpxImporterProvider = injector.getProvider(CacheSyncer.class);
-        mSyncInProgress = false;
+        cacheSyncerProvider = injector.getProvider(CacheSyncer.class);
+        syncInProgress = false;
     }
 
     // For testing.
     public MenuActionSyncGpx(Provider<CacheSyncer> gpxImporterProvider) {
-        mGpxImporterProvider = gpxImporterProvider;
-        mSyncInProgress = false;
+        cacheSyncerProvider = gpxImporterProvider;
+        syncInProgress = false;
     }
 
     public void abort() {
-        Log.d("GeoBeagle", "MenuActionSyncGpx aborting: " + mSyncInProgress);
-        if (!mSyncInProgress)
+        Log.d("GeoBeagle", "MenuActionSyncGpx aborting: " + syncInProgress);
+        if (!syncInProgress)
             return;
-        mCacheSyncer.abort();
-        mSyncInProgress = false;
+        cacheSyncer.abort();
+        syncInProgress = false;
     }
 
     @Override
     public void act() {
         Log.d("GeoBeagle", "MenuActionSync importing");
-        mCacheSyncer = mGpxImporterProvider.get();
-        mCacheSyncer.syncGpxs();
-        mSyncInProgress = true;
+        cacheSyncer = cacheSyncerProvider.get();
+        cacheSyncer.syncGpxs();
+        syncInProgress = true;
     }
 }
