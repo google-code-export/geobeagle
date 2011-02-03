@@ -86,8 +86,10 @@ public class ImportThread extends RoboThread {
         return isAlive;
     }
 
-    public void init() {
+    @Override
+    public void start() {
         gpxSyncer = gpxSyncerFactory.create();
         importBCachingWorker = importBCachingWorkerProvider.get();
+        super.start();
     }
 }

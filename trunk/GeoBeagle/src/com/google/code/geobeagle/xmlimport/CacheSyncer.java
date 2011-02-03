@@ -82,7 +82,6 @@ public class CacheSyncer {
     public void syncGpxs() {
         // TODO(sng): check when onResume is called.
         geocacheListPresenter.onPause();
-        importThread.init();
         importThread.start();
     }
 }
