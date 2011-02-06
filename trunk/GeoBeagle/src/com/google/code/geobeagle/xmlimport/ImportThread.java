@@ -111,7 +111,6 @@ public class ImportThread extends RoboThread {
     }
 
     public boolean isAliveHack() {
-        Log.d("GeoBeagle", "ImportThread:isAliveHack(): " + isAlive);
         return isAlive;
     }
 

@@ -71,7 +71,6 @@ public class CacheSyncer {
     void join() {
         try {
             while (isAlive()) {
-                Log.d("GeoBeagle", "Sleeping while gpx import completes");
                 Thread.sleep(100);
             }
         } catch (InterruptedException e) {

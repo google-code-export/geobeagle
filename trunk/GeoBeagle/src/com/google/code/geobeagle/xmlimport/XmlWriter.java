@@ -19,8 +19,6 @@ import com.google.inject.Singleton;
 
 import org.xmlpull.v1.XmlPullParser;
 
-import android.util.Log;
-
 import java.io.IOException;
 import java.util.HashMap;
 
@@ -49,7 +47,6 @@ public class XmlWriter implements EventHandler {
             tagWriter.endTag(name);
 
         if (previousFullPath.equals(GPX_WPT)) {
-            Log.d("GeoBeagle", "ENDING TAG");
             tagWriter.endTag("gpx");
             tagWriter.close();
         }
@@ -92,7 +89,6 @@ public class XmlWriter implements EventHandler {
         if (fullPath.equals(GPX_WPTTIME)) {
             time = text;
         } else if (fullPath.equals(GPX_WPTNAME)) {
-            Log.d("GeoBeagle", "TEXT: " + text);
             tagWriter.open(filename, text, "gpx");
             HashMap<String, String> emptyHashMap = new HashMap<String, String>();
             tagWriter.startTag(new Tag("gpx", emptyHashMap));
