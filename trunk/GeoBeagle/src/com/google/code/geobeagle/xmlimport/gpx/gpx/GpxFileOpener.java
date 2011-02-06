@@ -45,15 +45,15 @@ public class GpxFileOpener {
         }
     }
 
-    private final Provider<AbortState> mAborterProvider;
-    private final String mFilename;
+    private final Provider<AbortState> aborterProvider;
+    private final String filename;
 
     public GpxFileOpener(String filename, Provider<AbortState> aborterProvider) {
-        mFilename = filename;
-        mAborterProvider = aborterProvider;
+        this.filename = filename;
+        this.aborterProvider = aborterProvider;
     }
 
     public GpxFileIter iterator() {
-        return new GpxFileIter(mAborterProvider, mFilename);
+        return new GpxFileIter(aborterProvider, filename);
     }
 }
