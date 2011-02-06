@@ -28,10 +28,12 @@ class GpxReader implements IGpxReader {
         mPath = path;
     }
 
+    @Override
     public String getFilename() {
         return mPath;
     }
 
+    @Override
     public Reader open() throws FileNotFoundException {
         return new BufferedReader(new FileReader(mPath));
     }

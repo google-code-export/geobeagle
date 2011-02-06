@@ -27,10 +27,12 @@ class GpxReader implements IGpxReader {
         mReader = reader;
     }
 
+    @Override
     public String getFilename() {
         return mFilename;
     }
 
+    @Override
     public Reader open() {
         return mReader;
     }
