@@ -16,7 +16,6 @@ package com.google.code.geobeagle.xmlimport;
 
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.cachelist.Pausable;
-import com.google.code.geobeagle.activity.cachelist.actions.menu.Abortable;
 import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheListPresenter;
 import com.google.code.geobeagle.activity.main.fieldnotes.Toaster;
 import com.google.inject.Inject;
@@ -25,7 +24,7 @@ import com.google.inject.Injector;
 import android.util.Log;
 import android.widget.Toast;
 
-public class CacheSyncer implements Abortable {
+public class CacheSyncer {
 
     private final MessageHandler messageHandler;
     private final Toaster toaster;
@@ -54,7 +53,6 @@ public class CacheSyncer implements Abortable {
         importThread = injector.getInstance(ImportThread.class);
     }
 
-    @Override
     public void abort() {
         Log.d("GeoBeagle", "CacheSyncer:abort() " + isAlive());
         messageHandler.abortLoad();
