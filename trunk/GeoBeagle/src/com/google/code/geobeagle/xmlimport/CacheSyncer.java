@@ -31,19 +31,18 @@ public class CacheSyncer implements Abortable {
     private final Toaster mToaster;
     private final Pausable mGeocacheListPresenter;
     private final Aborter mAborter;
-    private final ImportThreadFactory mImportThreadFactory;
-    private ImportThread mImportThread;
+    private final ImportThread mImportThread;
 
     CacheSyncer(GeocacheListPresenter geocacheListPresenter,
             MessageHandler messageHandler,
             Toaster toaster,
             Aborter aborter,
-            ImportThreadFactory importThreadFactory) {
+            ImportThread importThread) {
         mMessageHandler = messageHandler;
         mToaster = toaster;
         mGeocacheListPresenter = geocacheListPresenter;
         mAborter = aborter;
-        mImportThreadFactory = importThreadFactory;
+        mImportThread = importThread;
     }
 
     @Inject
@@ -52,7 +51,7 @@ public class CacheSyncer implements Abortable {
         mMessageHandler = injector.getInstance(MessageHandler.class);
         mToaster = injector.getInstance(Toaster.class);
         mGeocacheListPresenter = injector.getInstance(GeocacheListPresenter.class);
-        mImportThreadFactory = injector.getInstance(ImportThreadFactory.class);
+        mImportThread = injector.getInstance(ImportThread.class);
     }
 
     @Override
@@ -83,10 +82,9 @@ public class CacheSyncer implements Abortable {
             }
     }
 
-    public void importGpxs() {
+    public void syncGpxs() {
         mGeocacheListPresenter.onPause();
-
-        mImportThread = mImportThreadFactory.create();
+        mImportThread.init();
         mImportThread.start();
     }
 }

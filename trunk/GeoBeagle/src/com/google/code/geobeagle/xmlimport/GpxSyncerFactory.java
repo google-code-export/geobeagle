@@ -27,7 +27,7 @@ import com.google.inject.Inject;
 
 import android.content.SharedPreferences;
 
-class ImportThreadFactory {
+class GpxSyncerFactory {
 
     private final BCachingStartTime bcachingStartTime;
     private final CacheListRefresh cacheListRefresh;
@@ -44,7 +44,7 @@ class ImportThreadFactory {
     private final UpdateFlag updateFlag;
 
     @Inject
-    public ImportThreadFactory(MessageHandler messageHandler,
+    public GpxSyncerFactory(MessageHandler messageHandler,
             ErrorDisplayer errorDisplayer,
             CacheListRefresh cacheListRefresh,
             GeoBeagleEnvironment geoBeagleEnvironment,
@@ -72,11 +72,11 @@ class ImportThreadFactory {
         this.oldCacheFilesCleaner = oldCacheFilesCleaner;
     }
 
-    public ImportThread create() {
+    public GpxSyncer create() {
         messageHandlerInterface.start(cacheListRefresh);
 
         final GpxToCache gpxToCache = gpxToCacheFactory.create(messageHandlerInterface);
-        return new ImportThread(gpxAndZipFiles, errorDisplayer, fileDataVersionWriter, dbFrontend,
+        return new GpxSyncer(gpxAndZipFiles, errorDisplayer, fileDataVersionWriter, dbFrontend,
                 fileDataVersionChecker, bcachingStartTime, updateFlag, messageHandlerInterface,
                 oldCacheFilesCleaner, sharedPreferences, gpxToCache, geoBeagleEnvironment);
     }
