@@ -32,22 +32,26 @@ public class GpxSyncer {
     private boolean mHasFiles;
     private final MessageHandler messageHandler;
     private final OldCacheFilesCleaner oldCacheFilesCleaner;
+    private final UpdateFlag updateFlag;
 
     public GpxSyncer(GpxAndZipFiles gpxAndZipFiles,
             FileDataVersionWriter fileDataVersionWriter,
             MessageHandler messageHandlerInterface,
             OldCacheFilesCleaner oldCacheFilesCleaner,
-            GpxToCache gpxToCache) {
+            GpxToCache gpxToCache,
+            UpdateFlag updateFlag) {
         this.gpxAndZipFiles = gpxAndZipFiles;
         this.fileDataVersionWriter = fileDataVersionWriter;
         this.messageHandler = messageHandlerInterface;
         this.mHasFiles = false;
         this.oldCacheFilesCleaner = oldCacheFilesCleaner;
         this.gpxToCache = gpxToCache;
+        this.updateFlag = updateFlag;
     }
 
     public boolean sync() throws IOException, ImportException, CancelException {
         try {
+            updateFlag.setUpdatesEnabled(false);
             GpxFilesAndZipFilesIter gpxFilesAndZipFilesIter = startImport();
             while (gpxFilesAndZipFilesIter.hasNext()) {
                 processFile(gpxFilesAndZipFilesIter);
@@ -55,6 +59,7 @@ public class GpxSyncer {
             return endImport();
         } finally {
             Log.d("GeoBeagle", "<<< Syncing");
+            updateFlag.setUpdatesEnabled(true);
             messageHandler.loadComplete();
         }
     }

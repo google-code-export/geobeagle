@@ -16,7 +16,6 @@ package com.google.code.geobeagle.xmlimport;
 
 import com.google.code.geobeagle.ErrorDisplayer;
 import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh.UpdateFlag;
 import com.google.code.geobeagle.bcaching.BCachingModule;
 import com.google.code.geobeagle.bcaching.ImportBCachingWorker;
 import com.google.code.geobeagle.bcaching.communication.BCachingException;
@@ -43,7 +42,6 @@ public class ImportThread extends RoboThread {
     private ImportBCachingWorker importBCachingWorker;
     private boolean isAlive;
     private final ErrorDisplayer errorDisplayer;
-    private final UpdateFlag updateFlag;
     private final SharedPreferences sharedPreferences;
     private final GeoBeagleEnvironment geoBeagleEnvironment;
     private final BCachingStartTime bcachingStartTime;
@@ -54,7 +52,6 @@ public class ImportThread extends RoboThread {
     ImportThread(GpxSyncerFactory gpxSyncerFactory,
             Provider<ImportBCachingWorker> importBCachingWorkerProvider,
             ErrorDisplayer errorDisplayer,
-            UpdateFlag updateFlag,
             SharedPreferences sharedPreferences,
             GeoBeagleEnvironment geoBeagleEnvironment,
             BCachingStartTime bcachingStartTime,
@@ -63,7 +60,6 @@ public class ImportThread extends RoboThread {
         this.gpxSyncerFactory = gpxSyncerFactory;
         this.importBCachingWorkerProvider = importBCachingWorkerProvider;
         this.errorDisplayer = errorDisplayer;
-        this.updateFlag = updateFlag;
         this.sharedPreferences = sharedPreferences;
         this.geoBeagleEnvironment = geoBeagleEnvironment;
         this.bcachingStartTime = bcachingStartTime;
@@ -74,7 +70,6 @@ public class ImportThread extends RoboThread {
     @Override
     public void run() {
         isAlive = true;
-        updateFlag.setUpdatesEnabled(false);
         try {
             if (fileDataVersionChecker.needsUpdating()) {
                 dbFrontend.forceUpdate();
@@ -106,7 +101,6 @@ public class ImportThread extends RoboThread {
         } finally {
             Log.d("GeoBeagle", "<<< Syncing");
             isAlive = false;
-            updateFlag.setUpdatesEnabled(true);
         }
     }
 

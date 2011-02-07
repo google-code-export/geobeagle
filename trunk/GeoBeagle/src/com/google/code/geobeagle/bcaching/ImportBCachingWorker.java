@@ -15,6 +15,7 @@
 package com.google.code.geobeagle.bcaching;
 
 import com.google.code.geobeagle.ErrorDisplayer;
+import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh.UpdateFlag;
 import com.google.code.geobeagle.bcaching.communication.BCachingException;
 import com.google.code.geobeagle.bcaching.progress.ProgressHandler;
 import com.google.code.geobeagle.bcaching.progress.ProgressManager;
@@ -42,6 +43,7 @@ public class ImportBCachingWorker {
     private final ProgressHandler progressHandler;
     private final ProgressManager progressManager;
     private final SharedPreferences sharedPreferences;
+    private final UpdateFlag updateFlag;
 
     @Inject
     public ImportBCachingWorker(Injector injector) {
@@ -51,18 +53,21 @@ public class ImportBCachingWorker {
         this.cacheImporter = injector.getInstance(CacheImporter.class);
         this.cursor = injector.getInstance(CacheListCursor.class);
         this.sharedPreferences = injector.getInstance(SharedPreferences.class);
+        this.updateFlag = injector.getInstance(UpdateFlag.class);
     }
 
     public ImportBCachingWorker(ProgressHandler progressHandler,
             ProgressManager progressManager,
             CacheImporter cacheImporter,
             CacheListCursor cacheListCursor,
-            SharedPreferences sharedPreferences) {
+            SharedPreferences sharedPreferences,
+            UpdateFlag updateFlag) {
         this.progressHandler = progressHandler;
         this.progressManager = progressManager;
         this.cacheImporter = cacheImporter;
         this.cursor = cacheListCursor;
         this.sharedPreferences = sharedPreferences;
+        this.updateFlag = updateFlag;
     }
 
     /*
@@ -77,6 +82,7 @@ public class ImportBCachingWorker {
         if (!sharedPreferences.getBoolean(BCachingModule.BCACHING_ENABLED, false))
             return;
 
+        updateFlag.setUpdatesEnabled(false);
         Log.d("GeoBeagle", "Starting import");
         inProgress = true;
         progressManager.update(progressHandler, ProgressMessage.START, 0);
@@ -89,6 +95,7 @@ public class ImportBCachingWorker {
             }
             cursor.close();
         } finally {
+            updateFlag.setUpdatesEnabled(true);
             progressManager.update(progressHandler, ProgressMessage.REFRESH, 0);
             progressManager.update(progressHandler, ProgressMessage.DONE, 0);
             inProgress = false;
