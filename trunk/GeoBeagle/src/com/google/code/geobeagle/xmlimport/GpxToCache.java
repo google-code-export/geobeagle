@@ -107,12 +107,11 @@ public class GpxToCache {
         cacheXmlTagsToSql.end();
     }
 
-    public void load(String path, Reader reader) throws CancelException {
+    public int load(String path, Reader reader) throws CancelException {
         try {
             String filename = new File(path).getName();
-            loadFile(path, filename, reader);
             importWakeLockProvider.get().acquire(WAKELOCK_DURATION);
-            return;
+            return loadFile(path, filename, reader);
         } catch (SQLiteException e) {
             errorDisplayer.displayError(R.string.error_writing_cache, path + ": " + e.getMessage());
         } catch (XmlPullParserException e) {
@@ -127,7 +126,7 @@ public class GpxToCache {
         throw new CancelException();
     }
 
-    private void loadFile(String source, String filename, Reader reader)
+    private int loadFile(String source, String filename, Reader reader)
             throws XmlPullParserException,
             IOException, CancelException {
         eventDispatcher.setInput(reader);
@@ -138,7 +137,7 @@ public class GpxToCache {
         try {
             Log.d("GeoBeagle", this + ": GpxToCache: load");
             if (fileAlreadyLoadedChecker.isAlreadyLoaded(source)) {
-                return;
+                return -1;
             }
 
             xmlWriter.open(filename);
@@ -153,7 +152,7 @@ public class GpxToCache {
                 }
                 // File already loaded.
                 if (!eventDispatcher.handleEvent(eventType)) {
-                    return;
+                    return -1;
                 }
             }
 
@@ -163,6 +162,7 @@ public class GpxToCache {
         } finally {
             cacheXmlTagsToSql.close(markAsComplete);
         }
+        return cacheXmlTagsToSql.getNumberOfCachesLoad();
     }
 
     public void start() {

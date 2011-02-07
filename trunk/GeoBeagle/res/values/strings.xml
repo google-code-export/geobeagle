@@ -11,6 +11,7 @@
 		License.
 	-->
 <resources>
+	<string name="string">%1$s</string>
 	<string name="upgrading_database">Upgrading database...</string>
     <string name="error_loading_url">Error loading url</string>
     <string name="removing_found_cache_from_cache_list">Removing found cache from cache list view.</string>

@@ -49,6 +49,7 @@ public class CacheXmlTagsToSql extends CacheXmlTagHandler {
     private final MessageHandlerInterface mMessageHandler;
     private final ImportWakeLock mWakeLock;
     private final GeoBeagleEnvironment mGeoBeagleEnvironment;
+    private int mCachesLoaded;
 
     @Inject
     CacheXmlTagsToSql(CacheTagSqlWriter cacheTagSqlWriter,
@@ -71,6 +72,10 @@ public class CacheXmlTagsToSql extends CacheXmlTagHandler {
         mCacheTagSqlWriter.stopWriting(success);
     }
 
+    public int getNumberOfCachesLoad() {
+        return mCachesLoaded;
+    }
+
     @Override
     public void container(String text) {
         mCacheTagSqlWriter.container(text);
@@ -90,6 +95,7 @@ public class CacheXmlTagsToSql extends CacheXmlTagHandler {
     public void endCache(Source source) throws IOException {
         mMessageHandler.updateName(mCacheName);
         mCacheTagSqlWriter.write(source);
+        mCachesLoaded++;
     }
 
     @Override
@@ -111,6 +117,7 @@ public class CacheXmlTagsToSql extends CacheXmlTagHandler {
 
     @Override
     public void start() {
+        mCachesLoaded = 0;
         new File(mGeoBeagleEnvironment.getDetailsDirectory()).mkdirs();
     }
 

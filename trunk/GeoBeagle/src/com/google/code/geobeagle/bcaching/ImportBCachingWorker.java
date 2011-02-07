@@ -14,13 +14,13 @@
 
 package com.google.code.geobeagle.bcaching;
 
-import com.google.code.geobeagle.ErrorDisplayer;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh.UpdateFlag;
 import com.google.code.geobeagle.bcaching.communication.BCachingException;
 import com.google.code.geobeagle.bcaching.progress.ProgressHandler;
 import com.google.code.geobeagle.bcaching.progress.ProgressManager;
 import com.google.code.geobeagle.bcaching.progress.ProgressMessage;
 import com.google.code.geobeagle.xmlimport.GpxToCache.CancelException;
+import com.google.code.geobeagle.xmlimport.SyncCollectingParameter;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 
@@ -42,32 +42,31 @@ public class ImportBCachingWorker {
     private boolean inProgress;
     private final ProgressHandler progressHandler;
     private final ProgressManager progressManager;
-    private final SharedPreferences sharedPreferences;
     private final UpdateFlag updateFlag;
+    private final SharedPreferences sharedPreferences;
 
     @Inject
     public ImportBCachingWorker(Injector injector) {
         this.progressHandler = injector.getInstance(ProgressHandler.class);
-        injector.getInstance(ErrorDisplayer.class);
         this.progressManager = injector.getInstance(ProgressManager.class);
         this.cacheImporter = injector.getInstance(CacheImporter.class);
         this.cursor = injector.getInstance(CacheListCursor.class);
-        this.sharedPreferences = injector.getInstance(SharedPreferences.class);
         this.updateFlag = injector.getInstance(UpdateFlag.class);
+        this.sharedPreferences = injector.getInstance(SharedPreferences.class);
     }
 
     public ImportBCachingWorker(ProgressHandler progressHandler,
             ProgressManager progressManager,
             CacheImporter cacheImporter,
             CacheListCursor cacheListCursor,
-            SharedPreferences sharedPreferences,
-            UpdateFlag updateFlag) {
+            UpdateFlag updateFlag,
+            SharedPreferences sharedPreferences) {
         this.progressHandler = progressHandler;
         this.progressManager = progressManager;
         this.cacheImporter = cacheImporter;
         this.cursor = cacheListCursor;
-        this.sharedPreferences = sharedPreferences;
         this.updateFlag = updateFlag;
+        this.sharedPreferences = sharedPreferences;
     }
 
     /*
@@ -78,21 +77,25 @@ public class ImportBCachingWorker {
         return inProgress;
     }
 
-    public void sync() throws CancelException, BCachingException {
+    public void sync(SyncCollectingParameter syncCollectingParameter) throws BCachingException,
+            CancelException {
         if (!sharedPreferences.getBoolean(BCachingModule.BCACHING_ENABLED, false))
             return;
-
         updateFlag.setUpdatesEnabled(false);
         Log.d("GeoBeagle", "Starting import");
         inProgress = true;
         progressManager.update(progressHandler, ProgressMessage.START, 0);
         try {
-            if (!cursor.open())
+            if (!cursor.open(syncCollectingParameter))
                 return;
-            while (cursor.readCaches()) {
+            int cachesRead;
+            int totalCachesRead = 0;
+            while ((cachesRead = cursor.readCaches()) > 0) {
+                totalCachesRead += cachesRead;
                 cacheImporter.load(cursor.getCacheIds());
                 cursor.increment();
             }
+            syncCollectingParameter.Log("  synced " + totalCachesRead + " caches");
             cursor.close();
         } finally {
             updateFlag.setUpdatesEnabled(true);
