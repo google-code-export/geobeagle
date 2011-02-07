@@ -82,9 +82,4 @@ public class MessageHandlerAdapter implements MessageHandlerInterface {
     public void updateWaypointId(String wpt) {
         this.waypoint = wpt;
     }
-
-    @Override
-    public void startBCachingImport() {
-    }
-
 }

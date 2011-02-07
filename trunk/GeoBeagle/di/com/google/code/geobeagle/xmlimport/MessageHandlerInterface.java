@@ -24,6 +24,4 @@ public interface MessageHandlerInterface {
     public abstract void updateStatus(String status);
 
     public abstract void deletingCacheFiles();
-
-    public abstract void startBCachingImport();
 }
