@@ -21,7 +21,6 @@ import static org.junit.Assert.assertTrue;
 
 import com.google.code.geobeagle.GeocacheFactory.Source;
 import com.google.code.geobeagle.cachedetails.CacheDetailsHtmlWriter;
-import com.google.code.geobeagle.xmlimport.GpxImporterDI.MessageHandler;
 
 import org.junit.Before;
 import org.junit.Test;
