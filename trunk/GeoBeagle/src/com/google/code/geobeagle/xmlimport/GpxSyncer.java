@@ -14,6 +14,7 @@
 
 package com.google.code.geobeagle.xmlimport;
 
+import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh.UpdateFlag;
 import com.google.code.geobeagle.cachedetails.FileDataVersionWriter;
 import com.google.code.geobeagle.xmlimport.GpxToCache.CancelException;
 import com.google.code.geobeagle.xmlimport.gpx.GpxAndZipFiles;
@@ -22,6 +23,7 @@ import com.google.code.geobeagle.xmlimport.gpx.IGpxReader;
 
 import android.util.Log;
 
+import java.io.File;
 import java.io.IOException;
 
 public class GpxSyncer {
@@ -49,12 +51,13 @@ public class GpxSyncer {
         this.updateFlag = updateFlag;
     }
 
-    public boolean sync() throws IOException, ImportException, CancelException {
+    public boolean sync(SyncCollectingParameter syncCollectingParameter) throws IOException,
+            ImportException, CancelException {
         try {
             updateFlag.setUpdatesEnabled(false);
             GpxFilesAndZipFilesIter gpxFilesAndZipFilesIter = startImport();
             while (gpxFilesAndZipFilesIter.hasNext()) {
-                processFile(gpxFilesAndZipFilesIter);
+                processFile(syncCollectingParameter, gpxFilesAndZipFilesIter);
             }
             return endImport();
         } finally {
@@ -70,16 +73,23 @@ public class GpxSyncer {
         return mHasFiles;
     }
 
-    private void processFile(GpxFilesAndZipFilesIter gpxFilesAndZipFilesIter) throws IOException,
-            CancelException {
+    private void processFile(SyncCollectingParameter syncCollectingParameter,
+            GpxFilesAndZipFilesIter gpxFilesAndZipFilesIter) throws IOException, CancelException {
         IGpxReader gpxReader = gpxFilesAndZipFilesIter.next();
         String filename = gpxReader.getFilename();
+        syncCollectingParameter.Log("***" + (new File(filename).getName()) + "***");
 
         mHasFiles = true;
-        gpxToCache.load(filename, gpxReader.open());
+        int cachesLoaded = gpxToCache.load(filename, gpxReader.open());
+        if (cachesLoaded == -1) {
+            syncCollectingParameter.Log("  no changes");
+        } else {
+            syncCollectingParameter.Log("  synced " + cachesLoaded + " caches");
+        }
     }
 
-    private GpxFilesAndZipFilesIter startImport() throws ImportException {
+    private GpxFilesAndZipFilesIter startImport()
+            throws ImportException {
         oldCacheFilesCleaner.clean(messageHandler);
         gpxToCache.start();
         GpxFilesAndZipFilesIter gpxFilesAndZipFilesIter = gpxAndZipFiles.iterator();

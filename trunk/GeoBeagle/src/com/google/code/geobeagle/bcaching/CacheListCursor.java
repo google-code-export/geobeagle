@@ -21,7 +21,13 @@ import com.google.code.geobeagle.bcaching.preferences.LastReadPosition;
 import com.google.code.geobeagle.bcaching.progress.ProgressHandler;
 import com.google.code.geobeagle.bcaching.progress.ProgressManager;
 import com.google.code.geobeagle.bcaching.progress.ProgressMessage;
+import com.google.code.geobeagle.xmlimport.SyncCollectingParameter;
 import com.google.inject.Inject;
+
+import android.util.Log;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 class CacheListCursor {
     private final BCachingStartTime bcachingStartTime;
@@ -29,6 +35,7 @@ class CacheListCursor {
     private final LastReadPosition lastReadPosition;
     private final ProgressHandler progressHandler;
     private final ProgressManager progressManager;
+    private final SimpleDateFormat formatter;
 
     @Inject
     CacheListCursor(BCachingStartTime bcachingStartTime, ProgressManager progressManager,
@@ -39,6 +46,7 @@ class CacheListCursor {
         this.progressHandler = progressHandler;
         this.bcachingListImporter = bcachingListImporter;
         this.lastReadPosition = lastReadPosition;
+        this.formatter = new SimpleDateFormat("MMM-dd HH:mm");
     }
 
     void close() {
@@ -61,14 +69,20 @@ class CacheListCursor {
         progressManager.update(progressHandler, ProgressMessage.SET_PROGRESS, position);
     }
 
-    boolean open() throws BCachingException {
+    boolean open(SyncCollectingParameter syncCollectingParameter) throws BCachingException {
         bcachingListImporter.setStartTime(String.valueOf(bcachingStartTime.getLastUpdateTime()));
         // bcachingListImporter.setStartTime("1274686304000");
         // bcachingListImporter.setStartTime("1274686304000");
         int totalCount = bcachingListImporter.getTotalCount();
 
-        if (totalCount <= 0)
+        long serverTime = bcachingStartTime.getLastUpdateTime();
+        String longModtime = formatter.format(new Date(serverTime));
+        syncCollectingParameter.Log("***bcaching.com***");
+        syncCollectingParameter.Log("  last synced: " + longModtime);
+        if (totalCount <= 0) {
+            syncCollectingParameter.Log("  no new caches");
             return false;
+        }
         progressManager.update(progressHandler, ProgressMessage.SET_MAX, totalCount);
         lastReadPosition.load();
         int startPosition = lastReadPosition.get();
@@ -76,9 +90,10 @@ class CacheListCursor {
         return true;
     }
 
-    boolean readCaches() throws BCachingException {
+    int readCaches() throws BCachingException {
+        Log.d("GeoBeagle", "readCaches");
         bcachingListImporter.readCacheList(lastReadPosition.get());
-        return bcachingListImporter.getCachesRead() > 0;
+        return bcachingListImporter.getCachesRead();
     }
 
 }

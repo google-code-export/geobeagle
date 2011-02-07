@@ -76,12 +76,14 @@ public class ImportThread extends RoboThread {
                 bcachingStartTime.clearStartTime();
             }
 
-            if (gpxSyncer.sync()
+            SyncCollectingParameter syncCollectingParameter = new SyncCollectingParameter();
+            if (gpxSyncer.sync(syncCollectingParameter)
                     && sharedPreferences.getString(BCachingModule.BCACHING_USERNAME, "").length() == 0)
                 throw new ImportException(R.string.error_no_gpx_files,
                         geoBeagleEnvironment.getImportFolder());
 
-            importBCachingWorker.sync();
+            importBCachingWorker.sync(syncCollectingParameter);
+            errorDisplayer.displayError(R.string.string, syncCollectingParameter.getLog());
         } catch (final FileNotFoundException e) {
             errorDisplayer.displayError(R.string.error_opening_file, e.getMessage());
             return;
