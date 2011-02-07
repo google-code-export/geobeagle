@@ -14,14 +14,23 @@
 
 package com.google.code.geobeagle.xmlimport;
 
+import com.google.code.geobeagle.ErrorDisplayer;
+import com.google.code.geobeagle.R;
+import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh.UpdateFlag;
 import com.google.code.geobeagle.bcaching.BCachingModule;
 import com.google.code.geobeagle.bcaching.ImportBCachingWorker;
+import com.google.code.geobeagle.bcaching.communication.BCachingException;
+import com.google.code.geobeagle.xmlimport.GpxToCache.CancelException;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
 import roboguice.util.RoboThread;
 
 import android.content.SharedPreferences;
+import android.util.Log;
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
 
 public class ImportThread extends RoboThread {
 
@@ -30,27 +39,60 @@ public class ImportThread extends RoboThread {
     private final SharedPreferences sharedPreferences;
     private final Provider<ImportBCachingWorker> importBCachingWorkerProvider;
     private ImportBCachingWorker importBCachingWorker;
+    private boolean isAlive;
+    private final ErrorDisplayer errorDisplayer;
+    private final UpdateFlag updateFlag;
 
     @Inject
     ImportThread(GpxSyncerFactory gpxSyncerFactory,
             SharedPreferences sharedPreferences,
-            Provider<ImportBCachingWorker> importBCachingWorkerProvider) {
+            Provider<ImportBCachingWorker> importBCachingWorkerProvider,
+            ErrorDisplayer errorDisplayer,
+            UpdateFlag updateFlag) {
         this.gpxSyncerFactory = gpxSyncerFactory;
         this.sharedPreferences = sharedPreferences;
         this.importBCachingWorkerProvider = importBCachingWorkerProvider;
+        this.errorDisplayer = errorDisplayer;
+        this.updateFlag = updateFlag;
     }
 
     @Override
     public void run() {
-        gpxSyncer.sync();
+        isAlive = true;
+        updateFlag.setUpdatesEnabled(false);
+        try {
 
-        if (sharedPreferences.getBoolean(BCachingModule.BCACHING_ENABLED, false)) {
-            importBCachingWorker.run();
+            gpxSyncer.sync();
+
+            if (sharedPreferences.getBoolean(BCachingModule.BCACHING_ENABLED, false)) {
+                importBCachingWorker.sync();
+            }
+        } catch (final FileNotFoundException e) {
+            errorDisplayer.displayError(R.string.error_opening_file, e.getMessage());
+            return;
+        } catch (IOException e) {
+            errorDisplayer.displayError(R.string.error_reading_file, e.getMessage());
+            return;
+        } catch (ImportException e) {
+            errorDisplayer.displayError(e.getError(), e.getPath());
+            return;
+        } catch (BCachingException e) {
+            errorDisplayer.displayError(R.string.problem_importing_from_bcaching,
+                    e.getLocalizedMessage());
+        } catch (CancelException e) {
+            // Toast can't be displayed in this thread; it must be displayed in
+            // main UI thread.
+            return;
+        } finally {
+            Log.d("GeoBeagle", "<<< Syncing");
+            isAlive = false;
+            updateFlag.setUpdatesEnabled(true);
         }
     }
 
     public boolean isAliveHack() {
-        return gpxSyncer.isAliveHack();
+        Log.d("GeoBeagle", "ImportThread:isAliveHack(): " + isAlive);
+        return isAlive;
     }
 
     public void init() {

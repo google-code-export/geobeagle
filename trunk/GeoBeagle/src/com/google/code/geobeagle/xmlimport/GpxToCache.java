@@ -148,7 +148,7 @@ public class GpxToCache {
                     .next()) {
                 // Log.d("GeoBeagle", "event: " + eventType);
                 if (aborter.isAborted()) {
-                    Log.d("GeoBeagle", "isAborted: " + aborter.isAborted());
+                    Log.d("GeoBeagle", "GpxToCache isAborted: " + aborter.isAborted());
                     throw new CancelException();
                 }
                 // File already loaded.

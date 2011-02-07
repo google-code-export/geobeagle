@@ -56,12 +56,14 @@ public class CacheSyncer implements Abortable {
 
     @Override
     public void abort() {
+        Log.d("GeoBeagle", "CacheSyncer:abort() " + isAlive());
         mMessageHandler.abortLoad();
         mAborter.abort();
         if (isAlive()) {
             join();
             mToaster.toast(R.string.import_canceled, Toast.LENGTH_SHORT);
         }
+        Log.d("GeoBeagle", "CacheSyncer:abort() ending: " + isAlive());
     }
 
     boolean isAlive() {
@@ -73,7 +75,7 @@ public class CacheSyncer implements Abortable {
     void join() {
         if (mImportThread != null)
             try {
-                while (!isAlive()) {
+                while (isAlive()) {
                     Log.d("GeoBeagle", "Sleeping while gpx import completes");
                     Thread.sleep(100);
                 }
