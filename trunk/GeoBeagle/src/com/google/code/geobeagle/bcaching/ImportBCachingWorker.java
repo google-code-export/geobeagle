@@ -124,7 +124,6 @@ public class ImportBCachingWorker extends RoboThread implements Abortable {
             progressManager.update(progressHandler, ProgressMessage.REFRESH, 0);
             progressManager.update(progressHandler, ProgressMessage.DONE, 0);
             inProgress = false;
-            Log.d("GeoBeagle", "ImportBcachingWorker ending");
         }
     }
 }
