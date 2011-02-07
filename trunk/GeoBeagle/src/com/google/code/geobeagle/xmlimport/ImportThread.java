@@ -17,14 +17,19 @@ package com.google.code.geobeagle.xmlimport;
 import com.google.code.geobeagle.ErrorDisplayer;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh.UpdateFlag;
+import com.google.code.geobeagle.bcaching.BCachingModule;
 import com.google.code.geobeagle.bcaching.ImportBCachingWorker;
 import com.google.code.geobeagle.bcaching.communication.BCachingException;
+import com.google.code.geobeagle.bcaching.preferences.BCachingStartTime;
+import com.google.code.geobeagle.cachedetails.FileDataVersionChecker;
+import com.google.code.geobeagle.database.DbFrontend;
 import com.google.code.geobeagle.xmlimport.GpxToCache.CancelException;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
 import roboguice.util.RoboThread;
 
+import android.content.SharedPreferences;
 import android.util.Log;
 
 import java.io.FileNotFoundException;
@@ -39,16 +44,31 @@ public class ImportThread extends RoboThread {
     private boolean isAlive;
     private final ErrorDisplayer errorDisplayer;
     private final UpdateFlag updateFlag;
+    private final SharedPreferences sharedPreferences;
+    private final GeoBeagleEnvironment geoBeagleEnvironment;
+    private final BCachingStartTime bcachingStartTime;
+    private final DbFrontend dbFrontend;
+    private final FileDataVersionChecker fileDataVersionChecker;
 
     @Inject
     ImportThread(GpxSyncerFactory gpxSyncerFactory,
             Provider<ImportBCachingWorker> importBCachingWorkerProvider,
             ErrorDisplayer errorDisplayer,
-            UpdateFlag updateFlag) {
+            UpdateFlag updateFlag,
+            SharedPreferences sharedPreferences,
+            GeoBeagleEnvironment geoBeagleEnvironment,
+            BCachingStartTime bcachingStartTime,
+            FileDataVersionChecker fileDataVersionChecker,
+            DbFrontend dbFrontend) {
         this.gpxSyncerFactory = gpxSyncerFactory;
         this.importBCachingWorkerProvider = importBCachingWorkerProvider;
         this.errorDisplayer = errorDisplayer;
         this.updateFlag = updateFlag;
+        this.sharedPreferences = sharedPreferences;
+        this.geoBeagleEnvironment = geoBeagleEnvironment;
+        this.bcachingStartTime = bcachingStartTime;
+        this.fileDataVersionChecker = fileDataVersionChecker;
+        this.dbFrontend = dbFrontend;
     }
 
     @Override
@@ -56,7 +76,16 @@ public class ImportThread extends RoboThread {
         isAlive = true;
         updateFlag.setUpdatesEnabled(false);
         try {
-            gpxSyncer.sync();
+            if (fileDataVersionChecker.needsUpdating()) {
+                dbFrontend.forceUpdate();
+                bcachingStartTime.clearStartTime();
+            }
+
+            if (gpxSyncer.sync()
+                    && sharedPreferences.getString(BCachingModule.BCACHING_USERNAME, "").length() == 0)
+                throw new ImportException(R.string.error_no_gpx_files,
+                        geoBeagleEnvironment.getImportFolder());
+
             importBCachingWorker.sync();
         } catch (final FileNotFoundException e) {
             errorDisplayer.displayError(R.string.error_opening_file, e.getMessage());
