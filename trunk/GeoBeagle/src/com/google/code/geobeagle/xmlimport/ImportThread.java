@@ -17,7 +17,6 @@ package com.google.code.geobeagle.xmlimport;
 import com.google.code.geobeagle.ErrorDisplayer;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh.UpdateFlag;
-import com.google.code.geobeagle.bcaching.BCachingModule;
 import com.google.code.geobeagle.bcaching.ImportBCachingWorker;
 import com.google.code.geobeagle.bcaching.communication.BCachingException;
 import com.google.code.geobeagle.xmlimport.GpxToCache.CancelException;
@@ -26,7 +25,6 @@ import com.google.inject.Provider;
 
 import roboguice.util.RoboThread;
 
-import android.content.SharedPreferences;
 import android.util.Log;
 
 import java.io.FileNotFoundException;
@@ -36,7 +34,6 @@ public class ImportThread extends RoboThread {
 
     private GpxSyncer gpxSyncer;
     private final GpxSyncerFactory gpxSyncerFactory;
-    private final SharedPreferences sharedPreferences;
     private final Provider<ImportBCachingWorker> importBCachingWorkerProvider;
     private ImportBCachingWorker importBCachingWorker;
     private boolean isAlive;
@@ -45,12 +42,10 @@ public class ImportThread extends RoboThread {
 
     @Inject
     ImportThread(GpxSyncerFactory gpxSyncerFactory,
-            SharedPreferences sharedPreferences,
             Provider<ImportBCachingWorker> importBCachingWorkerProvider,
             ErrorDisplayer errorDisplayer,
             UpdateFlag updateFlag) {
         this.gpxSyncerFactory = gpxSyncerFactory;
-        this.sharedPreferences = sharedPreferences;
         this.importBCachingWorkerProvider = importBCachingWorkerProvider;
         this.errorDisplayer = errorDisplayer;
         this.updateFlag = updateFlag;
@@ -61,12 +56,8 @@ public class ImportThread extends RoboThread {
         isAlive = true;
         updateFlag.setUpdatesEnabled(false);
         try {
-
             gpxSyncer.sync();
-
-            if (sharedPreferences.getBoolean(BCachingModule.BCACHING_ENABLED, false)) {
-                importBCachingWorker.sync();
-            }
+            importBCachingWorker.sync();
         } catch (final FileNotFoundException e) {
             errorDisplayer.displayError(R.string.error_opening_file, e.getMessage());
             return;
