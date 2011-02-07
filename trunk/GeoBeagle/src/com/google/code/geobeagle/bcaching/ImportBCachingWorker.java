@@ -61,9 +61,12 @@ public class ImportBCachingWorker extends RoboThread implements Abortable {
         this.updateFlag = injector.getInstance(UpdateFlag.class);
     }
 
-    public ImportBCachingWorker(ProgressHandler progressHandler, ProgressManager progressManager,
-            ErrorDisplayer errorDisplayer, CacheImporter cacheImporter,
-            Toaster toaster, CacheListCursor cacheListCursor,
+    public ImportBCachingWorker(ProgressHandler progressHandler,
+            ProgressManager progressManager,
+            ErrorDisplayer errorDisplayer,
+            CacheImporter cacheImporter,
+            Toaster toaster,
+            CacheListCursor cacheListCursor,
             UpdateFlag updateFlag) {
         this.progressHandler = progressHandler;
         this.errorDisplayer = errorDisplayer;
@@ -118,8 +121,7 @@ public class ImportBCachingWorker extends RoboThread implements Abortable {
             errorDisplayer.displayError(R.string.problem_importing_from_bcaching, e
                     .getLocalizedMessage());
         } catch (CancelException e) {
-        }
-        finally {
+        } finally {
             updateFlag.setUpdatesEnabled(true);
             progressManager.update(progressHandler, ProgressMessage.REFRESH, 0);
             progressManager.update(progressHandler, ProgressMessage.DONE, 0);

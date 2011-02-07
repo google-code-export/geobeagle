@@ -138,7 +138,7 @@ public class GpxImporterDI {
 
         @Override
         public void handleMessage(Message msg) {
-//            Log.d(GEOBEAGLE, "received msg: " + msg.what);
+            // Log.d(GEOBEAGLE, "received msg: " + msg.what);
             switch (msg.what) {
                 case MessageHandler.MSG_PROGRESS:
                     mProgressDialogWrapper.setMessage(mStatus);
@@ -158,7 +158,7 @@ public class GpxImporterDI {
                         ImportBCachingWorker importBCachingWorker = mImportBCachingWorkerProvider
                                 .get();
                         importBCachingWorker.start();
-                        while (!importBCachingWorker.inProgress())
+                        while (!importBCachingWorker.inProgress()) {
                             try {
                                 Thread.sleep(100);
                             } catch (InterruptedException e) {
@@ -167,6 +167,7 @@ public class GpxImporterDI {
                                                 + e);
                                 e.printStackTrace();
                             }
+                        }
                     }
                     break;
                 default:
