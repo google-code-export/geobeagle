@@ -32,17 +32,17 @@ import java.io.IOException;
 
 public class GpxSyncer {
 
-    private final BCachingStartTime mBCachingStartTime;
-    private final DbFrontend mDbFrontend;
-    private final FileDataVersionChecker mFileDataVersionChecker;
-    private final FileDataVersionWriter mFileDataVersionWriter;
-    private final GeoBeagleEnvironment mGeoBeagleEnvironment;
-    private final GpxAndZipFiles mGpxAndZipFiles;
-    private final GpxToCache mGpxToCache;
+    private final BCachingStartTime bcachingStartTime;
+    private final DbFrontend dbFrontend;
+    private final FileDataVersionChecker fileDataVersionChecker;
+    private final FileDataVersionWriter fileDataVersionWriter;
+    private final GeoBeagleEnvironment geoBeagleEnvironment;
+    private final GpxAndZipFiles gpxAndZipFiles;
+    private final GpxToCache gpxToCache;
     private boolean mHasFiles;
-    private final MessageHandler mMessageHandler;
-    private final OldCacheFilesCleaner mOldCacheFilesCleaner;
-    private final SharedPreferences mSharedPreferences;
+    private final MessageHandler messageHandler;
+    private final OldCacheFilesCleaner oldCacheFilesCleaner;
+    private final SharedPreferences sharedPreferences;
 
     public GpxSyncer(GpxAndZipFiles gpxAndZipFiles,
             FileDataVersionWriter fileDataVersionWriter,
@@ -54,17 +54,17 @@ public class GpxSyncer {
             SharedPreferences sharedPreferences,
             GpxToCache gpxToCache,
             GeoBeagleEnvironment geoBeagleEnvironment) {
-        mGpxAndZipFiles = gpxAndZipFiles;
-        mFileDataVersionWriter = fileDataVersionWriter;
-        mFileDataVersionChecker = fileDataVersionChecker;
-        mBCachingStartTime = bcachingStartTime;
-        mDbFrontend = dbFrontend;
-        mMessageHandler = messageHandlerInterface;
-        mHasFiles = false;
-        mOldCacheFilesCleaner = oldCacheFilesCleaner;
-        mSharedPreferences = sharedPreferences;
-        mGpxToCache = gpxToCache;
-        mGeoBeagleEnvironment = geoBeagleEnvironment;
+        this.gpxAndZipFiles = gpxAndZipFiles;
+        this.fileDataVersionWriter = fileDataVersionWriter;
+        this.fileDataVersionChecker = fileDataVersionChecker;
+        this.bcachingStartTime = bcachingStartTime;
+        this.dbFrontend = dbFrontend;
+        this.messageHandler = messageHandlerInterface;
+        this.mHasFiles = false;
+        this.oldCacheFilesCleaner = oldCacheFilesCleaner;
+        this.sharedPreferences = sharedPreferences;
+        this.gpxToCache = gpxToCache;
+        this.geoBeagleEnvironment = geoBeagleEnvironment;
     }
 
     public void sync() throws IOException, ImportException, CancelException {
@@ -72,17 +72,17 @@ public class GpxSyncer {
             tryRun();
         } finally {
             Log.d("GeoBeagle", "<<< Syncing");
-            mMessageHandler.loadComplete();
+            messageHandler.loadComplete();
         }
     }
 
     private void endImport() throws ImportException, IOException {
-        mFileDataVersionWriter.writeVersion();
-        mGpxToCache.end();
+        fileDataVersionWriter.writeVersion();
+        gpxToCache.end();
         if (!mHasFiles
-                && mSharedPreferences.getString(BCachingModule.BCACHING_USERNAME, "").length() == 0)
+                && sharedPreferences.getString(BCachingModule.BCACHING_USERNAME, "").length() == 0)
             throw new ImportException(R.string.error_no_gpx_files,
-                    mGeoBeagleEnvironment.getImportFolder());
+                    geoBeagleEnvironment.getImportFolder());
     }
 
     private void processFile(GpxFilesAndZipFilesIter gpxFilesAndZipFilesIter) throws IOException,
@@ -91,17 +91,17 @@ public class GpxSyncer {
         String filename = gpxReader.getFilename();
 
         mHasFiles = true;
-        mGpxToCache.load(filename, gpxReader.open());
+        gpxToCache.load(filename, gpxReader.open());
     }
 
     private GpxFilesAndZipFilesIter startImport() throws ImportException {
-        mOldCacheFilesCleaner.clean(mMessageHandler);
-        mGpxToCache.start();
-        if (mFileDataVersionChecker.needsUpdating()) {
-            mDbFrontend.forceUpdate();
-            mBCachingStartTime.clearStartTime();
+        oldCacheFilesCleaner.clean(messageHandler);
+        gpxToCache.start();
+        if (fileDataVersionChecker.needsUpdating()) {
+            dbFrontend.forceUpdate();
+            bcachingStartTime.clearStartTime();
         }
-        GpxFilesAndZipFilesIter gpxFilesAndZipFilesIter = mGpxAndZipFiles.iterator();
+        GpxFilesAndZipFilesIter gpxFilesAndZipFilesIter = gpxAndZipFiles.iterator();
         return gpxFilesAndZipFilesIter;
     }
 
