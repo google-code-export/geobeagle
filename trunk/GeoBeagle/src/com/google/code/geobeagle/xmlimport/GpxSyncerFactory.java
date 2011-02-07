@@ -14,9 +14,7 @@
 
 package com.google.code.geobeagle.xmlimport;
 
-import com.google.code.geobeagle.ErrorDisplayer;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
-import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh.UpdateFlag;
 import com.google.code.geobeagle.bcaching.preferences.BCachingStartTime;
 import com.google.code.geobeagle.cachedetails.FileDataVersionChecker;
 import com.google.code.geobeagle.cachedetails.FileDataVersionWriter;
@@ -32,7 +30,6 @@ class GpxSyncerFactory {
     private final BCachingStartTime bcachingStartTime;
     private final CacheListRefresh cacheListRefresh;
     private final DbFrontend dbFrontend;
-    private final ErrorDisplayer errorDisplayer;
     private final FileDataVersionChecker fileDataVersionChecker;
     private final FileDataVersionWriter fileDataVersionWriter;
     private final GeoBeagleEnvironment geoBeagleEnvironment;
@@ -41,11 +38,9 @@ class GpxSyncerFactory {
     private final MessageHandler messageHandlerInterface;
     private final OldCacheFilesCleaner oldCacheFilesCleaner;
     private final SharedPreferences sharedPreferences;
-    private final UpdateFlag updateFlag;
 
     @Inject
     public GpxSyncerFactory(MessageHandler messageHandler,
-            ErrorDisplayer errorDisplayer,
             CacheListRefresh cacheListRefresh,
             GeoBeagleEnvironment geoBeagleEnvironment,
             SharedPreferences sharedPreferences,
@@ -54,11 +49,9 @@ class GpxSyncerFactory {
             FileDataVersionWriter fileDataVersionWriter,
             FileDataVersionChecker fileDataVersionChecker,
             BCachingStartTime bcachingStartTime,
-            UpdateFlag updateFlag,
             DbFrontend dbFrontend,
             OldCacheFilesCleaner oldCacheFilesCleaner) {
         this.messageHandlerInterface = messageHandler;
-        this.errorDisplayer = errorDisplayer;
         this.cacheListRefresh = cacheListRefresh;
         this.geoBeagleEnvironment = geoBeagleEnvironment;
         this.sharedPreferences = sharedPreferences;
@@ -67,7 +60,6 @@ class GpxSyncerFactory {
         this.fileDataVersionWriter = fileDataVersionWriter;
         this.fileDataVersionChecker = fileDataVersionChecker;
         this.bcachingStartTime = bcachingStartTime;
-        this.updateFlag = updateFlag;
         this.dbFrontend = dbFrontend;
         this.oldCacheFilesCleaner = oldCacheFilesCleaner;
     }
@@ -76,8 +68,8 @@ class GpxSyncerFactory {
         messageHandlerInterface.start(cacheListRefresh);
 
         final GpxToCache gpxToCache = gpxToCacheFactory.create(messageHandlerInterface);
-        return new GpxSyncer(gpxAndZipFiles, errorDisplayer, fileDataVersionWriter, dbFrontend,
-                fileDataVersionChecker, bcachingStartTime, updateFlag, messageHandlerInterface,
+        return new GpxSyncer(gpxAndZipFiles, fileDataVersionWriter, dbFrontend,
+                fileDataVersionChecker, bcachingStartTime, messageHandlerInterface,
                 oldCacheFilesCleaner, sharedPreferences, gpxToCache, geoBeagleEnvironment);
     }
 }

@@ -15,10 +15,6 @@
 package com.google.code.geobeagle.bcaching;
 
 import com.google.code.geobeagle.ErrorDisplayer;
-import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.activity.cachelist.actions.menu.Abortable;
-import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh.UpdateFlag;
-import com.google.code.geobeagle.activity.main.fieldnotes.Toaster;
 import com.google.code.geobeagle.bcaching.communication.BCachingException;
 import com.google.code.geobeagle.bcaching.progress.ProgressHandler;
 import com.google.code.geobeagle.bcaching.progress.ProgressManager;
@@ -30,7 +26,6 @@ import com.google.inject.Injector;
 import roboguice.inject.ContextScoped;
 
 import android.util.Log;
-import android.widget.Toast;
 
 /**
  * Thread class that does the work of importing caches from the bcaching.com
@@ -39,73 +34,43 @@ import android.widget.Toast;
  * @author sng
  */
 @ContextScoped
-public class ImportBCachingWorker implements Abortable {
+public class ImportBCachingWorker {
     private final CacheImporter cacheImporter;
     private final CacheListCursor cursor;
-    private final ErrorDisplayer errorDisplayer;
     private boolean inProgress;
     private final ProgressHandler progressHandler;
     private final ProgressManager progressManager;
-    private final Toaster toaster;
-    private final UpdateFlag updateFlag;
 
     @Inject
     public ImportBCachingWorker(Injector injector) {
         this.progressHandler = injector.getInstance(ProgressHandler.class);
-        this.errorDisplayer = injector.getInstance(ErrorDisplayer.class);
+        injector.getInstance(ErrorDisplayer.class);
         this.progressManager = injector.getInstance(ProgressManager.class);
         this.cacheImporter = injector.getInstance(CacheImporter.class);
-        this.toaster = injector.getInstance(Toaster.class);
         this.cursor = injector.getInstance(CacheListCursor.class);
-        this.updateFlag = injector.getInstance(UpdateFlag.class);
     }
 
     public ImportBCachingWorker(ProgressHandler progressHandler,
             ProgressManager progressManager,
-            ErrorDisplayer errorDisplayer,
             CacheImporter cacheImporter,
-            Toaster toaster,
-            CacheListCursor cacheListCursor,
-            UpdateFlag updateFlag) {
+            CacheListCursor cacheListCursor) {
         this.progressHandler = progressHandler;
-        this.errorDisplayer = errorDisplayer;
         this.progressManager = progressManager;
         this.cacheImporter = cacheImporter;
-        this.toaster = toaster;
         this.cursor = cacheListCursor;
-        this.updateFlag = updateFlag;
     }
 
     /*
      * Abort the import thread. This call will block
      */
-    @Override
-    public synchronized void abort() {
-        if (!inProgress)
-            return;
-        try {
-            Log.d("GeoBeagle", "abort: JOIN STARTED");
-            while (inProgress) {
-                Log.d("GeoBeagle", "sleeping...");
-                Thread.sleep(100);
-            }
-            toaster.toast(R.string.import_canceled, Toast.LENGTH_LONG);
-            Log.d("GeoBeagle", "abort: JOIN FINISHED");
-        } catch (InterruptedException e) {
-            Log.d("GeoBeagle", "Ignoring InterruptedException: " + e.getLocalizedMessage());
-        }
-        Log.d("GeoBeagle", "done abort IMPORT");
-
-    }
 
     public synchronized boolean inProgress() {
         return inProgress;
     }
 
-    public void run() {
+    public void sync() throws CancelException, BCachingException {
         Log.d("GeoBeagle", "Starting import");
         inProgress = true;
-        updateFlag.setUpdatesEnabled(false);
         progressManager.update(progressHandler, ProgressMessage.START, 0);
         try {
             if (!cursor.open())
@@ -115,12 +80,7 @@ public class ImportBCachingWorker implements Abortable {
                 cursor.increment();
             }
             cursor.close();
-        } catch (BCachingException e) {
-            errorDisplayer.displayError(R.string.problem_importing_from_bcaching, e
-                    .getLocalizedMessage());
-        } catch (CancelException e) {
         } finally {
-            updateFlag.setUpdatesEnabled(true);
             progressManager.update(progressHandler, ProgressMessage.REFRESH, 0);
             progressManager.update(progressHandler, ProgressMessage.DONE, 0);
             inProgress = false;

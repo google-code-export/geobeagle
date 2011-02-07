@@ -15,7 +15,6 @@
 package com.google.code.geobeagle.activity.cachelist.actions.menu;
 
 import com.google.code.geobeagle.actions.Action;
-import com.google.code.geobeagle.bcaching.ImportBCachingWorker;
 import com.google.code.geobeagle.xmlimport.CacheSyncer;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
@@ -26,23 +25,18 @@ import android.util.Log;
 
 @Singleton
 public class MenuActionSyncGpx implements Action {
-    private Abortable mBCachingWorkerAborter;
     private CacheSyncer mCacheSyncer;
     private final Provider<CacheSyncer> mGpxImporterProvider;
-    private final Provider<ImportBCachingWorker> mImportBCachingWorkerProvider;
     private boolean mSyncInProgress;
 
     @Inject
     public MenuActionSyncGpx(Injector injector) {
         mGpxImporterProvider = injector.getProvider(CacheSyncer.class);
-        mImportBCachingWorkerProvider = injector.getProvider(ImportBCachingWorker.class);
         mSyncInProgress = false;
     }
 
     // For testing.
-    public MenuActionSyncGpx(Provider<ImportBCachingWorker> importBCachingWorkerProvider,
-            Provider<CacheSyncer> gpxImporterProvider) {
-        mImportBCachingWorkerProvider = importBCachingWorkerProvider;
+    public MenuActionSyncGpx(Provider<CacheSyncer> gpxImporterProvider) {
         mGpxImporterProvider = gpxImporterProvider;
         mSyncInProgress = false;
     }
@@ -52,7 +46,6 @@ public class MenuActionSyncGpx implements Action {
         if (!mSyncInProgress)
             return;
         mCacheSyncer.abort();
-        mBCachingWorkerAborter.abort();
         mSyncInProgress = false;
     }
 
@@ -60,7 +53,6 @@ public class MenuActionSyncGpx implements Action {
     public void act() {
         Log.d("GeoBeagle", "MenuActionSync importing");
         mCacheSyncer = mGpxImporterProvider.get();
-        mBCachingWorkerAborter = mImportBCachingWorkerProvider.get();
         mCacheSyncer.syncGpxs();
         mSyncInProgress = true;
     }
