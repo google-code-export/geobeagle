@@ -14,136 +14,30 @@
 
 package com.google.code.geobeagle.xmlimport;
 
-import com.google.code.geobeagle.ErrorDisplayer;
-import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh.UpdateFlag;
-import com.google.code.geobeagle.bcaching.BCachingModule;
-import com.google.code.geobeagle.bcaching.preferences.BCachingStartTime;
-import com.google.code.geobeagle.cachedetails.FileDataVersionChecker;
-import com.google.code.geobeagle.cachedetails.FileDataVersionWriter;
-import com.google.code.geobeagle.database.DbFrontend;
-import com.google.code.geobeagle.xmlimport.GpxToCache.CancelException;
-import com.google.code.geobeagle.xmlimport.gpx.GpxAndZipFiles;
-import com.google.code.geobeagle.xmlimport.gpx.GpxAndZipFiles.GpxFilesAndZipFilesIter;
-import com.google.code.geobeagle.xmlimport.gpx.IGpxReader;
+import com.google.inject.Inject;
 
 import roboguice.util.RoboThread;
 
-import android.content.SharedPreferences;
-import android.util.Log;
-
-import java.io.FileNotFoundException;
-import java.io.IOException;
-
 public class ImportThread extends RoboThread {
 
-    private final BCachingStartTime mBCachingStartTime;
-    private final DbFrontend mDbFrontend;
-    private final ErrorDisplayer mErrorDisplayer;
-    private final FileDataVersionChecker mFileDataVersionChecker;
-    private final FileDataVersionWriter mFileDataVersionWriter;
-    private final GeoBeagleEnvironment mGeoBeagleEnvironment;
-    private final GpxAndZipFiles mGpxAndZipFiles;
-    private final GpxToCache mGpxToCache;
-    private boolean mHasFiles;
-    private boolean mIsAlive;
-    private final MessageHandler mMessageHandler;
-    private final OldCacheFilesCleaner mOldCacheFilesCleaner;
-    private final SharedPreferences mSharedPreferences;
-    private final UpdateFlag mUpdateFlag;
+    private GpxSyncer gpxSyncer;
+    private final GpxSyncerFactory gpxSyncerFactory;
 
-    public ImportThread(GpxAndZipFiles gpxAndZipFiles,
-            ErrorDisplayer errorDisplayer,
-            FileDataVersionWriter fileDataVersionWriter,
-            DbFrontend dbFrontend,
-            FileDataVersionChecker fileDataVersionChecker,
-            BCachingStartTime bcachingStartTime,
-            UpdateFlag updateFlag,
-            MessageHandler messageHandlerInterface,
-            OldCacheFilesCleaner oldCacheFilesCleaner,
-            SharedPreferences sharedPreferences,
-            GpxToCache gpxToCache,
-            GeoBeagleEnvironment geoBeagleEnvironment) {
-        mGpxAndZipFiles = gpxAndZipFiles;
-        mErrorDisplayer = errorDisplayer;
-        mFileDataVersionWriter = fileDataVersionWriter;
-        mFileDataVersionChecker = fileDataVersionChecker;
-        mBCachingStartTime = bcachingStartTime;
-        mDbFrontend = dbFrontend;
-        mUpdateFlag = updateFlag;
-        mMessageHandler = messageHandlerInterface;
-        mHasFiles = false;
-        mOldCacheFilesCleaner = oldCacheFilesCleaner;
-        mSharedPreferences = sharedPreferences;
-        mGpxToCache = gpxToCache;
-        mGeoBeagleEnvironment = geoBeagleEnvironment;
-    }
-
-    public boolean isAliveHack() {
-        return mIsAlive;
+    @Inject
+    ImportThread(GpxSyncerFactory gpxSyncerFactory) {
+        this.gpxSyncerFactory = gpxSyncerFactory;
     }
 
     @Override
     public void run() {
-        mIsAlive = true;
-        try {
-            mUpdateFlag.setUpdatesEnabled(false);
-            tryRun();
-        } catch (final FileNotFoundException e) {
-            mErrorDisplayer.displayError(R.string.error_opening_file, e.getMessage());
-            return;
-        } catch (IOException e) {
-            mErrorDisplayer.displayError(R.string.error_reading_file, e.getMessage());
-            return;
-        } catch (ImportException e) {
-            mErrorDisplayer.displayError(e.getError(), e.getPath());
-            return;
-        } catch (CancelException e) {
-            return;
-        } finally {
-            mUpdateFlag.setUpdatesEnabled(true);
-            mMessageHandler.loadComplete();
-            mIsAlive = false;
-        }
-        Log.d("GeoBeagle", "STARTING BCACHING IMPORT");
-        mMessageHandler.startBCachingImport();
+        gpxSyncer.sync();
     }
 
-    private void endImport() throws ImportException, IOException {
-        mFileDataVersionWriter.writeVersion();
-        mGpxToCache.end();
-        if (!mHasFiles
-                && mSharedPreferences.getString(BCachingModule.BCACHING_USERNAME, "").length() == 0)
-            throw new ImportException(R.string.error_no_gpx_files,
-                    mGeoBeagleEnvironment.getImportFolder());
+    public boolean isAliveHack() {
+        return gpxSyncer.isAliveHack();
     }
 
-    private void processFile(GpxFilesAndZipFilesIter gpxFilesAndZipFilesIter) throws IOException,
-            CancelException {
-        IGpxReader gpxReader = gpxFilesAndZipFilesIter.next();
-        String filename = gpxReader.getFilename();
-
-        mHasFiles = true;
-        mGpxToCache.load(filename, gpxReader.open());
-    }
-
-    private GpxFilesAndZipFilesIter startImport() throws ImportException {
-        mOldCacheFilesCleaner.clean(mMessageHandler);
-        mGpxToCache.start();
-        if (mFileDataVersionChecker.needsUpdating()) {
-            mDbFrontend.forceUpdate();
-            mBCachingStartTime.clearStartTime();
-        }
-        GpxFilesAndZipFilesIter gpxFilesAndZipFilesIter = mGpxAndZipFiles.iterator();
-        gpxFilesAndZipFilesIter.getCount(); // For collecting parameter.
-        return gpxFilesAndZipFilesIter;
-    }
-
-    void tryRun() throws IOException, ImportException, CancelException {
-        GpxFilesAndZipFilesIter gpxFilesAndZipFilesIter = startImport();
-        while (gpxFilesAndZipFilesIter.hasNext()) {
-            processFile(gpxFilesAndZipFilesIter);
-        }
-        endImport();
+    public void init() {
+        gpxSyncer = gpxSyncerFactory.create();
     }
 }

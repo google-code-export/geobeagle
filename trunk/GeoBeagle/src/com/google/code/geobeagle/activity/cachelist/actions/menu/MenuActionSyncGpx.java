@@ -27,7 +27,7 @@ import android.util.Log;
 @Singleton
 public class MenuActionSyncGpx implements Action {
     private Abortable mBCachingWorkerAborter;
-    private CacheSyncer mGpxImporter;
+    private CacheSyncer mCacheSyncer;
     private final Provider<CacheSyncer> mGpxImporterProvider;
     private final Provider<ImportBCachingWorker> mImportBCachingWorkerProvider;
     private boolean mSyncInProgress;
@@ -51,7 +51,7 @@ public class MenuActionSyncGpx implements Action {
         Log.d("GeoBeagle", "MenuActionSyncGpx aborting: " + mSyncInProgress);
         if (!mSyncInProgress)
             return;
-        mGpxImporter.abort();
+        mCacheSyncer.abort();
         mBCachingWorkerAborter.abort();
         mSyncInProgress = false;
     }
@@ -59,9 +59,9 @@ public class MenuActionSyncGpx implements Action {
     @Override
     public void act() {
         Log.d("GeoBeagle", "MenuActionSync importing");
-        mGpxImporter = mGpxImporterProvider.get();
+        mCacheSyncer = mGpxImporterProvider.get();
         mBCachingWorkerAborter = mImportBCachingWorkerProvider.get();
-        mGpxImporter.importGpxs();
+        mCacheSyncer.syncGpxs();
         mSyncInProgress = true;
     }
 }
