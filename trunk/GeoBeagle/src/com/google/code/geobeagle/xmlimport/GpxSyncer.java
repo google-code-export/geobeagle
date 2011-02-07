@@ -28,7 +28,6 @@ import com.google.code.geobeagle.xmlimport.gpx.GpxAndZipFiles.GpxFilesAndZipFile
 import com.google.code.geobeagle.xmlimport.gpx.IGpxReader;
 
 import android.content.SharedPreferences;
-import android.util.Log;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -102,8 +101,6 @@ public class GpxSyncer {
             mMessageHandler.loadComplete();
             mIsAlive = false;
         }
-        Log.d("GeoBeagle", "STARTING BCACHING IMPORT");
-        mMessageHandler.startBCachingImport();
     }
 
     private void endImport() throws ImportException, IOException {

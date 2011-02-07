@@ -14,23 +14,39 @@
 
 package com.google.code.geobeagle.xmlimport;
 
+import com.google.code.geobeagle.bcaching.BCachingModule;
+import com.google.code.geobeagle.bcaching.ImportBCachingWorker;
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 
 import roboguice.util.RoboThread;
+
+import android.content.SharedPreferences;
 
 public class ImportThread extends RoboThread {
 
     private GpxSyncer gpxSyncer;
     private final GpxSyncerFactory gpxSyncerFactory;
+    private final SharedPreferences sharedPreferences;
+    private final Provider<ImportBCachingWorker> importBCachingWorkerProvider;
+    private ImportBCachingWorker importBCachingWorker;
 
     @Inject
-    ImportThread(GpxSyncerFactory gpxSyncerFactory) {
+    ImportThread(GpxSyncerFactory gpxSyncerFactory,
+            SharedPreferences sharedPreferences,
+            Provider<ImportBCachingWorker> importBCachingWorkerProvider) {
         this.gpxSyncerFactory = gpxSyncerFactory;
+        this.sharedPreferences = sharedPreferences;
+        this.importBCachingWorkerProvider = importBCachingWorkerProvider;
     }
 
     @Override
     public void run() {
         gpxSyncer.sync();
+
+        if (sharedPreferences.getBoolean(BCachingModule.BCACHING_ENABLED, false)) {
+            importBCachingWorker.run();
+        }
     }
 
     public boolean isAliveHack() {
@@ -39,5 +55,6 @@ public class ImportThread extends RoboThread {
 
     public void init() {
         gpxSyncer = gpxSyncerFactory.create();
+        importBCachingWorker = importBCachingWorkerProvider.get();
     }
 }

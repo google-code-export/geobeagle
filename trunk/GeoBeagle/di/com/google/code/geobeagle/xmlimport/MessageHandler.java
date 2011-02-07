@@ -15,15 +15,10 @@
 package com.google.code.geobeagle.xmlimport;
 
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
-import com.google.code.geobeagle.bcaching.BCachingModule;
-import com.google.code.geobeagle.bcaching.ImportBCachingWorker;
-import com.google.code.geobeagle.xmlimport.GpxImporterDI.ProgressDialogWrapper;
 import com.google.inject.Inject;
-import com.google.inject.Provider;
 
 import roboguice.inject.ContextScoped;
 
-import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
@@ -33,7 +28,6 @@ public class MessageHandler extends Handler implements MessageHandlerInterface {
     public static final String GEOBEAGLE = "GeoBeagle";
     static final int MSG_DONE = 1;
     static final int MSG_PROGRESS = 0;
-    private static final int MSG_BCACHING_IMPORT = 2;
 
     private int mCacheCount;
     private boolean mLoadAborted;
@@ -42,16 +36,10 @@ public class MessageHandler extends Handler implements MessageHandlerInterface {
     private String mSource;
     private String mStatus;
     private String mWaypointId;
-    private final Provider<ImportBCachingWorker> mImportBCachingWorkerProvider;
-    private final SharedPreferences mSharedPreferences;
 
     @Inject
-    public MessageHandler(ProgressDialogWrapper progressDialogWrapper,
-            Provider<ImportBCachingWorker> importBCachingWorkerProvider,
-            SharedPreferences sharedPreferences) {
+    public MessageHandler(ProgressDialogWrapper progressDialogWrapper) {
         mProgressDialogWrapper = progressDialogWrapper;
-        mImportBCachingWorkerProvider = importBCachingWorkerProvider;
-        mSharedPreferences = sharedPreferences;
     }
 
     @Override
@@ -71,28 +59,6 @@ public class MessageHandler extends Handler implements MessageHandlerInterface {
                 if (!mLoadAborted) {
                     mProgressDialogWrapper.dismiss();
                     mMenuActionRefresh.forceRefresh();
-                }
-                break;
-            case MessageHandler.MSG_BCACHING_IMPORT:
-                if (mLoadAborted) {
-                    return;
-                }
-
-                if (mSharedPreferences.getBoolean(BCachingModule.BCACHING_ENABLED, false)) {
-                    ImportBCachingWorker importBCachingWorker = mImportBCachingWorkerProvider
-                            .get();
-                    importBCachingWorker.start();
-                    while (importBCachingWorker.inProgress()) {
-                        try {
-                            Thread.sleep(100);
-                            Log.d("GeoBeagle", "sleeping for bcaching worker");
-                        } catch (InterruptedException e) {
-                            Log.d("GeoBeagle",
-                                    "InterruptedException while waiting for bcaching thread to die: "
-                                            + e);
-                            e.printStackTrace();
-                        }
-                    }
                 }
                 break;
             default:
@@ -146,10 +112,5 @@ public class MessageHandler extends Handler implements MessageHandlerInterface {
         mStatus = "Deleting old cache files....";
         if (!hasMessages(MessageHandler.MSG_PROGRESS))
             sendEmptyMessage(MessageHandler.MSG_PROGRESS);
-    }
-
-    @Override
-    public void startBCachingImport() {
-        sendEmptyMessage(MessageHandler.MSG_BCACHING_IMPORT);
     }
 }

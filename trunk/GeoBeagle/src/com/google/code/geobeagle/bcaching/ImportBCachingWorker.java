@@ -28,7 +28,6 @@ import com.google.inject.Inject;
 import com.google.inject.Injector;
 
 import roboguice.inject.ContextScoped;
-import roboguice.util.RoboThread;
 
 import android.util.Log;
 import android.widget.Toast;
@@ -40,7 +39,7 @@ import android.widget.Toast;
  * @author sng
  */
 @ContextScoped
-public class ImportBCachingWorker extends RoboThread implements Abortable {
+public class ImportBCachingWorker implements Abortable {
     private final CacheImporter cacheImporter;
     private final CacheListCursor cursor;
     private final ErrorDisplayer errorDisplayer;
@@ -103,7 +102,6 @@ public class ImportBCachingWorker extends RoboThread implements Abortable {
         return inProgress;
     }
 
-    @Override
     public void run() {
         Log.d("GeoBeagle", "Starting import");
         inProgress = true;
