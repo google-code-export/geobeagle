@@ -21,7 +21,6 @@ import com.google.code.geobeagle.activity.cachelist.actions.menu.Abortable;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
 import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheListPresenter;
 import com.google.code.geobeagle.activity.main.fieldnotes.Toaster;
-import com.google.code.geobeagle.xmlimport.GpxImporterDI.MessageHandler;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Provider;
