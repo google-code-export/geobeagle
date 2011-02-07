@@ -25,6 +25,7 @@ import com.google.inject.Injector;
 
 import roboguice.inject.ContextScoped;
 
+import android.content.SharedPreferences;
 import android.util.Log;
 
 /**
@@ -40,6 +41,7 @@ public class ImportBCachingWorker {
     private boolean inProgress;
     private final ProgressHandler progressHandler;
     private final ProgressManager progressManager;
+    private final SharedPreferences sharedPreferences;
 
     @Inject
     public ImportBCachingWorker(Injector injector) {
@@ -48,16 +50,19 @@ public class ImportBCachingWorker {
         this.progressManager = injector.getInstance(ProgressManager.class);
         this.cacheImporter = injector.getInstance(CacheImporter.class);
         this.cursor = injector.getInstance(CacheListCursor.class);
+        this.sharedPreferences = injector.getInstance(SharedPreferences.class);
     }
 
     public ImportBCachingWorker(ProgressHandler progressHandler,
             ProgressManager progressManager,
             CacheImporter cacheImporter,
-            CacheListCursor cacheListCursor) {
+            CacheListCursor cacheListCursor,
+            SharedPreferences sharedPreferences) {
         this.progressHandler = progressHandler;
         this.progressManager = progressManager;
         this.cacheImporter = cacheImporter;
         this.cursor = cacheListCursor;
+        this.sharedPreferences = sharedPreferences;
     }
 
     /*
@@ -69,6 +74,9 @@ public class ImportBCachingWorker {
     }
 
     public void sync() throws CancelException, BCachingException {
+        if (!sharedPreferences.getBoolean(BCachingModule.BCACHING_ENABLED, false))
+            return;
+
         Log.d("GeoBeagle", "Starting import");
         inProgress = true;
         progressManager.update(progressHandler, ProgressMessage.START, 0);
