@@ -15,6 +15,7 @@
 package com.google.code.geobeagle.xmlimport;
 
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
+import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh.UpdateFlag;
 import com.google.code.geobeagle.cachedetails.FileDataVersionWriter;
 import com.google.code.geobeagle.xmlimport.GpxToCache.GpxToCacheFactory;
 import com.google.code.geobeagle.xmlimport.gpx.GpxAndZipFiles;
@@ -28,19 +29,22 @@ class GpxSyncerFactory {
     private final GpxToCacheFactory gpxToCacheFactory;
     private final MessageHandler messageHandlerInterface;
     private final OldCacheFilesCleaner oldCacheFilesCleaner;
+    private final UpdateFlag updateFlag;
     @Inject
     public GpxSyncerFactory(MessageHandler messageHandler,
             CacheListRefresh cacheListRefresh,
             GpxAndZipFiles gpxAndZipFiles,
             GpxToCacheFactory gpxToCacheFactory,
             FileDataVersionWriter fileDataVersionWriter,
-            OldCacheFilesCleaner oldCacheFilesCleaner) {
+            OldCacheFilesCleaner oldCacheFilesCleaner,
+            UpdateFlag updateFlag) {
         this.messageHandlerInterface = messageHandler;
         this.cacheListRefresh = cacheListRefresh;
         this.gpxAndZipFiles = gpxAndZipFiles;
         this.gpxToCacheFactory = gpxToCacheFactory;
         this.fileDataVersionWriter = fileDataVersionWriter;
         this.oldCacheFilesCleaner = oldCacheFilesCleaner;
+        this.updateFlag = updateFlag;
     }
 
     public GpxSyncer create() {
@@ -48,6 +52,6 @@ class GpxSyncerFactory {
 
         final GpxToCache gpxToCache = gpxToCacheFactory.create(messageHandlerInterface);
         return new GpxSyncer(gpxAndZipFiles, fileDataVersionWriter, messageHandlerInterface,
-                oldCacheFilesCleaner, gpxToCache);
+                oldCacheFilesCleaner, gpxToCache, updateFlag);
     }
 }
