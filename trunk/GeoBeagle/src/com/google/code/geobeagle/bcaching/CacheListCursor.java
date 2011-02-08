@@ -76,9 +76,13 @@ class CacheListCursor {
         int totalCount = bcachingListImporter.getTotalCount();
 
         long serverTime = bcachingStartTime.getLastUpdateTime();
-        String longModtime = formatter.format(new Date(serverTime));
         syncCollectingParameter.Log("***bcaching.com***");
-        syncCollectingParameter.Log("  last synced: " + longModtime);
+        if (serverTime == 0) {
+            syncCollectingParameter.Log("  initial sync");
+        } else {
+            String longModtime = formatter.format(new Date(serverTime));
+            syncCollectingParameter.Log("  last synced: " + longModtime);
+        }
         if (totalCount <= 0) {
             syncCollectingParameter.Log("  no new caches");
             return false;
