@@ -66,7 +66,6 @@ class CacheListCursor {
 
         position += bcachingListImporter.getCachesRead();
         lastReadPosition.put(position);
-        progressManager.update(progressHandler, ProgressMessage.SET_PROGRESS, position);
     }
 
     boolean open(SyncCollectingParameter syncCollectingParameter) throws BCachingException {
