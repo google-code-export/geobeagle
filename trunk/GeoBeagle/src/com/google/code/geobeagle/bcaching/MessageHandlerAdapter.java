@@ -67,7 +67,10 @@ public class MessageHandlerAdapter implements MessageHandlerInterface {
 
     @Override
     public void updateName(String name) {
-        progressManager.update(handler, ProgressMessage.SET_FILE, count++, waypoint + " - " + name);
+        if (waypoint.startsWith("GC"))
+            count++;
+        progressManager.update(handler, ProgressMessage.SET_FILE,
+                waypoint.startsWith("GC") ? 1 : 0, waypoint + " - " + name);
     }
 
     @Override
