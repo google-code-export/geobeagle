@@ -14,6 +14,7 @@
 
 package com.google.code.geobeagle.bcaching;
 
+import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh.UpdateFlag;
 import com.google.code.geobeagle.bcaching.communication.BCachingException;
 import com.google.code.geobeagle.bcaching.progress.ProgressHandler;
@@ -95,7 +96,8 @@ public class ImportBCachingWorker {
                 cacheImporter.load(cursor.getCacheIds());
                 cursor.increment();
             }
-            syncCollectingParameter.Log("  synced " + totalCachesRead + " caches");
+            syncCollectingParameter.Log(R.string.sync_message_bcaching_synced_caches,
+                    totalCachesRead);
             cursor.close();
         } finally {
             updateFlag.setUpdatesEnabled(true);
