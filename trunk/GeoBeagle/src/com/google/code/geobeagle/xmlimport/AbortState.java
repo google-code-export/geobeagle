@@ -20,22 +20,22 @@ import android.util.Log;
 
 @ContextScoped
 public class AbortState {
-    private static boolean mAborted = false;
+    private static boolean aborted = false;
 
     AbortState() {
-        mAborted = false;
+        aborted = false;
     }
 
     public void abort() {
         Log.d("GeoBeagle", this + ": aborting");
-        mAborted = true;
+        aborted = true;
     }
 
     public boolean isAborted() {
-        return mAborted;
+        return aborted;
     }
 
     public void reset() {
-        mAborted = false;
+        aborted = false;
     }
 }
