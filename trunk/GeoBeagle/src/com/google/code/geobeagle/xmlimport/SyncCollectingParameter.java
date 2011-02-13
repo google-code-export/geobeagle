@@ -14,11 +14,22 @@
 
 package com.google.code.geobeagle.xmlimport;
 
+import com.google.inject.Inject;
+
+import android.content.res.Resources;
+
 public class SyncCollectingParameter {
     private String log;
+    private final Resources resources;
 
-    public SyncCollectingParameter() {
+    @Inject
+    public SyncCollectingParameter(Resources resources) {
+        this.resources = resources;
         this.log = "";
+    }
+
+    public void Log(int resId, Object... args) {
+        Log(resources.getString(resId, args));
     }
 
     public void Log(String s) {

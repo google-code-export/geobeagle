@@ -14,6 +14,7 @@
 
 package com.google.code.geobeagle.bcaching;
 
+import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.bcaching.communication.BCachingException;
 import com.google.code.geobeagle.bcaching.communication.BCachingListImporter;
 import com.google.code.geobeagle.bcaching.preferences.BCachingStartTime;
@@ -69,21 +70,21 @@ class CacheListCursor {
     }
 
     boolean open(SyncCollectingParameter syncCollectingParameter) throws BCachingException {
-        bcachingListImporter.setStartTime(String.valueOf(bcachingStartTime.getLastUpdateTime()));
+        long serverTime = bcachingStartTime.getLastUpdateTime();
         // bcachingListImporter.setStartTime("1274686304000");
         // bcachingListImporter.setStartTime("1274686304000");
+        bcachingListImporter.setStartTime(String.valueOf(serverTime));
         int totalCount = bcachingListImporter.getTotalCount();
 
-        long serverTime = bcachingStartTime.getLastUpdateTime();
-        syncCollectingParameter.Log("***bcaching.com***");
+        syncCollectingParameter.Log(R.string.sync_message_bcaching_start);
         if (serverTime == 0) {
             syncCollectingParameter.Log("  initial sync");
         } else {
             String longModtime = formatter.format(new Date(serverTime));
-            syncCollectingParameter.Log("  last synced: " + longModtime);
+            syncCollectingParameter.Log(R.string.sync_message_bcaching_last_sync, longModtime);
         }
         if (totalCount <= 0) {
-            syncCollectingParameter.Log("  no new caches");
+            syncCollectingParameter.Log(R.string.sync_message_bcaching_no_new_caches);
             return false;
         }
         progressManager.update(progressHandler, ProgressMessage.SET_MAX, totalCount);
