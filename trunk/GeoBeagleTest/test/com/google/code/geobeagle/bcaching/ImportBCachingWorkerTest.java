@@ -28,6 +28,8 @@ import com.google.code.geobeagle.bcaching.communication.BCachingException;
 import com.google.code.geobeagle.bcaching.progress.ProgressHandler;
 import com.google.code.geobeagle.bcaching.progress.ProgressManager;
 import com.google.code.geobeagle.bcaching.progress.ProgressMessage;
+import com.google.code.geobeagle.xmlimport.GpxToCache.CancelException;
+import com.google.code.geobeagle.xmlimport.SyncCollectingParameter;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -35,6 +37,7 @@ import org.junit.runner.RunWith;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import android.content.SharedPreferences;
 import android.os.Message;
 import android.util.Log;
 
@@ -44,11 +47,12 @@ import android.util.Log;
 })
 public class ImportBCachingWorkerTest extends GeoBeagleTest {
     private CacheImporter cacheImporter;
-    private ErrorDisplayer errorDisplayer;
     private ProgressHandler progressHandler;
     private ProgressManager progressManager;
     private CacheListCursor cursor;
     private UpdateFlag updateFlag;
+    private SharedPreferences sharedPreferences;
+    private SyncCollectingParameter syncCollectingParameter;
 
     @Before
     public void setUp() {
@@ -56,94 +60,88 @@ public class ImportBCachingWorkerTest extends GeoBeagleTest {
         mockStatic(System.class);
         progressHandler = createMock(ProgressHandler.class);
         progressManager = createMock(ProgressManager.class);
-        errorDisplayer = createMock(ErrorDisplayer.class);
+        createMock(ErrorDisplayer.class);
         cacheImporter = createMock(CacheImporter.class);
         updateFlag = createMock(UpdateFlag.class);
         cursor = createMock(CacheListCursor.class);
+        sharedPreferences = createMock(SharedPreferences.class);
+        syncCollectingParameter = createMock(SyncCollectingParameter.class);
     }
 
     @Test
-    public void testWorkerNoCaches() throws BCachingException {
+    public void testWorkerNoCaches() throws BCachingException, CancelException {
+        expect(sharedPreferences.getBoolean(BCachingModule.BCACHING_ENABLED, false))
+                .andReturn(true);
         updateFlag.setUpdatesEnabled(false);
         progressManager.update(progressHandler, ProgressMessage.START, 0);
-        expect(cursor.open()).andReturn(false);
+        expect(cursor.open(null)).andReturn(false);
         progressManager.update(progressHandler, ProgressMessage.DONE, 0);
         progressManager.update(progressHandler, ProgressMessage.REFRESH, 0);
         updateFlag.setUpdatesEnabled(true);
 
         replayAll();
         ImportBCachingWorker importBCachingWorker = new ImportBCachingWorker(progressHandler,
-                progressManager, null, null, null, cursor, updateFlag);
-        importBCachingWorker.run();
+                progressManager, cacheImporter, cursor, updateFlag, sharedPreferences);
+        importBCachingWorker.sync(null);
         verifyAll();
     }
 
     @Test
-    public void testWorkerOneChunk() throws BCachingException {
+    public void testWorkerOneChunk() throws BCachingException, CancelException {
+        expect(sharedPreferences.getBoolean(BCachingModule.BCACHING_ENABLED, false))
+                .andReturn(true);
         updateFlag.setUpdatesEnabled(false);
         progressManager.update(progressHandler, ProgressMessage.START, 0);
-        expect(cursor.open()).andReturn(true);
+        expect(cursor.open(syncCollectingParameter)).andReturn(true);
 
-        expect(cursor.readCaches()).andReturn(true);
+        expect(cursor.readCaches()).andReturn(3);
         expect(cursor.getCacheIds()).andReturn("1,2,3");
-        expect(cacheImporter.load("1,2,3")).andReturn(true);
+        cacheImporter.load("1,2,3");
         cursor.increment();
-        expect(cursor.readCaches()).andReturn(false);
+        expect(cursor.readCaches()).andReturn(0);
+        syncCollectingParameter.Log(R.string.sync_message_bcaching_synced_caches, 3);
         cursor.close();
         updateFlag.setUpdatesEnabled(true);
 
         progressManager.update(progressHandler, ProgressMessage.REFRESH, 0);
         progressManager.update(progressHandler, ProgressMessage.DONE, 0);
 
+
         replayAll();
-        new ImportBCachingWorker(progressHandler, progressManager, null, cacheImporter, null,
-                cursor, updateFlag).run();
+        new ImportBCachingWorker(progressHandler, progressManager, cacheImporter, cursor,
+                updateFlag, sharedPreferences).sync(syncCollectingParameter);
         verifyAll();
     }
 
     @Test
-    public void testWorkerRaise() throws BCachingException {
+    public void testWorkerTwoChunks() throws BCachingException, CancelException {
+        expect(sharedPreferences.getBoolean(BCachingModule.BCACHING_ENABLED, false))
+                .andReturn(true);
         updateFlag.setUpdatesEnabled(false);
         progressManager.update(progressHandler, ProgressMessage.START, 0);
-        expect(cursor.open())
-                .andThrow(new BCachingException("io exception"));
-        progressManager.update(progressHandler, ProgressMessage.REFRESH, 0);
-        progressManager.update(progressHandler, ProgressMessage.DONE, 0);
-        errorDisplayer.displayError(R.string.problem_importing_from_bcaching, "io exception");
-        updateFlag.setUpdatesEnabled(true);
+        expect(cursor.open(syncCollectingParameter)).andReturn(true);
 
-        replayAll();
-        ImportBCachingWorker importBCachingWorker = new ImportBCachingWorker(progressHandler,
-                progressManager, errorDisplayer, null, null, cursor, updateFlag);
-        importBCachingWorker.run();
-        verifyAll();
-    }
-
-    @Test
-    public void testWorkerTwoChunks() throws BCachingException {
-        updateFlag.setUpdatesEnabled(false);
-        progressManager.update(progressHandler, ProgressMessage.START, 0);
-        expect(cursor.open()).andReturn(true);
-
-        expect(cursor.readCaches()).andReturn(true);
+        expect(cursor.readCaches()).andReturn(3);
         expect(cursor.getCacheIds()).andReturn("1,2,3");
-        expect(cacheImporter.load("1,2,3")).andReturn(true);
+        cacheImporter.load("1,2,3");
         cursor.increment();
 
-        expect(cursor.readCaches()).andReturn(true);
+        expect(cursor.readCaches()).andReturn(3);
         expect(cursor.getCacheIds()).andReturn("4,5,6");
-        expect(cacheImporter.load("4,5,6")).andReturn(true);
+        cacheImporter.load("4,5,6");
         cursor.increment();
 
-        expect(cursor.readCaches()).andReturn(false);
+        expect(cursor.readCaches()).andReturn(0);
         cursor.close();
+        syncCollectingParameter.Log(R.string.sync_message_bcaching_synced_caches, 6);
+
         progressManager.update(progressHandler, ProgressMessage.REFRESH, 0);
         progressManager.update(progressHandler, ProgressMessage.DONE, 0);
         updateFlag.setUpdatesEnabled(true);
 
         replayAll();
-        new ImportBCachingWorker(progressHandler, progressManager, null, cacheImporter, null,
-                cursor, updateFlag).run();
+        new ImportBCachingWorker(progressHandler, progressManager, cacheImporter, cursor,
+                updateFlag, sharedPreferences).sync(syncCollectingParameter);
         verifyAll();
     }
 }

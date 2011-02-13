@@ -47,6 +47,7 @@ public class ImportThread extends RoboThread {
     private final BCachingStartTime bcachingStartTime;
     private final DbFrontend dbFrontend;
     private final FileDataVersionChecker fileDataVersionChecker;
+    private final SyncCollectingParameter syncCollectingParameter;
 
     @Inject
     ImportThread(GpxSyncerFactory gpxSyncerFactory,
@@ -56,7 +57,8 @@ public class ImportThread extends RoboThread {
             GeoBeagleEnvironment geoBeagleEnvironment,
             BCachingStartTime bcachingStartTime,
             FileDataVersionChecker fileDataVersionChecker,
-            DbFrontend dbFrontend) {
+            DbFrontend dbFrontend,
+            SyncCollectingParameter syncCollectingParameter) {
         this.gpxSyncerFactory = gpxSyncerFactory;
         this.importBCachingWorkerProvider = importBCachingWorkerProvider;
         this.errorDisplayer = errorDisplayer;
@@ -65,6 +67,7 @@ public class ImportThread extends RoboThread {
         this.bcachingStartTime = bcachingStartTime;
         this.fileDataVersionChecker = fileDataVersionChecker;
         this.dbFrontend = dbFrontend;
+        this.syncCollectingParameter = syncCollectingParameter;
     }
 
     @Override
@@ -76,7 +79,6 @@ public class ImportThread extends RoboThread {
                 bcachingStartTime.clearStartTime();
             }
 
-            SyncCollectingParameter syncCollectingParameter = new SyncCollectingParameter();
             if (gpxSyncer.sync(syncCollectingParameter)
                     && sharedPreferences.getString(BCachingModule.BCACHING_USERNAME, "").length() == 0)
                 throw new ImportException(R.string.error_no_gpx_files,
