@@ -49,13 +49,13 @@ import android.widget.AdapterView.AdapterContextMenuInfo;
         CacheListOnCreateContextMenuListener.class, DatabaseDI.class, Log.class
 })
 public class GeocacheListControllerTest extends GeoBeagleTest {
+    private AbortState abortState;
 
     @Before
     public void setUp() {
         abortState = PowerMock.createMock(AbortState.class);
     }
 
-    private AbortState abortState;
 
     @Test
     public void testCacheListOnCreateContextMenuListener() {
