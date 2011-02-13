@@ -25,10 +25,11 @@ import com.google.code.geobeagle.activity.cachelist.model.GeocacheVectors;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
 import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheListPresenter;
 import com.google.code.geobeagle.database.DatabaseDI;
-import com.google.code.geobeagle.xmlimport.Aborter;
+import com.google.code.geobeagle.xmlimport.AbortState;
 import com.google.inject.Provider;
 
 import org.easymock.EasyMock;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.api.easymock.PowerMock;
@@ -48,6 +49,13 @@ import android.widget.AdapterView.AdapterContextMenuInfo;
         CacheListOnCreateContextMenuListener.class, DatabaseDI.class, Log.class
 })
 public class GeocacheListControllerTest extends GeoBeagleTest {
+
+    @Before
+    public void setUp() {
+        abortState = PowerMock.createMock(AbortState.class);
+    }
+
+    private AbortState abortState;
 
     @Test
     public void testCacheListOnCreateContextMenuListener() {
@@ -182,14 +190,13 @@ public class GeocacheListControllerTest extends GeoBeagleTest {
     public void testOnPause() {
         Provider<MenuActionSyncGpx> menuActionSyncProvider = PowerMock.createMock(Provider.class);
         MenuActionSyncGpx menuActionSync = PowerMock.createMock(MenuActionSyncGpx.class);
-        Aborter aborter = PowerMock.createMock(Aborter.class);
 
         expect(menuActionSyncProvider.get()).andReturn(menuActionSync);
-        aborter.abort();
+        abortState.abort();
         menuActionSync.abort();
 
         PowerMock.replayAll();
-        new GeocacheListController(null, aborter, menuActionSyncProvider, null, null).onPause();
+        new GeocacheListController(null, abortState, menuActionSyncProvider, null, null).onPause();
         PowerMock.verifyAll();
     }
 
