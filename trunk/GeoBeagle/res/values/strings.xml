@@ -154,7 +154,7 @@
 	<string name="select_nav_choices_title">Please select</string>
 	<string name="search_hint">Search for caches</string>
 	<string name="sync_message_bcaching_start">***bcaching.com***</string>
-	<string name="sync_message_bcaching_last_sync">  last synced: </string>
+	<string name="sync_message_bcaching_last_sync">  last synced: %1$s</string>
 	<string name="sync_message_bcaching_no_new_caches">  no new caches</string>
 	<string name="sync_message_bcaching_synced_caches">  synced %1$d caches</string>
 </resources>
