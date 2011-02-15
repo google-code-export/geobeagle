@@ -17,10 +17,8 @@ package com.google.code.geobeagle.activity.main.view;
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.GeocacheFactory;
 import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.database.DbFrontend;
 import com.google.code.geobeagle.database.LocationSaver;
 import com.google.inject.Inject;
-import com.google.inject.Provider;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -29,7 +27,6 @@ import android.widget.EditText;
 
 public class EditCacheActivityDelegate {
     private final CancelButtonOnClickListener cancelButtonOnClickListener;
-    private final Provider<DbFrontend> dbFrontendProvider;
     private final GeocacheFactory geocacheFactory;
     private final LocationSaver locationSaver;
     private final Activity parent;
@@ -38,13 +35,11 @@ public class EditCacheActivityDelegate {
     public EditCacheActivityDelegate(Activity parent,
             CancelButtonOnClickListener cancelButtonOnClickListener,
             GeocacheFactory geocacheFactory,
-            LocationSaver locationSaver,
-            Provider<DbFrontend> dbFrontendProvider) {
+            LocationSaver locationSaver) {
         this.parent = parent;
         this.cancelButtonOnClickListener = cancelButtonOnClickListener;
         this.geocacheFactory = geocacheFactory;
         this.locationSaver = locationSaver;
-        this.dbFrontendProvider = dbFrontendProvider;
     }
 
     public void onCreate() {
@@ -52,7 +47,6 @@ public class EditCacheActivityDelegate {
     }
 
     public void onPause() {
-        dbFrontendProvider.get().closeDatabase();
     }
 
     public void onResume() {
