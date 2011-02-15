@@ -16,9 +16,18 @@ package com.google.code.geobeagle.database;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
+
+import android.database.Cursor;
+import android.util.Log;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 public class GpxWriter {
     private String mGpxTime;
     private final Provider<ISQLiteDatabase> sqliteProvider;
+    private final String[] queryArgs = new String[1];
+    private final SimpleDateFormat sqlDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     @Inject
     GpxWriter(Provider<ISQLiteDatabase> sqliteProvider) {
@@ -31,20 +40,35 @@ public class GpxWriter {
      * the database to protect them from being nuked when the load is complete.
      *
      * @param gpxName
-     * @param gpxTime
+     * @param gpxTimeString
      * @return
      */
-    public boolean isGpxAlreadyLoaded(String gpxName, String gpxTime) {
-        mGpxTime = gpxTime;
-        // TODO:countResults is slow; replace with a query, and moveToFirst.
-        ISQLiteDatabase sqliteDatabase = sqliteProvider.get();
-        boolean gpxAlreadyLoaded = sqliteDatabase.countResults(Database.TBL_GPX,
-                Database.SQL_MATCH_NAME_AND_EXPORTED_LATER, gpxName, gpxTime) > 0;
-        if (gpxAlreadyLoaded) {
-            sqliteDatabase.execSQL(Database.SQL_CACHES_DONT_DELETE_ME, gpxName);
-            sqliteDatabase.execSQL(Database.SQL_GPX_DONT_DELETE_ME, gpxName);
+    public boolean isGpxAlreadyLoaded(String gpxName, String gpxTimeString) {
+        Cursor cursor = null;
+        ISQLiteDatabase sqliteDatabase;
+        String dbTimeString = "";
+        try {
+            mGpxTime = gpxTimeString;
+            sqliteDatabase = sqliteProvider.get();
+            queryArgs[0] = gpxName;
+            cursor = sqliteDatabase.rawQuery(Database.SQL_GET_EXPORT_TIME, queryArgs);
+            if (!cursor.moveToFirst()) {
+                return false;
+            }
+            dbTimeString = cursor.getString(0);
+            Date gpxTime = sqlDateFormat.parse(gpxTimeString);
+            Date dbTime = sqlDateFormat.parse(dbTimeString);
+            if (gpxTime.after(dbTime)) {
+                return false;
+            }
+            return true;
+        } catch (ParseException e) {
+            Log.d("GeoBeagle", "error parsing dates:" + gpxTimeString + ", " + dbTimeString);
+            return false;
+        } finally {
+            if (cursor != null)
+                cursor.close();
         }
-        return gpxAlreadyLoaded;
     }
 
     public void writeGpx(String gpxName) {
