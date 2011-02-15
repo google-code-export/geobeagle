@@ -23,7 +23,7 @@ import java.io.File;
 import java.text.SimpleDateFormat;
 
 public class FileAlreadyLoadedChecker {
-
+    // TODO(sng) rename to LocAlreadyLoadedChecker
     private final GpxWriter mGpxWriter;
     private final SimpleDateFormat mSimpleDateFormat;
 
