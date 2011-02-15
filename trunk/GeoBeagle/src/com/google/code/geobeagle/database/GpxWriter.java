@@ -24,7 +24,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 public class GpxWriter {
-    private String mGpxTime;
+    private String gpxTime;
     private final Provider<ISQLiteDatabase> sqliteProvider;
     private final String[] queryArgs = new String[1];
     private final SimpleDateFormat sqlDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -32,7 +32,7 @@ public class GpxWriter {
     @Inject
     GpxWriter(Provider<ISQLiteDatabase> sqliteProvider) {
         this.sqliteProvider = sqliteProvider;
-        this.mGpxTime = "2000-01-01 01:00:00.000";
+        this.gpxTime = "2000-01-01 01:00:00.000";
     }
 
     /**
@@ -48,7 +48,7 @@ public class GpxWriter {
         ISQLiteDatabase sqliteDatabase;
         String dbTimeString = "";
         try {
-            mGpxTime = gpxTimeString;
+            gpxTime = gpxTimeString;
             sqliteDatabase = sqliteProvider.get();
             queryArgs[0] = gpxName;
             cursor = sqliteDatabase.rawQuery(Database.SQL_GET_EXPORT_TIME, queryArgs);
@@ -72,8 +72,8 @@ public class GpxWriter {
     }
 
     public void writeGpx(String gpxName) {
-        sqliteProvider.get().execSQL(Database.SQL_REPLACE_GPX, gpxName, mGpxTime);
-        mGpxTime = "2000-01-01 01:00:00.000";
+        sqliteProvider.get().execSQL(Database.SQL_REPLACE_GPX, gpxName, gpxTime);
+        gpxTime = "2000-01-01 01:00:00.000";
     }
 
 }
