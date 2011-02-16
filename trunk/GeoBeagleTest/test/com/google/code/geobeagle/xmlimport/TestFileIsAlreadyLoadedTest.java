@@ -34,7 +34,7 @@ import java.text.SimpleDateFormat;
 import java.util.TimeZone;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest( {
+@PrepareForTest({
         Log.class, FileAlreadyLoadedChecker.class
 })
 public class TestFileIsAlreadyLoadedTest {
@@ -56,7 +56,8 @@ public class TestFileIsAlreadyLoadedTest {
     public void testNotLoc() {
 
         PowerMock.replayAll();
-        assertFalse(new FileAlreadyLoadedChecker(gpxWriter, simpleDateFormat).isAlreadyLoaded("foo.gpx"));
+        assertFalse(new FileAlreadyLoadedChecker(gpxWriter, simpleDateFormat).isAlreadyLoaded(null,
+                "foo.gpx"));
         PowerMock.verifyAll();
     }
 
@@ -66,23 +67,25 @@ public class TestFileIsAlreadyLoadedTest {
         PowerMock.expectNew(File.class, "/sdcard/download/foo.loc").andReturn(file);
         EasyMock.expect(file.getName()).andReturn("foo.loc");
         EasyMock.expect(file.lastModified()).andReturn(0L);
-        EasyMock.expect(gpxWriter.isGpxAlreadyLoaded("foo.loc", "1970-01-01 00:00:00.000+0000"))
+        EasyMock.expect(
+                gpxWriter.isGpxAlreadyLoaded(null, "foo.loc", "1970-01-01 00:00:00.000+0000"))
                 .andReturn(true);
 
         PowerMock.replayAll();
-        assertTrue(new FileAlreadyLoadedChecker(gpxWriter, simpleDateFormat)
-                .isAlreadyLoaded("/sdcard/download/foo.loc"));
+        assertTrue(new FileAlreadyLoadedChecker(gpxWriter, simpleDateFormat).isAlreadyLoaded(null,
+                "/sdcard/download/foo.loc"));
         PowerMock.verifyAll();
     }
 
     @Test
     public void testLocFalse() {
-        EasyMock.expect(gpxWriter.isGpxAlreadyLoaded("foo.loc", "1970-01-01 00:00:00.000+0000"))
+        EasyMock.expect(
+                gpxWriter.isGpxAlreadyLoaded(null, "foo.loc", "1970-01-01 00:00:00.000+0000"))
                 .andReturn(false);
 
         PowerMock.replayAll();
-        assertFalse(new FileAlreadyLoadedChecker(gpxWriter, simpleDateFormat)
-                .isAlreadyLoaded("foo.loc"));
+        assertFalse(new FileAlreadyLoadedChecker(gpxWriter, simpleDateFormat).isAlreadyLoaded(null,
+                "foo.loc"));
         PowerMock.verifyAll();
     }
 }
