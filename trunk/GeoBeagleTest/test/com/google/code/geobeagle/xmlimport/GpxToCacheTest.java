@@ -17,7 +17,6 @@ package com.google.code.geobeagle.xmlimport;
 import static org.easymock.EasyMock.expect;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 import com.google.code.geobeagle.xmlimport.GpxToCache.CancelException;
 
@@ -73,51 +72,48 @@ public class GpxToCacheTest {
 
     @Test
     public void testLoadNone() throws XmlPullParserException, IOException, CancelException {
-        XmlPullParser xmlPullParser = PowerMock.createMock(XmlPullParser.class);
-        EventDispatcher eventDispatcher = PowerMock.createMock(EventDispatcher.class);
+        expect(importWakeLockProvider.get()).andReturn(importWakeLock);
+        importWakeLock.acquire(GpxToCache.WAKELOCK_DURATION);
+        eventDispatcher.setInput(reader);
+        cacheXmlTagsToSql.open("foo.gpx");
+        expect(locAlreadyLoadedChecker.isAlreadyLoaded(null, "/path/to/foo.gpx")).andReturn(false);
+        xmlWriter.open("foo.gpx");
+        eventDispatcher.open();
+        expect(eventDispatcher.getEventType()).andReturn(XmlPullParser.END_DOCUMENT);
+        expect(eventDispatcher.handleEvent(XmlPullParser.END_DOCUMENT)).andReturn(true);
+        cacheXmlTagsToSql.close(true);
+        expect(cacheXmlTagsToSql.getNumberOfCachesLoad()).andReturn(0);
 
-        expect(xmlPullParser.getEventType()).andReturn(XmlPullParser.END_DOCUMENT);
-        expect(eventDispatcher.handleEvent(XmlPullParser.END_DOCUMENT, null, null, xmlPullParser))
-                .andReturn(true);
-        expect(fileAlreadyLoadedChecker.isAlreadyLoaded(null)).andReturn(false);
-        eventDispatcher.open(null, null);
-
-        PowerMock.replayAll();
-        GpxToCache gpxToCache = new GpxToCache(xmlPullParser, new Aborter(),
-                fileAlreadyLoadedChecker);
-        assertEquals(false, gpxToCache.load(eventDispatcher, null, null));
-        PowerMock.verifyAll();
+        replayAll();
+        GpxToCache gpxToCache = new GpxToCache(abortState, locAlreadyLoadedChecker,
+                eventDispatcher, xmlWriter, cacheXmlTagsToSql, importWakeLockProvider, null);
+        assertEquals(0, gpxToCache.load(null, "/path/to/foo.gpx", null));
+        verifyAll();
     }
 
     @Test
     public void testLoadOne() throws XmlPullParserException, IOException, CancelException {
-        XmlPullParser xmlPullParser = PowerMock.createMock(XmlPullParser.class);
-        EventDispatcher eventDispatcher = PowerMock.createMock(EventDispatcher.class);
+        expect(importWakeLockProvider.get()).andReturn(importWakeLock);
+        importWakeLock.acquire(GpxToCache.WAKELOCK_DURATION);
+        eventDispatcher.setInput(reader);
+        cacheXmlTagsToSql.open("foo.gpx");
+        expect(locAlreadyLoadedChecker.isAlreadyLoaded(null, "/path/to/foo.gpx")).andReturn(false);
+        xmlWriter.open("foo.gpx");
+        eventDispatcher.open();
+        expect(eventDispatcher.getEventType()).andReturn(XmlPullParser.START_DOCUMENT);
+        expect(eventDispatcher.handleEvent(XmlPullParser.START_DOCUMENT)).andReturn(true);
+        expect(abortState.isAborted()).andReturn(false);
 
-        eventDispatcher.open(null, null);
-        expect(xmlPullParser.getEventType()).andReturn(XmlPullParser.START_DOCUMENT);
-        expect(eventDispatcher.handleEvent(XmlPullParser.START_DOCUMENT, null, null, xmlPullParser))
-                .andReturn(true);
-        expect(xmlPullParser.next()).andReturn(XmlPullParser.END_DOCUMENT);
-        expect(eventDispatcher.handleEvent(XmlPullParser.END_DOCUMENT, null, null, xmlPullParser))
-                .andReturn(true);
-        expect(fileAlreadyLoadedChecker.isAlreadyLoaded(null)).andReturn(false);
+        expect(eventDispatcher.next()).andReturn(XmlPullParser.END_DOCUMENT);
+        expect(eventDispatcher.handleEvent(XmlPullParser.END_DOCUMENT)).andReturn(true);
+        cacheXmlTagsToSql.close(true);
+        expect(cacheXmlTagsToSql.getNumberOfCachesLoad()).andReturn(12);
 
-        PowerMock.replayAll();
-        GpxToCache gpxToCache = new GpxToCache(xmlPullParser, new Aborter(),
-                fileAlreadyLoadedChecker);
-        assertEquals(false, gpxToCache.load(eventDispatcher, null, null));
-        PowerMock.verifyAll();
-    }
-
-    @Test
-    public void testAborterReset() {
-        final Aborter aborter = new Aborter();
-        assertFalse(aborter.isAborted());
-        aborter.abort();
-        assertTrue(aborter.isAborted());
-        aborter.reset();
-        assertFalse(aborter.isAborted());
+        replayAll();
+        GpxToCache gpxToCache = new GpxToCache(abortState, locAlreadyLoadedChecker,
+                eventDispatcher, xmlWriter, cacheXmlTagsToSql, importWakeLockProvider, null);
+        assertEquals(12, gpxToCache.load(null, "/path/to/foo.gpx", null));
+        verifyAll();
     }
 
     @Test
@@ -140,30 +136,34 @@ public class GpxToCacheTest {
 
     @Test
     public void testLoadTwo() throws XmlPullParserException, IOException, CancelException {
-        XmlPullParser xmlPullParser = PowerMock.createMock(XmlPullParser.class);
-        EventDispatcher eventDispatcher = PowerMock.createMock(EventDispatcher.class);
+        expect(importWakeLockProvider.get()).andReturn(importWakeLock);
+        importWakeLock.acquire(GpxToCache.WAKELOCK_DURATION);
+        eventDispatcher.setInput(reader);
+        cacheXmlTagsToSql.open("foo.gpx");
+        expect(locAlreadyLoadedChecker.isAlreadyLoaded(null, "/path/to/foo.gpx")).andReturn(false);
+        xmlWriter.open("foo.gpx");
+        eventDispatcher.open();
+        expect(eventDispatcher.getEventType()).andReturn(XmlPullParser.START_DOCUMENT);
+        expect(eventDispatcher.handleEvent(XmlPullParser.START_DOCUMENT)).andReturn(true);
+        expect(abortState.isAborted()).andReturn(false);
 
-        eventDispatcher.open(null, null);
-        expect(fileAlreadyLoadedChecker.isAlreadyLoaded(null)).andReturn(false);
-        expect(xmlPullParser.getEventType()).andReturn(XmlPullParser.START_DOCUMENT);
-        expect(eventDispatcher.handleEvent(XmlPullParser.START_DOCUMENT, null, null, xmlPullParser))
-                .andReturn(true);
+        expect(eventDispatcher.next()).andReturn(XmlPullParser.START_TAG);
+        expect(eventDispatcher.handleEvent(XmlPullParser.START_TAG)).andReturn(true);
+        expect(abortState.isAborted()).andReturn(false);
 
-        expect(xmlPullParser.next()).andReturn(XmlPullParser.START_TAG);
-        expect(eventDispatcher.handleEvent(XmlPullParser.START_TAG, null, null, xmlPullParser))
-                .andReturn(true);
+        expect(eventDispatcher.next()).andReturn(XmlPullParser.START_TAG);
+        expect(eventDispatcher.handleEvent(XmlPullParser.START_TAG)).andReturn(true);
+        expect(abortState.isAborted()).andReturn(false);
+        expect(eventDispatcher.next()).andReturn(XmlPullParser.END_DOCUMENT);
+        expect(eventDispatcher.handleEvent(XmlPullParser.END_DOCUMENT)).andReturn(true);
+        cacheXmlTagsToSql.close(true);
+        expect(cacheXmlTagsToSql.getNumberOfCachesLoad()).andReturn(12);
 
-        expect(xmlPullParser.next()).andReturn(XmlPullParser.START_TAG);
-        expect(eventDispatcher.handleEvent(XmlPullParser.START_TAG, null, null, xmlPullParser))
-                .andReturn(true);
-        expect(xmlPullParser.next()).andReturn(XmlPullParser.END_DOCUMENT);
-        expect(eventDispatcher.handleEvent(XmlPullParser.END_DOCUMENT, null, null, xmlPullParser))
-                .andReturn(true);
+        replayAll();
+        GpxToCache gpxToCache = new GpxToCache(abortState, locAlreadyLoadedChecker,
+                eventDispatcher, xmlWriter, cacheXmlTagsToSql, importWakeLockProvider, null);
 
-        PowerMock.replayAll();
-        assertEquals(false,
-                new GpxToCache(xmlPullParser, new Aborter(), fileAlreadyLoadedChecker).load(
-                        eventDispatcher, null, null));
-        PowerMock.verifyAll();
+        assertEquals(12, gpxToCache.load(null, "/path/to/foo.gpx", null));
+        verifyAll();
     }
 }

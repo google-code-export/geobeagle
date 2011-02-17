@@ -107,7 +107,8 @@ public class GpxToCache {
         cacheXmlTagsToSql.end();
     }
 
-    public int load(String path, Reader reader) throws CancelException {
+    public int load(String path, Reader reader)
+            throws CancelException {
         try {
             String filename = new File(path).getName();
             importWakeLockProvider.get().acquire(WAKELOCK_DURATION);
@@ -126,7 +127,9 @@ public class GpxToCache {
         throw new CancelException();
     }
 
-    private int loadFile(String source, String filename, Reader reader)
+    private int loadFile(String source,
+            String filename,
+            Reader reader)
             throws XmlPullParserException,
             IOException, CancelException {
         eventDispatcher.setInput(reader);

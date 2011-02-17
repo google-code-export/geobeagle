@@ -53,7 +53,7 @@ public class CacheXmlTagHandler {
 
     @SuppressWarnings("unused")
     public boolean gpxTime(String gpxTime) {
-        return true;
+        return false;
     }
 
     @SuppressWarnings("unused")
@@ -141,4 +141,5 @@ public class CacheXmlTagHandler {
     @SuppressWarnings("unused")
     public void url(String text) {
     }
+
 }
