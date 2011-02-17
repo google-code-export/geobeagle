@@ -82,7 +82,7 @@ public class GpxSyncer {
         mHasFiles = true;
         int cachesLoaded = gpxToCache.load(filename, gpxReader.open());
         if (cachesLoaded == -1) {
-            syncCollectingParameter.Log("  no changes");
+            syncCollectingParameter.Log("  synced 0 caches");
         } else {
             syncCollectingParameter.Log("  synced " + cachesLoaded + " caches");
         }
