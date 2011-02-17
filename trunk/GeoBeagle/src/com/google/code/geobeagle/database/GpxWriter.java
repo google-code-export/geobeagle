@@ -28,6 +28,7 @@ public class GpxWriter {
     private String gpxTime;
     private final Provider<ISQLiteDatabase> sqliteProvider;
     private final String[] queryArgs = new String[1];
+    private final SimpleDateFormat displayDateFormat = new SimpleDateFormat("MM-dd HH:mm");
     private final SimpleDateFormat sqlDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     private final SyncCollectingParameter syncCollectingParameter;
 
@@ -65,10 +66,11 @@ public class GpxWriter {
             Date gpxTime = sqlDateFormat.parse(gpxTimeString);
             Date dbTime = sqlDateFormat.parse(dbTimeString);
             if (gpxTime.after(dbTime)) {
-                syncCollectingParameter.Log(dbTime + " --> " + gpxTime);
+                syncCollectingParameter.Log(displayDateFormat.format(dbTime) + " --> "
+                        + displayDateFormat.format(gpxTime));
                 return false;
             }
-            syncCollectingParameter.Log(" unchanged since " + dbTime);
+            syncCollectingParameter.Log("  no changes since " + displayDateFormat.format(dbTime));
             return true;
         } catch (ParseException e) {
             Log.d("GeoBeagle", "error parsing dates:" + gpxTimeString + ", " + dbTimeString);
