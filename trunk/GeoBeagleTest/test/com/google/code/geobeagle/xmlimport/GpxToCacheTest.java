@@ -43,7 +43,7 @@ import java.io.Reader;
         GpxToCache.class, Log.class
 })
 public class GpxToCacheTest extends GeoBeagleTest {
-    private FileAlreadyLoadedChecker fileAlreadyLoadedChecker;
+    private LocAlreadyLoadedChecker locAlreadyLoadedChecker;
     private Provider<ImportWakeLock> importWakeLockProvider;
     private ImportWakeLock importWakeLock;
     private Reader reader;
@@ -56,7 +56,7 @@ public class GpxToCacheTest extends GeoBeagleTest {
     @SuppressWarnings("unchecked")
     public void setUp() {
         importWakeLockProvider = createMock(Provider.class);
-        fileAlreadyLoadedChecker = createMock(FileAlreadyLoadedChecker.class);
+        locAlreadyLoadedChecker = createMock(LocAlreadyLoadedChecker.class);
         importWakeLock = createMock(ImportWakeLock.class);
         eventDispatcher = createMock(EventDispatcher.class);
         cacheXmlTagsToSql = createMock(CacheXmlTagsToSql.class);
@@ -71,14 +71,14 @@ public class GpxToCacheTest extends GeoBeagleTest {
         expect(importWakeLockProvider.get()).andReturn(importWakeLock);
         importWakeLock.acquire(GpxToCache.WAKELOCK_DURATION);
         expect(eventDispatcher.getEventType()).andReturn(XmlPullParser.START_DOCUMENT);
-        expect(fileAlreadyLoadedChecker.isAlreadyLoaded("/path/to/foo.gpx")).andReturn(false);
+        expect(locAlreadyLoadedChecker.isAlreadyLoaded("/path/to/foo.gpx")).andReturn(false);
         xmlWriter.open("foo.gpx");
         expect(abortState.isAborted()).andReturn(true);
         eventDispatcher.open();
         cacheXmlTagsToSql.close(false);
 
         replayAll();
-        GpxToCache gpxToCache = new GpxToCache(abortState, fileAlreadyLoadedChecker,
+        GpxToCache gpxToCache = new GpxToCache(abortState, locAlreadyLoadedChecker,
                 eventDispatcher, xmlWriter, cacheXmlTagsToSql, importWakeLockProvider, null);
         try {
             gpxToCache.load("/path/to/foo.gpx", reader);
@@ -94,7 +94,7 @@ public class GpxToCacheTest extends GeoBeagleTest {
         importWakeLock.acquire(GpxToCache.WAKELOCK_DURATION);
         eventDispatcher.setInput(reader);
         cacheXmlTagsToSql.open("foo.gpx");
-        expect(fileAlreadyLoadedChecker.isAlreadyLoaded("/path/to/foo.gpx")).andReturn(false);
+        expect(locAlreadyLoadedChecker.isAlreadyLoaded("/path/to/foo.gpx")).andReturn(false);
         xmlWriter.open("foo.gpx");
         eventDispatcher.open();
         expect(eventDispatcher.getEventType()).andReturn(XmlPullParser.END_DOCUMENT);
@@ -103,7 +103,7 @@ public class GpxToCacheTest extends GeoBeagleTest {
         expect(cacheXmlTagsToSql.getNumberOfCachesLoad()).andReturn(0);
 
         replayAll();
-        GpxToCache gpxToCache = new GpxToCache(abortState, fileAlreadyLoadedChecker,
+        GpxToCache gpxToCache = new GpxToCache(abortState, locAlreadyLoadedChecker,
                 eventDispatcher, xmlWriter, cacheXmlTagsToSql, importWakeLockProvider, null);
         assertEquals(0, gpxToCache.load("/path/to/foo.gpx", reader));
         verifyAll();
@@ -115,7 +115,7 @@ public class GpxToCacheTest extends GeoBeagleTest {
         importWakeLock.acquire(GpxToCache.WAKELOCK_DURATION);
         eventDispatcher.setInput(reader);
         cacheXmlTagsToSql.open("foo.gpx");
-        expect(fileAlreadyLoadedChecker.isAlreadyLoaded("/path/to/foo.gpx")).andReturn(false);
+        expect(locAlreadyLoadedChecker.isAlreadyLoaded("/path/to/foo.gpx")).andReturn(false);
         xmlWriter.open("foo.gpx");
         eventDispatcher.open();
         expect(eventDispatcher.getEventType()).andReturn(XmlPullParser.START_DOCUMENT);
@@ -128,7 +128,7 @@ public class GpxToCacheTest extends GeoBeagleTest {
         expect(cacheXmlTagsToSql.getNumberOfCachesLoad()).andReturn(12);
 
         replayAll();
-        GpxToCache gpxToCache = new GpxToCache(abortState, fileAlreadyLoadedChecker,
+        GpxToCache gpxToCache = new GpxToCache(abortState, locAlreadyLoadedChecker,
                 eventDispatcher, xmlWriter, cacheXmlTagsToSql, importWakeLockProvider, null);
         assertEquals(12, gpxToCache.load("/path/to/foo.gpx", reader));
         verifyAll();
@@ -140,11 +140,11 @@ public class GpxToCacheTest extends GeoBeagleTest {
         importWakeLock.acquire(GpxToCache.WAKELOCK_DURATION);
         eventDispatcher.setInput(reader);
         cacheXmlTagsToSql.open("foo.gpx");
-        expect(fileAlreadyLoadedChecker.isAlreadyLoaded("/path/to/foo.gpx")).andReturn(true);
+        expect(locAlreadyLoadedChecker.isAlreadyLoaded("/path/to/foo.gpx")).andReturn(true);
         cacheXmlTagsToSql.close(false);
 
         replayAll();
-        GpxToCache gpxToCache = new GpxToCache(abortState, fileAlreadyLoadedChecker,
+        GpxToCache gpxToCache = new GpxToCache(abortState, locAlreadyLoadedChecker,
                 eventDispatcher, xmlWriter, cacheXmlTagsToSql, importWakeLockProvider, null);
         assertEquals(-1, gpxToCache.load("/path/to/foo.gpx", null));
         verifyAll();
@@ -156,7 +156,7 @@ public class GpxToCacheTest extends GeoBeagleTest {
         importWakeLock.acquire(GpxToCache.WAKELOCK_DURATION);
         eventDispatcher.setInput(reader);
         cacheXmlTagsToSql.open("foo.gpx");
-        expect(fileAlreadyLoadedChecker.isAlreadyLoaded("/path/to/foo.gpx")).andReturn(false);
+        expect(locAlreadyLoadedChecker.isAlreadyLoaded("/path/to/foo.gpx")).andReturn(false);
         xmlWriter.open("foo.gpx");
         eventDispatcher.open();
         expect(eventDispatcher.getEventType()).andReturn(XmlPullParser.START_DOCUMENT);
@@ -176,7 +176,7 @@ public class GpxToCacheTest extends GeoBeagleTest {
         expect(cacheXmlTagsToSql.getNumberOfCachesLoad()).andReturn(12);
 
         replayAll();
-        GpxToCache gpxToCache = new GpxToCache(abortState, fileAlreadyLoadedChecker,
+        GpxToCache gpxToCache = new GpxToCache(abortState, locAlreadyLoadedChecker,
                 eventDispatcher, xmlWriter, cacheXmlTagsToSql, importWakeLockProvider, null);
 
         assertEquals(12, gpxToCache.load("/path/to/foo.gpx", null));
