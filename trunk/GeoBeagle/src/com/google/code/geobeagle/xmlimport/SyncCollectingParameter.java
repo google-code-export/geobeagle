@@ -15,9 +15,11 @@
 package com.google.code.geobeagle.xmlimport;
 
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 
 import android.content.res.Resources;
 
+@Singleton
 public class SyncCollectingParameter {
     private String log;
     private final Resources resources;
@@ -25,7 +27,7 @@ public class SyncCollectingParameter {
     @Inject
     public SyncCollectingParameter(Resources resources) {
         this.resources = resources;
-        this.log = "";
+        reset();
     }
 
     public void Log(int resId, Object... args) {
@@ -38,6 +40,10 @@ public class SyncCollectingParameter {
 
     public String getLog() {
         return this.log;
+    }
+
+    public void reset() {
+        this.log = "";
     }
 
 }

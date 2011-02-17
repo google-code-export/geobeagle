@@ -78,7 +78,7 @@ public class ImportThread extends RoboThread {
                 dbFrontend.forceUpdate();
                 bcachingStartTime.clearStartTime();
             }
-
+            syncCollectingParameter.reset();
             if (gpxSyncer.sync(syncCollectingParameter)
                     && sharedPreferences.getString(BCachingModule.BCACHING_USERNAME, "").length() == 0)
                 throw new ImportException(R.string.error_no_gpx_files,
