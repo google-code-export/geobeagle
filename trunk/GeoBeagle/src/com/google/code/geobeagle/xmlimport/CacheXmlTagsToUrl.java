@@ -29,6 +29,7 @@ public class CacheXmlTagsToUrl extends CacheXmlTagHandler {
     @Override
     public void url(String text) {
         try {
+            stringWriterWrapper.open();
             stringWriterWrapper.write(text);
         } catch (IOException e) {
             e.printStackTrace();
