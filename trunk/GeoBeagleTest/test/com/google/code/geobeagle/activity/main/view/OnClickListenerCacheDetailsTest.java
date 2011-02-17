@@ -21,8 +21,8 @@ import static org.powermock.api.easymock.PowerMock.replayAll;
 import static org.powermock.api.easymock.PowerMock.verifyAll;
 
 import com.google.code.geobeagle.Geocache;
+import com.google.code.geobeagle.activity.details.DetailsActivity;
 import com.google.code.geobeagle.activity.main.GeoBeagle;
-import com.google.code.geobeagle.cachedetails.DetailsActivity;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

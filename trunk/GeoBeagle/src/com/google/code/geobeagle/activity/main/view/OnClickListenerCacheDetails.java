@@ -15,8 +15,8 @@
 package com.google.code.geobeagle.activity.main.view;
 
 import com.google.code.geobeagle.Geocache;
+import com.google.code.geobeagle.activity.details.DetailsActivity;
 import com.google.code.geobeagle.activity.main.GeoBeagle;
-import com.google.code.geobeagle.cachedetails.DetailsActivity;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 

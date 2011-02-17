@@ -12,7 +12,7 @@
  ** limitations under the License.
  */
 
-package com.google.code.geobeagle.cachedetails;
+package com.google.code.geobeagle.activity.details;
 
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.shakewaker.ShakeWaker;
