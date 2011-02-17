@@ -16,13 +16,14 @@ package com.google.code.geobeagle.activity.cachelist;
 
 import com.google.code.geobeagle.activity.cachelist.presenter.AbsoluteBearingFormatter;
 import com.google.code.geobeagle.activity.cachelist.presenter.BearingFormatter;
-import com.google.code.geobeagle.activity.cachelist.presenter.RelativeBearingFormatter;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh.ActionManager;
+import com.google.code.geobeagle.activity.cachelist.presenter.RelativeBearingFormatter;
 import com.google.code.geobeagle.formatting.DistanceFormatter;
 import com.google.code.geobeagle.formatting.DistanceFormatterImperial;
 import com.google.code.geobeagle.formatting.DistanceFormatterMetric;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
+import com.google.inject.Singleton;
 
 import roboguice.config.AbstractAndroidModule;
 
@@ -31,7 +32,7 @@ import android.content.SharedPreferences;
 public class CacheListModule extends AbstractAndroidModule {
     @Override
     protected void configure() {
-        bind(ActionManager.class).toProvider(ActionManagerProvider.class);
+        bind(ActionManager.class).toProvider(ActionManagerProvider.class).in(Singleton.class);
         bind(DistanceFormatter.class).toProvider(DistanceFormatterProvider.class);
         bind(BearingFormatter.class).toProvider(BearingFormatterProvider.class);
     }
@@ -54,10 +55,10 @@ public class CacheListModule extends AbstractAndroidModule {
                     : distanceFormatterMetric;
         }
     }
-    
+
     static class BearingFormatterProvider implements Provider<BearingFormatter> {
-        private AbsoluteBearingFormatter absoluteBearingFormatter;
-        private RelativeBearingFormatter relativeBearingFormatter;
+        private final AbsoluteBearingFormatter absoluteBearingFormatter;
+        private final RelativeBearingFormatter relativeBearingFormatter;
         private final SharedPreferences preferenceManager;
 
         @Inject
