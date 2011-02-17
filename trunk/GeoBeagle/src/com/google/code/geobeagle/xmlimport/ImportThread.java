@@ -16,7 +16,6 @@ package com.google.code.geobeagle.xmlimport;
 
 import com.google.code.geobeagle.ErrorDisplayer;
 import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.bcaching.BCachingModule;
 import com.google.code.geobeagle.bcaching.ImportBCachingWorker;
 import com.google.code.geobeagle.bcaching.communication.BCachingException;
 import com.google.code.geobeagle.bcaching.preferences.BCachingStartTime;
@@ -28,7 +27,6 @@ import com.google.inject.Provider;
 
 import roboguice.util.RoboThread;
 
-import android.content.SharedPreferences;
 import android.util.Log;
 
 import java.io.FileNotFoundException;
@@ -42,8 +40,6 @@ public class ImportThread extends RoboThread {
     private ImportBCachingWorker importBCachingWorker;
     private boolean isAlive;
     private final ErrorDisplayer errorDisplayer;
-    private final SharedPreferences sharedPreferences;
-    private final GeoBeagleEnvironment geoBeagleEnvironment;
     private final BCachingStartTime bcachingStartTime;
     private final DbFrontend dbFrontend;
     private final FileDataVersionChecker fileDataVersionChecker;
@@ -53,8 +49,6 @@ public class ImportThread extends RoboThread {
     ImportThread(GpxSyncerFactory gpxSyncerFactory,
             Provider<ImportBCachingWorker> importBCachingWorkerProvider,
             ErrorDisplayer errorDisplayer,
-            SharedPreferences sharedPreferences,
-            GeoBeagleEnvironment geoBeagleEnvironment,
             BCachingStartTime bcachingStartTime,
             FileDataVersionChecker fileDataVersionChecker,
             DbFrontend dbFrontend,
@@ -62,8 +56,6 @@ public class ImportThread extends RoboThread {
         this.gpxSyncerFactory = gpxSyncerFactory;
         this.importBCachingWorkerProvider = importBCachingWorkerProvider;
         this.errorDisplayer = errorDisplayer;
-        this.sharedPreferences = sharedPreferences;
-        this.geoBeagleEnvironment = geoBeagleEnvironment;
         this.bcachingStartTime = bcachingStartTime;
         this.fileDataVersionChecker = fileDataVersionChecker;
         this.dbFrontend = dbFrontend;
@@ -79,11 +71,7 @@ public class ImportThread extends RoboThread {
                 bcachingStartTime.clearStartTime();
             }
             syncCollectingParameter.reset();
-            if (gpxSyncer.sync(syncCollectingParameter)
-                    && sharedPreferences.getString(BCachingModule.BCACHING_USERNAME, "").length() == 0)
-                throw new ImportException(R.string.error_no_gpx_files,
-                        geoBeagleEnvironment.getImportFolder());
-
+            gpxSyncer.sync(syncCollectingParameter);
             importBCachingWorker.sync(syncCollectingParameter);
             errorDisplayer.displayError(R.string.string, syncCollectingParameter.getLog());
         } catch (final FileNotFoundException e) {

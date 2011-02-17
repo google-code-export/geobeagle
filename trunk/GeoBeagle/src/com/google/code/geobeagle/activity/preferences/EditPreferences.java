@@ -15,12 +15,19 @@
 package com.google.code.geobeagle.activity.preferences;
 
 import com.google.code.geobeagle.R;
+import com.google.code.geobeagle.activity.main.fieldnotes.Toaster;
+import com.google.code.geobeagle.bcaching.BCachingModule;
 import com.google.code.geobeagle.database.filter.FilterCleanliness;
+import com.google.code.geobeagle.preferences.PreferencesUpgrader;
+import com.google.inject.Inject;
 
 import roboguice.activity.GuicePreferenceActivity;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.Preference;
+import android.preference.Preference.OnPreferenceChangeListener;
+import android.widget.Toast;
 
 public class EditPreferences extends GuicePreferenceActivity {
     public static final String SHOW_FOUND_CACHES = "show-found-caches";
@@ -28,6 +35,28 @@ public class EditPreferences extends GuicePreferenceActivity {
     public static final String SHOW_WAYPOINTS = "show-waypoints";
     private FilterCleanliness filterCleanliness;
     private FilterSettingsChangeListener onPreferenceChangeListener;
+
+    static class SyncPreferencesChangeListener implements OnPreferenceChangeListener {
+        private final SharedPreferences sharedPreferences;
+        private final Toaster toaster;
+
+        @Inject
+        public SyncPreferencesChangeListener(SharedPreferences sharedPreferences, Toaster toaster) {
+            this.sharedPreferences = sharedPreferences;
+            this.toaster = toaster;
+        }
+
+        @Override
+        public boolean onPreferenceChange(Preference preference, Object newValue) {
+            String otherKey = preference.getKey().equals(BCachingModule.BCACHING_ENABLED) ? PreferencesUpgrader.SDCARD_ENABLED
+                    : BCachingModule.BCACHING_ENABLED;
+            if (newValue == Boolean.FALSE && !sharedPreferences.getBoolean(otherKey, false)) {
+                toaster.toast(R.string.must_have_a_sync_method, Toast.LENGTH_SHORT);
+                return false;
+            }
+            return true;
+        }
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -37,11 +66,18 @@ public class EditPreferences extends GuicePreferenceActivity {
         Preference showFoundCachesPreference = findPreference(SHOW_FOUND_CACHES);
         Preference showUnavailableCachesPreference = findPreference(SHOW_UNAVAILABLE_CACHES);
         Preference showWaypointsPreference = findPreference(SHOW_WAYPOINTS);
-        onPreferenceChangeListener = getInjector().getInstance(
-                FilterSettingsChangeListener.class);
+
+        onPreferenceChangeListener = getInjector().getInstance(FilterSettingsChangeListener.class);
+        SyncPreferencesChangeListener syncPreferencesChangeListener = getInjector().getInstance(
+                SyncPreferencesChangeListener.class);
         showWaypointsPreference.setOnPreferenceChangeListener(onPreferenceChangeListener);
         showFoundCachesPreference.setOnPreferenceChangeListener(onPreferenceChangeListener);
         showUnavailableCachesPreference.setOnPreferenceChangeListener(onPreferenceChangeListener);
+
+        Preference sdCardEnabledPreference = findPreference(PreferencesUpgrader.SDCARD_ENABLED);
+        Preference bcachingEnabledPreference = findPreference(BCachingModule.BCACHING_ENABLED);
+        sdCardEnabledPreference.setOnPreferenceChangeListener(syncPreferencesChangeListener);
+        bcachingEnabledPreference.setOnPreferenceChangeListener(syncPreferencesChangeListener);
 
         filterCleanliness = getInjector().getInstance(FilterCleanliness.class);
     }

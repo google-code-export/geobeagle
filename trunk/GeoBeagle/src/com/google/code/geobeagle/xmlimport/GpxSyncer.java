@@ -14,6 +14,7 @@
 
 package com.google.code.geobeagle.xmlimport;
 
+import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh.UpdateFlag;
 import com.google.code.geobeagle.cachedetails.FileDataVersionWriter;
 import com.google.code.geobeagle.xmlimport.GpxToCache.CancelException;
@@ -35,13 +36,15 @@ public class GpxSyncer {
     private final MessageHandler messageHandler;
     private final OldCacheFilesCleaner oldCacheFilesCleaner;
     private final UpdateFlag updateFlag;
+    private final GeoBeagleEnvironment geoBeagleEnvironment;
 
     public GpxSyncer(GpxAndZipFiles gpxAndZipFiles,
             FileDataVersionWriter fileDataVersionWriter,
             MessageHandler messageHandlerInterface,
             OldCacheFilesCleaner oldCacheFilesCleaner,
             GpxToCache gpxToCache,
-            UpdateFlag updateFlag) {
+            UpdateFlag updateFlag,
+            GeoBeagleEnvironment geoBeagleEnvironment) {
         this.gpxAndZipFiles = gpxAndZipFiles;
         this.fileDataVersionWriter = fileDataVersionWriter;
         this.messageHandler = messageHandlerInterface;
@@ -49,9 +52,10 @@ public class GpxSyncer {
         this.oldCacheFilesCleaner = oldCacheFilesCleaner;
         this.gpxToCache = gpxToCache;
         this.updateFlag = updateFlag;
+        this.geoBeagleEnvironment = geoBeagleEnvironment;
     }
 
-    public boolean sync(SyncCollectingParameter syncCollectingParameter) throws IOException,
+    public void sync(SyncCollectingParameter syncCollectingParameter) throws IOException,
             ImportException, CancelException {
         try {
             updateFlag.setUpdatesEnabled(false);
@@ -59,7 +63,10 @@ public class GpxSyncer {
             while (gpxFilesAndZipFilesIter.hasNext()) {
                 processFile(syncCollectingParameter, gpxFilesAndZipFilesIter);
             }
-            return endImport();
+            if (!mHasFiles)
+                syncCollectingParameter.Log(R.string.error_no_gpx_files,
+                        geoBeagleEnvironment.getImportFolder());
+            endImport();
         } finally {
             Log.d("GeoBeagle", "<<< Syncing");
             updateFlag.setUpdatesEnabled(true);
@@ -67,10 +74,9 @@ public class GpxSyncer {
         }
     }
 
-    private boolean endImport() throws IOException {
+    private void endImport() throws IOException {
         fileDataVersionWriter.writeVersion();
         gpxToCache.end();
-        return mHasFiles;
     }
 
     private void processFile(SyncCollectingParameter syncCollectingParameter,
