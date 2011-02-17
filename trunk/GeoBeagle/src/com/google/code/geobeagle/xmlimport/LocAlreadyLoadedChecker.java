@@ -22,19 +22,18 @@ import android.util.Log;
 import java.io.File;
 import java.text.SimpleDateFormat;
 
-public class FileAlreadyLoadedChecker {
-    // TODO(sng) rename to LocAlreadyLoadedChecker
+public class LocAlreadyLoadedChecker {
     private final GpxWriter mGpxWriter;
     private final SimpleDateFormat mSimpleDateFormat;
 
     // For testing.
-    public FileAlreadyLoadedChecker(GpxWriter gpxWriter, SimpleDateFormat dateFormat) {
+    public LocAlreadyLoadedChecker(GpxWriter gpxWriter, SimpleDateFormat dateFormat) {
         mGpxWriter = gpxWriter;
         mSimpleDateFormat = dateFormat;
     }
 
     @Inject
-    public FileAlreadyLoadedChecker(GpxWriter gpxWriter) {
+    public LocAlreadyLoadedChecker(GpxWriter gpxWriter) {
         mGpxWriter = gpxWriter;
         mSimpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSSZ");
     }

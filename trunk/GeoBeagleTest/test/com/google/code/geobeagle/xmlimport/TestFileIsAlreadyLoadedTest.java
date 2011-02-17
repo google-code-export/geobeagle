@@ -35,7 +35,7 @@ import java.util.TimeZone;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({
-        Log.class, FileAlreadyLoadedChecker.class
+        Log.class, LocAlreadyLoadedChecker.class
 })
 public class TestFileIsAlreadyLoadedTest {
 
@@ -56,7 +56,7 @@ public class TestFileIsAlreadyLoadedTest {
     public void testNotLoc() {
 
         PowerMock.replayAll();
-        assertFalse(new FileAlreadyLoadedChecker(gpxWriter, simpleDateFormat).isAlreadyLoaded(null,
+        assertFalse(new LocAlreadyLoadedChecker(gpxWriter, simpleDateFormat).isAlreadyLoaded(null,
                 "foo.gpx"));
         PowerMock.verifyAll();
     }
@@ -72,7 +72,7 @@ public class TestFileIsAlreadyLoadedTest {
                 .andReturn(true);
 
         PowerMock.replayAll();
-        assertTrue(new FileAlreadyLoadedChecker(gpxWriter, simpleDateFormat).isAlreadyLoaded(null,
+        assertTrue(new LocAlreadyLoadedChecker(gpxWriter, simpleDateFormat).isAlreadyLoaded(null,
                 "/sdcard/download/foo.loc"));
         PowerMock.verifyAll();
     }
@@ -84,7 +84,7 @@ public class TestFileIsAlreadyLoadedTest {
                 .andReturn(false);
 
         PowerMock.replayAll();
-        assertFalse(new FileAlreadyLoadedChecker(gpxWriter, simpleDateFormat).isAlreadyLoaded(null,
+        assertFalse(new LocAlreadyLoadedChecker(gpxWriter, simpleDateFormat).isAlreadyLoaded(null,
                 "foo.loc"));
         PowerMock.verifyAll();
     }
