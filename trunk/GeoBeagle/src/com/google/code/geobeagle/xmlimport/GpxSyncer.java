@@ -17,11 +17,13 @@ package com.google.code.geobeagle.xmlimport;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh.UpdateFlag;
 import com.google.code.geobeagle.cachedetails.FileDataVersionWriter;
+import com.google.code.geobeagle.preferences.PreferencesUpgrader;
 import com.google.code.geobeagle.xmlimport.GpxToCache.CancelException;
 import com.google.code.geobeagle.xmlimport.gpx.GpxAndZipFiles;
 import com.google.code.geobeagle.xmlimport.gpx.GpxAndZipFiles.GpxFilesAndZipFilesIter;
 import com.google.code.geobeagle.xmlimport.gpx.IGpxReader;
 
+import android.content.SharedPreferences;
 import android.util.Log;
 
 import java.io.File;
@@ -37,6 +39,7 @@ public class GpxSyncer {
     private final OldCacheFilesCleaner oldCacheFilesCleaner;
     private final UpdateFlag updateFlag;
     private final GeoBeagleEnvironment geoBeagleEnvironment;
+    private final SharedPreferences sharedPreferences;
 
     public GpxSyncer(GpxAndZipFiles gpxAndZipFiles,
             FileDataVersionWriter fileDataVersionWriter,
@@ -44,7 +47,8 @@ public class GpxSyncer {
             OldCacheFilesCleaner oldCacheFilesCleaner,
             GpxToCache gpxToCache,
             UpdateFlag updateFlag,
-            GeoBeagleEnvironment geoBeagleEnvironment) {
+            GeoBeagleEnvironment geoBeagleEnvironment,
+            SharedPreferences sharedPreferences) {
         this.gpxAndZipFiles = gpxAndZipFiles;
         this.fileDataVersionWriter = fileDataVersionWriter;
         this.messageHandler = messageHandlerInterface;
@@ -53,12 +57,16 @@ public class GpxSyncer {
         this.gpxToCache = gpxToCache;
         this.updateFlag = updateFlag;
         this.geoBeagleEnvironment = geoBeagleEnvironment;
+        this.sharedPreferences = sharedPreferences;
     }
 
     public void sync(SyncCollectingParameter syncCollectingParameter) throws IOException,
             ImportException, CancelException {
         try {
             updateFlag.setUpdatesEnabled(false);
+            if (!sharedPreferences.getBoolean(PreferencesUpgrader.SDCARD_ENABLED, false))
+                return;
+
             GpxFilesAndZipFilesIter gpxFilesAndZipFilesIter = startImport();
             while (gpxFilesAndZipFilesIter.hasNext()) {
                 processFile(syncCollectingParameter, gpxFilesAndZipFilesIter);

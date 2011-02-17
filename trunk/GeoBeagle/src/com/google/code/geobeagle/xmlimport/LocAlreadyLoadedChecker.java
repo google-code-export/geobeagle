@@ -14,7 +14,7 @@
 
 package com.google.code.geobeagle.xmlimport;
 
-import com.google.code.geobeagle.database.GpxWriter;
+import com.google.code.geobeagle.database.GpxTableWriterGpxFiles;
 import com.google.inject.Inject;
 
 import android.util.Log;
@@ -23,18 +23,18 @@ import java.io.File;
 import java.text.SimpleDateFormat;
 
 public class LocAlreadyLoadedChecker {
-    private final GpxWriter gpxWriter;
+    private final GpxTableWriterGpxFiles gpxTableWriterGpxFiles;
     private final SimpleDateFormat simpleDateFormat;
 
     // For testing.
-    public LocAlreadyLoadedChecker(GpxWriter gpxWriter, SimpleDateFormat dateFormat) {
-        this.gpxWriter = gpxWriter;
+    public LocAlreadyLoadedChecker(GpxTableWriterGpxFiles gpxTableWriterGpxFiles, SimpleDateFormat dateFormat) {
+        this.gpxTableWriterGpxFiles = gpxTableWriterGpxFiles;
         this.simpleDateFormat = dateFormat;
     }
 
     @Inject
-    public LocAlreadyLoadedChecker(GpxWriter gpxWriter) {
-        this.gpxWriter = gpxWriter;
+    public LocAlreadyLoadedChecker(GpxTableWriterGpxFiles gpxTableWriterGpxFiles) {
+        this.gpxTableWriterGpxFiles = gpxTableWriterGpxFiles;
         this.simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSSZ");
     }
 
@@ -50,7 +50,7 @@ public class LocAlreadyLoadedChecker {
         String sqlDate = simpleDateFormat.format(lastModified);
         Log.d("GeoBeagle", "GET NAME: " + sqlDate + ", " + source + ", " + lastModified);
 
-        if (gpxWriter.isGpxAlreadyLoaded(file.getName(), sqlDate)) {
+        if (gpxTableWriterGpxFiles.isGpxAlreadyLoaded(file.getName(), sqlDate)) {
             return true;
         }
         return false;

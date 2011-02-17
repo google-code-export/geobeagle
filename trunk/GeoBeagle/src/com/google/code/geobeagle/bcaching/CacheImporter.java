@@ -16,6 +16,7 @@ package com.google.code.geobeagle.bcaching;
 
 import com.google.code.geobeagle.bcaching.communication.BCachingException;
 import com.google.code.geobeagle.bcaching.communication.BCachingListImporterStateless;
+import com.google.code.geobeagle.database.GpxTableWriter;
 import com.google.code.geobeagle.xmlimport.GpxToCache;
 import com.google.code.geobeagle.xmlimport.GpxToCache.CancelException;
 import com.google.code.geobeagle.xmlimport.GpxToCache.GpxToCacheFactory;
@@ -40,12 +41,20 @@ public class CacheImporter {
     private final BufferedReaderFactory bufferedReaderFactory;
     private final GpxToCache gpxToCache;
 
+    static class GpxTableWriterBCaching implements GpxTableWriter {
+        @Override
+        public boolean isGpxAlreadyLoaded(String mGpxName, String sqlDate) {
+            return false;
+        }
+    }
+
     @Inject
     CacheImporter(BufferedReaderFactory bufferedReaderFactory,
             GpxToCacheFactory gpxToCacheFactory,
-            MessageHandlerAdapter messageHandlerAdapter) {
+            MessageHandlerAdapter messageHandlerAdapter,
+            GpxTableWriterBCaching gpxTableWriterBcaching) {
         this.bufferedReaderFactory = bufferedReaderFactory;
-        gpxToCache = gpxToCacheFactory.create(messageHandlerAdapter);
+        gpxToCache = gpxToCacheFactory.create(messageHandlerAdapter, gpxTableWriterBcaching);
     }
 
     public void load(String csvIds) throws BCachingException, CancelException {

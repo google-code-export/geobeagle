@@ -16,6 +16,7 @@ package com.google.code.geobeagle.xmlimport;
 
 import com.google.code.geobeagle.ErrorDisplayer;
 import com.google.code.geobeagle.R;
+import com.google.code.geobeagle.database.GpxTableWriter;
 import com.google.code.geobeagle.xmlimport.CacheXmlTagsToSql.CacheXmlTagsToSqlFactory;
 import com.google.code.geobeagle.xmlimport.EventDispatcher.EventDispatcherFactory;
 import com.google.code.geobeagle.xmlimport.EventHandlerSqlAndFileWriter.EventHandlerSqlAndFileWriterFactory;
@@ -67,8 +68,10 @@ public class GpxToCache {
             this.cacheXmlTagsToSqlFactory = cacheXmlTagsToSqlFactory;
         }
 
-        public GpxToCache create(MessageHandlerInterface messageHandler) {
-            CacheXmlTagsToSql cacheXmlTagsToSql = cacheXmlTagsToSqlFactory.create(messageHandler);
+        public GpxToCache create(MessageHandlerInterface messageHandler,
+                GpxTableWriter gpxTableWriter) {
+            CacheXmlTagsToSql cacheXmlTagsToSql = cacheXmlTagsToSqlFactory.create(messageHandler,
+                    gpxTableWriter);
 
             EventHandlerSqlAndFileWriter eventHandlerSqlAndFileWriter = eventHandlerSqlAndFileWriterFactory
                     .create(cacheXmlTagsToSql);

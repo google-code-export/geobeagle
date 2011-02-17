@@ -34,6 +34,10 @@ public class SyncCollectingParameter {
         Log(resources.getString(resId, args));
     }
 
+    public void NestedLog(int resId, Object... args) {
+        Log("  " + resources.getString(resId, args));
+    }
+
     public void Log(String s) {
         this.log += s + "\n";
     }
