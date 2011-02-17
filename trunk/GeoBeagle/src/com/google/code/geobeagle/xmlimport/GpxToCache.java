@@ -127,9 +127,8 @@ public class GpxToCache {
         throw new CancelException();
     }
 
-    private int loadFile(String source,
-            String filename,
-            Reader reader) throws XmlPullParserException, IOException, CancelException {
+    private int loadFile(String source, String filename, Reader reader)
+            throws XmlPullParserException, IOException, CancelException {
         eventDispatcher.setInput(reader);
 
         // Just use the filename, not the whole path.
