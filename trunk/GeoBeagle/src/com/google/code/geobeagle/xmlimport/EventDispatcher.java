@@ -85,7 +85,8 @@ public class EventDispatcher {
         return xmlPullParser.getEventType();
     }
 
-    public boolean handleEvent(int eventType) throws IOException {
+    public boolean handleEvent(int eventType)
+            throws IOException {
         switch (eventType) {
             case XmlPullParser.START_TAG: {
                 String name = xmlPullParser.getName();

@@ -14,6 +14,7 @@
 
 package com.google.code.geobeagle.database;
 
+import com.google.code.geobeagle.xmlimport.SyncCollectingParameter;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
@@ -28,11 +29,14 @@ public class GpxWriter {
     private final Provider<ISQLiteDatabase> sqliteProvider;
     private final String[] queryArgs = new String[1];
     private final SimpleDateFormat sqlDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    private final SyncCollectingParameter syncCollectingParameter;
 
     @Inject
-    GpxWriter(Provider<ISQLiteDatabase> sqliteProvider) {
+    GpxWriter(Provider<ISQLiteDatabase> sqliteProvider,
+            SyncCollectingParameter syncCollectingParameter) {
         this.sqliteProvider = sqliteProvider;
         this.gpxTime = "2000-01-01 01:00:00.000";
+        this.syncCollectingParameter = syncCollectingParameter;
     }
 
     /**
@@ -44,6 +48,7 @@ public class GpxWriter {
      * @return
      */
     public boolean isGpxAlreadyLoaded(String gpxName, String gpxTimeString) {
+        syncCollectingParameter.Log("loading: " + gpxName);
         Cursor cursor = null;
         ISQLiteDatabase sqliteDatabase;
         String dbTimeString = "";
@@ -53,14 +58,17 @@ public class GpxWriter {
             queryArgs[0] = gpxName;
             cursor = sqliteDatabase.rawQuery(Database.SQL_GET_EXPORT_TIME, queryArgs);
             if (!cursor.moveToFirst()) {
+                syncCollectingParameter.Log("not found: " + gpxName);
                 return false;
             }
             dbTimeString = cursor.getString(0);
             Date gpxTime = sqlDateFormat.parse(gpxTimeString);
             Date dbTime = sqlDateFormat.parse(dbTimeString);
             if (gpxTime.after(dbTime)) {
+                syncCollectingParameter.Log(dbTime + " --> " + gpxTime);
                 return false;
             }
+            syncCollectingParameter.Log(" unchanged since " + dbTime);
             return true;
         } catch (ParseException e) {
             Log.d("GeoBeagle", "error parsing dates:" + gpxTimeString + ", " + dbTimeString);
