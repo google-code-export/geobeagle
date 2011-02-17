@@ -115,7 +115,7 @@ public class CacheWriterTest {
                         "04-30-2009")).andReturn(0);
 
         replayAll();
-        assertFalse(new GpxWriter(sqliteProvider).isGpxAlreadyLoaded("foo.gpx", "04-30-2009"));
+        assertFalse(new GpxTableWriterGpxFiles(sqliteProvider, null).isGpxAlreadyLoaded("foo.gpx", "04-30-2009"));
         verifyAll();
     }
 
@@ -134,9 +134,9 @@ public class CacheWriterTest {
         sqlite.execSQL(Database.SQL_REPLACE_GPX, "foo.gpx", "04-30-2009 10:30");
 
         replayAll();
-        GpxWriter gpxWriter = new GpxWriter(sqliteProvider);
-        assertTrue(gpxWriter.isGpxAlreadyLoaded("foo.gpx", "04-30-2009 10:30"));
-        gpxWriter.writeGpx("foo.gpx");
+        GpxTableWriterGpxFiles gpxTableWriterGpxFiles = new GpxTableWriterGpxFiles(sqliteProvider, null);
+        assertTrue(gpxTableWriterGpxFiles.isGpxAlreadyLoaded("foo.gpx", "04-30-2009 10:30"));
+        gpxTableWriterGpxFiles.writeGpx("foo.gpx");
         verifyAll();
     }
 

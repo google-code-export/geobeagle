@@ -23,6 +23,7 @@ import static org.powermock.api.easymock.PowerMock.replayAll;
 import static org.powermock.api.easymock.PowerMock.verifyAll;
 
 import com.google.code.geobeagle.activity.cachelist.GeoBeagleTest;
+import com.google.code.geobeagle.xmlimport.SyncCollectingParameter;
 import com.google.inject.Provider;
 
 import org.easymock.Capture;
@@ -36,18 +37,20 @@ import android.database.Cursor;
 
 @RunWith(PowerMockRunner.class)
 public class GpxWriterTest extends GeoBeagleTest {
-    private GpxWriter gpxWriter;
+    private GpxTableWriterGpxFiles gpxTableWriterGpxFiles;
     private Provider<ISQLiteDatabase> sqliteProvider;
     private ISQLiteDatabase sqlite;
     private Cursor cursor;
     private Capture<String[]> capturedArgument;
+    private SyncCollectingParameter syncCollectingParameter;
 
     @SuppressWarnings("unchecked")
     @Before
     public void setUp() {
         sqliteProvider = createMock(Provider.class);
         sqlite = createMock(ISQLiteDatabase.class);
-        gpxWriter = new GpxWriter(sqliteProvider);
+        syncCollectingParameter = createMock(SyncCollectingParameter.class);
+        gpxTableWriterGpxFiles = new GpxTableWriterGpxFiles(sqliteProvider, syncCollectingParameter);
         cursor = createMock(Cursor.class);
         capturedArgument = new Capture<String[]>();
     }
@@ -61,7 +64,7 @@ public class GpxWriterTest extends GeoBeagleTest {
         expect(cursor.moveToFirst()).andReturn(false);
         cursor.close();
         replayAll();
-        assertFalse(gpxWriter.isGpxAlreadyLoaded("my.gpx", "2000-04-30 12:30:15"));
+        assertFalse(gpxTableWriterGpxFiles.isGpxAlreadyLoaded("my.gpx", "2000-04-30 12:30:15"));
         verifyAll();
 
         assertEquals(capturedArgument.getValue()[0], "my.gpx");
@@ -77,7 +80,7 @@ public class GpxWriterTest extends GeoBeagleTest {
         expect(cursor.getString(0)).andReturn("2000-05-01 12:30:15");
         cursor.close();
         replayAll();
-        assertTrue(gpxWriter.isGpxAlreadyLoaded("my.gpx", "2000-04-30 12:30:15"));
+        assertTrue(gpxTableWriterGpxFiles.isGpxAlreadyLoaded("my.gpx", "2000-04-30 12:30:15"));
     }
 
     @Test
@@ -90,7 +93,7 @@ public class GpxWriterTest extends GeoBeagleTest {
         expect(cursor.getString(0)).andReturn("2000-05-01 12:30:15");
         cursor.close();
         replayAll();
-        assertTrue(gpxWriter.isGpxAlreadyLoaded("my.gpx", "2000-05-01 12:30:15"));
+        assertTrue(gpxTableWriterGpxFiles.isGpxAlreadyLoaded("my.gpx", "2000-05-01 12:30:15"));
     }
 
     @Test
@@ -104,7 +107,7 @@ public class GpxWriterTest extends GeoBeagleTest {
         cursor.close();
         replayAll();
 
-        assertFalse(gpxWriter.isGpxAlreadyLoaded("my.gpx", "xxx"));
+        assertFalse(gpxTableWriterGpxFiles.isGpxAlreadyLoaded("my.gpx", "xxx"));
     }
 
     @Test
@@ -117,7 +120,7 @@ public class GpxWriterTest extends GeoBeagleTest {
         expect(cursor.getString(0)).andReturn("2000-04-19 12:30:15");
         cursor.close();
         replayAll();
-        assertFalse(gpxWriter.isGpxAlreadyLoaded("my.gpx", "2000-04-30 12:30:15"));
+        assertFalse(gpxTableWriterGpxFiles.isGpxAlreadyLoaded("my.gpx", "2000-04-30 12:30:15"));
     }
 
 }

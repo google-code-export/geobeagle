@@ -15,6 +15,7 @@
 package com.google.code.geobeagle.xmlimport;
 
 import com.google.code.geobeagle.GeocacheFactory.Source;
+import com.google.code.geobeagle.database.GpxTableWriter;
 import com.google.inject.Inject;
 
 import roboguice.inject.ContextScoped;
@@ -38,9 +39,11 @@ public class CacheXmlTagsToSql extends CacheXmlTagHandler {
             mWakeLock = importWakeLock;
             mGeoBeagleEnvironment = geoBeagleEnvironment;
         }
-        CacheXmlTagsToSql create(MessageHandlerInterface messageHandlerInterface) {
+
+        CacheXmlTagsToSql create(MessageHandlerInterface messageHandlerInterface,
+                GpxTableWriter gpxTableWriter) {
             return new CacheXmlTagsToSql(mCacheTagSqlWriter, messageHandlerInterface, mWakeLock,
-                    mGeoBeagleEnvironment);
+                    mGeoBeagleEnvironment, gpxTableWriter);
         }
     }
 
@@ -50,16 +53,18 @@ public class CacheXmlTagsToSql extends CacheXmlTagHandler {
     private final ImportWakeLock mWakeLock;
     private final GeoBeagleEnvironment mGeoBeagleEnvironment;
     private int mCachesLoaded;
+    private final GpxTableWriter mGpxWriter;
 
-    @Inject
     CacheXmlTagsToSql(CacheTagSqlWriter cacheTagSqlWriter,
             MessageHandlerInterface messageHandler,
             ImportWakeLock importWakeLock,
-            GeoBeagleEnvironment geoBeagleEnvironment) {
+            GeoBeagleEnvironment geoBeagleEnvironment,
+            GpxTableWriter gpxTableWriter) {
         mCacheTagSqlWriter = cacheTagSqlWriter;
         mMessageHandler = messageHandler;
         mWakeLock = importWakeLock;
         mGeoBeagleEnvironment = geoBeagleEnvironment;
+        mGpxWriter = gpxTableWriter;
     }
 
     @Override
@@ -100,7 +105,7 @@ public class CacheXmlTagsToSql extends CacheXmlTagHandler {
 
     @Override
     public boolean gpxTime(String gpxTime) {
-        return mCacheTagSqlWriter.gpxTime(gpxTime);
+        return mCacheTagSqlWriter.gpxTime(mGpxWriter, gpxTime);
     }
 
     @Override

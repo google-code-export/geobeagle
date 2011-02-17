@@ -17,9 +17,12 @@ package com.google.code.geobeagle.xmlimport;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh.UpdateFlag;
 import com.google.code.geobeagle.cachedetails.FileDataVersionWriter;
+import com.google.code.geobeagle.database.GpxTableWriterGpxFiles;
 import com.google.code.geobeagle.xmlimport.GpxToCache.GpxToCacheFactory;
 import com.google.code.geobeagle.xmlimport.gpx.GpxAndZipFiles;
 import com.google.inject.Inject;
+
+import android.content.SharedPreferences;
 
 class GpxSyncerFactory {
 
@@ -31,6 +34,8 @@ class GpxSyncerFactory {
     private final OldCacheFilesCleaner oldCacheFilesCleaner;
     private final UpdateFlag updateFlag;
     private final GeoBeagleEnvironment geoBeagleEnvironment;
+    private final GpxTableWriterGpxFiles gpxTableWriterGpxFiles;
+    private final SharedPreferences sharedPreferences;
 
     @Inject
     public GpxSyncerFactory(MessageHandler messageHandler,
@@ -40,7 +45,9 @@ class GpxSyncerFactory {
             FileDataVersionWriter fileDataVersionWriter,
             OldCacheFilesCleaner oldCacheFilesCleaner,
             UpdateFlag updateFlag,
-            GeoBeagleEnvironment geoBeagleEnvironment) {
+            GeoBeagleEnvironment geoBeagleEnvironment,
+            GpxTableWriterGpxFiles gpxTableWriterGpxFiles,
+            SharedPreferences sharedPreferences) {
         this.messageHandlerInterface = messageHandler;
         this.cacheListRefresh = cacheListRefresh;
         this.gpxAndZipFiles = gpxAndZipFiles;
@@ -49,13 +56,17 @@ class GpxSyncerFactory {
         this.oldCacheFilesCleaner = oldCacheFilesCleaner;
         this.updateFlag = updateFlag;
         this.geoBeagleEnvironment = geoBeagleEnvironment;
+        this.gpxTableWriterGpxFiles = gpxTableWriterGpxFiles;
+        this.sharedPreferences = sharedPreferences;
     }
 
     public GpxSyncer create() {
         messageHandlerInterface.start(cacheListRefresh);
 
-        final GpxToCache gpxToCache = gpxToCacheFactory.create(messageHandlerInterface);
+        final GpxToCache gpxToCache = gpxToCacheFactory.create(messageHandlerInterface,
+                gpxTableWriterGpxFiles);
         return new GpxSyncer(gpxAndZipFiles, fileDataVersionWriter, messageHandlerInterface,
-                oldCacheFilesCleaner, gpxToCache, updateFlag, geoBeagleEnvironment);
+                oldCacheFilesCleaner, gpxToCache, updateFlag, geoBeagleEnvironment,
+                sharedPreferences);
     }
 }

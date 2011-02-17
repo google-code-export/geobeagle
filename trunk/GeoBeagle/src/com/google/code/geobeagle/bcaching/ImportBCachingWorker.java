@@ -96,7 +96,7 @@ public class ImportBCachingWorker {
                 cacheImporter.load(cursor.getCacheIds());
                 cursor.increment();
             }
-            syncCollectingParameter.Log(R.string.sync_message_bcaching_synced_caches,
+            syncCollectingParameter.NestedLog(R.string.sync_message_bcaching_synced_caches,
                     totalCachesRead);
             cursor.close();
         } finally {
