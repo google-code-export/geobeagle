@@ -45,5 +45,4 @@ public class SyncCollectingParameter {
     public void reset() {
         this.log = "";
     }
-
 }

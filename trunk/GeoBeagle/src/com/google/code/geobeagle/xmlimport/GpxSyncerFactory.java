@@ -30,6 +30,8 @@ class GpxSyncerFactory {
     private final MessageHandler messageHandlerInterface;
     private final OldCacheFilesCleaner oldCacheFilesCleaner;
     private final UpdateFlag updateFlag;
+    private final GeoBeagleEnvironment geoBeagleEnvironment;
+
     @Inject
     public GpxSyncerFactory(MessageHandler messageHandler,
             CacheListRefresh cacheListRefresh,
@@ -37,7 +39,8 @@ class GpxSyncerFactory {
             GpxToCacheFactory gpxToCacheFactory,
             FileDataVersionWriter fileDataVersionWriter,
             OldCacheFilesCleaner oldCacheFilesCleaner,
-            UpdateFlag updateFlag) {
+            UpdateFlag updateFlag,
+            GeoBeagleEnvironment geoBeagleEnvironment) {
         this.messageHandlerInterface = messageHandler;
         this.cacheListRefresh = cacheListRefresh;
         this.gpxAndZipFiles = gpxAndZipFiles;
@@ -45,6 +48,7 @@ class GpxSyncerFactory {
         this.fileDataVersionWriter = fileDataVersionWriter;
         this.oldCacheFilesCleaner = oldCacheFilesCleaner;
         this.updateFlag = updateFlag;
+        this.geoBeagleEnvironment = geoBeagleEnvironment;
     }
 
     public GpxSyncer create() {
@@ -52,6 +56,6 @@ class GpxSyncerFactory {
 
         final GpxToCache gpxToCache = gpxToCacheFactory.create(messageHandlerInterface);
         return new GpxSyncer(gpxAndZipFiles, fileDataVersionWriter, messageHandlerInterface,
-                oldCacheFilesCleaner, gpxToCache, updateFlag);
+                oldCacheFilesCleaner, gpxToCache, updateFlag, geoBeagleEnvironment);
     }
 }
