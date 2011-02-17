@@ -23,19 +23,19 @@ import java.io.File;
 import java.text.SimpleDateFormat;
 
 public class LocAlreadyLoadedChecker {
-    private final GpxWriter mGpxWriter;
-    private final SimpleDateFormat mSimpleDateFormat;
+    private final GpxWriter gpxWriter;
+    private final SimpleDateFormat simpleDateFormat;
 
     // For testing.
     public LocAlreadyLoadedChecker(GpxWriter gpxWriter, SimpleDateFormat dateFormat) {
-        mGpxWriter = gpxWriter;
-        mSimpleDateFormat = dateFormat;
+        this.gpxWriter = gpxWriter;
+        this.simpleDateFormat = dateFormat;
     }
 
     @Inject
     public LocAlreadyLoadedChecker(GpxWriter gpxWriter) {
-        mGpxWriter = gpxWriter;
-        mSimpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSSZ");
+        this.gpxWriter = gpxWriter;
+        this.simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSSZ");
     }
 
     boolean isAlreadyLoaded(String source) {
@@ -47,10 +47,10 @@ public class LocAlreadyLoadedChecker {
 
         File file = new File(source);
         long lastModified = file.lastModified();
-        String sqlDate = mSimpleDateFormat.format(lastModified);
+        String sqlDate = simpleDateFormat.format(lastModified);
         Log.d("GeoBeagle", "GET NAME: " + sqlDate + ", " + source + ", " + lastModified);
 
-        if (mGpxWriter.isGpxAlreadyLoaded(file.getName(), sqlDate)) {
+        if (gpxWriter.isGpxAlreadyLoaded(file.getName(), sqlDate)) {
             return true;
         }
         return false;
