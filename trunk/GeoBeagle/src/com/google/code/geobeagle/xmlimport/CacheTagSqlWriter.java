@@ -44,21 +44,19 @@ public class CacheTagSqlWriter {
     private CharSequence mName;
     private int mTerrain;
     private final TagWriter mTagWriter;
-    private final ClearCachesFromSource mClearCachesFromSource;
     private boolean mArchived;
     private boolean mAvailable;
     private boolean mFound;
 
     @Inject
-    public CacheTagSqlWriter(CacheSqlWriter cacheSqlWriter, GpxTableWriterGpxFiles gpxTableWriterGpxFiles,
+    public CacheTagSqlWriter(CacheSqlWriter cacheSqlWriter,
+            GpxTableWriterGpxFiles gpxTableWriterGpxFiles,
             CacheTypeFactory cacheTypeFactory,
-            TagWriter tagWriter,
-            ClearCachesFromSource clearCachesFromSource) {
+            TagWriter tagWriter) {
         mCacheWriter = cacheSqlWriter;
         mGpxWriter = gpxTableWriterGpxFiles;
         mCacheTypeFactory = cacheTypeFactory;
         mTagWriter = tagWriter;
-        mClearCachesFromSource = clearCachesFromSource;
     }
 
     public void cacheName(String name) {
@@ -89,8 +87,8 @@ public class CacheTagSqlWriter {
         mDifficulty = mCacheTypeFactory.stars(difficulty);
     }
 
-    public void end() {
-        mClearCachesFromSource.clearEarlierLoads();
+    public void end(ClearCachesFromSource clearCachesFromSource) {
+        clearCachesFromSource.clearEarlierLoads();
     }
 
     public void gpxName(String gpxName) {
@@ -99,17 +97,18 @@ public class CacheTagSqlWriter {
     }
 
     /**
-     * @param gpxTime
      * @return true if we should load this gpx; false if the gpx is already
      *         loaded.
      */
-    public boolean gpxTime(GpxTableWriter gpxTableWriter, String gpxTime) {
+    public boolean gpxTime(ClearCachesFromSource clearCachesFromSource,
+            GpxTableWriter gpxTableWriter,
+            String gpxTime) {
         String sqlDate = isoTimeToSql(gpxTime);
         Log.d("GeoBeagle", this + ": CacheTagSqlWriter:gpxTime: " + mGpxName);
         if (gpxTableWriter.isGpxAlreadyLoaded(mGpxName, sqlDate)) {
             return false;
         }
-        mClearCachesFromSource.clearCaches(mGpxName);
+        clearCachesFromSource.clearCaches(mGpxName);
         return true;
     }
 

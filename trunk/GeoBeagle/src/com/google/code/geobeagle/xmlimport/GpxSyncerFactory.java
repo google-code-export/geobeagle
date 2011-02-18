@@ -17,6 +17,7 @@ package com.google.code.geobeagle.xmlimport;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh.UpdateFlag;
 import com.google.code.geobeagle.cachedetails.FileDataVersionWriter;
+import com.google.code.geobeagle.database.ClearCachesFromSourceImpl;
 import com.google.code.geobeagle.database.GpxTableWriterGpxFiles;
 import com.google.code.geobeagle.xmlimport.GpxToCache.GpxToCacheFactory;
 import com.google.code.geobeagle.xmlimport.gpx.GpxAndZipFiles;
@@ -36,6 +37,7 @@ class GpxSyncerFactory {
     private final GeoBeagleEnvironment geoBeagleEnvironment;
     private final GpxTableWriterGpxFiles gpxTableWriterGpxFiles;
     private final SharedPreferences sharedPreferences;
+    private final ClearCachesFromSourceImpl clearCachesFromSource;
 
     @Inject
     public GpxSyncerFactory(MessageHandler messageHandler,
@@ -47,7 +49,8 @@ class GpxSyncerFactory {
             UpdateFlag updateFlag,
             GeoBeagleEnvironment geoBeagleEnvironment,
             GpxTableWriterGpxFiles gpxTableWriterGpxFiles,
-            SharedPreferences sharedPreferences) {
+            SharedPreferences sharedPreferences,
+            ClearCachesFromSourceImpl clearCachesFromSource) {
         this.messageHandlerInterface = messageHandler;
         this.cacheListRefresh = cacheListRefresh;
         this.gpxAndZipFiles = gpxAndZipFiles;
@@ -58,13 +61,14 @@ class GpxSyncerFactory {
         this.geoBeagleEnvironment = geoBeagleEnvironment;
         this.gpxTableWriterGpxFiles = gpxTableWriterGpxFiles;
         this.sharedPreferences = sharedPreferences;
+        this.clearCachesFromSource = clearCachesFromSource;
     }
 
     public GpxSyncer create() {
         messageHandlerInterface.start(cacheListRefresh);
 
         final GpxToCache gpxToCache = gpxToCacheFactory.create(messageHandlerInterface,
-                gpxTableWriterGpxFiles);
+                gpxTableWriterGpxFiles, clearCachesFromSource);
         return new GpxSyncer(gpxAndZipFiles, fileDataVersionWriter, messageHandlerInterface,
                 oldCacheFilesCleaner, gpxToCache, updateFlag, geoBeagleEnvironment,
                 sharedPreferences);

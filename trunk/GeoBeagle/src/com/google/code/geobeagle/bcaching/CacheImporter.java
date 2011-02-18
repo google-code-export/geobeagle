@@ -16,6 +16,7 @@ package com.google.code.geobeagle.bcaching;
 
 import com.google.code.geobeagle.bcaching.communication.BCachingException;
 import com.google.code.geobeagle.bcaching.communication.BCachingListImporterStateless;
+import com.google.code.geobeagle.database.ClearCachesFromSource;
 import com.google.code.geobeagle.database.GpxTableWriter;
 import com.google.code.geobeagle.xmlimport.GpxToCache;
 import com.google.code.geobeagle.xmlimport.GpxToCache.CancelException;
@@ -52,9 +53,11 @@ public class CacheImporter {
     CacheImporter(BufferedReaderFactory bufferedReaderFactory,
             GpxToCacheFactory gpxToCacheFactory,
             MessageHandlerAdapter messageHandlerAdapter,
-            GpxTableWriterBCaching gpxTableWriterBcaching) {
+            GpxTableWriterBCaching gpxTableWriterBcaching,
+            ClearCachesFromSource clearCachesFromSourceNull) {
         this.bufferedReaderFactory = bufferedReaderFactory;
-        gpxToCache = gpxToCacheFactory.create(messageHandlerAdapter, gpxTableWriterBcaching);
+        gpxToCache = gpxToCacheFactory.create(messageHandlerAdapter, gpxTableWriterBcaching,
+                clearCachesFromSourceNull);
     }
 
     public void load(String csvIds) throws BCachingException, CancelException {
