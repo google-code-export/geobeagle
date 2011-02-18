@@ -69,7 +69,7 @@ public class EditCacheActivityDelegateTest {
         activity.setContentView(R.layout.cache_edit);
 
         PowerMock.replayAll();
-        new EditCacheActivityDelegate(activity, null, null, null, null).onCreate();
+        new EditCacheActivityDelegate(activity, null, null, null).onCreate();
         PowerMock.verifyAll();
     }
 
@@ -112,7 +112,7 @@ public class EditCacheActivityDelegateTest {
 
         replayAll();
         new EditCacheActivityDelegate(activity, cancelButtonOnClickListener, geocacheFactory,
-                locationSaver, null).onResume();
+                locationSaver).onResume();
         PowerMock.verifyAll();
         verifyAll();
     }

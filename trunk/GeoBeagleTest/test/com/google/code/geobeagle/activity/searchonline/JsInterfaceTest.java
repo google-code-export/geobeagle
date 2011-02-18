@@ -89,7 +89,7 @@ public class JsInterfaceTest {
 
         PowerMock.replayAll();
         assertEquals(0,
-                new JsInterface(helper, null, null, locationManager).atlasQuestOrGroundspeak(3));
+ new JsInterface(helper, null, null).atlasQuestOrGroundspeak(3));
         PowerMock.verifyAll();
     }
 
@@ -106,7 +106,7 @@ public class JsInterfaceTest {
         helper.launch("N, 37, 46.638, W, 122, 6.804");
 
         PowerMock.replayAll();
-        assertEquals(0, new JsInterface(helper, null, null, locationManager).openCaching(3));
+        assertEquals(0, new JsInterface(helper, null, null).openCaching(3));
         PowerMock.verifyAll();
     }
 }

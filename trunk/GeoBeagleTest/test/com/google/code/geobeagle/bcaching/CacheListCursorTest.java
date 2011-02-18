@@ -91,7 +91,7 @@ public class CacheListCursorTest extends GeoBeagleTest {
         syncCollectingParameter.Log(R.string.sync_message_bcaching_last_sync, "Dec-31 16:00");
         bcachingListImporter.setStartTime("900");
         expect(bcachingListImporter.getTotalCount()).andReturn(0);
-        syncCollectingParameter.Log(R.string.sync_message_bcaching_no_new_caches);
+        syncCollectingParameter.Log(R.string.sync_message_bcaching_synced_caches, 0);
 
         replayAll();
         assertFalse(new CacheListCursor(bcachingStartTime, progressManager, progressHandler,
