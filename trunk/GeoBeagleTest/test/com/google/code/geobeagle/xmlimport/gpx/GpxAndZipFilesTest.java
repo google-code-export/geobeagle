@@ -69,7 +69,7 @@ public class GpxAndZipFilesTest {
                 gpxFileIterAndZipFileIterFactory).andReturn(gpxFilesAndZipFilesIter);
 
         PowerMock.replayAll();
-        new GpxAndZipFiles(filenameFilter, gpxFileIterAndZipFileIterFactory, geobeagleEnvironment,
+        new GpxAndZipFiles(null, gpxFileIterAndZipFileIterFactory, geobeagleEnvironment,
                 sharedPreferences).iterator();
         PowerMock.verifyAll();
     }
@@ -92,9 +92,8 @@ public class GpxAndZipFilesTest {
 
         PowerMock.replayAll();
         try {
-            new GpxAndZipFiles(filenameFilter, gpxFileIterAndZipFileIterFactory,
-                    geobeagleEnvironment, sharedPreferences)
-                    .iterator();
+            new GpxAndZipFiles(null, gpxFileIterAndZipFileIterFactory, geobeagleEnvironment,
+                    sharedPreferences).iterator();
             assertTrue("Should have thrown exception but didn't.", false);
         } catch (ImportException e) {
         }

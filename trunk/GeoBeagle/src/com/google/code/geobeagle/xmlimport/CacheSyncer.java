@@ -18,6 +18,7 @@ import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.cachelist.Pausable;
 import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheListPresenter;
 import com.google.code.geobeagle.activity.main.fieldnotes.Toaster;
+import com.google.code.geobeagle.xmlimport.ImportThread.ImportThreadFactory;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 
@@ -30,18 +31,19 @@ public class CacheSyncer {
     private final Toaster toaster;
     private final Pausable geocacheListPresenter;
     private final AbortState abortState;
-    private final ImportThread importThread;
+    private final ImportThreadFactory importThreadFactory;
+    private ImportThread importThread;
 
     CacheSyncer(GeocacheListPresenter geocacheListPresenter,
             MessageHandler messageHandler,
             Toaster toaster,
             AbortState abortState,
-            ImportThread importThread) {
+            ImportThreadFactory importThreadFactory) {
         this.messageHandler = messageHandler;
         this.toaster = toaster;
         this.geocacheListPresenter = geocacheListPresenter;
         this.abortState = abortState;
-        this.importThread = importThread;
+        this.importThreadFactory = importThreadFactory;
     }
 
     @Inject
@@ -50,7 +52,7 @@ public class CacheSyncer {
         messageHandler = injector.getInstance(MessageHandler.class);
         toaster = injector.getInstance(Toaster.class);
         geocacheListPresenter = injector.getInstance(GeocacheListPresenter.class);
-        importThread = injector.getInstance(ImportThread.class);
+        importThreadFactory = injector.getInstance(ImportThreadFactory.class);
     }
 
     public void abort() {
@@ -81,6 +83,7 @@ public class CacheSyncer {
     public void syncGpxs() {
         // TODO(sng): check when onResume is called.
         geocacheListPresenter.onPause();
+        importThread = importThreadFactory.create();
         importThread.start();
     }
 }

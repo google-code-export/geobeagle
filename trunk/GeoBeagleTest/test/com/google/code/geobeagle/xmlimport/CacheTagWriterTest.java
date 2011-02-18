@@ -51,8 +51,8 @@ public class CacheTagWriterTest extends GeoBeagleTest {
         tagWriter = PowerMock.createMock(TagWriter.class);
         cacheTypeFactory = PowerMock.createMock(CacheTypeFactory.class);
         clearCachesFromSource = PowerMock.createMock(ClearCachesFromSource.class);
-        cacheTagSqlWriter = new CacheTagSqlWriter(cacheSqlWriter, gpxTableWriterGpxFiles, cacheTypeFactory,
-                tagWriter, clearCachesFromSource);
+        cacheTagSqlWriter = new CacheTagSqlWriter(cacheSqlWriter, gpxTableWriterGpxFiles,
+                cacheTypeFactory, tagWriter);
     }
 
     @Test
@@ -71,7 +71,7 @@ public class CacheTagWriterTest extends GeoBeagleTest {
         clearCachesFromSource.clearEarlierLoads();
 
         PowerMock.replayAll();
-        cacheTagSqlWriter.end();
+        cacheTagSqlWriter.end(clearCachesFromSource);
         PowerMock.verifyAll();
     }
 
@@ -93,7 +93,8 @@ public class CacheTagWriterTest extends GeoBeagleTest {
 
         PowerMock.replayAll();
         cacheTagSqlWriter.gpxName("foo.gpx");
-        assertFalse(cacheTagSqlWriter.gpxTime(gpxTableWriterGpxFiles, "2008-04-15T16:10:30"));
+        assertFalse(cacheTagSqlWriter.gpxTime(clearCachesFromSource, gpxTableWriterGpxFiles,
+                "2008-04-15T16:10:30"));
         PowerMock.verifyAll();
     }
 
@@ -104,7 +105,8 @@ public class CacheTagWriterTest extends GeoBeagleTest {
 
         PowerMock.replayAll();
         cacheTagSqlWriter.gpxName("foo.gpx");
-        assertTrue(cacheTagSqlWriter.gpxTime(gpxTableWriterGpxFiles, "2008-04-15T16:10:30"));
+        assertTrue(cacheTagSqlWriter.gpxTime(clearCachesFromSource, gpxTableWriterGpxFiles,
+                "2008-04-15T16:10:30"));
         PowerMock.verifyAll();
     }
 
@@ -140,7 +142,8 @@ public class CacheTagWriterTest extends GeoBeagleTest {
 
         PowerMock.replayAll();
         cacheTagSqlWriter.gpxName("foo.gpx");
-        cacheTagSqlWriter.gpxTime(gpxTableWriterGpxFiles, "2008-04-15T16:10:30.7369220-08:00");
+        cacheTagSqlWriter.gpxTime(clearCachesFromSource, gpxTableWriterGpxFiles,
+                "2008-04-15T16:10:30.7369220-08:00");
         cacheTagSqlWriter.stopWriting(true);
         PowerMock.verifyAll();
     }

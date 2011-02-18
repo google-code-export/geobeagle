@@ -58,8 +58,8 @@ public class CacheXmlTagsToSqlTest {
         mCacheTagWriter.cacheType("traditional");
 
         PowerMock.replayAll();
-        final CacheXmlTagsToSql cacheXmlTagsToSql = new CacheXmlTagsToSql(mCacheTagWriter,
-                null, null, null);
+        final CacheXmlTagsToSql cacheXmlTagsToSql = new CacheXmlTagsToSql(mCacheTagWriter, null,
+                null, null, null, null);
         cacheXmlTagsToSql.symbol("Geocache Found");
         cacheXmlTagsToSql.container("big");
         cacheXmlTagsToSql.difficulty("difficult");
@@ -73,16 +73,16 @@ public class CacheXmlTagsToSqlTest {
         mCacheTagWriter.stopWriting(true);
 
         PowerMock.replayAll();
-        new CacheXmlTagsToSql(mCacheTagWriter, mMessageHandler, null, null).close(true);
+        new CacheXmlTagsToSql(mCacheTagWriter, mMessageHandler, null, null, null, null).close(true);
         PowerMock.verifyAll();
     }
 
     @Test
     public void testEnd() {
-        mCacheTagWriter.end();
+        mCacheTagWriter.end(null);
 
         PowerMock.replayAll();
-        new CacheXmlTagsToSql(mCacheTagWriter, null, null, null).end();
+        new CacheXmlTagsToSql(mCacheTagWriter, null, null, null, null, null).end();
         PowerMock.verifyAll();
     }
 
@@ -92,7 +92,8 @@ public class CacheXmlTagsToSqlTest {
         mMessageHandler.updateName("");
 
         PowerMock.replayAll();
-        new CacheXmlTagsToSql(mCacheTagWriter, mMessageHandler, null, null).endCache(Source.GPX);
+        new CacheXmlTagsToSql(mCacheTagWriter, mMessageHandler, null, null, null, null)
+                .endCache(Source.GPX);
         PowerMock.verifyAll();
     }
 
@@ -104,7 +105,7 @@ public class CacheXmlTagsToSqlTest {
 
         PowerMock.replayAll();
         final CacheXmlTagsToSql cacheXmlTagsToSql = new CacheXmlTagsToSql(mCacheTagWriter,
-                mMessageHandler, null, null);
+                mMessageHandler, null, null, null, null);
         cacheXmlTagsToSql.wptDesc("my cache");
         cacheXmlTagsToSql.endCache(Source.GPX);
         PowerMock.verifyAll();
@@ -112,10 +113,11 @@ public class CacheXmlTagsToSqlTest {
 
     @Test
     public void testGpxTime() {
-        expect(mCacheTagWriter.gpxTime("today")).andReturn(true);
+        expect(mCacheTagWriter.gpxTime(null, null, "today")).andReturn(true);
 
         PowerMock.replayAll();
-        assertTrue(new CacheXmlTagsToSql(mCacheTagWriter, null, null, null).gpxTime("today"));
+        assertTrue(new CacheXmlTagsToSql(mCacheTagWriter, null, null, null, null, null)
+                .gpxTime("today"));
         PowerMock.verifyAll();
     }
 
@@ -124,7 +126,7 @@ public class CacheXmlTagsToSqlTest {
         mCacheTagWriter.cacheName("GC123");
 
         PowerMock.replayAll();
-        new CacheXmlTagsToSql(mCacheTagWriter, null, null, null)
+        new CacheXmlTagsToSql(mCacheTagWriter, null, null, null, null, null)
                 .groundspeakName("GC123");
         PowerMock.verifyAll();
     }
@@ -132,23 +134,21 @@ public class CacheXmlTagsToSqlTest {
     @Test
     public void testHint() throws IOException {
         PowerMock.replayAll();
-        new CacheXmlTagsToSql(null, null, null, null).hint("a hint");
+        new CacheXmlTagsToSql(null, null, null, null, null, null).hint("a hint");
         PowerMock.verifyAll();
     }
 
     @Test
     public void testLine() throws IOException {
         PowerMock.replayAll();
-        new CacheXmlTagsToSql(null, null, null, null)
-                .line("some data");
+        new CacheXmlTagsToSql(null, null, null, null, null, null).line("some data");
         PowerMock.verifyAll();
     }
 
     @Test
     public void testLogDate() throws IOException {
         PowerMock.replayAll();
-        new CacheXmlTagsToSql(null, null, null, null)
-                .logDate("04/30/99");
+        new CacheXmlTagsToSql(null, null, null, null, null, null).logDate("04/30/99");
         PowerMock.verifyAll();
     }
 
@@ -157,7 +157,7 @@ public class CacheXmlTagsToSqlTest {
         mCacheTagWriter.clear();
 
         PowerMock.replayAll();
-        new CacheXmlTagsToSql(mCacheTagWriter, null, null, null).startCache();
+        new CacheXmlTagsToSql(mCacheTagWriter, null, null, null, null, null).startCache();
         PowerMock.verifyAll();
     }
 
@@ -168,8 +168,8 @@ public class CacheXmlTagsToSqlTest {
         mCacheTagWriter.gpxName("foo.gpx");
 
         PowerMock.replayAll();
-        new CacheXmlTagsToSql(mCacheTagWriter, mMessageHandler, null, geoBeagleEnvironment)
-                .open("foo.gpx");
+        new CacheXmlTagsToSql(mCacheTagWriter, mMessageHandler, null, geoBeagleEnvironment, null,
+                null).open("foo.gpx");
         PowerMock.verifyAll();
     }
 
@@ -182,7 +182,7 @@ public class CacheXmlTagsToSqlTest {
         expect(file.mkdirs()).andReturn(true);
 
         PowerMock.replayAll();
-        new CacheXmlTagsToSql(mCacheTagWriter, null, null, geoBeagleEnvironment)
+        new CacheXmlTagsToSql(mCacheTagWriter, null, null, geoBeagleEnvironment, null, null)
                 .start();
         PowerMock.verifyAll();
     }
@@ -191,8 +191,7 @@ public class CacheXmlTagsToSqlTest {
     public void testStripIllegalFileChars() {
         assertEquals("boring", CacheDetailsHtmlWriter.replaceIllegalFileChars("boring"));
         assertEquals("n_a__s_______t_y__",
-                CacheDetailsHtmlWriter
-                .replaceIllegalFileChars("n<a\\/s:*?\"<>|t:y\t/"));
+                CacheDetailsHtmlWriter.replaceIllegalFileChars("n<a\\/s:*?\"<>|t:y\t/"));
     }
 
     @Test
@@ -200,7 +199,7 @@ public class CacheXmlTagsToSqlTest {
         mCacheTagWriter.symbol("Geocache Found");
 
         PowerMock.replayAll();
-        new CacheXmlTagsToSql(mCacheTagWriter, null, null, null)
+        new CacheXmlTagsToSql(mCacheTagWriter, null, null, null, null, null)
                 .symbol("Geocache Found");
         PowerMock.verifyAll();
     }
@@ -210,8 +209,7 @@ public class CacheXmlTagsToSqlTest {
         mCacheTagWriter.latitudeLongitude("37", "122");
 
         PowerMock.replayAll();
-        new CacheXmlTagsToSql(mCacheTagWriter, null, null, null)
-                .wpt("37", "122");
+        new CacheXmlTagsToSql(mCacheTagWriter, null, null, null, null, null).wpt("37", "122");
         PowerMock.verifyAll();
     }
 
@@ -220,7 +218,7 @@ public class CacheXmlTagsToSqlTest {
         mCacheTagWriter.cacheName("GC123 by so and so");
 
         PowerMock.replayAll();
-        new CacheXmlTagsToSql(mCacheTagWriter, null, null, null)
+        new CacheXmlTagsToSql(mCacheTagWriter, null, null, null, null, null)
                 .wptDesc("GC123 by so and so");
         PowerMock.verifyAll();
     }
@@ -233,8 +231,8 @@ public class CacheXmlTagsToSqlTest {
         mMessageHandler.updateWaypointId("GC123");
 
         PowerMock.replayAll();
-        CacheXmlTagsToSql cacheXmlTagsToSql = new CacheXmlTagsToSql(mCacheTagWriter, mMessageHandler,
-                wakeLock, null);
+        CacheXmlTagsToSql cacheXmlTagsToSql = new CacheXmlTagsToSql(mCacheTagWriter,
+                mMessageHandler, wakeLock, null, null, null);
         cacheXmlTagsToSql.wptName("GC123");
         PowerMock.verifyAll();
     }

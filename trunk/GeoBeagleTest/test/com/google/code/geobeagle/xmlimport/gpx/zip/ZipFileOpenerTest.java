@@ -20,7 +20,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import com.google.code.geobeagle.gpx.zip.ZipInputStreamFactory;
-import com.google.code.geobeagle.xmlimport.Aborter;
+import com.google.code.geobeagle.xmlimport.AbortState;
 import com.google.code.geobeagle.xmlimport.gpx.GpxAndZipFiles.GpxFilenameFilter;
 import com.google.code.geobeagle.xmlimport.gpx.zip.ZipFileOpener.ZipFileIter;
 import com.google.code.geobeagle.xmlimport.gpx.zip.ZipFileOpener.ZipInputFileTester;
@@ -42,13 +42,13 @@ import java.util.zip.ZipEntry;
         ZipFileIter.class, ZipFileOpener.class
 })
 public class ZipFileOpenerTest {
-    private Aborter aborter;
-    private Provider<Aborter> aborterProvider;
+    private AbortState aborter;
+    private Provider<AbortState> aborterProvider;
 
     @Before
     @SuppressWarnings("unchecked")
     public void setUp() {
-        aborter = PowerMock.createMock(Aborter.class);
+        aborter = PowerMock.createMock(AbortState.class);
         aborterProvider = PowerMock.createMock(Provider.class);
     }
 

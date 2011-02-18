@@ -18,7 +18,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import com.google.code.geobeagle.xmlimport.Aborter;
+import com.google.code.geobeagle.xmlimport.AbortState;
 import com.google.inject.Provider;
 
 import org.easymock.EasyMock;
@@ -35,13 +35,12 @@ import org.powermock.modules.junit4.PowerMockRunner;
 })
 public class GpxFileOpenerTest {
 
-    private Provider<Aborter> aborterProvider;
-    private Aborter aborter;
+    private Provider<AbortState> aborterProvider;
+    private AbortState aborter;
 
     @Before
     @SuppressWarnings("unchecked")
     public void setUp() {
-        aborter = PowerMock.createMock(Aborter.class);
         aborterProvider = PowerMock.createMock(Provider.class);
     }
 
