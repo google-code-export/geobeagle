@@ -15,6 +15,7 @@
 package com.google.code.geobeagle.xmlimport;
 
 import com.google.code.geobeagle.GeocacheFactory.Source;
+import com.google.code.geobeagle.database.ClearCachesFromSource;
 import com.google.code.geobeagle.database.GpxTableWriter;
 import com.google.inject.Inject;
 
@@ -41,9 +42,10 @@ public class CacheXmlTagsToSql extends CacheXmlTagHandler {
         }
 
         CacheXmlTagsToSql create(MessageHandlerInterface messageHandlerInterface,
-                GpxTableWriter gpxTableWriter) {
+                GpxTableWriter gpxTableWriter,
+                ClearCachesFromSource clearCachesFromSource) {
             return new CacheXmlTagsToSql(mCacheTagSqlWriter, messageHandlerInterface, mWakeLock,
-                    mGeoBeagleEnvironment, gpxTableWriter);
+                    mGeoBeagleEnvironment, gpxTableWriter, clearCachesFromSource);
         }
     }
 
@@ -54,17 +56,20 @@ public class CacheXmlTagsToSql extends CacheXmlTagHandler {
     private final GeoBeagleEnvironment mGeoBeagleEnvironment;
     private int mCachesLoaded;
     private final GpxTableWriter mGpxWriter;
+    private final ClearCachesFromSource mClearCachesFromSource;
 
     CacheXmlTagsToSql(CacheTagSqlWriter cacheTagSqlWriter,
             MessageHandlerInterface messageHandler,
             ImportWakeLock importWakeLock,
             GeoBeagleEnvironment geoBeagleEnvironment,
-            GpxTableWriter gpxTableWriter) {
+            GpxTableWriter gpxTableWriter,
+            ClearCachesFromSource clearCachesFromSource) {
         mCacheTagSqlWriter = cacheTagSqlWriter;
         mMessageHandler = messageHandler;
         mWakeLock = importWakeLock;
         mGeoBeagleEnvironment = geoBeagleEnvironment;
         mGpxWriter = gpxTableWriter;
+        mClearCachesFromSource = clearCachesFromSource;
     }
 
     @Override
@@ -93,7 +98,7 @@ public class CacheXmlTagsToSql extends CacheXmlTagHandler {
 
     @Override
     public void end() {
-        mCacheTagSqlWriter.end();
+        mCacheTagSqlWriter.end(mClearCachesFromSource);
     }
 
     @Override
@@ -105,7 +110,7 @@ public class CacheXmlTagsToSql extends CacheXmlTagHandler {
 
     @Override
     public boolean gpxTime(String gpxTime) {
-        return mCacheTagSqlWriter.gpxTime(mGpxWriter, gpxTime);
+        return mCacheTagSqlWriter.gpxTime(mClearCachesFromSource, mGpxWriter, gpxTime);
     }
 
     @Override
