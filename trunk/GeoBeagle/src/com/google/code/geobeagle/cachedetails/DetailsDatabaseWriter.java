@@ -21,10 +21,8 @@ import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
-import java.io.IOException;
-
 @Singleton
-public class DetailsDatabaseWriter implements Writer, CacheWriterOpener {
+public class DetailsDatabaseWriter {
 
     private final StringBuffer stringBuffer;
     private SQLiteDatabase sdDatabase;
@@ -37,8 +35,7 @@ public class DetailsDatabaseWriter implements Writer, CacheWriterOpener {
         stringBuffer = new StringBuffer();
     }
 
-    @Override
-    public void close() throws IOException {
+    public void close() {
         ContentValues contentValues = new ContentValues();
         contentValues.put("Details", stringBuffer.toString());
         contentValues.put("CacheId", cacheId);
@@ -60,8 +57,7 @@ public class DetailsDatabaseWriter implements Writer, CacheWriterOpener {
         Log.d("GeoBeagle", "DONE deleting details");
     }
 
-    @Override
-    public void open(String path, String cacheId) throws IOException {
+    public void open(String cacheId) {
         this.cacheId = cacheId;
         if (sdDatabase != null)
             return;
@@ -69,20 +65,12 @@ public class DetailsDatabaseWriter implements Writer, CacheWriterOpener {
         sdDatabase = sdDatabaseOpener.open();
     }
 
-    @Override
-    public void write(String str) throws IOException {
+    public boolean isOpen() {
+        return this.cacheId != null;
+    }
+
+    public void write(String str) {
         if (cacheId != null)
             stringBuffer.append(str);
     }
-
-    @Override
-    public boolean isOpen() {
-        return true;
-    }
-
-    @Override
-    public void mkdirs(String path) {
-
-    }
-
 }
