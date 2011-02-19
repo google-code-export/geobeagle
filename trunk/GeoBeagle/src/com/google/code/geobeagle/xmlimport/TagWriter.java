@@ -14,62 +14,59 @@
 
 package com.google.code.geobeagle.xmlimport;
 
-import com.google.code.geobeagle.cachedetails.FileAndDatabaseWriter;
-import com.google.code.geobeagle.cachedetails.FilePathStrategy;
-import com.google.code.geobeagle.cachedetails.IFileAndDatabaseWriter;
+import com.google.code.geobeagle.cachedetails.DetailsDatabaseWriter;
 import com.google.inject.Inject;
 
-import java.io.IOException;
-
 class TagWriter {
-    private static final String SPACES = "                        ";
+    // private static final String SPACES = "                        ";
+    private static final String SPACES = "....................";
     private int mLevel;
-    private final IFileAndDatabaseWriter writer;
-    private final FilePathStrategy filePathStrategy;
+    private final DetailsDatabaseWriter writer;
 
     @Inject
-    public TagWriter(FileAndDatabaseWriter writer, FilePathStrategy filePathStrategy) {
+    public TagWriter(DetailsDatabaseWriter writer) {
         this.writer = writer;
-        this.filePathStrategy = filePathStrategy;
     }
 
-    public void close() throws IOException {
+    public void close() {
         writer.close();
     }
 
-    public void endTag(String name) throws IOException {
+    public void endTag(String name) {
         mLevel--;
-        if (writer != null)
+        if (writer != null) {
+            System.err.println("</" + name + ">");
             writer.write("</" + name + ">");
+        }
+    }
+
+    public void open(String wpt) {
+        mLevel = 0;
+        writer.open(wpt);
+        writer.write("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
+    }
+
+    public void startTag(Tag tag) {
+        StringBuffer sb = new StringBuffer();
+        sb.append("\n" + SPACES.substring(0, Math.min(mLevel, SPACES.length())));
+        mLevel++;
+        sb.append("<" + tag.name);
+        for (String key : tag.attributes.keySet()) {
+            sb.append(" " + key + "='" + tag.attributes.get(key) + "'");
+        }
+        sb.append(">");
+        System.err.println(sb.toString());
+
+        writer.write(sb.toString());
+    }
+
+    public void text(String text) {
+        System.err.println(text);
+
+        writer.write(text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;"));
     }
 
     public boolean isOpen() {
         return writer.isOpen();
-    }
-
-    public void open(String gpxName, String wpt, String type) throws IOException {
-        String path = filePathStrategy.getPath(gpxName, wpt, type);
-        mLevel = 0;
-        writer.mkdirs(path);
-        writer.open(path, wpt);
-        writer.write("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
-    }
-
-    public void startTag(Tag tag) throws IOException {
-        writeNewline();
-        mLevel++;
-        writer.write("<" + tag.name);
-        for (String key : tag.attributes.keySet()) {
-            writer.write(" " + key + "='" + tag.attributes.get(key) + "'");
-        }
-        writer.write(">");
-    }
-
-    private void writeNewline() throws IOException {
-        writer.write("\n" + SPACES.substring(0, Math.min(mLevel, SPACES.length())));
-    }
-
-    public void text(String text) throws IOException {
-        writer.write(text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;"));
     }
 }

@@ -22,6 +22,7 @@ import com.google.code.geobeagle.bcaching.preferences.BCachingStartTime;
 import com.google.code.geobeagle.cachedetails.FileDataVersionChecker;
 import com.google.code.geobeagle.database.DbFrontend;
 import com.google.code.geobeagle.xmlimport.GpxToCache.CancelException;
+import com.google.inject.Inject;
 import com.google.inject.Provider;
 
 import roboguice.util.RoboThread;
@@ -43,6 +44,7 @@ public class ImportThread extends RoboThread {
         private final FileDataVersionChecker fileDataVersionChecker;
         private final SyncCollectingParameter syncCollectingParameter;
 
+        @Inject
         ImportThreadFactory(GpxSyncerFactory gpxSyncerFactory,
                 Provider<ImportBCachingWorker> importBCachingWorkerProvider,
                 ErrorDisplayer errorDisplayer,

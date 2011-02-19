@@ -24,7 +24,6 @@ import java.util.HashMap;
 
 @Singleton
 public class XmlWriter implements EventHandler {
-    private String filename;
     private final TagWriter tagWriter;
     private Tag tagWpt;
     private String time;
@@ -43,17 +42,12 @@ public class XmlWriter implements EventHandler {
         if (!previousFullPath.startsWith(GPX_WPT))
             return;
 
-        if (tagWriter.isOpen())
-            tagWriter.endTag(name);
+        tagWriter.endTag(name);
 
         if (previousFullPath.equals(GPX_WPT)) {
             tagWriter.endTag("gpx");
             tagWriter.close();
         }
-    }
-
-    public void open(String filename) {
-        this.filename = filename;
     }
 
     @Override
@@ -88,7 +82,7 @@ public class XmlWriter implements EventHandler {
         if (fullPath.equals(GPX_WPTTIME)) {
             time = text;
         } else if (fullPath.equals(GPX_WPTNAME)) {
-            tagWriter.open(filename, text, "gpx");
+            tagWriter.open(text);
             HashMap<String, String> emptyHashMap = new HashMap<String, String>();
             tagWriter.startTag(new Tag("gpx", emptyHashMap));
             tagWriter.startTag(tagWpt);
@@ -99,7 +93,6 @@ public class XmlWriter implements EventHandler {
             }
             tagWriter.startTag(new Tag("name", emptyHashMap));
         }
-
         if (tagWriter.isOpen())
             tagWriter.text(text);
         return true;
