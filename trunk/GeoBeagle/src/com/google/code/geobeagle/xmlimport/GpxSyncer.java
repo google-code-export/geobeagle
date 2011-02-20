@@ -64,7 +64,7 @@ public class GpxSyncer {
             ImportException, CancelException {
         try {
             updateFlag.setUpdatesEnabled(false);
-            if (!sharedPreferences.getBoolean(PreferencesUpgrader.SDCARD_ENABLED, false))
+            if (!sharedPreferences.getBoolean(PreferencesUpgrader.SDCARD_ENABLED, true))
                 return;
 
             GpxFilesAndZipFilesIter gpxFilesAndZipFilesIter = startImport();
