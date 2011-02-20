@@ -71,4 +71,12 @@ public class EventHandlerSqlAndFileWriter implements EventHandler {
             eventHandler.start(xmlPullParser);
         }
     }
+
+    @Override
+    public void end() {
+        for (EventHandler eventHandler : eventHandlers) {
+            eventHandler.end();
+        }
+
+    }
 }

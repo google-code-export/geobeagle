@@ -102,5 +102,11 @@ public class XmlWriter implements EventHandler {
     @Override
     public void start(XmlPullParser xmlPullParser) {
         this.xmlPullParser = xmlPullParser;
+        tagWriter.start();
+    }
+
+    @Override
+    public void end() {
+        tagWriter.end();
     }
 }

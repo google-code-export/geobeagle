@@ -123,4 +123,8 @@ public class EventDispatcher {
     public String getString() {
         return stringWriterWrapper.getString();
     }
+
+    public void close() {
+        eventHandler.end();
+    }
 }
