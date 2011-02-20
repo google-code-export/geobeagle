@@ -47,7 +47,7 @@
 				android:resource="@xml/searchable" />
 		</activity>
 
-		<activity android:name="activity.searchonline.SearchOnlineActivity"
+		<activity android:name=".activity.searchonline.SearchOnlineActivity"
 			android:label="@string/app_name" />
 
 		<!-- Destroy on orientation changes would lose any edits the user has made. 
@@ -61,7 +61,7 @@
 		<activity android:name=".activity.map.GeoMapActivity"
 			android:label="GeoBeagle map" android:configChanges="orientation|keyboardHidden" />
 
-		<activity android:name="activity.details.DetailsActivity" />
+		<activity android:name=".activity.details.DetailsActivity" />
 		<provider android:name=".SuggestionProvider"
 			android:authorities="com.google.code.geobeagle.SuggestionProvider" />
 	</application>
