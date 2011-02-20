@@ -99,7 +99,7 @@ public class ImportBCachingWorkerTest extends GeoBeagleTest {
         cacheImporter.load("1,2,3");
         cursor.increment();
         expect(cursor.readCaches()).andReturn(0);
-        syncCollectingParameter.Log(R.string.sync_message_bcaching_synced_caches, 3);
+        syncCollectingParameter.NestedLog(R.string.sync_message_bcaching_synced_caches, 3);
         cursor.close();
         updateFlag.setUpdatesEnabled(true);
 
@@ -133,7 +133,7 @@ public class ImportBCachingWorkerTest extends GeoBeagleTest {
 
         expect(cursor.readCaches()).andReturn(0);
         cursor.close();
-        syncCollectingParameter.Log(R.string.sync_message_bcaching_synced_caches, 6);
+        syncCollectingParameter.NestedLog(R.string.sync_message_bcaching_synced_caches, 6);
 
         progressManager.update(progressHandler, ProgressMessage.REFRESH, 0);
         progressManager.update(progressHandler, ProgressMessage.DONE, 0);
