@@ -51,9 +51,4 @@ public class TagWriter {
             tagStore.hideCache(geocacheId);
         }
     }
-
-    public boolean hasTag(CharSequence geocacheId, Tag tag) {
-        return tagStore.hasTag(geocacheId, tag);
-    }
-
 }
