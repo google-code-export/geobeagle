@@ -61,6 +61,7 @@ public class TagWriterImplTest extends GeoBeagleTest {
         suppressConstructor(ContentValues.class);
         contentValues.put("Visible", 0);
         PowerMock.expectNew(ContentValues.class).andReturn(contentValues);
+
     }
 
     @Test
@@ -70,10 +71,12 @@ public class TagWriterImplTest extends GeoBeagleTest {
         expect(filter.showBasedOnFoundState(false)).andReturn(true).anyTimes();
         replayAll();
 
-        TagWriter tagWriter = new TagWriter(filter, new TagStore(databaseProvider), null);
+        TagStore tagStore = new TagStore(databaseProvider);
+        TagWriter tagWriter = new TagWriter(filter, tagStore, null);
+        TagReader tagReader = new TagReader(tagStore);
         tagWriter.add("GC123", Tag.DNF, false);
-        assertTrue(tagWriter.hasTag("GC123", Tag.DNF));
-        assertFalse(tagWriter.hasTag("GC123", Tag.FOUND));
+        assertTrue(tagReader.hasTag("GC123", Tag.DNF));
+        assertFalse(tagReader.hasTag("GC123", Tag.FOUND));
         verifyAll();
     }
 
@@ -102,11 +105,13 @@ public class TagWriterImplTest extends GeoBeagleTest {
         expect(filter.showBasedOnFoundState(false)).andReturn(true).anyTimes();
         replayAll();
 
-        TagWriter tagWriter = new TagWriter(filter, new TagStore(databaseProvider), null);
+        TagStore tagStore = new TagStore(databaseProvider);
+        TagWriter tagWriter = new TagWriter(filter, tagStore, null);
+        TagReader tagReader = new TagReader(tagStore);
         tagWriter.add("GC123", Tag.FOUND, false);
         tagWriter.add("GCabc", Tag.FOUND, false);
-        assertTrue(tagWriter.hasTag("GC123", Tag.FOUND));
-        assertFalse(tagWriter.hasTag("GC123", Tag.DNF));
+        assertTrue(tagReader.hasTag("GC123", Tag.FOUND));
+        assertFalse(tagReader.hasTag("GC123", Tag.DNF));
         verifyAll();
     }
 
@@ -117,9 +122,9 @@ public class TagWriterImplTest extends GeoBeagleTest {
         expect(filter.showBasedOnFoundState(false)).andReturn(true).anyTimes();
 
         replayAll();
-        TagWriter tagWriter = new TagWriter(filter, new TagStore(databaseProvider), null);
-        assertFalse(tagWriter.hasTag("GC123", Tag.FOUND));
-        assertFalse(tagWriter.hasTag("GC123", Tag.DNF));
+        TagReader tagReader = new TagReader(new TagStore(databaseProvider));
+        assertFalse(tagReader.hasTag("GC123", Tag.FOUND));
+        assertFalse(tagReader.hasTag("GC123", Tag.DNF));
         verifyAll();
     }
 }

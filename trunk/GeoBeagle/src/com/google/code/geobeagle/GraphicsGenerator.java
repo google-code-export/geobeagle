@@ -15,7 +15,7 @@
 package com.google.code.geobeagle;
 
 import com.google.code.geobeagle.database.Tag;
-import com.google.code.geobeagle.database.TagWriter;
+import com.google.code.geobeagle.database.TagReader;
 import com.google.inject.Inject;
 
 import android.content.res.Resources;
@@ -225,21 +225,21 @@ public class GraphicsGenerator {
     }
 
     public static class IconOverlayFactory {
-        private final TagWriter mTagWriter;
+        private final TagReader mTagReader;
         private final Resources mResources;
 
         @Inject
-        public IconOverlayFactory(TagWriter tagWriter, Resources resources) {
-            mTagWriter = tagWriter;
+        public IconOverlayFactory(TagReader tagReader, Resources resources) {
+            mTagReader = tagReader;
             mResources = resources;
         }
 
         public IconOverlay create(Geocache geocache, boolean fBig) {
-            if (mTagWriter.hasTag(geocache.getId(), Tag.FOUND))
+            if (mTagReader.hasTag(geocache.getId(), Tag.FOUND))
                 return new IconOverlayImpl(
                         mResources.getDrawable(fBig ? R.drawable.overlay_found_big
                                 : R.drawable.overlay_found));
-            else if (mTagWriter.hasTag(geocache.getId(), Tag.DNF))
+            else if (mTagReader.hasTag(geocache.getId(), Tag.DNF))
                 return new IconOverlayImpl(mResources.getDrawable(fBig ? R.drawable.overlay_dnf_big
                         : R.drawable.overlay_dnf));
             return new NullIconOverlay();
