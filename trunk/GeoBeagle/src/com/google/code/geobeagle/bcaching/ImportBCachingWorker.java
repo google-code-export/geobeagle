@@ -16,6 +16,7 @@ package com.google.code.geobeagle.bcaching;
 
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh.UpdateFlag;
+import com.google.code.geobeagle.activity.preferences.Preferences;
 import com.google.code.geobeagle.bcaching.communication.BCachingException;
 import com.google.code.geobeagle.bcaching.progress.ProgressHandler;
 import com.google.code.geobeagle.bcaching.progress.ProgressManager;
@@ -80,7 +81,7 @@ public class ImportBCachingWorker {
 
     public void sync(SyncCollectingParameter syncCollectingParameter) throws BCachingException,
             CancelException {
-        if (!sharedPreferences.getBoolean(BCachingModule.BCACHING_ENABLED, false))
+        if (!sharedPreferences.getBoolean(Preferences.BCACHING_ENABLED, false))
             return;
         updateFlag.setUpdatesEnabled(false);
         Log.d("GeoBeagle", "Starting import");

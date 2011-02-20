@@ -15,7 +15,7 @@
 package com.google.code.geobeagle.database.filter;
 
 import com.google.code.geobeagle.CacheType;
-import com.google.code.geobeagle.activity.preferences.EditPreferences;
+import com.google.code.geobeagle.activity.preferences.Preferences;
 import com.google.inject.Inject;
 
 import android.content.SharedPreferences;
@@ -29,19 +29,19 @@ public class Filter {
     }
 
     public boolean showBasedOnFoundState(boolean found) {
-        boolean showFoundCaches = sharedPreferences.getBoolean(EditPreferences.SHOW_FOUND_CACHES,
+        boolean showFoundCaches = sharedPreferences.getBoolean(Preferences.SHOW_FOUND_CACHES,
                 false);
         return showFoundCaches || !found;
     }
 
     public boolean showBasedOnAvailableState(boolean available) {
         boolean showUnavailableCaches = sharedPreferences.getBoolean(
-                EditPreferences.SHOW_UNAVAILABLE_CACHES, false);
+                Preferences.SHOW_UNAVAILABLE_CACHES, false);
         return showUnavailableCaches || available;
     }
 
     public boolean showBasedOnCacheType(CacheType cacheType) {
-        boolean showWaypoints = sharedPreferences.getBoolean(EditPreferences.SHOW_WAYPOINTS, false);
+        boolean showWaypoints = sharedPreferences.getBoolean(Preferences.SHOW_WAYPOINTS, false);
         return showWaypoints || cacheType.toInt() < CacheType.WAYPOINT.toInt();
     }
 }

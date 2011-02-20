@@ -16,9 +16,7 @@ package com.google.code.geobeagle.activity.preferences;
 
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.main.fieldnotes.Toaster;
-import com.google.code.geobeagle.bcaching.BCachingModule;
 import com.google.code.geobeagle.database.filter.FilterCleanliness;
-import com.google.code.geobeagle.preferences.PreferencesUpgrader;
 import com.google.inject.Inject;
 
 import roboguice.activity.GuicePreferenceActivity;
@@ -30,12 +28,6 @@ import android.preference.Preference.OnPreferenceChangeListener;
 import android.widget.Toast;
 
 public class EditPreferences extends GuicePreferenceActivity {
-    public static final String SHOW_FOUND_CACHES = "show-found-caches";
-    public static final String SHOW_UNAVAILABLE_CACHES = "show-unavailable-caches";
-    public static final String SHOW_WAYPOINTS = "show-waypoints";
-    private FilterCleanliness filterCleanliness;
-    private FilterSettingsChangeListener onPreferenceChangeListener;
-
     static class SyncPreferencesChangeListener implements OnPreferenceChangeListener {
         private final SharedPreferences sharedPreferences;
         private final Toaster toaster;
@@ -48,8 +40,8 @@ public class EditPreferences extends GuicePreferenceActivity {
 
         @Override
         public boolean onPreferenceChange(Preference preference, Object newValue) {
-            String otherKey = preference.getKey().equals(BCachingModule.BCACHING_ENABLED) ? PreferencesUpgrader.SDCARD_ENABLED
-                    : BCachingModule.BCACHING_ENABLED;
+            String otherKey = preference.getKey().equals(Preferences.BCACHING_ENABLED) ? Preferences.SDCARD_ENABLED
+                    : Preferences.BCACHING_ENABLED;
             if (newValue == Boolean.FALSE && !sharedPreferences.getBoolean(otherKey, false)) {
                 toaster.toast(R.string.must_have_a_sync_method, Toast.LENGTH_SHORT);
                 return false;
@@ -57,15 +49,17 @@ public class EditPreferences extends GuicePreferenceActivity {
             return true;
         }
     }
+    private FilterCleanliness filterCleanliness;
+    private FilterSettingsChangeListener onPreferenceChangeListener;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         addPreferencesFromResource(R.xml.preferences);
-        Preference showFoundCachesPreference = findPreference(SHOW_FOUND_CACHES);
-        Preference showUnavailableCachesPreference = findPreference(SHOW_UNAVAILABLE_CACHES);
-        Preference showWaypointsPreference = findPreference(SHOW_WAYPOINTS);
+        Preference showFoundCachesPreference = findPreference(Preferences.SHOW_FOUND_CACHES);
+        Preference showUnavailableCachesPreference = findPreference(Preferences.SHOW_UNAVAILABLE_CACHES);
+        Preference showWaypointsPreference = findPreference(Preferences.SHOW_WAYPOINTS);
 
         onPreferenceChangeListener = getInjector().getInstance(FilterSettingsChangeListener.class);
         SyncPreferencesChangeListener syncPreferencesChangeListener = getInjector().getInstance(
@@ -74,12 +68,18 @@ public class EditPreferences extends GuicePreferenceActivity {
         showFoundCachesPreference.setOnPreferenceChangeListener(onPreferenceChangeListener);
         showUnavailableCachesPreference.setOnPreferenceChangeListener(onPreferenceChangeListener);
 
-        Preference sdCardEnabledPreference = findPreference(PreferencesUpgrader.SDCARD_ENABLED);
-        Preference bcachingEnabledPreference = findPreference(BCachingModule.BCACHING_ENABLED);
+        Preference sdCardEnabledPreference = findPreference(Preferences.SDCARD_ENABLED);
+        Preference bcachingEnabledPreference = findPreference(Preferences.BCACHING_ENABLED);
         sdCardEnabledPreference.setOnPreferenceChangeListener(syncPreferencesChangeListener);
         bcachingEnabledPreference.setOnPreferenceChangeListener(syncPreferencesChangeListener);
 
         filterCleanliness = getInjector().getInstance(FilterCleanliness.class);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        filterCleanliness.markDirty(onPreferenceChangeListener.hasChanged());
     }
 
     @Override
@@ -90,12 +90,6 @@ public class EditPreferences extends GuicePreferenceActivity {
         // because it doesn't slow down clicking/unclicking the checkbox.
         filterCleanliness.markDirty(true);
         onPreferenceChangeListener.resetHasChanged();
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        filterCleanliness.markDirty(onPreferenceChangeListener.hasChanged());
     }
 
 }

@@ -24,6 +24,7 @@ import com.google.code.geobeagle.ErrorDisplayer;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.cachelist.GeoBeagleTest;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh.UpdateFlag;
+import com.google.code.geobeagle.activity.preferences.Preferences;
 import com.google.code.geobeagle.bcaching.communication.BCachingException;
 import com.google.code.geobeagle.bcaching.progress.ProgressHandler;
 import com.google.code.geobeagle.bcaching.progress.ProgressManager;
@@ -70,7 +71,7 @@ public class ImportBCachingWorkerTest extends GeoBeagleTest {
 
     @Test
     public void testWorkerNoCaches() throws BCachingException, CancelException {
-        expect(sharedPreferences.getBoolean(BCachingModule.BCACHING_ENABLED, false))
+        expect(sharedPreferences.getBoolean(Preferences.BCACHING_ENABLED, false))
                 .andReturn(true);
         updateFlag.setUpdatesEnabled(false);
         progressManager.update(progressHandler, ProgressMessage.START, 0);
@@ -88,7 +89,7 @@ public class ImportBCachingWorkerTest extends GeoBeagleTest {
 
     @Test
     public void testWorkerOneChunk() throws BCachingException, CancelException {
-        expect(sharedPreferences.getBoolean(BCachingModule.BCACHING_ENABLED, false))
+        expect(sharedPreferences.getBoolean(Preferences.BCACHING_ENABLED, false))
                 .andReturn(true);
         updateFlag.setUpdatesEnabled(false);
         progressManager.update(progressHandler, ProgressMessage.START, 0);
@@ -115,7 +116,7 @@ public class ImportBCachingWorkerTest extends GeoBeagleTest {
 
     @Test
     public void testWorkerTwoChunks() throws BCachingException, CancelException {
-        expect(sharedPreferences.getBoolean(BCachingModule.BCACHING_ENABLED, false))
+        expect(sharedPreferences.getBoolean(Preferences.BCACHING_ENABLED, false))
                 .andReturn(true);
         updateFlag.setUpdatesEnabled(false);
         progressManager.update(progressHandler, ProgressMessage.START, 0);
