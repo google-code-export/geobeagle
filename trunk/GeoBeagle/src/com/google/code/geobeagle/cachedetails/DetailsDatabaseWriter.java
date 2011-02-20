@@ -46,9 +46,7 @@ public class DetailsDatabaseWriter {
     }
 
     public void deleteAll() {
-        Log.d("GeoBeagle", "deleting details: " + sdDatabase);
-        sdDatabaseOpener.open().delete("Details", null, null);
-        Log.d("GeoBeagle", "DONE deleting details");
+        sdDatabaseOpener.delete();
     }
 
     public void open(String cacheId) {
@@ -73,7 +71,7 @@ public class DetailsDatabaseWriter {
     public void end() {
         if (sdDatabase == null)
             return;
-        Log.d("GeoBeagle", "ENDING TRANSACTION");
+        Log.d("GeoBeagle", "DetailsDatabaseWriter::end()");
         sdDatabase.setTransactionSuccessful();
         sdDatabase.endTransaction();
         sdDatabase.close();
