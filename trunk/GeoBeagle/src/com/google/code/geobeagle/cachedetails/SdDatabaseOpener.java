@@ -22,6 +22,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 import android.widget.Toast;
 
+import java.io.File;
+
 @Singleton
 class SdDatabaseOpener {
     static final int DATABASE_VERSION = 6;
@@ -33,6 +35,10 @@ class SdDatabaseOpener {
             ShowToastOnUiThread showToastOnUiThread) {
         this.geoBeagleEnvironment = geoBeagleEnvironment;
         this.showToastOnUiThread = showToastOnUiThread;
+    }
+
+    void delete() {
+        new File(geoBeagleEnvironment.getExternalStorageDir() + "/geobeagle.db").delete();
     }
 
     SQLiteDatabase open() {
