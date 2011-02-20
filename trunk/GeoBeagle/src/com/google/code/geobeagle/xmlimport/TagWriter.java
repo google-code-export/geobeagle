@@ -61,10 +61,6 @@ class TagWriter {
         writer.write(text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;"));
     }
 
-    public boolean isOpen() {
-        return writer.isOpen();
-    }
-
     public void start() {
         writer.start();
     }

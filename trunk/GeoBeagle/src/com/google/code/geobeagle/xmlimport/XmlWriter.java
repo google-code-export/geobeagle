@@ -32,11 +32,13 @@ public class XmlWriter implements EventHandler {
     private static String GPX_WPTTIME = "/gpx/wpt/time";
     private static String GPX_WPTNAME = "/gpx/wpt/name";
     private final HashMap<String, String> emptyHashMap;
+    private boolean isWritingCache;
 
     @Inject
     public XmlWriter(TagWriter tagWriter) {
         this.tagWriter = tagWriter;
         emptyHashMap = new HashMap<String, String>();
+        isWritingCache = false;
     }
 
     @Override
@@ -44,12 +46,13 @@ public class XmlWriter implements EventHandler {
         if (!previousFullPath.startsWith(GPX_WPT))
             return;
 
-        if (tagWriter.isOpen())
+        if (isWritingCache)
             tagWriter.endTag(name);
 
         if (previousFullPath.equals(GPX_WPT)) {
             tagWriter.endTag("gpx");
             tagWriter.close();
+            isWritingCache = false;
         }
     }
 
@@ -69,7 +72,7 @@ public class XmlWriter implements EventHandler {
 
         if (fullPath.equals(GPX_WPT)) {
             tagWpt = tag;
-        } else if (tagWriter.isOpen()) {
+        } else if (isWritingCache) {
             tagWriter.startTag(tag);
         }
     }
@@ -94,8 +97,9 @@ public class XmlWriter implements EventHandler {
                 tagWriter.endTag("time");
             }
             tagWriter.startTag(new Tag("name", emptyHashMap));
+            isWritingCache = true;
         }
-        if (tagWriter.isOpen())
+        if (isWritingCache)
             tagWriter.text(text);
         return true;
     }

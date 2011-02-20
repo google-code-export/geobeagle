@@ -47,16 +47,13 @@ public class XmlWriterTest extends GeoBeagleTest {
     @Test
     public void testSimpleTag() throws IOException {
         detailsDatabaseWriter.start();
-        expect(detailsDatabaseWriter.isOpen()).andReturn(false);
         detailsDatabaseWriter.open("GC123");
         expect(xmlPullParser.getAttributeCount()).andStubReturn(0);
         detailsDatabaseWriter.write("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
         detailsDatabaseWriter.write("\n<gpx>");
         detailsDatabaseWriter.write("\n <wpt>");
         detailsDatabaseWriter.write("\n  <name>");
-        expect(detailsDatabaseWriter.isOpen()).andReturn(true);
         detailsDatabaseWriter.write("GC123");
-        expect(detailsDatabaseWriter.isOpen()).andReturn(true);
         detailsDatabaseWriter.write("</name>");
 
         replayAll();
@@ -72,10 +69,6 @@ public class XmlWriterTest extends GeoBeagleTest {
     public void testTagStack() throws IOException {
         detailsDatabaseWriter.start();
         expect(xmlPullParser.getAttributeCount()).andReturn(0).anyTimes();
-        expect(detailsDatabaseWriter.isOpen()).andReturn(false);
-        expect(detailsDatabaseWriter.isOpen()).andReturn(false);
-        expect(detailsDatabaseWriter.isOpen()).andReturn(false);
-        expect(detailsDatabaseWriter.isOpen()).andReturn(false);
         detailsDatabaseWriter.open("GC123");
         detailsDatabaseWriter.write("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
         detailsDatabaseWriter.write("\n<gpx>");
@@ -84,11 +77,8 @@ public class XmlWriterTest extends GeoBeagleTest {
         detailsDatabaseWriter.write("3oclock");
         detailsDatabaseWriter.write("</time>");
         detailsDatabaseWriter.write("\n  <name>");
-        expect(detailsDatabaseWriter.isOpen()).andReturn(true);
         detailsDatabaseWriter.write("GC123");
-        expect(detailsDatabaseWriter.isOpen()).andReturn(true);
         detailsDatabaseWriter.write("</name>");
-        expect(detailsDatabaseWriter.isOpen()).andReturn(true);
         detailsDatabaseWriter.write("</wpt>");
         detailsDatabaseWriter.write("</gpx>");
         detailsDatabaseWriter.close();
@@ -117,15 +107,12 @@ public class XmlWriterTest extends GeoBeagleTest {
         expect(xmlPullParser.getAttributeName(1)).andReturn("lon");
         expect(xmlPullParser.getAttributeValue(1)).andReturn("123");
         expect(xmlPullParser.getAttributeCount()).andReturn(0);
-        expect(detailsDatabaseWriter.isOpen()).andReturn(false);
         detailsDatabaseWriter.open("GC123");
         detailsDatabaseWriter.write("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
         detailsDatabaseWriter.write("\n<gpx>");
         detailsDatabaseWriter.write("\n <wpt lon='123' lat='456'>");
         detailsDatabaseWriter.write("\n  <name>");
-        expect(detailsDatabaseWriter.isOpen()).andReturn(true);
         detailsDatabaseWriter.write("GC123");
-        expect(detailsDatabaseWriter.isOpen()).andReturn(true);
         detailsDatabaseWriter.write("</name>");
 
         replayAll();
@@ -141,20 +128,15 @@ public class XmlWriterTest extends GeoBeagleTest {
     @Test
     public void testEscaping() throws IOException {
         detailsDatabaseWriter.start();
-        expect(detailsDatabaseWriter.isOpen()).andReturn(false);
         detailsDatabaseWriter.open("GC123");
         expect(xmlPullParser.getAttributeCount()).andStubReturn(0);
         detailsDatabaseWriter.write("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
         detailsDatabaseWriter.write("\n<gpx>");
         detailsDatabaseWriter.write("\n <wpt>");
         detailsDatabaseWriter.write("\n  <name>");
-        expect(detailsDatabaseWriter.isOpen()).andReturn(true);
         detailsDatabaseWriter.write("GC123");
-        expect(detailsDatabaseWriter.isOpen()).andReturn(true);
         detailsDatabaseWriter.write("</name>");
-        expect(detailsDatabaseWriter.isOpen()).andReturn(true);
         detailsDatabaseWriter.write("\n  <desc>");
-        expect(detailsDatabaseWriter.isOpen()).andReturn(true);
         detailsDatabaseWriter.write("&lt;&gt;&amp;");
 
         replayAll();
