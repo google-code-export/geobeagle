@@ -53,10 +53,6 @@ public class DetailsDatabaseWriter {
         this.cacheId = cacheId;
     }
 
-    public boolean isOpen() {
-        return cacheId != null;
-    }
-
     public void write(String str) {
         if (cacheId != null)
             stringBuffer.append(str);
