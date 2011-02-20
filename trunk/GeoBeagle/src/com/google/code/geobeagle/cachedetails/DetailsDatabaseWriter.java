@@ -39,21 +39,14 @@ public class DetailsDatabaseWriter {
         ContentValues contentValues = new ContentValues();
         contentValues.put("Details", stringBuffer.toString());
         contentValues.put("CacheId", cacheId);
-        // Log.d("GeoBeagle",
-        // "INSERTING Details: " + cacheId + "\n" +
-        // contentValues.getAsString("Details"));
         sdDatabase.replace("Details", "Details", contentValues);
         stringBuffer.setLength(0);
         this.cacheId = null;
     }
 
     public void deleteAll() {
-        if (sdDatabase != null)
-            return;
-
-        sdDatabase = sdDatabaseOpener.open();
         Log.d("GeoBeagle", "deleting details");
-        sdDatabase.delete("Details", null, null);
+        sdDatabaseOpener.open().delete("Details", null, null);
         Log.d("GeoBeagle", "DONE deleting details");
     }
 
