@@ -34,7 +34,6 @@ class TagWriter {
     public void endTag(String name) {
         mLevel--;
         if (writer != null) {
-            System.err.println("</" + name + ">");
             writer.write("</" + name + ">");
         }
     }
@@ -54,14 +53,11 @@ class TagWriter {
             sb.append(" " + key + "='" + tag.attributes.get(key) + "'");
         }
         sb.append(">");
-        System.err.println(sb.toString());
 
         writer.write(sb.toString());
     }
 
     public void text(String text) {
-        System.err.println(text);
-
         writer.write(text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;"));
     }
 
