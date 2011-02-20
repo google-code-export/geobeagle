@@ -31,10 +31,12 @@ public class XmlWriter implements EventHandler {
     private static String GPX_WPT = "/gpx/wpt";
     private static String GPX_WPTTIME = "/gpx/wpt/time";
     private static String GPX_WPTNAME = "/gpx/wpt/name";
+    private final HashMap<String, String> emptyHashMap;
 
     @Inject
     public XmlWriter(TagWriter tagWriter) {
         this.tagWriter = tagWriter;
+        emptyHashMap = new HashMap<String, String>();
     }
 
     @Override
@@ -84,7 +86,6 @@ public class XmlWriter implements EventHandler {
             time = text;
         } else if (fullPath.equals(GPX_WPTNAME)) {
             tagWriter.open(text);
-            HashMap<String, String> emptyHashMap = new HashMap<String, String>();
             tagWriter.startTag(new Tag("gpx", emptyHashMap));
             tagWriter.startTag(tagWpt);
             if (time != null) {
