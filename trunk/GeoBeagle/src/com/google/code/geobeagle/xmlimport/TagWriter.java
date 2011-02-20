@@ -22,6 +22,7 @@ class TagWriter {
     private int mLevel;
     private final DetailsDatabaseWriter writer;
     private final StringBuffer stringBuffer;
+    private String wpt;
 
     @Inject
     public TagWriter(DetailsDatabaseWriter writer) {
@@ -30,7 +31,8 @@ class TagWriter {
     }
 
     public void close() {
-        writer.write(stringBuffer.toString());
+        writer.write(wpt, stringBuffer.toString());
+        wpt = null;
     }
 
     public void endTag(String name) {
@@ -40,7 +42,7 @@ class TagWriter {
 
     public void open(String wpt) {
         mLevel = 0;
-        writer.open(wpt);
+        this.wpt = wpt;
         stringBuffer.setLength(0);
         stringBuffer.append("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
     }

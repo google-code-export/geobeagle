@@ -25,7 +25,6 @@ import android.util.Log;
 public class DetailsDatabaseWriter {
 
     private SQLiteDatabase sdDatabase;
-    private String cacheId;
     private final SdDatabaseOpener sdDatabaseOpener;
     private final ContentValues contentValues;
 
@@ -35,19 +34,14 @@ public class DetailsDatabaseWriter {
         contentValues = new ContentValues();
     }
 
-    public void write(String str) {
-        contentValues.put("Details", str);
+    public void write(String cacheId, String details) {
+        contentValues.put("Details", details);
         contentValues.put("CacheId", cacheId);
         sdDatabase.replace("Details", "Details", contentValues);
-        cacheId = null;
     }
 
     public void deleteAll() {
         sdDatabaseOpener.delete();
-    }
-
-    public void open(String cacheId) {
-        this.cacheId = cacheId;
     }
 
     public void start() {

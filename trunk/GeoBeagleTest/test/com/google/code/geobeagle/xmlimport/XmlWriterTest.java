@@ -47,10 +47,9 @@ public class XmlWriterTest extends GeoBeagleTest {
     @Test
     public void testSimpleTag() throws IOException {
         detailsDatabaseWriter.start();
-        detailsDatabaseWriter.open("GC123");
         expect(xmlPullParser.getAttributeCount()).andStubReturn(0);
-        detailsDatabaseWriter.write("<?xml version=\"1.0\" encoding=\"utf-8\"?>" + "\n<gpx>"
-                + "\n <wpt>\n  <name>GC123</name>");
+        detailsDatabaseWriter.write("GC123", "<?xml version=\"1.0\" encoding=\"utf-8\"?>"
+                + "\n<gpx>" + "\n <wpt>\n  <name>GC123</name>");
 
         replayAll();
         XmlWriter xmlWriter = new XmlWriter(tagWriter);
@@ -65,10 +64,10 @@ public class XmlWriterTest extends GeoBeagleTest {
     public void testTagStack() throws IOException {
         detailsDatabaseWriter.start();
         expect(xmlPullParser.getAttributeCount()).andReturn(0).anyTimes();
-        detailsDatabaseWriter.open("GC123");
-        detailsDatabaseWriter.write("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<gpx>\n <wpt>"
-                + "\n  <time>" + "3oclock" + "</time>" + "\n  <name>" + "GC123" + "</name>"
-                + "</wpt>" + "</gpx>");
+        detailsDatabaseWriter.write("GC123",
+                "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<gpx>\n <wpt>" + "\n  <time>"
+                        + "3oclock" + "</time>" + "\n  <name>" + "GC123" + "</name>" + "</wpt>"
+                        + "</gpx>");
 
         replayAll();
         XmlWriter xmlWriter = new XmlWriter(tagWriter);
@@ -94,8 +93,7 @@ public class XmlWriterTest extends GeoBeagleTest {
         expect(xmlPullParser.getAttributeName(1)).andReturn("lon");
         expect(xmlPullParser.getAttributeValue(1)).andReturn("123");
         expect(xmlPullParser.getAttributeCount()).andReturn(0);
-        detailsDatabaseWriter.open("GC123");
-        detailsDatabaseWriter.write("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<gpx>\n"
+        detailsDatabaseWriter.write("GC123", "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<gpx>\n"
                 + " <wpt lon='123' lat='456'>\n  <name>GC123</name></wpt></gpx>");
 
         replayAll();
@@ -112,10 +110,10 @@ public class XmlWriterTest extends GeoBeagleTest {
     @Test
     public void testEscaping() throws IOException {
         detailsDatabaseWriter.start();
-        detailsDatabaseWriter.open("GC123");
         expect(xmlPullParser.getAttributeCount()).andStubReturn(0);
-        detailsDatabaseWriter.write("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<gpx>\n <wpt>\n"
-                + "  <name>GC123</name>\n  <desc>&lt;&gt;&amp;</wpt></gpx>");
+        detailsDatabaseWriter.write("GC123",
+                "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<gpx>\n <wpt>\n"
+                        + "  <name>GC123</name>\n  <desc>&lt;&gt;&amp;</wpt></gpx>");
 
         replayAll();
         XmlWriter xmlWriter = new XmlWriter(tagWriter);
