@@ -42,7 +42,8 @@ public class XmlWriter implements EventHandler {
         if (!previousFullPath.startsWith(GPX_WPT))
             return;
 
-        tagWriter.endTag(name);
+        if (tagWriter.isOpen())
+            tagWriter.endTag(name);
 
         if (previousFullPath.equals(GPX_WPT)) {
             tagWriter.endTag("gpx");
