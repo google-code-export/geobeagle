@@ -21,44 +21,43 @@ class TagWriter {
     private static final String SPACES = "                        ";
     private int mLevel;
     private final DetailsDatabaseWriter writer;
+    private final StringBuffer stringBuffer;
 
     @Inject
     public TagWriter(DetailsDatabaseWriter writer) {
         this.writer = writer;
+        stringBuffer = new StringBuffer();
     }
 
     public void close() {
-        writer.close();
+        writer.write(stringBuffer.toString());
     }
 
     public void endTag(String name) {
         mLevel--;
-        if (writer != null) {
-            writer.write("</" + name + ">");
-        }
+        stringBuffer.append("</" + name + ">");
     }
 
     public void open(String wpt) {
         mLevel = 0;
         writer.open(wpt);
-        writer.write("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
+        stringBuffer.setLength(0);
+        stringBuffer.append("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
     }
 
     public void startTag(Tag tag) {
-        StringBuffer sb = new StringBuffer();
-        sb.append("\n" + SPACES.substring(0, Math.min(mLevel, SPACES.length())));
+        stringBuffer.append("\n" + SPACES.substring(0, Math.min(mLevel, SPACES.length())));
         mLevel++;
-        sb.append("<" + tag.name);
+        stringBuffer.append("<" + tag.name);
         for (String key : tag.attributes.keySet()) {
-            sb.append(" " + key + "='" + tag.attributes.get(key) + "'");
+            stringBuffer.append(" " + key + "='" + tag.attributes.get(key) + "'");
         }
-        sb.append(">");
+        stringBuffer.append(">");
 
-        writer.write(sb.toString());
     }
 
     public void text(String text) {
-        writer.write(text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;"));
+        stringBuffer.append(text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;"));
     }
 
     public void start() {
