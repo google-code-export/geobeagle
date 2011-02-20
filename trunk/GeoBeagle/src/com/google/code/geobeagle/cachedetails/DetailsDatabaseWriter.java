@@ -24,7 +24,6 @@ import android.util.Log;
 @Singleton
 public class DetailsDatabaseWriter {
 
-    private final StringBuffer stringBuffer;
     private SQLiteDatabase sdDatabase;
     private String cacheId;
     private final SdDatabaseOpener sdDatabaseOpener;
@@ -33,15 +32,13 @@ public class DetailsDatabaseWriter {
     @Inject
     DetailsDatabaseWriter(SdDatabaseOpener sdDatabaseOpener) {
         this.sdDatabaseOpener = sdDatabaseOpener;
-        stringBuffer = new StringBuffer();
         contentValues = new ContentValues();
     }
 
-    public void close() {
-        contentValues.put("Details", stringBuffer.toString());
+    public void write(String str) {
+        contentValues.put("Details", str);
         contentValues.put("CacheId", cacheId);
         sdDatabase.replace("Details", "Details", contentValues);
-        stringBuffer.setLength(0);
         cacheId = null;
     }
 
@@ -51,11 +48,6 @@ public class DetailsDatabaseWriter {
 
     public void open(String cacheId) {
         this.cacheId = cacheId;
-    }
-
-    public void write(String str) {
-        if (cacheId != null)
-            stringBuffer.append(str);
     }
 
     public void start() {
