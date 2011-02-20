@@ -24,19 +24,38 @@ import static org.powermock.api.easymock.PowerMock.verifyAll;
 
 import com.google.code.geobeagle.CacheType;
 import com.google.code.geobeagle.GeocacheFactory.Source;
+import com.google.code.geobeagle.activity.cachelist.GeoBeagleTest;
 import com.google.code.geobeagle.database.DatabaseDI.SQLiteWrapper;
 import com.google.code.geobeagle.database.filter.Filter;
+import com.google.code.geobeagle.xmlimport.SyncCollectingParameter;
 import com.google.inject.Provider;
 
+import org.easymock.EasyMock;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.modules.junit4.PowerMockRunner;
+
+import android.database.Cursor;
 @RunWith(PowerMockRunner.class)
 
-public class CacheWriterTest {
+public class CacheWriterTest extends GeoBeagleTest {
 
     private static final String INSERT_INTO_CACHES = "INSERT INTO CACHES (Id, Description, Source, DeleteMe) ";
     private static final String INSERT_INTO_GPX = "INSERT INTO GPX (Name, ExportTime, DeleteMe) ";
+    private SQLiteWrapper sqlite;
+    private SyncCollectingParameter syncCollectingParameter;
+    private Provider<ISQLiteDatabase> sqliteProvider;
+    private Cursor cursor;
+
+    @SuppressWarnings("unchecked")
+    @Before
+    public void setUp() {
+        cursor = createMock(Cursor.class);
+        sqlite = createMock(SQLiteWrapper.class);
+        syncCollectingParameter = createMock(SyncCollectingParameter.class);
+        sqliteProvider = createMock(Provider.class);
+    }
 
     @SuppressWarnings("unchecked")
     @Test
@@ -103,40 +122,52 @@ public class CacheWriterTest {
         verifyAll();
     }
 
-    @SuppressWarnings("unchecked")
     @Test
-    public void testIsGpxAlreadyLoadedFalse() {
-        SQLiteWrapper sqlite = createMock(SQLiteWrapper.class);
-        Provider<ISQLiteDatabase> sqliteProvider = createMock(Provider.class);
+    public void testIsGpxAlreadyLoadedInitialSync() {
         expect(sqliteProvider.get()).andReturn(sqlite);
-
-        expect(
-                sqlite.countResults(Database.TBL_GPX, "Name = ? AND ExportTime >= ?", "foo.gpx",
-                        "04-30-2009")).andReturn(0);
+        expect(sqlite.rawQuery((String)EasyMock.anyObject(), (String[])EasyMock.anyObject()))
+                .andReturn(cursor);
+        expect(cursor.moveToFirst()).andReturn(false);
+        syncCollectingParameter.Log("  initial sync");
+        cursor.close();
 
         replayAll();
-        assertFalse(new GpxTableWriterGpxFiles(sqliteProvider, null).isGpxAlreadyLoaded("foo.gpx", "04-30-2009"));
+        assertFalse(new GpxTableWriterGpxFiles(sqliteProvider, syncCollectingParameter)
+                .isGpxAlreadyLoaded("foo.gpx", "04-30-2009"));
         verifyAll();
     }
 
-    @SuppressWarnings("unchecked")
     @Test
-    public void testIsGpxAlreadyLoadedTrue() {
-        SQLiteWrapper sqlite = createMock(SQLiteWrapper.class);
-        Provider<ISQLiteDatabase> sqliteProvider = createMock(Provider.class);
-        expect(sqliteProvider.get()).andReturn(sqlite).times(2);
-
-        expect(
-                sqlite.countResults(Database.TBL_GPX, Database.SQL_MATCH_NAME_AND_EXPORTED_LATER,
-                        "foo.gpx", "04-30-2009 10:30")).andReturn(1);
-        sqlite.execSQL(Database.SQL_CACHES_DONT_DELETE_ME, "foo.gpx");
-        sqlite.execSQL(Database.SQL_GPX_DONT_DELETE_ME, "foo.gpx");
-        sqlite.execSQL(Database.SQL_REPLACE_GPX, "foo.gpx", "04-30-2009 10:30");
+    public void testIsGpxAlreadyLoadedFalse() {
+        expect(sqliteProvider.get()).andReturn(sqlite);
+        expect(sqlite.rawQuery((String)EasyMock.anyObject(), (String[])EasyMock.anyObject()))
+                .andReturn(cursor);
+        expect(cursor.moveToFirst()).andReturn(true);
+        expect(cursor.getString(0)).andReturn("05-01-2009 10:30:00");
+        syncCollectingParameter.Log("07-02 10:30 --> 11-30 10:30");
+        cursor.close();
 
         replayAll();
-        GpxTableWriterGpxFiles gpxTableWriterGpxFiles = new GpxTableWriterGpxFiles(sqliteProvider, null);
-        assertTrue(gpxTableWriterGpxFiles.isGpxAlreadyLoaded("foo.gpx", "04-30-2009 10:30"));
-        gpxTableWriterGpxFiles.writeGpx("foo.gpx");
+        GpxTableWriterGpxFiles gpxTableWriterGpxFiles = new GpxTableWriterGpxFiles(sqliteProvider,
+                syncCollectingParameter);
+        assertFalse(gpxTableWriterGpxFiles.isGpxAlreadyLoaded("foo.gpx", "04-30-2009 10:30:00"));
+        verifyAll();
+    }
+
+    @Test
+    public void testIsGpxAlreadyLoadedTrue() {
+        expect(sqliteProvider.get()).andReturn(sqlite);
+        expect(sqlite.rawQuery((String)EasyMock.anyObject(), (String[])EasyMock.anyObject()))
+                .andReturn(cursor);
+        expect(cursor.moveToFirst()).andReturn(true);
+        expect(cursor.getString(0)).andReturn("04-30-2009 10:30:00");
+        syncCollectingParameter.Log("  no changes since 11-30 10:30");
+        cursor.close();
+
+        replayAll();
+        GpxTableWriterGpxFiles gpxTableWriterGpxFiles = new GpxTableWriterGpxFiles(sqliteProvider,
+                syncCollectingParameter);
+        assertTrue(gpxTableWriterGpxFiles.isGpxAlreadyLoaded("foo.gpx", "04-30-2009 10:30:00"));
         verifyAll();
     }
 

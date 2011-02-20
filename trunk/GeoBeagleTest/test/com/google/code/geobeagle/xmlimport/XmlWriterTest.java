@@ -200,7 +200,7 @@ public class XmlWriterTest extends GeoBeagleTest {
 
         replayAll();
         XmlWriter xmlWriter = new XmlWriter(tagWriter);
-        xmlWriter.start(xmlPullParser);
+        xmlWriter.star          t(xmlPullParser);
         xmlWriter.startTag("wpt", "/gpx/wpt");
         xmlWriter.startTag("name", "/gpx/wpt/name");
         xmlWriter.text("/gpx/wpt/name", "GC123");
