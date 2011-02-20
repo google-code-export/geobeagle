@@ -22,7 +22,6 @@ import static org.powermock.api.easymock.PowerMock.verifyAll;
 
 import com.google.code.geobeagle.activity.cachelist.GeoBeagleTest;
 import com.google.code.geobeagle.cachedetails.DetailsDatabaseWriter;
-import com.google.code.geobeagle.cachedetails.FilePathStrategy;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -35,51 +34,11 @@ import java.io.IOException;
 @RunWith(PowerMockRunner.class)
 public class XmlWriterTest extends GeoBeagleTest {
     private TagWriter tagWriter;
-    private StringWriter stringWriter;
     private XmlPullParser xmlPullParser;
-    private FilePathStrategy filePathStrategy;
     private DetailsDatabaseWriter detailsDatabaseWriter;
-
-    static class StringWriter {
-        private final java.io.StringWriter stringWriter;
-        private boolean isOpen;
-
-        StringWriter() {
-            stringWriter = new java.io.StringWriter();
-            isOpen = false;
-        }
-
-        public void close() {
-            stringWriter.write("\nEOF\n");
-            isOpen = false;
-        }
-
-        public void write(String str) {
-            stringWriter.write(str);
-        }
-
-        @Override
-        public String toString() {
-            return stringWriter.toString();
-        }
-
-        public boolean isOpen() {
-            return isOpen;
-        }
-
-        public void mkdirs(String path) {
-        }
-
-        public void open(String path, String wpt) {
-            stringWriter.write("FILE: " + path + "\n");
-            isOpen = true;
-        }
-    }
 
     @Before
     public void setUp() {
-        stringWriter = new StringWriter();
-        filePathStrategy = createMock(FilePathStrategy.class);
         detailsDatabaseWriter = createStrictMock(DetailsDatabaseWriter.class);
         tagWriter = new TagWriter(detailsDatabaseWriter);
         xmlPullParser = createMock(XmlPullParser.class);
@@ -92,8 +51,8 @@ public class XmlWriterTest extends GeoBeagleTest {
         expect(xmlPullParser.getAttributeCount()).andStubReturn(0);
         detailsDatabaseWriter.write("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
         detailsDatabaseWriter.write("\n<gpx>");
-        detailsDatabaseWriter.write("\n.<wpt>");
-        detailsDatabaseWriter.write("\n..<name>");
+        detailsDatabaseWriter.write("\n <wpt>");
+        detailsDatabaseWriter.write("\n  <name>");
         expect(detailsDatabaseWriter.isOpen()).andReturn(true);
         detailsDatabaseWriter.write("GC123");
         expect(detailsDatabaseWriter.isOpen()).andReturn(true);
@@ -118,11 +77,11 @@ public class XmlWriterTest extends GeoBeagleTest {
         detailsDatabaseWriter.open("GC123");
         detailsDatabaseWriter.write("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
         detailsDatabaseWriter.write("\n<gpx>");
-        detailsDatabaseWriter.write("\n.<wpt>");
-        detailsDatabaseWriter.write("\n..<time>");
+        detailsDatabaseWriter.write("\n <wpt>");
+        detailsDatabaseWriter.write("\n  <time>");
         detailsDatabaseWriter.write("3oclock");
         detailsDatabaseWriter.write("</time>");
-        detailsDatabaseWriter.write("\n..<name>");
+        detailsDatabaseWriter.write("\n  <name>");
         expect(detailsDatabaseWriter.isOpen()).andReturn(true);
         detailsDatabaseWriter.write("GC123");
         expect(detailsDatabaseWriter.isOpen()).andReturn(true);
@@ -144,10 +103,6 @@ public class XmlWriterTest extends GeoBeagleTest {
         xmlWriter.endTag("name", "/gpx/wpt/name");
         xmlWriter.endTag("wpt", "/gpx/wpt");
         xmlWriter.endTag("gpx", "/gpx");
-//        assertEquals("FILE: /sdcard/filename.txt/6/GC123.gpx\n"
-//                + "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<gpx>\n"
-//                + " <wpt>\n  <time>3oclock</time>\n  <name>GC123</name></wpt></gpx>\nEOF\n",
-//                stringWriter.toString());
         verifyAll();
     }
 
@@ -163,8 +118,8 @@ public class XmlWriterTest extends GeoBeagleTest {
         detailsDatabaseWriter.open("GC123");
         detailsDatabaseWriter.write("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
         detailsDatabaseWriter.write("\n<gpx>");
-        detailsDatabaseWriter.write("\n.<wpt lon='123' lat='456'>");
-        detailsDatabaseWriter.write("\n..<name>");
+        detailsDatabaseWriter.write("\n <wpt lon='123' lat='456'>");
+        detailsDatabaseWriter.write("\n  <name>");
         expect(detailsDatabaseWriter.isOpen()).andReturn(true);
         detailsDatabaseWriter.write("GC123");
         expect(detailsDatabaseWriter.isOpen()).andReturn(true);
@@ -187,14 +142,14 @@ public class XmlWriterTest extends GeoBeagleTest {
         expect(xmlPullParser.getAttributeCount()).andStubReturn(0);
         detailsDatabaseWriter.write("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
         detailsDatabaseWriter.write("\n<gpx>");
-        detailsDatabaseWriter.write("\n.<wpt>");
-        detailsDatabaseWriter.write("\n..<name>");
+        detailsDatabaseWriter.write("\n <wpt>");
+        detailsDatabaseWriter.write("\n  <name>");
         expect(detailsDatabaseWriter.isOpen()).andReturn(true);
         detailsDatabaseWriter.write("GC123");
         expect(detailsDatabaseWriter.isOpen()).andReturn(true);
         detailsDatabaseWriter.write("</name>");
         expect(detailsDatabaseWriter.isOpen()).andReturn(true);
-        detailsDatabaseWriter.write("\n..<desc>");
+        detailsDatabaseWriter.write("\n  <desc>");
         expect(detailsDatabaseWriter.isOpen()).andReturn(true);
         detailsDatabaseWriter.write("&lt;&gt;&amp;");
 
