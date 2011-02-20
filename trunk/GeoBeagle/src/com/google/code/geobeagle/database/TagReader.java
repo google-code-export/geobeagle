@@ -24,10 +24,6 @@ public class TagReader {
         this.tagStore = tagStore;
     }
 
-    public FoundCaches getFoundCaches() {
-        return new FoundCaches(tagStore.getFoundCaches());
-    }
-
     public boolean hasTag(CharSequence geocacheId, Tag tag) {
         return tagStore.hasTag(geocacheId, tag);
     }
