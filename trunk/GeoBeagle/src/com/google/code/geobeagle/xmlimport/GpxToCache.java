@@ -157,6 +157,7 @@ public class GpxToCache {
             eventDispatcher.handleEvent(eventType);
             markAsComplete = true;
         } finally {
+            eventDispatcher.close();
             cacheXmlTagsToSql.close(markAsComplete);
         }
         return cacheXmlTagsToSql.getNumberOfCachesLoad();

@@ -46,6 +46,7 @@ public class XmlWriterTest extends GeoBeagleTest {
 
     @Test
     public void testSimpleTag() throws IOException {
+        detailsDatabaseWriter.start();
         expect(detailsDatabaseWriter.isOpen()).andReturn(false);
         detailsDatabaseWriter.open("GC123");
         expect(xmlPullParser.getAttributeCount()).andStubReturn(0);
@@ -69,6 +70,7 @@ public class XmlWriterTest extends GeoBeagleTest {
 
     @Test
     public void testTagStack() throws IOException {
+        detailsDatabaseWriter.start();
         expect(xmlPullParser.getAttributeCount()).andReturn(0).anyTimes();
         expect(detailsDatabaseWriter.isOpen()).andReturn(false);
         expect(detailsDatabaseWriter.isOpen()).andReturn(false);
@@ -108,6 +110,7 @@ public class XmlWriterTest extends GeoBeagleTest {
 
     @Test
     public void testAttributes() throws IOException {
+        detailsDatabaseWriter.start();
         expect(xmlPullParser.getAttributeCount()).andReturn(2);
         expect(xmlPullParser.getAttributeName(0)).andReturn("lat");
         expect(xmlPullParser.getAttributeValue(0)).andReturn("456");
@@ -137,6 +140,7 @@ public class XmlWriterTest extends GeoBeagleTest {
 
     @Test
     public void testEscaping() throws IOException {
+        detailsDatabaseWriter.start();
         expect(detailsDatabaseWriter.isOpen()).andReturn(false);
         detailsDatabaseWriter.open("GC123");
         expect(xmlPullParser.getAttributeCount()).andStubReturn(0);

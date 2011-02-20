@@ -50,4 +50,8 @@ public class EventHandlerGpx implements EventHandler {
         this.xmlPullParser = xmlPullParser;
     }
 
+    @Override
+    public void end() {
+    }
+
 }

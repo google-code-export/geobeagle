@@ -64,4 +64,12 @@ class TagWriter {
     public boolean isOpen() {
         return writer.isOpen();
     }
+
+    public void start() {
+        writer.start();
+    }
+
+    public void end() {
+        writer.end();
+    }
 }

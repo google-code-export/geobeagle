@@ -46,25 +46,37 @@ public class DetailsDatabaseWriter {
     }
 
     public void deleteAll() {
-        Log.d("GeoBeagle", "deleting details");
+        Log.d("GeoBeagle", "deleting details: " + sdDatabase);
         sdDatabaseOpener.open().delete("Details", null, null);
         Log.d("GeoBeagle", "DONE deleting details");
     }
 
     public void open(String cacheId) {
         this.cacheId = cacheId;
-        if (sdDatabase != null)
-            return;
-
-        sdDatabase = sdDatabaseOpener.open();
     }
 
     public boolean isOpen() {
-        return this.cacheId != null;
+        return cacheId != null;
     }
 
     public void write(String str) {
         if (cacheId != null)
             stringBuffer.append(str);
+    }
+
+    public void start() {
+        sdDatabase = sdDatabaseOpener.open();
+        Log.d("GeoBeagle", "STARTING TRANSACTION");
+        sdDatabase.beginTransaction();
+    }
+
+    public void end() {
+        if (sdDatabase == null)
+            return;
+        Log.d("GeoBeagle", "ENDING TRANSACTION");
+        sdDatabase.setTransactionSuccessful();
+        sdDatabase.endTransaction();
+        sdDatabase.close();
+        sdDatabase = null;
     }
 }
