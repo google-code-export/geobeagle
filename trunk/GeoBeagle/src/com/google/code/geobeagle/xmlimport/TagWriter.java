@@ -18,8 +18,7 @@ import com.google.code.geobeagle.cachedetails.DetailsDatabaseWriter;
 import com.google.inject.Inject;
 
 class TagWriter {
-    // private static final String SPACES = "                        ";
-    private static final String SPACES = "....................";
+    private static final String SPACES = "                        ";
     private int mLevel;
     private final DetailsDatabaseWriter writer;
 
