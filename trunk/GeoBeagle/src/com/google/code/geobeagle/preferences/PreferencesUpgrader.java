@@ -14,13 +14,12 @@
 
 package com.google.code.geobeagle.preferences;
 
-import com.google.code.geobeagle.bcaching.BCachingModule;
+import com.google.code.geobeagle.activity.preferences.Preferences;
 import com.google.code.geobeagle.xmlimport.GeoBeagleEnvironment;
 import com.google.inject.Inject;
 
 public class PreferencesUpgrader {
 
-    public static final String SDCARD_ENABLED = "sdcard-enabled";
     private final DependencyUpgrader dependencyUpgrader;
 
     @Inject
@@ -30,9 +29,9 @@ public class PreferencesUpgrader {
 
     public void upgrade(int oldVersion) {
         if (oldVersion <= 14) {
-            dependencyUpgrader.upgrade(BCachingModule.BCACHING_ENABLED,
-                    BCachingModule.BCACHING_USERNAME);
-            dependencyUpgrader.upgrade(SDCARD_ENABLED, GeoBeagleEnvironment.IMPORT_FOLDER);
+            dependencyUpgrader.upgrade(Preferences.BCACHING_ENABLED, Preferences.BCACHING_USERNAME);
+            dependencyUpgrader.upgrade(Preferences.SDCARD_ENABLED,
+                    GeoBeagleEnvironment.IMPORT_FOLDER);
         }
     }
 }

@@ -14,7 +14,7 @@
 
 package com.google.code.geobeagle.bcaching.communication;
 
-import com.google.code.geobeagle.bcaching.BCachingModule;
+import com.google.code.geobeagle.activity.preferences.Preferences;
 import com.google.inject.Inject;
 
 import android.content.SharedPreferences;
@@ -93,8 +93,8 @@ public class BCachingCommunication {
 
         @Inject
         public BCachingCredentials(SharedPreferences sharedPreferences) {
-            password = sharedPreferences.getString(BCachingModule.BCACHING_PASSWORD, "");
-            username = sharedPreferences.getString(BCachingModule.BCACHING_USERNAME, "");
+            password = sharedPreferences.getString(Preferences.BCACHING_PASSWORD, "");
+            username = sharedPreferences.getString(Preferences.BCACHING_USERNAME, "");
         }
     }
 

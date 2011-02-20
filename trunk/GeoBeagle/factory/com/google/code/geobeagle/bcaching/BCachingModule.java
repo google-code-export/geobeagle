@@ -27,11 +27,7 @@ import android.os.PowerManager.WakeLock;
 
 public class BCachingModule extends AbstractAndroidModule {
 
-    public static final String BCACHING_USERNAME = "bcaching-username";
-    public static final String BCACHING_PASSWORD = "bcaching-password";
     public static final String BCACHING_INITIAL_MESSAGE = "Getting cache count...";
-    public static final String BCACHING_ENABLED = "bcaching-enabled";
-
     @Provides
     WakeLock wakeLockProvider(PowerManager powerManager) {
         return powerManager.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, "Importing");

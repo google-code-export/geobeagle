@@ -19,7 +19,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import com.google.code.geobeagle.preferences.PreferencesUpgrader;
+import com.google.code.geobeagle.activity.preferences.Preferences;
 import com.google.code.geobeagle.xmlimport.GeoBeagleEnvironment;
 import com.google.code.geobeagle.xmlimport.ImportException;
 import com.google.code.geobeagle.xmlimport.gpx.GpxAndZipFiles.GpxAndZipFilenameFilter;
@@ -57,7 +57,7 @@ public class GpxAndZipFilesTest {
         GeoBeagleEnvironment geobeagleEnvironment = PowerMock
                 .createMock(GeoBeagleEnvironment.class);
 
-        EasyMock.expect(sharedPreferences.getBoolean(PreferencesUpgrader.SDCARD_ENABLED, true))
+        EasyMock.expect(sharedPreferences.getBoolean(Preferences.SDCARD_ENABLED, true))
                 .andReturn(true);
         EasyMock.expect(geobeagleEnvironment.getImportFolder()).andReturn("/sdcard/downloads");
         PowerMock.expectNew(File.class, "/sdcard/downloads").andReturn(file);
@@ -86,7 +86,7 @@ public class GpxAndZipFilesTest {
         GeoBeagleEnvironment geobeagleEnvironment = PowerMock
                 .createMock(GeoBeagleEnvironment.class);
 
-        EasyMock.expect(sharedPreferences.getBoolean(PreferencesUpgrader.SDCARD_ENABLED, true))
+        EasyMock.expect(sharedPreferences.getBoolean(Preferences.SDCARD_ENABLED, true))
                 .andReturn(true);
         EasyMock.expect(geobeagleEnvironment.getImportFolder()).andReturn("/sdcard/downloads");
         PowerMock.expectNew(File.class, "/sdcard/downloads").andReturn(file);

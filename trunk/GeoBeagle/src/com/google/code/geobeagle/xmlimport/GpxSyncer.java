@@ -16,8 +16,8 @@ package com.google.code.geobeagle.xmlimport;
 
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh.UpdateFlag;
+import com.google.code.geobeagle.activity.preferences.Preferences;
 import com.google.code.geobeagle.cachedetails.FileDataVersionWriter;
-import com.google.code.geobeagle.preferences.PreferencesUpgrader;
 import com.google.code.geobeagle.xmlimport.GpxToCache.CancelException;
 import com.google.code.geobeagle.xmlimport.gpx.GpxAndZipFiles;
 import com.google.code.geobeagle.xmlimport.gpx.GpxAndZipFiles.GpxFilesAndZipFilesIter;
@@ -64,7 +64,7 @@ public class GpxSyncer {
             ImportException, CancelException {
         try {
             updateFlag.setUpdatesEnabled(false);
-            if (!sharedPreferences.getBoolean(PreferencesUpgrader.SDCARD_ENABLED, true))
+            if (!sharedPreferences.getBoolean(Preferences.SDCARD_ENABLED, true))
                 return;
 
             GpxFilesAndZipFilesIter gpxFilesAndZipFilesIter = startImport();
