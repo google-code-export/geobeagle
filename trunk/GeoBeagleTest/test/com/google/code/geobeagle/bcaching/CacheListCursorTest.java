@@ -72,7 +72,7 @@ public class CacheListCursorTest extends GeoBeagleTest {
         bcachingListImporter.setStartTime("900");
         expect(bcachingListImporter.getTotalCount()).andReturn(128);
         syncCollectingParameter.Log(R.string.sync_message_bcaching_start);
-        syncCollectingParameter.Log(R.string.sync_message_bcaching_last_sync, "Dec-31 16:00");
+        syncCollectingParameter.NestedLog(R.string.sync_message_bcaching_last_sync, "12-31 16:00");
         progressManager.update(progressHandler, ProgressMessage.SET_MAX, 128);
         lastReadPosition.load();
         expect(lastReadPosition.get()).andReturn(25);
@@ -88,10 +88,10 @@ public class CacheListCursorTest extends GeoBeagleTest {
     public void testOpenNoCaches() throws BCachingException {
         expect(bcachingStartTime.getLastUpdateTime()).andReturn(900L);
         syncCollectingParameter.Log(R.string.sync_message_bcaching_start);
-        syncCollectingParameter.Log(R.string.sync_message_bcaching_last_sync, "Dec-31 16:00");
+        syncCollectingParameter.NestedLog(R.string.sync_message_bcaching_last_sync, "12-31 16:00");
         bcachingListImporter.setStartTime("900");
         expect(bcachingListImporter.getTotalCount()).andReturn(0);
-        syncCollectingParameter.Log(R.string.sync_message_bcaching_synced_caches, 0);
+        syncCollectingParameter.NestedLog(R.string.sync_message_bcaching_synced_caches, 0);
 
         replayAll();
         assertFalse(new CacheListCursor(bcachingStartTime, progressManager, progressHandler,
