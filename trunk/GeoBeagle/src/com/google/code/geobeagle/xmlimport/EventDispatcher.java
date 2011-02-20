@@ -116,7 +116,7 @@ public class EventDispatcher {
     }
 
     public void setInput(Reader reader) throws XmlPullParserException {
-        this.xmlPullParser = xmlPullParserProvider.get();
+        xmlPullParser = xmlPullParserProvider.get();
         xmlPullParser.setInput(reader);
     }
 
