@@ -21,7 +21,6 @@ import static org.powermock.api.easymock.PowerMock.verifyAll;
 
 import com.google.code.geobeagle.activity.cachelist.GeoBeagleTest;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionSyncGpx;
-import com.google.code.geobeagle.bcaching.ImportBCachingWorker;
 import com.google.code.geobeagle.xmlimport.CacheSyncer;
 import com.google.inject.Provider;
 
@@ -32,27 +31,22 @@ import org.powermock.modules.junit4.PowerMockRunner;
 
 @RunWith(PowerMockRunner.class)
 public class MenuActionSyncGpxTest extends GeoBeagleTest {
-    private Provider<ImportBCachingWorker> importBCachingWorkerProvider;
-    private Provider<CacheSyncer> gpxImporterProvider;
-    private CacheSyncer gpxImporter;
-    private ImportBCachingWorker importBCachingWorker;
+    private Provider<CacheSyncer> cacheSyncerProvider;
+    private CacheSyncer cacheSyncer;
     private MenuActionSyncGpx menuActionSyncGpx;
 
     @Before
     @SuppressWarnings("unchecked")
     public void setUp() {
-        importBCachingWorkerProvider = createMock(Provider.class);
-        gpxImporterProvider = createMock(Provider.class);
-        gpxImporter = createMock(CacheSyncer.class);
-        importBCachingWorker = createMock(ImportBCachingWorker.class);
-        menuActionSyncGpx = new MenuActionSyncGpx(gpxImporterProvider);
+        cacheSyncerProvider = createMock(Provider.class);
+        cacheSyncer = createMock(CacheSyncer.class);
+        menuActionSyncGpx = new MenuActionSyncGpx(cacheSyncerProvider);
     }
 
     @Test
     public void testAct() {
-        expect(importBCachingWorkerProvider.get()).andReturn(importBCachingWorker);
-        expect(gpxImporterProvider.get()).andReturn(gpxImporter);
-        gpxImporter.syncGpxs();
+        expect(cacheSyncerProvider.get()).andReturn(cacheSyncer);
+        cacheSyncer.syncGpxs();
 
         replayAll();
         menuActionSyncGpx.act();
@@ -61,10 +55,9 @@ public class MenuActionSyncGpxTest extends GeoBeagleTest {
 
     @Test
     public void testAbort() {
-        expect(gpxImporterProvider.get()).andReturn(gpxImporter);
-        gpxImporter.syncGpxs();
-        expect(importBCachingWorkerProvider.get()).andReturn(importBCachingWorker).anyTimes();
-        gpxImporter.abort();
+        expect(cacheSyncerProvider.get()).andReturn(cacheSyncer);
+        cacheSyncer.syncGpxs();
+        cacheSyncer.abort();
 
         replayAll();
         menuActionSyncGpx.act();
