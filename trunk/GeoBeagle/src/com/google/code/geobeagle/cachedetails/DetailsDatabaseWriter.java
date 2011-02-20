@@ -28,20 +28,21 @@ public class DetailsDatabaseWriter {
     private SQLiteDatabase sdDatabase;
     private String cacheId;
     private final SdDatabaseOpener sdDatabaseOpener;
+    private final ContentValues contentValues;
 
     @Inject
     DetailsDatabaseWriter(SdDatabaseOpener sdDatabaseOpener) {
         this.sdDatabaseOpener = sdDatabaseOpener;
         stringBuffer = new StringBuffer();
+        contentValues = new ContentValues();
     }
 
     public void close() {
-        ContentValues contentValues = new ContentValues();
         contentValues.put("Details", stringBuffer.toString());
         contentValues.put("CacheId", cacheId);
         sdDatabase.replace("Details", "Details", contentValues);
         stringBuffer.setLength(0);
-        this.cacheId = null;
+        cacheId = null;
     }
 
     public void deleteAll() {
