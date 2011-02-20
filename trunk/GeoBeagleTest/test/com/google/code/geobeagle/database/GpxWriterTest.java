@@ -57,6 +57,7 @@ public class GpxWriterTest extends GeoBeagleTest {
 
     @Test
     public void testEmpty() {
+        syncCollectingParameter.Log("  initial sync");
         expect(sqliteProvider.get()).andReturn(sqlite);
         expect(
                 sqlite.rawQuery(EasyMock.eq(Database.SQL_GET_EXPORT_TIME),
@@ -72,6 +73,8 @@ public class GpxWriterTest extends GeoBeagleTest {
 
     @Test
     public void testOld() {
+        syncCollectingParameter.Log("  no changes since 05-01 12:30");
+
         expect(sqliteProvider.get()).andReturn(sqlite);
         expect(
                 sqlite.rawQuery(EasyMock.eq(Database.SQL_GET_EXPORT_TIME),
@@ -85,6 +88,7 @@ public class GpxWriterTest extends GeoBeagleTest {
 
     @Test
     public void testIdentical() {
+        syncCollectingParameter.Log("  no changes since 05-01 12:30");
         expect(sqliteProvider.get()).andReturn(sqlite);
         expect(
                 sqlite.rawQuery(EasyMock.eq(Database.SQL_GET_EXPORT_TIME),
@@ -112,6 +116,7 @@ public class GpxWriterTest extends GeoBeagleTest {
 
     @Test
     public void testUpdateNeeded() {
+        syncCollectingParameter.Log("04-19 12:30 --> 04-30 12:30");
         expect(sqliteProvider.get()).andReturn(sqlite);
         expect(
                 sqlite.rawQuery(EasyMock.eq(Database.SQL_GET_EXPORT_TIME),
