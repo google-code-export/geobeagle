@@ -11,6 +11,7 @@
  ** See the License for the specific language governing permissions and
  ** limitations under the License.
  */
+
 package com.google.code.geobeagle.cachedetails;
 
 import com.google.code.geobeagle.R;
@@ -48,7 +49,8 @@ class SdDatabaseOpener {
         int oldVersion = sqliteDatabase.getVersion();
         Log.d("GeoBeagle", "SDDatabase verson: " + oldVersion);
         if (oldVersion < DATABASE_VERSION) {
-            showToastOnUiThread.showToast(R.string.upgrading_database, Toast.LENGTH_LONG);
+            if (oldVersion > 0)
+                showToastOnUiThread.showToast(R.string.upgrading_database, Toast.LENGTH_LONG);
             if (oldVersion < 6) {
                 sqliteDatabase.execSQL("DROP TABLE IF EXISTS DETAILS");
             }
