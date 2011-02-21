@@ -18,11 +18,11 @@ import android.view.View;
 import android.view.View.OnClickListener;
 
 public class LogFindClickListener implements OnClickListener {
-    private final GeoBeagle mGeoBeagle;
+    private final CompassActivity mGeoBeagle;
     private final int mIdDialog;
 
-    LogFindClickListener(GeoBeagle geoBeagle, int idDialog) {
-        mGeoBeagle = geoBeagle;
+    LogFindClickListener(CompassActivity compassActivity, int idDialog) {
+        mGeoBeagle = compassActivity;
         mIdDialog = idDialog;
     }
 

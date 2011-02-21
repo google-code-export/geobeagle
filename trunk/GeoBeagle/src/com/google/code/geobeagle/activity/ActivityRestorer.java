@@ -17,7 +17,7 @@ package com.google.code.geobeagle.activity;
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.activity.cachelist.CacheListActivity;
 import com.google.code.geobeagle.activity.cachelist.GeocacheListController;
-import com.google.code.geobeagle.activity.main.GeoBeagle;
+import com.google.code.geobeagle.activity.main.CompassActivity;
 import com.google.code.geobeagle.activity.main.GeocacheFromPreferencesFactory;
 import com.google.inject.Inject;
 
@@ -68,7 +68,7 @@ public class ActivityRestorer {
         @Override
         public void restore() {
             final Geocache geocache = mGeocacheFromPreferencesFactory.create(mSharedPreferences);
-            final Intent intent = new Intent(mActivity, GeoBeagle.class);
+            final Intent intent = new Intent(mActivity, CompassActivity.class);
             intent.putExtra("geocache", geocache).setAction(GeocacheListController.SELECT_CACHE);
             mActivity.startActivity(intent);
         }

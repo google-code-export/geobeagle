@@ -16,7 +16,7 @@ package com.google.code.geobeagle.activity.main.intents;
 
 import com.google.code.geobeagle.ErrorDisplayer;
 import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.activity.main.GeoBeagle;
+import com.google.code.geobeagle.activity.main.CompassActivity;
 import com.google.code.geobeagle.cacheloader.CacheLoaderException;
 import com.google.inject.Inject;
 
@@ -26,14 +26,14 @@ import android.content.Intent;
 import android.net.Uri;
 
 public class IntentStarterViewUri implements IntentStarter {
-    private final GeoBeagle mGeoBeagle;
+    private final CompassActivity mGeoBeagle;
     private final GeocacheToUri mGeocacheToUri;
     private final ErrorDisplayer mErrorDisplayer;
 
     @Inject
     public IntentStarterViewUri(Activity geoBeagle, GeocacheToUri geocacheToUri,
             ErrorDisplayer errorDisplayer) {
-        mGeoBeagle = (GeoBeagle)geoBeagle;
+        mGeoBeagle = (CompassActivity)geoBeagle;
         mGeocacheToUri = geocacheToUri;
         mErrorDisplayer = errorDisplayer;
     }

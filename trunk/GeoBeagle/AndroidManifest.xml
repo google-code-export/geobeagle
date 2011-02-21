@@ -14,7 +14,7 @@
 		android:name=".GeoBeagleApplication" android:debuggable="false">
 		<uses-library android:name="com.google.android.maps" />
 
-		<activity android:name=".activity.main.GeoBeagle"
+		<activity android:name=".activity.main.CompassActivity"
 			android:label="@string/app_name">
 			<intent-filter>
 				<action android:name="android.intent.action.VIEW" />

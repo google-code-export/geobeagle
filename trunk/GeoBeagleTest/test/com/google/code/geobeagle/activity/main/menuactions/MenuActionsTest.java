@@ -21,7 +21,7 @@ import com.google.code.geobeagle.actions.MenuActionSearchOnline;
 import com.google.code.geobeagle.actions.MenuActionSettings;
 import com.google.code.geobeagle.activity.EditCacheActivity;
 import com.google.code.geobeagle.activity.cachelist.CacheListActivity;
-import com.google.code.geobeagle.activity.main.GeoBeagle;
+import com.google.code.geobeagle.activity.main.CompassActivity;
 import com.google.code.geobeagle.activity.preferences.EditPreferences;
 import com.google.code.geobeagle.activity.searchonline.SearchOnlineActivity;
 
@@ -83,7 +83,7 @@ public class MenuActionsTest {
 
     @Test
     public void testMenuActionEditGeocache() throws Exception {
-        GeoBeagle geobeagle = PowerMock.createMock(GeoBeagle.class);
+        CompassActivity geobeagle = PowerMock.createMock(CompassActivity.class);
         Intent intent = PowerMock.createMock(Intent.class);
         Geocache geocache = PowerMock.createMock(Geocache.class);
 
