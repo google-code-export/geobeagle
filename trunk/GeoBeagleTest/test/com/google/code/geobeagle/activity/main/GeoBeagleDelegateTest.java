@@ -129,7 +129,7 @@ public class GeoBeagleDelegateTest extends GeoBeagleTest {
     @Test
     public void onResume() throws Exception {
         AppLifecycleManager appLifecycleManager = PowerMock.createMock(AppLifecycleManager.class);
-        GeoBeagle geobeagle = PowerMock.createMock(GeoBeagle.class);
+        CompassActivity geobeagle = PowerMock.createMock(CompassActivity.class);
         IncomingIntentHandler incomingIntentHandler = PowerMock
                 .createMock(IncomingIntentHandler.class);
         Intent intent = PowerMock.createMock(Intent.class);
@@ -219,20 +219,20 @@ public class GeoBeagleDelegateTest extends GeoBeagleTest {
 
     @Test
     public void testLogFindClickListener() {
-        GeoBeagle geoBeagle = PowerMock.createMock(GeoBeagle.class);
+        CompassActivity compassActivity = PowerMock.createMock(CompassActivity.class);
         View view = PowerMock.createMock(View.class);
 
-        geoBeagle.showDialog(17);
+        compassActivity.showDialog(17);
 
         PowerMock.replayAll();
-        new LogFindClickListener(geoBeagle, 17).onClick(view);
+        new LogFindClickListener(compassActivity, 17).onClick(view);
         PowerMock.verifyAll();
     }
 
     @Test
     public void testOnKeyDown_Camera() throws Exception {
         Intent intent = PowerMock.createMock(Intent.class);
-        GeoBeagle geoBeagle = PowerMock.createMock(GeoBeagle.class);
+        CompassActivity compassActivity = PowerMock.createMock(CompassActivity.class);
         KeyEvent keyEvent = PowerMock.createMock(KeyEvent.class);
         Geocache geocache = PowerMock.createMock(Geocache.class);
         File file = PowerMock.createMock(File.class);
@@ -256,10 +256,10 @@ public class GeoBeagleDelegateTest extends GeoBeagleTest {
         PowerMock.expectNew(File.class, "/sdcard/GeoBeagle_GCABC_2008-09-12_12.32.12.jpg")
                 .andReturn(file);
         EasyMock.expect(Uri.fromFile(file)).andReturn(uri);
-        geoBeagle.startActivityForResult(intent, GeoBeagleDelegate.ACTIVITY_REQUEST_TAKE_PICTURE);
+        compassActivity.startActivityForResult(intent, GeoBeagleDelegate.ACTIVITY_REQUEST_TAKE_PICTURE);
 
         PowerMock.replayAll();
-        final GeoBeagleDelegate geoBeagleDelegate = new GeoBeagleDelegate(null, null, geoBeagle,
+        final GeoBeagleDelegate geoBeagleDelegate = new GeoBeagleDelegate(null, null, compassActivity,
                 null,
                 null, null, null, null, null, null, null, geoBeagleEnvironment, null, null);
         geoBeagleDelegate.setGeocache(geocache);

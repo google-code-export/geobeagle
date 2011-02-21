@@ -14,17 +14,17 @@
 
 package com.google.code.geobeagle.activity.main.intents;
 import com.google.code.geobeagle.Geocache;
-import com.google.code.geobeagle.activity.main.GeoBeagle;
+import com.google.code.geobeagle.activity.main.CompassActivity;
 
 import android.app.Activity;
 import android.content.Intent;
 
 public class IntentStarterGeo implements IntentStarter {
-    private final GeoBeagle mGeoBeagle;
+    private final CompassActivity mGeoBeagle;
     private final Intent mIntent;
 
     public IntentStarterGeo(Activity geoBeagle, Intent intent) {
-        mGeoBeagle = (GeoBeagle)geoBeagle;
+        mGeoBeagle = (CompassActivity)geoBeagle;
         mIntent = intent;
     }
 

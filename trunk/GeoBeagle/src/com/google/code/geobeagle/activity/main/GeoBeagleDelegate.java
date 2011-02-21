@@ -97,7 +97,7 @@ public class GeoBeagleDelegate {
     private final GeocacheViewer mGeocacheViewer;
     private final IncomingIntentHandler mIncomingIntentHandler;
     private final GeoBeagleActivityMenuActions mMenuActions;
-    private final GeoBeagle mParent;
+    private final CompassActivity mParent;
     private final CheckDetailsButton mCheckDetailsButton;
     private final GeoBeagleEnvironment mGeoBeagleEnvironment;
     private final WebPageMenuEnabler mWebPageMenuEnabler;
@@ -118,7 +118,7 @@ public class GeoBeagleDelegate {
             GeoBeagleEnvironment geoBeagleEnvironment,
             LocationSaver locationSaver,
             GeoBeagleSensors geoBeagleSensors) {
-        mParent = (GeoBeagle)parent;
+        mParent = (CompassActivity)parent;
         mActivitySaver = activitySaver;
         mAppLifecycleManager = appLifecycleManager;
         mMenuActions = menuActions;
@@ -136,7 +136,7 @@ public class GeoBeagleDelegate {
 
     @Inject
     public GeoBeagleDelegate(Injector injector) {
-        mParent = (GeoBeagle)injector.getInstance(Activity.class);
+        mParent = (CompassActivity)injector.getInstance(Activity.class);
         mActivitySaver = injector.getInstance(ActivitySaver.class);
         mAppLifecycleManager = injector.getInstance(AppLifecycleManager.class);
         mMenuActions = injector.getInstance(GeoBeagleActivityMenuActions.class);

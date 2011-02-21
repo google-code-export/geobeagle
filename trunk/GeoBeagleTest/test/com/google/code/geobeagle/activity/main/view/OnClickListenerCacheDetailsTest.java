@@ -22,7 +22,7 @@ import static org.powermock.api.easymock.PowerMock.verifyAll;
 
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.activity.details.DetailsActivity;
-import com.google.code.geobeagle.activity.main.GeoBeagle;
+import com.google.code.geobeagle.activity.main.CompassActivity;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -39,7 +39,7 @@ public class OnClickListenerCacheDetailsTest {
 
     @Test
     public void testOnClick() throws Exception {
-        GeoBeagle geobeagle = createMock(GeoBeagle.class);
+        CompassActivity geobeagle = createMock(CompassActivity.class);
         Intent intent = createMock(Intent.class);
         Geocache geocache = createMock(Geocache.class);
 

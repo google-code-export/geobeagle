@@ -19,7 +19,7 @@ import com.google.android.maps.MapView;
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.cachelist.GeocacheListController;
-import com.google.code.geobeagle.activity.main.GeoBeagle;
+import com.google.code.geobeagle.activity.main.CompassActivity;
 
 import android.content.Context;
 import android.content.Intent;
@@ -56,7 +56,7 @@ public class CachePinsOverlay extends ItemizedOverlay<CacheItem> {
         if (geocache == null)
             return false;
 
-        final Intent intent = new Intent(mContext, GeoBeagle.class);
+        final Intent intent = new Intent(mContext, CompassActivity.class);
         intent.setAction(GeocacheListController.SELECT_CACHE);
         intent.putExtra("geocache", geocache);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

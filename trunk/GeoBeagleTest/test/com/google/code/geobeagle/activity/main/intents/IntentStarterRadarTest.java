@@ -17,7 +17,7 @@ package com.google.code.geobeagle.activity.main.intents;
 import static org.easymock.EasyMock.expect;
 
 import com.google.code.geobeagle.Geocache;
-import com.google.code.geobeagle.activity.main.GeoBeagle;
+import com.google.code.geobeagle.activity.main.CompassActivity;
 import com.google.code.geobeagle.activity.main.intents.IntentStarterGeo;
 
 import org.junit.Test;
@@ -37,18 +37,18 @@ public class IntentStarterRadarTest {
     @Test
     public void testStartIntent() throws Exception {
         Intent intent = PowerMock.createMock(Intent.class);
-        GeoBeagle geoBeagle = PowerMock.createMock(GeoBeagle.class);
+        CompassActivity compassActivity = PowerMock.createMock(CompassActivity.class);
         Geocache geocache = PowerMock.createMock(Geocache.class);
 
-        expect(geoBeagle.getGeocache()).andReturn(geocache);
+        expect(compassActivity.getGeocache()).andReturn(geocache);
         expect(geocache.getLatitude()).andReturn(37.175d);
         expect(intent.putExtra("latitude", 37.175f)).andReturn(intent);
         expect(geocache.getLongitude()).andReturn(122.8375d);
         expect(intent.putExtra("longitude", 122.8375f)).andReturn(intent);
-        geoBeagle.startActivity(intent);
+        compassActivity.startActivity(intent);
 
         PowerMock.replayAll();
-        new IntentStarterGeo(geoBeagle, intent).startIntent();
+        new IntentStarterGeo(compassActivity, intent).startIntent();
         PowerMock.verifyAll();
     }
 }

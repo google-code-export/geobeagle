@@ -54,10 +54,7 @@ import android.widget.EditText;
 import java.text.DateFormat;
 import java.util.Date;
 
-/*
- * Main Activity for GeoBeagle.
- */
-public class GeoBeagle extends GuiceActivity {
+public class CompassActivity extends GuiceActivity {
     private GeoBeagleDelegate mGeoBeagleDelegate;
     private static final DateFormat mLocalDateFormat = DateFormat
             .getTimeInstance(DateFormat.MEDIUM);

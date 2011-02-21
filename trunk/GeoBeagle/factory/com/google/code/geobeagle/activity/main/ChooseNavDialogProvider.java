@@ -35,7 +35,7 @@ import android.content.res.Resources;
 
 public class ChooseNavDialogProvider implements Provider<ChooseNavDialog> {
     private final ErrorDisplayer errorDisplayer;
-    private final GeoBeagle geoBeagle;
+    private final CompassActivity compassActivity;
     private final Provider<Resources> resourcesProvider;
     private final Provider<Context> contextProvider;
     private final Provider<InstallRadarAppDialog> installRadarAppDialogProvider;
@@ -43,7 +43,7 @@ public class ChooseNavDialogProvider implements Provider<ChooseNavDialog> {
     @Inject
     public ChooseNavDialogProvider(Injector injector) {
         errorDisplayer = injector.getInstance(ErrorDisplayer.class);
-        geoBeagle = (GeoBeagle)injector.getInstance(Activity.class);
+        compassActivity = (CompassActivity)injector.getInstance(Activity.class);
         resourcesProvider = injector.getProvider(Resources.class);
         contextProvider = injector.getProvider(Context.class);
         installRadarAppDialogProvider = injector.getProvider(InstallRadarAppDialog.class);
@@ -57,11 +57,11 @@ public class ChooseNavDialogProvider implements Provider<ChooseNavDialog> {
         final GeocacheToGoogleGeo geocacheToNavigate = new GeocacheToGoogleGeo(resourcesProvider,
                 R.string.navigate_intent);
 
-        final IntentStarterGeo intentStarterRadar = new IntentStarterGeo(geoBeagle, new Intent(
+        final IntentStarterGeo intentStarterRadar = new IntentStarterGeo(compassActivity, new Intent(
                 "com.google.android.radar.SHOW_RADAR"));
-        final IntentStarterViewUri intentStarterGoogleMaps = new IntentStarterViewUri(geoBeagle,
+        final IntentStarterViewUri intentStarterGoogleMaps = new IntentStarterViewUri(compassActivity,
                 geocacheToGoogleMaps, errorDisplayer);
-        final IntentStarterViewUri intentStarterNavigate = new IntentStarterViewUri(geoBeagle,
+        final IntentStarterViewUri intentStarterNavigate = new IntentStarterViewUri(compassActivity,
                 geocacheToNavigate, errorDisplayer);
         final IntentStarter[] intentStarters = {
                 intentStarterRadar, intentStarterGoogleMaps, intentStarterNavigate
