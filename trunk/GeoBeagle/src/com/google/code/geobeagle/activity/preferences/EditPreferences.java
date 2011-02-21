@@ -58,6 +58,7 @@ public class EditPreferences extends GuicePreferenceActivity {
 
         addPreferencesFromResource(R.xml.preferences);
         Preference showFoundCachesPreference = findPreference(Preferences.SHOW_FOUND_CACHES);
+        Preference showDnfCachesPreference = findPreference(Preferences.SHOW_DNF_CACHES);
         Preference showUnavailableCachesPreference = findPreference(Preferences.SHOW_UNAVAILABLE_CACHES);
         Preference showWaypointsPreference = findPreference(Preferences.SHOW_WAYPOINTS);
 
@@ -66,6 +67,7 @@ public class EditPreferences extends GuicePreferenceActivity {
                 SyncPreferencesChangeListener.class);
         showWaypointsPreference.setOnPreferenceChangeListener(onPreferenceChangeListener);
         showFoundCachesPreference.setOnPreferenceChangeListener(onPreferenceChangeListener);
+        showDnfCachesPreference.setOnPreferenceChangeListener(onPreferenceChangeListener);
         showUnavailableCachesPreference.setOnPreferenceChangeListener(onPreferenceChangeListener);
 
         Preference sdCardEnabledPreference = findPreference(Preferences.SDCARD_ENABLED);

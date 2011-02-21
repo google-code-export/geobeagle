@@ -43,10 +43,13 @@ public class CacheWriterTest extends GeoBeagleTest {
 
     private static final String INSERT_INTO_CACHES = "INSERT INTO CACHES (Id, Description, Source, DeleteMe) ";
     private static final String INSERT_INTO_GPX = "INSERT INTO GPX (Name, ExportTime, DeleteMe) ";
-    private SQLiteWrapper sqlite;
+    private ISQLiteDatabase sqlite;
     private SyncCollectingParameter syncCollectingParameter;
     private Provider<ISQLiteDatabase> sqliteProvider;
     private Cursor cursor;
+    private DesktopSQLiteDatabase db;
+    private DbToGeocacheAdapter dbToGeocacheAdapter;
+    private Filter filter;
 
     @SuppressWarnings("unchecked")
     @Before
@@ -55,15 +58,14 @@ public class CacheWriterTest extends GeoBeagleTest {
         sqlite = createMock(SQLiteWrapper.class);
         syncCollectingParameter = createMock(SyncCollectingParameter.class);
         sqliteProvider = createMock(Provider.class);
+        db = new DesktopSQLiteDatabase();
+        dbToGeocacheAdapter = createMock(DbToGeocacheAdapter.class);
+        filter = createMock(Filter.class);
     }
 
-    @SuppressWarnings("unchecked")
     @Test
     public void testClearEarlierLoads() {
-        DesktopSQLiteDatabase db = new DesktopSQLiteDatabase();
-        db.execSQL(DatabaseTest.currentSchema()); // andpe: Error
-                                                  // "table CACHES already exists"
-        Provider<ISQLiteDatabase> sqliteProvider = createMock(Provider.class);
+        db.execSQL(DatabaseTest.currentSchema());
         expect(sqliteProvider.get()).andReturn(db);
 
         db.execSQL(INSERT_INTO_CACHES + "VALUES ('GCTHISIMPORT', 'just loaded', 'foo.gpx', 0)");
@@ -82,11 +84,8 @@ public class CacheWriterTest extends GeoBeagleTest {
         assertEquals("keep.gpx|2009-04-30|1\n", db.dumpTable("GPX"));
     }
 
-    @SuppressWarnings("unchecked")
     @Test
     public void testDeleteCache() {
-        SQLiteWrapper sqlite = createMock(SQLiteWrapper.class);
-        Provider<ISQLiteDatabase> sqliteProvider = createMock(Provider.class);
         expect(sqliteProvider.get()).andReturn(sqlite);
 
         sqlite.execSQL(Database.SQL_DELETE_CACHE, "GC123");
@@ -97,14 +96,9 @@ public class CacheWriterTest extends GeoBeagleTest {
         verifyAll();
     }
 
-    @SuppressWarnings("unchecked")
     @Test
     public void testInsertAndUpdate() {
-        DbToGeocacheAdapter dbToGeocacheAdapter = createMock(DbToGeocacheAdapter.class);
-        SQLiteWrapper sqlite = createMock(SQLiteWrapper.class);
-        Provider<ISQLiteDatabase> sqliteProvider = createMock(Provider.class);
-        Filter filter = createMock(Filter.class);
-
+        expect(filter.showBasedOnDnfState("gc123")).andReturn(true);
         expect(filter.showBasedOnFoundState(true)).andReturn(true);
         expect(filter.showBasedOnAvailableState(false)).andReturn(true);
         expect(filter.showBasedOnCacheType(CacheType.NULL)).andReturn(true);
@@ -171,11 +165,8 @@ public class CacheWriterTest extends GeoBeagleTest {
         verifyAll();
     }
 
-    @SuppressWarnings("unchecked")
     @Test
     public void testStartWriting() {
-        SQLiteWrapper sqlite = createMock(SQLiteWrapper.class);
-        Provider<ISQLiteDatabase> sqliteProvider = createMock(Provider.class);
         expect(sqliteProvider.get()).andReturn(sqlite);
         sqlite.beginTransaction();
 
@@ -184,11 +175,8 @@ public class CacheWriterTest extends GeoBeagleTest {
         verifyAll();
     }
 
-    @SuppressWarnings("unchecked")
     @Test
     public void testStopWriting() {
-        Provider<ISQLiteDatabase> sqliteProvider = createMock(Provider.class);
-        ISQLiteDatabase sqlite = createMock(ISQLiteDatabase.class);
         expect(sqliteProvider.get()).andReturn(sqlite);
         sqlite.setTransactionSuccessful();
         sqlite.endTransaction();

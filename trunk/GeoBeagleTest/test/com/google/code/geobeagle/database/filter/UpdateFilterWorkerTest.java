@@ -50,6 +50,7 @@ public class UpdateFilterWorkerTest extends GeoBeagleTest {
         expect(sharedPreferences.getBoolean(Preferences.SHOW_WAYPOINTS, false)).andReturn(true);
         expect(sharedPreferences.getBoolean(Preferences.SHOW_FOUND_CACHES, false)).andReturn(
                 true);
+        expect(sharedPreferences.getBoolean(Preferences.SHOW_DNF_CACHES, true)).andReturn(true);
         expect(sharedPreferences.getBoolean(Preferences.SHOW_UNAVAILABLE_CACHES, false))
                 .andReturn(true);
         updateFilterHandler.endFiltering();
