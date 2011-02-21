@@ -37,6 +37,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.hardware.SensorManager;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -49,24 +50,31 @@ import android.view.MenuItem;
 import java.io.File;
 
 public class GeoBeagleDelegate {
+
     static class GeoBeagleSensors {
         private final SensorManager sensorManager;
         private final RadarView radarView;
         private final SharedPreferences sharedPreferences;
         private final CompassListener compassListener;
         private final ShakeWaker shakeWaker;
+        private final Provider<LocationManager> locationManagerProvider;
+        private final SatelliteCountListener satelliteCountListener;
 
         @Inject
         GeoBeagleSensors(SensorManager sensorManager,
                 RadarView radarView,
                 SharedPreferences sharedPreferences,
                 CompassListener compassListener,
-                ShakeWaker shakeWaker) {
+                ShakeWaker shakeWaker,
+                Provider<LocationManager> locationManagerProvider,
+                SatelliteCountListener satelliteCountListener) {
             this.sensorManager = sensorManager;
             this.radarView = radarView;
             this.sharedPreferences = sharedPreferences;
             this.compassListener = compassListener;
             this.shakeWaker = shakeWaker;
+            this.locationManagerProvider = locationManagerProvider;
+            this.satelliteCountListener = satelliteCountListener;
         }
 
         public void registerSensors() {
@@ -76,14 +84,16 @@ public class GeoBeagleDelegate {
                     SensorManager.SENSOR_DELAY_UI);
             sensorManager.registerListener(compassListener, SensorManager.SENSOR_ORIENTATION,
                     SensorManager.SENSOR_DELAY_UI);
-            shakeWaker.register();
+            locationManagerProvider.get().addGpsStatusListener(satelliteCountListener);
 
+            shakeWaker.register();
         }
 
         public void unregisterSensors() {
             sensorManager.unregisterListener(radarView);
             sensorManager.unregisterListener(compassListener);
             shakeWaker.unregister();
+            locationManagerProvider.get().removeGpsStatusListener(satelliteCountListener);
         }
     }
 
@@ -191,9 +201,6 @@ public class GeoBeagleDelegate {
 
     public void onRestoreInstanceState(Bundle savedInstanceState) {
         mGeocache = mGeocacheFromParcelFactory.createFromBundle(savedInstanceState);
-        // Is this really needed???
-        // mWritableDatabase =
-        // mGeoBeagleSqliteOpenHelper.getWritableSqliteWrapper();
     }
 
     public void onResume() {
