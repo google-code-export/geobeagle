@@ -62,7 +62,7 @@ public class CacheSqlWriter {
             boolean found) {
         boolean visible = filter.showBasedOnFoundState(found)
                 && filter.showBasedOnAvailableState(available)
-                && filter.showBasedOnCacheType(cacheType);
+                && filter.showBasedOnCacheType(cacheType) && filter.showBasedOnDnfState(id);
 
         sqliteProvider.get().execSQL(Database.SQL_REPLACE_CACHE, id, name, new Double(latitude),
                 new Double(longitude),

@@ -16,22 +16,31 @@ package com.google.code.geobeagle.database.filter;
 
 import com.google.code.geobeagle.CacheType;
 import com.google.code.geobeagle.activity.preferences.Preferences;
+import com.google.code.geobeagle.database.Tag;
+import com.google.code.geobeagle.database.TagReader;
 import com.google.inject.Inject;
 
 import android.content.SharedPreferences;
 
 public class Filter {
     private final SharedPreferences sharedPreferences;
+    private final TagReader tagReader;
 
     @Inject
-    public Filter(SharedPreferences sharedPreferences) {
+    public Filter(SharedPreferences sharedPreferences, TagReader tagReader) {
         this.sharedPreferences = sharedPreferences;
+        this.tagReader = tagReader;
     }
 
     public boolean showBasedOnFoundState(boolean found) {
         boolean showFoundCaches = sharedPreferences.getBoolean(Preferences.SHOW_FOUND_CACHES,
                 false);
         return showFoundCaches || !found;
+    }
+
+    public boolean showBasedOnDnfState(CharSequence geocacheId) {
+        boolean showDnfCaches = sharedPreferences.getBoolean(Preferences.SHOW_DNF_CACHES, true);
+        return showDnfCaches || !tagReader.hasTag(geocacheId, Tag.DNF);
     }
 
     public boolean showBasedOnAvailableState(boolean available) {

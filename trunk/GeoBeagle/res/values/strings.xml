@@ -14,7 +14,7 @@
 	<string name="string">%1$s</string>
 	<string name="upgrading_database">Upgrading database...</string>
     <string name="error_loading_url">Error loading url</string>
-    <string name="removing_found_cache_from_cache_list">Removing found cache from cache list view.</string>
+    <string name="removing_found_cache_from_cache_list">Removing found/dnf cache from cache list view.</string>
     <string name="web_page">Web Page</string>
     <string name="problem_importing_from_bcaching">Problem importing from bcaching.com:\n\n%1$s.</string>
     <string name="install_radar_uri">market://search?q=pname:com.eclipsim.gpsstatus2</string>

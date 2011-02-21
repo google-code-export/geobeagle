@@ -50,9 +50,11 @@ public class UpdateFilterWorker extends RoboThread {
             cacheVisibilityStore.hideUnavailableCaches();
         }
 
-        if (!sharedPreferences.getBoolean(Preferences.SHOW_FOUND_CACHES, false)) {
-            updateFilterHandler.setProgressMessage("Filtering found caches");
-            cacheVisibilityStore.hideFoundCaches();
+        boolean showFound = sharedPreferences.getBoolean(Preferences.SHOW_FOUND_CACHES, false);
+        boolean showDnf = sharedPreferences.getBoolean(Preferences.SHOW_DNF_CACHES, true);
+        if (!showFound || !showDnf) {
+            updateFilterHandler.setProgressMessage("Filtering found/dnf caches");
+            cacheVisibilityStore.hideFoundCaches(!showFound, !showDnf);
         }
 
         updateFilterHandler.endFiltering();

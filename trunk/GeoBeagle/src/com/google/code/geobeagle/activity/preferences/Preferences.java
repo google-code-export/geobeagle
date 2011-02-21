@@ -15,13 +15,12 @@
 package com.google.code.geobeagle.activity.preferences;
 
 public class Preferences {
-
     public static final String BCACHING_ENABLED = "bcaching-enabled";
     public static final String BCACHING_PASSWORD = "bcaching-password";
     public static final String BCACHING_USERNAME = "bcaching-username";
+    public static final String SDCARD_ENABLED = "sdcard-enabled";
+    public static final String SHOW_DNF_CACHES = "show-dnf-caches";
     public static final String SHOW_FOUND_CACHES = "show-found-caches";
     public static final String SHOW_UNAVAILABLE_CACHES = "show-unavailable-caches";
     public static final String SHOW_WAYPOINTS = "show-waypoints";
-    public static final String SDCARD_ENABLED = "sdcard-enabled";
-
 }

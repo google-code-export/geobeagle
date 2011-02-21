@@ -45,7 +45,9 @@ public class TagWriter {
         Log.d("GeoBeagle", "TagWriter: " + geocacheId + ", " + tag);
         tagStore.addTag(geocacheId, tag);
 
-        if (interactive && !filter.showBasedOnFoundState(tag == Tag.FOUND)) {
+        if (interactive
+                && (!filter.showBasedOnFoundState(tag == Tag.FOUND) || !filter
+                        .showBasedOnDnfState(geocacheId))) {
             Toast.makeText(context, R.string.removing_found_cache_from_cache_list,
                     Toast.LENGTH_LONG).show();
             tagStore.hideCache(geocacheId);

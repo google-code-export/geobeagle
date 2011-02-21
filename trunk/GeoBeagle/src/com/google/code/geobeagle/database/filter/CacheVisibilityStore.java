@@ -15,6 +15,7 @@
 package com.google.code.geobeagle.database.filter;
 
 import com.google.code.geobeagle.database.DbFrontend;
+import com.google.code.geobeagle.database.Tag;
 import com.google.inject.Inject;
 
 class CacheVisibilityStore {
@@ -41,9 +42,19 @@ class CacheVisibilityStore {
         dbFrontEnd.getDatabase().execSQL("UPDATE CACHES SET Visible = 0 WHERE CacheType >= 20");
     }
 
-    public void hideFoundCaches() {
+    public void hideFoundCaches(boolean hideFound, boolean hideDnf) {
+        String whereString = "";
+        if (hideFound && hideDnf) {
+            whereString = "";
+        } else if (hideFound && !hideDnf) {
+            whereString = "WHERE Id = " + Tag.FOUND.ordinal();
+        } else if (!hideFound && hideDnf) {
+            whereString = "WHERE Id = " + Tag.DNF.ordinal();
+        } else {
+            return;
+        }
         dbFrontEnd.getDatabase().execSQL(
-                "UPDATE CACHES SET Visible = 0 WHERE Id IN "
-                        + "(SELECT Cache FROM TAGS WHERE Id = 0)");
+                "UPDATE CACHES SET Visible = 0 WHERE Id IN " + "(SELECT Cache FROM TAGS "
+                        + whereString + ")");
     }
 }
