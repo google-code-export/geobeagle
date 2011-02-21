@@ -17,7 +17,6 @@
 			<LinearLayout android:orientation="vertical"
 				android:layout_gravity="left" android:layout_width="wrap_content"
 				android:layout_height="wrap_content">
-
 				<TextView android:id="@+id/radar_distance"
 					android:paddingTop="2sp" android:typeface="sans"
 					android:layout_width="wrap_content" android:layout_height="wrap_content"
@@ -33,12 +32,20 @@
 				class="com.google.code.geobeagle.activity.main.RadarView"
 				android:layout_width="220sp" android:layout_gravity="center_horizontal"
 				android:layout_height="220sp" android:layout_weight="1" />
-			<TextView android:id="@+id/radar_bearing" android:typeface="sans"
-				android:layout_width="wrap_content" android:layout_height="wrap_content"
-				android:text="9232" android:paddingRight="5sp"
-				android:textColor="@android:color/primary_text_dark"
-				android:layout_gravity="right" android:textSize="26sp"
-				android:gravity="right" />
+			<LinearLayout android:orientation="vertical"
+				android:layout_gravity="right" android:layout_width="wrap_content"
+				android:layout_height="wrap_content">
+				<TextView android:id="@+id/radar_bearing" android:paddingTop="2sp" android:typeface="sans"
+					android:layout_width="wrap_content" android:layout_height="wrap_content"
+					android:text="9232" android:paddingRight="5sp"
+					android:textColor="@android:color/primary_text_dark"
+					android:textSize="26sp"
+					android:gravity="right" />
+				<TextView android:id="@+id/satellite_count" android:typeface="sans"
+					android:layout_width="wrap_content" android:layout_height="wrap_content"
+					android:text="0 SATs" android:textColor="@android:color/primary_text_dark"
+					android:textSize="15sp" android:layout_gravity="right" android:gravity="right" />
+			</LinearLayout>
 		</FrameLayout>
 
 		<LinearLayout android:orientation="horizontal"

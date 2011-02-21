@@ -53,6 +53,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.hardware.SensorManager;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.net.UrlQuerySanitizer;
 import android.os.Bundle;
@@ -81,7 +82,11 @@ public class GeoBeagleDelegateTest extends GeoBeagleTest {
     private CompassListener compassListener;
     private GeoBeagleEnvironment geoBeagleEnvironment;
     private ShakeWaker shakeWaker;
+    private Provider<LocationManager> locationManagerProvider;
+    private SatelliteCountListener satelliteCountListener;
+    private LocationManager locationManager;
 
+    @SuppressWarnings("unchecked")
     @Before
     public void setUp() {
         geoBeagleSensors = PowerMock.createMock(GeoBeagleSensors.class);
@@ -91,11 +96,16 @@ public class GeoBeagleDelegateTest extends GeoBeagleTest {
         compassListener = PowerMock.createMock(CompassListener.class);
         geoBeagleEnvironment = PowerMock.createMock(GeoBeagleEnvironment.class);
         shakeWaker = PowerMock.createMock(ShakeWaker.class);
+        locationManager = PowerMock.createMock(LocationManager.class);
+        locationManagerProvider = PowerMock.createMock(Provider.class);
+        satelliteCountListener = PowerMock.createMock(SatelliteCountListener.class);
     }
-
 
     @Test
     public void testGeoBeagleSensorsRegisterSensors() {
+        EasyMock.expect(locationManagerProvider.get()).andReturn(locationManager);
+        EasyMock.expect(locationManager.addGpsStatusListener(satelliteCountListener)).andReturn(
+                true);
         radarView.handleUnknownLocation();
         EasyMock.expect(sharedPreferences.getBoolean("imperial", false)).andReturn(true);
         radarView.setUseImperial(true);
@@ -109,7 +119,7 @@ public class GeoBeagleDelegateTest extends GeoBeagleTest {
         PowerMock.replayAll();
 
         new GeoBeagleSensors(sensorManager, radarView, sharedPreferences, compassListener,
-                shakeWaker).registerSensors();
+                shakeWaker, locationManagerProvider, satelliteCountListener).registerSensors();
         PowerMock.verifyAll();
     }
 
@@ -118,10 +128,12 @@ public class GeoBeagleDelegateTest extends GeoBeagleTest {
         sensorManager.unregisterListener(radarView);
         sensorManager.unregisterListener(compassListener);
         shakeWaker.unregister();
+        EasyMock.expect(locationManagerProvider.get()).andReturn(locationManager);
+        locationManager.removeGpsStatusListener(satelliteCountListener);
         PowerMock.replayAll();
 
         new GeoBeagleSensors(sensorManager, radarView, sharedPreferences, compassListener,
-                shakeWaker).unregisterSensors();
+                shakeWaker, locationManagerProvider, satelliteCountListener).unregisterSensors();
         PowerMock.verifyAll();
     }
 
