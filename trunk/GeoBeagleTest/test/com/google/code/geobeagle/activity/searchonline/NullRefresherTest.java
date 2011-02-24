@@ -14,6 +14,8 @@
 
 package com.google.code.geobeagle.activity.searchonline;
 
+import com.google.code.geobeagle.activity.main.NullRefresher;
+
 import org.junit.Test;
 
 public class NullRefresherTest {

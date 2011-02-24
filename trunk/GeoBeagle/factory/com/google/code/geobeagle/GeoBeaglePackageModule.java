@@ -14,7 +14,7 @@
 
 package com.google.code.geobeagle;
 
-import com.google.code.geobeagle.activity.searchonline.NullRefresher;
+import com.google.code.geobeagle.activity.main.NullRefresher;
 import com.google.inject.Provides;
 
 import roboguice.config.AbstractAndroidModule;
