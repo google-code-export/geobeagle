@@ -55,7 +55,7 @@ public class DbFrontend {
 
     public synchronized void closeDatabase() {
         Log.d("GeoBeagleDb", this + ": DbFrontend.closeDatabase() " + mContext);
-        if (mContext == null)
+        if (mContext == null || mSqliteOpenHelper == null)
             return;
         mSqliteOpenHelper.close();
         mDatabase = null;
