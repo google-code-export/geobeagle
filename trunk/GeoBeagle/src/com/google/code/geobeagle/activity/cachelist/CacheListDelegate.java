@@ -81,7 +81,7 @@ public class CacheListDelegate {
         mDbFrontendProvider = dbFrontendProvider;
         mActivityVisible = activityVisible;
     }
-    
+
     @Inject
     public CacheListDelegate(Injector injector) {
         mActivitySaver = injector.getInstance(ActivitySaver.class);
