@@ -36,7 +36,7 @@ public class OnClickListenerIntentStarter implements OnClickListener {
         try {
             mIntentStarter.startIntent();
         } catch (final ActivityNotFoundException e) {
-            mErrorDisplayer.displayError(R.string.error2, e.getMessage());
+            mErrorDisplayer.displayError(R.string.error1, e.getMessage());
         }
     }
 }

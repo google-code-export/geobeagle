@@ -52,7 +52,7 @@ public class CacheButtonOnClickListenerTest {
         EasyMock.expect(activityNotFoundException.fillInStackTrace()).andReturn(
                 activityNotFoundException);
         EasyMock.expect(activityNotFoundException.getMessage()).andReturn("no radar");
-        errorDisplayer.displayError(R.string.error2, "no radar");
+        errorDisplayer.displayError(R.string.error1, "no radar");
 
         PowerMock.replayAll();
         new OnClickListenerIntentStarter(intentStarter, errorDisplayer).onClick(null);
