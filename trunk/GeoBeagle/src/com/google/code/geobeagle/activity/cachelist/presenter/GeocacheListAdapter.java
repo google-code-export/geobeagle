@@ -21,7 +21,6 @@ import com.google.inject.Inject;
 
 import roboguice.inject.ContextScoped;
 
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -33,7 +32,8 @@ public class GeocacheListAdapter extends BaseAdapter {
 
     @Inject
     public GeocacheListAdapter(GeocacheVectors geocacheVectors,
-            GeocacheSummaryRowInflater geocacheSummaryRowInflater, ActivityVisible activityVisible) {
+            GeocacheSummaryRowInflater geocacheSummaryRowInflater,
+            ActivityVisible activityVisible) {
         mGeocacheVectors = geocacheVectors;
         mGeocacheSummaryRowInflater = geocacheSummaryRowInflater;
         mActivityVisible = activityVisible;
@@ -58,7 +58,8 @@ public class GeocacheListAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         View view = mGeocacheSummaryRowInflater.inflate(convertView);
         if (!mActivityVisible.getVisible()) {
-            Log.d("GeoBeagle", "Not visible, punting any real work on getView");
+            // Log.d("GeoBeagle",
+            // "Not visible, punting any real work on getView");
             return view;
         }
         mGeocacheSummaryRowInflater.setData(view, mGeocacheVectors.get(position));
