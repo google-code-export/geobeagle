@@ -49,12 +49,6 @@ public class GeoMapActivity extends GuiceMapActivity {
 
     private FixedMyLocationOverlay mMyLocationOverlay;
 
-    @Override
-    protected boolean isRouteDisplayed() {
-        // This application doesn't use routes
-        return false;
-    }
-
     public MyLocationOverlay getMyLocationOverlay() {
         return mMyLocationOverlay;
     }
@@ -62,9 +56,9 @@ public class GeoMapActivity extends GuiceMapActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
-        // mMapView is built inside setContentView, therefore any objects which                            
-        // depend on mapView must be created after setContentView.  
+
+        // mMapView is built inside setContentView, therefore any objects which
+        // depend on mapView must be created after setContentView.
         setContentView(R.layout.map);
         final Injector injector = getInjector();
 
@@ -77,8 +71,8 @@ public class GeoMapActivity extends GuiceMapActivity {
 
         final Intent intent = getIntent();
         final GeoPoint center = new GeoPoint(
-                (int)(intent.getFloatExtra("latitude", 0) * GeoUtils.MILLION), (int)(intent
-                        .getFloatExtra("longitude", 0) * GeoUtils.MILLION));
+                (int)(intent.getFloatExtra("latitude", 0) * GeoUtils.MILLION),
+                (int)(intent.getFloatExtra("longitude", 0) * GeoUtils.MILLION));
 
         final MapController mapController = mMapView.getController();
         mapController.setCenter(center);
@@ -124,5 +118,11 @@ public class GeoMapActivity extends GuiceMapActivity {
         // Is this necessary? Or should we remove it and make openDatabase
         // private?
         mDbFrontend.openDatabase();
+    }
+
+    @Override
+    protected boolean isRouteDisplayed() {
+        // This application doesn't use routes
+        return false;
     }
 }
