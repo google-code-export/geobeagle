@@ -110,10 +110,6 @@ public class GeocacheListPresenter implements Pausable {
         listView.setOnCreateContextMenuListener(new CacheListOnCreateContextMenuListener(
                 mGeocacheVectors));
         listView.setOnScrollListener(mScrollListener);
-
-        // final List<Sensor> sensorList =
-        // mSensorManager.getSensorList(Sensor.TYPE_ORIENTATION);
-        // mCompassSensor = sensorList.get(0);
     }
 
     @Override
@@ -139,8 +135,6 @@ public class GeocacheListPresenter implements Pausable {
 
         mCombinedLocationManager.addGpsStatusListener(mGpsStatusListener);
 
-        // mSensorManager.registerListener(mCompassListener, mCompassSensor,
-        // SensorManager.SENSOR_DELAY_UI);
         mUpdateGpsWidgetRunnable.run();
         mSensorManagerWrapper.registerListener(mCompassListener, SensorManager.SENSOR_ORIENTATION,
                 SensorManager.SENSOR_DELAY_UI);
