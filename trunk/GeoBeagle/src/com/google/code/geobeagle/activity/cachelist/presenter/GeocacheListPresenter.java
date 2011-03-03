@@ -45,23 +45,23 @@ public class GeocacheListPresenter implements Pausable {
 
     static final int UPDATE_DELAY = 1000;
 
-    private final LocationListener mCombinedLocationListener;
-    private final CombinedLocationManager mCombinedLocationManager;
-    private final Provider<CacheListCompassListener> mCacheListCompassListenerProvider;
-    private final GeocacheListAdapter mGeocacheListAdapter;
-    private final GeocacheVectors mGeocacheVectors;
-    private final InflatedGpsStatusWidget mInflatedGpsStatusWidget;
-    private final ListActivity mListActivity;
-    private final LocationControlBuffered mLocationControlBuffered;
-    private final SensorManagerWrapper mSensorManagerWrapper;
-    private final UpdateGpsWidgetRunnable mUpdateGpsWidgetRunnable;
-    private final CacheListViewScrollListener mScrollListener;
-    private final GpsStatusListener mGpsStatusListener;
-    private final UpdateFilterWorker mUpdateFilterWorker;
-    private final FilterCleanliness mFilterCleanliness;
-    private final ShakeWaker mShakeWaker;
-    private final UpdateFilterMediator mUpdateFilterMediator;
-    private final SearchTarget mSearchTarget;
+    private final LocationListener combinedLocationListener;
+    private final CombinedLocationManager combinedLocationManager;
+    private final Provider<CacheListCompassListener> cacheListCompassListenerProvider;
+    private final GeocacheListAdapter geocacheListAdapter;
+    private final GeocacheVectors geocacheVectors;
+    private final InflatedGpsStatusWidget inflatedGpsStatusWidget;
+    private final ListActivity listActivity;
+    private final LocationControlBuffered locationControlBuffered;
+    private final SensorManagerWrapper sensorManagerWrapper;
+    private final UpdateGpsWidgetRunnable updateGpsWidgetRunnable;
+    private final CacheListViewScrollListener scrollListener;
+    private final GpsStatusListener gpsStatusListener;
+    private final UpdateFilterWorker updateFilterWorker;
+    private final FilterCleanliness filterCleanliness;
+    private final ShakeWaker shakeWaker;
+    private final UpdateFilterMediator updateFilterMediator;
+    private final SearchTarget searchTarget;
 
     @Inject
     public GeocacheListPresenter(CombinedLocationListener combinedLocationListener,
@@ -81,64 +81,64 @@ public class GeocacheListPresenter implements Pausable {
             ShakeWaker shakeWaker,
             UpdateFilterMediator updateFilterMediator,
             SearchTarget searchTarget) {
-        mCombinedLocationListener = combinedLocationListener;
-        mCombinedLocationManager = combinedLocationManager;
-        mCacheListCompassListenerProvider = cacheListCompassListenerProvider;
-        mGeocacheListAdapter = geocacheListAdapter;
-        mGeocacheVectors = geocacheVectors;
-        mInflatedGpsStatusWidget = inflatedGpsStatusWidget;
-        mShakeWaker = shakeWaker;
-        mListActivity = (ListActivity)listActivity;
-        mLocationControlBuffered = locationControlBuffered;
-        mUpdateGpsWidgetRunnable = updateGpsWidgetRunnable;
-        mSensorManagerWrapper = sensorManagerWrapper;
-        mScrollListener = cacheListViewScrollListener;
-        mGpsStatusListener = gpsStatusListener;
-        mUpdateFilterWorker = updateFilterWorker;
-        mFilterCleanliness = filterCleanliness;
-        mUpdateFilterMediator = updateFilterMediator;
-        mSearchTarget = searchTarget;
+        this.combinedLocationListener = combinedLocationListener;
+        this.combinedLocationManager = combinedLocationManager;
+        this.cacheListCompassListenerProvider = cacheListCompassListenerProvider;
+        this.geocacheListAdapter = geocacheListAdapter;
+        this.geocacheVectors = geocacheVectors;
+        this.inflatedGpsStatusWidget = inflatedGpsStatusWidget;
+        this.shakeWaker = shakeWaker;
+        this.listActivity = (ListActivity)listActivity;
+        this.locationControlBuffered = locationControlBuffered;
+        this.updateGpsWidgetRunnable = updateGpsWidgetRunnable;
+        this.sensorManagerWrapper = sensorManagerWrapper;
+        this.scrollListener = cacheListViewScrollListener;
+        this.gpsStatusListener = gpsStatusListener;
+        this.updateFilterWorker = updateFilterWorker;
+        this.filterCleanliness = filterCleanliness;
+        this.updateFilterMediator = updateFilterMediator;
+        this.searchTarget = searchTarget;
     }
 
     public void onCreate() {
-        mListActivity.setContentView(R.layout.cache_list);
-        final ListView listView = mListActivity.getListView();
+        listActivity.setContentView(R.layout.cache_list);
+        final ListView listView = listActivity.getListView();
         NoCachesView noCachesView = (NoCachesView)listView.getEmptyView();
-        noCachesView.setSearchTarget(mSearchTarget);
-        listView.addHeaderView((View)mInflatedGpsStatusWidget.getTag());
-        mListActivity.setListAdapter(mGeocacheListAdapter);
+        noCachesView.setSearchTarget(searchTarget);
+        listView.addHeaderView((View)inflatedGpsStatusWidget.getTag());
+        listActivity.setListAdapter(geocacheListAdapter);
         listView.setOnCreateContextMenuListener(new CacheListOnCreateContextMenuListener(
-                mGeocacheVectors));
-        listView.setOnScrollListener(mScrollListener);
+                geocacheVectors));
+        listView.setOnScrollListener(scrollListener);
     }
 
     @Override
     public void onPause() {
-        mCombinedLocationManager.removeUpdates();
-        mSensorManagerWrapper.unregisterListener();
-        mShakeWaker.unregister();
+        combinedLocationManager.removeUpdates();
+        sensorManagerWrapper.unregisterListener();
+        shakeWaker.unregister();
     }
 
     public void onResume(CacheListRefresh cacheListRefresh) {
-        if (mFilterCleanliness.isDirty()) {
-            mUpdateFilterMediator.startFiltering("Resetting filter");
-            mUpdateFilterWorker.start();
+        if (filterCleanliness.isDirty()) {
+            updateFilterMediator.startFiltering("Resetting filter");
+            updateFilterWorker.start();
         }
 
         final CacheListRefreshLocationListener cacheListRefreshLocationListener = new CacheListRefreshLocationListener(
                 cacheListRefresh);
-        final CacheListCompassListener mCompassListener = mCacheListCompassListenerProvider.get();
-        mCombinedLocationManager.requestLocationUpdates(UPDATE_DELAY, 0, mLocationControlBuffered);
-        mCombinedLocationManager.requestLocationUpdates(UPDATE_DELAY, 0, mCombinedLocationListener);
-        mCombinedLocationManager.requestLocationUpdates(UPDATE_DELAY, 0,
+        final CacheListCompassListener mCompassListener = cacheListCompassListenerProvider.get();
+        combinedLocationManager.requestLocationUpdates(UPDATE_DELAY, 0, locationControlBuffered);
+        combinedLocationManager.requestLocationUpdates(UPDATE_DELAY, 0, combinedLocationListener);
+        combinedLocationManager.requestLocationUpdates(UPDATE_DELAY, 0,
                 cacheListRefreshLocationListener);
 
-        mCombinedLocationManager.addGpsStatusListener(mGpsStatusListener);
+        combinedLocationManager.addGpsStatusListener(gpsStatusListener);
 
-        mUpdateGpsWidgetRunnable.run();
-        mSensorManagerWrapper.registerListener(mCompassListener, SensorManager.SENSOR_ORIENTATION,
+        updateGpsWidgetRunnable.run();
+        sensorManagerWrapper.registerListener(mCompassListener, SensorManager.SENSOR_ORIENTATION,
                 SensorManager.SENSOR_DELAY_UI);
-        mShakeWaker.register();
+        shakeWaker.register();
         Log.d("GeoBeagle", "GeocacheListPresenter onResume done");
     }
 }
