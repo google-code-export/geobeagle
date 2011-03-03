@@ -128,9 +128,9 @@ public class GeocacheListPresenter implements Pausable {
             updateFilterWorker.start();
         }
 
-        final CacheListRefreshLocationListener cacheListRefreshLocationListener = new CacheListRefreshLocationListener(
+        CacheListRefreshLocationListener cacheListRefreshLocationListener = new CacheListRefreshLocationListener(
                 cacheListRefresh);
-        final CacheListCompassListener mCompassListener = cacheListCompassListenerProvider.get();
+        CacheListCompassListener compassListener = cacheListCompassListenerProvider.get();
         combinedLocationManager.requestLocationUpdates(UPDATE_DELAY, 0, locationControlBuffered);
         combinedLocationManager.requestLocationUpdates(UPDATE_DELAY, 0, combinedLocationListener);
         combinedLocationManager.requestLocationUpdates(UPDATE_DELAY, 0,
@@ -139,7 +139,7 @@ public class GeocacheListPresenter implements Pausable {
         combinedLocationManager.addGpsStatusListener(gpsStatusListener);
 
         updateGpsWidgetRunnable.run();
-        sensorManagerWrapper.registerListener(mCompassListener, SensorManager.SENSOR_ORIENTATION,
+        sensorManagerWrapper.registerListener(compassListener, SensorManager.SENSOR_ORIENTATION,
                 SensorManager.SENSOR_DELAY_UI);
         shakeWaker.register();
         Log.d("GeoBeagle", "GeocacheListPresenter onResume done");
