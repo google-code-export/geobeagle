@@ -16,7 +16,6 @@ package com.google.code.geobeagle.activity.cachelist.presenter;
 
 import com.google.code.geobeagle.CacheListCompassListener;
 import com.google.code.geobeagle.LocationControlBuffered;
-import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.cachelist.CacheListViewScrollListener;
 import com.google.code.geobeagle.activity.cachelist.GeocacheListController.CacheListOnCreateContextMenuListener;
 import com.google.code.geobeagle.activity.cachelist.Pausable;
@@ -48,7 +47,6 @@ public class GeocacheListPresenter implements Pausable {
     private final LocationListener combinedLocationListener;
     private final CombinedLocationManager combinedLocationManager;
     private final Provider<CacheListCompassListener> cacheListCompassListenerProvider;
-    private final GeocacheListAdapter geocacheListAdapter;
     private final GeocacheVectors geocacheVectors;
     private final InflatedGpsStatusWidget inflatedGpsStatusWidget;
     private final ListActivity listActivity;
@@ -62,12 +60,13 @@ public class GeocacheListPresenter implements Pausable {
     private final ShakeWaker shakeWaker;
     private final UpdateFilterMediator updateFilterMediator;
     private final SearchTarget searchTarget;
+    private final ListFragtivityOnCreateHandler listFragtivityOnCreateHandler;
 
     @Inject
     public GeocacheListPresenter(CombinedLocationListener combinedLocationListener,
             CombinedLocationManager combinedLocationManager,
+            ListFragtivityOnCreateHandler listFragtivityOnCreateHandler,
             Provider<CacheListCompassListener> cacheListCompassListenerProvider,
-            GeocacheListAdapter geocacheListAdapter,
             GeocacheVectors geocacheVectors,
             InflatedGpsStatusWidget inflatedGpsStatusWidget,
             Activity listActivity,
@@ -84,7 +83,6 @@ public class GeocacheListPresenter implements Pausable {
         this.combinedLocationListener = combinedLocationListener;
         this.combinedLocationManager = combinedLocationManager;
         this.cacheListCompassListenerProvider = cacheListCompassListenerProvider;
-        this.geocacheListAdapter = geocacheListAdapter;
         this.geocacheVectors = geocacheVectors;
         this.inflatedGpsStatusWidget = inflatedGpsStatusWidget;
         this.shakeWaker = shakeWaker;
@@ -98,21 +96,24 @@ public class GeocacheListPresenter implements Pausable {
         this.filterCleanliness = filterCleanliness;
         this.updateFilterMediator = updateFilterMediator;
         this.searchTarget = searchTarget;
+        this.listFragtivityOnCreateHandler = listFragtivityOnCreateHandler;
     }
 
     public void onCreate() {
-        listActivity.setContentView(R.layout.cache_list);
-        setupListView(listActivity.getListView());
-        listActivity.setListAdapter(geocacheListAdapter);
+        listFragtivityOnCreateHandler.onCreateActivity(listActivity, this);
     }
 
-    private void setupListView(ListView listView) {
+    void setupListView(ListView listView) {
         NoCachesView noCachesView = (NoCachesView)listView.getEmptyView();
         noCachesView.setSearchTarget(searchTarget);
         listView.addHeaderView((View)inflatedGpsStatusWidget.getTag());
         listView.setOnCreateContextMenuListener(new CacheListOnCreateContextMenuListener(
                 geocacheVectors));
         listView.setOnScrollListener(scrollListener);
+    }
+
+    public void onCreateFragment(Object listFragment) {
+        listFragtivityOnCreateHandler.onCreateFragment(this, listFragment);
     }
 
     @Override

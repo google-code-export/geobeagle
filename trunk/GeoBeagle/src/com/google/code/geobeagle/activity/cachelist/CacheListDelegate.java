@@ -101,6 +101,10 @@ public class CacheListDelegate {
         mPresenter.onCreate();
     }
 
+    public void onCreateFragment(Object cacheListFragment) {
+        mPresenter.onCreateFragment(cacheListFragment);
+    }
+
     public boolean onCreateOptionsMenu(Menu menu) {
         return mController.onCreateOptionsMenu(menu);
     }

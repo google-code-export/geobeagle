@@ -17,6 +17,9 @@ package com.google.code.geobeagle.activity.cachelist;
 import com.google.code.geobeagle.activity.cachelist.presenter.AbsoluteBearingFormatter;
 import com.google.code.geobeagle.activity.cachelist.presenter.BearingFormatter;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh.ActionManager;
+import com.google.code.geobeagle.activity.cachelist.presenter.ListActivityOnCreateHandler;
+import com.google.code.geobeagle.activity.cachelist.presenter.ListFragmentOnCreateHandler;
+import com.google.code.geobeagle.activity.cachelist.presenter.ListFragtivityOnCreateHandler;
 import com.google.code.geobeagle.activity.cachelist.presenter.RelativeBearingFormatter;
 import com.google.code.geobeagle.formatting.DistanceFormatter;
 import com.google.code.geobeagle.formatting.DistanceFormatterImperial;
@@ -28,6 +31,7 @@ import com.google.inject.Singleton;
 import roboguice.config.AbstractAndroidModule;
 
 import android.content.SharedPreferences;
+import android.os.Build;
 
 public class CacheListModule extends AbstractAndroidModule {
     @Override
@@ -35,6 +39,12 @@ public class CacheListModule extends AbstractAndroidModule {
         bind(ActionManager.class).toProvider(ActionManagerProvider.class).in(Singleton.class);
         bind(DistanceFormatter.class).toProvider(DistanceFormatterProvider.class);
         bind(BearingFormatter.class).toProvider(BearingFormatterProvider.class);
+        int sdkVersion = Integer.parseInt(Build.VERSION.SDK);
+        if (sdkVersion >= Build.VERSION_CODES.HONEYCOMB) {
+            bind(ListFragtivityOnCreateHandler.class).to(ListFragmentOnCreateHandler.class);
+        } else {
+            bind(ListFragtivityOnCreateHandler.class).to(ListActivityOnCreateHandler.class);
+        }
     }
 
     static class DistanceFormatterProvider implements Provider<DistanceFormatter> {

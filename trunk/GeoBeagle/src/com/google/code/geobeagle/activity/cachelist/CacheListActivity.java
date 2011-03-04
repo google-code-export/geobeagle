@@ -41,7 +41,12 @@ import android.view.Window;
 import android.widget.ListView;
 
 public class CacheListActivity extends GuiceListActivity {
+
     private CacheListDelegate mCacheListDelegate;
+
+    public CacheListDelegate getCacheListDelegate() {
+        return mCacheListDelegate;
+    }
 
     @Override
     public boolean onContextItemSelected(MenuItem item) {
@@ -78,8 +83,10 @@ public class CacheListActivity extends GuiceListActivity {
         super.onCreate(savedInstanceState);
         Log.d("GeoBeagle", "CacheListActivity onCreate");
         requestWindowFeature(Window.FEATURE_PROGRESS);
+        Injector injector = this.getInjector();
 
-        final Injector injector = this.getInjector();
+        mCacheListDelegate = injector.getInstance(CacheListDelegate.class);
+        mCacheListDelegate.onCreate();
 
         final InflatedGpsStatusWidget inflatedGpsStatusWidget = injector
                 .getInstance(InflatedGpsStatusWidget.class);
@@ -87,9 +94,6 @@ public class CacheListActivity extends GuiceListActivity {
                 .getInstance(GpsStatusWidgetDelegate.class);
         inflatedGpsStatusWidget.setDelegate(gpsStatusWidgetDelegate);
 
-        mCacheListDelegate = injector.getInstance(CacheListDelegate.class);
-
-        mCacheListDelegate.onCreate();
         Intent intent = getIntent();
 
         if (!Intent.ACTION_SEARCH.equals(intent.getAction())) {
