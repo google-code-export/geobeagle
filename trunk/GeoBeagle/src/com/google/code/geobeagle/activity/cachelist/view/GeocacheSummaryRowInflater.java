@@ -14,15 +14,16 @@
 
 package com.google.code.geobeagle.activity.cachelist.view;
 
-import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.GraphicsGenerator.DifficultyAndTerrainPainter;
 import com.google.code.geobeagle.GraphicsGenerator.IconOverlayFactory;
 import com.google.code.geobeagle.GraphicsGenerator.IconRenderer;
 import com.google.code.geobeagle.GraphicsGenerator.ListViewBitmapCopier;
+import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVector;
 import com.google.code.geobeagle.activity.cachelist.presenter.BearingFormatter;
 import com.google.code.geobeagle.formatting.DistanceFormatter;
 import com.google.inject.Inject;
+import com.google.inject.Injector;
 import com.google.inject.Provider;
 
 import android.view.LayoutInflater;
@@ -40,7 +41,6 @@ public class GeocacheSummaryRowInflater {
     private final NameFormatter mNameFormatter;
     private final DifficultyAndTerrainPainter mDifficultyAndTerrainPainter;
 
-    @Inject
     public GeocacheSummaryRowInflater(LayoutInflater layoutInflater,
             Provider<DistanceFormatter> distanceFormatterProvider,
             Provider<BearingFormatter> bearingFormatterProvider, IconRenderer iconRenderer,
@@ -54,6 +54,18 @@ public class GeocacheSummaryRowInflater {
         mIconOverlayFactory = iconOverlayFactory;
         mNameFormatter = nameFormatter;
         mDifficultyAndTerrainPainter = difficultyAndTerrainPainter;
+    }
+
+    @Inject
+    public GeocacheSummaryRowInflater(Injector injector) {
+        mLayoutInflater = injector.getInstance(LayoutInflater.class);
+        mDistanceFormatterProvider = injector.getProvider(DistanceFormatter.class);
+        mBearingFormatterProvider = injector.getProvider(BearingFormatter.class);
+        mIconRenderer = injector.getInstance(IconRenderer.class);
+        mListViewBitmapCopier = injector.getInstance(ListViewBitmapCopier.class);
+        mIconOverlayFactory = injector.getInstance(IconOverlayFactory.class);
+        mNameFormatter = injector.getInstance(NameFormatter.class);
+        mDifficultyAndTerrainPainter = injector.getInstance(DifficultyAndTerrainPainter.class);
     }
 
     public View inflate(View convertView) {
