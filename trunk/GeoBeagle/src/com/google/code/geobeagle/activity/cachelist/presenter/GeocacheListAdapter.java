@@ -18,6 +18,7 @@ import com.google.code.geobeagle.activity.cachelist.ActivityVisible;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVectors;
 import com.google.code.geobeagle.activity.cachelist.view.GeocacheSummaryRowInflater;
 import com.google.inject.Inject;
+import com.google.inject.Injector;
 
 import roboguice.inject.ContextScoped;
 
@@ -30,13 +31,19 @@ public class GeocacheListAdapter extends BaseAdapter {
     private final GeocacheVectors mGeocacheVectors;
     private final ActivityVisible mActivityVisible;
 
-    @Inject
     public GeocacheListAdapter(GeocacheVectors geocacheVectors,
             GeocacheSummaryRowInflater geocacheSummaryRowInflater,
             ActivityVisible activityVisible) {
         mGeocacheVectors = geocacheVectors;
         mGeocacheSummaryRowInflater = geocacheSummaryRowInflater;
         mActivityVisible = activityVisible;
+    }
+
+    @Inject
+    public GeocacheListAdapter(Injector injector) {
+        mGeocacheVectors = injector.getInstance(GeocacheVectors.class);
+        mGeocacheSummaryRowInflater = injector.getInstance(GeocacheSummaryRowInflater.class);
+        mActivityVisible = injector.getInstance(ActivityVisible.class);
     }
 
     @Override

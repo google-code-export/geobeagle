@@ -30,6 +30,7 @@ import com.google.code.geobeagle.location.CombinedLocationListener;
 import com.google.code.geobeagle.location.CombinedLocationManager;
 import com.google.code.geobeagle.shakewaker.ShakeWaker;
 import com.google.inject.Inject;
+import com.google.inject.Injector;
 import com.google.inject.Provider;
 
 import android.app.Activity;
@@ -62,7 +63,6 @@ public class GeocacheListPresenter implements Pausable {
     private final SearchTarget searchTarget;
     private final ListFragtivityOnCreateHandler listFragtivityOnCreateHandler;
 
-    @Inject
     public GeocacheListPresenter(CombinedLocationListener combinedLocationListener,
             CombinedLocationManager combinedLocationManager,
             ListFragtivityOnCreateHandler listFragtivityOnCreateHandler,
@@ -97,6 +97,29 @@ public class GeocacheListPresenter implements Pausable {
         this.updateFilterMediator = updateFilterMediator;
         this.searchTarget = searchTarget;
         this.listFragtivityOnCreateHandler = listFragtivityOnCreateHandler;
+    }
+
+    @Inject
+    public GeocacheListPresenter(Injector injector) {
+        this.combinedLocationListener = injector.getInstance(CombinedLocationListener.class);
+        this.combinedLocationManager = injector.getInstance(CombinedLocationManager.class);
+        this.cacheListCompassListenerProvider = injector
+                .getProvider(CacheListCompassListener.class);
+        this.geocacheVectors = injector.getInstance(GeocacheVectors.class);
+        this.inflatedGpsStatusWidget = injector.getInstance(InflatedGpsStatusWidget.class);
+        this.shakeWaker = injector.getInstance(ShakeWaker.class);
+        this.listActivity = (ListActivity)injector.getInstance(Activity.class);
+        this.locationControlBuffered = injector.getInstance(LocationControlBuffered.class);
+        this.updateGpsWidgetRunnable = injector.getInstance(UpdateGpsWidgetRunnable.class);
+        this.sensorManagerWrapper = injector.getInstance(SensorManagerWrapper.class);
+        this.scrollListener = injector.getInstance(CacheListViewScrollListener.class);
+        this.gpsStatusListener = injector.getInstance(GpsStatusListener.class);
+        this.updateFilterWorker = injector.getInstance(UpdateFilterWorker.class);
+        this.filterCleanliness = injector.getInstance(FilterCleanliness.class);
+        this.updateFilterMediator = injector.getInstance(UpdateFilterMediator.class);
+        this.searchTarget = injector.getInstance(SearchTarget.class);
+        this.listFragtivityOnCreateHandler = injector
+                .getInstance(ListFragtivityOnCreateHandler.class);
     }
 
     public void onCreate() {
