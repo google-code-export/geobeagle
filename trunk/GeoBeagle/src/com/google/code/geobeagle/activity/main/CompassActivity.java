@@ -55,15 +55,15 @@ import java.text.DateFormat;
 import java.util.Date;
 
 public class CompassActivity extends GuiceActivity {
-    private GeoBeagleDelegate mGeoBeagleDelegate;
+    private GeoBeagleDelegate geoBeagleDelegate;
     private static final DateFormat mLocalDateFormat = DateFormat
             .getTimeInstance(DateFormat.MEDIUM);
 
     @Inject
-    LocationControlBuffered mLocationControlBuffered;
+    LocationControlBuffered locationControlBuffered;
 
     public Geocache getGeocache() {
-        return mGeoBeagleDelegate.getGeocache();
+        return geoBeagleDelegate.getGeocache();
     }
 
     @Override
@@ -82,33 +82,33 @@ public class CompassActivity extends GuiceActivity {
         Log.d("GeoBeagle", "GeoBeagle onCreate");
 
         setContentView(R.layout.main);
-        final Injector injector = getInjector();
+        Injector injector = getInjector();
 
-        final RadarView radarView = injector.getInstance(RadarView.class);
+        RadarView radarView = injector.getInstance(RadarView.class);
 
-        mLocationControlBuffered.onLocationChanged(null);
+        locationControlBuffered.onLocationChanged(null);
 
-        final LocationManager mLocationManager = injector.getInstance(LocationManager.class);
+        LocationManager locationManager = injector.getInstance(LocationManager.class);
 
         // Register for location updates
-        mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 1, radarView);
-        mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 1, radarView);
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 1, radarView);
+        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 1, radarView);
 
-        mGeoBeagleDelegate = injector.getInstance(GeoBeagleDelegate.class);
+        geoBeagleDelegate = injector.getInstance(GeoBeagleDelegate.class);
 
         // see http://www.androidguys.com/2008/11/07/rotational-forces-part-two/
         if (getLastNonConfigurationInstance() != null) {
             setIntent((Intent)getLastNonConfigurationInstance());
         }
-        final ErrorDisplayer errorDisplayer = injector.getInstance(ErrorDisplayer.class);
-        final Intent geoMapActivityIntent = new Intent(this, GeoMapActivity.class);
-        final OnClickListenerIntentStarter onClickListenerMapPage = new OnClickListenerIntentStarter(
+        ErrorDisplayer errorDisplayer = injector.getInstance(ErrorDisplayer.class);
+        Intent geoMapActivityIntent = new Intent(this, GeoMapActivity.class);
+        OnClickListenerIntentStarter onClickListenerMapPage = new OnClickListenerIntentStarter(
                 new IntentStarterGeo(this, geoMapActivityIntent), errorDisplayer);
         findViewById(id.maps).setOnClickListener(onClickListenerMapPage);
 
         findViewById(R.id.cache_details).setOnClickListener(
                 injector.getInstance(OnClickListenerCacheDetails.class));
-        final OnClickListener onClickListenerNavigate = injector
+        OnClickListener onClickListenerNavigate = injector
                 .getInstance(OnClickListenerNavigate.class);
         findViewById(id.navigate).setOnClickListener(onClickListenerNavigate);
 
@@ -124,15 +124,15 @@ public class CompassActivity extends GuiceActivity {
     @Override
     protected Dialog onCreateDialog(int id) {
         super.onCreateDialog(id);
-        final Injector injector = getInjector();
+        Injector injector = getInjector();
 
-        final AlertDialog.Builder builder = injector.getInstance(AlertDialog.Builder.class);
-        final View fieldnoteDialogView = LayoutInflater.from(this)
+        AlertDialog.Builder builder = injector.getInstance(AlertDialog.Builder.class);
+        View fieldnoteDialogView = LayoutInflater.from(this)
                 .inflate(R.layout.fieldnote, null);
 
-        final boolean fDnf = id == R.id.menu_log_dnf;
+        boolean fDnf = id == R.id.menu_log_dnf;
 
-        final OnClickOk onClickOk = injector.getInstance(OnClickOkFactory.class).create(
+        OnClickOk onClickOk = injector.getInstance(OnClickOkFactory.class).create(
                 (EditText)fieldnoteDialogView.findViewById(R.id.fieldnote), fDnf);
         builder.setTitle(R.string.field_note_title);
         builder.setView(fieldnoteDialogView);
@@ -146,13 +146,13 @@ public class CompassActivity extends GuiceActivity {
     @Override
     protected void onPrepareDialog(int id, Dialog dialog) {
         super.onCreateDialog(id);
-        final Injector injector = getInjector();
+        Injector injector = getInjector();
 
-        final boolean fDnf = id == R.id.menu_log_dnf;
+        boolean fDnf = id == R.id.menu_log_dnf;
 
-        final DialogHelperSms dialogHelperSms = injector.getInstance(DialogHelperSmsFactory.class)
-                .create(mGeoBeagleDelegate.getGeocache().getId().length(), fDnf);
-        final FieldnoteLogger fieldnoteLogger = injector.getInstance(FieldnoteLoggerFactory.class)
+        DialogHelperSms dialogHelperSms = injector.getInstance(DialogHelperSmsFactory.class)
+                .create(geoBeagleDelegate.getGeocache().getId().length(), fDnf);
+        FieldnoteLogger fieldnoteLogger = injector.getInstance(FieldnoteLoggerFactory.class)
                 .create(dialogHelperSms);
 
         fieldnoteLogger.onPrepareDialog(dialog, mLocalDateFormat.format(new Date()), fDnf);
@@ -160,31 +160,31 @@ public class CompassActivity extends GuiceActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        return mGeoBeagleDelegate.onCreateOptionsMenu(menu);
+        return geoBeagleDelegate.onCreateOptionsMenu(menu);
     }
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
-        return mGeoBeagleDelegate.onPrepareOptionsMenu(menu);
+        return geoBeagleDelegate.onPrepareOptionsMenu(menu);
     }
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (mGeoBeagleDelegate.onKeyDown(keyCode, event))
+        if (geoBeagleDelegate.onKeyDown(keyCode, event))
             return true;
         return super.onKeyDown(keyCode, event);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        return mGeoBeagleDelegate.onOptionsItemSelected(item);
+        return geoBeagleDelegate.onOptionsItemSelected(item);
     }
 
     @Override
     public void onPause() {
         Log.d("GeoBeagle", "GeoBeagle onPause");
-        mGeoBeagleDelegate.onPause();
+        geoBeagleDelegate.onPause();
         super.onPause();
     }
 
@@ -195,14 +195,14 @@ public class CompassActivity extends GuiceActivity {
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-        mGeoBeagleDelegate.onRestoreInstanceState(savedInstanceState);
+        geoBeagleDelegate.onRestoreInstanceState(savedInstanceState);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         Log.d("GeoBeagle", "GeoBeagle onResume");
-        mGeoBeagleDelegate.onResume();
+        geoBeagleDelegate.onResume();
     }
 
     /*
@@ -221,6 +221,6 @@ public class CompassActivity extends GuiceActivity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        mGeoBeagleDelegate.onSaveInstanceState(outState);
+        geoBeagleDelegate.onSaveInstanceState(outState);
     }
 }
