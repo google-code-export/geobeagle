@@ -62,16 +62,19 @@ public class CacheListDelegate {
     }
 
     private final ActivitySaver activitySaver;
+    private final ActivityVisible activityVisible;
     private final CacheListRefresh cacheListRefresh;
     private final GeocacheListController controller;
     private final Provider<DbFrontend> dbFrontendProvider;
     private final ImportIntentManager importIntentManager;
     private final GeocacheListPresenter presenter;
-    private final ActivityVisible activityVisible;
 
-    public CacheListDelegate(ImportIntentManager importIntentManager, ActivitySaver activitySaver,
-            CacheListRefresh cacheListRefresh, GeocacheListController geocacheListController,
-            GeocacheListPresenter geocacheListPresenter, Provider<DbFrontend> dbFrontendProvider,
+    public CacheListDelegate(ImportIntentManager importIntentManager,
+            ActivitySaver activitySaver,
+            CacheListRefresh cacheListRefresh,
+            GeocacheListController geocacheListController,
+            GeocacheListPresenter geocacheListPresenter,
+            Provider<DbFrontend> dbFrontendProvider,
             ActivityVisible activityVisible) {
         this.activitySaver = activitySaver;
         this.cacheListRefresh = cacheListRefresh;
