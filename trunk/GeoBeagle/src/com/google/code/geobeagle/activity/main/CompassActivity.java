@@ -55,24 +55,15 @@ import java.text.DateFormat;
 import java.util.Date;
 
 public class CompassActivity extends GuiceActivity {
-    private GeoBeagleDelegate geoBeagleDelegate;
     private static final DateFormat mLocalDateFormat = DateFormat
             .getTimeInstance(DateFormat.MEDIUM);
+    private GeoBeagleDelegate geoBeagleDelegate;
 
     @Inject
     LocationControlBuffered locationControlBuffered;
 
     public Geocache getGeocache() {
         return geoBeagleDelegate.getGeocache();
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == GeoBeagleDelegate.ACTIVITY_REQUEST_TAKE_PICTURE) {
-            Log.d("GeoBeagle", "camera intent has returned.");
-        } else if (resultCode == Activity.RESULT_OK)
-            setIntent(data);
     }
 
     @Override
@@ -92,7 +83,8 @@ public class CompassActivity extends GuiceActivity {
 
         // Register for location updates
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 1, radarView);
-        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 1, radarView);
+        locationManager
+                .requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 1, radarView);
 
         geoBeagleDelegate = injector.getInstance(GeoBeagleDelegate.class);
 
@@ -122,13 +114,60 @@ public class CompassActivity extends GuiceActivity {
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        return geoBeagleDelegate.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (geoBeagleDelegate.onKeyDown(keyCode, event))
+            return true;
+        return super.onKeyDown(keyCode, event);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        return geoBeagleDelegate.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onPause() {
+        Log.d("GeoBeagle", "GeoBeagle onPause");
+        geoBeagleDelegate.onPause();
+        super.onPause();
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+        return geoBeagleDelegate.onPrepareOptionsMenu(menu);
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see android.app.Activity#onRetainNonConfigurationInstance()
+     */
+    @Override
+    public Object onRetainNonConfigurationInstance() {
+        return getIntent();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == GeoBeagleDelegate.ACTIVITY_REQUEST_TAKE_PICTURE) {
+            Log.d("GeoBeagle", "camera intent has returned.");
+        } else if (resultCode == Activity.RESULT_OK)
+            setIntent(data);
+    }
+
+    @Override
     protected Dialog onCreateDialog(int id) {
         super.onCreateDialog(id);
         Injector injector = getInjector();
 
         AlertDialog.Builder builder = injector.getInstance(AlertDialog.Builder.class);
-        View fieldnoteDialogView = LayoutInflater.from(this)
-                .inflate(R.layout.fieldnote, null);
+        View fieldnoteDialogView = LayoutInflater.from(this).inflate(R.layout.fieldnote, null);
 
         boolean fDnf = id == R.id.menu_log_dnf;
 
@@ -158,36 +197,6 @@ public class CompassActivity extends GuiceActivity {
         fieldnoteLogger.onPrepareDialog(dialog, mLocalDateFormat.format(new Date()), fDnf);
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        return geoBeagleDelegate.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        super.onPrepareOptionsMenu(menu);
-        return geoBeagleDelegate.onPrepareOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (geoBeagleDelegate.onKeyDown(keyCode, event))
-            return true;
-        return super.onKeyDown(keyCode, event);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        return geoBeagleDelegate.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void onPause() {
-        Log.d("GeoBeagle", "GeoBeagle onPause");
-        geoBeagleDelegate.onPause();
-        super.onPause();
-    }
-
     /*
      * (non-Javadoc)
      * @see android.app.Activity#onRestoreInstanceState(android.os.Bundle)
@@ -203,15 +212,6 @@ public class CompassActivity extends GuiceActivity {
         super.onResume();
         Log.d("GeoBeagle", "GeoBeagle onResume");
         geoBeagleDelegate.onResume();
-    }
-
-    /*
-     * (non-Javadoc)
-     * @see android.app.Activity#onRetainNonConfigurationInstance()
-     */
-    @Override
-    public Object onRetainNonConfigurationInstance() {
-        return getIntent();
     }
 
     /*
