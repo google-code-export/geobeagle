@@ -47,7 +47,7 @@ public class BCachingListImporterStateless {
     private BCachingList importList(String maxCount, String startTime) throws BCachingException {
         params.put("maxcount", maxCount);
         params.put("since", startTime);
-        // params.put("since", "1297015559351");
+//         params.put("since", "1298740607924");
         return bCachingListImportHelper.importList(params);
     }
 

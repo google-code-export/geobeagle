@@ -30,15 +30,12 @@ public class ProgressHandler extends Handler {
     private final CacheListRefresh cacheListRefresher;
     private final ActivityVisible activityVisible;
 
-    // private int progressDebug;
-
     @Inject
     public ProgressHandler(BCachingProgressDialog progressDialog,
             CacheListRefresh cacheListRefresh, ActivityVisible activityVisible) {
         this.progressDialog = progressDialog;
         this.cacheListRefresher = cacheListRefresh;
         this.activityVisible = activityVisible;
-        // this.progressDebug = 0;
     }
 
     public void done() {
@@ -54,9 +51,7 @@ public class ProgressHandler extends Handler {
 
     public void setFile(String filename, int progress) {
         progressDialog.setMessage("Loading: " + filename);
-        progressDialog.incrementProgressBy(progress);
-        // this.progressDebug += progress;
-        // Log.d("GeoBeagle", "progress: " + progressDebug);
+        progressDialog.setProgress(progress);
     }
 
     public void setMax(int max) {

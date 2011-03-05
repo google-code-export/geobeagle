@@ -93,9 +93,10 @@ public class ImportBCachingWorker {
             int cachesRead;
             int totalCachesRead = 0;
             while ((cachesRead = cursor.readCaches()) > 0) {
-                totalCachesRead += cachesRead;
                 cacheImporter.load(cursor.getCacheIds());
                 cursor.increment();
+                totalCachesRead += cachesRead;
+                Log.d("GeoBeagle", "totalCachesRead: " + totalCachesRead);
             }
             syncCollectingParameter.NestedLog(R.string.sync_message_bcaching_synced_caches,
                     totalCachesRead);

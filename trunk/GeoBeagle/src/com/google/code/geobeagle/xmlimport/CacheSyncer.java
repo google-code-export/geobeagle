@@ -57,6 +57,7 @@ public class CacheSyncer {
 
     public void abort() {
         Log.d("GeoBeagle", "CacheSyncer:abort() " + isAlive());
+        //TODO(sng): Why not use AbortState()?
         messageHandler.abortLoad();
         abortState.abort();
         if (isAlive()) {
