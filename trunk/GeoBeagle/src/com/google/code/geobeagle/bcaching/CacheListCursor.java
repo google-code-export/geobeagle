@@ -89,6 +89,7 @@ class CacheListCursor {
         progressManager.update(progressHandler, ProgressMessage.SET_MAX, totalCount);
         lastReadPosition.load();
         int startPosition = lastReadPosition.get();
+        progressManager.setCurrentProgress(startPosition);
         progressManager.update(progressHandler, ProgressMessage.SET_PROGRESS, startPosition);
         return true;
     }
@@ -97,5 +98,4 @@ class CacheListCursor {
         bcachingListImporter.readCacheList(lastReadPosition.get());
         return bcachingListImporter.getCachesRead();
     }
-
 }

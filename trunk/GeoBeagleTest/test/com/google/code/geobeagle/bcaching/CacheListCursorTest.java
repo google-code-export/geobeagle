@@ -76,6 +76,7 @@ public class CacheListCursorTest extends GeoBeagleTest {
         progressManager.update(progressHandler, ProgressMessage.SET_MAX, 128);
         lastReadPosition.load();
         expect(lastReadPosition.get()).andReturn(25);
+        progressManager.setCurrentProgress(25);
         progressManager.update(progressHandler, ProgressMessage.SET_PROGRESS, 25);
 
         replayAll();
