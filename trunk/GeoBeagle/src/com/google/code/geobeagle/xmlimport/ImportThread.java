@@ -23,6 +23,7 @@ import com.google.code.geobeagle.cachedetails.FileDataVersionChecker;
 import com.google.code.geobeagle.database.DbFrontend;
 import com.google.code.geobeagle.xmlimport.GpxToCache.CancelException;
 import com.google.inject.Inject;
+import com.google.inject.Injector;
 import com.google.inject.Provider;
 
 import roboguice.util.RoboThread;
@@ -45,20 +46,14 @@ public class ImportThread extends RoboThread {
         private final SyncCollectingParameter syncCollectingParameter;
 
         @Inject
-        ImportThreadFactory(GpxSyncerFactory gpxSyncerFactory,
-                Provider<ImportBCachingWorker> importBCachingWorkerProvider,
-                ErrorDisplayer errorDisplayer,
-                BCachingStartTime bcachingStartTime,
-                FileDataVersionChecker fileDataVersionChecker,
-                DbFrontend dbFrontend,
-                SyncCollectingParameter syncCollectingParameter) {
-            this.gpxSyncerFactory = gpxSyncerFactory;
-            this.importBCachingWorkerProvider = importBCachingWorkerProvider;
-            this.errorDisplayer = errorDisplayer;
-            this.bcachingStartTime = bcachingStartTime;
-            this.fileDataVersionChecker = fileDataVersionChecker;
-            this.dbFrontend = dbFrontend;
-            this.syncCollectingParameter = syncCollectingParameter;
+        ImportThreadFactory(Injector injector) {
+            this.gpxSyncerFactory = injector.getInstance(GpxSyncerFactory.class);
+            this.importBCachingWorkerProvider = injector.getProvider(ImportBCachingWorker.class);
+            this.errorDisplayer = injector.getInstance(ErrorDisplayer.class);
+            this.bcachingStartTime = injector.getInstance(BCachingStartTime.class);
+            this.fileDataVersionChecker = injector.getInstance(FileDataVersionChecker.class);
+            this.dbFrontend = injector.getInstance(DbFrontend.class);
+            this.syncCollectingParameter = injector.getInstance(SyncCollectingParameter.class);
         }
 
         ImportThread create() {
