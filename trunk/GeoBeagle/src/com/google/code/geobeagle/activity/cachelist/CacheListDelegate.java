@@ -35,11 +35,11 @@ public class CacheListDelegate {
 
         @Inject
         ImportIntentManager(Activity activity) {
-            mActivity = activity;
+            this.mActivity = activity;
         }
 
         boolean isImport() {
-            final Intent intent = mActivity.getIntent();
+            Intent intent = mActivity.getIntent();
             if (intent == null)
                 return false;
 
@@ -61,73 +61,73 @@ public class CacheListDelegate {
         }
     }
 
-    private final ActivitySaver mActivitySaver;
-    private final CacheListRefresh mCacheListRefresh;
-    private final GeocacheListController mController;
-    private final Provider<DbFrontend> mDbFrontendProvider;
-    private final ImportIntentManager mImportIntentManager;
-    private final GeocacheListPresenter mPresenter;
-    private final ActivityVisible mActivityVisible;
+    private final ActivitySaver activitySaver;
+    private final CacheListRefresh cacheListRefresh;
+    private final GeocacheListController controller;
+    private final Provider<DbFrontend> dbFrontendProvider;
+    private final ImportIntentManager importIntentManager;
+    private final GeocacheListPresenter presenter;
+    private final ActivityVisible activityVisible;
 
     public CacheListDelegate(ImportIntentManager importIntentManager, ActivitySaver activitySaver,
             CacheListRefresh cacheListRefresh, GeocacheListController geocacheListController,
             GeocacheListPresenter geocacheListPresenter, Provider<DbFrontend> dbFrontendProvider,
             ActivityVisible activityVisible) {
-        mActivitySaver = activitySaver;
-        mCacheListRefresh = cacheListRefresh;
-        mController = geocacheListController;
-        mPresenter = geocacheListPresenter;
-        mImportIntentManager = importIntentManager;
-        mDbFrontendProvider = dbFrontendProvider;
-        mActivityVisible = activityVisible;
+        this.activitySaver = activitySaver;
+        this.cacheListRefresh = cacheListRefresh;
+        this.controller = geocacheListController;
+        this.presenter = geocacheListPresenter;
+        this.importIntentManager = importIntentManager;
+        this.dbFrontendProvider = dbFrontendProvider;
+        this.activityVisible = activityVisible;
     }
 
     @Inject
     public CacheListDelegate(Injector injector) {
-        mActivitySaver = injector.getInstance(ActivitySaver.class);
-        mCacheListRefresh = injector.getInstance(CacheListRefresh.class);
-        mController = injector.getInstance(GeocacheListController.class);
-        mPresenter = injector.getInstance(GeocacheListPresenter.class);
-        mImportIntentManager = injector.getInstance(ImportIntentManager.class);
-        mDbFrontendProvider = injector.getProvider(DbFrontend.class);
-        mActivityVisible = injector.getInstance(ActivityVisible.class);
+        this.activitySaver = injector.getInstance(ActivitySaver.class);
+        this.cacheListRefresh = injector.getInstance(CacheListRefresh.class);
+        this.controller = injector.getInstance(GeocacheListController.class);
+        this.presenter = injector.getInstance(GeocacheListPresenter.class);
+        this.importIntentManager = injector.getInstance(ImportIntentManager.class);
+        this.dbFrontendProvider = injector.getProvider(DbFrontend.class);
+        this.activityVisible = injector.getInstance(ActivityVisible.class);
     }
 
     public boolean onContextItemSelected(MenuItem menuItem) {
-        return mController.onContextItemSelected(menuItem);
+        return controller.onContextItemSelected(menuItem);
     }
 
     public void onCreate() {
-        mPresenter.onCreate();
+        presenter.onCreate();
     }
 
     public void onCreateFragment(Object cacheListFragment) {
-        mPresenter.onCreateFragment(cacheListFragment);
+        presenter.onCreateFragment(cacheListFragment);
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
-        return mController.onCreateOptionsMenu(menu);
+        return controller.onCreateOptionsMenu(menu);
     }
 
     public void onListItemClick(int position) {
-        mController.onListItemClick(position);
+        controller.onListItemClick(position);
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {
-        return mController.onOptionsItemSelected(item);
+        return controller.onOptionsItemSelected(item);
     }
 
     public void onPause() {
-        mActivityVisible.setVisible(false);
-        mPresenter.onPause();
-        mController.onPause();
-        mActivitySaver.save(ActivityType.CACHE_LIST);
-        mDbFrontendProvider.get().closeDatabase();
+        activityVisible.setVisible(false);
+        presenter.onPause();
+        controller.onPause();
+        activitySaver.save(ActivityType.CACHE_LIST);
+        dbFrontendProvider.get().closeDatabase();
     }
 
     public void onResume() {
-        mActivityVisible.setVisible(true);
-        mPresenter.onResume(mCacheListRefresh);
-        mController.onResume(mImportIntentManager.isImport());
+        activityVisible.setVisible(true);
+        presenter.onResume(cacheListRefresh);
+        controller.onResume(importIntentManager.isImport());
     }
 }
