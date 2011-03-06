@@ -58,7 +58,7 @@ public class CompassActivity extends GuiceActivity {
     private static final DateFormat mLocalDateFormat = DateFormat
             .getTimeInstance(DateFormat.MEDIUM);
     private GeoBeagleDelegate geoBeagleDelegate;
-
+    
     @Inject
     LocationControlBuffered locationControlBuffered;
 
@@ -72,9 +72,9 @@ public class CompassActivity extends GuiceActivity {
 
         Log.d("GeoBeagle", "GeoBeagle onCreate");
 
-        setContentView(R.layout.main);
         Injector injector = getInjector();
-
+        injector.getInstance(CompassFragtivityOnCreateHandler.class).onCreate(this);
+        
         RadarView radarView = injector.getInstance(RadarView.class);
 
         locationControlBuffered.onLocationChanged(null);

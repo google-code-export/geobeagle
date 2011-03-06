@@ -39,6 +39,7 @@ import roboguice.config.AbstractAndroidModule;
 import android.app.Activity;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -48,6 +49,12 @@ public class GeoBeagleModule extends AbstractAndroidModule {
     @Override
     protected void configure() {
         bind(ChooseNavDialog.class).toProvider(ChooseNavDialogProvider.class);
+        int sdkVersion = Integer.parseInt(Build.VERSION.SDK);
+        if (sdkVersion >= Build.VERSION_CODES.HONEYCOMB) {
+            bind(CompassFragtivityOnCreateHandler.class).to(CompassFragmentOnCreateHandler.class);
+        } else {
+            bind(CompassFragtivityOnCreateHandler.class).to(CompassActivityOnCreateHandler.class);
+        }
     }
 
     private UnlabelledAttributeViewer getImagesOnDifficulty(final Drawable[] pawDrawables,
