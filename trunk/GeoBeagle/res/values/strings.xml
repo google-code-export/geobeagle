@@ -154,4 +154,5 @@
 	<string name="sync_message_bcaching_last_sync">  last synced at %1$s</string>
 	<string name="sync_message_bcaching_synced_caches">  synced %1$d caches</string>
 	<string name="must_have_a_sync_method">You must enable either BCaching or sdcard syncing.</string>
+	<string name="sms_fail">Unable to send SMS, try changing to \'Log caches to File\' in Settings</string>
 </resources>
