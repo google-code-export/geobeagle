@@ -52,7 +52,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest( {
+@PrepareForTest({
         Activity.class, FileLogger.class, DateFormat.class, Intent.class, Linkify.class,
         View.class, FieldnoteLogger.class, EditText.class, SimpleDateFormat.class,
         FileLogger.class, Format.class, DialogHelperCommon.class, LengthFilter.class,
@@ -79,8 +79,7 @@ public class FieldNoteSenderTest {
         editText.setText("(12:36 PM/fwgb) TFTC! ");
         editText.setSelection(16, 22);
         PowerMock.replayAll();
-        new DialogHelperCommon(fieldnoteStringsFVsDnf)
-                .configureEditor(editText, "12:36 PM", false);
+        new DialogHelperCommon(fieldnoteStringsFVsDnf).configureEditor(editText, "12:36 PM", false);
         PowerMock.verifyAll();
     }
 
@@ -112,7 +111,7 @@ public class FieldNoteSenderTest {
         EasyMock.expect(geoBeagleEnvironment.getFieldNotesFilename()).andReturn("fieldnotes.txt");
         EasyMock.expect(context.getString(R.string.field_note_file_caveat)).andReturn(
                 ("file logging: %1$s"));
-        fieldNoteCaveat.setText("file logging: " +  "fieldnotes.txt");
+        fieldNoteCaveat.setText("file logging: " + "fieldnotes.txt");
         dialog.setTitle(R.string.log_cache_to_file);
 
         PowerMock.replayAll();
@@ -175,25 +174,21 @@ public class FieldNoteSenderTest {
         Dialog dialog = PowerMock.createMock(Dialog.class);
         EditText editText = PowerMock.createMock(EditText.class);
         TextView fieldnoteCaveat = PowerMock.createMock(TextView.class);
-        SharedPreferences defaultSharedPreferences = PowerMock
-                .createMock(SharedPreferences.class);
+        SharedPreferences defaultSharedPreferences = PowerMock.createMock(SharedPreferences.class);
 
-        EasyMock.expect(
-                defaultSharedPreferences.getBoolean("field-note-text-file",
-                        false)).andReturn(true);
-        EasyMock.expect(dialog.findViewById(R.id.fieldnote_caveat)).andReturn(
-                fieldnoteCaveat);
+        EasyMock.expect(defaultSharedPreferences.getBoolean("field-note-text-file", false))
+                .andReturn(true);
+        EasyMock.expect(dialog.findViewById(R.id.fieldnote_caveat)).andReturn(fieldnoteCaveat);
         dialogHelperFile.configureDialogText(dialog, fieldnoteCaveat);
         dialogHelperCommon.configureEditor(editText, null, false);
-        EasyMock.expect(dialog.findViewById(R.id.fieldnote))
-                .andReturn(editText);
+        EasyMock.expect(dialog.findViewById(R.id.fieldnote)).andReturn(editText);
 
         dialogHelperFile.configureEditor(editText);
         dialogHelperCommon.configureDialogText(fieldnoteCaveat);
 
         PowerMock.replayAll();
-        new FieldnoteLogger(dialogHelperCommon, dialogHelperFile, null,
-                defaultSharedPreferences).onPrepareDialog(dialog, null, false);
+        new FieldnoteLogger(dialogHelperCommon, dialogHelperFile, null, defaultSharedPreferences)
+                .onPrepareDialog(dialog, null, false);
         PowerMock.verifyAll();
     }
 
@@ -204,25 +199,21 @@ public class FieldNoteSenderTest {
         Dialog dialog = PowerMock.createMock(Dialog.class);
         EditText editText = PowerMock.createMock(EditText.class);
         TextView fieldnoteCaveat = PowerMock.createMock(TextView.class);
-        SharedPreferences defaultSharedPreferences = PowerMock
-                .createMock(SharedPreferences.class);
+        SharedPreferences defaultSharedPreferences = PowerMock.createMock(SharedPreferences.class);
 
-        EasyMock.expect(
-                defaultSharedPreferences.getBoolean("field-note-text-file",
-                        false)).andReturn(false);
-        EasyMock.expect(dialog.findViewById(R.id.fieldnote_caveat)).andReturn(
-                fieldnoteCaveat);
+        EasyMock.expect(defaultSharedPreferences.getBoolean("field-note-text-file", false))
+                .andReturn(false);
+        EasyMock.expect(dialog.findViewById(R.id.fieldnote_caveat)).andReturn(fieldnoteCaveat);
         dialogHelperSms.configureDialogText(dialog, fieldnoteCaveat);
         dialogHelperCommon.configureEditor(editText, null, false);
-        EasyMock.expect(dialog.findViewById(R.id.fieldnote))
-                .andReturn(editText);
+        EasyMock.expect(dialog.findViewById(R.id.fieldnote)).andReturn(editText);
 
         dialogHelperSms.configureEditor(editText);
         dialogHelperCommon.configureDialogText(fieldnoteCaveat);
 
         PowerMock.replayAll();
-        new FieldnoteLogger(dialogHelperCommon, null, dialogHelperSms,
-                defaultSharedPreferences).onPrepareDialog(dialog, null, false);
+        new FieldnoteLogger(dialogHelperCommon, null, dialogHelperSms, defaultSharedPreferences)
+                .onPrepareDialog(dialog, null, false);
         PowerMock.verifyAll();
     }
 
@@ -236,8 +227,8 @@ public class FieldNoteSenderTest {
         FileOutputStream fileOutputStream = PowerMock.createMock(FileOutputStream.class);
 
         EasyMock.expect(geoBeagleEnvironment.getFieldNotesFilename()).andReturn("fieldnotes.log");
-        PowerMock.expectNew(FileOutputStream.class, "fieldnotes.log", true)
-                .andReturn(fileOutputStream);
+        PowerMock.expectNew(FileOutputStream.class, "fieldnotes.log", true).andReturn(
+                fileOutputStream);
         PowerMock.expectNew(OutputStreamWriter.class, fileOutputStream, "UTF-16").andReturn(
                 outputStreamWriter);
 
@@ -252,8 +243,7 @@ public class FieldNoteSenderTest {
 
         PowerMock.replayAll();
         new FileLogger(fieldnoteStringsFVsDnf, dateFormat, null, geoBeagleEnvironment).log("GC123",
-                "easy find",
-                false);
+                "easy find", false);
         PowerMock.verifyAll();
     }
 
@@ -264,14 +254,12 @@ public class FieldNoteSenderTest {
         Toaster toaster = PowerMock.createMock(Toaster.class);
         IOException exception = new IOException();
 
-
         EasyMock.expect(geoBeagleEnvironment.getFieldNotesFilename()).andReturn("fieldnotes.log");
         PowerMock.expectNew(FileOutputStream.class, "fieldnotes.log", true).andThrow(exception);
         toaster.toast(R.string.error_writing_cache_log, Toast.LENGTH_LONG);
 
         PowerMock.replayAll();
-        new FileLogger(fieldnoteStringsFVsDnf, null, toaster, geoBeagleEnvironment).log(
-                "GC123",
+        new FileLogger(fieldnoteStringsFVsDnf, null, toaster, geoBeagleEnvironment).log("GC123",
                 "easy find", false);
         PowerMock.verifyAll();
     }
@@ -300,8 +288,7 @@ public class FieldNoteSenderTest {
                 "GEOC @");
         PowerMock.expectNew(Intent.class, Intent.ACTION_VIEW).andReturn(intent);
         EasyMock.expect(intent.putExtra("address", "41411")).andReturn(intent);
-        EasyMock
-                .expect(intent.putExtra((String)EasyMock.anyObject(), (String)EasyMock.anyObject()))
+        EasyMock.expect(intent.putExtra((String)EasyMock.anyObject(), (String)EasyMock.anyObject()))
                 .andReturn(intent);
         EasyMock.expect(intent.setType("vnd.android-dir/mms-sms")).andReturn(intent);
         context.startActivity(intent);
