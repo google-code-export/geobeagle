@@ -45,7 +45,7 @@ import android.view.MenuItem;
 
 import java.io.File;
 
-public class GeoBeagleDelegate {
+public class CompassActivityDelegate {
 
     static int ACTIVITY_REQUEST_TAKE_PICTURE = 1;
     private final ActivitySaver mActivitySaver;
@@ -64,7 +64,7 @@ public class GeoBeagleDelegate {
     private final LocationSaver mLocationSaver;
     private final GeoBeagleSensors mGeoBeagleSensors;
 
-    public GeoBeagleDelegate(ActivitySaver activitySaver,
+    public CompassActivityDelegate(ActivitySaver activitySaver,
             AppLifecycleManager appLifecycleManager,
             Activity parent,
             GeocacheFactory geocacheFactory,
@@ -95,7 +95,7 @@ public class GeoBeagleDelegate {
     }
 
     @Inject
-    public GeoBeagleDelegate(Injector injector) {
+    public CompassActivityDelegate(Injector injector) {
         mParent = (CompassActivity)injector.getInstance(Activity.class);
         mActivitySaver = injector.getInstance(ActivitySaver.class);
         mAppLifecycleManager = injector.getInstance(AppLifecycleManager.class);
@@ -123,7 +123,7 @@ public class GeoBeagleDelegate {
         Log.d("GeoBeagle", "capturing image to " + filename);
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(new File(filename)));
-        mParent.startActivityForResult(intent, GeoBeagleDelegate.ACTIVITY_REQUEST_TAKE_PICTURE);
+        mParent.startActivityForResult(intent, CompassActivityDelegate.ACTIVITY_REQUEST_TAKE_PICTURE);
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {

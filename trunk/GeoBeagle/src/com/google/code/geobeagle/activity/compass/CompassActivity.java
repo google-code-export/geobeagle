@@ -57,13 +57,13 @@ import java.util.Date;
 public class CompassActivity extends GuiceActivity {
     private static final DateFormat mLocalDateFormat = DateFormat
             .getTimeInstance(DateFormat.MEDIUM);
-    private GeoBeagleDelegate geoBeagleDelegate;
+    private CompassActivityDelegate compassActivityDelegate;
     
     @Inject
     LocationControlBuffered locationControlBuffered;
 
     public Geocache getGeocache() {
-        return geoBeagleDelegate.getGeocache();
+        return compassActivityDelegate.getGeocache();
     }
 
     @Override
@@ -86,7 +86,7 @@ public class CompassActivity extends GuiceActivity {
         locationManager
                 .requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 1, radarView);
 
-        geoBeagleDelegate = injector.getInstance(GeoBeagleDelegate.class);
+        compassActivityDelegate = injector.getInstance(CompassActivityDelegate.class);
 
         // see http://www.androidguys.com/2008/11/07/rotational-forces-part-two/
         if (getLastNonConfigurationInstance() != null) {
@@ -115,32 +115,32 @@ public class CompassActivity extends GuiceActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        return geoBeagleDelegate.onCreateOptionsMenu(menu);
+        return compassActivityDelegate.onCreateOptionsMenu(menu);
     }
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (geoBeagleDelegate.onKeyDown(keyCode, event))
+        if (compassActivityDelegate.onKeyDown(keyCode, event))
             return true;
         return super.onKeyDown(keyCode, event);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        return geoBeagleDelegate.onOptionsItemSelected(item);
+        return compassActivityDelegate.onOptionsItemSelected(item);
     }
 
     @Override
     public void onPause() {
         Log.d("GeoBeagle", "GeoBeagle onPause");
-        geoBeagleDelegate.onPause();
+        compassActivityDelegate.onPause();
         super.onPause();
     }
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
-        return geoBeagleDelegate.onPrepareOptionsMenu(menu);
+        return compassActivityDelegate.onPrepareOptionsMenu(menu);
     }
 
     /*
@@ -155,7 +155,7 @@ public class CompassActivity extends GuiceActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == GeoBeagleDelegate.ACTIVITY_REQUEST_TAKE_PICTURE) {
+        if (requestCode == CompassActivityDelegate.ACTIVITY_REQUEST_TAKE_PICTURE) {
             Log.d("GeoBeagle", "camera intent has returned.");
         } else if (resultCode == Activity.RESULT_OK)
             setIntent(data);
@@ -190,7 +190,7 @@ public class CompassActivity extends GuiceActivity {
         boolean fDnf = id == R.id.menu_log_dnf;
 
         DialogHelperSms dialogHelperSms = injector.getInstance(DialogHelperSmsFactory.class)
-                .create(geoBeagleDelegate.getGeocache().getId().length(), fDnf);
+                .create(compassActivityDelegate.getGeocache().getId().length(), fDnf);
         FieldnoteLogger fieldnoteLogger = injector.getInstance(FieldnoteLoggerFactory.class)
                 .create(dialogHelperSms);
 
@@ -204,14 +204,14 @@ public class CompassActivity extends GuiceActivity {
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-        geoBeagleDelegate.onRestoreInstanceState(savedInstanceState);
+        compassActivityDelegate.onRestoreInstanceState(savedInstanceState);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         Log.d("GeoBeagle", "GeoBeagle onResume");
-        geoBeagleDelegate.onResume();
+        compassActivityDelegate.onResume();
     }
 
     /*
@@ -221,6 +221,6 @@ public class CompassActivity extends GuiceActivity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        geoBeagleDelegate.onSaveInstanceState(outState);
+        compassActivityDelegate.onSaveInstanceState(outState);
     }
 }
