@@ -38,7 +38,7 @@ import com.google.code.geobeagle.activity.cachelist.GeocacheListController;
 import com.google.code.geobeagle.activity.compass.AppLifecycleManager;
 import com.google.code.geobeagle.activity.compass.CompassActivity;
 import com.google.code.geobeagle.activity.compass.GeoBeagleActivityMenuActions;
-import com.google.code.geobeagle.activity.compass.GeoBeagleDelegate;
+import com.google.code.geobeagle.activity.compass.CompassActivityDelegate;
 import com.google.code.geobeagle.activity.compass.GeoBeagleSensors;
 import com.google.code.geobeagle.activity.compass.GeocacheFromIntentFactory;
 import com.google.code.geobeagle.activity.compass.GeocacheFromParcelFactory;
@@ -84,11 +84,11 @@ import java.io.File;
 
 @PrepareForTest({
         KeyEvent.class, DateFormat.class, Intent.class, Bundle.class, FieldnoteStringsFVsDnf.class,
-        FieldnoteLogger.class, GeoBeagleDelegate.class, Log.class, Uri.class, DatabaseDI.class,
+        FieldnoteLogger.class, CompassActivityDelegate.class, Log.class, Uri.class, DatabaseDI.class,
         UrlQuerySanitizer.class, GeocacheFromIntentFactory.class, Util.class, Activity.class
 })
 @RunWith(PowerMockRunner.class)
-public class GeoBeagleDelegateTest extends GeoBeagleTest {
+public class CompassActivityDelegateTest extends GeoBeagleTest {
 
     private GeoBeagleSensors geoBeagleSensors;
     private SensorManager sensorManager;
@@ -175,12 +175,12 @@ public class GeoBeagleDelegateTest extends GeoBeagleTest {
         geoBeagleSensors.registerSensors();
         replayAll();
 
-        GeoBeagleDelegate geoBeagleDelegate = new GeoBeagleDelegate(null, appLifecycleManager,
+        CompassActivityDelegate compassActivityDelegate = new CompassActivityDelegate(null, appLifecycleManager,
                 geobeagle, null, geocacheViewer, incomingIntentHandler, null, null,
                 dbFrontEndProvider, checkDetailsButton, webPageButtonEnabler, null, locationSaver,
                 geoBeagleSensors);
-        geoBeagleDelegate.setGeocache(geocache);
-        geoBeagleDelegate.onResume();
+        compassActivityDelegate.setGeocache(geocache);
+        compassActivityDelegate.onResume();
         verifyAll();
     }
 
@@ -279,14 +279,14 @@ public class GeoBeagleDelegateTest extends GeoBeagleTest {
         expectNew(File.class, "/sdcard/GeoBeagle_GCABC_2008-09-12_12.32.12.jpg").andReturn(file);
         expect(Uri.fromFile(file)).andReturn(uri);
         compassActivity.startActivityForResult(intent,
-                GeoBeagleDelegate.ACTIVITY_REQUEST_TAKE_PICTURE);
+                CompassActivityDelegate.ACTIVITY_REQUEST_TAKE_PICTURE);
 
         replayAll();
-        final GeoBeagleDelegate geoBeagleDelegate = new GeoBeagleDelegate(null, null,
+        final CompassActivityDelegate compassActivityDelegate = new CompassActivityDelegate(null, null,
                 compassActivity, null, null, null, null, null, null, null, null,
                 geoBeagleEnvironment, null, null);
-        geoBeagleDelegate.setGeocache(geocache);
-        assertTrue(geoBeagleDelegate.onKeyDown(KeyEvent.KEYCODE_CAMERA, keyEvent));
+        compassActivityDelegate.setGeocache(geocache);
+        assertTrue(compassActivityDelegate.onKeyDown(KeyEvent.KEYCODE_CAMERA, keyEvent));
         verifyAll();
     }
 
@@ -295,9 +295,9 @@ public class GeoBeagleDelegateTest extends GeoBeagleTest {
         KeyEvent keyEvent = createMock(KeyEvent.class);
 
         replayAll();
-        final GeoBeagleDelegate geoBeagleDelegate = new GeoBeagleDelegate(null, null, null, null,
+        final CompassActivityDelegate compassActivityDelegate = new CompassActivityDelegate(null, null, null, null,
                 null, null, null, null, null, null, null, null, null, null);
-        assertFalse(geoBeagleDelegate.onKeyDown(KeyEvent.KEYCODE_A, keyEvent));
+        assertFalse(compassActivityDelegate.onKeyDown(KeyEvent.KEYCODE_A, keyEvent));
         verifyAll();
     }
 
@@ -310,7 +310,7 @@ public class GeoBeagleDelegateTest extends GeoBeagleTest {
         expect(menuActions.act(12)).andReturn(true);
         replayAll();
 
-        assertTrue(new GeoBeagleDelegate(null, null, null, null, null, null, menuActions, null,
+        assertTrue(new CompassActivityDelegate(null, null, null, null, null, null, menuActions, null,
                 null, null, null, geoBeagleEnvironment, null, null).onOptionsItemSelected(item));
         verifyAll();
     }
@@ -331,11 +331,11 @@ public class GeoBeagleDelegateTest extends GeoBeagleTest {
         dbFrontend.closeDatabase();
 
         replayAll();
-        final GeoBeagleDelegate geoBeagleDelegate = new GeoBeagleDelegate(activitySaver,
+        final CompassActivityDelegate compassActivityDelegate = new CompassActivityDelegate(activitySaver,
                 appLifecycleManager, null, null, null, null, null, null, dbFrontEndProvider, null,
                 null, null, null, geoBeagleSensors);
-        geoBeagleDelegate.setGeocache(geocache);
-        geoBeagleDelegate.onPause();
+        compassActivityDelegate.setGeocache(geocache);
+        compassActivityDelegate.onPause();
         verifyAll();
     }
 
@@ -348,7 +348,7 @@ public class GeoBeagleDelegateTest extends GeoBeagleTest {
         expect(geocacheFromParcelFactory.createFromBundle(bundle)).andReturn(geocache);
 
         replayAll();
-        new GeoBeagleDelegate(null, null, null, null, null, null, null, geocacheFromParcelFactory,
+        new CompassActivityDelegate(null, null, null, null, null, null, null, geocacheFromParcelFactory,
                 null, null, null, null, null, null).onRestoreInstanceState(bundle);
         verifyAll();
     }
@@ -360,10 +360,10 @@ public class GeoBeagleDelegateTest extends GeoBeagleTest {
 
         geocache.saveToBundle(bundle);
         replayAll();
-        final GeoBeagleDelegate geoBeagleDelegate = new GeoBeagleDelegate(null, null, null, null,
+        final CompassActivityDelegate compassActivityDelegate = new CompassActivityDelegate(null, null, null, null,
                 null, null, null, null, null, null, null, null, null, null);
-        geoBeagleDelegate.setGeocache(geocache);
-        geoBeagleDelegate.onSaveInstanceState(bundle);
+        compassActivityDelegate.setGeocache(geocache);
+        compassActivityDelegate.onSaveInstanceState(bundle);
         verifyAll();
     }
 
@@ -371,9 +371,9 @@ public class GeoBeagleDelegateTest extends GeoBeagleTest {
     public void testSetGet() {
         Geocache geocache = createMock(Geocache.class);
 
-        final GeoBeagleDelegate geoBeagleDelegate = new GeoBeagleDelegate(null, null, null, null,
+        final CompassActivityDelegate compassActivityDelegate = new CompassActivityDelegate(null, null, null, null,
                 null, null, null, null, null, null, null, null, null, null);
-        geoBeagleDelegate.setGeocache(geocache);
-        assertEquals(geocache, geoBeagleDelegate.getGeocache());
+        compassActivityDelegate.setGeocache(geocache);
+        assertEquals(geocache, compassActivityDelegate.getGeocache());
     }
 }
