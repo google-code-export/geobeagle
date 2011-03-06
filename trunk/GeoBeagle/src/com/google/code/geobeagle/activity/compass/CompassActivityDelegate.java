@@ -48,21 +48,21 @@ import java.io.File;
 public class CompassActivityDelegate {
 
     static int ACTIVITY_REQUEST_TAKE_PICTURE = 1;
-    private final ActivitySaver mActivitySaver;
-    private final AppLifecycleManager mAppLifecycleManager;
-    private final Provider<DbFrontend> mDbFrontendProvider;
-    private Geocache mGeocache;
-    private final GeocacheFactory mGeocacheFactory;
-    private final GeocacheFromParcelFactory mGeocacheFromParcelFactory;
-    private final GeocacheViewer mGeocacheViewer;
-    private final IncomingIntentHandler mIncomingIntentHandler;
-    private final GeoBeagleActivityMenuActions mMenuActions;
-    private final CompassActivity mParent;
-    private final CheckDetailsButton mCheckDetailsButton;
-    private final GeoBeagleEnvironment mGeoBeagleEnvironment;
-    private final WebPageMenuEnabler mWebPageMenuEnabler;
-    private final LocationSaver mLocationSaver;
-    private final GeoBeagleSensors mGeoBeagleSensors;
+    private final ActivitySaver activitySaver;
+    private final AppLifecycleManager appLifecycleManager;
+    private final Provider<DbFrontend> dbFrontendProvider;
+    private Geocache geocache;
+    private final GeocacheFactory geocacheFactory;
+    private final GeocacheFromParcelFactory geocacheFromParcelFactory;
+    private final GeocacheViewer geocacheViewer;
+    private final IncomingIntentHandler incomingIntentHandler;
+    private final GeoBeagleActivityMenuActions menuActions;
+    private final CompassActivity parent;
+    private final CheckDetailsButton checkDetailsButton;
+    private final GeoBeagleEnvironment geoBeagleEnvironment;
+    private final WebPageMenuEnabler webPageMenuEnabler;
+    private final LocationSaver locationSaver;
+    private final GeoBeagleSensors geoBeagleSensors;
 
     public CompassActivityDelegate(ActivitySaver activitySaver,
             AppLifecycleManager appLifecycleManager,
@@ -78,56 +78,56 @@ public class CompassActivityDelegate {
             GeoBeagleEnvironment geoBeagleEnvironment,
             LocationSaver locationSaver,
             GeoBeagleSensors geoBeagleSensors) {
-        mParent = (CompassActivity)parent;
-        mActivitySaver = activitySaver;
-        mAppLifecycleManager = appLifecycleManager;
-        mMenuActions = menuActions;
-        mGeocacheViewer = geocacheViewer;
-        mGeocacheFactory = geocacheFactory;
-        mIncomingIntentHandler = incomingIntentHandler;
-        mDbFrontendProvider = dbFrontendProvider;
-        mGeocacheFromParcelFactory = geocacheFromParcelFactory;
-        mGeoBeagleEnvironment = geoBeagleEnvironment;
-        mCheckDetailsButton = checkDetailsButton;
-        mWebPageMenuEnabler = webPageMenuEnabler;
-        mLocationSaver = locationSaver;
-        mGeoBeagleSensors = geoBeagleSensors;
+        this.parent = (CompassActivity)parent;
+        this.activitySaver = activitySaver;
+        this.appLifecycleManager = appLifecycleManager;
+        this.menuActions = menuActions;
+        this.geocacheViewer = geocacheViewer;
+        this.geocacheFactory = geocacheFactory;
+        this.incomingIntentHandler = incomingIntentHandler;
+        this.dbFrontendProvider = dbFrontendProvider;
+        this.geocacheFromParcelFactory = geocacheFromParcelFactory;
+        this.geoBeagleEnvironment = geoBeagleEnvironment;
+        this.checkDetailsButton = checkDetailsButton;
+        this.webPageMenuEnabler = webPageMenuEnabler;
+        this.locationSaver = locationSaver;
+        this.geoBeagleSensors = geoBeagleSensors;
     }
 
     @Inject
     public CompassActivityDelegate(Injector injector) {
-        mParent = (CompassActivity)injector.getInstance(Activity.class);
-        mActivitySaver = injector.getInstance(ActivitySaver.class);
-        mAppLifecycleManager = injector.getInstance(AppLifecycleManager.class);
-        mMenuActions = injector.getInstance(GeoBeagleActivityMenuActions.class);
-        mGeocacheViewer = injector.getInstance(GeocacheViewer.class);
-        mGeocacheFactory = injector.getInstance(GeocacheFactory.class);
-        mIncomingIntentHandler = injector.getInstance(IncomingIntentHandler.class);
-        mDbFrontendProvider = injector.getProvider(DbFrontend.class);
-        mGeocacheFromParcelFactory = injector.getInstance(GeocacheFromParcelFactory.class);
-        mGeoBeagleEnvironment = injector.getInstance(GeoBeagleEnvironment.class);
-        mCheckDetailsButton = injector.getInstance(CheckDetailsButton.class);
-        mWebPageMenuEnabler = injector.getInstance(WebPageMenuEnabler.class);
-        mLocationSaver = injector.getInstance(LocationSaver.class);
-        mGeoBeagleSensors = injector.getInstance(GeoBeagleSensors.class);
+        parent = (CompassActivity)injector.getInstance(Activity.class);
+        activitySaver = injector.getInstance(ActivitySaver.class);
+        appLifecycleManager = injector.getInstance(AppLifecycleManager.class);
+        menuActions = injector.getInstance(GeoBeagleActivityMenuActions.class);
+        geocacheViewer = injector.getInstance(GeocacheViewer.class);
+        geocacheFactory = injector.getInstance(GeocacheFactory.class);
+        incomingIntentHandler = injector.getInstance(IncomingIntentHandler.class);
+        dbFrontendProvider = injector.getProvider(DbFrontend.class);
+        geocacheFromParcelFactory = injector.getInstance(GeocacheFromParcelFactory.class);
+        geoBeagleEnvironment = injector.getInstance(GeoBeagleEnvironment.class);
+        checkDetailsButton = injector.getInstance(CheckDetailsButton.class);
+        webPageMenuEnabler = injector.getInstance(WebPageMenuEnabler.class);
+        locationSaver = injector.getInstance(LocationSaver.class);
+        geoBeagleSensors = injector.getInstance(GeoBeagleSensors.class);
     }
 
     public Geocache getGeocache() {
-        return mGeocache;
+        return geocache;
     }
 
     private void onCameraStart() {
-        String filename = mGeoBeagleEnvironment.getExternalStorageDir() + "/GeoBeagle_"
-                + mGeocache.getId()
+        String filename = geoBeagleEnvironment.getExternalStorageDir() + "/GeoBeagle_"
+                + geocache.getId()
                 + DateFormat.format("_yyyy-MM-dd_kk.mm.ss.jpg", System.currentTimeMillis());
         Log.d("GeoBeagle", "capturing image to " + filename);
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(new File(filename)));
-        mParent.startActivityForResult(intent, CompassActivityDelegate.ACTIVITY_REQUEST_TAKE_PICTURE);
+        parent.startActivityForResult(intent, CompassActivityDelegate.ACTIVITY_REQUEST_TAKE_PICTURE);
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
-        return mMenuActions.onCreateOptionsMenu(menu);
+        return menuActions.onCreateOptionsMenu(menu);
     }
 
     public boolean onKeyDown(int keyCode, KeyEvent event) {
@@ -139,49 +139,49 @@ public class CompassActivityDelegate {
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {
-        return mMenuActions.act(item.getItemId());
+        return menuActions.act(item.getItemId());
     }
 
     public void onPause() {
-        mAppLifecycleManager.onPause();
-        mGeoBeagleSensors.unregisterSensors();
-        mActivitySaver.save(ActivityType.VIEW_CACHE, mGeocache);
-        mDbFrontendProvider.get().closeDatabase();
+        appLifecycleManager.onPause();
+        geoBeagleSensors.unregisterSensors();
+        activitySaver.save(ActivityType.VIEW_CACHE, geocache);
+        dbFrontendProvider.get().closeDatabase();
     }
 
     public void onRestoreInstanceState(Bundle savedInstanceState) {
-        mGeocache = mGeocacheFromParcelFactory.createFromBundle(savedInstanceState);
+        geocache = geocacheFromParcelFactory.createFromBundle(savedInstanceState);
     }
 
     public void onResume() {
-        mAppLifecycleManager.onResume();
-        mGeoBeagleSensors.registerSensors();
-        mGeocache = mIncomingIntentHandler.maybeGetGeocacheFromIntent(mParent.getIntent(),
-                mGeocache, mLocationSaver);
+        appLifecycleManager.onResume();
+        geoBeagleSensors.registerSensors();
+        geocache = incomingIntentHandler.maybeGetGeocacheFromIntent(parent.getIntent(),
+                geocache, locationSaver);
 
         // Possible fix for issue 53.
-        if (mGeocache == null) {
-            mGeocache = mGeocacheFactory.create("", "", 0, 0, Source.MY_LOCATION, "",
+        if (geocache == null) {
+            geocache = geocacheFactory.create("", "", 0, 0, Source.MY_LOCATION, "",
                     CacheType.NULL, 0, 0, 0, true, false);
         }
-        mGeocacheViewer.set(mGeocache);
-        mCheckDetailsButton.check(mGeocache);
+        geocacheViewer.set(geocache);
+        checkDetailsButton.check(geocache);
     }
 
     public void onSaveInstanceState(Bundle outState) {
         // apparently there are cases where getGeocache returns null, causing
         // crashes with 0.7.7/0.7.8.
-        if (mGeocache != null)
-            mGeocache.saveToBundle(outState);
+        if (geocache != null)
+            geocache.saveToBundle(outState);
     }
 
     public void setGeocache(Geocache geocache) {
-        mGeocache = geocache;
+        this.geocache = geocache;
     }
 
     public boolean onPrepareOptionsMenu(Menu menu) {
         MenuItem item = menu.findItem(R.string.web_page);
-        item.setVisible(mWebPageMenuEnabler.shouldEnable(getGeocache()));
+        item.setVisible(webPageMenuEnabler.shouldEnable(getGeocache()));
         return true;
     }
 }
