@@ -19,7 +19,7 @@ import com.google.android.maps.MapView;
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.cachelist.GeocacheListController;
-import com.google.code.geobeagle.activity.main.CompassActivity;
+import com.google.code.geobeagle.activity.compass.CompassActivity;
 
 import android.content.Context;
 import android.content.Intent;

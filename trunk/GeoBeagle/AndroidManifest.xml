@@ -14,7 +14,7 @@
 		android:name=".GeoBeagleApplication" android:debuggable="false">
 		<uses-library android:name="com.google.android.maps" />
 
-		<activity android:name=".activity.main.CompassActivity"
+		<activity android:name=".activity.compass.CompassActivity"
 			android:label="@string/app_name">
 			<intent-filter>
 				<action android:name="android.intent.action.VIEW" />
@@ -61,9 +61,9 @@
 		<activity android:name=".activity.map.GeoMapActivity"
 			android:label="GeoBeagle map" android:configChanges="orientation|keyboardHidden" />
 
-		<activity android:name=".activity.details.DetailsActivity" />
-		<provider android:name=".SuggestionProvider"
-			android:authorities="com.google.code.geobeagle.SuggestionProvider" />
+        <activity android:name=".activity.details.DetailsActivity" />
+        <provider android:name=".SuggestionProvider"
+                android:authorities="com.google.code.geobeagle.SuggestionProvider" />
 	</application>
 
 	<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />

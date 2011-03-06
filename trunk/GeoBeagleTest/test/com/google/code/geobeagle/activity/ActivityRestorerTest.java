@@ -18,8 +18,8 @@ import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.activity.cachelist.CacheListActivity;
 import com.google.code.geobeagle.activity.cachelist.GeoBeagleTest;
 import com.google.code.geobeagle.activity.cachelist.GeocacheListController;
-import com.google.code.geobeagle.activity.main.CompassActivity;
-import com.google.code.geobeagle.activity.main.GeocacheFromPreferencesFactory;
+import com.google.code.geobeagle.activity.compass.CompassActivity;
+import com.google.code.geobeagle.activity.compass.GeocacheFromPreferencesFactory;
 
 import org.easymock.EasyMock;
 import org.junit.Test;

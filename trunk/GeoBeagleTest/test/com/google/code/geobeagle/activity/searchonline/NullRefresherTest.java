@@ -14,7 +14,7 @@
 
 package com.google.code.geobeagle.activity.searchonline;
 
-import com.google.code.geobeagle.activity.main.NullRefresher;
+import com.google.code.geobeagle.activity.compass.NullRefresher;
 
 import org.junit.Test;
 

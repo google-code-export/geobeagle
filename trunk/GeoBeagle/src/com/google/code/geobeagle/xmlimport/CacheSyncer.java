@@ -17,7 +17,7 @@ package com.google.code.geobeagle.xmlimport;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.cachelist.Pausable;
 import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheListPresenter;
-import com.google.code.geobeagle.activity.main.fieldnotes.Toaster;
+import com.google.code.geobeagle.activity.compass.fieldnotes.Toaster;
 import com.google.code.geobeagle.xmlimport.ImportThread.ImportThreadFactory;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
