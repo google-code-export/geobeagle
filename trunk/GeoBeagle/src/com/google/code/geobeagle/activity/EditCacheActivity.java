@@ -14,7 +14,7 @@
 
 package com.google.code.geobeagle.activity;
 
-import com.google.code.geobeagle.activity.main.view.EditCacheActivityDelegate;
+import com.google.code.geobeagle.activity.compass.view.EditCacheActivityDelegate;
 import com.google.inject.Injector;
 
 import roboguice.activity.GuiceActivity;

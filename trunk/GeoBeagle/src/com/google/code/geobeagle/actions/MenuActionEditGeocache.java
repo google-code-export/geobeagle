@@ -15,7 +15,7 @@
 package com.google.code.geobeagle.actions;
 
 import com.google.code.geobeagle.activity.EditCacheActivity;
-import com.google.code.geobeagle.activity.main.CompassActivity;
+import com.google.code.geobeagle.activity.compass.CompassActivity;
 import com.google.inject.Inject;
 
 import android.app.Activity;

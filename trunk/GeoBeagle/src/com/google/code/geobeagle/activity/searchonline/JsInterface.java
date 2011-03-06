@@ -15,7 +15,7 @@
 package com.google.code.geobeagle.activity.searchonline;
 
 import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.activity.main.fieldnotes.Toaster;
+import com.google.code.geobeagle.activity.compass.fieldnotes.Toaster;
 import com.google.inject.Inject;
 
 import android.app.Activity;

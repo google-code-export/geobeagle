@@ -19,7 +19,7 @@ import com.google.code.geobeagle.Geocache.AttributeFormatter;
 import com.google.code.geobeagle.Geocache.AttributeFormatterImpl;
 import com.google.code.geobeagle.Geocache.AttributeFormatterNull;
 import com.google.code.geobeagle.GeocacheFactory.Source.SourceFactory;
-import com.google.code.geobeagle.activity.main.GeocacheFromParcelFactory;
+import com.google.code.geobeagle.activity.compass.GeocacheFromParcelFactory;
 
 import android.os.Parcel;
 import android.os.Parcelable;

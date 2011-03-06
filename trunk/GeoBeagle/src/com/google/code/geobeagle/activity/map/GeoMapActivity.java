@@ -18,7 +18,7 @@ import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapController;
 import com.google.android.maps.MyLocationOverlay;
 import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.activity.main.GeoUtils;
+import com.google.code.geobeagle.activity.compass.GeoUtils;
 import com.google.code.geobeagle.database.DbFrontend;
 import com.google.inject.Inject;
 import com.google.inject.Injector;

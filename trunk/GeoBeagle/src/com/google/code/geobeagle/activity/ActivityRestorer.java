@@ -17,8 +17,8 @@ package com.google.code.geobeagle.activity;
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.activity.cachelist.CacheListActivity;
 import com.google.code.geobeagle.activity.cachelist.GeocacheListController;
-import com.google.code.geobeagle.activity.main.CompassActivity;
-import com.google.code.geobeagle.activity.main.GeocacheFromPreferencesFactory;
+import com.google.code.geobeagle.activity.compass.CompassActivity;
+import com.google.code.geobeagle.activity.compass.GeocacheFromPreferencesFactory;
 import com.google.inject.Inject;
 
 import android.app.Activity;

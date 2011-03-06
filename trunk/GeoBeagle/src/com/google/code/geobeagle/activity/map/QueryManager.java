@@ -17,7 +17,7 @@ package com.google.code.geobeagle.activity.map;
 import com.google.android.maps.GeoPoint;
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.activity.main.fieldnotes.Toaster;
+import com.google.code.geobeagle.activity.compass.fieldnotes.Toaster;
 import com.google.code.geobeagle.database.DbFrontend;
 import com.google.code.geobeagle.database.WhereFactoryFixedArea;
 import com.google.inject.Inject;

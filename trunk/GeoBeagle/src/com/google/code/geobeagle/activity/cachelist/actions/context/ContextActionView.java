@@ -34,7 +34,7 @@ public class ContextActionView implements ContextAction {
     @Override
     public void act(int position) {
         Intent intent = new Intent(mContext,
-                com.google.code.geobeagle.activity.main.CompassActivity.class);
+                com.google.code.geobeagle.activity.compass.CompassActivity.class);
         intent.putExtra("geocache", mGeocacheVectors.get(position).getGeocache()).setAction(
                 GeocacheListController.SELECT_CACHE);
         mContext.startActivity(intent);

@@ -16,7 +16,7 @@ package com.google.code.geobeagle;
 
 import com.google.code.geobeagle.activity.cachelist.CacheListModule;
 import com.google.code.geobeagle.activity.cachelist.model.ModelModule;
-import com.google.code.geobeagle.activity.main.GeoBeagleModule;
+import com.google.code.geobeagle.activity.compass.GeoBeagleModule;
 import com.google.code.geobeagle.bcaching.BCachingModule;
 import com.google.code.geobeagle.database.DatabaseModule;
 import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidgetModule;

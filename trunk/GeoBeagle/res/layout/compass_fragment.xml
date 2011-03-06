@@ -8,7 +8,7 @@
 	the specific language governing permissions and limitations under the License. -->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	android:layout_width="match_parent" android:layout_height="match_parent">
-	<fragment class="com.google.code.geobeagle.activity.main.CompassFragment"
+	<fragment class="com.google.code.geobeagle.activity.compass.CompassFragment"
 		android:id="@+id/compass_fragment" android:layout_width="match_parent"
 		android:layout_height="match_parent" />
 </FrameLayout>

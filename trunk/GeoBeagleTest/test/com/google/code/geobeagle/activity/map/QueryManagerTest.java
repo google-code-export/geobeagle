@@ -21,7 +21,7 @@ import static org.junit.Assert.assertTrue;
 import com.google.android.maps.GeoPoint;
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.activity.main.fieldnotes.Toaster;
+import com.google.code.geobeagle.activity.compass.fieldnotes.Toaster;
 import com.google.code.geobeagle.activity.map.QueryManager.CachedNeedsLoading;
 import com.google.code.geobeagle.activity.map.QueryManager.LoaderImpl;
 import com.google.code.geobeagle.database.DbFrontend;

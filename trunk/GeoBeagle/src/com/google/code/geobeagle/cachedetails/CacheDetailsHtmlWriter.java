@@ -14,7 +14,7 @@
 
 package com.google.code.geobeagle.cachedetails;
 
-import com.google.code.geobeagle.activity.main.Util;
+import com.google.code.geobeagle.activity.compass.Util;
 import com.google.inject.Inject;
 
 import android.content.Context;
