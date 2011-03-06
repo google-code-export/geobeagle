@@ -307,7 +307,7 @@ public class FieldNoteSenderTest {
         context.startActivity(intent);
 
         PowerMock.replayAll();
-        new SmsLogger(fieldnoteStringsFVsDnf, context).log("GC123", "easy find", false);
+        new SmsLogger(fieldnoteStringsFVsDnf, context, null).log("GC123", "easy find", false);
         PowerMock.verifyAll();
     }
 }

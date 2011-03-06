@@ -14,30 +14,40 @@
 
 package com.google.code.geobeagle.activity.main.fieldnotes;
 
+import com.google.code.geobeagle.ErrorDisplayer;
 import com.google.code.geobeagle.R;
 import com.google.inject.Inject;
 
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 
 public class SmsLogger implements ICacheLogger {
     private final Context mContext;
     private final FieldnoteStringsFVsDnf mFieldNoteStringsFoundVsDnf;
+    private final ErrorDisplayer mErrorDisplayer;
 
     @Inject
-    public SmsLogger(FieldnoteStringsFVsDnf fieldnoteStringsFVsDnf, Context context) {
+    public SmsLogger(FieldnoteStringsFVsDnf fieldnoteStringsFVsDnf,
+            Context context,
+            ErrorDisplayer errorDisplayer) {
         mFieldNoteStringsFoundVsDnf = fieldnoteStringsFVsDnf;
         mContext = context;
+        mErrorDisplayer = errorDisplayer;
     }
 
     @Override
     public void log(CharSequence geocacheId, CharSequence logText, boolean dnf) {
         Intent sendIntent = new Intent(Intent.ACTION_VIEW);
         sendIntent.putExtra("address", "41411");
-        sendIntent.putExtra("sms_body", mFieldNoteStringsFoundVsDnf.getString(
-                R.array.fieldnote_code, dnf)
-                + geocacheId + " " + logText);
+        sendIntent.putExtra("sms_body",
+                mFieldNoteStringsFoundVsDnf.getString(R.array.fieldnote_code, dnf) + geocacheId
+                        + " " + logText);
         sendIntent.setType("vnd.android-dir/mms-sms");
-        mContext.startActivity(sendIntent);
+        try {
+            mContext.startActivity(sendIntent);
+        } catch (ActivityNotFoundException e) {
+            mErrorDisplayer.displayError(R.string.sms_fail);
+        }
     }
 }
