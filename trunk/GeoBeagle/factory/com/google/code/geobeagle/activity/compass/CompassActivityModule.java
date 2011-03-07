@@ -50,7 +50,7 @@ import android.widget.TextView;
 
 import java.util.Arrays;
 
-public class GeoBeagleModule extends AbstractAndroidModule {
+public class CompassActivityModule extends AbstractAndroidModule {
     @Override
     protected void configure() {
         bind(ChooseNavDialog.class).toProvider(ChooseNavDialogProvider.class);
