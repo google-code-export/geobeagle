@@ -41,82 +41,82 @@ public class GeocacheViewer {
     }
 
     public static class LabelledAttributeViewer implements AttributeViewer {
-        private final AttributeViewer mUnlabelledAttributeViewer;
-        private final TextView mLabel;
+        private final AttributeViewer unlabelledAttributeViewer;
+        private final TextView label;
 
         public LabelledAttributeViewer(TextView label, AttributeViewer unlabelledAttributeViewer) {
-            mUnlabelledAttributeViewer = unlabelledAttributeViewer;
-            mLabel = label;
+            this.unlabelledAttributeViewer = unlabelledAttributeViewer;
+            this.label = label;
         }
 
         @Override
         public void setImage(int attributeValue) {
-            mUnlabelledAttributeViewer.setImage(attributeValue);
-            mLabel.setVisibility(attributeValue == 0 ? View.GONE : View.VISIBLE);
+            unlabelledAttributeViewer.setImage(attributeValue);
+            label.setVisibility(attributeValue == 0 ? View.GONE : View.VISIBLE);
         }
     }
 
     public static class UnlabelledAttributeViewer implements AttributeViewer {
-        private final Drawable[] mDrawables;
-        private final ImageView mImageView;
+        private final Drawable[] drawables;
+        private final ImageView imageView;
 
         public UnlabelledAttributeViewer(ImageView imageView, Drawable[] drawables) {
-            mImageView = imageView;
-            mDrawables = drawables;
+            this.imageView = imageView;
+            this.drawables = drawables;
         }
 
         @Override
         public void setImage(int attributeValue) {
             if (attributeValue == 0) {
-                mImageView.setVisibility(View.GONE);
+                imageView.setVisibility(View.GONE);
                 return;
             }
-            mImageView.setImageDrawable(mDrawables[attributeValue-1]);
-            mImageView.setVisibility(View.VISIBLE);
+            imageView.setImageDrawable(drawables[attributeValue-1]);
+            imageView.setVisibility(View.VISIBLE);
         }
     }
 
     public static class ResourceImages implements AttributeViewer {
-        private final List<Integer> mResources;
-        private final ImageView mImageView;
-        private final TextView mLabel;
+        private final List<Integer> resources;
+        private final ImageView imageView;
+        private final TextView label;
 
         public ResourceImages(TextView label, ImageView imageView, List<Integer> resources) {
-            mLabel = label;
-            mImageView = imageView;
-            mResources = resources;
+            this.label = label;
+            this.imageView = imageView;
+            this.resources = resources;
         }
 
         @Override
         public void setImage(int attributeValue) {
-            mImageView.setImageResource(mResources.get(attributeValue));
+            imageView.setImageResource(resources.get(attributeValue));
         }
         
         public void setVisibility(int visibility) {
-            mImageView.setVisibility(visibility);
-            mLabel.setVisibility(visibility);
+            imageView.setVisibility(visibility);
+            label.setVisibility(visibility);
         }
         
     }
  
     public static class NameViewer {
-        private final TextView mName;
-        private final NameFormatter mNameFormatter;
+        private final TextView name;
+        private final NameFormatter nameFormatter;
 
         @Inject
         public NameViewer(@Named("GeocacheName") TextView name, NameFormatter nameFormatter) {
-            mName = name;
-            mNameFormatter = nameFormatter;
+            this.name = name;
+            this.nameFormatter = nameFormatter;
         }
 
         void set(CharSequence name, boolean available, boolean archived) {
             if (name.length() == 0) {
-                mName.setVisibility(View.GONE);
+                this.name.setVisibility(View.GONE);
                 return;
             }
-            mName.setText(name);
-            mName.setVisibility(View.VISIBLE);
-            mNameFormatter.format(mName, available, archived);
+            this.name.setText(name);
+            this.name.setVisibility(View.VISIBLE);
+            nameFormatter.format(this.name, available, archived);
         }
     }
 
@@ -125,17 +125,17 @@ public class GeocacheViewer {
             R.drawable.size_4, R.drawable.size_5
     };
 
-    private final ImageView mCacheTypeImageView;
-    private final ResourceImages mContainer;
-    private final AttributeViewer mDifficulty;
-    private final NameViewer mName;
-    private final RadarView mRadarView;
-    private final AttributeViewer mTerrain;
-    private final IconOverlayFactory mIconOverlayFactory;
-    private final MapViewBitmapCopier mMapViewBitmapCopier;
-    private final IconRenderer mIconRenderer;
-    private final Activity mActivity;
-    private final DifficultyAndTerrainPainter mDifficultyAndTerrainPainter;
+    private final ImageView cacheTypeImageView;
+    private final ResourceImages container;
+    private final AttributeViewer difficulty;
+    private final NameViewer name;
+    private final RadarView radarView;
+    private final AttributeViewer terrain;
+    private final IconOverlayFactory iconOverlayFactory;
+    private final MapViewBitmapCopier mapViewBitmapCopier;
+    private final IconRenderer iconRenderer;
+    private final Activity activity;
+    private final DifficultyAndTerrainPainter difficultyAndTerrainPainter;
 
     public GeocacheViewer(RadarView radarView, Activity activity, NameViewer gcName,
             ImageView cacheTypeImageView,
@@ -143,37 +143,37 @@ public class GeocacheViewer {
             AttributeViewer gcTerrain, ResourceImages gcContainer,
             IconOverlayFactory iconOverlayFactory, MapViewBitmapCopier mapViewBitmapCopier,
             IconRenderer iconRenderer, DifficultyAndTerrainPainter difficultyAndTerrainPainter) {
-        mRadarView = radarView;
-        mActivity = activity;
-        mName = gcName;
-        mCacheTypeImageView = cacheTypeImageView;
-        mDifficulty = gcDifficulty;
-        mTerrain = gcTerrain;
-        mContainer = gcContainer;
-        mIconOverlayFactory = iconOverlayFactory;
-        mMapViewBitmapCopier = mapViewBitmapCopier;
-        mIconRenderer = iconRenderer;
-        mDifficultyAndTerrainPainter = difficultyAndTerrainPainter;
+        this.radarView = radarView;
+        this.activity = activity;
+        this.name = gcName;
+        this.cacheTypeImageView = cacheTypeImageView;
+        this.difficulty = gcDifficulty;
+        this.terrain = gcTerrain;
+        this.container = gcContainer;
+        this.iconOverlayFactory = iconOverlayFactory;
+        this.mapViewBitmapCopier = mapViewBitmapCopier;
+        this.iconRenderer = iconRenderer;
+        this.difficultyAndTerrainPainter = difficultyAndTerrainPainter;
     }
 
     public void set(Geocache geocache) {
-        final double latitude = geocache.getLatitude();
-        final double longitude = geocache.getLongitude();
-        mRadarView.setTarget((int)(latitude * GeoUtils.MILLION),
+        double latitude = geocache.getLatitude();
+        double longitude = geocache.getLongitude();
+        radarView.setTarget((int)(latitude * GeoUtils.MILLION),
                 (int)(longitude * GeoUtils.MILLION));
-        mActivity.setTitle("GeoBeagle: " + geocache.getId());
+        activity.setTitle("GeoBeagle: " + geocache.getId());
 
-        IconOverlay iconOverlay = mIconOverlayFactory.create(geocache, true);
+        IconOverlay iconOverlay = iconOverlayFactory.create(geocache, true);
         int iconBig = geocache.getCacheType().iconBig();
-        Drawable icon = mIconRenderer.renderIcon(0, 0, iconBig, iconOverlay, mMapViewBitmapCopier,
-                mDifficultyAndTerrainPainter);
-        mCacheTypeImageView.setImageDrawable(icon);
+        Drawable icon = iconRenderer.renderIcon(0, 0, iconBig, iconOverlay, mapViewBitmapCopier,
+                difficultyAndTerrainPainter);
+        cacheTypeImageView.setImageDrawable(icon);
         int container = geocache.getContainer();
-        mContainer.setVisibility(container == 0 ? View.GONE : View.VISIBLE);
-        mContainer.setImage(container);
-        mDifficulty.setImage(geocache.getDifficulty());
-        mTerrain.setImage(geocache.getTerrain());
+        this.container.setVisibility(container == 0 ? View.GONE : View.VISIBLE);
+        this.container.setImage(container);
+        difficulty.setImage(geocache.getDifficulty());
+        terrain.setImage(geocache.getTerrain());
 
-        mName.set(geocache.getName(), geocache.getAvailable(), geocache.getArchived());
+        name.set(geocache.getName(), geocache.getAvailable(), geocache.getArchived());
     }
 }
