@@ -14,7 +14,11 @@
 
 package com.google.code.geobeagle.activity.compass;
 
+import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.R;
+import com.google.code.geobeagle.activity.cachelist.CacheListActivity;
+import com.google.code.geobeagle.activity.compass.view.GeocacheViewer;
+import com.google.inject.Injector;
 
 import android.app.Fragment;
 import android.os.Bundle;
@@ -23,9 +27,22 @@ import android.view.View;
 import android.view.ViewGroup;
 
 public class CompassFragment extends Fragment {
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.compass, container, false);
+        View inflatedView = inflater.inflate(R.layout.compass, container, false);
+        Bundle arguments = getArguments();
+        if (arguments != null) {
+            CacheListActivity cacheListActivity = (CacheListActivity)getActivity();
+            Injector injector = cacheListActivity.getInjector();
+            GeocacheViewerFactory geocacheViewerFactory = injector
+                    .getInstance(GeocacheViewerFactory.class);
+            GeocacheViewer geocacheViewer = geocacheViewerFactory.create(new ViewViewContainer(
+                    inflatedView));
+            GeocacheFromParcelFactory geocacheFromParcelFactory = injector
+                    .getInstance(GeocacheFromParcelFactory.class);
+            Geocache geocache = geocacheFromParcelFactory.createFromBundle(arguments);
+            geocacheViewer.set(geocache);
+        }
+        return inflatedView;
     }
 }
