@@ -14,25 +14,11 @@
 
 package com.google.code.geobeagle.activity.compass;
 
-import com.google.code.geobeagle.GraphicsGenerator.DifficultyAndTerrainPainter;
-import com.google.code.geobeagle.GraphicsGenerator.IconOverlayFactory;
-import com.google.code.geobeagle.GraphicsGenerator.IconRenderer;
-import com.google.code.geobeagle.GraphicsGenerator.MapViewBitmapCopier;
 import com.google.code.geobeagle.GraphicsGenerator.RatingsArray;
 import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.activity.cachelist.view.NameFormatter;
-import com.google.code.geobeagle.activity.compass.ChooseNavDialog;
-import com.google.code.geobeagle.activity.compass.CompassActivityOnCreateHandler;
-import com.google.code.geobeagle.activity.compass.CompassFragmentOnCreateHandler;
-import com.google.code.geobeagle.activity.compass.CompassFragtivityOnCreateHandler;
-import com.google.code.geobeagle.activity.compass.RadarView;
-import com.google.code.geobeagle.activity.compass.view.GeocacheViewer;
 import com.google.code.geobeagle.activity.compass.view.GeocacheViewer.AttributeViewer;
 import com.google.code.geobeagle.activity.compass.view.GeocacheViewer.LabelledAttributeViewer;
-import com.google.code.geobeagle.activity.compass.view.GeocacheViewer.NameViewer;
-import com.google.code.geobeagle.activity.compass.view.GeocacheViewer.ResourceImages;
 import com.google.code.geobeagle.activity.compass.view.GeocacheViewer.UnlabelledAttributeViewer;
-import com.google.inject.Injector;
 import com.google.inject.Provides;
 
 import org.xmlpull.v1.XmlPullParser;
@@ -48,8 +34,6 @@ import android.os.Build;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.util.Arrays;
-
 public class CompassActivityModule extends AbstractAndroidModule {
     @Override
     protected void configure() {
@@ -62,7 +46,7 @@ public class CompassActivityModule extends AbstractAndroidModule {
         }
     }
 
-    private UnlabelledAttributeViewer getImagesOnDifficulty(final Drawable[] pawDrawables,
+    private static UnlabelledAttributeViewer getImagesOnDifficulty(final Drawable[] pawDrawables,
             ImageView imageView, RatingsArray ratingsArray) {
         return new UnlabelledAttributeViewer(imageView, ratingsArray.getRatings(pawDrawables, 10));
     }
@@ -82,45 +66,7 @@ public class CompassActivityModule extends AbstractAndroidModule {
         return XmlPullParserFactory.newInstance().newPullParser();
     }
 
-    @Provides
-    public GeocacheViewer providesGeocacheViewer(Injector injector) {
-        RadarView radarView = injector.getInstance(RadarView.class);
-        Activity activity = injector.getInstance(Activity.class);
-        IconOverlayFactory iconOverlayFactory = injector.getInstance(IconOverlayFactory.class);
-        NameFormatter nameFormatter = injector.getInstance(NameFormatter.class);
-        Resources resources = injector.getInstance(Resources.class);
-        RatingsArray ratingsArray = injector.getInstance(RatingsArray.class);
-        MapViewBitmapCopier mapViewBitmapCopier = injector.getInstance(MapViewBitmapCopier.class);
-        DifficultyAndTerrainPainter difficultyAndTerrainPainter = injector
-                .getInstance(DifficultyAndTerrainPainter.class);
-        IconRenderer iconRenderer = injector.getInstance(IconRenderer.class);
-
-        final TextView textViewName = (TextView)activity.findViewById(R.id.gcname);
-        final ImageView cacheTypeImageView = (ImageView)activity.findViewById(R.id.gcicon);
-        final NameViewer gcName = new NameViewer(textViewName, nameFormatter);
-
-        final AttributeViewer gcDifficulty = getLabelledAttributeViewer(activity, resources,
-                ratingsArray, new int[] {
-                        R.drawable.ribbon_unselected_dark, R.drawable.ribbon_half_bright,
-                        R.drawable.ribbon_selected_bright
-                }, R.id.gc_difficulty, R.id.gc_text_difficulty);
-
-        final AttributeViewer gcTerrain = getLabelledAttributeViewer(activity, resources,
-                ratingsArray, new int[] {
-                        R.drawable.paw_unselected_dark, R.drawable.paw_half_light,
-                        R.drawable.paw_selected_light
-                }, R.id.gc_terrain, R.id.gc_text_terrain);
-        final ResourceImages gcContainer = new ResourceImages(
-                (TextView)activity.findViewById(R.id.gc_text_container),
-                (ImageView)activity.findViewById(R.id.gccontainer),
-                Arrays.asList(GeocacheViewer.CONTAINER_IMAGES));
-
-        return new GeocacheViewer(radarView, activity, gcName, cacheTypeImageView, gcDifficulty,
-                gcTerrain, gcContainer, iconOverlayFactory, mapViewBitmapCopier, iconRenderer,
-                difficultyAndTerrainPainter);
-    }
-
-    private AttributeViewer getLabelledAttributeViewer(Activity activity, Resources resources,
+    static AttributeViewer getLabelledAttributeViewer(HasViewById activity, Resources resources,
             RatingsArray ratingsArray, int[] resourceIds, int difficultyId, int labelId) {
         final ImageView imageViewTerrain = (ImageView)activity.findViewById(difficultyId);
 

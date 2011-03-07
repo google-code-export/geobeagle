@@ -100,7 +100,8 @@ public class CompassActivityDelegate {
         activitySaver = injector.getInstance(ActivitySaver.class);
         appLifecycleManager = injector.getInstance(AppLifecycleManager.class);
         menuActions = injector.getInstance(GeoBeagleActivityMenuActions.class);
-        geocacheViewer = injector.getInstance(GeocacheViewer.class);
+        geocacheViewer = injector.getInstance(GeocacheViewerFactory.class).create(
+                new ActivityViewContainer(parent));
         geocacheFactory = injector.getInstance(GeocacheFactory.class);
         incomingIntentHandler = injector.getInstance(IncomingIntentHandler.class);
         dbFrontendProvider = injector.getProvider(DbFrontend.class);
