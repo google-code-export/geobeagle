@@ -14,6 +14,7 @@
 
 package com.google.code.geobeagle.activity.cachelist;
 
+import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.actions.ContextActions;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionSyncGpx;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVectors;
@@ -46,9 +47,9 @@ public class GeocacheListController {
             AdapterContextMenuInfo acmi = (AdapterContextMenuInfo)menuInfo;
             if (acmi.position > 0) {
                 menu.setHeaderTitle(mGeocacheVectors.get(acmi.position - 1).getId());
-                menu.add(0, MENU_VIEW, 0, "View");
-                menu.add(0, MENU_EDIT, 1, "Edit");
-                menu.add(0, MENU_DELETE, 2, "Delete");
+                menu.add(0, MENU_VIEW, 0, R.string.context_menu_view);
+                menu.add(0, MENU_EDIT, 1, R.string.context_menu_edit);
+                menu.add(0, MENU_DELETE, 2, R.string.context_menu_delete);
             }
         }
     }
