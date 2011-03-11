@@ -13,6 +13,7 @@
  */
 
 package com.google.code.geobeagle.activity.compass.intents;
+
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.activity.compass.CompassActivity;
 
@@ -20,19 +21,19 @@ import android.app.Activity;
 import android.content.Intent;
 
 public class IntentStarterGeo implements IntentStarter {
-    private final CompassActivity mGeoBeagle;
-    private final Intent mIntent;
+    private final CompassActivity geoBeagle;
+    private final Intent intent;
 
     public IntentStarterGeo(Activity geoBeagle, Intent intent) {
-        mGeoBeagle = (CompassActivity)geoBeagle;
-        mIntent = intent;
+        this.geoBeagle = (CompassActivity)geoBeagle;
+        this.intent = intent;
     }
 
     @Override
     public void startIntent() {
-        final Geocache geocache = mGeoBeagle.getGeocache();
-        mIntent.putExtra("latitude", (float)geocache.getLatitude());
-        mIntent.putExtra("longitude", (float)geocache.getLongitude());
-        mGeoBeagle.startActivity(mIntent);
+        Geocache geocache = geoBeagle.getGeocache();
+        intent.putExtra("latitude", (float)geocache.getLatitude());
+        intent.putExtra("longitude", (float)geocache.getLongitude());
+        geoBeagle.startActivity(intent);
     }
 }
