@@ -55,6 +55,7 @@ public class CacheListActivity extends GuiceListActivity {
 
     @Override
     public Dialog onCreateDialog(int idDialog) {
+        super.onCreateDialog(idDialog);
         // idDialog must be CACHE_LIST_DIALOG_CONFIRM_DELETE.
         final AlertDialog.Builder builder = new AlertDialog.Builder(this);
         final View confirmDeleteCacheView = LayoutInflater.from(this).inflate(
