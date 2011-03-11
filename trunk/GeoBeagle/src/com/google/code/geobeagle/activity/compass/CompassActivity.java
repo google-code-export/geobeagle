@@ -23,11 +23,10 @@ import com.google.code.geobeagle.R.id;
 import com.google.code.geobeagle.activity.compass.fieldnotes.DialogHelperSms;
 import com.google.code.geobeagle.activity.compass.fieldnotes.DialogHelperSmsFactory;
 import com.google.code.geobeagle.activity.compass.fieldnotes.FieldnoteLogger;
+import com.google.code.geobeagle.activity.compass.fieldnotes.FieldnoteLogger.OnClickOk;
 import com.google.code.geobeagle.activity.compass.fieldnotes.FieldnoteLoggerFactory;
 import com.google.code.geobeagle.activity.compass.fieldnotes.OnClickOkFactory;
-import com.google.code.geobeagle.activity.compass.fieldnotes.FieldnoteLogger.OnClickOk;
 import com.google.code.geobeagle.activity.compass.intents.IntentStarterGeo;
-import com.google.code.geobeagle.activity.compass.view.OnClickListenerCacheDetails;
 import com.google.code.geobeagle.activity.compass.view.OnClickListenerIntentStarter;
 import com.google.code.geobeagle.activity.compass.view.OnClickListenerRadar;
 import com.google.code.geobeagle.activity.map.GeoMapActivity;
@@ -48,7 +47,6 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.EditText;
 
 import java.text.DateFormat;
@@ -98,19 +96,8 @@ public class CompassActivity extends GuiceActivity {
                 new IntentStarterGeo(this, geoMapActivityIntent), errorDisplayer);
         findViewById(id.maps).setOnClickListener(onClickListenerMapPage);
 
-        findViewById(R.id.cache_details).setOnClickListener(
-                injector.getInstance(OnClickListenerCacheDetails.class));
-        OnClickListener onClickListenerNavigate = injector
-                .getInstance(OnClickListenerNavigate.class);
-        findViewById(id.navigate).setOnClickListener(onClickListenerNavigate);
-
-        findViewById(id.radarview).setOnClickListener(
-                injector.getInstance(OnClickListenerRadar.class));
-
-        findViewById(id.menu_log_find).setOnClickListener(
-                new LogFindClickListener(this, id.menu_log_find));
-        findViewById(id.menu_log_dnf).setOnClickListener(
-                new LogFindClickListener(this, id.menu_log_dnf));
+        injector.getInstance(CompassClickListenerSetter.class).setListeners(
+                new ActivityViewContainer(this), this);
     }
 
     @Override

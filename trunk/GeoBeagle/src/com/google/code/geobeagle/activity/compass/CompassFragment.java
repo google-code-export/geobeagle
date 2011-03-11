@@ -42,6 +42,8 @@ public class CompassFragment extends Fragment {
                     .getInstance(GeocacheFromParcelFactory.class);
             Geocache geocache = geocacheFromParcelFactory.createFromBundle(arguments);
             geocacheViewer.set(geocache);
+            injector.getInstance(CompassClickListenerSetter.class).setListeners(
+                    new ViewViewContainer(inflatedView), cacheListActivity);
         }
         return inflatedView;
     }
