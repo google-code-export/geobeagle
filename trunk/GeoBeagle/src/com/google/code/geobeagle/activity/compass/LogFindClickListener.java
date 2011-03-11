@@ -14,15 +14,16 @@
 
 package com.google.code.geobeagle.activity.compass;
 
+import android.app.Activity;
 import android.view.View;
 import android.view.View.OnClickListener;
 
 public class LogFindClickListener implements OnClickListener {
-    private final CompassActivity mGeoBeagle;
+    private final Activity mGeoBeagle;
     private final int mIdDialog;
 
-    LogFindClickListener(CompassActivity compassActivity, int idDialog) {
-        mGeoBeagle = compassActivity;
+    LogFindClickListener(Activity activity, int idDialog) {
+        mGeoBeagle = activity;
         mIdDialog = idDialog;
     }
 
