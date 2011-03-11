@@ -26,29 +26,29 @@ import android.content.Intent;
 import android.net.Uri;
 
 public class IntentStarterViewUri implements IntentStarter {
-    private final CompassActivity mGeoBeagle;
-    private final GeocacheToUri mGeocacheToUri;
-    private final ErrorDisplayer mErrorDisplayer;
+    private final CompassActivity compassActivity;
+    private final GeocacheToUri geocacheToUri;
+    private final ErrorDisplayer errorDisplayer;
 
     @Inject
     public IntentStarterViewUri(Activity geoBeagle, GeocacheToUri geocacheToUri,
             ErrorDisplayer errorDisplayer) {
-        mGeoBeagle = (CompassActivity)geoBeagle;
-        mGeocacheToUri = geocacheToUri;
-        mErrorDisplayer = errorDisplayer;
+        this.compassActivity = (CompassActivity)geoBeagle;
+        this.geocacheToUri = geocacheToUri;
+        this.errorDisplayer = errorDisplayer;
     }
 
     @Override
     public void startIntent() {
         try {
-            String uri = mGeocacheToUri.convert(mGeoBeagle.getGeocache());
+            String uri = geocacheToUri.convert(compassActivity.getGeocache());
             try {
-                mGeoBeagle.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(uri)));
+                compassActivity.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(uri)));
             } catch (ActivityNotFoundException e) {
-                mErrorDisplayer.displayError(R.string.no_intent_handler, uri);
+                errorDisplayer.displayError(R.string.no_intent_handler, uri);
             }
         } catch (CacheLoaderException e) {
-            mErrorDisplayer.displayError(e.getError(), e.getArgs());
+            errorDisplayer.displayError(e.getError(), e.getArgs());
         }
     }
 }
