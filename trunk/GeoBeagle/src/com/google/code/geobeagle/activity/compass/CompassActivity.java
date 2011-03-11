@@ -184,7 +184,7 @@ public class CompassActivity extends GuiceActivity {
 
     @Override
     protected void onPrepareDialog(int id, Dialog dialog) {
-        super.onCreateDialog(id);
+        super.onPrepareDialog(id, dialog);
         Injector injector = getInjector();
 
         boolean fDnf = id == R.id.menu_log_dnf;
