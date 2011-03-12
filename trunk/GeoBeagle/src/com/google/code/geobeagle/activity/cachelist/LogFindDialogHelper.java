@@ -22,7 +22,7 @@ import com.google.code.geobeagle.activity.compass.fieldnotes.FieldnoteLogger;
 import com.google.code.geobeagle.activity.compass.fieldnotes.FieldnoteLogger.OnClickOk;
 import com.google.code.geobeagle.activity.compass.fieldnotes.FieldnoteLoggerFactory;
 import com.google.code.geobeagle.activity.compass.fieldnotes.OnClickOkFactory;
-import com.google.inject.Injector;
+import com.google.inject.Inject;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -38,28 +38,41 @@ public class LogFindDialogHelper {
     private static final DateFormat mLocalDateFormat = DateFormat
             .getTimeInstance(DateFormat.MEDIUM);
 
-    public void onPrepareDialog(CharSequence cacheId, Injector injector, int id, Dialog dialog) {
+    private final DialogHelperSmsFactory dialogHelperSmsFactory;
+    private final FieldnoteLoggerFactory fieldnoteLoggerFactory;
+    private final OnClickOkFactory onClickOkFactory;
+    private final OnClickCancelListener onClickCancelListener;
+
+    @Inject
+    LogFindDialogHelper(DialogHelperSmsFactory dialogHelperSmsFactory,
+            FieldnoteLoggerFactory fieldnoteLoggerFactory,
+            OnClickOkFactory onClickOkFactory,
+            OnClickCancelListener onClickCancelListener) {
+        this.dialogHelperSmsFactory = dialogHelperSmsFactory;
+        this.fieldnoteLoggerFactory = fieldnoteLoggerFactory;
+        this.onClickOkFactory = onClickOkFactory;
+        this.onClickCancelListener = onClickCancelListener;
+    }
+
+    public void onPrepareDialog(CharSequence cacheId, int id, Dialog dialog) {
         boolean fDnf = id == R.id.menu_log_dnf;
-        DialogHelperSms dialogHelperSms = injector.getInstance(DialogHelperSmsFactory.class)
-                .create(cacheId.length(), fDnf);
-        FieldnoteLogger fieldnoteLogger = injector.getInstance(FieldnoteLoggerFactory.class)
-                .create(dialogHelperSms);
+        DialogHelperSms dialogHelperSms = dialogHelperSmsFactory.create(cacheId.length(), fDnf);
+        FieldnoteLogger fieldnoteLogger = fieldnoteLoggerFactory.create(dialogHelperSms);
 
         fieldnoteLogger.onPrepareDialog(dialog, mLocalDateFormat.format(new Date()), fDnf);
     }
 
-    public Dialog onCreateDialog(Activity activity, Injector injector, int id) {
-        AlertDialog.Builder builder = injector.getInstance(AlertDialog.Builder.class);
+    public Dialog onCreateDialog(Activity activity, int id) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         View fieldnoteDialogView = LayoutInflater.from(activity).inflate(R.layout.fieldnote, null);
 
         boolean fDnf = id == R.id.menu_log_dnf;
 
-        OnClickOk onClickOk = injector.getInstance(OnClickOkFactory.class).create(
+        OnClickOk onClickOk = onClickOkFactory.create(
                 (EditText)fieldnoteDialogView.findViewById(R.id.fieldnote), fDnf);
         builder.setTitle(R.string.field_note_title);
         builder.setView(fieldnoteDialogView);
-        builder.setNegativeButton(R.string.cancel,
-                injector.getInstance(OnClickCancelListener.class));
+        builder.setNegativeButton(R.string.cancel, onClickCancelListener);
         builder.setPositiveButton(R.string.log_cache, onClickOk);
         AlertDialog alertDialog = builder.create();
         return alertDialog;

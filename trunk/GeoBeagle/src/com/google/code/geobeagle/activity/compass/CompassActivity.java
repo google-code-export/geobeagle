@@ -137,16 +137,14 @@ public class CompassActivity extends GuiceActivity {
     @Override
     protected Dialog onCreateDialog(int id) {
         super.onCreateDialog(id);
-        return logFindDialogHelper.onCreateDialog(this, getInjector(), id);
+        return logFindDialogHelper.onCreateDialog(this, id);
     }
 
     @Override
     protected void onPrepareDialog(int id, Dialog dialog) {
         super.onPrepareDialog(id, dialog);
-        Injector injector = getInjector();
-
         Geocache geocache = compassActivityDelegate.getGeocache();
-        logFindDialogHelper.onPrepareDialog(geocache.getId(), injector, id, dialog);
+        logFindDialogHelper.onPrepareDialog(geocache.getId(), id, dialog);
     }
 
     /*
