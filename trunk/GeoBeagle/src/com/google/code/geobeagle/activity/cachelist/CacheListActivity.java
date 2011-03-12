@@ -19,7 +19,6 @@ import com.google.code.geobeagle.SuggestionProvider;
 import com.google.code.geobeagle.activity.ActivityRestorer;
 import com.google.code.geobeagle.activity.ActivityType;
 import com.google.code.geobeagle.activity.cachelist.actions.context.delete.ContextActionDeleteDialogHelper;
-import com.google.code.geobeagle.activity.cachelist.actions.context.delete.ContextActionDeleteStore;
 import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidgetDelegate;
 import com.google.code.geobeagle.gpsstatuswidget.InflatedGpsStatusWidget;
 import com.google.inject.Injector;
@@ -58,9 +57,8 @@ public class CacheListActivity extends GuiceListActivity {
         super.onCreateDialog(idDialog);
 
         if (idDialog == R.id.menu_log_dnf || idDialog == R.id.menu_log_find) {
-            return mLogFindDialogHelper.onCreateDialog(this, getInjector(), idDialog);
+            return mLogFindDialogHelper.onCreateDialog(this, idDialog);
         }
-
         return getInjector().getInstance(ContextActionDeleteDialogHelper.class)
                 .onCreateDialog(this);
     }
@@ -125,13 +123,7 @@ public class CacheListActivity extends GuiceListActivity {
     protected void onPrepareDialog(int id, Dialog dialog) {
 
         Injector injector = getInjector();
-        ContextActionDeleteStore contextActionDeleteStore = injector
-                .getInstance(ContextActionDeleteStore.class);
-        if (id == R.id.delete_cache)
-            injector.getInstance(ContextActionDeleteDialogHelper.class).onPrepareDialog(dialog);
-        else
-            mLogFindDialogHelper.onPrepareDialog(contextActionDeleteStore.getCacheId(),
-                    this.getInjector(), id, dialog);
+        injector.getInstance(ContextActionDeleteDialogHelper.class).onPrepareDialog(dialog);
     }
 
     @Override
