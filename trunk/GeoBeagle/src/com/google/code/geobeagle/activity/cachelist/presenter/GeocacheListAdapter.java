@@ -22,9 +22,11 @@ import com.google.inject.Injector;
 
 import roboguice.inject.ContextScoped;
 
+import android.graphics.Color;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ListView;
 @ContextScoped
 public class GeocacheListAdapter extends BaseAdapter {
     //TODO(sng): Rename to CacheListAdapter.
@@ -71,6 +73,8 @@ public class GeocacheListAdapter extends BaseAdapter {
             return view;
         }
         mGeocacheSummaryRowInflater.setData(view, mGeocacheVectors.get(position));
+        boolean isChecked = ((ListView)parent).isItemChecked(position + 1);
+        view.setBackgroundColor(isChecked ? Color.DKGRAY : Color.TRANSPARENT);
         return view;
     }
 }
