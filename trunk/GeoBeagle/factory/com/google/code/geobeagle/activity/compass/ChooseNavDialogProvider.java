@@ -16,8 +16,7 @@ package com.google.code.geobeagle.activity.compass;
 
 import com.google.code.geobeagle.ErrorDisplayer;
 import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.activity.compass.ChooseNavDialog;
-import com.google.code.geobeagle.activity.compass.CompassActivity;
+import com.google.code.geobeagle.activity.compass.fieldnotes.HasGeocache;
 import com.google.code.geobeagle.activity.compass.intents.GeocacheToGoogleGeo;
 import com.google.code.geobeagle.activity.compass.intents.IntentStarter;
 import com.google.code.geobeagle.activity.compass.intents.IntentStarterGeo;
@@ -31,24 +30,26 @@ import com.google.inject.Provider;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.Intent;
 import android.content.DialogInterface.OnClickListener;
+import android.content.Intent;
 import android.content.res.Resources;
 
 public class ChooseNavDialogProvider implements Provider<ChooseNavDialog> {
     private final ErrorDisplayer errorDisplayer;
-    private final CompassActivity compassActivity;
+    private final Activity activity;
     private final Provider<Resources> resourcesProvider;
     private final Provider<Context> contextProvider;
     private final Provider<InstallRadarAppDialog> installRadarAppDialogProvider;
+    private final HasGeocache hasGeocache;
 
     @Inject
     public ChooseNavDialogProvider(Injector injector) {
         errorDisplayer = injector.getInstance(ErrorDisplayer.class);
-        compassActivity = (CompassActivity)injector.getInstance(Activity.class);
+        activity = injector.getInstance(Activity.class);
         resourcesProvider = injector.getProvider(Resources.class);
         contextProvider = injector.getProvider(Context.class);
         installRadarAppDialogProvider = injector.getProvider(InstallRadarAppDialog.class);
+        hasGeocache = injector.getInstance(HasGeocache.class);
     }
 
     @Override
@@ -58,12 +59,12 @@ public class ChooseNavDialogProvider implements Provider<ChooseNavDialog> {
         GeocacheToGoogleGeo geocacheToNavigate = new GeocacheToGoogleGeo(resourcesProvider,
                 R.string.navigate_intent);
 
-        IntentStarterGeo intentStarterRadar = new IntentStarterGeo(compassActivity, new Intent(
-                "com.google.android.radar.SHOW_RADAR"));
-        IntentStarterViewUri intentStarterGoogleMaps = new IntentStarterViewUri(compassActivity,
-                geocacheToGoogleMaps, errorDisplayer);
-        IntentStarterViewUri intentStarterNavigate = new IntentStarterViewUri(compassActivity,
-                geocacheToNavigate, errorDisplayer);
+        IntentStarterGeo intentStarterRadar = new IntentStarterGeo(activity, new Intent(
+                "com.google.android.radar.SHOW_RADAR"), hasGeocache);
+        IntentStarterViewUri intentStarterGoogleMaps = new IntentStarterViewUri(activity,
+                geocacheToGoogleMaps, errorDisplayer, hasGeocache);
+        IntentStarterViewUri intentStarterNavigate = new IntentStarterViewUri(activity,
+                geocacheToNavigate, errorDisplayer, hasGeocache);
         IntentStarter[] intentStarters = {
                 intentStarterRadar, intentStarterGoogleMaps, intentStarterNavigate
         };

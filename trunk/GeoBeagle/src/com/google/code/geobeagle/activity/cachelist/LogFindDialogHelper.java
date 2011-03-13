@@ -21,6 +21,7 @@ import com.google.code.geobeagle.activity.compass.fieldnotes.DialogHelperSmsFact
 import com.google.code.geobeagle.activity.compass.fieldnotes.FieldnoteLogger;
 import com.google.code.geobeagle.activity.compass.fieldnotes.FieldnoteLogger.OnClickOk;
 import com.google.code.geobeagle.activity.compass.fieldnotes.FieldnoteLoggerFactory;
+import com.google.code.geobeagle.activity.compass.fieldnotes.HasGeocache;
 import com.google.code.geobeagle.activity.compass.fieldnotes.OnClickOkFactory;
 import com.google.inject.Inject;
 
@@ -42,19 +43,23 @@ public class LogFindDialogHelper {
     private final FieldnoteLoggerFactory fieldnoteLoggerFactory;
     private final OnClickOkFactory onClickOkFactory;
     private final OnClickCancelListener onClickCancelListener;
+    private final HasGeocache hasGeocache;
 
     @Inject
     LogFindDialogHelper(DialogHelperSmsFactory dialogHelperSmsFactory,
             FieldnoteLoggerFactory fieldnoteLoggerFactory,
             OnClickOkFactory onClickOkFactory,
-            OnClickCancelListener onClickCancelListener) {
+            OnClickCancelListener onClickCancelListener,
+            HasGeocache hasGeocache) {
         this.dialogHelperSmsFactory = dialogHelperSmsFactory;
         this.fieldnoteLoggerFactory = fieldnoteLoggerFactory;
         this.onClickOkFactory = onClickOkFactory;
         this.onClickCancelListener = onClickCancelListener;
+        this.hasGeocache = hasGeocache;
     }
 
-    public void onPrepareDialog(CharSequence cacheId, int id, Dialog dialog) {
+    public void onPrepareDialog(Activity activity, int id, Dialog dialog) {
+        CharSequence cacheId = hasGeocache.get(activity).getId();
         boolean fDnf = id == R.id.menu_log_dnf;
         DialogHelperSms dialogHelperSms = dialogHelperSmsFactory.create(cacheId.length(), fDnf);
         FieldnoteLogger fieldnoteLogger = fieldnoteLoggerFactory.create(dialogHelperSms);

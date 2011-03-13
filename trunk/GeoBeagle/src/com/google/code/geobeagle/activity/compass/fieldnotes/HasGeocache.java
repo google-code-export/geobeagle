@@ -12,18 +12,12 @@
  ** limitations under the License.
  */
 
-package com.google.code.geobeagle.activity.compass;
+package com.google.code.geobeagle.activity.compass.fieldnotes;
 
-import com.google.code.geobeagle.activity.compass.fieldnotes.HasGeocache;
-import com.google.code.geobeagle.activity.compass.intents.IntentStarterGeo;
-import com.google.inject.Inject;
+import com.google.code.geobeagle.Geocache;
 
 import android.app.Activity;
-import android.content.Intent;
 
-public class IntentStarterRadar extends IntentStarterGeo {
-    @Inject
-    IntentStarterRadar(Activity geoBeagle, HasGeocache hasGeocache) {
-        super(geoBeagle, new Intent("com.google.android.radar.SHOW_RADAR"), hasGeocache);
-    }
+public interface HasGeocache {
+    Geocache get(Activity activity);
 }

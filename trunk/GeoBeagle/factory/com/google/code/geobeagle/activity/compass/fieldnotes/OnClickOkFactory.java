@@ -14,8 +14,6 @@
 
 package com.google.code.geobeagle.activity.compass.fieldnotes;
 
-import com.google.code.geobeagle.activity.compass.CompassActivity;
-import com.google.code.geobeagle.activity.compass.fieldnotes.CacheLogger;
 import com.google.code.geobeagle.activity.compass.fieldnotes.FieldnoteLogger.OnClickOk;
 import com.google.inject.Inject;
 
@@ -24,15 +22,17 @@ import android.widget.EditText;
 
 public class OnClickOkFactory {
     private final CacheLogger cacheLogger;
-    private final CompassActivity compassActivity;
+    private final Activity activity;
+    private final HasGeocache hasGeocache;
 
     @Inject
-    public OnClickOkFactory(Activity activity, CacheLogger cacheLogger) {
-        this.compassActivity = (CompassActivity)activity;
+    public OnClickOkFactory(Activity activity, CacheLogger cacheLogger, HasGeocache hasGeocache) {
+        this.activity = activity;
         this.cacheLogger = cacheLogger;
+        this.hasGeocache = hasGeocache;
     }
 
     public OnClickOk create(EditText editText, boolean dnf) {
-        return new OnClickOk(compassActivity.getGeocache().getId(), editText, cacheLogger, dnf);
+        return new OnClickOk(hasGeocache.get(activity).getId(), editText, cacheLogger, dnf);
     }
 }

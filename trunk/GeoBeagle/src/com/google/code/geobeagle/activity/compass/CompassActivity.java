@@ -17,8 +17,9 @@ package com.google.code.geobeagle.activity.compass;
 import com.google.code.geobeagle.ErrorDisplayer;
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.LocationControlBuffered;
-import com.google.code.geobeagle.R.id;
+import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.cachelist.LogFindDialogHelper;
+import com.google.code.geobeagle.activity.compass.fieldnotes.HasGeocache;
 import com.google.code.geobeagle.activity.compass.intents.IntentStarterGeo;
 import com.google.code.geobeagle.activity.compass.view.OnClickListenerIntentStarter;
 import com.google.code.geobeagle.activity.map.GeoMapActivity;
@@ -76,9 +77,10 @@ public class CompassActivity extends GuiceActivity {
         }
         ErrorDisplayer errorDisplayer = injector.getInstance(ErrorDisplayer.class);
         Intent geoMapActivityIntent = new Intent(this, GeoMapActivity.class);
+        HasGeocache hasGeocache = injector.getInstance(HasGeocache.class);
         OnClickListenerIntentStarter onClickListenerMapPage = new OnClickListenerIntentStarter(
-                new IntentStarterGeo(this, geoMapActivityIntent), errorDisplayer);
-        findViewById(id.maps).setOnClickListener(onClickListenerMapPage);
+                new IntentStarterGeo(this, geoMapActivityIntent, hasGeocache), errorDisplayer);
+        findViewById(R.id.maps).setOnClickListener(onClickListenerMapPage);
 
         injector.getInstance(CompassClickListenerSetter.class).setListeners(
                 new ActivityViewContainer(this), this);
@@ -143,8 +145,7 @@ public class CompassActivity extends GuiceActivity {
     @Override
     protected void onPrepareDialog(int id, Dialog dialog) {
         super.onPrepareDialog(id, dialog);
-        Geocache geocache = compassActivityDelegate.getGeocache();
-        logFindDialogHelper.onPrepareDialog(geocache.getId(), id, dialog);
+        logFindDialogHelper.onPrepareDialog(this, id, dialog);
     }
 
     /*

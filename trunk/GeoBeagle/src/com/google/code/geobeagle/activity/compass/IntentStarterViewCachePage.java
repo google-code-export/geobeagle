@@ -15,6 +15,7 @@
 package com.google.code.geobeagle.activity.compass;
 
 import com.google.code.geobeagle.ErrorDisplayer;
+import com.google.code.geobeagle.activity.compass.fieldnotes.HasGeocache;
 import com.google.code.geobeagle.activity.compass.intents.GeocacheToCachePage;
 import com.google.code.geobeagle.activity.compass.intents.IntentStarterViewUri;
 import com.google.inject.Inject;
@@ -27,6 +28,6 @@ public class IntentStarterViewCachePage extends IntentStarterViewUri {
     public IntentStarterViewCachePage(Injector injector) {
         super(injector.getInstance(Activity.class),
                 injector.getInstance(GeocacheToCachePage.class), injector
-                        .getInstance(ErrorDisplayer.class));
+                        .getInstance(ErrorDisplayer.class), injector.getInstance(HasGeocache.class));
     }
 }
