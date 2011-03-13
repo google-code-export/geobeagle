@@ -42,6 +42,7 @@ public class CacheListActivity extends GuiceListActivity {
 
     private CacheListDelegate mCacheListDelegate;
     private LogFindDialogHelper mLogFindDialogHelper;
+    private ContextActionDeleteDialogHelper mContextActionDeleteDialogHelper;
 
     public CacheListDelegate getCacheListDelegate() {
         return mCacheListDelegate;
@@ -59,8 +60,7 @@ public class CacheListActivity extends GuiceListActivity {
         if (idDialog == R.id.menu_log_dnf || idDialog == R.id.menu_log_find) {
             return mLogFindDialogHelper.onCreateDialog(this, idDialog);
         }
-        return getInjector().getInstance(ContextActionDeleteDialogHelper.class)
-                .onCreateDialog(this);
+        return mContextActionDeleteDialogHelper.onCreateDialog(this);
     }
 
     @Override
@@ -82,6 +82,8 @@ public class CacheListActivity extends GuiceListActivity {
         Injector injector = this.getInjector();
 
         mLogFindDialogHelper = injector.getInstance(LogFindDialogHelper.class);
+        mContextActionDeleteDialogHelper = injector
+                .getInstance(ContextActionDeleteDialogHelper.class);
         mCacheListDelegate = injector.getInstance(CacheListDelegate.class);
         mCacheListDelegate.onCreate();
 
@@ -121,9 +123,7 @@ public class CacheListActivity extends GuiceListActivity {
 
     @Override
     protected void onPrepareDialog(int id, Dialog dialog) {
-
-        Injector injector = getInjector();
-        injector.getInstance(ContextActionDeleteDialogHelper.class).onPrepareDialog(dialog);
+        mContextActionDeleteDialogHelper.onPrepareDialog(dialog);
     }
 
     @Override
