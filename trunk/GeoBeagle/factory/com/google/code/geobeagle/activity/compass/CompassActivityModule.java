@@ -17,6 +17,7 @@ package com.google.code.geobeagle.activity.compass;
 import com.google.code.geobeagle.GraphicsGenerator.RatingsArray;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.compass.fieldnotes.ActivityWithGeocache;
+import com.google.code.geobeagle.activity.compass.fieldnotes.FragmentWithGeocache;
 import com.google.code.geobeagle.activity.compass.fieldnotes.HasGeocache;
 import com.google.code.geobeagle.activity.compass.view.GeocacheViewer.AttributeViewer;
 import com.google.code.geobeagle.activity.compass.view.GeocacheViewer.LabelledAttributeViewer;
@@ -43,10 +44,11 @@ public class CompassActivityModule extends AbstractAndroidModule {
         int sdkVersion = Integer.parseInt(Build.VERSION.SDK);
         if (sdkVersion >= Build.VERSION_CODES.HONEYCOMB) {
             bind(CompassFragtivityOnCreateHandler.class).to(CompassFragmentOnCreateHandler.class);
+            bind(HasGeocache.class).to(FragmentWithGeocache.class);
         } else {
             bind(CompassFragtivityOnCreateHandler.class).to(CompassActivityOnCreateHandler.class);
+            bind(HasGeocache.class).to(ActivityWithGeocache.class);
         }
-        bind(HasGeocache.class).to(ActivityWithGeocache.class);
     }
 
     private static UnlabelledAttributeViewer getImagesOnDifficulty(final Drawable[] pawDrawables,

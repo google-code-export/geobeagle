@@ -27,6 +27,12 @@ import android.view.View;
 import android.view.ViewGroup;
 
 public class CompassFragment extends Fragment {
+    private Geocache geocache;
+
+    public Geocache getGeocache() {
+        return geocache;
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View inflatedView = inflater.inflate(R.layout.compass, container, false);
@@ -40,7 +46,7 @@ public class CompassFragment extends Fragment {
                     inflatedView));
             GeocacheFromParcelFactory geocacheFromParcelFactory = injector
                     .getInstance(GeocacheFromParcelFactory.class);
-            Geocache geocache = geocacheFromParcelFactory.createFromBundle(arguments);
+            geocache = geocacheFromParcelFactory.createFromBundle(arguments);
             geocacheViewer.set(geocache);
             injector.getInstance(CompassClickListenerSetter.class).setListeners(
                     new ViewViewContainer(inflatedView), cacheListActivity);
