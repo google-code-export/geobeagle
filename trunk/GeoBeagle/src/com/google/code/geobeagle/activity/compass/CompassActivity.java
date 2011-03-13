@@ -28,7 +28,6 @@ import com.google.code.geobeagle.activity.compass.fieldnotes.FieldnoteLoggerFact
 import com.google.code.geobeagle.activity.compass.fieldnotes.OnClickOkFactory;
 import com.google.code.geobeagle.activity.compass.intents.IntentStarterGeo;
 import com.google.code.geobeagle.activity.compass.view.OnClickListenerIntentStarter;
-import com.google.code.geobeagle.activity.compass.view.OnClickListenerRadar;
 import com.google.code.geobeagle.activity.map.GeoMapActivity;
 import com.google.inject.Inject;
 import com.google.inject.Injector;

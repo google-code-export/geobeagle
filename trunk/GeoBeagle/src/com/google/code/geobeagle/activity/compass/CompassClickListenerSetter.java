@@ -21,16 +21,15 @@ import com.google.code.geobeagle.activity.compass.view.OnClickListenerRadar;
 import com.google.inject.Inject;
 
 import android.app.Activity;
-import android.view.View.OnClickListener;
 
 class CompassClickListenerSetter {
     private final OnClickListenerCacheDetails onClickListenerCacheDetails;
-    private final OnClickListener onClickListenerNavigate;
+    private final OnClickListenerNavigate onClickListenerNavigate;
     private final OnClickListenerRadar onClickListenerRadar;
 
     @Inject
     public CompassClickListenerSetter(OnClickListenerCacheDetails onClickListenerCacheDetails,
-            OnClickListener onClickListenerNavigate,
+            OnClickListenerNavigate onClickListenerNavigate,
             OnClickListenerRadar onClickListenerRadar) {
         this.onClickListenerCacheDetails = onClickListenerCacheDetails;
         this.onClickListenerNavigate = onClickListenerNavigate;
