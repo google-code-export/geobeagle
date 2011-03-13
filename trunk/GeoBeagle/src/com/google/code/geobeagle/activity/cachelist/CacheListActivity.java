@@ -14,35 +14,35 @@
 
 package com.google.code.geobeagle.activity.cachelist;
 
-import com.google.code.geobeagle.OnClickCancelListener;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.SuggestionProvider;
 import com.google.code.geobeagle.activity.ActivityRestorer;
 import com.google.code.geobeagle.activity.ActivityType;
 import com.google.code.geobeagle.activity.cachelist.actions.context.delete.ContextActionDeleteDialogHelper;
+import com.google.code.geobeagle.activity.cachelist.actions.context.delete.ContextActionDeleteStore;
 import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidgetDelegate;
 import com.google.code.geobeagle.gpsstatuswidget.InflatedGpsStatusWidget;
 import com.google.inject.Injector;
 
 import roboguice.activity.GuiceListActivity;
 
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.SearchManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.SearchRecentSuggestions;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.widget.ListView;
 
+
 public class CacheListActivity extends GuiceListActivity {
 
     private CacheListDelegate mCacheListDelegate;
+    private LogFindDialogHelper mLogFindDialogHelper;
 
     public CacheListDelegate getCacheListDelegate() {
         return mCacheListDelegate;
@@ -56,16 +56,13 @@ public class CacheListActivity extends GuiceListActivity {
     @Override
     public Dialog onCreateDialog(int idDialog) {
         super.onCreateDialog(idDialog);
-        // idDialog must be CACHE_LIST_DIALOG_CONFIRM_DELETE.
-        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        final View confirmDeleteCacheView = LayoutInflater.from(this).inflate(
-                R.layout.confirm_delete_cache, null);
 
-        builder.setNegativeButton(R.string.confirm_delete_negative, new OnClickCancelListener());
-        builder.setView(confirmDeleteCacheView);
+        if (idDialog == R.id.menu_log_dnf || idDialog == R.id.menu_log_find) {
+            return mLogFindDialogHelper.onCreateDialog(this, getInjector(), idDialog);
+        }
 
-        return getInjector().getInstance(ContextActionDeleteDialogHelper.class).onCreateDialog(
-                builder);
+        return getInjector().getInstance(ContextActionDeleteDialogHelper.class)
+                .onCreateDialog(this);
     }
 
     @Override
@@ -86,6 +83,7 @@ public class CacheListActivity extends GuiceListActivity {
         requestWindowFeature(Window.FEATURE_PROGRESS);
         Injector injector = this.getInjector();
 
+        mLogFindDialogHelper = injector.getInstance(LogFindDialogHelper.class);
         mCacheListDelegate = injector.getInstance(CacheListDelegate.class);
         mCacheListDelegate.onCreate();
 
@@ -125,7 +123,15 @@ public class CacheListActivity extends GuiceListActivity {
 
     @Override
     protected void onPrepareDialog(int id, Dialog dialog) {
-        getInjector().getInstance(ContextActionDeleteDialogHelper.class).onPrepareDialog(dialog);
+
+        Injector injector = getInjector();
+        ContextActionDeleteStore contextActionDeleteStore = injector
+                .getInstance(ContextActionDeleteStore.class);
+        if (id == R.id.delete_cache)
+            injector.getInstance(ContextActionDeleteDialogHelper.class).onPrepareDialog(dialog);
+        else
+            mLogFindDialogHelper.onPrepareDialog(contextActionDeleteStore.getCacheId(),
+                    this.getInjector(), id, dialog);
     }
 
     @Override

@@ -29,8 +29,6 @@ import android.app.Activity;
 
 @ContextScoped
 public class ContextActionDelete implements ContextAction {
-    public static final int CACHE_LIST_DIALOG_CONFIRM_DELETE = 0;
-
     private final Activity activity;
     private final Provider<CacheSqlWriter> cacheWriterProvider;
     private final GeocacheVectors geocacheVectors;
@@ -56,7 +54,7 @@ public class ContextActionDelete implements ContextAction {
         String cacheName = geocacheVector.getName().toString();
         String cacheId = geocacheVector.getId().toString();
         contextActionDeleteStore.saveCacheToDelete(cacheId, cacheName);
-        activity.showDialog(CACHE_LIST_DIALOG_CONFIRM_DELETE);
+        activity.showDialog(R.id.delete_cache);
     }
 
     public void delete() {
