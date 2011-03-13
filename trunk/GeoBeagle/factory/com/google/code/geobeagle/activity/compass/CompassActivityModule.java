@@ -16,6 +16,8 @@ package com.google.code.geobeagle.activity.compass;
 
 import com.google.code.geobeagle.GraphicsGenerator.RatingsArray;
 import com.google.code.geobeagle.R;
+import com.google.code.geobeagle.activity.compass.fieldnotes.ActivityWithGeocache;
+import com.google.code.geobeagle.activity.compass.fieldnotes.HasGeocache;
 import com.google.code.geobeagle.activity.compass.view.GeocacheViewer.AttributeViewer;
 import com.google.code.geobeagle.activity.compass.view.GeocacheViewer.LabelledAttributeViewer;
 import com.google.code.geobeagle.activity.compass.view.GeocacheViewer.UnlabelledAttributeViewer;
@@ -44,6 +46,7 @@ public class CompassActivityModule extends AbstractAndroidModule {
         } else {
             bind(CompassFragtivityOnCreateHandler.class).to(CompassActivityOnCreateHandler.class);
         }
+        bind(HasGeocache.class).to(ActivityWithGeocache.class);
     }
 
     private static UnlabelledAttributeViewer getImagesOnDifficulty(final Drawable[] pawDrawables,

@@ -16,7 +16,7 @@ package com.google.code.geobeagle.activity.compass.intents;
 
 import com.google.code.geobeagle.ErrorDisplayer;
 import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.activity.compass.CompassActivity;
+import com.google.code.geobeagle.activity.compass.fieldnotes.HasGeocache;
 import com.google.code.geobeagle.cacheloader.CacheLoaderException;
 import com.google.inject.Inject;
 
@@ -26,24 +26,28 @@ import android.content.Intent;
 import android.net.Uri;
 
 public class IntentStarterViewUri implements IntentStarter {
-    private final CompassActivity compassActivity;
+    private final Activity activity;
     private final GeocacheToUri geocacheToUri;
     private final ErrorDisplayer errorDisplayer;
+    private final HasGeocache hasGeocache;
 
     @Inject
-    public IntentStarterViewUri(Activity geoBeagle, GeocacheToUri geocacheToUri,
-            ErrorDisplayer errorDisplayer) {
-        this.compassActivity = (CompassActivity)geoBeagle;
+    public IntentStarterViewUri(Activity geoBeagle,
+            GeocacheToUri geocacheToUri,
+            ErrorDisplayer errorDisplayer,
+            HasGeocache hasGeocache) {
+        this.activity = geoBeagle;
         this.geocacheToUri = geocacheToUri;
         this.errorDisplayer = errorDisplayer;
+        this.hasGeocache = hasGeocache;
     }
 
     @Override
     public void startIntent() {
         try {
-            String uri = geocacheToUri.convert(compassActivity.getGeocache());
+            String uri = geocacheToUri.convert(hasGeocache.get(activity));
             try {
-                compassActivity.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(uri)));
+                activity.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(uri)));
             } catch (ActivityNotFoundException e) {
                 errorDisplayer.displayError(R.string.no_intent_handler, uri);
             }
