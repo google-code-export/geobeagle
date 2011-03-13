@@ -14,12 +14,16 @@
 
 package com.google.code.geobeagle.activity.cachelist.actions.context.delete;
 
+import com.google.code.geobeagle.OnClickCancelListener;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.cachelist.actions.context.ContextActionDelete;
 import com.google.inject.Inject;
 
-import android.app.AlertDialog.Builder;
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Dialog;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.TextView;
 
 public class ContextActionDeleteDialogHelper {
@@ -33,7 +37,15 @@ public class ContextActionDeleteDialogHelper {
         this.onClickOk = onClickOk;
     }
 
-    public Dialog onCreateDialog(Builder builder) {
+    public Dialog onCreateDialog(Activity activity) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+
+        View confirmDeleteCacheView = LayoutInflater.from(activity).inflate(
+                R.layout.confirm_delete_cache, null);
+
+        builder.setNegativeButton(R.string.confirm_delete_negative, new OnClickCancelListener());
+        builder.setView(confirmDeleteCacheView);
+
         return builder.setPositiveButton(R.string.delete_cache, onClickOk).create();
     }
 
