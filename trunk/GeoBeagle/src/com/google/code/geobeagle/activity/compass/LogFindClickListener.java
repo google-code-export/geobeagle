@@ -19,16 +19,16 @@ import android.view.View;
 import android.view.View.OnClickListener;
 
 public class LogFindClickListener implements OnClickListener {
-    private final Activity mGeoBeagle;
-    private final int mIdDialog;
+    private final Activity activity;
+    private final int idDialog;
 
     LogFindClickListener(Activity activity, int idDialog) {
-        mGeoBeagle = activity;
-        mIdDialog = idDialog;
+        this.activity = activity;
+        this.idDialog = idDialog;
     }
 
     @Override
     public void onClick(View v) {
-        mGeoBeagle.showDialog(mIdDialog);
+        activity.showDialog(idDialog);
     }
 }
