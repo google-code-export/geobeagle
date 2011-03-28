@@ -42,7 +42,7 @@ import android.view.View;
 import android.widget.ListView;
 
 public class GeocacheListPresenter implements Pausable {
-
+    //TODO(sng): Rename to CacheListPresenter.
     static final int UPDATE_DELAY = 1000;
 
     private final LocationListener combinedLocationListener;

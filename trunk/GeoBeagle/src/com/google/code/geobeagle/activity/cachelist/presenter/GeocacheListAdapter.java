@@ -27,6 +27,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 @ContextScoped
 public class GeocacheListAdapter extends BaseAdapter {
+    //TODO(sng): Rename to CacheListAdapter.
     private final GeocacheSummaryRowInflater mGeocacheSummaryRowInflater;
     private final GeocacheVectors mGeocacheVectors;
     private final ActivityVisible mActivityVisible;
