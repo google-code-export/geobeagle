@@ -29,6 +29,7 @@ public class DistanceSortStrategy implements SortStrategy {
         mLocationComparator = locationComparator;
     }
 
+    @Override
     public void sort(ArrayList<GeocacheVector> geocacheVectors) {
         for (GeocacheVector geocacheVector : geocacheVectors) {
             geocacheVector.setDistance(geocacheVector.getDistanceFast());
