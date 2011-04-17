@@ -16,6 +16,7 @@ package com.google.code.geobeagle.activity.cachelist;
 
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVectors;
+import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheListAdapter;
 import com.google.code.geobeagle.activity.compass.CompassFragment;
 import com.google.inject.Injector;
 
@@ -27,6 +28,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.HeaderViewListAdapter;
 import android.widget.ListView;
 
 public class CacheListFragment extends ListFragment {
@@ -54,9 +56,23 @@ public class CacheListFragment extends ListFragment {
     @Override
     public void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
+        HeaderViewListAdapter adapter = (HeaderViewListAdapter)l.getAdapter();
+        GeocacheListAdapter wrappedAdapter = (GeocacheListAdapter)adapter.getWrappedAdapter();
+        wrappedAdapter.setSelected(position-1);
+
+        showDetails(position - 1);
+    }
+
+    void showDetails(int position) {
+        int positionToShow = position;
+        int cacheCount = geocacheVectors.size();
+        if (cacheCount == 0)
+            return;
+        if (positionToShow >= cacheCount)
+            positionToShow = cacheCount - 1;
         CompassFragment compassFragment = new CompassFragment();
         Bundle bundle = new Bundle();
-        geocacheVectors.get(position - 1).getGeocache().saveToBundle(bundle);
+        geocacheVectors.get(position).getGeocache().saveToBundle(bundle);
 
         compassFragment.setArguments(bundle);
         FragmentManager fragmentManager = getFragmentManager();
