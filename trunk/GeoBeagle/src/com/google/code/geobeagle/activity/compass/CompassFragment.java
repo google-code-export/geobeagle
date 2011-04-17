@@ -37,20 +37,18 @@ public class CompassFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View inflatedView = inflater.inflate(R.layout.compass, container, false);
         Bundle arguments = getArguments();
-        if (arguments != null) {
-            CacheListActivity cacheListActivity = (CacheListActivity)getActivity();
-            Injector injector = cacheListActivity.getInjector();
-            GeocacheViewerFactory geocacheViewerFactory = injector
-                    .getInstance(GeocacheViewerFactory.class);
-            GeocacheViewer geocacheViewer = geocacheViewerFactory.create(new ViewViewContainer(
-                    inflatedView));
-            GeocacheFromParcelFactory geocacheFromParcelFactory = injector
-                    .getInstance(GeocacheFromParcelFactory.class);
-            geocache = geocacheFromParcelFactory.createFromBundle(arguments);
-            geocacheViewer.set(geocache);
-            injector.getInstance(CompassClickListenerSetter.class).setListeners(
-                    new ViewViewContainer(inflatedView), cacheListActivity);
-        }
+        CacheListActivity cacheListActivity = (CacheListActivity)getActivity();
+        Injector injector = cacheListActivity.getInjector();
+        GeocacheViewerFactory geocacheViewerFactory = injector
+                .getInstance(GeocacheViewerFactory.class);
+        GeocacheViewer geocacheViewer = geocacheViewerFactory.create(new ViewViewContainer(
+                inflatedView));
+        GeocacheFromParcelFactory geocacheFromParcelFactory = injector
+                .getInstance(GeocacheFromParcelFactory.class);
+        geocache = geocacheFromParcelFactory.createFromBundle(arguments);
+        geocacheViewer.set(geocache);
+        injector.getInstance(CompassClickListenerSetter.class).setListeners(
+                new ViewViewContainer(inflatedView), cacheListActivity);
         return inflatedView;
     }
 }

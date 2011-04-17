@@ -26,6 +26,10 @@ import com.google.inject.Provider;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
+import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
+import android.app.ListActivity;
 import android.content.DialogInterface;
 
 public class MenuActionDeleteAllCaches implements Action {
@@ -33,20 +37,31 @@ public class MenuActionDeleteAllCaches implements Action {
         private final CacheListRefresh cacheListRefresh;
         private final Provider<DbFrontend> dbFrontendProvider;
         private final BCachingStartTime bcachingLastUpdated;
+        private final Activity activity;
 
-        OnClickOkayListener(Provider<DbFrontend> dbFrontendProvider, CacheListRefresh cacheListRefresh,
+        OnClickOkayListener(Activity activity, Provider<DbFrontend> dbFrontendProvider, CacheListRefresh cacheListRefresh,
                 BCachingStartTime bcachingLastUpdated) {
+            this.activity = activity;
             this.dbFrontendProvider = dbFrontendProvider;
             this.cacheListRefresh = cacheListRefresh;
             this.bcachingLastUpdated = bcachingLastUpdated;
         }
 
+        void hideCompassFrame() {
+            ListActivity listActivity = (ListActivity)activity;
+            FragmentManager fragmentManager = listActivity.getFragmentManager();
+            Fragment compassFragment = fragmentManager.findFragmentById(R.id.compass_frame);
+            FragmentTransaction transaction = fragmentManager.beginTransaction();
+            transaction.hide(compassFragment);
+            transaction.commit();
+        }
         @Override
         public void onClick(DialogInterface dialog, int id) {
             dialog.dismiss();
             dbFrontendProvider.get().deleteAll();
             bcachingLastUpdated.clearStartTime();
             cacheListRefresh.forceRefresh();
+            hideCompassFrame();
         }
     }
 
@@ -72,11 +87,12 @@ public class MenuActionDeleteAllCaches implements Action {
       buildAlertDialog(mDbFrontendProvider, mCacheListRefresh, mBcachingLastUpdated).show();
     }
 
-    private AlertDialog buildAlertDialog(Provider<DbFrontend> dbFrontendProvider, CacheListRefresh cacheListRefresh,
+    private AlertDialog buildAlertDialog(Provider<DbFrontend> dbFrontendProvider,
+            CacheListRefresh cacheListRefresh,
             BCachingStartTime bcachingLastUpdated) {
         mBuilder.setTitle(R.string.delete_all_title);
-        final OnClickOkayListener onClickOkayListener = new OnClickOkayListener(dbFrontendProvider,
-                cacheListRefresh, bcachingLastUpdated);
+        final OnClickOkayListener onClickOkayListener = new OnClickOkayListener(mActivity,
+                dbFrontendProvider, cacheListRefresh, bcachingLastUpdated);
         final DialogInterface.OnClickListener onClickCancelListener = new OnClickCancelListener();
         mBuilder.setMessage(R.string.confirm_delete_all).setPositiveButton(
                 R.string.delete_all_title, onClickOkayListener).setNegativeButton(R.string.cancel,
@@ -85,5 +101,6 @@ public class MenuActionDeleteAllCaches implements Action {
         alertDialog.setOwnerActivity(mActivity);
         return alertDialog;
     }
+
 
 }

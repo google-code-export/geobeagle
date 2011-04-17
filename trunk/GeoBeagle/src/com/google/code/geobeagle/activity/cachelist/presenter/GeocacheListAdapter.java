@@ -26,13 +26,13 @@ import android.graphics.Color;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ListView;
 @ContextScoped
 public class GeocacheListAdapter extends BaseAdapter {
     //TODO(sng): Rename to CacheListAdapter.
     private final GeocacheSummaryRowInflater mGeocacheSummaryRowInflater;
     private final GeocacheVectors mGeocacheVectors;
     private final ActivityVisible mActivityVisible;
+    private CharSequence mSelected;
 
     public GeocacheListAdapter(GeocacheVectors geocacheVectors,
             GeocacheSummaryRowInflater geocacheSummaryRowInflater,
@@ -73,8 +73,14 @@ public class GeocacheListAdapter extends BaseAdapter {
             return view;
         }
         mGeocacheSummaryRowInflater.setData(view, mGeocacheVectors.get(position));
-        boolean isChecked = ((ListView)parent).isItemChecked(position + 1);
+        // ListView listView = (ListView)parent;
+        // boolean isChecked = listView.isItemChecked(position + 1);
+        boolean isChecked = mGeocacheVectors.get(position).getId().equals(mSelected);
         view.setBackgroundColor(isChecked ? Color.DKGRAY : Color.TRANSPARENT);
         return view;
+    }
+
+    public void setSelected(int position) {
+        mSelected = mGeocacheVectors.get(position).getId();
     }
 }
