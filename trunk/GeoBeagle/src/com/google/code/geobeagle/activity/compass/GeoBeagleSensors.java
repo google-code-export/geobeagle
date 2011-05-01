@@ -7,6 +7,7 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 
 import android.content.SharedPreferences;
+import android.hardware.Sensor;
 import android.hardware.SensorManager;
 import android.location.LocationManager;
 
@@ -52,10 +53,15 @@ class GeoBeagleSensors {
     public void registerSensors() {
         radarView.handleUnknownLocation();
         radarView.setUseImperial(sharedPreferences.getBoolean("imperial", false));
-        sensorManager.registerListener(radarView, SensorManager.SENSOR_ORIENTATION,
-                SensorManager.SENSOR_DELAY_UI);
-        sensorManager.registerListener(compassListener, SensorManager.SENSOR_ORIENTATION,
-                SensorManager.SENSOR_DELAY_UI);
+        Sensor accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        Sensor magnetometer = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
+
+        sensorManager.registerListener(compassListener, accelerometer, SensorManager.SENSOR_DELAY_UI);
+        sensorManager.registerListener(compassListener, magnetometer, SensorManager.SENSOR_DELAY_UI);
+
+        sensorManager.registerListener(radarView, accelerometer, SensorManager.SENSOR_DELAY_GAME);
+        sensorManager.registerListener(radarView, magnetometer, SensorManager.SENSOR_DELAY_GAME);
+
         locationManagerProvider.get().addGpsStatusListener(satelliteCountListener);
 
         shakeWaker.register();

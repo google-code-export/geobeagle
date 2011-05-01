@@ -31,6 +31,7 @@ package com.google.code.geobeagle.activity.compass;
  * limitations under the License.
  */
 
+import com.google.code.geobeagle.Azimuth;
 import com.google.code.geobeagle.R;
 
 import android.content.Context;
@@ -38,11 +39,13 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Path;
 import android.graphics.Paint.Align;
 import android.graphics.Paint.Style;
+import android.graphics.Path;
 import android.graphics.drawable.BitmapDrawable;
-import android.hardware.SensorListener;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -53,13 +56,12 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.TextView;
 
-@SuppressWarnings("deprecation")
-public class RadarView extends View implements SensorListener, LocationListener {
+public class RadarView extends View implements SensorEventListener, LocationListener {
 
     private static final long RETAIN_GPS_MILLIS = 10000L;
     private Paint mGridPaint;
     private Paint mErasePaint;
-    private float mOrientation;
+    private double mOrientation;
     private double mTargetLat;
     private double mTargetLon;
     private double mMyLocationLat;
@@ -175,6 +177,7 @@ public class RadarView extends View implements SensorListener, LocationListener 
     private final Paint mCompassPaint;
     private final Paint mArrowPaint;
     private final Path mArrowPath;
+    private final Azimuth mAzimuth;
 
     public RadarView(Context context) {
         this(context, null);
@@ -222,6 +225,7 @@ public class RadarView extends View implements SensorListener, LocationListener 
 
         mBlip = ((BitmapDrawable)getResources().getDrawable(R.drawable.blip)).getBitmap();
         mCompassPath = new Path();
+        mAzimuth = new Azimuth();
 
     }
 
@@ -322,17 +326,18 @@ public class RadarView extends View implements SensorListener, LocationListener 
     }
 
     @Override
-    public void onAccuracyChanged(int sensor, int accuracy) {
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
     }
 
     /**
      * Called when we get a new value from the compass
-     *
+     * 
      * @see android.hardware.SensorListener#onSensorChanged(int, float[])
      */
     @Override
-    public void onSensorChanged(int sensor, float[] values) {
-        mOrientation = values[0];
+    public void onSensorChanged(SensorEvent event) {
+        mAzimuth.sensorChanged(event);
+        mOrientation = mAzimuth.getAzimuth();
         double bearingToTarget = mBearing - mOrientation;
         updateBearing(bearingToTarget);
         postInvalidate();
