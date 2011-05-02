@@ -17,7 +17,6 @@ package com.google.code.geobeagle;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorManager;
-import android.util.Log;
 
 public class Azimuth {
 
@@ -35,33 +34,21 @@ public class Azimuth {
     }
 
     public void sensorChanged(SensorEvent event) {
+        boolean sensorReady = false;
         if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER)
             gravity = event.values.clone();
-        if (event.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD)
+        if (event.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD) {
             geomagnetic = event.values.clone();
-        if (gravity == null || geomagnetic == null) {
+            sensorReady = true;
+        }
+        if (gravity == null || geomagnetic == null || !sensorReady) {
             return;
         }
         if (!SensorManager.getRotationMatrix(rotationMatrix, identityMatrix, gravity, geomagnetic)) {
             return;
         }
-//        float rotationMatrixOut[] = new float[9];
-
-//        SensorManager.remapCoordinateSystem(rotationMatrix, SensorManager.AXIS_X,
-//                SensorManager.AXIS_Z, rotationMatrixOut);
         SensorManager.getOrientation(rotationMatrix, orientations);
-//        currentAzimuth = currentAzimuth - (currentAzimuth - Math.toDegrees(orientations[0])) / 2.0;
         currentAzimuth = Math.toDegrees(orientations[0]);
-//        float incl = SensorManager.getInclination(identityMatrix);
-//        final float rad2deg = (float)(180.0f/Math.PI);
-//        Log.d("Compass", "yaw: " + (int)(orientations[0]*rad2deg) +
-//                "  pitch: " + (int)(orientations[1]*rad2deg) +
-//                "  roll: " + (int)(orientations[2]*rad2deg) +
-//                "  incl: " + (int)(incl*rad2deg)
-//                );
-        // Log.d("GeoBeagle", "azimuth: " + event.sensor.getType() + ", " +
-        // orientations[0] + ", "
-        // + currentAzimuth);
     }
 
     public double getAzimuth() {
