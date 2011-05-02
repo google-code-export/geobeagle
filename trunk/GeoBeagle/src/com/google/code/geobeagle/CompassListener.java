@@ -21,6 +21,7 @@ import roboguice.inject.ContextScoped;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
+import android.util.Log;
 
 @ContextScoped
 public class CompassListener implements SensorEventListener {
@@ -50,9 +51,8 @@ public class CompassListener implements SensorEventListener {
     @Override
     public void onSensorChanged(SensorEvent event) {
         mAzimuth.sensorChanged(event);
-        // Log.d("GeoBeagle", "azimuth now " + mLastAzimuth + ", " +
-        // currentAzimuth);
         double currentAzimuth = mAzimuth.getAzimuth();
+//        Log.d("GeoBeagle", "azimuth now " + mLastAzimuth + ", " + currentAzimuth);
         if (Math.abs(currentAzimuth - mLastAzimuth) > 5) {
             mLocationControlBuffered.setAzimuth(((int)currentAzimuth / 5) * 5);
             mRefresher.refresh();
