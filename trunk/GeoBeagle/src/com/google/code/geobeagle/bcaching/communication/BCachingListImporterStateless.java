@@ -67,5 +67,6 @@ public class BCachingListImporterStateless {
         params.put("lastuploaddays", "7");
         params.put("app", "GeoBeagle");
         params.put("timeAsLong", "1");
+        params.put("own", "2");
     }
 }
