@@ -82,7 +82,7 @@ public class BCachingCommunication {
         return new String(out);
     }
 
-    private final String baseUrl = "http://www.bcaching.com/api";
+    private String baseUrl;
     private final String hashword;
     private final int timeout = 60000; // millisec
     private final String username;
@@ -99,7 +99,8 @@ public class BCachingCommunication {
     }
 
     @Inject
-    public BCachingCommunication(BCachingCredentials bcachingCredentials) {
+    public BCachingCommunication(BCachingCredentials bcachingCredentials,
+            SharedPreferences sharedPreferences) {
         username = bcachingCredentials.username;
         String hashword = "";
         try {
@@ -108,6 +109,8 @@ public class BCachingCommunication {
             Log.e("GeoBeagle", ex.toString());
         }
         this.hashword = hashword;
+        baseUrl = sharedPreferences.getString(Preferences.BCACHING_HOSTNAME,
+                "http://www.bcaching.com/api");
     }
 
     public String encodeHashword(String username, String password) {

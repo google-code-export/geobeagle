@@ -61,6 +61,10 @@
 		<CheckBoxPreference android:key="bcaching-sync-finds"
 			android:dependency="bcaching-enabled" android:layout="?android:attr/preferenceLayoutChild"
 			android:title="Sync Found Caches" android:summary="Include found caches in BCaching.com sync" />
+		<EditTextPreference android:key="bcaching-hostname"
+			android:dependency="bcaching-enabled" android:layout="?android:attr/preferenceLayoutChild"
+			android:title="Hostname" android:summary="Hostname for BCaching.com" 
+			android:defaultValue="http://www.bcaching.com/api"/>
 	</PreferenceCategory>
 
 </PreferenceScreen>
