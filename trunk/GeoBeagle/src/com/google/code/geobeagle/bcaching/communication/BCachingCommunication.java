@@ -202,20 +202,21 @@ public class BCachingCommunication {
             connection.addRequestProperty("Accept-encoding", "gzip");
             int responseCode = connection.getResponseCode();
             InputStream inputStream = null;
+            String contentEncoding = connection.getContentEncoding();
             try {
                 inputStream = connection.getInputStream();
             } catch (IOException e) {
                 InputStream errorStream = connection.getErrorStream();
-                if (connection.getContentEncoding() != null
-                        && connection.getContentEncoding().equalsIgnoreCase("gzip")) {
-                    inputStream = new java.util.zip.GZIPInputStream(errorStream);
+                if (contentEncoding != null
+                        && contentEncoding.equalsIgnoreCase("gzip")) {
+                    errorStream = new java.util.zip.GZIPInputStream(errorStream);
                 }
                 InputStreamReader errorStreamReader = new InputStreamReader(errorStream);
                 BufferedReader reader = new BufferedReader(errorStreamReader);
                 String string = connection.getResponseCode() + " error: " + reader.readLine();
                 throw new BCachingException(string);
             }
-            if (connection.getContentEncoding().equalsIgnoreCase("gzip")) {
+            if (contentEncoding != null && contentEncoding.equalsIgnoreCase("gzip")) {
                 inputStream = new java.util.zip.GZIPInputStream(inputStream);
             }
             if (responseCode != HttpURLConnection.HTTP_OK) {
