@@ -53,6 +53,7 @@ import android.location.LocationProvider;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -337,8 +338,13 @@ public class RadarView extends View implements SensorEventListener, LocationList
     @Override
     public void onSensorChanged(SensorEvent event) {
         mAzimuth.sensorChanged(event);
-        mOrientation = mAzimuth.getAzimuth();
+        double newOrientation = mAzimuth.getAzimuth();
+        mOrientation += (newOrientation - mOrientation)/2;
+        mOrientation = (int)mOrientation;
+        
         double bearingToTarget = mBearing - mOrientation;
+//        Log.d("GeoBeagle", "bearing, newOrientation, orientation: " + mBearing + ", "
+//                + newOrientation + ", " + mOrientation);
         updateBearing(bearingToTarget);
         postInvalidate();
     }

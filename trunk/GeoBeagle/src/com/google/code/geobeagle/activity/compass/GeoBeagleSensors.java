@@ -59,8 +59,8 @@ class GeoBeagleSensors {
         sensorManager.registerListener(compassListener, accelerometer, SensorManager.SENSOR_DELAY_UI);
         sensorManager.registerListener(compassListener, magnetometer, SensorManager.SENSOR_DELAY_UI);
 
-        sensorManager.registerListener(radarView, accelerometer, SensorManager.SENSOR_DELAY_GAME);
-        sensorManager.registerListener(radarView, magnetometer, SensorManager.SENSOR_DELAY_GAME);
+        sensorManager.registerListener(radarView, accelerometer, SensorManager.SENSOR_DELAY_UI);
+        sensorManager.registerListener(radarView, magnetometer, SensorManager.SENSOR_DELAY_UI);
 
         locationManagerProvider.get().addGpsStatusListener(satelliteCountListener);
 
