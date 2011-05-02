@@ -16,6 +16,7 @@ package com.google.code.geobeagle.activity.preferences;
 
 public class Preferences {
     public static final String BCACHING_ENABLED = "bcaching-enabled";
+    public static final String BCACHING_HOSTNAME = "bcaching-hostname";
     public static final String BCACHING_PASSWORD = "bcaching-password";
     public static final String BCACHING_USERNAME = "bcaching-username";
     public static final String SDCARD_ENABLED = "sdcard-enabled";
