@@ -34,37 +34,43 @@ public class MenuActionDeleteAllCaches implements Action {
     private final CacheListRefresh mCacheListRefresh;
     private final Provider<DbFrontend> mDbFrontendProvider;
     private final BCachingStartTime mBcachingLastUpdated;
+    private final CompassFrameHider mCompassFrameHider;
 
     @Inject
-    public MenuActionDeleteAllCaches(CacheListRefresh cacheListRefresh, Activity activity,
-            Provider<DbFrontend> dbFrontendProvider, AlertDialog.Builder builder,
-            BCachingStartTime bcachingLastUpdated) {
+    public MenuActionDeleteAllCaches(CacheListRefresh cacheListRefresh,
+            Activity activity,
+            Provider<DbFrontend> dbFrontendProvider,
+            AlertDialog.Builder builder,
+            BCachingStartTime bcachingLastUpdated,
+            CompassFrameHider compassFrameHider) {
         mDbFrontendProvider = dbFrontendProvider;
         mBuilder = builder;
         mActivity = activity;
         mCacheListRefresh = cacheListRefresh;
         mBcachingLastUpdated = bcachingLastUpdated;
+        mCompassFrameHider = compassFrameHider;
     }
 
     @Override
     public void act() {
-      buildAlertDialog(mDbFrontendProvider, mCacheListRefresh, mBcachingLastUpdated).show();
+        buildAlertDialog(mDbFrontendProvider, mCacheListRefresh, mBcachingLastUpdated,
+                mCompassFrameHider).show();
     }
 
     private AlertDialog buildAlertDialog(Provider<DbFrontend> dbFrontendProvider,
             CacheListRefresh cacheListRefresh,
-            BCachingStartTime bcachingLastUpdated) {
+            BCachingStartTime bcachingLastUpdated,
+            CompassFrameHider compassFrameHider) {
         mBuilder.setTitle(R.string.delete_all_title);
         final OnClickOkayListener onClickOkayListener = new OnClickOkayListener(mActivity,
-                dbFrontendProvider, cacheListRefresh, bcachingLastUpdated);
+                dbFrontendProvider, cacheListRefresh, bcachingLastUpdated, compassFrameHider);
         final DialogInterface.OnClickListener onClickCancelListener = new OnClickCancelListener();
-        mBuilder.setMessage(R.string.confirm_delete_all).setPositiveButton(
-                R.string.delete_all_title, onClickOkayListener).setNegativeButton(R.string.cancel,
-                onClickCancelListener);
+        mBuilder.setMessage(R.string.confirm_delete_all)
+                .setPositiveButton(R.string.delete_all_title, onClickOkayListener)
+                .setNegativeButton(R.string.cancel, onClickCancelListener);
         AlertDialog alertDialog = mBuilder.create();
         alertDialog.setOwnerActivity(mActivity);
         return alertDialog;
     }
-
 
 }

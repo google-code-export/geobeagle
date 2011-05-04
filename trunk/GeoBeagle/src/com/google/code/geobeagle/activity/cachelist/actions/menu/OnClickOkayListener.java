@@ -14,43 +14,34 @@
 
 package com.google.code.geobeagle.activity.cachelist.actions.menu;
 
-import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
 import com.google.code.geobeagle.bcaching.preferences.BCachingStartTime;
 import com.google.code.geobeagle.database.DbFrontend;
 import com.google.inject.Provider;
 
 import android.app.Activity;
-import android.app.Fragment;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
-import android.app.ListActivity;
 import android.content.DialogInterface;
 
 class OnClickOkayListener implements DialogInterface.OnClickListener {
-
     private final CacheListRefresh cacheListRefresh;
     private final Provider<DbFrontend> dbFrontendProvider;
     private final BCachingStartTime bcachingLastUpdated;
     private final Activity activity;
+    private final CompassFrameHider compassFrameHider;
 
     OnClickOkayListener(Activity activity,
             Provider<DbFrontend> dbFrontendProvider,
             CacheListRefresh cacheListRefresh,
-            BCachingStartTime bcachingLastUpdated) {
+            BCachingStartTime bcachingLastUpdated,
+            CompassFrameHider compassFrameHider) {
         this.activity = activity;
         this.dbFrontendProvider = dbFrontendProvider;
         this.cacheListRefresh = cacheListRefresh;
         this.bcachingLastUpdated = bcachingLastUpdated;
+        this.compassFrameHider = compassFrameHider;
     }
 
     void hideCompassFrame() {
-        ListActivity listActivity = (ListActivity)activity;
-        FragmentManager fragmentManager = listActivity.getFragmentManager();
-        Fragment compassFragment = fragmentManager.findFragmentById(R.id.compass_frame);
-        FragmentTransaction transaction = fragmentManager.beginTransaction();
-        transaction.hide(compassFragment);
-        transaction.commit();
     }
 
     @Override
@@ -59,6 +50,6 @@ class OnClickOkayListener implements DialogInterface.OnClickListener {
         dbFrontendProvider.get().deleteAll();
         bcachingLastUpdated.clearStartTime();
         cacheListRefresh.forceRefresh();
-        hideCompassFrame();
+        compassFrameHider.hideCompassFrame(activity);
     }
 }
