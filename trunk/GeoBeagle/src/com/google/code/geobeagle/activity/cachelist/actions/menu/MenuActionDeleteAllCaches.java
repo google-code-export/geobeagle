@@ -26,45 +26,9 @@ import com.google.inject.Provider;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
-import android.app.Fragment;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
-import android.app.ListActivity;
 import android.content.DialogInterface;
 
 public class MenuActionDeleteAllCaches implements Action {
-    private static class OnClickOkayListener implements DialogInterface.OnClickListener {
-        private final CacheListRefresh cacheListRefresh;
-        private final Provider<DbFrontend> dbFrontendProvider;
-        private final BCachingStartTime bcachingLastUpdated;
-        private final Activity activity;
-
-        OnClickOkayListener(Activity activity, Provider<DbFrontend> dbFrontendProvider, CacheListRefresh cacheListRefresh,
-                BCachingStartTime bcachingLastUpdated) {
-            this.activity = activity;
-            this.dbFrontendProvider = dbFrontendProvider;
-            this.cacheListRefresh = cacheListRefresh;
-            this.bcachingLastUpdated = bcachingLastUpdated;
-        }
-
-        void hideCompassFrame() {
-            ListActivity listActivity = (ListActivity)activity;
-            FragmentManager fragmentManager = listActivity.getFragmentManager();
-            Fragment compassFragment = fragmentManager.findFragmentById(R.id.compass_frame);
-            FragmentTransaction transaction = fragmentManager.beginTransaction();
-            transaction.hide(compassFragment);
-            transaction.commit();
-        }
-        @Override
-        public void onClick(DialogInterface dialog, int id) {
-            dialog.dismiss();
-            dbFrontendProvider.get().deleteAll();
-            bcachingLastUpdated.clearStartTime();
-            cacheListRefresh.forceRefresh();
-            hideCompassFrame();
-        }
-    }
-
     private final Activity mActivity;
     private final Builder mBuilder;
     private final CacheListRefresh mCacheListRefresh;
