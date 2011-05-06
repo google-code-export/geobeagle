@@ -15,7 +15,6 @@
 package com.google.code.geobeagle.cacheloader;
 
 import com.google.code.geobeagle.cachedetails.FilePathStrategy;
-import com.google.code.geobeagle.cachedetails.reader.DetailsReader;
 import com.google.code.geobeagle.xmlimport.CacheTagHandler;
 
 import java.io.File;
