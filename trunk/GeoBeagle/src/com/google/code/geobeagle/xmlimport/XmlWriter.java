@@ -30,6 +30,7 @@ public class XmlWriter implements EventHandler {
     private final TagWriter tagWriter;
     private Tag tagWpt;
     private String time;
+    private XmlPullParser xmlPullParser;
 
     @Inject
     public XmlWriter(FilePathStrategy filePathStrategy, TagWriter tagWriter) {
@@ -58,7 +59,7 @@ public class XmlWriter implements EventHandler {
     }
 
     @Override
-    public void startTag(String name, String fullPath, XmlPullParser xmlPullParser)
+    public void startTag(String name, String fullPath)
             throws IOException {
         if (!fullPath.startsWith(GpxPath.GPX_WPT.getPath()))
             return;
@@ -79,7 +80,7 @@ public class XmlWriter implements EventHandler {
     }
 
     @Override
-    public boolean text(String fullPath, String text, XmlPullParser xmlPullParser)
+    public boolean text(String fullPath, String text)
             throws IOException {
         if (!fullPath.startsWith(GpxPath.GPX_WPT.getPath()))
             return true;
@@ -106,5 +107,10 @@ public class XmlWriter implements EventHandler {
         if (tagWriter.isOpen())
             tagWriter.text(text);
         return true;
+    }
+
+    @Override
+    public void start(XmlPullParser xmlPullParser) {
+        this.xmlPullParser = xmlPullParser;
     }
 }

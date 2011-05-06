@@ -46,20 +46,27 @@ public class EventHandlerComposite implements EventHandler {
     }
 
     @Override
-    public void startTag(String name, String fullPath, XmlPullParser xmlPullParser)
+    public void startTag(String name, String fullPath)
             throws IOException {
         for (EventHandler eventHandler : eventHandlers) {
-            eventHandler.startTag(name, fullPath, xmlPullParser);
+            eventHandler.startTag(name, fullPath);
         }
     }
 
     @Override
-    public boolean text(String fullPath, String text, XmlPullParser xmlPullParser)
+    public boolean text(String fullPath, String text)
             throws IOException {
         boolean ret = true;
         for (EventHandler eventHandler : eventHandlers) {
-            ret &= eventHandler.text(fullPath, text, xmlPullParser);
+            ret &= eventHandler.text(fullPath, text);
         }
         return ret;
+    }
+
+    @Override
+    public void start(XmlPullParser xmlPullParser) {
+        for (EventHandler eventHandler : eventHandlers) {
+            eventHandler.start(xmlPullParser);
+        }
     }
 }
