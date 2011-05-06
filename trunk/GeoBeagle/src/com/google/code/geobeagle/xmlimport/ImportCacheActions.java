@@ -23,7 +23,7 @@ import java.io.File;
 import java.io.IOException;
 
 @ContextScoped
-public class ImportCacheActions extends CachePersisterFacade {
+public class ImportCacheActions extends CacheTagHandler {
 
     private String mCacheName = "";
     private final CacheTagSqlWriter mCacheTagWriter;

@@ -39,7 +39,7 @@ public class XmlWriter implements EventHandler {
 
     @Override
     public void endTag(String name, String previousFullPath,
-            CachePersisterFacade cachePersisterFacade) throws IOException {
+            CacheTagHandler cacheTagHandler) throws IOException {
         if (!previousFullPath.startsWith(GpxPath.GPX_WPT.getPath()))
             return;
 
@@ -62,7 +62,7 @@ public class XmlWriter implements EventHandler {
     public void startTag(String name,
             String fullPath,
             XmlPullParser xmlPullParser,
-            CachePersisterFacade cachePersisterFacade) throws IOException {
+            CacheTagHandler cacheTagHandler) throws IOException {
         if (!fullPath.startsWith(GpxPath.GPX_WPT.getPath()))
             return;
 
@@ -85,7 +85,7 @@ public class XmlWriter implements EventHandler {
     public boolean text(String fullPath,
             String text,
             XmlPullParser xmlPullParser,
-            CachePersisterFacade cachePersisterFacade) throws IOException {
+            CacheTagHandler cacheTagHandler) throws IOException {
         if (!fullPath.startsWith(GpxPath.GPX_WPT.getPath()))
             return true;
 

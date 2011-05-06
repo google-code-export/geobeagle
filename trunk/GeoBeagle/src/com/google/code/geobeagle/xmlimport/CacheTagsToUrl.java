@@ -18,7 +18,7 @@ import com.google.inject.Inject;
 
 import java.io.IOException;
 
-public class CacheTagsToUrl extends CachePersisterFacade {
+public class CacheTagsToUrl extends CacheTagHandler {
     private final StringWriterWrapper stringWriterWrapper;
 
     @Inject

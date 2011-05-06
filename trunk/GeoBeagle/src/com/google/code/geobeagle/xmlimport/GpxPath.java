@@ -108,8 +108,8 @@ public enum GpxPath {
         this.pathType = pathType;
     }
 
-    public void endTag(CachePersisterFacade cachePersisterFacade) throws IOException {
-        pathType.endTag(cachePersisterFacade);
+    public void endTag(CacheTagHandler cacheTagHandler) throws IOException {
+        pathType.endTag(cacheTagHandler);
     }
 
     public String getPath() {
@@ -117,14 +117,14 @@ public enum GpxPath {
     }
 
     public void startTag(XmlPullParser xmlPullParser,
-            CachePersisterFacade cachePersisterFacade) throws IOException {
-        pathType.startTag(xmlPullParser, cachePersisterFacade);
+            CacheTagHandler cacheTagHandler) throws IOException {
+        pathType.startTag(xmlPullParser, cacheTagHandler);
     }
 
-    public boolean text(String text, CachePersisterFacade cachePersisterFacade) throws IOException {
+    public boolean text(String text, CacheTagHandler cacheTagHandler) throws IOException {
         String trimmedText = text.trim();
         if (trimmedText.length() <= 0)
             return true;
-        return pathType.text(trimmedText, cachePersisterFacade);
+        return pathType.text(trimmedText, cacheTagHandler);
     }
 }

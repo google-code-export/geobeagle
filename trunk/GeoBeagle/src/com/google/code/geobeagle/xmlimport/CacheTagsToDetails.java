@@ -7,7 +7,7 @@ import com.google.inject.Inject;
 
 import java.io.IOException;
 
-public class CacheTagsToDetails extends CachePersisterFacade {
+public class CacheTagsToDetails extends CacheTagHandler {
 
     private final CacheDetailsWriter cacheDetailsWriter;
     private boolean encrypted;
