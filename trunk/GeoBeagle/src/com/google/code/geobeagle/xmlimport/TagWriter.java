@@ -15,6 +15,7 @@
 package com.google.code.geobeagle.xmlimport;
 
 import com.google.code.geobeagle.cachedetails.FileAndDatabaseWriter;
+import com.google.code.geobeagle.cachedetails.FilePathStrategy;
 import com.google.code.geobeagle.cachedetails.Writer;
 import com.google.inject.Inject;
 
@@ -24,10 +25,12 @@ class TagWriter {
     private static final String SPACES = "                        ";
     private int mLevel;
     private final Writer writer;
+    private FilePathStrategy filePathStrategy;
 
     @Inject
-    public TagWriter(FileAndDatabaseWriter writer) {
+    public TagWriter(FileAndDatabaseWriter writer, FilePathStrategy filePathStrategy) {
         this.writer = writer;
+        this.filePathStrategy = filePathStrategy;
     }
 
     // For testing.
@@ -49,10 +52,11 @@ class TagWriter {
         return writer.isOpen();
     }
 
-    public void open(String path) throws IOException {
+    public void open(String gpxName, String wpt, String type) throws IOException {
+        String path = filePathStrategy.getPath(gpxName, wpt, type);
         mLevel = 0;
         writer.mkdirs(path);
-        writer.open(path);
+        writer.open(path, wpt);
         writer.write("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
     }
 

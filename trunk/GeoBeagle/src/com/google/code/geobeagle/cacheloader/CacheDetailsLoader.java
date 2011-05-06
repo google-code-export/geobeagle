@@ -15,7 +15,6 @@
 package com.google.code.geobeagle.cacheloader;
 
 import com.google.code.geobeagle.cachedetails.FilePathStrategy;
-import com.google.code.geobeagle.cachedetails.StringWriterWrapper;
 import com.google.code.geobeagle.xmlimport.CacheTagsToDetails;
 import com.google.inject.Inject;
 
@@ -23,8 +22,7 @@ public class CacheDetailsLoader extends CacheLoader {
     @Inject
     CacheDetailsLoader(DetailsOpener detailsOpener,
             FilePathStrategy filePathStrategy,
-            CacheTagsToDetails cacheTagsToDetails,
-            StringWriterWrapper stringWriterWrapper) {
-        super(filePathStrategy, detailsOpener, cacheTagsToDetails, stringWriterWrapper);
+            CacheTagsToDetails cacheTagsToDetails) {
+        super(filePathStrategy, detailsOpener, cacheTagsToDetails);
     }
 }

@@ -23,9 +23,9 @@ public class FileAndDatabaseWriter implements Writer {
     }
 
     @Override
-    public void open(String path) throws IOException {
-        writerWrapper.open(path);
-        detailsDatabaseWriter.open(path);
+    public void open(String path, String cacheId) throws IOException {
+        writerWrapper.open(path, cacheId);
+        detailsDatabaseWriter.open(path, cacheId);
     }
 
     @Override

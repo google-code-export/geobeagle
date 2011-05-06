@@ -32,7 +32,7 @@ public class WriterWrapper implements com.google.code.geobeagle.cachedetails.Wri
     }
 
     @Override
-    public void open(String path) throws IOException {
+    public void open(String path, String cacheId) throws IOException {
         mWriter = new BufferedWriter(new FileWriter(path), 4000);
     }
 
