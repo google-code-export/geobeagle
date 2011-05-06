@@ -5,8 +5,7 @@ import com.google.inject.Inject;
 
 import java.io.IOException;
 
-public class FileAndDatabaseWriter implements Writer, CacheWriterOpener {
-
+public class FileAndDatabaseWriter implements IFileAndDatabaseWriter {
     private final WriterWrapper writerWrapper;
     private final DetailsDatabaseWriter detailsDatabaseWriter;
 

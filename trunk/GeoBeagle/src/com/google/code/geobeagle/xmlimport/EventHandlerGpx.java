@@ -14,6 +14,8 @@
 
 package com.google.code.geobeagle.xmlimport;
 
+import org.xmlpull.v1.XmlPullParser;
+
 import java.io.IOException;
 
 public class EventHandlerGpx implements EventHandler {
@@ -28,7 +30,7 @@ public class EventHandlerGpx implements EventHandler {
     @Override
     public void startTag(String name,
             String fullPath,
-            XmlPullParserWrapper xmlPullParser,
+            XmlPullParser xmlPullParser,
             CachePersisterFacade cachePersisterFacade) throws IOException {
         GpxPath.fromString(fullPath).startTag(xmlPullParser, cachePersisterFacade);
     }
@@ -36,7 +38,7 @@ public class EventHandlerGpx implements EventHandler {
     @Override
     public boolean text(String fullPath,
             String text,
-            XmlPullParserWrapper xmlPullParser,
+            XmlPullParser xmlPullParser,
             CachePersisterFacade cachePersisterFacade) throws IOException {
         return GpxPath.fromString(fullPath).text(text, cachePersisterFacade);
     }

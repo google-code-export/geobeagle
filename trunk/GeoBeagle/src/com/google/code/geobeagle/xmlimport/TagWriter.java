@@ -16,6 +16,7 @@ package com.google.code.geobeagle.xmlimport;
 
 import com.google.code.geobeagle.cachedetails.FileAndDatabaseWriter;
 import com.google.code.geobeagle.cachedetails.FilePathStrategy;
+import com.google.code.geobeagle.cachedetails.IFileAndDatabaseWriter;
 import com.google.inject.Inject;
 
 import java.io.IOException;
@@ -23,11 +24,16 @@ import java.io.IOException;
 class TagWriter {
     private static final String SPACES = "                        ";
     private int mLevel;
-    private final FileAndDatabaseWriter writer;
+    private final IFileAndDatabaseWriter writer;
     private final FilePathStrategy filePathStrategy;
 
     @Inject
     public TagWriter(FileAndDatabaseWriter writer, FilePathStrategy filePathStrategy) {
+        this.writer = writer;
+        this.filePathStrategy = filePathStrategy;
+    }
+
+    public TagWriter(IFileAndDatabaseWriter writer, FilePathStrategy filePathStrategy) {
         this.writer = writer;
         this.filePathStrategy = filePathStrategy;
     }

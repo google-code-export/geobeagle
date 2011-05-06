@@ -22,12 +22,13 @@ import static org.powermock.api.easymock.PowerMock.verifyAll;
 
 import com.google.code.geobeagle.activity.cachelist.GeoBeagleTest;
 import com.google.code.geobeagle.cachedetails.FilePathStrategy;
-import com.google.code.geobeagle.cachedetails.Writer;
+import com.google.code.geobeagle.cachedetails.IFileAndDatabaseWriter;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.modules.junit4.PowerMockRunner;
+import org.xmlpull.v1.XmlPullParser;
 
 import java.io.IOException;
 
@@ -36,10 +37,10 @@ public class XmlWriterTest extends GeoBeagleTest {
     private XmlWriter xmlWriter;
     private TagWriter tagWriter;
     private StringWriter stringWriter;
-    private XmlPullParserWrapper xmlPullParser;
+    private XmlPullParser xmlPullParser;
     private FilePathStrategy filePathStrategy;
 
-    static class StringWriter implements Writer {
+    static class StringWriter implements IFileAndDatabaseWriter {
         private final java.io.StringWriter stringWriter;
         private boolean isOpen;
 
@@ -52,12 +53,6 @@ public class XmlWriterTest extends GeoBeagleTest {
         public void close() throws IOException {
             stringWriter.write("\nEOF\n");
             isOpen = false;
-        }
-
-        @Override
-        public void open(String path) throws IOException {
-            stringWriter.write("FILE: " + path + "\n");
-            isOpen = true;
         }
 
         @Override
@@ -77,18 +72,22 @@ public class XmlWriterTest extends GeoBeagleTest {
 
         @Override
         public void mkdirs(String path) {
-            // TODO Auto-generated method stub
+        }
 
+        @Override
+        public void open(String path, String wpt) throws IOException {
+            stringWriter.write("FILE: " + path + "\n");
+            isOpen = true;
         }
     }
 
     @Before
     public void setUp() {
         stringWriter = new StringWriter();
-        tagWriter = new TagWriter(stringWriter);
         filePathStrategy = createMock(FilePathStrategy.class);
+        tagWriter = new TagWriter(stringWriter, filePathStrategy);
         xmlWriter = new XmlWriter(filePathStrategy, tagWriter);
-        xmlPullParser = createMock(XmlPullParserWrapper.class);
+        xmlPullParser = createMock(XmlPullParser.class);
     }
 
     @Test
