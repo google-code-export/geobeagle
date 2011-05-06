@@ -25,7 +25,6 @@ import com.google.code.geobeagle.database.DbFrontend;
 import com.google.code.geobeagle.xmlimport.gpx.GpxAndZipFiles;
 import com.google.code.geobeagle.xmlimport.gpx.GpxAndZipFiles.GpxFilesAndZipFilesIter;
 import com.google.code.geobeagle.xmlimport.gpx.IGpxReader;
-import com.google.inject.Provider;
 
 import org.xmlpull.v1.XmlPullParserException;
 
@@ -45,17 +44,14 @@ public class ImportThreadDelegate {
         private final OldCacheFilesCleaner mOldCacheFilesCleaner;
         private final GeoBeagleEnvironment mGeoBeagleEnvironment;
         private final SharedPreferences mSharedPreferences;
-        private final Provider<EventHelper> mEventHelperProvider;
 
         public ImportThreadHelper(GpxLoader gpxLoader, MessageHandlerInterface messageHandler,
-                Provider<EventHelper> eventHelperProvider,
                 EventHandler eventHandler,
                 OldCacheFilesCleaner oldCacheFilesCleaner,
                 SharedPreferences sharedPreferences,
                 GeoBeagleEnvironment geoBeagleEnvironment) {
             mGpxLoader = gpxLoader;
             mMessageHandler = messageHandler;
-            mEventHelperProvider = eventHelperProvider;
             mEventHandler = eventHandler;
             mHasFiles = false;
             mOldCacheFilesCleaner = oldCacheFilesCleaner;
@@ -80,7 +76,7 @@ public class ImportThreadDelegate {
 
             mHasFiles = true;
             mGpxLoader.open(filename, gpxReader.open());
-            return mGpxLoader.load(mEventHelperProvider.get(), mEventHandler);
+            return mGpxLoader.load(mEventHandler);
         }
 
         public void start() {
