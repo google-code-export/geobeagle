@@ -22,9 +22,11 @@ public interface EventHandler {
 
     void endTag(String name, String previousFullPath) throws IOException;
 
-    void startTag(String name, String mFullPath, XmlPullParser mXmlPullParser) throws IOException;
+    void startTag(String name, String mFullPath) throws IOException;
 
-    boolean text(String fullPath, String text, XmlPullParser xmlPullParser) throws IOException;
+    boolean text(String fullPath, String text) throws IOException;
 
     void open(String filename) throws IOException;
+
+    void start(XmlPullParser xmlPullParser);
 }

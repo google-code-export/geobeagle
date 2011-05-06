@@ -65,6 +65,7 @@ public class GpxToCache {
         if (mTestLocAlreadyLoaded.isAlreadyLoaded(mSource)) {
             return true;
         }
+        eventHandler.start(mXmlPullParser);
         eventHelper.open(mFilename, eventHandler);
         int eventType;
         for (eventType = mXmlPullParser.getEventType(); eventType != XmlPullParser.END_DOCUMENT; eventType = mXmlPullParser
