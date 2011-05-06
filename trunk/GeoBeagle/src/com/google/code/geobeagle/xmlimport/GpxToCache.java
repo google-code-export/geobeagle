@@ -31,7 +31,7 @@ public class GpxToCache {
     }
 
     private final Aborter mAborter;
-    private XmlPullParser mXmlPullParserWrapper;
+    private XmlPullParser mXmlPullParser;
     private String mSource;
     private final FileAlreadyLoadedChecker mTestLocAlreadyLoaded;
     private String mFilename;
@@ -40,7 +40,7 @@ public class GpxToCache {
     GpxToCache(XmlPullParser xmlPullParserWrapper,
             Aborter aborter,
             FileAlreadyLoadedChecker fileAlreadyLoadedChecker) {
-        mXmlPullParserWrapper = xmlPullParserWrapper;
+        mXmlPullParser = xmlPullParserWrapper;
         mAborter = aborter;
         mTestLocAlreadyLoaded = fileAlreadyLoadedChecker;
     }
@@ -68,7 +68,7 @@ public class GpxToCache {
         }
         eventHelper.open(mFilename, eventHandler);
         int eventType;
-        for (eventType = mXmlPullParserWrapper.getEventType(); eventType != XmlPullParser.END_DOCUMENT; eventType = mXmlPullParserWrapper
+        for (eventType = mXmlPullParser.getEventType(); eventType != XmlPullParser.END_DOCUMENT; eventType = mXmlPullParser
                 .next()) {
 //            Log.d("GeoBeagle", "event: " + eventType);
             if (mAborter.isAborted()) {
@@ -77,13 +77,13 @@ public class GpxToCache {
             }
             // File already loaded.
             if (!eventHelper.handleEvent(eventType, eventHandler, cachePersisterFacade,
-                    mXmlPullParserWrapper))
+                    mXmlPullParser))
                 return true;
         }
 
         // Pick up END_DOCUMENT event as well.
         eventHelper.handleEvent(eventType, eventHandler, cachePersisterFacade,
-                mXmlPullParserWrapper);
+                mXmlPullParser);
         return false;
     }
 
@@ -92,6 +92,6 @@ public class GpxToCache {
         mFilename = filename;
         XmlPullParser newPullParser = XmlPullParserFactory.newInstance().newPullParser();
         newPullParser.setInput(reader);
-        mXmlPullParserWrapper = newPullParser;
+        mXmlPullParser = newPullParser;
     }
 }
