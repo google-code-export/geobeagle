@@ -35,9 +35,9 @@ public class LocationSaverTest {
     @SuppressWarnings("unchecked")
     @Test
     public void testSave() {
-        CacheWriter writer = createMock(CacheWriter.class);
+        CacheSqlWriter writer = createMock(CacheSqlWriter.class);
         Geocache geocache = createMock(Geocache.class);
-        Provider<CacheWriter> cacheWriterProvider = createMock(Provider.class);
+        Provider<CacheSqlWriter> cacheWriterProvider = createMock(Provider.class);
         TagWriter tagWriter = createMock(TagWriter.class);
         expect(tagWriter.hasTag("LB12345", Tag.FOUND)).andReturn(true);
         expect(cacheWriterProvider.get()).andReturn(writer);

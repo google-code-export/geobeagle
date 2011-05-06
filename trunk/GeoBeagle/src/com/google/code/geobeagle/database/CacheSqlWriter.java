@@ -23,7 +23,7 @@ import com.google.inject.Provider;
 /**
  * @author sng
  */
-public class CacheWriter {
+public class CacheSqlWriter {
     static final String ANALYZE = "ANALYZE";
     public static final String SQLS_CLEAR_EARLIER_LOADS[] = {
             Database.SQL_DELETE_OLD_CACHES, Database.SQL_DELETE_OLD_GPX,
@@ -34,7 +34,7 @@ public class CacheWriter {
     private final Filter filter;
 
     @Inject
-    CacheWriter(Provider<ISQLiteDatabase> writableDatabaseProvider,
+    CacheSqlWriter(Provider<ISQLiteDatabase> writableDatabaseProvider,
             DbToGeocacheAdapter dbToGeocacheAdapter,
             Filter filter) {
         sqliteProvider = writableDatabaseProvider;

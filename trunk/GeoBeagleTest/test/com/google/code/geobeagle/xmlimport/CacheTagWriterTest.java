@@ -23,7 +23,7 @@ import com.google.code.geobeagle.CacheType;
 import com.google.code.geobeagle.CacheTypeFactory;
 import com.google.code.geobeagle.GeocacheFactory.Source;
 import com.google.code.geobeagle.activity.cachelist.GeoBeagleTest;
-import com.google.code.geobeagle.database.CacheWriter;
+import com.google.code.geobeagle.database.CacheSqlWriter;
 import com.google.code.geobeagle.database.ClearCachesFromSource;
 import com.google.code.geobeagle.database.GpxWriter;
 import com.google.code.geobeagle.database.Tag;
@@ -37,7 +37,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 
 @RunWith(PowerMockRunner.class)
 public class CacheTagWriterTest extends GeoBeagleTest {
-    private CacheWriter cacheWriter;
+    private CacheSqlWriter cacheSqlWriter;
     private GpxWriter gpxWriter;
     private TagWriter tagWriter;
     private CacheTypeFactory cacheTypeFactory;
@@ -46,18 +46,18 @@ public class CacheTagWriterTest extends GeoBeagleTest {
 
     @Before
     public void setUp() {
-        cacheWriter = PowerMock.createMock(CacheWriter.class);
+        cacheSqlWriter = PowerMock.createMock(CacheSqlWriter.class);
         gpxWriter = PowerMock.createMock(GpxWriter.class);
         tagWriter = PowerMock.createMock(TagWriter.class);
         cacheTypeFactory = PowerMock.createMock(CacheTypeFactory.class);
         clearCachesFromSource = PowerMock.createMock(ClearCachesFromSource.class);
-        cacheTagSqlWriter = new CacheTagSqlWriter(cacheWriter, gpxWriter, cacheTypeFactory,
+        cacheTagSqlWriter = new CacheTagSqlWriter(cacheSqlWriter, gpxWriter, cacheTypeFactory,
                 tagWriter, clearCachesFromSource);
     }
 
     @Test
     public void testClear() {
-        cacheWriter.insertAndUpdateCache(null, null, 0, 0, Source.GPX, null, CacheType.NULL, 0, 0,
+        cacheSqlWriter.insertAndUpdateCache(null, null, 0, 0, Source.GPX, null, CacheType.NULL, 0, 0,
                 0, true, false, false);
 
         PowerMock.replayAll();
@@ -77,7 +77,7 @@ public class CacheTagWriterTest extends GeoBeagleTest {
 
     @Test
     public void testSymbol() {
-        cacheWriter.insertAndUpdateCache(null, null, 0, 0, Source.GPX, null, null, 0, 0, 0, false,
+        cacheSqlWriter.insertAndUpdateCache(null, null, 0, 0, Source.GPX, null, null, 0, 0, 0, false,
                 false, true);
         tagWriter.add(null, Tag.FOUND, false);
 
@@ -116,7 +116,7 @@ public class CacheTagWriterTest extends GeoBeagleTest {
 
     @Test
     public void testStartWriting() {
-        cacheWriter.startWriting();
+        cacheSqlWriter.startWriting();
 
         PowerMock.replayAll();
         cacheTagSqlWriter.startWriting();
@@ -125,7 +125,7 @@ public class CacheTagWriterTest extends GeoBeagleTest {
 
     @Test
     public void testStopWritingFailure() {
-        cacheWriter.stopWriting();
+        cacheSqlWriter.stopWriting();
 
         PowerMock.replayAll();
         cacheTagSqlWriter.stopWriting(false);
@@ -134,7 +134,7 @@ public class CacheTagWriterTest extends GeoBeagleTest {
 
     @Test
     public void testStopWritingSuccess() {
-        cacheWriter.stopWriting();
+        cacheSqlWriter.stopWriting();
         expect(gpxWriter.isGpxAlreadyLoaded("foo.gpx", "2008-04-15 16:10:30")).andReturn(true);
         gpxWriter.writeGpx("foo.gpx");
 
@@ -147,7 +147,7 @@ public class CacheTagWriterTest extends GeoBeagleTest {
 
     @Test
     public void testWrite() {
-        cacheWriter.insertAndUpdateCache("GC123", "my cache", 122, 37, Source.GPX, "foo.gpx",
+        cacheSqlWriter.insertAndUpdateCache("GC123", "my cache", 122, 37, Source.GPX, "foo.gpx",
                 CacheType.TRADITIONAL, 6, 5, 1, false, false, true);
         expect(cacheTypeFactory.container("Micro")).andReturn(1);
         expect(cacheTypeFactory.stars("2.5")).andReturn(5);

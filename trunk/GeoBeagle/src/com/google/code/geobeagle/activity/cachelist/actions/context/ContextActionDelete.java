@@ -19,7 +19,7 @@ import com.google.code.geobeagle.activity.cachelist.actions.context.delete.Conte
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVector;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVectors;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
-import com.google.code.geobeagle.database.CacheWriter;
+import com.google.code.geobeagle.database.CacheSqlWriter;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
@@ -32,14 +32,14 @@ public class ContextActionDelete implements ContextAction {
     public static final int CACHE_LIST_DIALOG_CONFIRM_DELETE = 0;
 
     private final Activity activity;
-    private final Provider<CacheWriter> cacheWriterProvider;
+    private final Provider<CacheSqlWriter> cacheWriterProvider;
     private final GeocacheVectors geocacheVectors;
     private final CacheListRefresh cacheListRefresh;
     private final ContextActionDeleteStore contextActionDeleteStore;
 
     @Inject
     public ContextActionDelete(GeocacheVectors geocacheVectors,
-            Provider<CacheWriter> cacheWriterProvider,
+            Provider<CacheSqlWriter> cacheWriterProvider,
             Activity activity,
             ContextActionDeleteStore contextActionDeleteStore,
             CacheListRefresh cacheListRefresh) {
