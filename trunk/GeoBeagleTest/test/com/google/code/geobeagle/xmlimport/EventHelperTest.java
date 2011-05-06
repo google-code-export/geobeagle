@@ -42,8 +42,8 @@ public class EventHelperTest {
         xmlPathBuilder.endTag("name");
 
         PowerMock.replayAll();
-        EventHelper eventHelper = new EventHelper(xmlPathBuilder, xmlPullParser);
-        eventHelper.handleEvent(XmlPullParser.END_TAG, eventHandlerGpx, null);
+        EventHelper eventHelper = new EventHelper(xmlPathBuilder);
+        eventHelper.handleEvent(XmlPullParser.END_TAG, eventHandlerGpx, null, xmlPullParser);
         PowerMock.verifyAll();
     }
 
@@ -59,8 +59,8 @@ public class EventHelperTest {
         eventHandlerGpx.startTag("some tag", "/foo", xmlPullParser, null);
 
         PowerMock.replayAll();
-        EventHelper eventHelper = new EventHelper(xmlPathBuilder, xmlPullParser);
-        eventHelper.handleEvent(XmlPullParser.START_TAG, eventHandlerGpx, null);
+        EventHelper eventHelper = new EventHelper(xmlPathBuilder);
+        eventHelper.handleEvent(XmlPullParser.START_TAG, eventHandlerGpx, null, xmlPullParser);
         PowerMock.verifyAll();
     }
 
@@ -75,8 +75,8 @@ public class EventHelperTest {
         expect(eventHandlerGpx.text("/path", "text", xmlPullParser, null)).andReturn(true);
 
         PowerMock.replayAll();
-        EventHelper eventHelper = new EventHelper(xmlPathBuilder, xmlPullParser);
-        eventHelper.handleEvent(XmlPullParser.TEXT, eventHandlerGpx, null);
+        EventHelper eventHelper = new EventHelper(xmlPathBuilder);
+        eventHelper.handleEvent(XmlPullParser.TEXT, eventHandlerGpx, null, xmlPullParser);
         PowerMock.verifyAll();
     }
 

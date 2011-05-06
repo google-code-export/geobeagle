@@ -19,10 +19,10 @@ import com.google.code.geobeagle.cachedetails.StringWriterWrapper;
 import com.google.code.geobeagle.xmlimport.CachePersisterFacade;
 import com.google.code.geobeagle.xmlimport.EventHandlerGpx;
 import com.google.code.geobeagle.xmlimport.EventHelper;
+import com.google.inject.Provider;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
-import org.xmlpull.v1.XmlPullParserFactory;
 
 import android.app.Activity;
 
@@ -37,25 +37,28 @@ public class DetailsReader {
     private final Reader mReader;
     private final StringWriterWrapper mStringWriterWrapper;
     private XmlPullParser mXmlPullParserWrapper;
+    private final Provider<XmlPullParser> mXmlPullParserProvider;
 
     public DetailsReader(Activity activity,
             Reader fileReader,
             String path,
             EventHelper eventHelper,
             EventHandlerGpx eventHandlerGpx,
-            StringWriterWrapper stringWriterWrapper) {
+            StringWriterWrapper stringWriterWrapper,
+            Provider<XmlPullParser> xmlPullParserProvider) {
         mActivity = activity;
         mPath = path;
         mEventHelper = eventHelper;
         mEventHandlerGpx = eventHandlerGpx;
         mReader = fileReader;
         mStringWriterWrapper = stringWriterWrapper;
+        mXmlPullParserProvider = xmlPullParserProvider;
     }
 
     public String read(CachePersisterFacade cachePersisterFacade) {
         try {
             mEventHelper.open(mPath, mEventHandlerGpx);
-            XmlPullParser newPullParser = XmlPullParserFactory.newInstance().newPullParser();
+            XmlPullParser newPullParser = mXmlPullParserProvider.get();
             newPullParser.setInput(mReader);
             mXmlPullParserWrapper = newPullParser;
             int eventType;
