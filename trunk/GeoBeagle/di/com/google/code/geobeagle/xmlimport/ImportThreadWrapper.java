@@ -51,11 +51,10 @@ public class ImportThreadWrapper {
     }
 
     public void open(CacheListRefresh cacheListRefresh,
-            GpxLoader gpxLoader,
             ErrorDisplayer mErrorDisplayer,
             Injector injector) {
         mMessageHandler.start(cacheListRefresh);
-        mImportThread = ImportThread.create(mMessageHandler, gpxLoader, mErrorDisplayer, injector);
+        mImportThread = ImportThread.create(mMessageHandler, mErrorDisplayer, injector);
     }
 
     public void start() {

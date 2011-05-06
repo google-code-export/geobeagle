@@ -47,7 +47,6 @@ public class GpxImporterDI {
     // Can't test this due to final methods in base.
     public static class ImportThread extends RoboThread {
         static ImportThread create(MessageHandlerInterface messageHandlerInterface,
-                GpxLoader gpxLoader,
                 ErrorDisplayer errorDisplayer,
                 Injector injector) {
             final GpxAndZipFilenameFilter filenameFilter = injector
@@ -66,6 +65,7 @@ public class GpxImporterDI {
             final OldCacheFilesCleaner oldCacheFilesCleaner = new OldCacheFilesCleaner(
                     injector.getInstance(GeoBeagleEnvironment.class), messageHandlerInterface);
 
+            final GpxLoader gpxLoader = injector.getInstance(GpxLoaderFromFile.class);
             final ImportThreadHelper importThreadHelper = new ImportThreadHelper(gpxLoader,
                     messageHandlerInterface, oldCacheFilesCleaner, sharedPreferences,
                     geoBeagleEnvironment);
