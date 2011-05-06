@@ -22,10 +22,10 @@ import com.google.code.geobeagle.bcaching.preferences.BCachingStartTime;
 import com.google.code.geobeagle.cachedetails.FileDataVersionChecker;
 import com.google.code.geobeagle.cachedetails.FileDataVersionWriter;
 import com.google.code.geobeagle.database.DbFrontend;
-import com.google.code.geobeagle.xmlimport.EventHelperDI.EventHelperFactory;
 import com.google.code.geobeagle.xmlimport.gpx.GpxAndZipFiles;
 import com.google.code.geobeagle.xmlimport.gpx.GpxAndZipFiles.GpxFilesAndZipFilesIter;
 import com.google.code.geobeagle.xmlimport.gpx.IGpxReader;
+import com.google.inject.Provider;
 
 import org.xmlpull.v1.XmlPullParserException;
 
@@ -39,22 +39,23 @@ public class ImportThreadDelegate {
 
     public static class ImportThreadHelper {
         private final EventHandler mEventHandler;
-        private final EventHelperFactory mEventHelperFactory;
         private final GpxLoader mGpxLoader;
         private boolean mHasFiles;
         private final MessageHandlerInterface mMessageHandler;
         private final OldCacheFilesCleaner mOldCacheFilesCleaner;
         private final GeoBeagleEnvironment mGeoBeagleEnvironment;
         private final SharedPreferences mSharedPreferences;
+        private final Provider<EventHelper> mEventHelperProvider;
 
         public ImportThreadHelper(GpxLoader gpxLoader, MessageHandlerInterface messageHandler,
-                EventHelperFactory eventHelperFactory, EventHandler eventHandler,
+                Provider<EventHelper> eventHelperProvider,
+                EventHandler eventHandler,
                 OldCacheFilesCleaner oldCacheFilesCleaner,
                 SharedPreferences sharedPreferences,
                 GeoBeagleEnvironment geoBeagleEnvironment) {
             mGpxLoader = gpxLoader;
             mMessageHandler = messageHandler;
-            mEventHelperFactory = eventHelperFactory;
+            mEventHelperProvider = eventHelperProvider;
             mEventHandler = eventHandler;
             mHasFiles = false;
             mOldCacheFilesCleaner = oldCacheFilesCleaner;
@@ -79,7 +80,7 @@ public class ImportThreadDelegate {
 
             mHasFiles = true;
             mGpxLoader.open(filename, gpxReader.open());
-            return mGpxLoader.load(mEventHelperFactory.create(), mEventHandler);
+            return mGpxLoader.load(mEventHelperProvider.get(), mEventHandler);
         }
 
         public void start() {
@@ -148,7 +149,7 @@ public class ImportThreadDelegate {
     public synchronized boolean isAlive() {
         return mIsAlive;
     }
-    
+
     protected void tryRun() throws IOException, XmlPullParserException, ImportException,
             CancelException {
         if (mFileDataVersionChecker.needsUpdating()) {
