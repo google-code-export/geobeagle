@@ -14,6 +14,7 @@
 
 package com.google.code.geobeagle.xmlimport;
 
+import com.google.code.geobeagle.xmlimport.EventHandlerGpx.EventHandlerGpxDetails;
 import com.google.inject.Inject;
 
 import org.xmlpull.v1.XmlPullParser;
@@ -26,15 +27,14 @@ public class EventHandlerComposite implements EventHandler {
     private final List<EventHandler> eventHandlers;
 
     @Inject
-    public EventHandlerComposite(XmlWriter xmlWriter, EventHandlerGpx eventHandlerGpx) {
+    public EventHandlerComposite(XmlWriter xmlWriter, EventHandlerGpxDetails eventHandlerGpx) {
         this.eventHandlers = Arrays.asList(xmlWriter, eventHandlerGpx);
     }
 
     @Override
-    public void endTag(String name, String previousFullPath,
-            CacheTagHandler cacheTagHandler) throws IOException {
+    public void endTag(String name, String previousFullPath) throws IOException {
         for (EventHandler eventHandler : eventHandlers) {
-            eventHandler.endTag(name, previousFullPath, cacheTagHandler);
+            eventHandler.endTag(name, previousFullPath);
         }
     }
 
@@ -46,23 +46,19 @@ public class EventHandlerComposite implements EventHandler {
     }
 
     @Override
-    public void startTag(String name,
-            String fullPath,
-            XmlPullParser xmlPullParser,
-            CacheTagHandler cacheTagHandler) throws IOException {
+    public void startTag(String name, String fullPath, XmlPullParser xmlPullParser)
+            throws IOException {
         for (EventHandler eventHandler : eventHandlers) {
-            eventHandler.startTag(name, fullPath, xmlPullParser, cacheTagHandler);
+            eventHandler.startTag(name, fullPath, xmlPullParser);
         }
     }
 
     @Override
-    public boolean text(String fullPath,
-            String text,
-            XmlPullParser xmlPullParser,
-            CacheTagHandler cacheTagHandler) throws IOException {
+    public boolean text(String fullPath, String text, XmlPullParser xmlPullParser)
+            throws IOException {
         boolean ret = true;
         for (EventHandler eventHandler : eventHandlers) {
-            ret &= eventHandler.text(fullPath, text, xmlPullParser, cacheTagHandler);
+            ret &= eventHandler.text(fullPath, text, xmlPullParser);
         }
         return ret;
     }

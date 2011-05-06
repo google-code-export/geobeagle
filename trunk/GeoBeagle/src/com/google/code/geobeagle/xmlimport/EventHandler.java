@@ -20,18 +20,11 @@ import java.io.IOException;
 
 public interface EventHandler {
 
-    void endTag(String name, String previousFullPath, CacheTagHandler cacheTagHandler)
-            throws IOException;
+    void endTag(String name, String previousFullPath) throws IOException;
 
-    void startTag(String name,
-            String mFullPath,
-            XmlPullParser mXmlPullParser,
-            CacheTagHandler cacheTagHandler) throws IOException;
+    void startTag(String name, String mFullPath, XmlPullParser mXmlPullParser) throws IOException;
 
-    boolean text(String fullPath,
-            String text,
-            XmlPullParser xmlPullParser,
-            CacheTagHandler cacheTagHandler) throws IOException;
+    boolean text(String fullPath, String text, XmlPullParser xmlPullParser) throws IOException;
 
     void open(String filename) throws IOException;
 }
