@@ -14,31 +14,42 @@
 
 package com.google.code.geobeagle.xmlimport;
 
+import com.google.inject.Inject;
+
 import org.xmlpull.v1.XmlPullParser;
 
 import java.io.IOException;
 
 public class EventHandlerGpx implements EventHandler {
 
+    static class EventHandlerGpxDetails extends EventHandlerGpx {
+        @Inject
+        public EventHandlerGpxDetails(CacheTagsToDetails cacheTagsToDetails) {
+            super(cacheTagsToDetails);
+        }
+
+    }
+    private final CacheTagHandler cacheTagHandler;
+
+    public EventHandlerGpx(CacheTagHandler cacheTagHandler) {
+        this.cacheTagHandler = cacheTagHandler;
+    }
+
     @Override
-    public void endTag(String name, String previousFullPath, CacheTagHandler cacheTagHandler)
+    public void endTag(String name, String previousFullPath)
             throws IOException {
         GpxPath.fromString(previousFullPath).endTag(cacheTagHandler);
     }
 
     @Override
-    public void startTag(String name,
-            String fullPath,
-            XmlPullParser xmlPullParser,
-            CacheTagHandler cacheTagHandler) throws IOException {
+    public void startTag(String name, String fullPath, XmlPullParser xmlPullParser)
+            throws IOException {
         GpxPath.fromString(fullPath).startTag(xmlPullParser, cacheTagHandler);
     }
 
     @Override
-    public boolean text(String fullPath,
-            String text,
-            XmlPullParser xmlPullParser,
-            CacheTagHandler cacheTagHandler) throws IOException {
+    public boolean text(String fullPath, String text, XmlPullParser xmlPullParser)
+            throws IOException {
         return GpxPath.fromString(fullPath).text(text, cacheTagHandler);
     }
 
