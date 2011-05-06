@@ -23,9 +23,7 @@ public class GpxLoaderFromBCaching extends GpxLoader {
     public GpxLoaderFromBCaching(ImportCacheActionsFromBCaching importCacheActions,
             ErrorDisplayer errorDisplayer,
             GpxToCache gpxToCache,
-            Provider<ImportWakeLock> importWakeLockProvider,
-            EventHandlerComposite eventHandlerComposite) {
-        super(importCacheActions, errorDisplayer, gpxToCache, eventHandlerComposite,
-                importWakeLockProvider);
+            Provider<ImportWakeLock> importWakeLockProvider) {
+        super(importCacheActions, errorDisplayer, gpxToCache, importWakeLockProvider);
     }
 }
