@@ -96,7 +96,7 @@ public class CacheDetailsWriterTest extends GeoBeagleTest {
     public void testWriteWptName() throws IOException {
         HtmlWriter htmlWriter = createMock(HtmlWriter.class);
 
-        htmlWriter.open(null);
+        htmlWriter.open();
         htmlWriter.writeHeader();
         htmlWriter.writeln("<font color=grey>Location:</font> 37 00.000, 122 00.000");
 

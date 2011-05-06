@@ -33,6 +33,8 @@ import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Provider;
 
+import org.xmlpull.v1.XmlPullParser;
+
 import roboguice.inject.ContextScoped;
 import roboguice.util.RoboThread;
 
@@ -50,7 +52,7 @@ public class GpxImporterDI {
         static ImportThread create(MessageHandlerInterface messageHandlerInterface,
                 GpxLoader gpxLoader,
                 EventHandler eventHandler,
-                XmlPullParserWrapper xmlPullParserWrapper,
+                XmlPullParser xmlPullParserWrapper,
                 ErrorDisplayer errorDisplayer,
                 Injector injector) {
             final GpxAndZipFilenameFilter filenameFilter = injector
@@ -110,11 +112,10 @@ public class GpxImporterDI {
     public static class ImportThreadWrapper {
         private ImportThread mImportThread;
         private final MessageHandler mMessageHandler;
-        private final XmlPullParserWrapper mXmlPullParserWrapper;
+        private final XmlPullParser mXmlPullParserWrapper;
 
         @Inject
-        public ImportThreadWrapper(MessageHandler messageHandler,
-                XmlPullParserWrapper xmlPullParserWrapper) {
+        public ImportThreadWrapper(MessageHandler messageHandler, XmlPullParser xmlPullParserWrapper) {
             mMessageHandler = messageHandler;
             mXmlPullParserWrapper = xmlPullParserWrapper;
         }

@@ -16,6 +16,8 @@ package com.google.code.geobeagle.xmlimport;
 
 import com.google.inject.Inject;
 
+import org.xmlpull.v1.XmlPullParser;
+
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
@@ -44,7 +46,9 @@ public class EventHandlerComposite implements EventHandler {
     }
 
     @Override
-    public void startTag(String name, String fullPath, XmlPullParserWrapper xmlPullParser,
+    public void startTag(String name,
+            String fullPath,
+            XmlPullParser xmlPullParser,
             CachePersisterFacade cachePersisterFacade) throws IOException {
         for (EventHandler eventHandler : eventHandlers) {
             eventHandler.startTag(name, fullPath, xmlPullParser, cachePersisterFacade);
@@ -52,7 +56,9 @@ public class EventHandlerComposite implements EventHandler {
     }
 
     @Override
-    public boolean text(String fullPath, String text, XmlPullParserWrapper xmlPullParser,
+    public boolean text(String fullPath,
+            String text,
+            XmlPullParser xmlPullParser,
             CachePersisterFacade cachePersisterFacade) throws IOException {
         boolean ret = true;
         for (EventHandler eventHandler : eventHandlers) {

@@ -16,12 +16,14 @@ package com.google.code.geobeagle.xmlimport;
 
 import com.google.code.geobeagle.GeocacheFactory.Source;
 
+import org.xmlpull.v1.XmlPullParser;
+
 import java.io.IOException;
 
 enum PathType {
     CACHE {
         @Override
-        public void startTag(XmlPullParserWrapper xmlPullParser,
+        public void startTag(XmlPullParser xmlPullParser,
                 CachePersisterFacade cachePersisterFacade) {
             cachePersisterFacade.available(xmlPullParser.getAttributeValue(null, "available"));
             cachePersisterFacade.archived(xmlPullParser.getAttributeValue(null, "archived"));
@@ -99,7 +101,7 @@ enum PathType {
     },
     LOC_COORD {
         @Override
-        public void startTag(XmlPullParserWrapper xmlPullParser,
+        public void startTag(XmlPullParser xmlPullParser,
                 CachePersisterFacade cachePersisterFacade) {
             cachePersisterFacade.wpt(xmlPullParser.getAttributeValue(null, "lat"),
                     xmlPullParser.getAttributeValue(null, "lon"));
@@ -113,7 +115,7 @@ enum PathType {
     },
     LOC_WPTNAME {
         @Override
-        public void startTag(XmlPullParserWrapper xmlPullParser,
+        public void startTag(XmlPullParser xmlPullParser,
                 CachePersisterFacade cachePersisterFacade) throws IOException {
             cachePersisterFacade.startCache();
             cachePersisterFacade.wptName(xmlPullParser.getAttributeValue(null, "id"));
@@ -141,7 +143,7 @@ enum PathType {
         }
 
         @Override
-        public void startTag(XmlPullParserWrapper xmlPullParser,
+        public void startTag(XmlPullParser xmlPullParser,
                 CachePersisterFacade cachePersisterFacade) {
             cachePersisterFacade.setEncrypted("true".equalsIgnoreCase(xmlPullParser
                     .getAttributeValue(null, "encoded")));
@@ -180,7 +182,7 @@ enum PathType {
     },
     NOP {
         @Override
-        public void startTag(XmlPullParserWrapper xmlPullParser,
+        public void startTag(XmlPullParser xmlPullParser,
                 CachePersisterFacade cachePersisterFacade) {
         }
 
@@ -229,7 +231,7 @@ enum PathType {
         }
 
         @Override
-        public void startTag(XmlPullParserWrapper xmlPullParser,
+        public void startTag(XmlPullParser xmlPullParser,
                 CachePersisterFacade cachePersisterFacade) {
             cachePersisterFacade.startCache();
             cachePersisterFacade.wpt(xmlPullParser.getAttributeValue(null, "lat"),
@@ -274,7 +276,7 @@ enum PathType {
     }
 
     @SuppressWarnings("unused")
-    public void startTag(XmlPullParserWrapper xmlPullParser,
+    public void startTag(XmlPullParser xmlPullParser,
             CachePersisterFacade cachePersisterFacade) throws IOException {
     }
 

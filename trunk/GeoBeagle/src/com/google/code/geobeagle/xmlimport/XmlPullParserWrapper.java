@@ -18,12 +18,9 @@ import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
 
-import roboguice.inject.ContextScoped;
-
 import java.io.IOException;
 import java.io.Reader;
 
-@ContextScoped
 public class XmlPullParserWrapper {
     private String mSource;
     private XmlPullParser mXmlPullParser;

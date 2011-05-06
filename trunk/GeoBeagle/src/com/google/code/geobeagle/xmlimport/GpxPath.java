@@ -14,6 +14,8 @@
 
 package com.google.code.geobeagle.xmlimport;
 
+import org.xmlpull.v1.XmlPullParser;
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -114,7 +116,7 @@ public enum GpxPath {
         return path;
     }
 
-    public void startTag(XmlPullParserWrapper xmlPullParser,
+    public void startTag(XmlPullParser xmlPullParser,
             CachePersisterFacade cachePersisterFacade) throws IOException {
         pathType.startTag(xmlPullParser, cachePersisterFacade);
     }
