@@ -33,7 +33,7 @@ import com.google.code.geobeagle.cachedetails.reader.DetailsReader;
 import com.google.code.geobeagle.xmlimport.CacheTagsToDetails;
 import com.google.code.geobeagle.xmlimport.EventHandlerGpx;
 import com.google.code.geobeagle.xmlimport.EventHelper;
-import com.google.code.geobeagle.xmlimport.XmlPullParserWrapper;
+import com.google.inject.Provider;
 
 import org.easymock.EasyMock;
 import org.junit.Before;
@@ -74,11 +74,12 @@ public class CacheDetailsLoaderTest {
     private FileReader fileReader;
     private Reader reader;
     private StringWriterWrapper stringWriterWrapper;
-    private XmlPullParserWrapper xmlPullParser;
+    private XmlPullParser xmlPullParser;
     private XmlPullParserException xmlPullParserException;
-    private XmlPullParserWrapper xmlPullParserWrapper;
     private DetailsDatabaseReader detailsDatabaseReader;
+    private Provider<XmlPullParser> xmlPullParserProvider;
 
+    @SuppressWarnings("unchecked")
     @Before
     public void setUp() {
         fileDataVersionChecker = createMock(FileDataVersionChecker.class);
@@ -89,15 +90,15 @@ public class CacheDetailsLoaderTest {
         activity = createMock(Activity.class);
         fileReader = createMock(FileReader.class);
         eventHelper = createMock(EventHelper.class);
-        xmlPullParser = createMock(XmlPullParserWrapper.class);
+        xmlPullParser = createMock(XmlPullParser.class);
         stringWriterWrapper = createMock(StringWriterWrapper.class);
         bufferedReader = createMock(BufferedReader.class);
-        xmlPullParserWrapper = createMock(XmlPullParserWrapper.class);
         reader = createMock(Reader.class);
         xmlPullParserException = createMock(XmlPullParserException.class);
         detailsOpener = createMock(DetailsOpener.class);
         filePathStrategy = createMock(FilePathStrategy.class);
         detailsDatabaseReader = createMock(DetailsDatabaseReader.class);
+        xmlPullParserProvider = createMock(Provider.class);
     }
 
     @Test
@@ -108,14 +109,14 @@ public class CacheDetailsLoaderTest {
         expectNew(FileReader.class, "/sdcard/foo.gpx").andReturn(fileReader);
         expectNew(BufferedReader.class, fileReader).andReturn(bufferedReader);
         expectNew(DetailsReader.class, eq(activity), EasyMock.anyObject(), eq("/sdcard/foo.gpx"),
-                eq(eventHelper), eq(eventHandler), eq(xmlPullParser), eq(stringWriterWrapper))
-                .andReturn(detailsReader);
+                eq(eventHelper), eq(eventHandler), eq(stringWriterWrapper),
+                eq(xmlPullParserProvider)).andReturn(detailsReader);
         expect(detailsDatabaseReader.read("GC123")).andReturn("the details");
 
         replayAll();
         assertEquals(detailsReader, new DetailsOpener(activity, fileDataVersionChecker,
-                eventHelper, eventHandler, xmlPullParser, stringWriterWrapper,
-                detailsDatabaseReader).open(file, "GC123"));
+                eventHelper, eventHandler, stringWriterWrapper, detailsDatabaseReader,
+                xmlPullParserProvider).open(file, "GC123"));
         verifyAll();
     }
 
@@ -130,8 +131,9 @@ public class CacheDetailsLoaderTest {
         expect(detailsDatabaseReader.read("GC123")).andReturn("the details");
         replayAll();
         try {
-            new DetailsOpener(activity, fileDataVersionChecker, null, null, null, null,
-                    detailsDatabaseReader).open(file, "GC123");
+            new DetailsOpener(activity, fileDataVersionChecker, null, null, null,
+                    detailsDatabaseReader, xmlPullParserProvider).open(file,
+                    "GC123");
             fail("expected exception");
         } catch (CacheLoaderException cle) {
             assertEquals(R.string.error_opening_details_file, cle.getError());
@@ -145,16 +147,17 @@ public class CacheDetailsLoaderTest {
         eventHelper.open("/sdcard/foo.gpx", eventHandler);
         StringWriterWrapper stringWriterWrapper = new StringWriterWrapper();
         stringWriterWrapper.write("DETAILS");
-        xmlPullParserWrapper.open("/sdcard/foo.gpx", reader);
-        expect(xmlPullParserWrapper.getEventType()).andReturn(XmlPullParser.END_DOCUMENT);
+        expect(xmlPullParserProvider.get()).andReturn(xmlPullParser);
+        xmlPullParser.setInput(reader);
+        expect(xmlPullParser.getEventType()).andReturn(XmlPullParser.END_DOCUMENT);
         expect(
                 eventHelper.handleEvent(XmlPullParser.END_DOCUMENT, eventHandler,
-                        cacheTagsToDetails)).andReturn(true);
+                        cacheTagsToDetails, xmlPullParser)).andReturn(true);
 
         replayAll();
         assertEquals("DETAILS",
                 new DetailsReader(activity, reader, "/sdcard/foo.gpx", eventHelper,
-                        eventHandler, xmlPullParserWrapper, stringWriterWrapper)
+                eventHandler, stringWriterWrapper, xmlPullParserProvider)
                         .read(cacheTagsToDetails));
         verifyAll();
     }
@@ -164,14 +167,15 @@ public class CacheDetailsLoaderTest {
         expect(activity.getString(R.string.error_reading_details_file, "/sdcard/foo.gpx"))
                 .andReturn("Can't open file /sdcard/foo.gpx");
         eventHelper.open("/sdcard/foo.gpx", eventHandler);
-        xmlPullParser.open("/sdcard/foo.gpx", reader);
+        expect(xmlPullParserProvider.get()).andReturn(xmlPullParser);
+        xmlPullParser.setInput(reader);
         expectLastCall().andThrow(xmlPullParserException);
         expect(xmlPullParserException.fillInStackTrace()).andStubReturn(xmlPullParserException);
 
         replayAll();
         assertEquals("Can't open file /sdcard/foo.gpx",
-                new DetailsReader(activity, reader, "/sdcard/foo.gpx", eventHelper,
-                        eventHandler, xmlPullParser, stringWriterWrapper).read(cacheTagsToDetails));
+                new DetailsReader(activity, reader, "/sdcard/foo.gpx", eventHelper, eventHandler,
+                        stringWriterWrapper, xmlPullParserProvider).read(cacheTagsToDetails));
         verifyAll();
     }
 
