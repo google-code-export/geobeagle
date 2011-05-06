@@ -16,7 +16,7 @@ package com.google.code.geobeagle.cachedetails.reader;
 
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.cachedetails.StringWriterWrapper;
-import com.google.code.geobeagle.xmlimport.CachePersisterFacade;
+import com.google.code.geobeagle.xmlimport.CacheTagHandler;
 import com.google.code.geobeagle.xmlimport.EventHandlerGpx;
 import com.google.code.geobeagle.xmlimport.EventHelper;
 import com.google.inject.Provider;
@@ -55,7 +55,7 @@ public class DetailsReader {
         mXmlPullParserProvider = xmlPullParserProvider;
     }
 
-    public String read(CachePersisterFacade cachePersisterFacade) {
+    public String read(CacheTagHandler cacheTagHandler) {
         try {
             mEventHelper.open(mPath, mEventHandlerGpx);
             XmlPullParser newPullParser = mXmlPullParserProvider.get();
@@ -64,12 +64,12 @@ public class DetailsReader {
             int eventType;
             for (eventType = mXmlPullParserWrapper.getEventType(); eventType != XmlPullParser.END_DOCUMENT; eventType = mXmlPullParserWrapper
                     .next()) {
-                mEventHelper.handleEvent(eventType, mEventHandlerGpx, cachePersisterFacade,
+                mEventHelper.handleEvent(eventType, mEventHandlerGpx, cacheTagHandler,
                         mXmlPullParserWrapper);
             }
 
             // Pick up END_DOCUMENT event as well.
-            mEventHelper.handleEvent(eventType, mEventHandlerGpx, cachePersisterFacade,
+            mEventHelper.handleEvent(eventType, mEventHandlerGpx, cacheTagHandler,
                     newPullParser);
 
             return mStringWriterWrapper.getString();

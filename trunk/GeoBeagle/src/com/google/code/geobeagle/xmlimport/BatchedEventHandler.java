@@ -14,24 +14,10 @@
 
 package com.google.code.geobeagle.xmlimport;
 
-import org.xmlpull.v1.XmlPullParser;
+public interface BatchedEventHandler extends EventHandler {
+    void start();
 
-import java.io.IOException;
+    void flush();
 
-public interface EventHandler {
-
-    void endTag(String name, String previousFullPath, CacheTagHandler cacheTagHandler)
-            throws IOException;
-
-    void startTag(String name,
-            String mFullPath,
-            XmlPullParser mXmlPullParser,
-            CacheTagHandler cacheTagHandler) throws IOException;
-
-    boolean text(String fullPath,
-            String text,
-            XmlPullParser xmlPullParser,
-            CacheTagHandler cacheTagHandler) throws IOException;
-
-    void open(String filename) throws IOException;
+    void end();
 }

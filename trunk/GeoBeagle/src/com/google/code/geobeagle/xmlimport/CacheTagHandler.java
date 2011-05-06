@@ -18,7 +18,7 @@ import com.google.code.geobeagle.GeocacheFactory.Source;
 
 import java.io.IOException;
 
-public class CachePersisterFacade {
+public class CacheTagHandler {
 
     @SuppressWarnings("unused")
     public void archived(String attributeValue) {
