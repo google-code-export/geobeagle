@@ -15,6 +15,7 @@ public class DetailsDatabaseWriter implements Writer {
     private final GeoBeagleEnvironment geoBeagleEnvironment;
     private final StringBuffer stringBuffer;
     private SQLiteDatabase sdDatabase;
+    private String cacheId;
 
     @Inject
     DetailsDatabaseWriter(GeoBeagleEnvironment geoBeagleEnvironment) {
@@ -26,17 +27,19 @@ public class DetailsDatabaseWriter implements Writer {
     public void close() throws IOException {
         ContentValues contentValues = new ContentValues();
         contentValues.put("Details", stringBuffer.toString());
-        Log.d("GeoBeagle", "INSERTING Details: " + contentValues);
+        contentValues.put("CacheId", cacheId);
+        Log.d("GeoBeagle", "INSERTING Details: " + cacheId);
         sdDatabase.insert("Details", "Details", contentValues);
     }
 
     @Override
-    public void open(String path) throws IOException {
+    public void open(String path, String cacheId) throws IOException {
+        this.cacheId = cacheId;
         if (sdDatabase != null)
             return;
         sdDatabase = SQLiteDatabase.openDatabase(geoBeagleEnvironment.getExternalStorageDir()
                 + "/geobeagle.db", null, SQLiteDatabase.CREATE_IF_NECESSARY);
-        sdDatabase.execSQL("CREATE TABLE IF NOT EXISTS Details (" + "Details TEXT)");
+        sdDatabase.execSQL("CREATE TABLE IF NOT EXISTS Details (CacheId TEXT, Details TEXT)");
     }
 
     @Override
