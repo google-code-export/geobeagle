@@ -101,48 +101,6 @@ public class GpxImporterDI {
         }
     }
 
-    // Wrapper so that containers can follow the "constructors do no work" rule.
-    public static class ImportThreadWrapper {
-        private ImportThread mImportThread;
-        private final MessageHandler mMessageHandler;
-
-        @Inject
-        public ImportThreadWrapper(MessageHandler messageHandler) {
-            mMessageHandler = messageHandler;
-        }
-
-        public boolean isAlive() {
-            if (mImportThread != null)
-                return mImportThread.isAliveHack();
-            return false;
-        }
-
-        public void join() {
-            if (mImportThread != null)
-                try {
-                    while (!isAlive()) {
-                        Log.d("GeoBeagle", "Sleeping while gpx import completes");
-                        Thread.sleep(100);
-                    }
-                } catch (InterruptedException e) {
-                    // Ignore; we are aborting anyway.
-                }
-        }
-
-        public void open(CacheListRefresh cacheListRefresh, GpxLoader gpxLoader,
-                ErrorDisplayer mErrorDisplayer,
-                Injector injector) {
-            mMessageHandler.start(cacheListRefresh);
-            mImportThread = ImportThread.create(mMessageHandler, gpxLoader, mErrorDisplayer,
-                    injector);
-        }
-
-        public void start() {
-            if (mImportThread != null)
-                mImportThread.start();
-        }
-    }
-
     // Too hard to test this class due to final methods in base.
     @ContextScoped
     public static class MessageHandler extends Handler implements MessageHandlerInterface {
