@@ -33,20 +33,17 @@ public class GpxLoader {
     private final ErrorDisplayer mErrorDisplayer;
     private final GpxToCache mGpxToCache;
     private final Provider<ImportWakeLock> mImportWakeLockProvider;
-    private final Provider<EventHelper> mEventHelperProvider;
     public static final int WAKELOCK_DURATION = 15000;
     private final EventHandler mEventHandler;
 
     public GpxLoader(ImportCacheActions importCacheActions,
             ErrorDisplayer errorDisplayer,
             GpxToCache gpxToCache,
-            Provider<EventHelper> eventHelperProvider,
             EventHandler eventHandler,
             Provider<ImportWakeLock> importWakeLockProvider) {
         mGpxToCache = gpxToCache;
         mImportCacheActions = importCacheActions;
         mErrorDisplayer = errorDisplayer;
-        mEventHelperProvider = eventHelperProvider;
         mEventHandler = eventHandler;
         mImportWakeLockProvider = importWakeLockProvider;
     }
@@ -66,10 +63,9 @@ public class GpxLoader {
     public boolean load() {
         boolean markLoadAsComplete = false;
         boolean continueLoading = false;
-        EventHelper eventHelper = mEventHelperProvider.get();
         try {
             mImportWakeLockProvider.get().acquire(WAKELOCK_DURATION);
-            boolean alreadyLoaded = mGpxToCache.load(eventHelper, mEventHandler);
+            boolean alreadyLoaded = mGpxToCache.load(mEventHandler);
             markLoadAsComplete = !alreadyLoaded;
             continueLoading = true;
         } catch (final SQLiteException e) {
