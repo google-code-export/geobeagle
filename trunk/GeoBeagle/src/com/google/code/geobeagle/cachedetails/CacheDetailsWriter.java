@@ -137,7 +137,7 @@ public class CacheDetailsWriter {
     }
 
     public void writeWptName() throws IOException {
-        htmlWriter.open(null);
+        htmlWriter.open();
         htmlWriter.writeHeader();
         writeField("Location", latitude + ", " + longitude);
         latitude = longitude = null;

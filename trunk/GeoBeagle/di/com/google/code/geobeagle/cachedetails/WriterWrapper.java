@@ -21,7 +21,8 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
-public class WriterWrapper implements com.google.code.geobeagle.cachedetails.Writer {
+public class WriterWrapper implements com.google.code.geobeagle.cachedetails.Writer,
+        FilerWriterOpener {
 
     private java.io.Writer mWriter;
 
@@ -32,7 +33,7 @@ public class WriterWrapper implements com.google.code.geobeagle.cachedetails.Wri
     }
 
     @Override
-    public void open(String path, String cacheId) throws IOException {
+    public void open(String path) throws IOException {
         mWriter = new BufferedWriter(new FileWriter(path), 4000);
     }
 

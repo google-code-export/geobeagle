@@ -19,7 +19,7 @@ import java.io.IOException;
 public interface Writer {
     public void close() throws IOException;
 
-    public void open(String path, String wpt) throws IOException;
+    // public void open(String path, String wpt) throws IOException;
 
     public void write(String str) throws IOException;
 
