@@ -17,7 +17,6 @@ package com.google.code.geobeagle.xmlimport;
 import com.google.code.geobeagle.ErrorDisplayer;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.xmlimport.GpxToCache.CancelException;
-import com.google.inject.Inject;
 import com.google.inject.Provider;
 
 import org.xmlpull.v1.XmlPullParserException;
@@ -36,17 +35,19 @@ public class GpxLoader {
     private final Provider<ImportWakeLock> mImportWakeLockProvider;
     private final Provider<EventHelper> mEventHelperProvider;
     public static final int WAKELOCK_DURATION = 15000;
+    private final EventHandler mEventHandler;
 
-    @Inject
     public GpxLoader(ImportCacheActions importCacheActions,
             ErrorDisplayer errorDisplayer,
             GpxToCache gpxToCache,
             Provider<EventHelper> eventHelperProvider,
+            EventHandler eventHandler,
             Provider<ImportWakeLock> importWakeLockProvider) {
         mGpxToCache = gpxToCache;
         mImportCacheActions = importCacheActions;
         mErrorDisplayer = errorDisplayer;
         mEventHelperProvider = eventHelperProvider;
+        mEventHandler = eventHandler;
         mImportWakeLockProvider = importWakeLockProvider;
     }
 
@@ -62,13 +63,13 @@ public class GpxLoader {
      * @return true if we should continue loading more files, false if we should
      *         terminate.
      */
-    public boolean load(EventHandler eventHandler) {
+    public boolean load() {
         boolean markLoadAsComplete = false;
         boolean continueLoading = false;
         EventHelper eventHelper = mEventHelperProvider.get();
         try {
             mImportWakeLockProvider.get().acquire(WAKELOCK_DURATION);
-            boolean alreadyLoaded = mGpxToCache.load(eventHelper, eventHandler);
+            boolean alreadyLoaded = mGpxToCache.load(eventHelper, mEventHandler);
             markLoadAsComplete = !alreadyLoaded;
             continueLoading = true;
         } catch (final SQLiteException e) {

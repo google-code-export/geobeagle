@@ -48,7 +48,6 @@ public class GpxImporterDI {
     public static class ImportThread extends RoboThread {
         static ImportThread create(MessageHandlerInterface messageHandlerInterface,
                 GpxLoader gpxLoader,
-                EventHandler eventHandler,
                 ErrorDisplayer errorDisplayer,
                 Injector injector) {
             final GpxAndZipFilenameFilter filenameFilter = injector
@@ -68,7 +67,7 @@ public class GpxImporterDI {
                     injector.getInstance(GeoBeagleEnvironment.class), messageHandlerInterface);
 
             final ImportThreadHelper importThreadHelper = new ImportThreadHelper(gpxLoader,
-                    messageHandlerInterface, eventHandler, oldCacheFilesCleaner, sharedPreferences,
+                    messageHandlerInterface, oldCacheFilesCleaner, sharedPreferences,
                     geoBeagleEnvironment);
             final FileDataVersionWriter fileDataVersionWriter = injector
                     .getInstance(FileDataVersionWriter.class);
@@ -131,10 +130,11 @@ public class GpxImporterDI {
         }
 
         public void open(CacheListRefresh cacheListRefresh, GpxLoader gpxLoader,
-                EventHandler eventHandler, ErrorDisplayer mErrorDisplayer, Injector injector) {
+                ErrorDisplayer mErrorDisplayer,
+                Injector injector) {
             mMessageHandler.start(cacheListRefresh);
-            mImportThread = ImportThread.create(mMessageHandler, gpxLoader, eventHandler,
-                    mErrorDisplayer, injector);
+            mImportThread = ImportThread.create(mMessageHandler, gpxLoader, mErrorDisplayer,
+                    injector);
         }
 
         public void start() {
