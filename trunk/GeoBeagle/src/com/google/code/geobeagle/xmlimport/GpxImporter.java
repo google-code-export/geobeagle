@@ -32,7 +32,6 @@ import android.widget.Toast;
 public class GpxImporter implements Abortable {
 
     private final ErrorDisplayer mErrorDisplayer;
-    private final GpxLoader mGpxLoader;
     private final ImportThreadWrapper mImportThreadWrapper;
     private final Provider<Context> mContextProvider;
     private final MessageHandler mMessageHandler;
@@ -40,31 +39,32 @@ public class GpxImporter implements Abortable {
     private final Pausable mGeocacheListPresenter;
     private final Provider<CacheListRefresh> mCacheListRefreshProvider;
     private final Injector mInjector;
+    private final Aborter mAborter;
 
     GpxImporter(GeocacheListPresenter geocacheListPresenter,
-            GpxLoaderFromFile gpxLoaderFromFile,
             Provider<Context> contextProvider,
             ImportThreadWrapper importThreadWrapper,
             MessageHandler messageHandler,
             ToastFactory toastFactory,
             ErrorDisplayer errorDisplayer,
             Provider<CacheListRefresh> cacheListRefreshProvider,
+            Aborter aborter,
             Injector injector) {
         mContextProvider = contextProvider;
-        mGpxLoader = gpxLoaderFromFile;
         mImportThreadWrapper = importThreadWrapper;
         mMessageHandler = messageHandler;
         mErrorDisplayer = errorDisplayer;
         mToastFactory = toastFactory;
         mGeocacheListPresenter = geocacheListPresenter;
         mCacheListRefreshProvider = cacheListRefreshProvider;
+        mAborter = aborter;
         mInjector = injector;
     }
 
     @Inject
     GpxImporter(Injector injector) {
         mContextProvider = injector.getProvider(Context.class);
-        mGpxLoader = injector.getInstance(GpxLoaderFromFile.class);
+        mAborter = injector.getInstance(Aborter.class);
         mImportThreadWrapper = injector.getInstance(ImportThreadWrapper.class);
         mMessageHandler = injector.getInstance(MessageHandler.class);
         mErrorDisplayer = injector.getInstance(ErrorDisplayer.class);
@@ -77,7 +77,7 @@ public class GpxImporter implements Abortable {
     @Override
     public void abort() {
         mMessageHandler.abortLoad();
-        mGpxLoader.abort();
+        mAborter.abort();
         if (mImportThreadWrapper.isAlive()) {
             mImportThreadWrapper.join();
             mToastFactory.showToast(mContextProvider.get(), R.string.import_canceled,
@@ -88,7 +88,7 @@ public class GpxImporter implements Abortable {
     public void importGpxs() {
         mGeocacheListPresenter.onPause();
 
-        mImportThreadWrapper.open(mCacheListRefreshProvider.get(), mGpxLoader, mErrorDisplayer,
+        mImportThreadWrapper.open(mCacheListRefreshProvider.get(), mErrorDisplayer,
                 mInjector);
         mImportThreadWrapper.start();
     }
