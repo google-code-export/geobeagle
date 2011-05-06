@@ -29,18 +29,18 @@ import java.io.IOException;
 import java.io.Reader;
 
 public class GpxLoader {
-    private final ImportCacheActions mImportCacheActions;
+    private final CacheTagsToSql mImportCacheActions;
     private final ErrorDisplayer mErrorDisplayer;
     private final GpxToCache mGpxToCache;
     private final Provider<ImportWakeLock> mImportWakeLockProvider;
     public static final int WAKELOCK_DURATION = 15000;
 
-    public GpxLoader(ImportCacheActions importCacheActions,
+    public GpxLoader(CacheTagsToSql cacheTagsToSql,
             ErrorDisplayer errorDisplayer,
             GpxToCache gpxToCache,
             Provider<ImportWakeLock> importWakeLockProvider) {
         mGpxToCache = gpxToCache;
-        mImportCacheActions = importCacheActions;
+        mImportCacheActions = cacheTagsToSql;
         mErrorDisplayer = errorDisplayer;
         mImportWakeLockProvider = importWakeLockProvider;
     }
