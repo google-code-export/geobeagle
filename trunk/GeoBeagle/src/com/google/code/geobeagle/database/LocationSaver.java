@@ -19,24 +19,24 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 
 public class LocationSaver {
-    private final Provider<CacheWriter> cacheWriterProvider;
+    private final Provider<CacheSqlWriter> cacheWriterProvider;
     private final TagWriter tagWriter;
 
     @Inject
-    public LocationSaver(Provider<CacheWriter> cacheWriterProvider, TagWriter tagWriter) {
+    public LocationSaver(Provider<CacheSqlWriter> cacheWriterProvider, TagWriter tagWriter) {
         this.cacheWriterProvider = cacheWriterProvider;
         this.tagWriter = tagWriter;
     }
 
     public void saveLocation(Geocache geocache) {
         CharSequence id = geocache.getId();
-        CacheWriter cacheWriter = cacheWriterProvider.get();
-        cacheWriter.startWriting();
+        CacheSqlWriter cacheSqlWriter = cacheWriterProvider.get();
+        cacheSqlWriter.startWriting();
         boolean found = tagWriter.hasTag(id, Tag.FOUND);
-        cacheWriter.insertAndUpdateCache(id, geocache.getName(), geocache.getLatitude(),
+        cacheSqlWriter.insertAndUpdateCache(id, geocache.getName(), geocache.getLatitude(),
                 geocache.getLongitude(), geocache.getSourceType(), geocache.getSourceName(),
                 geocache.getCacheType(), geocache.getDifficulty(), geocache.getTerrain(),
                 geocache.getContainer(), geocache.getAvailable(), geocache.getArchived(), found);
-        cacheWriter.stopWriting();
+        cacheSqlWriter.stopWriting();
     }
 }
