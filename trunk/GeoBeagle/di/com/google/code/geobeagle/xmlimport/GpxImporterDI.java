@@ -67,12 +67,9 @@ public class GpxImporterDI {
             final OldCacheFilesCleaner oldCacheFilesCleaner = new OldCacheFilesCleaner(
                     injector.getInstance(GeoBeagleEnvironment.class), messageHandlerInterface);
 
-            final Provider<EventHelper> eventHelperProvider = injector
-                    .getProvider(EventHelper.class);
             final ImportThreadHelper importThreadHelper = new ImportThreadHelper(gpxLoader,
-                    messageHandlerInterface, eventHelperProvider, eventHandler,
-                    oldCacheFilesCleaner,
-                    sharedPreferences, geoBeagleEnvironment);
+                    messageHandlerInterface, eventHandler, oldCacheFilesCleaner, sharedPreferences,
+                    geoBeagleEnvironment);
             final FileDataVersionWriter fileDataVersionWriter = injector
                     .getInstance(FileDataVersionWriter.class);
             final FileDataVersionChecker fileDataVersionChecker = injector
