@@ -25,7 +25,7 @@ import com.google.code.geobeagle.activity.cachelist.model.GeocacheVectors;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
 import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheListPresenter;
 import com.google.code.geobeagle.database.DatabaseDI;
-import com.google.code.geobeagle.xmlimport.GpxToCache.Aborter;
+import com.google.code.geobeagle.xmlimport.Aborter;
 import com.google.inject.Provider;
 
 import org.easymock.EasyMock;

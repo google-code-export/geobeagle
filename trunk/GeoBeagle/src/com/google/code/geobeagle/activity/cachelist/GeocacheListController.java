@@ -18,7 +18,7 @@ import com.google.code.geobeagle.actions.ContextActions;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionSyncGpx;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVectors;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
-import com.google.code.geobeagle.xmlimport.GpxToCache.Aborter;
+import com.google.code.geobeagle.xmlimport.Aborter;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Provider;

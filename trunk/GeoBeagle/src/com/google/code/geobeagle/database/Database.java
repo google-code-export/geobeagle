@@ -63,7 +63,6 @@ public class Database {
     public static final String SQL_DELETE_CACHE = "DELETE FROM CACHES WHERE Id=?";
     public static final String SQL_DELETE_OLD_CACHES = "DELETE FROM CACHES WHERE DeleteMe = 1";
     public static final String SQL_DELETE_OLD_GPX = "DELETE FROM GPX WHERE DeleteMe = 1";
-    public static final String SQL_DROP_CACHE_TABLE = "DROP TABLE IF EXISTS CACHES";
     public static final String SQL_GPX_DONT_DELETE_ME = "UPDATE GPX SET DeleteMe = 0 WHERE Name = ?";
     public static final String SQL_MATCH_NAME_AND_EXPORTED_LATER = "Name = ? AND ExportTime >= ?";
     public static final String SQL_REPLACE_CACHE = "REPLACE INTO CACHES "

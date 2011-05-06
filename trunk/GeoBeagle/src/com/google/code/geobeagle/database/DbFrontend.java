@@ -15,6 +15,7 @@
 package com.google.code.geobeagle.database;
 
 import com.google.code.geobeagle.Geocache;
+import com.google.code.geobeagle.cachedetails.DetailsDatabaseWriter;
 import com.google.code.geobeagle.database.DatabaseDI.GeoBeagleSqliteOpenHelper;
 import com.google.code.geobeagle.preferences.PreferencesUpgrader;
 import com.google.inject.Inject;
@@ -39,14 +40,17 @@ public class DbFrontend {
     private ISQLiteDatabase mDatabase;
     private GeoBeagleSqliteOpenHelper mSqliteOpenHelper;
     private final PreferencesUpgrader mPreferencesUpgrader;
+    private final DetailsDatabaseWriter mSdDatabase;
 
     @Inject
     DbFrontend(Activity activity,
             CacheReader cacheReader,
-            PreferencesUpgrader preferencesUpgrader) {
+            PreferencesUpgrader preferencesUpgrader,
+            DetailsDatabaseWriter detailsDatabaseWriter) {
         mCacheReader = cacheReader;
         mPreferencesUpgrader = preferencesUpgrader;
         mContext = activity.getApplicationContext();
+        mSdDatabase = detailsDatabaseWriter;
     }
 
     public synchronized void closeDatabase() {
@@ -117,6 +121,7 @@ public class DbFrontend {
         openDatabase();
         mDatabase.execSQL(Database.SQL_DELETE_ALL_CACHES);
         mDatabase.execSQL(Database.SQL_DELETE_ALL_GPX);
+        mSdDatabase.deleteAll();
     }
 
     public void forceUpdate() {

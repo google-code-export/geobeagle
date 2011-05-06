@@ -30,7 +30,7 @@ public class FileAndDatabaseWriter implements Writer, CacheWriterOpener {
 
     @Override
     public void write(String str) throws IOException {
-        writerWrapper.write(str);
+        // writerWrapper.write(str);
         detailsDatabaseWriter.write(str);
     }
 

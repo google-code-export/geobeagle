@@ -15,6 +15,7 @@
 package com.google.code.geobeagle.cacheloader;
 
 import com.google.code.geobeagle.R;
+import com.google.code.geobeagle.cachedetails.DetailsDatabaseReader;
 import com.google.code.geobeagle.cachedetails.FileDataVersionChecker;
 import com.google.code.geobeagle.cachedetails.StringWriterWrapper;
 import com.google.code.geobeagle.cachedetails.reader.DetailsReader;
@@ -31,6 +32,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.Reader;
+import java.io.StringReader;
 
 class DetailsOpener {
     private final Activity activity;
@@ -39,6 +41,7 @@ class DetailsOpener {
     private final FileDataVersionChecker fileDataVersionChecker;
     private final StringWriterWrapper stringWriterWrapper;
     private final XmlPullParserWrapper xmlPullParser;
+    private final DetailsDatabaseReader detailsDatabaseReader;
 
     @Inject
     DetailsOpener(Activity activity,
@@ -46,22 +49,26 @@ class DetailsOpener {
             EventHelper eventHelper,
             EventHandlerGpx eventHandlerGpx,
             XmlPullParserWrapper xmlPullParser,
-            StringWriterWrapper stringWriterWrapper) {
+            StringWriterWrapper stringWriterWrapper,
+            DetailsDatabaseReader detailsDatabaseReader) {
         this.activity = activity;
         this.fileDataVersionChecker = fileDataVersionChecker;
         this.eventHelper = eventHelper;
         this.eventHandlerGpx = eventHandlerGpx;
         this.xmlPullParser = xmlPullParser;
         this.stringWriterWrapper = stringWriterWrapper;
+        this.detailsDatabaseReader = detailsDatabaseReader;
     }
 
-    public DetailsReader open(File file) throws CacheLoaderException {
+    public DetailsReader open(File file, CharSequence cacheId) throws CacheLoaderException {
         String state = Environment.getExternalStorageState();
         if (!Environment.MEDIA_MOUNTED.equals(state)) {
             throw new CacheLoaderException(R.string.error_cant_read_sdroot, state);
         }
         final Reader fileReader;
+        final Reader dbReader;
         String absolutePath = file.getAbsolutePath();
+        dbReader = new StringReader(detailsDatabaseReader.read(cacheId));
         try {
             fileReader = new BufferedReader(new FileReader(absolutePath));
         } catch (FileNotFoundException e) {
@@ -69,7 +76,7 @@ class DetailsOpener {
                     : R.string.error_opening_details_file;
             throw new CacheLoaderException(error, e.getMessage());
         }
-        return new DetailsReader(activity, fileReader, absolutePath, eventHelper,
+        return new DetailsReader(activity, dbReader, absolutePath, eventHelper,
                 eventHandlerGpx, xmlPullParser, stringWriterWrapper);
     }
 }

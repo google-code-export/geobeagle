@@ -45,6 +45,7 @@ public class XmlWriter implements EventHandler {
             tagWriter.endTag(name);
 
         if (previousFullPath.equals(GpxPath.GPX_WPT.getPath())) {
+            Log.d("GeoBeagle", "ENDING TAG");
             tagWriter.endTag("gpx");
             tagWriter.close();
         }

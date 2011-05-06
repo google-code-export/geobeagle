@@ -19,7 +19,6 @@ import com.google.inject.Inject;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
-import roboguice.inject.ContextScoped;
 
 import android.util.Log;
 
@@ -27,28 +26,6 @@ import java.io.IOException;
 import java.io.Reader;
 
 public class GpxToCache {
-    @ContextScoped
-    public static class Aborter {
-        private static boolean mAborted = false;
-
-        Aborter() {
-            mAborted = false;
-        }
-
-        public void abort() {
-            Log.d("GeoBeagle", this + ": aborting");
-            mAborted = true;
-        }
-
-        public boolean isAborted() {
-            return mAborted;
-        }
-
-        public void reset() {
-            mAborted = false;
-        }
-    }
-
     @SuppressWarnings("serial")
     public static class CancelException extends Exception {
     }
