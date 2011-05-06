@@ -37,10 +37,10 @@ public class GpxToCache {
     private String mFilename;
 
     @Inject
-    GpxToCache(XmlPullParser xmlPullParserWrapper,
+    GpxToCache(XmlPullParser xmlPullParser,
             Aborter aborter,
             FileAlreadyLoadedChecker fileAlreadyLoadedChecker) {
-        mXmlPullParser = xmlPullParserWrapper;
+        mXmlPullParser = xmlPullParser;
         mAborter = aborter;
         mTestLocAlreadyLoaded = fileAlreadyLoadedChecker;
     }
