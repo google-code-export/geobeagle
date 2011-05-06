@@ -38,6 +38,7 @@ public class EventHelper {
     }
 
     private final XmlPathBuilder mXmlPathBuilder;
+    private EventHandler eventHandler;
 
     @Inject
     public EventHelper(XmlPathBuilder xmlPathBuilder) {
@@ -45,7 +46,6 @@ public class EventHelper {
     }
 
     public boolean handleEvent(int eventType,
-            EventHandler eventHandler,
             XmlPullParser mXmlPullParser) throws IOException {
         switch (eventType) {
             case XmlPullParser.START_TAG: {
@@ -66,8 +66,12 @@ public class EventHelper {
         return true;
     }
 
-    public void open(String filename, EventHandler eventHandler) throws IOException {
+    public void open(String filename) throws IOException {
         eventHandler.open(filename);
+    }
+
+    public void setEventHandler(EventHandler eventHandler) {
+        this.eventHandler = eventHandler;
     }
 
 }
