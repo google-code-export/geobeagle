@@ -38,16 +38,15 @@ public class EventHelper {
     }
 
     private final XmlPathBuilder mXmlPathBuilder;
-    private final XmlPullParser mXmlPullParser;
 
     @Inject
-    public EventHelper(XmlPathBuilder xmlPathBuilder, XmlPullParser xmlPullParser) {
+    public EventHelper(XmlPathBuilder xmlPathBuilder) {
         mXmlPathBuilder = xmlPathBuilder;
-        mXmlPullParser = xmlPullParser;
     }
 
     public boolean handleEvent(int eventType, EventHandler eventHandler,
-            CachePersisterFacade cachePersisterFacade) throws IOException {
+            CachePersisterFacade cachePersisterFacade,
+            XmlPullParser mXmlPullParser) throws IOException {
         switch (eventType) {
             case XmlPullParser.START_TAG: {
                 final String name = mXmlPullParser.getName();
