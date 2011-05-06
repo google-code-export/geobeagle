@@ -16,13 +16,13 @@ package com.google.code.geobeagle.cachedetails.reader;
 
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.cachedetails.StringWriterWrapper;
+import com.google.code.geobeagle.xmlimport.CachePersisterFacade;
 import com.google.code.geobeagle.xmlimport.EventHandlerGpx;
 import com.google.code.geobeagle.xmlimport.EventHelper;
-import com.google.code.geobeagle.xmlimport.CachePersisterFacade;
-import com.google.code.geobeagle.xmlimport.XmlPullParserWrapper;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
+import org.xmlpull.v1.XmlPullParserFactory;
 
 import android.app.Activity;
 
@@ -36,20 +36,18 @@ public class DetailsReader {
     private final String mPath;
     private final Reader mReader;
     private final StringWriterWrapper mStringWriterWrapper;
-    private final XmlPullParserWrapper mXmlPullParserWrapper;
+    private XmlPullParser mXmlPullParserWrapper;
 
     public DetailsReader(Activity activity,
             Reader fileReader,
             String path,
             EventHelper eventHelper,
             EventHandlerGpx eventHandlerGpx,
-            XmlPullParserWrapper xmlPullParserWrapper,
             StringWriterWrapper stringWriterWrapper) {
         mActivity = activity;
         mPath = path;
         mEventHelper = eventHelper;
         mEventHandlerGpx = eventHandlerGpx;
-        mXmlPullParserWrapper = xmlPullParserWrapper;
         mReader = fileReader;
         mStringWriterWrapper = stringWriterWrapper;
     }
@@ -57,15 +55,19 @@ public class DetailsReader {
     public String read(CachePersisterFacade cachePersisterFacade) {
         try {
             mEventHelper.open(mPath, mEventHandlerGpx);
-            mXmlPullParserWrapper.open(mPath, mReader);
+            XmlPullParser newPullParser = XmlPullParserFactory.newInstance().newPullParser();
+            newPullParser.setInput(mReader);
+            mXmlPullParserWrapper = newPullParser;
             int eventType;
             for (eventType = mXmlPullParserWrapper.getEventType(); eventType != XmlPullParser.END_DOCUMENT; eventType = mXmlPullParserWrapper
                     .next()) {
-                mEventHelper.handleEvent(eventType, mEventHandlerGpx, cachePersisterFacade);
+                mEventHelper.handleEvent(eventType, mEventHandlerGpx, cachePersisterFacade,
+                        mXmlPullParserWrapper);
             }
 
             // Pick up END_DOCUMENT event as well.
-            mEventHelper.handleEvent(eventType, mEventHandlerGpx, cachePersisterFacade);
+            mEventHelper.handleEvent(eventType, mEventHandlerGpx, cachePersisterFacade,
+                    newPullParser);
 
             return mStringWriterWrapper.getString();
         } catch (XmlPullParserException e) {

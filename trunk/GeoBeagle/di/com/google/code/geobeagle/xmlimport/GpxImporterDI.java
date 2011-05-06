@@ -33,8 +33,6 @@ import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Provider;
 
-import org.xmlpull.v1.XmlPullParser;
-
 import roboguice.inject.ContextScoped;
 import roboguice.util.RoboThread;
 
@@ -52,7 +50,6 @@ public class GpxImporterDI {
         static ImportThread create(MessageHandlerInterface messageHandlerInterface,
                 GpxLoader gpxLoader,
                 EventHandler eventHandler,
-                XmlPullParser xmlPullParserWrapper,
                 ErrorDisplayer errorDisplayer,
                 Injector injector) {
             final GpxAndZipFilenameFilter filenameFilter = injector
@@ -68,8 +65,7 @@ public class GpxImporterDI {
                     .getInstance(SharedPreferences.class);
             final GpxAndZipFiles gpxAndZipFiles = new GpxAndZipFiles(filenameFilter,
                     gpxFileIterAndZipFileIterFactory, geoBeagleEnvironment, sharedPreferences);
-            final EventHelperFactory eventHelperFactory = new EventHelperFactory(
-                    xmlPullParserWrapper);
+            final EventHelperFactory eventHelperFactory = new EventHelperFactory();
             final OldCacheFilesCleaner oldCacheFilesCleaner = new OldCacheFilesCleaner(
                     injector.getInstance(GeoBeagleEnvironment.class), messageHandlerInterface);
 
@@ -112,12 +108,10 @@ public class GpxImporterDI {
     public static class ImportThreadWrapper {
         private ImportThread mImportThread;
         private final MessageHandler mMessageHandler;
-        private final XmlPullParser mXmlPullParserWrapper;
 
         @Inject
-        public ImportThreadWrapper(MessageHandler messageHandler, XmlPullParser xmlPullParserWrapper) {
+        public ImportThreadWrapper(MessageHandler messageHandler) {
             mMessageHandler = messageHandler;
-            mXmlPullParserWrapper = xmlPullParserWrapper;
         }
 
         public boolean isAlive() {
@@ -142,7 +136,7 @@ public class GpxImporterDI {
                 EventHandler eventHandler, ErrorDisplayer mErrorDisplayer, Injector injector) {
             mMessageHandler.start(cacheListRefresh);
             mImportThread = ImportThread.create(mMessageHandler, gpxLoader, eventHandler,
-                    mXmlPullParserWrapper, mErrorDisplayer, injector);
+                    mErrorDisplayer, injector);
         }
 
         public void start() {

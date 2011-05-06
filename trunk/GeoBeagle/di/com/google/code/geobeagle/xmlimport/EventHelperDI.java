@@ -16,20 +16,16 @@ package com.google.code.geobeagle.xmlimport;
 
 import com.google.code.geobeagle.xmlimport.EventHelper.XmlPathBuilder;
 
-import org.xmlpull.v1.XmlPullParser;
-
 public class EventHelperDI {
 
     public static class EventHelperFactory {
-        private final XmlPullParser mXmlPullParser;
 
-        public EventHelperFactory(XmlPullParser xmlPullParser) {
-            mXmlPullParser = xmlPullParser;
+        public EventHelperFactory() {
         }
 
         public EventHelper create() {
             final XmlPathBuilder xmlPathBuilder = new XmlPathBuilder();
-            return new EventHelper(xmlPathBuilder, mXmlPullParser);
+            return new EventHelper(xmlPathBuilder);
         }
     }
 }
