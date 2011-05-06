@@ -14,7 +14,7 @@
 
 package com.google.code.geobeagle.xmlimport.gpx.gpx;
 
-import com.google.code.geobeagle.xmlimport.GpxToCache.Aborter;
+import com.google.code.geobeagle.xmlimport.Aborter;
 import com.google.code.geobeagle.xmlimport.gpx.IGpxReader;
 import com.google.code.geobeagle.xmlimport.gpx.IGpxReaderIter;
 import com.google.inject.Provider;

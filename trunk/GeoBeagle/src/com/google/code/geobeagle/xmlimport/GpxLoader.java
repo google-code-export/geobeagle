@@ -30,7 +30,7 @@ import java.io.IOException;
 import java.io.Reader;
 
 public class GpxLoader {
-    private final ImportCacheActions mCachePersisterFacade;
+    private final ImportCacheActions mImportCacheActions;
     private final ErrorDisplayer mErrorDisplayer;
     private final GpxToCache mGpxToCache;
     private final Provider<ImportWakeLock> mImportWakeLockProvider;
@@ -42,7 +42,7 @@ public class GpxLoader {
             GpxToCache gpxToCache,
             Provider<ImportWakeLock> importWakeLockProvider) {
         mGpxToCache = gpxToCache;
-        mCachePersisterFacade = importCacheActions;
+        mImportCacheActions = importCacheActions;
         mErrorDisplayer = errorDisplayer;
         mImportWakeLockProvider = importWakeLockProvider;
     }
@@ -52,7 +52,7 @@ public class GpxLoader {
     }
 
     public void end() {
-        mCachePersisterFacade.end();
+        mImportCacheActions.end();
     }
 
     /**
@@ -65,7 +65,7 @@ public class GpxLoader {
         try {
             mImportWakeLockProvider.get().acquire(WAKELOCK_DURATION);
             boolean alreadyLoaded = mGpxToCache.load(eventHelper, eventHandler,
-                    mCachePersisterFacade);
+                    mImportCacheActions);
             markLoadAsComplete = !alreadyLoaded;
             continueLoading = true;
         } catch (final SQLiteException e) {
@@ -82,7 +82,7 @@ public class GpxLoader {
                     + ": " + e.getMessage());
         } catch (CancelException e) {
         }
-        mCachePersisterFacade.close(markLoadAsComplete);
+        mImportCacheActions.close(markLoadAsComplete);
         return continueLoading;
     }
 
@@ -90,14 +90,14 @@ public class GpxLoader {
         final String filename = new File(path).getName();
         mGpxToCache.open(path, filename, reader);
         // Just use the filename, not the whole path.
-        mCachePersisterFacade.open(filename);
+        mImportCacheActions.open(filename);
     }
 
     public void start() {
-        mCachePersisterFacade.start();
+        mImportCacheActions.start();
     }
 
     public String getLastModified() {
-        return mCachePersisterFacade.getLastModified();
+        return mImportCacheActions.getLastModified();
     }
 }

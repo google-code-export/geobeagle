@@ -17,6 +17,8 @@ package com.google.code.geobeagle.activity.cachelist.presenter;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 
+import android.util.Log;
+
 public class DistanceUpdater implements RefreshAction {
     private final GeocacheListAdapter mGeocacheListAdapter;
 
@@ -31,7 +33,7 @@ public class DistanceUpdater implements RefreshAction {
 
     @Override
     public void refresh() {
-        // Log.d("GeoBeagle", "notifyDataSetChanged");
+        Log.d("GeoBeagle", "DistanceUpdater: notifyDataSetChanged");
         mGeocacheListAdapter.notifyDataSetChanged();
     }
 }

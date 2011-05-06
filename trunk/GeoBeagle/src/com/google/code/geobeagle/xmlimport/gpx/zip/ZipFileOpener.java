@@ -15,7 +15,7 @@
 package com.google.code.geobeagle.xmlimport.gpx.zip;
 
 import com.google.code.geobeagle.gpx.zip.ZipInputStreamFactory;
-import com.google.code.geobeagle.xmlimport.GpxToCache.Aborter;
+import com.google.code.geobeagle.xmlimport.Aborter;
 import com.google.code.geobeagle.xmlimport.gpx.GpxAndZipFiles.GpxFilenameFilter;
 import com.google.code.geobeagle.xmlimport.gpx.IGpxReader;
 import com.google.code.geobeagle.xmlimport.gpx.IGpxReaderIter;
