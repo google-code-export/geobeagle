@@ -14,8 +14,8 @@
 
 package com.google.code.geobeagle.activity.searchonline;
 
+import com.google.code.geobeagle.CacheListActivityStarter;
 import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.activity.cachelist.CacheListActivity;
 import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidgetDelegate;
 import com.google.code.geobeagle.gpsstatuswidget.InflatedGpsStatusWidget;
 import com.google.code.geobeagle.gpsstatuswidget.UpdateGpsWidgetRunnable;
@@ -23,7 +23,6 @@ import com.google.inject.Injector;
 
 import roboguice.activity.GuiceActivity;
 
-import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
@@ -34,6 +33,7 @@ public class SearchOnlineActivity extends GuiceActivity {
 
     private SearchOnlineActivityDelegate mSearchOnlineActivityDelegate;
     private UpdateGpsWidgetRunnable mUpdateGpsWidgetRunnable;
+    private CacheListActivityStarter mCacheListActivityStarter;
 
     SearchOnlineActivityDelegate getMSearchOnlineActivityDelegate() {
         return mSearchOnlineActivityDelegate;
@@ -57,6 +57,7 @@ public class SearchOnlineActivity extends GuiceActivity {
 
         mSearchOnlineActivityDelegate = injector.getInstance(SearchOnlineActivityDelegate.class);
         mSearchOnlineActivityDelegate.configureWebView();
+        mCacheListActivityStarter = injector.getInstance(CacheListActivityStarter.class);
     }
 
     @Override
@@ -68,7 +69,7 @@ public class SearchOnlineActivity extends GuiceActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         super.onOptionsItemSelected(item);
-        startActivity(new Intent(this, CacheListActivity.class));
+        mCacheListActivityStarter.start();
         return true;
     }
 

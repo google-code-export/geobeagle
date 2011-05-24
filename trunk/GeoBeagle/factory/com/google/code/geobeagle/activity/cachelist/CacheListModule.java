@@ -14,6 +14,8 @@
 
 package com.google.code.geobeagle.activity.cachelist;
 
+import com.google.code.geobeagle.CacheListActivityStarter;
+import com.google.code.geobeagle.CacheListActivityStarterPreHoneycomb;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.CompassFrameHider;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.HoneycombCompassFrameHider;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.NullCompassFrameHider;
@@ -42,7 +44,9 @@ public class CacheListModule extends AbstractAndroidModule {
         bind(ActionManager.class).toProvider(ActionManagerProvider.class).in(Singleton.class);
         bind(DistanceFormatter.class).toProvider(DistanceFormatterProvider.class);
         bind(BearingFormatter.class).toProvider(BearingFormatterProvider.class);
+
         int sdkVersion = Integer.parseInt(Build.VERSION.SDK);
+        bind(CacheListActivityStarter.class).to(CacheListActivityStarterPreHoneycomb.class);
         if (sdkVersion >= Build.VERSION_CODES.HONEYCOMB) {
             bind(ListFragtivityOnCreateHandler.class).to(ListFragmentOnCreateHandler.class);
             bind(CompassFrameHider.class).to(HoneycombCompassFrameHider.class);
