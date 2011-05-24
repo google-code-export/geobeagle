@@ -14,15 +14,11 @@
 
 package com.google.code.geobeagle.activity.compass;
 
-import com.google.code.geobeagle.ErrorDisplayer;
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.LocationControlBuffered;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.cachelist.LogFindDialogHelper;
-import com.google.code.geobeagle.activity.compass.fieldnotes.HasGeocache;
-import com.google.code.geobeagle.activity.compass.intents.IntentStarterGeo;
-import com.google.code.geobeagle.activity.compass.view.OnClickListenerIntentStarter;
-import com.google.code.geobeagle.activity.map.GeoMapActivity;
+import com.google.code.geobeagle.activity.map.OnClickListenerMapPage;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 
@@ -75,11 +71,8 @@ public class CompassActivity extends GuiceActivity {
         if (getLastNonConfigurationInstance() != null) {
             setIntent((Intent)getLastNonConfigurationInstance());
         }
-        ErrorDisplayer errorDisplayer = injector.getInstance(ErrorDisplayer.class);
-        Intent geoMapActivityIntent = new Intent(this, GeoMapActivity.class);
-        HasGeocache hasGeocache = injector.getInstance(HasGeocache.class);
-        OnClickListenerIntentStarter onClickListenerMapPage = new OnClickListenerIntentStarter(
-                new IntentStarterGeo(this, geoMapActivityIntent, hasGeocache), errorDisplayer);
+        OnClickListenerMapPage onClickListenerMapPage = injector
+                .getInstance(OnClickListenerMapPage.class);
         findViewById(R.id.maps).setOnClickListener(onClickListenerMapPage);
 
         injector.getInstance(CompassClickListenerSetter.class).setListeners(

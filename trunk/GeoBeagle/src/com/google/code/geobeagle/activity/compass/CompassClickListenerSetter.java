@@ -17,6 +17,7 @@ package com.google.code.geobeagle.activity.compass;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.R.id;
 import com.google.code.geobeagle.activity.compass.view.OnClickListenerCacheDetails;
+import com.google.code.geobeagle.activity.map.OnClickListenerMapPage;
 import com.google.inject.Inject;
 
 import android.app.Activity;
@@ -24,12 +25,15 @@ import android.app.Activity;
 class CompassClickListenerSetter {
     private final OnClickListenerCacheDetails onClickListenerCacheDetails;
     private final OnClickListenerNavigate onClickListenerNavigate;
+    private final OnClickListenerMapPage onClickListenerMapPage;
 
     @Inject
     public CompassClickListenerSetter(OnClickListenerCacheDetails onClickListenerCacheDetails,
-            OnClickListenerNavigate onClickListenerNavigate) {
+            OnClickListenerNavigate onClickListenerNavigate,
+            OnClickListenerMapPage onClickListenerMapPage) {
         this.onClickListenerCacheDetails = onClickListenerCacheDetails;
         this.onClickListenerNavigate = onClickListenerNavigate;
+        this.onClickListenerMapPage = onClickListenerMapPage;
     }
 
     void setListeners(HasViewById hasViewById, Activity activity) {
@@ -40,5 +44,7 @@ class CompassClickListenerSetter {
                 new LogFindClickListener(activity, id.menu_log_find));
         hasViewById.findViewById(id.menu_log_dnf).setOnClickListener(
                 new LogFindClickListener(activity, id.menu_log_dnf));
+        hasViewById.findViewById(R.id.maps).setOnClickListener(onClickListenerMapPage);
+
     }
 }
