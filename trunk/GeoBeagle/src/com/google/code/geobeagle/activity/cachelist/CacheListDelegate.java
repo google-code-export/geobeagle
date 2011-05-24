@@ -14,17 +14,27 @@
 
 package com.google.code.geobeagle.activity.cachelist;
 
+import com.google.code.geobeagle.R;
+import com.google.code.geobeagle.R.id;
+import com.google.code.geobeagle.SuggestionProvider;
+import com.google.code.geobeagle.activity.ActivityRestorer;
 import com.google.code.geobeagle.activity.ActivitySaver;
 import com.google.code.geobeagle.activity.ActivityType;
+import com.google.code.geobeagle.activity.cachelist.actions.context.delete.ContextActionDeleteDialogHelper;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
 import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheListPresenter;
 import com.google.code.geobeagle.database.DbFrontend;
+import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidgetDelegate;
+import com.google.code.geobeagle.gpsstatuswidget.InflatedGpsStatusWidget;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Provider;
 
 import android.app.Activity;
+import android.app.Dialog;
+import android.app.SearchManager;
 import android.content.Intent;
+import android.provider.SearchRecentSuggestions;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -68,6 +78,10 @@ public class CacheListDelegate {
     private final Provider<DbFrontend> dbFrontendProvider;
     private final ImportIntentManager importIntentManager;
     private final GeocacheListPresenter presenter;
+    private final LogFindDialogHelper logFindDialogHelper;
+    private final ContextActionDeleteDialogHelper contextActionDeleteDialogHelper;
+    private final Activity activity;
+    private ActivityRestorer activityRestorer;
 
     public CacheListDelegate(ImportIntentManager importIntentManager,
             ActivitySaver activitySaver,
@@ -75,7 +89,11 @@ public class CacheListDelegate {
             GeocacheListController geocacheListController,
             GeocacheListPresenter geocacheListPresenter,
             Provider<DbFrontend> dbFrontendProvider,
-            ActivityVisible activityVisible) {
+            ActivityVisible activityVisible,
+            LogFindDialogHelper logFindDialogHelper,
+            ContextActionDeleteDialogHelper contextActionDeleteDialogHelper,
+            Activity activity,
+            ActivityRestorer activityRestorer) {
         this.activitySaver = activitySaver;
         this.cacheListRefresh = cacheListRefresh;
         this.controller = geocacheListController;
@@ -83,6 +101,10 @@ public class CacheListDelegate {
         this.importIntentManager = importIntentManager;
         this.dbFrontendProvider = dbFrontendProvider;
         this.activityVisible = activityVisible;
+        this.logFindDialogHelper = logFindDialogHelper;
+        this.contextActionDeleteDialogHelper = contextActionDeleteDialogHelper;
+        this.activity = activity;
+        this.activityRestorer = activityRestorer;
     }
 
     @Inject
@@ -94,14 +116,26 @@ public class CacheListDelegate {
         this.importIntentManager = injector.getInstance(ImportIntentManager.class);
         this.dbFrontendProvider = injector.getProvider(DbFrontend.class);
         this.activityVisible = injector.getInstance(ActivityVisible.class);
+        this.logFindDialogHelper = injector.getInstance(LogFindDialogHelper.class);
+        this.contextActionDeleteDialogHelper = injector
+                .getInstance(ContextActionDeleteDialogHelper.class);
+        this.activity = injector.getInstance(Activity.class);
+        this.activityRestorer = injector.getInstance(ActivityRestorer.class);
     }
 
     public boolean onContextItemSelected(MenuItem menuItem) {
         return controller.onContextItemSelected(menuItem);
     }
 
-    public void onCreate() {
+    public boolean onCreate(Intent intent, InflatedGpsStatusWidget inflatedGpsStatusWidget, GpsStatusWidgetDelegate gpsStatusWidgetDelegate) {
+        if (!Intent.ACTION_SEARCH.equals(intent.getAction())) {
+            if (activityRestorer.restore(intent.getFlags(), ActivityType.CACHE_LIST))
+                return false;
+        }
         presenter.onCreate();
+        inflatedGpsStatusWidget.setDelegate(gpsStatusWidgetDelegate);
+
+        return true;
     }
 
     public void onCreateFragment(Object cacheListFragment) {
@@ -128,9 +162,39 @@ public class CacheListDelegate {
         dbFrontendProvider.get().closeDatabase();
     }
 
-    public void onResume() {
+    public void onResume(SearchTarget searchTarget) {
+        search(activity, searchTarget);
+
         activityVisible.setVisible(true);
         presenter.onResume(cacheListRefresh);
         controller.onResume(importIntentManager.isImport());
+    }
+
+    Dialog onCreateDialog(Activity activity, int idDialog) {
+        if (idDialog == id.menu_log_dnf || idDialog == id.menu_log_find) {
+            return logFindDialogHelper.onCreateDialog(activity, idDialog);
+        }
+        return contextActionDeleteDialogHelper.onCreateDialog(activity);
+    }
+
+    public void onPrepareDialog(int id, Dialog dialog) {
+        if (id == R.id.delete_cache)
+            contextActionDeleteDialogHelper.onPrepareDialog(dialog);
+        else
+            logFindDialogHelper.onPrepareDialog(activity, id, dialog);
+    }
+
+    void search(Activity cacheListActivityHoneycomb, SearchTarget searchTarget) {
+        Intent intent = cacheListActivityHoneycomb.getIntent();
+
+        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
+            String query = intent.getStringExtra(SearchManager.QUERY);
+            searchTarget.setTarget(query);
+            SearchRecentSuggestions suggestions = new SearchRecentSuggestions(cacheListActivityHoneycomb,
+                    SuggestionProvider.AUTHORITY, SuggestionProvider.MODE);
+            suggestions.saveRecentQuery(query, null);
+        } else {
+            searchTarget.setTarget(null);
+        }
     }
 }
