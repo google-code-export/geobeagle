@@ -14,11 +14,6 @@
 
 package com.google.code.geobeagle.activity.cachelist;
 
-import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.SuggestionProvider;
-import com.google.code.geobeagle.activity.ActivityRestorer;
-import com.google.code.geobeagle.activity.ActivityType;
-import com.google.code.geobeagle.activity.cachelist.actions.context.delete.ContextActionDeleteDialogHelper;
 import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidgetDelegate;
 import com.google.code.geobeagle.gpsstatuswidget.InflatedGpsStatusWidget;
 import com.google.inject.Injector;
@@ -26,10 +21,8 @@ import com.google.inject.Injector;
 import roboguice.activity.GuiceListActivity;
 
 import android.app.Dialog;
-import android.app.SearchManager;
 import android.content.Intent;
 import android.os.Bundle;
-import android.provider.SearchRecentSuggestions;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -41,8 +34,6 @@ import android.widget.ListView;
 public class CacheListActivity extends GuiceListActivity {
 
     private CacheListDelegate mCacheListDelegate;
-    private LogFindDialogHelper mLogFindDialogHelper;
-    private ContextActionDeleteDialogHelper mContextActionDeleteDialogHelper;
 
     public CacheListDelegate getCacheListDelegate() {
         return mCacheListDelegate;
@@ -56,11 +47,7 @@ public class CacheListActivity extends GuiceListActivity {
     @Override
     public Dialog onCreateDialog(int idDialog) {
         super.onCreateDialog(idDialog);
-
-        if (idDialog == R.id.menu_log_dnf || idDialog == R.id.menu_log_find) {
-            return mLogFindDialogHelper.onCreateDialog(this, idDialog);
-        }
-        return mContextActionDeleteDialogHelper.onCreateDialog(this);
+        return mCacheListDelegate.onCreateDialog(this, idDialog);
     }
 
     @Override
@@ -80,25 +67,16 @@ public class CacheListActivity extends GuiceListActivity {
         Log.d("GeoBeagle", "CacheListActivity onCreate");
         requestWindowFeature(Window.FEATURE_PROGRESS);
         Injector injector = this.getInjector();
-
-        mLogFindDialogHelper = injector.getInstance(LogFindDialogHelper.class);
-        mContextActionDeleteDialogHelper = injector
-                .getInstance(ContextActionDeleteDialogHelper.class);
         mCacheListDelegate = injector.getInstance(CacheListDelegate.class);
-        mCacheListDelegate.onCreate();
-
-        final InflatedGpsStatusWidget inflatedGpsStatusWidget = injector
-                .getInstance(InflatedGpsStatusWidget.class);
-        final GpsStatusWidgetDelegate gpsStatusWidgetDelegate = injector
-                .getInstance(GpsStatusWidgetDelegate.class);
-        inflatedGpsStatusWidget.setDelegate(gpsStatusWidgetDelegate);
-
         Intent intent = getIntent();
 
-        if (!Intent.ACTION_SEARCH.equals(intent.getAction())) {
-            injector.getInstance(ActivityRestorer.class).restore(getIntent().getFlags(),
-                    ActivityType.CACHE_LIST);
-        }
+        InflatedGpsStatusWidget inflatedGpsStatusWidget = injector
+                .getInstance(InflatedGpsStatusWidget.class);
+        GpsStatusWidgetDelegate gpsStatusWidgetDelegate = injector
+                .getInstance(GpsStatusWidgetDelegate.class);
+        if (!mCacheListDelegate.onCreate(intent, inflatedGpsStatusWidget, gpsStatusWidgetDelegate))
+            return;
+
         Log.d("GeoBeagle", "Done creating CacheListActivity");
     }
 
@@ -124,33 +102,16 @@ public class CacheListActivity extends GuiceListActivity {
     @Override
     protected void onPrepareDialog(int id, Dialog dialog) {
         super.onPrepareDialog(id, dialog);
-        if (id == R.id.delete_cache)
-            mContextActionDeleteDialogHelper.onPrepareDialog(dialog);
-        else
-            mLogFindDialogHelper.onPrepareDialog(this, id, dialog);
+        mCacheListDelegate.onPrepareDialog(id, dialog);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-
-        Intent intent = getIntent();
-        Injector injector = this.getInjector();
-
+        Injector injector = getInjector();
         SearchTarget searchTarget = injector.getInstance(SearchTarget.class);
-        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
 
-            String query = intent.getStringExtra(SearchManager.QUERY);
-            searchTarget.setTarget(query);
-            SearchRecentSuggestions suggestions = new SearchRecentSuggestions(this,
-                    SuggestionProvider.AUTHORITY, SuggestionProvider.MODE);
-            suggestions.saveRecentQuery(query, null);
-
-        } else {
-            searchTarget.setTarget(null);
-        }
         Log.d("GeoBeagle", "CacheListActivity onResume");
-        mCacheListDelegate.onResume();
+        mCacheListDelegate.onResume(searchTarget);
     }
-
 }
