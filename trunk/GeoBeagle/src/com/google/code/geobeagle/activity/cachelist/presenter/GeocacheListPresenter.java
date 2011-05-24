@@ -34,7 +34,6 @@ import com.google.inject.Injector;
 import com.google.inject.Provider;
 
 import android.app.Activity;
-import android.app.ListActivity;
 import android.hardware.SensorManager;
 import android.location.LocationListener;
 import android.util.Log;
@@ -50,7 +49,7 @@ public class GeocacheListPresenter implements Pausable {
     private final Provider<CacheListCompassListener> cacheListCompassListenerProvider;
     private final GeocacheVectors geocacheVectors;
     private final InflatedGpsStatusWidget inflatedGpsStatusWidget;
-    private final ListActivity listActivity;
+    private final Activity activity;
     private final LocationControlBuffered locationControlBuffered;
     private final SensorManagerWrapper sensorManagerWrapper;
     private final UpdateGpsWidgetRunnable updateGpsWidgetRunnable;
@@ -86,7 +85,7 @@ public class GeocacheListPresenter implements Pausable {
         this.geocacheVectors = geocacheVectors;
         this.inflatedGpsStatusWidget = inflatedGpsStatusWidget;
         this.shakeWaker = shakeWaker;
-        this.listActivity = (ListActivity)listActivity;
+        this.activity = listActivity;
         this.locationControlBuffered = locationControlBuffered;
         this.updateGpsWidgetRunnable = updateGpsWidgetRunnable;
         this.sensorManagerWrapper = sensorManagerWrapper;
@@ -108,7 +107,7 @@ public class GeocacheListPresenter implements Pausable {
         this.geocacheVectors = injector.getInstance(GeocacheVectors.class);
         this.inflatedGpsStatusWidget = injector.getInstance(InflatedGpsStatusWidget.class);
         this.shakeWaker = injector.getInstance(ShakeWaker.class);
-        this.listActivity = (ListActivity)injector.getInstance(Activity.class);
+        this.activity = injector.getInstance(Activity.class);
         this.locationControlBuffered = injector.getInstance(LocationControlBuffered.class);
         this.updateGpsWidgetRunnable = injector.getInstance(UpdateGpsWidgetRunnable.class);
         this.sensorManagerWrapper = injector.getInstance(SensorManagerWrapper.class);
@@ -123,7 +122,7 @@ public class GeocacheListPresenter implements Pausable {
     }
 
     public void onCreate() {
-        listFragtivityOnCreateHandler.onCreateActivity(listActivity, this);
+        listFragtivityOnCreateHandler.onCreateActivity(activity, this);
     }
 
     void setupListView(ListView listView) {

@@ -17,6 +17,7 @@ package com.google.code.geobeagle.activity.cachelist.presenter;
 import com.google.code.geobeagle.R;
 import com.google.inject.Inject;
 
+import android.app.Activity;
 import android.app.ListActivity;
 import android.widget.ListView;
 
@@ -29,8 +30,8 @@ public class ListActivityOnCreateHandler implements ListFragtivityOnCreateHandle
     }
 
     @Override
-    public void onCreateActivity(ListActivity listActivity,
-            GeocacheListPresenter geocacheListPresenter) {
+    public void onCreateActivity(Activity activity, GeocacheListPresenter geocacheListPresenter) {
+        ListActivity listActivity = (ListActivity)activity;
         listActivity.setContentView(R.layout.cache_list);
         ListView listView = listActivity.getListView();
         geocacheListPresenter.setupListView(listView);
