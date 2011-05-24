@@ -14,8 +14,8 @@
 
 package com.google.code.geobeagle.activity;
 
+import com.google.code.geobeagle.CacheListActivityStarter;
 import com.google.code.geobeagle.Geocache;
-import com.google.code.geobeagle.activity.cachelist.CacheListActivity;
 import com.google.code.geobeagle.activity.cachelist.GeocacheListController;
 import com.google.code.geobeagle.activity.compass.CompassActivity;
 import com.google.code.geobeagle.activity.compass.GeocacheFromPreferencesFactory;
@@ -30,14 +30,17 @@ public class ActivityRestorer {
 
     static class CacheListRestorer implements Restorer {
         private final Activity mActivity;
+        private final CacheListActivityStarter mCacheListActivityStarter;
 
-        public CacheListRestorer(Activity activity) {
+        @Inject
+        public CacheListRestorer(Activity activity, CacheListActivityStarter cacheListActivityStarter) {
             mActivity = activity;
+            mCacheListActivityStarter = cacheListActivityStarter;
         }
 
         @Override
         public void restore() {
-            mActivity.startActivity(new Intent(mActivity, CacheListActivity.class));
+            mCacheListActivityStarter.start();
             mActivity.finish();
         }
 
@@ -87,18 +90,20 @@ public class ActivityRestorer {
     @Inject
     public ActivityRestorer(Activity activity,
             GeocacheFromPreferencesFactory geocacheFromPreferencesFactory,
-            SharedPreferences sharedPreferences) {
+            SharedPreferences sharedPreferences,
+            CacheListRestorer cacheListRestorer) {
         mSharedPreferences = sharedPreferences;
         final NullRestorer nullRestorer = new NullRestorer();
         mRestorers = new Restorer[] {
-                nullRestorer, new CacheListRestorer(activity), nullRestorer,
+                nullRestorer, cacheListRestorer, nullRestorer,
                 new ViewCacheRestorer(geocacheFromPreferencesFactory, sharedPreferences, activity)
         };
     }
 
     public boolean restore(int flags, ActivityType currentActivityType) {
-        if ((flags & Intent.FLAG_ACTIVITY_NEW_TASK) == 0)
+        if ((flags & Intent.FLAG_ACTIVITY_NEW_TASK) == 0) {
             return false;
+        }
         final String lastActivity = mSharedPreferences.getString(ActivitySaver.LAST_ACTIVITY,
                 ActivityType.NONE.name());
         final ActivityType activityType = ActivityType.valueOf(lastActivity);
