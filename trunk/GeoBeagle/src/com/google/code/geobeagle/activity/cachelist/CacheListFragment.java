@@ -43,7 +43,8 @@ public class CacheListFragment extends ListFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Injector injector = ((CacheListActivity)getActivity()).getInjector();
+
+        Injector injector = ((CacheListActivityHoneycomb)getActivity()).getInjector();
         geocacheVectors = injector.getInstance(GeocacheVectors.class);
         setHasOptionsMenu(true);
     }
@@ -89,6 +90,6 @@ public class CacheListFragment extends ListFragment {
     }
 
     private CacheListDelegate getCacheListDelegate() {
-        return ((CacheListActivity)getActivity()).getCacheListDelegate();
+        return ((CacheListActivityHoneycomb)getActivity()).getCacheListDelegate();
     }
 }

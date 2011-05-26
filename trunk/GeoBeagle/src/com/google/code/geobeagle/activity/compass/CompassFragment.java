@@ -17,7 +17,7 @@ package com.google.code.geobeagle.activity.compass;
 import com.google.code.geobeagle.CompassListener;
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.activity.cachelist.CacheListActivity;
+import com.google.code.geobeagle.activity.cachelist.CacheListActivityHoneycomb;
 import com.google.code.geobeagle.activity.compass.view.GeocacheViewer;
 import com.google.code.geobeagle.shakewaker.ShakeWaker;
 import com.google.inject.Injector;
@@ -59,7 +59,7 @@ public class CompassFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View inflatedView = inflater.inflate(R.layout.compass, container, false);
         Bundle arguments = getArguments();
-        CacheListActivity cacheListActivity = (CacheListActivity)getActivity();
+        CacheListActivityHoneycomb cacheListActivity = (CacheListActivityHoneycomb)getActivity();
         Injector injector = cacheListActivity.getInjector();
         GeocacheViewerFactory geocacheViewerFactory = injector
                 .getInstance(GeocacheViewerFactory.class);
