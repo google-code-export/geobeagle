@@ -129,8 +129,7 @@ public class CacheListDelegate {
 
     public boolean onCreate(Intent intent, InflatedGpsStatusWidget inflatedGpsStatusWidget, GpsStatusWidgetDelegate gpsStatusWidgetDelegate) {
         if (!Intent.ACTION_SEARCH.equals(intent.getAction())) {
-            if (activityRestorer.restore(intent.getFlags(), ActivityType.CACHE_LIST))
-                return false;
+            activityRestorer.restore(intent.getFlags(), ActivityType.CACHE_LIST);
         }
         presenter.onCreate();
         inflatedGpsStatusWidget.setDelegate(gpsStatusWidgetDelegate);
