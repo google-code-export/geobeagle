@@ -106,7 +106,7 @@ public class ActivityRestorer {
         final String lastActivity = mSharedPreferences.getString(ActivitySaver.LAST_ACTIVITY,
                 ActivityType.NONE.name());
         final ActivityType activityType = ActivityType.valueOf(lastActivity);
-        if (currentActivityType != activityType || activityType == ActivityType.CACHE_LIST) {
+        if (currentActivityType != activityType) {
             Log.d("GeoBeagle", "restoring: " + activityType);
             mRestorers[activityType.toInt()].restore();
             return true;
