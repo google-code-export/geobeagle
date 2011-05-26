@@ -14,6 +14,8 @@
 
 package com.google.code.geobeagle.activity.cachelist;
 
+import com.google.code.geobeagle.activity.ActivityRestorer;
+import com.google.code.geobeagle.activity.ActivityType;
 import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidgetDelegate;
 import com.google.code.geobeagle.gpsstatuswidget.InflatedGpsStatusWidget;
 import com.google.inject.Injector;
@@ -22,6 +24,7 @@ import roboguice.activity.GuiceListActivity;
 
 import android.app.Dialog;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -69,6 +72,12 @@ public class CacheListActivity extends GuiceListActivity {
         Injector injector = this.getInjector();
         mCacheListDelegate = injector.getInstance(CacheListDelegate.class);
         Intent intent = getIntent();
+        int sdkVersion = Integer.parseInt(Build.VERSION.SDK);
+        if (sdkVersion >= Build.VERSION_CODES.HONEYCOMB) {
+            startActivity(new Intent(this, CacheListActivityHoneycomb.class));
+            finish();
+            return;
+        }
 
         InflatedGpsStatusWidget inflatedGpsStatusWidget = injector
                 .getInstance(InflatedGpsStatusWidget.class);
