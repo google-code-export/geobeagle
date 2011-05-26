@@ -49,7 +49,7 @@ public class CompassActivity extends GuiceActivity {
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Log.d("GeoBeagle", "GeoBeagle onCreate");
+        Log.d("GeoBeagle", "CompassActivity onCreate");
 
         Injector injector = getInjector();
         injector.getInstance(CompassFragtivityOnCreateHandler.class).onCreate(this);
@@ -100,7 +100,7 @@ public class CompassActivity extends GuiceActivity {
 
     @Override
     public void onPause() {
-        Log.d("GeoBeagle", "GeoBeagle onPause");
+        Log.d("GeoBeagle", "CompassActivity onPause");
         compassActivityDelegate.onPause();
         super.onPause();
     }
@@ -154,7 +154,7 @@ public class CompassActivity extends GuiceActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        Log.d("GeoBeagle", "GeoBeagle onResume");
+        Log.d("GeoBeagle", "CompassActivity onResume");
         compassActivityDelegate.onResume();
     }
 
