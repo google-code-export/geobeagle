@@ -107,7 +107,7 @@ public class ActivityRestorer {
                 ActivityType.NONE.name());
         final ActivityType activityType = ActivityType.valueOf(lastActivity);
         if (currentActivityType != activityType || activityType == ActivityType.CACHE_LIST) {
-            Log.d("GeoBeagle", "RESTORING: " + activityType);
+            Log.d("GeoBeagle", "restoring: " + activityType);
             mRestorers[activityType.toInt()].restore();
             return true;
         }
