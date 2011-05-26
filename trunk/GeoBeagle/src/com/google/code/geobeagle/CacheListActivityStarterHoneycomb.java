@@ -12,21 +12,27 @@
  ** limitations under the License.
  */
 
-package com.google.code.geobeagle.actions;
+package com.google.code.geobeagle;
 
-import com.google.code.geobeagle.CacheListActivityStarter;
+import com.google.code.geobeagle.activity.cachelist.CacheListActivityHoneycomb;
 import com.google.inject.Inject;
 
-public class MenuActionCacheList implements Action {
-    private CacheListActivityStarter cacheListActivityStarter;
+import android.app.Activity;
+import android.content.Intent;
+import android.util.Log;
+
+public class CacheListActivityStarterHoneycomb implements CacheListActivityStarter {
+    private Activity activity;
 
     @Inject
-    public MenuActionCacheList(CacheListActivityStarter cacheListActivityStarter) {
-        this.cacheListActivityStarter = cacheListActivityStarter;
+    CacheListActivityStarterHoneycomb(Activity activity) {
+        this.activity = activity;
     }
 
     @Override
-    public void act() {
-        cacheListActivityStarter.start();
+    public void start() {
+        Log.d("GeoBeagle", "starting CLA HC");
+        activity.startActivity(new Intent(activity, CacheListActivityHoneycomb.class));
     }
+
 }
