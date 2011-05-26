@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Licensed under the Apache License, Version 2.0 (the "License"); you 
+	may not use this file except in compliance with the License. You may obtain 
+	a copy of the License at: http://www.apache.org/licenses/LICENSE-2.0. Unless 
+	required by applicable law or agreed to in writing, software distributed 
+	under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES 
+	OR CONDITIONS OF ANY KIND, either express or implied. See the License for 
+	the specific language governing permissions and limitations under the License. -->
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+	<CheckBoxPreference android:key="imperial"
+		android:title="Use Imperial System" android:summary="Miles and feet instead of meters" />
+	<CheckBoxPreference android:key="field-note-text-file"
+		android:title="Log Caches to File" android:summary="Log field notes to a file instead of SMS" />
+
+	<ListPreference android:key="shake-wake-duration"
+		android:title="Screen Timeout" android:entries="@array/shake_wake_duration_choices"
+		android:summary="Extend screen timeout if the accelerometer detects motion--keeps phone awake while geocaching."
+		android:entryValues="@array/shake_wake_duration_values"
+		android:defaultValue="0" android:dialogTitle="Screen timeout extension" />
+
+	<com.google.code.geobeagle.ClearSuggestionHistoryPreference
+		android:key="clear-search-history" android:title="Clear search history"
+		android:summary="Clear cache search history" android:dialogMessage="Search history will be deleted."
+		android:dialogTitle="Clear">
+	</com.google.code.geobeagle.ClearSuggestionHistoryPreference>
+
+	<PreferenceCategory android:orderingFromXml="true"
+		android:title="Cache list settings">
+		<CheckBoxPreference android:key="absolute-bearing"
+			android:title="Absolute Bearing in List" android:summary="Letters (NS) instead of arrows (^v)" />
+		<CheckBoxPreference android:key="show-found-caches"
+			android:title="Show Found Caches" android:summary="Show found caches in cache list"
+			android:defaultValue="true" />
+		<CheckBoxPreference android:key="show-dnf-caches"
+			android:title="Show DNF Caches" android:summary="Show DNF (Did Not Find) caches in cache list"
+			android:defaultValue="true" />
+		<CheckBoxPreference android:key="show-unavailable-caches"
+			android:title="Show Unavailable Caches" android:summary="Show unavailable caches in cache list"
+			android:defaultValue="false" />
+		<CheckBoxPreference android:key="show-waypoints"
+			android:title="Show Waypoints" android:summary="Show waypoints in cache list"
+			android:defaultValue="false" />
+	</PreferenceCategory>
+
+	<PreferenceCategory android:orderingFromXml="true"
+		android:title="Sync settings">
+		<CheckBoxPreference android:key="sdcard-enabled"
+			android:title="Sync using sdcard" android:defaultValue="true" />
+		<EditTextPreference android:key="import-folder"
+			android:dependency="sdcard-enabled" android:layout="?android:attr/preferenceLayoutChild"
+			android:defaultValue="/sdcard/download" android:title="Import Folder"
+			android:summary="Folder for gpx/loc/zip files (e.g. '/sdcard/download')" />
+		<CheckBoxPreference android:key="bcaching-enabled"
+			android:title="Sync using BCaching" android:defaultValue="false" />
+		<EditTextPreference android:key="bcaching-username"
+			android:dependency="bcaching-enabled" android:layout="?android:attr/preferenceLayoutChild"
+			android:title="User Name" android:summary="User Name for BCaching.com" />
+		<EditTextPreference android:key="bcaching-password"
+			android:dependency="bcaching-enabled" android:layout="?android:attr/preferenceLayoutChild"
+			android:password="true" android:title="Password" android:summary="Password for BCaching.com" />
+		<CheckBoxPreference android:key="bcaching-sync-finds"
+			android:dependency="bcaching-enabled" android:layout="?android:attr/preferenceLayoutChild"
+			android:title="Sync Found Caches" android:summary="Include found caches in BCaching.com sync" />
+		<EditTextPreference android:key="bcaching-hostname"
+			android:dependency="bcaching-enabled" android:layout="?android:attr/preferenceLayoutChild"
+			android:title="Hostname" android:summary="Hostname for BCaching.com" 
+			android:defaultValue="http://www.bcaching.com/api"/>
+	</PreferenceCategory>
+
+</PreferenceScreen>

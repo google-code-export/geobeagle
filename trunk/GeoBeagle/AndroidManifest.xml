@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Licensed under the Apache License, Version 2.0 (the "License"); you 
+	may not use this file except in compliance with the License. You may obtain 
+	a copy of the License at: http://www.apache.org/licenses/LICENSE-2.0. Unless 
+	required by applicable law or agreed to in writing, software distributed 
+	under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES 
+	OR CONDITIONS OF ANY KIND, either express or implied. See the License for 
+	the specific language governing permissions and limitations under the License. -->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+	package="com.google.code.geobeagle" android:versionName="1.4.11"
+	android:versionCode="202">
+	<uses-sdk android:minSdkVersion="3" android:targetSdkVersion="11" />
+	<application android:icon="@drawable/icon" android:label="@string/app_name"
+		android:name=".GeoBeagleApplication" android:debuggable="false"
+		android:hardwareAccelerated="true">
+		<uses-library android:name="com.google.android.maps" />
+
+		<activity android:name=".activity.compass.CompassActivity" android:screenOrientation="portrait"
+			android:label="@string/app_name">
+			<intent-filter>
+				<action android:name="android.intent.action.VIEW" />
+				<category android:name="android.intent.category.DEFAULT" />
+				<category android:name="android.intent.category.BROWSABLE" />
+				<data android:scheme="http" android:host="maps.google.com"
+					android:pathPrefix="/maps" />
+			</intent-filter>
+		</activity>
+
+		<activity android:name=".activity.cachelist.CacheListActivity"
+			android:label="@string/app_name" android:configChanges="orientation|keyboardHidden">
+			<intent-filter>
+				<action android:name="android.intent.action.MAIN" />
+				<category android:name="android.intent.category.LAUNCHER" />
+			</intent-filter>
+			<intent-filter>
+				<category android:name="android.intent.category.DEFAULT" />
+				<action android:name="android.intent.action.VIEW" />
+				<category android:name="android.intent.category.BROWSABLE" />
+				<data android:mimeType="application/octet-stream"
+					android:pathPattern=".*\\.gpx" />
+				<data android:mimeType="application/octet-stream"
+					android:pathPattern=".*\\.loc" />
+			</intent-filter>
+			<intent-filter>
+				<action android:name="android.intent.action.SEARCH" />
+			</intent-filter>
+			<meta-data android:name="android.app.searchable"
+				android:resource="@xml/searchable" />
+		</activity>
+
+		<activity android:name=".activity.searchonline.SearchOnlineActivity"
+			android:label="@string/app_name" />
+
+		<!-- Destroy on orientation changes would lose any edits the user has made. 
+			(http://code.google.com/p/geobeagle/issues/detail?id=43) -->
+		<activity android:name=".activity.EditCacheActivity"
+			android:label="Edit Geocache" android:configChanges="orientation|keyboardHidden" />
+
+		<activity android:name=".activity.preferences.EditPreferences"
+			android:label="@string/app_name" />
+
+		<activity android:name=".activity.map.GeoMapActivity"
+			android:label="GeoBeagle map" android:configChanges="orientation|keyboardHidden" />
+
+        <activity android:name=".activity.details.DetailsActivity" />
+        <provider android:name=".SuggestionProvider"
+                android:authorities="com.google.code.geobeagle.SuggestionProvider" />
+	</application>
+
+	<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+	<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+	<uses-permission android:name="android.permission.WAKE_LOCK" />
+	<uses-permission android:name="android.permission.INTERNET" />
+	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+</manifest> 

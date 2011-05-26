@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+	<!--
+		Licensed under the Apache License, Version 2.0 (the "License"); you
+		may not use this file except in compliance with the License. You may
+		obtain a copy of the License at:
+		http://www.apache.org/licenses/LICENSE-2.0. Unless required by
+		applicable law or agreed to in writing, software distributed under the
+		License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+		CONDITIONS OF ANY KIND, either express or implied. See the License for
+		the specific language governing permissions and limitations under the
+		License.
+	-->
+<resources>
+	<string name="too_many_caches">Too many caches to display--zoom in to see
+		caches.</string>
+	<string name="satellite_view">Satellite view</string>
+	<string name="map_view">Map view</string>
+	<string name="geobeagle">GeoBeagle</string>
+	<string name="error1">Error: %1$s</string>
+	<string name="error2">Error: %1$s\n%2$s</string>
+	<string name="meter_right">····›····»····</string>
+	<string name="meter_left">····«····‹····</string>
+	<string name="select_destination">Select destination</string>
+	<string name="go_to">Geocache:</string>
+	<string name="via">Android App</string>
+	<string name="generic_failure">GENERIC FAILURE error sending SMS, please
+		try again</string>
+	<string name="no_service">NO SERVICE error sending SMS, please try again
+	</string>
+	<string name="null_pdu">NULL PDU error sending SMS, please try again
+	</string>
+	<string name="radio_off">RADIO OFF error sending SMS, please try again
+	</string>
+	<string name="sms_canceled">Field Note SMS delivery canceled.</string>
+	<string name="sms_delivered">Field Note SMS delivered!</string>
+	<string name="unknown_error">Unknown error</string>
+	<string name="radar">Radar</string>
+	<string name="degrees_symbol">°</string>
+	<string name="app_name">GeoBeagle</string>
+	<string name="maps">Map</string>
+	<string name="map">Map</string>
+	<string name="list">Nearest Caches</string>
+	<string name="geocaching_map">Online Map</string>
+	<string name="nearest_caches">Online List</string>
+	<string name="sms_sent">SMS sent</string>
+	<string name="my_location">My Location</string>
+	<string name="field_note_title">Log cache using Field Note</string>
+	<string name="send_sms">Send SMS</string>
+	<string name="cancel">Cancel</string>
+	<string name="cache_page">Web Page</string>
+	<string name="recent_locations">Recent locations</string>
+	<string name="current_location_null">Current Location is not available. Make sure
+		your GPS is enabled and try again.</string>
+	<string name="out_of_service">OUT OF SERVICE</string>
+	<string name="available">AVAILABLE</string>
+	<string name="temporarily_unavailable">TEMPORARILY UNAVAILABLE</string>
+	<string name="getting_location_from_gps">getting location from gps...</string>
+	<string name="map_intent">geo:0,0?q=loc:%1$.5f,%2$.5f (%3$s)</string>
+	<string name="get_coords_toast">&quot;To get the coords from the cache page, click: 'online maps...' / 'Google Maps'.&quot;</string>
+	<string name="error_cant_get_location">"Location cannot be determined.  Please ensure that your GPS is enabled and try again."</string>
+	<string name="error_opening_file">Unable to open file '%1$s'.</string>
+	<string name="error_parsing_file">Error parsing file '%1$s'.</string>
+	<string name="file_not_found">File not found exception: '%1$s'.</string>
+	<string name="error_reading_file">Error reading file '%1$s'.</string>
+	<string name="error_writing_cache">Error writing cache: '%1$s'.</string>
+	<string name="error_no_gpx_files">Nothing to sync: no cache files found in /sdcard/download folder.\n\nYou can bulk import hundreds of caches at a time by copying gpx or loc files onto your sd card. See http://code.google.com/p/geobeagle for instructions.</string>
+	<string name="error_cant_read_sd">Error reading folder /sdcard/download, please make sure your sdcard is readable.</string>
+	<string name="error_opening_details_file">"Error opening cache details file '%1$s'.  Please try unmounting your sdcard or re-importing the cache file.</string>
+	<string name="error_reading_details_file">"Error reading cache details file '%1$s'.  Please try unmounting your sdcard or re-importing the cache file.</string>
+	<string name="my_current_location">My Current Location</string>
+	<string name="import_canceled">Sync aborted!</string>
+	<string name="menu_import_gpx">Sync GPX and ZIP files from /sdcard/download</string>
+	<string name="menu_show_nearest_caches">Show Nearest Caches</string>
+	<string name="menu_show_all_caches">Show All Caches</string>
+	<string name="sorting">Filtering / Sorting...</string>
+	<string name="search_for">Search for</string>
+	<string name="cache_list_title">GeoBeagle: Nearest caches (%2$d total)</string>
+	<string name="cache_list_title_all">%1$d caches out of %2$d</string>
+	<string name="no_nearby_caches">No caches near your current location; click Menu / Show all caches.</string>
+	<string name="no_caches">No Caches--click Menu / Search Online to find a cache on the internet, or click Menu / Sync to import "Pocket Queries" downloaded from Geocaching.com.</string>
+    <array name="nearest_objects">
+	  <item>http://www.atlasquest.com/results.html?gTypeId=2;gSort=5;gStatus=1209;gCoord=%1$.5f,%2$.5f</item>
+	  <item>http://www.geocaching.com/seek/nearest.aspx?lat=%1$.5f&amp;lng=%2$.5f&amp;f=1</item>
+	  <item>http://opencaching.cz/search.php?searchto=searchbydistance&amp;showresult=1&amp;output=HTML&amp;latNS=%1$s&amp;lat_h=%2$d&amp;lat_min=%3$.3f&amp;lonEW=%4$s&amp;lon_h=%5$d&amp;lon_min=%6$.3f&amp;distance=75&amp;unit=km</item>
+	  <item>http://opencaching.de/search.php?searchto=searchbydistance&amp;showresult=1&amp;output=HTML&amp;latNS=%1$s&amp;lat_h=%2$d&amp;lat_min=%3$.3f&amp;lonEW=%4$s&amp;lon_h=%5$d&amp;lon_min=%6$.3f&amp;distance=75&amp;unit=km</item>
+	  <item>http://opencaching.pl/search.php?searchto=searchbydistance&amp;showresult=1&amp;output=HTML&amp;latNS=%1$s&amp;lat_h=%2$d&amp;lat_min=%3$.3f&amp;lonEW=%4$s&amp;lon_h=%5$d&amp;lon_min=%6$.3f&amp;distance=75&amp;unit=km</item>
+	</array>
+	<array name="cache_page_url">
+	  <item>http://www.atlasquest.com/showinfo.html?gBoxId=%1s</item>
+	  <item>http://www.geocaching.com/seek/cache_details.aspx?wp=GC%1$s</item>
+	  <item>http://www.opencaching.de/viewcache.php?wp=OC%1$s</item>
+	</array>
+<string name="menu_choose_filter">Choose filter</string>
+
+<string name="menu_cache_list">Cache List</string>
+<string name="menu_search_online">Search Online</string>
+<string name="menu_settings">Settings</string>
+<string name="menu_edit_geocache">Edit</string>
+<string name="menu_google_maps">Google Maps</string>
+<string name="menu_log_dnf">Log DNF :-(</string>
+<string name="menu_log_find">Log Find :-)</string>
+<string name="menu_toggle_satellite">Satellite view</string>
+<string name="menu_add_my_location">Add My Location</string>
+<string name="menu_sync">Sync /sdcard/download</string>
+<string name="menu_toggle_filter">Show All Caches</string>
+</resources>
