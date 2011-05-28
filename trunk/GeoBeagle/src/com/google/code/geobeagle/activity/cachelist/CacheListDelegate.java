@@ -181,13 +181,13 @@ public class CacheListDelegate {
             logFindDialogHelper.onPrepareDialog(activity, id, dialog);
     }
 
-    void search(Activity cacheListActivityHoneycomb, SearchTarget searchTarget) {
-        Intent intent = cacheListActivityHoneycomb.getIntent();
+    void search(Activity activity, SearchTarget searchTarget) {
+        Intent intent = activity.getIntent();
 
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             String query = intent.getStringExtra(SearchManager.QUERY);
             searchTarget.setTarget(query);
-            SearchRecentSuggestions suggestions = new SearchRecentSuggestions(cacheListActivityHoneycomb,
+            SearchRecentSuggestions suggestions = new SearchRecentSuggestions(activity,
                     SuggestionProvider.AUTHORITY, SuggestionProvider.MODE);
             suggestions.saveRecentQuery(query, null);
         } else {
