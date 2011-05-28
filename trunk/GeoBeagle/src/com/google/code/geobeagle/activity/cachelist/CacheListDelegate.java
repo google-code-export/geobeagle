@@ -133,9 +133,6 @@ public class CacheListDelegate {
         }
         presenter.onCreate();
         inflatedGpsStatusWidget.setDelegate(gpsStatusWidgetDelegate);
-        if (!Intent.ACTION_SEARCH.equals(intent.getAction())) {
-            activityRestorer.restore(intent.getFlags(), ActivityType.CACHE_LIST);
-        }
     }
 
     public void onCreateFragment(Object cacheListFragment) {
