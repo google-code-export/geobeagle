@@ -101,7 +101,7 @@ public class CacheListActivityHoneycomb extends GuiceActivity {
         Injector injector = getInjector();
         SearchTarget searchTarget = injector.getInstance(SearchTarget.class);
 
-        Log.d("GeoBeagle", "CacheListActivity onResume");
+        Log.d("GeoBeagle", "CacheListActivityHoneycomb onResume");
         mCacheListDelegate.onResume(searchTarget);
     }
 }
