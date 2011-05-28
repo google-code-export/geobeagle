@@ -20,6 +20,7 @@ import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.Timing;
 import com.google.code.geobeagle.activity.map.QueryManager.LoaderImpl;
+import com.google.code.geobeagle.activity.map.click.MapClickIntentFactory;
 import com.google.inject.Inject;
 
 import android.app.Activity;
@@ -35,15 +36,21 @@ public class CachePinsOverlayFactory {
     private final QueryManager mQueryManager;
     private final Resources mResources;
     private final LoaderImpl mLoaderImpl;
+    private final MapClickIntentFactory mMapClickIntentFactory;
 
     @Inject
-    public CachePinsOverlayFactory(Activity activity, CacheItemFactory cacheItemFactory,
-            QueryManager queryManager, Resources resources, LoaderImpl loaderImpl) {
+    public CachePinsOverlayFactory(Activity activity,
+            CacheItemFactory cacheItemFactory,
+            QueryManager queryManager,
+            Resources resources,
+            LoaderImpl loaderImpl,
+            MapClickIntentFactory mapClickIntentFactory) {
         mResources = resources;
         mActivity = activity;
         mCacheItemFactory = cacheItemFactory;
+        mMapClickIntentFactory = mapClickIntentFactory;
         mCachePinsOverlay = new CachePinsOverlay(resources, cacheItemFactory, activity,
-                new ArrayList<Geocache>());
+                new ArrayList<Geocache>(), mapClickIntentFactory);
         mQueryManager = queryManager;
         mLoaderImpl = loaderImpl;
     }
@@ -68,7 +75,7 @@ public class CachePinsOverlayFactory {
 
         timing.lap("Loaded caches");
         mCachePinsOverlay = new CachePinsOverlay(mResources, mCacheItemFactory, mActivity,
-                cacheList);
+                cacheList, mMapClickIntentFactory);
         return mCachePinsOverlay;
     }
 }

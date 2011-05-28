@@ -17,6 +17,7 @@ package com.google.code.geobeagle;
 import com.google.code.geobeagle.activity.cachelist.CacheListModule;
 import com.google.code.geobeagle.activity.cachelist.model.ModelModule;
 import com.google.code.geobeagle.activity.compass.CompassActivityModule;
+import com.google.code.geobeagle.activity.map.click.MapModule;
 import com.google.code.geobeagle.bcaching.BCachingModule;
 import com.google.code.geobeagle.database.DatabaseModule;
 import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidgetModule;
@@ -64,5 +65,6 @@ public class GeoBeagleApplication extends GuiceApplication {
         modules.add(new ModelModule());
         modules.add(new GpsStatusWidgetModule());
         modules.add(new BCachingModule());
+        modules.add(new MapModule());
     }
 }
