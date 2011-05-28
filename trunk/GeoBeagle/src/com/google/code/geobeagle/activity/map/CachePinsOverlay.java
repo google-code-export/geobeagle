@@ -18,8 +18,8 @@ import com.google.android.maps.ItemizedOverlay;
 import com.google.android.maps.MapView;
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.activity.cachelist.GeocacheListController;
-import com.google.code.geobeagle.activity.compass.CompassActivity;
+import com.google.code.geobeagle.activity.map.CacheItemFactory;
+import com.google.code.geobeagle.activity.map.click.MapClickIntentFactory;
 
 import android.content.Context;
 import android.content.Intent;
@@ -33,12 +33,18 @@ public class CachePinsOverlay extends ItemizedOverlay<CacheItem> {
     private final CacheItemFactory mCacheItemFactory;
     private final Context mContext;
     private final ArrayList<Geocache> mCacheList;
+    private final MapClickIntentFactory mMapClickIntentFactory;
 
-    public CachePinsOverlay(Resources resources, CacheItemFactory cacheItemFactory, Context context, ArrayList<Geocache> cacheList) {
+    public CachePinsOverlay(Resources resources,
+            CacheItemFactory cacheItemFactory,
+            Context context,
+            ArrayList<Geocache> cacheList,
+            MapClickIntentFactory mapClickIntentFactory) {
         super(boundCenterBottom(resources.getDrawable(R.drawable.map_pin2_others)));
         mContext = context;
         mCacheItemFactory = cacheItemFactory;
         mCacheList = cacheList;
+        mMapClickIntentFactory = mapClickIntentFactory;
         populate();
     }
 
@@ -55,10 +61,7 @@ public class CachePinsOverlay extends ItemizedOverlay<CacheItem> {
         Geocache geocache = getItem(i).getGeocache();
         if (geocache == null)
             return false;
-
-        final Intent intent = new Intent(mContext, CompassActivity.class);
-        intent.setAction(GeocacheListController.SELECT_CACHE);
-        intent.putExtra("geocache", geocache);
+        Intent intent = mMapClickIntentFactory.createIntent(mContext, geocache);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         mContext.startActivity(intent);
 
