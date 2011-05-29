@@ -39,6 +39,7 @@ public class CacheDetailsHtmlWriter {
     private String logType;
     private String relativeTime;
     private final RelativeDateFormatter relativeDateFormatter;
+    private String wpt;
 
     @Inject
     public CacheDetailsHtmlWriter(HtmlWriter htmlWriter,
@@ -136,15 +137,19 @@ public class CacheDetailsHtmlWriter {
         htmlWriter.writeln("");
     }
 
-    public void writeWptName() throws IOException {
+    public void writeWptName(String wpt) throws IOException {
         htmlWriter.open();
         htmlWriter.writeHeader();
         writeField("Location", latitude + ", " + longitude);
         latitude = longitude = null;
+        this.wpt = wpt;
     }
 
     public void writeLogFinder(String finder) {
         this.finder = finder;
     }
 
+    public void writeUrl(String text) throws IOException {
+        writeField("Name", "<a href=" + text + ">" + wpt + "</a>");
+    }
 }

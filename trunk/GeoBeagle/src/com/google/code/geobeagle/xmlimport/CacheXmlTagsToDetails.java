@@ -81,7 +81,7 @@ public class CacheXmlTagsToDetails extends CacheXmlTagHandler {
 
     @Override
     public void wptName(String wpt) throws IOException {
-        cacheDetailsHtmlWriter.writeWptName();
+        cacheDetailsHtmlWriter.writeWptName(wpt);
     }
 
     @Override
@@ -125,6 +125,7 @@ public class CacheXmlTagsToDetails extends CacheXmlTagHandler {
     }
 
     @Override
-    public void url(String text) {
+    public void url(String text) throws IOException {
+        cacheDetailsHtmlWriter.writeUrl(text);
     }
 }

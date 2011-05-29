@@ -139,7 +139,7 @@ public class CacheXmlTagHandler {
     }
 
     @SuppressWarnings("unused")
-    public void url(String text) {
+    public void url(String text) throws IOException {
     }
 
 }
