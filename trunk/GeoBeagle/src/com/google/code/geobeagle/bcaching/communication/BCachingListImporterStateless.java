@@ -47,6 +47,7 @@ public class BCachingListImporterStateless {
     private BCachingList importList(String maxCount, String startTime) throws BCachingException {
         params.put("maxcount", maxCount);
         params.put("since", startTime);
+//         params.put("since", "1298740607924");
         return bCachingListImportHelper.importList(params);
     }
 
@@ -66,5 +67,6 @@ public class BCachingListImporterStateless {
         params.put("lastuploaddays", "7");
         params.put("app", "GeoBeagle");
         params.put("timeAsLong", "1");
+        params.put("own", "2");
     }
 }

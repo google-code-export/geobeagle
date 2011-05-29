@@ -33,7 +33,7 @@ public enum ProgressMessage {
     SET_FILE {
         @Override
         void act(ProgressHandler progressHandler, Message msg) {
-            progressHandler.setFile((String)msg.obj);
+            progressHandler.setFile((String)msg.obj, msg.arg1);
         }
     },
     SET_MAX {

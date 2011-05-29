@@ -14,6 +14,7 @@
 
 package com.google.code.geobeagle.bcaching;
 
+import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.bcaching.communication.BCachingException;
 import com.google.code.geobeagle.bcaching.communication.BCachingListImporter;
 import com.google.code.geobeagle.bcaching.preferences.BCachingStartTime;
@@ -21,7 +22,11 @@ import com.google.code.geobeagle.bcaching.preferences.LastReadPosition;
 import com.google.code.geobeagle.bcaching.progress.ProgressHandler;
 import com.google.code.geobeagle.bcaching.progress.ProgressManager;
 import com.google.code.geobeagle.bcaching.progress.ProgressMessage;
+import com.google.code.geobeagle.xmlimport.SyncCollectingParameter;
 import com.google.inject.Inject;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 class CacheListCursor {
     private final BCachingStartTime bcachingStartTime;
@@ -29,6 +34,7 @@ class CacheListCursor {
     private final LastReadPosition lastReadPosition;
     private final ProgressHandler progressHandler;
     private final ProgressManager progressManager;
+    private final SimpleDateFormat formatter;
 
     @Inject
     CacheListCursor(BCachingStartTime bcachingStartTime, ProgressManager progressManager,
@@ -39,6 +45,7 @@ class CacheListCursor {
         this.progressHandler = progressHandler;
         this.bcachingListImporter = bcachingListImporter;
         this.lastReadPosition = lastReadPosition;
+        this.formatter = new SimpleDateFormat("MM-dd HH:mm");
     }
 
     void close() {
@@ -58,27 +65,37 @@ class CacheListCursor {
 
         position += bcachingListImporter.getCachesRead();
         lastReadPosition.put(position);
-        progressManager.update(progressHandler, ProgressMessage.SET_PROGRESS, position);
     }
 
-    boolean open() throws BCachingException {
-        bcachingListImporter.setStartTime(String.valueOf(bcachingStartTime.getLastUpdateTime()));
+    boolean open(SyncCollectingParameter syncCollectingParameter) throws BCachingException {
+        long serverTime = bcachingStartTime.getLastUpdateTime();
         // bcachingListImporter.setStartTime("1274686304000");
         // bcachingListImporter.setStartTime("1274686304000");
+        bcachingListImporter.setStartTime(String.valueOf(serverTime));
         int totalCount = bcachingListImporter.getTotalCount();
 
-        if (totalCount <= 0)
+        syncCollectingParameter.Log(R.string.sync_message_bcaching_start);
+        if (serverTime == 0) {
+            syncCollectingParameter.Log("  initial sync");
+        } else {
+            String longModtime = formatter.format(new Date(serverTime));
+            syncCollectingParameter
+                    .NestedLog(R.string.sync_message_bcaching_last_sync, longModtime);
+        }
+        if (totalCount <= 0) {
+            syncCollectingParameter.NestedLog(R.string.sync_message_bcaching_synced_caches, 0);
             return false;
+        }
         progressManager.update(progressHandler, ProgressMessage.SET_MAX, totalCount);
         lastReadPosition.load();
         int startPosition = lastReadPosition.get();
+        progressManager.setCurrentProgress(startPosition);
         progressManager.update(progressHandler, ProgressMessage.SET_PROGRESS, startPosition);
         return true;
     }
 
-    boolean readCaches() throws BCachingException {
+    int readCaches() throws BCachingException {
         bcachingListImporter.readCacheList(lastReadPosition.get());
-        return bcachingListImporter.getCachesRead() > 0;
+        return bcachingListImporter.getCachesRead();
     }
-
 }

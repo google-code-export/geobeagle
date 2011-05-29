@@ -122,7 +122,6 @@ class DesktopSQLiteDatabase implements ISQLiteDatabase {
         }
 
         String s = "SELECT COUNT(*) FROM " + table + stringBuilder.toString();
-        System.err.print(s + "\n");
         String result = exec(s);
         return Integer.parseInt(result.trim()) != 0;
     }

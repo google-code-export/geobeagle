@@ -14,11 +14,12 @@
 
 package com.google.code.geobeagle.activity.cachelist;
 
+import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.actions.ContextActions;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionSyncGpx;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVectors;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
-import com.google.code.geobeagle.xmlimport.Aborter;
+import com.google.code.geobeagle.xmlimport.AbortState;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Provider;
@@ -33,7 +34,7 @@ import android.view.View.OnCreateContextMenuListener;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 
 public class GeocacheListController {
-
+    //TODO(sng): Rename to CacheListController.
     public static class CacheListOnCreateContextMenuListener implements OnCreateContextMenuListener {
         private final GeocacheVectors mGeocacheVectors;
 
@@ -46,9 +47,9 @@ public class GeocacheListController {
             AdapterContextMenuInfo acmi = (AdapterContextMenuInfo)menuInfo;
             if (acmi.position > 0) {
                 menu.setHeaderTitle(mGeocacheVectors.get(acmi.position - 1).getId());
-                menu.add(0, MENU_VIEW, 0, "View");
-                menu.add(0, MENU_EDIT, 1, "Edit");
-                menu.add(0, MENU_DELETE, 2, "Delete");
+                menu.add(0, MENU_VIEW, 0, R.string.context_menu_view);
+                menu.add(0, MENU_EDIT, 1, R.string.context_menu_edit);
+                menu.add(0, MENU_DELETE, 2, R.string.context_menu_delete);
             }
         }
     }
@@ -58,7 +59,7 @@ public class GeocacheListController {
     static final int MENU_EDIT = 2;
     public static final String SELECT_CACHE = "SELECT_CACHE";
     private final CacheListRefresh mCacheListRefresh;
-    private final Aborter mAborter;
+    private final AbortState mAborter;
     private final Provider<MenuActionSyncGpx> mMenuActionSyncGpxProvider;
     private final Provider<CacheListMenuActions> mCacheListMenuActionsProvider;
     private final Provider<ContextActions> mContextActionsProvider;
@@ -66,19 +67,19 @@ public class GeocacheListController {
     @Inject
     public GeocacheListController(Injector injector) {
         mCacheListRefresh = injector.getInstance(CacheListRefresh.class);
-        mAborter = injector.getInstance(Aborter.class);
+        mAborter = injector.getInstance(AbortState.class);
         mMenuActionSyncGpxProvider = injector.getProvider(MenuActionSyncGpx.class);
         mCacheListMenuActionsProvider = injector.getProvider(CacheListMenuActions.class);
         mContextActionsProvider = injector.getProvider(ContextActions.class);
     }
 
     public GeocacheListController(CacheListRefresh cacheListRefresh,
-            Aborter aborter,
+            AbortState abortState,
             Provider<MenuActionSyncGpx> menuActionSyncProvider,
             Provider<CacheListMenuActions> cacheListMenuActionsProvider,
             Provider<ContextActions> contextActionsProvider) {
         mCacheListRefresh = cacheListRefresh;
-        mAborter = aborter;
+        mAborter = abortState;
         mMenuActionSyncGpxProvider = menuActionSyncProvider;
         mCacheListMenuActionsProvider = cacheListMenuActionsProvider;
         mContextActionsProvider = contextActionsProvider;

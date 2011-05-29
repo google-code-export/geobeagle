@@ -15,21 +15,21 @@
 package com.google.code.geobeagle.xmlimport;
 
 
+import com.google.inject.Inject;
+
 import android.util.Log;
 
 import java.io.File;
 
 public class OldCacheFilesCleaner {
     private final String directory;
-    private final MessageHandlerInterface messageHandler;
 
-    public OldCacheFilesCleaner(GeoBeagleEnvironment geoBeagleEnvironment,
-            MessageHandlerInterface messageHandler) {
+    @Inject
+    public OldCacheFilesCleaner(GeoBeagleEnvironment geoBeagleEnvironment) {
         this.directory = geoBeagleEnvironment.getOldDetailsDirectory();
-        this.messageHandler = messageHandler;
     }
 
-    public void clean() {
+    public void clean(MessageHandlerInterface messageHandler) {
         messageHandler.deletingCacheFiles();
         String[] list = new File(directory).list(new ExtensionFilter(".html"));
         if (list == null)

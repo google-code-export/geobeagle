@@ -17,7 +17,7 @@ package com.google.code.geobeagle;
 import com.google.android.maps.GeoPoint;
 import com.google.code.geobeagle.GeocacheFactory.Provider;
 import com.google.code.geobeagle.GeocacheFactory.Source;
-import com.google.code.geobeagle.activity.main.GeoUtils;
+import com.google.code.geobeagle.activity.compass.GeoUtils;
 
 import android.content.SharedPreferences.Editor;
 import android.location.Location;

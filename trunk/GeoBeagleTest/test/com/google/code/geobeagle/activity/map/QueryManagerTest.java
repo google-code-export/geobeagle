@@ -21,12 +21,11 @@ import static org.junit.Assert.assertTrue;
 import com.google.android.maps.GeoPoint;
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.activity.main.fieldnotes.ToasterFactory;
+import com.google.code.geobeagle.activity.compass.fieldnotes.Toaster;
 import com.google.code.geobeagle.activity.map.QueryManager.CachedNeedsLoading;
 import com.google.code.geobeagle.activity.map.QueryManager.LoaderImpl;
 import com.google.code.geobeagle.database.DbFrontend;
 import com.google.code.geobeagle.database.WhereFactoryFixedArea;
-import com.google.code.geobeagle.xmlimport.GpxImporterDI.Toaster;
 
 import org.easymock.EasyMock;
 import org.junit.Before;
@@ -178,20 +177,17 @@ public class QueryManagerTest {
         DbFrontend dbFrontend = PowerMock.createMock(DbFrontend.class);
         WhereFactoryFixedArea where = PowerMock.createMock(WhereFactoryFixedArea.class);
         Toaster toaster = PowerMock.createMock(Toaster.class);
-        ToasterFactory toasterFactory = PowerMock.createMock(ToasterFactory.class);
         LoaderImpl loaderImpl = PowerMock.createMock(LoaderImpl.class);
 
         ArrayList<Geocache> nullList = new ArrayList<Geocache>();
         int[] newBounds = {
                 0, 0, 0, 0
         };
-        EasyMock.expect(toasterFactory.create(R.string.too_many_caches, Toast.LENGTH_SHORT))
-                .andReturn(toaster);
-        toaster.showToast();
+        toaster.toast(R.string.too_many_caches, Toast.LENGTH_SHORT);
         EasyMock.expect(dbFrontend.count(0, 0, where)).andReturn(2000);
 
         PowerMock.replayAll();
-        final ArrayList<Geocache> list = new QueryManager.PeggedLoader(dbFrontend, toasterFactory,
+        final ArrayList<Geocache> list = new QueryManager.PeggedLoader(dbFrontend, toaster,
                 loaderImpl).load(0, 1, 2, 3, where, newBounds);
         assertEquals(nullList, list);
         assertEquals(newBounds[0], 0);

@@ -18,8 +18,8 @@ import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.activity.cachelist.CacheListActivity;
 import com.google.code.geobeagle.activity.cachelist.GeoBeagleTest;
 import com.google.code.geobeagle.activity.cachelist.GeocacheListController;
-import com.google.code.geobeagle.activity.main.GeoBeagle;
-import com.google.code.geobeagle.activity.main.GeocacheFromPreferencesFactory;
+import com.google.code.geobeagle.activity.compass.CompassActivity;
+import com.google.code.geobeagle.activity.compass.GeocacheFromPreferencesFactory;
 
 import org.easymock.EasyMock;
 import org.junit.Test;
@@ -127,7 +127,7 @@ public class ActivityRestorerTest extends GeoBeagleTest {
                 .andReturn(viewCache);
         EasyMock.expect(geocacheFromPreferencesFactory.create(sharedPreferences)).andReturn(
                 geocache);
-        PowerMock.expectNew(Intent.class, parent, GeoBeagle.class).andReturn(intent);
+        PowerMock.expectNew(Intent.class, parent, CompassActivity.class).andReturn(intent);
         EasyMock.expect(intent.putExtra("geocache", geocache)).andReturn(intent);
         EasyMock.expect(intent.setAction(GeocacheListController.SELECT_CACHE)).andReturn(intent);
         parent.startActivity(intent);

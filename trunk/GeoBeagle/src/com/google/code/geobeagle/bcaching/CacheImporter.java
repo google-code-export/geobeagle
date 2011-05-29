@@ -16,10 +16,12 @@ package com.google.code.geobeagle.bcaching;
 
 import com.google.code.geobeagle.bcaching.communication.BCachingException;
 import com.google.code.geobeagle.bcaching.communication.BCachingListImporterStateless;
-import com.google.code.geobeagle.xmlimport.GpxLoaderFromBCaching;
+import com.google.code.geobeagle.database.ClearCachesFromSource;
+import com.google.code.geobeagle.database.GpxTableWriter;
+import com.google.code.geobeagle.xmlimport.GpxToCache;
+import com.google.code.geobeagle.xmlimport.GpxToCache.CancelException;
+import com.google.code.geobeagle.xmlimport.GpxToCache.GpxToCacheFactory;
 import com.google.inject.Inject;
-
-import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.BufferedReader;
 import java.util.Hashtable;
@@ -38,28 +40,31 @@ public class CacheImporter {
     }
 
     private final BufferedReaderFactory bufferedReaderFactory;
-    private final GpxLoaderFromBCaching gpxLoader;
+    private final GpxToCache gpxToCache;
+
+    static class GpxTableWriterBCaching implements GpxTableWriter {
+        @Override
+        public boolean isGpxAlreadyLoaded(String mGpxName, String sqlDate) {
+            return false;
+        }
+    }
 
     @Inject
-    CacheImporter(BufferedReaderFactory bufferedReaderFactory, GpxLoaderFromBCaching gpxLoader) {
+    CacheImporter(BufferedReaderFactory bufferedReaderFactory,
+            GpxToCacheFactory gpxToCacheFactory,
+            MessageHandlerAdapter messageHandlerAdapter,
+            GpxTableWriterBCaching gpxTableWriterBcaching,
+            ClearCachesFromSource clearCachesFromSourceNull) {
         this.bufferedReaderFactory = bufferedReaderFactory;
-        this.gpxLoader = gpxLoader;
+        gpxToCache = gpxToCacheFactory.create(messageHandlerAdapter, gpxTableWriterBcaching,
+                clearCachesFromSourceNull);
     }
 
-    public boolean load(String csvIds) throws BCachingException {
+    public void load(String csvIds) throws BCachingException, CancelException {
         params.put("ids", csvIds);
 
-        try {
-            BufferedReader bufferedReader = bufferedReaderFactory.create(params);
-            gpxLoader.open("BCaching.com", bufferedReader);
-        } catch (XmlPullParserException e) {
-            throw new BCachingException("Error parsing data from baching.com: "
-                    + e.getLocalizedMessage());
-        }
-        return gpxLoader.load();
+        BufferedReader bufferedReader = bufferedReaderFactory.create(params);
+        gpxToCache.load("BCaching.com", bufferedReader);
     }
 
-    public String getLastModified() {
-        return gpxLoader.getLastModified();
-    }
 }

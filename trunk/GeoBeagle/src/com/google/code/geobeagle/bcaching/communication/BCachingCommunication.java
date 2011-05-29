@@ -14,7 +14,7 @@
 
 package com.google.code.geobeagle.bcaching.communication;
 
-import com.google.code.geobeagle.bcaching.BCachingModule;
+import com.google.code.geobeagle.activity.preferences.Preferences;
 import com.google.inject.Inject;
 
 import android.content.SharedPreferences;
@@ -82,7 +82,7 @@ public class BCachingCommunication {
         return new String(out);
     }
 
-    private final String baseUrl = "http://www.bcaching.com/api";
+    private String baseUrl;
     private final String hashword;
     private final int timeout = 60000; // millisec
     private final String username;
@@ -93,13 +93,14 @@ public class BCachingCommunication {
 
         @Inject
         public BCachingCredentials(SharedPreferences sharedPreferences) {
-            password = sharedPreferences.getString(BCachingModule.BCACHING_PASSWORD, "");
-            username = sharedPreferences.getString(BCachingModule.BCACHING_USERNAME, "");
+            password = sharedPreferences.getString(Preferences.BCACHING_PASSWORD, "");
+            username = sharedPreferences.getString(Preferences.BCACHING_USERNAME, "");
         }
     }
 
     @Inject
-    public BCachingCommunication(BCachingCredentials bcachingCredentials) {
+    public BCachingCommunication(BCachingCredentials bcachingCredentials,
+            SharedPreferences sharedPreferences) {
         username = bcachingCredentials.username;
         String hashword = "";
         try {
@@ -108,6 +109,8 @@ public class BCachingCommunication {
             Log.e("GeoBeagle", ex.toString());
         }
         this.hashword = hashword;
+        baseUrl = sharedPreferences.getString(Preferences.BCACHING_HOSTNAME,
+                "http://www.bcaching.com/api");
     }
 
     public String encodeHashword(String username, String password) {
@@ -199,20 +202,21 @@ public class BCachingCommunication {
             connection.addRequestProperty("Accept-encoding", "gzip");
             int responseCode = connection.getResponseCode();
             InputStream inputStream = null;
+            String contentEncoding = connection.getContentEncoding();
             try {
                 inputStream = connection.getInputStream();
             } catch (IOException e) {
                 InputStream errorStream = connection.getErrorStream();
-                if (connection.getContentEncoding() != null
-                        && connection.getContentEncoding().equalsIgnoreCase("gzip")) {
-                    inputStream = new java.util.zip.GZIPInputStream(errorStream);
+                if (contentEncoding != null
+                        && contentEncoding.equalsIgnoreCase("gzip")) {
+                    errorStream = new java.util.zip.GZIPInputStream(errorStream);
                 }
                 InputStreamReader errorStreamReader = new InputStreamReader(errorStream);
                 BufferedReader reader = new BufferedReader(errorStreamReader);
                 String string = connection.getResponseCode() + " error: " + reader.readLine();
                 throw new BCachingException(string);
             }
-            if (connection.getContentEncoding().equalsIgnoreCase("gzip")) {
+            if (contentEncoding != null && contentEncoding.equalsIgnoreCase("gzip")) {
                 inputStream = new java.util.zip.GZIPInputStream(inputStream);
             }
             if (responseCode != HttpURLConnection.HTTP_OK) {

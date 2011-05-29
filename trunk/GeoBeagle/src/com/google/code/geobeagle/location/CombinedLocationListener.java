@@ -18,6 +18,7 @@ import com.google.code.geobeagle.LocationControlBuffered;
 import com.google.code.geobeagle.activity.cachelist.ActivityVisible;
 import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidgetDelegate;
 import com.google.inject.Inject;
+import com.google.inject.Injector;
 
 import android.location.Location;
 import android.location.LocationListener;
@@ -31,14 +32,19 @@ public class CombinedLocationListener implements LocationListener {
     private final LocationListener mLocationListener;
     private final ActivityVisible mActivityVisible;
 
-    @Inject
     public CombinedLocationListener(LocationControlBuffered locationControlBuffered,
             GpsStatusWidgetDelegate locationListener, ActivityVisible activityVisible) {
         mLocationListener = locationListener;
         mLocationControlBuffered = locationControlBuffered;
         mActivityVisible = activityVisible;
     }
-
+    
+    @Inject
+    public CombinedLocationListener(Injector injector) {
+        mLocationListener = injector.getInstance(GpsStatusWidgetDelegate.class);
+        mLocationControlBuffered = injector.getInstance(LocationControlBuffered.class);
+        mActivityVisible = injector.getInstance(ActivityVisible.class);
+    }
     @Override
     public void onLocationChanged(Location location) {
         if (!mActivityVisible.getVisible())

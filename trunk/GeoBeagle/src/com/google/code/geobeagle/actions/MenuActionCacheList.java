@@ -14,22 +14,19 @@
 
 package com.google.code.geobeagle.actions;
 
-import com.google.code.geobeagle.activity.cachelist.CacheListActivity;
+import com.google.code.geobeagle.CacheListActivityStarter;
 import com.google.inject.Inject;
 
-import android.app.Activity;
-import android.content.Intent;
-
 public class MenuActionCacheList implements Action {
-    private Activity mActivity;
+    private CacheListActivityStarter cacheListActivityStarter;
 
     @Inject
-    public MenuActionCacheList(Activity activity) {
-        mActivity = activity;
+    public MenuActionCacheList(CacheListActivityStarter cacheListActivityStarter) {
+        this.cacheListActivityStarter = cacheListActivityStarter;
     }
 
     @Override
     public void act() {
-        mActivity.startActivity(new Intent(mActivity, CacheListActivity.class));
+        cacheListActivityStarter.start();
     }
 }

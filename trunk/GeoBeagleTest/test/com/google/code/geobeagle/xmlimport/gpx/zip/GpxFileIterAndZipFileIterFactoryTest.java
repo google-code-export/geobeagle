@@ -18,7 +18,7 @@ import static org.easymock.EasyMock.expect;
 import static org.junit.Assert.assertEquals;
 
 import com.google.code.geobeagle.gpx.zip.ZipInputStreamFactory;
-import com.google.code.geobeagle.xmlimport.Aborter;
+import com.google.code.geobeagle.xmlimport.AbortState;
 import com.google.code.geobeagle.xmlimport.GeoBeagleEnvironment;
 import com.google.code.geobeagle.xmlimport.gpx.GpxFileIterAndZipFileIterFactory;
 import com.google.code.geobeagle.xmlimport.gpx.gpx.GpxFileOpener;
@@ -42,14 +42,14 @@ import org.powermock.modules.junit4.PowerMockRunner;
 public class GpxFileIterAndZipFileIterFactoryTest {
 
     private GeoBeagleEnvironment geoBeagleEnvironment;
-    private Aborter aborter;
+    private AbortState aborter;
     private GpxFileIter gpxFileIterator;
-    private Provider<Aborter> aborterProvider;
+    private Provider<AbortState> aborterProvider;
 
     @Before
     public void setUp() {
         geoBeagleEnvironment = PowerMock.createMock(GeoBeagleEnvironment.class);
-        aborter = PowerMock.createMock(Aborter.class);
+        aborter = PowerMock.createMock(AbortState.class);
         gpxFileIterator = PowerMock.createStrictMock(GpxFileIter.class);
         aborterProvider = PowerMock.createMock(Provider.class);
     }

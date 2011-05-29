@@ -25,10 +25,11 @@ import com.google.code.geobeagle.activity.cachelist.model.GeocacheVectors;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
 import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheListPresenter;
 import com.google.code.geobeagle.database.DatabaseDI;
-import com.google.code.geobeagle.xmlimport.Aborter;
+import com.google.code.geobeagle.xmlimport.AbortState;
 import com.google.inject.Provider;
 
 import org.easymock.EasyMock;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.api.easymock.PowerMock;
@@ -48,25 +49,35 @@ import android.widget.AdapterView.AdapterContextMenuInfo;
         CacheListOnCreateContextMenuListener.class, DatabaseDI.class, Log.class
 })
 public class GeocacheListControllerTest extends GeoBeagleTest {
+    private AbortState abortState;
+    private ContextMenu contextMenu;
+    private CacheListRefresh cacheListRefresh;
+    private AdapterContextMenuInfo adapterContextMenuInfo;
+
+    @Before
+    public void setUp() {
+        abortState = PowerMock.createMock(AbortState.class);
+        adapterContextMenuInfo = PowerMock.createMock(AdapterContextMenuInfo.class);
+        cacheListRefresh = PowerMock.createMock(CacheListRefresh.class);
+        contextMenu = PowerMock.createMock(ContextMenu.class);
+    }
 
     @Test
     public void testCacheListOnCreateContextMenuListener() {
-        ContextMenu menu = PowerMock.createMock(ContextMenu.class);
-        AdapterContextMenuInfo menuInfo = PowerMock.createMock(AdapterContextMenuInfo.class);
         GeocacheVectors geocacheVectors = PowerMock.createMock(GeocacheVectors.class);
         GeocacheVector geocacheVector = PowerMock.createMock(GeocacheVector.class);
 
         expect(geocacheVectors.get(11)).andReturn(geocacheVector);
         expect(geocacheVector.getId()).andReturn("GC123");
-        expect(menu.setHeaderTitle("GC123")).andReturn(menu);
-        expect(menu.add(0, GeocacheListController.MENU_VIEW, 0, "View")).andReturn(null);
-        expect(menu.add(0, GeocacheListController.MENU_EDIT, 1, "Edit")).andReturn(null);
-        expect(menu.add(0, GeocacheListController.MENU_DELETE, 2, "Delete")).andReturn(null);
+        expect(contextMenu.setHeaderTitle("GC123")).andReturn(contextMenu);
+        expect(contextMenu.add(0, GeocacheListController.MENU_VIEW, 0, "View")).andReturn(null);
+        expect(contextMenu.add(0, GeocacheListController.MENU_EDIT, 1, "Edit")).andReturn(null);
+        expect(contextMenu.add(0, GeocacheListController.MENU_DELETE, 2, "Delete")).andReturn(null);
 
         PowerMock.replayAll();
-        menuInfo.position = 12;
-        new CacheListOnCreateContextMenuListener(geocacheVectors).onCreateContextMenu(menu, null,
-                menuInfo);
+        adapterContextMenuInfo.position = 12;
+        new CacheListOnCreateContextMenuListener(geocacheVectors).onCreateContextMenu(contextMenu, null,
+                adapterContextMenuInfo);
         PowerMock.verifyAll();
     }
 
@@ -94,7 +105,6 @@ public class GeocacheListControllerTest extends GeoBeagleTest {
 
     @Test
     public void testOnCreateContextMenu() {
-        ContextMenu contextMenu = PowerMock.createMock(ContextMenu.class);
         MenuItem menuItem = PowerMock.createMock(MenuItem.class);
         GeocacheVectors geocacheVectors = PowerMock.createMock(GeocacheVectors.class);
         GeocacheVector geocacheVector = PowerMock.createMock(GeocacheVector.class);
@@ -182,21 +192,18 @@ public class GeocacheListControllerTest extends GeoBeagleTest {
     public void testOnPause() {
         Provider<MenuActionSyncGpx> menuActionSyncProvider = PowerMock.createMock(Provider.class);
         MenuActionSyncGpx menuActionSync = PowerMock.createMock(MenuActionSyncGpx.class);
-        Aborter aborter = PowerMock.createMock(Aborter.class);
 
         expect(menuActionSyncProvider.get()).andReturn(menuActionSync);
-        aborter.abort();
+        abortState.abort();
         menuActionSync.abort();
 
         PowerMock.replayAll();
-        new GeocacheListController(null, aborter, menuActionSyncProvider, null, null).onPause();
+        new GeocacheListController(null, abortState, menuActionSyncProvider, null, null).onPause();
         PowerMock.verifyAll();
     }
 
     @Test
     public void testOnResume() {
-        CacheListRefresh cacheListRefresh = PowerMock.createMock(CacheListRefresh.class);
-
         cacheListRefresh.forceRefresh();
 
         PowerMock.replayAll();

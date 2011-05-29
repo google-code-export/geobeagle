@@ -19,19 +19,21 @@ import com.google.code.geobeagle.xmlimport.gpx.IGpxReader;
 import java.io.Reader;
 
 class GpxReader implements IGpxReader {
-    private final String mFilename;
-    private final Reader mReader;
+    private final String filename;
+    private final Reader reader;
 
     GpxReader(String filename, Reader reader) {
-        mFilename = filename;
-        mReader = reader;
+        this.filename = filename;
+        this.reader = reader;
     }
 
+    @Override
     public String getFilename() {
-        return mFilename;
+        return filename;
     }
 
+    @Override
     public Reader open() {
-        return mReader;
+        return reader;
     }
 }

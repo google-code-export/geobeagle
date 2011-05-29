@@ -19,7 +19,7 @@ import static org.powermock.api.easymock.PowerMock.createMock;
 import static org.powermock.api.easymock.PowerMock.replayAll;
 import static org.powermock.api.easymock.PowerMock.verifyAll;
 
-import com.google.code.geobeagle.bcaching.BCachingModule;
+import com.google.code.geobeagle.activity.preferences.Preferences;
 import com.google.code.geobeagle.xmlimport.GeoBeagleEnvironment;
 
 import org.junit.Test;
@@ -36,9 +36,9 @@ public class PreferencesUpgraderTest {
         SharedPreferences sharedPreferences = createMock(SharedPreferences.class);
         Editor editor = createMock(Editor.class);
 
-        expect(sharedPreferences.getString(BCachingModule.BCACHING_USERNAME, "")).andReturn("tom");
+        expect(sharedPreferences.getString(Preferences.BCACHING_USERNAME, "")).andReturn("tom");
         expect(sharedPreferences.edit()).andReturn(editor);
-        expect(editor.putBoolean(BCachingModule.BCACHING_ENABLED, true)).andReturn(editor);
+        expect(editor.putBoolean(Preferences.BCACHING_ENABLED, true)).andReturn(editor);
         expect(editor.commit()).andReturn(true);
 
         expect(sharedPreferences.getString(GeoBeagleEnvironment.IMPORT_FOLDER, "")).andReturn("");
@@ -60,9 +60,9 @@ public class PreferencesUpgraderTest {
     public void testPreferencesUpgrader() {
         DependencyUpgrader dependencyUpgrader = createMock(DependencyUpgrader.class);
 
-        dependencyUpgrader.upgrade(BCachingModule.BCACHING_ENABLED,
-                BCachingModule.BCACHING_USERNAME);
-        dependencyUpgrader.upgrade(PreferencesUpgrader.SDCARD_ENABLED,
+        dependencyUpgrader.upgrade(Preferences.BCACHING_ENABLED,
+                Preferences.BCACHING_USERNAME);
+        dependencyUpgrader.upgrade(Preferences.SDCARD_ENABLED,
                 GeoBeagleEnvironment.IMPORT_FOLDER);
 
         replayAll();

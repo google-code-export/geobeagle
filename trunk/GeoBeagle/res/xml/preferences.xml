@@ -31,6 +31,9 @@
 		<CheckBoxPreference android:key="show-found-caches"
 			android:title="Show Found Caches" android:summary="Show found caches in cache list"
 			android:defaultValue="true" />
+		<CheckBoxPreference android:key="show-dnf-caches"
+			android:title="Show DNF Caches" android:summary="Show DNF (Did Not Find) caches in cache list"
+			android:defaultValue="true" />
 		<CheckBoxPreference android:key="show-unavailable-caches"
 			android:title="Show Unavailable Caches" android:summary="Show unavailable caches in cache list"
 			android:defaultValue="false" />
@@ -58,6 +61,10 @@
 		<CheckBoxPreference android:key="bcaching-sync-finds"
 			android:dependency="bcaching-enabled" android:layout="?android:attr/preferenceLayoutChild"
 			android:title="Sync Found Caches" android:summary="Include found caches in BCaching.com sync" />
+		<EditTextPreference android:key="bcaching-hostname"
+			android:dependency="bcaching-enabled" android:layout="?android:attr/preferenceLayoutChild"
+			android:title="Hostname" android:summary="Hostname for BCaching.com" 
+			android:defaultValue="http://www.bcaching.com/api"/>
 	</PreferenceCategory>
 
 </PreferenceScreen>

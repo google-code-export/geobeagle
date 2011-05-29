@@ -29,7 +29,6 @@ public class MessageHandlerAdapter implements MessageHandlerInterface {
     private final ProgressManager progressManager;
     private final ProgressHandler handler;
     private String waypoint;
-    private int count;
 
     public MessageHandlerAdapter(ProgressHandler handler, ProgressManager progressManager) {
         this.handler = handler;
@@ -62,12 +61,14 @@ public class MessageHandlerAdapter implements MessageHandlerInterface {
 
     @Override
     public void start(CacheListRefresh cacheListRefresh) {
-        count = 0;
     }
 
     @Override
     public void updateName(String name) {
-        progressManager.update(handler, ProgressMessage.SET_FILE, count++, waypoint + " - " + name);
+        if (waypoint.startsWith("GC"))
+            progressManager.incrementProgress();
+        progressManager.update(handler, ProgressMessage.SET_FILE,
+                progressManager.getCurrentProgress(), waypoint + " - " + name);
     }
 
     @Override
@@ -82,9 +83,4 @@ public class MessageHandlerAdapter implements MessageHandlerInterface {
     public void updateWaypointId(String wpt) {
         this.waypoint = wpt;
     }
-
-    @Override
-    public void startBCachingImport() {
-    }
-
 }

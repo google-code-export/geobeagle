@@ -44,7 +44,10 @@ public class BCachingList {
     }
 
     int getCachesRead() throws BCachingException {
-        return cacheList.getJSONArray("data").length();
+        int length = cacheList.getJSONArray("data").length();
+        Log.d("GeoBeagle", "getCachesRead: " + length);
+
+        return length;
     }
 
     int getTotalCount() throws BCachingException {

@@ -21,7 +21,7 @@ import static org.powermock.api.easymock.PowerMock.verifyAll;
 
 import com.google.code.geobeagle.activity.cachelist.GeoBeagleTest;
 import com.google.code.geobeagle.activity.cachelist.presenter.filter.UpdateFilterHandler;
-import com.google.code.geobeagle.activity.preferences.EditPreferences;
+import com.google.code.geobeagle.activity.preferences.Preferences;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -47,10 +47,11 @@ public class UpdateFilterWorkerTest extends GeoBeagleTest {
     @Test
     public void showAllCachesShouldDismissDialogBox() {
         cacheVisibilityStore.setAllVisible();
-        expect(sharedPreferences.getBoolean(EditPreferences.SHOW_WAYPOINTS, false)).andReturn(true);
-        expect(sharedPreferences.getBoolean(EditPreferences.SHOW_FOUND_CACHES, false)).andReturn(
+        expect(sharedPreferences.getBoolean(Preferences.SHOW_WAYPOINTS, false)).andReturn(true);
+        expect(sharedPreferences.getBoolean(Preferences.SHOW_FOUND_CACHES, false)).andReturn(
                 true);
-        expect(sharedPreferences.getBoolean(EditPreferences.SHOW_UNAVAILABLE_CACHES, false))
+        expect(sharedPreferences.getBoolean(Preferences.SHOW_DNF_CACHES, true)).andReturn(true);
+        expect(sharedPreferences.getBoolean(Preferences.SHOW_UNAVAILABLE_CACHES, false))
                 .andReturn(true);
         updateFilterHandler.endFiltering();
         replayAll();

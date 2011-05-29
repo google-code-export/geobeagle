@@ -1,7 +1,10 @@
 #summary How to set up the project in Eclipse
 
 First, you need to check out the sources with one of the following.<br>
+Version 1.0:<br>
 `svn checkout https://geobeagle.googlecode.com/svn/trunk`<br>
+Version 1.5:<br>
+`svn checkout https://geobeagle.googlecode.com/svn/branches/andpet`
 
 =Setting up !GeoBeagle=
 
@@ -9,26 +12,20 @@ First, you need to check out the sources with one of the following.<br>
   # Override the following settings: Use !GeoBeagle as the Application Name and the Project Name.  Choose Google APIs as the Build Target.
   # Right click on "!GeoBeagle" in your Package Explorer window, select "Properties / Java Build Path / Source", and make sure the following *three* folders are in your source: "!GeoBeagle/di", "!GeoBeagle/gen", "!GeoBeagle/src" (otherwise, you'll get "source not found errors").
   # Eclipse / Preferences / Set Android SDK Location
-  # Set java1.6 (GeoBeagle/ properties/ Java compiler / Enable project specific settings, set Compiler compliance level to 1.6.
-  # Add roboguice libraries.  roboguice-1.0.jar can be downloaded here: http://download.java.net/maven/2/roboguice/roboguice/1.0/ The other Guice files can be downloaded here:
-
-http://code.google.com/p/google-guice/downloads/list
-
-guice-2-1.0-no_aop.jar can be downloaded directly guice-assistedinject-2.0.jar is in guice-2.0.zip
-
-Edit the libraries in GeoBeagle / properties / Java Build Path / Libraries to point to your local copies.
-
+  # Set java1.6 (otherwise, you'll get "The method restore() of type !ActivityRestorer.!CacheListRestorer must override a superclass method" error).
   # To make Google Maps work in !GeoBeagle, you need to generate your own "android:apiKey" signature to enter into res/layout/map.xml. Follow the instructions on: http://code.google.com/intl/sv-SE/android/add-ons/google-apis/mapkey.html#getdebugfingerprint Ask on the mailing list if you face any problems.
 
 =Setting up the tests=
 
-  # Eclipse / New *Java* Project. Uncheck "use default location". Set the location to the GeoBeagleTest directory. Set project name to "!GeoBeagleTest"
+To run the tests, don't use the SDK android-sdk-windows-1.5_r2. Versions `r1` and `r3` are ok but `r2` contains a bug that prevents `com.google.map.MapPoint` from being found.
+
+  # Eclipse / New *Java* Project / Create Project From Existing Source / select the directory named "!GeoBeagleTest"
   # Properties / java build path / Projects / add / select !GeoBeagle project 
   # Download powermock with dependencies: http://code.google.com/p/powermock/downloads/list, select powermock-1.2.5-with-dependencies.zip.
   # Add the following using Properties / Java build path / Libraries / add external jars... :
     # All powermock jars
     # android.jar (android-sdk-XXX/platforms/android-X.X/android.jar)
     # The Google Maps lib (android-sdk-XXX/add-ons/google_apis-3/libs/maps.jar)
-  # Run / Run Configurations / Junit test / Arguments/ VM Arguments: `-Xms256m -Xmx1024m -XX:MaxPermSize=256m`
+  # Run / Run Configurations / Junit test / Arguments/ VM Arguments: `-Xms256m -Xmx1024m -XX:!MaxPermSize=256m`
   # See the following blog posting for more information on automated testing and !GeoBeagle: http://googletesting.blogspot.com/2009/07/old-habits-die-hard.html
 See this blog for a few more tips: http://ntoll.org/article/hello-android

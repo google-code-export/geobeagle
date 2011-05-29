@@ -17,6 +17,7 @@ package com.google.code.geobeagle.bcaching.preferences;
 import com.google.inject.Inject;
 
 import android.content.SharedPreferences;
+import android.util.Log;
 
 public class LastReadPosition {
     static final String BCACHING_LAST_READ_POSITION = "bcaching-last-read-position";
@@ -37,9 +38,11 @@ public class LastReadPosition {
 
     public void load() {
         lastRead = sharedPreferences.getInt(BCACHING_LAST_READ_POSITION, 0);
+        Log.d("GeoBeagle", "Load last read: " + lastRead);
     }
 
     public void put(int lastRead) {
+        Log.d("GeoBeagle", "Put last read: " + lastRead);
         preferencesWriter.putInt(BCACHING_LAST_READ_POSITION, lastRead);
         this.lastRead = lastRead;
     }

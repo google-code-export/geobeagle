@@ -25,7 +25,7 @@ import com.google.code.geobeagle.GeocacheFactory.Source;
 import com.google.code.geobeagle.activity.cachelist.GeoBeagleTest;
 import com.google.code.geobeagle.database.CacheSqlWriter;
 import com.google.code.geobeagle.database.ClearCachesFromSource;
-import com.google.code.geobeagle.database.GpxWriter;
+import com.google.code.geobeagle.database.GpxTableWriterGpxFiles;
 import com.google.code.geobeagle.database.Tag;
 import com.google.code.geobeagle.database.TagWriter;
 
@@ -38,7 +38,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 @RunWith(PowerMockRunner.class)
 public class CacheTagWriterTest extends GeoBeagleTest {
     private CacheSqlWriter cacheSqlWriter;
-    private GpxWriter gpxWriter;
+    private GpxTableWriterGpxFiles gpxTableWriterGpxFiles;
     private TagWriter tagWriter;
     private CacheTypeFactory cacheTypeFactory;
     private CacheTagSqlWriter cacheTagSqlWriter;
@@ -47,12 +47,12 @@ public class CacheTagWriterTest extends GeoBeagleTest {
     @Before
     public void setUp() {
         cacheSqlWriter = PowerMock.createMock(CacheSqlWriter.class);
-        gpxWriter = PowerMock.createMock(GpxWriter.class);
+        gpxTableWriterGpxFiles = PowerMock.createMock(GpxTableWriterGpxFiles.class);
         tagWriter = PowerMock.createMock(TagWriter.class);
         cacheTypeFactory = PowerMock.createMock(CacheTypeFactory.class);
         clearCachesFromSource = PowerMock.createMock(ClearCachesFromSource.class);
-        cacheTagSqlWriter = new CacheTagSqlWriter(cacheSqlWriter, gpxWriter, cacheTypeFactory,
-                tagWriter, clearCachesFromSource);
+        cacheTagSqlWriter = new CacheTagSqlWriter(cacheSqlWriter, gpxTableWriterGpxFiles,
+                cacheTypeFactory, tagWriter);
     }
 
     @Test
@@ -71,7 +71,7 @@ public class CacheTagWriterTest extends GeoBeagleTest {
         clearCachesFromSource.clearEarlierLoads();
 
         PowerMock.replayAll();
-        cacheTagSqlWriter.end();
+        cacheTagSqlWriter.end(clearCachesFromSource);
         PowerMock.verifyAll();
     }
 
@@ -89,22 +89,24 @@ public class CacheTagWriterTest extends GeoBeagleTest {
 
     @Test
     public void testGpxTimeDontLoad() {
-        expect(gpxWriter.isGpxAlreadyLoaded("foo.gpx", "2008-04-15 16:10:30")).andReturn(true);
+        expect(gpxTableWriterGpxFiles.isGpxAlreadyLoaded("foo.gpx", "2008-04-15 16:10:30")).andReturn(true);
 
         PowerMock.replayAll();
         cacheTagSqlWriter.gpxName("foo.gpx");
-        assertFalse(cacheTagSqlWriter.gpxTime("2008-04-15T16:10:30"));
+        assertFalse(cacheTagSqlWriter.gpxTime(clearCachesFromSource, gpxTableWriterGpxFiles,
+                "2008-04-15T16:10:30"));
         PowerMock.verifyAll();
     }
 
     @Test
     public void testGpxTimeLoad() {
-        expect(gpxWriter.isGpxAlreadyLoaded("foo.gpx", "2008-04-15 16:10:30")).andReturn(false);
+        expect(gpxTableWriterGpxFiles.isGpxAlreadyLoaded("foo.gpx", "2008-04-15 16:10:30")).andReturn(false);
         clearCachesFromSource.clearCaches("foo.gpx");
 
         PowerMock.replayAll();
         cacheTagSqlWriter.gpxName("foo.gpx");
-        assertTrue(cacheTagSqlWriter.gpxTime("2008-04-15T16:10:30"));
+        assertTrue(cacheTagSqlWriter.gpxTime(clearCachesFromSource, gpxTableWriterGpxFiles,
+                "2008-04-15T16:10:30"));
         PowerMock.verifyAll();
     }
 
@@ -135,12 +137,13 @@ public class CacheTagWriterTest extends GeoBeagleTest {
     @Test
     public void testStopWritingSuccess() {
         cacheSqlWriter.stopWriting();
-        expect(gpxWriter.isGpxAlreadyLoaded("foo.gpx", "2008-04-15 16:10:30")).andReturn(true);
-        gpxWriter.writeGpx("foo.gpx");
+        expect(gpxTableWriterGpxFiles.isGpxAlreadyLoaded("foo.gpx", "2008-04-15 16:10:30")).andReturn(true);
+        gpxTableWriterGpxFiles.writeGpx("foo.gpx");
 
         PowerMock.replayAll();
         cacheTagSqlWriter.gpxName("foo.gpx");
-        cacheTagSqlWriter.gpxTime("2008-04-15T16:10:30.7369220-08:00");
+        cacheTagSqlWriter.gpxTime(clearCachesFromSource, gpxTableWriterGpxFiles,
+                "2008-04-15T16:10:30.7369220-08:00");
         cacheTagSqlWriter.stopWriting(true);
         PowerMock.verifyAll();
     }

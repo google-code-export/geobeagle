@@ -22,21 +22,21 @@ import android.content.Context;
 import android.content.Intent;
 
 public class ContextActionView implements ContextAction {
-    private final Context mContext;
-    private final GeocacheVectors mGeocacheVectors;
+    private final Context context;
+    private final GeocacheVectors geocacheVectors;
 
     @Inject
     public ContextActionView(GeocacheVectors geocacheVectors, Context context) {
-        mGeocacheVectors = geocacheVectors;
-        mContext = context;
+        this.geocacheVectors = geocacheVectors;
+        this.context = context;
     }
 
     @Override
     public void act(int position) {
-        Intent intent = new Intent(mContext,
-                com.google.code.geobeagle.activity.main.GeoBeagle.class);
-        intent.putExtra("geocache", mGeocacheVectors.get(position).getGeocache()).setAction(
+        Intent intent = new Intent(context,
+                com.google.code.geobeagle.activity.compass.CompassActivity.class);
+        intent.putExtra("geocache", geocacheVectors.get(position).getGeocache()).setAction(
                 GeocacheListController.SELECT_CACHE);
-        mContext.startActivity(intent);
+        context.startActivity(intent);
     }
 }

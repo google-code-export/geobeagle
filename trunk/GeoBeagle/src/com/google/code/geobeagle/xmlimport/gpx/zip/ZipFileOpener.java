@@ -15,7 +15,7 @@
 package com.google.code.geobeagle.xmlimport.gpx.zip;
 
 import com.google.code.geobeagle.gpx.zip.ZipInputStreamFactory;
-import com.google.code.geobeagle.xmlimport.Aborter;
+import com.google.code.geobeagle.xmlimport.AbortState;
 import com.google.code.geobeagle.xmlimport.gpx.GpxAndZipFiles.GpxFilenameFilter;
 import com.google.code.geobeagle.xmlimport.gpx.IGpxReader;
 import com.google.code.geobeagle.xmlimport.gpx.IGpxReaderIter;
@@ -29,13 +29,13 @@ import java.util.zip.ZipEntry;
 public class ZipFileOpener {
 
     public static class ZipFileIter implements IGpxReaderIter {
-        private final Provider<Aborter> mAborterProvider;
+        private final Provider<AbortState> mAborterProvider;
         private ZipEntry mNextZipEntry;
         private final ZipInputFileTester mZipInputFileTester;
         private final GpxZipInputStream mZipInputStream;
 
         ZipFileIter(GpxZipInputStream zipInputStream,
-                Provider<Aborter> aborterProvider,
+                Provider<AbortState> aborterProvider,
                 ZipInputFileTester zipInputFileTester, ZipEntry nextZipEntry) {
             mZipInputStream = zipInputStream;
             mNextZipEntry = nextZipEntry;
@@ -44,7 +44,7 @@ public class ZipFileOpener {
         }
 
         ZipFileIter(GpxZipInputStream zipInputStream,
-                Provider<Aborter> aborterProvider,
+                Provider<AbortState> aborterProvider,
                 ZipInputFileTester zipInputFileTester) {
             mZipInputStream = zipInputStream;
             mNextZipEntry = null;
@@ -86,7 +86,7 @@ public class ZipFileOpener {
         }
     }
 
-    private final Provider<Aborter> mAborterProvider;
+    private final Provider<AbortState> mAborterProvider;
     private final String mFilename;
     private final ZipInputFileTester mZipInputFileTester;
     private final ZipInputStreamFactory mZipInputStreamFactory;
@@ -94,7 +94,7 @@ public class ZipFileOpener {
     public ZipFileOpener(String filename,
             ZipInputStreamFactory zipInputStreamFactory,
             ZipInputFileTester zipInputFileTester,
-            Provider<Aborter> aborterProvider) {
+            Provider<AbortState> aborterProvider) {
         mFilename = filename;
         mZipInputStreamFactory = zipInputStreamFactory;
         mAborterProvider = aborterProvider;
