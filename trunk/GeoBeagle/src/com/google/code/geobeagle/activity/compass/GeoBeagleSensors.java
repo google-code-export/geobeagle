@@ -1,16 +1,3 @@
-
-package com.google.code.geobeagle.activity.compass;
-
-import com.google.code.geobeagle.CompassListener;
-import com.google.code.geobeagle.shakewaker.ShakeWaker;
-import com.google.inject.Inject;
-import com.google.inject.Provider;
-
-import android.content.SharedPreferences;
-import android.hardware.Sensor;
-import android.hardware.SensorManager;
-import android.location.LocationManager;
-
 /*
  ** Licensed under the Apache License, Version 2.0 (the "License");
  ** you may not use this file except in compliance with the License.
@@ -24,6 +11,19 @@ import android.location.LocationManager;
  ** See the License for the specific language governing permissions and
  ** limitations under the License.
  */
+
+package com.google.code.geobeagle.activity.compass;
+
+import com.google.code.geobeagle.CompassListener;
+import com.google.code.geobeagle.shakewaker.ShakeWaker;
+import com.google.inject.Inject;
+import com.google.inject.Provider;
+
+import android.content.SharedPreferences;
+import android.hardware.Sensor;
+import android.hardware.SensorManager;
+import android.location.LocationManager;
+
 class GeoBeagleSensors {
     private final SensorManager sensorManager;
     private final RadarView radarView;
