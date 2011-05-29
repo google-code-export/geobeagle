@@ -17,7 +17,6 @@ package com.google.code.geobeagle.activity.cachelist;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.R.id;
 import com.google.code.geobeagle.SuggestionProvider;
-import com.google.code.geobeagle.activity.ActivityRestorer;
 import com.google.code.geobeagle.activity.ActivitySaver;
 import com.google.code.geobeagle.activity.ActivityType;
 import com.google.code.geobeagle.activity.cachelist.actions.context.delete.ContextActionDeleteDialogHelper;
@@ -81,7 +80,6 @@ public class CacheListDelegate {
     private final LogFindDialogHelper logFindDialogHelper;
     private final ContextActionDeleteDialogHelper contextActionDeleteDialogHelper;
     private final Activity activity;
-    private ActivityRestorer activityRestorer;
 
     public CacheListDelegate(ImportIntentManager importIntentManager,
             ActivitySaver activitySaver,
@@ -92,8 +90,7 @@ public class CacheListDelegate {
             ActivityVisible activityVisible,
             LogFindDialogHelper logFindDialogHelper,
             ContextActionDeleteDialogHelper contextActionDeleteDialogHelper,
-            Activity activity,
-            ActivityRestorer activityRestorer) {
+            Activity activity) {
         this.activitySaver = activitySaver;
         this.cacheListRefresh = cacheListRefresh;
         this.controller = geocacheListController;
@@ -104,7 +101,6 @@ public class CacheListDelegate {
         this.logFindDialogHelper = logFindDialogHelper;
         this.contextActionDeleteDialogHelper = contextActionDeleteDialogHelper;
         this.activity = activity;
-        this.activityRestorer = activityRestorer;
     }
 
     @Inject
@@ -120,7 +116,6 @@ public class CacheListDelegate {
         this.contextActionDeleteDialogHelper = injector
                 .getInstance(ContextActionDeleteDialogHelper.class);
         this.activity = injector.getInstance(Activity.class);
-        this.activityRestorer = injector.getInstance(ActivityRestorer.class);
     }
 
     public boolean onContextItemSelected(MenuItem menuItem) {
@@ -128,14 +123,10 @@ public class CacheListDelegate {
     }
 
     public void onCreate(Injector injector) {
-        Intent intent = activity.getIntent();
         InflatedGpsStatusWidget inflatedGpsStatusWidget = injector
                 .getInstance(InflatedGpsStatusWidget.class);
         GpsStatusWidgetDelegate gpsStatusWidgetDelegate = injector
                 .getInstance(GpsStatusWidgetDelegate.class);
-        if (!Intent.ACTION_SEARCH.equals(intent.getAction())) {
-            activityRestorer.restore(intent.getFlags(), ActivityType.CACHE_LIST);
-        }
         presenter.onCreate();
         inflatedGpsStatusWidget.setDelegate(gpsStatusWidgetDelegate);
     }
