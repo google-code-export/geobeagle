@@ -16,6 +16,7 @@ package com.google.code.geobeagle.activity.cachelist.presenter;
 
 import static org.easymock.EasyMock.expect;
 
+import com.google.code.geobeagle.Azimuth;
 import com.google.code.geobeagle.CacheListCompassListener;
 import com.google.code.geobeagle.CompassListener;
 import com.google.code.geobeagle.LocationControlBuffered;
@@ -29,6 +30,7 @@ import com.google.code.geobeagle.shakewaker.ShakeWaker;
 import com.google.inject.Provider;
 
 import org.easymock.EasyMock;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.api.easymock.PowerMock;
@@ -36,6 +38,7 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import android.app.ListActivity;
+import android.hardware.SensorEvent;
 import android.hardware.SensorManager;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -45,6 +48,13 @@ import android.util.Log;
         GeocacheListPresenter.class, Log.class, PreferenceManager.class
 })
 public class CacheListPresenterTest extends GeoBeagleTest {
+    private Azimuth azimuth;
+
+    @Before
+    public void setUp() {
+        azimuth = PowerMock.createMock(Azimuth.class);
+    }
+
     @Test
     public void testBaseAdapterLocationListener() {
         PowerMock.mockStatic(Log.class);
@@ -66,7 +76,7 @@ public class CacheListPresenterTest extends GeoBeagleTest {
 
     @Test
     public void testCompassOnAccuracyChanged() {
-        new CompassListener(null, null).onAccuracyChanged(0, 0);
+        new CompassListener(null, null, null).onAccuracyChanged(null, 0);
     }
 
     @Test
@@ -75,23 +85,17 @@ public class CacheListPresenterTest extends GeoBeagleTest {
                 .createMock(LocationControlBuffered.class);
         Refresher refresher = PowerMock.createMock(Refresher.class);
 
-        float values[] = new float[] {
-            6f
-        };
-        locationControlBuffered.setAzimuth(5);
+        azimuth.sensorChanged(null);
+        EasyMock.expect(azimuth.getAzimuth()).andReturn(12.0);
+        locationControlBuffered.setAzimuth(10);
         refresher.refresh();
 
         PowerMock.replayAll();
         final CompassListener compassListener = new CompassListener(refresher,
-                locationControlBuffered);
-        compassListener.onSensorChanged(0, values);
+                locationControlBuffered, azimuth);
+        compassListener.onSensorChanged(null);
         PowerMock.verifyAll();
     }
-
-    // @Test
-    // public void testCompassListener() {
-    // new CompassListener(null, null, 0).onAccuracyChanged(null, 0);
-    // }
 
     @Test
     public void testCompassOnSensorUnchanged() {
@@ -102,8 +106,8 @@ public class CacheListPresenterTest extends GeoBeagleTest {
             4f
         };
         final CompassListener compassListener = new CompassListener(refresher,
-                locationControlBuffered);
-        compassListener.onSensorChanged(0, values);
+                locationControlBuffered, azimuth);
+        compassListener.onSensorChanged(null);
     }
 
     @Test
@@ -165,7 +169,6 @@ public class CacheListPresenterTest extends GeoBeagleTest {
                 cacheListRefreshLocationListener);
         combinedLocationManager.addGpsStatusListener(gpsStatusListener);
         sensorManagerWrapper.registerListener(cacheListCompassListener,
-                SensorManager.SENSOR_ORIENTATION,
                 SensorManager.SENSOR_DELAY_UI);
         shakeWaker.register();
 
