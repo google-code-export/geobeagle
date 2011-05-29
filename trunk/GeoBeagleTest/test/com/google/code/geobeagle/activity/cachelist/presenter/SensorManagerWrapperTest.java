@@ -22,6 +22,7 @@ import org.junit.runner.RunWith;
 import org.powermock.api.easymock.PowerMock;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import android.hardware.Sensor;
 import android.hardware.SensorManager;
 
 @RunWith(PowerMockRunner.class)
@@ -30,13 +31,20 @@ public class SensorManagerWrapperTest {
     public void SensorManagerTest() {
         SensorManager sensorManager = PowerMock.createMock(SensorManager.class);
         CompassListener compassListener = PowerMock.createMock(CompassListener.class);
+        Sensor accelSensor = PowerMock.createMock(Sensor.class);
+        Sensor magSensor = PowerMock.createMock(Sensor.class);
 
-        EasyMock.expect(sensorManager.registerListener(compassListener, 0, 1)).andReturn(true);
+        EasyMock.expect(sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)).andReturn(
+                accelSensor);
+        EasyMock.expect(sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD)).andReturn(
+                magSensor);
+        EasyMock.expect(sensorManager.registerListener(compassListener, accelSensor, 0)).andReturn(true);
+        EasyMock.expect(sensorManager.registerListener(compassListener, magSensor, 0)).andReturn(true);
         sensorManager.unregisterListener(compassListener);
 
         PowerMock.replayAll();
         SensorManagerWrapper sensorManagerWrapper = new SensorManagerWrapper(sensorManager);
-        sensorManagerWrapper.registerListener(compassListener, 0, 1);
+        sensorManagerWrapper.registerListener(compassListener, 0);
         sensorManagerWrapper.unregisterListener();
         PowerMock.verifyAll();
     }
