@@ -19,7 +19,6 @@ import com.google.inject.Inject;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.util.Log;
 
 public class CacheListActivityStarterHoneycomb implements CacheListActivityStarter {
     private Activity activity;
@@ -31,7 +30,6 @@ public class CacheListActivityStarterHoneycomb implements CacheListActivityStart
 
     @Override
     public void start() {
-        Log.d("GeoBeagle", "starting CLA HC");
         activity.startActivity(new Intent(activity, CacheListActivityHoneycomb.class));
     }
 
