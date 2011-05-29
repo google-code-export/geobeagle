@@ -32,32 +32,32 @@ import android.widget.ListView;
 
 public class CacheListActivity extends GuiceListActivity {
 
-    private CacheListDelegate mCacheListDelegate;
+    private CacheListDelegate cacheListDelegate;
 
     public CacheListDelegate getCacheListDelegate() {
-        return mCacheListDelegate;
+        return cacheListDelegate;
     }
 
     @Override
     public boolean onContextItemSelected(MenuItem item) {
-        return mCacheListDelegate.onContextItemSelected(item) || super.onContextItemSelected(item);
+        return cacheListDelegate.onContextItemSelected(item) || super.onContextItemSelected(item);
     }
 
     @Override
     public Dialog onCreateDialog(int idDialog) {
         super.onCreateDialog(idDialog);
-        return mCacheListDelegate.onCreateDialog(this, idDialog);
+        return cacheListDelegate.onCreateDialog(this, idDialog);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
-        return mCacheListDelegate.onCreateOptionsMenu(menu);
+        return cacheListDelegate.onCreateOptionsMenu(menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        return mCacheListDelegate.onOptionsItemSelected(item) || super.onOptionsItemSelected(item);
+        return cacheListDelegate.onOptionsItemSelected(item) || super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -65,8 +65,7 @@ public class CacheListActivity extends GuiceListActivity {
         super.onCreate(savedInstanceState);
         Log.d("GeoBeagle", "CacheListActivity onCreate");
         requestWindowFeature(Window.FEATURE_PROGRESS);
-        Injector injector = this.getInjector();
-        mCacheListDelegate = injector.getInstance(CacheListDelegate.class);
+
         int sdkVersion = Integer.parseInt(Build.VERSION.SDK);
         if (sdkVersion >= Build.VERSION_CODES.HONEYCOMB) {
             startActivity(new Intent(this, CacheListActivityHoneycomb.class));
@@ -74,7 +73,9 @@ public class CacheListActivity extends GuiceListActivity {
             return;
         }
 
-        mCacheListDelegate.onCreate(injector);
+        Injector injector = this.getInjector();
+        cacheListDelegate = injector.getInstance(CacheListDelegate.class);
+        cacheListDelegate.onCreate(injector);
 
         Log.d("GeoBeagle", "Done creating CacheListActivity");
     }
@@ -82,7 +83,7 @@ public class CacheListActivity extends GuiceListActivity {
     @Override
     protected void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
-        mCacheListDelegate.onListItemClick(position);
+        cacheListDelegate.onListItemClick(position);
     }
 
     @Override
@@ -93,7 +94,7 @@ public class CacheListActivity extends GuiceListActivity {
          * super.onPause because the guice activity onPause nukes the database
          * object from the guice map.
          */
-        mCacheListDelegate.onPause();
+        cacheListDelegate.onPause();
         super.onPause();
         Log.d("GeoBeagle", "CacheListActivity onPauseComplete");
     }
@@ -101,7 +102,7 @@ public class CacheListActivity extends GuiceListActivity {
     @Override
     protected void onPrepareDialog(int id, Dialog dialog) {
         super.onPrepareDialog(id, dialog);
-        mCacheListDelegate.onPrepareDialog(id, dialog);
+        cacheListDelegate.onPrepareDialog(id, dialog);
     }
 
     @Override
@@ -110,6 +111,6 @@ public class CacheListActivity extends GuiceListActivity {
         SearchTarget searchTarget = getInjector().getInstance(SearchTarget.class);
 
         Log.d("GeoBeagle", "CacheListActivity onResume");
-        mCacheListDelegate.onResume(searchTarget);
+        cacheListDelegate.onResume(searchTarget);
     }
 }
