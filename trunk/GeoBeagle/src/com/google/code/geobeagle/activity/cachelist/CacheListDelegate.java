@@ -127,7 +127,12 @@ public class CacheListDelegate {
         return controller.onContextItemSelected(menuItem);
     }
 
-    public void onCreate(Intent intent, InflatedGpsStatusWidget inflatedGpsStatusWidget, GpsStatusWidgetDelegate gpsStatusWidgetDelegate) {
+    public void onCreate(Injector injector) {
+        Intent intent = activity.getIntent();
+        InflatedGpsStatusWidget inflatedGpsStatusWidget = injector
+                .getInstance(InflatedGpsStatusWidget.class);
+        GpsStatusWidgetDelegate gpsStatusWidgetDelegate = injector
+                .getInstance(GpsStatusWidgetDelegate.class);
         if (!Intent.ACTION_SEARCH.equals(intent.getAction())) {
             activityRestorer.restore(intent.getFlags(), ActivityType.CACHE_LIST);
         }
