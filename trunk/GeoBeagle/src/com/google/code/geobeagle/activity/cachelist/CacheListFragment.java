@@ -41,6 +41,11 @@ public class CacheListFragment extends ListFragment {
     }
 
     @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        return getCacheListDelegate().onContextItemSelected(item) || super.onContextItemSelected(item);
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 

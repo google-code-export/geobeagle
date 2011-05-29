@@ -37,11 +37,6 @@ public class CacheListActivityHoneycomb extends GuiceActivity {
     }
 
     @Override
-    public boolean onContextItemSelected(MenuItem item) {
-        return mCacheListDelegate.onContextItemSelected(item) || super.onContextItemSelected(item);
-    }
-
-    @Override
     public Dialog onCreateDialog(int idDialog) {
         super.onCreateDialog(idDialog);
         return mCacheListDelegate.onCreateDialog(this, idDialog);
