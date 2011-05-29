@@ -106,7 +106,7 @@ public class CacheDetailsWriterTest extends GeoBeagleTest {
                 null,
                 null);
         cacheDetailsWriter.latitudeLongitude("37.0", "122.0");
-        cacheDetailsWriter.writeWptName();
+        cacheDetailsWriter.writeWptName("GC123");
         verifyAll();
     }
 }
