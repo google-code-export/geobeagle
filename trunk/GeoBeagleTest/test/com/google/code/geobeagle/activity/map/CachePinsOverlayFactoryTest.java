@@ -21,6 +21,7 @@ import com.google.android.maps.Projection;
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.cachelist.GeoBeagleTest;
+import com.google.code.geobeagle.activity.map.click.MapClickIntentFactory;
 
 import org.easymock.EasyMock;
 import org.junit.Before;
@@ -31,6 +32,7 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.res.Resources;
 import android.util.Log;
 import android.view.View;
@@ -38,7 +40,7 @@ import android.view.View;
 import java.util.ArrayList;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest( {
+@PrepareForTest({
         View.class, Log.class, CachePinsOverlay.class
 })
 public class CachePinsOverlayFactoryTest extends GeoBeagleTest {
@@ -46,6 +48,8 @@ public class CachePinsOverlayFactoryTest extends GeoBeagleTest {
     private CacheItemFactory cacheItemFactory;
     private Activity activity;
     private ArrayList<Geocache> list;
+    private Context context;
+    private MapClickIntentFactory mapClickIntentFactory;
 
     @Before
     public void setUp() {
@@ -53,6 +57,8 @@ public class CachePinsOverlayFactoryTest extends GeoBeagleTest {
         cacheItemFactory = PowerMock.createMock(CacheItemFactory.class);
         activity = PowerMock.createMock(Activity.class);
         list = new ArrayList<Geocache>();
+        context = PowerMock.createMock(Context.class);
+        mapClickIntentFactory = PowerMock.createMock(MapClickIntentFactory.class);
     }
 
     @Test
@@ -73,14 +79,14 @@ public class CachePinsOverlayFactoryTest extends GeoBeagleTest {
         EasyMock.expect(queryManager.needsLoading(newTopLeft, newBottomRight)).andReturn(true);
 
         EasyMock.expect(queryManager.load(newTopLeft, newBottomRight, null)).andReturn(list);
-        PowerMock.expectNew(CachePinsOverlay.class, resources, cacheItemFactory, activity, list)
-                .andReturn(cachePinsOverlay);
-        PowerMock.expectNew(CachePinsOverlay.class, resources, cacheItemFactory, activity, list)
-                .andReturn(cachePinsOverlay);
+        PowerMock.expectNew(CachePinsOverlay.class, resources, cacheItemFactory, activity, list,
+                mapClickIntentFactory).andReturn(cachePinsOverlay);
+        PowerMock.expectNew(CachePinsOverlay.class, resources, cacheItemFactory, activity, list,
+                mapClickIntentFactory).andReturn(cachePinsOverlay);
 
         PowerMock.replayAll();
-        final CachePinsOverlayFactory cachePinsOverlayFactory = new CachePinsOverlayFactory(
-                activity, cacheItemFactory, queryManager, resources, null);
+        CachePinsOverlayFactory cachePinsOverlayFactory = new CachePinsOverlayFactory(activity,
+                cacheItemFactory, queryManager, resources, null, mapClickIntentFactory);
         assertEquals(cachePinsOverlay, cachePinsOverlayFactory.getCachePinsOverlay());
         PowerMock.verifyAll();
     }
@@ -101,12 +107,12 @@ public class CachePinsOverlayFactoryTest extends GeoBeagleTest {
         EasyMock.expect(geoMapView.getBottom()).andReturn(200);
         EasyMock.expect(projection.fromPixels(100, 200)).andReturn(newBottomRight);
         EasyMock.expect(queryManager.needsLoading(newTopLeft, newBottomRight)).andReturn(false);
-        PowerMock.expectNew(CachePinsOverlay.class, resources, cacheItemFactory, activity, list)
-                .andReturn(cachePinsOverlay);
+        PowerMock.expectNew(CachePinsOverlay.class, resources, cacheItemFactory, activity, list,
+                mapClickIntentFactory).andReturn(cachePinsOverlay);
 
         PowerMock.replayAll();
-        final CachePinsOverlayFactory cachePinsOverlayFactory = new CachePinsOverlayFactory(
-                activity, cacheItemFactory, queryManager, resources, null);
+        CachePinsOverlayFactory cachePinsOverlayFactory = new CachePinsOverlayFactory(
+                activity, cacheItemFactory, queryManager, resources, null, mapClickIntentFactory);
         assertEquals(cachePinsOverlay, cachePinsOverlayFactory.getCachePinsOverlay());
         PowerMock.verifyAll();
     }
