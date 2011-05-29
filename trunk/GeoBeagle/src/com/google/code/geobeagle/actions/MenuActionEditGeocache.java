@@ -15,18 +15,18 @@
 package com.google.code.geobeagle.actions;
 
 import com.google.code.geobeagle.activity.EditCacheActivity;
-import com.google.code.geobeagle.activity.main.GeoBeagle;
+import com.google.code.geobeagle.activity.compass.CompassActivity;
 import com.google.inject.Inject;
 
 import android.app.Activity;
 import android.content.Intent;
 
 public class MenuActionEditGeocache implements Action {
-    private final GeoBeagle parent;
+    private final CompassActivity parent;
 
     @Inject
     public MenuActionEditGeocache(Activity parent) {
-        this.parent = (GeoBeagle)parent;
+        this.parent = (CompassActivity)parent;
     }
 
     @Override

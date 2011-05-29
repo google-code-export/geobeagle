@@ -15,7 +15,7 @@
 package com.google.code.geobeagle.database.filter;
 
 import com.google.code.geobeagle.activity.cachelist.presenter.filter.UpdateFilterHandler;
-import com.google.code.geobeagle.activity.preferences.EditPreferences;
+import com.google.code.geobeagle.activity.preferences.Preferences;
 import com.google.inject.Inject;
 
 import roboguice.util.RoboThread;
@@ -40,19 +40,21 @@ public class UpdateFilterWorker extends RoboThread {
     public void run() {
         cacheVisibilityStore.setAllVisible();
 
-        if (!sharedPreferences.getBoolean(EditPreferences.SHOW_WAYPOINTS, false)) {
+        if (!sharedPreferences.getBoolean(Preferences.SHOW_WAYPOINTS, false)) {
             updateFilterHandler.setProgressMessage("Filtering waypoints");
             cacheVisibilityStore.hideWaypoints();
         }
 
-        if (!sharedPreferences.getBoolean(EditPreferences.SHOW_UNAVAILABLE_CACHES, false)) {
+        if (!sharedPreferences.getBoolean(Preferences.SHOW_UNAVAILABLE_CACHES, false)) {
             updateFilterHandler.setProgressMessage("Filtering unavailable caches");
             cacheVisibilityStore.hideUnavailableCaches();
         }
 
-        if (!sharedPreferences.getBoolean(EditPreferences.SHOW_FOUND_CACHES, false)) {
-            updateFilterHandler.setProgressMessage("Filtering found caches");
-            cacheVisibilityStore.hideFoundCaches();
+        boolean showFound = sharedPreferences.getBoolean(Preferences.SHOW_FOUND_CACHES, false);
+        boolean showDnf = sharedPreferences.getBoolean(Preferences.SHOW_DNF_CACHES, true);
+        if (!showFound || !showDnf) {
+            updateFilterHandler.setProgressMessage("Filtering found/dnf caches");
+            cacheVisibilityStore.hideFoundCaches(!showFound, !showDnf);
         }
 
         updateFilterHandler.endFiltering();

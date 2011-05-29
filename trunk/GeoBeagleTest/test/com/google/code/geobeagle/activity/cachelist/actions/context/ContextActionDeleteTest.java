@@ -74,7 +74,7 @@ public class ContextActionDeleteTest {
         ContextActionDeleteStore contextActionDeleteStore = createMock(ContextActionDeleteStore.class);
 
         contextActionDeleteStore.saveCacheToDelete("GC123", "My cache");
-        activity.showDialog(ContextActionDelete.CACHE_LIST_DIALOG_CONFIRM_DELETE);
+        activity.showDialog(1234);
         expect(geocacheVectors.get(17)).andReturn(geocacheVector);
         expect(geocacheVector.getId()).andReturn("GC123");
         expect(geocacheVector.getName()).andReturn("My cache");
@@ -158,7 +158,7 @@ public class ContextActionDeleteTest {
         replayAll();
         ContextActionDeleteDialogHelper contextActionDeleteDialogHelper = new ContextActionDeleteDialogHelper(
                 null, onClickOk);
-        contextActionDeleteDialogHelper.onCreateDialog(builder);
+        contextActionDeleteDialogHelper.onCreateDialog(null);
         verifyAll();
     }
 

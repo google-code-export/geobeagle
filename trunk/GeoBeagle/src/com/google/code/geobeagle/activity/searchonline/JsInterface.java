@@ -15,12 +15,10 @@
 package com.google.code.geobeagle.activity.searchonline;
 
 import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.xmlimport.GpxImporterDI;
-import com.google.code.geobeagle.xmlimport.GpxImporterDI.ToastFactory;
+import com.google.code.geobeagle.activity.compass.fieldnotes.Toaster;
 import com.google.inject.Inject;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
 import android.location.LocationManager;
@@ -31,8 +29,7 @@ import java.util.Locale;
 
 class JsInterface {
     private final JsInterfaceHelper mHelper;
-    private final ToastFactory mToastFactory;
-    private final Context mContext;
+    private final Toaster mToaster;
     private final LocationManager mLocationManager;
 
     static class JsInterfaceHelper {
@@ -61,14 +58,11 @@ class JsInterface {
     }
 
     @Inject
-    public JsInterface(
-            JsInterfaceHelper jsInterfaceHelper,
-            GpxImporterDI.ToastFactory toastFactory,
-            Context context,
+    public JsInterface(JsInterfaceHelper jsInterfaceHelper,
+            Toaster toaster,
             LocationManager locationManager) {
         mHelper = jsInterfaceHelper;
-        mToastFactory = toastFactory;
-        mContext = context;
+        mToaster = toaster;
         mLocationManager = locationManager;
     }
 
@@ -85,7 +79,7 @@ class JsInterface {
     private Location getLocation() {
         Location location = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
         if (location == null) {
-            mToastFactory.showToast(mContext, R.string.current_location_null, Toast.LENGTH_LONG);
+            mToaster.toast(R.string.current_location_null, Toast.LENGTH_LONG);
         }
         return location;
     }

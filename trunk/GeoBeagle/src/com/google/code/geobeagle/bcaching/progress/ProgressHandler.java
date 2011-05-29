@@ -49,9 +49,9 @@ public class ProgressHandler extends Handler {
         progressMessage.act(this, msg);
     }
 
-    public void setFile(String filename) {
+    public void setFile(String filename, int progress) {
         progressDialog.setMessage("Loading: " + filename);
-        progressDialog.incrementProgressBy(1);
+        progressDialog.setProgress(progress);
     }
 
     public void setMax(int max) {

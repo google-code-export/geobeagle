@@ -15,7 +15,7 @@
 package com.google.code.geobeagle.xmlimport.gpx;
 
 import com.google.code.geobeagle.R;
-import com.google.code.geobeagle.preferences.PreferencesUpgrader;
+import com.google.code.geobeagle.activity.preferences.Preferences;
 import com.google.code.geobeagle.xmlimport.GeoBeagleEnvironment;
 import com.google.code.geobeagle.xmlimport.ImportException;
 import com.google.inject.Inject;
@@ -91,7 +91,8 @@ public class GpxAndZipFiles {
     private final GeoBeagleEnvironment mGeoBeagleEnvironment;
     private final SharedPreferences mSharedPreferences;
 
-    public GpxAndZipFiles(FilenameFilter filenameFilter,
+    @Inject
+    public GpxAndZipFiles(GpxAndZipFilenameFilter filenameFilter,
             GpxFileIterAndZipFileIterFactory gpxFileIterAndZipFileIterFactory,
             GeoBeagleEnvironment geoBeagleEnvironment,
             SharedPreferences sharedPreferences) {
@@ -103,7 +104,7 @@ public class GpxAndZipFiles {
 
     public GpxFilesAndZipFilesIter iterator() throws ImportException {
         String[] fileList;
-        if (!mSharedPreferences.getBoolean(PreferencesUpgrader.SDCARD_ENABLED, true)) {
+        if (!mSharedPreferences.getBoolean(Preferences.SDCARD_ENABLED, true)) {
             fileList = new String[0];
         } else {
             String gpxDir = mGeoBeagleEnvironment.getImportFolder();

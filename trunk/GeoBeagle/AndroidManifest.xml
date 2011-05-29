@@ -7,14 +7,15 @@
 	OR CONDITIONS OF ANY KIND, either express or implied. See the License for 
 	the specific language governing permissions and limitations under the License. -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-	package="com.google.code.geobeagle" android:versionName="1.2.10"
-	android:versionCode="187">
-	<uses-sdk android:minSdkVersion="3" />
+	package="com.google.code.geobeagle" android:versionName="1.4.13"
+	android:versionCode="204">
+	<uses-sdk android:minSdkVersion="3" android:targetSdkVersion="11" />
 	<application android:icon="@drawable/icon" android:label="@string/app_name"
-		android:name=".GeoBeagleApplication" android:debuggable="false">
+		android:name=".GeoBeagleApplication" android:debuggable="false"
+		android:hardwareAccelerated="true">
 		<uses-library android:name="com.google.android.maps" />
 
-		<activity android:name=".activity.main.GeoBeagle"
+		<activity android:name=".activity.compass.CompassActivity" android:screenOrientation="portrait"
 			android:label="@string/app_name">
 			<intent-filter>
 				<action android:name="android.intent.action.VIEW" />
@@ -47,6 +48,23 @@
 				android:resource="@xml/searchable" />
 		</activity>
 
+		<activity android:name=".activity.cachelist.CacheListActivityHoneycomb"
+			android:label="@string/app_name" android:configChanges="orientation|keyboardHidden">
+			<intent-filter>
+				<action android:name="android.intent.action.MAIN" />
+			</intent-filter>
+			<intent-filter>
+				<category android:name="android.intent.category.DEFAULT" />
+				<action android:name="android.intent.action.VIEW" />
+				<category android:name="android.intent.category.BROWSABLE" />
+				<data android:mimeType="application/octet-stream"
+					android:pathPattern=".*\\.gpx" />
+				<data android:mimeType="application/octet-stream"
+					android:pathPattern=".*\\.loc" />
+			</intent-filter>
+		</activity>
+
+
 		<activity android:name=".activity.searchonline.SearchOnlineActivity"
 			android:label="@string/app_name" />
 
@@ -61,9 +79,9 @@
 		<activity android:name=".activity.map.GeoMapActivity"
 			android:label="GeoBeagle map" android:configChanges="orientation|keyboardHidden" />
 
-		<activity android:name=".cachedetails.DetailsActivity" />
-		<provider android:name=".SuggestionProvider"
-			android:authorities="com.google.code.geobeagle.SuggestionProvider" />
+        <activity android:name=".activity.details.DetailsActivity" />
+        <provider android:name=".SuggestionProvider"
+                android:authorities="com.google.code.geobeagle.SuggestionProvider" />
 	</application>
 
 	<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />

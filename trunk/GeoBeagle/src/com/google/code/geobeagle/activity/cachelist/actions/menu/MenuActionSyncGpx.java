@@ -15,8 +15,7 @@
 package com.google.code.geobeagle.activity.cachelist.actions.menu;
 
 import com.google.code.geobeagle.actions.Action;
-import com.google.code.geobeagle.bcaching.ImportBCachingWorker;
-import com.google.code.geobeagle.xmlimport.GpxImporter;
+import com.google.code.geobeagle.xmlimport.CacheSyncer;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Provider;
@@ -26,42 +25,35 @@ import android.util.Log;
 
 @Singleton
 public class MenuActionSyncGpx implements Action {
-    private Abortable mBCachingWorkerAborter;
-    private GpxImporter mGpxImporter;
-    private final Provider<GpxImporter> mGpxImporterProvider;
-    private final Provider<ImportBCachingWorker> mImportBCachingWorkerProvider;
-    private boolean mSyncInProgress;
+    private CacheSyncer cacheSyncer;
+    private final Provider<CacheSyncer> cacheSyncerProvider;
+    private boolean syncInProgress;
 
     @Inject
     public MenuActionSyncGpx(Injector injector) {
-        mGpxImporterProvider = injector.getProvider(GpxImporter.class);
-        mImportBCachingWorkerProvider = injector.getProvider(ImportBCachingWorker.class);
-        mSyncInProgress = false;
+        cacheSyncerProvider = injector.getProvider(CacheSyncer.class);
+        syncInProgress = false;
     }
 
     // For testing.
-    public MenuActionSyncGpx(Provider<ImportBCachingWorker> importBCachingWorkerProvider,
-            Provider<GpxImporter> gpxImporterProvider) {
-        mImportBCachingWorkerProvider = importBCachingWorkerProvider;
-        mGpxImporterProvider = gpxImporterProvider;
-        mSyncInProgress = false;
+    public MenuActionSyncGpx(Provider<CacheSyncer> gpxImporterProvider) {
+        cacheSyncerProvider = gpxImporterProvider;
+        syncInProgress = false;
     }
 
     public void abort() {
-        Log.d("GeoBeagle", "MenuActionSyncGpx aborting: " + mSyncInProgress);
-        if (!mSyncInProgress)
+        Log.d("GeoBeagle", "MenuActionSyncGpx aborting: " + syncInProgress);
+        if (!syncInProgress)
             return;
-        mGpxImporter.abort();
-        mBCachingWorkerAborter.abort();
-        mSyncInProgress = false;
+        cacheSyncer.abort();
+        syncInProgress = false;
     }
 
     @Override
     public void act() {
         Log.d("GeoBeagle", "MenuActionSync importing");
-        mGpxImporter = mGpxImporterProvider.get();
-        mBCachingWorkerAborter = mImportBCachingWorkerProvider.get();
-        mGpxImporter.importGpxs();
-        mSyncInProgress = true;
+        cacheSyncer = cacheSyncerProvider.get();
+        cacheSyncer.syncGpxs();
+        syncInProgress = true;
     }
 }

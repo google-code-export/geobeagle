@@ -48,7 +48,7 @@ public class ContextActionViewTest {
         Geocache geocache = PowerMock.createMock(Geocache.class);
 
         PowerMock.expectNew(Intent.class, context,
-                com.google.code.geobeagle.activity.main.GeoBeagle.class).andReturn(intent);
+                com.google.code.geobeagle.activity.compass.CompassActivity.class).andReturn(intent);
         expect(geocacheVectors.get(34)).andReturn(geocacheVector);
         expect(geocacheVector.getGeocache()).andReturn(geocache);
         expect(intent.setAction(GeocacheListController.SELECT_CACHE)).andReturn(intent);

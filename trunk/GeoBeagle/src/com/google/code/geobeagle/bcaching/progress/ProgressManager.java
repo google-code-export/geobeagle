@@ -14,16 +14,37 @@
 
 package com.google.code.geobeagle.bcaching.progress;
 
-import android.os.Message;
+import com.google.inject.Singleton;
 
+import android.os.Message;
+import android.util.Log;
+
+@Singleton
 public class ProgressManager {
+    private int currentProgress;
+
+    public void setCurrentProgress(int currentProgress) {
+        this.currentProgress = currentProgress;
+    }
+
     public void update(ProgressHandler handler, ProgressMessage progressMessage, int arg) {
         Message.obtain(handler, progressMessage.ordinal(), arg, 0).sendToTarget();
     }
 
-    public void update(ProgressHandler handler, ProgressMessage progressMessage, int arg1,
+    public void update(ProgressHandler handler,
+            ProgressMessage progressMessage,
+            int arg1,
             String arg2) {
         if (!handler.hasMessages(progressMessage.ordinal()))
             Message.obtain(handler, progressMessage.ordinal(), arg1, 0, arg2).sendToTarget();
+    }
+
+    public int getCurrentProgress() {
+        return currentProgress;
+    }
+
+    public void incrementProgress() {
+        Log.d("GeoBeagle", "incrementing Progress: " + currentProgress);
+        currentProgress++;
     }
 }

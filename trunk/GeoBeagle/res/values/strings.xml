@@ -11,9 +11,10 @@
 		License.
 	-->
 <resources>
+	<string name="string">%1$s</string>
 	<string name="upgrading_database">Upgrading database...</string>
     <string name="error_loading_url">Error loading url</string>
-    <string name="removing_found_cache_from_cache_list">Removing found cache from cache list view.</string>
+    <string name="removing_found_cache_from_cache_list">Removing found/dnf cache from cache list view.</string>
     <string name="web_page">Web Page</string>
     <string name="problem_importing_from_bcaching">Problem importing from bcaching.com:\n\n%1$s.</string>
     <string name="install_radar_uri">market://search?q=pname:com.eclipsim.gpsstatus2</string>
@@ -83,10 +84,7 @@
 	<string name="file_not_found">File not found exception: \'%1$s\'.</string>
 	<string name="error_reading_file">Error reading file \'%1$s\'.</string>
 	<string name="error_writing_cache">Error writing cache: \'%1$s\'.</string>
-	<string name="error_no_gpx_files">Nothing to sync: no cache files found in \"%1$s\" folder.\n\n
-	GeoBeagle can bulk import thousands of caches at a time.
-	Copy gpx/loc/zip files to your \"%1$s\" folder, or set up a BCaching.com account.\n\n
-	See http://code.google.com/p/geobeagle for details.</string>
+	<string name="error_no_gpx_files">No gpx/loc/zip files found in \"%1$s\" folder.</string>
 	<string name="error_cant_read_sd">Error reading folder \"%1$s\", please make sure your sdcard is readable.</string>
 	<string name="error_cant_read_sdroot">Error (\"%1$s\") reading folder /sdcard, please make sure your sdcard is readable.</string>
 	<string name="error_opening_details_file">"Error opening cache details file '%1$s'.  Please try unmounting your sdcard or re-importing the cache file.</string>
@@ -152,4 +150,12 @@
 	</string-array>
 	<string name="select_nav_choices_title">Please select</string>
 	<string name="search_hint">Search for caches</string>
+	<string name="sync_message_bcaching_start">***bcaching.com***</string>
+	<string name="sync_message_bcaching_last_sync">  last synced at %1$s</string>
+	<string name="sync_message_bcaching_synced_caches">  synced %1$d caches</string>
+	<string name="must_have_a_sync_method">You must enable either BCaching or sdcard syncing.</string>
+	<string name="sms_fail">Unable to send SMS, try changing to \'Log caches to File\' in Settings</string>
+	<string name="context_menu_view">View</string>
+	<string name="context_menu_edit">Edit</string>
+	<string name="context_menu_delete">Delete</string>
 </resources>

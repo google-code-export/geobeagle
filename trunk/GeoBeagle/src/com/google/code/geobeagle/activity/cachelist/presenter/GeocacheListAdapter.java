@@ -18,25 +18,35 @@ import com.google.code.geobeagle.activity.cachelist.ActivityVisible;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVectors;
 import com.google.code.geobeagle.activity.cachelist.view.GeocacheSummaryRowInflater;
 import com.google.inject.Inject;
+import com.google.inject.Injector;
 
 import roboguice.inject.ContextScoped;
 
-import android.util.Log;
+import android.graphics.Color;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 @ContextScoped
 public class GeocacheListAdapter extends BaseAdapter {
+    //TODO(sng): Rename to CacheListAdapter.
     private final GeocacheSummaryRowInflater mGeocacheSummaryRowInflater;
     private final GeocacheVectors mGeocacheVectors;
     private final ActivityVisible mActivityVisible;
+    private CharSequence mSelected;
 
-    @Inject
     public GeocacheListAdapter(GeocacheVectors geocacheVectors,
-            GeocacheSummaryRowInflater geocacheSummaryRowInflater, ActivityVisible activityVisible) {
+            GeocacheSummaryRowInflater geocacheSummaryRowInflater,
+            ActivityVisible activityVisible) {
         mGeocacheVectors = geocacheVectors;
         mGeocacheSummaryRowInflater = geocacheSummaryRowInflater;
         mActivityVisible = activityVisible;
+    }
+
+    @Inject
+    public GeocacheListAdapter(Injector injector) {
+        mGeocacheVectors = injector.getInstance(GeocacheVectors.class);
+        mGeocacheSummaryRowInflater = injector.getInstance(GeocacheSummaryRowInflater.class);
+        mActivityVisible = injector.getInstance(ActivityVisible.class);
     }
 
     @Override
@@ -58,10 +68,19 @@ public class GeocacheListAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         View view = mGeocacheSummaryRowInflater.inflate(convertView);
         if (!mActivityVisible.getVisible()) {
-            Log.d("GeoBeagle", "Not visible, punting any real work on getView");
+            // Log.d("GeoBeagle",
+            // "Not visible, punting any real work on getView");
             return view;
         }
         mGeocacheSummaryRowInflater.setData(view, mGeocacheVectors.get(position));
+        // ListView listView = (ListView)parent;
+        // boolean isChecked = listView.isItemChecked(position + 1);
+        boolean isChecked = mGeocacheVectors.get(position).getId().equals(mSelected);
+        view.setBackgroundColor(isChecked ? Color.DKGRAY : Color.TRANSPARENT);
         return view;
+    }
+
+    public void setSelected(int position) {
+        mSelected = mGeocacheVectors.get(position).getId();
     }
 }

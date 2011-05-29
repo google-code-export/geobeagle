@@ -95,6 +95,7 @@ public class CacheListRefresh implements Refresher {
 
         mTiming.start();
         try {
+//            Log.d("GeoBeagle", "REFRESH");
             final long now = mTiming.getTime();
             final IGpsLocation here = mLocationControlBuffered.getGpsLocation();
             final float azimuth = mLocationControlBuffered.getAzimuth();
