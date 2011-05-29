@@ -14,8 +14,6 @@
 
 package com.google.code.geobeagle.activity.cachelist;
 
-import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidgetDelegate;
-import com.google.code.geobeagle.gpsstatuswidget.InflatedGpsStatusWidget;
 import com.google.inject.Injector;
 
 import roboguice.activity.GuiceListActivity;
@@ -69,7 +67,6 @@ public class CacheListActivity extends GuiceListActivity {
         requestWindowFeature(Window.FEATURE_PROGRESS);
         Injector injector = this.getInjector();
         mCacheListDelegate = injector.getInstance(CacheListDelegate.class);
-        Intent intent = getIntent();
         int sdkVersion = Integer.parseInt(Build.VERSION.SDK);
         if (sdkVersion >= Build.VERSION_CODES.HONEYCOMB) {
             startActivity(new Intent(this, CacheListActivityHoneycomb.class));
@@ -77,11 +74,7 @@ public class CacheListActivity extends GuiceListActivity {
             return;
         }
 
-        InflatedGpsStatusWidget inflatedGpsStatusWidget = injector
-                .getInstance(InflatedGpsStatusWidget.class);
-        GpsStatusWidgetDelegate gpsStatusWidgetDelegate = injector
-                .getInstance(GpsStatusWidgetDelegate.class);
-        mCacheListDelegate.onCreate(intent, inflatedGpsStatusWidget, gpsStatusWidgetDelegate);
+        mCacheListDelegate.onCreate(injector);
 
         Log.d("GeoBeagle", "Done creating CacheListActivity");
     }
@@ -114,8 +107,7 @@ public class CacheListActivity extends GuiceListActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        Injector injector = getInjector();
-        SearchTarget searchTarget = injector.getInstance(SearchTarget.class);
+        SearchTarget searchTarget = getInjector().getInstance(SearchTarget.class);
 
         Log.d("GeoBeagle", "CacheListActivity onResume");
         mCacheListDelegate.onResume(searchTarget);
