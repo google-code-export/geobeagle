@@ -14,18 +14,19 @@
 
 package com.google.code.geobeagle.activity.compass.menuactions;
 
+import com.google.code.geobeagle.CacheListActivityStarter;
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.actions.MenuActionCacheList;
 import com.google.code.geobeagle.actions.MenuActionEditGeocache;
 import com.google.code.geobeagle.actions.MenuActionSearchOnline;
 import com.google.code.geobeagle.actions.MenuActionSettings;
 import com.google.code.geobeagle.activity.EditCacheActivity;
-import com.google.code.geobeagle.activity.cachelist.CacheListActivity;
 import com.google.code.geobeagle.activity.compass.CompassActivity;
 import com.google.code.geobeagle.activity.preferences.EditPreferences;
 import com.google.code.geobeagle.activity.searchonline.SearchOnlineActivity;
 
 import org.easymock.EasyMock;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.api.easymock.PowerMock;
@@ -42,16 +43,18 @@ import android.content.Intent;
 })
 public class MenuActionsTest {
 
+    private CacheListActivityStarter cacheListActivityStarter;
+    @Before
+    public void setUp() {
+        cacheListActivityStarter = PowerMock.createMock(CacheListActivityStarter.class);
+    }
+
     @Test
     public void testMenuActionCacheList() throws Exception {
-        Activity activity = PowerMock.createMock(Activity.class);
-        Intent intent = PowerMock.createMock(Intent.class);
-
-        PowerMock.expectNew(Intent.class, activity, CacheListActivity.class).andReturn(intent);
-        activity.startActivity(intent);
+        cacheListActivityStarter.start();
 
         PowerMock.replayAll();
-        new MenuActionCacheList(activity).act();
+        new MenuActionCacheList(cacheListActivityStarter).act();
         PowerMock.verifyAll();
     }
 

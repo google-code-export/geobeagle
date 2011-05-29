@@ -117,27 +117,6 @@ public class CompassActivityDelegateTest extends GeoBeagleTest {
     }
 
     @Test
-    public void testGeoBeagleSensorsRegisterSensors() {
-        expect(locationManagerProvider.get()).andReturn(locationManager);
-        expect(locationManager.addGpsStatusListener(satelliteCountListener)).andReturn(true);
-        radarView.handleUnknownLocation();
-        expect(sharedPreferences.getBoolean("imperial", false)).andReturn(true);
-        radarView.setUseImperial(true);
-        expect(
-                sensorManager.registerListener(radarView, SensorManager.SENSOR_ORIENTATION,
-                        SensorManager.SENSOR_DELAY_UI)).andReturn(true);
-        expect(
-                sensorManager.registerListener(compassListener, SensorManager.SENSOR_ORIENTATION,
-                        SensorManager.SENSOR_DELAY_UI)).andReturn(true);
-        shakeWaker.register();
-        replayAll();
-
-        new GeoBeagleSensors(sensorManager, radarView, sharedPreferences, compassListener,
-                shakeWaker, locationManagerProvider, satelliteCountListener).registerSensors();
-        verifyAll();
-    }
-
-    @Test
     public void testGeoBeagleSensorsUnregister() {
         sensorManager.unregisterListener(radarView);
         sensorManager.unregisterListener(compassListener);

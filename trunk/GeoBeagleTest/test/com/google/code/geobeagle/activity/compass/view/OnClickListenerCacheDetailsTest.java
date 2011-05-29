@@ -22,6 +22,7 @@ import static org.powermock.api.easymock.PowerMock.verifyAll;
 
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.activity.compass.CompassActivity;
+import com.google.code.geobeagle.activity.compass.fieldnotes.HasGeocache;
 import com.google.code.geobeagle.activity.compass.view.OnClickListenerCacheDetails;
 import com.google.code.geobeagle.activity.details.DetailsActivity;
 
@@ -43,9 +44,10 @@ public class OnClickListenerCacheDetailsTest {
         CompassActivity geobeagle = createMock(CompassActivity.class);
         Intent intent = createMock(Intent.class);
         Geocache geocache = createMock(Geocache.class);
+        HasGeocache hasGeocache = createMock(HasGeocache.class);
 
         expectNew(Intent.class, geobeagle, DetailsActivity.class).andReturn(intent);
-        expect(geobeagle.getGeocache()).andReturn(geocache);
+        expect(hasGeocache.get(geobeagle)).andReturn(geocache);
         expect(geocache.getSourceName()).andReturn("bcaching.com");
         expect(geocache.getId()).andReturn("GC123");
         expect(geocache.getName()).andReturn("my cache");
@@ -58,7 +60,7 @@ public class OnClickListenerCacheDetailsTest {
         geobeagle.startActivity(intent);
 
         replayAll();
-        new OnClickListenerCacheDetails(geobeagle).onClick(null);
+        new OnClickListenerCacheDetails(geobeagle, hasGeocache).onClick(null);
         verifyAll();
     }
 }

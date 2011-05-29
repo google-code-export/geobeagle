@@ -40,38 +40,6 @@ import android.webkit.WebView;
 @RunWith(PowerMockRunner.class)
 public class SearchOnlineActivityDelegateTest extends GeoBeagleTest {
     @Test
-    @SuppressWarnings("unchecked")
-    public void onResume() {
-        SensorManager sensorManager = PowerMock.createMock(SensorManager.class);
-        CompassListener compassListener = PowerMock.createMock(CompassListener.class);
-        LocationControlBuffered locationControlBuffered = PowerMock
-                .createMock(LocationControlBuffered.class);
-        CombinedLocationListener combinedLocationListener = PowerMock
-                .createMock(CombinedLocationListener.class);
-        CombinedLocationManager combinedLocationManager = PowerMock
-                .createMock(CombinedLocationManager.class);
-        ActivityVisible activityVisible = PowerMock.createMock(ActivityVisible.class);
-        Activity activity = PowerMock.createMock(Activity.class);
-        Provider<CompassListener> compassListenerProvider = PowerMock.createMock(Provider.class);
-
-        EasyMock.expect(activity.findViewById(R.id.help_contents)).andReturn(null);
-        activityVisible.setVisible(true);
-        EasyMock.expect(
-                sensorManager.registerListener(compassListener, SensorManager.SENSOR_ORIENTATION,
-                        SensorManager.SENSOR_DELAY_UI)).andReturn(true);
-        EasyMock.expect(compassListenerProvider.get()).andReturn(compassListener);
-        combinedLocationManager.requestLocationUpdates(1000, 0, locationControlBuffered);
-        combinedLocationManager.requestLocationUpdates(1000, 0, combinedLocationListener);
-
-        PowerMock.replayAll();
-        new SearchOnlineActivityDelegate(activity, sensorManager, compassListenerProvider,
-                combinedLocationManager,
-                combinedLocationListener, locationControlBuffered, null, activityVisible, null)
-                .onResume();
-        PowerMock.verifyAll();
-    }
-
-    @Test
     public void configureWebVew() {
         WebView webView = PowerMock.createMock(WebView.class);
         JsInterface jsInterface = PowerMock.createMock(JsInterface.class);

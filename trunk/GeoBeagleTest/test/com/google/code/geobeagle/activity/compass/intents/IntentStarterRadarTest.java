@@ -17,8 +17,7 @@ package com.google.code.geobeagle.activity.compass.intents;
 import static org.easymock.EasyMock.expect;
 
 import com.google.code.geobeagle.Geocache;
-import com.google.code.geobeagle.activity.compass.CompassActivity;
-import com.google.code.geobeagle.activity.compass.intents.IntentStarterGeo;
+import com.google.code.geobeagle.activity.compass.fieldnotes.HasGeocache;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -26,6 +25,7 @@ import org.powermock.api.easymock.PowerMock;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import android.app.Activity;
 import android.content.Intent;
 
 @RunWith(PowerMockRunner.class)
@@ -37,18 +37,19 @@ public class IntentStarterRadarTest {
     @Test
     public void testStartIntent() throws Exception {
         Intent intent = PowerMock.createMock(Intent.class);
-        CompassActivity compassActivity = PowerMock.createMock(CompassActivity.class);
+        HasGeocache hasGeocache = PowerMock.createMock(HasGeocache.class);
         Geocache geocache = PowerMock.createMock(Geocache.class);
-
-        expect(compassActivity.getGeocache()).andReturn(geocache);
+        Activity activity = PowerMock.createMock(Activity.class);
+        
+        expect(hasGeocache.get(activity)).andReturn(geocache);
         expect(geocache.getLatitude()).andReturn(37.175d);
         expect(intent.putExtra("latitude", 37.175f)).andReturn(intent);
         expect(geocache.getLongitude()).andReturn(122.8375d);
         expect(intent.putExtra("longitude", 122.8375f)).andReturn(intent);
-        compassActivity.startActivity(intent);
+        activity.startActivity(intent);
 
         PowerMock.replayAll();
-        new IntentStarterGeo(compassActivity, intent).startIntent();
+        new IntentStarterGeo(activity, intent, hasGeocache).startIntent();
         PowerMock.verifyAll();
     }
 }

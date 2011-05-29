@@ -26,6 +26,7 @@ import com.google.code.geobeagle.ErrorDisplayer;
 import com.google.code.geobeagle.Geocache;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.compass.CompassActivity;
+import com.google.code.geobeagle.activity.compass.fieldnotes.HasGeocache;
 import com.google.code.geobeagle.activity.compass.intents.GeocacheToUri;
 import com.google.code.geobeagle.activity.compass.intents.IntentStarterViewUri;
 import com.google.code.geobeagle.cacheloader.CacheLoaderException;
@@ -52,6 +53,7 @@ public class IntentStarterViewUriTest {
     private Geocache geocache;
     private ErrorDisplayer errorDisplayer;
     private Uri uri;
+    private HasGeocache hasGeocache;
 
     @Before
     public void setUp() {
@@ -61,20 +63,20 @@ public class IntentStarterViewUriTest {
         geocache = createMock(Geocache.class);
         errorDisplayer = createMock(ErrorDisplayer.class);
         uri = createMock(Uri.class);
-
+        hasGeocache = createMock(HasGeocache.class);
         mockStatic(Uri.class);
     }
 
     @Test
     public void testStartIntent() throws Exception {
-        expect(compassActivity.getGeocache()).andReturn(geocache);
         expect(geocacheToUri.convert(geocache)).andReturn("destination uri");
         expect(Uri.parse("destination uri")).andReturn(uri);
         expectNew(Intent.class, Intent.ACTION_VIEW, uri).andReturn(intent);
+        expect(hasGeocache.get(compassActivity)).andReturn(geocache);
         compassActivity.startActivity(intent);
         replayAll();
 
-        new IntentStarterViewUri(compassActivity, geocacheToUri, null).startIntent();
+        new IntentStarterViewUri(compassActivity, geocacheToUri, null, hasGeocache).startIntent();
         verifyAll();
     }
 
@@ -83,7 +85,7 @@ public class IntentStarterViewUriTest {
         ActivityNotFoundException activityNotFoundException = PowerMock
                 .createMock(ActivityNotFoundException.class);
 
-        expect(compassActivity.getGeocache()).andReturn(geocache);
+        expect(hasGeocache.get(compassActivity)).andReturn(geocache);
         expect(geocacheToUri.convert(geocache)).andReturn("destination uri");
         expect(Uri.parse("destination uri")).andReturn(uri);
         expectNew(Intent.class, Intent.ACTION_VIEW, uri).andReturn(intent);
@@ -94,7 +96,7 @@ public class IntentStarterViewUriTest {
         errorDisplayer.displayError(R.string.no_intent_handler, "destination uri");
 
         replayAll();
-        new IntentStarterViewUri(compassActivity, geocacheToUri, errorDisplayer)
+        new IntentStarterViewUri(compassActivity, geocacheToUri, errorDisplayer, hasGeocache)
                 .startIntent();
         verifyAll();
     }
@@ -103,8 +105,7 @@ public class IntentStarterViewUriTest {
     public void ioExceptionShouldDisplayError() throws Exception {
         CacheLoaderException cacheLoaderException = PowerMock
                 .createMock(CacheLoaderException.class);
-
-        expect(compassActivity.getGeocache()).andReturn(geocache);
+        expect(hasGeocache.get(compassActivity)).andReturn(geocache);
         expect(geocacheToUri.convert(geocache)).andThrow(cacheLoaderException);
         expect(cacheLoaderException.getError()).andReturn(R.string.error_loading_url);
         expect(cacheLoaderException.getArgs()).andReturn(new Object[0]);
@@ -112,7 +113,7 @@ public class IntentStarterViewUriTest {
         errorDisplayer.displayError(R.string.error_loading_url);
 
         replayAll();
-        new IntentStarterViewUri(compassActivity, geocacheToUri, errorDisplayer).startIntent();
+        new IntentStarterViewUri(compassActivity, geocacheToUri, errorDisplayer, hasGeocache).startIntent();
         verifyAll();
     }
 }
