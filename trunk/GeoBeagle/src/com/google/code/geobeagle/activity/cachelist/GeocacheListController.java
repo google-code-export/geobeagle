@@ -24,6 +24,7 @@ import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Provider;
 
+import android.os.Build;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -47,16 +48,18 @@ public class GeocacheListController {
             AdapterContextMenuInfo acmi = (AdapterContextMenuInfo)menuInfo;
             if (acmi.position > 0) {
                 menu.setHeaderTitle(mGeocacheVectors.get(acmi.position - 1).getId());
-                menu.add(0, MENU_VIEW, 0, R.string.context_menu_view);
+                if (Integer.parseInt(Build.VERSION.SDK) <= Build.VERSION_CODES.HONEYCOMB) {
+                    menu.add(0, MENU_VIEW, 0, R.string.context_menu_view);
+                }
                 menu.add(0, MENU_EDIT, 1, R.string.context_menu_edit);
                 menu.add(0, MENU_DELETE, 2, R.string.context_menu_delete);
             }
         }
     }
 
-    static final int MENU_DELETE = 0;
-    static final int MENU_VIEW = 1;
-    static final int MENU_EDIT = 2;
+    static final int MENU_EDIT = 0;
+    static final int MENU_DELETE = 1;
+    static final int MENU_VIEW = 2;
     public static final String SELECT_CACHE = "SELECT_CACHE";
     private final CacheListRefresh mCacheListRefresh;
     private final AbortState mAborter;
