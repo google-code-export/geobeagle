@@ -29,19 +29,19 @@ import android.util.Log;
 public class ActivityRestorer {
 
     static class CacheListRestorer implements Restorer {
-        private final Activity mActivity;
-        private final CacheListActivityStarter mCacheListActivityStarter;
+        private final Activity activity;
+        private final CacheListActivityStarter cacheListActivityStarter;
 
         @Inject
         public CacheListRestorer(Activity activity, CacheListActivityStarter cacheListActivityStarter) {
-            mActivity = activity;
-            mCacheListActivityStarter = cacheListActivityStarter;
+            this.activity = activity;
+            this.cacheListActivityStarter = cacheListActivityStarter;
         }
 
         @Override
         public void restore() {
-            mCacheListActivityStarter.start();
-            mActivity.finish();
+            cacheListActivityStarter.start();
+            activity.finish();
         }
 
     }
@@ -63,9 +63,9 @@ public class ActivityRestorer {
 
         public ViewCacheRestorer(GeocacheFromPreferencesFactory geocacheFromPreferencesFactory,
                 SharedPreferences sharedPreferences, Activity activity) {
-            mGeocacheFromPreferencesFactory = geocacheFromPreferencesFactory;
-            mSharedPreferences = sharedPreferences;
-            mActivity = activity;
+            this.mGeocacheFromPreferencesFactory = geocacheFromPreferencesFactory;
+            this.mSharedPreferences = sharedPreferences;
+            this.mActivity = activity;
         }
 
         @Override
@@ -77,14 +77,11 @@ public class ActivityRestorer {
         }
     }
 
-    private final Restorer[] mRestorers;
-    private final SharedPreferences mSharedPreferences;
+    private final Restorer[] restorers;
+    private final SharedPreferences sharedPreferences;
 
-    /**
-     * @return the mSharedPreferences
-     */
     public SharedPreferences getSharedPreferences() {
-        return mSharedPreferences;
+        return sharedPreferences;
     }
 
     @Inject
@@ -92,8 +89,8 @@ public class ActivityRestorer {
             GeocacheFromPreferencesFactory geocacheFromPreferencesFactory,
             SharedPreferences sharedPreferences,
             CacheListRestorer cacheListRestorer) {
-        mSharedPreferences = sharedPreferences;
-        mRestorers = new Restorer[] {
+        this.sharedPreferences = sharedPreferences;
+        this.restorers = new Restorer[] {
                 cacheListRestorer, cacheListRestorer, cacheListRestorer,
                 new ViewCacheRestorer(geocacheFromPreferencesFactory, sharedPreferences, activity)
         };
@@ -103,12 +100,12 @@ public class ActivityRestorer {
         if ((flags & Intent.FLAG_ACTIVITY_NEW_TASK) == 0) {
             return false;
         }
-        final String lastActivity = mSharedPreferences.getString(ActivitySaver.LAST_ACTIVITY,
+        final String lastActivity = sharedPreferences.getString(ActivitySaver.LAST_ACTIVITY,
                 ActivityType.NONE.name());
         final ActivityType activityType = ActivityType.valueOf(lastActivity);
         if (currentActivityType != activityType) {
             Log.d("GeoBeagle", "restoring: " + activityType);
-            mRestorers[activityType.toInt()].restore();
+            restorers[activityType.toInt()].restore();
             return true;
         }
         return false;

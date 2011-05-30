@@ -21,27 +21,26 @@ import roboguice.inject.ContextScoped;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
-import android.util.Log;
 
 @ContextScoped
 public class CompassListener implements SensorEventListener {
-    private final Refresher mRefresher;
-    private final LocationControlBuffered mLocationControlBuffered;
-    private final Azimuth mAzimuth;
-    private double mLastAzimuth;
+    private final Refresher refresher;
+    private final LocationControlBuffered locationControlBuffered;
+    private final Azimuth azimuth;
+    private double lastAzimuth;
 
     public double getLastAzimuth() {
-        return mLastAzimuth;
+        return lastAzimuth;
     }
 
     @Inject
     public CompassListener(Refresher refresher,
             LocationControlBuffered locationControlBuffered,
             Azimuth azimuth) {
-        mRefresher = refresher;
-        mLocationControlBuffered = locationControlBuffered;
-        mLastAzimuth = -1440f;
-        mAzimuth = azimuth;
+        this.refresher = refresher;
+        this.locationControlBuffered = locationControlBuffered;
+        this.lastAzimuth = -1440f;
+        this.azimuth = azimuth;
     }
 
     @Override
@@ -50,13 +49,13 @@ public class CompassListener implements SensorEventListener {
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-        mAzimuth.sensorChanged(event);
-        double currentAzimuth = mAzimuth.getAzimuth();
+        azimuth.sensorChanged(event);
+        double currentAzimuth = azimuth.getAzimuth();
 //        Log.d("GeoBeagle", "azimuth now " + mLastAzimuth + ", " + currentAzimuth);
-        if (Math.abs(currentAzimuth - mLastAzimuth) > 5) {
-            mLocationControlBuffered.setAzimuth(((int)currentAzimuth / 5) * 5);
-            mRefresher.refresh();
-            mLastAzimuth = currentAzimuth;
+        if (Math.abs(currentAzimuth - lastAzimuth) > 5) {
+            locationControlBuffered.setAzimuth(((int)currentAzimuth / 5) * 5);
+            refresher.refresh();
+            lastAzimuth = currentAzimuth;
         }
     }
 }
