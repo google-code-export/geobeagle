@@ -21,6 +21,8 @@ import com.google.code.geobeagle.activity.cachelist.actions.context.ContextActio
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 
+import android.os.Build;
+
 import java.util.ArrayList;
 
 public class ContextActions {
@@ -28,9 +30,11 @@ public class ContextActions {
 
     @Inject
     public ContextActions(Injector injector) {
-        contextActions.add(injector.getInstance(ContextActionDelete.class));
-        contextActions.add(injector.getInstance(ContextActionView.class));
         contextActions.add(injector.getInstance(ContextActionEdit.class));
+        contextActions.add(injector.getInstance(ContextActionDelete.class));
+        if (Integer.parseInt(Build.VERSION.SDK) <= Build.VERSION_CODES.HONEYCOMB) {
+            contextActions.add(injector.getInstance(ContextActionView.class));
+        }
     }
 
     public void act(int menuIndex, int position) {
