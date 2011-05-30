@@ -76,7 +76,7 @@ public class CacheListPresenterTest extends GeoBeagleTest {
 
     @Test
     public void testCompassOnAccuracyChanged() {
-        new CompassListener(null, null, null).onAccuracyChanged(null, 0);
+        new CompassListener(null, null).onAccuracyChanged(0, 0);
     }
 
     @Test
@@ -92,8 +92,8 @@ public class CacheListPresenterTest extends GeoBeagleTest {
 
         PowerMock.replayAll();
         final CompassListener compassListener = new CompassListener(refresher,
-                locationControlBuffered, azimuth);
-        compassListener.onSensorChanged(null);
+                locationControlBuffered);
+        compassListener.onSensorChanged(0, null);
         PowerMock.verifyAll();
     }
 
@@ -106,8 +106,8 @@ public class CacheListPresenterTest extends GeoBeagleTest {
             4f
         };
         final CompassListener compassListener = new CompassListener(refresher,
-                locationControlBuffered, azimuth);
-        compassListener.onSensorChanged(null);
+                locationControlBuffered);
+        compassListener.onSensorChanged(0, null);
     }
 
     @Test
@@ -169,7 +169,7 @@ public class CacheListPresenterTest extends GeoBeagleTest {
                 cacheListRefreshLocationListener);
         combinedLocationManager.addGpsStatusListener(gpsStatusListener);
         sensorManagerWrapper.registerListener(cacheListCompassListener,
-                SensorManager.SENSOR_DELAY_UI);
+                SensorManager.SENSOR_DELAY_UI, 0);
         shakeWaker.register();
 
         PowerMock.replayAll();

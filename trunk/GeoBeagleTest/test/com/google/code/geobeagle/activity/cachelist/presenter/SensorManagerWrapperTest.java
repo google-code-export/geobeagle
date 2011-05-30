@@ -38,13 +38,13 @@ public class SensorManagerWrapperTest {
                 accelSensor);
         EasyMock.expect(sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD)).andReturn(
                 magSensor);
-        EasyMock.expect(sensorManager.registerListener(compassListener, accelSensor, 0)).andReturn(true);
-        EasyMock.expect(sensorManager.registerListener(compassListener, magSensor, 0)).andReturn(true);
+        EasyMock.expect(sensorManager.registerListener(compassListener, 0)).andReturn(true);
+        EasyMock.expect(sensorManager.registerListener(compassListener, 0)).andReturn(true);
         sensorManager.unregisterListener(compassListener);
 
         PowerMock.replayAll();
         SensorManagerWrapper sensorManagerWrapper = new SensorManagerWrapper(sensorManager);
-        sensorManagerWrapper.registerListener(compassListener, 0);
+        sensorManagerWrapper.registerListener(compassListener, 0, 0);
         sensorManagerWrapper.unregisterListener();
         PowerMock.verifyAll();
     }
