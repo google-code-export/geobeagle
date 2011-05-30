@@ -30,10 +30,10 @@ import java.util.ArrayList;
 
 public class CachePinsOverlay extends ItemizedOverlay<CacheItem> {
 
-    private final CacheItemFactory mCacheItemFactory;
-    private final Context mContext;
-    private final ArrayList<Geocache> mCacheList;
-    private final MapClickIntentFactory mMapClickIntentFactory;
+    private final CacheItemFactory cacheItemFactory;
+    private final Context context;
+    private final ArrayList<Geocache> cacheList;
+    private final MapClickIntentFactory mapClickIntentFactory;
 
     public CachePinsOverlay(Resources resources,
             CacheItemFactory cacheItemFactory,
@@ -41,10 +41,10 @@ public class CachePinsOverlay extends ItemizedOverlay<CacheItem> {
             ArrayList<Geocache> cacheList,
             MapClickIntentFactory mapClickIntentFactory) {
         super(boundCenterBottom(resources.getDrawable(R.drawable.map_pin2_others)));
-        mContext = context;
-        mCacheItemFactory = cacheItemFactory;
-        mCacheList = cacheList;
-        mMapClickIntentFactory = mapClickIntentFactory;
+        this.context = context;
+        this.cacheItemFactory = cacheItemFactory;
+        this.cacheList = cacheList;
+        this.mapClickIntentFactory = mapClickIntentFactory;
         populate();
     }
 
@@ -61,20 +61,20 @@ public class CachePinsOverlay extends ItemizedOverlay<CacheItem> {
         Geocache geocache = getItem(i).getGeocache();
         if (geocache == null)
             return false;
-        Intent intent = mMapClickIntentFactory.createIntent(mContext, geocache);
+        Intent intent = mapClickIntentFactory.createIntent(context, geocache);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        mContext.startActivity(intent);
+        context.startActivity(intent);
 
         return true;
     }
 
     @Override
     protected CacheItem createItem(int i) {
-        return mCacheItemFactory.createCacheItem(mCacheList.get(i));
+        return cacheItemFactory.createCacheItem(cacheList.get(i));
     }
 
     @Override
     public int size() {
-        return mCacheList.size();
+        return cacheList.size();
     }
 }

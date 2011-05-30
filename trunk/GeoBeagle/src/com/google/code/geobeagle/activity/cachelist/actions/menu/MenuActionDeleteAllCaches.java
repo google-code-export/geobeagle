@@ -29,12 +29,12 @@ import android.app.AlertDialog.Builder;
 import android.content.DialogInterface;
 
 public class MenuActionDeleteAllCaches implements Action {
-    private final Activity mActivity;
-    private final Builder mBuilder;
-    private final CacheListRefresh mCacheListRefresh;
-    private final Provider<DbFrontend> mDbFrontendProvider;
-    private final BCachingStartTime mBcachingLastUpdated;
-    private final CompassFrameHider mCompassFrameHider;
+    private final Activity activity;
+    private final Builder builder;
+    private final CacheListRefresh cacheListRefresh;
+    private final Provider<DbFrontend> cbFrontendProvider;
+    private final BCachingStartTime bcachingLastUpdated;
+    private final CompassFrameHider compassFrameHider;
 
     @Inject
     public MenuActionDeleteAllCaches(CacheListRefresh cacheListRefresh,
@@ -43,33 +43,33 @@ public class MenuActionDeleteAllCaches implements Action {
             AlertDialog.Builder builder,
             BCachingStartTime bcachingLastUpdated,
             CompassFrameHider compassFrameHider) {
-        mDbFrontendProvider = dbFrontendProvider;
-        mBuilder = builder;
-        mActivity = activity;
-        mCacheListRefresh = cacheListRefresh;
-        mBcachingLastUpdated = bcachingLastUpdated;
-        mCompassFrameHider = compassFrameHider;
+        this.cbFrontendProvider = dbFrontendProvider;
+        this.builder = builder;
+        this.activity = activity;
+        this.cacheListRefresh = cacheListRefresh;
+        this.bcachingLastUpdated = bcachingLastUpdated;
+        this.compassFrameHider = compassFrameHider;
     }
 
     @Override
     public void act() {
-        buildAlertDialog(mDbFrontendProvider, mCacheListRefresh, mBcachingLastUpdated,
-                mCompassFrameHider).show();
+        buildAlertDialog(cbFrontendProvider, cacheListRefresh, bcachingLastUpdated,
+                compassFrameHider).show();
     }
 
     private AlertDialog buildAlertDialog(Provider<DbFrontend> dbFrontendProvider,
             CacheListRefresh cacheListRefresh,
             BCachingStartTime bcachingLastUpdated,
             CompassFrameHider compassFrameHider) {
-        mBuilder.setTitle(R.string.delete_all_title);
-        final OnClickOkayListener onClickOkayListener = new OnClickOkayListener(mActivity,
+        builder.setTitle(R.string.delete_all_title);
+        final OnClickOkayListener onClickOkayListener = new OnClickOkayListener(activity,
                 dbFrontendProvider, cacheListRefresh, bcachingLastUpdated, compassFrameHider);
         final DialogInterface.OnClickListener onClickCancelListener = new OnClickCancelListener();
-        mBuilder.setMessage(R.string.confirm_delete_all)
+        builder.setMessage(R.string.confirm_delete_all)
                 .setPositiveButton(R.string.delete_all_title, onClickOkayListener)
                 .setNegativeButton(R.string.cancel, onClickCancelListener);
-        AlertDialog alertDialog = mBuilder.create();
-        alertDialog.setOwnerActivity(mActivity);
+        AlertDialog alertDialog = builder.create();
+        alertDialog.setOwnerActivity(activity);
         return alertDialog;
     }
 

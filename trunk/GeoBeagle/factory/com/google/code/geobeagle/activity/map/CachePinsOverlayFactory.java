@@ -30,13 +30,13 @@ import android.util.Log;
 import java.util.ArrayList;
 
 public class CachePinsOverlayFactory {
-    private final CacheItemFactory mCacheItemFactory;
-    private CachePinsOverlay mCachePinsOverlay;
-    private final Activity mActivity;
-    private final QueryManager mQueryManager;
-    private final Resources mResources;
-    private final LoaderImpl mLoaderImpl;
-    private final MapClickIntentFactory mMapClickIntentFactory;
+    private final CacheItemFactory cacheItemFactory;
+    private CachePinsOverlay cachePinsOverlay;
+    private final Activity activity;
+    private final QueryManager queryManager;
+    private final Resources resources;
+    private final LoaderImpl loaderImpl;
+    private final MapClickIntentFactory mapClickIntentFactory;
 
     @Inject
     public CachePinsOverlayFactory(Activity activity,
@@ -45,37 +45,37 @@ public class CachePinsOverlayFactory {
             Resources resources,
             LoaderImpl loaderImpl,
             MapClickIntentFactory mapClickIntentFactory) {
-        mResources = resources;
-        mActivity = activity;
-        mCacheItemFactory = cacheItemFactory;
-        mMapClickIntentFactory = mapClickIntentFactory;
-        mCachePinsOverlay = new CachePinsOverlay(resources, cacheItemFactory, activity,
+        this.resources = resources;
+        this.activity = activity;
+        this.cacheItemFactory = cacheItemFactory;
+        this.mapClickIntentFactory = mapClickIntentFactory;
+        this.cachePinsOverlay = new CachePinsOverlay(resources, cacheItemFactory, activity,
                 new ArrayList<Geocache>(), mapClickIntentFactory);
-        mQueryManager = queryManager;
-        mLoaderImpl = loaderImpl;
+        this.queryManager = queryManager;
+        this.loaderImpl = loaderImpl;
     }
 
     public CachePinsOverlay getCachePinsOverlay() {
         Log.d("GeoBeagle", "refresh Caches");
-        final Timing timing = new Timing();
+        Timing timing = new Timing();
 
-        GeoMapView mGeoMapView = (GeoMapView)mActivity.findViewById(R.id.mapview);
+        GeoMapView geoMapView = (GeoMapView)activity.findViewById(R.id.mapview);
 
-        Projection projection = mGeoMapView .getProjection();
+        Projection projection = geoMapView.getProjection();
         GeoPoint newTopLeft = projection.fromPixels(0, 0);
-        GeoPoint newBottomRight = projection.fromPixels(mGeoMapView.getRight(), mGeoMapView
-                .getBottom());
+        GeoPoint newBottomRight = projection.fromPixels(geoMapView.getRight(),
+                geoMapView.getBottom());
 
         timing.start();
 
-        if (!mQueryManager.needsLoading(newTopLeft, newBottomRight))
-            return mCachePinsOverlay;
+        if (!queryManager.needsLoading(newTopLeft, newBottomRight))
+            return cachePinsOverlay;
 
-        ArrayList<Geocache> cacheList = mQueryManager.load(newTopLeft, newBottomRight, mLoaderImpl);
+        ArrayList<Geocache> cacheList = queryManager.load(newTopLeft, newBottomRight, loaderImpl);
 
         timing.lap("Loaded caches");
-        mCachePinsOverlay = new CachePinsOverlay(mResources, mCacheItemFactory, mActivity,
-                cacheList, mMapClickIntentFactory);
-        return mCachePinsOverlay;
+        cachePinsOverlay = new CachePinsOverlay(resources, cacheItemFactory, activity, cacheList,
+                mapClickIntentFactory);
+        return cachePinsOverlay;
     }
 }
