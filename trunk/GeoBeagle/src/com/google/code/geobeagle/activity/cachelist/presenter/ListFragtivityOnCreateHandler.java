@@ -18,7 +18,7 @@ import android.app.Activity;
 import android.app.ListActivity;
 
 public interface ListFragtivityOnCreateHandler {
-    void onCreateActivity(Activity listActivity, GeocacheListPresenter geocacheListPresenter);
+    void onCreateActivity(Activity listActivity, CacheListPresenter cacheListPresenter);
 
-    void onCreateFragment(GeocacheListPresenter geocacheListPresenter, Object listFragmentParam);
+    void onCreateFragment(CacheListPresenter cacheListPresenter, Object listFragmentParam);
 }

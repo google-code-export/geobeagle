@@ -23,7 +23,7 @@ import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionSyncG
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVector;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVectors;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
-import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheListPresenter;
+import com.google.code.geobeagle.activity.cachelist.presenter.CacheListPresenter;
 import com.google.code.geobeagle.database.DatabaseDI;
 import com.google.code.geobeagle.xmlimport.AbortState;
 import com.google.inject.Provider;
@@ -45,7 +45,7 @@ import android.widget.AdapterView.AdapterContextMenuInfo;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest( {
-        GeocacheListController.class, ListActivity.class, GeocacheListPresenter.class,
+        GeocacheListController.class, ListActivity.class, CacheListPresenter.class,
         CacheListOnCreateContextMenuListener.class, DatabaseDI.class, Log.class
 })
 public class GeocacheListControllerTest extends GeoBeagleTest {
