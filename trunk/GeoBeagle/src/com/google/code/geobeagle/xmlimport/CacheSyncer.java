@@ -16,7 +16,7 @@ package com.google.code.geobeagle.xmlimport;
 
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.cachelist.Pausable;
-import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheListPresenter;
+import com.google.code.geobeagle.activity.cachelist.presenter.CacheListPresenter;
 import com.google.code.geobeagle.activity.compass.fieldnotes.Toaster;
 import com.google.code.geobeagle.xmlimport.ImportThread.ImportThreadFactory;
 import com.google.inject.Inject;
@@ -34,14 +34,14 @@ public class CacheSyncer {
     private final ImportThreadFactory importThreadFactory;
     private ImportThread importThread;
 
-    CacheSyncer(GeocacheListPresenter geocacheListPresenter,
+    CacheSyncer(CacheListPresenter cacheListPresenter,
             MessageHandler messageHandler,
             Toaster toaster,
             AbortState abortState,
             ImportThreadFactory importThreadFactory) {
         this.messageHandler = messageHandler;
         this.toaster = toaster;
-        this.geocacheListPresenter = geocacheListPresenter;
+        this.geocacheListPresenter = cacheListPresenter;
         this.abortState = abortState;
         this.importThreadFactory = importThreadFactory;
     }
@@ -51,7 +51,7 @@ public class CacheSyncer {
         abortState = injector.getInstance(AbortState.class);
         messageHandler = injector.getInstance(MessageHandler.class);
         toaster = injector.getInstance(Toaster.class);
-        geocacheListPresenter = injector.getInstance(GeocacheListPresenter.class);
+        geocacheListPresenter = injector.getInstance(CacheListPresenter.class);
         importThreadFactory = injector.getInstance(ImportThreadFactory.class);
     }
 

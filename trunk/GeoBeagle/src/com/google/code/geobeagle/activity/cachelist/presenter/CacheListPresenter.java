@@ -40,8 +40,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
 
-public class GeocacheListPresenter implements Pausable {
-    //TODO(sng): Rename to CacheListPresenter.
+public class CacheListPresenter implements Pausable {
     static final int UPDATE_DELAY = 1000;
 
     private final LocationListener combinedLocationListener;
@@ -62,7 +61,7 @@ public class GeocacheListPresenter implements Pausable {
     private final SearchTarget searchTarget;
     private final ListFragtivityOnCreateHandler listFragtivityOnCreateHandler;
 
-    public GeocacheListPresenter(CombinedLocationListener combinedLocationListener,
+    public CacheListPresenter(CombinedLocationListener combinedLocationListener,
             CombinedLocationManager combinedLocationManager,
             ListFragtivityOnCreateHandler listFragtivityOnCreateHandler,
             Provider<CacheListCompassListener> cacheListCompassListenerProvider,
@@ -99,7 +98,7 @@ public class GeocacheListPresenter implements Pausable {
     }
 
     @Inject
-    public GeocacheListPresenter(Injector injector) {
+    public CacheListPresenter(Injector injector) {
         this.combinedLocationListener = injector.getInstance(CombinedLocationListener.class);
         this.combinedLocationManager = injector.getInstance(CombinedLocationManager.class);
         this.cacheListCompassListenerProvider = injector

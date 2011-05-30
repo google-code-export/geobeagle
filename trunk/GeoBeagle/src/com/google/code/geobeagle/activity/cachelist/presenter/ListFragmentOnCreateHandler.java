@@ -31,16 +31,16 @@ public class ListFragmentOnCreateHandler implements ListFragtivityOnCreateHandle
 
     @Override
     public void onCreateActivity(Activity listActivity,
-            GeocacheListPresenter geocacheListPresenter) {
+            CacheListPresenter cacheListPresenter) {
         listActivity.setContentView(R.layout.cache_list_fragment);
     }
 
     @Override
-    public void onCreateFragment(GeocacheListPresenter geocacheListPresenter,
+    public void onCreateFragment(CacheListPresenter cacheListPresenter,
             Object listFragmentParam) {
         ListFragment listFragment = (ListFragment)listFragmentParam;
         ListView listView = listFragment.getListView();
-        geocacheListPresenter.setupListView(listView);
+        cacheListPresenter.setupListView(listView);
         listFragment.setListAdapter(geocacheListAdapter);
     }
 }

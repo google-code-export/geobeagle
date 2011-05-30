@@ -21,7 +21,7 @@ import com.google.code.geobeagle.activity.ActivitySaver;
 import com.google.code.geobeagle.activity.ActivityType;
 import com.google.code.geobeagle.activity.cachelist.actions.context.delete.ContextActionDeleteDialogHelper;
 import com.google.code.geobeagle.activity.cachelist.presenter.CacheListRefresh;
-import com.google.code.geobeagle.activity.cachelist.presenter.GeocacheListPresenter;
+import com.google.code.geobeagle.activity.cachelist.presenter.CacheListPresenter;
 import com.google.code.geobeagle.database.DbFrontend;
 import com.google.code.geobeagle.gpsstatuswidget.GpsStatusWidgetDelegate;
 import com.google.code.geobeagle.gpsstatuswidget.InflatedGpsStatusWidget;
@@ -44,7 +44,7 @@ public class CacheListDelegate {
     private final GeocacheListController controller;
     private final Provider<DbFrontend> dbFrontendProvider;
     private final ImportIntentManager importIntentManager;
-    private final GeocacheListPresenter presenter;
+    private final CacheListPresenter presenter;
     private final LogFindDialogHelper logFindDialogHelper;
     private final ContextActionDeleteDialogHelper contextActionDeleteDialogHelper;
     private final Activity activity;
@@ -53,7 +53,7 @@ public class CacheListDelegate {
             ActivitySaver activitySaver,
             CacheListRefresh cacheListRefresh,
             GeocacheListController geocacheListController,
-            GeocacheListPresenter geocacheListPresenter,
+            CacheListPresenter cacheListPresenter,
             Provider<DbFrontend> dbFrontendProvider,
             ActivityVisible activityVisible,
             LogFindDialogHelper logFindDialogHelper,
@@ -62,7 +62,7 @@ public class CacheListDelegate {
         this.activitySaver = activitySaver;
         this.cacheListRefresh = cacheListRefresh;
         this.controller = geocacheListController;
-        this.presenter = geocacheListPresenter;
+        this.presenter = cacheListPresenter;
         this.importIntentManager = importIntentManager;
         this.dbFrontendProvider = dbFrontendProvider;
         this.activityVisible = activityVisible;
@@ -76,7 +76,7 @@ public class CacheListDelegate {
         this.activitySaver = injector.getInstance(ActivitySaver.class);
         this.cacheListRefresh = injector.getInstance(CacheListRefresh.class);
         this.controller = injector.getInstance(GeocacheListController.class);
-        this.presenter = injector.getInstance(GeocacheListPresenter.class);
+        this.presenter = injector.getInstance(CacheListPresenter.class);
         this.importIntentManager = injector.getInstance(ImportIntentManager.class);
         this.dbFrontendProvider = injector.getProvider(DbFrontend.class);
         this.activityVisible = injector.getInstance(ActivityVisible.class);

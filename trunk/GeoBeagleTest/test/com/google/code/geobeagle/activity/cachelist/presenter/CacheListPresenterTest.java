@@ -45,7 +45,7 @@ import android.util.Log;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest( {
-        GeocacheListPresenter.class, Log.class, PreferenceManager.class
+        CacheListPresenter.class, Log.class, PreferenceManager.class
 })
 public class CacheListPresenterTest extends GeoBeagleTest {
     private Azimuth azimuth;
@@ -122,7 +122,7 @@ public class CacheListPresenterTest extends GeoBeagleTest {
         sensorManagerWrapper.unregisterListener();
         shakeWaker.unregister();
         PowerMock.replayAll();
-        new GeocacheListPresenter(null, combinedLocationManager, null, null, null, null, null,
+        new CacheListPresenter(null, combinedLocationManager, null, null, null, null, null,
                 null, sensorManagerWrapper, null, null, null, null, null, shakeWaker, null, null)
                 .onPause();
         PowerMock.verifyAll();
@@ -161,11 +161,11 @@ public class CacheListPresenterTest extends GeoBeagleTest {
 
         expect(cacheListCompassListenerProvider.get()).andReturn(cacheListCompassListener);
         updateGpsRunnable.run();
-        combinedLocationManager.requestLocationUpdates(GeocacheListPresenter.UPDATE_DELAY, 0,
+        combinedLocationManager.requestLocationUpdates(CacheListPresenter.UPDATE_DELAY, 0,
                 locationControlBuffered);
-        combinedLocationManager.requestLocationUpdates(GeocacheListPresenter.UPDATE_DELAY, 0,
+        combinedLocationManager.requestLocationUpdates(CacheListPresenter.UPDATE_DELAY, 0,
                 combinedLocationListener);
-        combinedLocationManager.requestLocationUpdates(GeocacheListPresenter.UPDATE_DELAY, 0,
+        combinedLocationManager.requestLocationUpdates(CacheListPresenter.UPDATE_DELAY, 0,
                 cacheListRefreshLocationListener);
         combinedLocationManager.addGpsStatusListener(gpsStatusListener);
         sensorManagerWrapper.registerListener(cacheListCompassListener,
@@ -173,7 +173,7 @@ public class CacheListPresenterTest extends GeoBeagleTest {
         shakeWaker.register();
 
         PowerMock.replayAll();
-        new GeocacheListPresenter(combinedLocationListener, combinedLocationManager, null,
+        new CacheListPresenter(combinedLocationListener, combinedLocationManager, null,
                 cacheListCompassListenerProvider, null, null, listActivity,
                 locationControlBuffered, sensorManagerWrapper, updateGpsRunnable, null,
                 gpsStatusListener, null, filterCleanliness, shakeWaker, null, null)
