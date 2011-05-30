@@ -26,14 +26,6 @@ import java.util.ArrayList;
 public class ContextActions {
     private final ArrayList<ContextAction> contextActions = new ArrayList<ContextAction>();
 
-    public ContextActions(ContextActionDelete contextActionDelete,
-            ContextActionEdit contextActionEdit,
-            ContextActionView contextActionView) {
-        contextActions.add(contextActionDelete);
-        contextActions.add(contextActionView);
-        contextActions.add(contextActionEdit);
-    }
-
     @Inject
     public ContextActions(Injector injector) {
         contextActions.add(injector.getInstance(ContextActionDelete.class));
