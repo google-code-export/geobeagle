@@ -46,12 +46,6 @@ public class ActivityRestorer {
 
     }
 
-    static class NullRestorer implements Restorer {
-        @Override
-        public void restore() {
-        }
-    }
-
     interface Restorer {
         void restore();
     }
