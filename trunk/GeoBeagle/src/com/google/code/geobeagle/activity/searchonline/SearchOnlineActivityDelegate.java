@@ -26,7 +26,6 @@ import com.google.inject.Provider;
 
 import android.app.Activity;
 import android.graphics.Color;
-import android.hardware.Sensor;
 import android.hardware.SensorManager;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -82,11 +81,9 @@ public class SearchOnlineActivityDelegate {
     public void onResume() {
         mCombinedLocationManager.requestLocationUpdates(1000, 0, mLocationControlBuffered);
         mCombinedLocationManager.requestLocationUpdates(1000, 0, mCombinedLocationListener);
-        Sensor accelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-        Sensor magnetometer = mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
-        CompassListener compassListener = mCompassListenerProvider.get();
-        mSensorManager.registerListener(compassListener, accelerometer, SensorManager.SENSOR_DELAY_GAME);
-        mSensorManager.registerListener(compassListener, magnetometer, SensorManager.SENSOR_DELAY_GAME);
+        mSensorManager.registerListener(mCompassListenerProvider.get(),
+                SensorManager.SENSOR_ORIENTATION,
+                SensorManager.SENSOR_DELAY_UI);
         mActivityVisible.setVisible(true);
     }
 }

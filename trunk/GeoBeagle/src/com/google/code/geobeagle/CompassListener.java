@@ -18,44 +18,48 @@ import com.google.inject.Inject;
 
 import roboguice.inject.ContextScoped;
 
-import android.hardware.Sensor;
-import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
+import android.hardware.SensorListener;
 
+@SuppressWarnings("deprecation")
 @ContextScoped
-public class CompassListener implements SensorEventListener {
-    private final Refresher refresher;
-    private final LocationControlBuffered locationControlBuffered;
-    private final Azimuth azimuth;
-    private double lastAzimuth;
 
-    public double getLastAzimuth() {
-        return lastAzimuth;
+public class CompassListener implements SensorListener {
+
+    private final Refresher mRefresher;
+    private final LocationControlBuffered mLocationControlBuffered;
+    private float mLastAzimuth;
+
+    public float getLastAzimuth() {
+        return mLastAzimuth;
     }
 
     @Inject
-    public CompassListener(Refresher refresher,
-            LocationControlBuffered locationControlBuffered,
-            Azimuth azimuth) {
-        this.refresher = refresher;
-        this.locationControlBuffered = locationControlBuffered;
-        this.lastAzimuth = -1440f;
-        this.azimuth = azimuth;
+    public CompassListener(Refresher refresher, LocationControlBuffered locationControlBuffered) {
+        mRefresher = refresher;
+        mLocationControlBuffered = locationControlBuffered;
+        mLastAzimuth = -1440f;
+    }
+
+    // public void onAccuracyChanged(Sensor sensor, int accuracy) {
+    // }
+
+    // public void onSensorChanged(SensorEvent event) {
+    // onSensorChanged(SensorManager.SENSOR_ORIENTATION, event.values);
+    // }
+
+    @Override
+    public void onAccuracyChanged(int sensor, int accuracy) {
     }
 
     @Override
-    public void onAccuracyChanged(Sensor sensor, int accuracy) {
-    }
-
-    @Override
-    public void onSensorChanged(SensorEvent event) {
-        azimuth.sensorChanged(event);
-        double currentAzimuth = azimuth.getAzimuth();
-//        Log.d("GeoBeagle", "azimuth now " + mLastAzimuth + ", " + currentAzimuth);
-        if (Math.abs(currentAzimuth - lastAzimuth) > 5) {
-            locationControlBuffered.setAzimuth(((int)currentAzimuth / 5) * 5);
-            refresher.refresh();
-            lastAzimuth = currentAzimuth;
+    public void onSensorChanged(int sensor, float[] values) {
+        final float currentAzimuth = values[0];
+        if (Math.abs(currentAzimuth - mLastAzimuth) > 5) {
+            // Log.d("GeoBeagle", "azimuth now " + sensor + ", " +
+            // currentAzimuth);
+            mLocationControlBuffered.setAzimuth(((int)currentAzimuth / 5) * 5);
+            mRefresher.refresh();
+            mLastAzimuth = currentAzimuth;
         }
     }
 }

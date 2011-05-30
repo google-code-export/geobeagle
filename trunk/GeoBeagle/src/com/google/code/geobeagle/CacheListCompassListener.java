@@ -22,7 +22,7 @@ import roboguice.inject.ContextScoped;
 public class CacheListCompassListener extends CompassListener {
     @Inject
     public CacheListCompassListener(CacheListRefresh refresher,
-            LocationControlBuffered locationControlBuffered, Azimuth azimuth) {
-        super(refresher, locationControlBuffered, azimuth);
+            LocationControlBuffered locationControlBuffered) {
+        super(refresher, locationControlBuffered);
     }
 }
