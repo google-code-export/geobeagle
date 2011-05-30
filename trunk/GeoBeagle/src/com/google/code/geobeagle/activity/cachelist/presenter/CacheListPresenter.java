@@ -161,7 +161,8 @@ public class CacheListPresenter implements Pausable {
         combinedLocationManager.addGpsStatusListener(gpsStatusListener);
 
         updateGpsWidgetRunnable.run();
-        sensorManagerWrapper.registerListener(compassListener, SensorManager.SENSOR_DELAY_UI);
+        sensorManagerWrapper.registerListener(compassListener, SensorManager.SENSOR_ORIENTATION,
+                SensorManager.SENSOR_DELAY_UI);
         shakeWaker.register();
         Log.d("GeoBeagle", "GeocacheListPresenter onResume done");
     }

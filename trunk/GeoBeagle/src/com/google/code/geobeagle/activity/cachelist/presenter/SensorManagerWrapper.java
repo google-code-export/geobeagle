@@ -17,7 +17,6 @@ package com.google.code.geobeagle.activity.cachelist.presenter;
 import com.google.code.geobeagle.CompassListener;
 import com.google.inject.Inject;
 
-import android.hardware.Sensor;
 import android.hardware.SensorManager;
 
 public class SensorManagerWrapper {
@@ -34,11 +33,9 @@ public class SensorManagerWrapper {
         mSensorManager.unregisterListener(mCompassListener);
     }
 
-    public void registerListener(CompassListener compassListener, int sensorDelayUi) {
+    public void registerListener(CompassListener compassListener, int sensorOrientation,
+            int sensorDelayUi) {
         mCompassListener = compassListener;
-        Sensor accelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-        Sensor magnetometer = mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
-        mSensorManager.registerListener(compassListener, accelerometer, sensorDelayUi);
-        mSensorManager.registerListener(compassListener, magnetometer, sensorDelayUi);
+        mSensorManager.registerListener(compassListener, sensorOrientation, sensorDelayUi);
     }
 }
