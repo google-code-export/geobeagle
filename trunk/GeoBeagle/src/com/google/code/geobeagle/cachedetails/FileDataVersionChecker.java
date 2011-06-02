@@ -34,6 +34,8 @@ public class FileDataVersionChecker {
     }
 
     public boolean needsUpdating() {
+        if (true)
+            return false;
         File file = new File(geoBeagleEnvironment.getVersionPath());
         if (!file.exists())
             return true;
