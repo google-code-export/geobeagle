@@ -59,7 +59,7 @@ public class GeocacheToCachePageTest extends GeoBeagleTest {
         expect(geocache.getSourceType()).andReturn(Source.GPX);
         expect(geocache.getId()).andReturn("GCFOO");
         expect(geocache.getSourceName()).andReturn("bcaching.com");
-        expect(cacheUrlLoader.load("bcaching.com", "GCFOO")).andReturn("http://coord.info/GCFOO");
+        expect(cacheUrlLoader.load("GCFOO")).andReturn("http://coord.info/GCFOO");
         replayAll();
 
         GeocacheToCachePage geocacheToCachePage = new GeocacheToCachePage(cacheUrlLoader, resources);

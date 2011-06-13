@@ -15,23 +15,19 @@
 package com.google.code.geobeagle.activity.details;
 
 import com.google.code.geobeagle.cacheloader.CacheLoader;
-import com.google.code.geobeagle.cacheloader.CacheLoaderException;
 import com.google.code.geobeagle.cacheloader.CacheLoaderFactory;
 import com.google.code.geobeagle.xmlimport.CacheXmlTagsToDetails;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 
 import android.content.Intent;
-import android.content.res.Resources;
 import android.webkit.WebView;
 
 class DetailsWebView {
     private final CacheLoader cacheLoader;
-    private final Resources resources;
 
-    DetailsWebView(CacheLoader cacheLoader, Resources resources) {
+    DetailsWebView(CacheLoader cacheLoader) {
         this.cacheLoader = cacheLoader;
-        this.resources = resources;
     }
 
     @Inject
@@ -39,20 +35,12 @@ class DetailsWebView {
         CacheLoaderFactory cacheLoaderFactory = injector.getInstance(CacheLoaderFactory.class);
         CacheXmlTagsToDetails cacheXmlTagsToDetails = injector.getInstance(CacheXmlTagsToDetails.class);
         cacheLoader = cacheLoaderFactory.create(cacheXmlTagsToDetails);
-        resources = injector.getInstance(Resources.class);
     }
 
     String loadDetails(WebView webView, Intent intent) {
         webView.getSettings().setJavaScriptEnabled(true);
-        String sourceName = intent.getStringExtra(DetailsActivity.INTENT_EXTRA_GEOCACHE_SOURCE);
         String id = intent.getStringExtra(DetailsActivity.INTENT_EXTRA_GEOCACHE_ID);
-        String details;
-        try {
-            details = cacheLoader.load(sourceName, id);
-        } catch (CacheLoaderException e) {
-            details = resources.getString(e.getError(), e.getArgs());
-        }
-        webView.loadDataWithBaseURL(null, details, "text/html", "utf-8", null);
+        webView.loadDataWithBaseURL(null, cacheLoader.load(id), "text/html", "utf-8", null);
         return id + ": " + intent.getStringExtra(DetailsActivity.INTENT_EXTRA_GEOCACHE_NAME);
     }
 }
