@@ -89,7 +89,6 @@
 	<string name="error_cant_read_sdroot">Error (\"%1$s\") reading folder /sdcard, please make sure your sdcard is readable.</string>
 	<string name="error_opening_details_file">"Error opening cache details file '%1$s'.  Please try unmounting your sdcard or re-importing the cache file.</string>
 	<string name="error_reading_details_file">"Error reading cache details file '%1$s'.  Please try unmounting your sdcard or re-importing the cache file.</string>
-	<string name="error_details_file_version">Sorry, the cache details format is out of date.  Please re-import by selecting Cache List / Sync Caches.</string>
 	<string name="my_current_location">My Current Location</string>
 	<string name="import_canceled">Sync aborted!</string>
 	<string name="menu_show_nearest_caches">Show Nearest</string>

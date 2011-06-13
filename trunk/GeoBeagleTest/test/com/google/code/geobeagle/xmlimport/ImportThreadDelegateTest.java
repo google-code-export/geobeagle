@@ -25,7 +25,6 @@ import com.google.code.geobeagle.activity.cachelist.GeoBeagleTest;
 import com.google.code.geobeagle.bcaching.ImportBCachingWorker;
 import com.google.code.geobeagle.bcaching.communication.BCachingException;
 import com.google.code.geobeagle.bcaching.preferences.BCachingStartTime;
-import com.google.code.geobeagle.cachedetails.FileDataVersionChecker;
 import com.google.code.geobeagle.database.DbFrontend;
 import com.google.code.geobeagle.xmlimport.GpxToCache.CancelException;
 import com.google.code.geobeagle.xmlimport.gpx.GpxAndZipFiles;
@@ -51,7 +50,6 @@ import java.io.IOException;
 })
 public class ImportThreadDelegateTest extends GeoBeagleTest {
 
-    private FileDataVersionChecker fileDataVersionChecker;
     private DbFrontend dbFrontend;
     private SyncCollectingParameter syncCollectingParameter;
     private GpxSyncer gpxSyncer;
@@ -61,7 +59,6 @@ public class ImportThreadDelegateTest extends GeoBeagleTest {
 
     @Before
     public void setUp() {
-        fileDataVersionChecker = createMock(FileDataVersionChecker.class);
         dbFrontend = createMock(DbFrontend.class);
         syncCollectingParameter = createMock(SyncCollectingParameter.class);
         gpxSyncer = createMock(GpxSyncer.class);
@@ -79,13 +76,11 @@ public class ImportThreadDelegateTest extends GeoBeagleTest {
         expect(syncCollectingParameter.getLog()).andReturn("LOG");
         errorDisplayer.displayError(R.string.string, "LOG");
         bcachingStartTime.clearStartTime();
-        expect(fileDataVersionChecker.needsUpdating()).andReturn(true);
         dbFrontend.forceUpdate();
 
         replayAll();
         ImportThread importThread = new ImportThread(gpxSyncer, importBCachingWorker,
-                errorDisplayer, bcachingStartTime, fileDataVersionChecker, dbFrontend,
-                syncCollectingParameter);
+                errorDisplayer, bcachingStartTime, dbFrontend, syncCollectingParameter);
         importThread.run();
         verifyAll();
     }

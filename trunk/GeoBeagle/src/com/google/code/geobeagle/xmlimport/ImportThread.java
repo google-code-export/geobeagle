@@ -19,7 +19,6 @@ import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.bcaching.ImportBCachingWorker;
 import com.google.code.geobeagle.bcaching.communication.BCachingException;
 import com.google.code.geobeagle.bcaching.preferences.BCachingStartTime;
-import com.google.code.geobeagle.cachedetails.FileDataVersionChecker;
 import com.google.code.geobeagle.database.DbFrontend;
 import com.google.code.geobeagle.xmlimport.GpxToCache.CancelException;
 import com.google.inject.Inject;
@@ -42,7 +41,6 @@ public class ImportThread extends RoboThread {
         private final ErrorDisplayer errorDisplayer;
         private final BCachingStartTime bcachingStartTime;
         private final DbFrontend dbFrontend;
-        private final FileDataVersionChecker fileDataVersionChecker;
         private final SyncCollectingParameter syncCollectingParameter;
 
         @Inject
@@ -51,15 +49,13 @@ public class ImportThread extends RoboThread {
             this.importBCachingWorkerProvider = injector.getProvider(ImportBCachingWorker.class);
             this.errorDisplayer = injector.getInstance(ErrorDisplayer.class);
             this.bcachingStartTime = injector.getInstance(BCachingStartTime.class);
-            this.fileDataVersionChecker = injector.getInstance(FileDataVersionChecker.class);
             this.dbFrontend = injector.getInstance(DbFrontend.class);
             this.syncCollectingParameter = injector.getInstance(SyncCollectingParameter.class);
         }
 
         ImportThread create() {
             return new ImportThread(gpxSyncerFactory.create(), importBCachingWorkerProvider.get(),
-                    errorDisplayer, bcachingStartTime, fileDataVersionChecker, dbFrontend,
-                    syncCollectingParameter);
+                    errorDisplayer, bcachingStartTime, dbFrontend, syncCollectingParameter);
         }
     }
 
@@ -69,21 +65,18 @@ public class ImportThread extends RoboThread {
     private final ErrorDisplayer errorDisplayer;
     private final BCachingStartTime bcachingStartTime;
     private final DbFrontend dbFrontend;
-    private final FileDataVersionChecker fileDataVersionChecker;
     private final SyncCollectingParameter syncCollectingParameter;
 
     ImportThread(GpxSyncer gpxSyncer,
             ImportBCachingWorker importBCachingWorker,
             ErrorDisplayer errorDisplayer,
             BCachingStartTime bcachingStartTime,
-            FileDataVersionChecker fileDataVersionChecker,
             DbFrontend dbFrontend,
             SyncCollectingParameter syncCollectingParameter) {
         this.gpxSyncer = gpxSyncer;
         this.importBCachingWorker = importBCachingWorker;
         this.errorDisplayer = errorDisplayer;
         this.bcachingStartTime = bcachingStartTime;
-        this.fileDataVersionChecker = fileDataVersionChecker;
         this.dbFrontend = dbFrontend;
         this.syncCollectingParameter = syncCollectingParameter;
     }
@@ -92,10 +85,6 @@ public class ImportThread extends RoboThread {
     public void run() {
         isAlive = true;
         try {
-            if (fileDataVersionChecker.needsUpdating()) {
-                dbFrontend.forceUpdate();
-                bcachingStartTime.clearStartTime();
-            }
             syncCollectingParameter.reset();
             gpxSyncer.sync(syncCollectingParameter);
             importBCachingWorker.sync(syncCollectingParameter);
