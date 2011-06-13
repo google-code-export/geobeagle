@@ -49,7 +49,7 @@ public class GeocacheToCachePage implements GeocacheToUri {
     @Override
     public String convert(Geocache geocache) throws CacheLoaderException {
         if (geocache.getSourceType() == Source.GPX) {
-            return cacheLoader.load(geocache.getSourceName(), geocache.getId());
+            return cacheLoader.load(geocache.getId());
         }
         return String.format(resources.getStringArray(R.array.cache_page_url)[geocache
                 .getContentProvider().toInt()], geocache.getShortId());

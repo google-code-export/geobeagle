@@ -28,21 +28,18 @@ import java.io.StringReader;
 public class CacheLoader {
     private final DetailsDatabaseReader detailsDatabaseReader;
     private final DetailsXmlToString detailsXmlToString;
-    private final CacheReaderFromFile cacheReaderFromFile;
     private final Resources resources;
 
-    CacheLoader(CacheReaderFromFile cacheReaderFromFile,
-            DetailsDatabaseReader detailsDatabaseReader,
+    CacheLoader(DetailsDatabaseReader detailsDatabaseReader,
             DetailsXmlToString detailsXmlToString,
             Resources resources) {
         this.detailsDatabaseReader = detailsDatabaseReader;
         this.detailsXmlToString = detailsXmlToString;
-        this.cacheReaderFromFile = cacheReaderFromFile;
         this.resources = resources;
     }
 
-    public String load(CharSequence sourceName, CharSequence cacheId) throws CacheLoaderException {
-        Reader reader = createReader(sourceName, cacheId);
+    public String load(CharSequence cacheId) {
+        Reader reader = createReader(cacheId);
         try {
             return detailsXmlToString.read(reader);
         } catch (XmlPullParserException e) {
@@ -52,12 +49,7 @@ public class CacheLoader {
         }
     }
 
-    private Reader createReader(CharSequence sourceName, CharSequence cacheId)
-            throws CacheLoaderException {
-        String detailsFromDatabase = detailsDatabaseReader.read(cacheId);
-        if (detailsFromDatabase == null)
-            return cacheReaderFromFile.getReader(sourceName, cacheId);
-
-        return new StringReader(detailsFromDatabase);
+    private Reader createReader(CharSequence cacheId) {
+        return new StringReader(detailsDatabaseReader.read(cacheId));
     }
 }
