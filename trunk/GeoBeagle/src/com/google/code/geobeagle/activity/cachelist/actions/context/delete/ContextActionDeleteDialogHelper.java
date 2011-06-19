@@ -19,8 +19,8 @@ import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.cachelist.actions.context.ContextActionDelete;
 import com.google.inject.Inject;
 
-import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
 import android.app.Dialog;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,24 +29,31 @@ import android.widget.TextView;
 public class ContextActionDeleteDialogHelper {
     private final ContextActionDelete contextActionDelete;
     private final OnClickOk onClickOk;
+    private final Builder builder;
+    private final LayoutInflater layoutInflater;
+    private final OnClickCancelListener onClickCancelListener;
 
     @Inject
     public ContextActionDeleteDialogHelper(ContextActionDelete contextActionDelete,
-            OnClickOk onClickOk) {
+            OnClickOk onClickOk,
+            AlertDialog.Builder builder,
+            LayoutInflater layoutInflater,
+            OnClickCancelListener onClickCancelListener) {
         this.contextActionDelete = contextActionDelete;
         this.onClickOk = onClickOk;
+        this.builder = builder;
+        this.layoutInflater = layoutInflater;
+        this.onClickCancelListener = onClickCancelListener;
     }
 
-    public Dialog onCreateDialog(Activity activity) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+    public Dialog onCreateDialog() {
+        View confirmDeleteCacheView = layoutInflater.inflate(R.layout.confirm_delete_cache, null);
 
-        View confirmDeleteCacheView = LayoutInflater.from(activity).inflate(
-                R.layout.confirm_delete_cache, null);
-
-        builder.setNegativeButton(R.string.confirm_delete_negative, new OnClickCancelListener());
+        builder.setNegativeButton(R.string.confirm_delete_negative, onClickCancelListener);
         builder.setView(confirmDeleteCacheView);
-
-        return builder.setPositiveButton(R.string.delete_cache, onClickOk).create();
+        builder.setPositiveButton(R.string.delete_cache, onClickOk);
+        
+        return builder.create();
     }
 
     public void onPrepareDialog(Dialog dialog) {

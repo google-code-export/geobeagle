@@ -75,8 +75,6 @@ public class ImportThreadDelegateTest extends GeoBeagleTest {
         importBCachingWorker.sync(syncCollectingParameter);
         expect(syncCollectingParameter.getLog()).andReturn("LOG");
         errorDisplayer.displayError(R.string.string, "LOG");
-        bcachingStartTime.clearStartTime();
-        dbFrontend.forceUpdate();
 
         replayAll();
         ImportThread importThread = new ImportThread(gpxSyncer, importBCachingWorker,

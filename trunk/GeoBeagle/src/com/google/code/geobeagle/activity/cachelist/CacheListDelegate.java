@@ -135,7 +135,7 @@ public class CacheListDelegate {
         if (idDialog == id.menu_log_dnf || idDialog == id.menu_log_find) {
             return logFindDialogHelper.onCreateDialog(activity, idDialog);
         }
-        return contextActionDeleteDialogHelper.onCreateDialog(activity);
+        return contextActionDeleteDialogHelper.onCreateDialog();
     }
 
     public void onPrepareDialog(int id, Dialog dialog) {
