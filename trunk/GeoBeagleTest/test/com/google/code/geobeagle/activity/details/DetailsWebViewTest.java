@@ -41,8 +41,6 @@ public class DetailsWebViewTest {
 
         expect(webView.getSettings()).andReturn(settings);
         settings.setJavaScriptEnabled(true);
-        expect(intent.getStringExtra(DetailsActivity.INTENT_EXTRA_GEOCACHE_SOURCE)).andReturn(
-                "bcaching.com");
         expect(intent.getStringExtra(DetailsActivity.INTENT_EXTRA_GEOCACHE_ID)).andReturn("GC123");
         expect(intent.getStringExtra(DetailsActivity.INTENT_EXTRA_GEOCACHE_NAME)).andReturn(
                 "An easy cache");

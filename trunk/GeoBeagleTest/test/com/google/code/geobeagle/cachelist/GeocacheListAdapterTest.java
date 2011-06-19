@@ -29,6 +29,7 @@ import org.powermock.api.easymock.PowerMock;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import android.graphics.Color;
 import android.view.View;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
@@ -84,7 +85,9 @@ public class GeocacheListAdapterTest {
 
         EasyMock.expect(activityVisible.getVisible()).andReturn(true);
         EasyMock.expect(geocacheSummaryRowInflater.inflate(convertView)).andReturn(newConvertView);
-        EasyMock.expect(geocacheVectors.get(17)).andReturn(geocacheVector);
+        EasyMock.expect(geocacheVectors.get(17)).andReturn(geocacheVector).anyTimes();
+        EasyMock.expect(geocacheVector.getId()).andReturn("GC123");
+        newConvertView.setBackgroundColor(Color.TRANSPARENT);
         geocacheSummaryRowInflater.setData(newConvertView, geocacheVector);
 
         PowerMock.replayAll();

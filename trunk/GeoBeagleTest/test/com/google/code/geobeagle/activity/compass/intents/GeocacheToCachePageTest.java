@@ -58,7 +58,6 @@ public class GeocacheToCachePageTest extends GeoBeagleTest {
     public void convertGpxShouldUseCacheUrlLoader() throws CacheLoaderException {
         expect(geocache.getSourceType()).andReturn(Source.GPX);
         expect(geocache.getId()).andReturn("GCFOO");
-        expect(geocache.getSourceName()).andReturn("bcaching.com");
         expect(cacheUrlLoader.load("GCFOO")).andReturn("http://coord.info/GCFOO");
         replayAll();
 

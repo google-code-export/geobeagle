@@ -20,6 +20,7 @@ import static org.powermock.api.easymock.PowerMock.createMock;
 import static org.powermock.api.easymock.PowerMock.replayAll;
 import static org.powermock.api.easymock.PowerMock.verifyAll;
 
+import com.google.code.geobeagle.OnClickCancelListener;
 import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.activity.cachelist.actions.context.delete.ContextActionDeleteDialogHelper;
 import com.google.code.geobeagle.activity.cachelist.actions.context.delete.ContextActionDeleteStore;
@@ -40,6 +41,8 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.content.DialogInterface;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.TextView;
 
 @RunWith(PowerMockRunner.class)
@@ -74,7 +77,7 @@ public class ContextActionDeleteTest {
         ContextActionDeleteStore contextActionDeleteStore = createMock(ContextActionDeleteStore.class);
 
         contextActionDeleteStore.saveCacheToDelete("GC123", "My cache");
-        activity.showDialog(1234);
+        activity.showDialog(R.id.delete_cache);
         expect(geocacheVectors.get(17)).andReturn(geocacheVector);
         expect(geocacheVector.getId()).andReturn("GC123");
         expect(geocacheVector.getName()).andReturn("My cache");
@@ -150,15 +153,21 @@ public class ContextActionDeleteTest {
     public void testOnCreateDialog() {
         Builder builder = createMock(Builder.class);
         AlertDialog dialog = createMock(AlertDialog.class);
+        LayoutInflater layoutInflater = createMock(LayoutInflater.class);
+        View confirmDeleteCacheView = createMock(View.class);
+        OnClickCancelListener onClickCancelListener = createMock(OnClickCancelListener.class);
 
-        expect(builder.setPositiveButton(R.string.delete_cache, onClickOk)).andReturn(
-                builder);
+        expect(layoutInflater.inflate(R.layout.confirm_delete_cache, null)).andReturn(
+                confirmDeleteCacheView);
+        expect(builder.setNegativeButton(R.string.confirm_delete_negative, onClickCancelListener))
+                .andReturn(builder);
+        expect(builder.setPositiveButton(R.string.delete_cache, onClickOk)).andReturn(builder);
+        expect(builder.setView(confirmDeleteCacheView)).andReturn(builder);
         expect(builder.create()).andReturn(dialog);
 
         replayAll();
-        ContextActionDeleteDialogHelper contextActionDeleteDialogHelper = new ContextActionDeleteDialogHelper(
-                null, onClickOk);
-        contextActionDeleteDialogHelper.onCreateDialog(null);
+        new ContextActionDeleteDialogHelper(null, onClickOk, builder, layoutInflater,
+                onClickCancelListener).onCreateDialog();
         verifyAll();
     }
 
@@ -166,6 +175,7 @@ public class ContextActionDeleteTest {
     public void testOnPrepareDialog() {
         ContextActionDelete contextActionDelete = createMock(ContextActionDelete.class);
         TextView textView = createMock(TextView.class);
+        LayoutInflater layoutInflater = createMock(LayoutInflater.class);
 
         expect(contextActionDelete.getConfirmDeleteTitle()).andReturn(
                 "Confirm delete GC123");
@@ -178,7 +188,7 @@ public class ContextActionDeleteTest {
 
         replayAll();
         ContextActionDeleteDialogHelper contextActionDeleteDialogHelper = new ContextActionDeleteDialogHelper(
-                contextActionDelete, onClickOk);
+                contextActionDelete, onClickOk, null, layoutInflater, null);
         contextActionDeleteDialogHelper.onPrepareDialog(dialog);
         verifyAll();
     }

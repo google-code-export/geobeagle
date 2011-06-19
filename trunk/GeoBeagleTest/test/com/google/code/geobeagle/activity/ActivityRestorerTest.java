@@ -35,7 +35,7 @@ import android.util.Log;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({
-        Intent.class, ActivityRestorer.class, Log.class
+        Intent.class, ActivityRestorer.class, Log.class, ViewCacheRestorer.class
 })
 public class ActivityRestorerTest extends GeoBeagleTest {
     private SharedPreferences sharedPreferences;
