@@ -17,6 +17,7 @@ package com.google.code.geobeagle.activity.cachelist;
 import static org.easymock.EasyMock.expect;
 import static org.junit.Assert.assertTrue;
 
+import com.google.code.geobeagle.R;
 import com.google.code.geobeagle.actions.ContextActions;
 import com.google.code.geobeagle.activity.cachelist.GeocacheListController.CacheListOnCreateContextMenuListener;
 import com.google.code.geobeagle.activity.cachelist.actions.menu.MenuActionSyncGpx;
@@ -53,6 +54,7 @@ public class GeocacheListControllerTest extends GeoBeagleTest {
     private ContextMenu contextMenu;
     private CacheListRefresh cacheListRefresh;
     private AdapterContextMenuInfo adapterContextMenuInfo;
+    private ViewMenuAdder viewMenuAdder;
 
     @Before
     public void setUp() {
@@ -60,6 +62,7 @@ public class GeocacheListControllerTest extends GeoBeagleTest {
         adapterContextMenuInfo = PowerMock.createMock(AdapterContextMenuInfo.class);
         cacheListRefresh = PowerMock.createMock(CacheListRefresh.class);
         contextMenu = PowerMock.createMock(ContextMenu.class);
+        viewMenuAdder = new ViewMenuAdderPreHoneycomb();
     }
 
     @Test
@@ -70,13 +73,17 @@ public class GeocacheListControllerTest extends GeoBeagleTest {
         expect(geocacheVectors.get(11)).andReturn(geocacheVector);
         expect(geocacheVector.getId()).andReturn("GC123");
         expect(contextMenu.setHeaderTitle("GC123")).andReturn(contextMenu);
-        expect(contextMenu.add(0, GeocacheListController.MENU_VIEW, 0, "View")).andReturn(null);
-        expect(contextMenu.add(0, GeocacheListController.MENU_EDIT, 1, "Edit")).andReturn(null);
-        expect(contextMenu.add(0, GeocacheListController.MENU_DELETE, 2, "Delete")).andReturn(null);
+        expect(contextMenu.add(0, GeocacheListController.MENU_VIEW, 0, R.string.context_menu_view))
+                .andReturn(null);
+        expect(contextMenu.add(0, GeocacheListController.MENU_EDIT, 1, R.string.context_menu_edit))
+                .andReturn(null);
+        expect(
+                contextMenu.add(0, GeocacheListController.MENU_DELETE, 2,
+                        R.string.context_menu_delete)).andReturn(null);
 
         PowerMock.replayAll();
         adapterContextMenuInfo.position = 12;
-        new CacheListOnCreateContextMenuListener(geocacheVectors).onCreateContextMenu(contextMenu, null,
+        new CacheListOnCreateContextMenuListener(geocacheVectors, viewMenuAdder).onCreateContextMenu(contextMenu, null,
                 adapterContextMenuInfo);
         PowerMock.verifyAll();
     }
@@ -115,16 +122,18 @@ public class GeocacheListControllerTest extends GeoBeagleTest {
         EasyMock.expect(geocacheVectors.get(41)).andReturn(geocacheVector);
         EasyMock.expect(geocacheVector.getId()).andReturn("GCABC");
         EasyMock.expect(contextMenu.setHeaderTitle("GCABC")).andReturn(contextMenu);
-        EasyMock.expect(contextMenu.add(0, GeocacheListController.MENU_VIEW, 0, "View")).andReturn(
-                menuItem);
-        EasyMock.expect(contextMenu.add(0, GeocacheListController.MENU_EDIT, 1, "Edit")).andReturn(
-                menuItem);
-        EasyMock.expect(contextMenu.add(0, GeocacheListController.MENU_DELETE, 2, "Delete"))
+        expect(contextMenu.add(0, GeocacheListController.MENU_VIEW, 0, R.string.context_menu_view))
+                .andReturn(null);
+        EasyMock.expect(
+                contextMenu.add(0, GeocacheListController.MENU_EDIT, 1, R.string.context_menu_edit))
                 .andReturn(menuItem);
+        EasyMock.expect(
+                contextMenu.add(0, GeocacheListController.MENU_DELETE, 2,
+                        R.string.context_menu_delete)).andReturn(menuItem);
 
         PowerMock.replayAll();
-        new CacheListOnCreateContextMenuListener(geocacheVectors).onCreateContextMenu(contextMenu,
-                null, contextMenuInfo);
+        new CacheListOnCreateContextMenuListener(geocacheVectors, viewMenuAdder)
+                .onCreateContextMenu(contextMenu, null, contextMenuInfo);
         PowerMock.verifyAll();
     }
 
@@ -151,12 +160,11 @@ public class GeocacheListControllerTest extends GeoBeagleTest {
         Provider<ContextActions> contextActionsProvider = PowerMock.createMock(Provider.class);
 
         expect(contextActionsProvider.get()).andReturn(contextActions);
-        contextActions.act(1, 45);
+        contextActions.act(2, 45);
 
         PowerMock.replayAll();
         new GeocacheListController(null, null, null, null, contextActionsProvider)
-                .onListItemClick(
-                46);
+                .onListItemClick(46);
         PowerMock.verifyAll();
     }
 

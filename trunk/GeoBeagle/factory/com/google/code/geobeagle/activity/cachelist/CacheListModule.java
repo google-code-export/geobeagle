@@ -51,10 +51,12 @@ public class CacheListModule extends AbstractAndroidModule {
             bind(ListFragtivityOnCreateHandler.class).to(ListFragmentOnCreateHandler.class);
             bind(CompassFrameHider.class).to(HoneycombCompassFrameHider.class);
             bind(CacheListActivityStarter.class).to(CacheListActivityStarterHoneycomb.class);
+            bind(ViewMenuAdder.class).to(ViewMenuAdderHoneycomb.class);
         } else {
             bind(ListFragtivityOnCreateHandler.class).to(ListActivityOnCreateHandler.class);
             bind(CompassFrameHider.class).to(NullCompassFrameHider.class);
             bind(CacheListActivityStarter.class).to(CacheListActivityStarterPreHoneycomb.class);
+            bind(ViewMenuAdder.class).to(ViewMenuAdderPreHoneycomb.class);
         }
     }
 
