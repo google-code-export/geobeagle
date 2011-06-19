@@ -20,6 +20,7 @@ import com.google.code.geobeagle.activity.cachelist.CacheListViewScrollListener;
 import com.google.code.geobeagle.activity.cachelist.GeocacheListController.CacheListOnCreateContextMenuListener;
 import com.google.code.geobeagle.activity.cachelist.Pausable;
 import com.google.code.geobeagle.activity.cachelist.SearchTarget;
+import com.google.code.geobeagle.activity.cachelist.ViewMenuAdder;
 import com.google.code.geobeagle.activity.cachelist.model.GeocacheVectors;
 import com.google.code.geobeagle.activity.cachelist.presenter.filter.UpdateFilterMediator;
 import com.google.code.geobeagle.database.filter.FilterCleanliness;
@@ -61,6 +62,8 @@ public class CacheListPresenter implements Pausable {
     private final SearchTarget searchTarget;
     private final ListFragtivityOnCreateHandler listFragtivityOnCreateHandler;
 
+    private final ViewMenuAdder viewMenuAdder;
+
     public CacheListPresenter(CombinedLocationListener combinedLocationListener,
             CombinedLocationManager combinedLocationManager,
             ListFragtivityOnCreateHandler listFragtivityOnCreateHandler,
@@ -77,7 +80,8 @@ public class CacheListPresenter implements Pausable {
             FilterCleanliness filterCleanliness,
             ShakeWaker shakeWaker,
             UpdateFilterMediator updateFilterMediator,
-            SearchTarget searchTarget) {
+            SearchTarget searchTarget,
+            ViewMenuAdder viewMenuAdder) {
         this.combinedLocationListener = combinedLocationListener;
         this.combinedLocationManager = combinedLocationManager;
         this.cacheListCompassListenerProvider = cacheListCompassListenerProvider;
@@ -95,6 +99,7 @@ public class CacheListPresenter implements Pausable {
         this.updateFilterMediator = updateFilterMediator;
         this.searchTarget = searchTarget;
         this.listFragtivityOnCreateHandler = listFragtivityOnCreateHandler;
+        this.viewMenuAdder = viewMenuAdder;
     }
 
     @Inject
@@ -118,6 +123,7 @@ public class CacheListPresenter implements Pausable {
         this.searchTarget = injector.getInstance(SearchTarget.class);
         this.listFragtivityOnCreateHandler = injector
                 .getInstance(ListFragtivityOnCreateHandler.class);
+        this.viewMenuAdder = injector.getInstance(ViewMenuAdder.class);
     }
 
     public void onCreate() {
@@ -129,7 +135,7 @@ public class CacheListPresenter implements Pausable {
         noCachesView.setSearchTarget(searchTarget);
         listView.addHeaderView((View)inflatedGpsStatusWidget.getTag());
         listView.setOnCreateContextMenuListener(new CacheListOnCreateContextMenuListener(
-                geocacheVectors));
+                geocacheVectors, viewMenuAdder));
         listView.setOnScrollListener(scrollListener);
     }
 

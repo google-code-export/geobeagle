@@ -24,7 +24,6 @@ import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Provider;
 
-import android.os.Build;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -35,12 +34,14 @@ import android.view.View.OnCreateContextMenuListener;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 
 public class GeocacheListController {
-    //TODO(sng): Rename to CacheListController.
     public static class CacheListOnCreateContextMenuListener implements OnCreateContextMenuListener {
         private final GeocacheVectors mGeocacheVectors;
+        private final ViewMenuAdder mViewMenuAdder;
 
-        public CacheListOnCreateContextMenuListener(GeocacheVectors geocacheVectors) {
+        public CacheListOnCreateContextMenuListener(GeocacheVectors geocacheVectors,
+                ViewMenuAdder viewMenuAdder) {
             mGeocacheVectors = geocacheVectors;
+            mViewMenuAdder = viewMenuAdder;
         }
 
         @Override
@@ -48,9 +49,7 @@ public class GeocacheListController {
             AdapterContextMenuInfo acmi = (AdapterContextMenuInfo)menuInfo;
             if (acmi.position > 0) {
                 menu.setHeaderTitle(mGeocacheVectors.get(acmi.position - 1).getId());
-                if (Integer.parseInt(Build.VERSION.SDK) <= Build.VERSION_CODES.HONEYCOMB) {
-                    menu.add(0, MENU_VIEW, 0, R.string.context_menu_view);
-                }
+                mViewMenuAdder.addViewMenu(menu);
                 menu.add(0, MENU_EDIT, 1, R.string.context_menu_edit);
                 menu.add(0, MENU_DELETE, 2, R.string.context_menu_delete);
             }
